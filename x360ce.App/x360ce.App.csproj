@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>x360ce.App</RootNamespace>
+    <AssemblyName>x360ce</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <StartupObject>x360ce.App.Program</StartupObject>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\ControllerType.cs" />
+    <Compile Include="Common\Helper.cs" />
+    <Compile Include="Common\Ini.cs" />
+    <Compile Include="Common\SettingType.cs" />
+    <Compile Include="Controls\AboutControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AboutControl.Designer.cs">
+      <DependentUpon>AboutControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DirectInputControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\DirectInputControl.Designer.cs">
+      <DependentUpon>DirectInputControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PadControl.Designer.cs">
+      <DependentUpon>PadControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Html2Rtf\Converter.cs" />
+    <Compile Include="MainForm-CheckFiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm-Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <EmbeddedResource Include="Images\xboxControllerFront.png" />
+    <EmbeddedResource Include="Images\xboxControllerTop.png" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\SettingsConverter.cs" />
+    <Compile Include="Win32\BIND_OPTS3.cs" />
+    <Compile Include="Win32\CLSCTX.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
+    <Compile Include="Win32\SafeLibraryHandle.cs" />
+    <Compile Include="Win32\SafeTokenHandle.cs" />
+    <Compile Include="Win32\SID_AND_ATTRIBUTES.cs" />
+    <Compile Include="Win32\TOKEN_ELEVATION.cs" />
+    <Compile Include="Win32\TOKEN_ELEVATION_TYPE.cs" />
+    <Compile Include="Win32\TOKEN_INFORMATION_CLASS.cs" />
+    <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
+    <Compile Include="Win32\WinAPI.cs" />
+    <Compile Include="Win32\WinNT.cs" />
+    <Compile Include="XnaInput\Buttons.cs" />
+    <Compile Include="XnaInput\Controller.cs" />
+    <Compile Include="XnaInput\ButtonsValues.cs" />
+    <Compile Include="XnaInput\ControllerCollection.cs" />
+    <Compile Include="XnaInput\GamePad.cs" />
+    <Compile Include="XnaInput\GamePadType.cs" />
+    <Compile Include="XnaInput\DPadEnum.cs" />
+    <Compile Include="XnaInput\GamePadState.cs" />
+    <Compile Include="XnaInput\Vibration.cs" />
+    <Compile Include="XnaInput\XInput.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\MarkButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app.ico" />
+    <EmbeddedResource Include="Controls\AboutControl.resx">
+      <DependentUpon>AboutControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DirectInputControl.resx">
+      <DependentUpon>DirectInputControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PadControl.resx">
+      <DependentUpon>PadControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\MarkController.png" />
+    <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
+    <EmbeddedResource Include="Documents\Help.htm" />
+    <EmbeddedResource Include="Html2Rtf\xhtml2rtf.xsl" />
+    <Content Include="Html2Rtf\Readme.htm" />
+    <Content Include="Html2Rtf\xhtml2rtf.txt" />
+    <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
+    <EmbeddedResource Include="Images\bullet_square_glass_green.png" />
+    <EmbeddedResource Include="Images\bullet_square_glass_grey.png" />
+    <EmbeddedResource Include="Images\bullet_square_glass_red.png" />
+    <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
+    <Content Include="Images\xboxControllerDPad.png" />
+    <Content Include="Images\xboxControllerLeftThumbstick.png" />
+    <None Include="app.manifest" />
+    <None Include="Images\xboxControllerLeftTrigger.png" />
+    <Content Include="Images\xboxControllerRightThumbstick.png" />
+    <None Include="Images\xboxControllerRightTrigger.png" />
+    <Content Include="Images\xboxControllerSpriteFont.png" />
+    <EmbeddedResource Include="Presets\xinput1_3.dll" />
+    <EmbeddedResource Include="Images\MarkAxis.png" />
+    <EmbeddedResource Include="Documents\ChangeLog.txt" />
+    <None Include="Images\app_128x128.png" />
+    <EmbeddedResource Include="Presets\x360ce.Clear.ini" />
+    <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
+    <EmbeddedResource Include="Presets\x360ce.ini" />
+    <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)
+cd ..\..
+if exist JocysCom.sign.bat JocysCom.sign.bat</PostBuildEvent>
+  </PropertyGroup>
+</Project>

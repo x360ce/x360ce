@@ -1,0 +1,30 @@
+﻿v2.0.2.9 (2010-03-17) by Evaldas Jocys
+- Help tab added.
+
+v2.0.2.8 (2010-03-17) by Evaldas Jocys
+- Fixed recording.
+- Fixed autosaving.
+- Fixed Thumb Left/Right/Up/Down settings map.
+
+v2.0.2.3 (2010-03-17) by Evaldas Jocys
+- Supports old ini file xbox360cemu.ini if found and new x360ce.ini doesn't exists.
+- Supports hotplugging USB devices.
+- Interface updated.
+- Can load custom presets from disk.
+
+v 2.0.1.2 (2010-03-14) by Evaldas Jocys
+- Setting changes now applies instantly.
+- [Save] button makes changes permanent.
+- Updated button names to names used by Microsoft.
+- Fixed bug with multiple controllers attached.
+
+v 2.0.0.0 (2010-03-11) by Evaldas Jocys
+- Pack of new features and improvements.
+- Supports load and save settings.
+- Presets feature added.
+- Supports DirectInput action capture/recording.
+- New DirectInput information tab.
+- All images updated.
+
+v 1.0.3300.21118 by Racer_S
+v 1.0.3295.32855 by Racer_S
