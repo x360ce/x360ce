@@ -1,6 +1,7 @@
 ﻿v2.0.2.10 (2010-03-17) by Evaldas Jocys
 - DirectInput rY fix.
 - Added preset for "Controller (Xbox 360 Wireless Receiver for Windows)"
+- Fixed Native settings section location.
 
 v2.0.2.9 (2010-03-17) by Evaldas Jocys
 - Help tab added.
