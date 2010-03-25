@@ -439,6 +439,7 @@ namespace x360ce.App.Controls
 			map.Add(section + "Right Thumb", RightStickButtonComboBox);
 			map.Add(section + "TriggerDeadzone", LeftTriggerDeadZoneTrackBar);
 			map.Add(section + "ControllerType", GamePadTypeComboBox);
+			map.Add(section + "Native", NativeModeCheckBox);
 			// Same key used!
 			map.Add(section + "Right Trigger Deadzone", RightTriggerDeadZoneTrackBar);
 			map.Add(section + "Left Trigger", LeftTriggerComboBox);

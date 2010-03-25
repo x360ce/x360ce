@@ -57,7 +57,6 @@ namespace x360ce.App
 			this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput13CheckBox = new System.Windows.Forms.CheckBox();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.FakeApiCheckBox = new System.Windows.Forms.CheckBox();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
@@ -167,7 +166,6 @@ namespace x360ce.App
 			this.OptionsTabPage.Controls.Add(this.InstallFilesXinput11CheckBox);
 			this.OptionsTabPage.Controls.Add(this.InstallFilesXinput12CheckBox);
 			this.OptionsTabPage.Controls.Add(this.InstallFilesXinput13CheckBox);
-			this.OptionsTabPage.Controls.Add(this.checkBox1);
 			this.OptionsTabPage.Controls.Add(this.FakeApiCheckBox);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
@@ -240,7 +238,7 @@ namespace x360ce.App
 			// EnableLoggingCheckBox
 			// 
 			this.EnableLoggingCheckBox.AutoSize = true;
-			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(7, 122);
+			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(3, 99);
 			this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
 			this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.EnableLoggingCheckBox.TabIndex = 21;
@@ -250,7 +248,7 @@ namespace x360ce.App
 			// UseInitBeepCheckBox
 			// 
 			this.UseInitBeepCheckBox.AutoSize = true;
-			this.UseInitBeepCheckBox.Location = new System.Drawing.Point(7, 99);
+			this.UseInitBeepCheckBox.Location = new System.Drawing.Point(3, 76);
 			this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
 			this.UseInitBeepCheckBox.Size = new System.Drawing.Size(90, 17);
 			this.UseInitBeepCheckBox.TabIndex = 22;
@@ -260,7 +258,7 @@ namespace x360ce.App
 			// FakeDiCheckBox
 			// 
 			this.FakeDiCheckBox.AutoSize = true;
-			this.FakeDiCheckBox.Location = new System.Drawing.Point(7, 76);
+			this.FakeDiCheckBox.Location = new System.Drawing.Point(3, 53);
 			this.FakeDiCheckBox.Name = "FakeDiCheckBox";
 			this.FakeDiCheckBox.Size = new System.Drawing.Size(64, 17);
 			this.FakeDiCheckBox.TabIndex = 23;
@@ -270,7 +268,7 @@ namespace x360ce.App
 			// FakeWmiCheckBox
 			// 
 			this.FakeWmiCheckBox.AutoSize = true;
-			this.FakeWmiCheckBox.Location = new System.Drawing.Point(7, 53);
+			this.FakeWmiCheckBox.Location = new System.Drawing.Point(3, 30);
 			this.FakeWmiCheckBox.Name = "FakeWmiCheckBox";
 			this.FakeWmiCheckBox.Size = new System.Drawing.Size(76, 17);
 			this.FakeWmiCheckBox.TabIndex = 18;
@@ -327,20 +325,10 @@ namespace x360ce.App
 			this.InstallFilesXinput13CheckBox.Text = "xinput1_3.dll (Recommended)";
 			this.InstallFilesXinput13CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// checkBox1
-			// 
-			this.checkBox1.AutoSize = true;
-			this.checkBox1.Location = new System.Drawing.Point(7, 7);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(87, 17);
-			this.checkBox1.TabIndex = 19;
-			this.checkBox1.Text = "Native Mode";
-			this.checkBox1.UseVisualStyleBackColor = true;
-			// 
 			// FakeApiCheckBox
 			// 
 			this.FakeApiCheckBox.AutoSize = true;
-			this.FakeApiCheckBox.Location = new System.Drawing.Point(7, 30);
+			this.FakeApiCheckBox.Location = new System.Drawing.Point(3, 7);
 			this.FakeApiCheckBox.Name = "FakeApiCheckBox";
 			this.FakeApiCheckBox.Size = new System.Drawing.Size(70, 17);
 			this.FakeApiCheckBox.TabIndex = 20;
@@ -522,7 +510,6 @@ namespace x360ce.App
 		private CheckBox UseInitBeepCheckBox;
 		private CheckBox FakeDiCheckBox;
 		private CheckBox FakeWmiCheckBox;
-		private CheckBox checkBox1;
 		private CheckBox FakeApiCheckBox;
 		private Label FakePidLabel;
 		private Label FakeVidLabel;
