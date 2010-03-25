@@ -216,6 +216,7 @@
     <EmbeddedResource Include="Images\MarkAxis.png" />
     <EmbeddedResource Include="Documents\ChangeLog.txt" />
     <None Include="Images\app_128x128.png" />
+    <EmbeddedResource Include="Presets\x360ce.Controller_%28Xbox_360_Wireless_Receiver_for_Windows%29.ini" />
     <EmbeddedResource Include="Presets\x360ce.Clear.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
     <EmbeddedResource Include="Presets\x360ce.ini" />

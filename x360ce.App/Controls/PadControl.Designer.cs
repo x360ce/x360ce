@@ -123,6 +123,7 @@
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.NativeModeCheckBox = new System.Windows.Forms.CheckBox();
 			this.AdvancedTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.FfOverallTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
@@ -157,6 +158,7 @@
 			this.AdvancedTabPage.Controls.Add(this.FfRightMotorInvertCheckBox);
 			this.AdvancedTabPage.Controls.Add(this.FfLeftMotorInvertCheckBox);
 			this.AdvancedTabPage.Controls.Add(this.FfSwapMotorCheckBox);
+			this.AdvancedTabPage.Controls.Add(this.NativeModeCheckBox);
 			this.AdvancedTabPage.Controls.Add(this.FfEnableCheckBox);
 			this.AdvancedTabPage.Controls.Add(this.TestRightMotorLabel);
 			this.AdvancedTabPage.Controls.Add(this.LeftMotorTestTrackBar);
@@ -1169,8 +1171,18 @@
 			// DiMenuStrip
 			// 
 			this.DiMenuStrip.Name = "DiMenuStrip";
-			this.DiMenuStrip.Size = new System.Drawing.Size(153, 26);
+			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
+			// 
+			// NativeModeCheckBox
+			// 
+			this.NativeModeCheckBox.AutoSize = true;
+			this.NativeModeCheckBox.Location = new System.Drawing.Point(262, 8);
+			this.NativeModeCheckBox.Name = "NativeModeCheckBox";
+			this.NativeModeCheckBox.Size = new System.Drawing.Size(87, 17);
+			this.NativeModeCheckBox.TabIndex = 32;
+			this.NativeModeCheckBox.Text = "Native Mode";
+			this.NativeModeCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// PadControl
 			// 
@@ -1292,5 +1304,6 @@
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
 		private System.Windows.Forms.TextBox RightMotorTestTextBox;
 		private System.Windows.Forms.TextBox LeftMotorTestTextBox;
+		private System.Windows.Forms.CheckBox NativeModeCheckBox;
 	}
 }
