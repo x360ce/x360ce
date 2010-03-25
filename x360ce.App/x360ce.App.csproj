@@ -212,7 +212,6 @@
     <None Include="app.manifest" />
     <None Include="Documents\JocysCom.sign.bat" />
     <None Include="Documents\x360ce.App.source.bat" />
-    <None Include="Documents\x360ce.App.source.zip" />
     <None Include="Images\xboxControllerLeftTrigger.png" />
     <Content Include="Images\xboxControllerRightThumbstick.png" />
     <None Include="Images\xboxControllerRightTrigger.png" />
