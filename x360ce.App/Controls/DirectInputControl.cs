@@ -117,7 +117,7 @@ namespace x360ce.App.Controls
 			DiAxisTable.Rows[0][8] = state.VRx;
 			// Y-axis.
 			DiAxisTable.Rows[1][1] = state.Y;
-			DiAxisTable.Rows[2][2] = state.Ry;
+			DiAxisTable.Rows[1][2] = state.Ry;
 			DiAxisTable.Rows[1][3] = state.AY;
 			DiAxisTable.Rows[1][4] = state.ARy;
 			DiAxisTable.Rows[1][5] = state.FY;
