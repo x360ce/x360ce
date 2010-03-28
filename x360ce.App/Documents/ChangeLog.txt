@@ -1,4 +1,8 @@
-﻿v2.0.2.11 (2010-03-25) by Evaldas Jocys
+﻿v2.0.2.13 (2010-03-28) by Evaldas Jocys
+- xBox 360 controller preset thumb stick button assigments fix.
+- VID, PID, ProductName - read-only settings load fix.
+
+v2.0.2.11 (2010-03-25) by Evaldas Jocys
 - DirectInput rY fix.
 - Added preset for "Controller (Xbox 360 Wireless Receiver for Windows)"
 - Fixed Native settings section location.

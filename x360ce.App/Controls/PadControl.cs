@@ -452,6 +452,7 @@ namespace x360ce.App.Controls
 			map.Add(section + "ForcePercent", FfOverallTrackBar);
 			//_SettingsMap.Add("ControllerType",
 			// FakeAPI
+			map.Add(section + "ProductName", diControl.DeviceProductNameTextBox);
 			map.Add(section + "VID", diControl.DeviceVidTextBox);
 			map.Add(section + "PID", diControl.DevicePidTextBox);
 			return map;

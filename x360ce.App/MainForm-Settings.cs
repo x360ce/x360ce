@@ -110,6 +110,11 @@ namespace x360ce.App
 			}
 			else if (control is TextBox)
 			{
+				// if setting is readonly.
+				if (key == "ProductName") return;
+				if (key == "PID") return;
+				if (key == "VID") return;
+
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
