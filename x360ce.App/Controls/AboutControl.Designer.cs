@@ -41,6 +41,8 @@
 			this.AboutVirusLabel = new System.Windows.Forms.Label();
 			this.AboutProductLabel = new System.Windows.Forms.Label();
 			this.pictureBox3 = new System.Windows.Forms.PictureBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -68,7 +70,7 @@
 			// AboutWikiLinkLabel
 			// 
 			this.AboutWikiLinkLabel.AutoSize = true;
-			this.AboutWikiLinkLabel.Location = new System.Drawing.Point(241, 109);
+			this.AboutWikiLinkLabel.Location = new System.Drawing.Point(219, 109);
 			this.AboutWikiLinkLabel.Name = "AboutWikiLinkLabel";
 			this.AboutWikiLinkLabel.Size = new System.Drawing.Size(241, 13);
 			this.AboutWikiLinkLabel.TabIndex = 12;
@@ -81,14 +83,14 @@
 			this.AboutWikiLabel.AutoSize = true;
 			this.AboutWikiLabel.Location = new System.Drawing.Point(148, 109);
 			this.AboutWikiLabel.Name = "AboutWikiLabel";
-			this.AboutWikiLabel.Size = new System.Drawing.Size(87, 13);
+			this.AboutWikiLabel.Size = new System.Drawing.Size(65, 13);
 			this.AboutWikiLabel.TabIndex = 10;
-			this.AboutWikiLabel.Text = "Visit X360c Wiki:";
+			this.AboutWikiLabel.Text = "X360c Wiki:";
 			// 
 			// AboutTocaEditLinkLabel
 			// 
 			this.AboutTocaEditLinkLabel.AutoSize = true;
-			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(241, 87);
+			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(219, 66);
 			this.AboutTocaEditLinkLabel.Name = "AboutTocaEditLinkLabel";
 			this.AboutTocaEditLinkLabel.Size = new System.Drawing.Size(126, 13);
 			this.AboutTocaEditLinkLabel.TabIndex = 11;
@@ -99,16 +101,16 @@
 			// AboutTocaLabel
 			// 
 			this.AboutTocaLabel.AutoSize = true;
-			this.AboutTocaLabel.Location = new System.Drawing.Point(148, 87);
+			this.AboutTocaLabel.Location = new System.Drawing.Point(148, 66);
 			this.AboutTocaLabel.Name = "AboutTocaLabel";
-			this.AboutTocaLabel.Size = new System.Drawing.Size(87, 13);
+			this.AboutTocaLabel.Size = new System.Drawing.Size(65, 13);
 			this.AboutTocaLabel.TabIndex = 7;
-			this.AboutTocaLabel.Text = "Visit ToCA EDIT:";
+			this.AboutTocaLabel.Text = "ToCA EDIT:";
 			// 
 			// AboutJocysLinkLabel
 			// 
 			this.AboutJocysLinkLabel.AutoSize = true;
-			this.AboutJocysLinkLabel.Location = new System.Drawing.Point(466, 66);
+			this.AboutJocysLinkLabel.Location = new System.Drawing.Point(437, 87);
 			this.AboutJocysLinkLabel.Name = "AboutJocysLinkLabel";
 			this.AboutJocysLinkLabel.Size = new System.Drawing.Size(112, 13);
 			this.AboutJocysLinkLabel.TabIndex = 13;
@@ -119,7 +121,7 @@
 			// AboutVirusLinkLabel
 			// 
 			this.AboutVirusLinkLabel.AutoSize = true;
-			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(241, 66);
+			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(219, 87);
 			this.AboutVirusLinkLabel.Name = "AboutVirusLinkLabel";
 			this.AboutVirusLinkLabel.Size = new System.Drawing.Size(117, 13);
 			this.AboutVirusLinkLabel.TabIndex = 14;
@@ -130,20 +132,20 @@
 			// AboutJocysLabel
 			// 
 			this.AboutJocysLabel.AutoSize = true;
-			this.AboutJocysLabel.Location = new System.Drawing.Point(373, 66);
+			this.AboutJocysLabel.Location = new System.Drawing.Point(351, 87);
 			this.AboutJocysLabel.Name = "AboutJocysLabel";
-			this.AboutJocysLabel.Size = new System.Drawing.Size(82, 13);
+			this.AboutJocysLabel.Size = new System.Drawing.Size(60, 13);
 			this.AboutJocysLabel.TabIndex = 6;
-			this.AboutJocysLabel.Text = "Visit Jocys.com:";
+			this.AboutJocysLabel.Text = "Jocys.com:";
 			// 
 			// AboutVirusLabel
 			// 
 			this.AboutVirusLabel.AutoSize = true;
-			this.AboutVirusLabel.Location = new System.Drawing.Point(148, 66);
+			this.AboutVirusLabel.Location = new System.Drawing.Point(148, 87);
 			this.AboutVirusLabel.Name = "AboutVirusLabel";
-			this.AboutVirusLabel.Size = new System.Drawing.Size(75, 13);
+			this.AboutVirusLabel.Size = new System.Drawing.Size(53, 13);
 			this.AboutVirusLabel.TabIndex = 9;
-			this.AboutVirusLabel.Text = "Visit VirusDev:";
+			this.AboutVirusLabel.Text = "VirusDev:";
 			// 
 			// AboutProductLabel
 			// 
@@ -164,6 +166,26 @@
 			this.pictureBox3.TabIndex = 5;
 			this.pictureBox3.TabStop = false;
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(351, 66);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(80, 13);
+			this.label1.TabIndex = 6;
+			this.label1.Text = "Google Project:";
+			// 
+			// linkLabel1
+			// 
+			this.linkLabel1.AutoSize = true;
+			this.linkLabel1.Location = new System.Drawing.Point(437, 66);
+			this.linkLabel1.Name = "linkLabel1";
+			this.linkLabel1.Size = new System.Drawing.Size(171, 13);
+			this.linkLabel1.TabIndex = 13;
+			this.linkLabel1.TabStop = true;
+			this.linkLabel1.Text = "http://code.google.com/p/x360ce";
+			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+			// 
 			// AboutControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -174,8 +196,10 @@
 			this.Controls.Add(this.AboutWikiLabel);
 			this.Controls.Add(this.AboutTocaEditLinkLabel);
 			this.Controls.Add(this.AboutTocaLabel);
+			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this.AboutJocysLinkLabel);
 			this.Controls.Add(this.AboutVirusLinkLabel);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.AboutJocysLabel);
 			this.Controls.Add(this.AboutVirusLabel);
 			this.Controls.Add(this.AboutProductLabel);
@@ -203,5 +227,7 @@
 		private System.Windows.Forms.Label AboutVirusLabel;
 		private System.Windows.Forms.Label AboutProductLabel;
 		private System.Windows.Forms.PictureBox pictureBox3;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.LinkLabel linkLabel1;
 	}
 }
