@@ -28,10 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DiEffectsDataGridView = new System.Windows.Forms.DataGridView();
 			this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -98,8 +98,8 @@
 			this.DiEffectsDataGridView.Name = "DiEffectsDataGridView";
 			this.DiEffectsDataGridView.ReadOnly = true;
 			this.DiEffectsDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-			this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
 			this.DiEffectsDataGridView.Size = new System.Drawing.Size(609, 231);
 			this.DiEffectsDataGridView.TabIndex = 55;
 			// 
@@ -242,22 +242,22 @@
             this.DiColumnFr,
             this.DiColumnV,
             this.DiColumnVr});
-			dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle11;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.DiAxisDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiAxisDataGridView.Location = new System.Drawing.Point(5, 84);
 			this.DiAxisDataGridView.Name = "DiAxisDataGridView";
 			this.DiAxisDataGridView.ReadOnly = true;
 			this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiAxisDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle12;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
 			this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiAxisDataGridView.Size = new System.Drawing.Size(362, 84);
 			this.DiAxisDataGridView.TabIndex = 44;
@@ -266,8 +266,8 @@
 			// 
 			this.DiColumnAxis.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
 			this.DiColumnAxis.DataPropertyName = "Axis";
-			dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle10;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle2;
 			this.DiColumnAxis.HeaderText = "Axis";
 			this.DiColumnAxis.Name = "DiColumnAxis";
 			this.DiColumnAxis.ReadOnly = true;
@@ -579,7 +579,7 @@
 		private System.Windows.Forms.TextBox DeviceProductGuidTextBox;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox DeviceProductNameTextBox;
 		private System.Windows.Forms.Label label3;
+		public System.Windows.Forms.TextBox DeviceProductNameTextBox;
 	}
 }
