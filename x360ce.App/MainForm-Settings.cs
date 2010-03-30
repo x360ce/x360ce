@@ -84,7 +84,7 @@ namespace x360ce.App
 
 		void ReadSettings()
 		{
-			ReadSettings(cIniFile, -1);
+			ReadSettings(iniFile, -1);
 		}
 
 		void ReadSetting(Control control, string key, string value)
@@ -196,7 +196,7 @@ namespace x360ce.App
 
 		void SaveSettings()
 		{
-			ini = new Ini(cIniFile);
+			ini = new Ini(iniFile);
 			foreach (string key in SettingsMap.Keys) SaveSettings(key);
 		}
 
@@ -344,7 +344,7 @@ namespace x360ce.App
 		void ReloadXInputLibrary()
 		{
 			if (timer.Enabled) timer.Stop();
-			XInput.ReLoadLibrary(cXinput3File);
+			XInput.ReLoadLibrary(dllFile);
 			timer.Start();
 		}
 

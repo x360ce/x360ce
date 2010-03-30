@@ -22,6 +22,16 @@ namespace x360ce.App.Win32
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern Boolean IsUserAnAdmin();
 
+
+		//[DllImport("coredll")]
+		//private static extern bool GetFileVersionInfo(string filename, UInt32 handle, UInt32 len, IntPtr buffer);
+
+		//[DllImport("coredll")]
+		//private static extern UInt32 GetFileVersionInfoSize(string filename, out UInt32 handle);
+
+		//[DllImport("coredll")]
+		//private static extern bool VerQueryValue(IntPtr buffer, string subblock, out IntPtr blockbuffer, out int len);
+
 		#endregion
 
 		#region ole32
