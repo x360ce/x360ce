@@ -73,6 +73,8 @@ namespace x360ce.App
 			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
+			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
@@ -401,7 +403,9 @@ namespace x360ce.App
             this.toolStripStatusLabel2,
             this.StatusEventsLabel,
             this.StatusSaveLabel,
-            this.StatusIsAdminLabel});
+            this.StatusIsAdminLabel,
+            this.StatusIniLabel,
+            this.StatusDllLabel});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 508);
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Size = new System.Drawing.Size(659, 24);
@@ -418,33 +422,28 @@ namespace x360ce.App
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(215, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(11, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// StatusEventsLabel
 			// 
-			this.StatusEventsLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-			this.StatusEventsLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
+			this.StatusEventsLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusEventsLabel.Name = "StatusEventsLabel";
 			this.StatusEventsLabel.Size = new System.Drawing.Size(105, 19);
 			this.StatusEventsLabel.Text = "StatusEventsLabel";
 			// 
 			// StatusSaveLabel
 			// 
-			this.StatusSaveLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-			this.StatusSaveLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
+			this.StatusSaveLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusSaveLabel.Name = "StatusSaveLabel";
 			this.StatusSaveLabel.Size = new System.Drawing.Size(95, 19);
 			this.StatusSaveLabel.Text = "StatusSaveLabel";
 			// 
 			// StatusIsAdminLabel
 			// 
+			this.StatusIsAdminLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusIsAdminLabel.Name = "StatusIsAdminLabel";
-			this.StatusIsAdminLabel.Size = new System.Drawing.Size(111, 19);
+			this.StatusIsAdminLabel.Size = new System.Drawing.Size(115, 19);
 			this.StatusIsAdminLabel.Text = "StatusIsAdminLabel";
 			// 
 			// CleanStatusTimer
@@ -467,6 +466,20 @@ namespace x360ce.App
 			// 
 			this.SettingsTimer.Interval = 500;
 			this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
+			// 
+			// StatusDllLabel
+			// 
+			this.StatusDllLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.StatusDllLabel.Name = "StatusDllLabel";
+			this.StatusDllLabel.Size = new System.Drawing.Size(85, 19);
+			this.StatusDllLabel.Text = "StatusDllLabel";
+			// 
+			// StatusIniLabel
+			// 
+			this.StatusIniLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.StatusIniLabel.Name = "StatusIniLabel";
+			this.StatusIniLabel.Size = new System.Drawing.Size(84, 19);
+			this.StatusIniLabel.Text = "StatusIniLabel";
 			// 
 			// MainForm
 			// 
@@ -541,6 +554,8 @@ namespace x360ce.App
 		private Button ElevatedActionButton;
 		private Button ElevateThisAppButton;
 		private ToolStripStatusLabel StatusIsAdminLabel;
+		private ToolStripStatusLabel StatusIniLabel;
+		private ToolStripStatusLabel StatusDllLabel;
 
 	}
 }

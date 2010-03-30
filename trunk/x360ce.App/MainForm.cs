@@ -24,14 +24,16 @@ namespace x360ce.App
 		}
 		private ButtonValues lastButtonsPressed = ButtonValues.None;
 
-
-		string cIniFile = "x360ce.ini";
-		string cIniFileNew = "x360ce.ini";
-		string cIniTmpFile = "x360ce.tmp";
-		string cXinput0File = "xinput9_1_0.dll";
-		string cXinput1File = "xinput1_1.dll";
-		string cXinput2File = "xinput1_2.dll";
-		string cXinput3File = "xinput1_3.dll";
+		// Possible file names.
+		string iniFileNew = "x360ce.ini";
+		string iniTmpFile = "x360ce.tmp";
+		string dllFile0 = "xinput9_1_0.dll";
+		string dllFile1 = "xinput1_1.dll";
+		string dllFile2 = "xinput1_2.dll";
+		string dllFile3 = "xinput1_3.dll";
+		// Will be set to default values.
+		string iniFile;
+		string dllFile;
 
 		public int oldIndex;
 
@@ -64,13 +66,20 @@ namespace x360ce.App
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
 			// If it is old ini file.
+			iniFile = iniFileNew;
 			if (System.IO.File.Exists("xbox360cemu.ini")
-				&& !System.IO.File.Exists(cIniFile))
+				&& !System.IO.File.Exists(iniFile))
 			{
 				// Use old file.
-				cIniFile = "xbox360cemu.ini";
-				cIniTmpFile = "xbox360cemu.tmp";
+				iniFile = "xbox360cemu.ini";
+				iniTmpFile = "xbox360cemu.tmp";
 			}
+			// Set default cXinputFile.
+			if (System.IO.File.Exists(dllFile3)) dllFile = dllFile3;
+			else if (System.IO.File.Exists(dllFile2)) dllFile = dllFile2;
+			else if (System.IO.File.Exists(dllFile1)) dllFile = dllFile1;
+			else if (System.IO.File.Exists(dllFile0)) dllFile = dllFile0;
+			else dllFile = dllFile3;
 			// Init presets. Execute only after name of cIniFile is set.
 			InitPresets();
 			// Load about control.
@@ -100,28 +109,11 @@ namespace x360ce.App
 				ControlPads[i].InitPadControl();
 			}
 			// Check if ini and dll is on disk.
-			CheckFiles(true);
-			// Can't run witout ini.
-			if (!File.Exists(cIniFile))
+			if (!CheckFiles(true))
 			{
-				MessageBox.Show(
-					string.Format("Configuration file '{0}' is required for application to run!", cIniFile),
-					"Error", MessageBoxButtons.OK);
-				this.Close();
 				return;
 			}
-			// If temp file exist then.
-			FileInfo iniTmp = new FileInfo(cIniTmpFile);
-			if (iniTmp.Exists)
-			{
-				// It means that application crashed. Restore ini from temp.
-				iniTmp.CopyTo(cIniFile, true);
-			}
-			else
-			{
-				// Create temp file to store original settings.
-				File.Copy(cIniFile, cIniTmpFile, true);
-			}
+			
 			ReloadXinputSettings();
 			Version v = new Version(Application.ProductVersion);
 			this.Text = string.Format(this.Text, Application.ProductVersion);
@@ -139,8 +131,6 @@ namespace x360ce.App
 			//XInput.ReLoadLibrary(cXinput3File);
 			// start capture events.
 			if (Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
-
-
 			timer.Start();
 			//ReloadXInputLibrary();
 		}
@@ -205,8 +195,8 @@ namespace x360ce.App
 		void InitPresets()
 		{
 			PresetComboBox.Items.Clear();
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(cIniFileNew);
-			var ext = System.IO.Path.GetExtension(cIniFileNew);
+			var prefix = System.IO.Path.GetFileNameWithoutExtension(iniFileNew);
+			var ext = System.IO.Path.GetExtension(iniFileNew);
 			string name;
 			// Presets: Embedded.
 			var embeddedPresets = new List<string>();
@@ -276,8 +266,8 @@ namespace x360ce.App
 		{
 			// exit if "Presets:" or "Embedded:".
 			if (name.Contains(":")) return;
-			string prefix = System.IO.Path.GetFileNameWithoutExtension(cIniFile);
-			string ext = System.IO.Path.GetExtension(cIniFile);
+			string prefix = System.IO.Path.GetFileNameWithoutExtension(iniFile);
+			string ext = System.IO.Path.GetExtension(iniFile);
 			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
 			var resource = Helper.GetResource("Presets." + resourceName);
 			// If internal preset was found.
@@ -304,11 +294,11 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			timer.Stop();
-			FileInfo tmp = new FileInfo(cIniTmpFile);
+			FileInfo tmp = new FileInfo(iniTmpFile);
 			if (tmp.Exists)
 			{
 				// Rename temp to ini.
-				tmp.CopyTo(cIniFile, true);
+				tmp.CopyTo(iniFile, true);
 				// delete temp.
 				tmp.Delete();
 			}
@@ -317,52 +307,12 @@ namespace x360ce.App
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
 			// Owerwrite temp file.
-			FileInfo ini = new FileInfo(cIniFile);
-			ini.CopyTo(cIniTmpFile, true);
+			FileInfo ini = new FileInfo(iniFile);
+			ini.CopyTo(iniTmpFile, true);
 			toolStripStatusLabel1.Text = "Settings saved";
 		}
 
-		//void SaveReloadSetting(Control control)
-		//{
-		//    SaveSettings(control);
-		//    DiDevices = null;
-		//    ReloadXInputLibrary();
-		//    CleanStatusTimer.Start();
-		//}
-
-		//private void SettingsCheckBox_CheckedChanged(object sender, EventArgs e)
-		//{
-		//    SaveReloadSetting((Control)sender);
-		//}
-
-		//private void SettingsTextBox_TextChanged(object sender, EventArgs e)
-		//{
-		//    var control = (TextBox)sender;
-		//    Regex idRx = new Regex("^0x[0-9abcdefABCDEF]{4,4}$");
-		//    if (control == FakePidTextBox
-		//        || control == FakeVidTextBox
-		//        )
-		//    {
-		//        if (idRx.IsMatch(control.Text)) SaveReloadSetting((Control)control);
-		//    }
-		//}
-
-		//private void GamePadTypeComboBox_TextChanged(object sender, EventArgs e)
-		//{
-		//    SaveReloadSetting((Control)sender);
-		//}
-
-		//private void DiDevicesComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		//{
-		//    CurrentDiDevice.Dispose();
-		//    CurrentDiDevice = null;
-		//    ShowDeviceInfo();
-		//    ResetDiMenuStrip();
-
-		//}
-
 		#region Timer
-
 
 		List<DeviceInstance> _DiInstances = new List<DeviceInstance>();
 		/// <summary>
@@ -468,7 +418,7 @@ namespace x360ce.App
 			if (instancesChanged || settingsChanged)
 			{
 				settingsChanged = false;
-				XInput.ReLoadLibrary(cXinput3File);
+				XInput.ReLoadLibrary(dllFile);
 				reloads++;
 				return;
 			}
