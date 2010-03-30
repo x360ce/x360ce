@@ -1,4 +1,8 @@
-﻿v2.0.2.13 (2010-03-28) by Evaldas Jocys
+﻿v2.0.2.15 (2010-03-30) by Evaldas Jocys
+- UAC support added. Application will ask for elevation if it runs from UAC protected area.
+- Status bar updated with information about loaded INI and DLL.
+
+v2.0.2.13 (2010-03-28) by Evaldas Jocys
 - xBox 360 controller preset thumb stick button assignment fix.
 - VID, PID, ProductName - read-only settings load fix.
 - Link to Google project added.
