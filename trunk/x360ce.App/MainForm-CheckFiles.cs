@@ -143,19 +143,8 @@ namespace x360ce.App
 
 		void Elevate()
 		{
-			if (WinAPI.IsElevated)
-			{
-
-			}
-			else
-			{
-				WinAPI.RunElevated();
-			}
+			// If this is Vista/7 and is not elevated then elevate.
+			if (WinAPI.IsVista && !WinAPI.IsElevated) WinAPI.RunElevated();
 		}
-
-
-
-
-
 	}
 }
