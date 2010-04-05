@@ -113,17 +113,20 @@ namespace x360ce.App
 			{
 				return;
 			}
-			
+
 			ReloadXinputSettings();
 			Version v = new Version(Application.ProductVersion);
 			this.Text = string.Format(this.Text, Application.ProductVersion);
+			// Version = major.minor.build.revision
 			switch (v.Build)
 			{
-				case 0: this.Text += " Alpha"; break;
-				case 1: this.Text += " Beta 1"; break;
-				case 2: this.Text += " Beta 2"; break;
-				case 3: this.Text += " Beta 3"; break;
-				case 4: this.Text += " RC"; break;
+				case 0: this.Text += " Alpha"; break;  // Alpha Release (AR)
+				case 1: this.Text += " Beta 1"; break; // Master Beta (MB)
+				case 2: this.Text += " Beta 2"; break; // Feature Complete (FC)
+				case 3: this.Text += " Beta 3"; break; // Technical Preview (TP)
+				case 4: this.Text += " RC"; break;     // Release Candidate (RC)
+				// case 5: this.Text += " RTM"; break; // Release to Manufacturing (RTM)
+				// case 6: this.Text += " GM"; break;  // General Availability (GA) / Gold
 			}
 			//InitDirectInputTab();
 			// Timer will execute ReloadXInputLibrary();
@@ -470,10 +473,10 @@ namespace x360ce.App
 				HelpRichTextBox.DeselectAll();
 			}
 		}
-	
 
-	
-		
+
+
+
 
 	}
 }
