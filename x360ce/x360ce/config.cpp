@@ -135,8 +135,13 @@ VOID ReadPadConfig(INT idx) {
 
 	ReadFromFile(section, _T("VID"), buffer, _T("0"));						Gamepad[idx].vid = (WORD) hexToDword(buffer);
 	ReadFromFile(section, _T("PID"), buffer, _T("0"));						Gamepad[idx].pid = (WORD) hexToDword(buffer);
-	DWORD dwPIDVID = MAKELONG(Gamepad[idx].vid,Gamepad[idx].pid);
-	if (dwPIDVID > 0) { PadMap.enabled = true; } else { return; }  
+
+	ReadFromFile(section, _T("Instance"), buffer, _T("0"));
+	GUID outguid;
+	IIDFromString(buffer,&outguid);
+	Gamepad[idx].instance = outguid;
+
+	DWORD dwPIDVID = MAKELONG(Gamepad[idx].vid,Gamepad[idx].pid);	if (dwPIDVID > 0) { PadMap.enabled = true; } else { return; }  
 
 	Gamepad[idx].dwPadIndex = idx;
 
