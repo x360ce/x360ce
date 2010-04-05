@@ -34,6 +34,7 @@ struct DIGAMEPAD {
 	TCHAR name[MAX_PATH];
 	WORD vid;
 	WORD pid;
+	GUID instance;
 	DIJOYSTATE2 state;
 	LPDIRECTINPUTEFFECT g_pEffect[2];
 	DWORD g_dwNumForceFeedbackAxis;

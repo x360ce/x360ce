@@ -87,7 +87,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 
 	DWORD dwgpPIDVID = MAKELONG(gp->vid,gp->pid);
 
-	if(dwgpPIDVID == pInst->guidProduct.Data1)
+	if(dwgpPIDVID == pInst->guidProduct.Data1 && gp->instance == pInst->guidInstance )
 	{
 		g_pDI->CreateDevice( pInst->guidInstance, &pDevice, NULL );
 		if(pDevice)
