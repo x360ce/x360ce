@@ -1,4 +1,7 @@
-﻿v2.0.2.17 (2010-04-05) by Evaldas Jocys
+﻿v2.0.2.18 (2010-04-11) by Evaldas Jocys
+- New: "Logitech Cordless RumblePad 2" by Nexor from Russia
+
+v2.0.2.17 (2010-04-05) by Evaldas Jocys
 - New: "Saitek Cyborg Rumble Pad" preset by Jorge Fuentes
 
 v2.0.2.16 (2010-03-30) by Evaldas Jocys

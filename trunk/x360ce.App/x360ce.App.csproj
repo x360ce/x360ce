@@ -223,6 +223,7 @@
     <None Include="Images\app_128x128.png" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
+    <EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
     <None Include="Presets\x360ce.SpeedLink_USB_Gamepad_for_Windows.ini" />
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Trigger_3_in_1_Rumble_Force.ini" />
     <EmbeddedResource Include="Presets\x360ce.Controller_%28Xbox_360_Wireless_Receiver_for_Windows%29.ini" />
