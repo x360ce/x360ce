@@ -1,4 +1,7 @@
-﻿v2.0.2.18 (2010-04-11) by Evaldas Jocys
+﻿v2.0.2.19 (2010-04-11) by Evaldas Jocys
+- Update: signed xinput1_3.dll with trusted certificate.
+
+v2.0.2.18 (2010-04-11) by Evaldas Jocys
 - New: "Logitech Cordless RumblePad 2" by Nexor from Russia
 
 v2.0.2.17 (2010-04-05) by Evaldas Jocys
