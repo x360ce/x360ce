@@ -22,8 +22,7 @@ namespace x360ce.App
 		{
 			InitializeComponent();
 		}
-		private ButtonValues lastButtonsPressed = ButtonValues.None;
-
+		
 		// Possible file names.
 		string iniFileNew = "x360ce.ini";
 		string iniTmpFile = "x360ce.tmp";

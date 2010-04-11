@@ -76,22 +76,22 @@ namespace x360ce.App
 		bool IsFileSame(string fileName)
 		{
 			return false;
-			if (!System.IO.File.Exists(fileName)) return false;
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-			StreamReader sr;
-			// Get MD5 of file on the disk.
-			sr = new StreamReader(fileName);
-			var dMd5 = new Guid(md5.ComputeHash(sr.BaseStream));
-			// Get MD5 of resource file.
-			if (fileName == dllFile0) fileName = dllFile;
-			if (fileName == dllFile1) fileName = dllFile;
-			if (fileName == dllFile2) fileName = dllFile;
-			if (fileName == dllFile3) fileName = dllFile;
-			var assembly = Assembly.GetExecutingAssembly();
-			sr = new StreamReader(assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName));
-			var rMd5 = new Guid(md5.ComputeHash(sr.BaseStream));
-			// return result.
-			return rMd5.Equals(dMd5);
+			//if (!System.IO.File.Exists(fileName)) return false;
+			//var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+			//StreamReader sr;
+			//// Get MD5 of file on the disk.
+			//sr = new StreamReader(fileName);
+			//var dMd5 = new Guid(md5.ComputeHash(sr.BaseStream));
+			//// Get MD5 of resource file.
+			//if (fileName == dllFile0) fileName = dllFile;
+			//if (fileName == dllFile1) fileName = dllFile;
+			//if (fileName == dllFile2) fileName = dllFile;
+			//if (fileName == dllFile3) fileName = dllFile;
+			//var assembly = Assembly.GetExecutingAssembly();
+			//sr = new StreamReader(assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName));
+			//var rMd5 = new Guid(md5.ComputeHash(sr.BaseStream));
+			//// return result.
+			//return rMd5.Equals(dMd5);
 		}
 
 		bool CopyFile(string sourceFileName, string destFileName)
