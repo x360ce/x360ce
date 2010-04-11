@@ -164,7 +164,7 @@ namespace x360ce.App
 				string v = ini.GetValue(section, key);
 				ReadSetting(control, key, v);
 			}
-			toolStripStatusLabel1.Text = string.Format("Settings from '{0}' file loaded.", ini.File.Name);
+			toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", ini.File.Name);
 		}
 
 		public void SetComboBoxValue(ComboBox cbx, string text)
