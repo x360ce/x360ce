@@ -359,7 +359,7 @@ namespace x360ce.App.Win32
 				f2.Demand();
 				return true;
 			}
-			catch (SecurityException s)
+			catch
 			{
 				return false;
 			}
