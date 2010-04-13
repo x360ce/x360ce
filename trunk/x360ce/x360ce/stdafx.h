@@ -18,11 +18,11 @@
 #define arrayof(x) (sizeof(x)/sizeof(x[0])) 
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x600
+#define _WIN32_WINNT 0x501
 #endif
 
 #ifndef NTDDI_VERSION
-#define NTDDI_VERSION NTDDI_WINVISTA
+#define NTDDI_VERSION NTDDI_WINXP
 #endif
 
 #define WIN32_LEAN_AND_MEAN
