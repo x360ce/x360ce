@@ -62,19 +62,19 @@ HRESULT STDMETHODCALLTYPE NewGet(
 		if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL )
 		{
 			//WriteLog(_T("%s"),pVal->bstrVal); 
-			WORD wPid = 0, wVid = 0;
+			DWORD dwPid = 0, dwVid = 0;
 			WCHAR* strVid = _tcsstr( pVal->bstrVal, _T("VID_") );
-			if(strVid && _stscanf_s( strVid, _T("VID_%4X"), &wVid ) != 1 )
+			if(strVid && _stscanf_s( strVid, _T("VID_%4X"), &dwVid ) != 1 )
 				return hr;
 			WCHAR* strPid = _tcsstr( pVal->bstrVal, _T("PID_") );
-			if(strPid && _stscanf_s( strPid, _T("PID_%4X"), &wPid ) != 1 )
+			if(strPid && _stscanf_s( strPid, _T("PID_%4X"), &dwPid ) != 1 )
 				return hr;
 
 			for(int i = 0; i < 4; i++)
 			{
-				if(Gamepad[i].vid != 0 && Gamepad[i].vid == wVid )
+				if(Gamepad[i].vid != 0 && Gamepad[i].vid == dwVid )
 				{
-					if(Gamepad[i].pid != 0 && Gamepad[i].pid == wPid)
+					if(Gamepad[i].pid != 0 && Gamepad[i].pid == dwPid)
 					{
 						WCHAR* strUSB = _tcsstr( pVal->bstrVal, _T("USB") );
 						WCHAR tempstr[MAX_PATH];

@@ -434,13 +434,13 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	XINPUT_GAMEPAD xGamepad;
 	xGamepad.bLeftTrigger = (BYTE)0xFF;
 	xGamepad.bRightTrigger = (BYTE)0xFF;
-	xGamepad.sThumbLX = (SHORT) 4294967232;
-	xGamepad.sThumbLY = (SHORT) 4294967232;
-	xGamepad.sThumbRX = (SHORT) 4294967232;
-	xGamepad.sThumbRY = (SHORT) 4294967232;
-	xGamepad.wButtons = (WORD)  62463;
+	xGamepad.sThumbLX = (SHORT) 0xFFFF;
+	xGamepad.sThumbLY = (SHORT) 0xFFFF;
+	xGamepad.sThumbRX = (SHORT) 0xFFFF;
+	xGamepad.sThumbRY = (SHORT) 0xFFFF;
+	xGamepad.wButtons = (WORD)  0xFFFFFFFF;
 
-	XINPUT_VIBRATION Vibration = {(BYTE)0xFF,(BYTE)0xFF};					//this should be max WORD val, but in dump is max BYTE val
+	XINPUT_VIBRATION Vibration = {(WORD)0xFFFFFFFF,(WORD)0xFFFFFFFF};
 
 	pCapabilities->Flags = (WORD) 4;
 	pCapabilities->SubType=(BYTE)Gamepad[dwUserIndex].gamepadtype;
@@ -448,7 +448,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	pCapabilities->Vibration = Vibration;
 	pCapabilities->Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
 
-	WriteLog(_T("XInputGetCapabilities send type %i"),(BYTE)Gamepad[dwUserIndex].gamepadtype);
+	WriteLog(_T("XInputGetCapabilities:: SubType %i"),(BYTE)Gamepad[dwUserIndex].gamepadtype);
 
 	return ERROR_SUCCESS;
 }

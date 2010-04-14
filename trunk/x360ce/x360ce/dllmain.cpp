@@ -141,7 +141,7 @@ VOID ExitInstance()
 		CloseHandle(hNativeInstance);
 	}
 
-	if(hWnd) CloseHandle(hWnd);
+	if(IsWindow(hWnd)) CloseHandle(hWnd);
 	if(hX360ceInstance) CloseHandle(hX360ceInstance);
 }
 
