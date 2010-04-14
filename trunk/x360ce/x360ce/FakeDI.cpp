@@ -83,8 +83,6 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						//WriteLog(_T("Product Name change from %s to %s"),ANSIInst.tszProductName,FakeInst.tszProductName);
 						//WriteLog(_T("Instance Name change from %s to %s"),ANSIInst.tszInstanceName,FakeInst.tszInstanceName);
 
-						delete [] &ANSIInst;
-
 						return lpOldCallback((DIDEVICEINSTANCEW*) &FakeInst,pContext);
 					}
 				}
