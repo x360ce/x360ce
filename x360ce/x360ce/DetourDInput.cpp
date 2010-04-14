@@ -1,18 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 ToCA Edit
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
- 
+*  Copyright (C) 2002-2010 ToCA Edit
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "stdafx.h"
 
 //!!! DO NOT ADD global.h !!!
@@ -36,49 +36,109 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 		return lpOldCallback(pInst,pContext);
 	}
 
-	DIDEVICEINSTANCE pFakeInst;
 	if(pInst && pInst->dwSize!=0)
 	{
 		WriteLog(_T("FakeEnumCallback"));
 
-		if(wFakeDI >= 1)
+		if(sizeof(DIDEVICEINSTANCEA) ==  pInst->dwSize) 	//ANSI or UNICODE ?
 		{
+			WriteLog(_T("FakeEnumCallback:: Using ANSI"));
+			DIDEVICEINSTANCEA FakeInst;
+			DIDEVICEINSTANCEA ANSIInst;
 
-			GUID fakeguid = pInst->guidProduct;
+			memcpy(&ANSIInst,pInst,pInst->dwSize);
 
-			for(int i = 0; i < 4; i++)
+			if(wFakeDI >= 1)
 			{
-				DWORD dwPIDVID = MAKELONG(Gamepad[i].vid,Gamepad[i].pid);
 
-				if (dwPIDVID != 0 && dwPIDVID == fakeguid.Data1)
+				GUID fakeguid = pInst->guidProduct;
+
+				for(int i = 0; i < 4; i++)
 				{
-					memcpy(&pFakeInst,pInst,pInst->dwSize);
+					DWORD dwPIDVID = MAKELONG(Gamepad[i].vid,Gamepad[i].pid);
 
-					DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+					if (dwPIDVID != 0 && dwPIDVID == fakeguid.Data1)
+					{
+						memcpy(&FakeInst,&ANSIInst,ANSIInst.dwSize);
 
-					pFakeInst.guidProduct.Data1=dwFakePIDVID;
-					pFakeInst.guidProduct.Data2=0x0000;
-					pFakeInst.guidProduct.Data3=0x0000;
-					BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
-					memcpy(&pFakeInst.guidProduct.Data4, pdata4, 8);
+						DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
-					LPOLESTR strOldguidProduct;
-					LPOLESTR strNewguidProduct;
-					StringFromIID(pInst->guidProduct,&strOldguidProduct);
-					StringFromIID(pFakeInst.guidProduct,&strNewguidProduct);
-					WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						FakeInst.guidProduct.Data1=dwFakePIDVID;
+						FakeInst.guidProduct.Data2=0x0000;
+						FakeInst.guidProduct.Data3=0x0000;
+						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
+						memcpy(&FakeInst.guidProduct.Data4, pdata4, 8);
 
-					pFakeInst.dwDevType = 66069;
-					pFakeInst.wUsage = 5;
-					pFakeInst.wUsagePage = 1;
+						LPOLESTR strOldguidProduct;
+						LPOLESTR strNewguidProduct;
+						StringFromIID(ANSIInst.guidProduct,&strOldguidProduct);
+						StringFromIID(FakeInst.guidProduct,&strNewguidProduct);
+						WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
-					_stprintf_s(pFakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
-					WriteLog(_T("Product Name change from %s to %s"),pInst->tszProductName,pFakeInst.tszProductName);
-					_stprintf_s(pFakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)")); 	
-					WriteLog(_T("Instance Name change from %s to %s"),pInst->tszInstanceName,pFakeInst.tszInstanceName);
+						FakeInst.dwDevType = 66069;
+						FakeInst.wUsage = 5;
+						FakeInst.wUsagePage = 1;
 
+						sprintf_s(FakeInst.tszProductName, "%s", "XBOX 360 For Windows (Controller)");
+						sprintf_s(FakeInst.tszInstanceName, "%s", "XBOX 360 For Windows (Controller)"); 
 
-					return lpOldCallback(&pFakeInst,pContext);
+						//TODO, need ansi to unicode conversion
+						//WriteLog(_T("Product Name change from %s to %s"),ANSIInst.tszProductName,FakeInst.tszProductName);
+						//WriteLog(_T("Instance Name change from %s to %s"),ANSIInst.tszInstanceName,FakeInst.tszInstanceName);
+
+						delete [] &ANSIInst;
+						delete [] pInst;
+
+						return lpOldCallback((DIDEVICEINSTANCEW*) &FakeInst,pContext);
+					}
+				}
+			}
+		}
+
+		else
+		{
+			WriteLog(_T("FakeEnumCallback:: Using UNICODE"));
+			DIDEVICEINSTANCEW pFakeInst;
+			if(wFakeDI >= 1)
+			{
+
+				GUID fakeguid = pInst->guidProduct;
+
+				for(int i = 0; i < 4; i++)
+				{
+					DWORD dwPIDVID = MAKELONG(Gamepad[i].vid,Gamepad[i].pid);
+
+					if (dwPIDVID != 0 && dwPIDVID == fakeguid.Data1)
+					{
+						memcpy(&pFakeInst,pInst,pInst->dwSize);
+
+						DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+
+						pFakeInst.guidProduct.Data1=dwFakePIDVID;
+						pFakeInst.guidProduct.Data2=0x0000;
+						pFakeInst.guidProduct.Data3=0x0000;
+						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
+						memcpy(&pFakeInst.guidProduct.Data4, pdata4, 8);
+
+						LPOLESTR strOldguidProduct;
+						LPOLESTR strNewguidProduct;
+						StringFromIID(pInst->guidProduct,&strOldguidProduct);
+						StringFromIID(pFakeInst.guidProduct,&strNewguidProduct);
+						WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+
+						pFakeInst.dwDevType = 66069;
+						pFakeInst.wUsage = 5;
+						pFakeInst.wUsagePage = 1;
+
+						_stprintf_s(pFakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
+						WriteLog(_T("Product Name change from %s to %s"),pInst->tszProductName,pFakeInst.tszProductName);
+						_stprintf_s(pFakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)")); 	
+						WriteLog(_T("Instance Name change from %s to %s"),pInst->tszInstanceName,pFakeInst.tszInstanceName);
+
+						delete [] pInst;
+
+						return lpOldCallback(&pFakeInst,pContext);
+					}
 				}
 			}
 		}
