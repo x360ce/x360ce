@@ -87,7 +87,6 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						//WriteLog(_T("Instance Name change from %s to %s"),ANSIInst.tszInstanceName,FakeInst.tszInstanceName);
 
 						delete [] &ANSIInst;
-						delete [] pInst;
 
 						return lpOldCallback((DIDEVICEINSTANCEW*) &FakeInst,pContext);
 					}
@@ -134,8 +133,6 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						WriteLog(_T("Product Name change from %s to %s"),pInst->tszProductName,pFakeInst.tszProductName);
 						_stprintf_s(pFakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)")); 	
 						WriteLog(_T("Instance Name change from %s to %s"),pInst->tszInstanceName,pFakeInst.tszInstanceName);
-
-						delete [] pInst;
 
 						return lpOldCallback(&pFakeInst,pContext);
 					}
