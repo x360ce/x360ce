@@ -29,6 +29,7 @@ DWORD dwAppPID = NULL;
 
 extern void FakeWMI();
 extern void FakeDI();
+extern void FakeWinTrust();
 
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
 { 
@@ -101,7 +102,7 @@ VOID InitInstance(HMODULE hModule)
 
 	InitConfig();
 
-#if SVN_MODS == 1 
+#if SVN_MODS != 0 
 	WriteLog(_T("x360ce SVN Revision %d (modded) started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
 #else 
 	WriteLog(_T("x360ce SVN Revision %d started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
@@ -118,6 +119,7 @@ VOID InitInstance(HMODULE hModule)
 	{
 		if(wFakeWMI) FakeWMI();
 		if(wFakeDI) FakeDI();
+		if(wFakeWinTrust) FakeWinTrust();
 	}
 }
 
@@ -134,13 +136,13 @@ VOID ExitInstance()
 
 	if (hNativeInstance)
 	{
-		::FreeLibrary(hNativeInstance);
+		FreeLibrary(hNativeInstance);
 		hNativeInstance = NULL;  
 		CloseHandle(hNativeInstance);
 	}
 
-	if(hWnd)CloseHandle(hWnd);
-	if(hX360ceInstance)CloseHandle(hX360ceInstance);
+	if(hWnd) CloseHandle(hWnd);
+	if(hX360ceInstance) CloseHandle(hX360ceInstance);
 }
 
 extern "C" BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved)
@@ -158,10 +160,4 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved)
 		ExitInstance();
 	}
 	return TRUE;
-}
-
-//Deutored.dll
-HMODULE WINAPI Detoured()
-{
-	return (HMODULE) hX360ceInstance;
 }

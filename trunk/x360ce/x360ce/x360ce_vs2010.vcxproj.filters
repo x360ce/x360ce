@@ -18,12 +18,6 @@
     <ClCompile Include="config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DetourDInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DetourWMI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="directinput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,6 +31,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="x360ce.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeDI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeWinTrust.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeWMI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

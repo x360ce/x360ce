@@ -19,6 +19,8 @@
 #include "config.h"
 #include "directinput.h"
 
+#pragma warning(disable:4310)
+
 extern HWND hWnd;
 BOOL bEnabled = FALSE;
 BOOL bUseEnabled= FALSE;
@@ -108,8 +110,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	/*
 	Nasty trick to support XInputEnable states, because not every game calls it so:
 	- must support games that use it, and do enable/disable as needed by game
-		if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return fake S_OK
-		if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue 
+		if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return fake S_OK, ie. connected but state not updating
+		if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
 	- must support games that not call it
 		if bUseEnabled is FALSE ie. XInputEnable was not call -> do not care about XInputEnable states 
 	*/

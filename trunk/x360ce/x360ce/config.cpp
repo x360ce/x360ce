@@ -24,6 +24,7 @@ BOOL bInitBeep=0;
 
 WORD wFakeWMI=0;
 WORD wFakeDI=0;
+WORD wFakeWinTrust=0;
 
 WORD wFakeVID=0;
 WORD wFakePID=0;
@@ -102,6 +103,7 @@ VOID InitConfig() {
 	//FakeAPI
 	ReadFromFile(_T("FakeAPI"), _T("FakeWMI"), buffer, _T("0"));		wFakeWMI = (WORD) _tstoi(buffer);
 	ReadFromFile(_T("FakeAPI"), _T("FakeDI"), buffer, _T("0"));			wFakeDI = (WORD) _tstoi(buffer);
+	ReadFromFile(_T("FakeAPI"), _T("FakeWinTrust"), buffer, _T("0"));	wFakeWinTrust = (WORD) _tstoi(buffer);
 
 	wFakeAPI = wFakeWMI + wFakeDI;
 
