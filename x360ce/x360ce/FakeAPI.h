@@ -15,6 +15,7 @@
 extern WORD wFakeAPI;
 extern WORD wFakeWMI;
 extern WORD wFakeDI;
+extern WORD wFakeWinTrust;
 
 extern WORD wFakeVID;
 extern WORD wFakePID;
