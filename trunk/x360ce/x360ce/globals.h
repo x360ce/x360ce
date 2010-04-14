@@ -13,15 +13,14 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
-#define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
-
-// externs
-
-#include <dinput.h>
 #include <xinput.h>
 
-extern TCHAR x360ce_ver[];
+//useful macros
+#define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
+#define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
+#define arrayof(x) (sizeof(x)/sizeof(x[0])) 
+
+// externs
 
 extern HINSTANCE hX360ceInstance;
 extern HINSTANCE hNativeInstance;

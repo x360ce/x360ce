@@ -19,6 +19,7 @@
 #include "config.h"
 #include "directinput.h"
 #include "FakeAPI.h"
+#include "svnrev.h"
 
 HINSTANCE hX360ceInstance = NULL;
 HINSTANCE hNativeInstance = NULL;
@@ -28,7 +29,6 @@ DWORD dwAppPID = NULL;
 
 extern void FakeWMI();
 extern void FakeDI();
-extern void FakeThread(HANDLE);
 
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
 { 
@@ -101,7 +101,11 @@ VOID InitInstance(HMODULE hModule)
 
 	InitConfig();
 
-	WriteLog(_T("x360ce %s started by process %s PID %d"),x360ce_ver,PIDName(dwAppPID),dwAppPID);
+#if SVN_MODS == 1 
+	WriteLog(_T("x360ce SVN Revision %d (modded) started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
+#else 
+	WriteLog(_T("x360ce SVN Revision %d started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
+#endif
 
 	Createx360ceWindow(hX360ceInstance);
 
@@ -141,6 +145,8 @@ VOID ExitInstance()
 
 extern "C" BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved)
 {
+	UNREFERENCED_PARAMETER(reserved);
+
 	if (dwReason == DLL_PROCESS_ATTACH ) 
 	{
 		InitInstance(hinst);

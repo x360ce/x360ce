@@ -26,8 +26,6 @@ BOOL bUseEnabled= FALSE;
 DWORD dwlastUserIndex = (DWORD) -1;
 extern WORD wNativeMode;
 
-TCHAR x360ce_ver[] = _T("3.1.4.2 WIP");
-
 VOID LoadOriginalDll(VOID)
 {
 
@@ -477,6 +475,9 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
  GUID* pDSoundCaptureGuid    // [out] DSound device ID for capture
  )
 {
+	UNREFERENCED_PARAMETER(pDSoundRenderGuid);
+	UNREFERENCED_PARAMETER(pDSoundCaptureGuid);
+
 	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
 	return ERROR_SUCCESS;
 }
@@ -489,6 +490,8 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation
  )
 
 {
+	UNREFERENCED_PARAMETER(devType);
+
 	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
 
 	// Report a wired controller

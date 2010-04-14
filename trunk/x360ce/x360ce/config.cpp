@@ -146,8 +146,8 @@ VOID ReadPadConfig(INT idx) {
 	Gamepad[idx].dwPadIndex = idx;
 
 	ReadFromFile(section, _T("SwapMotor"), buffer, _T("0"));				Gamepad[idx].swapmotor = _ttoi(buffer);
-	ReadFromFile(section, _T("LeftMotorDirection"), buffer, _T("0"));		Gamepad[idx].wLMotorDirection = _ttoi(buffer);
-	ReadFromFile(section, _T("RightMotorDirection"), buffer, _T("1"));		Gamepad[idx].wRMotorDirection = _ttoi(buffer);
+	ReadFromFile(section, _T("LeftMotorDirection"), buffer, _T("0"));		Gamepad[idx].wLMotorDirection = (WORD) _ttoi(buffer);
+	ReadFromFile(section, _T("RightMotorDirection"), buffer, _T("1"));		Gamepad[idx].wRMotorDirection = (WORD) _ttoi(buffer);
 	ReadFromFile(section, _T("TriggerDeadzone"), buffer, _T("25"));			Gamepad[idx].tdeadzone = _ttoi(buffer);
 	ReadFromFile(section, _T("UseForceFeedback"), buffer, _T("0"));			Gamepad[idx].useforce = _ttoi(buffer);
 	ReadFromFile(section, _T("ControllerType"), buffer, _T("1"));			Gamepad[idx].gamepadtype = _ttoi(buffer);			//WILDS
