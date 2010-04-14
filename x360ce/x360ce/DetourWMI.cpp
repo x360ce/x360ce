@@ -14,11 +14,10 @@
  */
  
 #include "stdafx.h"
-
-//!!! DO NOT ADD global.h !!!
-
+#include "globals.h"
 #include "FakeAPI.h"
-#define CINTERFACE
+
+#define CINTERFACE			//needed for detours
 #define _WIN32_DCOM
 #include <wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
@@ -28,7 +27,6 @@
 
 #include "utils.h"
 
-#include <dinput.h>
 #include "directinput.h"
 
 #define _CRT_SECURE_NO_DEPRECATE

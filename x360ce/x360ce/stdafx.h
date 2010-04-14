@@ -15,8 +15,6 @@
  
 #pragma once
 
-#define arrayof(x) (sizeof(x)/sizeof(x[0])) 
-
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x501
 #endif

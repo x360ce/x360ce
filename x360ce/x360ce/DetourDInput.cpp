@@ -14,15 +14,12 @@
 */
 
 #include "stdafx.h"
-
-//!!! DO NOT ADD global.h !!!
-
+#include "globals.h"
 #include "FakeAPI.h"
 #include "utils.h"
 #include <detours.h>
 
-#define CINTERFACE
-#include <dinput.h>
+#define CINTERFACE	//needed for detours
 #include "directinput.h"
 
 LPDIENUMDEVICESCALLBACK lpOldCallback= NULL;

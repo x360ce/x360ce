@@ -33,7 +33,7 @@ struct GamepadMap {
 	GamepadMap() {
 		// Set default values
 		for (INT i = 0; i < 10; ++i) Button[i] = -1;
-		for (INT i = 0; i < 4; ++i) pov[i] = -1;
+		for (INT i = 0; i < 4; ++i) pov[i] = (DWORD) -1;
 		DpadPOV = -1;
 		enabled = false;
 	}

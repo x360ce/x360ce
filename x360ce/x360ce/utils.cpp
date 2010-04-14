@@ -15,6 +15,7 @@
  
 #include "stdafx.h"
 #include "globals.h"
+#include "directinput.h"
 #include "utils.h"
 
 TCHAR tstrConfigFile[MAX_PATH];	
