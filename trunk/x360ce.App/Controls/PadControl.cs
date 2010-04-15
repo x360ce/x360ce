@@ -453,9 +453,11 @@ namespace x360ce.App.Controls
 			//_SettingsMap.Add("ControllerType",
 			// FakeAPI
 			map.Add(section + "ProductName", diControl.DeviceProductNameTextBox);
-			map.Add(section + "VID", diControl.DeviceVidTextBox);
+            map.Add(section + "Instance", diControl.DeviceInstanceGuidTextBox);
+            map.Add(section + "VID", diControl.DeviceVidTextBox);
 			map.Add(section + "PID", diControl.DevicePidTextBox);
-			return map;
+
+            return map;
 		}
 
 		#endregion

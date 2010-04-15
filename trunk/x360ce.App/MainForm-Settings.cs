@@ -112,9 +112,9 @@ namespace x360ce.App
 			{
 				// if setting is readonly.
 				if (key == "ProductName") return;
-				if (key == "PID") return;
+                if (key == "Instance") return;
+                if (key == "PID") return;
 				if (key == "VID") return;
-
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -235,7 +235,9 @@ namespace x360ce.App
 			}
 			else if (control is TextBox)
 			{
-				v = control.Text;
+				// if setting is readonly.
+                if (key == "Instance") v = string.Format("{{{0}}}", control.Text);
+				else v = control.Text;
 			}
 			else if (control is NumericUpDown)
 			{
@@ -285,7 +287,7 @@ namespace x360ce.App
 			// Don't allow controls to fire events.
 			foreach (var control in SettingsMap.Values)
 			{
-				if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
+                if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
 				if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
 				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
 				if (control is ComboBox || control is TextBox) control.TextChanged -= new System.EventHandler(this.Control_TextChanged);
