@@ -236,8 +236,11 @@ namespace x360ce.App
 			else if (control is TextBox)
 			{
 				// if setting is readonly.
-                if (key == "Instance") v = string.Format("{{{0}}}", control.Text);
-				else v = control.Text;
+                if (key == "Instance")
+                {
+                    v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("B") : string.Format("{{{0}}}", control.Text);
+                }
+                else v = control.Text;
 			}
 			else if (control is NumericUpDown)
 			{
