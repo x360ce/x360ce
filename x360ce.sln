@@ -5,6 +5,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App", "x360ce.App\x3
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce_vs2010.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
+	ProjectSection(SolutionItems) = preProject
+		x360ce\Support\changelog.txt = x360ce\Support\changelog.txt
+		x360ce\Support\HowToBuild.txt = x360ce\Support\HowToBuild.txt
+		x360ce\Support\Readme.txt = x360ce\Support\Readme.txt
+		x360ce\Support\x360ce.ini = x360ce\Support\x360ce.ini
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
