@@ -120,17 +120,29 @@ namespace x360ce.App
                 return;
             }
             // Fix INI File.
+            var ini = new Ini(iniFile);
             bool instancesChanged = false;
             var instances =    GetCurrentInstances(ref instancesChanged);
+            bool deviceOrderChanged = false;
             for (int i = 0; i < instances.Count; i++)
 			{
+                string curInstance = instances[i].InstanceGuid.ToString("B").ToLower();
+                string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
+                if (oldInstance != curInstance) deviceOrderChanged = true;
                 ReadPadSettings(iniFile, "IG_"+instances[i].InstanceGuid.ToString("N"), i);
 			}
             for (int i = instances.Count; i < 4; i++)
             {
-                ReadPadSettings(iniFile, "IG_"+Guid.Empty.ToString("N"), i);
+                string curInstance = Guid.Empty.ToString("B").ToLower();
+                string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
+                if (oldInstance != curInstance) deviceOrderChanged = true;
+                ReadPadSettings(iniFile, "IG_" + Guid.Empty.ToString("N"), i);
             }
             SaveSettings();
+            if (deviceOrderChanged)
+            {
+                MessageBox.Show("Device order changed! Settings fixed. You must click [Save] button in order for XInput to work properly.", "Device order changed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             //
             ReloadXinputSettings();
             Version v = new Version(Application.ProductVersion);
