@@ -1,4 +1,11 @@
-﻿v2.0.2.21 (2010-04-15) by Evaldas Jocys
+﻿v2.0.2.24 (2010-04-16) by Evaldas Jocys
+- New: Support for backup settings: [IG_<InstanceGuid>] section.
+
+v2.0.2.23 (2010-04-16) by Evaldas Jocys
+- Update: [FakeAPI]\FakeAPI option removed.
+- Update: [FakeAPI]\FakeWMI option updated to checbox on interface.
+
+v2.0.2.21 (2010-04-15) by Evaldas Jocys
 - Update: Project updated to Visual Studio 2010.
 - Update: 'Instance' option support added.
 - Update: xinput1_3.dll updated to 3.2.0.46 version.
