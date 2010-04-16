@@ -75,6 +75,7 @@
     <Compile Include="Common\ControllerType.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Ini.cs" />
+    <Compile Include="Common\KeyValuePair.cs" />
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
@@ -148,6 +149,7 @@
     <Compile Include="XnaInput\Controller.cs" />
     <Compile Include="XnaInput\ButtonsValues.cs" />
     <Compile Include="XnaInput\ControllerCollection.cs" />
+    <Compile Include="XnaInput\FakeWmi.cs" />
     <Compile Include="XnaInput\GamePad.cs" />
     <Compile Include="XnaInput\GamePadType.cs" />
     <Compile Include="XnaInput\DPadEnum.cs" />
@@ -214,7 +216,9 @@
     <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
     <Content Include="Images\xboxControllerDPad.png" />
     <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Documents\JocysCom.sign.bat" />
     <None Include="Documents\x360ce.App.source.bat" />
     <None Include="Images\xboxControllerLeftTrigger.png" />

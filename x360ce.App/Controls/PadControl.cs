@@ -108,7 +108,7 @@ namespace x360ce.App.Controls
 				}
 				mainForm.SetComboBoxValue(CurrentCbx, actions[0]);
 				CurrentCbx.ForeColor = SystemColors.WindowText;
-				mainForm.SaveSettings(CurrentCbx);
+				mainForm.SaveSetting(CurrentCbx);
 				mainForm.NotifySettingsChange();
 				//mainForm.toolStripStatusLabel1.Text = "Recorded: " + CurrentCbx.Text;
 				CurrentCbx = null;
