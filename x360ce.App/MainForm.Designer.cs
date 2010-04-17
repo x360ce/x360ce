@@ -41,23 +41,24 @@ namespace x360ce.App
             this.Pad3TabPage = new System.Windows.Forms.TabPage();
             this.Pad4TabPage = new System.Windows.Forms.TabPage();
             this.OptionsTabPage = new System.Windows.Forms.TabPage();
-            this.FakeWmiComboBox = new System.Windows.Forms.ComboBox();
-            this.ElevatedActionButton = new System.Windows.Forms.Button();
-            this.ElevateThisAppButton = new System.Windows.Forms.Button();
-            this.FakePidLabel = new System.Windows.Forms.Label();
-            this.InstalledFilesLabel = new System.Windows.Forms.Label();
-            this.FakeWmiLabel = new System.Windows.Forms.Label();
-            this.FakeVidLabel = new System.Windows.Forms.Label();
-            this.FakePidTextBox = new System.Windows.Forms.TextBox();
-            this.FakeVidTextBox = new System.Windows.Forms.TextBox();
-            this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
+            this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
             this.UseInitBeepCheckBox = new System.Windows.Forms.CheckBox();
-            this.FakeDiCheckBox = new System.Windows.Forms.CheckBox();
+            this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
+            this.InstalledFilesGroupBox = new System.Windows.Forms.GroupBox();
             this.InstallFilesX360ceCheckBox = new System.Windows.Forms.CheckBox();
-            this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
-            this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
-            this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
             this.InstallFilesXinput13CheckBox = new System.Windows.Forms.CheckBox();
+            this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
+            this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
+            this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
+            this.FakeApiGroupBox = new System.Windows.Forms.GroupBox();
+            this.FakeWmiLabel = new System.Windows.Forms.Label();
+            this.FakeWmiComboBox = new System.Windows.Forms.ComboBox();
+            this.FakeWinTrustCheckBox = new System.Windows.Forms.CheckBox();
+            this.FakeDiCheckBox = new System.Windows.Forms.CheckBox();
+            this.FakeVidTextBox = new System.Windows.Forms.TextBox();
+            this.FakePidTextBox = new System.Windows.Forms.TextBox();
+            this.FakePidLabel = new System.Windows.Forms.Label();
+            this.FakeVidLabel = new System.Windows.Forms.Label();
             this.HelpTabPage = new System.Windows.Forms.TabPage();
             this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
             this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -77,6 +78,9 @@ namespace x360ce.App
             this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
             this.MainTabControl.SuspendLayout();
             this.OptionsTabPage.SuspendLayout();
+            this.TestingAndLoggingGroupBox.SuspendLayout();
+            this.InstalledFilesGroupBox.SuspendLayout();
+            this.FakeApiGroupBox.SuspendLayout();
             this.HelpTabPage.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -89,7 +93,7 @@ namespace x360ce.App
             // ResetButton
             // 
             this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.ResetButton.Location = new System.Drawing.Point(491, 484);
+            this.ResetButton.Location = new System.Drawing.Point(496, 482);
             this.ResetButton.Name = "ResetButton";
             this.ResetButton.Size = new System.Drawing.Size(75, 23);
             this.ResetButton.TabIndex = 15;
@@ -113,7 +117,7 @@ namespace x360ce.App
             this.MainTabControl.Location = new System.Drawing.Point(12, 12);
             this.MainTabControl.Name = "MainTabControl";
             this.MainTabControl.SelectedIndex = 0;
-            this.MainTabControl.Size = new System.Drawing.Size(635, 466);
+            this.MainTabControl.Size = new System.Drawing.Size(640, 468);
             this.MainTabControl.TabIndex = 16;
             this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
             // 
@@ -121,7 +125,7 @@ namespace x360ce.App
             // 
             this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
             this.Pad1TabPage.Name = "Pad1TabPage";
-            this.Pad1TabPage.Size = new System.Drawing.Size(627, 439);
+            this.Pad1TabPage.Size = new System.Drawing.Size(632, 441);
             this.Pad1TabPage.TabIndex = 6;
             this.Pad1TabPage.Text = "Controller 1";
             // 
@@ -152,189 +156,199 @@ namespace x360ce.App
             // OptionsTabPage
             // 
             this.OptionsTabPage.BackColor = System.Drawing.Color.Transparent;
-            this.OptionsTabPage.Controls.Add(this.FakeWmiComboBox);
-            this.OptionsTabPage.Controls.Add(this.ElevatedActionButton);
-            this.OptionsTabPage.Controls.Add(this.ElevateThisAppButton);
-            this.OptionsTabPage.Controls.Add(this.FakePidLabel);
-            this.OptionsTabPage.Controls.Add(this.InstalledFilesLabel);
-            this.OptionsTabPage.Controls.Add(this.FakeWmiLabel);
-            this.OptionsTabPage.Controls.Add(this.FakeVidLabel);
-            this.OptionsTabPage.Controls.Add(this.FakePidTextBox);
-            this.OptionsTabPage.Controls.Add(this.FakeVidTextBox);
-            this.OptionsTabPage.Controls.Add(this.EnableLoggingCheckBox);
-            this.OptionsTabPage.Controls.Add(this.UseInitBeepCheckBox);
-            this.OptionsTabPage.Controls.Add(this.FakeDiCheckBox);
-            this.OptionsTabPage.Controls.Add(this.InstallFilesX360ceCheckBox);
-            this.OptionsTabPage.Controls.Add(this.InstallFilesXinput910CheckBox);
-            this.OptionsTabPage.Controls.Add(this.InstallFilesXinput11CheckBox);
-            this.OptionsTabPage.Controls.Add(this.InstallFilesXinput12CheckBox);
-            this.OptionsTabPage.Controls.Add(this.InstallFilesXinput13CheckBox);
+            this.OptionsTabPage.Controls.Add(this.TestingAndLoggingGroupBox);
+            this.OptionsTabPage.Controls.Add(this.InstalledFilesGroupBox);
+            this.OptionsTabPage.Controls.Add(this.FakeApiGroupBox);
             this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
             this.OptionsTabPage.Name = "OptionsTabPage";
-            this.OptionsTabPage.Size = new System.Drawing.Size(627, 439);
+            this.OptionsTabPage.Size = new System.Drawing.Size(632, 441);
             this.OptionsTabPage.TabIndex = 5;
             this.OptionsTabPage.Text = "Options";
             // 
-            // FakeWmiComboBox
+            // TestingAndLoggingGroupBox
             // 
-            this.FakeWmiComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.FakeWmiComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.FakeWmiComboBox.FormattingEnabled = true;
-            this.FakeWmiComboBox.Location = new System.Drawing.Point(67, 9);
-            this.FakeWmiComboBox.Name = "FakeWmiComboBox";
-            this.FakeWmiComboBox.Size = new System.Drawing.Size(100, 21);
-            this.FakeWmiComboBox.TabIndex = 28;
-            // 
-            // ElevatedActionButton
-            // 
-            this.ElevatedActionButton.Location = new System.Drawing.Point(346, 317);
-            this.ElevatedActionButton.Name = "ElevatedActionButton";
-            this.ElevatedActionButton.Size = new System.Drawing.Size(75, 23);
-            this.ElevatedActionButton.TabIndex = 27;
-            this.ElevatedActionButton.Text = "Action";
-            this.ElevatedActionButton.UseVisualStyleBackColor = true;
-            this.ElevatedActionButton.Visible = false;
-            // 
-            // ElevateThisAppButton
-            // 
-            this.ElevateThisAppButton.Location = new System.Drawing.Point(346, 288);
-            this.ElevateThisAppButton.Name = "ElevateThisAppButton";
-            this.ElevateThisAppButton.Size = new System.Drawing.Size(75, 23);
-            this.ElevateThisAppButton.TabIndex = 27;
-            this.ElevateThisAppButton.Text = "Elevate";
-            this.ElevateThisAppButton.UseVisualStyleBackColor = true;
-            this.ElevateThisAppButton.Visible = false;
-            this.ElevateThisAppButton.Click += new System.EventHandler(this.ElevateThisAppButton_Click);
-            // 
-            // FakePidLabel
-            // 
-            this.FakePidLabel.AutoSize = true;
-            this.FakePidLabel.Location = new System.Drawing.Point(4, 65);
-            this.FakePidLabel.Name = "FakePidLabel";
-            this.FakePidLabel.Size = new System.Drawing.Size(52, 13);
-            this.FakePidLabel.TabIndex = 26;
-            this.FakePidLabel.Text = "FakePID:";
-            // 
-            // InstalledFilesLabel
-            // 
-            this.InstalledFilesLabel.AutoSize = true;
-            this.InstalledFilesLabel.Location = new System.Drawing.Point(183, 16);
-            this.InstalledFilesLabel.Name = "InstalledFilesLabel";
-            this.InstalledFilesLabel.Size = new System.Drawing.Size(70, 13);
-            this.InstalledFilesLabel.TabIndex = 26;
-            this.InstalledFilesLabel.Text = "Installed files:";
-            // 
-            // FakeWmiLabel
-            // 
-            this.FakeWmiLabel.AutoSize = true;
-            this.FakeWmiLabel.Location = new System.Drawing.Point(4, 12);
-            this.FakeWmiLabel.Name = "FakeWmiLabel";
-            this.FakeWmiLabel.Size = new System.Drawing.Size(57, 13);
-            this.FakeWmiLabel.TabIndex = 26;
-            this.FakeWmiLabel.Text = "FakeWMI:";
-            // 
-            // FakeVidLabel
-            // 
-            this.FakeVidLabel.AutoSize = true;
-            this.FakeVidLabel.Location = new System.Drawing.Point(4, 39);
-            this.FakeVidLabel.Name = "FakeVidLabel";
-            this.FakeVidLabel.Size = new System.Drawing.Size(52, 13);
-            this.FakeVidLabel.TabIndex = 26;
-            this.FakeVidLabel.Text = "FakeVID:";
-            // 
-            // FakePidTextBox
-            // 
-            this.FakePidTextBox.Location = new System.Drawing.Point(67, 62);
-            this.FakePidTextBox.Name = "FakePidTextBox";
-            this.FakePidTextBox.Size = new System.Drawing.Size(100, 20);
-            this.FakePidTextBox.TabIndex = 25;
-            // 
-            // FakeVidTextBox
-            // 
-            this.FakeVidTextBox.Location = new System.Drawing.Point(67, 36);
-            this.FakeVidTextBox.Name = "FakeVidTextBox";
-            this.FakeVidTextBox.Size = new System.Drawing.Size(100, 20);
-            this.FakeVidTextBox.TabIndex = 24;
-            // 
-            // EnableLoggingCheckBox
-            // 
-            this.EnableLoggingCheckBox.AutoSize = true;
-            this.EnableLoggingCheckBox.Location = new System.Drawing.Point(67, 134);
-            this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
-            this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
-            this.EnableLoggingCheckBox.TabIndex = 21;
-            this.EnableLoggingCheckBox.Text = "Enable Logging";
-            this.EnableLoggingCheckBox.UseVisualStyleBackColor = true;
+            this.TestingAndLoggingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
+            this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
+            this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(396, 3);
+            this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
+            this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(233, 138);
+            this.TestingAndLoggingGroupBox.TabIndex = 31;
+            this.TestingAndLoggingGroupBox.TabStop = false;
+            this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
             // 
             // UseInitBeepCheckBox
             // 
             this.UseInitBeepCheckBox.AutoSize = true;
-            this.UseInitBeepCheckBox.Location = new System.Drawing.Point(67, 111);
+            this.UseInitBeepCheckBox.Location = new System.Drawing.Point(6, 23);
             this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
             this.UseInitBeepCheckBox.Size = new System.Drawing.Size(90, 17);
             this.UseInitBeepCheckBox.TabIndex = 22;
             this.UseInitBeepCheckBox.Text = "Use Init Beep";
             this.UseInitBeepCheckBox.UseVisualStyleBackColor = true;
             // 
-            // FakeDiCheckBox
+            // EnableLoggingCheckBox
             // 
-            this.FakeDiCheckBox.AutoSize = true;
-            this.FakeDiCheckBox.Location = new System.Drawing.Point(67, 88);
-            this.FakeDiCheckBox.Name = "FakeDiCheckBox";
-            this.FakeDiCheckBox.Size = new System.Drawing.Size(64, 17);
-            this.FakeDiCheckBox.TabIndex = 23;
-            this.FakeDiCheckBox.Text = "Fake DI";
-            this.FakeDiCheckBox.UseVisualStyleBackColor = true;
+            this.EnableLoggingCheckBox.AutoSize = true;
+            this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 46);
+            this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
+            this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
+            this.EnableLoggingCheckBox.TabIndex = 21;
+            this.EnableLoggingCheckBox.Text = "Enable Logging";
+            this.EnableLoggingCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // InstalledFilesGroupBox
+            // 
+            this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesX360ceCheckBox);
+            this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput13CheckBox);
+            this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput12CheckBox);
+            this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput11CheckBox);
+            this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput910CheckBox);
+            this.InstalledFilesGroupBox.Location = new System.Drawing.Point(190, 3);
+            this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
+            this.InstalledFilesGroupBox.Size = new System.Drawing.Size(200, 138);
+            this.InstalledFilesGroupBox.TabIndex = 30;
+            this.InstalledFilesGroupBox.TabStop = false;
+            this.InstalledFilesGroupBox.Text = "Installed Files";
             // 
             // InstallFilesX360ceCheckBox
             // 
             this.InstallFilesX360ceCheckBox.AutoSize = true;
-            this.InstallFilesX360ceCheckBox.Location = new System.Drawing.Point(186, 42);
+            this.InstallFilesX360ceCheckBox.Location = new System.Drawing.Point(6, 23);
             this.InstallFilesX360ceCheckBox.Name = "InstallFilesX360ceCheckBox";
             this.InstallFilesX360ceCheckBox.Size = new System.Drawing.Size(74, 17);
             this.InstallFilesX360ceCheckBox.TabIndex = 19;
             this.InstallFilesX360ceCheckBox.Text = "x360ce.ini";
             this.InstallFilesX360ceCheckBox.UseVisualStyleBackColor = true;
             // 
-            // InstallFilesXinput910CheckBox
+            // InstallFilesXinput13CheckBox
             // 
-            this.InstallFilesXinput910CheckBox.AutoSize = true;
-            this.InstallFilesXinput910CheckBox.Location = new System.Drawing.Point(186, 134);
-            this.InstallFilesXinput910CheckBox.Name = "InstallFilesXinput910CheckBox";
-            this.InstallFilesXinput910CheckBox.Size = new System.Drawing.Size(97, 17);
-            this.InstallFilesXinput910CheckBox.TabIndex = 19;
-            this.InstallFilesXinput910CheckBox.Text = "xinput9_1_0.dll";
-            this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
-            // 
-            // InstallFilesXinput11CheckBox
-            // 
-            this.InstallFilesXinput11CheckBox.AutoSize = true;
-            this.InstallFilesXinput11CheckBox.Location = new System.Drawing.Point(186, 111);
-            this.InstallFilesXinput11CheckBox.Name = "InstallFilesXinput11CheckBox";
-            this.InstallFilesXinput11CheckBox.Size = new System.Drawing.Size(85, 17);
-            this.InstallFilesXinput11CheckBox.TabIndex = 19;
-            this.InstallFilesXinput11CheckBox.Text = "xinput1_1.dll";
-            this.InstallFilesXinput11CheckBox.UseVisualStyleBackColor = true;
+            this.InstallFilesXinput13CheckBox.AutoSize = true;
+            this.InstallFilesXinput13CheckBox.Location = new System.Drawing.Point(6, 46);
+            this.InstallFilesXinput13CheckBox.Name = "InstallFilesXinput13CheckBox";
+            this.InstallFilesXinput13CheckBox.Size = new System.Drawing.Size(166, 17);
+            this.InstallFilesXinput13CheckBox.TabIndex = 19;
+            this.InstallFilesXinput13CheckBox.Text = "xinput1_3.dll (Recommended)";
+            this.InstallFilesXinput13CheckBox.UseVisualStyleBackColor = true;
             // 
             // InstallFilesXinput12CheckBox
             // 
             this.InstallFilesXinput12CheckBox.AutoSize = true;
-            this.InstallFilesXinput12CheckBox.Location = new System.Drawing.Point(186, 88);
+            this.InstallFilesXinput12CheckBox.Location = new System.Drawing.Point(6, 69);
             this.InstallFilesXinput12CheckBox.Name = "InstallFilesXinput12CheckBox";
             this.InstallFilesXinput12CheckBox.Size = new System.Drawing.Size(85, 17);
             this.InstallFilesXinput12CheckBox.TabIndex = 19;
             this.InstallFilesXinput12CheckBox.Text = "xinput1_2.dll";
             this.InstallFilesXinput12CheckBox.UseVisualStyleBackColor = true;
             // 
-            // InstallFilesXinput13CheckBox
+            // InstallFilesXinput11CheckBox
             // 
-            this.InstallFilesXinput13CheckBox.AutoSize = true;
-            this.InstallFilesXinput13CheckBox.Location = new System.Drawing.Point(186, 65);
-            this.InstallFilesXinput13CheckBox.Name = "InstallFilesXinput13CheckBox";
-            this.InstallFilesXinput13CheckBox.Size = new System.Drawing.Size(166, 17);
-            this.InstallFilesXinput13CheckBox.TabIndex = 19;
-            this.InstallFilesXinput13CheckBox.Text = "xinput1_3.dll (Recommended)";
-            this.InstallFilesXinput13CheckBox.UseVisualStyleBackColor = true;
+            this.InstallFilesXinput11CheckBox.AutoSize = true;
+            this.InstallFilesXinput11CheckBox.Location = new System.Drawing.Point(6, 92);
+            this.InstallFilesXinput11CheckBox.Name = "InstallFilesXinput11CheckBox";
+            this.InstallFilesXinput11CheckBox.Size = new System.Drawing.Size(85, 17);
+            this.InstallFilesXinput11CheckBox.TabIndex = 19;
+            this.InstallFilesXinput11CheckBox.Text = "xinput1_1.dll";
+            this.InstallFilesXinput11CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // InstallFilesXinput910CheckBox
+            // 
+            this.InstallFilesXinput910CheckBox.AutoSize = true;
+            this.InstallFilesXinput910CheckBox.Location = new System.Drawing.Point(6, 115);
+            this.InstallFilesXinput910CheckBox.Name = "InstallFilesXinput910CheckBox";
+            this.InstallFilesXinput910CheckBox.Size = new System.Drawing.Size(97, 17);
+            this.InstallFilesXinput910CheckBox.TabIndex = 19;
+            this.InstallFilesXinput910CheckBox.Text = "xinput9_1_0.dll";
+            this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // FakeApiGroupBox
+            // 
+            this.FakeApiGroupBox.Controls.Add(this.FakeWmiLabel);
+            this.FakeApiGroupBox.Controls.Add(this.FakeWmiComboBox);
+            this.FakeApiGroupBox.Controls.Add(this.FakeWinTrustCheckBox);
+            this.FakeApiGroupBox.Controls.Add(this.FakeDiCheckBox);
+            this.FakeApiGroupBox.Controls.Add(this.FakeVidTextBox);
+            this.FakeApiGroupBox.Controls.Add(this.FakePidTextBox);
+            this.FakeApiGroupBox.Controls.Add(this.FakePidLabel);
+            this.FakeApiGroupBox.Controls.Add(this.FakeVidLabel);
+            this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
+            this.FakeApiGroupBox.Name = "FakeApiGroupBox";
+            this.FakeApiGroupBox.Size = new System.Drawing.Size(181, 138);
+            this.FakeApiGroupBox.TabIndex = 29;
+            this.FakeApiGroupBox.TabStop = false;
+            this.FakeApiGroupBox.Text = "Fake API";
+            // 
+            // FakeWmiLabel
+            // 
+            this.FakeWmiLabel.AutoSize = true;
+            this.FakeWmiLabel.Location = new System.Drawing.Point(6, 16);
+            this.FakeWmiLabel.Name = "FakeWmiLabel";
+            this.FakeWmiLabel.Size = new System.Drawing.Size(57, 13);
+            this.FakeWmiLabel.TabIndex = 26;
+            this.FakeWmiLabel.Text = "FakeWMI:";
+            // 
+            // FakeWmiComboBox
+            // 
+            this.FakeWmiComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FakeWmiComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.FakeWmiComboBox.FormattingEnabled = true;
+            this.FakeWmiComboBox.Location = new System.Drawing.Point(69, 13);
+            this.FakeWmiComboBox.Name = "FakeWmiComboBox";
+            this.FakeWmiComboBox.Size = new System.Drawing.Size(100, 21);
+            this.FakeWmiComboBox.TabIndex = 28;
+            // 
+            // FakeWinTrustCheckBox
+            // 
+            this.FakeWinTrustCheckBox.AutoSize = true;
+            this.FakeWinTrustCheckBox.Location = new System.Drawing.Point(69, 115);
+            this.FakeWinTrustCheckBox.Name = "FakeWinTrustCheckBox";
+            this.FakeWinTrustCheckBox.Size = new System.Drawing.Size(99, 17);
+            this.FakeWinTrustCheckBox.TabIndex = 23;
+            this.FakeWinTrustCheckBox.Text = "Fake Win Trust";
+            this.FakeWinTrustCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // FakeDiCheckBox
+            // 
+            this.FakeDiCheckBox.AutoSize = true;
+            this.FakeDiCheckBox.Location = new System.Drawing.Point(69, 92);
+            this.FakeDiCheckBox.Name = "FakeDiCheckBox";
+            this.FakeDiCheckBox.Size = new System.Drawing.Size(64, 17);
+            this.FakeDiCheckBox.TabIndex = 23;
+            this.FakeDiCheckBox.Text = "Fake DI";
+            this.FakeDiCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // FakeVidTextBox
+            // 
+            this.FakeVidTextBox.Location = new System.Drawing.Point(69, 40);
+            this.FakeVidTextBox.Name = "FakeVidTextBox";
+            this.FakeVidTextBox.Size = new System.Drawing.Size(100, 20);
+            this.FakeVidTextBox.TabIndex = 24;
+            // 
+            // FakePidTextBox
+            // 
+            this.FakePidTextBox.Location = new System.Drawing.Point(69, 66);
+            this.FakePidTextBox.Name = "FakePidTextBox";
+            this.FakePidTextBox.Size = new System.Drawing.Size(100, 20);
+            this.FakePidTextBox.TabIndex = 25;
+            // 
+            // FakePidLabel
+            // 
+            this.FakePidLabel.AutoSize = true;
+            this.FakePidLabel.Location = new System.Drawing.Point(6, 69);
+            this.FakePidLabel.Name = "FakePidLabel";
+            this.FakePidLabel.Size = new System.Drawing.Size(52, 13);
+            this.FakePidLabel.TabIndex = 26;
+            this.FakePidLabel.Text = "FakePID:";
+            // 
+            // FakeVidLabel
+            // 
+            this.FakeVidLabel.AutoSize = true;
+            this.FakeVidLabel.Location = new System.Drawing.Point(6, 43);
+            this.FakeVidLabel.Name = "FakeVidLabel";
+            this.FakeVidLabel.Size = new System.Drawing.Size(52, 13);
+            this.FakeVidLabel.TabIndex = 26;
+            this.FakeVidLabel.Text = "FakeVID:";
             // 
             // HelpTabPage
             // 
@@ -379,15 +393,15 @@ namespace x360ce.App
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.PresetComboBox.FormattingEnabled = true;
-            this.PresetComboBox.Location = new System.Drawing.Point(12, 484);
+            this.PresetComboBox.Location = new System.Drawing.Point(12, 482);
             this.PresetComboBox.Name = "PresetComboBox";
-            this.PresetComboBox.Size = new System.Drawing.Size(392, 21);
+            this.PresetComboBox.Size = new System.Drawing.Size(397, 21);
             this.PresetComboBox.TabIndex = 27;
             // 
             // LoadPresetButton
             // 
             this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.LoadPresetButton.Location = new System.Drawing.Point(410, 484);
+            this.LoadPresetButton.Location = new System.Drawing.Point(415, 482);
             this.LoadPresetButton.Name = "LoadPresetButton";
             this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
             this.LoadPresetButton.TabIndex = 15;
@@ -405,9 +419,9 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 508);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 510);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(659, 24);
+            this.statusStrip1.Size = new System.Drawing.Size(664, 24);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 17;
             this.statusStrip1.Text = "statusStrip1";
@@ -421,7 +435,7 @@ namespace x360ce.App
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(42, 19);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(47, 19);
             this.toolStripStatusLabel2.Spring = true;
             // 
             // StatusEventsLabel
@@ -467,7 +481,7 @@ namespace x360ce.App
             // SaveButton
             // 
             this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveButton.Location = new System.Drawing.Point(572, 484);
+            this.SaveButton.Location = new System.Drawing.Point(577, 482);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(75, 23);
             this.SaveButton.TabIndex = 15;
@@ -484,7 +498,7 @@ namespace x360ce.App
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(659, 532);
+            this.ClientSize = new System.Drawing.Size(664, 534);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.PresetComboBox);
             this.Controls.Add(this.MainTabControl);
@@ -493,8 +507,8 @@ namespace x360ce.App
             this.Controls.Add(this.LoadPresetButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MaximumSize = new System.Drawing.Size(675, 570);
-            this.MinimumSize = new System.Drawing.Size(675, 570);
+            this.MaximumSize = new System.Drawing.Size(680, 572);
+            this.MinimumSize = new System.Drawing.Size(680, 572);
             this.Name = "MainForm";
             this.Text = "TocaEdit Xbox 360 Controller Emulator {0}";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -502,7 +516,12 @@ namespace x360ce.App
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.MainTabControl.ResumeLayout(false);
             this.OptionsTabPage.ResumeLayout(false);
-            this.OptionsTabPage.PerformLayout();
+            this.TestingAndLoggingGroupBox.ResumeLayout(false);
+            this.TestingAndLoggingGroupBox.PerformLayout();
+            this.InstalledFilesGroupBox.ResumeLayout(false);
+            this.InstalledFilesGroupBox.PerformLayout();
+            this.FakeApiGroupBox.ResumeLayout(false);
+            this.FakeApiGroupBox.PerformLayout();
             this.HelpTabPage.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -527,8 +546,7 @@ namespace x360ce.App
 		private TextBox FakeVidTextBox;
 		private Timer CleanStatusTimer;
 		private ComboBox PresetComboBox;
-		private Button LoadPresetButton;
-		private Label InstalledFilesLabel;
+        private Button LoadPresetButton;
 		private CheckBox InstallFilesX360ceCheckBox;
 		private CheckBox InstallFilesXinput910CheckBox;
 		private CheckBox InstallFilesXinput11CheckBox;
@@ -547,14 +565,16 @@ namespace x360ce.App
 		private ToolStripStatusLabel StatusSaveLabel;
 		private ToolStripStatusLabel toolStripStatusLabel2;
 		private TabPage HelpTabPage;
-		private RichTextBox HelpRichTextBox;
-		private Button ElevatedActionButton;
-		private Button ElevateThisAppButton;
+        private RichTextBox HelpRichTextBox;
 		private ToolStripStatusLabel StatusIsAdminLabel;
 		private ToolStripStatusLabel StatusIniLabel;
 		private ToolStripStatusLabel StatusDllLabel;
         private ComboBox FakeWmiComboBox;
         private Label FakeWmiLabel;
+        private GroupBox FakeApiGroupBox;
+        private CheckBox FakeWinTrustCheckBox;
+        private GroupBox InstalledFilesGroupBox;
+        private GroupBox TestingAndLoggingGroupBox;
 
 	}
 }

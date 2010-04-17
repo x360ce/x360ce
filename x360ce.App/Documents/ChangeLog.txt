@@ -1,4 +1,11 @@
-﻿v2.0.2.24 (2010-04-16) by Evaldas Jocys
+﻿v2.0.2.29 (2010-04-17) by Evaldas Jocys
+- New: "Axis To D-Pad" settings group box added.
+- New: "FakeWinTrust" check box added.
+- Fix: Settings save fixed.
+- Update: Options combined into groups.
+- Update: Internal preset file will be removed from disk after load.
+
+v2.0.2.24 (2010-04-16) by Evaldas Jocys
 - New: Support for backup settings: [IG_<InstanceGuid>] section.
 
 v2.0.2.23 (2010-04-16) by Evaldas Jocys
