@@ -67,6 +67,7 @@ namespace x360ce.App
                     _SettingsMap.Add(@"Options\Log", EnableLoggingCheckBox);
                     _SettingsMap.Add(@"FakeAPI\FakeWMI", FakeWmiComboBox);
                     _SettingsMap.Add(@"FakeAPI\FakeDI", FakeDiCheckBox);
+                    _SettingsMap.Add(@"FakeAPI\FakeWinTrust", FakeWinTrustCheckBox);
                     _SettingsMap.Add(@"FakeAPI\FakeVID", FakeVidTextBox);
                     _SettingsMap.Add(@"FakeAPI\FakePID", FakePidTextBox);
                     // Add PAD settings.
@@ -79,8 +80,6 @@ namespace x360ce.App
                 return _SettingsMap;
             }
         }
-
-        Ini ini;
 
         void ReadSettings()
         {
@@ -132,6 +131,14 @@ namespace x360ce.App
                 TrackBar tc = (TrackBar)control;
                 int n = 0;
                 int.TryParse(value, out n);
+                if (key == "AxisToDPadDeadZone")
+                {
+                    if (value == "") n = 256;
+                    // convert 256  to 100%
+                    n = System.Convert.ToInt32((float)n / 256F * 100F);
+                }
+                // convert 256  to 100%
+                if (key == "AxisToDPadOffset") n = System.Convert.ToInt32((float)n / 256F * 100F);
                 if (n < tc.Minimum) n = tc.Minimum;
                 if (n > tc.Maximum) n = tc.Maximum;
                 tc.Value = n;
@@ -152,21 +159,21 @@ namespace x360ce.App
         /// <param name="iniSection">Read setings from specified section only. Null - read from all sections.</param>
         void ReadSettings(string file)
         {
-            ini = new Ini(file);
+            var ini2 = new Ini(file);
             foreach (string path in SettingsMap.Keys)
             {
                 Control control = SettingsMap[path];
                 string section = path.Split('\\')[0];
                 string key = path.Split('\\')[1];
-                string v = ini.GetValue(section, key);
+                string v = ini2.GetValue(section, key);
                 ReadSetting(control, key, v);
             }
-            toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", ini.File.Name);
+            toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", ini2.File.Name);
         }
 
         void ReadPadSettings(string file, string iniSection, int padIndex)
         {
-            ini = new Ini(file);
+            var ini2 = new Ini(file);
             foreach (string path in SettingsMap.Keys)
             {
                 Control control = SettingsMap[path];
@@ -176,10 +183,10 @@ namespace x360ce.App
                 if (section != "PAD1") continue;
                 string dstPath = string.Format("PAD{0}\\{1}", padIndex + 1, key);
                 control = SettingsMap[dstPath];
-                string v = ini.GetValue(iniSection, key);
+                string v = ini2.GetValue(iniSection, key);
                 ReadSetting(control, key, v);
             }
-            toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", ini.File.Name);
+            toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", ini2.File.Name);
         }
 
         public void SetComboBoxValue(ComboBox cbx, string text)
@@ -208,19 +215,20 @@ namespace x360ce.App
             cbx.SelectedIndex = 0;
         }
 
-
         void SaveSettings()
         {
-            foreach (string path in SettingsMap.Keys) SaveSetting(path);
+            var ini = new Ini(iniFile);
+            foreach (string path in SettingsMap.Keys) SaveSetting(ini, path);
         }
 
         public void SaveSetting(Control control)
         {
+            var ini = new Ini(iniFile);
             foreach (string path in SettingsMap.Keys)
             {
                 if (SettingsMap[path] == control)
                 {
-                    SaveSetting(path);
+                    SaveSetting(ini, path);
                     break;
                 }
             }
@@ -228,9 +236,9 @@ namespace x360ce.App
 
         int saveCount = 0;
 
-        void SavePadSetting(string file, string iniSection, int padIndex)
+        void SavePadSettings(string file, string iniSection, int padIndex)
         {
-            ini = new Ini(file);
+            var ini = new Ini(file);
             foreach (string path in SettingsMap.Keys)
             {
                 Control control = SettingsMap[path];
@@ -239,13 +247,13 @@ namespace x360ce.App
                 // Use only PAD1 section to get key names.
                 if (section != "PAD1") continue;
                 string srcIniPath = string.Format("PAD{0}\\{1}", padIndex + 1, key);
-                SaveSetting(srcIniPath, iniSection);
+                SaveSetting(ini, srcIniPath, iniSection);
             }
         }
 
-        void SaveSetting(string path)
+        void SaveSetting(Ini ini, string path)
         {
-            SaveSetting(path, null);
+            SaveSetting(ini, path, null);
         }
 
         /// <summary>
@@ -253,7 +261,7 @@ namespace x360ce.App
         /// </summary>
         /// <param name="path">path of parameter (related to actual control)</param>
         /// <param name="dstIniSection">if not null then section will be different inside INI file than specified in path</param>
-        void SaveSetting(string path, string dstIniSection)
+        void SaveSetting(Ini ini, string path, string dstIniSection)
         {
             var control = SettingsMap[path];
             string section = path.Split('\\')[0];
@@ -290,7 +298,12 @@ namespace x360ce.App
             else if (control is TrackBar)
             {
                 TrackBar tc = (TrackBar)control;
-                v = tc.Value.ToString();
+                if (key == "AxisToDPadDeadZone" || key == "AxisToDPadOffset")
+                {
+                    // convert 100%  to 256
+                    v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
+                }
+                else v = tc.Value.ToString();
             }
             else if (control is CheckBox)
             {

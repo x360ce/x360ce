@@ -456,7 +456,10 @@ namespace x360ce.App.Controls
             map.Add(section + "Instance", diControl.DeviceInstanceGuidTextBox);
             map.Add(section + "VID", diControl.DeviceVidTextBox);
 			map.Add(section + "PID", diControl.DevicePidTextBox);
-
+            // Axis To D-Pad
+            map.Add(section + "AxisToDPad", AxisToDPadEnabledCheckBox);
+            map.Add(section + "AxisToDPadDeadZone", AxisToDPadDeadZoneTrackBar);
+            map.Add(section + "AxisToDPadOffset", AxisToDPadOffsetTrackBar);
             return map;
 		}
 
@@ -805,6 +808,18 @@ namespace x360ce.App.Controls
 			RightMotorTestTextBox.Text = string.Format("{0} ", speed);
 			Controller.RightMotorSpeed = speed;
 		}
+
+        private void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            TrackBar control = (TrackBar)sender;
+            AxisToDPadOffsetTextBox.Text = string.Format("{0} % ", control.Value);
+        }
+
+        private void AxisToDPadDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            TrackBar control = (TrackBar)sender;
+            AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
+        }
 
 	}
 }

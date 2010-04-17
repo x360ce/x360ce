@@ -60,7 +60,6 @@ namespace x360ce.App
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            Win32.WinAPI.EnableShieldIcon(ElevatedActionButton);
             // Fill FakeWmi ComboBox.
             var fakeWmiOptions = new List<KeyValuePair>();
             var types = (FakeWmi[])Enum.GetValues(typeof(FakeWmi));
@@ -122,15 +121,15 @@ namespace x360ce.App
             // Fix INI File.
             var ini = new Ini(iniFile);
             bool instancesChanged = false;
-            var instances =    GetCurrentInstances(ref instancesChanged);
+            var instances = GetCurrentInstances(ref instancesChanged);
             bool deviceOrderChanged = false;
             for (int i = 0; i < instances.Count; i++)
-			{
+            {
                 string curInstance = instances[i].InstanceGuid.ToString("B").ToLower();
                 string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
                 if (oldInstance != curInstance) deviceOrderChanged = true;
-                ReadPadSettings(iniFile, "IG_"+instances[i].InstanceGuid.ToString("N"), i);
-			}
+                ReadPadSettings(iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
+            }
             for (int i = instances.Count; i < 4; i++)
             {
                 string curInstance = Guid.Empty.ToString("B").ToLower();
@@ -316,6 +315,8 @@ namespace x360ce.App
             ResumeEvents();
             SaveSettings();
             NotifySettingsChange();
+            // remove file if it was from resource.
+            if (resource != null) System.IO.File.Delete(resourceName);
             //CleanStatusTimer.Start();
         }
 
@@ -348,7 +349,7 @@ namespace x360ce.App
                 Guid ig = new Guid(guidString);
                 if (ig.Equals(Guid.Empty)) continue;
                 string section = string.Format("IG_{0}", ig.ToString("N"));
-                SavePadSetting(iniFile, section, i);
+                SavePadSettings(iniFile, section, i);
             }
             // Owerwrite temp file.
             FileInfo ini = new FileInfo(iniFile);

@@ -115,6 +115,10 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
+    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />
+    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power.ini" />
+    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power_Mod.ini" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
