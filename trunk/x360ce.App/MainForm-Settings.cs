@@ -236,6 +236,12 @@ namespace x360ce.App
 
         int saveCount = 0;
 
+        /// <summary>
+        /// Save pad settings.
+        /// </summary>
+        /// <param name="file">INI file Name</param>
+        /// <param name="iniSection">INI Section to save.</param>
+        /// <param name="padIndex">Source PAD index.</param>
         void SavePadSettings(string file, string iniSection, int padIndex)
         {
             var ini = new Ini(file);
