@@ -54,7 +54,6 @@ namespace x360ce.App
             this.FakeWmiLabel = new System.Windows.Forms.Label();
             this.FakeWmiComboBox = new System.Windows.Forms.ComboBox();
             this.FakeWinTrustCheckBox = new System.Windows.Forms.CheckBox();
-            this.FakeDiCheckBox = new System.Windows.Forms.CheckBox();
             this.FakeVidTextBox = new System.Windows.Forms.TextBox();
             this.FakePidTextBox = new System.Windows.Forms.TextBox();
             this.FakePidLabel = new System.Windows.Forms.Label();
@@ -76,6 +75,8 @@ namespace x360ce.App
             this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveButton = new System.Windows.Forms.Button();
             this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
+            this.FakeDiComboBox = new System.Windows.Forms.ComboBox();
+            this.FakeDiLabel = new System.Windows.Forms.Label();
             this.MainTabControl.SuspendLayout();
             this.OptionsTabPage.SuspendLayout();
             this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -133,7 +134,7 @@ namespace x360ce.App
             // 
             this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
             this.Pad2TabPage.Name = "Pad2TabPage";
-            this.Pad2TabPage.Size = new System.Drawing.Size(627, 439);
+            this.Pad2TabPage.Size = new System.Drawing.Size(632, 441);
             this.Pad2TabPage.TabIndex = 7;
             this.Pad2TabPage.Text = "Controller 2";
             // 
@@ -141,7 +142,7 @@ namespace x360ce.App
             // 
             this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
             this.Pad3TabPage.Name = "Pad3TabPage";
-            this.Pad3TabPage.Size = new System.Drawing.Size(627, 439);
+            this.Pad3TabPage.Size = new System.Drawing.Size(632, 441);
             this.Pad3TabPage.TabIndex = 8;
             this.Pad3TabPage.Text = "Controller 3";
             // 
@@ -149,7 +150,7 @@ namespace x360ce.App
             // 
             this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
             this.Pad4TabPage.Name = "Pad4TabPage";
-            this.Pad4TabPage.Size = new System.Drawing.Size(627, 439);
+            this.Pad4TabPage.Size = new System.Drawing.Size(632, 441);
             this.Pad4TabPage.TabIndex = 9;
             this.Pad4TabPage.Text = "Controller 4";
             // 
@@ -171,9 +172,9 @@ namespace x360ce.App
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-            this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(396, 3);
+            this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(455, 3);
             this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-            this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(233, 138);
+            this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(174, 144);
             this.TestingAndLoggingGroupBox.TabIndex = 31;
             this.TestingAndLoggingGroupBox.TabStop = false;
             this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
@@ -181,7 +182,7 @@ namespace x360ce.App
             // UseInitBeepCheckBox
             // 
             this.UseInitBeepCheckBox.AutoSize = true;
-            this.UseInitBeepCheckBox.Location = new System.Drawing.Point(6, 23);
+            this.UseInitBeepCheckBox.Location = new System.Drawing.Point(6, 27);
             this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
             this.UseInitBeepCheckBox.Size = new System.Drawing.Size(90, 17);
             this.UseInitBeepCheckBox.TabIndex = 22;
@@ -191,7 +192,7 @@ namespace x360ce.App
             // EnableLoggingCheckBox
             // 
             this.EnableLoggingCheckBox.AutoSize = true;
-            this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 46);
+            this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 50);
             this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
             this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
             this.EnableLoggingCheckBox.TabIndex = 21;
@@ -205,9 +206,9 @@ namespace x360ce.App
             this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput12CheckBox);
             this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput11CheckBox);
             this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput910CheckBox);
-            this.InstalledFilesGroupBox.Location = new System.Drawing.Point(190, 3);
+            this.InstalledFilesGroupBox.Location = new System.Drawing.Point(250, 3);
             this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
-            this.InstalledFilesGroupBox.Size = new System.Drawing.Size(200, 138);
+            this.InstalledFilesGroupBox.Size = new System.Drawing.Size(199, 144);
             this.InstalledFilesGroupBox.TabIndex = 30;
             this.InstalledFilesGroupBox.TabStop = false;
             this.InstalledFilesGroupBox.Text = "Installed Files";
@@ -215,7 +216,7 @@ namespace x360ce.App
             // InstallFilesX360ceCheckBox
             // 
             this.InstallFilesX360ceCheckBox.AutoSize = true;
-            this.InstallFilesX360ceCheckBox.Location = new System.Drawing.Point(6, 23);
+            this.InstallFilesX360ceCheckBox.Location = new System.Drawing.Point(6, 27);
             this.InstallFilesX360ceCheckBox.Name = "InstallFilesX360ceCheckBox";
             this.InstallFilesX360ceCheckBox.Size = new System.Drawing.Size(74, 17);
             this.InstallFilesX360ceCheckBox.TabIndex = 19;
@@ -225,7 +226,7 @@ namespace x360ce.App
             // InstallFilesXinput13CheckBox
             // 
             this.InstallFilesXinput13CheckBox.AutoSize = true;
-            this.InstallFilesXinput13CheckBox.Location = new System.Drawing.Point(6, 46);
+            this.InstallFilesXinput13CheckBox.Location = new System.Drawing.Point(6, 50);
             this.InstallFilesXinput13CheckBox.Name = "InstallFilesXinput13CheckBox";
             this.InstallFilesXinput13CheckBox.Size = new System.Drawing.Size(166, 17);
             this.InstallFilesXinput13CheckBox.TabIndex = 19;
@@ -235,7 +236,7 @@ namespace x360ce.App
             // InstallFilesXinput12CheckBox
             // 
             this.InstallFilesXinput12CheckBox.AutoSize = true;
-            this.InstallFilesXinput12CheckBox.Location = new System.Drawing.Point(6, 69);
+            this.InstallFilesXinput12CheckBox.Location = new System.Drawing.Point(6, 73);
             this.InstallFilesXinput12CheckBox.Name = "InstallFilesXinput12CheckBox";
             this.InstallFilesXinput12CheckBox.Size = new System.Drawing.Size(85, 17);
             this.InstallFilesXinput12CheckBox.TabIndex = 19;
@@ -245,7 +246,7 @@ namespace x360ce.App
             // InstallFilesXinput11CheckBox
             // 
             this.InstallFilesXinput11CheckBox.AutoSize = true;
-            this.InstallFilesXinput11CheckBox.Location = new System.Drawing.Point(6, 92);
+            this.InstallFilesXinput11CheckBox.Location = new System.Drawing.Point(6, 96);
             this.InstallFilesXinput11CheckBox.Name = "InstallFilesXinput11CheckBox";
             this.InstallFilesXinput11CheckBox.Size = new System.Drawing.Size(85, 17);
             this.InstallFilesXinput11CheckBox.TabIndex = 19;
@@ -255,7 +256,7 @@ namespace x360ce.App
             // InstallFilesXinput910CheckBox
             // 
             this.InstallFilesXinput910CheckBox.AutoSize = true;
-            this.InstallFilesXinput910CheckBox.Location = new System.Drawing.Point(6, 115);
+            this.InstallFilesXinput910CheckBox.Location = new System.Drawing.Point(6, 119);
             this.InstallFilesXinput910CheckBox.Name = "InstallFilesXinput910CheckBox";
             this.InstallFilesXinput910CheckBox.Size = new System.Drawing.Size(97, 17);
             this.InstallFilesXinput910CheckBox.TabIndex = 19;
@@ -264,17 +265,18 @@ namespace x360ce.App
             // 
             // FakeApiGroupBox
             // 
+            this.FakeApiGroupBox.Controls.Add(this.FakeDiLabel);
             this.FakeApiGroupBox.Controls.Add(this.FakeWmiLabel);
+            this.FakeApiGroupBox.Controls.Add(this.FakeDiComboBox);
             this.FakeApiGroupBox.Controls.Add(this.FakeWmiComboBox);
             this.FakeApiGroupBox.Controls.Add(this.FakeWinTrustCheckBox);
-            this.FakeApiGroupBox.Controls.Add(this.FakeDiCheckBox);
             this.FakeApiGroupBox.Controls.Add(this.FakeVidTextBox);
             this.FakeApiGroupBox.Controls.Add(this.FakePidTextBox);
             this.FakeApiGroupBox.Controls.Add(this.FakePidLabel);
             this.FakeApiGroupBox.Controls.Add(this.FakeVidLabel);
             this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
             this.FakeApiGroupBox.Name = "FakeApiGroupBox";
-            this.FakeApiGroupBox.Size = new System.Drawing.Size(181, 138);
+            this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 144);
             this.FakeApiGroupBox.TabIndex = 29;
             this.FakeApiGroupBox.TabStop = false;
             this.FakeApiGroupBox.Text = "Fake API";
@@ -284,9 +286,9 @@ namespace x360ce.App
             this.FakeWmiLabel.AutoSize = true;
             this.FakeWmiLabel.Location = new System.Drawing.Point(6, 16);
             this.FakeWmiLabel.Name = "FakeWmiLabel";
-            this.FakeWmiLabel.Size = new System.Drawing.Size(57, 13);
+            this.FakeWmiLabel.Size = new System.Drawing.Size(60, 13);
             this.FakeWmiLabel.TabIndex = 26;
-            this.FakeWmiLabel.Text = "FakeWMI:";
+            this.FakeWmiLabel.Text = "Fake WMI:";
             // 
             // FakeWmiComboBox
             // 
@@ -295,60 +297,50 @@ namespace x360ce.App
             this.FakeWmiComboBox.FormattingEnabled = true;
             this.FakeWmiComboBox.Location = new System.Drawing.Point(69, 13);
             this.FakeWmiComboBox.Name = "FakeWmiComboBox";
-            this.FakeWmiComboBox.Size = new System.Drawing.Size(100, 21);
+            this.FakeWmiComboBox.Size = new System.Drawing.Size(166, 21);
             this.FakeWmiComboBox.TabIndex = 28;
             // 
             // FakeWinTrustCheckBox
             // 
             this.FakeWinTrustCheckBox.AutoSize = true;
-            this.FakeWinTrustCheckBox.Location = new System.Drawing.Point(69, 115);
+            this.FakeWinTrustCheckBox.Location = new System.Drawing.Point(69, 119);
             this.FakeWinTrustCheckBox.Name = "FakeWinTrustCheckBox";
             this.FakeWinTrustCheckBox.Size = new System.Drawing.Size(99, 17);
             this.FakeWinTrustCheckBox.TabIndex = 23;
             this.FakeWinTrustCheckBox.Text = "Fake Win Trust";
             this.FakeWinTrustCheckBox.UseVisualStyleBackColor = true;
             // 
-            // FakeDiCheckBox
-            // 
-            this.FakeDiCheckBox.AutoSize = true;
-            this.FakeDiCheckBox.Location = new System.Drawing.Point(69, 92);
-            this.FakeDiCheckBox.Name = "FakeDiCheckBox";
-            this.FakeDiCheckBox.Size = new System.Drawing.Size(64, 17);
-            this.FakeDiCheckBox.TabIndex = 23;
-            this.FakeDiCheckBox.Text = "Fake DI";
-            this.FakeDiCheckBox.UseVisualStyleBackColor = true;
-            // 
             // FakeVidTextBox
             // 
-            this.FakeVidTextBox.Location = new System.Drawing.Point(69, 40);
+            this.FakeVidTextBox.Location = new System.Drawing.Point(69, 67);
             this.FakeVidTextBox.Name = "FakeVidTextBox";
-            this.FakeVidTextBox.Size = new System.Drawing.Size(100, 20);
+            this.FakeVidTextBox.Size = new System.Drawing.Size(99, 20);
             this.FakeVidTextBox.TabIndex = 24;
             // 
             // FakePidTextBox
             // 
-            this.FakePidTextBox.Location = new System.Drawing.Point(69, 66);
+            this.FakePidTextBox.Location = new System.Drawing.Point(69, 93);
             this.FakePidTextBox.Name = "FakePidTextBox";
-            this.FakePidTextBox.Size = new System.Drawing.Size(100, 20);
+            this.FakePidTextBox.Size = new System.Drawing.Size(99, 20);
             this.FakePidTextBox.TabIndex = 25;
             // 
             // FakePidLabel
             // 
             this.FakePidLabel.AutoSize = true;
-            this.FakePidLabel.Location = new System.Drawing.Point(6, 69);
+            this.FakePidLabel.Location = new System.Drawing.Point(6, 96);
             this.FakePidLabel.Name = "FakePidLabel";
-            this.FakePidLabel.Size = new System.Drawing.Size(52, 13);
+            this.FakePidLabel.Size = new System.Drawing.Size(55, 13);
             this.FakePidLabel.TabIndex = 26;
-            this.FakePidLabel.Text = "FakePID:";
+            this.FakePidLabel.Text = "Fake PID:";
             // 
             // FakeVidLabel
             // 
             this.FakeVidLabel.AutoSize = true;
-            this.FakeVidLabel.Location = new System.Drawing.Point(6, 43);
+            this.FakeVidLabel.Location = new System.Drawing.Point(6, 70);
             this.FakeVidLabel.Name = "FakeVidLabel";
-            this.FakeVidLabel.Size = new System.Drawing.Size(52, 13);
+            this.FakeVidLabel.Size = new System.Drawing.Size(55, 13);
             this.FakeVidLabel.TabIndex = 26;
-            this.FakeVidLabel.Text = "FakeVID:";
+            this.FakeVidLabel.Text = "Fake VID:";
             // 
             // HelpTabPage
             // 
@@ -356,7 +348,7 @@ namespace x360ce.App
             this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
             this.HelpTabPage.Name = "HelpTabPage";
             this.HelpTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.HelpTabPage.Size = new System.Drawing.Size(627, 439);
+            this.HelpTabPage.Size = new System.Drawing.Size(632, 441);
             this.HelpTabPage.TabIndex = 10;
             this.HelpTabPage.Text = "Help";
             // 
@@ -368,7 +360,7 @@ namespace x360ce.App
             this.HelpRichTextBox.Location = new System.Drawing.Point(3, 3);
             this.HelpRichTextBox.Name = "HelpRichTextBox";
             this.HelpRichTextBox.ReadOnly = true;
-            this.HelpRichTextBox.Size = new System.Drawing.Size(621, 433);
+            this.HelpRichTextBox.Size = new System.Drawing.Size(626, 435);
             this.HelpRichTextBox.TabIndex = 0;
             this.HelpRichTextBox.Text = "";
             // 
@@ -377,7 +369,7 @@ namespace x360ce.App
             this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
             this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
             this.AboutTabPage.Name = "AboutTabPage";
-            this.AboutTabPage.Size = new System.Drawing.Size(627, 439);
+            this.AboutTabPage.Size = new System.Drawing.Size(632, 441);
             this.AboutTabPage.TabIndex = 2;
             this.AboutTabPage.Text = "About";
             // 
@@ -494,6 +486,25 @@ namespace x360ce.App
             this.SettingsTimer.Interval = 500;
             this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
             // 
+            // FakeDiComboBox
+            // 
+            this.FakeDiComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FakeDiComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.FakeDiComboBox.FormattingEnabled = true;
+            this.FakeDiComboBox.Location = new System.Drawing.Point(69, 40);
+            this.FakeDiComboBox.Name = "FakeDiComboBox";
+            this.FakeDiComboBox.Size = new System.Drawing.Size(166, 21);
+            this.FakeDiComboBox.TabIndex = 28;
+            // 
+            // FakeDiLabel
+            // 
+            this.FakeDiLabel.AutoSize = true;
+            this.FakeDiLabel.Location = new System.Drawing.Point(6, 43);
+            this.FakeDiLabel.Name = "FakeDiLabel";
+            this.FakeDiLabel.Size = new System.Drawing.Size(48, 13);
+            this.FakeDiLabel.TabIndex = 26;
+            this.FakeDiLabel.Text = "Fake DI:";
+            // 
             // MainForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -538,8 +549,7 @@ namespace x360ce.App
 		private StatusStrip statusStrip1;
 		private TabPage OptionsTabPage;
 		private CheckBox EnableLoggingCheckBox;
-		private CheckBox UseInitBeepCheckBox;
-        private CheckBox FakeDiCheckBox;
+        private CheckBox UseInitBeepCheckBox;
 		private Label FakePidLabel;
 		private Label FakeVidLabel;
 		private TextBox FakePidTextBox;
@@ -575,6 +585,8 @@ namespace x360ce.App
         private CheckBox FakeWinTrustCheckBox;
         private GroupBox InstalledFilesGroupBox;
         private GroupBox TestingAndLoggingGroupBox;
+        private Label FakeDiLabel;
+        private ComboBox FakeDiComboBox;
 
 	}
 }

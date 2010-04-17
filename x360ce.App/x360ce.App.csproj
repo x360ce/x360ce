@@ -153,6 +153,7 @@
     <Compile Include="XnaInput\Controller.cs" />
     <Compile Include="XnaInput\ButtonsValues.cs" />
     <Compile Include="XnaInput\ControllerCollection.cs" />
+    <Compile Include="XnaInput\FakeDi.cs" />
     <Compile Include="XnaInput\FakeWmi.cs" />
     <Compile Include="XnaInput\GamePad.cs" />
     <Compile Include="XnaInput\GamePadType.cs" />
