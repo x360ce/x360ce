@@ -1,4 +1,7 @@
-﻿v2.0.2.33 (2010-04-17) by Evaldas Jocys
+﻿v2.0.2.34 (2010-04-17) by Evaldas Jocys
+- Fix: Issue with Global settings save fix.
+
+v2.0.2.33 (2010-04-17) by Evaldas Jocys
 - New: "Axis To D-Pad" settings group box added.
 - New: "FakeWinTrust" check box added.
 - New: Thrustmaster Dual Analog/Power gamepads presets by crazycat

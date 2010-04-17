@@ -129,6 +129,7 @@ namespace x360ce.App
                 string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
                 if (oldInstance != curInstance) deviceOrderChanged = true;
                 ReadPadSettings(iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
+                SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
             }
             for (int i = instances.Count; i < 4; i++)
             {
@@ -136,8 +137,8 @@ namespace x360ce.App
                 string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
                 if (oldInstance != curInstance) deviceOrderChanged = true;
                 ReadPadSettings(iniFile, "IG_" + Guid.Empty.ToString("N"), i);
+                SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
             }
-            SaveSettings();
             if (deviceOrderChanged)
             {
                 MessageBox.Show("Device order changed! Settings fixed. You must click [Save] button in order for XInput to work properly.", "Device order changed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
