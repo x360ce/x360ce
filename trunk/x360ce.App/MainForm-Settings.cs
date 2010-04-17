@@ -66,7 +66,7 @@ namespace x360ce.App
                     _SettingsMap.Add(@"Options\UseInitBeep", UseInitBeepCheckBox);
                     _SettingsMap.Add(@"Options\Log", EnableLoggingCheckBox);
                     _SettingsMap.Add(@"FakeAPI\FakeWMI", FakeWmiComboBox);
-                    _SettingsMap.Add(@"FakeAPI\FakeDI", FakeDiCheckBox);
+                    _SettingsMap.Add(@"FakeAPI\FakeDI", FakeDiComboBox);
                     _SettingsMap.Add(@"FakeAPI\FakeWinTrust", FakeWinTrustCheckBox);
                     _SettingsMap.Add(@"FakeAPI\FakeVID", FakeVidTextBox);
                     _SettingsMap.Add(@"FakeAPI\FakePID", FakePidTextBox);
@@ -106,7 +106,7 @@ namespace x360ce.App
             else if (control is ComboBox)
             {
                 var cbx = (ComboBox)control;
-                if (key == "FakeWMI") cbx.SelectedValue = value;
+                if (key == "FakeWMI" || key == "FakeDI") cbx.SelectedValue = value;
             }
             else if (control is TextBox)
             {
@@ -285,7 +285,7 @@ namespace x360ce.App
             else if (control is ComboBox)
             {
                 var cbx = (ComboBox)control;
-                if (key == "FakeWMI") v = (string)cbx.SelectedValue;
+                if (key == "FakeWMI" || key == "FakeDI") v = (string)cbx.SelectedValue;
             }
             else if (control is TextBox)
             {

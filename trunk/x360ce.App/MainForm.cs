@@ -61,13 +61,20 @@ namespace x360ce.App
         private void MainForm_Load(object sender, EventArgs e)
         {
             // Fill FakeWmi ComboBox.
-            var fakeWmiOptions = new List<KeyValuePair>();
-            var types = (FakeWmi[])Enum.GetValues(typeof(FakeWmi));
-            foreach (var item in types) fakeWmiOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-            FakeWmiComboBox.DataSource = fakeWmiOptions;
+            var wmiOptions = new List<KeyValuePair>();
+            var wmiTypes = (FakeWmi[])Enum.GetValues(typeof(FakeWmi));
+            foreach (var item in wmiTypes) wmiOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
+            FakeWmiComboBox.DataSource = wmiOptions;
             FakeWmiComboBox.DisplayMember = "Key";
             FakeWmiComboBox.ValueMember = "Value";
-
+            // Fill FakeDi ComboBox.
+            var diOptions = new List<KeyValuePair>();
+            var diTypes = (FakeDi[])Enum.GetValues(typeof(FakeDi));
+            foreach (var item in diTypes) diOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
+            FakeDiComboBox.DataSource = diOptions;
+            FakeDiComboBox.DisplayMember = "Key";
+            FakeDiComboBox.ValueMember = "Value";
+            // Set status.
             StatusSaveLabel.Visible = false;
             StatusEventsLabel.Visible = false;
             // If it is old ini file.

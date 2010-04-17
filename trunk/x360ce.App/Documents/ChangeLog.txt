@@ -1,4 +1,7 @@
-﻿v2.0.2.34 (2010-04-17) by Evaldas Jocys
+﻿v2.0.2.35 (2010-04-17) by Evaldas Jocys
+- Fix: FakeDI option converted to ComboBox
+
+v2.0.2.34 (2010-04-17) by Evaldas Jocys
 - Fix: Issue with Global settings save fix.
 
 v2.0.2.33 (2010-04-17) by Evaldas Jocys
