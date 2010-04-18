@@ -9,67 +9,26 @@ namespace x360ce.App
 {
     public partial class MainForm
     {
+
         Dictionary<string, Control> _SettingsMap;
+        /// <summary>
+        /// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+        /// </summary>
         Dictionary<string, Control> SettingsMap
         {
             get
             {
-                // Adopted names:
-                //
-                // Internal Microsoft Name - "Public Name"
-                // Big = "Guide"
-                // Thumb = "Stick"
-                // Shoulder = "Bumper"
-                //
-                // ButtonA
-                // ButtonB
-                // ButtonBack
-                // ButtonBig
-                // ButtonStart
-                // ButtonX
-                // ButtonY
-                // DPad
-                // DPadDown
-                // DPadLeft
-                // DPadRight
-                // DPadUp
-                // LeftShoulder
-                // LeftThumb
-                // LeftThumbAxisX
-                // LeftThumbAxisXmax
-                // LeftThumbAxisXmin
-                // LeftThumbAxisY
-                // LeftThumbAxisYmax
-                // LeftThumbAxisYmin
-                // LeftThumbDown
-                // LeftThumbLeft
-                // LeftThumbRight
-                // LeftThumbUp
-                // LeftTrigger
-                // RightShoulder
-                // RightStick
-                // RightStickAxisX
-                // RightStickAxisXmax
-                // RightStickAxisXmin
-                // RightStickAxisY
-                // RightStickAxisYmax
-                // RightStickAxisYmin
-                // RightStickDown
-                // RightStickLeft
-                // RightStickRight
-                // RightStickUp
-                // RightTrigger
-
                 if (_SettingsMap == null) _SettingsMap = new Dictionary<string, Control>();
                 if (_SettingsMap.Count == 0)
                 {
-                    _SettingsMap.Add(@"Options\UseInitBeep", UseInitBeepCheckBox);
-                    _SettingsMap.Add(@"Options\Log", EnableLoggingCheckBox);
-                    _SettingsMap.Add(@"FakeAPI\FakeWMI", FakeWmiComboBox);
-                    _SettingsMap.Add(@"FakeAPI\FakeDI", FakeDiComboBox);
-                    _SettingsMap.Add(@"FakeAPI\FakeWinTrust", FakeWinTrustCheckBox);
-                    _SettingsMap.Add(@"FakeAPI\FakeVID", FakeVidTextBox);
-                    _SettingsMap.Add(@"FakeAPI\FakePID", FakePidTextBox);
+                    _SettingsMap.Add(@"Options\" + SettingName.UseInitBeep, UseInitBeepCheckBox);
+                    _SettingsMap.Add(@"Options\" + SettingName.DebugMode, DebugModeCheckBox);
+                    _SettingsMap.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
+                    _SettingsMap.Add(@"FakeAPI\" + SettingName.FakeWinTrust, FakeWinTrustCheckBox);
+                    _SettingsMap.Add(@"FakeAPI\" + SettingName.FakeWmi, FakeWmiComboBox);
+                    _SettingsMap.Add(@"FakeAPI\" + SettingName.FakeDi, FakeDiComboBox);
+                    _SettingsMap.Add(@"FakeAPI\" + SettingName.FakeVid, FakeVidTextBox);
+                    _SettingsMap.Add(@"FakeAPI\" + SettingName.FakePid, FakePidTextBox);
                     // Add PAD settings.
                     for (int i = 0; i < ControlPads.Length; i++)
                     {
@@ -94,7 +53,7 @@ namespace x360ce.App
                 int n = 0;
                 int.TryParse(value, out n);
                 try { cbx.SelectedItem = (ControllerType)n; }
-                catch (Exception) { }
+                catch (Exception) { if (IsDebugMode) throw; }
             }
             // If Di menu strip attached.
             else if (control is ComboBox && control.ContextMenuStrip != null)
@@ -106,15 +65,15 @@ namespace x360ce.App
             else if (control is ComboBox)
             {
                 var cbx = (ComboBox)control;
-                if (key == "FakeWMI" || key == "FakeDI") cbx.SelectedValue = value;
+                if (key == SettingName.FakeWmi || key == SettingName.FakeDi) cbx.SelectedValue = value;
             }
             else if (control is TextBox)
             {
                 // if setting is readonly.
-                if (key == "ProductName") return;
-                if (key == "Instance") return;
-                if (key == "PID") return;
-                if (key == "VID") return;
+                if (key == SettingName.ProductName) return;
+                if (key == SettingName.InstanceGuid) return;
+                if (key == SettingName.Pid) return;
+                if (key == SettingName.Vid) return;
                 control.Text = value;
             }
             else if (control is NumericUpDown)
@@ -131,14 +90,14 @@ namespace x360ce.App
                 TrackBar tc = (TrackBar)control;
                 int n = 0;
                 int.TryParse(value, out n);
-                if (key == "AxisToDPadDeadZone")
+                if (key == SettingName.AxisToDPadDeadZone)
                 {
                     if (value == "") n = 256;
                     // convert 256  to 100%
                     n = System.Convert.ToInt32((float)n / 256F * 100F);
                 }
                 // convert 256  to 100%
-                if (key == "AxisToDPadOffset") n = System.Convert.ToInt32((float)n / 256F * 100F);
+                if (key == SettingName.AxisToDPadOffset) n = System.Convert.ToInt32((float)n / 256F * 100F);
                 if (n < tc.Minimum) n = tc.Minimum;
                 if (n > tc.Maximum) n = tc.Maximum;
                 tc.Value = n;
@@ -285,12 +244,12 @@ namespace x360ce.App
             else if (control is ComboBox)
             {
                 var cbx = (ComboBox)control;
-                if (key == "FakeWMI" || key == "FakeDI") v = (string)cbx.SelectedValue;
+                if (key == SettingName.FakeWmi || key == SettingName.FakeDi) v = (string)cbx.SelectedValue;
             }
             else if (control is TextBox)
             {
                 // if setting is readonly.
-                if (key == "Instance")
+                if (key == SettingName.InstanceGuid)
                 {
                     v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("B") : string.Format("{{{0}}}", control.Text);
                 }
@@ -304,7 +263,7 @@ namespace x360ce.App
             else if (control is TrackBar)
             {
                 TrackBar tc = (TrackBar)control;
-                if (key == "AxisToDPadDeadZone" || key == "AxisToDPadOffset")
+                if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset)
                 {
                     // convert 100%  to 256
                     v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
@@ -327,11 +286,11 @@ namespace x360ce.App
             if (v == "v4") v = "LEFT";
             if (v == "")
             {
-                if (key == "D-pad Up") v = "UP";
-                if (key == "D-pad Down") v = "DOWN";
-                if (key == "D-pad Left") v = "LEFT";
-                if (key == "D-pad Right") v = "RIGHT";
-                if (key == "VID" || key == "PID" || key == "FakeVID" || key == "FakePID") v = "0x0";
+                if (key == SettingName.DPadUp) v = "UP";
+                if (key == SettingName.DPadDown) v = "DOWN";
+                if (key == SettingName.DPadLeft) v = "LEFT";
+                if (key == SettingName.DPadRight) v = "RIGHT";
+                if (key == SettingName.Vid || key == SettingName.Pid || key == SettingName.FakeVid || key == SettingName.FakePid) v = "0x0";
             }
             string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
             ini.SetValue(iniSection, key, v);
@@ -372,6 +331,16 @@ namespace x360ce.App
             }
             resumed++;
             StatusEventsLabel.Text = string.Format("ON {0} {1}", suspended, resumed);
+        }
+
+        /// <summary>
+        /// Delay settings trough timer so interface will be more responsive on TrackBars.
+        /// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
+        /// </summary>
+        public void NotifySettingsChange()
+        {
+            SettingsTimer.Stop();
+            SettingsTimer.Start();
         }
 
         private void Control_TextChanged(object sender, EventArgs e)
