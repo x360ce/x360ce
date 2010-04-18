@@ -19,42 +19,42 @@ namespace x360ce.App
     public struct SettingName
     {
         // [Options] section.
-        [DefaultValue("1"), Description("Use 0 to 1; default 1; beep on init")]
+        [DefaultValue("1"), Description("Use 0 to 1; default 1; beep on init.")]
         public const string UseInitBeep = "UseInitBeep";
         [DefaultValue("0"), Description("0 - Suspend errors; 1 - throw application errors.")]
         public const string DebugMode = "DebugMode";
-        [DefaultValue("0"), Description("use 0 to 1; creates a log file in folder 'x360ce logs'")]
+        [DefaultValue("0"), Description("use 0 to 1; creates a log file in folder 'x360ce logs'.")]
         public const string Log = "Log";
         // [FakeAPI] section.
         [DefaultValue("0"), Description("")]
         public const string FakeWinTrust = "FakeWinTrust";
-        [DefaultValue("0"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable")]
+        [DefaultValue("0"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
         public const string FakeWmi = "FakeWMI";
-        [DefaultValue("0"), Description("DirectInput API patching, 1 only callback, 2 callback and device info, 0 disable")]
+        [DefaultValue("0"), Description("DirectInput API patching, 1 only callback, 2 callback and device info, 0 disable.")]
         public const string FakeDi = "FakeDI";
-        [DefaultValue("0x0"), Description("")]
+        [DefaultValue("0x0"), Description("Fake vendor Id.")]
         public const string FakeVid = "FakeVID";
-        [DefaultValue("0x0"), Description("")]
+        [DefaultValue("0x0"), Description("Fake product Id.")]
         public const string FakePid = "FakePID";
         // [PAD] section.
-        [DefaultValue("Unknown Device"), Description("Device product name")]
+        [DefaultValue("Unknown Device"), Description("Device product name.")]
         public const string ProductName = "ProductName";
-        [DefaultValue("{00000000-0000-0000-0000-000000000000}"), Description("Device instance GUID")]
+        [DefaultValue("{00000000-0000-0000-0000-000000000000}"), Description("Device instance GUID.")]
         public const string InstanceGuid = "Instance";
-        [DefaultValue("0x0"), Description("Device vendor ID")]
+        [DefaultValue("0x0"), Description("Device vendor Id.")]
         public const string Vid = "VID";
-        [DefaultValue("0x0"), Description("Device product ID")]
+        [DefaultValue("0x0"), Description("Device product Id.")]
         public const string Pid = "PID";
-        [DefaultValue("1"), Description("Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8,")]
+        [DefaultValue("1"), Description("Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.")]
         public const string GamePadType = "ControllerType";
-        [DefaultValue("0"), Description("Native mode, calls system xinput1_3.dll to support xinput compatible controller together with emulated")]
+        [DefaultValue("0"), Description("Native mode, calls system xinput1_3.dll to support xinput compatible controller together with emulated.")]
         public const string NativeMode = "Native";
         // Main Mapping
         [DefaultValue("0"), Description("Left stick button. Disable = 0.")]
         public const string LeftThumbButton = "Left Thumb";
-        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable")]
+        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.")]
         public const string LeftThumbAxisX = "Left Analog X";
-        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable")]
+        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.")]
         public const string LeftThumbAxisY = "Left Analog Y";
         [DefaultValue("0"), Description("Button Id. Disable = 0.")]
         public const string LeftThumbRight = "Left Analog X+ Button";
@@ -66,9 +66,9 @@ namespace x360ce.App
         public const string LeftThumbDown = "Left Analog Y- Button";
         [DefaultValue("0"), Description("Button Id. Disable = 0.")]
         public const string RightThumbButton = "Right Thumb";
-        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable")]
+        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.")]
         public const string RightThumbAxisX = "Right Analog X";
-        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable")]
+        [DefaultValue("0"), Description("Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.")]
         public const string RightThumbAxisY = "Right Analog Y";
         [DefaultValue("0"), Description("Button Id. Disable = 0.")]
         public const string RightThumbRight = "Right Analog X+ Button";
@@ -78,7 +78,7 @@ namespace x360ce.App
         public const string RightThumbUp = "Right Analog Y+ Button";
         [DefaultValue("0"), Description("Button Id. Disable = 0.")]
         public const string RightThumbDown = "Right Analog Y- Button";
-        [DefaultValue("0"), Description("Disable = 0, POV Index = N")]
+        [DefaultValue("0"), Description("Disable = 0, POV Index = N.")]
         public const string DPad = "D-pad POV";
         [DefaultValue("UP"), Description("D-Pad up button.")]
         public const string DPadUp = "D-pad Up";
@@ -104,31 +104,31 @@ namespace x360ce.App
         public const string LeftShoulder = "Left Shoulder";
         [DefaultValue("0"), Description("Button Id. Disable = 0.")]
         public const string RightShoulder = "Right Shoulder";
-        [DefaultValue("0"), Description("Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2;")]
+        [DefaultValue("0"), Description("Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.")]
         public const string LeftTrigger = "Left Trigger";
-        [DefaultValue("0"), Description("[0:255]; default 0; add deadzone to trigger")]
+        [DefaultValue("0"), Description("[0-255]; default 0; add deadzone to trigger.")]
         public const string LeftTriggerDeadZone = "TriggerDeadzone";
-        [DefaultValue("0"), Description("Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2;")]
+        [DefaultValue("0"), Description("Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.")]
         public const string RightTrigger = "Right Trigger";
-        [DefaultValue("0"), Description("[0:255]; default 0; add deadzone to trigger")]
+        [DefaultValue("0"), Description("[0-255] add deadzone to trigger.")]
         public const string RightTriggerDeadZone = "Right Trigger Deadzone";
         // Force Feedback.
-        [DefaultValue("0"), Description("Use force feedback. Disabled = 0, Enabled = 1.")]
+        [DefaultValue("0"), Description("[0,1] Use force feedback. Disabled = 0, Enabled = 1.")]
         public const string ForceEnable = "UseForceFeedback";
         [DefaultValue("0"), Description("Swap motor. Disabled = 0, Enabled = 1.")]
         public const string ForceSwapMotor = "SwapMotor";
-        [DefaultValue("0"), Description("Motor Direction. Normal = 0, Inverted = 1")]
+        [DefaultValue("0"), Description("Motor Direction. Normal = 0, Inverted = 1.")]
         public const string ForceLeftMotorInvert = "LeftMotorDirection";
-        [DefaultValue("1"), Description("Motor Direction. Normal = 0, Inverted = 1")]
+        [DefaultValue("1"), Description("Motor Direction. Normal = 0, Inverted = 1.")]
         public const string ForceRightMotorInvert = "RightMotorDirection";
-        [DefaultValue("100"), Description("Strenght of force feedback. Use 0 to 100")]
+        [DefaultValue("100"), Description("Strenght of force feedback. Use 0 to 100.")]
         public const string ForceOverall = "ForcePercent";
         // Axis To D-Pad
         [DefaultValue("0"), Description("Axis to control DPad. Disabled = 0, Enabled = 1.")]
         public const string AxisToDPadEnabled = "AxisToDPad";
-        [DefaultValue("256"), Description("Dead zone for axis")]
+        [DefaultValue("256"), Description("Dead zone for axis.")]
         public const string AxisToDPadDeadZone = "AxisToDPadDeadZone";
-        [DefaultValue("0"), Description("Axis to D-Pad offset")]
+        [DefaultValue("0"), Description("Axis to D-Pad offset.")]
         public const string AxisToDPadOffset = "AxisToDPadOffset";
 
         public static bool IsDPad(string name)
