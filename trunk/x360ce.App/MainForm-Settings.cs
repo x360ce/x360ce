@@ -275,11 +275,11 @@ namespace x360ce.App
                 CheckBox tc = (CheckBox)control;
                 v = tc.Checked ? "1" : "0";
             }
-            if (key.Contains("Analog") && !key.Contains("Button"))
+            if (SettingName.IsThumbAxis(key))
             {
                 v = v.Replace("a", "");
             }
-            if (key.Contains("D-pad")) v = v.Replace("p", "");
+            if (SettingName.IsDPad(key)) v = v.Replace("p", "");
             if (v == "v1") v = "UP";
             if (v == "v2") v = "RIGHT";
             if (v == "v3") v = "DOWN";
@@ -293,6 +293,9 @@ namespace x360ce.App
                 if (key == SettingName.Vid || key == SettingName.Pid || key == SettingName.FakeVid || key == SettingName.FakePid) v = "0x0";
             }
             string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
+            // add comment.
+            var l = SettingName.MaxNameLength - key.Length + 24;
+            v = string.Format("{0, -" + l + "} # {1}", v, SettingName.GetDescription(key));
             ini.SetValue(iniSection, key, v);
             saveCount++;
             StatusSaveLabel.Text = string.Format("S {0}", saveCount);

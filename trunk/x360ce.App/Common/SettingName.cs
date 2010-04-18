@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace x360ce.App
 {
@@ -9,7 +10,8 @@ namespace x360ce.App
     /// Map between .NET and INI file. This makes refactoring easier.
     /// </summary>
     /// <remarks>
-    /// Adopted names: Internal Code Name - "Public Name"
+    /// Adopted names:
+    /// "Internal Code Name" = "Public Name"
     /// Big = "Guide"
     /// Thumb = "Stick"
     /// Shoulder = "Bumper"
@@ -39,7 +41,7 @@ namespace x360ce.App
         public const string ProductName = "ProductName";
         [DefaultValue("{00000000-0000-0000-0000-000000000000}"), Description("Device instance GUID")]
         public const string InstanceGuid = "Instance";
-        [DefaultValue("0x0"),Description("Device vendor ID")]
+        [DefaultValue("0x0"), Description("Device vendor ID")]
         public const string Vid = "VID";
         [DefaultValue("0x0"), Description("Device product ID")]
         public const string Pid = "PID";
@@ -128,5 +130,74 @@ namespace x360ce.App
         public const string AxisToDPadDeadZone = "AxisToDPadDeadZone";
         [DefaultValue("0"), Description("Axis to D-Pad offset")]
         public const string AxisToDPadOffset = "AxisToDPadOffset";
+
+        public static bool IsDPad(string name)
+        {
+            return name == SettingName.DPad
+                || name == SettingName.DPadDown
+                || name == SettingName.DPadLeft
+                || name == SettingName.DPadRight
+                || name == SettingName.DPadUp;
+        }
+
+        public static bool IsThumbAxis(string name)
+        {
+            return name == SettingName.LeftThumbAxisX
+                || name == SettingName.LeftThumbAxisY
+                || name == SettingName.RightThumbAxisX
+                || name == SettingName.RightThumbAxisY;
+        }
+
+        public static int _maxNameLength;
+        public static int MaxNameLength
+        {
+            get
+            {
+                if (_maxNameLength > 0) return _maxNameLength;
+                var o = new SettingName();
+                FieldInfo[] items = o.GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
+                int max = 0;
+                for (int i = 0; i < items.Length; i++)
+                {
+                    if (!items[i].IsLiteral) continue;
+                    max = Math.Max(max, ((string)items[i].GetValue(o)).Length);
+                }
+                _maxNameLength = max;
+                return _maxNameLength;
+            }
+        }
+
+        static FieldInfo GetFieldInfo(string key)
+        {
+            var o = new SettingName();
+            FieldInfo[] items = o.GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (!items[i].IsLiteral) continue;
+                var value = (string)items[i].GetValue(o);
+                if (value == key) return items[i];
+            }
+            return null;
+        }
+
+
+        public static string GetDescription(string key)
+        {
+            var comment = string.Empty;
+            var info = GetFieldInfo(key);
+            if (info == null) return string.Empty;
+            DescriptionAttribute a =(DescriptionAttribute)info.GetCustomAttributes(typeof(DescriptionAttribute), false)[0];
+            return a.Description;
+        }
+
+        public static string GetDefaultValue(string key)
+        {
+            var comment = string.Empty;
+            var info = GetFieldInfo(key);
+            if (info == null) return string.Empty;
+            DefaultValueAttribute a = (DefaultValueAttribute)info.GetCustomAttributes(typeof(DefaultValueAttribute), false)[0];
+            return (string)a.Value;
+        }
+
     }
 }
