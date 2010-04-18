@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>x360ce.App</RootNamespace>
     <AssemblyName>x360ce</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
@@ -18,11 +18,11 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <StartupObject>x360ce.App.Program</StartupObject>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -61,9 +61,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-    <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0" />
+    <Reference Include="Microsoft.DirectX.DirectInput" />
+    <Reference Include="Microsoft.Xna.Framework">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -76,6 +77,7 @@
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
+    <Compile Include="Common\SettingName.cs" />
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
@@ -104,6 +106,51 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XnaInput\Buttons.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\ButtonsValues.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\Controller.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\ControllerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\DPadEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\FakeDi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\FakeWmi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\GamePad.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\GamePadState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\GamePadType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\Vibration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XnaInput\XInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Controls\AboutControl.resx">
+      <DependentUpon>AboutControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\DirectInputControl.resx">
+      <DependentUpon>DirectInputControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PadControl.resx">
+      <DependentUpon>PadControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -149,22 +196,11 @@
     <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="Win32\WinAPI.cs" />
     <Compile Include="Win32\WinNT.cs" />
-    <Compile Include="XnaInput\Buttons.cs" />
-    <Compile Include="XnaInput\Controller.cs" />
-    <Compile Include="XnaInput\ButtonsValues.cs" />
-    <Compile Include="XnaInput\ControllerCollection.cs" />
-    <Compile Include="XnaInput\FakeDi.cs" />
-    <Compile Include="XnaInput\FakeWmi.cs" />
-    <Compile Include="XnaInput\GamePad.cs" />
-    <Compile Include="XnaInput\GamePadType.cs" />
-    <Compile Include="XnaInput\DPadEnum.cs" />
-    <Compile Include="XnaInput\GamePadState.cs" />
-    <Compile Include="XnaInput\Vibration.cs" />
-    <Compile Include="XnaInput\XInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Images\MarkButton.png" />
   </ItemGroup>
@@ -197,15 +233,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
-    <EmbeddedResource Include="Controls\AboutControl.resx">
-      <DependentUpon>AboutControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DirectInputControl.resx">
-      <DependentUpon>DirectInputControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PadControl.resx">
-      <DependentUpon>PadControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
     <EmbeddedResource Include="Documents\Help.htm" />
@@ -221,9 +248,6 @@
     <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
     <Content Include="Images\xboxControllerDPad.png" />
     <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <None Include="app.manifest">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Documents\JocysCom.sign.bat" />
     <None Include="Documents\x360ce.App.source.bat" />
     <None Include="Images\xboxControllerLeftTrigger.png" />
@@ -245,6 +269,7 @@
     <EmbeddedResource Include="Presets\x360ce.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

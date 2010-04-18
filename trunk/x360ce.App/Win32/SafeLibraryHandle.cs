@@ -4,7 +4,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace x360ce.App.Win32
 {
-	[SecurityCritical(SecurityCriticalScope.Everything), HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
+	[HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	public sealed class SafeLibraryHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		internal SafeLibraryHandle()

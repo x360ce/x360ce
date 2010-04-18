@@ -529,7 +529,6 @@
             this.Controls.Add(this.DiDeviceTypeLabel);
             this.Name = "DirectInputControl";
             this.Size = new System.Drawing.Size(615, 408);
-            this.Load += new System.EventHandler(this.DirectInputControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
             this.ResumeLayout(false);

@@ -77,7 +77,7 @@
             this.DPadComboBox = new System.Windows.Forms.ComboBox();
             this.RightTriggerTextBox = new System.Windows.Forms.TextBox();
             this.LeftTriggerTextBox = new System.Windows.Forms.TextBox();
-            this.RightStickTextBox = new System.Windows.Forms.TextBox();
+            this.RightThumbTextBox = new System.Windows.Forms.TextBox();
             this.LeftThumbTextBox = new System.Windows.Forms.TextBox();
             this.LeftTriggerComboBox = new System.Windows.Forms.ComboBox();
             this.FrontPictureBox = new System.Windows.Forms.PictureBox();
@@ -87,12 +87,12 @@
             this.RightTriggerLabel = new System.Windows.Forms.Label();
             this.RightTriggerComboBox = new System.Windows.Forms.ComboBox();
             this.ButtonBComboBox = new System.Windows.Forms.ComboBox();
-            this.RightStickAxisXLabel = new System.Windows.Forms.Label();
+            this.RightThumbAxisXLabel = new System.Windows.Forms.Label();
             this.LeftThumbAxisXLabel = new System.Windows.Forms.Label();
             this.ButtonXLabel = new System.Windows.Forms.Label();
             this.RightShoulderLabel = new System.Windows.Forms.Label();
             this.ButtonYComboBox = new System.Windows.Forms.ComboBox();
-            this.RightStickAxisXComboBox = new System.Windows.Forms.ComboBox();
+            this.RightThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
             this.ButtonBLabel = new System.Windows.Forms.Label();
             this.LeftThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
             this.BigButtonComboBox = new System.Windows.Forms.ComboBox();
@@ -108,19 +108,19 @@
             this.DPadUpLabel = new System.Windows.Forms.Label();
             this.DPadLabel = new System.Windows.Forms.Label();
             this.BackButtonLabel = new System.Windows.Forms.Label();
-            this.RightStickAxisYLabel = new System.Windows.Forms.Label();
+            this.RightThumbAxisYLabel = new System.Windows.Forms.Label();
             this.ButtonYLabel = new System.Windows.Forms.Label();
-            this.LeftStickAxisYLabel = new System.Windows.Forms.Label();
+            this.LeftThumbAxisYLabel = new System.Windows.Forms.Label();
             this.LeftShoulderLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.LeftTriggerLabel = new System.Windows.Forms.Label();
-            this.RightStickButtonLabel = new System.Windows.Forms.Label();
+            this.RightThumbButtonLabel = new System.Windows.Forms.Label();
             this.LeftThumbButtonComboBox = new System.Windows.Forms.ComboBox();
             this.LeftThumbButtonLabel = new System.Windows.Forms.Label();
             this.LeftThumbAxisYComboBox = new System.Windows.Forms.ComboBox();
-            this.RightStickAxisYComboBox = new System.Windows.Forms.ComboBox();
-            this.RightStickButtonComboBox = new System.Windows.Forms.ComboBox();
+            this.RightThumbAxisYComboBox = new System.Windows.Forms.ComboBox();
+            this.RightThumbButtonComboBox = new System.Windows.Forms.ComboBox();
             this.TopPictureBox = new System.Windows.Forms.PictureBox();
             this.PadTabControl = new System.Windows.Forms.TabControl();
             this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -421,7 +421,7 @@
             this.GeneralTabPage.Controls.Add(this.DPadComboBox);
             this.GeneralTabPage.Controls.Add(this.RightTriggerTextBox);
             this.GeneralTabPage.Controls.Add(this.LeftTriggerTextBox);
-            this.GeneralTabPage.Controls.Add(this.RightStickTextBox);
+            this.GeneralTabPage.Controls.Add(this.RightThumbTextBox);
             this.GeneralTabPage.Controls.Add(this.LeftThumbTextBox);
             this.GeneralTabPage.Controls.Add(this.LeftTriggerComboBox);
             this.GeneralTabPage.Controls.Add(this.FrontPictureBox);
@@ -431,12 +431,12 @@
             this.GeneralTabPage.Controls.Add(this.RightTriggerLabel);
             this.GeneralTabPage.Controls.Add(this.RightTriggerComboBox);
             this.GeneralTabPage.Controls.Add(this.ButtonBComboBox);
-            this.GeneralTabPage.Controls.Add(this.RightStickAxisXLabel);
+            this.GeneralTabPage.Controls.Add(this.RightThumbAxisXLabel);
             this.GeneralTabPage.Controls.Add(this.LeftThumbAxisXLabel);
             this.GeneralTabPage.Controls.Add(this.ButtonXLabel);
             this.GeneralTabPage.Controls.Add(this.RightShoulderLabel);
             this.GeneralTabPage.Controls.Add(this.ButtonYComboBox);
-            this.GeneralTabPage.Controls.Add(this.RightStickAxisXComboBox);
+            this.GeneralTabPage.Controls.Add(this.RightThumbAxisXComboBox);
             this.GeneralTabPage.Controls.Add(this.ButtonBLabel);
             this.GeneralTabPage.Controls.Add(this.LeftThumbAxisXComboBox);
             this.GeneralTabPage.Controls.Add(this.BigButtonComboBox);
@@ -452,19 +452,19 @@
             this.GeneralTabPage.Controls.Add(this.DPadUpLabel);
             this.GeneralTabPage.Controls.Add(this.DPadLabel);
             this.GeneralTabPage.Controls.Add(this.BackButtonLabel);
-            this.GeneralTabPage.Controls.Add(this.RightStickAxisYLabel);
+            this.GeneralTabPage.Controls.Add(this.RightThumbAxisYLabel);
             this.GeneralTabPage.Controls.Add(this.ButtonYLabel);
-            this.GeneralTabPage.Controls.Add(this.LeftStickAxisYLabel);
+            this.GeneralTabPage.Controls.Add(this.LeftThumbAxisYLabel);
             this.GeneralTabPage.Controls.Add(this.LeftShoulderLabel);
             this.GeneralTabPage.Controls.Add(this.label2);
             this.GeneralTabPage.Controls.Add(this.label1);
             this.GeneralTabPage.Controls.Add(this.LeftTriggerLabel);
-            this.GeneralTabPage.Controls.Add(this.RightStickButtonLabel);
+            this.GeneralTabPage.Controls.Add(this.RightThumbButtonLabel);
             this.GeneralTabPage.Controls.Add(this.LeftThumbButtonComboBox);
             this.GeneralTabPage.Controls.Add(this.LeftThumbButtonLabel);
             this.GeneralTabPage.Controls.Add(this.LeftThumbAxisYComboBox);
-            this.GeneralTabPage.Controls.Add(this.RightStickAxisYComboBox);
-            this.GeneralTabPage.Controls.Add(this.RightStickButtonComboBox);
+            this.GeneralTabPage.Controls.Add(this.RightThumbAxisYComboBox);
+            this.GeneralTabPage.Controls.Add(this.RightThumbButtonComboBox);
             this.GeneralTabPage.Controls.Add(this.TopPictureBox);
             this.GeneralTabPage.Location = new System.Drawing.Point(4, 22);
             this.GeneralTabPage.Name = "GeneralTabPage";
@@ -718,16 +718,16 @@
             this.LeftTriggerTextBox.Text = "0";
             this.LeftTriggerTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // RightStickTextBox
+            // RightThumbTextBox
             // 
-            this.RightStickTextBox.Location = new System.Drawing.Point(524, 194);
-            this.RightStickTextBox.Name = "RightStickTextBox";
-            this.RightStickTextBox.ReadOnly = true;
-            this.RightStickTextBox.Size = new System.Drawing.Size(89, 20);
-            this.RightStickTextBox.TabIndex = 19;
-            this.RightStickTextBox.TabStop = false;
-            this.RightStickTextBox.Text = "0;0";
-            this.RightStickTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.RightThumbTextBox.Location = new System.Drawing.Point(524, 194);
+            this.RightThumbTextBox.Name = "RightThumbTextBox";
+            this.RightThumbTextBox.ReadOnly = true;
+            this.RightThumbTextBox.Size = new System.Drawing.Size(89, 20);
+            this.RightThumbTextBox.TabIndex = 19;
+            this.RightThumbTextBox.TabStop = false;
+            this.RightThumbTextBox.Text = "0;0";
+            this.RightThumbTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // LeftThumbTextBox
             // 
@@ -821,14 +821,14 @@
             this.ButtonBComboBox.TabIndex = 58;
             this.ButtonBComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
             // 
-            // RightStickAxisXLabel
+            // RightThumbAxisXLabel
             // 
-            this.RightStickAxisXLabel.AutoSize = true;
-            this.RightStickAxisXLabel.Location = new System.Drawing.Point(444, 223);
-            this.RightStickAxisXLabel.Name = "RightStickAxisXLabel";
-            this.RightStickAxisXLabel.Size = new System.Drawing.Size(63, 13);
-            this.RightStickAxisXLabel.TabIndex = 35;
-            this.RightStickAxisXLabel.Text = "Stick Axis X";
+            this.RightThumbAxisXLabel.AutoSize = true;
+            this.RightThumbAxisXLabel.Location = new System.Drawing.Point(444, 223);
+            this.RightThumbAxisXLabel.Name = "RightThumbAxisXLabel";
+            this.RightThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
+            this.RightThumbAxisXLabel.TabIndex = 35;
+            this.RightThumbAxisXLabel.Text = "Stick Axis X";
             // 
             // LeftThumbAxisXLabel
             // 
@@ -868,16 +868,16 @@
             this.ButtonYComboBox.TabIndex = 55;
             this.ButtonYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
             // 
-            // RightStickAxisXComboBox
+            // RightThumbAxisXComboBox
             // 
-            this.RightStickAxisXComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RightStickAxisXComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.RightStickAxisXComboBox.FormattingEnabled = true;
-            this.RightStickAxisXComboBox.Location = new System.Drawing.Point(524, 220);
-            this.RightStickAxisXComboBox.Name = "RightStickAxisXComboBox";
-            this.RightStickAxisXComboBox.Size = new System.Drawing.Size(89, 21);
-            this.RightStickAxisXComboBox.TabIndex = 56;
-            this.RightStickAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+            this.RightThumbAxisXComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RightThumbAxisXComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RightThumbAxisXComboBox.FormattingEnabled = true;
+            this.RightThumbAxisXComboBox.Location = new System.Drawing.Point(524, 220);
+            this.RightThumbAxisXComboBox.Name = "RightThumbAxisXComboBox";
+            this.RightThumbAxisXComboBox.Size = new System.Drawing.Size(89, 21);
+            this.RightThumbAxisXComboBox.TabIndex = 56;
+            this.RightThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
             // 
             // ButtonBLabel
             // 
@@ -1026,14 +1026,14 @@
             this.BackButtonLabel.TabIndex = 22;
             this.BackButtonLabel.Text = "Back";
             // 
-            // RightStickAxisYLabel
+            // RightThumbAxisYLabel
             // 
-            this.RightStickAxisYLabel.AutoSize = true;
-            this.RightStickAxisYLabel.Location = new System.Drawing.Point(444, 250);
-            this.RightStickAxisYLabel.Name = "RightStickAxisYLabel";
-            this.RightStickAxisYLabel.Size = new System.Drawing.Size(63, 13);
-            this.RightStickAxisYLabel.TabIndex = 28;
-            this.RightStickAxisYLabel.Text = "Stick Axis Y";
+            this.RightThumbAxisYLabel.AutoSize = true;
+            this.RightThumbAxisYLabel.Location = new System.Drawing.Point(444, 250);
+            this.RightThumbAxisYLabel.Name = "RightThumbAxisYLabel";
+            this.RightThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
+            this.RightThumbAxisYLabel.TabIndex = 28;
+            this.RightThumbAxisYLabel.Text = "Stick Axis Y";
             // 
             // ButtonYLabel
             // 
@@ -1044,14 +1044,14 @@
             this.ButtonYLabel.TabIndex = 32;
             this.ButtonYLabel.Text = "Y Button";
             // 
-            // LeftStickAxisYLabel
+            // LeftThumbAxisYLabel
             // 
-            this.LeftStickAxisYLabel.AutoSize = true;
-            this.LeftStickAxisYLabel.Location = new System.Drawing.Point(101, 250);
-            this.LeftStickAxisYLabel.Name = "LeftStickAxisYLabel";
-            this.LeftStickAxisYLabel.Size = new System.Drawing.Size(63, 13);
-            this.LeftStickAxisYLabel.TabIndex = 33;
-            this.LeftStickAxisYLabel.Text = "Stick Axis Y";
+            this.LeftThumbAxisYLabel.AutoSize = true;
+            this.LeftThumbAxisYLabel.Location = new System.Drawing.Point(101, 250);
+            this.LeftThumbAxisYLabel.Name = "LeftThumbAxisYLabel";
+            this.LeftThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
+            this.LeftThumbAxisYLabel.TabIndex = 33;
+            this.LeftThumbAxisYLabel.Text = "Stick Axis Y";
             // 
             // LeftShoulderLabel
             // 
@@ -1091,14 +1091,14 @@
             this.LeftTriggerLabel.TabIndex = 29;
             this.LeftTriggerLabel.Text = "Trigger";
             // 
-            // RightStickButtonLabel
+            // RightThumbButtonLabel
             // 
-            this.RightStickButtonLabel.AutoSize = true;
-            this.RightStickButtonLabel.Location = new System.Drawing.Point(444, 277);
-            this.RightStickButtonLabel.Name = "RightStickButtonLabel";
-            this.RightStickButtonLabel.Size = new System.Drawing.Size(65, 13);
-            this.RightStickButtonLabel.TabIndex = 30;
-            this.RightStickButtonLabel.Text = "Stick Button";
+            this.RightThumbButtonLabel.AutoSize = true;
+            this.RightThumbButtonLabel.Location = new System.Drawing.Point(444, 277);
+            this.RightThumbButtonLabel.Name = "RightThumbButtonLabel";
+            this.RightThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
+            this.RightThumbButtonLabel.TabIndex = 30;
+            this.RightThumbButtonLabel.Text = "Stick Button";
             // 
             // LeftThumbButtonComboBox
             // 
@@ -1131,27 +1131,27 @@
             this.LeftThumbAxisYComboBox.TabIndex = 51;
             this.LeftThumbAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
             // 
-            // RightStickAxisYComboBox
+            // RightThumbAxisYComboBox
             // 
-            this.RightStickAxisYComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RightStickAxisYComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.RightStickAxisYComboBox.FormattingEnabled = true;
-            this.RightStickAxisYComboBox.Location = new System.Drawing.Point(524, 247);
-            this.RightStickAxisYComboBox.Name = "RightStickAxisYComboBox";
-            this.RightStickAxisYComboBox.Size = new System.Drawing.Size(89, 21);
-            this.RightStickAxisYComboBox.TabIndex = 44;
-            this.RightStickAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+            this.RightThumbAxisYComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RightThumbAxisYComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RightThumbAxisYComboBox.FormattingEnabled = true;
+            this.RightThumbAxisYComboBox.Location = new System.Drawing.Point(524, 247);
+            this.RightThumbAxisYComboBox.Name = "RightThumbAxisYComboBox";
+            this.RightThumbAxisYComboBox.Size = new System.Drawing.Size(89, 21);
+            this.RightThumbAxisYComboBox.TabIndex = 44;
+            this.RightThumbAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
             // 
-            // RightStickButtonComboBox
+            // RightThumbButtonComboBox
             // 
-            this.RightStickButtonComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RightStickButtonComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.RightStickButtonComboBox.FormattingEnabled = true;
-            this.RightStickButtonComboBox.Location = new System.Drawing.Point(524, 274);
-            this.RightStickButtonComboBox.Name = "RightStickButtonComboBox";
-            this.RightStickButtonComboBox.Size = new System.Drawing.Size(89, 21);
-            this.RightStickButtonComboBox.TabIndex = 49;
-            this.RightStickButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+            this.RightThumbButtonComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RightThumbButtonComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RightThumbButtonComboBox.FormattingEnabled = true;
+            this.RightThumbButtonComboBox.Location = new System.Drawing.Point(524, 274);
+            this.RightThumbButtonComboBox.Name = "RightThumbButtonComboBox";
+            this.RightThumbButtonComboBox.Size = new System.Drawing.Size(89, 21);
+            this.RightThumbButtonComboBox.TabIndex = 49;
+            this.RightThumbButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
             // 
             // TopPictureBox
             // 
@@ -1384,7 +1384,7 @@
 		private System.Windows.Forms.ComboBox DPadComboBox;
 		private System.Windows.Forms.TextBox RightTriggerTextBox;
 		private System.Windows.Forms.TextBox LeftTriggerTextBox;
-		private System.Windows.Forms.TextBox RightStickTextBox;
+		private System.Windows.Forms.TextBox RightThumbTextBox;
 		private System.Windows.Forms.TextBox LeftThumbTextBox;
 		private System.Windows.Forms.ComboBox LeftTriggerComboBox;
 		private System.Windows.Forms.PictureBox FrontPictureBox;
@@ -1394,12 +1394,12 @@
 		private System.Windows.Forms.Label RightTriggerLabel;
 		private System.Windows.Forms.ComboBox RightTriggerComboBox;
 		private System.Windows.Forms.ComboBox ButtonBComboBox;
-		private System.Windows.Forms.Label RightStickAxisXLabel;
+		private System.Windows.Forms.Label RightThumbAxisXLabel;
 		private System.Windows.Forms.Label LeftThumbAxisXLabel;
 		private System.Windows.Forms.Label ButtonXLabel;
 		private System.Windows.Forms.Label RightShoulderLabel;
 		private System.Windows.Forms.ComboBox ButtonYComboBox;
-		private System.Windows.Forms.ComboBox RightStickAxisXComboBox;
+		private System.Windows.Forms.ComboBox RightThumbAxisXComboBox;
 		private System.Windows.Forms.Label ButtonBLabel;
 		private System.Windows.Forms.ComboBox LeftThumbAxisXComboBox;
 		private System.Windows.Forms.ComboBox BigButtonComboBox;
@@ -1415,17 +1415,17 @@
 		private System.Windows.Forms.Label DPadUpLabel;
 		private System.Windows.Forms.Label DPadLabel;
 		private System.Windows.Forms.Label BackButtonLabel;
-		private System.Windows.Forms.Label RightStickAxisYLabel;
+		private System.Windows.Forms.Label RightThumbAxisYLabel;
 		private System.Windows.Forms.Label ButtonYLabel;
-		private System.Windows.Forms.Label LeftStickAxisYLabel;
+		private System.Windows.Forms.Label LeftThumbAxisYLabel;
 		private System.Windows.Forms.Label LeftShoulderLabel;
 		private System.Windows.Forms.Label LeftTriggerLabel;
-		private System.Windows.Forms.Label RightStickButtonLabel;
+		private System.Windows.Forms.Label RightThumbButtonLabel;
 		private System.Windows.Forms.ComboBox LeftThumbButtonComboBox;
 		private System.Windows.Forms.Label LeftThumbButtonLabel;
 		private System.Windows.Forms.ComboBox LeftThumbAxisYComboBox;
-		private System.Windows.Forms.ComboBox RightStickAxisYComboBox;
-		private System.Windows.Forms.ComboBox RightStickButtonComboBox;
+		private System.Windows.Forms.ComboBox RightThumbAxisYComboBox;
+		private System.Windows.Forms.ComboBox RightThumbButtonComboBox;
 		private System.Windows.Forms.PictureBox TopPictureBox;
 		private System.Windows.Forms.TabControl PadTabControl;
 		private System.Windows.Forms.Label label2;

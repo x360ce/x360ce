@@ -51,7 +51,9 @@ namespace x360ce.App
             this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
             this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
             this.FakeApiGroupBox = new System.Windows.Forms.GroupBox();
+            this.FakeDiLabel = new System.Windows.Forms.Label();
             this.FakeWmiLabel = new System.Windows.Forms.Label();
+            this.FakeDiComboBox = new System.Windows.Forms.ComboBox();
             this.FakeWmiComboBox = new System.Windows.Forms.ComboBox();
             this.FakeWinTrustCheckBox = new System.Windows.Forms.CheckBox();
             this.FakeVidTextBox = new System.Windows.Forms.TextBox();
@@ -75,8 +77,7 @@ namespace x360ce.App
             this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveButton = new System.Windows.Forms.Button();
             this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
-            this.FakeDiComboBox = new System.Windows.Forms.ComboBox();
-            this.FakeDiLabel = new System.Windows.Forms.Label();
+            this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
             this.MainTabControl.SuspendLayout();
             this.OptionsTabPage.SuspendLayout();
             this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -171,6 +172,7 @@ namespace x360ce.App
             this.TestingAndLoggingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
+            this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
             this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(455, 3);
             this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
@@ -281,6 +283,15 @@ namespace x360ce.App
             this.FakeApiGroupBox.TabStop = false;
             this.FakeApiGroupBox.Text = "Fake API";
             // 
+            // FakeDiLabel
+            // 
+            this.FakeDiLabel.AutoSize = true;
+            this.FakeDiLabel.Location = new System.Drawing.Point(6, 43);
+            this.FakeDiLabel.Name = "FakeDiLabel";
+            this.FakeDiLabel.Size = new System.Drawing.Size(48, 13);
+            this.FakeDiLabel.TabIndex = 26;
+            this.FakeDiLabel.Text = "Fake DI:";
+            // 
             // FakeWmiLabel
             // 
             this.FakeWmiLabel.AutoSize = true;
@@ -289,6 +300,16 @@ namespace x360ce.App
             this.FakeWmiLabel.Size = new System.Drawing.Size(60, 13);
             this.FakeWmiLabel.TabIndex = 26;
             this.FakeWmiLabel.Text = "Fake WMI:";
+            // 
+            // FakeDiComboBox
+            // 
+            this.FakeDiComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.FakeDiComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.FakeDiComboBox.FormattingEnabled = true;
+            this.FakeDiComboBox.Location = new System.Drawing.Point(69, 40);
+            this.FakeDiComboBox.Name = "FakeDiComboBox";
+            this.FakeDiComboBox.Size = new System.Drawing.Size(166, 21);
+            this.FakeDiComboBox.TabIndex = 28;
             // 
             // FakeWmiComboBox
             // 
@@ -486,24 +507,15 @@ namespace x360ce.App
             this.SettingsTimer.Interval = 500;
             this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
             // 
-            // FakeDiComboBox
+            // DebugModeCheckBox
             // 
-            this.FakeDiComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.FakeDiComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.FakeDiComboBox.FormattingEnabled = true;
-            this.FakeDiComboBox.Location = new System.Drawing.Point(69, 40);
-            this.FakeDiComboBox.Name = "FakeDiComboBox";
-            this.FakeDiComboBox.Size = new System.Drawing.Size(166, 21);
-            this.FakeDiComboBox.TabIndex = 28;
-            // 
-            // FakeDiLabel
-            // 
-            this.FakeDiLabel.AutoSize = true;
-            this.FakeDiLabel.Location = new System.Drawing.Point(6, 43);
-            this.FakeDiLabel.Name = "FakeDiLabel";
-            this.FakeDiLabel.Size = new System.Drawing.Size(48, 13);
-            this.FakeDiLabel.TabIndex = 26;
-            this.FakeDiLabel.Text = "Fake DI:";
+            this.DebugModeCheckBox.AutoSize = true;
+            this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 73);
+            this.DebugModeCheckBox.Name = "DebugModeCheckBox";
+            this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
+            this.DebugModeCheckBox.TabIndex = 21;
+            this.DebugModeCheckBox.Text = "Debug Mode";
+            this.DebugModeCheckBox.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -587,6 +599,7 @@ namespace x360ce.App
         private GroupBox TestingAndLoggingGroupBox;
         private Label FakeDiLabel;
         private ComboBox FakeDiComboBox;
+        private CheckBox DebugModeCheckBox;
 
 	}
 }

@@ -95,8 +95,13 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		JoystickState emptyState = default(JoystickState);
-
+		JoystickState emptyState {
+            get
+            {
+                return default(JoystickState);
+            }
+        }
+  
 		List<string> ShowDirectInputState(Device device)
 		{
 			List<string> actions = new List<string>();
@@ -246,11 +251,6 @@ namespace x360ce.App.Controls
 				deviceInstanceGuid = device == null ? Guid.Empty : device.DeviceInformation.InstanceGuid;
 			}
 			return ShowDirectInputState(device);
-		}
-
-		private void DirectInputControl_Load(object sender, EventArgs e)
-		{
-
 		}
 
 	}

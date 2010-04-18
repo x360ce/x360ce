@@ -9,9 +9,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using x360ce.App.XnaInput;
 using System.Text.RegularExpressions;
-using Microsoft.DirectX.DirectInput;
 using System.Collections.Specialized;
 using System.Security.Principal;
+using Microsoft.DirectX.DirectInput;
 using System.Security.AccessControl;
 
 namespace x360ce.App
@@ -22,6 +22,8 @@ namespace x360ce.App
         {
             InitializeComponent();
         }
+
+        public bool IsDebugMode { get { return DebugModeCheckBox.Checked; } }
 
         // Possible file names.
         string iniFileNew = "x360ce.ini";
@@ -125,32 +127,6 @@ namespace x360ce.App
             {
                 return;
             }
-            // Fix INI File.
-            var ini = new Ini(iniFile);
-            bool instancesChanged = false;
-            var instances = GetCurrentInstances(ref instancesChanged);
-            bool deviceOrderChanged = false;
-            for (int i = 0; i < instances.Count; i++)
-            {
-                string curInstance = instances[i].InstanceGuid.ToString("B").ToLower();
-                string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
-                if (oldInstance != curInstance) deviceOrderChanged = true;
-                ReadPadSettings(iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
-                SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
-            }
-            for (int i = instances.Count; i < 4; i++)
-            {
-                string curInstance = Guid.Empty.ToString("B").ToLower();
-                string oldInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
-                if (oldInstance != curInstance) deviceOrderChanged = true;
-                ReadPadSettings(iniFile, "IG_" + Guid.Empty.ToString("N"), i);
-                SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
-            }
-            if (deviceOrderChanged)
-            {
-                MessageBox.Show("Device order changed! Settings fixed. You must click [Save] button in order for XInput to work properly.", "Device order changed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            //
             ReloadXinputSettings();
             Version v = new Version(Application.ProductVersion);
             this.Text = string.Format(this.Text, Application.ProductVersion);
@@ -165,14 +141,14 @@ namespace x360ce.App
                 // case 5: this.Text += " RTM"; break; // Release to Manufacturing (RTM)
                 // case 6: this.Text += " GM"; break;  // General Availability (GA) / Gold
             }
-            //InitDirectInputTab();
-            // Timer will execute ReloadXInputLibrary();
-            //XInput.ReLoadLibrary(cXinput3File);
-            //XInput.ReLoadLibrary(cXinput3File);
-            // start capture events.
+            ////InitDirectInputTab();
+            //// Timer will execute ReloadXInputLibrary();
+            ////XInput.ReLoadLibrary(cXinput3File);
+            ////XInput.ReLoadLibrary(cXinput3File);
+            //// start capture events.
             if (Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
             timer.Start();
-            //ReloadXInputLibrary();
+            ////ReloadXInputLibrary();
         }
 
         public void CopyElevated(string source, string dest)
@@ -221,14 +197,10 @@ namespace x360ce.App
             }
             MessageBox.Show(message);
             //WindowsIdentity self = System.Security.Principal.WindowsIdentity.GetCurrent();
-
             //			 FileSystemAccessRule rule = new FileSystemAccessRule(
             //    self.Name, 
             //    FileSystemRights.FullControl,
             //    AccessControlType.Allow);
-
-
-
         }
 
 
@@ -291,8 +263,8 @@ namespace x360ce.App
 
         private void CleanStatusTimer_Tick(object sender, EventArgs e)
         {
-            //toolStripStatusLabel1.Text = "";
-            //CleanStatusTimer.Stop();
+            toolStripStatusLabel1.Text = "";
+            CleanStatusTimer.Stop();
         }
 
         private void LoadPresetButton_Click(object sender, EventArgs e)
@@ -352,7 +324,7 @@ namespace x360ce.App
             // store unique instance settings.
             for (int i = 0; i < 4; i++)
             {
-                string guidString = SettingsMap[string.Format("PAD{0}\\Instance", i + 1)].Text;
+                string guidString = SettingsMap[string.Format("PAD{0}\\"+SettingName.InstanceGuid, i + 1)].Text;
                 if (!Helper.IsGuid(guidString)) continue;
                 Guid ig = new Guid(guidString);
                 if (ig.Equals(Guid.Empty)) continue;
@@ -368,7 +340,13 @@ namespace x360ce.App
 
         #region Timer
 
-        List<DeviceInstance> _DiInstances = new List<DeviceInstance>();
+        List<DeviceInstance> _diInstances;
+        List<DeviceInstance> diInstances
+        {
+            get { return _diInstances = _diInstances ?? new List<DeviceInstance>(); }
+            set { _diInstances = value; }
+        }
+
         /// <summary>
         /// Access this only insite Timer_Click!
         /// </summary>
@@ -386,7 +364,7 @@ namespace x360ce.App
                 list.Add(di);
             }
             instancesChanged = false;
-            if (_DiInstances.Count != list.Count)
+            if (diInstances.Count != list.Count)
             {
                 instancesChanged = true;
             }
@@ -394,14 +372,14 @@ namespace x360ce.App
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (!_DiInstances[i].InstanceGuid.Equals(list[i].InstanceGuid))
+                    if (!diInstances[i].InstanceGuid.Equals(list[i].InstanceGuid))
                     {
                         instancesChanged = true;
                     }
                 }
             }
-            _DiInstances = list;
-            return _DiInstances;
+            diInstances = list;
+            return diInstances;
         }
 
         Device _CurrentDiDevice;
@@ -434,16 +412,6 @@ namespace x360ce.App
             return _CurrentDiDevice;
         }
 
-        /// <summary>
-        /// Delay settings trough timer so interface will be more responsive on TrackBars.
-        /// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
-        /// </summary>
-        public void NotifySettingsChange()
-        {
-            SettingsTimer.Stop();
-            SettingsTimer.Start();
-        }
-
         private void SettingsTimer_Tick(object sender, EventArgs e)
         {
             settingsChanged = true;
@@ -464,13 +432,15 @@ namespace x360ce.App
             }
             catch (Exception)
             {
-                System.Threading.Thread.Sleep(100);
+                if (IsDebugMode) throw;
+                else System.Threading.Thread.Sleep(100);
                 return;
             }
             var device = GetCurrentDiDevice(instances);
             tcount++;
             if (instancesChanged || settingsChanged)
             {
+                //FixConfig(instances);
                 settingsChanged = false;
                 XInput.ReLoadLibrary(dllFile);
                 reloads++;
@@ -480,7 +450,7 @@ namespace x360ce.App
             //toolStripStatusLabel1.Text = "";
             for (int i = 0; i < 4; i++)
             {
-                XInput.Controllers[i].PollState();
+                //XInput.Controllers[i].PollState();
                 var on = XInput.Controllers[i].IsConnected;
                 string image = on ? "green" : "grey";
                 // If DirectInput device exist but controller doesn't work then error.
@@ -492,17 +462,46 @@ namespace x360ce.App
             {
                 CurrentPadControl.UpdateFrom(CurrentController, device);
             }
-            catch (Exception) { }
-            //toolStripStatusLabel1.Text = string.Format("Reloads: {0}; Count: {1}", reloads, tcount);
+            catch (Exception)
+            {
+                if (IsDebugMode) throw;
+            }
+            toolStripStatusLabel1.Text = string.Format("Reloads: {0}; Count: {1}", reloads, tcount);
+        }
+
+        void FixConfig(List<DeviceInstance> instances)
+        {
+
+            // Fix INI File.
+            var ini = new Ini(iniFile);
+            for (int i = 0; i < instances.Count; i++)
+            {
+                string curInstance = instances[i].InstanceGuid.ToString("B").ToLower();
+                string padInstance = ini.GetValue(string.Format("PAD{0}", i + 1), SettingName.InstanceGuid).ToLower();
+                if (curInstance != padInstance)
+                {
+                    ReadPadSettings(iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
+                    SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
+                }
+            }
+            for (int i = instances.Count; i < 4; i++)
+            {
+                string curInstance = Guid.Empty.ToString("B").ToLower();
+                string padInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
+                if (curInstance != padInstance)
+                {
+                    ReadPadSettings(iniFile, "IG_" + Guid.Empty.ToString("N"), i);
+                    SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
+                }
+            }
+            //if (deviceOrderChanged)
+            //{
+            //    MessageBox.Show("Device order changed! Settings fixed. You must click [Save] button in order for XInput to work properly.", "Device order changed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //}
+
         }
 
         #endregion
-
-        private void ElevateThisAppButton_Click(object sender, EventArgs e)
-        {
-            timer.Stop();
-            Win32.WinAPI.RunElevated();
-        }
 
         bool HelpInit = false;
 
@@ -524,12 +523,6 @@ namespace x360ce.App
                 HelpRichTextBox.DeselectAll();
             }
         }
-
-
-
-
-
-
 
     }
 }
