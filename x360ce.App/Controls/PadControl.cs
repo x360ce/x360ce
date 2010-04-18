@@ -451,7 +451,7 @@ namespace x360ce.App.Controls
             map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
             map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
             map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
-            map.Add(section + SettingName.RightTriggerDeadZon, RightTriggerDeadZoneTrackBar);
+            map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
             // Force Feedback
             map.Add(section + SettingName.ForceEnable, FfEnableCheckBox);
             map.Add(section + SettingName.ForceSwapMotor, FfSwapMotorCheckBox);
