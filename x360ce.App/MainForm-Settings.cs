@@ -295,7 +295,7 @@ namespace x360ce.App
             string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
             // add comment.
             var l = SettingName.MaxNameLength - key.Length + 24;
-            v = string.Format("{0, -" + l + "} # {1}", v, SettingName.GetDescription(key));
+            v = string.Format("{0, -" + l + "} # {1} Default: '{2}'.", v, SettingName.GetDescription(key), SettingName.GetDefaultValue(key));
             ini.SetValue(iniSection, key, v);
             saveCount++;
             StatusSaveLabel.Text = string.Format("S {0}", saveCount);
