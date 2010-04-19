@@ -31,6 +31,8 @@ extern void FakeWMI();
 extern void FakeDI();
 extern void FakeWinTrust();
 
+extern VOID LoadOriginalDll(VOID);
+
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
 { 
 	WNDCLASSEX wcx; 

@@ -36,6 +36,7 @@ struct DIGAMEPAD {
 	TCHAR name[MAX_PATH];
 	WORD vid;
 	WORD pid;
+	GUID product;
 	GUID instance;
 	DIJOYSTATE2 state;
 	LPDIRECTINPUTEFFECT g_pEffect[2];
@@ -53,8 +54,9 @@ struct DIGAMEPAD {
 	INT axistodpadoffset;
 	DIGAMEPAD()
 	{
+		ZeroMemory(this,sizeof(DIGAMEPAD));
 		_tcscpy_s(ident,_T("[x360ce]"));
-		dwPadIndex = (DWORD) -1;
+		dwPadIndex = 0;
 		connected = 0;
 		for (INT i = 0; i < 2; ++i) g_pEffect[i] = NULL;
 		g_dwNumForceFeedbackAxis = NULL;
@@ -77,7 +79,6 @@ extern VOID Initialize(DWORD idx);
 extern HRESULT UpdateState( INT );
 extern HRESULT InitDirectInput( HWND hook, INT idx );
 extern VOID FreeDirectInput( INT idx );
-//extern WORD ConfigPadCount();
 extern WORD EnumPadCount();
 extern HRESULT Enumerate(DWORD idx);
 extern VOID FreeAll( VOID );

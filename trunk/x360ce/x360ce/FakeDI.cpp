@@ -52,9 +52,8 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 
 				for(int i = 0; i < 4; i++)
 				{
-					DWORD dwPIDVID = MAKELONG(Gamepad[i].vid,Gamepad[i].pid);
 
-					if (dwPIDVID != 0 && dwPIDVID == fakeguid.Data1)
+					if (Gamepad[i].product.Data1 != 0 && Gamepad[i].product.Data1 == fakeguid.Data1)
 					{
 						memcpy(&FakeInst,&ANSIInst,ANSIInst.dwSize);
 
@@ -100,9 +99,8 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 
 				for(int i = 0; i < 4; i++)
 				{
-					DWORD dwPIDVID = MAKELONG(Gamepad[i].vid,Gamepad[i].pid);
 
-					if (dwPIDVID != 0 && dwPIDVID == fakeguid.Data1)
+					if (Gamepad[i].product.Data1 != 0 && Gamepad[i].product.Data1 == fakeguid.Data1)
 					{
 						memcpy(&pFakeInst,pInst,pInst->dwSize);
 
@@ -166,8 +164,7 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 		{
 			for(int i = 0; i < 4; i++)
 			{
-				DWORD dwPIDVID = MAKELONG(Gamepad[i].vid,Gamepad[i].pid);
-				if(dwPIDVID != 0 && dwPIDVID == pdidi->guidProduct.Data1)
+				if(Gamepad[i].product.Data1 != 0 && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1)
 				{
 					LPOLESTR strOldguidProduct;
 					StringFromIID(pdidi->guidProduct,&strOldguidProduct);

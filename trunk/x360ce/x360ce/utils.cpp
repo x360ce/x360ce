@@ -178,3 +178,41 @@ LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ) {
 
 }
 
+inline static WORD flipShort(WORD s) {
+	return (s>>8) | (s<<8);
+}
+
+inline static DWORD flipLong(DWORD l) {
+	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
+}
+
+void GUIDtoString(TCHAR *data, const GUID *pg) 
+{
+	_stprintf(data, _T("%08X-%04X-%04X-%04X-%04X%08X"),
+		pg->Data1, (DWORD)pg->Data2, (DWORD)pg->Data3,
+		flipShort(((WORD*)pg->Data4)[0]), 
+		flipShort(((WORD*)pg->Data4)[1]),
+		flipLong(((DWORD*)pg->Data4)[1]));
+}
+
+int StringToGUID(GUID *pg, TCHAR *dataw) 
+{
+	char data[100];
+	if (_tcslen(dataw) > 50) return 0;
+	int w = 0;
+	while (dataw[w]) {
+		data[w] = (char) dataw[w];
+		w++;
+	}
+	data[w] = 0;
+	DWORD temp[5];
+	sscanf(data, "%08X-%04X-%04X-%04X-%04X%08X",
+		&pg->Data1, temp, temp+1,
+		temp+2, temp+3, temp+4);
+	pg->Data2 = (WORD) temp[0];
+	pg->Data3 = (WORD) temp[1];
+	((WORD*)pg->Data4)[0] = flipShort((WORD)temp[2]);
+	((WORD*)pg->Data4)[1] = flipShort((WORD)temp[3]);
+	((DWORD*)pg->Data4)[1] = flipLong(temp[4]);
+	return 1;
+}

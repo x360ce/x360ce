@@ -135,17 +135,21 @@ VOID ReadPadConfig(INT idx) {
 		return; 
 	}
 
-	ReadFromFile(section, _T("VID"), buffer, _T("0"));						Gamepad[idx].vid = (WORD) hexToDword(buffer);
-	ReadFromFile(section, _T("PID"), buffer, _T("0"));						Gamepad[idx].pid = (WORD) hexToDword(buffer);
+	//ReadFromFile(section, _T("VID"), buffer, _T("0"));						Gamepad[idx].vid = (WORD) hexToDword(buffer);
+	//ReadFromFile(section, _T("PID"), buffer, _T("0"));						Gamepad[idx].pid = (WORD) hexToDword(buffer);
+
+	ReadFromFile(section, _T("Product"), buffer, _T("0"));
+	StringToGUID(&Gamepad[idx].product,buffer);
+
+	Gamepad[idx].pid = HIWORD(Gamepad[idx].product.Data1);
+	Gamepad[idx].vid = LOWORD(Gamepad[idx].product.Data1);
 
 	ReadFromFile(section, _T("Instance"), buffer, _T("0"));
-	GUID outguid;
-	IIDFromString(buffer,&outguid);
-	Gamepad[idx].instance = outguid;
+	StringToGUID(&Gamepad[idx].instance,buffer);
 
-	DWORD dwPIDVID = MAKELONG(Gamepad[idx].vid,Gamepad[idx].pid);	if (dwPIDVID > 0) { PadMap.enabled = true; } else { return; }  
+	if (Gamepad[idx].product.Data1 > 0) { PadMap.enabled = true; } else { return; }  
 
-	Gamepad[idx].dwPadIndex = idx;
+	Gamepad[idx].dwPadIndex = idx+1;
 
 	ReadFromFile(section, _T("SwapMotor"), buffer, _T("0"));				Gamepad[idx].swapmotor = _ttoi(buffer);
 	ReadFromFile(section, _T("LeftMotorDirection"), buffer, _T("0"));		Gamepad[idx].wLMotorDirection = (WORD) _ttoi(buffer);

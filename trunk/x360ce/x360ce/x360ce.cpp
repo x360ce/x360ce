@@ -28,6 +28,8 @@ BOOL bUseEnabled= FALSE;
 DWORD dwlastUserIndex = (DWORD) -1;
 extern WORD wNativeMode;
 
+FARPROC p[12] = {0};
+
 VOID LoadOriginalDll(VOID)
 {
 
@@ -40,13 +42,14 @@ VOID LoadOriginalDll(VOID)
 	_tcscat_s(buffer,sizeof(buffer),_T("\\xinput1_3.dll"));
 
 	// try to load the system's dinput.dll, if pointer empty
-	if (!hNativeInstance) hNativeInstance = ::LoadLibrary(buffer);
+	if (!hNativeInstance) hNativeInstance = LoadLibrary(buffer);
 
 	// Debug
 	if (!hNativeInstance)
 	{
 		ExitProcess(0); // exit the hard way
 	}
+
 }
 
 HRESULT XInit(DWORD dwUserIndex){
@@ -92,8 +95,9 @@ HRESULT XInit(DWORD dwUserIndex){
 	return S_OK;
 }
 
-extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
+DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
+
 	//WriteLog(_T("XInputGetState"));
 	if(Gamepad[dwUserIndex].native) 
 	{
@@ -352,7 +356,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return hr;
 }
 
-extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
+DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
 
 	if(Gamepad[dwUserIndex].native) 
@@ -416,7 +420,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
+DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	if(Gamepad[dwUserIndex].native) 
 	{
@@ -453,7 +457,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	return ERROR_SUCCESS;
 }
 
-extern "C" VOID WINAPI XInputEnable(BOOL enable)
+VOID WINAPI XInputEnable(BOOL enable)
 {
 	if(wNativeMode) 
 	{
@@ -470,7 +474,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 }
 
-extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
+DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 (
  DWORD dwUserIndex,          // [in] Index of the gamer associated with the device
  GUID* pDSoundRenderGuid,    // [out] DSound device ID for render
@@ -484,7 +488,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 	return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetBatteryInformation
+DWORD WINAPI XInputGetBatteryInformation
 (
  DWORD                       dwUserIndex,        // [in]  Index of the gamer associated with the device
  BYTE                        devType,            // [in]  Which device on this user index
@@ -502,7 +506,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation
 
 }
 
-extern "C" DWORD WINAPI XInputGetKeystroke
+DWORD WINAPI XInputGetKeystroke
 (
  DWORD dwUserIndex,              // [in]  Index of the gamer associated with the device
  DWORD dwReserved,               // [in]  Reserved for future use
