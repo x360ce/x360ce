@@ -25,18 +25,6 @@ DIGAMEPAD Gamepad[4];	//but we need a 4 gamepads
 INT init[4] = {NULL};
 INT axiscount=0;
 
-#if 0
-WORD ConfigPadCount()
-{
-	WORD ret=0;
-	for(WORD pad=0;pad<4;pad++)
-	{
-		if(Gamepad[pad].id > -1) ret++;
-	}
-	return ret;	//returns configured pad count
-}
-#endif
-
 WORD EnumPadCount()
 {
 	WORD ret=0;
@@ -85,9 +73,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 	LPDIRECTINPUTDEVICE8 pDevice;
 	DIGAMEPAD * gp = (DIGAMEPAD*) pContext;
 
-	DWORD dwgpPIDVID = MAKELONG(gp->vid,gp->pid);
-
-	if(dwgpPIDVID == pInst->guidProduct.Data1 && gp->instance == pInst->guidInstance )
+	if(gp->product == pInst->guidProduct && gp->instance == pInst->guidInstance )
 	{
 		g_pDI->CreateDevice( pInst->guidInstance, &pDevice, NULL );
 		if(pDevice)
@@ -96,7 +82,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 			//gp->guid = pInst->guidProduct; 
 			_tcscpy_s(gp->name,pInst->tszProductName);
 			gp->connected = 1;
-			WriteLog(_T("[PAD%d] Device \"%s\" initialized"),gp->dwPadIndex+1,gp->name);
+			WriteLog(_T("[PAD%d] Device \"%s\" initialized"),gp->dwPadIndex,gp->name);
 
 			//LPOLESTR bbb;
 			//StringFromIID(gp->guid,&bbb);
