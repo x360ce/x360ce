@@ -15,9 +15,9 @@
  
 #include "stdafx.h"
 #include "globals.h"
-#include "directinput.h"
-#include "utils.h"
-#include "config.h"
+#include "DirectInput.h"
+#include "Utils.h"
+#include "Config.h"
 
 DINPUT_DATA DDATA;
 DINPUT_GAMEPAD Gamepad[4];	//but we need a 4 gamepads
