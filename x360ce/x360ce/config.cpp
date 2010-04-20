@@ -92,27 +92,24 @@ VOID InitConfig() {
 	if (pStr != NULL)
 		*(++pStr)=_T('\0'); 
 
-	TCHAR buffer[MAX_PATH];
-
 	_stprintf_s(tstrConfigFile,_T("%s%s"),strPath, _T("x360ce.ini"));
 
 	// Read global options
-	ReadFromFile(_T("Options"), _T("UseInitBeep"), buffer, _T("1"));	bInitBeep = _tstoi(buffer);
-	ReadFromFile(_T("Options"), _T("Log"), buffer, _T("0"));			writelog = _tstoi(buffer);
+	bInitBeep = ReadUINTFromFile(_T("Options"), _T("UseInitBeep"));
+	writelog = ReadUINTFromFile(_T("Options"), _T("Log"));
 
 	//FakeAPI
-	ReadFromFile(_T("FakeAPI"), _T("FakeWMI"), buffer, _T("0"));		wFakeWMI = (WORD) _tstoi(buffer);
-	ReadFromFile(_T("FakeAPI"), _T("FakeDI"), buffer, _T("0"));			wFakeDI = (WORD) _tstoi(buffer);
-	ReadFromFile(_T("FakeAPI"), _T("FakeWinTrust"), buffer, _T("0"));	wFakeWinTrust = (WORD) _tstoi(buffer);
+	wFakeWMI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWMI"));
+	wFakeDI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeDI"));
+	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"));
 
 	wFakeAPI = wFakeWMI + wFakeDI;
 
 	if(wFakeAPI)
 	{
-		ReadFromFile(_T("FakeAPI"), _T("FakeVID"), buffer, _T("0"));		wFakeVID = (WORD) hexToDword(buffer);
-		ReadFromFile(_T("FakeAPI"), _T("FakePID"), buffer, _T("0"));		wFakePID = (WORD) hexToDword(buffer);
+		wFakeVID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeVID"));
+		wFakePID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakePID"));
 	}
-
 
 	// Read pad mappings
 	for (WORD b = 0; b < 4; b++) 
@@ -122,65 +119,57 @@ VOID InitConfig() {
 
 VOID ReadPadConfig(INT idx) {
 
-	TCHAR section[20];
+	TCHAR section[5];
 	_stprintf_s(section,_T("PAD%d"),idx+1);
 	GamepadMap &PadMap = GamepadMapping[idx];
 
 	TCHAR buffer[MAX_PATH];
 
-	ReadFromFile(section, _T("Native"), buffer, _T("0"));					Gamepad[idx].native = _ttoi(buffer);
+	Gamepad[idx].native = ReadUINTFromFile(section, _T("Native"));
 	if(Gamepad[idx].native) 
 	{ 
 		wNativeMode = 1;
 		return; 
 	}
 
-	//ReadFromFile(section, _T("VID"), buffer, _T("0"));						Gamepad[idx].vid = (WORD) hexToDword(buffer);
-	//ReadFromFile(section, _T("PID"), buffer, _T("0"));						Gamepad[idx].pid = (WORD) hexToDword(buffer);
-
-	ReadFromFile(section, _T("Product"), buffer, _T("0"));
+	ReadStringFromFile(section, _T("Product"), buffer, _T("0"));
 	StringToGUID(&Gamepad[idx].product,buffer);
 
 	Gamepad[idx].pid = HIWORD(Gamepad[idx].product.Data1);
 	Gamepad[idx].vid = LOWORD(Gamepad[idx].product.Data1);
 
-	ReadFromFile(section, _T("Instance"), buffer, _T("0"));
+	ReadStringFromFile(section, _T("Instance"), buffer, _T("0"));
 	StringToGUID(&Gamepad[idx].instance,buffer);
 
 	if (Gamepad[idx].product.Data1 > 0) { PadMap.enabled = true; } else { return; }  
 
 	Gamepad[idx].dwPadIndex = idx+1;
 
-	ReadFromFile(section, _T("SwapMotor"), buffer, _T("0"));				Gamepad[idx].swapmotor = _ttoi(buffer);
-	ReadFromFile(section, _T("LeftMotorDirection"), buffer, _T("0"));		Gamepad[idx].wLMotorDirection = (WORD) _ttoi(buffer);
-	ReadFromFile(section, _T("RightMotorDirection"), buffer, _T("1"));		Gamepad[idx].wRMotorDirection = (WORD) _ttoi(buffer);
-	ReadFromFile(section, _T("TriggerDeadzone"), buffer, _T("25"));			Gamepad[idx].tdeadzone = _ttoi(buffer);
-	ReadFromFile(section, _T("UseForceFeedback"), buffer, _T("0"));			Gamepad[idx].useforce = _ttoi(buffer);
-	ReadFromFile(section, _T("ControllerType"), buffer, _T("1"));			Gamepad[idx].gamepadtype = _ttoi(buffer);			//WILDS
-	ReadFromFile(section, _T("AxisToDPad"), buffer, _T("0"));				Gamepad[idx].axistodpad = _ttoi(buffer);			//WILDS
-	ReadFromFile(section, _T("AxisToDPadDeadZone"), buffer, _T("256"));		Gamepad[idx].axistodpaddeadzone = _ttoi(buffer);	//WILDS
-	ReadFromFile(section, _T("AxisToDPadOffset"), buffer, _T("0"));			Gamepad[idx].axistodpadoffset = _ttoi(buffer);		//WILDS
-	ReadFromFile(section, _T("ForcePercent"), buffer, _T("100"));			
-	
-		DWORD forcepercent = _ttoi(buffer);
-		Gamepad[idx].forcepercent = ((float)forcepercent * (float)0.01);
-
+	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"));
+	Gamepad[idx].wLMotorDirection = (WORD) ReadUINTFromFile(section, _T("LeftMotorDirection"));
+	Gamepad[idx].wRMotorDirection = (WORD) ReadUINTFromFile(section, _T("RightMotorDirection"));
+	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"));
+	Gamepad[idx].useforce = ReadUINTFromFile(section, _T("UseForceFeedback"));
+	Gamepad[idx].gamepadtype = ReadUINTFromFile(section, _T("ControllerType"));
+	Gamepad[idx].axistodpad = ReadUINTFromFile(section, _T("AxisToDPad"));
+	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"));
+	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"));
+	Gamepad[idx].forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent")) * (FLOAT) 0.01;	
 
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 	PadMap.DpadPOV = -1;
 
-	// All values start from 1 in the INI file
-
+	//TODO: fix this
 	for (INT i=0; i<10; ++i) {
-		if (ReadFromFile(section, buttonNames[i], buffer) > 0) {
+		if (ReadStringFromFile(section, buttonNames[i], buffer) > 0) {
 			INT val = _tstoi(buffer);
 			PadMap.Button[i] = val - 1;
 		}
 	}
 
 	for (INT i=0; i<4; ++i) {
-		if (ReadFromFile(section, povNames[i], buffer) > 0) {
+		if (ReadStringFromFile(section, povNames[i], buffer) > 0) {
 			
 			if(_tcsstr(buffer,_T("UP"))) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_UP;
 			if(_tcsstr(buffer,_T("DOWN"))) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_DOWN;
@@ -190,7 +179,7 @@ VOID ReadPadConfig(INT idx) {
 	}
 
 	for (INT i=0; i<4; ++i) {
-		if (ReadFromFile(section, axisNames[i], buffer) > 0) {
+		if (ReadStringFromFile(section, axisNames[i], buffer) > 0) {
 			LPTSTR a = buffer;
 			if (_totlower(*a) == 's') { // Slider
 				PadMap.Axis[i].analogType = SLIDER;
@@ -205,16 +194,16 @@ VOID ReadPadConfig(INT idx) {
 	}
 
 	for (INT i=0; i<4; ++i) {
-		if (ReadFromFile(section, axisBNames[i*2], buffer) > 0) {
+		if (UINT ret = ReadUINTFromFile(section, axisBNames[i*2]) > 0) {
 			PadMap.Axis[i].hasDigital = true;
-			PadMap.Axis[i].positiveButtonID = _ttoi(buffer) - 1;
+			PadMap.Axis[i].positiveButtonID = ret - 1;
 		}
-		if (ReadFromFile(section, axisBNames[i*2+1], buffer) > 0) {
+		if (UINT ret = ReadUINTFromFile(section, axisBNames[i*2+1]) > 0) {
 			PadMap.Axis[i].hasDigital = true;
-			PadMap.Axis[i].negativeButtonID = _ttoi(buffer) - 1;
+			PadMap.Axis[i].negativeButtonID = ret - 1;
 		}
 	}
-	if (ReadFromFile(section, _T("Left Trigger"), buffer) > 0) {
+	if (ReadStringFromFile(section, _T("Left Trigger"), buffer) > 0) {
 		LPTSTR a = buffer;
 		if ((PadMap.Trigger[0].type = getTriggerType(a)) == DIGITAL) {
 			PadMap.Trigger[0].id = _ttoi(a) - 1;
@@ -224,7 +213,7 @@ VOID ReadPadConfig(INT idx) {
 		}
 	}
 
-	if (ReadFromFile(section, _T("Right Trigger"), buffer) > 0) {
+	if (ReadStringFromFile(section, _T("Right Trigger"), buffer) > 0) {
 		LPTSTR a = buffer;
 		if ((PadMap.Trigger[1].type = getTriggerType(a)) == DIGITAL) {
 			PadMap.Trigger[1].id = _ttoi(a) - 1;
@@ -234,9 +223,8 @@ VOID ReadPadConfig(INT idx) {
 		}
 	}
 
-	if (ReadFromFile(section, _T("D-pad POV"), buffer) > 0) {
-		INT val = _tstoi(buffer);
-		PadMap.DpadPOV = val - 1;
+	if (UINT ret = ReadUINTFromFile(section, _T("D-pad POV")) > 0) {
+		PadMap.DpadPOV = ret - 1;
 	}
 }
 

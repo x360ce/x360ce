@@ -12,10 +12,10 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
-
-INT WriteToFile(LPTSTR, LPTSTR, LPTSTR);
-INT ReadFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput);
-INT ReadFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault);
+DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput);
+DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault);
+UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey);
+UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault);
 HWND GetWindowHandle(DWORD);
 LPTSTR const DXErrStr(HRESULT dierr);
 INT WriteLog(LPCTSTR,...);

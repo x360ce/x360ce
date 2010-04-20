@@ -28,10 +28,10 @@ HRESULT PrepareForce(INT idx, INT effidx);
 
 extern LPDIRECTINPUT8 g_pDI;
 
-struct DIGAMEPAD {
+struct DINPUT_GAMEPAD {
 	TCHAR ident[9];
 	LPDIRECTINPUTDEVICE8 g_pGamepad;
-	DWORD dwPadIndex;
+	DWORD dwPadIndex;  //starting from 1
 	BOOL connected;
 	TCHAR name[MAX_PATH];
 	WORD vid;
@@ -52,9 +52,9 @@ struct DIGAMEPAD {
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
-	DIGAMEPAD()
+	DINPUT_GAMEPAD()
 	{
-		ZeroMemory(this,sizeof(DIGAMEPAD));
+		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
 		_tcscpy_s(ident,_T("[x360ce]"));
 		dwPadIndex = 0;
 		connected = 0;
@@ -74,7 +74,7 @@ struct DIGAMEPAD {
 
 // externs
 
-extern struct DIGAMEPAD Gamepad[4];
+extern struct DINPUT_GAMEPAD Gamepad[4];
 extern VOID Initialize(DWORD idx);
 extern HRESULT UpdateState( INT );
 extern HRESULT InitDirectInput( HWND hook, INT idx );
