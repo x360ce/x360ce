@@ -33,7 +33,7 @@ struct DINPUT_GAMEPAD {
 	LPDIRECTINPUTDEVICE8 g_pGamepad;
 	DWORD dwPadIndex;  //starting from 1
 	BOOL connected;
-	TCHAR name[MAX_PATH];
+	TCHAR name[MAX_PATHW];
 	WORD vid;
 	WORD pid;
 	GUID product;

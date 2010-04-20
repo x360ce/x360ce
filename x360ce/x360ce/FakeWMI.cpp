@@ -77,7 +77,7 @@ HRESULT STDMETHODCALLTYPE NewGet(
 					if(Gamepad[i].pid != 0 && Gamepad[i].pid == dwPid)
 					{
 						WCHAR* strUSB = _tcsstr( pVal->bstrVal, _T("USB") );
-						WCHAR tempstr[MAX_PATH];
+						WCHAR tempstr[MAX_PATHW];
 						if( strUSB )
 						{
 							BSTR fakebstr=NULL;

@@ -85,9 +85,9 @@ GamepadMap GamepadMapping[4];
 VOID InitConfig() {
 
 	LPTSTR pStr;
-	TCHAR strPath[MAX_PATH];
-	extern TCHAR tstrConfigFile[MAX_PATH];	
-	GetModuleFileName (NULL, strPath, MAX_PATH);
+	TCHAR strPath[MAX_PATHW];
+	extern TCHAR tstrConfigFile[MAX_PATHW];	
+	GetModuleFileName (NULL, strPath, MAX_PATHW);
 	pStr = _tcsrchr(strPath, _T('\\'));
 	if (pStr != NULL)
 		*(++pStr)=_T('\0'); 
@@ -123,7 +123,7 @@ VOID ReadPadConfig(INT idx) {
 	_stprintf_s(section,_T("PAD%d"),idx+1);
 	GamepadMap &PadMap = GamepadMapping[idx];
 
-	TCHAR buffer[MAX_PATH];
+	TCHAR buffer[MAX_PATHW];
 
 	Gamepad[idx].native = ReadUINTFromFile(section, _T("Native"));
 	if(Gamepad[idx].native) 
@@ -155,7 +155,6 @@ VOID ReadPadConfig(INT idx) {
 	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"));
 	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"));
 	Gamepad[idx].forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent")) * (FLOAT) 0.01;	
-
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 	PadMap.DpadPOV = -1;
