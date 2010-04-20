@@ -43,6 +43,7 @@ namespace x360ce.App
             this.OptionsTabPage = new System.Windows.Forms.TabPage();
             this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
             this.UseInitBeepCheckBox = new System.Windows.Forms.CheckBox();
+            this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
             this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
             this.InstalledFilesGroupBox = new System.Windows.Forms.GroupBox();
             this.InstallFilesX360ceCheckBox = new System.Windows.Forms.CheckBox();
@@ -77,7 +78,6 @@ namespace x360ce.App
             this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveButton = new System.Windows.Forms.Button();
             this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
-            this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
             this.MainTabControl.SuspendLayout();
             this.OptionsTabPage.SuspendLayout();
             this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -190,6 +190,16 @@ namespace x360ce.App
             this.UseInitBeepCheckBox.TabIndex = 22;
             this.UseInitBeepCheckBox.Text = "Use Init Beep";
             this.UseInitBeepCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // DebugModeCheckBox
+            // 
+            this.DebugModeCheckBox.AutoSize = true;
+            this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 73);
+            this.DebugModeCheckBox.Name = "DebugModeCheckBox";
+            this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
+            this.DebugModeCheckBox.TabIndex = 21;
+            this.DebugModeCheckBox.Text = "Debug Mode";
+            this.DebugModeCheckBox.UseVisualStyleBackColor = true;
             // 
             // EnableLoggingCheckBox
             // 
@@ -507,16 +517,6 @@ namespace x360ce.App
             this.SettingsTimer.Interval = 500;
             this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
             // 
-            // DebugModeCheckBox
-            // 
-            this.DebugModeCheckBox.AutoSize = true;
-            this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 73);
-            this.DebugModeCheckBox.Name = "DebugModeCheckBox";
-            this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
-            this.DebugModeCheckBox.TabIndex = 21;
-            this.DebugModeCheckBox.Text = "Debug Mode";
-            this.DebugModeCheckBox.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -580,8 +580,7 @@ namespace x360ce.App
 		private TabPage Pad3TabPage;
 		private TabPage Pad4TabPage;
 		private ImageList BuletImageList;
-		public ToolStripStatusLabel toolStripStatusLabel1;
-		private Timer timer;
+        public ToolStripStatusLabel toolStripStatusLabel1;
 		private Timer SettingsTimer;
 		private ToolStripStatusLabel StatusEventsLabel;
 		private ToolStripStatusLabel StatusSaveLabel;
@@ -600,6 +599,7 @@ namespace x360ce.App
         private Label FakeDiLabel;
         private ComboBox FakeDiComboBox;
         private CheckBox DebugModeCheckBox;
+        public Timer timer;
 
 	}
 }

@@ -6,11 +6,11 @@ namespace x360ce.App.XnaInput
 	public class Controller
 	{
 		private static bool automaticallyPollState = true;
-		private int playerIndex = 0;
-		private XnaInput.GamePadState state = new XnaInput.GamePadState();
-		private Vibration vibration = new Vibration();
+        private PlayerIndex playerIndex = PlayerIndex.One;
+		private XnaInput.XINPUT_STATE state = new XnaInput.XINPUT_STATE();
+		private XINPUT_VIBRATION vibration = new XINPUT_VIBRATION();
 
-		internal Controller(int playerIndex)
+        internal Controller(PlayerIndex playerIndex)
 		{
 			this.playerIndex = playerIndex;
 		}
@@ -18,12 +18,12 @@ namespace x360ce.App.XnaInput
 		public bool IsButtonDown(ButtonValues buttonsToCheck)
 		{
 			this.PollStateInternal();
-			return ((this.state.Gamepad.Buttons & buttonsToCheck) != ButtonValues.None);
+			return ((this.state.GamePad.Buttons & buttonsToCheck) != ButtonValues.None);
 		}
 
 		public bool PollState()
 		{
-			return (XInput.GetState(this.playerIndex, ref this.state) == 0);
+			return (UnsafeNativeMethods.GetState(this.playerIndex, out this.state) == 0);
 		}
 
 		private bool PollStateInternal()
@@ -31,11 +31,11 @@ namespace x360ce.App.XnaInput
 			return (AutomaticallyPollState && this.PollState());
 		}
 
-		public void SetMotorSpeeds(ushort leftMotor, ushort rightMotor)
+		public void SetMotorSpeeds(short leftMotor, short rightMotor)
 		{
 			this.vibration.LeftMotorSpeed = leftMotor;
 			this.vibration.RightMotorSpeed = rightMotor;
-			XInput.SetState(this.playerIndex, ref this.vibration);
+			UnsafeNativeMethods.SetState(this.playerIndex, out this.vibration);
 		}
 
 		public static bool AutomaticallyPollState
@@ -58,7 +58,7 @@ namespace x360ce.App.XnaInput
 			}
 		}
 
-		public ushort LeftMotorSpeed
+		public short LeftMotorSpeed
 		{
 			get
 			{
@@ -67,11 +67,11 @@ namespace x360ce.App.XnaInput
 			set
 			{
 				this.vibration.LeftMotorSpeed = value;
-				XInput.SetState(this.playerIndex, ref this.vibration);
+				UnsafeNativeMethods.SetState(this.playerIndex, out this.vibration);
 			}
 		}
 
-		public ushort RightMotorSpeed
+		public short RightMotorSpeed
 		{
 			get
 			{
@@ -80,11 +80,11 @@ namespace x360ce.App.XnaInput
 			set
 			{
 				this.vibration.RightMotorSpeed = value;
-				XInput.SetState(this.playerIndex, ref this.vibration);
+				UnsafeNativeMethods.SetState(this.playerIndex, out this.vibration);
 			}
 		}
 
-		public XnaInput.GamePadState State
+		public XnaInput.XINPUT_STATE State
 		{
 			get
 			{

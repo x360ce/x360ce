@@ -381,7 +381,7 @@ namespace x360ce.App
         void ReloadXInputLibrary()
         {
             if (timer.Enabled) timer.Stop();
-            XInput.ReLoadLibrary(dllFile);
+            UnsafeNativeMethods.ReLoadLibrary(dllFile);
             timer.Start();
         }
 
