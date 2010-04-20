@@ -15,9 +15,9 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "utils.h"
-#include "config.h"
-#include "directinput.h"
+#include "Utils.h"
+#include "Config.h"
+#include "DirectInput.h"
 
 #pragma warning(disable:4310)
 

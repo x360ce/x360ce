@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "FakeAPI.h"
-#include "utils.h"
+#include "Utils.h"
 #include <Softpub.h>
 #include <detours.h>
 

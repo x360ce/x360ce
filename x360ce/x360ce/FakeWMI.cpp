@@ -25,9 +25,9 @@
 #include <oleauto.h>
 #include <detours.h>
 
-#include "utils.h"
+#include "Utils.h"
 
-#include "directinput.h"
+#include "DirectInput.h"
 
 #define _CRT_SECURE_NO_DEPRECATE
 #define _WIN32_DCOM

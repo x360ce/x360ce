@@ -16,11 +16,11 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "FakeAPI.h"
-#include "utils.h"
+#include "Utils.h"
 #include <detours.h>
 
 #define CINTERFACE	//needed for detours
-#include "directinput.h"
+#include "DirectInput.h"
 
 LPDIENUMDEVICESCALLBACK lpOldCallback= NULL;
 

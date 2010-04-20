@@ -15,8 +15,8 @@
  
 #include "stdafx.h"
 #include "globals.h"
-#include "directinput.h"
-#include "utils.h"
+#include "DirectInput.h"
+#include "Utils.h"
 
 TCHAR tstrConfigFile[MAX_PATHW];	
 BOOL writelog = 0;
