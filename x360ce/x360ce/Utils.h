@@ -12,6 +12,14 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
+
+// externs
+extern TCHAR tstrConfigFile[MAX_PATHW];
+extern BOOL writelog;
+extern BOOL logready; 
+extern LPTSTR logfilename;
+
+// prototypes
 DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput);
 DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault);
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey);
@@ -21,11 +29,5 @@ LPTSTR const DXErrStr(HRESULT dierr);
 INT WriteLog(LPCTSTR,...);
 LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
-int StringToGUID(GUID *pg, TCHAR *dataw);
-
-
-// externs
-extern TCHAR tstrConfigFile[MAX_PATHW];
-extern BOOL writelog;
-extern BOOL logready; 
-extern LPTSTR logfilename;
+void GUIDtoString(TCHAR *data, const GUID *pg);
+BOOL StringToGUID(GUID *pg, TCHAR *dataw);

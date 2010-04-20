@@ -209,8 +209,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="config.cpp" />
-    <ClCompile Include="directinput.cpp" />
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FakeDI.cpp" />
     <ClCompile Include="FakeWinTrust.cpp" />
@@ -221,12 +221,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h" />
-    <ClInclude Include="directinput.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="DirectInput.h" />
     <ClInclude Include="FakeAPI.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="resource.h" />
@@ -234,7 +234,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="svnrev_template.h" />
     <ClInclude Include="svnrev_unknown.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="x360ce.def" />

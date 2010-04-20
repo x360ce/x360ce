@@ -12,11 +12,13 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "stdafx.h"
 #include "globals.h"
 #include "DirectInput.h"
 #include "Utils.h"
+
+#pragma warning(disable:4996)
 
 TCHAR tstrConfigFile[MAX_PATHW];	
 BOOL writelog = 0;
@@ -197,7 +199,16 @@ inline static DWORD flipLong(DWORD l) {
 	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
 }
 
-int StringToGUID(GUID *pg, TCHAR *dataw) 
+void GUIDtoString(TCHAR *data, const GUID *pg) 
+{
+	_stprintf(data, _T("%08X-%04X-%04X-%04X-%04X%08X"),
+		pg->Data1, (DWORD)pg->Data2, (DWORD)pg->Data3,
+		flipShort(((WORD*)pg->Data4)[0]), 
+		flipShort(((WORD*)pg->Data4)[1]),
+		flipLong(((DWORD*)pg->Data4)[1]));
+}
+
+BOOL StringToGUID(GUID *pg, TCHAR *dataw) 
 {
 	char data[100];
 	if (_tcslen(dataw) > 50) return 0;

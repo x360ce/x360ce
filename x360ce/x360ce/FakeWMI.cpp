@@ -24,9 +24,7 @@
 #include <ole2.h>
 #include <oleauto.h>
 #include <detours.h>
-
 #include "Utils.h"
-
 #include "DirectInput.h"
 
 #define _CRT_SECURE_NO_DEPRECATE

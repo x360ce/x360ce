@@ -21,7 +21,6 @@
 
 DINPUT_DATA DDATA;
 DINPUT_GAMEPAD Gamepad[4];	//but we need a 4 gamepads
-LPDIEFFECT lpDIeff;
 
 INT init[4] = {NULL};
 INT axiscount=0;
