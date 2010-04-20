@@ -27,7 +27,7 @@ int StringToGUID(GUID *pg, TCHAR *dataw);
 
 // externs
 
-extern TCHAR tstrConfigFile[MAX_PATH];
+extern TCHAR tstrConfigFile[MAX_PATHW];
 extern BOOL writelog;
 extern BOOL logready; 
 extern LPTSTR logfilename;
