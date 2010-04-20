@@ -121,25 +121,28 @@
     <Compile Include="XnaInput\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="XnaInput\ErrorCodes.cs" />
     <Compile Include="XnaInput\FakeDi.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="XnaInput\FakeWmi.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XnaInput\GamePad.cs">
+    <Compile Include="XnaInput\XINPUT_CAPABILITIES.cs" />
+    <Compile Include="XnaInput\XINPUT_GAMEPAD.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XnaInput\GamePadState.cs">
+    <Compile Include="XnaInput\XINPUT_STATE.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="XnaInput\GamePadType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XnaInput\Vibration.cs">
+    <Compile Include="XnaInput\PlayerIndex.cs" />
+    <Compile Include="XnaInput\XINPUT_VIBRATION.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XnaInput\XInput.cs">
+    <Compile Include="XnaInput\UnsafeNativeMethods.cs">
       <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="Controls\AboutControl.resx">

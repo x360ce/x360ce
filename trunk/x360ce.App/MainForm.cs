@@ -51,8 +51,8 @@ namespace x360ce.App
             }
         }
 
-        Controller CurrentController { get { return XInput.Controllers[controllerIndex]; } }
-        GamePad CurrentPad { get { return CurrentController.State.Gamepad; } }
+        Controller CurrentController { get { return UnsafeNativeMethods.Controllers[controllerIndex]; } }
+        XINPUT_GAMEPAD CurrentPad { get { return CurrentController.State.GamePad; } }
         Controls.PadControl CurrentPadControl { get { return ControlPads[controllerIndex]; } }
         TabPage CurrentPadTabControl { get { return ControlPages[controllerIndex]; } }
 
@@ -442,7 +442,7 @@ namespace x360ce.App
             {
                 //FixConfig(instances);
                 settingsChanged = false;
-                XInput.ReLoadLibrary(dllFile);
+                UnsafeNativeMethods.ReLoadLibrary(dllFile);
                 reloads++;
                 return;
             }
@@ -451,7 +451,7 @@ namespace x360ce.App
             for (int i = 0; i < 4; i++)
             {
                 //XInput.Controllers[i].PollState();
-                var on = XInput.Controllers[i].IsConnected;
+                var on = UnsafeNativeMethods.Controllers[i].PollState();
                 string image = on ? "green" : "grey";
                 // If DirectInput device exist but controller doesn't work then error.
                 if (i < instances.Count) if (!on) image = "red";
@@ -466,7 +466,7 @@ namespace x360ce.App
             {
                 if (IsDebugMode) throw;
             }
-            toolStripStatusLabel1.Text = string.Format("Reloads: {0}; Count: {1}", reloads, tcount);
+            toolStripStatusLabel1.Text = string.Format("Count: {0}, Reloads: {1}, Errors: {2}", tcount, reloads, Program.ErrorCount);
         }
 
         void FixConfig(List<DeviceInstance> instances)

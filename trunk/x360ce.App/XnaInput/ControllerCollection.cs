@@ -11,10 +11,10 @@ namespace x360ce.App.XnaInput
 
 		public ControllerCollection()
 		{
-			for (int i = 0; i < 4; i++)
-			{
-				this.controllers.Add(new Controller(i));
-			}
+            foreach (PlayerIndex playerIndex in Enum.GetValues(typeof(PlayerIndex)))
+            {
+                this.controllers.Add(new Controller(playerIndex));
+            }
 		}
 
 		public Controller this[int index]

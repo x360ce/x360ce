@@ -473,7 +473,7 @@ namespace x360ce.App.Controls
         private int rightY;
 
         Controller Controller;
-        GamePad GamePad;
+        XINPUT_GAMEPAD GamePad;
         Guid instanceGuid;
 
         public void UpdateFrom(Controller controller, Device device)
@@ -506,11 +506,11 @@ namespace x360ce.App.Controls
             Controller = controller;
             IsEnabled = controller.IsConnected;
             if (!IsEnabled) return;
-            GamePad = controller.State.Gamepad;
-            this.leftX = GamePad.ThumbLeftX;
-            this.leftY = GamePad.ThumbLeftY;
-            this.rightX = GamePad.ThumbRightX;
-            this.rightY = GamePad.ThumbRightY;
+            GamePad = controller.State.GamePad;
+            this.leftX = GamePad.ThumbLX;
+            this.leftY = GamePad.ThumbLY;
+            this.rightX = GamePad.ThumbRX;
+            this.rightY = GamePad.ThumbRY;
             UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", this.leftX, this.leftY));
             UpdateControl(RightThumbTextBox, string.Format("{0};{1}", this.rightX, this.rightY));
             //ButtonValues buttons = CurrentPad.Buttons;
@@ -718,7 +718,7 @@ namespace x360ce.App.Controls
         {
             if (Controller == null) return;
             float value = (float)LeftMotorTestTrackBar.Value / 100F * (float)ushort.MaxValue;
-            ushort speed = (ushort)value;
+            short speed = (short)value;
             LeftMotorTestTextBox.Text = string.Format("{0} ", speed);
             Controller.LeftMotorSpeed = speed;
             Controller.LeftMotorSpeed = speed;
@@ -728,7 +728,7 @@ namespace x360ce.App.Controls
         {
             if (Controller == null) return;
             float value = (float)RightMotorTestTrackBar.Value / 100F * (float)ushort.MaxValue;
-            ushort speed = (ushort)value;
+            short speed = (short)value;
             RightMotorTestTextBox.Text = string.Format("{0} ", speed);
             Controller.RightMotorSpeed = speed;
         }

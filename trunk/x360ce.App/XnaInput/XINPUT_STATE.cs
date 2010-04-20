@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 namespace x360ce.App.XnaInput
 {
 	[StructLayout(LayoutKind.Sequential)]
-	public struct GamePadState
+	public struct XINPUT_STATE
 	{
-		public uint PacketNumber;
-		public GamePad Gamepad;
+		public int PacketNumber;
+		public XINPUT_GAMEPAD GamePad;
 	}
 }
 
