@@ -55,18 +55,10 @@ VOID LoadOriginalDll(VOID)
 HRESULT XInit(DWORD dwUserIndex){
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
-	if( !Gamepad[dwUserIndex].vid ||  !Gamepad[dwUserIndex].pid ) return hr;
+	if(!Gamepad[dwUserIndex].product.Data1) return hr;
 
-	if(
-		Gamepad[dwUserIndex].g_pGamepad == NULL	&&	//and already gamepad is not enumerated
-		dwUserIndex != dwlastUserIndex				//only on-change
-		)
+	if(Gamepad[dwUserIndex].g_pGamepad == NULL && dwUserIndex != dwlastUserIndex)
 	{ 
-
-		if(bInitBeep)
-		{
-			MessageBeep(MB_OK);
-		}
 
 		WriteLog(_T("Initializing Gamepad %d"),dwUserIndex+1);
 		WriteLog(_T("User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
@@ -74,10 +66,6 @@ HRESULT XInit(DWORD dwUserIndex){
 		hr = Enumerate(dwUserIndex); //enumerate when is more configured devices than created
 		if(SUCCEEDED(hr))
 		{
-				if(bInitBeep)
-	{
-		MessageBeep(MB_OK);
-	}
 			WriteLog(_T("[PAD%d] Enumeration finished"),dwUserIndex+1);
 		}
 		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
@@ -85,7 +73,7 @@ HRESULT XInit(DWORD dwUserIndex){
 		hr = InitDirectInput(hWnd,dwUserIndex);
 		if(FAILED(hr))
 		{
-			WriteLog(_T("InitDirectInput fail (1) with %s"),DXErrStr(hr));
+			WriteLog(_T("XInit fail with %s"),DXErrStr(hr));
 		}
 	}
 	else return ERROR_DEVICE_NOT_CONNECTED;
@@ -111,6 +99,10 @@ DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
+	hr = XInit(dwUserIndex);
+
+	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+
 	/*
 	Nasty trick to support XInputEnable states, because not every game calls it so:
 	- must support games that use it, and do enable/disable as needed by game
@@ -121,10 +113,6 @@ DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	*/
 
 	if(!bEnabled && bUseEnabled) return S_OK;
-
-	hr = XInit(dwUserIndex);
-
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
 
 	GamepadMap PadMap = GamepadMapping[dwUserIndex];
 
@@ -388,7 +376,6 @@ DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 	if(NULL == Gamepad[dwUserIndex].g_pEffect[0]) hrLeftForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].wLMotorDirection);
 	if(NULL == Gamepad[dwUserIndex].g_pEffect[1]) hrRightForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].wRMotorDirection);
 
-
 	if(FAILED(hrLeftForce))WriteLog(_T("PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hr));
 	if(FAILED(hrRightForce))WriteLog(_T("PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hr));
 
@@ -467,7 +454,7 @@ VOID WINAPI XInputEnable(BOOL enable)
 		return nativeXInputEnable(enable);
 	}
 
-	WriteLog(_T("XInputEnable called, state %d"),enable);
+	WriteLog(_T("[CORE] XInputEnable called, state %d"),enable);
 
 	bEnabled = enable;
 	bUseEnabled = TRUE;

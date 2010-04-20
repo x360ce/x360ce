@@ -79,7 +79,6 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 			(HMENU) NULL,        // use class menu 
 			hX360ceInstance,     // handle to application instance 
 			(LPVOID) NULL);      // no window-creation data 
-
 		return TRUE;
 	}
 	else
@@ -87,7 +86,6 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 		WriteLog(_T("RegisterWindowClass Failed"));
 		return FALSE;
 	}
-	return FALSE;
 }
 
 VOID InitInstance(HMODULE hModule) 
@@ -97,11 +95,7 @@ VOID InitInstance(HMODULE hModule)
 #endif
 
 	hX360ceInstance = (HINSTANCE) hModule;
-
-	DisableThreadLibraryCalls(hX360ceInstance);
-
 	dwAppPID=GetCurrentProcessId();
-
 	InitConfig();
 
 #if SVN_MODS != 0 
@@ -110,9 +104,7 @@ VOID InitInstance(HMODULE hModule)
 	WriteLog(_T("x360ce SVN Revision %d started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
 #endif
 
-	Createx360ceWindow(hX360ceInstance);
-
-	if(!hWnd)
+	if(!Createx360ceWindow(hX360ceInstance))
 	{
 		WriteLog(_T("x360ce window not created, ForceFeedback will be disabled !"));
 	}
@@ -127,14 +119,9 @@ VOID InitInstance(HMODULE hModule)
 
 VOID ExitInstance() 
 {   
-	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
+	ReleaseDirectInput();
 
-	delete[] logfilename;
-	for(INT i=0;i<EnumPadCount();i++)
-	{
-		Gamepad[i].g_pGamepad = NULL;
-	}
-	g_pDI = NULL;
+	free(logfilename);
 
 	if (hNativeInstance)
 	{
@@ -143,17 +130,19 @@ VOID ExitInstance()
 		CloseHandle(hNativeInstance);
 	}
 
-	if(IsWindow(hWnd)) CloseHandle(hWnd);
-	if(hX360ceInstance) CloseHandle(hX360ceInstance);
+	if(IsWindow(hWnd)) DestroyWindow(hWnd);
+
+	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
 }
 
-extern "C" BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved)
+BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
 {
 	UNREFERENCED_PARAMETER(reserved);
 
 	if (dwReason == DLL_PROCESS_ATTACH ) 
 	{
-		InitInstance(hinst);
+		DisableThreadLibraryCalls(hModule);
+		InitInstance(hModule);
 	}
 
 	else if (dwReason == DLL_PROCESS_DETACH) 

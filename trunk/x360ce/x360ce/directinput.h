@@ -18,15 +18,17 @@
 #define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 
-HRESULT InitDirectInput(HWND, INT,INT);
-BOOL ButtonPressed(DWORD, INT);
+struct DINPUT_DATA 
+{
+	LPDIRECTINPUT8 g_pDI;
+	UINT refCount;
+	UINT deviceCount;
 
-VOID Initialize(DWORD);
-HRESULT Update(HWND, INT);
-HRESULT SetDeviceForces(INT idx, WORD force, INT type);
-HRESULT PrepareForce(INT idx, INT effidx);
-
-extern LPDIRECTINPUT8 g_pDI;
+	DINPUT_DATA()
+	{
+		ZeroMemory(this,sizeof(DINPUT_DATA));
+	}
+};
 
 struct DINPUT_GAMEPAD {
 	TCHAR ident[9];
@@ -52,6 +54,7 @@ struct DINPUT_GAMEPAD {
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
+
 	DINPUT_GAMEPAD()
 	{
 		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
@@ -72,13 +75,18 @@ struct DINPUT_GAMEPAD {
 	}
 };
 
-// externs
-
+//externs
 extern struct DINPUT_GAMEPAD Gamepad[4];
-extern VOID Initialize(DWORD idx);
-extern HRESULT UpdateState( INT );
-extern HRESULT InitDirectInput( HWND hook, INT idx );
-extern VOID FreeDirectInput( INT idx );
-extern WORD EnumPadCount();
-extern HRESULT Enumerate(DWORD idx);
-extern VOID FreeAll( VOID );
+extern LPDIEFFECT lpDIeff;
+
+// prototypes
+HRESULT InitDirectInput(HWND, INT,INT);
+BOOL ButtonPressed(DWORD, INT);
+HRESULT UpdateState( INT );
+HRESULT InitDirectInput( HWND hook, INT idx );
+WORD EnumPadCount();
+HRESULT Enumerate(DWORD idx);
+void ReleaseDirectInput();
+void Deactivate();
+HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx);
+HRESULT PrepareForce(DWORD idx, WORD effidx);
