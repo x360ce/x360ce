@@ -197,15 +197,6 @@ inline static DWORD flipLong(DWORD l) {
 	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
 }
 
-void GUIDtoString(TCHAR *data, const GUID *pg) 
-{
-	_stprintf(data, _T("%08X-%04X-%04X-%04X-%04X%08X"),
-		pg->Data1, (DWORD)pg->Data2, (DWORD)pg->Data3,
-		flipShort(((WORD*)pg->Data4)[0]), 
-		flipShort(((WORD*)pg->Data4)[1]),
-		flipLong(((DWORD*)pg->Data4)[1]));
-}
-
 int StringToGUID(GUID *pg, TCHAR *dataw) 
 {
 	char data[100];

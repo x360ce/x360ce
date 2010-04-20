@@ -146,8 +146,6 @@ VOID ReadPadConfig(INT idx) {
 	Gamepad[idx].dwPadIndex = idx+1;
 
 	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"));
-	Gamepad[idx].wLMotorDirection = (WORD) ReadUINTFromFile(section, _T("LeftMotorDirection"));
-	Gamepad[idx].wRMotorDirection = (WORD) ReadUINTFromFile(section, _T("RightMotorDirection"));
 	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"));
 	Gamepad[idx].useforce = ReadUINTFromFile(section, _T("UseForceFeedback"));
 	Gamepad[idx].gamepadtype = ReadUINTFromFile(section, _T("ControllerType"));

@@ -21,12 +21,10 @@ LPTSTR const DXErrStr(HRESULT dierr);
 INT WriteLog(LPCTSTR,...);
 LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
-void GUIDtoString(wchar_t *data, const GUID *pg);
 int StringToGUID(GUID *pg, TCHAR *dataw);
 
 
 // externs
-
 extern TCHAR tstrConfigFile[MAX_PATHW];
 extern BOOL writelog;
 extern BOOL logready; 
