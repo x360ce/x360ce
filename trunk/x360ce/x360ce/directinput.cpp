@@ -20,7 +20,7 @@
 #include "config.h"
 
 LPDIRECTINPUT8	g_pDI = NULL ;   //only one DirectInput interface is needed
-DIGAMEPAD Gamepad[4];	//but we need a 4 gamepads
+DINPUT_GAMEPAD Gamepad[4];	//but we need a 4 gamepads
 
 INT init[4] = {NULL};
 INT axiscount=0;
@@ -71,7 +71,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 								   VOID* pContext )
 {
 	LPDIRECTINPUTDEVICE8 pDevice;
-	DIGAMEPAD * gp = (DIGAMEPAD*) pContext;
+	DINPUT_GAMEPAD * gp = (DINPUT_GAMEPAD*) pContext;
 
 	if(gp->product == pInst->guidProduct && gp->instance == pInst->guidInstance )
 	{
@@ -99,7 +99,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
 
-	DIGAMEPAD * gp = (DIGAMEPAD*) pContext;
+	DINPUT_GAMEPAD * gp = (DINPUT_GAMEPAD*) pContext;
 
 	// For axes that are returned, set the DIPROP_RANGE property for the
 	// enumerated axis in order to scale min/max values.

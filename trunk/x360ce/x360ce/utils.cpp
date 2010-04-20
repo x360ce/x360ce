@@ -62,15 +62,26 @@ VOID GetTime(INT &year, INT &month, INT &day, INT &hour, INT &min, INT &sec ){
 	}
 }
 
-INT ReadFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput)
+DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput)
 {
-	return ReadFromFile(strFileSection, strKey, strOutput, NULL);
+	return ReadStringFromFile(strFileSection, strKey, strOutput, NULL);
 }
 
-INT ReadFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault)
+DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault)
 {
-	return GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, tstrConfigFile);
+	return GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATHW, tstrConfigFile);
 }
+
+UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
+{
+	return ReadUINTFromFile(strFileSection, strKey, NULL);
+}
+
+UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault)
+{
+	return GetPrivateProfileInt(strFileSection,strKey,uDefault,tstrConfigFile);
+}
+
 LPTSTR const DXErrStr(HRESULT dierr) {
 	if (dierr == DIERR_ACQUIRED) return _T("DIERR_ACQUIRED");
 	if (dierr == DI_BUFFEROVERFLOW) return _T("DI_BUFFEROVERFLOW");
@@ -206,7 +217,7 @@ int StringToGUID(GUID *pg, TCHAR *dataw)
 	}
 	data[w] = 0;
 	DWORD temp[5];
-	sscanf(data, "%08X-%04X-%04X-%04X-%04X%08X",
+	sscanf_s(data, "%08X-%04X-%04X-%04X-%04X%08X",
 		&pg->Data1, temp, temp+1,
 		temp+2, temp+3, temp+4);
 	pg->Data2 = (WORD) temp[0];

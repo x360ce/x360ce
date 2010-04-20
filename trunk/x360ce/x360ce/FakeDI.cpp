@@ -65,10 +65,10 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 						memcpy(&FakeInst.guidProduct.Data4, pdata4, 8);
 
-						LPOLESTR strOldguidProduct;
-						LPOLESTR strNewguidProduct;
-						StringFromIID(ANSIInst.guidProduct,&strOldguidProduct);
-						StringFromIID(FakeInst.guidProduct,&strNewguidProduct);
+						TCHAR strOldguidProduct[50];
+						TCHAR strNewguidProduct[50];
+						GUIDtoString(strOldguidProduct,&ANSIInst.guidProduct);
+						GUIDtoString(strNewguidProduct,&FakeInst.guidProduct);
 						WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
 						FakeInst.dwDevType = 66069;
@@ -112,10 +112,10 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 						memcpy(&pFakeInst.guidProduct.Data4, pdata4, 8);
 
-						LPOLESTR strOldguidProduct;
-						LPOLESTR strNewguidProduct;
-						StringFromIID(pInst->guidProduct,&strOldguidProduct);
-						StringFromIID(pFakeInst.guidProduct,&strNewguidProduct);
+						TCHAR strOldguidProduct[50];
+						TCHAR strNewguidProduct[50];
+						GUIDtoString(strOldguidProduct,&pInst->guidProduct);
+						GUIDtoString(strNewguidProduct,&pFakeInst.guidProduct);
 						WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
 						pFakeInst.dwDevType = 66069;
@@ -177,8 +177,8 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 					unsigned char pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 					memcpy(&(pdidi->guidProduct.Data4), pdata4, 8);
 
-					LPOLESTR strNewguidProduct;
-					StringFromIID(pdidi->guidProduct,&strNewguidProduct);
+					TCHAR strNewguidProduct[50];
+					GUIDtoString(strNewguidProduct,&pdidi->guidProduct);
 					WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
 					pdidi->dwDevType = 66069;
