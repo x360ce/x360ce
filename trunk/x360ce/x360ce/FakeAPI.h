@@ -20,3 +20,6 @@ extern WORD wFakeWinTrust;
 extern WORD wFakeVID;
 extern WORD wFakePID;
 
+void FakeWMI();
+void FakeDI();
+void FakeWinTrust();

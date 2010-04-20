@@ -21,36 +21,10 @@
 
 #pragma warning(disable:4310)
 
-extern HWND hWnd;
 BOOL bEnabled = FALSE;
 BOOL bUseEnabled= FALSE;
 
 DWORD dwlastUserIndex = (DWORD) -1;
-extern WORD wNativeMode;
-
-FARPROC p[12] = {0};
-
-VOID LoadOriginalDll(VOID)
-{
-
-	TCHAR buffer[MAX_PATHW];
-
-	// Getting path to system dir and to xinput1_3.dll
-	GetSystemDirectory(buffer,MAX_PATHW);
-
-	// Append dll name
-	_tcscat_s(buffer,sizeof(buffer),_T("\\xinput1_3.dll"));
-
-	// try to load the system's dinput.dll, if pointer empty
-	if (!hNativeInstance) hNativeInstance = LoadLibrary(buffer);
-
-	// Debug
-	if (!hNativeInstance)
-	{
-		ExitProcess(0); // exit the hard way
-	}
-
-}
 
 HRESULT XInit(DWORD dwUserIndex){
 

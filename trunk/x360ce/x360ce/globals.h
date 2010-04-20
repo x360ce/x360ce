@@ -22,15 +22,17 @@
 #define MAX_PATHW MAX_PATH*2
 
 // externs
-
 extern HINSTANCE hX360ceInstance;
 extern HINSTANCE hNativeInstance;
-
 extern HWND hWnd;
 extern DWORD dwAppPID;
 extern LPCTSTR PIDName(DWORD);
 extern VOID InitConfig();
 extern BOOL bEnabled;
+extern WORD wNativeMode;
+
+// prototypes
+void LoadOriginalDll();
 
 
 

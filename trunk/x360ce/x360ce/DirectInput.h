@@ -77,7 +77,6 @@ struct DINPUT_GAMEPAD {
 
 //externs
 extern struct DINPUT_GAMEPAD Gamepad[4];
-extern LPDIEFFECT lpDIeff;
 
 // prototypes
 HRESULT InitDirectInput(HWND, INT,INT);
