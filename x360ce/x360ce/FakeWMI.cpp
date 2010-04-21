@@ -79,12 +79,12 @@ HRESULT STDMETHODCALLTYPE NewGet(
 						if( strUSB )
 						{
 							BSTR fakebstr=NULL;
-							WriteLog(_T("Old DeviceID = %s"),pVal->bstrVal);
+							WriteLog(_T("[FAKEWMI] Old DeviceID = %s"),pVal->bstrVal);
 							_stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID );
 							fakebstr=SysAllocString(tempstr);
 							pVal->bstrVal = fakebstr;
 							SysFreeString(fakebstr);
-							WriteLog(_T("New DeviceID = %s"),pVal->bstrVal);
+							WriteLog(_T("[FAKEWMI] New DeviceID = %s"),pVal->bstrVal);
 							return hr;
 						}
 
@@ -95,12 +95,12 @@ HRESULT STDMETHODCALLTYPE NewGet(
 							if( strHID )
 							{
 								BSTR fakebstr=NULL;
-								WriteLog(_T("Old DeviceID = %s"),pVal->bstrVal);
+								WriteLog(_T("[FAKEWMI] Old DeviceID = %s"),pVal->bstrVal);
 								_stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID );
 								fakebstr=SysAllocString(tempstr);
 								pVal->bstrVal = fakebstr;
 								SysFreeString(fakebstr);
-								WriteLog(_T("New DeviceID = %s"),pVal->bstrVal);
+								WriteLog(_T("[FAKEWMI] New DeviceID = %s"),pVal->bstrVal);
 								return hr;
 							}
 						}
@@ -300,7 +300,7 @@ HRESULT WINAPI NewCoCreateInstance(__in     REFCLSID rclsid,
 
 void FakeWMI()
 {
-	WriteLog(_T("FakeWMI"));
+	WriteLog(_T("[FAKEAPI] FakeWMI"));
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());

@@ -35,11 +35,11 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 
 	if(pInst && pInst->dwSize!=0)
 	{
-		WriteLog(_T("FakeEnumCallback"));
+		WriteLog(_T("[FAKEDI] FakeEnumCallback"));
 
 		if(sizeof(DIDEVICEINSTANCEA) ==  pInst->dwSize) 	//ANSI or UNICODE ?
 		{
-			WriteLog(_T("FakeEnumCallback:: Using ANSI"));
+			WriteLog(_T("[FAKEDI] FakeEnumCallback:: Using ANSI"));
 			DIDEVICEINSTANCEA FakeInst;
 			DIDEVICEINSTANCEA ANSIInst;
 
@@ -69,7 +69,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						TCHAR strNewguidProduct[50];
 						GUIDtoString(strOldguidProduct,&ANSIInst.guidProduct);
 						GUIDtoString(strNewguidProduct,&FakeInst.guidProduct);
-						WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
 						FakeInst.dwDevType = 66069;
 						FakeInst.wUsage = 5;
@@ -90,7 +90,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 
 		else
 		{
-			WriteLog(_T("FakeEnumCallback:: Using UNICODE"));
+			WriteLog(_T("[FAKEDI] FakeEnumCallback:: Using UNICODE"));
 			DIDEVICEINSTANCEW pFakeInst;
 			if(wFakeDI >= 1)
 			{
@@ -116,16 +116,16 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						TCHAR strNewguidProduct[50];
 						GUIDtoString(strOldguidProduct,&pInst->guidProduct);
 						GUIDtoString(strNewguidProduct,&pFakeInst.guidProduct);
-						WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
 						pFakeInst.dwDevType = 66069;
 						pFakeInst.wUsage = 5;
 						pFakeInst.wUsagePage = 1;
 
 						_stprintf_s(pFakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
-						WriteLog(_T("Product Name change from %s to %s"),pInst->tszProductName,pFakeInst.tszProductName);
+						WriteLog(_T("[FAKEDI] Product Name change from %s to %s"),pInst->tszProductName,pFakeInst.tszProductName);
 						_stprintf_s(pFakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)")); 	
-						WriteLog(_T("Instance Name change from %s to %s"),pInst->tszInstanceName,pFakeInst.tszInstanceName);
+						WriteLog(_T("[FAKEDI] Instance Name change from %s to %s"),pInst->tszInstanceName,pFakeInst.tszInstanceName);
 
 						return lpOldCallback(&pFakeInst,pContext);
 					}
@@ -158,7 +158,7 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 	hr = OldGetDeviceInfo ( This, pdidi );
 	if(pdidi != NULL)
 	{
-		WriteLog(_T("NewGetDeviceInfo"));
+		WriteLog(_T("[FAKEDI] NewGetDeviceInfo"));
 
 		if(wFakeDI >= 2)
 		{
@@ -179,17 +179,17 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 
 					TCHAR strNewguidProduct[50];
 					GUIDtoString(strNewguidProduct,&pdidi->guidProduct);
-					WriteLog(_T("GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+					WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
 
 					pdidi->dwDevType = 66069;
 					pdidi->wUsage = 5;
 					pdidi->wUsagePage = 1;
-					WriteLog(_T("Product Name change from %s"), pdidi->tszProductName );
+					WriteLog(_T("[FAKEDI] Product Name change from %s"), pdidi->tszProductName );
 					_stprintf_s(pdidi->tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
 					WriteLog(_T("to %s"), pdidi->tszProductName );
-					WriteLog(_T("Instance Name change from %s"), pdidi->tszInstanceName );
+					WriteLog(_T("[FAKEDI] Instance Name change from %s"), pdidi->tszInstanceName );
 					_stprintf_s(pdidi->tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
-					WriteLog(_T("to %s"), pdidi->tszInstanceName );
+					WriteLog(_T("[FAKEDI] to %s"), pdidi->tszInstanceName );
 				}
 			}
 		}
@@ -203,21 +203,21 @@ HRESULT STDMETHODCALLTYPE NewGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rgu
 {
 	HRESULT hr;
 	hr = OldGetProperty (This, rguidProp, pdiph);
-	WriteLog(_T("NewGetProperty"));
+	WriteLog(_T("[FAKEDI] NewGetProperty"));
 
 	if ( (&rguidProp==&DIPROP_VIDPID) )
 	{
 		DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
-		WriteLog(_T("Old VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
+		WriteLog(_T("[FAKEDI] Old VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 		((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
-		WriteLog(_T("New VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
+		WriteLog(_T("[FAKEDI] New VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 	}
 	if ( (&rguidProp==&DIPROP_PRODUCTNAME) )
 	{
-		WriteLog(_T("Old PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
+		WriteLog(_T("[FAKEDI] Old PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 		_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
-		WriteLog(_T("New PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
+		WriteLog(_T("[FAKEDI] New PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 
 	}
 	return hr;
@@ -233,7 +233,7 @@ HRESULT STDMETHODCALLTYPE NewCreateDevice (LPDIRECTINPUT8 This, REFGUID rguid, L
 	hr = OldCreateDevice (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	if(lplpDirectInputDevice != NULL)
 	{
-		WriteLog(_T("NewCreateDevice"));
+		WriteLog(_T("[FAKEDI] NewCreateDevice"));
 		pDID = (LPDIRECTINPUTDEVICE8) *lplpDirectInputDevice;
 		if(pDID != NULL)
 		{
@@ -270,7 +270,7 @@ HRESULT WINAPI NewDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID ri
 
 	if(ppvOut != NULL) 
 	{
-		WriteLog(_T("NewDirectInput8Create"));
+		WriteLog(_T("[FAKEDI] NewDirectInput8Create"));
 
 		pDI = (LPDIRECTINPUT8) *ppvOut;
 		if(pDI != NULL) 
@@ -301,7 +301,7 @@ HRESULT WINAPI NewDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID ri
 
 void FakeDI()
 {
-	WriteLog(_T("FakeDInput"));
+	WriteLog(_T("[FAKEAPI] FakeDI"));
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());

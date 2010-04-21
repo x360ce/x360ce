@@ -15,5 +15,4 @@
  
 #define SVN_REV $WCREV$
 #define SVN_MODS $WCMODS?1:0$
-#define SVN_VERSION "3.2.0.$WCREV$"
 

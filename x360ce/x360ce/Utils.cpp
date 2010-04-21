@@ -139,7 +139,7 @@ LPTSTR const DXErrStr(HRESULT dierr) {
 
 }
 
-INT WriteLog(LPCTSTR str,...)
+BOOL WriteLog(LPTSTR str,...)
 {
 	if (writelog)
 	{
@@ -173,11 +173,10 @@ INT WriteLog(LPCTSTR str,...)
 		fprintf(fp," \n");
 		fclose(fp);
 
-		return 0;
+		return 1;
 	}
-	return -1;
+	return 0;
 }
-
 
 LONG clamp(LONG val, LONG min, LONG max) {
 	if (val < min) return min;

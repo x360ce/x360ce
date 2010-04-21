@@ -65,9 +65,6 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="svnrev_template.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -36,20 +36,20 @@ HRESULT XInit(DWORD dwUserIndex){
 	if(Gamepad[dwUserIndex].g_pGamepad == NULL && dwUserIndex != dwlastUserIndex)
 	{ 
 
-		WriteLog(_T("Initializing Gamepad %d"),dwUserIndex+1);
-		WriteLog(_T("User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
+		WriteLog(_T("[XINIT] Initializing Gamepad %d"),dwUserIndex+1);
+		WriteLog(_T("[XINIT] User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
 
 		hr = Enumerate(dwUserIndex); //enumerate when is more configured devices than created
 		if(SUCCEEDED(hr))
 		{
-			WriteLog(_T("[PAD%d] Enumeration finished"),dwUserIndex+1);
+			WriteLog(_T("[XINIT] [PAD%d] Enumeration finished"),dwUserIndex+1);
 		}
 		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 		hr = InitDirectInput(hWnd,dwUserIndex);
 		if(FAILED(hr))
 		{
-			WriteLog(_T("XInit fail with %s"),DXErrStr(hr));
+			WriteLog(_T("[XINIT] XInit fail with %s"),DXErrStr(hr));
 		}
 	}
 	else return ERROR_DEVICE_NOT_CONNECTED;
@@ -352,8 +352,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	if(NULL == Gamepad[dwUserIndex].g_pEffect[0]) hrLeftForce = PrepareForce(dwUserIndex,0);
 	if(NULL == Gamepad[dwUserIndex].g_pEffect[1]) hrRightForce = PrepareForce(dwUserIndex,1);
 
-	if(FAILED(hrLeftForce))WriteLog(_T("PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hr));
-	if(FAILED(hrRightForce))WriteLog(_T("PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hr));
+	if(FAILED(hrLeftForce))WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hr));
+	if(FAILED(hrRightForce))WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hr));
 
 
 	//Modified by Racer_S 9/20/2009
@@ -372,13 +372,13 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	// wLeftMotorSpeed
 
 	if(SUCCEEDED(hrLeftForce))hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
-	if(FAILED(hr))WriteLog(_T("SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
 
 
 	// wRightMotorSpeed
 
 	if(SUCCEEDED(hrRightForce))hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,1);
-	if(FAILED(hr))WriteLog(_T("SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
 
 	return ERROR_SUCCESS;
 }
@@ -422,7 +422,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	}
 	else pCapabilities = &XCAPS;
 
-	WriteLog(_T("XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
+	WriteLog(_T("[XINPUT] XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
@@ -437,7 +437,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 		return nativeXInputEnable(enable);
 	}
 
-	WriteLog(_T("[CORE] XInputEnable called, state %d"),enable);
+	WriteLog(_T("[XINPUT] XInputEnable called, state %d"),enable);
 
 	bEnabled = enable;
 	bUseEnabled = TRUE;

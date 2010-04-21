@@ -31,13 +31,7 @@ WORD wFakePID=0;
 
 WORD wNativeMode=0;
 
-DWORD hexToDword(LPTSTR buf)
-{
-	long v = wcstoul(buf, NULL, 16);
-	return v;
-}
-
-LPCTSTR buttonNames[10] = {
+static LPCTSTR buttonNames[10] = {
 	_T("A"),
 	_T("B"),
 	_T("X"),
@@ -50,20 +44,20 @@ LPCTSTR buttonNames[10] = {
 	_T("Right Thumb"),
 };
 
-LPCTSTR povNames[4] = {
+static LPCTSTR povNames[4] = {
 	_T("D-pad Up"),
 	_T("D-pad Down"),
 	_T("D-pad Left"),
 	_T("D-pad Right")
 };
 
-LPCTSTR axisNames[4] = {
+static LPCTSTR axisNames[4] = {
 	_T("Left Analog X"),
 	_T("Left Analog Y"),
 	_T("Right Analog X"),
 	_T("Right Analog Y")
 };
-LPCTSTR axisBNames[8] = {
+static LPCTSTR axisBNames[8] = {
 	_T("Left Analog X+ Button"),
 	_T("Left Analog X- Button"),
 	_T("Left Analog Y+ Button"),
@@ -73,7 +67,7 @@ LPCTSTR axisBNames[8] = {
 	_T("Right Analog Y+ Button"),
 	_T("Right Analog Y- Button")
 };
-LPCTSTR padNames[4] = {
+static LPCTSTR padNames[4] = {
 	_T("PAD1"),
 	_T("PAD2"),
 	_T("PAD3"),
