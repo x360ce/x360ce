@@ -1,4 +1,4 @@
-﻿v2.0.2.41 (2010-04-17) by Evaldas Jocys
+﻿v2.0.2.41 (2010-04-21) by Evaldas Jocys
 - Update: Reverted back to xinput1_3.dll updated to 3.1.4.1
 - Update: Xna Framework Input Updated to 3.1 version
 
