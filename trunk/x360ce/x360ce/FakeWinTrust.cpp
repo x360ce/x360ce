@@ -32,7 +32,7 @@ LONG WINAPI NewWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 
 void FakeWinTrust()
 {
-	WriteLog(_T("FakeWinTrust"));
+	WriteLog(_T("[FAKEAPI] FakeWinTrust"));
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());

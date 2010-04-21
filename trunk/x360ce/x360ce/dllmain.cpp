@@ -19,7 +19,6 @@
 #include "Config.h"
 #include "DirectInput.h"
 #include "FakeAPI.h"
-#include "svnrev.h"
 
 HINSTANCE hX360ceInstance = NULL;
 HINSTANCE hNativeInstance = NULL;
@@ -99,7 +98,7 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 	}
 	else
 	{
-		WriteLog(_T("RegisterWindowClass Failed"));
+		WriteLog(_T("[CORE] RegisterWindowClass Failed"));
 		return FALSE;
 	}
 }
@@ -115,14 +114,14 @@ VOID InitInstance(HMODULE hModule)
 	InitConfig(_T("x360ce.ini"));
 
 #if SVN_MODS != 0 
-	WriteLog(_T("x360ce SVN Revision %d (modded) started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
+	WriteLog(_T("[CORE] x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
 #else 
-	WriteLog(_T("x360ce SVN Revision %d started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
+	WriteLog(_T("[CORE] x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
 #endif
 
 	if(!Createx360ceWindow(hX360ceInstance))
 	{
-		WriteLog(_T("x360ce window not created, ForceFeedback will be disabled !"));
+		WriteLog(_T("[CORE] x360ce window not created, ForceFeedback will be disabled !"));
 	}
 
 	if(wFakeAPI)
@@ -163,7 +162,7 @@ extern "C" BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
 
 	else if (dwReason == DLL_PROCESS_DETACH) 
 	{
-		WriteLog(_T("x360ce terminating, bye"));
+		WriteLog(_T("[CORE] x360ce terminating, bye"));
 		ExitInstance();
 	}
 	return TRUE;

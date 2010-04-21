@@ -35,6 +35,8 @@
 #include <time.h>
 #include <fstream>
 
+#include <xinput.h>
+
 #if defined(DEBUG) | defined(_DEBUG)
 #include <crtdbg.h>
 #endif

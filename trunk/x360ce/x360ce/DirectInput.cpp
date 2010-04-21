@@ -92,7 +92,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 			gp->g_pGamepad = pDevice;
 			_tcscpy_s(gp->name,pInst->tszProductName);
 			gp->connected = 1;
-			WriteLog(_T("[PAD%d] Device \"%s\" initialized"),gp->dwPadIndex,gp->name);
+			WriteLog(_T("[DINPUT] [PAD%d] Device \"%s\" initialized"),gp->dwPadIndex,gp->name);
 
 		}
 		return DIENUM_STOP;
@@ -165,12 +165,12 @@ HRESULT Enumerate(DWORD idx)
 	Deactivate(idx);
 	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
 
-	WriteLog(_T("[PAD%d] Enumerating User ID %d"),idx+1,idx);
+	WriteLog(_T("[DINPUT] [PAD%d] Enumerating User ID %d"),idx+1,idx);
 	if( FAILED( hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL,
 		EnumGamepadsCallback, &Gamepad[idx],
 		DIEDFL_ATTACHEDONLY ) ) )
 	{
-		WriteLog(_T("[PAD%d] Enumeration FAILED !!!"),idx+1);
+		WriteLog(_T("[DINPUT] [PAD%d] Enumeration FAILED !!!"),idx+1);
 		return hr;
 	}
 	if(Gamepad[idx].g_pGamepad == NULL) WriteLog(_T("[PAD%d] Enumeration FAILED !!!"),idx+1);
@@ -188,7 +188,7 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->SetDataFormat( &c_dfDIJoystick2 ) ) )
 	{
-		WriteLog(_T("[PAD%d] SetDataFormat failed with code HR = %s"), idx+1, DXErrStr(hr));
+		WriteLog(_T("[DINPUT] [PAD%d] SetDataFormat failed with code HR = %s"), idx+1, DXErrStr(hr));
 		return hr;
 	}
 
@@ -200,18 +200,18 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 		DISCL_EXCLUSIVE |
 		DISCL_BACKGROUND ) ) )
 	{
-		WriteLog(_T("[PAD%d] SetCooperativeLevel (1) failed with code HR = %s"), idx+1, DXErrStr(coophr));
+		WriteLog(_T("[DINPUT] [PAD%d] SetCooperativeLevel (1) failed with code HR = %s"), idx+1, DXErrStr(coophr));
 		//return coophr;
 	}
 	if(coophr!=S_OK) 
 	{
-		WriteLog(_T("Device not exclusive acquired, disabling ForceFeedback"));
+		WriteLog(_T("[DINPUT] Device not exclusive acquired, disabling ForceFeedback"));
 		Gamepad[idx].useforce = 0;
 		if( FAILED( coophr = Gamepad[idx].g_pGamepad->SetCooperativeLevel( hDlg,
 			DISCL_NONEXCLUSIVE |
 			DISCL_BACKGROUND ) ) )
 		{
-			WriteLog(_T("[PAD%d] SetCooperativeLevel (2) failed with code HR = %s"), idx+1, DXErrStr(coophr));
+			WriteLog(_T("[DINPUT] [PAD%d] SetCooperativeLevel (2) failed with code HR = %s"), idx+1, DXErrStr(coophr));
 			//return coophr;
 		}
 	}
@@ -226,26 +226,26 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->SetProperty( DIPROP_AUTOCENTER, &dipdw.diph ) ) )
 	{
-		WriteLog(_T("[PAD%d] SetProperty failed with code HR = %s"), idx+1, DXErrStr(hr));
+		WriteLog(_T("[DINPUT] [PAD%d] SetProperty failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
 	}
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumObjectsCallback,
 		( VOID* )&Gamepad[idx], DIDFT_AXIS ) ) )
 	{
-		WriteLog(_T("[PAD%d] EnumObjects failed with code HR = %s"), idx+1, DXErrStr(hr));
+		WriteLog(_T("[DINPUT] [PAD%d] EnumObjects failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
 	}
 	else
 	{
-		WriteLog(_T("[PAD%d] Device with %d axes"),idx+1,axiscount);
+		WriteLog(_T("[DINPUT] [PAD%d] Device with %d axes"),idx+1,axiscount);
 	}
 	axiscount=0;
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumFFAxesCallback,
 		( VOID* )&Gamepad[idx].g_dwNumForceFeedbackAxis, DIDFT_AXIS ) ) )
 	{
-		WriteLog(_T("[PAD%d] EnumFFAxesCallback failed with code HR = %s"), idx+1, DXErrStr(hr));
+		WriteLog(_T("[DINPUT] [PAD%d] EnumFFAxesCallback failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
 	}
 
@@ -254,7 +254,7 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->Acquire() ) )
 	{
-		WriteLog(_T("[PAD%d] Acquire failed with code HR = %s"), idx+1, DXErrStr(hr));
+		WriteLog(_T("[DINPUT] [PAD%d] Acquire failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
 	}
 
@@ -328,7 +328,7 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 		if( FAILED( hr = Gamepad[idx].g_pGamepad->CreateEffect( GUID_ConstantForce  ,
 			&eff, &Gamepad[idx].g_pEffect[effidx] , NULL ) ) )
 		{
-			WriteLog(_T("[PAD%d] CreateEffect (1) failed with code HR = %s"), idx+1, DXErrStr(hr));
+			WriteLog(_T("[DINPUT] [PAD%d] CreateEffect (1) failed with code HR = %s"), idx+1, DXErrStr(hr));
 		}
 	}
 	return hr;

@@ -13,13 +13,21 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include <xinput.h>
+#include "svnrev.h"
 
 //useful macros
 #define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
 #define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
 #define arrayof(x) (sizeof(x)/sizeof(x[0])) 
 #define MAX_PATHW MAX_PATH*2
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
+#define VERSION_MAJOR 3
+#define VERSION_MINOR 2
+#define VERSION_PATCH 0
+#define VERSION_STRING TOSTRING(VERSION_MAJOR) "." TOSTRING(VERSION_MINOR) "." TOSTRING(VERSION_PATCH) "." TOSTRING(SVN_REV)
+
 
 // externs
 extern HINSTANCE hX360ceInstance;
