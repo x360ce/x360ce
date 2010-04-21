@@ -6,7 +6,6 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.DirectX.DirectInput;
-using x360ce.App.XnaInput;
 
 namespace x360ce.App.Controls
 {
