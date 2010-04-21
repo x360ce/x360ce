@@ -59,7 +59,7 @@ HRESULT XInit(DWORD dwUserIndex){
 	return S_OK;
 }
 
-DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
+extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 
 	//WriteLog(_T("XInputGetState"));
@@ -320,7 +320,7 @@ DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return hr;
 }
 
-DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
+extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
 
 	if(Gamepad[dwUserIndex].native) 
@@ -349,8 +349,8 @@ DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
 
-	if(NULL == Gamepad[dwUserIndex].g_pEffect[0]) hrLeftForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].wLMotorDirection);
-	if(NULL == Gamepad[dwUserIndex].g_pEffect[1]) hrRightForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].wRMotorDirection);
+	if(NULL == Gamepad[dwUserIndex].g_pEffect[0]) hrLeftForce = PrepareForce(dwUserIndex,0);
+	if(NULL == Gamepad[dwUserIndex].g_pEffect[1]) hrRightForce = PrepareForce(dwUserIndex,1);
 
 	if(FAILED(hrLeftForce))WriteLog(_T("PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hr));
 	if(FAILED(hrRightForce))WriteLog(_T("PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hr));
@@ -383,7 +383,7 @@ DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 	return ERROR_SUCCESS;
 }
 
-DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
+extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	if(Gamepad[dwUserIndex].native) 
 	{
@@ -418,16 +418,16 @@ DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPA
 		XCAPS.Vibration = Vibration;
 		XCAPS.Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
 
-		pCapabilities = (XINPUT_CAPABILITIES*)&XCAPS;
+		pCapabilities = &XCAPS;
 	}
-	else pCapabilities = (XINPUT_CAPABILITIES*)&XCAPS;
+	else pCapabilities = &XCAPS;
 
 	WriteLog(_T("XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
 
-VOID WINAPI XInputEnable(BOOL enable)
+extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
 	if(wNativeMode) 
 	{
@@ -444,7 +444,7 @@ VOID WINAPI XInputEnable(BOOL enable)
 
 }
 
-DWORD WINAPI XInputGetDSoundAudioDeviceGuids
+extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 (
  DWORD dwUserIndex,          // [in] Index of the gamer associated with the device
  GUID* pDSoundRenderGuid,    // [out] DSound device ID for render
@@ -458,7 +458,7 @@ DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 	return ERROR_SUCCESS;
 }
 
-DWORD WINAPI XInputGetBatteryInformation
+extern "C" DWORD WINAPI XInputGetBatteryInformation
 (
  DWORD                       dwUserIndex,        // [in]  Index of the gamer associated with the device
  BYTE                        devType,            // [in]  Which device on this user index
@@ -476,7 +476,7 @@ DWORD WINAPI XInputGetBatteryInformation
 
 }
 
-DWORD WINAPI XInputGetKeystroke
+extern "C" DWORD WINAPI XInputGetKeystroke
 (
  DWORD dwUserIndex,              // [in]  Index of the gamer associated with the device
  DWORD dwReserved,               // [in]  Reserved for future use
