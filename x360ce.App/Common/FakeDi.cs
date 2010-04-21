@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace x360ce.App.XnaInput
+namespace x360ce.App
 {
         public enum FakeDi
         {

@@ -7,12 +7,13 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using x360ce.App.XnaInput;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using System.Security.Principal;
 using Microsoft.DirectX.DirectInput;
 using System.Security.AccessControl;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 namespace x360ce.App
 {
@@ -51,8 +52,8 @@ namespace x360ce.App
             }
         }
 
-        Controller CurrentController { get { return UnsafeNativeMethods.Controllers[controllerIndex]; } }
-        XINPUT_GAMEPAD CurrentPad { get { return CurrentController.State.GamePad; } }
+        GamePadState CurrentController { get { return GamePad.GetState((PlayerIndex)controllerIndex); } }
+        //XINPUT_GAMEPAD CurrentPad { get { return CurrentController.State.GamePad; } }
         Controls.PadControl CurrentPadControl { get { return ControlPads[controllerIndex]; } }
         TabPage CurrentPadTabControl { get { return ControlPages[controllerIndex]; } }
 
@@ -251,7 +252,7 @@ namespace x360ce.App
             for (int i = 0; i < ControlPads.Length; i++)
             {
                 // Stop recording on all panels.
-                if (e.KeyCode == Keys.Escape && ControlPads[i].Recording)
+                if (e.KeyCode == System.Windows.Forms.Keys.Escape && ControlPads[i].Recording)
                 {
                     ControlPads[i].RecordingStop(null);
                     e.Handled = true;
@@ -451,7 +452,7 @@ namespace x360ce.App
             for (int i = 0; i < 4; i++)
             {
                 //XInput.Controllers[i].PollState();
-                var on = UnsafeNativeMethods.Controllers[i].PollState();
+                var on = GamePad.GetState((PlayerIndex)i).IsConnected;
                 string image = on ? "green" : "grey";
                 // If DirectInput device exist but controller doesn't work then error.
                 if (i < instances.Count) if (!on) image = "red";

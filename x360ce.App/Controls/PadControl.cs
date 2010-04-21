@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using x360ce.App.XnaInput;
 using System.Text.RegularExpressions;
 using Microsoft.DirectX.DirectInput;
+using Microsoft.Xna.Framework.Input;
 
 namespace x360ce.App.Controls
 {
@@ -234,27 +234,29 @@ namespace x360ce.App.Controls
             Point triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
             if (!Recording)
             {
+                var tl = FloatToByte(Controller.Triggers.Left);
+                var tr = FloatToByte(Controller.Triggers.Right);
                 // Temp workaround: when initialized triggers have default value of 127);
-                if (GamePad.LeftTrigger == 127 && GamePad.RightTrigger == 127)
+                if (tl == 110 && tr == 110)
                 {
                     this.LeftTriggerTextBox.Text = "0";
                     this.RightTriggerTextBox.Text = "0";
                 }
                 else
                 {
-                    UpdateControl(LeftTriggerTextBox, GamePad.LeftTrigger.ToString());
-                    UpdateControl(RightTriggerTextBox, GamePad.RightTrigger.ToString());
-                    on = GamePad.LeftTrigger > 0;
+                    UpdateControl(LeftTriggerTextBox, tl.ToString());
+                    UpdateControl(RightTriggerTextBox, tr.ToString());
+                    on = tl > 0;
                     setLabelColor(on, LeftTriggerLabel);
                     if (on) e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
-                    on = GamePad.RightTrigger > 0;
+                    on = tr > 0;
                     setLabelColor(on, RightTriggerLabel);
                     if (on) e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
                 }
-                on = Controller.IsButtonDown(ButtonValues.LeftShoulder);
+                on = Controller.IsButtonDown(Buttons.LeftShoulder);
                 setLabelColor(on, LeftShoulderLabel);
                 if (on) e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
-                on = Controller.IsButtonDown(ButtonValues.RightShoulder);
+                on = Controller.IsButtonDown(Buttons.RightShoulder);
                 setLabelColor(on, RightShoulderLabel);
                 if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
             }
@@ -313,53 +315,53 @@ namespace x360ce.App.Controls
                 setLabelColor(this.rightY > 2000, RightThumbAxisYLabel);
                 if (this.rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
 
-                on = Controller.IsButtonDown(ButtonValues.RightThumb);
+                on = Controller.IsButtonDown(Buttons.RightStick);
                 if (on) e.Graphics.DrawImage(this.markB, thumbRight.X + mW, thumbRight.Y + mH);
                 e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (this.rightX * padSize)), (float)((thumbRight.Y + mH) + (-this.rightY * padSize)));
                 setLabelColor(on, RightThumbButtonLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.LeftThumb);
+                on = Controller.IsButtonDown(Buttons.LeftStick);
                 if (on) e.Graphics.DrawImage(this.markB, thumbLeft.X + mW, thumbLeft.Y + mH);
                 e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (this.leftX * padSize)), (float)((thumbLeft.Y + mH) + (-this.leftY * padSize)));
                 setLabelColor(on, LeftThumbButtonLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Y);
+                on = Controller.IsButtonDown(Buttons.Y);
                 if (on) e.Graphics.DrawImage(this.markB, buttonY.X + mW, buttonY.Y + mH);
                 setLabelColor(on, ButtonYLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.X);
+                on = Controller.IsButtonDown(Buttons.X);
                 if (on) e.Graphics.DrawImage(this.markB, buttonX.X + mW, buttonX.Y + mH);
                 setLabelColor(on, ButtonXLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.B);
+                on = Controller.IsButtonDown(Buttons.B);
                 if (on) e.Graphics.DrawImage(this.markB, buttonB.X + mW, buttonB.Y + mH);
                 setLabelColor(on, ButtonBLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.A);
+                on = Controller.IsButtonDown(Buttons.A);
                 if (on) e.Graphics.DrawImage(this.markB, buttonA.X + mW, buttonA.Y + mH);
                 setLabelColor(on, ButtonALabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Start);
+                on = Controller.IsButtonDown(Buttons.Start);
                 if (on) e.Graphics.DrawImage(this.markB, buttonStart.X + mW, buttonStart.Y + mH);
                 setLabelColor(on, StartButtonLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Back);
+                on = Controller.IsButtonDown(Buttons.Back);
                 if (on) e.Graphics.DrawImage(this.markB, buttonBack.X + mW, buttonBack.Y + mH);
                 setLabelColor(on, BackButtonLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Up);
+                on = Controller.IsButtonDown(Buttons.DPadUp);
                 if (on) e.Graphics.DrawImage(this.markB, dPadUp.X + mW, dPadUp.Y + mH);
                 setLabelColor(on, DPadUpLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Down);
+                on = Controller.IsButtonDown(Buttons.DPadDown);
                 if (on) e.Graphics.DrawImage(this.markB, dPadDown.X + mW, dPadDown.Y + mH);
                 setLabelColor(on, DPadDownLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Left);
+                on = Controller.IsButtonDown(Buttons.DPadLeft);
                 if (on) e.Graphics.DrawImage(this.markB, dPadLeft.X + mW, dPadLeft.Y + mH);
                 setLabelColor(on, DPadLeftLabel);
 
-                on = Controller.IsButtonDown(ButtonValues.Right);
+                on = Controller.IsButtonDown(Buttons.DPadRight);
                 if (on) e.Graphics.DrawImage(this.markB, dPadRight.X + mW, dPadRight.Y + mH);
                 setLabelColor(on, DPadRightLabel);
 
@@ -467,16 +469,16 @@ namespace x360ce.App.Controls
 
         #endregion
 
-        private int leftX;
-        private int leftY;
-        private int rightX;
-        private int rightY;
+        private float leftX;
+        private float leftY;
+        private float rightX;
+        private float rightY;
 
-        Controller Controller;
-        XINPUT_GAMEPAD GamePad;
+        GamePadState Controller;
+        //XINPUT_GAMEPAD GamePad;
         Guid instanceGuid;
 
-        public void UpdateFrom(Controller controller, Device device)
+        public void UpdateFrom(GamePadState controller, Device device)
         {
             List<string> actions = diControl.UpdateFrom(device);
             if (Recording) RecordingStop(actions);
@@ -506,11 +508,16 @@ namespace x360ce.App.Controls
             Controller = controller;
             IsEnabled = controller.IsConnected;
             if (!IsEnabled) return;
-            GamePad = controller.State.GamePad;
-            this.leftX = GamePad.ThumbLX;
-            this.leftY = GamePad.ThumbLY;
-            this.rightX = GamePad.ThumbRX;
-            this.rightY = GamePad.ThumbRY;
+            //GamePad = controller.State.GamePad;
+
+
+
+
+
+            this.leftX = FloatToInt(controller.ThumbSticks.Left.X);
+            this.leftY = FloatToInt(controller.ThumbSticks.Left.Y);
+            this.rightX = FloatToInt(controller.ThumbSticks.Right.X);
+            this.rightY = FloatToInt(controller.ThumbSticks.Right.Y);
             UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", this.leftX, this.leftY));
             UpdateControl(RightThumbTextBox, string.Format("{0};{1}", this.rightX, this.rightY));
             //ButtonValues buttons = CurrentPad.Buttons;
@@ -518,6 +525,20 @@ namespace x360ce.App.Controls
             this.FrontPictureBox.Refresh();
             //this.lastButtonsPressed = buttons;
             //ShowDirectInputState();
+        }
+
+      // Check left thumbStick
+        public float FloatToInt(float v)
+        {
+            // -1 to 1 int16.MinValue int16.MaxValue.
+            return (UInt16)Math.Round((((double)v + 1) / 2) * (double)UInt16.MaxValue) + Int16.MinValue;
+        }
+
+        // Check left thumbStick
+        public float FloatToByte(float v)
+        {
+            // -1 to 1 int16.MinValue int16.MaxValue.
+            return (Byte)Math.Round((double)v * (double)Byte.MaxValue);
         }
 
         // Use this to reduce flicekring.
@@ -720,8 +741,9 @@ namespace x360ce.App.Controls
             float value = (float)LeftMotorTestTrackBar.Value / 100F * (float)ushort.MaxValue;
             short speed = (short)value;
             LeftMotorTestTextBox.Text = string.Format("{0} ", speed);
-            Controller.LeftMotorSpeed = speed;
-            Controller.LeftMotorSpeed = speed;
+            //GamePad.SetVibration(
+            //Controller.LeftMotorSpeed = speed;
+            //Controller.LeftMotorSpeed = speed;
         }
 
         private void RightMotorTestTrackBar_ValueChanged(object sender, EventArgs e)
@@ -730,7 +752,7 @@ namespace x360ce.App.Controls
             float value = (float)RightMotorTestTrackBar.Value / 100F * (float)ushort.MaxValue;
             short speed = (short)value;
             RightMotorTestTextBox.Text = string.Format("{0} ", speed);
-            Controller.RightMotorSpeed = speed;
+            //Controller.RightMotorSpeed = speed;
         }
 
         private void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)

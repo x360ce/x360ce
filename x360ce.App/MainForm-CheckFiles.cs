@@ -5,7 +5,6 @@ using System.Reflection;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using x360ce.App.XnaInput;
 using System.Security.Permissions;
 using System.Security;
 using x360ce.App.Win32;

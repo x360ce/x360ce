@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace x360ce.App.XnaInput
+namespace x360ce.App
 {
 	public enum DPadEnum
 	{

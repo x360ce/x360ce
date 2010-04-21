@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using x360ce.App.XnaInput;
 
 namespace x360ce.App
 {
@@ -381,7 +380,7 @@ namespace x360ce.App
         void ReloadXInputLibrary()
         {
             if (timer.Enabled) timer.Stop();
-            UnsafeNativeMethods.ReLoadLibrary(dllFile);
+            //UnsafeNativeMethods.ReLoadLibrary(dllFile);
             timer.Start();
         }
 

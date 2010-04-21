@@ -62,9 +62,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.DirectX.DirectInput" />
-    <Reference Include="Microsoft.Xna.Framework">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
@@ -104,45 +101,59 @@
     <Compile Include="MainForm-Settings.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Microsoft\Xna\Framework\Design\FieldPropertyDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\Design\MathTypeConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\Design\MemberPropertyDescriptor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\Design\Vector2Converter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\ErrorCodes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\FrameworkResources.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\Helpers.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\Buttons.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\ButtonState.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\ButtonValues.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePad.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadButtons.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadCapabilities.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadDeadZone.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadDeadZoneUtils.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadDPad.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadState.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadThumbSticks.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadTriggers.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\GamePadType.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\UnsafeNativeMethods.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_CAPABILITIES.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_GAMEPAD.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_STATE.cs" />
+    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_VIBRATION.cs" />
+    <Compile Include="Microsoft\Xna\Framework\MathHelper.cs" />
+    <Compile Include="Microsoft\Xna\Framework\PlayerIndex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Microsoft\Xna\Framework\Vector2.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XnaInput\Buttons.cs">
+    <Compile Include="Common\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XnaInput\ButtonsValues.cs">
+    <Compile Include="Common\FakeDi.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XnaInput\Controller.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\ControllerCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\DPadEnum.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\ErrorCodes.cs" />
-    <Compile Include="XnaInput\FakeDi.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\FakeWmi.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\XINPUT_CAPABILITIES.cs" />
-    <Compile Include="XnaInput\XINPUT_GAMEPAD.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\XINPUT_STATE.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\GamePadType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\PlayerIndex.cs" />
-    <Compile Include="XnaInput\XINPUT_VIBRATION.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="XnaInput\UnsafeNativeMethods.cs">
+    <Compile Include="Common\FakeWmi.cs">
       <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="Controls\AboutControl.resx">
