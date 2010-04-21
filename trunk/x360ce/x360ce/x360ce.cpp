@@ -19,6 +19,17 @@
 #include "Config.h"
 #include "DirectInput.h"
 
+typedef struct _XINPUT_CAPS
+{
+	BYTE                                Type;
+	BYTE                                SubType;
+	WORD                                Flags;
+	XINPUT_GAMEPAD                      Gamepad;
+	XINPUT_VIBRATION                    Vibration;
+} XINPUT_CAPS, *PXINPUT_CAPS;
+
+XINPUT_CAPS XCAPS;
+
 #pragma warning(disable:4310)
 
 BOOL bEnabled = FALSE;
@@ -395,25 +406,32 @@ DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPA
 
 	if(!Gamepad[dwUserIndex].connected) return ERROR_DEVICE_NOT_CONNECTED;
 
-	// Dump from original x360 controller
-	XINPUT_GAMEPAD xGamepad;
-	xGamepad.bLeftTrigger = (BYTE)0xFF;
-	xGamepad.bRightTrigger = (BYTE)0xFF;
-	xGamepad.sThumbLX = (SHORT) 0xFFFF;
-	xGamepad.sThumbLY = (SHORT) 0xFFFF;
-	xGamepad.sThumbRX = (SHORT) 0xFFFF;
-	xGamepad.sThumbRY = (SHORT) 0xFFFF;
-	xGamepad.wButtons = (WORD)  0xFFFFFFFF;
+	if(!XCAPS.SubType)
+	{
+		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPS));
+		// Dump from original x360 controller
+		XINPUT_GAMEPAD xGamepad;
+		xGamepad.bLeftTrigger = (BYTE)0xFF;
+		xGamepad.bRightTrigger = (BYTE)0xFF;
+		xGamepad.sThumbLX = (SHORT) 0xFFFF;
+		xGamepad.sThumbLY = (SHORT) 0xFFFF;
+		xGamepad.sThumbRX = (SHORT) 0xFFFF;
+		xGamepad.sThumbRY = (SHORT) 0xFFFF;
+		xGamepad.wButtons = (WORD)  0xFFFFFFFF;
 
-	XINPUT_VIBRATION Vibration = {(WORD)0xFFFFFFFF,(WORD)0xFFFFFFFF};
+		XINPUT_VIBRATION Vibration = {(WORD)0xFFFFFFFF,(WORD)0xFFFFFFFF};
 
-	pCapabilities->Flags = (WORD) 4;
-	pCapabilities->SubType=(BYTE)Gamepad[dwUserIndex].gamepadtype;
-	pCapabilities->Gamepad = xGamepad;
-	pCapabilities->Vibration = Vibration;
-	pCapabilities->Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
+		XCAPS.Flags = (WORD) 4;
+		XCAPS.SubType=(BYTE)Gamepad[dwUserIndex].gamepadtype;
+		XCAPS.Gamepad = xGamepad;
+		XCAPS.Vibration = Vibration;
+		XCAPS.Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
 
-	WriteLog(_T("XInputGetCapabilities:: SubType %i"),(BYTE)Gamepad[dwUserIndex].gamepadtype);
+		pCapabilities = (XINPUT_CAPABILITIES*)&XCAPS;
+	}
+	else pCapabilities = (XINPUT_CAPABILITIES*)&XCAPS;
+
+	WriteLog(_T("XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
