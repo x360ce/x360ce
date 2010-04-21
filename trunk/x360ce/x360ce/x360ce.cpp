@@ -19,16 +19,7 @@
 #include "Config.h"
 #include "DirectInput.h"
 
-typedef struct _XINPUT_CAPS
-{
-	BYTE                                Type;
-	BYTE                                SubType;
-	WORD                                Flags;
-	XINPUT_GAMEPAD                      Gamepad;
-	XINPUT_VIBRATION                    Vibration;
-} XINPUT_CAPS, *PXINPUT_CAPS;
-
-XINPUT_CAPS XCAPS;
+XINPUT_CAPABILITIES XCAPS;
 
 #pragma warning(disable:4310)
 
@@ -408,7 +399,7 @@ DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPA
 
 	if(!XCAPS.SubType)
 	{
-		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPS));
+		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
 		// Dump from original x360 controller
 		XINPUT_GAMEPAD xGamepad;
 		xGamepad.bLeftTrigger = (BYTE)0xFF;
