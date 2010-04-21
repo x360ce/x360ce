@@ -112,7 +112,7 @@ VOID InitInstance(HMODULE hModule)
 
 	hX360ceInstance = (HINSTANCE) hModule;
 	dwAppPID=GetCurrentProcessId();
-	InitConfig();
+	InitConfig(_T("x360ce.ini"));
 
 #if SVN_MODS != 0 
 	WriteLog(_T("x360ce SVN Revision %d (modded) started by process %s PID %d"),SVN_REV,PIDName(dwAppPID),dwAppPID);
@@ -151,7 +151,7 @@ VOID ExitInstance()
 	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
 }
 
-BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
+extern "C" BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
 {
 	UNREFERENCED_PARAMETER(reserved);
 

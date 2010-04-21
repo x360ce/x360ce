@@ -65,8 +65,6 @@ struct DINPUT_GAMEPAD {
 		g_dwNumForceFeedbackAxis = NULL;
 		native = 0;
 		swapmotor = 0;
-		wLMotorDirection = 0;
-		wRMotorDirection = 1;
 		tdeadzone  = 0;
 		useforce = 0;
 		forcepercent = 100;

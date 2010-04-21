@@ -82,8 +82,8 @@ LPCTSTR padNames[4] = {
 
 GamepadMap GamepadMapping[4];
 
-VOID InitConfig() {
-
+extern "C" void InitConfig(LPTSTR ininame) 
+{
 	LPTSTR pStr;
 	TCHAR strPath[MAX_PATHW];
 	extern TCHAR tstrConfigFile[MAX_PATHW];	
@@ -92,7 +92,7 @@ VOID InitConfig() {
 	if (pStr != NULL)
 		*(++pStr)=_T('\0'); 
 
-	_stprintf_s(tstrConfigFile,_T("%s%s"),strPath, _T("x360ce.ini"));
+	_stprintf_s(tstrConfigFile,_T("%s%s"),strPath, ininame);
 
 	// Read global options
 	bInitBeep = ReadUINTFromFile(_T("Options"), _T("UseInitBeep"));
@@ -117,7 +117,7 @@ VOID InitConfig() {
 }
 
 
-VOID ReadPadConfig(INT idx) {
+void ReadPadConfig(INT idx) {
 
 	TCHAR section[5];
 	_stprintf_s(section,_T("PAD%d"),idx+1);
