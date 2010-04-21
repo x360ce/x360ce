@@ -574,11 +574,11 @@
 		private System.Windows.Forms.Label DiDeviceTypeLabel;
 		public System.Windows.Forms.TextBox DevicePidTextBox;
         public System.Windows.Forms.TextBox DeviceVidTextBox;
-		private System.Windows.Forms.TextBox DeviceProductGuidTextBox;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		public System.Windows.Forms.TextBox DeviceProductNameTextBox;
         public System.Windows.Forms.TextBox DeviceInstanceGuidTextBox;
+        public System.Windows.Forms.TextBox DeviceProductGuidTextBox;
 	}
 }

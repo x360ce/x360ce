@@ -417,6 +417,7 @@ namespace x360ce.App.Controls
             string section = string.Format(@"PAD{0}\", ControllerIndex + 1);
             // FakeAPI
             map.Add(section + SettingName.ProductName, diControl.DeviceProductNameTextBox);
+            map.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
             map.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
             map.Add(section + SettingName.Vid, diControl.DeviceVidTextBox);
             map.Add(section + SettingName.Pid, diControl.DevicePidTextBox);

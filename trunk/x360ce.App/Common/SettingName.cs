@@ -39,7 +39,9 @@ namespace x360ce.App
         // [PAD] section.
         [DefaultValue("Unknown Device"), Description("Device product name.")]
         public const string ProductName = "ProductName";
-        [DefaultValue("{00000000-0000-0000-0000-000000000000}"), Description("Device instance GUID.")]
+        [DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device product GUID.")]
+        public const string ProductGuid = "Product";
+        [DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device instance GUID.")]
         public const string InstanceGuid = "Instance";
         [DefaultValue("0x0"), Description("Device vendor Id.")]
         public const string Vid = "VID";
