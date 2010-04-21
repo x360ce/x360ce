@@ -70,6 +70,7 @@ namespace x360ce.App
             {
                 // if setting is readonly.
                 if (key == SettingName.ProductName) return;
+                if (key == SettingName.ProductGuid) return;
                 if (key == SettingName.InstanceGuid) return;
                 if (key == SettingName.Pid) return;
                 if (key == SettingName.Vid) return;
@@ -248,9 +249,9 @@ namespace x360ce.App
             else if (control is TextBox)
             {
                 // if setting is readonly.
-                if (key == SettingName.InstanceGuid)
+                if (key == SettingName.InstanceGuid || key == SettingName.ProductGuid)
                 {
-                    v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("B") : string.Format("{{{0}}}", control.Text);
+                    v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
                 }
                 else v = control.Text;
             }
