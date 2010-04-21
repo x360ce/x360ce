@@ -1,6 +1,6 @@
 ﻿v2.0.2.41 (2010-04-21) by Evaldas Jocys
-- Update: Reverted back to xinput1_3.dll updated to 3.1.4.1
-- Update: Xna Framework Input Updated to 3.1 version
+- Update: Reverted back to xinput1_3.dll v3.1.4.1.
+- Update: Xna Framework Input Code updated to 3.1 version.
 
 v2.0.2.35 (2010-04-17) by Evaldas Jocys
 - Fix: FakeDI option converted to ComboBox
