@@ -87,7 +87,8 @@ namespace x360ce.App.Controls
 
 		void SetValue(Control control, string value, params object[] args)
 		{
-			if (control.Text != value) control.Text = string.Format(value, args);
+			//if (control.Text != value)
+			control.Text = string.Format(value, args);
 		}
 
 		JoystickState emptyState
