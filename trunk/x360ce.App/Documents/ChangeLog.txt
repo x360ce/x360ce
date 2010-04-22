@@ -1,4 +1,8 @@
-﻿v2.0.2.41 (2010-04-21) by Evaldas Jocys
+﻿v2.0.2.43 (2010-04-22) by Evaldas Jocys
+- Update: Updated to xinput1_3.dll v3.2.0.81.
+- Update: Disabled comments in INI.
+
+v2.0.2.41 (2010-04-21) by Evaldas Jocys
 - Update: Reverted back to xinput1_3.dll v3.1.4.1.
 - Update: Xna Framework Input Code updated to 3.1 version.
 
