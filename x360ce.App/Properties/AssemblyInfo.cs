@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TocaEdit")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
-[assembly: AssemblyCopyright("Copyright © 2010")]
+[assembly: AssemblyCopyright("Copyright © TocaEdit 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("2.0.2.43")]
+[assembly: AssemblyVersion("2.0.2.44")]
 [assembly: AssemblyDelaySign(false)]
