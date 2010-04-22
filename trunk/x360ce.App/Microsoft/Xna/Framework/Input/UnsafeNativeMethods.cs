@@ -66,11 +66,6 @@ namespace Microsoft.Xna.Framework.Input
 			get { return _LibraryName; }
 		}
 
-		public static void ReLoadLibrary()
-		{
-			ReLoadLibrary(LibraryName);
-		}
-
 		public static void ReLoadLibrary(string fileName)
 		{
 			_LibraryName = fileName;

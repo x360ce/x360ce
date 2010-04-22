@@ -59,25 +59,6 @@ namespace x360ce.App.Controls
 				DiEffectsTable.Rows.Clear();
 				return;
 			}
-			var di = device.DeviceInformation;
-			// Update pid and vid always so they wont be overwritten by load settings.
-			short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
-			short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
-			//bool attached = false;
-			//try
-			//{
-			//    attached = Manager.GetDeviceAttached(di.ProductGuid);
-			//}
-			//catch (Exception)
-			//{
-			//}
-			DeviceVidTextBox.Text = string.Format("0x{0}", vid.ToString("X4"));
-			DevicePidTextBox.Text = string.Format("0x{0}", pid.ToString("X4"));
-			DeviceProductNameTextBox.Text = di.ProductName;
-			DeviceProductGuidTextBox.Text = di.ProductGuid.ToString();
-			DeviceInstanceGuidTextBox.Text = di.InstanceGuid.ToString();
-			var state = device.CurrentJoystickState;
-			DeviceTypeTextBox.Text = di.DeviceType.ToString();
 			DiCapFfLabel.Text = string.Format("Force Feedback: {0}", device.Caps.ForceFeedback ? "YES" : "NO");
 			DiCapAxesLabel.Text = string.Format("Axes: {0}", device.Caps.NumberAxes);
 			DiCapButtonsLabel.Text = string.Format("Buttons: {0}", device.Caps.NumberButtons);
@@ -92,15 +73,31 @@ namespace x360ce.App.Controls
 		            ((EffectParameterFlags)eff.DynamicParams).ToString()
 		        });
 			}
+			var di = device.DeviceInformation;
+			// Update pid and vid always so they wont be overwritten by load settings.
+			short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
+			short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
+			SetValue(DeviceVidTextBox, "0x{0}", vid.ToString("X4"));
+			SetValue(DevicePidTextBox, "0x{0}", pid.ToString("X4"));
+			SetValue(DeviceProductNameTextBox, di.ProductName);
+			SetValue(DeviceProductGuidTextBox, di.ProductGuid.ToString());
+			SetValue(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
+			SetValue(DeviceTypeTextBox, di.DeviceType.ToString());
 		}
 
-		JoystickState emptyState {
-            get
-            {
-                return default(JoystickState);
-            }
-        }
-  
+		void SetValue(Control control, string value, params object[] args)
+		{
+			if (control.Text != value) control.Text = string.Format(value, args);
+		}
+
+		JoystickState emptyState
+		{
+			get
+			{
+				return default(JoystickState);
+			}
+		}
+
 		List<string> ShowDirectInputState(Device device)
 		{
 			List<string> actions = new List<string>();

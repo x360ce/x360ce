@@ -16,31 +16,25 @@ namespace x360ce.App
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			form = new MainForm();
 			Application.Run(form);
 		}
 
-		static string cLogFile = "x360ce.log";
+		//static string cLogFile = "x360ce.log";
 
         public static object DeviceLock = new object();
 
+        public static int TimerCount = 0;
+        public static int ReloadCount = 0;
         public static int ErrorCount = 0;
 
-		static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-		{
-            form.timer.Stop();
+       public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+			form.timer.Stop();
             ErrorCount++;
-			string message = e.Exception.Message;
-			message += string.Format("\r\n\r\nDo you want to write error details into {0} log file?", cLogFile);
-			//DialogResult dr = MessageBox.Show(message, "Application Error", MessageBoxButtons.OKCancel);
-			//if (dr == DialogResult.OK)
-			//{
-			//	System.IO.File.AppendAllText(cLogFile, e.Exception.ToString());
-			//
-			//}
-
-            form.timer.Start();
-		}
+            form.UpdateStatus("- " + e.Exception.Message);
+			form.timer.Start();
+        }
 	}
 }

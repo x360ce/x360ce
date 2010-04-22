@@ -350,7 +350,7 @@ namespace x360ce.App
         {
             SaveSetting((Control)sender);
             NotifySettingsChange();
-        }
+		}
 
         private void Control_ValueChanged(object sender, EventArgs e)
         {
@@ -373,17 +373,5 @@ namespace x360ce.App
             ResumeEvents();
         }
 
-        /// <summary>
-        /// Can be reloaded on two ocations:
-        /// a) Direct Input Device was disconnected, connected or order changed.
-        /// b) Settings file (*.ini) was updated.
-        /// </summary>
-        void ReloadXInputLibrary()
-        {
-            if (timer.Enabled) timer.Stop();
-            //UnsafeNativeMethods.ReLoadLibrary(dllFile);
-            timer.Start();
-        }
-
-    }
+     }
 }
