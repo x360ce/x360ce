@@ -71,7 +71,11 @@ DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutpu
 
 DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault)
 {
-	return GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATHW, tstrConfigFile);
+	DWORD ret;
+	LPTSTR next_token;
+	ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATHW, tstrConfigFile);
+	if(ret) _tcstok_s(strOutput,_T(" "),&next_token);  //should fix comment in ini file
+	return ret;
 }
 
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
