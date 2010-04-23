@@ -16,13 +16,14 @@
 #include "svnrev.h"
 
 //useful macros
+#define arrayof(x) (sizeof(x)/sizeof(x[0])) 
 #define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
 #define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
-#define arrayof(x) (sizeof(x)/sizeof(x[0])) 
 #define MAX_PATHW MAX_PATH*2
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+//x360ce version info
 #define VERSION_MAJOR 3
 #define VERSION_MINOR 2
 #define VERSION_PATCH 0
@@ -35,7 +36,7 @@ extern HINSTANCE hNativeInstance;
 extern HWND hWnd;
 extern DWORD dwAppPID;
 extern LPCTSTR PIDName(DWORD);
-extern VOID InitConfig();
+extern void InitConfig();
 extern BOOL bEnabled;
 extern WORD wNativeMode;
 

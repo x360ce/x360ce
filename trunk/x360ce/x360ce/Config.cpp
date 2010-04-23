@@ -151,7 +151,7 @@ void ReadPadConfig(INT idx) {
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 	PadMap.DpadPOV = -1;
 
-	//TODO: fix this
+	//TODO: rewrite this ...
 	for (INT i=0; i<10; ++i) {
 		if (ReadStringFromFile(section, buttonNames[i], buffer) > 0) {
 			INT val = _tstoi(buffer);
@@ -185,11 +185,13 @@ void ReadPadConfig(INT idx) {
 	}
 
 	for (INT i=0; i<4; ++i) {
-		if (UINT ret = ReadUINTFromFile(section, axisBNames[i*2]) > 0) {
+		if (ReadStringFromFile(section, axisBNames[i*2],buffer) > 0) {
+			INT ret = _tstoi(buffer);
 			PadMap.Axis[i].hasDigital = true;
 			PadMap.Axis[i].positiveButtonID = ret - 1;
 		}
-		if (UINT ret = ReadUINTFromFile(section, axisBNames[i*2+1]) > 0) {
+		if (ReadStringFromFile(section, axisBNames[i*2+1],buffer) > 0) {
+			INT ret = _tstoi(buffer);
 			PadMap.Axis[i].hasDigital = true;
 			PadMap.Axis[i].negativeButtonID = ret - 1;
 		}

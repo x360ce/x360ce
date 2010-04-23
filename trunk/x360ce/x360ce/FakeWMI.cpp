@@ -46,7 +46,7 @@ HRESULT STDMETHODCALLTYPE NewGet(
 								 /* [unique][in][out] */ CIMTYPE *pType,
 								 /* [unique][in][out] */ long *plFlavor)
 {
-	WriteLog(_T("NewGet"));
+	WriteLog(_T("[FAKEWMI] NewGet"));
 	HRESULT hr;
 	hr = OldGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
@@ -129,7 +129,7 @@ HRESULT STDMETHODCALLTYPE NewNext(
 								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
-	WriteLog(_T("NewNext"));
+	WriteLog(_T("[FAKEWMI] NewNext"));
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
@@ -170,7 +170,7 @@ HRESULT STDMETHODCALLTYPE NewCreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	WriteLog(_T("NewCreateInstanceEnum"));
+	WriteLog(_T("[FAKEWIM] NewCreateInstanceEnum"));
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
@@ -220,7 +220,7 @@ HRESULT STDMETHODCALLTYPE NewConnectServer(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	WriteLog(_T("NewConnectServer"));
+	WriteLog(_T("[FAKEWMI] NewConnectServer"));
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
 
@@ -281,7 +281,7 @@ HRESULT WINAPI NewCoCreateInstance(__in     REFCLSID rclsid,
 		pIWbemLocator = (IWbemLocator *) *ppv;
 		if(pIWbemLocator != NULL) 
 		{
-			//WriteLog(_T("NewCoCreateInstance if2"));
+			WriteLog(_T("[FakeWMI] NewCoCreateInstance"));
 			if(OldConnectServer == NULL) 
 			{
 
