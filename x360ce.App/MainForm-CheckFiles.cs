@@ -63,12 +63,6 @@ namespace x360ce.App
 			// Set status labels.
 			StatusIsAdminLabel.Text = string.Format("Elevated: {0}", Win32.WinAPI.IsElevated);
 			StatusIniLabel.Text = iniFile;
-			var dllInfo = new System.IO.FileInfo(dllFile);
-			if (dllInfo.Exists)
-			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				StatusDllLabel.Text = dllFile + " " + vi.FileVersion;
-			}
 			return true;
 		}
 

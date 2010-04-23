@@ -437,7 +437,7 @@ namespace x360ce.App
 					Program.ReloadCount++;
 					//FixConfig(instances);
 					settingsChanged = false;
-					UnsafeNativeMethods.ReLoadLibrary(dllFile);
+					ReloadLibrary();
 					return;
 				}
 				var instances = new List<DeviceInstance>();
@@ -453,7 +453,7 @@ namespace x360ce.App
 					Program.ReloadCount++;
 					//FixConfig(instances);
 					settingsChanged = false;
-					UnsafeNativeMethods.ReLoadLibrary(dllFile);
+					ReloadLibrary();
 					return;
 				}
 				// Check all pads.
@@ -464,6 +464,25 @@ namespace x360ce.App
 				var currentPad = GamePad.GetState((PlayerIndex)controllerIndex);
 				currentPadControl.UpdateFromXInput(currentPad);
 				UpdateStatus("");
+		}
+
+		Version _dllVersion;
+		Version dllVersion
+		{
+			get {return  _dllVersion = _dllVersion ?? new Version(); }
+			set { _dllVersion = value; }
+		}
+
+		public void ReloadLibrary()
+		{
+			var dllInfo = new System.IO.FileInfo(dllFile);
+			if (dllInfo.Exists)
+			{
+				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
+				dllVersion = new Version(vi.FileVersion);
+				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
+				UnsafeNativeMethods.ReLoadLibrary(dllFile);
+			}
 		}
 
 		public void UpdateStatus(string message)
