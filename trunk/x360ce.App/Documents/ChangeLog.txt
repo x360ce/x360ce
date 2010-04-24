@@ -1,4 +1,8 @@
-﻿v2.0.2.47 (2010-04-24) by Evaldas Jocys
+﻿v2.0.2.49 (2010-04-24) by Evaldas Jocys
+- Update: Assembly file Updated.
+- Fix: Xna Framework Resources file fixed.
+
+v2.0.2.47 (2010-04-24) by Evaldas Jocys
 - Fix: Force feedback test fixed.
 
 v2.0.2.46 (2010-04-23) by Evaldas Jocys
