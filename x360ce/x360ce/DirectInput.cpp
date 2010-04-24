@@ -328,7 +328,7 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 		if( FAILED( hr = Gamepad[idx].g_pGamepad->CreateEffect( GUID_ConstantForce  ,
 			&eff, &Gamepad[idx].g_pEffect[effidx] , NULL ) ) )
 		{
-			WriteLog(_T("[DINPUT] [PAD%d] CreateEffect (1) failed with code HR = %s"), idx+1, DXErrStr(hr));
+			WriteLog(_T("[DINPUT] [PAD%d] CreateEffect (%d) failed with code HR = %s"), idx+1, effidx, DXErrStr(hr));
 		}
 	}
 	return hr;
