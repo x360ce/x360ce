@@ -479,7 +479,7 @@ namespace x360ce.App
 			if (dllInfo.Exists)
 			{
 				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				dllVersion = new Version(vi.FileVersion);
+				dllVersion = vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion);
 				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
 				UnsafeNativeMethods.ReLoadLibrary(dllFile);
 			}
