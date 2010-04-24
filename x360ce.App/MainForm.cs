@@ -292,7 +292,7 @@ namespace x360ce.App
 			ReadPadSettings(resourceName, "PAD1", ControllerIndex);
 			ResumeEvents();
 			// Save setting and notify if vaue changed.
-			if (SaveSettings())	NotifySettingsChange();
+			if (SaveSettings()) NotifySettingsChange();
 			// remove file if it was from resource.
 			if (resource != null) System.IO.File.Delete(resourceName);
 			//CleanStatusTimer.Start();
@@ -431,32 +431,34 @@ namespace x360ce.App
 
 		private void timer_Tick(object sender, EventArgs e)
 		{
-				Program.TimerCount++;
-				bool instancesChanged = false;
-				if (settingsChanged)
-				{
-					Program.ReloadCount++;
-					//FixConfig(instances);
-					settingsChanged = false;
-					ReloadLibrary();
-					return;
-				}
-				var instances = new List<DeviceInstance>();
-				try { instances = GetCurrentInstances(ref instancesChanged); }
-				catch (Exception)
-				{
-					// Update GamePad state LED's (disable since instances list is empty).
-					UpdateGamePadStatus(instances);
-					throw;
-				}
-				if (instancesChanged)
-				{
-					Program.ReloadCount++;
-					//FixConfig(instances);
-					settingsChanged = false;
-					ReloadLibrary();
-					return;
-				}
+			Program.TimerCount++;
+			bool instancesChanged = false;
+			if (settingsChanged)
+			{
+				Program.ReloadCount++;
+				//FixConfig(instances);
+				settingsChanged = false;
+				ReloadLibrary();
+				return;
+			}
+			var instances = new List<DeviceInstance>();
+			try { instances = GetCurrentInstances(ref instancesChanged); }
+			catch (Exception)
+			{
+				// Update GamePad state LED's (disable since instances list is empty).
+				UpdateGamePadStatus(instances);
+				throw;
+			}
+			if (instancesChanged)
+			{
+				Program.ReloadCount++;
+				//FixConfig(instances);
+				settingsChanged = false;
+				ReloadLibrary();
+				return;
+			}
+			if (instances.Count > 0)
+			{
 				// Check all pads.
 				UpdateGamePadStatus(instances);
 				var currentPadControl = ControlPads[ControllerIndex];
@@ -464,13 +466,14 @@ namespace x360ce.App
 				currentPadControl.UpdateFromDirectInput(currentDevice);
 				var currentPad = GamePad.GetState((PlayerIndex)ControllerIndex);
 				currentPadControl.UpdateFromXInput(currentPad);
-				UpdateStatus("");
+			}
+			UpdateStatus("");
 		}
 
 		Version _dllVersion;
 		Version dllVersion
 		{
-			get {return  _dllVersion = _dllVersion ?? new Version(); }
+			get { return _dllVersion = _dllVersion ?? new Version(); }
 			set { _dllVersion = value; }
 		}
 
