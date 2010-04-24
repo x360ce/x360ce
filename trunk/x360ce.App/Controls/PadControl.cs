@@ -734,21 +734,23 @@ namespace x360ce.App.Controls
 		private void LeftMotorTestTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			if (Controller == null) return;
-			float value = (float)LeftMotorTestTrackBar.Value / 100F * (float)ushort.MaxValue;
-			short speed = (short)value;
-			LeftMotorTestTextBox.Text = string.Format("{0} ", speed);
-			//GamePad.SetVibration(
-			//Controller.LeftMotorSpeed = speed;
-			//Controller.LeftMotorSpeed = speed;
+			UpdateForceFeedBack();
 		}
 
 		private void RightMotorTestTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			if (Controller == null) return;
-			float value = (float)RightMotorTestTrackBar.Value / 100F * (float)ushort.MaxValue;
-			short speed = (short)value;
-			RightMotorTestTextBox.Text = string.Format("{0} ", speed);
-			//Controller.RightMotorSpeed = speed;
+			UpdateForceFeedBack();
+		}
+
+		public void UpdateForceFeedBack()
+		{
+			// Convert 100% trackbar to MotorSpeed's 0 - 1.0
+			float leftMotor = (float)LeftMotorTestTrackBar.Value / 100F;
+			float rightMotor = (float)RightMotorTestTrackBar.Value / 100F;
+			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
+			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
+			GamePad.SetVibration((Microsoft.Xna.Framework.PlayerIndex)mainForm.ControllerIndex, leftMotor, rightMotor);
 		}
 
 		private void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
