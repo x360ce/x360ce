@@ -177,16 +177,25 @@ HRESULT Enumerate(DWORD idx)
 	return ERROR_SUCCESS;
 }
 
+//-----------------------------------------------------------------------------
+// Name: InitDirectInput()
+// Desc: Initialize the DirectInput variables.
+//-----------------------------------------------------------------------------
 HRESULT InitDirectInput( HWND hDlg, INT idx )
 {
+	DINPUT_GAMEPAD g_p = Gamepad[idx];
+	LPDIRECTINPUTDEVICE8 g_pDevice = g_p.g_pGamepad;
 
-	if(Gamepad[idx].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(g_pDevice == NULL) return ERROR_DEVICE_NOT_CONNECTED;
 
 	DIPROPDWORD dipdw;
 	HRESULT hr=S_OK;
 	HRESULT coophr=S_OK;
 
-	if( FAILED( hr = Gamepad[idx].g_pGamepad->SetDataFormat( &c_dfDIJoystick2 ) ) )
+	// Set the data format to "simple joystick" - a predefined data format. A
+	// data format specifies which controls on a device we are interested in,
+	// and how they should be reported.
+	if( FAILED( hr = g_pDevice->SetDataFormat( &c_dfDIJoystick2 ) ) )
 	{
 		WriteLog(_T("[DINPUT] [PAD%d] SetDataFormat failed with code HR = %s"), idx+1, DXErrStr(hr));
 		return hr;
@@ -195,8 +204,7 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	// Set the cooperative level to let DInput know how this device should
 	// interact with the system and with other DInput applications.
 	// Exclusive access is required in order to perform force feedback.
-
-	if( FAILED( coophr = Gamepad[idx].g_pGamepad->SetCooperativeLevel( hDlg,
+	if( FAILED( coophr = g_pDevice->SetCooperativeLevel( hDlg,
 		DISCL_EXCLUSIVE |
 		DISCL_BACKGROUND ) ) )
 	{
@@ -206,8 +214,8 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	if(coophr!=S_OK) 
 	{
 		WriteLog(_T("[DINPUT] Device not exclusive acquired, disabling ForceFeedback"));
-		Gamepad[idx].useforce = 0;
-		if( FAILED( coophr = Gamepad[idx].g_pGamepad->SetCooperativeLevel( hDlg,
+		g_p.useforce = 0;
+		if( FAILED( coophr = g_pDevice->SetCooperativeLevel( hDlg,
 			DISCL_NONEXCLUSIVE |
 			DISCL_BACKGROUND ) ) )
 		{
@@ -224,14 +232,14 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	dipdw.diph.dwHow = DIPH_DEVICE;
 	dipdw.dwData = FALSE;
 
-	if( FAILED( hr = Gamepad[idx].g_pGamepad->SetProperty( DIPROP_AUTOCENTER, &dipdw.diph ) ) )
+	if( FAILED( hr = g_pDevice->SetProperty( DIPROP_AUTOCENTER, &dipdw.diph ) ) )
 	{
 		WriteLog(_T("[DINPUT] [PAD%d] SetProperty failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
 	}
 
-	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumObjectsCallback,
-		( VOID* )&Gamepad[idx], DIDFT_AXIS ) ) )
+	if( FAILED( hr = g_pDevice->EnumObjects( EnumObjectsCallback,
+		( VOID* )&g_p, DIDFT_AXIS ) ) )
 	{
 		WriteLog(_T("[DINPUT] [PAD%d] EnumObjects failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
@@ -242,17 +250,23 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	}
 	axiscount=0;
 
-	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumFFAxesCallback,
-		( VOID* )&Gamepad[idx].g_dwNumForceFeedbackAxis, DIDFT_AXIS ) ) )
+	// Enumerate and count the axes of the joystick 
+	if( FAILED( hr = g_pDevice->EnumObjects( EnumFFAxesCallback,
+		( VOID* )&g_p.g_dwNumForceFeedbackAxis, DIDFT_AXIS ) ) )
 	{
 		WriteLog(_T("[DINPUT] [PAD%d] EnumFFAxesCallback failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
 	}
+	else
+	{
+		WriteLog(_T("[DINPUT] [PAD%d] Device with %d FF axes"),idx+1,g_p.g_dwNumForceFeedbackAxis);
+	}
 
-	if( Gamepad[idx].g_dwNumForceFeedbackAxis > 2 )
-		Gamepad[idx].g_dwNumForceFeedbackAxis = 2;
+	// Support one or two axis joysticks
+	if( g_p.g_dwNumForceFeedbackAxis > 2 )
+		g_p.g_dwNumForceFeedbackAxis = 2;
 
-	if( FAILED( hr = Gamepad[idx].g_pGamepad->Acquire() ) )
+	if( FAILED( hr = g_pDevice->Acquire() ) )
 	{
 		WriteLog(_T("[DINPUT] [PAD%d] Acquire failed with code HR = %s"), idx+1, DXErrStr(hr));
 		//return hr;
