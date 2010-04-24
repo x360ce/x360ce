@@ -280,8 +280,14 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 	// Modifying an effect is basically the same as creating a new one, except
 	// you need only specify the parameters you are modifying
 	HRESULT hr= S_OK;
-	LONG     rglDirection[2] = { effidx, 0 };
+	LONG     rglDirection[2] = { 1, 0 };
 	DWORD    rgdwAxes[2]     = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
+
+	if(effidx)
+	{
+		rglDirection[0] = 0;
+		rglDirection[1] = 1;
+	}
 
 	LONG magnitude = (LONG)(force/256*256-1);
 
@@ -317,7 +323,13 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 	{
 
 		DWORD    rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
-		LONG rglDirection[2] = { effidx, 0 };
+		LONG rglDirection[2] = { 1, 0 };
+
+		if(effidx)
+		{
+			rglDirection[0] = 0;
+			rglDirection[1] = 1;
+		}
 
 		DICONSTANTFORCE cf;
 		DIEFFECT eff;
