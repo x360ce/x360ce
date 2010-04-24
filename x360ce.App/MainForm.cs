@@ -39,7 +39,7 @@ namespace x360ce.App
 
 		public int oldIndex;
 
-		public int controllerIndex
+		public int ControllerIndex
 		{
 			get
 			{
@@ -289,7 +289,7 @@ namespace x360ce.App
 			}
 			SuspendEvents();
 			// preset will be stored in inside [PAD1] section;
-			ReadPadSettings(resourceName, "PAD1", controllerIndex);
+			ReadPadSettings(resourceName, "PAD1", ControllerIndex);
 			ResumeEvents();
 			SaveSettings();
 			NotifySettingsChange();
@@ -397,8 +397,8 @@ namespace x360ce.App
 		Device GetCurrentDiDevice(List<DeviceInstance> instances)
 		{
 			// Assign instance guid (empty guid is instance is unavailable)
-			Guid ig = controllerIndex < instances.Count
-				? instances[controllerIndex].InstanceGuid
+			Guid ig = ControllerIndex < instances.Count
+				? instances[ControllerIndex].InstanceGuid
 				: Guid.Empty;
 			// Current is not empty and instance is different or empty then...
 			if (_CurrentDiDevice != null &&
@@ -458,10 +458,10 @@ namespace x360ce.App
 				}
 				// Check all pads.
 				UpdateGamePadStatus(instances);
-				var currentPadControl = ControlPads[controllerIndex];
+				var currentPadControl = ControlPads[ControllerIndex];
 				var currentDevice = GetCurrentDiDevice(instances);
 				currentPadControl.UpdateFromDirectInput(currentDevice);
-				var currentPad = GamePad.GetState((PlayerIndex)controllerIndex);
+				var currentPad = GamePad.GetState((PlayerIndex)ControllerIndex);
 				currentPadControl.UpdateFromXInput(currentPad);
 				UpdateStatus("");
 		}
