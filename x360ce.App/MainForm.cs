@@ -424,6 +424,7 @@ namespace x360ce.App
 		{
 			settingsChanged = true;
 			SettingsTimer.Stop();
+			timer.Start();
 		}
 
 		bool settingsChanged = false;

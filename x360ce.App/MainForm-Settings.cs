@@ -361,7 +361,9 @@ namespace x360ce.App
         /// </summary>
         public void NotifySettingsChange()
         {
+			timer.Stop();
             SettingsTimer.Stop();
+			// Timer will be started inside Settings timer.
             SettingsTimer.Start();
         }
 

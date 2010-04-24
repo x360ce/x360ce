@@ -1,7 +1,8 @@
-﻿v2.0.2.50 (2010-04-24) by Evaldas Jocys
+﻿v2.0.2.51 (2010-04-24) by Evaldas Jocys
 - Update: Assembly file Updated.
 - Fix: Xna Framework Resources file fixed.
 - Fix: Don't reload DLL if value haven't changed in INI.
+- Fix: Now timer will stop during settings update.
 
 v2.0.2.47 (2010-04-24) by Evaldas Jocys
 - Fix: Force feedback test fixed.
