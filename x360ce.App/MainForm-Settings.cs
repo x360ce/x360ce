@@ -174,24 +174,33 @@ namespace x360ce.App
             cbx.SelectedIndex = 0;
         }
 
-        void SaveSettings()
-        {
-            var ini = new Ini(iniFile);
-            foreach (string path in SettingsMap.Keys) SaveSetting(ini, path);
-        }
+		bool SaveSettings()
+		{
+			var ini = new Ini(iniFile);
+			var saved = false;
+			foreach (string path in SettingsMap.Keys)
+			{
+				var r = SaveSetting(ini, path);
+				if (r) saved = r;
+			}
+			return saved;
+		}
 
-        public void SaveSetting(Control control)
-        {
-            var ini = new Ini(iniFile);
-            foreach (string path in SettingsMap.Keys)
-            {
-                if (SettingsMap[path] == control)
-                {
-                    SaveSetting(ini, path);
-                    break;
-                }
-            }
-        }
+		public bool SaveSetting(Control control)
+		{
+			var ini = new Ini(iniFile);
+			var saved = false;
+			foreach (string path in SettingsMap.Keys)
+			{
+				if (SettingsMap[path] == control)
+				{
+					var r = SaveSetting(ini, path);
+					if (r) saved = r;
+					break;
+				}
+			}
+			return saved;
+		}
 
         int saveCount = 0;
 
@@ -201,10 +210,11 @@ namespace x360ce.App
         /// <param name="file">INI file Name</param>
         /// <param name="iniSection">INI Section to save.</param>
         /// <param name="padIndex">Source PAD index.</param>
-        void SavePadSettings(string file, string iniSection, int padIndex)
+        bool SavePadSettings(string file, string iniSection, int padIndex)
         {
             var ini = new Ini(file);
-            foreach (string path in SettingsMap.Keys)
+			var saved = false;
+			foreach (string path in SettingsMap.Keys)
             {
                 Control control = SettingsMap[path];
                 string section = path.Split('\\')[0];
@@ -212,13 +222,15 @@ namespace x360ce.App
                 // Use only PAD1 section to get key names.
                 if (section != "PAD1") continue;
                 string srcIniPath = string.Format("PAD{0}\\{1}", padIndex + 1, key);
-                SaveSetting(ini, srcIniPath, iniSection);
-            }
+               var r = SaveSetting(ini, srcIniPath, iniSection);
+			   if (r) saved = true;
+			}
+			return saved;
         }
 
-        void SaveSetting(Ini ini, string path)
+        bool SaveSetting(Ini ini, string path)
         {
-            SaveSetting(ini, path, null);
+            return SaveSetting(ini, path, null);
         }
 
         /// <summary>
@@ -226,80 +238,87 @@ namespace x360ce.App
         /// </summary>
         /// <param name="path">path of parameter (related to actual control)</param>
         /// <param name="dstIniSection">if not null then section will be different inside INI file than specified in path</param>
-        void SaveSetting(Ini ini, string path, string dstIniSection)
-        {
-            var control = SettingsMap[path];
-            string section = path.Split('\\')[0];
-            string key = path.Split('\\')[1];
-            string v = string.Empty;
-            if (control.Name == "GamePadTypeComboBox")
-            {
-                v = ((int)(ControllerType)((ComboBox)control).SelectedItem).ToString();
-            }
-            // If di menu strip attached.
-            else if (control is ComboBox && control.ContextMenuStrip != null)
-            {
-                v = new SettingsConverter(control.Text, key).ToIniSetting();
-            }
-            else if (control is ComboBox)
-            {
-                var cbx = (ComboBox)control;
-                if (key == SettingName.FakeWmi || key == SettingName.FakeDi) v = (string)cbx.SelectedValue;
-            }
-            else if (control is TextBox)
-            {
-                // if setting is readonly.
-                if (key == SettingName.InstanceGuid || key == SettingName.ProductGuid)
-                {
-                    v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
-                }
-                else v = control.Text;
-            }
-            else if (control is NumericUpDown)
-            {
-                NumericUpDown nud = (NumericUpDown)control;
-                v = nud.Value.ToString();
-            }
-            else if (control is TrackBar)
-            {
-                TrackBar tc = (TrackBar)control;
-                if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset)
-                {
-                    // convert 100%  to 256
-                    v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
-                }
-                else v = tc.Value.ToString();
-            }
-            else if (control is CheckBox)
-            {
-                CheckBox tc = (CheckBox)control;
-                v = tc.Checked ? "1" : "0";
-            }
-            if (SettingName.IsThumbAxis(key))
-            {
-                v = v.Replace("a", "");
-            }
-            if (SettingName.IsDPad(key)) v = v.Replace("p", "");
-            if (v == "v1") v = "UP";
-            if (v == "v2") v = "RIGHT";
-            if (v == "v3") v = "DOWN";
-            if (v == "v4") v = "LEFT";
-            if (v == "")
-            {
-                if (key == SettingName.DPadUp) v = "UP";
-                if (key == SettingName.DPadDown) v = "DOWN";
-                if (key == SettingName.DPadLeft) v = "LEFT";
-                if (key == SettingName.DPadRight) v = "RIGHT";
-                if (key == SettingName.Vid || key == SettingName.Pid || key == SettingName.FakeVid || key == SettingName.FakePid) v = "0x0";
-            }
-            string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
-            // add comment.
-            //var l = SettingName.MaxNameLength - key.Length + 24;
-            //v = string.Format("{0, -" + l + "} # {1} Default: '{2}'.", v, SettingName.GetDescription(key), SettingName.GetDefaultValue(key));
-            ini.SetValue(iniSection, key, v);
-            saveCount++;
-            StatusSaveLabel.Text = string.Format("S {0}", saveCount);
-        }
+		bool SaveSetting(Ini ini, string path, string dstIniSection)
+		{
+			var control = SettingsMap[path];
+			string section = path.Split('\\')[0];
+			string key = path.Split('\\')[1];
+			string v = string.Empty;
+			if (control.Name == "GamePadTypeComboBox")
+			{
+				v = ((int)(ControllerType)((ComboBox)control).SelectedItem).ToString();
+			}
+			// If di menu strip attached.
+			else if (control is ComboBox && control.ContextMenuStrip != null)
+			{
+				v = new SettingsConverter(control.Text, key).ToIniSetting();
+			}
+			else if (control is ComboBox)
+			{
+				var cbx = (ComboBox)control;
+				if (key == SettingName.FakeWmi || key == SettingName.FakeDi) v = (string)cbx.SelectedValue;
+			}
+			else if (control is TextBox)
+			{
+				// if setting is readonly.
+				if (key == SettingName.InstanceGuid || key == SettingName.ProductGuid)
+				{
+					v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
+				}
+				else v = control.Text;
+			}
+			else if (control is NumericUpDown)
+			{
+				NumericUpDown nud = (NumericUpDown)control;
+				v = nud.Value.ToString();
+			}
+			else if (control is TrackBar)
+			{
+				TrackBar tc = (TrackBar)control;
+				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset)
+				{
+					// convert 100%  to 256
+					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
+				}
+				else v = tc.Value.ToString();
+			}
+			else if (control is CheckBox)
+			{
+				CheckBox tc = (CheckBox)control;
+				v = tc.Checked ? "1" : "0";
+			}
+			if (SettingName.IsThumbAxis(key))
+			{
+				v = v.Replace("a", "");
+			}
+			if (SettingName.IsDPad(key)) v = v.Replace("p", "");
+			if (v == "v1") v = "UP";
+			if (v == "v2") v = "RIGHT";
+			if (v == "v3") v = "DOWN";
+			if (v == "v4") v = "LEFT";
+			if (v == "")
+			{
+				if (key == SettingName.DPadUp) v = "UP";
+				if (key == SettingName.DPadDown) v = "DOWN";
+				if (key == SettingName.DPadLeft) v = "LEFT";
+				if (key == SettingName.DPadRight) v = "RIGHT";
+				if (key == SettingName.Vid || key == SettingName.Pid || key == SettingName.FakeVid || key == SettingName.FakePid) v = "0x0";
+			}
+			string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
+			// add comment.
+			//var l = SettingName.MaxNameLength - key.Length + 24;
+			//v = string.Format("{0, -" + l + "} # {1} Default: '{2}'.", v, SettingName.GetDescription(key), SettingName.GetDefaultValue(key));
+			var oldValue = ini.GetValue(iniSection, key);
+			var saved = false;
+			if (oldValue != v)
+			{
+				ini.SetValue(iniSection, key, v);
+				saveCount++;
+				saved = true;
+				StatusSaveLabel.Text = string.Format("S {0}", saveCount);
+			}
+			return saved;
+		}
 
         #region Setting Events
 
@@ -346,23 +365,23 @@ namespace x360ce.App
             SettingsTimer.Start();
         }
 
-        private void Control_TextChanged(object sender, EventArgs e)
-        {
-            SaveSetting((Control)sender);
-            NotifySettingsChange();
+		private void Control_TextChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if vaue changed.
+			if (SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
-        private void Control_ValueChanged(object sender, EventArgs e)
-        {
-            SaveSetting((Control)sender);
-            NotifySettingsChange();
-        }
+		private void Control_ValueChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if vaue changed.
+			if (SaveSetting((Control)sender)) NotifySettingsChange();
+		}
 
-        private void Control_CheckedChanged(object sender, EventArgs e)
-        {
-            SaveSetting((Control)sender);
-            NotifySettingsChange();
-        }
+		private void Control_CheckedChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if vaue changed.
+			if (SaveSetting((Control)sender)) NotifySettingsChange();
+		}
 
         #endregion
 
