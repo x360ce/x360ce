@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Resources;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("X360 Controller Emulator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Wrapper library that translates XInput calls to DirectInput calls, for support old, no XInput compatible gamepads.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TocaEdit")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
@@ -32,4 +33,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("2.0.2.46")]
+[assembly: AssemblyFileVersionAttribute("2.0.2.46")]
 [assembly: AssemblyDelaySign(false)]
+[assembly: NeutralResourcesLanguageAttribute("en")]
