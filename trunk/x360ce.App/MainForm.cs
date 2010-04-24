@@ -291,8 +291,8 @@ namespace x360ce.App
 			// preset will be stored in inside [PAD1] section;
 			ReadPadSettings(resourceName, "PAD1", ControllerIndex);
 			ResumeEvents();
-			SaveSettings();
-			NotifySettingsChange();
+			// Save setting and notify if vaue changed.
+			if (SaveSettings())	NotifySettingsChange();
 			// remove file if it was from resource.
 			if (resource != null) System.IO.File.Delete(resourceName);
 			//CleanStatusTimer.Start();
