@@ -1,4 +1,7 @@
-﻿v2.0.2.46 (2010-04-23) by Evaldas Jocys
+﻿v2.0.2.47 (2010-04-24) by Evaldas Jocys
+- Fix: Force feedback test fixed.
+
+v2.0.2.46 (2010-04-23) by Evaldas Jocys
 - Update: Updated to xinput1_3.dll v3.2.0.97.
 
 v2.0.2.44 (2010-04-22) by Evaldas Jocys
