@@ -117,8 +117,10 @@
     <Compile Include="Microsoft\Xna\Framework\ErrorCodes.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Microsoft\Xna\Framework\FrameworkResources.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Microsoft\Xna\Framework\FrameworkResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FrameworkResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Microsoft\Xna\Framework\Helpers.cs" />
     <Compile Include="Microsoft\Xna\Framework\Input\Buttons.cs" />
@@ -165,6 +167,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Microsoft\Xna\Framework\FrameworkResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FrameworkResources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Microsoft.Xna.Framework</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
