@@ -267,17 +267,15 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 	// you need only specify the parameters you are modifying
 	HRESULT hr= S_OK;
 	LONG     rglDirection[2] = { 0, 0 };
-	DWORD    rgdwAxes[2]     = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
 
-	if(effidx)
+	if( Gamepad[idx].g_dwNumForceFeedbackAxis == 1 )
 	{
 		rglDirection[0] = 0;
-		rglDirection[1] = 1;
+
 	}
 	else
 	{
-		rglDirection[0] = 1;
-		rglDirection[1] = 0;
+		rglDirection[0] = force;
 	}
 
 	LONG magnitude = (LONG)(force/256*256-1);
@@ -295,7 +293,6 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 	eff.dwTriggerButton = DIEB_NOTRIGGER;
 	eff.dwTriggerRepeatInterval = 0;
 	eff.cAxes = Gamepad[idx].g_dwNumForceFeedbackAxis;
-	eff.rgdwAxes = rgdwAxes;
 	eff.rglDirection = rglDirection;
 	eff.lpEnvelope = 0;
 	eff.cbTypeSpecificParams = sizeof( DICONSTANTFORCE );
@@ -316,19 +313,7 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 		DWORD    rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
 		LONG rglDirection[2] = { 0, 0 };
 
-		if(effidx)
-		{
-			rglDirection[0] = 0;
-			rglDirection[1] = 1;
-		}
-		else
-		{
-			rglDirection[0] = 1;
-			rglDirection[1] = 0;
-		}
-
-
-		DICONSTANTFORCE cf;
+		DICONSTANTFORCE cf = { 0 };
 		DIEFFECT eff;
 
 		ZeroMemory( &eff, sizeof( eff ) );
