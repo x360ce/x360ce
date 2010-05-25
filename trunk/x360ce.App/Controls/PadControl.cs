@@ -53,6 +53,9 @@ namespace x360ce.App.Controls
 					((ComboBox)control).ContextMenuStrip = DiMenuStrip;
 				}
 			}
+
+			// hide experimental option.
+			PadTabControl.TabPages.Remove(KeyboardTabPage);
 		}
 
 		#region Recording
