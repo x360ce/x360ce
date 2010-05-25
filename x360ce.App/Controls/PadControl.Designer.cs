@@ -133,10 +133,10 @@
 			this.RightThumbButtonComboBox = new System.Windows.Forms.ComboBox();
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
-			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
 			this.keyboardControl1 = new x360ce.App.Controls.KeyboardControl();
+			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.AdvancedTabPage.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -1308,12 +1308,6 @@
 			this.PadTabControl.Size = new System.Drawing.Size(628, 437);
 			this.PadTabControl.TabIndex = 1;
 			// 
-			// DiMenuStrip
-			// 
-			this.DiMenuStrip.Name = "DiMenuStrip";
-			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
-			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
-			// 
 			// KeyboardTabPage
 			// 
 			this.KeyboardTabPage.Controls.Add(this.keyboardControl1);
@@ -1332,6 +1326,12 @@
 			this.keyboardControl1.Name = "keyboardControl1";
 			this.keyboardControl1.Size = new System.Drawing.Size(614, 405);
 			this.keyboardControl1.TabIndex = 0;
+			// 
+			// DiMenuStrip
+			// 
+			this.DiMenuStrip.Name = "DiMenuStrip";
+			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
+			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
 			// PadControl
 			// 
