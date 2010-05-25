@@ -89,6 +89,12 @@
     <Compile Include="Controls\DirectInputControl.Designer.cs">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\KeyboardControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\KeyboardControl.Designer.cs">
+      <DependentUpon>KeyboardControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -164,6 +170,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DirectInputControl.resx">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\KeyboardControl.resx">
+      <DependentUpon>KeyboardControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>

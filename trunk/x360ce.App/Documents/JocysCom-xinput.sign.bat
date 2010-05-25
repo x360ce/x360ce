@@ -1,4 +1,4 @@
-::@ECHO OFF
+@ECHO OFF
 SET file=%~1
 IF "%file%" == "" SET file=..\..\x360ce.App\Presets\xinput1_3.dll
 ::IF "%file%" == "" SET file=..\..\x360ce.App\bin\Debug\xinput1_3.dll
