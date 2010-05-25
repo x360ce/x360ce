@@ -1,4 +1,7 @@
-﻿v2.0.2.52 (2010-04-24) by Evaldas Jocys
+﻿v2.0.2.60 (2010-05-25) by Evaldas Jocys
+- Update: Updated to xinput1_3.dll v3.2.0.120.
+
+v2.0.2.52 (2010-04-24) by Evaldas Jocys
 - Update: Assembly file Updated.
 - Fix: Xna Framework Resources file fixed.
 - Fix: Don't reload DLL if value haven't changed in INI.

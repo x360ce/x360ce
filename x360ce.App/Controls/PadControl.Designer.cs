@@ -135,6 +135,8 @@
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
+			this.keyboardControl1 = new x360ce.App.Controls.KeyboardControl();
 			this.AdvancedTabPage.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -150,6 +152,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).BeginInit();
 			this.PadTabControl.SuspendLayout();
+			this.KeyboardTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DirectInputTabPage
@@ -1295,6 +1298,7 @@
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.PadTabControl.Controls.Add(this.GeneralTabPage);
+			this.PadTabControl.Controls.Add(this.KeyboardTabPage);
 			this.PadTabControl.Controls.Add(this.AdvancedTabPage);
 			this.PadTabControl.Controls.Add(this.DirectInputTabPage);
 			this.PadTabControl.Location = new System.Drawing.Point(3, 3);
@@ -1309,6 +1313,25 @@
 			this.DiMenuStrip.Name = "DiMenuStrip";
 			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
+			// 
+			// KeyboardTabPage
+			// 
+			this.KeyboardTabPage.Controls.Add(this.keyboardControl1);
+			this.KeyboardTabPage.Location = new System.Drawing.Point(4, 22);
+			this.KeyboardTabPage.Name = "KeyboardTabPage";
+			this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.KeyboardTabPage.Size = new System.Drawing.Size(620, 411);
+			this.KeyboardTabPage.TabIndex = 4;
+			this.KeyboardTabPage.Text = "Keyboard";
+			this.KeyboardTabPage.UseVisualStyleBackColor = true;
+			// 
+			// keyboardControl1
+			// 
+			this.keyboardControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.keyboardControl1.Location = new System.Drawing.Point(3, 3);
+			this.keyboardControl1.Name = "keyboardControl1";
+			this.keyboardControl1.Size = new System.Drawing.Size(614, 405);
+			this.keyboardControl1.TabIndex = 0;
 			// 
 			// PadControl
 			// 
@@ -1338,6 +1361,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).EndInit();
 			this.PadTabControl.ResumeLayout(false);
+			this.KeyboardTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1450,5 +1474,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox AxisToDPadOffsetTextBox;
 		private System.Windows.Forms.ToolTip MainToolTip;
+		private System.Windows.Forms.TabPage KeyboardTabPage;
+		private KeyboardControl keyboardControl1;
 	}
 }
