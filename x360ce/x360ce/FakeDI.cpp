@@ -51,7 +51,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 
 				for(int i = 0; i < 4; i++)
 				{
-					if (Gamepad[i].connected && Gamepad[i].product.Data1 == fakeguid.Data1)
+					if (Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == fakeguid.Data1)
 					{
 						memcpy(&FakeInst,&ANSIInst,ANSIInst.dwSize);
 
@@ -95,7 +95,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 
 				for(int i = 0; i < 4; i++)
 				{
-					if (Gamepad[i].connected && Gamepad[i].product.Data1 == fakeguid.Data1)
+					if (Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == fakeguid.Data1)
 					{
 						memcpy(&pFakeInst,pInst,pInst->dwSize);
 
@@ -168,7 +168,7 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 
 				for(int i = 0; i < 4; i++)
 				{
-					if(Gamepad[i].connected && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1)
+					if(Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1)
 					{
 
 						memcpy(&Fakepdidi,&ANSIpdidi,ANSIpdidi.dwSize);
@@ -210,7 +210,7 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 				WriteLog(_T("[FAKEDI] NewGetDeviceInfo:: Using UNICODE"));
 				for(int i = 0; i < 4; i++)
 				{
-					if(Gamepad[i].connected && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1)
+					if(Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1)
 					{
 
 						DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
