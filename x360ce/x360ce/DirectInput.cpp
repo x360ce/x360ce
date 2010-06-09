@@ -139,6 +139,28 @@ BOOL CALLBACK EnumFFAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pCo
 	return DIENUM_CONTINUE;
 }
 
+BOOL CALLBACK DIEnumEffectsCallback(LPCDIEFFECTINFO pdei, 
+	LPVOID pvRef)
+{
+	HRESULT              hr;
+	//LPDIRECTINPUTDEVICE8 lpdid = (LPDIRECTINPUTDEVICE8)pvRef;   
+	DINPUT_GAMEPAD* gp = (DINPUT_GAMEPAD*)pvRef;
+	// Pointer to calling device
+	//LPDIRECTINPUTEFFECT  lpdiEffect;      // Pointer to created effect
+	//DIEFFECT             diEffect;        // Params for created effect
+	//DICONSTANTFORCE      diConstantForce; // Type-specific parameters
+
+
+	if (DIEFT_GETTYPE(pdei->dwEffType) == DIEFT_CONSTANTFORCE)
+	{
+
+		hr = gp->useforce = 1;
+		WriteLog(_T("aaaaaaaaaa"));
+	}
+
+	return DIENUM_CONTINUE;
+}
+
 HRESULT UpdateState(INT idx )
 {
 	HRESULT hr;
@@ -252,6 +274,13 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	if( Gamepad[idx].g_dwNumForceFeedbackAxis > 2 )
 		Gamepad[idx].g_dwNumForceFeedbackAxis = 2;
 
+	WriteLog(_T("aaaaaa %d"), Gamepad[idx].g_dwNumForceFeedbackAxis);
+
+	if( Gamepad[idx].g_dwNumForceFeedbackAxis <= 0 )
+		Gamepad[idx].useforce = 0;
+
+	hr =Gamepad[idx].g_pGamepad->EnumEffects(&DIEnumEffectsCallback, &Gamepad[idx], DIEFT_ALL);
+
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->Acquire() ) )
 	{
 		WriteLog(_T("[DINPUT] [PAD%d] Acquire failed with code HR = %s"), idx+1, DXErrStr(hr));
@@ -337,6 +366,7 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 			&eff, &Gamepad[idx].g_pEffect[effidx] , NULL ) ) )
 		{
 			WriteLog(_T("[DINPUT] [PAD%d] CreateEffect (%d) failed with code HR = %s"), idx+1,effidx, DXErrStr(hr));
+			return hr;
 		}
 	}
 	return hr;

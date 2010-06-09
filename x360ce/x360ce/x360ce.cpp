@@ -1,17 +1,17 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 ToCA Edit
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
+*  Copyright (C) 2002-2010 ToCA Edit
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "stdafx.h"
 #include "globals.h"
@@ -82,10 +82,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	/*
 	Nasty trick to support XInputEnable states, because not every game calls it so:
 	- must support games that use it, and do enable/disable as needed by game
-		if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return fake S_OK, ie. connected but state not updating
-		if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
+	if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return fake S_OK, ie. connected but state not updating
+	if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
 	- must support games that not call it
-		if bUseEnabled is FALSE ie. XInputEnable was not call -> do not care about XInputEnable states 
+	if bUseEnabled is FALSE ie. XInputEnable was not call -> do not care about XInputEnable states 
 	*/
 
 	if(!bEnabled && bUseEnabled) return S_OK;
@@ -146,6 +146,16 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		}
 
 	}
+	else 
+	{
+		for (INT i = 0; i < 4; ++i) 
+		{
+			if ((PadMap.pov[i] >= 0)&&	ButtonPressed(PadMap.pov[i],dwUserIndex)) 
+			{
+					xGamepad.wButtons |= povIDs[i];
+			}
+		}
+	}
 
 	// Created so we can refer to each axis with an ID
 	LONG axis[7] = {
@@ -178,22 +188,22 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		} else {
 			LONG *values;
 			switch (triggerType) {
-				case AXIS:
-				case HAXIS:
+			case AXIS:
+			case HAXIS:
 
 
-					values = axis;
-					break;
+				values = axis;
+				break;
 
 
-				case SLIDER:
-				case HSLIDER:
+			case SLIDER:
+			case HSLIDER:
 
-					values = slider;
-					break;
-				default:
-					values = axis;
-					break;
+				values = slider;
+				break;
+			default:
+				values = axis;
+				break;
 			}
 
 			LONG v = (PadMap.Trigger[i].id > 0 ?
@@ -201,15 +211,15 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			-values[-PadMap.Trigger[i].id -1] - 1);
 
 			/*
-				--- v is the full range (-32768 .. +32767) that should be projected to 0...255
+			--- v is the full range (-32768 .. +32767) that should be projected to 0...255
 
-				--- Full ranges
-				AXIS:	(	0 to 255 from -32768 to 32767) using axis
-				SLIDER:	(	0 to 255 from -32768 to 32767) using slider
-				------------------------------------------------------------------------------
-				--- Half ranges
-				HAXIS:	(	0 to 255 from 0 to 32767) using axis
-				HSLIDER:	(	0 to 255 from 0 to 32767) using slider
+			--- Full ranges
+			AXIS:	(	0 to 255 from -32768 to 32767) using axis
+			SLIDER:	(	0 to 255 from -32768 to 32767) using slider
+			------------------------------------------------------------------------------
+			--- Half ranges
+			HAXIS:	(	0 to 255 from 0 to 32767) using axis
+			HSLIDER:	(	0 to 255 from 0 to 32767) using slider
 			*/
 
 			LONG v2=0;
@@ -219,18 +229,18 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 			switch (triggerType) {
 				// Full range
-				case AXIS:
-				case SLIDER:
-					scaling = 256; offset = 32768;
-					break;
-					// Half range
-				case HAXIS:
-				case HSLIDER:
-					scaling = 128; offset = 0;
-					break;
-				default:
-					scaling = 1; offset = 0;
-					break;
+			case AXIS:
+			case SLIDER:
+				scaling = 256; offset = 32768;
+				break;
+				// Half range
+			case HAXIS:
+			case HSLIDER:
+				scaling = 128; offset = 0;
+				break;
+			default:
+				scaling = 1; offset = 0;
+				break;
 			}
 
 			v2 = (v + offset) / scaling;
@@ -297,27 +307,27 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		}
 	}
 
-		//WILDS - Axis to D-Pad
-		if(Gamepad[dwUserIndex].axistodpad==1)
-		{
-			//WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
+	//WILDS - Axis to D-Pad
+	if(Gamepad[dwUserIndex].axistodpad==1)
+	{
+		//WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
 
-			if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
-				xGamepad.wButtons |= XINPUT_GAMEPAD_LEFT_THUMB;
-			if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset < -Gamepad[dwUserIndex].axistodpaddeadzone)
-				xGamepad.wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
+		if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
+			xGamepad.wButtons |= XINPUT_GAMEPAD_LEFT_THUMB;
+		if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset < -Gamepad[dwUserIndex].axistodpaddeadzone)
+			xGamepad.wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
 
-			if(Gamepad[dwUserIndex].state.lY - Gamepad[dwUserIndex].axistodpadoffset < -Gamepad[dwUserIndex].axistodpaddeadzone)
-				xGamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
-			if(Gamepad[dwUserIndex].state.lY - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
-				xGamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
-		}
-		//WILDS END
+		if(Gamepad[dwUserIndex].state.lY - Gamepad[dwUserIndex].axistodpadoffset < -Gamepad[dwUserIndex].axistodpaddeadzone)
+			xGamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
+		if(Gamepad[dwUserIndex].state.lY - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
+			xGamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
+	}
+	//WILDS END
 
-		// --- Do Linears ---
-		// TODO
+	// --- Do Linears ---
+	// TODO
 
-		return hr;
+	return hr;
 }
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
@@ -445,11 +455,11 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 }
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
-(
- DWORD dwUserIndex,          // [in] Index of the gamer associated with the device
- GUID* pDSoundRenderGuid,    // [out] DSound device ID for render
- GUID* pDSoundCaptureGuid    // [out] DSound device ID for capture
- )
+	(
+	DWORD dwUserIndex,          // [in] Index of the gamer associated with the device
+	GUID* pDSoundRenderGuid,    // [out] DSound device ID for render
+	GUID* pDSoundCaptureGuid    // [out] DSound device ID for capture
+	)
 {
 	UNREFERENCED_PARAMETER(pDSoundRenderGuid);
 	UNREFERENCED_PARAMETER(pDSoundCaptureGuid);
@@ -459,11 +469,11 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 }
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation
-(
- DWORD                       dwUserIndex,        // [in]  Index of the gamer associated with the device
- BYTE                        devType,            // [in]  Which device on this user index
- XINPUT_BATTERY_INFORMATION* pBatteryInformation // [out] Contains the level and types of batteries
- )
+	(
+	DWORD                       dwUserIndex,        // [in]  Index of the gamer associated with the device
+	BYTE                        devType,            // [in]  Which device on this user index
+	XINPUT_BATTERY_INFORMATION* pBatteryInformation // [out] Contains the level and types of batteries
+	)
 
 {
 	UNREFERENCED_PARAMETER(devType);
@@ -477,11 +487,11 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation
 }
 
 extern "C" DWORD WINAPI XInputGetKeystroke
-(
- DWORD dwUserIndex,              // [in]  Index of the gamer associated with the device
- DWORD dwReserved,               // [in]  Reserved for future use
- PXINPUT_KEYSTROKE pKeystroke    // [out] Pointer to an XINPUT_KEYSTROKE structure that receives an input event.
- )
+	(
+	DWORD dwUserIndex,              // [in]  Index of the gamer associated with the device
+	DWORD dwReserved,               // [in]  Reserved for future use
+	PXINPUT_KEYSTROKE pKeystroke    // [out] Pointer to an XINPUT_KEYSTROKE structure that receives an input event.
+	)
 {
 
 	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
