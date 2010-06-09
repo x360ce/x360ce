@@ -136,7 +136,7 @@ VOID ExitInstance()
 {   
 	ReleaseDirectInput();
 
-	free(logfilename);
+	delete[] logfilename;
 
 	if (hNativeInstance)
 	{
