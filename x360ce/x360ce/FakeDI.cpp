@@ -17,22 +17,25 @@
 #include "globals.h"
 #include "FakeAPI.h"
 #include "Utils.h"
+
 #include <detours.h>
-
 #define CINTERFACE	//needed for detours
-#include "DirectInput.h"
+#include "FakeDI.h"
 
-LPDIENUMDEVICESCALLBACK lpOldCallback= NULL;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT (WINAPI *GenuineDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter) = DirectInput8Create;
+HRESULT (STDMETHODCALLTYPE *GenuineCreateDevice) (LPDIRECTINPUT8 This, REFGUID rguid, LPDIRECTINPUTDEVICE8 *lplpDirectInputDevice, LPUNKNOWN pUnkOuter) = NULL;
+HRESULT (STDMETHODCALLTYPE *GenuineGetProperty) (LPDIRECTINPUTDEVICE8 This, REFGUID rguidProp, LPDIPROPHEADER pdiph) = NULL;
+HRESULT (STDMETHODCALLTYPE *GenuineGetDeviceInfo) (LPDIRECTINPUTDEVICE8 This, LPDIDEVICEINSTANCE pdidi) = NULL;
+HRESULT (STDMETHODCALLTYPE *GenuineEnumDevices) (LPDIRECTINPUT8 This, DWORD dwDevType,LPDIENUMDEVICESCALLBACK lpCallback,LPVOID pvRef,DWORD dwFlags) = NULL;
+LPDIENUMDEVICESCALLBACK lpGenuineCallback= NULL;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 {
-
-	// check for magic [x360ce], if is then this is a x360ce dll process
-	if (pContext != NULL && _tcsstr( (TCHAR*)pContext, _T("[x360ce]") ))
-	{
-		return lpOldCallback(pInst,pContext);
-	}
-
 	if(pInst && pInst->dwSize!=0)
 	{
 		WriteLog(_T("[FAKEDI] FakeEnumCallback"));
@@ -63,11 +66,11 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 						memcpy(&FakeInst.guidProduct.Data4, pdata4, 8);
 
-						TCHAR strOldguidProduct[50];
-						TCHAR strNewguidProduct[50];
-						GUIDtoString(strOldguidProduct,&ANSIInst.guidProduct);
-						GUIDtoString(strNewguidProduct,&FakeInst.guidProduct);
-						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						TCHAR strGenuineguidProduct[50];
+						TCHAR strFakeguidProduct[50];
+						GUIDtoString(strGenuineguidProduct,&ANSIInst.guidProduct);
+						GUIDtoString(strFakeguidProduct,&FakeInst.guidProduct);
+						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strGenuineguidProduct,strFakeguidProduct);
 
 						FakeInst.dwDevType = 66069;
 						FakeInst.wUsage = 5;
@@ -81,7 +84,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						WriteLog(_T("Instance Name change from %s to %s"),ANSIInst.tszInstanceName,FakeInst.tszInstanceName);
 						*/
 
-						return lpOldCallback((DIDEVICEINSTANCEW*) &FakeInst,pContext);
+						return lpGenuineCallback((DIDEVICEINSTANCEW*) &FakeInst,pContext);
 					}
 				}
 			}
@@ -107,11 +110,11 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 						memcpy(&pFakeInst.guidProduct.Data4, pdata4, 8);
 
-						TCHAR strOldguidProduct[50];
-						TCHAR strNewguidProduct[50];
-						GUIDtoString(strOldguidProduct,&pInst->guidProduct);
-						GUIDtoString(strNewguidProduct,&pFakeInst.guidProduct);
-						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						TCHAR strGenuineguidProduct[50];
+						TCHAR strFakeguidProduct[50];
+						GUIDtoString(strGenuineguidProduct,&pInst->guidProduct);
+						GUIDtoString(strFakeguidProduct,&pFakeInst.guidProduct);
+						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strGenuineguidProduct,strFakeguidProduct);
 
 						pFakeInst.dwDevType = 66069;
 						pFakeInst.wUsage = 5;
@@ -122,45 +125,43 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						_stprintf_s(pFakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)")); 	
 						WriteLog(_T("[FAKEDI] Instance Name change from %s to %s"),pInst->tszInstanceName,pFakeInst.tszInstanceName);
 
-						return lpOldCallback(&pFakeInst,pContext);
+						return lpGenuineCallback(&pFakeInst,pContext);
 					}
 				}
 			}
 		}
 	}
 
-	return lpOldCallback(pInst,pContext);
+	return lpGenuineCallback(pInst,pContext);
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-HRESULT (STDMETHODCALLTYPE *OldEnumDevices) (LPDIRECTINPUT8 This, DWORD dwDevType,LPDIENUMDEVICESCALLBACK lpCallback,LPVOID pvRef,DWORD dwFlags) = NULL;
-
-HRESULT STDMETHODCALLTYPE NewEnumDevices (LPDIRECTINPUT8 This, DWORD dwDevType,LPDIENUMDEVICESCALLBACK lpCallback,LPVOID pvRef,DWORD dwFlags)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT STDMETHODCALLTYPE FakeEnumDevices (LPDIRECTINPUT8 This, DWORD dwDevType,LPDIENUMDEVICESCALLBACK lpCallback,LPVOID pvRef,DWORD dwFlags)
 {
 	if (lpCallback != NULL)
 	{
-		lpOldCallback= lpCallback;
-		return OldEnumDevices(This,dwDevType,FakeEnumCallback,pvRef,dwFlags);
+		lpGenuineCallback= lpCallback;
+		return GenuineEnumDevices(This,dwDevType,FakeEnumCallback,pvRef,dwFlags);
 	}
-	return OldEnumDevices(This,dwDevType,lpCallback,pvRef,dwFlags);
+	return GenuineEnumDevices(This,dwDevType,lpCallback,pvRef,dwFlags);
 }
 
-HRESULT (STDMETHODCALLTYPE *OldGetDeviceInfo) (LPDIRECTINPUTDEVICE8 This, LPDIDEVICEINSTANCE pdidi) = NULL;
-
-HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVICEINSTANCE pdidi)
+HRESULT STDMETHODCALLTYPE FakeGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVICEINSTANCE pdidi)
 {
 	HRESULT hr;
-	hr = OldGetDeviceInfo ( This, pdidi );
+	hr = GenuineGetDeviceInfo ( This, pdidi );
+
 	if(pdidi != NULL)
 	{
-		WriteLog(_T("[FAKEDI] NewGetDeviceInfo"));
+		WriteLog(_T("[FAKEDI] FakeGetDeviceInfo"));
 
 		if(wFakeDI >= 2)
 		{
 			//ANSI or UNICODE ?
 			if(sizeof(DIDEVICEINSTANCEA) ==  pdidi->dwSize)					//ANSI
 			{
-				WriteLog(_T("[FAKEDI] NewGetDeviceInfo:: Using ANSI"));
+				WriteLog(_T("[FAKEDI] FakeGetDeviceInfo:: Using ANSI"));
 				DIDEVICEINSTANCEA Fakepdidi;
 				DIDEVICEINSTANCEA ANSIpdidi;
 
@@ -181,11 +182,11 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 						memcpy(&Fakepdidi.guidProduct.Data4, pdata4, 8);
 
-						TCHAR strOldguidProduct[50];
-						TCHAR strNewguidProduct[50];
-						GUIDtoString(strOldguidProduct,&Fakepdidi.guidProduct);
-						GUIDtoString(strNewguidProduct,&Fakepdidi.guidProduct);
-						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						TCHAR strGenuineguidProduct[50];
+						TCHAR strFakeguidProduct[50];
+						GUIDtoString(strGenuineguidProduct,&Fakepdidi.guidProduct);
+						GUIDtoString(strFakeguidProduct,&Fakepdidi.guidProduct);
+						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strGenuineguidProduct,strFakeguidProduct);
 
 						Fakepdidi.dwDevType = 66069;
 						Fakepdidi.wUsage = 5;
@@ -207,7 +208,7 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 			}
 			else															//UNICODE
 			{
-				WriteLog(_T("[FAKEDI] NewGetDeviceInfo:: Using UNICODE"));
+				WriteLog(_T("[FAKEDI] FakeGetDeviceInfo:: Using UNICODE"));
 				for(int i = 0; i < 4; i++)
 				{
 					if(Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1)
@@ -221,11 +222,11 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 						memcpy(&(pdidi->guidProduct.Data4), pdata4, 8);
 
-						TCHAR strNewguidProduct[50];
-						TCHAR strOldguidProduct[50];
-						GUIDtoString(strOldguidProduct,&pdidi->guidProduct);
-						GUIDtoString(strNewguidProduct,&pdidi->guidProduct);
-						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strOldguidProduct,strNewguidProduct);
+						TCHAR strFakeguidProduct[50];
+						TCHAR strGenuineguidProduct[50];
+						GUIDtoString(strGenuineguidProduct,&pdidi->guidProduct);
+						GUIDtoString(strFakeguidProduct,&pdidi->guidProduct);
+						WriteLog(_T("[FAKEDI] GUID change from %s to %s"),strGenuineguidProduct,strFakeguidProduct);
 
 						pdidi->dwDevType = 66069;
 						pdidi->wUsage = 5;
@@ -245,101 +246,101 @@ HRESULT STDMETHODCALLTYPE NewGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVIC
 	}
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT (STDMETHODCALLTYPE *OldGetProperty) (LPDIRECTINPUTDEVICE8 This, REFGUID rguidProp, LPDIPROPHEADER pdiph) = NULL;
-
-HRESULT STDMETHODCALLTYPE NewGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT STDMETHODCALLTYPE FakeGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
 	HRESULT hr;
-	hr = OldGetProperty (This, rguidProp, pdiph);
-	WriteLog(_T("[FAKEDI] NewGetProperty"));
+	hr = GenuineGetProperty (This, rguidProp, pdiph);
+	WriteLog(_T("[FAKEDI] FakeGetProperty"));
 
 	if ( (&rguidProp==&DIPROP_VIDPID) )
 	{
 		DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
-		WriteLog(_T("[FAKEDI] Old VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
+		WriteLog(_T("[FAKEDI] Genuine VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 		((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
-		WriteLog(_T("[FAKEDI] New VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
+		WriteLog(_T("[FAKEDI] Fake VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 	}
 	if ( (&rguidProp==&DIPROP_PRODUCTNAME) )
 	{
-		WriteLog(_T("[FAKEDI] Old PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
+		WriteLog(_T("[FAKEDI] Genuine PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 		_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
-		WriteLog(_T("[FAKEDI] New PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
+		WriteLog(_T("[FAKEDI] Fake PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 
 	}
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT (STDMETHODCALLTYPE *OldCreateDevice) (LPDIRECTINPUT8 This, REFGUID rguid, LPDIRECTINPUTDEVICE8 *lplpDirectInputDevice, LPUNKNOWN pUnkOuter) = NULL;
-
-HRESULT STDMETHODCALLTYPE NewCreateDevice (LPDIRECTINPUT8 This, REFGUID rguid, LPDIRECTINPUTDEVICE8 * lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT STDMETHODCALLTYPE FakeCreateDevice (LPDIRECTINPUT8 This, REFGUID rguid, LPDIRECTINPUTDEVICE8 * lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
 {
 	HRESULT hr;
 	LPDIRECTINPUTDEVICE8 pDID;
 
-	hr = OldCreateDevice (This, rguid, lplpDirectInputDevice, pUnkOuter);
+	hr = GenuineCreateDevice (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	if(lplpDirectInputDevice != NULL)
 	{
-		WriteLog(_T("[FAKEDI] NewCreateDevice"));
+		WriteLog(_T("[FAKEDI] FakeCreateDevice"));
 		pDID = (LPDIRECTINPUTDEVICE8) *lplpDirectInputDevice;
 		if(pDID != NULL)
 		{
-			if(OldGetDeviceInfo == NULL)
+			if(GenuineGetDeviceInfo == NULL)
 			{
-				OldGetDeviceInfo = pDID->lpVtbl->GetDeviceInfo;
+				GenuineGetDeviceInfo = pDID->lpVtbl->GetDeviceInfo;
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OldGetDeviceInfo, NewGetDeviceInfo);
+				DetourAttach(&(PVOID&)GenuineGetDeviceInfo, FakeGetDeviceInfo);
 				DetourTransactionCommit();
 			}
-			if(OldGetProperty == NULL)
+			if(GenuineGetProperty == NULL)
 			{
-				OldGetProperty = pDID->lpVtbl->GetProperty;
+				GenuineGetProperty = pDID->lpVtbl->GetProperty;
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OldGetProperty, NewGetProperty);
+				DetourAttach(&(PVOID&)GenuineGetProperty, FakeGetProperty);
 				DetourTransactionCommit();
 			}
 		}
 	}
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT (WINAPI *OldDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter) = DirectInput8Create;
-
-HRESULT WINAPI NewDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
 {
 
 	HRESULT hr;
 	LPDIRECTINPUT8 pDI;
 
-	hr = OldDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
+	hr = GenuineDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
 	if(ppvOut != NULL) 
 	{
-		WriteLog(_T("[FAKEDI] NewDirectInput8Create"));
+		WriteLog(_T("[FAKEDI] FakeDirectInput8Create"));
 
 		pDI = (LPDIRECTINPUT8) *ppvOut;
 		if(pDI != NULL) 
 		{
-			if(OldEnumDevices == NULL) 
+			if(GenuineEnumDevices == NULL) 
 			{
-				OldEnumDevices = pDI->lpVtbl->EnumDevices;
+				GenuineEnumDevices = pDI->lpVtbl->EnumDevices;
 
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OldEnumDevices, NewEnumDevices);
+				DetourAttach(&(PVOID&)GenuineEnumDevices, FakeEnumDevices);
 				DetourTransactionCommit();
 			}
-			if(OldCreateDevice == NULL)
+			if(GenuineCreateDevice == NULL)
 			{
-				OldCreateDevice = pDI->lpVtbl->CreateDevice;
+				GenuineCreateDevice = pDI->lpVtbl->CreateDevice;
 
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OldCreateDevice, NewCreateDevice);
+				DetourAttach(&(PVOID&)GenuineCreateDevice, FakeCreateDevice);
 				DetourTransactionCommit();
 			}
 		}
@@ -347,14 +348,17 @@ HRESULT WINAPI NewDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID ri
 
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FakeDI()
 {
 	WriteLog(_T("[FAKEAPI] FakeDI"));
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(PVOID&)OldDirectInput8Create, NewDirectInput8Create);
+	DetourAttach(&(PVOID&)GenuineDirectInput8Create, FakeDirectInput8Create);
 	DetourTransactionCommit();
 
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

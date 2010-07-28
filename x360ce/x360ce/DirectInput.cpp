@@ -15,9 +15,9 @@
  
 #include "stdafx.h"
 #include "globals.h"
-#include "DirectInput.h"
 #include "Utils.h"
 #include "Config.h"
+#include "FakeDI.h"
 
 DINPUT_DATA DDATA;
 DINPUT_GAMEPAD Gamepad[4];	//but we need a 4 gamepads
@@ -27,7 +27,7 @@ INT axiscount=0;
 
 LPDIRECTINPUT8 GetDirectInput() {
 	if (!DDATA.g_pDI) {
-		if (FAILED(DirectInput8Create( hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.g_pDI, NULL ) ) )
+		if (FAILED(GenuineDirectInput8Create( hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.g_pDI, NULL ) ) )
 			return 0;
 	}
 	DDATA.refCount++;
@@ -165,7 +165,7 @@ HRESULT UpdateState(INT idx )
 {
 	HRESULT hr;
 
-	if( (NULL == Gamepad[idx].g_pGamepad) || !(Gamepad[idx].connected))
+	if( (!Gamepad[idx].g_pGamepad) || !(Gamepad[idx].connected))
 		return S_FALSE;
 
 	// Poll the device to read the current state
@@ -195,14 +195,14 @@ HRESULT Enumerate(DWORD idx)
 		WriteLog(_T("[DINPUT] [PAD%d] Enumeration FAILED !!!"),idx+1);
 		return hr;
 	}
-	if(Gamepad[idx].g_pGamepad == NULL) WriteLog(_T("[PAD%d] Enumeration FAILED !!!"),idx+1);
+	if(!Gamepad[idx].g_pGamepad) WriteLog(_T("[PAD%d] Enumeration FAILED !!!"),idx+1);
 	return ERROR_SUCCESS;
 }
 
 HRESULT InitDirectInput( HWND hDlg, INT idx )
 {
 
-	if(Gamepad[idx].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[idx].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	DIPROPDWORD dipdw;
 	HRESULT hr=S_OK;
