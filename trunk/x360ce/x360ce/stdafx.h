@@ -15,6 +15,10 @@
  
 #pragma once
 
+#if defined(DEBUG) | defined(_DEBUG)
+#include <crtdbg.h>
+#endif
+
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x501
 #endif
@@ -37,6 +41,4 @@
 
 #include <xinput.h>
 
-#if defined(DEBUG) | defined(_DEBUG)
-#include <crtdbg.h>
-#endif
+

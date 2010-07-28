@@ -17,10 +17,11 @@
 #include "globals.h"
 #include "FakeAPI.h"
 #include "Utils.h"
-#include <Softpub.h>
-#include <detours.h>
+#include "FakeWinTrust.h"
 
-LONG (WINAPI *OldWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = WinVerifyTrust;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+LONG (WINAPI *GenuineWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = WinVerifyTrust;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LONG WINAPI NewWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
@@ -36,7 +37,7 @@ void FakeWinTrust()
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(PVOID&)OldWinVerifyTrust, NewWinVerifyTrust);
+	DetourAttach(&(PVOID&)GenuineWinVerifyTrust, NewWinVerifyTrust);
 	DetourTransactionCommit();
 
 }

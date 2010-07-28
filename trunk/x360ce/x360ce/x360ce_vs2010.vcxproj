@@ -155,6 +155,13 @@
       </DebugInformationFormat>
       <OmitFramePointers>true</OmitFramePointers>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -228,6 +235,9 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="FakeAPI.h" />
+    <ClInclude Include="FakeDI.h" />
+    <ClInclude Include="FakeWinTrust.h" />
+    <ClInclude Include="FakeWMI.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

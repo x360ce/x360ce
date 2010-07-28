@@ -20,6 +20,7 @@
 #include "DirectInput.h"
 
 XINPUT_CAPABILITIES XCAPS;
+bool capsready = false;
 
 #pragma warning(disable:4310)
 
@@ -28,12 +29,13 @@ BOOL bUseEnabled= FALSE;
 
 DWORD dwlastUserIndex = (DWORD) -1;
 
-HRESULT XInit(DWORD dwUserIndex){
+HRESULT XInit(DWORD dwUserIndex)
+{
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 	if(!Gamepad[dwUserIndex].product.Data1) return hr;
 
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL && dwUserIndex != dwlastUserIndex)
+	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex)
 	{ 
 
 		WriteLog(_T("[XINIT] Initializing Gamepad %d"),dwUserIndex+1);
@@ -71,13 +73,13 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
-	if (!pState || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
+	if (!pState || dwUserIndex >= XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
 	hr = XInit(dwUserIndex);
 
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	/*
 	Nasty trick to support XInputEnable states, because not every game calls it so:
@@ -341,7 +343,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		return nativeXInputSetState(dwUserIndex,pVibration);
 	}
 
-	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
+	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
 
 	if(!bEnabled && bUseEnabled) return S_OK;
 
@@ -353,7 +355,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	HRESULT hrLeftForce = S_FALSE;
 	HRESULT hrRightForce = S_FALSE;
 
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 	if(!Gamepad[dwUserIndex].useforce) return ERROR_SUCCESS;
 
 	WORD wLeftMotorSpeed = 0;
@@ -403,33 +405,39 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
-	if (!pCapabilities || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
+	if (!pCapabilities || dwUserIndex >= XUSER_MAX_COUNT-1 || dwFlags != 0) return ERROR_BAD_ARGUMENTS; 
 
-	if(!Gamepad[dwUserIndex].connected) return ERROR_DEVICE_NOT_CONNECTED;
-
-	if(!XCAPS.SubType)
+	if(!capsready)
 	{
 		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
 		// Dump from original x360 controller
 		XINPUT_GAMEPAD xGamepad;
-		xGamepad.bLeftTrigger = (BYTE)0xFF;
-		xGamepad.bRightTrigger = (BYTE)0xFF;
+		ZeroMemory(&xGamepad,sizeof(XINPUT_GAMEPAD));
+
+		xGamepad.bLeftTrigger = (BYTE) 0xFF;
+		xGamepad.bRightTrigger = (BYTE) 0xFF;
 		xGamepad.sThumbLX = (SHORT) 0xFFFF;
 		xGamepad.sThumbLY = (SHORT) 0xFFFF;
 		xGamepad.sThumbRX = (SHORT) 0xFFFF;
 		xGamepad.sThumbRY = (SHORT) 0xFFFF;
 		xGamepad.wButtons = (WORD)  0xFFFFFFFF;
 
-		XINPUT_VIBRATION Vibration = {(WORD)0xFFFFFFFF,(WORD)0xFFFFFFFF};
+		XINPUT_VIBRATION Vibration;
+		ZeroMemory(&Vibration,sizeof(XINPUT_VIBRATION));
+
+		Vibration.wLeftMotorSpeed =	(WORD) 0xFFFFFFFF;
+		Vibration.wRightMotorSpeed = (WORD) 0xFFFFFFFF;
 
 		XCAPS.Flags = (WORD) 4;
-		XCAPS.SubType=(BYTE)Gamepad[dwUserIndex].gamepadtype;
+		XCAPS.SubType = (BYTE) Gamepad[dwUserIndex].gamepadtype;
 		XCAPS.Gamepad = xGamepad;
 		XCAPS.Vibration = Vibration;
 		XCAPS.Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
 
 		pCapabilities = &XCAPS;
+		capsready = true;
 	}
+
 	else pCapabilities = &XCAPS;
 
 	WriteLog(_T("[XINPUT] XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
@@ -464,7 +472,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 	UNREFERENCED_PARAMETER(pDSoundRenderGuid);
 	UNREFERENCED_PARAMETER(pDSoundCaptureGuid);
 
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 	return ERROR_SUCCESS;
 }
 
@@ -478,7 +486,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation
 {
 	UNREFERENCED_PARAMETER(devType);
 
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	// Report a wired controller
 	pBatteryInformation->BatteryType = BATTERY_TYPE_WIRED;
@@ -494,7 +502,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke
 	)
 {
 
-	if(Gamepad[dwUserIndex].g_pGamepad == NULL) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	pKeystroke->Flags = NULL;
 	pKeystroke->HidCode = NULL;

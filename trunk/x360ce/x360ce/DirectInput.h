@@ -31,7 +31,6 @@ struct DINPUT_DATA
 };
 
 struct DINPUT_GAMEPAD {
-	TCHAR ident[9];
 	LPDIRECTINPUTDEVICE8 g_pGamepad;
 	DWORD dwPadIndex;  //starting from 1
 	BOOL connected;
@@ -58,7 +57,6 @@ struct DINPUT_GAMEPAD {
 	DINPUT_GAMEPAD()
 	{
 		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
-		_tcscpy_s(ident,_T("[x360ce]"));
 		dwPadIndex = 0;
 		connected = 0;
 		for (INT i = 0; i < 2; ++i) g_pEffect[i] = NULL;
