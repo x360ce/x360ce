@@ -1,4 +1,8 @@
-﻿v2.0.2.62 (2010-05-25) by Evaldas Jocys
+﻿v2.0.2.65 (2010-05-25) by Evaldas Jocys
+- Update: Updated to xinput1_3.dll v3.2.0.129.
+- Update: LeftMotorDirection and RightMotorDirection setting was removed.
+
+v2.0.2.62 (2010-05-25) by Evaldas Jocys
 - Update: Experimental keyboard option hidden.
 
 v2.0.2.61 (2010-05-25) by Evaldas Jocys

@@ -109,10 +109,10 @@ namespace x360ce.App.Controls
 						actions[0] = rx.Match(actions[0]).Groups[0].Value;
 					}
 				}
-				mainForm.SetComboBoxValue(CurrentCbx, actions[0]);
+				SettingManager.Current.SetComboBoxValue(CurrentCbx, actions[0]);
 				CurrentCbx.ForeColor = SystemColors.WindowText;
 				// Save setting and notify if vaue changed.
-				if (mainForm.SaveSetting(CurrentCbx)) mainForm.NotifySettingsChange();
+				if (SettingManager.Current.SaveSetting(CurrentCbx)) mainForm.NotifySettingsChange();
 				//mainForm.toolStripStatusLabel1.Text = "Recorded: " + CurrentCbx.Text;
 				CurrentCbx = null;
 				Recording = false;
@@ -437,8 +437,6 @@ namespace x360ce.App.Controls
 			// Force Feedback
 			map.Add(section + SettingName.ForceEnable, FfEnableCheckBox);
 			map.Add(section + SettingName.ForceSwapMotor, FfSwapMotorCheckBox);
-			map.Add(section + SettingName.ForceLeftMotorInvert, FfLeftMotorInvertCheckBox);
-			map.Add(section + SettingName.ForceRightMotorInvert, FfRightMotorInvertCheckBox);
 			map.Add(section + SettingName.ForceOverall, FfOverallTrackBar);
 			// Axis To D-Pad
 			map.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
@@ -481,7 +479,7 @@ namespace x360ce.App.Controls
 			{
 				Guid iGuid = Guid.Empty;
 				try { iGuid = device.DeviceInformation.InstanceGuid; }
-				catch (Exception) { if (mainForm.IsDebugMode) throw; }
+				catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
 				instanceGuid = (device == null) ? Guid.Empty : iGuid;
 				ResetDiMenuStrip(device);
 			}
@@ -645,7 +643,7 @@ namespace x360ce.App.Controls
 			{
 				if (CurrentCbx == DPadComboBox)
 				{
-					mainForm.SetComboBoxValue(CurrentCbx, item.Text);
+					SettingManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
 					CurrentCbx = null;
 					DiMenuStrip.Close();
 				}
@@ -658,12 +656,12 @@ namespace x360ce.App.Controls
 				}
 				else if (item.Text == cEmpty)
 				{
-					mainForm.SetComboBoxValue(CurrentCbx, string.Empty);
+					SettingManager.Current.SetComboBoxValue(CurrentCbx, string.Empty);
 					CurrentCbx = null;
 				}
 				else
 				{
-					mainForm.SetComboBoxValue(CurrentCbx, item.Text);
+					SettingManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
 					CurrentCbx = null;
 				}
 			}
