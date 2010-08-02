@@ -75,6 +75,8 @@
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
+    <Compile Include="Common\SettingEventArgs.cs" />
+    <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingName.cs" />
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Controls\AboutControl.cs">
@@ -102,12 +104,6 @@
       <DependentUpon>PadControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
-    <Compile Include="MainForm-CheckFiles.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm-Settings.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Microsoft\Xna\Framework\Design\FieldPropertyDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>

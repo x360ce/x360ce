@@ -56,8 +56,6 @@
 			this.TestRightMotorLabel = new System.Windows.Forms.Label();
 			this.FfOverallTextBox = new System.Windows.Forms.TextBox();
 			this.FfSwapMotorCheckBox = new System.Windows.Forms.CheckBox();
-			this.FfLeftMotorInvertCheckBox = new System.Windows.Forms.CheckBox();
-			this.FfRightMotorInvertCheckBox = new System.Windows.Forms.CheckBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.FfOverallTrackBar = new System.Windows.Forms.TrackBar();
 			this.OptionsDeviceTypeLabel = new System.Windows.Forms.Label();
@@ -180,6 +178,8 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)));
 			this.groupBox2.Controls.Add(this.AxisToDPadEnabledCheckBox);
 			this.groupBox2.Controls.Add(this.AxisToDPadOffsetTrackBar);
 			this.groupBox2.Controls.Add(this.AxisToDPadDeadZoneTrackBar);
@@ -187,9 +187,9 @@
 			this.groupBox2.Controls.Add(this.AxisToDPadOffsetTextBox);
 			this.groupBox2.Controls.Add(this.label3);
 			this.groupBox2.Controls.Add(this.AxisToDPadDeadZoneTextBox);
-			this.groupBox2.Location = new System.Drawing.Point(6, 289);
+			this.groupBox2.Location = new System.Drawing.Point(6, 267);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(502, 116);
+			this.groupBox2.Size = new System.Drawing.Size(502, 138);
 			this.groupBox2.TabIndex = 43;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Axis To D-Pad";
@@ -351,13 +351,11 @@
 			this.groupBox1.Controls.Add(this.TestRightMotorLabel);
 			this.groupBox1.Controls.Add(this.FfOverallTextBox);
 			this.groupBox1.Controls.Add(this.FfSwapMotorCheckBox);
-			this.groupBox1.Controls.Add(this.FfLeftMotorInvertCheckBox);
-			this.groupBox1.Controls.Add(this.FfRightMotorInvertCheckBox);
 			this.groupBox1.Controls.Add(this.label11);
 			this.groupBox1.Controls.Add(this.FfOverallTrackBar);
 			this.groupBox1.Location = new System.Drawing.Point(6, 119);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(502, 164);
+			this.groupBox1.Size = new System.Drawing.Size(502, 142);
 			this.groupBox1.TabIndex = 41;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Force Feedback";
@@ -453,28 +451,6 @@
 			this.FfSwapMotorCheckBox.TabIndex = 33;
 			this.FfSwapMotorCheckBox.Text = "Swap Motor";
 			this.FfSwapMotorCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// FfLeftMotorInvertCheckBox
-			// 
-			this.FfLeftMotorInvertCheckBox.AutoSize = true;
-			this.FfLeftMotorInvertCheckBox.Location = new System.Drawing.Point(9, 137);
-			this.FfLeftMotorInvertCheckBox.Name = "FfLeftMotorInvertCheckBox";
-			this.FfLeftMotorInvertCheckBox.Size = new System.Drawing.Size(98, 17);
-			this.FfLeftMotorInvertCheckBox.TabIndex = 35;
-			this.FfLeftMotorInvertCheckBox.Text = "Invert Direction";
-			this.FfLeftMotorInvertCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// FfRightMotorInvertCheckBox
-			// 
-			this.FfRightMotorInvertCheckBox.AutoSize = true;
-			this.FfRightMotorInvertCheckBox.Checked = true;
-			this.FfRightMotorInvertCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.FfRightMotorInvertCheckBox.Location = new System.Drawing.Point(262, 141);
-			this.FfRightMotorInvertCheckBox.Name = "FfRightMotorInvertCheckBox";
-			this.FfRightMotorInvertCheckBox.Size = new System.Drawing.Size(98, 17);
-			this.FfRightMotorInvertCheckBox.TabIndex = 34;
-			this.FfRightMotorInvertCheckBox.Text = "Invert Direction";
-			this.FfRightMotorInvertCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// label11
 			// 
@@ -1375,8 +1351,6 @@
 		private System.Windows.Forms.TextBox LeftTriggerDeadZoneTextBox;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TrackBar FfOverallTrackBar;
-		private System.Windows.Forms.CheckBox FfRightMotorInvertCheckBox;
-		private System.Windows.Forms.CheckBox FfLeftMotorInvertCheckBox;
 		private System.Windows.Forms.CheckBox FfSwapMotorCheckBox;
 		private System.Windows.Forms.CheckBox FfEnableCheckBox;
 		private System.Windows.Forms.Label TestRightMotorLabel;

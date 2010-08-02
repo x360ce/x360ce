@@ -24,17 +24,11 @@ namespace x360ce.App
 			InitializeComponent();
 		}
 
-		public bool IsDebugMode { get { return DebugModeCheckBox.Checked; } }
-
-		// Possible file names.
-		string iniFileNew = "x360ce.ini";
-		string iniTmpFile = "x360ce.tmp";
 		string dllFile0 = "xinput9_1_0.dll";
 		string dllFile1 = "xinput1_1.dll";
 		string dllFile2 = "xinput1_2.dll";
 		string dllFile3 = "xinput1_3.dll";
 		// Will be set to default values.
-		string iniFile;
 		string dllFile;
 
 		public int oldIndex;
@@ -77,15 +71,7 @@ namespace x360ce.App
 			// Set status.
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
-			// If it is old ini file.
-			iniFile = iniFileNew;
-			if (System.IO.File.Exists("xbox360cemu.ini")
-				&& !System.IO.File.Exists(iniFile))
-			{
-				// Use old file.
-				iniFile = "xbox360cemu.ini";
-				iniTmpFile = "xbox360cemu.tmp";
-			}
+
 			// Set default cXinputFile.
 			if (System.IO.File.Exists(dllFile3)) dllFile = dllFile3;
 			else if (System.IO.File.Exists(dllFile2)) dllFile = dllFile2;
@@ -121,9 +107,23 @@ namespace x360ce.App
 				ControlPads[i].InitPadControl();
 			}
 			// Check if ini and dll is on disk.
-			if (!CheckFiles(true))
+			if (!CheckFiles(true)) return;
+			// INI setting keys with controls.
+			var sm = SettingManager.Current.SettingsMap;
+			SettingManager.Current.ConfigSaved += new EventHandler<SettingEventArgs>(Current_ConfigSaved);
+			SettingManager.Current.ConfigLoaded += new EventHandler<SettingEventArgs>(Current_ConfigLoaded);
+			sm.Add(@"Options\" + SettingName.UseInitBeep, UseInitBeepCheckBox);
+			sm.Add(@"Options\" + SettingName.DebugMode, DebugModeCheckBox);
+			sm.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakeWinTrust, FakeWinTrustCheckBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakeWmi, FakeWmiComboBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakeDi, FakeDiComboBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakeVid, FakeVidTextBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakePid, FakePidTextBox);
+			for (int i = 0; i < ControlPads.Length; i++)
 			{
-				return;
+				var map = ControlPads[i].SettingsMap;
+				foreach (var key in map.Keys) sm.Add(key, map[key]);
 			}
 			ReloadXinputSettings();
 			Version v = new Version(Application.ProductVersion);
@@ -147,6 +147,16 @@ namespace x360ce.App
 			if (Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 			timer.Start();
 			////ReloadXInputLibrary();
+		}
+
+		void Current_ConfigSaved(object sender, SettingEventArgs e)
+		{
+			StatusSaveLabel.Text = string.Format("S {0}", e.Count);
+		}
+
+		void Current_ConfigLoaded(object sender, SettingEventArgs e)
+		{
+			toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", e.Name);
 		}
 
 		public void CopyElevated(string source, string dest)
@@ -205,8 +215,8 @@ namespace x360ce.App
 		void InitPresets()
 		{
 			PresetComboBox.Items.Clear();
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(iniFileNew);
-			var ext = System.IO.Path.GetExtension(iniFileNew);
+			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
+			var ext = System.IO.Path.GetExtension(SettingManager.Current.iniFile);
 			string name;
 			// Presets: Embedded.
 			var embeddedPresets = new List<string>();
@@ -272,12 +282,14 @@ namespace x360ce.App
 			LoadPreset(name);
 		}
 
+		#region Setting Events
+
 		void LoadPreset(string name)
 		{
 			// exit if "Presets:" or "Embedded:".
 			if (name.Contains(":")) return;
-			string prefix = System.IO.Path.GetFileNameWithoutExtension(iniFile);
-			string ext = System.IO.Path.GetExtension(iniFile);
+			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
+			var ext = System.IO.Path.GetExtension(SettingManager.Current.iniFile);
 			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
 			var resource = Helper.GetResource("Presets." + resourceName);
 			// If internal preset was found.
@@ -289,10 +301,10 @@ namespace x360ce.App
 			}
 			SuspendEvents();
 			// preset will be stored in inside [PAD1] section;
-			ReadPadSettings(resourceName, "PAD1", ControllerIndex);
+			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", ControllerIndex);
 			ResumeEvents();
 			// Save setting and notify if vaue changed.
-			if (SaveSettings()) NotifySettingsChange();
+			if (SettingManager.Current.SaveSettings()) NotifySettingsChange();
 			// remove file if it was from resource.
 			if (resource != null) System.IO.File.Delete(resourceName);
 			//CleanStatusTimer.Start();
@@ -303,14 +315,87 @@ namespace x360ce.App
 			ReloadXinputSettings();
 		}
 
+		int resumed = 0;
+		int suspended = 0;
+
+		public void SuspendEvents()
+		{
+			StatusEventsLabel.Text = "OFF...";
+			// Don't allow controls to fire events.
+			foreach (var control in SettingManager.Current.SettingsMap.Values)
+			{
+				if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
+				if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
+				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
+				if (control is ComboBox || control is TextBox) control.TextChanged -= new System.EventHandler(this.Control_TextChanged);
+			}
+			suspended++;
+			StatusEventsLabel.Text = string.Format("OFF {0} {1}", suspended, resumed);
+		}
+
+		public void ResumeEvents()
+		{
+			StatusEventsLabel.Text = "ON...";
+			// Allow controls to fire events.
+			foreach (var control in SettingManager.Current.SettingsMap.Values)
+			{
+				if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
+				if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
+				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged += new EventHandler(this.Control_TextChanged);
+				if (control is ComboBox || control is TextBox) control.TextChanged += new System.EventHandler(this.Control_TextChanged);
+			}
+			resumed++;
+			StatusEventsLabel.Text = string.Format("ON {0} {1}", suspended, resumed);
+		}
+
+		/// <summary>
+		/// Delay settings trough timer so interface will be more responsive on TrackBars.
+		/// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
+		/// </summary>
+		public void NotifySettingsChange()
+		{
+			timer.Stop();
+			SettingsTimer.Stop();
+			// Timer will be started inside Settings timer.
+			SettingsTimer.Start();
+		}
+
+		private void Control_TextChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if vaue changed.
+			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
+		}
+
+		private void Control_ValueChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if vaue changed.
+			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
+		}
+
+		private void Control_CheckedChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if vaue changed.
+			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
+		}
+
+		void ReloadXinputSettings()
+		{
+			SuspendEvents();
+			SettingManager.Current.ReadSettings();
+			ResumeEvents();
+		}
+
+		#endregion
+
+
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			timer.Stop();
-			FileInfo tmp = new FileInfo(iniTmpFile);
+			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
 			if (tmp.Exists)
 			{
 				// Rename temp to ini.
-				tmp.CopyTo(iniFile, true);
+				tmp.CopyTo(SettingManager.Current.iniFile, true);
 				// delete temp.
 				tmp.Delete();
 			}
@@ -322,16 +407,16 @@ namespace x360ce.App
 			// store unique instance settings.
 			for (int i = 0; i < 4; i++)
 			{
-				string guidString = SettingsMap[string.Format("PAD{0}\\" + SettingName.InstanceGuid, i + 1)].Text;
+				string guidString = SettingManager.Current.SettingsMap[string.Format("PAD{0}\\" + SettingName.InstanceGuid, i + 1)].Text;
 				if (!Helper.IsGuid(guidString)) continue;
 				Guid ig = new Guid(guidString);
 				if (ig.Equals(Guid.Empty)) continue;
 				string section = string.Format("IG_{0}", ig.ToString("N"));
-				SavePadSettings(iniFile, section, i);
+				SettingManager.Current.SavePadSettings(SettingManager.Current.iniFile, section, i);
 			}
 			// Owerwrite temp file.
-			FileInfo ini = new FileInfo(iniFile);
-			ini.CopyTo(iniTmpFile, true);
+			FileInfo ini = new FileInfo(SettingManager.Current.iniFile);
+			ini.CopyTo(SettingManager.Current.iniTmpFile, true);
 			toolStripStatusLabel1.Text = "Settings saved";
 			timer.Start();
 		}
@@ -362,15 +447,6 @@ namespace x360ce.App
 					|| di.DeviceType == DeviceType.Joystick
 				) list.Add(di);
 			}
-			//foreach (DeviceInstance di in Manager.Devices))
-			//{
-			//    // Skip if device is not what we are looking for. 
-			//    if (di.DeviceType != DeviceType.Driving
-			//        && di.DeviceType != DeviceType.Flight
-			//        && di.DeviceType != DeviceType.Gamepad
-			//        && di.DeviceType != DeviceType.Joystick) continue;
-			//    list.Add(di);
-			//}
 			instancesChanged = false;
 			if (diInstances.Count != list.Count)
 			{
@@ -513,20 +589,19 @@ namespace x360ce.App
 			}
 		}
 
-
 		void FixConfig(List<DeviceInstance> instances)
 		{
 
 			// Fix INI File.
-			var ini = new Ini(iniFile);
+			var ini = new Ini(SettingManager.Current.iniFile);
 			for (int i = 0; i < instances.Count; i++)
 			{
 				string curInstance = instances[i].InstanceGuid.ToString("B").ToLower();
 				string padInstance = ini.GetValue(string.Format("PAD{0}", i + 1), SettingName.InstanceGuid).ToLower();
 				if (curInstance != padInstance)
 				{
-					ReadPadSettings(iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
-					SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
+					SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
+					SettingManager.Current.SavePadSettings(SettingManager.Current.iniFile, string.Format("PAD{0}", i + 1), i);
 				}
 			}
 			for (int i = instances.Count; i < 4; i++)
@@ -535,15 +610,10 @@ namespace x360ce.App
 				string padInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
 				if (curInstance != padInstance)
 				{
-					ReadPadSettings(iniFile, "IG_" + Guid.Empty.ToString("N"), i);
-					SavePadSettings(iniFile, string.Format("PAD{0}", i + 1), i);
+					SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, "IG_" + Guid.Empty.ToString("N"), i);
+					SettingManager.Current.SavePadSettings(SettingManager.Current.iniFile, string.Format("PAD{0}", i + 1), i);
 				}
 			}
-			//if (deviceOrderChanged)
-			//{
-			//    MessageBox.Show("Device order changed! Settings fixed. You must click [Save] button in order for XInput to work properly.", "Device order changed!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			//}
-
 		}
 
 		#endregion
@@ -575,6 +645,137 @@ namespace x360ce.App
 			if (!cbx.Checked) Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 			else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
+
+		#region Check Files
+
+		bool CheckFiles(bool createIfNotExist)
+		{
+			InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.Current.iniFile);
+			InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
+			InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
+			InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
+			InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
+			InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.Current.iniFile);
+			InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
+			InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
+			InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
+			InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
+			if (createIfNotExist)
+			{
+				// If ini file doesn't exists.
+				if (!System.IO.File.Exists(SettingManager.Current.iniFile))
+				{
+					if (!CreateFile(SettingManager.Current.iniFile)) return false;
+				}
+				// If xinput file doesn't exists.
+				if (!System.IO.File.Exists(dllFile))
+				{
+					if (!CreateFile(dllFile)) return false;
+				}
+			}
+			// Can't run witout ini.
+			if (!File.Exists(SettingManager.Current.iniFile))
+			{
+				MessageBox.Show(
+					string.Format("Configuration file '{0}' is required for application to run!", SettingManager.Current.iniFile),
+					"Error", MessageBoxButtons.OK);
+				this.Close();
+				return false;
+			}
+			// If temp file exist then.
+			FileInfo iniTmp = new FileInfo(SettingManager.Current.iniTmpFile);
+			if (iniTmp.Exists)
+			{
+				// It means that application crashed. Restore ini from temp.
+				if (!CopyFile(iniTmp.FullName, SettingManager.Current.iniFile)) return false;
+			}
+			else
+			{
+				// Create temp file to store original settings.
+				if (!CopyFile(SettingManager.Current.iniFile, SettingManager.Current.iniTmpFile)) return false;
+			}
+			// Set status labels.
+			StatusIsAdminLabel.Text = string.Format("Elevated: {0}", Win32.WinAPI.IsElevated);
+			StatusIniLabel.Text = SettingManager.Current.iniFile;
+			return true;
+		}
+
+		bool IsFileSame(string fileName)
+		{
+			return false;
+			//if (!System.IO.File.Exists(fileName)) return false;
+			//var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+			//StreamReader sr;
+			//// Get MD5 of file on the disk.
+			//sr = new StreamReader(fileName);
+			//var dMd5 = new Guid(md5.ComputeHash(sr.BaseStream));
+			//// Get MD5 of resource file.
+			//if (fileName == dllFile0) fileName = dllFile;
+			//if (fileName == dllFile1) fileName = dllFile;
+			//if (fileName == dllFile2) fileName = dllFile;
+			//if (fileName == dllFile3) fileName = dllFile;
+			//var assembly = Assembly.GetExecutingAssembly();
+			//sr = new StreamReader(assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName));
+			//var rMd5 = new Guid(md5.ComputeHash(sr.BaseStream));
+			//// return result.
+			//return rMd5.Equals(dMd5);
+		}
+
+		bool CopyFile(string sourceFileName, string destFileName)
+		{
+			try
+			{
+				File.Copy(sourceFileName, destFileName, true);
+			}
+			catch (Exception)
+			{
+				Elevate();
+				return false;
+			}
+			return true;
+		}
+
+		bool CreateFile(string fileName)
+		{
+			var answer = MessageBox.Show(
+				string.Format("'{0}' file is missing.\r\nDo you want to create default file?", fileName),
+				string.Format("Missing '{0}' file!", fileName),
+				MessageBoxButtons.YesNo);
+			if (answer == DialogResult.Yes)
+			{
+				var assembly = Assembly.GetExecutingAssembly();
+				var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName);
+				FileStream sw = null;
+				try
+				{
+					sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+				}
+				catch (Exception)
+				{
+					Elevate();
+					return false;
+				}
+				var buffer = new byte[1024];
+				while (true)
+				{
+					var count = sr.Read(buffer, 0, buffer.Length);
+					if (count == 0) break;
+					sw.Write(buffer, 0, count);
+				}
+				sr.Close();
+				sw.Close();
+			}
+			return true;
+		}
+
+		void Elevate()
+		{
+			// If this is Vista/7 and is not elevated then elevate.
+			if (x360ce.App.Win32.WinAPI.IsVista && !x360ce.App.Win32.WinAPI.IsElevated) x360ce.App.Win32.WinAPI.RunElevated();
+		}
+
+		#endregion
+
 
 	}
 }

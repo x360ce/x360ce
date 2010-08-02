@@ -63,27 +63,27 @@ namespace x360ce.App
 				string t = m.Groups["type"].Value;
 				string n = m.Groups["neg"].Value;
 				_Index = int.Parse(m.Groups["num"].Value);
-				if (key.Contains("Analog") && !key.Contains("Button")) t = "a";
-				if (key.Contains("D-pad POV")) t = "p";
-				if (t == "a" && Index == 7) _Index = 0;
+				if (key.Contains("Analog") && !key.Contains("Button")) t = SettingName.SType.Axis;
+				if (key.Contains("D-pad POV")) t = SettingName.SType.DPad;
+				if (t == SettingName.SType.Axis && Index == 7) _Index = 0;
 				switch (t)
 				{
-					case "a":
+					case SettingName.SType.Axis :
 						_Type = n == "-" ? SettingType.IAxis : SettingType.Axis;
 						break;
-					case "s":
+					case SettingName.SType.Slider:
 						_Type = n == "-" ? SettingType.ISlider : SettingType.Slider;
 						break;
-					case "x":
+					case SettingName.SType.HAxis:
 						_Type = n == "-" ? SettingType.IHAxis : SettingType.HAxis;
 						break;
-					case "h":
+					case SettingName.SType.HSlider:
 						_Type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
 						break;
-					case "p":
+					case SettingName.SType.DPad:
 						_Type = SettingType.DPad;
 						break;
-					case "v":
+					case SettingName.SType.DPadButton:
 						_Type = SettingType.DPadButton;
 						break;
 					default:

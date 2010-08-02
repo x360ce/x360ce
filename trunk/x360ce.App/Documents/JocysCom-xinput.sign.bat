@@ -22,4 +22,3 @@ GOTO:EOF
 
 :Error
 echo File doesn't Exist: "%~1"
-exit
