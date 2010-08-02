@@ -1,4 +1,5 @@
-﻿v2.0.2.65 (2010-05-25) by Evaldas Jocys
+﻿v2.0.2.66 (2010-08-02) by Evaldas Jocys
+- Update: Updated to xinput1_3.dll v3.2.0.133.
 - Update: LeftMotorDirection and RightMotorDirection setting was removed.
 - Update: Code updated.
 
