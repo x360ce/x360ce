@@ -73,7 +73,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
-	if (!pState || dwUserIndex >= XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
+	if (!pState || dwUserIndex > XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
@@ -343,7 +343,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		return nativeXInputSetState(dwUserIndex,pVibration);
 	}
 
-	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
+	if (!pVibration || dwUserIndex > XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
 
 	if(!bEnabled && bUseEnabled) return S_OK;
 
@@ -405,7 +405,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
-	if (!pCapabilities || dwUserIndex >= XUSER_MAX_COUNT-1 || dwFlags != 0) return ERROR_BAD_ARGUMENTS; 
+	if (!pCapabilities || dwUserIndex > XUSER_MAX_COUNT-1 || dwFlags != 0) return ERROR_BAD_ARGUMENTS; 
 
 	if(!capsready)
 	{
