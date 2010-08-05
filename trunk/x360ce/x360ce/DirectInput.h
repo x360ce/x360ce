@@ -31,6 +31,7 @@ struct DINPUT_DATA
 };
 
 struct DINPUT_GAMEPAD {
+	DWORD id1;
 	LPDIRECTINPUTDEVICE8 g_pGamepad;
 	DWORD dwPadIndex;  //starting from 1
 	BOOL connected;
@@ -53,22 +54,7 @@ struct DINPUT_GAMEPAD {
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
-
-	DINPUT_GAMEPAD()
-	{
-		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
-		dwPadIndex = 0;
-		connected = 0;
-		for (INT i = 0; i < 2; ++i) g_pEffect[i] = NULL;
-		g_dwNumForceFeedbackAxis = NULL;
-		native = 0;
-		swapmotor = 0;
-		tdeadzone  = 0;
-		useforce = 0;
-		forcepercent = 100;
-		gamepadtype = 1;
-
-	}
+	DWORD id2;
 };
 
 //externs

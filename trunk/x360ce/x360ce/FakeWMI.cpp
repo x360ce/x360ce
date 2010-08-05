@@ -28,14 +28,14 @@
 #include "FakeWMI.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT (WINAPI *GenuineCoCreateInstance)(__in     REFCLSID rclsid, 
+HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid, 
 									  __in_opt LPUNKNOWN pUnkOuter,
 									  __in     DWORD dwClsContext, 
 									  __in     REFIID riid, 
 									  __deref_out LPVOID FAR* ppv) = CoCreateInstance;
 
 
-HRESULT ( STDMETHODCALLTYPE *GenuineConnectServer )( 
+HRESULT ( STDMETHODCALLTYPE *OriginalConnectServer )( 
 	IWbemLocator * This,
 	/* [in] */ const BSTR strNetworkResource,
 	/* [in] */ const BSTR strUser,
@@ -46,21 +46,21 @@ HRESULT ( STDMETHODCALLTYPE *GenuineConnectServer )(
 	/* [in] */ IWbemContext *pCtx,
 	/* [out] */ IWbemServices **ppNamespace) = NULL;
 
-HRESULT ( STDMETHODCALLTYPE *GenuineCreateInstanceEnum )( 
+HRESULT ( STDMETHODCALLTYPE *OriginalCreateInstanceEnum )( 
 	IWbemServices * This,
 	/* [in] */ __RPC__in const BSTR strFilter,
 	/* [in] */ long lFlags,
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum) = NULL;
 
-HRESULT ( STDMETHODCALLTYPE *GenuineNext )( 
+HRESULT ( STDMETHODCALLTYPE *OriginalNext )( 
 									   IEnumWbemClassObject * This,
 									   /* [in] */ long lTimeout,
 									   /* [in] */ ULONG uCount,
 									   /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 									   /* [out] */ __RPC__out ULONG *puReturned) = NULL;
 
-HRESULT ( STDMETHODCALLTYPE *GenuineGet )( 
+HRESULT ( STDMETHODCALLTYPE *OriginalGet )( 
 									  IWbemClassObject * This,
 									  /* [string][in] */ LPCWSTR wszName,
 									  /* [in] */ long lFlags,
@@ -80,7 +80,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 {
 	WriteLog(_T("[FAKEWMI] FakeGet"));
 	HRESULT hr;
-	hr = GenuineGet(This,wszName,lFlags,pVal,pType,plFlavor);
+	hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	//WriteLog(_T("wszName %s pVal->vt %d"),wszName,pVal->vt);
 
@@ -111,7 +111,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 						if( strUSB )
 						{
 							BSTR fakebstr=NULL;
-							WriteLog(_T("[FAKEWMI] Genuine DeviceID = %s"),pVal->bstrVal);
+							WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
 							_stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID );
 							fakebstr=SysAllocString(tempstr);
 							pVal->bstrVal = fakebstr;
@@ -127,7 +127,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 							if( strHID )
 							{
 								BSTR fakebstr=NULL;
-								WriteLog(_T("[FAKEWMI] Genuine DeviceID = %s"),pVal->bstrVal);
+								WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
 								_stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID );
 								fakebstr=SysAllocString(tempstr);
 								pVal->bstrVal = fakebstr;
@@ -158,21 +158,21 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
-	hr = GenuineNext(This,lTimeout,uCount,apObjects,puReturned);
+	hr = OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
 
 	if(apObjects!=NULL)
 	{
 		if(*apObjects!=NULL)
 		{
 			pDevices = *apObjects;
-			if(GenuineGet == NULL)
+			if(OriginalGet == NULL)
 			{
 
-				GenuineGet = pDevices->lpVtbl->Get;
+				OriginalGet = pDevices->lpVtbl->Get;
 
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)GenuineGet, FakeGet);
+				DetourAttach(&(PVOID&)OriginalGet, FakeGet);
 				DetourTransactionCommit();
 			}
 		}
@@ -192,7 +192,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
-	hr = GenuineCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
+	hr = OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
 
 	if(ppEnum != NULL)
 	{
@@ -200,13 +200,13 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 		{
 			pEnumDevices = *ppEnum;
 
-			if(GenuineNext == NULL) 
+			if(OriginalNext == NULL) 
 			{
-				GenuineNext = pEnumDevices->lpVtbl->Next;
+				OriginalNext = pEnumDevices->lpVtbl->Next;
 
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)GenuineNext, FakeNext);
+				DetourAttach(&(PVOID&)OriginalNext, FakeNext);
 				DetourTransactionCommit();
 			}
 		}
@@ -231,7 +231,7 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
 
-	hr = GenuineConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	hr = OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
 	if(ppNamespace != NULL)
 	{
@@ -239,13 +239,13 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 		{
 			pIWbemServices = *ppNamespace;
 
-			if(GenuineCreateInstanceEnum == NULL) 
+			if(OriginalCreateInstanceEnum == NULL) 
 			{
-				GenuineCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
+				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
 
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)GenuineCreateInstanceEnum, FakeCreateInstanceEnum);
+				DetourAttach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
 				DetourTransactionCommit();
 			}
 		}
@@ -273,7 +273,7 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	StringFromIID(riid,&str2);
 	WriteLog(_T("riid: %s"),str2);
 	*/
-	hr = GenuineCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(ppv != NULL && riid == IID_IWbemLocator) 
 	{
@@ -283,14 +283,14 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 		if(pIWbemLocator != NULL) 
 		{
 			WriteLog(_T("[FakeWMI] FakeCoCreateInstance"));
-			if(GenuineConnectServer == NULL) 
+			if(OriginalConnectServer == NULL) 
 			{
 
-				GenuineConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
 
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)GenuineConnectServer, FakeConnectServer);
+				DetourAttach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
 				DetourTransactionCommit();
 			}
 		}
@@ -299,13 +299,21 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	return hr;
 }
 
-void FakeWMI()
+void FakeWMI(bool state)
 {
-	WriteLog(_T("[FAKEAPI] FakeWMI"));
+	WriteLog(_T("[FAKEAPI] FakeWMI(%d)"),state);
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(PVOID&)GenuineCoCreateInstance, FakeCoCreateInstance);
-	DetourTransactionCommit();
+	if(state){
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+		DetourTransactionCommit();
+	}
+	else {
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+		DetourTransactionCommit();
+	}
 
 }

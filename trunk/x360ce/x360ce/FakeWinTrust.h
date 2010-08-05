@@ -16,4 +16,4 @@
 #include <Softpub.h>
 #include <detours.h>
 
-extern LONG (WINAPI *GenuineWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
+extern LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);

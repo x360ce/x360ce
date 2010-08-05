@@ -15,14 +15,14 @@
 
 #include "DirectInput.h"
 
-extern HRESULT (WINAPI *GenuineCoCreateInstance)(__in     REFCLSID rclsid, 
+extern HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid, 
 									  __in_opt LPUNKNOWN pUnkOuter,
 									  __in     DWORD dwClsContext, 
 									  __in     REFIID riid, 
 									  __deref_out LPVOID FAR* ppv);
 
 
-extern HRESULT ( STDMETHODCALLTYPE *GenuineConnectServer )( 
+extern HRESULT ( STDMETHODCALLTYPE *OriginalConnectServer )( 
 	IWbemLocator * This,
 	/* [in] */ const BSTR strNetworkResource,
 	/* [in] */ const BSTR strUser,
@@ -33,21 +33,21 @@ extern HRESULT ( STDMETHODCALLTYPE *GenuineConnectServer )(
 	/* [in] */ IWbemContext *pCtx,
 	/* [out] */ IWbemServices **ppNamespace);
 
-extern HRESULT ( STDMETHODCALLTYPE *GenuineCreateInstanceEnum )( 
+extern HRESULT ( STDMETHODCALLTYPE *OriginalCreateInstanceEnum )( 
 	IWbemServices * This,
 	/* [in] */ __RPC__in const BSTR strFilter,
 	/* [in] */ long lFlags,
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum);
 
-extern HRESULT ( STDMETHODCALLTYPE *GenuineNext )( 
+extern HRESULT ( STDMETHODCALLTYPE *OriginalNext )( 
 									   IEnumWbemClassObject * This,
 									   /* [in] */ long lTimeout,
 									   /* [in] */ ULONG uCount,
 									   /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 									   /* [out] */ __RPC__out ULONG *puReturned);
 
-extern HRESULT ( STDMETHODCALLTYPE *GenuineGet )( 
+extern HRESULT ( STDMETHODCALLTYPE *OriginalGet )( 
 									  IWbemClassObject * This,
 									  /* [string][in] */ LPCWSTR wszName,
 									  /* [in] */ long lFlags,
