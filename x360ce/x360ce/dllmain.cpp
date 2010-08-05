@@ -98,7 +98,7 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 	}
 	else
 	{
-		WriteLog(_T("[CORE] RegisterWindowClass Failed"));
+		WriteLog(_T("[CORE]    RegisterWindowClass Failed"));
 		return FALSE;
 	}
 }
@@ -109,31 +109,54 @@ VOID InitInstance(HMODULE hModule)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
+	for (int i=0;i<XUSER_MAX_COUNT;i++){
+		ZeroMemory(&Gamepad[i],sizeof(DINPUT_GAMEPAD));
+		Gamepad[i].id1 = X360CE_ID1;
+		Gamepad[i].id2 = X360CE_ID2;
+		Gamepad[i].dwPadIndex = 0;
+		Gamepad[i].connected = 0;
+		for (int j = 0; j < 2; ++j) Gamepad[i].g_pEffect[j] = NULL;
+		Gamepad[i].g_dwNumForceFeedbackAxis = NULL;
+		Gamepad[i].native = 0;
+		Gamepad[i].swapmotor = 0;
+		Gamepad[i].tdeadzone  = 0;
+		Gamepad[i].useforce = 0;
+		Gamepad[i].forcepercent = 100;
+		Gamepad[i].gamepadtype = 1;
+	}
+
 	hX360ceInstance = (HINSTANCE) hModule;
 	dwAppPID=GetCurrentProcessId();
 	InitConfig(_T("x360ce.ini"));
 
 #if SVN_MODS != 0 
-	WriteLog(_T("[CORE] x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
+	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
 #else 
-	WriteLog(_T("[CORE] x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
+	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
 #endif
 
 	if(!Createx360ceWindow(hX360ceInstance))
 	{
-		WriteLog(_T("[CORE] x360ce window not created, ForceFeedback will be disabled !"));
+		WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
 	}
 
 	if(wFakeAPI)
 	{
-		if(wFakeWMI) FakeWMI();
-		if(wFakeDI) FakeDI();
-		if(wFakeWinTrust) FakeWinTrust();
+		if(wFakeWMI) FakeWMI(true);
+		if(wFakeDI) FakeDI(true);
+		if(wFakeWinTrust) FakeWinTrust(true);
 	}
 }
 
 VOID ExitInstance() 
 {   
+	if(wFakeAPI)
+	{
+		if(wFakeWMI) FakeWMI(false);
+		if(wFakeDI) FakeDI(false);
+		if(wFakeWinTrust) FakeWinTrust(false);
+	}
+
 	ReleaseDirectInput();
 
 	delete[] logfilename;
@@ -162,7 +185,7 @@ extern "C" BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
 
 	else if (dwReason == DLL_PROCESS_DETACH) 
 	{
-		WriteLog(_T("[CORE] x360ce terminating, bye"));
+		WriteLog(_T("[CORE]    x360ce terminating, bye"));
 		ExitInstance();
 	}
 	return TRUE;

@@ -12,6 +12,7 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
+
 extern WORD wFakeAPI;
 extern WORD wFakeWMI;
 extern WORD wFakeDI;
@@ -20,6 +21,6 @@ extern WORD wFakeWinTrust;
 extern WORD wFakeVID;
 extern WORD wFakePID;
 
-void FakeWMI();
-void FakeDI();
-void FakeWinTrust();
+void FakeWMI(bool state);
+void FakeDI(bool state);
+void FakeWinTrust(bool state);

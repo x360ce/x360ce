@@ -38,20 +38,20 @@ HRESULT XInit(DWORD dwUserIndex)
 	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex)
 	{ 
 
-		WriteLog(_T("[XINIT] Initializing Gamepad %d"),dwUserIndex+1);
-		WriteLog(_T("[XINIT] User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
+		WriteLog(_T("[XINIT]   Initializing Gamepad %d"),dwUserIndex+1);
+		WriteLog(_T("[XINIT]   User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
 
-		hr = Enumerate(dwUserIndex); //enumerate when is more configured devices than created
+		hr = Enumerate(dwUserIndex); 
 		if(SUCCEEDED(hr))
 		{
-			WriteLog(_T("[XINIT] [PAD%d] Enumeration finished"),dwUserIndex+1);
+			WriteLog(_T("[XINIT]   [PAD%d] Enumeration finished"),dwUserIndex+1);
 		}
 		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 		hr = InitDirectInput(hWnd,dwUserIndex);
 		if(FAILED(hr))
 		{
-			WriteLog(_T("[XINIT] XInit fail with %s"),DXErrStr(hr));
+			WriteLog(_T("[XINIT]   XInit fail with %s"),DXErrStr(hr));
 		}
 	}
 	else return ERROR_DEVICE_NOT_CONNECTED;
