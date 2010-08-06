@@ -364,9 +364,6 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	//hr = XInit(dwUserIndex);
 	//if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
-	HRESULT hrLeftForce = E_FAIL;
-	HRESULT hrRightForce = E_FAIL;
-
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 	if(!Gamepad[dwUserIndex].useforce) return ERROR_SUCCESS;
 
@@ -375,13 +372,14 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	if(!Gamepad[dwUserIndex].forceready) 
 	{
-		PrepareForce(dwUserIndex,0);
-		PrepareForce(dwUserIndex,1);
-		Gamepad[dwUserIndex].forceready = TRUE;
+		HRESULT hrLeftForce = E_FAIL, hrRightForce = E_FAIL;
+		hrLeftForce = PrepareForce(dwUserIndex,0);
+		hrRightForce = PrepareForce(dwUserIndex,1);
+		if FAILED(hrLeftForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hrLeftForce));
+		if FAILED(hrRightForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hrRightForce));
+		if (SUCCEEDED(hrLeftForce) && SUCCEEDED(hrRightForce))
+			Gamepad[dwUserIndex].forceready = TRUE;
 	}
-
-	if(FAILED(hrLeftForce))WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hr));
-	if(FAILED(hrRightForce))WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hr));
 
 	if(Gamepad[dwUserIndex].swapmotor)
 	{
@@ -390,19 +388,16 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	}
 	else
 	{
-
 		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].forcepercent);
 		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].forcepercent);
 	}
 
 	if(Gamepad[dwUserIndex].forceready)
 	{
-
-	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
-	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
-
-	hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,1);
-	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+		hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
+		if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+		hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,1);
+		if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
 	}
 	return ERROR_SUCCESS;
 }
@@ -417,42 +412,28 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
-	if (!pCapabilities || dwUserIndex > XUSER_MAX_COUNT-1 || dwFlags != 0) return ERROR_BAD_ARGUMENTS; 
+	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1))/* || dwFlags != 0*/) return ERROR_BAD_ARGUMENTS; 
 
 	if(!capsready)
 	{
 		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
-		// Dump from original x360 controller
-		XINPUT_GAMEPAD xGamepad;
-		ZeroMemory(&xGamepad,sizeof(XINPUT_GAMEPAD));
+		XCAPS.Type = XINPUT_DEVTYPE_GAMEPAD;
+		XCAPS.SubType = (BYTE)Gamepad[dwUserIndex].gamepadtype;
+		XCAPS.Flags = XINPUT_CAPS_VOICE_SUPPORTED;
+		XCAPS.Vibration.wLeftMotorSpeed = XCAPS.Vibration.wRightMotorSpeed = 0xFFFF;
 
-		xGamepad.bLeftTrigger = (BYTE) 0xFF;
-		xGamepad.bRightTrigger = (BYTE) 0xFF;
-		xGamepad.sThumbLX = (SHORT) 0xFFFF;
-		xGamepad.sThumbLY = (SHORT) 0xFFFF;
-		xGamepad.sThumbRX = (SHORT) 0xFFFF;
-		xGamepad.sThumbRY = (SHORT) 0xFFFF;
-		xGamepad.wButtons = (WORD)  0xFFFFFFFF;
-
-		XINPUT_VIBRATION Vibration;
-		ZeroMemory(&Vibration,sizeof(XINPUT_VIBRATION));
-
-		Vibration.wLeftMotorSpeed =	(WORD) 0xFFFFFFFF;
-		Vibration.wRightMotorSpeed = (WORD) 0xFFFFFFFF;
-
-		XCAPS.Flags = (WORD) 4;
-		XCAPS.SubType = (BYTE) Gamepad[dwUserIndex].gamepadtype;
-		XCAPS.Gamepad = xGamepad;
-		XCAPS.Vibration = Vibration;
-		XCAPS.Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
-
-		pCapabilities = &XCAPS;
+		XCAPS.Gamepad.wButtons = 0xFFFF;	
+		XCAPS.Gamepad.bLeftTrigger = 0xFF;
+		XCAPS.Gamepad.bRightTrigger = 0xFF;
+		XCAPS.Gamepad.sThumbLX = 0xFFFF;
+		XCAPS.Gamepad.sThumbLY = 0xFFFF;
+		XCAPS.Gamepad.sThumbRX = 0xFFFF;
+		XCAPS.Gamepad.sThumbRY = 0xFFFF;
 		capsready = true;
 	}
+	pCapabilities = &XCAPS;
 
-	else pCapabilities = &XCAPS;
-
-	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
+	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"), pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
