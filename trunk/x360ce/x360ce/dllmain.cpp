@@ -113,14 +113,6 @@ VOID InitInstance(HMODULE hModule)
 		ZeroMemory(&Gamepad[i],sizeof(DINPUT_GAMEPAD));
 		Gamepad[i].id1 = X360CE_ID1;
 		Gamepad[i].id2 = X360CE_ID2;
-		Gamepad[i].dwPadIndex = 0;
-		Gamepad[i].connected = 0;
-		for (int j = 0; j < 2; ++j) Gamepad[i].g_pEffect[j] = NULL;
-		Gamepad[i].g_dwNumForceFeedbackAxis = NULL;
-		Gamepad[i].native = 0;
-		Gamepad[i].swapmotor = 0;
-		Gamepad[i].tdeadzone  = 0;
-		Gamepad[i].useforce = 0;
 		Gamepad[i].forcepercent = 100;
 		Gamepad[i].gamepadtype = 1;
 	}

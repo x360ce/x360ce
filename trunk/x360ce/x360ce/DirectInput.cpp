@@ -88,7 +88,6 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
 		lpDI8->CreateDevice( pInst->guidInstance, &pDevice, NULL );
 		if(pDevice)
 		{
-			if(bInitBeep) MessageBeep(MB_OK);
 			gp->g_pGamepad = pDevice;
 			_tcscpy_s(gp->name,pInst->tszProductName);
 			gp->connected = 1;
@@ -162,23 +161,25 @@ BOOL CALLBACK DIEnumEffectsCallback(LPCDIEFFECTINFO pdei,
 
 HRESULT UpdateState(INT idx )
 {
-	HRESULT hr;
+	HRESULT hr=E_FAIL;
 
 	if( (!Gamepad[idx].g_pGamepad))
-		return S_FALSE;
+		return E_FAIL;
 
 	// Poll the device to read the current state
-	hr = Gamepad[idx].g_pGamepad->Poll();
+	// not all devices must be polled so checking result code is useless
+	Gamepad[idx].g_pGamepad->Poll();
 
-	//if(FAILED(hr)) hr = Gamepad[idx].g_pGamepad->Acquire();
-
-	if ((hr != DI_OK && hr != DI_NOEFFECT) || DI_OK != Gamepad[idx].g_pGamepad->GetDeviceState( sizeof( DIJOYSTATE2 ), &Gamepad[idx].state ) )
-	{
-			Deactivate(idx);
-			return S_OK;
+	//But GetDeviceState must be succesed
+	hr = Gamepad[idx].g_pGamepad->GetDeviceState( sizeof( DIJOYSTATE2 ), &Gamepad[idx].state );
+	if(FAILED(hr)){
+		if(bInitBeep) MessageBeep(MB_OK);
+		WriteLog(_T("[DINPUT]  [PAD%d] Device Acquired"),idx+1);
+		hr = Gamepad[idx].g_pGamepad->Acquire();
+		if(SUCCEEDED(hr)) UpdateState(idx);
 	}
 
-	return S_OK;
+	return hr;
 }
 
 HRESULT Enumerate(DWORD idx)
@@ -261,7 +262,7 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	}
 	else
 	{
-		WriteLog(_T("[DINPUT]  [PAD%d] Device with %d axes"),idx+1,axiscount);
+		WriteLog(_T("[DINPUT]  [PAD%d] Detected axis count: %d"),idx+1,axiscount);
 	}
 	axiscount=0;
 
@@ -278,15 +279,9 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	if( Gamepad[idx].g_dwNumForceFeedbackAxis <= 0 )
 		Gamepad[idx].useforce = 0;
 
-	hr =Gamepad[idx].g_pGamepad->EnumEffects(&DIEnumEffectsCallback, &Gamepad[idx], DIEFT_ALL);
+	//Gamepad[idx].g_pGamepad->EnumEffects(&DIEnumEffectsCallback, &Gamepad[idx], DIEFT_ALL);
 
-	if( FAILED( hr = Gamepad[idx].g_pGamepad->Acquire() ) )
-	{
-		WriteLog(_T("[DINPUT]  [PAD%d] Acquire failed with code HR = %s"), idx+1, DXErrStr(hr));
-		//return hr;
-	}
-
-	return coophr;
+	return S_OK;
 }
 
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
@@ -295,18 +290,18 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 	// you need only specify the parameters you are modifying
 	HRESULT hr= S_OK;
 	LONG     rglDirection[2] = { 0, 0 };
+	DOUBLE	correction = 6.5535;
 
 	if( Gamepad[idx].g_dwNumForceFeedbackAxis == 1 )
 	{
 		rglDirection[0] = 0;
-
 	}
 	else
 	{
 		rglDirection[0] = force;
 	}
 
-	LONG magnitude = (LONG)(force/256*256-1);
+	LONG magnitude = (LONG)((DOUBLE)force / (DOUBLE)correction);
 
 	DICONSTANTFORCE cf;
 	DIEFFECT eff;
@@ -334,7 +329,7 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 
 HRESULT PrepareForce(DWORD idx, WORD effidx)
 {
-	HRESULT hr= S_FALSE;
+	HRESULT hr= E_FAIL;
 	if( NULL == Gamepad[idx].g_pEffect[effidx] )
 	{
 
@@ -368,7 +363,7 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 			return hr;
 		}
 	}
-	return hr;
+	return S_OK;
 }
 
 // return buttons state (1 pressed, 0 not pressed)

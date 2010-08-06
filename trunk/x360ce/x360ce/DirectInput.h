@@ -42,6 +42,7 @@ struct DINPUT_GAMEPAD {
 	GUID instance;
 	DIJOYSTATE2 state;
 	LPDIRECTINPUTEFFECT g_pEffect[2];
+	BOOL forceready;
 	DWORD g_dwNumForceFeedbackAxis;
 	BOOL native;
 	BOOL swapmotor;
