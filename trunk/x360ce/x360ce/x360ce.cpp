@@ -412,28 +412,42 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
-	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1))/* || dwFlags != 0*/) return ERROR_BAD_ARGUMENTS; 
+	if (!pCapabilities || dwUserIndex > XUSER_MAX_COUNT-1 || dwFlags != 0) return ERROR_BAD_ARGUMENTS; 
 
 	if(!capsready)
 	{
 		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
-		XCAPS.Type = XINPUT_DEVTYPE_GAMEPAD;
-		XCAPS.SubType = (BYTE)Gamepad[dwUserIndex].gamepadtype;
-		XCAPS.Flags = XINPUT_CAPS_VOICE_SUPPORTED;
-		XCAPS.Vibration.wLeftMotorSpeed = XCAPS.Vibration.wRightMotorSpeed = 0xFFFF;
+		// Dump from original x360 controller
+		XINPUT_GAMEPAD xGamepad;
+		ZeroMemory(&xGamepad,sizeof(XINPUT_GAMEPAD));
 
-		XCAPS.Gamepad.wButtons = 0xFFFF;	
-		XCAPS.Gamepad.bLeftTrigger = 0xFF;
-		XCAPS.Gamepad.bRightTrigger = 0xFF;
-		XCAPS.Gamepad.sThumbLX = 0xFFFF;
-		XCAPS.Gamepad.sThumbLY = 0xFFFF;
-		XCAPS.Gamepad.sThumbRX = 0xFFFF;
-		XCAPS.Gamepad.sThumbRY = 0xFFFF;
+		xGamepad.bLeftTrigger = (BYTE) 0xFF;
+		xGamepad.bRightTrigger = (BYTE) 0xFF;
+		xGamepad.sThumbLX = (SHORT) 0xFFFF;
+		xGamepad.sThumbLY = (SHORT) 0xFFFF;
+		xGamepad.sThumbRX = (SHORT) 0xFFFF;
+		xGamepad.sThumbRY = (SHORT) 0xFFFF;
+		xGamepad.wButtons = (WORD)  0xFFFFFFFF;
+
+		XINPUT_VIBRATION Vibration;
+		ZeroMemory(&Vibration,sizeof(XINPUT_VIBRATION));
+
+		Vibration.wLeftMotorSpeed =	(WORD) 0xFFFFFFFF;
+		Vibration.wRightMotorSpeed = (WORD) 0xFFFFFFFF;
+
+		XCAPS.Flags = (WORD) 4;
+		XCAPS.SubType = (BYTE) Gamepad[dwUserIndex].gamepadtype;
+		XCAPS.Gamepad = xGamepad;
+		XCAPS.Vibration = Vibration;
+		XCAPS.Type = (BYTE) 0;											//strange because spec says 1, but in dump this is 0
+
+		pCapabilities = &XCAPS;
 		capsready = true;
 	}
-	pCapabilities = &XCAPS;
 
-	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"), pCapabilities->SubType);
+	else pCapabilities = &XCAPS;
+
+	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
