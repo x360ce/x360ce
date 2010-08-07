@@ -86,6 +86,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	hr = XInit(dwUserIndex);
 	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
+	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+
 	/*
 	Nasty trick to support XInputEnable states, because not every game calls it so:
 	- must support games that use it, and do enable/disable as needed by game
@@ -432,7 +434,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		XCAPS.Gamepad.sThumbRY = 0;
 		capsready = true;
 	}
-	pCapabilities = &XCAPS;
+	*pCapabilities = XCAPS;
 
 	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
