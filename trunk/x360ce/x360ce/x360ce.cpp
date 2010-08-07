@@ -412,23 +412,24 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
-	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || dwFlags != 0) return ERROR_BAD_ARGUMENTS; 
+	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
 	if(!capsready)
 	{
 		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
 		XCAPS.Type = 0;
-		XCAPS.SubType = (BYTE)Gamepad[dwUserIndex].gamepadtype;
+		XCAPS.SubType = Gamepad[dwUserIndex].gamepadtype;
 		XCAPS.Flags = 0;
 		XCAPS.Vibration.wLeftMotorSpeed = XCAPS.Vibration.wRightMotorSpeed = 0xFFFF;
 
 		XCAPS.Gamepad.wButtons = 0xFFFF;	
 		XCAPS.Gamepad.bLeftTrigger = 0xFF;
 		XCAPS.Gamepad.bRightTrigger = 0xFF;
-		XCAPS.Gamepad.sThumbLX = 0xFFFF;
-		XCAPS.Gamepad.sThumbLY = 0xFFFF;
-		XCAPS.Gamepad.sThumbRX = 0xFFFF;
-		XCAPS.Gamepad.sThumbRY = 0xFFFF;
+		//center is more reliable because SHORT is signed
+		XCAPS.Gamepad.sThumbLX = 0;
+		XCAPS.Gamepad.sThumbLY = 0;
+		XCAPS.Gamepad.sThumbRX = 0;
+		XCAPS.Gamepad.sThumbRY = 0;
 		capsready = true;
 	}
 	pCapabilities = &XCAPS;
