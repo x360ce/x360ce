@@ -23,10 +23,26 @@ struct DINPUT_DATA
 	LPDIRECTINPUT8 g_pDI;
 	UINT refCount;
 	UINT deviceCount;
-
 	DINPUT_DATA()
 	{
 		ZeroMemory(this,sizeof(DINPUT_DATA));
+	}
+};
+
+struct DINPUT_FF
+{
+	DIPERIODIC pf;
+	INT xForce;
+	INT yForce;
+	INT oldXForce;
+	INT oldYForce;
+	DWORD oldMagnitude;
+	DWORD oldPeriod;
+	DIEFFECT eff;
+	BOOL IsUpdateEffectCreated;
+	DINPUT_FF()
+	{
+		ZeroMemory(this,sizeof(DINPUT_FF));
 	}
 };
 
@@ -56,17 +72,7 @@ struct DINPUT_GAMEPAD {
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
 	DWORD id2;
-	// EJ: Added by EJocys
-	DIPERIODIC pf;
-	INT xForce;
-	INT yForce;
-	INT oldXForce;
-	INT oldYForce;
-	DWORD oldMagnitude;
-	DWORD oldPeriod;
-	// EJ: Effect parameters
-	DIEFFECT eff;
-	BOOL IsUpdateEffectCreated;
+	DINPUT_FF ff;
 };
 
 //externs

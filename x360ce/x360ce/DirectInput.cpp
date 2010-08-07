@@ -349,10 +349,10 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
     if( nForce < -DI_FFNOMINALMAX ) nForce = -DI_FFNOMINALMAX;
     if( nForce > +DI_FFNOMINALMAX ) nForce = +DI_FFNOMINALMAX;
 	if (effidx == 0){
-		Gamepad[idx].xForce = nForce;
+		Gamepad[idx].ff.xForce = nForce;
 		period = 60000;
 	}else{
-		Gamepad[idx].yForce = nForce;
+		Gamepad[idx].ff.yForce = nForce;
 		period = 120000;
 	}
 	DWORD magnitude = 0;
@@ -362,7 +362,7 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 	LONG rglDirection[2] = { 0, 0 };
 	//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !1! HR = %s"), idx+1,effidx, DXErrStr(hr));
 	DIEFFECT eff;
-	if ( Gamepad[idx].IsUpdateEffectCreated == false)
+	if ( Gamepad[idx].ff.IsUpdateEffectCreated == false)
 	{
 		//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !1a! HR = %s"), idx+1,effidx, DXErrStr(hr));
 		ZeroMemory( &eff, sizeof( eff ) );
@@ -373,30 +373,30 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 		eff.dwStartDelay = 0;
 		//eff.cbTypeSpecificParams = sizeof( DICONSTANTFORCE );
 		eff.cbTypeSpecificParams = sizeof( DIPERIODIC );
-		 Gamepad[idx].eff = eff;
-		 Gamepad[idx].IsUpdateEffectCreated = true;
+		 Gamepad[idx].ff.eff = eff;
+		 Gamepad[idx].ff.IsUpdateEffectCreated = true;
 	}
-	eff =  Gamepad[idx].eff;
+	eff =  Gamepad[idx].ff.eff;
 	//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !2! HR = %s"), idx+1,effidx, DXErrStr(hr));
 	// When modifying an effect you need only specify the parameters you are modifying
 	if(  Gamepad[idx].g_dwNumForceFeedbackAxis == 1 )
 	{
 		//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !3a! HR = %s"), idx+1,effidx, DXErrStr(hr));
 		// Apply only one direction and keep the direction at zero
-		magnitude = ( DWORD )sqrt( ( double )Gamepad[idx].xForce * ( double )Gamepad[idx].xForce + ( double )Gamepad[idx].yForce * ( double )Gamepad[idx].yForce );
+		magnitude = ( DWORD )sqrt( ( double )Gamepad[idx].ff.xForce * ( double )Gamepad[idx].ff.xForce + ( double )Gamepad[idx].ff.yForce * ( double )Gamepad[idx].ff.yForce );
 		rglDirection[0] = 0;
-		Gamepad[idx].pf.dwMagnitude = Gamepad[idx].xForce;
-		Gamepad[idx].pf.dwPeriod = period;
+		Gamepad[idx].ff.pf.dwMagnitude = Gamepad[idx].ff.xForce;
+		Gamepad[idx].ff.pf.dwPeriod = period;
 	}
 	else
 	{
 		//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !3b! HR = %s"), idx+1,effidx, DXErrStr(hr));
 		magnitude = MulDiv(force, DI_FFNOMINALMAX, 65535);
 		// Apply magnitude from both directions 
-		rglDirection[0] = Gamepad[idx].xForce;
-		rglDirection[1] = Gamepad[idx].yForce;
-		Gamepad[idx].pf.dwMagnitude = magnitude;
-		Gamepad[idx].pf.dwPeriod = period;
+		rglDirection[0] = Gamepad[idx].ff.xForce;
+		rglDirection[1] = Gamepad[idx].ff.yForce;
+		Gamepad[idx].ff.pf.dwMagnitude = magnitude;
+		Gamepad[idx].ff.pf.dwPeriod = period;
 		//LeftForceMagnitude
 		//LeftForcePeriod
 		// dwMagnitude - Magnitude of the effect, in the range from 0 through 10,000. If an envelope is applied to this effect, the value represents the magnitude of the sustain. If no envelope is applied, the value represents the amplitude of the entire effect. 
@@ -406,16 +406,19 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 	}
 	//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !3b! axis = %d, x = %d, y = %d, m = %d"), idx+1,effidx, Gamepad[idx].g_dwNumForceFeedbackAxis, Gamepad[idx].xForce, Gamepad[idx].yForce, magnitude);
 	//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !6! HR = %s"), idx+1,effidx, DXErrStr(hr));
-	Gamepad[idx].eff.rglDirection = rglDirection;
-	Gamepad[idx].eff.lpvTypeSpecificParams = &Gamepad[idx].pf;
-	if ( Gamepad[idx].oldMagnitude != Gamepad[idx].pf.dwMagnitude ||  Gamepad[idx].oldPeriod !=  Gamepad[idx].pf.dwPeriod ||  Gamepad[idx].oldXForce != Gamepad[idx].xForce ||  Gamepad[idx].oldYForce !=  Gamepad[idx].yForce){
-		 Gamepad[idx].oldMagnitude =  Gamepad[idx].pf.dwMagnitude;
-		 Gamepad[idx].oldPeriod =  Gamepad[idx].pf.dwPeriod;
-		 Gamepad[idx].oldXForce = Gamepad[idx].xForce;
-		 Gamepad[idx].oldYForce = Gamepad[idx].yForce;
+	Gamepad[idx].ff.eff.rglDirection = rglDirection;
+	Gamepad[idx].ff.eff.lpvTypeSpecificParams = &Gamepad[idx].ff.pf;
+	if ( Gamepad[idx].ff.oldMagnitude != Gamepad[idx].ff.pf.dwMagnitude ||
+		 Gamepad[idx].ff.oldPeriod !=  Gamepad[idx].ff.pf.dwPeriod ||
+		 Gamepad[idx].ff.oldXForce != Gamepad[idx].ff.xForce ||
+		 Gamepad[idx].ff.oldYForce !=  Gamepad[idx].ff.yForce){
+		 Gamepad[idx].ff.oldMagnitude =  Gamepad[idx].ff.pf.dwMagnitude;
+		 Gamepad[idx].ff.oldPeriod =  Gamepad[idx].ff.pf.dwPeriod;
+		 Gamepad[idx].ff.oldXForce = Gamepad[idx].ff.xForce;
+		 Gamepad[idx].ff.oldYForce = Gamepad[idx].ff.yForce;
 		//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !7! HR = %s"), idx+1,effidx, DXErrStr(hr));
 		// Set the new parameters and start the effect immediately.
-		if( FAILED( hr = Gamepad[idx].g_pEffect[effidx]->SetParameters( &Gamepad[idx].eff, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START ))){
+		if( FAILED( hr = Gamepad[idx].g_pEffect[effidx]->SetParameters( &Gamepad[idx].ff.eff, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START ))){
 			WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) failed with code HR = %s"), idx+1,effidx, DXErrStr(hr));
 			return hr;
 		};
@@ -464,14 +467,14 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 
 	DIEFFECT eff;
 	DIPERIODIC pf = { 0 };
-	Gamepad[idx].pf = pf;
-	Gamepad[idx].xForce = 0;
-	Gamepad[idx].yForce = 0;
-	Gamepad[idx].oldXForce = 0;
-	Gamepad[idx].oldYForce = 0;
-	Gamepad[idx].oldMagnitude = 0;
-	Gamepad[idx].oldPeriod = 0;
-	Gamepad[idx].IsUpdateEffectCreated = false;
+	Gamepad[idx].ff.pf = pf;
+	Gamepad[idx].ff.xForce = 0;
+	Gamepad[idx].ff.yForce = 0;
+	Gamepad[idx].ff.oldXForce = 0;
+	Gamepad[idx].ff.oldYForce = 0;
+	Gamepad[idx].ff.oldMagnitude = 0;
+	Gamepad[idx].ff.oldPeriod = 0;
+	Gamepad[idx].ff.IsUpdateEffectCreated = false;
 	// Constant:  Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay
 	// Sine Wave: Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay, SamplePeriod
 	HRESULT hr = E_FAIL;
@@ -507,7 +510,7 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
 	eff.rgdwAxes = rgdwAxes;
 	eff.rglDirection = rglDirection;
 	//eff.lpvTypeSpecificParams = &cf;
-	eff.lpvTypeSpecificParams = &Gamepad[idx].pf;
+	eff.lpvTypeSpecificParams = &Gamepad[idx].ff.pf;
 	// Create the prepared effect
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->CreateEffect(
 		effGuid,  // GUID from enumeration
