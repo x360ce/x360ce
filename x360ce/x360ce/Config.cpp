@@ -97,7 +97,7 @@ extern "C" void InitConfig(LPTSTR ininame)
 	wFakeDI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeDI"));
 	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"));
 
-	wFakeAPI = wFakeWMI + wFakeDI;
+	wFakeAPI = wFakeWMI + wFakeDI + wFakeWinTrust;
 
 	if(wFakeAPI)
 	{

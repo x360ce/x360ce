@@ -47,6 +47,9 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 		}
 	}
 
+
+	if (wFakeDI == 3 ) return DIENUM_STOP;
+
 	if(pInst && pInst->dwSize!=0)
 	{
 		if(wFakeDI >= 1)
@@ -165,7 +168,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVI
 	{
 		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfo"));
 
-		if(wFakeDI >= 2)
+		if((wFakeDI >= 2) && (wFakeDI != 3))
 		{
 			//ANSI or UNICODE ?
 			if(sizeof(DIDEVICEINSTANCEA) ==  pdidi->dwSize)					//ANSI
