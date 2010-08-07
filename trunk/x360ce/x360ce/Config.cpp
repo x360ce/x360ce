@@ -142,7 +142,7 @@ void ReadPadConfig(INT idx) {
 	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"));
 	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"));
 	Gamepad[idx].useforce = ReadUINTFromFile(section, _T("UseForceFeedback"));
-	Gamepad[idx].gamepadtype = ReadUINTFromFile(section, _T("ControllerType"));
+	Gamepad[idx].gamepadtype = (BYTE)ReadUINTFromFile(section, _T("ControllerType"));
 	Gamepad[idx].axistodpad = ReadUINTFromFile(section, _T("AxisToDPad"));
 	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"));
 	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"));

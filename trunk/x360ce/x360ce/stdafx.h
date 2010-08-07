@@ -28,6 +28,8 @@
 #endif
 
 #define WIN32_LEAN_AND_MEAN
+
+#define STRICT
 #define DIRECTINPUT_VERSION 0x0800
 
 // Windows Header Files:

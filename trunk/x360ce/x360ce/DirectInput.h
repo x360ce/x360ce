@@ -51,7 +51,7 @@ struct DINPUT_GAMEPAD {
 	DWORD tdeadzone;
 	BOOL useforce;
 	FLOAT forcepercent;
-	INT gamepadtype;
+	BYTE gamepadtype;
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;

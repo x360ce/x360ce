@@ -13,9 +13,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define STRICT
-#define DIRECTINPUT_VERSION 0x0800
-
 #include "stdafx.h"
 #include "globals.h"
 #include "Utils.h"
@@ -536,7 +533,8 @@ HRESULT PrepareForce(DWORD idx, WORD effidx)
  // allocated for storing the GUID.
 //-----------------------------------------------------------------------------
  BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef) {
-    LPDIRECTINPUTDEVICE8 g_pDevice = (LPDIRECTINPUTDEVICE8)pvRef;   
+//    LPDIRECTINPUTDEVICE8 g_pDevice = (LPDIRECTINPUTDEVICE8)pvRef; 
+	 UNREFERENCED_PARAMETER(pvRef);
 	// Pointer to calling device
 	BOOL isConstant = DIEFT_GETTYPE(di->dwEffType) == DIEFT_CONSTANTFORCE;
 	BOOL isPeriodic = DIEFT_GETTYPE(di->dwEffType) == DIEFT_PERIODIC;
