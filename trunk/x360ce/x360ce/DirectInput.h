@@ -56,6 +56,17 @@ struct DINPUT_GAMEPAD {
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
 	DWORD id2;
+	// EJ: Added by EJocys
+	DIPERIODIC pf;
+	INT xForce;
+	INT yForce;
+	INT oldXForce;
+	INT oldYForce;
+	DWORD oldMagnitude;
+	DWORD oldPeriod;
+	// EJ: Effect parameters
+	DIEFFECT eff;
+	BOOL IsUpdateEffectCreated;
 };
 
 //externs
@@ -72,3 +83,4 @@ void ReleaseDirectInput();
 void Deactivate();
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx);
 HRESULT PrepareForce(DWORD idx, WORD effidx);
+BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
