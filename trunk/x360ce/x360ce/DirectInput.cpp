@@ -148,27 +148,6 @@ BOOL CALLBACK EnumFFAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pCo
 	return DIENUM_CONTINUE;
 }
 
-BOOL CALLBACK DIEnumEffectsCallback(LPCDIEFFECTINFO pdei, 
-	LPVOID pvRef)
-{
-	HRESULT              hr;
-	//LPDIRECTINPUTDEVICE8 lpdid = (LPDIRECTINPUTDEVICE8)pvRef;   
-	DINPUT_GAMEPAD* gp = (DINPUT_GAMEPAD*)pvRef;
-	// Pointer to calling device
-	//LPDIRECTINPUTEFFECT  lpdiEffect;      // Pointer to created effect
-	//DIEFFECT             diEffect;        // Params for created effect
-	//DICONSTANTFORCE      diConstantForce; // Type-specific parameters
-
-
-	if (DIEFT_GETTYPE(pdei->dwEffType) == DIEFT_CONSTANTFORCE)
-	{
-
-		hr = gp->useforce = 1;
-	}
-
-	return DIENUM_CONTINUE;
-}
-
 HRESULT UpdateState(INT idx )
 {
 	HRESULT hr=E_FAIL;
@@ -295,8 +274,6 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 
 	if( Gamepad[idx].g_dwNumForceFeedbackAxis <= 0 )
 		Gamepad[idx].useforce = 0;
-
-	//Gamepad[idx].g_pGamepad->EnumEffects(&DIEnumEffectsCallback, &Gamepad[idx], DIEFT_ALL);
 
 	return S_OK;
 }
