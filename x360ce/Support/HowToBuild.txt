@@ -16,15 +16,25 @@ Reboot your PC to initialize new environment variables.
 Make sure that this folder contains binaries:
 c:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\
 
-Open "Visual Studio 2008 Command Prompt" as administrator and build Detour:
+Open "Visual Studio 2010 Command Prompt" as administrator and build Detour:
 
     cd "C:\Program Files (x86)\Microsoft Research\Detours Express 2.1"
     set PROCESSOR_ARCHITECTURE=x86
     nmake
 
+Open Visual Studio 2010
 
-Open Visual Studio 2008
+Open: Build -> Configuration Manager...
+
+	Active Solution Configuration: Debug
+	Active Solution Platform: Win32
+
+	Project Context, Configuation, Platform
+	x360ce,          Debug,        Win32
+	x360.App,        Debug,        AnyCPU
+
 Open: Tools -> Options -> Projects and Solutions -> VC++ Directories
+
 Select
     Platform: Win32
 
