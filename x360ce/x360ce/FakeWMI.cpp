@@ -114,8 +114,8 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 						{
 							BSTR fakebstr=NULL;
 							WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
-							if(wFakeWMI_NOPIDVID) _stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), Gamepad[i].vid , Gamepad[i].pid );
-							else _stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID ); 
+							if(wFakeWMI_NOPIDVID) _stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_%02d"), Gamepad[i].vid , Gamepad[i].pid,i );
+							else _stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_%02d"), wFakeVID, wFakePID,i ); 
 							fakebstr=SysAllocString(tempstr);
 							pVal->bstrVal = fakebstr;
 							SysFreeString(fakebstr);
@@ -131,8 +131,8 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 							{
 								BSTR fakebstr=NULL;
 								WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
-								if(wFakeWMI_NOPIDVID) _stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), Gamepad[i].vid , Gamepad[i].pid );
-								else _stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID ); 
+								if(wFakeWMI_NOPIDVID) _stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_%02d"), Gamepad[i].vid , Gamepad[i].pid,i );
+								else _stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_%02d"), wFakeVID, wFakePID,i ); 
 								fakebstr=SysAllocString(tempstr);
 								pVal->bstrVal = fakebstr;
 								SysFreeString(fakebstr);
