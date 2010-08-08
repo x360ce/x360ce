@@ -96,7 +96,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>
@@ -114,7 +114,7 @@
       <Command>"$(ProjectDir)\preBuild.cmd"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy /y $(TargetPath) "E:\Gry\Prototype"</Command>
+      <Command>copy /y $(TargetPath) "E:\Gry\Prince of Persia Zapomniane Piaski"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -169,7 +169,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>

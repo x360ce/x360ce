@@ -134,9 +134,9 @@ VOID InitInstance(HMODULE hModule)
 
 	if(wFakeAPI)
 	{
-		if(wFakeWMI) FakeWMI(true);
-		if(wFakeDI) FakeDI(true);
-		if(wFakeWinTrust) FakeWinTrust(true);
+		if(wFakeWMI) FakeWMI();
+		if(wFakeDI) FakeDI();
+		if(wFakeWinTrust) FakeWinTrust();
 	}
 }
 
@@ -144,9 +144,9 @@ VOID ExitInstance()
 {   
 	if(wFakeAPI)
 	{
-		if(wFakeWMI) FakeWMI(false);
-		if(wFakeDI) FakeDI(false);
-		if(wFakeWinTrust) FakeWinTrust(false);
+		if(wFakeWMI) FakeWMI_Detach();
+		if(wFakeDI) FakeDI_Detach();
+		if(wFakeWinTrust) FakeWinTrust_Detach();
 	}
 
 	ReleaseDirectInput();
