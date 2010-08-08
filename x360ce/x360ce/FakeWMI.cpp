@@ -27,6 +27,8 @@
 #include <detours.h>
 #include "FakeWMI.h"
 
+BOOL NextFlag = false;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid, 
 									  __in_opt LPUNKNOWN pUnkOuter,
@@ -82,7 +84,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 	HRESULT hr;
 	hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	//WriteLog(_T("wszName %s pVal->vt %d"),wszName,pVal->vt);
+	//WriteLog(_T("wszName %s pVal->vt %d pType %d"),wszName,pVal->vt,&pType);
 
 	//BSTR bstrDeviceID = SysAllocString( L"DeviceID" );
 
@@ -102,9 +104,9 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 
 			for(int i = 0; i < 4; i++)
 			{
-				if(Gamepad[i].vid != 0 && Gamepad[i].vid == dwVid )
+				if(Gamepad[i].configured && Gamepad[i].vid == dwVid )
 				{
-					if(Gamepad[i].pid != 0 && Gamepad[i].pid == dwPid)
+					if(Gamepad[i].configured && Gamepad[i].pid == dwPid)
 					{
 						WCHAR* strUSB = _tcsstr( pVal->bstrVal, _T("USB") );
 						WCHAR tempstr[MAX_PATHW];
@@ -112,7 +114,8 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 						{
 							BSTR fakebstr=NULL;
 							WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
-							_stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID );
+							if(wFakeWMI_NOPIDVID) _stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), Gamepad[i].vid , Gamepad[i].pid );
+							else _stprintf_s(tempstr,_T("USB\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID ); 
 							fakebstr=SysAllocString(tempstr);
 							pVal->bstrVal = fakebstr;
 							SysFreeString(fakebstr);
@@ -128,7 +131,8 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 							{
 								BSTR fakebstr=NULL;
 								WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
-								_stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID );
+								if(wFakeWMI_NOPIDVID) _stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), Gamepad[i].vid , Gamepad[i].pid );
+								else _stprintf_s(tempstr,_T("HID\\VID_%04X&PID_%04X&IG_00"), wFakeVID, wFakePID ); 
 								fakebstr=SysAllocString(tempstr);
 								pVal->bstrVal = fakebstr;
 								SysFreeString(fakebstr);
@@ -158,7 +162,19 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
+	/*
+	if(NextFlag)
+	{
+		return WBEM_S_NO_MORE_DATA;
+	}*/
+
 	hr = OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
+
+	/*if(hr == WBEM_S_NO_MORE_DATA)
+	{
+		NextFlag = true;
+		return WBEM_S_NO_ERROR;
+	}*/
 
 	if(apObjects!=NULL)
 	{
