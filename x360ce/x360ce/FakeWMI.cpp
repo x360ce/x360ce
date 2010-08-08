@@ -323,29 +323,43 @@ void FakeWMI_Detach()
 {
 	WriteLog(_T("[FAKEAPI] FakeWMI:: Detaching"));
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourDetach(&(PVOID&)OriginalGet, FakeGet);
-	DetourTransactionCommit();
+	if(OriginalGet)
+	{
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalGet, FakeGet);
+		DetourTransactionCommit();
+	}
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourDetach(&(PVOID&)OriginalNext, FakeNext);
-	DetourTransactionCommit();
+	if(OriginalNext)
+	{
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalNext, FakeNext);
+		DetourTransactionCommit();
+	}
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
-	DetourTransactionCommit();
+	if(OriginalCreateInstanceEnum)
+	{
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
+		DetourTransactionCommit();
+	}
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
-	DetourTransactionCommit();
+	if(OriginalConnectServer)
+	{
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
+		DetourTransactionCommit();
+	}
 
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
-	DetourTransactionCommit();
+	if(OriginalCoCreateInstance)
+	{
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+		DetourTransactionCommit();
+	}
 }
