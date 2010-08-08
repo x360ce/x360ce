@@ -52,7 +52,7 @@ struct DINPUT_GAMEPAD {
 	DWORD dwPadIndex;  //starting from 1
 	BOOL connected;
 	BOOL configured;
-	TCHAR name[MAX_PATHW];
+	TCHAR name[MAX_PATH];
 	WORD vid;
 	WORD pid;
 	GUID product;

@@ -29,10 +29,10 @@ DWORD dwAppPID = NULL;
 void LoadOriginalDll()
 {
 
-	TCHAR buffer[MAX_PATHW];
+	TCHAR buffer[MAX_PATH];
 
 	// Getting path to system dir and to xinput1_3.dll
-	GetSystemDirectory(buffer,MAX_PATHW);
+	GetSystemDirectory(buffer,MAX_PATH);
 
 	// Append dll name
 	_tcscat_s(buffer,sizeof(buffer),_T("\\xinput1_3.dll"));
