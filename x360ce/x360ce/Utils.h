@@ -14,7 +14,7 @@
  */
 
 // externs
-extern TCHAR tstrConfigFile[MAX_PATHW];
+extern TCHAR tstrConfigFile[MAX_PATH];
 extern BOOL writelog;
 extern BOOL logready; 
 extern LPTSTR logfilename;

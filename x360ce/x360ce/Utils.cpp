@@ -20,11 +20,11 @@
 
 #pragma warning(disable:4996)
 
-TCHAR tstrConfigFile[MAX_PATHW];	
+TCHAR tstrConfigFile[MAX_PATH];	
 BOOL writelog = 0;
 LPTSTR logfilename;
 BOOL logready = 0;
-TCHAR szProcessName[MAX_PATHW] = _T("Unknown");
+TCHAR szProcessName[MAX_PATH] = _T("Unknown");
 
 LPCTSTR PIDName(DWORD processID){
 
@@ -73,7 +73,7 @@ DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutpu
 {
 	DWORD ret;
 	LPTSTR next_token;
-	ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATHW, tstrConfigFile);
+	ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, tstrConfigFile);
 	if(ret) _tcstok_s(strOutput,_T(" "),&next_token);  //should fix comment in ini file
 	return ret;
 }
@@ -157,8 +157,8 @@ BOOL WriteLog(LPTSTR str,...)
 		GetTime(year, month, day, hour, min, sec );
 
 		if(logready == 0){ // checking if file name for log is ready, if not create it
-			logfilename = new TCHAR[MAX_PATHW];
-			_stprintf_s(logfilename,MAX_PATHW,_T("x360ce_logs\\x360ce %d%02d%02d-%02d%02d%02d.log"),year,month,day,hour,min,sec);
+			logfilename = new TCHAR[MAX_PATH];
+			_stprintf_s(logfilename,MAX_PATH,_T("x360ce_logs\\x360ce %d%02d%02d-%02d%02d%02d.log"),year,month,day,hour,min,sec);
 			logready = 1;
 		}
 

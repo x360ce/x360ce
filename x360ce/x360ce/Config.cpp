@@ -80,9 +80,9 @@ GamepadMap GamepadMapping[4];
 extern "C" void InitConfig(LPTSTR ininame) 
 {
 	LPTSTR pStr;
-	TCHAR strPath[MAX_PATHW];
-	extern TCHAR tstrConfigFile[MAX_PATHW];	
-	GetModuleFileName (NULL, strPath, MAX_PATHW);
+	TCHAR strPath[MAX_PATH];
+	extern TCHAR tstrConfigFile[MAX_PATH];	
+	GetModuleFileName (NULL, strPath, MAX_PATH);
 	pStr = _tcsrchr(strPath, _T('\\'));
 	if (pStr != NULL)
 		*(++pStr)=_T('\0'); 
@@ -119,7 +119,7 @@ void ReadPadConfig(INT idx) {
 	_stprintf_s(section,_T("PAD%d"),idx+1);
 	GamepadMap &PadMap = GamepadMapping[idx];
 
-	TCHAR buffer[MAX_PATHW];
+	TCHAR buffer[MAX_PATH];
 
 	Gamepad[idx].native = ReadUINTFromFile(section, _T("Native"));
 	if(Gamepad[idx].native) 

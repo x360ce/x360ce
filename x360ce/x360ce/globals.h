@@ -19,7 +19,6 @@
 #define arrayof(x) (sizeof(x)/sizeof(x[0])) 
 #define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
 #define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
-#define MAX_PATHW 260
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
