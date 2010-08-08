@@ -37,6 +37,7 @@ LPDIENUMDEVICESCALLBACK lpOriginalCallback= NULL;
 BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 {
 	WriteLog(_T("[FAKEDI]  FakeEnumCallback"));
+	if ((pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && (pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return lpOriginalCallback(pInst,pContext);;
 
 	if (pContext)
 	{
@@ -47,6 +48,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 		}
 	}
 
+	if ((wFakeDI == 3) ) return DIENUM_STOP;
 
 	if(pInst && pInst->dwSize!=0)
 	{
@@ -58,8 +60,6 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 				DIDEVICEINSTANCEA ANSIInst;
 
 				memcpy(&ANSIInst,pInst,pInst->dwSize);
-
-				if ((wFakeDI == 3) && !(ANSIInst.dwDevType == DI8DEVTYPE_KEYBOARD) && !(ANSIInst.dwDevType == DI8DEVTYPE_MOUSE) ) return DIENUM_STOP;
 
 				DIDEVICEINSTANCEA FakeInst;
 				GUID fakeguid = pInst->guidProduct;
@@ -105,8 +105,6 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 			else
 			{
 				WriteLog(_T("[FAKEDI]  FakeEnumCallback:: Using UNICODE"));
-
-				if ((wFakeDI == 3) && !(pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && !(pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return DIENUM_STOP;
 
 				DIDEVICEINSTANCEW pFakeInst;
 				GUID fakeguid = pInst->guidProduct;
