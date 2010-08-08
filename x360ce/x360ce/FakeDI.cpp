@@ -152,7 +152,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeEnumDevices (LPDIRECTINPUT8 This, DWORD dwDevType,LPDIENUMDEVICESCALLBACK lpCallback,LPVOID pvRef,DWORD dwFlags)
 {
-	if (lpCallback != NULL)
+	if (lpCallback)
 	{
 		lpOriginalCallback= lpCallback;
 		return OriginalEnumDevices(This,dwDevType,FakeEnumCallback,pvRef,dwFlags);
@@ -165,7 +165,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVI
 	HRESULT hr;
 	hr = OriginalGetDeviceInfo ( This, pdidi );
 
-	if(pdidi != NULL)
+	if(pdidi)
 	{
 		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfo"));
 
@@ -294,13 +294,13 @@ HRESULT STDMETHODCALLTYPE FakeCreateDevice (LPDIRECTINPUT8 This, REFGUID rguid, 
 	LPDIRECTINPUTDEVICE8 pDID;
 
 	hr = OriginalCreateDevice (This, rguid, lplpDirectInputDevice, pUnkOuter);
-	if(lplpDirectInputDevice != NULL)
+	if(lplpDirectInputDevice)
 	{
 		WriteLog(_T("[FAKEDI]  FakeCreateDevice"));
 		pDID = (LPDIRECTINPUTDEVICE8) *lplpDirectInputDevice;
 		if(pDID != NULL)
 		{
-			if(OriginalGetDeviceInfo == NULL)
+			if(!OriginalGetDeviceInfo)
 			{
 				OriginalGetDeviceInfo = pDID->lpVtbl->GetDeviceInfo;
 				DetourTransactionBegin();
@@ -308,7 +308,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateDevice (LPDIRECTINPUT8 This, REFGUID rguid, 
 				DetourAttach(&(PVOID&)OriginalGetDeviceInfo, FakeGetDeviceInfo);
 				DetourTransactionCommit();
 			}
-			if(OriginalGetProperty == NULL)
+			if(!OriginalGetProperty)
 			{
 				OriginalGetProperty = pDID->lpVtbl->GetProperty;
 				DetourTransactionBegin();
@@ -331,14 +331,14 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 
 	hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
-	if(ppvOut != NULL) 
+	if(ppvOut) 
 	{
 		WriteLog(_T("[FAKEDI]  FakeDirectInput8Create"));
 
 		pDI = (LPDIRECTINPUT8) *ppvOut;
-		if(pDI != NULL) 
+		if(pDI) 
 		{
-			if(OriginalEnumDevices == NULL) 
+			if(!OriginalEnumDevices) 
 			{
 				OriginalEnumDevices = pDI->lpVtbl->EnumDevices;
 
@@ -347,7 +347,7 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 				DetourAttach(&(PVOID&)OriginalEnumDevices, FakeEnumDevices);
 				DetourTransactionCommit();
 			}
-			if(OriginalCreateDevice == NULL)
+			if(!OriginalCreateDevice)
 			{
 				OriginalCreateDevice = pDI->lpVtbl->CreateDevice;
 
@@ -364,21 +364,43 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void FakeDI(bool state)
+void FakeDI()
 {
-	WriteLog(_T("[FAKEAPI] FakeDI(%d)"),state);
-	if(state){
+	WriteLog(_T("[FAKEAPI] FakeDI:: Attaching"));
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach(&(PVOID&)OriginalDirectInput8Create, FakeDirectInput8Create);
 	DetourTransactionCommit();
-	}
-	
-	else{
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void FakeDI_Detach()
+{
+	WriteLog(_T("[FAKEAPI] FakeDI:: Detaching"));
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalGetDeviceInfo, FakeGetDeviceInfo);
+	DetourTransactionCommit();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalGetProperty, FakeGetProperty);
+	DetourTransactionCommit();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalEnumDevices, FakeEnumDevices);
+	DetourTransactionCommit();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalCreateDevice, FakeCreateDevice);
+	DetourTransactionCommit();
+
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourDetach(&(PVOID&)OriginalDirectInput8Create, FakeDirectInput8Create);
 	DetourTransactionCommit();
-	}
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -22,6 +22,10 @@ extern WORD wFakeWinTrust;
 extern WORD wFakeVID;
 extern WORD wFakePID;
 
-void FakeWMI(bool state);
-void FakeDI(bool state);
-void FakeWinTrust(bool state);
+void FakeWMI();
+void FakeDI();
+void FakeWinTrust();
+
+void FakeWMI_Detach();
+void FakeDI_Detach();
+void FakeWinTrust_Detach();

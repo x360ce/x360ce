@@ -21,12 +21,12 @@
 #define CINTERFACE			//needed for detours
 #define _WIN32_DCOM
 #include <wbemidl.h>
-#pragma comment(lib, "wbemuuid.lib")
 #include <ole2.h>
 #include <oleauto.h>
 #include <detours.h>
 #include "FakeWMI.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid, 
 									  __in_opt LPUNKNOWN pUnkOuter,
@@ -68,8 +68,9 @@ HRESULT ( STDMETHODCALLTYPE *OriginalGet )(
 									  /* [unique][in][out] */ CIMTYPE *pType,
 									  /* [unique][in][out] */ long *plFlavor) = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeGet( 
 	IWbemClassObject * This,
 	/* [string][in] */ LPCWSTR wszName,
@@ -143,7 +144,9 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeNext( 
 								  IEnumWbemClassObject * This,
 								  /* [in] */ long lTimeout,
@@ -157,12 +160,12 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 
 	hr = OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
 
-	if(apObjects!=NULL)
+	if(apObjects)
 	{
-		if(*apObjects!=NULL)
+		if(*apObjects)
 		{
 			pDevices = *apObjects;
-			if(OriginalGet == NULL)
+			if(!OriginalGet)
 			{
 
 				OriginalGet = pDevices->lpVtbl->Get;
@@ -177,7 +180,9 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum( 
 	IWbemServices * This,
 	/* [in] */ __RPC__in const BSTR strFilter, 
@@ -191,13 +196,13 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 
 	hr = OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
 
-	if(ppEnum != NULL)
+	if(ppEnum)
 	{
-		if(*ppEnum != NULL)
+		if(*ppEnum)
 		{
 			pEnumDevices = *ppEnum;
 
-			if(OriginalNext == NULL) 
+			if(!OriginalNext) 
 			{
 				OriginalNext = pEnumDevices->lpVtbl->Next;
 
@@ -211,7 +216,9 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeConnectServer( 
 	IWbemLocator * This,
 	/* [in] */ const BSTR strNetworkResource,
@@ -230,13 +237,13 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 
 	hr = OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
-	if(ppNamespace != NULL)
+	if(ppNamespace)
 	{
-		if(*ppNamespace != NULL)
+		if(*ppNamespace)
 		{
 			pIWbemServices = *ppNamespace;
 
-			if(OriginalCreateInstanceEnum == NULL) 
+			if(!OriginalCreateInstanceEnum) 
 			{
 				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
 
@@ -250,7 +257,9 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid, 
 								   __in_opt LPUNKNOWN pUnkOuter,
 								   __in     DWORD dwClsContext, 
@@ -272,15 +281,15 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	*/
 	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
-	if(ppv != NULL && riid == IID_IWbemLocator) 
+	if(ppv && (riid == IID_IWbemLocator)) 
 	{
 		//WriteLog(_T("FakeCoCreateInstance if1 "));
 
 		pIWbemLocator = (IWbemLocator *) *ppv;
-		if(pIWbemLocator != NULL) 
+		if(pIWbemLocator) 
 		{
 			WriteLog(_T("[FakeWMI] FakeCoCreateInstance"));
-			if(OriginalConnectServer == NULL) 
+			if(!OriginalConnectServer) 
 			{
 
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
@@ -295,22 +304,48 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 
 	return hr;
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void FakeWMI(bool state)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void FakeWMI()
 {
-	WriteLog(_T("[FAKEAPI] FakeWMI(%d)"),state);
+	WriteLog(_T("[FAKEAPI] FakeWMI:: Attaching"));
 
-	if(state){
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
-		DetourTransactionCommit();
-	}
-	else {
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
-		DetourTransactionCommit();
-	}
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+	DetourTransactionCommit();
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+void FakeWMI_Detach()
+{
+	WriteLog(_T("[FAKEAPI] FakeWMI:: Detaching"));
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalGet, FakeGet);
+	DetourTransactionCommit();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalNext, FakeNext);
+	DetourTransactionCommit();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
+	DetourTransactionCommit();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
+	DetourTransactionCommit();
+
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+	DetourTransactionCommit();
 }

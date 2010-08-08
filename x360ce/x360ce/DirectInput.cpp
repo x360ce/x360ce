@@ -280,42 +280,6 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 {
-	//// Modifying an effect is basically the same as creating a new one, except
-	//// you need only specify the parameters you are modifying
-	//HRESULT hr= S_OK;
-	//LONG     rglDirection[2] = { 0, 0 };
-	//DOUBLE	correction = 6.5535;
-	//if( Gamepad[idx].g_dwNumForceFeedbackAxis == 1 )
-	//{
-	//	rglDirection[0] = 0;
-	//}
-	//else
-	//{
-	//	rglDirection[0] = force;
-	//}
-	//LONG magnitude = (LONG)((DOUBLE)force / (DOUBLE)correction);
-	//DICONSTANTFORCE cf;
-	//DIEFFECT eff;
-	//cf.lMagnitude = magnitude;
-	//ZeroMemory( &eff, sizeof( eff ) );
-	//eff.dwSize = sizeof( DIEFFECT );
-	//eff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-	//eff.dwDuration =INFINITE;
-	//eff.dwSamplePeriod = 0;
-	//eff.dwGain = DI_FFNOMINALMAX;
-	//eff.dwTriggerButton = DIEB_NOTRIGGER;
-	//eff.dwTriggerRepeatInterval = 0;
-	//eff.cAxes = Gamepad[idx].g_dwNumForceFeedbackAxis;
-	//eff.rglDirection = rglDirection;
-	//eff.lpEnvelope = 0;
-	//eff.cbTypeSpecificParams = sizeof( DICONSTANTFORCE );
-	//eff.lpvTypeSpecificParams = &cf;
-	//eff.dwStartDelay = 0;
-	//// Now set the new parameters and start the effect immediately.
-	//hr= Gamepad[idx].g_pEffect[effidx]->SetParameters( &eff, DIEP_DIRECTION |DIEP_TYPESPECIFICPARAMS |DIEP_START |DIES_SOLO );
-	//return hr;
-	//return S_OK;
-
 	WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) %d"), idx+1,effidx, force);
 	//[-10000:10000]
 	//INT nForce = MulDiv(force, 2 * DI_FFNOMINALMAX, 65535) - DI_FFNOMINALMAX;
@@ -410,38 +374,6 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 //-----------------------------------------------------------------------------
 HRESULT PrepareForce(DWORD idx, WORD effidx)
 {
-	//HRESULT hr= E_FAIL;
-	//if( NULL == Gamepad[idx].g_pEffect[effidx] )
-	//{
-	//	DWORD    rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
-	//	LONG rglDirection[2] = { 0, 0 };
-	//	DICONSTANTFORCE cf = { 0 };
-	//	DIEFFECT eff;
-	//	ZeroMemory( &eff, sizeof( eff ) );
-	//	eff.dwSize = sizeof( DIEFFECT );
-	//	eff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-	//	eff.dwDuration = INFINITE;
-	//	eff.dwSamplePeriod = 0;
-	//	eff.dwGain = DI_FFNOMINALMAX;
-	//	eff.dwTriggerButton = DIEB_NOTRIGGER;
-	//	eff.dwTriggerRepeatInterval = 0;
-	//	eff.cAxes = Gamepad[idx].g_dwNumForceFeedbackAxis;
-	//	eff.rgdwAxes = rgdwAxes;
-	//	eff.rglDirection = rglDirection;
-	//	eff.lpEnvelope = 0;
-	//	eff.cbTypeSpecificParams = sizeof( DICONSTANTFORCE );
-	//	eff.lpvTypeSpecificParams = &cf;
-	//	eff.dwStartDelay = 0;
-	//	// Create the prepared effect
-	//	if( FAILED( hr = Gamepad[idx].g_pGamepad->CreateEffect( GUID_ConstantForce  ,
-	//		&eff, &Gamepad[idx].g_pEffect[effidx] , NULL ) ) )
-	//	{
-	//		WriteLog(_T("[DINPUT]  [PAD%d] CreateEffect (%d) failed with code HR = %s"), idx+1,effidx, DXErrStr(hr));
-	//		return hr;
-	//	}
-	//}
-	//return S_OK;
-
 	DIEFFECT eff;
 	DIPERIODIC pf = { 0 };
 	Gamepad[idx].ff.pf = pf;
