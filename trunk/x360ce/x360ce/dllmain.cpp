@@ -109,14 +109,6 @@ VOID InitInstance(HMODULE hModule)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-	for (int i=0;i<XUSER_MAX_COUNT;i++){
-		ZeroMemory(&Gamepad[i],sizeof(DINPUT_GAMEPAD));
-		Gamepad[i].id1 = X360CE_ID1;
-		Gamepad[i].id2 = X360CE_ID2;
-		Gamepad[i].forcepercent = 100;
-		Gamepad[i].gamepadtype = 1;
-	}
-
 	hX360ceInstance = (HINSTANCE) hModule;
 	dwAppPID=GetCurrentProcessId();
 	InitConfig(_T("x360ce.ini"));

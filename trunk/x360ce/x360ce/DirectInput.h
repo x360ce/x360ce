@@ -74,6 +74,14 @@ struct DINPUT_GAMEPAD {
 	INT axistodpadoffset;
 	DWORD id2;
 	DINPUT_FF ff;
+	DINPUT_GAMEPAD()
+	{
+		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
+		id1 = X360CE_ID1;
+		id2 = X360CE_ID2;
+		forcepercent = 100;
+		gamepadtype = 1;
+	}
 };
 
 //externs
