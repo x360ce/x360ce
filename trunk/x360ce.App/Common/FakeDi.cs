@@ -7,16 +7,18 @@ namespace x360ce.App
         public enum FakeDi
         {
             /// <summary>
-            /// Disabled
+            /// Disabled.
             /// </summary>
             Disabled = 0,
             /// <summary>
-            ///  Enabled: Callback
+            ///  Enabled: Callback.
             /// </summary>
             EnabledCallback = 1,
             /// <summary>
-            /// Enabled: Callback + DevInfo
+            /// Enabled: Callback + DevInfo.
             /// </summary>
-            EnabledCallbackAndDevInfo = 2
-        }
+            EnabledCallbackAndDevInfo = 2,
+			// Block all except Keyboard and Mouse.
+			BlockAllExceptKbdAndMouse = 3
+		}
 }

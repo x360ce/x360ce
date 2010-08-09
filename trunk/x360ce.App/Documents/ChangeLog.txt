@@ -1,4 +1,9 @@
-﻿v2.0.2.67 (2010-08-05) by Evaldas Jocys
+﻿v2.0.2.71 (2010-08-09) by Evaldas Jocys
+- Update: Updated to xinput1_3.dll v3.2.0.165.
+- Update: Default options updated.
+- New: 'FakeWMI_NOPIDVID' option - Don't change PID/VID in FakeWMI spoofing.
+
+v2.0.2.67 (2010-08-05) by Evaldas Jocys
 - Update: Updated to xinput1_3.dll v3.2.0.138.
 
 v2.0.2.66 (2010-08-02) by Evaldas Jocys
