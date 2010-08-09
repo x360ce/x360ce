@@ -117,6 +117,7 @@ namespace x360ce.App
 			sm.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakeWinTrust, FakeWinTrustCheckBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakeWmi, FakeWmiComboBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakeWmiNoPidVid, FakeWmiNoPidVidCheckBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakeDi, FakeDiComboBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakeVid, FakeVidTextBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakePid, FakePidTextBox);

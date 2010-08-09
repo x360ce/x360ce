@@ -78,6 +78,7 @@ namespace x360ce.App
 			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
+			this.FakeWmiNoPidVidCheckBox = new System.Windows.Forms.CheckBox();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -176,7 +177,7 @@ namespace x360ce.App
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
 			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(455, 3);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(174, 144);
+			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(174, 168);
 			this.TestingAndLoggingGroupBox.TabIndex = 31;
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
@@ -221,7 +222,7 @@ namespace x360ce.App
 			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput910CheckBox);
 			this.InstalledFilesGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
-			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(199, 144);
+			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(199, 168);
 			this.InstalledFilesGroupBox.TabIndex = 30;
 			this.InstalledFilesGroupBox.TabStop = false;
 			this.InstalledFilesGroupBox.Text = "Installed Files";
@@ -282,6 +283,7 @@ namespace x360ce.App
 			this.FakeApiGroupBox.Controls.Add(this.FakeWmiLabel);
 			this.FakeApiGroupBox.Controls.Add(this.FakeDiComboBox);
 			this.FakeApiGroupBox.Controls.Add(this.FakeWmiComboBox);
+			this.FakeApiGroupBox.Controls.Add(this.FakeWmiNoPidVidCheckBox);
 			this.FakeApiGroupBox.Controls.Add(this.FakeWinTrustCheckBox);
 			this.FakeApiGroupBox.Controls.Add(this.FakeVidTextBox);
 			this.FakeApiGroupBox.Controls.Add(this.FakePidTextBox);
@@ -289,7 +291,7 @@ namespace x360ce.App
 			this.FakeApiGroupBox.Controls.Add(this.FakeVidLabel);
 			this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.FakeApiGroupBox.Name = "FakeApiGroupBox";
-			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 144);
+			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 168);
 			this.FakeApiGroupBox.TabIndex = 29;
 			this.FakeApiGroupBox.TabStop = false;
 			this.FakeApiGroupBox.Text = "Fake API";
@@ -518,6 +520,16 @@ namespace x360ce.App
 			this.SettingsTimer.Interval = 500;
 			this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
 			// 
+			// FakeWmiNoPidVidCheckBox
+			// 
+			this.FakeWmiNoPidVidCheckBox.AutoSize = true;
+			this.FakeWmiNoPidVidCheckBox.Location = new System.Drawing.Point(69, 142);
+			this.FakeWmiNoPidVidCheckBox.Name = "FakeWmiNoPidVidCheckBox";
+			this.FakeWmiNoPidVidCheckBox.Size = new System.Drawing.Size(148, 17);
+			this.FakeWmiNoPidVidCheckBox.TabIndex = 23;
+			this.FakeWmiNoPidVidCheckBox.Text = "No VID/PID in Fake WMI";
+			this.FakeWmiNoPidVidCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -601,6 +613,7 @@ namespace x360ce.App
         private ComboBox FakeDiComboBox;
         private CheckBox DebugModeCheckBox;
         public Timer timer;
+		private CheckBox FakeWmiNoPidVidCheckBox;
 
 	}
 }
