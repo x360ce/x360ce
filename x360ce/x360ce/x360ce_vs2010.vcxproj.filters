@@ -71,15 +71,6 @@
     <ClInclude Include="svnrev_unknown.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FakeDI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FakeWinTrust.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FakeWMI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="x360ce.def">

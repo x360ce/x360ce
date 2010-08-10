@@ -243,9 +243,6 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="FakeAPI.h" />
-    <ClInclude Include="FakeDI.h" />
-    <ClInclude Include="FakeWinTrust.h" />
-    <ClInclude Include="FakeWMI.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

@@ -19,11 +19,9 @@
 #include "Config.h"
 #include "DirectInput.h"
 
-WORD wFakeAPI=0;
+WORD wFakeMODE=0;
 BOOL bInitBeep=0;
 
-WORD wFakeWMI=0;
-WORD wFakeDI=0;
 WORD wFakeWinTrust=0;
 
 WORD wFakeVID=0;
@@ -93,13 +91,10 @@ extern "C" void InitConfig(LPTSTR ininame)
 	writelog = ReadUINTFromFile(_T("Options"), _T("Log"));
 
 	//FakeAPI
-	wFakeWMI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWMI"));
-	wFakeDI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeDI"));
+	wFakeMODE = (WORD) ReadUINTFromFile(_T("FakeMODE"), _T("FakeMODE"));
 	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"));
 
-	wFakeAPI = wFakeWMI + wFakeDI + wFakeWinTrust;
-
-	if(wFakeAPI)
+	if(wFakeMODE)
 	{
 		wFakeVID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeVID"));
 		wFakePID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakePID"));

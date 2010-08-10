@@ -15,9 +15,9 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "FakeAPI.h"
 #include "Utils.h"
-#include "FakeWinTrust.h"
+#include <Softpub.h>
+#include "FakeAPI.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = WinVerifyTrust;
