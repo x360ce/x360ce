@@ -47,6 +47,7 @@ void FakeWinTrust_Detach()
 
 	if(OriginalWinVerifyTrust)
 	{
+		WriteLog(_T("[FAKEWT]  FakeWinVerifyTrust:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalWinVerifyTrust, FakeWinVerifyTrust);

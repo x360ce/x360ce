@@ -325,6 +325,7 @@ void FakeWMI_Detach()
 
 	if(OriginalGet)
 	{
+		WriteLog(_T("[FAKEWMI] FakeGet:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalGet, FakeGet);
@@ -333,6 +334,7 @@ void FakeWMI_Detach()
 
 	if(OriginalNext)
 	{
+		WriteLog(_T("[FAKEWMI] FakeNext:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalNext, FakeNext);
@@ -341,6 +343,7 @@ void FakeWMI_Detach()
 
 	if(OriginalCreateInstanceEnum)
 	{
+		WriteLog(_T("[FAKEWMI] FakeCreateInstanceEnum:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
@@ -349,6 +352,7 @@ void FakeWMI_Detach()
 
 	if(OriginalConnectServer)
 	{
+		WriteLog(_T("[FAKEWMI] FakeConnectServer:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
@@ -357,6 +361,7 @@ void FakeWMI_Detach()
 
 	if(OriginalCoCreateInstance)
 	{
+		WriteLog(_T("[FAKEWMI] FakeCoCreateInstance:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
