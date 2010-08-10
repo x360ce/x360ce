@@ -190,7 +190,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	WriteLog(_T("[FAKEWIM] FakeCreateInstanceEnum"));
+	WriteLog(_T("[FAKEWMI] FakeCreateInstanceEnum"));
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
