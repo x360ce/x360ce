@@ -96,8 +96,8 @@ extern "C" void InitConfig(LPTSTR ininame)
 
 	if(wFakeMODE)
 	{
-		wFakeVID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeVID"));
-		wFakePID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakePID"));
+		wFakeVID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeVID"),0x045E);
+		wFakePID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakePID"),0x028E);
 	}
 
 	// Read pad mappings
