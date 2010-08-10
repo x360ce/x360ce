@@ -47,7 +47,6 @@ struct DINPUT_FF
 };
 
 struct DINPUT_GAMEPAD {
-	DWORD id1;
 	LPDIRECTINPUTDEVICE8 g_pGamepad;
 	DWORD dwPadIndex;  //starting from 1
 	BOOL connected;
@@ -72,13 +71,10 @@ struct DINPUT_GAMEPAD {
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
-	DWORD id2;
 	DINPUT_FF ff;
 	DINPUT_GAMEPAD()
 	{
 		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
-		id1 = X360CE_ID1;
-		id2 = X360CE_ID2;
 		forcepercent = 100;
 		gamepadtype = 1;
 	}

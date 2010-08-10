@@ -181,9 +181,11 @@ HRESULT Enumerate(DWORD idx)
 
 	WORD wTmp = wFakeDI;
 	if (wFakeDI>0) wFakeDI=0; //Temporary disable FakeDI
+	WriteLog(_T("[DINPUT]  Temporary disable FakeDI"));
 	WriteLog(_T("[DINPUT]  [PAD%d] Enumerating User ID %d"),idx+1,idx);
 	hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &Gamepad[idx], DIEDFL_ATTACHEDONLY );
 	if (wTmp>0) wFakeDI=wTmp; // Restore FakeDI
+	WriteLog(_T("[DINPUT]  Restore FakeDI state"));
 	if FAILED(hr)
 	{
 		WriteLog(_T("[DINPUT]  [PAD%d] Enumeration FAILED !!!"),idx+1);

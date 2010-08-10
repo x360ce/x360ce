@@ -37,17 +37,9 @@ LPDIENUMDEVICESCALLBACK lpOriginalCallback= NULL;
 BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 {
 	WriteLog(_T("[FAKEDI]  FakeEnumCallback"));
-	if ((pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && (pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return lpOriginalCallback(pInst,pContext);;
-
-	if (pContext)
-	{
-		DINPUT_GAMEPAD * check = (DINPUT_GAMEPAD*) pContext;
-		if (check->id1 == X360CE_ID1 && check->id2 == X360CE_ID2){
-			WriteLog(_T("[FAKEDI]  FakeEnumCallback:: x360ce detected"));
-			return lpOriginalCallback(pInst,pContext);
-		}
-	}
-
+	// Fast return if keyboard or mouse
+	if ((pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && (pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return lpOriginalCallback(pInst,pContext);
+	// Return no more devices if FakeDI=3 (blocker)
 	if ((wFakeDI == 3) ) return DIENUM_STOP;
 
 	if(pInst && pInst->dwSize!=0)
@@ -268,7 +260,7 @@ HRESULT STDMETHODCALLTYPE FakeGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rg
 	hr = OriginalGetProperty (This, rguidProp, pdiph);
 	WriteLog(_T("[FAKEDI]  FakeGetProperty"));
 
-	if ( (&rguidProp==&DIPROP_VIDPID) )
+	if ( (&rguidProp==&DIPROP_VIDPID) && wFakeDI )
 	{
 		DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
@@ -276,7 +268,7 @@ HRESULT STDMETHODCALLTYPE FakeGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rg
 		((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
 		WriteLog(_T("[FAKEDI]  Fake VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 	}
-	if ( (&rguidProp==&DIPROP_PRODUCTNAME) )
+	if ( (&rguidProp==&DIPROP_PRODUCTNAME) && wFakeDI )
 	{
 		WriteLog(_T("[FAKEDI]  Original PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 		_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
