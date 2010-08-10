@@ -23,7 +23,6 @@ WORD wFakeAPI=0;
 BOOL bInitBeep=0;
 
 WORD wFakeWMI=0;
-WORD wFakeWMI_NOPIDVID=0;
 WORD wFakeDI=0;
 WORD wFakeWinTrust=0;
 
@@ -95,7 +94,6 @@ extern "C" void InitConfig(LPTSTR ininame)
 
 	//FakeAPI
 	wFakeWMI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWMI"));
-	wFakeWMI_NOPIDVID = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWMI_NOPIDVID"));
 	wFakeDI = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeDI"));
 	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"));
 
