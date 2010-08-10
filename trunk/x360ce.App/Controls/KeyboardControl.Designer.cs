@@ -44,6 +44,8 @@
 			this.ScriptTextBox = new System.Windows.Forms.TextBox();
 			this.AppendButton = new System.Windows.Forms.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.TriggerButton = new System.Windows.Forms.Button();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.MapDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DelayNumericUpDown)).BeginInit();
 			this.SuspendLayout();
@@ -192,6 +194,22 @@
 			this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyboardTextBox_KeyDown);
 			this.textBox1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.KeyboardTextBox_PreviewKeyDown);
 			// 
+			// TriggerButton
+			// 
+			this.TriggerButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.TriggerButton.Location = new System.Drawing.Point(477, 399);
+			this.TriggerButton.Name = "TriggerButton";
+			this.TriggerButton.Size = new System.Drawing.Size(75, 23);
+			this.TriggerButton.TabIndex = 2;
+			this.TriggerButton.Text = "Trigger";
+			this.TriggerButton.UseVisualStyleBackColor = true;
+			this.TriggerButton.Click += new System.EventHandler(this.TriggerButton_Click);
+			// 
+			// timer1
+			// 
+			this.timer1.Interval = 25000;
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
 			// KeyboardControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -202,6 +220,7 @@
 			this.Controls.Add(this.DelayLabel);
 			this.Controls.Add(this.LeftTriggerComboBox);
 			this.Controls.Add(this.AddButton);
+			this.Controls.Add(this.TriggerButton);
 			this.Controls.Add(this.AppendButton);
 			this.Controls.Add(this.MapDataGridView);
 			this.Controls.Add(this.ScriptTextBox);
@@ -234,5 +253,7 @@
 		private System.Windows.Forms.TextBox ScriptTextBox;
 		private System.Windows.Forms.Button AppendButton;
 		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.Button TriggerButton;
+		private System.Windows.Forms.Timer timer1;
 	}
 }

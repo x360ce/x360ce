@@ -56,6 +56,7 @@ namespace x360ce.App
 			this.FakeWmiLabel = new System.Windows.Forms.Label();
 			this.FakeDiComboBox = new System.Windows.Forms.ComboBox();
 			this.FakeWmiComboBox = new System.Windows.Forms.ComboBox();
+			this.FakeWmiNoPidVidCheckBox = new System.Windows.Forms.CheckBox();
 			this.FakeWinTrustCheckBox = new System.Windows.Forms.CheckBox();
 			this.FakeVidTextBox = new System.Windows.Forms.TextBox();
 			this.FakePidTextBox = new System.Windows.Forms.TextBox();
@@ -78,7 +79,7 @@ namespace x360ce.App
 			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
-			this.FakeWmiNoPidVidCheckBox = new System.Windows.Forms.CheckBox();
+			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -172,6 +173,7 @@ namespace x360ce.App
 			// 
 			this.TestingAndLoggingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
@@ -185,7 +187,7 @@ namespace x360ce.App
 			// UseInitBeepCheckBox
 			// 
 			this.UseInitBeepCheckBox.AutoSize = true;
-			this.UseInitBeepCheckBox.Location = new System.Drawing.Point(6, 27);
+			this.UseInitBeepCheckBox.Location = new System.Drawing.Point(5, 50);
 			this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
 			this.UseInitBeepCheckBox.Size = new System.Drawing.Size(90, 17);
 			this.UseInitBeepCheckBox.TabIndex = 22;
@@ -195,7 +197,7 @@ namespace x360ce.App
 			// DebugModeCheckBox
 			// 
 			this.DebugModeCheckBox.AutoSize = true;
-			this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 73);
+			this.DebugModeCheckBox.Location = new System.Drawing.Point(5, 96);
 			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
 			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
 			this.DebugModeCheckBox.TabIndex = 21;
@@ -206,7 +208,7 @@ namespace x360ce.App
 			// EnableLoggingCheckBox
 			// 
 			this.EnableLoggingCheckBox.AutoSize = true;
-			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 50);
+			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(5, 73);
 			this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
 			this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.EnableLoggingCheckBox.TabIndex = 21;
@@ -333,6 +335,16 @@ namespace x360ce.App
 			this.FakeWmiComboBox.Name = "FakeWmiComboBox";
 			this.FakeWmiComboBox.Size = new System.Drawing.Size(166, 21);
 			this.FakeWmiComboBox.TabIndex = 28;
+			// 
+			// FakeWmiNoPidVidCheckBox
+			// 
+			this.FakeWmiNoPidVidCheckBox.AutoSize = true;
+			this.FakeWmiNoPidVidCheckBox.Location = new System.Drawing.Point(69, 142);
+			this.FakeWmiNoPidVidCheckBox.Name = "FakeWmiNoPidVidCheckBox";
+			this.FakeWmiNoPidVidCheckBox.Size = new System.Drawing.Size(148, 17);
+			this.FakeWmiNoPidVidCheckBox.TabIndex = 23;
+			this.FakeWmiNoPidVidCheckBox.Text = "No VID/PID in Fake WMI";
+			this.FakeWmiNoPidVidCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// FakeWinTrustCheckBox
 			// 
@@ -520,15 +532,18 @@ namespace x360ce.App
 			this.SettingsTimer.Interval = 500;
 			this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
 			// 
-			// FakeWmiNoPidVidCheckBox
+			// XInputEnableCheckBox
 			// 
-			this.FakeWmiNoPidVidCheckBox.AutoSize = true;
-			this.FakeWmiNoPidVidCheckBox.Location = new System.Drawing.Point(69, 142);
-			this.FakeWmiNoPidVidCheckBox.Name = "FakeWmiNoPidVidCheckBox";
-			this.FakeWmiNoPidVidCheckBox.Size = new System.Drawing.Size(148, 17);
-			this.FakeWmiNoPidVidCheckBox.TabIndex = 23;
-			this.FakeWmiNoPidVidCheckBox.Text = "No VID/PID in Fake WMI";
-			this.FakeWmiNoPidVidCheckBox.UseVisualStyleBackColor = true;
+			this.XInputEnableCheckBox.AutoSize = true;
+			this.XInputEnableCheckBox.Checked = true;
+			this.XInputEnableCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.XInputEnableCheckBox.Location = new System.Drawing.Point(6, 27);
+			this.XInputEnableCheckBox.Name = "XInputEnableCheckBox";
+			this.XInputEnableCheckBox.Size = new System.Drawing.Size(93, 17);
+			this.XInputEnableCheckBox.TabIndex = 22;
+			this.XInputEnableCheckBox.Text = "Enable XInput";
+			this.XInputEnableCheckBox.UseVisualStyleBackColor = true;
+			this.XInputEnableCheckBox.CheckedChanged += new System.EventHandler(this.XInputEnableCheckBox_CheckedChanged);
 			// 
 			// MainForm
 			// 
@@ -614,6 +629,7 @@ namespace x360ce.App
         private CheckBox DebugModeCheckBox;
         public Timer timer;
 		private CheckBox FakeWmiNoPidVidCheckBox;
+		private CheckBox XInputEnableCheckBox;
 
 	}
 }

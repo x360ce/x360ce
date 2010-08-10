@@ -777,6 +777,11 @@ namespace x360ce.App
 
 		#endregion
 
+		private void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
+		}
+
 
 	}
 }
