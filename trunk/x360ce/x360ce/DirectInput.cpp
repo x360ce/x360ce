@@ -18,6 +18,7 @@
 #include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
+#include "FakeAPI.h"
 
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
@@ -178,10 +179,12 @@ HRESULT Enumerate(DWORD idx)
 	Deactivate(idx);
 	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
 
+	WORD wTmp = wFakeDI;
+	if (wFakeDI>0) wFakeDI=0; //Temporary disable FakeDI
 	WriteLog(_T("[DINPUT]  [PAD%d] Enumerating User ID %d"),idx+1,idx);
-	if( FAILED( hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL,
-		EnumGamepadsCallback, &Gamepad[idx],
-		DIEDFL_ATTACHEDONLY ) ) )
+	hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &Gamepad[idx], DIEDFL_ATTACHEDONLY );
+	if (wTmp>0) wFakeDI=wTmp; // Restore FakeDI
+	if FAILED(hr)
 	{
 		WriteLog(_T("[DINPUT]  [PAD%d] Enumeration FAILED !!!"),idx+1);
 		return hr;
