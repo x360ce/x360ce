@@ -124,20 +124,20 @@ VOID InitInstance(HMODULE hModule)
 		WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
 	}
 
-	if(wFakeAPI)
+	if(wFakeMODE)
 	{
-		if(wFakeWMI) FakeWMI();
-		if(wFakeDI) FakeDI();
+		if(wFakeMODE) FakeWMI();
+		if(wFakeMODE>=2) FakeDI();
 		if(wFakeWinTrust) FakeWinTrust();
 	}
 }
 
 VOID ExitInstance() 
 {   
-	if(wFakeAPI)
+	if(wFakeMODE)
 	{
-		if(wFakeWMI) FakeWMI_Detach();
-		if(wFakeDI) FakeDI_Detach();
+		if(wFakeMODE) FakeWMI_Detach();
+		if(wFakeMODE>=2) FakeDI_Detach();
 		if(wFakeWinTrust) FakeWinTrust_Detach();
 	}
 

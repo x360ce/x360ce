@@ -13,9 +13,9 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-extern WORD wFakeAPI;
-extern WORD wFakeWMI;
-extern WORD wFakeDI;
+#include <detours.h>
+
+extern WORD wFakeMODE;
 extern WORD wFakeWinTrust;
 
 extern WORD wFakeVID;
