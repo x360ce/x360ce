@@ -69,7 +69,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						FakeInst.guidProduct.Data2=0x0000;
 						FakeInst.guidProduct.Data3=0x0000;
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
-						memcpy(&FakeInst.guidProduct.Data4, pdata4, 8);
+						memcpy(&FakeInst.guidProduct.Data4, pdata4, sizeof(pdata4));
 
 						TCHAR strOriginalguidProduct[50];
 						TCHAR strFakeguidProduct[50];
@@ -84,10 +84,8 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						sprintf_s(FakeInst.tszProductName, "%s", "XBOX 360 For Windows (Controller)");
 						sprintf_s(FakeInst.tszInstanceName, "%s", "XBOX 360 For Windows (Controller)"); 
 
-						/*TODO, need ansi to unicode conversion
-						WriteLog(_T("Product Name change from %s to %s"),ANSIInst.tszProductName,FakeInst.tszProductName);
-						WriteLog(_T("Instance Name change from %s to %s"),ANSIInst.tszInstanceName,FakeInst.tszInstanceName);
-						*/
+						WriteLog(L"[FAKEDI]  Product Name change from %S to %S",ANSIInst.tszProductName,FakeInst.tszProductName);
+						WriteLog(L"[FAKEDI]  Instance Name change from %S to %S",ANSIInst.tszInstanceName,FakeInst.tszInstanceName);
 
 						return lpOriginalCallback((DIDEVICEINSTANCEW*) &FakeInst,pContext);
 					}
@@ -113,7 +111,7 @@ BOOL CALLBACK FakeEnumCallback( const DIDEVICEINSTANCE* pInst,VOID* pContext )
 						pFakeInst.guidProduct.Data2=0x0000;
 						pFakeInst.guidProduct.Data3=0x0000;
 						BYTE pdata4[8] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
-						memcpy(&pFakeInst.guidProduct.Data4, pdata4, 8);
+						memcpy(&pFakeInst.guidProduct.Data4, pdata4, sizeof(pdata4));
 
 						TCHAR strOriginalguidProduct[50];
 						TCHAR strFakeguidProduct[50];
@@ -197,10 +195,8 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVI
 						sprintf_s(FakeInst.tszProductName, "%s", "XBOX 360 For Windows (Controller)");
 						sprintf_s(FakeInst.tszInstanceName, "%s", "XBOX 360 For Windows (Controller)");
 
-						/*TODO, need ansi to unicode conversion
-						WriteLog(_T("Product Name change from %s to %s"),OrigInst.tszProductName,FakeInst.tszProductName);
-						WriteLog(_T("Instance Name change from %s to %s"),OrigInst.tszInstanceName,FakeInst.tszInstanceName);
-						*/
+						WriteLog(L"[FAKEDI]  Product Name change from %S to %S",OrigInst.tszProductName,FakeInst.tszProductName);
+						WriteLog(L"[FAKEDI]  Instance Name change from %S to %S",OrigInst.tszInstanceName,FakeInst.tszInstanceName);
 
 						memcpy(pdidi,&FakeInst,FakeInst.dwSize);
 						hr=DI_OK;
