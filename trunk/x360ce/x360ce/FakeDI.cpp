@@ -41,7 +41,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfo (LPDIRECTINPUTDEVICE8 This, LPDIDEVI
 	{
 		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfo"));
 
-		if(wFakeMODE == 2)
+		if(wFakeMode == 2)
 		{
 			//ANSI or UNICODE ?
 			if(sizeof(DIDEVICEINSTANCEA) ==  pdidi->dwSize)					//ANSI
@@ -135,7 +135,7 @@ HRESULT STDMETHODCALLTYPE FakeGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rg
 	hr = OriginalGetProperty (This, rguidProp, pdiph);
 	WriteLog(_T("[FAKEDI]  FakeGetProperty"));
 
-	if ( (&rguidProp==&DIPROP_VIDPID) && (wFakeMODE == 2) )
+	if ( (&rguidProp==&DIPROP_VIDPID) && (wFakeMode == 2) )
 	{
 		DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
@@ -143,7 +143,7 @@ HRESULT STDMETHODCALLTYPE FakeGetProperty (LPDIRECTINPUTDEVICE8 This, REFGUID rg
 		((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
 		WriteLog(_T("[FAKEDI]  Fake VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 	}
-	if ( (&rguidProp==&DIPROP_PRODUCTNAME) && (wFakeMODE == 2) )
+	if ( (&rguidProp==&DIPROP_PRODUCTNAME) && (wFakeMode == 2) )
 	{
 		WriteLog(_T("[FAKEDI]  Original PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 		_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
