@@ -81,7 +81,31 @@ namespace x360ce.App.Controls
 		{
 		}
 
+		private void TriggerButton_Click(object sender, EventArgs e)
+		{
+			timer1.Enabled = !timer1.Enabled;
+			TriggerButton.Text = timer1.Enabled ? "Enabled" : "Disabled";
 
+		}
+
+
+		private int h = 0;
+
+		private void timer1_Tick(object sender, EventArgs e)
+		{
+			h++;
+			SendKeys.Send("{8}");
+			if (h % 5 == 0)
+			{
+				System.Threading.Thread.Sleep(500);
+				SendKeys.Send("{9}");
+			}
+			if (h % 8 == 0)
+			{
+				System.Threading.Thread.Sleep(500);
+				SendKeys.Send("{0}");
+			}
+		}
 
 	}
 }

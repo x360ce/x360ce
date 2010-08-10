@@ -55,7 +55,10 @@ namespace x360ce.App.Controls
 			}
 
 			// hide experimental option.
-			PadTabControl.TabPages.Remove(KeyboardTabPage);
+			if (!Properties.Settings.Default.EnableKeyboardControl)
+			{
+				PadTabControl.TabPages.Remove(KeyboardTabPage);
+			}
 		}
 
 		#region Recording

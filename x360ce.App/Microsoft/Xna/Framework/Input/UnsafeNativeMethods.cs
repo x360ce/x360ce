@@ -21,6 +21,7 @@ namespace Microsoft.Xna.Framework.Input
         internal delegate ErrorCodes _GetCaps(PlayerIndex playerIndex, uint flags, out XINPUT_CAPABILITIES pCaps);
         internal delegate ErrorCodes _GetState(PlayerIndex playerIndex, out XINPUT_STATE pState);
         internal delegate ErrorCodes _SetState(PlayerIndex playerIndex, out XINPUT_VIBRATION pVibration);
+		internal delegate ErrorCodes _Enable(bool enable);
 
 		internal static string LastError;
 
@@ -58,6 +59,18 @@ namespace Microsoft.Xna.Framework.Input
 			}
 			_GetState m = (_GetState)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(_GetState));
             return m(playerIndex, out pState);
+		}
+
+		internal static ErrorCodes Enable(bool enable)
+		{
+			IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputEnable");
+			if (procAddress == IntPtr.Zero)
+			{
+				LastError = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
+				throw new Exception(LastError);
+			}
+			_Enable m = (_Enable)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(_Enable));
+			return m(enable);
 		}
 
 		static string _LibraryName;
