@@ -15,7 +15,7 @@
 
 #include <detours.h>
 
-extern WORD wFakeMODE;
+extern WORD wFakeMode;
 extern WORD wFakeWinTrust;
 
 extern WORD wFakeVID;
