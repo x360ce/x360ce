@@ -27,51 +27,35 @@ namespace Microsoft.Xna.Framework.Input
 
         internal static ErrorCodes GetCaps(PlayerIndex playerIndex, uint flags, out XINPUT_CAPABILITIES pCaps)
         {
-            IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetCapabilities");
-            if (procAddress == IntPtr.Zero)
-            {
-                LastError = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
-                throw new Exception(LastError);
-            }
-            _GetCaps m = (_GetCaps)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(_GetCaps));
-            return m(playerIndex, flags, out pCaps);
+			return GetMethod<_GetCaps>("XInputSetState")(playerIndex, flags, out pCaps);
         }
 
         internal static ErrorCodes SetState(PlayerIndex playerIndex, ref XINPUT_VIBRATION pVibration)
 		{
-            IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputSetState");
-			if (procAddress == IntPtr.Zero)
-			{
-				LastError = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
-                throw new Exception(LastError);
-			}
-			_SetState m = (_SetState)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(_SetState));
-            return m(playerIndex, out pVibration);
+			return GetMethod<_SetState>("XInputSetState")(playerIndex, out pVibration);
 		}
 
         internal static ErrorCodes GetState(PlayerIndex playerIndex, out XINPUT_STATE pState)
 		{
-            IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetState");
-			if (procAddress == IntPtr.Zero)
-			{
-				LastError = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
-                throw new Exception(LastError);
-			}
-			_GetState m = (_GetState)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(_GetState));
-            return m(playerIndex, out pState);
+			return GetMethod<_GetState>("XInputGetState")(playerIndex, out pState);
 		}
 
 		internal static ErrorCodes Enable(bool enable)
 		{
-			IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputEnable");
+			return GetMethod<_Enable>("XInputEnable")(enable);
+		}
+
+		internal static T GetMethod<T>(string methodName)
+		{
+			IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, methodName);
 			if (procAddress == IntPtr.Zero)
 			{
 				LastError = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
 				throw new Exception(LastError);
 			}
-			_Enable m = (_Enable)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(_Enable));
-			return m(enable);
+			return (T)(object)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(T));
 		}
+
 
 		static string _LibraryName;
 		public static string LibraryName
