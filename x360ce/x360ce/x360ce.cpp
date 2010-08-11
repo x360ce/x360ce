@@ -19,9 +19,6 @@
 #include "Config.h"
 #include "DirectInput.h"
 
-XINPUT_CAPABILITIES XCAPS;
-bool capsready = false;
-
 #pragma warning(disable:4310)
 
 BOOL bEnabled = FALSE;
@@ -416,25 +413,19 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
-	if(!capsready)
-	{
-		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
-		XCAPS.Type = 0;
-		XCAPS.SubType = Gamepad[dwUserIndex].gamepadtype;
-		XCAPS.Flags = 0;
-		XCAPS.Vibration.wLeftMotorSpeed = XCAPS.Vibration.wRightMotorSpeed = 0xFFFF;
+	pCapabilities->Type = 0;
+	pCapabilities->SubType = Gamepad[dwUserIndex].gamepadtype;
+	pCapabilities->Flags = 0;
+	pCapabilities->Vibration.wLeftMotorSpeed = pCapabilities->Vibration.wRightMotorSpeed = 0xFFFF;
 
-		XCAPS.Gamepad.wButtons = 0xFFFF;	
-		XCAPS.Gamepad.bLeftTrigger = 0xFF;
-		XCAPS.Gamepad.bRightTrigger = 0xFF;
-		//center is more reliable because SHORT is signed
-		XCAPS.Gamepad.sThumbLX = 0;
-		XCAPS.Gamepad.sThumbLY = 0;
-		XCAPS.Gamepad.sThumbRX = 0;
-		XCAPS.Gamepad.sThumbRY = 0;
-		capsready = true;
-	}
-	*pCapabilities = XCAPS;
+	pCapabilities->Gamepad.wButtons = 0xFFFF;	
+	pCapabilities->Gamepad.bLeftTrigger = 0xFF;
+	pCapabilities->Gamepad.bRightTrigger = 0xFF;
+	//center is more reliable because SHORT is signed
+	pCapabilities->Gamepad.sThumbLX = 0;
+	pCapabilities->Gamepad.sThumbLY = 0;
+	pCapabilities->Gamepad.sThumbRX = 0;
+	pCapabilities->Gamepad.sThumbRY = 0;
 
 	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
