@@ -26,6 +26,9 @@ BOOL bUseEnabled= FALSE;
 
 DWORD dwlastUserIndex = (DWORD) -1;
 
+XINPUT_CAPABILITIES XCAPS[4];
+bool capsready[4] = {0,0,0,0};
+
 HRESULT XInit(DWORD dwUserIndex)
 {
 
@@ -413,20 +416,24 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
-	pCapabilities->Type = 0;
-	pCapabilities->SubType = Gamepad[dwUserIndex].gamepadtype;
-	pCapabilities->Flags = 0;
-	pCapabilities->Vibration.wLeftMotorSpeed = pCapabilities->Vibration.wRightMotorSpeed = 0xFFFF;
+	if(!capsready[dwUserIndex])
+	{
+		XCAPS[dwUserIndex].Type = 0;
+		XCAPS[dwUserIndex].SubType = Gamepad[dwUserIndex].gamepadtype;
+		XCAPS[dwUserIndex].Flags = 0;
+		XCAPS[dwUserIndex].Vibration.wLeftMotorSpeed = pCapabilities->Vibration.wRightMotorSpeed = 0xFFFF;
 
-	pCapabilities->Gamepad.wButtons = 0xFFFF;	
-	pCapabilities->Gamepad.bLeftTrigger = 0xFF;
-	pCapabilities->Gamepad.bRightTrigger = 0xFF;
-	//center is more reliable because SHORT is signed
-	pCapabilities->Gamepad.sThumbLX = 0;
-	pCapabilities->Gamepad.sThumbLY = 0;
-	pCapabilities->Gamepad.sThumbRX = 0;
-	pCapabilities->Gamepad.sThumbRY = 0;
+		XCAPS[dwUserIndex].Gamepad.wButtons = 0xFFFF;	
+		XCAPS[dwUserIndex].Gamepad.bLeftTrigger = 0xFF;
+		XCAPS[dwUserIndex].Gamepad.bRightTrigger = 0xFF;
+		//center is more reliable because SHORT is signed
+		XCAPS[dwUserIndex].Gamepad.sThumbLX = 0;
+		XCAPS[dwUserIndex].Gamepad.sThumbLY = 0;
+		XCAPS[dwUserIndex].Gamepad.sThumbRX = 0;
+		XCAPS[dwUserIndex].Gamepad.sThumbRY = 0;
+	}
 
+	*pCapabilities = XCAPS[dwUserIndex];
 	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
