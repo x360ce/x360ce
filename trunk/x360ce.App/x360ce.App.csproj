@@ -156,12 +156,6 @@
     <Compile Include="Common\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common\FakeDi.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Common\FakeWmi.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
     </EmbeddedResource>
