@@ -56,7 +56,7 @@ namespace x360ce.App
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
 			// Fill FakeWmi ComboBox.
 			var fakeModeOptions = new List<KeyValuePair>();
-			var fakeModeTypes = (FakeWmi[])Enum.GetValues(typeof(FakeWmi));
+			var fakeModeTypes = (FakeMode[])Enum.GetValues(typeof(FakeMode));
 			foreach (var item in fakeModeTypes) fakeModeOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			FakeModeComboBox.DataSource = fakeModeOptions;
 			FakeModeComboBox.DisplayMember = "Key";
