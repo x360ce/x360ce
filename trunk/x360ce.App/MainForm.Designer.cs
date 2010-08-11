@@ -55,7 +55,6 @@ namespace x360ce.App
 			this.FakeApiGroupBox = new System.Windows.Forms.GroupBox();
 			this.FakeModeLabel = new System.Windows.Forms.Label();
 			this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
-			this.FakeWmiNoPidVidCheckBox = new System.Windows.Forms.CheckBox();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -289,7 +288,6 @@ namespace x360ce.App
 			// 
 			this.FakeApiGroupBox.Controls.Add(this.FakeModeLabel);
 			this.FakeApiGroupBox.Controls.Add(this.FakeModeComboBox);
-			this.FakeApiGroupBox.Controls.Add(this.FakeWmiNoPidVidCheckBox);
 			this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.FakeApiGroupBox.Name = "FakeApiGroupBox";
 			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 143);
@@ -315,16 +313,6 @@ namespace x360ce.App
 			this.FakeModeComboBox.Name = "FakeModeComboBox";
 			this.FakeModeComboBox.Size = new System.Drawing.Size(159, 21);
 			this.FakeModeComboBox.TabIndex = 28;
-			// 
-			// FakeWmiNoPidVidCheckBox
-			// 
-			this.FakeWmiNoPidVidCheckBox.AutoSize = true;
-			this.FakeWmiNoPidVidCheckBox.Location = new System.Drawing.Point(69, 40);
-			this.FakeWmiNoPidVidCheckBox.Name = "FakeWmiNoPidVidCheckBox";
-			this.FakeWmiNoPidVidCheckBox.Size = new System.Drawing.Size(148, 17);
-			this.FakeWmiNoPidVidCheckBox.TabIndex = 23;
-			this.FakeWmiNoPidVidCheckBox.Text = "No VID/PID in Fake WMI";
-			this.FakeWmiNoPidVidCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// HelpTabPage
 			// 
@@ -545,8 +533,7 @@ namespace x360ce.App
         private GroupBox InstalledFilesGroupBox;
 		private GroupBox TestingAndLoggingGroupBox;
         private CheckBox DebugModeCheckBox;
-        public Timer timer;
-		private CheckBox FakeWmiNoPidVidCheckBox;
+		public Timer timer;
 		private CheckBox XInputEnableCheckBox;
 
 	}
