@@ -1,4 +1,7 @@
-﻿v2.0.2.75 (2010-08-11)
+﻿v2.0.2.76 (2010-08-11)
+- Update: Updated to xinput1_3.dll v3.2.0.188.
+
+v2.0.2.75 (2010-08-11)
 - Update: Updated to xinput1_3.dll v3.2.0.180.
 - Update: FakeWMI and FakeDI merged into FakeMODE.
 - Update: FakeWinTrust removed.
