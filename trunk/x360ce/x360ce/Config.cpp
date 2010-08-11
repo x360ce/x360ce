@@ -91,7 +91,7 @@ extern "C" void InitConfig(LPTSTR ininame)
 	writelog = ReadUINTFromFile(_T("Options"), _T("Log"));
 
 	//FakeAPI
-	wFakeMode = (WORD) ReadUINTFromFile(_T("FakeMode"), _T("FakeMode"));
+	wFakeMode = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeMode"));
 	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"));
 
 	if(wFakeMode)
