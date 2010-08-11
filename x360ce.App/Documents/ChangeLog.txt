@@ -1,53 +1,59 @@
-﻿v2.0.2.71 (2010-08-09) by Evaldas Jocys
+﻿v2.0.2.75 (2010-08-11)
+- Update: Updated to xinput1_3.dll v3.2.0.180.
+- Update: FakeWMI and FakeDI merged into FakeMODE.
+- Update: FakeWinTrust removed.
+- Update: FakePID and FakeVid option removed.
+
+v2.0.2.71 (2010-08-09)
 - Update: Updated to xinput1_3.dll v3.2.0.165.
 - Update: Default options updated.
 - New: 'FakeWMI_NOPIDVID' option - Don't change PID/VID in FakeWMI spoofing.
 
-v2.0.2.67 (2010-08-05) by Evaldas Jocys
+v2.0.2.67 (2010-08-05)
 - Update: Updated to xinput1_3.dll v3.2.0.138.
 
-v2.0.2.66 (2010-08-02) by Evaldas Jocys
+v2.0.2.66 (2010-08-02)
 - Update: Updated to xinput1_3.dll v3.2.0.133.
 - Update: LeftMotorDirection and RightMotorDirection setting was removed.
 - Update: Code updated.
 
-v2.0.2.62 (2010-05-25) by Evaldas Jocys
+v2.0.2.62 (2010-05-25)
 - Update: Experimental keyboard option hidden.
 
-v2.0.2.61 (2010-05-25) by Evaldas Jocys
+v2.0.2.61 (2010-05-25)
 - Update: Updated to xinput1_3.dll v3.2.0.120.
 
-v2.0.2.52 (2010-04-24) by Evaldas Jocys
+v2.0.2.52 (2010-04-24)
 - Update: Assembly file Updated.
 - Fix: Xna Framework Resources file fixed.
 - Fix: Don't reload DLL if value haven't changed in INI.
 - Fix: Now timer will stop during settings update.
 - Fix: Don't query devices if none connected.
 
-v2.0.2.47 (2010-04-24) by Evaldas Jocys
+v2.0.2.47 (2010-04-24)
 - Fix: Force feedback test fixed.
 
-v2.0.2.46 (2010-04-23) by Evaldas Jocys
+v2.0.2.46 (2010-04-23)
 - Update: Updated to xinput1_3.dll v3.2.0.97.
 
-v2.0.2.44 (2010-04-22) by Evaldas Jocys
+v2.0.2.44 (2010-04-22)
 - Update: Updated to xinput1_3.dll v3.2.0.91.
 
-v2.0.2.43 (2010-04-22) by Evaldas Jocys
+v2.0.2.43 (2010-04-22)
 - Update: Updated to xinput1_3.dll v3.2.0.81.
 - Update: Disabled comments in INI.
 
-v2.0.2.41 (2010-04-21) by Evaldas Jocys
+v2.0.2.41 (2010-04-21)
 - Update: Reverted back to xinput1_3.dll v3.1.4.1.
 - Update: Xna Framework Input Code updated to 3.1 version.
 
-v2.0.2.35 (2010-04-17) by Evaldas Jocys
+v2.0.2.35 (2010-04-17)
 - Fix: FakeDI option converted to ComboBox
 
-v2.0.2.34 (2010-04-17) by Evaldas Jocys
+v2.0.2.34 (2010-04-17)
 - Fix: Issue with Global settings save fix.
 
-v2.0.2.33 (2010-04-17) by Evaldas Jocys
+v2.0.2.33 (2010-04-17)
 - New: "Axis To D-Pad" settings group box added.
 - New: "FakeWinTrust" check box added.
 - New: Thrustmaster Dual Analog/Power gamepads presets by crazycat
@@ -55,65 +61,65 @@ v2.0.2.33 (2010-04-17) by Evaldas Jocys
 - Update: Options combined into groups.
 - Update: Internal preset file will be removed from disk after load.
 
-v2.0.2.24 (2010-04-16) by Evaldas Jocys
+v2.0.2.24 (2010-04-16)
 - New: Support for backup settings: [IG_<InstanceGuid>] section.
 
-v2.0.2.23 (2010-04-16) by Evaldas Jocys
+v2.0.2.23 (2010-04-16)
 - Update: [FakeAPI]\FakeAPI option removed.
 - Update: [FakeAPI]\FakeWMI option updated to checbox on interface.
 
-v2.0.2.21 (2010-04-15) by Evaldas Jocys
+v2.0.2.21 (2010-04-15)
 - Update: Project updated to Visual Studio 2010.
 - Update: 'Instance' option support added.
 - Update: xinput1_3.dll updated to 3.2.0.46 version.
 
-v2.0.2.19 (2010-04-11) by Evaldas Jocys
+v2.0.2.19 (2010-04-11)
 - Update: signed xinput1_3.dll with trusted certificate.
 
-v2.0.2.18 (2010-04-11) by Evaldas Jocys
+v2.0.2.18 (2010-04-11)
 - New: "Logitech Cordless RumblePad 2" by Nexor from Russia.
 
-v2.0.2.17 (2010-04-05) by Evaldas Jocys
+v2.0.2.17 (2010-04-05)
 - New: "Saitek Cyborg Rumble Pad" preset by Jorge Fuentes.
 
-v2.0.2.16 (2010-03-30) by Evaldas Jocys
+v2.0.2.16 (2010-03-30)
 - Fix: don't elevate if not Vista/7.
 
-v2.0.2.15 (2010-03-30) by Evaldas Jocys
+v2.0.2.15 (2010-03-30)
 - UAC support added. Application will ask for elevation if it runs from UAC protected area.
 - Status bar updated with information about loaded INI and DLL.
 
-v2.0.2.13 (2010-03-28) by Evaldas Jocys
+v2.0.2.13 (2010-03-28)
 - xBox 360 controller preset thumb stick button assignment fix.
 - VID, PID, ProductName - read-only settings load fix.
 - Link to Google project added.
 
-v2.0.2.11 (2010-03-25) by Evaldas Jocys
+v2.0.2.11 (2010-03-25)
 - DirectInput rY fix.
 - Added preset for "Controller (Xbox 360 Wireless Receiver for Windows)".
 - Fixed Native settings section location.
 
-v2.0.2.9 (2010-03-21) by Evaldas Jocys
+v2.0.2.9 (2010-03-21)
 - Help tab added.
 
-v2.0.2.8 (2010-03-19) by Evaldas Jocys
+v2.0.2.8 (2010-03-19)
 - Fixed recording.
 - Fixed autosaving.
 - Fixed Thumb Left/Right/Up/Down settings map.
 
-v2.0.2.3 (2010-03-17) by Evaldas Jocys
+v2.0.2.3 (2010-03-17)
 - Supports old ini file xbox360cemu.ini if found and new x360ce.ini doesn't exists.
 - Supports hotplugging USB devices.
 - Interface updated.
 - Can load custom presets from disk.
 
-v 2.0.1.2 (2010-03-14) by Evaldas Jocys
+v 2.0.1.2 (2010-03-14)
 - Setting changes now applies instantly.
 - [Save] button makes changes permanent.
 - Updated button names to names used by Microsoft.
 - Fixed bug with multiple controllers attached.
 
-v 2.0.0.0 (2010-03-11) by Evaldas Jocys
+v 2.0.0.0 (2010-03-11)
 - Pack of new features and improvements.
 - Supports load and save settings.
 - Presets feature added.
