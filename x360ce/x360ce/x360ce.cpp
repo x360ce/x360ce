@@ -431,6 +431,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		XCAPS[dwUserIndex].Gamepad.sThumbLY = 0;
 		XCAPS[dwUserIndex].Gamepad.sThumbRX = 0;
 		XCAPS[dwUserIndex].Gamepad.sThumbRY = 0;
+		capsready[dwUserIndex] = true;
 	}
 
 	*pCapabilities = XCAPS[dwUserIndex];
