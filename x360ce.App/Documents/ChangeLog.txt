@@ -3,6 +3,7 @@
 - Update: FakeWMI and FakeDI merged into FakeMODE.
 - Update: FakeWinTrust removed.
 - Update: FakePID and FakeVid option removed.
+- Update: 'FakeWMI_NOPIDVID' option removed.
 
 v2.0.2.71 (2010-08-09)
 - Update: Updated to xinput1_3.dll v3.2.0.165.

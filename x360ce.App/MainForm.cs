@@ -109,7 +109,6 @@ namespace x360ce.App
 			sm.Add(@"Options\" + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakeMode, FakeModeComboBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakeWmiNoPidVid, FakeWmiNoPidVidCheckBox);
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				var map = ControlPads[i].SettingsMap;
