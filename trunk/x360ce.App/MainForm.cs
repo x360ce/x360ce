@@ -55,19 +55,12 @@ namespace x360ce.App
 			// init default
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
 			// Fill FakeWmi ComboBox.
-			var wmiOptions = new List<KeyValuePair>();
-			var wmiTypes = (FakeWmi[])Enum.GetValues(typeof(FakeWmi));
-			foreach (var item in wmiTypes) wmiOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-			FakeWmiComboBox.DataSource = wmiOptions;
-			FakeWmiComboBox.DisplayMember = "Key";
-			FakeWmiComboBox.ValueMember = "Value";
-			// Fill FakeDi ComboBox.
-			var diOptions = new List<KeyValuePair>();
-			var diTypes = (FakeDi[])Enum.GetValues(typeof(FakeDi));
-			foreach (var item in diTypes) diOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-			FakeDiComboBox.DataSource = diOptions;
-			FakeDiComboBox.DisplayMember = "Key";
-			FakeDiComboBox.ValueMember = "Value";
+			var fakeModeOptions = new List<KeyValuePair>();
+			var fakeModeTypes = (FakeWmi[])Enum.GetValues(typeof(FakeWmi));
+			foreach (var item in fakeModeTypes) fakeModeOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
+			FakeModeComboBox.DataSource = fakeModeOptions;
+			FakeModeComboBox.DisplayMember = "Key";
+			FakeModeComboBox.ValueMember = "Value";
 			// Set status.
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
@@ -115,12 +108,8 @@ namespace x360ce.App
 			sm.Add(@"Options\" + SettingName.UseInitBeep, UseInitBeepCheckBox);
 			sm.Add(@"Options\" + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakeWinTrust, FakeWinTrustCheckBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakeWmi, FakeWmiComboBox);
+			sm.Add(@"FakeAPI\" + SettingName.FakeMode, FakeModeComboBox);
 			sm.Add(@"FakeAPI\" + SettingName.FakeWmiNoPidVid, FakeWmiNoPidVidCheckBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakeDi, FakeDiComboBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakeVid, FakeVidTextBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakePid, FakePidTextBox);
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				var map = ControlPads[i].SettingsMap;

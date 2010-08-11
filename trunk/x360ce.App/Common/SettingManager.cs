@@ -62,7 +62,7 @@ namespace x360ce.App
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
-				if (key == SettingName.FakeWmi || key == SettingName.FakeDi) cbx.SelectedValue = value;
+				if (key == SettingName.FakeMode) cbx.SelectedValue = value;
 			}
 			else if (control is TextBox)
 			{
@@ -256,7 +256,7 @@ namespace x360ce.App
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
-				if (key == SettingName.FakeWmi || key == SettingName.FakeDi) v = (string)cbx.SelectedValue;
+				if (key == SettingName.FakeMode) v = (string)cbx.SelectedValue;
 			}
 			else if (control is TextBox)
 			{
@@ -302,7 +302,7 @@ namespace x360ce.App
 				if (key == SettingName.DPadDown) v = "DOWN";
 				if (key == SettingName.DPadLeft) v = "LEFT";
 				if (key == SettingName.DPadRight) v = "RIGHT";
-				if (key == SettingName.Vid || key == SettingName.Pid || key == SettingName.FakeVid || key == SettingName.FakePid) v = "0x0";
+				if (key == SettingName.Vid || key == SettingName.Pid) v = "0x0";
 			}
 			string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
 			// add comment.

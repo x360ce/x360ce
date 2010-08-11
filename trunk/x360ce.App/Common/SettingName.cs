@@ -48,18 +48,10 @@ namespace x360ce.App
 		public const string Log = "Log";
 
 		// [FakeAPI] section.
-		[DefaultValue("0"), Description("")]
-		public const string FakeWinTrust = "FakeWinTrust";
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
-		public const string FakeWmi = "FakeWMI";
+		public const string FakeMode = "FakeMODE";
 		[DefaultValue("1"), Description("Don't change PID/VID in FakeWMI spoofing, so this add only IG_00 string.")]
 		public const string FakeWmiNoPidVid = "FakeWMI_NOPIDVID";
-		[DefaultValue("0"), Description("DirectInput API patching, 1 only callback, 2 callback and device info, 0 disable.")]
-		public const string FakeDi = "FakeDI";
-		[DefaultValue("0x0"), Description("Fake vendor Id.")]
-		public const string FakeVid = "FakeVID";
-		[DefaultValue("0x0"), Description("Fake product Id.")]
-		public const string FakePid = "FakePID";
 
 		// [PAD] section.
 		[DefaultValue("Unknown Device"), Description("Device product name.")]
