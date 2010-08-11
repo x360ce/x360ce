@@ -179,17 +179,19 @@ HRESULT Enumerate(DWORD idx)
 	Deactivate(idx);
 	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
 
-	if (wFakeMode == 2)
+
+	WORD wFakeModeOrig=wFakeMode;
+	if (wFakeModeOrig)
 	{
-		wFakeMode=1; //Temporary disable FakeDI
-		WriteLog(_T("[DINPUT]  Temporary disable FakeDI"));
+		wFakeMode=0; //Temporary disable FakeAPI
+		WriteLog(_T("[DINPUT]  Temporary disable FakeAPI"));
 	}
 	WriteLog(_T("[DINPUT]  [PAD%d] Enumerating User ID %d"),idx+1,idx);
 	hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &Gamepad[idx], DIEDFL_ATTACHEDONLY );
-	if (wFakeMode == 2) 
+	if (wFakeModeOrig) 
 	{
-		wFakeMode=2; // Restore FakeDI
-		WriteLog(_T("[DINPUT]  Restore FakeDI state"));
+		wFakeMode=wFakeModeOrig; // Restore FakeAPI state, if disable before
+		WriteLog(_T("[DINPUT]  Restore FakeAPI state"));
 	}
 	if FAILED(hr)
 	{
