@@ -122,7 +122,7 @@ BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pC
 		diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
 		diprg.diph.dwHow        = DIPH_BYID; 
 		diprg.diph.dwObj        = pdidoi->dwType; // Specify the enumerated axis
-		diprg.lMin              = -32767;
+		diprg.lMin              = -32768;
 		diprg.lMax              = +32767; 
 
 		// Set the range for the axis
