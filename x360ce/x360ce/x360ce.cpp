@@ -292,16 +292,13 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 				if(PadMap.Axis[i].id > 0 )
 				{
-					*(targetAxis[i]) = (SHORT) values[PadMap.Axis[i].id - 1];
-					*(targetAxis[i])= (SHORT) clamp(*(targetAxis[i]),-32768,32767);
+					SHORT val = values[PadMap.Axis[i].id - 1];
+					*(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
 				}
 				else if(PadMap.Axis[i].id < 0 )
 				{
-					LONG val = -values[-PadMap.Axis[i].id - 1];
-
-					if(val > 0) val = 32767 * val / 32768;
-					else val = 32768 * val / 32767; 
-					*(targetAxis[i]) = (SHORT) val;
+					SHORT val = -values[-PadMap.Axis[i].id - 1];
+					*(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
 				}
 
 
