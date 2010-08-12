@@ -87,10 +87,9 @@ VOID CreateLog()
 
 BOOL WriteLog(LPTSTR str,...)
 {
-	tm timeinfo;
-	GetTime(&timeinfo);
-
 	if (writelog) {
+		tm timeinfo;
+		GetTime(&timeinfo);
 		FILE * fp;
 		_tfopen_s(&fp,logfilename,_T("a"));
 
