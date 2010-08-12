@@ -137,16 +137,16 @@ void ReadPadConfig(INT idx) {
 
 	} else { return; }  
 
-	Gamepad[idx].dwPadIndex = idx+1;
+	Gamepad[idx].dwPadIndex = idx;
 
 	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"));
 	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"));
-	Gamepad[idx].useforce = ReadUINTFromFile(section, _T("UseForceFeedback"));
+	Gamepad[idx].ff.useforce = ReadUINTFromFile(section, _T("UseForceFeedback"));
 	Gamepad[idx].gamepadtype = (BYTE)ReadUINTFromFile(section, _T("ControllerType"));
 	Gamepad[idx].axistodpad = ReadUINTFromFile(section, _T("AxisToDPad"));
 	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"));
 	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"));
-	Gamepad[idx].forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent")) * (FLOAT) 0.01;	
+	Gamepad[idx].ff.forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent")) * (FLOAT) 0.01;	
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 	PadMap.DpadPOV = -1;

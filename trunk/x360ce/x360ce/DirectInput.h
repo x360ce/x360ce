@@ -40,15 +40,21 @@ struct DINPUT_FF
 	DWORD oldPeriod;
 	DIEFFECT eff;
 	BOOL IsUpdateEffectCreated;
+	LPDIRECTINPUTEFFECT g_pEffect[2];
+	DWORD g_dwNumForceFeedbackAxis;
+	BOOL forceready;
+	BOOL useforce;
+	FLOAT forcepercent;
 	DINPUT_FF()
 	{
 		ZeroMemory(this,sizeof(DINPUT_FF));
+		forcepercent = 100;
 	}
 };
 
 struct DINPUT_GAMEPAD {
 	LPDIRECTINPUTDEVICE8 g_pGamepad;
-	DWORD dwPadIndex;  //starting from 1
+	DWORD dwPadIndex;
 	BOOL connected;
 	BOOL configured;
 	TCHAR name[MAX_PATH];
@@ -57,16 +63,10 @@ struct DINPUT_GAMEPAD {
 	GUID product;
 	GUID instance;
 	DIJOYSTATE2 state;
-	LPDIRECTINPUTEFFECT g_pEffect[2];
-	BOOL forceready;
-	DWORD g_dwNumForceFeedbackAxis;
+	DWORD dwAxisCount;
 	BOOL native;
 	BOOL swapmotor;
-	WORD wLMotorDirection;
-	WORD wRMotorDirection;
 	DWORD tdeadzone;
-	BOOL useforce;
-	FLOAT forcepercent;
 	BYTE gamepadtype;
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
@@ -75,7 +75,6 @@ struct DINPUT_GAMEPAD {
 	DINPUT_GAMEPAD()
 	{
 		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
-		forcepercent = 100;
 		gamepadtype = 1;
 	}
 };

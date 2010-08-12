@@ -61,9 +61,9 @@ HRESULT XInit(DWORD dwUserIndex)
 		WriteLog(_T("[XINIT]   XInit fail"));
 		return ERROR_DEVICE_NOT_CONNECTED;
 	}
+	else UpdateState(dwUserIndex);
 
 	dwlastUserIndex = dwUserIndex;
-
 	return hr;
 }
 
@@ -364,12 +364,12 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	//if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
-	if(!Gamepad[dwUserIndex].useforce) return ERROR_SUCCESS;
+	if(!Gamepad[dwUserIndex].ff.useforce) return ERROR_SUCCESS;
 
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
 
-	if(!Gamepad[dwUserIndex].forceready) 
+	if(!Gamepad[dwUserIndex].ff.forceready) 
 	{
 		HRESULT hrLeftForce = E_FAIL, hrRightForce = E_FAIL;
 		hrLeftForce = PrepareForce(dwUserIndex,0);
@@ -377,21 +377,21 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		if FAILED(hrLeftForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hrLeftForce));
 		if FAILED(hrRightForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hrRightForce));
 		if (SUCCEEDED(hrLeftForce) && SUCCEEDED(hrRightForce))
-			Gamepad[dwUserIndex].forceready = TRUE;
+			Gamepad[dwUserIndex].ff.forceready = TRUE;
 	}
 
 	if(Gamepad[dwUserIndex].swapmotor)
 	{
-		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].forcepercent);
-		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].forcepercent);
+		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
+		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 	}
 	else
 	{
-		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].forcepercent);
-		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].forcepercent);
+		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
+		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 	}
 
-	if(Gamepad[dwUserIndex].forceready)
+	if(Gamepad[dwUserIndex].ff.forceready)
 	{
 		hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
 		if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
