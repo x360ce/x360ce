@@ -226,11 +226,11 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			-values[-PadMap.Trigger[i].id -1] - 1);
 
 			/*
-			--- v is the full range (-32768 .. +32767) that should be projected to 0...255
+			--- v is the full range (-32767 .. +32767) that should be projected to 0...255
 
 			--- Full ranges
-			AXIS:	(	0 to 255 from -32768 to 32767) using axis
-			SLIDER:	(	0 to 255 from -32768 to 32767) using slider
+			AXIS:	(	0 to 255 from -32767 to 32767) using axis
+			SLIDER:	(	0 to 255 from -32767 to 32767) using slider
 			------------------------------------------------------------------------------
 			--- Half ranges
 			HAXIS:	(	0 to 255 from 0 to 32767) using axis
@@ -246,7 +246,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				// Full range
 			case AXIS:
 			case SLIDER:
-				scaling = 256; offset = 32768;
+				scaling = 256; offset = 32767;
 				break;
 				// Half range
 			case HAXIS:
@@ -293,16 +293,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				if(PadMap.Axis[i].id > 0 )
 				{
 					SHORT val = (SHORT) values[PadMap.Axis[i].id - 1];
-					*(targetAxis[i])= (SHORT) clamp(val,-32768,32767);
+					*(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
 				}
 				else if(PadMap.Axis[i].id < 0 )
 				{
 					SHORT val = (SHORT) -values[-PadMap.Axis[i].id - 1];
-					val = (SHORT) clamp(val,-32768,32767);
-
-					if(val > 0) val = 32767 * val / 32768;
-					else if(val < 0) val = 32768 * val / 32767; 
-					*(targetAxis[i]) = (SHORT) val;
+					*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
 				}
 
 
@@ -318,7 +314,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			if (PadMap.Axis[i].hasDigital && PadMap.Axis[i].negativeButtonID >= 0) {
 
 				if (ButtonPressed(PadMap.Axis[i].negativeButtonID,dwUserIndex))
-					*(targetAxis[i]) = -32768;
+					*(targetAxis[i]) = -32767;
 			}	
 		}
 	}
