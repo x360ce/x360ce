@@ -28,11 +28,6 @@
 #define VERSION_PATCH 0
 #define VERSION_STRING TOSTRING(VERSION_MAJOR) "." TOSTRING(VERSION_MINOR) "." TOSTRING(VERSION_PATCH) "." TOSTRING(SVN_REV)
 
-#define X360CE_ID1 0xDEADCAFE 
-#define X360CE_ID2 0xBED4DEAD 
-
-
-// externs
 extern HINSTANCE hX360ceInstance;
 extern HINSTANCE hNativeInstance;
 extern HWND hWnd;
@@ -42,7 +37,6 @@ extern void InitConfig();
 extern BOOL bEnabled;
 extern WORD wNativeMode;
 
-// prototypes
 void LoadOriginalDll();
 
 

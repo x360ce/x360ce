@@ -1,18 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 ToCA Edit
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
- 
+*  Copyright (C) 2002-2010 ToCA Edit
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "stdafx.h"
 #include "globals.h"
 #include "Utils.h"
@@ -28,7 +28,6 @@ DWORD dwAppPID = NULL;
 
 void LoadOriginalDll()
 {
-
 	TCHAR buffer[MAX_PATH];
 
 	// Getting path to system dir and to xinput1_3.dll
@@ -41,11 +40,9 @@ void LoadOriginalDll()
 	if (!hNativeInstance) hNativeInstance = LoadLibrary(buffer);
 
 	// Debug
-	if (!hNativeInstance)
-	{
+	if (!hNativeInstance) {
 		ExitProcess(0); // exit the hard way
 	}
-
 }
 
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
@@ -74,14 +71,12 @@ BOOL RegisterWindowClass(HINSTANCE hinstance)
 	wcx.lpszClassName = _T("x360ceWClass");  // name of window class 
 
 	// Register the window class. 
-
 	return RegisterClassEx(&wcx); 
 } 
 
 BOOL Createx360ceWindow(HINSTANCE hInst)
 {
-	if(RegisterWindowClass(hInst))
-	{
+	if(RegisterWindowClass(hInst)) {
 		hWnd = CreateWindow( 
 			_T("x360ceWClass"),  // name of window class
 			_T("x360ce"),        // title-bar string 
@@ -96,8 +91,7 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 			(LPVOID) NULL);      // no window-creation data 
 		return TRUE;
 	}
-	else
-	{
+	else {
 		WriteLog(_T("[CORE]    RegisterWindowClass Failed"));
 		return FALSE;
 	}
@@ -112,6 +106,7 @@ VOID InitInstance(HMODULE hModule)
 	hX360ceInstance = (HINSTANCE) hModule;
 	dwAppPID=GetCurrentProcessId();
 	InitConfig(_T("x360ce.ini"));
+	CreateLog();
 
 #if SVN_MODS != 0 
 	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
@@ -119,13 +114,11 @@ VOID InitInstance(HMODULE hModule)
 	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
 #endif
 
-	if(!Createx360ceWindow(hX360ceInstance))
-	{
+	if(!Createx360ceWindow(hX360ceInstance)) {
 		WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
 	}
 
-	if(wFakeMode)
-	{
+	if(wFakeMode) {
 		if(wFakeMode) FakeWMI();
 		if(wFakeMode>=2) FakeDI();
 		if(wFakeWinTrust) FakeWinTrust();
@@ -134,8 +127,7 @@ VOID InitInstance(HMODULE hModule)
 
 VOID ExitInstance() 
 {   
-	if(wFakeMode)
-	{
+	if(wFakeMode) {
 		if(wFakeMode) FakeWMI_Detach();
 		if(wFakeMode>=2) FakeDI_Detach();
 		if(wFakeWinTrust) FakeWinTrust_Detach();
@@ -143,10 +135,7 @@ VOID ExitInstance()
 
 	ReleaseDirectInput();
 
-	delete[] logfilename;
-
-	if (hNativeInstance)
-	{
+	if (hNativeInstance) {
 		FreeLibrary(hNativeInstance);
 		hNativeInstance = NULL;  
 		CloseHandle(hNativeInstance);
@@ -155,20 +144,19 @@ VOID ExitInstance()
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
 
 	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
+	delete[] logfilename;
 }
 
 extern "C" BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
 {
 	UNREFERENCED_PARAMETER(reserved);
 
-	if (dwReason == DLL_PROCESS_ATTACH ) 
-	{
+	if (dwReason == DLL_PROCESS_ATTACH ) {
 		DisableThreadLibraryCalls(hModule);
 		InitInstance(hModule);
 	}
 
-	else if (dwReason == DLL_PROCESS_DETACH) 
-	{
+	else if (dwReason == DLL_PROCESS_DETACH) {
 		WriteLog(_T("[CORE]    x360ce terminating, bye"));
 		ExitInstance();
 	}

@@ -23,46 +23,7 @@
 TCHAR tstrConfigFile[MAX_PATH];	
 BOOL writelog = 0;
 LPTSTR logfilename;
-BOOL logready = 0;
 TCHAR szProcessName[MAX_PATH] = _T("Unknown");
-
-LPCTSTR PIDName(DWORD processID){
-
-	HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |PROCESS_VM_READ,FALSE, processID );
-
-	// Get the process name.
-
-	if (NULL != hProcess )
-	{
-		HMODULE hMod;
-		DWORD cbNeeded;
-
-		if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), 
-			&cbNeeded) )
-		{
-			GetModuleBaseName( hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR) );
-		}
-	}
-	CloseHandle(hProcess);
-	return (szProcessName);
-}
-
-VOID GetTime(INT &year, INT &month, INT &day, INT &hour, INT &min, INT &sec ){
-	{
-		time_t rawtime;
-		struct tm timeinfo;
-		time ( &rawtime );
-		localtime_s(&timeinfo,&rawtime);  
-
-		year = timeinfo.tm_year+1900;
-		month = timeinfo.tm_mon+1;
-		day = timeinfo.tm_mday;
-		hour = timeinfo.tm_hour;
-		min = timeinfo.tm_min;
-		sec = timeinfo.tm_sec;
-
-	}
-}
 
 DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput)
 {
@@ -78,6 +39,30 @@ DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutpu
 	return ret;
 }
 
+LPCTSTR PIDName(DWORD processID)
+{
+	HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |PROCESS_VM_READ,FALSE, processID );
+
+	// Get the process name.
+	if (NULL != hProcess ){
+		HMODULE hMod;
+		DWORD cbNeeded;
+
+		if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), &cbNeeded) ) {
+			GetModuleBaseName( hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR) );
+		}
+	}
+	CloseHandle(hProcess);
+	return (szProcessName);
+}
+
+VOID GetTime( tm *timeinfo )
+{
+	time_t rawtime;
+	time ( &rawtime );
+	localtime_s(timeinfo,&rawtime);  
+}
+
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
 {
 	return ReadUINTFromFile(strFileSection, strKey, NULL);
@@ -88,7 +73,98 @@ UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault)
 	return GetPrivateProfileInt(strFileSection,strKey,uDefault,tstrConfigFile);
 }
 
-LPTSTR const DXErrStr(HRESULT dierr) {
+VOID CreateLog()
+{
+	if (writelog) {
+		tm timeinfo;
+		GetTime(&timeinfo);
+		logfilename = new TCHAR[MAX_PATH];
+		_stprintf_s(logfilename,MAX_PATH,_T("x360ce\\x360ce %d%02d%02d-%02d%02d%02d.log"),
+			timeinfo.tm_year+1900,timeinfo.tm_mon+1,timeinfo.tm_mday,timeinfo.tm_hour,timeinfo.tm_min,timeinfo.tm_sec);
+		if( (GetFileAttributes(_T("x360ce")) == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(_T("x360ce"), NULL);
+	}
+}
+
+BOOL WriteLog(LPTSTR str,...)
+{
+	tm timeinfo;
+	GetTime(&timeinfo);
+
+	if (writelog) {
+		FILE * fp;
+		_tfopen_s(&fp,logfilename,_T("a"));
+
+		//fp is null, file is not open.
+		if (fp==NULL)
+			return -1;
+		_ftprintf (fp,_T("%02d:%02d:%02d.%u:: "),timeinfo.tm_hour,timeinfo.tm_min,timeinfo.tm_sec,GetTickCount());
+		va_list arglist;
+		va_start(arglist,str);
+		_vftprintf(fp,str,arglist);
+		va_end(arglist);
+		fprintf(fp," \n");
+		fclose(fp);
+		return 1;
+	}
+	return 0;
+}
+
+LONG clamp(LONG val, LONG min, LONG max)
+{
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+}
+LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
+{
+	if (val < lowerDZ) return min;
+	if (val > upperDZ) return max;
+	return val;
+}
+
+inline static WORD flipShort(WORD s) 
+{
+	return (s>>8) | (s<<8);
+}
+
+inline static DWORD flipLong(DWORD l) 
+{
+	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
+}
+
+void GUIDtoString(TCHAR *data, const GUID *pg) 
+{
+	_stprintf(data, _T("%08X-%04X-%04X-%04X-%04X%08X"),
+		pg->Data1, (DWORD)pg->Data2, (DWORD)pg->Data3,
+		flipShort(((WORD*)pg->Data4)[0]), 
+		flipShort(((WORD*)pg->Data4)[1]),
+		flipLong(((DWORD*)pg->Data4)[1]));
+}
+
+BOOL StringToGUID(GUID *pg, TCHAR *dataw) 
+{
+	char data[100];
+	if (_tcslen(dataw) > 50) return 0;
+	int w = 0;
+	while (dataw[w]) {
+		data[w] = (char) dataw[w];
+		w++;
+	}
+	data[w] = 0;
+	DWORD temp[5];
+	sscanf_s(data, "%08X-%04X-%04X-%04X-%04X%08X",
+		&pg->Data1, temp, temp+1,
+		temp+2, temp+3, temp+4);
+	pg->Data2 = (WORD) temp[0];
+	pg->Data3 = (WORD) temp[1];
+	((WORD*)pg->Data4)[0] = flipShort((WORD)temp[2]);
+	((WORD*)pg->Data4)[1] = flipShort((WORD)temp[3]);
+	((DWORD*)pg->Data4)[1] = flipLong(temp[4]);
+	return 1;
+}
+
+LPTSTR const DXErrStr(HRESULT dierr) 
+{
 	if (dierr == DIERR_ACQUIRED) return _T("DIERR_ACQUIRED");
 	if (dierr == DI_BUFFEROVERFLOW) return _T("DI_BUFFEROVERFLOW");
 	if (dierr == DI_DOWNLOADSKIPPED) return _T("DI_DOWNLOADSKIPPED");
@@ -141,94 +217,4 @@ LPTSTR const DXErrStr(HRESULT dierr) {
 	_itot_s(dierr,buffer,arrayof(buffer),16);	//as hex
 	return buffer;	//return value of HRESULT
 
-}
-
-BOOL WriteLog(LPTSTR str,...)
-{
-	if (writelog)
-	{
-		INT year = 0;
-		INT month = 0;
-		INT day = 0;
-		INT hour = 0;
-		INT min = 0;
-		INT sec = 0;
-
-		GetTime(year, month, day, hour, min, sec );
-
-		if(logready == 0){ // checking if file name for log is ready, if not create it
-			logfilename = new TCHAR[MAX_PATH];
-			_stprintf_s(logfilename,MAX_PATH,_T("x360ce_logs\\x360ce %d%02d%02d-%02d%02d%02d.log"),year,month,day,hour,min,sec);
-			logready = 1;
-		}
-
-		if(GetFileAttributes(_T("x360ce_logs")) == INVALID_FILE_ATTRIBUTES) CreateDirectory(_T("x360ce_logs"), NULL);
-		FILE * fp;
-		_tfopen_s(&fp,logfilename,_T("a"));
-
-		//fp is null, file is not open.
-		if (fp==NULL)
-			return -1;
-		_ftprintf (fp,_T("%02d:%02d:%02d.%u:: "),hour,min,sec,GetTickCount());
-		va_list arglist;
-		va_start(arglist,str);
-		_vftprintf(fp,str,arglist);
-		va_end(arglist);
-		fprintf(fp," \n");
-		fclose(fp);
-
-		return 1;
-	}
-	return 0;
-}
-
-LONG clamp(LONG val, LONG min, LONG max) {
-	if (val < min) return min;
-	if (val > max) return max;
-	return val;
-}
-LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ) {
-	if (val < lowerDZ) return min;
-	if (val > upperDZ) return max;
-	return val;
-
-}
-
-inline static WORD flipShort(WORD s) {
-	return (s>>8) | (s<<8);
-}
-
-inline static DWORD flipLong(DWORD l) {
-	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
-}
-
-void GUIDtoString(TCHAR *data, const GUID *pg) 
-{
-	_stprintf(data, _T("%08X-%04X-%04X-%04X-%04X%08X"),
-		pg->Data1, (DWORD)pg->Data2, (DWORD)pg->Data3,
-		flipShort(((WORD*)pg->Data4)[0]), 
-		flipShort(((WORD*)pg->Data4)[1]),
-		flipLong(((DWORD*)pg->Data4)[1]));
-}
-
-BOOL StringToGUID(GUID *pg, TCHAR *dataw) 
-{
-	char data[100];
-	if (_tcslen(dataw) > 50) return 0;
-	int w = 0;
-	while (dataw[w]) {
-		data[w] = (char) dataw[w];
-		w++;
-	}
-	data[w] = 0;
-	DWORD temp[5];
-	sscanf_s(data, "%08X-%04X-%04X-%04X-%04X%08X",
-		&pg->Data1, temp, temp+1,
-		temp+2, temp+3, temp+4);
-	pg->Data2 = (WORD) temp[0];
-	pg->Data3 = (WORD) temp[1];
-	((WORD*)pg->Data4)[0] = flipShort((WORD)temp[2]);
-	((WORD*)pg->Data4)[1] = flipShort((WORD)temp[3]);
-	((DWORD*)pg->Data4)[1] = flipLong(temp[4]);
-	return 1;
 }

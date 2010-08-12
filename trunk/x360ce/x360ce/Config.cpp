@@ -19,15 +19,13 @@
 #include "Config.h"
 #include "DirectInput.h"
 
-WORD wFakeMode=0;
 BOOL bInitBeep=0;
+WORD wNativeMode=0;
 
+WORD wFakeMode=0;
 WORD wFakeWinTrust=0;
-
 WORD wFakeVID=0;
 WORD wFakePID=0;
-
-WORD wNativeMode=0;
 
 static LPCTSTR buttonNames[10] = {
 	_T("A"),
@@ -54,6 +52,12 @@ static LPCTSTR axisNames[4] = {
 	_T("Left Analog Y"),
 	_T("Right Analog X"),
 	_T("Right Analog Y")
+};
+static LPCTSTR axisLNames[4] = {
+	_T("Left Analog X Linear"),
+	_T("Left Analog Y Linear"),
+	_T("Right Analog X Linear"),
+	_T("Right Analog Y Linear")
 };
 static LPCTSTR axisBNames[8] = {
 	_T("Left Analog X+ Button"),
@@ -190,6 +194,10 @@ void ReadPadConfig(INT idx) {
 				PadMap.Axis[i].id = _ttoi(a);
 			}
 		}
+	}
+
+	for (int i=0; i<4; ++i) {
+		Gamepad[idx].axislinear[i] = (SHORT) ReadUINTFromFile(section, axisLNames[i], 0);
 	}
 
 	for (INT i=0; i<4; ++i) {

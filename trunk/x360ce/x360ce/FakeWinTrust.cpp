@@ -33,7 +33,6 @@ LONG WINAPI FakeWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 
 void FakeWinTrust()
 {
-
 	WriteLog(_T("[FAKEAPI] FakeWinTrust:: Attaching"));
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -45,8 +44,7 @@ void FakeWinTrust_Detach()
 {
 	WriteLog(_T("[FAKEAPI] FakeWinTrust:: Detaching"));
 
-	if(OriginalWinVerifyTrust)
-	{
+	if(OriginalWinVerifyTrust) {
 		WriteLog(_T("[FAKEWT]  FakeWinVerifyTrust:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
