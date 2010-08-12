@@ -31,33 +31,28 @@ bool capsready[4] = {0,0,0,0};
 
 HRESULT XInit(DWORD dwUserIndex)
 {
-
 	HRESULT hr=S_OK;
 	if(!Gamepad[dwUserIndex].product.Data1) return ERROR_DEVICE_NOT_CONNECTED;
 
-	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex)
-	{ 
+	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex){ 
 
 		WriteLog(_T("[XINIT]   Initializing Gamepad %d"),dwUserIndex+1);
 		WriteLog(_T("[XINIT]   User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
 
 		hr = Enumerate(dwUserIndex); 
-		if(SUCCEEDED(hr))
-		{
+		if(SUCCEEDED(hr)) {
 			WriteLog(_T("[XINIT]   [PAD%d] Enumeration finished"),dwUserIndex+1);
 		}
 		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 		hr = InitDirectInput(hWnd,dwUserIndex);
-		if(FAILED(hr))
-		{
+		if(FAILED(hr)) {
 			WriteLog(_T("[XINIT]   XInit fail with %s"),DXErrStr(hr));
 		}
 	}
 	else return ERROR_DEVICE_NOT_CONNECTED;
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) 
-	{
+	if(!Gamepad[dwUserIndex].g_pGamepad) {
 		WriteLog(_T("[XINIT]   XInit fail"));
 		return ERROR_DEVICE_NOT_CONNECTED;
 	}
@@ -71,8 +66,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 
 	//WriteLog(_T("XInputGetState"));
-	if(Gamepad[dwUserIndex].native) 
-	{
+	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetState_Type)(DWORD dwUserIndex, XINPUT_STATE* pState);
 		XInputGetState_Type nativeXInputGetState = (XInputGetState_Type) GetProcAddress( hNativeInstance, "XInputGetState");
@@ -140,34 +134,28 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		DWORD pov = Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
 		DWORD povdeg = pov/100;
 
-		if (IN_RANGE(povdeg,270,360) || IN_RANGE(povdeg,0,90) || povdeg == 0 ) // Up-left, up, up-right, up (at 360 degrees)
-		{
+		// Up-left, up, up-right, up (at 360 degrees)
+		if (IN_RANGE(povdeg,270,360) || IN_RANGE(povdeg,0,90) || povdeg == 0 ) { 
 			xGamepad.wButtons |= PadMap.pov[0];
 		}
-
-		if (IN_RANGE(povdeg,0,180)) // Up-right, right, down-right
-		{	
+		// Up-right, right, down-right
+		if (IN_RANGE(povdeg,0,180)) { 
 			xGamepad.wButtons |= PadMap.pov[3];	
 		}
-
-		if (IN_RANGE(povdeg,90,270)) // Down-right, down, down-left
-		{	
+		// Down-right, down, down-left
+		if (IN_RANGE(povdeg,90,270)) { 
 			xGamepad.wButtons |= PadMap.pov[1];
 		}
-
-		if (IN_RANGE(povdeg,180,360)) // Down-left, left, up-left
-		{	
+		// Down-left, left, up-left	
+		if (IN_RANGE(povdeg,180,360)) { 
 			xGamepad.wButtons |= PadMap.pov[2];
 		}
 
 	}
-	else 
-	{
-		for (INT i = 0; i < 4; ++i) 
-		{
-			if ((PadMap.pov[i] >= 0)&&	ButtonPressed(PadMap.pov[i],dwUserIndex)) 
-			{
-					xGamepad.wButtons |= povIDs[i];
+	else {
+		for (INT i = 0; i < 4; ++i) {
+			if ((PadMap.pov[i] >= 0)&&	ButtonPressed(PadMap.pov[i],dwUserIndex)) {
+				xGamepad.wButtons |= povIDs[i];
 			}
 		}
 	}
@@ -198,22 +186,19 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		MappingType triggerType = PadMap.Trigger[i].type;
 
 		if (triggerType == DIGITAL) {
-			if (ButtonPressed(PadMap.Trigger[i].id,dwUserIndex))
-			{	*(targetTrigger[i]) = 255;		}
-		} else {
+			if (ButtonPressed(PadMap.Trigger[i].id,dwUserIndex)) {
+				*(targetTrigger[i]) = 255;
+			}
+		} 
+		else {
 			LONG *values;
 			switch (triggerType) {
 			case AXIS:
 			case HAXIS:
-
-
 				values = axis;
 				break;
-
-
 			case SLIDER:
 			case HSLIDER:
-
 				values = slider;
 				break;
 			default:
@@ -221,9 +206,13 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				break;
 			}
 
-			LONG v = (PadMap.Trigger[i].id > 0 ?
-				values[PadMap.Trigger[i].id -1] :
-			-values[-PadMap.Trigger[i].id -1] - 1);
+			LONG v = 0;
+			if(PadMap.Trigger[i].id > 0) {
+				v = values[PadMap.Trigger[i].id -1];
+			}
+			else {
+				v = -values[-PadMap.Trigger[i].id -1] - 1;
+			}
 
 			/*
 			--- v is the full range (-32767 .. +32767) that should be projected to 0...255
@@ -240,7 +229,6 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			LONG v2=0;
 			LONG offset=0;
 			LONG scaling=1;
-
 
 			switch (triggerType) {
 				// Full range
@@ -287,21 +275,16 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			// Analog input
 			if (PadMap.Axis[i].analogType == AXIS) values = axis;
 			if (PadMap.Axis[i].analogType == SLIDER) values = slider;
-			if (PadMap.Axis[i].analogType != NONE)
-			{
+			if (PadMap.Axis[i].analogType != NONE) {
 
-				if(PadMap.Axis[i].id > 0 )
-				{
+				if(PadMap.Axis[i].id > 0 ) {
 					SHORT val = (SHORT) values[PadMap.Axis[i].id - 1];
 					*(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
 				}
-				else if(PadMap.Axis[i].id < 0 )
-				{
+				else if(PadMap.Axis[i].id < 0 ) {
 					SHORT val = (SHORT) -values[-PadMap.Axis[i].id - 1];
 					*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
 				}
-
-
 			}
 
 			// Digital input, positive direction
@@ -320,8 +303,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	}
 
 	//WILDS - Axis to D-Pad
-	if(Gamepad[dwUserIndex].axistodpad==1)
-	{
+	if(Gamepad[dwUserIndex].axistodpad==1) {
 		//WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
 
 		if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
@@ -337,7 +319,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	//WILDS END
 
 	// --- Do Linears ---
-	// TODO
+	for (int i = 0; i < 4; ++i) {
+		SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (Gamepad[dwUserIndex].axislinear[i] * 0.01))));
+		*(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
+	}
 
 	return hr;
 }
@@ -345,8 +330,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
 
-	if(Gamepad[dwUserIndex].native) 
-	{
+	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputSetState_Type)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 		XInputSetState_Type nativeXInputSetState = (XInputSetState_Type) GetProcAddress( hNativeInstance, "XInputSetState");
@@ -369,8 +353,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
 
-	if(!Gamepad[dwUserIndex].ff.forceready) 
-	{
+	if(!Gamepad[dwUserIndex].ff.forceready) {
 		HRESULT hrLeftForce = E_FAIL, hrRightForce = E_FAIL;
 		hrLeftForce = PrepareForce(dwUserIndex,0);
 		hrRightForce = PrepareForce(dwUserIndex,1);
@@ -380,19 +363,16 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 			Gamepad[dwUserIndex].ff.forceready = TRUE;
 	}
 
-	if(Gamepad[dwUserIndex].swapmotor)
-	{
+	if(Gamepad[dwUserIndex].swapmotor) {
 		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 	}
-	else
-	{
+	else {
 		wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 	}
 
-	if(Gamepad[dwUserIndex].ff.forceready)
-	{
+	if(Gamepad[dwUserIndex].ff.forceready) {
 		hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
 		if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
 		hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,1);
@@ -403,8 +383,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-	if(Gamepad[dwUserIndex].native) 
-	{
+	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetCapabilities_Type)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
 		XInputGetCapabilities_Type nativeXInputGetCapabilities = (XInputGetCapabilities_Type) GetProcAddress( hNativeInstance, "XInputGetCapabilities");
@@ -413,8 +392,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
-	if(!capsready[dwUserIndex])
-	{
+	if(!capsready[dwUserIndex]) {
 		XCAPS[dwUserIndex].Type = 0;
 		XCAPS[dwUserIndex].SubType = Gamepad[dwUserIndex].gamepadtype;
 		XCAPS[dwUserIndex].Flags = 0;
@@ -439,8 +417,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-	if(wNativeMode) 
-	{
+	if(wNativeMode) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef VOID (WINAPI* XInputEnable_Type)(BOOL enable);
 		XInputEnable_Type nativeXInputEnable = (XInputEnable_Type) GetProcAddress( hNativeInstance, "XInputSetState");
@@ -454,12 +431,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 }
 
-extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
-	(
-	DWORD dwUserIndex,          // [in] Index of the gamer associated with the device
-	GUID* pDSoundRenderGuid,    // [out] DSound device ID for render
-	GUID* pDSoundCaptureGuid    // [out] DSound device ID for capture
-	)
+extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids (DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
 	UNREFERENCED_PARAMETER(pDSoundRenderGuid);
 	UNREFERENCED_PARAMETER(pDSoundCaptureGuid);
@@ -468,13 +440,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids
 	return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetBatteryInformation
-	(
-	DWORD                       dwUserIndex,        // [in]  Index of the gamer associated with the device
-	BYTE                        devType,            // [in]  Which device on this user index
-	XINPUT_BATTERY_INFORMATION* pBatteryInformation // [out] Contains the level and types of batteries
-	)
-
+extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
 	UNREFERENCED_PARAMETER(devType);
 
@@ -486,12 +452,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation
 
 }
 
-extern "C" DWORD WINAPI XInputGetKeystroke
-	(
-	DWORD dwUserIndex,              // [in]  Index of the gamer associated with the device
-	DWORD dwReserved,               // [in]  Reserved for future use
-	PXINPUT_KEYSTROKE pKeystroke    // [out] Pointer to an XINPUT_KEYSTROKE structure that receives an input event.
-	)
+extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke)
 {
 
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;

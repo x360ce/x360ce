@@ -16,7 +16,6 @@
 // externs
 extern TCHAR tstrConfigFile[MAX_PATH];
 extern BOOL writelog;
-extern BOOL logready; 
 extern LPTSTR logfilename;
 
 // prototypes
@@ -30,4 +29,5 @@ LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
 void GUIDtoString(TCHAR *data, const GUID *pg);
 BOOL StringToGUID(GUID *pg, TCHAR *dataw);
+VOID CreateLog();
 BOOL WriteLog(LPTSTR str,...);

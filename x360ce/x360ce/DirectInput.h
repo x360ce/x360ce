@@ -71,6 +71,7 @@ struct DINPUT_GAMEPAD {
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
+	SHORT axislinear[4];
 	DINPUT_FF ff;
 	DINPUT_GAMEPAD()
 	{
@@ -79,10 +80,8 @@ struct DINPUT_GAMEPAD {
 	}
 };
 
-//externs
 extern struct DINPUT_GAMEPAD Gamepad[4];
 
-// prototypes
 HRESULT InitDirectInput(HWND, INT,INT);
 BOOL ButtonPressed(DWORD, INT);
 HRESULT UpdateState( INT );
