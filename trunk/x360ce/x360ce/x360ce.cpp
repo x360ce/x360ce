@@ -62,6 +62,8 @@ HRESULT XInit(DWORD dwUserIndex)
 	return hr;
 }
 
+extern VOID DetachFakeAPI();
+
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 

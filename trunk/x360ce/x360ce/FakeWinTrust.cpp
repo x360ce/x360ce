@@ -20,7 +20,7 @@
 #include "FakeAPI.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = WinVerifyTrust;
+LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LONG WINAPI FakeWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
@@ -33,17 +33,19 @@ LONG WINAPI FakeWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 
 void FakeWinTrust()
 {
-	WriteLog(_T("[FAKEAPI] FakeWinTrust:: Attaching"));
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(PVOID&)OriginalWinVerifyTrust, FakeWinVerifyTrust);
-	DetourTransactionCommit();
+	if(!OriginalWinVerifyTrust) {
+		OriginalWinVerifyTrust =WinVerifyTrust;
+
+		WriteLog(_T("[FAKEAPI] FakeWinTrust:: Attaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalWinVerifyTrust, FakeWinVerifyTrust);
+		DetourTransactionCommit();
+	}
 }
 
 void FakeWinTrust_Detach()
 {
-	WriteLog(_T("[FAKEAPI] FakeWinTrust:: Detaching"));
-
 	if(OriginalWinVerifyTrust) {
 		WriteLog(_T("[FAKEWT]  FakeWinVerifyTrust:: Detaching"));
 		DetourTransactionBegin();

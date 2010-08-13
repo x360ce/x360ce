@@ -114,8 +114,7 @@
       <Command>"$(ProjectDir)\preBuild.cmd"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>copy /y $(TargetPath) E:\Gry\GRID</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

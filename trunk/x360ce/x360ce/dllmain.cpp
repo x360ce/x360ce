@@ -97,6 +97,24 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 	}
 }
 
+VOID AttachFakeAPI()
+{
+	if(wFakeMode) {
+		if(wFakeMode) FakeWMI();
+		if(wFakeMode>=2) FakeDI();
+		if(wFakeWinTrust) FakeWinTrust();
+	}
+}
+
+VOID DetachFakeAPI()
+{
+	if(wFakeMode) {
+		if(wFakeMode) FakeWMI_Detach();
+		if(wFakeMode>=2) FakeDI_Detach();
+		if(wFakeWinTrust) FakeWinTrust_Detach();
+	}
+}
+
 VOID InitInstance(HMODULE hModule) 
 {
 #if defined(DEBUG) | defined(_DEBUG)
@@ -118,20 +136,12 @@ VOID InitInstance(HMODULE hModule)
 		WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
 	}
 
-	if(wFakeMode) {
-		if(wFakeMode) FakeWMI();
-		if(wFakeMode>=2) FakeDI();
-		if(wFakeWinTrust) FakeWinTrust();
-	}
+	AttachFakeAPI();
 }
 
 VOID ExitInstance() 
 {   
-	if(wFakeMode) {
-		if(wFakeMode) FakeWMI_Detach();
-		if(wFakeMode>=2) FakeDI_Detach();
-		if(wFakeWinTrust) FakeWinTrust_Detach();
-	}
+	DetachFakeAPI();
 
 	ReleaseDirectInput();
 
@@ -142,23 +152,24 @@ VOID ExitInstance()
 	}
 
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
-
 	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
+	WriteLog(_T("[CORE]    x360ce terminating, bye"));
 	delete[] logfilename;
 }
 
-extern "C" BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID reserved)
+extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
 {
-	UNREFERENCED_PARAMETER(reserved);
+	UNREFERENCED_PARAMETER(lpReserved);
+	switch( fdwReason ) 
+	{ 
+	case DLL_PROCESS_ATTACH:
+		DisableThreadLibraryCalls(hinstDLL);
+		InitInstance(hinstDLL);
+		break;
 
-	if (dwReason == DLL_PROCESS_ATTACH ) {
-		DisableThreadLibraryCalls(hModule);
-		InitInstance(hModule);
-	}
-
-	else if (dwReason == DLL_PROCESS_DETACH) {
-		WriteLog(_T("[CORE]    x360ce terminating, bye"));
+	case DLL_PROCESS_DETACH:
 		ExitInstance();
+		break;
 	}
 	return TRUE;
 }
