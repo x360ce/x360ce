@@ -24,7 +24,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT (WINAPI *OriginalDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter) = DirectInput8Create;
+HRESULT (WINAPI *OriginalDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter) = NULL;
 HRESULT (STDMETHODCALLTYPE *OriginalCreateDevice) (LPDIRECTINPUT8 This, REFGUID rguid, LPDIRECTINPUTDEVICE8 *lplpDirectInputDevice, LPUNKNOWN pUnkOuter) = NULL;
 HRESULT (STDMETHODCALLTYPE *OriginalGetProperty) (LPDIRECTINPUTDEVICE8 This, REFGUID rguidProp, LPDIPROPHEADER pdiph) = NULL;
 HRESULT (STDMETHODCALLTYPE *OriginalGetDeviceInfo) (LPDIRECTINPUTDEVICE8 This, LPDIDEVICEINSTANCE pdidi) = NULL;
@@ -208,19 +208,21 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FakeDI()
 {
-	WriteLog(_T("[FAKEAPI] FakeDI:: Attaching"));
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(PVOID&)OriginalDirectInput8Create, FakeDirectInput8Create);
-	DetourTransactionCommit();
+	if(!OriginalDirectInput8Create) {
+		OriginalDirectInput8Create = DirectInput8Create;
+
+		WriteLog(_T("[FAKEAPI] FakeDirectInput8Create:: Attaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalDirectInput8Create, FakeDirectInput8Create);
+		DetourTransactionCommit();
+	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void FakeDI_Detach()
 {
-	WriteLog(_T("[FAKEAPI] FakeDI:: Detaching"));
-
 	if(OriginalGetDeviceInfo) {
 		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfo:: Detaching"));
 		DetourTransactionBegin();

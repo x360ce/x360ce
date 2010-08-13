@@ -31,7 +31,7 @@ HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid,
 									  __in_opt LPUNKNOWN pUnkOuter,
 									  __in     DWORD dwClsContext, 
 									  __in     REFIID riid, 
-									  __deref_out LPVOID FAR* ppv) = CoCreateInstance;
+									  __deref_out LPVOID FAR* ppv) = NULL;
 
 
 HRESULT ( STDMETHODCALLTYPE *OriginalConnectServer )( 
@@ -83,8 +83,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 	hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	//WriteLog(_T("wszName %s pVal->vt %d pType %d"),wszName,pVal->vt,&pType);
-
-	//BSTR bstrDeviceID = SysAllocString( L"DeviceID" );
+	//if( pVal->vt == VT_BSTR) WriteLog(_T("%s"),pVal->bstrVal);
 
 	if (wFakeMode) {
 
@@ -282,20 +281,21 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FakeWMI()
 {
-	WriteLog(_T("[FAKEAPI] FakeWMI:: Attaching"));
+	if(!OriginalCoCreateInstance) {
+		OriginalCoCreateInstance = CoCreateInstance;
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-	DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
-	DetourTransactionCommit();
+		WriteLog(_T("[FAKEAPI] FakeCoCreateInstance:: Attaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+		DetourTransactionCommit();
+	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void FakeWMI_Detach()
 {
-	WriteLog(_T("[FAKEAPI] FakeWMI:: Detaching"));
-
 	if(OriginalGet) {
 		WriteLog(_T("[FAKEWMI] FakeGet:: Detaching"));
 		DetourTransactionBegin();
