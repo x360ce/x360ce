@@ -1,10 +1,35 @@
-XBOX 360 Controller emulator vibmod by Virus
+XBOX 360 Controller emulator
 
-Read Readme.txt !!!
-
-Google Code Project here: http://code.google.com/p/x360ce
+Google Code Project page: http://code.google.com/p/x360ce
 
 History:
+
+11/08/2010 - version 3.2.0.184
+
+Marged FakeWMI & FakeDI to FakeMode:
+	0 - Disabled
+	1 - Normal mode,game will detect gamepad as xinput compatibilie device.
+	2 - Compatbility mode, game will detect gamepad as XBOX 360 Controler for Windows.
+
+10/08/2010 - version 3.2.0.171
+
+crazycat fix main FakeDI problems by temporary disabling it for enumeration inside x360ce dll so FakeDI=2 will not break x360ce enumeration ! (BIG thanks for that, the idea was so simple ...).
+So I disabled magic checks in FakeEnumCallback that are ussles now (because above change) and add check for FakeDI inside FakeGetProperty.
+FakeWMI_NOPIDVID was removed, insted FakeWMI will check for FakeDI setting because only usefull settings are:
+	FakeWMI=1, FakeDI=0 -> FakeWMI will add only IG_ string
+	FakeWMI=1, FakeDI>0 -> FakeWMI will add IG_ string and change VID/PID to Fake ones
+	With this method is easier to configure x360ce (do not add any new options).
+	Most games will work now with: FakeWMI=1, FakeDI=0. Some (mostly Ubisoft games) will need FakeWMI=1, and FakeDI>0 (game depended, but 2 should be safe for now).
+Pre 3.1.4.0 history deleted from this file.
+
+08/08/2010 - version 3.2.0.164
+
+ejocys writhed new FFB implemetation ! This fix many FFB problems !
+crazycat fixed XInputGetCapatibilities.
+I added some FakeAPI chages: FakeDI=3 - blocker, as old dinput8.dll blocker, 
+	it will block all devices accept mouse and keyboard.
+New FakeAPI option FakeWMI_NOPIDVID, to add only IG_ string in WMI, Prototype and POPFS 
+	now playble with FFB on settings: FakeWMI=1, FakeWMI_NOPIDVID=1, FakeDI=0.
 
 22/04/2010 - version 3.2.0.91
 
@@ -22,185 +47,4 @@ Added FakeAPI calls - dinput8 dlls are now deprecated
 Removed patching features
 Experimental native mode (support for native xinput devices) 
 Fix very old accuarcy bug for axis, now have correct values, from -32768 to +32767
-Removed Linears (somone used this ?)
-
-11/04/2009 - version 3.1.3.0 (3.1 RC3) (by Virus; http://virusdev.ovh.org/files)
-
-Some big changes because of RC2 issues. My mistake is to making emu better that XInput is, that done more cons, that pros. 
-	So I went back to strict XInput specification, and dont use things from dinput that are not needed.
-	First change is that emu from now will ALWAYS be working in a DirectInputs Background Mode (DISCL_BACKGROUND) and
-	use of a XInputEnable function to enable and disable input. So how it work now ? Now is a check, before we know a check we must know flags.
-	So if 'enabled' is a flag to enable gamepad passed from game to emu, and 'UseEnabled' is flag that check if XInputEnable is called, 
-	we have 4 states of thats flags combination:
-	
-	enabled is FALSE and UseEnabled is FALSE -> emu is ON
-	enabled is TRUE  and UseEnabled is TRUE  -> emu is ON
-	
-	enabled is TRUE  and UseEnabled is FALSE -> emu is ON
-	enabled is FALSE and UseEnabled is TRUE  -> emu is OFF
-	
-	ie. we only off when UseEnable is TRUE (XInputEnable was called) and enabled is FALSE.
-	
-	That change should fix RC2 version vibration problems in GRID and maybe other games, and makes the emulator more compatible with XInput specification !
-	All reInit/Failsafe flags are NOT usable now, because should not be needed !
-Note: Self Signed xinput1_3.dll, ie. if file is signed by VirusDev cert, is supported by me.
-	
-10/28/2009 - version 3.1.2.0 RC2 (by Virus; http://virusdev.ovh.org/files)
-
-Changed game window search (foreground mode), Failsafe is not needed now for games like Bionic Commando !
-Fixed default config (PAD1 enabled, other disabled)
-	
-10/24/2009 - version 3.1.1.0 RC1 (by Virus; http://virusdev.ovh.org/files)
-
-Added support for Guitar Hero 4 (Wilds Mod), thanks to Wilds for the implementation and Seph for the idea
-Added POV Reverse (POVXReverse,POVYReverse) to swap Left/Right, Up/Down
-Some cleaning in project
-
-09/20/2009 - version 3.1.0.4 BETA3 (by Racer_S; www.tocaedit.com)
-
-Added Option UseAutoReInit; Reinit if Rumble fails (DIERR_NOTEXCLUSIVEACQUIRED) use only for game like Need For Speed SHIFT
-
-09/20/2009 - version 3.1.0.3 BETA3 (by Racer_S; www.tocaedit.com)
-
-Added Re-Init DirectX hotkey F9; it's like v3.0 but does not reload config file...  required for Need For Speed SHIFT
-Added SwapMotor in config file
-Added ForcePercent in config file
-
-08/06/2009 - version 3.1.0.0 BETA3 (by Virus; http://virusdev.ovh.org/files)
-
-Changed XInput initialization to fix some games (eg. Prototype)
-Merge pkt-zer0 fixes
-
-08/05/2009 - version 3.1.0.0 BETA2 (by Virus; http://virusdev.ovh.org/files)
-
-Dynamic Enumeration
-Some other small fixes
-Build using Visual Studio 2008 runtime (need to be installed to use emu now)
-Constant Force effect are now default
-
-08/03/2009 - version 3.1.0.0 BETA (by Virus; http://virusdev.ovh.org/files)
-
-Added Force Feedback, redesigned inizialization
-
-08/03/2009 - version 3.1.0.0 pre-BETA, for testing only (by Virus; http://virusdev.ovh.org/files)
-
-Rewritten DirectInput, now should be proper done.
-TODO: deinitialization, force feedback, any bug caused by DirectInput functions changes
-
-08/01/09 - version 3.0.6.8
-Changes in version 3.0.6.5 are wrong ! Corrected:
-
-	'a'  AXIS;	// Axis
-	's'  SLIDER;	// Slider
-	'x'  HAXIS;	// Half range Axis
-	'h'  HSLIDER;	// Half range Slider
-	without DIGITAL // Button
-	'-' after type and before number to reverse
-
-	Full ranges
-	AXIS:	(	0 to 255 from  -32768 to 32768) using axis
-	SLIDER:	(	0 to 255 from  -32768 to 32768) using slider
-
-	Half ranges
-	HAXIS:	(	0 to 255 from	    0 to 32768) using axis
-	HSLIDER:(	0 to 255 from	    0 to 32768) using slider
-	
-08/01/09 - version 3.0.6.7
-Rewrite deadzones (calculations in 3.0.3.6 are wrong)
-Fix Start()/Stop() ... one more time. This fixes 'pad discconect' if app windows lose focus and ForceFeedback is off.
-Added Release() and Delete() to clean separently.
-
-08/01/09 - version 3.0.6.6
-Fixed some Direct Input start/stop, and poll issues
-Changed XInputEnable to use new functions (Start(force)/Stop(force)), easier and better checks = less crashes :)
-Added new option: TriggerDeadzone in [PADx] sections. As states, it set deadzones for triggers.
-	Value is caluculated on orginal full axis/slider value, but in out units (value*128),
-	setting TriggerDeadzone=3 is like set deadzone to 0-3 and 252-255.
-
-07/31/09 - version 3.0.6.5
-ptk-zero rearrange some parts of code, and also give me a idea to map triggers as axis parts, upper and lower.
-
-	Usable variables are now:
-
-	'a'  AXIS;	// Axis
-	's'  SLIDER;	// Slider
-	'l'  LAXIS;	// Lower part of Axis
-	'u'  UAXIS;	// Upper part of Axis
-	'k'  LSLIDER;	// Lower part of Slider
-	'y'  USLIDER;	// Upper part of Slider
-	without DIGITAL // Button
-	'-' after type and before number to reverse
-
-	pkt-zer0 states:
-	Here, v is the full range (-32768 .. +32768) that should be projected to 0..255
-
-	And I map types to ranges (for triggers only):
-
-	Full ranges
-	AXIS:	(	0 to 255 from -32768 to 32768) using axis
-	SLIDER:	(	0 to 255 from -32768 to 32768) using slider
-
-	Part ranges
-	LAXIS:	(	0 to 255 from -32768 to		0) using axis
-	UAXIS:	(	0 to 255 from	   0 to 32768) using axis
-	LSLIDER:(	0 to 255 from -32768 to		0) using slider
-	USLIDER:(	0 to 255 from	   0 to 32768) using slider
-
-	If gamepads is 5 axis (single axis/slider for both triggers) set:
-
-	Example:
-
-	Old emulator settings:
-
-	Left Trigger=h4
-	Right Trigger=h4
-
-	Is same as this settings:
-
-	Left Trigger=a4
-	Right Trigger=a-4
-
-	Second axis must be reversed, because single axis pad must working as this:
-	
-	Left Trigger 0 ---> 255 <--- 0 Right Trigger
-	
-CSLIDER/CAXIS deleted, because should not be needed.
-HSLIDER/HAXIS deleted, because above method is mouch more flexible.
-
-Because of above changes I permanent change config file name to x360ce.ini, and also axis/slider numbering (Left Thumb Y is reversed, ad '-') 
-
-Added Visual Studio 2005 project files to sources.
-
-And big thanks to pkg-zer0 for help :)
-
-07/30/09 - version 3.0.6.0
-Rearange source code
-Fixed DirectInput Stop/Start if window lose/get focus
-Some null pointers fixed in DirectInput code
-Change config name to x360ce.ini (old will work too)
-
-07/26/09 - version 3.0.5.1
-Quick hotfix
-
-07/26/09 - version 3.0.5.0
-Changed Force Feedback functions
-
-07/24/09 - version 3.0.4.1
-Fixed Bionic Commando - once again ...
-Different dinput window hooking, works with SDK demos 
-	(on loose focus deactivate, on focus activate), should work with games.
-Removed DebugBeep, Log is better
-
-07/23/09 - version 3.0.4.0
-Fixed InitBeep lag, now uses MessageBeep (async)
-Fixed Bionic Commando - again, now proper emu deinit (free gamepads), different init/reinit dll
-Added logging function, use Log=1, logs to 'xbox360cemu.log' some interesting stuff
-
-07/22/09 - version 3.0.3.2
-Fixed Prototype (seems to be game bug !, game loops XInputGetCapabilities fuction)
-Added new option UseDebugBeep, useful for debugging
-
-07/21/09 - version 3.0.3.1
-Added half (single) axis support (use 'h' in trigger config)
-Fixed Force Feedback Vista/Windows 7 crash
-Fixed Bionic Commando
+Removed Linears (someone used this ?)
