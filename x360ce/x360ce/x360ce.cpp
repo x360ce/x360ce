@@ -355,8 +355,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	if(!Gamepad[dwUserIndex].ff.forceready) {
 		HRESULT hrLeftForce = E_FAIL, hrRightForce = E_FAIL;
-		hrLeftForce = PrepareForce(dwUserIndex,0);
-		hrRightForce = PrepareForce(dwUserIndex,1);
+		hrLeftForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].swapmotor?0:1);
+		hrRightForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].swapmotor?1:0);
 		if FAILED(hrLeftForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hrLeftForce));
 		if FAILED(hrRightForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hrRightForce));
 		if (SUCCEEDED(hrLeftForce) && SUCCEEDED(hrRightForce))

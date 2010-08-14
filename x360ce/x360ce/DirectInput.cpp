@@ -274,11 +274,11 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 
 	if (effidx == 0) {
 		Gamepad[idx].ff.xForce = nForce;
-		period = 60000;
+		period = Gamepad[idx].ff.leftPeriod*1000;
 	}
 	else {
 		Gamepad[idx].ff.yForce = nForce;
-		period = 120000;
+		period = Gamepad[idx].ff.rightPeriod*1000;
 	}
 	DWORD magnitude = 0;
 	// Constant:  Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay

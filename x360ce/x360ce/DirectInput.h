@@ -38,6 +38,8 @@ struct DINPUT_FF
 	INT oldYForce;
 	DWORD oldMagnitude;
 	DWORD oldPeriod;
+	DWORD leftPeriod;
+	DWORD rightPeriod;
 	DIEFFECT eff;
 	BOOL IsUpdateEffectCreated;
 	LPDIRECTINPUTEFFECT g_pEffect[2];
