@@ -113,7 +113,7 @@ extern "C" void InitConfig(LPTSTR ininame)
 void ReadPadConfig(INT idx) {
 
 	TCHAR section[5];
-	_stprintf_s(section,_T("PAD%d"),idx+1);
+	_stprintf_s(section,_T("PAD%u"),idx+1);
 	GamepadMap &PadMap = GamepadMapping[idx];
 
 	TCHAR buffer[MAX_PATH];
@@ -151,6 +151,9 @@ void ReadPadConfig(INT idx) {
 	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"));
 	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"));
 	Gamepad[idx].ff.forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent")) * (FLOAT) 0.01;	
+	Gamepad[idx].ff.leftPeriod = ReadUINTFromFile(section, _T("LeftMotorPeriod"),60);
+	Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, _T("RightMotorPeriod"),120);
+
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 	PadMap.DpadPOV = -1;
