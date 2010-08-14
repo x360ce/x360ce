@@ -393,7 +393,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
 	if(!capsready[dwUserIndex]) {
-		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
+		ZeroMemory(&XCAPS[dwUserIndex],sizeof(XINPUT_CAPABILITIES));
 
 		//XCAPS[dwUserIndex].Type = 0;
 		XCAPS[dwUserIndex].SubType = Gamepad[dwUserIndex].gamepadtype;
