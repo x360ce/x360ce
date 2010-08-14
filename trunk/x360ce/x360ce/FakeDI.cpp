@@ -395,12 +395,11 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 	HRESULT hr;
 	hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
-	if(ppvOut)  {
-		WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - %s interface"), IsEqualIID(riidltf,IID_IDirectInput8A) ? _T("ANSI"):_T("UNICODE"));
-
+	if(ppvOut) {
 		if(IsEqualIID(riidltf,IID_IDirectInput8A)) {
 			LPDIRECTINPUT8A pDIA = (LPDIRECTINPUT8A) *ppvOut;
 			if(pDIA)  {
+				WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - ANSI interface"));
 				if(!OriginalCreateDeviceA) {
 					OriginalCreateDeviceA = pDIA->lpVtbl->CreateDevice;
 					DetourTransactionBegin();
@@ -420,6 +419,7 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 			if (IsEqualIID(riidltf,IID_IDirectInput8W)) {
 				LPDIRECTINPUT8W pDIW = (LPDIRECTINPUT8W) *ppvOut;
 				if(pDIW)  {
+					WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - UNICODE interface"));
 					if(!OriginalCreateDeviceW) {
 						OriginalCreateDeviceW = pDIW->lpVtbl->CreateDevice;
 						DetourTransactionBegin();
