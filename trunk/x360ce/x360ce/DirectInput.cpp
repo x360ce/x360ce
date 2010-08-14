@@ -263,7 +263,7 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 {
-	WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) %d"), idx+1,effidx, force);
+	if(force) WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) %d"), idx+1,effidx, force);
 	//[-10000:10000]
 	//INT nForce = MulDiv(force, 2 * DI_FFNOMINALMAX, 65535) - DI_FFNOMINALMAX;
 	//[0:10000]
