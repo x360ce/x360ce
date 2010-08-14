@@ -342,9 +342,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	if (!pVibration || dwUserIndex > XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
 
 	if(!bEnabled && bUseEnabled) return S_OK;
-
 	HRESULT hr=ERROR_SUCCESS;
-	if(!bEnabled && bUseEnabled) return S_OK;
 
 	//hr = XInit(dwUserIndex);
 	//if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
@@ -395,19 +393,21 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
 	if(!capsready[dwUserIndex]) {
-		XCAPS[dwUserIndex].Type = 0;
+		ZeroMemory(&XCAPS,sizeof(XINPUT_CAPABILITIES));
+
+		//XCAPS[dwUserIndex].Type = 0;
 		XCAPS[dwUserIndex].SubType = Gamepad[dwUserIndex].gamepadtype;
-		XCAPS[dwUserIndex].Flags = 0;
+		//XCAPS[dwUserIndex].Flags = 0;
 		XCAPS[dwUserIndex].Vibration.wLeftMotorSpeed = pCapabilities->Vibration.wRightMotorSpeed = 0xFFFF;
 
 		XCAPS[dwUserIndex].Gamepad.wButtons = 0xFFFF;	
 		XCAPS[dwUserIndex].Gamepad.bLeftTrigger = 0xFF;
 		XCAPS[dwUserIndex].Gamepad.bRightTrigger = 0xFF;
 		//center is more reliable because SHORT is signed
-		XCAPS[dwUserIndex].Gamepad.sThumbLX = 0;
-		XCAPS[dwUserIndex].Gamepad.sThumbLY = 0;
-		XCAPS[dwUserIndex].Gamepad.sThumbRX = 0;
-		XCAPS[dwUserIndex].Gamepad.sThumbRY = 0;
+		//XCAPS[dwUserIndex].Gamepad.sThumbLX = 0;
+		//XCAPS[dwUserIndex].Gamepad.sThumbLY = 0;
+		//XCAPS[dwUserIndex].Gamepad.sThumbRX = 0;
+		//XCAPS[dwUserIndex].Gamepad.sThumbRY = 0;
 		capsready[dwUserIndex] = true;
 	}
 
