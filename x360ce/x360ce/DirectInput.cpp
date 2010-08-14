@@ -136,7 +136,7 @@ BOOL CALLBACK EnumFFAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pCo
 	return DIENUM_CONTINUE;
 }
 
-HRESULT UpdateState(INT idx )
+HRESULT UpdateState(DWORD idx )
 {
 	HRESULT hr=E_FAIL;
 

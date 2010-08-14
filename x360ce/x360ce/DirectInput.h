@@ -84,7 +84,7 @@ extern struct DINPUT_GAMEPAD Gamepad[4];
 
 HRESULT InitDirectInput(HWND, INT,INT);
 BOOL ButtonPressed(DWORD, INT);
-HRESULT UpdateState( INT );
+HRESULT UpdateState( DWORD );
 HRESULT InitDirectInput( HWND hook, INT idx );
 WORD EnumPadCount();
 HRESULT Enumerate(DWORD idx);
