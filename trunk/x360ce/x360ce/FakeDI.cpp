@@ -42,7 +42,7 @@ LPDIENUMDEVICESCALLBACKW lpOriginalCallbackW= NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 {
-	WriteLog(_T("[FAKEDI]  FakeEnumCallback"));
+	WriteLog(_T("[FAKEDI]  FakeEnumCallbackA"));
 	// Fast return if keyboard or mouse
 	if ((pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && (pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return lpOriginalCallbackA(pInst,pContext);
 
