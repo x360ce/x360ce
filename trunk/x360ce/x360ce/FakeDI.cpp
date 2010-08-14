@@ -462,37 +462,65 @@ void FakeDI()
 
 void FakeDI_Detach()
 {
-#if 0
-	if(OriginalGetDeviceInfo) {
-		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfo:: Detaching"));
+	if(OriginalGetDeviceInfoA) {
+		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfoA:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalGetDeviceInfo, FakeGetDeviceInfo);
+		DetourDetach(&(PVOID&)OriginalGetDeviceInfoA, FakeGetDeviceInfoA);
+		DetourTransactionCommit();
+	}
+	if(OriginalGetDeviceInfoW) {
+		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfoW:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalGetDeviceInfoW, FakeGetDeviceInfoW);
 		DetourTransactionCommit();
 	}
 
-	if(OriginalGetProperty) {
-		WriteLog(_T("[FAKEDI]  FakeGetProperty:: Detaching"));
+	if(OriginalGetPropertyA) {
+		WriteLog(_T("[FAKEDI]  FakeGetPropertyA:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalGetProperty, FakeGetProperty);
+		DetourDetach(&(PVOID&)OriginalGetPropertyA, FakeGetPropertyA);
+		DetourTransactionCommit();
+	}
+	if(OriginalGetPropertyW) {
+		WriteLog(_T("[FAKEDI]  FakeGetPropertyW:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalGetPropertyW, FakeGetPropertyW);
 		DetourTransactionCommit();
 	}
 
-	if(OriginalCreateDevice) {
-		WriteLog(_T("[FAKEDI]  FakeCreateDevice:: Detaching"));
+	if(OriginalCreateDeviceA) {
+		WriteLog(_T("[FAKEDI]  FakeCreateDeviceA:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalCreateDevice, FakeCreateDevice);
+		DetourDetach(&(PVOID&)OriginalCreateDeviceA, FakeCreateDeviceA);
+		DetourTransactionCommit();
+	}
+	if(OriginalCreateDeviceW) {
+		WriteLog(_T("[FAKEDI]  FakeCreateDeviceW:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCreateDeviceW, FakeCreateDeviceW);
 		DetourTransactionCommit();
 	}
 
-	if(OriginalEnumDevices)
+	if(OriginalEnumDevicesA)
 	{
-		WriteLog(_T("[FAKEDI]  FakeEnumDevices:: Detaching"));
+		WriteLog(_T("[FAKEDI]  FakeEnumDevicesA:: Detaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalEnumDevices, FakeEnumDevices);
+		DetourDetach(&(PVOID&)OriginalEnumDevicesA, FakeEnumDevicesA);
+		DetourTransactionCommit();
+	}
+	if(OriginalEnumDevicesW)
+	{
+		WriteLog(_T("[FAKEDI]  FakeEnumDevicesW:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalEnumDevicesW, FakeEnumDevicesW);
 		DetourTransactionCommit();
 	}
 
@@ -503,5 +531,4 @@ void FakeDI_Detach()
 		DetourDetach(&(PVOID&)OriginalDirectInput8Create, FakeDirectInput8Create);
 		DetourTransactionCommit();
 	}
-#endif
 }
