@@ -57,13 +57,9 @@ namespace x360ce.App
 		[DefaultValue("Unknown Device"), Description("Device product name.")]
 		public const string ProductName = "ProductName";
 		[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device product GUID.")]
-		public const string ProductGuid = "Product";
+        public const string ProductGuid = "ProductGuid";
 		[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device instance GUID.")]
-		public const string InstanceGuid = "Instance";
-		[DefaultValue("0x0"), Description("Device vendor Id.")]
-		public const string Vid = "VID";
-		[DefaultValue("0x0"), Description("Device product Id.")]
-		public const string Pid = "PID";
+        public const string InstanceGuid = "InstanceGuid";
 		[DefaultValue("1"), Description("Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.")]
 		public const string GamePadType = "ControllerType";
 		[DefaultValue("0"), Description("Native mode, calls system xinput1_3.dll to support xinput compatible controller together with emulated.")]

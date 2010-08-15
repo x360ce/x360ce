@@ -401,8 +401,6 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.ProductName, diControl.DeviceProductNameTextBox);
 			map.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
 			map.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
-			map.Add(section + SettingName.Vid, diControl.DeviceVidTextBox);
-			map.Add(section + SettingName.Pid, diControl.DevicePidTextBox);
 			map.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
 			map.Add(section + SettingName.NativeMode, NativeModeCheckBox);
 			// Mappings

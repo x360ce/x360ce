@@ -183,9 +183,6 @@
       <SetChecksum>true</SetChecksum>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
-      <BaseAddress>0x00400000</BaseAddress>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(TargetPath)" "E:\Gry\Tom Clancy%27s H.A.W.X"</Command>
