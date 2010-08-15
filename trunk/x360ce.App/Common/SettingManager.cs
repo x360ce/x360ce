@@ -70,8 +70,6 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
-				if (key == SettingName.Pid) return;
-				if (key == SettingName.Vid) return;
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -302,7 +300,6 @@ namespace x360ce.App
 				if (key == SettingName.DPadDown) v = "DOWN";
 				if (key == SettingName.DPadLeft) v = "LEFT";
 				if (key == SettingName.DPadRight) v = "RIGHT";
-				if (key == SettingName.Vid || key == SettingName.Pid) v = "0x0";
 			}
 			string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
 			// add comment.
