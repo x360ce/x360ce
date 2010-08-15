@@ -4,15 +4,19 @@ Google Code Project page: http://code.google.com/p/x360ce
 
 History:
 
-11/08/2010 - version 3.2.0.184
+15/08/2010 - version 3.2.0.241
+Separete ANSI and UNICODE FakeDI functions.
+XInputGetCapabilities will (hopefully) now return proper data, and should be little faster.
+WriteLog optimization (but for gaming set it alyways to 0, it's just little faster...).
+LeftMotorPeriod & RightMotorPeriod to manipulate FFB Period values (in milisecounds).
 
+11/08/2010 - version 3.2.0.184
 Marged FakeWMI & FakeDI to FakeMode:
 	0 - Disabled
 	1 - Normal mode,game will detect gamepad as xinput compatibilie device.
 	2 - Compatbility mode, game will detect gamepad as XBOX 360 Controler for Windows.
 
 10/08/2010 - version 3.2.0.171
-
 crazycat fix main FakeDI problems by temporary disabling it for enumeration inside x360ce dll so FakeDI=2 will not break x360ce enumeration ! (BIG thanks for that, the idea was so simple ...).
 So I disabled magic checks in FakeEnumCallback that are ussles now (because above change) and add check for FakeDI inside FakeGetProperty.
 FakeWMI_NOPIDVID was removed, insted FakeWMI will check for FakeDI setting because only usefull settings are:
@@ -23,7 +27,6 @@ FakeWMI_NOPIDVID was removed, insted FakeWMI will check for FakeDI setting becau
 Pre 3.1.4.0 history deleted from this file.
 
 08/08/2010 - version 3.2.0.164
-
 ejocys writhed new FFB implemetation ! This fix many FFB problems !
 crazycat fixed XInputGetCapatibilities.
 I added some FakeAPI chages: FakeDI=3 - blocker, as old dinput8.dll blocker, 
@@ -32,7 +35,6 @@ New FakeAPI option FakeWMI_NOPIDVID, to add only IG_ string in WMI, Prototype an
 	now playble with FFB on settings: FakeWMI=1, FakeWMI_NOPIDVID=1, FakeDI=0.
 
 22/04/2010 - version 3.2.0.91
-
 Change build enviroment to Visual Studio 2010.
 Build with Detours library from MPC-HC (should be better, but force compiling with static runtime).
 Added Unicode/ANSI detection to FakeDI Callback.
@@ -42,7 +44,6 @@ Many minor changes, and some code cleanup.
 Automatic version system based on SVN revision (major.minor.patch.svn_revision).
 
 11/18/2009 - version 3.1.4.0 (by Virus; http://virusdev.ovh.org/files)
-
 Added FakeAPI calls - dinput8 dlls are now deprecated
 Removed patching features
 Experimental native mode (support for native xinput devices) 
