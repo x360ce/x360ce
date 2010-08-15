@@ -43,8 +43,18 @@ LPDIENUMDEVICESCALLBACKW lpOriginalCallbackW= NULL;
 BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 {
 	WriteLog(_T("[FAKEDI]  FakeEnumCallbackA"));
+
 	// Fast return if keyboard or mouse
-	if ((pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && (pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return lpOriginalCallbackA(pInst,pContext);
+	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD)) {
+		WriteLog(_T("[FAKEDI]  FakeEnumCallbackA:: Keyboard detected"));
+		return lpOriginalCallbackA(pInst,pContext);
+	}
+	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE)) {
+		WriteLog(_T("[FAKEDI]  FakeEnumCallbackA:: Mouse detected"));
+		return lpOriginalCallbackA(pInst,pContext);
+	}
+
+	if(wFakeMode == 3) return DIENUM_STOP;
 
 	if(pInst && pInst->dwSize!=0)
 	{
@@ -97,8 +107,18 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 {
 	WriteLog(_T("[FAKEDI]  FakeEnumCallbackW"));
+
 	// Fast return if keyboard or mouse
-	if ((pInst->dwDevType == DI8DEVTYPE_KEYBOARD) && (pInst->dwDevType == DI8DEVTYPE_MOUSE) ) return lpOriginalCallbackW(pInst,pContext);
+	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD)) {
+		WriteLog(_T("[FAKEDI]  FakeEnumCallbackA:: Keyboard detected"));
+		return lpOriginalCallbackW(pInst,pContext);
+	}
+	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE)) {
+		WriteLog(_T("[FAKEDI]  FakeEnumCallbackA:: Mouse detected"));
+		return lpOriginalCallbackW(pInst,pContext);
+	}
+
+	if(wFakeMode == 3) return DIENUM_STOP;
 
 	if(pInst && pInst->dwSize!=0)
 	{
@@ -152,7 +172,7 @@ HRESULT STDMETHODCALLTYPE FakeEnumDevicesA (LPDIRECTINPUT8A This, DWORD dwDevTyp
 	if (lpCallback)
 	{
 		lpOriginalCallbackA= lpCallback;
-		return OriginalEnumDevicesA(This,dwDevType,FakeEnumCallbackA,pvRef,dwFlags);
+		return OriginalEnumDevicesA(This,dwDevType,&FakeEnumCallbackA,pvRef,dwFlags);
 	}
 	return OriginalEnumDevicesA(This,dwDevType,lpCallback,pvRef,dwFlags);
 }
@@ -165,7 +185,7 @@ HRESULT STDMETHODCALLTYPE FakeEnumDevicesW (LPDIRECTINPUT8W This, DWORD dwDevTyp
 	if (lpCallback)
 	{
 		lpOriginalCallbackW= lpCallback;
-		return OriginalEnumDevicesW(This,dwDevType,FakeEnumCallbackW,pvRef,dwFlags);
+		return OriginalEnumDevicesW(This,dwDevType,&FakeEnumCallbackW,pvRef,dwFlags);
 	}
 	return OriginalEnumDevicesW(This,dwDevType,lpCallback,pvRef,dwFlags);
 }
@@ -180,7 +200,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 	if(pdidi) {
 		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfoA"));
 
-		if(wFakeMode == 2) {
+		if(wFakeMode >= 2) {
 			for(int i = 0; i < 4; i++) {
 				if(Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1) {
 					DIDEVICEINSTANCEA OrigInst, FakeInst;
@@ -230,7 +250,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 	if(pdidi) {
 		WriteLog(_T("[FAKEDI]  FakeGetDeviceInfoW"));
 
-		if(wFakeMode == 2) {
+		if(wFakeMode >= 2) {
 			for(int i = 0; i < 4; i++) {
 				if(Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1) {
 					DIDEVICEINSTANCEW OrigInst, FakeInst;						
@@ -275,7 +295,7 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 	hr = OriginalGetPropertyA(This, rguidProp, pdiph);
 	WriteLog(_T("[FAKEDI]  FakeGetPropertyA"));
 
-	if (wFakeMode == 2 ) {
+	if (wFakeMode >= 2 ) {
 		if ( (&rguidProp==&DIPROP_VIDPID) ) {
 			DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
@@ -301,15 +321,15 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 	hr = OriginalGetPropertyW(This, rguidProp, pdiph);
 	WriteLog(_T("[FAKEDI]  FakeGetPropertyW"));
 
-	if (wFakeMode == 2 ) {
-		if ( (&rguidProp==&DIPROP_VIDPID) ) {
+	if (wFakeMode >= 2 ) {
+		if ((IsEqualGUID(rguidProp,DIPROP_VIDPID))) {
 			DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
 			WriteLog(_T("[FAKEDI]  Original VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 			((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
 			WriteLog(_T("[FAKEDI]  Fake VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 		}
-		if ( (&rguidProp==&DIPROP_PRODUCTNAME) ) {
+		if ((IsEqualGUID(rguidProp,DIPROP_PRODUCTNAME))) {
 			WriteLog(_T("[FAKEDI]  Original PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 			_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
 			WriteLog(_T("[FAKEDI]  Fake PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
@@ -396,7 +416,7 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 	hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
 	if(ppvOut) {
-		if(IsEqualIID(riidltf,IID_IDirectInput8A)) {
+		if(IsEqualGUID(riidltf,IID_IDirectInput8A)) {
 			LPDIRECTINPUT8A pDIA = (LPDIRECTINPUT8A) *ppvOut;
 			if(pDIA)  {
 				WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - ANSI interface"));
@@ -416,7 +436,7 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 					DetourTransactionCommit();
 				}
 			}
-			if (IsEqualIID(riidltf,IID_IDirectInput8W)) {
+			if (IsEqualGUID(riidltf,IID_IDirectInput8W)) {
 				LPDIRECTINPUT8W pDIW = (LPDIRECTINPUT8W) *ppvOut;
 				if(pDIW)  {
 					WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - UNICODE interface"));
