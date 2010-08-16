@@ -27,6 +27,8 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void (WINAPI *OriginalCoUninitialize)() = NULL;
 HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid, 
 									  __in_opt LPUNKNOWN pUnkOuter,
 									  __in     DWORD dwClsContext, 
@@ -243,6 +245,7 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 {
 	HRESULT hr;
 	IWbemLocator* pIWbemLocator = NULL;
+
 	/*
 	LPOLESTR str1;
 	StringFromIID(rclsid,&str1);
@@ -254,6 +257,7 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	StringFromIID(riid,&str2);
 	WriteLog(_T("riid: %s"),str2);
 	*/
+
 	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(ppv && (riid == IID_IWbemLocator)) {
@@ -265,7 +269,6 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 			if(!OriginalConnectServer) {
 
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
-
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
 				DetourAttach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
@@ -279,11 +282,62 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void FakeCoUninitialize()
+{
+	WriteLog(_T("[FAKEAPI] FakeCoUninitialize"));
+
+	if(OriginalGet) {
+		WriteLog(_T("[FAKEWMI] FakeGet:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalGet, FakeGet);
+		DetourTransactionCommit();
+		OriginalGet = NULL;
+	}
+
+	if(OriginalNext) {
+		WriteLog(_T("[FAKEWMI] FakeNext:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalNext, FakeNext);
+		DetourTransactionCommit();
+		OriginalNext=NULL;
+	}
+
+	if(OriginalCreateInstanceEnum) {
+		WriteLog(_T("[FAKEWMI] FakeCreateInstanceEnum:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
+		DetourTransactionCommit();
+		OriginalCreateInstanceEnum=NULL;
+	}
+
+	if(OriginalConnectServer) {
+		WriteLog(_T("[FAKEWMI] FakeConnectServer:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
+		DetourTransactionCommit();
+		OriginalConnectServer=NULL;
+	}
+	OriginalCoUninitialize();
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FakeWMI()
 {
+	if(!OriginalCoUninitialize) {
+		OriginalCoUninitialize = CoUninitialize;
+		WriteLog(_T("[FAKEAPI] FakeCoUninitialize:: Attaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalCoUninitialize, FakeCoUninitialize);
+		DetourTransactionCommit();
+	}
 	if(!OriginalCoCreateInstance) {
 		OriginalCoCreateInstance = CoCreateInstance;
-
 		WriteLog(_T("[FAKEAPI] FakeCoCreateInstance:: Attaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
@@ -333,6 +387,14 @@ void FakeWMI_Detach()
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+		DetourTransactionCommit();
+	}
+
+	if(OriginalCoUninitialize) {
+		WriteLog(_T("[FAKEWMI] FakeCoUninitialize:: Detaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCoUninitialize, FakeCoUninitialize);
 		DetourTransactionCommit();
 	}
 }
