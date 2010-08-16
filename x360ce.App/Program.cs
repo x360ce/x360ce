@@ -31,10 +31,10 @@ namespace x360ce.App
 
        public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-			form.timer.Stop();
+			form.UpdateTimer.Stop();
             ErrorCount++;
             form.UpdateStatus("- " + e.Exception.Message);
-			form.timer.Start();
+			form.UpdateTimer.Start();
         }
 	}
 }

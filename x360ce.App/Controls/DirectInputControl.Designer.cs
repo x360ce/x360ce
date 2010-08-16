@@ -70,10 +70,10 @@
             this.DiDeviceTypeLabel = new System.Windows.Forms.Label();
             this.DeviceInstanceGuidTextBox = new System.Windows.Forms.TextBox();
             this.DeviceProductGuidTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.DiProductGuidLabel = new System.Windows.Forms.Label();
+            this.DiInstanceGuidLabel = new System.Windows.Forms.Label();
             this.DeviceProductNameTextBox = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.DiProductNameLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -456,23 +456,23 @@
             this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(225, 20);
             this.DeviceProductGuidTextBox.TabIndex = 36;
             // 
-            // label1
+			// DiProductGuidLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(356, 32);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(25, 13);
-            this.label1.TabIndex = 48;
-            this.label1.Text = "PG:";
+            this.DiProductGuidLabel.AutoSize = true;
+            this.DiProductGuidLabel.Location = new System.Drawing.Point(356, 32);
+			this.DiProductGuidLabel.Name = "DiProductGuidLabel";
+            this.DiProductGuidLabel.Size = new System.Drawing.Size(25, 13);
+            this.DiProductGuidLabel.TabIndex = 48;
+            this.DiProductGuidLabel.Text = "PG:";
             // 
-            // label2
+			// DiInstanceGuidLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(356, 58);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(21, 13);
-            this.label2.TabIndex = 48;
-            this.label2.Text = "IG:";
+            this.DiInstanceGuidLabel.AutoSize = true;
+            this.DiInstanceGuidLabel.Location = new System.Drawing.Point(356, 58);
+			this.DiInstanceGuidLabel.Name = "DiInstanceGuidLabel";
+            this.DiInstanceGuidLabel.Size = new System.Drawing.Size(21, 13);
+            this.DiInstanceGuidLabel.TabIndex = 48;
+            this.DiInstanceGuidLabel.Text = "IG:";
             // 
             // DeviceProductNameTextBox
             // 
@@ -484,23 +484,23 @@
             this.DeviceProductNameTextBox.Size = new System.Drawing.Size(225, 20);
             this.DeviceProductNameTextBox.TabIndex = 36;
             // 
-            // label3
+			// DiProductNameLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(356, 6);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(25, 13);
-            this.label3.TabIndex = 48;
-            this.label3.Text = "PN:";
+            this.DiProductNameLabel.AutoSize = true;
+            this.DiProductNameLabel.Location = new System.Drawing.Point(356, 6);
+			this.DiProductNameLabel.Name = "DiProductNameLabel";
+            this.DiProductNameLabel.Size = new System.Drawing.Size(25, 13);
+            this.DiProductNameLabel.TabIndex = 48;
+            this.DiProductNameLabel.Text = "PN:";
             // 
             // DirectInputControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.DiEffectsDataGridView);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.DiInstanceGuidLabel);
+            this.Controls.Add(this.DiProductNameLabel);
+            this.Controls.Add(this.DiProductGuidLabel);
             this.Controls.Add(this.DiCapDPadsLabel);
             this.Controls.Add(this.DiCapButtonsLabel);
             this.Controls.Add(this.DiDPadLabel);
@@ -574,9 +574,9 @@
 		private System.Windows.Forms.Label DiDeviceTypeLabel;
 		public System.Windows.Forms.TextBox DevicePidTextBox;
         public System.Windows.Forms.TextBox DeviceVidTextBox;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label DiProductGuidLabel;
+		private System.Windows.Forms.Label DiInstanceGuidLabel;
+		private System.Windows.Forms.Label DiProductNameLabel;
 		public System.Windows.Forms.TextBox DeviceProductNameTextBox;
         public System.Windows.Forms.TextBox DeviceInstanceGuidTextBox;
         public System.Windows.Forms.TextBox DeviceProductGuidTextBox;
