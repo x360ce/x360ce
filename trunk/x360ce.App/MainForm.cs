@@ -381,6 +381,7 @@ namespace x360ce.App
 		{
 			UpdateTimer.Stop();
 			// Unload xinput()
+			UnsafeNativeMethods.Enable(false);
 			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
 			if (tmp.Exists)
 			{
