@@ -717,6 +717,21 @@ namespace x360ce.App.Controls
 			UpdateForceFeedBack();
 		}
 
+		private void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			if (gamePadState == null) return;
+			UpdateForceFeedBack2();
+		}
+
+		public void UpdateForceFeedBack2()
+		{
+			// Convert Direct Input Period force feedback effect parameter value.
+			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * 5;
+			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * 5;
+			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
+			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
+		}
+
 		public void UpdateForceFeedBack()
 		{
 			// Convert 100% trackbar to MotorSpeed's 0 - 1.0
@@ -724,12 +739,9 @@ namespace x360ce.App.Controls
 			float rightMotor = (float)RightMotorTestTrackBar.Value / 100F;
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
-			// Convert Direct Input Period force feedback effect parameter value.
-			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value *5;
-			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value *5;
-			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
-			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
 			GamePad.SetVibration((Microsoft.Xna.Framework.PlayerIndex)mainForm.ControllerIndex, leftMotor, rightMotor);
+			//UnsafeNativeMethods.Enable(false);
+			//UnsafeNativeMethods.Enable(true);
 		}
 
 		private void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
@@ -744,5 +756,6 @@ namespace x360ce.App.Controls
 			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
+	
 	}
 }

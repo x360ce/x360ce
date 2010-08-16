@@ -94,6 +94,11 @@ namespace x360ce.App
 				}
 				// convert 256  to 100%
 				if (key == SettingName.AxisToDPadOffset) n = System.Convert.ToInt32((float)n / 256F * 100F);
+				// Convert 500 to 100
+				if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				{
+					n = System.Convert.ToInt32((float)n / 500F * 100F);
+				}
 				if (n < tc.Minimum) n = tc.Minimum;
 				if (n > tc.Maximum) n = tc.Maximum;
 				tc.Value = n;
@@ -277,6 +282,11 @@ namespace x360ce.App
 				{
 					// convert 100%  to 256
 					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
+				}
+				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				{
+					// convert 100  to 500
+					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
 				}
 				else v = tc.Value.ToString();
 			}
