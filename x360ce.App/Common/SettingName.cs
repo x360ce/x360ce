@@ -152,6 +152,12 @@ namespace x360ce.App
 		public const string ForceSwapMotor = "SwapMotor";
 		[DefaultValue("100"), Description("Strenght of force feedback. Use 0 to 100.")]
 		public const string ForceOverall = "ForcePercent";
+		[DefaultValue("60"), Description("Left motor period. Use 0 to 500.")]
+		public const string LeftMotorPeriod = "LeftMotorPeriod";
+		[DefaultValue("120"), Description("Right motor period. Use 0 to 500.")]
+		public const string RightMotorPeriod = "RightMotorPeriod";
+
+
 
 		public static bool IsButton(string name)
 		{
