@@ -439,6 +439,8 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.ForceEnable, FfEnableCheckBox);
 			map.Add(section + SettingName.ForceSwapMotor, FfSwapMotorCheckBox);
 			map.Add(section + SettingName.ForceOverall, FfOverallTrackBar);
+			map.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
+			map.Add(section + SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
 			// Axis To D-Pad
 			map.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
 			map.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
@@ -709,13 +711,7 @@ namespace x360ce.App.Controls
 			RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void LeftMotorTestTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			if (gamePadState == null) return;
-			UpdateForceFeedBack();
-		}
-
-		private void RightMotorTestTrackBar_ValueChanged(object sender, EventArgs e)
+		private void MotorTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			if (gamePadState == null) return;
 			UpdateForceFeedBack();
@@ -728,6 +724,11 @@ namespace x360ce.App.Controls
 			float rightMotor = (float)RightMotorTestTrackBar.Value / 100F;
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
+			// Convert Direct Input Period force feedback effect parameter value.
+			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value *5;
+			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value *5;
+			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
+			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
 			GamePad.SetVibration((Microsoft.Xna.Framework.PlayerIndex)mainForm.ControllerIndex, leftMotor, rightMotor);
 		}
 
