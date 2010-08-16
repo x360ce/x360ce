@@ -380,6 +380,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			UpdateTimer.Stop();
+			// Unload xinput()
 			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
 			if (tmp.Exists)
 			{
