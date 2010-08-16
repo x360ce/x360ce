@@ -1,90 +1,33 @@
 ---------------------------------------------------------------
-How To to Build "XBOX 360 Controller Emulator" Solution
+How To to Build "XBOX 360 Controller Emulator"
 ---------------------------------------------------------------
 
 Download and Install:
 
-    1. Microsoft DirectX SDK 9.0c (February 2010)
+    1. Microsoft DirectX SDK 9.0c
        http://msdn.microsoft.com/directx
-    2. Microsoft Research Detours Express 2.1
-       http://research.microsoft.com/en-us/projects/detours
-    3. Microsoft Windows SDK for Windows 7 and .NET Framework 3.5 SP1 6.1.7600.16385
+    2. Microsoft Visual Studio 2010
+       http://msdn.microsoft.com/en-us/vstudio/bb984878.aspx
+	   or 
+	   Microsoft Visual Studio 2010 Express
+	   http://www.microsoft.com/express/
+	   with Microsoft Windows SDK for Windows
        http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx
 
-Reboot your PC to initialize new environment variables.
 
-Make sure that this folder contains binaries:
-c:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\
+Open C:\Users\[user]\AppData\Local\Microsoft\MSBuild\v4.0\Microsoft.Cpp.Win32.user.props
+Copy this, and change DirectX SDK path to yours:
 
-Open "Visual Studio 2010 Command Prompt" as administrator and build Detour:
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <IncludePath>G:\SDK\DirectX\Include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LibraryPath>G:\SDK\DirectX\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+</Project>
 
-    cd "C:\Program Files (x86)\Microsoft Research\Detours Express 2.1"
-    set PROCESSOR_ARCHITECTURE=x86
-    nmake
-
-Open Visual Studio 2010
-
-Open: Build -> Configuration Manager...
-
-	Active Solution Configuration: Debug
-	Active Solution Platform: Win32
-
-	Project Context, Configuation, Platform
-	x360ce,          Debug,        Win32
-	x360.App,        Debug,        AnyCPU
-
-Open: Tools -> Options -> Projects and Solutions -> VC++ Directories
-
-Select
-    Platform: Win32
-
-        Directories: Include files
-            $(DXSDK_DIR)Include
-            C:\Program Files (x86)\Microsoft Research\Detours Express 2.1\src
-            ...
-        Directories: Library files
-            $(DXSDK_DIR)Lib\x86
-            C:\Program Files (x86)\Microsoft Research\Detours Express 2.1\lib\x86
-            ...
-
-    Platform: x64
-
-        Directories: Include files
-            $(DXSDK_DIR)Include
-            C:\Program Files (x86)\Microsoft Research\Detours Express 2.1\src
-            ...
-        Directories: Library files
-            $(DXSDK_DIR)Lib\x64
-            C:\Program Files (x86)\Microsoft Research\Detours Express 2.1\lib\x64
-            ...
-
-Build solution.
-
-
----------------------------------------------------------------
-Some notes:
----------------------------------------------------------------
-
-Error	1	error C2664: 'wcstoul' :
-cannot convert parameter 1 from 'LPTSTR' to 'const wchar_t *'
-x360ce\config.cpp	91	x360ce
-
-Error	1	error C2664: 'int sprintf_s(char *,size_t,const char *,...)' :
-cannot convert parameter 1 from 'WCHAR [260]' to 'char *'
-x360ce\DetourDInput.cpp	143	x360ce
-
-
-		size_t i;
-		char * pmbhello = (char *)malloc( MB_CUR_MAX );
-		wchar_t *pwchello = ((LPDIPROPSTRING)pdiph)->wsz;
-		wchar_t *pwc      = (wchar_t *)malloc( sizeof( wchar_t ));
-		i = wcstombs( pmbhello, pwchello, MB_CUR_MAX );
-	
-
-		WriteLog(_T("Old PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
-		_stprintf_s( pmbhello, i, _T("XBOX 360 For Windows (Controller)") );
-		WriteLog(_T("New PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
-
-
+Open x360ce solution file and build.
 
 
