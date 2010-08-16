@@ -138,9 +138,9 @@
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
-			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -378,7 +378,7 @@
 			// 
 			this.ForceEnableCheckBox.AutoSize = true;
 			this.ForceEnableCheckBox.Location = new System.Drawing.Point(6, 19);
-			this.ForceEnableCheckBox.Name = "FfEnableCheckBox";
+			this.ForceEnableCheckBox.Name = "ForceEnableCheckBox";
 			this.ForceEnableCheckBox.Size = new System.Drawing.Size(140, 17);
 			this.ForceEnableCheckBox.TabIndex = 32;
 			this.ForceEnableCheckBox.Text = "Enable Force Feedback";
@@ -393,7 +393,7 @@
 			this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.RightMotorPeriodTrackBar.TabIndex = 30;
 			this.RightMotorPeriodTrackBar.TickFrequency = 2;
-			this.RightMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorTrackBar_ValueChanged);
+			this.RightMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
 			// 
 			// RightMotorTestTrackBar
 			// 
@@ -454,7 +454,7 @@
 			this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.LeftMotorPeriodTrackBar.TabIndex = 28;
 			this.LeftMotorPeriodTrackBar.TickFrequency = 2;
-			this.LeftMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorTrackBar_ValueChanged);
+			this.LeftMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
 			// 
 			// LeftMotorPeriodTextBox
 			// 
@@ -1369,6 +1369,12 @@
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
 			// 
+			// DiMenuStrip
+			// 
+			this.DiMenuStrip.Name = "DiMenuStrip";
+			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
+			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
+			// 
 			// PadKeyboardControl
 			// 
 			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1376,12 +1382,6 @@
 			this.PadKeyboardControl.Name = "PadKeyboardControl";
 			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
 			this.PadKeyboardControl.TabIndex = 0;
-			// 
-			// DiMenuStrip
-			// 
-			this.DiMenuStrip.Name = "DiMenuStrip";
-			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
-			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
 			// PadControl
 			// 
