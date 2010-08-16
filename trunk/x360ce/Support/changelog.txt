@@ -4,6 +4,9 @@ Google Code Project page: http://code.google.com/p/x360ce
 
 History:
 
+16/08/2010 - version 3.2.0.246
+CrazyCat added FakeWMI CoUninitialize (fixes HAWX 1.02!)
+
 15/08/2010 - version 3.2.0.241
 Separete ANSI and UNICODE FakeDI functions.
 XInputGetCapabilities will (hopefully) now return proper data, and should be little faster.
