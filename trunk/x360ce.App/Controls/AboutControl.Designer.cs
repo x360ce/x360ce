@@ -40,10 +40,10 @@
 			this.AboutJocysLabel = new System.Windows.Forms.Label();
 			this.AboutVirusLabel = new System.Windows.Forms.Label();
 			this.AboutProductLabel = new System.Windows.Forms.Label();
-			this.pictureBox3 = new System.Windows.Forms.PictureBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+			this.ProductPictureBox = new System.Windows.Forms.PictureBox();
+			this.GoogleProjectLabel = new System.Windows.Forms.Label();
+			this.GoogleProjectLinkLabel = new System.Windows.Forms.LinkLabel();
+			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// ChangeLogTextBox
@@ -157,34 +157,34 @@
 			this.AboutProductLabel.TabIndex = 8;
 			this.AboutProductLabel.Text = "XBOX 360 Controller Emulator {0}";
 			// 
-			// pictureBox3
+			// ProductPictureBox
 			// 
-			this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-			this.pictureBox3.Location = new System.Drawing.Point(3, 3);
-			this.pictureBox3.Name = "pictureBox3";
-			this.pictureBox3.Size = new System.Drawing.Size(128, 128);
-			this.pictureBox3.TabIndex = 5;
-			this.pictureBox3.TabStop = false;
+			this.ProductPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
+			this.ProductPictureBox.Location = new System.Drawing.Point(3, 3);
+			this.ProductPictureBox.Name = "ProductPictureBox";
+			this.ProductPictureBox.Size = new System.Drawing.Size(128, 128);
+			this.ProductPictureBox.TabIndex = 5;
+			this.ProductPictureBox.TabStop = false;
 			// 
-			// label1
+			// GoogleProjectLabel
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(351, 66);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(80, 13);
-			this.label1.TabIndex = 6;
-			this.label1.Text = "Google Project:";
+			this.GoogleProjectLabel.AutoSize = true;
+			this.GoogleProjectLabel.Location = new System.Drawing.Point(351, 66);
+			this.GoogleProjectLabel.Name = "GoogleProjectLabel";
+			this.GoogleProjectLabel.Size = new System.Drawing.Size(80, 13);
+			this.GoogleProjectLabel.TabIndex = 6;
+			this.GoogleProjectLabel.Text = "Google Project:";
 			// 
-			// linkLabel1
+			// GoogleProjectLinkLabel
 			// 
-			this.linkLabel1.AutoSize = true;
-			this.linkLabel1.Location = new System.Drawing.Point(437, 66);
-			this.linkLabel1.Name = "linkLabel1";
-			this.linkLabel1.Size = new System.Drawing.Size(171, 13);
-			this.linkLabel1.TabIndex = 13;
-			this.linkLabel1.TabStop = true;
-			this.linkLabel1.Text = "http://code.google.com/p/x360ce";
-			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+			this.GoogleProjectLinkLabel.AutoSize = true;
+			this.GoogleProjectLinkLabel.Location = new System.Drawing.Point(437, 66);
+			this.GoogleProjectLinkLabel.Name = "GoogleProjectLinkLabel";
+			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(171, 13);
+			this.GoogleProjectLinkLabel.TabIndex = 13;
+			this.GoogleProjectLinkLabel.TabStop = true;
+			this.GoogleProjectLinkLabel.Text = "http://code.google.com/p/x360ce";
+			this.GoogleProjectLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
 			// 
 			// AboutControl
 			// 
@@ -196,18 +196,18 @@
 			this.Controls.Add(this.AboutWikiLabel);
 			this.Controls.Add(this.AboutTocaEditLinkLabel);
 			this.Controls.Add(this.AboutTocaLabel);
-			this.Controls.Add(this.linkLabel1);
+			this.Controls.Add(this.GoogleProjectLinkLabel);
 			this.Controls.Add(this.AboutJocysLinkLabel);
 			this.Controls.Add(this.AboutVirusLinkLabel);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.GoogleProjectLabel);
 			this.Controls.Add(this.AboutJocysLabel);
 			this.Controls.Add(this.AboutVirusLabel);
 			this.Controls.Add(this.AboutProductLabel);
-			this.Controls.Add(this.pictureBox3);
+			this.Controls.Add(this.ProductPictureBox);
 			this.Name = "AboutControl";
 			this.Size = new System.Drawing.Size(619, 328);
 			this.Load += new System.EventHandler(this.AboutControl_Load);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -226,8 +226,8 @@
 		private System.Windows.Forms.Label AboutJocysLabel;
 		private System.Windows.Forms.Label AboutVirusLabel;
 		private System.Windows.Forms.Label AboutProductLabel;
-		private System.Windows.Forms.PictureBox pictureBox3;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.LinkLabel linkLabel1;
+		private System.Windows.Forms.PictureBox ProductPictureBox;
+		private System.Windows.Forms.Label GoogleProjectLabel;
+		private System.Windows.Forms.LinkLabel GoogleProjectLinkLabel;
 	}
 }

@@ -134,7 +134,7 @@ namespace x360ce.App
 			////XInput.ReLoadLibrary(cXinput3File);
 			//// start capture events.
 			if (Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
-			timer.Start();
+			UpdateTimer.Start();
 			////ReloadXInputLibrary();
 		}
 
@@ -343,7 +343,7 @@ namespace x360ce.App
 		/// </summary>
 		public void NotifySettingsChange()
 		{
-			timer.Stop();
+			UpdateTimer.Stop();
 			SettingsTimer.Stop();
 			// Timer will be started inside Settings timer.
 			SettingsTimer.Start();
@@ -379,7 +379,7 @@ namespace x360ce.App
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			timer.Stop();
+			UpdateTimer.Stop();
 			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
 			if (tmp.Exists)
 			{
@@ -392,7 +392,7 @@ namespace x360ce.App
 
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
-			timer.Stop();
+			UpdateTimer.Stop();
 			// store unique instance settings.
 			for (int i = 0; i < 4; i++)
 			{
@@ -407,7 +407,7 @@ namespace x360ce.App
 			FileInfo ini = new FileInfo(SettingManager.Current.iniFile);
 			ini.CopyTo(SettingManager.Current.iniTmpFile, true);
 			toolStripStatusLabel1.Text = "Settings saved";
-			timer.Start();
+			UpdateTimer.Start();
 		}
 
 		#region Timer
@@ -489,12 +489,12 @@ namespace x360ce.App
 		{
 			settingsChanged = true;
 			SettingsTimer.Stop();
-			timer.Start();
+			UpdateTimer.Start();
 		}
 
 		bool settingsChanged = false;
 
-		private void timer_Tick(object sender, EventArgs e)
+		private void UpdateTimer_Tick(object sender, EventArgs e)
 		{
 			Program.TimerCount++;
 			bool instancesChanged = false;

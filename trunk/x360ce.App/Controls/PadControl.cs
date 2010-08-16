@@ -436,9 +436,9 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
 			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
 			// Force Feedback
-			map.Add(section + SettingName.ForceEnable, FfEnableCheckBox);
-			map.Add(section + SettingName.ForceSwapMotor, FfSwapMotorCheckBox);
-			map.Add(section + SettingName.ForceOverall, FfOverallTrackBar);
+			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
+			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
+			map.Add(section + SettingName.ForceOverall, ForceOverallTrackBar);
 			map.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
 			map.Add(section + SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
 			// Axis To D-Pad
@@ -693,10 +693,10 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void FfOverallTrackBar_ValueChanged(object sender, EventArgs e)
+		private void ForceOverallTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			FfOverallTextBox.Text = string.Format("{0} % ", control.Value);
+			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 		private void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)

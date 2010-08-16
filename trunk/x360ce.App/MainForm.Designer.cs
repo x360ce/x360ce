@@ -33,7 +33,7 @@ namespace x360ce.App
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.timer = new System.Windows.Forms.Timer(this.components);
+			this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
 			this.ResetButton = new System.Windows.Forms.Button();
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.Pad1TabPage = new System.Windows.Forms.TabPage();
@@ -81,10 +81,10 @@ namespace x360ce.App
 			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// timer
+			// UpdateTimer
 			// 
-			this.timer.Interval = 50;
-			this.timer.Tick += new System.EventHandler(this.timer_Tick);
+			this.UpdateTimer.Interval = 50;
+			this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
 			// 
 			// ResetButton
 			// 
@@ -533,7 +533,7 @@ namespace x360ce.App
         private GroupBox InstalledFilesGroupBox;
 		private GroupBox TestingAndLoggingGroupBox;
         private CheckBox DebugModeCheckBox;
-		public Timer timer;
+		public Timer UpdateTimer;
 		private CheckBox XInputEnableCheckBox;
 
 	}
