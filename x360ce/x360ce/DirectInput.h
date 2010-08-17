@@ -44,7 +44,6 @@ struct DINPUT_FF
 	BOOL IsUpdateEffectCreated;
 	LPDIRECTINPUTEFFECT g_pEffect[2];
 	DWORD g_dwNumForceFeedbackAxis;
-	BOOL forceready;
 	BOOL useforce;
 	FLOAT forcepercent;
 	DINPUT_FF()
