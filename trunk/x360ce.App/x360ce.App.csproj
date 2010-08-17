@@ -71,7 +71,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\ControllerType.cs" />
     <Compile Include="Common\FakeMode.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Ini.cs" />
