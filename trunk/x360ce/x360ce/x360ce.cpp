@@ -353,15 +353,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
 
-	if(!Gamepad[dwUserIndex].ff.forceready) {
-		HRESULT hrLeftForce = E_FAIL, hrRightForce = E_FAIL;
-		hrLeftForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].swapmotor?0:1);
-		hrRightForce = PrepareForce(dwUserIndex,Gamepad[dwUserIndex].swapmotor?1:0);
-		if FAILED(hrLeftForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrLeftForce = %s"), dwUserIndex, DXErrStr(hrLeftForce));
-		if FAILED(hrRightForce) WriteLog(_T("[XINPUT] PrepareForce for pad %d failed with code hrRightForce = %s"), dwUserIndex, DXErrStr(hrRightForce));
-		if (SUCCEEDED(hrLeftForce) && SUCCEEDED(hrRightForce))
-			Gamepad[dwUserIndex].ff.forceready = TRUE;
-	}
+	PrepareForce(dwUserIndex,Gamepad[dwUserIndex].swapmotor?0:1);
+	PrepareForce(dwUserIndex,Gamepad[dwUserIndex].swapmotor?1:0);
 
 	if(Gamepad[dwUserIndex].swapmotor) {
 		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
@@ -372,12 +365,11 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		wRightMotorSpeed = (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 	}
 
-	if(Gamepad[dwUserIndex].ff.forceready) {
-		hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
-		if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
-		hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,1);
-		if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
-	}
+	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,0);
+	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+	hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,1);
+	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+
 	return ERROR_SUCCESS;
 }
 
