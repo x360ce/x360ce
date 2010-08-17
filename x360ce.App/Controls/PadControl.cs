@@ -43,7 +43,7 @@ namespace x360ce.App.Controls
 			this.markC.SetResolution(rH, rV);
 			this.markR.SetResolution(rH, rV);
 			// Add gamepad typed to ComboBox.
-			var types = (ControllerType[])Enum.GetValues(typeof(ControllerType));
+			var types = (GamePadType[])Enum.GetValues(typeof(GamePadType));
 			foreach (var item in types) GamePadTypeComboBox.Items.Add(item);
 			// Attach context strip with button names to every ComboBox on general tab.
 			foreach (var control in GeneralTabPage.Controls)

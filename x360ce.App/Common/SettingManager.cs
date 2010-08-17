@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Xna.Framework.Input;
 
 namespace x360ce.App
 {
@@ -49,7 +50,7 @@ namespace x360ce.App
 				var cbx = (ComboBox)control;
 				int n = 0;
 				int.TryParse(value, out n);
-				try { cbx.SelectedItem = (ControllerType)n; }
+				try { cbx.SelectedItem = (GamePadType)n; }
 				catch (Exception) { if (IsDebugMode) throw; }
 			}
 			// If Di menu strip attached.
@@ -247,7 +248,7 @@ namespace x360ce.App
 			string v = string.Empty;
 			if (control.Name == "GamePadTypeComboBox")
 			{
-				v = ((int)(ControllerType)((ComboBox)control).SelectedItem).ToString();
+				v = ((int)(GamePadType)((ComboBox)control).SelectedItem).ToString();
 			}
 			// If di menu strip attached.
 			else if (control is ComboBox && control.ContextMenuStrip != null)
