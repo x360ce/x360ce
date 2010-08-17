@@ -380,8 +380,16 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			UpdateTimer.Stop();
-			// Unload xinput()
-			UnsafeNativeMethods.Enable(false);
+			// Disable force feedback effect before closing app.
+			try
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
+						GamePad.SetVibration((PlayerIndex)i, 0, 0);
+				}
+			}
+			catch (Exception) { }
 			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
 			if (tmp.Exists)
 			{
