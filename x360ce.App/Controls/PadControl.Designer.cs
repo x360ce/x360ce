@@ -138,9 +138,9 @@
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
+			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -1369,12 +1369,6 @@
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
 			// 
-			// DiMenuStrip
-			// 
-			this.DiMenuStrip.Name = "DiMenuStrip";
-			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
-			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
-			// 
 			// PadKeyboardControl
 			// 
 			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1382,6 +1376,12 @@
 			this.PadKeyboardControl.Name = "PadKeyboardControl";
 			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
 			this.PadKeyboardControl.TabIndex = 0;
+			// 
+			// DiMenuStrip
+			// 
+			this.DiMenuStrip.Name = "DiMenuStrip";
+			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
+			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
 			// PadControl
 			// 
@@ -1430,9 +1430,7 @@
 		private System.Windows.Forms.CheckBox ForceSwapMotorCheckBox;
 		private System.Windows.Forms.CheckBox ForceEnableCheckBox;
 		private System.Windows.Forms.Label TestRightMotorLabel;
-		private System.Windows.Forms.TrackBar LeftMotorTestTrackBar;
 		private System.Windows.Forms.Label TestLeftMotorLabel;
-		private System.Windows.Forms.TrackBar RightMotorTestTrackBar;
 		private System.Windows.Forms.TrackBar LeftTriggerDeadZoneTrackBar;
 		private System.Windows.Forms.TrackBar RightTriggerDeadZoneTrackBar;
 		private System.Windows.Forms.Label RightTriggerDeadZoneLabel;
@@ -1532,5 +1530,7 @@
 		private System.Windows.Forms.TrackBar LeftMotorPeriodTrackBar;
 		private System.Windows.Forms.TextBox LeftMotorPeriodTextBox;
 		private System.Windows.Forms.Label RightMotorPeriodLabel;
+		public System.Windows.Forms.TrackBar LeftMotorTestTrackBar;
+		public System.Windows.Forms.TrackBar RightMotorTestTrackBar;
 	}
 }
