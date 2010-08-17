@@ -388,6 +388,9 @@ namespace x360ce.App
 					if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
 						GamePad.SetVibration((PlayerIndex)i, 0, 0);
 				}
+				UnsafeNativeMethods.FreeLibrary();
+				System.Threading.Thread.Sleep(100);
+
 			}
 			catch (Exception) { }
 			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
