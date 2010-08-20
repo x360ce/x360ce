@@ -261,20 +261,9 @@ HRESULT InitDirectInput( HWND hDlg, INT idx )
 	return S_OK;
 }
 
-BOOL EffectIsPlaying(DWORD idx)
-{
-	DWORD state;
-	Gamepad[idx].g_pGamepad->GetForceFeedbackState(&state);
-
-	if(state & DIGFFS_STOPPED) return FALSE;
-	return TRUE;
-}
-
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 {
 	if(force) WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) %d"), idx+1,effidx, force);
-	if(!force) return Gamepad[idx].ff.g_pEffect[effidx]->Stop();
-	if(EffectIsPlaying(idx)) Gamepad[idx].ff.g_pEffect[effidx]->Stop();
 	//[-10000:10000]
 	//INT nForce = MulDiv(force, 2 * DI_FFNOMINALMAX, 65535) - DI_FFNOMINALMAX;
 	//[0:10000]
@@ -326,7 +315,8 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 		//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !3b! HR = %s"), idx+1,effidx, DXErrStr(hr));
 		magnitude = MulDiv(force, DI_FFNOMINALMAX, 65535);
 		// Apply magnitude from both directions 
-		rglDirection[0] = 1;
+		rglDirection[0] = Gamepad[idx].ff.xForce;
+		rglDirection[1] = Gamepad[idx].ff.yForce;
 		Gamepad[idx].ff.pf.dwMagnitude = magnitude;
 		Gamepad[idx].ff.pf.dwPeriod = period;
 		//LeftForceMagnitude
@@ -350,13 +340,12 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx)
 			Gamepad[idx].ff.oldYForce = Gamepad[idx].ff.yForce;
 			//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !7! HR = %s"), idx+1,effidx, DXErrStr(hr));
 			// Set the new parameters and start the effect immediately.
-			if( FAILED( hr = Gamepad[idx].ff.g_pEffect[effidx]->SetParameters( &Gamepad[idx].ff.eff, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS  | DIEP_SAMPLEPERIOD ))){
+			if( FAILED( hr = Gamepad[idx].ff.g_pEffect[effidx]->SetParameters( &Gamepad[idx].ff.eff, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START ))){
 				WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) failed with code HR = %s"), idx+1,effidx, DXErrStr(hr));
 				return hr;
 			};
 	}
 	//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) return HR = %s"), idx+1,effidx, DXErrStr(hr));
-	Gamepad[idx].ff.g_pEffect[effidx]->Start(INFINITE,DIES_SOLO);
 	return hr;
 }
 
