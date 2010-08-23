@@ -91,12 +91,12 @@ extern "C" void InitConfig(LPTSTR ininame)
 	_stprintf_s(tstrConfigFile,_T("%s%s"),strPath, ininame);
 
 	// Read global options
-	bInitBeep = ReadUINTFromFile(_T("Options"), _T("UseInitBeep"));
-	writelog = ReadUINTFromFile(_T("Options"), _T("Log"));
+	bInitBeep = ReadUINTFromFile(_T("Options"), _T("UseInitBeep"),1);
+	writelog = ReadUINTFromFile(_T("Options"), _T("Log"),0);
 
 	//FakeAPI
-	wFakeMode = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeMode"));
-	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"));
+	wFakeMode = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeMode"),0);
+	wFakeWinTrust = (WORD) ReadUINTFromFile(_T("FakeAPI"), _T("FakeWinTrust"),0);
 
 	if(wFakeMode)
 	{
@@ -118,7 +118,7 @@ void ReadPadConfig(INT idx) {
 
 	TCHAR buffer[MAX_PATH];
 
-	Gamepad[idx].native = ReadUINTFromFile(section, _T("Native"));
+	Gamepad[idx].native = ReadUINTFromFile(section, _T("Native"),0);
 	if(Gamepad[idx].native) 
 	{ 
 		wNativeMode = 1;
@@ -143,14 +143,14 @@ void ReadPadConfig(INT idx) {
 
 	Gamepad[idx].dwPadIndex = idx;
 
-	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"));
-	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"));
-	Gamepad[idx].ff.useforce = ReadUINTFromFile(section, _T("UseForceFeedback"));
-	Gamepad[idx].gamepadtype = (BYTE)ReadUINTFromFile(section, _T("ControllerType"));
-	Gamepad[idx].axistodpad = ReadUINTFromFile(section, _T("AxisToDPad"));
-	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"));
-	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"));
-	Gamepad[idx].ff.forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent")) * (FLOAT) 0.01;	
+	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"),0);
+	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"),75);
+	Gamepad[idx].ff.useforce = ReadUINTFromFile(section, _T("UseForceFeedback"),0);
+	Gamepad[idx].gamepadtype = (BYTE)ReadUINTFromFile(section, _T("ControllerType"),1);
+	Gamepad[idx].axistodpad = ReadUINTFromFile(section, _T("AxisToDPad"),0);
+	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, _T("AxisToDPadDeadZone"),0);
+	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"),0);
+	Gamepad[idx].ff.forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent"),100) * (FLOAT) 0.01;	
 	Gamepad[idx].ff.leftPeriod = ReadUINTFromFile(section, _T("LeftMotorPeriod"),60);
 	Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, _T("RightMotorPeriod"),120);
 

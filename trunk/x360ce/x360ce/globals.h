@@ -28,6 +28,9 @@
 #define VERSION_PATCH 0
 #define VERSION_STRING TOSTRING(VERSION_MAJOR) "." TOSTRING(VERSION_MINOR) "." TOSTRING(VERSION_PATCH) "." TOSTRING(SVN_REV)
 
+#define LeftMotor 0
+#define RightMotor 1
+
 extern HINSTANCE hX360ceInstance;
 extern HINSTANCE hNativeInstance;
 extern HWND hWnd;
