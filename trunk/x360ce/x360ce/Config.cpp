@@ -146,7 +146,7 @@ void ReadPadConfig(INT idx) {
 		StringToGUID(&Gamepad[idx].instance,buffer);
 	}
 
-	if (Gamepad[idx].product.Data1 > 0) 
+	if ((Gamepad[idx].product.Data1 != 0) && (Gamepad[idx].instance.Data1 != 0))
 	{ 
 		Gamepad[idx].configured = true;
 		PadMap.enabled = true;
