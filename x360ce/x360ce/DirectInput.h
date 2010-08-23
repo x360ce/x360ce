@@ -28,10 +28,17 @@ struct DINPUT_DATA
 		ZeroMemory(this,sizeof(DINPUT_DATA));
 	}
 };
+struct FFB_CAPS
+{
+	BOOL ConstantForce;
+	BOOL PeriodicForce;
+};
 
 struct DINPUT_FF
 {
 	DIPERIODIC pf;
+	DICONSTANTFORCE cf;
+	DIRAMPFORCE rf;
 	INT xForce;
 	INT yForce;
 	INT oldXForce;
@@ -40,13 +47,13 @@ struct DINPUT_FF
 	DWORD oldPeriod;
 	DWORD leftPeriod;
 	DWORD rightPeriod;
-	DIEFFECT eff;
+	DIEFFECT eff[2];
 	BOOL IsUpdateEffectCreated;
 	LPDIRECTINPUTEFFECT g_pEffect[2];
 	DWORD g_dwNumForceFeedbackAxis;
-	BOOL forceready;
 	BOOL useforce;
 	FLOAT forcepercent;
+	FFB_CAPS ffbcaps;
 	DINPUT_FF()
 	{
 		ZeroMemory(this,sizeof(DINPUT_FF));
