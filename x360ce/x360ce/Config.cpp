@@ -128,11 +128,23 @@ void ReadPadConfig(INT idx) {
 	ReadStringFromFile(section, _T("ProductGUID"), buffer, _T("0"));
 	StringToGUID(&Gamepad[idx].product,buffer);
 
+	if(!Gamepad[idx].product.Data1)
+	{
+		ReadStringFromFile(section, _T("Product"), buffer, _T("0"));
+		StringToGUID(&Gamepad[idx].product,buffer);
+	}
+
 	Gamepad[idx].pid = HIWORD(Gamepad[idx].product.Data1);
 	Gamepad[idx].vid = LOWORD(Gamepad[idx].product.Data1);
 
 	ReadStringFromFile(section, _T("InstanceGUID"), buffer, _T("0"));
 	StringToGUID(&Gamepad[idx].instance,buffer);
+
+	if(!Gamepad[idx].instance.Data1)
+	{
+		ReadStringFromFile(section, _T("Instance"), buffer, _T("0"));
+		StringToGUID(&Gamepad[idx].instance,buffer);
+	}
 
 	if (Gamepad[idx].product.Data1 > 0) 
 	{ 
