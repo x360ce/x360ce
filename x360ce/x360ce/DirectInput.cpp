@@ -310,8 +310,12 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 
 	Gamepad[idx].ff.eff[motor].lpvTypeSpecificParams = &Gamepad[idx].ff.pf;
 
-	Gamepad[idx].ff.g_pEffect[motor]->SetParameters( &Gamepad[idx].ff.eff[motor], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_DURATION | DIEP_SAMPLEPERIOD);
-	Gamepad[idx].ff.g_pEffect[motor]->Start(INFINITE,DIES_SOLO);
+	hr = Gamepad[idx].ff.g_pEffect[motor]->SetParameters( &Gamepad[idx].ff.eff[motor], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_DURATION | DIEP_SAMPLEPERIOD);
+	if(FAILED(hr)) return hr;
+
+	hr = Gamepad[idx].ff.g_pEffect[motor]->Start(INFINITE,DIES_SOLO);
+	if(FAILED(hr)) return hr;
+
 	return S_OK;
 }
 
