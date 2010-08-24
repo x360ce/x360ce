@@ -56,13 +56,6 @@ LPCTSTR PIDName(DWORD processID)
 	return (szProcessName);
 }
 
-VOID GetTime( tm *timeinfo )
-{
-	time_t rawtime;
-	time ( &rawtime );
-	localtime_s(timeinfo,&rawtime);  
-}
-
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
 {
 	return ReadUINTFromFile(strFileSection, strKey, NULL);
@@ -76,11 +69,13 @@ UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault)
 VOID CreateLog()
 {
 	if (writelog) {
-		tm timeinfo;
-		GetTime(&timeinfo);
+
+		SYSTEMTIME systime;
+		GetLocalTime(&systime);
+
 		logfilename = new TCHAR[MAX_PATH];
 		_stprintf_s(logfilename,MAX_PATH,_T("x360ce\\x360ce %d%02d%02d-%02d%02d%02d.log"),
-			timeinfo.tm_year+1900,timeinfo.tm_mon+1,timeinfo.tm_mday,timeinfo.tm_hour,timeinfo.tm_min,timeinfo.tm_sec);
+			systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
 		if( (GetFileAttributes(_T("x360ce")) == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(_T("x360ce"), NULL);
 	}
 }
@@ -88,15 +83,16 @@ VOID CreateLog()
 BOOL WriteLog(LPTSTR str,...)
 {
 	if (writelog) {
-		tm timeinfo;
-		GetTime(&timeinfo);
+		SYSTEMTIME systime;
+		GetLocalTime(&systime);
+
 		FILE * fp;
 		_tfopen_s(&fp,logfilename,_T("a"));
 
 		//fp is null, file is not open.
 		if (fp==NULL)
 			return -1;
-		_ftprintf (fp,_T("%02d:%02d:%02d.%u:: "),timeinfo.tm_hour,timeinfo.tm_min,timeinfo.tm_sec,GetTickCount());
+		_ftprintf (fp,_T("%02d:%02d:%02d.%u:: "),systime.wHour,systime.wMinute,systime.wSecond,systime.wMilliseconds);
 		va_list arglist;
 		va_start(arglist,str);
 		_vftprintf(fp,str,arglist);

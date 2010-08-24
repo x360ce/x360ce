@@ -410,15 +410,13 @@ HRESULT STDMETHODCALLTYPE FakeCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
 {
-
-	HRESULT hr;
-
 	/*
 	LPOLESTR str1;
 	StringFromIID(riidltf,&str1);
 	WriteLog(_T("rclsid: %s"),str1);
 	*/
 
+	HRESULT hr;
 	hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
 	if(ppvOut) {
