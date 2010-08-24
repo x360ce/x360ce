@@ -328,20 +328,20 @@ void FakeCoUninitialize()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FakeWMI()
 {
-	if(!OriginalCoUninitialize) {
-		OriginalCoUninitialize = CoUninitialize;
-		WriteLog(_T("[FAKEAPI] FakeCoUninitialize:: Attaching"));
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourAttach(&(PVOID&)OriginalCoUninitialize, FakeCoUninitialize);
-		DetourTransactionCommit();
-	}
 	if(!OriginalCoCreateInstance) {
 		OriginalCoCreateInstance = CoCreateInstance;
 		WriteLog(_T("[FAKEAPI] FakeCoCreateInstance:: Attaching"));
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
+		DetourTransactionCommit();
+	}
+	if(!OriginalCoUninitialize) {
+		OriginalCoUninitialize = CoUninitialize;
+		WriteLog(_T("[FAKEAPI] FakeCoUninitialize:: Attaching"));
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalCoUninitialize, FakeCoUninitialize);
 		DetourTransactionCommit();
 	}
 }

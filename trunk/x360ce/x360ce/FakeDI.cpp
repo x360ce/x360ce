@@ -296,14 +296,14 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 	WriteLog(_T("[FAKEDI]  FakeGetPropertyA"));
 
 	if (wFakeMode >= 2 ) {
-		if ( (&rguidProp==&DIPROP_VIDPID) ) {
+		if ( (&rguidProp == &DIPROP_VIDPID) ) {
 			DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
 			WriteLog(_T("[FAKEDI]  Original VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 			((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
 			WriteLog(_T("[FAKEDI]  Fake VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 		}
-		if ( (&rguidProp==&DIPROP_PRODUCTNAME) ) {
+		if ( (&rguidProp == &DIPROP_PRODUCTNAME) ) {
 			WriteLog(_T("[FAKEDI]  Original PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 			_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
 			WriteLog(_T("[FAKEDI]  Fake PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
@@ -322,18 +322,17 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 	WriteLog(_T("[FAKEDI]  FakeGetPropertyW"));
 
 	if (wFakeMode >= 2 ) {
-		if ((IsEqualGUID(rguidProp,DIPROP_VIDPID))) {
+		if ( (&rguidProp == &DIPROP_VIDPID)) {
 			DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
 
 			WriteLog(_T("[FAKEDI]  Original VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 			((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
 			WriteLog(_T("[FAKEDI]  Fake VIDPID = %08X"),((LPDIPROPDWORD)pdiph)->dwData);
 		}
-		if ((IsEqualGUID(rguidProp,DIPROP_PRODUCTNAME))) {
+		if ((&rguidProp == &DIPROP_PRODUCTNAME)) {
 			WriteLog(_T("[FAKEDI]  Original PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
 			_stprintf_s( ((LPDIPROPSTRING)pdiph)->wsz, _T("%s"), _T("XBOX 360 For Windows (Controller)") );
 			WriteLog(_T("[FAKEDI]  Fake PRODUCTNAME = %s"),((LPDIPROPSTRING)pdiph)->wsz);
-
 		}
 	}
 	return hr;
@@ -413,6 +412,13 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 {
 
 	HRESULT hr;
+
+	/*
+	LPOLESTR str1;
+	StringFromIID(riidltf,&str1);
+	WriteLog(_T("rclsid: %s"),str1);
+	*/
+
 	hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
 	if(ppvOut) {
@@ -436,25 +442,25 @@ HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 					DetourTransactionCommit();
 				}
 			}
-			if (IsEqualGUID(riidltf,IID_IDirectInput8W)) {
-				LPDIRECTINPUT8W pDIW = (LPDIRECTINPUT8W) *ppvOut;
-				if(pDIW)  {
-					WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - UNICODE interface"));
-					if(!OriginalCreateDeviceW) {
-						OriginalCreateDeviceW = pDIW->lpVtbl->CreateDevice;
-						DetourTransactionBegin();
-						DetourUpdateThread(GetCurrentThread());
-						DetourAttach(&(PVOID&)OriginalCreateDeviceW, FakeCreateDeviceW);
-						DetourTransactionCommit();
-					}
-					if(!OriginalEnumDevicesW)
-					{
-						OriginalEnumDevicesW = pDIW->lpVtbl->EnumDevices;
-						DetourTransactionBegin();
-						DetourUpdateThread(GetCurrentThread());
-						DetourAttach(&(PVOID&)OriginalEnumDevicesW, FakeEnumDevicesW);
-						DetourTransactionCommit();
-					}
+		}
+		if (IsEqualGUID(riidltf,IID_IDirectInput8W)) {
+			LPDIRECTINPUT8W pDIW = (LPDIRECTINPUT8W) *ppvOut;
+			if(pDIW)  {
+				WriteLog(_T("[FAKEDI]  FakeDirectInput8Create - UNICODE interface"));
+				if(!OriginalCreateDeviceW) {
+					OriginalCreateDeviceW = pDIW->lpVtbl->CreateDevice;
+					DetourTransactionBegin();
+					DetourUpdateThread(GetCurrentThread());
+					DetourAttach(&(PVOID&)OriginalCreateDeviceW, FakeCreateDeviceW);
+					DetourTransactionCommit();
+				}
+				if(!OriginalEnumDevicesW)
+				{
+					OriginalEnumDevicesW = pDIW->lpVtbl->EnumDevices;
+					DetourTransactionBegin();
+					DetourUpdateThread(GetCurrentThread());
+					DetourAttach(&(PVOID&)OriginalEnumDevicesW, FakeEnumDevicesW);
+					DetourTransactionCommit();
 				}
 			}
 		}
