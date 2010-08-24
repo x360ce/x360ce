@@ -47,31 +47,24 @@ void LoadOriginalDll()
 
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
 { 
-	WNDCLASSEX wcx; 
+	WNDCLASS wc; 
 
 	// Fill in the window class structure with parameters 
 	// that describe the main window. 
 
-	wcx.cbSize = sizeof(wcx);          // size of structure 
-	wcx.style = CS_HREDRAW | CS_VREDRAW;
-	wcx.lpfnWndProc = DefWindowProc;     // points to window procedure 
-	wcx.cbClsExtra = 0;                // no extra class memory 
-	wcx.cbWndExtra = 0;                // no extra window memory 
-	wcx.hInstance = hinstance;         // handle to instance 
-	wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);              // predefined app. icon 
-	wcx.hCursor = LoadCursor(NULL, IDC_ARROW);                    // predefined arrow 
-	wcx.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);    // white background brush 
-	wcx.hIconSm = (HICON) LoadImage(hinstance, // small class icon 
-		MAKEINTRESOURCE(5),
-		IMAGE_ICON, 
-		GetSystemMetrics(SM_CXSMICON), 
-		GetSystemMetrics(SM_CYSMICON), 
-		LR_DEFAULTCOLOR); 
-	wcx.lpszMenuName =  _T("x360ceMenu");    // name of menu resource
-	wcx.lpszClassName = _T("x360ceWClass");  // name of window class 
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = DefWindowProc;     // points to window procedure 
+	wc.cbClsExtra = 0;                // no extra class memory 
+	wc.cbWndExtra = 0;                // no extra window memory 
+	wc.hInstance = hinstance;         // handle to instance 
+	wc.hIcon = NULL;              // predefined app. icon 
+	wc.hCursor = NULL;                    // predefined arrow 
+	wc.hbrBackground = NULL;    // white background brush 
+	wc.lpszMenuName =  _T("x360ceMenu");    // name of menu resource
+	wc.lpszClassName = _T("x360ceWClass");  // name of window class 
 
 	// Register the window class. 
-	return RegisterClassEx(&wcx); 
+	return RegisterClass(&wc); 
 } 
 
 BOOL Createx360ceWindow(HINSTANCE hInst)
@@ -87,7 +80,7 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 			CW_USEDEFAULT,       // default height 
 			(HWND) NULL,         // no owner window 
 			(HMENU) NULL,        // use class menu 
-			hX360ceInstance,     // handle to application instance 
+			hInst,     // handle to application instance 
 			(LPVOID) NULL);      // no window-creation data 
 		return TRUE;
 	}
