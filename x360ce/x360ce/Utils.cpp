@@ -74,8 +74,9 @@ VOID CreateLog()
 		GetLocalTime(&systime);
 
 		logfilename = new TCHAR[MAX_PATH];
-		_stprintf_s(logfilename,MAX_PATH,_T("x360ce\\x360ce %d%02d%02d-%02d%02d%02d.log"),
+		_stprintf_s(logfilename,MAX_PATH,_T("x360ce\\x360ce %u%02u%02u-%02u%02u%02u.log"),
 			systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
+
 		if( (GetFileAttributes(_T("x360ce")) == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(_T("x360ce"), NULL);
 	}
 }
@@ -92,7 +93,7 @@ BOOL WriteLog(LPTSTR str,...)
 		//fp is null, file is not open.
 		if (fp==NULL)
 			return -1;
-		_ftprintf (fp,_T("%02d:%02d:%02d.%u:: "),systime.wHour,systime.wMinute,systime.wSecond,systime.wMilliseconds);
+		_ftprintf (fp,_T("%02u:%02u:%02u.%03u:: "),systime.wHour,systime.wMinute,systime.wSecond,systime.wMilliseconds);
 		va_list arglist;
 		va_start(arglist,str);
 		_vftprintf(fp,str,arglist);

@@ -326,7 +326,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		*(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
 	}
 
-	return hr;
+	if(SUCCEEDED(hr)) return ERROR_SUCCESS;
+	return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
