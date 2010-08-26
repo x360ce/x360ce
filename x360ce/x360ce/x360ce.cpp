@@ -26,8 +26,15 @@ BOOL bUseEnabled= FALSE;
 
 DWORD dwlastUserIndex = (DWORD) -1;
 
-XINPUT_CAPABILITIES XCAPS[4];
-bool capsready[4] = {0,0,0,0};
+XINPUT_CAPABILITIES *LPXCAPS[4]={NULL,NULL,NULL,NULL};
+
+void XDeInit()
+{
+	for(DWORD dwUserIndex=0; dwUserIndex<XUSER_MAX_COUNT; dwUserIndex++) {
+		SAFE_DELETE(LPXCAPS[dwUserIndex]);
+	}
+
+}
 
 HRESULT XInit(DWORD dwUserIndex)
 {
@@ -75,7 +82,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
-	if (!pState || dwUserIndex > XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
+	if (!pState || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
@@ -322,8 +329,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	// --- Do Linears ---
 	for (int i = 0; i < 4; ++i) {
-		SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (Gamepad[dwUserIndex].axislinear[i] * 0.01))));
-		*(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
+
+		if (Gamepad[dwUserIndex].axislinear[i]) {
+
+			SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (Gamepad[dwUserIndex].axislinear[i] * 0.01))));
+			*(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
+		}
 	}
 
 	if(SUCCEEDED(hr)) return ERROR_SUCCESS;
@@ -340,7 +351,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		return nativeXInputSetState(dwUserIndex,pVibration);
 	}
 
-	if (!pVibration || dwUserIndex > XUSER_MAX_COUNT-1) return ERROR_BAD_ARGUMENTS; 
+	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
 
 	if(!bEnabled && bUseEnabled) return S_OK;
 	HRESULT hr=ERROR_SUCCESS;
@@ -357,8 +368,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	PrepareForce(dwUserIndex,LeftMotor);
 	PrepareForce(dwUserIndex,RightMotor);
 
-	wLeftMotorSpeed =  (WORD)((FLOAT)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
-	wRightMotorSpeed = (WORD)((FLOAT)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
+	wLeftMotorSpeed =  (WORD)((DOUBLE)pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
+	wRightMotorSpeed = (WORD)((DOUBLE)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 
 	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,LeftMotor);
 	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
@@ -377,28 +388,28 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
-	if (!pCapabilities || (dwUserIndex > (XUSER_MAX_COUNT-1)) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
+	if (!pCapabilities || (dwUserIndex >= XUSER_MAX_COUNT) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS; //thats correct
 
-	if(!capsready[dwUserIndex]) {
-		ZeroMemory(&XCAPS[dwUserIndex],sizeof(XINPUT_CAPABILITIES));
+	if(!LPXCAPS[dwUserIndex]) {
 
-		XCAPS[dwUserIndex].Type = XINPUT_DEVTYPE_GAMEPAD;
-		XCAPS[dwUserIndex].SubType = Gamepad[dwUserIndex].gamepadtype;
+		LPXCAPS[dwUserIndex] = new XINPUT_CAPABILITIES;
+		ZeroMemory(LPXCAPS[dwUserIndex],sizeof(XINPUT_CAPABILITIES));
+		LPXCAPS[dwUserIndex]->Type = XINPUT_DEVTYPE_GAMEPAD;
+		LPXCAPS[dwUserIndex]->SubType = Gamepad[dwUserIndex].gamepadtype;
 		//XCAPS[dwUserIndex].Flags = 0;
-		XCAPS[dwUserIndex].Vibration.wLeftMotorSpeed = XCAPS[dwUserIndex].Vibration.wRightMotorSpeed = 0xFFFF;
+		LPXCAPS[dwUserIndex]->Vibration.wLeftMotorSpeed = LPXCAPS[dwUserIndex]->Vibration.wRightMotorSpeed = 0xFFFF;
 
-		XCAPS[dwUserIndex].Gamepad.wButtons = 0xFFFF;	
-		XCAPS[dwUserIndex].Gamepad.bLeftTrigger = 0xFF;
-		XCAPS[dwUserIndex].Gamepad.bRightTrigger = 0xFF;
+		LPXCAPS[dwUserIndex]->Gamepad.wButtons = 0xFFFF;	
+		LPXCAPS[dwUserIndex]->Gamepad.bLeftTrigger = 0xFF;
+		LPXCAPS[dwUserIndex]->Gamepad.bRightTrigger = 0xFF;
 		//center is more reliable because SHORT is signed
 		//XCAPS[dwUserIndex].Gamepad.sThumbLX = 0;
 		//XCAPS[dwUserIndex].Gamepad.sThumbLY = 0;
 		//XCAPS[dwUserIndex].Gamepad.sThumbRX = 0;
 		//XCAPS[dwUserIndex].Gamepad.sThumbRY = 0;
-		capsready[dwUserIndex] = true;
 	}
 
-	*pCapabilities = XCAPS[dwUserIndex];
+	*pCapabilities = *LPXCAPS[dwUserIndex];
 	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
 
 	return ERROR_SUCCESS;

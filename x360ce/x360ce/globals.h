@@ -16,6 +16,9 @@
 #include "svnrev.h"
 
 //useful macros
+#define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETEARRAY(p)  { if(p) { delete[] (p);     (p)=NULL; } }
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 #define arrayof(x) (sizeof(x)/sizeof(x[0])) 
 #define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
 #define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
@@ -34,14 +37,10 @@
 extern HINSTANCE hX360ceInstance;
 extern HINSTANCE hNativeInstance;
 extern HWND hWnd;
-extern DWORD dwAppPID;
 extern LPCTSTR PIDName(DWORD);
 extern void InitConfig();
 extern BOOL bEnabled;
 extern WORD wNativeMode;
 
 void LoadOriginalDll();
-
-
-
-
+void XDeInit();

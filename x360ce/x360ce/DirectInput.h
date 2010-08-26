@@ -15,9 +15,6 @@
  
 #include <dinput.h>
 
-#define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }
-#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
-
 struct DINPUT_DATA 
 {
 	LPDIRECTINPUT8 g_pDI;
@@ -52,7 +49,7 @@ struct DINPUT_FF
 	LPDIRECTINPUTEFFECT g_pEffect[2];
 	DWORD g_dwNumForceFeedbackAxis;
 	BOOL useforce;
-	FLOAT forcepercent;
+	DOUBLE forcepercent;
 	FFB_CAPS ffbcaps;
 	DINPUT_FF()
 	{

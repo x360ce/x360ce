@@ -179,6 +179,7 @@
       <SetChecksum>true</SetChecksum>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <LinkErrorReporting>NoErrorReport</LinkErrorReporting>
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(TargetPath)" "E:\Gry\Tom Clancy%27s H.A.W.X"</Command>
