@@ -24,7 +24,6 @@ HINSTANCE hX360ceInstance = NULL;
 HINSTANCE hNativeInstance = NULL;
 
 HWND hWnd = NULL;
-DWORD dwAppPID = NULL;
 
 void LoadOriginalDll()
 {
@@ -115,7 +114,7 @@ VOID InitInstance(HMODULE hModule)
 #endif
 
 	hX360ceInstance = (HINSTANCE) hModule;
-	dwAppPID=GetCurrentProcessId();
+	DWORD dwAppPID =GetCurrentProcessId();
 	InitConfig(_T("x360ce.ini"));
 	CreateLog();
 
@@ -144,10 +143,13 @@ VOID ExitInstance()
 		CloseHandle(hNativeInstance);
 	}
 
+	XDeInit();
+
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
 	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
 	WriteLog(_T("[CORE]    x360ce terminating, bye"));
-	delete[] logfilename;
+
+	SAFE_DELETEARRAY(logfilename);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
