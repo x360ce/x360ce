@@ -433,12 +433,12 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.LeftThumbDeadZoneX, LeftTriggerDeadZoneXTrackBar);
 			map.Add(section + SettingName.LeftThumbDeadZoneY, LeftTriggerDeadZoneYTrackBar);
 			map.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
+			map.Add(section + SettingName.RightThumbDeadZoneX, RightTriggerDeadZoneXTrackBar);
+			map.Add(section + SettingName.RightThumbDeadZoneY, RightTriggerDeadZoneYTrackBar);
 			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
 			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
 			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
 			map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
-			map.Add(section + SettingName.RightThumbDeadZoneX, RightTriggerDeadZoneXTrackBar);
-			map.Add(section + SettingName.RightThumbDeadZoneY, RightTriggerDeadZoneYTrackBar);
 			// Force Feedback
 			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
 			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
