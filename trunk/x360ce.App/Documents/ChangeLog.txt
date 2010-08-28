@@ -1,6 +1,6 @@
 ﻿v2.0.2.83 (2010-08-28)
 - Fix: Permission check issues on Windows XP
-- Update: Updated to xinput1_3.dll v3.2.0.286.
+- Update: Updated to xinput1_3.dll v3.2.0.289.
 - New: Thumb deadzone setting support added.
 
 v2.0.2.80 (2010-08-28)
