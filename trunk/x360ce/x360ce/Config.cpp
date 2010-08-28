@@ -204,9 +204,7 @@ void ReadPadConfig(INT idx) {
 				if(_tcsstr(buffer,_T("RIGHT"))) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_RIGHT;
 			}
 		}
-	}
 
-	for (INT i=0; i<4; ++i) {
 		if (ReadStringFromFile(section, axisNames[i], buffer) > 0) {
 			LPTSTR a = buffer;
 			if (_totlower(*a) == 's') { // Slider
@@ -219,18 +217,10 @@ void ReadPadConfig(INT idx) {
 				PadMap.Axis[i].id = _ttoi(a);
 			}
 		}
-	}
 
-	for (INT i=0; i<4; ++i) {
 		Gamepad[idx].adeadzone[i] = ReadUINTFromFile(section, axisDZNames[i], 0);
-	}
-
-
-	for (int i=0; i<4; ++i) {
 		Gamepad[idx].axislinear[i] = (SHORT) ReadUINTFromFile(section, axisLNames[i], 0);
-	}
 
-	for (INT i=0; i<4; ++i) {
 		if (ReadStringFromFile(section, axisBNames[i*2],buffer) > 0) {
 			INT ret = _tstoi(buffer);
 			PadMap.Axis[i].hasDigital = true;
@@ -242,6 +232,7 @@ void ReadPadConfig(INT idx) {
 			PadMap.Axis[i].negativeButtonID = ret - 1;
 		}
 	}
+
 	if (ReadStringFromFile(section, _T("Left Trigger"), buffer) > 0) {
 		LPTSTR a = buffer;
 		if ((PadMap.Trigger[0].type = getTriggerType(a)) == DIGITAL) {

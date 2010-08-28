@@ -76,14 +76,13 @@ void Deactivate()
 	for (int i=0; i<4; i++) Deactivate(i);
 }
 
-BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst,
-	VOID* pContext )
+BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContext )
 {
 	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
 	LPDIRECTINPUTDEVICE8 pDevice;
 	DINPUT_GAMEPAD * gp = (DINPUT_GAMEPAD*) pContext;
 
-	if(gp->product == pInst->guidProduct && gp->instance == pInst->guidInstance ) {
+	if(IsEqualGUID(gp->product, pInst->guidProduct) && IsEqualGUID(gp->instance, pInst->guidInstance) ) {
 		lpDI8->CreateDevice( pInst->guidInstance, &pDevice, NULL );
 		if(pDevice) {
 			gp->g_pGamepad = pDevice;
@@ -303,9 +302,9 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 		Gamepad[idx].ff.pf.dwPeriod = DI_SECONDS*2;
 	}
 	if(motor == RightMotor)  {
-		Gamepad[idx].ff.eff[motor].dwDuration = DI_SECONDS/50;
+		Gamepad[idx].ff.eff[motor].dwDuration = DI_SECONDS/40;
 		Gamepad[idx].ff.pf.dwMagnitude = -nForce;
-		Gamepad[idx].ff.pf.dwPeriod = DI_SECONDS/50;
+		Gamepad[idx].ff.pf.dwPeriod = DI_SECONDS/40;
 	}
 
 	Gamepad[idx].ff.eff[motor].lpvTypeSpecificParams = &Gamepad[idx].ff.pf;
