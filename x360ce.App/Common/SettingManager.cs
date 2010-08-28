@@ -90,7 +90,7 @@ namespace x360ce.App
 				// convert 256  to 100%
 				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
 				{
-					if (value == "") n = 256;
+					if (key == SettingName.AxisToDPadDeadZone && value == "") n = 256;
 					n = System.Convert.ToInt32((float)n / 256F * 100F);
 				}
 				// Convert 500 to 100%
