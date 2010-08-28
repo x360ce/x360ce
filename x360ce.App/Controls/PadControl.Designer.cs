@@ -133,7 +133,6 @@
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
-			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
 			this.ForceEnableCheckBox = new System.Windows.Forms.CheckBox();
@@ -155,6 +154,7 @@
 			this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -335,7 +335,7 @@
 			this.RightTriggerDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.RightTriggerDeadZoneTrackBar.TabIndex = 25;
 			this.RightTriggerDeadZoneTrackBar.TickFrequency = 2;
-			this.RightTriggerDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.LeftTriggerDeadZoneTrackBar_ValueChanged);
+			this.RightTriggerDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.RightTriggerDeadZoneTrackBar_ValueChanged);
 			// 
 			// LeftTriggerDeadZoneTrackBar
 			// 
@@ -1331,14 +1331,6 @@
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
 			// 
-			// PadKeyboardControl
-			// 
-			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
-			this.PadKeyboardControl.Name = "PadKeyboardControl";
-			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
-			this.PadKeyboardControl.TabIndex = 0;
-			// 
 			// ForceFeedbackTabPage
 			// 
 			this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -1555,6 +1547,14 @@
 			this.DiMenuStrip.Name = "DiMenuStrip";
 			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
+			// 
+			// PadKeyboardControl
+			// 
+			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
+			this.PadKeyboardControl.Name = "PadKeyboardControl";
+			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
+			this.PadKeyboardControl.TabIndex = 0;
 			// 
 			// PadControl
 			// 
