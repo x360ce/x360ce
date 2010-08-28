@@ -133,7 +133,7 @@ namespace x360ce.App
 			////XInput.ReLoadLibrary(cXinput3File);
 			////XInput.ReLoadLibrary(cXinput3File);
 			//// start capture events.
-			if (Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+			if (Win32.WinAPI.IsVista && Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 			UpdateTimer.Start();
 			////ReloadXInputLibrary();
 		}
@@ -697,7 +697,9 @@ namespace x360ce.App
 				if (!CopyFile(SettingManager.Current.iniFile, SettingManager.Current.iniTmpFile)) return false;
 			}
 			// Set status labels.
-			StatusIsAdminLabel.Text = string.Format("Elevated: {0}", Win32.WinAPI.IsElevated);
+			StatusIsAdminLabel.Text = Win32.WinAPI.IsVista
+				? string.Format("Elevated: {0}", Win32.WinAPI.IsElevated)
+				: "";
 			StatusIniLabel.Text = SettingManager.Current.iniFile;
 			return true;
 		}
