@@ -174,7 +174,7 @@ void ReadPadConfig(INT idx) {
 	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, _T("AxisToDPadOffset"),0);
 	Gamepad[idx].ff.forcepercent = (FLOAT) ReadUINTFromFile(section, _T("ForcePercent"),100) * (FLOAT) 0.01;	
 	Gamepad[idx].ff.leftPeriod = ReadUINTFromFile(section, _T("LeftMotorPeriod"),60);
-	Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, _T("RightMotorPeriod"),120);
+	Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, _T("RightMotorPeriod"),20);
 
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
