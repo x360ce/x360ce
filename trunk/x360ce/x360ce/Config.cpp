@@ -53,12 +53,21 @@ static LPCTSTR axisNames[4] = {
 	_T("Right Analog X"),
 	_T("Right Analog Y")
 };
+
+LPCTSTR axisDZNames[4] = {
+	_T("Left Analog X DeadZone"),
+	_T("Left Analog Y DeadZone"),
+	_T("Right Analog X DeadZone"),
+	_T("Right Analog Y DeadZone"),
+};
+
 static LPCTSTR axisLNames[4] = {
 	_T("Left Analog X Linear"),
 	_T("Left Analog Y Linear"),
 	_T("Right Analog X Linear"),
 	_T("Right Analog Y Linear")
 };
+
 static LPCTSTR axisBNames[8] = {
 	_T("Left Analog X+ Button"),
 	_T("Left Analog X- Button"),
@@ -69,6 +78,7 @@ static LPCTSTR axisBNames[8] = {
 	_T("Right Analog Y+ Button"),
 	_T("Right Analog Y- Button")
 };
+
 static LPCTSTR padNames[4] = {
 	_T("PAD1"),
 	_T("PAD2"),
@@ -210,6 +220,11 @@ void ReadPadConfig(INT idx) {
 			}
 		}
 	}
+
+	for (INT i=0; i<4; ++i) {
+		Gamepad[idx].adeadzone[i] = ReadUINTFromFile(section, axisDZNames[i], 0);
+	}
+
 
 	for (int i=0; i<4; ++i) {
 		Gamepad[idx].axislinear[i] = (SHORT) ReadUINTFromFile(section, axisLNames[i], 0);
