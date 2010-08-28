@@ -80,6 +80,11 @@ namespace x360ce.App
 		public const string LeftThumbUp = "Left Analog Y+ Button";
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
 		public const string LeftThumbDown = "Left Analog Y- Button";
+		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to left thumb X.")]
+		public const string LeftThumbDeadZoneX = "Left Analog X DeadZone";
+		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to left thumb Y.")]
+		public const string LeftThumbDeadZoneY = "Left Analog Y DeadZone";
+
 
 		// Right Thumb.
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
@@ -96,6 +101,10 @@ namespace x360ce.App
 		public const string RightThumbUp = "Right Analog Y+ Button";
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
 		public const string RightThumbDown = "Right Analog Y- Button";
+		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to right thumb X.")]
+		public const string RightThumbDeadZoneX = "Right Analog X DeadZone";
+		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to right thumb Y.")]
+		public const string RightThumbDeadZoneY = "Right Analog Y DeadZone";
 
 		// D-Pad.
 		[DefaultValue("0"), Description("Disable = 0, POV Index = N.")]
@@ -138,16 +147,12 @@ namespace x360ce.App
 		// Triggers.
 		[DefaultValue("0"), Description("Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.")]
 		public const string LeftTrigger = "Left Trigger";
-		[DefaultValue("0"), Description("[0-255]; default 0; add deadzone to trigger.")]
-		public const string LeftTriggerDeadZoneX = "Left Analog X DeadZone";
-		[DefaultValue("0"), Description("[0-255]; default 0; add deadzone to trigger.")]
-		public const string LeftTriggerDeadZoneY = "Left Analog Y DeadZone";
+		[DefaultValue("0"), Description("[0-255] add deadzone to left trigger.")]
+		public const string LeftTriggerDeadZone = "TriggerDeadzone";
 		[DefaultValue("0"), Description("Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.")]
 		public const string RightTrigger = "Right Trigger";
-		[DefaultValue("0"), Description("[0-255] add deadzone to trigger.")]
-		public const string RightTriggerDeadZoneX = "Right Analog X DeadZone";
-		[DefaultValue("0"), Description("[0-255] add deadzone to trigger.")]
-		public const string RightTriggerDeadZoneY = "Right Analog Y DeadZone";
+		[DefaultValue("0"), Description("[0-255] add deadzone to right trigger.")]
+		public const string RightTriggerDeadZone = "RightTriggerDeadZone";
 
 		// Force feedback.
 		[DefaultValue("0"), Description("[0,1] Use force feedback. Disabled = 0, Enabled = 1.")]
