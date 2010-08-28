@@ -332,12 +332,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 		if (Gamepad[dwUserIndex].adeadzone[i]) {
 
-			DWORD ingamedeadzone = Gamepad[dwUserIndex].adeadzone[i];
+			SHORT ingamedeadzone = Gamepad[dwUserIndex].adeadzone[i];
 			DWORD val = *(targetAxis[i]);
-			SHORT direction = val > 0 ? 1 : -1;
-			val = (DWORD) (abs((DOUBLE)val) / ((DOUBLE)32767 / ((DOUBLE)32767 - (DOUBLE)ingamedeadzone * (DOUBLE)1.0)) + (DOUBLE)ingamedeadzone);
-			val = clamp(val,0,32767);
-			*(targetAxis[i]) = (SHORT) (direction * val);
+			if((val <= ingamedeadzone) || (val >= -ingamedeadzone) ) val = 0;
+			*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
 		}
 	}
 
