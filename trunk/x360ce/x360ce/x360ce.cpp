@@ -327,20 +327,28 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	}
 	//WILDS END
 
+
+
 	for (int i = 0; i < 4; ++i)
 	{
 
-		if (Gamepad[dwUserIndex].adeadzone[i]) {
+		if (Gamepad[dwUserIndex].axiscenter[i]) {
+			int center = Gamepad[dwUserIndex].axiscenter[i];
+			int val = *(targetAxis[i]);
+			int direction = val > 0 ? 1 : -1;
+			val = abs(val) / (32767 / (32767 - center * 1.0)) + center;
+			val = min(val, 32767);
+			*(targetAxis[i]) = direction * val;
+		}
 
+		if (Gamepad[dwUserIndex].adeadzone[i]) {
 			SHORT ingamedeadzone = Gamepad[dwUserIndex].adeadzone[i];
 			DWORD val = *(targetAxis[i]);
 			if((val <= ingamedeadzone) || (val >= -ingamedeadzone) ) val = 0;
 			*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
 		}
-	}
 
 	// --- Do Linears ---
-	for (int i = 0; i < 4; ++i) {
 
 		if (Gamepad[dwUserIndex].axislinear[i]) {
 
