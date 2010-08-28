@@ -1395,6 +1395,7 @@
 			this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.RightMotorPeriodTrackBar.TabIndex = 30;
 			this.RightMotorPeriodTrackBar.TickFrequency = 2;
+			this.RightMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
 			// 
 			// RightMotorTestTrackBar
 			// 
@@ -1406,6 +1407,7 @@
 			this.RightMotorTestTrackBar.TabIndex = 30;
 			this.RightMotorTestTrackBar.TickFrequency = 2;
 			this.MainToolTip.SetToolTip(this.RightMotorTestTrackBar, "High-frequency rumble motor.");
+			this.RightMotorTestTrackBar.ValueChanged += new System.EventHandler(this.MotorTrackBar_ValueChanged);
 			// 
 			// LeftMotorPeriodLabel
 			// 
@@ -1454,6 +1456,7 @@
 			this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.LeftMotorPeriodTrackBar.TabIndex = 28;
 			this.LeftMotorPeriodTrackBar.TickFrequency = 2;
+			this.LeftMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
 			// 
 			// LeftMotorPeriodTextBox
 			// 
@@ -1475,6 +1478,7 @@
 			this.LeftMotorTestTrackBar.TabIndex = 28;
 			this.LeftMotorTestTrackBar.TickFrequency = 2;
 			this.MainToolTip.SetToolTip(this.LeftMotorTestTrackBar, "Low-frequency rumble motor.");
+			this.LeftMotorTestTrackBar.ValueChanged += new System.EventHandler(this.MotorTrackBar_ValueChanged);
 			// 
 			// RightMotorPeriodLabel
 			// 
@@ -1544,6 +1548,7 @@
 			this.ForceOverallTrackBar.TabIndex = 36;
 			this.ForceOverallTrackBar.TickFrequency = 2;
 			this.ForceOverallTrackBar.Value = 100;
+			this.ForceOverallTrackBar.ValueChanged += new System.EventHandler(this.ForceOverallTrackBar_ValueChanged);
 			// 
 			// DiMenuStrip
 			// 
