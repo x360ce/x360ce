@@ -430,13 +430,15 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.LeftShoulder, LeftShoulderComboBox);
 			map.Add(section + SettingName.RightShoulder, RightShoulderComboBox);
 			map.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
+			map.Add(section + SettingName.LeftThumbDeadZoneX, LeftTriggerDeadZoneXTrackBar);
+			map.Add(section + SettingName.LeftThumbDeadZoneY, LeftTriggerDeadZoneYTrackBar);
 			map.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
-			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
-			map.Add(section + SettingName.LeftTriggerDeadZoneX, LeftTriggerDeadZoneXTrackBar);
-			map.Add(section + SettingName.LeftTriggerDeadZoneY, LeftTriggerDeadZoneYTrackBar);
 			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
-			map.Add(section + SettingName.RightTriggerDeadZoneX, RightTriggerDeadZoneXTrackBar);
-			map.Add(section + SettingName.RightTriggerDeadZoneY, RightTriggerDeadZoneYTrackBar);
+			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
+			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
+			map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+			map.Add(section + SettingName.RightThumbDeadZoneX, RightTriggerDeadZoneXTrackBar);
+			map.Add(section + SettingName.RightThumbDeadZoneY, RightTriggerDeadZoneYTrackBar);
 			// Force Feedback
 			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
 			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
@@ -701,29 +703,43 @@ namespace x360ce.App.Controls
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void LeftTriggerDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			LeftTriggerDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
-		}
 
-		private void LeftTriggerDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		private void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			LeftTriggerDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
+			LeftTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 
-		private void RightTriggerDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
+		private void RightTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			RightTriggerDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
+			RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void RightTriggerDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		private void LeftThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			RightTriggerDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
+			LeftThumbDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		private void LeftThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			LeftThumbDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+
+		private void RightThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			RightThumbDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		private void RightThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			RightThumbDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 		private void MotorTrackBar_ValueChanged(object sender, EventArgs e)

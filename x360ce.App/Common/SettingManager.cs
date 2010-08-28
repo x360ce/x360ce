@@ -87,18 +87,21 @@ namespace x360ce.App
 				TrackBar tc = (TrackBar)control;
 				int n = 0;
 				int.TryParse(value, out n);
-				if (key == SettingName.AxisToDPadDeadZone)
+				// convert 256  to 100%
+				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
 				{
 					if (value == "") n = 256;
-					// convert 256  to 100%
 					n = System.Convert.ToInt32((float)n / 256F * 100F);
 				}
-				// convert 256  to 100%
-				if (key == SettingName.AxisToDPadOffset) n = System.Convert.ToInt32((float)n / 256F * 100F);
-				// Convert 500 to 100
-				if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				// Convert 500 to 100%
+				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
 					n = System.Convert.ToInt32((float)n / 500F * 100F);
+				}
+				// Convert 32767 to 100%
+				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
+				{
+					n = System.Convert.ToInt32((float)n / ((float)Int16.MaxValue) * 100F);
 				}
 				if (n < tc.Minimum) n = tc.Minimum;
 				if (n > tc.Maximum) n = tc.Maximum;
@@ -279,15 +282,20 @@ namespace x360ce.App
 			else if (control is TrackBar)
 			{
 				TrackBar tc = (TrackBar)control;
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset)
+				// convert 100%  to 256
+				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
 				{
-					// convert 100%  to 256
 					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
 				}
+				// convert 100%  to 500
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					// convert 100  to 500
 					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
+				}
+				// Convert 100% to 32767
+				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
+				{
+					v = System.Convert.ToInt32((float)tc.Value / 100F * ((float)Int16.MaxValue)).ToString();
 				}
 				else v = tc.Value.ToString();
 			}
