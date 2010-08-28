@@ -432,9 +432,11 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
 			map.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
 			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
-			map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+			map.Add(section + SettingName.LeftTriggerDeadZoneX, LeftTriggerDeadZoneXTrackBar);
+			map.Add(section + SettingName.LeftTriggerDeadZoneY, LeftTriggerDeadZoneYTrackBar);
 			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
-			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
+			map.Add(section + SettingName.RightTriggerDeadZoneX, RightTriggerDeadZoneXTrackBar);
+			map.Add(section + SettingName.RightTriggerDeadZoneY, RightTriggerDeadZoneYTrackBar);
 			// Force Feedback
 			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
 			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
@@ -699,16 +701,29 @@ namespace x360ce.App.Controls
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+		private void LeftTriggerDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			LeftTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
+			LeftTriggerDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void RightTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+		private void LeftTriggerDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
+			LeftTriggerDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+
+		private void RightTriggerDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			RightTriggerDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		private void RightTriggerDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			RightTriggerDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 		private void MotorTrackBar_ValueChanged(object sender, EventArgs e)
