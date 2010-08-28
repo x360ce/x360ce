@@ -1,4 +1,9 @@
-﻿v2.0.2.77 (2010-08-17)
+﻿v2.0.2.80 (2010-08-28)
+- Update: Updated to xinput1_3.dll v3.2.0.273.
+- Updated: Logitech Wheel presets to support "Mafia II" game.
+- Updated: Help section updated.
+
+v2.0.2.77 (2010-08-17)
 Fix: Disable force feedback effect before closing app.
 
 v2.0.2.76 (2010-08-11)
