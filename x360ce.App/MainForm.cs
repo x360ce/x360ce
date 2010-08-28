@@ -740,9 +740,9 @@ namespace x360ce.App
 		bool CreateFile(string fileName)
 		{
 			var answer = MessageBox.Show(
-				string.Format("'{0}' file is missing.\r\nDo you want to create default file?", fileName),
-				string.Format("Missing '{0}' file!", fileName),
-				MessageBoxButtons.YesNo);
+				string.Format("'{0}' was not found. This file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(fileName).FullName),
+				string.Format("'{0}' was not found.", fileName),
+				MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 			if (answer == DialogResult.Yes)
 			{
 				var assembly = Assembly.GetExecutingAssembly();
