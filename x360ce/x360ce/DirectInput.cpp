@@ -295,16 +295,15 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 
 	LONG nForce = MulDiv(force, DI_FFNOMINALMAX, 65535);
 	nForce = clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
-
 	if(motor == LeftMotor) {
-		Gamepad[idx].ff.eff[motor].dwDuration = DI_SECONDS*2;
+		Gamepad[idx].ff.eff[motor].dwDuration = Gamepad[idx].ff.leftPeriod*1000;
 		Gamepad[idx].ff.pf.dwMagnitude = nForce;
-		Gamepad[idx].ff.pf.dwPeriod = DI_SECONDS*2;
+		Gamepad[idx].ff.pf.dwPeriod = Gamepad[idx].ff.leftPeriod*1000;
 	}
 	if(motor == RightMotor)  {
-		Gamepad[idx].ff.eff[motor].dwDuration = DI_SECONDS/40;
-		Gamepad[idx].ff.pf.dwMagnitude = -nForce;
-		Gamepad[idx].ff.pf.dwPeriod = DI_SECONDS/40;
+		Gamepad[idx].ff.eff[motor].dwDuration = Gamepad[idx].ff.rightPeriod*1000;
+		Gamepad[idx].ff.pf.dwMagnitude = nForce;
+		Gamepad[idx].ff.pf.dwPeriod = Gamepad[idx].ff.rightPeriod*1000;
 	}
 
 	Gamepad[idx].ff.eff[motor].lpvTypeSpecificParams = &Gamepad[idx].ff.pf;
