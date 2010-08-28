@@ -1,4 +1,7 @@
-﻿v2.0.2.83 (2010-08-28)
+﻿v2.0.2.85 (2010-08-28)
+- New: Preset for Logitech G27 Racing Wheel (from chalkman)
+
+v2.0.2.84 (2010-08-28)
 - Fix: Permission check issues on Windows XP
 - Update: Updated to xinput1_3.dll v3.2.0.290.
 - New: Thumb deadzone setting support added.
