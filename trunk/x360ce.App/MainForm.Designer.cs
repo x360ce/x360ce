@@ -202,6 +202,8 @@ namespace x360ce.App
 			// DebugModeCheckBox
 			// 
 			this.DebugModeCheckBox.AutoSize = true;
+			this.DebugModeCheckBox.Checked = true;
+			this.DebugModeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.DebugModeCheckBox.Location = new System.Drawing.Point(5, 96);
 			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
 			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
