@@ -806,6 +806,12 @@ namespace x360ce.App.Controls
 					RightThumbXAntiDeadZoneNumericUpDown.Value = 6951;
 					RightThumbYAntiDeadZoneNumericUpDown.Value = 6951;
 					break;
+				case "Enabled (XInput, 90%)":
+					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7064;
+					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7064;
+					RightThumbXAntiDeadZoneNumericUpDown.Value = 7820;
+					RightThumbYAntiDeadZoneNumericUpDown.Value = 7820;
+					break;
 				case "Enabled (XInput, 100%)":
 					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7849;
 					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7849;
