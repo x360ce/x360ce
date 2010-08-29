@@ -28,7 +28,6 @@ namespace x360ce.App
 		string dllFile1 = "xinput1_1.dll";
 		string dllFile2 = "xinput1_2.dll";
 		string dllFile3 = "xinput1_3.dll";
-		Version newVersion = new Version("3.2.0.295");
 		// Will be set to default values.
 		string dllFile;
 
@@ -65,7 +64,6 @@ namespace x360ce.App
 			// Set status.
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
-
 			// Set default cXinputFile.
 			if (System.IO.File.Exists(dllFile3)) dllFile = dllFile3;
 			else if (System.IO.File.Exists(dllFile2)) dllFile = dllFile2;
@@ -574,6 +572,30 @@ namespace x360ce.App
 			return new Version("0.0.0.0");
 		}
 
+		Version GetEmbeddedDllVersion()
+		{
+			// There must be an easier way to check embeded non managed dll version.
+			var assembly = Assembly.GetExecutingAssembly();
+			var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + dllFile);
+			string tempPath = Path.GetTempPath();
+			FileStream sw = null;
+			var tempFile = Path.Combine(Path.GetTempPath(), dllFile);
+			sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
+			var buffer = new byte[1024];
+			while (true)
+			{
+				var count = sr.Read(buffer, 0, buffer.Length);
+				if (count == 0) break;
+				sw.Write(buffer, 0, count);
+			}
+			sr.Close();
+			sw.Close();
+			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tempFile);
+			var v = vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion);
+			System.IO.File.Delete(tempFile);
+			return v;
+		}
+
 		public void ReloadLibrary()
 		{
 			var dllInfo = new System.IO.FileInfo(dllFile);
@@ -688,13 +710,14 @@ namespace x360ce.App
 					if (!CreateFile(SettingManager.Current.iniFile, null)) return false;
 				}
 				// If xinput file doesn't exists.
+				var embeddedDllVersion = GetEmbeddedDllVersion(); 
 				if (!System.IO.File.Exists(dllFile))
 				{
 					if (!CreateFile(dllFile, null)) return false;
 				}
-				else if (dllVersion < newVersion)
+				else if (dllVersion < embeddedDllVersion)
 				{
-					CreateFile(dllFile, newVersion);
+					CreateFile(dllFile, embeddedDllVersion);
 					return true;
 				}
 			}
