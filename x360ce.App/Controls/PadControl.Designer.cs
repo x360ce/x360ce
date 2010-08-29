@@ -142,6 +142,7 @@
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
+			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
 			this.ForceEnableCheckBox = new System.Windows.Forms.CheckBox();
@@ -163,7 +164,7 @@
 			this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
+			this.label1 = new System.Windows.Forms.Label();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -393,6 +394,7 @@
 			this.ThumbsGroupBox.Controls.Add(this.RightThumbYAntiDeadZoneLabel);
 			this.ThumbsGroupBox.Controls.Add(this.LeftThumbYAntiDeadZoneLabel);
 			this.ThumbsGroupBox.Controls.Add(this.RightThumbXAntiDeadZoneLabel);
+			this.ThumbsGroupBox.Controls.Add(this.label1);
 			this.ThumbsGroupBox.Controls.Add(this.LeftThumbXAntiDeadZoneLabel);
 			this.ThumbsGroupBox.Controls.Add(this.LeftTriggerDeadZoneLabel);
 			this.ThumbsGroupBox.Controls.Add(this.RightTriggerDeadZoneLabel);
@@ -416,17 +418,17 @@
 			this.ThumbAntiDeadZoneComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ThumbAntiDeadZoneComboBox.FormattingEnabled = true;
 			this.ThumbAntiDeadZoneComboBox.Items.AddRange(new object[] {
-            "None",
-            "Mafia II"});
-			this.ThumbAntiDeadZoneComboBox.Location = new System.Drawing.Point(9, 111);
+            "Disabled",
+            "Enabled (XInput)"});
+			this.ThumbAntiDeadZoneComboBox.Location = new System.Drawing.Point(111, 111);
 			this.ThumbAntiDeadZoneComboBox.Name = "ThumbAntiDeadZoneComboBox";
-			this.ThumbAntiDeadZoneComboBox.Size = new System.Drawing.Size(121, 21);
+			this.ThumbAntiDeadZoneComboBox.Size = new System.Drawing.Size(139, 21);
 			this.ThumbAntiDeadZoneComboBox.TabIndex = 29;
 			this.ThumbAntiDeadZoneComboBox.SelectedIndexChanged += new System.EventHandler(this.ThumbAntiDeadZoneComboBox_SelectedIndexChanged);
 			// 
 			// RightThumbYAntiDeadZoneNumericUpDown
 			// 
-			this.RightThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(475, 159);
+			this.RightThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(475, 164);
 			this.RightThumbYAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -438,7 +440,7 @@
 			// 
 			// LeftThumbYAntiDeadZoneNumericUpDown
 			// 
-			this.LeftThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(175, 159);
+			this.LeftThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(175, 164);
 			this.LeftThumbYAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -450,7 +452,7 @@
 			// 
 			// RightThumbXAntiDeadZoneNumericUpDown
 			// 
-			this.RightThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(475, 133);
+			this.RightThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(475, 138);
 			this.RightThumbXAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -462,7 +464,7 @@
 			// 
 			// LeftThumbXAntiDeadZoneNumericUpDown
 			// 
-			this.LeftThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(175, 133);
+			this.LeftThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(175, 138);
 			this.LeftThumbXAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -493,7 +495,7 @@
 			// RightThumbYAntiDeadZoneLabel
 			// 
 			this.RightThumbYAntiDeadZoneLabel.AutoSize = true;
-			this.RightThumbYAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 161);
+			this.RightThumbYAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 166);
 			this.RightThumbYAntiDeadZoneLabel.Name = "RightThumbYAntiDeadZoneLabel";
 			this.RightThumbYAntiDeadZoneLabel.Size = new System.Drawing.Size(150, 13);
 			this.RightThumbYAntiDeadZoneLabel.TabIndex = 20;
@@ -502,7 +504,7 @@
 			// LeftThumbYAntiDeadZoneLabel
 			// 
 			this.LeftThumbYAntiDeadZoneLabel.AutoSize = true;
-			this.LeftThumbYAntiDeadZoneLabel.Location = new System.Drawing.Point(26, 161);
+			this.LeftThumbYAntiDeadZoneLabel.Location = new System.Drawing.Point(26, 166);
 			this.LeftThumbYAntiDeadZoneLabel.Name = "LeftThumbYAntiDeadZoneLabel";
 			this.LeftThumbYAntiDeadZoneLabel.Size = new System.Drawing.Size(143, 13);
 			this.LeftThumbYAntiDeadZoneLabel.TabIndex = 20;
@@ -511,7 +513,7 @@
 			// RightThumbXAntiDeadZoneLabel
 			// 
 			this.RightThumbXAntiDeadZoneLabel.AutoSize = true;
-			this.RightThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 135);
+			this.RightThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 140);
 			this.RightThumbXAntiDeadZoneLabel.Name = "RightThumbXAntiDeadZoneLabel";
 			this.RightThumbXAntiDeadZoneLabel.Size = new System.Drawing.Size(150, 13);
 			this.RightThumbXAntiDeadZoneLabel.TabIndex = 20;
@@ -520,7 +522,7 @@
 			// LeftThumbXAntiDeadZoneLabel
 			// 
 			this.LeftThumbXAntiDeadZoneLabel.AutoSize = true;
-			this.LeftThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(26, 135);
+			this.LeftThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(26, 140);
 			this.LeftThumbXAntiDeadZoneLabel.Name = "LeftThumbXAntiDeadZoneLabel";
 			this.LeftThumbXAntiDeadZoneLabel.Size = new System.Drawing.Size(143, 13);
 			this.LeftThumbXAntiDeadZoneLabel.TabIndex = 20;
@@ -1450,6 +1452,14 @@
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
 			// 
+			// PadKeyboardControl
+			// 
+			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
+			this.PadKeyboardControl.Name = "PadKeyboardControl";
+			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
+			this.PadKeyboardControl.TabIndex = 0;
+			// 
 			// ForceFeedbackTabPage
 			// 
 			this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -1667,13 +1677,14 @@
 			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
-			// PadKeyboardControl
+			// label1
 			// 
-			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
-			this.PadKeyboardControl.Name = "PadKeyboardControl";
-			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
-			this.PadKeyboardControl.TabIndex = 0;
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(26, 114);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(79, 13);
+			this.label1.TabIndex = 20;
+			this.label1.Text = "AntiDeadZone:";
 			// 
 			// PadControl
 			// 
@@ -1858,5 +1869,6 @@
 		private System.Windows.Forms.Label RightThumbXAntiDeadZoneLabel;
 		private System.Windows.Forms.Label LeftThumbXAntiDeadZoneLabel;
 		private System.Windows.Forms.ComboBox ThumbAntiDeadZoneComboBox;
+		private System.Windows.Forms.Label label1;
 	}
 }
