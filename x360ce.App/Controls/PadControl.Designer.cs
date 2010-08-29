@@ -162,9 +162,9 @@
 			this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.label1 = new System.Windows.Forms.Label();
 			this.ThumbAntiDeadZoneComboBox = new System.Windows.Forms.ComboBox();
+			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -1656,14 +1656,6 @@
 			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
-			// PadKeyboardControl
-			// 
-			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
-			this.PadKeyboardControl.Name = "PadKeyboardControl";
-			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
-			this.PadKeyboardControl.TabIndex = 0;
-			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
@@ -1686,14 +1678,22 @@
             "Enabled (XInput, 50%)",
             "Enabled (XInput, 60%)",
             "Enabled (XInput, 70%)",
-            "Enabled (XInput, 80%)",
+            "Enabled (XInput, 80%) (Recommended)",
             "Enabled (XInput, 90%)",
             "Enabled (XInput, 100%)"});
 			this.ThumbAntiDeadZoneComboBox.Location = new System.Drawing.Point(111, 111);
 			this.ThumbAntiDeadZoneComboBox.Name = "ThumbAntiDeadZoneComboBox";
-			this.ThumbAntiDeadZoneComboBox.Size = new System.Drawing.Size(139, 21);
+			this.ThumbAntiDeadZoneComboBox.Size = new System.Drawing.Size(194, 21);
 			this.ThumbAntiDeadZoneComboBox.TabIndex = 29;
 			this.ThumbAntiDeadZoneComboBox.SelectedIndexChanged += new System.EventHandler(this.ThumbAntiDeadZoneComboBox_SelectedIndexChanged);
+			// 
+			// PadKeyboardControl
+			// 
+			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
+			this.PadKeyboardControl.Name = "PadKeyboardControl";
+			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
+			this.PadKeyboardControl.TabIndex = 0;
 			// 
 			// PadControl
 			// 
