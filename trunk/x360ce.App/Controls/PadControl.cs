@@ -800,7 +800,7 @@ namespace x360ce.App.Controls
 		{
 			switch (ThumbAntiDeadZoneComboBox.Text)
 			{
-				case "Mafia II":
+				case "Enabled (XInput)":
 					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7849;
 					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7849;
 					RightThumbXAntiDeadZoneNumericUpDown.Value = 8689;
