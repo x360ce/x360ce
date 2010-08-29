@@ -27,6 +27,8 @@ WORD wFakeWinTrust=0;
 WORD wFakeVID=0;
 WORD wFakePID=0;
 
+LPWSTR lpConfigFile = NULL;
+
 static LPCTSTR buttonNames[10] = {
 	_T("A"),
 	_T("B"),
@@ -95,17 +97,23 @@ static LPCTSTR padNames[4] = {
 
 GamepadMap GamepadMapping[4];
 
-extern "C" void InitConfig(LPTSTR ininame) 
+void InitConfig(LPCWSTR ininame) 
 {
-	LPTSTR pStr;
-	TCHAR strPath[MAX_PATH];
-	extern TCHAR tstrConfigFile[MAX_PATH];	
+	LPWSTR pStr;
+	static TCHAR strPath[MAX_PATH];
+
+	lpConfigFile = new WCHAR[MAX_PATH];
+
 	GetModuleFileName (NULL, strPath, MAX_PATH);
 	pStr = _tcsrchr(strPath, _T('\\'));
 	if (pStr != NULL)
 		*(++pStr)=_T('\0'); 
 
-	_stprintf_s(tstrConfigFile,_T("%s%s"),strPath, ininame);
+	swprintf_s(lpConfigFile,MAX_PATH,_T("%s%s"),strPath, ininame);
+}
+
+void ReadConfig() 
+{
 
 	// Read global options
 	bInitBeep = ReadUINTFromFile(_T("Options"), _T("UseInitBeep"),1);

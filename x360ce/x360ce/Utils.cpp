@@ -18,42 +18,33 @@
 #include "DirectInput.h"
 #include "Utils.h"
 
-#pragma warning(disable:4996)
-
-TCHAR tstrConfigFile[MAX_PATH];	
 BOOL writelog = 0;
-LPTSTR logfilename;
-TCHAR szProcessName[MAX_PATH] = _T("Unknown");
+LPWSTR lpLogFileName;
 
-DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput)
+DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput)
 {
 	return ReadStringFromFile(strFileSection, strKey, strOutput, NULL);
 }
 
-DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault)
+DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault)
 {
-	DWORD ret;
-	LPTSTR next_token;
-	ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, tstrConfigFile);
-	if(ret) _tcstok_s(strOutput,_T(" "),&next_token);  //should fix comment in ini file
-	return ret;
+	if(lpConfigFile) {
+		DWORD ret;
+		LPTSTR next_token;
+		ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, lpConfigFile);
+		if(ret) wcstok_s (strOutput,L" ",&next_token);
+		return ret;
+	}
+	return 0;
 }
 
-LPCTSTR PIDName(DWORD processID)
+LPCWSTR ModuleFileName()
 {
-	HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |PROCESS_VM_READ,FALSE, processID );
-
-	// Get the process name.
-	if (NULL != hProcess ){
-		HMODULE hMod;
-		DWORD cbNeeded;
-
-		if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), &cbNeeded) ) {
-			GetModuleBaseName( hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR) );
-		}
-	}
-	CloseHandle(hProcess);
-	return (szProcessName);
+	LPWSTR pStr;
+	static WCHAR strPath[MAX_PATH];
+	GetModuleFileName (NULL, strPath, MAX_PATH);
+	pStr = wcsrchr(strPath, L'\\') +1;
+	return pStr;
 }
 
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
@@ -63,7 +54,8 @@ UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
 
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault)
 {
-	return GetPrivateProfileInt(strFileSection,strKey,uDefault,tstrConfigFile);
+	if (lpConfigFile) return GetPrivateProfileInt(strFileSection,strKey,uDefault,lpConfigFile);
+	return 0;
 }
 
 VOID CreateLog()
@@ -73,11 +65,11 @@ VOID CreateLog()
 		SYSTEMTIME systime;
 		GetLocalTime(&systime);
 
-		logfilename = new TCHAR[MAX_PATH];
-		_stprintf_s(logfilename,MAX_PATH,_T("x360ce\\x360ce %u%02u%02u-%02u%02u%02u.log"),
+		lpLogFileName = new TCHAR[MAX_PATH];
+		swprintf_s(lpLogFileName,MAX_PATH,L"x360ce\\x360ce %u%02u%02u-%02u%02u%02u.log",
 			systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
 
-		if( (GetFileAttributes(_T("x360ce")) == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(_T("x360ce"), NULL);
+		if( (GetFileAttributes(L"x360ce") == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(L"x360ce", NULL);
 	}
 }
 
@@ -88,17 +80,17 @@ BOOL WriteLog(LPTSTR str,...)
 		GetLocalTime(&systime);
 
 		FILE * fp;
-		_tfopen_s(&fp,logfilename,_T("a"));
+		_wfopen_s(&fp, lpLogFileName, L"a");
 
 		//fp is null, file is not open.
 		if (fp==NULL)
 			return -1;
-		_ftprintf (fp,_T("%02u:%02u:%02u.%03u:: "),systime.wHour,systime.wMinute,systime.wSecond,systime.wMilliseconds);
+		fwprintf(fp, L"%02u:%02u:%02u.%03u:: ", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds);
 		va_list arglist;
 		va_start(arglist,str);
-		_vftprintf(fp,str,arglist);
+		vfwprintf(fp,str,arglist);
 		va_end(arglist);
-		fprintf(fp," \n");
+		fwprintf(fp, L" \n");
 		fclose(fp);
 		return 1;
 	}
@@ -128,9 +120,10 @@ inline static DWORD flipLong(DWORD l)
 	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
 }
 
-void GUIDtoString(TCHAR *data, const GUID *pg) 
+void GUIDtoString(LPWSTR data, const GUID *pg) 
 {
-	_stprintf(data, _T("%08X-%04X-%04X-%04X-%04X%08X"),
+	swprintf_s(data, 50,
+		_T("%08X-%04X-%04X-%04X-%04X%08X"),
 		pg->Data1, (DWORD)pg->Data2, (DWORD)pg->Data3,
 		flipShort(((WORD*)pg->Data4)[0]), 
 		flipShort(((WORD*)pg->Data4)[1]),

@@ -15,16 +15,21 @@
  
 #pragma once
 
+#define _BIND_TO_CURRENT_CRT_VERSION 1
+#define _BIND_TO_CURRENT_ATL_VERSION 1
+#define _BIND_TO_CURRENT_MFC_VERSION 1
+#define _BIND_TO_CURRENT_OPENMP_VERSION 1
+
 #if defined(DEBUG) | defined(_DEBUG)
 #include <crtdbg.h>
 #endif
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x501
+#define _WIN32_WINNT _WIN32_WINNT_WINXP
 #endif
 
 #ifndef NTDDI_VERSION
-#define NTDDI_VERSION NTDDI_WINXP
+#define NTDDI_VERSION NTDDI_WINXPSP3
 #endif
 
 #define WIN32_LEAN_AND_MEAN
@@ -36,8 +41,6 @@
 #include <windows.h>
 #include <tchar.h>
 #include <math.h>
-#include <psapi.h>
-
 #include <time.h>
 #include <fstream>
 

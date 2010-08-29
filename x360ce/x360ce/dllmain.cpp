@@ -33,60 +33,15 @@ void LoadOriginalDll()
 	GetSystemDirectory(buffer,MAX_PATH);
 
 	// Append dll name
-	_tcscat_s(buffer,sizeof(buffer),_T("\\xinput1_3.dll"));
+	wcscat_s(buffer,sizeof(buffer),L"\\xinput1_3.dll");
 
 	// try to load the system's dinput.dll, if pointer empty
 	if (!hNativeInstance) hNativeInstance = LoadLibrary(buffer);
 
 	// Debug
-	if (!hNativeInstance) {
-		ExitProcess(0); // exit the hard way
-	}
-}
-
-BOOL RegisterWindowClass(HINSTANCE hinstance) 
-{ 
-	WNDCLASS wc; 
-
-	// Fill in the window class structure with parameters 
-	// that describe the main window. 
-
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = DefWindowProc;     // points to window procedure 
-	wc.cbClsExtra = 0;                // no extra class memory 
-	wc.cbWndExtra = 0;                // no extra window memory 
-	wc.hInstance = hinstance;         // handle to instance 
-	wc.hIcon = NULL;              // predefined app. icon 
-	wc.hCursor = NULL;                    // predefined arrow 
-	wc.hbrBackground = NULL;    // white background brush 
-	wc.lpszMenuName =  _T("x360ceMenu");    // name of menu resource
-	wc.lpszClassName = _T("x360ceWClass");  // name of window class 
-
-	// Register the window class. 
-	return RegisterClass(&wc); 
-} 
-
-BOOL Createx360ceWindow(HINSTANCE hInst)
-{
-	if(RegisterWindowClass(hInst)) {
-		hWnd = CreateWindow( 
-			_T("x360ceWClass"),  // name of window class
-			_T("x360ce"),        // title-bar string 
-			WS_OVERLAPPEDWINDOW, // top-level window 
-			CW_USEDEFAULT,       // default horizontal position 
-			CW_USEDEFAULT,       // default vertical position 
-			CW_USEDEFAULT,       // default width 
-			CW_USEDEFAULT,       // default height 
-			(HWND) NULL,         // no owner window 
-			(HMENU) NULL,        // use class menu 
-			hInst,     // handle to application instance 
-			(LPVOID) NULL);      // no window-creation data 
-		return TRUE;
-	}
-	else {
-		WriteLog(_T("[CORE]    RegisterWindowClass Failed"));
-		return FALSE;
-	}
+	//if (!hNativeInstance) {
+	//	ExitProcess(0); // exit the hard way
+	//}
 }
 
 VOID AttachFakeAPI()
@@ -107,26 +62,23 @@ VOID DetachFakeAPI()
 	}
 }
 
-VOID InitInstance(HMODULE hModule) 
+VOID InitInstance(HINSTANCE hinstDLL) 
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-	hX360ceInstance = (HINSTANCE) hModule;
-	DWORD dwAppPID =GetCurrentProcessId();
-	InitConfig(_T("x360ce.ini"));
+	hX360ceInstance =  hinstDLL;
+	DWORD dwAppPID = GetCurrentProcessId();
+	InitConfig(L"x360ce.ini");
+	ReadConfig();
 	CreateLog();
 
 #if SVN_MODS != 0 
-	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
+	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #else 
-	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,PIDName(dwAppPID),dwAppPID);
+	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #endif
-
-	if(!Createx360ceWindow(hX360ceInstance)) {
-		WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
-	}
 
 	AttachFakeAPI();
 }
@@ -146,10 +98,12 @@ VOID ExitInstance()
 	XDeInit();
 
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
+	hWnd = NULL;
 	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
 	WriteLog(_T("[CORE]    x360ce terminating, bye"));
 
-	SAFE_DELETEARRAY(logfilename);
+	SAFE_DELETEARRAY(lpLogFileName);
+	SAFE_DELETEARRAY(lpConfigFile);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 

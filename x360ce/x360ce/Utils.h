@@ -14,20 +14,19 @@
  */
 
 // externs
-extern TCHAR tstrConfigFile[MAX_PATH];
 extern BOOL writelog;
-extern LPTSTR logfilename;
+extern LPWSTR lpLogFileName;
 
 // prototypes
-DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput);
-DWORD ReadStringFromFile(LPCTSTR strFileSection, LPCTSTR strKey, LPTSTR strOutput, LPTSTR strDefault);
-UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey);
-UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault);
-HWND GetWindowHandle(DWORD);
-LPTSTR const DXErrStr(HRESULT dierr);
+DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput);
+DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault);
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey);
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,UINT uDefault);
+LPCWSTR ModuleFileName();
+LPWSTR const DXErrStr(HRESULT dierr);
 LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
-void GUIDtoString(TCHAR *data, const GUID *pg);
-BOOL StringToGUID(GUID *pg, TCHAR *dataw);
+void GUIDtoString(LPWSTR data, const GUID *pg);
+BOOL StringToGUID(GUID *pg, LPWSTR dataw);
 VOID CreateLog();
 BOOL WriteLog(LPTSTR str,...);

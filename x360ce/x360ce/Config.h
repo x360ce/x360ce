@@ -64,6 +64,7 @@ static const WORD povIDs[4] = {
 extern BOOL bInitBeep;
 extern struct GamepadMap GamepadMapping[4];
 
-extern "C" void InitConfig(LPTSTR ininame);
-MappingType getTriggerType(LPCTSTR);
+void InitConfig(LPCWSTR ininame);
+void ReadConfig();
 void ReadPadConfig(INT idx);
+MappingType getTriggerType(LPCTSTR);
