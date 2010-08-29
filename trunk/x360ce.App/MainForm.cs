@@ -28,6 +28,7 @@ namespace x360ce.App
 		string dllFile1 = "xinput1_1.dll";
 		string dllFile2 = "xinput1_2.dll";
 		string dllFile3 = "xinput1_3.dll";
+		Version newVersion = new Version("3.2.0.295");
 		// Will be set to default values.
 		string dllFile;
 
@@ -553,8 +554,24 @@ namespace x360ce.App
 		Version _dllVersion;
 		Version dllVersion
 		{
-			get { return _dllVersion = _dllVersion ?? new Version(); }
+			get {
+				if (_dllVersion != null) return _dllVersion;
+				_dllVersion = GetDllVersion(dllFile);
+				return _dllVersion;
+			}
 			set { _dllVersion = value; }
+		}
+
+
+		private Version GetDllVersion(string fileName)
+		{
+			var dllInfo = new System.IO.FileInfo(fileName);
+			if (dllInfo.Exists)
+			{
+				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
+				return vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion);
+			}
+			return new Version("0.0.0.0");
 		}
 
 		public void ReloadLibrary()
@@ -562,8 +579,7 @@ namespace x360ce.App
 			var dllInfo = new System.IO.FileInfo(dllFile);
 			if (dllInfo.Exists)
 			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				dllVersion = vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion);
+				dllVersion = GetDllVersion(dllInfo.FullName);
 				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
 				UnsafeNativeMethods.ReLoadLibrary(dllFile);
 			}
@@ -669,12 +685,17 @@ namespace x360ce.App
 				// If ini file doesn't exists.
 				if (!System.IO.File.Exists(SettingManager.Current.iniFile))
 				{
-					if (!CreateFile(SettingManager.Current.iniFile)) return false;
+					if (!CreateFile(SettingManager.Current.iniFile, null)) return false;
 				}
 				// If xinput file doesn't exists.
 				if (!System.IO.File.Exists(dllFile))
 				{
-					if (!CreateFile(dllFile)) return false;
+					if (!CreateFile(dllFile, null)) return false;
+				}
+				else if (dllVersion < newVersion)
+				{
+					CreateFile(dllFile, newVersion);
+					return true;
 				}
 			}
 			// Can't run witout ini.
@@ -741,12 +762,23 @@ namespace x360ce.App
 			return true;
 		}
 
-		bool CreateFile(string fileName)
+		bool CreateFile(string fileName, Version newVersion)
 		{
-			var answer = MessageBox.Show(
-				string.Format("'{0}' was not found. This file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(fileName).FullName),
-				string.Format("'{0}' was not found.", fileName),
-				MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			DialogResult answer;
+			if (newVersion == null)
+			{
+				answer = MessageBox.Show(
+					string.Format("'{0}' was not found. This file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(fileName).FullName),
+					string.Format("'{0}' was not found.", fileName),
+					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			}
+			else
+			{
+				answer = MessageBox.Show(
+					string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?",  new System.IO.FileInfo(fileName).FullName, dllVersion, newVersion),
+					string.Format("New version of '{0}' file is available.", fileName),
+					MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+			}
 			if (answer == DialogResult.Yes)
 			{
 				var assembly = Assembly.GetExecutingAssembly();
