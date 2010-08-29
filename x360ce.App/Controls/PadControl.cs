@@ -798,33 +798,15 @@ namespace x360ce.App.Controls
 
 		private void ThumbAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			switch (ThumbAntiDeadZoneComboBox.Text)
-			{
-				case "Enabled (XInput, 80%)":
-					LeftThumbXAntiDeadZoneNumericUpDown.Value = 6279;
-					LeftThumbYAntiDeadZoneNumericUpDown.Value = 6279;
-					RightThumbXAntiDeadZoneNumericUpDown.Value = 6951;
-					RightThumbYAntiDeadZoneNumericUpDown.Value = 6951;
-					break;
-				case "Enabled (XInput, 90%)":
-					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7064;
-					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7064;
-					RightThumbXAntiDeadZoneNumericUpDown.Value = 7820;
-					RightThumbYAntiDeadZoneNumericUpDown.Value = 7820;
-					break;
-				case "Enabled (XInput, 100%)":
-					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7849;
-					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7849;
-					RightThumbXAntiDeadZoneNumericUpDown.Value = 8689;
-					RightThumbYAntiDeadZoneNumericUpDown.Value = 8689;
-					break;
-				default:
-					LeftThumbXAntiDeadZoneNumericUpDown.Value = 0;
-					LeftThumbYAntiDeadZoneNumericUpDown.Value = 0;
-					RightThumbXAntiDeadZoneNumericUpDown.Value = 0;
-					RightThumbYAntiDeadZoneNumericUpDown.Value = 0;
-					break;
-			}
+			int XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE = 7849;
+			int XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE = 8689;
+			var n = ThumbAntiDeadZoneComboBox.Text == "Disabled"
+				? 0
+				: float.Parse(new Regex("[^0-9]").Replace(ThumbAntiDeadZoneComboBox.Text, "")) / 100;
+			LeftThumbXAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * n);
+			LeftThumbYAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * n);
+			RightThumbXAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * n);
+			RightThumbYAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * n);
 		}
 
 	}
