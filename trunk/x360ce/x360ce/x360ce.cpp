@@ -28,6 +28,51 @@ DWORD dwlastUserIndex = (DWORD) -1;
 
 XINPUT_CAPABILITIES *LPXCAPS[4]={NULL,NULL,NULL,NULL};
 
+BOOL RegisterWindowClass(HINSTANCE hinstance) 
+{ 
+	WNDCLASS wc; 
+
+	// Fill in the window class structure with parameters 
+	// that describe the main window. 
+
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = DefWindowProc;     // points to window procedure 
+	wc.cbClsExtra = 0;                // no extra class memory 
+	wc.cbWndExtra = 0;                // no extra window memory 
+	wc.hInstance = hinstance;         // handle to instance 
+	wc.hIcon = NULL;              // predefined app. icon 
+	wc.hCursor = NULL;                    // predefined arrow 
+	wc.hbrBackground = NULL;    // white background brush 
+	wc.lpszMenuName =  _T("x360ceMenu");    // name of menu resource
+	wc.lpszClassName = _T("x360ceWClass");  // name of window class 
+
+	// Register the window class. 
+	return RegisterClass(&wc); 
+} 
+
+BOOL Createx360ceWindow(HINSTANCE hInst)
+{
+	if(RegisterWindowClass(hInst)) {
+		hWnd = CreateWindow( 
+			_T("x360ceWClass"),  // name of window class
+			_T("x360ce"),        // title-bar string 
+			WS_OVERLAPPEDWINDOW, // top-level window 
+			CW_USEDEFAULT,       // default horizontal position 
+			CW_USEDEFAULT,       // default vertical position 
+			CW_USEDEFAULT,       // default width 
+			CW_USEDEFAULT,       // default height 
+			(HWND) NULL,         // no owner window 
+			(HMENU) NULL,        // use class menu 
+			hInst,     // handle to application instance 
+			(LPVOID) NULL);      // no window-creation data 
+		return TRUE;
+	}
+	else {
+		WriteLog(_T("[CORE]    RegisterWindowClass Failed"));
+		return FALSE;
+	}
+}
+
 void XDeInit()
 {
 	for(DWORD dwUserIndex=0; dwUserIndex<XUSER_MAX_COUNT; dwUserIndex++) {
@@ -39,6 +84,13 @@ void XDeInit()
 HRESULT XInit(DWORD dwUserIndex)
 {
 	HRESULT hr=S_OK;
+
+	if(!hWnd) {	
+		if(!Createx360ceWindow(hX360ceInstance)) {
+			WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
+		}
+	}
+
 	if(!Gamepad[dwUserIndex].product.Data1) return ERROR_DEVICE_NOT_CONNECTED;
 
 	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex){ 
