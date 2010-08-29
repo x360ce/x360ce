@@ -61,11 +61,11 @@ LPCTSTR axisDZNames[4] = {
 	_T("Right Analog Y DeadZone"),
 };
 
-LPCTSTR axisCenterNames[4] = {
-	_T("Left Analog X Center"),
-	_T("Left Analog Y Center"),
-	_T("Right Analog X Center"),
-	_T("Right Analog Y Center"),
+LPCTSTR axisADZNames[4] = {
+	_T("Left Analog X AntiDeadZone"),
+	_T("Left Analog Y AntiDeadZone"),
+	_T("Right Analog X AntiDeadZone"),
+	_T("Right Analog Y AntiDeadZone"),
 };
 
 static LPCTSTR axisLNames[4] = {
@@ -173,7 +173,7 @@ void ReadPadConfig(INT idx) {
 	Gamepad[idx].dwPadIndex = idx;
 
 	Gamepad[idx].swapmotor = ReadUINTFromFile(section, _T("SwapMotor"),0);
-	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"),75);
+	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, _T("TriggerDeadzone"),XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
 	Gamepad[idx].ff.useforce = ReadUINTFromFile(section, _T("UseForceFeedback"),0);
 	Gamepad[idx].gamepadtype = (BYTE)ReadUINTFromFile(section, _T("ControllerType"),1);
 	Gamepad[idx].axistodpad = ReadUINTFromFile(section, _T("AxisToDPad"),0);
@@ -226,7 +226,7 @@ void ReadPadConfig(INT idx) {
 		}
 
 		Gamepad[idx].adeadzone[i] =  (SHORT) ReadUINTFromFile(section, axisDZNames[i], 0);
-		Gamepad[idx].axiscenter[i] = (SHORT) ReadUINTFromFile(section, axisCenterNames[i], 0);
+		Gamepad[idx].antidz[i] = (SHORT) ReadUINTFromFile(section, axisADZNames[i], 0);
 		Gamepad[idx].axislinear[i] = (SHORT) ReadUINTFromFile(section, axisLNames[i], 0);
 
 		if (ReadStringFromFile(section, axisBNames[i*2],buffer) > 0) {
