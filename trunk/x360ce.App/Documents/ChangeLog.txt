@@ -1,4 +1,7 @@
-﻿v2.0.2.88 (2010-08-29)
+﻿v2.0.2.89 (2010-08-29)
+- Update: AntiDeadzone presets added.
+
+v2.0.2.88 (2010-08-29)
 - New: Offer update if old version of xinput1_3.dll was found.
 
 v2.0.2.87 (2010-08-29)
