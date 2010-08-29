@@ -316,6 +316,7 @@ namespace x360ce.App
 				if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
 				if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
 				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
+				if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
 				if (control is ComboBox || control is TextBox) control.TextChanged -= new System.EventHandler(this.Control_TextChanged);
 			}
 			suspended++;
@@ -329,6 +330,7 @@ namespace x360ce.App
 			foreach (var control in SettingManager.Current.SettingsMap.Values)
 			{
 				if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
+				if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
 				if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
 				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged += new EventHandler(this.Control_TextChanged);
 				if (control is ComboBox || control is TextBox) control.TextChanged += new System.EventHandler(this.Control_TextChanged);
