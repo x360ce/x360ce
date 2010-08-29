@@ -1,4 +1,7 @@
-﻿v2.0.2.87 (2010-08-29)
+﻿v2.0.2.88 (2010-08-29)
+- New: Offer update if old version of xinput1_3.dll was found.
+
+v2.0.2.87 (2010-08-29)
 - New: AntiDeadZone settings support added.
 - Update: Updated to xinput1_3.dll v3.2.0.295.
 

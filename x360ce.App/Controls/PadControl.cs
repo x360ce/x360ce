@@ -800,7 +800,13 @@ namespace x360ce.App.Controls
 		{
 			switch (ThumbAntiDeadZoneComboBox.Text)
 			{
-				case "Enabled (XInput)":
+				case "Enabled (XInput, 80%)":
+					LeftThumbXAntiDeadZoneNumericUpDown.Value = 6279;
+					LeftThumbYAntiDeadZoneNumericUpDown.Value = 6279;
+					RightThumbXAntiDeadZoneNumericUpDown.Value = 6951;
+					RightThumbYAntiDeadZoneNumericUpDown.Value = 6951;
+					break;
+				case "Enabled (XInput, 100%)":
 					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7849;
 					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7849;
 					RightThumbXAntiDeadZoneNumericUpDown.Value = 8689;
@@ -813,11 +819,7 @@ namespace x360ce.App.Controls
 					RightThumbYAntiDeadZoneNumericUpDown.Value = 0;
 					break;
 			}
-
-
 		}
 
-
-	
 	}
 }
