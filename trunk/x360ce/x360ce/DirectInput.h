@@ -74,7 +74,7 @@ struct DINPUT_GAMEPAD {
 	BOOL swapmotor;
 	DWORD tdeadzone;
 	SHORT adeadzone[4];
-	SHORT axiscenter[4];
+	SHORT antidz[4];
 	BYTE gamepadtype;
 	BOOL axistodpad;
 	INT axistodpaddeadzone;
