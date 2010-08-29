@@ -84,7 +84,10 @@ namespace x360ce.App
 		public const string LeftThumbDeadZoneX = "Left Analog X DeadZone";
 		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to left thumb Y.")]
 		public const string LeftThumbDeadZoneY = "Left Analog Y DeadZone";
-
+		[DefaultValue("0"), Description("[0-32767]; default 0; remove in-game deadzone for left thumb X.")]
+		public const string LeftThumbAntiDeadZoneX = "Left Analog X AntiDeadZone";
+		[DefaultValue("0"), Description("[0-32767]; default 0;  remove in-game deadzone for Left thumb Y.")]
+		public const string LeftThumbAntiDeadZoneY = "Left Analog Y AntiDeadZone";
 
 		// Right Thumb.
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
@@ -105,6 +108,10 @@ namespace x360ce.App
 		public const string RightThumbDeadZoneX = "Right Analog X DeadZone";
 		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to right thumb Y.")]
 		public const string RightThumbDeadZoneY = "Right Analog Y DeadZone";
+		[DefaultValue("0"), Description("[0-32767]; default 0; remove in-game deadzone for right thumb X.")]
+		public const string RightThumbAntiDeadZoneX = "Right Analog X AntiDeadZone";
+		[DefaultValue("0"), Description("[0-32767]; default 0;  remove in-game deadzone for right thumb Y.")]
+		public const string RightThumbAntiDeadZoneY = "Right Analog Y AntiDeadZone";
 
 		// D-Pad.
 		[DefaultValue("0"), Description("Disable = 0, POV Index = N.")]

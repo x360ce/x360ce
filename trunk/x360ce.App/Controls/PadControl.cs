@@ -403,52 +403,61 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
 			map.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
 			map.Add(section + SettingName.NativeMode, NativeModeCheckBox);
-			// Mappings
-			map.Add(section + SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
-			map.Add(section + SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
-			map.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
-			map.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
-			map.Add(section + SettingName.LeftThumbRight, LeftThumbRightComboBox);
-			map.Add(section + SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
-			map.Add(section + SettingName.LeftThumbUp, LeftThumbUpComboBox);
-			map.Add(section + SettingName.LeftThumbDown, LeftThumbDownComboBox);
-			map.Add(section + SettingName.RightThumbRight, RightThumbRightComboBox);
-			map.Add(section + SettingName.RightThumbLeft, RightThumbLeftComboBox);
-			map.Add(section + SettingName.RightThumbUp, RightThumbUpComboBox);
-			map.Add(section + SettingName.RightThumbDown, RightThumbDownComboBox);
+			// Triggers
+			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
+			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
+			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
+			map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+			// D-Pad
 			map.Add(section + SettingName.DPad, DPadComboBox);
 			map.Add(section + SettingName.DPadUp, DPadUpComboBox);
 			map.Add(section + SettingName.DPadDown, DPadDownComboBox);
 			map.Add(section + SettingName.DPadLeft, DPadLeftComboBox);
 			map.Add(section + SettingName.DPadRight, DPadRightComboBox);
+			// Axis To D-Pad
+			map.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
+			map.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
+			map.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
+			// Buttons
 			map.Add(section + SettingName.ButtonBack, ButtonBackComboBox);
 			map.Add(section + SettingName.ButtonStart, ButtonStartComboBox);
 			map.Add(section + SettingName.ButtonA, ButtonAComboBox);
 			map.Add(section + SettingName.ButtonB, ButtonBComboBox);
 			map.Add(section + SettingName.ButtonX, ButtonXComboBox);
 			map.Add(section + SettingName.ButtonY, ButtonYComboBox);
+			// Shoulders.
 			map.Add(section + SettingName.LeftShoulder, LeftShoulderComboBox);
 			map.Add(section + SettingName.RightShoulder, RightShoulderComboBox);
+			// Left Thumb
+			map.Add(section + SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
+			map.Add(section + SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
+			map.Add(section + SettingName.LeftThumbRight, LeftThumbRightComboBox);
+			map.Add(section + SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
+			map.Add(section + SettingName.LeftThumbUp, LeftThumbUpComboBox);
+			map.Add(section + SettingName.LeftThumbDown, LeftThumbDownComboBox);
 			map.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
-			map.Add(section + SettingName.LeftThumbDeadZoneX, LeftTriggerDeadZoneXTrackBar);
-			map.Add(section + SettingName.LeftThumbDeadZoneY, LeftTriggerDeadZoneYTrackBar);
+			map.Add(section + SettingName.LeftThumbDeadZoneX, LeftThumbDeadZoneXTrackBar);
+			map.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbDeadZoneYTrackBar);
+			map.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXAntiDeadZoneNumericUpDown);
+			map.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYAntiDeadZoneNumericUpDown);
+			// Right Thumb
+			map.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
+			map.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
+			map.Add(section + SettingName.RightThumbRight, RightThumbRightComboBox);
+			map.Add(section + SettingName.RightThumbLeft, RightThumbLeftComboBox);
+			map.Add(section + SettingName.RightThumbUp, RightThumbUpComboBox);
+			map.Add(section + SettingName.RightThumbDown, RightThumbDownComboBox);
 			map.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
-			map.Add(section + SettingName.RightThumbDeadZoneX, RightTriggerDeadZoneXTrackBar);
-			map.Add(section + SettingName.RightThumbDeadZoneY, RightTriggerDeadZoneYTrackBar);
-			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
-			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
-			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
-			map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+			map.Add(section + SettingName.RightThumbDeadZoneX, RightThumbDeadZoneXTrackBar);
+			map.Add(section + SettingName.RightThumbDeadZoneY, RightThumbDeadZoneYTrackBar);
+			map.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXAntiDeadZoneNumericUpDown);
+			map.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
 			// Force Feedback
 			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
 			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
 			map.Add(section + SettingName.ForceOverall, ForceOverallTrackBar);
 			map.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
 			map.Add(section + SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
-			// Axis To D-Pad
-			map.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
-			map.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
-			map.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			return map;
 		}
 
@@ -786,6 +795,28 @@ namespace x360ce.App.Controls
 			TrackBar control = (TrackBar)sender;
 			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
+
+		private void ThumbAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			switch (ThumbAntiDeadZoneComboBox.Text)
+			{
+				case "Mafia II":
+					LeftThumbXAntiDeadZoneNumericUpDown.Value = 7849;
+					LeftThumbYAntiDeadZoneNumericUpDown.Value = 7849;
+					RightThumbXAntiDeadZoneNumericUpDown.Value = 8689;
+					RightThumbYAntiDeadZoneNumericUpDown.Value = 8689;
+					break;
+				default:
+					LeftThumbXAntiDeadZoneNumericUpDown.Value = 0;
+					LeftThumbYAntiDeadZoneNumericUpDown.Value = 0;
+					RightThumbXAntiDeadZoneNumericUpDown.Value = 0;
+					RightThumbYAntiDeadZoneNumericUpDown.Value = 0;
+					break;
+			}
+
+
+		}
+
 
 	
 	}
