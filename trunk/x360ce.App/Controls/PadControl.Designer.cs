@@ -57,6 +57,7 @@
 			this.RightThumbYAntiDeadZoneLabel = new System.Windows.Forms.Label();
 			this.LeftThumbYAntiDeadZoneLabel = new System.Windows.Forms.Label();
 			this.RightThumbXAntiDeadZoneLabel = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
 			this.LeftThumbXAntiDeadZoneLabel = new System.Windows.Forms.Label();
 			this.LeftTriggerDeadZoneLabel = new System.Windows.Forms.Label();
 			this.RightTriggerDeadZoneLabel = new System.Windows.Forms.Label();
@@ -164,7 +165,6 @@
 			this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.label1 = new System.Windows.Forms.Label();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -419,7 +419,8 @@
 			this.ThumbAntiDeadZoneComboBox.FormattingEnabled = true;
 			this.ThumbAntiDeadZoneComboBox.Items.AddRange(new object[] {
             "Disabled",
-            "Enabled (XInput)"});
+            "Enabled (XInput, 80%)",
+            "Enabled (XInput, 100%)"});
 			this.ThumbAntiDeadZoneComboBox.Location = new System.Drawing.Point(111, 111);
 			this.ThumbAntiDeadZoneComboBox.Name = "ThumbAntiDeadZoneComboBox";
 			this.ThumbAntiDeadZoneComboBox.Size = new System.Drawing.Size(139, 21);
@@ -518,6 +519,15 @@
 			this.RightThumbXAntiDeadZoneLabel.Size = new System.Drawing.Size(150, 13);
 			this.RightThumbXAntiDeadZoneLabel.TabIndex = 20;
 			this.RightThumbXAntiDeadZoneLabel.Text = "Right Thumb X AntiDeadZone";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(26, 114);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(79, 13);
+			this.label1.TabIndex = 20;
+			this.label1.Text = "AntiDeadZone:";
 			// 
 			// LeftThumbXAntiDeadZoneLabel
 			// 
@@ -1676,15 +1686,6 @@
 			this.DiMenuStrip.Name = "DiMenuStrip";
 			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(26, 114);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(79, 13);
-			this.label1.TabIndex = 20;
-			this.label1.Text = "AntiDeadZone:";
 			// 
 			// PadControl
 			// 
