@@ -21,7 +21,7 @@ extern LPWSTR lpLogFileName;
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput);
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault);
 UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey);
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,UINT uDefault);
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault);
 LPCWSTR ModuleFileName();
 LPWSTR const DXErrStr(HRESULT dierr);
 LONG clamp(LONG val, LONG min, LONG max);
@@ -30,3 +30,16 @@ DWORD GUIDtoString(const GUID pg, LPWSTR data, int size);
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid);
 VOID CreateLog();
 BOOL WriteLog(LPTSTR str,...);
+
+template<class Dest, class Src>
+Dest force_cast(Src src)
+{
+	union
+	{
+		Dest d;
+		Src s;
+	} convertor;
+
+	convertor.s = src;
+	return convertor.d;
+}

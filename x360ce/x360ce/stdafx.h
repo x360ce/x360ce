@@ -15,6 +15,8 @@
  
 #pragma once
 
+#define UNICODE
+
 #define _BIND_TO_CURRENT_CRT_VERSION 1
 #define _BIND_TO_CURRENT_ATL_VERSION 1
 #define _BIND_TO_CURRENT_MFC_VERSION 1

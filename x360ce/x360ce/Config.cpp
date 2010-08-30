@@ -115,8 +115,8 @@ void ReadConfig()
 {
 
 	// Read global options
-	bInitBeep = ReadUINTFromFile(L"Options", L"UseInitBeep",1);
-	writelog = ReadUINTFromFile(L"Options", L"Log",0);
+	bInitBeep = (BOOL) ReadUINTFromFile(L"Options", L"UseInitBeep",1);
+	writelog = (BOOL) ReadUINTFromFile(L"Options", L"Log",0);
 
 	//FakeAPI
 	wFakeMode = (WORD) ReadUINTFromFile(L"FakeAPI", L"FakeMode",0);
@@ -134,7 +134,7 @@ void ReadConfig()
 }
 
 
-void ReadPadConfig(INT idx) {
+void ReadPadConfig(DWORD idx) {
 
 	WCHAR section[10];
 	swprintf_s(section,L"PAD%u",idx+1);
@@ -142,7 +142,7 @@ void ReadPadConfig(INT idx) {
 
 	WCHAR buffer[MAX_PATH];
 
-	Gamepad[idx].native = ReadUINTFromFile(section, L"Native",0);
+	Gamepad[idx].native = (BOOL) ReadUINTFromFile(section, L"Native",0);
 	if(Gamepad[idx].native) 
 	{ 
 		wNativeMode = 1;
@@ -153,27 +153,27 @@ void ReadPadConfig(INT idx) {
 	GUIDtoString(GUID_NULL,NullGUIDStr,50);
 
 	ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
-	StringToGUID(buffer,&Gamepad[idx].product);
+	StringToGUID(buffer,&Gamepad[idx].productGUID);
 	
-	if(IsEqualGUID(Gamepad[idx].product,GUID_NULL))
+	if(IsEqualGUID(Gamepad[idx].productGUID,GUID_NULL))
 	{
 		ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
-		StringToGUID(buffer,&Gamepad[idx].product);
+		StringToGUID(buffer,&Gamepad[idx].productGUID);
 	}
 
-	Gamepad[idx].pid = HIWORD(Gamepad[idx].product.Data1);
-	Gamepad[idx].vid = LOWORD(Gamepad[idx].product.Data1);
+	Gamepad[idx].pid = HIWORD(Gamepad[idx].productGUID.Data1);
+	Gamepad[idx].vid = LOWORD(Gamepad[idx].productGUID.Data1);
 
 	ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
-	StringToGUID(buffer,&Gamepad[idx].instance);
+	StringToGUID(buffer,&Gamepad[idx].instanceGUID);
 
-	if(IsEqualGUID(Gamepad[idx].instance,GUID_NULL))
+	if(IsEqualGUID(Gamepad[idx].instanceGUID,GUID_NULL))
 	{
 		ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
-		StringToGUID(buffer,&Gamepad[idx].instance);
+		StringToGUID(buffer,&Gamepad[idx].instanceGUID);
 	}
 
-	if (!(IsEqualGUID(Gamepad[idx].product,GUID_NULL))  && !(IsEqualGUID(Gamepad[idx].instance,GUID_NULL)))
+	if (!(IsEqualGUID(Gamepad[idx].productGUID,GUID_NULL))  && !(IsEqualGUID(Gamepad[idx].instanceGUID,GUID_NULL)))
 	{ 
 		Gamepad[idx].configured = true;
 		PadMap.enabled = true;
@@ -184,11 +184,11 @@ void ReadPadConfig(INT idx) {
 
 	Gamepad[idx].swapmotor = ReadUINTFromFile(section, L"SwapMotor",0);
 	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-	Gamepad[idx].ff.useforce = ReadUINTFromFile(section, L"UseForceFeedback",0);
-	Gamepad[idx].gamepadtype = (BYTE)ReadUINTFromFile(section, L"ControllerType",1);
-	Gamepad[idx].axistodpad = ReadUINTFromFile(section, L"AxisToDPad",0);
-	Gamepad[idx].axistodpaddeadzone = ReadUINTFromFile(section, L"AxisToDPadDeadZone",0);
-	Gamepad[idx].axistodpadoffset = ReadUINTFromFile(section, L"AxisToDPadOffset",0);
+	Gamepad[idx].ff.useforce = (BOOL)  ReadUINTFromFile(section, L"UseForceFeedback",0);
+	Gamepad[idx].gamepadtype = (BYTE) ReadUINTFromFile(section, L"ControllerType",1);
+	Gamepad[idx].axistodpad = (BOOL) ReadUINTFromFile(section, L"AxisToDPad",0);
+	Gamepad[idx].axistodpaddeadzone = (INT) ReadUINTFromFile(section, L"AxisToDPadDeadZone",0);
+	Gamepad[idx].axistodpadoffset = (INT) ReadUINTFromFile(section, L"AxisToDPadOffset",0);
 	Gamepad[idx].ff.forcepercent = (FLOAT) ReadUINTFromFile(section, L"ForcePercent",100) * (FLOAT) 0.01;	
 	Gamepad[idx].ff.leftPeriod = ReadUINTFromFile(section, L"LeftMotorPeriod",60);
 	Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, L"RightMotorPeriod",20);
@@ -201,7 +201,7 @@ void ReadPadConfig(INT idx) {
 
 	for (INT i=0; i<10; ++i) {
 		if (ReadUINTFromFile(section,buttonNames[i],0) > 0) {
-			PadMap.Button[i] = (ReadUINTFromFile(section,buttonNames[i],0) - 1);
+			PadMap.Button[i] = (INT) (ReadUINTFromFile(section,buttonNames[i],0) - 1);
 		}
 	}
 
@@ -211,7 +211,7 @@ void ReadPadConfig(INT idx) {
 			INT val = _wtoi(buffer);
 			if(val > 0) 
 			{
-				PadMap.pov[i] = val - 1;
+				PadMap.pov[i] = (DWORD) (val - 1);
 			} 
 			else 
 			{
@@ -271,8 +271,8 @@ void ReadPadConfig(INT idx) {
 		}
 	}
 
-	if (UINT ret = ReadUINTFromFile(section, L"D-pad POV") > 0) {
-		PadMap.DpadPOV = ret - 1;
+	if (ReadUINTFromFile(section, L"D-pad POV") > 0) {
+		PadMap.DpadPOV = (INT) ReadUINTFromFile(section, L"D-pad POV") - 1;
 	}
 }
 

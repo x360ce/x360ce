@@ -66,5 +66,5 @@ extern struct GamepadMap GamepadMapping[4];
 
 void InitConfig(LPCWSTR ininame);
 void ReadConfig();
-void ReadPadConfig(INT idx);
+void ReadPadConfig(DWORD idx);
 MappingType getTriggerType(LPCWSTR);

@@ -76,9 +76,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	CreateLog();
 
 #if SVN_MODS != 0 
-	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #else 
-	WriteLog(_T("[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d"),VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #endif
 
 	AttachFakeAPI();
