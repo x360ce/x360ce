@@ -54,7 +54,7 @@ UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
 	return 0;
 }
 
-UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,UINT uDefault)
+UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,INT uDefault)
 {
 	if (lpConfigFile) return GetPrivateProfileInt(strFileSection,strKey,uDefault,lpConfigFile);
 	return 0;
@@ -114,7 +114,7 @@ LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
 
 inline static WORD flipShort(WORD s) 
 {
-	return (s>>8) | (s<<8);
+	return (WORD) ((s>>8) | (s<<8));
 }
 
 inline static DWORD flipLong(DWORD l) 
@@ -124,13 +124,13 @@ inline static DWORD flipLong(DWORD l)
 
 DWORD GUIDtoString(const GUID pg, LPWSTR data, int size) 
 {
-	DWORD ret = StringFromGUID2(pg,data,size);
+	int ret = StringFromGUID2(pg,data,size);
 	return ret;
 }
 
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid)
 {
-	static GUID g = GUID_NULL;
+	GUID g = GUID_NULL;
 	WCHAR tmp[50];
 	if (*szBuf != L'{') swprintf_s(tmp,L"%s%s%s",L"{",szBuf,L"}");
 	HRESULT hr = CLSIDFromString(tmp, &g);

@@ -33,9 +33,6 @@ struct FFB_CAPS
 
 struct DINPUT_FF
 {
-	DIPERIODIC pf;
-	DICONSTANTFORCE cf;
-	DIRAMPFORCE rf;
 	INT xForce;
 	INT yForce;
 	INT oldXForce;
@@ -44,11 +41,14 @@ struct DINPUT_FF
 	DWORD oldPeriod;
 	DWORD leftPeriod;
 	DWORD rightPeriod;
-	DIEFFECT eff[2];
 	BOOL IsUpdateEffectCreated;
+	BOOL useforce;
+	DIPERIODIC pf;
+	DICONSTANTFORCE cf;
+	DIRAMPFORCE rf;
+	DIEFFECT eff[2];
 	LPDIRECTINPUTEFFECT g_pEffect[2];
 	DWORD g_dwNumForceFeedbackAxis;
-	BOOL useforce;
 	DOUBLE forcepercent;
 	FFB_CAPS ffbcaps;
 	DINPUT_FF()
@@ -63,23 +63,22 @@ struct DINPUT_GAMEPAD {
 	DWORD dwPadIndex;
 	BOOL connected;
 	BOOL configured;
-	TCHAR name[MAX_PATH];
+	BOOL native;
+	BOOL axistodpad;
+	UINT dwAxisCount;
+	UINT swapmotor;
+	UINT tdeadzone;
 	WORD vid;
 	WORD pid;
-	GUID product;
-	GUID instance;
+	GUID productGUID;
+	GUID instanceGUID;
 	DIJOYSTATE2 state;
-	DWORD dwAxisCount;
-	BOOL native;
-	BOOL swapmotor;
-	DWORD tdeadzone;
 	SHORT adeadzone[4];
 	SHORT antidz[4];
-	BYTE gamepadtype;
-	BOOL axistodpad;
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
 	SHORT axislinear[4];
+	BYTE gamepadtype;
 	DINPUT_FF ff;
 	DINPUT_GAMEPAD()
 	{
@@ -90,10 +89,9 @@ struct DINPUT_GAMEPAD {
 
 extern struct DINPUT_GAMEPAD Gamepad[4];
 
-HRESULT InitDirectInput(HWND, INT,INT);
+HRESULT InitDirectInput( HWND hDlg, DWORD idx );
 BOOL ButtonPressed(DWORD, INT);
 HRESULT UpdateState( DWORD );
-HRESULT InitDirectInput( HWND hook, INT idx );
 WORD EnumPadCount();
 HRESULT Enumerate(DWORD idx);
 void ReleaseDirectInput();

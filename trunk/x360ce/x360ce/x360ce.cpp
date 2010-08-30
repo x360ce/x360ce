@@ -91,7 +91,7 @@ HRESULT XInit(DWORD dwUserIndex)
 		}
 	}
 
-	if(!Gamepad[dwUserIndex].product.Data1) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!Gamepad[dwUserIndex].productGUID.Data1) return ERROR_DEVICE_NOT_CONNECTED;
 
 	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex){ 
 
@@ -130,7 +130,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetState_Type)(DWORD dwUserIndex, XINPUT_STATE* pState);
-		XInputGetState_Type nativeXInputGetState = (XInputGetState_Type) GetProcAddress( hNativeInstance, "XInputGetState");
+		FARPROC fp = GetProcAddress( hNativeInstance, "XInputGetState");
+		XInputGetState_Type nativeXInputGetState = force_cast<XInputGetState_Type>(fp);
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
@@ -379,8 +380,6 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	}
 	//WILDS END
 
-
-
 	for (int i = 0; i < 4; ++i)
 	{
 
@@ -420,7 +419,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputSetState_Type)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
-		XInputSetState_Type nativeXInputSetState = (XInputSetState_Type) GetProcAddress( hNativeInstance, "XInputSetState");
+		FARPROC fp = GetProcAddress( hNativeInstance, "XInputSetState");
+		XInputSetState_Type nativeXInputSetState = force_cast<XInputSetState_Type>(fp);
 		return nativeXInputSetState(dwUserIndex,pVibration);
 	}
 
@@ -457,7 +457,8 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetCapabilities_Type)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
-		XInputGetCapabilities_Type nativeXInputGetCapabilities = (XInputGetCapabilities_Type) GetProcAddress( hNativeInstance, "XInputGetCapabilities");
+		FARPROC fp = GetProcAddress( hNativeInstance, "XInputGetCapabilities");
+		XInputGetCapabilities_Type nativeXInputGetCapabilities = force_cast<XInputGetCapabilities_Type>(fp);
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
@@ -493,7 +494,8 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 	if(wNativeMode) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef VOID (WINAPI* XInputEnable_Type)(BOOL enable);
-		XInputEnable_Type nativeXInputEnable = (XInputEnable_Type) GetProcAddress( hNativeInstance, "XInputSetState");
+		FARPROC fp = GetProcAddress( hNativeInstance, "XInputEnable");
+		XInputEnable_Type nativeXInputEnable = force_cast<XInputEnable_Type>(fp);
 		return nativeXInputEnable(enable);
 	}
 

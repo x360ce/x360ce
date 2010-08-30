@@ -64,11 +64,11 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 
 			for(int i = 0; i < 4; i++)
 			{
-				if (Gamepad[i].product.Data1 != NULL && IsEqualGUID(Gamepad[i].product,pInst->guidProduct))
+				if (Gamepad[i].productGUID.Data1 != NULL && IsEqualGUID(Gamepad[i].productGUID,pInst->guidProduct))
 				{
 					memcpy(&FakeInst,pInst,pInst->dwSize);
 
-					DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+					DWORD dwFakePIDVID = (DWORD) MAKELONG(wFakeVID,wFakePID);
 
 					FakeInst.guidProduct.Data1=dwFakePIDVID;
 					FakeInst.guidProduct.Data2=0x0000;
@@ -127,11 +127,11 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 
 			for(int i = 0; i < 4; i++)
 			{
-				if (Gamepad[i].product.Data1 != NULL && IsEqualGUID(Gamepad[i].product,pInst->guidProduct))
+				if (Gamepad[i].productGUID.Data1 != NULL && IsEqualGUID(Gamepad[i].productGUID,pInst->guidProduct))
 				{
 					memcpy(&FakeInst,pInst,pInst->dwSize);
 
-					DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+					DWORD dwFakePIDVID = (DWORD) MAKELONG(wFakeVID,wFakePID);
 
 					FakeInst.guidProduct.Data1=dwFakePIDVID;
 					FakeInst.guidProduct.Data2=0x0000;
@@ -216,11 +216,11 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 			DIDEVICEINSTANCEA FakeInst;
 
 			for(int i = 0; i < 4; i++) {
-				if(Gamepad[i].product.Data1 != NULL && IsEqualGUID(Gamepad[i].product, pdidi->guidProduct)) {
+				if(Gamepad[i].productGUID.Data1 != NULL && IsEqualGUID(Gamepad[i].productGUID, pdidi->guidProduct)) {
 
 					memcpy(&FakeInst,pdidi,pdidi->dwSize);
 
-					DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+					DWORD dwFakePIDVID = (DWORD) MAKELONG(wFakeVID,wFakePID);
 
 					FakeInst.guidProduct.Data1=dwFakePIDVID;
 					FakeInst.guidProduct.Data2=0x0000;
@@ -278,11 +278,12 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 			DIDEVICEINSTANCEW FakeInst;
 
 			for(int i = 0; i < 4; i++) {
-				if(Gamepad[i].product.Data1 != NULL && Gamepad[i].product.Data1 == pdidi->guidProduct.Data1) {
+				if(Gamepad[i].productGUID.Data1 != NULL && Gamepad[i].productGUID.Data1 == pdidi->guidProduct.Data1) {
 					
 					memcpy(&FakeInst,pdidi,pdidi->dwSize);
 
-					DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+					DWORD dwFakePIDVID = (DWORD) MAKELONG(wFakeVID,wFakePID);
+
 					FakeInst.guidProduct.Data1=dwFakePIDVID;
 					FakeInst.guidProduct.Data2=0x0000;
 					FakeInst.guidProduct.Data3=0x0000;
@@ -326,7 +327,7 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 	if (wFakeMode >= 2 ) {
 
 		if ( (&rguidProp == &DIPROP_VIDPID) ) {
-			DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+			DWORD dwFakePIDVID = (DWORD) MAKELONG(wFakeVID,wFakePID);
 			DWORD dwOriginalPIDVID = ((LPDIPROPDWORD)pdiph)->dwData;
 
 			((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;
@@ -356,7 +357,7 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 	if (wFakeMode >= 2 ) {
 
 		if ( (&rguidProp == &DIPROP_VIDPID) ) {
-			DWORD dwFakePIDVID = MAKELONG(wFakeVID,wFakePID);
+			DWORD dwFakePIDVID = (DWORD) MAKELONG(wFakeVID,wFakePID);
 			DWORD dwOriginalPIDVID = ((LPDIPROPDWORD)pdiph)->dwData;
 
 			((LPDIPROPDWORD)pdiph)->dwData = dwFakePIDVID;

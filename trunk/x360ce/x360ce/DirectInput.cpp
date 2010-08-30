@@ -73,7 +73,7 @@ void Deactivate(DWORD idx)
 
 void Deactivate() 
 {
-	for (int i=0; i<4; i++) Deactivate(i);
+	for (DWORD i=0; i<4; i++) Deactivate(i);
 }
 
 BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContext )
@@ -82,13 +82,12 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContex
 	LPDIRECTINPUTDEVICE8 pDevice;
 	DINPUT_GAMEPAD * gp = (DINPUT_GAMEPAD*) pContext;
 
-	if(IsEqualGUID(gp->product, pInst->guidProduct) && IsEqualGUID(gp->instance, pInst->guidInstance) ) {
+	if(IsEqualGUID(gp->productGUID, pInst->guidProduct) && IsEqualGUID(gp->instanceGUID, pInst->guidInstance) ) {
 		lpDI8->CreateDevice( pInst->guidInstance, &pDevice, NULL );
 		if(pDevice) {
 			gp->g_pGamepad = pDevice;
-			_tcscpy_s(gp->name,pInst->tszProductName);
 			gp->connected = 1;
-			WriteLog(_T("[DINPUT]  [PAD%d] Device \"%s\" initialized"),gp->dwPadIndex+1,gp->name);
+			WriteLog(_T("[DINPUT]  [PAD%d] Device \"%s\" initialized"),gp->dwPadIndex+1,pInst->tszProductName);
 		}
 		return DIENUM_STOP;
 	}
@@ -185,7 +184,7 @@ HRESULT Enumerate(DWORD idx)
 	return ERROR_SUCCESS;
 }
 
-HRESULT InitDirectInput( HWND hDlg, INT idx )
+HRESULT InitDirectInput( HWND hDlg, DWORD idx )
 {
 
 	if(!Gamepad[idx].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
@@ -297,12 +296,12 @@ HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 	nForce = clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
 	if(motor == LeftMotor) {
 		Gamepad[idx].ff.eff[motor].dwDuration = Gamepad[idx].ff.leftPeriod*1000;
-		Gamepad[idx].ff.pf.dwMagnitude = nForce;
+		Gamepad[idx].ff.pf.dwMagnitude = (DWORD) nForce;
 		Gamepad[idx].ff.pf.dwPeriod = Gamepad[idx].ff.leftPeriod*1000;
 	}
 	if(motor == RightMotor)  {
 		Gamepad[idx].ff.eff[motor].dwDuration = Gamepad[idx].ff.rightPeriod*1000;
-		Gamepad[idx].ff.pf.dwMagnitude = nForce;
+		Gamepad[idx].ff.pf.dwMagnitude = (DWORD) nForce;
 		Gamepad[idx].ff.pf.dwPeriod = Gamepad[idx].ff.rightPeriod*1000;
 	}
 

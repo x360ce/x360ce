@@ -100,7 +100,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 				return hr;
 
 			for(WORD i = 0; i < 4; i++) {
-				if(Gamepad[i].configured && Gamepad[i].vid == dwVid && Gamepad[i].pid == dwPid) {
+				if(!IsEqualGUID(Gamepad[i].productGUID, GUID_NULL) && !IsEqualGUID(Gamepad[i].instanceGUID, GUID_NULL) && Gamepad[i].vid == dwVid && Gamepad[i].pid == dwPid) {
 					WCHAR* strUSB = _tcsstr( pVal->bstrVal, _T("USB") );
 					WCHAR tempstr[MAX_PATH];
 					if( strUSB ) {
