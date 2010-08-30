@@ -78,8 +78,8 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 
 					TCHAR strOriginalguidProduct[50];
 					TCHAR strFakeguidProduct[50];
-					GUIDtoString(strOriginalguidProduct,&pInst->guidProduct);
-					GUIDtoString(strFakeguidProduct,&FakeInst.guidProduct);
+					GUIDtoString(pInst->guidProduct,strOriginalguidProduct,50);
+					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
 
 					FakeInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
@@ -141,8 +141,8 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 
 					TCHAR strOriginalguidProduct[50];
 					TCHAR strFakeguidProduct[50];
-					GUIDtoString(strOriginalguidProduct,&pInst->guidProduct);
-					GUIDtoString(strFakeguidProduct,&FakeInst.guidProduct);
+					GUIDtoString(pInst->guidProduct,strOriginalguidProduct,50);
+					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
 
 					FakeInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
@@ -230,8 +230,8 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 
 					TCHAR strOriginalguidProduct[50];
 					TCHAR strFakeguidProduct[50];
-					GUIDtoString(strOriginalguidProduct,&pdidi->guidProduct);
-					GUIDtoString(strFakeguidProduct,&FakeInst.guidProduct);
+					GUIDtoString(pdidi->guidProduct,strOriginalguidProduct,50);
+					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
 
 					FakeInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
@@ -291,8 +291,8 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 
 					TCHAR strOriginalguidProduct[50];
 					TCHAR strFakeguidProduct[50];
-					GUIDtoString(strOriginalguidProduct,&pdidi->guidProduct);
-					GUIDtoString(strFakeguidProduct,&FakeInst.guidProduct);
+					GUIDtoString(pdidi->guidProduct,strOriginalguidProduct,50);
+					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
 
 					FakeInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215

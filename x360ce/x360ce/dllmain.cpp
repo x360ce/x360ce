@@ -70,7 +70,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 	hX360ceInstance =  hinstDLL;
 	DWORD dwAppPID = GetCurrentProcessId();
-	InitConfig(L"x360ce.ini");
+	static WCHAR IniFileName[] = L"x360ce.ini";
+	InitConfig(IniFileName);
 	ReadConfig();
 	CreateLog();
 
@@ -112,7 +113,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 	switch( fdwReason ) 
 	{ 
 	case DLL_PROCESS_ATTACH:
-		DisableThreadLibraryCalls(hinstDLL);
+		//DisableThreadLibraryCalls(hinstDLL); //MUST be disabled for static runtime
 		InitInstance(hinstDLL);
 		break;
 

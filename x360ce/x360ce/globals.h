@@ -24,6 +24,7 @@
 #define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
+#define bytesof(a, b) ((a) * sizeof(b))
 
 //x360ce version info
 #define VERSION_MAJOR 3
