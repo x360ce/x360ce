@@ -168,9 +168,9 @@ namespace x360ce.App.Controls
 			}
 			// Sliders
 			var sNum = 1;
+			ProcessSlider(actions, state.GetSlider(), DiUvSliderTextBox, ref sNum);
 			ProcessSlider(actions, state.GetASlider(), DiASliderTextBox, ref sNum);
 			ProcessSlider(actions, state.GetFSlider(), DiFSliderTextBox, ref sNum);
-			ProcessSlider(actions, state.GetSlider(), DiUvSliderTextBox, ref sNum);
 			ProcessSlider(actions, state.GetVSlider(), DiVSliderTextBox, ref sNum);
 
 			// Poin of view buttons
@@ -232,20 +232,26 @@ namespace x360ce.App.Controls
 			int n3 = p4 + p1;
 			int n4 = n3 + space;
 			if (v > p1 && v < p2) return "";
-			if (v > n1 && v < n2) return "I";
-			if (v > p3 && v < p4) return "";
+			if (v > n1 && v < n2) return (isWheel) ? "IH" : "I";
+			if (v > p3 && v < p4) return (isWheel) ? "H" : "";
 			if (v > n3 && v < n4) return "I";
 			return null;
 		}
 
 		Guid deviceInstanceGuid;
+		bool isWheel = false;
 
 		public List<string> UpdateFrom(Device device)
 		{
 			if (!Helper.IsSameDevice(device, deviceInstanceGuid))
 			{
 				ShowDeviceInfo(device);
-				deviceInstanceGuid = device == null ? Guid.Empty : device.DeviceInformation.InstanceGuid;
+				deviceInstanceGuid = Guid.Empty;
+				if (device != null)
+				{
+					deviceInstanceGuid = device.DeviceInformation.InstanceGuid;
+					isWheel = device.DeviceInformation.DeviceType == DeviceType.Driving;
+				}
 			}
 			return ShowDirectInputState(device);
 		}
