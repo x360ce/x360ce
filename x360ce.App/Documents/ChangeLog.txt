@@ -1,4 +1,7 @@
-﻿v2.0.2.89 (2010-08-29)
+﻿v2.0.2.90 (2010-09-01)
+- Fixed: Fixed "Record" feature when pedals are reported as single slider. 
+
+v2.0.2.89 (2010-08-29)
 - Update: AntiDeadzone presets added.
 
 v2.0.2.88 (2010-08-29)
