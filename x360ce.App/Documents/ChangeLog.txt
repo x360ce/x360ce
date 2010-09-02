@@ -1,4 +1,7 @@
-﻿v2.0.2.90 (2010-09-01)
+﻿v2.0.2.91 (2010-09-02)
+- New: Preset for "Logitech WingMan Formula Force GP USB" (from Martin Kopecký)
+
+v2.0.2.90 (2010-09-01)
 - Fixed: Fixed "Record" feature when pedals are reported as single slider. 
 
 v2.0.2.89 (2010-08-29)
@@ -12,7 +15,7 @@ v2.0.2.87 (2010-08-29)
 - Update: Updated to xinput1_3.dll v3.2.0.295.
 
 v2.0.2.85 (2010-08-28)
-- New: Preset for Logitech G27 Racing Wheel (from chalkman)
+- New: Preset for "Logitech G27 Racing Wheel" (from chalkman)
 
 v2.0.2.84 (2010-08-28)
 - Fix: Permission check issues on Windows XP
@@ -89,7 +92,7 @@ v2.0.2.34 (2010-04-17)
 v2.0.2.33 (2010-04-17)
 - New: "Axis To D-Pad" settings group box added.
 - New: "FakeWinTrust" check box added.
-- New: Thrustmaster Dual Analog/Power gamepads presets by crazycat
+- New: Thrustmaster Dual Analog/Power gamepads presets (from crazycat)
 - Fix: Settings save fixed.
 - Update: Options combined into groups.
 - Update: Internal preset file will be removed from disk after load.
