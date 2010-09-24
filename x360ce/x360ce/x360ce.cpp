@@ -181,15 +181,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	// --- Map buttons ---
 	for (INT i = 0; i < 10; ++i) {
-		if ((PadMap.Button[i] >= 0)
-			&&	ButtonPressed(PadMap.Button[i],dwUserIndex)
-			) {
-				xGamepad.wButtons |= buttonIDs[i];
-		}
+		if ((PadMap.Button[i] >= 0) && ButtonPressed(PadMap.Button[i],dwUserIndex)) 
+			xGamepad.wButtons |= buttonIDs[i];
 	}
 
 	// --- Map POV to the D-pad ---
-	if (PadMap.DpadPOV >= 0 ) {
+	if ((PadMap.DpadPOV >= 0) && !PadMap.PovIsButton) {
 
 		//INT pov = POVState(PadMap.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
@@ -214,9 +211,9 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		}
 
 	}
-	else {
+	else if((PadMap.DpadPOV < 0) && PadMap.PovIsButton) {
 		for (INT i = 0; i < 4; ++i) {
-			if ((PadMap.pov[i] >= 0)&&	ButtonPressed(PadMap.pov[i],dwUserIndex)) {
+			if ((PadMap.pov[i] >= 0) && ButtonPressed(PadMap.pov[i],dwUserIndex)) {
 				xGamepad.wButtons |= povIDs[i];
 			}
 		}

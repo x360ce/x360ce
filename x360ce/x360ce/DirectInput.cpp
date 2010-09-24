@@ -87,7 +87,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContex
 		if(pDevice) {
 			gp->g_pGamepad = pDevice;
 			gp->connected = 1;
-			WriteLog(_T("[DINPUT]  [PAD%d] Device \"%s\" initialized"),gp->dwPadIndex+1,pInst->tszProductName);
+			WriteLog(L"[DINPUT]  [PAD%d] Device \"%s\" initialized",gp->dwPadIndex+1,pInst->tszProductName);
 		}
 		return DIENUM_STOP;
 	}
@@ -150,7 +150,7 @@ HRESULT UpdateState(DWORD idx )
 	hr = Gamepad[idx].g_pGamepad->GetDeviceState( sizeof( DIJOYSTATE2 ), &Gamepad[idx].state );
 	if(FAILED(hr)) {
 		if(bInitBeep) MessageBeep(MB_OK);
-		WriteLog(_T("[DINPUT]  [PAD%d] Device Acquired"),idx+1);
+		WriteLog(L"[DINPUT]  [PAD%d] Device Acquired",idx+1);
 		hr = Gamepad[idx].g_pGamepad->Acquire();
 	}
 
@@ -168,19 +168,19 @@ HRESULT Enumerate(DWORD idx)
 	WORD wFakeModeOrig=wFakeMode;
 	if (wFakeModeOrig) {
 		wFakeMode=0; //Temporary disable FakeAPI
-		WriteLog(_T("[DINPUT]  Temporary disable FakeAPI"));
+		WriteLog(L"[DINPUT]  Temporary disable FakeAPI");
 	}
-	WriteLog(_T("[DINPUT]  [PAD%d] Enumerating User ID %d"),idx+1,idx);
+	WriteLog(L"[DINPUT]  [PAD%d] Enumerating User ID %d",idx+1,idx);
 	hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &Gamepad[idx], DIEDFL_ATTACHEDONLY );
 	if (wFakeModeOrig) {
 		wFakeMode=wFakeModeOrig; // Restore FakeAPI state, if disable before
-		WriteLog(_T("[DINPUT]  Restore FakeAPI state"));
+		WriteLog(L"[DINPUT]  Restore FakeAPI state");
 	}
 	if FAILED(hr) {
-		WriteLog(_T("[DINPUT]  [PAD%d] Enumeration FAILED !!!"),idx+1);
+		WriteLog(L"[DINPUT]  [PAD%d] Enumeration FAILED !!!",idx+1);
 		return hr;
 	}
-	if(!Gamepad[idx].g_pGamepad) WriteLog(_T("[PAD%d] Enumeration FAILED !!!"),idx+1);
+	if(!Gamepad[idx].g_pGamepad) WriteLog(L"[PAD%d] Enumeration FAILED !!!",idx+1);
 	return ERROR_SUCCESS;
 }
 
@@ -242,12 +242,12 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
 			//return hr;
 	}
 	else {
-		WriteLog(_T("[DINPUT]  [PAD%d] Detected axis count: %d"),idx+1,Gamepad[idx].dwAxisCount);
+		WriteLog(L"[DINPUT]  [PAD%d] Detected axis count: %d",idx+1,Gamepad[idx].dwAxisCount);
 	}
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumFFAxesCallback,
 		( VOID* )&Gamepad[idx].ff.g_dwNumForceFeedbackAxis, DIDFT_AXIS ) ) ) {
-			WriteLog(_T("[DINPUT]  [PAD%d] EnumFFAxesCallback failed with code HR = %s"), idx+1, DXErrStr(hr));
+			WriteLog(L"[DINPUT]  [PAD%d] EnumFFAxesCallback failed with code HR = %s", idx+1, DXErrStr(hr));
 			//return hr;
 	}
 

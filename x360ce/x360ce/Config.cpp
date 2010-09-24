@@ -197,8 +197,6 @@ void ReadPadConfig(DWORD idx) {
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 	PadMap.DpadPOV = -1;
 
-	ZeroMemory(buffer,bytesof(MAX_PATH, WCHAR));
-
 	for (INT i=0; i<10; ++i) {
 		if (ReadUINTFromFile(section,buttonNames[i],0) > 0) {
 			PadMap.Button[i] = (INT) (ReadUINTFromFile(section,buttonNames[i],0) - 1);
@@ -207,11 +205,11 @@ void ReadPadConfig(DWORD idx) {
 
 	for (INT i=0; i<4; ++i) {
 		if (ReadStringFromFile(section, povNames[i], buffer) > 0) {
-
 			INT val = _wtoi(buffer);
 			if(val > 0) 
 			{
 				PadMap.pov[i] = (DWORD) (val - 1);
+				PadMap.PovIsButton = true;
 			} 
 			else 
 			{
@@ -219,6 +217,7 @@ void ReadPadConfig(DWORD idx) {
 				if(wcsstr(buffer,L"DOWN")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_DOWN;
 				if(wcsstr(buffer,L"LEFT")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_LEFT;
 				if(wcsstr(buffer,L"RIGHT")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_RIGHT;
+				PadMap.PovIsButton = false;
 			}
 		}
 
@@ -272,7 +271,7 @@ void ReadPadConfig(DWORD idx) {
 	}
 
 	if (ReadUINTFromFile(section, L"D-pad POV") > 0) {
-		PadMap.DpadPOV = (INT) ReadUINTFromFile(section, L"D-pad POV") - 1;
+		PadMap.DpadPOV = (INT) ReadUINTFromFile(section, L"D-pad POV",0) - 1;
 	}
 }
 

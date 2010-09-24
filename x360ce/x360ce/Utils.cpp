@@ -31,21 +31,17 @@ DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutpu
 {
 	if(lpConfigFile) {
 		DWORD ret;
-		LPTSTR next_token;
+		LPWSTR pStr;
 		ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, lpConfigFile);
-		if(ret) wcstok_s (strOutput,L" ",&next_token);
+
+		pStr = wcschr(strOutput, L' ');
+		if (pStr) {
+			*(--pStr)=L'\0';
+			strOutput = pStr;
+		}
 		return ret;
 	}
 	return 0;
-}
-
-LPCWSTR ModuleFileName()
-{
-	LPWSTR pStr;
-	static WCHAR strPath[MAX_PATH];
-	GetModuleFileName (NULL, strPath, MAX_PATH);
-	pStr = wcsrchr(strPath, L'\\') +1;
-	return pStr;
 }
 
 UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
@@ -58,6 +54,15 @@ UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,INT uDefault)
 {
 	if (lpConfigFile) return GetPrivateProfileInt(strFileSection,strKey,uDefault,lpConfigFile);
 	return 0;
+}
+
+LPCWSTR ModuleFileName()
+{
+	LPWSTR pStr;
+	static WCHAR strPath[MAX_PATH];
+	GetModuleFileName (NULL, strPath, MAX_PATH);
+	pStr = wcsrchr(strPath, L'\\') +1;
+	return pStr;
 }
 
 VOID CreateLog()
@@ -138,7 +143,7 @@ HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid)
 	return hr;
 }
 
-LPTSTR const DXErrStr(HRESULT dierr) 
+LPWSTR const DXErrStr(HRESULT dierr) 
 {
 	if (dierr == DIERR_ACQUIRED) return L"DIERR_ACQUIRED";
 	if (dierr == DI_BUFFEROVERFLOW) return L"DI_BUFFEROVERFLOW";
