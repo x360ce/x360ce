@@ -15,15 +15,19 @@
  
 #pragma once
 
+#ifndef UNICODE
 #define UNICODE
+#endif
 
 #define _BIND_TO_CURRENT_CRT_VERSION 1
-#define _BIND_TO_CURRENT_ATL_VERSION 1
-#define _BIND_TO_CURRENT_MFC_VERSION 1
-#define _BIND_TO_CURRENT_OPENMP_VERSION 1
 
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG)
+#define _SECURE_SCL 1
 #include <crtdbg.h>
+#endif
+
+#if defined(NDEBUG)
+#define _SECURE_SCL 0
 #endif
 
 #ifndef _WIN32_WINNT

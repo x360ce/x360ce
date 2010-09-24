@@ -80,48 +80,48 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
 {
-	WriteLog(_T("[FAKEWMI] FakeGet"));
+	WriteLog(L"[FAKEWMI] FakeGet");
 	HRESULT hr;
 	hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	//WriteLog(_T("wszName %s pVal->vt %d pType %d"),wszName,pVal->vt,&pType);
-	//if( pVal->vt == VT_BSTR) WriteLog(_T("%s"),pVal->bstrVal);
+	//WriteLog(L"wszName %s pVal->vt %d pType %d"),wszName,pVal->vt,&pType);
+	//if( pVal->vt == VT_BSTR) WriteLog(L"%s"),pVal->bstrVal);
 
 	if (wFakeMode) {
 
 		if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL ) {
-			//WriteLog(_T("%s"),pVal->bstrVal); 
+			//WriteLog(L"%s"),pVal->bstrVal); 
 			DWORD dwPid = 0, dwVid = 0;
-			WCHAR* strVid = _tcsstr( pVal->bstrVal, _T("VID_") );
-			if(strVid && _stscanf_s( strVid, _T("VID_%4X"), &dwVid ) != 1 )
+			WCHAR* strVid = wcsstr( pVal->bstrVal, L"VID_" );
+			if(strVid && swscanf_s( strVid, L"VID_%4X", &dwVid ) != 1 )
 				return hr;
-			WCHAR* strPid = _tcsstr( pVal->bstrVal, _T("PID_") );
-			if(strPid && _stscanf_s( strPid, _T("PID_%4X"), &dwPid ) != 1 )
+			WCHAR* strPid = wcsstr( pVal->bstrVal, L"PID_" );
+			if(strPid && swscanf_s( strPid, L"PID_%4X", &dwPid ) != 1 )
 				return hr;
 
 			for(WORD i = 0; i < 4; i++) {
 				if(!IsEqualGUID(Gamepad[i].productGUID, GUID_NULL) && !IsEqualGUID(Gamepad[i].instanceGUID, GUID_NULL) && Gamepad[i].vid == dwVid && Gamepad[i].pid == dwPid) {
-					WCHAR* strUSB = _tcsstr( pVal->bstrVal, _T("USB") );
+					WCHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
 					WCHAR tempstr[MAX_PATH];
 					if( strUSB ) {
 						BSTR fakebstr=NULL;
-						WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
+						WriteLog(L"[FAKEWMI] Original DeviceID = %s",pVal->bstrVal);
 						if(wFakeMode>=2) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", wFakeVID, wFakePID,i ); 
 						else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", Gamepad[i].vid , Gamepad[i].pid,i );
 						fakebstr=SysAllocString(tempstr);
 						pVal->bstrVal = fakebstr;
-						WriteLog(_T("[FAKEWMI] Fake DeviceID = %s"),pVal->bstrVal);
+						WriteLog(L"[FAKEWMI] Fake DeviceID = %s",pVal->bstrVal);
 						return hr;
 					}
-					WCHAR* strHID = _tcsstr( pVal->bstrVal, _T("HID") );
+					WCHAR* strHID = wcsstr( pVal->bstrVal, L"HID" );
 					if( strHID ) {
 						BSTR fakebstr=NULL;
-						WriteLog(_T("[FAKEWMI] Original DeviceID = %s"),pVal->bstrVal);
+						WriteLog(L"[FAKEWMI] Original DeviceID = %s",pVal->bstrVal);
 						if(wFakeMode>=2) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", wFakeVID, wFakePID,i );
 						else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", Gamepad[i].vid , Gamepad[i].pid,i );	 
 						fakebstr=SysAllocString(tempstr);
 						pVal->bstrVal = fakebstr;
-						WriteLog(_T("[FAKEWMI] Fake DeviceID = %s"),pVal->bstrVal);
+						WriteLog(L"[FAKEWMI] Fake DeviceID = %s",pVal->bstrVal);
 						return hr;
 					}
 				}
@@ -140,7 +140,7 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
-	WriteLog(_T("[FAKEWMI] FakeNext"));
+	WriteLog(L"[FAKEWMI] FakeNext");
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
@@ -173,7 +173,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	WriteLog(_T("[FAKEWMI] FakeCreateInstanceEnum"));
+	WriteLog(L"[FAKEWMI] FakeCreateInstanceEnum");
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
@@ -211,7 +211,7 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	WriteLog(_T("[FAKEWMI] FakeConnectServer"));
+	WriteLog(L"[FAKEWMI] FakeConnectServer");
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
 
@@ -249,23 +249,23 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	/*
 	LPOLESTR str1;
 	StringFromIID(rclsid,&str1);
-	WriteLog(_T("rclsid: %s"),str1);
+	WriteLog(L"rclsid: %s"),str1);
 
-	WriteLog(_T("dwClsContext: %d"),dwClsContext);
+	WriteLog(L"dwClsContext: %d"),dwClsContext);
 
 	LPOLESTR str2;
 	StringFromIID(riid,&str2);
-	WriteLog(_T("riid: %s"),str2);
+	WriteLog(L"riid: %s"),str2);
 	*/
 
 	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(ppv && (riid == IID_IWbemLocator)) {
-		//WriteLog(_T("FakeCoCreateInstance if1 "));
+		//WriteLog(L"FakeCoCreateInstance if1 "));
 
 		pIWbemLocator = (IWbemLocator *) *ppv;
 		if(pIWbemLocator) {
-			WriteLog(_T("[FakeWMI] FakeCoCreateInstance"));
+			WriteLog(L"[FakeWMI] FakeCoCreateInstance");
 			if(!OriginalConnectServer) {
 
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
@@ -284,10 +284,10 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FakeCoUninitialize()
 {
-	WriteLog(_T("[FAKEAPI] FakeCoUninitialize"));
+	WriteLog(L"[FAKEAPI] FakeCoUninitialize");
 
 	if(OriginalGet) {
-		WriteLog(_T("[FAKEWMI] FakeGet:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeGet:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalGet, FakeGet);
@@ -296,7 +296,7 @@ void FakeCoUninitialize()
 	}
 
 	if(OriginalNext) {
-		WriteLog(_T("[FAKEWMI] FakeNext:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeNext:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalNext, FakeNext);
@@ -305,7 +305,7 @@ void FakeCoUninitialize()
 	}
 
 	if(OriginalCreateInstanceEnum) {
-		WriteLog(_T("[FAKEWMI] FakeCreateInstanceEnum:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeCreateInstanceEnum:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
@@ -314,7 +314,7 @@ void FakeCoUninitialize()
 	}
 
 	if(OriginalConnectServer) {
-		WriteLog(_T("[FAKEWMI] FakeConnectServer:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeConnectServer:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
@@ -330,7 +330,7 @@ void FakeWMI()
 {
 	if(!OriginalCoCreateInstance) {
 		OriginalCoCreateInstance = CoCreateInstance;
-		WriteLog(_T("[FAKEAPI] FakeCoCreateInstance:: Attaching"));
+		WriteLog(L"[FAKEAPI] FakeCoCreateInstance:: Attaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourAttach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
@@ -338,7 +338,7 @@ void FakeWMI()
 	}
 	if(!OriginalCoUninitialize) {
 		OriginalCoUninitialize = CoUninitialize;
-		WriteLog(_T("[FAKEAPI] FakeCoUninitialize:: Attaching"));
+		WriteLog(L"[FAKEAPI] FakeCoUninitialize:: Attaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourAttach(&(PVOID&)OriginalCoUninitialize, FakeCoUninitialize);
@@ -351,7 +351,7 @@ void FakeWMI()
 void FakeWMI_Detach()
 {
 	if(OriginalGet) {
-		WriteLog(_T("[FAKEWMI] FakeGet:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeGet:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalGet, FakeGet);
@@ -359,7 +359,7 @@ void FakeWMI_Detach()
 	}
 
 	if(OriginalNext) {
-		WriteLog(_T("[FAKEWMI] FakeNext:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeNext:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalNext, FakeNext);
@@ -367,7 +367,7 @@ void FakeWMI_Detach()
 	}
 
 	if(OriginalCreateInstanceEnum) {
-		WriteLog(_T("[FAKEWMI] FakeCreateInstanceEnum:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeCreateInstanceEnum:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, FakeCreateInstanceEnum);
@@ -375,7 +375,7 @@ void FakeWMI_Detach()
 	}
 
 	if(OriginalConnectServer) {
-		WriteLog(_T("[FAKEWMI] FakeConnectServer:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeConnectServer:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalConnectServer, FakeConnectServer);
@@ -383,7 +383,7 @@ void FakeWMI_Detach()
 	}
 
 	if(OriginalCoCreateInstance) {
-		WriteLog(_T("[FAKEWMI] FakeCoCreateInstance:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeCoCreateInstance:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCoCreateInstance, FakeCoCreateInstance);
@@ -391,7 +391,7 @@ void FakeWMI_Detach()
 	}
 
 	if(OriginalCoUninitialize) {
-		WriteLog(_T("[FAKEWMI] FakeCoUninitialize:: Detaching"));
+		WriteLog(L"[FAKEWMI] FakeCoUninitialize:: Detaching");
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 		DetourDetach(&(PVOID&)OriginalCoUninitialize, FakeCoUninitialize);

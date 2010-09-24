@@ -29,12 +29,14 @@ struct GamepadMap {
 	TriggerMap Trigger[2];
 	AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
 	INT DpadPOV; // Index of POV switch to use for the D-pad
+	BOOL PovIsButton;
 	BOOL enabled;
 	GamepadMap() {
 		// Set default values
 		for (INT i = 0; i < 10; ++i) Button[i] = -1;
 		for (INT i = 0; i < 4; ++i) pov[i] = (DWORD) -1;
 		DpadPOV = -1;
+		PovIsButton = 0;
 		enabled = false;
 	}
 

@@ -113,7 +113,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 	switch( fdwReason ) 
 	{ 
 	case DLL_PROCESS_ATTACH:
-		//DisableThreadLibraryCalls(hinstDLL); //MUST be disabled for static runtime
+		//DisableThreadLibraryCalls(hinstDLL); // MUST be disabled for static (/MT) runtime
 		InitInstance(hinstDLL);
 		break;
 

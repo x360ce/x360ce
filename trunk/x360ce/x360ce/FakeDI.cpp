@@ -42,15 +42,15 @@ LPDIENUMDEVICESCALLBACKW lpOriginalCallbackW= NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 {
-	WriteLog(_T("[FAKEDI]  FakeEnumCallbackA"));
+	WriteLog(L"[FAKEDI]  FakeEnumCallbackA");
 
 	// Fast return if keyboard or mouse
 	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD)) {
-		WriteLog(_T("[FAKEDI]  FakeEnumCallbackA:: Keyboard detected"));
+		WriteLog(L"[FAKEDI]  FakeEnumCallbackA:: Keyboard detected");
 		return lpOriginalCallbackA(pInst,pContext);
 	}
 	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE)) {
-		WriteLog(_T("[FAKEDI]  FakeEnumCallbackA:: Mouse detected"));
+		WriteLog(L"[FAKEDI]  FakeEnumCallbackA:: Mouse detected");
 		return lpOriginalCallbackA(pInst,pContext);
 	}
 
@@ -149,8 +149,8 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 					FakeInst.wUsage = 0x05;
 					FakeInst.wUsagePage = 0x01;
 
-					_stprintf_s(FakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
-					_stprintf_s(FakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));  
+					swprintf_s(FakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
+					swprintf_s(FakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));  
 
 					WriteLog(_T("[FAKEDI]  Product Name change from %s to %s"),pInst->tszProductName,FakeInst.tszProductName);
 					WriteLog(_T("[FAKEDI]  Instance Name change from %s to %s"),pInst->tszInstanceName,FakeInst.tszInstanceName);
@@ -300,8 +300,8 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 					FakeInst.wUsage = 0x05;
 					FakeInst.wUsagePage = 0x01;
 
-					_stprintf_s(FakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
-					_stprintf_s(FakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));  
+					swprintf_s(FakeInst.tszProductName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));
+					swprintf_s(FakeInst.tszInstanceName, _T("%s"), _T("XBOX 360 For Windows (Controller)"));  
 
 					WriteLog(_T("[FAKEDI]  Product Name change from %s to %s"),pdidi->tszProductName,FakeInst.tszProductName);
 					WriteLog(_T("[FAKEDI]  Instance Name change from %s to %s"),pdidi->tszInstanceName,FakeInst.tszInstanceName);
