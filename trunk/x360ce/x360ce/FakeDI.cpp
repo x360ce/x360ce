@@ -76,8 +76,8 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 					BYTE pdata4[] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 					memcpy(&FakeInst.guidProduct.Data4, pdata4, sizeof(pdata4));
 
-					TCHAR strOriginalguidProduct[50];
-					TCHAR strFakeguidProduct[50];
+					WCHAR strOriginalguidProduct[50];
+					WCHAR strFakeguidProduct[50];
 					GUIDtoString(pInst->guidProduct,strOriginalguidProduct,50);
 					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
@@ -139,8 +139,8 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 					BYTE pdata4[] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 					memcpy(&FakeInst.guidProduct.Data4, pdata4, sizeof(pdata4));
 
-					TCHAR strOriginalguidProduct[50];
-					TCHAR strFakeguidProduct[50];
+					WCHAR strOriginalguidProduct[50];
+					WCHAR strFakeguidProduct[50];
 					GUIDtoString(pInst->guidProduct,strOriginalguidProduct,50);
 					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
@@ -228,8 +228,8 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 					BYTE pdata4[] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 					memcpy(&FakeInst.guidProduct.Data4, pdata4, sizeof(pdata4));
 
-					TCHAR strOriginalguidProduct[50];
-					TCHAR strFakeguidProduct[50];
+					WCHAR strOriginalguidProduct[50];
+					WCHAR strFakeguidProduct[50];
 					GUIDtoString(pdidi->guidProduct,strOriginalguidProduct,50);
 					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
@@ -290,8 +290,8 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 					BYTE pdata4[] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
 					memcpy(&FakeInst.guidProduct.Data4, pdata4, sizeof(pdata4));
 
-					TCHAR strOriginalguidProduct[50];
-					TCHAR strFakeguidProduct[50];
+					WCHAR strOriginalguidProduct[50];
+					WCHAR strFakeguidProduct[50];
 					GUIDtoString(pdidi->guidProduct,strOriginalguidProduct,50);
 					GUIDtoString(FakeInst.guidProduct,strFakeguidProduct,50);
 					WriteLog(_T("[FAKEDI]  GUID change from %s to %s"),strOriginalguidProduct,strFakeguidProduct);
@@ -387,7 +387,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
 
 	hr = OriginalCreateDeviceA (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	if(lplpDirectInputDevice) {
-		//TCHAR strDevGUID[50];
+		//WCHAR strDevGUID[50];
 		//GUIDtoString(strDevGUID,&rguid);
 		//WriteLog(_T("[FAKEDI]  Device GUID : %s"),strDevGUID);
 		pDID = (LPDIRECTINPUTDEVICE8A) *lplpDirectInputDevice;
@@ -422,7 +422,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 
 	hr = OriginalCreateDeviceW (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	if(lplpDirectInputDevice) {
-		//TCHAR strDevGUID[50];
+		//WCHAR strDevGUID[50];
 		//GUIDtoString(strDevGUID,&rguid);
 		//WriteLog(_T("[FAKEDI]  Device GUID : %s"),strDevGUID);
 		pDID = (LPDIRECTINPUTDEVICE8W) *lplpDirectInputDevice;

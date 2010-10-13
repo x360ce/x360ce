@@ -27,7 +27,7 @@ HWND hWnd = NULL;
 
 void LoadOriginalDll()
 {
-	TCHAR buffer[MAX_PATH];
+	WCHAR buffer[MAX_PATH];
 
 	// Getting path to system dir and to xinput1_3.dll
 	GetSystemDirectory(buffer,MAX_PATH);

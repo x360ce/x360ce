@@ -96,6 +96,19 @@ WORD EnumPadCount();
 HRESULT Enumerate(DWORD idx);
 void ReleaseDirectInput();
 void Deactivate();
+BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
+
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx);
 HRESULT PrepareForce(DWORD idx, WORD effidx);
-BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
+
+HRESULT SetDeviceForcesFailsafe(DWORD idx, WORD force, WORD effidx);
+HRESULT PrepareForceFailsafe(DWORD idx, WORD effidx);
+
+HRESULT SetDeviceForcesEjocys(DWORD idx, WORD force, WORD effidx);
+HRESULT PrepareForceEjocys(DWORD idx, WORD effidx);
+
+HRESULT SetDeviceForcesNew(DWORD idx, WORD force, WORD effidx);
+HRESULT PrepareForceNew(DWORD idx, WORD effidx);
+
+
+
