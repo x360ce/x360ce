@@ -44,13 +44,13 @@ DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutpu
 	return 0;
 }
 
-UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey)
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey)
 {
 	if (lpConfigFile) return ReadUINTFromFile(strFileSection, strKey, NULL);
 	return 0;
 }
 
-UINT ReadUINTFromFile(LPCTSTR strFileSection, LPCTSTR strKey ,INT uDefault)
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault)
 {
 	if (lpConfigFile) return GetPrivateProfileInt(strFileSection,strKey,uDefault,lpConfigFile);
 	return 0;
@@ -72,7 +72,7 @@ VOID CreateLog()
 		SYSTEMTIME systime;
 		GetLocalTime(&systime);
 
-		lpLogFileName = new TCHAR[MAX_PATH];
+		lpLogFileName = new WCHAR[MAX_PATH];
 		swprintf_s(lpLogFileName,MAX_PATH,L"x360ce\\x360ce %u%02u%02u-%02u%02u%02u.log",
 			systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
 
@@ -80,7 +80,7 @@ VOID CreateLog()
 	}
 }
 
-BOOL WriteLog(LPTSTR str,...)
+BOOL WriteLog(LPWSTR str,...)
 {
 	if (writelog) {
 		SYSTEMTIME systime;
@@ -91,7 +91,7 @@ BOOL WriteLog(LPTSTR str,...)
 
 		//fp is null, file is not open.
 		if (fp==NULL)
-			return -1;
+			return 0;
 		fwprintf(fp, L"%02u:%02u:%02u.%03u:: ", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds);
 		va_list arglist;
 		va_start(arglist,str);
@@ -127,33 +127,38 @@ inline static DWORD flipLong(DWORD l)
 	return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
 }
 
-DWORD GUIDtoString(const GUID pg, LPWSTR data, int size) 
+HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size) 
 {
 	int ret = StringFromGUID2(pg,data,size);
-	return ret;
+	if(ret) return S_OK;
+	return E_FAIL;
 }
 
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid)
 {
+	HRESULT hr = E_FAIL;
 	GUID g = GUID_NULL;
-	WCHAR tmp[50];
-	if (*szBuf != L'{') swprintf_s(tmp,L"%s%s%s",L"{",szBuf,L"}");
-	HRESULT hr = CLSIDFromString(tmp, &g);
+	if ((wcschr(szBuf,L'{')) && (wcsrchr(szBuf,L'}'))) {
+		hr = CLSIDFromString(szBuf, &g);
+	}
+	else {
+		WCHAR tmp[50];
+		swprintf_s(tmp,L"%s%s%s",L"{",szBuf,L"}");
+		hr = CLSIDFromString(tmp, &g);
+	}
+
 	*rGuid = g;
 	return hr;
 }
 
 LPWSTR const DXErrStr(HRESULT dierr) 
 {
+	if (dierr == E_FAIL) return L"E_FAIL";
 	if (dierr == DIERR_ACQUIRED) return L"DIERR_ACQUIRED";
-	if (dierr == DI_BUFFEROVERFLOW) return L"DI_BUFFEROVERFLOW";
 	if (dierr == DI_DOWNLOADSKIPPED) return L"DI_DOWNLOADSKIPPED";
 	if (dierr == DI_EFFECTRESTARTED) return L"DI_EFFECTRESTARTED";
-	if (dierr == DI_NOEFFECT) return L"DI_NOEFFECT";
-	if (dierr == DI_NOTATTACHED) return L"DI_NOTATTACHED";
 	if (dierr == DI_OK) return L"DI_OK";
 	if (dierr == DI_POLLEDDEVICE) return L"DI_POLLEDDEVICE";
-	if (dierr == DI_PROPNOEFFECT) return L"DI_PROPNOEFFECT";
 	if (dierr == DI_SETTINGSNOTSAVED) return L"DI_SETTINGSNOTSAVED";
 	if (dierr == DI_TRUNCATED) return L"DI_TRUNCATED";
 	if (dierr == DI_TRUNCATEDANDRESTARTED) return L"DI_TRUNCATEDANDRESTARTED";
@@ -192,6 +197,8 @@ LPWSTR const DXErrStr(HRESULT dierr)
 	if (dierr == E_HANDLE) return L"E_HANDLE";
 	if (dierr == E_PENDING) return L"E_PENDING";
 	if (dierr == E_POINTER) return L"E_POINTER";
+	if (dierr == S_FALSE) return L"S_FALSE";
+
 	
 	LPWSTR buffer = NULL;
 	_itow_s(dierr,buffer,MAX_PATH,16);	//as hex

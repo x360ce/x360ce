@@ -28,6 +28,7 @@ WORD wFakeVID=0;
 WORD wFakePID=0;
 
 LPWSTR lpConfigFile = NULL;
+BOOL ffbtype = NULL;
 
 static LPCWSTR buttonNames[10] = {
 	L"A",
@@ -117,6 +118,7 @@ void ReadConfig()
 	// Read global options
 	bInitBeep = (BOOL) ReadUINTFromFile(L"Options", L"UseInitBeep",1);
 	writelog = (BOOL) ReadUINTFromFile(L"Options", L"Log",0);
+	ffbtype = (BOOL) ReadUINTFromFile(L"Options", L"FFBType",0);
 
 	//FakeAPI
 	wFakeMode = (WORD) ReadUINTFromFile(L"FakeAPI", L"FakeMode",0);

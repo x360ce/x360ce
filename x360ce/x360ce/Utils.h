@@ -26,20 +26,7 @@ LPCWSTR ModuleFileName();
 LPWSTR const DXErrStr(HRESULT dierr);
 LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
-DWORD GUIDtoString(const GUID pg, LPWSTR data, int size);
+HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size);
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid);
 VOID CreateLog();
-BOOL WriteLog(LPTSTR str,...);
-
-template<class Dest, class Src>
-Dest force_cast(Src src)
-{
-	union
-	{
-		Dest d;
-		Src s;
-	} convertor;
-
-	convertor.s = src;
-	return convertor.d;
-}
+BOOL WriteLog(LPWSTR str,...);

@@ -52,4 +52,3 @@
 
 #include <xinput.h>
 
-
