@@ -12,24 +12,20 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef _X360CE_H_
+#define _X360CE_H_
 
-#ifndef _FAKEAPI_H_
-#define _FAKEAPI_H_
+#define LeftMotor 0
+#define RightMotor 1
 
-#include <detours.h>
+extern HINSTANCE hX360ceInstance;
+extern HINSTANCE hNativeInstance;
+extern HWND hWnd;
+extern BOOL bEnabled;
+extern WORD wNativeMode;
 
-extern WORD wFakeMode;
-extern WORD wFakeWinTrust;
-
-extern WORD wFakeVID;
-extern WORD wFakePID;
-
-void FakeWMI();
-void FakeDI();
-void FakeWinTrust();
-
-void FakeWMI_Detach();
-void FakeDI_Detach();
-void FakeWinTrust_Detach();
+void LoadOriginalDll();
+void XDeInit();
 
 #endif

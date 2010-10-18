@@ -12,24 +12,16 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef _VERSION_H_
+#define _VERSION_H_
 
-#ifndef _FAKEAPI_H_
-#define _FAKEAPI_H_
+#include "globals.h"
+#include "svnrev.h"
 
-#include <detours.h>
-
-extern WORD wFakeMode;
-extern WORD wFakeWinTrust;
-
-extern WORD wFakeVID;
-extern WORD wFakePID;
-
-void FakeWMI();
-void FakeDI();
-void FakeWinTrust();
-
-void FakeWMI_Detach();
-void FakeDI_Detach();
-void FakeWinTrust_Detach();
+#define VERSION_MAJOR 3
+#define VERSION_MINOR 2
+#define VERSION_PATCH 1
+#define VERSION_STRING TOSTRING(VERSION_MAJOR) "." TOSTRING(VERSION_MINOR) "." TOSTRING(VERSION_PATCH) "." TOSTRING(SVN_REV)
 
 #endif

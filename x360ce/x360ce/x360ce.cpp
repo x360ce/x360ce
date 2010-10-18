@@ -15,6 +15,7 @@
 
 #include "stdafx.h"
 #include "globals.h"
+#include "x360ce.h"
 #include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
@@ -43,8 +44,8 @@ BOOL RegisterWindowClass(HINSTANCE hinstance)
 	wc.hIcon = NULL;              // predefined app. icon 
 	wc.hCursor = NULL;                    // predefined arrow 
 	wc.hbrBackground = NULL;    // white background brush 
-	wc.lpszMenuName =  _T("x360ceMenu");    // name of menu resource
-	wc.lpszClassName = _T("x360ceWClass");  // name of window class 
+	wc.lpszMenuName =  L"x360ceMenu";    // name of menu resource
+	wc.lpszClassName = L"x360ceWClass";  // name of window class 
 
 	// Register the window class. 
 	return RegisterClass(&wc); 
@@ -54,8 +55,8 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 {
 	if(RegisterWindowClass(hInst)) {
 		hWnd = CreateWindow( 
-			_T("x360ceWClass"),  // name of window class
-			_T("x360ce"),        // title-bar string 
+			L"x360ceWClass",  // name of window class
+			L"x360ce",        // title-bar string 
 			WS_OVERLAPPEDWINDOW, // top-level window 
 			CW_USEDEFAULT,       // default horizontal position 
 			CW_USEDEFAULT,       // default vertical position 
@@ -68,7 +69,7 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 		return TRUE;
 	}
 	else {
-		WriteLog(_T("[CORE]    RegisterWindowClass Failed"));
+		WriteLog(L"[CORE]    RegisterWindowClass Failed");
 		return FALSE;
 	}
 }
@@ -87,7 +88,7 @@ HRESULT XInit(DWORD dwUserIndex)
 
 	if(!hWnd) {	
 		if(!Createx360ceWindow(hX360ceInstance)) {
-			WriteLog(_T("[CORE]    x360ce window not created, ForceFeedback will be disabled !"));
+			WriteLog(L"[CORE]    x360ce window not created, ForceFeedback will be disabled !");
 		}
 	}
 
@@ -95,24 +96,24 @@ HRESULT XInit(DWORD dwUserIndex)
 
 	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex){ 
 
-		WriteLog(_T("[XINIT]   Initializing Gamepad %d"),dwUserIndex+1);
-		WriteLog(_T("[XINIT]   User ID: %d, Last User ID: %d"),dwUserIndex,dwlastUserIndex);
+		WriteLog(L"[XINIT]   Initializing Gamepad %d",dwUserIndex+1);
+		WriteLog(L"[XINIT]   User ID: %d, Last User ID: %d",dwUserIndex,dwlastUserIndex);
 
 		hr = Enumerate(dwUserIndex); 
 		if(SUCCEEDED(hr)) {
-			WriteLog(_T("[XINIT]   [PAD%d] Enumeration finished"),dwUserIndex+1);
+			WriteLog(L"[XINIT]   [PAD%d] Enumeration finished",dwUserIndex+1);
 		}
 		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 		hr = InitDirectInput(hWnd,dwUserIndex);
 		if(FAILED(hr)) {
-			WriteLog(_T("[XINIT]   XInit fail with %s"),DXErrStr(hr));
+			WriteLog(L"[XINIT]   XInit fail with %s",DXErrStr(hr));
 		}
 	}
 	else return ERROR_DEVICE_NOT_CONNECTED;
 
 	if(!Gamepad[dwUserIndex].g_pGamepad) {
-		WriteLog(_T("[XINIT]   XInit fail"));
+		WriteLog(L"[XINIT]   XInit fail");
 		return ERROR_DEVICE_NOT_CONNECTED;
 	}
 	else UpdateState(dwUserIndex);
@@ -160,7 +161,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 #ifdef DEBUG
-	WriteLog(_T("UpdateState %d %d"),dwUserIndex,hr);
+	WriteLog(L"UpdateState %d %d",dwUserIndex,hr);
 #endif
 
 	GamepadMap PadMap = GamepadMapping[dwUserIndex];
@@ -440,9 +441,11 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	wRightMotorSpeed = (WORD)((DOUBLE)pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 
 	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,LeftMotor);
-	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+	if(FAILED(hr))
+		WriteLog(L"[XINPUT] SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
 	hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,RightMotor);
-	if(FAILED(hr))WriteLog(_T("[XINPUT] SetDeviceForces for pad %d failed with code HR = %s"), dwUserIndex, DXErrStr(hr));
+	if(FAILED(hr))
+		WriteLog(L"[XINPUT] SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
 
 	return ERROR_SUCCESS;
 }
@@ -478,7 +481,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	}
 
 	*pCapabilities = *LPXCAPS[dwUserIndex];
-	WriteLog(_T("[XINPUT]  XInputGetCapabilities:: SubType %i"),pCapabilities->SubType);
+	WriteLog(L"[XINPUT]  XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
@@ -492,7 +495,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 		return nativeXInputEnable(enable);
 	}
 
-	WriteLog(_T("[XINPUT]  XInputEnable called, state %d"),enable);
+	WriteLog(L"[XINPUT]  XInputEnable called, state %d",enable);
 
 	bEnabled = enable;
 	bUseEnabled = TRUE;

@@ -13,6 +13,11 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
  
+#ifndef _DIRECTINPUT_H_
+#define _DIRECTINPUT_H_
+
+#define DIRECTINPUT_VERSION 0x0800
+
 #include <dinput.h>
 
 struct DINPUT_DATA 
@@ -110,5 +115,4 @@ HRESULT PrepareForceEjocys(DWORD idx, WORD effidx);
 HRESULT SetDeviceForcesNew(DWORD idx, WORD force, WORD effidx);
 HRESULT PrepareForceNew(DWORD idx, WORD effidx);
 
-
-
+#endif
