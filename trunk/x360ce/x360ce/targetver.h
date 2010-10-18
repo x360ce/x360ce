@@ -13,23 +13,15 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FAKEAPI_H_
-#define _FAKEAPI_H_
+#pragma once
 
-#include <detours.h>
+// Including SDKDDKVer.h defines the highest available Windows platform.
 
-extern WORD wFakeMode;
-extern WORD wFakeWinTrust;
+// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
+// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
-extern WORD wFakeVID;
-extern WORD wFakePID;
+#include <WinSDKVer.h>
 
-void FakeWMI();
-void FakeDI();
-void FakeWinTrust();
+#define _WIN32_WINNT _WIN32_WINNT_WINXP
 
-void FakeWMI_Detach();
-void FakeDI_Detach();
-void FakeWinTrust_Detach();
-
-#endif
+#include <SDKDDKVer.h>

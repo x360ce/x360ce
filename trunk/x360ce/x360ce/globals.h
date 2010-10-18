@@ -13,7 +13,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
  
-#include "svnrev.h"
+#ifndef _GLOBALS_H_
+#define _GLOBALS_H_
 
 //useful macros
 #define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }
@@ -26,21 +27,4 @@
 #define TOSTRING(x) STRINGIFY(x)
 #define bytesof(a, b) ((a) * sizeof(b))
 
-//x360ce version info
-#define VERSION_MAJOR 3
-#define VERSION_MINOR 2
-#define VERSION_PATCH 0
-#define VERSION_STRING TOSTRING(VERSION_MAJOR) "." TOSTRING(VERSION_MINOR) "." TOSTRING(VERSION_PATCH) "." TOSTRING(SVN_REV)
-
-#define LeftMotor 0
-#define RightMotor 1
-
-extern HINSTANCE hX360ceInstance;
-extern HINSTANCE hNativeInstance;
-extern HWND hWnd;
-extern BOOL bEnabled;
-extern WORD wNativeMode;
-extern LPWSTR lpConfigFile;
-
-void LoadOriginalDll();
-void XDeInit();
+#endif

@@ -15,6 +15,8 @@
 
 #include "stdafx.h"
 #include "globals.h"
+#include "version.h"
+#include "x360ce.h"
 #include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
@@ -100,8 +102,8 @@ VOID ExitInstance()
 
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
 	hWnd = NULL;
-	UnregisterClass(_T("x360ceWClass"),hX360ceInstance);
-	WriteLog(_T("[CORE]    x360ce terminating, bye"));
+	UnregisterClass(L"x360ceWClass",hX360ceInstance);
+	WriteLog(L"[CORE]    x360ce terminating, bye");
 
 	SAFE_DELETEARRAY(lpLogFileName);
 	SAFE_DELETEARRAY(lpConfigFile);

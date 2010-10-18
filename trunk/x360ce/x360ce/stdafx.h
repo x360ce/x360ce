@@ -15,37 +15,28 @@
  
 #pragma once
 
+#include "targetver.h"
+
+#define _BIND_TO_CURRENT_CRT_VERSION 1
+
+#define WIN32_LEAN_AND_MEAN
+#define STRICT
+
 #ifndef UNICODE
 #define UNICODE
 #endif
 
-#define _BIND_TO_CURRENT_CRT_VERSION 1
-
-#if defined(DEBUG)
+#ifdef DEBUG
 #define _SECURE_SCL 1
 #include <crtdbg.h>
 #endif
 
-#if defined(NDEBUG)
+#ifdef NDEBUG
 #define _SECURE_SCL 0
 #endif
 
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
-#endif
-
-#ifndef NTDDI_VERSION
-#define NTDDI_VERSION NTDDI_WINXPSP3
-#endif
-
-#define WIN32_LEAN_AND_MEAN
-
-#define STRICT
-#define DIRECTINPUT_VERSION 0x0800
-
 // Windows Header Files:
 #include <windows.h>
-#include <tchar.h>
 #include <math.h>
 #include <time.h>
 #include <fstream>

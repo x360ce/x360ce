@@ -13,8 +13,12 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _UTILS_H_
+#define _UTILS_H_
+
 // externs
 extern BOOL writelog;
+extern LPWSTR lpConfigFile;
 extern LPWSTR lpLogFileName;
 
 // prototypes
@@ -30,3 +34,5 @@ HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size);
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid);
 VOID CreateLog();
 BOOL WriteLog(LPWSTR str,...);
+
+#endif
