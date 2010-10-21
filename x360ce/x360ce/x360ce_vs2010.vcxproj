@@ -62,6 +62,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AssemblerOutput>All</AssemblerOutput>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -133,9 +134,6 @@
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="FakeDI.cpp" />
-    <ClCompile Include="FakeWinTrust.cpp" />
-    <ClCompile Include="FakeWMI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -146,7 +144,6 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="FakeAPI.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -162,6 +159,11 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="x360ce.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FakeAPI\FakeAPI.vcxproj">
+      <Project>{bc69b32c-7c1f-4d99-bda9-817ac030d832}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
