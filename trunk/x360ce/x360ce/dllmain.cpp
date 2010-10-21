@@ -20,7 +20,7 @@
 #include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
-#include "FakeAPI.h"
+#include "..\FakeAPI\FakeAPI.h"
 
 HINSTANCE hX360ceInstance = NULL;
 HINSTANCE hNativeInstance = NULL;
@@ -48,19 +48,15 @@ void LoadOriginalDll()
 
 VOID AttachFakeAPI()
 {
-	if(wFakeMode) {
-		if(wFakeMode) FakeWMI();
-		if(wFakeMode>=2) FakeDI();
-		if(wFakeWinTrust) FakeWinTrust();
+	if(x360ce_FakeAPIConfig.bEnabled) {
+		FakeAPI_Init( &x360ce_FakeAPIConfig,  x360ce_FakeAPIGamepadConfig);
 	}
 }
 
 VOID DetachFakeAPI()
 {
-	if(wFakeMode) {
-		if(wFakeMode) FakeWMI_Detach();
-		if(wFakeMode>=2) FakeDI_Detach();
-		if(wFakeWinTrust) FakeWinTrust_Detach();
+	if(x360ce_FakeAPIConfig.bEnabled) {
+		FakeAPI_Clean();
 	}
 }
 

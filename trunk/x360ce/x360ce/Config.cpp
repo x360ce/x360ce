@@ -22,13 +22,11 @@
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
-WORD wFakeMode=0;
-WORD wFakeWinTrust=0;
-WORD wFakeVID=0;
-WORD wFakePID=0;
-
 LPWSTR lpConfigFile = NULL;
 BOOL ffbtype = NULL;
+
+FAKEAPI_CONIFG x360ce_FakeAPIConfig;
+FAKEAPI_GAMEPAD_CONIFG x360ce_FakeAPIGamepadConfig[4];
 
 static LPCWSTR buttonNames[10] = {
 	L"A",
@@ -121,13 +119,14 @@ void ReadConfig()
 	ffbtype = (BOOL) ReadUINTFromFile(L"Options", L"FFBType",0);
 
 	//FakeAPI
-	wFakeMode = (WORD) ReadUINTFromFile(L"FakeAPI", L"FakeMode",0);
-	wFakeWinTrust = (WORD) ReadUINTFromFile(L"FakeAPI", L"FakeWinTrust",0);
+	x360ce_FakeAPIConfig.dwFakeMode = (DWORD) ReadUINTFromFile(L"FakeAPI", L"FakeMode",0);
+	x360ce_FakeAPIConfig.dwFakeWinTrust = (DWORD) ReadUINTFromFile(L"FakeAPI", L"FakeWinTrust",0);
 
-	if(wFakeMode)
+	if(x360ce_FakeAPIConfig.dwFakeMode)
 	{
-		wFakeVID = (WORD) ReadUINTFromFile(L"FakeAPI", L"FakeVID",0x045E);
-		wFakePID = (WORD) ReadUINTFromFile(L"FakeAPI", L"FakePID",0x028E);
+		x360ce_FakeAPIConfig.bEnabled = 1;
+		x360ce_FakeAPIConfig.dwFakeVID = (DWORD) ReadUINTFromFile(L"FakeAPI", L"FakeVID",0x045E);
+		x360ce_FakeAPIConfig.dwFakePID = (DWORD) ReadUINTFromFile(L"FakeAPI", L"FakePID",0x028E);
 	}
 
 	// Read pad mappings

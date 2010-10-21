@@ -27,3 +27,4 @@
 #include <SDKDDKVer.h>
 
 #define DIRECTINPUT_VERSION 0x0800
+

@@ -16,6 +16,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include "..\FakeAPI\FakeAPI.h"
+
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER };
 
 struct AxisMap {
@@ -89,5 +91,8 @@ void InitConfig(LPCWSTR ininame);
 void ReadConfig();
 void ReadPadConfig(DWORD idx);
 MappingType getTriggerType(LPCWSTR);
+
+extern FAKEAPI_CONIFG x360ce_FakeAPIConfig;
+extern FAKEAPI_GAMEPAD_CONIFG x360ce_FakeAPIGamepadConfig[4];
 
 #endif

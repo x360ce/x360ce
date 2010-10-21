@@ -12,18 +12,19 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+#ifndef _GLOBALS_H_
+#define _GLOBALS_H_
 
-#pragma once
+//useful macros
+#define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETEARRAY(p)  { if(p) { delete[] (p);     (p)=NULL; } }
+#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+#define arrayof(x) (sizeof(x)/sizeof(*x)) 
+#define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max)) 
+#define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max)) 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define bytesof(a, b) ((a) * sizeof(b))
 
-// Including SDKDDKVer.h defines the highest available Windows platform.
-
-// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
-
-#include <WinSDKVer.h>
-
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
-
-#include <SDKDDKVer.h>
-
-#define DIRECTINPUT_VERSION 0x0800
+#endif

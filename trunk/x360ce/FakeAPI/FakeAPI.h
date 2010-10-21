@@ -13,17 +13,43 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef _FAKEAPI_H_
+#define _FAKEAPI_H_
 
-// Including SDKDDKVer.h defines the highest available Windows platform.
+#include <detours.h>
 
-// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
+struct FAKEAPI_GAMEPAD_CONIFG
+{
+	GUID productGUID;
+	GUID instanceGUID;
+	DWORD dwVID;
+	DWORD dwPID;
+};
 
-#include <WinSDKVer.h>
+struct FAKEAPI_CONIFG
+{
+	BOOL  bEnabled;
+	DWORD dwFakeMode;
+	DWORD dwFakeVID;
+	DWORD dwFakePID;
+	DWORD dwFakeWinTrust;
+};
 
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
+void FakeWMI();
+void FakeDI();
+void FakeWinTrust();
 
-#include <SDKDDKVer.h>
+void FakeWMI_Clean();
+void FakeDI_Clean();
+void FakeWinTrust_Clean();
 
-#define DIRECTINPUT_VERSION 0x0800
+FAKEAPI_CONIFG* FakeAPI_Config();
+FAKEAPI_GAMEPAD_CONIFG* FakeAPI_GamepadConfig(DWORD dwUserIndex);
+
+BOOL FakeAPI_Enable(BOOL state);
+BOOL FakeAPI_Enable();
+
+BOOL FakeAPI_Init(FAKEAPI_CONIFG* fconfig, FAKEAPI_GAMEPAD_CONIFG* gconfig);
+BOOL FakeAPI_Clean();
+
+#endif

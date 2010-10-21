@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1
 		x360ce\Support\x360ce.ini = x360ce\Support\x360ce.ini
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FakeAPI", "x360ce\FakeAPI\FakeAPI.vcxproj", "{BC69B32C-7C1F-4D99-BDA9-817AC030D832}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,18 @@ Global
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|Win32.Build.0 = Release|Win32
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|x64.ActiveCfg = Release|x64
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|x64.Build.0 = Release|x64
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Debug|Win32.Build.0 = Debug|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Debug|x64.ActiveCfg = Debug|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Release|Any CPU.ActiveCfg = Release|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Release|Win32.ActiveCfg = Release|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Release|Win32.Build.0 = Release|Win32
+		{BC69B32C-7C1F-4D99-BDA9-817AC030D832}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
