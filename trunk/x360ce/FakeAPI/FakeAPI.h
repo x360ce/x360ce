@@ -16,14 +16,17 @@
 #ifndef _FAKEAPI_H_
 #define _FAKEAPI_H_
 
-#include <detours.h>
-
 struct FAKEAPI_GAMEPAD_CONIFG
 {
-	GUID productGUID;
-	GUID instanceGUID;
+	BOOL  bEnabled;
+	GUID  productGUID;
+	GUID  instanceGUID;
 	DWORD dwVID;
 	DWORD dwPID;
+	FAKEAPI_GAMEPAD_CONIFG()
+	{
+		ZeroMemory(this,sizeof(FAKEAPI_GAMEPAD_CONIFG));
+	}
 };
 
 struct FAKEAPI_CONIFG
@@ -33,6 +36,10 @@ struct FAKEAPI_CONIFG
 	DWORD dwFakeVID;
 	DWORD dwFakePID;
 	DWORD dwFakeWinTrust;
+	FAKEAPI_CONIFG()
+	{
+		ZeroMemory(this,sizeof(FAKEAPI_CONIFG));
+	}
 };
 
 void FakeWMI();

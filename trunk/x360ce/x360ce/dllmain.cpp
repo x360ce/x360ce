@@ -49,6 +49,12 @@ void LoadOriginalDll()
 VOID AttachFakeAPI()
 {
 	if(x360ce_FakeAPIConfig.bEnabled) {
+
+		for(WORD i = 0; i < 4; i++) {
+			x360ce_FakeAPIGamepadConfig[i].productGUID = Gamepad[i].productGUID;
+			x360ce_FakeAPIGamepadConfig[i].instanceGUID = Gamepad[i].instanceGUID;
+		}
+
 		FakeAPI_Init( &x360ce_FakeAPIConfig,  x360ce_FakeAPIGamepadConfig);
 	}
 }

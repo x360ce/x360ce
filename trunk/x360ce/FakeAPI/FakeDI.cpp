@@ -42,6 +42,7 @@ LPDIENUMDEVICESCALLBACKW lpOriginalCallbackW= NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 {
+	if(!FakeAPI_Config()->bEnabled) return lpOriginalCallbackA(pInst,pContext);
 	WriteLog(L"[FAKEDI]  FakeEnumCallbackA");
 
 	// Fast return if keyboard or mouse
@@ -64,7 +65,7 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 
 			for(int i = 0; i < 4; i++)
 			{
-				if (FakeAPI_GamepadConfig(i)->productGUID.Data1 != NULL && IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID,pInst->guidProduct))
+				if (FakeAPI_GamepadConfig(i)->bEnabled && IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID,pInst->guidProduct))
 				{
 					memcpy(&FakeInst,pInst,pInst->dwSize);
 
@@ -105,6 +106,7 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 {
+	if(!FakeAPI_Config()->bEnabled) return lpOriginalCallbackW(pInst,pContext);
 	WriteLog(L"[FAKEDI]  FakeEnumCallbackW");
 
 	// Fast return if keyboard or mouse
@@ -127,7 +129,7 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 
 			for(int i = 0; i < 4; i++)
 			{
-				if (FakeAPI_GamepadConfig(i)->productGUID.Data1 != NULL && IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID,pInst->guidProduct))
+				if (FakeAPI_GamepadConfig(i)->bEnabled && IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID,pInst->guidProduct))
 				{
 					memcpy(&FakeInst,pInst,pInst->dwSize);
 
@@ -167,6 +169,7 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeEnumDevicesA (LPDIRECTINPUT8A This, DWORD dwDevType,LPDIENUMDEVICESCALLBACKA lpCallback,LPVOID pvRef,DWORD dwFlags)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalEnumDevicesA(This,dwDevType,lpCallback,pvRef,dwFlags);
 	WriteLog(L"[FAKEDI]  FakeEnumDevicesA");
 
 	if (lpCallback)
@@ -181,6 +184,7 @@ HRESULT STDMETHODCALLTYPE FakeEnumDevicesA (LPDIRECTINPUT8A This, DWORD dwDevTyp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeEnumDevicesW (LPDIRECTINPUT8W This, DWORD dwDevType,LPDIENUMDEVICESCALLBACKW lpCallback,LPVOID pvRef,DWORD dwFlags)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalEnumDevicesW(This,dwDevType,lpCallback,pvRef,dwFlags);
 	WriteLog(L"[FAKEDI]  FakeEnumDevicesW");
 
 	if (lpCallback)
@@ -195,6 +199,7 @@ HRESULT STDMETHODCALLTYPE FakeEnumDevicesW (LPDIRECTINPUT8W This, DWORD dwDevTyp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDEVICEINSTANCEA pdidi)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalGetDeviceInfoA ( This, pdidi );
 	WriteLog(L"[FAKEDI]  FakeGetDeviceInfoA");
 
 	HRESULT hr;
@@ -216,7 +221,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 			DIDEVICEINSTANCEA FakeInst;
 
 			for(int i = 0; i < 4; i++) {
-				if(FakeAPI_GamepadConfig(i)->productGUID.Data1 != NULL && IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID, pdidi->guidProduct)) {
+				if(FakeAPI_GamepadConfig(i)->bEnabled && IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID, pdidi->guidProduct)) {
 
 					memcpy(&FakeInst,pdidi,pdidi->dwSize);
 
@@ -257,6 +262,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDEVICEINSTANCEW pdidi)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalGetDeviceInfoW ( This, pdidi );
 	WriteLog(L"[FAKEDI]  FakeGetDeviceInfoW");
 
 	HRESULT hr;
@@ -278,7 +284,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 			DIDEVICEINSTANCEW FakeInst;
 
 			for(int i = 0; i < 4; i++) {
-				if(FakeAPI_GamepadConfig(i)->productGUID.Data1 != NULL && FakeAPI_GamepadConfig(i)->productGUID.Data1 == pdidi->guidProduct.Data1) {
+				if(FakeAPI_GamepadConfig(i)->bEnabled && FakeAPI_GamepadConfig(i)->productGUID.Data1 == pdidi->guidProduct.Data1) {
 					
 					memcpy(&FakeInst,pdidi,pdidi->dwSize);
 
@@ -319,6 +325,7 @@ HRESULT STDMETHODCALLTYPE FakeGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalGetPropertyA(This, rguidProp, pdiph);
 	WriteLog(L"[FAKEDI]  FakeGetPropertyA");
 
 	HRESULT hr;
@@ -350,6 +357,7 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalGetPropertyW(This, rguidProp, pdiph);
 	HRESULT hr;
 	hr = OriginalGetPropertyW(This, rguidProp, pdiph);
 	WriteLog(L"[FAKEDI]  FakeGetPropertyW");
@@ -380,6 +388,7 @@ HRESULT STDMETHODCALLTYPE FakeGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid, LPDIRECTINPUTDEVICE8A * lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalCreateDeviceA (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	WriteLog(L"[FAKEDI]  FakeCreateDeviceA");
 
 	HRESULT hr;
@@ -415,6 +424,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE FakeCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid, LPDIRECTINPUTDEVICE8W * lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalCreateDeviceW (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	WriteLog(L"[FAKEDI]  FakeCreateDeviceW");
 
 	HRESULT hr;
@@ -450,6 +460,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI FakeDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
 {
+	//if(!FakeAPI_Config()->bEnabled) return OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 	WriteLog(L"[FAKEDI]  FakeDirectInput8Create");
 
 	/*
