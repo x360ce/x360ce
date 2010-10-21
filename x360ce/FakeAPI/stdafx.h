@@ -34,3 +34,4 @@
 #include <time.h>
 #include <fstream>
 #include <CGuid.h>
+#include <detours.h>

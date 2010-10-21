@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "stdafx.h"
 #include "globals.h"
 #include "FakeAPI.h"
@@ -24,6 +24,8 @@
 #include <ole2.h>
 #include <oleauto.h>
 #include <dinput.h>
+
+#pragma comment(lib,"wbemuuid.lib")
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,11 +85,10 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 	if(!FakeAPI_Config()->bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	WriteLog(L"[FAKEWMI] FakeGet");
-	HRESULT hr;
-	hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
+	HRESULT hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	//WriteLog(L"wszName %s pVal->vt %d pType %d"),wszName,pVal->vt,&pType);
-	//if( pVal->vt == VT_BSTR) WriteLog(L"%s"),pVal->bstrVal);
+	//WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
+	//if( pVal->vt == VT_BSTR) WriteLog(L"%s",pVal->bstrVal);
 
 	if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL ) {
 		//WriteLog(L"%s"),pVal->bstrVal); 
@@ -100,7 +101,7 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 			return hr;
 
 		for(WORD i = 0; i < 4; i++) {
-			if(!IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID, GUID_NULL) && !IsEqualGUID(FakeAPI_GamepadConfig(i)->instanceGUID, GUID_NULL) && FakeAPI_GamepadConfig(i)->dwVID == dwVid && FakeAPI_GamepadConfig(i)->dwPID == dwPid) {
+			if(FakeAPI_GamepadConfig(i)->bEnabled && FakeAPI_GamepadConfig(i)->dwVID == dwVid && FakeAPI_GamepadConfig(i)->dwPID == dwPid) {
 				WCHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
 				WCHAR tempstr[MAX_PATH];
 				if( strUSB ) {
@@ -139,6 +140,7 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
 	WriteLog(L"[FAKEWMI] FakeNext");
 	HRESULT hr;
 	IWbemClassObject* pDevices;
@@ -172,6 +174,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
 	WriteLog(L"[FAKEWMI] FakeCreateInstanceEnum");
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
@@ -210,6 +213,7 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 	WriteLog(L"[FAKEWMI] FakeConnectServer");
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
@@ -242,6 +246,7 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 								   __in     REFIID riid, 
 								   __deref_out LPVOID FAR* ppv)
 {
+	if(!FakeAPI_Config()->bEnabled) return OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 	HRESULT hr;
 	IWbemLocator* pIWbemLocator = NULL;
 

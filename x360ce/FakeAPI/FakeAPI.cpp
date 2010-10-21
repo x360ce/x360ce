@@ -17,29 +17,17 @@
 #include "globals.h"
 #include "FakeAPI.h"
 
-FAKEAPI_CONIFG FakeAPIConfig;
-FAKEAPI_GAMEPAD_CONIFG GamepadConfig[4];
-
-BOOL FakeAPI_CopyConfig(FAKEAPI_CONIFG* config)
-{
-	memcpy(&FakeAPIConfig,config,sizeof(FAKEAPI_CONIFG));
-	return TRUE;
-}
-
-BOOL FakeAPI_CopyGamepadConfig(FAKEAPI_GAMEPAD_CONIFG* config)
-{
-	memcpy(GamepadConfig,config,sizeof(FAKEAPI_GAMEPAD_CONIFG)*4);
-	return TRUE;
-}
+FAKEAPI_CONIFG* FakeAPIConfig;
+FAKEAPI_GAMEPAD_CONIFG* GamepadConfig[4];
 
 FAKEAPI_CONIFG* FakeAPI_Config()
 {
-	return &FakeAPIConfig;
+	return FakeAPIConfig;
 }
 
 FAKEAPI_GAMEPAD_CONIFG* FakeAPI_GamepadConfig(DWORD dwUserIndex)
 {
-	return &GamepadConfig[dwUserIndex];
+	return GamepadConfig[dwUserIndex];
 }
 
 BOOL FakeAPI_Enable(BOOL state)
@@ -55,18 +43,25 @@ BOOL FakeAPI_Enable()
 
 BOOL FakeAPI_Init(FAKEAPI_CONIFG* fconfig, FAKEAPI_GAMEPAD_CONIFG* gconfig)
 {
-	FakeAPI_CopyConfig(fconfig);
-	FakeAPI_CopyGamepadConfig(gconfig);
+	if(!fconfig->bEnabled) return FALSE;
+
+	FakeAPIConfig = fconfig;
 
 	for(WORD i = 0; i < 4; i++) {
+
+		GamepadConfig[i] = gconfig;
+		gconfig++;
+
 		if(!IsEqualGUID(FakeAPI_GamepadConfig(i)->productGUID, GUID_NULL) && !IsEqualGUID(FakeAPI_GamepadConfig(i)->instanceGUID, GUID_NULL))
 		{
 			if(!FakeAPI_GamepadConfig(i)->dwVID) FakeAPI_GamepadConfig(i)->dwVID = LOWORD(FakeAPI_GamepadConfig(i)->productGUID.Data1);
 			if(!FakeAPI_GamepadConfig(i)->dwPID) FakeAPI_GamepadConfig(i)->dwPID = HIWORD(FakeAPI_GamepadConfig(i)->productGUID.Data1);
+
+			FakeAPI_GamepadConfig(i)->bEnabled = 1;
 		}
 	}
 	
-	if(FakeAPI_Config()->dwFakeMode) {
+	if(FakeAPI_Config()->bEnabled) {
 		FakeWMI();
 		if(FakeAPI_Config()->dwFakeMode >= 2) FakeDI();
 		if(FakeAPI_Config()->dwFakeWinTrust) FakeWinTrust();
@@ -78,9 +73,9 @@ BOOL FakeAPI_Init(FAKEAPI_CONIFG* fconfig, FAKEAPI_GAMEPAD_CONIFG* gconfig)
 BOOL FakeAPI_Clean()
 {
 	if(FakeAPI_Config()->dwFakeMode) {
-		FakeWMI();
-		if(FakeAPI_Config()->dwFakeMode >= 2) FakeDI();
-		if(FakeAPI_Config()->dwFakeWinTrust) FakeWinTrust();
+		FakeWMI_Clean();
+		if(FakeAPI_Config()->dwFakeMode >= 2) FakeDI_Clean();
+		if(FakeAPI_Config()->dwFakeWinTrust) FakeWinTrust_Clean();
 	}
 	return TRUE;
 }
