@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "FakeAPI.h"
-#include "Utils.h"
+#include "..\Utilities\Utils.h"
 
 #define CINTERFACE			//needed for detours
 #define _WIN32_DCOM

@@ -41,7 +41,7 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\x360ce\3rdparty;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\..\include;$(SolutionDir)\x360ce\3rdparty;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\x360ce\3rdparty;$(LibraryPath)</LibraryPath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xinput1_3</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xinput1_3</TargetName>
@@ -137,19 +137,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\globals.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="globals.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="svnrev_template.h" />
     <ClInclude Include="svnrev_unknown.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Utils.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="x360ce.h" />
   </ItemGroup>
@@ -162,6 +160,9 @@
   <ItemGroup>
     <ProjectReference Include="..\FakeAPI\FakeAPI.vcxproj">
       <Project>{bc69b32c-7c1f-4d99-bda9-817ac030d832}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.vcxproj">
+      <Project>{2daa046f-bc02-4d80-9a8f-fe320ebd9de3}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

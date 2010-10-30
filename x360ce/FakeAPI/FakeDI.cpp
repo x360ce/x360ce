@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "FakeAPI.h"
-#include "Utils.h"
+#include "..\Utilities\Utils.h"
 
 #include <detours.h>
 #define CINTERFACE	//needed for detours

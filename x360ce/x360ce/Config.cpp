@@ -15,15 +15,14 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "Utils.h"
+#include "..\Utilities\Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
 
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
-LPWSTR lpConfigFile = NULL;
-BOOL ffbtype = NULL;
+int ffbtype = NULL;
 
 FAKEAPI_CONIFG x360ce_FakeAPIConfig;
 FAKEAPI_GAMEPAD_CONIFG x360ce_FakeAPIGamepadConfig[4];
@@ -96,26 +95,12 @@ static LPCWSTR padNames[4] = {
 
 GamepadMap GamepadMapping[4];
 
-void InitConfig(LPCWSTR ininame) 
-{
-	LPWSTR pStr;
-	static WCHAR strPath[MAX_PATH];
-	lpConfigFile = new WCHAR[MAX_PATH];
-
-	GetModuleFileName (NULL, strPath, MAX_PATH);
-	pStr = wcsrchr(strPath, L'\\');
-	if (pStr != NULL)
-		*(++pStr)=L'\0'; 
-
-	swprintf_s(lpConfigFile,MAX_PATH,L"%s%s",strPath, ininame);
-}
-
 void ReadConfig() 
 {
 
 	// Read global options
 	bInitBeep = (BOOL) ReadUINTFromFile(L"Options", L"UseInitBeep",1);
-	writelog = (BOOL) ReadUINTFromFile(L"Options", L"Log",0);
+	LogEnable((BOOL) ReadUINTFromFile(L"Options", L"Log",0));
 	ffbtype = (BOOL) ReadUINTFromFile(L"Options", L"FFBType",0);
 
 	//FakeAPI
