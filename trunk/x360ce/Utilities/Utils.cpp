@@ -14,12 +14,15 @@
  */
 
 #include "stdafx.h"
+#include <dinput.h>
 #include "globals.h"
-#include "DirectInput.h"
 #include "Utils.h"
 
 BOOL writelog = 0;
-LPWSTR lpLogFileName;
+LPWSTR lpConfigFile = NULL;
+LPWSTR lpLogFileName = NULL;
+LPWSTR lpLogFolderName = NULL;
+
 
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput)
 {
@@ -65,18 +68,51 @@ LPCWSTR ModuleFileName()
 	return pStr;
 }
 
-VOID CreateLog()
+void IniCleanup() 
 {
-	if (writelog) {
+	SAFE_DELETE_ARRAY(lpConfigFile);
+}
+
+void SetIniFileName(LPCWSTR ininame) 
+{
+	LPWSTR pStr;
+	static WCHAR strPath[MAX_PATH];
+	lpConfigFile = new WCHAR[MAX_PATH];
+
+	GetModuleFileName (NULL, strPath, MAX_PATH);
+	pStr = wcsrchr(strPath, L'\\');
+	if (pStr != NULL)
+		*(++pStr)=L'\0'; 
+
+	swprintf_s(lpConfigFile,MAX_PATH,L"%s%s",strPath, ininame);
+}
+
+void LogEnable(BOOL log) 
+{
+	writelog = log;
+}
+
+void LogCleanup() 
+{
+	SAFE_FREE(lpLogFileName);
+	SAFE_FREE(lpLogFolderName);
+}
+
+VOID CreateLog(LPWSTR logbasename, LPWSTR foldename)
+{
+	lpLogFileName = _wcsdup(logbasename);
+	lpLogFolderName = _wcsdup(foldename);
+
+	if (lpLogFileName && lpLogFolderName && writelog) {
 
 		SYSTEMTIME systime;
 		GetLocalTime(&systime);
 
 		lpLogFileName = new WCHAR[MAX_PATH];
-		swprintf_s(lpLogFileName,MAX_PATH,L"x360ce\\x360ce %u%02u%02u-%02u%02u%02u.log",
-			systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
+		swprintf_s(lpLogFileName,MAX_PATH,L"%s\\%s_%u%02u%02u-%02u%02u%02u.log",
+			lpLogFolderName,logbasename,systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
 
-		if( (GetFileAttributes(L"x360ce") == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(L"x360ce", NULL);
+		if( (GetFileAttributes(lpLogFolderName) == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(lpLogFolderName, NULL);
 	}
 }
 

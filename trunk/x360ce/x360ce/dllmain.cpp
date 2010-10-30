@@ -17,7 +17,7 @@
 #include "globals.h"
 #include "version.h"
 #include "x360ce.h"
-#include "Utils.h"
+#include "..\Utilities\Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "..\FakeAPI\FakeAPI.h"
@@ -74,10 +74,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 	hX360ceInstance =  hinstDLL;
 	DWORD dwAppPID = GetCurrentProcessId();
-	static WCHAR IniFileName[] = L"x360ce.ini";
-	InitConfig(IniFileName);
+	SetIniFileName(L"x360ce.ini");
 	ReadConfig();
-	CreateLog();
+	CreateLog(L"x360ce",L"x360ce");
 
 #if SVN_MODS != 0 
 	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
@@ -107,8 +106,8 @@ VOID ExitInstance()
 	UnregisterClass(L"x360ceWClass",hX360ceInstance);
 	WriteLog(L"[CORE]    x360ce terminating, bye");
 
-	SAFE_DELETEARRAY(lpLogFileName);
-	SAFE_DELETEARRAY(lpConfigFile);
+	IniCleanup();
+	LogCleanup();
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 

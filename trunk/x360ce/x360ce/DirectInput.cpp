@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "x360ce.h"
-#include "Utils.h"
+#include "..\Utilities\Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "..\FakeAPI\FakeAPI.h"

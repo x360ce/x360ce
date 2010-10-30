@@ -17,9 +17,9 @@
 #define _UTILS_H_
 
 // externs
-extern BOOL writelog;
-extern LPWSTR lpConfigFile;
-extern LPWSTR lpLogFileName;
+//BOOL writelog;
+//LPWSTR lpConfigFile;
+//LPWSTR lpLogFileName;
 
 // prototypes
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput);
@@ -32,7 +32,11 @@ LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
 HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size);
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid);
-VOID CreateLog();
+void SetIniFileName(LPCWSTR ininame);
+void LogEnable(BOOL log);
+VOID CreateLog(LPWSTR logbasename, LPWSTR foldename);
 BOOL WriteLog(LPWSTR str,...);
+void IniCleanup();
+void LogCleanup();
 
-#endif
+#endif // _UTILS_H_
