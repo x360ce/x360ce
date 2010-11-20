@@ -45,6 +45,9 @@ namespace x360ce.App.Controls
 			// Add gamepad typed to ComboBox.
 			var types = (GamePadType[])Enum.GetValues(typeof(GamePadType));
 			foreach (var item in types) GamePadTypeComboBox.Items.Add(item);
+			// Add force feedback typed to ComboBox.
+			var fTypes = (ForceFeedBackType[])Enum.GetValues(typeof(ForceFeedBackType));
+			foreach (var item in fTypes) ForceTypeComboBox.Items.Add(item);
 			// Attach context strip with button names to every ComboBox on general tab.
 			foreach (var control in GeneralTabPage.Controls)
 			{
@@ -454,6 +457,7 @@ namespace x360ce.App.Controls
 			map.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
 			// Force Feedback
 			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
+			map.Add(section + SettingName.ForceType, ForceTypeComboBox);
 			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
 			map.Add(section + SettingName.ForceOverall, ForceOverallTrackBar);
 			map.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
