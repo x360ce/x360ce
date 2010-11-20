@@ -164,6 +164,8 @@ namespace x360ce.App
 		// Force feedback.
 		[DefaultValue("0"), Description("[0,1] Use force feedback. Disabled = 0, Enabled = 1.")]
 		public const string ForceEnable = "UseForceFeedback";
+		[DefaultValue("0"), Description("[0-2] Force feedback type.")]
+		public const string ForceType = "FFBType";
 		[DefaultValue("0"), Description("Swap motor. Disabled = 0, Enabled = 1.")]
 		public const string ForceSwapMotor = "SwapMotor";
 		[DefaultValue("100"), Description("Strenght of force feedback. Use 0 to 100.")]

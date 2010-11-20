@@ -1,5 +1,9 @@
-﻿v2.0.2.91 (2010-09-02)
-- New: Preset for "Logitech WingMan Formula Force GP USB" (from Martin Kopecký)
+﻿v2.0.2.93 (2010-11-20)
+- Update: Swiched to "Microsoft Windows SDK 7.1".
+- New: Force feedback type option (FFBType) support added.
+
+v2.0.2.91 (2010-09-02)
+- New: Preset for "Logitech WingMan Formula Force GP USB" (from Martin Kopecký).
 
 v2.0.2.90 (2010-09-01)
 - Fixed: Fixed "Record" feature when pedals are reported as single slider. 
@@ -15,10 +19,10 @@ v2.0.2.87 (2010-08-29)
 - Update: Updated to xinput1_3.dll v3.2.0.295.
 
 v2.0.2.85 (2010-08-28)
-- New: Preset for "Logitech G27 Racing Wheel" (from chalkman)
+- New: Preset for "Logitech G27 Racing Wheel" (from chalkman).
 
 v2.0.2.84 (2010-08-28)
-- Fix: Permission check issues on Windows XP
+- Fix: Permission check issues on Windows XP.
 - Update: Updated to xinput1_3.dll v3.2.0.290.
 - New: Thumb deadzone setting support added.
 

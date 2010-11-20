@@ -9,7 +9,7 @@ GOTO:EOF
 ::=============================================================
 :SIG :: Sign and Timestamp Code
 ::-------------------------------------------------------------
-set sgt=C:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\signtool.exe
+set sgt=C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
 set pfx=D:\_Backup\Configuration\SSL\Jocys.com.CodeSign.pfx
 set d=XBOX 360 Controller Emulator
 set du=http://www.jocys.com/projects/x360ce

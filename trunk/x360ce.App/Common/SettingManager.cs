@@ -43,15 +43,34 @@ namespace x360ce.App
 			ReadSettings(iniFile);
 		}
 
+
+
 		public void ReadSetting(Control control, string key, string value)
 		{
-			if (control.Name == "GamePadTypeComboBox")
+			if (key == SettingName.FakeMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
 			{
 				var cbx = (ComboBox)control;
-				int n = 0;
-				int.TryParse(value, out n);
-				try { cbx.SelectedItem = (GamePadType)n; }
-				catch (Exception) { if (IsDebugMode) throw; }
+				for (int i = 0; i < cbx.Items.Count; i++)
+				{
+					if (cbx.Items[i] is KeyValuePair)
+					{
+						var kv = (KeyValuePair)cbx.Items[i];
+						if (kv.Value == value)
+						{
+							cbx.SelectedIndex = i;
+							break;
+						}
+					}
+					else
+					{
+						var kv = (int)cbx.Items[i];
+						if (kv.ToString() == value)
+						{
+							cbx.SelectedIndex = i;
+							break;
+						}
+					}
+				}
 			}
 			// If Di menu strip attached.
 			else if (control is ComboBox && control.ContextMenuStrip != null)
@@ -60,11 +79,7 @@ namespace x360ce.App
 				var text = new SettingsConverter(value, key).ToFrmSetting();
 				SetComboBoxValue(cbx, text);
 			}
-			else if (control is ComboBox)
-			{
-				var cbx = (ComboBox)control;
-				if (key == SettingName.FakeMode) cbx.SelectedValue = value;
-			}
+
 			else if (control is TextBox)
 			{
 				// if setting is readonly.
@@ -249,9 +264,12 @@ namespace x360ce.App
 			string section = path.Split('\\')[0];
 			string key = path.Split('\\')[1];
 			string v = string.Empty;
-			if (control.Name == "GamePadTypeComboBox")
+			if (key == SettingName.FakeMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
 			{
-				v = ((int)(GamePadType)((ComboBox)control).SelectedItem).ToString();
+				var v1 = ((ComboBox)control).SelectedItem;
+				if (v1 == null) { v = "0"; }
+				else if (v1 is KeyValuePair) { v = ((KeyValuePair)v1).Value; }
+				else { v = ((int)v1).ToString(); }
 			}
 			// If di menu strip attached.
 			else if (control is ComboBox && control.ContextMenuStrip != null)
@@ -259,11 +277,6 @@ namespace x360ce.App
 				v = new SettingsConverter(control.Text, key).ToIniSetting();
 				// make sure that disabled button value is "0".
 				if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
-			}
-			else if (control is ComboBox)
-			{
-				var cbx = (ComboBox)control;
-				if (key == SettingName.FakeMode) v = (string)cbx.SelectedValue;
 			}
 			else if (control is TextBox)
 			{
