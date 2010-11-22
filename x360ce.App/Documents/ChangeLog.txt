@@ -1,4 +1,7 @@
-﻿v2.0.2.93 (2010-11-20)
+﻿v2.0.2.94 (2010-11-22)
+- Update: Digital Signature updated.
+
+v2.0.2.93 (2010-11-20)
 - Update: Swiched to "Microsoft Windows SDK 7.1".
 - New: Force feedback type option (FFBType) support added.
 
