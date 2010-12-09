@@ -15,7 +15,7 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "..\Utilities\Utils.h"
+#include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
 
