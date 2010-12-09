@@ -51,9 +51,9 @@ void FakeWMI();
 void FakeDI();
 void FakeWinTrust();
 
-void FakeWMI_Clean();
-void FakeDI_Clean();
-void FakeWinTrust_Clean();
+void FakeWMIClean();
+void FakeDIClean();
+void FakeWinTrustClean();
 
 FAKEAPI_CONIFG* FakeAPI_Config();
 FAKEAPI_GAMEPAD_CONIFG* FakeAPI_GamepadConfig(DWORD dwUserIndex);

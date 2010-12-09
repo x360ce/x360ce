@@ -75,8 +75,16 @@ BOOL FakeAPI_Init(FAKEAPI_CONIFG* fconfig, FAKEAPI_GAMEPAD_CONIFG* gconfig)
 
 BOOL FakeAPI_Clean()
 {
-	LhUninstallAllHooks();
-	LhWaitForPendingRemovals();
+
+	if(FakeAPI_Config()->bEnabled) {
+		LhUninstallAllHooks();
+		LhWaitForPendingRemovals();
+
+		FakeWMIClean();
+		if(FakeAPI_Config()->dwFakeMode >= 2) FakeDIClean();
+		if(FakeAPI_Config()->dwFakeWinTrust) FakeWinTrustClean();
+	}
+
 	return TRUE;
 }
 
