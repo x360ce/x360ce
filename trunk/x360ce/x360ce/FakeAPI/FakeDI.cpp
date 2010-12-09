@@ -545,3 +545,16 @@ void FakeDI()
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void FakeDIClean()
+{
+	SAFE_DELETE(hHookDirectInput8Create);
+	SAFE_DELETE(hHookCreateDeviceA);
+	SAFE_DELETE(hHookCreateDeviceW);
+	SAFE_DELETE(hHookGetPropertyA);
+	SAFE_DELETE(hHookGetPropertyW);
+	SAFE_DELETE(hHookGetDeviceInfoA);
+	SAFE_DELETE(hHookGetDeviceInfoW);
+	SAFE_DELETE(hHookEnumDevicesA);
+	SAFE_DELETE(hHookEnumDevicesW);
+}

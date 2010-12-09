@@ -359,3 +359,12 @@ void FakeWMI()
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void FakeWMIClean()
+{
+	SAFE_DELETE(hHookGet);
+	SAFE_DELETE(hHookNext);
+	SAFE_DELETE(hHookCreateInstanceEnum);
+	SAFE_DELETE(hHookConnectServer);
+	SAFE_DELETE(hHookCoCreateInstance);
+	SAFE_DELETE(hHookCoUninitialize);
+}
