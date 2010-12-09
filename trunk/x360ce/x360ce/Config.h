@@ -16,7 +16,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include "..\FakeAPI\FakeAPI.h"
+#include "FakeAPI\FakeAPI.h"
 
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER };
 

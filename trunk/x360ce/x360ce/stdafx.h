@@ -42,4 +42,3 @@
 #include <fstream>
 
 #include <xinput.h>
-

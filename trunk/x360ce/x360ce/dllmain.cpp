@@ -17,10 +17,10 @@
 #include "globals.h"
 #include "version.h"
 #include "x360ce.h"
-#include "..\Utilities\Utils.h"
+#include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
-#include "..\FakeAPI\FakeAPI.h"
+#include "FakeAPI\FakeAPI.h"
 
 HINSTANCE hX360ceInstance = NULL;
 HINSTANCE hNativeInstance = NULL;
@@ -59,17 +59,15 @@ VOID AttachFakeAPI()
 	}
 }
 
-VOID DetachFakeAPI()
-{
-	if(x360ce_FakeAPIConfig.bEnabled) {
-		FakeAPI_Clean();
-	}
-}
-
 VOID InitInstance(HINSTANCE hinstDLL) 
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	int CurrentFlags;
+	CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
+	CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
+	CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
+	_CrtSetDbgFlag(CurrentFlags);
 #endif
 
 	hX360ceInstance =  hinstDLL;
@@ -89,8 +87,6 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 VOID ExitInstance() 
 {   
-	DetachFakeAPI();
-
 	ReleaseDirectInput();
 
 	if (hNativeInstance) {
@@ -104,8 +100,10 @@ VOID ExitInstance()
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
 	hWnd = NULL;
 	UnregisterClass(L"x360ceWClass",hX360ceInstance);
+
 	WriteLog(L"[CORE]    x360ce terminating, bye");
 
+	FakeAPI_Clean();
 	IniCleanup();
 	LogCleanup();
 }
@@ -113,15 +111,22 @@ VOID ExitInstance()
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
 {
 	UNREFERENCED_PARAMETER(lpReserved);
+
 	switch( fdwReason ) 
 	{ 
 	case DLL_PROCESS_ATTACH:
-		//DisableThreadLibraryCalls(hinstDLL); // MUST be disabled for static (/MT) runtime
+		LhInitializeLibrary(hinstDLL);
 		InitInstance(hinstDLL);
 		break;
 
+	case DLL_THREAD_DETACH:
+		LhBarrierThreadDetach();
+		break;
+
 	case DLL_PROCESS_DETACH:
+
 		ExitInstance();
+		LhUninitializeLibrary();
 		break;
 	}
 	return TRUE;

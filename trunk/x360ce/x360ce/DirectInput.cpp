@@ -16,10 +16,10 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "x360ce.h"
-#include "..\Utilities\Utils.h"
+#include "Utils.h"
 #include "Config.h"
 #include "DirectInput.h"
-#include "..\FakeAPI\FakeAPI.h"
+#include "FakeAPI\FakeAPI.h"
 
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
