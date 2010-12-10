@@ -25,7 +25,7 @@
 BOOL bEnabled = FALSE;
 BOOL bUseEnabled= FALSE;
 
-DWORD dwlastUserIndex = (DWORD) -1;
+bool bPAD[4] = {FALSE,FALSE,FALSE,FALSE};
 
 XINPUT_CAPABILITIES *LPXCAPS[4]={NULL,NULL,NULL,NULL};
 
@@ -84,6 +84,8 @@ void XDeInit()
 
 HRESULT XInit(DWORD dwUserIndex)
 {
+	bPAD[dwUserIndex] = true;
+
 	HRESULT hr=S_OK;
 
 	if(!hWnd) {	
@@ -94,10 +96,9 @@ HRESULT XInit(DWORD dwUserIndex)
 
 	if(!Gamepad[dwUserIndex].productGUID.Data1) return ERROR_DEVICE_NOT_CONNECTED;
 
-	if(!Gamepad[dwUserIndex].g_pGamepad && dwUserIndex != dwlastUserIndex){ 
+	if(!Gamepad[dwUserIndex].g_pGamepad){ 
 
 		WriteLog(L"[XINIT]   Initializing Gamepad %d",dwUserIndex+1);
-		WriteLog(L"[XINIT]   User ID: %d, Last User ID: %d",dwUserIndex,dwlastUserIndex);
 
 		hr = Enumerate(dwUserIndex); 
 		if(SUCCEEDED(hr)) {
@@ -118,7 +119,6 @@ HRESULT XInit(DWORD dwUserIndex)
 	}
 	else UpdateState(dwUserIndex);
 
-	dwlastUserIndex = dwUserIndex;
 	return hr;
 }
 
@@ -139,8 +139,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
-	hr = XInit(dwUserIndex);
-	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!bPAD[dwUserIndex]) {
+		hr = XInit(dwUserIndex);
+		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+	}
 
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
