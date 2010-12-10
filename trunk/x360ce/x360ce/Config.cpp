@@ -23,6 +23,7 @@ BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
 int ffbtype = NULL;
+BOOL enableconsole = FALSE;
 
 FAKEAPI_CONIFG x360ce_FakeAPIConfig;
 FAKEAPI_GAMEPAD_CONIFG x360ce_FakeAPIGamepadConfig[4];
@@ -102,6 +103,8 @@ void ReadConfig()
 	bInitBeep = (BOOL) ReadUINTFromFile(L"Options", L"UseInitBeep",1);
 	LogEnable((BOOL) ReadUINTFromFile(L"Options", L"Log",0));
 	ffbtype = (BOOL) ReadUINTFromFile(L"Options", L"FFBType",0);
+
+	enableconsole = (BOOL) ReadUINTFromFile(L"Options", L"Console",0);
 
 	//FakeAPI
 	x360ce_FakeAPIConfig.dwFakeMode = (DWORD) ReadUINTFromFile(L"FakeAPI", L"FakeMode",0);

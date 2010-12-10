@@ -264,6 +264,7 @@
     <ClInclude Include="svnrev_template.h" />
     <ClInclude Include="svnrev_unknown.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="x360ce.h" />
   </ItemGroup>

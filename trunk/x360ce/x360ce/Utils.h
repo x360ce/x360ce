@@ -38,5 +38,6 @@ VOID CreateLog(LPWSTR logbasename, LPWSTR foldename);
 BOOL WriteLog(LPWSTR str,...);
 void IniCleanup();
 void LogCleanup();
+void Console();
 
 #endif // _UTILS_H_
