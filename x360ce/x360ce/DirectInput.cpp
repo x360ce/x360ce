@@ -34,7 +34,15 @@ WORD lastforce = 0;
 
 LPDIRECTINPUT8 GetDirectInput() {
 	if (!DDATA.g_pDI) {
-		if (FAILED(DirectInput8Create( hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.g_pDI, NULL ) ) )
+
+		if(FakeAPI_Enable()) {
+			FakeAPI_Enable(0);
+			WriteLog(L"[DINPUT]  Temporary disable FakeAPI");
+		}
+
+		HRESULT hr = DirectInput8Create( hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.g_pDI, NULL );
+
+		if (FAILED(hr))
 			return 0;
 	}
 	DDATA.refCount++;
@@ -165,18 +173,8 @@ HRESULT Enumerate(DWORD idx)
 	Deactivate(idx);
 	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
 
-	if(FakeAPI_Enable()) {
-		FakeAPI_Enable(0);
-		WriteLog(L"[DINPUT]  Temporary disable FakeAPI");
-	}
-
 	WriteLog(L"[DINPUT]  [PAD%d] Enumerating User ID %d",idx+1,idx);
 	hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &Gamepad[idx], DIEDFL_ATTACHEDONLY );
-
-	if(!FakeAPI_Enable()) {
-		FakeAPI_Enable(1);
-		WriteLog(L"[DINPUT]  Restore FakeAPI state");
-	}
 
 	if FAILED(hr) {
 		WriteLog(L"[DINPUT]  [PAD%d] Enumeration FAILED !!!",idx+1);

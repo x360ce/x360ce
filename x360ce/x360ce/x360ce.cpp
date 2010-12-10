@@ -102,7 +102,7 @@ HRESULT XInit(DWORD dwUserIndex)
 
 		hr = Enumerate(dwUserIndex); 
 		if(SUCCEEDED(hr)) {
-			WriteLog(L"[XINIT]   [PAD%d] Enumeration finished",dwUserIndex+1);
+			WriteLog(L"[XINIT]   [PAD%d] Enumerated",dwUserIndex+1);
 		}
 		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -118,6 +118,11 @@ HRESULT XInit(DWORD dwUserIndex)
 		return ERROR_DEVICE_NOT_CONNECTED;
 	}
 	else UpdateState(dwUserIndex);
+
+	if(!FakeAPI_Enable()) {
+		FakeAPI_Enable(1);
+		WriteLog(L"[DINPUT]  Restore FakeAPI state");
+	}
 
 	return hr;
 }

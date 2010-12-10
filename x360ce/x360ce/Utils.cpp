@@ -16,13 +16,26 @@
 #include "stdafx.h"
 #include <dinput.h>
 #include "globals.h"
+#include "Config.h"
 #include "Utils.h"
+#include <io.h>
+#include <fcntl.h>
 
 BOOL writelog = 0;
 LPWSTR lpConfigFile = NULL;
 LPWSTR lpLogFileName = NULL;
 LPWSTR lpLogFolderName = NULL;
 
+void Console()
+{
+	AllocConsole();
+
+	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+	int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+	FILE* hf_out = _wfdopen(hCrt, L"w");
+	setvbuf(hf_out, NULL, _IONBF, 1);
+	*stdout = *hf_out;
+}
 
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput)
 {
@@ -118,10 +131,21 @@ VOID CreateLog(LPWSTR logbasename, LPWSTR foldename)
 
 BOOL WriteLog(LPWSTR str,...)
 {
-	if (writelog) {
-		SYSTEMTIME systime;
-		GetLocalTime(&systime);
+	SYSTEMTIME systime;
+	GetLocalTime(&systime);
 
+	if(enableconsole)
+	{
+		wprintf(L"%02u:%02u:%02u.%03u:: ", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds);
+		va_list arglist;
+		va_start(arglist,str);
+		vwprintf(str,arglist);
+		va_end(arglist);
+		wprintf(L" \n");
+		return 1;
+	}
+
+	if (writelog) {
 		FILE * fp;
 		_wfopen_s(&fp, lpLogFileName, L"a");
 
@@ -137,6 +161,7 @@ BOOL WriteLog(LPWSTR str,...)
 		fclose(fp);
 		return 1;
 	}
+
 	return 0;
 }
 

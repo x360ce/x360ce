@@ -74,12 +74,13 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	DWORD dwAppPID = GetCurrentProcessId();
 	SetIniFileName(L"x360ce.ini");
 	ReadConfig();
-	CreateLog(L"x360ce",L"x360ce");
+	if(enableconsole) Console();
+	else CreateLog(L"x360ce",L"x360ce");
 
 #if SVN_MODS != 0 
-	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d (modded) started by process %s PID %d",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(L"[CORE]    x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #else 
-	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d started by process %s PID %d",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #endif
 
 	AttachFakeAPI();
@@ -90,9 +91,9 @@ VOID ExitInstance()
 	ReleaseDirectInput();
 
 	if (hNativeInstance) {
-		FreeLibrary(hNativeInstance);
-		hNativeInstance = NULL;  
+		FreeLibrary(hNativeInstance); 
 		CloseHandle(hNativeInstance);
+		hNativeInstance = NULL; 
 	}
 
 	XDeInit();
