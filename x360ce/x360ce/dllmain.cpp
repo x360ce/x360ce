@@ -74,8 +74,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	DWORD dwAppPID = GetCurrentProcessId();
 	SetIniFileName(L"x360ce.ini");
 	ReadConfig();
-	if(enableconsole) Console();
-	else CreateLog(L"x360ce",L"x360ce");
+	Console();
+	CreateLog(L"x360ce",L"x360ce");
 
 #if SVN_MODS != 0 
 	WriteLog(L"[CORE]    x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
@@ -125,7 +125,6 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 		break;
 
 	case DLL_PROCESS_DETACH:
-
 		ExitInstance();
 		LhUninitializeLibrary();
 		break;

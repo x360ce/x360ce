@@ -77,13 +77,13 @@ DRIVER_SHARED_API(NTSTATUS, RtlGetLastError());
 
 DRIVER_SHARED_API(PWCHAR, RtlGetLastErrorString());
 
-BOOL LhInitializeLibrary( HMODULE hModule);
+DRIVER_SHARED_API(BOOL, LhInitializeLibrary( HMODULE hModule));
 
-BOOL LhUninitializeLibrary();
+DRIVER_SHARED_API(BOOL, LhUninitializeLibrary());
 
-void LhBarrierThreadDetach();
+DRIVER_SHARED_API(void, LhBarrierThreadDetach());
 
-EASYHOOK_NT_EXPORT LhGetOldProc(TRACED_HOOK_HANDLE InHandle, UCHAR** OutValue);
+EASYHOOK_NT_EXPORT LhGetOldProc(TRACED_HOOK_HANDLE InHandle, VOID** OutValue);
 
 DRIVER_SHARED_API(NTSTATUS, LhInstallHook(
             void* InEntryPoint,
