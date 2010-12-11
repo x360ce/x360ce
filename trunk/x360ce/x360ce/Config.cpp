@@ -22,7 +22,6 @@
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
-int ffbtype = NULL;
 BOOL enableconsole = FALSE;
 
 FAKEAPI_CONIFG x360ce_FakeAPIConfig;
@@ -102,7 +101,6 @@ void ReadConfig()
 	// Read global options
 	bInitBeep = (BOOL) ReadUINTFromFile(L"Options", L"UseInitBeep",1);
 	LogEnable((BOOL) ReadUINTFromFile(L"Options", L"Log",0));
-	ffbtype = (BOOL) ReadUINTFromFile(L"Options", L"FFBType",0);
 
 	enableconsole = (BOOL) ReadUINTFromFile(L"Options", L"Console",0);
 
@@ -170,6 +168,8 @@ void ReadPadConfig(DWORD idx) {
 	} else { return; }  
 
 	Gamepad[idx].dwPadIndex = idx;
+
+	Gamepad[idx].ff.type = (BYTE) ReadUINTFromFile(section, L"FFBType",0);
 
 	Gamepad[idx].swapmotor = ReadUINTFromFile(section, L"SwapMotor",0);
 	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
