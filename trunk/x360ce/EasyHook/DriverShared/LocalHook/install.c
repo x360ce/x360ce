@@ -451,7 +451,7 @@ ULONG GetTrampolineSize()
     return 0;
 }
 
-EASYHOOK_NT_EXPORT LhGetOldProc(TRACED_HOOK_HANDLE InHandle, UCHAR** OutValue)
+EASYHOOK_NT_EXPORT LhGetOldProc(TRACED_HOOK_HANDLE InHandle, VOID** OutValue)
 {
 	LOCAL_HOOK_INFO*        Hook = NULL;
 	NTSTATUS                NtStatus = STATUS_NOT_SUPPORTED;

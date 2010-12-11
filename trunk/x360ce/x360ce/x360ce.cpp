@@ -167,7 +167,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
-#ifdef DEBUG
+#if defined(DEBUG) | defined(_DEBUG)
 	WriteLog(L"UpdateState %d %d",dwUserIndex,hr);
 #endif
 

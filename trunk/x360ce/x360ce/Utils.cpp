@@ -28,13 +28,15 @@ LPWSTR lpLogFolderName = NULL;
 
 void Console()
 {
-	AllocConsole();
+	if(enableconsole){
+		AllocConsole();
 
-	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-	int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
-	FILE* hf_out = _wfdopen(hCrt, L"w");
-	setvbuf(hf_out, NULL, _IONBF, 1);
-	*stdout = *hf_out;
+		HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+		int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+		FILE* hf_out = _wfdopen(hCrt, L"w");
+		setvbuf(hf_out, NULL, _IONBF, 1);
+		*stdout = *hf_out;
+	}
 }
 
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput)
