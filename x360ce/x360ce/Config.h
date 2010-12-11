@@ -85,7 +85,6 @@ static const WORD povIDs[4] = {
 
 extern BOOL bInitBeep;
 extern struct GamepadMap GamepadMapping[4];
-extern int ffbtype;
 extern BOOL enableconsole;
 
 void InitConfig(LPCWSTR ininame);

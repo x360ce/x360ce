@@ -36,6 +36,7 @@ struct FFB_CAPS
 
 struct DINPUT_FF
 {
+	BYTE type;
 	INT xForce;
 	INT yForce;
 	INT oldXForce;

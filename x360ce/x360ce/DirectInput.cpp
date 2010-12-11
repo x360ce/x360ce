@@ -278,8 +278,8 @@ BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef)
 
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 {
-	if(ffbtype == 1) return SetDeviceForcesEjocys(idx,force,motor);
-	if(ffbtype == 2) return SetDeviceForcesNew(idx,force,motor);
+	if(Gamepad[idx].ff.type == 1) return SetDeviceForcesEjocys(idx,force,motor);
+	if(Gamepad[idx].ff.type == 2) return SetDeviceForcesNew(idx,force,motor);
 	return SetDeviceForcesFailsafe(idx,force,motor);
 }
 
@@ -288,8 +288,8 @@ HRESULT PrepareForce(DWORD idx, WORD motor)
 	if(Gamepad[idx].ff.g_pEffect[motor]) return S_FALSE;
 
 
-	if(ffbtype == 1) return PrepareForceEjocys(idx,motor);
-	if(ffbtype == 2) return PrepareForceNew(idx,motor);
+	if(Gamepad[idx].ff.type == 1) return PrepareForceEjocys(idx,motor);
+	if(Gamepad[idx].ff.type == 2) return PrepareForceNew(idx,motor);
 	return PrepareForceFailsafe(idx,motor);
 }
 
