@@ -163,7 +163,7 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 				OriginalGet = pDevices->lpVtbl->Get;
 				hHookGet = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalGet,FakeGet,(PVOID)NULL,hHookGet);
+				LhInstallHook(OriginalGet,FakeGet,static_cast<PVOID>(NULL),hHookGet);
 				LhSetInclusiveACL(ACLEntries, 1, hHookGet);
 			}
 		}
@@ -197,7 +197,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 				OriginalNext = pEnumDevices->lpVtbl->Next;
 				hHookNext = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalNext,FakeNext,(PVOID)NULL,hHookNext);
+				LhInstallHook(OriginalNext,FakeNext,static_cast<PVOID>(NULL),hHookNext);
 				LhSetInclusiveACL(ACLEntries, 1, hHookNext);
 
 			}
@@ -236,7 +236,7 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
 				hHookCreateInstanceEnum = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalCreateInstanceEnum,FakeCreateInstanceEnum,(PVOID)NULL,hHookCreateInstanceEnum);
+				LhInstallHook(OriginalCreateInstanceEnum,FakeCreateInstanceEnum,static_cast<PVOID>(NULL),hHookCreateInstanceEnum);
 				LhSetInclusiveACL(ACLEntries, 1, hHookCreateInstanceEnum);
 			}
 		}
@@ -257,31 +257,17 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	HRESULT hr;
 	IWbemLocator* pIWbemLocator = NULL;
 
-	/*
-	LPOLESTR str1;
-	StringFromIID(rclsid,&str1);
-	WriteLog(L"rclsid: %s"),str1);
-
-	WriteLog(L"dwClsContext: %d"),dwClsContext);
-
-	LPOLESTR str2;
-	StringFromIID(riid,&str2);
-	WriteLog(L"riid: %s"),str2);
-	*/
-
 	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(ppv && (riid == IID_IWbemLocator)) {
-		//WriteLog(L"FakeCoCreateInstance if1 "));
-
-		pIWbemLocator = (IWbemLocator *) *ppv;
+		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 		if(pIWbemLocator) {
 			WriteLog(L"[FakeWMI] FakeCoCreateInstance");
 			if(!OriginalConnectServer) {
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
 				hHookConnectServer = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalConnectServer,FakeConnectServer,(PVOID)NULL,hHookConnectServer);
+				LhInstallHook(OriginalConnectServer,FakeConnectServer,static_cast<PVOID>(NULL),hHookConnectServer);
 				LhSetInclusiveACL(ACLEntries, 1, hHookConnectServer);
 			}
 		}
@@ -301,7 +287,6 @@ void FakeCoUninitialize()
 
 		if(hHookGet) LhUninstallHook(hHookGet);
 		SAFE_DELETE(hHookGet);
-
 		OriginalGet = NULL;
 	}
 
@@ -310,7 +295,6 @@ void FakeCoUninitialize()
 
 		if(hHookNext) LhUninstallHook(hHookNext);
 		SAFE_DELETE(hHookNext);
-
 		OriginalNext=NULL;
 	}
 
@@ -319,7 +303,6 @@ void FakeCoUninitialize()
 
 		if(hHookCreateInstanceEnum) LhUninstallHook(hHookCreateInstanceEnum);
 		SAFE_DELETE(hHookCreateInstanceEnum);
-
 		OriginalCreateInstanceEnum=NULL;
 	}
 
@@ -328,7 +311,6 @@ void FakeCoUninitialize()
 
 		if(hHookConnectServer) LhUninstallHook(hHookConnectServer);
 		SAFE_DELETE(hHookConnectServer);
-
 		OriginalConnectServer=NULL;
 	}
 	OriginalCoUninitialize();
@@ -343,7 +325,7 @@ void FakeWMI()
 		hHookCoCreateInstance = new HOOK_TRACE_INFO();
 		WriteLog(L"[FAKEAPI] FakeCoCreateInstance:: Attaching");
 
-		LhInstallHook(OriginalCoCreateInstance,FakeCoCreateInstance,(PVOID)NULL,hHookCoCreateInstance);
+		LhInstallHook(OriginalCoCreateInstance,FakeCoCreateInstance,static_cast<PVOID>(NULL),hHookCoCreateInstance);
 		LhSetInclusiveACL(ACLEntries, 1, hHookCoCreateInstance);
 
 	}
@@ -352,7 +334,7 @@ void FakeWMI()
 		hHookCoUninitialize = new HOOK_TRACE_INFO();
 		WriteLog(L"[FAKEAPI] FakeCoUninitialize:: Attaching");
 
-		LhInstallHook(OriginalCoUninitialize,FakeCoUninitialize,(PVOID)NULL,hHookCoUninitialize);
+		LhInstallHook(OriginalCoUninitialize,FakeCoUninitialize,static_cast<PVOID>(NULL),hHookCoUninitialize);
 		LhSetInclusiveACL(ACLEntries, 1, hHookCoUninitialize);
 
 	}

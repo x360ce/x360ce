@@ -18,8 +18,7 @@
 #include "globals.h"
 #include "Config.h"
 #include "Utils.h"
-#include <io.h>
-#include <fcntl.h>
+#include <Shlwapi.h>
 
 BOOL writelog = 0;
 LPWSTR lpConfigFile = NULL;
@@ -76,11 +75,9 @@ UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault)
 
 LPCWSTR ModuleFileName()
 {
-	LPWSTR pStr;
 	static WCHAR strPath[MAX_PATH];
 	GetModuleFileName (NULL, strPath, MAX_PATH);
-	pStr = wcsrchr(strPath, L'\\') +1;
-	return pStr;
+	return PathFindFileName(strPath);;
 }
 
 void IniCleanup() 
@@ -90,14 +87,12 @@ void IniCleanup()
 
 void SetIniFileName(LPCWSTR ininame) 
 {
-	LPWSTR pStr;
 	static WCHAR strPath[MAX_PATH];
 	lpConfigFile = new WCHAR[MAX_PATH];
 
 	GetModuleFileName (NULL, strPath, MAX_PATH);
-	pStr = wcsrchr(strPath, L'\\');
-	if (pStr != NULL)
-		*(++pStr)=L'\0'; 
+	PathRemoveFileSpec(strPath);
+	PathAddBackslash(strPath);
 
 	swprintf_s(lpConfigFile,MAX_PATH,L"%s%s",strPath, ininame);
 }
@@ -127,7 +122,7 @@ VOID CreateLog(LPWSTR logbasename, LPWSTR foldename)
 		swprintf_s(lpLogFileName,MAX_PATH,L"%s\\%s_%u%02u%02u-%02u%02u%02u.log",
 			lpLogFolderName,logbasename,systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
 
-		if( (GetFileAttributes(lpLogFolderName) == INVALID_FILE_ATTRIBUTES) ) CreateDirectory(lpLogFolderName, NULL);
+		if(!PathIsDirectory(lpLogFolderName)) CreateDirectory(lpLogFolderName, NULL);
 	}
 }
 
@@ -135,6 +130,8 @@ BOOL WriteLog(LPWSTR str,...)
 {
 	SYSTEMTIME systime;
 	GetLocalTime(&systime);
+
+	BOOL ret = FALSE;
 
 	if(enableconsole)
 	{
@@ -144,7 +141,7 @@ BOOL WriteLog(LPWSTR str,...)
 		vwprintf(str,arglist);
 		va_end(arglist);
 		wprintf(L" \n");
-		return 1;
+		ret = TRUE;
 	}
 
 	if (writelog) {
@@ -161,10 +158,10 @@ BOOL WriteLog(LPWSTR str,...)
 		va_end(arglist);
 		fwprintf(fp, L" \n");
 		fclose(fp);
-		return 1;
+		ret = TRUE;
 	}
 
-	return 0;
+	return ret;
 }
 
 LONG clamp(LONG val, LONG min, LONG max)

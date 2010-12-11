@@ -43,7 +43,7 @@ void FakeWinTrust()
 		hHookWinVerifyTrust = new HOOK_TRACE_INFO(); 
 		WriteLog(L"[FAKEAPI] FakeWinTrust:: Attaching");
 
-		LhInstallHook(OriginalWinVerifyTrust,FakeWinVerifyTrust,(PVOID)NULL,hHookWinVerifyTrust);
+		LhInstallHook(OriginalWinVerifyTrust,FakeWinVerifyTrust,static_cast<PVOID>(NULL),hHookWinVerifyTrust);
 		LhSetInclusiveACL(ACLEntries, 1, hHookWinVerifyTrust);
 	}
 }

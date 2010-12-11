@@ -53,7 +53,7 @@ struct DINPUT_FF
 	DIEFFECT eff[2];
 	LPDIRECTINPUTEFFECT g_pEffect[2];
 	DWORD g_dwNumForceFeedbackAxis;
-	DOUBLE forcepercent;
+	FLOAT forcepercent;
 	FFB_CAPS ffbcaps;
 	DINPUT_FF()
 	{
@@ -72,8 +72,6 @@ struct DINPUT_GAMEPAD {
 	UINT dwAxisCount;
 	UINT swapmotor;
 	UINT tdeadzone;
-	WORD vid;
-	WORD pid;
 	GUID productGUID;
 	GUID instanceGUID;
 	DIJOYSTATE2 state;
