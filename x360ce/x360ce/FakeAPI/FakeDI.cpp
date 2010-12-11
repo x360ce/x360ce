@@ -86,7 +86,7 @@ BOOL CALLBACK FakeEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 					FakeInst->guidProduct.Data2=0x0000;
 					FakeInst->guidProduct.Data3=0x0000;
 					BYTE pdata4[] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
-					memcpy(FakeInst->guidProduct.Data4, pdata4, sizeof(pdata4));
+					memcpy(&FakeInst->guidProduct.Data4, pdata4, sizeof(pdata4));
 
 					WCHAR strOriginalguidProduct[50];
 					WCHAR strFakeguidProduct[50];
@@ -158,7 +158,7 @@ BOOL CALLBACK FakeEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 					FakeInst->guidProduct.Data2=0x0000;
 					FakeInst->guidProduct.Data3=0x0000;
 					BYTE pdata4[] = {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44};
-					memcpy(FakeInst->guidProduct.Data4, pdata4, sizeof(pdata4));
+					memcpy(&FakeInst->guidProduct.Data4, pdata4, sizeof(pdata4));
 
 					WCHAR strOriginalguidProduct[50];
 					WCHAR strFakeguidProduct[50];
