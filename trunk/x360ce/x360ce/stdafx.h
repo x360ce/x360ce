@@ -40,5 +40,7 @@
 #include <math.h>
 #include <time.h>
 #include <fstream>
+#include <io.h>
+#include <fcntl.h>
 
 #include <xinput.h>
