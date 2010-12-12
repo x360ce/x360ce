@@ -556,5 +556,5 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	pKeystroke->UserIndex = NULL;
 	dwReserved=NULL;
 
-	return ERROR_SUCCESS;
+	return ERROR_EMPTY;
 }
