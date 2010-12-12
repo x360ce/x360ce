@@ -75,12 +75,12 @@ BOOL FakeAPI_Init(FAKEAPI_CONIFG* fconfig, FAKEAPI_GAMEPAD_CONIFG* gconfig)
 
 BOOL FakeAPI_Clean()
 {
+	LhUninstallAllHooks();
+	LhWaitForPendingRemovals();
+
 	FakeWMIClean();
 	FakeDIClean();
 	FakeWinTrustClean();
-
-	LhUninstallAllHooks();
-	LhWaitForPendingRemovals();
 
 	return TRUE;
 }
