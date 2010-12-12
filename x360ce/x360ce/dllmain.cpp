@@ -102,9 +102,10 @@ VOID ExitInstance()
 	hWnd = NULL;
 	UnregisterClass(L"x360ceWClass",hX360ceInstance);
 
+	FakeAPI_Clean();
+
 	WriteLog(L"[CORE]    x360ce terminating, bye");
 
-	FakeAPI_Clean();
 	IniCleanup();
 	LogCleanup();
 }
