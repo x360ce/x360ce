@@ -1,90 +1,101 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="FakeAPI">
-      <UniqueIdentifier>{a4679c79-7e4d-464b-8ee6-f9c1f4a6f57f}</UniqueIdentifier>
+    <Filter Include="InputHook">
+      <UniqueIdentifier>{96876da5-52c5-4292-8ff3-52a7b383540e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{01556c3f-3e2b-4238-a986-18cd8e30b0e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{cf2276e8-0a0c-4435-8315-416ced42a7d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FakeAPI\InputHook.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookWinTrust.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookWMI.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\InputHook.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Ini.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Log.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Misc.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
     <ClCompile Include="Config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="x360ce.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="FakeAPI\FakeAPI.cpp">
-      <Filter>FakeAPI</Filter>
+    <ClCompile Include="DirectInput.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="FakeAPI\FakeDI.cpp">
-      <Filter>FakeAPI</Filter>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="FakeAPI\FakeWinTrust.cpp">
-      <Filter>FakeAPI</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="FakeAPI\FakeWMI.cpp">
-      <Filter>FakeAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="InputHook\HookDI.cpp">
+      <Filter>InputHook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectInput.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="svnrev_template.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="svnrev_unknown.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="x360ce.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FakeAPI\FakeAPI.h">
-      <Filter>FakeAPI</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="globals.h">
-      <Filter>Header Files</Filter>
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="InputHook\InputHook.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Ini.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Log.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Misc.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

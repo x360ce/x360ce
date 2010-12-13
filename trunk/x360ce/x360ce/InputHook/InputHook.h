@@ -13,55 +13,55 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FAKEAPI_H_
-#define _FAKEAPI_H_
+#ifndef _InputHook_H_
+#define _InputHook_H_
 
 #include <CGuid.h>
 #include "EasyHook.h"
 
 extern ULONG ACLEntries[1];
 
-struct FAKEAPI_GAMEPAD_CONIFG
+struct InputHook_GAMEPAD_CONIFG
 {
 	BOOL  bEnabled;
 	GUID  productGUID;
 	GUID  instanceGUID;
 	DWORD dwVID;
 	DWORD dwPID;
-	FAKEAPI_GAMEPAD_CONIFG()
+	InputHook_GAMEPAD_CONIFG()
 	{
-		ZeroMemory(this,sizeof(FAKEAPI_GAMEPAD_CONIFG));
+		ZeroMemory(this,sizeof(InputHook_GAMEPAD_CONIFG));
 	}
 };
 
-struct FAKEAPI_CONIFG
+struct InputHook_CONIFG
 {
 	BOOL  bEnabled;
-	DWORD dwFakeMode;
-	DWORD dwFakeVID;
-	DWORD dwFakePID;
-	DWORD dwFakeWinTrust;
-	FAKEAPI_CONIFG()
+	DWORD dwHookMode;
+	DWORD dwHookVID;
+	DWORD dwHookPID;
+	DWORD dwHookWinTrust;
+	InputHook_CONIFG()
 	{
-		ZeroMemory(this,sizeof(FAKEAPI_CONIFG));
+		ZeroMemory(this,sizeof(InputHook_CONIFG));
 	}
 };
 
-void FakeWMI();
-void FakeDI();
-void FakeWinTrust();
+void HookWMI();
+void HookDI();
+void HookWinTrust();
 
-void FakeWMIClean();
-void FakeDIClean();
-void FakeWinTrustClean();
+void HookWMIClean();
+void HookDIClean();
+void HookWinTrustClean();
 
-FAKEAPI_CONIFG* FakeAPI_Config();
-FAKEAPI_GAMEPAD_CONIFG* FakeAPI_GamepadConfig(DWORD dwUserIndex);
+InputHook_CONIFG* InputHook_Config();
+InputHook_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex);
 
-BOOL FakeAPI_Enable(BOOL state);
-BOOL FakeAPI_Enable();
+BOOL InputHook_Enable(BOOL state);
+BOOL InputHook_Enable();
 
-BOOL FakeAPI_Init(FAKEAPI_CONIFG* fconfig, FAKEAPI_GAMEPAD_CONIFG* gconfig);
-BOOL FakeAPI_Clean();
+BOOL InputHook_Init(InputHook_CONIFG* fconfig, InputHook_GAMEPAD_CONIFG* gconfig);
+BOOL InputHook_Clean();
 
 #endif

@@ -15,17 +15,17 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "Utils.h"
+#include "Utilities\Ini.h"
+#include "Utilities\Log.h"
+#include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
-BOOL enableconsole = FALSE;
-
-FAKEAPI_CONIFG x360ce_FakeAPIConfig;
-FAKEAPI_GAMEPAD_CONIFG x360ce_FakeAPIGamepadConfig[4];
+InputHook_CONIFG x360ce_InputHookConfig;
+InputHook_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
 static LPCWSTR buttonNames[10] = {
 	L"A",
@@ -104,15 +104,15 @@ void ReadConfig()
 
 	enableconsole = static_cast<BOOL>(ReadUINTFromFile(L"Options", L"Console",0));
 
-	//FakeAPI
-	x360ce_FakeAPIConfig.dwFakeMode = ReadUINTFromFile(L"FakeAPI", L"FakeMode",0);
-	x360ce_FakeAPIConfig.dwFakeWinTrust = ReadUINTFromFile(L"FakeAPI", L"FakeWinTrust",0);
+	//InputHook
+	x360ce_InputHookConfig.dwHookMode = ReadUINTFromFile(L"InputHook", L"HookMode",0);
+	x360ce_InputHookConfig.dwHookWinTrust = ReadUINTFromFile(L"InputHook", L"HookWinTrust",0);
 
-	if(x360ce_FakeAPIConfig.dwFakeMode)
+	if(x360ce_InputHookConfig.dwHookMode)
 	{
-		x360ce_FakeAPIConfig.bEnabled = 1;
-		x360ce_FakeAPIConfig.dwFakeVID = ReadUINTFromFile(L"FakeAPI", L"FakeVID",0x045E);
-		x360ce_FakeAPIConfig.dwFakePID = ReadUINTFromFile(L"FakeAPI", L"FakePID",0x028E);
+		x360ce_InputHookConfig.bEnabled = 1;
+		x360ce_InputHookConfig.dwHookVID = ReadUINTFromFile(L"InputHook", L"HookVID",0x045E);
+		x360ce_InputHookConfig.dwHookPID = ReadUINTFromFile(L"InputHook", L"HookPID",0x028E);
 	}
 
 	// Read pad mappings

@@ -17,10 +17,12 @@
 #include "globals.h"
 #include "version.h"
 #include "x360ce.h"
-#include "Utils.h"
+#include "Utilities\Ini.h"
+#include "Utilities\Log.h"
+#include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
-#include "FakeAPI\FakeAPI.h"
+#include "InputHook\InputHook.h"
 
 HINSTANCE hX360ceInstance = NULL;
 HINSTANCE hNativeInstance = NULL;
@@ -46,17 +48,18 @@ void LoadOriginalDll()
 	//}
 }
 
-VOID AttachFakeAPI()
+VOID InstallInputHooks()
 {
-	if(x360ce_FakeAPIConfig.bEnabled) {
+	if(x360ce_InputHookConfig.bEnabled) {
 
-		for(WORD i = 0; i < 4; i++) {
-			x360ce_FakeAPIGamepadConfig[i].productGUID = Gamepad[i].productGUID;
-			x360ce_FakeAPIGamepadConfig[i].instanceGUID = Gamepad[i].instanceGUID;
+		for(WORD i = 0; i < 4; i++)
+		{
+			x360ce_InputHookGamepadConfig[i].bEnabled = Gamepad[i].configured;
+			x360ce_InputHookGamepadConfig[i].productGUID = Gamepad[i].productGUID;
+			x360ce_InputHookGamepadConfig[i].instanceGUID = Gamepad[i].instanceGUID;
 		}
-
-		FakeAPI_Init( &x360ce_FakeAPIConfig,  x360ce_FakeAPIGamepadConfig);
 	}
+	InputHook_Init( &x360ce_InputHookConfig,  x360ce_InputHookGamepadConfig);
 }
 
 VOID InitInstance(HINSTANCE hinstDLL) 
@@ -75,20 +78,20 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	SetIniFileName(L"x360ce.ini");
 	ReadConfig();
 	Console();
-	CreateLog(L"x360ce",L"x360ce");
+	LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
 
 #if SVN_MODS != 0 
-	WriteLog(L"[CORE]    x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(L"[CORE]      x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #else 
-	WriteLog(L"[CORE]    x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(L"[CORE]      x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #endif
 
-	AttachFakeAPI();
+	InstallInputHooks();
 }
 
 VOID ExitInstance() 
 {   
-	ReleaseDirectInput();
+	InputHook_Clean();
 
 	if (hNativeInstance) {
 		FreeLibrary(hNativeInstance); 
@@ -102,12 +105,10 @@ VOID ExitInstance()
 	hWnd = NULL;
 	UnregisterClass(L"x360ceWClass",hX360ceInstance);
 
-	FakeAPI_Clean();
+	WriteLog(L"[CORE]      x360ce terminating, bye");
 
-	WriteLog(L"[CORE]    x360ce terminating, bye");
-
-	IniCleanup();
 	LogCleanup();
+	IniCleanup();
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
@@ -127,7 +128,6 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 
 	case DLL_PROCESS_DETACH:
 		ExitInstance();
-		LhUninitializeLibrary();
 		break;
 	}
 	return TRUE;
