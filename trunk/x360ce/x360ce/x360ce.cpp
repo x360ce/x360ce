@@ -83,6 +83,8 @@ void XDeInit()
 		SAFE_DELETE(lpXCaps[dwUserIndex]);
 	}
 
+	SAFE_DELETE(lpXBatInfo);
+
 }
 
 HRESULT XInit(DWORD dwUserIndex)

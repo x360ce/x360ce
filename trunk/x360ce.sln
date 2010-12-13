@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1
 		x360ce\Support\changelog.txt = x360ce\Support\changelog.txt
 		x360ce\Support\HowToBuild.txt = x360ce\Support\HowToBuild.txt
 		x360ce\Support\Readme.txt = x360ce\Support\Readme.txt
-		x360ce\Support\x360ce.ini = x360ce\Support\x360ce.ini
+		x360ce\Support\x360ce_template.ini = x360ce\Support\x360ce_template.ini
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EasyHookLib", "x360ce\EasyHook\EasyHookLib\EasyHookLib.vcxproj", "{8C365CFD-ECA2-4867-8B2F-E30444FE3A9F}"
