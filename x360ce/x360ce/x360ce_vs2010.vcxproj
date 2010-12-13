@@ -242,30 +242,32 @@
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="FakeAPI\FakeAPI.cpp" />
-    <ClCompile Include="FakeAPI\FakeDI.cpp" />
-    <ClCompile Include="FakeAPI\FakeWinTrust.cpp" />
-    <ClCompile Include="FakeAPI\FakeWMI.cpp" />
+    <ClCompile Include="InputHook\HookDI.cpp" />
+    <ClCompile Include="InputHook\HookWinTrust.cpp" />
+    <ClCompile Include="InputHook\HookWMI.cpp" />
+    <ClCompile Include="InputHook\InputHook.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Utilities\Ini.cpp" />
+    <ClCompile Include="Utilities\Log.cpp" />
+    <ClCompile Include="Utilities\Misc.cpp" />
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="FakeAPI\FakeAPI.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="InputHook\InputHook.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="svnrev_template.h" />
-    <ClInclude Include="svnrev_unknown.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Utilities\Ini.h" />
+    <ClInclude Include="Utilities\Log.h" />
+    <ClInclude Include="Utilities\Misc.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="x360ce.h" />
   </ItemGroup>

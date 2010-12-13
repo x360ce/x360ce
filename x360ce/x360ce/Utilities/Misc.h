@@ -15,29 +15,12 @@
 
 #ifndef _UTILS_H_
 #define _UTILS_H_
-
-// externs
-//BOOL writelog;
-//LPWSTR lpConfigFile;
-//LPWSTR lpLogFileName;
-
-// prototypes
-DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput);
-DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault);
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey);
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault);
+;
 LPCWSTR ModuleFileName();
 LPWSTR const DXErrStr(HRESULT dierr);
 LONG clamp(LONG val, LONG min, LONG max);
 LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
 HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size);
 HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid);
-void SetIniFileName(LPCWSTR ininame);
-void LogEnable(BOOL log);
-VOID CreateLog(LPWSTR logbasename, LPWSTR foldename);
-BOOL WriteLog(LPWSTR str,...);
-void IniCleanup();
-void LogCleanup();
-void Console();
 
 #endif // _UTILS_H_

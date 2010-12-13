@@ -16,7 +16,8 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "x360ce.h"
-#include "Utils.h"
+#include "Utilities\Log.h"
+#include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 
@@ -28,6 +29,8 @@ BOOL bUseEnabled= FALSE;
 bool bPAD[4] = {FALSE,FALSE,FALSE,FALSE};
 
 XINPUT_CAPABILITIES *lpXCaps[4]={NULL,NULL,NULL,NULL};
+XINPUT_BATTERY_INFORMATION *lpXBatInfo=NULL;
+GUID guidnull = GUID_NULL;
 
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
 { 
@@ -69,7 +72,7 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 		return TRUE;
 	}
 	else {
-		WriteLog(L"[CORE]    RegisterWindowClass Failed");
+		WriteLog(L"[CORE]      RegisterWindowClass Failed");
 		return FALSE;
 	}
 }
@@ -90,7 +93,7 @@ HRESULT XInit(DWORD dwUserIndex)
 
 	if(!hWnd) {	
 		if(!Createx360ceWindow(hX360ceInstance)) {
-			WriteLog(L"[CORE]    x360ce window not created, ForceFeedback will be disabled !");
+			WriteLog(L"[CORE]      x360ce window not created, ForceFeedback will be disabled !");
 		}
 	}
 
@@ -119,15 +122,15 @@ HRESULT XInit(DWORD dwUserIndex)
 	}
 	else UpdateState(dwUserIndex);
 
-	if(!FakeAPI_Enable()) {
-		FakeAPI_Enable(1);
-		WriteLog(L"[DINPUT]  Restore FakeAPI state");
+	if(!InputHook_Enable()) {
+		InputHook_Enable(1);
+		WriteLog(L"[DINPUT]  Restore InputHook state");
 	}
 
 	return hr;
 }
 
-extern VOID DetachFakeAPI();
+extern VOID DetachInputHook();
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
@@ -154,7 +157,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	/*
 	Nasty trick to support XInputEnable states, because not every game calls it so:
 	- must support games that use it, and do enable/disable as needed by game
-	if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return fake S_OK, ie. connected but state not updating
+	if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return Hook S_OK, ie. connected but state not updating
 	if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
 	- must support games that not call it
 	if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states 
@@ -488,7 +491,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	}
 
 	*pCapabilities = *lpXCaps[dwUserIndex];
-	WriteLog(L"[XINPUT]  XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
+	WriteLog(L"[XINPUT]    XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
@@ -502,7 +505,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 		return nativeXInputEnable(enable);
 	}
 
-	WriteLog(L"[XINPUT]  XInputEnable called, state %d",enable);
+	WriteLog(L"[XINPUT]    XInputEnable called, state %d",enable);
 
 	bEnabled = enable;
 	bUseEnabled = TRUE;
@@ -517,6 +520,9 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 		XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( hNativeInstance, "XInputGetDSoundAudioDeviceGuids");
 		return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 	}
+
+	*pDSoundRenderGuid = guidnull;
+	*pDSoundCaptureGuid = guidnull;
 
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 	return ERROR_SUCCESS;
@@ -534,7 +540,16 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	// Report a wired controller
-	pBatteryInformation->BatteryType = BATTERY_TYPE_WIRED;
+
+	if(!lpXBatInfo)
+	{
+		lpXBatInfo = new XINPUT_BATTERY_INFORMATION;
+		ZeroMemory(lpXBatInfo,sizeof(XINPUT_BATTERY_INFORMATION));
+		lpXBatInfo->BatteryLevel = BATTERY_LEVEL_FULL;
+		lpXBatInfo->BatteryType = BATTERY_TYPE_WIRED;
+	}
+
+	*pBatteryInformation = *lpXBatInfo;
 	return ERROR_SUCCESS;
 
 }
@@ -550,11 +565,8 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
 	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-	pKeystroke->Flags = NULL;
-	pKeystroke->HidCode = NULL;
-	pKeystroke->Unicode = NULL;
-	pKeystroke->UserIndex = NULL;
-	dwReserved=NULL;
+
+	UNREFERENCED_PARAMETER(pKeystroke);
 
 	return ERROR_EMPTY;
 }

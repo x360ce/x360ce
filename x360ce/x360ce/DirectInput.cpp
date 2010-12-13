@@ -16,10 +16,11 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "x360ce.h"
-#include "Utils.h"
+#include "Utilities\Log.h"
+#include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
-#include "FakeAPI\FakeAPI.h"
+#include "InputHook\InputHook.h"
 
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
@@ -35,9 +36,9 @@ WORD lastforce = 0;
 LPDIRECTINPUT8 GetDirectInput() {
 	if (!DDATA.g_pDI) {
 
-		if(FakeAPI_Enable()) {
-			FakeAPI_Enable(0);
-			WriteLog(L"[DINPUT]  Temporary disable FakeAPI");
+		if(InputHook_Enable()) {
+			InputHook_Enable(FALSE);
+			WriteLog(L"[DINPUT]  Temporary disable InputHook");
 		}
 
 		HRESULT hr = DirectInput8Create( hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.g_pDI, NULL );

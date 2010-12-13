@@ -12,8 +12,16 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#define SVN_REV_UNKNOWN
 
-#define SVN_REV 0
-#define SVN_MODS 1
+#ifndef _INI_H_
+#define _INI_H_
+
+// prototypes
+DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput);
+DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault);
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey);
+UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault);
+void SetIniFileName(LPCWSTR ininame);
+void IniCleanup();
+
+#endif // _INI_H_

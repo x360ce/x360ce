@@ -15,9 +15,9 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "Utils.h"
+#include "Utilities\Log.h"
 #include <Softpub.h>
-#include "FakeAPI.h"
+#include "InputHook.h"
 
 //EasyHook
 TRACED_HOOK_HANDLE		hHookWinVerifyTrust = NULL;
@@ -26,9 +26,9 @@ TRACED_HOOK_HANDLE		hHookWinVerifyTrust = NULL;
 LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-LONG WINAPI FakeWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
+LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!FakeAPI_Config()->bEnabled) return FakeWinVerifyTrust(hwnd,pgActionID,pWVTData);
+	if(!InputHook_Config()->bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
 
 	UNREFERENCED_PARAMETER(hwnd);
 	UNREFERENCED_PARAMETER(pgActionID);
@@ -36,19 +36,19 @@ LONG WINAPI FakeWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 	return 0;
 }
 
-void FakeWinTrust()
+void HookWinTrust()
 {
 	if(!OriginalWinVerifyTrust) {
 		OriginalWinVerifyTrust = WinVerifyTrust;
 		hHookWinVerifyTrust = new HOOK_TRACE_INFO(); 
-		WriteLog(L"[FAKEAPI] FakeWinTrust:: Attaching");
+		WriteLog(L"[InputHook] HookWinTrust:: Hooking");
 
-		LhInstallHook(OriginalWinVerifyTrust,FakeWinVerifyTrust,static_cast<PVOID>(NULL),hHookWinVerifyTrust);
+		LhInstallHook(OriginalWinVerifyTrust,HookWinVerifyTrust,static_cast<PVOID>(NULL),hHookWinVerifyTrust);
 		LhSetInclusiveACL(ACLEntries, 1, hHookWinVerifyTrust);
 	}
 }
 
-void FakeWinTrustClean()
+void HookWinTrustClean()
 {
 	SAFE_DELETE(hHookWinVerifyTrust);
 }

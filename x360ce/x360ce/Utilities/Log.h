@@ -12,8 +12,15 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#define SVN_REV_UNKNOWN
 
-#define SVN_REV 0
-#define SVN_MODS 1
+#ifndef _LOG_H_
+#define _LOG_H_
+
+// prototypes
+void LogEnable(BOOL log);
+BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR foldename,size_t foldename_size);
+void Console();
+BOOL WriteLog(LPWSTR str,...);
+void LogCleanup();
+
+#endif // _LOG_H_

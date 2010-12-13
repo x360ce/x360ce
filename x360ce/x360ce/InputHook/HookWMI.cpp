@@ -15,8 +15,8 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "FakeAPI.h"
-#include "Utils.h"
+#include "InputHook.h"
+#include "Utilities\Log.h"
 
 #define CINTERFACE
 #define _WIN32_DCOM
@@ -83,7 +83,7 @@ HRESULT ( STDMETHODCALLTYPE *OriginalGet )(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE FakeGet( 
+HRESULT STDMETHODCALLTYPE HookGet( 
 	IWbemClassObject * This,
 	/* [string][in] */ LPCWSTR wszName,
 	/* [in] */ long lFlags,
@@ -91,9 +91,9 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
 {
-	if(!FakeAPI_Config()->bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
+	if(!InputHook_Config()->bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	WriteLog(L"[FAKEWMI] FakeGet");
+	WriteLog(L"[HookWMI] HookGet");
 	HRESULT hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	//WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
@@ -110,28 +110,28 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 			return hr;
 
 		for(WORD i = 0; i < 4; i++) {
-			if(FakeAPI_GamepadConfig(i)->bEnabled && FakeAPI_GamepadConfig(i)->dwVID == dwVid && FakeAPI_GamepadConfig(i)->dwPID == dwPid) {
+			if(InputHook_GamepadConfig(i)->bEnabled && InputHook_GamepadConfig(i)->dwVID == dwVid && InputHook_GamepadConfig(i)->dwPID == dwPid) {
 				WCHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
 				WCHAR tempstr[MAX_PATH];
 				if( strUSB ) {
-					BSTR fakebstr=NULL;
-					WriteLog(L"[FAKEWMI] Original DeviceID = %s",pVal->bstrVal);
-					if(FakeAPI_Config()->dwFakeMode >= 2) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", FakeAPI_Config()->dwFakeVID, FakeAPI_Config()->dwFakePID,i ); 
-					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", FakeAPI_GamepadConfig(i)->dwVID , FakeAPI_GamepadConfig(i)->dwPID,i );
-					fakebstr=SysAllocString(tempstr);
-					pVal->bstrVal = fakebstr;
-					WriteLog(L"[FAKEWMI] Fake DeviceID = %s",pVal->bstrVal);
+					BSTR Hookbstr=NULL;
+					WriteLog(L"[HookWMI] Original DeviceID = %s",pVal->bstrVal);
+					if(InputHook_Config()->dwHookMode >= 2) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i ); 
+					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );
+					Hookbstr=SysAllocString(tempstr);
+					pVal->bstrVal = Hookbstr;
+					WriteLog(L"[HookWMI] Hook DeviceID = %s",pVal->bstrVal);
 					return hr;
 				}
 				WCHAR* strHID = wcsstr( pVal->bstrVal, L"HID" );
 				if( strHID ) {
-					BSTR fakebstr=NULL;
-					WriteLog(L"[FAKEWMI] Original DeviceID = %s",pVal->bstrVal);
-					if(FakeAPI_Config()->dwFakeMode >= 2) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", FakeAPI_Config()->dwFakeVID, FakeAPI_Config()->dwFakePID,i );
-					else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", FakeAPI_GamepadConfig(i)->dwVID , FakeAPI_GamepadConfig(i)->dwPID,i );	 
-					fakebstr=SysAllocString(tempstr);
-					pVal->bstrVal = fakebstr;
-					WriteLog(L"[FAKEWMI] Fake DeviceID = %s",pVal->bstrVal);
+					BSTR Hookbstr=NULL;
+					WriteLog(L"[HookWMI] Original DeviceID = %s",pVal->bstrVal);
+					if(InputHook_Config()->dwHookMode >= 2) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i );
+					else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );	 
+					Hookbstr=SysAllocString(tempstr);
+					pVal->bstrVal = Hookbstr;
+					WriteLog(L"[HookWMI] Hook DeviceID = %s",pVal->bstrVal);
 					return hr;
 				}
 			}
@@ -142,15 +142,15 @@ HRESULT STDMETHODCALLTYPE FakeGet(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE FakeNext( 
+HRESULT STDMETHODCALLTYPE HookNext( 
 								  IEnumWbemClassObject * This,
 								  /* [in] */ long lTimeout,
 								  /* [in] */ ULONG uCount,
 								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
-	if(!FakeAPI_Config()->bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
-	WriteLog(L"[FAKEWMI] FakeNext");
+	if(!InputHook_Config()->bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
+	WriteLog(L"[HookWMI] HookNext");
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
@@ -163,7 +163,7 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 				OriginalGet = pDevices->lpVtbl->Get;
 				hHookGet = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalGet,FakeGet,static_cast<PVOID>(NULL),hHookGet);
+				LhInstallHook(OriginalGet,HookGet,static_cast<PVOID>(NULL),hHookGet);
 				LhSetInclusiveACL(ACLEntries, 1, hHookGet);
 			}
 		}
@@ -174,15 +174,15 @@ HRESULT STDMETHODCALLTYPE FakeNext(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum( 
+HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum( 
 	IWbemServices * This,
 	/* [in] */ __RPC__in const BSTR strFilter, 
 	/* [in] */ long lFlags,
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	if(!FakeAPI_Config()->bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
-	WriteLog(L"[FAKEWMI] FakeCreateInstanceEnum");
+	if(!InputHook_Config()->bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
+	WriteLog(L"[HookWMI] HookCreateInstanceEnum");
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
@@ -197,7 +197,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 				OriginalNext = pEnumDevices->lpVtbl->Next;
 				hHookNext = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalNext,FakeNext,static_cast<PVOID>(NULL),hHookNext);
+				LhInstallHook(OriginalNext,HookNext,static_cast<PVOID>(NULL),hHookNext);
 				LhSetInclusiveACL(ACLEntries, 1, hHookNext);
 
 			}
@@ -209,7 +209,7 @@ HRESULT STDMETHODCALLTYPE FakeCreateInstanceEnum(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE FakeConnectServer( 
+HRESULT STDMETHODCALLTYPE HookConnectServer( 
 	IWbemLocator * This,
 	/* [in] */ const BSTR strNetworkResource,
 	/* [in] */ const BSTR strUser,
@@ -221,8 +221,8 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	if(!FakeAPI_Config()->bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
-	WriteLog(L"[FAKEWMI] FakeConnectServer");
+	if(!InputHook_Config()->bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	WriteLog(L"[HookWMI] HookConnectServer");
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
 
@@ -236,7 +236,7 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
 				hHookCreateInstanceEnum = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalCreateInstanceEnum,FakeCreateInstanceEnum,static_cast<PVOID>(NULL),hHookCreateInstanceEnum);
+				LhInstallHook(OriginalCreateInstanceEnum,HookCreateInstanceEnum,static_cast<PVOID>(NULL),hHookCreateInstanceEnum);
 				LhSetInclusiveACL(ACLEntries, 1, hHookCreateInstanceEnum);
 			}
 		}
@@ -247,13 +247,13 @@ HRESULT STDMETHODCALLTYPE FakeConnectServer(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid, 
+HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid, 
 								   __in_opt LPUNKNOWN pUnkOuter,
 								   __in     DWORD dwClsContext, 
 								   __in     REFIID riid, 
 								   __deref_out LPVOID FAR* ppv)
 {
-	if(!FakeAPI_Config()->bEnabled) return OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	if(!InputHook_Config()->bEnabled) return OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 	HRESULT hr;
 	IWbemLocator* pIWbemLocator = NULL;
 
@@ -262,12 +262,12 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 	if(ppv && (riid == IID_IWbemLocator)) {
 		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 		if(pIWbemLocator) {
-			WriteLog(L"[FakeWMI] FakeCoCreateInstance");
+			WriteLog(L"[HookWMI] HookCoCreateInstance");
 			if(!OriginalConnectServer) {
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
 				hHookConnectServer = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalConnectServer,FakeConnectServer,static_cast<PVOID>(NULL),hHookConnectServer);
+				LhInstallHook(OriginalConnectServer,HookConnectServer,static_cast<PVOID>(NULL),hHookConnectServer);
 				LhSetInclusiveACL(ACLEntries, 1, hHookConnectServer);
 			}
 		}
@@ -278,38 +278,42 @@ HRESULT WINAPI FakeCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void FakeCoUninitialize()
+void HookCoUninitialize()
 {
-	WriteLog(L"[FAKEAPI] FakeCoUninitialize");
+	WriteLog(L"[InputHook] HookCoUninitialize");
 
-	if(OriginalGet) {
-		WriteLog(L"[FAKEWMI] FakeGet:: Detaching");
+	if(hHookGet) {
+		WriteLog(L"[HookWMI] HookGet:: Removing Hook");
 
-		if(hHookGet) LhUninstallHook(hHookGet);
+		LhUninstallHook(hHookGet);
+		LhWaitForPendingRemovals();
 		SAFE_DELETE(hHookGet);
 		OriginalGet = NULL;
 	}
 
-	if(OriginalNext) {
-		WriteLog(L"[FAKEWMI] FakeNext:: Detaching");
+	if(hHookNext) {
+		WriteLog(L"[HookWMI] HookNext:: Removing Hook");
 
-		if(hHookNext) LhUninstallHook(hHookNext);
+		LhUninstallHook(hHookNext);
+		LhWaitForPendingRemovals();
 		SAFE_DELETE(hHookNext);
 		OriginalNext=NULL;
 	}
 
-	if(OriginalCreateInstanceEnum) {
-		WriteLog(L"[FAKEWMI] FakeCreateInstanceEnum:: Detaching");
+	if(hHookCreateInstanceEnum) {
+		WriteLog(L"[HookWMI] HookCreateInstanceEnum:: Removing Hook");
 
-		if(hHookCreateInstanceEnum) LhUninstallHook(hHookCreateInstanceEnum);
+		LhUninstallHook(hHookCreateInstanceEnum);
+		LhWaitForPendingRemovals();
 		SAFE_DELETE(hHookCreateInstanceEnum);
 		OriginalCreateInstanceEnum=NULL;
 	}
 
-	if(OriginalConnectServer) {
-		WriteLog(L"[FAKEWMI] FakeConnectServer:: Detaching");
+	if(hHookConnectServer) {
+		WriteLog(L"[HookWMI] HookConnectServer:: Removing Hook");
 
-		if(hHookConnectServer) LhUninstallHook(hHookConnectServer);
+		LhUninstallHook(hHookConnectServer);
+		LhWaitForPendingRemovals();
 		SAFE_DELETE(hHookConnectServer);
 		OriginalConnectServer=NULL;
 	}
@@ -318,30 +322,30 @@ void FakeCoUninitialize()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void FakeWMI()
+void HookWMI()
 {
 	if(!OriginalCoCreateInstance) {
 		OriginalCoCreateInstance = CoCreateInstance;
 		hHookCoCreateInstance = new HOOK_TRACE_INFO();
-		WriteLog(L"[FAKEAPI] FakeCoCreateInstance:: Attaching");
+		WriteLog(L"[InputHook] HookCoCreateInstance:: Hooking");
 
-		LhInstallHook(OriginalCoCreateInstance,FakeCoCreateInstance,static_cast<PVOID>(NULL),hHookCoCreateInstance);
+		LhInstallHook(OriginalCoCreateInstance,HookCoCreateInstance,static_cast<PVOID>(NULL),hHookCoCreateInstance);
 		LhSetInclusiveACL(ACLEntries, 1, hHookCoCreateInstance);
 
 	}
 	if(!OriginalCoUninitialize) {
 		OriginalCoUninitialize = CoUninitialize;
 		hHookCoUninitialize = new HOOK_TRACE_INFO();
-		WriteLog(L"[FAKEAPI] FakeCoUninitialize:: Attaching");
+		WriteLog(L"[InputHook] HookCoUninitialize:: Hooking");
 
-		LhInstallHook(OriginalCoUninitialize,FakeCoUninitialize,static_cast<PVOID>(NULL),hHookCoUninitialize);
+		LhInstallHook(OriginalCoUninitialize,HookCoUninitialize,static_cast<PVOID>(NULL),hHookCoUninitialize);
 		LhSetInclusiveACL(ACLEntries, 1, hHookCoUninitialize);
 
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void FakeWMIClean()
+void HookWMIClean()
 {
 	SAFE_DELETE(hHookGet);
 	SAFE_DELETE(hHookNext);

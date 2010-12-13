@@ -16,7 +16,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include "FakeAPI\FakeAPI.h"
+#include "InputHook\InputHook.h"
 
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER };
 
@@ -92,7 +92,7 @@ void ReadConfig();
 void ReadPadConfig(DWORD idx);
 MappingType getTriggerType(LPCWSTR);
 
-extern FAKEAPI_CONIFG x360ce_FakeAPIConfig;
-extern FAKEAPI_GAMEPAD_CONIFG x360ce_FakeAPIGamepadConfig[4];
+extern InputHook_CONIFG x360ce_InputHookConfig;
+extern InputHook_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
 #endif
