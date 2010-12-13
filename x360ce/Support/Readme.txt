@@ -1,7 +1,9 @@
 XBOX 360 Controller emulator
 ============================
 
-Version 3.1.4.0
+If you appreciate my work, feel free to donate: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=J4LS7ZXWPN66A&lc=US&item_name=x360ce%20donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest
+
+Version 3.3.1.x
 ===============
 
 Configuration
@@ -24,44 +26,20 @@ xinput1_1.dll
 Fake API calls
 ==============
 
-Version 3.1 include new method to fake API calls using Detour library. 
+Version 3.3 include new method to hook API calls using EasyHook library. 
 That metod is for more compatibility with games. Games souch like Trine, Red Faction Guerrilla and other will now work.
-For use this new feature you must configure properly x360ce:
-
-	Set main option "FakeAPI" to 1
-	Get and set correct VID/PID for you gamepad in pad options
-
-To get VID/PID of gamepad:
-
-	Open "Device Manager"
-	In "Human Interface Devices" find "HID-compliant game controller"
-	Double click to open properties, go to "Details" tab
-	From combo box select "Hardware Ids"
-	In listbox you will see a list of id like: "HID\VID_044F&PID_B323"
-	So you VID is a hex number after "VID_" ie. in upper example 0x044F and PID 0xB323
-	Write valuses to x360ce.ini
-	Play :)
-
 If you using this method you not need dinput8 dlls to block/spoof directinput, it done automaticaly and better (WIM is also spoofed)
 
 Know Issues
 ===========
 
-Prototype regression:
-	Game will work very slow. crazycat create a patch for force vibration and sound mnormalization.
-	First fix not only vibration, also fix slowness, but for me sound normalization breaks some sounds, so I created a patch without it.
-	Available here: http://virusdev.ovh.org/files/xinputemu/prot_x360ce_supp.zip
-	All credits go to crazycat
-
-H.A.W.X:
-	Currently working for making game to work property using xinput, crazycat write to me with a fix, but that fix already tried.
-	So I was done some debbuging, and this game has 3 complicated checks for xinput, but get it to work with xinput - with problems, ie. currently state of this game is WIP
+Game that initializes xinput DLL dynamically by using LoadLibary will not work with this and all older versions.
+Some gamepad FFB drivers may crash with ForceFeedback enabled.
 
 Uninstallation
 ==============
 
-Delete x360ce.ini, xinput1_3.dll file, and dinput8.dll (if used).
-
+Delete x360ce.ini, xinput1_3.dll (or any other name of it).
 
 THANKS:
 =======
