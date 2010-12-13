@@ -27,7 +27,7 @@ WORD wNativeMode=0;
 InputHook_CONIFG x360ce_InputHookConfig;
 InputHook_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
-static LPCWSTR buttonNames[10] = {
+static LPCWSTR buttonNames[] = {
 	L"A",
 	L"B",
 	L"X",
@@ -40,42 +40,42 @@ static LPCWSTR buttonNames[10] = {
 	L"Right Thumb",
 };
 
-static LPCWSTR povNames[4] = {
+static LPCWSTR povNames[] = {
 	L"D-pad Up",
 	L"D-pad Down",
 	L"D-pad Left",
 	L"D-pad Right"
 };
 
-static LPCWSTR axisNames[4] = {
+static LPCWSTR axisNames[] = {
 	L"Left Analog X",
 	L"Left Analog Y",
 	L"Right Analog X",
 	L"Right Analog Y"
 };
 
-static LPCWSTR axisDZNames[4] = {
+static LPCWSTR axisDZNames[] = {
 	L"Left Analog X DeadZone",
 	L"Left Analog Y DeadZone",
 	L"Right Analog X DeadZone",
 	L"Right Analog Y DeadZone",
 };
 
-static LPCWSTR axisADZNames[4] = {
+static LPCWSTR axisADZNames[] = {
 	L"Left Analog X AntiDeadZone",
 	L"Left Analog Y AntiDeadZone",
 	L"Right Analog X AntiDeadZone",
 	L"Right Analog Y AntiDeadZone",
 };
 
-static LPCWSTR axisLNames[4] = {
+static LPCWSTR axisLNames[] = {
 	L"Left Analog X Linear",
 	L"Left Analog Y Linear",
 	L"Right Analog X Linear",
 	L"Right Analog Y Linear"
 };
 
-static LPCWSTR axisBNames[8] = {
+static LPCWSTR axisBNames[] = {
 	L"Left Analog X+ Button",
 	L"Left Analog X- Button",
 	L"Left Analog Y+ Button",
@@ -86,7 +86,7 @@ static LPCWSTR axisBNames[8] = {
 	L"Right Analog Y- Button"
 };
 
-static LPCWSTR padNames[4] = {
+static LPCWSTR padNames[] = {
 	L"PAD1",
 	L"PAD2",
 	L"PAD3",

@@ -16,11 +16,13 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
+enum LogType{ LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKDI, LOG_HOOKWMI, LOG_HOOKWT };
+
 // prototypes
 void LogEnable(BOOL log);
 BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR foldename,size_t foldename_size);
 void Console();
-BOOL WriteLog(LPWSTR str,...);
+BOOL WriteLog(LogType logType, LPWSTR str,...);
 void LogCleanup();
 
 #endif // _LOG_H_

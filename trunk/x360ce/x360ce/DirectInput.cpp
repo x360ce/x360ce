@@ -38,7 +38,7 @@ LPDIRECTINPUT8 GetDirectInput() {
 
 		if(InputHook_Enable()) {
 			InputHook_Enable(FALSE);
-			WriteLog(L"[DINPUT]  Temporary disable InputHook");
+			WriteLog(LOG_IHOOK,L"Temporary disable InputHook");
 		}
 
 		HRESULT hr = DirectInput8Create( hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.g_pDI, NULL );
@@ -97,7 +97,7 @@ BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContex
 		if(pDevice) {
 			gp->g_pGamepad = pDevice;
 			gp->connected = 1;
-			WriteLog(L"[DINPUT]  [PAD%d] Device \"%s\" initialized",gp->dwPadIndex+1,pInst->tszProductName);
+			WriteLog(LOG_DINPUT,L"[PAD%d] Device \"%s\" initialized",gp->dwPadIndex+1,pInst->tszProductName);
 		}
 		return DIENUM_STOP;
 	}
@@ -160,7 +160,7 @@ HRESULT UpdateState(DWORD idx )
 	hr = Gamepad[idx].g_pGamepad->GetDeviceState( sizeof( DIJOYSTATE2 ), &Gamepad[idx].state );
 	if(FAILED(hr)) {
 		if(bInitBeep) MessageBeep(MB_OK);
-		WriteLog(L"[DINPUT]  [PAD%d] Device Acquired",idx+1);
+		WriteLog(LOG_DINPUT,L"[PAD%d] Device Acquired",idx+1);
 		hr = Gamepad[idx].g_pGamepad->Acquire();
 	}
 
@@ -174,14 +174,14 @@ HRESULT Enumerate(DWORD idx)
 	Deactivate(idx);
 	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
 
-	WriteLog(L"[DINPUT]  [PAD%d] Enumerating User ID %d",idx+1,idx);
+	WriteLog(LOG_DINPUT,L"[PAD%d] Enumerating User ID %d",idx+1,idx);
 	hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &Gamepad[idx], DIEDFL_ATTACHEDONLY );
 
 	if FAILED(hr) {
-		WriteLog(L"[DINPUT]  [PAD%d] Enumeration FAILED !!!",idx+1);
+		WriteLog(LOG_DINPUT,L"[PAD%d] Enumeration FAILED !!!",idx+1);
 		return hr;
 	}
-	if(!Gamepad[idx].g_pGamepad) WriteLog(L"[PAD%d] Enumeration FAILED !!!",idx+1);
+	if(!Gamepad[idx].g_pGamepad) WriteLog(LOG_DINPUT,L"[PAD%d] Enumeration FAILED !!!",idx+1);
 	return ERROR_SUCCESS;
 }
 
@@ -203,7 +203,7 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
 	// it in this sample. But setting the data format is important so that the
 	// DIJOFS_* values work properly.
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->SetDataFormat( &c_dfDIJoystick2 ) ) ) {
-		WriteLog(L"[DINPUT]  [PAD%d] SetDataFormat failed with code HR = %s", idx+1, DXErrStr(hr));
+		WriteLog(LOG_DINPUT,L"[PAD%d] SetDataFormat failed with code HR = %s", idx+1, DXErrStr(hr));
 		return hr;
 	}
 
@@ -213,16 +213,16 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
 	if( FAILED( coophr = Gamepad[idx].g_pGamepad->SetCooperativeLevel( hDlg,
 		DISCL_EXCLUSIVE |
 		DISCL_BACKGROUND ) ) ) {
-			WriteLog(L"[DINPUT]  [PAD%d] SetCooperativeLevel (1) failed with code HR = %s", idx+1, DXErrStr(coophr));
+			WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (1) failed with code HR = %s", idx+1, DXErrStr(coophr));
 			//return coophr;
 	}
 	if(coophr!=S_OK) {
-		WriteLog(L"[DINPUT]  Device not exclusive acquired, disabling ForceFeedback");
+		WriteLog(LOG_DINPUT,L"[Device not exclusive acquired, disabling ForceFeedback");
 		Gamepad[idx].ff.useforce = 0;
 		if( FAILED( coophr = Gamepad[idx].g_pGamepad->SetCooperativeLevel( hDlg,
 			DISCL_NONEXCLUSIVE |
 			DISCL_BACKGROUND ) ) ) {
-				WriteLog(L"[DINPUT]  [PAD%d] SetCooperativeLevel (2) failed with code HR = %s", idx+1, DXErrStr(coophr));
+				WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (2) failed with code HR = %s", idx+1, DXErrStr(coophr));
 				//return coophr;
 		}
 	}
@@ -239,16 +239,16 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumObjectsCallback,
 		( VOID* )&Gamepad[idx], DIDFT_AXIS ) ) ) {
-			WriteLog(L"[DINPUT]  [PAD%d] EnumObjects failed with code HR = %s", idx+1, DXErrStr(hr));
+			WriteLog(LOG_DINPUT,L"[PAD%d] EnumObjects failed with code HR = %s", idx+1, DXErrStr(hr));
 			//return hr;
 	}
 	else {
-		WriteLog(L"[DINPUT]  [PAD%d] Detected axis count: %d",idx+1,Gamepad[idx].dwAxisCount);
+		WriteLog(LOG_DINPUT,L"[PAD%d] Detected axis count: %d",idx+1,Gamepad[idx].dwAxisCount);
 	}
 
 	if( FAILED( hr = Gamepad[idx].g_pGamepad->EnumObjects( EnumFFAxesCallback,
 		( VOID* )&Gamepad[idx].ff.g_dwNumForceFeedbackAxis, DIDFT_AXIS ) ) ) {
-			WriteLog(L"[DINPUT]  [PAD%d] EnumFFAxesCallback failed with code HR = %s", idx+1, DXErrStr(hr));
+			WriteLog(LOG_DINPUT,L"[PAD%d] EnumFFAxesCallback failed with code HR = %s", idx+1, DXErrStr(hr));
 			//return hr;
 	}
 
@@ -273,7 +273,7 @@ BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef)
 	// Pointer to calling device
 	gamepad->ff.ffbcaps.ConstantForce = DIEFT_GETTYPE(di->dwEffType) == DIEFT_CONSTANTFORCE;
 	gamepad->ff.ffbcaps.PeriodicForce = DIEFT_GETTYPE(di->dwEffType) == DIEFT_PERIODIC;
-	WriteLog(L"   Effect '%s'. IsConstant = %d, IsPeriodic = %d", di->tszName, gamepad->ff.ffbcaps.ConstantForce, gamepad->ff.ffbcaps.PeriodicForce);
+	WriteLog(LOG_DINPUT,L"   Effect '%s'. IsConstant = %d, IsPeriodic = %d", di->tszName, gamepad->ff.ffbcaps.ConstantForce, gamepad->ff.ffbcaps.PeriodicForce);
 	return DIENUM_CONTINUE;
 }
 
@@ -367,12 +367,12 @@ HRESULT PrepareForceFailsafe(DWORD idx, WORD motor)
 		if( FAILED( hr = Gamepad[idx].g_pGamepad->CreateEffect( GUID_ConstantForce  ,
 			&eff, &Gamepad[idx].ff.g_pEffect[motor] , NULL ) ) )
 		{
-			WriteLog(L"[PAD%d] CreateEffect (1) failed with code HR = %s", idx+1, DXErrStr(hr));
+			WriteLog(LOG_DINPUT,L"[PAD%d] CreateEffect (1) failed with code HR = %s", idx+1, DXErrStr(hr));
 			return hr;
 		}
 		if( NULL == Gamepad[idx].ff.g_pEffect[motor] )
 		{
-			WriteLog(L"g_pEffect is NULL!!!!");
+			WriteLog(LOG_DINPUT,L"g_pEffect is NULL!!!!");
 			return E_FAIL;
 		}
 		return S_OK;
@@ -406,12 +406,12 @@ HRESULT PrepareForceFailsafe(DWORD idx, WORD motor)
 		if( FAILED( hr = Gamepad[idx].g_pGamepad->CreateEffect( GUID_ConstantForce  ,
 			&eff, &Gamepad[idx].ff.g_pEffect[motor] , NULL ) ) )
 		{
-			WriteLog(L"[PAD%d] CreateEffect (2) failed with code HR = %s", idx+1, DXErrStr(hr));
+			WriteLog(LOG_DINPUT,L"[PAD%d] CreateEffect (2) failed with code HR = %s", idx+1, DXErrStr(hr));
 			return hr;
 		}
 		if( NULL == Gamepad[idx].ff.g_pEffect[motor] )
 		{
-			WriteLog(L"[PAD%d] g_pEffect is NULL!!!!",idx+1);
+			WriteLog(LOG_DINPUT,L"[PAD%d] g_pEffect is NULL!!!!",idx+1);
 			return E_FAIL;
 		}
 		return S_OK;
@@ -457,7 +457,7 @@ HRESULT SetDeviceForcesEjocys(DWORD idx, WORD force, WORD effidx)
 	//return hr;
 	//return S_OK;
 
-	WriteLog(L"[DINPUT]  [PAD%d] SetDeviceForces (%d) %d", idx+1,effidx, force);
+	WriteLog(LOG_DINPUT,L"[PAD%d] SetDeviceForces (%d) %d", idx+1,effidx, force);
 	//[-10000:10000]
 	//INT nForce = MulDiv(force, 2 * DI_FFNOMINALMAX, 65535) - DI_FFNOMINALMAX;
 	//[0:10000]
@@ -537,7 +537,7 @@ HRESULT SetDeviceForcesEjocys(DWORD idx, WORD force, WORD effidx)
 			//WriteLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !7! HR = %s"), idx+1,effidx, DXErrStr(hr));
 			// Set the new parameters and start the effect immediately.
 			if( FAILED( hr = Gamepad[idx].ff.g_pEffect[effidx]->SetParameters( &Gamepad[idx].ff.eff[0], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START ))){
-				WriteLog(L"[DINPUT]  [PAD%d] SetDeviceForces (%d) failed with code HR = %s", idx+1,effidx, DXErrStr(hr));
+				WriteLog(LOG_DINPUT,L"[PAD%d] SetDeviceForces (%d) failed with code HR = %s", idx+1,effidx, DXErrStr(hr));
 				return hr;
 			};
 	}
@@ -610,9 +610,9 @@ HRESULT PrepareForceEjocys(DWORD idx, WORD effidx)
 	DIDEVCAPS didcaps;
 	didcaps.dwSize = sizeof didcaps;
 	if (SUCCEEDED(Gamepad[idx].g_pGamepad->GetCapabilities(&didcaps)) && (didcaps.dwFlags & DIDC_FORCEFEEDBACK)){
-		WriteLog(L"[DINPUT]  [PAD%d] PrepareForce (%d) Force Feedback is available", idx+1,effidx);
+		WriteLog(LOG_DINPUT,L"[PAD%d] PrepareForce (%d) Force Feedback is available", idx+1,effidx);
 	} else {
-		WriteLog(L"[DINPUT]  [PAD%d] PrepareForce (%d) Force Feedback is NOT available", idx+1,effidx);
+		WriteLog(LOG_DINPUT,L"[PAD%d] PrepareForce (%d) Force Feedback is NOT available", idx+1,effidx);
 	}
 	// Enumerate effects
 	if (SUCCEEDED(hr = Gamepad[idx].g_pGamepad->EnumEffects(&EnumEffectsCallback, Gamepad[idx].g_pGamepad, DIEFT_ALL))){
@@ -636,7 +636,7 @@ HRESULT PrepareForceEjocys(DWORD idx, WORD effidx)
 		&Gamepad[idx].ff.g_pEffect[effidx],  // where to put interface pointer
 		NULL)))
 	{
-		WriteLog(L"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %s", idx+1,effidx, DXErrStr(hr));
+		WriteLog(LOG_DINPUT,L"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %s", idx+1,effidx, DXErrStr(hr));
 		return hr;
 	}
 	if(Gamepad[idx].ff.g_pEffect[effidx] == NULL) return E_FAIL;
@@ -705,10 +705,10 @@ HRESULT PrepareForceNew(DWORD idx, WORD motor)
 		DIDEVCAPS didcaps;
 		didcaps.dwSize = sizeof didcaps;
 		if (SUCCEEDED(Gamepad[idx].g_pGamepad->GetCapabilities(&didcaps)) && (didcaps.dwFlags & DIDC_FORCEFEEDBACK)) {
-			WriteLog(L"[DINPUT]  [PAD%d] PrepareForce (%d) Force Feedback is available", idx+1,motor);
+			WriteLog(LOG_DINPUT,L"[[PAD%d] PrepareForce (%d) Force Feedback is available", idx+1,motor);
 		} 
 		else {
-			WriteLog(L"[DINPUT]  [PAD%d] PrepareForce (%d) Force Feedback is NOT available", idx+1,motor);
+			WriteLog(LOG_DINPUT,L"[PAD%d] PrepareForce (%d) Force Feedback is NOT available", idx+1,motor);
 		}
 		// Enumerate effects
 		if (SUCCEEDED(hr = Gamepad[idx].g_pGamepad->EnumEffects(&EnumEffectsCallback, &Gamepad[idx], DIEFT_ALL))) {
@@ -732,7 +732,7 @@ HRESULT PrepareForceNew(DWORD idx, WORD motor)
 		hr = Gamepad[idx].g_pGamepad->CreateEffect(geff, &Gamepad[idx].ff.eff[motor], &Gamepad[idx].ff.g_pEffect[motor], NULL);
 		if(FAILED(hr))
 		{
-			WriteLog(L"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %s", idx+1,motor, DXErrStr(hr));
+			WriteLog(LOG_DINPUT,L"[PAD%d] PrepareForce (%d) failed with code HR = %s", idx+1,motor, DXErrStr(hr));
 			return hr;
 		}
 		if(!Gamepad[idx].ff.g_pEffect[motor]) return E_FAIL;

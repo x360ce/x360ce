@@ -42,6 +42,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tlhelp32.h>
+#include <tchar.h>
 #include <strsafe.h>
 #include <crtdbg.h>
 
