@@ -93,7 +93,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 {
 	if(!InputHook_Config()->bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	WriteLog(L"[HookWMI] HookGet");
+	WriteLog(LOG_HOOKWMI,L"HookGet");
 	HRESULT hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	//WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
@@ -115,23 +115,23 @@ HRESULT STDMETHODCALLTYPE HookGet(
 				WCHAR tempstr[MAX_PATH];
 				if( strUSB ) {
 					BSTR Hookbstr=NULL;
-					WriteLog(L"[HookWMI] Original DeviceID = %s",pVal->bstrVal);
+					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 					if(InputHook_Config()->dwHookMode >= 2) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i ); 
 					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );
 					Hookbstr=SysAllocString(tempstr);
 					pVal->bstrVal = Hookbstr;
-					WriteLog(L"[HookWMI] Hook DeviceID = %s",pVal->bstrVal);
+					WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
 					return hr;
 				}
 				WCHAR* strHID = wcsstr( pVal->bstrVal, L"HID" );
 				if( strHID ) {
 					BSTR Hookbstr=NULL;
-					WriteLog(L"[HookWMI] Original DeviceID = %s",pVal->bstrVal);
+					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 					if(InputHook_Config()->dwHookMode >= 2) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i );
 					else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );	 
 					Hookbstr=SysAllocString(tempstr);
 					pVal->bstrVal = Hookbstr;
-					WriteLog(L"[HookWMI] Hook DeviceID = %s",pVal->bstrVal);
+					WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
 					return hr;
 				}
 			}
@@ -150,7 +150,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
 	if(!InputHook_Config()->bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
-	WriteLog(L"[HookWMI] HookNext");
+	WriteLog(LOG_HOOKWMI,L"HookNext");
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
@@ -182,7 +182,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
 	if(!InputHook_Config()->bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
-	WriteLog(L"[HookWMI] HookCreateInstanceEnum");
+	WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum");
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
@@ -222,7 +222,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 
 {
 	if(!InputHook_Config()->bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
-	WriteLog(L"[HookWMI] HookConnectServer");
+	WriteLog(LOG_HOOKWMI,L"HookConnectServer");
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
 
@@ -262,7 +262,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 	if(ppv && (riid == IID_IWbemLocator)) {
 		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 		if(pIWbemLocator) {
-			WriteLog(L"[HookWMI] HookCoCreateInstance");
+			WriteLog(LOG_HOOKWMI,L"HookCoCreateInstance");
 			if(!OriginalConnectServer) {
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
 				hHookConnectServer = new HOOK_TRACE_INFO();
@@ -280,10 +280,10 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void HookCoUninitialize()
 {
-	WriteLog(L"[InputHook] HookCoUninitialize");
+	WriteLog(LOG_HOOKWMI,L"HookCoUninitialize");
 
 	if(hHookGet) {
-		WriteLog(L"[HookWMI] HookGet:: Removing Hook");
+		WriteLog(LOG_HOOKWMI,L"HookGet:: Removing Hook");
 
 		LhUninstallHook(hHookGet);
 		LhWaitForPendingRemovals();
@@ -292,7 +292,7 @@ void HookCoUninitialize()
 	}
 
 	if(hHookNext) {
-		WriteLog(L"[HookWMI] HookNext:: Removing Hook");
+		WriteLog(LOG_HOOKWMI,L"HookNext:: Removing Hook");
 
 		LhUninstallHook(hHookNext);
 		LhWaitForPendingRemovals();
@@ -301,7 +301,7 @@ void HookCoUninitialize()
 	}
 
 	if(hHookCreateInstanceEnum) {
-		WriteLog(L"[HookWMI] HookCreateInstanceEnum:: Removing Hook");
+		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Removing Hook");
 
 		LhUninstallHook(hHookCreateInstanceEnum);
 		LhWaitForPendingRemovals();
@@ -310,7 +310,7 @@ void HookCoUninitialize()
 	}
 
 	if(hHookConnectServer) {
-		WriteLog(L"[HookWMI] HookConnectServer:: Removing Hook");
+		WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Removing Hook");
 
 		LhUninstallHook(hHookConnectServer);
 		LhWaitForPendingRemovals();
@@ -327,7 +327,7 @@ void HookWMI()
 	if(!OriginalCoCreateInstance) {
 		OriginalCoCreateInstance = CoCreateInstance;
 		hHookCoCreateInstance = new HOOK_TRACE_INFO();
-		WriteLog(L"[InputHook] HookCoCreateInstance:: Hooking");
+		WriteLog(LOG_IHOOK,L"HookCoCreateInstance:: Hooking");
 
 		LhInstallHook(OriginalCoCreateInstance,HookCoCreateInstance,static_cast<PVOID>(NULL),hHookCoCreateInstance);
 		LhSetInclusiveACL(ACLEntries, 1, hHookCoCreateInstance);
@@ -336,7 +336,7 @@ void HookWMI()
 	if(!OriginalCoUninitialize) {
 		OriginalCoUninitialize = CoUninitialize;
 		hHookCoUninitialize = new HOOK_TRACE_INFO();
-		WriteLog(L"[InputHook] HookCoUninitialize:: Hooking");
+		WriteLog(LOG_IHOOK,L"HookCoUninitialize:: Hooking");
 
 		LhInstallHook(OriginalCoUninitialize,HookCoUninitialize,static_cast<PVOID>(NULL),hHookCoUninitialize);
 		LhSetInclusiveACL(ACLEntries, 1, hHookCoUninitialize);

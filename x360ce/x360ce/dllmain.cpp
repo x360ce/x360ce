@@ -81,9 +81,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
 
 #if SVN_MODS != 0 
-	WriteLog(L"[CORE]      x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #else 
-	WriteLog(L"[CORE]      x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #endif
 
 	InstallInputHooks();
@@ -105,7 +105,7 @@ VOID ExitInstance()
 	hWnd = NULL;
 	UnregisterClass(L"x360ceWClass",hX360ceInstance);
 
-	WriteLog(L"[CORE]      x360ce terminating, bye");
+	WriteLog(LOG_CORE,L"x360ce terminating, bye");
 
 	LogCleanup();
 	IniCleanup();

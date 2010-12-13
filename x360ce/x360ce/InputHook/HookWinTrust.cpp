@@ -29,6 +29,7 @@ LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTDat
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
 	if(!InputHook_Config()->bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+	WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust");
 
 	UNREFERENCED_PARAMETER(hwnd);
 	UNREFERENCED_PARAMETER(pgActionID);
@@ -41,7 +42,7 @@ void HookWinTrust()
 	if(!OriginalWinVerifyTrust) {
 		OriginalWinVerifyTrust = WinVerifyTrust;
 		hHookWinVerifyTrust = new HOOK_TRACE_INFO(); 
-		WriteLog(L"[InputHook] HookWinTrust:: Hooking");
+		WriteLog(LOG_IHOOK,L"HookWinTrust:: Hooking");
 
 		LhInstallHook(OriginalWinVerifyTrust,HookWinVerifyTrust,static_cast<PVOID>(NULL),hHookWinVerifyTrust);
 		LhSetInclusiveACL(ACLEntries, 1, hHookWinVerifyTrust);

@@ -15,12 +15,23 @@
 
 #include "stdafx.h"
 #include "globals.h"
+#include "Utilities\Log.h"
 #include <Shlwapi.h>
 
 BOOL writelog = FALSE;
 BOOL enableconsole = FALSE;
 LPWSTR lpLogFileName = NULL;
 LPWSTR lpLogFolderName = NULL;
+
+static LPCWSTR LogTypeNames[] = {
+	L"[Core]      ",
+	L"[XInput]    ",
+	L"[DInput]    ",
+	L"[InputHook] ",
+	L"[HookDI]    ",
+	L"[HookWMI]   ",
+	L"[HookWT]    ",
+};
 
 void ConsoleEnable(BOOL console) 
 {
@@ -81,7 +92,7 @@ BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR dirname,size_t
 	return bRet;
 }
 
-BOOL WriteLog(LPWSTR str,...)
+BOOL WriteLog(LogType logType, LPWSTR str,...)
 {
 	SYSTEMTIME systime;
 	GetLocalTime(&systime);
@@ -90,7 +101,7 @@ BOOL WriteLog(LPWSTR str,...)
 
 	if(enableconsole)
 	{
-		wprintf(L"%02u:%02u:%02u.%03u:: ", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds);
+		wprintf(L"%02u:%02u:%02u.%03u:: %s", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,LogTypeNames[logType]);
 		va_list arglist;
 		va_start(arglist,str);
 		vwprintf(str,arglist);
@@ -106,7 +117,7 @@ BOOL WriteLog(LPWSTR str,...)
 		//fp is null, file is not open.
 		if (fp==NULL)
 			return 0;
-		fwprintf(fp, L"%02u:%02u:%02u.%03u:: ", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds);
+		fwprintf(fp, L"%02u:%02u:%02u.%03u:: %s", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,LogTypeNames[logType]);
 		va_list arglist;
 		va_start(arglist,str);
 		vfwprintf(fp,str,arglist);

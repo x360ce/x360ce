@@ -20,10 +20,10 @@
     Please visit http://www.codeplex.com/easyhook for more information
     about the project and latest updates.
 */
+#include "stdafx.h"
 #include <fusion.h>
 #include <mscoree.h>
 #include <atlbase.h>
-#include "stdafx.h"
 
 typedef HRESULT (__stdcall *CreateAsmCache)(IAssemblyCache **ppAsmCache, DWORD dwReserved);
 typedef HRESULT (__stdcall *LoadLibraryShim_PROC)(LPCWSTR szDllName, LPCWSTR szVersion, LPVOID pvReserved, HMODULE *phModDll);
@@ -56,7 +56,7 @@ extern "C" __declspec(dllexport) void __stdcall GacReleaseContext(LPINTERNAL_CON
 	*RefContext = NULL;
 }
 
-extern "C" int main(int argc, char** argw){ return 0;}
+extern "C" int __cdecl main(int argc, char** argw){ return 0;}
 
 extern "C" __declspec(dllexport) LPINTERNAL_CONTEXT __stdcall GacCreateContext(){
 	LPINTERNAL_CONTEXT	Result = NULL;
