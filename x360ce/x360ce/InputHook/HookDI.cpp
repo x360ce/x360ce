@@ -32,8 +32,8 @@ TRACED_HOOK_HANDLE		hHookGetDeviceInfoA = NULL;
 TRACED_HOOK_HANDLE		hHookGetDeviceInfoW = NULL;
 TRACED_HOOK_HANDLE		hHookEnumDevicesA = NULL;
 TRACED_HOOK_HANDLE		hHookEnumDevicesW = NULL;
-TRACED_HOOK_HANDLE		hHookCallbackA = NULL;
-TRACED_HOOK_HANDLE		hHookCallbackW = NULL;
+//TRACED_HOOK_HANDLE		hHookCallbackA = NULL;
+//TRACED_HOOK_HANDLE		hHookCallbackW = NULL;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,12 +201,10 @@ HRESULT STDMETHODCALLTYPE HookEnumDevicesA (LPDIRECTINPUT8A This, DWORD dwDevTyp
 	if(!InputHook_Config()->bEnabled) return OriginalEnumDevicesA(This,dwDevType,lpCallback,pvRef,dwFlags);
 	WriteLog(LOG_HOOKDI,L"HookEnumDevicesA");
 
-	if(!lpOriginalCallbackA) {
-		lpOriginalCallbackA = lpCallback;
-		hHookCallbackA = new HOOK_TRACE_INFO();
-
-		LhInstallHook(lpOriginalCallbackA,HookEnumCallbackA,static_cast<PVOID>(NULL),hHookCallbackA);
-		LhSetInclusiveACL(ACLEntries, 1,hHookCallbackA );
+	if (lpCallback)
+	{
+		lpOriginalCallbackA= lpCallback;
+		return OriginalEnumDevicesA(This,dwDevType,HookEnumCallbackA,pvRef,dwFlags);
 	}
 
 	return OriginalEnumDevicesA(This,dwDevType,lpCallback,pvRef,dwFlags);
@@ -219,12 +217,10 @@ HRESULT STDMETHODCALLTYPE HookEnumDevicesW (LPDIRECTINPUT8W This, DWORD dwDevTyp
 	if(!InputHook_Config()->bEnabled || !lpCallback) return OriginalEnumDevicesW(This,dwDevType,lpCallback,pvRef,dwFlags);
 	WriteLog(LOG_HOOKDI,L"HookEnumDevicesW");
 
-	if(!lpOriginalCallbackW) {
-		lpOriginalCallbackW = lpCallback;
-		hHookCallbackW = new HOOK_TRACE_INFO();
-
-		LhInstallHook(lpOriginalCallbackW,HookEnumCallbackW,static_cast<PVOID>(NULL),hHookCallbackW);
-		LhSetInclusiveACL(ACLEntries, 1,hHookCallbackW );
+	if (lpCallback)
+	{
+		lpOriginalCallbackW= lpCallback;
+		return OriginalEnumDevicesW(This,dwDevType,HookEnumCallbackW,pvRef,dwFlags);
 	}
 
 	return OriginalEnumDevicesW(This,dwDevType,lpCallback,pvRef,dwFlags);
@@ -583,7 +579,5 @@ void HookDIClean()
 	SAFE_DELETE(hHookGetDeviceInfoW);
 	SAFE_DELETE(hHookEnumDevicesA);
 	SAFE_DELETE(hHookEnumDevicesW);
-	SAFE_DELETE(hHookCallbackA);
-	SAFE_DELETE(hHookCallbackW);
 
 }

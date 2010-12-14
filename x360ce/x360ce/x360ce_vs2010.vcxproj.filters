@@ -20,9 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FakeAPI\InputHook.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
     <ClCompile Include="InputHook\HookWinTrust.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
