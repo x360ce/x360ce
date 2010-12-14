@@ -173,7 +173,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 #if defined(DEBUG) | defined(_DEBUG)
-	WriteLog(L"UpdateState %d %d",dwUserIndex,hr);
+	WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
 #endif
 
 	GamepadMap PadMap = GamepadMapping[dwUserIndex];
@@ -458,7 +458,6 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,RightMotor);
 	if(FAILED(hr))
 		WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
-
 	return ERROR_SUCCESS;
 }
 
