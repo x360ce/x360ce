@@ -124,8 +124,8 @@ HRESULT XInit(DWORD dwUserIndex)
 	}
 	else UpdateState(dwUserIndex);
 
-	if(!InputHook_Enable()) {
-		InputHook_Enable(1);
+	if(InputHook_Enable()) {
+		InputHook_Enable(InputHook_LastState());
 		WriteLog(LOG_IHOOK,L"Restore InputHook state");
 	}
 
