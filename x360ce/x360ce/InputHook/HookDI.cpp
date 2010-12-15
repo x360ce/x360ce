@@ -489,10 +489,10 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT WINAPI HookDIrectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
+HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
 {
 	if(!InputHook_Config()->bEnabled) return OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
-	WriteLog(LOG_HOOKDI,L"HookDIrectInput8Create");
+	WriteLog(LOG_HOOKDI,L"HookDirectInput8Create");
 
 	/*
 	LPOLESTR str1;
@@ -507,7 +507,7 @@ HRESULT WINAPI HookDIrectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 		if(IsEqualIID(riidltf,IID_IDirectInput8A)) {
 			LPDIRECTINPUT8A pDIA = static_cast<LPDIRECTINPUT8A>(*ppvOut);
 			if(pDIA)  {
-				WriteLog(LOG_HOOKDI,L"HookDIrectInput8Create - ANSI interface");
+				WriteLog(LOG_HOOKDI,L"HookDirectInput8Create - ANSI interface");
 				if(!OriginalCreateDeviceA) {
 					OriginalCreateDeviceA = pDIA->lpVtbl->CreateDevice;
 					hHookCreateDeviceA = new HOOK_TRACE_INFO();
@@ -528,7 +528,7 @@ HRESULT WINAPI HookDIrectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 		if (IsEqualIID(riidltf,IID_IDirectInput8W)) {
 			LPDIRECTINPUT8W pDIW = static_cast<LPDIRECTINPUT8W>(*ppvOut);
 			if(pDIW)  {
-				WriteLog(LOG_HOOKDI,L"HookDIrectInput8Create - UNICODE interface");
+				WriteLog(LOG_HOOKDI,L"HookDirectInput8Create - UNICODE interface");
 				if(!OriginalCreateDeviceW) {
 					OriginalCreateDeviceW = pDIW->lpVtbl->CreateDevice;
 					hHookCreateDeviceW = new HOOK_TRACE_INFO();
@@ -558,9 +558,9 @@ void HookDI()
 	if(!OriginalDirectInput8Create) {
 		OriginalDirectInput8Create = DirectInput8Create;
 		hHookDirectInput8Create = new HOOK_TRACE_INFO();
-		WriteLog(LOG_IHOOK,L"HookDIrectInput8Create:: Hooking");
+		WriteLog(LOG_IHOOK,L"HookDirectInput8Create:: Hooking");
 
-		LhInstallHook(OriginalDirectInput8Create,HookDIrectInput8Create,static_cast<PVOID>(NULL),hHookDirectInput8Create);
+		LhInstallHook(OriginalDirectInput8Create,HookDirectInput8Create,static_cast<PVOID>(NULL),hHookDirectInput8Create);
 		LhSetInclusiveACL(ACLEntries, 1,hHookDirectInput8Create );
 	}
 }
