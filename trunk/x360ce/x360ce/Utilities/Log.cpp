@@ -58,6 +58,7 @@ void LogEnable(BOOL log)
 
 void LogCleanup() 
 {
+	if(enableconsole)FreeConsole();
 	SAFE_DELETE_ARRAY(lpLogFileName);
 }
 
