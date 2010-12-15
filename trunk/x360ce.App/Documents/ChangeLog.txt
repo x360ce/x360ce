@@ -1,4 +1,7 @@
-﻿v2.0.2.94 (2010-11-22)
+﻿v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
+- Update: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
+
+v2.0.2.94 (2010-11-22)
 - Update: Digital Signature updated.
 
 v2.0.2.93 (2010-11-20)

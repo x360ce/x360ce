@@ -47,7 +47,7 @@ namespace x360ce.App
 
 		public void ReadSetting(Control control, string key, string value)
 		{
-			if (key == SettingName.FakeMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
+			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
 			{
 				var cbx = (ComboBox)control;
 				for (int i = 0; i < cbx.Items.Count; i++)
@@ -264,7 +264,7 @@ namespace x360ce.App
 			string section = path.Split('\\')[0];
 			string key = path.Split('\\')[1];
 			string v = string.Empty;
-			if (key == SettingName.FakeMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
+			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null) { v = "0"; }

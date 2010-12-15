@@ -304,7 +304,7 @@ namespace x360ce.App
 			this.FakeModeLabel.Name = "FakeModeLabel";
 			this.FakeModeLabel.Size = new System.Drawing.Size(64, 13);
 			this.FakeModeLabel.TabIndex = 26;
-			this.FakeModeLabel.Text = "Fake Mode:";
+			this.FakeModeLabel.Text = "Hook Mode:";
 			// 
 			// FakeModeComboBox
 			// 

@@ -57,7 +57,7 @@ namespace x360ce.App
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
 			// Fill FakeWmi ComboBox.
 			var fakeModeOptions = new List<KeyValuePair>();
-			var fakeModeTypes = (FakeMode[])Enum.GetValues(typeof(FakeMode));
+			var fakeModeTypes = (HookMode[])Enum.GetValues(typeof(HookMode));
 			foreach (var item in fakeModeTypes) fakeModeOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			FakeModeComboBox.DataSource = fakeModeOptions;
 			FakeModeComboBox.DisplayMember = "Key";
@@ -108,7 +108,7 @@ namespace x360ce.App
 			sm.Add(@"Options\" + SettingName.UseInitBeep, UseInitBeepCheckBox);
 			sm.Add(@"Options\" + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
-			sm.Add(@"FakeAPI\" + SettingName.FakeMode, FakeModeComboBox);
+			sm.Add(@"InputHook\" + SettingName.HookMode, FakeModeComboBox);
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				var map = ControlPads[i].SettingsMap;
