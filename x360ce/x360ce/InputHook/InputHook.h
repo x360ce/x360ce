@@ -58,7 +58,8 @@ void HookWinTrustClean();
 InputHook_CONIFG* InputHook_Config();
 InputHook_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex);
 
-BOOL InputHook_Enable(BOOL state);
+VOID InputHook_Enable(BOOL state);
+BOOL InputHook_LastState();
 BOOL InputHook_Enable();
 
 BOOL InputHook_Init(InputHook_CONIFG* fconfig, InputHook_GAMEPAD_CONIFG* gconfig);

@@ -19,6 +19,7 @@
 
 InputHook_CONIFG* InputHookConfig = NULL;
 InputHook_GAMEPAD_CONIFG* GamepadConfig[4] = {NULL,NULL,NULL,NULL};
+BOOL laststate = FALSE;
 
 ULONG ACLEntries[1] = {0};
 
@@ -32,15 +33,20 @@ InputHook_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex)
 	return GamepadConfig[dwUserIndex];
 }
 
-BOOL InputHook_Enable(BOOL state)
+VOID InputHook_Enable(BOOL state)
 {
 	InputHook_Config()->bEnabled = state;
-	return state;
+	laststate = state;
 }
 
 BOOL InputHook_Enable()
 {
 	return InputHook_Config()->bEnabled;
+}
+
+BOOL InputHook_LastState()
+{
+	return laststate;
 }
 
 BOOL InputHook_Init(InputHook_CONIFG* fconfig, InputHook_GAMEPAD_CONIFG* gconfig)

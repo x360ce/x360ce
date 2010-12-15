@@ -32,8 +32,6 @@ TRACED_HOOK_HANDLE		hHookGetDeviceInfoA = NULL;
 TRACED_HOOK_HANDLE		hHookGetDeviceInfoW = NULL;
 TRACED_HOOK_HANDLE		hHookEnumDevicesA = NULL;
 TRACED_HOOK_HANDLE		hHookEnumDevicesW = NULL;
-//TRACED_HOOK_HANDLE		hHookCallbackA = NULL;
-//TRACED_HOOK_HANDLE		hHookCallbackW = NULL;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
