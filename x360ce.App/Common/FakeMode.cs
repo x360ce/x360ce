@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App
 {
-	enum FakeMode
+	enum HookMode
 	{
 		/// <summary>Disabled</summary>
 		Disabled = 0,

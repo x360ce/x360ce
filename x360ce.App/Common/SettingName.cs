@@ -47,11 +47,9 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("use 0 to 1; creates a log file in folder 'x360ce logs'.")]
 		public const string Log = "Log";
 
-		// [FakeAPI] section.
+		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
-		public const string FakeMode = "FakeMODE";
-		[DefaultValue("1"), Description("Don't change PID/VID in FakeWMI spoofing, so this add only IG_00 string.")]
-		public const string FakeWmiNoPidVid = "FakeWMI_NOPIDVID";
+        public const string HookMode = "HookMode";
 
 		// [PAD] section.
 		[DefaultValue("Unknown Device"), Description("Device product name.")]
