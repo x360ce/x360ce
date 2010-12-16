@@ -279,6 +279,7 @@ BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef)
 
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 {
+	if(!Gamepad[idx].ff.g_pEffect[motor]) return S_FALSE;
 	if(Gamepad[idx].ff.type == 1) return SetDeviceForcesEjocys(idx,force,motor);
 	if(Gamepad[idx].ff.type == 2) return SetDeviceForcesNew(idx,force,motor);
 	return SetDeviceForcesFailsafe(idx,force,motor);

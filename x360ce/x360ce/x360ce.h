@@ -22,7 +22,19 @@
 extern HINSTANCE hX360ceInstance;
 extern HINSTANCE hNativeInstance;
 extern HWND hWnd;
-extern BOOL bEnabled;
+
+struct XINPUT_ENABLE
+{
+	BOOL bEnabled;
+	BOOL bUseEnabled;
+	XINPUT_ENABLE()
+	{
+		bEnabled = FALSE;
+		bUseEnabled = FALSE;
+	}
+};
+
+
 extern WORD wNativeMode;
 
 void LoadOriginalDll();
