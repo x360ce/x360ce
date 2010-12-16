@@ -23,10 +23,13 @@
 
 #pragma warning(disable:4310)
 
-BOOL bEnabled = FALSE;
-BOOL bUseEnabled= FALSE;
+//BOOL bEnabled = FALSE;
+//BOOL bUseEnabled= FALSE;
 
-bool bPAD[4] = {FALSE,FALSE,FALSE,FALSE};
+XINPUT_ENABLE XInputIsEnabled;
+
+BOOL bPAD[4] = {FALSE,FALSE,FALSE,FALSE};
+BOOL bXDeInit = FALSE;
 
 XINPUT_CAPABILITIES *lpXCaps[4]={NULL,NULL,NULL,NULL};
 XINPUT_BATTERY_INFORMATION *lpXBatInfo=NULL;
@@ -79,6 +82,14 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 
 void XDeInit()
 {
+	bXDeInit = TRUE;
+	/* That should work, but crash my FFB driver at exit. TODO
+	for(int i = 0; i < 4; i++)
+	{
+		SetDeviceForces(i,0,LeftMotor);
+		SetDeviceForces(i,0,RightMotor);
+	}
+	*/
 	for(DWORD dwUserIndex=0; dwUserIndex<XUSER_MAX_COUNT; dwUserIndex++) {
 		SAFE_DELETE(lpXCaps[dwUserIndex]);
 	}
@@ -136,7 +147,7 @@ extern VOID DetachInputHook();
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-
+	if(bXDeInit) return ERROR_DEVICE_NOT_CONNECTED;
 	//WriteLog(_T("XInputGetState"));
 	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
@@ -165,7 +176,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states 
 	*/
 
-	if(!bEnabled && bUseEnabled) return S_OK;
+	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled) return S_OK;
 
 	// poll data from device
 	hr = UpdateState(dwUserIndex);
@@ -424,7 +435,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-
+	if(bXDeInit) return ERROR_DEVICE_NOT_CONNECTED;
 	if(Gamepad[dwUserIndex].native) {
 		if(!hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
@@ -434,7 +445,6 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
 
-	if(!bEnabled && bUseEnabled) return S_OK;
 	HRESULT hr=ERROR_SUCCESS;
 
 	//hr = XInit(dwUserIndex);
@@ -448,6 +458,13 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	PrepareForce(dwUserIndex,LeftMotor);
 	PrepareForce(dwUserIndex,RightMotor);
+
+	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
+	{ 
+		SetDeviceForces(dwUserIndex,0,LeftMotor);
+		SetDeviceForces(dwUserIndex,0,RightMotor);
+		return ERROR_SUCCESS;
+	}
 
 	wLeftMotorSpeed =  static_cast<WORD>(pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
 	wRightMotorSpeed = static_cast<WORD>(pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
@@ -508,8 +525,8 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 	WriteLog(LOG_XINPUT,L"XInputEnable called, state %d",enable);
 
-	bEnabled = enable;
-	bUseEnabled = TRUE;
+	XInputIsEnabled.bEnabled = enable;
+	XInputIsEnabled.bUseEnabled = TRUE;
 
 }
 

@@ -93,13 +93,13 @@ VOID ExitInstance()
 {   
 	InputHook_Clean();
 
+	XDeInit();
+
 	if (hNativeInstance) {
 		FreeLibrary(hNativeInstance); 
 		CloseHandle(hNativeInstance);
 		hNativeInstance = NULL; 
 	}
-
-	XDeInit();
 
 	if(IsWindow(hWnd)) DestroyWindow(hWnd);
 	hWnd = NULL;
