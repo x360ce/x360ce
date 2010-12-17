@@ -365,7 +365,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 	if(!InputHook_Config()->bEnabled) return OriginalGetPropertyA(This, rguidProp, pdiph);
 	HRESULT hr;
 	hr = OriginalGetPropertyA(This, rguidProp, pdiph);
-	WriteLog(LOG_HOOKDI,L"HookGetPropertyW");
+	WriteLog(LOG_HOOKDI,L"HookGetPropertyA");
 
 	if (InputHook_Config()->dwHookMode >= 2 ) {
 

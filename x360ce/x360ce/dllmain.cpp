@@ -37,7 +37,7 @@ void LoadOriginalDll()
 	GetSystemDirectory(buffer,MAX_PATH);
 
 	// Append dll name
-	wcscat_s(buffer,sizeof(buffer),L"\\xinput1_3.dll");
+	wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
 
 	// try to load the system's dinput.dll, if pointer empty
 	if (!hNativeInstance) hNativeInstance = LoadLibrary(buffer);
