@@ -295,7 +295,7 @@ namespace x360ce.App
 			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 143);
 			this.FakeApiGroupBox.TabIndex = 29;
 			this.FakeApiGroupBox.TabStop = false;
-			this.FakeApiGroupBox.Text = "Fake API";
+			this.FakeApiGroupBox.Text = "InputHook";
 			// 
 			// FakeModeLabel
 			// 
