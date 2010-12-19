@@ -24,10 +24,10 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
-HINSTANCE hX360ceInstance = NULL;
-HINSTANCE hNativeInstance = NULL;
+HINSTANCE g_hX360ceInstance = NULL;
+HINSTANCE g_hNativeInstance = NULL;
 
-HWND hWnd = NULL;
+HWND g_hWnd = NULL;
 
 void LoadOriginalDll()
 {
@@ -40,7 +40,7 @@ void LoadOriginalDll()
 	wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
 
 	// try to load the system's dinput.dll, if pointer empty
-	if (!hNativeInstance) hNativeInstance = LoadLibrary(buffer);
+	if (!g_hNativeInstance) g_hNativeInstance = LoadLibrary(buffer);
 
 	// Debug
 	//if (!hNativeInstance) {
@@ -54,9 +54,9 @@ VOID InstallInputHooks()
 
 		for(WORD i = 0; i < 4; i++)
 		{
-			x360ce_InputHookGamepadConfig[i].bEnabled = Gamepad[i].configured;
-			x360ce_InputHookGamepadConfig[i].productGUID = Gamepad[i].productGUID;
-			x360ce_InputHookGamepadConfig[i].instanceGUID = Gamepad[i].instanceGUID;
+			x360ce_InputHookGamepadConfig[i].bEnabled = g_Gamepad[i].configured;
+			x360ce_InputHookGamepadConfig[i].productGUID = g_Gamepad[i].productGUID;
+			x360ce_InputHookGamepadConfig[i].instanceGUID = g_Gamepad[i].instanceGUID;
 		}
 	}
 	InputHook_Init( &x360ce_InputHookConfig,  x360ce_InputHookGamepadConfig);
@@ -73,7 +73,7 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	_CrtSetDbgFlag(CurrentFlags);
 #endif
 
-	hX360ceInstance =  hinstDLL;
+	g_hX360ceInstance =  hinstDLL;
 	DWORD dwAppPID = GetCurrentProcessId();
 	SetIniFileName(L"x360ce.ini");
 	ReadConfig();
@@ -93,17 +93,15 @@ VOID ExitInstance()
 {   
 	InputHook_Clean();
 
-	XDeInit();
-
-	if (hNativeInstance) {
-		FreeLibrary(hNativeInstance); 
-		CloseHandle(hNativeInstance);
-		hNativeInstance = NULL; 
+	if (g_hNativeInstance) {
+		FreeLibrary(g_hNativeInstance); 
+		CloseHandle(g_hNativeInstance);
+		g_hNativeInstance = NULL; 
 	}
 
-	if(IsWindow(hWnd)) DestroyWindow(hWnd);
-	hWnd = NULL;
-	UnregisterClass(L"x360ceWClass",hX360ceInstance);
+	if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
+	g_hWnd = NULL;
+	UnregisterClass(L"x360ceWClass",g_hX360ceInstance);
 
 	WriteLog(LOG_CORE,L"x360ce terminating, bye");
 

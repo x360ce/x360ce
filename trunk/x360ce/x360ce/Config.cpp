@@ -24,8 +24,8 @@
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
-InputHook_CONIFG x360ce_InputHookConfig;
-InputHook_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
+IHOOK_CONIFG x360ce_InputHookConfig;
+IHOOK_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
 static LPCWSTR buttonNames[] = {
 	L"A",
@@ -129,8 +129,8 @@ void ReadPadConfig(DWORD idx) {
 
 	WCHAR buffer[MAX_PATH];
 
-	Gamepad[idx].native = static_cast<BOOL>(ReadUINTFromFile(section, L"Native",0));
-	if(Gamepad[idx].native) 
+	g_Gamepad[idx].native = static_cast<BOOL>(ReadUINTFromFile(section, L"Native",0));
+	if(g_Gamepad[idx].native) 
 	{ 
 		wNativeMode = 1;
 		return; 
@@ -140,44 +140,44 @@ void ReadPadConfig(DWORD idx) {
 	GUIDtoString(GUID_NULL,NullGUIDStr,50);
 
 	ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
-	StringToGUID(buffer,&Gamepad[idx].productGUID);
+	StringToGUID(buffer,&g_Gamepad[idx].productGUID);
 	
-	if(IsEqualGUID(Gamepad[idx].productGUID,GUID_NULL))
+	if(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL))
 	{
 		ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
-		StringToGUID(buffer,&Gamepad[idx].productGUID);
+		StringToGUID(buffer,&g_Gamepad[idx].productGUID);
 	}
 
 	ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
-	StringToGUID(buffer,&Gamepad[idx].instanceGUID);
+	StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
 
-	if(IsEqualGUID(Gamepad[idx].instanceGUID,GUID_NULL))
+	if(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL))
 	{
 		ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
-		StringToGUID(buffer,&Gamepad[idx].instanceGUID);
+		StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
 	}
 
-	if (!(IsEqualGUID(Gamepad[idx].productGUID,GUID_NULL))  && !(IsEqualGUID(Gamepad[idx].instanceGUID,GUID_NULL)))
+	if (!(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL))  && !(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL)))
 	{ 
-		Gamepad[idx].configured = true;
+		g_Gamepad[idx].configured = true;
 		PadMap.enabled = true;
 
 	} else { return; }  
 
-	Gamepad[idx].dwPadIndex = idx;
+	g_Gamepad[idx].dwPadIndex = idx;
 
-	Gamepad[idx].ff.type = (BYTE) ReadUINTFromFile(section, L"FFBType",0);
+	g_Gamepad[idx].ff.type = (BYTE) ReadUINTFromFile(section, L"FFBType",0);
 
-	Gamepad[idx].swapmotor = ReadUINTFromFile(section, L"SwapMotor",0);
-	Gamepad[idx].tdeadzone = ReadUINTFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-	Gamepad[idx].ff.useforce = static_cast<BOOL>(ReadUINTFromFile(section, L"UseForceFeedback",0));
-	Gamepad[idx].gamepadtype = static_cast<BYTE>(ReadUINTFromFile(section, L"ControllerType",1));
-	Gamepad[idx].axistodpad = static_cast<BOOL>(ReadUINTFromFile(section, L"AxisToDPad",0));
-	Gamepad[idx].axistodpaddeadzone = static_cast<INT>(ReadUINTFromFile(section, L"AxisToDPadDeadZone",0));
-	Gamepad[idx].axistodpadoffset = static_cast<INT>(ReadUINTFromFile(section, L"AxisToDPadOffset",0));
-	Gamepad[idx].ff.forcepercent = static_cast<FLOAT>(ReadUINTFromFile(section, L"ForcePercent",100) * 0.01);	
-	Gamepad[idx].ff.leftPeriod = ReadUINTFromFile(section, L"LeftMotorPeriod",60);
-	Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, L"RightMotorPeriod",20);
+	g_Gamepad[idx].swapmotor = ReadUINTFromFile(section, L"SwapMotor",0);
+	g_Gamepad[idx].tdeadzone = ReadUINTFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+	g_Gamepad[idx].ff.useforce = static_cast<BOOL>(ReadUINTFromFile(section, L"UseForceFeedback",0));
+	g_Gamepad[idx].gamepadtype = static_cast<BYTE>(ReadUINTFromFile(section, L"ControllerType",1));
+	g_Gamepad[idx].axistodpad = static_cast<BOOL>(ReadUINTFromFile(section, L"AxisToDPad",0));
+	g_Gamepad[idx].axistodpaddeadzone = static_cast<INT>(ReadUINTFromFile(section, L"AxisToDPadDeadZone",0));
+	g_Gamepad[idx].axistodpadoffset = static_cast<INT>(ReadUINTFromFile(section, L"AxisToDPadOffset",0));
+	g_Gamepad[idx].ff.forcepercent = static_cast<FLOAT>(ReadUINTFromFile(section, L"ForcePercent",100) * 0.01);	
+	g_Gamepad[idx].ff.leftPeriod = ReadUINTFromFile(section, L"LeftMotorPeriod",60);
+	g_Gamepad[idx].ff.rightPeriod = ReadUINTFromFile(section, L"RightMotorPeriod",20);
 
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
@@ -220,9 +220,9 @@ void ReadPadConfig(DWORD idx) {
 			}
 		}
 
-		Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ReadUINTFromFile(section, axisDZNames[i], 0));
-		Gamepad[idx].antidz[i] = static_cast<SHORT>(ReadUINTFromFile(section, axisADZNames[i], 0));
-		Gamepad[idx].axislinear[i] = static_cast<SHORT>(ReadUINTFromFile(section, axisLNames[i], 0));
+		g_Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ReadUINTFromFile(section, axisDZNames[i], 0));
+		g_Gamepad[idx].antidz[i] = static_cast<SHORT>(ReadUINTFromFile(section, axisADZNames[i], 0));
+		g_Gamepad[idx].axislinear[i] = static_cast<SHORT>(ReadUINTFromFile(section, axisLNames[i], 0));
 
 		if (ReadStringFromFile(section, axisBNames[i*2],buffer) > 0) {
 			INT ret = _wtoi(buffer);

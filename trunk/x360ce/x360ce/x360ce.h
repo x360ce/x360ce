@@ -19,9 +19,9 @@
 #define LeftMotor 0
 #define RightMotor 1
 
-extern HINSTANCE hX360ceInstance;
-extern HINSTANCE hNativeInstance;
-extern HWND hWnd;
+extern HINSTANCE g_hX360ceInstance;
+extern HINSTANCE g_hNativeInstance;
+extern HWND g_hWnd;
 
 struct XINPUT_ENABLE
 {
@@ -34,10 +34,6 @@ struct XINPUT_ENABLE
 	}
 };
 
-
-extern WORD wNativeMode;
-
 void LoadOriginalDll();
-void XDeInit();
 
 #endif
