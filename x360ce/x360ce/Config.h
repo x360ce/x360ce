@@ -92,7 +92,7 @@ void ReadConfig();
 void ReadPadConfig(DWORD idx);
 MappingType getTriggerType(LPCWSTR);
 
-extern InputHook_CONIFG x360ce_InputHookConfig;
-extern InputHook_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
+extern IHOOK_CONIFG x360ce_InputHookConfig;
+extern IHOOK_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
 #endif

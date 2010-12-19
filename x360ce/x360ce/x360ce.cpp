@@ -21,19 +21,7 @@
 #include "Config.h"
 #include "DirectInput.h"
 
-#pragma warning(disable:4310)
-
-//BOOL bEnabled = FALSE;
-//BOOL bUseEnabled= FALSE;
-
 XINPUT_ENABLE XInputIsEnabled;
-
-BOOL bPAD[4] = {FALSE,FALSE,FALSE,FALSE};
-BOOL bXDeInit = FALSE;
-
-XINPUT_CAPABILITIES *lpXCaps[4]={NULL,NULL,NULL,NULL};
-XINPUT_BATTERY_INFORMATION *lpXBatInfo=NULL;
-GUID guidnull = GUID_NULL;
 
 BOOL RegisterWindowClass(HINSTANCE hinstance) 
 { 
@@ -60,7 +48,7 @@ BOOL RegisterWindowClass(HINSTANCE hinstance)
 BOOL Createx360ceWindow(HINSTANCE hInst)
 {
 	if(RegisterWindowClass(hInst)) {
-		hWnd = CreateWindow( 
+		g_hWnd = CreateWindow( 
 			L"x360ceWClass",  // name of window class
 			L"x360ce",        // title-bar string 
 			WS_OVERLAPPEDWINDOW, // top-level window 
@@ -80,79 +68,64 @@ BOOL Createx360ceWindow(HINSTANCE hInst)
 	}
 }
 
-void XDeInit()
-{
-	bXDeInit = TRUE;
-	/* That should work, but crash my FFB driver at exit. TODO
-	for(int i = 0; i < 4; i++)
-	{
-		SetDeviceForces(i,0,LeftMotor);
-		SetDeviceForces(i,0,RightMotor);
-	}
-	*/
-	for(DWORD dwUserIndex=0; dwUserIndex<XUSER_MAX_COUNT; dwUserIndex++) {
-		SAFE_DELETE(lpXCaps[dwUserIndex]);
-	}
-
-	SAFE_DELETE(lpXBatInfo);
-
-}
-
 HRESULT XInit(DWORD dwUserIndex)
 {
-	bPAD[dwUserIndex] = true;
+	if(g_Gamepad[dwUserIndex].configured && !g_Gamepad[dwUserIndex].initialized) 
+	{
+		HRESULT hr=ERROR_SUCCESS;
 
-	HRESULT hr=S_OK;
-
-	if(!hWnd) {	
-		if(!Createx360ceWindow(hX360ceInstance)) {
-			WriteLog(LOG_CORE,L"x360ce window not created, ForceFeedback will be disabled !");
+		if(!g_hWnd) {	
+			if(!Createx360ceWindow(g_hX360ceInstance)) {
+				WriteLog(LOG_CORE,L"x360ce window not created, ForceFeedback will be disabled !");
+			}
 		}
-	}
 
-	if(!Gamepad[dwUserIndex].configured) return ERROR_DEVICE_NOT_CONNECTED;
+		if(!g_Gamepad[dwUserIndex].pGamepad){ 
 
-	if(!Gamepad[dwUserIndex].g_pGamepad){ 
+			if(InputHook_Enable()) {
+				InputHook_Enable(FALSE);
+				WriteLog(LOG_CORE,L"Temporary disable InputHook");
+			}
 
-		WriteLog(LOG_CORE,L"Initializing Gamepad %d",dwUserIndex+1);
+			WriteLog(LOG_CORE,L"[PAD%d] Initializing UserIndex %d",dwUserIndex+1,dwUserIndex);
 
-		hr = Enumerate(dwUserIndex); 
-		if(SUCCEEDED(hr)) {
-			WriteLog(LOG_CORE,L"[PAD%d] Enumerated",dwUserIndex+1);
+			hr = Enumerate(dwUserIndex); 
+			if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+
+			hr = InitDirectInput(g_hWnd,dwUserIndex);
+			if(FAILED(hr)) {
+				WriteLog(LOG_CORE,L"[PAD%d] XInit fail with %s",dwUserIndex+1,DXErrStr(hr));
+			}
 		}
-		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+		else return ERROR_DEVICE_NOT_CONNECTED;
 
-		hr = InitDirectInput(hWnd,dwUserIndex);
-		if(FAILED(hr)) {
-			WriteLog(LOG_CORE,L"XInit fail with %s",DXErrStr(hr));
+		if(!g_Gamepad[dwUserIndex].pGamepad) {
+			WriteLog(LOG_CORE,L"XInit fail");
+			return ERROR_DEVICE_NOT_CONNECTED;
 		}
-	}
-	else return ERROR_DEVICE_NOT_CONNECTED;
+		else 
+		{
+			if(bInitBeep) MessageBeep(MB_OK);
+			g_Gamepad[dwUserIndex].initialized = TRUE;
+			WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",dwUserIndex+1);
+		}
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) {
-		WriteLog(LOG_CORE,L"XInit fail");
-		return ERROR_DEVICE_NOT_CONNECTED;
+		if(InputHook_Enable()) {
+			InputHook_Enable(InputHook_LastState());
+			WriteLog(LOG_CORE,L"Restore InputHook state");
+		}
+		return ERROR_SUCCESS;
 	}
-	else UpdateState(dwUserIndex);
-
-	if(InputHook_Enable()) {
-		InputHook_Enable(InputHook_LastState());
-		WriteLog(LOG_IHOOK,L"Restore InputHook state");
-	}
-
-	return hr;
+	return ERROR_DEVICE_NOT_CONNECTED; //should be never called
 }
-
-extern VOID DetachInputHook();
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	if(bXDeInit) return ERROR_DEVICE_NOT_CONNECTED;
 	//WriteLog(_T("XInputGetState"));
-	if(Gamepad[dwUserIndex].native) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[dwUserIndex].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
-		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( hNativeInstance, "XInputGetState");
+		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
@@ -160,27 +133,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
-	if(!bPAD[dwUserIndex]) {
-		hr = XInit(dwUserIndex);
-		if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
-	}
+	hr = XInit(dwUserIndex);
+	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-	/*
-	Nasty trick to support XInputEnable states, because not every game calls it so:
-	- must support games that use it, and do enable/disable as needed by game
-	if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return Hook S_OK, ie. connected but state not updating
-	if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
-	- must support games that not call it
-	if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states 
-	*/
-
-	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled) return S_OK;
-
-	// poll data from device
-	hr = UpdateState(dwUserIndex);
-
+	//Update device state if enabled or we not use enable
+	if(XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)  
+		hr = UpdateState(dwUserIndex);
 	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -189,23 +149,25 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	GamepadMap PadMap = GamepadMapping[dwUserIndex];
 
-	XINPUT_GAMEPAD &xGamepad = pState->Gamepad;
+	XINPUT_STATE &xState = *pState; 
 
-	xGamepad.wButtons = 0;
-	xGamepad.bLeftTrigger = 0;
-	xGamepad.bRightTrigger = 0;
-	xGamepad.sThumbLX = 0;
-	xGamepad.sThumbLY = 0;
-	xGamepad.sThumbRX = 0;
-	xGamepad.sThumbRY = 0;
+	xState.Gamepad.wButtons = 0;
+	xState.Gamepad.bLeftTrigger = 0;
+	xState.Gamepad.bRightTrigger = 0;
+	xState.Gamepad.sThumbLX = 0;
+	xState.Gamepad.sThumbLY = 0;
+	xState.Gamepad.sThumbRX = 0;
+	xState.Gamepad.sThumbRY = 0;
+
+	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled) return ERROR_SUCCESS;
 
 	// timestamp packet
-	pState->dwPacketNumber=GetTickCount();
+	xState.dwPacketNumber=GetTickCount();
 
 	// --- Map buttons ---
 	for (INT i = 0; i < 10; ++i) {
 		if ((PadMap.Button[i] >= 0) && ButtonPressed(PadMap.Button[i],dwUserIndex)) 
-			xGamepad.wButtons |= buttonIDs[i];
+			xState.Gamepad.wButtons |= buttonIDs[i];
 	}
 
 	// --- Map POV to the D-pad ---
@@ -213,54 +175,54 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 		//INT pov = POVState(PadMap.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
-		DWORD pov = Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
+		DWORD pov = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
 		DWORD povdeg = pov/100;
 
 		// Up-left, up, up-right, up (at 360 degrees)
 		if (IN_RANGE(povdeg,270,360) || IN_RANGE(povdeg,0,90) || povdeg == 0 ) { 
-			xGamepad.wButtons |= PadMap.pov[0];
+			xState.Gamepad.wButtons |= PadMap.pov[0];
 		}
 		// Up-right, right, down-right
 		if (IN_RANGE(povdeg,0,180)) { 
-			xGamepad.wButtons |= PadMap.pov[3];	
+			xState.Gamepad.wButtons |= PadMap.pov[3];	
 		}
 		// Down-right, down, down-left
 		if (IN_RANGE(povdeg,90,270)) { 
-			xGamepad.wButtons |= PadMap.pov[1];
+			xState.Gamepad.wButtons |= PadMap.pov[1];
 		}
 		// Down-left, left, up-left	
 		if (IN_RANGE(povdeg,180,360)) { 
-			xGamepad.wButtons |= PadMap.pov[2];
+			xState.Gamepad.wButtons |= PadMap.pov[2];
 		}
 
 	}
 	else if((PadMap.DpadPOV < 0) && PadMap.PovIsButton) {
 		for (INT i = 0; i < 4; ++i) {
 			if ((PadMap.pov[i] >= 0) && ButtonPressed(PadMap.pov[i],dwUserIndex)) {
-				xGamepad.wButtons |= povIDs[i];
+				xState.Gamepad.wButtons |= povIDs[i];
 			}
 		}
 	}
 
 	// Created so we can refer to each axis with an ID
 	LONG axis[7] = {
-		Gamepad[dwUserIndex].state.lX,
-		Gamepad[dwUserIndex].state.lY,
-		Gamepad[dwUserIndex].state.lZ,
-		Gamepad[dwUserIndex].state.lRx,
-		Gamepad[dwUserIndex].state.lRy,
-		Gamepad[dwUserIndex].state.lRz,
+		g_Gamepad[dwUserIndex].state.lX,
+		g_Gamepad[dwUserIndex].state.lY,
+		g_Gamepad[dwUserIndex].state.lZ,
+		g_Gamepad[dwUserIndex].state.lRx,
+		g_Gamepad[dwUserIndex].state.lRy,
+		g_Gamepad[dwUserIndex].state.lRz,
 		0
 	};
 	LONG slider[2] = {
-		Gamepad[dwUserIndex].state.rglSlider[0],
-		Gamepad[dwUserIndex].state.rglSlider[1]
+		g_Gamepad[dwUserIndex].state.rglSlider[0],
+		g_Gamepad[dwUserIndex].state.rglSlider[1]
 	};
 
 	// --- Map triggers ---
 	BYTE *targetTrigger[2] = {
-		&xGamepad.bLeftTrigger,
-		&xGamepad.bRightTrigger
+		&xState.Gamepad.bLeftTrigger,
+		&xState.Gamepad.bRightTrigger
 	};
 
 	for (INT i = 0; i < 2; ++i) {
@@ -331,7 +293,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			v2 = (v + offset) / scaling;
 
 			// Add deadzones
-			*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, Gamepad[dwUserIndex].tdeadzone, 255);
+			*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
 
 		}
 	}
@@ -340,15 +302,15 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	// Created so we can refer to each axis with an ID
 	SHORT *targetAxis[4] = {
-		&xGamepad.sThumbLX,
-		&xGamepad.sThumbLY,
-		&xGamepad.sThumbRX,
-		&xGamepad.sThumbRY
+		&xState.Gamepad.sThumbLX,
+		&xState.Gamepad.sThumbLY,
+		&xState.Gamepad.sThumbRX,
+		&xState.Gamepad.sThumbRY
 	};
 
 	// NOTE: Could add symbolic constants as indexers, such as 
 	// THUMB_LX_AXIS, THUMB_LX_POSITIVE, THUMB_LX_NEGATIVE
-	if(Gamepad[dwUserIndex].axistodpad==0)
+	if(g_Gamepad[dwUserIndex].axistodpad==0)
 	{
 
 
@@ -385,36 +347,36 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	}
 
 	//WILDS - Axis to D-Pad
-	if(Gamepad[dwUserIndex].axistodpad==1) {
+	if(g_Gamepad[dwUserIndex].axistodpad==1) {
 		//WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
 
-		if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
-			xGamepad.wButtons |= XINPUT_GAMEPAD_LEFT_THUMB;
-		if(Gamepad[dwUserIndex].state.lX - Gamepad[dwUserIndex].axistodpadoffset < -Gamepad[dwUserIndex].axistodpaddeadzone)
-			xGamepad.wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
+		if(g_Gamepad[dwUserIndex].state.lX - g_Gamepad[dwUserIndex].axistodpadoffset > g_Gamepad[dwUserIndex].axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_LEFT_THUMB;
+		if(g_Gamepad[dwUserIndex].state.lX - g_Gamepad[dwUserIndex].axistodpadoffset < -g_Gamepad[dwUserIndex].axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
 
-		if(Gamepad[dwUserIndex].state.lY - Gamepad[dwUserIndex].axistodpadoffset < -Gamepad[dwUserIndex].axistodpaddeadzone)
-			xGamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
-		if(Gamepad[dwUserIndex].state.lY - Gamepad[dwUserIndex].axistodpadoffset > Gamepad[dwUserIndex].axistodpaddeadzone)
-			xGamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
+		if(g_Gamepad[dwUserIndex].state.lY - g_Gamepad[dwUserIndex].axistodpadoffset < -g_Gamepad[dwUserIndex].axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
+		if(g_Gamepad[dwUserIndex].state.lY - g_Gamepad[dwUserIndex].axistodpadoffset > g_Gamepad[dwUserIndex].axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
 	}
 	//WILDS END
 
 	for (int i = 0; i < 4; ++i)
 	{
 
-		if (Gamepad[dwUserIndex].antidz[i]) {
-			SHORT antidz = Gamepad[dwUserIndex].antidz[i];
+		if (g_Gamepad[dwUserIndex].antidz[i]) {
+			SHORT antidz = g_Gamepad[dwUserIndex].antidz[i];
 			LONG val = *(targetAxis[i]);
 			SHORT direction = val > 0 ? 1 : -1;
 			val = (LONG)(abs(val) / (32767 / (32767 - antidz * 1.0)) + antidz);
 			val = min(val, 32767);
-			if(val == Gamepad[dwUserIndex].antidz[i] || val == -Gamepad[dwUserIndex].antidz[i]) val = 0;
+			if(val == g_Gamepad[dwUserIndex].antidz[i] || val == -g_Gamepad[dwUserIndex].antidz[i]) val = 0;
 			*(targetAxis[i]) = (SHORT) (direction * val);
 		}
 
-		if (Gamepad[dwUserIndex].adeadzone[i]) {
-			SHORT dz = Gamepad[dwUserIndex].adeadzone[i];
+		if (g_Gamepad[dwUserIndex].adeadzone[i]) {
+			SHORT dz = g_Gamepad[dwUserIndex].adeadzone[i];
 			LONG val = *(targetAxis[i]);
 			if((val <= dz) && (val >= -dz) ) val = 0;
 			*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
@@ -422,9 +384,9 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 	// --- Do Linears ---
 
-		if (Gamepad[dwUserIndex].axislinear[i]) {
+		if (g_Gamepad[dwUserIndex].axislinear[i]) {
 
-			SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (Gamepad[dwUserIndex].axislinear[i] * 0.01))));
+			SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (g_Gamepad[dwUserIndex].axislinear[i] * 0.01))));
 			*(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
 		}
 	}
@@ -435,11 +397,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-	if(bXDeInit) return ERROR_DEVICE_NOT_CONNECTED;
-	if(Gamepad[dwUserIndex].native) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[dwUserIndex].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
-		XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( hNativeInstance, "XInputSetState");
+		XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( g_hNativeInstance, "XInputSetState");
 		return nativeXInputSetState(dwUserIndex,pVibration);
 	}
 
@@ -447,11 +408,10 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	HRESULT hr=ERROR_SUCCESS;
 
-	//hr = XInit(dwUserIndex);
-	//if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+	XINPUT_VIBRATION &xVib = *pVibration;
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
-	if(!Gamepad[dwUserIndex].ff.useforce) return ERROR_SUCCESS;
+	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!g_Gamepad[dwUserIndex].ff.useforce) return ERROR_SUCCESS;
 
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
@@ -466,8 +426,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		return ERROR_SUCCESS;
 	}
 
-	wLeftMotorSpeed =  static_cast<WORD>(pVibration->wLeftMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
-	wRightMotorSpeed = static_cast<WORD>(pVibration->wRightMotorSpeed * Gamepad[dwUserIndex].ff.forcepercent);
+	wLeftMotorSpeed =  static_cast<WORD>(xVib.wLeftMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
+	wRightMotorSpeed = static_cast<WORD>(xVib.wRightMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
 
 	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,LeftMotor);
 	if(FAILED(hr))
@@ -480,108 +440,104 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-	if(Gamepad[dwUserIndex].native) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[dwUserIndex].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
-		XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( hNativeInstance, "XInputGetCapabilities");
+		XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( g_hNativeInstance, "XInputGetCapabilities");
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
 
 	if (!pCapabilities || (dwUserIndex >= XUSER_MAX_COUNT) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS;
 
-	if(!lpXCaps[dwUserIndex]) {
+	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
+	xCaps.Type = XINPUT_DEVTYPE_GAMEPAD;
+	xCaps.SubType = g_Gamepad[dwUserIndex].gamepadtype;
+	xCaps.Flags = 0;
+	xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFFFF;
+	xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
+	//TODO -  max or center is correct? need dump from XInput device
+	xCaps.Gamepad.sThumbLX = 0;
+	xCaps.Gamepad.sThumbLY = 0;
+	xCaps.Gamepad.sThumbRX = 0;
+	xCaps.Gamepad.sThumbRY = 0;
 
-		lpXCaps[dwUserIndex] = new XINPUT_CAPABILITIES;
-		ZeroMemory(lpXCaps[dwUserIndex],sizeof(XINPUT_CAPABILITIES));
-		lpXCaps[dwUserIndex]->Type = XINPUT_DEVTYPE_GAMEPAD;
-		lpXCaps[dwUserIndex]->SubType = Gamepad[dwUserIndex].gamepadtype;
-		//XCAPS[dwUserIndex].Flags = 0;
-		lpXCaps[dwUserIndex]->Vibration.wLeftMotorSpeed 
-			= lpXCaps[dwUserIndex]->Vibration.wRightMotorSpeed 
-			= lpXCaps[dwUserIndex]->Gamepad.wButtons = 0xFFFF;
-		lpXCaps[dwUserIndex]->Gamepad.bLeftTrigger 
-			= lpXCaps[dwUserIndex]->Gamepad.bRightTrigger = 0xFF;
-		//center is more reliable because SHORT is signed
-		//XCAPS[dwUserIndex].Gamepad.sThumbLX = 0;
-		//XCAPS[dwUserIndex].Gamepad.sThumbLY = 0;
-		//XCAPS[dwUserIndex].Gamepad.sThumbRX = 0;
-		//XCAPS[dwUserIndex].Gamepad.sThumbRY = 0;
-	}
-
-	*pCapabilities = *lpXCaps[dwUserIndex];
-	WriteLog(LOG_XINPUT,L"XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
+	//WriteLog(LOG_XINPUT,L"XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
 
 	return ERROR_SUCCESS;
 }
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-	if(wNativeMode) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[0].native || g_Gamepad[1].native || g_Gamepad[2].native || g_Gamepad[3].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
-		XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( hNativeInstance, "XInputEnable");
-		return nativeXInputEnable(enable);
+		XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( g_hNativeInstance, "XInputEnable");
+		nativeXInputEnable(enable);
 	}
 
-	WriteLog(LOG_XINPUT,L"XInputEnable called, state %d",enable);
+	/*
+	Nasty trick to support XInputEnable states, because not every game calls it so:
+	- must support games that use it, and do enable/disable as needed by game
+	if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return Hook S_OK, ie. connected but state not updating
+	if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
+	- must support games that not call it
+	if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states 
+	*/
 
 	XInputIsEnabled.bEnabled = enable;
 	XInputIsEnabled.bUseEnabled = TRUE;
+
+	if(enable) WriteLog(LOG_XINPUT,L"XInput Enabled");
+	else WriteLog(LOG_XINPUT,L"XInput Disabled");
 
 }
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-	if(wNativeMode) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[dwUserIndex].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
-		XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( hNativeInstance, "XInputGetDSoundAudioDeviceGuids");
+		XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( g_hNativeInstance, "XInputGetDSoundAudioDeviceGuids");
 		return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 	}
 
-	*pDSoundRenderGuid = guidnull;
-	*pDSoundCaptureGuid = guidnull;
+	*pDSoundRenderGuid = GUID_NULL;
+	*pDSoundCaptureGuid = GUID_NULL;
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-	if(wNativeMode) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[dwUserIndex].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
-		XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( hNativeInstance, "XInputGetBatteryInformation");
+		XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( g_hNativeInstance, "XInputGetBatteryInformation");
 		return nativeXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
 	}
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	// Report a wired controller
 
-	if(!lpXBatInfo)
-	{
-		lpXBatInfo = new XINPUT_BATTERY_INFORMATION;
-		ZeroMemory(lpXBatInfo,sizeof(XINPUT_BATTERY_INFORMATION));
-		lpXBatInfo->BatteryLevel = BATTERY_LEVEL_FULL;
-		lpXBatInfo->BatteryType = BATTERY_TYPE_WIRED;
-	}
+	XINPUT_BATTERY_INFORMATION &xBatInfo = *pBatteryInformation;
+	xBatInfo.BatteryLevel = BATTERY_LEVEL_FULL;
+	xBatInfo.BatteryType = BATTERY_TYPE_WIRED;
 
-	*pBatteryInformation = *lpXBatInfo;
 	return ERROR_SUCCESS;
-
 }
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke)
 {
-	if(wNativeMode) {
-		if(!hNativeInstance) LoadOriginalDll();
+	if(g_Gamepad[dwUserIndex].native) {
+		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
-		XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( hNativeInstance, "XInputGetKeystroke");
+		XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( g_hNativeInstance, "XInputGetKeystroke");
 		return nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
 	}
 
-	if(!Gamepad[dwUserIndex].g_pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 
 	UNREFERENCED_PARAMETER(pKeystroke);

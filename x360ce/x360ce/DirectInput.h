@@ -20,7 +20,7 @@
 
 struct DINPUT_DATA 
 {
-	LPDIRECTINPUT8 g_pDI;
+	LPDIRECTINPUT8 pDI;
 	UINT refCount;
 	UINT deviceCount;
 	DINPUT_DATA()
@@ -51,8 +51,8 @@ struct DINPUT_FF
 	DICONSTANTFORCE cf;
 	DIRAMPFORCE rf;
 	DIEFFECT eff[2];
-	LPDIRECTINPUTEFFECT g_pEffect[2];
-	DWORD g_dwNumForceFeedbackAxis;
+	LPDIRECTINPUTEFFECT pEffect[2];
+	DWORD dwNumForceFeedbackAxis;
 	FLOAT forcepercent;
 	FFB_CAPS ffbcaps;
 	DINPUT_FF()
@@ -63,9 +63,10 @@ struct DINPUT_FF
 };
 
 struct DINPUT_GAMEPAD {
-	LPDIRECTINPUTDEVICE8 g_pGamepad;
+	LPDIRECTINPUTDEVICE8 pGamepad;
 	DWORD dwPadIndex;
 	BOOL connected;
+	BOOL initialized;
 	BOOL configured;
 	BOOL native;
 	BOOL axistodpad;
@@ -89,7 +90,7 @@ struct DINPUT_GAMEPAD {
 	}
 };
 
-extern struct DINPUT_GAMEPAD Gamepad[4];
+extern struct DINPUT_GAMEPAD g_Gamepad[4];
 
 HRESULT InitDirectInput( HWND hDlg, DWORD idx );
 BOOL ButtonPressed(DWORD, INT);

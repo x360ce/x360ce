@@ -17,18 +17,18 @@
 #include "globals.h"
 #include "InputHook.h"
 
-InputHook_CONIFG* InputHookConfig = NULL;
-InputHook_GAMEPAD_CONIFG* GamepadConfig[4] = {NULL,NULL,NULL,NULL};
+IHOOK_CONIFG* InputHookConfig = NULL;
+IHOOK_GAMEPAD_CONIFG* GamepadConfig[4] = {NULL,NULL,NULL,NULL};
 BOOL laststate = FALSE;
 
 ULONG ACLEntries[1] = {0};
 
-InputHook_CONIFG* InputHook_Config()
+IHOOK_CONIFG* InputHook_Config()
 {
 	return InputHookConfig;
 }
 
-InputHook_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex)
+IHOOK_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex)
 {
 	return GamepadConfig[dwUserIndex];
 }
@@ -49,7 +49,7 @@ BOOL InputHook_LastState()
 	return laststate;
 }
 
-BOOL InputHook_Init(InputHook_CONIFG* fconfig, InputHook_GAMEPAD_CONIFG* gconfig)
+BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 {
 
 	if(!fconfig) return FALSE;

@@ -21,29 +21,29 @@
 
 extern ULONG ACLEntries[1];
 
-struct InputHook_GAMEPAD_CONIFG
+struct IHOOK_GAMEPAD_CONIFG
 {
 	BOOL  bEnabled;
 	GUID  productGUID;
 	GUID  instanceGUID;
 	DWORD dwVID;
 	DWORD dwPID;
-	InputHook_GAMEPAD_CONIFG()
+	IHOOK_GAMEPAD_CONIFG()
 	{
-		ZeroMemory(this,sizeof(InputHook_GAMEPAD_CONIFG));
+		ZeroMemory(this,sizeof(IHOOK_GAMEPAD_CONIFG));
 	}
 };
 
-struct InputHook_CONIFG
+struct IHOOK_CONIFG
 {
 	BOOL  bEnabled;
 	DWORD dwHookMode;
 	DWORD dwHookVID;
 	DWORD dwHookPID;
 	DWORD dwHookWinTrust;
-	InputHook_CONIFG()
+	IHOOK_CONIFG()
 	{
-		ZeroMemory(this,sizeof(InputHook_CONIFG));
+		ZeroMemory(this,sizeof(IHOOK_CONIFG));
 	}
 };
 
@@ -55,14 +55,14 @@ void HookWMIClean();
 void HookDIClean();
 void HookWinTrustClean();
 
-InputHook_CONIFG* InputHook_Config();
-InputHook_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex);
+IHOOK_CONIFG* InputHook_Config();
+IHOOK_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex);
 
 VOID InputHook_Enable(BOOL state);
 BOOL InputHook_LastState();
 BOOL InputHook_Enable();
 
-BOOL InputHook_Init(InputHook_CONIFG* fconfig, InputHook_GAMEPAD_CONIFG* gconfig);
+BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig);
 BOOL InputHook_Clean();
 
 #endif
