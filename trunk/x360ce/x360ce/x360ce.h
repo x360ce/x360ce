@@ -16,8 +16,10 @@
 #ifndef _X360CE_H_
 #define _X360CE_H_
 
-#define LeftMotor 0
-#define RightMotor 1
+#define FFB_LEFTMOTOR 0
+#define FFB_RIGHTMOTOR 1
+
+#define XUSER_MAX XUSER_MAX_COUNT-1
 
 extern HINSTANCE g_hX360ceInstance;
 extern HINSTANCE g_hNativeInstance;

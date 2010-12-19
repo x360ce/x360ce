@@ -129,7 +129,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
-	if (!pState || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
+	if (!pState || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS; 
 
 	HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
 
@@ -404,7 +404,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 		return nativeXInputSetState(dwUserIndex,pVibration);
 	}
 
-	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS; 
+	if (!pVibration || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS; 
 
 	HRESULT hr=ERROR_SUCCESS;
 
@@ -416,23 +416,23 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
 
-	PrepareForce(dwUserIndex,LeftMotor);
-	PrepareForce(dwUserIndex,RightMotor);
+	PrepareForce(dwUserIndex,FFB_LEFTMOTOR);
+	PrepareForce(dwUserIndex,FFB_RIGHTMOTOR);
 
 	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
 	{ 
-		SetDeviceForces(dwUserIndex,0,LeftMotor);
-		SetDeviceForces(dwUserIndex,0,RightMotor);
+		SetDeviceForces(dwUserIndex,0,FFB_LEFTMOTOR);
+		SetDeviceForces(dwUserIndex,0,FFB_RIGHTMOTOR);
 		return ERROR_SUCCESS;
 	}
 
 	wLeftMotorSpeed =  static_cast<WORD>(xVib.wLeftMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
 	wRightMotorSpeed = static_cast<WORD>(xVib.wRightMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
 
-	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,LeftMotor);
+	hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,FFB_LEFTMOTOR);
 	if(FAILED(hr))
 		WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
-	hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,RightMotor);
+	hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,FFB_RIGHTMOTOR);
 	if(FAILED(hr))
 		WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
 	return ERROR_SUCCESS;
@@ -446,8 +446,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( g_hNativeInstance, "XInputGetCapabilities");
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
-
-	if (!pCapabilities || (dwUserIndex >= XUSER_MAX_COUNT) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS;
+	if (!pCapabilities || (dwUserIndex > XUSER_MAX) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS;
 
 	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
 	xCaps.Type = XINPUT_DEVTYPE_GAMEPAD;
@@ -501,10 +500,12 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 		return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 	}
 
+	if(!pDSoundRenderGuid || !pDSoundCaptureGuid || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
+	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+
 	*pDSoundRenderGuid = GUID_NULL;
 	*pDSoundCaptureGuid = GUID_NULL;
-
-	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	
 	return ERROR_SUCCESS;
 }
 
@@ -517,10 +518,10 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 		return nativeXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
 	}
 
+	if (!pBatteryInformation || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS; 
 	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	// Report a wired controller
-
 	XINPUT_BATTERY_INFORMATION &xBatInfo = *pBatteryInformation;
 	xBatInfo.BatteryLevel = BATTERY_LEVEL_FULL;
 	xBatInfo.BatteryType = BATTERY_TYPE_WIRED;
@@ -528,7 +529,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 	return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke)
+extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
 	if(g_Gamepad[dwUserIndex].native) {
 		if(!g_hNativeInstance) LoadOriginalDll();
@@ -536,11 +537,8 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 		XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( g_hNativeInstance, "XInputGetKeystroke");
 		return nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
 	}
-
+	if (!pKeystroke || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS; 
 	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-
-	UNREFERENCED_PARAMETER(pKeystroke);
-
-	return ERROR_EMPTY;
+	return ERROR_EMPTY; //no key pressed
 }

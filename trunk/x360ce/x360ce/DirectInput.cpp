@@ -657,12 +657,12 @@ HRESULT SetDeviceForcesNew(DWORD idx, WORD force, WORD motor)
 
 	LONG nForce = MulDiv(force, DI_FFNOMINALMAX, 65535);
 	nForce = clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
-	if(motor == LeftMotor) {
+	if(motor == FFB_LEFTMOTOR) {
 		g_Gamepad[idx].ff.eff[motor].dwDuration = g_Gamepad[idx].ff.leftPeriod*1000;
 		g_Gamepad[idx].ff.pf.dwMagnitude = (DWORD) nForce;
 		g_Gamepad[idx].ff.pf.dwPeriod = g_Gamepad[idx].ff.leftPeriod*1000;
 	}
-	if(motor == RightMotor)  {
+	if(motor == FFB_RIGHTMOTOR)  {
 		g_Gamepad[idx].ff.eff[motor].dwDuration = g_Gamepad[idx].ff.rightPeriod*1000;
 		g_Gamepad[idx].ff.pf.dwMagnitude = (DWORD) nForce;
 		g_Gamepad[idx].ff.pf.dwPeriod = g_Gamepad[idx].ff.rightPeriod*1000;
@@ -720,8 +720,8 @@ HRESULT PrepareForceNew(DWORD idx, WORD motor)
 		g_Gamepad[idx].ff.eff[motor].lpvTypeSpecificParams = &g_Gamepad[idx].ff.rf;
 
 		GUID geff;
-		if ( motor == LeftMotor ) geff = GUID_SawtoothDown;
-		if ( motor == RightMotor ) geff = GUID_SawtoothUp;
+		if ( motor == FFB_LEFTMOTOR ) geff = GUID_SawtoothDown;
+		if ( motor == FFB_RIGHTMOTOR ) geff = GUID_SawtoothUp;
 
 		// Create the prepared effect
 		hr = g_Gamepad[idx].pGamepad->CreateEffect(geff, &g_Gamepad[idx].ff.eff[motor], &g_Gamepad[idx].ff.pEffect[motor], NULL);
