@@ -61,7 +61,7 @@ VOID Createx360ceWindow(HINSTANCE hInstance)
 		CW_USEDEFAULT,		// default height 
 		HWND_MESSAGE,		// message-only window 
 		NULL,				// no class menu 
-		hInstance,				// handle to application instance 
+		hInstance,			// handle to application instance 
 		NULL);				// no window-creation data 
 	
 	if(!g_hWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
@@ -116,7 +116,7 @@ HRESULT XInit(DWORD dwUserIndex)
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	//WriteLog(_T("XInputGetState"));
+	//WriteLog(LOG_XINPUT,L"XInputGetState");
 	if(g_Gamepad[dwUserIndex].native) {
 		if(!g_hNativeInstance) LoadOriginalDll();
 		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
@@ -405,6 +405,9 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	XINPUT_VIBRATION &xVib = *pVibration;
 
+	//WriteLog(LOG_XINPUT,L"%u",xVib.wLeftMotorSpeed);
+	//WriteLog(LOG_XINPUT,L"%u",xVib.wRightMotorSpeed);
+
 	if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 	if(!g_Gamepad[dwUserIndex].ff.useforce) return ERROR_SUCCESS;
 
@@ -441,7 +444,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 		XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( g_hNativeInstance, "XInputGetCapabilities");
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
-	if (!pCapabilities || (dwUserIndex > XUSER_MAX) || (dwFlags &~1) ) return ERROR_BAD_ARGUMENTS;
+	if (!pCapabilities || (dwUserIndex > XUSER_MAX) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
 
 	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
 	xCaps.Type = XINPUT_DEVTYPE_GAMEPAD;
