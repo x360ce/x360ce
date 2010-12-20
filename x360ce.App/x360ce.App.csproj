@@ -239,6 +239,7 @@
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power_Mod.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_G27_Racing_Wheel_USB.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_WingMan_Formula_Force_GP_USB.ini" />
+    <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
