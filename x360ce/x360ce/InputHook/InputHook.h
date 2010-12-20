@@ -59,7 +59,7 @@ IHOOK_CONIFG* InputHook_Config();
 IHOOK_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex);
 
 VOID InputHook_Enable(BOOL state);
-BOOL InputHook_LastState();
+DWORD InputHook_Mode();
 BOOL InputHook_Enable();
 
 BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig);

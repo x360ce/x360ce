@@ -23,7 +23,7 @@
 
 XINPUT_ENABLE XInputIsEnabled;
 
-BOOL RegisterWindowClass(HINSTANCE hinstance) 
+BOOL RegisterWindowClass(HINSTANCE hInstance) 
 { 
 	WNDCLASS wc; 
 
@@ -34,7 +34,7 @@ BOOL RegisterWindowClass(HINSTANCE hinstance)
 	wc.lpfnWndProc = DefWindowProc;     // points to window procedure 
 	wc.cbClsExtra = 0;                // no extra class memory 
 	wc.cbWndExtra = 0;                // no extra window memory 
-	wc.hInstance = hinstance;         // handle to instance 
+	wc.hInstance = hInstance;         // handle to instance 
 	wc.hIcon = NULL;              // predefined app. icon 
 	wc.hCursor = NULL;                    // predefined arrow 
 	wc.hbrBackground = NULL;    // white background brush 
@@ -45,27 +45,26 @@ BOOL RegisterWindowClass(HINSTANCE hinstance)
 	return RegisterClass(&wc); 
 } 
 
-BOOL Createx360ceWindow(HINSTANCE hInst)
+VOID Createx360ceWindow(HINSTANCE hInstance)
 {
-	if(RegisterWindowClass(hInst)) {
-		g_hWnd = CreateWindow( 
-			L"x360ceWClass",  // name of window class
-			L"x360ce",        // title-bar string 
-			WS_OVERLAPPEDWINDOW, // top-level window 
-			CW_USEDEFAULT,       // default horizontal position 
-			CW_USEDEFAULT,       // default vertical position 
-			CW_USEDEFAULT,       // default width 
-			CW_USEDEFAULT,       // default height 
-			NULL,         // no owner window 
-			NULL,        // use class menu 
-			hInst,     // handle to application instance 
-			NULL);      // no window-creation data 
-		return TRUE;
-	}
-	else {
-		WriteLog(LOG_CORE,L"RegisterWindowClass Failed");
-		return FALSE;
-	}
+	BOOL ret = RegisterWindowClass(hInstance);
+	if(!ret) WriteLog(LOG_CORE,L"RegisterWindowClass failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+
+	//HWND_MESSAGE window is not visible, has no z-order and cannot be enumerated - fixes GRID
+	g_hWnd = CreateWindow( 
+		L"x360ceWClass",	// name of window class
+		L"x360ce",			// title-bar string 
+		WS_TILED,			// normal window 
+		CW_USEDEFAULT,		// default horizontal position 
+		CW_USEDEFAULT,		// default vertical position 
+		CW_USEDEFAULT,		// default width 
+		CW_USEDEFAULT,		// default height 
+		HWND_MESSAGE,		// message-only window 
+		NULL,				// no class menu 
+		hInstance,				// handle to application instance 
+		NULL);				// no window-creation data 
+	
+	if(!g_hWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
 }
 
 HRESULT XInit(DWORD dwUserIndex)
@@ -74,15 +73,11 @@ HRESULT XInit(DWORD dwUserIndex)
 	{
 		HRESULT hr=ERROR_SUCCESS;
 
-		if(!g_hWnd) {	
-			if(!Createx360ceWindow(g_hX360ceInstance)) {
-				WriteLog(LOG_CORE,L"x360ce window not created, ForceFeedback will be disabled !");
-			}
-		}
+		if(!g_hWnd) Createx360ceWindow(g_hX360ceInstance);
 
 		if(!g_Gamepad[dwUserIndex].pGamepad){ 
 
-			if(InputHook_Enable()) {
+			if(InputHook_Enable() && (InputHook_Mode() > 1)) {
 				InputHook_Enable(FALSE);
 				WriteLog(LOG_CORE,L"Temporary disable InputHook");
 			}
@@ -110,8 +105,8 @@ HRESULT XInit(DWORD dwUserIndex)
 			WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",dwUserIndex+1);
 		}
 
-		if(InputHook_Enable()) {
-			InputHook_Enable(InputHook_LastState());
+		if(!InputHook_Enable() && (InputHook_Mode() > 1)) {
+			InputHook_Enable(TRUE);
 			WriteLog(LOG_CORE,L"Restore InputHook state");
 		}
 		return ERROR_SUCCESS;

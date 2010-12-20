@@ -44,9 +44,9 @@ BOOL InputHook_Enable()
 	return InputHook_Config()->bEnabled;
 }
 
-BOOL InputHook_LastState()
+DWORD InputHook_Mode()
 {
-	return laststate;
+	return InputHookConfig->dwHookMode;
 }
 
 BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
