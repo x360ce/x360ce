@@ -1,4 +1,8 @@
-﻿v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
+﻿v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
+- Update: Compatibility with latest x360ce Library.
+- New: SL-6555-SBK preset added.
+
+v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
 - Update: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
 
 v2.0.2.94 (2010-11-22)
