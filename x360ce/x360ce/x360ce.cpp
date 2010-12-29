@@ -234,6 +234,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 			switch (triggerType) {
 			case AXIS:
 			case HAXIS:
+			case CBUT: // add /////////////////////////////////////////////////////////
 				values = axis;
 				break;
 			case SLIDER:
@@ -278,17 +279,56 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				// Half range
 			case HAXIS:
 			case HSLIDER:
+			case CBUT: // add /////////////////////////////////////////////////////////
 				scaling = 128; offset = 0;
 				break;
 			default:
 				scaling = 1; offset = 0;
 				break;
 			}
-
-			v2 = (v + offset) / scaling;
-
+			
+			
+			//v2 = (v + offset) / scaling;
 			// Add deadzones
-			*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
+			//*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
+
+			
+			/////////////////////////////////////////////////////////////////////////////////////////
+			if (triggerType == CBUT) {
+
+				if (ButtonPressed(PadMap.Trigger[0].but,dwUserIndex) 
+					&& ButtonPressed(PadMap.Trigger[1].but,dwUserIndex)) {
+						*(targetTrigger[0]) = 255;
+						*(targetTrigger[1]) = 255;
+				}
+
+				if (ButtonPressed(PadMap.Trigger[0].but,dwUserIndex) 
+					&& !ButtonPressed(PadMap.Trigger[1].but,dwUserIndex)) {
+						v2 = (offset-v) / scaling;
+						*(targetTrigger[0]) = 255;
+						*(targetTrigger[1]) = 255 - (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
+				}
+
+				if (!ButtonPressed(PadMap.Trigger[0].but,dwUserIndex) 
+					&& ButtonPressed(PadMap.Trigger[1].but,dwUserIndex)) {
+						v2 = (offset+v) / scaling;
+						*(targetTrigger[0]) = 255 - (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
+						*(targetTrigger[1]) = 255;
+				}
+
+				if (!ButtonPressed(PadMap.Trigger[0].but,dwUserIndex) 
+					&& !ButtonPressed(PadMap.Trigger[1].but,dwUserIndex)) {
+						v2 = (offset+v) / scaling;
+						*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
+					}
+
+			} else {
+				v2 = (offset+v) / scaling;
+				*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, g_Gamepad[dwUserIndex].tdeadzone, 255);
+			}
+			/////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 		}
 	}

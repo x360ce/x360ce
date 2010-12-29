@@ -181,6 +181,10 @@ void ReadPadConfig(DWORD idx) {
 
 	for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
 	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
+	///////////////////////////////////////////////////////////////////////////////////////
+	for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].but = -1;
+	///////////////////////////////////////////////////////////////////////////////////////
+
 	PadMap.DpadPOV = -1;
 
 	for (INT i=0; i<10; ++i) {
@@ -256,6 +260,19 @@ void ReadPadConfig(DWORD idx) {
 		}
 	}
 
+///////////////////////////////////////////////////////////////////////////////////////
+	if (ReadStringFromFile(section, L"Left Trigger But", buffer) > 0) {
+		LPWSTR a = buffer;
+		PadMap.Trigger[0].but = _wtoi(a) - 1;
+	}
+	
+	if (ReadStringFromFile(section, L"Right Trigger But", buffer) > 0) {
+		LPWSTR a = buffer;
+		PadMap.Trigger[1].but = _wtoi(a) - 1;
+	}
+///////////////////////////////////////////////////////////////////////////////////////
+
+
 	if (ReadUINTFromFile(section, L"D-pad POV") > 0) {
 		PadMap.DpadPOV = static_cast<INT>(ReadUINTFromFile(section, L"D-pad POV",0)) - 1;
 	}
@@ -266,6 +283,9 @@ MappingType getTriggerType(LPCWSTR s) {
 	if (towlower(*s) == L'a') return AXIS;	// Axis
 	if (towlower(*s) == L's') return SLIDER;	// Slider
 	if (towlower(*s) == L'x') return HAXIS;	// Half range axis
-	if (towlower(*s) == L'h') return HSLIDER;	// Half range slider
+	if (towlower(*s) == L'h') return HSLIDER;	// Half range slider	
+	////////////////////////////////////////////////////////////////////
+	if (towlower(*s) == L'z') return CBUT;	
+	////////////////////////////////////////////////////////////////////
 	return DIGITAL;							// Digital
 }
