@@ -18,7 +18,7 @@
 
 #include "InputHook\InputHook.h"
 
-enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER };
+enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };// add CBUT
 
 struct AxisMap {
 	INT id;
@@ -36,6 +36,9 @@ struct AxisMap {
 struct TriggerMap {
 	INT id;			// Index for the mapped button/axis/slider
 	MappingType type;
+	////////////////////////////////////////////////////////////////
+	INT but;
+	////////////////////////////////////////////////////////////////
 	TriggerMap() {
 		type = NONE;
 	}
