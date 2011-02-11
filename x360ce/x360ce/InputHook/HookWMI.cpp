@@ -25,9 +25,10 @@
 #include <oleauto.h>
 #include <dinput.h>
 
+// COM CLSIDs
 #pragma comment(lib,"wbemuuid.lib")
 
-//EasyHook
+// EasyHook handles
 TRACED_HOOK_HANDLE		hHookGet = NULL;
 TRACED_HOOK_HANDLE		hHookNext = NULL;
 TRACED_HOOK_HANDLE		hHookCreateInstanceEnum = NULL;

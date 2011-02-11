@@ -17,66 +17,65 @@
 #include "globals.h"
 #include "InputHook.h"
 
-IHOOK_CONIFG* InputHookConfig = NULL;
-IHOOK_GAMEPAD_CONIFG* GamepadConfig[4] = {NULL,NULL,NULL,NULL};
+IHOOK_CONIFG InputHookConfig;
+IHOOK_GAMEPAD_CONIFG GamepadConfig[4];
 BOOL laststate = FALSE;
 
 ULONG ACLEntries[1];
 
 IHOOK_CONIFG* InputHook_Config()
 {
-	return InputHookConfig;
+	return &InputHookConfig;
 }
 
 IHOOK_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex)
 {
-	return GamepadConfig[dwUserIndex];
+	return &GamepadConfig[dwUserIndex];
 }
 
 VOID InputHook_Enable(BOOL state)
 {
-	InputHook_Config()->bEnabled = state;
+	InputHookConfig.bEnabled = state;
 	laststate = state;
 }
 
 BOOL InputHook_Enable()
 {
-	return InputHook_Config()->bEnabled;
+	return InputHookConfig.bEnabled;
 }
 
 DWORD InputHook_Mode()
 {
-	return InputHookConfig->dwHookMode;
+	return InputHookConfig.dwHookMode;
 }
 
 BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 {
 
 	if(!fconfig) return FALSE;
-
-	InputHookConfig = fconfig;
-
 	if(!fconfig->bEnabled) return FALSE;
+
+	memcpy(&InputHookConfig,fconfig,sizeof(IHOOK_CONIFG));
 
 	for(WORD i = 0; i < 4; i++) {
 
-		GamepadConfig[i] = gconfig;
+		memcpy(&GamepadConfig[i],gconfig,sizeof(IHOOK_GAMEPAD_CONIFG));
 		gconfig++;
 
-		if(!IsEqualGUID(InputHook_GamepadConfig(i)->productGUID, GUID_NULL) && !IsEqualGUID(InputHook_GamepadConfig(i)->instanceGUID, GUID_NULL))
+		if(!IsEqualGUID(GamepadConfig[i].productGUID, GUID_NULL) && !IsEqualGUID(GamepadConfig[i].instanceGUID, GUID_NULL))
 		{
-			if(!InputHook_GamepadConfig(i)->dwVID) InputHook_GamepadConfig(i)->dwVID = LOWORD(InputHook_GamepadConfig(i)->productGUID.Data1);
-			if(!InputHook_GamepadConfig(i)->dwPID) InputHook_GamepadConfig(i)->dwPID = HIWORD(InputHook_GamepadConfig(i)->productGUID.Data1);
+			if(!GamepadConfig[i].dwVID) GamepadConfig[i].dwVID = LOWORD(GamepadConfig[i].productGUID.Data1);
+			if(!GamepadConfig[i].dwPID) GamepadConfig[i].dwPID = HIWORD(GamepadConfig[i].productGUID.Data1);
 		}
-		else InputHook_GamepadConfig(i)->bEnabled = FALSE;
+		else GamepadConfig[i].bEnabled = FALSE;
 	}
 	
 	LhSetGlobalExclusiveACL(ACLEntries,0);
 
-	if(InputHook_Config()->bEnabled) {
+	if(InputHookConfig.bEnabled) {
 		HookWMI();
-		if(InputHook_Config()->dwHookMode >= 2) HookDI();
-		if(InputHook_Config()->dwHookWinTrust) HookWinTrust();
+		if(InputHookConfig.dwHookMode >= 2) HookDI();
+		if(InputHookConfig.dwHookWinTrust) HookWinTrust();
 	}
 
 	return TRUE;
