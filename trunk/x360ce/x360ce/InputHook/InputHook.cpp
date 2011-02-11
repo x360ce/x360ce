@@ -21,7 +21,7 @@ IHOOK_CONIFG* InputHookConfig = NULL;
 IHOOK_GAMEPAD_CONIFG* GamepadConfig[4] = {NULL,NULL,NULL,NULL};
 BOOL laststate = FALSE;
 
-ULONG ACLEntries[1] = {0};
+ULONG ACLEntries[1];
 
 IHOOK_CONIFG* InputHook_Config()
 {
@@ -71,6 +71,8 @@ BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 		else InputHook_GamepadConfig(i)->bEnabled = FALSE;
 	}
 	
+	LhSetGlobalExclusiveACL(ACLEntries,0);
+
 	if(InputHook_Config()->bEnabled) {
 		HookWMI();
 		if(InputHook_Config()->dwHookMode >= 2) HookDI();

@@ -164,7 +164,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
 				hHookGet = new HOOK_TRACE_INFO();
 
 				LhInstallHook(OriginalGet,HookGet,static_cast<PVOID>(NULL),hHookGet);
-				LhSetInclusiveACL(ACLEntries, 1, hHookGet);
+				LhSetExclusiveACL(ACLEntries, 0, hHookGet);
 			}
 		}
 	}
@@ -198,7 +198,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 				hHookNext = new HOOK_TRACE_INFO();
 
 				LhInstallHook(OriginalNext,HookNext,static_cast<PVOID>(NULL),hHookNext);
-				LhSetInclusiveACL(ACLEntries, 1, hHookNext);
+				LhSetExclusiveACL(ACLEntries, 0, hHookNext);
 
 			}
 		}
@@ -237,7 +237,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 				hHookCreateInstanceEnum = new HOOK_TRACE_INFO();
 
 				LhInstallHook(OriginalCreateInstanceEnum,HookCreateInstanceEnum,static_cast<PVOID>(NULL),hHookCreateInstanceEnum);
-				LhSetInclusiveACL(ACLEntries, 1, hHookCreateInstanceEnum);
+				LhSetExclusiveACL(ACLEntries, 0, hHookCreateInstanceEnum);
 			}
 		}
 	}
@@ -268,7 +268,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 				hHookConnectServer = new HOOK_TRACE_INFO();
 
 				LhInstallHook(OriginalConnectServer,HookConnectServer,static_cast<PVOID>(NULL),hHookConnectServer);
-				LhSetInclusiveACL(ACLEntries, 1, hHookConnectServer);
+				LhSetExclusiveACL(ACLEntries, 0, hHookConnectServer);
 			}
 		}
 	}
@@ -330,7 +330,7 @@ void HookWMI()
 		WriteLog(LOG_IHOOK,L"HookCoCreateInstance:: Hooking");
 
 		LhInstallHook(OriginalCoCreateInstance,HookCoCreateInstance,static_cast<PVOID>(NULL),hHookCoCreateInstance);
-		LhSetInclusiveACL(ACLEntries, 1, hHookCoCreateInstance);
+		LhSetExclusiveACL(ACLEntries, 0, hHookCoCreateInstance);
 
 	}
 	if(!OriginalCoUninitialize) {
@@ -339,7 +339,7 @@ void HookWMI()
 		WriteLog(LOG_IHOOK,L"HookCoUninitialize:: Hooking");
 
 		LhInstallHook(OriginalCoUninitialize,HookCoUninitialize,static_cast<PVOID>(NULL),hHookCoUninitialize);
-		LhSetInclusiveACL(ACLEntries, 1, hHookCoUninitialize);
+		LhSetExclusiveACL(ACLEntries, 0, hHookCoUninitialize);
 
 	}
 }
