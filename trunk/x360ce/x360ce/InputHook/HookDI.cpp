@@ -234,6 +234,8 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 	HRESULT hr;
 	hr = OriginalGetDeviceInfoA ( This, pdidi );
 
+	if(pdidi) {
+
 	// Fast return if keyboard or mouse
 	if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD)) {
 		WriteLog(LOG_HOOKDI,L"HookGetDeviceInfoA:: Keyboard detected");
@@ -244,7 +246,6 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 		return hr;
 	}
 
-	if(pdidi) {
 		if(InputHook_Config()->dwHookMode >= 2) {
 
 			for(int i = 0; i < 4; i++) {
@@ -294,15 +295,13 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDEVICEINSTANCEW pdidi)
 {
-	WriteLog(LOG_HOOKDI,L"debug: %u %u",InputHook_Config()->bEnabled, InputHook_Config()->dwHookMode);
-
 	if(!InputHook_Config()->bEnabled) return OriginalGetDeviceInfoW ( This, pdidi );
 	WriteLog(LOG_HOOKDI,L"HookGetDeviceInfoW");
 
 	HRESULT hr = OriginalGetDeviceInfoW ( This, pdidi );
 
-	if(pdidi) {
-
+	if(pdidi) 
+	{
 
 	// Fast return if keyboard or mouse
 	if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD)) {
@@ -313,9 +312,6 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 		WriteLog(LOG_HOOKDI,L"HookGetDeviceInfoW:: Mouse detected");
 		return hr;
 	}
-
-
-	WriteLog(LOG_HOOKDI,L"hi from pdidi if");
 
 		if(InputHook_Config()->dwHookMode >= 2) {
 

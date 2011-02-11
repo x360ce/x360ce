@@ -19,6 +19,7 @@
 enum LogType{ LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKDI, LOG_HOOKWMI, LOG_HOOKWT };
 
 // prototypes
+void WriteStamp();
 void LogEnable(BOOL log);
 BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR foldename,size_t foldename_size);
 void Console();

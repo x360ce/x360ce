@@ -80,6 +80,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	Console();
 	LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
 
+	WriteStamp();
+
 #if SVN_MODS != 0 
 	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
 #else 

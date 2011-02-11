@@ -33,6 +33,27 @@ static LPCWSTR LogTypeNames[] = {
 	L"[HookWT]    ",
 };
 
+void WriteStamp()
+{
+	if(enableconsole)
+	{
+		wprintf(L"%s",L"TIME           THREAD   TYPE        DATA");
+		wprintf(L"\n");
+	}
+
+	if (writelog) {
+		FILE * fp;
+		_wfopen_s(&fp, lpLogFileName, L"a");
+
+		//fp is null, file is not open.
+		if (fp==NULL)
+			return;
+		fwprintf(fp, L"%s",L"TIME           THREAD   TYPE        DATA");
+		fwprintf(fp, L"\n");
+		fclose(fp);
+	}
+}
+
 void ConsoleEnable(BOOL console) 
 {
 	enableconsole = console;
@@ -102,7 +123,8 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
 
 	if(enableconsole)
 	{
-		wprintf(L"%02u:%02u:%02u.%03u:: %s", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,LogTypeNames[logType]);
+		wprintf(L"%02u:%02u:%02u.%03u:: %08u %s",\
+			systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
 		va_list arglist;
 		va_start(arglist,str);
 		vwprintf(str,arglist);
@@ -118,7 +140,8 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
 		//fp is null, file is not open.
 		if (fp==NULL)
 			return 0;
-		fwprintf(fp, L"%02u:%02u:%02u.%03u:: %s", systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,LogTypeNames[logType]);
+		fwprintf(fp, L"%02u:%02u:%02u.%03u:: %08u %s",\
+			systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
 		va_list arglist;
 		va_start(arglist,str);
 		vfwprintf(fp,str,arglist);
