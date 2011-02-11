@@ -294,11 +294,15 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDEVICEINSTANCEW pdidi)
 {
+	WriteLog(LOG_HOOKDI,L"debug: %u %u",InputHook_Config()->bEnabled, InputHook_Config()->dwHookMode);
+
 	if(!InputHook_Config()->bEnabled) return OriginalGetDeviceInfoW ( This, pdidi );
 	WriteLog(LOG_HOOKDI,L"HookGetDeviceInfoW");
 
-	HRESULT hr;
-	hr = OriginalGetDeviceInfoW ( This, pdidi );
+	HRESULT hr = OriginalGetDeviceInfoW ( This, pdidi );
+
+	if(pdidi) {
+
 
 	// Fast return if keyboard or mouse
 	if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD)) {
@@ -310,12 +314,13 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 		return hr;
 	}
 
-	if(pdidi) {
+
+	WriteLog(LOG_HOOKDI,L"hi from pdidi if");
 
 		if(InputHook_Config()->dwHookMode >= 2) {
 
 			for(int i = 0; i < 4; i++) {
-				if(InputHook_GamepadConfig(i)->bEnabled && InputHook_GamepadConfig(i)->productGUID.Data1 == pdidi->guidProduct.Data1) {
+				if(InputHook_GamepadConfig(i)->productGUID.Data1 == pdidi->guidProduct.Data1) {
 					
 
 					DWORD dwHookPIDVID = static_cast<DWORD>(MAKELONG(InputHook_Config()->dwHookVID,InputHook_Config()->dwHookPID));
@@ -394,8 +399,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
 	if(!InputHook_Config()->bEnabled) return OriginalGetPropertyW(This, rguidProp, pdiph);
-	HRESULT hr;
-	hr = OriginalGetPropertyW(This, rguidProp, pdiph);
+	HRESULT hr = OriginalGetPropertyW(This, rguidProp, pdiph);
 	WriteLog(LOG_HOOKDI,L"HookGetPropertyW");
 
 	if (InputHook_Config()->dwHookMode >= 2 ) {
@@ -440,14 +444,14 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
 			hHookGetDeviceInfoA = new HOOK_TRACE_INFO();
 
 			LhInstallHook(OriginalGetDeviceInfoA,HookGetDeviceInfoA,static_cast<PVOID>(NULL),hHookGetDeviceInfoA);
-			LhSetInclusiveACL(ACLEntries, 1,hHookGetDeviceInfoA );
+			LhSetExclusiveACL(ACLEntries, 0,hHookGetDeviceInfoA );
 		}
 		if(!OriginalGetPropertyA) {
 			OriginalGetPropertyA = (*lplpDirectInputDevice)->lpVtbl->GetProperty;
 			hHookGetPropertyA = new HOOK_TRACE_INFO();
 
 			LhInstallHook(OriginalGetPropertyA,HookGetPropertyA,static_cast<PVOID>(NULL),hHookGetPropertyA);
-			LhSetInclusiveACL(ACLEntries, 1,hHookGetPropertyA );
+			LhSetExclusiveACL(ACLEntries, 0,hHookGetPropertyA );
 		}
 	}
 	return hr;
@@ -470,18 +474,20 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 
 	if(*lplpDirectInputDevice) {
 		if(!OriginalGetDeviceInfoW) {
+			WriteLog(LOG_HOOKDI,L"OriginalGetDeviceInfoW:: Hooking");
 			OriginalGetDeviceInfoW = (*lplpDirectInputDevice)->lpVtbl->GetDeviceInfo;
 			hHookGetDeviceInfoW = new HOOK_TRACE_INFO();
 
 			LhInstallHook(OriginalGetDeviceInfoW,HookGetDeviceInfoW,static_cast<PVOID>(NULL),hHookGetDeviceInfoW);
-			LhSetInclusiveACL(ACLEntries, 1,hHookGetDeviceInfoW );
+			LhSetExclusiveACL(ACLEntries, 0,hHookGetDeviceInfoW );
 		}
 		if(!OriginalGetPropertyW) {
+			WriteLog(LOG_HOOKDI,L"OriginalGetPropertyW:: Hooking");
 			OriginalGetPropertyW = (*lplpDirectInputDevice)->lpVtbl->GetProperty;
 			hHookGetPropertyW = new HOOK_TRACE_INFO();
 
 			LhInstallHook(OriginalGetPropertyW,HookGetPropertyW,static_cast<PVOID>(NULL),hHookGetPropertyW);
-			LhSetInclusiveACL(ACLEntries, 1,hHookGetPropertyW );
+			LhSetExclusiveACL(ACLEntries, 0,hHookGetPropertyW );
 		}
 	}
 	return hr;
@@ -513,7 +519,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 					hHookCreateDeviceA = new HOOK_TRACE_INFO();
 
 					LhInstallHook(OriginalCreateDeviceA,HookCreateDeviceA,static_cast<PVOID>(NULL),hHookCreateDeviceA);
-					LhSetInclusiveACL(ACLEntries, 1,hHookCreateDeviceA );
+					LhSetExclusiveACL(ACLEntries, 0,hHookCreateDeviceA );
 				}
 				if(!OriginalEnumDevicesA)
 				{
@@ -521,7 +527,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 					hHookEnumDevicesA = new HOOK_TRACE_INFO();
 
 					LhInstallHook(OriginalEnumDevicesA,HookEnumDevicesA,static_cast<PVOID>(NULL),hHookEnumDevicesA);
-					LhSetInclusiveACL(ACLEntries, 1,hHookEnumDevicesA );
+					LhSetExclusiveACL(ACLEntries, 0,hHookEnumDevicesA );
 				}
 			}
 		}
@@ -534,7 +540,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 					hHookCreateDeviceW = new HOOK_TRACE_INFO();
 
 					LhInstallHook(OriginalCreateDeviceW,HookCreateDeviceW,static_cast<PVOID>(NULL),hHookCreateDeviceW);
-					LhSetInclusiveACL(ACLEntries, 1,hHookCreateDeviceW );
+					LhSetExclusiveACL(ACLEntries, 0,hHookCreateDeviceW );
 				}
 				if(!OriginalEnumDevicesW)
 				{
@@ -542,7 +548,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 					hHookEnumDevicesW = new HOOK_TRACE_INFO();
 
 					LhInstallHook(OriginalEnumDevicesW,HookEnumDevicesW,static_cast<PVOID>(NULL),hHookEnumDevicesW);
-					LhSetInclusiveACL(ACLEntries, 1,hHookEnumDevicesW );
+					LhSetExclusiveACL(ACLEntries, 0,hHookEnumDevicesW );
 				}
 			}
 		}
@@ -561,7 +567,7 @@ void HookDI()
 		WriteLog(LOG_IHOOK,L"HookDirectInput8Create:: Hooking");
 
 		LhInstallHook(OriginalDirectInput8Create,HookDirectInput8Create,static_cast<PVOID>(NULL),hHookDirectInput8Create);
-		LhSetInclusiveACL(ACLEntries, 1,hHookDirectInput8Create );
+		LhSetExclusiveACL(ACLEntries, 0,hHookDirectInput8Create );
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

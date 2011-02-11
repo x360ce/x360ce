@@ -45,7 +45,7 @@ void HookWinTrust()
 		WriteLog(LOG_IHOOK,L"HookWinTrust:: Hooking");
 
 		LhInstallHook(OriginalWinVerifyTrust,HookWinVerifyTrust,static_cast<PVOID>(NULL),hHookWinVerifyTrust);
-		LhSetInclusiveACL(ACLEntries, 1, hHookWinVerifyTrust);
+		LhSetExclusiveACL(ACLEntries, 0, hHookWinVerifyTrust);
 	}
 }
 
