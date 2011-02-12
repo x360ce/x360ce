@@ -109,9 +109,11 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CallingConvention>StdCall</CallingConvention>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Aux_ulib.lib;GS_x86.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Aux_ulib.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EasyHook32.dll</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -127,7 +129,7 @@ copy "$(TargetDir)\EasyHookSvc.exe" "$(TargetDir)\EasyHook32Svc.exe"
 </Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>Aux_ulib.lib;GS_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Aux_ulib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -187,9 +189,10 @@ copy "$(TargetDir)\EasyHookSvc.exe" "$(TargetDir)\EasyHook32Svc.exe"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <AssemblerOutput>All</AssemblerOutput>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <DisableSpecificWarnings>4995</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Aux_ulib.lib;GS_x86.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Aux_ulib.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EasyHook32.dll</OutputFile>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -207,7 +210,7 @@ copy "$(TargetDir)\EasyHookSvc.exe" "$(TargetDir)\EasyHook32Svc.exe"
     </PostBuildEvent>
     <ProjectReference />
     <Lib>
-      <AdditionalDependencies>Aux_ulib.lib;GS_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Aux_ulib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -230,11 +233,11 @@ copy "$(TargetDir)\EasyHookSvc.exe" "$(TargetDir)\EasyHook32Svc.exe"
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CallingConvention>StdCall</CallingConvention>
-      <CompileAs>CompileAsCpp</CompileAs>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <DisableSpecificWarnings>4995</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Aux_ulib_x64.lib;GS_x64.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
