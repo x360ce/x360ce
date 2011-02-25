@@ -111,7 +111,7 @@ HRESULT XInit(DWORD dwUserIndex)
 		}
 		return ERROR_SUCCESS;
 	}
-	return ERROR_DEVICE_NOT_CONNECTED; //should be never called
+	return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
@@ -386,9 +386,9 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		//WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
 
 		if(g_Gamepad[dwUserIndex].state.lX - g_Gamepad[dwUserIndex].axistodpadoffset > g_Gamepad[dwUserIndex].axistodpaddeadzone)
-			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_LEFT_THUMB;
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 		if(g_Gamepad[dwUserIndex].state.lX - g_Gamepad[dwUserIndex].axistodpadoffset < -g_Gamepad[dwUserIndex].axistodpaddeadzone)
-			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_RIGHT_THUMB;
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
 
 		if(g_Gamepad[dwUserIndex].state.lY - g_Gamepad[dwUserIndex].axistodpadoffset < -g_Gamepad[dwUserIndex].axistodpaddeadzone)
 			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
