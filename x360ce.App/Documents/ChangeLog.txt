@@ -1,4 +1,8 @@
-﻿v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
+﻿v2.0.2.98 (2011-03-18)
+- Update: Keyboard Navigation Updated
+- Update: Updated to xinput1_3.dll v3.3.0.398.
+
+v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
 - Update: Compatibility with latest x360ce Library.
 - New: SL-6555-SBK preset added.
 

@@ -101,7 +101,7 @@
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
             this.DiEffectsDataGridView.Size = new System.Drawing.Size(609, 231);
-            this.DiEffectsDataGridView.TabIndex = 55;
+            this.DiEffectsDataGridView.TabIndex = 0;
             // 
             // DiEffectNameColumn
             // 
@@ -137,7 +137,7 @@
             this.DiCapDPadsLabel.Location = new System.Drawing.Point(427, 143);
             this.DiCapDPadsLabel.Name = "DiCapDPadsLabel";
             this.DiCapDPadsLabel.Size = new System.Drawing.Size(86, 13);
-            this.DiCapDPadsLabel.TabIndex = 48;
+            this.DiCapDPadsLabel.TabIndex = 0;
             this.DiCapDPadsLabel.Text = "DiCapPovsLabel";
             // 
             // DiCapButtonsLabel
@@ -146,7 +146,7 @@
             this.DiCapButtonsLabel.Location = new System.Drawing.Point(427, 126);
             this.DiCapButtonsLabel.Name = "DiCapButtonsLabel";
             this.DiCapButtonsLabel.Size = new System.Drawing.Size(98, 13);
-            this.DiCapButtonsLabel.TabIndex = 49;
+            this.DiCapButtonsLabel.TabIndex = 0;
             this.DiCapButtonsLabel.Text = "DiCapButtonsLabel";
             // 
             // DiDPadLabel
@@ -155,7 +155,7 @@
             this.DiDPadLabel.Location = new System.Drawing.Point(228, 32);
             this.DiDPadLabel.Name = "DiDPadLabel";
             this.DiDPadLabel.Size = new System.Drawing.Size(40, 13);
-            this.DiDPadLabel.TabIndex = 47;
+            this.DiDPadLabel.TabIndex = 0;
             this.DiDPadLabel.Text = "D-Pad:";
             // 
             // DiCapAxesLabel
@@ -164,7 +164,7 @@
             this.DiCapAxesLabel.Location = new System.Drawing.Point(427, 109);
             this.DiCapAxesLabel.Name = "DiCapAxesLabel";
             this.DiCapAxesLabel.Size = new System.Drawing.Size(85, 13);
-            this.DiCapAxesLabel.TabIndex = 45;
+            this.DiCapAxesLabel.TabIndex = 0;
             this.DiCapAxesLabel.Text = "DiCapAxesLabel";
             // 
             // DiUvaLabel
@@ -173,7 +173,7 @@
             this.DiUvaLabel.Location = new System.Drawing.Point(228, 58);
             this.DiUvaLabel.Name = "DiUvaLabel";
             this.DiUvaLabel.Size = new System.Drawing.Size(40, 13);
-            this.DiUvaLabel.TabIndex = 46;
+            this.DiUvaLabel.TabIndex = 0;
             this.DiUvaLabel.Text = "U/V A:";
             // 
             // DiCapFfLabel
@@ -182,7 +182,7 @@
             this.DiCapFfLabel.Location = new System.Drawing.Point(427, 92);
             this.DiCapFfLabel.Name = "DiCapFfLabel";
             this.DiCapFfLabel.Size = new System.Drawing.Size(71, 13);
-            this.DiCapFfLabel.TabIndex = 53;
+            this.DiCapFfLabel.TabIndex = 0;
             this.DiCapFfLabel.Text = "DiCapFfLabel";
             // 
             // DiExtraVLabel
@@ -191,7 +191,7 @@
             this.DiExtraVLabel.Location = new System.Drawing.Point(102, 58);
             this.DiExtraVLabel.Name = "DiExtraVLabel";
             this.DiExtraVLabel.Size = new System.Drawing.Size(44, 13);
-            this.DiExtraVLabel.TabIndex = 54;
+            this.DiExtraVLabel.TabIndex = 0;
             this.DiExtraVLabel.Text = "Extra V:";
             // 
             // DiExtraFLabel
@@ -200,7 +200,7 @@
             this.DiExtraFLabel.Location = new System.Drawing.Point(103, 32);
             this.DiExtraFLabel.Name = "DiExtraFLabel";
             this.DiExtraFLabel.Size = new System.Drawing.Size(43, 13);
-            this.DiExtraFLabel.TabIndex = 52;
+            this.DiExtraFLabel.TabIndex = 0;
             this.DiExtraFLabel.Text = "Extra F:";
             // 
             // DiExtraALabel
@@ -209,7 +209,7 @@
             this.DiExtraALabel.Location = new System.Drawing.Point(103, 6);
             this.DiExtraALabel.Name = "DiExtraALabel";
             this.DiExtraALabel.Size = new System.Drawing.Size(44, 13);
-            this.DiExtraALabel.TabIndex = 50;
+            this.DiExtraALabel.TabIndex = 0;
             this.DiExtraALabel.Text = "Extra A:";
             // 
             // DiButtonsLabel
@@ -218,7 +218,7 @@
             this.DiButtonsLabel.Location = new System.Drawing.Point(228, 6);
             this.DiButtonsLabel.Name = "DiButtonsLabel";
             this.DiButtonsLabel.Size = new System.Drawing.Size(46, 13);
-            this.DiButtonsLabel.TabIndex = 51;
+            this.DiButtonsLabel.TabIndex = 0;
             this.DiButtonsLabel.Text = "Buttons:";
             // 
             // DiAxisDataGridView
@@ -260,7 +260,7 @@
             this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.DiAxisDataGridView.Size = new System.Drawing.Size(362, 84);
-            this.DiAxisDataGridView.TabIndex = 44;
+            this.DiAxisDataGridView.TabIndex = 0;
             // 
             // DiColumnAxis
             // 
@@ -343,7 +343,7 @@
             this.DevicePidTextBox.Name = "DevicePidTextBox";
             this.DevicePidTextBox.ReadOnly = true;
             this.DevicePidTextBox.Size = new System.Drawing.Size(57, 20);
-            this.DevicePidTextBox.TabIndex = 37;
+            this.DevicePidTextBox.TabIndex = 0;
             // 
             // DeviceVidTextBox
             // 
@@ -351,7 +351,7 @@
             this.DeviceVidTextBox.Name = "DeviceVidTextBox";
             this.DeviceVidTextBox.ReadOnly = true;
             this.DeviceVidTextBox.Size = new System.Drawing.Size(57, 20);
-            this.DeviceVidTextBox.TabIndex = 38;
+            this.DeviceVidTextBox.TabIndex = 0;
             // 
             // DiDPadTextBox
             // 
@@ -359,7 +359,7 @@
             this.DiDPadTextBox.Name = "DiDPadTextBox";
             this.DiDPadTextBox.ReadOnly = true;
             this.DiDPadTextBox.Size = new System.Drawing.Size(70, 20);
-            this.DiDPadTextBox.TabIndex = 35;
+            this.DiDPadTextBox.TabIndex = 0;
             // 
             // DiUvSliderTextBox
             // 
@@ -367,7 +367,7 @@
             this.DiUvSliderTextBox.Name = "DiUvSliderTextBox";
             this.DiUvSliderTextBox.ReadOnly = true;
             this.DiUvSliderTextBox.Size = new System.Drawing.Size(70, 20);
-            this.DiUvSliderTextBox.TabIndex = 36;
+            this.DiUvSliderTextBox.TabIndex = 0;
             // 
             // DiVSliderTextBox
             // 
@@ -375,7 +375,7 @@
             this.DiVSliderTextBox.Name = "DiVSliderTextBox";
             this.DiVSliderTextBox.ReadOnly = true;
             this.DiVSliderTextBox.Size = new System.Drawing.Size(70, 20);
-            this.DiVSliderTextBox.TabIndex = 39;
+            this.DiVSliderTextBox.TabIndex = 0;
             // 
             // DiFSliderTextBox
             // 
@@ -383,7 +383,7 @@
             this.DiFSliderTextBox.Name = "DiFSliderTextBox";
             this.DiFSliderTextBox.ReadOnly = true;
             this.DiFSliderTextBox.Size = new System.Drawing.Size(70, 20);
-            this.DiFSliderTextBox.TabIndex = 42;
+            this.DiFSliderTextBox.TabIndex = 0;
             // 
             // DiASliderTextBox
             // 
@@ -391,7 +391,7 @@
             this.DiASliderTextBox.Name = "DiASliderTextBox";
             this.DiASliderTextBox.ReadOnly = true;
             this.DiASliderTextBox.Size = new System.Drawing.Size(70, 20);
-            this.DiASliderTextBox.TabIndex = 43;
+            this.DiASliderTextBox.TabIndex = 0;
             // 
             // DiButtonsTextBox
             // 
@@ -399,7 +399,7 @@
             this.DiButtonsTextBox.Name = "DiButtonsTextBox";
             this.DiButtonsTextBox.ReadOnly = true;
             this.DiButtonsTextBox.Size = new System.Drawing.Size(70, 20);
-            this.DiButtonsTextBox.TabIndex = 40;
+            this.DiButtonsTextBox.TabIndex = 0;
             // 
             // DeviceTypeTextBox
             // 
@@ -407,7 +407,7 @@
             this.DeviceTypeTextBox.Name = "DeviceTypeTextBox";
             this.DeviceTypeTextBox.ReadOnly = true;
             this.DeviceTypeTextBox.Size = new System.Drawing.Size(57, 20);
-            this.DeviceTypeTextBox.TabIndex = 41;
+            this.DeviceTypeTextBox.TabIndex = 0;
             // 
             // DiDevicePidLabel
             // 
@@ -415,7 +415,7 @@
             this.DiDevicePidLabel.Location = new System.Drawing.Point(5, 58);
             this.DiDevicePidLabel.Name = "DiDevicePidLabel";
             this.DiDevicePidLabel.Size = new System.Drawing.Size(28, 13);
-            this.DiDevicePidLabel.TabIndex = 32;
+            this.DiDevicePidLabel.TabIndex = 0;
             this.DiDevicePidLabel.Text = "PID:";
             // 
             // DiDeviceVidLabel
@@ -424,7 +424,7 @@
             this.DiDeviceVidLabel.Location = new System.Drawing.Point(5, 32);
             this.DiDeviceVidLabel.Name = "DiDeviceVidLabel";
             this.DiDeviceVidLabel.Size = new System.Drawing.Size(28, 13);
-            this.DiDeviceVidLabel.TabIndex = 33;
+            this.DiDeviceVidLabel.TabIndex = 0;
             this.DiDeviceVidLabel.Text = "VID:";
             // 
             // DiDeviceTypeLabel
@@ -433,7 +433,7 @@
             this.DiDeviceTypeLabel.Location = new System.Drawing.Point(5, 6);
             this.DiDeviceTypeLabel.Name = "DiDeviceTypeLabel";
             this.DiDeviceTypeLabel.Size = new System.Drawing.Size(34, 13);
-            this.DiDeviceTypeLabel.TabIndex = 34;
+            this.DiDeviceTypeLabel.TabIndex = 0;
             this.DiDeviceTypeLabel.Text = "Type:";
             // 
             // DeviceInstanceGuidTextBox
@@ -444,7 +444,7 @@
             this.DeviceInstanceGuidTextBox.Name = "DeviceInstanceGuidTextBox";
             this.DeviceInstanceGuidTextBox.ReadOnly = true;
             this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(225, 20);
-            this.DeviceInstanceGuidTextBox.TabIndex = 36;
+            this.DeviceInstanceGuidTextBox.TabIndex = 0;
             // 
             // DeviceProductGuidTextBox
             // 
@@ -454,7 +454,7 @@
             this.DeviceProductGuidTextBox.Name = "DeviceProductGuidTextBox";
             this.DeviceProductGuidTextBox.ReadOnly = true;
             this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(225, 20);
-            this.DeviceProductGuidTextBox.TabIndex = 36;
+            this.DeviceProductGuidTextBox.TabIndex = 0;
             // 
 			// DiProductGuidLabel
             // 
@@ -462,7 +462,7 @@
             this.DiProductGuidLabel.Location = new System.Drawing.Point(356, 32);
 			this.DiProductGuidLabel.Name = "DiProductGuidLabel";
             this.DiProductGuidLabel.Size = new System.Drawing.Size(25, 13);
-            this.DiProductGuidLabel.TabIndex = 48;
+            this.DiProductGuidLabel.TabIndex = 0;
             this.DiProductGuidLabel.Text = "PG:";
             // 
 			// DiInstanceGuidLabel
@@ -471,7 +471,7 @@
             this.DiInstanceGuidLabel.Location = new System.Drawing.Point(356, 58);
 			this.DiInstanceGuidLabel.Name = "DiInstanceGuidLabel";
             this.DiInstanceGuidLabel.Size = new System.Drawing.Size(21, 13);
-            this.DiInstanceGuidLabel.TabIndex = 48;
+            this.DiInstanceGuidLabel.TabIndex = 0;
             this.DiInstanceGuidLabel.Text = "IG:";
             // 
             // DeviceProductNameTextBox
@@ -482,7 +482,7 @@
             this.DeviceProductNameTextBox.Name = "DeviceProductNameTextBox";
             this.DeviceProductNameTextBox.ReadOnly = true;
             this.DeviceProductNameTextBox.Size = new System.Drawing.Size(225, 20);
-            this.DeviceProductNameTextBox.TabIndex = 36;
+            this.DeviceProductNameTextBox.TabIndex = 0;
             // 
 			// DiProductNameLabel
             // 
@@ -490,7 +490,7 @@
             this.DiProductNameLabel.Location = new System.Drawing.Point(356, 6);
 			this.DiProductNameLabel.Name = "DiProductNameLabel";
             this.DiProductNameLabel.Size = new System.Drawing.Size(25, 13);
-            this.DiProductNameLabel.TabIndex = 48;
+            this.DiProductNameLabel.TabIndex = 0;
             this.DiProductNameLabel.Text = "PN:";
             // 
             // DirectInputControl

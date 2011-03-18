@@ -146,6 +146,7 @@
 			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
+			this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.ForceEnableCheckBox = new System.Windows.Forms.CheckBox();
 			this.RightMotorPeriodTrackBar = new System.Windows.Forms.TrackBar();
 			this.RightMotorTestTrackBar = new System.Windows.Forms.TrackBar();
@@ -165,7 +166,6 @@
 			this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -201,7 +201,7 @@
 			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
 			this.DirectInputTabPage.Size = new System.Drawing.Size(620, 411);
-			this.DirectInputTabPage.TabIndex = 3;
+			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
 			// AdvancedTabPage
@@ -216,13 +216,13 @@
 			this.AdvancedTabPage.Name = "AdvancedTabPage";
 			this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.AdvancedTabPage.Size = new System.Drawing.Size(620, 411);
-			this.AdvancedTabPage.TabIndex = 1;
+			this.AdvancedTabPage.TabIndex = 0;
 			this.AdvancedTabPage.Text = "Advanced";
 			// 
 			// AxisToDPadGroupBox
 			// 
-			this.AxisToDPadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)));
+			this.AxisToDPadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadEnabledCheckBox);
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTrackBar);
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTrackBar);
@@ -233,7 +233,7 @@
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(6, 308);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
 			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(608, 97);
-			this.AxisToDPadGroupBox.TabIndex = 43;
+			this.AxisToDPadGroupBox.TabIndex = 0;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
 			// 
@@ -243,7 +243,7 @@
 			this.AxisToDPadEnabledCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.AxisToDPadEnabledCheckBox.Name = "AxisToDPadEnabledCheckBox";
 			this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(65, 17);
-			this.AxisToDPadEnabledCheckBox.TabIndex = 32;
+			this.AxisToDPadEnabledCheckBox.TabIndex = 14;
 			this.AxisToDPadEnabledCheckBox.Text = "Enabled";
 			this.AxisToDPadEnabledCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -254,7 +254,7 @@
 			this.AxisToDPadOffsetTrackBar.Maximum = 100;
 			this.AxisToDPadOffsetTrackBar.Name = "AxisToDPadOffsetTrackBar";
 			this.AxisToDPadOffsetTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.AxisToDPadOffsetTrackBar.TabIndex = 28;
+			this.AxisToDPadOffsetTrackBar.TabIndex = 16;
 			this.AxisToDPadOffsetTrackBar.TickFrequency = 2;
 			this.AxisToDPadOffsetTrackBar.ValueChanged += new System.EventHandler(this.AxisToDPadOffsetTrackBar_ValueChanged);
 			// 
@@ -265,7 +265,7 @@
 			this.AxisToDPadDeadZoneTrackBar.Maximum = 100;
 			this.AxisToDPadDeadZoneTrackBar.Name = "AxisToDPadDeadZoneTrackBar";
 			this.AxisToDPadDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.AxisToDPadDeadZoneTrackBar.TabIndex = 28;
+			this.AxisToDPadDeadZoneTrackBar.TabIndex = 15;
 			this.AxisToDPadDeadZoneTrackBar.TickFrequency = 2;
 			this.AxisToDPadDeadZoneTrackBar.Value = 100;
 			this.AxisToDPadDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.AxisToDPadDeadZoneTrackBar_ValueChanged);
@@ -276,7 +276,7 @@
 			this.OffsetLabel.Location = new System.Drawing.Point(319, 39);
 			this.OffsetLabel.Name = "OffsetLabel";
 			this.OffsetLabel.Size = new System.Drawing.Size(35, 13);
-			this.OffsetLabel.TabIndex = 29;
+			this.OffsetLabel.TabIndex = 0;
 			this.OffsetLabel.Text = "Offset";
 			// 
 			// AxisToDPadOffsetTextBox
@@ -285,7 +285,8 @@
 			this.AxisToDPadOffsetTextBox.Name = "AxisToDPadOffsetTextBox";
 			this.AxisToDPadOffsetTextBox.ReadOnly = true;
 			this.AxisToDPadOffsetTextBox.Size = new System.Drawing.Size(43, 20);
-			this.AxisToDPadOffsetTextBox.TabIndex = 38;
+			this.AxisToDPadOffsetTextBox.TabIndex = 0;
+			this.AxisToDPadOffsetTextBox.TabStop = false;
 			this.AxisToDPadOffsetTextBox.Text = "0 % ";
 			this.AxisToDPadOffsetTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -295,7 +296,7 @@
 			this.DeadZoneLabel.Location = new System.Drawing.Point(6, 39);
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
 			this.DeadZoneLabel.Size = new System.Drawing.Size(61, 13);
-			this.DeadZoneLabel.TabIndex = 29;
+			this.DeadZoneLabel.TabIndex = 0;
 			this.DeadZoneLabel.Text = "Dead Zone";
 			// 
 			// AxisToDPadDeadZoneTextBox
@@ -304,7 +305,8 @@
 			this.AxisToDPadDeadZoneTextBox.Name = "AxisToDPadDeadZoneTextBox";
 			this.AxisToDPadDeadZoneTextBox.ReadOnly = true;
 			this.AxisToDPadDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
-			this.AxisToDPadDeadZoneTextBox.TabIndex = 38;
+			this.AxisToDPadDeadZoneTextBox.TabIndex = 0;
+			this.AxisToDPadDeadZoneTextBox.TabStop = false;
 			this.AxisToDPadDeadZoneTextBox.Text = "100 % ";
 			this.AxisToDPadDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -319,7 +321,7 @@
 			this.groupBox1.Location = new System.Drawing.Point(6, 33);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(608, 68);
-			this.groupBox1.TabIndex = 42;
+			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Triggers";
 			// 
@@ -329,7 +331,7 @@
 			this.label3.Location = new System.Drawing.Point(6, 16);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(118, 13);
-			this.label3.TabIndex = 20;
+			this.label3.TabIndex = 0;
 			this.label3.Text = "Left Trigger Dead Zone";
 			// 
 			// label4
@@ -338,7 +340,7 @@
 			this.label4.Location = new System.Drawing.Point(319, 16);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(125, 13);
-			this.label4.TabIndex = 21;
+			this.label4.TabIndex = 0;
 			this.label4.Text = "Right Trigger Dead Zone";
 			// 
 			// RightTriggerDeadZoneTrackBar
@@ -348,7 +350,7 @@
 			this.RightTriggerDeadZoneTrackBar.Maximum = 100;
 			this.RightTriggerDeadZoneTrackBar.Name = "RightTriggerDeadZoneTrackBar";
 			this.RightTriggerDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.RightTriggerDeadZoneTrackBar.TabIndex = 25;
+			this.RightTriggerDeadZoneTrackBar.TabIndex = 4;
 			this.RightTriggerDeadZoneTrackBar.TickFrequency = 2;
 			this.RightTriggerDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.RightTriggerDeadZoneTrackBar_ValueChanged);
 			// 
@@ -359,7 +361,7 @@
 			this.LeftTriggerDeadZoneTrackBar.Maximum = 100;
 			this.LeftTriggerDeadZoneTrackBar.Name = "LeftTriggerDeadZoneTrackBar";
 			this.LeftTriggerDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.LeftTriggerDeadZoneTrackBar.TabIndex = 24;
+			this.LeftTriggerDeadZoneTrackBar.TabIndex = 3;
 			this.LeftTriggerDeadZoneTrackBar.TickFrequency = 2;
 			this.LeftTriggerDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.LeftTriggerDeadZoneTrackBar_ValueChanged);
 			// 
@@ -369,7 +371,8 @@
 			this.RightTriggerDeadZoneTextBox.Name = "RightTriggerDeadZoneTextBox";
 			this.RightTriggerDeadZoneTextBox.ReadOnly = true;
 			this.RightTriggerDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
-			this.RightTriggerDeadZoneTextBox.TabIndex = 26;
+			this.RightTriggerDeadZoneTextBox.TabIndex = 0;
+			this.RightTriggerDeadZoneTextBox.TabStop = false;
 			this.RightTriggerDeadZoneTextBox.Text = "0 % ";
 			this.RightTriggerDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -379,7 +382,8 @@
 			this.LeftTriggerDeadZoneTextBox.Name = "LeftTriggerDeadZoneTextBox";
 			this.LeftTriggerDeadZoneTextBox.ReadOnly = true;
 			this.LeftTriggerDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
-			this.LeftTriggerDeadZoneTextBox.TabIndex = 27;
+			this.LeftTriggerDeadZoneTextBox.TabIndex = 0;
+			this.LeftTriggerDeadZoneTextBox.TabStop = false;
 			this.LeftTriggerDeadZoneTextBox.Text = "0 % ";
 			this.LeftTriggerDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -410,7 +414,7 @@
 			this.ThumbsGroupBox.Location = new System.Drawing.Point(9, 107);
 			this.ThumbsGroupBox.Name = "ThumbsGroupBox";
 			this.ThumbsGroupBox.Size = new System.Drawing.Size(608, 195);
-			this.ThumbsGroupBox.TabIndex = 42;
+			this.ThumbsGroupBox.TabIndex = 0;
 			this.ThumbsGroupBox.TabStop = false;
 			this.ThumbsGroupBox.Text = "Thumbs";
 			// 
@@ -433,7 +437,7 @@
 			this.ThumbAntiDeadZoneComboBox.Location = new System.Drawing.Point(111, 111);
 			this.ThumbAntiDeadZoneComboBox.Name = "ThumbAntiDeadZoneComboBox";
 			this.ThumbAntiDeadZoneComboBox.Size = new System.Drawing.Size(194, 21);
-			this.ThumbAntiDeadZoneComboBox.TabIndex = 29;
+			this.ThumbAntiDeadZoneComboBox.TabIndex = 9;
 			this.ThumbAntiDeadZoneComboBox.SelectedIndexChanged += new System.EventHandler(this.ThumbAntiDeadZoneComboBox_SelectedIndexChanged);
 			// 
 			// RightThumbYAntiDeadZoneNumericUpDown
@@ -446,7 +450,7 @@
             0});
 			this.RightThumbYAntiDeadZoneNumericUpDown.Name = "RightThumbYAntiDeadZoneNumericUpDown";
 			this.RightThumbYAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(75, 20);
-			this.RightThumbYAntiDeadZoneNumericUpDown.TabIndex = 28;
+			this.RightThumbYAntiDeadZoneNumericUpDown.TabIndex = 13;
 			// 
 			// LeftThumbYAntiDeadZoneNumericUpDown
 			// 
@@ -458,7 +462,7 @@
             0});
 			this.LeftThumbYAntiDeadZoneNumericUpDown.Name = "LeftThumbYAntiDeadZoneNumericUpDown";
 			this.LeftThumbYAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(75, 20);
-			this.LeftThumbYAntiDeadZoneNumericUpDown.TabIndex = 28;
+			this.LeftThumbYAntiDeadZoneNumericUpDown.TabIndex = 11;
 			// 
 			// RightThumbXAntiDeadZoneNumericUpDown
 			// 
@@ -470,7 +474,7 @@
             0});
 			this.RightThumbXAntiDeadZoneNumericUpDown.Name = "RightThumbXAntiDeadZoneNumericUpDown";
 			this.RightThumbXAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(75, 20);
-			this.RightThumbXAntiDeadZoneNumericUpDown.TabIndex = 28;
+			this.RightThumbXAntiDeadZoneNumericUpDown.TabIndex = 12;
 			// 
 			// LeftThumbXAntiDeadZoneNumericUpDown
 			// 
@@ -482,7 +486,7 @@
             0});
 			this.LeftThumbXAntiDeadZoneNumericUpDown.Name = "LeftThumbXAntiDeadZoneNumericUpDown";
 			this.LeftThumbXAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(75, 20);
-			this.LeftThumbXAntiDeadZoneNumericUpDown.TabIndex = 28;
+			this.LeftThumbXAntiDeadZoneNumericUpDown.TabIndex = 10;
 			// 
 			// LeftTriggerDeadZoneYLabel
 			// 
@@ -490,7 +494,7 @@
 			this.LeftTriggerDeadZoneYLabel.Location = new System.Drawing.Point(6, 77);
 			this.LeftTriggerDeadZoneYLabel.Name = "LeftTriggerDeadZoneYLabel";
 			this.LeftTriggerDeadZoneYLabel.Size = new System.Drawing.Size(17, 13);
-			this.LeftTriggerDeadZoneYLabel.TabIndex = 20;
+			this.LeftTriggerDeadZoneYLabel.TabIndex = 0;
 			this.LeftTriggerDeadZoneYLabel.Text = "Y:";
 			// 
 			// LeftTriggerDeadZoneXLabel
@@ -499,7 +503,7 @@
 			this.LeftTriggerDeadZoneXLabel.Location = new System.Drawing.Point(6, 39);
 			this.LeftTriggerDeadZoneXLabel.Name = "LeftTriggerDeadZoneXLabel";
 			this.LeftTriggerDeadZoneXLabel.Size = new System.Drawing.Size(17, 13);
-			this.LeftTriggerDeadZoneXLabel.TabIndex = 20;
+			this.LeftTriggerDeadZoneXLabel.TabIndex = 0;
 			this.LeftTriggerDeadZoneXLabel.Text = "X:";
 			// 
 			// RightThumbYAntiDeadZoneLabel
@@ -508,7 +512,7 @@
 			this.RightThumbYAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 166);
 			this.RightThumbYAntiDeadZoneLabel.Name = "RightThumbYAntiDeadZoneLabel";
 			this.RightThumbYAntiDeadZoneLabel.Size = new System.Drawing.Size(150, 13);
-			this.RightThumbYAntiDeadZoneLabel.TabIndex = 20;
+			this.RightThumbYAntiDeadZoneLabel.TabIndex = 0;
 			this.RightThumbYAntiDeadZoneLabel.Text = "Right Thumb Y AntiDeadZone";
 			// 
 			// LeftThumbYAntiDeadZoneLabel
@@ -517,7 +521,7 @@
 			this.LeftThumbYAntiDeadZoneLabel.Location = new System.Drawing.Point(26, 166);
 			this.LeftThumbYAntiDeadZoneLabel.Name = "LeftThumbYAntiDeadZoneLabel";
 			this.LeftThumbYAntiDeadZoneLabel.Size = new System.Drawing.Size(143, 13);
-			this.LeftThumbYAntiDeadZoneLabel.TabIndex = 20;
+			this.LeftThumbYAntiDeadZoneLabel.TabIndex = 0;
 			this.LeftThumbYAntiDeadZoneLabel.Text = "Left Thumb Y AntiDeadZone";
 			// 
 			// RightThumbXAntiDeadZoneLabel
@@ -526,7 +530,7 @@
 			this.RightThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 140);
 			this.RightThumbXAntiDeadZoneLabel.Name = "RightThumbXAntiDeadZoneLabel";
 			this.RightThumbXAntiDeadZoneLabel.Size = new System.Drawing.Size(150, 13);
-			this.RightThumbXAntiDeadZoneLabel.TabIndex = 20;
+			this.RightThumbXAntiDeadZoneLabel.TabIndex = 0;
 			this.RightThumbXAntiDeadZoneLabel.Text = "Right Thumb X AntiDeadZone";
 			// 
 			// label1
@@ -535,7 +539,7 @@
 			this.label1.Location = new System.Drawing.Point(26, 114);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(79, 13);
-			this.label1.TabIndex = 20;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "AntiDeadZone:";
 			// 
 			// LeftThumbXAntiDeadZoneLabel
@@ -544,7 +548,7 @@
 			this.LeftThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(26, 140);
 			this.LeftThumbXAntiDeadZoneLabel.Name = "LeftThumbXAntiDeadZoneLabel";
 			this.LeftThumbXAntiDeadZoneLabel.Size = new System.Drawing.Size(143, 13);
-			this.LeftThumbXAntiDeadZoneLabel.TabIndex = 20;
+			this.LeftThumbXAntiDeadZoneLabel.TabIndex = 0;
 			this.LeftThumbXAntiDeadZoneLabel.Text = "Left Thumb X AntiDeadZone";
 			// 
 			// LeftTriggerDeadZoneLabel
@@ -553,7 +557,7 @@
 			this.LeftTriggerDeadZoneLabel.Location = new System.Drawing.Point(6, 16);
 			this.LeftTriggerDeadZoneLabel.Name = "LeftTriggerDeadZoneLabel";
 			this.LeftTriggerDeadZoneLabel.Size = new System.Drawing.Size(118, 13);
-			this.LeftTriggerDeadZoneLabel.TabIndex = 20;
+			this.LeftTriggerDeadZoneLabel.TabIndex = 0;
 			this.LeftTriggerDeadZoneLabel.Text = "Left Thumb Dead Zone";
 			// 
 			// RightTriggerDeadZoneLabel
@@ -562,7 +566,7 @@
 			this.RightTriggerDeadZoneLabel.Location = new System.Drawing.Point(319, 16);
 			this.RightTriggerDeadZoneLabel.Name = "RightTriggerDeadZoneLabel";
 			this.RightTriggerDeadZoneLabel.Size = new System.Drawing.Size(125, 13);
-			this.RightTriggerDeadZoneLabel.TabIndex = 21;
+			this.RightTriggerDeadZoneLabel.TabIndex = 0;
 			this.RightTriggerDeadZoneLabel.Text = "Right Thumb Dead Zone";
 			// 
 			// RightThumbDeadZoneYTrackBar
@@ -572,7 +576,7 @@
 			this.RightThumbDeadZoneYTrackBar.Maximum = 100;
 			this.RightThumbDeadZoneYTrackBar.Name = "RightThumbDeadZoneYTrackBar";
 			this.RightThumbDeadZoneYTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.RightThumbDeadZoneYTrackBar.TabIndex = 25;
+			this.RightThumbDeadZoneYTrackBar.TabIndex = 8;
 			this.RightThumbDeadZoneYTrackBar.TickFrequency = 2;
 			this.RightThumbDeadZoneYTrackBar.ValueChanged += new System.EventHandler(this.RightThumbDeadZoneYTrackBar_ValueChanged);
 			// 
@@ -583,7 +587,7 @@
 			this.RightThumbDeadZoneXTrackBar.Maximum = 100;
 			this.RightThumbDeadZoneXTrackBar.Name = "RightThumbDeadZoneXTrackBar";
 			this.RightThumbDeadZoneXTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.RightThumbDeadZoneXTrackBar.TabIndex = 25;
+			this.RightThumbDeadZoneXTrackBar.TabIndex = 7;
 			this.RightThumbDeadZoneXTrackBar.TickFrequency = 2;
 			this.RightThumbDeadZoneXTrackBar.ValueChanged += new System.EventHandler(this.RightThumbDeadZoneXTrackBar_ValueChanged);
 			// 
@@ -594,7 +598,7 @@
 			this.LeftThumbDeadZoneYTrackBar.Maximum = 100;
 			this.LeftThumbDeadZoneYTrackBar.Name = "LeftThumbDeadZoneYTrackBar";
 			this.LeftThumbDeadZoneYTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.LeftThumbDeadZoneYTrackBar.TabIndex = 24;
+			this.LeftThumbDeadZoneYTrackBar.TabIndex = 6;
 			this.LeftThumbDeadZoneYTrackBar.TickFrequency = 2;
 			this.LeftThumbDeadZoneYTrackBar.ValueChanged += new System.EventHandler(this.LeftThumbDeadZoneYTrackBar_ValueChanged);
 			// 
@@ -604,7 +608,8 @@
 			this.RightThumbDeadZoneYTextBox.Name = "RightThumbDeadZoneYTextBox";
 			this.RightThumbDeadZoneYTextBox.ReadOnly = true;
 			this.RightThumbDeadZoneYTextBox.Size = new System.Drawing.Size(43, 20);
-			this.RightThumbDeadZoneYTextBox.TabIndex = 26;
+			this.RightThumbDeadZoneYTextBox.TabIndex = 0;
+			this.RightThumbDeadZoneYTextBox.TabStop = false;
 			this.RightThumbDeadZoneYTextBox.Text = "0 % ";
 			this.RightThumbDeadZoneYTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -615,7 +620,7 @@
 			this.LeftThumbDeadZoneXTrackBar.Maximum = 100;
 			this.LeftThumbDeadZoneXTrackBar.Name = "LeftThumbDeadZoneXTrackBar";
 			this.LeftThumbDeadZoneXTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.LeftThumbDeadZoneXTrackBar.TabIndex = 24;
+			this.LeftThumbDeadZoneXTrackBar.TabIndex = 5;
 			this.LeftThumbDeadZoneXTrackBar.TickFrequency = 2;
 			this.LeftThumbDeadZoneXTrackBar.ValueChanged += new System.EventHandler(this.LeftThumbDeadZoneXTrackBar_ValueChanged);
 			// 
@@ -625,7 +630,8 @@
 			this.LeftThumbDeadZoneYTextBox.Name = "LeftThumbDeadZoneYTextBox";
 			this.LeftThumbDeadZoneYTextBox.ReadOnly = true;
 			this.LeftThumbDeadZoneYTextBox.Size = new System.Drawing.Size(43, 20);
-			this.LeftThumbDeadZoneYTextBox.TabIndex = 27;
+			this.LeftThumbDeadZoneYTextBox.TabIndex = 0;
+			this.LeftThumbDeadZoneYTextBox.TabStop = false;
 			this.LeftThumbDeadZoneYTextBox.Text = "0 % ";
 			this.LeftThumbDeadZoneYTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -635,7 +641,8 @@
 			this.RightThumbDeadZoneXTextBox.Name = "RightThumbDeadZoneXTextBox";
 			this.RightThumbDeadZoneXTextBox.ReadOnly = true;
 			this.RightThumbDeadZoneXTextBox.Size = new System.Drawing.Size(43, 20);
-			this.RightThumbDeadZoneXTextBox.TabIndex = 26;
+			this.RightThumbDeadZoneXTextBox.TabIndex = 0;
+			this.RightThumbDeadZoneXTextBox.TabStop = false;
 			this.RightThumbDeadZoneXTextBox.Text = "0 % ";
 			this.RightThumbDeadZoneXTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -645,7 +652,8 @@
 			this.LeftThumbDeadZoneXTextBox.Name = "LeftThumbDeadZoneXTextBox";
 			this.LeftThumbDeadZoneXTextBox.ReadOnly = true;
 			this.LeftThumbDeadZoneXTextBox.Size = new System.Drawing.Size(43, 20);
-			this.LeftThumbDeadZoneXTextBox.TabIndex = 27;
+			this.LeftThumbDeadZoneXTextBox.TabIndex = 0;
+			this.LeftThumbDeadZoneXTextBox.TabStop = false;
 			this.LeftThumbDeadZoneXTextBox.Text = "0 % ";
 			this.LeftThumbDeadZoneXTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -655,7 +663,7 @@
 			this.OptionsDeviceTypeLabel.Location = new System.Drawing.Point(3, 11);
 			this.OptionsDeviceTypeLabel.Name = "OptionsDeviceTypeLabel";
 			this.OptionsDeviceTypeLabel.Size = new System.Drawing.Size(71, 13);
-			this.OptionsDeviceTypeLabel.TabIndex = 40;
+			this.OptionsDeviceTypeLabel.TabIndex = 0;
 			this.OptionsDeviceTypeLabel.Text = "Device Type:";
 			// 
 			// GamePadTypeComboBox
@@ -665,7 +673,7 @@
 			this.GamePadTypeComboBox.Location = new System.Drawing.Point(80, 6);
 			this.GamePadTypeComboBox.Name = "GamePadTypeComboBox";
 			this.GamePadTypeComboBox.Size = new System.Drawing.Size(121, 21);
-			this.GamePadTypeComboBox.TabIndex = 39;
+			this.GamePadTypeComboBox.TabIndex = 1;
 			// 
 			// NativeModeCheckBox
 			// 
@@ -673,7 +681,7 @@
 			this.NativeModeCheckBox.Location = new System.Drawing.Point(328, 10);
 			this.NativeModeCheckBox.Name = "NativeModeCheckBox";
 			this.NativeModeCheckBox.Size = new System.Drawing.Size(87, 17);
-			this.NativeModeCheckBox.TabIndex = 32;
+			this.NativeModeCheckBox.TabIndex = 2;
 			this.NativeModeCheckBox.Text = "Native Mode";
 			this.NativeModeCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -762,7 +770,7 @@
 			this.DPadDownComboBox.Location = new System.Drawing.Point(229, 382);
 			this.DPadDownComboBox.Name = "DPadDownComboBox";
 			this.DPadDownComboBox.Size = new System.Drawing.Size(89, 21);
-			this.DPadDownComboBox.TabIndex = 78;
+			this.DPadDownComboBox.TabIndex = 44;
 			this.DPadDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadRightComboBox
@@ -773,7 +781,7 @@
 			this.DPadRightComboBox.Location = new System.Drawing.Point(229, 355);
 			this.DPadRightComboBox.Name = "DPadRightComboBox";
 			this.DPadRightComboBox.Size = new System.Drawing.Size(89, 21);
-			this.DPadRightComboBox.TabIndex = 79;
+			this.DPadRightComboBox.TabIndex = 43;
 			this.DPadRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadUpComboBox
@@ -784,7 +792,7 @@
 			this.DPadUpComboBox.Location = new System.Drawing.Point(229, 301);
 			this.DPadUpComboBox.Name = "DPadUpComboBox";
 			this.DPadUpComboBox.Size = new System.Drawing.Size(89, 21);
-			this.DPadUpComboBox.TabIndex = 80;
+			this.DPadUpComboBox.TabIndex = 41;
 			this.DPadUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadLeftComboBox
@@ -795,7 +803,7 @@
 			this.DPadLeftComboBox.Location = new System.Drawing.Point(229, 328);
 			this.DPadLeftComboBox.Name = "DPadLeftComboBox";
 			this.DPadLeftComboBox.Size = new System.Drawing.Size(89, 21);
-			this.DPadLeftComboBox.TabIndex = 77;
+			this.DPadLeftComboBox.TabIndex = 42;
 			this.DPadLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbDownComboBox
@@ -806,7 +814,7 @@
 			this.LeftThumbDownComboBox.Location = new System.Drawing.Point(6, 382);
 			this.LeftThumbDownComboBox.Name = "LeftThumbDownComboBox";
 			this.LeftThumbDownComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbDownComboBox.TabIndex = 75;
+			this.LeftThumbDownComboBox.TabIndex = 27;
 			this.LeftThumbDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbRightComboBox
@@ -817,7 +825,7 @@
 			this.LeftThumbRightComboBox.Location = new System.Drawing.Point(6, 355);
 			this.LeftThumbRightComboBox.Name = "LeftThumbRightComboBox";
 			this.LeftThumbRightComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbRightComboBox.TabIndex = 76;
+			this.LeftThumbRightComboBox.TabIndex = 26;
 			this.LeftThumbRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbLeftComboBox
@@ -828,7 +836,7 @@
 			this.LeftThumbLeftComboBox.Location = new System.Drawing.Point(6, 328);
 			this.LeftThumbLeftComboBox.Name = "LeftThumbLeftComboBox";
 			this.LeftThumbLeftComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbLeftComboBox.TabIndex = 73;
+			this.LeftThumbLeftComboBox.TabIndex = 25;
 			this.LeftThumbLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbUpComboBox
@@ -839,7 +847,7 @@
 			this.LeftThumbUpComboBox.Location = new System.Drawing.Point(6, 301);
 			this.LeftThumbUpComboBox.Name = "LeftThumbUpComboBox";
 			this.LeftThumbUpComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbUpComboBox.TabIndex = 74;
+			this.LeftThumbUpComboBox.TabIndex = 24;
 			this.LeftThumbUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbDownComboBox
@@ -850,7 +858,7 @@
 			this.RightThumbDownComboBox.Location = new System.Drawing.Point(524, 382);
 			this.RightThumbDownComboBox.Name = "RightThumbDownComboBox";
 			this.RightThumbDownComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbDownComboBox.TabIndex = 69;
+			this.RightThumbDownComboBox.TabIndex = 37;
 			this.RightThumbDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbRightComboBox
@@ -861,7 +869,7 @@
 			this.RightThumbRightComboBox.Location = new System.Drawing.Point(524, 355);
 			this.RightThumbRightComboBox.Name = "RightThumbRightComboBox";
 			this.RightThumbRightComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbRightComboBox.TabIndex = 70;
+			this.RightThumbRightComboBox.TabIndex = 36;
 			this.RightThumbRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbLeftComboBox
@@ -872,7 +880,7 @@
 			this.RightThumbLeftComboBox.Location = new System.Drawing.Point(524, 328);
 			this.RightThumbLeftComboBox.Name = "RightThumbLeftComboBox";
 			this.RightThumbLeftComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbLeftComboBox.TabIndex = 71;
+			this.RightThumbLeftComboBox.TabIndex = 35;
 			this.RightThumbLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbUpComboBox
@@ -883,7 +891,7 @@
 			this.RightThumbUpComboBox.Location = new System.Drawing.Point(524, 301);
 			this.RightThumbUpComboBox.Name = "RightThumbUpComboBox";
 			this.RightThumbUpComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbUpComboBox.TabIndex = 72;
+			this.RightThumbUpComboBox.TabIndex = 34;
 			this.RightThumbUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbDownLabel
@@ -892,7 +900,7 @@
 			this.LeftThumbDownLabel.Location = new System.Drawing.Point(101, 385);
 			this.LeftThumbDownLabel.Name = "LeftThumbDownLabel";
 			this.LeftThumbDownLabel.Size = new System.Drawing.Size(62, 13);
-			this.LeftThumbDownLabel.TabIndex = 66;
+			this.LeftThumbDownLabel.TabIndex = 0;
 			this.LeftThumbDownLabel.Text = "Stick Down";
 			this.LeftThumbDownLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -902,7 +910,7 @@
 			this.AdvancedDownLabel.Location = new System.Drawing.Point(444, 385);
 			this.AdvancedDownLabel.Name = "AdvancedDownLabel";
 			this.AdvancedDownLabel.Size = new System.Drawing.Size(62, 13);
-			this.AdvancedDownLabel.TabIndex = 66;
+			this.AdvancedDownLabel.TabIndex = 0;
 			this.AdvancedDownLabel.Text = "Stick Down";
 			this.AdvancedDownLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -912,7 +920,7 @@
 			this.LeftThumbUpLabel.Location = new System.Drawing.Point(101, 304);
 			this.LeftThumbUpLabel.Name = "LeftThumbUpLabel";
 			this.LeftThumbUpLabel.Size = new System.Drawing.Size(48, 13);
-			this.LeftThumbUpLabel.TabIndex = 65;
+			this.LeftThumbUpLabel.TabIndex = 0;
 			this.LeftThumbUpLabel.Text = "Stick Up";
 			this.LeftThumbUpLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -922,7 +930,7 @@
 			this.LeftThumbRightLabel.Location = new System.Drawing.Point(101, 358);
 			this.LeftThumbRightLabel.Name = "LeftThumbRightLabel";
 			this.LeftThumbRightLabel.Size = new System.Drawing.Size(59, 13);
-			this.LeftThumbRightLabel.TabIndex = 67;
+			this.LeftThumbRightLabel.TabIndex = 0;
 			this.LeftThumbRightLabel.Text = "Stick Right";
 			this.LeftThumbRightLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -932,7 +940,7 @@
 			this.AdvancedUpLabel.Location = new System.Drawing.Point(444, 304);
 			this.AdvancedUpLabel.Name = "AdvancedUpLabel";
 			this.AdvancedUpLabel.Size = new System.Drawing.Size(48, 13);
-			this.AdvancedUpLabel.TabIndex = 65;
+			this.AdvancedUpLabel.TabIndex = 0;
 			this.AdvancedUpLabel.Text = "Stick Up";
 			this.AdvancedUpLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -942,7 +950,7 @@
 			this.LeftThumbLeftLabel.Location = new System.Drawing.Point(101, 331);
 			this.LeftThumbLeftLabel.Name = "LeftThumbLeftLabel";
 			this.LeftThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
-			this.LeftThumbLeftLabel.TabIndex = 68;
+			this.LeftThumbLeftLabel.TabIndex = 0;
 			this.LeftThumbLeftLabel.Text = "Stick Left";
 			this.LeftThumbLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -952,7 +960,7 @@
 			this.AdvancedRightLabel.Location = new System.Drawing.Point(444, 358);
 			this.AdvancedRightLabel.Name = "AdvancedRightLabel";
 			this.AdvancedRightLabel.Size = new System.Drawing.Size(59, 13);
-			this.AdvancedRightLabel.TabIndex = 67;
+			this.AdvancedRightLabel.TabIndex = 0;
 			this.AdvancedRightLabel.Text = "Stick Right";
 			this.AdvancedRightLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -962,7 +970,7 @@
 			this.AdvancedLeftLabel.Location = new System.Drawing.Point(444, 331);
 			this.AdvancedLeftLabel.Name = "AdvancedLeftLabel";
 			this.AdvancedLeftLabel.Size = new System.Drawing.Size(52, 13);
-			this.AdvancedLeftLabel.TabIndex = 68;
+			this.AdvancedLeftLabel.TabIndex = 0;
 			this.AdvancedLeftLabel.Text = "Stick Left";
 			this.AdvancedLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -974,7 +982,7 @@
 			this.DPadComboBox.Location = new System.Drawing.Point(6, 167);
 			this.DPadComboBox.Name = "DPadComboBox";
 			this.DPadComboBox.Size = new System.Drawing.Size(89, 21);
-			this.DPadComboBox.TabIndex = 64;
+			this.DPadComboBox.TabIndex = 6;
 			this.DPadComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightTriggerTextBox
@@ -983,7 +991,7 @@
 			this.RightTriggerTextBox.Name = "RightTriggerTextBox";
 			this.RightTriggerTextBox.ReadOnly = true;
 			this.RightTriggerTextBox.Size = new System.Drawing.Size(89, 20);
-			this.RightTriggerTextBox.TabIndex = 17;
+			this.RightTriggerTextBox.TabIndex = 0;
 			this.RightTriggerTextBox.TabStop = false;
 			this.RightTriggerTextBox.Text = "0";
 			this.RightTriggerTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -994,7 +1002,7 @@
 			this.LeftTriggerTextBox.Name = "LeftTriggerTextBox";
 			this.LeftTriggerTextBox.ReadOnly = true;
 			this.LeftTriggerTextBox.Size = new System.Drawing.Size(89, 20);
-			this.LeftTriggerTextBox.TabIndex = 18;
+			this.LeftTriggerTextBox.TabIndex = 0;
 			this.LeftTriggerTextBox.TabStop = false;
 			this.LeftTriggerTextBox.Text = "0";
 			this.LeftTriggerTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -1005,7 +1013,7 @@
 			this.RightThumbTextBox.Name = "RightThumbTextBox";
 			this.RightThumbTextBox.ReadOnly = true;
 			this.RightThumbTextBox.Size = new System.Drawing.Size(89, 20);
-			this.RightThumbTextBox.TabIndex = 19;
+			this.RightThumbTextBox.TabIndex = 0;
 			this.RightThumbTextBox.TabStop = false;
 			this.RightThumbTextBox.Text = "0;0";
 			this.RightThumbTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -1016,7 +1024,7 @@
 			this.LeftThumbTextBox.Name = "LeftThumbTextBox";
 			this.LeftThumbTextBox.ReadOnly = true;
 			this.LeftThumbTextBox.Size = new System.Drawing.Size(89, 20);
-			this.LeftThumbTextBox.TabIndex = 20;
+			this.LeftThumbTextBox.TabIndex = 0;
 			this.LeftThumbTextBox.TabStop = false;
 			this.LeftThumbTextBox.Text = "0;0";
 			this.LeftThumbTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -1029,7 +1037,7 @@
 			this.LeftTriggerComboBox.Location = new System.Drawing.Point(6, 32);
 			this.LeftTriggerComboBox.Name = "LeftTriggerComboBox";
 			this.LeftTriggerComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftTriggerComboBox.TabIndex = 42;
+			this.LeftTriggerComboBox.TabIndex = 1;
 			this.LeftTriggerComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// FrontPictureBox
@@ -1037,7 +1045,7 @@
 			this.FrontPictureBox.Location = new System.Drawing.Point(181, 117);
 			this.FrontPictureBox.Name = "FrontPictureBox";
 			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
-			this.FrontPictureBox.TabIndex = 21;
+			this.FrontPictureBox.TabIndex = 0;
 			this.FrontPictureBox.TabStop = false;
 			// 
 			// ButtonAComboBox
@@ -1048,7 +1056,7 @@
 			this.ButtonAComboBox.Location = new System.Drawing.Point(524, 167);
 			this.ButtonAComboBox.Name = "ButtonAComboBox";
 			this.ButtonAComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonAComboBox.TabIndex = 45;
+			this.ButtonAComboBox.TabIndex = 16;
 			this.ButtonAComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonALabel
@@ -1057,7 +1065,7 @@
 			this.ButtonALabel.Location = new System.Drawing.Point(444, 170);
 			this.ButtonALabel.Name = "ButtonALabel";
 			this.ButtonALabel.Size = new System.Drawing.Size(48, 13);
-			this.ButtonALabel.TabIndex = 37;
+			this.ButtonALabel.TabIndex = 0;
 			this.ButtonALabel.Text = "A Button";
 			// 
 			// ButtonXComboBox
@@ -1068,7 +1076,7 @@
 			this.ButtonXComboBox.Location = new System.Drawing.Point(524, 113);
 			this.ButtonXComboBox.Name = "ButtonXComboBox";
 			this.ButtonXComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonXComboBox.TabIndex = 60;
+			this.ButtonXComboBox.TabIndex = 14;
 			this.ButtonXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightTriggerLabel
@@ -1077,7 +1085,7 @@
 			this.RightTriggerLabel.Location = new System.Drawing.Point(443, 33);
 			this.RightTriggerLabel.Name = "RightTriggerLabel";
 			this.RightTriggerLabel.Size = new System.Drawing.Size(40, 13);
-			this.RightTriggerLabel.TabIndex = 38;
+			this.RightTriggerLabel.TabIndex = 0;
 			this.RightTriggerLabel.Text = "Trigger";
 			// 
 			// RightTriggerComboBox
@@ -1088,7 +1096,7 @@
 			this.RightTriggerComboBox.Location = new System.Drawing.Point(524, 32);
 			this.RightTriggerComboBox.Name = "RightTriggerComboBox";
 			this.RightTriggerComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightTriggerComboBox.TabIndex = 59;
+			this.RightTriggerComboBox.TabIndex = 11;
 			this.RightTriggerComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonBComboBox
@@ -1099,7 +1107,7 @@
 			this.ButtonBComboBox.Location = new System.Drawing.Point(524, 140);
 			this.ButtonBComboBox.Name = "ButtonBComboBox";
 			this.ButtonBComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonBComboBox.TabIndex = 58;
+			this.ButtonBComboBox.TabIndex = 15;
 			this.ButtonBComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbAxisXLabel
@@ -1108,7 +1116,7 @@
 			this.RightThumbAxisXLabel.Location = new System.Drawing.Point(444, 223);
 			this.RightThumbAxisXLabel.Name = "RightThumbAxisXLabel";
 			this.RightThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
-			this.RightThumbAxisXLabel.TabIndex = 35;
+			this.RightThumbAxisXLabel.TabIndex = 0;
 			this.RightThumbAxisXLabel.Text = "Stick Axis X";
 			// 
 			// LeftThumbAxisXLabel
@@ -1117,7 +1125,7 @@
 			this.LeftThumbAxisXLabel.Location = new System.Drawing.Point(101, 223);
 			this.LeftThumbAxisXLabel.Name = "LeftThumbAxisXLabel";
 			this.LeftThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
-			this.LeftThumbAxisXLabel.TabIndex = 40;
+			this.LeftThumbAxisXLabel.TabIndex = 0;
 			this.LeftThumbAxisXLabel.Text = "Stick Axis X";
 			// 
 			// ButtonXLabel
@@ -1126,7 +1134,7 @@
 			this.ButtonXLabel.Location = new System.Drawing.Point(444, 116);
 			this.ButtonXLabel.Name = "ButtonXLabel";
 			this.ButtonXLabel.Size = new System.Drawing.Size(48, 13);
-			this.ButtonXLabel.TabIndex = 41;
+			this.ButtonXLabel.TabIndex = 0;
 			this.ButtonXLabel.Text = "X Button";
 			// 
 			// RightShoulderLabel
@@ -1135,7 +1143,7 @@
 			this.RightShoulderLabel.Location = new System.Drawing.Point(444, 60);
 			this.RightShoulderLabel.Name = "RightShoulderLabel";
 			this.RightShoulderLabel.Size = new System.Drawing.Size(43, 13);
-			this.RightShoulderLabel.TabIndex = 23;
+			this.RightShoulderLabel.TabIndex = 0;
 			this.RightShoulderLabel.Text = "Bumper";
 			// 
 			// ButtonYComboBox
@@ -1146,7 +1154,7 @@
 			this.ButtonYComboBox.Location = new System.Drawing.Point(524, 86);
 			this.ButtonYComboBox.Name = "ButtonYComboBox";
 			this.ButtonYComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonYComboBox.TabIndex = 55;
+			this.ButtonYComboBox.TabIndex = 13;
 			this.ButtonYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbAxisXComboBox
@@ -1157,7 +1165,7 @@
 			this.RightThumbAxisXComboBox.Location = new System.Drawing.Point(524, 220);
 			this.RightThumbAxisXComboBox.Name = "RightThumbAxisXComboBox";
 			this.RightThumbAxisXComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbAxisXComboBox.TabIndex = 56;
+			this.RightThumbAxisXComboBox.TabIndex = 31;
 			this.RightThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonBLabel
@@ -1166,7 +1174,7 @@
 			this.ButtonBLabel.Location = new System.Drawing.Point(444, 143);
 			this.ButtonBLabel.Name = "ButtonBLabel";
 			this.ButtonBLabel.Size = new System.Drawing.Size(48, 13);
-			this.ButtonBLabel.TabIndex = 25;
+			this.ButtonBLabel.TabIndex = 0;
 			this.ButtonBLabel.Text = "B Button";
 			// 
 			// LeftThumbAxisXComboBox
@@ -1177,7 +1185,7 @@
 			this.LeftThumbAxisXComboBox.Location = new System.Drawing.Point(6, 220);
 			this.LeftThumbAxisXComboBox.Name = "LeftThumbAxisXComboBox";
 			this.LeftThumbAxisXComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbAxisXComboBox.TabIndex = 54;
+			this.LeftThumbAxisXComboBox.TabIndex = 21;
 			this.LeftThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// BigButtonComboBox
@@ -1188,7 +1196,7 @@
 			this.BigButtonComboBox.Location = new System.Drawing.Point(6, 140);
 			this.BigButtonComboBox.Name = "BigButtonComboBox";
 			this.BigButtonComboBox.Size = new System.Drawing.Size(89, 21);
-			this.BigButtonComboBox.TabIndex = 52;
+			this.BigButtonComboBox.TabIndex = 5;
 			this.BigButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonStartComboBox
@@ -1199,7 +1207,7 @@
 			this.ButtonStartComboBox.Location = new System.Drawing.Point(6, 113);
 			this.ButtonStartComboBox.Name = "ButtonStartComboBox";
 			this.ButtonStartComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonStartComboBox.TabIndex = 52;
+			this.ButtonStartComboBox.TabIndex = 4;
 			this.ButtonStartComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonBackComboBox
@@ -1210,7 +1218,7 @@
 			this.ButtonBackComboBox.Location = new System.Drawing.Point(6, 86);
 			this.ButtonBackComboBox.Name = "ButtonBackComboBox";
 			this.ButtonBackComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonBackComboBox.TabIndex = 53;
+			this.ButtonBackComboBox.TabIndex = 3;
 			this.ButtonBackComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftShoulderComboBox
@@ -1221,7 +1229,7 @@
 			this.LeftShoulderComboBox.Location = new System.Drawing.Point(6, 59);
 			this.LeftShoulderComboBox.Name = "LeftShoulderComboBox";
 			this.LeftShoulderComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftShoulderComboBox.TabIndex = 57;
+			this.LeftShoulderComboBox.TabIndex = 2;
 			this.LeftShoulderComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightShoulderComboBox
@@ -1232,7 +1240,7 @@
 			this.RightShoulderComboBox.Location = new System.Drawing.Point(524, 59);
 			this.RightShoulderComboBox.Name = "RightShoulderComboBox";
 			this.RightShoulderComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightShoulderComboBox.TabIndex = 61;
+			this.RightShoulderComboBox.TabIndex = 12;
 			this.RightShoulderComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// BigButtonLabel
@@ -1241,7 +1249,7 @@
 			this.BigButtonLabel.Location = new System.Drawing.Point(101, 143);
 			this.BigButtonLabel.Name = "BigButtonLabel";
 			this.BigButtonLabel.Size = new System.Drawing.Size(35, 13);
-			this.BigButtonLabel.TabIndex = 26;
+			this.BigButtonLabel.TabIndex = 0;
 			this.BigButtonLabel.Text = "Guide";
 			// 
 			// StartButtonLabel
@@ -1250,7 +1258,7 @@
 			this.StartButtonLabel.Location = new System.Drawing.Point(101, 116);
 			this.StartButtonLabel.Name = "StartButtonLabel";
 			this.StartButtonLabel.Size = new System.Drawing.Size(29, 13);
-			this.StartButtonLabel.TabIndex = 26;
+			this.StartButtonLabel.TabIndex = 0;
 			this.StartButtonLabel.Text = "Start";
 			// 
 			// DPadDownLabel
@@ -1259,7 +1267,7 @@
 			this.DPadDownLabel.Location = new System.Drawing.Point(324, 385);
 			this.DPadDownLabel.Name = "DPadDownLabel";
 			this.DPadDownLabel.Size = new System.Drawing.Size(68, 13);
-			this.DPadDownLabel.TabIndex = 22;
+			this.DPadDownLabel.TabIndex = 0;
 			this.DPadDownLabel.Text = "D-Pad Down";
 			// 
 			// DPadRightLabel
@@ -1268,7 +1276,7 @@
 			this.DPadRightLabel.Location = new System.Drawing.Point(324, 358);
 			this.DPadRightLabel.Name = "DPadRightLabel";
 			this.DPadRightLabel.Size = new System.Drawing.Size(65, 13);
-			this.DPadRightLabel.TabIndex = 22;
+			this.DPadRightLabel.TabIndex = 0;
 			this.DPadRightLabel.Text = "D-Pad Right";
 			// 
 			// DPadLeftLabel
@@ -1277,7 +1285,7 @@
 			this.DPadLeftLabel.Location = new System.Drawing.Point(324, 331);
 			this.DPadLeftLabel.Name = "DPadLeftLabel";
 			this.DPadLeftLabel.Size = new System.Drawing.Size(58, 13);
-			this.DPadLeftLabel.TabIndex = 22;
+			this.DPadLeftLabel.TabIndex = 0;
 			this.DPadLeftLabel.Text = "D-Pad Left";
 			// 
 			// DPadUpLabel
@@ -1286,7 +1294,7 @@
 			this.DPadUpLabel.Location = new System.Drawing.Point(324, 304);
 			this.DPadUpLabel.Name = "DPadUpLabel";
 			this.DPadUpLabel.Size = new System.Drawing.Size(54, 13);
-			this.DPadUpLabel.TabIndex = 22;
+			this.DPadUpLabel.TabIndex = 0;
 			this.DPadUpLabel.Text = "D-Pad Up";
 			// 
 			// DPadLabel
@@ -1295,7 +1303,7 @@
 			this.DPadLabel.Location = new System.Drawing.Point(101, 170);
 			this.DPadLabel.Name = "DPadLabel";
 			this.DPadLabel.Size = new System.Drawing.Size(37, 13);
-			this.DPadLabel.TabIndex = 22;
+			this.DPadLabel.TabIndex = 0;
 			this.DPadLabel.Text = "D-Pad";
 			// 
 			// BackButtonLabel
@@ -1304,7 +1312,7 @@
 			this.BackButtonLabel.Location = new System.Drawing.Point(101, 89);
 			this.BackButtonLabel.Name = "BackButtonLabel";
 			this.BackButtonLabel.Size = new System.Drawing.Size(32, 13);
-			this.BackButtonLabel.TabIndex = 22;
+			this.BackButtonLabel.TabIndex = 0;
 			this.BackButtonLabel.Text = "Back";
 			// 
 			// RightThumbAxisYLabel
@@ -1313,7 +1321,7 @@
 			this.RightThumbAxisYLabel.Location = new System.Drawing.Point(444, 250);
 			this.RightThumbAxisYLabel.Name = "RightThumbAxisYLabel";
 			this.RightThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
-			this.RightThumbAxisYLabel.TabIndex = 28;
+			this.RightThumbAxisYLabel.TabIndex = 0;
 			this.RightThumbAxisYLabel.Text = "Stick Axis Y";
 			// 
 			// ButtonYLabel
@@ -1322,7 +1330,7 @@
 			this.ButtonYLabel.Location = new System.Drawing.Point(444, 89);
 			this.ButtonYLabel.Name = "ButtonYLabel";
 			this.ButtonYLabel.Size = new System.Drawing.Size(48, 13);
-			this.ButtonYLabel.TabIndex = 32;
+			this.ButtonYLabel.TabIndex = 0;
 			this.ButtonYLabel.Text = "Y Button";
 			// 
 			// LeftThumbAxisYLabel
@@ -1331,7 +1339,7 @@
 			this.LeftThumbAxisYLabel.Location = new System.Drawing.Point(101, 250);
 			this.LeftThumbAxisYLabel.Name = "LeftThumbAxisYLabel";
 			this.LeftThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
-			this.LeftThumbAxisYLabel.TabIndex = 33;
+			this.LeftThumbAxisYLabel.TabIndex = 0;
 			this.LeftThumbAxisYLabel.Text = "Stick Axis Y";
 			// 
 			// LeftShoulderLabel
@@ -1340,7 +1348,7 @@
 			this.LeftShoulderLabel.Location = new System.Drawing.Point(101, 62);
 			this.LeftShoulderLabel.Name = "LeftShoulderLabel";
 			this.LeftShoulderLabel.Size = new System.Drawing.Size(43, 13);
-			this.LeftShoulderLabel.TabIndex = 34;
+			this.LeftShoulderLabel.TabIndex = 0;
 			this.LeftShoulderLabel.Text = "Bumper";
 			// 
 			// RightLabel
@@ -1350,7 +1358,7 @@
 			this.RightLabel.Location = new System.Drawing.Point(443, 9);
 			this.RightLabel.Name = "RightLabel";
 			this.RightLabel.Size = new System.Drawing.Size(41, 13);
-			this.RightLabel.TabIndex = 29;
+			this.RightLabel.TabIndex = 0;
 			this.RightLabel.Text = "RIGHT";
 			// 
 			// LeftLabel
@@ -1360,7 +1368,7 @@
 			this.LeftLabel.Location = new System.Drawing.Point(101, 9);
 			this.LeftLabel.Name = "LeftLabel";
 			this.LeftLabel.Size = new System.Drawing.Size(33, 13);
-			this.LeftLabel.TabIndex = 29;
+			this.LeftLabel.TabIndex = 0;
 			this.LeftLabel.Text = "LEFT";
 			// 
 			// LeftTriggerLabel
@@ -1369,8 +1377,8 @@
 			this.LeftTriggerLabel.Location = new System.Drawing.Point(101, 35);
 			this.LeftTriggerLabel.Name = "LeftTriggerLabel";
 			this.LeftTriggerLabel.Size = new System.Drawing.Size(40, 13);
-			this.LeftTriggerLabel.TabIndex = 29;
-			this.LeftTriggerLabel.Text = "Trigger";
+			this.LeftTriggerLabel.TabIndex = 0;
+			this.LeftTriggerLabel.Text = "&Trigger";
 			// 
 			// RightThumbButtonLabel
 			// 
@@ -1378,7 +1386,7 @@
 			this.RightThumbButtonLabel.Location = new System.Drawing.Point(444, 277);
 			this.RightThumbButtonLabel.Name = "RightThumbButtonLabel";
 			this.RightThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
-			this.RightThumbButtonLabel.TabIndex = 30;
+			this.RightThumbButtonLabel.TabIndex = 0;
 			this.RightThumbButtonLabel.Text = "Stick Button";
 			// 
 			// LeftThumbButtonComboBox
@@ -1389,7 +1397,7 @@
 			this.LeftThumbButtonComboBox.Location = new System.Drawing.Point(6, 274);
 			this.LeftThumbButtonComboBox.Name = "LeftThumbButtonComboBox";
 			this.LeftThumbButtonComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbButtonComboBox.TabIndex = 46;
+			this.LeftThumbButtonComboBox.TabIndex = 23;
 			this.LeftThumbButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbButtonLabel
@@ -1398,7 +1406,7 @@
 			this.LeftThumbButtonLabel.Location = new System.Drawing.Point(101, 277);
 			this.LeftThumbButtonLabel.Name = "LeftThumbButtonLabel";
 			this.LeftThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
-			this.LeftThumbButtonLabel.TabIndex = 31;
+			this.LeftThumbButtonLabel.TabIndex = 0;
 			this.LeftThumbButtonLabel.Text = "Stick Button";
 			// 
 			// LeftThumbAxisYComboBox
@@ -1409,7 +1417,7 @@
 			this.LeftThumbAxisYComboBox.Location = new System.Drawing.Point(6, 247);
 			this.LeftThumbAxisYComboBox.Name = "LeftThumbAxisYComboBox";
 			this.LeftThumbAxisYComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftThumbAxisYComboBox.TabIndex = 51;
+			this.LeftThumbAxisYComboBox.TabIndex = 22;
 			this.LeftThumbAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbAxisYComboBox
@@ -1420,7 +1428,7 @@
 			this.RightThumbAxisYComboBox.Location = new System.Drawing.Point(524, 247);
 			this.RightThumbAxisYComboBox.Name = "RightThumbAxisYComboBox";
 			this.RightThumbAxisYComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbAxisYComboBox.TabIndex = 44;
+			this.RightThumbAxisYComboBox.TabIndex = 32;
 			this.RightThumbAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbButtonComboBox
@@ -1431,7 +1439,7 @@
 			this.RightThumbButtonComboBox.Location = new System.Drawing.Point(524, 274);
 			this.RightThumbButtonComboBox.Name = "RightThumbButtonComboBox";
 			this.RightThumbButtonComboBox.Size = new System.Drawing.Size(89, 21);
-			this.RightThumbButtonComboBox.TabIndex = 49;
+			this.RightThumbButtonComboBox.TabIndex = 33;
 			this.RightThumbButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// TopPictureBox
@@ -1440,14 +1448,14 @@
 			this.TopPictureBox.Name = "TopPictureBox";
 			this.TopPictureBox.Size = new System.Drawing.Size(256, 105);
 			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.TopPictureBox.TabIndex = 16;
+			this.TopPictureBox.TabIndex = 0;
 			this.TopPictureBox.TabStop = false;
 			// 
 			// PadTabControl
 			// 
-			this.PadTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.PadTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.PadTabControl.Controls.Add(this.GeneralTabPage);
 			this.PadTabControl.Controls.Add(this.KeyboardTabPage);
 			this.PadTabControl.Controls.Add(this.AdvancedTabPage);
@@ -1458,7 +1466,7 @@
 			this.PadTabControl.Name = "PadTabControl";
 			this.PadTabControl.SelectedIndex = 0;
 			this.PadTabControl.Size = new System.Drawing.Size(628, 437);
-			this.PadTabControl.TabIndex = 1;
+			this.PadTabControl.TabIndex = 0;
 			// 
 			// KeyboardTabPage
 			// 
@@ -1467,7 +1475,7 @@
 			this.KeyboardTabPage.Name = "KeyboardTabPage";
 			this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.KeyboardTabPage.Size = new System.Drawing.Size(620, 411);
-			this.KeyboardTabPage.TabIndex = 4;
+			this.KeyboardTabPage.TabIndex = 0;
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
 			// 
@@ -1477,7 +1485,7 @@
 			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
 			this.PadKeyboardControl.Name = "PadKeyboardControl";
 			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
-			this.PadKeyboardControl.TabIndex = 0;
+			this.PadKeyboardControl.TabIndex = 1;
 			// 
 			// ForceFeedbackTabPage
 			// 
@@ -1487,7 +1495,7 @@
 			this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
 			this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(620, 411);
-			this.ForceFeedbackTabPage.TabIndex = 5;
+			this.ForceFeedbackTabPage.TabIndex = 0;
 			this.ForceFeedbackTabPage.Text = "Force Feedback";
 			// 
 			// ForceFeedbackGroupBox
@@ -1513,9 +1521,18 @@
 			this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(6, 6);
 			this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
 			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(608, 170);
-			this.ForceFeedbackGroupBox.TabIndex = 42;
+			this.ForceFeedbackGroupBox.TabIndex = 0;
 			this.ForceFeedbackGroupBox.TabStop = false;
 			this.ForceFeedbackGroupBox.Text = "Force Feedback";
+			// 
+			// ForceTypeComboBox
+			// 
+			this.ForceTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ForceTypeComboBox.FormattingEnabled = true;
+			this.ForceTypeComboBox.Location = new System.Drawing.Point(161, 17);
+			this.ForceTypeComboBox.Name = "ForceTypeComboBox";
+			this.ForceTypeComboBox.Size = new System.Drawing.Size(121, 21);
+			this.ForceTypeComboBox.TabIndex = 3;
 			// 
 			// ForceEnableCheckBox
 			// 
@@ -1523,7 +1540,7 @@
 			this.ForceEnableCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.ForceEnableCheckBox.Name = "ForceEnableCheckBox";
 			this.ForceEnableCheckBox.Size = new System.Drawing.Size(140, 17);
-			this.ForceEnableCheckBox.TabIndex = 32;
+			this.ForceEnableCheckBox.TabIndex = 1;
 			this.ForceEnableCheckBox.Text = "Enable Force Feedback";
 			this.ForceEnableCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -1534,7 +1551,7 @@
 			this.RightMotorPeriodTrackBar.Maximum = 100;
 			this.RightMotorPeriodTrackBar.Name = "RightMotorPeriodTrackBar";
 			this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.RightMotorPeriodTrackBar.TabIndex = 30;
+			this.RightMotorPeriodTrackBar.TabIndex = 7;
 			this.RightMotorPeriodTrackBar.TickFrequency = 2;
 			this.RightMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
 			// 
@@ -1545,7 +1562,7 @@
 			this.RightMotorTestTrackBar.Maximum = 100;
 			this.RightMotorTestTrackBar.Name = "RightMotorTestTrackBar";
 			this.RightMotorTestTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.RightMotorTestTrackBar.TabIndex = 30;
+			this.RightMotorTestTrackBar.TabIndex = 8;
 			this.RightMotorTestTrackBar.TickFrequency = 2;
 			this.MainToolTip.SetToolTip(this.RightMotorTestTrackBar, "High-frequency rumble motor.");
 			this.RightMotorTestTrackBar.ValueChanged += new System.EventHandler(this.MotorTrackBar_ValueChanged);
@@ -1556,7 +1573,7 @@
 			this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(6, 67);
 			this.LeftMotorPeriodLabel.Name = "LeftMotorPeriodLabel";
 			this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(110, 13);
-			this.LeftMotorPeriodLabel.TabIndex = 29;
+			this.LeftMotorPeriodLabel.TabIndex = 0;
 			this.LeftMotorPeriodLabel.Text = "Left Motor Period (ms)";
 			// 
 			// TestLeftMotorLabel
@@ -1565,7 +1582,7 @@
 			this.TestLeftMotorLabel.Location = new System.Drawing.Point(6, 118);
 			this.TestLeftMotorLabel.Name = "TestLeftMotorLabel";
 			this.TestLeftMotorLabel.Size = new System.Drawing.Size(79, 13);
-			this.TestLeftMotorLabel.TabIndex = 29;
+			this.TestLeftMotorLabel.TabIndex = 0;
 			this.TestLeftMotorLabel.Text = "Test Left Motor";
 			// 
 			// RightMotorPeriodTextBox
@@ -1574,7 +1591,8 @@
 			this.RightMotorPeriodTextBox.Name = "RightMotorPeriodTextBox";
 			this.RightMotorPeriodTextBox.ReadOnly = true;
 			this.RightMotorPeriodTextBox.Size = new System.Drawing.Size(43, 20);
-			this.RightMotorPeriodTextBox.TabIndex = 38;
+			this.RightMotorPeriodTextBox.TabIndex = 0;
+			this.RightMotorPeriodTextBox.TabStop = false;
 			this.RightMotorPeriodTextBox.Text = "0 ";
 			this.RightMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -1584,7 +1602,8 @@
 			this.RightMotorTestTextBox.Name = "RightMotorTestTextBox";
 			this.RightMotorTestTextBox.ReadOnly = true;
 			this.RightMotorTestTextBox.Size = new System.Drawing.Size(43, 20);
-			this.RightMotorTestTextBox.TabIndex = 38;
+			this.RightMotorTestTextBox.TabIndex = 0;
+			this.RightMotorTestTextBox.TabStop = false;
 			this.RightMotorTestTextBox.Text = "0 % ";
 			this.RightMotorTestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -1595,7 +1614,7 @@
 			this.LeftMotorPeriodTrackBar.Maximum = 100;
 			this.LeftMotorPeriodTrackBar.Name = "LeftMotorPeriodTrackBar";
 			this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.LeftMotorPeriodTrackBar.TabIndex = 28;
+			this.LeftMotorPeriodTrackBar.TabIndex = 5;
 			this.LeftMotorPeriodTrackBar.TickFrequency = 2;
 			this.LeftMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
 			// 
@@ -1605,7 +1624,8 @@
 			this.LeftMotorPeriodTextBox.Name = "LeftMotorPeriodTextBox";
 			this.LeftMotorPeriodTextBox.ReadOnly = true;
 			this.LeftMotorPeriodTextBox.Size = new System.Drawing.Size(43, 20);
-			this.LeftMotorPeriodTextBox.TabIndex = 38;
+			this.LeftMotorPeriodTextBox.TabIndex = 0;
+			this.LeftMotorPeriodTextBox.TabStop = false;
 			this.LeftMotorPeriodTextBox.Text = "0 ";
 			this.LeftMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -1616,7 +1636,7 @@
 			this.LeftMotorTestTrackBar.Maximum = 100;
 			this.LeftMotorTestTrackBar.Name = "LeftMotorTestTrackBar";
 			this.LeftMotorTestTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.LeftMotorTestTrackBar.TabIndex = 28;
+			this.LeftMotorTestTrackBar.TabIndex = 6;
 			this.LeftMotorTestTrackBar.TickFrequency = 2;
 			this.MainToolTip.SetToolTip(this.LeftMotorTestTrackBar, "Low-frequency rumble motor.");
 			this.LeftMotorTestTrackBar.ValueChanged += new System.EventHandler(this.MotorTrackBar_ValueChanged);
@@ -1627,7 +1647,7 @@
 			this.RightMotorPeriodLabel.Location = new System.Drawing.Point(323, 67);
 			this.RightMotorPeriodLabel.Name = "RightMotorPeriodLabel";
 			this.RightMotorPeriodLabel.Size = new System.Drawing.Size(117, 13);
-			this.RightMotorPeriodLabel.TabIndex = 31;
+			this.RightMotorPeriodLabel.TabIndex = 0;
 			this.RightMotorPeriodLabel.Text = "Right Motor Period (ms)";
 			// 
 			// LeftMotorTestTextBox
@@ -1636,7 +1656,8 @@
 			this.LeftMotorTestTextBox.Name = "LeftMotorTestTextBox";
 			this.LeftMotorTestTextBox.ReadOnly = true;
 			this.LeftMotorTestTextBox.Size = new System.Drawing.Size(43, 20);
-			this.LeftMotorTestTextBox.TabIndex = 38;
+			this.LeftMotorTestTextBox.TabIndex = 0;
+			this.LeftMotorTestTextBox.TabStop = false;
 			this.LeftMotorTestTextBox.Text = "0 % ";
 			this.LeftMotorTestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -1646,16 +1667,17 @@
 			this.TestRightMotorLabel.Location = new System.Drawing.Point(323, 118);
 			this.TestRightMotorLabel.Name = "TestRightMotorLabel";
 			this.TestRightMotorLabel.Size = new System.Drawing.Size(86, 13);
-			this.TestRightMotorLabel.TabIndex = 31;
+			this.TestRightMotorLabel.TabIndex = 0;
 			this.TestRightMotorLabel.Text = "Test Right Motor";
 			// 
 			// ForceOverallTextBox
 			// 
-			this.ForceOverallTextBox.Location = new System.Drawing.Point(555, 35);
+			this.ForceOverallTextBox.Location = new System.Drawing.Point(559, 35);
 			this.ForceOverallTextBox.Name = "ForceOverallTextBox";
 			this.ForceOverallTextBox.ReadOnly = true;
 			this.ForceOverallTextBox.Size = new System.Drawing.Size(43, 20);
-			this.ForceOverallTextBox.TabIndex = 38;
+			this.ForceOverallTextBox.TabIndex = 0;
+			this.ForceOverallTextBox.TabStop = false;
 			this.ForceOverallTextBox.Text = "100 % ";
 			this.ForceOverallTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -1665,28 +1687,28 @@
 			this.ForceSwapMotorCheckBox.Location = new System.Drawing.Point(6, 42);
 			this.ForceSwapMotorCheckBox.Name = "ForceSwapMotorCheckBox";
 			this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(83, 17);
-			this.ForceSwapMotorCheckBox.TabIndex = 33;
+			this.ForceSwapMotorCheckBox.TabIndex = 2;
 			this.ForceSwapMotorCheckBox.Text = "Swap Motor";
 			this.ForceSwapMotorCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OveralEffectsStengthLabel
 			// 
 			this.OveralEffectsStengthLabel.AutoSize = true;
-			this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(319, 20);
+			this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(323, 20);
 			this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
 			this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(114, 13);
-			this.OveralEffectsStengthLabel.TabIndex = 37;
+			this.OveralEffectsStengthLabel.TabIndex = 0;
 			this.OveralEffectsStengthLabel.Text = "Overal Effects Stength";
 			// 
 			// ForceOverallTrackBar
 			// 
 			this.ForceOverallTrackBar.AutoSize = false;
 			this.ForceOverallTrackBar.LargeChange = 10;
-			this.ForceOverallTrackBar.Location = new System.Drawing.Point(322, 36);
+			this.ForceOverallTrackBar.Location = new System.Drawing.Point(326, 35);
 			this.ForceOverallTrackBar.Maximum = 100;
 			this.ForceOverallTrackBar.Name = "ForceOverallTrackBar";
 			this.ForceOverallTrackBar.Size = new System.Drawing.Size(227, 28);
-			this.ForceOverallTrackBar.TabIndex = 36;
+			this.ForceOverallTrackBar.TabIndex = 4;
 			this.ForceOverallTrackBar.TickFrequency = 2;
 			this.ForceOverallTrackBar.Value = 100;
 			this.ForceOverallTrackBar.ValueChanged += new System.EventHandler(this.ForceOverallTrackBar_ValueChanged);
@@ -1696,15 +1718,6 @@
 			this.DiMenuStrip.Name = "DiMenuStrip";
 			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
-			// 
-			// ForceTypeComboBox
-			// 
-			this.ForceTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ForceTypeComboBox.FormattingEnabled = true;
-			this.ForceTypeComboBox.Location = new System.Drawing.Point(161, 17);
-			this.ForceTypeComboBox.Name = "ForceTypeComboBox";
-			this.ForceTypeComboBox.Size = new System.Drawing.Size(121, 21);
-			this.ForceTypeComboBox.TabIndex = 40;
 			// 
 			// PadControl
 			// 

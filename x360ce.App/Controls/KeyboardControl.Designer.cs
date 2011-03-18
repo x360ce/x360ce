@@ -52,9 +52,9 @@
 			// 
 			// MapDataGridView
 			// 
-			this.MapDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.MapDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.MapDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.MapDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.KeyboardKeyColumn,
@@ -63,7 +63,7 @@
 			this.MapDataGridView.Location = new System.Drawing.Point(3, 3);
 			this.MapDataGridView.Name = "MapDataGridView";
 			this.MapDataGridView.Size = new System.Drawing.Size(549, 361);
-			this.MapDataGridView.TabIndex = 0;
+			this.MapDataGridView.TabIndex = 1;
 			this.MapDataGridView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.MapDataGridView_PreviewKeyDown);
 			// 
 			// KeyboardKeyColumn
@@ -96,7 +96,7 @@
 			this.KeyboardTextBox.Location = new System.Drawing.Point(3, 410);
 			this.KeyboardTextBox.Name = "KeyboardTextBox";
 			this.KeyboardTextBox.Size = new System.Drawing.Size(140, 20);
-			this.KeyboardTextBox.TabIndex = 1;
+			this.KeyboardTextBox.TabIndex = 3;
 			this.KeyboardTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyboardTextBox_KeyDown);
 			this.KeyboardTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyboardTextBox_KeyPress);
 			this.KeyboardTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyboardTextBox_KeyUp);
@@ -108,8 +108,8 @@
 			this.AddButton.Location = new System.Drawing.Point(477, 370);
 			this.AddButton.Name = "AddButton";
 			this.AddButton.Size = new System.Drawing.Size(75, 23);
-			this.AddButton.TabIndex = 2;
-			this.AddButton.Text = "Add";
+			this.AddButton.TabIndex = 9;
+			this.AddButton.Text = "&Add";
 			this.AddButton.UseVisualStyleBackColor = true;
 			// 
 			// LeftTriggerComboBox
@@ -121,7 +121,7 @@
 			this.LeftTriggerComboBox.Location = new System.Drawing.Point(3, 370);
 			this.LeftTriggerComboBox.Name = "LeftTriggerComboBox";
 			this.LeftTriggerComboBox.Size = new System.Drawing.Size(89, 21);
-			this.LeftTriggerComboBox.TabIndex = 43;
+			this.LeftTriggerComboBox.TabIndex = 2;
 			// 
 			// KeyboardLabel
 			// 
@@ -130,7 +130,7 @@
 			this.KeyboardLabel.Location = new System.Drawing.Point(3, 394);
 			this.KeyboardLabel.Name = "KeyboardLabel";
 			this.KeyboardLabel.Size = new System.Drawing.Size(55, 13);
-			this.KeyboardLabel.TabIndex = 44;
+			this.KeyboardLabel.TabIndex = 0;
 			this.KeyboardLabel.Text = "Keyboard:";
 			// 
 			// LoopCheckBox
@@ -140,7 +140,7 @@
 			this.LoopCheckBox.Location = new System.Drawing.Point(149, 437);
 			this.LoopCheckBox.Name = "LoopCheckBox";
 			this.LoopCheckBox.Size = new System.Drawing.Size(50, 17);
-			this.LoopCheckBox.TabIndex = 45;
+			this.LoopCheckBox.TabIndex = 6;
 			this.LoopCheckBox.Text = "Loop";
 			this.LoopCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -150,7 +150,7 @@
 			this.DelayNumericUpDown.Location = new System.Drawing.Point(149, 411);
 			this.DelayNumericUpDown.Name = "DelayNumericUpDown";
 			this.DelayNumericUpDown.Size = new System.Drawing.Size(75, 20);
-			this.DelayNumericUpDown.TabIndex = 46;
+			this.DelayNumericUpDown.TabIndex = 4;
 			// 
 			// DelayLabel
 			// 
@@ -159,18 +159,18 @@
 			this.DelayLabel.Location = new System.Drawing.Point(146, 395);
 			this.DelayLabel.Name = "DelayLabel";
 			this.DelayLabel.Size = new System.Drawing.Size(37, 13);
-			this.DelayLabel.TabIndex = 44;
+			this.DelayLabel.TabIndex = 0;
 			this.DelayLabel.Text = "Delay:";
 			// 
 			// ScriptTextBox
 			// 
-			this.ScriptTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.ScriptTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.ScriptTextBox.Location = new System.Drawing.Point(230, 370);
 			this.ScriptTextBox.Multiline = true;
 			this.ScriptTextBox.Name = "ScriptTextBox";
 			this.ScriptTextBox.Size = new System.Drawing.Size(241, 84);
-			this.ScriptTextBox.TabIndex = 1;
+			this.ScriptTextBox.TabIndex = 8;
 			this.ScriptTextBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.textBox1_PreviewKeyDown);
 			// 
 			// AppendButton
@@ -179,7 +179,7 @@
 			this.AppendButton.Location = new System.Drawing.Point(149, 370);
 			this.AppendButton.Name = "AppendButton";
 			this.AppendButton.Size = new System.Drawing.Size(75, 23);
-			this.AppendButton.TabIndex = 2;
+			this.AppendButton.TabIndex = 7;
 			this.AppendButton.Text = ">>";
 			this.AppendButton.UseVisualStyleBackColor = true;
 			this.AppendButton.Click += new System.EventHandler(this.AppendButton_Click);
@@ -190,7 +190,7 @@
 			this.textBox1.Location = new System.Drawing.Point(3, 434);
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(140, 20);
-			this.textBox1.TabIndex = 1;
+			this.textBox1.TabIndex = 5;
 			this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyboardTextBox_KeyDown);
 			this.textBox1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.KeyboardTextBox_PreviewKeyDown);
 			// 
@@ -200,8 +200,8 @@
 			this.TriggerButton.Location = new System.Drawing.Point(477, 399);
 			this.TriggerButton.Name = "TriggerButton";
 			this.TriggerButton.Size = new System.Drawing.Size(75, 23);
-			this.TriggerButton.TabIndex = 2;
-			this.TriggerButton.Text = "Trigger";
+			this.TriggerButton.TabIndex = 10;
+			this.TriggerButton.Text = "&Trigger";
 			this.TriggerButton.UseVisualStyleBackColor = true;
 			this.TriggerButton.Click += new System.EventHandler(this.TriggerButton_Click);
 			// 
