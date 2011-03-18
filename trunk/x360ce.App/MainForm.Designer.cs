@@ -92,16 +92,16 @@ namespace x360ce.App
 			this.ResetButton.Location = new System.Drawing.Point(496, 482);
 			this.ResetButton.Name = "ResetButton";
 			this.ResetButton.Size = new System.Drawing.Size(75, 23);
-			this.ResetButton.TabIndex = 15;
-			this.ResetButton.Text = "Reset";
+			this.ResetButton.TabIndex = 4;
+			this.ResetButton.Text = "&Reset";
 			this.ResetButton.UseVisualStyleBackColor = true;
 			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
 			// 
 			// MainTabControl
 			// 
-			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.MainTabControl.Controls.Add(this.Pad1TabPage);
 			this.MainTabControl.Controls.Add(this.Pad2TabPage);
 			this.MainTabControl.Controls.Add(this.Pad3TabPage);
@@ -114,7 +114,7 @@ namespace x360ce.App
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.Size = new System.Drawing.Size(640, 468);
-			this.MainTabControl.TabIndex = 16;
+			this.MainTabControl.TabIndex = 1;
 			this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// 
 			// Pad1TabPage
@@ -122,7 +122,7 @@ namespace x360ce.App
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
 			this.Pad1TabPage.Size = new System.Drawing.Size(632, 441);
-			this.Pad1TabPage.TabIndex = 6;
+			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "Controller 1";
 			// 
 			// Pad2TabPage
@@ -130,7 +130,7 @@ namespace x360ce.App
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
 			this.Pad2TabPage.Size = new System.Drawing.Size(632, 441);
-			this.Pad2TabPage.TabIndex = 7;
+			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "Controller 2";
 			// 
 			// Pad3TabPage
@@ -138,7 +138,7 @@ namespace x360ce.App
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
 			this.Pad3TabPage.Size = new System.Drawing.Size(632, 441);
-			this.Pad3TabPage.TabIndex = 8;
+			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "Controller 3";
 			// 
 			// Pad4TabPage
@@ -146,7 +146,7 @@ namespace x360ce.App
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
 			this.Pad4TabPage.Size = new System.Drawing.Size(632, 441);
-			this.Pad4TabPage.TabIndex = 9;
+			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "Controller 4";
 			// 
 			// OptionsTabPage
@@ -158,13 +158,13 @@ namespace x360ce.App
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
 			this.OptionsTabPage.Size = new System.Drawing.Size(632, 441);
-			this.OptionsTabPage.TabIndex = 5;
+			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
 			// TestingAndLoggingGroupBox
 			// 
-			this.TestingAndLoggingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.TestingAndLoggingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
@@ -172,7 +172,7 @@ namespace x360ce.App
 			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(455, 3);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
 			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(174, 143);
-			this.TestingAndLoggingGroupBox.TabIndex = 31;
+			this.TestingAndLoggingGroupBox.TabIndex = 0;
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
 			// 
@@ -184,7 +184,7 @@ namespace x360ce.App
 			this.XInputEnableCheckBox.Location = new System.Drawing.Point(6, 27);
 			this.XInputEnableCheckBox.Name = "XInputEnableCheckBox";
 			this.XInputEnableCheckBox.Size = new System.Drawing.Size(93, 17);
-			this.XInputEnableCheckBox.TabIndex = 22;
+			this.XInputEnableCheckBox.TabIndex = 0;
 			this.XInputEnableCheckBox.Text = "Enable XInput";
 			this.XInputEnableCheckBox.UseVisualStyleBackColor = true;
 			this.XInputEnableCheckBox.CheckedChanged += new System.EventHandler(this.XInputEnableCheckBox_CheckedChanged);
@@ -195,7 +195,7 @@ namespace x360ce.App
 			this.UseInitBeepCheckBox.Location = new System.Drawing.Point(5, 50);
 			this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
 			this.UseInitBeepCheckBox.Size = new System.Drawing.Size(90, 17);
-			this.UseInitBeepCheckBox.TabIndex = 22;
+			this.UseInitBeepCheckBox.TabIndex = 0;
 			this.UseInitBeepCheckBox.Text = "Use Init Beep";
 			this.UseInitBeepCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -207,7 +207,7 @@ namespace x360ce.App
 			this.DebugModeCheckBox.Location = new System.Drawing.Point(5, 96);
 			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
 			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
-			this.DebugModeCheckBox.TabIndex = 21;
+			this.DebugModeCheckBox.TabIndex = 0;
 			this.DebugModeCheckBox.Text = "Debug Mode";
 			this.DebugModeCheckBox.UseVisualStyleBackColor = true;
 			this.DebugModeCheckBox.CheckedChanged += new System.EventHandler(this.DebugModeCheckBox_CheckedChanged);
@@ -218,7 +218,7 @@ namespace x360ce.App
 			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(5, 73);
 			this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
 			this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
-			this.EnableLoggingCheckBox.TabIndex = 21;
+			this.EnableLoggingCheckBox.TabIndex = 0;
 			this.EnableLoggingCheckBox.Text = "Enable Logging";
 			this.EnableLoggingCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -232,7 +232,7 @@ namespace x360ce.App
 			this.InstalledFilesGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
 			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(199, 143);
-			this.InstalledFilesGroupBox.TabIndex = 30;
+			this.InstalledFilesGroupBox.TabIndex = 0;
 			this.InstalledFilesGroupBox.TabStop = false;
 			this.InstalledFilesGroupBox.Text = "Installed Files";
 			// 
@@ -242,7 +242,7 @@ namespace x360ce.App
 			this.InstallFilesX360ceCheckBox.Location = new System.Drawing.Point(6, 27);
 			this.InstallFilesX360ceCheckBox.Name = "InstallFilesX360ceCheckBox";
 			this.InstallFilesX360ceCheckBox.Size = new System.Drawing.Size(74, 17);
-			this.InstallFilesX360ceCheckBox.TabIndex = 19;
+			this.InstallFilesX360ceCheckBox.TabIndex = 0;
 			this.InstallFilesX360ceCheckBox.Text = "x360ce.ini";
 			this.InstallFilesX360ceCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -252,7 +252,7 @@ namespace x360ce.App
 			this.InstallFilesXinput13CheckBox.Location = new System.Drawing.Point(6, 50);
 			this.InstallFilesXinput13CheckBox.Name = "InstallFilesXinput13CheckBox";
 			this.InstallFilesXinput13CheckBox.Size = new System.Drawing.Size(166, 17);
-			this.InstallFilesXinput13CheckBox.TabIndex = 19;
+			this.InstallFilesXinput13CheckBox.TabIndex = 0;
 			this.InstallFilesXinput13CheckBox.Text = "xinput1_3.dll (Recommended)";
 			this.InstallFilesXinput13CheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -262,7 +262,7 @@ namespace x360ce.App
 			this.InstallFilesXinput12CheckBox.Location = new System.Drawing.Point(6, 73);
 			this.InstallFilesXinput12CheckBox.Name = "InstallFilesXinput12CheckBox";
 			this.InstallFilesXinput12CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.InstallFilesXinput12CheckBox.TabIndex = 19;
+			this.InstallFilesXinput12CheckBox.TabIndex = 0;
 			this.InstallFilesXinput12CheckBox.Text = "xinput1_2.dll";
 			this.InstallFilesXinput12CheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -272,7 +272,7 @@ namespace x360ce.App
 			this.InstallFilesXinput11CheckBox.Location = new System.Drawing.Point(6, 96);
 			this.InstallFilesXinput11CheckBox.Name = "InstallFilesXinput11CheckBox";
 			this.InstallFilesXinput11CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.InstallFilesXinput11CheckBox.TabIndex = 19;
+			this.InstallFilesXinput11CheckBox.TabIndex = 0;
 			this.InstallFilesXinput11CheckBox.Text = "xinput1_1.dll";
 			this.InstallFilesXinput11CheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -282,7 +282,7 @@ namespace x360ce.App
 			this.InstallFilesXinput910CheckBox.Location = new System.Drawing.Point(6, 119);
 			this.InstallFilesXinput910CheckBox.Name = "InstallFilesXinput910CheckBox";
 			this.InstallFilesXinput910CheckBox.Size = new System.Drawing.Size(97, 17);
-			this.InstallFilesXinput910CheckBox.TabIndex = 19;
+			this.InstallFilesXinput910CheckBox.TabIndex = 0;
 			this.InstallFilesXinput910CheckBox.Text = "xinput9_1_0.dll";
 			this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -293,7 +293,7 @@ namespace x360ce.App
 			this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.FakeApiGroupBox.Name = "FakeApiGroupBox";
 			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 143);
-			this.FakeApiGroupBox.TabIndex = 29;
+			this.FakeApiGroupBox.TabIndex = 0;
 			this.FakeApiGroupBox.TabStop = false;
 			this.FakeApiGroupBox.Text = "InputHook";
 			// 
@@ -302,8 +302,8 @@ namespace x360ce.App
 			this.FakeModeLabel.AutoSize = true;
 			this.FakeModeLabel.Location = new System.Drawing.Point(6, 16);
 			this.FakeModeLabel.Name = "FakeModeLabel";
-			this.FakeModeLabel.Size = new System.Drawing.Size(64, 13);
-			this.FakeModeLabel.TabIndex = 26;
+			this.FakeModeLabel.Size = new System.Drawing.Size(66, 13);
+			this.FakeModeLabel.TabIndex = 0;
 			this.FakeModeLabel.Text = "Hook Mode:";
 			// 
 			// FakeModeComboBox
@@ -314,7 +314,7 @@ namespace x360ce.App
 			this.FakeModeComboBox.Location = new System.Drawing.Point(76, 13);
 			this.FakeModeComboBox.Name = "FakeModeComboBox";
 			this.FakeModeComboBox.Size = new System.Drawing.Size(159, 21);
-			this.FakeModeComboBox.TabIndex = 28;
+			this.FakeModeComboBox.TabIndex = 0;
 			// 
 			// HelpTabPage
 			// 
@@ -323,7 +323,7 @@ namespace x360ce.App
 			this.HelpTabPage.Name = "HelpTabPage";
 			this.HelpTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.HelpTabPage.Size = new System.Drawing.Size(632, 441);
-			this.HelpTabPage.TabIndex = 10;
+			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
 			// HelpRichTextBox
@@ -344,7 +344,7 @@ namespace x360ce.App
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
 			this.AboutTabPage.Size = new System.Drawing.Size(632, 441);
-			this.AboutTabPage.TabIndex = 2;
+			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
 			// BuletImageList
@@ -355,14 +355,14 @@ namespace x360ce.App
 			// 
 			// PresetComboBox
 			// 
-			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.PresetComboBox.FormattingEnabled = true;
 			this.PresetComboBox.Location = new System.Drawing.Point(12, 482);
 			this.PresetComboBox.Name = "PresetComboBox";
 			this.PresetComboBox.Size = new System.Drawing.Size(397, 21);
-			this.PresetComboBox.TabIndex = 27;
+			this.PresetComboBox.TabIndex = 2;
 			// 
 			// LoadPresetButton
 			// 
@@ -370,8 +370,8 @@ namespace x360ce.App
 			this.LoadPresetButton.Location = new System.Drawing.Point(415, 482);
 			this.LoadPresetButton.Name = "LoadPresetButton";
 			this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
-			this.LoadPresetButton.TabIndex = 15;
-			this.LoadPresetButton.Text = "Load";
+			this.LoadPresetButton.TabIndex = 3;
+			this.LoadPresetButton.Text = "&Load";
 			this.LoadPresetButton.UseVisualStyleBackColor = true;
 			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
 			// 
@@ -389,7 +389,7 @@ namespace x360ce.App
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Size = new System.Drawing.Size(664, 24);
 			this.statusStrip1.SizingGrip = false;
-			this.statusStrip1.TabIndex = 17;
+			this.statusStrip1.TabIndex = 0;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
 			// toolStripStatusLabel1
@@ -450,8 +450,8 @@ namespace x360ce.App
 			this.SaveButton.Location = new System.Drawing.Point(577, 482);
 			this.SaveButton.Name = "SaveButton";
 			this.SaveButton.Size = new System.Drawing.Size(75, 23);
-			this.SaveButton.TabIndex = 15;
-			this.SaveButton.Text = "Save";
+			this.SaveButton.TabIndex = 5;
+			this.SaveButton.Text = "&Save";
 			this.SaveButton.UseVisualStyleBackColor = true;
 			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
 			// 
