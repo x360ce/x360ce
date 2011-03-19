@@ -1,11 +1,11 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-    using System;
+	using System;
 
-    public enum ButtonState
-    {
-        Released,
-        Pressed
-    }
+	public enum ButtonState
+	{
+		Released,
+		Pressed
+	}
 }
 

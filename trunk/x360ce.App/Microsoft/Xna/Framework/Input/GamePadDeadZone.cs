@@ -1,12 +1,12 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-    using System;
+	using System;
 
-    public enum GamePadDeadZone
-    {
-        None,
-        IndependentAxes,
-        Circular
-    }
+	public enum GamePadDeadZone
+	{
+		None,
+		IndependentAxes,
+		Circular
+	}
 }
 
