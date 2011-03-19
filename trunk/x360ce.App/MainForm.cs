@@ -101,19 +101,7 @@ namespace x360ce.App
 			}
 			// Check if ini and dll is on disk.
 			if (!CheckFiles(true)) return;
-			// INI setting keys with controls.
-			var sm = SettingManager.Current.SettingsMap;
-			SettingManager.Current.ConfigSaved += new EventHandler<SettingEventArgs>(Current_ConfigSaved);
-			SettingManager.Current.ConfigLoaded += new EventHandler<SettingEventArgs>(Current_ConfigLoaded);
-			sm.Add(@"Options\" + SettingName.UseInitBeep, UseInitBeepCheckBox);
-			sm.Add(@"Options\" + SettingName.DebugMode, DebugModeCheckBox);
-			sm.Add(@"Options\" + SettingName.Log, EnableLoggingCheckBox);
-			sm.Add(@"InputHook\" + SettingName.HookMode, FakeModeComboBox);
-			for (int i = 0; i < ControlPads.Length; i++)
-			{
-				var map = ControlPads[i].SettingsMap;
-				foreach (var key in map.Keys) sm.Add(key, map[key]);
-			}
+			UpdateSettingsMap();
 			ReloadXinputSettings();
 			Version v = new Version(Application.ProductVersion);
 			this.Text = string.Format(this.Text, Application.ProductVersion);
@@ -136,6 +124,28 @@ namespace x360ce.App
 			if (Win32.WinAPI.IsVista && Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 			UpdateTimer.Start();
 			////ReloadXInputLibrary();
+		}
+
+				/// <summary>
+		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// </summary>
+		void UpdateSettingsMap()
+		{
+			// INI setting keys with controls.
+			var sm = SettingManager.Current.SettingsMap;
+			SettingManager.Current.ConfigSaved += new EventHandler<SettingEventArgs>(Current_ConfigSaved);
+			SettingManager.Current.ConfigLoaded += new EventHandler<SettingEventArgs>(Current_ConfigLoaded);
+			string section = @"Options\";
+			sm.Add(section + SettingName.UseInitBeep, UseInitBeepCheckBox);
+			sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
+			sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
+			sm.Add(section + SettingName.Console, ConsoleCheckBox);
+			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
+			for (int i = 0; i < ControlPads.Length; i++)
+			{
+				var map = ControlPads[i].SettingsMap;
+				foreach (var key in map.Keys) sm.Add(key, map[key]);
+			}
 		}
 
 		void Current_ConfigSaved(object sender, SettingEventArgs e)

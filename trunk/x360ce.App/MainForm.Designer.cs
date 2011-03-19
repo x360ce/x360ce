@@ -72,6 +72,7 @@ namespace x360ce.App
 			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
+			this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -167,6 +168,7 @@ namespace x360ce.App
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
+			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
 			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(455, 3);
@@ -204,7 +206,7 @@ namespace x360ce.App
 			this.DebugModeCheckBox.AutoSize = true;
 			this.DebugModeCheckBox.Checked = true;
 			this.DebugModeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.DebugModeCheckBox.Location = new System.Drawing.Point(5, 96);
+			this.DebugModeCheckBox.Location = new System.Drawing.Point(5, 119);
 			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
 			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
 			this.DebugModeCheckBox.TabIndex = 0;
@@ -460,6 +462,17 @@ namespace x360ce.App
 			this.SettingsTimer.Interval = 500;
 			this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
 			// 
+			// ConsoleCheckBox
+			// 
+			this.ConsoleCheckBox.AutoSize = true;
+			this.ConsoleCheckBox.Location = new System.Drawing.Point(5, 96);
+			this.ConsoleCheckBox.Name = "ConsoleCheckBox";
+			this.ConsoleCheckBox.Size = new System.Drawing.Size(100, 17);
+			this.ConsoleCheckBox.TabIndex = 0;
+			this.ConsoleCheckBox.Text = "Enable Console";
+			this.ConsoleCheckBox.UseVisualStyleBackColor = true;
+			this.ConsoleCheckBox.CheckedChanged += new System.EventHandler(this.DebugModeCheckBox_CheckedChanged);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -537,6 +550,7 @@ namespace x360ce.App
         private CheckBox DebugModeCheckBox;
 		public Timer UpdateTimer;
 		private CheckBox XInputEnableCheckBox;
+		private CheckBox ConsoleCheckBox;
 
 	}
 }
