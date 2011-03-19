@@ -129,20 +129,14 @@
   <data name="ArrayMultipleFour" xml:space="preserve">
     <value>The array {0} must have a length that is a multiple of four.</value>
   </data>
-  <data name="AudioGetMasterVolumeFailed" xml:space="preserve">
-    <value>Failed to obtain the master volume for sound effects.</value>
-  </data>
-  <data name="AudioSetMasterVolumeFailed" xml:space="preserve">
-    <value>Failed to set the master volume for sound effects.</value>
-  </data>
-  <data name="AutoGenerateMipMapInvalidLevels" xml:space="preserve">
-    <value>Textures created using TextureUsage.AutoGenerateMipMap must set numberLevels to zero or one.</value>
-  </data>
-  <data name="BackBufferTooLarge" xml:space="preserve">
-    <value>The back buffer size requested is too large.</value>
+  <data name="BackBufferBadSize" xml:space="preserve">
+    <value>The back buffer size requested is too large or too small.</value>
   </data>
   <data name="BadXnb" xml:space="preserve">
     <value>Error loading "{0}".</value>
+  </data>
+  <data name="BadXnbGraphicsProfile" xml:space="preserve">
+    <value>Error loading "{0}". This file was compiled for the {1} profile, and cannot be loaded into a {2} GraphicsDevice.</value>
   </data>
   <data name="BadXnbMagic" xml:space="preserve">
     <value>Error loading "{0}". This is not a compiled content file.</value>
@@ -162,9 +156,6 @@
   <data name="BadXnbWrongType" xml:space="preserve">
     <value>Error loading "{0}". File contains {1} but trying to load as {2}.</value>
   </data>
-  <data name="BasicEffectCanOnlyUseTexture2D" xml:space="preserve">
-    <value>Error loading "{0}".  BasicEffect only supports 2D textures.</value>
-  </data>
   <data name="BeginMustBeCalledBeforeDraw" xml:space="preserve">
     <value>Begin must be called successfully before a Draw can be called.</value>
   </data>
@@ -174,59 +165,59 @@
   <data name="BindPoseNotAvailable" xml:space="preserve">
     <value>BindPose is not available until AvatarRenderer.IsLoaded returns true.</value>
   </data>
+  <data name="BlobStreamIsNotExpandable" xml:space="preserve">
+    <value>Blob stream is not expandable.</value>
+  </data>
   <data name="BoundingBoxZeroPoints" xml:space="preserve">
     <value>You should have at least one point in points</value>
   </data>
   <data name="BoundingSphereZeroPoints" xml:space="preserve">
     <value>You should have at least one point in points.</value>
   </data>
+  <data name="BoundStateObject" xml:space="preserve">
+    <value>Cannot change read-only {0}. State objects become read-only the first time they are bound to a GraphicsDevice. To change property values, create a new {0} instance.</value>
+  </data>
+  <data name="BuiltInEffectWrongTextureType" xml:space="preserve">
+    <value>Error loading "{0}". File references a {1} but {2} requires a {3}.</value>
+  </data>
+  <data name="CallFrameworkDispatcherUpdate" xml:space="preserve">
+    <value>FrameworkDispatcher.Update has not been called. Regular FrameworkDispatcher.Update calls are necessary for fire and forget sound effects and framework events to function correctly. See http://go.microsoft.com/fwlink/?LinkId</value>
+  </data>
   <data name="CannotCallSpriteBeginTwice" xml:space="preserve">
     <value>Begin cannot be called again before a successful call to End.</value>
   </data>
   <data name="CannotClearNullDepth" xml:space="preserve">
-    <value>An error has occurred during the Clear operation while trying to clear the depth or stencil buffer, no DepthStencilBuffer surface exists.</value>
-  </data>
-  <data name="CannotCreateDepthBufferOfFormat" xml:space="preserve">
-    <value>The device does not support creating a depth buffer of the given format.</value>
-  </data>
-  <data name="CannotCreateRenderTargetOfFormat" xml:space="preserve">
-    <value>The device does not support creating a render target of the given format.</value>
-  </data>
-  <data name="CannotCreateTextureOfFormat" xml:space="preserve">
-    <value>The device does not support creating a texture of the given format with the given TextureUsage.</value>
+    <value>Cannot clear depth or stencil because the device does not have an active depth or stencil buffer.</value>
   </data>
   <data name="CannotDrawNoData" xml:space="preserve">
     <value>A valid vertex buffer (and a valid index buffer if you are using indexed primitives) must be set on the device before any draw operations may be performed.</value>
   </data>
-  <data name="CannotDrawNoDecl" xml:space="preserve">
-    <value>A valid vertex declaration must be set on the device before any draw operations can be performed.</value>
-  </data>
-  <data name="CannotDrawNoEffect" xml:space="preserve">
-    <value>The effects currently being used to render do not have a vertex shader and pixel shader defined. Both are required before drawing.</value>
-  </data>
   <data name="CannotDrawNoShader" xml:space="preserve">
-    <value>Both a valid vertex shader and pixel shader (or valid effect) must be set on the device before any draw operations may be performed.</value>
+    <value>Both a vertex shader and pixel shader must be set on the device before any draw operations may be performed.</value>
   </data>
   <data name="CannotEndTwice" xml:space="preserve">
     <value>An "End" function can only be called once for each call to "Begin."</value>
   </data>
-  <data name="CannotLockCompressedVolume" xml:space="preserve">
-    <value>Using GetData or SetData on a Texture3D with a compressed format is not supported.</value>
+  <data name="CannotGetBackBufferActiveRenderTargets" xml:space="preserve">
+    <value>Cannot use GetBackBufferData when a render target is active.</value>
+  </data>
+  <data name="CannotMixShader2and3" xml:space="preserve">
+    <value>Cannot mix shader model 3.0 with earlier shader models. If either the vertex shader or pixel shader is compiled as 3.0, they must both be.</value>
   </data>
   <data name="CannotNextSpriteBeginImmediate" xml:space="preserve">
     <value>Nesting more than one SpriteBatch.Begin when using a SpriteBatch with SpriteSortMode.Immediate is not allowed.</value>
   </data>
-  <data name="CannotResolveBackBufferWithActiveRenderTargets" xml:space="preserve">
-    <value>Cannot resolve the backbuffer when a render target is active.</value>
+  <data name="CannotPresentActiveRenderTargets" xml:space="preserve">
+    <value>Cannot call Present when a render target is active.</value>
   </data>
   <data name="CannotSetAlreadyUsedRenderTarget" xml:space="preserve">
-    <value>The render target has already been set on another index.  Each render target may only be set on a single index at a time.</value>
+    <value>The render target has already been set on another index. Each render target may only be set on a single index at a time.</value>
   </data>
   <data name="CannotUseFormatTypeAsManualWhenLocking" xml:space="preserve">
     <value>GetData and SetData may not be called for textures of this format.</value>
   </data>
-  <data name="CannotUseUnknownFormat" xml:space="preserve">
-    <value>Textures cannot be created using SurfaceFormat.Unknown.</value>
+  <data name="CantDisableLighting" xml:space="preserve">
+    <value>{0} does not support setting LightingEnabled to false.</value>
   </data>
   <data name="CantRemoveLocalMachine" xml:space="preserve">
     <value>The local NetworkMachine cannot be removed from the session.</value>
@@ -237,32 +228,8 @@
   <data name="CantSerializeReadOnlyNull" xml:space="preserve">
     <value>Cannot deserialize {1}.{0} because it is both null and read-only.</value>
   </data>
-  <data name="CardDoesNotSupport32BitIndices" xml:space="preserve">
-    <value>This device does not support 32-bit indices.  Use IndexElementSize.SixteenBits or a type that has a size of two bytes.</value>
-  </data>
-  <data name="CardNoCubeMap" xml:space="preserve">
-    <value>Device does not support TextureCube.</value>
-  </data>
-  <data name="CardNoMipMap" xml:space="preserve">
-    <value>The graphics card does not support mipmap textures. Specify 1 for the number of levels.</value>
-  </data>
-  <data name="CardNoVolume" xml:space="preserve">
-    <value>Device does not support Texture3D.</value>
-  </data>
-  <data name="ChangeTechniqueBetweenBeginEnd" xml:space="preserve">
-    <value>Cannot change between textured and untextured drawing within a Begin/End pair.</value>
-  </data>
   <data name="CharacterNotInFont" xml:space="preserve">
     <value>The character '{0}' (0x{1:x4}) is not available in this SpriteFont. If applicable, adjust the font's start and end CharacterRegions to include this character.</value>
-  </data>
-  <data name="ConflictingRenderState" xml:space="preserve">
-    <value>The render states that are currently set cannot be used together.</value>
-  </data>
-  <data name="ConflictingTextureFilter" xml:space="preserve">
-    <value>The current texture filters cannot be used together.</value>
-  </data>
-  <data name="ConflictingTexturePalette" xml:space="preserve">
-    <value>The current textures cannot be used simultaneously.</value>
   </data>
   <data name="ContentManagerCannotChangeRootDirectory" xml:space="preserve">
     <value>This property cannot be changed after content has been loaded into the ContentManager.</value>
@@ -277,7 +244,7 @@
     <value>An invalid operation occurred when trying to query the keyboard state. The result code was {0}.</value>
   </data>
   <data name="CueNotFound" xml:space="preserve">
-    <value>An error occurred trying to play the cue named "{0}".  Is the cue name correct?</value>
+    <value>An error occurred trying to play the cue named "{0}". Is the cue name correct?</value>
   </data>
   <data name="DataNotAvailable" xml:space="preserve">
     <value>The query data is not yet available. Use the IsComplete property to determine if the data is available before attempting to retrieve it.</value>
@@ -288,11 +255,29 @@
   <data name="DeviceCannotBeNullOnResourceCreate" xml:space="preserve">
     <value>The GraphicsDevice must not be null when creating new resources.</value>
   </data>
-  <data name="DidNotReadEnoughData" xml:space="preserve">
-    <value>Not enough data was read from this object.</value>
-  </data>
   <data name="DriverError" xml:space="preserve">
     <value>The driver has encountered an unexpected error.</value>
+  </data>
+  <data name="DuplicateVertexElement" xml:space="preserve">
+    <value>Invalid VertexDeclaration. Duplicate element {0}{1}.</value>
+  </data>
+  <data name="DxtNotMultipleOfFour" xml:space="preserve">
+    <value>DXT compressed texture sizes must be multiples of four.</value>
+  </data>
+  <data name="DynamicSoundEffectInstancePacketLimit" xml:space="preserve">
+    <value>Please ensure that there are less than 64 buffers pending on this instance.</value>
+  </data>
+  <data name="DynamicSoundEffectInvalidBuffer" xml:space="preserve">
+    <value>Buffer is invalid. Ensure that the buffer length is non-zero and meets the block alignment requirements for the audio format.</value>
+  </data>
+  <data name="DynamicSoundEffectInvalidLoopRegion" xml:space="preserve">
+    <value>Invalid loop region specified. Ensure that the loop is defined in samples and falls within the audio buffer boundaries.</value>
+  </data>
+  <data name="DynamicSoundEffectInvalidOffset" xml:space="preserve">
+    <value>Byte offset is invalid. Ensure that it falls within the buffer and meets the block alignment requirements for the audio format.</value>
+  </data>
+  <data name="DynamicSoundEffectInvalidPlayLength" xml:space="preserve">
+    <value>Number of samples to play is invalid. Ensure that it meets the block alignment requirements for the audio format.</value>
   </data>
   <data name="EmptySongCollectionsCannotBePlayed" xml:space="preserve">
     <value>Play cannot be called on empty SongCollection objects.</value>
@@ -302,9 +287,6 @@
   </data>
   <data name="Expired" xml:space="preserve">
     <value>The XACT engine is a pre-release version and has expired.</value>
-  </data>
-  <data name="FileNotNull" xml:space="preserve">
-    <value>The file name passed in must not be null.</value>
   </data>
   <data name="GamerAlreadyInSession" xml:space="preserve">
     <value>The specified gamer is already in the session.</value>
@@ -318,17 +300,29 @@
   <data name="GamerServicesAlreadyInitialized" xml:space="preserve">
     <value>The Gamer Services functionality is already initialized.</value>
   </data>
+  <data name="GamerServicesCancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="GamerServicesGuideAlreadyVisible" xml:space="preserve">
     <value>The function cannot be completed at this time: the Guide UI is already active. Wait until Guide.IsVisible is false before issuing this call.</value>
+  </data>
+  <data name="GamerServicesInitializeFromNonUIThread" xml:space="preserve">
+    <value>GamerServicesDispatcher.Initialize can not be called from a non-UI thread. Please call this from the UI thread.</value>
   </data>
   <data name="GamerServicesNotInitialized" xml:space="preserve">
     <value>The Gamer Services functionality must be initialized before you call this method. The easiest way to do that is to add a GamerServicesComponent to the Game.Components collection in the constructor of your Game class.</value>
   </data>
-  <data name="GammaRampMustBeCorrectValue" xml:space="preserve">
-    <value>The arrays used in gamma ramps must have a length of 256.</value>
+  <data name="GamerServicesOkButton" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="GesturesNotAvailable" xml:space="preserve">
+    <value>No gestures are available at this time.  TouchPanel.ReadGesture should only be called when TouchPanel.IsGestureAvailable is true.</value>
+  </data>
+  <data name="GesturesNotEnabled" xml:space="preserve">
+    <value>This operation cannot be completed until TouchPanel.EnabledGestures is assigned.</value>
   </data>
   <data name="GuideIsShowing" xml:space="preserve">
-    <value>The storage selection user interface could not be shown.  This can usually occur when the user interface is already being shown.</value>
+    <value>The storage selection user interface could not be shown. This can usually occur when the user interface is already being shown.</value>
   </data>
   <data name="IAsyncNotFromBegin" xml:space="preserve">
     <value>The IAsyncResult parameter to this "End" function must be obtained by calling the matching "Begin."</value>
@@ -336,62 +330,29 @@
   <data name="InCallback" xml:space="preserve">
     <value>An invalid method was called during an XACT callback.</value>
   </data>
-  <data name="IncorrectBufferSize" xml:space="preserve">
-    <value>The buffer being created is the wrong size.</value>
-  </data>
-  <data name="IndexBufferSizeMustBeMutlipleOfIndexSize" xml:space="preserve">
-    <value>The total size of the index buffer must be an even multiple of the index element size (either 16 or 32 bits).</value>
-  </data>
   <data name="IndexBuffersMustBeSizedCorrectly" xml:space="preserve">
     <value>IndexBuffers may be created only with types that are 16 bit or 32 bit in size.</value>
   </data>
   <data name="InstallingTitleUpdate" xml:space="preserve">
     <value>Gamer Services functionality is not available because a title update is being installed.</value>
   </data>
-  <data name="InstanceApply3DFailed" xml:space="preserve">
-    <value>Failed to apply 3D positioning values for sound effect instance.</value>
-  </data>
-  <data name="InstanceGetPanFailed" xml:space="preserve">
-    <value>Failed to obtain the pan value for sound effect instance</value>
-  </data>
-  <data name="InstanceGetPitchFailed" xml:space="preserve">
-    <value>Failed to obtain the pitch for sound effect instance.</value>
-  </data>
-  <data name="InstanceGetStateFailed" xml:space="preserve">
-    <value>Failed to obtain the state for sound effect instance.</value>
-  </data>
-  <data name="InstanceGetVolumeFailed" xml:space="preserve">
-    <value>Failed to obtain the volume for sound effect instance.</value>
-  </data>
-  <data name="InstancePauseFailed" xml:space="preserve">
-    <value>Failed to pause the sound effect instance.</value>
-  </data>
-  <data name="InstancePlaybackFailed" xml:space="preserve">
-    <value>Failed to start sound effect instance playback.</value>
-  </data>
   <data name="InstancePlayFailedDueToLimit" xml:space="preserve">
     <value>Failed to start sound effect instance due to instance limit.</value>
-  </data>
-  <data name="InstanceResumeFailed" xml:space="preserve">
-    <value>Failed to resume the sound effect instance.</value>
-  </data>
-  <data name="InstanceSetPanFailed" xml:space="preserve">
-    <value>Failed to set the pan value for sound effect instance.</value>
-  </data>
-  <data name="InstanceSetPitchFailed" xml:space="preserve">
-    <value>Failed to set the pitch for sound effect instance.</value>
-  </data>
-  <data name="InstanceSetVolumeFailed" xml:space="preserve">
-    <value>Failed to set instance volume.</value>
-  </data>
-  <data name="InstanceStopFailed" xml:space="preserve">
-    <value>Failed to stop the sound effect instance.</value>
   </data>
   <data name="InvalidAccelerometer" xml:space="preserve">
     <value>An invalid operation was performed. Accelerometer is invalid.</value>
   </data>
   <data name="InvalidApply3DCall" xml:space="preserve">
     <value>The sound is not a 3D sound. Call Apply3D before the first Play call to configure it to be a 3D sound.</value>
+  </data>
+  <data name="InvalidBufferSize" xml:space="preserve">
+    <value>Buffer size cannot be negative.</value>
+  </data>
+  <data name="InvalidBytesPerCluster" xml:space="preserve">
+    <value>The bytesPerCluster must be one of the following: 4K, 8K, 16K, 32K, or 64K. Passing zero will default to 4K.</value>
+  </data>
+  <data name="InvalidCacheContainerOpenAsyncResult" xml:space="preserve">
+    <value>The IAsyncResult is no longer valid.</value>
   </data>
   <data name="InvalidCall" xml:space="preserve">
     <value>The method call is invalid.</value>
@@ -414,8 +375,8 @@
   <data name="InvalidDevice" xml:space="preserve">
     <value>Resources can only be used on the GraphicsDevice that they were created on. This resource was not created on this GraphicsDevice.</value>
   </data>
-  <data name="InvalidDeviceType" xml:space="preserve">
-    <value>The requested device type is not valid.</value>
+  <data name="InvalidDisplayOrientation" xml:space="preserve">
+    <value>The specified DisplayOrientation is invalid.</value>
   </data>
   <data name="InvalidEmitterDopplerScale" xml:space="preserve">
     <value>The doppler scale of an audio emitter must be greater than or equal to zero.</value>
@@ -423,23 +384,20 @@
   <data name="InvalidEntryCount" xml:space="preserve">
     <value>Invalid entry count.</value>
   </data>
-  <data name="InvalidMultisampleType" xml:space="preserve">
-    <value>The only valid MultisampleType values on the Xbox 360 are None, TwoSamples and FourSamples.</value>
+  <data name="InvalidFileCacheSize" xml:space="preserve">
+    <value>The fileCacheSize must be between 20K and 1020K. Passing zero will default to 20K.</value>
+  </data>
+  <data name="InvalidInstanceStreams" xml:space="preserve">
+    <value>DrawInstancedPrimitives requires at least one vertex buffer to be bound with a non-zero instance frequency, and also at least one with a zero instance frequency.</value>
+  </data>
+  <data name="InvalidMicrophoneBufferDuration" xml:space="preserve">
+    <value>Microphone buffer duration must be between 100ms and 1sec and  10ms aligned.</value>
   </data>
   <data name="InvalidNativeHandle" xml:space="preserve">
     <value>A serious error has occurred.</value>
   </data>
-  <data name="InvalidPlatform" xml:space="preserve">
-    <value>Shaders and Effects can only be compiled for Windows or the XBox 360.</value>
-  </data>
   <data name="InvalidRectangle" xml:space="preserve">
     <value>The rectangle is too large or too small for this resource.</value>
-  </data>
-  <data name="InvalidRenderTargetIndex" xml:space="preserve">
-    <value>The render target index must be within the valid range for this device.</value>
-  </data>
-  <data name="InvalidResourceManagementMode" xml:space="preserve">
-    <value>ResourceManagementMode must be either Manual or Automatic.</value>
   </data>
   <data name="InvalidServiceProvider" xml:space="preserve">
     <value>Invalid service provider passed.</value>
@@ -450,17 +408,14 @@
   <data name="InvalidSoundOffsetOrIndex" xml:space="preserve">
     <value>The specified sound offset or index is invalid.</value>
   </data>
-  <data name="InvalidSpeakers" xml:space="preserve">
-    <value>AudioSpeakers.Stereo and AudioSpeakers.Surround5Dot1 are the only valid options for this argument.</value>
-  </data>
-  <data name="InvalidStreamIndex" xml:space="preserve">
-    <value>The index for this vertex stream is invalid.</value>
+  <data name="InvalidStoragePath" xml:space="preserve">
+    <value>The specified storage path is invalid.</value>
   </data>
   <data name="InvalidStringFormat" xml:space="preserve">
     <value>Invalid string format. Expected a string in the format "{0}".</value>
   </data>
-  <data name="InvalidTextureFormat" xml:space="preserve">
-    <value>Invalid format specified for this texture.</value>
+  <data name="InvalidTitleContainerName" xml:space="preserve">
+    <value>Invalid filename. TitleContainer.OpenStream requires a relative URI.</value>
   </data>
   <data name="InvalidTotalSize" xml:space="preserve">
     <value>The size of the data passed in is too large or too small for this resource.</value>
@@ -474,14 +429,14 @@
   <data name="InvalidUsage" xml:space="preserve">
     <value>The method or function that was called cannot be used in the manner requested.</value>
   </data>
-  <data name="InvalidUsageFlagsForTexture" xml:space="preserve">
-    <value>Texture resources can only be created with the following TextureUsage options: AutoGenerateMipMap, Tiled, or Linear.</value>
-  </data>
   <data name="InvalidVariableIndex" xml:space="preserve">
     <value>The specified variable index is invalid.</value>
   </data>
   <data name="InvalidWaveIndex" xml:space="preserve">
     <value>The specified wave index is invalid.</value>
+  </data>
+  <data name="InvalidWaveStream" xml:space="preserve">
+    <value>Ensure that the specified stream contains valid PCM mono or stereo wave data.</value>
   </data>
   <data name="InvalidXactVolume" xml:space="preserve">
     <value>Volume must be a positive float value.</value>
@@ -510,32 +465,86 @@
   <data name="LeaderboardWriteOverflow" xml:space="preserve">
     <value>Too many leaderboard writes. You can only write to {0} leaderboards per game session.</value>
   </data>
+  <data name="LIVEn400BadRequest" xml:space="preserve">
+    <value>LIVEn400BadRequest.</value>
+  </data>
+  <data name="LIVEn401Unauthorized" xml:space="preserve">
+    <value>No permission to access this service. Error code 401.</value>
+  </data>
+  <data name="LIVEn500InternalServerError" xml:space="preserve">
+    <value>Unexpected service error. Please contact your Account Manager. Error code 500.</value>
+  </data>
+  <data name="LIVEn503ServiceUnavailable" xml:space="preserve">
+    <value>Service is currently unavailable. Error code 503.</value>
+  </data>
+  <data name="LIVEnAccountBanned" xml:space="preserve">
+    <value>This account has been banned from Xbox LIVE.</value>
+  </data>
+  <data name="LIVEnAccountSuspended" xml:space="preserve">
+    <value>This account has been suspended due to Terms of Service violation.</value>
+  </data>
+  <data name="LIVEnCountryNotSupported" xml:space="preserve">
+    <value>The country specified is currently unsupported. Unable to connect to Xbox LIVE.</value>
+  </data>
+  <data name="LIVEnFlashUpdateRequired" xml:space="preserve">
+    <value>Phone software update required. Please update the phone software and try again.</value>
+  </data>
+  <data name="LIVEnGamertagChangeRequired" xml:space="preserve">
+    <value>Please change the Gamertag to connect to Xbox LIVE.</value>
+  </data>
+  <data name="LIVEnGamertagUpdateRequired" xml:space="preserve">
+    <value>Please update your Xbox LIVE account to connect to Xbox LIVE.</value>
+  </data>
+  <data name="LIVEnInvalidUser" xml:space="preserve">
+    <value>This user's Xbox LIVE account does not have a valid Windows Live ID associated with it.</value>
+  </data>
+  <data name="LIVEnNotSupportedTitle" xml:space="preserve">
+    <value>This game is not supported by Xbox LIVE.</value>
+  </data>
+  <data name="LIVEnServiceNotProvisioned" xml:space="preserve">
+    <value>This user does not have an Xbox LIVE account.</value>
+  </data>
+  <data name="LIVEnTermsOfServiceNotAccepted" xml:space="preserve">
+    <value>The Terms of Service has been updated. Please accept the new Terms of Service before connecting to Xbox LIVE.</value>
+  </data>
+  <data name="LIVEnTitleUpdateRequired" xml:space="preserve">
+    <value>This version of the game is no longer supported by Xbox LIVE. Please download the latest version from Marketplace.</value>
+  </data>
+  <data name="LIVEnUnexpectedNetworkError" xml:space="preserve">
+    <value>An unexpected network error has occurred.</value>
+  </data>
+  <data name="LIVEnXBLConnectionUnavailable" xml:space="preserve">
+    <value>Unable to connect to Xbox LIVE. Please log onto www.xbox.com to troubleshoot this issue.</value>
+  </data>
+  <data name="LIVEnXBLNotEnabled" xml:space="preserve">
+    <value>Xbox LIVE is not enabled on this device.</value>
+  </data>
   <data name="LocalDeviceLibrary" xml:space="preserve">
     <value>Local device library</value>
-  </data>
-  <data name="METCannotBeMipMapped" xml:space="preserve">
-    <value>Multi-element textures cannot be mipmapped, set numberLevels to one.</value>
   </data>
   <data name="MissingNativeDependency" xml:space="preserve">
     <value>Failed to load {0}. Please verify that you have the XNA Framework installed.</value>
   </data>
+  <data name="MissingVertexShaderInput" xml:space="preserve">
+    <value>The current vertex declaration does not include all the elements required by the current vertex shader.</value>
+  </data>
+  <data name="MissingVertexShaderInputDetails" xml:space="preserve">
+    <value>{0} {1}{2} is missing.</value>
+  </data>
+  <data name="MobileNoInstancing" xml:space="preserve">
+    <value>The Windows Phone platform does not support DrawInstancedPrimitives.</value>
+  </data>
   <data name="ModelHasNoEffect" xml:space="preserve">
     <value>ModelMeshPart has a null Effect.</value>
+  </data>
+  <data name="ModelHasNoIEffectMatrices" xml:space="preserve">
+    <value>This model contains a custom effect which does not implement the IEffectMatrices interface, so it cannot be drawn using Model.Draw. Instead, call ModelMesh.Draw after setting the appropriate effect parameters.</value>
   </data>
   <data name="MoreData" xml:space="preserve">
     <value>There is more data available than the specified buffer size can hold.</value>
   </data>
-  <data name="MustBeMultipleOfFour" xml:space="preserve">
-    <value>When setting float shader constant data, the array must have a length that is a multiple of four.</value>
-  </data>
-  <data name="MustBeSixteenOrThirtyTwoBitIndices" xml:space="preserve">
-    <value>Index buffers can only be created for indices which are sixteen or thirty-two bits in length. This parameter is invalid.</value>
-  </data>
   <data name="MustBeValidIndex" xml:space="preserve">
     <value>This parameter must be a valid index within the array.</value>
-  </data>
-  <data name="MustBeZero" xml:space="preserve">
-    <value>This parameter must be zero. Any value other than zero is invalid.</value>
   </data>
   <data name="MustCallBeginSprite" xml:space="preserve">
     <value>Begin must be called on SpriteBatch before you can call this method.</value>
@@ -544,16 +553,13 @@
     <value>When drawing, at least one primitive must be drawn.</value>
   </data>
   <data name="MustResolveRenderTarget" xml:space="preserve">
-    <value>The render target must not be set on the device when calling GetTexture.</value>
+    <value>The render target must not be set on the device when it is used as a texture.</value>
   </data>
   <data name="MustRetrieveAtLeastOne" xml:space="preserve">
     <value>When attempting to call GetValue which returns an array, you must request that at least one member be returned.</value>
   </data>
   <data name="MustUserShaderCode" xml:space="preserve">
     <value>You can only construct Effect with data that was already compiled. This data is not a compiled effect.</value>
-  </data>
-  <data name="MustUseSquareTextures" xml:space="preserve">
-    <value>Device requires square textures.</value>
   </data>
   <data name="NegativePlaneDistance" xml:space="preserve">
     <value>You should specify positive value for {0}.</value>
@@ -570,6 +576,9 @@
   <data name="NetworkGamerNotLocal" xml:space="preserve">
     <value>This method cannot be called on remote gamer instances. It is only valid when NetworkGamer.IsLocal is true. If you are looping over the contents of the NetworkSession.AllGamers collection, consider using NetworkSession.LocalGamers instead.</value>
   </data>
+  <data name="NetworkGamerRequired" xml:space="preserve">
+    <value>An instance of NetworkGamer is required in order to access the leaderboard.</value>
+  </data>
   <data name="NetworkGamerWrongSession" xml:space="preserve">
     <value>This NetworkGamer belongs to the wrong session.</value>
   </data>
@@ -583,19 +592,13 @@
     <value>Unable to find any valid audio playback devices.</value>
   </data>
   <data name="NoCreatorsClub" xml:space="preserve">
-    <value>The current profile does not have an XNA Creators Club membership, which is required to sign in to the Live service. To continue, purchase a membership from Xbox Live Marketplace, or switch to a local gamer profile.</value>
+    <value>The current profile does not have an XNA Creators Club membership, which is required to sign in to the LIVE service. To continue, purchase a membership from Xbox LIVE Marketplace, or switch to a local gamer profile.</value>
   </data>
   <data name="NoDefaultConstructor" xml:space="preserve">
     <value>Cannot deserialize type {0} because it does not have a parameterless constructor.</value>
   </data>
   <data name="NoDeviceConnected" xml:space="preserve">
     <value>The device is no longer connected.</value>
-  </data>
-  <data name="NoDirectXRedist" xml:space="preserve">
-    <value>Could not find a dependency required for this functionality.\r\n{0}\r\nPlease ensure you have installed the appropriate redist package.</value>
-  </data>
-  <data name="NoFullPathExceptionText" xml:space="preserve">
-    <value>You must not pass in a full path to this method.</value>
   </data>
   <data name="NoGraphicsDevice" xml:space="preserve">
     <value>GraphicsDevice not found.</value>
@@ -606,11 +609,8 @@
   <data name="NoJoinInProgress" xml:space="preserve">
     <value>This operation is not valid because join-in-progress is disabled.</value>
   </data>
-  <data name="NoPower2Width" xml:space="preserve">
-    <value>Device does not support texture width and height values that are not powers of 2.</value>
-  </data>
-  <data name="NoPower2WidthMulti" xml:space="preserve">
-    <value>Device does not support multi-level texture width and height values that are not powers of 2.</value>
+  <data name="NonZeroInstanceFrequency" xml:space="preserve">
+    <value>Non-instanced draw calls are not valid when a vertex buffer is bound with a non-zero instance frequency.</value>
   </data>
   <data name="NoProjectGuid" xml:space="preserve">
     <value>Could not find a valid project identifier. In order to use Gamer Services functionality, you must have a GuidAttribute on your main game assembly.</value>
@@ -618,11 +618,8 @@
   <data name="NoPublicSlots" xml:space="preserve">
     <value>Session full. The session does not have any open public slots.</value>
   </data>
-  <data name="NoQuery" xml:space="preserve">
-    <value>Occlusion queries are not supported by this graphics device.</value>
-  </data>
-  <data name="NotAvailableOnThisPlatform" xml:space="preserve">
-    <value>This functionality is not available on this platform.</value>
+  <data name="NotCurrentTechnique" xml:space="preserve">
+    <value>Cannot Apply an EffectPass that is not from the CurrentTechnique.</value>
   </data>
   <data name="NotEnoughCorners" xml:space="preserve">
     <value>You have to have at least 8 elements to copy corners.</value>
@@ -651,8 +648,8 @@
   <data name="NullNotAllowed" xml:space="preserve">
     <value>This method does not accept null for this parameter.</value>
   </data>
-  <data name="NullRenderTarget" xml:space="preserve">
-    <value>ResolveRenderTarget may not be called when the current render target is null. Use ResolveBackBuffer instead.</value>
+  <data name="NullWindowHandleNotAllowed" xml:space="preserve">
+    <value>PresentationParameters.DeviceWindowHandle must not be null.</value>
   </data>
   <data name="NumberVerticesMustBeGreaterZero" xml:space="preserve">
     <value>When drawing indexed primitives, the number of vertices passed in must be greater than zero.</value>
@@ -663,8 +660,14 @@
   <data name="OffsetNotValid" xml:space="preserve">
     <value>The offset must be within the valid range for this resource.</value>
   </data>
-  <data name="OneSimRenderTarget" xml:space="preserve">
-    <value>The device does not support more than one simultaneous render target.</value>
+  <data name="OnlyOneCacheContainer" xml:space="preserve">
+    <value>Only one CacheContainer can be opened at a time.</value>
+  </data>
+  <data name="OnlySupportedForLIVEn" xml:space="preserve">
+    <value>This feature is only supported when using the LIVE-Enabled service type.</value>
+  </data>
+  <data name="OnlySupportedForXboxLIVE" xml:space="preserve">
+    <value>This feature is only supported on Xbox LIVE service.</value>
   </data>
   <data name="OpenResourceNotBinary" xml:space="preserve">
     <value>Error loading "{0}". Not a binary resource.</value>
@@ -693,9 +696,6 @@
   <data name="PacketQueueFull" xml:space="preserve">
     <value>Network data could not be sent because the output packet queue is full. You should send data less frequently, or use an unreliable SendDataOptions mode.</value>
   </data>
-  <data name="PacketSubmissionFailed" xml:space="preserve">
-    <value>Failed to submit audio for playback.</value>
-  </data>
   <data name="PlayerDeviceAlreadyOpened" xml:space="preserve">
     <value>A new container cannot be opened until all previouses containers used by this PlayerIndex have been disposed.</value>
   </data>
@@ -712,13 +712,91 @@
     <value>Player2</value>
   </data>
   <data name="ProFeatureNotSupported" xml:space="preserve">
-    <value>This feature is only available to professional developers.</value>
+    <value>This feature is only available for Xbox LIVE Registered Developers.</value>
+  </data>
+  <data name="ProfileAspectRatio" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum {1} aspect ratio of {2}.</value>
+  </data>
+  <data name="ProfileDataCountRange" xml:space="preserve">
+    <value>The count must be greater than zero and less than or equal to {0}.</value>
+  </data>
+  <data name="ProfileDataIndexOutOfRange" xml:space="preserve">
+    <value>The index must be either 0, 1, or 2.</value>
+  </data>
+  <data name="ProfileDataOffsetRange" xml:space="preserve">
+    <value>The offset must be a valid index into dataBuffer.</value>
+  </data>
+  <data name="ProfileDataSizeTooBig" xml:space="preserve">
+    <value>The offset + count cannot exceed the size of the dataBuffer.</value>
+  </data>
+  <data name="ProfileFeatureNotSupported" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support {1}.</value>
+  </data>
+  <data name="ProfileFormatNotSupported" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support {1} format {2}.</value>
+  </data>
+  <data name="ProfileInvalidBlendFormat" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support alpha blending or ColorWriteChannels when using rendertarget format {1}.</value>
+  </data>
+  <data name="ProfileInvalidDevice" xml:space="preserve">
+    <value>Could not find a graphics device that supports the XNA Framework {0} profile.</value>
+  </data>
+  <data name="ProfileInvalidFilterFormat" xml:space="preserve">
+    <value>XNA Framework {0} profile requires TextureFilter to be Point when using texture format {1}.</value>
+  </data>
+  <data name="ProfileMaxPrimitiveCount" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum of {1} primitives per draw call.</value>
+  </data>
+  <data name="ProfileMaxRenderTargets" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum of {1} simultaneous rendertargets.</value>
+  </data>
+  <data name="ProfileMaxVertexElements" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum of {1} simultaneous vertex elements.</value>
+  </data>
+  <data name="ProfileMaxVertexStreams" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum of {1} simultaneous vertex buffers.</value>
+  </data>
+  <data name="ProfileMaxVertexStride" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum vertex stride of {1}.</value>
+  </data>
+  <data name="ProfileNoIndexElementSize32" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support 32 bit indices. Use IndexElementSize.SixteenBits or a type that has a size of two bytes.</value>
+  </data>
+  <data name="ProfileNoMinMaxSrcDestBlend" xml:space="preserve">
+    <value>XNA Framework {0} profile requires {1}SourceBlend and {1}DestinationBlend to be One when using {1}BlendFunction Min or Max.</value>
+  </data>
+  <data name="ProfileNoSeparateAlphaBlend" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support separate alpha blend. BlendState.{1} and {2} must be set to the same value.</value>
+  </data>
+  <data name="ProfileNotPowerOfTwo" xml:space="preserve">
+    <value>XNA Framework {0} profile requires {1} sizes to be powers of two.</value>
+  </data>
+  <data name="ProfileNotPowerOfTwoDXT" xml:space="preserve">
+    <value>XNA Framework {0} profile requires DXT compressed {1} sizes to be powers of two. To use a non power of two {1}, disable DXT compression.</value>
+  </data>
+  <data name="ProfileNotPowerOfTwoMipped" xml:space="preserve">
+    <value>XNA Framework {0} profile requires mipmapped {1} sizes to be powers of two. To use a non power of two {1}, remove the mipmaps.</value>
   </data>
   <data name="ProfileNotPrivileged" xml:space="preserve">
-    <value>The current gamer profile does not have suitable privileges to perform this operation. You may require a Live Gold account, or need to change your parental control settings.</value>
+    <value>The current gamer profile does not have suitable privileges to perform this operation. You may require a LIVE Gold account, or need to change your parental control settings.</value>
   </data>
   <data name="ProfileNotSignedIn" xml:space="preserve">
-    <value>A signed in gamer profile is required to perform this operation. A Live profile may also be required. There are no profiles currently signed in, or the profile is not signed in to Live.</value>
+    <value>A signed in gamer profile is required to perform this operation. A LIVE profile may also be required. There are no profiles currently signed in, or the profile is not signed in to LIVE.</value>
+  </data>
+  <data name="ProfileNoWrapNonPow2" xml:space="preserve">
+    <value>XNA Framework {0} profile requires TextureAddressMode to be Clamp when using texture sizes that are not powers of two.</value>
+  </data>
+  <data name="ProfilePixelShaderModel" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support pixel shader model {1}.</value>
+  </data>
+  <data name="ProfileTooBig" xml:space="preserve">
+    <value>XNA Framework {0} profile supports a maximum {1} size of {2}.</value>
+  </data>
+  <data name="ProfileVertexShaderModel" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support vertex shader model {1}.</value>
+  </data>
+  <data name="ProfileVertexTextureFormatNotSupported" xml:space="preserve">
+    <value>XNA Framework {0} profile does not support vertex texture format {1}.</value>
   </data>
   <data name="ProxyAlreadyRunning" xml:space="preserve">
     <value>Error initializing Games for Windows - LIVE. Another program is already using this functionality.</value>
@@ -741,9 +819,6 @@
   <data name="ReaderConstructedNewInstance" xml:space="preserve">
     <value>ContentTypeReader {0} returned a new object instance from its Read method. This should have loaded data into the existingInstance parameter.</value>
   </data>
-  <data name="ReadFileIncorrectBytes" xml:space="preserve">
-    <value>An error occurred while trying to read this file. An invalid number of bytes were read.</value>
-  </data>
   <data name="ReadOnly" xml:space="preserve">
     <value>This {0} is read-only.</value>
   </data>
@@ -753,11 +828,8 @@
   <data name="ReflectiveReaderTypeNotFound" xml:space="preserve">
     <value>Error loading "{0}". Cannot find type {1}.</value>
   </data>
-  <data name="RenderTargetAndDepthMustMatch" xml:space="preserve">
-    <value>The active render target and depth stencil surface must have the same pixel size and multisampling type.</value>
-  </data>
   <data name="RenderTargetsMustMatch" xml:space="preserve">
-    <value>All active render targets must be the same size with the same multisample type.</value>
+    <value>All active render targets must be the same size with the same multisample type and bit depth.</value>
   </data>
   <data name="RequireNonNullAudioEngine" xml:space="preserve">
     <value>You must pass in a valid audio engine.</value>
@@ -766,7 +838,7 @@
     <value>The array is not the correct size for the amount of data requested.</value>
   </data>
   <data name="ResourceInUse" xml:space="preserve">
-    <value>The operation was aborted. You may not modify a resource that has been set on a device, or after it has been used within a tiling bracket.</value>
+    <value>You may not call SetData on a resource while it is actively set on the GraphicsDevice. Unset it from the device before calling SetData.</value>
   </data>
   <data name="ResourcesMustBeGreaterThanZeroSize" xml:space="preserve">
     <value>Resource size must be greater than zero.</value>
@@ -776,6 +848,9 @@
   </data>
   <data name="SavedGameFolder" xml:space="preserve">
     <value>SavedGames</value>
+  </data>
+  <data name="ScissorInvalid" xml:space="preserve">
+    <value>The scissor rectangle is invalid. The scissor rectangle cannot be larger than or outside of the current render target bounds.</value>
   </data>
   <data name="SelectVariation" xml:space="preserve">
     <value>A variation could not be selected.</value>
@@ -802,7 +877,7 @@
     <value>Session not joinable. You must wait for the host to return to the lobby before joining.</value>
   </data>
   <data name="ShaderCodeSizeMustBeDword" xml:space="preserve">
-    <value>Effect and shader code must have a size that is a multiple of four bytes.</value>
+    <value>Effect code must have a size that is a multiple of four bytes.</value>
   </data>
   <data name="ShadersMustBeCompiled" xml:space="preserve">
     <value>Creating an effect requires that the shader code has been compiled.</value>
@@ -810,20 +885,35 @@
   <data name="ShowSignInPaneCountInvalid" xml:space="preserve">
     <value>The paneCount argument is invalid. The valid options for this parameter are 1, 2, and 4.</value>
   </data>
+  <data name="SimulateMarketplacePurchaseCancelString" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SimulateMarketplacePurchaseOkString" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SimulateMarketplacePurchaseString" xml:space="preserve">
+    <value>SimulateMarketplacePurchaseString=Would you like to simulate purchasing the full version of this game?\n\nThis screen is an emulation provided for testing. Once your game is available on LIVE Marketplace, the Marketplace purchase page will appear here instead.</value>
+  </data>
+  <data name="SimulateMarketplaceTitleString" xml:space="preserve">
+    <value>Test Purchase</value>
+  </data>
+  <data name="SkinnedEffectMaxBones" xml:space="preserve">
+    <value>SkinnedEffect supports a maximum of {0} bones.</value>
+  </data>
+  <data name="SkinnedEffectWeightsPerVertex" xml:space="preserve">
+    <value>SkinnedEffect.WeightsPerVertex must be 1, 2, or 4.</value>
+  </data>
   <data name="SongPlaybackFailed" xml:space="preserve">
     <value>Song playback failed. Please verify that the song is not DRM protected. DRM protected songs are not supported for creator games.</value>
   </data>
   <data name="StaleSearchResult" xml:space="preserve">
     <value>This session search result is no longer valid. NetworkSession.Find return data is only valid up until you create a NetworkSession or perform some other search.</value>
   </data>
-  <data name="StreamMustBeReadable" xml:space="preserve">
-    <value>The stream passed into this method must be readable.</value>
+  <data name="StreamNotSeekable" xml:space="preserve">
+    <value>The stream is required to be seekable.</value>
   </data>
-  <data name="StreamNotNull" xml:space="preserve">
-    <value>The stream passed into this method cannot be null.</value>
-  </data>
-  <data name="StreamsMustBeReadable" xml:space="preserve">
-    <value>Streams passed into this method must be readable.</value>
+  <data name="StreamTooLong" xml:space="preserve">
+    <value>The stream exceeds the maximum length of {0}.</value>
   </data>
   <data name="StringCollectionInvalid" xml:space="preserve">
     <value>The argument is invalid. It must contain between 1 and {0} strings. The strings cannot be null or empty, and must be less than {1} characters long.</value>
@@ -836,15 +926,6 @@
   </data>
   <data name="TitleNameNotNull" xml:space="preserve">
     <value>You must pass in a non-null title name.</value>
-  </data>
-  <data name="TooManyLevels" xml:space="preserve">
-    <value>Textures can only have a maximum of 32 levels.</value>
-  </data>
-  <data name="TooManyLevelsCube" xml:space="preserve">
-    <value>Too many levels for a TextureCube of this size.</value>
-  </data>
-  <data name="TooManyLevelsVolume" xml:space="preserve">
-    <value>Too many levels for a Texture3D of this size.</value>
   </data>
   <data name="TooManyOperations" xml:space="preserve">
     <value>The application is requesting more texture filtering operations than the device supports.</value>
@@ -879,50 +960,44 @@
   <data name="UnknownError" xml:space="preserve">
     <value>An unknown error occcured.</value>
   </data>
-  <data name="UnsupportedAlphaOperation" xml:space="preserve">
-    <value>The device does not support a specified texture blending operation for the alpha channel.</value>
+  <data name="VertexElementBadUsage" xml:space="preserve">
+    <value>Invalid VertexDeclaration. Usage {0}{1} is out of range.</value>
   </data>
-  <data name="UnsupportedColorArg" xml:space="preserve">
-    <value>The device does not support a specified texture blending argument for color values.</value>
+  <data name="VertexElementOffsetNotMultipleFour" xml:space="preserve">
+    <value>Invalid VertexDeclaration. Vertex stride and VertexElement.Offset must be multiples of four.</value>
   </data>
-  <data name="UnsupportedColorOperation" xml:space="preserve">
-    <value>The device does not support a specified texture blending operation for color values.</value>
+  <data name="VertexElementOutsideStride" xml:space="preserve">
+    <value>Invalid VertexDeclaration. Element {0}{1} does not fit within the specified vertex stride.</value>
   </data>
-  <data name="UnsupportedFactorValue" xml:space="preserve">
-    <value>The device does not support the specified texture factor value.</value>
-  </data>
-  <data name="UnsupportedTextureFilter" xml:space="preserve">
-    <value>The device does not support the specified texture filter.</value>
-  </data>
-  <data name="ValidFormatRequiredForDepthStencil" xml:space="preserve">
-    <value>A valid SurfaceFormat must be specified for the AutoDepthStencil member if EnableAutoDepthStencil is true.</value>
-  </data>
-  <data name="ValidIndex" xml:space="preserve">
-    <value>This parameter must be a valid index within the array.</value>
-  </data>
-  <data name="VertexElementIncorrectSize" xml:space="preserve">
-    <value>The VertexElement array is either too large or too small.</value>
-  </data>
-  <data name="VertexStrideTooBig" xml:space="preserve">
-    <value>The vertex stride is larger than the vertex buffer. This is not allowed.</value>
+  <data name="VertexElementsOverlap" xml:space="preserve">
+    <value>Invalid VertexDeclaration. Elements {0}{1} and {2}{3} are overlapping.</value>
   </data>
   <data name="VertexStrideTooSmall" xml:space="preserve">
     <value>The vertex stride is too small for the type of data requested. This is not allowed.</value>
   </data>
+  <data name="VertexTypeNotIVertexType" xml:space="preserve">
+    <value>Invalid vertex type. {0} does not implement the IVertexType interface.</value>
+  </data>
+  <data name="VertexTypeNotValueType" xml:space="preserve">
+    <value>Invalid vertex type. {0} is not a value type.</value>
+  </data>
+  <data name="VertexTypeNullDeclaration" xml:space="preserve">
+    <value>Invalid vertex type. {0} returned a null VertexDeclaration.</value>
+  </data>
+  <data name="VertexTypeWrongSize" xml:space="preserve">
+    <value>Invalid vertex type. The size of {0} does not match the stride of its vertex declaration.</value>
+  </data>
+  <data name="ViewportInvalid" xml:space="preserve">
+    <value>The viewport is invalid. The viewport cannot be larger than or outside of the current render target bounds. The MinDepth and MaxDepth must be between 0 and 1.</value>
+  </data>
   <data name="VisualizationArrayTooSmall" xml:space="preserve">
     <value>Length of visualization data buffers must be at least {0}.</value>
-  </data>
-  <data name="VoiceCreationFailed" xml:space="preserve">
-    <value>Failed to create a low-level voice.</value>
   </data>
   <data name="VoiceDestructionFailed" xml:space="preserve">
     <value>Failed to destroy the low-level voice.</value>
   </data>
   <data name="WaveBankNotPrepared" xml:space="preserve">
     <value>The wave bank is not prepared.</value>
-  </data>
-  <data name="WidthHeightTooLarge" xml:space="preserve">
-    <value>Texture width or height is larger than the device supports.</value>
   </data>
   <data name="WmpMediaSource" xml:space="preserve">
     <value>Local Windows Media Player library</value>
@@ -936,14 +1011,14 @@
   <data name="WrongNumberOfGamers" xml:space="preserve">
     <value>There are an invalid number of gamers listed in the {0} argument. This method supports between {1} and {2} gamers.</value>
   </data>
-  <data name="WrongResolveTargetSize" xml:space="preserve">
-    <value>ResolveBackBuffer target texture is not the same size as the backbuffer.</value>
-  </data>
   <data name="WrongTextureFormat" xml:space="preserve">
     <value>The pixel format of the texture surface is not valid.</value>
   </data>
   <data name="XactReadFile" xml:space="preserve">
     <value>An error occurred while attempting to read a file.</value>
+  </data>
+  <data name="XBLIGFeatureNotSupported" xml:space="preserve">
+    <value>This feature is only available to Xbox LIVE Indie Games developers.</value>
   </data>
   <data name="XlastAchievement" xml:space="preserve">
     <value>achievement</value>

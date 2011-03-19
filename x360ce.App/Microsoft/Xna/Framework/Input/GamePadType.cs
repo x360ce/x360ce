@@ -1,7 +1,5 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using System;
-
 	public enum GamePadType
 	{
 		AlternateGuitar = 7,

@@ -1,15 +1,16 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using Microsoft.Xna.Framework;
 	using System;
 	using System.Diagnostics;
 
 	public static class GamePad
 	{
+		// Fields
 		private static bool[] _disconnected = new bool[4];
 		private static long[] _lastReadTime = new long[4];
 		internal const string XinputNativeDll = "xinput1_3.dll";
 
+		// Methods
 		public static GamePadCapabilities GetCapabilities(PlayerIndex playerIndex)
 		{
 			XINPUT_CAPABILITIES pCaps = new XINPUT_CAPABILITIES();

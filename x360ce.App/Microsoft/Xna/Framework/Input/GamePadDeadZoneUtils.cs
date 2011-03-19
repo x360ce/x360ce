@@ -1,14 +1,15 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using Microsoft.Xna.Framework;
 	using System;
 
 	internal static class GamePadDeadZoneUtils
 	{
+		// Fields
 		private const int LeftStickDeadZoneSize = 0x1ea9;
 		private const int RightStickDeadZoneSize = 0x21f1;
 		private const int TriggerDeadZoneSize = 30;
 
+		// Methods
 		internal static Vector2 ApplyLeftStickDeadZone(int x, int y, GamePadDeadZone deadZoneMode)
 		{
 			return ApplyStickDeadZone(x, y, deadZoneMode, 0x1ea9);

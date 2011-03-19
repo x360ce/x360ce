@@ -1,6 +1,5 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using Microsoft.Xna.Framework;
 	using System;
 	using System.Globalization;
 	using System.Runtime.InteropServices;
@@ -66,7 +65,7 @@
 		{
 			if (left._left == right._left)
 			{
-				return (left._right != right._right);
+				return !(left._right == right._right);
 			}
 			return true;
 		}

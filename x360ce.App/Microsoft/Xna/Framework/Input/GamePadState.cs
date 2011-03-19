@@ -1,7 +1,5 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using Microsoft.Xna.Framework;
-	using System;
 	using System.Globalization;
 	using System.Runtime.InteropServices;
 
@@ -28,13 +26,13 @@
 			this.FillInternalState();
 		}
 
-		public GamePadState(Vector2 leftThumbStick, Vector2 rightThumbStick, float leftTrigger, float rightTrigger, params Microsoft.Xna.Framework.Input.Buttons[] buttons)
+		public GamePadState(Vector2 leftThumbStick, Vector2 rightThumbStick, float leftTrigger, float rightTrigger, params Buttons[] buttons)
 		{
 			this._packet = 0;
 			this._connected = true;
 			this._thumbs = new GamePadThumbSticks(leftThumbStick, rightThumbStick);
 			this._triggers = new GamePadTriggers(leftTrigger, rightTrigger);
-			Microsoft.Xna.Framework.Input.Buttons buttons2 = 0;
+			Buttons buttons2 = 0;
 			if (buttons != null)
 			{
 				for (int i = 0; i < buttons.Length; i++)
@@ -44,10 +42,10 @@
 			}
 			this._buttons = new GamePadButtons(buttons2);
 			this._dpad = new GamePadDPad();
-			this._dpad._down = ((buttons2 & Microsoft.Xna.Framework.Input.Buttons.DPadDown) != 0) ? ButtonState.Pressed : ButtonState.Released;
-			this._dpad._up = ((buttons2 & Microsoft.Xna.Framework.Input.Buttons.DPadUp) != 0) ? ButtonState.Pressed : ButtonState.Released;
-			this._dpad._left = ((buttons2 & Microsoft.Xna.Framework.Input.Buttons.DPadLeft) != 0) ? ButtonState.Pressed : ButtonState.Released;
-			this._dpad._right = ((buttons2 & Microsoft.Xna.Framework.Input.Buttons.DPadRight) != 0) ? ButtonState.Pressed : ButtonState.Released;
+			this._dpad._down = ((buttons2 & Input.Buttons.DPadDown) != 0) ? ButtonState.Pressed : ButtonState.Released;
+			this._dpad._up = ((buttons2 & Input.Buttons.DPadUp) != 0) ? ButtonState.Pressed : ButtonState.Released;
+			this._dpad._left = ((buttons2 & Input.Buttons.DPadLeft) != 0) ? ButtonState.Pressed : ButtonState.Released;
+			this._dpad._right = ((buttons2 & Input.Buttons.DPadRight) != 0) ? ButtonState.Pressed : ButtonState.Released;
 			this._state = new XINPUT_STATE();
 			this.FillInternalState();
 		}
@@ -191,53 +189,53 @@
 				return this._triggers;
 			}
 		}
-		public bool IsButtonDown(Microsoft.Xna.Framework.Input.Buttons button)
+		public bool IsButtonDown(Buttons button)
 		{
-			Microsoft.Xna.Framework.Input.Buttons buttons = ((Microsoft.Xna.Framework.Input.Buttons)this._state.GamePad.Buttons) & (Microsoft.Xna.Framework.Input.Buttons.Y | Microsoft.Xna.Framework.Input.Buttons.X | Microsoft.Xna.Framework.Input.Buttons.B | Microsoft.Xna.Framework.Input.Buttons.A | Microsoft.Xna.Framework.Input.Buttons.BigButton | Microsoft.Xna.Framework.Input.Buttons.RightShoulder | Microsoft.Xna.Framework.Input.Buttons.LeftShoulder | Microsoft.Xna.Framework.Input.Buttons.RightStick | Microsoft.Xna.Framework.Input.Buttons.LeftStick | Microsoft.Xna.Framework.Input.Buttons.Back | Microsoft.Xna.Framework.Input.Buttons.Start | Microsoft.Xna.Framework.Input.Buttons.DPadRight | Microsoft.Xna.Framework.Input.Buttons.DPadLeft | Microsoft.Xna.Framework.Input.Buttons.DPadDown | Microsoft.Xna.Framework.Input.Buttons.DPadUp);
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickLeft) == Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickLeft) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).X < 0f))
+			Buttons buttons = ((Buttons)this._state.GamePad.Buttons) & (Input.Buttons.Y | Input.Buttons.X | Input.Buttons.B | Input.Buttons.A | Input.Buttons.BigButton | Input.Buttons.RightShoulder | Input.Buttons.LeftShoulder | Input.Buttons.RightStick | Input.Buttons.LeftStick | Input.Buttons.Back | Input.Buttons.Start | Input.Buttons.DPadRight | Input.Buttons.DPadLeft | Input.Buttons.DPadDown | Input.Buttons.DPadUp);
+			if (((button & Input.Buttons.LeftThumbstickLeft) == Input.Buttons.LeftThumbstickLeft) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).X < 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickLeft;
+				buttons |= Input.Buttons.LeftThumbstickLeft;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickRight) == Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickRight) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).X > 0f))
+			if (((button & Input.Buttons.LeftThumbstickRight) == Input.Buttons.LeftThumbstickRight) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).X > 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickRight;
+				buttons |= Input.Buttons.LeftThumbstickRight;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown) == Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).Y < 0f))
+			if (((button & Input.Buttons.LeftThumbstickDown) == Input.Buttons.LeftThumbstickDown) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).Y < 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickDown;
+				buttons |= Input.Buttons.LeftThumbstickDown;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp) == Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).Y > 0f))
+			if (((button & Input.Buttons.LeftThumbstickUp) == Input.Buttons.LeftThumbstickUp) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).Y > 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.LeftThumbstickUp;
+				buttons |= Input.Buttons.LeftThumbstickUp;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.RightThumbstickLeft) == Microsoft.Xna.Framework.Input.Buttons.RightThumbstickLeft) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).X < 0f))
+			if (((button & Input.Buttons.RightThumbstickLeft) == Input.Buttons.RightThumbstickLeft) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).X < 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.RightThumbstickLeft;
+				buttons |= Input.Buttons.RightThumbstickLeft;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.RightThumbstickRight) == Microsoft.Xna.Framework.Input.Buttons.RightThumbstickRight) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).X > 0f))
+			if (((button & Input.Buttons.RightThumbstickRight) == Input.Buttons.RightThumbstickRight) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).X > 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.RightThumbstickRight;
+				buttons |= Input.Buttons.RightThumbstickRight;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.RightThumbstickDown) == Microsoft.Xna.Framework.Input.Buttons.RightThumbstickDown) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).Y < 0f))
+			if (((button & Input.Buttons.RightThumbstickDown) == Input.Buttons.RightThumbstickDown) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).Y < 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.RightThumbstickDown;
+				buttons |= Input.Buttons.RightThumbstickDown;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.RightThumbstickUp) == Microsoft.Xna.Framework.Input.Buttons.RightThumbstickUp) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).Y > 0f))
+			if (((button & Input.Buttons.RightThumbstickUp) == Input.Buttons.RightThumbstickUp) && (GamePadDeadZoneUtils.ApplyRightStickDeadZone(this._state.GamePad.ThumbRX, this._state.GamePad.ThumbRY, GamePadDeadZone.IndependentAxes).Y > 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.RightThumbstickUp;
+				buttons |= Input.Buttons.RightThumbstickUp;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.LeftTrigger) == Microsoft.Xna.Framework.Input.Buttons.LeftTrigger) && (GamePadDeadZoneUtils.ApplyTriggerDeadZone(this._state.GamePad.LeftTrigger, GamePadDeadZone.IndependentAxes) > 0f))
+			if (((button & Input.Buttons.LeftTrigger) == Input.Buttons.LeftTrigger) && (GamePadDeadZoneUtils.ApplyTriggerDeadZone(this._state.GamePad.LeftTrigger, GamePadDeadZone.IndependentAxes) > 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.LeftTrigger;
+				buttons |= Input.Buttons.LeftTrigger;
 			}
-			if (((button & Microsoft.Xna.Framework.Input.Buttons.RightTrigger) == Microsoft.Xna.Framework.Input.Buttons.RightTrigger) && (GamePadDeadZoneUtils.ApplyTriggerDeadZone(this._state.GamePad.RightTrigger, GamePadDeadZone.IndependentAxes) > 0f))
+			if (((button & Input.Buttons.RightTrigger) == Input.Buttons.RightTrigger) && (GamePadDeadZoneUtils.ApplyTriggerDeadZone(this._state.GamePad.RightTrigger, GamePadDeadZone.IndependentAxes) > 0f))
 			{
-				buttons |= Microsoft.Xna.Framework.Input.Buttons.RightTrigger;
+				buttons |= Input.Buttons.RightTrigger;
 			}
 			return ((button & buttons) == button);
 		}
 
-		public bool IsButtonUp(Microsoft.Xna.Framework.Input.Buttons button)
+		public bool IsButtonUp(Buttons button)
 		{
 			return !this.IsButtonDown(button);
 		}

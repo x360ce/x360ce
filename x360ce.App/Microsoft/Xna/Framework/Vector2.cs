@@ -434,7 +434,7 @@
 		{
 			if (value1.X == value2.X)
 			{
-				return (value1.Y != value2.Y);
+				return !(value1.Y == value2.Y);
 			}
 			return true;
 		}

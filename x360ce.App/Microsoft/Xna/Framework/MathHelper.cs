@@ -4,6 +4,7 @@
 
 	public static class MathHelper
 	{
+		// Fields
 		public const float E = 2.718282f;
 		public const float Log10E = 0.4342945f;
 		public const float Log2E = 1.442695f;
@@ -12,6 +13,7 @@
 		public const float PiOver4 = 0.7853982f;
 		public const float TwoPi = 6.283185f;
 
+		// Methods
 		public static float Barycentric(float value1, float value2, float value3, float amount1, float amount2)
 		{
 			return ((value1 + (amount1 * (value2 - value1))) + (amount2 * (value3 - value1)));
