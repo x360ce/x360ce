@@ -92,7 +92,7 @@ namespace x360ce.App
 			this.ResetButton.Location = new System.Drawing.Point(496, 482);
 			this.ResetButton.Name = "ResetButton";
 			this.ResetButton.Size = new System.Drawing.Size(75, 23);
-			this.ResetButton.TabIndex = 4;
+			this.ResetButton.TabIndex = 62;
 			this.ResetButton.Text = "&Reset";
 			this.ResetButton.UseVisualStyleBackColor = true;
 			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
@@ -362,7 +362,7 @@ namespace x360ce.App
 			this.PresetComboBox.Location = new System.Drawing.Point(12, 482);
 			this.PresetComboBox.Name = "PresetComboBox";
 			this.PresetComboBox.Size = new System.Drawing.Size(397, 21);
-			this.PresetComboBox.TabIndex = 2;
+			this.PresetComboBox.TabIndex = 60;
 			// 
 			// LoadPresetButton
 			// 
@@ -370,7 +370,7 @@ namespace x360ce.App
 			this.LoadPresetButton.Location = new System.Drawing.Point(415, 482);
 			this.LoadPresetButton.Name = "LoadPresetButton";
 			this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
-			this.LoadPresetButton.TabIndex = 3;
+			this.LoadPresetButton.TabIndex = 61;
 			this.LoadPresetButton.Text = "&Load";
 			this.LoadPresetButton.UseVisualStyleBackColor = true;
 			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
@@ -450,7 +450,7 @@ namespace x360ce.App
 			this.SaveButton.Location = new System.Drawing.Point(577, 482);
 			this.SaveButton.Name = "SaveButton";
 			this.SaveButton.Size = new System.Drawing.Size(75, 23);
-			this.SaveButton.TabIndex = 5;
+			this.SaveButton.TabIndex = 63;
 			this.SaveButton.Text = "&Save";
 			this.SaveButton.UseVisualStyleBackColor = true;
 			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);

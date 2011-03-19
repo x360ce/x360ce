@@ -143,7 +143,6 @@
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
-			this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
 			this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
@@ -186,7 +185,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).BeginInit();
 			this.PadTabControl.SuspendLayout();
-			this.KeyboardTabPage.SuspendLayout();
 			this.ForceFeedbackTabPage.SuspendLayout();
 			this.ForceFeedbackGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
@@ -233,7 +231,7 @@
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(6, 308);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
 			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(608, 97);
-			this.AxisToDPadGroupBox.TabIndex = 0;
+			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
 			// 
@@ -1470,7 +1468,6 @@
 			// 
 			// KeyboardTabPage
 			// 
-			this.KeyboardTabPage.Controls.Add(this.PadKeyboardControl);
 			this.KeyboardTabPage.Location = new System.Drawing.Point(4, 22);
 			this.KeyboardTabPage.Name = "KeyboardTabPage";
 			this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -1478,14 +1475,6 @@
 			this.KeyboardTabPage.TabIndex = 0;
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
-			// 
-			// PadKeyboardControl
-			// 
-			this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
-			this.PadKeyboardControl.Name = "PadKeyboardControl";
-			this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
-			this.PadKeyboardControl.TabIndex = 1;
 			// 
 			// ForceFeedbackTabPage
 			// 
@@ -1752,7 +1741,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).EndInit();
 			this.PadTabControl.ResumeLayout(false);
-			this.KeyboardTabPage.ResumeLayout(false);
 			this.ForceFeedbackTabPage.ResumeLayout(false);
 			this.ForceFeedbackGroupBox.ResumeLayout(false);
 			this.ForceFeedbackGroupBox.PerformLayout();
@@ -1860,7 +1848,6 @@
         private System.Windows.Forms.TextBox AxisToDPadOffsetTextBox;
 		private System.Windows.Forms.ToolTip MainToolTip;
 		private System.Windows.Forms.TabPage KeyboardTabPage;
-		private KeyboardControl PadKeyboardControl;
 		private System.Windows.Forms.TrackBar RightThumbDeadZoneYTrackBar;
 		private System.Windows.Forms.TrackBar LeftThumbDeadZoneYTrackBar;
 		private System.Windows.Forms.TextBox RightThumbDeadZoneYTextBox;
