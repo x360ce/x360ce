@@ -1,7 +1,5 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using Microsoft.Xna.Framework;
-	using System;
 	using System.Runtime.InteropServices;
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -15,15 +13,15 @@
 			this._caps = caps;
 		}
 
-		public Microsoft.Xna.Framework.Input.GamePadType GamePadType
+		public GamePadType GamePadType
 		{
 			get
 			{
 				if (this._caps.Type == 3)
 				{
-					return (((Microsoft.Xna.Framework.Input.GamePadType)(this._caps.Type << 8)) | ((Microsoft.Xna.Framework.Input.GamePadType)this._caps.SubType));
+					return (((GamePadType)(this._caps.Type << 8)) | ((GamePadType)this._caps.SubType));
 				}
-				return (Microsoft.Xna.Framework.Input.GamePadType)this._caps.SubType;
+				return (GamePadType)this._caps.SubType;
 			}
 		}
 		public bool IsConnected

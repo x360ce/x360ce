@@ -1,7 +1,5 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
-	using Microsoft.Xna.Framework;
-	using System;
 	using System.Globalization;
 	using System.Runtime.InteropServices;
 
