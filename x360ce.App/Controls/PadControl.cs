@@ -410,71 +410,71 @@ namespace x360ce.App.Controls
 		/// </summary>
 		Dictionary<string, Control> GetSettingsMap()
 		{
-			Dictionary<string, Control> map = new Dictionary<string, Control>();
+			Dictionary<string, Control> sm = new Dictionary<string, Control>();
 			string section = string.Format(@"PAD{0}\", ControllerIndex + 1);
 			// FakeAPI
-			map.Add(section + SettingName.ProductName, diControl.DeviceProductNameTextBox);
-			map.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
-			map.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
-			map.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
-			map.Add(section + SettingName.NativeMode, NativeModeCheckBox);
+			sm.Add(section + SettingName.ProductName, diControl.DeviceProductNameTextBox);
+			sm.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
+			sm.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
+			sm.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
+			sm.Add(section + SettingName.NativeMode, NativeModeCheckBox);
 			// Triggers
-			map.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
-			map.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
-			map.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
-			map.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+			sm.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
+			sm.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
+			sm.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
+			sm.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
 			// D-Pad
-			map.Add(section + SettingName.DPad, DPadComboBox);
-			map.Add(section + SettingName.DPadUp, DPadUpComboBox);
-			map.Add(section + SettingName.DPadDown, DPadDownComboBox);
-			map.Add(section + SettingName.DPadLeft, DPadLeftComboBox);
-			map.Add(section + SettingName.DPadRight, DPadRightComboBox);
+			sm.Add(section + SettingName.DPad, DPadComboBox);
+			sm.Add(section + SettingName.DPadUp, DPadUpComboBox);
+			sm.Add(section + SettingName.DPadDown, DPadDownComboBox);
+			sm.Add(section + SettingName.DPadLeft, DPadLeftComboBox);
+			sm.Add(section + SettingName.DPadRight, DPadRightComboBox);
 			// Axis To D-Pad
-			map.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
-			map.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
-			map.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
+			sm.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
+			sm.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
+			sm.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
-			map.Add(section + SettingName.ButtonBack, ButtonBackComboBox);
-			map.Add(section + SettingName.ButtonStart, ButtonStartComboBox);
-			map.Add(section + SettingName.ButtonA, ButtonAComboBox);
-			map.Add(section + SettingName.ButtonB, ButtonBComboBox);
-			map.Add(section + SettingName.ButtonX, ButtonXComboBox);
-			map.Add(section + SettingName.ButtonY, ButtonYComboBox);
+			sm.Add(section + SettingName.ButtonBack, ButtonBackComboBox);
+			sm.Add(section + SettingName.ButtonStart, ButtonStartComboBox);
+			sm.Add(section + SettingName.ButtonA, ButtonAComboBox);
+			sm.Add(section + SettingName.ButtonB, ButtonBComboBox);
+			sm.Add(section + SettingName.ButtonX, ButtonXComboBox);
+			sm.Add(section + SettingName.ButtonY, ButtonYComboBox);
 			// Shoulders.
-			map.Add(section + SettingName.LeftShoulder, LeftShoulderComboBox);
-			map.Add(section + SettingName.RightShoulder, RightShoulderComboBox);
+			sm.Add(section + SettingName.LeftShoulder, LeftShoulderComboBox);
+			sm.Add(section + SettingName.RightShoulder, RightShoulderComboBox);
 			// Left Thumb
-			map.Add(section + SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
-			map.Add(section + SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
-			map.Add(section + SettingName.LeftThumbRight, LeftThumbRightComboBox);
-			map.Add(section + SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
-			map.Add(section + SettingName.LeftThumbUp, LeftThumbUpComboBox);
-			map.Add(section + SettingName.LeftThumbDown, LeftThumbDownComboBox);
-			map.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
-			map.Add(section + SettingName.LeftThumbDeadZoneX, LeftThumbDeadZoneXTrackBar);
-			map.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbDeadZoneYTrackBar);
-			map.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXAntiDeadZoneNumericUpDown);
-			map.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYAntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
+			sm.Add(section + SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
+			sm.Add(section + SettingName.LeftThumbRight, LeftThumbRightComboBox);
+			sm.Add(section + SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
+			sm.Add(section + SettingName.LeftThumbUp, LeftThumbUpComboBox);
+			sm.Add(section + SettingName.LeftThumbDown, LeftThumbDownComboBox);
+			sm.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
+			sm.Add(section + SettingName.LeftThumbDeadZoneX, LeftThumbDeadZoneXTrackBar);
+			sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbDeadZoneYTrackBar);
+			sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXAntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYAntiDeadZoneNumericUpDown);
 			// Right Thumb
-			map.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
-			map.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
-			map.Add(section + SettingName.RightThumbRight, RightThumbRightComboBox);
-			map.Add(section + SettingName.RightThumbLeft, RightThumbLeftComboBox);
-			map.Add(section + SettingName.RightThumbUp, RightThumbUpComboBox);
-			map.Add(section + SettingName.RightThumbDown, RightThumbDownComboBox);
-			map.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
-			map.Add(section + SettingName.RightThumbDeadZoneX, RightThumbDeadZoneXTrackBar);
-			map.Add(section + SettingName.RightThumbDeadZoneY, RightThumbDeadZoneYTrackBar);
-			map.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXAntiDeadZoneNumericUpDown);
-			map.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
+			sm.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
+			sm.Add(section + SettingName.RightThumbRight, RightThumbRightComboBox);
+			sm.Add(section + SettingName.RightThumbLeft, RightThumbLeftComboBox);
+			sm.Add(section + SettingName.RightThumbUp, RightThumbUpComboBox);
+			sm.Add(section + SettingName.RightThumbDown, RightThumbDownComboBox);
+			sm.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
+			sm.Add(section + SettingName.RightThumbDeadZoneX, RightThumbDeadZoneXTrackBar);
+			sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbDeadZoneYTrackBar);
+			sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXAntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
 			// Force Feedback
-			map.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
-			map.Add(section + SettingName.ForceType, ForceTypeComboBox);
-			map.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
-			map.Add(section + SettingName.ForceOverall, ForceOverallTrackBar);
-			map.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
-			map.Add(section + SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
-			return map;
+			sm.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
+			sm.Add(section + SettingName.ForceType, ForceTypeComboBox);
+			sm.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
+			sm.Add(section + SettingName.ForceOverall, ForceOverallTrackBar);
+			sm.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
+			sm.Add(section + SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
+			return sm;
 		}
 
 		#endregion

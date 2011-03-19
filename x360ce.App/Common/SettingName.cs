@@ -46,6 +46,8 @@ namespace x360ce.App
 		public const string DebugMode = "DebugMode";
 		[DefaultValue("0"), Description("use 0 to 1; creates a log file in folder 'x360ce logs'.")]
 		public const string Log = "Log";
+		[DefaultValue("0"), Description("use 0 to 1; creates console log window.")]
+		public const string Console = "Console";
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
