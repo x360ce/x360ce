@@ -1,6 +1,7 @@
-﻿v2.0.2.100 (2011-03-19)
+﻿v2.0.2.101 (2011-03-19)
 - New: 'Console' setting support added.
 - Update: Microsoft XNA Framework classes updated to 4.0.
+- New: Preset for "Philips Wireless PC Controller".
 
 v2.0.2.98 (2011-03-18)
 - Update: Keyboard Navigation Updated
@@ -8,7 +9,7 @@ v2.0.2.98 (2011-03-18)
 
 v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
 - Update: Compatibility with latest x360ce Library.
-- New: SL-6555-SBK preset added.
+- New: Preset for "SL-6555-SBK".
 
 v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
 - Update: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
