@@ -1,4 +1,7 @@
-﻿v2.0.2.101 (2011-03-19)
+﻿v2.0.2.102 (2011-03-26)
+- Fix: Now properly saves HookMode under [InputHook] section.
+
+v2.0.2.101 (2011-03-19)
 - New: 'Console' setting support added.
 - Update: Microsoft XNA Framework classes updated to 4.0.
 - New: Preset for "Philips Wireless PC Controller".

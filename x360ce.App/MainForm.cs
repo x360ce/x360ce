@@ -140,6 +140,7 @@ namespace x360ce.App
 			sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(section + SettingName.Console, ConsoleCheckBox);
+			section = @"InputHook\";
 			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
