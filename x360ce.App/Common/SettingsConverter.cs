@@ -5,6 +5,10 @@ using System.Text.RegularExpressions;
 
 namespace x360ce.App
 {
+
+	/// <summary>
+	/// Convert setting value between Enums and INI string.
+	/// </summary>
 	public partial class SettingsConverter
 	{
 
