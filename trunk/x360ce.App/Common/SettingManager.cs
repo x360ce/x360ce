@@ -44,7 +44,9 @@ namespace x360ce.App
 		}
 
 
-
+		/// <summary>
+		/// Read setting from INI file into windows form control.
+		/// </summary>
 		public void ReadSetting(Control control, string key, string value)
 		{
 			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
@@ -132,7 +134,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Read settings from INI file into windows form.
+		/// Read settings from INI file into windows form controls.
 		/// </summary>
 		/// <param name="file">INI file containing settings.</param>
 		/// <param name="iniSection">Read setings from specified section only. Null - read from all sections.</param>
@@ -196,6 +198,10 @@ namespace x360ce.App
 			cbx.SelectedIndex = 0;
 		}
 
+		/// <summary>
+		/// Save all setting values to INI file.
+		/// </summary>
+		/// <returns></returns>
 		public bool SaveSettings()
 		{
 			var ini = new Ini(iniFile);
@@ -208,6 +214,9 @@ namespace x360ce.App
 			return saved;
 		}
 
+		/// <summary>
+		/// Save control value to INI file.
+		/// </summary>
 		public bool SaveSetting(Control control)
 		{
 			var ini = new Ini(iniFile);
@@ -254,7 +263,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Save setting to current ini file.
+		/// Save setting from windows form control to current INI file.
 		/// </summary>
 		/// <param name="path">path of parameter (related to actual control)</param>
 		/// <param name="dstIniSection">if not null then section will be different inside INI file than specified in path</param>
