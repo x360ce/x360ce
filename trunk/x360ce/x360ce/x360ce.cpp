@@ -488,8 +488,8 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
 	xCaps.Type = XINPUT_DEVTYPE_GAMEPAD;
-	xCaps.SubType = g_Gamepad[dwUserIndex].gamepadtype;
-	xCaps.Flags = 0;
+	xCaps.SubType = g_Gamepad[dwUserIndex].gamepadtype; //customizable subtype
+	xCaps.Flags = 0; // we do not support sound
 	xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFFFF;
 	xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
 	//TODO -  max or center is correct? need dump from XInput device
@@ -497,6 +497,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	xCaps.Gamepad.sThumbLY = 0;
 	xCaps.Gamepad.sThumbRX = 0;
 	xCaps.Gamepad.sThumbRY = 0;
+	xCaps.Gamepad.wButtons = 0xF3FF; //make sure this is right
 
 	//WriteLog(LOG_XINPUT,L"XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
 

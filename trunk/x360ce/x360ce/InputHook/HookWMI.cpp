@@ -283,7 +283,7 @@ void HookCoUninitialize()
 {
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitialize");
 
-	if(hHookGet) {
+	if(OriginalGet) {
 		WriteLog(LOG_HOOKWMI,L"HookGet:: Removing Hook");
 
 		LhUninstallHook(hHookGet);
@@ -292,7 +292,7 @@ void HookCoUninitialize()
 		OriginalGet = NULL;
 	}
 
-	if(hHookNext) {
+	if(OriginalNext) {
 		WriteLog(LOG_HOOKWMI,L"HookNext:: Removing Hook");
 
 		LhUninstallHook(hHookNext);
@@ -301,7 +301,7 @@ void HookCoUninitialize()
 		OriginalNext=NULL;
 	}
 
-	if(hHookCreateInstanceEnum) {
+	if(OriginalCreateInstanceEnum) {
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Removing Hook");
 
 		LhUninstallHook(hHookCreateInstanceEnum);
@@ -310,7 +310,7 @@ void HookCoUninitialize()
 		OriginalCreateInstanceEnum=NULL;
 	}
 
-	if(hHookConnectServer) {
+	if(OriginalConnectServer) {
 		WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Removing Hook");
 
 		LhUninstallHook(hHookConnectServer);
