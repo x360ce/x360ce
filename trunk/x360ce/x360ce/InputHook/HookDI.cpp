@@ -364,9 +364,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
 	if(!InputHook_Config()->bEnabled) return OriginalGetPropertyA(This, rguidProp, pdiph);
-	HRESULT hr;
-	hr = OriginalGetPropertyA(This, rguidProp, pdiph);
 	WriteLog(LOG_HOOKDI,L"HookGetPropertyA");
+
+	HRESULT hr = OriginalGetPropertyA(This, rguidProp, pdiph);
 
 	if (InputHook_Config()->dwHookMode >= 2 ) {
 
@@ -395,8 +395,9 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
 	if(!InputHook_Config()->bEnabled) return OriginalGetPropertyW(This, rguidProp, pdiph);
-	HRESULT hr = OriginalGetPropertyW(This, rguidProp, pdiph);
 	WriteLog(LOG_HOOKDI,L"HookGetPropertyW");
+	
+	HRESULT hr = OriginalGetPropertyW(This, rguidProp, pdiph);
 
 	if (InputHook_Config()->dwHookMode >= 2 ) {
 
@@ -427,9 +428,8 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
 	if(!InputHook_Config()->bEnabled) return OriginalCreateDeviceA (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	WriteLog(LOG_HOOKDI,L"HookCreateDeviceA");
 
-	HRESULT hr;
+	HRESULT hr = OriginalCreateDeviceA (This, rguid, lplpDirectInputDevice, pUnkOuter);
 
-	hr = OriginalCreateDeviceA (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	if(*lplpDirectInputDevice) {
 		//WCHAR strDevGUID[50];
 		//GUIDtoString(strDevGUID,&rguid);
@@ -460,9 +460,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 	if(!InputHook_Config()->bEnabled) return OriginalCreateDeviceW (This, rguid, lplpDirectInputDevice, pUnkOuter);
 	WriteLog(LOG_HOOKDI,L"HookCreateDeviceW");
 
-	HRESULT hr;
-
-	hr = OriginalCreateDeviceW (This, rguid, lplpDirectInputDevice, pUnkOuter);
+	HRESULT hr = OriginalCreateDeviceW (This, rguid, lplpDirectInputDevice, pUnkOuter);
 
 	//WCHAR strDevGUID[50];
 	//GUIDtoString(strDevGUID,&rguid);
@@ -502,8 +500,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 	WriteLog(_T("rclsid: %s"),str1);
 	*/
 
-	HRESULT hr;
-	hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
+	HRESULT hr = OriginalDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
 	if(ppvOut) {
 		if(IsEqualIID(riidltf,IID_IDirectInput8A)) {
