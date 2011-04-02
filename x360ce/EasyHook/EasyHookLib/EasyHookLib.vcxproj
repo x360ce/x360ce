@@ -242,6 +242,8 @@ copy "$(TargetDir)\EasyHookSvc.exe" "$(TargetDir)\EasyHook32Svc.exe"
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <DisableSpecificWarnings>4995</DisableSpecificWarnings>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Aux_ulib_x64.lib;GS_x64.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
