@@ -122,9 +122,6 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
-
-		if(bInitBeep) MessageBeep(MB_OK);
-
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
