@@ -54,6 +54,7 @@ void LoadSystemXInputDLL()
 		WriteLog(LOG_CORE,L"x360ce will exit now!!!");
 		ExitProcess(1); // exit the hard way
 	}
+	else if(bInitBeep) MessageBeep(MB_ICONASTERISK);
 }
 
 VOID InstallInputHooks()
