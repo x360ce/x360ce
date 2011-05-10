@@ -486,17 +486,19 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	}
 	if (!pCapabilities || (dwUserIndex > XUSER_MAX) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
 
+	if(!g_Gamepad[dwUserIndex].configured) return ERROR_DEVICE_NOT_CONNECTED;
+
 	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
 	xCaps.Type = XINPUT_DEVTYPE_GAMEPAD;
 	xCaps.SubType = g_Gamepad[dwUserIndex].gamepadtype; //customizable subtype
 	xCaps.Flags = 0; // we do not support sound
 	xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFFFF;
 	xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
-	//TODO -  max or center is correct? need dump from XInput device
-	xCaps.Gamepad.sThumbLX = 0;
-	xCaps.Gamepad.sThumbLY = 0;
-	xCaps.Gamepad.sThumbRX = 0;
-	xCaps.Gamepad.sThumbRY = 0;
+	//MSDN lie, this is not range !
+	xCaps.Gamepad.sThumbLX = 1;
+	xCaps.Gamepad.sThumbLY = 2;
+	xCaps.Gamepad.sThumbRX = 3;
+	xCaps.Gamepad.sThumbRY = 4;
 	xCaps.Gamepad.wButtons = 0xF3FF; //make sure this is right
 
 	//WriteLog(LOG_XINPUT,L"XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
