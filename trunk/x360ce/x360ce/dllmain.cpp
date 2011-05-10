@@ -1,17 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
-*  Copyright (C) 2002-2010 ToCA Edit
-*
-*  x360ce is free software: you can redistribute it and/or modify it under the terms
-*  of the GNU Lesser General Public License as published by the Free Software Found-
-*  ation, either version 3 of the License, or (at your option) any later version.
-*
-*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-*  PURPOSE.  See the GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along with x360ce.
-*  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2011 Robert Krawczyk
+ *
+ *  x360ce is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU Lesser General Public License as published by the Free Software Found-
+ *  ation, either version 3 of the License, or (at your option) any later version.
+ *
+ *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with x360ce.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "stdafx.h"
 #include "globals.h"
@@ -24,28 +25,35 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
+BOOL bEasyHookInitialized = FALSE;
+
 HINSTANCE g_hX360ceInstance = NULL;
 HINSTANCE g_hNativeInstance = NULL;
 
 HWND g_hWnd = NULL;
 
-void LoadOriginalDll()
+void LoadSystemXInputDLL()
 {
+	WCHAR sysdir[MAX_PATH];
 	WCHAR buffer[MAX_PATH];
 
 	// Getting path to system dir and to xinput1_3.dll
-	GetSystemDirectory(buffer,MAX_PATH);
+	GetSystemDirectory(sysdir,MAX_PATH);
 
 	// Append dll name
-	wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
+	//wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
+	swprintf_s(buffer,L"%s\\%s",sysdir,DLLFileName(g_hX360ceInstance));
 
-	// try to load the system's dinput.dll, if pointer empty
+	// try to load the system's xinput dll, if pointer empty
+	WriteLog(LOG_CORE,L"Loading %s",buffer);
 	if (!g_hNativeInstance) g_hNativeInstance = LoadLibrary(buffer);
 
-	// Debug
-	//if (!hNativeInstance) {
-	//	ExitProcess(0); // exit the hard way
-	//}
+	//Debug
+	if (!g_hNativeInstance) {
+		WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
+		WriteLog(LOG_CORE,L"x360ce will exit now!!!");
+		ExitProcess(1); // exit the hard way
+	}
 }
 
 VOID InstallInputHooks()
@@ -83,17 +91,20 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	WriteStamp();
 
 #if SVN_MODS != 0 
-	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
 #else 
-	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,ModuleFileName(),dwAppPID);
+	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
 #endif
 
-	InstallInputHooks();
+	WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
+
+	if(bEasyHookInitialized) InstallInputHooks();
+	else WriteLog(LOG_CORE,L"EasyHook fail to initialize, InputHook will not work!");
 }
 
 VOID ExitInstance() 
 {   
-	InputHook_Clean();
+	if(bEasyHookInitialized) InputHook_Clean();
 
 	if (g_hNativeInstance) {
 		FreeLibrary(g_hNativeInstance); 
@@ -118,7 +129,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 	switch( fdwReason ) 
 	{ 
 	case DLL_PROCESS_ATTACH:
-		LhInitializeLibrary(hinstDLL);
+		bEasyHookInitialized = LhInitializeLibrary(hinstDLL);
 		InitInstance(hinstDLL);
 		break;
 

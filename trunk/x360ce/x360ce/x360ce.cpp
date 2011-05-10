@@ -1,17 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
-*  Copyright (C) 2002-2010 ToCA Edit
-*
-*  x360ce is free software: you can redistribute it and/or modify it under the terms
-*  of the GNU Lesser General Public License as published by the Free Software Found-
-*  ation, either version 3 of the License, or (at your option) any later version.
-*
-*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-*  PURPOSE.  See the GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along with x360ce.
-*  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2011 Robert Krawczyk
+ *
+ *  x360ce is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU Lesser General Public License as published by the Free Software Found-
+ *  ation, either version 3 of the License, or (at your option) any later version.
+ *
+ *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with x360ce.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "stdafx.h"
 #include "globals.h"
@@ -118,9 +119,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	//WriteLog(LOG_XINPUT,L"XInputGetState");
 	if(g_Gamepad[dwUserIndex].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
+
+		if(bInitBeep) MessageBeep(MB_OK);
+
 		return nativeXInputGetState(dwUserIndex,pState);
 	}
 
@@ -170,23 +174,22 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 		//INT pov = POVState(PadMap.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
-		DWORD pov = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
-		DWORD povdeg = pov/100;
+		DWORD povdeg = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
 
 		// Up-left, up, up-right, up (at 360 degrees)
-		if (IN_RANGE(povdeg,270,360) || IN_RANGE(povdeg,0,90) || povdeg == 0 ) { 
+		if (IN_RANGE(povdeg,27000,36000) || IN_RANGE(povdeg,0,9000) || povdeg == 0 ) { 
 			xState.Gamepad.wButtons |= PadMap.pov[0];
 		}
 		// Up-right, right, down-right
-		if (IN_RANGE(povdeg,0,180)) { 
+		if (IN_RANGE(povdeg,0,18000)) { 
 			xState.Gamepad.wButtons |= PadMap.pov[3];	
 		}
 		// Down-right, down, down-left
-		if (IN_RANGE(povdeg,90,270)) { 
+		if (IN_RANGE(povdeg,9000,27000)) { 
 			xState.Gamepad.wButtons |= PadMap.pov[1];
 		}
 		// Down-left, left, up-left	
-		if (IN_RANGE(povdeg,180,360)) { 
+		if (IN_RANGE(povdeg,18000,36000)) { 
 			xState.Gamepad.wButtons |= PadMap.pov[2];
 		}
 
@@ -433,7 +436,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
 	if(g_Gamepad[dwUserIndex].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 		XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( g_hNativeInstance, "XInputSetState");
 		return nativeXInputSetState(dwUserIndex,pVibration);
@@ -479,7 +482,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	if(g_Gamepad[dwUserIndex].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
 		XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( g_hNativeInstance, "XInputGetCapabilities");
 		return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
@@ -507,10 +510,10 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
 	if(g_Gamepad[0].native || g_Gamepad[1].native || g_Gamepad[2].native || g_Gamepad[3].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
 		XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( g_hNativeInstance, "XInputEnable");
-		nativeXInputEnable(enable);
+		return nativeXInputEnable(enable);
 	}
 
 	/*
@@ -533,7 +536,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
 	if(g_Gamepad[dwUserIndex].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
 		XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( g_hNativeInstance, "XInputGetDSoundAudioDeviceGuids");
 		return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
@@ -551,7 +554,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
 	if(g_Gamepad[dwUserIndex].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
 		XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( g_hNativeInstance, "XInputGetBatteryInformation");
 		return nativeXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
@@ -571,7 +574,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
 	if(g_Gamepad[dwUserIndex].native) {
-		if(!g_hNativeInstance) LoadOriginalDll();
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
 		XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( g_hNativeInstance, "XInputGetKeystroke");
 		return nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);

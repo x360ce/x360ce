@@ -1,5 +1,6 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 ToCA Edit
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2011 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU Lesser General Public License as published by the Free Software Found-
@@ -96,6 +97,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
 	WriteLog(LOG_HOOKWMI,L"HookGet");
 	HRESULT hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
+	if(FAILED(hr)) return hr;
 
 	//WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
 	//if( pVal->vt == VT_BSTR) WriteLog(L"%s",pVal->bstrVal);
@@ -117,7 +119,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 				if( strUSB ) {
 					BSTR Hookbstr=NULL;
 					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
-					if(InputHook_Config()->dwHookMode >= 2) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i ); 
+					if(InputHook_Config()->dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i ); 
 					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );
 					Hookbstr=SysAllocString(tempstr);
 					pVal->bstrVal = Hookbstr;
@@ -128,7 +130,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 				if( strHID ) {
 					BSTR Hookbstr=NULL;
 					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
-					if(InputHook_Config()->dwHookMode >= 2) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i );
+					if(InputHook_Config()->dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i );
 					else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );	 
 					Hookbstr=SysAllocString(tempstr);
 					pVal->bstrVal = Hookbstr;
@@ -156,6 +158,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
 	IWbemClassObject* pDevices;
 
 	hr = OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
+	if(FAILED(hr)) return hr;
 
 	if(apObjects) {
 		if(*apObjects) {
@@ -188,7 +191,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
 	hr = OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
-
+	if(FAILED(hr)) return hr;
 
 	if(ppEnum) {
 		if(*ppEnum) {
@@ -228,6 +231,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 	IWbemServices* pIWbemServices = NULL;
 
 	hr = OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	if(FAILED(hr)) return hr;
 
 	if(ppNamespace) {
 		if(*ppNamespace) {
@@ -259,6 +263,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 	IWbemLocator* pIWbemLocator = NULL;
 
 	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	if(FAILED(hr)) return hr;
 
 	if(ppv && (riid == IID_IWbemLocator)) {
 		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);

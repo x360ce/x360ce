@@ -1,5 +1,6 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 ToCA Edit
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2011 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU Lesser General Public License as published by the Free Software Found-
