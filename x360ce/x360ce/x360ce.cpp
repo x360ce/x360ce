@@ -512,7 +512,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
 		XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( g_hNativeInstance, "XInputEnable");
-		return nativeXInputEnable(enable);
+		nativeXInputEnable(enable);
 	}
 
 	/*
