@@ -489,26 +489,25 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	if(!g_Gamepad[dwUserIndex].configured) return ERROR_DEVICE_NOT_CONNECTED;
 
 	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
-	xCaps.Type = XINPUT_DEVTYPE_GAMEPAD;
+	xCaps.Type = 0;
 	xCaps.SubType = g_Gamepad[dwUserIndex].gamepadtype; //customizable subtype
 	xCaps.Flags = 0; // we do not support sound
-	xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFFFF;
+	xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFF;
 	xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
 	//MSDN lie, this is not range !
-	xCaps.Gamepad.sThumbLX = 1;
-	xCaps.Gamepad.sThumbLY = 2;
-	xCaps.Gamepad.sThumbRX = 3;
-	xCaps.Gamepad.sThumbRY = 4;
-	xCaps.Gamepad.wButtons = 0xF3FF; //make sure this is right
-
-	//WriteLog(LOG_XINPUT,L"XInputGetCapabilities:: SubType %i",pCapabilities->SubType);
+	//Dumped from XInput device
+	xCaps.Gamepad.sThumbLX = (SHORT) -64;
+	xCaps.Gamepad.sThumbLY = (SHORT) -64;
+	xCaps.Gamepad.sThumbRX = (SHORT) -64;
+	xCaps.Gamepad.sThumbRY = (SHORT) -64;
+	xCaps.Gamepad.wButtons = (WORD) 0xF3FF;
 
 	return ERROR_SUCCESS;
 }
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-	if(g_Gamepad[0].native || g_Gamepad[1].native || g_Gamepad[2].native || g_Gamepad[3].native) {
+	if(wNativeMode) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
 		XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( g_hNativeInstance, "XInputEnable");
