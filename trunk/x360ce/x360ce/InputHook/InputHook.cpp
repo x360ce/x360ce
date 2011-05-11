@@ -24,16 +24,6 @@ BOOL laststate = FALSE;
 
 ULONG ACLEntries[1];
 
-IHOOK_CONIFG* InputHook_Config()
-{
-	return &InputHookConfig;
-}
-
-IHOOK_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex)
-{
-	return &GamepadConfig[dwUserIndex];
-}
-
 VOID InputHook_Enable(BOOL state)
 {
 	InputHookConfig.bEnabled = state;
@@ -70,8 +60,6 @@ BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 		}
 		else GamepadConfig[i].bEnabled = FALSE;
 	}
-	
-	LhSetGlobalExclusiveACL(ACLEntries,0);
 
 	if(InputHookConfig.bEnabled) {
 		HookWMI();
@@ -84,7 +72,6 @@ BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 
 BOOL InputHook_Clean()
 {
-	LhUninitializeLibrary();
 
 	HookWMIClean();
 	HookDIClean();
@@ -93,3 +80,12 @@ BOOL InputHook_Clean()
 	return TRUE;
 }
 
+#ifdef WIN64
+
+LONG (WINAPI * Real_RegCloseKey)(HKEY a0) = RegCloseKey;
+LONG (WINAPI * Real_RegFlushKey)(HKEY a0) = RegFlushKey;
+LONG (WINAPI * Real_RegDeleteValueA)(HKEY a0,LPCSTR a1) = RegDeleteValueA;
+LONG (WINAPI * Real_RegDeleteValueW)(HKEY a0,LPCWSTR a1) = RegDeleteValueW;
+BOOL (__stdcall * Real_IsDebuggerPresent)(void) = IsDebuggerPresent;
+
+#endif
