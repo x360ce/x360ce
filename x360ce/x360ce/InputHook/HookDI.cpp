@@ -564,7 +564,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 			if(pDIW)  {
 				WriteLog(LOG_HOOKDI,L"HookDirectInput8Create - UNICODE interface");
 				if(!OriginalCreateDeviceW) {
-					WriteLog(LOG_HOOKDI,L"OriginalCreateDeviceW:: Hooking");
+					WriteLog(LOG_HOOKDI,L"HookCreateDeviceW:: Hooking");
 					OriginalCreateDeviceW = pDIW->lpVtbl->CreateDevice;
 					DetourTransactionBegin();
 					DetourUpdateThread(GetCurrentThread());
