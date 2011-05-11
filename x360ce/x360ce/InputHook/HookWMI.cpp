@@ -156,7 +156,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
 		if(*apObjects) {
 			pDevices = *apObjects;
 			if(!OriginalGet) {
-				WriteLog(LOG_HOOKWMI,L"OriginalGet:: Hooking");
+				WriteLog(LOG_HOOKWMI,L"HookGet:: Hooking");
 				OriginalGet = pDevices->lpVtbl->Get;
 
 				DetourTransactionBegin();
@@ -193,7 +193,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 			pEnumDevices = *ppEnum;
 
 			if(!OriginalNext) {
-				WriteLog(LOG_HOOKWMI,L"OriginalNext:: Hooking");
+				WriteLog(LOG_HOOKWMI,L"HookNext:: Hooking");
 				OriginalNext = pEnumDevices->lpVtbl->Next;
 
 				DetourTransactionBegin();
@@ -235,7 +235,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 			pIWbemServices = *ppNamespace;
 
 			if(!OriginalCreateInstanceEnum) {
-				WriteLog(LOG_HOOKWMI,L"OriginalCreateInstanceEnum:: Hooking");
+				WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Hooking");
 				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
 
 				DetourTransactionBegin();
@@ -271,7 +271,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 		if(pIWbemLocator) {
 
 			if(!OriginalConnectServer) {
-				WriteLog(LOG_HOOKWMI,L"OriginalConnectServer:: Hooking");
+				WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Hooking");
 				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
 				DetourTransactionBegin();
 				DetourUpdateThread(GetCurrentThread());
