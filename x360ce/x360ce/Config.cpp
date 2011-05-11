@@ -124,54 +124,58 @@ void ReadConfig()
 
 void ReadPadConfig(DWORD idx) {
 
+	DWORD ret;
+
 	WCHAR section[10];
 	swprintf_s(section,L"PAD%u",idx+1);
 	GamepadMap &PadMap = GamepadMapping[idx];
 
 	WCHAR buffer[MAX_PATH];
-
 	WCHAR NullGUIDStr[50];
+
 	GUIDtoString(GUID_NULL,NullGUIDStr,50);
 
-	ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
+	ret = ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
+	if(!ret) return;
 	StringToGUID(buffer,&g_Gamepad[idx].productGUID);
 	
 	if(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL))
 	{
-		ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
+		ret = ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
+		if(!ret) return;
 		StringToGUID(buffer,&g_Gamepad[idx].productGUID);
 	}
 
-	ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
+	ret = ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
+	if(!ret) return;
 	StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
 
 	if(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL))
 	{
-		ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
+		ret = ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
+		if(!ret) return;
 		StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
 	}
 
-	g_Gamepad[idx].native = static_cast<BOOL>(ReadUINTFromFile(section, L"Native",0));
+	g_Gamepad[idx].native = (BOOL) (ReadUINTFromFile(section, L"Native",0));
 	if(g_Gamepad[idx].native) 
 	{ 
 		wNativeMode = 1;
 		g_Gamepad[idx].configured = true;
+		PadMap.enabled = false;
 		return; 
 	}
 
-	if (!(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL))  && !(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL)))
+	if (!(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL)) && !(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL)))
 	{ 
 		g_Gamepad[idx].configured = true;
 		PadMap.enabled = true;
 
-	} else { return; } 
-
-
+	} else { return; }
 
 	g_Gamepad[idx].dwPadIndex = idx;
 
 	g_Gamepad[idx].ff.type = (BYTE) ReadUINTFromFile(section, L"FFBType",0);
-
 	g_Gamepad[idx].swapmotor = ReadUINTFromFile(section, L"SwapMotor",0);
 	g_Gamepad[idx].tdeadzone = ReadUINTFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
 	g_Gamepad[idx].ff.useforce = static_cast<BOOL>(ReadUINTFromFile(section, L"UseForceFeedback",0));
