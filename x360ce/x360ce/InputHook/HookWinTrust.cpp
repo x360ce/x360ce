@@ -20,16 +20,13 @@
 #include <Softpub.h>
 #include "InputHook.h"
 
-//EasyHook
-TRACED_HOOK_HANDLE		hHookWinVerifyTrust = NULL;
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 LONG (WINAPI *OriginalWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData) = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!InputHook_Config()->bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+	if(!InputHookConfig.bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
 	WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust");
 
 	UNREFERENCED_PARAMETER(hwnd);
@@ -42,15 +39,22 @@ void HookWinTrust()
 {
 	if(!OriginalWinVerifyTrust) {
 		OriginalWinVerifyTrust = WinVerifyTrust;
-		hHookWinVerifyTrust = new HOOK_TRACE_INFO(); 
-		WriteLog(LOG_IHOOK,L"HookWinTrust:: Hooking");
 
-		LhInstallHook(OriginalWinVerifyTrust,HookWinVerifyTrust,static_cast<PVOID>(NULL),hHookWinVerifyTrust);
-		LhSetExclusiveACL(ACLEntries, 0, hHookWinVerifyTrust);
+		WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust:: Hooking");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalWinVerifyTrust, HookWinVerifyTrust);
+		DetourTransactionCommit();
 	}
 }
 
 void HookWinTrustClean()
 {
-	SAFE_DELETE(hHookWinVerifyTrust);
+	if(OriginalWinVerifyTrust) {
+		WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalWinVerifyTrust, HookWinVerifyTrust);
+		DetourTransactionCommit();
+	}
 }

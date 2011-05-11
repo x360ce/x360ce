@@ -29,15 +29,6 @@
 // COM CLSIDs
 #pragma comment(lib,"wbemuuid.lib")
 
-// EasyHook handles
-TRACED_HOOK_HANDLE		hHookGet = NULL;
-TRACED_HOOK_HANDLE		hHookNext = NULL;
-TRACED_HOOK_HANDLE		hHookCreateInstanceEnum = NULL;
-TRACED_HOOK_HANDLE		hHookConnectServer = NULL;
-TRACED_HOOK_HANDLE		hHookCoCreateInstance = NULL;
-TRACED_HOOK_HANDLE		hHookCoUninitialize = NULL;
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -93,9 +84,9 @@ HRESULT STDMETHODCALLTYPE HookGet(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
 {
-	if(!InputHook_Config()->bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
-
+	if(!InputHookConfig.bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 	WriteLog(LOG_HOOKWMI,L"HookGet");
+
 	HRESULT hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 	if(FAILED(hr)) return hr;
 
@@ -113,14 +104,14 @@ HRESULT STDMETHODCALLTYPE HookGet(
 			return hr;
 
 		for(WORD i = 0; i < 4; i++) {
-			if(InputHook_GamepadConfig(i)->bEnabled && InputHook_GamepadConfig(i)->dwVID == dwVid && InputHook_GamepadConfig(i)->dwPID == dwPid) {
+			if(GamepadConfig[i].bEnabled && GamepadConfig[i].dwVID == dwVid && GamepadConfig[i].dwPID == dwPid) {
 				WCHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
 				WCHAR tempstr[MAX_PATH];
 				if( strUSB ) {
 					BSTR Hookbstr=NULL;
 					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
-					if(InputHook_Config()->dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i ); 
-					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );
+					if(InputHookConfig.dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i ); 
+					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
 					Hookbstr=SysAllocString(tempstr);
 					pVal->bstrVal = Hookbstr;
 					WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
@@ -130,8 +121,8 @@ HRESULT STDMETHODCALLTYPE HookGet(
 				if( strHID ) {
 					BSTR Hookbstr=NULL;
 					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
-					if(InputHook_Config()->dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_Config()->dwHookVID, InputHook_Config()->dwHookPID,i );
-					else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHook_GamepadConfig(i)->dwVID , InputHook_GamepadConfig(i)->dwPID,i );	 
+					if(InputHookConfig.dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
+					else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );	 
 					Hookbstr=SysAllocString(tempstr);
 					pVal->bstrVal = Hookbstr;
 					WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
@@ -152,8 +143,9 @@ HRESULT STDMETHODCALLTYPE HookNext(
 								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
-	if(!InputHook_Config()->bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
+	if(!InputHookConfig.bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
 	WriteLog(LOG_HOOKWMI,L"HookNext");
+
 	HRESULT hr;
 	IWbemClassObject* pDevices;
 
@@ -164,11 +156,13 @@ HRESULT STDMETHODCALLTYPE HookNext(
 		if(*apObjects) {
 			pDevices = *apObjects;
 			if(!OriginalGet) {
+				WriteLog(LOG_HOOKWMI,L"OriginalGet:: Hooking");
 				OriginalGet = pDevices->lpVtbl->Get;
-				hHookGet = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalGet,HookGet,static_cast<PVOID>(NULL),hHookGet);
-				LhSetExclusiveACL(ACLEntries, 0, hHookGet);
+				DetourTransactionBegin();
+				DetourUpdateThread(GetCurrentThread());
+				DetourAttach(&(PVOID&)OriginalGet, HookGet);
+				DetourTransactionCommit();
 			}
 		}
 	}
@@ -185,8 +179,9 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	if(!InputHook_Config()->bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
+	if(!InputHookConfig.bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
 	WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum");
+
 	HRESULT hr;
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
@@ -198,12 +193,13 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 			pEnumDevices = *ppEnum;
 
 			if(!OriginalNext) {
+				WriteLog(LOG_HOOKWMI,L"OriginalNext:: Hooking");
 				OriginalNext = pEnumDevices->lpVtbl->Next;
-				hHookNext = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalNext,HookNext,static_cast<PVOID>(NULL),hHookNext);
-				LhSetExclusiveACL(ACLEntries, 0, hHookNext);
-
+				DetourTransactionBegin();
+				DetourUpdateThread(GetCurrentThread());
+				DetourAttach(&(PVOID&)OriginalNext, HookNext);
+				DetourTransactionCommit();
 			}
 		}
 	}
@@ -225,8 +221,9 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	if(!InputHook_Config()->bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	if(!InputHookConfig.bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 	WriteLog(LOG_HOOKWMI,L"HookConnectServer");
+
 	HRESULT hr;
 	IWbemServices* pIWbemServices = NULL;
 
@@ -238,11 +235,13 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 			pIWbemServices = *ppNamespace;
 
 			if(!OriginalCreateInstanceEnum) {
+				WriteLog(LOG_HOOKWMI,L"OriginalCreateInstanceEnum:: Hooking");
 				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
-				hHookCreateInstanceEnum = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalCreateInstanceEnum,HookCreateInstanceEnum,static_cast<PVOID>(NULL),hHookCreateInstanceEnum);
-				LhSetExclusiveACL(ACLEntries, 0, hHookCreateInstanceEnum);
+				DetourTransactionBegin();
+				DetourUpdateThread(GetCurrentThread());
+				DetourAttach(&(PVOID&)OriginalCreateInstanceEnum, HookCreateInstanceEnum);
+				DetourTransactionCommit();
 			}
 		}
 	}
@@ -258,7 +257,9 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 								   __in     REFIID riid, 
 								   __deref_out LPVOID FAR* ppv)
 {
-	if(!InputHook_Config()->bEnabled) return OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	if(!InputHookConfig.bEnabled) return OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	WriteLog(LOG_HOOKWMI,L"HookCoCreateInstance");
+
 	HRESULT hr;
 	IWbemLocator* pIWbemLocator = NULL;
 
@@ -268,13 +269,14 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 	if(ppv && (riid == IID_IWbemLocator)) {
 		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 		if(pIWbemLocator) {
-			WriteLog(LOG_HOOKWMI,L"HookCoCreateInstance");
-			if(!OriginalConnectServer) {
-				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
-				hHookConnectServer = new HOOK_TRACE_INFO();
 
-				LhInstallHook(OriginalConnectServer,HookConnectServer,static_cast<PVOID>(NULL),hHookConnectServer);
-				LhSetExclusiveACL(ACLEntries, 0, hHookConnectServer);
+			if(!OriginalConnectServer) {
+				WriteLog(LOG_HOOKWMI,L"OriginalConnectServer:: Hooking");
+				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+				DetourTransactionBegin();
+				DetourUpdateThread(GetCurrentThread());
+				DetourAttach(&(PVOID&)OriginalConnectServer, HookConnectServer);
+				DetourTransactionCommit();
 			}
 		}
 	}
@@ -286,44 +288,46 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void HookCoUninitialize()
 {
+	if(!InputHookConfig.bEnabled) return OriginalCoUninitialize();
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitialize");
 
 	if(OriginalGet) {
 		WriteLog(LOG_HOOKWMI,L"HookGet:: Removing Hook");
-
-		LhUninstallHook(hHookGet);
-		LhWaitForPendingRemovals();
-		SAFE_DELETE(hHookGet);
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalGet, HookGet);
+		DetourTransactionCommit();
 		OriginalGet = NULL;
 	}
 
 	if(OriginalNext) {
 		WriteLog(LOG_HOOKWMI,L"HookNext:: Removing Hook");
-
-		LhUninstallHook(hHookNext);
-		LhWaitForPendingRemovals();
-		SAFE_DELETE(hHookNext);
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalNext, HookNext);
+		DetourTransactionCommit();
 		OriginalNext=NULL;
 	}
 
 	if(OriginalCreateInstanceEnum) {
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Removing Hook");
-
-		LhUninstallHook(hHookCreateInstanceEnum);
-		LhWaitForPendingRemovals();
-		SAFE_DELETE(hHookCreateInstanceEnum);
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, HookCreateInstanceEnum);
+		DetourTransactionCommit();
 		OriginalCreateInstanceEnum=NULL;
 	}
 
 	if(OriginalConnectServer) {
 		WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Removing Hook");
-
-		LhUninstallHook(hHookConnectServer);
-		LhWaitForPendingRemovals();
-		SAFE_DELETE(hHookConnectServer);
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalConnectServer, HookConnectServer);
+		DetourTransactionCommit();
 		OriginalConnectServer=NULL;
 	}
-	OriginalCoUninitialize();
+
+	return OriginalCoUninitialize();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,31 +336,70 @@ void HookWMI()
 {
 	if(!OriginalCoCreateInstance) {
 		OriginalCoCreateInstance = CoCreateInstance;
-		hHookCoCreateInstance = new HOOK_TRACE_INFO();
 		WriteLog(LOG_IHOOK,L"HookCoCreateInstance:: Hooking");
-
-		LhInstallHook(OriginalCoCreateInstance,HookCoCreateInstance,static_cast<PVOID>(NULL),hHookCoCreateInstance);
-		LhSetExclusiveACL(ACLEntries, 0, hHookCoCreateInstance);
-
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalCoCreateInstance, HookCoCreateInstance);
+		DetourTransactionCommit();
 	}
 	if(!OriginalCoUninitialize) {
 		OriginalCoUninitialize = CoUninitialize;
-		hHookCoUninitialize = new HOOK_TRACE_INFO();
 		WriteLog(LOG_IHOOK,L"HookCoUninitialize:: Hooking");
-
-		LhInstallHook(OriginalCoUninitialize,HookCoUninitialize,static_cast<PVOID>(NULL),hHookCoUninitialize);
-		LhSetExclusiveACL(ACLEntries, 0, hHookCoUninitialize);
-
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourAttach(&(PVOID&)OriginalCoUninitialize, HookCoUninitialize);
+		DetourTransactionCommit();
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HookWMIClean()
 {
-	SAFE_DELETE(hHookGet);
-	SAFE_DELETE(hHookNext);
-	SAFE_DELETE(hHookCreateInstanceEnum);
-	SAFE_DELETE(hHookConnectServer);
-	SAFE_DELETE(hHookCoCreateInstance);
-	SAFE_DELETE(hHookCoUninitialize);
+	if(OriginalGet) {
+		WriteLog(LOG_HOOKWMI,L"HookGet:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalGet, HookGet);
+		DetourTransactionCommit();
+	}
+
+	if(OriginalNext) {
+		WriteLog(LOG_HOOKWMI,L"HookNext:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalNext, HookNext);
+		DetourTransactionCommit();
+	}
+
+	if(OriginalCreateInstanceEnum) {
+		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, HookCreateInstanceEnum);
+		DetourTransactionCommit();
+	}
+
+	if(OriginalConnectServer) {
+		WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalConnectServer, HookConnectServer);
+		DetourTransactionCommit();
+	}
+
+	if(OriginalCoCreateInstance) {
+		WriteLog(LOG_HOOKWMI,L"HookCoCreateInstance:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCoCreateInstance, HookCoCreateInstance);
+		DetourTransactionCommit();
+	}
+
+	if(OriginalCoUninitialize) {
+		WriteLog(LOG_HOOKWMI,L"HookCoUninitialize:: Removing Hook");
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		DetourDetach(&(PVOID&)OriginalCoUninitialize, HookCoUninitialize);
+		DetourTransactionCommit();
+	}
 }

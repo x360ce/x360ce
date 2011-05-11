@@ -25,8 +25,6 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
-BOOL bEasyHookInitialized = FALSE;
-
 HINSTANCE g_hX360ceInstance = NULL;
 HINSTANCE g_hNativeInstance = NULL;
 
@@ -57,8 +55,20 @@ void LoadSystemXInputDLL()
 	else if(bInitBeep) MessageBeep(MB_ICONASTERISK);
 }
 
+SHORT ConfiguredPadCount()
+{
+	SHORT configuredpads = 0;
+	for(int i = 0; i < 4; i++)
+	{
+		if(g_Gamepad[i].configured) ++configuredpads;
+	}
+	return configuredpads;
+}
+
 VOID InstallInputHooks()
 {
+	x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
+
 	if(x360ce_InputHookConfig.bEnabled) {
 
 		for(WORD i = 0; i < 4; i++)
@@ -99,13 +109,12 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 	WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
-	if(bEasyHookInitialized) InstallInputHooks();
-	else WriteLog(LOG_CORE,L"EasyHook fail to initialize, InputHook will not work!");
+	InstallInputHooks();
 }
 
 VOID ExitInstance() 
 {   
-	if(bEasyHookInitialized) InputHook_Clean();
+	InputHook_Clean();
 
 	if (g_hNativeInstance) {
 		FreeLibrary(g_hNativeInstance); 
@@ -130,12 +139,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 	switch( fdwReason ) 
 	{ 
 	case DLL_PROCESS_ATTACH:
-		bEasyHookInitialized = LhInitializeLibrary(hinstDLL);
 		InitInstance(hinstDLL);
-		break;
-
-	case DLL_THREAD_DETACH:
-		LhBarrierThreadDetach();
 		break;
 
 	case DLL_PROCESS_DETACH:

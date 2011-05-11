@@ -18,7 +18,7 @@
 #define _InputHook_H_
 
 #include <CGuid.h>
-#include "EasyHook.h"
+#include "detours.h"
 
 extern ULONG ACLEntries[1];
 
@@ -44,11 +44,15 @@ struct IHOOK_CONIFG
 	DWORD dwHookVID;
 	DWORD dwHookPID;
 	DWORD dwHookWinTrust;
+	SHORT sConfiguredPads;
 	IHOOK_CONIFG()
 	{
 		ZeroMemory(this,sizeof(IHOOK_CONIFG));
 	}
 };
+
+extern IHOOK_CONIFG InputHookConfig;
+extern IHOOK_GAMEPAD_CONIFG GamepadConfig[4];
 
 void HookWMI();
 void HookDI();
@@ -57,9 +61,6 @@ void HookWinTrust();
 void HookWMIClean();
 void HookDIClean();
 void HookWinTrustClean();
-
-IHOOK_CONIFG* InputHook_Config();
-IHOOK_GAMEPAD_CONIFG* InputHook_GamepadConfig(DWORD dwUserIndex);
 
 VOID InputHook_Enable(BOOL state);
 DWORD InputHook_Mode();
