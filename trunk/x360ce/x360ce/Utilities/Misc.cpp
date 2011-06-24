@@ -22,14 +22,14 @@
 LPCWSTR HostFileName()
 {
 	static WCHAR strPath[MAX_PATH];
-	GetModuleFileName (NULL, strPath, MAX_PATH);
+	GetModuleFileName(NULL, strPath, MAX_PATH);
 	return PathFindFileName(strPath);
 }
 
 LPCWSTR DLLFileName(HINSTANCE hModule)
 {
 	static WCHAR strPath[MAX_PATH];
-	GetModuleFileName (hModule, strPath, MAX_PATH);
+	GetModuleFileName(hModule, strPath, MAX_PATH);
 	return PathFindFileName(strPath);
 }
 

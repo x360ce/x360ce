@@ -65,29 +65,32 @@ struct DINPUT_FF
 
 struct DINPUT_GAMEPAD {
 	LPDIRECTINPUTDEVICE8 pGamepad;
+	DIJOYSTATE2 state;
+	DINPUT_FF ff;
 	DWORD dwPadIndex;
 	BOOL connected;
 	BOOL initialized;
 	BOOL configured;
-	BOOL native;
+	BOOL passthrough;
+
 	BOOL axistodpad;
 	UINT dwAxisCount;
 	UINT swapmotor;
 	UINT tdeadzone;
 	GUID productGUID;
 	GUID instanceGUID;
-	DIJOYSTATE2 state;
 	SHORT adeadzone[4];
 	SHORT antidz[4];
 	INT axistodpaddeadzone;
 	INT axistodpadoffset;
 	SHORT axislinear[4];
 	BYTE gamepadtype;
-	DINPUT_FF ff;
+
 	DINPUT_GAMEPAD()
 	{
 		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
 		gamepadtype = 1;
+		passthrough = 1;
 	}
 };
 

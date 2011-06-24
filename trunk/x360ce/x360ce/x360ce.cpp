@@ -118,7 +118,7 @@ HRESULT XInit(DWORD dwUserIndex)
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	//WriteLog(LOG_XINPUT,L"XInputGetState");
-	if(g_Gamepad[dwUserIndex].native) {
+	if(g_Gamepad[dwUserIndex].passthrough) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
@@ -274,13 +274,13 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				// Full range
 			case AXIS:
 			case SLIDER:
-				scaling = 256; offset = 32767;
+				scaling = 255; offset = 32767;
 				break;
 				// Half range
 			case HAXIS:
 			case HSLIDER:
 			case CBUT: // add /////////////////////////////////////////////////////////
-				scaling = 128; offset = 0;
+				scaling = 127; offset = 0;
 				break;
 			default:
 				scaling = 1; offset = 0;
@@ -432,7 +432,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-	if(g_Gamepad[dwUserIndex].native) {
+	if(g_Gamepad[dwUserIndex].passthrough) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 		XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( g_hNativeInstance, "XInputSetState");
@@ -478,7 +478,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-	if(g_Gamepad[dwUserIndex].native) {
+	if(g_Gamepad[dwUserIndex].passthrough) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
 		XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( g_hNativeInstance, "XInputGetCapabilities");
@@ -533,7 +533,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-	if(g_Gamepad[dwUserIndex].native) {
+	if(g_Gamepad[dwUserIndex].passthrough) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
 		XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( g_hNativeInstance, "XInputGetDSoundAudioDeviceGuids");
@@ -551,7 +551,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-	if(g_Gamepad[dwUserIndex].native) {
+	if(g_Gamepad[dwUserIndex].passthrough) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
 		XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( g_hNativeInstance, "XInputGetBatteryInformation");
@@ -571,7 +571,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
-	if(g_Gamepad[dwUserIndex].native) {
+	if(g_Gamepad[dwUserIndex].passthrough) {
 		if(!g_hNativeInstance) LoadSystemXInputDLL();
 		typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
 		XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( g_hNativeInstance, "XInputGetKeystroke");
