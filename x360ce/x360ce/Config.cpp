@@ -157,8 +157,8 @@ void ReadPadConfig(DWORD idx) {
 		StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
 	}
 
-	g_Gamepad[idx].native = (BOOL) (ReadUINTFromFile(section, L"Native",0));
-	if(g_Gamepad[idx].native) 
+	g_Gamepad[idx].passthrough = (BOOL) (ReadUINTFromFile(section, L"PassThrough",1));
+	if(g_Gamepad[idx].passthrough) 
 	{ 
 		wNativeMode = 1;
 		g_Gamepad[idx].configured = true;

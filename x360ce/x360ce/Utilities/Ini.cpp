@@ -15,7 +15,6 @@
  */
 
 #include "stdafx.h"
-#include <dinput.h>
 #include "globals.h"
 #include <Shlwapi.h>
 
@@ -31,7 +30,7 @@ void SetIniFileName(LPCWSTR ininame)
 	WCHAR strPath[MAX_PATH];
 	lpConfigFile = new WCHAR[MAX_PATH];
 
-	GetModuleFileName (NULL, strPath, MAX_PATH);
+	GetModuleFileName(NULL, strPath, MAX_PATH);
 	PathRemoveFileSpec(strPath);
 	PathAddBackslash(strPath);
 
