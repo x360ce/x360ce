@@ -1,4 +1,7 @@
-﻿v2.0.2.102 (2011-03-26)
+﻿v2.0.2.105 (2011-07-13)
+- New: 'Native' setting was renamed to 'PassThrough'
+
+v2.0.2.102 (2011-03-26)
 - Fix: Now properly saves HookMode under [InputHook] section.
 
 v2.0.2.101 (2011-03-19)
