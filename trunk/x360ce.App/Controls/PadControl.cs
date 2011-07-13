@@ -417,7 +417,7 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
 			sm.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
 			sm.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
-			sm.Add(section + SettingName.NativeMode, NativeModeCheckBox);
+			sm.Add(section + SettingName.PassThrough, PassThroughCheckBox);
 			// Triggers
 			sm.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
 			sm.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);

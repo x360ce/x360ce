@@ -62,8 +62,8 @@ namespace x360ce.App
         public const string InstanceGuid = "InstanceGuid";
 		[DefaultValue("1"), Description("Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.")]
 		public const string GamePadType = "ControllerType";
-		[DefaultValue("0"), Description("Native mode, calls system xinput1_3.dll to support xinput compatible controller together with emulated.")]
-		public const string NativeMode = "Native";
+		[DefaultValue("0"), Description("Pass Through mode, calls system's native xinput1_3.dll to support xinput compatible controller together with emulated.")]
+		public const string PassThrough = "PassThrough";
 
 		// Left Thumb.
 		[DefaultValue("0"), Description("Left stick button. Disable = 0.")]

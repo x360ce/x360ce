@@ -71,7 +71,7 @@
 			this.LeftThumbDeadZoneXTextBox = new System.Windows.Forms.TextBox();
 			this.OptionsDeviceTypeLabel = new System.Windows.Forms.Label();
 			this.GamePadTypeComboBox = new System.Windows.Forms.ComboBox();
-			this.NativeModeCheckBox = new System.Windows.Forms.CheckBox();
+			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
 			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
@@ -209,7 +209,7 @@
 			this.AdvancedTabPage.Controls.Add(this.ThumbsGroupBox);
 			this.AdvancedTabPage.Controls.Add(this.OptionsDeviceTypeLabel);
 			this.AdvancedTabPage.Controls.Add(this.GamePadTypeComboBox);
-			this.AdvancedTabPage.Controls.Add(this.NativeModeCheckBox);
+			this.AdvancedTabPage.Controls.Add(this.PassThroughCheckBox);
 			this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
 			this.AdvancedTabPage.Name = "AdvancedTabPage";
 			this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -673,15 +673,15 @@
 			this.GamePadTypeComboBox.Size = new System.Drawing.Size(121, 21);
 			this.GamePadTypeComboBox.TabIndex = 1;
 			// 
-			// NativeModeCheckBox
+			// PassThroughCheckBox
 			// 
-			this.NativeModeCheckBox.AutoSize = true;
-			this.NativeModeCheckBox.Location = new System.Drawing.Point(328, 10);
-			this.NativeModeCheckBox.Name = "NativeModeCheckBox";
-			this.NativeModeCheckBox.Size = new System.Drawing.Size(87, 17);
-			this.NativeModeCheckBox.TabIndex = 2;
-			this.NativeModeCheckBox.Text = "Native Mode";
-			this.NativeModeCheckBox.UseVisualStyleBackColor = true;
+			this.PassThroughCheckBox.AutoSize = true;
+			this.PassThroughCheckBox.Location = new System.Drawing.Point(328, 10);
+			this.PassThroughCheckBox.Name = "PassThroughCheckBox";
+			this.PassThroughCheckBox.Size = new System.Drawing.Size(87, 17);
+			this.PassThroughCheckBox.TabIndex = 2;
+			this.PassThroughCheckBox.Text = "Pass Through";
+			this.PassThroughCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// GeneralTabPage
 			// 
@@ -1836,7 +1836,7 @@
 		private System.Windows.Forms.Label OptionsDeviceTypeLabel;
 		private System.Windows.Forms.ComboBox GamePadTypeComboBox;
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
-		private System.Windows.Forms.CheckBox NativeModeCheckBox;
+		private System.Windows.Forms.CheckBox PassThroughCheckBox;
 		private System.Windows.Forms.GroupBox ThumbsGroupBox;
         private System.Windows.Forms.GroupBox AxisToDPadGroupBox;
         private System.Windows.Forms.CheckBox AxisToDPadEnabledCheckBox;
