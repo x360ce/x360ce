@@ -91,12 +91,12 @@
       <AssemblerOutput>All</AssemblerOutput>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\MologieDetours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>detours.lib;wbemuuid.lib;dxguid.lib;dinput8.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wbemuuid.lib;dxguid.lib;dinput8.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>
@@ -130,10 +130,10 @@
       <AssemblerOutput>All</AssemblerOutput>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\MologieDetours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>detours.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>
@@ -171,13 +171,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <AssemblerOutput>All</AssemblerOutput>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\MologieDetours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>detours.lib;wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>
@@ -221,15 +223,14 @@
       <AssemblerOutput>All</AssemblerOutput>
       <CallingConvention>StdCall</CallingConvention>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\detours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\MologieDetours;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <FloatingPointModel>Fast</FloatingPointModel>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>detours.lib;wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wbemuuid.lib;dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>
@@ -254,6 +255,10 @@
     <ProjectReference />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\MologieDetours\hde.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="dllmain.cpp" />

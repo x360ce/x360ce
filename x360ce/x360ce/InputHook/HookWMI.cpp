@@ -32,15 +32,16 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void (WINAPI *OriginalCoUninitialize)() = NULL;
-HRESULT (WINAPI *OriginalCoCreateInstance)(__in     REFCLSID rclsid, 
+typedef void (WINAPI *tCoUninitialize)();
+
+typedef HRESULT (WINAPI *tCoCreateInstance)(__in     REFCLSID rclsid, 
 									  __in_opt LPUNKNOWN pUnkOuter,
 									  __in     DWORD dwClsContext, 
 									  __in     REFIID riid, 
-									  __deref_out LPVOID FAR* ppv) = NULL;
+									  __deref_out LPVOID FAR* ppv);
 
 
-HRESULT ( STDMETHODCALLTYPE *OriginalConnectServer )( 
+typedef HRESULT ( STDMETHODCALLTYPE *tConnectServer )( 
 	IWbemLocator * This,
 	/* [in] */ const BSTR strNetworkResource,
 	/* [in] */ const BSTR strUser,
@@ -49,29 +50,37 @@ HRESULT ( STDMETHODCALLTYPE *OriginalConnectServer )(
 	/* [in] */ long lSecurityFlags,
 	/* [in] */ const BSTR strAuthority,
 	/* [in] */ IWbemContext *pCtx,
-	/* [out] */ IWbemServices **ppNamespace) = NULL;
+	/* [out] */ IWbemServices **ppNamespace);
 
-HRESULT ( STDMETHODCALLTYPE *OriginalCreateInstanceEnum )( 
+typedef HRESULT ( STDMETHODCALLTYPE *tCreateInstanceEnum )( 
 	IWbemServices * This,
 	/* [in] */ __RPC__in const BSTR strFilter,
 	/* [in] */ long lFlags,
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
-	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum) = NULL;
+	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum);
 
-HRESULT ( STDMETHODCALLTYPE *OriginalNext )( 
+typedef HRESULT ( STDMETHODCALLTYPE *tNext )( 
 									   IEnumWbemClassObject * This,
 									   /* [in] */ long lTimeout,
 									   /* [in] */ ULONG uCount,
 									   /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
-									   /* [out] */ __RPC__out ULONG *puReturned) = NULL;
+									   /* [out] */ __RPC__out ULONG *puReturned);
 
-HRESULT ( STDMETHODCALLTYPE *OriginalGet )( 
+typedef HRESULT ( STDMETHODCALLTYPE *tGet )( 
 									  IWbemClassObject * This,
 									  /* [string][in] */ LPCWSTR wszName,
 									  /* [in] */ long lFlags,
 									  /* [unique][in][out] */ VARIANT *pVal,
 									  /* [unique][in][out] */ CIMTYPE *pType,
-									  /* [unique][in][out] */ long *plFlavor) = NULL;
+									  /* [unique][in][out] */ long *plFlavor);
+
+MologieDetours::Detour<tCoUninitialize>* hCoUninitialize = NULL;
+MologieDetours::Detour<tCoCreateInstance>* hCoCreateInstance = NULL;
+MologieDetours::Detour<tConnectServer>* hConnectServer = NULL;
+MologieDetours::Detour<tCreateInstanceEnum>* hCreateInstanceEnum = NULL;
+MologieDetours::Detour<tNext>* hNext = NULL;
+MologieDetours::Detour<tGet>* hGet = NULL;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,11 +92,11 @@ HRESULT STDMETHODCALLTYPE HookGet(
 	/* [unique][in][out] */ VARIANT *pVal,
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
-{
-	if(!InputHookConfig.bEnabled) return OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
+{	
+	HRESULT hr = hGet->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
+	if(!InputHookConfig.bEnabled) return hr;
 	WriteLog(LOG_HOOKWMI,L"HookGet");
 
-	HRESULT hr = OriginalGet(This,wszName,lFlags,pVal,pType,plFlavor);
 	if(FAILED(hr)) return hr;
 
 	//WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
@@ -143,26 +152,21 @@ HRESULT STDMETHODCALLTYPE HookNext(
 								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 								  /* [out] */ __RPC__out ULONG *puReturned)
 {
-	if(!InputHookConfig.bEnabled) return OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
+	HRESULT hr = hNext->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
+
+	if(!InputHookConfig.bEnabled) return hr;
 	WriteLog(LOG_HOOKWMI,L"HookNext");
 
-	HRESULT hr;
-	IWbemClassObject* pDevices;
-
-	hr = OriginalNext(This,lTimeout,uCount,apObjects,puReturned);
 	if(FAILED(hr)) return hr;
+
+	IWbemClassObject* pDevices;
 
 	if(apObjects) {
 		if(*apObjects) {
 			pDevices = *apObjects;
-			if(!OriginalGet) {
+			if(!hGet) {
 				WriteLog(LOG_HOOKWMI,L"HookGet:: Hooking");
-				OriginalGet = pDevices->lpVtbl->Get;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OriginalGet, HookGet);
-				DetourTransactionCommit();
+				hGet = new MologieDetours::Detour<tGet>(pDevices->lpVtbl->Get, HookGet);
 			}
 		}
 	}
@@ -179,27 +183,20 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	if(!InputHookConfig.bEnabled) return OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
+	HRESULT hr = hCreateInstanceEnum->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
+	if(!InputHookConfig.bEnabled) return hr;
 	WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum");
 
-	HRESULT hr;
-	IEnumWbemClassObject* pEnumDevices = NULL;
-
-	hr = OriginalCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
 	if(FAILED(hr)) return hr;
+	IEnumWbemClassObject* pEnumDevices = NULL;
 
 	if(ppEnum) {
 		if(*ppEnum) {
 			pEnumDevices = *ppEnum;
 
-			if(!OriginalNext) {
+			if(!hNext) {
 				WriteLog(LOG_HOOKWMI,L"HookNext:: Hooking");
-				OriginalNext = pEnumDevices->lpVtbl->Next;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OriginalNext, HookNext);
-				DetourTransactionCommit();
+				hNext = new MologieDetours::Detour<tNext>(pEnumDevices->lpVtbl->Next, HookNext);
 			}
 		}
 	}
@@ -221,27 +218,21 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	if(!InputHookConfig.bEnabled) return OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	HRESULT hr = hConnectServer->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+
+	if(!InputHookConfig.bEnabled) return hr;
 	WriteLog(LOG_HOOKWMI,L"HookConnectServer");
-
-	HRESULT hr;
-	IWbemServices* pIWbemServices = NULL;
-
-	hr = OriginalConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 	if(FAILED(hr)) return hr;
+
+	IWbemServices* pIWbemServices = NULL;
 
 	if(ppNamespace) {
 		if(*ppNamespace) {
 			pIWbemServices = *ppNamespace;
 
-			if(!OriginalCreateInstanceEnum) {
+			if(!hCreateInstanceEnum) {
 				WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Hooking");
-				OriginalCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OriginalCreateInstanceEnum, HookCreateInstanceEnum);
-				DetourTransactionCommit();
+				hCreateInstanceEnum = new MologieDetours::Detour<tCreateInstanceEnum>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnum);
 			}
 		}
 	}
@@ -257,26 +248,19 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 								   __in     REFIID riid, 
 								   __deref_out LPVOID FAR* ppv)
 {
-	if(!InputHookConfig.bEnabled) return OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	HRESULT hr = hCoCreateInstance->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	if(!InputHookConfig.bEnabled) return hr;
 	WriteLog(LOG_HOOKWMI,L"HookCoCreateInstance");
-
-	HRESULT hr;
-	IWbemLocator* pIWbemLocator = NULL;
-
-	hr = OriginalCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 	if(FAILED(hr)) return hr;
+
+	IWbemLocator* pIWbemLocator = NULL;
 
 	if(ppv && (riid == IID_IWbemLocator)) {
 		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 		if(pIWbemLocator) {
-
-			if(!OriginalConnectServer) {
+			if(!hConnectServer) {
 				WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Hooking");
-				OriginalConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)OriginalConnectServer, HookConnectServer);
-				DetourTransactionCommit();
+				hConnectServer = new MologieDetours::Detour<tConnectServer>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServer);
 			}
 		}
 	}
@@ -286,120 +270,76 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void HookCoUninitialize()
+void WINAPI HookCoUninitialize()
 {
-	if(!InputHookConfig.bEnabled) return OriginalCoUninitialize();
+	if(!InputHookConfig.bEnabled) return hCoUninitialize->GetOriginalFunction()();
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitialize");
 
-	if(OriginalGet) {
+	if(hGet) {
 		WriteLog(LOG_HOOKWMI,L"HookGet:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalGet, HookGet);
-		DetourTransactionCommit();
-		OriginalGet = NULL;
+		SAFE_DELETE(hGet);
 	}
 
-	if(OriginalNext) {
+	if(hNext) {
 		WriteLog(LOG_HOOKWMI,L"HookNext:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalNext, HookNext);
-		DetourTransactionCommit();
-		OriginalNext=NULL;
+		SAFE_DELETE(hNext);
 	}
 
-	if(OriginalCreateInstanceEnum) {
+	if(hCreateInstanceEnum) {
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, HookCreateInstanceEnum);
-		DetourTransactionCommit();
-		OriginalCreateInstanceEnum=NULL;
+		SAFE_DELETE(hCreateInstanceEnum);;
 	}
 
-	if(OriginalConnectServer) {
+	if(hConnectServer) {
 		WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalConnectServer, HookConnectServer);
-		DetourTransactionCommit();
-		OriginalConnectServer=NULL;
+		SAFE_DELETE(hConnectServer);
 	}
 
-	return OriginalCoUninitialize();
+	return hCoUninitialize->GetOriginalFunction()();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void HookWMI()
 {
-	if(!OriginalCoCreateInstance) {
-		OriginalCoCreateInstance = CoCreateInstance;
-		WriteLog(LOG_IHOOK,L"HookCoCreateInstance:: Hooking");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourAttach(&(PVOID&)OriginalCoCreateInstance, HookCoCreateInstance);
-		DetourTransactionCommit();
+	if(!hCoCreateInstance) {
+		hCoCreateInstance = new MologieDetours::Detour<tCoCreateInstance>(CoCreateInstance, HookCoCreateInstance);
 	}
-	if(!OriginalCoUninitialize) {
-		OriginalCoUninitialize = CoUninitialize;
-		WriteLog(LOG_IHOOK,L"HookCoUninitialize:: Hooking");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourAttach(&(PVOID&)OriginalCoUninitialize, HookCoUninitialize);
-		DetourTransactionCommit();
+	if(!hCoUninitialize) {
+		hCoUninitialize = new MologieDetours::Detour<tCoUninitialize>(CoUninitialize, HookCoUninitialize);
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HookWMIClean()
 {
-	if(OriginalGet) {
+	if(hGet) {
 		WriteLog(LOG_HOOKWMI,L"HookGet:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalGet, HookGet);
-		DetourTransactionCommit();
+		SAFE_DELETE(hGet);
 	}
 
-	if(OriginalNext) {
+	if(hNext) {
 		WriteLog(LOG_HOOKWMI,L"HookNext:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalNext, HookNext);
-		DetourTransactionCommit();
+		SAFE_DELETE(hNext);
 	}
 
-	if(OriginalCreateInstanceEnum) {
+	if(hCreateInstanceEnum) {
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnum:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalCreateInstanceEnum, HookCreateInstanceEnum);
-		DetourTransactionCommit();
+		SAFE_DELETE(hCreateInstanceEnum);;
 	}
 
-	if(OriginalConnectServer) {
+	if(hConnectServer) {
 		WriteLog(LOG_HOOKWMI,L"HookConnectServer:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalConnectServer, HookConnectServer);
-		DetourTransactionCommit();
+		SAFE_DELETE(hConnectServer);
 	}
 
-	if(OriginalCoCreateInstance) {
+	if(hCoCreateInstance) {
 		WriteLog(LOG_HOOKWMI,L"HookCoCreateInstance:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalCoCreateInstance, HookCoCreateInstance);
-		DetourTransactionCommit();
+		SAFE_DELETE(hCoCreateInstance);
 	}
 
-	if(OriginalCoUninitialize) {
+	if(hCoUninitialize) {
 		WriteLog(LOG_HOOKWMI,L"HookCoUninitialize:: Removing Hook");
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(PVOID&)OriginalCoUninitialize, HookCoUninitialize);
-		DetourTransactionCommit();
+		SAFE_DELETE(hCoUninitialize);
 	}
 }

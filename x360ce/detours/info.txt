@@ -1,1 +1,0 @@
-Modified build of detours library designed for MPC-HC player (http://sourceforge.net/projects/mpc-hc/)
