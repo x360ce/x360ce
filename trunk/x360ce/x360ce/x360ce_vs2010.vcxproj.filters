@@ -56,6 +56,9 @@
     <ClCompile Include="InputHook\HookDI.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
+    <ClCompile Include="..\MologieDetours\hde.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
