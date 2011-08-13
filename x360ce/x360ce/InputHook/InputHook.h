@@ -43,6 +43,7 @@ struct IHOOK_CONIFG
 	DWORD dwHookMode;
 	DWORD dwHookVID;
 	DWORD dwHookPID;
+	DWORD dwHookWMIANSI;
 	DWORD dwHookWinTrust;
 	SHORT sConfiguredPads;
 	IHOOK_CONIFG()
@@ -54,11 +55,13 @@ struct IHOOK_CONIFG
 extern IHOOK_CONIFG InputHookConfig;
 extern IHOOK_GAMEPAD_CONIFG GamepadConfig[4];
 
-void HookWMI();
+void HookWMI_UNI();
+void HookWMI_ANSI();
 void HookDI();
 void HookWinTrust();
 
-void HookWMIClean();
+void HookWMI_UNI_Clean();
+void HookWMI_ANSI_Clean();
 void HookDIClean();
 void HookWinTrustClean();
 

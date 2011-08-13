@@ -23,9 +23,6 @@
     <ClCompile Include="InputHook\HookWinTrust.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
-    <ClCompile Include="InputHook\HookWMI.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
     <ClCompile Include="InputHook\InputHook.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
@@ -57,6 +54,12 @@
       <Filter>InputHook</Filter>
     </ClCompile>
     <ClCompile Include="..\MologieDetours\hde.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookWMI_UNI.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookWMI_ANSI.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
   </ItemGroup>

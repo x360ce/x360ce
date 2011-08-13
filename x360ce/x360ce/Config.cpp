@@ -107,6 +107,7 @@ void ReadConfig()
 
 	//InputHook
 	x360ce_InputHookConfig.dwHookMode = ReadUINTFromFile(L"InputHook", L"HookMode",0);
+	x360ce_InputHookConfig.dwHookWMIANSI = ReadUINTFromFile(L"InputHook", L"HookUseANSI",0);
 	x360ce_InputHookConfig.dwHookWinTrust = ReadUINTFromFile(L"InputHook", L"HookWinTrust",0);
 
 	if(x360ce_InputHookConfig.dwHookMode)
