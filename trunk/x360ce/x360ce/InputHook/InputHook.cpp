@@ -62,7 +62,9 @@ BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 	}
 
 	if(InputHookConfig.bEnabled) {
-		HookWMI();
+		if(InputHookConfig.dwHookWMIANSI) HookWMI_ANSI();
+		else HookWMI_UNI();
+
 		if(InputHookConfig.dwHookMode >= HOOK_COMPAT) HookDI();
 		if(InputHookConfig.dwHookWinTrust) HookWinTrust();
 	}
@@ -73,7 +75,8 @@ BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 BOOL InputHook_Clean()
 {
 
-	HookWMIClean();
+	HookWMI_UNI_Clean();
+	HookWMI_ANSI_Clean();
 	HookDIClean();
 	HookWinTrustClean();
 

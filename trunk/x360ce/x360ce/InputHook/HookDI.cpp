@@ -39,14 +39,14 @@ typedef HRESULT (STDMETHODCALLTYPE *tEnumDevicesW) (LPDIRECTINPUT8W This, DWORD 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 MologieDetours::Detour<tDirectInput8Create>* hDirectInput8Create = NULL;
-MologieDetours::Detour<tCreateDeviceA>* hCreateDeviceA = NULL;;
-MologieDetours::Detour<tCreateDeviceW>* hCreateDeviceW = NULL;;
-MologieDetours::Detour<tGetPropertyA>* hGetPropertyA = NULL;;
-MologieDetours::Detour<tGetPropertyW>* hGetPropertyW = NULL;;
-MologieDetours::Detour<tGetDeviceInfoA>* hGetDeviceInfoA = NULL;;
-MologieDetours::Detour<tGetDeviceInfoW>* hGetDeviceInfoW = NULL;;
-MologieDetours::Detour<tEnumDevicesA>* hEnumDevicesA = NULL;;
-MologieDetours::Detour<tEnumDevicesW>* hEnumDevicesW = NULL;;
+MologieDetours::Detour<tCreateDeviceA>* hCreateDeviceA = NULL;
+MologieDetours::Detour<tCreateDeviceW>* hCreateDeviceW = NULL;
+MologieDetours::Detour<tGetPropertyA>* hGetPropertyA = NULL;
+MologieDetours::Detour<tGetPropertyW>* hGetPropertyW = NULL;
+MologieDetours::Detour<tGetDeviceInfoA>* hGetDeviceInfoA = NULL;
+MologieDetours::Detour<tGetDeviceInfoW>* hGetDeviceInfoW = NULL;
+MologieDetours::Detour<tEnumDevicesA>* hEnumDevicesA = NULL;
+MologieDetours::Detour<tEnumDevicesW>* hEnumDevicesW = NULL;
 
 LPDIENUMDEVICESCALLBACKA lpTrueCallbackA= NULL;
 LPDIENUMDEVICESCALLBACKW lpTrueCallbackW= NULL;
