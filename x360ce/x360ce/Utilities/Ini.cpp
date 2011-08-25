@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include <Shlwapi.h>
+#include "minIni\minIni.h"
 
 LPWSTR lpConfigFile = NULL;
 
@@ -39,18 +40,7 @@ void SetIniFileName(LPCWSTR ininame)
 
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault)
 {
-	if(lpConfigFile) {
-		DWORD ret;
-		LPWSTR pStr;
-		ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, lpConfigFile);
-
-		pStr = wcschr(strOutput, L' ');
-		if (pStr) {
-			*(--pStr)=L'\0';
-			strOutput = pStr;
-		}
-		return ret;
-	}
+	if(lpConfigFile) return ini_gets(strFileSection,strKey,strDefault,strOutput,MAX_PATH,lpConfigFile);
 	return 0;
 }
 
@@ -62,7 +52,7 @@ DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutpu
 
 UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault)
 {
-	if (lpConfigFile) return GetPrivateProfileInt(strFileSection,strKey,uDefault,lpConfigFile);
+	if (lpConfigFile) return ini_getl(strFileSection,strKey,uDefault,lpConfigFile);
 	return 0;
 }
 
