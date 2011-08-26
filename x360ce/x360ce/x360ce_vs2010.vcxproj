@@ -271,12 +271,6 @@
     </ClCompile>
     <ClCompile Include="Utilities\Ini.cpp" />
     <ClCompile Include="Utilities\Log.cpp" />
-    <ClCompile Include="Utilities\minIni\minIni.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Utilities\Misc.cpp" />
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
@@ -290,8 +284,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utilities\Ini.h" />
     <ClInclude Include="Utilities\Log.h" />
-    <ClInclude Include="Utilities\minIni\minGlue.h" />
-    <ClInclude Include="Utilities\minIni\minIni.h" />
     <ClInclude Include="Utilities\Misc.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="x360ce.h" />

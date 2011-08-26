@@ -18,9 +18,6 @@
     <Filter Include="Utilities">
       <UniqueIdentifier>{cf2276e8-0a0c-4435-8315-416ced42a7d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utilities\minIni">
-      <UniqueIdentifier>{fa955265-8116-48b6-ac70-1afb7b9fbe2b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputHook\HookWinTrust.cpp">
@@ -65,9 +62,6 @@
     <ClCompile Include="InputHook\HookWMI_ANSI.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities\minIni\minIni.c">
-      <Filter>Utilities\minIni</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -105,12 +99,6 @@
     </ClInclude>
     <ClInclude Include="Utilities\Misc.h">
       <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\minIni\minIni.h">
-      <Filter>Utilities\minIni</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\minIni\minGlue.h">
-      <Filter>Utilities\minIni</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
