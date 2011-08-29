@@ -20,8 +20,8 @@
 // prototypes
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput);
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault);
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey);
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault);
+long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey);
+long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault);
 void SetIniFileName(LPCWSTR ininame);
 void IniCleanup();
 

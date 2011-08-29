@@ -118,7 +118,6 @@ VOID ExitInstance()
 
 	if (g_hNativeInstance) {
 		FreeLibrary(g_hNativeInstance); 
-		CloseHandle(g_hNativeInstance);
 		g_hNativeInstance = NULL; 
 	}
 
