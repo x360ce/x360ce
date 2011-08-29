@@ -18,36 +18,40 @@
 #include "globals.h"
 #include <Shlwapi.h>
 
-LPWSTR lpConfigFile = NULL;
+LPWSTR g_pConfigFile = NULL;
 
 void IniCleanup() 
 {
-	SAFE_DELETE_ARRAY(lpConfigFile);
+	SAFE_DELETE_ARRAY(g_pConfigFile);
 }
 
 void SetIniFileName(LPCWSTR ininame) 
 {
 	WCHAR strPath[MAX_PATH];
-	lpConfigFile = new WCHAR[MAX_PATH];
+	g_pConfigFile = new WCHAR[MAX_PATH];
 
 	GetModuleFileName(NULL, strPath, MAX_PATH);
 	PathRemoveFileSpec(strPath);
 	PathAddBackslash(strPath);
 
-	swprintf_s(lpConfigFile,MAX_PATH,L"%s%s",strPath, ininame);
+	swprintf_s(g_pConfigFile,MAX_PATH,L"%s%s",strPath, ininame);
 }
 
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault)
 {
-	if(lpConfigFile) {
+	if(g_pConfigFile)
+	{
 		DWORD ret;
 		LPWSTR pStr;
-		ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, lpConfigFile);
+		ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, g_pConfigFile);
 
-		pStr = wcschr(strOutput, L' ');
+		pStr = wcschr(strOutput, L'#');
 		if (pStr) {
 			*pStr=L'\0';
-			strOutput = pStr;
+		}
+		pStr = wcschr(strOutput, L';');
+		if (pStr) {
+			*pStr=L'\0';
 		}
 		return ret;
 	}
@@ -56,18 +60,30 @@ DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutpu
 
 DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput)
 {
-	if (lpConfigFile) return ReadStringFromFile(strFileSection, strKey, strOutput, NULL);
+	if (g_pConfigFile)
+		return ReadStringFromFile(strFileSection, strKey, strOutput, NULL);
 	return 0;
 }
 
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault)
+long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault)
 {
-	if (lpConfigFile) return GetPrivateProfileInt(strFileSection,strKey,uDefault,lpConfigFile);
-	return 0;
+	if (g_pConfigFile) 
+	{
+		WCHAR tmp[MAX_PATH];
+		WCHAR def[MAX_PATH];
+		DWORD ret;
+
+		swprintf_s(def,MAX_PATH,L"%u",uDefault);
+		ret = ReadStringFromFile(strFileSection,strKey,tmp,def);
+
+		if(ret)
+			return _wtol(tmp);
+	}
+	return -1;
 }
 
-UINT ReadUINTFromFile(LPCWSTR strFileSection, LPCWSTR strKey)
+long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey)
 {
-	if (lpConfigFile) return ReadUINTFromFile(strFileSection, strKey, NULL);
+	if (g_pConfigFile) return ReadLongFromFile(strFileSection, strKey, -1);
 	return 0;
 }
