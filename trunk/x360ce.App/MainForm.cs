@@ -126,7 +126,7 @@ namespace x360ce.App
 			////ReloadXInputLibrary();
 		}
 
-				/// <summary>
+		/// <summary>
 		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
 		/// </summary>
 		void UpdateSettingsMap()
@@ -452,6 +452,8 @@ namespace x360ce.App
 		{
 			//Populate All devices
 			var list = new List<DeviceInstance>();
+			// If you encouter "LoaderLock was detected" Exception when debugging then:
+			// Make sure that you have reference to Microsoft.Directx.dll. 
 			var dl = Manager.Devices.GetEnumerator();
 			while (dl.MoveNext())
 			{
@@ -564,7 +566,8 @@ namespace x360ce.App
 		Version _dllVersion;
 		Version dllVersion
 		{
-			get {
+			get
+			{
 				if (_dllVersion != null) return _dllVersion;
 				_dllVersion = GetDllVersion(dllFile);
 				return _dllVersion;
@@ -722,7 +725,7 @@ namespace x360ce.App
 					if (!CreateFile(SettingManager.Current.iniFile, null)) return false;
 				}
 				// If xinput file doesn't exists.
-				var embeddedDllVersion = GetEmbeddedDllVersion(); 
+				var embeddedDllVersion = GetEmbeddedDllVersion();
 				if (!System.IO.File.Exists(dllFile))
 				{
 					if (!CreateFile(dllFile, null)) return false;
@@ -810,7 +813,7 @@ namespace x360ce.App
 			else
 			{
 				answer = MessageBox.Show(
-					string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?",  new System.IO.FileInfo(fileName).FullName, dllVersion, newVersion),
+					string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", new System.IO.FileInfo(fileName).FullName, dllVersion, newVersion),
 					string.Format("New version of '{0}' file is available.", fileName),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 			}
