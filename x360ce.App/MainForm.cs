@@ -448,7 +448,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Access this only insite Timer_Click!
 		/// </summary>
-		List<DeviceInstance> GetCurrentInstances(ref bool instancesChanged)
+		bool RefreshCurrentInstances()
 		{
 			//Populate All devices
 			var list = new List<DeviceInstance>();
@@ -464,7 +464,8 @@ namespace x360ce.App
 					|| di.DeviceType == DeviceType.Joystick
 				) list.Add(di);
 			}
-			instancesChanged = false;
+			bool instancesChanged = false;
+			// If instance was removed of added then...
 			if (diInstances.Count != list.Count)
 			{
 				instancesChanged = true;
@@ -473,19 +474,21 @@ namespace x360ce.App
 			{
 				for (int i = 0; i < list.Count; i++)
 				{
+					// If instance order changed then...
 					if (!diInstances[i].InstanceGuid.Equals(list[i].InstanceGuid))
 					{
 						instancesChanged = true;
+						break;
 					}
 				}
 			}
 			diInstances = list;
-			return diInstances;
+			return instancesChanged;
 		}
 
 		Device _CurrentDiDevice;
 		/// <summary>
-		/// Access this only insite Timer_Click!
+		/// Access this only from inside Timer_Click!
 		/// </summary>
 		Device GetCurrentDiDevice(List<DeviceInstance> instances)
 		{
@@ -521,44 +524,48 @@ namespace x360ce.App
 		}
 
 		bool settingsChanged = false;
+		GamePadState emptyState = new GamePadState();
 
 		private void UpdateTimer_Tick(object sender, EventArgs e)
 		{
 			Program.TimerCount++;
+			// Check if 
 			bool instancesChanged = false;
-			if (settingsChanged)
+			// If settings haven't changed then...
+			if (!settingsChanged)
 			{
-				Program.ReloadCount++;
-				//FixConfig(instances);
-				settingsChanged = false;
+				// Refresh instances.
+				try { instancesChanged = RefreshCurrentInstances(); }
+				catch (Exception)
+				{
+					// Update GamePad state LED's (disable since DInput instance list is empty).
+					diInstances = new List<DeviceInstance>();
+					UpdateGamePadStatus();
+					throw;
+				}
+			}
+			// If settings changed or directInput instances changed then...
+			if (settingsChanged || instancesChanged)
+			{
 				ReloadLibrary();
 				return;
 			}
-			var instances = new List<DeviceInstance>();
-			try { instances = GetCurrentInstances(ref instancesChanged); }
-			catch (Exception)
-			{
-				// Update GamePad state LED's (disable since instances list is empty).
-				UpdateGamePadStatus(instances);
-				throw;
-			}
-			if (instancesChanged)
-			{
-				Program.ReloadCount++;
-				//FixConfig(instances);
-				settingsChanged = false;
-				ReloadLibrary();
-				return;
-			}
-			if (instances.Count > 0)
+			var currentPadControl = ControlPads[ControllerIndex];
+			if (diInstances.Count > 0)
 			{
 				// Check all pads.
-				UpdateGamePadStatus(instances);
-				var currentPadControl = ControlPads[ControllerIndex];
-				var currentDevice = GetCurrentDiDevice(instances);
+				UpdateGamePadStatus();
+				var currentDevice = GetCurrentDiDevice(diInstances);
 				currentPadControl.UpdateFromDirectInput(currentDevice);
+			}
+			if (UnsafeNativeMethods.IsLoaded)
+			{
 				var currentPad = GamePad.GetState((PlayerIndex)ControllerIndex);
 				currentPadControl.UpdateFromXInput(currentPad);
+			}
+			else
+			{
+				currentPadControl.UpdateFromXInput(emptyState);
 			}
 			UpdateStatus("");
 		}
@@ -613,6 +620,9 @@ namespace x360ce.App
 
 		public void ReloadLibrary()
 		{
+			Program.ReloadCount++;
+			//FixConfig(instances);
+			settingsChanged = false;
 			var dllInfo = new System.IO.FileInfo(dllFile);
 			if (dllInfo.Exists)
 			{
@@ -631,16 +641,25 @@ namespace x360ce.App
 		/// <summary>
 		/// Update GamePad state LED's.
 		/// </summary>
-		/// <param name="instances"></param>
-		void UpdateGamePadStatus(List<DeviceInstance> instances)
+		/// <param name="diInstances"></param>
+		void UpdateGamePadStatus()
 		{
 			for (int i = 0; i < 4; i++)
 			{
+				// DInput instance is ON.
+				var diOn = i < diInstances.Count;
+				// XInput instance is ON.
 				//XInput.Controllers[i].PollState();
-				var on = GamePad.GetState((PlayerIndex)i).IsConnected;
-				string image = on ? "green" : "grey";
-				// If DirectInput device exist but controller doesn't work then error.
-				if (i < instances.Count) if (!on) image = "red";
+				var xiOn = UnsafeNativeMethods.IsLoaded && GamePad.GetState((PlayerIndex)i).IsConnected;
+				string image = diOn
+					// di ON, xi ON 
+					? xiOn ? "green"
+					// di ON, xi OFF
+					: "red"
+					// di OFF, xi ON
+					: xiOn ? "yellow"
+					// di OFF, xi OFF
+					: "grey";
 				string bullet = string.Format("bullet_square_glass_{0}.png", image);
 				if (ControlPages[i].ImageKey != bullet) ControlPages[i].ImageKey = bullet;
 			}

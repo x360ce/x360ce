@@ -149,7 +149,6 @@ namespace x360ce.App.Controls
 
 		private void PadControl_Load(object sender, EventArgs e)
 		{
-
 		}
 
 		private void ComboBox_DropDown(object sender, EventArgs e)
@@ -519,13 +518,42 @@ namespace x360ce.App.Controls
 
 		public void UpdateFromXInput(GamePadState state)
 		{
+			var wasConnected = gamePadState.IsConnected;
+			var nowConnected = state.IsConnected;
 			gamePadState = state;
-			IsEnabled = state.IsConnected;
-			if (!IsEnabled) return;
-			this.leftX = FloatToInt(state.ThumbSticks.Left.X);
-			this.leftY = FloatToInt(state.ThumbSticks.Left.Y);
-			this.rightX = FloatToInt(state.ThumbSticks.Right.X);
-			this.rightY = FloatToInt(state.ThumbSticks.Right.Y);
+			// If form was disabled and no data is comming then just return.
+			if (!wasConnected && !nowConnected) return;
+			// If device connection changed then...
+			if (wasConnected != nowConnected)
+			{
+				if (nowConnected)
+				{
+					// Enable form.
+					this.FrontPictureBox.Image = frontImage;
+					this.TopPictureBox.Image = topImage;
+				}
+				else
+				{
+					// Disable form.
+					this.FrontPictureBox.Image = frontDisabledImage;
+					this.TopPictureBox.Image = topDisabledImage;
+					
+				}
+			}
+			if (nowConnected)
+			{
+				this.leftX = FloatToInt(state.ThumbSticks.Left.X);
+				this.leftY = FloatToInt(state.ThumbSticks.Left.Y);
+				this.rightX = FloatToInt(state.ThumbSticks.Right.X);
+				this.rightY = FloatToInt(state.ThumbSticks.Right.Y);
+			}
+			else
+			{
+				this.leftX = 0;
+				this.leftY = 0;
+				this.rightX = 0;
+				this.rightY = 0;
+			}
 			UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", this.leftX, this.leftY));
 			UpdateControl(RightThumbTextBox, string.Format("{0};{1}", this.rightX, this.rightY));
 			this.TopPictureBox.Refresh();
@@ -550,32 +578,6 @@ namespace x360ce.App.Controls
 		public void UpdateControl(Control control, string text)
 		{
 			if (control.Text != text) control.Text = text;
-		}
-
-		bool _IsEnabled;
-		public bool IsEnabled
-		{
-			set
-			{
-				if (_IsEnabled == value) return;
-				if (value)
-				{
-					this.FrontPictureBox.Image = frontImage;
-					this.TopPictureBox.Image = topImage;
-					this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
-					this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
-				}
-				else
-				{
-					this.FrontPictureBox.Image = frontDisabledImage;
-					this.TopPictureBox.Image = topDisabledImage;
-					this.FrontPictureBox.Paint -= new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
-					this.TopPictureBox.Paint -= new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
-				}
-				_IsEnabled = value;
-			}
-			get { return _IsEnabled; }
-
 		}
 
 		string cRecord = "[Record]";
