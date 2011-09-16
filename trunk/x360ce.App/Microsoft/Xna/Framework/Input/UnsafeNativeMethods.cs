@@ -66,20 +66,23 @@ namespace Microsoft.Xna.Framework.Input
 		public static void ReLoadLibrary(string fileName)
 		{
 			_LibraryName = fileName;
-			if (libHandle != IntPtr.Zero) FreeLibrary();
+			if (IsLoaded) FreeLibrary();
 			libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(fileName);
-			if (libHandle == IntPtr.Zero)
-			{
-				MessageBox.Show("Failed to load '{0}'", fileName);
-			}
+			if (!IsLoaded) 	MessageBox.Show("Failed to load '{0}'", fileName);
 		}
 
 		public static void FreeLibrary()
 		{
-			if (libHandle == IntPtr.Zero) return;
+			if (!IsLoaded) return;
 			x360ce.App.Win32.NativeMethods.FreeLibrary(libHandle);
 			libHandle = IntPtr.Zero;
 		}
+
+		public static bool IsLoaded
+		{
+			get { return libHandle != IntPtr.Zero; }
+		}
+
 
 	}
 }

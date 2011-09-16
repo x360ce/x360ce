@@ -105,7 +105,9 @@ namespace x360ce.App.Controls
 			JoystickState state = emptyState;
 			if (device != null)
 			{
-				try { state = device.CurrentJoystickState; }
+				try {
+					device.Acquire();
+					state = device.CurrentJoystickState; }
 				catch (Exception) { }
 			}
 			// X-axis.

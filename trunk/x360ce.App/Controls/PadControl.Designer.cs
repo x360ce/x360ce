@@ -678,7 +678,7 @@
 			this.PassThroughCheckBox.AutoSize = true;
 			this.PassThroughCheckBox.Location = new System.Drawing.Point(328, 10);
 			this.PassThroughCheckBox.Name = "PassThroughCheckBox";
-			this.PassThroughCheckBox.Size = new System.Drawing.Size(87, 17);
+			this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
 			this.PassThroughCheckBox.TabIndex = 2;
 			this.PassThroughCheckBox.Text = "Pass Through";
 			this.PassThroughCheckBox.UseVisualStyleBackColor = true;
@@ -1045,6 +1045,7 @@
 			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
 			this.FrontPictureBox.TabIndex = 0;
 			this.FrontPictureBox.TabStop = false;
+			this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
 			// 
 			// ButtonAComboBox
 			// 
@@ -1448,6 +1449,7 @@
 			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.TopPictureBox.TabIndex = 0;
 			this.TopPictureBox.TabStop = false;
+			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
 			// 
 			// PadTabControl
 			// 
