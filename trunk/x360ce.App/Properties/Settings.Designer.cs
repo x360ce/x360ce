@@ -31,5 +31,15 @@ namespace x360ce.App.Properties {
                 return ((bool)(this["EnableKeyboardControl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost.x360ce.com/webservices/x360ce.asmx")]
+        public string x360ce_com_x360ce_localhost_x360ce {
+            get {
+                return ((string)(this["x360ce_com_x360ce_localhost_x360ce"]));
+            }
+        }
     }
 }

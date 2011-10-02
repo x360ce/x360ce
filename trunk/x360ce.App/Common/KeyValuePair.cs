@@ -10,7 +10,7 @@ namespace x360ce.App
     /// Key/value pair that can be set or retrieved.
     /// </summary>
     [Serializable, StructLayout(LayoutKind.Sequential)]
-    public struct KeyValuePair
+    public class KeyValuePair
     {
         private string _key;
         private string _value;

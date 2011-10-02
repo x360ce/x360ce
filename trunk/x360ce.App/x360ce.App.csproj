@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
+    <OutputPath>bin\Debug\x86\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
@@ -57,7 +57,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>bin\Release\x86\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -76,7 +76,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>bin\Debug\x64\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
@@ -93,7 +93,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>bin\Release\x64\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -117,6 +117,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -147,6 +149,25 @@
     </Compile>
     <Compile Include="Controls\KeyboardControl.Designer.cs">
       <DependentUpon>KeyboardControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LoadingCircle.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LoadingCircle.Designer.cs">
+      <DependentUpon>LoadingCircle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LoadingCircleToolStripMenuItem.cs" />
+    <Compile Include="Controls\NewDeviceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\NewDeviceForm.Designer.cs">
+      <DependentUpon>NewDeviceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OnlineUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OnlineUserControl.Designer.cs">
+      <DependentUpon>OnlineUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadControl.cs">
       <SubType>UserControl</SubType>
@@ -255,6 +276,12 @@
     <EmbeddedResource Include="Controls\KeyboardControl.resx">
       <DependentUpon>KeyboardControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\NewDeviceForm.resx">
+      <DependentUpon>NewDeviceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OnlineUserControl.resx">
+      <DependentUpon>OnlineUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -301,6 +328,11 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\SettingsConverter.cs" />
+    <Compile Include="Web References\com.x360ce.localhost\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Win32\BIND_OPTS3.cs" />
     <Compile Include="Win32\CLSCTX.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
@@ -313,6 +345,14 @@
     <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="Win32\WinAPI.cs" />
     <Compile Include="Win32\WinNT.cs" />
+    <None Include="Web References\com.x360ce.localhost\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\com.x360ce.localhost\SearchResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\com.x360ce.localhost\x360ce.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -350,7 +390,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
+    <Content Include="Images\app_48x48.png" />
+    <None Include="Images\delete_16x16.png" />
+    <None Include="Images\empty_16x16.png" />
+    <None Include="Images\load_16x16.png" />
+    <None Include="Images\refresh_16x16.png" />
+    <None Include="Images\save_16x16.png" />
+    <None Include="Images\save_add_16x16.png" />
+    <None Include="Images\arrow_right_16x16.png" />
+    <None Include="Images\check_16x16.png" />
+    <None Include="Images\check_disabled_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
+    <None Include="Web References\com.x360ce.localhost\x360ce.disco" />
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
     <EmbeddedResource Include="Documents\Help.htm" />
@@ -387,7 +438,22 @@
     <EmbeddedResource Include="Presets\x360ce.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://localhost.x360ce.com/webservices/x360ce.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\com.x360ce.localhost\</RelPath>
+      <UpdateFromURL>http://localhost.x360ce.com/webservices/x360ce.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>x360ce_com_x360ce_localhost_x360ce</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -397,6 +463,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)Documents\JocysCom.sign.bat" "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

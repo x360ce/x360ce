@@ -259,7 +259,7 @@
 			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
 			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
 			this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.DiAxisDataGridView.Size = new System.Drawing.Size(362, 84);
+			this.DiAxisDataGridView.Size = new System.Drawing.Size(345, 84);
 			this.DiAxisDataGridView.TabIndex = 0;
 			// 
 			// DiColumnAxis

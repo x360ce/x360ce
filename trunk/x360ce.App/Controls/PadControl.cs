@@ -36,7 +36,47 @@ namespace x360ce.App.Controls
 
 		private KeyboardControl PadKeyboardControl;
 
-
+		public void InitPresets()
+		{
+			PresetComboBox.Items.Clear();
+			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
+			var ext = System.IO.Path.GetExtension(SettingManager.Current.iniFile);
+			string name;
+			// Presets: Embedded.
+			var embeddedPresets = new List<string>();
+			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+			string[] files = assembly.GetManifestResourceNames();
+			var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
+			Regex rx = new Regex(pattern);
+			for (int i = 0; i < files.Length; i++)
+			{
+				if (rx.IsMatch(files[i]))
+				{
+					name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
+					embeddedPresets.Add(name);
+				}
+			}
+			// Presets: Custom.
+			var dir = new System.IO.DirectoryInfo(".");
+			var fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
+			List<string> customPresets = new List<string>();
+			for (int i = 0; i < fis.Length; i++)
+			{
+				name = fis[i].Name.Substring(prefix.Length + 1);
+				name = name.Substring(0, name.Length - ext.Length);
+				name = name.Replace("_", " ");
+				if (!embeddedPresets.Contains(name)) customPresets.Add(name);
+			}
+			PresetComboBox.Items.Add("Presets:");
+			string[] cNames = customPresets.ToArray();
+			string[] eNames = embeddedPresets.ToArray();
+			Array.Sort(cNames);
+			Array.Sort(eNames);
+			foreach (var item in cNames) PresetComboBox.Items.Add(item);
+			if (cNames.Length > 0) PresetComboBox.Items.Add("Embeded:");
+			foreach (var item in eNames) PresetComboBox.Items.Add(item);
+			PresetComboBox.SelectedIndex = 0;
+		}
 
 		public void InitPadControl()
 		{
@@ -505,12 +545,18 @@ namespace x360ce.App.Controls
 			{
 				UpdateControl(DirectInputTabPage, device.DeviceInformation.InstanceName);
 			}
+			else
+			{
+			}
 			// if this is different device;
 			if (!Helper.IsSameDevice(device, instanceGuid))
 			{
 				Guid iGuid = Guid.Empty;
-				try { iGuid = device.DeviceInformation.InstanceGuid; }
-				catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
+				if (device != null)
+				{
+					try { iGuid = device.DeviceInformation.InstanceGuid; }
+					catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
+				}
 				instanceGuid = (device == null) ? Guid.Empty : iGuid;
 				ResetDiMenuStrip(device);
 			}
@@ -792,6 +838,7 @@ namespace x360ce.App.Controls
 
 		public void UpdateForceFeedBack()
 		{
+			if (mainForm.ControllerIndex == -1) return; 
 			// Convert 100% trackbar to MotorSpeed's 0 - 1.0
 			float leftMotor = (float)LeftMotorTestTrackBar.Value / 100F;
 			float rightMotor = (float)RightMotorTestTrackBar.Value / 100F;
@@ -825,6 +872,35 @@ namespace x360ce.App.Controls
 			LeftThumbYAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE * n);
 			RightThumbXAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * n);
 			RightThumbYAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * n);
+		}
+
+		private void LoadPresetButton_Click(object sender, EventArgs e)
+		{
+			if (string.IsNullOrEmpty(PresetComboBox.Text)) return;
+			string name = PresetComboBox.Text.Replace(" ", "_");
+		mainForm.LoadPreset(name);
+		}
+
+		private void ResetPresetButton_Click(object sender, EventArgs e)
+		{
+			mainForm.ReloadXinputSettings();
+		}
+
+		private void SavePresetButton_Click(object sender, EventArgs e)
+		{
+			mainForm.UpdateTimer.Stop();
+			// Save settigns to INI file.
+			SettingManager.Current.SaveSettings();
+			// Owerwrite Temp file.
+			var ini = new System.IO.FileInfo(SettingManager.Current.iniFile);
+			ini.CopyTo(SettingManager.Current.iniTmpFile, true);
+			mainForm.toolStripStatusLabel1.Text = "Settings saved";
+			mainForm.UpdateTimer.Start();
+		}
+
+		private void PadTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			mainForm.UpdateHelpHeader();
 		}
 
 	}

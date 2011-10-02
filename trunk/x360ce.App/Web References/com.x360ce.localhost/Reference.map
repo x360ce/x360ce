@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://localhost.x360ce.com/webservices/x360ce.asmx?disco" filename="x360ce.disco" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://localhost.x360ce.com/webservices/x360ce.asmx?wsdl" filename="x360ce.wsdl" />
+  </Results>
+</DiscoveryClientResultsFile>

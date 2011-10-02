@@ -22,7 +22,10 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
+			Current = this;
 		}
+
+		public static MainForm Current { get; set; }
 
 		string dllFile0 = "xinput9_1_0.dll";
 		string dllFile1 = "xinput1_1.dll";
@@ -37,7 +40,7 @@ namespace x360ce.App
 		{
 			get
 			{
-				int newIndex = 0;
+				int newIndex = -1;
 				if (MainTabControl.SelectedTab == Pad1TabPage) newIndex = 0;
 				if (MainTabControl.SelectedTab == Pad2TabPage) newIndex = 1;
 				if (MainTabControl.SelectedTab == Pad3TabPage) newIndex = 2;
@@ -52,6 +55,10 @@ namespace x360ce.App
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			BusyLoadingCircle.Visible = false;
+			BusyLoadingCircle.Top = HeaderPictureBox.Top;
+			BusyLoadingCircle.Left = HeaderPictureBox.Left;
+			defaultBody = HelpBodyLabel.Text;
 			//if (DesignMode) return;
 			// init default
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
@@ -71,8 +78,6 @@ namespace x360ce.App
 			else if (System.IO.File.Exists(dllFile1)) dllFile = dllFile1;
 			else if (System.IO.File.Exists(dllFile0)) dllFile = dllFile0;
 			else dllFile = dllFile3;
-			// Init presets. Execute only after name of cIniFile is set.
-			InitPresets();
 			// Load about control.
 			ControlAbout = new Controls.AboutControl();
 			ControlAbout.Dock = DockStyle.Fill;
@@ -98,6 +103,8 @@ namespace x360ce.App
 				ControlPads[i].Dock = DockStyle.Fill;
 				ControlPages[i].Controls.Add(ControlPads[i]);
 				ControlPads[i].InitPadControl();
+				// Init presets. Execute only after name of cIniFile is set.
+				ControlPads[i].InitPresets();
 			}
 			// Check if ini and dll is on disk.
 			if (!CheckFiles(true)) return;
@@ -140,6 +147,8 @@ namespace x360ce.App
 			sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(section + SettingName.Console, ConsoleCheckBox);
+			sm.Add(section + SettingName.OnlineDatabaseUrl, onlineUserControl1.OnlineDatabaseUrlTextBox);
+			sm.Add(section + SettingName.OnlineFeatures, OnlineCheckBox);
 			section = @"InputHook\";
 			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
 			for (int i = 0; i < ControlPads.Length; i++)
@@ -211,49 +220,6 @@ namespace x360ce.App
 			//    AccessControlType.Allow);
 		}
 
-
-		void InitPresets()
-		{
-			PresetComboBox.Items.Clear();
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
-			var ext = System.IO.Path.GetExtension(SettingManager.Current.iniFile);
-			string name;
-			// Presets: Embedded.
-			var embeddedPresets = new List<string>();
-			var assembly = Assembly.GetExecutingAssembly();
-			string[] files = assembly.GetManifestResourceNames();
-			var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
-			Regex rx = new Regex(pattern);
-			for (int i = 0; i < files.Length; i++)
-			{
-				if (rx.IsMatch(files[i]))
-				{
-					name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
-					embeddedPresets.Add(name);
-				}
-			}
-			// Presets: Custom.
-			var dir = new System.IO.DirectoryInfo(".");
-			FileInfo[] fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
-			List<string> customPresets = new List<string>();
-			for (int i = 0; i < fis.Length; i++)
-			{
-				name = fis[i].Name.Substring(prefix.Length + 1);
-				name = name.Substring(0, name.Length - ext.Length);
-				name = name.Replace("_", " ");
-				if (!embeddedPresets.Contains(name)) customPresets.Add(name);
-			}
-			PresetComboBox.Items.Add("Presets:");
-			string[] cNames = customPresets.ToArray();
-			string[] eNames = embeddedPresets.ToArray();
-			Array.Sort(cNames);
-			Array.Sort(eNames);
-			foreach (var item in cNames) PresetComboBox.Items.Add(item);
-			if (cNames.Length > 0) PresetComboBox.Items.Add("Embeded:");
-			foreach (var item in eNames) PresetComboBox.Items.Add(item);
-			PresetComboBox.SelectedIndex = 0;
-		}
-
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			for (int i = 0; i < ControlPads.Length; i++)
@@ -275,17 +241,11 @@ namespace x360ce.App
 			CleanStatusTimer.Stop();
 		}
 
-		private void LoadPresetButton_Click(object sender, EventArgs e)
-		{
-			if (string.IsNullOrEmpty(PresetComboBox.Text)) return;
-			string name = PresetComboBox.Text.Replace(" ", "_");
-			LoadPreset(name);
-		}
-
 		#region Setting Events
 
-		void LoadPreset(string name)
+		public void LoadPreset(string name)
 		{
+			if (ControllerIndex == -1) return;
 			// exit if "Presets:" or "Embedded:".
 			if (name.Contains(":")) return;
 			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
@@ -310,11 +270,6 @@ namespace x360ce.App
 			//CleanStatusTimer.Start();
 		}
 
-		private void ResetButton_Click(object sender, EventArgs e)
-		{
-			ReloadXinputSettings();
-		}
-
 		int resumed = 0;
 		int suspended = 0;
 
@@ -328,7 +283,8 @@ namespace x360ce.App
 				if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
 				if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
 				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
-				if (control is ComboBox || control is TextBox) control.TextChanged -= new System.EventHandler(this.Control_TextChanged);
+				if (control is ComboBox) control.TextChanged -= new System.EventHandler(this.Control_TextChanged);
+				// || control is TextBox
 			}
 			suspended++;
 			StatusEventsLabel.Text = string.Format("OFF {0} {1}", suspended, resumed);
@@ -344,7 +300,8 @@ namespace x360ce.App
 				if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
 				if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
 				if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged += new EventHandler(this.Control_TextChanged);
-				if (control is ComboBox || control is TextBox) control.TextChanged += new System.EventHandler(this.Control_TextChanged);
+				if (control is ComboBox) control.TextChanged += new System.EventHandler(this.Control_TextChanged);
+				//  || control is TextBox
 			}
 			resumed++;
 			StatusEventsLabel.Text = string.Format("ON {0} {1}", suspended, resumed);
@@ -380,7 +337,7 @@ namespace x360ce.App
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
-		void ReloadXinputSettings()
+		public void ReloadXinputSettings()
 		{
 			SuspendEvents();
 			SettingManager.Current.ReadSettings();
@@ -406,43 +363,67 @@ namespace x360ce.App
 
 			}
 			catch (Exception) { }
-			FileInfo tmp = new FileInfo(SettingManager.Current.iniTmpFile);
+			var tmp = new FileInfo(SettingManager.Current.iniTmpFile);
+			var ini = new FileInfo(SettingManager.Current.iniFile);
 			if (tmp.Exists)
 			{
-				// Rename temp to ini.
-				tmp.CopyTo(SettingManager.Current.iniFile, true);
+				// Before renaming file check for changes.
+				var changed = false;
+				if (tmp.Length != ini.Length) { changed = true; }
+				else
+				{
+					var tmpChecksum = Helper.GetFileChecksum(tmp.FullName);
+					var iniChecksum = Helper.GetFileChecksum(ini.FullName);
+					changed = !tmpChecksum.Equals(iniChecksum);
+				}
+				if (changed)
+				{
+					var result = MessageBox.Show(
+						"Do you want to save changes you made to configuration?",
+						"Save Changes?",
+						MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+					if (result == System.Windows.Forms.DialogResult.Yes)
+					{
+						// Do nothing since ini contains latest updates.
+					}
+					else if (result == System.Windows.Forms.DialogResult.No)
+					{
+						// Rename temp to ini.
+						tmp.CopyTo(SettingManager.Current.iniFile, true);
+					}
+					else if (result == System.Windows.Forms.DialogResult.Cancel)
+					{
+						e.Cancel = true;
+						return;
+					}
+				}
 				// delete temp.
 				tmp.Delete();
 			}
 		}
 
-		private void SaveButton_Click(object sender, EventArgs e)
-		{
-			UpdateTimer.Stop();
-			// store unique instance settings.
-			for (int i = 0; i < 4; i++)
-			{
-				string guidString = SettingManager.Current.SettingsMap[string.Format("PAD{0}\\" + SettingName.InstanceGuid, i + 1)].Text;
-				if (!Helper.IsGuid(guidString)) continue;
-				Guid ig = new Guid(guidString);
-				if (ig.Equals(Guid.Empty)) continue;
-				string section = string.Format("IG_{0}", ig.ToString("N"));
-				SettingManager.Current.SavePadSettings(SettingManager.Current.iniFile, section, i);
-			}
-			// Owerwrite temp file.
-			FileInfo ini = new FileInfo(SettingManager.Current.iniFile);
-			ini.CopyTo(SettingManager.Current.iniTmpFile, true);
-			toolStripStatusLabel1.Text = "Settings saved";
-			UpdateTimer.Start();
-		}
-
 		#region Timer
+
+
+		List<DeviceInstance> _diInstancesOld;
+		List<DeviceInstance> diInstancesOld
+		{
+			get { return _diInstancesOld = _diInstancesOld ?? new List<DeviceInstance>(); }
+			set { _diInstancesOld = value; }
+		}
 
 		List<DeviceInstance> _diInstances;
 		List<DeviceInstance> diInstances
 		{
 			get { return _diInstances = _diInstances ?? new List<DeviceInstance>(); }
 			set { _diInstances = value; }
+		}
+
+		List<Device> _diDevices;
+		List<Device> diDevices
+		{
+			get { return _diDevices = _diDevices ?? new List<Device>(); }
+			set { _diDevices = value; }
 		}
 
 		/// <summary>
@@ -482,38 +463,34 @@ namespace x360ce.App
 					}
 				}
 			}
-			diInstances = list;
-			return instancesChanged;
-		}
+			if (instancesChanged)
+			{
+				// Dispose from previous list of devices.
+				for (int i = 0; i < diDevices.Count; i++)
+				{
+					// Dispose current device.
+					diDevices[i].Unacquire();
+					diDevices[i].Dispose();
+				}
+				diDevices.Clear();
 
-		Device _CurrentDiDevice;
-		/// <summary>
-		/// Access this only from inside Timer_Click!
-		/// </summary>
-		Device GetCurrentDiDevice(List<DeviceInstance> instances)
-		{
-			// Assign instance guid (empty guid is instance is unavailable)
-			Guid ig = ControllerIndex < instances.Count
-				? instances[ControllerIndex].InstanceGuid
-				: Guid.Empty;
-			// Current is not empty and instance is different or empty then...
-			if (_CurrentDiDevice != null &&
-				(!_CurrentDiDevice.DeviceInformation.InstanceGuid.Equals(ig) || Guid.Empty.Equals(ig)))
-			{
-				// Dispose current device.
-				_CurrentDiDevice.Unacquire();
-				_CurrentDiDevice.Dispose();
-				_CurrentDiDevice = null;
+				// Crate new list of devices.
+				for (int i = 0; i < list.Count; i++)
+				{
+					var ig = list[i].InstanceGuid;
+					var device = new Device(ig);
+					device.SetCooperativeLevel(this, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+					device.Acquire();
+					diDevices.Add(device);
+				}
+				onlineUserControl1.BindDevices(list);
+				onlineUserControl1.BindFiles();
 			}
-			// If current device is empty and instance guid sugested then...
-			if (_CurrentDiDevice == null && !ig.Equals(Guid.Empty))
-			{
-				_CurrentDiDevice = new Device(ig);
-				_CurrentDiDevice.SetCooperativeLevel(this, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-				_CurrentDiDevice.Acquire();
-			}
-			//if (!attached) return null;
-			return _CurrentDiDevice;
+			// Assign new list of instances.
+			diInstancesOld = diInstances;
+			diInstances = list;
+			// Return true if instances changed.
+			return instancesChanged;
 		}
 
 		private void SettingsTimer_Tick(object sender, EventArgs e)
@@ -521,6 +498,11 @@ namespace x360ce.App
 			settingsChanged = true;
 			SettingsTimer.Stop();
 			UpdateTimer.Start();
+		}
+
+		bool ContainsProduct(Guid productGuid)
+		{
+			return true;
 		}
 
 		bool settingsChanged = false;
@@ -535,7 +517,10 @@ namespace x360ce.App
 			if (!settingsChanged)
 			{
 				// Refresh instances.
-				try { instancesChanged = RefreshCurrentInstances(); }
+				try
+				{
+					instancesChanged = RefreshCurrentInstances();
+				}
 				catch (Exception)
 				{
 					// Update GamePad state LED's (disable since DInput instance list is empty).
@@ -544,29 +529,45 @@ namespace x360ce.App
 					throw;
 				}
 			}
+			// Check all pads.
+			UpdateGamePadStatus();
+			for (int i = 0; i < 4; i++)
+			{
+				var currentPadControl = ControlPads[i];
+				var currentDevice = i < diDevices.Count ? diDevices[i] : null;
+				if (currentDevice == null)
+				{
+					// clear all settings.
+					SuspendEvents();
+					SettingManager.Current.ClearPadSettings(i);
+					ResumeEvents();
+				}
+				currentPadControl.UpdateFromDirectInput(currentDevice);
+				if (UnsafeNativeMethods.IsLoaded)
+				{
+					var currentPad = GamePad.GetState((PlayerIndex)i);
+					currentPadControl.UpdateFromXInput(currentPad);
+				}
+				else
+				{
+					currentPadControl.UpdateFromXInput(emptyState);
+				}
+			}
 			// If settings changed or directInput instances changed then...
 			if (settingsChanged || instancesChanged)
 			{
+				if (instancesChanged)
+				{
+					UpdateTimer.Stop();
+					SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
+					UpdateTimer.Start();
+				}
 				ReloadLibrary();
 				return;
 			}
-			var currentPadControl = ControlPads[ControllerIndex];
-			if (diInstances.Count > 0)
-			{
-				// Check all pads.
-				UpdateGamePadStatus();
-				var currentDevice = GetCurrentDiDevice(diInstances);
-				currentPadControl.UpdateFromDirectInput(currentDevice);
-			}
-			if (UnsafeNativeMethods.IsLoaded)
-			{
-				var currentPad = GamePad.GetState((PlayerIndex)ControllerIndex);
-				currentPadControl.UpdateFromXInput(currentPad);
-			}
-			else
-			{
-				currentPadControl.UpdateFromXInput(emptyState);
-			}
+			//if (ControllerIndex > -1)
+			//{
+			//}
 			UpdateStatus("");
 		}
 
@@ -665,33 +666,6 @@ namespace x360ce.App
 			}
 		}
 
-		void FixConfig(List<DeviceInstance> instances)
-		{
-
-			// Fix INI File.
-			var ini = new Ini(SettingManager.Current.iniFile);
-			for (int i = 0; i < instances.Count; i++)
-			{
-				string curInstance = instances[i].InstanceGuid.ToString("B").ToLower();
-				string padInstance = ini.GetValue(string.Format("PAD{0}", i + 1), SettingName.InstanceGuid).ToLower();
-				if (curInstance != padInstance)
-				{
-					SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, "IG_" + instances[i].InstanceGuid.ToString("N"), i);
-					SettingManager.Current.SavePadSettings(SettingManager.Current.iniFile, string.Format("PAD{0}", i + 1), i);
-				}
-			}
-			for (int i = instances.Count; i < 4; i++)
-			{
-				string curInstance = Guid.Empty.ToString("B").ToLower();
-				string padInstance = ini.GetValue(string.Format("PAD{0}", i + 1), "Instance").ToLower();
-				if (curInstance != padInstance)
-				{
-					SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, "IG_" + Guid.Empty.ToString("N"), i);
-					SettingManager.Current.SavePadSettings(SettingManager.Current.iniFile, string.Format("PAD{0}", i + 1), i);
-				}
-			}
-		}
-
 		#endregion
 
 		bool HelpInit = false;
@@ -713,6 +687,7 @@ namespace x360ce.App
 				HelpRichTextBox.SelectionRightIndent = 8;
 				HelpRichTextBox.DeselectAll();
 			}
+			UpdateHelpHeader();
 		}
 
 		private void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -721,6 +696,41 @@ namespace x360ce.App
 			if (!cbx.Checked) Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 			else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
+
+		private void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
+		}
+
+		#region Help Header
+
+		string defaultBody;
+
+		public void UpdateHelpHeader(string message, MessageBoxIcon icon)
+		{
+			HelpSubjectLabel.Text = MainTabControl.SelectedTab.Text;
+			if (ControllerIndex > -1)
+			{
+				var currentPadControl = ControlPads[ControllerIndex];
+				HelpSubjectLabel.Text += " - " + currentPadControl.PadTabControl.SelectedTab.Text;
+			}
+			HelpBodyLabel.Text = string.IsNullOrEmpty(message) ? defaultBody : message;
+			if (icon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = System.Drawing.Color.DarkRed;
+			else if (icon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = System.Drawing.Color.DarkGreen;
+			else HelpBodyLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+		}
+
+		public void UpdateHelpHeader(string message)
+		{
+			UpdateHelpHeader(message, MessageBoxIcon.None);
+		}
+
+		public void UpdateHelpHeader()
+		{
+			UpdateHelpHeader(defaultBody, MessageBoxIcon.None);
+		}
+
+		#endregion
 
 		#region Check Files
 
@@ -871,11 +881,40 @@ namespace x360ce.App
 
 		#endregion
 
-		private void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
+		#region WebService loading circle
+
+		public bool LoadingCircle
 		{
-			UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
+			get { return BusyLoadingCircle.Active; }
+			set
+			{
+				if (value)
+				{
+					BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+					BusyLoadingCircle.InnerCircleRadius = 12;
+					BusyLoadingCircle.NumberSpoke = 100;
+					BusyLoadingCircle.OuterCircleRadius = 18;
+					BusyLoadingCircle.RotationSpeed = 10;
+					BusyLoadingCircle.SpokeThickness = 3;
+					//this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+					BusyLoadingCircle.Active = value;
+					BusyLoadingCircle.Visible = value;
+				}
+				else
+				{
+					LoadinngCircleTimeout.Enabled = true;
+				}
+			}
 		}
 
+		private void LoadinngCircleTimeout_Tick(object sender, EventArgs e)
+		{
+			LoadinngCircleTimeout.Enabled = false;
+			BusyLoadingCircle.Active = false;
+			BusyLoadingCircle.Visible = false;
+		}
+
+		#endregion
 
 	}
 }

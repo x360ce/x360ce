@@ -1,6 +1,7 @@
 ::@ECHO OFF
+::"$(ProjectDir)Documents\JocysCom.sign.bat" "$(TargetPath)"
 SET file=%~1
-IF "%file%" == "" SET file=..\..\x360ce.App\bin\Debug\x360ce.exe
+IF "%file%" == "" SET file=..\bin\Debug\x86\x360ce.exe
 CALL:SIG "%file%"
 pause
 
@@ -21,4 +22,4 @@ GOTO:EOF
 
 :Error
 echo File doesn't Exist: "%~1"
-exit
+pause

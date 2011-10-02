@@ -1,4 +1,10 @@
-﻿v2.0.2.105 (2011-07-13)
+﻿v2.0.2.128 (2011-10-02)
+- New: Internet Settings Database feature added.
+- New: Application now asks to save changes on exit.
+- Update: On how INI file works.
+- Update: Updated to xinput1_3.dll v3.3.1.444.
+
+v2.0.2.105 (2011-07-13)
 - New: 'Native' setting was renamed to 'PassThrough'
 
 v2.0.2.102 (2011-03-26)
