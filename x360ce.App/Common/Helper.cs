@@ -97,6 +97,16 @@ namespace x360ce.App
                 : GuidRegex.IsMatch(s);
         }
 
+		public static Guid GetFileChecksum(string fileName)
+		{
+			var file = new FileStream(fileName, FileMode.Open);
+			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+			byte[] retVal = md5.ComputeHash(file);
+			file.Close();
+			return new Guid(retVal);
+		}
+
+
         #endregion
 
 	}

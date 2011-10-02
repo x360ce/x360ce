@@ -52,6 +52,9 @@ namespace x360ce.App.Controls
 			if (device == null)
 			{
 				// clean everything here.
+				SetValue(DeviceProductNameTextBox, "");
+				SetValue(DeviceProductGuidTextBox, "");
+				SetValue(DeviceInstanceGuidTextBox, "");
 				DiCapFfLabel.Text = string.Empty;
 				DiCapAxesLabel.Text = string.Empty;
 				DiCapButtonsLabel.Text = string.Empty;

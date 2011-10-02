@@ -67,6 +67,69 @@ namespace x360ce.App.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap arrow_right_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("arrow_right_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap check_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("check_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap check_disabled_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("check_disabled_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap delete_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("delete_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap empty_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("empty_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap load_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("load_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap refresh_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("refresh_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap save_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("save_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap save_add_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("save_add_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap xboxControllerDPad {
             get {
                 object obj = ResourceManager.GetObject("xboxControllerDPad", resourceCulture);

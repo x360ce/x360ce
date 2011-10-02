@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Input;
+using x360ce.App.com.x360ce.localhost;
+using Microsoft.DirectX.DirectInput;
+using x360ce.App.Controls;
 
 namespace x360ce.App
 {
@@ -47,7 +50,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Read setting from INI file into windows form control.
 		/// </summary>
-		public void ReadSetting(Control control, string key, string value)
+		public void ReadSettingTo(Control control, string key, string value)
 		{
 			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
 			{
@@ -88,6 +91,7 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
+				if (key == SettingName.OnlineDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.GetDefaultValue(SettingName.OnlineDatabaseUrl);
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -143,33 +147,194 @@ namespace x360ce.App
 			var ini2 = new Ini(file);
 			foreach (string path in SettingsMap.Keys)
 			{
-				Control control = SettingsMap[path];
 				string section = path.Split('\\')[0];
+				// If this is PAD section.
+				var padIndex = SettingName.GetPadIndex(path);
+				if (padIndex > -1)
+				{
+					section = GetInstanceSection(padIndex);
+					// If destination section is empty because controller is not connected then skip.
+					if (string.IsNullOrEmpty(section)) continue;
+				}
+				Control control = SettingsMap[path];
 				string key = path.Split('\\')[1];
 				string v = ini2.GetValue(section, key);
-				ReadSetting(control, key, v);
+				ReadSettingTo(control, key, v);
 			}
 			loadCount++;
 			if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(ini2.File.Name, loadCount));
 		}
 
+		/// <summary>
+		/// Get PadSetting object from INI by device Instance GUID.
+		/// </summary>
+		/// <param name="instanceGuid">Instance GUID.</param>
+		/// <returns>PadSettings object.</returns>
+		public PadSetting GetPadSetting(string padSectionName)
+		{
+			var ini2 = new Ini(iniFile);
+			var ps = new PadSetting();
+			ps.PadSettingChecksum = Guid.Empty;
+			ps.AxisToDPadDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadDeadZone);
+			ps.AxisToDPadEnabled = ini2.GetValue(padSectionName, SettingName.AxisToDPadEnabled);
+			ps.AxisToDPadOffset = ini2.GetValue(padSectionName, SettingName.AxisToDPadOffset);
+			ps.ButtonA = ini2.GetValue(padSectionName, SettingName.ButtonA);
+			ps.ButtonB = ini2.GetValue(padSectionName, SettingName.ButtonB);
+			ps.ButtonBack = ini2.GetValue(padSectionName, SettingName.ButtonBack);
+			ps.ButtonStart = ini2.GetValue(padSectionName, SettingName.ButtonStart);
+			ps.ButtonX = ini2.GetValue(padSectionName, SettingName.ButtonX);
+			ps.ButtonY = ini2.GetValue(padSectionName, SettingName.ButtonY);
+			ps.DPad = ini2.GetValue(padSectionName, SettingName.DPad);
+			ps.DPadDown = ini2.GetValue(padSectionName, SettingName.DPadDown);
+			ps.DPadLeft = ini2.GetValue(padSectionName, SettingName.DPadLeft);
+			ps.DPadRight = ini2.GetValue(padSectionName, SettingName.DPadRight);
+			ps.DPadUp = ini2.GetValue(padSectionName, SettingName.DPadUp);
+			ps.ForceEnable = ini2.GetValue(padSectionName, SettingName.ForceEnable);
+			ps.ForceOverall = ini2.GetValue(padSectionName, SettingName.ForceOverall);
+			ps.ForceSwapMotor = ini2.GetValue(padSectionName, SettingName.ForceSwapMotor);
+			ps.ForceType = ini2.GetValue(padSectionName, SettingName.ForceType);
+			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.GamePadType);
+			ps.LeftMotorPeriod = ini2.GetValue(padSectionName, SettingName.LeftMotorPeriod);
+			ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
+			ps.LeftThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX);
+			ps.LeftThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY);
+			ps.LeftThumbAxisX = ini2.GetValue(padSectionName, SettingName.LeftThumbAxisX);
+			ps.LeftThumbAxisY = ini2.GetValue(padSectionName, SettingName.LeftThumbAxisY);
+			ps.LeftThumbButton = ini2.GetValue(padSectionName, SettingName.LeftThumbButton);
+			ps.LeftThumbDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbDeadZoneX);
+			ps.LeftThumbDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbDeadZoneY);
+			ps.LeftThumbDown = ini2.GetValue(padSectionName, SettingName.LeftThumbDown);
+			ps.LeftThumbLeft = ini2.GetValue(padSectionName, SettingName.LeftThumbLeft);
+			ps.LeftThumbRight = ini2.GetValue(padSectionName, SettingName.LeftThumbRight);
+			ps.LeftThumbUp = ini2.GetValue(padSectionName, SettingName.LeftThumbUp);
+			ps.LeftTrigger = ini2.GetValue(padSectionName, SettingName.LeftTrigger);
+			ps.LeftTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.LeftTriggerDeadZone);
+			ps.PassThrough = ini2.GetValue(padSectionName, SettingName.PassThrough);
+			ps.RightMotorPeriod = ini2.GetValue(padSectionName, SettingName.RightMotorPeriod);
+			ps.RightShoulder = ini2.GetValue(padSectionName, SettingName.RightShoulder);
+			ps.RightThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX);
+			ps.RightThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY);
+			ps.RightThumbAxisX = ini2.GetValue(padSectionName, SettingName.RightThumbAxisX);
+			ps.RightThumbAxisY = ini2.GetValue(padSectionName, SettingName.RightThumbAxisY);
+			ps.RightThumbButton = ini2.GetValue(padSectionName, SettingName.RightThumbButton);
+			ps.RightThumbDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbDeadZoneX);
+			ps.RightThumbDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbDeadZoneY);
+			ps.RightThumbDown = ini2.GetValue(padSectionName, SettingName.RightThumbDown);
+			ps.RightThumbLeft = ini2.GetValue(padSectionName, SettingName.RightThumbLeft);
+			ps.RightThumbRight = ini2.GetValue(padSectionName, SettingName.RightThumbRight);
+			ps.RightThumbUp = ini2.GetValue(padSectionName, SettingName.RightThumbUp);
+			ps.RightTrigger = ini2.GetValue(padSectionName, SettingName.RightTrigger);
+			ps.RightTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.RightTriggerDeadZone);
+			return ps;
+		}
+
+		/// <summary>
+		/// Get PadSetting object from INI by device Instance GUID.
+		/// </summary>
+		/// <param name="instanceGuid">Instance GUID.</param>
+		/// <returns>PadSettings object.</returns>
+		public void SetPadSetting(string padSectionName, PadSetting ps)
+		{
+			var ini2 = new Ini(iniFile);
+			//ps.PadSettingChecksum = Guid.Empty;
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadDeadZone, ps.AxisToDPadDeadZone);
+			ini2.GetValue(padSectionName, SettingName.AxisToDPadEnabled, ps.AxisToDPadEnabled);
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadOffset, ps.AxisToDPadOffset);
+			ini2.SetValue(padSectionName, SettingName.ButtonA, ps.ButtonA);
+			ini2.SetValue(padSectionName, SettingName.ButtonB, ps.ButtonB);
+			ini2.SetValue(padSectionName, SettingName.ButtonBack, ps.ButtonBack);
+			ini2.SetValue(padSectionName, SettingName.ButtonStart, ps.ButtonStart);
+			ini2.SetValue(padSectionName, SettingName.ButtonX, ps.ButtonX);
+			ini2.SetValue(padSectionName, SettingName.ButtonY, ps.ButtonY);
+			ini2.SetValue(padSectionName, SettingName.DPad, ps.DPad);
+			ini2.SetValue(padSectionName, SettingName.DPadDown, ps.DPadDown);
+			ini2.SetValue(padSectionName, SettingName.DPadLeft, ps.DPadLeft);
+			ini2.SetValue(padSectionName, SettingName.DPadRight, ps.DPadRight);
+			ini2.SetValue(padSectionName, SettingName.DPadUp, ps.DPadUp);
+			ini2.SetValue(padSectionName, SettingName.ForceEnable, ps.ForceEnable);
+			ini2.SetValue(padSectionName, SettingName.ForceOverall, ps.ForceOverall);
+			ini2.SetValue(padSectionName, SettingName.ForceSwapMotor, ps.ForceSwapMotor);
+			ini2.SetValue(padSectionName, SettingName.ForceType, ps.ForceType);
+			ini2.SetValue(padSectionName, SettingName.GamePadType, ps.GamePadType);
+			ini2.SetValue(padSectionName, SettingName.LeftMotorPeriod, ps.LeftMotorPeriod);
+			ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX, ps.LeftThumbAntiDeadZoneX);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY, ps.LeftThumbAntiDeadZoneY);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbAxisX, ps.LeftThumbAxisX);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbAxisY, ps.LeftThumbAxisY);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbButton, ps.LeftThumbButton);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbDeadZoneX, ps.LeftThumbDeadZoneX);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbDeadZoneY, ps.LeftThumbDeadZoneY);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbDown, ps.LeftThumbDown);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbLeft, ps.LeftThumbLeft);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbRight, ps.LeftThumbRight);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbUp, ps.LeftThumbUp);
+			ini2.SetValue(padSectionName, SettingName.LeftTrigger, ps.LeftTrigger);
+			ini2.SetValue(padSectionName, SettingName.LeftTriggerDeadZone, ps.LeftTriggerDeadZone);
+			ini2.SetValue(padSectionName, SettingName.PassThrough, ps.PassThrough);
+			ini2.SetValue(padSectionName, SettingName.RightMotorPeriod, ps.RightMotorPeriod);
+			ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
+			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX, ps.RightThumbAntiDeadZoneX);
+			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY, ps.RightThumbAntiDeadZoneY);
+			ini2.SetValue(padSectionName, SettingName.RightThumbAxisX, ps.RightThumbAxisX);
+			ini2.SetValue(padSectionName, SettingName.RightThumbAxisY, ps.RightThumbAxisY);
+			ini2.SetValue(padSectionName, SettingName.RightThumbButton, ps.RightThumbButton);
+			ini2.SetValue(padSectionName, SettingName.RightThumbDeadZoneX, ps.RightThumbDeadZoneX);
+			ini2.SetValue(padSectionName, SettingName.RightThumbDeadZoneY, ps.RightThumbDeadZoneY);
+			ini2.SetValue(padSectionName, SettingName.RightThumbDown, ps.RightThumbDown);
+			ini2.SetValue(padSectionName, SettingName.RightThumbLeft, ps.RightThumbLeft);
+			ini2.SetValue(padSectionName, SettingName.RightThumbRight, ps.RightThumbRight);
+			ini2.SetValue(padSectionName, SettingName.RightThumbUp, ps.RightThumbUp);
+			ini2.SetValue(padSectionName, SettingName.RightTrigger, ps.RightTrigger);
+			ini2.SetValue(padSectionName, SettingName.RightTriggerDeadZone, ps.RightTriggerDeadZone);
+		}
+
+		/// <summary>
+		/// Read PAD settings from INI file to form.
+		/// </summary>
+		/// <param name="file">INI file name.</param>
+		/// <param name="iniSection">Source INI pad section.</param>
+		/// <param name="padIndex">Destination pad index.</param>
 		public void ReadPadSettings(string file, string iniSection, int padIndex)
 		{
 			var ini2 = new Ini(file);
+			var pad = string.Format("PAD{0}", padIndex + 1);
 			foreach (string path in SettingsMap.Keys)
 			{
-				Control control = SettingsMap[path];
 				string section = path.Split('\\')[0];
+				if (section != pad) continue;
 				string key = path.Split('\\')[1];
-				// Use only PAD1 section to get key names.
-				if (section != "PAD1") continue;
-				string dstPath = string.Format("PAD{0}\\{1}", padIndex + 1, key);
+				Control control = SettingsMap[path];
+				string dstPath = string.Format("{0}\\{1}", pad, key);
 				control = SettingsMap[dstPath];
 				string v = ini2.GetValue(iniSection, key);
-				ReadSetting(control, key, v);
+				ReadSettingTo(control, key, v);
 			}
 			loadCount++;
 			if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(ini2.File.Name, loadCount));
+		}
+
+
+		/// <summary>
+		/// Read PAD settings from INI file to form.
+		/// </summary>
+		/// <param name="file">INI file name.</param>
+		/// <param name="iniSection">Source INI pad section.</param>
+		/// <param name="padIndex">Destination pad index.</param>
+		public void ClearPadSettings(int padIndex)
+		{
+			var pad = string.Format("PAD{0}", padIndex + 1);
+			foreach (string path in SettingsMap.Keys)
+			{
+				string section = path.Split('\\')[0];
+				if (section != pad) continue;
+				string key = path.Split('\\')[1];
+				Control control = SettingsMap[path];
+				string dstPath = string.Format("{0}\\{1}", pad, key);
+				control = SettingsMap[dstPath];
+				ReadSettingTo(control, key, "");
+			}
+			loadCount++;
 		}
 
 		public void SetComboBoxValue(ComboBox cbx, string text)
@@ -233,33 +398,39 @@ namespace x360ce.App
 			return saved;
 		}
 
+		string GetInstanceSection(int padIndex)
+		{
+			string pad = string.Format("PAD{0}", padIndex + 1);
+			string guidString = SettingManager.Current.SettingsMap[pad + "\\" + SettingName.InstanceGuid].Text;
+			// If instanceGuid value is not a GUID then exit.
+			if (!Helper.IsGuid(guidString)) return null;
+			Guid ig = new Guid(guidString);
+			// If InstanceGuid value is empty then exit.
+			if (ig.Equals(Guid.Empty)) return null;
+			// Save settings to unique Instace section.
+			return SettingManager.Current.GetInstanceSection(ig);
+		}
+
 		/// <summary>
 		/// Save pad settings.
 		/// </summary>
-		/// <param name="file">INI file Name</param>
-		/// <param name="iniSection">INI Section to save.</param>
 		/// <param name="padIndex">Source PAD index.</param>
-		public bool SavePadSettings(string file, string iniSection, int padIndex)
+		/// <param name="file">Destination INI file name.</param>
+		/// <param name="iniSection">Destination INI section to save.</param>
+		public bool SavePadSettings(int padIndex, string file)
 		{
 			var ini = new Ini(file);
 			var saved = false;
+			var pad = string.Format("PAD{0}", padIndex + 1);
 			foreach (string path in SettingsMap.Keys)
 			{
-				Control control = SettingsMap[path];
 				string section = path.Split('\\')[0];
-				string key = path.Split('\\')[1];
-				// Use only PAD1 section to get key names.
-				if (section != "PAD1") continue;
-				string srcIniPath = string.Format("PAD{0}\\{1}", padIndex + 1, key);
-				var r = SaveSetting(ini, srcIniPath, iniSection);
+				// If this is not PAD section then skip.
+				if (section != pad) continue;
+				var r = SaveSetting(ini, path);
 				if (r) saved = true;
 			}
 			return saved;
-		}
-
-		public bool SaveSetting(Ini ini, string path)
-		{
-			return SaveSetting(ini, path, null);
 		}
 
 		/// <summary>
@@ -267,10 +438,9 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="path">path of parameter (related to actual control)</param>
 		/// <param name="dstIniSection">if not null then section will be different inside INI file than specified in path</param>
-		public bool SaveSetting(Ini ini, string path, string dstIniSection)
+		public bool SaveSetting(Ini ini, string path)
 		{
 			var control = SettingsMap[path];
-			string section = path.Split('\\')[0];
 			string key = path.Split('\\')[1];
 			string v = string.Empty;
 			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
@@ -342,21 +512,118 @@ namespace x360ce.App
 				if (key == SettingName.DPadLeft) v = "LEFT";
 				if (key == SettingName.DPadRight) v = "RIGHT";
 			}
-			string iniSection = string.IsNullOrEmpty(dstIniSection) ? section : dstIniSection;
 			// add comment.
 			//var l = SettingName.MaxNameLength - key.Length + 24;
 			//v = string.Format("{0, -" + l + "} # {1} Default: '{2}'.", v, SettingName.GetDescription(key), SettingName.GetDefaultValue(key));
-			var oldValue = ini.GetValue(iniSection, key);
+			var section = path.Split('\\')[0];
+			var padIndex = SettingName.GetPadIndex(path);
+			// If this is PAD section then
+			if (padIndex > -1)
+			{
+				section = GetInstanceSection(padIndex);
+				// If destination section is empty because controller is not connected then skip.
+				if (string.IsNullOrEmpty(section)) return false;
+				// Update Mappings.
+				var pad = string.Format("PAD{0}", padIndex + 1);
+				ini.SetValue("Mappings", pad, section);
+			}
+			var oldValue = ini.GetValue(section, key);
 			var saved = false;
 			if (oldValue != v)
 			{
-				ini.SetValue(iniSection, key, v);
+				ini.SetValue(section, key, v);
 				saveCount++;
 				saved = true;
 				if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(iniFile, saveCount));
-
 			}
 			return saved;
+		}
+
+		public string GetInstanceSection(Guid instanceGuid)
+		{
+			return string.Format("IG_{0:N}", instanceGuid);
+		}
+
+		public string GetProductSection(Guid productGuid)
+		{
+			return string.Format("PG_{0:N}", productGuid);
+		}
+
+
+		public bool ContainsProductSection(Guid productGuid, string iniFileName, out string sectionName)
+		{
+			var ini2 = new Ini(iniFileName);
+			var section = GetInstanceSection(productGuid);
+			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "ProductGUID"));
+			sectionName = contains?section: null;
+			return contains;
+		}
+
+		public bool ContainsInstanceSection(Guid instanceGuid, string iniFileName, out string sectionName)
+		{
+			var ini2 = new Ini(iniFileName);
+			var section = GetInstanceSection(instanceGuid);
+			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "InstanceGUID"));
+			sectionName = contains ? section : null;
+			return contains;
+		}
+
+		public bool ContainsInstanceSectionOld(Guid instanceGuid, string iniFileName, out string sectionName)
+		{
+			var ini2 = new Ini(iniFileName);
+			for (int i = 1; i <= 4; i++)
+			{
+				var section = string.Format("PAD{0}", i);
+				var v = ini2.GetValue(section, "InstanceGUID");
+				if (string.IsNullOrEmpty(v)) continue;
+				if (v.ToLower() == instanceGuid.ToString("D").ToLower())
+				{
+					sectionName = section;
+					return true;
+				}
+			}
+			sectionName = null;
+			return false;
+		}
+
+
+		public void CheckSettings(List<DeviceInstance> diInstances, List<DeviceInstance> diInstancesOld)
+		{
+			var updated = false;
+			for (int i = 0; i < diInstances.Count; i++)
+			{
+				var ig = diInstances[i].InstanceGuid;
+				// If INI file contain settings for this device then...
+				string sectionName = null;
+				if (ContainsInstanceSection(ig, iniFile, out sectionName))
+				{
+					var samePosition = false;
+					for (int oi = 0; oi < diInstancesOld.Count; oi++)
+					{
+						if (diInstancesOld[oi].InstanceGuid.Equals(ig) && i == oi)
+						{
+							samePosition = true;
+						}
+					}
+					// Load settings.
+					var section = GetInstanceSection(ig);
+					if (!samePosition) ReadPadSettings(iniFile, section, i);
+				}
+				else
+				{
+					MainForm.Current.SuspendEvents();
+					ClearPadSettings(i);
+					MainForm.Current.ResumeEvents();
+					var f = new NewDeviceForm();
+					f.LoadData(diInstances[i], i);
+					f.StartPosition = FormStartPosition.CenterParent;
+					var result = f.ShowDialog(MainForm.Current);
+					updated = true;
+				}
+			}
+			if (updated){
+				if (SettingManager.Current.SaveSettings()) MainForm.Current.NotifySettingsChange();
+			}
 		}
 
 	}

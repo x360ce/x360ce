@@ -34,7 +34,6 @@ namespace x360ce.App
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
-			this.ResetButton = new System.Windows.Forms.Button();
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.Pad1TabPage = new System.Windows.Forms.TabPage();
 			this.Pad2TabPage = new System.Windows.Forms.TabPage();
@@ -44,6 +43,7 @@ namespace x360ce.App
 			this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
 			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
 			this.UseInitBeepCheckBox = new System.Windows.Forms.CheckBox();
+			this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
 			this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
 			this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
 			this.InstalledFilesGroupBox = new System.Windows.Forms.GroupBox();
@@ -52,15 +52,17 @@ namespace x360ce.App
 			this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
+			this.OnlineGroupBox = new System.Windows.Forms.GroupBox();
+			this.OnlineCheckBox = new System.Windows.Forms.CheckBox();
 			this.FakeApiGroupBox = new System.Windows.Forms.GroupBox();
 			this.FakeModeLabel = new System.Windows.Forms.Label();
 			this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
+			this.SettingsDatabaseTabPage = new System.Windows.Forms.TabPage();
+			this.onlineUserControl1 = new x360ce.App.Controls.OnlineUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
 			this.BuletImageList = new System.Windows.Forms.ImageList(this.components);
-			this.PresetComboBox = new System.Windows.Forms.ComboBox();
-			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -70,33 +72,32 @@ namespace x360ce.App
 			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
-			this.SaveButton = new System.Windows.Forms.Button();
 			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
-			this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
+			this.TopPanel = new System.Windows.Forms.Panel();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.HelpBodyLabel = new System.Windows.Forms.Label();
+			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
+			this.HelpSubjectLabel = new System.Windows.Forms.Label();
+			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
+			this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.InstalledFilesGroupBox.SuspendLayout();
+			this.OnlineGroupBox.SuspendLayout();
 			this.FakeApiGroupBox.SuspendLayout();
+			this.SettingsDatabaseTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
+			this.TopPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// UpdateTimer
 			// 
 			this.UpdateTimer.Interval = 50;
 			this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
-			// 
-			// ResetButton
-			// 
-			this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ResetButton.Location = new System.Drawing.Point(496, 482);
-			this.ResetButton.Name = "ResetButton";
-			this.ResetButton.Size = new System.Drawing.Size(75, 23);
-			this.ResetButton.TabIndex = 62;
-			this.ResetButton.Text = "&Reset";
-			this.ResetButton.UseVisualStyleBackColor = true;
-			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
 			// 
 			// MainTabControl
 			// 
@@ -108,13 +109,14 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.Pad3TabPage);
 			this.MainTabControl.Controls.Add(this.Pad4TabPage);
 			this.MainTabControl.Controls.Add(this.OptionsTabPage);
+			this.MainTabControl.Controls.Add(this.SettingsDatabaseTabPage);
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
 			this.MainTabControl.ImageList = this.BuletImageList;
-			this.MainTabControl.Location = new System.Drawing.Point(12, 12);
+			this.MainTabControl.Location = new System.Drawing.Point(6, 70);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(640, 468);
+			this.MainTabControl.Size = new System.Drawing.Size(640, 496);
 			this.MainTabControl.TabIndex = 1;
 			this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// 
@@ -122,7 +124,7 @@ namespace x360ce.App
 			// 
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
-			this.Pad1TabPage.Size = new System.Drawing.Size(632, 441);
+			this.Pad1TabPage.Size = new System.Drawing.Size(632, 469);
 			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "Controller 1";
 			// 
@@ -130,7 +132,7 @@ namespace x360ce.App
 			// 
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
-			this.Pad2TabPage.Size = new System.Drawing.Size(632, 441);
+			this.Pad2TabPage.Size = new System.Drawing.Size(632, 469);
 			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "Controller 2";
 			// 
@@ -138,7 +140,7 @@ namespace x360ce.App
 			// 
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
-			this.Pad3TabPage.Size = new System.Drawing.Size(632, 441);
+			this.Pad3TabPage.Size = new System.Drawing.Size(632, 469);
 			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "Controller 3";
 			// 
@@ -146,7 +148,7 @@ namespace x360ce.App
 			// 
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
-			this.Pad4TabPage.Size = new System.Drawing.Size(632, 441);
+			this.Pad4TabPage.Size = new System.Drawing.Size(632, 469);
 			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "Controller 4";
 			// 
@@ -155,10 +157,11 @@ namespace x360ce.App
 			this.OptionsTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.OptionsTabPage.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.OptionsTabPage.Controls.Add(this.InstalledFilesGroupBox);
+			this.OptionsTabPage.Controls.Add(this.OnlineGroupBox);
 			this.OptionsTabPage.Controls.Add(this.FakeApiGroupBox);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
-			this.OptionsTabPage.Size = new System.Drawing.Size(632, 441);
+			this.OptionsTabPage.Size = new System.Drawing.Size(632, 469);
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
@@ -200,6 +203,17 @@ namespace x360ce.App
 			this.UseInitBeepCheckBox.TabIndex = 0;
 			this.UseInitBeepCheckBox.Text = "Use Init Beep";
 			this.UseInitBeepCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// ConsoleCheckBox
+			// 
+			this.ConsoleCheckBox.AutoSize = true;
+			this.ConsoleCheckBox.Location = new System.Drawing.Point(5, 96);
+			this.ConsoleCheckBox.Name = "ConsoleCheckBox";
+			this.ConsoleCheckBox.Size = new System.Drawing.Size(100, 17);
+			this.ConsoleCheckBox.TabIndex = 0;
+			this.ConsoleCheckBox.Text = "Enable Console";
+			this.ConsoleCheckBox.UseVisualStyleBackColor = true;
+			this.ConsoleCheckBox.CheckedChanged += new System.EventHandler(this.DebugModeCheckBox_CheckedChanged);
 			// 
 			// DebugModeCheckBox
 			// 
@@ -288,13 +302,33 @@ namespace x360ce.App
 			this.InstallFilesXinput910CheckBox.Text = "xinput9_1_0.dll";
 			this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
 			// 
+			// OnlineGroupBox
+			// 
+			this.OnlineGroupBox.Controls.Add(this.OnlineCheckBox);
+			this.OnlineGroupBox.Location = new System.Drawing.Point(3, 53);
+			this.OnlineGroupBox.Name = "OnlineGroupBox";
+			this.OnlineGroupBox.Size = new System.Drawing.Size(241, 93);
+			this.OnlineGroupBox.TabIndex = 0;
+			this.OnlineGroupBox.TabStop = false;
+			this.OnlineGroupBox.Text = "Internet";
+			// 
+			// OnlineCheckBox
+			// 
+			this.OnlineCheckBox.AutoSize = true;
+			this.OnlineCheckBox.Location = new System.Drawing.Point(9, 19);
+			this.OnlineCheckBox.Name = "OnlineCheckBox";
+			this.OnlineCheckBox.Size = new System.Drawing.Size(226, 17);
+			this.OnlineCheckBox.TabIndex = 1;
+			this.OnlineCheckBox.Text = "Enable Online Settings Database Features";
+			this.OnlineCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// FakeApiGroupBox
 			// 
 			this.FakeApiGroupBox.Controls.Add(this.FakeModeLabel);
 			this.FakeApiGroupBox.Controls.Add(this.FakeModeComboBox);
 			this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.FakeApiGroupBox.Name = "FakeApiGroupBox";
-			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 143);
+			this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 44);
 			this.FakeApiGroupBox.TabIndex = 0;
 			this.FakeApiGroupBox.TabStop = false;
 			this.FakeApiGroupBox.Text = "InputHook";
@@ -318,13 +352,31 @@ namespace x360ce.App
 			this.FakeModeComboBox.Size = new System.Drawing.Size(159, 21);
 			this.FakeModeComboBox.TabIndex = 0;
 			// 
+			// SettingsDatabaseTabPage
+			// 
+			this.SettingsDatabaseTabPage.Controls.Add(this.onlineUserControl1);
+			this.SettingsDatabaseTabPage.Location = new System.Drawing.Point(4, 23);
+			this.SettingsDatabaseTabPage.Name = "SettingsDatabaseTabPage";
+			this.SettingsDatabaseTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.SettingsDatabaseTabPage.Size = new System.Drawing.Size(632, 469);
+			this.SettingsDatabaseTabPage.TabIndex = 1;
+			this.SettingsDatabaseTabPage.Text = "Settings Database";
+			// 
+			// onlineUserControl1
+			// 
+			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
+			this.onlineUserControl1.Name = "onlineUserControl1";
+			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
+			this.onlineUserControl1.TabIndex = 0;
+			// 
 			// HelpTabPage
 			// 
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
 			this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
 			this.HelpTabPage.Name = "HelpTabPage";
 			this.HelpTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.HelpTabPage.Size = new System.Drawing.Size(632, 441);
+			this.HelpTabPage.Size = new System.Drawing.Size(632, 469);
 			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
@@ -336,7 +388,7 @@ namespace x360ce.App
 			this.HelpRichTextBox.Location = new System.Drawing.Point(3, 3);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(626, 435);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(626, 463);
 			this.HelpRichTextBox.TabIndex = 0;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -345,7 +397,7 @@ namespace x360ce.App
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
-			this.AboutTabPage.Size = new System.Drawing.Size(632, 441);
+			this.AboutTabPage.Size = new System.Drawing.Size(632, 469);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
@@ -354,28 +406,6 @@ namespace x360ce.App
 			this.BuletImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
 			this.BuletImageList.ImageSize = new System.Drawing.Size(16, 16);
 			this.BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
-			// 
-			// PresetComboBox
-			// 
-			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.PresetComboBox.FormattingEnabled = true;
-			this.PresetComboBox.Location = new System.Drawing.Point(12, 482);
-			this.PresetComboBox.Name = "PresetComboBox";
-			this.PresetComboBox.Size = new System.Drawing.Size(397, 21);
-			this.PresetComboBox.TabIndex = 60;
-			// 
-			// LoadPresetButton
-			// 
-			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.LoadPresetButton.Location = new System.Drawing.Point(415, 482);
-			this.LoadPresetButton.Name = "LoadPresetButton";
-			this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
-			this.LoadPresetButton.TabIndex = 61;
-			this.LoadPresetButton.Text = "&Load";
-			this.LoadPresetButton.UseVisualStyleBackColor = true;
-			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
 			// 
 			// statusStrip1
 			// 
@@ -387,9 +417,9 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-			this.statusStrip1.Location = new System.Drawing.Point(0, 510);
+			this.statusStrip1.Location = new System.Drawing.Point(0, 572);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(664, 24);
+			this.statusStrip1.Size = new System.Drawing.Size(650, 24);
 			this.statusStrip1.SizingGrip = false;
 			this.statusStrip1.TabIndex = 0;
 			this.statusStrip1.Text = "statusStrip1";
@@ -403,7 +433,7 @@ namespace x360ce.App
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(47, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(33, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// StatusEventsLabel
@@ -446,48 +476,98 @@ namespace x360ce.App
 			this.CleanStatusTimer.Interval = 3000;
 			this.CleanStatusTimer.Tick += new System.EventHandler(this.CleanStatusTimer_Tick);
 			// 
-			// SaveButton
-			// 
-			this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SaveButton.Location = new System.Drawing.Point(577, 482);
-			this.SaveButton.Name = "SaveButton";
-			this.SaveButton.Size = new System.Drawing.Size(75, 23);
-			this.SaveButton.TabIndex = 63;
-			this.SaveButton.Text = "&Save";
-			this.SaveButton.UseVisualStyleBackColor = true;
-			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
-			// 
 			// SettingsTimer
 			// 
 			this.SettingsTimer.Interval = 500;
 			this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
 			// 
-			// ConsoleCheckBox
+			// TopPanel
 			// 
-			this.ConsoleCheckBox.AutoSize = true;
-			this.ConsoleCheckBox.Location = new System.Drawing.Point(5, 96);
-			this.ConsoleCheckBox.Name = "ConsoleCheckBox";
-			this.ConsoleCheckBox.Size = new System.Drawing.Size(100, 17);
-			this.ConsoleCheckBox.TabIndex = 0;
-			this.ConsoleCheckBox.Text = "Enable Console";
-			this.ConsoleCheckBox.UseVisualStyleBackColor = true;
-			this.ConsoleCheckBox.CheckedChanged += new System.EventHandler(this.DebugModeCheckBox_CheckedChanged);
+			this.TopPanel.BackColor = System.Drawing.SystemColors.Info;
+			this.TopPanel.Controls.Add(this.BusyLoadingCircle);
+			this.TopPanel.Controls.Add(this.HelpBodyLabel);
+			this.TopPanel.Controls.Add(this.HelpPictureBox);
+			this.TopPanel.Controls.Add(this.HelpSubjectLabel);
+			this.TopPanel.Controls.Add(this.HeaderPictureBox);
+			this.TopPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.TopPanel.Location = new System.Drawing.Point(0, 0);
+			this.TopPanel.Name = "TopPanel";
+			this.TopPanel.Size = new System.Drawing.Size(650, 64);
+			this.TopPanel.TabIndex = 3;
+			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 9;
+			// 
+			// HelpBodyLabel
+			// 
+			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.HelpBodyLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.HelpBodyLabel.Location = new System.Drawing.Point(42, 29);
+			this.HelpBodyLabel.Name = "HelpBodyLabel";
+			this.HelpBodyLabel.Size = new System.Drawing.Size(548, 32);
+			this.HelpBodyLabel.TabIndex = 7;
+			this.HelpBodyLabel.Text = resources.GetString("HelpBodyLabel.Text");
+			// 
+			// HelpPictureBox
+			// 
+			this.HelpPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HelpPictureBox.Image")));
+			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
+			this.HelpPictureBox.Name = "HelpPictureBox";
+			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
+			this.HelpPictureBox.TabIndex = 8;
+			this.HelpPictureBox.TabStop = false;
+			// 
+			// HelpSubjectLabel
+			// 
+			this.HelpSubjectLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.HelpSubjectLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.HelpSubjectLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.HelpSubjectLabel.Location = new System.Drawing.Point(6, 9);
+			this.HelpSubjectLabel.Name = "HelpSubjectLabel";
+			this.HelpSubjectLabel.Size = new System.Drawing.Size(584, 20);
+			this.HelpSubjectLabel.TabIndex = 5;
+			this.HelpSubjectLabel.Text = "Controler 1 - General";
+			// 
+			// HeaderPictureBox
+			// 
+			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.HeaderPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HeaderPictureBox.Image")));
+			this.HeaderPictureBox.Location = new System.Drawing.Point(596, 9);
+			this.HeaderPictureBox.Name = "HeaderPictureBox";
+			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
+			this.HeaderPictureBox.TabIndex = 6;
+			this.HeaderPictureBox.TabStop = false;
+			// 
+			// LoadinngCircleTimeout
+			// 
+			this.LoadinngCircleTimeout.Tick += new System.EventHandler(this.LoadinngCircleTimeout_Tick);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(664, 534);
+			this.ClientSize = new System.Drawing.Size(650, 596);
+			this.Controls.Add(this.TopPanel);
 			this.Controls.Add(this.statusStrip1);
-			this.Controls.Add(this.PresetComboBox);
 			this.Controls.Add(this.MainTabControl);
-			this.Controls.Add(this.SaveButton);
-			this.Controls.Add(this.ResetButton);
-			this.Controls.Add(this.LoadPresetButton);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
-			this.MaximumSize = new System.Drawing.Size(680, 572);
-			this.MinimumSize = new System.Drawing.Size(680, 572);
+			this.MinimumSize = new System.Drawing.Size(666, 634);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator {0}";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -499,11 +579,17 @@ namespace x360ce.App
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.InstalledFilesGroupBox.ResumeLayout(false);
 			this.InstalledFilesGroupBox.PerformLayout();
+			this.OnlineGroupBox.ResumeLayout(false);
+			this.OnlineGroupBox.PerformLayout();
 			this.FakeApiGroupBox.ResumeLayout(false);
 			this.FakeApiGroupBox.PerformLayout();
+			this.SettingsDatabaseTabPage.ResumeLayout(false);
 			this.HelpTabPage.ResumeLayout(false);
 			this.statusStrip1.ResumeLayout(false);
 			this.statusStrip1.PerformLayout();
+			this.TopPanel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -511,7 +597,6 @@ namespace x360ce.App
 
 		#endregion
 
-		private Button ResetButton;
 		private TabControl MainTabControl;
 		private TabPage AboutTabPage;
 		private StatusStrip statusStrip1;
@@ -519,14 +604,11 @@ namespace x360ce.App
 		private CheckBox EnableLoggingCheckBox;
 		private CheckBox UseInitBeepCheckBox;
 		private Timer CleanStatusTimer;
-		private ComboBox PresetComboBox;
-        private Button LoadPresetButton;
 		private CheckBox InstallFilesX360ceCheckBox;
 		private CheckBox InstallFilesXinput910CheckBox;
 		private CheckBox InstallFilesXinput11CheckBox;
 		private CheckBox InstallFilesXinput12CheckBox;
 		private CheckBox InstallFilesXinput13CheckBox;
-		private Button SaveButton;
 		private TabPage Pad1TabPage;
 		private TabPage Pad2TabPage;
 		private TabPage Pad3TabPage;
@@ -551,6 +633,17 @@ namespace x360ce.App
 		public Timer UpdateTimer;
 		private CheckBox XInputEnableCheckBox;
 		private CheckBox ConsoleCheckBox;
+		private TabPage SettingsDatabaseTabPage;
+		private GroupBox OnlineGroupBox;
+		private Panel TopPanel;
+		internal Label HelpBodyLabel;
+		internal PictureBox HelpPictureBox;
+		internal Label HelpSubjectLabel;
+		internal PictureBox HeaderPictureBox;
+		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
+		private Timer LoadinngCircleTimeout;
+		public CheckBox OnlineCheckBox;
+		public Controls.OnlineUserControl onlineUserControl1;
 
 	}
 }

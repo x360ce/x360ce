@@ -73,6 +73,10 @@
 			this.GamePadTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
+			this.PresetComboBox = new System.Windows.Forms.ComboBox();
+			this.SavePresetButton = new System.Windows.Forms.Button();
+			this.ResetPresetButton = new System.Windows.Forms.Button();
+			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
@@ -198,7 +202,7 @@
 			// 
 			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
-			this.DirectInputTabPage.Size = new System.Drawing.Size(620, 411);
+			this.DirectInputTabPage.Size = new System.Drawing.Size(620, 438);
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
@@ -213,14 +217,14 @@
 			this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
 			this.AdvancedTabPage.Name = "AdvancedTabPage";
 			this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.AdvancedTabPage.Size = new System.Drawing.Size(620, 411);
+			this.AdvancedTabPage.Size = new System.Drawing.Size(620, 438);
 			this.AdvancedTabPage.TabIndex = 0;
 			this.AdvancedTabPage.Text = "Advanced";
 			// 
 			// AxisToDPadGroupBox
 			// 
-			this.AxisToDPadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+			this.AxisToDPadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadEnabledCheckBox);
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTrackBar);
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTrackBar);
@@ -310,6 +314,8 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.label3);
 			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.RightTriggerDeadZoneTrackBar);
@@ -387,6 +393,8 @@
 			// 
 			// ThumbsGroupBox
 			// 
+			this.ThumbsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.ThumbsGroupBox.Controls.Add(this.ThumbAntiDeadZoneComboBox);
 			this.ThumbsGroupBox.Controls.Add(this.RightThumbYAntiDeadZoneNumericUpDown);
 			this.ThumbsGroupBox.Controls.Add(this.LeftThumbYAntiDeadZoneNumericUpDown);
@@ -760,6 +768,50 @@
 			this.GeneralTabPage.TabIndex = 0;
 			this.GeneralTabPage.Text = "General";
 			// 
+			// PresetComboBox
+			// 
+			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.PresetComboBox.FormattingEnabled = true;
+			this.PresetComboBox.Location = new System.Drawing.Point(3, 446);
+			this.PresetComboBox.Name = "PresetComboBox";
+			this.PresetComboBox.Size = new System.Drawing.Size(385, 21);
+			this.PresetComboBox.TabIndex = 64;
+			// 
+			// SavePresetButton
+			// 
+			this.SavePresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.SavePresetButton.Location = new System.Drawing.Point(556, 444);
+			this.SavePresetButton.Name = "SavePresetButton";
+			this.SavePresetButton.Size = new System.Drawing.Size(75, 23);
+			this.SavePresetButton.TabIndex = 67;
+			this.SavePresetButton.Text = "&Save";
+			this.SavePresetButton.UseVisualStyleBackColor = true;
+			this.SavePresetButton.Click += new System.EventHandler(this.SavePresetButton_Click);
+			// 
+			// ResetPresetButton
+			// 
+			this.ResetPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.ResetPresetButton.Location = new System.Drawing.Point(475, 444);
+			this.ResetPresetButton.Name = "ResetPresetButton";
+			this.ResetPresetButton.Size = new System.Drawing.Size(75, 23);
+			this.ResetPresetButton.TabIndex = 66;
+			this.ResetPresetButton.Text = "&Reset";
+			this.ResetPresetButton.UseVisualStyleBackColor = true;
+			this.ResetPresetButton.Click += new System.EventHandler(this.ResetPresetButton_Click);
+			// 
+			// LoadPresetButton
+			// 
+			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.LoadPresetButton.Location = new System.Drawing.Point(394, 444);
+			this.LoadPresetButton.Name = "LoadPresetButton";
+			this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
+			this.LoadPresetButton.TabIndex = 65;
+			this.LoadPresetButton.Text = "&Load";
+			this.LoadPresetButton.UseVisualStyleBackColor = true;
+			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
+			// 
 			// DPadDownComboBox
 			// 
 			this.DPadDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -850,6 +902,7 @@
 			// 
 			// RightThumbDownComboBox
 			// 
+			this.RightThumbDownComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbDownComboBox.FormattingEnabled = true;
@@ -861,6 +914,7 @@
 			// 
 			// RightThumbRightComboBox
 			// 
+			this.RightThumbRightComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbRightComboBox.FormattingEnabled = true;
@@ -872,6 +926,7 @@
 			// 
 			// RightThumbLeftComboBox
 			// 
+			this.RightThumbLeftComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbLeftComboBox.FormattingEnabled = true;
@@ -883,6 +938,7 @@
 			// 
 			// RightThumbUpComboBox
 			// 
+			this.RightThumbUpComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbUpComboBox.FormattingEnabled = true;
@@ -904,6 +960,7 @@
 			// 
 			// AdvancedDownLabel
 			// 
+			this.AdvancedDownLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AdvancedDownLabel.AutoSize = true;
 			this.AdvancedDownLabel.Location = new System.Drawing.Point(444, 385);
 			this.AdvancedDownLabel.Name = "AdvancedDownLabel";
@@ -934,6 +991,7 @@
 			// 
 			// AdvancedUpLabel
 			// 
+			this.AdvancedUpLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AdvancedUpLabel.AutoSize = true;
 			this.AdvancedUpLabel.Location = new System.Drawing.Point(444, 304);
 			this.AdvancedUpLabel.Name = "AdvancedUpLabel";
@@ -954,6 +1012,7 @@
 			// 
 			// AdvancedRightLabel
 			// 
+			this.AdvancedRightLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AdvancedRightLabel.AutoSize = true;
 			this.AdvancedRightLabel.Location = new System.Drawing.Point(444, 358);
 			this.AdvancedRightLabel.Name = "AdvancedRightLabel";
@@ -964,6 +1023,7 @@
 			// 
 			// AdvancedLeftLabel
 			// 
+			this.AdvancedLeftLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AdvancedLeftLabel.AutoSize = true;
 			this.AdvancedLeftLabel.Location = new System.Drawing.Point(444, 331);
 			this.AdvancedLeftLabel.Name = "AdvancedLeftLabel";
@@ -985,6 +1045,7 @@
 			// 
 			// RightTriggerTextBox
 			// 
+			this.RightTriggerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightTriggerTextBox.Location = new System.Drawing.Point(524, 6);
 			this.RightTriggerTextBox.Name = "RightTriggerTextBox";
 			this.RightTriggerTextBox.ReadOnly = true;
@@ -1007,6 +1068,7 @@
 			// 
 			// RightThumbTextBox
 			// 
+			this.RightThumbTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbTextBox.Location = new System.Drawing.Point(524, 194);
 			this.RightThumbTextBox.Name = "RightThumbTextBox";
 			this.RightThumbTextBox.ReadOnly = true;
@@ -1049,6 +1111,7 @@
 			// 
 			// ButtonAComboBox
 			// 
+			this.ButtonAComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonAComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ButtonAComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.ButtonAComboBox.FormattingEnabled = true;
@@ -1060,6 +1123,7 @@
 			// 
 			// ButtonALabel
 			// 
+			this.ButtonALabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonALabel.AutoSize = true;
 			this.ButtonALabel.Location = new System.Drawing.Point(444, 170);
 			this.ButtonALabel.Name = "ButtonALabel";
@@ -1069,6 +1133,7 @@
 			// 
 			// ButtonXComboBox
 			// 
+			this.ButtonXComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonXComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ButtonXComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.ButtonXComboBox.FormattingEnabled = true;
@@ -1080,6 +1145,7 @@
 			// 
 			// RightTriggerLabel
 			// 
+			this.RightTriggerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightTriggerLabel.AutoSize = true;
 			this.RightTriggerLabel.Location = new System.Drawing.Point(443, 33);
 			this.RightTriggerLabel.Name = "RightTriggerLabel";
@@ -1089,6 +1155,7 @@
 			// 
 			// RightTriggerComboBox
 			// 
+			this.RightTriggerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightTriggerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightTriggerComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightTriggerComboBox.FormattingEnabled = true;
@@ -1100,6 +1167,7 @@
 			// 
 			// ButtonBComboBox
 			// 
+			this.ButtonBComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonBComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ButtonBComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.ButtonBComboBox.FormattingEnabled = true;
@@ -1111,6 +1179,7 @@
 			// 
 			// RightThumbAxisXLabel
 			// 
+			this.RightThumbAxisXLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbAxisXLabel.AutoSize = true;
 			this.RightThumbAxisXLabel.Location = new System.Drawing.Point(444, 223);
 			this.RightThumbAxisXLabel.Name = "RightThumbAxisXLabel";
@@ -1129,6 +1198,7 @@
 			// 
 			// ButtonXLabel
 			// 
+			this.ButtonXLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonXLabel.AutoSize = true;
 			this.ButtonXLabel.Location = new System.Drawing.Point(444, 116);
 			this.ButtonXLabel.Name = "ButtonXLabel";
@@ -1138,6 +1208,7 @@
 			// 
 			// RightShoulderLabel
 			// 
+			this.RightShoulderLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightShoulderLabel.AutoSize = true;
 			this.RightShoulderLabel.Location = new System.Drawing.Point(444, 60);
 			this.RightShoulderLabel.Name = "RightShoulderLabel";
@@ -1147,6 +1218,7 @@
 			// 
 			// ButtonYComboBox
 			// 
+			this.ButtonYComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonYComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ButtonYComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.ButtonYComboBox.FormattingEnabled = true;
@@ -1158,6 +1230,7 @@
 			// 
 			// RightThumbAxisXComboBox
 			// 
+			this.RightThumbAxisXComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbAxisXComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbAxisXComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbAxisXComboBox.FormattingEnabled = true;
@@ -1169,6 +1242,7 @@
 			// 
 			// ButtonBLabel
 			// 
+			this.ButtonBLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonBLabel.AutoSize = true;
 			this.ButtonBLabel.Location = new System.Drawing.Point(444, 143);
 			this.ButtonBLabel.Name = "ButtonBLabel";
@@ -1233,6 +1307,7 @@
 			// 
 			// RightShoulderComboBox
 			// 
+			this.RightShoulderComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightShoulderComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightShoulderComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightShoulderComboBox.FormattingEnabled = true;
@@ -1316,6 +1391,7 @@
 			// 
 			// RightThumbAxisYLabel
 			// 
+			this.RightThumbAxisYLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbAxisYLabel.AutoSize = true;
 			this.RightThumbAxisYLabel.Location = new System.Drawing.Point(444, 250);
 			this.RightThumbAxisYLabel.Name = "RightThumbAxisYLabel";
@@ -1325,6 +1401,7 @@
 			// 
 			// ButtonYLabel
 			// 
+			this.ButtonYLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonYLabel.AutoSize = true;
 			this.ButtonYLabel.Location = new System.Drawing.Point(444, 89);
 			this.ButtonYLabel.Name = "ButtonYLabel";
@@ -1352,6 +1429,7 @@
 			// 
 			// RightLabel
 			// 
+			this.RightLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightLabel.AutoSize = true;
 			this.RightLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.RightLabel.Location = new System.Drawing.Point(443, 9);
@@ -1381,6 +1459,7 @@
 			// 
 			// RightThumbButtonLabel
 			// 
+			this.RightThumbButtonLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbButtonLabel.AutoSize = true;
 			this.RightThumbButtonLabel.Location = new System.Drawing.Point(444, 277);
 			this.RightThumbButtonLabel.Name = "RightThumbButtonLabel";
@@ -1421,6 +1500,7 @@
 			// 
 			// RightThumbAxisYComboBox
 			// 
+			this.RightThumbAxisYComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbAxisYComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbAxisYComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbAxisYComboBox.FormattingEnabled = true;
@@ -1432,6 +1512,7 @@
 			// 
 			// RightThumbButtonComboBox
 			// 
+			this.RightThumbButtonComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbButtonComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbButtonComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbButtonComboBox.FormattingEnabled = true;
@@ -1467,13 +1548,14 @@
 			this.PadTabControl.SelectedIndex = 0;
 			this.PadTabControl.Size = new System.Drawing.Size(628, 437);
 			this.PadTabControl.TabIndex = 0;
+			this.PadTabControl.SelectedIndexChanged += new System.EventHandler(this.PadTabControl_SelectedIndexChanged);
 			// 
 			// KeyboardTabPage
 			// 
 			this.KeyboardTabPage.Location = new System.Drawing.Point(4, 22);
 			this.KeyboardTabPage.Name = "KeyboardTabPage";
 			this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.KeyboardTabPage.Size = new System.Drawing.Size(620, 411);
+			this.KeyboardTabPage.Size = new System.Drawing.Size(620, 438);
 			this.KeyboardTabPage.TabIndex = 0;
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
@@ -1485,12 +1567,14 @@
 			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
 			this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
 			this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(620, 411);
+			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(620, 438);
 			this.ForceFeedbackTabPage.TabIndex = 0;
 			this.ForceFeedbackTabPage.Text = "Force Feedback";
 			// 
 			// ForceFeedbackGroupBox
 			// 
+			this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceTypeComboBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceEnableCheckBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorPeriodTrackBar);
@@ -1714,9 +1798,13 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.PresetComboBox);
+			this.Controls.Add(this.SavePresetButton);
 			this.Controls.Add(this.PadTabControl);
+			this.Controls.Add(this.ResetPresetButton);
+			this.Controls.Add(this.LoadPresetButton);
 			this.Name = "PadControl";
-			this.Size = new System.Drawing.Size(634, 443);
+			this.Size = new System.Drawing.Size(634, 470);
 			this.Load += new System.EventHandler(this.PadControl_Load);
 			this.AdvancedTabPage.ResumeLayout(false);
 			this.AdvancedTabPage.PerformLayout();
@@ -1832,7 +1920,6 @@
 		private System.Windows.Forms.ComboBox RightThumbAxisYComboBox;
 		private System.Windows.Forms.ComboBox RightThumbButtonComboBox;
 		private System.Windows.Forms.PictureBox TopPictureBox;
-		private System.Windows.Forms.TabControl PadTabControl;
 		private System.Windows.Forms.Label RightLabel;
 		private System.Windows.Forms.Label LeftLabel;
 		private System.Windows.Forms.Label OptionsDeviceTypeLabel;
@@ -1893,5 +1980,10 @@
 		private System.Windows.Forms.ComboBox ThumbAntiDeadZoneComboBox;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox ForceTypeComboBox;
+		private System.Windows.Forms.ComboBox PresetComboBox;
+		private System.Windows.Forms.Button SavePresetButton;
+		private System.Windows.Forms.Button ResetPresetButton;
+		private System.Windows.Forms.Button LoadPresetButton;
+		public System.Windows.Forms.TabControl PadTabControl;
 	}
 }

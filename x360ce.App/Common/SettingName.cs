@@ -44,10 +44,14 @@ namespace x360ce.App
 		public const string UseInitBeep = "UseInitBeep";
 		[DefaultValue("0"), Description("0 - Suspend errors; 1 - throw application errors.")]
 		public const string DebugMode = "DebugMode";
-		[DefaultValue("0"), Description("use 0 to 1; creates a log file in folder 'x360ce logs'.")]
+		[DefaultValue("0"), Description("Use 0 to 1; creates a log file in folder 'x360ce logs'.")]
 		public const string Log = "Log";
-		[DefaultValue("0"), Description("use 0 to 1; creates console log window.")]
+		[DefaultValue("0"), Description("Use 0 to 1; creates console log window.")]
 		public const string Console = "Console";
+		[DefaultValue("http://www.x360ce.com/webservices/x360ce.asmx"), Description("Online settings database URL.")]
+		public const string OnlineDatabaseUrl = "OnlineDatabaseUrl";
+		[DefaultValue("0"), Description("Online features: 0 - Disable; 1 - Enable.")]
+		public const string OnlineFeatures = "OnlineFeatures";
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
@@ -185,7 +189,12 @@ namespace x360ce.App
 		[DefaultValue("120"), Description("Right motor period. Use 0 to 500.")]
 		public const string RightMotorPeriod = "RightMotorPeriod";
 
-
+		public static int GetPadIndex(string path)
+		{
+			var section = path.Split('\\')[0];
+			var pads = new List<string>() { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
+			return pads.IndexOf(section);
+		}
 
 		public static bool IsButton(string name)
 		{

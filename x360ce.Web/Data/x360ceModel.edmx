@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="x360ceModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="x360ceModelStoreContainer">
+          <EntitySet Name="x360ce_PadSettings" EntityType="x360ceModel.Store.x360ce_PadSettings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Products" EntityType="x360ceModel.Store.x360ce_Products" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Settings" EntityType="x360ceModel.Store.x360ce_Settings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Summaries" EntityType="x360ceModel.Store.x360ce_Summaries" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="x360ce_PadSettings">
+          <Key>
+            <PropertyRef Name="PadSettingChecksum" />
+          </Key>
+          <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="AxisToDPadDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="AxisToDPadEnabled" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="AxisToDPadOffset" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonA" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonB" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonBack" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonStart" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPad" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadDown" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadLeft" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadRight" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadUp" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceEnable" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceOverall" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceSwapMotor" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceType" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="GamePadType" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftMotorPeriod" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftShoulder" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAxisX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAxisY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbButton" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbDown" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbLeft" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbRight" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbUp" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftTrigger" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftTriggerDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="PassThrough" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightMotorPeriod" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightShoulder" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAntiDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAntiDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAxisX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAxisY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbButton" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbDown" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbLeft" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbRight" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbUp" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightTrigger" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightTriggerDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
+        </EntityType>
+        <EntityType Name="x360ce_Products">
+          <Key>
+            <PropertyRef Name="ProductGuid" />
+          </Key>
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+        </EntityType>
+        <EntityType Name="x360ce_Settings">
+          <Key>
+            <PropertyRef Name="SettingId" />
+          </Key>
+          <Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InstanceName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="DeviceType" Type="int" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="Comment" Type="nvarchar" Nullable="false" MaxLength="1024" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+          <Property Name="DateSelected" Type="datetime" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="x360ce_Summaries">
+          <Key>
+            <PropertyRef Name="SummaryId" />
+          </Key>
+          <Property Name="SummaryId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Users" Type="int" Nullable="false" />
+          <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="x360ceModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="PadSettings" EntityType="x360ceModel.PadSetting" />
+          <EntitySet Name="Settings" EntityType="x360ceModel.Setting" />
+          <EntitySet Name="Products" EntityType="x360ceModel.Product" />
+          <EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
+        </EntityContainer>
+        <EntityType Name="PadSetting">
+          <Key>
+            <PropertyRef Name="PadSettingChecksum" />
+          </Key>
+          <Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
+          <Property Type="String" Name="AxisToDPadDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AxisToDPadEnabled" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AxisToDPadOffset" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ButtonA" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ButtonB" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ButtonX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ButtonY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DPad" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DPadDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DPadLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DPadRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DPadUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ForceEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LeftTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="PassThrough" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RightTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="SettingId" />
+          </Key>
+          <Property Type="Guid" Name="SettingId" Nullable="false" />
+          <Property Type="Guid" Name="InstanceGuid" Nullable="false" />
+          <Property Type="String" Name="InstanceName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="Guid" Name="ProductGuid" Nullable="false" />
+          <Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="DeviceType" Nullable="false" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Comment" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+          <Property Type="DateTime" Name="DateUpdated" Nullable="false" />
+          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
+          <Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
+          <Property Type="DateTime" Name="DateSelected" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="ProductGuid" />
+          </Key>
+          <Property Type="Guid" Name="ProductGuid" Nullable="false" />
+          <Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Summary">
+          <Key>
+            <PropertyRef Name="SummaryId" />
+          </Key>
+          <Property Type="Guid" Name="SummaryId" Nullable="false" />
+          <Property Type="Int32" Name="Users" Nullable="false" />
+          <Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
+          <Property Type="Guid" Name="ProductGuid" Nullable="false" />
+          <Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+          <Property Type="DateTime" Name="DateUpdated" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="x360ceModel" />
+        <Alias Key="Target" Value="x360ceModel.Store" />
+        <EntityContainerMapping CdmEntityContainer="x360ceModelContainer" StorageEntityContainer="x360ceModelStoreContainer">
+          <EntitySetMapping Name="PadSettings">
+            <EntityTypeMapping TypeName="x360ceModel.PadSetting">
+              <MappingFragment StoreEntitySet="x360ce_PadSettings">
+                <ScalarProperty Name="RightTriggerDeadZone" ColumnName="RightTriggerDeadZone" />
+                <ScalarProperty Name="RightTrigger" ColumnName="RightTrigger" />
+                <ScalarProperty Name="RightThumbUp" ColumnName="RightThumbUp" />
+                <ScalarProperty Name="RightThumbRight" ColumnName="RightThumbRight" />
+                <ScalarProperty Name="RightThumbLeft" ColumnName="RightThumbLeft" />
+                <ScalarProperty Name="RightThumbDown" ColumnName="RightThumbDown" />
+                <ScalarProperty Name="RightThumbDeadZoneY" ColumnName="RightThumbDeadZoneY" />
+                <ScalarProperty Name="RightThumbDeadZoneX" ColumnName="RightThumbDeadZoneX" />
+                <ScalarProperty Name="RightThumbButton" ColumnName="RightThumbButton" />
+                <ScalarProperty Name="RightThumbAxisY" ColumnName="RightThumbAxisY" />
+                <ScalarProperty Name="RightThumbAxisX" ColumnName="RightThumbAxisX" />
+                <ScalarProperty Name="RightThumbAntiDeadZoneY" ColumnName="RightThumbAntiDeadZoneY" />
+                <ScalarProperty Name="RightThumbAntiDeadZoneX" ColumnName="RightThumbAntiDeadZoneX" />
+                <ScalarProperty Name="RightShoulder" ColumnName="RightShoulder" />
+                <ScalarProperty Name="RightMotorPeriod" ColumnName="RightMotorPeriod" />
+                <ScalarProperty Name="PassThrough" ColumnName="PassThrough" />
+                <ScalarProperty Name="LeftTriggerDeadZone" ColumnName="LeftTriggerDeadZone" />
+                <ScalarProperty Name="LeftTrigger" ColumnName="LeftTrigger" />
+                <ScalarProperty Name="LeftThumbUp" ColumnName="LeftThumbUp" />
+                <ScalarProperty Name="LeftThumbRight" ColumnName="LeftThumbRight" />
+                <ScalarProperty Name="LeftThumbLeft" ColumnName="LeftThumbLeft" />
+                <ScalarProperty Name="LeftThumbDown" ColumnName="LeftThumbDown" />
+                <ScalarProperty Name="LeftThumbDeadZoneY" ColumnName="LeftThumbDeadZoneY" />
+                <ScalarProperty Name="LeftThumbDeadZoneX" ColumnName="LeftThumbDeadZoneX" />
+                <ScalarProperty Name="LeftThumbButton" ColumnName="LeftThumbButton" />
+                <ScalarProperty Name="LeftThumbAxisY" ColumnName="LeftThumbAxisY" />
+                <ScalarProperty Name="LeftThumbAxisX" ColumnName="LeftThumbAxisX" />
+                <ScalarProperty Name="LeftThumbAntiDeadZoneY" ColumnName="LeftThumbAntiDeadZoneY" />
+                <ScalarProperty Name="LeftThumbAntiDeadZoneX" ColumnName="LeftThumbAntiDeadZoneX" />
+                <ScalarProperty Name="LeftShoulder" ColumnName="LeftShoulder" />
+                <ScalarProperty Name="LeftMotorPeriod" ColumnName="LeftMotorPeriod" />
+                <ScalarProperty Name="GamePadType" ColumnName="GamePadType" />
+                <ScalarProperty Name="ForceType" ColumnName="ForceType" />
+                <ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
+                <ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />
+                <ScalarProperty Name="ForceEnable" ColumnName="ForceEnable" />
+                <ScalarProperty Name="DPadUp" ColumnName="DPadUp" />
+                <ScalarProperty Name="DPadRight" ColumnName="DPadRight" />
+                <ScalarProperty Name="DPadLeft" ColumnName="DPadLeft" />
+                <ScalarProperty Name="DPadDown" ColumnName="DPadDown" />
+                <ScalarProperty Name="DPad" ColumnName="DPad" />
+                <ScalarProperty Name="ButtonY" ColumnName="ButtonY" />
+                <ScalarProperty Name="ButtonX" ColumnName="ButtonX" />
+                <ScalarProperty Name="ButtonStart" ColumnName="ButtonStart" />
+                <ScalarProperty Name="ButtonBack" ColumnName="ButtonBack" />
+                <ScalarProperty Name="ButtonB" ColumnName="ButtonB" />
+                <ScalarProperty Name="ButtonA" ColumnName="ButtonA" />
+                <ScalarProperty Name="AxisToDPadOffset" ColumnName="AxisToDPadOffset" />
+                <ScalarProperty Name="AxisToDPadEnabled" ColumnName="AxisToDPadEnabled" />
+                <ScalarProperty Name="AxisToDPadDeadZone" ColumnName="AxisToDPadDeadZone" />
+                <ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="x360ceModel.Setting">
+              <MappingFragment StoreEntitySet="x360ce_Settings">
+                <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
+                <ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="DeviceType" ColumnName="DeviceType" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+                <ScalarProperty Name="InstanceName" ColumnName="InstanceName" />
+                <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
+                <ScalarProperty Name="SettingId" ColumnName="SettingId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="x360ceModel.Product">
+              <MappingFragment StoreEntitySet="x360ce_Products">
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Summaries">
+            <EntityTypeMapping TypeName="x360ceModel.Summary">
+              <MappingFragment StoreEntitySet="x360ce_Summaries">
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+                <ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
+                <ScalarProperty Name="Users" ColumnName="Users" />
+                <ScalarProperty Name="SummaryId" ColumnName="SummaryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram Name="x360ceModel" ZoomLevel="88" >
+        <EntityTypeShape EntityType="x360ceModel.PadSetting" Width="1.5" PointX="0.5" PointY="0.5" Height="10.82615234375" />
+        <EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="3.375" PointY="0.75" Height="3.5186979166666656" />
+        <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="5.375" PointY="0.75" Height="1.4033821614583326" />
+        <EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="5.375" PointY="3.75" Height="2.7494921874999996" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
