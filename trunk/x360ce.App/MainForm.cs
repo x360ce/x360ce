@@ -515,27 +515,6 @@ namespace x360ce.App
 				UpdateTimer.Start();
 				return;
 			}
-
-
-
-			//// If settings haven't changed then...
-			//if (!settingsChanged)
-			//{
-			//    // Refresh instances.
-			//    //try
-			//    //{
-			//    instancesChanged = RefreshCurrentInstances();
-			//    //}
-			//    //catch (Exception)
-			//    //{
-			//    // Update GamePad state LED's (disable since DInput instance list is empty).
-			//    //diInstances = new List<DeviceInstance>();
-			//    //UpdateGamePadStatus();
-			//    //	throw;
-			//    //}
-			//}
-
-
 			// Check all pads.
 			UpdateGamePadStatus();
 			for (int i = 0; i < 4; i++)
@@ -560,9 +539,6 @@ namespace x360ce.App
 					currentPadControl.UpdateFromXInput(emptyState);
 				}
 			}
-			//if (ControllerIndex > -1)
-			//{
-			//}
 			UpdateStatus("");
 		}
 
