@@ -1,4 +1,8 @@
-﻿v2.0.2.128 (2011-10-02)
+﻿v2.0.2.132 (2011-10-04)
+- Update: Code optimizations.
+- Update: Fixed issue with multiple controllers and settings.
+
+v2.0.2.128 (2011-10-02)
 - New: Internet Settings Database feature added.
 - New: Application now asks to save changes on exit.
 - Update: On how INI file works.
