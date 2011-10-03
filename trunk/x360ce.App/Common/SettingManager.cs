@@ -523,9 +523,6 @@ namespace x360ce.App
 				section = GetInstanceSection(padIndex);
 				// If destination section is empty because controller is not connected then skip.
 				if (string.IsNullOrEmpty(section)) return false;
-				// Update Mappings.
-				var pad = string.Format("PAD{0}", padIndex + 1);
-				ini.SetValue("Mappings", pad, section);
 			}
 			var oldValue = ini.GetValue(section, key);
 			var saved = false;
@@ -590,36 +587,51 @@ namespace x360ce.App
 		public void CheckSettings(List<DeviceInstance> diInstances, List<DeviceInstance> diInstancesOld)
 		{
 			var updated = false;
-			for (int i = 0; i < diInstances.Count; i++)
+			var ini2 = new Ini(iniFile);
+			var oldCount = diInstancesOld.Count;
+			var newCount = diInstances.Count;
+			for (int i = 0; i < 4; i++)
 			{
-				var ig = diInstances[i].InstanceGuid;
-				// If INI file contain settings for this device then...
-				string sectionName = null;
-				if (ContainsInstanceSection(ig, iniFile, out sectionName))
+				var pad = string.Format("PAD{0}", i + 1);
+				var section = "";
+				// If direct Input instance is connected.
+				if (i < diInstances.Count)
 				{
-					var samePosition = false;
-					for (int oi = 0; oi < diInstancesOld.Count; oi++)
+					var ig = diInstances[i].InstanceGuid;
+					section = GetInstanceSection(ig);
+					// If INI file contain settings for this device then...
+					string sectionName = null;
+					if (ContainsInstanceSection(ig, iniFile, out sectionName))
 					{
-						if (diInstancesOld[oi].InstanceGuid.Equals(ig) && i == oi)
+						var samePosition = i < oldCount && diInstancesOld[i].InstanceGuid.Equals(diInstances[i].InstanceGuid);
+						// Load settings.
+						if (!samePosition)
 						{
-							samePosition = true;
+							MainForm.Current.SuspendEvents();
+							ReadPadSettings(iniFile, section, i);
+							MainForm.Current.ResumeEvents();
 						}
 					}
-					// Load settings.
-					var section = GetInstanceSection(ig);
-					if (!samePosition) ReadPadSettings(iniFile, section, i);
+					else
+					{
+						MainForm.Current.SuspendEvents();
+						ClearPadSettings(i);
+						MainForm.Current.ResumeEvents();
+						var f = new NewDeviceForm();
+						f.LoadData(diInstances[i], i);
+						f.StartPosition = FormStartPosition.CenterParent;
+						var result = f.ShowDialog(MainForm.Current);
+						updated = true;
+					}
 				}
 				else
 				{
 					MainForm.Current.SuspendEvents();
 					ClearPadSettings(i);
 					MainForm.Current.ResumeEvents();
-					var f = new NewDeviceForm();
-					f.LoadData(diInstances[i], i);
-					f.StartPosition = FormStartPosition.CenterParent;
-					var result = f.ShowDialog(MainForm.Current);
-					updated = true;
 				}
+				// Update Mappings.
+				ini2.SetValue(SettingName.Mappings, pad, section);
 			}
 			if (updated){
 				if (SettingManager.Current.SaveSettings()) MainForm.Current.NotifySettingsChange();

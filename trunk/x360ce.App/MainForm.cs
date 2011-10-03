@@ -426,45 +426,34 @@ namespace x360ce.App
 			set { _diDevices = value; }
 		}
 
+		int _diCount = -1;
+		System.Collections.IEnumerator dl = null;
+		//Populate All devices
+		List<DeviceInstance> list = new List<DeviceInstance>();
+
 		/// <summary>
 		/// Access this only insite Timer_Click!
 		/// </summary>
 		bool RefreshCurrentInstances()
 		{
-			//Populate All devices
-			var list = new List<DeviceInstance>();
+
 			// If you encouter "LoaderLock was detected" Exception when debugging then:
 			// Make sure that you have reference to Microsoft.Directx.dll. 
-			var dl = Manager.Devices.GetEnumerator();
-			while (dl.MoveNext())
-			{
-				var di = (DeviceInstance)dl.Current;
-				if (di.DeviceType == DeviceType.Driving
-					|| di.DeviceType == DeviceType.Flight
-					|| di.DeviceType == DeviceType.Gamepad
-					|| di.DeviceType == DeviceType.Joystick
-				) list.Add(di);
-			}
 			bool instancesChanged = false;
-			// If instance was removed of added then...
-			if (diInstances.Count != list.Count)
+			if (Manager.Devices.Count != _diCount)
 			{
-				instancesChanged = true;
-			}
-			else
-			{
-				for (int i = 0; i < list.Count; i++)
+				_diCount = Manager.Devices.Count;
+				dl = Manager.Devices.GetEnumerator();
+				list.Clear();
+				while (dl.MoveNext())
 				{
-					// If instance order changed then...
-					if (!diInstances[i].InstanceGuid.Equals(list[i].InstanceGuid))
-					{
-						instancesChanged = true;
-						break;
-					}
+					var di = (DeviceInstance)dl.Current;
+					if (di.DeviceType == DeviceType.Driving
+						|| di.DeviceType == DeviceType.Flight
+						|| di.DeviceType == DeviceType.Gamepad
+						|| di.DeviceType == DeviceType.Joystick
+					) list.Add(di);
 				}
-			}
-			if (instancesChanged)
-			{
 				// Dispose from previous list of devices.
 				for (int i = 0; i < diDevices.Count; i++)
 				{
@@ -473,8 +462,7 @@ namespace x360ce.App
 					diDevices[i].Dispose();
 				}
 				diDevices.Clear();
-
-				// Crate new list of devices.
+				// Create new list of devices.
 				for (int i = 0; i < list.Count; i++)
 				{
 					var ig = list[i].InstanceGuid;
@@ -485,10 +473,13 @@ namespace x360ce.App
 				}
 				onlineUserControl1.BindDevices(list);
 				onlineUserControl1.BindFiles();
+				// Assign new list of instances.
+				diInstancesOld.Clear();
+				diInstancesOld.AddRange(diInstances.ToArray());
+				diInstances.Clear();
+				diInstances.AddRange(list.ToArray());
+				instancesChanged = true;
 			}
-			// Assign new list of instances.
-			diInstancesOld = diInstances;
-			diInstances = list;
 			// Return true if instances changed.
 			return instancesChanged;
 		}
@@ -511,24 +502,40 @@ namespace x360ce.App
 		private void UpdateTimer_Tick(object sender, EventArgs e)
 		{
 			Program.TimerCount++;
-			// Check if 
-			bool instancesChanged = false;
-			// If settings haven't changed then...
-			if (!settingsChanged)
+			bool instancesChanged = RefreshCurrentInstances();
+			// If settings changed or directInput instances changed then...
+			if (settingsChanged || instancesChanged)
 			{
-				// Refresh instances.
-				try
+				UpdateTimer.Stop();
+				if (instancesChanged)
 				{
-					instancesChanged = RefreshCurrentInstances();
+					SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
 				}
-				catch (Exception)
-				{
-					// Update GamePad state LED's (disable since DInput instance list is empty).
-					diInstances = new List<DeviceInstance>();
-					UpdateGamePadStatus();
-					throw;
-				}
+				ReloadLibrary();
+				UpdateTimer.Start();
+				return;
 			}
+
+
+
+			//// If settings haven't changed then...
+			//if (!settingsChanged)
+			//{
+			//    // Refresh instances.
+			//    //try
+			//    //{
+			//    instancesChanged = RefreshCurrentInstances();
+			//    //}
+			//    //catch (Exception)
+			//    //{
+			//    // Update GamePad state LED's (disable since DInput instance list is empty).
+			//    //diInstances = new List<DeviceInstance>();
+			//    //UpdateGamePadStatus();
+			//    //	throw;
+			//    //}
+			//}
+
+
 			// Check all pads.
 			UpdateGamePadStatus();
 			for (int i = 0; i < 4; i++)
@@ -552,18 +559,6 @@ namespace x360ce.App
 				{
 					currentPadControl.UpdateFromXInput(emptyState);
 				}
-			}
-			// If settings changed or directInput instances changed then...
-			if (settingsChanged || instancesChanged)
-			{
-				if (instancesChanged)
-				{
-					UpdateTimer.Stop();
-					SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
-					UpdateTimer.Start();
-				}
-				ReloadLibrary();
-				return;
 			}
 			//if (ControllerIndex > -1)
 			//{

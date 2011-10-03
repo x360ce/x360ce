@@ -39,6 +39,8 @@ namespace x360ce.App
 			public const string DPadButton = "v";
 		}
 
+		public const string Mappings = "Mappings";
+
 		// [Options] section.
 		[DefaultValue("1"), Description("Use 0 to 1; default 1; beep on init.")]
 		public const string UseInitBeep = "UseInitBeep";
