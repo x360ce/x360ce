@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Services;
 using x360ce.Web.Data;
 using x360ce.Web.Common;
+using System.Data.Objects;
+using System.Linq.Expressions;
 
 namespace x360ce.Web.WebServices
 {
@@ -46,7 +48,7 @@ namespace x360ce.Web.WebServices
 			s1.IsEnabled = s.IsEnabled;
 			s1.PadSettingChecksum = checksum;
 			// Save Pad Settings.
-			var p1 = db.PadSettings.FirstOrDefault(x => x.PadSettingChecksum  == checksum);
+			var p1 = db.PadSettings.FirstOrDefault(x => x.PadSettingChecksum == checksum);
 			if (p1 == null)
 			{
 				p1 = new PadSetting();
@@ -125,29 +127,37 @@ namespace x360ce.Web.WebServices
 			}
 			// Global Configurations.
 			var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
-			var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToArray();
-			if (products.Length == 0 || files.Length == 0)
+			var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToList();
+			if (products.Length == 0 || files.Count == 0)
 			{
 				sr.Summaries = new Summary[0];
 			}
 			else
 			{
-				var query = from q in db.Summaries select q;
+				files.Add(new SearchParameter() { FileName = "", FileProductName = "" });
+				Expression body = null;
+				var param = Expression.Parameter(typeof(Summary), "x");
+				var pgParam = Expression.PropertyOrField(param, "ProductGuid");
+				var fnParam = Expression.PropertyOrField(param, "FileName");
+				var fpParam = Expression.PropertyOrField(param, "FileProductName");
 				for (int i = 0; i < products.Length; i++)
 				{
 					var productGuid = products[i];
-					for (int f = 0; f < files.Length; f++)
+					for (int f = 0; f < files.Count; f++)
 					{
 						var fileName = files[f].FileName;
 						var fileProductName = files[f].FileProductName;
-						query = from q in query.Union(
-									from c in query
-									where c.ProductGuid == productGuid && c.FileName == fileName && c.FileProductName == fileProductName
-									select c
-								) select q;
+						var exp1 = Expression.AndAlso(
+								Expression.Equal(pgParam, Expression.Constant(productGuid)),
+								Expression.Equal(fnParam, Expression.Constant(fileName))
+
+						   );
+						exp1 = Expression.AndAlso(exp1, Expression.Equal(fpParam, Expression.Constant(fileProductName)));
+						body = body == null ? exp1 : Expression.OrElse(body, exp1).Reduce();
 					}
 				}
-				sr.Summaries = query.OrderBy(x=>x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x=>x.Users).ToArray();
+				var lambda = Expression.Lambda<Func<Summary, bool>>(body, param);
+				sr.Summaries = db.Summaries.Where(lambda).OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
 			}
 			return sr;
 		}
@@ -168,10 +178,98 @@ namespace x360ce.Web.WebServices
 		{
 			var sr = new SearchResult();
 			var db = new Data.x360ceModelContainer();
-			sr.PadSettings = db.PadSettings.Where(x=> checksum.Contains(x.PadSettingChecksum)).ToArray();
+			sr.PadSettings = db.PadSettings.Where(x => checksum.Contains(x.PadSettingChecksum)).ToArray();
 			return sr;
 		}
 
 
 	}
+
+	public class ParameterRebinder : ExpressionVisitor
+	{
+
+		private readonly Dictionary<ParameterExpression, ParameterExpression> map;
+
+
+
+		public ParameterRebinder(Dictionary<ParameterExpression, ParameterExpression> map)
+		{
+
+			this.map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
+
+		}
+
+
+
+		public static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map, Expression exp)
+		{
+
+			return new ParameterRebinder(map).Visit(exp);
+
+		}
+
+
+
+		protected override Expression VisitParameter(ParameterExpression p)
+		{
+
+			ParameterExpression replacement;
+
+			if (map.TryGetValue(p, out replacement))
+			{
+
+				p = replacement;
+
+			}
+
+			return base.VisitParameter(p);
+
+		}
+
+	}
+
+	public static class Utility
+	{
+
+		public static Expression<T> Compose<T>(this Expression<T> first, Expression<T> second, Func<Expression, Expression, Expression> merge)
+		{
+
+			// build parameter map (from parameters of second to parameters of first)
+
+			var map = first.Parameters.Select((f, i) => new { f, s = second.Parameters[i] }).ToDictionary(p => p.s, p => p.f);
+
+
+
+			// replace parameters in the second lambda expression with parameters from the first
+
+			var secondBody = ParameterRebinder.ReplaceParameters(map, second.Body);
+
+
+
+			// apply composition of lambda expression bodies to parameters from the first expression 
+
+			return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
+
+		}
+
+
+
+		public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
+		{
+
+			return first.Compose(second, Expression.And);
+
+		}
+
+
+
+		public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
+		{
+
+			return first.Compose(second, Expression.Or);
+
+		}
+
+	}
+
 }

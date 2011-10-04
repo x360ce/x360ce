@@ -124,14 +124,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\FakeMode.cs" />
+    <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
+    <Compile Include="Common\PropertyComparer.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingName.cs" />
     <Compile Include="Common\SettingType.cs" />
+    <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

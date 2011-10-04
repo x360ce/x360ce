@@ -21,7 +21,7 @@ namespace x360ce.App.Controls
 
 		private void NewDeviceForm_Load(object sender, EventArgs e)
 		{
-			configs = new BindingList<Summary>();
+			configs = new SortableBindingList<Summary>();
 			MySettingsDataGridView.AutoGenerateColumns = false;
 			MySettingsDataGridView.DataSource = configs;
 			WizzardTabControl.TabPages.Remove(Step2TabPage);
@@ -180,7 +180,7 @@ namespace x360ce.App.Controls
 			BrowseRadioButton.Checked = true;
 		}
 
-		BindingList<Summary> configs;
+		SortableBindingList<Summary> configs;
 
 		void LoadSettingsFromFolder(string folderName)
 		{

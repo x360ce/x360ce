@@ -1,4 +1,8 @@
-﻿v2.0.2.132 (2011-10-04)
+﻿v2.0.2.136 (2011-10-04)
+- Update: Sortable grids.
+
+
+v2.0.2.132 (2011-10-04)
 - Update: Code optimizations.
 - Update: Fixed issue with multiple controllers and settings.
 

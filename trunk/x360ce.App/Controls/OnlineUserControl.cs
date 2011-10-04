@@ -16,8 +16,8 @@ namespace x360ce.App.Controls
 		public OnlineUserControl()
 		{
 			InitializeComponent();
-			_Settings = new BindingList<Setting>();
-			_Summaries = new BindingList<Summary>();
+			_Settings = new SortableBindingList<Setting>();
+			_Summaries = new SortableBindingList<Summary>();
 		}
 
 		MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
