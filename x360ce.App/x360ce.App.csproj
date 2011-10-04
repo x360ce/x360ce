@@ -123,7 +123,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\FakeMode.cs" />
+    <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\Helper.cs" />
