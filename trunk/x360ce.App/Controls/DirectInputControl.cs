@@ -102,9 +102,11 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		JoystickState oldState;
+		List<string> actions = new List<string>();
+
 		List<string> ShowDirectInputState(Device device)
 		{
-			List<string> actions = new List<string>();
 			JoystickState state = emptyState;
 			if (device != null)
 			{
@@ -113,6 +115,9 @@ namespace x360ce.App.Controls
 					state = device.CurrentJoystickState; }
 				catch (Exception) { }
 			}
+			if (state.Equals(oldState)) return actions;
+			oldState = state;
+			actions.Clear();
 			// X-axis.
 			DiAxisTable.Rows[0][1] = state.X;
 			DiAxisTable.Rows[0][2] = state.Rx;

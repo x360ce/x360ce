@@ -48,26 +48,27 @@
 			this.BrowseRadioButton = new System.Windows.Forms.RadioButton();
 			this.SearchRadioButton = new System.Windows.Forms.RadioButton();
 			this.Step2TabPage = new System.Windows.Forms.TabPage();
-			this.OnlinePictureBox = new System.Windows.Forms.PictureBox();
+			this.InternetPictureBox = new System.Windows.Forms.PictureBox();
 			this.LocalPictureBox = new System.Windows.Forms.PictureBox();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.ResultsLabel = new System.Windows.Forms.Label();
-			this.OnlineLabel = new System.Windows.Forms.Label();
+			this.InternetLabel = new System.Windows.Forms.Label();
 			this.LocalLabel = new System.Windows.Forms.Label();
 			this.SettingsListTabControl = new System.Windows.Forms.TabControl();
 			this.MySettingsTabPage = new System.Windows.Forms.TabPage();
 			this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.NextButton = new System.Windows.Forms.Button();
 			this.SettingsFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.BackButton = new System.Windows.Forms.Button();
-			this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.SearchTheInternetCheckBox = new System.Windows.Forms.CheckBox();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.WizzardTabControl.SuspendLayout();
 			this.Step1TabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.BrowsePictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.SearchPictureBox)).BeginInit();
 			this.Step2TabPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.OnlinePictureBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.InternetPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.LocalPictureBox)).BeginInit();
 			this.SettingsListTabControl.SuspendLayout();
 			this.MySettingsTabPage.SuspendLayout();
@@ -80,12 +81,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.SearchLabel.AutoSize = true;
-			this.SearchLabel.Location = new System.Drawing.Point(45, 53);
+			this.SearchLabel.Location = new System.Drawing.Point(45, 56);
+			this.SearchLabel.Margin = new System.Windows.Forms.Padding(3);
 			this.SearchLabel.Name = "SearchLabel";
-			this.SearchLabel.Size = new System.Drawing.Size(444, 13);
+			this.SearchLabel.Size = new System.Drawing.Size(384, 13);
 			this.SearchLabel.TabIndex = 0;
-			this.SearchLabel.Text = "Application will search your computer and Internet for the best settings match fo" +
-    "r your device.";
+			this.SearchLabel.Text = "Application will search your computer for the best settings match for your device" +
+    ".";
 			this.SearchLabel.Click += new System.EventHandler(this.SearchLabel_Click);
 			// 
 			// BrowseLabel
@@ -94,7 +96,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.BrowseLabel.AutoSize = true;
-			this.BrowseLabel.Location = new System.Drawing.Point(45, 102);
+			this.BrowseLabel.Location = new System.Drawing.Point(45, 121);
+			this.BrowseLabel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
 			this.BrowseLabel.Name = "BrowseLabel";
 			this.BrowseLabel.Size = new System.Drawing.Size(340, 13);
 			this.BrowseLabel.TabIndex = 0;
@@ -105,7 +108,7 @@
 			// 
 			this.CloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Location = new System.Drawing.Point(453, 259);
+			this.CloseButton.Location = new System.Drawing.Point(456, 259);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.Size = new System.Drawing.Size(75, 23);
 			this.CloseButton.TabIndex = 4;
@@ -130,11 +133,12 @@
 			this.WizzardTabControl.Location = new System.Drawing.Point(12, 12);
 			this.WizzardTabControl.Name = "WizzardTabControl";
 			this.WizzardTabControl.SelectedIndex = 0;
-			this.WizzardTabControl.Size = new System.Drawing.Size(516, 241);
+			this.WizzardTabControl.Size = new System.Drawing.Size(519, 241);
 			this.WizzardTabControl.TabIndex = 2;
 			// 
 			// Step1TabPage
 			// 
+			this.Step1TabPage.Controls.Add(this.SearchTheInternetCheckBox);
 			this.Step1TabPage.Controls.Add(this.IncludeSubfoldersCheckBox);
 			this.Step1TabPage.Controls.Add(this.DescriptionLabel);
 			this.Step1TabPage.Controls.Add(this.FolderPathTextBox);
@@ -149,7 +153,7 @@
 			this.Step1TabPage.Location = new System.Drawing.Point(4, 22);
 			this.Step1TabPage.Name = "Step1TabPage";
 			this.Step1TabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.Step1TabPage.Size = new System.Drawing.Size(508, 215);
+			this.Step1TabPage.Size = new System.Drawing.Size(511, 215);
 			this.Step1TabPage.TabIndex = 0;
 			this.Step1TabPage.Text = "Step 1";
 			this.Step1TabPage.UseVisualStyleBackColor = true;
@@ -159,7 +163,7 @@
 			this.IncludeSubfoldersCheckBox.AutoSize = true;
 			this.IncludeSubfoldersCheckBox.Checked = true;
 			this.IncludeSubfoldersCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.IncludeSubfoldersCheckBox.Location = new System.Drawing.Point(48, 144);
+			this.IncludeSubfoldersCheckBox.Location = new System.Drawing.Point(48, 163);
 			this.IncludeSubfoldersCheckBox.Name = "IncludeSubfoldersCheckBox";
 			this.IncludeSubfoldersCheckBox.Size = new System.Drawing.Size(112, 17);
 			this.IncludeSubfoldersCheckBox.TabIndex = 4;
@@ -173,7 +177,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.DescriptionLabel.Location = new System.Drawing.Point(3, 7);
 			this.DescriptionLabel.Name = "DescriptionLabel";
-			this.DescriptionLabel.Size = new System.Drawing.Size(496, 23);
+			this.DescriptionLabel.Size = new System.Drawing.Size(499, 23);
 			this.DescriptionLabel.TabIndex = 3;
 			this.DescriptionLabel.Text = "New device with unique instance id was detected. How do you want to search for se" +
     "ttings?";
@@ -182,15 +186,15 @@
 			// 
 			this.FolderPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.FolderPathTextBox.Location = new System.Drawing.Point(48, 118);
+			this.FolderPathTextBox.Location = new System.Drawing.Point(48, 137);
 			this.FolderPathTextBox.Name = "FolderPathTextBox";
-			this.FolderPathTextBox.Size = new System.Drawing.Size(373, 20);
+			this.FolderPathTextBox.Size = new System.Drawing.Size(376, 20);
 			this.FolderPathTextBox.TabIndex = 2;
 			// 
 			// BrowseButton
 			// 
 			this.BrowseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BrowseButton.Location = new System.Drawing.Point(427, 116);
+			this.BrowseButton.Location = new System.Drawing.Point(430, 135);
 			this.BrowseButton.Name = "BrowseButton";
 			this.BrowseButton.Size = new System.Drawing.Size(75, 23);
 			this.BrowseButton.TabIndex = 2;
@@ -201,7 +205,7 @@
 			// BrowsePictureBox
 			// 
 			this.BrowsePictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_16x16;
-			this.BrowsePictureBox.Location = new System.Drawing.Point(6, 82);
+			this.BrowsePictureBox.Location = new System.Drawing.Point(6, 98);
 			this.BrowsePictureBox.Name = "BrowsePictureBox";
 			this.BrowsePictureBox.Size = new System.Drawing.Size(16, 16);
 			this.BrowsePictureBox.TabIndex = 1;
@@ -220,7 +224,7 @@
 			// 
 			this.BrowseRadioButton.AutoSize = true;
 			this.BrowseRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.BrowseRadioButton.Location = new System.Drawing.Point(28, 82);
+			this.BrowseRadioButton.Location = new System.Drawing.Point(28, 98);
 			this.BrowseRadioButton.Name = "BrowseRadioButton";
 			this.BrowseRadioButton.Size = new System.Drawing.Size(208, 17);
 			this.BrowseRadioButton.TabIndex = 1;
@@ -244,29 +248,29 @@
 			// 
 			// Step2TabPage
 			// 
-			this.Step2TabPage.Controls.Add(this.OnlinePictureBox);
+			this.Step2TabPage.Controls.Add(this.InternetPictureBox);
 			this.Step2TabPage.Controls.Add(this.LocalPictureBox);
-			this.Step2TabPage.Controls.Add(this.BusyLoadingCircle);
 			this.Step2TabPage.Controls.Add(this.ResultsLabel);
-			this.Step2TabPage.Controls.Add(this.OnlineLabel);
+			this.Step2TabPage.Controls.Add(this.InternetLabel);
 			this.Step2TabPage.Controls.Add(this.LocalLabel);
 			this.Step2TabPage.Controls.Add(this.SettingsListTabControl);
+			this.Step2TabPage.Controls.Add(this.BusyLoadingCircle);
 			this.Step2TabPage.Location = new System.Drawing.Point(4, 22);
 			this.Step2TabPage.Name = "Step2TabPage";
 			this.Step2TabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.Step2TabPage.Size = new System.Drawing.Size(508, 215);
+			this.Step2TabPage.Size = new System.Drawing.Size(511, 215);
 			this.Step2TabPage.TabIndex = 1;
 			this.Step2TabPage.Text = "Step 2";
 			this.Step2TabPage.UseVisualStyleBackColor = true;
 			// 
-			// OnlinePictureBox
+			// InternetPictureBox
 			// 
-			this.OnlinePictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_16x16;
-			this.OnlinePictureBox.Location = new System.Drawing.Point(6, 28);
-			this.OnlinePictureBox.Name = "OnlinePictureBox";
-			this.OnlinePictureBox.Size = new System.Drawing.Size(16, 16);
-			this.OnlinePictureBox.TabIndex = 22;
-			this.OnlinePictureBox.TabStop = false;
+			this.InternetPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_16x16;
+			this.InternetPictureBox.Location = new System.Drawing.Point(6, 28);
+			this.InternetPictureBox.Name = "InternetPictureBox";
+			this.InternetPictureBox.Size = new System.Drawing.Size(16, 16);
+			this.InternetPictureBox.TabIndex = 22;
+			this.InternetPictureBox.TabStop = false;
 			// 
 			// LocalPictureBox
 			// 
@@ -277,22 +281,6 @@
 			this.LocalPictureBox.TabIndex = 22;
 			this.LocalPictureBox.TabStop = false;
 			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(454, 6);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 21;
-			// 
 			// ResultsLabel
 			// 
 			this.ResultsLabel.AutoSize = true;
@@ -302,14 +290,14 @@
 			this.ResultsLabel.TabIndex = 20;
 			this.ResultsLabel.Text = "[ResultsLabel]";
 			// 
-			// OnlineLabel
+			// InternetLabel
 			// 
-			this.OnlineLabel.AutoSize = true;
-			this.OnlineLabel.Location = new System.Drawing.Point(28, 31);
-			this.OnlineLabel.Name = "OnlineLabel";
-			this.OnlineLabel.Size = new System.Drawing.Size(149, 13);
-			this.OnlineLabel.TabIndex = 20;
-			this.OnlineLabel.Text = "Searching online for settings...";
+			this.InternetLabel.AutoSize = true;
+			this.InternetLabel.Location = new System.Drawing.Point(28, 31);
+			this.InternetLabel.Name = "InternetLabel";
+			this.InternetLabel.Size = new System.Drawing.Size(149, 13);
+			this.InternetLabel.TabIndex = 20;
+			this.InternetLabel.Text = "Searching online for settings...";
 			// 
 			// LocalLabel
 			// 
@@ -388,28 +376,6 @@
 			this.MySettingsDataGridView.Size = new System.Drawing.Size(488, 105);
 			this.MySettingsDataGridView.TabIndex = 0;
 			// 
-			// NextButton
-			// 
-			this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.NextButton.Location = new System.Drawing.Point(372, 259);
-			this.NextButton.Name = "NextButton";
-			this.NextButton.Size = new System.Drawing.Size(75, 23);
-			this.NextButton.TabIndex = 3;
-			this.NextButton.Text = "Next >";
-			this.NextButton.UseVisualStyleBackColor = true;
-			this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
-			// 
-			// BackButton
-			// 
-			this.BackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.BackButton.Location = new System.Drawing.Point(291, 259);
-			this.BackButton.Name = "BackButton";
-			this.BackButton.Size = new System.Drawing.Size(75, 23);
-			this.BackButton.TabIndex = 3;
-			this.BackButton.Text = "< Back";
-			this.BackButton.UseVisualStyleBackColor = true;
-			this.BackButton.Click += new System.EventHandler(this.BackButton_Click);
-			// 
 			// DateColumn
 			// 
 			this.DateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -430,12 +396,61 @@
 			this.MyFileColumn.Name = "MyFileColumn";
 			this.MyFileColumn.ReadOnly = true;
 			// 
+			// NextButton
+			// 
+			this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.NextButton.Location = new System.Drawing.Point(375, 259);
+			this.NextButton.Name = "NextButton";
+			this.NextButton.Size = new System.Drawing.Size(75, 23);
+			this.NextButton.TabIndex = 3;
+			this.NextButton.Text = "Next >";
+			this.NextButton.UseVisualStyleBackColor = true;
+			this.NextButton.Click += new System.EventHandler(this.NextButton_Click);
+			// 
+			// BackButton
+			// 
+			this.BackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.BackButton.Location = new System.Drawing.Point(294, 259);
+			this.BackButton.Name = "BackButton";
+			this.BackButton.Size = new System.Drawing.Size(75, 23);
+			this.BackButton.TabIndex = 3;
+			this.BackButton.Text = "< Back";
+			this.BackButton.UseVisualStyleBackColor = true;
+			this.BackButton.Click += new System.EventHandler(this.BackButton_Click);
+			// 
+			// SearchTheInternetCheckBox
+			// 
+			this.SearchTheInternetCheckBox.AutoSize = true;
+			this.SearchTheInternetCheckBox.Location = new System.Drawing.Point(48, 75);
+			this.SearchTheInternetCheckBox.Name = "SearchTheInternetCheckBox";
+			this.SearchTheInternetCheckBox.Size = new System.Drawing.Size(117, 17);
+			this.SearchTheInternetCheckBox.TabIndex = 4;
+			this.SearchTheInternetCheckBox.Text = "Search the Internet";
+			this.SearchTheInternetCheckBox.UseVisualStyleBackColor = true;
+			this.SearchTheInternetCheckBox.CheckedChanged += new System.EventHandler(this.SearchTheInternetCheckBox_CheckedChanged);
+			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(454, 6);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 21;
+			// 
 			// NewDeviceForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.CloseButton;
-			this.ClientSize = new System.Drawing.Size(540, 288);
+			this.ClientSize = new System.Drawing.Size(543, 288);
 			this.Controls.Add(this.WizzardTabControl);
 			this.Controls.Add(this.BackButton);
 			this.Controls.Add(this.NextButton);
@@ -452,7 +467,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.SearchPictureBox)).EndInit();
 			this.Step2TabPage.ResumeLayout(false);
 			this.Step2TabPage.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.OnlinePictureBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.InternetPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.LocalPictureBox)).EndInit();
 			this.SettingsListTabControl.ResumeLayout(false);
 			this.MySettingsTabPage.ResumeLayout(false);
@@ -486,11 +501,12 @@
 		private System.Windows.Forms.Label ResultsLabel;
 		private System.Windows.Forms.Label LocalLabel;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-		private System.Windows.Forms.Label OnlineLabel;
-		private System.Windows.Forms.PictureBox OnlinePictureBox;
+		private System.Windows.Forms.Label InternetLabel;
+		private System.Windows.Forms.PictureBox InternetPictureBox;
 		private System.Windows.Forms.PictureBox LocalPictureBox;
 		private System.Windows.Forms.Button BackButton;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		private System.Windows.Forms.CheckBox SearchTheInternetCheckBox;
 	}
 }

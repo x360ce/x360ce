@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows.Forms;
+using x360ce.App.Controls;
 
 namespace Microsoft.Xna.Framework.Input
 {
@@ -68,7 +69,7 @@ namespace Microsoft.Xna.Framework.Input
 			_LibraryName = fileName;
 			if (IsLoaded) FreeLibrary();
 			libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(fileName);
-			if (!IsLoaded) 	MessageBox.Show("Failed to load '{0}'", fileName);
+			if (!IsLoaded) 	MessageBoxForm.Show("Failed to load '{0}'", fileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		public static void FreeLibrary()

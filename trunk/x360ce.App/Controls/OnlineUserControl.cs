@@ -11,9 +11,9 @@ using x360ce.App.com.x360ce.localhost;
 
 namespace x360ce.App.Controls
 {
-	public partial class OnlineUserControl : UserControl
+	public partial class InternetUserControl : UserControl
 	{
-		public OnlineUserControl()
+		public InternetUserControl()
 		{
 			InitializeComponent();
 			_Settings = new SortableBindingList<Setting>();
@@ -22,17 +22,28 @@ namespace x360ce.App.Controls
 
 		MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
 
-		private void OnlineUserControl_Load(object sender, EventArgs e)
+		private void InternetUserControl_Load(object sender, EventArgs e)
 		{
-			MySettingsDataGridView.AutoGenerateColumns = false;
-			GlobalSettingsDataGridView.AutoGenerateColumns = false;
-
-			MySettingsDataGridView.DataSource = _Settings;
-			GlobalSettingsDataGridView.DataSource = _Summaries;
-			OnlineCheckBox_CheckedChanged(null, null);
+			SettingsDataGridView.AutoGenerateColumns = false;
+			SummariesDataGridView.AutoGenerateColumns = false;
+			_Summaries.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
+			_Settings.ListChanged += new ListChangedEventHandler(_Settings_ListChanged);
+			SettingsDataGridView.DataSource = _Settings;
+			SummariesDataGridView.DataSource = _Summaries;
+			InternetCheckBox_CheckedChanged(null, null);
 		}
 
-		private void OnlineCheckBox_CheckedChanged(object sender, EventArgs e)
+		void _Settings_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			SettingsTabPage.Text = _Settings.Count == 0 ? "My Settings" : string.Format("My Settings [{0}]", _Settings.Count);
+		}
+
+		void _Summaries_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			SummariesTabPage.Text = _Summaries.Count == 0 ? "Global Settings" : string.Format("Global Settings [{0}]", _Summaries.Count);
+		}
+
+		private void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateActionButtons();
 		}
@@ -185,14 +196,18 @@ namespace x360ce.App.Controls
 
 		Setting CurrentSetting;
 
+		bool refreshed = false;
+
 		void UpdateActionButtons()
 		{
-			SaveButton.Enabled = ControllerComboBox.Items.Count > 0;
-			LoadButton.Enabled = ControllerComboBox.Items.Count > 0 && MySettingsDataGridView.SelectedRows.Count == 1;
-			DeleteButton.Enabled = ControllerComboBox.Items.Count > 0 && MySettingsDataGridView.SelectedRows.Count == 1;
+			SaveButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsListTabControl.SelectedTab == SettingsTabPage && refreshed;
+			LoadButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsDataGridView.SelectedRows.Count == 1;
+			DeleteButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsListTabControl.SelectedTab == SettingsTabPage &&
+				((SettingsDataGridView.SelectedRows.Count == 1 && SettingsListTabControl.SelectedTab == SettingsTabPage) ||
+				(SummariesDataGridView.SelectedRows.Count == 1 && SettingsListTabControl.SelectedTab == SummariesTabPage));
 			CurrentSetting = GetCurrentSetting();
 			SaveButton.Image = ContainsSetting(CurrentSetting) ? Properties.Resources.save_16x16 : Properties.Resources.save_add_16x16;
-			MySettingsDataGridView.Refresh();
+			SettingsDataGridView.Refresh();
 		}
 
 		bool ContainsSetting(Setting setting)
@@ -258,7 +273,7 @@ namespace x360ce.App.Controls
 			var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
 			var ps = SettingManager.Current.GetPadSetting(padSectionName);
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = OnlineDatabaseUrlTextBox.Text;
+			ws.Url = InternetDatabaseUrlTextBox.Text;
 			ws.SaveSettingCompleted += new SaveSettingCompletedEventHandler(ws_SaveSettingCompleted);
 			ws.SaveSettingAsync(s, ps);
 		}
@@ -284,12 +299,18 @@ namespace x360ce.App.Controls
 
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
-			mainForm.LoadingCircle = true;
-			var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
-			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = OnlineDatabaseUrlTextBox.Text;
-			ws.DeleteSettingCompleted += new DeleteSettingCompletedEventHandler(ws_DeleteSettingCompleted);
-			ws.DeleteSettingAsync(setting);
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm("Do you really want to delete selected setting from Internet Settings Database?", MainForm.Current.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+			if (result == DialogResult.Yes)
+			{
+				mainForm.LoadingCircle = true;
+				var setting = (Setting)SettingsDataGridView.SelectedRows[0].DataBoundItem;
+				var ws = new com.x360ce.localhost.x360ce();
+				ws.Url = InternetDatabaseUrlTextBox.Text;
+				ws.DeleteSettingCompleted += new DeleteSettingCompletedEventHandler(ws_DeleteSettingCompleted);
+				ws.DeleteSettingAsync(setting);
+			}
 		}
 
 		void ws_DeleteSettingCompleted(object sender, DeleteSettingCompletedEventArgs e)
@@ -316,14 +337,14 @@ namespace x360ce.App.Controls
 			RefreshGrid(true);
 		}
 
-		private void RefreshGrid(bool showResult)
+		public void RefreshGrid(bool showResult)
 		{
 			mainForm.LoadingCircle = true;
 			var sp = new List<SearchParameter>();
 			FillSearchParameterWithDevices(sp);
 			FillSearchParameterWithFiles(sp);
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = OnlineDatabaseUrlTextBox.Text;
+			ws.Url = InternetDatabaseUrlTextBox.Text;
 			ws.SearchSettingsCompleted += new SearchSettingsCompletedEventHandler(ws_SearchSettingsCompleted);
 			ws.SearchSettingsAsync(sp.ToArray(), showResult);
 		}
@@ -359,18 +380,37 @@ namespace x360ce.App.Controls
 		private void LoadSetting()
 		{
 			mainForm.UpdateTimer.Stop();
-			if (MySettingsDataGridView.SelectedRows.Count == 0) return;
-			var s = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
 			var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
-			var message = "Do you want to load configuration:";
-			message += "\r\n    " + s.ProductName;
-			if (!string.IsNullOrEmpty(s.FileName)) message += "\r\n    " + s.FileName;
-			if (!string.IsNullOrEmpty(s.FileProductName)) message += ": " + s.FileProductName;
-			message += "\r\nfor:\r\n    " + name + "?";
-			var result = MessageBox.Show(message, "Load Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+			var message = "";
+			Setting setting = null;
+			Summary summary = null;
+			var title = "";
+			if (SettingsListTabControl.SelectedTab == SettingsTabPage)
+			{
+				if (SettingsDataGridView.SelectedRows.Count == 0) return;
+				message = "Do you want to load My Setting:";
+				title = "Load My Setting?";
+				setting = (Setting)SettingsDataGridView.SelectedRows[0].DataBoundItem;
+				message += "\r\n\r\n    " + setting.ProductName;
+				if (!string.IsNullOrEmpty(setting.FileName)) message += " | " + setting.FileName;
+				if (!string.IsNullOrEmpty(setting.FileProductName)) message += " | " + setting.FileProductName;
+			}
+			else if (SettingsListTabControl.SelectedTab == SummariesTabPage)
+			{
+				if (SummariesDataGridView.SelectedRows.Count == 0) return;
+				message = "Do you want to load Global Setting:";
+				title = "Load Global Setting?";
+				summary = (Summary)SummariesDataGridView.SelectedRows[0].DataBoundItem;
+				message += "\r\n\r\n    " + summary.ToString();
+			}
+			message += "\r\n\r\nFor " + name + "?";
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
 			if (result == DialogResult.Yes)
 			{
-				LoadSetting(s.PadSettingChecksum);
+				if (SettingsListTabControl.SelectedTab == SettingsTabPage) LoadSetting(setting.PadSettingChecksum);
+				if (SettingsListTabControl.SelectedTab == SummariesTabPage) LoadSetting(summary.PadSettingChecksum);
 			}
 			else
 			{
@@ -378,10 +418,11 @@ namespace x360ce.App.Controls
 			}
 		}
 
+
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = OnlineDatabaseUrlTextBox.Text;
+			ws.Url = InternetDatabaseUrlTextBox.Text;
 			ws.LoadSettingCompleted += new LoadSettingCompletedEventHandler(ws_LoadSettingCompleted);
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
@@ -396,6 +437,7 @@ namespace x360ce.App.Controls
 			{
 				var di = _devices[ControllerComboBox.SelectedIndex];
 				var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
+				SettingManager.Current.SetPadSetting(padSectionName, di);
 				SettingManager.Current.SetPadSetting(padSectionName, e.Result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
 				SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, padSectionName, ControllerComboBox.SelectedIndex);
@@ -405,7 +447,7 @@ namespace x360ce.App.Controls
 				// Save setting and notify if vaue changed.
 				if (SettingManager.Current.SaveSettings()) MainForm.Current.NotifySettingsChange();
 
-			
+
 			}
 		}
 
@@ -414,6 +456,7 @@ namespace x360ce.App.Controls
 
 		void ws_SearchSettingsCompleted(object sender, SearchSettingsCompletedEventArgs e)
 		{
+			refreshed = true;
 			if (e.Result == null)
 			{
 				UpdateList(new List<Setting>(), _Settings);
@@ -432,7 +475,6 @@ namespace x360ce.App.Controls
 					mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1} Your Settings and {2} General Settings received.", DateTime.Now, e.Result.Settings.Length, e.Result.Summaries.Length), MessageBoxIcon.Information);
 				}
 			}
-			
 			mainForm.LoadingCircle = false;
 		}
 
@@ -452,20 +494,20 @@ namespace x360ce.App.Controls
 			e.CellStyle.BackColor = match ? System.Drawing.Color.FromArgb(255, 222, 225, 231) : e.CellStyle.BackColor = grid.DefaultCellStyle.BackColor;
 		}
 
-		#region My Settings Grid
+		#region Settings Grid
 
-		Setting MySettingSelection;
+		Setting SettingSelection;
 
 		Color currentColor = System.Drawing.Color.FromArgb(255, 191, 210, 249);
 
-		private void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			var setting = ((Setting)grid.Rows[e.RowIndex].DataBoundItem);
 			var isCurrent = setting.InstanceGuid == CurrentSetting.InstanceGuid && setting.FileName == CurrentSetting.FileName && setting.FileProductName == CurrentSetting.FileProductName;
 			if (e.ColumnIndex == grid.Columns[MySidColumn.Name].Index)
 			{
-				UpdateCellStyle(grid, e, MySettingSelection == null ? null : (Guid?)MySettingSelection.PadSettingChecksum);
+				UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
 			}
 			else if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
@@ -474,44 +516,43 @@ namespace x360ce.App.Controls
 			else
 			{
 				//var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
-
 				//e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
 			}
 		}
 
-		private void MySettingsDataGridView_SelectionChanged(object sender, EventArgs e)
+		private void SettingsDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			MySettingSelection = grid.SelectedRows.Count == 0 ? null : (Setting)grid.SelectedRows[0].DataBoundItem;
-			CommentSelectedTextBox.Text = grid.SelectedRows.Count == 0 ? "" : MySettingSelection.Comment;
+			SettingSelection = grid.SelectedRows.Count == 0 ? null : (Setting)grid.SelectedRows[0].DataBoundItem;
+			CommentSelectedTextBox.Text = grid.SelectedRows.Count == 0 ? "" : SettingSelection.Comment;
 			grid.Refresh();
 		}
 
 		#endregion
 
-		#region Global Settings Grid
+		#region Summaries Grid
 
-		Summary GlobalSettingSelection;
+		Summary SummariesSelection;
 
-		private void GlobalSettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private void SummariesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			if (e.ColumnIndex == grid.Columns[SidColumn.Name].Index)
 			{
-				UpdateCellStyle(grid, e, GlobalSettingSelection == null ? null : (Guid?)GlobalSettingSelection.PadSettingChecksum);
+				UpdateCellStyle(grid, e, SummariesSelection == null ? null : (Guid?)SummariesSelection.PadSettingChecksum);
 			}
 		}
 
-		private void GlobalSettingsDataGridView_SelectionChanged(object sender, EventArgs e)
+		private void SummariesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			GlobalSettingSelection = grid.SelectedRows.Count == 0 ? null : (Summary)grid.SelectedRows[0].DataBoundItem;
+			SummariesSelection = grid.SelectedRows.Count == 0 ? null : (Summary)grid.SelectedRows[0].DataBoundItem;
 			grid.Refresh();
 		}
 
 		#endregion
 
-		private void OnlineUserControl_KeyDown(object sender, KeyEventArgs e)
+		private void InternetUserControl_KeyDown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode)
 			{
@@ -522,22 +563,35 @@ namespace x360ce.App.Controls
 					RefreshGrid(true);
 					break;
 				case Keys.M:
-					if (e.Alt) SettingsListTabControl.SelectedTab = MySettingsTabPage;
+					if (e.Alt) SettingsListTabControl.SelectedTab = SettingsTabPage;
 					break;
 				case Keys.G:
-					if (e.Alt) SettingsListTabControl.SelectedTab = GlobalSettingsTabPage;
+					if (e.Alt) SettingsListTabControl.SelectedTab = SummariesTabPage;
 					break;
 				default:
 					break;
 			}
 		}
 
-		private void MySettingsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void SettingsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
 			LoadSetting();
 		}
 
+		private void SummariesDataGridView_DoubleClick(object sender, EventArgs e)
+		{
+			LoadSetting();
+		}
 
+		private void SettingsListTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateActionButtons();
+		}
+
+		private void InternetDatabaseUrlTextBox_DoubleClick(object sender, EventArgs e)
+		{
+			InternetDatabaseUrlTextBox.ReadOnly = false;
+		}
 
 	}
 }

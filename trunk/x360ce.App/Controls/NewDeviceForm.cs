@@ -27,6 +27,7 @@ namespace x360ce.App.Controls
 			WizzardTabControl.TabPages.Remove(Step2TabPage);
 			SearchRadioButton.Checked = true;
 			FolderPathTextBox.Text = new FileInfo(Application.ExecutablePath).DirectoryName;
+			SearchTheInternetCheckBox.Checked = SearchRadioButton.Checked && MainForm.Current.InternetCheckBox.Checked;
 		}
 
 		DeviceInstance _di;
@@ -42,12 +43,6 @@ namespace x360ce.App.Controls
 			DescriptionLabel.Text = string.Format(DescriptionLabel.Text, di.ProductName, di.InstanceGuid.ToString("N"));
 			BackButton.Visible = false;
 			ResultsLabel.Text = "";
-			if (!MainForm.Current.OnlineCheckBox.Checked)
-			{
-				OnlinePictureBox.Visible = false;
-				OnlineLabel.Visible = false;
-				SearchLabel.Text = SearchLabel.Text.Replace(" and Internet", "");
-			}
 			UpdateButtons();
 		}
 
@@ -119,7 +114,6 @@ namespace x360ce.App.Controls
 						// preset will be stored in inside [PAD1] section;
 						SettingManager.Current.ReadPadSettings(iniFile, section, _padIndex);
 						MainForm.Current.ResumeEvents();
-						// Save setting and notify if vaue changed.
 						this.DialogResult = System.Windows.Forms.DialogResult.OK;
 					}
 					else
@@ -131,10 +125,12 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		#region Load Settings from the Internet
+
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = MainForm.Current.onlineUserControl1.OnlineDatabaseUrlTextBox.Text;
+			ws.Url = MainForm.Current.onlineUserControl1.InternetDatabaseUrlTextBox.Text;
 			ws.LoadSettingCompleted += new LoadSettingCompletedEventHandler(ws_LoadSettingCompleted);
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
@@ -148,15 +144,17 @@ namespace x360ce.App.Controls
 			else
 			{
 				var padSectionName = SettingManager.Current.GetInstanceSection(_di.InstanceGuid);
+				SettingManager.Current.SetPadSetting(padSectionName, _di);
 				SettingManager.Current.SetPadSetting(padSectionName, e.Result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
 				SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, padSectionName, _padIndex);
 				MainForm.Current.ResumeEvents();
-				// Save setting and notify if vaue changed.
 				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, (_padIndex + 1) + "." + _di.ProductName), MessageBoxIcon.Information);
 			}
 			this.DialogResult = System.Windows.Forms.DialogResult.OK;
 		}
+
+		#endregion
 
 		private void BackButton_Click(object sender, EventArgs e)
 		{
@@ -165,9 +163,9 @@ namespace x360ce.App.Controls
 			NextButton.Text = "Next >";
 			BackButton.Visible = false;
 			LocalLabel.Text = LocalLabel.Text.Replace(" Done", "");
-			OnlineLabel.Text = OnlineLabel.Text.Replace(" Done", "");
+			InternetLabel.Text = InternetLabel.Text.Replace(" Done", "");
 			LocalPictureBox.Image = Properties.Resources.check_disabled_16x16;
-			OnlinePictureBox.Image = Properties.Resources.check_disabled_16x16;
+			InternetPictureBox.Image = Properties.Resources.check_disabled_16x16;
 		}
 
 		private void SearchLabel_Click(object sender, EventArgs e)
@@ -210,9 +208,9 @@ namespace x360ce.App.Controls
 			}
 			LocalPictureBox.Image = Properties.Resources.check_16x16;
 			LocalLabel.Text += " Done";
-			if (SearchRadioButton.Checked && MainForm.Current.OnlineCheckBox.Checked)
+			if (SearchTheInternetCheckBox.Checked)
 			{
-				LoadSettingsFromOnline();
+				LoadSettingsFromInternet();
 			}
 			else
 			{
@@ -222,10 +220,10 @@ namespace x360ce.App.Controls
 
 		List<SearchParameter> _sp;
 
-		void LoadSettingsFromOnline()
+		void LoadSettingsFromInternet()
 		{
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = MainForm.Current.onlineUserControl1.OnlineDatabaseUrlTextBox.Text;
+			ws.Url = MainForm.Current.onlineUserControl1.InternetDatabaseUrlTextBox.Text;
 			ws.SearchSettingsCompleted += new SearchSettingsCompletedEventHandler(ws_SearchSettingsCompleted);
 			_sp = new List<SearchParameter>();
 			_sp.Add(new SearchParameter() { InstanceGuid = _di.InstanceGuid, ProductGuid = _di.ProductGuid });
@@ -240,11 +238,11 @@ namespace x360ce.App.Controls
 			sr = null;
 			if (e.Error != null)
 			{
-				OnlinePictureBox.Image = Properties.Resources.delete_16x16;
+				InternetPictureBox.Image = Properties.Resources.delete_16x16;
 				return;
 			}
-			OnlinePictureBox.Image = Properties.Resources.check_16x16;
-			OnlineLabel.Text += " Done";
+			InternetPictureBox.Image = Properties.Resources.check_16x16;
+			InternetLabel.Text += " Done";
 			sr = e.Result;
 			var s = GetBestSetting(e.Result);
 			if (s != null) configs.Add(s);
@@ -264,7 +262,7 @@ namespace x360ce.App.Controls
 					if (s.InstanceGuid.Equals(_di.InstanceGuid) && _sp[f].FileName == s.FileName && _sp[f].FileProductName == s.FileProductName)
 					{
 						sum.DateUpdated = s.DateUpdated;
-						sum.FileName = string.Format("ISDB: {0}: {1}", s.FileName, s.FileProductName);
+						sum.FileName = string.Format("Internet: {0}: {1}", s.FileName, s.FileProductName);
 						sum.PadSettingChecksum = s.PadSettingChecksum;
 						return sum;
 					}
@@ -275,7 +273,7 @@ namespace x360ce.App.Controls
 					if (s.InstanceGuid.Equals(_di.InstanceGuid) && _sp[f].FileName == s.FileName)
 					{
 						sum.DateUpdated = s.DateUpdated;
-						sum.FileName = string.Format("ISDB: {0}: {1}", s.FileName, s.FileProductName);
+						sum.FileName = string.Format("Internet: {0}: {1}", s.FileName, s.FileProductName);
 						sum.PadSettingChecksum = s.PadSettingChecksum;
 						return sum;
 					}
@@ -286,7 +284,7 @@ namespace x360ce.App.Controls
 					if (s.InstanceGuid.Equals(_di.InstanceGuid))
 					{
 						sum.DateUpdated = s.DateUpdated;
-						sum.FileName = string.Format("ISDB: {0}: {1}", s.FileName, s.FileProductName);
+						sum.FileName = string.Format("Internet: {0}: {1}", s.FileName, s.FileProductName);
 						sum.PadSettingChecksum = s.PadSettingChecksum;
 						return sum;
 					}
@@ -303,7 +301,7 @@ namespace x360ce.App.Controls
 					if (s2.ProductGuid.Equals(_di.ProductGuid) && _sp[f].FileName == s2.FileName && _sp[f].FileProductName == s2.FileProductName)
 					{
 						sum.DateUpdated = s2.DateUpdated;
-						sum.FileName = string.Format("ISDB: {0}: {1}", s2.FileName, s2.FileProductName);
+						sum.FileName = string.Format("Internet: {0}: {1}", s2.FileName, s2.FileProductName);
 						sum.PadSettingChecksum = s2.PadSettingChecksum;
 						return sum;
 					}
@@ -314,7 +312,7 @@ namespace x360ce.App.Controls
 					if (s2.ProductGuid.Equals(_di.ProductGuid) && _sp[f].FileName == s2.FileName)
 					{
 						sum.DateUpdated = s2.DateUpdated;
-						sum.FileName = string.Format("ISDB: {0}: {1}", s2.FileName, s2.FileProductName);
+						sum.FileName = string.Format("Internet: {0}: {1}", s2.FileName, s2.FileProductName);
 						sum.PadSettingChecksum = s2.PadSettingChecksum;
 						return sum;
 					}
@@ -325,7 +323,7 @@ namespace x360ce.App.Controls
 					if (s2.ProductGuid.Equals(_di.ProductGuid))
 					{
 						sum.DateUpdated = s2.DateUpdated;
-						sum.FileName = string.Format("ISDB: {0}: {1}", s2.FileName, s2.FileProductName);
+						sum.FileName = string.Format("Internet: {0}: {1}", s2.FileName, s2.FileProductName);
 						sum.PadSettingChecksum = s2.PadSettingChecksum;
 						return sum;
 					}
@@ -395,6 +393,12 @@ namespace x360ce.App.Controls
 				ResultsLabel.Text = "Please select configuration to load from the list and click [Finish] to continue.";
 			}
 			LoadingCircle = false;
+		}
+
+		private void SearchTheInternetCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			InternetPictureBox.Visible = SearchTheInternetCheckBox.Checked;
+			InternetLabel.Visible = SearchTheInternetCheckBox.Checked;
 		}
 
 	}

@@ -14,6 +14,7 @@ using Microsoft.DirectX.DirectInput;
 using System.Security.AccessControl;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using x360ce.App.Controls;
 
 namespace x360ce.App
 {
@@ -24,6 +25,8 @@ namespace x360ce.App
 			InitializeComponent();
 			Current = this;
 		}
+
+		DeviceDetector detector;
 
 		public static MainForm Current { get; set; }
 
@@ -55,6 +58,15 @@ namespace x360ce.App
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			BeginInvoke(new LoadFormDelegate(LoadForm), null);
+		}
+
+		private delegate void LoadFormDelegate();
+
+		void LoadForm()
+		{
+			detector = new DeviceDetector(false);
+			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
 			BusyLoadingCircle.Visible = false;
 			BusyLoadingCircle.Top = HeaderPictureBox.Top;
 			BusyLoadingCircle.Left = HeaderPictureBox.Left;
@@ -78,10 +90,6 @@ namespace x360ce.App
 			else if (System.IO.File.Exists(dllFile1)) dllFile = dllFile1;
 			else if (System.IO.File.Exists(dllFile0)) dllFile = dllFile0;
 			else dllFile = dllFile3;
-			// Load about control.
-			ControlAbout = new Controls.AboutControl();
-			ControlAbout.Dock = DockStyle.Fill;
-			AboutTabPage.Controls.Add(ControlAbout);
 			// Load Tab pages.
 			ControlPages = new TabPage[4];
 			ControlPages[0] = Pad1TabPage;
@@ -94,6 +102,13 @@ namespace x360ce.App
 			BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
 			BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
 			foreach (var item in ControlPages) item.ImageKey = "bullet_square_glass_grey.png";
+			// Hide status values.
+			StatusDllLabel.Text = dllFile;
+			MainStatusStrip.Visible = false;
+			// Check if ini and dll is on disk.
+			if (!CheckFiles(true)) return;
+			// Show status values.
+			MainStatusStrip.Visible = true;
 			// Load PAD controls.
 			ControlPads = new Controls.PadControl[4];
 			for (int i = 0; i < ControlPads.Length; i++)
@@ -106,12 +121,15 @@ namespace x360ce.App
 				// Init presets. Execute only after name of cIniFile is set.
 				ControlPads[i].InitPresets();
 			}
-			// Check if ini and dll is on disk.
-			if (!CheckFiles(true)) return;
+			// Load about control.
+			ControlAbout = new Controls.AboutControl();
+			ControlAbout.Dock = DockStyle.Fill;
+			AboutTabPage.Controls.Add(ControlAbout);
+			// Update settings map.
 			UpdateSettingsMap();
 			ReloadXinputSettings();
 			Version v = new Version(Application.ProductVersion);
-			this.Text = string.Format(this.Text, Application.ProductVersion);
+			this.Text += " " + Application.ProductVersion;
 			// Version = major.minor.build.revision
 			switch (v.Build)
 			{
@@ -133,6 +151,11 @@ namespace x360ce.App
 			////ReloadXInputLibrary();
 		}
 
+		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
+		{
+			forceRecountDevices = true;
+		}
+
 		/// <summary>
 		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
 		/// </summary>
@@ -147,8 +170,9 @@ namespace x360ce.App
 			sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(section + SettingName.Console, ConsoleCheckBox);
-			sm.Add(section + SettingName.OnlineDatabaseUrl, onlineUserControl1.OnlineDatabaseUrlTextBox);
-			sm.Add(section + SettingName.OnlineFeatures, OnlineCheckBox);
+			sm.Add(section + SettingName.InternetDatabaseUrl, onlineUserControl1.InternetDatabaseUrlTextBox);
+			sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
+			sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
 			section = @"InputHook\";
 			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
 			for (int i = 0; i < ControlPads.Length; i++)
@@ -165,7 +189,7 @@ namespace x360ce.App
 
 		void Current_ConfigLoaded(object sender, SettingEventArgs e)
 		{
-			toolStripStatusLabel1.Text = string.Format("'{0}' loaded.", e.Name);
+			StatusTimerLabel.Text = string.Format("'{0}' loaded.", e.Name);
 		}
 
 		public void CopyElevated(string source, string dest)
@@ -232,12 +256,12 @@ namespace x360ce.App
 					e.SuppressKeyPress = true;
 				}
 			}
-			toolStripStatusLabel1.Text = "";
+			StatusTimerLabel.Text = "";
 		}
 
 		private void CleanStatusTimer_Tick(object sender, EventArgs e)
 		{
-			toolStripStatusLabel1.Text = "";
+			StatusTimerLabel.Text = "";
 			CleanStatusTimer.Stop();
 		}
 
@@ -378,10 +402,12 @@ namespace x360ce.App
 				}
 				if (changed)
 				{
-					var result = MessageBox.Show(
-						"Do you want to save changes you made to configuration?",
-						"Save Changes?",
-						MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+					var form = new MessageBoxForm();
+					form.StartPosition = FormStartPosition.CenterParent;
+					var result = form.ShowForm(
+					"Do you want to save changes you made to configuration?",
+					"Save Changes?",
+					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
 					if (result == System.Windows.Forms.DialogResult.Yes)
 					{
 						// Do nothing since ini contains latest updates.
@@ -431,6 +457,9 @@ namespace x360ce.App
 		//Populate All devices
 		List<DeviceInstance> list = new List<DeviceInstance>();
 
+		bool forceRecountDevices = true;
+		int deviceCount = 0;
+
 		/// <summary>
 		/// Access this only insite Timer_Click!
 		/// </summary>
@@ -440,7 +469,12 @@ namespace x360ce.App
 			// If you encouter "LoaderLock was detected" Exception when debugging then:
 			// Make sure that you have reference to Microsoft.Directx.dll. 
 			bool instancesChanged = false;
-			if (Manager.Devices.Count != _diCount)
+			if (forceRecountDevices)
+			{
+				deviceCount = Manager.Devices.Count;
+				forceRecountDevices = false;
+			}
+			if (deviceCount != _diCount)
 			{
 				_diCount = Manager.Devices.Count;
 				dl = Manager.Devices.GetEnumerator();
@@ -499,10 +533,36 @@ namespace x360ce.App
 		bool settingsChanged = false;
 		GamePadState emptyState = new GamePadState();
 
+		bool[] cleanPadStatus = new bool[4];
+
 		private void UpdateTimer_Tick(object sender, EventArgs e)
 		{
 			Program.TimerCount++;
 			bool instancesChanged = RefreshCurrentInstances();
+			// Load direct input data.
+			for (int i = 0; i < 4; i++)
+			{
+				var currentPadControl = ControlPads[i];
+				var currentDevice = i < diDevices.Count ? diDevices[i] : null;
+				// If current device is empty then..
+				if (currentDevice == null)
+				{
+					// but form contains data then...
+					if (!cleanPadStatus[i])
+					{
+						// Clear all settings.
+						SuspendEvents();
+						SettingManager.Current.ClearPadSettings(i);
+						ResumeEvents();
+						cleanPadStatus[i] = true;
+					}
+				}
+				else
+				{
+					cleanPadStatus[i] = false;
+				}
+				currentPadControl.UpdateFromDirectInput(currentDevice);
+			}
 			// If settings changed or directInput instances changed then...
 			if (settingsChanged || instancesChanged)
 			{
@@ -520,15 +580,6 @@ namespace x360ce.App
 			for (int i = 0; i < 4; i++)
 			{
 				var currentPadControl = ControlPads[i];
-				var currentDevice = i < diDevices.Count ? diDevices[i] : null;
-				if (currentDevice == null)
-				{
-					// clear all settings.
-					SuspendEvents();
-					SettingManager.Current.ClearPadSettings(i);
-					ResumeEvents();
-				}
-				currentPadControl.UpdateFromDirectInput(currentDevice);
 				if (UnsafeNativeMethods.IsLoaded)
 				{
 					var currentPad = GamePad.GetState((PlayerIndex)i);
@@ -606,7 +657,7 @@ namespace x360ce.App
 
 		public void UpdateStatus(string message)
 		{
-			toolStripStatusLabel1.Text = string.Format("Count: {0}, Reloads: {1}, Errors: {2} {3}",
+			StatusTimerLabel.Text = string.Format("Count: {0}, Reloads: {1}, Errors: {2} {3}",
 				Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
 		}
 
@@ -657,6 +708,13 @@ namespace x360ce.App
 				HelpRichTextBox.SelectionIndent = 8;
 				HelpRichTextBox.SelectionRightIndent = 8;
 				HelpRichTextBox.DeselectAll();
+			}
+			else if (MainTabControl.SelectedTab == SettingsDatabaseTabPage)
+			{
+				if (InternetCheckBox.Checked && InternetAutoloadCheckBox.Checked)
+				{
+					onlineUserControl1.RefreshGrid(true);
+				}
 			}
 			UpdateHelpHeader();
 		}
@@ -709,13 +767,19 @@ namespace x360ce.App
 		{
 			InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.Current.iniFile);
 			InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
-			InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
-			InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
-			InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
 			InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.Current.iniFile);
-			InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
-			InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
-			InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
+			InstallFilesXinput910CheckBox.SuspendLayout();
+			InstallFilesXinput11CheckBox.SuspendLayout();
+			InstallFilesXinput12CheckBox.SuspendLayout();
+			InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
+			InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
+			InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
+			InstallFilesXinput910CheckBox.ResumeLayout(false);
+			InstallFilesXinput11CheckBox.ResumeLayout(false);
+			InstallFilesXinput12CheckBox.ResumeLayout(false);
+			//InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
+			//InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
+			//InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
 			InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
 			if (createIfNotExist)
 			{
@@ -739,9 +803,11 @@ namespace x360ce.App
 			// Can't run witout ini.
 			if (!File.Exists(SettingManager.Current.iniFile))
 			{
-				MessageBox.Show(
-					string.Format("Configuration file '{0}' is required for application to run!", SettingManager.Current.iniFile),
-					"Error", MessageBoxButtons.OK);
+				var form = new MessageBoxForm();
+				form.StartPosition = FormStartPosition.CenterParent;
+				form.ShowForm(
+				string.Format("Configuration file '{0}' is required for application to run!", SettingManager.Current.iniFile),
+				"Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				this.Close();
 				return false;
 			}
@@ -803,16 +869,18 @@ namespace x360ce.App
 		bool CreateFile(string fileName, Version newVersion)
 		{
 			DialogResult answer;
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
 			if (newVersion == null)
 			{
-				answer = MessageBox.Show(
-					string.Format("'{0}' was not found. This file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(fileName).FullName),
+				answer = form.ShowForm(
+					string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(fileName).FullName),
 					string.Format("'{0}' was not found.", fileName),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 			}
 			else
 			{
-				answer = MessageBox.Show(
+				answer = form.ShowForm(
 					string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", new System.IO.FileInfo(fileName).FullName, dllVersion, newVersion),
 					string.Format("New version of '{0}' file is available.", fileName),
 					MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -886,6 +954,38 @@ namespace x360ce.App
 		}
 
 		#endregion
+
+		private void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
+		}
+
+		private void InstallFilesXinput12CheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			CreateDllFile(InstallFilesXinput12CheckBox.Checked, dllFile2);
+		}
+
+		private void InstallFilesXinput11CheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			CreateDllFile(InstallFilesXinput11CheckBox.Checked, dllFile1);
+		}
+
+		private void InstallFilesXinput910CheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			CreateDllFile(InstallFilesXinput910CheckBox.Checked, dllFile0);
+		}
+
+		void CreateDllFile(bool create, string file)
+		{
+			if (create)
+			{
+				if (!System.IO.File.Exists(file)) System.IO.File.Copy(dllFile, file, true);
+			}
+			else
+			{
+				if (System.IO.File.Exists(file)) System.IO.File.Delete(file);
+			}
+		}
 
 	}
 }

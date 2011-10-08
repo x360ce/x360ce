@@ -91,7 +91,7 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
-				if (key == SettingName.OnlineDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.GetDefaultValue(SettingName.OnlineDatabaseUrl);
+				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.GetDefaultValue(SettingName.InternetDatabaseUrl);
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -228,6 +228,15 @@ namespace x360ce.App
 			return ps;
 		}
 
+		public void SetPadSetting(string padSectionName, DeviceInstance di)
+		{
+			var ini2 = new Ini(iniFile);
+			//ps.PadSettingChecksum = Guid.Empty;
+			ini2.SetValue(padSectionName, SettingName.ProductName, di.ProductName);
+			ini2.GetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
+			ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
+		}
+
 		/// <summary>
 		/// Get PadSetting object from INI by device Instance GUID.
 		/// </summary>
@@ -316,7 +325,7 @@ namespace x360ce.App
 
 
 		/// <summary>
-		/// Read PAD settings from INI file to form.
+		/// Clear Pad settings.
 		/// </summary>
 		/// <param name="file">INI file name.</param>
 		/// <param name="iniSection">Source INI pad section.</param>
@@ -400,6 +409,8 @@ namespace x360ce.App
 
 		string GetInstanceSection(int padIndex)
 		{
+			
+			
 			string pad = string.Format("PAD{0}", padIndex + 1);
 			string guidString = SettingManager.Current.SettingsMap[pad + "\\" + SettingName.InstanceGuid].Text;
 			// If instanceGuid value is not a GUID then exit.
@@ -614,6 +625,7 @@ namespace x360ce.App
 					}
 					else
 					{
+						MainForm.Current.MainTabControl.SelectedIndex = i;
 						MainForm.Current.SuspendEvents();
 						ClearPadSettings(i);
 						MainForm.Current.ResumeEvents();

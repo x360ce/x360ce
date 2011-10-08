@@ -23,8 +23,8 @@ namespace x360ce.App
 		}
 
 		// Maybe index D-Pads buttons like [1,2,3,4][5,6,7,8][9,10,11,12]... and use 'BDpad' type. 
-		Regex frmRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|DPad|DPadButton) (?<num>[0-9]+)[ ]*(?<ext>Up|Left|Right|Down)?$");
-		Regex iniRegex = new Regex("^(?<type>[asxhpv])?(?<neg>[-]*)?(?<num>[0-9]+)$");
+		static Regex frmRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|DPad|DPadButton) (?<num>[0-9]+)[ ]*(?<ext>Up|Left|Right|Down)?$");
+		static Regex iniRegex = new Regex("^(?<type>[asxhpv])?(?<neg>[-]*)?(?<num>[0-9]+)$");
 
 		int _Index;
 		public int Index { get { return _Index; } }

@@ -136,11 +136,11 @@ namespace x360ce.App.Controls
 			CurrentCbx.ForeColor = SystemColors.GrayText;
 			if (CurrentCbx == DPadComboBox)
 			{
-				mainForm.toolStripStatusLabel1.Text = "Recording - press any D-Pad button on your direct input device. Press ESC to cancel...";
+				mainForm.StatusTimerLabel.Text = "Recording - press any D-Pad button on your direct input device. Press ESC to cancel...";
 			}
 			else
 			{
-				mainForm.toolStripStatusLabel1.Text = "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
+				mainForm.StatusTimerLabel.Text = "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
 			}
 		}
 
@@ -525,7 +525,7 @@ namespace x360ce.App.Controls
 
 		GamePadState gamePadState;
 		//XINPUT_GAMEPAD GamePad;
-		Guid instanceGuid;
+		private Guid instanceGuid;
 
 		public void UpdateFromDirectInput(Device device)
 		{
@@ -562,8 +562,22 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		//public bool IsSameState(GamePadState s1, GamePadState s2){
+		//    if (s1.Buttons.A != s2.Buttons.A) return false;
+		//    if (s1.Buttons.A != s2.Buttons.A) return false;
+		//    if (s1.Buttons.A != s2.Buttons.A) return false;
+		//    if (s1.Buttons.A != s2.Buttons.A) return false;
+
+		//    return true;
+		//}
+
+		GamePadState oldState;
+
 		public void UpdateFromXInput(GamePadState state)
 		{
+			// If nothing changed then return.
+			if (state.Equals(oldState)) return;
+			oldState = state;
 			var wasConnected = gamePadState.IsConnected;
 			var nowConnected = state.IsConnected;
 			gamePadState = state;
@@ -894,7 +908,7 @@ namespace x360ce.App.Controls
 			// Owerwrite Temp file.
 			var ini = new System.IO.FileInfo(SettingManager.Current.iniFile);
 			ini.CopyTo(SettingManager.Current.iniTmpFile, true);
-			mainForm.toolStripStatusLabel1.Text = "Settings saved";
+			mainForm.StatusTimerLabel.Text = "Settings saved";
 			mainForm.UpdateTimer.Start();
 		}
 

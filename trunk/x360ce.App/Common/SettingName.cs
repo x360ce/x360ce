@@ -50,10 +50,12 @@ namespace x360ce.App
 		public const string Log = "Log";
 		[DefaultValue("0"), Description("Use 0 to 1; creates console log window.")]
 		public const string Console = "Console";
-		[DefaultValue("http://www.x360ce.com/webservices/x360ce.asmx"), Description("Online settings database URL.")]
-		public const string OnlineDatabaseUrl = "OnlineDatabaseUrl";
-		[DefaultValue("0"), Description("Online features: 0 - Disable; 1 - Enable.")]
-		public const string OnlineFeatures = "OnlineFeatures";
+		[DefaultValue("http://www.x360ce.com/webservices/x360ce.asmx"), Description("Internet settings database URL.")]
+		public const string InternetDatabaseUrl = "InternetDatabaseUrl";
+		[DefaultValue("0"), Description("Internet features: 0 - Disable; 1 - Enable.")]
+		public const string InternetFeatures = "InternetFeatures";
+		[DefaultValue("1"), Description("Autoload settings when Internet Settings tab is selected: 0 - Disable; 1 - Enable.")]
+		public const string InternetAutoload = "InternetAutoload";
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
