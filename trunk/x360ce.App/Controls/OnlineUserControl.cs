@@ -445,9 +445,9 @@ namespace x360ce.App.Controls
 				var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
 				mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, name), MessageBoxIcon.Information);
 				// Save setting and notify if vaue changed.
-				if (SettingManager.Current.SaveSettings()) MainForm.Current.NotifySettingsChange();
-
-
+				SettingManager.Current.SaveSettings();
+				MainForm.Current.NotifySettingsChange();
+				mainForm.UpdateTimer.Start();
 			}
 		}
 
