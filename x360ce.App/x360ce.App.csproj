@@ -123,6 +123,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DeviceDetector.cs" />
+    <Compile Include="Common\DeviceDetectorEventArgs.cs" />
+    <Compile Include="Common\DeviceDetectorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\DeviceDetectorForm.Designer.cs">
+      <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ExtensionAttribute.cs" />
+    <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
@@ -160,6 +170,12 @@
       <DependentUpon>LoadingCircle.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoadingCircleToolStripMenuItem.cs" />
+    <Compile Include="Controls\MessageBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MessageBoxForm.Designer.cs">
+      <DependentUpon>MessageBoxForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NewDeviceForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -270,14 +286,24 @@
     <Compile Include="Common\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Win32\WM_DEVICECHANGE.cs" />
+    <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
+      <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DirectInputControl.resx">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\KeyboardControl.resx">
       <DependentUpon>KeyboardControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MessageBoxForm.resx">
+      <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\NewDeviceForm.resx">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
@@ -295,7 +321,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -338,6 +364,8 @@
     </Compile>
     <Compile Include="Win32\BIND_OPTS3.cs" />
     <Compile Include="Win32\CLSCTX.cs" />
+    <Compile Include="Win32\DEV_BROADCAST_HANDLE.cs" />
+    <Compile Include="Win32\DEV_BROADCAST_VOLUME.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Win32\SafeLibraryHandle.cs" />
     <Compile Include="Win32\SafeTokenHandle.cs" />
@@ -393,6 +421,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Information.ico" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question.ico" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
+    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <Content Include="Images\app_48x48.png" />
     <None Include="Images\delete_16x16.png" />
     <None Include="Images\empty_16x16.png" />
@@ -403,6 +439,7 @@
     <None Include="Images\arrow_right_16x16.png" />
     <None Include="Images\check_16x16.png" />
     <None Include="Images\check_disabled_16x16.png" />
+    <Content Include="Images\tip_24x24.png" />
     <Content Include="Presets\ReadMe.txt" />
     <None Include="Web References\com.x360ce.localhost\x360ce.disco" />
     <EmbeddedResource Include="Images\MarkController.png" />

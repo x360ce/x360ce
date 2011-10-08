@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class OnlineUserControl
+	partial class InternetUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -35,14 +35,14 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.SettingsDataGridView = new System.Windows.Forms.DataGridView();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyControllerColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ControllerComboBox = new System.Windows.Forms.ComboBox();
-			this.OnlineDatabaseUrlTextBox = new System.Windows.Forms.TextBox();
+			this.InternetDatabaseUrlTextBox = new System.Windows.Forms.TextBox();
 			this.ControllerLabel = new System.Windows.Forms.Label();
 			this.GameComboBox = new System.Windows.Forms.ComboBox();
 			this.GameLabel = new System.Windows.Forms.Label();
@@ -50,9 +50,9 @@
 			this.CommentLabel = new System.Windows.Forms.Label();
 			this.CommentSelectedTextBox = new System.Windows.Forms.TextBox();
 			this.SettingsListTabControl = new System.Windows.Forms.TabControl();
-			this.MySettingsTabPage = new System.Windows.Forms.TabPage();
-			this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
-			this.GlobalSettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.SettingsTabPage = new System.Windows.Forms.TabPage();
+			this.SummariesTabPage = new System.Windows.Forms.TabPage();
+			this.SummariesDataGridView = new System.Windows.Forms.DataGridView();
 			this.SidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,30 +62,30 @@
 			this.LoadButton = new System.Windows.Forms.Button();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.RefreshButton = new System.Windows.Forms.Button();
-			((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).BeginInit();
 			this.SettingsListTabControl.SuspendLayout();
-			this.MySettingsTabPage.SuspendLayout();
-			this.GlobalSettingsTabPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).BeginInit();
+			this.SettingsTabPage.SuspendLayout();
+			this.SummariesTabPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// MySettingsDataGridView
+			// SettingsDataGridView
 			// 
-			this.MySettingsDataGridView.AllowUserToAddRows = false;
-			this.MySettingsDataGridView.AllowUserToDeleteRows = false;
-			this.MySettingsDataGridView.AllowUserToResizeRows = false;
-			this.MySettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.MySettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.MySettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.SettingsDataGridView.AllowUserToAddRows = false;
+			this.SettingsDataGridView.AllowUserToDeleteRows = false;
+			this.SettingsDataGridView.AllowUserToResizeRows = false;
+			this.SettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.SettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.SettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MySettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-			this.MySettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.MySettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.SettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.SettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.SettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MyIconColumn,
             this.MySidColumn,
             this.MyControllerColumn,
@@ -98,13 +98,13 @@
 			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MySettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
-			this.MySettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MySettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.MySettingsDataGridView.Location = new System.Drawing.Point(0, 0);
-			this.MySettingsDataGridView.MultiSelect = false;
-			this.MySettingsDataGridView.Name = "MySettingsDataGridView";
-			this.MySettingsDataGridView.ReadOnly = true;
+			this.SettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+			this.SettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 0);
+			this.SettingsDataGridView.MultiSelect = false;
+			this.SettingsDataGridView.Name = "SettingsDataGridView";
+			this.SettingsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -112,14 +112,14 @@
 			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MySettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-			this.MySettingsDataGridView.RowHeadersVisible = false;
-			this.MySettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.MySettingsDataGridView.Size = new System.Drawing.Size(592, 251);
-			this.MySettingsDataGridView.TabIndex = 0;
-			this.MySettingsDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MySettingsDataGridView_CellContentDoubleClick);
-			this.MySettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MySettingsDataGridView_CellFormatting);
-			this.MySettingsDataGridView.SelectionChanged += new System.EventHandler(this.MySettingsDataGridView_SelectionChanged);
+			this.SettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.SettingsDataGridView.RowHeadersVisible = false;
+			this.SettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.SettingsDataGridView.Size = new System.Drawing.Size(592, 251);
+			this.SettingsDataGridView.TabIndex = 0;
+			this.SettingsDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SettingsDataGridView_CellContentDoubleClick);
+			this.SettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
+			this.SettingsDataGridView.SelectionChanged += new System.EventHandler(this.SettingsDataGridView_SelectionChanged);
 			// 
 			// MyIconColumn
 			// 
@@ -179,15 +179,16 @@
 			this.ControllerComboBox.TabIndex = 2;
 			this.ControllerComboBox.SelectedIndexChanged += new System.EventHandler(this.ControllerComboBox_SelectedIndexChanged);
 			// 
-			// OnlineDatabaseUrlTextBox
+			// InternetDatabaseUrlTextBox
 			// 
-			this.OnlineDatabaseUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.InternetDatabaseUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.OnlineDatabaseUrlTextBox.Location = new System.Drawing.Point(3, 73);
-			this.OnlineDatabaseUrlTextBox.Name = "OnlineDatabaseUrlTextBox";
-			this.OnlineDatabaseUrlTextBox.ReadOnly = true;
-			this.OnlineDatabaseUrlTextBox.Size = new System.Drawing.Size(438, 20);
-			this.OnlineDatabaseUrlTextBox.TabIndex = 12;
+			this.InternetDatabaseUrlTextBox.Location = new System.Drawing.Point(3, 73);
+			this.InternetDatabaseUrlTextBox.Name = "InternetDatabaseUrlTextBox";
+			this.InternetDatabaseUrlTextBox.ReadOnly = true;
+			this.InternetDatabaseUrlTextBox.Size = new System.Drawing.Size(438, 20);
+			this.InternetDatabaseUrlTextBox.TabIndex = 12;
+			this.InternetDatabaseUrlTextBox.DoubleClick += new System.EventHandler(this.InternetDatabaseUrlTextBox_DoubleClick);
 			// 
 			// ControllerLabel
 			// 
@@ -252,51 +253,52 @@
 			this.SettingsListTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.SettingsListTabControl.Controls.Add(this.MySettingsTabPage);
-			this.SettingsListTabControl.Controls.Add(this.GlobalSettingsTabPage);
+			this.SettingsListTabControl.Controls.Add(this.SettingsTabPage);
+			this.SettingsListTabControl.Controls.Add(this.SummariesTabPage);
 			this.SettingsListTabControl.Location = new System.Drawing.Point(3, 99);
 			this.SettingsListTabControl.Name = "SettingsListTabControl";
 			this.SettingsListTabControl.SelectedIndex = 0;
 			this.SettingsListTabControl.Size = new System.Drawing.Size(600, 277);
 			this.SettingsListTabControl.TabIndex = 18;
+			this.SettingsListTabControl.SelectedIndexChanged += new System.EventHandler(this.SettingsListTabControl_SelectedIndexChanged);
 			// 
-			// MySettingsTabPage
+			// SettingsTabPage
 			// 
-			this.MySettingsTabPage.Controls.Add(this.MySettingsDataGridView);
-			this.MySettingsTabPage.Location = new System.Drawing.Point(4, 22);
-			this.MySettingsTabPage.Name = "MySettingsTabPage";
-			this.MySettingsTabPage.Size = new System.Drawing.Size(592, 251);
-			this.MySettingsTabPage.TabIndex = 0;
-			this.MySettingsTabPage.Text = "My Settings";
-			this.MySettingsTabPage.UseVisualStyleBackColor = true;
+			this.SettingsTabPage.Controls.Add(this.SettingsDataGridView);
+			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SettingsTabPage.Name = "SettingsTabPage";
+			this.SettingsTabPage.Size = new System.Drawing.Size(592, 251);
+			this.SettingsTabPage.TabIndex = 0;
+			this.SettingsTabPage.Text = "My Settings";
+			this.SettingsTabPage.UseVisualStyleBackColor = true;
 			// 
-			// GlobalSettingsTabPage
+			// SummariesTabPage
 			// 
-			this.GlobalSettingsTabPage.Controls.Add(this.GlobalSettingsDataGridView);
-			this.GlobalSettingsTabPage.Location = new System.Drawing.Point(4, 22);
-			this.GlobalSettingsTabPage.Name = "GlobalSettingsTabPage";
-			this.GlobalSettingsTabPage.Size = new System.Drawing.Size(592, 251);
-			this.GlobalSettingsTabPage.TabIndex = 1;
-			this.GlobalSettingsTabPage.Text = "Global Settings";
-			this.GlobalSettingsTabPage.UseVisualStyleBackColor = true;
+			this.SummariesTabPage.Controls.Add(this.SummariesDataGridView);
+			this.SummariesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SummariesTabPage.Name = "SummariesTabPage";
+			this.SummariesTabPage.Size = new System.Drawing.Size(592, 251);
+			this.SummariesTabPage.TabIndex = 1;
+			this.SummariesTabPage.Text = "Global Settings";
+			this.SummariesTabPage.UseVisualStyleBackColor = true;
 			// 
-			// GlobalSettingsDataGridView
+			// SummariesDataGridView
 			// 
-			this.GlobalSettingsDataGridView.AllowUserToAddRows = false;
-			this.GlobalSettingsDataGridView.AllowUserToDeleteRows = false;
-			this.GlobalSettingsDataGridView.AllowUserToResizeRows = false;
-			this.GlobalSettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.GlobalSettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.GlobalSettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.SummariesDataGridView.AllowUserToAddRows = false;
+			this.SummariesDataGridView.AllowUserToDeleteRows = false;
+			this.SummariesDataGridView.AllowUserToResizeRows = false;
+			this.SummariesDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.SummariesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.SummariesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GlobalSettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-			this.GlobalSettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.GlobalSettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.SummariesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			this.SummariesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.SummariesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.SidColumn,
             this.dataGridViewTextBoxColumn1,
             this.dataGridViewTextBoxColumn2,
@@ -309,13 +311,13 @@
 			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.GlobalSettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
-			this.GlobalSettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.GlobalSettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.GlobalSettingsDataGridView.Location = new System.Drawing.Point(0, 0);
-			this.GlobalSettingsDataGridView.MultiSelect = false;
-			this.GlobalSettingsDataGridView.Name = "GlobalSettingsDataGridView";
-			this.GlobalSettingsDataGridView.ReadOnly = true;
+			this.SummariesDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
+			this.SummariesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SummariesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+			this.SummariesDataGridView.Location = new System.Drawing.Point(0, 0);
+			this.SummariesDataGridView.MultiSelect = false;
+			this.SummariesDataGridView.Name = "SummariesDataGridView";
+			this.SummariesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -323,13 +325,14 @@
 			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GlobalSettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
-			this.GlobalSettingsDataGridView.RowHeadersVisible = false;
-			this.GlobalSettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.GlobalSettingsDataGridView.Size = new System.Drawing.Size(592, 251);
-			this.GlobalSettingsDataGridView.TabIndex = 1;
-			this.GlobalSettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GlobalSettingsDataGridView_CellFormatting);
-			this.GlobalSettingsDataGridView.SelectionChanged += new System.EventHandler(this.GlobalSettingsDataGridView_SelectionChanged);
+			this.SummariesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+			this.SummariesDataGridView.RowHeadersVisible = false;
+			this.SummariesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.SummariesDataGridView.Size = new System.Drawing.Size(592, 251);
+			this.SummariesDataGridView.TabIndex = 1;
+			this.SummariesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SummariesDataGridView_CellFormatting);
+			this.SummariesDataGridView.SelectionChanged += new System.EventHandler(this.SummariesDataGridView_SelectionChanged);
+			this.SummariesDataGridView.DoubleClick += new System.EventHandler(this.SummariesDataGridView_DoubleClick);
 			// 
 			// SidColumn
 			// 
@@ -428,14 +431,14 @@
 			this.RefreshButton.UseVisualStyleBackColor = true;
 			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
 			// 
-			// OnlineUserControl
+			// InternetUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.SettingsListTabControl);
 			this.Controls.Add(this.CommentSelectedTextBox);
 			this.Controls.Add(this.CommentTextBox);
-			this.Controls.Add(this.OnlineDatabaseUrlTextBox);
+			this.Controls.Add(this.InternetDatabaseUrlTextBox);
 			this.Controls.Add(this.GameLabel);
 			this.Controls.Add(this.ControllerLabel);
 			this.Controls.Add(this.CommentLabel);
@@ -445,15 +448,15 @@
 			this.Controls.Add(this.LoadButton);
 			this.Controls.Add(this.SaveButton);
 			this.Controls.Add(this.RefreshButton);
-			this.Name = "OnlineUserControl";
+			this.Name = "InternetUserControl";
 			this.Size = new System.Drawing.Size(606, 405);
-			this.Load += new System.EventHandler(this.OnlineUserControl_Load);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnlineUserControl_KeyDown);
-			((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).EndInit();
+			this.Load += new System.EventHandler(this.InternetUserControl_Load);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InternetUserControl_KeyDown);
+			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).EndInit();
 			this.SettingsListTabControl.ResumeLayout(false);
-			this.MySettingsTabPage.ResumeLayout(false);
-			this.GlobalSettingsTabPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).EndInit();
+			this.SettingsTabPage.ResumeLayout(false);
+			this.SummariesTabPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -461,7 +464,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView MySettingsDataGridView;
+		private System.Windows.Forms.DataGridView SettingsDataGridView;
 		private System.Windows.Forms.Button RefreshButton;
 		private System.Windows.Forms.Button SaveButton;
 		private System.Windows.Forms.Button LoadButton;
@@ -472,12 +475,12 @@
 		private System.Windows.Forms.Button DeleteButton;
 		private System.Windows.Forms.TextBox CommentTextBox;
 		private System.Windows.Forms.Label CommentLabel;
-		public System.Windows.Forms.TextBox OnlineDatabaseUrlTextBox;
+		public System.Windows.Forms.TextBox InternetDatabaseUrlTextBox;
 		private System.Windows.Forms.TextBox CommentSelectedTextBox;
 		private System.Windows.Forms.TabControl SettingsListTabControl;
-		private System.Windows.Forms.TabPage MySettingsTabPage;
-		private System.Windows.Forms.TabPage GlobalSettingsTabPage;
-		private System.Windows.Forms.DataGridView GlobalSettingsDataGridView;
+		private System.Windows.Forms.TabPage SettingsTabPage;
+		private System.Windows.Forms.TabPage SummariesTabPage;
+		private System.Windows.Forms.DataGridView SummariesDataGridView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;

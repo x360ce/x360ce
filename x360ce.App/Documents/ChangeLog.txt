@@ -1,6 +1,18 @@
-﻿v2.0.2.136 (2011-10-04)
+﻿v2.0.2.154 (2011-10-08)
+- Fix: Application will become visible before checking for missing files.
+- Fix: XInput library will be re-loaded after loading settings for new device.
+- Fix: Internet Database buttons now will disable/enable itself properly.
+- Fix: Loading settings from internet.
+- New: Confirmation box on setting deletion from Internet Settings Database.
+- Update: Updated device insertion and removal method which reduced CPU usage.
+- Update: Other parts of code were optimized to use less CPU resources.
 - Update: Sortable grids.
-
+- Update: Message box updated.
+- Update: Some icons were updated.
+- Update: "Search the Internet" CheckBox was added to "New Device Detected" wizard.
+- Update: Internet features are now enabled by default.
+- Update: Application option names for Internet settings were renamed.
+- Update: Internet Database URL TextBox allows to edit URL on double click.
 
 v2.0.2.132 (2011-10-04)
 - Update: Code optimizations.

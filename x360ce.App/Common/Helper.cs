@@ -6,6 +6,7 @@ using System.IO;
 using System.Drawing;
 using Microsoft.DirectX.DirectInput;
 using System.Text.RegularExpressions;
+using x360ce.App.com.x360ce.localhost;
 
 namespace x360ce.App
 {

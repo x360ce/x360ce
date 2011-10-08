@@ -22,7 +22,7 @@ namespace x360ce.App.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace x360ce.App.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("x360ce.App.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace x360ce.App.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -60,105 +60,133 @@ namespace x360ce.App.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap app_128x128 {
+        public static System.Drawing.Bitmap app_128x128 {
             get {
                 object obj = ResourceManager.GetObject("app_128x128", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap arrow_right_16x16 {
+        public static System.Drawing.Bitmap arrow_right_16x16 {
             get {
                 object obj = ResourceManager.GetObject("arrow_right_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap check_16x16 {
+        public static System.Drawing.Bitmap check_16x16 {
             get {
                 object obj = ResourceManager.GetObject("check_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap check_disabled_16x16 {
+        public static System.Drawing.Bitmap check_disabled_16x16 {
             get {
                 object obj = ResourceManager.GetObject("check_disabled_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap delete_16x16 {
+        public static System.Drawing.Bitmap delete_16x16 {
             get {
                 object obj = ResourceManager.GetObject("delete_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap empty_16x16 {
+        public static System.Drawing.Bitmap empty_16x16 {
             get {
                 object obj = ResourceManager.GetObject("empty_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap load_16x16 {
+        public static System.Drawing.Bitmap load_16x16 {
             get {
                 object obj = ResourceManager.GetObject("load_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap refresh_16x16 {
+        public static System.Drawing.Bitmap MessageBoxIcon_Error_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("MessageBoxIcon_Error_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap MessageBoxIcon_Information_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("MessageBoxIcon_Information_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap MessageBoxIcon_Question_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("MessageBoxIcon_Question_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap MessageBoxIcon_Warning_32x32 {
+            get {
+                object obj = ResourceManager.GetObject("MessageBoxIcon_Warning_32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap refresh_16x16 {
             get {
                 object obj = ResourceManager.GetObject("refresh_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap save_16x16 {
+        public static System.Drawing.Bitmap save_16x16 {
             get {
                 object obj = ResourceManager.GetObject("save_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap save_add_16x16 {
+        public static System.Drawing.Bitmap save_add_16x16 {
             get {
                 object obj = ResourceManager.GetObject("save_add_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap xboxControllerDPad {
+        public static System.Drawing.Bitmap xboxControllerDPad {
             get {
                 object obj = ResourceManager.GetObject("xboxControllerDPad", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap xboxControllerLeftThumbstick {
+        public static System.Drawing.Bitmap xboxControllerLeftThumbstick {
             get {
                 object obj = ResourceManager.GetObject("xboxControllerLeftThumbstick", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap xboxControllerLeftTrigger {
+        public static System.Drawing.Bitmap xboxControllerLeftTrigger {
             get {
                 object obj = ResourceManager.GetObject("xboxControllerLeftTrigger", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap xboxControllerRightThumbstick {
+        public static System.Drawing.Bitmap xboxControllerRightThumbstick {
             get {
                 object obj = ResourceManager.GetObject("xboxControllerRightThumbstick", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap xboxControllerRightTrigger {
+        public static System.Drawing.Bitmap xboxControllerRightTrigger {
             get {
                 object obj = ResourceManager.GetObject("xboxControllerRightTrigger", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

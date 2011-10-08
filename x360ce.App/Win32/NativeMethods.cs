@@ -48,13 +48,39 @@ namespace x360ce.App.Win32
 		#region user32
 
 		/// <summary>
-		/// API used to send a message to another window
+		/// Sends the specified message to a window or windows.
 		/// </summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+		/// <summary>
+		/// Sends the specified message to a window or windows.
+		/// </summary>
+		/// <param name="hWnd"></param>
+		/// <param name="Msg"></param>
+		/// <param name="wParam"></param>
+		/// <param name="lParam"></param>
+		/// <returns></returns>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr SendMessage(HandleRef hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+		/// <summary>
+		/// Registers the device or type of device for which a window will receive notifications.
+		/// </summary>
+		/// <param name="hRecipient">A handle to the window or service that will receive device events for the devices specified in the NotificationFilter parameter.</param>
+		/// <param name="NotificationFilter">A pointer to a block of data that specifies the type of device for which notifications should be sent.</param>
+		/// <param name="Flags">This parameter can be one of the following values.</param>
+		/// <returns>If the function succeeds, the return value is a device notification handle. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, uint Flags);
+
+		/// <summary>
+		/// Closes the specified device notification handle.
+		/// </summary>
+		/// <param name="Handle">Device notification handle returned by the RegisterDeviceNotification function.</param>
+		/// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		public static extern uint UnregisterDeviceNotification(IntPtr Handle);
 
 		#endregion
 
