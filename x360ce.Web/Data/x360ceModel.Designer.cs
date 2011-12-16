@@ -128,6 +128,22 @@ namespace x360ce.Web.Data
             }
         }
         private ObjectSet<Summary> _Summaries;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Vendor> Vendors
+        {
+            get
+            {
+                if ((_Vendors == null))
+                {
+                    _Vendors = base.CreateObjectSet<Vendor>("Vendors");
+                }
+                return _Vendors;
+            }
+        }
+        private ObjectSet<Vendor> _Vendors;
 
         #endregion
         #region AddTo Methods
@@ -162,6 +178,14 @@ namespace x360ce.Web.Data
         public void AddToSummaries(Summary summary)
         {
             base.AddObject("Summaries", summary);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Vendors EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToVendors(Vendor vendor)
+        {
+            base.AddObject("Vendors", vendor);
         }
 
         #endregion
@@ -2259,6 +2283,139 @@ namespace x360ce.Web.Data
         private global::System.DateTime _DateUpdated;
         partial void OnDateUpdatedChanging(global::System.DateTime value);
         partial void OnDateUpdatedChanged();
+
+        #endregion
+    
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="Vendor")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Vendor : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Vendor object.
+        /// </summary>
+        /// <param name="vendorId">Initial value of the VendorId property.</param>
+        /// <param name="vendorName">Initial value of the VendorName property.</param>
+        /// <param name="shortName">Initial value of the ShortName property.</param>
+        /// <param name="webSite">Initial value of the WebSite property.</param>
+        public static Vendor CreateVendor(global::System.Int32 vendorId, global::System.String vendorName, global::System.String shortName, global::System.String webSite)
+        {
+            Vendor vendor = new Vendor();
+            vendor.VendorId = vendorId;
+            vendor.VendorName = vendorName;
+            vendor.ShortName = shortName;
+            vendor.WebSite = webSite;
+            return vendor;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 VendorId
+        {
+            get
+            {
+                return _VendorId;
+            }
+            set
+            {
+                if (_VendorId != value)
+                {
+                    OnVendorIdChanging(value);
+                    ReportPropertyChanging("VendorId");
+                    _VendorId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("VendorId");
+                    OnVendorIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _VendorId;
+        partial void OnVendorIdChanging(global::System.Int32 value);
+        partial void OnVendorIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String VendorName
+        {
+            get
+            {
+                return _VendorName;
+            }
+            set
+            {
+                OnVendorNameChanging(value);
+                ReportPropertyChanging("VendorName");
+                _VendorName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("VendorName");
+                OnVendorNameChanged();
+            }
+        }
+        private global::System.String _VendorName;
+        partial void OnVendorNameChanging(global::System.String value);
+        partial void OnVendorNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ShortName
+        {
+            get
+            {
+                return _ShortName;
+            }
+            set
+            {
+                OnShortNameChanging(value);
+                ReportPropertyChanging("ShortName");
+                _ShortName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ShortName");
+                OnShortNameChanged();
+            }
+        }
+        private global::System.String _ShortName;
+        partial void OnShortNameChanging(global::System.String value);
+        partial void OnShortNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String WebSite
+        {
+            get
+            {
+                return _WebSite;
+            }
+            set
+            {
+                OnWebSiteChanging(value);
+                ReportPropertyChanging("WebSite");
+                _WebSite = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("WebSite");
+                OnWebSiteChanged();
+            }
+        }
+        private global::System.String _WebSite;
+        partial void OnWebSiteChanging(global::System.String value);
+        partial void OnWebSiteChanged();
 
         #endregion
     
