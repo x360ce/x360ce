@@ -182,6 +182,21 @@ namespace x360ce.Web.WebServices
 			return sr;
 		}
 
+		[WebMethod]
+		public List<Vendor> GetVendors()
+		{
+			var db = new Data.x360ceModelContainer();
+			var q = from row in db.Vendors
+					select new Vendor
+					{
+						VendorId = row.VendorId,
+						VendorName = row.VendorName,
+						ShortName = row.ShortName,
+						WebSite = row.WebSite
+					};
+			return q.ToList();
+		}
+
 
 	}
 

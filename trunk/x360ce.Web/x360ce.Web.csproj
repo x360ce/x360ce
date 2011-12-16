@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -71,7 +72,9 @@
   <ItemGroup>
     <Compile Include="Common\SearchParameter.cs" />
     <Compile Include="Common\SearchResult.cs" />
+    <Compile Include="Common\Vendor.cs" />
     <Compile Include="Data\PadSetting.cs" />
+    <Compile Include="Data\Vendor.cs" />
     <Compile Include="Data\x360ceModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

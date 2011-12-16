@@ -10,6 +10,7 @@
           <EntitySet Name="x360ce_Products" EntityType="x360ceModel.Store.x360ce_Products" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="x360ce_Settings" EntityType="x360ceModel.Store.x360ce_Settings" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="x360ce_Summaries" EntityType="x360ceModel.Store.x360ce_Summaries" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Vendors" EntityType="x360ceModel.Store.x360ce_Vendors" store:Type="Tables" Schema="dbo" />
         </EntityContainer>
         <EntityType Name="x360ce_PadSettings">
           <Key>
@@ -107,6 +108,15 @@
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="x360ce_Vendors">
+          <Key>
+            <PropertyRef Name="VendorId" />
+          </Key>
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="VendorName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="ShortName" Type="nvarchar" Nullable="false" MaxLength="32" />
+          <Property Name="WebSite" Type="nvarchar" Nullable="false" MaxLength="256" />
+        </EntityType>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -116,6 +126,7 @@
           <EntitySet Name="Settings" EntityType="x360ceModel.Setting" />
           <EntitySet Name="Products" EntityType="x360ceModel.Product" />
           <EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
+          <EntitySet Name="Vendors" EntityType="x360ceModel.Vendor" />
         </EntityContainer>
         <EntityType Name="PadSetting">
           <Key>
@@ -212,6 +223,15 @@
           <Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="DateCreated" Nullable="false" />
           <Property Type="DateTime" Name="DateUpdated" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="VendorId" />
+          </Key>
+          <Property Type="Int32" Name="VendorId" Nullable="false" />
+          <Property Type="String" Name="VendorName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ShortName" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="WebSite" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -321,6 +341,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="x360ceModel.Vendor">
+              <MappingFragment StoreEntitySet="x360ce_Vendors">
+                <ScalarProperty Name="WebSite" ColumnName="WebSite" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -341,11 +371,12 @@
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram Name="x360ceModel" ZoomLevel="88" >
+      <Diagram Name="x360ceModel" ZoomLevel="70" >
         <EntityTypeShape EntityType="x360ceModel.PadSetting" Width="1.5" PointX="0.5" PointY="0.5" Height="10.82615234375" />
         <EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="3.375" PointY="0.75" Height="3.5186979166666656" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="5.375" PointY="0.75" Height="1.4033821614583326" />
         <EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="5.375" PointY="3.75" Height="2.7494921874999996" />
+        <EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.375" PointY="0.75" Height="1.7879850260416674" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
