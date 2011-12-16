@@ -1,4 +1,7 @@
-﻿v2.0.2.156 (2011-10-08)
+﻿v2.0.2.158 (2011-12-16)
+- Update: DLL and EXE signed with updated digital certificate.
+
+v2.0.2.156 (2011-10-08)
 - Fix: Other bug related to loading settings from internet.
 
 v2.0.2.154 (2011-10-08)
