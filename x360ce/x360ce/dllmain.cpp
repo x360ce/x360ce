@@ -32,118 +32,127 @@ HWND g_hWnd = NULL;
 
 void LoadSystemXInputDLL()
 {
-	WCHAR sysdir[MAX_PATH];
-	WCHAR buffer[MAX_PATH];
+    WCHAR sysdir[MAX_PATH];
+    WCHAR buffer[MAX_PATH];
 
-	// Getting path to system dir and to xinput1_3.dll
-	GetSystemDirectory(sysdir,MAX_PATH);
+    // Getting path to system dir and to xinput1_3.dll
+    GetSystemDirectory(sysdir,MAX_PATH);
 
-	// Append dll name
-	//wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
-	swprintf_s(buffer,L"%s\\%s",sysdir,DLLFileName(g_hX360ceInstance));
+    // Append dll name
+    //wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
+    swprintf_s(buffer,L"%s\\%s",sysdir,DLLFileName(g_hX360ceInstance));
 
-	// try to load the system's xinput dll, if pointer empty
-	WriteLog(LOG_CORE,L"Loading %s",buffer);
-	if (!g_hNativeInstance) g_hNativeInstance = LoadLibrary(buffer);
+    // try to load the system's xinput dll, if pointer empty
+    WriteLog(LOG_CORE,L"Loading %s",buffer);
 
-	//Debug
-	if (!g_hNativeInstance) {
-		WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
-		WriteLog(LOG_CORE,L"x360ce will exit now!!!");
-		ExitProcess(1); // exit the hard way
-	}
-	else if(bInitBeep) MessageBeep(MB_ICONASTERISK);
+    if (!g_hNativeInstance) g_hNativeInstance = LoadLibrary(buffer);
+
+    //Debug
+    if (!g_hNativeInstance)
+    {
+        WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
+        WriteLog(LOG_CORE,L"x360ce will exit now!!!");
+        ExitProcess(1); // exit the hard way
+    }
+    else if(bInitBeep) MessageBeep(MB_ICONASTERISK);
 }
 
 SHORT ConfiguredPadCount()
 {
-	SHORT configuredpads = 0;
-	for(int i = 0; i < 4; i++)
-	{
-		if(g_Gamepad[i].configured) ++configuredpads;
-	}
-	return configuredpads;
+    SHORT configuredpads = 0;
+
+    for(int i = 0; i < 4; i++)
+    {
+        if(g_Gamepad[i].configured) ++configuredpads;
+    }
+
+    return configuredpads;
 }
 
 VOID InstallInputHooks()
 {
-	x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
+    x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
 
-	if(x360ce_InputHookConfig.bEnabled) {
+    if(x360ce_InputHookConfig.bEnabled)
+    {
 
-		for(WORD i = 0; i < 4; i++)
-		{
-			x360ce_InputHookGamepadConfig[i].bEnabled = g_Gamepad[i].configured;
-			x360ce_InputHookGamepadConfig[i].productGUID = g_Gamepad[i].productGUID;
-			x360ce_InputHookGamepadConfig[i].instanceGUID = g_Gamepad[i].instanceGUID;
-		}
-	}
-	InputHook_Init( &x360ce_InputHookConfig,  x360ce_InputHookGamepadConfig);
+        for(WORD i = 0; i < 4; i++)
+        {
+            x360ce_InputHookGamepadConfig[i].bEnabled = g_Gamepad[i].configured;
+            x360ce_InputHookGamepadConfig[i].productGUID = g_Gamepad[i].productGUID;
+            x360ce_InputHookGamepadConfig[i].instanceGUID = g_Gamepad[i].instanceGUID;
+        }
+    }
+
+    InputHook_Init( &x360ce_InputHookConfig,  x360ce_InputHookGamepadConfig);
 }
 
-VOID InitInstance(HINSTANCE hinstDLL) 
+VOID InitInstance(HINSTANCE hinstDLL)
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	int CurrentFlags;
-	CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-	CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
-	CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
-	CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
-	_CrtSetDbgFlag(CurrentFlags);
+    int CurrentFlags;
+    CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+    CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
+    CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
+    CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
+    _CrtSetDbgFlag(CurrentFlags);
 #endif
 
-	g_hX360ceInstance =  hinstDLL;
-	DWORD dwAppPID = GetCurrentProcessId();
-	SetIniFileName(L"x360ce.ini");
-	ReadConfig();
-	Console();
-	LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
+    g_hX360ceInstance =  hinstDLL;
+    DWORD dwAppPID = GetCurrentProcessId();
+    SetIniFileName(L"x360ce.ini");
+    ReadConfig();
+    Console();
+    LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
 
-	WriteStamp();
+    WriteStamp();
 
-#if SVN_MODS != 0 
-	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
-#else 
-	WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
+#if SVN_MODS != 0
+    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
+#else
+    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
 #endif
 
-	WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
+    WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
-	InstallInputHooks();
+    InstallInputHooks();
 }
 
-VOID ExitInstance() 
-{   
-	InputHook_Clean();
-
-	if (g_hNativeInstance) {
-		FreeLibrary(g_hNativeInstance); 
-		g_hNativeInstance = NULL; 
-	}
-
-	if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
-	g_hWnd = NULL;
-	UnregisterClass(L"x360ceWClass",g_hX360ceInstance);
-
-	WriteLog(LOG_CORE,L"x360ce terminating, bye");
-
-	LogCleanup();
-	IniCleanup();
-}
-
-extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
+VOID ExitInstance()
 {
-	UNREFERENCED_PARAMETER(lpReserved);
+    InputHook_Clean();
 
-	switch( fdwReason ) 
-	{ 
-	case DLL_PROCESS_ATTACH:
-		InitInstance(hinstDLL);
-		break;
+    if (g_hNativeInstance)
+    {
+        FreeLibrary(g_hNativeInstance);
+        g_hNativeInstance = NULL;
+    }
 
-	case DLL_PROCESS_DETACH:
-		ExitInstance();
-		break;
-	}
-	return TRUE;
+    if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
+
+    g_hWnd = NULL;
+    UnregisterClass(L"x360ceWClass",g_hX360ceInstance);
+
+    WriteLog(LOG_CORE,L"x360ce terminating, bye");
+
+    LogCleanup();
+    IniCleanup();
+}
+
+extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
+{
+    UNREFERENCED_PARAMETER(lpReserved);
+
+    switch( fdwReason )
+    {
+    case DLL_PROCESS_ATTACH:
+        InitInstance(hinstDLL);
+        break;
+
+    case DLL_PROCESS_DETACH:
+        ExitInstance();
+        break;
+    }
+
+    return TRUE;
 }

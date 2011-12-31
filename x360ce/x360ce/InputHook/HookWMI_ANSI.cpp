@@ -35,45 +35,45 @@
 
 typedef void (WINAPI *tCoUninitializeA)();
 
-typedef HRESULT (WINAPI *tCoCreateInstanceA)(__in     REFCLSID rclsid, 
-									  __in_opt LPUNKNOWN pUnkOuter,
-									  __in     DWORD dwClsContext, 
-									  __in     REFIID riid, 
-									  __deref_out LPVOID FAR* ppv);
+typedef HRESULT (WINAPI *tCoCreateInstanceA)(__in     REFCLSID rclsid,
+        __in_opt LPUNKNOWN pUnkOuter,
+        __in     DWORD dwClsContext,
+        __in     REFIID riid,
+        __deref_out LPVOID FAR* ppv);
 
 
-typedef HRESULT ( STDMETHODCALLTYPE *tConnectServerA )( 
-	IWbemLocator * This,
-	/* [in] */ const BSTR strNetworkResource,
-	/* [in] */ const BSTR strUser,
-	/* [in] */ const BSTR strPassword,
-	/* [in] */ const BSTR strLocale,
-	/* [in] */ long lSecurityFlags,
-	/* [in] */ const BSTR strAuthority,
-	/* [in] */ IWbemContext *pCtx,
-	/* [out] */ IWbemServices **ppNamespace);
+typedef HRESULT ( STDMETHODCALLTYPE *tConnectServerA )(
+    IWbemLocator * This,
+    /* [in] */ const BSTR strNetworkResource,
+    /* [in] */ const BSTR strUser,
+    /* [in] */ const BSTR strPassword,
+    /* [in] */ const BSTR strLocale,
+    /* [in] */ long lSecurityFlags,
+    /* [in] */ const BSTR strAuthority,
+    /* [in] */ IWbemContext *pCtx,
+    /* [out] */ IWbemServices **ppNamespace);
 
-typedef HRESULT ( STDMETHODCALLTYPE *tCreateInstanceEnumA )( 
-	IWbemServices * This,
-	/* [in] */ __RPC__in const BSTR strFilter,
-	/* [in] */ long lFlags,
-	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
-	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum);
+typedef HRESULT ( STDMETHODCALLTYPE *tCreateInstanceEnumA )(
+    IWbemServices * This,
+    /* [in] */ __RPC__in const BSTR strFilter,
+    /* [in] */ long lFlags,
+    /* [in] */ __RPC__in_opt IWbemContext *pCtx,
+    /* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum);
 
-typedef HRESULT ( STDMETHODCALLTYPE *tNextA )( 
-									   IEnumWbemClassObject * This,
-									   /* [in] */ long lTimeout,
-									   /* [in] */ ULONG uCount,
-									   /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
-									   /* [out] */ __RPC__out ULONG *puReturned);
+typedef HRESULT ( STDMETHODCALLTYPE *tNextA )(
+    IEnumWbemClassObject * This,
+    /* [in] */ long lTimeout,
+    /* [in] */ ULONG uCount,
+    /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
+    /* [out] */ __RPC__out ULONG *puReturned);
 
-typedef HRESULT ( STDMETHODCALLTYPE *tGetA )( 
-									  IWbemClassObject * This,
-									  /* [string][in] */ LPCWSTR wszName,
-									  /* [in] */ long lFlags,
-									  /* [unique][in][out] */ VARIANT *pVal,
-									  /* [unique][in][out] */ CIMTYPE *pType,
-									  /* [unique][in][out] */ long *plFlavor);
+typedef HRESULT ( STDMETHODCALLTYPE *tGetA )(
+    IWbemClassObject * This,
+    /* [string][in] */ LPCWSTR wszName,
+    /* [in] */ long lFlags,
+    /* [unique][in][out] */ VARIANT *pVal,
+    /* [unique][in][out] */ CIMTYPE *pType,
+    /* [unique][in][out] */ long *plFlavor);
 
 MologieDetours::Detour<tCoUninitializeA>* hCoUninitializeA = NULL;
 MologieDetours::Detour<tCoCreateInstanceA>* hCoCreateInstanceA = NULL;
@@ -86,261 +86,315 @@ MologieDetours::Detour<tGetA>* hGetA = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE HookGetA( 
-	IWbemClassObject * This,
-	/* [string][in] */ LPCWSTR wszName,
-	/* [in] */ long lFlags,
-	/* [unique][in][out] */ VARIANT *pVal,
-	/* [unique][in][out] */ CIMTYPE *pType,
-	/* [unique][in][out] */ long *plFlavor)
-{	
-	HRESULT hr = hGetA->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
-	if(!InputHookConfig.bEnabled) return hr;
-	WriteLog(LOG_HOOKWMI,L"HookGetA");
+HRESULT STDMETHODCALLTYPE HookGetA(
+    IWbemClassObject * This,
+    /* [string][in] */ LPCWSTR wszName,
+    /* [in] */ long lFlags,
+    /* [unique][in][out] */ VARIANT *pVal,
+    /* [unique][in][out] */ CIMTYPE *pType,
+    /* [unique][in][out] */ long *plFlavor)
+{
+    HRESULT hr = hGetA->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	if(FAILED(hr)) return hr;
+    if(!InputHookConfig.bEnabled) return hr;
 
-	//WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
-	//if( pVal->vt == VT_BSTR) WriteLog(L"%s",pVal->bstrVal);
+    WriteLog(LOG_HOOKWMI,L"HookGetA");
 
-	if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL ) {
-		//WriteLog(L"%s"),pVal->bstrVal); 
-		DWORD dwPid = 0, dwVid = 0;
-		char* strVid = strstr( pVal->bstrVal, "VID_" );
-		if(strVid && sscanf_s( strVid, "VID_%4X", &dwVid ) != 1 )
-			return hr;
-		char* strPid = strstr( pVal->bstrVal, "PID_" );
-		if(strPid && sscanf_s( strPid, "PID_%4X", &dwPid ) != 1 )
-			return hr;
+    if(FAILED(hr)) return hr;
 
-		for(WORD i = 0; i < 4; i++) {
-			if(GamepadConfig[i].bEnabled && GamepadConfig[i].dwVID == dwVid && GamepadConfig[i].dwPID == dwPid) {
-				char* strUSB = strstr( pVal->bstrVal, "USB" );
-				char tempstr[MAX_PATH];
-				if( strUSB ) {
-					BSTR Hookbstr=NULL;
-					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
-					if(InputHookConfig.dwHookMode >= HOOK_COMPAT) sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i ); 
-					else sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
-					Hookbstr=SysAllocString(tempstr);
-					pVal->bstrVal = Hookbstr;
-					WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
-					return hr;
-				}
-				char* strHID = strstr( pVal->bstrVal, "HID" );
-				if( strHID ) {
-					BSTR Hookbstr=NULL;
-					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
-					if(InputHookConfig.dwHookMode >= HOOK_COMPAT) sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
-					else sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );	 
-					Hookbstr=SysAllocString(tempstr);
-					pVal->bstrVal = Hookbstr;
-					WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
-					return hr;
-				}
-			}
-		} 
-	}
-	return hr;
+    //WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
+    //if( pVal->vt == VT_BSTR) WriteLog(L"%s",pVal->bstrVal);
+
+    if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL )
+    {
+        //WriteLog(L"%s"),pVal->bstrVal);
+        DWORD dwPid = 0, dwVid = 0;
+        char* strVid = strstr( pVal->bstrVal, "VID_" );
+
+        if(strVid && sscanf_s( strVid, "VID_%4X", &dwVid ) != 1 )
+            return hr;
+
+        char* strPid = strstr( pVal->bstrVal, "PID_" );
+
+        if(strPid && sscanf_s( strPid, "PID_%4X", &dwPid ) != 1 )
+            return hr;
+
+        for(WORD i = 0; i < 4; i++)
+        {
+            if(GamepadConfig[i].bEnabled && GamepadConfig[i].dwVID == dwVid && GamepadConfig[i].dwPID == dwPid)
+            {
+                char* strUSB = strstr( pVal->bstrVal, "USB" );
+                char tempstr[MAX_PATH];
+
+                if( strUSB )
+                {
+                    BSTR Hookbstr=NULL;
+                    WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
+
+                    if(InputHookConfig.dwHookMode >= HOOK_COMPAT) sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
+                    else sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
+
+                    Hookbstr=SysAllocString(tempstr);
+                    pVal->bstrVal = Hookbstr;
+                    WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+                    return hr;
+                }
+
+                char* strHID = strstr( pVal->bstrVal, "HID" );
+
+                if( strHID )
+                {
+                    BSTR Hookbstr=NULL;
+                    WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
+
+                    if(InputHookConfig.dwHookMode >= HOOK_COMPAT) sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
+                    else sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
+
+                    Hookbstr=SysAllocString(tempstr);
+                    pVal->bstrVal = Hookbstr;
+                    WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+                    return hr;
+                }
+            }
+        }
+    }
+
+    return hr;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE HookNextA( 
-								  IEnumWbemClassObject * This,
-								  /* [in] */ long lTimeout,
-								  /* [in] */ ULONG uCount,
-								  /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
-								  /* [out] */ __RPC__out ULONG *puReturned)
+HRESULT STDMETHODCALLTYPE HookNextA(
+    IEnumWbemClassObject * This,
+    /* [in] */ long lTimeout,
+    /* [in] */ ULONG uCount,
+    /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
+    /* [out] */ __RPC__out ULONG *puReturned)
 {
-	HRESULT hr = hNextA->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
+    HRESULT hr = hNextA->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
 
-	if(!InputHookConfig.bEnabled) return hr;
-	WriteLog(LOG_HOOKWMI,L"HookNextA");
+    if(!InputHookConfig.bEnabled) return hr;
 
-	if(FAILED(hr)) return hr;
+    WriteLog(LOG_HOOKWMI,L"HookNextA");
 
-	IWbemClassObject* pDevices;
+    if(FAILED(hr)) return hr;
 
-	if(apObjects) {
-		if(*apObjects) {
-			pDevices = *apObjects;
-			if(!hGetA) {
-				WriteLog(LOG_HOOKWMI,L"HookGetA:: Hooking");
-				hGetA = new MologieDetours::Detour<tGetA>(pDevices->lpVtbl->Get, HookGetA);
-			}
-		}
-	}
+    IWbemClassObject* pDevices;
 
-	return hr;
+    if(apObjects)
+    {
+        if(*apObjects)
+        {
+            pDevices = *apObjects;
+
+            if(!hGetA)
+            {
+                WriteLog(LOG_HOOKWMI,L"HookGetA:: Hooking");
+                hGetA = new MologieDetours::Detour<tGetA>(pDevices->lpVtbl->Get, HookGetA);
+            }
+        }
+    }
+
+    return hr;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA( 
-	IWbemServices * This,
-	/* [in] */ __RPC__in const BSTR strFilter, 
-	/* [in] */ long lFlags,
-	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
-	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
+HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
+    IWbemServices * This,
+    /* [in] */ __RPC__in const BSTR strFilter,
+    /* [in] */ long lFlags,
+    /* [in] */ __RPC__in_opt IWbemContext *pCtx,
+    /* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	HRESULT hr = hCreateInstanceEnumA->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
-	if(!InputHookConfig.bEnabled) return hr;
-	WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA");
+    HRESULT hr = hCreateInstanceEnumA->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
 
-	if(FAILED(hr)) return hr;
-	IEnumWbemClassObject* pEnumDevices = NULL;
+    if(!InputHookConfig.bEnabled) return hr;
 
-	if(ppEnum) {
-		if(*ppEnum) {
-			pEnumDevices = *ppEnum;
+    WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA");
 
-			if(!hNextA) {
-				WriteLog(LOG_HOOKWMI,L"HookNextA:: Hooking");
-				hNextA = new MologieDetours::Detour<tNextA>(pEnumDevices->lpVtbl->Next, HookNextA);
-			}
-		}
-	}
+    if(FAILED(hr)) return hr;
 
-	return hr;
+    IEnumWbemClassObject* pEnumDevices = NULL;
+
+    if(ppEnum)
+    {
+        if(*ppEnum)
+        {
+            pEnumDevices = *ppEnum;
+
+            if(!hNextA)
+            {
+                WriteLog(LOG_HOOKWMI,L"HookNextA:: Hooking");
+                hNextA = new MologieDetours::Detour<tNextA>(pEnumDevices->lpVtbl->Next, HookNextA);
+            }
+        }
+    }
+
+    return hr;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT STDMETHODCALLTYPE HookConnectServerA( 
-	IWbemLocator * This,
-	/* [in] */ const BSTR strNetworkResource,
-	/* [in] */ const BSTR strUser,
-	/* [in] */ const BSTR strPassword,
-	/* [in] */ const BSTR strLocale,
-	/* [in] */ long lSecurityFlags,
-	/* [in] */ const BSTR strAuthority,
-	/* [in] */ IWbemContext *pCtx,
-	/* [out] */ IWbemServices **ppNamespace)
+HRESULT STDMETHODCALLTYPE HookConnectServerA(
+    IWbemLocator * This,
+    /* [in] */ const BSTR strNetworkResource,
+    /* [in] */ const BSTR strUser,
+    /* [in] */ const BSTR strPassword,
+    /* [in] */ const BSTR strLocale,
+    /* [in] */ long lSecurityFlags,
+    /* [in] */ const BSTR strAuthority,
+    /* [in] */ IWbemContext *pCtx,
+    /* [out] */ IWbemServices **ppNamespace)
 
 {
-	HRESULT hr = hConnectServerA->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+    HRESULT hr = hConnectServerA->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
-	if(!InputHookConfig.bEnabled) return hr;
-	WriteLog(LOG_HOOKWMI,L"HookConnectServerA");
-	if(FAILED(hr)) return hr;
+    if(!InputHookConfig.bEnabled) return hr;
 
-	IWbemServices* pIWbemServices = NULL;
+    WriteLog(LOG_HOOKWMI,L"HookConnectServerA");
 
-	if(ppNamespace) {
-		if(*ppNamespace) {
-			pIWbemServices = *ppNamespace;
+    if(FAILED(hr)) return hr;
 
-			if(!hCreateInstanceEnumA) {
-				WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Hooking");
-				hCreateInstanceEnumA = new MologieDetours::Detour<tCreateInstanceEnumA>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumA);
-			}
-		}
-	}
+    IWbemServices* pIWbemServices = NULL;
 
-	return hr;
+    if(ppNamespace)
+    {
+        if(*ppNamespace)
+        {
+            pIWbemServices = *ppNamespace;
+
+            if(!hCreateInstanceEnumA)
+            {
+                WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Hooking");
+                hCreateInstanceEnumA = new MologieDetours::Detour<tCreateInstanceEnumA>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumA);
+            }
+        }
+    }
+
+    return hr;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid, 
-								   __in_opt LPUNKNOWN pUnkOuter,
-								   __in     DWORD dwClsContext, 
-								   __in     REFIID riid, 
-								   __deref_out LPVOID FAR* ppv)
+HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
+                                     __in_opt LPUNKNOWN pUnkOuter,
+                                     __in     DWORD dwClsContext,
+                                     __in     REFIID riid,
+                                     __deref_out LPVOID FAR* ppv)
 {
-	HRESULT hr = hCoCreateInstanceA->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
-	if(!InputHookConfig.bEnabled) return hr;
-	WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA");
-	//if(FAILED(hr)) return hr;
+    HRESULT hr = hCoCreateInstanceA->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
-	IWbemLocator* pIWbemLocator = NULL;
+    if(!InputHookConfig.bEnabled) return hr;
 
-	if(ppv && (riid == IID_IWbemLocator)) {
-		pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
-		if(pIWbemLocator) {
-			if(!hConnectServerA) {
-				WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Hooking");
-				hConnectServerA = new MologieDetours::Detour<tConnectServerA>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerA);
-			}
-		}
-	}
+    WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA");
+    //if(FAILED(hr)) return hr;
 
-	return hr;
+    IWbemLocator* pIWbemLocator = NULL;
+
+    if(ppv && (riid == IID_IWbemLocator))
+    {
+        pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
+
+        if(pIWbemLocator)
+        {
+            if(!hConnectServerA)
+            {
+                WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Hooking");
+                hConnectServerA = new MologieDetours::Detour<tConnectServerA>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerA);
+            }
+        }
+    }
+
+    return hr;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeA()
 {
-	if(!InputHookConfig.bEnabled) return hCoUninitializeA->GetOriginalFunction()();
-	WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA");
+    if(!InputHookConfig.bEnabled) return hCoUninitializeA->GetOriginalFunction()();
 
-	if(hGetA) {
-		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
-		SAFE_DELETE(hGetA);
-	}
+    WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA");
 
-	if(hNextA) {
-		WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
-		SAFE_DELETE(hNextA);
-	}
+    if(hGetA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
+        SAFE_DELETE(hGetA);
+    }
 
-	if(hCreateInstanceEnumA) {
-		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
-		SAFE_DELETE(hCreateInstanceEnumA);;
-	}
+    if(hNextA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
+        SAFE_DELETE(hNextA);
+    }
 
-	if(hConnectServerA) {
-		WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
-		SAFE_DELETE(hConnectServerA);
-	}
+    if(hCreateInstanceEnumA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
+        SAFE_DELETE(hCreateInstanceEnumA);;
+    }
 
-	return hCoUninitializeA->GetOriginalFunction()();
+    if(hConnectServerA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
+        SAFE_DELETE(hConnectServerA);
+    }
+
+    return hCoUninitializeA->GetOriginalFunction()();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void HookWMI_ANSI()
 {
-	if(!hCoCreateInstanceA) {
-		hCoCreateInstanceA = new MologieDetours::Detour<tCoCreateInstanceA>(CoCreateInstance, HookCoCreateInstanceA);
-	}
-	if(!hCoUninitializeA) {
-		hCoUninitializeA = new MologieDetours::Detour<tCoUninitializeA>(CoUninitialize, HookCoUninitializeA);
-	}
+    if(!hCoCreateInstanceA)
+    {
+        hCoCreateInstanceA = new MologieDetours::Detour<tCoCreateInstanceA>(CoCreateInstance, HookCoCreateInstanceA);
+    }
+
+    if(!hCoUninitializeA)
+    {
+        hCoUninitializeA = new MologieDetours::Detour<tCoUninitializeA>(CoUninitialize, HookCoUninitializeA);
+    }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HookWMI_ANSI_Clean()
 {
-	if(hGetA) {
-		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
-		SAFE_DELETE(hGetA);
-	}
+    if(hGetA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
+        SAFE_DELETE(hGetA);
+    }
 
-	if(hNextA) {
-		WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
-		SAFE_DELETE(hNextA);
-	}
+    if(hNextA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
+        SAFE_DELETE(hNextA);
+    }
 
-	if(hCreateInstanceEnumA) {
-		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
-		SAFE_DELETE(hCreateInstanceEnumA);;
-	}
+    if(hCreateInstanceEnumA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
+        SAFE_DELETE(hCreateInstanceEnumA);;
+    }
 
-	if(hConnectServerA) {
-		WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
-		SAFE_DELETE(hConnectServerA);
-	}
+    if(hConnectServerA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
+        SAFE_DELETE(hConnectServerA);
+    }
 
-	if(hCoCreateInstanceA) {
-		WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA:: Removing Hook");
-		SAFE_DELETE(hCoCreateInstanceA);
-	}
+    if(hCoCreateInstanceA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA:: Removing Hook");
+        SAFE_DELETE(hCoCreateInstanceA);
+    }
 
-	if(hCoUninitializeA) {
-		WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA:: Removing Hook");
-		SAFE_DELETE(hCoUninitializeA);
-	}
+    if(hCoUninitializeA)
+    {
+        WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA:: Removing Hook");
+        SAFE_DELETE(hCoUninitializeA);
+    }
 }

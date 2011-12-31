@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #define SVN_REV $WCREV$
 #define SVN_MODS $WCMODS?1:0$
 

@@ -28,26 +28,29 @@ MologieDetours::Detour<tWinVerifyTrust>* hWinVerifyTrust = NULL;
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!InputHookConfig.bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
-	WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust");
+    if(!InputHookConfig.bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
 
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(pgActionID);
-	UNREFERENCED_PARAMETER(pWVTData);
-	return 0;
+    WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust");
+
+    UNREFERENCED_PARAMETER(hwnd);
+    UNREFERENCED_PARAMETER(pgActionID);
+    UNREFERENCED_PARAMETER(pWVTData);
+    return 0;
 }
 
 void HookWinTrust()
 {
-	if(!hWinVerifyTrust) {
-		hWinVerifyTrust = new MologieDetours::Detour<tWinVerifyTrust>(WinVerifyTrust, HookWinVerifyTrust);
-	}
+    if(!hWinVerifyTrust)
+    {
+        hWinVerifyTrust = new MologieDetours::Detour<tWinVerifyTrust>(WinVerifyTrust, HookWinVerifyTrust);
+    }
 }
 
 void HookWinTrustClean()
 {
-	if(hWinVerifyTrust) {
-		WriteLog(LOG_HOOKWT, L"HookWinVerifyTrust:: Removing Hook");
-		SAFE_DELETE(hWinVerifyTrust);
-	}
+    if(hWinVerifyTrust)
+    {
+        WriteLog(LOG_HOOKWT, L"HookWinVerifyTrust:: Removing Hook");
+        SAFE_DELETE(hWinVerifyTrust);
+    }
 }
