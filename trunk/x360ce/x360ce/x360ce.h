@@ -13,7 +13,7 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef _X360CE_H_
 #define _X360CE_H_
 
@@ -28,13 +28,13 @@ extern HWND g_hWnd;
 
 struct XINPUT_ENABLE
 {
-	BOOL bEnabled;
-	BOOL bUseEnabled;
-	XINPUT_ENABLE()
-	{
-		bEnabled = FALSE;
-		bUseEnabled = FALSE;
-	}
+    bool bEnabled;
+    bool bUseEnabled;
+    XINPUT_ENABLE()
+    {
+        bEnabled = FALSE;
+        bUseEnabled = FALSE;
+    }
 };
 
 void LoadSystemXInputDLL();

@@ -24,133 +24,140 @@ BOOL enableconsole = FALSE;
 LPWSTR lpLogFileName = NULL;
 LPWSTR lpLogFolderName = NULL;
 
-static LPCWSTR LogTypeNames[] = {
-	L"[Core]      ",
-	L"[XInput]    ",
-	L"[DInput]    ",
-	L"[InputHook] ",
-	L"[HookDI]    ",
-	L"[HookWMI]   ",
-	L"[HookWT]    ",
+static LPCWSTR LogTypeNames[] =
+{
+    L"[Core]      ",
+    L"[XInput]    ",
+    L"[DInput]    ",
+    L"[InputHook] ",
+    L"[HookDI]    ",
+    L"[HookWMI]   ",
+    L"[HookWT]    ",
 };
 
 void WriteStamp()
 {
-	if(enableconsole)
-	{
-		wprintf(L"%s",L"TIME           THREAD   TYPE        DATA");
-		wprintf(L"\n");
-	}
+    if(enableconsole)
+    {
+        wprintf(L"%s",L"TIME           THREAD   TYPE        DATA");
+        wprintf(L"\n");
+    }
 
-	if (writelog) {
-		FILE * fp;
-		_wfopen_s(&fp, lpLogFileName, L"a");
+    if (writelog)
+    {
+        FILE * fp;
+        _wfopen_s(&fp, lpLogFileName, L"a");
 
-		//fp is null, file is not open.
-		if (fp==NULL)
-			return;
-		fwprintf(fp, L"%s",L"TIME           THREAD   TYPE        DATA");
-		fwprintf(fp, L"\n");
-		fclose(fp);
-	}
+        //fp is null, file is not open.
+        if (fp==NULL)
+            return;
+
+        fwprintf(fp, L"%s",L"TIME           THREAD   TYPE        DATA");
+        fwprintf(fp, L"\n");
+        fclose(fp);
+    }
 }
 
-void ConsoleEnable(BOOL console) 
+void ConsoleEnable(BOOL console)
 {
-	enableconsole = console;
+    enableconsole = console;
 }
 
 void Console()
 {
-	if(enableconsole){
-		AllocConsole();
+    if(enableconsole)
+    {
+        AllocConsole();
 
-		HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-		int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
-		FILE* hf_out = _wfdopen(hCrt, L"w");
-		setvbuf(hf_out, NULL, _IONBF, 1);
-		*stdout = *hf_out;
-	}
+        HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+        int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+        FILE* hf_out = _wfdopen(hCrt, L"w");
+        setvbuf(hf_out, NULL, _IONBF, 1);
+        *stdout = *hf_out;
+    }
 }
 
-void LogEnable(BOOL log) 
+void LogEnable(BOOL log)
 {
-	writelog = log;
+    writelog = log;
 }
 
-void LogCleanup() 
+void LogCleanup()
 {
-	if(enableconsole)FreeConsole();
-	SAFE_DELETE_ARRAY(lpLogFileName);
+    if(enableconsole)FreeConsole();
+
+    SAFE_DELETE_ARRAY(lpLogFileName);
 }
 
 BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR dirname,size_t dirname_size)
 {
 
-	UNREFERENCED_PARAMETER(logbasename_size);
+    UNREFERENCED_PARAMETER(logbasename_size);
 
-	BOOL bRet = FALSE;
+    BOOL bRet = FALSE;
 
-	if (writelog && logbasename && dirname) 
-	{
-		lpLogFileName = new WCHAR[MAX_PATH];
-		lpLogFolderName = new WCHAR[dirname_size+1];
+    if (writelog && logbasename && dirname)
+    {
+        lpLogFileName = new WCHAR[MAX_PATH];
+        lpLogFolderName = new WCHAR[dirname_size+1];
 
-		wcscpy_s(lpLogFileName,MAX_PATH,logbasename);
-		wcscpy_s(lpLogFolderName,dirname_size,dirname);
+        wcscpy_s(lpLogFileName,MAX_PATH,logbasename);
+        wcscpy_s(lpLogFolderName,dirname_size,dirname);
 
-		SYSTEMTIME systime;
-		GetLocalTime(&systime);
+        SYSTEMTIME systime;
+        GetLocalTime(&systime);
 
-		swprintf_s(lpLogFileName,MAX_PATH,L"%s\\%s_%u%02u%02u-%02u%02u%02u.log",
-			lpLogFolderName,logbasename,systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
+        swprintf_s(lpLogFileName,MAX_PATH,L"%s\\%s_%u%02u%02u-%02u%02u%02u.log",
+                   lpLogFolderName,logbasename,systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
 
-		if(!PathIsDirectory(lpLogFolderName)) CreateDirectory(lpLogFolderName, NULL);
+        if(!PathIsDirectory(lpLogFolderName)) CreateDirectory(lpLogFolderName, NULL);
 
-		SAFE_DELETE_ARRAY(lpLogFolderName);
+        SAFE_DELETE_ARRAY(lpLogFolderName);
 
-		bRet = TRUE;
-	}
+        bRet = TRUE;
+    }
 
-	return bRet;
+    return bRet;
 }
 
 BOOL WriteLog(LogType logType, LPWSTR str,...)
 {
-	SYSTEMTIME systime;
-	GetLocalTime(&systime);
+    SYSTEMTIME systime;
+    GetLocalTime(&systime);
 
-	BOOL ret = FALSE;
+    BOOL ret = FALSE;
 
-	if(enableconsole)
-	{
-		wprintf(L"%02u:%02u:%02u.%03u:: %08u %s",\
-			systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
-		va_list arglist;
-		va_start(arglist,str);
-		vwprintf(str,arglist);
-		va_end(arglist);
-		wprintf(L" \n");
-		ret = TRUE;
-	}
+    if(enableconsole)
+    {
+        wprintf(L"%02u:%02u:%02u.%03u:: %08u %s",\
+                systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
+        va_list arglist;
+        va_start(arglist,str);
+        vwprintf(str,arglist);
+        va_end(arglist);
+        wprintf(L" \n");
+        ret = TRUE;
+    }
 
-	if (writelog) {
-		FILE * fp;
-		_wfopen_s(&fp, lpLogFileName, L"a");
+    if (writelog)
+    {
+        FILE * fp;
+        _wfopen_s(&fp, lpLogFileName, L"a");
 
-		//fp is null, file is not open.
-		if (fp==NULL)
-			return 0;
-		fwprintf(fp, L"%02u:%02u:%02u.%03u:: %08u %s",\
-			systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
-		va_list arglist;
-		va_start(arglist,str);
-		vfwprintf(fp,str,arglist);
-		va_end(arglist);
-		fwprintf(fp, L" \n");
-		fclose(fp);
-		ret = TRUE;
-	}
+        //fp is null, file is not open.
+        if (fp==NULL)
+            return 0;
 
-	return ret;
+        fwprintf(fp, L"%02u:%02u:%02u.%03u:: %08u %s",\
+                 systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
+        va_list arglist;
+        va_start(arglist,str);
+        vfwprintf(fp,str,arglist);
+        va_end(arglist);
+        fwprintf(fp, L" \n");
+        fclose(fp);
+        ret = TRUE;
+    }
+
+    return ret;
 }

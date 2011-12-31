@@ -22,34 +22,34 @@
 
 extern ULONG ACLEntries[1];
 
-enum HookMode{ HOOK_NONE, HOOK_NORMAL, HOOK_COMPAT, HOOK_ALL};
+enum HookMode { HOOK_NONE, HOOK_NORMAL, HOOK_COMPAT, HOOK_ALL};
 
 struct IHOOK_GAMEPAD_CONIFG
 {
-	BOOL  bEnabled;
-	GUID  productGUID;
-	GUID  instanceGUID;
-	DWORD dwVID;
-	DWORD dwPID;
-	IHOOK_GAMEPAD_CONIFG()
-	{
-		ZeroMemory(this,sizeof(IHOOK_GAMEPAD_CONIFG));
-	}
+    BOOL  bEnabled;
+    GUID  productGUID;
+    GUID  instanceGUID;
+    DWORD dwVID;
+    DWORD dwPID;
+    IHOOK_GAMEPAD_CONIFG()
+    {
+        ZeroMemory(this,sizeof(IHOOK_GAMEPAD_CONIFG));
+    }
 };
 
 struct IHOOK_CONIFG
 {
-	BOOL  bEnabled;
-	DWORD dwHookMode;
-	DWORD dwHookVID;
-	DWORD dwHookPID;
-	DWORD dwHookWMIANSI;
-	DWORD dwHookWinTrust;
-	SHORT sConfiguredPads;
-	IHOOK_CONIFG()
-	{
-		ZeroMemory(this,sizeof(IHOOK_CONIFG));
-	}
+    BOOL  bEnabled;
+    DWORD dwHookMode;
+    DWORD dwHookVID;
+    DWORD dwHookPID;
+    DWORD dwHookWMIANSI;
+    DWORD dwHookWinTrust;
+    SHORT sConfiguredPads;
+    IHOOK_CONIFG()
+    {
+        ZeroMemory(this,sizeof(IHOOK_CONIFG));
+    }
 };
 
 extern IHOOK_CONIFG InputHookConfig;

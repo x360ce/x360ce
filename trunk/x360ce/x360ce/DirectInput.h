@@ -13,85 +13,88 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef _DIRECTINPUT_H_
 #define _DIRECTINPUT_H_
 
 #include <dinput.h>
 
-struct DINPUT_DATA 
+struct DINPUT_DATA
 {
-	LPDIRECTINPUT8 pDI;
-	UINT refCount;
-	UINT deviceCount;
-	DINPUT_DATA()
-	{
-		ZeroMemory(this,sizeof(DINPUT_DATA));
-	}
+    LPDIRECTINPUT8 pDI;
+    UINT refCount;
+    UINT deviceCount;
+    DINPUT_DATA()
+    {
+        ZeroMemory(this,sizeof(DINPUT_DATA));
+    }
 };
 struct FFB_CAPS
 {
-	BOOL ConstantForce;
-	BOOL PeriodicForce;
+    BOOL ConstantForce;
+    BOOL PeriodicForce;
 };
 
 struct DINPUT_FF
 {
-	BYTE type;
-	INT xForce;
-	INT yForce;
-	INT oldXForce;
-	INT oldYForce;
-	DWORD oldMagnitude;
-	DWORD oldPeriod;
-	DWORD leftPeriod;
-	DWORD rightPeriod;
-	BOOL IsUpdateEffectCreated;
-	BOOL useforce;
-	DIPERIODIC pf;
-	DICONSTANTFORCE cf;
-	DIRAMPFORCE rf;
-	DIEFFECT eff[2];
-	LPDIRECTINPUTEFFECT pEffect[2];
-	DWORD dwNumForceFeedbackAxis;
-	FLOAT forcepercent;
-	FFB_CAPS ffbcaps;
-	DINPUT_FF()
-	{
-		ZeroMemory(this,sizeof(DINPUT_FF));
-		forcepercent = 100;
-	}
+    BYTE type;
+    INT xForce;
+    INT yForce;
+    INT oldXForce;
+    INT oldYForce;
+    DWORD oldMagnitude;
+    DWORD oldPeriod;
+    DWORD leftPeriod;
+    DWORD rightPeriod;
+    BOOL IsUpdateEffectCreated;
+    BOOL useforce;
+    DIPERIODIC pf;
+    DICONSTANTFORCE cf;
+    DIRAMPFORCE rf;
+    DIEFFECT eff[2];
+    LPDIRECTINPUTEFFECT pEffect[2];
+    DWORD dwNumForceFeedbackAxis;
+    FLOAT forcepercent;
+    FFB_CAPS ffbcaps;
+    DINPUT_FF()
+    {
+        ZeroMemory(this,sizeof(DINPUT_FF));
+        forcepercent = 100;
+    }
 };
 
-struct DINPUT_GAMEPAD {
-	LPDIRECTINPUTDEVICE8 pGamepad;
-	DIJOYSTATE2 state;
-	DINPUT_FF ff;
-	DWORD dwPadIndex;
-	BOOL connected;
-	BOOL initialized;
-	BOOL configured;
-	BOOL passthrough;
+struct DINPUT_GAMEPAD
+{
+    LPDIRECTINPUTDEVICE8 pGamepad;
+    DIJOYSTATE2 state;
+    DINPUT_FF ff;
+    DWORD dwPadIndex;
+    bool connected;
+    bool initialized;
+    bool configured;
+    bool passthrough;
+    bool enumfail;
+    bool axistodpad;
+    bool padding1;
+    bool padding2;
+    UINT dwAxisCount;
+    UINT swapmotor;
+    UINT tdeadzone;
+    GUID productGUID;
+    GUID instanceGUID;
+    SHORT adeadzone[4];
+    SHORT antidz[4];
+    INT axistodpaddeadzone;
+    INT axistodpadoffset;
+    SHORT axislinear[4];
+    BYTE gamepadtype;
 
-	BOOL axistodpad;
-	UINT dwAxisCount;
-	UINT swapmotor;
-	UINT tdeadzone;
-	GUID productGUID;
-	GUID instanceGUID;
-	SHORT adeadzone[4];
-	SHORT antidz[4];
-	INT axistodpaddeadzone;
-	INT axistodpadoffset;
-	SHORT axislinear[4];
-	BYTE gamepadtype;
-
-	DINPUT_GAMEPAD()
-	{
-		ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
-		gamepadtype = 1;
-		passthrough = 1;
-	}
+    DINPUT_GAMEPAD()
+    {
+        ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
+        gamepadtype = 1;
+        passthrough = 1;
+    }
 };
 
 extern struct DINPUT_GAMEPAD g_Gamepad[4];

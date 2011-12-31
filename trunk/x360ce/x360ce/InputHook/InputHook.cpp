@@ -26,69 +26,64 @@ ULONG ACLEntries[1];
 
 VOID InputHook_Enable(BOOL state)
 {
-	InputHookConfig.bEnabled = state;
-	laststate = state;
+    InputHookConfig.bEnabled = state;
+    laststate = state;
 }
 
 BOOL InputHook_Enable()
 {
-	return InputHookConfig.bEnabled;
+    return InputHookConfig.bEnabled;
 }
 
 DWORD InputHook_Mode()
 {
-	return InputHookConfig.dwHookMode;
+    return InputHookConfig.dwHookMode;
 }
 
 BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
 {
 
-	if(!fconfig) return FALSE;
-	if(!fconfig->bEnabled) return FALSE;
+    if(!fconfig) return FALSE;
 
-	memcpy(&InputHookConfig,fconfig,sizeof(IHOOK_CONIFG));
+    if(!fconfig->bEnabled) return FALSE;
 
-	for(WORD i = 0; i < 4; i++) {
+    memcpy(&InputHookConfig,fconfig,sizeof(IHOOK_CONIFG));
 
-		memcpy(&GamepadConfig[i],gconfig,sizeof(IHOOK_GAMEPAD_CONIFG));
-		gconfig++;
+    for(WORD i = 0; i < 4; i++)
+    {
 
-		if(!IsEqualGUID(GamepadConfig[i].productGUID, GUID_NULL) && !IsEqualGUID(GamepadConfig[i].instanceGUID, GUID_NULL))
-		{
-			if(!GamepadConfig[i].dwVID) GamepadConfig[i].dwVID = LOWORD(GamepadConfig[i].productGUID.Data1);
-			if(!GamepadConfig[i].dwPID) GamepadConfig[i].dwPID = HIWORD(GamepadConfig[i].productGUID.Data1);
-		}
-		else GamepadConfig[i].bEnabled = FALSE;
-	}
+        memcpy(&GamepadConfig[i],gconfig,sizeof(IHOOK_GAMEPAD_CONIFG));
+        gconfig++;
 
-	if(InputHookConfig.bEnabled) {
-		if(InputHookConfig.dwHookWMIANSI) HookWMI_ANSI();
-		else HookWMI_UNI();
+        if(!IsEqualGUID(GamepadConfig[i].productGUID, GUID_NULL) && !IsEqualGUID(GamepadConfig[i].instanceGUID, GUID_NULL))
+        {
+            if(!GamepadConfig[i].dwVID) GamepadConfig[i].dwVID = LOWORD(GamepadConfig[i].productGUID.Data1);
 
-		if(InputHookConfig.dwHookMode >= HOOK_COMPAT) HookDI();
-		if(InputHookConfig.dwHookWinTrust) HookWinTrust();
-	}
+            if(!GamepadConfig[i].dwPID) GamepadConfig[i].dwPID = HIWORD(GamepadConfig[i].productGUID.Data1);
+        }
+        else GamepadConfig[i].bEnabled = FALSE;
+    }
 
-	return TRUE;
+    if(InputHookConfig.bEnabled)
+    {
+        if(InputHookConfig.dwHookWMIANSI) HookWMI_ANSI();
+        else HookWMI_UNI();
+
+        if(InputHookConfig.dwHookMode >= HOOK_COMPAT) HookDI();
+
+        if(InputHookConfig.dwHookWinTrust) HookWinTrust();
+    }
+
+    return TRUE;
 }
 
 BOOL InputHook_Clean()
 {
 
-	HookWMI_UNI_Clean();
-	HookWMI_ANSI_Clean();
-	HookDIClean();
-	HookWinTrustClean();
+    HookWMI_UNI_Clean();
+    HookWMI_ANSI_Clean();
+    HookDIClean();
+    HookWinTrustClean();
 
-	return TRUE;
+    return TRUE;
 }
-
-#ifdef WIN64
-
-LONG (WINAPI * Real_RegCloseKey)(HKEY a0) = RegCloseKey;
-LONG (WINAPI * Real_RegFlushKey)(HKEY a0) = RegFlushKey;
-LONG (WINAPI * Real_RegDeleteValueA)(HKEY a0,LPCSTR a1) = RegDeleteValueA;
-LONG (WINAPI * Real_RegDeleteValueW)(HKEY a0,LPCWSTR a1) = RegDeleteValueW;
-BOOL (__stdcall * Real_IsDebuggerPresent)(void) = IsDebuggerPresent;
-
-#endif

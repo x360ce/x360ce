@@ -13,7 +13,7 @@
  *  You should have received a copy of the GNU General Public License along with x360ce.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
