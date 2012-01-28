@@ -17,22 +17,37 @@ namespace x360ce.App
 		[STAThread]
 		static void Main()
 		{
-			//try
-			//{
+			try
+			{
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 				form = new MainForm();
 				MainForm.Current = form;
 				Application.Run(form);
-			//}
-			//catch (Exception ex)
-			//{
-			//    var box = new Controls.MessageBoxForm();
-			//    var result = box.ShowForm(ex.ToString(), "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-			//    if (result == DialogResult.Cancel) Application.Exit();
-			//    throw ex;
-			//}
+			}
+			catch (Exception ex)
+			{
+				var message = ex.ToString();
+				if (ex.GetType().Equals(typeof(System.Reflection.ReflectionTypeLoadException)))
+				{
+					message += "\r\n===============================================================\r\n";
+					var ex2 = (System.Reflection.ReflectionTypeLoadException)ex;
+					foreach (Exception ex3 in ex2.LoaderExceptions) message += ex3.Message + "\r\n";
+				}
+				if (ex.InnerException != null)
+				{
+					if (ex.InnerException.GetType().Equals(typeof(System.Reflection.ReflectionTypeLoadException)))
+					{
+						System.Reflection.ReflectionTypeLoadException exIn = (System.Reflection.ReflectionTypeLoadException)ex.InnerException;
+						foreach (Exception ex3 in exIn.LoaderExceptions) message += ex3.Message + "\r\n";
+					}
+				}
+				var box = new Controls.MessageBoxForm();
+				var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+				if (result == DialogResult.Cancel) Application.Exit();
+				throw ex;
+			}
 		}
 
 		//static string cLogFile = "x360ce.log";
