@@ -33,7 +33,6 @@ namespace x360ce.App
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.Pad1TabPage = new System.Windows.Forms.TabPage();
 			this.Pad2TabPage = new System.Windows.Forms.TabPage();
@@ -59,6 +58,7 @@ namespace x360ce.App
 			this.FakeModeLabel = new System.Windows.Forms.Label();
 			this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
 			this.SettingsDatabaseTabPage = new System.Windows.Forms.TabPage();
+			this.onlineUserControl1 = new x360ce.App.Controls.InternetUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -74,13 +74,12 @@ namespace x360ce.App
 			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
 			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
 			this.TopPanel = new System.Windows.Forms.Panel();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
 			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
 			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
 			this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.onlineUserControl1 = new x360ce.App.Controls.InternetUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -94,11 +93,6 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// UpdateTimer
-			// 
-			this.UpdateTimer.Interval = 50;
-			this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
 			// 
 			// MainTabControl
 			// 
@@ -378,6 +372,14 @@ namespace x360ce.App
 			this.SettingsDatabaseTabPage.TabIndex = 1;
 			this.SettingsDatabaseTabPage.Text = "Settings Database";
 			// 
+			// onlineUserControl1
+			// 
+			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
+			this.onlineUserControl1.Name = "onlineUserControl1";
+			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
+			this.onlineUserControl1.TabIndex = 0;
+			// 
 			// HelpTabPage
 			// 
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
@@ -503,6 +505,22 @@ namespace x360ce.App
 			this.TopPanel.Size = new System.Drawing.Size(650, 64);
 			this.TopPanel.TabIndex = 3;
 			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 9;
+			// 
 			// HelpBodyLabel
 			// 
 			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -548,30 +566,6 @@ namespace x360ce.App
 			// LoadinngCircleTimeout
 			// 
 			this.LoadinngCircleTimeout.Tick += new System.EventHandler(this.LoadinngCircleTimeout_Tick);
-			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
-			// 
-			// onlineUserControl1
-			// 
-			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
-			this.onlineUserControl1.Name = "onlineUserControl1";
-			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
-			this.onlineUserControl1.TabIndex = 0;
 			// 
 			// MainForm
 			// 
@@ -644,8 +638,7 @@ namespace x360ce.App
 		private GroupBox FakeApiGroupBox;
         private GroupBox InstalledFilesGroupBox;
 		private GroupBox TestingAndLoggingGroupBox;
-        private CheckBox DebugModeCheckBox;
-		public Timer UpdateTimer;
+		private CheckBox DebugModeCheckBox;
 		private CheckBox XInputEnableCheckBox;
 		private CheckBox ConsoleCheckBox;
 		private TabPage SettingsDatabaseTabPage;

@@ -418,7 +418,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new com.x360ce.localhost.x360ce();

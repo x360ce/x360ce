@@ -212,8 +212,7 @@ namespace x360ce.App.Controls
 			ActiveControl.Select();
 		}
 
-
-		private void copyToolStripMenuItem_Click_1(object sender, EventArgs e)
+		private void copyToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Clipboard.SetText(this.TextLabel.Text);
 		}

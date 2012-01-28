@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="UpdateTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <metadata name="BuletImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>527, 17</value>
   </metadata>
@@ -139,7 +136,7 @@
   <data name="HelpPictureBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADr0AAA69AUf7kK0AAARNSURBVEhL7VVdTJtVGN4Ym3hlohc6d6lXu1HjhVzMbGpc
+        YQUAAAAJcEhZcwAADrwAAA68AZW8ckkAAARNSURBVEhL7VVdTJtVGN4Ym3hlohc6d6lXu1HjhVzMbGpc
         Mk0W73SJMYs/2YwmZruYk+GELYpGRAdBfqSwlS3AgG6ACIL8tIVKa1sohcFKC7S0lP7S0n5tv/b7+vqc
         wyDZjw7nhTd+yZPv5HznvM/7PO97zretqtewfdt/9RDRdmAHkAvsvAU2ZnMPnljnxHxu/6Qzr003vbuu
         z/ji5UHzvha1ZT8DG2Nun6LfvLfdMJvXYXTkbdmAzvGFnNrfjI+26W2HylSaryo7dc0XB8dbrmisA82j

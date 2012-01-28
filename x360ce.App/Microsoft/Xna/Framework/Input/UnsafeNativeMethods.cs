@@ -64,12 +64,12 @@ namespace Microsoft.Xna.Framework.Input
 			get { return _LibraryName; }
 		}
 
-		public static void ReLoadLibrary(string fileName)
+		public static bool ReLoadLibrary(string fileName)
 		{
 			_LibraryName = fileName;
 			if (IsLoaded) FreeLibrary();
 			libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(fileName);
-			if (!IsLoaded) 	MessageBoxForm.Show("Failed to load '{0}'", fileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return IsLoaded;
 		}
 
 		public static void FreeLibrary()
