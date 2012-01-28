@@ -83,6 +83,7 @@
 			this.TextLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.TextLabel.ContextMenuStrip = this.CopyContextMenuStrip;
 			this.TextLabel.Location = new System.Drawing.Point(50, 12);
 			this.TextLabel.Name = "TextLabel";
 			this.TextLabel.Size = new System.Drawing.Size(278, 27);
@@ -109,6 +110,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.panel1.BackColor = System.Drawing.SystemColors.Window;
+			this.panel1.ContextMenuStrip = this.CopyContextMenuStrip;
 			this.panel1.Controls.Add(this.IconPictureBox);
 			this.panel1.Controls.Add(this.TextLabel);
 			this.panel1.Location = new System.Drawing.Point(0, 0);

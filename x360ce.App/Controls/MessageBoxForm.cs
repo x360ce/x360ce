@@ -214,7 +214,7 @@ namespace x360ce.App.Controls
 
 		private void copyToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Clipboard.SetText(this.TextLabel.Text);
+			Clipboard.SetText(TextLabel.Text);
 		}
 
 	}
