@@ -23,7 +23,6 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
-			Current = this;
 		}
 
 		DeviceDetector detector;
@@ -56,15 +55,23 @@ namespace x360ce.App
 		public Controls.PadControl[] ControlPads;
 		public TabPage[] ControlPages;
 
+		public System.Timers.Timer UpdateTimer;
+
 		private void MainForm_Load(object sender, EventArgs e)
 		{
-			BeginInvoke(new LoadFormDelegate(LoadForm), null);
+			UpdateTimer = new System.Timers.Timer();
+			UpdateTimer.AutoReset = false;
+			UpdateTimer.Interval = 200;
+			UpdateTimer.SynchronizingObject = this;
+			UpdateTimer.Elapsed +=new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
+			UpdateTimer.Start();
 		}
 
-		private delegate void LoadFormDelegate();
+		bool formLoaded = false;
 
 		void LoadForm()
 		{
+			formLoaded = true;
 			detector = new DeviceDetector(false);
 			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
 			BusyLoadingCircle.Visible = false;
@@ -147,7 +154,6 @@ namespace x360ce.App
 			////XInput.ReLoadLibrary(cXinput3File);
 			//// start capture events.
 			if (Win32.WinAPI.IsVista && Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
-			UpdateTimer.Start();
 			////ReloadXInputLibrary();
 		}
 
@@ -525,19 +531,30 @@ namespace x360ce.App
 			UpdateTimer.Start();
 		}
 
-		bool ContainsProduct(Guid productGuid)
-		{
-			return true;
-		}
-
+	
 		bool settingsChanged = false;
 		GamePadState emptyState = new GamePadState();
 
 		bool[] cleanPadStatus = new bool[4];
 
-		private void UpdateTimer_Tick(object sender, EventArgs e)
+		private void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			// If this method is executed on separate thread than current control then...
+			if (InvokeRequired)
+			{
+				// Re-execute this method on same thread as current control.
+				EventHandler<System.Timers.ElapsedEventArgs> handler = UpdateTimer_Elapsed;
+				// Use 'BeginIvoke' instead of 'Invoke' to make sure that
+				// you will get proper error message if something fails.
+				BeginInvoke(handler, new object[] { sender, e });
+				return;
+			}
 			Program.TimerCount++;
+			if (!formLoaded){
+				LoadForm();
+				UpdateTimer.Interval = 50;
+				UpdateTimer.Start();
+			}
 			bool instancesChanged = RefreshCurrentInstances();
 			// Load direct input data.
 			for (int i = 0; i < 4; i++)
@@ -566,31 +583,29 @@ namespace x360ce.App
 			// If settings changed or directInput instances changed then...
 			if (settingsChanged || instancesChanged)
 			{
-				UpdateTimer.Stop();
-				if (instancesChanged)
-				{
-					SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
-				}
+				if (instancesChanged) SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
 				ReloadLibrary();
-				UpdateTimer.Start();
-				return;
 			}
-			// Check all pads.
-			UpdateGamePadStatus();
-			for (int i = 0; i < 4; i++)
+			else
 			{
-				var currentPadControl = ControlPads[i];
-				if (UnsafeNativeMethods.IsLoaded)
+				// Check all pads.
+				UpdateGamePadStatus();
+				for (int i = 0; i < 4; i++)
 				{
-					var currentPad = GamePad.GetState((PlayerIndex)i);
-					currentPadControl.UpdateFromXInput(currentPad);
+					var currentPadControl = ControlPads[i];
+					if (UnsafeNativeMethods.IsLoaded)
+					{
+						var currentPad = GamePad.GetState((PlayerIndex)i);
+						currentPadControl.UpdateFromXInput(currentPad);
+					}
+					else
+					{
+						currentPadControl.UpdateFromXInput(emptyState);
+					}
 				}
-				else
-				{
-					currentPadControl.UpdateFromXInput(emptyState);
-				}
+				UpdateStatus("");
 			}
-			UpdateStatus("");
+			UpdateTimer.Start();
 		}
 
 		Version _dllVersion;
@@ -612,7 +627,7 @@ namespace x360ce.App
 			if (dllInfo.Exists)
 			{
 				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				return vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion);
+				return vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion.Replace(',','.'));
 			}
 			return new Version("0.0.0.0");
 		}
@@ -651,7 +666,13 @@ namespace x360ce.App
 			{
 				dllVersion = GetDllVersion(dllInfo.FullName);
 				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
-				UnsafeNativeMethods.ReLoadLibrary(dllFile);
+				if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
+				{
+					var msg = string.Format("Failed to load '{0}'", dllFile);
+					var form = new MessageBoxForm();
+					form.StartPosition = FormStartPosition.CenterParent;
+					form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
 		}
 

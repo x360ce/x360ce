@@ -11,14 +11,28 @@ namespace x360ce.App
 		/// </summary>
 		static MainForm form;
 
+		/// <summary>
+		/// The main entry point for the application.
+		/// </summary>
 		[STAThread]
 		static void Main()
 		{
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-			form = new MainForm();
-			Application.Run(form);
+			//try
+			//{
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+				form = new MainForm();
+				MainForm.Current = form;
+				Application.Run(form);
+			//}
+			//catch (Exception ex)
+			//{
+			//    var box = new Controls.MessageBoxForm();
+			//    var result = box.ShowForm(ex.ToString(), "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+			//    if (result == DialogResult.Cancel) Application.Exit();
+			//    throw ex;
+			//}
 		}
 
 		//static string cLogFile = "x360ce.log";
