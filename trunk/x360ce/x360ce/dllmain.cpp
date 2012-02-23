@@ -25,6 +25,8 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
+CRITICAL_SECTION cs;
+
 HINSTANCE g_hX360ceInstance = NULL;
 HINSTANCE g_hNativeInstance = NULL;
 
@@ -98,6 +100,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
     _CrtSetDbgFlag(CurrentFlags);
 #endif
 
+	InitializeCriticalSection(&cs);
+
+	EnterCriticalSection(&cs);
     g_hX360ceInstance =  hinstDLL;
     DWORD dwAppPID = GetCurrentProcessId();
     SetIniFileName(L"x360ce.ini");
@@ -116,10 +121,12 @@ VOID InitInstance(HINSTANCE hinstDLL)
     WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
     InstallInputHooks();
+	LeaveCriticalSection(&cs);
 }
 
 VOID ExitInstance()
 {
+	EnterCriticalSection(&cs);
     InputHook_Clean();
 
     if (g_hNativeInstance)
@@ -137,6 +144,9 @@ VOID ExitInstance()
 
     LogCleanup();
     IniCleanup();
+
+	LeaveCriticalSection(&cs);
+	DeleteCriticalSection(&cs);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
