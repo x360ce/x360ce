@@ -29,6 +29,8 @@
 #define TOSTRING(x) STRINGIFY(x)
 #define bytesof(a, b) ((a) * sizeof(b))
 
+extern CRITICAL_SECTION cs;
+
 #endif
 
 

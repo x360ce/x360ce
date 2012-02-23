@@ -71,6 +71,7 @@ VOID Createx360ceWindow(HINSTANCE hInstance)
 
 HRESULT XInit(DWORD dwUserIndex)
 {
+	EnterCriticalSection(&cs);
     if(g_Gamepad[dwUserIndex].configured && !g_Gamepad[dwUserIndex].enumfail)
     {
         HRESULT hr=ERROR_SUCCESS;
@@ -90,7 +91,11 @@ HRESULT XInit(DWORD dwUserIndex)
 
             hr = Enumerate(dwUserIndex);
 
-            if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+            if(FAILED(hr)) 
+			{
+				LeaveCriticalSection(&cs);
+				return ERROR_DEVICE_NOT_CONNECTED;
+			}
 
             hr = InitDirectInput(g_hWnd,dwUserIndex);
 
@@ -99,12 +104,17 @@ HRESULT XInit(DWORD dwUserIndex)
                 WriteLog(LOG_CORE,L"[PAD%d] XInit fail with %s",dwUserIndex+1,DXErrStr(hr));
             }
         }
-        else return ERROR_DEVICE_NOT_CONNECTED;
+        else 
+		{
+			LeaveCriticalSection(&cs);
+			return ERROR_DEVICE_NOT_CONNECTED;
+		}
 
         if(!g_Gamepad[dwUserIndex].pGamepad)
         {
             WriteLog(LOG_CORE,L"XInit fail");
             g_Gamepad[dwUserIndex].enumfail = true;
+			LeaveCriticalSection(&cs);
             return ERROR_DEVICE_NOT_CONNECTED;
         }
         else
@@ -120,10 +130,10 @@ HRESULT XInit(DWORD dwUserIndex)
             InputHook_Enable(TRUE);
             WriteLog(LOG_CORE,L"Restore InputHook state");
         }
-
+		LeaveCriticalSection(&cs);
         return ERROR_SUCCESS;
     }
-
+	LeaveCriticalSection(&cs);
     return ERROR_DEVICE_NOT_CONNECTED;
 }
 
