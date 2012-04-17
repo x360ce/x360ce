@@ -28,6 +28,8 @@ WORD wNativeMode=0;
 IHOOK_CONIFG x360ce_InputHookConfig;
 IHOOK_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
+BOOL g_Disable;
+
 static LPCWSTR buttonNames[] =
 {
     L"A",
@@ -108,10 +110,12 @@ void ReadConfig()
 {
 
     // Read global options
+
+	g_Disable = ReadLongFromFile(L"Options", L"Disable",0);
     bInitBeep = static_cast<BOOL>(ReadLongFromFile(L"Options", L"UseInitBeep",1));
     LogEnable(static_cast<BOOL>(ReadLongFromFile(L"Options", L"Log",0)));
-
     enableconsole = static_cast<BOOL>(ReadLongFromFile(L"Options", L"Console",0));
+	if(g_Disable) return;
 
     //InputHook
     x360ce_InputHookConfig.dwHookMode = ReadLongFromFile(L"InputHook", L"HookMode",0);

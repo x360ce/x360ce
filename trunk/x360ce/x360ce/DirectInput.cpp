@@ -94,6 +94,23 @@ void Deactivate()
     for (DWORD i=0; i<4; i++) Deactivate(i);
 }
 
+static bool AcquireDevice(LPDIRECTINPUTDEVICE8 lpDirectInputDevice)
+{
+	if (FAILED (lpDirectInputDevice->Acquire()))
+	{
+		HRESULT result = lpDirectInputDevice->Acquire();
+		if (result == DIERR_OTHERAPPHASPRIO)
+			return FALSE;
+		if (FAILED (result))
+		{
+			Deactivate();
+			return FALSE;
+		}
+
+	}
+	return TRUE;
+}
+
 BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContext )
 {
     LPDIRECTINPUT8 lpDI8 = GetDirectInput();
@@ -308,6 +325,18 @@ BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef)
 HRESULT SetDeviceForces(DWORD idx, WORD force, WORD motor)
 {
     if(!g_Gamepad[idx].ff.pEffect[motor]) return S_FALSE;
+
+	if ( force == 0) {
+		if (FAILED (g_Gamepad[idx].ff.pEffect[motor]->Stop())) {
+			AcquireDevice (g_Gamepad[idx].pGamepad);
+			if (FAILED (g_Gamepad[idx].ff.pEffect[motor]->Stop()))
+			{
+				ReleaseDirectInput();
+				return S_FALSE;
+			}
+		}
+		return S_OK;
+	}
 
     if(g_Gamepad[idx].ff.type == 1) return SetDeviceForcesEjocys(idx,force,motor);
 

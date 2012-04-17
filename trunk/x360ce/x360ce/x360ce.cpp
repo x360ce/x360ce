@@ -72,6 +72,7 @@ VOID Createx360ceWindow(HINSTANCE hInstance)
 HRESULT XInit(DWORD dwUserIndex)
 {
 	EnterCriticalSection(&cs);
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].configured && !g_Gamepad[dwUserIndex].enumfail)
     {
         HRESULT hr=ERROR_SUCCESS;
@@ -140,6 +141,7 @@ HRESULT XInit(DWORD dwUserIndex)
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //WriteLog(LOG_XINPUT,L"XInputGetState");
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
@@ -202,25 +204,25 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
         DWORD povdeg = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
 
         // Up-left, up, up-right, up (at 360 degrees)
-        if (IN_RANGE(povdeg,27000,36000) || IN_RANGE(povdeg,0,9000) || povdeg == 0 )
+        if ((povdeg >= 0 && povdeg < 4500) || (povdeg >= 31500 && povdeg < 36000))
         {
             xState.Gamepad.wButtons |= PadMap.pov[0];
         }
 
         // Up-right, right, down-right
-        if (IN_RANGE(povdeg,0,18000))
+        if (povdeg >= 4500 && povdeg < 13500)
         {
             xState.Gamepad.wButtons |= PadMap.pov[3];
         }
 
         // Down-right, down, down-left
-        if (IN_RANGE(povdeg,9000,27000))
+        if (povdeg >= 13500 && povdeg < 22500)
         {
             xState.Gamepad.wButtons |= PadMap.pov[1];
         }
 
         // Down-left, left, up-left
-        if (IN_RANGE(povdeg,18000,36000))
+        if (povdeg >= 22500 && povdeg < 31500)
         {
             xState.Gamepad.wButtons |= PadMap.pov[2];
         }
@@ -521,6 +523,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
@@ -574,6 +577,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
@@ -606,6 +610,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
+	if(g_Disable) return;
     if(wNativeMode)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
@@ -634,6 +639,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
@@ -655,6 +661,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
@@ -678,6 +685,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
         if(!g_hNativeInstance) LoadSystemXInputDLL();
