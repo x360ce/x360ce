@@ -110,4 +110,6 @@ MappingType getTriggerType(LPCWSTR);
 extern IHOOK_CONIFG x360ce_InputHookConfig;
 extern IHOOK_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
+extern BOOL g_Disable;
+
 #endif
