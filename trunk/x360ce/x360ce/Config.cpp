@@ -224,7 +224,7 @@ void ReadPadConfig(DWORD idx)
     g_Gamepad[idx].ff.leftPeriod = ReadLongFromFile(section, L"LeftMotorPeriod",60);
     g_Gamepad[idx].ff.rightPeriod = ReadLongFromFile(section, L"RightMotorPeriod",20);
 
-    for (INT i = 0; i < 10; ++i) PadMap.Button[i] = -1;
+    for (INT i = 0; i < 10; ++i) PadMap.Button[i] = (WORD) -1;
 
     for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 
@@ -233,7 +233,7 @@ void ReadPadConfig(DWORD idx)
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    PadMap.DpadPOV = -1;
+    PadMap.DpadPOV = (WORD) -1;
 
     for (INT i=0; i<10; ++i)
     {

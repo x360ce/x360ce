@@ -168,7 +168,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 #if defined(DEBUG) | defined(_DEBUG)
-    WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
+    //WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
 #endif
 
     GamepadMap PadMap = GamepadMapping[dwUserIndex];
@@ -597,8 +597,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
     xCaps.Flags = 0; // we do not support sound
     xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFF;
     xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
-    //MSDN lie, this is not range !
-    //Dumped from XInput device
+
     xCaps.Gamepad.sThumbLX = (SHORT) -64;
     xCaps.Gamepad.sThumbLY = (SHORT) -64;
     xCaps.Gamepad.sThumbRX = (SHORT) -64;
@@ -692,12 +691,68 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
         typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
         XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( g_hNativeInstance, "XInputGetKeystroke");
-        return nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
+        DWORD ret = nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
+
+
+		WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+		return ret;
     }
 
     if (!pKeystroke || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
 
     if(!g_Gamepad[dwUserIndex].pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-    return ERROR_EMPTY; //no key pressed
+	XINPUT_KEYSTROKE &xkey = *pKeystroke;
+
+	XINPUT_STATE xState;
+	ZeroMemory(&xState,sizeof(XINPUT_STATE));
+	XInputGetState(dwUserIndex,&xState);
+
+	static WORD flags[10];
+	WORD vkey = NULL;
+	WORD curretFlags = NULL;
+
+	int i = 0;
+	for(i = 0; i < 10; i++)
+	{
+		if(xState.Gamepad.wButtons & buttonIDs[i] && !flags[i])
+		{
+			vkey = keyIDs[i];
+			curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
+			break;
+		}
+		if(xState.Gamepad.wButtons & buttonIDs[i] && (flags[i] == XINPUT_KEYSTROKE_KEYDOWN))
+		{
+			vkey = keyIDs[i];
+			curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
+			break;
+		}
+		if(!(xState.Gamepad.wButtons & buttonIDs[i]) && (flags[i] & XINPUT_KEYSTROKE_KEYDOWN))
+		{
+			vkey = keyIDs[i];
+			curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
+			break;
+		}
+		if(!(xState.Gamepad.wButtons & buttonIDs[i]) && (flags[i] & XINPUT_KEYSTROKE_KEYUP))
+		{
+			curretFlags = flags[i] = FALSE;
+			break;
+		}
+	}
+
+	DWORD ret = ERROR_EMPTY;
+
+	if(vkey)
+	{
+		xkey.UserIndex = dwUserIndex;
+		xkey.Unicode = NULL;
+		xkey.HidCode = NULL;
+		xkey.Flags = curretFlags;
+		xkey.VirtualKey = vkey;
+		ret = ERROR_SUCCESS;
+	}
+
+	WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+
+	return ret;
 }

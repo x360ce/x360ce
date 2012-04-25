@@ -53,25 +53,39 @@ struct GamepadMap
 {
     // Axis indexes are positive or negative numbers, zero is invalid.
     // All other indexer values start from zero.
-    INT Button[10];
+    WORD Button[10];
     DWORD pov[4];
     TriggerMap Trigger[2];
     AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
-    INT DpadPOV; // Index of POV switch to use for the D-pad
+    WORD DpadPOV; // Index of POV switch to use for the D-pad
     BOOL PovIsButton;
     BOOL enabled;
     GamepadMap()
     {
         // Set default values
-        for (INT i = 0; i < 10; ++i) Button[i] = -1;
+        for (INT i = 0; i < 10; ++i) Button[i] = (WORD) -1;
 
         for (INT i = 0; i < 4; ++i) pov[i] = (DWORD) -1;
 
-        DpadPOV = -1;
+        DpadPOV = (WORD) -1;
         PovIsButton = 0;
         enabled = false;
     }
 
+};
+
+enum eGamepadIDs
+{
+	GAMEPAD_A,
+	GAMEPAD_B,
+	GAMEPAD_X,
+	GAMEPAD_Y,
+	GAMEPAD_LEFT_SHOULDER,
+	GAMEPAD_RIGHT_SHOULDER,
+	GAMEPAD_BACK,
+	GAMEPAD_START,
+	GAMEPAD_LEFT_THUMB,
+	GAMEPAD_RIGHT_THUMB,
 };
 
 // Map internal IDs to XInput constants
@@ -87,6 +101,20 @@ static const WORD buttonIDs[10] =
     XINPUT_GAMEPAD_START,
     XINPUT_GAMEPAD_LEFT_THUMB,
     XINPUT_GAMEPAD_RIGHT_THUMB,
+};
+
+static const WORD keyIDs[10] =
+{
+	VK_PAD_A,
+	VK_PAD_B,
+	VK_PAD_X,
+	VK_PAD_Y,
+	VK_PAD_LSHOULDER,
+	VK_PAD_RSHOULDER,
+	VK_PAD_BACK,
+	VK_PAD_START,
+	VK_PAD_LTHUMB_PRESS,
+	VK_PAD_RTHUMB_PRESS,
 };
 
 static const WORD povIDs[4] =
