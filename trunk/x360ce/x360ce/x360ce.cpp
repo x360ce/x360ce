@@ -709,36 +709,46 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	XInputGetState(dwUserIndex,&xState);
 
 	static WORD flags[10];
+	static WORD hackflag = 0;
 	WORD vkey = NULL;
 	WORD curretFlags = NULL;
 
 	int i = 0;
 	for(i = 0; i < 10; i++)
 	{
-		if(xState.Gamepad.wButtons & buttonIDs[i] && !flags[i])
+		if(xState.Gamepad.wButtons & buttonIDs[i])
 		{
-			vkey = keyIDs[i];
-			curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
-			break;
+			if(flags[i] == NULL)
+			{
+				vkey = keyIDs[i];
+				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
+				break;
+			}
+			if((flags[i] == XINPUT_KEYSTROKE_KEYDOWN) && ! hackflag)
+			{
+				vkey = keyIDs[i];
+				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
+				break;
+			}
 		}
-		if(xState.Gamepad.wButtons & buttonIDs[i] && (flags[i] == XINPUT_KEYSTROKE_KEYDOWN))
+		if(!(xState.Gamepad.wButtons & buttonIDs[i]))
 		{
-			vkey = keyIDs[i];
-			curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
-			break;
-		}
-		if(!(xState.Gamepad.wButtons & buttonIDs[i]) && (flags[i] & XINPUT_KEYSTROKE_KEYDOWN))
-		{
-			vkey = keyIDs[i];
-			curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
-			break;
-		}
-		if(!(xState.Gamepad.wButtons & buttonIDs[i]) && (flags[i] & XINPUT_KEYSTROKE_KEYUP))
-		{
-			curretFlags = flags[i] = FALSE;
-			break;
+			if(flags[i] & XINPUT_KEYSTROKE_KEYDOWN)
+			{
+				vkey = keyIDs[i];
+				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
+				break;
+			}
+			if(flags[i] & XINPUT_KEYSTROKE_KEYUP)
+			{
+				curretFlags = flags[i] = NULL;
+				break;
+			}
 		}
 	}
+
+	if(hackflag < 7) hackflag++;
+	else hackflag = 0;
 
 	DWORD ret = ERROR_EMPTY;
 
