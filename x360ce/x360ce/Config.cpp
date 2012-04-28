@@ -247,25 +247,25 @@ void ReadPadConfig(DWORD idx)
     {
         if (ReadStringFromFile(section, povNames[i], buffer) > 0)
         {
-            INT val = _wtoi(buffer);
-
-            if(val > 0)
-            {
-                PadMap.pov[i] = val - 1;
-                PadMap.PovIsButton = true;
-            }
-            else
-            {
-                if(wcsstr(buffer,L"UP")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_UP;
-
-                if(wcsstr(buffer,L"DOWN")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_DOWN;
-
-                if(wcsstr(buffer,L"LEFT")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_LEFT;
-
-                if(wcsstr(buffer,L"RIGHT")) PadMap.pov[i] = XINPUT_GAMEPAD_DPAD_RIGHT;
-
-                PadMap.PovIsButton = false;
-            }
+			WORD val = _wtoi(buffer);
+			if(val == 0)
+			{
+				//for compatibility with x360ce.App
+				if(wcsstr(buffer,L"UP")) PadMap.pov[i] = 36000;
+				if(wcsstr(buffer,L"DOWN")) PadMap.pov[i] = 18000;
+				if(wcsstr(buffer,L"LEFT")) PadMap.pov[i] = 27000;
+				if(wcsstr(buffer,L"RIGHT")) PadMap.pov[i] = 9000;
+			}
+			else if(val < 100)
+			{
+				PadMap.pov[i] = val - 1;
+				PadMap.PovIsButton = true;
+			}
+			else 
+			{
+				PadMap.pov[i] = val;
+				PadMap.PovIsButton = false;
+			}
         }
 
         if (ReadStringFromFile(section, axisNames[i], buffer) > 0)

@@ -54,7 +54,7 @@ struct GamepadMap
     // Axis indexes are positive or negative numbers, zero is invalid.
     // All other indexer values start from zero.
     WORD Button[10];
-    DWORD pov[4];
+    WORD pov[4];
     TriggerMap Trigger[2];
     AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
     WORD DpadPOV; // Index of POV switch to use for the D-pad
@@ -64,8 +64,7 @@ struct GamepadMap
     {
         // Set default values
         for (INT i = 0; i < 10; ++i) Button[i] = (WORD) -1;
-
-        for (INT i = 0; i < 4; ++i) pov[i] = (DWORD) -1;
+        for (INT i = 0; i < 4; ++i) pov[i] = (WORD) -1;
 
         DpadPOV = (WORD) -1;
         PovIsButton = 0;
@@ -115,6 +114,14 @@ static const WORD keyIDs[10] =
 	VK_PAD_START,
 	VK_PAD_LTHUMB_PRESS,
 	VK_PAD_RTHUMB_PRESS,
+};
+
+enum ePovIDs
+{
+	GAMEPAD_DPAD_UP,
+	GAMEPAD_DPAD_DOWN,
+	GAMEPAD_DPAD_LEFT,
+	GAMEPAD_DPAD_RIGHT
 };
 
 static const WORD povIDs[4] =

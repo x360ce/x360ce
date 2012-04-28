@@ -195,39 +195,31 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
             xState.Gamepad.wButtons |= buttonIDs[i];
     }
 
-    // --- Map POV to the D-pad ---
-    if ((PadMap.DpadPOV >= 0) && !PadMap.PovIsButton)
-    {
+	// --- Map POV to the D-pad ---
+	if ((PadMap.DpadPOV >= 0) && !PadMap.PovIsButton)
+	{
+		//INT pov = POVState(PadMap.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
-        //INT pov = POVState(PadMap.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
+		WORD povdeg = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
+		if(povdeg >= 0) 
+		{
+			// Up-left, up, up-right, up (at 360 degrees)
+			if (IN_RANGE2(povdeg,PadMap.pov[GAMEPAD_DPAD_LEFT]+1,PadMap.pov[GAMEPAD_DPAD_UP]) || IN_RANGE2(povdeg,0,PadMap.pov[GAMEPAD_DPAD_RIGHT]-1))
+				xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
 
-        DWORD povdeg = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
+			// Up-right, right, down-right
+			if (IN_RANGE(povdeg,0,PadMap.pov[GAMEPAD_DPAD_DOWN]))
+				xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
 
-        // Up-left, up, up-right, up (at 360 degrees)
-        if ((povdeg >= 0 && povdeg < 4500) || (povdeg >= 31500 && povdeg < 36000))
-        {
-            xState.Gamepad.wButtons |= PadMap.pov[0];
-        }
+			// Down-right, down, down-left
+			if (IN_RANGE(povdeg,PadMap.pov[GAMEPAD_DPAD_RIGHT],PadMap.pov[GAMEPAD_DPAD_LEFT]))
+				xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
 
-        // Up-right, right, down-right
-        if (povdeg >= 4500 && povdeg < 13500)
-        {
-            xState.Gamepad.wButtons |= PadMap.pov[3];
-        }
-
-        // Down-right, down, down-left
-        if (povdeg >= 13500 && povdeg < 22500)
-        {
-            xState.Gamepad.wButtons |= PadMap.pov[1];
-        }
-
-        // Down-left, left, up-left
-        if (povdeg >= 22500 && povdeg < 31500)
-        {
-            xState.Gamepad.wButtons |= PadMap.pov[2];
-        }
-
-    }
+			// Down-left, left, up-left
+			if (IN_RANGE(povdeg,PadMap.pov[GAMEPAD_DPAD_DOWN],PadMap.pov[GAMEPAD_DPAD_UP]))
+				xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
+		}
+	}
     else if((PadMap.DpadPOV < 0) && PadMap.PovIsButton)
     {
         for (INT i = 0; i < 4; ++i)
@@ -747,7 +739,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 		}
 	}
 
-	if(hackflag < 7) hackflag++;
+	if(hackflag < 8) hackflag++;
 	else hackflag = 0;
 
 	DWORD ret = ERROR_EMPTY;
