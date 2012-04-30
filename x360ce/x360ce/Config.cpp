@@ -189,6 +189,12 @@ void ReadPadConfig(DWORD idx)
         StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
     }
 
+	for (int i=0; i<4; ++i)
+	{
+		SHORT tmp = static_cast<SHORT>(ReadLongFromFile(section, axisADZNames[i], 0));
+		g_Gamepad[idx].antidz[i] = clamp(tmp,0,32767);
+	}
+
     g_Gamepad[idx].passthrough = (ReadLongFromFile(section, L"PassThrough",1) !=0);
 
     if(g_Gamepad[idx].passthrough)
@@ -224,7 +230,7 @@ void ReadPadConfig(DWORD idx)
     g_Gamepad[idx].ff.leftPeriod = ReadLongFromFile(section, L"LeftMotorPeriod",60);
     g_Gamepad[idx].ff.rightPeriod = ReadLongFromFile(section, L"RightMotorPeriod",20);
 
-    for (INT i = 0; i < 10; ++i) PadMap.Button[i] = (WORD) -1;
+	memset(PadMap.Button,-1,sizeof(PadMap.Button));
 
     for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 
@@ -255,6 +261,7 @@ void ReadPadConfig(DWORD idx)
 				if(wcsstr(buffer,L"DOWN")) PadMap.pov[i] = 18000;
 				if(wcsstr(buffer,L"LEFT")) PadMap.pov[i] = 27000;
 				if(wcsstr(buffer,L"RIGHT")) PadMap.pov[i] = 9000;
+				PadMap.PovIsButton = false;
 			}
 			else if(val < 100)
 			{
@@ -287,7 +294,6 @@ void ReadPadConfig(DWORD idx)
         }
 
         g_Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ReadLongFromFile(section, axisDZNames[i], 0));
-        g_Gamepad[idx].antidz[i] = static_cast<SHORT>(ReadLongFromFile(section, axisADZNames[i], 0));
         g_Gamepad[idx].axislinear[i] = static_cast<SHORT>(ReadLongFromFile(section, axisLNames[i], 0));
 
         if (INT ret = ReadLongFromFile(section, axisBNames[i*2]) > 0)
