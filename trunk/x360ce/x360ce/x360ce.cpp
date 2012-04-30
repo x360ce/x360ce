@@ -132,24 +132,52 @@ HRESULT XInit(DWORD dwUserIndex)
             WriteLog(LOG_CORE,L"Restore InputHook state");
         }
 		LeaveCriticalSection(&cs);
-        return ERROR_SUCCESS;
-    }
+		return ERROR_SUCCESS;
+	}
 	LeaveCriticalSection(&cs);
-    return ERROR_DEVICE_NOT_CONNECTED;
+	return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-    //WriteLog(LOG_XINPUT,L"XInputGetState");
+	//WriteLog(LOG_XINPUT,L"XInputGetState");
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-    if(g_Gamepad[dwUserIndex].passthrough)
-    {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+	if(g_Gamepad[dwUserIndex].passthrough)
+	{
+		if(!g_hNativeInstance) LoadSystemXInputDLL();
 
-        typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
-        XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
-        return nativeXInputGetState(dwUserIndex,pState);
-    }
+		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
+		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
+		DWORD ret = nativeXInputGetState(dwUserIndex,pState);
+
+		for (int i = 0; i < 4; ++i)
+		{
+			if (g_Gamepad[dwUserIndex].antidz[i])
+			{
+				SHORT antidz = g_Gamepad[dwUserIndex].antidz[i];
+				SHORT* val = NULL;
+				if(i == 0)
+					val = &pState->Gamepad.sThumbLX;
+				else if(i == 1)
+					val = &pState->Gamepad.sThumbLY;
+				else if(i == 2)
+					val = &pState->Gamepad.sThumbRX;
+				else if(i == 3)
+					val = &pState->Gamepad.sThumbRY;
+
+				if(val == NULL) continue;
+
+				SHORT direction = *val > 0 ? 1 : -1;
+				*val = (LONG)(abs(*val) / (32767 / (32767 - antidz * 1.0)) + antidz);
+				*val = min(*val, 32767);
+
+				if(*val == g_Gamepad[dwUserIndex].antidz[i] || *val == -g_Gamepad[dwUserIndex].antidz[i]) *val = 0;
+
+				*val = (SHORT) (direction * *val);
+			}
+		}
+		return ret;
+	}
 
     if (!pState || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
 
@@ -700,8 +728,9 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	ZeroMemory(&xState,sizeof(XINPUT_STATE));
 	XInputGetState(dwUserIndex,&xState);
 
+	//static DWORD dwPacketID = NULL;
 	static WORD flags[10];
-	static WORD hackflag = 0;
+
 	WORD vkey = NULL;
 	WORD curretFlags = NULL;
 
@@ -716,17 +745,29 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
 				break;
 			}
-			if((flags[i] == XINPUT_KEYSTROKE_KEYDOWN) && ! hackflag)
+#if 0
+			if((flags[i] & XINPUT_KEYSTROKE_KEYDOWN))
 			{
-				vkey = keyIDs[i];
-				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
-				break;
+				if((xState.dwPacketNumber - dwPacketID) >= 500)
+				{
+					dwPacketID = xState.dwPacketNumber;
+					vkey = keyIDs[i];
+					curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
+					break;
+				}
+				else
+				{
+					if(dwPacketID == NULL) dwPacketID = xState.dwPacketNumber;
+					break;
+				}
 			}
+#endif
 		}
 		if(!(xState.Gamepad.wButtons & buttonIDs[i]))
 		{
 			if(flags[i] & XINPUT_KEYSTROKE_KEYDOWN)
 			{
+				//dwPacketID = NULL;
 				vkey = keyIDs[i];
 				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
 				break;
@@ -738,9 +779,6 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 			}
 		}
 	}
-
-	if(hackflag < 8) hackflag++;
-	else hackflag = 0;
 
 	DWORD ret = ERROR_EMPTY;
 
