@@ -728,16 +728,16 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	ZeroMemory(&xState,sizeof(XINPUT_STATE));
 	XInputGetState(dwUserIndex,&xState);
 
-	//static DWORD dwPacketID = NULL;
-	static WORD flags[10];
+	static WORD repeat[14];
+	static WORD flags[14];
 
 	WORD vkey = NULL;
 	WORD curretFlags = NULL;
 
 	int i = 0;
-	for(i = 0; i < 10; i++)
+	for(i = 0; i < 14; i++)
 	{
-		if(xState.Gamepad.wButtons & buttonIDs[i])
+		if(xState.Gamepad.wButtons & allButtonIDs[i])
 		{
 			if(flags[i] == NULL)
 			{
@@ -745,29 +745,27 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
 				break;
 			}
-#if 0
 			if((flags[i] & XINPUT_KEYSTROKE_KEYDOWN))
 			{
-				if((xState.dwPacketNumber - dwPacketID) >= 500)
+				if(repeat[i] <= 0)
 				{
-					dwPacketID = xState.dwPacketNumber;
+					repeat[i] = 5;
 					vkey = keyIDs[i];
 					curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
 					break;
 				}
 				else
 				{
-					if(dwPacketID == NULL) dwPacketID = xState.dwPacketNumber;
-					break;
+					repeat[i]--;
+					continue;
 				}
 			}
-#endif
 		}
-		if(!(xState.Gamepad.wButtons & buttonIDs[i]))
+		if(!(xState.Gamepad.wButtons & allButtonIDs[i]))
 		{
 			if(flags[i] & XINPUT_KEYSTROKE_KEYDOWN)
 			{
-				//dwPacketID = NULL;
+				repeat[i] = 5*4;
 				vkey = keyIDs[i];
 				curretFlags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
 				break;
