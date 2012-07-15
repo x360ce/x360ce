@@ -20,7 +20,6 @@
 #include "Utilities\Log.h"
 
 #define OLE2ANSI
-#define CINTERFACE
 #define _WIN32_DCOM
 #include <wbemidl.h>
 #include <ole2.h>
@@ -75,12 +74,12 @@ typedef HRESULT ( STDMETHODCALLTYPE *tGetA )(
     /* [unique][in][out] */ CIMTYPE *pType,
     /* [unique][in][out] */ long *plFlavor);
 
-MologieDetours::Detour<tCoUninitializeA>* hCoUninitializeA = NULL;
-MologieDetours::Detour<tCoCreateInstanceA>* hCoCreateInstanceA = NULL;
-MologieDetours::Detour<tConnectServerA>* hConnectServerA = NULL;
-MologieDetours::Detour<tCreateInstanceEnumA>* hCreateInstanceEnumA = NULL;
-MologieDetours::Detour<tNextA>* hNextA = NULL;
-MologieDetours::Detour<tGetA>* hGetA = NULL;
+Detour<tCoUninitializeA>* hCoUninitializeA = NULL;
+Detour<tCoCreateInstanceA>* hCoCreateInstanceA = NULL;
+Detour<tConnectServerA>* hConnectServerA = NULL;
+Detour<tCreateInstanceEnumA>* hCreateInstanceEnumA = NULL;
+Detour<tNextA>* hNextA = NULL;
+Detour<tGetA>* hGetA = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -190,7 +189,7 @@ HRESULT STDMETHODCALLTYPE HookNextA(
             if(!hGetA)
             {
                 WriteLog(LOG_HOOKWMI,L"HookGetA:: Hooking");
-                hGetA = new MologieDetours::Detour<tGetA>(pDevices->lpVtbl->Get, HookGetA);
+                hGetA = new Detour<tGetA>(pDevices->lpVtbl->Get, HookGetA);
             }
         }
     }
@@ -226,7 +225,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
             if(!hNextA)
             {
                 WriteLog(LOG_HOOKWMI,L"HookNextA:: Hooking");
-                hNextA = new MologieDetours::Detour<tNextA>(pEnumDevices->lpVtbl->Next, HookNextA);
+                hNextA = new Detour<tNextA>(pEnumDevices->lpVtbl->Next, HookNextA);
             }
         }
     }
@@ -267,7 +266,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
             if(!hCreateInstanceEnumA)
             {
                 WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Hooking");
-                hCreateInstanceEnumA = new MologieDetours::Detour<tCreateInstanceEnumA>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumA);
+                hCreateInstanceEnumA = new Detour<tCreateInstanceEnumA>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumA);
             }
         }
     }
@@ -301,7 +300,7 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
             if(!hConnectServerA)
             {
                 WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Hooking");
-                hConnectServerA = new MologieDetours::Detour<tConnectServerA>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerA);
+                hConnectServerA = new Detour<tConnectServerA>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerA);
             }
         }
     }
@@ -350,12 +349,12 @@ void HookWMI_ANSI()
 {
     if(!hCoCreateInstanceA)
     {
-        hCoCreateInstanceA = new MologieDetours::Detour<tCoCreateInstanceA>(CoCreateInstance, HookCoCreateInstanceA);
+        hCoCreateInstanceA = new Detour<tCoCreateInstanceA>(CoCreateInstance, HookCoCreateInstanceA);
     }
 
     if(!hCoUninitializeA)
     {
-        hCoUninitializeA = new MologieDetours::Detour<tCoUninitializeA>(CoUninitialize, HookCoUninitializeA);
+        hCoUninitializeA = new Detour<tCoUninitializeA>(CoUninitialize, HookCoUninitializeA);
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

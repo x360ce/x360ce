@@ -24,37 +24,12 @@
 
 XINPUT_ENABLE XInputIsEnabled;
 
-BOOL RegisterWindowClass(HINSTANCE hInstance)
+extern iHook g_iHook;
+
+VOID MakeWindow()
 {
-    WNDCLASS wc;
-
-    // Fill in the window class structure with parameters
-    // that describe the main window.
-
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = DefWindowProc;     // points to window procedure
-    wc.cbClsExtra = 0;                // no extra class memory
-    wc.cbWndExtra = 0;                // no extra window memory
-    wc.hInstance = hInstance;         // handle to instance
-    wc.hIcon = NULL;              // predefined app. icon
-    wc.hCursor = NULL;                    // predefined arrow
-    wc.hbrBackground = NULL;    // white background brush
-    wc.lpszMenuName =  L"x360ceMenu";    // name of menu resource
-    wc.lpszClassName = L"x360ceWClass";  // name of window class
-
-    // Register the window class.
-    return RegisterClass(&wc);
-}
-
-VOID Createx360ceWindow(HINSTANCE hInstance)
-{
-    BOOL ret = RegisterWindowClass(hInstance);
-
-    if(!ret) WriteLog(LOG_CORE,L"RegisterWindowClass failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
-
-    //HWND_MESSAGE window is not visible, has no z-order and cannot be enumerated - fixes GRID
     g_hWnd = CreateWindow(
-                 L"x360ceWClass",	// name of window class
+                 L"Message",	// name of window class
                  L"x360ce",			// title-bar string
                  WS_TILED,			// normal window
                  CW_USEDEFAULT,		// default horizontal position
@@ -63,10 +38,11 @@ VOID Createx360ceWindow(HINSTANCE hInstance)
                  CW_USEDEFAULT,		// default height
                  HWND_MESSAGE,		// message-only window
                  NULL,				// no class menu
-                 hInstance,			// handle to application instance
+                 g_hX360ceInstance,	// handle to application instance
                  NULL);				// no window-creation data
 
-    if(!g_hWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+    if(!g_hWnd)
+		WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
 }
 
 HRESULT XInit(DWORD dwUserIndex)
@@ -77,14 +53,18 @@ HRESULT XInit(DWORD dwUserIndex)
     {
         HRESULT hr=ERROR_SUCCESS;
 
-        if(!g_hWnd) Createx360ceWindow(g_hX360ceInstance);
+        if(!g_hWnd) MakeWindow();
 
         if(!g_Gamepad[dwUserIndex].pGamepad)
         {
 
-            if(InputHook_Enable() && (InputHook_Mode() > 1))
+			BOOL bHookDisabled = FALSE;
+
+            if(g_iHook.GetState() && (g_iHook.GetHookMode() & iHook::HOOK_DI))
             {
-                InputHook_Enable(FALSE);
+                //g_iHook.Disable();
+				bHookDisabled = TRUE;
+				g_iHook.SetHookMode(g_iHook.GetHookMode() ^ iHook::HOOK_DI);
                 WriteLog(LOG_CORE,L"Temporary disable InputHook");
             }
 
@@ -99,6 +79,12 @@ HRESULT XInit(DWORD dwUserIndex)
 			}
 
             hr = InitDirectInput(g_hWnd,dwUserIndex);
+
+			if(!g_iHook.GetState() && bHookDisabled )
+			{
+				g_iHook.SetHookMode(g_iHook.GetHookMode() | iHook::HOOK_DI);
+				WriteLog(LOG_CORE,L"Restore InputHook state");
+			}
 
             if(FAILED(hr))
             {
@@ -124,12 +110,6 @@ HRESULT XInit(DWORD dwUserIndex)
 
             g_Gamepad[dwUserIndex].initialized = TRUE;
             WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",dwUserIndex+1);
-        }
-
-        if(!InputHook_Enable() && (InputHook_Mode() > 1))
-        {
-            InputHook_Enable(TRUE);
-            WriteLog(LOG_CORE,L"Restore InputHook state");
         }
 		LeaveCriticalSection(&cs);
 		return ERROR_SUCCESS;
@@ -195,8 +175,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
     if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
-#if defined(DEBUG) | defined(_DEBUG)
-    //WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
+#if defined(VERBOSE_LOG)
+    WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
 #endif
 
     GamepadMap PadMap = GamepadMapping[dwUserIndex];
@@ -434,10 +414,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
     // NOTE: Could add symbolic constants as indexers, such as
     // THUMB_LX_AXIS, THUMB_LX_POSITIVE, THUMB_LX_NEGATIVE
-    if(g_Gamepad[dwUserIndex].axistodpad==0)
+    if(!g_Gamepad[dwUserIndex].axistodpad)
     {
-
-
         for (INT i = 0; i < 4; ++i)
         {
             LONG *values = axis;
@@ -449,17 +427,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
             if (PadMap.Axis[i].analogType != NONE)
             {
-
-                if(PadMap.Axis[i].id > 0 )
-                {
-                    SHORT val = (SHORT) values[PadMap.Axis[i].id - 1];
-                    *(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
-                }
-                else if(PadMap.Axis[i].id < 0 )
-                {
-                    SHORT val = (SHORT) -values[-PadMap.Axis[i].id - 1];
-                    *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
-                }
+				SHORT val = NULL;
+				if(PadMap.Axis[i].id < 0)
+					val = (SHORT) -values[-PadMap.Axis[i].id - 1];
+				else
+					val = (SHORT) values[PadMap.Axis[i].id - 1];
+				*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
             }
 
             // Digital input, positive direction

@@ -31,6 +31,11 @@
 
 extern CRITICAL_SECTION cs;
 
+typedef HRESULT (WINAPI* DirectInput8CreateType)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPVOID punkOuter);
+extern DirectInput8CreateType g_DirectInput8Create;
+
+extern HANDLE hHeap;
+
 #endif
 
 

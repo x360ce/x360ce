@@ -19,32 +19,34 @@
 #include "Utilities\Log.h"
 #include <Shlwapi.h>
 
+HANDLE hConsole = INVALID_HANDLE_VALUE;
 BOOL writelog = FALSE;
 BOOL enableconsole = FALSE;
 LPWSTR lpLogFileName = NULL;
-LPWSTR lpLogFolderName = NULL;
 
 static LPCWSTR LogTypeNames[] =
 {
-    L"[Core]      ",
-    L"[XInput]    ",
-    L"[DInput]    ",
-    L"[InputHook] ",
-    L"[HookDI]    ",
-    L"[HookWMI]   ",
-    L"[HookWT]    ",
+    L"[Core]    ",
+    L"[XInput]  ",
+    L"[DInput]  ",
+    L"[IHook]   ",
+    L"[HookDI]  ",
+    L"[HookWMI] ",
+    L"[HookWT]  ",
 };
 
 void WriteStamp()
 {
     if(enableconsole)
     {
-        wprintf(L"%s",L"TIME           THREAD   TYPE        DATA");
+        wprintf(L"%s",L"TIME           THREAD  TYPE      DATA");
         wprintf(L"\n");
+		fflush(stdout);
     }
 
     if (writelog)
     {
+		if(!lpLogFileName) return;
         FILE * fp;
         _wfopen_s(&fp, lpLogFileName, L"a");
 
@@ -52,7 +54,7 @@ void WriteStamp()
         if (fp==NULL)
             return;
 
-        fwprintf(fp, L"%s",L"TIME           THREAD   TYPE        DATA");
+        fwprintf(fp, L"%s",L"TIME           THREAD  TYPE      DATA");
         fwprintf(fp, L"\n");
         fclose(fp);
     }
@@ -67,13 +69,7 @@ void Console()
 {
     if(enableconsole)
     {
-        AllocConsole();
 
-        HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-        int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
-        FILE* hf_out = _wfdopen(hCrt, L"w");
-        setvbuf(hf_out, NULL, _IONBF, 1);
-        *stdout = *hf_out;
     }
 }
 
@@ -85,8 +81,8 @@ void LogEnable(BOOL log)
 void LogCleanup()
 {
     if(enableconsole)FreeConsole();
-
-    SAFE_DELETE_ARRAY(lpLogFileName);
+    //SAFE_DELETE_ARRAY(lpLogFileName);
+	HeapFree(hHeap,NULL,lpLogFileName);
 }
 
 BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR dirname,size_t dirname_size)
@@ -98,8 +94,9 @@ BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR dirname,size_t
 
     if (writelog && logbasename && dirname)
     {
-        lpLogFileName = new WCHAR[MAX_PATH];
-        lpLogFolderName = new WCHAR[dirname_size+1];
+
+		lpLogFileName = (LPWSTR) HeapAlloc(hHeap,HEAP_ZERO_MEMORY,MAX_PATH*sizeof(WCHAR));
+		LPWSTR lpLogFolderName = (LPWSTR) HeapAlloc(hHeap,HEAP_ZERO_MEMORY,(dirname_size+1)*sizeof(WCHAR));
 
         wcscpy_s(lpLogFileName,MAX_PATH,logbasename);
         wcscpy_s(lpLogFolderName,dirname_size,dirname);
@@ -112,7 +109,7 @@ BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR dirname,size_t
 
         if(!PathIsDirectory(lpLogFolderName)) CreateDirectory(lpLogFolderName, NULL);
 
-        SAFE_DELETE_ARRAY(lpLogFolderName);
+		HeapFree(hHeap,NULL,lpLogFolderName);
 
         bRet = TRUE;
     }
@@ -129,18 +126,42 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
 
     if(enableconsole)
     {
-        wprintf(L"%02u:%02u:%02u.%03u:: %08u %s",\
+		if(hConsole == INVALID_HANDLE_VALUE)
+		{
+			CONSOLE_SCREEN_BUFFER_INFO csbi;
+			AllocConsole();
+			hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleTitle(L"x360ce");
+			GetConsoleScreenBufferInfo(hConsole,&csbi);
+
+			SetConsoleTextAttribute(hConsole,csbi.wAttributes| FOREGROUND_INTENSITY);
+		}
+
+		WCHAR buf[MAX_PATH];
+		DWORD dwChars = NULL;
+
+        swprintf_s(buf,L"%02u:%02u:%02u.%03u %08u %s",\
                 systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
+
+		WriteConsole(hConsole, buf, wcslen(buf),&dwChars,NULL);
+
+
         va_list arglist;
         va_start(arglist,str);
-        vwprintf(str,arglist);
+        vswprintf_s(buf,str,arglist);
+
+		WriteConsole(hConsole, buf, wcslen(buf),&dwChars,NULL);
+
         va_end(arglist);
-        wprintf(L" \n");
+        //wprintf(L" \n");
+		WriteConsole(hConsole, L" \n", wcslen(L" \n"),&dwChars,NULL);
+
         ret = TRUE;
     }
 
     if (writelog)
     {
+		if(!lpLogFileName) return FALSE;
         FILE * fp;
         _wfopen_s(&fp, lpLogFileName, L"a");
 
@@ -148,7 +169,7 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
         if (fp==NULL)
             return 0;
 
-        fwprintf(fp, L"%02u:%02u:%02u.%03u:: %08u %s",\
+        fwprintf(fp, L"%02u:%02u:%02u.%03u %08u %s",\
                  systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
         va_list arglist;
         va_start(arglist,str);

@@ -18,7 +18,6 @@
 #include "globals.h"
 #include "version.h"
 #include "x360ce.h"
-#include "Utilities\Ini.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
 #include "Config.h"
@@ -30,7 +29,45 @@ CRITICAL_SECTION cs;
 HINSTANCE g_hX360ceInstance = NULL;
 HINSTANCE g_hNativeInstance = NULL;
 
+HANDLE hHeap = NULL;
+
 HWND g_hWnd = NULL;
+
+HINSTANCE g_hDInput8Instance = NULL;
+DirectInput8CreateType g_DirectInput8Create = NULL;
+
+iHook g_iHook;
+
+void LoadSystemDInput8DLL()
+{
+	WCHAR sysdir[MAX_PATH];
+	WCHAR buffer[MAX_PATH];
+
+	// Getting path to system dir and to xinput1_3.dll
+	GetSystemDirectory(sysdir,MAX_PATH);
+
+	// Append dll name
+	//wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
+	swprintf_s(buffer,L"%s\\%s",sysdir,L"dinput8.dll");
+
+	// try to load the system's xinput dll, if pointer empty
+	WriteLog(LOG_CORE,L"Loading %s",buffer);
+
+	if (!g_hDInput8Instance)
+		g_hDInput8Instance = LoadLibrary(buffer);
+
+	//Debug
+	if (!g_hDInput8Instance)
+	{
+		WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
+		WriteLog(LOG_CORE,L"x360ce will exit now!!!");
+		ExitProcess(1); // exit the hard way
+	}
+	else
+	{
+		g_DirectInput8Create = (DirectInput8CreateType) GetProcAddress( g_hDInput8Instance, "DirectInput8Create");
+	}
+}
 
 void LoadSystemXInputDLL()
 {
@@ -73,43 +110,47 @@ SHORT ConfiguredPadCount()
 
 VOID InstallInputHooks()
 {
-    x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
+    //x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
 
-    if(x360ce_InputHookConfig.bEnabled)
+	iHookPadConfig padconf[4];
+    if(g_iHook.GetState())
     {
-
-        for(WORD i = 0; i < 4; i++)
+        for(WORD i = 0; i < ConfiguredPadCount(); i++)
         {
-            x360ce_InputHookGamepadConfig[i].bEnabled = g_Gamepad[i].configured;
-            x360ce_InputHookGamepadConfig[i].productGUID = g_Gamepad[i].productGUID;
-            x360ce_InputHookGamepadConfig[i].instanceGUID = g_Gamepad[i].instanceGUID;
+            if(g_Gamepad[i].configured) padconf[i].Enable();
+            padconf[i].SetProductGUID(g_Gamepad[i].productGUID);
+            padconf[i].SetInstanceGUID(g_Gamepad[i].instanceGUID);
+			g_iHook.AddHook(padconf[i]);
         }
     }
 
-    InputHook_Init( &x360ce_InputHookConfig,  x360ce_InputHookGamepadConfig);
+	g_iHook.ExecuteHooks();
 }
 
 VOID InitInstance(HINSTANCE hinstDLL)
 {
-#if defined(DEBUG) | defined(_DEBUG)
+
+#ifdef _DEBUG
     int CurrentFlags;
     CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
     CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
+	CurrentFlags |= _CRTDBG_ALLOC_MEM_DF;
     CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
-    CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
+    //CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
     _CrtSetDbgFlag(CurrentFlags);
 #endif
 
 	InitializeCriticalSection(&cs);
-
 	EnterCriticalSection(&cs);
+
     g_hX360ceInstance =  hinstDLL;
+
+	hHeap = HeapCreate(NULL,NULL,NULL);
+
     DWORD dwAppPID = GetCurrentProcessId();
-    SetIniFileName(L"x360ce.ini");
-    ReadConfig();
+    ReadConfig(L"x360ce.ini");
     Console();
     LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
-
     WriteStamp();
 
 #if SVN_MODS != 0
@@ -120,6 +161,7 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
     WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
+	LoadSystemDInput8DLL();
     InstallInputHooks();
 	LeaveCriticalSection(&cs);
 }
@@ -127,7 +169,6 @@ VOID InitInstance(HINSTANCE hinstDLL)
 VOID ExitInstance()
 {
 	EnterCriticalSection(&cs);
-    InputHook_Clean();
 
     if (g_hNativeInstance)
     {
@@ -135,7 +176,8 @@ VOID ExitInstance()
         g_hNativeInstance = NULL;
     }
 
-    if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
+    if(IsWindow(g_hWnd))
+		DestroyWindow(g_hWnd);
 
     g_hWnd = NULL;
     UnregisterClass(L"x360ceWClass",g_hX360ceInstance);
@@ -143,7 +185,8 @@ VOID ExitInstance()
     WriteLog(LOG_CORE,L"x360ce terminating, bye");
 
     LogCleanup();
-    IniCleanup();
+
+	HeapDestroy(hHeap);
 
 	LeaveCriticalSection(&cs);
 	DeleteCriticalSection(&cs);
