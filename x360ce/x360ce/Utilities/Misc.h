@@ -20,9 +20,28 @@
 LPCWSTR HostFileName();
 LPCWSTR DLLFileName(HINSTANCE hModule);
 LPWSTR const DXErrStr(HRESULT dierr);
-LONG clamp(LONG val, LONG min, LONG max);
-LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ);
-HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size);
-HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid);
+inline LONG clamp(LONG val, LONG min, LONG max)
+{
+	if (val < min) return min;
+
+	if (val > max) return max;
+
+	return val;
+}
+inline LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
+{
+	if (val < lowerDZ) return min;
+
+	if (val > upperDZ) return max;
+
+	return val;
+}
+#if 0
+HRESULT GUIDtoString(const GUID pg, LPWSTR str, int size);
+#endif
+LPCWSTR GUIDtoString(const GUID g, LPWSTR str);
+LPCSTR GUIDtoString(const GUID g, LPSTR str);
+
+void StringToGUID(LPCWSTR szBuf, GUID *rGuid);
 
 #endif // _UTILS_H_

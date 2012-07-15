@@ -18,72 +18,61 @@
 #include "globals.h"
 #include "InputHook.h"
 
-IHOOK_CONIFG InputHookConfig;
-IHOOK_GAMEPAD_CONIFG GamepadConfig[4];
-BOOL laststate = FALSE;
+iHook *iHookThis = NULL;
 
-ULONG ACLEntries[1];
-
-VOID InputHook_Enable(BOOL state)
+iHookPadConfig::iHookPadConfig()
+	:bEnabled(0)
+	,productGUID(GUID())
+	,instanceGUID(GUID())
+	,dwVIDPID(0)
 {
-    InputHookConfig.bEnabled = state;
-    laststate = state;
+
 }
 
-BOOL InputHook_Enable()
+iHook::iHook()
+	:bEnabled(0)
+	,dwHookMode(0)
+	,dwHookVIDPID(MAKELONG(0x028E,0x045E))
+	,bHookWMIANSI(0)
+	,bHookWinTrust(0)
+	,dwHookCount(0)
+	,hHeap(0)
 {
-    return InputHookConfig.bEnabled;
+	iHookThis = this;
+	hHeap = HeapCreate(NULL,NULL,NULL);
 }
 
-DWORD InputHook_Mode()
+iHook::~iHook()
 {
-    return InputHookConfig.dwHookMode;
+	HookWMI_UNI_Clean();
+	//HookWMI_ANSI_Clean();
+	HookDIClean();
+	HookWinTrustClean();
+
+	HeapDestroy(hHeap);
 }
 
-BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig)
+BOOL iHook::AddHook(iHookPadConfig &config)
 {
-
-    if(!fconfig) return FALSE;
-
-    if(!fconfig->bEnabled) return FALSE;
-
-    memcpy(&InputHookConfig,fconfig,sizeof(IHOOK_CONIFG));
-
-    for(WORD i = 0; i < 4; i++)
-    {
-
-        memcpy(&GamepadConfig[i],gconfig,sizeof(IHOOK_GAMEPAD_CONIFG));
-        gconfig++;
-
-        if(!IsEqualGUID(GamepadConfig[i].productGUID, GUID_NULL) && !IsEqualGUID(GamepadConfig[i].instanceGUID, GUID_NULL))
-        {
-            if(!GamepadConfig[i].dwVID) GamepadConfig[i].dwVID = LOWORD(GamepadConfig[i].productGUID.Data1);
-
-            if(!GamepadConfig[i].dwPID) GamepadConfig[i].dwPID = HIWORD(GamepadConfig[i].productGUID.Data1);
-        }
-        else GamepadConfig[i].bEnabled = FALSE;
-    }
-
-    if(InputHookConfig.bEnabled)
-    {
-        if(InputHookConfig.dwHookWMIANSI) HookWMI_ANSI();
-        else HookWMI_UNI();
-
-        if(InputHookConfig.dwHookMode >= HOOK_COMPAT) HookDI();
-
-        if(InputHookConfig.dwHookWinTrust) HookWinTrust();
-    }
-
-    return TRUE;
+	dwHookCount++;
+	vPadConf.push_back(config);
+	return TRUE;
 }
 
-BOOL InputHook_Clean()
+BOOL iHook::ExecuteHooks()
 {
+	if(!bEnabled) return FALSE;
 
-    HookWMI_UNI_Clean();
-    HookWMI_ANSI_Clean();
-    HookDIClean();
-    HookWinTrustClean();
+	if(!bHookWMIANSI)
+		HookWMI_UNI();
+//	else
+		//HookWMI_ANSI();
 
-    return TRUE;
+	if(dwHookMode & HOOK_DI)
+		HookDI();
+
+	if(bHookWinTrust)
+		HookWinTrust();
+
+	return TRUE;
 }

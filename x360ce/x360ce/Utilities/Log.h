@@ -19,6 +19,8 @@
 
 enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKDI, LOG_HOOKWMI, LOG_HOOKWT };
 
+#define LOG(x)
+
 // prototypes
 void WriteStamp();
 void LogEnable(BOOL log);

@@ -23,12 +23,12 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef LONG (WINAPI *tWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
 
-MologieDetours::Detour<tWinVerifyTrust>* hWinVerifyTrust = NULL;
+Detour<tWinVerifyTrust>* hWinVerifyTrust = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-    if(!InputHookConfig.bEnabled) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+    if(!iHookThis->GetState()) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
 
     WriteLog(LOG_HOOKWT,L"HookWinVerifyTrust");
 
@@ -40,9 +40,9 @@ LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 
 void HookWinTrust()
 {
-    if(!hWinVerifyTrust)
+    if(!hWinVerifyTrust && iHookThis)
     {
-        hWinVerifyTrust = new MologieDetours::Detour<tWinVerifyTrust>(WinVerifyTrust, HookWinVerifyTrust);
+        hWinVerifyTrust = new Detour<tWinVerifyTrust>(WinVerifyTrust, HookWinVerifyTrust);
     }
 }
 

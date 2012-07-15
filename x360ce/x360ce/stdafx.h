@@ -18,6 +18,8 @@
 
 #include "targetver.h"
 
+#define CINTERFACE
+
 #define _BIND_TO_CURRENT_CRT_VERSION 1
 
 #define WIN32_LEAN_AND_MEAN
@@ -28,8 +30,10 @@
 #define UNICODE
 #endif
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #define _SECURE_SCL 1
+#define _CRTDBG_MAP_ALLOC
+
 #include <crtdbg.h>
 #endif
 
@@ -42,6 +46,9 @@
 #include <math.h>
 #include <time.h>
 #include <fstream>
+#include <map>
+#include <locale>
+#include <codecvt>
 #include <io.h>
 #include <fcntl.h>
 

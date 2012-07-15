@@ -33,62 +33,71 @@ LPCWSTR DLLFileName(HINSTANCE hModule)
     return PathFindFileName(strPath);
 }
 
-
-LONG clamp(LONG val, LONG min, LONG max)
+#if 0
+HRESULT GUIDtoString(const GUID pg, LPWSTR str, int size)
 {
-    if (val < min) return min;
+    int ret = StringFromGUID2(pg,str,size);
 
-    if (val > max) return max;
-
-    return val;
-}
-LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
-{
-    if (val < lowerDZ) return min;
-
-    if (val > upperDZ) return max;
-
-    return val;
-}
-
-inline static WORD flipShort(WORD s)
-{
-    return (WORD) ((s>>8) | (s<<8));
-}
-
-inline static DWORD flipLong(DWORD l)
-{
-    return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
-}
-
-HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size)
-{
-    int ret = StringFromGUID2(pg,data,size);
-
-    if(ret) return S_OK;
+    if(ret)
+		return S_OK;
 
     return E_FAIL;
 }
+#endif
 
-HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid)
+LPCWSTR GUIDtoString(const GUID g, LPWSTR str)
 {
-    HRESULT hr = E_FAIL;
-    GUID g = GUID_NULL;
-
-    if ((wcschr(szBuf,L'{')) && (wcsrchr(szBuf,L'}')))
-    {
-        hr = CLSIDFromString(szBuf, &g);
-    }
-    else
-    {
-        WCHAR tmp[50];
-        swprintf_s(tmp,L"%s%s%s",L"{",szBuf,L"}");
-        hr = CLSIDFromString(tmp, &g);
-    }
-
-    *rGuid = g;
-    return hr;
+	if(str == NULL)
+		return NULL;
+	swprintf_s(str,40,L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+		g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
+	return str;
 }
+
+LPCSTR GUIDtoString(const GUID g, LPSTR str)
+{
+	if(str == NULL)
+		return NULL;
+	sprintf_s(str,40,"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+		g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
+	return str;
+}
+
+void StringToGUID(LPCWSTR szBuf, GUID *rGuid)
+{
+	if(!szBuf)
+		return;
+
+	GUID g = GUID_NULL;
+
+	DWORD data2;
+	DWORD data3;
+	DWORD tmp[8];
+
+	if ((wcschr(szBuf,L'{')) && (wcsrchr(szBuf,L'}')))
+	{
+		swscanf_s(szBuf,L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+			&g.Data1,&data2,&data3,&tmp[0],&tmp[1],&tmp[2],&tmp[3],&tmp[4],&tmp[5],&tmp[6],&tmp[7]);
+	}
+	else
+	{
+		swscanf_s(szBuf,L"%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+			&g.Data1,&data2,&data3,&tmp[0],&tmp[1],&tmp[2],&tmp[3],&tmp[4],&tmp[5],&tmp[6],&tmp[7]);
+	}
+
+
+	g.Data2 = (WORD) data2;
+	g.Data3 = (WORD) data3;
+	for(int i=0; i < 8; ++i)
+	{
+		g.Data4[i] = (unsigned char) tmp[i];
+	}
+
+	*rGuid = g;
+	return;
+}
+
+
 
 LPWSTR const DXErrStr(HRESULT dierr)
 {

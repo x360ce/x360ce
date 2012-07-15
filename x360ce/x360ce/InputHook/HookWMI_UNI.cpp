@@ -18,8 +18,8 @@
 #include "globals.h"
 #include "InputHook.h"
 #include "Utilities\Log.h"
+#include "Utilities\Misc.h"
 
-#define CINTERFACE
 #define _WIN32_DCOM
 #include <wbemidl.h>
 #include <ole2.h>
@@ -74,13 +74,13 @@ typedef HRESULT ( STDMETHODCALLTYPE *tGetW )(
     /* [unique][in][out] */ CIMTYPE *pType,
     /* [unique][in][out] */ long *plFlavor);
 
-MologieDetours::Detour<tCoUninitializeW>* hCoUninitializeW = NULL;
-MologieDetours::Detour<tCoCreateInstanceW>* hCoCreateInstanceW = NULL;
+Detour<tCoUninitializeW>* hCoUninitializeW = NULL;
+Detour<tCoCreateInstanceW>* hCoCreateInstanceW = NULL;
 
-MologieDetours::Detour<tConnectServerW>* hConnectServerW = NULL;
-MologieDetours::Detour<tCreateInstanceEnumW>* hCreateInstanceEnumW = NULL;
-MologieDetours::Detour<tNextW>* hNextW = NULL;
-MologieDetours::Detour<tGetW>* hGetW = NULL;
+Detour<tConnectServerW>* hConnectServerW = NULL;
+Detour<tCreateInstanceEnumW>* hCreateInstanceEnumW = NULL;
+Detour<tNextW>* hNextW = NULL;
+Detour<tGetW>* hGetW = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,14 +96,14 @@ HRESULT STDMETHODCALLTYPE HookGetW(
 {
     HRESULT hr = hGetW->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookGetW");
 
     if(FAILED(hr)) return hr;
 
-    //WriteLog(L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
-    //if( pVal->vt == VT_BSTR) WriteLog(L"%s",pVal->bstrVal);
+    //WriteLog(LOG_HOOKWMI, L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
+    //if( pVal->vt == VT_BSTR) WriteLog(LOG_HOOKWMI, L"%s",pVal->bstrVal);
 
     if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL )
     {
@@ -119,9 +119,10 @@ HRESULT STDMETHODCALLTYPE HookGetW(
         if(strPid && swscanf_s( strPid, L"PID_%4X", &dwPid ) != 1 )
             return hr;
 
-        for(WORD i = 0; i < 4; i++)
+        for(WORD i = 0; i < iHookThis->GetHookCount(); i++)
         {
-            if(GamepadConfig[i].bEnabled && GamepadConfig[i].dwVID == dwVid && GamepadConfig[i].dwPID == dwPid)
+			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+            if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
                 WCHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
                 WCHAR tempstr[MAX_PATH];
@@ -131,12 +132,27 @@ HRESULT STDMETHODCALLTYPE HookGetW(
                     BSTR Hookbstr=NULL;
                     WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 
-                    if(InputHookConfig.dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
-                    else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
+					DWORD dwHookVid = NULL;
+					DWORD dwHookPID = NULL;
 
-                    Hookbstr=SysAllocString(tempstr);
-                    pVal->bstrVal = Hookbstr;
-                    WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+					if(iHookThis->GetHookMode() & iHook::HOOK_VIDPID)
+					{
+						dwHookVid = HIWORD(iHookThis->GetHookVIDPID());
+						dwHookPID = LOWORD(iHookThis->GetHookVIDPID());
+					}
+					else
+					{
+						dwHookVid = HIWORD(padconf.GetProductVIDPID());
+						dwHookPID = LOWORD(padconf.GetProductVIDPID());
+					}
+
+                    if(dwHookVid && dwHookPID)
+					{
+						swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d",dwHookVid,dwHookPID,i );
+						Hookbstr=SysAllocString(tempstr);
+						pVal->bstrVal = Hookbstr;
+						WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+					}
                     return hr;
                 }
 
@@ -147,13 +163,28 @@ HRESULT STDMETHODCALLTYPE HookGetW(
                     BSTR Hookbstr=NULL;
                     WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 
-                    if(InputHookConfig.dwHookMode >= HOOK_COMPAT) swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
-                    else swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
+					DWORD dwHookVid = NULL;
+					DWORD dwHookPID = NULL;
 
-                    Hookbstr=SysAllocString(tempstr);
-                    pVal->bstrVal = Hookbstr;
-                    WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
-                    return hr;
+					if(iHookThis->GetHookMode() & iHook::HOOK_VIDPID)
+					{
+						dwHookVid = HIWORD(iHookThis->GetHookVIDPID());
+						dwHookPID = LOWORD(iHookThis->GetHookVIDPID());
+					}
+					else
+					{
+						dwHookVid = LOWORD(padconf.GetProductVIDPID());
+						dwHookPID = HIWORD(padconf.GetProductVIDPID());
+					}
+
+					if(dwHookVid && dwHookPID)
+					{
+						swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPID,i );
+						Hookbstr=SysAllocString(tempstr);
+						pVal->bstrVal = Hookbstr;
+						WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+					}
+					return hr;
                 }
             }
         }
@@ -173,7 +204,7 @@ HRESULT STDMETHODCALLTYPE HookNextW(
 {
     HRESULT hr = hNextW->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookNextW");
 
@@ -190,7 +221,7 @@ HRESULT STDMETHODCALLTYPE HookNextW(
             if(!hGetW)
             {
                 WriteLog(LOG_HOOKWMI,L"HookGetW:: Hooking");
-                hGetW = new MologieDetours::Detour<tGetW>(pDevices->lpVtbl->Get, HookGetW);
+                hGetW = new Detour<tGetW>(pDevices->lpVtbl->Get, HookGetW);
             }
         }
     }
@@ -209,7 +240,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumW(
 {
     HRESULT hr = hCreateInstanceEnumW->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumW");
 
@@ -226,7 +257,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumW(
             if(!hNextW)
             {
                 WriteLog(LOG_HOOKWMI,L"HookNextW:: Hooking");
-                hNextW = new MologieDetours::Detour<tNextW>(pEnumDevices->lpVtbl->Next, HookNextW);
+                hNextW = new Detour<tNextW>(pEnumDevices->lpVtbl->Next, HookNextW);
             }
         }
     }
@@ -250,7 +281,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerW(
 {
     HRESULT hr = hConnectServerW->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookConnectServerW");
 
@@ -267,7 +298,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerW(
             if(!hCreateInstanceEnumW)
             {
                 WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumW:: Hooking");
-                hCreateInstanceEnumW = new MologieDetours::Detour<tCreateInstanceEnumW>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumW);
+                hCreateInstanceEnumW = new Detour<tCreateInstanceEnumW>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumW);
             }
         }
     }
@@ -285,7 +316,7 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
 {
     HRESULT hr = hCoCreateInstanceW->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceW");
 
@@ -293,7 +324,7 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
 
     IWbemLocator* pIWbemLocator = NULL;
 
-    if(ppv && (riid == IID_IWbemLocator))
+    if(ppv && IsEqualGUID(riid,IID_IWbemLocator))
     {
         pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 
@@ -302,7 +333,7 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
             if(!hConnectServerW)
             {
                 WriteLog(LOG_HOOKWMI,L"HookConnectServerW:: Hooking");
-                hConnectServerW = new MologieDetours::Detour<tConnectServerW>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerW);
+                hConnectServerW = new Detour<tConnectServerW>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerW);
             }
         }
     }
@@ -314,7 +345,7 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeW()
 {
-    if(!InputHookConfig.bEnabled) return hCoUninitializeW->GetOriginalFunction()();
+    if(!iHookThis->GetState()) return hCoUninitializeW->GetOriginalFunction()();
 
     WriteLog(LOG_HOOKWMI,L"HookCoUninitializeW");
 
@@ -349,14 +380,16 @@ void WINAPI HookCoUninitializeW()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void HookWMI_UNI()
 {
+	WriteLog(LOG_HOOKWMI,L"HookWMI:: Hooking");
+
     if(!hCoCreateInstanceW)
     {
-        hCoCreateInstanceW = new MologieDetours::Detour<tCoCreateInstanceW>(CoCreateInstance, HookCoCreateInstanceW);
+        hCoCreateInstanceW = new Detour<tCoCreateInstanceW>(CoCreateInstance, HookCoCreateInstanceW);
     }
 
     if(!hCoUninitializeW)
     {
-        hCoUninitializeW = new MologieDetours::Detour<tCoUninitializeW>(CoUninitialize, HookCoUninitializeW);
+        hCoUninitializeW = new Detour<tCoUninitializeW>(CoUninitialize, HookCoUninitializeW);
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
