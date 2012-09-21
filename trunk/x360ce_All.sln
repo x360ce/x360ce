@@ -1,10 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App", "x360ce.App\x360ce.App.csproj", "{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce_vs2010.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject
 		x360ce\Support\changelog.txt = x360ce\Support\changelog.txt
@@ -15,9 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1
 		x360ce\Support\x360ce_template.ini = x360ce\Support\x360ce_template.ini
 	EndProjectSection
 EndProject
-Project("{C8D11400-126E-41CD-887F-60BD40844F9E}") = "x360ce.Master", "x360ce.Master\x360ce.Master.dbproj", "{92D98F37-CBB6-4869-88D9-9323A9B73DFF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App", "x360ce.App\x360ce.App.csproj", "{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}"
 EndProject
-Project("{C8D11400-126E-41CD-887F-60BD40844F9E}") = "x360ce.Data", "x360ce.Data\x360ce.Data.dbproj", "{67CBC824-A49E-4E9B-A947-360F3DFE65C3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce_vs2010.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Master", "x360ce.Master\x360ce.Master.sqlproj", "{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Data", "x360ce.Data\x360ce.Data.sqlproj", "{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.Web", "x360ce.Web\x360ce.Web.csproj", "{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}"
 EndProject
@@ -45,14 +45,14 @@ Global
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|Win32.Build.0 = Release|Win32
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|x64.ActiveCfg = Release|x64
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|x64.Build.0 = Release|x64
-		{92D98F37-CBB6-4869-88D9-9323A9B73DFF}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{92D98F37-CBB6-4869-88D9-9323A9B73DFF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{92D98F37-CBB6-4869-88D9-9323A9B73DFF}.Release|Win32.ActiveCfg = Release|Any CPU
-		{92D98F37-CBB6-4869-88D9-9323A9B73DFF}.Release|x64.ActiveCfg = Release|Any CPU
-		{67CBC824-A49E-4E9B-A947-360F3DFE65C3}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{67CBC824-A49E-4E9B-A947-360F3DFE65C3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{67CBC824-A49E-4E9B-A947-360F3DFE65C3}.Release|Win32.ActiveCfg = Release|Any CPU
-		{67CBC824-A49E-4E9B-A947-360F3DFE65C3}.Release|x64.ActiveCfg = Release|Any CPU
+		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|Win32.ActiveCfg = Release|Any CPU
+		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|x64.ActiveCfg = Release|Any CPU
+		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Release|Win32.ActiveCfg = Release|Any CPU
+		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Release|x64.ActiveCfg = Release|Any CPU
 		{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}.Release|Win32.ActiveCfg = Release|Any CPU

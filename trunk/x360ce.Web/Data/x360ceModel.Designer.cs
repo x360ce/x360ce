@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
-
 namespace x360ce.Web.Data
 {
     #region Contexts
@@ -146,6 +146,7 @@ namespace x360ce.Web.Data
         private ObjectSet<Vendor> _Vendors;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -189,11 +190,11 @@ namespace x360ce.Web.Data
         }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -318,6 +319,7 @@ namespace x360ce.Web.Data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1548,6 +1550,7 @@ namespace x360ce.Web.Data
         partial void OnRightTriggerDeadZoneChanged();
 
         #endregion
+
     
     }
     
@@ -1575,6 +1578,7 @@ namespace x360ce.Web.Data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1629,6 +1633,7 @@ namespace x360ce.Web.Data
         partial void OnProductNameChanged();
 
         #endregion
+
     
     }
     
@@ -1680,6 +1685,7 @@ namespace x360ce.Web.Data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2022,6 +2028,7 @@ namespace x360ce.Web.Data
         partial void OnDateSelectedChanged();
 
         #endregion
+
     
     }
     
@@ -2063,6 +2070,7 @@ namespace x360ce.Web.Data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2285,6 +2293,7 @@ namespace x360ce.Web.Data
         partial void OnDateUpdatedChanged();
 
         #endregion
+
     
     }
     
@@ -2316,6 +2325,7 @@ namespace x360ce.Web.Data
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2418,9 +2428,11 @@ namespace x360ce.Web.Data
         partial void OnWebSiteChanged();
 
         #endregion
+
     
     }
 
     #endregion
+
     
 }
