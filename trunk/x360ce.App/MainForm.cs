@@ -1058,7 +1058,7 @@ namespace x360ce.App
 				// Show currently running instance.
 				if (m.WParam.ToInt32() == wParam_Restore)
 				{
-					// Note: Use .FormWindowState.Minimized and FormWindowState.Normal otherwise it could fail sometimes because of this:
+					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
 					// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
 					// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
 					if (WindowState != FormWindowState.Minimized) WindowState = FormWindowState.Minimized;
