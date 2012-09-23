@@ -9,7 +9,11 @@ GOTO:EOF
 ::=============================================================
 :SIG :: Sign and Timestamp Code
 ::-------------------------------------------------------------
-set sgt=C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
+:: SIGNTOOL.EXE Note:
+:: Use the Windows 7 Platform SDK web installer that lets you
+:: download just the components you need—so just choose the
+:: ".NET developer \ Tools" and deselect everything else.
+set sgt=%ProgramFiles%\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
 set pfx=D:\_Backup\Configuration\SSL\Jocys.com.CodeSign.pfx
 set d=XBOX 360 Controller Emulator
 set du=http://www.jocys.com/projects/x360ce

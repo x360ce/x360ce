@@ -1,5 +1,6 @@
 ﻿v2.0.2.163 (2012-09-23)
-- New: AllowOnlyOneCopy option added
+- New: AllowOnlyOneCopy option added.
+- New: Prompt to repair .NET application settings added.
 
 v2.0.2.158 (2011-12-16)
 - Update: DLL and EXE signed with updated digital certificate.
