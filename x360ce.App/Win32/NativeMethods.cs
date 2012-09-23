@@ -87,18 +87,25 @@ namespace x360ce.App.Win32
 		/// network drivers, system-level device drivers, or any combination of these system components. 
 		/// </summary>
 		/// <param name="dwFlags">The broadcast option.</param>
-		/// <param name="pdwRecipients"></param>
-		/// <param name="uiMessage"></param>
-		/// <param name="wParam"></param>
-		/// <param name="lParam"></param>
-		/// <returns></returns>
+		/// <param name="pdwRecipients">A pointer to a variable that contains and receives information about the recipients of the message.</param>
+		/// <param name="uiMessage">The message to be sent.</param>
+		/// <param name="wParam">Additional message-specific information.</param>
+		/// <param name="lParam">Additional message-specific information.</param>
+		/// <returns>Positive value if the function succeeds, -1 if the function is unable to broadcast the message.</returns>
 		[DllImport("user32.dll", EntryPoint = "BroadcastSystemMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
 		public static extern int BroadcastSystemMessage(Int32 dwFlags, ref Int32 pdwRecipients, int uiMessage, int wParam, int lParam);
 
+		/// <summary>
+		/// Defines a new window message that is guaranteed to be unique throughout the system.
+		/// The message value can be used when sending or posting messages.
+		/// </summary>
+		/// <param name="pString">The message to be registered.</param>
+		/// <returns>
+		/// If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.
+		/// If the function fails, the return value is zero. To get extended error information, call GetLastError.
+		/// </returns>
 		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
 		public static extern int RegisterWindowMessage(String pString);
-
-
 
 		#endregion
 

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+using x360ce.App.Properties;
 using x360ce.App.Win32;
 
 namespace x360ce.App
@@ -19,10 +22,19 @@ namespace x360ce.App
 			{
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-				MainForm.Current = new MainForm();
 				// Requires System.Configuration.Installl reference.
 				var ic = new System.Configuration.Install.InstallContext(null, args);
+				if (ic.Parameters.ContainsKey("Settings"))
+				{
+					OpenSettingsFolder(Application.UserAppDataPath);
+					OpenSettingsFolder(Application.CommonAppDataPath);
+					OpenSettingsFolder(Application.LocalUserAppDataPath);
+					return;
+				}
+
+				if (!CheckSettings()) return;
+				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+				MainForm.Current = new MainForm();
 				if (ic.Parameters.ContainsKey("Exit"))
 				{
 					MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
@@ -68,6 +80,51 @@ namespace x360ce.App
 			MainForm.Current.UpdateTimer.Stop();
 			MainForm.Current.UpdateStatus("- " + e.Exception.Message);
 			MainForm.Current.UpdateTimer.Start();
+		}
+
+		static void OpenSettingsFolder(string path)
+		{
+			var di = new System.IO.DirectoryInfo(path);
+			//if (!di.Exists) return;
+			//if (di.GetFiles().Length == 0) return;
+			var psi = new ProcessStartInfo(di.Parent.Parent.FullName);
+			psi.UseShellExecute = true;
+			psi.ErrorDialog = true;
+			Process.Start(psi);
+		}	
+
+		static bool CheckSettings()
+		{
+			try
+			{
+				Settings.Default.Reload();
+			}
+			catch (ConfigurationErrorsException ex)
+			{
+				// Requires System.Configuration
+				string filename = ((ConfigurationErrorsException)ex.InnerException).Filename;
+				var title = "Corrupt user settings of " + Application.ProductName;
+				var text =
+					"Program has detected that your user settings file has become corrupted. " +
+					"This may be due to a crash or improper exiting of the program. " +
+					"Program must reset your user settings in order to continue.\r\n" +
+					"Click [Yes] to reset your user settings and continue.\r\n" +
+					"Click [No] if you wish to exit and attempt manual repair.";
+				var result = MessageBox.Show(text, title, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+				if (result == DialogResult.Yes)
+				{
+					System.IO.File.Delete(filename);
+					Settings.Default.Reload();
+				}
+				else
+				{
+					OpenSettingsFolder(Application.UserAppDataPath);
+					OpenSettingsFolder(Application.CommonAppDataPath);
+					OpenSettingsFolder(Application.LocalUserAppDataPath);
+					return false;
+				}
+			}
+			return true;
 		}
 
 	}
