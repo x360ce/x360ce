@@ -82,6 +82,24 @@ namespace x360ce.App.Win32
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern uint UnregisterDeviceNotification(IntPtr Handle);
 
+		/// <summary>
+		/// Sends a message to the specified recipients. The recipients can be applications, installable drivers,
+		/// network drivers, system-level device drivers, or any combination of these system components. 
+		/// </summary>
+		/// <param name="dwFlags">The broadcast option.</param>
+		/// <param name="pdwRecipients"></param>
+		/// <param name="uiMessage"></param>
+		/// <param name="wParam"></param>
+		/// <param name="lParam"></param>
+		/// <returns></returns>
+		[DllImport("user32.dll", EntryPoint = "BroadcastSystemMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		public static extern int BroadcastSystemMessage(Int32 dwFlags, ref Int32 pdwRecipients, int uiMessage, int wParam, int lParam);
+
+		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		public static extern int RegisterWindowMessage(String pString);
+
+
+
 		#endregion
 
 		#region advapi32

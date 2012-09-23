@@ -147,7 +147,7 @@ namespace x360ce.App.Controls
 				SettingManager.Current.SetPadSetting(padSectionName, _di);
 				SettingManager.Current.SetPadSetting(padSectionName, e.Result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
-				SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, padSectionName, _padIndex);
+				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
 				MainForm.Current.ResumeEvents();
 				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, (_padIndex + 1) + "." + _di.ProductName), MessageBoxIcon.Information);
 			}

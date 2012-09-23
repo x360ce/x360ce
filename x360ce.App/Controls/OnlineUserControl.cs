@@ -439,7 +439,7 @@ namespace x360ce.App.Controls
 				SettingManager.Current.SetPadSetting(padSectionName, di);
 				SettingManager.Current.SetPadSetting(padSectionName, e.Result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
-				SettingManager.Current.ReadPadSettings(SettingManager.Current.iniFile, padSectionName, ControllerComboBox.SelectedIndex);
+				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, ControllerComboBox.SelectedIndex);
 				MainForm.Current.ResumeEvents();
 				var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
 				mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, name), MessageBoxIcon.Information);

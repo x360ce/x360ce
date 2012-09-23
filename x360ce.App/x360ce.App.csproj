@@ -114,6 +114,8 @@
     <Reference Include="Microsoft.DirectX" />
     <Reference Include="Microsoft.DirectX.DirectInput" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -287,6 +289,8 @@
     <Compile Include="Common\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Win32\BSF.cs" />
+    <Compile Include="Win32\BSM.cs" />
     <Compile Include="Win32\WM_DEVICECHANGE.cs" />
     <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>

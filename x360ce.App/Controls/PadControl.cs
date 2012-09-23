@@ -39,8 +39,8 @@ namespace x360ce.App.Controls
 		public void InitPresets()
 		{
 			PresetComboBox.Items.Clear();
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
-			var ext = System.IO.Path.GetExtension(SettingManager.Current.iniFile);
+			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
+			var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
 			string name;
 			// Presets: Embedded.
 			var embeddedPresets = new List<string>();
@@ -906,8 +906,8 @@ namespace x360ce.App.Controls
 			// Save settigns to INI file.
 			SettingManager.Current.SaveSettings();
 			// Owerwrite Temp file.
-			var ini = new System.IO.FileInfo(SettingManager.Current.iniFile);
-			ini.CopyTo(SettingManager.Current.iniTmpFile, true);
+			var ini = new System.IO.FileInfo(SettingManager.IniFileName);
+			ini.CopyTo(SettingManager.TmpFileName, true);
 			mainForm.StatusTimerLabel.Text = "Settings saved";
 			mainForm.UpdateTimer.Start();
 		}
