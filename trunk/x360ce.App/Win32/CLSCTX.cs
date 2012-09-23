@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace x360ce.App.Win32
 {
 	[Flags]

@@ -63,7 +63,7 @@ namespace x360ce.App
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.Interval = 200;
 			UpdateTimer.SynchronizingObject = this;
-			UpdateTimer.Elapsed +=new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
+			UpdateTimer.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
 			UpdateTimer.Start();
 		}
 
@@ -179,6 +179,7 @@ namespace x360ce.App
 			sm.Add(section + SettingName.InternetDatabaseUrl, onlineUserControl1.InternetDatabaseUrlTextBox);
 			sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
 			sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
+			sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			section = @"InputHook\";
 			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
 			for (int i = 0; i < ControlPads.Length; i++)
@@ -278,8 +279,8 @@ namespace x360ce.App
 			if (ControllerIndex == -1) return;
 			// exit if "Presets:" or "Embedded:".
 			if (name.Contains(":")) return;
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.Current.iniFile);
-			var ext = System.IO.Path.GetExtension(SettingManager.Current.iniFile);
+			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
+			var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
 			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
 			var resource = Helper.GetResource("Presets." + resourceName);
 			// If internal preset was found.
@@ -393,8 +394,8 @@ namespace x360ce.App
 
 			}
 			catch (Exception) { }
-			var tmp = new FileInfo(SettingManager.Current.iniTmpFile);
-			var ini = new FileInfo(SettingManager.Current.iniFile);
+			var tmp = new FileInfo(SettingManager.TmpFileName);
+			var ini = new FileInfo(SettingManager.IniFileName);
 			if (tmp.Exists)
 			{
 				// Before renaming file check for changes.
@@ -421,7 +422,7 @@ namespace x360ce.App
 					else if (result == System.Windows.Forms.DialogResult.No)
 					{
 						// Rename temp to ini.
-						tmp.CopyTo(SettingManager.Current.iniFile, true);
+						tmp.CopyTo(SettingManager.IniFileName, true);
 					}
 					else if (result == System.Windows.Forms.DialogResult.Cancel)
 					{
@@ -531,7 +532,7 @@ namespace x360ce.App
 			UpdateTimer.Start();
 		}
 
-	
+
 		bool settingsChanged = false;
 		GamePadState emptyState = new GamePadState();
 
@@ -550,7 +551,8 @@ namespace x360ce.App
 				return;
 			}
 			Program.TimerCount++;
-			if (!formLoaded){
+			if (!formLoaded)
+			{
 				LoadForm();
 				UpdateTimer.Interval = 50;
 				UpdateTimer.Start();
@@ -627,7 +629,7 @@ namespace x360ce.App
 			if (dllInfo.Exists)
 			{
 				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				return vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion.Replace(',','.'));
+				return vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion.Replace(',', '.'));
 			}
 			return new Version("0.0.0.0");
 		}
@@ -786,9 +788,9 @@ namespace x360ce.App
 
 		bool CheckFiles(bool createIfNotExist)
 		{
-			InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.Current.iniFile);
+			InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.IniFileName);
 			InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
-			InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.Current.iniFile);
+			InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.IniFileName);
 			InstallFilesXinput910CheckBox.SuspendLayout();
 			InstallFilesXinput11CheckBox.SuspendLayout();
 			InstallFilesXinput12CheckBox.SuspendLayout();
@@ -805,9 +807,9 @@ namespace x360ce.App
 			if (createIfNotExist)
 			{
 				// If ini file doesn't exists.
-				if (!System.IO.File.Exists(SettingManager.Current.iniFile))
+				if (!System.IO.File.Exists(SettingManager.IniFileName))
 				{
-					if (!CreateFile(SettingManager.Current.iniFile, null)) return false;
+					if (!CreateFile(SettingManager.IniFileName, null)) return false;
 				}
 				// If xinput file doesn't exists.
 				var embeddedDllVersion = GetEmbeddedDllVersion();
@@ -822,33 +824,33 @@ namespace x360ce.App
 				}
 			}
 			// Can't run witout ini.
-			if (!File.Exists(SettingManager.Current.iniFile))
+			if (!File.Exists(SettingManager.IniFileName))
 			{
 				var form = new MessageBoxForm();
 				form.StartPosition = FormStartPosition.CenterParent;
 				form.ShowForm(
-				string.Format("Configuration file '{0}' is required for application to run!", SettingManager.Current.iniFile),
+				string.Format("Configuration file '{0}' is required for application to run!", SettingManager.IniFileName),
 				"Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				this.Close();
 				return false;
 			}
 			// If temp file exist then.
-			FileInfo iniTmp = new FileInfo(SettingManager.Current.iniTmpFile);
+			FileInfo iniTmp = new FileInfo(SettingManager.TmpFileName);
 			if (iniTmp.Exists)
 			{
 				// It means that application crashed. Restore ini from temp.
-				if (!CopyFile(iniTmp.FullName, SettingManager.Current.iniFile)) return false;
+				if (!CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
 			}
 			else
 			{
 				// Create temp file to store original settings.
-				if (!CopyFile(SettingManager.Current.iniFile, SettingManager.Current.iniTmpFile)) return false;
+				if (!CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
 			}
 			// Set status labels.
 			StatusIsAdminLabel.Text = Win32.WinAPI.IsVista
 				? string.Format("Elevated: {0}", Win32.WinAPI.IsElevated)
 				: "";
-			StatusIniLabel.Text = SettingManager.Current.iniFile;
+			StatusIniLabel.Text = SettingManager.IniFileName;
 			return true;
 		}
 
@@ -1007,6 +1009,73 @@ namespace x360ce.App
 				if (System.IO.File.Exists(file)) System.IO.File.Delete(file);
 			}
 		}
+
+		#region Allow only one copy of Application at a time
+
+		/// <summary>Stores the unique windows message id from the RegisterWindowMessage call.</summary>
+		int _WindowMessage;
+		/// <summary>Used to determine if the application is already open.</summary>
+		System.Threading.Mutex _Mutex;
+
+		public const int wParam_Restore = 1;
+		public const int wParam_Close = 2;
+
+		/// <summary>
+		/// Broadcast message to other instances of this application.
+		/// </summary>
+		/// <param name="wParam">Send parameter to other instances of this application.</param>
+		/// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
+		public bool BroadcastMessage(int wParam)
+		{
+			// Check for previous instance of this app.
+			var uid = Application.ProductName;
+			_Mutex = new System.Threading.Mutex(false, uid);
+			// Register the windows message
+			_WindowMessage = Win32.NativeMethods.RegisterWindowMessage(uid);
+			var firsInstance = _Mutex.WaitOne(1, true);
+			// If this is not the first instance then...
+			if (!firsInstance)
+			{
+				// Brodcast a message with parameters to another instance.
+				var recipients = (int)Win32.BSM.BSM_APPLICATIONS;
+				var flags = Win32.BSF.BSF_IGNORECURRENTTASK | Win32.BSF.BSF_POSTMESSAGE;
+				var ret = Win32.NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0);
+			}
+			return !firsInstance;
+		}
+
+		/// <summary>
+		/// NOTE you must be careful with this method. This is handeling all the
+		/// windows messages that are coming to the form...
+		/// </summary>
+		/// <param name="m"></param>
+		/// <remarks>This overrides the windows messaging processing</remarks>
+		protected override void DefWndProc(ref System.Windows.Forms.Message m)
+		{
+			// If message value was found then...
+			if (m.Msg == _WindowMessage)
+			{
+				// Show currently running instance.
+				if (m.WParam.ToInt32() == wParam_Restore)
+				{
+					// Note: Use .FormWindowState.Minimized and FormWindowState.Normal otherwise it could fail sometimes because of this:
+					// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
+					// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
+					if (WindowState != FormWindowState.Minimized) WindowState = FormWindowState.Minimized;
+					this.Activate();
+					if (WindowState == FormWindowState.Minimized) WindowState = FormWindowState.Normal;
+				}
+				//  Close currently running instance.
+				if (m.WParam.ToInt32() == wParam_Close) Close();
+			}
+			// Let the normal windows messaging process it.
+			base.DefWndProc(ref m);
+		}
+
+		#endregion
+
+
+
 
 	}
 }

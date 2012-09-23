@@ -1,4 +1,7 @@
-﻿v2.0.2.158 (2011-12-16)
+﻿v2.0.2.163 (2012-09-23)
+- New: AllowOnlyOneCopy option added
+
+v2.0.2.158 (2011-12-16)
 - Update: DLL and EXE signed with updated digital certificate.
 
 v2.0.2.156 (2011-10-08)

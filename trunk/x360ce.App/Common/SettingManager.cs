@@ -21,8 +21,8 @@ namespace x360ce.App
 			get { return _current = _current ?? new SettingManager(); }
 		}
 
-		public string iniFile = "x360ce.ini";
-		public string iniTmpFile = "x360ce.tmp";
+		public const string IniFileName = "x360ce.ini";
+		public const string TmpFileName = "x360ce.tmp";
 
 		public int saveCount = 0;
 		public int loadCount = 0;
@@ -43,7 +43,7 @@ namespace x360ce.App
 
 		public void ReadSettings()
 		{
-			ReadSettings(iniFile);
+			ReadSettings(IniFileName);
 		}
 
 
@@ -91,7 +91,7 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
-				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.GetDefaultValue(SettingName.InternetDatabaseUrl);
+				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.DefaultInternetDatabaseUrl;
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -172,7 +172,7 @@ namespace x360ce.App
 		/// <returns>PadSettings object.</returns>
 		public PadSetting GetPadSetting(string padSectionName)
 		{
-			var ini2 = new Ini(iniFile);
+			var ini2 = new Ini(IniFileName);
 			var ps = new PadSetting();
 			ps.PadSettingChecksum = Guid.Empty;
 			ps.AxisToDPadDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadDeadZone);
@@ -230,24 +230,24 @@ namespace x360ce.App
 
 		public void SetPadSetting(string padSectionName, DeviceInstance di)
 		{
-			var ini2 = new Ini(iniFile);
+			var ini2 = new Ini(IniFileName);
 			//ps.PadSettingChecksum = Guid.Empty;
 			ini2.SetValue(padSectionName, SettingName.ProductName, di.ProductName);
-			ini2.GetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
+			ini2.SetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
 			ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
 		}
 
 		/// <summary>
-		/// Get PadSetting object from INI by device Instance GUID.
+		/// Set INI settings from PadSetting object by device Instance GUID.
 		/// </summary>
 		/// <param name="instanceGuid">Instance GUID.</param>
 		/// <returns>PadSettings object.</returns>
 		public void SetPadSetting(string padSectionName, PadSetting ps)
 		{
-			var ini2 = new Ini(iniFile);
+			var ini2 = new Ini(IniFileName);
 			//ps.PadSettingChecksum = Guid.Empty;
 			ini2.SetValue(padSectionName, SettingName.AxisToDPadDeadZone, ps.AxisToDPadDeadZone);
-			ini2.GetValue(padSectionName, SettingName.AxisToDPadEnabled, ps.AxisToDPadEnabled);
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadEnabled, ps.AxisToDPadEnabled);
 			ini2.SetValue(padSectionName, SettingName.AxisToDPadOffset, ps.AxisToDPadOffset);
 			ini2.SetValue(padSectionName, SettingName.ButtonA, ps.ButtonA);
 			ini2.SetValue(padSectionName, SettingName.ButtonB, ps.ButtonB);
@@ -378,7 +378,7 @@ namespace x360ce.App
 		/// <returns></returns>
 		public bool SaveSettings()
 		{
-			var ini = new Ini(iniFile);
+			var ini = new Ini(IniFileName);
 			var saved = false;
 			foreach (string path in SettingsMap.Keys)
 			{
@@ -393,7 +393,7 @@ namespace x360ce.App
 		/// </summary>
 		public bool SaveSetting(Control control)
 		{
-			var ini = new Ini(iniFile);
+			var ini = new Ini(IniFileName);
 			var saved = false;
 			foreach (string path in SettingsMap.Keys)
 			{
@@ -542,7 +542,7 @@ namespace x360ce.App
 				ini.SetValue(section, key, v);
 				saveCount++;
 				saved = true;
-				if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(iniFile, saveCount));
+				if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(IniFileName, saveCount));
 			}
 			return saved;
 		}
@@ -598,7 +598,7 @@ namespace x360ce.App
 		public void CheckSettings(List<DeviceInstance> diInstances, List<DeviceInstance> diInstancesOld)
 		{
 			var updated = false;
-			var ini2 = new Ini(iniFile);
+			var ini2 = new Ini(IniFileName);
 			var oldCount = diInstancesOld.Count;
 			var newCount = diInstances.Count;
 			for (int i = 0; i < 4; i++)
@@ -612,14 +612,14 @@ namespace x360ce.App
 					section = GetInstanceSection(ig);
 					// If INI file contain settings for this device then...
 					string sectionName = null;
-					if (ContainsInstanceSection(ig, iniFile, out sectionName))
+					if (ContainsInstanceSection(ig, IniFileName, out sectionName))
 					{
 						var samePosition = i < oldCount && diInstancesOld[i].InstanceGuid.Equals(diInstances[i].InstanceGuid);
 						// Load settings.
 						if (!samePosition)
 						{
 							MainForm.Current.SuspendEvents();
-							ReadPadSettings(iniFile, section, i);
+							ReadPadSettings(IniFileName, section, i);
 							MainForm.Current.ResumeEvents();
 						}
 					}

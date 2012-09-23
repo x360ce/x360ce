@@ -51,6 +51,8 @@ namespace x360ce.App
 			this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
+			this.OperationGroupBox = new System.Windows.Forms.GroupBox();
+			this.AllowOnlyOneCopyCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetGroupBox = new System.Windows.Forms.GroupBox();
 			this.InternetAutoloadCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetCheckBox = new System.Windows.Forms.CheckBox();
@@ -84,6 +86,7 @@ namespace x360ce.App
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.InstalledFilesGroupBox.SuspendLayout();
+			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
 			this.FakeApiGroupBox.SuspendLayout();
 			this.SettingsDatabaseTabPage.SuspendLayout();
@@ -152,6 +155,7 @@ namespace x360ce.App
 			this.OptionsTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.OptionsTabPage.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.OptionsTabPage.Controls.Add(this.InstalledFilesGroupBox);
+			this.OptionsTabPage.Controls.Add(this.OperationGroupBox);
 			this.OptionsTabPage.Controls.Add(this.InternetGroupBox);
 			this.OptionsTabPage.Controls.Add(this.FakeApiGroupBox);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
@@ -300,13 +304,34 @@ namespace x360ce.App
 			this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
 			this.InstallFilesXinput910CheckBox.CheckedChanged += new System.EventHandler(this.InstallFilesXinput910CheckBox_CheckedChanged);
 			// 
+			// OperationGroupBox
+			// 
+			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
+			this.OperationGroupBox.Location = new System.Drawing.Point(3, 122);
+			this.OperationGroupBox.Name = "OperationGroupBox";
+			this.OperationGroupBox.Size = new System.Drawing.Size(241, 47);
+			this.OperationGroupBox.TabIndex = 0;
+			this.OperationGroupBox.TabStop = false;
+			this.OperationGroupBox.Text = "Operation";
+			// 
+			// AllowOnlyOneCopyCheckBox
+			// 
+			this.AllowOnlyOneCopyCheckBox.AutoSize = true;
+			this.AllowOnlyOneCopyCheckBox.Location = new System.Drawing.Point(9, 19);
+			this.AllowOnlyOneCopyCheckBox.Name = "AllowOnlyOneCopyCheckBox";
+			this.AllowOnlyOneCopyCheckBox.Size = new System.Drawing.Size(230, 17);
+			this.AllowOnlyOneCopyCheckBox.TabIndex = 1;
+			this.AllowOnlyOneCopyCheckBox.Text = "Allow only one copy of Application at a time";
+			this.AllowOnlyOneCopyCheckBox.UseVisualStyleBackColor = true;
+			this.AllowOnlyOneCopyCheckBox.CheckedChanged += new System.EventHandler(this.InternetCheckBox_CheckedChanged);
+			// 
 			// InternetGroupBox
 			// 
 			this.InternetGroupBox.Controls.Add(this.InternetAutoloadCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(3, 53);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(241, 93);
+			this.InternetGroupBox.Size = new System.Drawing.Size(241, 63);
 			this.InternetGroupBox.TabIndex = 0;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -579,7 +604,7 @@ namespace x360ce.App
 			this.KeyPreview = true;
 			this.MinimumSize = new System.Drawing.Size(666, 634);
 			this.Name = "MainForm";
-			this.Text = "TocaEdit Xbox 360 Controller Emulator";
+			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
@@ -589,6 +614,8 @@ namespace x360ce.App
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.InstalledFilesGroupBox.ResumeLayout(false);
 			this.InstalledFilesGroupBox.PerformLayout();
+			this.OperationGroupBox.ResumeLayout(false);
+			this.OperationGroupBox.PerformLayout();
 			this.InternetGroupBox.ResumeLayout(false);
 			this.InternetGroupBox.PerformLayout();
 			this.FakeApiGroupBox.ResumeLayout(false);
@@ -654,6 +681,8 @@ namespace x360ce.App
 		public Controls.InternetUserControl onlineUserControl1;
 		public CheckBox InternetAutoloadCheckBox;
 		public TabControl MainTabControl;
+		private GroupBox OperationGroupBox;
+		public CheckBox AllowOnlyOneCopyCheckBox;
 
 	}
 }

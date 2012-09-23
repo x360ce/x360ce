@@ -39,6 +39,7 @@ namespace x360ce.App
 			public const string DPadButton = "v";
 		}
 
+		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
 		public const string Mappings = "Mappings";
 
 		// [Options] section.
@@ -50,16 +51,18 @@ namespace x360ce.App
 		public const string Log = "Log";
 		[DefaultValue("0"), Description("Use 0 to 1; creates console log window.")]
 		public const string Console = "Console";
-		[DefaultValue("http://www.x360ce.com/webservices/x360ce.asmx"), Description("Internet settings database URL.")]
+		[DefaultValue(DefaultInternetDatabaseUrl), Description("Internet settings database URL.")]
 		public const string InternetDatabaseUrl = "InternetDatabaseUrl";
 		[DefaultValue("0"), Description("Internet features: 0 - Disable; 1 - Enable.")]
 		public const string InternetFeatures = "InternetFeatures";
 		[DefaultValue("1"), Description("Autoload settings when Internet Settings tab is selected: 0 - Disable; 1 - Enable.")]
 		public const string InternetAutoload = "InternetAutoload";
+		[DefaultValue("1"), Description("Allow only one copy of Application at a time: 0 - Disable; 1 - Enable.")]
+		public const string AllowOnlyOneCopy = "AllowOnlyOneCopy";
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
-        public const string HookMode = "HookMode";
+		public const string HookMode = "HookMode";
 
 		// [Mappings] section.
 		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
@@ -75,9 +78,9 @@ namespace x360ce.App
 		[DefaultValue("Unknown Device"), Description("Device product name.")]
 		public const string ProductName = "ProductName";
 		[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device product GUID.")]
-        public const string ProductGuid = "ProductGuid";
+		public const string ProductGuid = "ProductGuid";
 		[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device instance GUID.")]
-        public const string InstanceGuid = "InstanceGuid";
+		public const string InstanceGuid = "InstanceGuid";
 		[DefaultValue("1"), Description("Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.")]
 		public const string GamePadType = "ControllerType";
 		[DefaultValue("0"), Description("Pass Through mode, calls system's native xinput1_3.dll to support xinput compatible controller together with emulated.")]
@@ -229,66 +232,6 @@ namespace x360ce.App
 				|| name == SettingName.LeftThumbAxisY
 				|| name == SettingName.RightThumbAxisX
 				|| name == SettingName.RightThumbAxisY;
-		}
-
-		public static int _maxNameLength;
-		public static int MaxNameLength
-		{
-			get
-			{
-				if (_maxNameLength > 0) return _maxNameLength;
-				var o = new SettingName();
-				FieldInfo[] items = o.GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
-				int max = 0;
-				for (int i = 0; i < items.Length; i++)
-				{
-					if (!items[i].IsLiteral) continue;
-					max = Math.Max(max, ((string)items[i].GetValue(o)).Length);
-				}
-				_maxNameLength = max;
-				return _maxNameLength;
-			}
-		}
-
-		static FieldInfo GetFieldInfo(string key)
-		{
-			var o = new SettingName();
-			FieldInfo[] items = o.GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
-			for (int i = 0; i < items.Length; i++)
-			{
-				if (!items[i].IsLiteral) continue;
-				var value = (string)items[i].GetValue(o);
-				if (value == key) return items[i];
-			}
-			return null;
-		}
-
-		/// <summary>
-		/// Get setting description.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public static string GetDescription(string key)
-		{
-			var comment = string.Empty;
-			var info = GetFieldInfo(key);
-			if (info == null) return string.Empty;
-			DescriptionAttribute a = (DescriptionAttribute)info.GetCustomAttributes(typeof(DescriptionAttribute), false)[0];
-			return a.Description;
-		}
-
-		/// <summary>
-		/// Get setting default value.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public static string GetDefaultValue(string key)
-		{
-			var comment = string.Empty;
-			var info = GetFieldInfo(key);
-			if (info == null) return string.Empty;
-			DefaultValueAttribute a = (DefaultValueAttribute)info.GetCustomAttributes(typeof(DefaultValueAttribute), false)[0];
-			return (string)a.Value;
 		}
 
 	}

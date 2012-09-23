@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using x360ce.App.Win32;
 
 namespace x360ce.App
 {
 	static class Program
 	{
-		
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		static void Main(string[] args)
 		{
 			try
 			{
@@ -20,7 +21,19 @@ namespace x360ce.App
 				Application.SetCompatibleTextRenderingDefault(false);
 				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 				MainForm.Current = new MainForm();
-				Application.Run(MainForm.Current);
+				// Requires System.Configuration.Installl reference.
+				var ic = new System.Configuration.Install.InstallContext(null, args);
+				if (ic.Parameters.ContainsKey("Exit"))
+				{
+					MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
+					return;
+				}
+				var ini = new Ini(SettingManager.IniFileName);
+				var oneCopy = !ini.File.Exists || ini.GetValue("Options", SettingName.AllowOnlyOneCopy) == "1";
+				if (!(oneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore)))
+				{
+					Application.Run(MainForm.Current);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -43,8 +56,6 @@ namespace x360ce.App
 			foreach (Exception ex3 in exceptions) message += ex3.Message + "\r\n";
 		}
 
-		//static string cLogFile = "x360ce.log";
-
 		public static object DeviceLock = new object();
 
 		public static int TimerCount = 0;
@@ -58,5 +69,6 @@ namespace x360ce.App
 			MainForm.Current.UpdateStatus("- " + e.Exception.Message);
 			MainForm.Current.UpdateTimer.Start();
 		}
+
 	}
 }
