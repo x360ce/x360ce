@@ -37,6 +37,7 @@
 			this.CopyContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.textBox1 = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).BeginInit();
 			this.CopyContextMenuStrip.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -85,6 +86,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TextLabel.ContextMenuStrip = this.CopyContextMenuStrip;
 			this.TextLabel.Location = new System.Drawing.Point(50, 12);
+			this.TextLabel.MaximumSize = new System.Drawing.Size(640, 480);
 			this.TextLabel.Name = "TextLabel";
 			this.TextLabel.Size = new System.Drawing.Size(278, 27);
 			this.TextLabel.TabIndex = 5;
@@ -100,7 +102,7 @@
 			// copyToolStripMenuItem
 			// 
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-			this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.copyToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
 			this.copyToolStripMenuItem.Text = "Copy";
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
 			// 
@@ -111,12 +113,23 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.panel1.BackColor = System.Drawing.SystemColors.Window;
 			this.panel1.ContextMenuStrip = this.CopyContextMenuStrip;
+			this.panel1.Controls.Add(this.textBox1);
 			this.panel1.Controls.Add(this.IconPictureBox);
 			this.panel1.Controls.Add(this.TextLabel);
 			this.panel1.Location = new System.Drawing.Point(0, 0);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(340, 57);
 			this.panel1.TabIndex = 11;
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(50, 12);
+			this.textBox1.Multiline = true;
+			this.textBox1.Name = "textBox1";
+			this.textBox1.ReadOnly = true;
+			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.textBox1.Size = new System.Drawing.Size(151, 32);
+			this.textBox1.TabIndex = 12;
 			// 
 			// MessageBoxForm
 			// 
@@ -136,6 +149,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).EndInit();
 			this.CopyContextMenuStrip.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -150,6 +164,7 @@
 		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.TextBox textBox1;
 
 
 	}
