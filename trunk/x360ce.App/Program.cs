@@ -20,6 +20,10 @@ namespace x360ce.App
 		{
 			try
 			{
+				if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
+				{
+					// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
+				}
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 				// Requires System.Configuration.Installl reference.
