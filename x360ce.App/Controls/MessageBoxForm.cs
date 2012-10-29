@@ -205,6 +205,18 @@ namespace x360ce.App.Controls
 		{
 			this.Height = Math.Max(h + TextLabel.Height, this.MinimumSize.Height);
 			this.Width = Math.Max(w + TextLabel.Width, this.MinimumSize.Width);
+			if (TextLabel.Width + 1 >= TextLabel.MaximumSize.Width && TextLabel.Height + 1 >= TextLabel.MaximumSize.Height)
+			{
+				textBox1.Text = TextLabel.Text;
+				textBox1.Size = TextLabel.Size;
+				textBox1.Top = TextLabel.Top;
+				textBox1.Left = TextLabel.Left;
+			}
+			else
+			{
+				textBox1.Text = "";
+				textBox1.Visible = false;
+			}
 		}
 
 		private void MessageBoxForm_Load(System.Object sender, System.EventArgs e)

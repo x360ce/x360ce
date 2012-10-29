@@ -49,23 +49,44 @@ namespace x360ce.App
 			}
 			catch (Exception ex)
 			{
-				var message = ex.ToString();
-				AddLoaderException(ex, ref message);
-				if (ex.InnerException != null) AddLoaderException(ex, ref message);
+				var message = "";
+				AddExceptionMessage(ex, ref message);
+				if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
 				var box = new Controls.MessageBoxForm();
 				var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
 				if (result == DialogResult.Cancel) Application.Exit();
-				throw ex;
 			}
 		}
 
 		/// <summary>Add information about missing libraries and DLLs</summary>
-		private static void AddLoaderException(Exception ex, ref string message)
+		private static void AddExceptionMessage(Exception ex, ref string message)
 		{
-			if (!ex.GetType().Equals(typeof(ReflectionTypeLoadException))) return;
-			message += "\r\n===============================================================\r\n";
-			var exceptions = ((ReflectionTypeLoadException)ex).LoaderExceptions;
-			foreach (Exception ex3 in exceptions) message += ex3.Message + "\r\n";
+			var ex1 = ex as ConfigurationErrorsException;
+			var ex2 = ex as ReflectionTypeLoadException;
+			var m = "";
+			if (ex1 != null)
+			{
+				m += string.Format("Filename: {0}\r\n", ex1.Filename);
+				m += string.Format("Line: {0}\r\n", ex1.Line);
+			}
+			else if (ex2 != null)
+			{
+				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
+			}
+			if (message.Length > 0)
+			{
+				message += "===============================================================\r\n";
+			}
+			message += ex.ToString()+"\r\n";
+			foreach (var key in ex.Data.Keys)
+			{
+				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
+			}
+			if (m.Length > 0)
+			{
+				message += "===============================================================\r\n";
+				message += m;
+			}
 		}
 
 		public static object DeviceLock = new object();
@@ -91,7 +112,7 @@ namespace x360ce.App
 			psi.UseShellExecute = true;
 			psi.ErrorDialog = true;
 			Process.Start(psi);
-		}	
+		}
 
 		static bool CheckSettings()
 		{
