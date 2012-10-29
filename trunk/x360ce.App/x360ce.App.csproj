@@ -141,7 +141,6 @@
     <Compile Include="Common\DeviceDetectorForm.Designer.cs">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Common\ExtensionAttribute.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\FilterList.cs" />
