@@ -1,0 +1,17 @@
+
+/* My english is bad, I hope that you understand me ;)
+   If you can correct it, email me, please :) */ 
+
+version 0.04 [2009.03.09]
+ + now relative addresses stored to hde64s.imm* (see doc/ for more info)
+ + removed first sentence from LICENSE
+
+version 0.03 [2009.01.02]
+ + fixed bug: error setting 0x800000 flag to "hde64s.flags" when no prefixes
+
+version 0.02 [2008.11.02]
+ + associated some fields of "hde64s" structure into unions
+ + repacked table, it redecued on 37 bytes
+
+version 0.01 [2008.09.22]
+ + first release
