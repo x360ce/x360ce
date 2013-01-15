@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "globals.h"
+#include "externals.h"
 #include "Utilities\Ini.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"

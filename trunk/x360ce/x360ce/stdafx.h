@@ -41,8 +41,15 @@
 #include <windows.h>
 #include <math.h>
 #include <time.h>
-#include <fstream>
 #include <io.h>
 #include <fcntl.h>
+
+//C++
+#include <ios>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <string>
 
 #include <xinput.h>

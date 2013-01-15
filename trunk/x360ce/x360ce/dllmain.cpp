@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "globals.h"
+#include "externals.h"
 #include "version.h"
 #include "x360ce.h"
 #include "Utilities\Ini.h"
@@ -27,10 +27,10 @@
 
 CRITICAL_SECTION cs;
 
-HINSTANCE g_hX360ceInstance = NULL;
-HINSTANCE g_hNativeInstance = NULL;
+HINSTANCE hThis = NULL;
+HINSTANCE hNative = NULL;
 
-HWND g_hWnd = NULL;
+HWND hMsgWnd = NULL;
 
 void LoadSystemXInputDLL()
 {
@@ -42,15 +42,15 @@ void LoadSystemXInputDLL()
 
     // Append dll name
     //wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
-    swprintf_s(buffer,L"%s\\%s",sysdir,DLLFileName(g_hX360ceInstance));
+    swprintf_s(buffer,L"%s\\%s",sysdir,DLLFileName(hThis));
 
     // try to load the system's xinput dll, if pointer empty
     WriteLog(LOG_CORE,L"Loading %s",buffer);
 
-    if (!g_hNativeInstance) g_hNativeInstance = LoadLibrary(buffer);
+    if (!hNative) hNative = LoadLibrary(buffer);
 
     //Debug
-    if (!g_hNativeInstance)
+    if (!hNative)
     {
         WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
         WriteLog(LOG_CORE,L"x360ce will exit now!!!");
@@ -103,7 +103,7 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	InitializeCriticalSection(&cs);
 
 	EnterCriticalSection(&cs);
-    g_hX360ceInstance =  hinstDLL;
+    hThis =  hinstDLL;
     DWORD dwAppPID = GetCurrentProcessId();
     SetIniFileName(L"x360ce.ini");
     ReadConfig();
@@ -129,16 +129,16 @@ VOID ExitInstance()
 	EnterCriticalSection(&cs);
     InputHook_Clean();
 
-    if (g_hNativeInstance)
+    if (hNative)
     {
-        FreeLibrary(g_hNativeInstance);
-        g_hNativeInstance = NULL;
+        FreeLibrary(hNative);
+        hNative = NULL;
     }
 
-    if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
+    if(IsWindow(hMsgWnd)) DestroyWindow(hMsgWnd);
 
-    g_hWnd = NULL;
-    UnregisterClass(L"x360ceWClass",g_hX360ceInstance);
+    hMsgWnd = NULL;
+    UnregisterClass(L"x360ceWClass",hThis);
 
     WriteLog(LOG_CORE,L"x360ce terminating, bye");
 
