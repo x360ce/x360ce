@@ -14,8 +14,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _GLOBALS_H_
-#define _GLOBALS_H_
+#ifndef _EXTERNALS_H_
+#define _EXTERNALS_H_
 
 //useful macros
 #define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }

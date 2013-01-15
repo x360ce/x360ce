@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "globals.h"
+#include "externals.h"
 #include "x360ce.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
@@ -39,7 +39,7 @@ LPDIRECTINPUT8 GetDirectInput()
     if (!DDATA.pDI)
     {
 
-        HRESULT hr = DirectInput8Create( g_hX360ceInstance, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.pDI, NULL );
+        HRESULT hr = DirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.pDI, NULL );
 
         if (FAILED(hr))
             return 0;

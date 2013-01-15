@@ -22,9 +22,9 @@
 
 #define XUSER_MAX XUSER_MAX_COUNT-1
 
-extern HINSTANCE g_hX360ceInstance;
-extern HINSTANCE g_hNativeInstance;
-extern HWND g_hWnd;
+extern HINSTANCE hThis;
+extern HINSTANCE hNative;
+extern HWND hMsgWnd;
 
 struct XINPUT_ENABLE
 {

@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "globals.h"
+#include "externals.h"
 #include "x360ce.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
@@ -53,7 +53,7 @@ VOID Createx360ceWindow(HINSTANCE hInstance)
     if(!ret) WriteLog(LOG_CORE,L"RegisterWindowClass failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
 
     //HWND_MESSAGE window is not visible, has no z-order and cannot be enumerated - fixes GRID
-    g_hWnd = CreateWindow(
+    hMsgWnd = CreateWindow(
                  L"x360ceWClass",	// name of window class
                  L"x360ce",			// title-bar string
                  WS_TILED,			// normal window
@@ -66,7 +66,7 @@ VOID Createx360ceWindow(HINSTANCE hInstance)
                  hInstance,			// handle to application instance
                  NULL);				// no window-creation data
 
-    if(!g_hWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+    if(!hMsgWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
 }
 
 HRESULT XInit(DWORD dwUserIndex)
@@ -77,7 +77,7 @@ HRESULT XInit(DWORD dwUserIndex)
     {
         HRESULT hr=ERROR_SUCCESS;
 
-        if(!g_hWnd) Createx360ceWindow(g_hX360ceInstance);
+        if(!hMsgWnd) Createx360ceWindow(hThis);
 
         if(!g_Gamepad[dwUserIndex].pGamepad)
         {
@@ -98,7 +98,7 @@ HRESULT XInit(DWORD dwUserIndex)
 				return ERROR_DEVICE_NOT_CONNECTED;
 			}
 
-            hr = InitDirectInput(g_hWnd,dwUserIndex);
+            hr = InitDirectInput(hMsgWnd,dwUserIndex);
 
             if(FAILED(hr))
             {
@@ -144,10 +144,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
 	if(g_Gamepad[dwUserIndex].passthrough)
 	{
-		if(!g_hNativeInstance) LoadSystemXInputDLL();
+		if(!hNative) LoadSystemXInputDLL();
 
 		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
-		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( g_hNativeInstance, "XInputGetState");
+		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( hNative, "XInputGetState");
 		DWORD ret = nativeXInputGetState(dwUserIndex,pState);
 
 		for (int i = 0; i < 4; ++i)
@@ -546,10 +546,10 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+        if(!hNative) LoadSystemXInputDLL();
 
         typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
-        XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( g_hNativeInstance, "XInputSetState");
+        XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( hNative, "XInputSetState");
         return nativeXInputSetState(dwUserIndex,pVibration);
     }
 
@@ -579,8 +579,11 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
         return ERROR_SUCCESS;
     }
 
-    wLeftMotorSpeed =  static_cast<WORD>(xVib.wLeftMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
-    wRightMotorSpeed = static_cast<WORD>(xVib.wRightMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
+    WORD left =  static_cast<WORD>(xVib.wLeftMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
+    WORD right = static_cast<WORD>(xVib.wRightMotorSpeed * g_Gamepad[dwUserIndex].ff.forcepercent);
+
+	wLeftMotorSpeed = g_Gamepad[dwUserIndex].swapmotor ? right : left;
+	wRightMotorSpeed = g_Gamepad[dwUserIndex].swapmotor ? left : right;
 
     hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,FFB_LEFTMOTOR);
 
@@ -600,10 +603,10 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+        if(!hNative) LoadSystemXInputDLL();
 
         typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
-        XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( g_hNativeInstance, "XInputGetCapabilities");
+        XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( hNative, "XInputGetCapabilities");
         return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
     }
 
@@ -632,10 +635,10 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 	if(g_Disable) return;
     if(wNativeMode)
     {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+        if(!hNative) LoadSystemXInputDLL();
 
         typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
-        XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( g_hNativeInstance, "XInputEnable");
+        XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( hNative, "XInputEnable");
         nativeXInputEnable(enable);
     }
 
@@ -661,10 +664,10 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+        if(!hNative) LoadSystemXInputDLL();
 
         typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
-        XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( g_hNativeInstance, "XInputGetDSoundAudioDeviceGuids");
+        XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( hNative, "XInputGetDSoundAudioDeviceGuids");
         return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
     }
 
@@ -683,10 +686,10 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+        if(!hNative) LoadSystemXInputDLL();
 
         typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
-        XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( g_hNativeInstance, "XInputGetBatteryInformation");
+        XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( hNative, "XInputGetBatteryInformation");
         return nativeXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
     }
 
@@ -707,10 +710,10 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
     if(g_Gamepad[dwUserIndex].passthrough)
     {
-        if(!g_hNativeInstance) LoadSystemXInputDLL();
+        if(!hNative) LoadSystemXInputDLL();
 
         typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
-        XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( g_hNativeInstance, "XInputGetKeystroke");
+        XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( hNative, "XInputGetKeystroke");
         DWORD ret = nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
 
 

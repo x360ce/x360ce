@@ -16,7 +16,7 @@
 
 #include "stdafx.h"
 #include <dinput.h>
-#include "globals.h"
+#include "externals.h"
 #include <Shlwapi.h>
 
 LPCWSTR HostFileName()

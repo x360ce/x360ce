@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "globals.h"
+#include "externals.h"
 #include "InputHook.h"
 #include "Utilities\Log.h"
 

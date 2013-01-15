@@ -279,7 +279,7 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="globals.h" />
+    <ClInclude Include="externals.h" />
     <ClInclude Include="InputHook\InputHook.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
