@@ -1,0 +1,33 @@
+---------------------------------------------------------------
+How To to Build "XBOX 360 Controller Emulator"
+---------------------------------------------------------------
+
+Download and Install:
+
+    1. Microsoft DirectX SDK 9.0c
+       http://msdn.microsoft.com/directx
+    2. Microsoft Visual Studio 2010
+       http://msdn.microsoft.com/en-us/vstudio/bb984878.aspx
+	   or 
+	   Microsoft Visual Studio 2010 Express
+	   http://www.microsoft.com/express/
+	   with Microsoft Windows SDK for Windows
+       http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx
+
+
+Open C:\Users\[user]\AppData\Local\Microsoft\MSBuild\v4.0\Microsoft.Cpp.Win32.user.props
+Copy this, and change DirectX SDK path to yours:
+
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <IncludePath>G:\SDK\DirectX\Include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LibraryPath>G:\SDK\DirectX\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+</Project>
+
+Open x360ce solution file and build.
+
+
