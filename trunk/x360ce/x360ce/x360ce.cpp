@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "externals.h"
+#include "globals.h"
 #include "x360ce.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
@@ -23,114 +23,94 @@
 #include "DirectInput.h"
 
 XINPUT_ENABLE XInputIsEnabled;
+extern iHook g_iHook;
+HWND g_hWnd;
 
-BOOL RegisterWindowClass(HINSTANCE hInstance)
+VOID MakeWindow()
 {
-    WNDCLASS wc;
+	g_hWnd = CreateWindow(
+		L"Message",	// name of window class
+		L"x360ce",			// title-bar std::string
+		WS_TILED,			// normal window
+		CW_USEDEFAULT,		// default horizontal position
+		CW_USEDEFAULT,		// default vertical position
+		CW_USEDEFAULT,		// default width
+		CW_USEDEFAULT,		// default height
+		HWND_MESSAGE,		// message-only window
+		NULL,				// no class menu
+		hThis,	// handle to application instance
+		NULL);				// no window-creation data
 
-    // Fill in the window class structure with parameters
-    // that describe the main window.
-
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = DefWindowProc;     // points to window procedure
-    wc.cbClsExtra = 0;                // no extra class memory
-    wc.cbWndExtra = 0;                // no extra window memory
-    wc.hInstance = hInstance;         // handle to instance
-    wc.hIcon = NULL;              // predefined app. icon
-    wc.hCursor = NULL;                    // predefined arrow
-    wc.hbrBackground = NULL;    // white background brush
-    wc.lpszMenuName =  L"x360ceMenu";    // name of menu resource
-    wc.lpszClassName = L"x360ceWClass";  // name of window class
-
-    // Register the window class.
-    return RegisterClass(&wc);
-}
-
-VOID Createx360ceWindow(HINSTANCE hInstance)
-{
-    BOOL ret = RegisterWindowClass(hInstance);
-
-    if(!ret) WriteLog(LOG_CORE,L"RegisterWindowClass failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
-
-    //HWND_MESSAGE window is not visible, has no z-order and cannot be enumerated - fixes GRID
-    hMsgWnd = CreateWindow(
-                 L"x360ceWClass",	// name of window class
-                 L"x360ce",			// title-bar string
-                 WS_TILED,			// normal window
-                 CW_USEDEFAULT,		// default horizontal position
-                 CW_USEDEFAULT,		// default vertical position
-                 CW_USEDEFAULT,		// default width
-                 CW_USEDEFAULT,		// default height
-                 HWND_MESSAGE,		// message-only window
-                 NULL,				// no class menu
-                 hInstance,			// handle to application instance
-                 NULL);				// no window-creation data
-
-    if(!hMsgWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+	if(!g_hWnd)
+		WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
 }
 
 HRESULT XInit(DWORD dwUserIndex)
 {
 	EnterCriticalSection(&cs);
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-    if(g_Gamepad[dwUserIndex].configured && !g_Gamepad[dwUserIndex].enumfail)
-    {
-        HRESULT hr=ERROR_SUCCESS;
+	if(g_Gamepad[dwUserIndex].configured && !g_Gamepad[dwUserIndex].enumfail)
+	{
+		HRESULT hr=ERROR_SUCCESS;
 
-        if(!hMsgWnd) Createx360ceWindow(hThis);
+		if(!g_hWnd) MakeWindow();
 
-        if(!g_Gamepad[dwUserIndex].pGamepad)
-        {
+		if(!g_Gamepad[dwUserIndex].pGamepad)
+		{
 
-            if(InputHook_Enable() && (InputHook_Mode() > 1))
-            {
-                InputHook_Enable(FALSE);
-                WriteLog(LOG_CORE,L"Temporary disable InputHook");
-            }
+			BOOL bHookDisabled = FALSE;
 
-            WriteLog(LOG_CORE,L"[PAD%d] Initializing UserIndex %d",dwUserIndex+1,dwUserIndex);
+			if(g_iHook.GetState() && (g_iHook.GetHookMode() & iHook::HOOK_DI))
+			{
+				//g_iHook.Disable();
+				bHookDisabled = TRUE;
+				g_iHook.SetHookMode(g_iHook.GetHookMode() ^ iHook::HOOK_DI);
+				WriteLog(LOG_CORE,L"Temporary disable InputHook");
+			}
 
-            hr = Enumerate(dwUserIndex);
+			WriteLog(LOG_CORE,L"[PAD%d] Initializing UserIndex %d",dwUserIndex+1,dwUserIndex);
 
-            if(FAILED(hr)) 
+			hr = Enumerate(dwUserIndex);
+
+			if(FAILED(hr)) 
 			{
 				LeaveCriticalSection(&cs);
 				return ERROR_DEVICE_NOT_CONNECTED;
 			}
 
-            hr = InitDirectInput(hMsgWnd,dwUserIndex);
+			hr = InitDirectInput(g_hWnd,dwUserIndex);
 
-            if(FAILED(hr))
-            {
-                WriteLog(LOG_CORE,L"[PAD%d] XInit fail with %s",dwUserIndex+1,DXErrStr(hr));
-            }
-        }
-        else 
+			if(!g_iHook.GetState() && bHookDisabled )
+			{
+				g_iHook.SetHookMode(g_iHook.GetHookMode() | iHook::HOOK_DI);
+				WriteLog(LOG_CORE,L"Restore InputHook state");
+			}
+
+			if(FAILED(hr))
+			{
+				WriteLog(LOG_CORE,L"[PAD%d] XInit fail with %s",dwUserIndex+1,DXErrStr(hr));
+			}
+		}
+		else 
 		{
 			LeaveCriticalSection(&cs);
 			return ERROR_DEVICE_NOT_CONNECTED;
 		}
 
-        if(!g_Gamepad[dwUserIndex].pGamepad)
-        {
-            WriteLog(LOG_CORE,L"XInit fail");
-            g_Gamepad[dwUserIndex].enumfail = true;
+		if(!g_Gamepad[dwUserIndex].pGamepad)
+		{
+			WriteLog(LOG_CORE,L"XInit fail");
+			g_Gamepad[dwUserIndex].enumfail = true;
 			LeaveCriticalSection(&cs);
-            return ERROR_DEVICE_NOT_CONNECTED;
-        }
-        else
-        {
-            if(bInitBeep) MessageBeep(MB_OK);
+			return ERROR_DEVICE_NOT_CONNECTED;
+		}
+		else
+		{
+			if(bInitBeep) MessageBeep(MB_OK);
 
-            g_Gamepad[dwUserIndex].initialized = TRUE;
-            WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",dwUserIndex+1);
-        }
-
-        if(!InputHook_Enable() && (InputHook_Mode() > 1))
-        {
-            InputHook_Enable(TRUE);
-            WriteLog(LOG_CORE,L"Restore InputHook state");
-        }
+			g_Gamepad[dwUserIndex].initialized = TRUE;
+			WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",dwUserIndex+1);
+		}
 		LeaveCriticalSection(&cs);
 		return ERROR_SUCCESS;
 	}

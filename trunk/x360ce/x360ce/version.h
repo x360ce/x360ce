@@ -17,7 +17,7 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-#include "externals.h"
+#include "globals.h"
 #include "svnrev.h"
 
 #define VERSION_MAJOR 3

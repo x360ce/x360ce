@@ -9,3 +9,5 @@ EXPORTS
 		XInputGetDSoundAudioDeviceGuids @6
 		XInputGetBatteryInformation @7
 		XInputGetKeystroke @8
+
+		reset @128

@@ -105,7 +105,8 @@
       <MapExports>true</MapExports>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>false</DataExecutionPrevention>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -171,13 +172,13 @@
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\MologieDetours;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dinput8.lib;dxguid.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;dinput8.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)xinput1_3.dll</OutputFile>
       <ModuleDefinitionFile>x360ce.def</ModuleDefinitionFile>
       <DelayLoadDLLs>
@@ -262,7 +263,10 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="InputHook\HookDI.cpp" />
     <ClCompile Include="InputHook\HookWinTrust.cpp" />
-    <ClCompile Include="InputHook\HookWMI_ANSI.cpp" />
+    <ClCompile Include="InputHook\HookWMI_ANSI.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="InputHook\HookWMI_UNI.cpp" />
     <ClCompile Include="InputHook\InputHook.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -271,15 +275,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Utilities\Ini.cpp" />
     <ClCompile Include="Utilities\Log.cpp" />
-    <ClCompile Include="Utilities\Misc.cpp" />
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="externals.h" />
+    <ClInclude Include="globals.h" />
     <ClInclude Include="InputHook\InputHook.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

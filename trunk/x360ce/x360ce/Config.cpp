@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "externals.h"
+#include "globals.h"
 #include "Utilities\Ini.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
@@ -25,10 +25,9 @@
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
 
-IHOOK_CONIFG x360ce_InputHookConfig;
-IHOOK_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
-
 BOOL g_Disable;
+
+extern iHook g_iHook;
 
 static LPCWSTR buttonNames[] =
 {
@@ -106,38 +105,41 @@ static LPCWSTR padNames[] =
 
 GamepadMap GamepadMapping[4];
 
-void ReadConfig()
+void ReadConfig(InI &ini)
 {
 
     // Read global options
 
-	g_Disable = ReadLongFromFile(L"Options", L"Disable",0);
-    bInitBeep = static_cast<BOOL>(ReadLongFromFile(L"Options", L"UseInitBeep",1));
-    LogEnable(static_cast<BOOL>(ReadLongFromFile(L"Options", L"Log",0)));
-    enableconsole = static_cast<BOOL>(ReadLongFromFile(L"Options", L"Console",0));
+	g_Disable = ini.ReadLongFromFile(L"Options", L"Disable",0);
+    bInitBeep = static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"UseInitBeep",1));
+    LogEnable(static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"Log",0)));
+    enableconsole = static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"Console",0));
 	if(g_Disable) return;
 
     //InputHook
-    x360ce_InputHookConfig.dwHookMode = ReadLongFromFile(L"InputHook", L"HookMode",0);
-    x360ce_InputHookConfig.dwHookWMIANSI = ReadLongFromFile(L"InputHook", L"HookUseANSI",0);
-    x360ce_InputHookConfig.dwHookWinTrust = ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
+	DWORD tmp;
+    tmp = ini.ReadLongFromFile(L"InputHook", L"HookMode",0);
+	g_iHook.SetHookMode(tmp);
+	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookUseANSI",0);
+	g_iHook.EnableANSIMode(tmp);
+    tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
+	g_iHook.EnableTrustHook(tmp);
 
-    if(x360ce_InputHookConfig.dwHookMode)
-    {
-        x360ce_InputHookConfig.bEnabled = 1;
-        x360ce_InputHookConfig.dwHookVID = ReadLongFromFile(L"InputHook", L"HookVID",0x045E);
-        x360ce_InputHookConfig.dwHookPID = ReadLongFromFile(L"InputHook", L"HookPID",0x028E);
-    }
+	if(g_iHook.GetHookMode())
+	{
+		g_iHook.Enable();
+		DWORD vid = ini.ReadLongFromFile(L"InputHook", L"HookVID",0x045E);
+		DWORD pid = ini.ReadLongFromFile(L"InputHook", L"HookPID",0x028E);
+		if(vid != 0x045E || pid != 0x28E) g_iHook.SetHookVIDPID(MAKELONG(pid,vid));
+	}
 
     // Read pad mappings
     for (DWORD i = 0; i < 4; ++i)
-        ReadPadConfig(i);
-
-    IniCleanup();
+        ReadPadConfig(i, ini);
 }
 
 
-void ReadPadConfig(DWORD idx)
+void ReadPadConfig(DWORD idx, InI &ini)
 {
 
     DWORD ret;
@@ -147,7 +149,7 @@ void ReadPadConfig(DWORD idx)
 
     WCHAR buffer[MAX_PATH];
 
-    ret = ReadStringFromFile(section, key, buffer);
+    ret = ini.ReadStringFromFile(section, key, buffer);
 
     if(!ret) return;
 
@@ -159,7 +161,7 @@ void ReadPadConfig(DWORD idx)
 
     GUIDtoString(GUID_NULL,NullGUIDStr,50);
 
-    ret = ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
+    ret = ini.ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
 
     if(!ret) return;
 
@@ -167,14 +169,14 @@ void ReadPadConfig(DWORD idx)
 
     if(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL))
     {
-        ret = ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
+        ret = ini.ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
 
         if(!ret) return;
 
         StringToGUID(buffer,&g_Gamepad[idx].productGUID);
     }
 
-    ret = ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
+    ret = ini.ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
 
     if(!ret) return;
 
@@ -182,7 +184,7 @@ void ReadPadConfig(DWORD idx)
 
     if(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL))
     {
-        ret = ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
+        ret = ini.ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
 
         if(!ret) return;
 
@@ -191,11 +193,11 @@ void ReadPadConfig(DWORD idx)
 
 	for (int i=0; i<4; ++i)
 	{
-		SHORT tmp = static_cast<SHORT>(ReadLongFromFile(section, axisADZNames[i], 0));
+		SHORT tmp = static_cast<SHORT>(ini.ReadLongFromFile(section, axisADZNames[i], 0));
 		g_Gamepad[idx].antidz[i] = clamp(tmp,0,32767);
 	}
 
-    g_Gamepad[idx].passthrough = (ReadLongFromFile(section, L"PassThrough",1) !=0);
+    g_Gamepad[idx].passthrough = (ini.ReadLongFromFile(section, L"PassThrough",1) !=0);
 
     if(g_Gamepad[idx].passthrough)
     {
@@ -218,17 +220,17 @@ void ReadPadConfig(DWORD idx)
 
     g_Gamepad[idx].dwPadIndex = idx;
 
-    g_Gamepad[idx].ff.type = (BYTE) ReadLongFromFile(section, L"FFBType",0);
-    g_Gamepad[idx].swapmotor = ReadLongFromFile(section, L"SwapMotor",0);
-    g_Gamepad[idx].tdeadzone = ReadLongFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-    g_Gamepad[idx].ff.useforce = static_cast<BOOL>(ReadLongFromFile(section, L"UseForceFeedback",0));
-    g_Gamepad[idx].gamepadtype = static_cast<BYTE>(ReadLongFromFile(section, L"ControllerType",1));
-    g_Gamepad[idx].axistodpad = (ReadLongFromFile(section, L"AxisToDPad",0) !=0);
-    g_Gamepad[idx].axistodpaddeadzone = static_cast<INT>(ReadLongFromFile(section, L"AxisToDPadDeadZone",0));
-    g_Gamepad[idx].axistodpadoffset = static_cast<INT>(ReadLongFromFile(section, L"AxisToDPadOffset",0));
-    g_Gamepad[idx].ff.forcepercent = static_cast<FLOAT>(ReadLongFromFile(section, L"ForcePercent",100) * 0.01);
-    g_Gamepad[idx].ff.leftPeriod = ReadLongFromFile(section, L"LeftMotorPeriod",60);
-    g_Gamepad[idx].ff.rightPeriod = ReadLongFromFile(section, L"RightMotorPeriod",20);
+    g_Gamepad[idx].ff.type = (BYTE) ini.ReadLongFromFile(section, L"FFBType",0);
+    g_Gamepad[idx].swapmotor = ini.ReadLongFromFile(section, L"SwapMotor",0);
+    g_Gamepad[idx].tdeadzone = ini.ReadLongFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+    g_Gamepad[idx].ff.useforce = static_cast<BOOL>(ini.ReadLongFromFile(section, L"UseForceFeedback",0));
+    g_Gamepad[idx].gamepadtype = static_cast<BYTE>(ini.ReadLongFromFile(section, L"ControllerType",1));
+    g_Gamepad[idx].axistodpad = (ini.ReadLongFromFile(section, L"AxisToDPad",0) !=0);
+    g_Gamepad[idx].axistodpaddeadzone = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadDeadZone",0));
+    g_Gamepad[idx].axistodpadoffset = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadOffset",0));
+    g_Gamepad[idx].ff.forcepercent = static_cast<FLOAT>(ini.ReadLongFromFile(section, L"ForcePercent",100) * 0.01);
+    g_Gamepad[idx].ff.leftPeriod = ini.ReadLongFromFile(section, L"LeftMotorPeriod",60);
+    g_Gamepad[idx].ff.rightPeriod = ini.ReadLongFromFile(section, L"RightMotorPeriod",20);
 
 	memset(PadMap.Button,-1,sizeof(PadMap.Button));
 
@@ -243,15 +245,15 @@ void ReadPadConfig(DWORD idx)
 
     for (INT i=0; i<10; ++i)
     {
-        if (ReadLongFromFile(section,buttonNames[i],0) > 0)
+        if (ini.ReadLongFromFile(section,buttonNames[i],0) > 0)
         {
-            PadMap.Button[i] = static_cast<INT>(ReadLongFromFile(section,buttonNames[i],0)) - 1;
+            PadMap.Button[i] = static_cast<INT>(ini.ReadLongFromFile(section,buttonNames[i],0)) - 1;
         }
     }
 
     for (INT i=0; i<4; ++i)
     {
-        if (ReadStringFromFile(section, povNames[i], buffer) > 0)
+        if (ini.ReadStringFromFile(section, povNames[i], buffer) > 0)
         {
 			WORD val = _wtoi(buffer);
 			if(val == 0)
@@ -275,7 +277,7 @@ void ReadPadConfig(DWORD idx)
 			}
         }
 
-        if (ReadStringFromFile(section, axisNames[i], buffer) > 0)
+        if (ini.ReadStringFromFile(section, axisNames[i], buffer) > 0)
         {
             LPWSTR a = buffer;
 
@@ -293,23 +295,23 @@ void ReadPadConfig(DWORD idx)
             }
         }
 
-        g_Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ReadLongFromFile(section, axisDZNames[i], 0));
-        g_Gamepad[idx].axislinear[i] = static_cast<SHORT>(ReadLongFromFile(section, axisLNames[i], 0));
+        g_Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ini.ReadLongFromFile(section, axisDZNames[i], 0));
+        g_Gamepad[idx].axislinear[i] = static_cast<SHORT>(ini.ReadLongFromFile(section, axisLNames[i], 0));
 
-        if (INT ret = ReadLongFromFile(section, axisBNames[i*2]) > 0)
+        if (INT ret = ini.ReadLongFromFile(section, axisBNames[i*2]) > 0)
         {
             PadMap.Axis[i].hasDigital = true;
             PadMap.Axis[i].positiveButtonID = ret - 1;
         }
 
-        if (INT ret = ReadLongFromFile(section, axisBNames[i*2+1]) > 0)
+        if (INT ret = ini.ReadLongFromFile(section, axisBNames[i*2+1]) > 0)
         {
             PadMap.Axis[i].hasDigital = true;
             PadMap.Axis[i].negativeButtonID = ret - 1;
         }
     }
 
-    if (ReadStringFromFile(section, L"Left Trigger", buffer) > 0)
+    if (ini.ReadStringFromFile(section, L"Left Trigger", buffer) > 0)
     {
         LPWSTR a = buffer;
 
@@ -324,7 +326,7 @@ void ReadPadConfig(DWORD idx)
         }
     }
 
-    if (ReadStringFromFile(section, L"Right Trigger", buffer) > 0)
+    if (ini.ReadStringFromFile(section, L"Right Trigger", buffer) > 0)
     {
         LPWSTR a = buffer;
 
@@ -340,13 +342,13 @@ void ReadPadConfig(DWORD idx)
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-    if (ReadStringFromFile(section, L"Left Trigger But", buffer) > 0)
+    if (ini.ReadStringFromFile(section, L"Left Trigger But", buffer) > 0)
     {
         LPWSTR a = buffer;
         PadMap.Trigger[0].but = _wtoi(a) - 1;
     }
 
-    if (ReadStringFromFile(section, L"Right Trigger But", buffer) > 0)
+    if (ini.ReadStringFromFile(section, L"Right Trigger But", buffer) > 0)
     {
         LPWSTR a = buffer;
         PadMap.Trigger[1].but = _wtoi(a) - 1;
@@ -354,9 +356,9 @@ void ReadPadConfig(DWORD idx)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-    if (ReadLongFromFile(section, L"D-pad POV") > 0)
+    if (ini.ReadLongFromFile(section, L"D-pad POV") > 0)
     {
-        PadMap.DpadPOV = static_cast<INT>(ReadLongFromFile(section, L"D-pad POV",0)) - 1;
+        PadMap.DpadPOV = static_cast<INT>(ini.ReadLongFromFile(section, L"D-pad POV",0)) - 1;
     }
 }
 
