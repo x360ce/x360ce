@@ -15,44 +15,48 @@
  */
 
 #include "stdafx.h"
-#include "externals.h"
+#include "globals.h"
 #include "Utilities\Log.h"
 #include <Shlwapi.h>
 
+HANDLE hConsole = INVALID_HANDLE_VALUE;
 BOOL writelog = FALSE;
 BOOL enableconsole = FALSE;
-LPWSTR lpLogFileName = NULL;
-LPWSTR lpLogFolderName = NULL;
+//LPWSTR lpLogFileName = NULL;
+
+std::wstring logfilename;
 
 static LPCWSTR LogTypeNames[] =
 {
-    L"[Core]      ",
-    L"[XInput]    ",
-    L"[DInput]    ",
-    L"[InputHook] ",
-    L"[HookDI]    ",
-    L"[HookWMI]   ",
-    L"[HookWT]    ",
+    L"[Core]    ",
+    L"[XInput]  ",
+    L"[DInput]  ",
+    L"[IHook]   ",
+    L"[HookDI]  ",
+    L"[HookWMI] ",
+    L"[HookWT]  ",
 };
 
 void WriteStamp()
 {
     if(enableconsole)
     {
-        wprintf(L"%s",L"TIME           THREAD   TYPE        DATA");
+        wprintf(L"%s",L"TIME           THREAD   TYPE      DATA");
         wprintf(L"\n");
+		fflush(stdout);
     }
 
     if (writelog)
     {
+		if(logfilename.empty()) return;
         FILE * fp;
-        _wfopen_s(&fp, lpLogFileName, L"a");
+        _wfopen_s(&fp, logfilename.c_str(), L"a");
 
         //fp is null, file is not open.
         if (fp==NULL)
             return;
 
-        fwprintf(fp, L"%s",L"TIME           THREAD   TYPE        DATA");
+        fwprintf(fp, L"%s",L"TIME           THREAD   TYPE      DATA");
         fwprintf(fp, L"\n");
         fclose(fp);
     }
@@ -85,38 +89,35 @@ void LogEnable(BOOL log)
 void LogCleanup()
 {
     if(enableconsole)FreeConsole();
-
-    SAFE_DELETE_ARRAY(lpLogFileName);
 }
 
-BOOL CreateLog(LPWSTR logbasename,size_t logbasename_size, LPWSTR dirname,size_t dirname_size)
+BOOL CreateLog()
 {
-
-    UNREFERENCED_PARAMETER(logbasename_size);
-
     BOOL bRet = FALSE;
 
-    if (writelog && logbasename && dirname)
+    if (writelog)
     {
-        lpLogFileName = new WCHAR[MAX_PATH];
-        lpLogFolderName = new WCHAR[dirname_size+1];
-
-        wcscpy_s(lpLogFileName,MAX_PATH,logbasename);
-        wcscpy_s(lpLogFolderName,dirname_size,dirname);
+		std::wstring name = L"x360ce";
 
         SYSTEMTIME systime;
         GetLocalTime(&systime);
 
-        swprintf_s(lpLogFileName,MAX_PATH,L"%s\\%s_%u%02u%02u-%02u%02u%02u.log",
-                   lpLogFolderName,logbasename,systime.wYear,systime.wMonth,systime.wDay,systime.wHour,systime.wMinute,systime.wSecond);
+		std::wostringstream s;
+		s << std::setfill(L'0') << name << L"\\" << name << L'_' 
+			<< std::setw(2) << systime.wYear 
+			<< std::setw(2) << systime.wMonth
+			<< std::setw(2) << systime.wDay << L'-' 
+			<< std::setw(2) << systime.wHour 
+			<< std::setw(2) << systime.wMinute 
+			<< std::setw(2) << systime.wSecond << L".log";
 
-        if(!PathIsDirectory(lpLogFolderName)) CreateDirectory(lpLogFolderName, NULL);
+		logfilename = s.str();
 
-        SAFE_DELETE_ARRAY(lpLogFolderName);
-
+        if(!PathIsDirectory(name.c_str())) CreateDirectory(name.c_str(), NULL);
         bRet = TRUE;
     }
 
+	LogEnable(bRet);
     return bRet;
 }
 
@@ -141,14 +142,15 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
 
     if (writelog)
     {
+		if(logfilename.empty()) return FALSE;
         FILE * fp;
-        _wfopen_s(&fp, lpLogFileName, L"a");
+        _wfopen_s(&fp, logfilename.c_str(), L"a");
 
         //fp is null, file is not open.
         if (fp==NULL)
             return 0;
 
-        fwprintf(fp, L"%02u:%02u:%02u.%03u:: %08u %s",\
+        fwprintf(fp, L"%02u:%02u:%02u.%03u %08u %s",\
                  systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
         va_list arglist;
         va_start(arglist,str);

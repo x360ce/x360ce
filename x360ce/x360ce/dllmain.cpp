@@ -15,7 +15,7 @@
  */
 
 #include "stdafx.h"
-#include "externals.h"
+#include "globals.h"
 #include "version.h"
 #include "x360ce.h"
 #include "Utilities\Ini.h"
@@ -29,8 +29,42 @@ CRITICAL_SECTION cs;
 
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
+HINSTANCE hDinput8 = NULL;
 
-HWND hMsgWnd = NULL;
+extern HWND g_hWnd;
+iHook g_iHook;
+
+extern DINPUT_DATA DDATA;
+extern DINPUT_GAMEPAD g_Gamepad[4];
+
+extern void ReleaseDirectInput();
+
+void LoadSystemDInput8DLL()
+{
+	WCHAR sysdir[MAX_PATH];
+	WCHAR buffer[MAX_PATH];
+
+	// Getting path to system dir and to xinput1_3.dll
+	GetSystemDirectory(sysdir,MAX_PATH);
+
+	// Append dll name
+	//wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
+	swprintf_s(buffer,L"%s\\%s",sysdir,L"dinput8.dll");
+
+	// try to load the system's xinput dll, if pointer empty
+	WriteLog(LOG_CORE,L"Loading %s",buffer);
+
+	if (!hDinput8)
+		hDinput8 = LoadLibrary(buffer);
+
+	//Debug
+	if (!hDinput8)
+	{
+		WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
+		WriteLog(LOG_CORE,L"x360ce will exit now!!!");
+		ExitProcess(1); // exit the hard way
+	}
+}
 
 void LoadSystemXInputDLL()
 {
@@ -73,20 +107,24 @@ SHORT ConfiguredPadCount()
 
 VOID InstallInputHooks()
 {
-    x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
+	//x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
 
-    if(x360ce_InputHookConfig.bEnabled)
-    {
+	iHookPadConfig padconf[4];
+	if(g_iHook.GetState())
+	{
+		if(!hDinput8) LoadSystemDInput8DLL();
+		g_iHook.SetDinput8(hDinput8);
 
-        for(WORD i = 0; i < 4; i++)
-        {
-            x360ce_InputHookGamepadConfig[i].bEnabled = g_Gamepad[i].configured;
-            x360ce_InputHookGamepadConfig[i].productGUID = g_Gamepad[i].productGUID;
-            x360ce_InputHookGamepadConfig[i].instanceGUID = g_Gamepad[i].instanceGUID;
-        }
-    }
+		for(WORD i = 0; i < ConfiguredPadCount(); i++)
+		{
+			if(g_Gamepad[i].configured) padconf[i].Enable();
+			padconf[i].SetProductGUID(g_Gamepad[i].productGUID);
+			padconf[i].SetInstanceGUID(g_Gamepad[i].instanceGUID);
+			g_iHook.AddHook(padconf[i]);
+		}
+	}
 
-    InputHook_Init( &x360ce_InputHookConfig,  x360ce_InputHookGamepadConfig);
+	g_iHook.ExecuteHooks();
 }
 
 VOID InitInstance(HINSTANCE hinstDLL)
@@ -101,17 +139,17 @@ VOID InitInstance(HINSTANCE hinstDLL)
 #endif
 
 	InitializeCriticalSection(&cs);
-
 	EnterCriticalSection(&cs);
     hThis =  hinstDLL;
-    DWORD dwAppPID = GetCurrentProcessId();
-    SetIniFileName(L"x360ce.ini");
-    ReadConfig();
-    Console();
-    LogEnable(CreateLog(L"x360ce",sizeof(L"x360ce"),L"x360ce",sizeof(L"x360ce")));
 
+	InI ini;
+    ini.SetIniFileName(L"x360ce.ini");
+    ReadConfig(ini);
+    Console();
+    CreateLog();
     WriteStamp();
 
+	DWORD dwAppPID = GetCurrentProcessId();
 #if SVN_MODS != 0
     WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
 #else
@@ -120,6 +158,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
     WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
+	LoadSystemDInput8DLL();
+	LoadSystemXInputDLL();
+
     InstallInputHooks();
 	LeaveCriticalSection(&cs);
 }
@@ -127,7 +168,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 VOID ExitInstance()
 {
 	EnterCriticalSection(&cs);
-    InputHook_Clean();
+
+	ReleaseDirectInput();
 
     if (hNative)
     {
@@ -135,18 +177,28 @@ VOID ExitInstance()
         hNative = NULL;
     }
 
-    if(IsWindow(hMsgWnd)) DestroyWindow(hMsgWnd);
+	if (hDinput8)
+	{
+		FreeLibrary(hDinput8);
+		hDinput8 = NULL;
+	}
 
-    hMsgWnd = NULL;
-    UnregisterClass(L"x360ceWClass",hThis);
+    if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
+    g_hWnd = NULL;
 
     WriteLog(LOG_CORE,L"x360ce terminating, bye");
 
     LogCleanup();
-    IniCleanup();
 
 	LeaveCriticalSection(&cs);
 	DeleteCriticalSection(&cs);
+}
+
+extern "C" VOID WINAPI reset()
+{
+	ZeroMemory(g_Gamepad,sizeof(DINPUT_GAMEPAD)*4);
+	ExitInstance();
+	InitInstance(hThis);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )

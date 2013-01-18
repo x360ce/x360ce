@@ -17,6 +17,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include "Utilities\Ini.h"
 #include "InputHook\InputHook.h"
 
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };// add CBUT
@@ -146,12 +147,9 @@ extern BOOL enableconsole;
 extern WORD wNativeMode;
 
 void InitConfig(LPCWSTR ininame);
-void ReadConfig();
-void ReadPadConfig(DWORD idx);
+void ReadConfig(InI &ini);
+void ReadPadConfig(DWORD idx, InI &ini);
 MappingType getTriggerType(LPCWSTR);
-
-extern IHOOK_CONIFG x360ce_InputHookConfig;
-extern IHOOK_GAMEPAD_CONIFG x360ce_InputHookGamepadConfig[4];
 
 extern BOOL g_Disable;
 

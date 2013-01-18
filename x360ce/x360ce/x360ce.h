@@ -24,7 +24,7 @@
 
 extern HINSTANCE hThis;
 extern HINSTANCE hNative;
-extern HWND hMsgWnd;
+extern HWND g_hWnd;
 
 struct XINPUT_ENABLE
 {

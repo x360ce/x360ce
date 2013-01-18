@@ -15,13 +15,16 @@
  */
 
 #include "stdafx.h"
-#include "externals.h"
+#include "globals.h"
 #include "x360ce.h"
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
+
+extern HINSTANCE hDinput8;
+extern void LoadSystemDInput8DLL();
 
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
@@ -38,8 +41,10 @@ LPDIRECTINPUT8 GetDirectInput()
 {
     if (!DDATA.pDI)
     {
-
-        HRESULT hr = DirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.pDI, NULL );
+		if(!hDinput8) LoadSystemDInput8DLL();
+		typedef HRESULT (WINAPI *tDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
+		tDirectInput8Create oDirectInput8Create = (tDirectInput8Create) GetProcAddress( hDinput8, "DirectInput8Create");
+        HRESULT hr = oDirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.pDI, NULL );
 
         if (FAILED(hr))
             return 0;
