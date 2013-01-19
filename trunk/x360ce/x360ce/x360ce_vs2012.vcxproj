@@ -263,10 +263,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="InputHook\HookDI.cpp" />
     <ClCompile Include="InputHook\HookWinTrust.cpp" />
-    <ClCompile Include="InputHook\HookWMI_ANSI.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="InputHook\HookWMI_ANSI.cpp" />
     <ClCompile Include="InputHook\HookWMI_UNI.cpp" />
     <ClCompile Include="InputHook\InputHook.cpp" />
     <ClCompile Include="stdafx.cpp">
