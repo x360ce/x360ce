@@ -43,7 +43,7 @@ iHook::iHook()
 iHook::~iHook()
 {
 	HookWMI_UNI_Clean();
-	//HookWMI_ANSI_Clean();
+	HookWMI_ANSI_Clean();
 	HookDIClean();
 	HookWinTrustClean();
 }
@@ -61,8 +61,8 @@ BOOL iHook::ExecuteHooks()
 
 	if(!bHookWMIANSI)
 		HookWMI_UNI();
-//	else
-		//HookWMI_ANSI();
+	else
+		HookWMI_ANSI();
 
 	if(dwHookMode & HOOK_DI)
 		HookDI();

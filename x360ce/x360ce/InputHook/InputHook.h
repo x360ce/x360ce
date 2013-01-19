@@ -173,8 +173,6 @@ protected:
 };
 
 extern iHook *iHookThis;
-//typedef HRESULT (WINAPI *tDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
-//extern tDirectInput8Create RealDirectInput8Create;
 
 void HookWMI_UNI();
 void HookWMI_ANSI();
@@ -185,14 +183,5 @@ void HookWMI_UNI_Clean();
 void HookWMI_ANSI_Clean();
 void HookDIClean();
 void HookWinTrustClean();
-
-#if 0
-VOID InputHook_Enable(BOOL state);
-DWORD InputHook_Mode();
-BOOL InputHook_Enable();
-
-BOOL InputHook_Init(IHOOK_CONIFG* fconfig, IHOOK_GAMEPAD_CONIFG* gconfig);
-BOOL InputHook_Clean();
-#endif
 
 #endif

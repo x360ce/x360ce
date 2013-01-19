@@ -19,6 +19,7 @@
 #include "InputHook.h"
 #include "Utilities\Log.h"
 
+#define CINTERFACE
 #define OLE2ANSI
 #define _WIN32_DCOM
 #include <wbemidl.h>
@@ -95,7 +96,7 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 {
     HRESULT hr = hGetA->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookGetA");
 
@@ -120,40 +121,71 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 
         for(WORD i = 0; i < 4; i++)
         {
-            if(GamepadConfig[i].bEnabled && GamepadConfig[i].dwVID == dwVid && GamepadConfig[i].dwPID == dwPid)
+			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+            if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
                 char* strUSB = strstr( pVal->bstrVal, "USB" );
                 char tempstr[MAX_PATH];
 
-                if( strUSB )
-                {
-                    BSTR Hookbstr=NULL;
-                    WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
+				if( strUSB )
+				{
+					BSTR Hookbstr=NULL;
+					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 
-                    if(InputHookConfig.dwHookMode >= HOOK_COMPAT) sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
-                    else sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
+					DWORD dwHookVid = NULL;
+					DWORD dwHookPID = NULL;
 
-                    Hookbstr=SysAllocString(tempstr);
-                    pVal->bstrVal = Hookbstr;
-                    WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
-                    return hr;
-                }
+					if(iHookThis->GetHookMode() & iHook::HOOK_VIDPID)
+					{
+						dwHookVid = HIWORD(iHookThis->GetHookVIDPID());
+						dwHookPID = LOWORD(iHookThis->GetHookVIDPID());
+					}
+					else
+					{
+						dwHookVid = HIWORD(padconf.GetProductVIDPID());
+						dwHookPID = LOWORD(padconf.GetProductVIDPID());
+					}
+
+					if(dwHookVid && dwHookPID)
+					{
+						sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d",dwHookVid,dwHookPID,i );
+						Hookbstr=SysAllocString(tempstr);
+						pVal->bstrVal = Hookbstr;
+						WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+					}
+					return hr;
+				}
 
                 char* strHID = strstr( pVal->bstrVal, "HID" );
 
-                if( strHID )
-                {
-                    BSTR Hookbstr=NULL;
-                    WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
+				if( strHID )
+				{
+					BSTR Hookbstr=NULL;
+					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 
-                    if(InputHookConfig.dwHookMode >= HOOK_COMPAT) sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", InputHookConfig.dwHookVID, InputHookConfig.dwHookPID,i );
-                    else sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", GamepadConfig[i].dwVID , GamepadConfig[i].dwPID,i );
+					DWORD dwHookVid = NULL;
+					DWORD dwHookPID = NULL;
 
-                    Hookbstr=SysAllocString(tempstr);
-                    pVal->bstrVal = Hookbstr;
-                    WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
-                    return hr;
-                }
+					if(iHookThis->GetHookMode() & iHook::HOOK_VIDPID)
+					{
+						dwHookVid = HIWORD(iHookThis->GetHookVIDPID());
+						dwHookPID = LOWORD(iHookThis->GetHookVIDPID());
+					}
+					else
+					{
+						dwHookVid = LOWORD(padconf.GetProductVIDPID());
+						dwHookPID = HIWORD(padconf.GetProductVIDPID());
+					}
+
+					if(dwHookVid && dwHookPID)
+					{
+						sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPID,i );
+						Hookbstr=SysAllocString(tempstr);
+						pVal->bstrVal = Hookbstr;
+						WriteLog(LOG_HOOKWMI,L"Hook DeviceID = %s",pVal->bstrVal);
+					}
+					return hr;
+				}
             }
         }
     }
@@ -172,7 +204,7 @@ HRESULT STDMETHODCALLTYPE HookNextA(
 {
     HRESULT hr = hNextA->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
 
-    if(!InputHookConfig.bEnabled) return hr;
+	if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookNextA");
 
@@ -208,7 +240,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
 {
     HRESULT hr = hCreateInstanceEnumA->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA");
 
@@ -249,7 +281,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
 {
     HRESULT hr = hConnectServerA->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookConnectServerA");
 
@@ -284,7 +316,7 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 {
     HRESULT hr = hCoCreateInstanceA->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
-    if(!InputHookConfig.bEnabled) return hr;
+    if(!iHookThis->GetState()) return hr;
 
     WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA");
     //if(FAILED(hr)) return hr;
@@ -312,7 +344,7 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeA()
 {
-    if(!InputHookConfig.bEnabled) return hCoUninitializeA->GetOriginalFunction()();
+   if(!iHookThis->GetState()) return hCoUninitializeA->GetOriginalFunction()();
 
     WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA");
 
