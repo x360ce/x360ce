@@ -27,16 +27,6 @@
 #pragma comment( lib, "detours32.lib" )
 #endif
 
-void HookWMI_UNI();
-void HookWMI_ANSI();
-void HookDI();
-void HookWinTrust();
-
-void HookWMI_UNI_Clean();
-void HookWMI_ANSI_Clean();
-void HookDIClean();
-void HookWinTrustClean();
-
 class iHookPadConfig
 {
 public:
@@ -99,7 +89,10 @@ private:
 class iHook
 {
 public:
-	iHook();
+	iHook::iHook()
+		:dwHookMode(0)
+		,dwHookVIDPID(MAKELONG(0x045E,0x028E)) 
+	{}
 	virtual ~iHook()
 	{
 		HookWMI_UNI_Clean();
@@ -212,6 +205,16 @@ private:
 	HMODULE hDinput8;
 protected:
 	std::vector<iHookPadConfig> vPadConf;
+
+	void HookWMI_UNI();
+	void HookWMI_ANSI();
+	void HookDI();
+	void HookWinTrust();
+
+	void HookWMI_UNI_Clean();
+	void HookWMI_ANSI_Clean();
+	void HookDIClean();
+	void HookWinTrustClean();
 };
 
 #ifdef _IN_HOOK

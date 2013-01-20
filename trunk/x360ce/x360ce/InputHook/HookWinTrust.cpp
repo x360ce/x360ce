@@ -19,8 +19,9 @@
 #include "Utilities\Log.h"
 #include <Softpub.h>
 
-#define _IN_HOOK
 #include "InputHook.h"
+
+iHook *iHookWT = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef LONG (WINAPI *tWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
@@ -30,7 +31,7 @@ tWinVerifyTrust hWinVerifyTrust = NULL;
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_TRUST)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+	if(!iHookWT->CheckHook(iHook::HOOK_TRUST)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
 
 	WriteLog(LOG_HOOKWT,L"In HookWinVerifyTrust");
 
@@ -40,9 +41,12 @@ LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 	return 0;
 }
 
-void HookWinTrust()
+void iHook::HookWinTrust()
 {
-	if(!iHookThis || !iHookThis->CheckHook(iHook::HOOK_TRUST)) return;
+	if(!CheckHook(iHook::HOOK_TRUST)) return;
+
+	iHookWT = this;
+
 	if(!hWinVerifyTrust )
 	{
 		WriteLog(LOG_HOOKWT, L"Hooking:: WinVerifyTrust");
@@ -54,7 +58,7 @@ void HookWinTrust()
 	}
 }
 
-void HookWinTrustClean()
+void iHook::HookWinTrustClean()
 {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());

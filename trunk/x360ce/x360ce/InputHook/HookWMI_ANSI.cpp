@@ -26,8 +26,8 @@
 #include <oleauto.h>
 #include <dinput.h>
 
-#define _IN_HOOK
 #include "InputHook.h"
+iHook *iHookWMIA = NULL;
 
 // COM CLSIDs
 #pragma comment(lib,"wbemuuid.lib")
@@ -99,7 +99,7 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 {
 	HRESULT hr = hGetA(This,wszName,lFlags,pVal,pType,plFlavor);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
+	if(!iHookWMIA->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
 	WriteLog(LOG_HOOKWMI,L"HookGetA");
 
@@ -124,7 +124,7 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 
 		for(WORD i = 0; i < 4; i++)
 		{
-			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+			iHookPadConfig &padconf = iHookWMIA->GetPadConfig(i);
 			if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
 			{
 				char* strUSB = strstr( pVal->bstrVal, "USB" );
@@ -138,10 +138,10 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 					DWORD dwHookVid = NULL;
 					DWORD dwHookPid = NULL;
 
-					if(iHookThis->CheckHook(iHook::HOOK_VIDPID))
+					if(iHookWMIA->CheckHook(iHook::HOOK_VIDPID))
 					{
-						dwHookVid = LOWORD(iHookThis->GetFakeVIDPID());
-						dwHookPid = HIWORD(iHookThis->GetFakeVIDPID());
+						dwHookVid = LOWORD(iHookWMIA->GetFakeVIDPID());
+						dwHookPid = HIWORD(iHookWMIA->GetFakeVIDPID());
 					}
 					else
 					{
@@ -169,10 +169,10 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 					DWORD dwHookVid = NULL;
 					DWORD dwHookPid = NULL;
 
-					if(iHookThis->CheckHook(iHook::HOOK_VIDPID))
+					if(iHookWMIA->CheckHook(iHook::HOOK_VIDPID))
 					{
-						dwHookVid = LOWORD(iHookThis->GetFakeVIDPID());
-						dwHookPid = HIWORD(iHookThis->GetFakeVIDPID());
+						dwHookVid = LOWORD(iHookWMIA->GetFakeVIDPID());
+						dwHookPid = HIWORD(iHookWMIA->GetFakeVIDPID());
 					}
 					else
 					{
@@ -207,7 +207,7 @@ HRESULT STDMETHODCALLTYPE HookNextA(
 {
 	HRESULT hr = hNextA(This,lTimeout,uCount,apObjects,puReturned);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
+	if(!iHookWMIA->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
 	WriteLog(LOG_HOOKWMI,L"HookNextA");
 
@@ -248,7 +248,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
 {
 	HRESULT hr = hCreateInstanceEnumA(This,strFilter,lFlags,pCtx,ppEnum);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
+	if(!iHookWMIA->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
 	WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA");
 
@@ -294,7 +294,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
 {
 	HRESULT hr = hConnectServerA(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
+	if(!iHookWMIA->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
 	WriteLog(LOG_HOOKWMI,L"HookConnectServerA");
 
@@ -334,7 +334,7 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 {
 	HRESULT hr = hCoCreateInstanceA(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
+	if(!iHookWMIA->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
 	WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA");
 	//if(FAILED(hr)) return hr;
@@ -367,7 +367,7 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeA()
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hCoUninitializeA();
+	if(!iHookWMIA->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hCoUninitializeA();
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA");
 
 	DetourTransactionBegin();
@@ -403,10 +403,11 @@ void WINAPI HookCoUninitializeA()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void HookWMI_ANSI()
+void iHook::HookWMI_ANSI()
 {
-	if(!iHookThis || !iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return;
+	if(!CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return;
 	WriteLog(LOG_HOOKWMI,L"HookWMI:: Hooking");
+	iHookWMIA = this;
 
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
@@ -426,7 +427,7 @@ void HookWMI_ANSI()
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void HookWMI_ANSI_Clean()
+void iHook::HookWMI_ANSI_Clean()
 {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
