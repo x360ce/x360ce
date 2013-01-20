@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "globals.h"
 
-#define _IN_HOOK
 #include "InputHook.h"
 
 #define CINTERFACE
@@ -25,6 +24,8 @@
 
 #include "Utilities\Log.h"
 #include "Utilities\Misc.h"
+
+iHook* iHookDI;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +60,7 @@ static LPDIENUMDEVICESCALLBACKW lpTrueCallbackW= NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL FAR PASCAL HookEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext )
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return lpTrueCallbackA(pInst,pContext);
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return lpTrueCallbackA(pInst,pContext);
 	WriteLog(LOG_HOOKDI,L"HookEnumCallbackA");
 
 	// Fast return if keyboard or mouse
@@ -75,19 +76,19 @@ BOOL FAR PASCAL HookEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext
 		return lpTrueCallbackA(pInst,pContext);
 	}
 
-	if(iHookThis->CheckHook(iHook::HOOK_STOP)) return DIENUM_STOP;
+	if(iHookDI->CheckHook(iHook::HOOK_STOP)) return DIENUM_STOP;
 
 	if(pInst && pInst->dwSize == sizeof(DIDEVICEINSTANCEA))
 	{
-		for(size_t i = 0; i < iHookThis->GetHookCount(); i++)
+		for(size_t i = 0; i < iHookDI->GetHookCount(); i++)
 		{
-			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+			iHookPadConfig &padconf = iHookDI->GetPadConfig(i);
 			if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(),pInst->guidProduct))
 			{
 				DIDEVICEINSTANCEA HookInst;
 				memcpy(&HookInst,pInst,pInst->dwSize);
 
-				GUID guidProduct = { iHookThis->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
+				GUID guidProduct = { iHookDI->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
 				HookInst.guidProduct = guidProduct;
 
 				std::string strTrueguidProduct = GUIDtoStringA(pInst->guidProduct);
@@ -99,7 +100,7 @@ BOOL FAR PASCAL HookEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext
 				HookInst.wUsage = 0x05;
 				HookInst.wUsagePage = 0x01;
 
-				if(iHookThis->CheckHook(iHook::HOOK_NAME))
+				if(iHookDI->CheckHook(iHook::HOOK_NAME))
 				{
 
 					std::string OldProductName = HookInst.tszProductName;
@@ -124,7 +125,7 @@ BOOL FAR PASCAL HookEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext )
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return lpTrueCallbackW(pInst,pContext);
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return lpTrueCallbackW(pInst,pContext);
 	WriteLog(LOG_HOOKDI,L"HookEnumCallbackW");
 
 	// Fast return if keyboard or mouse
@@ -140,14 +141,14 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
 		return lpTrueCallbackW(pInst,pContext);
 	}
 
-	if(iHookThis->CheckHook(iHook::HOOK_STOP)) return DIENUM_STOP;
+	if(iHookDI->CheckHook(iHook::HOOK_STOP)) return DIENUM_STOP;
 
 	if(pInst && pInst->dwSize == sizeof(DIDEVICEINSTANCEW))
 	{
 
-		for(size_t i = 0; i < iHookThis->GetHookCount(); i++)
+		for(size_t i = 0; i < iHookDI->GetHookCount(); i++)
 		{
-			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+			iHookPadConfig &padconf = iHookDI->GetPadConfig(i);
 			if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(),pInst->guidProduct))
 			{
 				DIDEVICEINSTANCEW HookInst;
@@ -155,7 +156,7 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
 
 				//DWORD dwHookPIDVID = static_cast<DWORD>(MAKELONG(InputHookConfig.dwHookVID,InputHookConfig.dwHookPID));
 
-				GUID guidProduct = { iHookThis->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
+				GUID guidProduct = { iHookDI->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
 				HookInst.guidProduct = guidProduct;
 
 				WCHAR strTrueguidProduct[50];
@@ -168,7 +169,7 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
 				HookInst.wUsage = 0x05;
 				HookInst.wUsagePage = 0x01;
 
-				if(iHookThis->CheckHook(iHook::HOOK_NAME))
+				if(iHookDI->CheckHook(iHook::HOOK_NAME))
 				{
 					std::wstring OldProductName(HookInst.tszProductName);
 					std::wstring OldInstanceName(HookInst.tszInstanceName);
@@ -192,7 +193,7 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE HookEnumDevicesA (LPDIRECTINPUT8A This, DWORD dwDevType,LPDIENUMDEVICESCALLBACKA lpCallback,LPVOID pvRef,DWORD dwFlags)
 {
-	if(iHookThis->CheckHook(iHook::HOOK_DI))
+	if(iHookDI->CheckHook(iHook::HOOK_DI))
 	{
 		WriteLog(LOG_HOOKDI,L"HookEnumDevicesA");
 
@@ -210,7 +211,7 @@ HRESULT STDMETHODCALLTYPE HookEnumDevicesA (LPDIRECTINPUT8A This, DWORD dwDevTyp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT STDMETHODCALLTYPE HookEnumDevicesW (LPDIRECTINPUT8W This, DWORD dwDevType,LPDIENUMDEVICESCALLBACKW lpCallback,LPVOID pvRef,DWORD dwFlags)
 {
-	if(iHookThis->CheckHook(iHook::HOOK_DI))
+	if(iHookDI->CheckHook(iHook::HOOK_DI))
 	{
 		WriteLog(LOG_HOOKDI,L"HookEnumDevicesW");
 
@@ -230,7 +231,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 {
 	HRESULT hr = hGetDeviceInfoA( This, pdidi );
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookGetDeviceInfoA");
 
 	if(FAILED(hr)) return hr;
@@ -251,9 +252,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 			return hr;
 		}
 
-		for(size_t i = 0; i < iHookThis->GetHookCount(); i++)
+		for(size_t i = 0; i < iHookDI->GetHookCount(); i++)
 		{
-			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+			iHookPadConfig &padconf = iHookDI->GetPadConfig(i);
 			if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(), pdidi->guidProduct))
 			{
 
@@ -264,7 +265,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 
 				//DWORD dwHookPIDVID = static_cast<DWORD>(MAKELONG(InputHookConfig.dwHookVID,InputHookConfig.dwHookPID));
 
-				GUID guidProduct = { iHookThis->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
+				GUID guidProduct = { iHookDI->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
 				pdidi->guidProduct = guidProduct;
 
 				GUIDtoString(pdidi->guidProduct,strHookguidProduct);
@@ -275,7 +276,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 				pdidi->wUsage = 0x05;
 				pdidi->wUsagePage = 0x01;
 
-				if(iHookThis->CheckHook(iHook::HOOK_NAME))
+				if(iHookDI->CheckHook(iHook::HOOK_NAME))
 				{
 					std::string OldProductName(pdidi->tszProductName);
 					std::string OldInstanceName(pdidi->tszInstanceName);
@@ -301,7 +302,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 {
 	HRESULT hr = hGetDeviceInfoW( This, pdidi );
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookGetDeviceInfoW");
 
 	if(FAILED(hr)) return hr;
@@ -322,9 +323,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 			return hr;
 		}
 
-		for(size_t i = 0; i < iHookThis->GetHookCount(); i++)
+		for(size_t i = 0; i < iHookDI->GetHookCount(); i++)
 		{
-			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
+			iHookPadConfig &padconf = iHookDI->GetPadConfig(i);
 			if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(), pdidi->guidProduct))
 			{
 
@@ -335,7 +336,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 
 				//DWORD dwHookPIDVID = static_cast<DWORD>(MAKELONG(InputHookConfig.dwHookVID,InputHookConfig.dwHookPID));
 
-				GUID guidProduct = { iHookThis->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
+				GUID guidProduct = { iHookDI->GetFakeVIDPID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
 				pdidi->guidProduct = guidProduct;
 
 				GUIDtoString(pdidi->guidProduct,strHookguidProduct);
@@ -346,7 +347,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 				pdidi->wUsage = 0x05;
 				pdidi->wUsagePage = 0x01;
 
-				if(iHookThis->CheckHook(iHook::HOOK_NAME))
+				if(iHookDI->CheckHook(iHook::HOOK_NAME))
 				{
 					std::wstring OldProductName(pdidi->tszProductName);
 					std::wstring OldInstanceName(pdidi->tszInstanceName);
@@ -372,21 +373,21 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 {
 	HRESULT hr = hGetPropertyA(This, rguidProp, pdiph);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookGetPropertyA");
 
 	if(FAILED(hr)) return hr;
 
 	if(&rguidProp == &DIPROP_VIDPID)
 	{
-		DWORD dwHookPIDVID = iHookThis->GetFakeVIDPID();
+		DWORD dwHookPIDVID = iHookDI->GetFakeVIDPID();
 		DWORD dwTruePIDVID = reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData;
 
 		reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData = dwHookPIDVID;
 		WriteLog(LOG_HOOKDI,L"VIDPID change from %08X to %08X",dwTruePIDVID,reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
 	}
 
-	if(iHookThis->CheckHook(iHook::HOOK_NAME))
+	if(iHookDI->CheckHook(iHook::HOOK_NAME))
 	{
 		if (&rguidProp == &DIPROP_PRODUCTNAME)
 		{
@@ -408,7 +409,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 {
 	HRESULT hr = hGetPropertyW(This, rguidProp, pdiph);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookGetPropertyW");
 
 	if(FAILED(hr)) return hr;
@@ -416,14 +417,14 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 
 	if(&rguidProp == &DIPROP_VIDPID)
 	{
-		DWORD dwHookPIDVID = iHookThis->GetFakeVIDPID();
+		DWORD dwHookPIDVID = iHookDI->GetFakeVIDPID();
 		DWORD dwTruePIDVID = reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData;
 
 		reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData = dwHookPIDVID;
 		WriteLog(LOG_HOOKDI,L"VIDPID change from %08X to %08X",dwTruePIDVID,reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
 	}
 
-	if(iHookThis->CheckHook(iHook::HOOK_NAME))
+	if(iHookDI->CheckHook(iHook::HOOK_NAME))
 	{
 		if(&rguidProp == &DIPROP_PRODUCTNAME)
 		{
@@ -445,7 +446,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
 {
 	HRESULT hr = hCreateDeviceA(This, rguid, lplpDirectInputDevice, pUnkOuter);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookCreateDeviceA");
 
 	if(FAILED(hr)) return hr;
@@ -480,7 +481,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
 {
 	HRESULT hr = hCreateDeviceW(This, rguid, lplpDirectInputDevice, pUnkOuter);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookCreateDeviceW");
 
 	if(FAILED(hr)) return hr;
@@ -515,7 +516,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 {
 	HRESULT hr = hDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
 
-	if(!iHookThis->CheckHook(iHook::HOOK_DI)) return hr;
+	if(!iHookDI->CheckHook(iHook::HOOK_DI)) return hr;
 	WriteLog(LOG_HOOKDI,L"HookDirectInput8Create");
 
 	if(ppvOut)
@@ -580,14 +581,16 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void HookDI()
+void iHook::HookDI()
 {
-	if(!iHookThis || !iHookThis->CheckHook(iHook::HOOK_DI)) return;
+	if(!CheckHook(iHook::HOOK_DI)) return;
 	WriteLog(LOG_HOOKDI,L"HookDI:: Hooking");
 
-	if(!hDirectInput8Create && iHookThis)
+	iHookDI = this;
+
+	if(!hDirectInput8Create)
 	{
-		hDirectInput8Create = (tDirectInput8Create) GetProcAddress( iHookThis->GetDinput8(), "DirectInput8Create");
+		hDirectInput8Create = (tDirectInput8Create) GetProcAddress( GetDinput8(), "DirectInput8Create");
 
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
@@ -597,7 +600,7 @@ void HookDI()
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void HookDIClean()
+void iHook::HookDIClean()
 {
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
