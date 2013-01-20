@@ -23,6 +23,8 @@
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
+
+#define _DEFINE_HOOK
 #include "InputHook\InputHook.h"
 
 CRITICAL_SECTION cs;
@@ -107,8 +109,6 @@ SHORT ConfiguredPadCount()
 
 VOID InstallInputHooks()
 {
-	//x360ce_InputHookConfig.sConfiguredPads = ConfiguredPadCount();
-
 	iHookPadConfig padconf[4];
 	if(g_iHook.GetState())
 	{

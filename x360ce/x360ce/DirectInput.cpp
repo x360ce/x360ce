@@ -21,7 +21,6 @@
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
-#include "InputHook\InputHook.h"
 
 extern HINSTANCE hDinput8;
 extern void LoadSystemDInput8DLL();
@@ -70,7 +69,7 @@ void ReleaseDirectInput()
 
 void Deactivate(DWORD idx)
 {
-    if (g_Gamepad[idx].ff.pEffect)
+    if (*g_Gamepad[idx].ff.pEffect)
     {
         for (int i=0; i<2; i++)
         {
@@ -176,7 +175,7 @@ BOOL CALLBACK EnumFFAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pCo
 {
     DWORD* pdwNumForceFeedbackAxis = (DWORD*) pContext;
 
-    if( ((pdidoi->dwFlags && DIDOI_FFACTUATOR) != 0) )
+    if( ((pdidoi->dwFlags & DIDOI_FFACTUATOR) != 0) )
         (*pdwNumForceFeedbackAxis)++;
 
     return DIENUM_CONTINUE;
@@ -245,7 +244,7 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
     // DIJOFS_* values work properly.
     if( FAILED( hr = g_Gamepad[idx].pGamepad->SetDataFormat( &c_dfDIJoystick2 ) ) )
     {
-        WriteLog(LOG_DINPUT,L"[PAD%d] SetDataFormat failed with code HR = %s", idx+1, DXErrStr(hr));
+        WriteLog(LOG_DINPUT,L"[PAD%d] SetDataFormat failed with code HR = %h", idx+1, hr);
         return hr;
     }
 
@@ -256,7 +255,7 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
                          DISCL_EXCLUSIVE |
                          DISCL_BACKGROUND ) ) )
     {
-        WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (1) failed with code HR = %s", idx+1, DXErrStr(coophr));
+        WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (1) failed with code HR = %h", idx+1, coophr);
         //return coophr;
     }
 
@@ -269,7 +268,7 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
                              DISCL_NONEXCLUSIVE |
                              DISCL_BACKGROUND ) ) )
         {
-            WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (2) failed with code HR = %s", idx+1, DXErrStr(coophr));
+            WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (2) failed with code HR = %h", idx+1, coophr);
             //return coophr;
         }
     }
@@ -287,7 +286,7 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
     if( FAILED( hr = g_Gamepad[idx].pGamepad->EnumObjects( EnumObjectsCallback,
                      ( VOID* )&g_Gamepad[idx], DIDFT_AXIS ) ) )
     {
-        WriteLog(LOG_DINPUT,L"[PAD%d] EnumObjects failed with code HR = %s", idx+1, DXErrStr(hr));
+        WriteLog(LOG_DINPUT,L"[PAD%d] EnumObjects failed with code HR = %h", idx+1, hr);
         //return hr;
     }
     else
@@ -298,7 +297,7 @@ HRESULT InitDirectInput( HWND hDlg, DWORD idx )
     if( FAILED( hr = g_Gamepad[idx].pGamepad->EnumObjects( EnumFFAxesCallback,
                      ( VOID* )&g_Gamepad[idx].ff.dwNumForceFeedbackAxis, DIDFT_AXIS ) ) )
     {
-        WriteLog(LOG_DINPUT,L"[PAD%d] EnumFFAxesCallback failed with code HR = %s", idx+1, DXErrStr(hr));
+        WriteLog(LOG_DINPUT,L"[PAD%d] EnumFFAxesCallback failed with code HR = %h", idx+1, hr);
         //return hr;
     }
 
@@ -436,7 +435,7 @@ HRESULT PrepareForceFailsafe(DWORD idx, WORD motor)
         if( FAILED( hr = g_Gamepad[idx].pGamepad->CreateEffect( GUID_ConstantForce  ,
                          &eff, &g_Gamepad[idx].ff.pEffect[motor] , NULL ) ) )
         {
-            WriteLog(LOG_DINPUT,L"[PAD%d] CreateEffect (1) failed with code HR = %s", idx+1, DXErrStr(hr));
+            WriteLog(LOG_DINPUT,L"[PAD%d] CreateEffect (1) failed with code HR = %h", idx+1, hr);
             return hr;
         }
 
@@ -477,7 +476,7 @@ HRESULT PrepareForceFailsafe(DWORD idx, WORD motor)
         if( FAILED( hr = g_Gamepad[idx].pGamepad->CreateEffect( GUID_ConstantForce  ,
                          &eff, &g_Gamepad[idx].ff.pEffect[motor] , NULL ) ) )
         {
-            WriteLog(LOG_DINPUT,L"[PAD%d] CreateEffect (2) failed with code HR = %s", idx+1, DXErrStr(hr));
+            WriteLog(LOG_DINPUT,L"[PAD%d] CreateEffect (2) failed with code HR = %h", idx+1, hr);
             return hr;
         }
 
@@ -626,7 +625,7 @@ HRESULT SetDeviceForcesEjocys(DWORD idx, WORD force, WORD effidx)
         // Set the new parameters and start the effect immediately.
         if( FAILED( hr = g_Gamepad[idx].ff.pEffect[effidx]->SetParameters( &g_Gamepad[idx].ff.eff[0], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START )))
         {
-            WriteLog(LOG_DINPUT,L"[PAD%d] SetDeviceForces (%d) failed with code HR = %s", idx+1,effidx, DXErrStr(hr));
+            WriteLog(LOG_DINPUT,L"[PAD%d] SetDeviceForces (%d) failed with code HR = %h", idx+1,effidx, hr);
             return hr;
         };
     }
@@ -736,7 +735,7 @@ HRESULT PrepareForceEjocys(DWORD idx, WORD effidx)
                          &g_Gamepad[idx].ff.pEffect[effidx],  // where to put interface pointer
                          NULL)))
     {
-        WriteLog(LOG_DINPUT,L"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %s", idx+1,effidx, DXErrStr(hr));
+        WriteLog(LOG_DINPUT,L"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %h", idx+1,effidx, hr);
         return hr;
     }
 
@@ -851,7 +850,7 @@ HRESULT PrepareForceNew(DWORD idx, WORD motor)
 
         if(FAILED(hr))
         {
-            WriteLog(LOG_DINPUT,L"[PAD%d] PrepareForce (%d) failed with code HR = %s", idx+1,motor, DXErrStr(hr));
+            WriteLog(LOG_DINPUT,L"[PAD%d] PrepareForce (%d) failed with code HR = %h", idx+1,motor, hr);
             return hr;
         }
 

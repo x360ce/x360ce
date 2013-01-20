@@ -19,15 +19,34 @@
 
 #include <CGuid.h>
 #include <vector>
-#include "detours.h"
+#include <detours.h>
 
-using namespace MologieDetours;
+#ifdef WIN64
+#pragma comment( lib, "detours64.lib" )
+#else
+#pragma comment( lib, "detours32.lib" )
+#endif
+
+void HookWMI_UNI();
+void HookWMI_ANSI();
+void HookDI();
+void HookWinTrust();
+
+void HookWMI_UNI_Clean();
+void HookWMI_ANSI_Clean();
+void HookDIClean();
+void HookWinTrustClean();
 
 class iHookPadConfig
 {
 public:
-	iHookPadConfig();
-	~iHookPadConfig(){};
+	iHookPadConfig()
+		:bEnabled(0)
+		,gProductGUID(GUID_NULL)
+		,gInstanceGUID(GUID_NULL)
+		,dwVIDPID(0)
+	{}
+	virtual ~iHookPadConfig(){};
 
 	inline BOOL Enable()
 	{
@@ -81,69 +100,75 @@ class iHook
 {
 public:
 	iHook();
-	~iHook();
-	//enum HookMode { HOOK_NONE = 0, HOOK_NORMAL, HOOK_COMPAT, HOOK_ALL};
-
-	static const DWORD HOOK_NONE   = 0x00000000;
-	static const DWORD HOOK_WMI    = 0x00000001;
-	static const DWORD HOOK_DI     = 0x00000002;
-	static const DWORD HOOK_VIDPID = 0x00000004;
-	static const DWORD HOOK_NAME   = 0x00000008;
-	static const DWORD HOOK_STOP   = 0x80000000;
-
-	BOOL AddHook(iHookPadConfig &config);
-
-	inline BOOL Enable()
+	virtual ~iHook()
 	{
-		return bEnabled = TRUE;
+		HookWMI_UNI_Clean();
+		HookWMI_ANSI_Clean();
+		HookDIClean();
+		HookWinTrustClean();
+	};
+
+	static const DWORD HOOK_NONE        = 0x00000000;
+	static const DWORD HOOK_WMI         = 0x00000001;
+	static const DWORD HOOK_DI          = 0x00000002;
+	static const DWORD HOOK_VIDPID      = 0x00000004;
+	static const DWORD HOOK_NAME        = 0x00000008;
+	static const DWORD HOOK_STOP        = 0x00000010;
+	static const DWORD HOOK_WMIA        = 0x00000020;
+	static const DWORD HOOK_TRUST       = 0x00000040;
+	static const DWORD HOOK_ENABLE      = 0x80000000;
+
+	inline VOID Enable()
+	{
+		dwHookMode |= HOOK_ENABLE;
 	}
 
-	inline BOOL Disable()
+	inline VOID Disable()
 	{
-		return bEnabled = FALSE;
+		dwHookMode &= ~HOOK_ENABLE;
 	}
 
-	inline DWORD SetHookMode(DWORD mode)
+	inline VOID EnableHook(const DWORD flag)
+	{
+		dwHookMode |= flag;
+	}
+
+	inline VOID DisableHook(const DWORD flag)
+	{
+		dwHookMode &= ~flag;
+	}
+
+	inline BOOL CheckHook(const DWORD flag)
+	{
+		return (dwHookMode & (flag | HOOK_ENABLE)) == (flag | HOOK_ENABLE);
+	}
+
+	inline BOOL GetState()
+	{
+		return (dwHookMode & HOOK_ENABLE) == HOOK_ENABLE;
+	}
+
+	inline DWORD SetMode(DWORD mode)
 	{
 		return dwHookMode = mode;
 	}
 
-	inline DWORD SetHookVIDPID(DWORD vidpid)
+	inline DWORD SetFakeVIDPID(DWORD vidpid)
 	{
 		return dwHookVIDPID = vidpid;
 	}
 
-	inline DWORD GetHookVIDPID()
+	inline DWORD GetFakeVIDPID()
 	{
 		return dwHookVIDPID;
 	}
 
-	inline BOOL EnableANSIMode(BOOL enable)
+	inline size_t GetHookCount()
 	{
-		return bHookWMIANSI = enable;
+		return vPadConf.size();
 	}
 
-	inline BOOL EnableTrustHook(BOOL enable)
-	{
-		return bHookWinTrust = enable;
-	}
-
-	inline DWORD GetState()
-	{
-		return bEnabled;
-	}
-
-	inline DWORD GetHookMode()
-	{
-		return dwHookMode;
-	}
-
-	inline DWORD GetHookCount()
-	{
-		return dwHookCount;
-	}
-
-	inline iHookPadConfig& GetPadConfig(DWORD dwUserIndex)
+	inline iHookPadConfig& GetPadConfig(size_t dwUserIndex)
 	{
 		return vPadConf[dwUserIndex];
 	}
@@ -158,30 +183,39 @@ public:
 		return hDinput8 = hMod;
 	}
 
-	BOOL iHook::ExecuteHooks();
+	inline VOID AddHook(iHookPadConfig &config)
+	{
+		vPadConf.push_back(config);
+	}
+
+	inline VOID ExecuteHooks()
+	{
+		if(!GetState()) return;
+
+		if(CheckHook(HOOK_WMI | HOOK_WMIA))
+			HookWMI_ANSI();
+		else if(CheckHook(HOOK_WMI))
+			HookWMI_UNI();
+
+		if(CheckHook(HOOK_DI))
+			HookDI();
+
+		if(CheckHook(HOOK_TRUST))
+			HookWinTrust();
+
+		return;
+	}
 
 private:
-	BOOL  bEnabled;
 	DWORD dwHookMode;
 	DWORD dwHookVIDPID;
-	BOOL  bHookWMIANSI;
-	BOOL  bHookWinTrust;
-	DWORD dwHookCount;
 	HMODULE hDinput8;
 protected:
 	std::vector<iHookPadConfig> vPadConf;
 };
 
+#ifdef _IN_HOOK
 extern iHook *iHookThis;
-
-void HookWMI_UNI();
-void HookWMI_ANSI();
-void HookDI();
-void HookWinTrust();
-
-void HookWMI_UNI_Clean();
-void HookWMI_ANSI_Clean();
-void HookDIClean();
-void HookWinTrustClean();
+#endif
 
 #endif

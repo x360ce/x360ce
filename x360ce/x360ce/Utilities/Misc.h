@@ -17,7 +17,6 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <dinput.h>
 #include <Shlwapi.h>
 
 inline LPCWSTR HostFileName()
@@ -60,7 +59,7 @@ inline static DWORD flipLong(DWORD l)
     return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
 }
 
-inline HRESULT GUIDtoString(const GUID pg, LPWSTR data, int size=50)
+inline HRESULT GUIDtoString(const GUID &pg, LPWSTR data, int size=50)
 {
     int ret = StringFromGUID2(pg,data,size);
 
@@ -89,7 +88,7 @@ inline HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid)
     return hr;
 }
 
-inline const std::string GUIDtoStringA(const GUID g)
+inline const std::string GUIDtoStringA(const GUID &g)
 {
 	std::string str;
 	char tmp[40];
@@ -100,7 +99,7 @@ inline const std::string GUIDtoStringA(const GUID g)
 	return str;
 }
 
-inline const std::wstring GUIDtoStringW(const GUID g)
+inline const std::wstring GUIDtoStringW(const GUID &g)
 {
 	std::wstring str;
 	WCHAR tmp[40];
@@ -111,9 +110,10 @@ inline const std::wstring GUIDtoStringW(const GUID g)
 	return str;
 }
 
+// TODO, need to relecated this to drop depedency on <dinput.h>
+/*
 inline LPWSTR const DXErrStr(HRESULT dierr)
 {
-    if (dierr == E_FAIL) return L"E_FAIL";
     if (dierr == DIERR_ACQUIRED) return L"DIERR_ACQUIRED";
     if (dierr == DI_DOWNLOADSKIPPED) return L"DI_DOWNLOADSKIPPED";
     if (dierr == DI_EFFECTRESTARTED) return L"DI_EFFECTRESTARTED";
@@ -123,7 +123,6 @@ inline LPWSTR const DXErrStr(HRESULT dierr)
     if (dierr == DI_TRUNCATED) return L"DI_TRUNCATED";
     if (dierr == DI_TRUNCATEDANDRESTARTED) return L"DI_TRUNCATEDANDRESTARTED";
     if (dierr == DI_WRITEPROTECT) return L"DI_WRITEPROTECT";
-    if (dierr == DIERR_ACQUIRED) return L"DIERR_ACQUIRED";
     if (dierr == DIERR_ALREADYINITIALIZED) return L"DIERR_ALREADYINITIALIZED";
     if (dierr == DIERR_BADDRIVERVER) return L"DIERR_BADDRIVERVER";
     if (dierr == DIERR_BETADIRECTINPUTVERSION) return L"DIERR_BETADIRECTINPUTVERSION";
@@ -131,7 +130,6 @@ inline LPWSTR const DXErrStr(HRESULT dierr)
     if (dierr == DIERR_DEVICENOTREG) return L"DIERR_DEVICENOTREG";
     if (dierr == DIERR_EFFECTPLAYING) return L"DIERR_EFFECTPLAYING";
     if (dierr == DIERR_GENERIC) return L"DIERR_GENERIC";
-    if (dierr == DIERR_HANDLEEXISTS) return L"DIERR_HANDLEEXISTS";
     if (dierr == DIERR_HASEFFECTS) return L"DIERR_HASEFFECTS";
     if (dierr == DIERR_INCOMPLETEEFFECT) return L"DIERR_INCOMPLETEEFFECT";
     if (dierr == DIERR_INPUTLOST) return L"DIERR_INPUTLOST";
@@ -146,9 +144,7 @@ inline LPWSTR const DXErrStr(HRESULT dierr)
     if (dierr == DIERR_NOTEXCLUSIVEACQUIRED) return L"DIERR_NOTEXCLUSIVEACQUIRED";
     if (dierr == DIERR_NOTFOUND) return L"DIERR_NOTFOUND";
     if (dierr == DIERR_NOTINITIALIZED) return L"DIERR_NOTINITIALIZED";
-    if (dierr == DIERR_OBJECTNOTFOUND) return L"DIERR_OBJECTNOTFOUND";
     if (dierr == DIERR_OLDDIRECTINPUTVERSION) return L"DIERR_OLDDIRECTINPUTVERSION";
-    if (dierr == DIERR_OTHERAPPHASPRIO) return L"DIERR_OTHERAPPHASPRIO";
     if (dierr == DIERR_OUTOFMEMORY) return L"DIERR_OUTOFMEMORY";
     if (dierr == DIERR_READONLY) return L"DIERR_READONLY";
     if (dierr == DIERR_REPORTFULL) return L"DIERR_REPORTFULL";
@@ -159,10 +155,10 @@ inline LPWSTR const DXErrStr(HRESULT dierr)
     if (dierr == E_POINTER) return L"E_POINTER";
     if (dierr == S_FALSE) return L"S_FALSE";
 
-    LPWSTR buffer = NULL;
+    static WCHAR buffer[MAX_PATH];
     _itow_s(dierr,buffer,MAX_PATH,16);	//as hex
     return buffer;	//return value of HRESULT
 
-}
+}*/
 
 #endif // _UTILS_H_

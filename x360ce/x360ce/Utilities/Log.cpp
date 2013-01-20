@@ -74,7 +74,7 @@ void Console()
         AllocConsole();
 
         HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-        int hCrt = _open_osfhandle((long) handle_out, _O_TEXT);
+        int hCrt = _open_osfhandle((LONG) handle_out, _O_TEXT);
         FILE* hf_out = _wfdopen(hCrt, L"w");
         setvbuf(hf_out, NULL, _IONBF, 1);
         *stdout = *hf_out;

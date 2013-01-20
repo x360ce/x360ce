@@ -21,6 +21,7 @@
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
+#include "InputHook\InputHook.h"
 
 XINPUT_ENABLE XInputIsEnabled;
 extern iHook g_iHook;
@@ -57,15 +58,12 @@ HRESULT XInit(DWORD dwUserIndex)
 
 		if(!g_Gamepad[dwUserIndex].pGamepad)
 		{
-
 			BOOL bHookDisabled = FALSE;
-
-			if(g_iHook.GetState() && (g_iHook.GetHookMode() & iHook::HOOK_DI))
+			if(g_iHook.CheckHook(iHook::HOOK_DI))
 			{
-				//g_iHook.Disable();
 				bHookDisabled = TRUE;
-				g_iHook.SetHookMode(g_iHook.GetHookMode() ^ iHook::HOOK_DI);
-				WriteLog(LOG_CORE,L"Temporary disable InputHook");
+				g_iHook.DisableHook(iHook::HOOK_DI);
+				WriteLog(LOG_CORE,L"Temporary disable HookDI");
 			}
 
 			WriteLog(LOG_CORE,L"[PAD%d] Initializing UserIndex %d",dwUserIndex+1,dwUserIndex);
@@ -80,15 +78,15 @@ HRESULT XInit(DWORD dwUserIndex)
 
 			hr = InitDirectInput(g_hWnd,dwUserIndex);
 
-			if(!g_iHook.GetState() && bHookDisabled )
+			if(!g_iHook.CheckHook(iHook::HOOK_DI) && bHookDisabled )
 			{
-				g_iHook.SetHookMode(g_iHook.GetHookMode() | iHook::HOOK_DI);
-				WriteLog(LOG_CORE,L"Restore InputHook state");
+				g_iHook.EnableHook(iHook::HOOK_DI);
+				WriteLog(LOG_CORE,L"Restore HookDI state");
 			}
 
 			if(FAILED(hr))
 			{
-				WriteLog(LOG_CORE,L"[PAD%d] XInit fail with %s",dwUserIndex+1,DXErrStr(hr));
+				WriteLog(LOG_CORE,L"[PAD%d] XInit fail with %h",dwUserIndex+1,hr);
 			}
 		}
 		else 
@@ -132,7 +130,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 		for (int i = 0; i < 4; ++i)
 		{
-			if (g_Gamepad[dwUserIndex].antidz[i])
+			if (g_Gamepad[dwUserIndex].antidz[i] && pState)
 			{
 				SHORT antidz = g_Gamepad[dwUserIndex].antidz[i];
 				SHORT* val = NULL;
@@ -148,7 +146,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				if(val == NULL) continue;
 
 				SHORT direction = *val > 0 ? 1 : -1;
-				*val = (LONG)(abs(*val) / (32767 / (32767 - antidz * 1.0)) + antidz);
+				*val = (SHORT)(abs(*val) / (32767 / (32767 - antidz * 1.0)) + antidz);
 				*val = min(*val, 32767);
 
 				if(*val == g_Gamepad[dwUserIndex].antidz[i] || *val == -g_Gamepad[dwUserIndex].antidz[i]) *val = 0;
@@ -161,9 +159,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
     if (!pState || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
 
-    HRESULT hr=ERROR_DEVICE_NOT_CONNECTED;
-
-    hr = XInit(dwUserIndex);
+    HRESULT hr = XInit(dwUserIndex);
 
     if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -197,18 +193,18 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     xState.dwPacketNumber=GetTickCount();
 
     // --- Map buttons ---
-    for (INT i = 0; i < 10; ++i)
+    for (int i = 0; i < 10; ++i)
     {
-        if ((PadMap.Button[i] >= 0) && ButtonPressed(PadMap.Button[i],dwUserIndex))
+        if (((int)PadMap.Button[i] >= 0) && ButtonPressed(PadMap.Button[i],dwUserIndex))
             xState.Gamepad.wButtons |= buttonIDs[i];
     }
 
 	// --- Map POV to the D-pad ---
-	if ((PadMap.DpadPOV >= 0) && !PadMap.PovIsButton)
+	if (((int)PadMap.DpadPOV >= 0) && !PadMap.PovIsButton)
 	{
 		//INT pov = POVState(PadMap.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
-		WORD povdeg = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
+		int povdeg = g_Gamepad[dwUserIndex].state.rgdwPOV[PadMap.DpadPOV];
 		if(povdeg >= 0) 
 		{
 			// Up-left, up, up-right, up (at 360 degrees)
@@ -228,11 +224,11 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 		}
 	}
-    else if((PadMap.DpadPOV < 0) && PadMap.PovIsButton)
+    else if(((int)PadMap.DpadPOV < 0) && PadMap.PovIsButton)
     {
-        for (INT i = 0; i < 4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            if ((PadMap.pov[i] >= 0) && ButtonPressed(PadMap.pov[i],dwUserIndex))
+            if (((int)PadMap.pov[i] >= 0) && ButtonPressed(PadMap.pov[i],dwUserIndex))
             {
                 xState.Gamepad.wButtons |= povIDs[i];
             }
@@ -568,12 +564,12 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
     hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,FFB_LEFTMOTOR);
 
     if(FAILED(hr))
-        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
+        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %h", dwUserIndex, hr);
 
     hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,FFB_RIGHTMOTOR);
 
     if(FAILED(hr))
-        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %s", dwUserIndex, DXErrStr(hr));
+        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %h", dwUserIndex, hr);
 
     return ERROR_SUCCESS;
 }
@@ -696,8 +692,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
         XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( hNative, "XInputGetKeystroke");
         DWORD ret = nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
 
-
-		WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+		//WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 		return ret;
     }
 
@@ -765,7 +760,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
 	if(vkey)
 	{
-		xkey.UserIndex = dwUserIndex;
+		xkey.UserIndex = (BYTE)dwUserIndex;
 		xkey.Unicode = NULL;
 		xkey.HidCode = NULL;
 		xkey.Flags = curretFlags;
@@ -773,7 +768,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 		ret = ERROR_SUCCESS;
 	}
 
-	WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+	//WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
 	return ret;
 }
