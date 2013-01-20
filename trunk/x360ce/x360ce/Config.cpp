@@ -21,6 +21,7 @@
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
+#include "InputHook\InputHook.h"
 
 BOOL bInitBeep=0;
 WORD wNativeMode=0;
@@ -119,18 +120,26 @@ void ReadConfig(InI &ini)
     //InputHook
 	DWORD tmp;
     tmp = ini.ReadLongFromFile(L"InputHook", L"HookMode",0);
-	g_iHook.SetHookMode(tmp);
-	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookUseANSI",0);
-	g_iHook.EnableANSIMode(tmp);
-    tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
-	g_iHook.EnableTrustHook(tmp);
 
-	if(g_iHook.GetHookMode())
+	//TODO: make this nicer
+	if(tmp == 1) g_iHook.SetMode(iHook::HOOK_WMI);
+	if(tmp == 2) g_iHook.SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI);
+	if(tmp == 3) g_iHook.SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
+	if(tmp >  3) g_iHook.SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
+
+	if(tmp > 0) g_iHook.Enable();
+	
+	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookUseANSI",0);
+	if(tmp == 1) g_iHook.SetMode(iHook::HOOK_WMIA);
+
+    tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
+	if(tmp == 1) g_iHook.SetMode(iHook::HOOK_TRUST);
+
+	if(g_iHook.GetState())
 	{
-		g_iHook.Enable();
 		DWORD vid = ini.ReadLongFromFile(L"InputHook", L"HookVID",0x045E);
 		DWORD pid = ini.ReadLongFromFile(L"InputHook", L"HookPID",0x028E);
-		if(vid != 0x045E || pid != 0x28E) g_iHook.SetHookVIDPID(MAKELONG(pid,vid));
+		if(vid != 0x045E || pid != 0x28E) g_iHook.SetFakeVIDPID(MAKELONG(vid,pid));
 	}
 
     // Read pad mappings
@@ -194,7 +203,7 @@ void ReadPadConfig(DWORD idx, InI &ini)
 	for (int i=0; i<4; ++i)
 	{
 		SHORT tmp = static_cast<SHORT>(ini.ReadLongFromFile(section, axisADZNames[i], 0));
-		g_Gamepad[idx].antidz[i] = clamp(tmp,0,32767);
+		g_Gamepad[idx].antidz[i] =  static_cast<SHORT>(clamp(tmp,0,32767));
 	}
 
     g_Gamepad[idx].passthrough = (ini.ReadLongFromFile(section, L"PassThrough",1) !=0);
@@ -247,7 +256,7 @@ void ReadPadConfig(DWORD idx, InI &ini)
     {
         if (ini.ReadLongFromFile(section,buttonNames[i],0) > 0)
         {
-            PadMap.Button[i] = static_cast<INT>(ini.ReadLongFromFile(section,buttonNames[i],0)) - 1;
+            PadMap.Button[i] = static_cast<WORD>(ini.ReadLongFromFile(section,buttonNames[i],0)) - 1;
         }
     }
 
@@ -255,7 +264,7 @@ void ReadPadConfig(DWORD idx, InI &ini)
     {
         if (ini.ReadStringFromFile(section, povNames[i], buffer) > 0)
         {
-			WORD val = _wtoi(buffer);
+			int val = _wtoi(buffer);
 			if(val == 0)
 			{
 				//for compatibility with x360ce.App
@@ -267,12 +276,12 @@ void ReadPadConfig(DWORD idx, InI &ini)
 			}
 			else if(val < 100)
 			{
-				PadMap.pov[i] = val - 1;
+				PadMap.pov[i] = static_cast<WORD>(val - 1);
 				PadMap.PovIsButton = true;
 			}
 			else 
 			{
-				PadMap.pov[i] = val;
+				PadMap.pov[i] = static_cast<WORD>(val);
 				PadMap.PovIsButton = false;
 			}
         }
@@ -298,13 +307,14 @@ void ReadPadConfig(DWORD idx, InI &ini)
         g_Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ini.ReadLongFromFile(section, axisDZNames[i], 0));
         g_Gamepad[idx].axislinear[i] = static_cast<SHORT>(ini.ReadLongFromFile(section, axisLNames[i], 0));
 
-        if (INT ret = ini.ReadLongFromFile(section, axisBNames[i*2]) > 0)
+		INT ret = ini.ReadLongFromFile(section, axisBNames[i*2]);
+        if (ret > 0)
         {
             PadMap.Axis[i].hasDigital = true;
             PadMap.Axis[i].positiveButtonID = ret - 1;
         }
-
-        if (INT ret = ini.ReadLongFromFile(section, axisBNames[i*2+1]) > 0)
+		ret = ini.ReadLongFromFile(section, axisBNames[i*2+1]);
+        if (ret > 0)
         {
             PadMap.Axis[i].hasDigital = true;
             PadMap.Axis[i].negativeButtonID = ret - 1;
@@ -358,7 +368,7 @@ void ReadPadConfig(DWORD idx, InI &ini)
 
     if (ini.ReadLongFromFile(section, L"D-pad POV") > 0)
     {
-        PadMap.DpadPOV = static_cast<INT>(ini.ReadLongFromFile(section, L"D-pad POV",0)) - 1;
+        PadMap.DpadPOV = static_cast<WORD>(ini.ReadLongFromFile(section, L"D-pad POV",0)) - 1;
     }
 }
 

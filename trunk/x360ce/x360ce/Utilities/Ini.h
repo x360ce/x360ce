@@ -32,7 +32,6 @@ public:
 	{
 		WCHAR strPath[MAX_PATH];
 		WCHAR tmp[MAX_PATH];
-		//g_pConfigFile = new WCHAR[MAX_PATH];
 
 		GetModuleFileName(NULL, strPath, MAX_PATH);
 		PathRemoveFileSpec(strPath);
@@ -42,7 +41,7 @@ public:
 		wsConfigFile = tmp;
 	}
 
-	inline DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault)
+	inline DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault = 0)
 	{
 		if(wsConfigFile.empty()) return 0;
 
@@ -58,29 +57,19 @@ public:
 		return ret;
 	}
 
-	inline DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput)
-	{
-		return ReadStringFromFile(strFileSection, strKey, strOutput, NULL);
-	}
-
-	inline long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey ,INT uDefault)
+	inline long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey, INT iDefault = 0)
 	{
 
 		WCHAR tmp[MAX_PATH];
 		WCHAR def[MAX_PATH];
 		DWORD ret;
 
-		swprintf_s(def,MAX_PATH,L"%u",uDefault);
+		swprintf_s(def,MAX_PATH,L"%d",iDefault);
 		ret = ReadStringFromFile(strFileSection,strKey,tmp,def);
 
 		if(ret) return _wtol(tmp);
 		else return 0;
 
-	}
-
-	inline long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey)
-	{
-		return ReadLongFromFile(strFileSection, strKey, 0);
 	}
 
 private:

@@ -18,7 +18,6 @@
 #define _CONFIG_H_
 
 #include "Utilities\Ini.h"
-#include "InputHook\InputHook.h"
 
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };// add CBUT
 
