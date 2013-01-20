@@ -564,12 +564,12 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
     hr = SetDeviceForces(dwUserIndex,wLeftMotorSpeed,FFB_LEFTMOTOR);
 
     if(FAILED(hr))
-        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %h", dwUserIndex, hr);
+        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
 
     hr = SetDeviceForces(dwUserIndex,wRightMotorSpeed,FFB_RIGHTMOTOR);
 
     if(FAILED(hr))
-        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %h", dwUserIndex, hr);
+        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
 
     return ERROR_SUCCESS;
 }
