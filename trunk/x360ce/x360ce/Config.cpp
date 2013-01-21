@@ -104,7 +104,8 @@ static LPCWSTR padNames[] =
     L"PAD4",
 };
 
-GamepadMap GamepadMapping[4];
+//GamepadMap GamepadMapping[4];
+std::vector<GamepadMap> GamepadMapping;
 
 void ReadConfig(InI &ini)
 {
@@ -150,7 +151,6 @@ void ReadConfig(InI &ini)
 
 void ReadPadConfig(DWORD idx, InI &ini)
 {
-
     DWORD ret;
     WCHAR section[MAX_PATH] = L"Mappings";
     WCHAR key[MAX_PATH];
@@ -159,87 +159,62 @@ void ReadPadConfig(DWORD idx, InI &ini)
     WCHAR buffer[MAX_PATH];
 
     ret = ini.ReadStringFromFile(section, key, buffer);
-
     if(!ret) return;
+
+	DINPUT_GAMEPAD gamepad;
+	GamepadMap PadMap;
 
     //store value as section name
     wcscpy_s(section,buffer);
 
-    WCHAR NullGUIDStr[50];
-    GamepadMap &PadMap = GamepadMapping[idx];
+    ini.ReadStringFromFile(section, L"ProductGUID", buffer, 0);
+    StringToGUID(&gamepad.productGUID,buffer);
 
-    GUIDtoString(GUID_NULL,NullGUIDStr,50);
+    ini.ReadStringFromFile(section, L"InstanceGUID", buffer, 0);
+    StringToGUID(&gamepad.instanceGUID,buffer);
 
-    ret = ini.ReadStringFromFile(section, L"ProductGUID", buffer, NullGUIDStr);
-
-    if(!ret) return;
-
-    StringToGUID(buffer,&g_Gamepad[idx].productGUID);
-
-    if(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL))
-    {
-        ret = ini.ReadStringFromFile(section, L"Product", buffer, NullGUIDStr);
-
-        if(!ret) return;
-
-        StringToGUID(buffer,&g_Gamepad[idx].productGUID);
-    }
-
-    ret = ini.ReadStringFromFile(section, L"InstanceGUID", buffer, NullGUIDStr);
-
-    if(!ret) return;
-
-    StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
-
-    if(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL))
-    {
-        ret = ini.ReadStringFromFile(section, L"Instance", buffer, NullGUIDStr);
-
-        if(!ret) return;
-
-        StringToGUID(buffer,&g_Gamepad[idx].instanceGUID);
-    }
-
+	//TODO rework pass-trough handling code
 	for (int i=0; i<4; ++i)
 	{
 		SHORT tmp = static_cast<SHORT>(ini.ReadLongFromFile(section, axisADZNames[i], 0));
-		g_Gamepad[idx].antidz[i] =  static_cast<SHORT>(clamp(tmp,0,32767));
+		gamepad.antidz[i] =  static_cast<SHORT>(clamp(tmp,0,32767));
 	}
 
-    g_Gamepad[idx].passthrough = (ini.ReadLongFromFile(section, L"PassThrough",1) !=0);
+    gamepad.passthrough = (ini.ReadLongFromFile(section, L"PassThrough",1) !=0);
 
-    if(g_Gamepad[idx].passthrough)
+    if(gamepad.passthrough)
     {
         wNativeMode = 1;
-        g_Gamepad[idx].configured = true;
+        //gamepad.configured = true;
         PadMap.enabled = false;
+		GamepadMapping.push_back(PadMap);
+		g_Gamepads.push_back(gamepad);
         return;
     }
 
-    if (!(IsEqualGUID(g_Gamepad[idx].productGUID,GUID_NULL)) && !(IsEqualGUID(g_Gamepad[idx].instanceGUID,GUID_NULL)))
+    if (!(IsEqualGUID(gamepad.productGUID,GUID_NULL)) && !(IsEqualGUID(gamepad.instanceGUID,GUID_NULL)))
     {
-        g_Gamepad[idx].configured = true;
+        //gamepad.configured = true;
         PadMap.enabled = true;
 
     }
-    else
-    {
-        return;
-    }
+    else return;
 
-    g_Gamepad[idx].dwPadIndex = idx;
 
-    g_Gamepad[idx].ff.type = (BYTE) ini.ReadLongFromFile(section, L"FFBType",0);
-    g_Gamepad[idx].swapmotor = ini.ReadLongFromFile(section, L"SwapMotor",0);
-    g_Gamepad[idx].tdeadzone = ini.ReadLongFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-    g_Gamepad[idx].ff.useforce = static_cast<BOOL>(ini.ReadLongFromFile(section, L"UseForceFeedback",0));
-    g_Gamepad[idx].gamepadtype = static_cast<BYTE>(ini.ReadLongFromFile(section, L"ControllerType",1));
-    g_Gamepad[idx].axistodpad = (ini.ReadLongFromFile(section, L"AxisToDPad",0) !=0);
-    g_Gamepad[idx].axistodpaddeadzone = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadDeadZone",0));
-    g_Gamepad[idx].axistodpadoffset = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadOffset",0));
-    g_Gamepad[idx].ff.forcepercent = static_cast<FLOAT>(ini.ReadLongFromFile(section, L"ForcePercent",100) * 0.01);
-    g_Gamepad[idx].ff.leftPeriod = ini.ReadLongFromFile(section, L"LeftMotorPeriod",60);
-    g_Gamepad[idx].ff.rightPeriod = ini.ReadLongFromFile(section, L"RightMotorPeriod",20);
+    gamepad.dwUserIndex = idx;
+
+	gamepad.useProduct = ini.ReadLongFromFile(section, L"UseProductGUID",0)!=0;
+    gamepad.ff.type = (BYTE) ini.ReadLongFromFile(section, L"FFBType",0);
+    gamepad.swapmotor = ini.ReadLongFromFile(section, L"SwapMotor",0);
+    gamepad.tdeadzone = ini.ReadLongFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+    gamepad.ff.useforce = static_cast<BOOL>(ini.ReadLongFromFile(section, L"UseForceFeedback",0));
+    gamepad.gamepadtype = static_cast<BYTE>(ini.ReadLongFromFile(section, L"ControllerType",1));
+    gamepad.axistodpad = (ini.ReadLongFromFile(section, L"AxisToDPad",0) !=0);
+    gamepad.axistodpaddeadzone = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadDeadZone",0));
+    gamepad.axistodpadoffset = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadOffset",0));
+    gamepad.ff.forcepercent = static_cast<FLOAT>(ini.ReadLongFromFile(section, L"ForcePercent",100) * 0.01);
+    gamepad.ff.leftPeriod = ini.ReadLongFromFile(section, L"LeftMotorPeriod",60);
+    gamepad.ff.rightPeriod = ini.ReadLongFromFile(section, L"RightMotorPeriod",20);
 
 	memset(PadMap.Button,-1,sizeof(PadMap.Button));
 
@@ -304,8 +279,8 @@ void ReadPadConfig(DWORD idx, InI &ini)
             }
         }
 
-        g_Gamepad[idx].adeadzone[i] =  static_cast<SHORT>(ini.ReadLongFromFile(section, axisDZNames[i], 0));
-        g_Gamepad[idx].axislinear[i] = static_cast<SHORT>(ini.ReadLongFromFile(section, axisLNames[i], 0));
+        gamepad.adeadzone[i] =  static_cast<SHORT>(ini.ReadLongFromFile(section, axisDZNames[i], 0));
+        gamepad.axislinear[i] = static_cast<SHORT>(ini.ReadLongFromFile(section, axisLNames[i], 0));
 
 		INT ret = ini.ReadLongFromFile(section, axisBNames[i*2]);
         if (ret > 0)
@@ -370,6 +345,9 @@ void ReadPadConfig(DWORD idx, InI &ini)
     {
         PadMap.DpadPOV = static_cast<WORD>(ini.ReadLongFromFile(section, L"D-pad POV",0)) - 1;
     }
+
+	GamepadMapping.push_back(PadMap);
+	g_Gamepads.push_back(gamepad);
 }
 
 // NOTE: Letters corresponding to mapping types changed. Include in update notes.

@@ -141,7 +141,7 @@ static const WORD povIDs[4] =
 };
 
 extern BOOL bInitBeep;
-extern struct GamepadMap GamepadMapping[4];
+extern std::vector<GamepadMap> GamepadMapping;
 extern BOOL enableconsole;
 extern WORD wNativeMode;
 

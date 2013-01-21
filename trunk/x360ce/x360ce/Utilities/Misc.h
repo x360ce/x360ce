@@ -19,20 +19,15 @@
 
 #include <Shlwapi.h>
 
-inline LPCWSTR HostFileName()
-{
-    static WCHAR strPath[MAX_PATH];
-    GetModuleFileName(NULL, strPath, MAX_PATH);
-    return PathFindFileName(strPath);
-}
-
-inline LPCWSTR DLLFileName(HINSTANCE hModule)
+inline LPCWSTR GetFileName(HMODULE hModule = NULL)
 {
     static WCHAR strPath[MAX_PATH];
     GetModuleFileName(hModule, strPath, MAX_PATH);
+	size_t len = wcslen(strPath)+1;
+	if(len > MAX_PATH) len = MAX_PATH;
+	strPath[len] = L'0'; //not null terminated on Windows XP
     return PathFindFileName(strPath);
 }
-
 
 inline LONG clamp(LONG val, LONG min, LONG max)
 {
@@ -41,6 +36,7 @@ inline LONG clamp(LONG val, LONG min, LONG max)
 
     return val;
 }
+
 inline LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
 {
     if (val < lowerDZ) return min;
@@ -68,7 +64,7 @@ inline HRESULT GUIDtoString(const GUID &pg, LPWSTR data, int size=50)
     return E_FAIL;
 }
 
-inline HRESULT StringToGUID(LPWSTR szBuf, GUID *rGuid)
+inline HRESULT StringToGUID(GUID *rGuid, LPWSTR szBuf)
 {
     HRESULT hr = E_FAIL;
     GUID g = GUID_NULL;

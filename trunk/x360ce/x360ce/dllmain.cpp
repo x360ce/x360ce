@@ -34,13 +34,11 @@ HINSTANCE hDinput8 = NULL;
 extern HWND g_hWnd;
 iHook g_iHook;
 
-extern DINPUT_DATA DDATA;
-extern DINPUT_GAMEPAD g_Gamepad[4];
-
 extern void ReleaseDirectInput();
 
 void LoadSystemDInput8DLL()
 {
+	if(hDinput8) return;
 	WCHAR sysdir[MAX_PATH];
 	WCHAR buffer[MAX_PATH];
 
@@ -68,6 +66,7 @@ void LoadSystemDInput8DLL()
 
 void LoadSystemXInputDLL()
 {
+	if(hNative) return;
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
@@ -76,7 +75,7 @@ void LoadSystemXInputDLL()
 
     // Append dll name
     //wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
-    swprintf_s(buffer,L"%s\\%s",sysdir,DLLFileName(hThis));
+    swprintf_s(buffer,L"%s\\%s",sysdir,GetFileName(hThis));
 
     // try to load the system's xinput dll, if pointer empty
     WriteLog(LOG_CORE,L"Loading %s",buffer);
@@ -93,32 +92,20 @@ void LoadSystemXInputDLL()
     else if(bInitBeep) MessageBeep(MB_ICONASTERISK);
 }
 
-SHORT ConfiguredPadCount()
-{
-    SHORT configuredpads = 0;
-
-    for(int i = 0; i < 4; i++)
-    {
-        if(g_Gamepad[i].configured) ++configuredpads;
-    }
-
-    return configuredpads;
-}
-
 VOID InstallInputHooks()
 {
-	iHookPadConfig padconf[4];
 	if(g_iHook.GetState())
 	{
-		if(!hDinput8) LoadSystemDInput8DLL();
+		LoadSystemDInput8DLL();
 		g_iHook.SetDinput8(hDinput8);
 
-		for(WORD i = 0; i < ConfiguredPadCount(); i++)
+		for(WORD i = 0; i < g_Gamepads.size(); i++)
 		{
-			if(g_Gamepad[i].configured) padconf[i].Enable();
-			padconf[i].SetProductGUID(g_Gamepad[i].productGUID);
-			padconf[i].SetInstanceGUID(g_Gamepad[i].instanceGUID);
-			g_iHook.AddHook(padconf[i]);
+			iHookPadConfig padconf;
+			padconf.Enable();
+			padconf.SetProductGUID(g_Gamepads[i].productGUID);
+			padconf.SetInstanceGUID(g_Gamepads[i].instanceGUID);
+			g_iHook.AddHook(padconf);
 		}
 	}
 
@@ -149,9 +136,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 	DWORD dwAppPID = GetCurrentProcessId();
 #if SVN_MODS != 0
-    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
+    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName(),dwAppPID);
 #else
-    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,HostFileName(),dwAppPID);
+    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName(),dwAppPID);
 #endif
 
     WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
@@ -194,7 +181,9 @@ VOID ExitInstance()
 
 extern "C" VOID WINAPI reset()
 {
-	ZeroMemory(g_Gamepad,sizeof(DINPUT_GAMEPAD)*4);
+	g_Gamepads.clear();
+	GamepadMapping.clear();
+
 	ExitInstance();
 	InitInstance(hThis);
 }
