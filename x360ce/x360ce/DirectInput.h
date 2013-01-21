@@ -19,16 +19,6 @@
 
 #include <dinput.h>
 
-struct DINPUT_DATA
-{
-    LPDIRECTINPUT8 pDI;
-    UINT refCount;
-    UINT deviceCount;
-    DINPUT_DATA()
-    {
-        ZeroMemory(this,sizeof(DINPUT_DATA));
-    }
-};
 struct FFB_CAPS
 {
     BOOL ConstantForce;
@@ -103,8 +93,7 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad );
 BOOL ButtonPressed(DWORD buttonidx, DINPUT_GAMEPAD &gamepad);
 HRESULT UpdateState(DINPUT_GAMEPAD &gamepad);
 WORD EnumPadCount();
-HRESULT Enumerate(DINPUT_GAMEPAD &gamepad);
-void ReleaseDirectInput();
+void FreeDinput();
 void Deactivate();
 BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 

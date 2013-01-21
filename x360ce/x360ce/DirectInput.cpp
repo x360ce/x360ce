@@ -28,7 +28,6 @@ extern void LoadSystemDInput8DLL();
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
 //-----------------------------------------------------------------------------
-DINPUT_DATA DDATA;
 std::vector<DINPUT_GAMEPAD> g_Gamepads;
 
 INT init[4] = {NULL};
@@ -36,35 +35,23 @@ WORD lastforce = 0;
 
 //-----------------------------------------------------------------------------
 
-LPDIRECTINPUT8 GetDirectInput()
+LPDIRECTINPUT8 g_pDI = NULL;
+HRESULT LoadDinput()
 {
-    if (!DDATA.pDI)
-    {
-		LoadSystemDInput8DLL();
-		typedef HRESULT (WINAPI *tDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
-		tDirectInput8Create oDirectInput8Create = (tDirectInput8Create) GetProcAddress( hDinput8, "DirectInput8Create");
-        HRESULT hr = oDirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&DDATA.pDI, NULL );
-
-        if (FAILED(hr))
-            return 0;
-    }
-
-    DDATA.refCount++;
-    return DDATA.pDI;
+	if(g_pDI) return S_OK;
+	LoadSystemDInput8DLL();
+	typedef HRESULT (WINAPI *tDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
+	tDirectInput8Create oDirectInput8Create = (tDirectInput8Create) GetProcAddress( hDinput8, "DirectInput8Create");
+	return oDirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&g_pDI, NULL );
 }
 
-void ReleaseDirectInput()
+void FreeDinput()
 {
-    if (DDATA.refCount)
-    {
-        DDATA.refCount--;
-
-        if (!DDATA.refCount)
-        {
-            DDATA.pDI->Release();
-            DDATA.pDI = 0;
-        }
-    }
+	if (g_pDI)
+	{
+		g_pDI->Release();
+		g_pDI = 0;
+	}
 }
 
 void Deactivate(DINPUT_GAMEPAD &gamepad)
@@ -113,45 +100,20 @@ static bool AcquireDevice(LPDIRECTINPUTDEVICE8 lpDirectInputDevice)
 	return TRUE;
 }
 
-BOOL CALLBACK EnumGamepadsCallback( const DIDEVICEINSTANCE* pInst, VOID* pContext )
-{
-    LPDIRECTINPUT8 lpDI8 = GetDirectInput();
-    LPDIRECTINPUTDEVICE8 pDevice;
-    DINPUT_GAMEPAD * gp = (DINPUT_GAMEPAD*) pContext;
-
-    if(IsEqualGUID(gp->productGUID, pInst->guidProduct) && IsEqualGUID(gp->instanceGUID, pInst->guidInstance) )
-    {
-        lpDI8->CreateDevice( pInst->guidInstance, &pDevice, NULL );
-        if(pDevice)
-        {
-            gp->pGamepad = pDevice;
-            gp->connected = 1;
-            WriteLog(LOG_DINPUT,L"[PAD%d] Device \"%s\" created",gp->dwUserIndex+1,pInst->tszProductName);
-        }
-
-        return DIENUM_STOP;
-    }
-    else return DIENUM_CONTINUE;
-}
-
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
+    DINPUT_GAMEPAD *gp = (DINPUT_GAMEPAD*) pContext;
 
-    DINPUT_GAMEPAD * gp = (DINPUT_GAMEPAD*) pContext;
-
-    // For axes that are returned, set the DIPROP_RANGE property for the
-    // enumerated axis in order to scale min/max values.
     if( pdidoi->dwType & DIDFT_AXIS )
     {
         DIPROPRANGE diprg;
         diprg.diph.dwSize       = sizeof(DIPROPRANGE);
         diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER);
         diprg.diph.dwHow        = DIPH_BYID;
-        diprg.diph.dwObj        = pdidoi->dwType; // Specify the enumerated axis
+        diprg.diph.dwObj        = pdidoi->dwType;
         diprg.lMin              = -32767;
         diprg.lMax              = +32767;
 
-        // Set the range for the axis
         if( FAILED( gp->pGamepad->SetProperty( DIPROP_RANGE, &diprg.diph ) ) )
             return DIENUM_STOP;
     }
@@ -160,11 +122,6 @@ BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pC
     return DIENUM_CONTINUE;
 }
 
-//-----------------------------------------------------------------------------
-// Name: EnumFFAxesCallback()
-// Desc: Callback function for enumerating the axes on a joystick and counting
-//       each force feedback enabled axis
-//-----------------------------------------------------------------------------
 BOOL CALLBACK EnumFFAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
     DWORD* pdwNumForceFeedbackAxis = (DWORD*) pContext;
@@ -194,41 +151,21 @@ HRESULT UpdateState(DINPUT_GAMEPAD &gamepad)
     return hr;
 }
 
-/*
-HRESULT Enumerate(DINPUT_GAMEPAD &gamepad)
-{
-    HRESULT hr;
-
-    Deactivate(gamepad);
-    LPDIRECTINPUT8 lpDI8 = GetDirectInput();
-
-    WriteLog(LOG_DINPUT,L"[PAD%d] Enumerating UserIndex %d",gamepad.dwUserIndex+1,gamepad.dwUserIndex);
-    hr = lpDI8->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumGamepadsCallback, &gamepad, DIEDFL_ATTACHEDONLY );
-
-    if FAILED(hr)
-    {
-        WriteLog(LOG_DINPUT,L"[PAD%d] Enumeration FAILED !!!",gamepad.dwUserIndex+1);
-        return hr;
-    }
-
-    if(!gamepad.pGamepad)
-	{
-		WriteLog(LOG_DINPUT,L"[PAD%d] Enumeration FAILED !!!",gamepad.dwUserIndex+1);
-		return hr;
-	}
-
-    return ERROR_SUCCESS;
-}*/
-
 HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 {
 	DIPROPDWORD dipdw;
 	HRESULT hr=S_FALSE;
 	HRESULT coophr=S_FALSE;
-	LPDIRECTINPUT8 lpDI8 = GetDirectInput();
+	LoadDinput(); 
 
-	if(gamepad.useProduct) hr = lpDI8->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
-	else hr = lpDI8->CreateDevice( gamepad.instanceGUID, &gamepad.pGamepad, NULL );
+	if(!gamepad.useProduct) hr = g_pDI->CreateDevice( gamepad.instanceGUID, &gamepad.pGamepad, NULL );
+	else hr = g_pDI->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
+
+	if(!gamepad.useProduct && FAILED(hr)) 
+	{
+		WriteLog(LOG_CORE,L"%s",L"InstanceGuid is incorrect, trying ProductGuid");
+		hr = g_pDI->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
+	}
 
 	if(!gamepad.pGamepad)
 	{ 
@@ -242,72 +179,38 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 		WriteLog(LOG_DINPUT,L"[PAD%d] Device created",gamepad.dwUserIndex+1);
 	}
 
-    // Set the data format to "simple joystick" - a predefined data format. A
-    // data format specifies which controls on a device we are interested in,
-    // and how they should be reported.
-    //
-    // This tells DirectInput that we will be passing a DIJOYSTATE structure to
-    // IDirectInputDevice8::GetDeviceState(). Even though we won't actually do
-    // it in this sample. But setting the data format is important so that the
-    // DIJOFS_* values work properly.
     if( FAILED( hr = gamepad.pGamepad->SetDataFormat( &c_dfDIJoystick2 ) ) )
-    {
-        WriteLog(LOG_DINPUT,L"[PAD%d] SetDataFormat failed with code HR = %X", gamepad.dwUserIndex+1, hr);
-        return hr;
-    }
+		WriteLog(LOG_DINPUT,L"[PAD%d] SetDataFormat failed with code HR = %X", gamepad.dwUserIndex+1, hr);
 
-    // Set the cooperative level to let DInput know how this device should
-    // interact with the system and with other DInput applications.
-    // Exclusive access is required in order to perform force feedback.
-    if( FAILED( coophr = gamepad.pGamepad->SetCooperativeLevel( hDlg,
-                         DISCL_EXCLUSIVE |
-                         DISCL_BACKGROUND ) ) )
-    {
-        WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (1) failed with code HR = %X", gamepad.dwUserIndex+1, coophr);
-        //return coophr;
-    }
+
+    if( FAILED( coophr = gamepad.pGamepad->SetCooperativeLevel( hDlg, DISCL_EXCLUSIVE |DISCL_BACKGROUND ) ) )
+		WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (1) failed with code HR = %X", gamepad.dwUserIndex+1, coophr);
 
     if(coophr!=S_OK)
     {
         WriteLog(LOG_DINPUT,L"[Device not exclusive acquired, disabling ForceFeedback");
         gamepad.ff.useforce = 0;
 
-        if( FAILED( coophr = gamepad.pGamepad->SetCooperativeLevel( hDlg,
-                             DISCL_NONEXCLUSIVE |
-                             DISCL_BACKGROUND ) ) )
-        {
-            WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (2) failed with code HR = %X", gamepad.dwUserIndex+1, coophr);
-            //return coophr;
-        }
+        if( FAILED( coophr = gamepad.pGamepad->SetCooperativeLevel( hDlg, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) ) )
+			WriteLog(LOG_DINPUT,L"[PAD%d] SetCooperativeLevel (2) failed with code HR = %X", gamepad.dwUserIndex+1, coophr);
+
     }
 
-    // Since we will be playing force feedback effects, we should disable the
-    // auto-centering spring.
     dipdw.diph.dwSize = sizeof( DIPROPDWORD );
     dipdw.diph.dwHeaderSize = sizeof( DIPROPHEADER );
     dipdw.diph.dwObj = 0;
     dipdw.diph.dwHow = DIPH_DEVICE;
     dipdw.dwData = FALSE;
-    // not all gamepad drivers need this (like PS3), so do not check result code
     gamepad.pGamepad->SetProperty( DIPROP_AUTOCENTER, &dipdw.diph );
 
-    if( FAILED( hr = gamepad.pGamepad->EnumObjects( EnumObjectsCallback,
-                     ( VOID* )&gamepad, DIDFT_AXIS ) ) )
-    {
-        WriteLog(LOG_DINPUT,L"[PAD%d] EnumObjects failed with code HR = %X", gamepad.dwUserIndex+1, hr);
-        //return hr;
-    }
-    else
-    {
-        WriteLog(LOG_DINPUT,L"[PAD%d] Detected axis count: %d",gamepad.dwUserIndex+1,gamepad.dwAxisCount);
-    }
+    if( FAILED( hr = gamepad.pGamepad->EnumObjects( EnumObjectsCallback, ( VOID* )&gamepad, DIDFT_AXIS ) ) )
+		WriteLog(LOG_DINPUT,L"[PAD%d] EnumObjects failed with code HR = %X", gamepad.dwUserIndex+1, hr);
+    else WriteLog(LOG_DINPUT,L"[PAD%d] Detected axis count: %d",gamepad.dwUserIndex+1,gamepad.dwAxisCount);
 
-    if( FAILED( hr = gamepad.pGamepad->EnumObjects( EnumFFAxesCallback,
-                     ( VOID* )&gamepad.ff.dwNumForceFeedbackAxis, DIDFT_AXIS ) ) )
-    {
-        WriteLog(LOG_DINPUT,L"[PAD%d] EnumFFAxesCallback failed with code HR = %X", gamepad.dwUserIndex+1, hr);
-        //return hr;
-    }
+
+    if( FAILED( hr = gamepad.pGamepad->EnumObjects( EnumFFAxesCallback, ( VOID* )&gamepad.ff.dwNumForceFeedbackAxis, DIDFT_AXIS ) ) )
+		WriteLog(LOG_DINPUT,L"[PAD%d] EnumFFAxesCallback failed with code HR = %X", gamepad.dwUserIndex+1, hr);
+
 
     if( gamepad.ff.dwNumForceFeedbackAxis > 2 )
         gamepad.ff.dwNumForceFeedbackAxis = 2;
@@ -343,7 +246,7 @@ HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD motor)
 			AcquireDevice (gamepad.pGamepad);
 			if (FAILED (gamepad.ff.pEffect[motor]->Stop()))
 			{
-				ReleaseDirectInput();
+				void FreeDinput();
 				return S_FALSE;
 			}
 		}

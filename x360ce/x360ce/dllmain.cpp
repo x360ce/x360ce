@@ -34,8 +34,6 @@ HINSTANCE hDinput8 = NULL;
 extern HWND g_hWnd;
 iHook g_iHook;
 
-extern void ReleaseDirectInput();
-
 void LoadSystemDInput8DLL()
 {
 	if(hDinput8) return;
@@ -52,15 +50,16 @@ void LoadSystemDInput8DLL()
 	// try to load the system's xinput dll, if pointer empty
 	WriteLog(LOG_CORE,L"Loading %s",buffer);
 
-	if (!hDinput8)
-		hDinput8 = LoadLibrary(buffer);
+	if (!hDinput8) hDinput8 = LoadLibrary(buffer);
 
 	//Debug
 	if (!hDinput8)
 	{
-		WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
-		WriteLog(LOG_CORE,L"x360ce will exit now!!!");
-		ExitProcess(1); // exit the hard way
+		HRESULT hr = GetLastError();
+		swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
+		WriteLog(LOG_CORE,L"%s", sysdir);
+		MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
+		ExitProcess(hr);
 	}
 }
 
@@ -85,11 +84,12 @@ void LoadSystemXInputDLL()
     //Debug
     if (!hNative)
     {
-        WriteLog(LOG_CORE,L"Cannot load %s error: 0x%x", buffer, GetLastError());
-        WriteLog(LOG_CORE,L"x360ce will exit now!!!");
-        ExitProcess(1); // exit the hard way
+		HRESULT hr = GetLastError();
+		swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
+		WriteLog(LOG_CORE,L"%s", sysdir);
+		MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
+		ExitProcess(hr);
     }
-    else if(bInitBeep) MessageBeep(MB_ICONASTERISK);
 }
 
 VOID InstallInputHooks()
@@ -154,7 +154,7 @@ VOID ExitInstance()
 {
 	EnterCriticalSection(&cs);
 
-	ReleaseDirectInput();
+	FreeDinput();
 
     if (hNative)
     {
