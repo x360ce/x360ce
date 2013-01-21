@@ -68,14 +68,14 @@ struct DINPUT_GAMEPAD
     LPDIRECTINPUTDEVICE8 pGamepad;
     DIJOYSTATE2 state;
     DINPUT_FF ff;
-    DWORD dwPadIndex;
+    DWORD dwUserIndex;
     bool connected;
     bool initialized;
-    bool configured;
+    //bool configured;
     bool passthrough;
     bool enumfail;
     bool axistodpad;
-    bool padding1;
+    bool useProduct;
     bool padding2;
     UINT dwAxisCount;
     UINT swapmotor;
@@ -97,27 +97,27 @@ struct DINPUT_GAMEPAD
     }
 };
 
-extern struct DINPUT_GAMEPAD g_Gamepad[4];
+extern std::vector<DINPUT_GAMEPAD> g_Gamepads;
 
-HRESULT InitDirectInput( HWND hDlg, DWORD idx );
-BOOL ButtonPressed(DWORD, INT);
-HRESULT UpdateState( DWORD );
+HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad );
+BOOL ButtonPressed(DWORD buttonidx, DINPUT_GAMEPAD &gamepad);
+HRESULT UpdateState(DINPUT_GAMEPAD &gamepad);
 WORD EnumPadCount();
-HRESULT Enumerate(DWORD idx);
+HRESULT Enumerate(DINPUT_GAMEPAD &gamepad);
 void ReleaseDirectInput();
 void Deactivate();
 BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
-HRESULT SetDeviceForces(DWORD idx, WORD force, WORD effidx);
-HRESULT PrepareForce(DWORD idx, WORD effidx);
+HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
+HRESULT PrepareForce(DINPUT_GAMEPAD &gamepad, WORD effidx);
 
-HRESULT SetDeviceForcesFailsafe(DWORD idx, WORD force, WORD effidx);
-HRESULT PrepareForceFailsafe(DWORD idx, WORD effidx);
+HRESULT SetDeviceForcesFailsafe(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
+HRESULT PrepareForceFailsafe(DINPUT_GAMEPAD &gamepad, WORD effidx);
 
-HRESULT SetDeviceForcesEjocys(DWORD idx, WORD force, WORD effidx);
-HRESULT PrepareForceEjocys(DWORD idx, WORD effidx);
+HRESULT SetDeviceForcesEjocys(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
+HRESULT PrepareForceEjocys(DINPUT_GAMEPAD &gamepad, WORD effidx);
 
-HRESULT SetDeviceForcesNew(DWORD idx, WORD force, WORD effidx);
-HRESULT PrepareForceNew(DWORD idx, WORD effidx);
+HRESULT SetDeviceForcesNew(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
+HRESULT PrepareForceNew(DINPUT_GAMEPAD &gamepad, WORD effidx);
 
 #endif

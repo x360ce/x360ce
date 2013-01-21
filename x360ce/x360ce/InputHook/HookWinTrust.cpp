@@ -21,7 +21,7 @@
 
 #include "InputHook.h"
 
-iHook *iHookWT = NULL;
+static iHook *iHookThis = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef LONG (WINAPI *tWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
@@ -31,7 +31,7 @@ tWinVerifyTrust hWinVerifyTrust = NULL;
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!iHookWT->CheckHook(iHook::HOOK_TRUST)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+	if(!iHookThis->CheckHook(iHook::HOOK_TRUST)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
 
 	WriteLog(LOG_HOOKWT,L"In HookWinVerifyTrust");
 
@@ -45,7 +45,7 @@ void iHook::HookWinTrust()
 {
 	if(!CheckHook(iHook::HOOK_TRUST)) return;
 
-	iHookWT = this;
+	iHookThis = this;
 
 	if(!hWinVerifyTrust )
 	{
