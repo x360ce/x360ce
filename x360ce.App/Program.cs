@@ -57,6 +57,13 @@ namespace x360ce.App
 				AddExceptionMessage(ex, ref message);
 				if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
 				var box = new Controls.MessageBoxForm();
+				if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
+				{
+					message += "===============================================================\r\n";
+					message += "You can click the link below to download Microsoft DirectX.";
+					box.MainLinkLabel.Text = "http://www.microsoft.com/en-us/download/details.aspx?id=35";
+					box.MainLinkLabel.Visible = true;
+				}
 				var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
 				if (result == DialogResult.Cancel) Application.Exit();
 			}
@@ -81,7 +88,7 @@ namespace x360ce.App
 			{
 				message += "===============================================================\r\n";
 			}
-			message += ex.ToString()+"\r\n";
+			message += ex.ToString() + "\r\n";
 			foreach (var key in ex.Data.Keys)
 			{
 				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);

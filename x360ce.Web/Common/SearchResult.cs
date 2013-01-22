@@ -8,7 +8,6 @@ namespace x360ce.Web.Common
 {
 	public class SearchResult
 	{
-		string ErrorMessage;
 		public Setting[] Settings { get; set; }
 		public Summary[] Summaries { get; set; }
 		public PadSetting[] PadSettings { get; set; }

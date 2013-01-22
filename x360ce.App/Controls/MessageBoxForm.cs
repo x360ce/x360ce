@@ -229,5 +229,10 @@ namespace x360ce.App.Controls
 			Clipboard.SetText(TextLabel.Text);
 		}
 
+		private void MainLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			Helper.OpenUrl(MainLinkLabel.Text);
+		}
+
 	}
 }
