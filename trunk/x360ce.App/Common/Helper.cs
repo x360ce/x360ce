@@ -7,6 +7,7 @@ using System.Drawing;
 using Microsoft.DirectX.DirectInput;
 using System.Text.RegularExpressions;
 using x360ce.App.com.x360ce.localhost;
+using System.Windows.Forms;
 
 namespace x360ce.App
 {
@@ -72,31 +73,49 @@ namespace x360ce.App
 			return instanceGuid.Equals(device == null ? Guid.Empty : device.DeviceInformation.InstanceGuid);
 		}
 
-        #region Comparisons
+		public static void OpenUrl(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch (System.ComponentModel.Win32Exception noBrowser)
+			{
+				if (noBrowser.ErrorCode == -2147467259)
+					MessageBox.Show(noBrowser.Message);
+			}
+			catch (System.Exception other)
+			{
+				MessageBox.Show(other.Message);
+			}
+		}
 
-        private static Regex _GuidRegex;
-        public static Regex GuidRegex
-        {
-            get
-            {
-                if (_GuidRegex == null)
-                {
-                    _GuidRegex = new Regex(
-                "^[A-Fa-f0-9]{32}$|" +
-                "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
-                "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$");
-                }
-                return _GuidRegex;
-            }
 
-        }
+		#region Comparisons
 
-        public static bool IsGuid(string s)
-        {
-            return string.IsNullOrEmpty(s)
-                ? false
-                : GuidRegex.IsMatch(s);
-        }
+		private static Regex _GuidRegex;
+		public static Regex GuidRegex
+		{
+			get
+			{
+				if (_GuidRegex == null)
+				{
+					_GuidRegex = new Regex(
+				"^[A-Fa-f0-9]{32}$|" +
+				"^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
+				"^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$");
+				}
+				return _GuidRegex;
+			}
+
+		}
+
+		public static bool IsGuid(string s)
+		{
+			return string.IsNullOrEmpty(s)
+				? false
+				: GuidRegex.IsMatch(s);
+		}
 
 		public static Guid GetFileChecksum(string fileName)
 		{
@@ -108,7 +127,7 @@ namespace x360ce.App
 		}
 
 
-        #endregion
+		#endregion
 
 	}
 }

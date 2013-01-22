@@ -668,13 +668,25 @@ namespace x360ce.App
 			{
 				dllVersion = GetDllVersion(dllInfo.FullName);
 				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
-				if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
+				var resetSupportedVersion = new Version(3, 3, 1, 507);
+				// If dll supports reset and was loaded once then...
+				if (dllVersion >= resetSupportedVersion && Program.ReloadCount > 1)
 				{
-					var msg = string.Format("Failed to load '{0}'", dllFile);
-					var form = new MessageBoxForm();
-					form.StartPosition = FormStartPosition.CenterParent;
-					form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					// Fast: Notify x360ce to reload settings. 
+					UnsafeNativeMethods.Reset();
 				}
+				else
+				{
+					// Slow: Reload whole x360ce.dll.
+					if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
+					{
+						var msg = string.Format("Failed to load '{0}'", dllFile);
+						var form = new MessageBoxForm();
+						form.StartPosition = FormStartPosition.CenterParent;
+						form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
+
 			}
 		}
 

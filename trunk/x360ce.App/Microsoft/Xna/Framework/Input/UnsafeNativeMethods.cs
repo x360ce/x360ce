@@ -23,6 +23,7 @@ namespace Microsoft.Xna.Framework.Input
 		internal delegate ErrorCodes _GetState(PlayerIndex playerIndex, out XINPUT_STATE pState);
 		internal delegate ErrorCodes _SetState(PlayerIndex playerIndex, out XINPUT_VIBRATION pVibration);
 		internal delegate ErrorCodes _Enable(bool enable);
+		internal delegate ErrorCodes _Reset();
 
 		internal static string LastError;
 
@@ -44,6 +45,11 @@ namespace Microsoft.Xna.Framework.Input
 		internal static ErrorCodes Enable(bool enable)
 		{
 			return GetMethod<_Enable>("XInputEnable")(enable);
+		}
+
+		internal static ErrorCodes Reset()
+		{
+			return GetMethod<_Reset>("reset")();
 		}
 
 		internal static T GetMethod<T>(string methodName)

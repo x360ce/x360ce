@@ -38,6 +38,7 @@
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.MainLinkLabel = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).BeginInit();
 			this.CopyContextMenuStrip.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -131,11 +132,25 @@
 			this.textBox1.Size = new System.Drawing.Size(151, 32);
 			this.textBox1.TabIndex = 12;
 			// 
+			// MainLinkLabel
+			// 
+			this.MainLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.MainLinkLabel.AutoSize = true;
+			this.MainLinkLabel.Location = new System.Drawing.Point(12, 76);
+			this.MainLinkLabel.Name = "MainLinkLabel";
+			this.MainLinkLabel.Size = new System.Drawing.Size(76, 13);
+			this.MainLinkLabel.TabIndex = 12;
+			this.MainLinkLabel.TabStop = true;
+			this.MainLinkLabel.Text = "MainLinkLabel";
+			this.MainLinkLabel.Visible = false;
+			this.MainLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.MainLinkLabel_LinkClicked);
+			// 
 			// MessageBoxForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(340, 107);
+			this.Controls.Add(this.MainLinkLabel);
 			this.Controls.Add(this.Button2);
 			this.Controls.Add(this.Button3);
 			this.Controls.Add(this.panel1);
@@ -151,6 +166,7 @@
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -165,6 +181,7 @@
 		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.TextBox textBox1;
+		public System.Windows.Forms.LinkLabel MainLinkLabel;
 
 
 	}
