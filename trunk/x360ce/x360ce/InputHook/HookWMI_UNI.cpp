@@ -156,7 +156,7 @@ HRESULT STDMETHODCALLTYPE HookGetW(
 						pVal->bstrVal = Hookbstr;
 						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
-					return hr;
+					continue;
 				}
 
 				WCHAR* strHID = wcsstr( pVal->bstrVal, L"HID" );
@@ -187,7 +187,7 @@ HRESULT STDMETHODCALLTYPE HookGetW(
 						pVal->bstrVal = Hookbstr;
 						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
-					return hr;
+					continue;
 				}
 			}
 		}
@@ -212,6 +212,7 @@ HRESULT STDMETHODCALLTYPE HookNextW(
 	WriteLog(LOG_HOOKWMI,L"HookNextW");
 
 	if(FAILED(hr)) return hr;
+	if(hr != WBEM_S_NO_ERROR) return hr;
 
 	IWbemClassObject* pDevices;
 
@@ -220,6 +221,16 @@ HRESULT STDMETHODCALLTYPE HookNextW(
 		if(*apObjects)
 		{
 			pDevices = *apObjects;
+
+			if(hGetW != pDevices->lpVtbl->Get)
+			{
+				WriteLog(LOG_HOOKWMI,L"HookGetW:: Release");
+
+				DetourTransactionBegin();
+				DetourUpdateThread(GetCurrentThread());
+				DetourDetach(&(PVOID&)hGetW, HookGetW);
+				DetourTransactionCommit();
+			}
 
 			if(!hGetW)
 			{
