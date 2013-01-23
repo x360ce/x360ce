@@ -92,13 +92,15 @@ public:
 	iHook::iHook()
 		:dwHookMode(0)
 		,dwHookVIDPID(MAKELONG(0x045E,0x028E)) 
-	{}
+	{InitializeCriticalSection(&cs);}
 	virtual ~iHook()
 	{
+		EnterCriticalSection(&cs);
 		HookWMI_UNI_Clean();
 		HookWMI_ANSI_Clean();
 		HookDIClean();
 		HookWinTrustClean();
+		LeaveCriticalSection(&cs);
 	};
 
 	static const DWORD HOOK_NONE        = 0x00000000;
@@ -183,6 +185,7 @@ public:
 
 	inline VOID ExecuteHooks()
 	{
+		EnterCriticalSection(&cs);
 		if(!GetState()) return;
 
 		if(CheckHook(HOOK_WMI | HOOK_WMIA))
@@ -196,6 +199,7 @@ public:
 		if(CheckHook(HOOK_TRUST))
 			HookWinTrust();
 
+		LeaveCriticalSection(&cs);
 		return;
 	}
 
@@ -205,6 +209,7 @@ private:
 	HMODULE hDinput8;
 protected:
 	std::vector<iHookPadConfig> vPadConf;
+	CRITICAL_SECTION cs;
 
 	void HookWMI_UNI();
 	void HookWMI_ANSI();

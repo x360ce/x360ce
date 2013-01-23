@@ -157,7 +157,7 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 						pVal->bstrVal = Hookbstr;
 						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
-					return hr;
+					continue;
 				}
 
 				char* strHID = strstr( pVal->bstrVal, "HID" );
@@ -188,7 +188,7 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 						pVal->bstrVal = Hookbstr;
 						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
-					return hr;
+					continue;
 				}
 			}
 		}
