@@ -47,9 +47,19 @@ namespace Microsoft.Xna.Framework.Input
 			return GetMethod<_Enable>("XInputEnable")(enable);
 		}
 
+		/// <summary>Custom function of x360ce library. Reloads settings from INI file.</summary>
 		internal static ErrorCodes Reset()
 		{
 			return GetMethod<_Reset>("reset")();
+		}
+
+		internal static bool IsResetSupported
+		{
+			get
+			{
+				IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "reset");
+				return procAddress != IntPtr.Zero;
+			}
 		}
 
 		internal static T GetMethod<T>(string methodName)

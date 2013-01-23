@@ -668,9 +668,7 @@ namespace x360ce.App
 			{
 				dllVersion = GetDllVersion(dllInfo.FullName);
 				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
-				var resetSupportedVersion = new Version(3, 3, 1, 507);
-				// If dll supports reset and was loaded once then...
-				if (dllVersion >= resetSupportedVersion && Program.ReloadCount > 1)
+				if (UnsafeNativeMethods.IsResetSupported)
 				{
 					// Fast: Notify x360ce to reload settings. 
 					UnsafeNativeMethods.Reset();
