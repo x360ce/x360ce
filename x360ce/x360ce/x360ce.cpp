@@ -141,7 +141,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return ret;
 	}
 
-    if (!pState || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
+    if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
     HRESULT hr = XInit(gamepad);
     if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
@@ -513,7 +513,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
         return nativeXInputSetState(dwUserIndex,pVibration);
     }
 
-    if (!pVibration || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
+    if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
     HRESULT hr=ERROR_SUCCESS;
 
@@ -574,7 +574,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
         return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
     }
 
-    if (!pCapabilities || (dwUserIndex > XUSER_MAX) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
+    if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
 
     XINPUT_CAPABILITIES &xCaps = *pCapabilities;
     xCaps.Type = 0;
@@ -637,7 +637,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
         return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
     }
 
-    if(!pDSoundRenderGuid || !pDSoundCaptureGuid || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
+    if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
     if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -662,7 +662,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
         return nativeXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
     }
 
-    if (!pBatteryInformation || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
+    if (!pBatteryInformation || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
     if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -692,7 +692,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 		return ret;
     }
 
-    if (!pKeystroke || (dwUserIndex > XUSER_MAX)) return ERROR_BAD_ARGUMENTS;
+    if (!pKeystroke || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
     if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -767,4 +767,87 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	//WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
 	return ret;
+}
+
+//undocumented
+DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
+{
+
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
+	if(gamepad.passthrough)
+	{
+		LoadSystemXInputDLL();
+
+		typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState);
+		XInputGetStateEx_t nXInputGetStateEx = (XInputGetStateEx_t) GetProcAddress( hNative, (LPCSTR) 100);
+		return nXInputGetStateEx(dwUserIndex,pState);
+	}
+
+	GamepadMap &PadMap = GamepadMapping[dwUserIndex];
+	XINPUT_STATE &xState = *pState;
+
+	if (PadMap.guide && ButtonPressed(PadMap.guide,gamepad))
+		xState.Gamepad.wButtons |= 0x400;
+
+	//WriteLog(LOG_XINPUT,L"XInputGetStateEx %u",xState.Gamepad.wButtons);
+
+	return ERROR_SUCCESS;
+}
+
+// third argument seems to be LPOVERLAPPED or its XBOX version
+DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPOVERLAPPED pOverlapped)
+{
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
+	if(gamepad.passthrough)
+	{
+		LoadSystemXInputDLL();
+
+		typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPOVERLAPPED pOverlapped);
+		XInputWaitForGuideButton_t nXInputWaitForGuideButton = (XInputWaitForGuideButton_t) GetProcAddress( hNative, (LPCSTR) 101);
+		return nXInputWaitForGuideButton(dwUserIndex,dwFlag,pOverlapped); 
+	}
+
+	return ERROR_SUCCESS;
+}
+
+DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
+{
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
+	if(gamepad.passthrough)
+	{
+		LoadSystemXInputDLL();
+
+		typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex);
+		XInputCancelGuideButtonWait_t nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t) GetProcAddress( hNative, (LPCSTR) 102);
+		return nXInputCancelGuideButtonWait(dwUserIndex); 
+	}
+
+	return ERROR_SUCCESS;
+}
+
+DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
+{
+	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
+	if(gamepad.passthrough)
+	{
+		LoadSystemXInputDLL();
+
+		typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex);
+		XInputPowerOffController_t nXInputPowerOffController = (XInputPowerOffController_t) GetProcAddress( hNative, (LPCSTR) 103);
+		return nXInputPowerOffController(dwUserIndex); 
+	}
+
+	return ERROR_SUCCESS;
 }

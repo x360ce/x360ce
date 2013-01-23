@@ -20,8 +20,6 @@
 #define FFB_LEFTMOTOR 0
 #define FFB_RIGHTMOTOR 1
 
-#define XUSER_MAX XUSER_MAX_COUNT-1
-
 extern HINSTANCE hThis;
 extern HINSTANCE hNative;
 extern HWND g_hWnd;
