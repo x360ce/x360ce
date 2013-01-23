@@ -57,6 +57,7 @@ struct GamepadMap
     WORD pov[4];
     TriggerMap Trigger[2];
     AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
+	WORD guide;
     WORD DpadPOV; // Index of POV switch to use for the D-pad
     BOOL PovIsButton;
     BOOL enabled;

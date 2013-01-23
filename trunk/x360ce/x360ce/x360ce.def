@@ -10,4 +10,10 @@ EXPORTS
 		XInputGetBatteryInformation @7
 		XInputGetKeystroke @8
 
+		;undocumented
+		XInputGetStateEx @100
+		XInputWaitForGuideButton @101
+		XInputCancelGuideButtonWait @102
+		XInputPowerOffController @103
+
 		reset @128

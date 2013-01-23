@@ -206,7 +206,7 @@ void ReadPadConfig(DWORD idx, InI &ini)
 	gamepad.useProduct = ini.ReadLongFromFile(section, L"UseProductGUID",0)!=0;
     gamepad.ff.type = (BYTE) ini.ReadLongFromFile(section, L"FFBType",0);
     gamepad.swapmotor = ini.ReadLongFromFile(section, L"SwapMotor",0);
-    gamepad.tdeadzone = ini.ReadLongFromFile(section, L"TriggerDeadzone",XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+    gamepad.tdeadzone = ini.ReadLongFromFile(section, L"TriggerDeadzone",0);
     gamepad.ff.useforce = static_cast<BOOL>(ini.ReadLongFromFile(section, L"UseForceFeedback",0));
     gamepad.gamepadtype = static_cast<BYTE>(ini.ReadLongFromFile(section, L"ControllerType",1));
     gamepad.axistodpad = (ini.ReadLongFromFile(section, L"AxisToDPad",0) !=0);
@@ -216,7 +216,9 @@ void ReadPadConfig(DWORD idx, InI &ini)
     gamepad.ff.leftPeriod = ini.ReadLongFromFile(section, L"LeftMotorPeriod",60);
     gamepad.ff.rightPeriod = ini.ReadLongFromFile(section, L"RightMotorPeriod",20);
 
-	memset(PadMap.Button,-1,sizeof(PadMap.Button));
+	PadMap.guide = ini.ReadLongFromFile(section, L"GuideButton",0);
+
+	//memset(PadMap.Button,-1,sizeof(PadMap.Button));
 
     for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
 
