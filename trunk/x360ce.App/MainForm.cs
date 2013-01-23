@@ -638,7 +638,7 @@ namespace x360ce.App
 		{
 			// There must be an easier way to check embeded non managed dll version.
 			var assembly = Assembly.GetExecutingAssembly();
-			var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + dllFile);
+			var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + dllFile3);
 			string tempPath = Path.GetTempPath();
 			FileStream sw = null;
 			var tempFile = Path.Combine(Path.GetTempPath(), dllFile);
@@ -921,7 +921,7 @@ namespace x360ce.App
 			if (answer == DialogResult.Yes)
 			{
 				var assembly = Assembly.GetExecutingAssembly();
-				var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName);
+				var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + dllFile3);
 				FileStream sw = null;
 				try
 				{
