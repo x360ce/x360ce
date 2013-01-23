@@ -111,7 +111,6 @@ void ReadConfig(InI &ini)
 {
 
     // Read global options
-
 	g_Disable = ini.ReadLongFromFile(L"Options", L"Disable",0);
     bInitBeep = static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"UseInitBeep",1));
     LogEnable(static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"Log",0)));
@@ -216,7 +215,7 @@ void ReadPadConfig(DWORD idx, InI &ini)
     gamepad.ff.leftPeriod = ini.ReadLongFromFile(section, L"LeftMotorPeriod",60);
     gamepad.ff.rightPeriod = ini.ReadLongFromFile(section, L"RightMotorPeriod",20);
 
-	PadMap.guide = ini.ReadLongFromFile(section, L"GuideButton",0);
+	PadMap.guide = static_cast<WORD>(ini.ReadLongFromFile(section, L"GuideButton",0));
 
 	//memset(PadMap.Button,-1,sizeof(PadMap.Button));
 

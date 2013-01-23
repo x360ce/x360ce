@@ -29,6 +29,89 @@ HWND g_hWnd;
 
 extern CRITICAL_SECTION cs;
 
+
+/**********************************************************************************************/
+/**********************************************************************************************/
+/**********************************************************************************************/
+
+// XINPUT FUNCTIONS TYPES
+typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
+typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
+typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
+typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
+typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
+typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
+
+typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState);
+typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid);
+typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex);
+typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex);
+
+// XINPUT FUNCTIONS POINTERS
+XInputGetState_t nXInputGetState = NULL;
+XInputSetState_t nXInputSetState = NULL;
+XInputGetCapabilities_t nXInputGetCapabilities = NULL;
+XInputEnable_t nXInputEnable = NULL;
+XInputGetDSoundAudioDeviceGuids_t nXInputGetDSoundAudioDeviceGuids = NULL;
+XInputGetBatteryInformation_t nXInputGetBatteryInformation = NULL;
+XInputGetKeystroke_t nXInputGetKeystroke = NULL;
+
+XInputGetStateEx_t nXInputGetStateEx = NULL;
+XInputWaitForGuideButton_t nXInputWaitForGuideButton = NULL;
+XInputCancelGuideButtonWait_t nXInputCancelGuideButtonWait = NULL;
+XInputPowerOffController_t nXInputPowerOffController = NULL;
+
+/**********************************************************************************************/
+/**********************************************************************************************/
+/**********************************************************************************************/
+
+enum funcType {GETSTATE, SETSTATE, GETCAPS, ENABLE, AUDIO, BATTERY, KEYSTROKE, GETSTATEEX, WAITGUIDE, CANCELGUIDE, POWEROFF};
+
+inline VOID InitalizeFunction(funcType func, HMODULE hMod = hNative)
+{
+	LoadXInputDLL(hMod);
+
+	switch(func)
+	{
+	case GETSTATE:
+		if(!nXInputGetState) nXInputGetState = (XInputGetState_t)GetProcAddress(hMod,"XInputGetState");
+		break;
+	case SETSTATE:
+		if(!nXInputSetState) nXInputSetState = (XInputSetState_t)GetProcAddress(hMod,"XInputSetState");
+		break;
+	case GETCAPS:
+		if(!nXInputGetCapabilities) nXInputGetCapabilities = (XInputGetCapabilities_t)GetProcAddress(hMod,"XInputGetCapabilities");
+		break;
+	case ENABLE:
+		if(!nXInputEnable) nXInputEnable = (XInputEnable_t)GetProcAddress(hMod,"XInputEnable");
+		break;
+	case AUDIO:
+		if(!nXInputGetDSoundAudioDeviceGuids) nXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t)GetProcAddress(hMod,"XInputGetDSoundAudioDeviceGuids");
+		break;
+	case BATTERY:
+		if(!nXInputGetBatteryInformation) nXInputGetBatteryInformation = (XInputGetBatteryInformation_t)GetProcAddress(hMod,"XInputGetBatteryInformation");
+		break;
+	case KEYSTROKE:
+		if(!nXInputGetKeystroke) nXInputGetKeystroke = (XInputGetKeystroke_t)GetProcAddress(hMod,"XInputGetKeystroke");
+		break;
+
+	case GETSTATEEX:
+		if(!nXInputGetStateEx) nXInputGetStateEx = (XInputGetStateEx_t)GetProcAddress(hMod,(LPCSTR)100);
+		break;
+	case WAITGUIDE:
+		if(!nXInputWaitForGuideButton) nXInputWaitForGuideButton = (XInputWaitForGuideButton_t)GetProcAddress(hMod,(LPCSTR)101);
+		break;
+	case CANCELGUIDE:
+		if(!nXInputCancelGuideButtonWait) nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t)GetProcAddress(hMod,(LPCSTR)102);
+		break;
+	case POWEROFF:
+		if(!nXInputPowerOffController) nXInputPowerOffController = (XInputPowerOffController_t)GetProcAddress(hMod,(LPCSTR)103);
+		break;
+	}
+}
+
+
 VOID MakeWindow()
 {
 	g_hWnd = CreateWindow(
@@ -61,10 +144,8 @@ HRESULT XInit(DINPUT_GAMEPAD &gamepad)
 
 		if(!gamepad.pGamepad)
 		{
-			BOOL bHookDisabled = FALSE;
 			if(g_iHook.CheckHook(iHook::HOOK_DI))
 			{
-				bHookDisabled = TRUE;
 				g_iHook.DisableHook(iHook::HOOK_DI);
 				WriteLog(LOG_CORE,L"Temporary disable HookDI");
 			}
@@ -84,7 +165,7 @@ HRESULT XInit(DINPUT_GAMEPAD &gamepad)
 				WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",gamepad.dwUserIndex+1);
 			}
 
-			if(!g_iHook.CheckHook(iHook::HOOK_DI) && bHookDisabled )
+			if(!g_iHook.CheckHook(iHook::HOOK_DI) )
 			{
 				g_iHook.EnableHook(iHook::HOOK_DI);
 				WriteLog(LOG_CORE,L"Restore HookDI state");
@@ -106,39 +187,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if(gamepad.passthrough)
 	{
-		LoadSystemXInputDLL();
-
-		typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
-		XInputGetState_t nativeXInputGetState = (XInputGetState_t) GetProcAddress( hNative, "XInputGetState");
-		DWORD ret = nativeXInputGetState(dwUserIndex,pState);
-
-		for (UINT i = 0; i < g_Gamepads.size(); ++i)
-		{
-			if (gamepad.antidz[i] && pState != 0)
-			{
-				SHORT antidz = gamepad.antidz[i];
-				SHORT* val = NULL;
-				if(i == 0)
-					val = &pState->Gamepad.sThumbLX;
-				else if(i == 1)
-					val = &pState->Gamepad.sThumbLY;
-				else if(i == 2)
-					val = &pState->Gamepad.sThumbRX;
-				else if(i == 3)
-					val = &pState->Gamepad.sThumbRY;
-
-				if(val == NULL) continue;
-
-				SHORT direction = *val > 0 ? 1 : -1;
-				*val = (SHORT)(abs(*val) / (32767 / (32767 - antidz * 1.0)) + antidz);
-				*val = min(*val, 32767);
-
-				if(*val == gamepad.antidz[i] || *val == -gamepad.antidz[i]) *val = 0;
-
-				*val = (SHORT) (direction * *val);
-			}
-		}
-		return ret;
+		InitalizeFunction(GETSTATE);
+		return nXInputGetState(dwUserIndex,pState);
 	}
 
     if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
@@ -506,11 +556,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
     if(gamepad.passthrough)
     {
-        LoadSystemXInputDLL();
-
-        typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
-        XInputSetState_t nativeXInputSetState = (XInputSetState_t) GetProcAddress( hNative, "XInputSetState");
-        return nativeXInputSetState(dwUserIndex,pVibration);
+		InitalizeFunction(SETSTATE);
+		return nXInputSetState(dwUserIndex,pVibration);
     }
 
     if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
@@ -567,11 +614,8 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
     if(gamepad.passthrough)
     {
-        LoadSystemXInputDLL();
-
-        typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
-        XInputGetCapabilities_t nativeXInputGetCapabilities = (XInputGetCapabilities_t) GetProcAddress( hNative, "XInputGetCapabilities");
-        return nativeXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
+		InitalizeFunction(GETCAPS);
+		return nXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
     }
 
     if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
@@ -597,11 +641,8 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 	if(g_Disable) return;
     if(wNativeMode)
     {
-        LoadSystemXInputDLL();
-
-        typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
-        XInputEnable_t nativeXInputEnable = (XInputEnable_t) GetProcAddress( hNative, "XInputEnable");
-        nativeXInputEnable(enable);
+		InitalizeFunction(ENABLE);
+		nXInputEnable(enable);
     }
 
     /*
@@ -630,11 +671,8 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
     if(gamepad.passthrough)
     {
-        LoadSystemXInputDLL();
-
-        typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
-        XInputGetDSoundAudioDeviceGuids_t nativeXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t) GetProcAddress( hNative, "XInputGetDSoundAudioDeviceGuids");
-        return nativeXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
+		InitalizeFunction(AUDIO);
+		return nXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
     }
 
     if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
@@ -655,11 +693,8 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
     if(gamepad.passthrough)
     {
-        LoadSystemXInputDLL();
-
-        typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
-        XInputGetBatteryInformation_t nativeXInputGetBatteryInformation = (XInputGetBatteryInformation_t) GetProcAddress( hNative, "XInputGetBatteryInformation");
-        return nativeXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
+		InitalizeFunction(BATTERY);
+		return nXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
     }
 
     if (!pBatteryInformation || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
@@ -681,16 +716,12 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
     if(gamepad.passthrough)
-    {
-        LoadSystemXInputDLL();
+	{
+		//WriteLog(LOG_XINPUT,L"flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
-        typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
-        XInputGetKeystroke_t nativeXInputGetKeystroke = (XInputGetKeystroke_t) GetProcAddress( hNative, "XInputGetKeystroke");
-        DWORD ret = nativeXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
-
-		//WriteLog(LOG_XINPUT,L"ret: %u, flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
-		return ret;
-    }
+		InitalizeFunction(KEYSTROKE);
+		return nXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
+  }
 
     if (!pKeystroke || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
@@ -779,10 +810,7 @@ DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if(gamepad.passthrough)
 	{
-		LoadSystemXInputDLL();
-
-		typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState);
-		XInputGetStateEx_t nXInputGetStateEx = (XInputGetStateEx_t) GetProcAddress( hNative, (LPCSTR) 100);
+		InitalizeFunction(GETSTATEEX);
 		return nXInputGetStateEx(dwUserIndex,pState);
 	}
 
@@ -797,8 +825,7 @@ DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 	return ERROR_SUCCESS;
 }
 
-// third argument seems to be LPOVERLAPPED or its XBOX version
-DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPOVERLAPPED pOverlapped)
+DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
 	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
@@ -806,11 +833,8 @@ DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPOVERLAP
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if(gamepad.passthrough)
 	{
-		LoadSystemXInputDLL();
-
-		typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPOVERLAPPED pOverlapped);
-		XInputWaitForGuideButton_t nXInputWaitForGuideButton = (XInputWaitForGuideButton_t) GetProcAddress( hNative, (LPCSTR) 101);
-		return nXInputWaitForGuideButton(dwUserIndex,dwFlag,pOverlapped); 
+		InitalizeFunction(WAITGUIDE);
+		return nXInputWaitForGuideButton(dwUserIndex,dwFlag,pVoid);
 	}
 
 	return ERROR_SUCCESS;
@@ -824,11 +848,8 @@ DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if(gamepad.passthrough)
 	{
-		LoadSystemXInputDLL();
-
-		typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex);
-		XInputCancelGuideButtonWait_t nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t) GetProcAddress( hNative, (LPCSTR) 102);
-		return nXInputCancelGuideButtonWait(dwUserIndex); 
+		InitalizeFunction(CANCELGUIDE);
+		return nXInputCancelGuideButtonWait(dwUserIndex);
 	}
 
 	return ERROR_SUCCESS;
@@ -842,11 +863,8 @@ DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if(gamepad.passthrough)
 	{
-		LoadSystemXInputDLL();
-
-		typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex);
-		XInputPowerOffController_t nXInputPowerOffController = (XInputPowerOffController_t) GetProcAddress( hNative, (LPCSTR) 103);
-		return nXInputPowerOffController(dwUserIndex); 
+		InitalizeFunction(POWEROFF);
+		return nXInputPowerOffController(dwUserIndex);
 	}
 
 	return ERROR_SUCCESS;
