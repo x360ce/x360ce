@@ -23,7 +23,7 @@
 #include "DirectInput.h"
 
 extern HINSTANCE hDinput8;
-extern void LoadSystemDInput8DLL();
+extern void LoadDinput8DLL();
 
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
@@ -39,7 +39,7 @@ LPDIRECTINPUT8 g_pDI = NULL;
 HRESULT LoadDinput()
 {
 	if(g_pDI) return S_OK;
-	LoadSystemDInput8DLL();
+	LoadDinput8DLL();
 	typedef HRESULT (WINAPI *tDirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
 	tDirectInput8Create oDirectInput8Create = (tDirectInput8Create) GetProcAddress( hDinput8, "DirectInput8Create");
 	return oDirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&g_pDI, NULL );

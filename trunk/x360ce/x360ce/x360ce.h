@@ -35,6 +35,6 @@ struct XINPUT_ENABLE
     }
 };
 
-void LoadSystemXInputDLL();
+void LoadXInputDLL(HMODULE &hMod);
 
 #endif

@@ -34,7 +34,7 @@ HINSTANCE hDinput8 = NULL;
 extern HWND g_hWnd;
 iHook g_iHook;
 
-void LoadSystemDInput8DLL()
+void LoadDinput8DLL()
 {
 	if(hDinput8) return;
 	WCHAR sysdir[MAX_PATH];
@@ -50,7 +50,7 @@ void LoadSystemDInput8DLL()
 	// try to load the system's xinput dll, if pointer empty
 	WriteLog(LOG_CORE,L"Loading %s",buffer);
 
-	if (!hDinput8) hDinput8 = LoadLibrary(buffer);
+	hDinput8 = LoadLibrary(buffer);
 
 	//Debug
 	if (!hDinput8)
@@ -63,9 +63,9 @@ void LoadSystemDInput8DLL()
 	}
 }
 
-void LoadSystemXInputDLL()
+void LoadXInputDLL(HMODULE &hMod = hNative)
 {
-	if(hNative) return;
+	if(hMod) return;
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
@@ -79,10 +79,10 @@ void LoadSystemXInputDLL()
     // try to load the system's xinput dll, if pointer empty
     WriteLog(LOG_CORE,L"Loading %s",buffer);
 
-    if (!hNative) hNative = LoadLibrary(buffer);
+	hMod = LoadLibrary(buffer);
 
     //Debug
-    if (!hNative)
+    if (!hMod)
     {
 		HRESULT hr = GetLastError();
 		swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
@@ -96,7 +96,7 @@ VOID InstallInputHooks()
 {
 	if(g_iHook.GetState())
 	{
-		LoadSystemDInput8DLL();
+		LoadDinput8DLL();
 		g_iHook.SetDinput8(hDinput8);
 
 		for(WORD i = 0; i < g_Gamepads.size(); i++)
@@ -143,8 +143,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
     WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
-	LoadSystemDInput8DLL();
-	LoadSystemXInputDLL();
+	LoadDinput8DLL();
+	LoadXInputDLL();
 
     InstallInputHooks();
 	LeaveCriticalSection(&cs);
