@@ -1,4 +1,7 @@
-﻿v2.1.2.184 (2013-01-22)
+﻿v2.1.2.185 (2013-01-22)
+- Update:  Update check for 'reset' code.
+
+v2.1.2.184 (2013-01-22)
 - Fix:  Program offers message with download link if Microsoft DirectX not found.
 - New:  Faster 'reset' method is used for reloading settings.
 - Update: New digital signature.
