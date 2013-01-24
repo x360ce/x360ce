@@ -21,12 +21,6 @@
 #include <vector>
 #include <detours.h>
 
-#ifdef WIN64
-#pragma comment( lib, "detours64.lib" )
-#else
-#pragma comment( lib, "detours32.lib" )
-#endif
-
 class iHookPadConfig
 {
 public:
@@ -168,16 +162,6 @@ public:
 		return vPadConf[dwUserIndex];
 	}
 
-	inline HMODULE GetDinput8()
-	{
-		return hDinput8;
-	}
-
-	inline HMODULE SetDinput8(HMODULE hMod)
-	{
-		return hDinput8 = hMod;
-	}
-
 	inline VOID AddHook(iHookPadConfig &config)
 	{
 		vPadConf.push_back(config);
@@ -206,7 +190,6 @@ public:
 private:
 	DWORD dwHookMode;
 	DWORD dwHookVIDPID;
-	HMODULE hDinput8;
 protected:
 	std::vector<iHookPadConfig> vPadConf;
 	CRITICAL_SECTION cs;

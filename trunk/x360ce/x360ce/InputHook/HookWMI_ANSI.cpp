@@ -33,6 +33,8 @@ static iHook *iHookThis = NULL;
 // COM CLSIDs
 #pragma comment(lib,"wbemuuid.lib")
 
+using namespace MologieDetours;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -78,13 +80,12 @@ typedef HRESULT ( STDMETHODCALLTYPE *tGetA )(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor);
 
-static tCoUninitializeA hCoUninitializeA = NULL;
-static tCoCreateInstanceA hCoCreateInstanceA = NULL;
-
-static tConnectServerA hConnectServerA = NULL;
-static tCreateInstanceEnumA hCreateInstanceEnumA = NULL;
-static tNextA hNextA = NULL;
-static tGetA hGetA = NULL;
+Detour<tCoUninitializeA>* hCoUninitializeA = NULL;
+Detour<tCoCreateInstanceA>* hCoCreateInstanceA = NULL;
+Detour<tConnectServerA>* hConnectServerA = NULL;
+Detour<tCreateInstanceEnumA>* hCreateInstanceEnumA = NULL;
+Detour<tNextA>* hNextA = NULL;
+Detour<tGetA>* hGetA = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +99,7 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
 {
-	HRESULT hr = hGetA(This,wszName,lFlags,pVal,pType,plFlavor);
+	HRESULT hr = hGetA->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -206,7 +207,7 @@ HRESULT STDMETHODCALLTYPE HookNextA(
 	/* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 	/* [out] */ __RPC__out ULONG *puReturned)
 {
-	HRESULT hr = hNextA(This,lTimeout,uCount,apObjects,puReturned);
+	HRESULT hr = hNextA->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -222,15 +223,10 @@ HRESULT STDMETHODCALLTYPE HookNextA(
 		{
 			pDevices = *apObjects;
 
-			if(!hGetA)
+			if(!hGetA && pDevices->lpVtbl->Get)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookGetA:: Hooking");
-				hGetA = pDevices->lpVtbl->Get;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hGetA, HookGetA);
-				DetourTransactionCommit();
+				hGetA = new Detour<tGetA>(pDevices->lpVtbl->Get, HookGetA);
 			}
 		}
 	}
@@ -247,7 +243,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	HRESULT hr = hCreateInstanceEnumA(This,strFilter,lFlags,pCtx,ppEnum);
+	HRESULT hr = hCreateInstanceEnumA->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -263,15 +259,10 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
 		{
 			pEnumDevices = *ppEnum;
 
-			if(!hNextA)
+			if(!hNextA && pEnumDevices->lpVtbl->Next)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookNextA:: Hooking");
-				hNextA = pEnumDevices->lpVtbl->Next;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hNextA, HookNextA);
-				DetourTransactionCommit();
+				hNextA = new Detour<tNextA>(pEnumDevices->lpVtbl->Next, HookNextA);
 			}
 		}
 	}
@@ -293,7 +284,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	HRESULT hr = hConnectServerA(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	HRESULT hr = hConnectServerA->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -309,15 +300,10 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
 		{
 			pIWbemServices = *ppNamespace;
 
-			if(!hCreateInstanceEnumA)
+			if(!hCreateInstanceEnumA && pIWbemServices->lpVtbl->CreateInstanceEnum)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Hooking");
-				hCreateInstanceEnumA = pIWbemServices->lpVtbl->CreateInstanceEnum;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hCreateInstanceEnumA, HookCreateInstanceEnumA);
-				DetourTransactionCommit();
+				hCreateInstanceEnumA = new Detour<tCreateInstanceEnumA>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumA);
 			}
 		}
 	}
@@ -333,7 +319,7 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 									 __in     REFIID riid,
 									 __deref_out LPVOID FAR* ppv)
 {
-	HRESULT hr = hCoCreateInstanceA(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	HRESULT hr = hCoCreateInstanceA->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -348,15 +334,10 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 
 		if(pIWbemLocator)
 		{
-			if(!hConnectServerA)
+			if(!hConnectServerA && pIWbemLocator->lpVtbl->ConnectServer)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Hooking");
-				hConnectServerA = pIWbemLocator->lpVtbl->ConnectServer;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hConnectServerA, HookConnectServerA);
-				DetourTransactionCommit();
+				hConnectServerA = new Detour<tConnectServerA>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerA);
 			}
 		}
 	}
@@ -368,38 +349,34 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeA()
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hCoUninitializeA();
+	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hCoUninitializeA->GetOriginalFunction()();
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA");
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
 
 	if(hGetA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
-		DetourDetach(&(PVOID&)hGetA, HookGetA);
+		SAFE_DELETE(hGetA);
 	}
 
 	if(hNextA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
-		DetourDetach(&(PVOID&)hNextA, HookNextA);
+		SAFE_DELETE(hNextA);
 	}
 
 	if(hCreateInstanceEnumA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
-		DetourDetach(&(PVOID&)hCreateInstanceEnumA, HookCreateInstanceEnumA);
+		SAFE_DELETE(hCreateInstanceEnumA);;
 	}
 
 	if(hConnectServerA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
-		DetourDetach(&(PVOID&)hConnectServerA, HookConnectServerA);
+		SAFE_DELETE(hConnectServerA);
 	}
-	DetourTransactionCommit();
 
-	return hCoUninitializeA();
+	return hCoUninitializeA->GetOriginalFunction()();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -410,63 +387,46 @@ void iHook::HookWMI_ANSI()
 	WriteLog(LOG_HOOKWMI,L"HookWMI:: Hooking");
 	iHookThis = this;
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
-	if(!hCoCreateInstanceA)
-	{
-		hCoCreateInstanceA = CoCreateInstance;
-		DetourAttach(&(PVOID&)hCoCreateInstanceA, HookCoCreateInstanceA);
-	}
-
-	if(!hCoUninitializeA)
-	{
-		hCoUninitializeA = CoUninitialize;
-		DetourAttach(&(PVOID&)hCoUninitializeA, HookCoUninitializeA);
-	}
-	DetourTransactionCommit();
+	if(!hCoCreateInstanceA) hCoCreateInstanceA = new Detour<tCoCreateInstanceA>(CoCreateInstance, HookCoCreateInstanceA);
+	if(!hCoUninitializeA) hCoUninitializeA = new Detour<tCoUninitializeA>(CoUninitialize, HookCoUninitializeA);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void iHook::HookWMI_ANSI_Clean()
 {
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
 	if(hGetA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
-		DetourDetach(&(PVOID&)hGetA, HookGetA);
+		SAFE_DELETE(hGetA);
 	}
 
 	if(hNextA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
-		DetourDetach(&(PVOID&)hNextA, HookNextA);
+		SAFE_DELETE(hNextA);
 	}
 
 	if(hCreateInstanceEnumA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
-		DetourDetach(&(PVOID&)hCreateInstanceEnumA, HookCreateInstanceEnumA);
+		SAFE_DELETE(hCreateInstanceEnumA);;
 	}
 
 	if(hConnectServerA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
-		DetourDetach(&(PVOID&)hConnectServerA, HookConnectServerA);
+		SAFE_DELETE(hConnectServerA);
 	}
 
 	if(hCoCreateInstanceA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA:: Removing Hook");
-		DetourDetach(&(PVOID&)hCoCreateInstanceA, HookCoCreateInstanceA);
+		SAFE_DELETE(hCoCreateInstanceA);
 	}
 
 	if(hCoUninitializeA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA:: Removing Hook");
-		DetourDetach(&(PVOID&)hCoUninitializeA, HookCoUninitializeA);
+		SAFE_DELETE(hCoUninitializeA);
 	}
-	DetourTransactionCommit();
 }

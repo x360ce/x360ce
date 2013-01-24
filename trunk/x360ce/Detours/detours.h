@@ -1,553 +1,762 @@
-//////////////////////////////////////////////////////////////////////////////
-//
-//  Core Detours Functionality (detours.h of detours.lib)
-//
-//  Microsoft Research Detours Package, Version 3.0 Build_308.
-//
-//  Copyright (c) Microsoft Corporation.  All rights reserved.
-//
+/**
+ * Mologie Detours
+ * Copyright (c) 2011 Oliver Kuckertz <oliver.kuckertz@mologie.de>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @file	detours.h
+ *
+ * @brief	Declares the detours class.
+ *
+ * @todo	Implement MS hotpatching
+ * @todo	Complete DetourImport class (add IAT parser, maybe ELF support)
+ * @todo	Expand relative opcodes which can not be relocated
+ * @todo	Other detour types, maybe use/write a mutation engine
+ */
 
-#pragma once
-#ifndef _DETOURS_H_
-#define _DETOURS_H_
+#pragma warning(disable:4244)
 
-#define DETOURS_VERSION     30000   // 3.00.00
+#ifndef INCLUDED_LIB_MOLOGIE_DETOURS_DETOURS_H
+#define INCLUDED_LIB_MOLOGIE_DETOURS_DETOURS_H
 
-//////////////////////////////////////////////////////////////////////////////
-//
+#include <stdint.h>
+#include "hde.h"
+#include <stdexcept>
+#include <cstring>
 
-#if (_MSC_VER < 1299)
-typedef LONG LONG_PTR;
-typedef ULONG ULONG_PTR;
-#endif
-
-#ifndef __in_z
-#define __in_z
-#endif
-
-//////////////////////////////////////////////////////////////////////////////
-//
-#ifndef GUID_DEFINED
-#define GUID_DEFINED
-typedef struct  _GUID
-{
-    DWORD Data1;
-    WORD Data2;
-    WORD Data3;
-    BYTE Data4[ 8 ];
-} GUID;
-
-#ifdef INITGUID
-#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-        const GUID name \
-                = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
+#ifdef WIN32
+#  include <Windows.h>
+#  define MOLOGIE_DETOURS_MEMORY_UNPROTECT(ADDRESS, SIZE, OLDPROT) (VirtualProtect((LPVOID)(ADDRESS), (SIZE_T)(SIZE), PAGE_EXECUTE_READWRITE, &OLDPROT) == TRUE)
+#  define MOLOGIE_DETOURS_MEMORY_REPROTECT(ADDRESS, SIZE, OLDPROT) (VirtualProtect((LPVOID)(ADDRESS), (SIZE_T)(SIZE), OLDPROT, &OLDPROT) == TRUE)
+#  define MOLOGIE_DETOURS_MEMORY_WINDOWS_INIT(NAME) DWORD NAME
 #else
-#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-    const GUID name
-#endif // INITGUID
-#endif // !GUID_DEFINED
+#  include <sys/mman.h>
+#  include <unistd.h>
+#  define MOLOGIE_DETOURS_MEMORY_POSIX_PAGEPROTECT(ADDRESS, SIZE, NEWPROT) \
+	( \
+		mprotect((void*)((((unsigned int)(ADDRESS) + pageSize_ - 1) & ~(pageSize_ - 1)) - pageSize_), pageSize_, NEWPROT) == 0 \
+	&&	( \
+			((((unsigned int)(ADDRESS) + pageSize_ - 1) & ~(pageSize_ - 1)) - pageSize_) == ((((unsigned int)(ADDRESS) + (SIZE) + pageSize_ - 1) & ~(pageSize_ - 1)) - pageSize_) \
+		||	mprotect((void*)((((unsigned int)(ADDRESS) + (SIZE) + pageSize_ - 1) & ~(pageSize_ - 1)) - pageSize_), pageSize_, NEWPROT) == 0 \
+		) \
+	)
+#  define MOLOGIE_DETOURS_MEMORY_UNPROTECT(ADDRESS, SIZE, OLDPROT) MOLOGIE_DETOURS_MEMORY_POSIX_PAGEPROTECT((ADDRESS), (SIZE), PROT_READ | PROT_WRITE | PROT_EXEC)
+#  define MOLOGIE_DETOURS_MEMORY_REPROTECT(ADDRESS, SIZE, OLDPROT) MOLOGIE_DETOURS_MEMORY_POSIX_PAGEPROTECT((ADDRESS), (SIZE), PROT_READ | PROT_EXEC)
+#  define MOLOGIE_DETOURS_MEMORY_WINDOWS_INIT(NAME)
+#endif
+#define MOLOGIE_DETOURS_DETOUR_SIZE (1 + sizeof(void*))
 
-#if defined(__cplusplus)
-#ifndef _REFGUID_DEFINED
-#define _REFGUID_DEFINED
-#define REFGUID             const GUID &
-#endif // !_REFGUID_DEFINED
-#else // !__cplusplus
-#ifndef _REFGUID_DEFINED
-#define _REFGUID_DEFINED
-#define REFGUID             const GUID * const
-#endif // !_REFGUID_DEFINED
-#endif // !__cplusplus
-
-//
-//////////////////////////////////////////////////////////////////////////////
-
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
-/////////////////////////////////////////////////// Instruction Target Macros.
-//
-#define DETOUR_INSTRUCTION_TARGET_NONE          ((PVOID)0)
-#define DETOUR_INSTRUCTION_TARGET_DYNAMIC       ((PVOID)(LONG_PTR)-1)
-#define DETOUR_SECTION_HEADER_SIGNATURE         0x00727444   // "Dtr\0"
-
-extern const GUID DETOUR_EXE_RESTORE_GUID;
-
-#define DETOUR_TRAMPOLINE_SIGNATURE             0x21727444  // Dtr!
-typedef struct _DETOUR_TRAMPOLINE DETOUR_TRAMPOLINE, *PDETOUR_TRAMPOLINE;
-
-/////////////////////////////////////////////////////////// Binary Structures.
-//
-#pragma pack(push, 8)
-typedef struct _DETOUR_SECTION_HEADER
+/**
+ * @namespace	MologieDetours
+ *
+ * @brief	Used to store library-specific classes.
+ */
+namespace MologieDetours
 {
-    DWORD       cbHeaderSize;
-    DWORD       nSignature;
-    DWORD       nDataOffset;
-    DWORD       cbDataSize;
+	/**
+	 * @typedef	address_type
+	 *
+	 * @brief	Defines an alias representing type of an address.
+	 */
+#if defined(MOLOGIE_DETOURS_HDE_32)
+	typedef uint32_t address_type;
+#elif defined(MOLOGIE_DETOURS_HDE_64)
+	typedef uint64_t address_type;
+#endif
 
-    DWORD       nOriginalImportVirtualAddress;
-    DWORD       nOriginalImportSize;
-    DWORD       nOriginalBoundImportVirtualAddress;
-    DWORD       nOriginalBoundImportSize;
+	/**
+	 * @typedef	address_pointer_type
+	 *
+	 * @brief	Defines an alias representing type of a pointerto an address.
+	 */
+#if defined(MOLOGIE_DETOURS_HDE_32)
+	typedef uint32_t* address_pointer_type;
+#elif defined(MOLOGIE_DETOURS_HDE_64)
+	typedef uint64_t* address_pointer_type;
+#endif
 
-    DWORD       nOriginalIatVirtualAddress;
-    DWORD       nOriginalIatSize;
-    DWORD       nOriginalSizeOfImage;
-    DWORD       cbPrePE;
+	/**
+	 * @class	DetourException
+	 *
+	 * @brief	Exception for signalling detour errors.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	14.05.2011
+	 */
+	class DetourException : public std::runtime_error
+	{
+	public:
+		typedef std::runtime_error _Mybase;
+		explicit DetourException(const std::string& _Message) : _Mybase(_Message.c_str()) { }
+		explicit DetourException(const char* _Message) : _Mybase(_Message) { }
+	};
 
-    DWORD       nOriginalClrFlags;
-    DWORD       reserved1;
-    DWORD       reserved2;
-    DWORD       reserved3;
+	/**
+	 * @class	DetourPageProtectionException
+	 *
+	 * @brief	Exception for signalling detour page protection errors.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	16.05.2011
+	 */
+	class DetourPageProtectionException : public DetourException
+	{
+	public:
+		typedef DetourException _Mybase;
+		explicit DetourPageProtectionException(const std::string& _Message, const void* errorAddress) : _Mybase(_Message.c_str()), errorAddress_(errorAddress) { }
+		explicit DetourPageProtectionException(const char* _Message, const void* errorAddress) : _Mybase(_Message), errorAddress_(errorAddress) { }
+		const void* GetErrorAddress() { return errorAddress_; }
+	private:
+		const void* errorAddress_;
+	};
 
-    // Followed by cbPrePE bytes of data.
-} DETOUR_SECTION_HEADER, *PDETOUR_SECTION_HEADER;
+	/**
+	 * @class	DetourDisassemblerException
+	 *
+	 * @brief	Exception for signalling detour disassembler errors.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	16.05.2011
+	 */
+	class DetourDisassemblerException : public DetourException
+	{
+	public:
+		typedef DetourException _Mybase;
+		explicit DetourDisassemblerException(const std::string& _Message) : _Mybase(_Message.c_str()) { }
+		explicit DetourDisassemblerException(const char* _Message) : _Mybase(_Message) { }
+	};
 
-typedef struct _DETOUR_SECTION_RECORD
-{
-    DWORD       cbBytes;
-    DWORD       nReserved;
-    GUID        guid;
-} DETOUR_SECTION_RECORD, *PDETOUR_SECTION_RECORD;
+	/**
+	 * @class	DetourRelocationException
+	 *
+	 * @brief	Exception for signalling detour relocation errors.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	16.05.2011
+	 */
+	class DetourRelocationException : public DetourException
+	{
+	public:
+		typedef DetourException _Mybase;
+		explicit DetourRelocationException(const std::string& _Message) : _Mybase(_Message.c_str()) { }
+		explicit DetourRelocationException(const char* _Message) : _Mybase(_Message) { }
+	};
 
-typedef struct _DETOUR_CLR_HEADER
-{
-    // Header versioning
-    ULONG                   cb;
-    USHORT                  MajorRuntimeVersion;
-    USHORT                  MinorRuntimeVersion;
+	/**
+	 * @class	Detour
+	 *
+	 * @brief	Used for creating detours using detour trampolines.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	14.05.2011
+	 */
+	template <typename function_type> class Detour
+	{
+	public:
+		/**
+		 * @fn	Detour::Detour(function_type pSource, function_type pDetour)
+		 *
+		 * @brief	Creates a new local detour using a given function address.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @param	pSource	The source function.
+		 * @param	pDetour	The detour function.
+		 */
+		Detour(function_type pSource, function_type pDetour)
+			: pSource_(pSource), pDetour_(pDetour), instructionCount_(0)
+		{
+			CreateDetour();
+		}
 
-    // Symbol table and startup information
-    IMAGE_DATA_DIRECTORY    MetaData;
-    ULONG                   Flags;
+		/**
+		 * @fn	Detour::Detour(function_type pSource, function_type pDetour, size_t instructionCount)
+		 *
+		 * @brief	Creates a new local detour using a given function address and a predefined
+		 * 			instruction count.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	22.05.2011
+		 *
+		 * @param	pSource				The source function.
+		 * @param	pDetour				The detour function.
+		 * @param	instructionCount	Size of instructions to replace, must be >=
+		 * 								MOLOGIE_DETOURS_DETOUR_SIZE.
+		 */
+		Detour(function_type pSource, function_type pDetour, size_t instructionCount)
+			: pSource_(pSource), pDetour_(pDetour), instructionCount_(instructionCount)
+		{
+			CreateDetour();
+		}
+#ifdef WIN32
+		/**
+		 * @fn	Detour::Detour(HMODULE module, const char* lpProcName, function_type pDetour)
+		 *
+		 * @brief	Creates a new local detour on an exported function.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @param	module	  	The module.
+		 * @param	lpProcName	Name of the pointer to a proc.
+		 * @param	pDetour   	The detour.
+		 */
+		Detour(HMODULE module, const char* lpProcName, function_type pDetour)
+			: pSource_(reinterpret_cast<function_type>(GetProcAddress(module, lpProcName))), pDetour_(pDetour), instructionCount_(0)
+		{
+			CreateDetour();
+		}
+#endif
 
-    // Followed by the rest of the IMAGE_COR20_HEADER
-} DETOUR_CLR_HEADER, *PDETOUR_CLR_HEADER;
+		/**
+		 * @fn	Detour::~Detour()
+		 *
+		 * @brief	Destroys the detour. If reverting the changes fails, the detour is removed by making
+		 * 			the trampoline redirect to the original code, eg. remove the detour from the call
+		 * 			chain.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @exception	DetourPageProtectionException	Thrown when the page protection of detour-related
+		 * 												memory can not be changed.
+		 */
+		virtual ~Detour()
+		{
+			try
+			{
+				// Attempt to revert
+				Revert();
+			}
+			catch(DetourException)
+			{
+				// Reverting failed, redirect trampoline to original code instead
+				*reinterpret_cast<address_pointer_type>(trampoline_ + 1) = backupOriginalCode_ - trampoline_ - MOLOGIE_DETOURS_DETOUR_SIZE;
+			}
 
-typedef struct _DETOUR_EXE_RESTORE
-{
-    DWORD               cb;
-    DWORD               cbidh;
-    DWORD               cbinh;
-    DWORD               cbclr;
+			// Free the detour code backup used by Revert()
+			delete[] backupDetour_;
+		}
 
-    PBYTE               pidh;
-    PBYTE               pinh;
-    PBYTE               pclr;
+		/**
+		 * @fn	size_t Detour::GetInstructionCount()
+		 *
+		 * @brief	Gets the size of the code replaced.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @return	Returns the size of the code replaced.
+		 */
+		size_t GetInstructionCount()
+		{
+			return instructionCount_;
+		}
 
-    IMAGE_DOS_HEADER    idh;
-    union {
-        IMAGE_NT_HEADERS    inh;
-        IMAGE_NT_HEADERS32  inh32;
-        IMAGE_NT_HEADERS64  inh64;
-        BYTE                raw[sizeof(IMAGE_NT_HEADERS64) +
-                                sizeof(IMAGE_SECTION_HEADER) * 32];
-    };
-    DETOUR_CLR_HEADER   clr;
+		/**
+		 * @fn	function_type Detour::GetSource()
+		 *
+		 * @brief	Gets the source.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @return	Returns the address of the detoured target function.
+		 */
+		function_type GetSource()
+		{
+			return pSource_;
+		}
 
-} DETOUR_EXE_RESTORE, *PDETOUR_EXE_RESTORE;
+		/**
+		 * @fn	function_type Detour::GetDetour()
+		 *
+		 * @brief	Gets the detour.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @return	Returns the address of the detour.
+		 */
+		function_type GetDetour()
+		{
+			return pDetour_;
+		}
 
-#pragma pack(pop)
+		/**
+		 * @fn	function_type Detour::GetOriginalFunction()
+		 *
+		 * @brief	Gets the original function.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @return	Returns a function pointer which can be used to execute the original function.
+		 */
+		function_type GetOriginalFunction()
+		{
+			return reinterpret_cast<function_type>(backupOriginalCode_);
+		}
 
-#define DETOUR_SECTION_HEADER_DECLARE(cbSectionSize) \
-{ \
-      sizeof(DETOUR_SECTION_HEADER),\
-      DETOUR_SECTION_HEADER_SIGNATURE,\
-      sizeof(DETOUR_SECTION_HEADER),\
-      (cbSectionSize),\
-      \
-      0,\
-      0,\
-      0,\
-      0,\
-      \
-      0,\
-      0,\
-      0,\
-      0,\
+	private:
+		/**
+		 * @fn	virtual void Detour::CreateDetour()
+		 *
+		 * @brief	Creates the detour.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	14.05.2011
+		 *
+		 * @exception	DetourDisassemblerException	   	Thrown when the disassembler returns an error or
+		 * 												an unexpected result.
+		 * @exception	DetourPageProtectionException	Thrown when the page protection of detour-related
+		 * 												memory can not be changed.
+		 */
+		virtual void CreateDetour()
+		{
+#ifndef WIN32
+			// Get page size on POSIX systems
+			pageSize_ = sysconf(_SC_PAGESIZE);
+#endif
+			// Used for storing the original page protection flags on Windows
+			MOLOGIE_DETOURS_MEMORY_WINDOWS_INIT(dwProt);
+
+			// Make things simple
+			uint8_t* targetFunction = reinterpret_cast<uint8_t*>(pSource_);
+#ifdef WIN32
+			// Check whether the function starts with a relative short jump(- sizeof detour) and assume a hotpatched function
+			if(targetFunction[0] == 0xEB && static_cast<int8_t>(targetFunction[1]) == - static_cast<int8_t>(MOLOGIE_DETOURS_DETOUR_SIZE) - 2)
+			{
+				// Place our detour after the relative jmp
+				// This will result in the hotpatch being called first, however we won't break things here
+				// Use the DetourHotpatch class to create a hotpatch instead.
+				pSource_ = reinterpret_cast<function_type>(reinterpret_cast<address_type>(pSource_) + 2);
+				targetFunction = reinterpret_cast<uint8_t*>(pSource_);
+			}
+#endif
+			// Used for finding the instruction count
+			uint8_t* pbCurOp = targetFunction;
+
+			// Find the required instruction count
+			while(instructionCount_ < MOLOGIE_DETOURS_DETOUR_SIZE)
+			{
+				if(*pbCurOp == 0xC3) // Abort if a RET instruction is hit
+				{
+					throw DetourDisassemblerException("The target function is too short. Strictly refusing to detour it.");
+				}
+
+				size_t i = GetInstructionSize(pbCurOp);
+
+				if(i == 0)
+				{
+					throw DetourDisassemblerException("Disassembler returned invalid opcode length");
+				}
+
+				instructionCount_ += i;
+				pbCurOp += i;
+			}
+
+			// Backup the original code
+			backupOriginalCode_ = new uint8_t[instructionCount_ + MOLOGIE_DETOURS_DETOUR_SIZE];
+			memcpy(backupOriginalCode_, targetFunction, instructionCount_);
+
+			// Fix relative jmps to point to the correct location
+			RelocateCode(targetFunction, backupOriginalCode_, instructionCount_);
+
+			// Jump back to original function after executing replaced code
+			uint8_t* jmpBack = backupOriginalCode_ + instructionCount_;
+			jmpBack[0] = 0xE9;
+			*reinterpret_cast<address_pointer_type>(jmpBack + 1) = reinterpret_cast<address_type>(pSource_) + instructionCount_ - reinterpret_cast<address_type>(jmpBack) - MOLOGIE_DETOURS_DETOUR_SIZE;
+
+			// Make backupOriginalCode_ executable
+			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(backupOriginalCode_, instructionCount_ + MOLOGIE_DETOURS_DETOUR_SIZE, dwProt))
+			{
+				throw DetourPageProtectionException("Failed to make copy of original code executable", backupOriginalCode_);
+			}
+
+			// Create a new trampoline which points at the detour
+			trampoline_ = new uint8_t[MOLOGIE_DETOURS_DETOUR_SIZE];
+			trampoline_[0] = 0xE9;
+			*reinterpret_cast<address_pointer_type>(trampoline_ + 1) = reinterpret_cast<address_type>(pDetour_) - reinterpret_cast<address_type>(trampoline_) - MOLOGIE_DETOURS_DETOUR_SIZE;
+
+			// Make trampoline_ executable
+			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(trampoline_, MOLOGIE_DETOURS_DETOUR_SIZE, dwProt))
+			{
+				throw DetourPageProtectionException("Failed to make trampoline executable", trampoline_);
+			}
+
+			// Unprotect original function
+			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(targetFunction, MOLOGIE_DETOURS_DETOUR_SIZE, dwProt))
+			{
+				throw DetourPageProtectionException("Failed to change page protection of original function", reinterpret_cast<void*>(targetFunction));
+			}
+
+			// Redirect original function to trampoline
+			targetFunction[0] = 0xE9;
+			*reinterpret_cast<address_pointer_type>(targetFunction + 1) = reinterpret_cast<address_type>(trampoline_) - reinterpret_cast<address_type>(targetFunction) - MOLOGIE_DETOURS_DETOUR_SIZE;
+
+			// Create backup of detour
+			backupDetour_ = new uint8_t[MOLOGIE_DETOURS_DETOUR_SIZE];
+			memcpy(backupDetour_, targetFunction, MOLOGIE_DETOURS_DETOUR_SIZE);
+
+			// Reprotect original function
+			if(!MOLOGIE_DETOURS_MEMORY_REPROTECT(targetFunction, MOLOGIE_DETOURS_DETOUR_SIZE, dwProt))
+			{
+			    throw DetourPageProtectionException("Failed to change page protection of original function", reinterpret_cast<void*>(targetFunction));
+			}
+
+			// Flush instruction cache on Windows
+#ifdef WIN32
+			FlushInstructionCache(GetCurrentProcess(), pSource_, MOLOGIE_DETOURS_DETOUR_SIZE);
+#endif
+		}
+
+		/**
+		 * @fn	void Detour::Revert()
+		 *
+		 * @brief	Reverts any changes made and restores the original code.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @exception	DetourException				 	Thrown when the target function has been modified.
+		 * @exception	DetourPageProtectionException	Thrown when the target function's page protection
+		 * 												can't be changed.
+		 */
+		void Revert()
+		{
+			// Used for storing the original page protection flags on Windows
+			MOLOGIE_DETOURS_MEMORY_WINDOWS_INIT(dwProt);
+
+			// Make sure the modified function is left as-is
+			if(memcmp(reinterpret_cast<void*>(pSource_), backupDetour_, MOLOGIE_DETOURS_DETOUR_SIZE) != 0)
+			{
+				throw DetourException("Function has been modified, can not revert.");
+			}
+
+			// Unprotect original function
+			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(pSource_, MOLOGIE_DETOURS_DETOUR_SIZE, dwProt))
+			{
+				throw DetourPageProtectionException("Failed to change page protection of original function", reinterpret_cast<void*>(pSource_));
+			}
+
+			// Restore original code
+			memcpy(reinterpret_cast<void*>(pSource_), backupOriginalCode_, MOLOGIE_DETOURS_DETOUR_SIZE);
+
+			// Fix relative jmps to point to the correct location
+			RelocateCode(backupOriginalCode_, reinterpret_cast<uint8_t*>(pSource_), instructionCount_);
+
+			// Reprotect original function
+			if(!MOLOGIE_DETOURS_MEMORY_REPROTECT(pSource_, MOLOGIE_DETOURS_DETOUR_SIZE, dwProt))
+			{
+			    throw DetourPageProtectionException("Failed to change page protection of original function", trampoline_);
+			}
+
+			// Free memory allocated for trampoline and original code
+			delete[] trampoline_;
+			delete[] backupOriginalCode_;
+		}
+
+		/**
+		 * @fn	void Detour::RelocateCode(uint8_t* baseOld, uint8_t* baseNew, size_t size)
+		 *
+		 * @brief	This function relocates the copied code of another function. Only works with code
+		 * 			that HDE (or the custom disassembler backend) can actually parse.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @exception	DetourRelocationException	Thrown when a relocation error occures.
+		 *
+		 * @param [in,out]	baseOld	The old base.
+		 * @param [in,out]	baseNew	The new base.
+		 * @param	size		   	The code's size.
+		 */
+		void RelocateCode(uint8_t* baseOld, uint8_t* baseNew, size_t size)
+		{
+			uint8_t* pbCurOp = baseNew;
+			address_type delta = baseOld - baseNew;
+
+			while(pbCurOp < baseNew + size)
+			{
+#if defined(MOLOGIE_DETOURS_HDE_32)
+				hde32s hs = { 0 };
+				uint8_t i = hde32_disasm(pbCurOp, &hs);
+#elif defined(MOLOGIE_DETOURS_HDE_64)
+				hde64s hs = { 0 };
+				uint8_t i = hde64_disasm(pbCurOp, &hs);
+#endif
+				if(i == 0)
+				{
+					// Unknown instruction. Let's hope we don't break anything here and continue anyway.
+					return;
+				}
+
+				if(hs.flags & F_RELATIVE)
+				{
+#if defined(MOLOGIE_DETOURS_HDE_32)
+					if(hs.flags & F_IMM8 || hs.flags & F_IMM16)
+#elif defined(MOLOGIE_DETOURS_HDE64)
+					if(hs.flags & F_IMM8 || hs.flags & F_IMM16 || hs.flags & F_IMM32)
+#endif
+					{
+						// Oh noes! We shouldn't continue here.
+						throw DetourRelocationException("The target function starts with a relative jmp instruction which can not be patched.");
+					}
+
+#if defined(MOLOGIE_DETOURS_HDE_32)
+					if(hs.flags & F_IMM32)
+					{
+						unsigned char offset = (hs.opcode == 0x0F) ? 2 : 1;
+						*reinterpret_cast<uint32_t*>(pbCurOp + offset) += delta;
+					}
+#elif defined(MOLOGIE_DETOURS_HDE_64)
+					if(hs.flags & F_IMM64)
+					{
+						unsigned char offset = (hs.opcode == 0x0F) ? 2 : 1;
+						*reinterpret_cast<uint64_t*>(pbCurOp + offset) += delta;
+					}
+#endif
+				}
+
+				pbCurOp += i;
+			}
+		}
+
+		/**
+		 * @fn	size_t Detour::GetInstructionSize(const void* code)
+		 *
+		 * @brief	Gets an instruction's size.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	14.05.2011
+		 *
+		 * @param	code	The instruction.
+		 *
+		 * @return	The instruction size.
+		 */
+		size_t GetInstructionSize(const void* code)
+		{
+#if defined(MOLOGIE_DETOURS_HDE_32)
+			hde32s hs = { 0 };
+			return hde32_disasm(code, &hs);
+#elif defined(MOLOGIE_DETOURS_HDE_64)
+			hde64s hs = { 0 };
+			return hde64_disasm(code, &hs);
+#endif
+		}
+
+		function_type pSource_; // Pointer to target function
+		function_type pDetour_; // Pointer to detour function
+		uint8_t* backupOriginalCode_; // Pointer to the original code
+		uint8_t* backupDetour_; // Backup of the detour code for Revert()
+		uint8_t* trampoline_; // Trampoline which points to either the detour or the backed up code
+		size_t instructionCount_; // Size of code replaced
+#ifndef WIN32
+		long int pageSize_; // Size of a single memory page
+#endif
+	};
+
+	/**
+	 * @class	DetourImport
+	 *
+	 * @brief	Used for creating detours on an import of a single module.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	16.05.2011
+	 */
+	template <typename function_type> class DetourImport
+	{
+	public:
+
+		/**
+		 * @fn	DetourImport::DetourImport(address_type pSource, function_type pDetour)
+		 *
+		 * @brief	Creates a new local detour using a given import.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	09.05.2011
+		 *
+		 * @exception	DetourPageProtectionException	Thrown when detourpageprotection.
+		 *
+		 * @param	pSource	The import.
+		 * @param	pDetour	The detour function.
+		 */
+		DetourImport(address_type pSource, function_type pDetour)
+			: pSource_(reinterpret_cast<function_type*>(pSource)), pDetour_(pDetour)
+		{
+#ifndef WIN32
+			// Get page size on POSIX systems
+			pageSize_ = sysconf(_SC_PAGESIZE);
+#endif
+			// Used for storing the page protection flags on Windows
+			MOLOGIE_DETOURS_MEMORY_WINDOWS_INIT(dwProt);
+
+			pSourceBackup_ = *pSource_;
+
+			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(pSource_, sizeof(pSource_), dwProt))
+			{
+				throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
+			}
+
+			*pSource_ = pDetour_;
+
+			if(!MOLOGIE_DETOURS_MEMORY_REPROTECT(pSource_, sizeof(pSource_), dwProt))
+			{
+				throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
+			}
+		}
+
+		/**
+		 * @fn	DetourImport::~DetourImport()
+		 *
+		 * @brief	Finaliser.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	16.05.2011
+		 *
+		 * @exception	DetourPageProtectionException	Thrown when the page protection of the IAT table
+		 * 												can not be changed.
+		 */
+		virtual ~DetourImport()
+		{
+			// Only continue if another application did not modify the IAT after us.
+			// This should not happen, usually.
+			if(!IsValid())
+			{
+				// Mhm
+				return;
+			}
+
+			// Used for storing the original page protection flags on Windows
+			MOLOGIE_DETOURS_MEMORY_WINDOWS_INIT(dwProt);
+
+			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(pSource_, sizeof(pSource_), dwProt))
+			{
+				// Raising exception inside the destructor is illegal 
+				//throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
+			}
+
+			*pSource_ = pSourceBackup_;
+
+			if(!MOLOGIE_DETOURS_MEMORY_REPROTECT(pSource_, sizeof(pSource_), dwProt))
+			{
+				// Raising exception inside the destructor is illegal 
+				//throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
+			}
+		}
+
+		/**
+		 * @fn	bool DetourImport::IsValid()
+		 *
+		 * @brief	Query if the detour is still applied.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	16.05.2011
+		 *
+		 * @return	true if valid, false if not.
+		 */
+		bool IsValid()
+		{
+			return (*pSource_ == pDetour_);
+		}
+
+	private:
+		function_type* pSource_;
+		function_type pSourceBackup_;
+		function_type pDetour_;
+#ifndef WIN32
+        long int pageSize_;
+#endif
+	};
+
+#ifdef WIN32
+	/**
+	 * @class	DetourHotpatch
+	 *
+	 * @brief	Creates a new local detour using hotpatching.
+	 *
+	 * @author	Oliver Kuckertz
+	 * @date	16.05.2011
+	 */
+	template <typename function_type> class DetourHotpatch
+		: public Detour<function_type>
+	{
+	public:
+		/**
+		 * @fn	DetourHotpatch::DetourHotpatch()
+		 *
+		 * @brief	Default constructor.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	16.05.2011
+		 */
+		DetourHotpatch()
+		{
+		}
+
+		/**
+		 * @fn	DetourHotpatch::~DetourHotpatch()
+		 *
+		 * @brief	Finaliser.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	16.05.2011
+		 */
+		~DetourHotpatch()
+		{
+		}
+
+	private:
+		/**
+		 * @fn	static bool Detour::IsHotpatchable()
+		 *
+		 * @brief	Query if the target function is hotpatchable.
+		 *
+		 * @author	Oliver Kuckertz
+		 * @date	16.05.2011
+		 *
+		 * @return	true if hotpatchable, false if not.
+		 */
+		bool IsHotpatchable()
+		{
+			constuint8_t movEdiEdi[] = { 0x8B, 0xFF };
+
+			bool haveNops = true;
+			bool haveSpace = (memcmp(reinterpret_cast<void*>(pSource_), movEdiEdi, sizeof(movEdiEdi)) == 0);
+
+			uint8_t* pbCode = reinterpret_cast<uint8_t*>(pSource_) - MOLOGIE_DETOURS_DETOUR_SIZE;
+
+			for(size_t i = 0; i < MOLOGIE_DETOURS_DETOUR_SIZE; i++)
+			{
+				if(pbCode[i] != 0x90)
+				{
+					haveNops = false;
+					break;
+				}
+			}
+
+			return (haveNops && haveSpace);
+		}
+	};
+#endif
 }
 
-///////////////////////////////////////////////////////////// Binary Typedefs.
-//
-typedef BOOL (CALLBACK *PF_DETOUR_BINARY_BYWAY_CALLBACK)(PVOID pContext,
-                                                         PCHAR pszFile,
-                                                         PCHAR *ppszOutFile);
-
-typedef BOOL (CALLBACK *PF_DETOUR_BINARY_FILE_CALLBACK)(PVOID pContext,
-                                                        PCHAR pszOrigFile,
-                                                        PCHAR pszFile,
-                                                        PCHAR *ppszOutFile);
-
-typedef BOOL (CALLBACK *PF_DETOUR_BINARY_SYMBOL_CALLBACK)(PVOID pContext,
-                                                          ULONG nOrigOrdinal,
-                                                          ULONG nOrdinal,
-                                                          ULONG *pnOutOrdinal,
-                                                          PCHAR pszOrigSymbol,
-                                                          PCHAR pszSymbol,
-                                                          PCHAR *ppszOutSymbol);
-
-typedef BOOL (CALLBACK *PF_DETOUR_BINARY_COMMIT_CALLBACK)(PVOID pContext);
-
-typedef BOOL (CALLBACK *PF_DETOUR_ENUMERATE_EXPORT_CALLBACK)(PVOID pContext,
-                                                             ULONG nOrdinal,
-                                                             PCHAR pszName,
-                                                             PVOID pCode);
-
-typedef BOOL (CALLBACK *PF_DETOUR_IMPORT_FILE_CALLBACK)(PVOID pContext,
-                                                        HMODULE hModule,
-                                                        PCSTR pszFile);
-
-typedef BOOL (CALLBACK *PF_DETOUR_IMPORT_FUNC_CALLBACK)(PVOID pContext,
-                                                        DWORD nOrdinal,
-                                                        PCSTR pszFunc,
-                                                        PVOID pvFunc);
-
-typedef VOID * PDETOUR_BINARY;
-typedef VOID * PDETOUR_LOADED_BINARY;
-
-//////////////////////////////////////////////////////////// Transaction APIs.
-//
-LONG WINAPI DetourTransactionBegin();
-LONG WINAPI DetourTransactionAbort();
-LONG WINAPI DetourTransactionCommit();
-LONG WINAPI DetourTransactionCommitEx(PVOID **pppFailedPointer);
-
-LONG WINAPI DetourUpdateThread(HANDLE hThread);
-
-LONG WINAPI DetourAttach(PVOID *ppPointer,
-                         PVOID pDetour);
-
-LONG WINAPI DetourAttachEx(PVOID *ppPointer,
-                           PVOID pDetour,
-                           PDETOUR_TRAMPOLINE *ppRealTrampoline,
-                           PVOID *ppRealTarget,
-                           PVOID *ppRealDetour);
-
-LONG WINAPI DetourDetach(PVOID *ppPointer,
-                         PVOID pDetour);
-
-BOOL WINAPI DetourSetIgnoreTooSmall(BOOL fIgnore);
-BOOL WINAPI DetourSetRetainRegions(BOOL fRetain);
-
-////////////////////////////////////////////////////////////// Code Functions.
-//
-PVOID WINAPI DetourFindFunction(PCSTR pszModule, PCSTR pszFunction);
-PVOID WINAPI DetourCodeFromPointer(PVOID pPointer, PVOID *ppGlobals);
-PVOID WINAPI DetourCopyInstruction(PVOID pDst,
-                                   PVOID *pDstPool,
-                                   PVOID pSrc,
-                                   PVOID *ppTarget,
-                                   LONG *plExtra);
-
-///////////////////////////////////////////////////// Loaded Binary Functions.
-//
-HMODULE WINAPI DetourGetContainingModule(PVOID pvAddr);
-HMODULE WINAPI DetourEnumerateModules(HMODULE hModuleLast);
-PVOID WINAPI DetourGetEntryPoint(HMODULE hModule);
-ULONG WINAPI DetourGetModuleSize(HMODULE hModule);
-BOOL WINAPI DetourEnumerateExports(HMODULE hModule,
-                                   PVOID pContext,
-                                   PF_DETOUR_ENUMERATE_EXPORT_CALLBACK pfExport);
-BOOL WINAPI DetourEnumerateImports(HMODULE hModule,
-                                   PVOID pContext,
-                                   PF_DETOUR_IMPORT_FILE_CALLBACK pfImportFile,
-                                   PF_DETOUR_IMPORT_FUNC_CALLBACK pfImportFunc);
-
-PVOID WINAPI DetourFindPayload(HMODULE hModule, REFGUID rguid, DWORD *pcbData);
-PVOID WINAPI DetourFindPayloadEx(REFGUID rguid, DWORD * pcbData);
-DWORD WINAPI DetourGetSizeOfPayloads(HMODULE hModule);
-
-///////////////////////////////////////////////// Persistent Binary Functions.
-//
-
-PDETOUR_BINARY WINAPI DetourBinaryOpen(HANDLE hFile);
-PVOID WINAPI DetourBinaryEnumeratePayloads(PDETOUR_BINARY pBinary,
-                                           GUID *pGuid,
-                                           DWORD *pcbData,
-                                           DWORD *pnIterator);
-PVOID WINAPI DetourBinaryFindPayload(PDETOUR_BINARY pBinary,
-                                     REFGUID rguid,
-                                     DWORD *pcbData);
-PVOID WINAPI DetourBinarySetPayload(PDETOUR_BINARY pBinary,
-                                    REFGUID rguid,
-                                    PVOID pData,
-                                    DWORD cbData);
-BOOL WINAPI DetourBinaryDeletePayload(PDETOUR_BINARY pBinary, REFGUID rguid);
-BOOL WINAPI DetourBinaryPurgePayloads(PDETOUR_BINARY pBinary);
-BOOL WINAPI DetourBinaryResetImports(PDETOUR_BINARY pBinary);
-BOOL WINAPI DetourBinaryEditImports(PDETOUR_BINARY pBinary,
-                                    PVOID pContext,
-                                    PF_DETOUR_BINARY_BYWAY_CALLBACK pfByway,
-                                    PF_DETOUR_BINARY_FILE_CALLBACK pfFile,
-                                    PF_DETOUR_BINARY_SYMBOL_CALLBACK pfSymbol,
-                                    PF_DETOUR_BINARY_COMMIT_CALLBACK pfCommit);
-BOOL WINAPI DetourBinaryWrite(PDETOUR_BINARY pBinary, HANDLE hFile);
-BOOL WINAPI DetourBinaryClose(PDETOUR_BINARY pBinary);
-
-/////////////////////////////////////////////////// Create Process & Load Dll.
-//
-typedef BOOL (WINAPI *PDETOUR_CREATE_PROCESS_ROUTINEA)
-    (LPCSTR lpApplicationName,
-     LPSTR lpCommandLine,
-     LPSECURITY_ATTRIBUTES lpProcessAttributes,
-     LPSECURITY_ATTRIBUTES lpThreadAttributes,
-     BOOL bInheritHandles,
-     DWORD dwCreationFlags,
-     LPVOID lpEnvironment,
-     LPCSTR lpCurrentDirectory,
-     LPSTARTUPINFOA lpStartupInfo,
-     LPPROCESS_INFORMATION lpProcessInformation);
-
-typedef BOOL (WINAPI *PDETOUR_CREATE_PROCESS_ROUTINEW)
-    (LPCWSTR lpApplicationName,
-     LPWSTR lpCommandLine,
-     LPSECURITY_ATTRIBUTES lpProcessAttributes,
-     LPSECURITY_ATTRIBUTES lpThreadAttributes,
-     BOOL bInheritHandles,
-     DWORD dwCreationFlags,
-     LPVOID lpEnvironment,
-     LPCWSTR lpCurrentDirectory,
-     LPSTARTUPINFOW lpStartupInfo,
-     LPPROCESS_INFORMATION lpProcessInformation);
-
-BOOL WINAPI DetourCreateProcessWithDllA(LPCSTR lpApplicationName,
-                                        __in_z LPSTR lpCommandLine,
-                                        LPSECURITY_ATTRIBUTES lpProcessAttributes,
-                                        LPSECURITY_ATTRIBUTES lpThreadAttributes,
-                                        BOOL bInheritHandles,
-                                        DWORD dwCreationFlags,
-                                        LPVOID lpEnvironment,
-                                        LPCSTR lpCurrentDirectory,
-                                        LPSTARTUPINFOA lpStartupInfo,
-                                        LPPROCESS_INFORMATION lpProcessInformation,
-                                        LPCSTR lpDllName,
-                                        PDETOUR_CREATE_PROCESS_ROUTINEA
-                                        pfCreateProcessA);
-
-BOOL WINAPI DetourCreateProcessWithDllW(LPCWSTR lpApplicationName,
-                                        __in_z LPWSTR lpCommandLine,
-                                        LPSECURITY_ATTRIBUTES lpProcessAttributes,
-                                        LPSECURITY_ATTRIBUTES lpThreadAttributes,
-                                        BOOL bInheritHandles,
-                                        DWORD dwCreationFlags,
-                                        LPVOID lpEnvironment,
-                                        LPCWSTR lpCurrentDirectory,
-                                        LPSTARTUPINFOW lpStartupInfo,
-                                        LPPROCESS_INFORMATION lpProcessInformation,
-                                        LPCSTR lpDllName,
-                                        PDETOUR_CREATE_PROCESS_ROUTINEW
-                                        pfCreateProcessW);
-
-#ifdef UNICODE
-#define DetourCreateProcessWithDll  DetourCreateProcessWithDllW
-#define PDETOUR_CREATE_PROCESS_ROUTINE     PDETOUR_CREATE_PROCESS_ROUTINEW
-#else
-#define DetourCreateProcessWithDll  DetourCreateProcessWithDllA
-#define PDETOUR_CREATE_PROCESS_ROUTINE     PDETOUR_CREATE_PROCESS_ROUTINEA
-#endif // !UNICODE
-
-BOOL WINAPI DetourUpdateProcessWithDll(HANDLE hProcess,
-                                       LPCSTR *plpDlls,
-                                       DWORD nDlls);
-
-BOOL WINAPI DetourCopyPayloadToProcess(HANDLE hProcess,
-                                       REFGUID rguid,
-                                       PVOID pvData,
-                                       DWORD cbData);
-BOOL WINAPI DetourRestoreAfterWith();
-BOOL WINAPI DetourRestoreAfterWithEx(PVOID pvData, DWORD cbData);
-
-//
-//////////////////////////////////////////////////////////////////////////////
-#ifdef __cplusplus
-}
-#endif // __cplusplus
-
-//////////////////////////////////////////////// Detours Internal Definitions.
-//
-#ifdef __cplusplus
-#ifdef DETOURS_INTERNAL
-
-#ifndef __deref_out
-#define __deref_out
-#endif
-
-#ifndef __deref
-#define __deref
-#endif
-
-//////////////////////////////////////////////////////////////////////////////
-//
-#if (_MSC_VER < 1299)
-#include <imagehlp.h>
-typedef IMAGEHLP_MODULE IMAGEHLP_MODULE64;
-typedef PIMAGEHLP_MODULE PIMAGEHLP_MODULE64;
-typedef IMAGEHLP_SYMBOL SYMBOL_INFO;
-typedef PIMAGEHLP_SYMBOL PSYMBOL_INFO;
-
-static inline
-LONG InterlockedCompareExchange(LONG *ptr, LONG nval, LONG oval)
-{
-    return (LONG)::InterlockedCompareExchange((PVOID*)ptr, (PVOID)nval, (PVOID)oval);
-}
-#else
-#include <dbghelp.h>
-#endif
-
-#ifdef IMAGEAPI // defined by DBGHELP.H
-typedef LPAPI_VERSION (NTAPI *PF_ImagehlpApiVersionEx)(LPAPI_VERSION AppVersion);
-
-typedef BOOL (NTAPI *PF_SymInitialize)(IN HANDLE hProcess,
-                                       IN LPCSTR UserSearchPath,
-                                       IN BOOL fInvadeProcess);
-typedef DWORD (NTAPI *PF_SymSetOptions)(IN DWORD SymOptions);
-typedef DWORD (NTAPI *PF_SymGetOptions)(VOID);
-typedef DWORD64 (NTAPI *PF_SymLoadModule64)(IN HANDLE hProcess,
-                                            IN HANDLE hFile,
-                                            IN PSTR ImageName,
-                                            IN PSTR ModuleName,
-                                            IN DWORD64 BaseOfDll,
-                                            IN DWORD SizeOfDll);
-typedef BOOL (NTAPI *PF_SymGetModuleInfo64)(IN HANDLE hProcess,
-                                            IN DWORD64 qwAddr,
-                                            OUT PIMAGEHLP_MODULE64 ModuleInfo);
-typedef BOOL (NTAPI *PF_SymFromName)(IN HANDLE hProcess,
-                                     IN LPSTR Name,
-                                     OUT PSYMBOL_INFO Symbol);
-
-typedef struct _DETOUR_SYM_INFO
-{
-    HANDLE                  hProcess;
-    HMODULE                 hDbgHelp;
-    PF_ImagehlpApiVersionEx pfImagehlpApiVersionEx;
-    PF_SymInitialize        pfSymInitialize;
-    PF_SymSetOptions        pfSymSetOptions;
-    PF_SymGetOptions        pfSymGetOptions;
-    PF_SymLoadModule64      pfSymLoadModule64;
-    PF_SymGetModuleInfo64   pfSymGetModuleInfo64;
-    PF_SymFromName          pfSymFromName;
-} DETOUR_SYM_INFO, *PDETOUR_SYM_INFO;
-
-PDETOUR_SYM_INFO DetourLoadDbgHelp(VOID);
-
-#endif // IMAGEAPI
-
-#ifndef DETOUR_TRACE
-#if DETOUR_DEBUG
-#define DETOUR_TRACE(x) printf x
-#define DETOUR_BREAK()  __debugbreak()
-#include <stdio.h>
-#include <limits.h>
-#else
-#define DETOUR_TRACE(x)
-#define DETOUR_BREAK()
-#endif
-#endif
-
-#ifdef DETOURS_IA64
-#error Feature not supported in this release.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // DETOURS_IA64
-
-//////////////////////////////////////////////////////////////////////////////
-
-#endif // DETOURS_INTERNAL
-#endif // __cplusplus
-
-#endif // _DETOURS_H_
-//
-////////////////////////////////////////////////////////////////  End of File.
+#endif // !INCLUDED_LIB_MOLOGIE_DETOURS_DETOURS_H

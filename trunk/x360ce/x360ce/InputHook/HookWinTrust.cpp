@@ -22,11 +22,12 @@
 #include "InputHook.h"
 
 static iHook *iHookThis = NULL;
+using namespace MologieDetours;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef LONG (WINAPI *tWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
 
-tWinVerifyTrust hWinVerifyTrust = NULL;
+Detour<tWinVerifyTrust>* hWinVerifyTrust = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
@@ -44,29 +45,16 @@ LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 void iHook::HookWinTrust()
 {
 	if(!CheckHook(iHook::HOOK_TRUST)) return;
-
 	iHookThis = this;
 
-	if(!hWinVerifyTrust )
-	{
-		WriteLog(LOG_HOOKWT, L"Hooking:: WinVerifyTrust");
-		hWinVerifyTrust = WinVerifyTrust;
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourAttach(&(PVOID&)hWinVerifyTrust, HookWinVerifyTrust);
-		DetourTransactionCommit();
-	}
+	if(!hWinVerifyTrust) hWinVerifyTrust = new Detour<tWinVerifyTrust>(WinVerifyTrust, HookWinVerifyTrust);
 }
 
 void iHook::HookWinTrustClean()
 {
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
 	if(hWinVerifyTrust)
 	{
 		WriteLog(LOG_HOOKWT, L"HookWinVerifyTrust:: Removing Hook");
-		DetourDetach(&(PVOID&)hWinVerifyTrust, HookWinVerifyTrust);
-
+		SAFE_DELETE(hWinVerifyTrust);
 	}
-	DetourTransactionCommit();
 }
