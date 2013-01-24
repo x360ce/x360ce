@@ -24,11 +24,15 @@
 #include "InputHook\InputHook.h"
 
 XINPUT_ENABLE XInputIsEnabled;
-extern iHook* g_iHook;
+
+WNDPROC oldWndProc;
 HWND g_hWnd;
 
 extern CRITICAL_SECTION cs;
+extern DWORD startThread;
+extern BOOL cleanDeinit;
 
+extern iHook* g_iHook;
 
 /**********************************************************************************************/
 /**********************************************************************************************/
@@ -68,50 +72,49 @@ XInputPowerOffController_t nXInputPowerOffController = NULL;
 
 enum funcType {GETSTATE, SETSTATE, GETCAPS, ENABLE, AUDIO, BATTERY, KEYSTROKE, GETSTATEEX, WAITGUIDE, CANCELGUIDE, POWEROFF};
 
-inline VOID InitalizeFunction(funcType func, HMODULE hMod = hNative)
+inline VOID InitalizeFunction(funcType func)
 {
-	LoadXInputDLL(hMod);
+	LoadXInputDLL();
 
 	switch(func)
 	{
 	case GETSTATE:
-		if(!nXInputGetState) nXInputGetState = (XInputGetState_t)GetProcAddress(hMod,"XInputGetState");
+		if(!nXInputGetState) nXInputGetState = (XInputGetState_t)GetProcAddress(hNative,"XInputGetState");
 		break;
 	case SETSTATE:
-		if(!nXInputSetState) nXInputSetState = (XInputSetState_t)GetProcAddress(hMod,"XInputSetState");
+		if(!nXInputSetState) nXInputSetState = (XInputSetState_t)GetProcAddress(hNative,"XInputSetState");
 		break;
 	case GETCAPS:
-		if(!nXInputGetCapabilities) nXInputGetCapabilities = (XInputGetCapabilities_t)GetProcAddress(hMod,"XInputGetCapabilities");
+		if(!nXInputGetCapabilities) nXInputGetCapabilities = (XInputGetCapabilities_t)GetProcAddress(hNative,"XInputGetCapabilities");
 		break;
 	case ENABLE:
-		if(!nXInputEnable) nXInputEnable = (XInputEnable_t)GetProcAddress(hMod,"XInputEnable");
+		if(!nXInputEnable) nXInputEnable = (XInputEnable_t)GetProcAddress(hNative,"XInputEnable");
 		break;
 	case AUDIO:
-		if(!nXInputGetDSoundAudioDeviceGuids) nXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t)GetProcAddress(hMod,"XInputGetDSoundAudioDeviceGuids");
+		if(!nXInputGetDSoundAudioDeviceGuids) nXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t)GetProcAddress(hNative,"XInputGetDSoundAudioDeviceGuids");
 		break;
 	case BATTERY:
-		if(!nXInputGetBatteryInformation) nXInputGetBatteryInformation = (XInputGetBatteryInformation_t)GetProcAddress(hMod,"XInputGetBatteryInformation");
+		if(!nXInputGetBatteryInformation) nXInputGetBatteryInformation = (XInputGetBatteryInformation_t)GetProcAddress(hNative,"XInputGetBatteryInformation");
 		break;
 	case KEYSTROKE:
-		if(!nXInputGetKeystroke) nXInputGetKeystroke = (XInputGetKeystroke_t)GetProcAddress(hMod,"XInputGetKeystroke");
+		if(!nXInputGetKeystroke) nXInputGetKeystroke = (XInputGetKeystroke_t)GetProcAddress(hNative,"XInputGetKeystroke");
 		break;
 
 	case GETSTATEEX:
-		if(!nXInputGetStateEx) nXInputGetStateEx = (XInputGetStateEx_t)GetProcAddress(hMod,(LPCSTR)100);
+		if(!nXInputGetStateEx) nXInputGetStateEx = (XInputGetStateEx_t)GetProcAddress(hNative,(LPCSTR)100);
 		break;
 	case WAITGUIDE:
-		if(!nXInputWaitForGuideButton) nXInputWaitForGuideButton = (XInputWaitForGuideButton_t)GetProcAddress(hMod,(LPCSTR)101);
+		if(!nXInputWaitForGuideButton) nXInputWaitForGuideButton = (XInputWaitForGuideButton_t)GetProcAddress(hNative,(LPCSTR)101);
 		break;
 	case CANCELGUIDE:
-		if(!nXInputCancelGuideButtonWait) nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t)GetProcAddress(hMod,(LPCSTR)102);
+		if(!nXInputCancelGuideButtonWait) nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t)GetProcAddress(hNative,(LPCSTR)102);
 		break;
 	case POWEROFF:
-		if(!nXInputPowerOffController) nXInputPowerOffController = (XInputPowerOffController_t)GetProcAddress(hMod,(LPCSTR)103);
+		if(!nXInputPowerOffController) nXInputPowerOffController = (XInputPowerOffController_t)GetProcAddress(hNative,(LPCSTR)103);
 		break;
 	}
 }
 
-WNDPROC oldWndProc;
 LRESULT CALLBACK WndProc(
 	__in  HWND hWnd,
 	__in  UINT uMsg,
@@ -123,16 +126,24 @@ LRESULT CALLBACK WndProc(
 	switch ( uMsg )
 	{
 	case MYQUITMSG:
+		EnterCriticalSection(&cs);
+		if(startThread == GetCurrentThreadId())
 		{
-			EnterCriticalSection(&cs);
-			SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG) oldWndProc);
+			WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative));
+			if(hNative)
+			{
+				FreeLibrary(hNative);
+				hNative = NULL;
+			}
 
+			SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG) oldWndProc);
 			WriteLog(LOG_CORE,L"Destroying message window");
 			DestroyWindow(g_hWnd);
 			g_hWnd = NULL;
-			LeaveCriticalSection(&cs);
-			break;
+			cleanDeinit = TRUE;
 		}
+		LeaveCriticalSection(&cs);
+		break;
 	}
 	return CallWindowProc(oldWndProc, hWnd, uMsg, wParam, lParam);
 }
@@ -209,15 +220,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	//WriteLog(LOG_XINPUT,L"XInputGetState");
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex+1 > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(GETSTATE);
 		return nXInputGetState(dwUserIndex,pState);
 	}
 
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
 	HRESULT hr = XInit(gamepad);
@@ -577,16 +587,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex+1 > g_Gamepads.size())  return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(SETSTATE);
 		return nXInputSetState(dwUserIndex,pVibration);
 	}
 
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
 	HRESULT hr=ERROR_SUCCESS;
@@ -635,15 +643,14 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(GETCAPS);
 		return nXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 	}
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
 
@@ -692,15 +699,14 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(AUDIO);
 		return nXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 	}
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
@@ -715,14 +721,14 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(BATTERY);
 		return nXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
 	}
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	if (!pBatteryInformation || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
@@ -739,16 +745,16 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		//WriteLog(LOG_XINPUT,L"flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
 		InitalizeFunction(KEYSTROKE);
 		return nXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
 	}
+
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	if (!pKeystroke || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
@@ -830,17 +836,15 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 //undocumented
 DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
-
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(GETSTATEEX);
 		return nXInputGetStateEx(dwUserIndex,pState);
 	}
 
+	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 	GamepadMap &PadMap = GamepadMapping[dwUserIndex];
 	XINPUT_STATE &xState = *pState;
 
@@ -855,14 +859,14 @@ DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(WAITGUIDE);
 		return nXInputWaitForGuideButton(dwUserIndex,dwFlag,pVoid);
 	}
+
+	//DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	return ERROR_SUCCESS;
 }
@@ -870,14 +874,14 @@ DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pV
 DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(CANCELGUIDE);
 		return nXInputCancelGuideButtonWait(dwUserIndex);
 	}
+
+	//DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	return ERROR_SUCCESS;
 }
@@ -885,14 +889,14 @@ DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
-	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
-	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-	if(gamepad.passthrough)
+	if(dwUserIndex+1 > g_Gamepads.size() || g_Gamepads[dwUserIndex].passthrough)
 	{
 		InitalizeFunction(POWEROFF);
 		return nXInputPowerOffController(dwUserIndex);
 	}
+
+	//DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
 	return ERROR_SUCCESS;
 }
