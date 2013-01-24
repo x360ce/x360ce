@@ -29,7 +29,7 @@
  * @todo	Expand relative opcodes which can not be relocated
  * @todo	Other detour types, maybe use/write a mutation engine
  */
-#ifdef _MSVC_VER
+#ifdef _MSC_VER
 #pragma warning(disable:4244)
 #endif
 
@@ -668,6 +668,7 @@ namespace MologieDetours
 
 			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(pSource_, sizeof(pSource_), dwProt))
 			{
+				//FIXME: Raising exception inside the destructor is illegal 
 				//throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
 			}
 
@@ -675,6 +676,7 @@ namespace MologieDetours
 
 			if(!MOLOGIE_DETOURS_MEMORY_REPROTECT(pSource_, sizeof(pSource_), dwProt))
 			{
+				//FIXME: Raising exception inside the destructor is illegal 
 				//throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
 			}
 		}
