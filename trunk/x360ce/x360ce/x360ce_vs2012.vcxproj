@@ -280,6 +280,7 @@
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Detours\detours.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="globals.h" />

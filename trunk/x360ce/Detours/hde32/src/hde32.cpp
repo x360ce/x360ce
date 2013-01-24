@@ -10,7 +10,9 @@
 #include "../include/hde32.h"
 #include "../include/table32.h"
 
+#ifdef _MSC_VER
 #pragma warning(disable:4701)
+#endif
 
 unsigned int hde32_disasm(const void *code, hde32s *hs)
 {
@@ -180,7 +182,7 @@ no_lock_error:
 			}
 			for (; ht != table_end; ht += 2)
 				if (*ht++ == opcode) {
-					if (*ht++ & pref && !((*ht << m_reg) & 0x80))
+					if ((*ht++ & pref) && !((*ht << m_reg) & 0x80))
 						goto error_operand;
 					else
 						break;
@@ -231,6 +233,7 @@ no_error_operand:
 			disp_size = 2;
 			if (!(pref & PRE_67))
 				disp_size <<= 1;
+			break;
 		}
 
 		if (m_mod != 3 && m_rm == 4 && !(pref & PRE_67)) {
@@ -256,6 +259,7 @@ no_error_operand:
 		case 4:
 			hs->flags |= F_DISP32;
 			hs->disp.disp32 = *(uint32_t*)p;
+			break;
 		}
 		p += disp_size;
 	} else if (pref & PRE_LOCK)
