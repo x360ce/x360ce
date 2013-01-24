@@ -570,6 +570,7 @@ void iHook::HookDI()
 
 void iHook::HookDIClean()
 {
+	WriteLog(LOG_HOOKDI,L"HookDI Clean");
 	if(hGetDeviceInfoA)
 	{
 		WriteLog(LOG_HOOKDI, L"HookGetDeviceInfoA:: Removing Hook");

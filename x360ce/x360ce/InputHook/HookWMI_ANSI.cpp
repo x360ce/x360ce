@@ -394,6 +394,7 @@ void iHook::HookWMI_ANSI()
 
 void iHook::HookWMI_ANSI_Clean()
 {
+	WriteLog(LOG_HOOKWMI,L"HookWMIA Clean");
 	if(hGetA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");

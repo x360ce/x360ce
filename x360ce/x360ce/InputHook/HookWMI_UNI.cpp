@@ -394,6 +394,7 @@ void iHook::HookWMI_UNI()
 
 void iHook::HookWMI_UNI_Clean()
 {
+	WriteLog(LOG_HOOKWMI,L"HookWMIU Clean");
 	if(hGetW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetW:: Removing Hook");

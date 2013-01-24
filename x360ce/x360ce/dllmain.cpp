@@ -24,6 +24,7 @@
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
+#include <process.h>
 
 CRITICAL_SECTION cs;
 
@@ -31,7 +32,7 @@ HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
 
 extern HWND g_hWnd;
-iHook g_iHook;
+iHook* g_iHook;
 
 void LoadXInputDLL(HMODULE &hMod = hNative)
 {
@@ -64,7 +65,7 @@ void LoadXInputDLL(HMODULE &hMod = hNative)
 
 VOID InstallInputHooks()
 {
-	if(g_iHook.GetState())
+	if(g_iHook->GetState())
 	{
 		for(WORD i = 0; i < g_Gamepads.size(); i++)
 		{
@@ -72,11 +73,29 @@ VOID InstallInputHooks()
 			padconf.Enable();
 			padconf.SetProductGUID(g_Gamepads[i].productGUID);
 			padconf.SetInstanceGUID(g_Gamepads[i].instanceGUID);
-			g_iHook.AddHook(padconf);
+			g_iHook->AddHook(padconf);
 		}
 	}
 
-	g_iHook.ExecuteHooks();
+	g_iHook->ExecuteHooks();
+}
+
+VOID ExitInstance()
+{
+	EnterCriticalSection(&cs);
+
+	FreeDinput();
+	SAFE_DELETE(g_iHook);
+	SAFE_DELETE(hNative)
+
+	if(IsWindow(g_hWnd)) SendMessage(g_hWnd,MYQUITMSG,NULL,NULL);
+
+	WriteLog(LOG_CORE,L"x360ce terminating, bye");
+
+	LogCleanup();
+
+	LeaveCriticalSection(&cs);
+	DeleteCriticalSection(&cs);
 }
 
 VOID InitInstance(HINSTANCE hinstDLL)
@@ -93,6 +112,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	InitializeCriticalSection(&cs);
 	EnterCriticalSection(&cs);
     hThis =  hinstDLL;
+
+	g_iHook = new iHook;
 
 	InI ini;
     ini.SetIniFileName(L"x360ce.ini");
@@ -112,29 +133,6 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
     InstallInputHooks();
 	LeaveCriticalSection(&cs);
-}
-
-VOID ExitInstance()
-{
-	EnterCriticalSection(&cs);
-
-	FreeDinput();
-
-    if (hNative)
-    {
-        FreeLibrary(hNative);
-        hNative = NULL;
-    }
-
-    if(IsWindow(g_hWnd)) DestroyWindow(g_hWnd);
-    g_hWnd = NULL;
-
-    WriteLog(LOG_CORE,L"x360ce terminating, bye");
-
-    LogCleanup();
-
-	LeaveCriticalSection(&cs);
-	DeleteCriticalSection(&cs);
 }
 
 extern "C" VOID WINAPI reset()
