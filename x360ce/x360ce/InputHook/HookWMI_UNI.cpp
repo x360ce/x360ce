@@ -32,6 +32,8 @@ static iHook *iHookThis = NULL;
 // COM CLSIDs
 #pragma comment(lib,"wbemuuid.lib")
 
+using namespace MologieDetours;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,13 +79,13 @@ typedef HRESULT ( STDMETHODCALLTYPE *tGetW )(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor);
 
-static tCoUninitializeW hCoUninitializeW = NULL;
-static tCoCreateInstanceW hCoCreateInstanceW = NULL;
+Detour<tCoUninitializeW>* hCoUninitializeW = NULL;
+Detour<tCoCreateInstanceW>* hCoCreateInstanceW = NULL;
 
-static tConnectServerW hConnectServerW = NULL;
-static tCreateInstanceEnumW hCreateInstanceEnumW = NULL;
-static tNextW hNextW = NULL;
-static tGetW hGetW = NULL;
+Detour<tConnectServerW>* hConnectServerW = NULL;
+Detour<tCreateInstanceEnumW>* hCreateInstanceEnumW = NULL;
+Detour<tNextW>* hNextW = NULL;
+Detour<tGetW>* hGetW = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +99,7 @@ HRESULT STDMETHODCALLTYPE HookGetW(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
 {
-	HRESULT hr = hGetW(This,wszName,lFlags,pVal,pType,plFlavor);
+	HRESULT hr = hGetW->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hr;
 
@@ -205,7 +207,7 @@ HRESULT STDMETHODCALLTYPE HookNextW(
 	/* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 	/* [out] */ __RPC__out ULONG *puReturned)
 {
-	HRESULT hr = hNextW(This,lTimeout,uCount,apObjects,puReturned);
+	HRESULT hr = hNextW->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hr;
 
@@ -222,25 +224,10 @@ HRESULT STDMETHODCALLTYPE HookNextW(
 		{
 			pDevices = *apObjects;
 
-			if(hGetW != pDevices->lpVtbl->Get)
-			{
-				WriteLog(LOG_HOOKWMI,L"HookGetW:: Release");
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourDetach(&(PVOID&)hGetW, HookGetW);
-				DetourTransactionCommit();
-			}
-
-			if(!hGetW)
+			if(!hGetW && pDevices->lpVtbl->Get)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookGetW:: Hooking");
-				hGetW = pDevices->lpVtbl->Get;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hGetW, HookGetW);
-				DetourTransactionCommit();
+				hGetW = new Detour<tGetW>(pDevices->lpVtbl->Get, HookGetW);
 			}
 		}
 	}
@@ -257,7 +244,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumW(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	HRESULT hr = hCreateInstanceEnumW(This,strFilter,lFlags,pCtx,ppEnum);
+	HRESULT hr = hCreateInstanceEnumW->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hr;
 
@@ -273,15 +260,10 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumW(
 		{
 			pEnumDevices = *ppEnum;
 
-			if(!hNextW)
+			if(!hNextW && pEnumDevices->lpVtbl->Next)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookNextW:: Hooking");
-				hNextW = pEnumDevices->lpVtbl->Next;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hNextW, HookNextW);
-				DetourTransactionCommit();
+				hNextW = new Detour<tNextW>(pEnumDevices->lpVtbl->Next, HookNextW);
 			}
 		}
 	}
@@ -303,7 +285,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServerW(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	HRESULT hr = hConnectServerW(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	HRESULT hr = hConnectServerW->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hr;
 
@@ -319,15 +301,10 @@ HRESULT STDMETHODCALLTYPE HookConnectServerW(
 		{
 			pIWbemServices = *ppNamespace;
 
-			if(!hCreateInstanceEnumW)
+			if(!hCreateInstanceEnumW && pIWbemServices->lpVtbl->CreateInstanceEnum)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumW:: Hooking");
-				hCreateInstanceEnumW = pIWbemServices->lpVtbl->CreateInstanceEnum;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hCreateInstanceEnumW, HookCreateInstanceEnumW);
-				DetourTransactionCommit();
+				hCreateInstanceEnumW = new Detour<tCreateInstanceEnumW>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumW);
 			}
 		}
 	}
@@ -343,7 +320,7 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
 									 __in     REFIID riid,
 									 __deref_out LPVOID FAR* ppv)
 {
-	HRESULT hr = hCoCreateInstanceW(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	HRESULT hr = hCoCreateInstanceW->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hr;
 	WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceW");
@@ -358,19 +335,13 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
 
 		if(pIWbemLocator)
 		{
-			if(!hConnectServerW)
+			if(!hConnectServerW && pIWbemLocator->lpVtbl->ConnectServer)
 			{
 				WriteLog(LOG_HOOKWMI,L"HookConnectServerW:: Hooking");
-				hConnectServerW = pIWbemLocator->lpVtbl->ConnectServer;
-
-				DetourTransactionBegin();
-				DetourUpdateThread(GetCurrentThread());
-				DetourAttach(&(PVOID&)hConnectServerW, HookConnectServerW);
-				DetourTransactionCommit();
+				hConnectServerW = new Detour<tConnectServerW>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerW);
 			}
 		}
 	}
-
 	return hr;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,39 +349,34 @@ HRESULT WINAPI HookCoCreateInstanceW(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeW()
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hCoUninitializeW();
+	if(!iHookThis->CheckHook(iHook::HOOK_WMI)) return hCoUninitializeW->GetOriginalFunction()();
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitializeW");
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
 
 	if(hGetW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetW:: Removing Hook");
-		DetourDetach(&(PVOID&)hGetW, HookGetW);
+		SAFE_DELETE(hGetW);
 	}
 
 	if(hNextW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookNextW:: Removing Hook");
-		DetourDetach(&(PVOID&)hNextW, HookNextW);
+		SAFE_DELETE(hNextW);
 	}
 
 	if(hCreateInstanceEnumW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumW:: Removing Hook");
-		DetourDetach(&(PVOID&)hCreateInstanceEnumW, HookCreateInstanceEnumW);
+		SAFE_DELETE(hCreateInstanceEnumW);;
 	}
 
 	if(hConnectServerW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookConnectServerW:: Removing Hook");
-		DetourDetach(&(PVOID&)hConnectServerW, HookConnectServerW);
+		SAFE_DELETE(hConnectServerW);
 	}
 
-	DetourTransactionCommit();
-
-	return hCoUninitializeW();
+	return hCoUninitializeW->GetOriginalFunction()();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -421,63 +387,46 @@ void iHook::HookWMI_UNI()
 	WriteLog(LOG_HOOKWMI,L"HookWMI:: Hooking");
 	iHookThis = this;
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
-	if(!hCoCreateInstanceW)
-	{
-		hCoCreateInstanceW = CoCreateInstance;
-		DetourAttach(&(PVOID&)hCoCreateInstanceW, HookCoCreateInstanceW);
-	}
-
-	if(!hCoUninitializeW)
-	{
-		hCoUninitializeW = CoUninitialize;
-		DetourAttach(&(PVOID&)hCoUninitializeW, HookCoUninitializeW);
-	}
-	DetourTransactionCommit();
+	if(!hCoCreateInstanceW) hCoCreateInstanceW = new Detour<tCoCreateInstanceW>(CoCreateInstance, HookCoCreateInstanceW);
+	if(!hCoUninitializeW) hCoUninitializeW = new Detour<tCoUninitializeW>(CoUninitialize, HookCoUninitializeW);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void iHook::HookWMI_UNI_Clean()
 {
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
 	if(hGetW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetW:: Removing Hook");
-		DetourDetach(&(PVOID&)hGetW, HookGetW);
+		SAFE_DELETE(hGetW);
 	}
 
 	if(hNextW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookNextW:: Removing Hook");
-		DetourDetach(&(PVOID&)hNextW, HookNextW);
+		SAFE_DELETE(hNextW);
 	}
 
 	if(hCreateInstanceEnumW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumW:: Removing Hook");
-		DetourDetach(&(PVOID&)hCreateInstanceEnumW, HookCreateInstanceEnumW);
+		SAFE_DELETE(hCreateInstanceEnumW);;
 	}
 
 	if(hConnectServerW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookConnectServerW:: Removing Hook");
-		DetourDetach(&(PVOID&)hConnectServerW, HookConnectServerW);
+		SAFE_DELETE(hConnectServerW);
 	}
 
 	if(hCoCreateInstanceW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceW:: Removing Hook");
-		DetourDetach(&(PVOID&)hCoCreateInstanceW, HookCoCreateInstanceW);
+		SAFE_DELETE(hCoCreateInstanceW);
 	}
 
 	if(hCoUninitializeW)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCoUninitializeW:: Removing Hook");
-		DetourDetach(&(PVOID&)hCoUninitializeW, HookCoUninitializeW);
+		SAFE_DELETE(hCoUninitializeW);
 	}
-	DetourTransactionCommit();
 }

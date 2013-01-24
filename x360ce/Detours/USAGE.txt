@@ -1,0 +1,71 @@
+Mologie Detours
+Version 2.0, 2011-06-24
+Cross-platform x86, x86-64 detours
+
+Copyright (c) 2011 Oliver Kuckertz
+Licensed under the MIT license, http://www.opensource.org/licenses/mit-license.php
+
+
+Basic usage:
+
+0) Include hde.cpp into your project or create a library from it and statically link it.
+
+1) Define a new type:
+
+typedef int (*tPrintIntegers)(int, int);
+
+Make sure to specify the correct calling convention. On unixes, this is always cdecl.
+For WinAPI functions, this is always stdcall.
+To define a type with a calling convention use:
+
+typedef int (__cdecl *tPrintIntegers)(int, int);
+
+
+2) Create a global variable for the class instance (only required if you have to call the original function):
+
+MologieDetours::Detour<tPrintIntegers>* detour_PrintIntegers = NULL;
+
+
+3) Create the detour function. Its type must match the original function's type.
+
+int hook_PrintIntegers(int param1, int param2)
+{
+	return detour_PrintIntegers->GetOriginalFunction()(param1, param2);
+}
+
+
+4) Create the detour in your program's initialization routine:
+
+try
+{
+	detour_PrintIntegers = new MologieDetours::Detour<tPrintIntegers>(PrintIntegers, hook_PrintIntegers);
+}
+catch(MologieDetours::DetourException &e)
+{
+	// Handle error
+}
+
+
+5) Remove the detour
+
+delete detour_PrintIntegers;
+
+
+Changelog:
+
+Version 2.0:
+	Added automated reverting if the target function has not been changed since the last access
+	Added different types of exceptions are thrown depending on the error
+	Fixed memory allocated by other code was made read-only which lead to crashes
+	Fixed rare crash scenario if a function's first 5 bytes were on two different pages on Linux
+	Fixed headers on GCC
+
+Version 2.0-alpha:
+	Added DoxyGen documentation
+	Added HDE as replacement for LDE
+	Added x86-64 support
+	Removed LDE
+	Fixed bug in constructor for creating a detour using a module handle and exported function name
+
+Version 1.1:
+	Fixed issue in Revert() if code has been relocated

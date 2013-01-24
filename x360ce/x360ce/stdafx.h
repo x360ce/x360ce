@@ -52,5 +52,6 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <xinput.h>

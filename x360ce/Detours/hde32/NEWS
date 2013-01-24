@@ -1,0 +1,27 @@
+version 0.28.01 [2009.03.09]
+ + updated to HDE32 0.28
+
+version 0.27.01 [2009.01.02]
+ + fixed bug: error setting 0x800000 flag to "hde32s.flags" when no prefixes
+
+version 0.25.01 [2008.10.08]
+ + updated to HDE32 0.25
+
+version 0.24.01 [2008.09.11]
+ + updated to HDE32 0.24
+
+version 0.20.01 [2008.09.06]
+ + updated to HDE32 0.20
+
+version 0.19.01 [2008.08.28]
+ + updated to HDE32 0.19
+
+version 0.15.01 [2008.08.16]
+ + updated to HDE32 0.15
+ + new version format: x.xx.yy, x.xx - base HDE32 version, yy - HDE32C version
+
+version 0.02 [2008.08.09] (new version format: 0.13.02)
+ + added readme.txt and license.txt
+
+version 0.01 [2008.08.04] (new version format: 0.13.01)
+ + first release
