@@ -52,6 +52,7 @@ void iHook::HookWinTrust()
 
 void iHook::HookWinTrustClean()
 {
+	WriteLog(LOG_HOOKWT,L"HookWT Clean");
 	if(hWinVerifyTrust)
 	{
 		WriteLog(LOG_HOOKWT, L"HookWinVerifyTrust:: Removing Hook");

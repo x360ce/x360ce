@@ -29,6 +29,8 @@
 #define TOSTRING(x) STRINGIFY(x)
 #define bytesof(a, b) ((a) * sizeof(b))
 
+#define MYQUITMSG WM_USER+1
+
 #endif
 
 

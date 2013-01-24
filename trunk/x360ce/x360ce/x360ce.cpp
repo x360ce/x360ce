@@ -1,18 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2011 Robert Krawczyk
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
+*  Copyright (C) 2002-2010 Racer_S
+*  Copyright (C) 2010-2011 Robert Krawczyk
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "stdafx.h"
 #include "globals.h"
@@ -24,7 +24,7 @@
 #include "InputHook\InputHook.h"
 
 XINPUT_ENABLE XInputIsEnabled;
-extern iHook g_iHook;
+extern iHook* g_iHook;
 HWND g_hWnd;
 
 extern CRITICAL_SECTION cs;
@@ -111,6 +111,31 @@ inline VOID InitalizeFunction(funcType func, HMODULE hMod = hNative)
 	}
 }
 
+WNDPROC oldWndProc;
+LRESULT CALLBACK WndProc(
+	__in  HWND hWnd,
+	__in  UINT uMsg,
+	__in  WPARAM wParam,
+	__in  LPARAM lParam
+	)
+
+{	
+	switch ( uMsg )
+	{
+	case MYQUITMSG:
+		{
+			EnterCriticalSection(&cs);
+			SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG) oldWndProc);
+
+			WriteLog(LOG_CORE,L"Destroying message window");
+			DestroyWindow(g_hWnd);
+			g_hWnd = NULL;
+			LeaveCriticalSection(&cs);
+			break;
+		}
+	}
+	return CallWindowProc(oldWndProc, hWnd, uMsg, wParam, lParam);
+}
 
 VOID MakeWindow()
 {
@@ -129,6 +154,8 @@ VOID MakeWindow()
 
 	if(!g_hWnd)
 		WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+
+	oldWndProc = (WNDPROC) SetWindowLong(g_hWnd,GWL_WNDPROC,(LONG)WndProc);
 }
 
 HRESULT XInit(DINPUT_GAMEPAD &gamepad)
@@ -144,9 +171,9 @@ HRESULT XInit(DINPUT_GAMEPAD &gamepad)
 
 		if(!gamepad.pGamepad)
 		{
-			if(g_iHook.CheckHook(iHook::HOOK_DI))
+			if(g_iHook->CheckHook(iHook::HOOK_DI))
 			{
-				g_iHook.DisableHook(iHook::HOOK_DI);
+				g_iHook->DisableHook(iHook::HOOK_DI);
 				WriteLog(LOG_CORE,L"Temporary disable HookDI");
 			}
 
@@ -165,9 +192,9 @@ HRESULT XInit(DINPUT_GAMEPAD &gamepad)
 				WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",gamepad.dwUserIndex+1);
 			}
 
-			if(!g_iHook.CheckHook(iHook::HOOK_DI) )
+			if(!g_iHook->CheckHook(iHook::HOOK_DI) )
 			{
-				g_iHook.EnableHook(iHook::HOOK_DI);
+				g_iHook->EnableHook(iHook::HOOK_DI);
 				WriteLog(LOG_CORE,L"Restore HookDI state");
 			}
 		}
@@ -191,43 +218,43 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		return nXInputGetState(dwUserIndex,pState);
 	}
 
-    if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
+	if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
-    HRESULT hr = XInit(gamepad);
-    if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	HRESULT hr = XInit(gamepad);
+	if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-    //Update device state if enabled or we not use enable
-    if(XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)
-        hr = UpdateState(gamepad);
+	//Update device state if enabled or we not use enable
+	if(XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)
+		hr = UpdateState(gamepad);
 
-    if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
+	if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
 #if defined(DEBUG) | defined(_DEBUG)
-    //WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
+	//WriteLog(LOG_XINPUT,L"UpdateState %d %d",dwUserIndex,hr);
 #endif
 
-    GamepadMap &PadMap = GamepadMapping[dwUserIndex];
-    XINPUT_STATE &xState = *pState;
+	GamepadMap &PadMap = GamepadMapping[dwUserIndex];
+	XINPUT_STATE &xState = *pState;
 
-    xState.Gamepad.wButtons = 0;
-    xState.Gamepad.bLeftTrigger = 0;
-    xState.Gamepad.bRightTrigger = 0;
-    xState.Gamepad.sThumbLX = 0;
-    xState.Gamepad.sThumbLY = 0;
-    xState.Gamepad.sThumbRX = 0;
-    xState.Gamepad.sThumbRY = 0;
+	xState.Gamepad.wButtons = 0;
+	xState.Gamepad.bLeftTrigger = 0;
+	xState.Gamepad.bRightTrigger = 0;
+	xState.Gamepad.sThumbLX = 0;
+	xState.Gamepad.sThumbLY = 0;
+	xState.Gamepad.sThumbRX = 0;
+	xState.Gamepad.sThumbRY = 0;
 
-    if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled) return ERROR_SUCCESS;
+	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled) return ERROR_SUCCESS;
 
-    // timestamp packet
-    xState.dwPacketNumber=GetTickCount();
+	// timestamp packet
+	xState.dwPacketNumber=GetTickCount();
 
-    // --- Map buttons ---
-    for (int i = 0; i < 10; ++i)
-    {
-        if (((int)PadMap.Button[i] >= 0) && ButtonPressed(PadMap.Button[i],gamepad))
-            xState.Gamepad.wButtons |= buttonIDs[i];
-    }
+	// --- Map buttons ---
+	for (int i = 0; i < 10; ++i)
+	{
+		if (((int)PadMap.Button[i] >= 0) && ButtonPressed(PadMap.Button[i],gamepad))
+			xState.Gamepad.wButtons |= buttonIDs[i];
+	}
 
 	// --- Map POV to the D-pad ---
 	if (((int)PadMap.DpadPOV >= 0) && !PadMap.PovIsButton)
@@ -254,297 +281,297 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 		}
 	}
-    else if(((int)PadMap.DpadPOV < 0) && PadMap.PovIsButton)
-    {
-        for (int i = 0; i < 4; ++i)
-        {
-            if (((int)PadMap.pov[i] >= 0) && ButtonPressed(PadMap.pov[i],gamepad))
-            {
-                xState.Gamepad.wButtons |= povIDs[i];
-            }
-        }
-    }
+	else if(((int)PadMap.DpadPOV < 0) && PadMap.PovIsButton)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			if (((int)PadMap.pov[i] >= 0) && ButtonPressed(PadMap.pov[i],gamepad))
+			{
+				xState.Gamepad.wButtons |= povIDs[i];
+			}
+		}
+	}
 
-    // Created so we can refer to each axis with an ID
-    LONG axis[7] =
-    {
-        gamepad.state.lX,
-        gamepad.state.lY,
-        gamepad.state.lZ,
+	// Created so we can refer to each axis with an ID
+	LONG axis[7] =
+	{
+		gamepad.state.lX,
+		gamepad.state.lY,
+		gamepad.state.lZ,
 		gamepad.state.lRx,
 		gamepad.state.lRy,
-        gamepad.state.lRz,
-        0
-    };
-    LONG slider[2] =
-    {
-        gamepad.state.rglSlider[0],
-        gamepad.state.rglSlider[1]
-    };
+		gamepad.state.lRz,
+		0
+	};
+	LONG slider[2] =
+	{
+		gamepad.state.rglSlider[0],
+		gamepad.state.rglSlider[1]
+	};
 
-    // --- Map triggers ---
-    BYTE *targetTrigger[2] =
-    {
-        &xState.Gamepad.bLeftTrigger,
-        &xState.Gamepad.bRightTrigger
-    };
+	// --- Map triggers ---
+	BYTE *targetTrigger[2] =
+	{
+		&xState.Gamepad.bLeftTrigger,
+		&xState.Gamepad.bRightTrigger
+	};
 
-    for (INT i = 0; i < 2; ++i)
-    {
+	for (INT i = 0; i < 2; ++i)
+	{
 
-        MappingType triggerType = PadMap.Trigger[i].type;
+		MappingType triggerType = PadMap.Trigger[i].type;
 
-        if (triggerType == DIGITAL)
-        {
-            if (ButtonPressed(PadMap.Trigger[i].id,gamepad))
-            {
-                *(targetTrigger[i]) = 255;
-            }
-        }
-        else
-        {
-            LONG *values;
+		if (triggerType == DIGITAL)
+		{
+			if (ButtonPressed(PadMap.Trigger[i].id,gamepad))
+			{
+				*(targetTrigger[i]) = 255;
+			}
+		}
+		else
+		{
+			LONG *values;
 
-            switch (triggerType)
-            {
-            case AXIS:
-            case HAXIS:
-            case CBUT: // add /////////////////////////////////////////////////////////
-                values = axis;
-                break;
+			switch (triggerType)
+			{
+			case AXIS:
+			case HAXIS:
+			case CBUT: // add /////////////////////////////////////////////////////////
+				values = axis;
+				break;
 
-            case SLIDER:
-            case HSLIDER:
-                values = slider;
-                break;
+			case SLIDER:
+			case HSLIDER:
+				values = slider;
+				break;
 
-            default:
-                values = axis;
-                break;
-            }
+			default:
+				values = axis;
+				break;
+			}
 
-            LONG v = 0;
+			LONG v = 0;
 
-            if(PadMap.Trigger[i].id > 0)
-            {
-                v = values[PadMap.Trigger[i].id -1];
-            }
-            else
-            {
-                v = -values[-PadMap.Trigger[i].id -1] - 1;
-            }
+			if(PadMap.Trigger[i].id > 0)
+			{
+				v = values[PadMap.Trigger[i].id -1];
+			}
+			else
+			{
+				v = -values[-PadMap.Trigger[i].id -1] - 1;
+			}
 
-            /*
-            --- v is the full range (-32767 .. +32767) that should be projected to 0...255
+			/*
+			--- v is the full range (-32767 .. +32767) that should be projected to 0...255
 
-            --- Full ranges
-            AXIS:	(	0 to 255 from -32767 to 32767) using axis
-            SLIDER:	(	0 to 255 from -32767 to 32767) using slider
-            ------------------------------------------------------------------------------
-            --- Half ranges
-            HAXIS:	(	0 to 255 from 0 to 32767) using axis
-            HSLIDER:	(	0 to 255 from 0 to 32767) using slider
-            */
+			--- Full ranges
+			AXIS:	(	0 to 255 from -32767 to 32767) using axis
+			SLIDER:	(	0 to 255 from -32767 to 32767) using slider
+			------------------------------------------------------------------------------
+			--- Half ranges
+			HAXIS:	(	0 to 255 from 0 to 32767) using axis
+			HSLIDER:	(	0 to 255 from 0 to 32767) using slider
+			*/
 
-            LONG v2=0;
-            LONG offset=0;
-            LONG scaling=1;
+			LONG v2=0;
+			LONG offset=0;
+			LONG scaling=1;
 
-            switch (triggerType)
-            {
-                // Full range
-            case AXIS:
-            case SLIDER:
-                scaling = 255;
-                offset = 32767;
-                break;
+			switch (triggerType)
+			{
+				// Full range
+			case AXIS:
+			case SLIDER:
+				scaling = 255;
+				offset = 32767;
+				break;
 
-                // Half range
-            case HAXIS:
-            case HSLIDER:
-            case CBUT: // add /////////////////////////////////////////////////////////
-                scaling = 127;
-                offset = 0;
-                break;
+				// Half range
+			case HAXIS:
+			case HSLIDER:
+			case CBUT: // add /////////////////////////////////////////////////////////
+				scaling = 127;
+				offset = 0;
+				break;
 
-            default:
-                scaling = 1;
-                offset = 0;
-                break;
-            }
-
-
-            //v2 = (v + offset) / scaling;
-            // Add deadzones
-            //*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
+			default:
+				scaling = 1;
+				offset = 0;
+				break;
+			}
 
 
-            /////////////////////////////////////////////////////////////////////////////////////////
-            if (triggerType == CBUT)
-            {
-
-                if (ButtonPressed(PadMap.Trigger[0].but,gamepad)
-                        && ButtonPressed(PadMap.Trigger[1].but,gamepad))
-                {
-                    *(targetTrigger[0]) = 255;
-                    *(targetTrigger[1]) = 255;
-                }
-
-                if (ButtonPressed(PadMap.Trigger[0].but,gamepad)
-                        && !ButtonPressed(PadMap.Trigger[1].but,gamepad))
-                {
-                    v2 = (offset-v) / scaling;
-                    *(targetTrigger[0]) = 255;
-                    *(targetTrigger[1]) = 255 - (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
-                }
-
-                if (!ButtonPressed(PadMap.Trigger[0].but,gamepad)
-                        && ButtonPressed(PadMap.Trigger[1].but,gamepad))
-                {
-                    v2 = (offset+v) / scaling;
-                    *(targetTrigger[0]) = 255 - (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
-                    *(targetTrigger[1]) = 255;
-                }
-
-                if (!ButtonPressed(PadMap.Trigger[0].but,gamepad)
-                        && !ButtonPressed(PadMap.Trigger[1].but,gamepad))
-                {
-                    v2 = (offset+v) / scaling;
-                    *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
-                }
-
-            }
-            else
-            {
-                v2 = (offset+v) / scaling;
-                *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
-            }
-
-            /////////////////////////////////////////////////////////////////////////////////////////
+			//v2 = (v + offset) / scaling;
+			// Add deadzones
+			//*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
 
 
+			/////////////////////////////////////////////////////////////////////////////////////////
+			if (triggerType == CBUT)
+			{
 
-        }
-    }
+				if (ButtonPressed(PadMap.Trigger[0].but,gamepad)
+					&& ButtonPressed(PadMap.Trigger[1].but,gamepad))
+				{
+					*(targetTrigger[0]) = 255;
+					*(targetTrigger[1]) = 255;
+				}
 
-    // --- Map thumbsticks ---
+				if (ButtonPressed(PadMap.Trigger[0].but,gamepad)
+					&& !ButtonPressed(PadMap.Trigger[1].but,gamepad))
+				{
+					v2 = (offset-v) / scaling;
+					*(targetTrigger[0]) = 255;
+					*(targetTrigger[1]) = 255 - (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
+				}
 
-    // Created so we can refer to each axis with an ID
-    SHORT *targetAxis[4] =
-    {
-        &xState.Gamepad.sThumbLX,
-        &xState.Gamepad.sThumbLY,
-        &xState.Gamepad.sThumbRX,
-        &xState.Gamepad.sThumbRY
-    };
+				if (!ButtonPressed(PadMap.Trigger[0].but,gamepad)
+					&& ButtonPressed(PadMap.Trigger[1].but,gamepad))
+				{
+					v2 = (offset+v) / scaling;
+					*(targetTrigger[0]) = 255 - (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
+					*(targetTrigger[1]) = 255;
+				}
 
-    // NOTE: Could add symbolic constants as indexers, such as
-    // THUMB_LX_AXIS, THUMB_LX_POSITIVE, THUMB_LX_NEGATIVE
-    if(gamepad.axistodpad==0)
-    {
+				if (!ButtonPressed(PadMap.Trigger[0].but,gamepad)
+					&& !ButtonPressed(PadMap.Trigger[1].but,gamepad))
+				{
+					v2 = (offset+v) / scaling;
+					*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
+				}
+
+			}
+			else
+			{
+				v2 = (offset+v) / scaling;
+				*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, gamepad.tdeadzone, 255);
+			}
+
+			/////////////////////////////////////////////////////////////////////////////////////////
 
 
-        for (INT i = 0; i < 4; ++i)
-        {
-            LONG *values = axis;
 
-            // Analog input
-            if (PadMap.Axis[i].analogType == AXIS) values = axis;
+		}
+	}
 
-            if (PadMap.Axis[i].analogType == SLIDER) values = slider;
+	// --- Map thumbsticks ---
 
-            if (PadMap.Axis[i].analogType != NONE)
-            {
+	// Created so we can refer to each axis with an ID
+	SHORT *targetAxis[4] =
+	{
+		&xState.Gamepad.sThumbLX,
+		&xState.Gamepad.sThumbLY,
+		&xState.Gamepad.sThumbRX,
+		&xState.Gamepad.sThumbRY
+	};
 
-                if(PadMap.Axis[i].id > 0 )
-                {
-                    SHORT val = (SHORT) values[PadMap.Axis[i].id - 1];
-                    *(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
-                }
-                else if(PadMap.Axis[i].id < 0 )
-                {
-                    SHORT val = (SHORT) -values[-PadMap.Axis[i].id - 1];
-                    *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
-                }
-            }
+	// NOTE: Could add symbolic constants as indexers, such as
+	// THUMB_LX_AXIS, THUMB_LX_POSITIVE, THUMB_LX_NEGATIVE
+	if(gamepad.axistodpad==0)
+	{
 
-            // Digital input, positive direction
-            if (PadMap.Axis[i].hasDigital && PadMap.Axis[i].positiveButtonID >= 0)
-            {
 
-                if (ButtonPressed(PadMap.Axis[i].positiveButtonID,gamepad))
-                    *(targetAxis[i]) = 32767;
-            }
+		for (INT i = 0; i < 4; ++i)
+		{
+			LONG *values = axis;
 
-            // Digital input, negative direction
-            if (PadMap.Axis[i].hasDigital && PadMap.Axis[i].negativeButtonID >= 0)
-            {
+			// Analog input
+			if (PadMap.Axis[i].analogType == AXIS) values = axis;
 
-                if (ButtonPressed(PadMap.Axis[i].negativeButtonID,gamepad))
-                    *(targetAxis[i]) = -32767;
-            }
-        }
-    }
+			if (PadMap.Axis[i].analogType == SLIDER) values = slider;
 
-    //WILDS - Axis to D-Pad
-    if(gamepad.axistodpad==1)
-    {
-        //WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
+			if (PadMap.Axis[i].analogType != NONE)
+			{
 
-        if(gamepad.state.lX - gamepad.axistodpadoffset > gamepad.axistodpaddeadzone)
-            xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
+				if(PadMap.Axis[i].id > 0 )
+				{
+					SHORT val = (SHORT) values[PadMap.Axis[i].id - 1];
+					*(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
+				}
+				else if(PadMap.Axis[i].id < 0 )
+				{
+					SHORT val = (SHORT) -values[-PadMap.Axis[i].id - 1];
+					*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
+				}
+			}
 
-        if(gamepad.state.lX - gamepad.axistodpadoffset < -gamepad.axistodpaddeadzone)
-            xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
+			// Digital input, positive direction
+			if (PadMap.Axis[i].hasDigital && PadMap.Axis[i].positiveButtonID >= 0)
+			{
 
-        if(gamepad.state.lY - gamepad.axistodpadoffset < -gamepad.axistodpaddeadzone)
-            xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
+				if (ButtonPressed(PadMap.Axis[i].positiveButtonID,gamepad))
+					*(targetAxis[i]) = 32767;
+			}
 
-        if(gamepad.state.lY - gamepad.axistodpadoffset > gamepad.axistodpaddeadzone)
-            xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
-    }
+			// Digital input, negative direction
+			if (PadMap.Axis[i].hasDigital && PadMap.Axis[i].negativeButtonID >= 0)
+			{
 
-    //WILDS END
+				if (ButtonPressed(PadMap.Axis[i].negativeButtonID,gamepad))
+					*(targetAxis[i]) = -32767;
+			}
+		}
+	}
 
-    for (int i = 0; i < 4; ++i)
-    {
+	//WILDS - Axis to D-Pad
+	if(gamepad.axistodpad==1)
+	{
+		//WriteLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
 
-        if (gamepad.antidz[i])
-        {
-            SHORT antidz = gamepad.antidz[i];
-            LONG val = *(targetAxis[i]);
-            SHORT direction = val > 0 ? 1 : -1;
-            val = (LONG)(abs(val) / (32767 / (32767 - antidz * 1.0)) + antidz);
-            val = min(val, 32767);
+		if(gamepad.state.lX - gamepad.axistodpadoffset > gamepad.axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 
-            if(val == gamepad.antidz[i] || val == -gamepad.antidz[i]) val = 0;
+		if(gamepad.state.lX - gamepad.axistodpadoffset < -gamepad.axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
 
-            *(targetAxis[i]) = (SHORT) (direction * val);
-        }
+		if(gamepad.state.lY - gamepad.axistodpadoffset < -gamepad.axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
 
-        if (gamepad.adeadzone[i])
-        {
-            SHORT dz = gamepad.adeadzone[i];
-            LONG val = *(targetAxis[i]);
+		if(gamepad.state.lY - gamepad.axistodpadoffset > gamepad.axistodpaddeadzone)
+			xState.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
+	}
 
-            if((val <= dz) && (val >= -dz) ) val = 0;
+	//WILDS END
 
-            *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
-        }
+	for (int i = 0; i < 4; ++i)
+	{
 
-        // --- Do Linears ---
+		if (gamepad.antidz[i])
+		{
+			SHORT antidz = gamepad.antidz[i];
+			LONG val = *(targetAxis[i]);
+			SHORT direction = val > 0 ? 1 : -1;
+			val = (LONG)(abs(val) / (32767 / (32767 - antidz * 1.0)) + antidz);
+			val = min(val, 32767);
 
-        if (gamepad.axislinear[i])
-        {
+			if(val == gamepad.antidz[i] || val == -gamepad.antidz[i]) val = 0;
 
-            SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (gamepad.axislinear[i] * 0.01))));
-            *(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
-        }
-    }
+			*(targetAxis[i]) = (SHORT) (direction * val);
+		}
 
-    if(SUCCEEDED(hr)) return ERROR_SUCCESS;
+		if (gamepad.adeadzone[i])
+		{
+			SHORT dz = gamepad.adeadzone[i];
+			LONG val = *(targetAxis[i]);
 
-    return ERROR_DEVICE_NOT_CONNECTED;
+			if((val <= dz) && (val >= -dz) ) val = 0;
+
+			*(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
+		}
+
+		// --- Do Linears ---
+
+		if (gamepad.axislinear[i])
+		{
+
+			SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (gamepad.axislinear[i] * 0.01))));
+			*(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
+		}
+	}
+
+	if(SUCCEEDED(hr)) return ERROR_SUCCESS;
+
+	return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
@@ -554,55 +581,55 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
-    if(gamepad.passthrough)
-    {
+	if(gamepad.passthrough)
+	{
 		InitalizeFunction(SETSTATE);
 		return nXInputSetState(dwUserIndex,pVibration);
-    }
+	}
 
-    if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
+	if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
-    HRESULT hr=ERROR_SUCCESS;
+	HRESULT hr=ERROR_SUCCESS;
 
-    XINPUT_VIBRATION &xVib = *pVibration;
+	XINPUT_VIBRATION &xVib = *pVibration;
 
-    //WriteLog(LOG_XINPUT,L"%u",xVib.wLeftMotorSpeed);
-    //WriteLog(LOG_XINPUT,L"%u",xVib.wRightMotorSpeed);
+	//WriteLog(LOG_XINPUT,L"%u",xVib.wLeftMotorSpeed);
+	//WriteLog(LOG_XINPUT,L"%u",xVib.wRightMotorSpeed);
 
-    if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(!gamepad.ff.useforce) return ERROR_SUCCESS;
+	if(!gamepad.ff.useforce) return ERROR_SUCCESS;
 
-    WORD wLeftMotorSpeed = 0;
-    WORD wRightMotorSpeed = 0;
+	WORD wLeftMotorSpeed = 0;
+	WORD wRightMotorSpeed = 0;
 
-    PrepareForce(gamepad,FFB_LEFTMOTOR);
-    PrepareForce(gamepad,FFB_RIGHTMOTOR);
+	PrepareForce(gamepad,FFB_LEFTMOTOR);
+	PrepareForce(gamepad,FFB_RIGHTMOTOR);
 
-    if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
-    {
-        SetDeviceForces(gamepad,0,FFB_LEFTMOTOR);
-        SetDeviceForces(gamepad,0,FFB_RIGHTMOTOR);
-        return ERROR_SUCCESS;
-    }
+	if(!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
+	{
+		SetDeviceForces(gamepad,0,FFB_LEFTMOTOR);
+		SetDeviceForces(gamepad,0,FFB_RIGHTMOTOR);
+		return ERROR_SUCCESS;
+	}
 
-    WORD left =  static_cast<WORD>(xVib.wLeftMotorSpeed * gamepad.ff.forcepercent);
-    WORD right = static_cast<WORD>(xVib.wRightMotorSpeed * gamepad.ff.forcepercent);
+	WORD left =  static_cast<WORD>(xVib.wLeftMotorSpeed * gamepad.ff.forcepercent);
+	WORD right = static_cast<WORD>(xVib.wRightMotorSpeed * gamepad.ff.forcepercent);
 
 	wLeftMotorSpeed = gamepad.swapmotor ? right : left;
 	wRightMotorSpeed = gamepad.swapmotor ? left : right;
 
-    hr = SetDeviceForces(gamepad,wLeftMotorSpeed,FFB_LEFTMOTOR);
+	hr = SetDeviceForces(gamepad,wLeftMotorSpeed,FFB_LEFTMOTOR);
 
-    if(FAILED(hr))
-        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
+	if(FAILED(hr))
+		WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
 
-    hr = SetDeviceForces(gamepad,wRightMotorSpeed,FFB_RIGHTMOTOR);
+	hr = SetDeviceForces(gamepad,wRightMotorSpeed,FFB_RIGHTMOTOR);
 
-    if(FAILED(hr))
-        WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
+	if(FAILED(hr))
+		WriteLog(LOG_XINPUT,L"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
@@ -612,53 +639,53 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
-    if(gamepad.passthrough)
-    {
+	if(gamepad.passthrough)
+	{
 		InitalizeFunction(GETCAPS);
 		return nXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
-    }
+	}
 
-    if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
+	if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
 
-    XINPUT_CAPABILITIES &xCaps = *pCapabilities;
-    xCaps.Type = 0;
-    xCaps.SubType = gamepad.gamepadtype; //customizable subtype
-    xCaps.Flags = 0; // we do not support sound
-    xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFF;
-    xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
+	XINPUT_CAPABILITIES &xCaps = *pCapabilities;
+	xCaps.Type = 0;
+	xCaps.SubType = gamepad.gamepadtype; //customizable subtype
+	xCaps.Flags = 0; // we do not support sound
+	xCaps.Vibration.wLeftMotorSpeed = xCaps.Vibration.wRightMotorSpeed = 0xFF;
+	xCaps.Gamepad.bLeftTrigger = xCaps.Gamepad.bRightTrigger = 0xFF;
 
-    xCaps.Gamepad.sThumbLX = (SHORT) -64;
-    xCaps.Gamepad.sThumbLY = (SHORT) -64;
-    xCaps.Gamepad.sThumbRX = (SHORT) -64;
-    xCaps.Gamepad.sThumbRY = (SHORT) -64;
-    xCaps.Gamepad.wButtons = (WORD) 0xF3FF;
+	xCaps.Gamepad.sThumbLX = (SHORT) -64;
+	xCaps.Gamepad.sThumbLY = (SHORT) -64;
+	xCaps.Gamepad.sThumbRX = (SHORT) -64;
+	xCaps.Gamepad.sThumbRY = (SHORT) -64;
+	xCaps.Gamepad.wButtons = (WORD) 0xF3FF;
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
 	if(g_Disable) return;
-    if(wNativeMode)
-    {
+	if(wNativeMode)
+	{
 		InitalizeFunction(ENABLE);
 		nXInputEnable(enable);
-    }
+	}
 
-    /*
-    Nasty trick to support XInputEnable states, because not every game calls it so:
-    - must support games that use it, and do enable/disable as needed by game
-    if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return Hook S_OK, ie. connected but state not updating
-    if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
-    - must support games that not call it
-    if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states
-    */
+	/*
+	Nasty trick to support XInputEnable states, because not every game calls it so:
+	- must support games that use it, and do enable/disable as needed by game
+	if bEnabled is FALSE and bUseEnabled is TRUE = gamepad is disabled -> return Hook S_OK, ie. connected but state not updating
+	if bEnabled is TRUE and bUseEnabled is TRUE = gamepad is enabled -> continue, ie. connected and updating state
+	- must support games that not call it
+	if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states
+	*/
 
-    XInputIsEnabled.bEnabled = (enable != 0);
-    XInputIsEnabled.bUseEnabled = true;
+	XInputIsEnabled.bEnabled = (enable != 0);
+	XInputIsEnabled.bUseEnabled = true;
 
-    if(enable) WriteLog(LOG_XINPUT,L"XInput Enabled");
-    else WriteLog(LOG_XINPUT,L"XInput Disabled");
+	if(enable) WriteLog(LOG_XINPUT,L"XInput Enabled");
+	else WriteLog(LOG_XINPUT,L"XInput Disabled");
 
 }
 
@@ -669,20 +696,20 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
 
-    if(gamepad.passthrough)
-    {
+	if(gamepad.passthrough)
+	{
 		InitalizeFunction(AUDIO);
 		return nXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
-    }
+	}
 
-    if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
+	if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
-    if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-    *pDSoundRenderGuid = GUID_NULL;
-    *pDSoundCaptureGuid = GUID_NULL;
+	*pDSoundRenderGuid = GUID_NULL;
+	*pDSoundCaptureGuid = GUID_NULL;
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
@@ -691,22 +718,22 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-    if(gamepad.passthrough)
-    {
+	if(gamepad.passthrough)
+	{
 		InitalizeFunction(BATTERY);
 		return nXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
-    }
+	}
 
-    if (!pBatteryInformation || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
+	if (!pBatteryInformation || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
-    if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
-    // Report a wired controller
-    XINPUT_BATTERY_INFORMATION &xBatInfo = *pBatteryInformation;
-    xBatInfo.BatteryLevel = BATTERY_LEVEL_FULL;
-    xBatInfo.BatteryType = BATTERY_TYPE_WIRED;
+	// Report a wired controller
+	XINPUT_BATTERY_INFORMATION &xBatInfo = *pBatteryInformation;
+	xBatInfo.BatteryLevel = BATTERY_LEVEL_FULL;
+	xBatInfo.BatteryType = BATTERY_TYPE_WIRED;
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
@@ -715,17 +742,17 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	if(dwUserIndex > g_Gamepads.size()) return ERROR_DEVICE_NOT_CONNECTED;
 
 	DINPUT_GAMEPAD &gamepad = g_Gamepads[dwUserIndex];
-    if(gamepad.passthrough)
+	if(gamepad.passthrough)
 	{
 		//WriteLog(LOG_XINPUT,L"flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
 		InitalizeFunction(KEYSTROKE);
 		return nXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
-  }
+	}
 
-    if (!pKeystroke || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
+	if (!pKeystroke || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
-    if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
+	if(!gamepad.pGamepad) return ERROR_DEVICE_NOT_CONNECTED;
 
 	XINPUT_KEYSTROKE &xkey = *pKeystroke;
 

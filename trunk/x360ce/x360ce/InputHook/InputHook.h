@@ -83,7 +83,7 @@ private:
 class iHook
 {
 public:
-	iHook::iHook()
+	iHook()
 		:dwHookMode(0)
 		,dwHookVIDPID(MAKELONG(0x045E,0x028E)) 
 	{InitializeCriticalSection(&cs);}
@@ -186,6 +186,12 @@ public:
 		LeaveCriticalSection(&cs);
 		return;
 	}
+
+	inline VOID Clean()
+	{
+
+	}
+
 
 private:
 	DWORD dwHookMode;

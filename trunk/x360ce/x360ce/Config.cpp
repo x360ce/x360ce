@@ -28,7 +28,7 @@ WORD wNativeMode=0;
 
 BOOL g_Disable;
 
-extern iHook g_iHook;
+extern iHook* g_iHook;
 
 static LPCWSTR buttonNames[] =
 {
@@ -122,24 +122,24 @@ void ReadConfig(InI &ini)
     tmp = ini.ReadLongFromFile(L"InputHook", L"HookMode",0);
 
 	//TODO: make this nicer
-	if(tmp == 1) g_iHook.SetMode(iHook::HOOK_WMI);
-	if(tmp == 2) g_iHook.SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI);
-	if(tmp == 3) g_iHook.SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
-	if(tmp >  3) g_iHook.SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
+	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WMI);
+	if(tmp == 2) g_iHook->SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI);
+	if(tmp == 3) g_iHook->SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
+	if(tmp >  3) g_iHook->SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
 
-	if(tmp > 0) g_iHook.Enable();
+	if(tmp > 0) g_iHook->Enable();
 	
 	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookUseANSI",0);
-	if(tmp == 1) g_iHook.SetMode(iHook::HOOK_WMIA);
+	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WMIA);
 
     tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
-	if(tmp == 1) g_iHook.SetMode(iHook::HOOK_TRUST);
+	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_TRUST);
 
-	if(g_iHook.GetState())
+	if(g_iHook->GetState())
 	{
 		DWORD vid = ini.ReadLongFromFile(L"InputHook", L"HookVID",0x045E);
 		DWORD pid = ini.ReadLongFromFile(L"InputHook", L"HookPID",0x028E);
-		if(vid != 0x045E || pid != 0x28E) g_iHook.SetFakeVIDPID(MAKELONG(vid,pid));
+		if(vid != 0x045E || pid != 0x28E) g_iHook->SetFakeVIDPID(MAKELONG(vid,pid));
 	}
 
     // Read pad mappings
