@@ -849,7 +849,7 @@ DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 
 	//WriteLog(LOG_XINPUT,L"XInputGetStateEx %u",xState.Gamepad.wButtons);
 
-	return ERROR_SUCCESS;
+	return XInputGetState(dwUserIndex,pState);
 }
 
 DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
