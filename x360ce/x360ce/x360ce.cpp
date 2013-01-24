@@ -136,7 +136,7 @@ LRESULT CALLBACK WndProc(
 				hNative = NULL;
 			}
 
-			SetWindowLongPtr(g_hWnd, GWLP_WNDPROC, (LONG) oldWndProc);
+			SetWindowLongPtr(g_hWnd, GWLP_WNDPROC, (LONG_PTR) oldWndProc);
 			WriteLog(LOG_CORE,L"Destroying message window");
 			DestroyWindow(g_hWnd);
 			g_hWnd = NULL;
@@ -166,7 +166,7 @@ VOID MakeWindow()
 	if(!g_hWnd)
 		WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
 
-	oldWndProc = (WNDPROC) SetWindowLongPtr(g_hWnd,GWLP_WNDPROC,(LONG)WndProc);
+	oldWndProc = (WNDPROC) SetWindowLongPtr(g_hWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
 }
 
 HRESULT XInit(DINPUT_GAMEPAD &gamepad)
