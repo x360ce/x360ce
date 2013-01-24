@@ -29,8 +29,9 @@
  * @todo	Expand relative opcodes which can not be relocated
  * @todo	Other detour types, maybe use/write a mutation engine
  */
-
+#ifdef _MSVC_VER
 #pragma warning(disable:4244)
+#endif
 
 #ifndef INCLUDED_LIB_MOLOGIE_DETOURS_DETOURS_H
 #define INCLUDED_LIB_MOLOGIE_DETOURS_DETOURS_H
@@ -207,6 +208,23 @@ namespace MologieDetours
 		}
 #ifdef WIN32
 		/**
+		 * @fn	Detour::Detour(const char* moduleName, const char* lpProcName, function_type pDetour)
+		 *
+		 * @brief	Creates a new local detour on an exported function.
+		 *
+		 * @author	Kai Uwe Jesussek
+		 * @date	06.11.2011
+		 *
+		 * @param	moduleName  The Name of the module.
+		 * @param	lpProcName	Name of the pointer to a proc.
+		 * @param	pDetour   	The detour.
+		 */
+		Detour(const char* moduleName, const char* lpProcName, function_type pDetour)
+			: pSource_(reinterpret_cast<function_type>(GetProcAddress(GetModuleHandle(moduleName), lpProcName))), pDetour_(pDetour), instructionCount_(0)
+		{
+			CreateDetour();
+		}
+		/**
 		 * @fn	Detour::Detour(HMODULE module, const char* lpProcName, function_type pDetour)
 		 *
 		 * @brief	Creates a new local detour on an exported function.
@@ -245,7 +263,7 @@ namespace MologieDetours
 				// Attempt to revert
 				Revert();
 			}
-			catch(DetourException)
+			catch(DetourException &)
 			{
 				// Reverting failed, redirect trampoline to original code instead
 				*reinterpret_cast<address_pointer_type>(trampoline_ + 1) = backupOriginalCode_ - trampoline_ - MOLOGIE_DETOURS_DETOUR_SIZE;
@@ -424,7 +442,7 @@ namespace MologieDetours
 
 			// Flush instruction cache on Windows
 #ifdef WIN32
-			FlushInstructionCache(GetCurrentProcess(), pSource_, MOLOGIE_DETOURS_DETOUR_SIZE);
+			FlushInstructionCache(GetCurrentProcess(), (const void*) pSource_, MOLOGIE_DETOURS_DETOUR_SIZE);
 #endif
 		}
 
@@ -512,9 +530,9 @@ namespace MologieDetours
 				if(hs.flags & F_RELATIVE)
 				{
 #if defined(MOLOGIE_DETOURS_HDE_32)
-					if(hs.flags & F_IMM8 || hs.flags & F_IMM16)
+					if((hs.flags & F_IMM8) || (hs.flags & F_IMM16))
 #elif defined(MOLOGIE_DETOURS_HDE64)
-					if(hs.flags & F_IMM8 || hs.flags & F_IMM16 || hs.flags & F_IMM32)
+					if((hs.flags & F_IMM8) || (hs.flags & F_IMM16) || (hs.flags & F_IMM32))
 #endif
 					{
 						// Oh noes! We shouldn't continue here.
@@ -635,7 +653,7 @@ namespace MologieDetours
 		 * @exception	DetourPageProtectionException	Thrown when the page protection of the IAT table
 		 * 												can not be changed.
 		 */
-		virtual ~DetourImport()
+		~DetourImport()
 		{
 			// Only continue if another application did not modify the IAT after us.
 			// This should not happen, usually.
@@ -650,7 +668,6 @@ namespace MologieDetours
 
 			if(!MOLOGIE_DETOURS_MEMORY_UNPROTECT(pSource_, sizeof(pSource_), dwProt))
 			{
-				// Raising exception inside the destructor is illegal 
 				//throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
 			}
 
@@ -658,7 +675,6 @@ namespace MologieDetours
 
 			if(!MOLOGIE_DETOURS_MEMORY_REPROTECT(pSource_, sizeof(pSource_), dwProt))
 			{
-				// Raising exception inside the destructor is illegal 
 				//throw DetourPageProtectionException("Failed to change page protection of IAT", reinterpret_cast<void*>(pSource_));
 			}
 		}
@@ -737,12 +753,12 @@ namespace MologieDetours
 		 */
 		bool IsHotpatchable()
 		{
-			constuint8_t movEdiEdi[] = { 0x8B, 0xFF };
+			const uint8_t movEdiEdi[] = { 0x8B, 0xFF };
 
 			bool haveNops = true;
-			bool haveSpace = (memcmp(reinterpret_cast<void*>(pSource_), movEdiEdi, sizeof(movEdiEdi)) == 0);
+			bool haveSpace = (memcmp(reinterpret_cast<void*>(this->pSource_), movEdiEdi, sizeof(movEdiEdi)) == 0);
 
-			uint8_t* pbCode = reinterpret_cast<uint8_t*>(pSource_) - MOLOGIE_DETOURS_DETOUR_SIZE;
+			uint8_t* pbCode = reinterpret_cast<uint8_t*>(this->pSource_) - MOLOGIE_DETOURS_DETOUR_SIZE;
 
 			for(size_t i = 0; i < MOLOGIE_DETOURS_DETOUR_SIZE; i++)
 			{
