@@ -102,7 +102,7 @@ VOID ExitInstance()
 		}
 		if(IsWindow(g_hWnd))
 		{
-			SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG) oldWndProc);
+			SetWindowLongPtr(g_hWnd, GWLP_WNDPROC, (LONG) oldWndProc);
 			WriteLog(LOG_CORE,L"Destroying message window");
 			DestroyWindow(g_hWnd);
 			g_hWnd = NULL;
