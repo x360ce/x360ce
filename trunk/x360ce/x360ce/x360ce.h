@@ -26,8 +26,8 @@ extern HWND g_hWnd;
 
 struct XINPUT_ENABLE
 {
-    bool bEnabled;
-    bool bUseEnabled;
+    BOOL bEnabled;
+    BOOL bUseEnabled;
     XINPUT_ENABLE()
     {
         bEnabled = FALSE;
@@ -35,6 +35,6 @@ struct XINPUT_ENABLE
     }
 };
 
-void LoadXInputDLL(HMODULE &hMod);
+void LoadXInputDLL();
 
 #endif

@@ -19,6 +19,16 @@
 
 #include <Shlwapi.h>
 
+inline LPCWSTR GetFilePath(HMODULE hModule = NULL)
+{
+	static WCHAR strPath[MAX_PATH];
+	GetModuleFileName(hModule, strPath, MAX_PATH);
+	size_t len = wcslen(strPath)+1;
+	if(len > MAX_PATH) len = MAX_PATH;
+	strPath[len] = L'0'; //not null terminated on Windows XP
+	return strPath;
+}
+
 inline LPCWSTR GetFileName(HMODULE hModule = NULL)
 {
     static WCHAR strPath[MAX_PATH];

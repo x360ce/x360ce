@@ -69,11 +69,12 @@ void ConsoleEnable(BOOL console)
 
 void Console()
 {
-    if(enableconsole)
+	static HANDLE handle_out = NULL;
+    if(enableconsole && !handle_out)
     {
         AllocConsole();
 
-        HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+        handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
         int hCrt = _open_osfhandle((LONG) handle_out, _O_TEXT);
         FILE* hf_out = _wfdopen(hCrt, L"w");
         setvbuf(hf_out, NULL, _IONBF, 1);
@@ -93,9 +94,9 @@ void LogCleanup()
 
 BOOL CreateLog()
 {
-    BOOL bRet = FALSE;
+    static BOOL bRet = FALSE;
 
-    if (writelog)
+    if (writelog && !bRet)
     {
 		std::wstring name = L"x360ce";
 

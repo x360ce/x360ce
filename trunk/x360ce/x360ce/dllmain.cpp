@@ -27,16 +27,20 @@
 #include <process.h>
 
 CRITICAL_SECTION cs;
+DWORD startThread = NULL;
+BOOL cleanDeinit = FALSE;
 
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
 
-extern HWND g_hWnd;
 iHook* g_iHook;
 
-void LoadXInputDLL(HMODULE &hMod = hNative)
+extern WNDPROC oldWndProc;
+extern HWND g_hWnd;
+
+void LoadXInputDLL()
 {
-	if(hMod) return;
+	if(hNative) return;
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
@@ -50,10 +54,10 @@ void LoadXInputDLL(HMODULE &hMod = hNative)
     // try to load the system's xinput dll, if pointer empty
     WriteLog(LOG_CORE,L"Loading %s",buffer);
 
-	hMod = LoadLibrary(buffer);
+	hNative = LoadLibrary(buffer);
 
     //Debug
-    if (!hMod)
+    if (!hNative)
     {
 		HRESULT hr = GetLastError();
 		swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
@@ -86,10 +90,29 @@ VOID ExitInstance()
 
 	FreeDinput();
 	SAFE_DELETE(g_iHook);
-	SAFE_DELETE(hNative)
 
-	if(IsWindow(g_hWnd)) SendMessage(g_hWnd,MYQUITMSG,NULL,NULL);
+	//we can deinit here
+	if(startThread == GetCurrentThreadId())
+	{
+		WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative));
+		if(hNative)
+		{
+			FreeLibrary(hNative);
+			hNative = NULL;
+		}
+		if(IsWindow(g_hWnd))
+		{
+			SetWindowLong(g_hWnd, GWL_WNDPROC, (LONG) oldWndProc);
+			WriteLog(LOG_CORE,L"Destroying message window");
+			DestroyWindow(g_hWnd);
+			g_hWnd = NULL;
+		}
+		cleanDeinit = TRUE;
+	}
+	//else - try deinit in window proc
+	else if(IsWindow(g_hWnd)) SendMessage(g_hWnd,MYQUITMSG,NULL,NULL);
 
+	if(!cleanDeinit) WriteLog(LOG_CORE,L"Dirty deinit detected, please report issue");
 	WriteLog(LOG_CORE,L"x360ce terminating, bye");
 
 	LogCleanup();
@@ -112,6 +135,8 @@ VOID InitInstance(HINSTANCE hinstDLL)
 	InitializeCriticalSection(&cs);
 	EnterCriticalSection(&cs);
     hThis =  hinstDLL;
+
+	startThread = GetCurrentThreadId();
 
 	g_iHook = new iHook;
 
@@ -137,10 +162,12 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 extern "C" VOID WINAPI reset()
 {
+	FreeDinput();
+	SAFE_DELETE(g_iHook);
+
 	g_Gamepads.clear();
 	GamepadMapping.clear();
 
-	ExitInstance();
 	InitInstance(hThis);
 }
 
