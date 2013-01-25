@@ -31,9 +31,8 @@ tWinVerifyTrust hWinVerifyTrust = NULL;
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_TRUST)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
-
-	WriteLog(LOG_HOOKWT,L"In HookWinVerifyTrust");
+	if(!iHookThis->CheckHook(iHook::HOOK_WT)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+	WriteLog(LOG_HOOKWT,L"*WinVerifyTrust*");
 
 	UNREFERENCED_PARAMETER(hwnd);
 	UNREFERENCED_PARAMETER(pgActionID);
@@ -41,9 +40,9 @@ LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 	return 0;
 }
 
-void iHook::HookWinTrust()
+void iHook::HookWT()
 {
-	if(!CheckHook(iHook::HOOK_TRUST)) return;
+	if(!CheckHook(iHook::HOOK_WT)) return;
 	iHookThis = this;
 
 	if(!hWinVerifyTrust) 
@@ -57,12 +56,11 @@ void iHook::HookWinTrust()
 	}
 }
 
-void iHook::HookWinTrustClean()
+void iHook::HookWT_Cleanup()
 {
-	WriteLog(LOG_HOOKWT,L"HookWT Clean");
 	if(hWinVerifyTrust)
 	{
-		WriteLog(LOG_HOOKWMI,L"HookWinVerifyTrust:: Removing Hook");
+		WriteLog(LOG_HOOKWMI,L"Removing WinVerifyTrust Hook");
 		if(HooksSafeTransition(hWinVerifyTrust,true))
 		{
 			HooksRemoveRedirection(hWinVerifyTrust,true);

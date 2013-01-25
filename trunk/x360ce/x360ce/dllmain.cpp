@@ -24,7 +24,6 @@
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
-#include <process.h>
 
 CRITICAL_SECTION cs;
 DWORD startThread = NULL;

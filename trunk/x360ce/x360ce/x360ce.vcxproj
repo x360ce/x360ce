@@ -261,9 +261,9 @@
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="InputHook\HookDI.cpp" />
-    <ClCompile Include="InputHook\HookWinTrust.cpp" />
-    <ClCompile Include="InputHook\HookWMI_ANSI.cpp" />
-    <ClCompile Include="InputHook\HookWMI_UNI.cpp" />
+    <ClCompile Include="InputHook\HookWT.cpp" />
+    <ClCompile Include="InputHook\HookANSICOM.cpp" />
+    <ClCompile Include="InputHook\HookCOM.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

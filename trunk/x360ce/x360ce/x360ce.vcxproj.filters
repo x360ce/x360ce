@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="DirectInput.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="x360ce.cpp" />
+    <ClCompile Include="InputHook\HookDI.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Log.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookANSICOM.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookCOM.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookWT.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="DirectInput.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="version.h" />
+    <ClInclude Include="x360ce.h" />
+    <ClInclude Include="InputHook\InputHook.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h" />
+    <ClInclude Include="Utilities\Ini.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Misc.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Log.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="x360ce.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="x360ce.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="InputHook">
+      <UniqueIdentifier>{fdb33f5a-9e6e-4cd3-ade6-cbc97e23eb1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{3283c799-9d37-401b-8a6d-30154413c677}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
