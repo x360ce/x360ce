@@ -440,7 +440,7 @@ void WINAPI HookCoUninitialize()
 void iHook::HookCOM()
 {
 	if(!CheckHook(iHook::HOOK_COM)) return;
-	WriteLog(LOG_HOOKWMI,L"Hooking COM (UNICODE)");
+	WriteLog(LOG_HOOKWMI,L"Hooking COM");
 	iHookThis = this;
 
 	if(!hCoCreateInstance) 

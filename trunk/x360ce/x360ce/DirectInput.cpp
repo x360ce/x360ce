@@ -152,13 +152,22 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 	HRESULT coophr=S_FALSE;
 	LoadDinput(); 
 
-	if(!gamepad.useProduct) hr = g_pDI->CreateDevice( gamepad.instanceGUID, &gamepad.pGamepad, NULL );
+	if(!gamepad.useProduct)
+	{
+		hr = g_pDI->CreateDevice( gamepad.instanceGUID, &gamepad.pGamepad, NULL );
+		if(FAILED(hr)) 
+		{
+			WriteLog(LOG_CORE,L"%s",L"InstanceGuid is incorrect trying ProductGuid");
+			hr = g_pDI->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
+		}
+	}	
 	else hr = g_pDI->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
 
-	if(!gamepad.useProduct && FAILED(hr)) 
+	if(FAILED(hr)) 
 	{
-		WriteLog(LOG_CORE,L"%s",L"InstanceGuid is incorrect, trying ProductGuid");
-		hr = g_pDI->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
+		WriteLog(LOG_CORE,L"x360ce is misconfigured!");
+		MessageBox(NULL,L"x360ce is misconfigured!",L"Error",MB_ICONERROR);
+		ExitProcess(hr);
 	}
 
 	if(!gamepad.pGamepad)
