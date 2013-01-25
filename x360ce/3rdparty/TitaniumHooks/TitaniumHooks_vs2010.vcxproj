@@ -201,7 +201,7 @@
     <ClInclude Include="TH.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\distorm3\make\win32\cdistorm.vcxproj">
+    <ProjectReference Include="..\distorm3\make\win32\cdistorm_vs2010.vcxproj">
       <Project>{15051ce1-ab10-4239-973d-01b84f2ad0a9}</Project>
     </ProjectReference>
   </ItemGroup>

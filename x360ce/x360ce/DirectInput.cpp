@@ -165,8 +165,8 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 
 	if(FAILED(hr)) 
 	{
-		WriteLog(LOG_CORE,L"x360ce is misconfigured!");
-		MessageBox(NULL,L"x360ce is misconfigured!",L"Error",MB_ICONERROR);
+		WriteLog(LOG_CORE,L"x360ce is misconfigured or device is disconnected");
+		MessageBox(NULL,L"x360ce is misconfigured or device is disconnected",L"Error",MB_ICONERROR);
 		ExitProcess(hr);
 	}
 

@@ -289,7 +289,7 @@
     <ResourceCompile Include="x360ce.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rdparty\TitaniumHooks\TitaniumHooks.vcxproj">
+    <ProjectReference Include="..\3rdparty\TitaniumHooks\TitaniumHooks_vs2010.vcxproj">
       <Project>{5dd9b949-a733-4ae1-85e3-b9c5e4a069b5}</Project>
     </ProjectReference>
   </ItemGroup>
