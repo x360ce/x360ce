@@ -1,11 +1,13 @@
 ﻿namespace Microsoft.Xna.Framework
 {
-	public enum PlayerIndex
-	{
-		One,
-		Two,
-		Three,
-		Four
-	}
+    using System;
+
+    public enum PlayerIndex
+    {
+        One,
+        Two,
+        Three,
+        Four
+    }
 }
 

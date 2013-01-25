@@ -398,6 +398,9 @@
     <None Include="Web References\com.x360ce.localhost\SearchResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\com.x360ce.localhost\Vendor.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\com.x360ce.localhost\x360ce.wsdl" />
   </ItemGroup>
   <ItemGroup>

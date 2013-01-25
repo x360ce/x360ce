@@ -380,7 +380,7 @@ namespace x360ce.App.Controls
 				DrawState(Buttons.X, buttonX, ButtonXLabel, e);
 				DrawState(Buttons.B, buttonB, ButtonBLabel, e);
 				DrawState(Buttons.A, buttonA, ButtonALabel, e);
-				DrawState(Buttons.BigButton, buttonBig, null, e);
+				DrawState(Buttons.BigButton, buttonBig, ButtonBigLabel, e);
 				DrawState(Buttons.Start, buttonStart, StartButtonLabel, e);
 				DrawState(Buttons.Back, buttonBack, BackButtonLabel, e);
 				DrawState(Buttons.DPadUp, dPadUp, DPadUpLabel, e);
@@ -473,6 +473,7 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
 			sm.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
+			sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox);
 			sm.Add(section + SettingName.ButtonBack, ButtonBackComboBox);
 			sm.Add(section + SettingName.ButtonStart, ButtonStartComboBox);
 			sm.Add(section + SettingName.ButtonA, ButtonAComboBox);

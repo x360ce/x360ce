@@ -921,7 +921,7 @@ namespace x360ce.App
 			if (answer == DialogResult.Yes)
 			{
 				var assembly = Assembly.GetExecutingAssembly();
-				var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + dllFile3);
+				var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName);
 				FileStream sw = null;
 				try
 				{

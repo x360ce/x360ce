@@ -155,6 +155,8 @@ namespace x360ce.App
 		public const string AxisToDPadOffset = "AxisToDPadOffset";
 
 		// Button names.
+		[DefaultValue("0"), Description("Guide button.")]
+		public const string ButtonBig = "GuideButton";
 		[DefaultValue("0"), Description("Back button.")]
 		public const string ButtonBack = "Back";
 		[DefaultValue("0"), Description("Start button.")]

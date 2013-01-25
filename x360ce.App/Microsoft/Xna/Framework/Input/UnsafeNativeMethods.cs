@@ -27,6 +27,7 @@ namespace Microsoft.Xna.Framework.Input
 
 		internal static string LastError;
 
+		[SecurityCritical, SecuritySafeCritical]
 		internal static ErrorCodes GetCaps(PlayerIndex playerIndex, uint flags, out XINPUT_CAPABILITIES pCaps)
 		{
 			return GetMethod<_GetCaps>("XInputGetCapabilities")(playerIndex, flags, out pCaps);
