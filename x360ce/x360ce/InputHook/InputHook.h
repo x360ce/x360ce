@@ -90,21 +90,21 @@ public:
 	virtual ~iHook()
 	{
 		EnterCriticalSection(&cs);
-		HookWMI_UNI_Clean();
-		HookWMI_ANSI_Clean();
-		HookDIClean();
-		HookWinTrustClean();
+		HookCOM_Cleanup();
+		HookANSICOM_Cleanup();
+		HookDI_Cleanup();
+		HookWT_Cleanup();
 		LeaveCriticalSection(&cs);
 	};
 
 	static const DWORD HOOK_NONE        = 0x00000000;
-	static const DWORD HOOK_WMI         = 0x00000001;
+	static const DWORD HOOK_COM         = 0x00000001;
 	static const DWORD HOOK_DI          = 0x00000002;
 	static const DWORD HOOK_VIDPID      = 0x00000004;
 	static const DWORD HOOK_NAME        = 0x00000008;
 	static const DWORD HOOK_STOP        = 0x00000010;
-	static const DWORD HOOK_WMIA        = 0x00000020;
-	static const DWORD HOOK_TRUST       = 0x00000040;
+	static const DWORD HOOK_ANSICOM     = 0x00000020;
+	static const DWORD HOOK_WT          = 0x00000040;
 	static const DWORD HOOK_ENABLE      = 0x80000000;
 
 	inline VOID Enable()
@@ -172,17 +172,17 @@ public:
 		EnterCriticalSection(&cs);
 		if(!GetState()) return;
 
-		if(CheckHook(HOOK_WMI | HOOK_WMIA))
-			HookWMI_UNI();
+		if(CheckHook(HOOK_COM | HOOK_ANSICOM))
+			HookCOM();
 		else 
-			if(CheckHook(HOOK_WMI))
-			HookWMI_UNI();
+			if(CheckHook(HOOK_COM))
+			HookCOM();
 
 		if(CheckHook(HOOK_DI))
 			HookDI();
 
-		if(CheckHook(HOOK_TRUST))
-			HookWinTrust();
+		if(CheckHook(HOOK_WT))
+			HookWT();
 
 		LeaveCriticalSection(&cs);
 		return;
@@ -201,15 +201,15 @@ protected:
 	std::vector<iHookPadConfig> vPadConf;
 	CRITICAL_SECTION cs;
 
-	void HookWMI_UNI();
-	void HookWMI_ANSI();
+	void HookCOM();
+	void HookANSICOM();
 	void HookDI();
-	void HookWinTrust();
+	void HookWT();
 
-	void HookWMI_UNI_Clean();
-	void HookWMI_ANSI_Clean();
-	void HookDIClean();
-	void HookWinTrustClean();
+	void HookCOM_Cleanup();
+	void HookANSICOM_Cleanup();
+	void HookDI_Cleanup();
+	void HookWT_Cleanup();
 };
 
 #ifdef _IN_HOOK

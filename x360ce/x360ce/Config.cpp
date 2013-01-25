@@ -122,18 +122,18 @@ void ReadConfig(InI &ini)
     tmp = ini.ReadLongFromFile(L"InputHook", L"HookMode",0);
 
 	//TODO: make this nicer
-	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WMI);
-	if(tmp == 2) g_iHook->SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI);
-	if(tmp == 3) g_iHook->SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
-	if(tmp >  3) g_iHook->SetMode(iHook::HOOK_WMI | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
+	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_COM);
+	if(tmp == 2) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI);
+	if(tmp == 3) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
+	if(tmp >  3) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
 
 	if(tmp > 0) g_iHook->Enable();
 	
-	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookUseANSI",0);
-	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WMIA);
+	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookANSICOM",0);
+	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_ANSICOM);
 
     tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
-	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_TRUST);
+	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WT);
 
 	if(g_iHook->GetState())
 	{
