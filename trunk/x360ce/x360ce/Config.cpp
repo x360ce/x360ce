@@ -128,9 +128,6 @@ void ReadConfig(InI &ini)
 	if(tmp >  3) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
 
 	if(tmp > 0) g_iHook->Enable();
-	
-	tmp  = ini.ReadLongFromFile(L"InputHook", L"HookANSICOM",0);
-	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_ANSICOM);
 
     tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
 	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WT);

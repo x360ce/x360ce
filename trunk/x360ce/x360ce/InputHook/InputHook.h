@@ -91,7 +91,6 @@ public:
 	{
 		EnterCriticalSection(&cs);
 		HookCOM_Cleanup();
-		HookANSICOM_Cleanup();
 		HookDI_Cleanup();
 		HookWT_Cleanup();
 		LeaveCriticalSection(&cs);
@@ -103,8 +102,7 @@ public:
 	static const DWORD HOOK_VIDPID      = 0x00000004;
 	static const DWORD HOOK_NAME        = 0x00000008;
 	static const DWORD HOOK_STOP        = 0x00000010;
-	static const DWORD HOOK_ANSICOM     = 0x00000020;
-	static const DWORD HOOK_WT          = 0x00000040;
+	static const DWORD HOOK_WT          = 0x00000020;
 	static const DWORD HOOK_ENABLE      = 0x80000000;
 
 	inline VOID Enable()
@@ -172,10 +170,7 @@ public:
 		EnterCriticalSection(&cs);
 		if(!GetState()) return;
 
-		if(CheckHook(HOOK_COM | HOOK_ANSICOM))
-			HookCOM();
-		else 
-			if(CheckHook(HOOK_COM))
+		if(CheckHook(HOOK_COM))
 			HookCOM();
 
 		if(CheckHook(HOOK_DI))
@@ -202,12 +197,10 @@ protected:
 	CRITICAL_SECTION cs;
 
 	void HookCOM();
-	void HookANSICOM();
 	void HookDI();
 	void HookWT();
 
 	void HookCOM_Cleanup();
-	void HookANSICOM_Cleanup();
 	void HookDI_Cleanup();
 	void HookWT_Cleanup();
 };

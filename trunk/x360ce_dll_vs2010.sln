@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce_vs2012.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce_vs2010.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject

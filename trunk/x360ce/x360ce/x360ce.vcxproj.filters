@@ -12,9 +12,6 @@
     <ClCompile Include="Utilities\Log.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="InputHook\HookANSICOM.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
     <ClCompile Include="InputHook\HookCOM.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
