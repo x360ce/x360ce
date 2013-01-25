@@ -25,8 +25,8 @@
 
 XINPUT_ENABLE XInputIsEnabled;
 
-WNDPROC oldWndProc;
-HWND g_hWnd;
+WNDPROC oldWndProc = NULL;
+HWND g_hWnd = NULL;
 
 extern CRITICAL_SECTION cs;
 extern DWORD startThread;
@@ -129,9 +129,9 @@ LRESULT CALLBACK WndProc(
 		EnterCriticalSection(&cs);
 		if(startThread == GetCurrentThreadId())
 		{
-			WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative));
 			if(hNative)
 			{
+				WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative).c_str());
 				FreeLibrary(hNative);
 				hNative = NULL;
 			}
@@ -163,10 +163,8 @@ VOID MakeWindow()
 		hThis,	// handle to application instance
 		NULL);				// no window-creation data
 
-	if(!g_hWnd)
-		WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
-
-	oldWndProc = (WNDPROC) SetWindowLongPtr(g_hWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
+	if(!g_hWnd) WriteLog(LOG_CORE,L"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+	else oldWndProc = (WNDPROC) SetWindowLongPtr(g_hWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
 }
 
 HRESULT XInit(DINPUT_GAMEPAD &gamepad)
@@ -834,7 +832,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 }
 
 //undocumented
-DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
+extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -856,7 +854,7 @@ DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 	return XInputGetState(dwUserIndex,pState);
 }
 
-DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
+extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -871,7 +869,7 @@ DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pV
 	return ERROR_SUCCESS;
 }
 
-DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
+extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -886,7 +884,7 @@ DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 	return ERROR_SUCCESS;
 }
 
-DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
+extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
 	if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
 

@@ -1,0 +1,48 @@
+diStorm3 for Ring 0
+Gil Dabah Aug 2010
+http://ragestorm.net/distorm/
+
+Tested sample with DDK 7600.16385.1 using WinXPSP2.
+
+Steps of how to build the diStorm64 sample using the DDK.
+
+Warning - Make sure the path you extracted diStorm to does not include any spaces, otherwise you will get an error from the build.
+
+1) Open the DDK's build environment, for example: "Win XP Free Build Environment",
+which readies the evnrionment variables for building a driver. Or run the SETENV.BAT in console.
+
+2) Launch "build", once you're in the directory of the /ddkproj.
+
+3) If everything worked smoothly, you should see a new file named "distorm.sys" under objfre_wxp_x86\i386
+(that's if you use WinXP and the Free Environment).
+
+	- If you experienced any errors, try moving the whole distorm directory to c:\winddk\src\
+	  (or any other directory tree which doesn't contain spaces in its name).
+
+4) Now you will have to register the new driver:
+	a. Copy the distorm.sys file to \windows\system32\drivers\.
+	b. Use the DDK's regini.exe with the supplied distorm.ini.
+	c. Restart Windows for the effect to take place. :(
+
+ **The alternative is to use some tool like KmdManager.exe, which will register the driver without a need for the .ini file, nor a reboot.
+
+
+5) Now open your favorite debug-strings monitor (mine is DebugView).
+Make sure you monitor kernel debug-strings.
+
+6) Launching "net start distorm" from command line, will run the DriverEntry code in "main.c",
+which will disassemble a few instructions from the KeBugcheck routine and dump it using DbgPrint.
+
+
+NOTES:
+-+----
+The sample uses the stack for storing the results from the decode function.
+If you have too many structures on the stack, you better allocate memory before calling the decode function,
+and later on free that memory. Don't use the NONPAGED pool if you don't really need it.
+
+_OffsetType is the type of the DecodedInstruction.Offset field, which defaults to 64bits,
+so make sure that when you print this variable you use %I64X, or when you use it anywhere else, you use the _OffsetType as well.
+Notice that we call directly distorm_decode64, since we SUPPORT_64BIT_OFFSET and because we don't have the macros of distorm.h.
+
+diStorm can be really compiled for all IRQL, it doesn't use any resource or the standard C library at all.
+Although the sample uses diStorm at PASSIVE level.

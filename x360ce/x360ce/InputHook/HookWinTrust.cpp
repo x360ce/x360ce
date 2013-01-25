@@ -22,12 +22,11 @@
 #include "InputHook.h"
 
 static iHook *iHookThis = NULL;
-using namespace MologieDetours;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef LONG (WINAPI *tWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
 
-Detour<tWinVerifyTrust>* hWinVerifyTrust = NULL;
+tWinVerifyTrust hWinVerifyTrust = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
@@ -47,7 +46,15 @@ void iHook::HookWinTrust()
 	if(!CheckHook(iHook::HOOK_TRUST)) return;
 	iHookThis = this;
 
-	if(!hWinVerifyTrust) hWinVerifyTrust = new Detour<tWinVerifyTrust>(WinVerifyTrust, HookWinVerifyTrust);
+	if(!hWinVerifyTrust) 
+	{
+		hWinVerifyTrust = WinVerifyTrust;
+		if(HooksSafeTransition(hWinVerifyTrust,true))
+		{
+			HooksInsertNewRedirection(hWinVerifyTrust,HookWinVerifyTrust,TEE_HOOK_NRM_JUMP);
+			HooksSafeTransition(hWinVerifyTrust,false);
+		}
+	}
 }
 
 void iHook::HookWinTrustClean()
@@ -55,7 +62,11 @@ void iHook::HookWinTrustClean()
 	WriteLog(LOG_HOOKWT,L"HookWT Clean");
 	if(hWinVerifyTrust)
 	{
-		WriteLog(LOG_HOOKWT, L"HookWinVerifyTrust:: Removing Hook");
-		SAFE_DELETE(hWinVerifyTrust);
+		WriteLog(LOG_HOOKWMI,L"HookWinVerifyTrust:: Removing Hook");
+		if(HooksSafeTransition(hWinVerifyTrust,true))
+		{
+			HooksRemoveRedirection(hWinVerifyTrust,true);
+			HooksSafeTransition(hWinVerifyTrust,false);
+		}
 	}
 }

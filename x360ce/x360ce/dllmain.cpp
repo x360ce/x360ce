@@ -48,8 +48,7 @@ void LoadXInputDLL()
     GetSystemDirectory(sysdir,MAX_PATH);
 
     // Append dll name
-    //wcscat_s(buffer,MAX_PATH,L"\\xinput1_3.dll");
-    swprintf_s(buffer,L"%s\\%s",sysdir,GetFileName(hThis));
+    swprintf_s(buffer,L"%s\\%s",sysdir,GetFileName(hThis).c_str());
 
     // try to load the system's xinput dll, if pointer empty
     WriteLog(LOG_CORE,L"Loading %s",buffer);
@@ -94,9 +93,9 @@ VOID ExitInstance()
 	//we can deinit here
 	if(startThread == GetCurrentThreadId())
 	{
-		WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative));
 		if(hNative)
 		{
+			WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative).c_str());
 			FreeLibrary(hNative);
 			hNative = NULL;
 		}
@@ -149,9 +148,9 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 	DWORD dwAppPID = GetCurrentProcessId();
 #if SVN_MODS != 0
-    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName(),dwAppPID);
+    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName().c_str(),dwAppPID);
 #else
-    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName(),dwAppPID);
+    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName().c_str(),dwAppPID);
 #endif
 
     WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");

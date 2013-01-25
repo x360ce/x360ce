@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce_vs2010.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1
 		x360ce\Support\x360ce_template.ini = x360ce\Support\x360ce_template.ini
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ditool", "ditool\ditool.vcxproj", "{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TitaniumHooks", "x360ce\3rdparty\TitaniumHooks\TitaniumHooks.vcxproj", "{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xitool", "xitool\xitool.vcxproj", "{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "distorm", "x360ce\3rdparty\distorm3\make\win32\cdistorm.vcxproj", "{15051CE1-AB10-4239-973D-01B84F2AD0A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,18 +33,22 @@ Global
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|Win32.Build.0 = Release|Win32
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|x64.ActiveCfg = Release|x64
 		{303D4435-7541-4357-91B1-CC9DA7E0E926}.Release|x64.Build.0 = Release|x64
-		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|Win32.Build.0 = Debug|Win32
-		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|x64.ActiveCfg = Debug|Win32
-		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32.ActiveCfg = Release|Win32
-		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32.Build.0 = Release|Win32
-		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|x64.ActiveCfg = Release|Win32
-		{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}.Debug|Win32.Build.0 = Debug|Win32
-		{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}.Debug|x64.ActiveCfg = Debug|Win32
-		{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}.Release|Win32.ActiveCfg = Release|Win32
-		{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}.Release|Win32.Build.0 = Release|Win32
-		{9173BC33-55EE-4804-BD22-A4EC5A4A88C2}.Release|x64.ActiveCfg = Release|Win32
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Debug|Win32.Build.0 = Debug|Win32
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Debug|x64.ActiveCfg = Debug|x64
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Debug|x64.Build.0 = Debug|x64
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Release|Win32.ActiveCfg = Release|Win32
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Release|Win32.Build.0 = Release|Win32
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Release|x64.ActiveCfg = Release|x64
+		{5DD9B949-A733-4AE1-85E3-B9C5E4A069B5}.Release|x64.Build.0 = Release|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Debug|Win32.ActiveCfg = clib|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Debug|Win32.Build.0 = clib|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Debug|x64.ActiveCfg = clib|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Debug|x64.Build.0 = clib|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Release|Win32.ActiveCfg = clib|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Release|Win32.Build.0 = clib|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Release|x64.ActiveCfg = clib|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.Release|x64.Build.0 = clib|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

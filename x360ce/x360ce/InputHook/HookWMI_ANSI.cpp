@@ -33,8 +33,6 @@ static iHook *iHookThis = NULL;
 // COM CLSIDs
 #pragma comment(lib,"wbemuuid.lib")
 
-using namespace MologieDetours;
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,12 +78,12 @@ typedef HRESULT ( STDMETHODCALLTYPE *tGetA )(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor);
 
-Detour<tCoUninitializeA>* hCoUninitializeA = NULL;
-Detour<tCoCreateInstanceA>* hCoCreateInstanceA = NULL;
-Detour<tConnectServerA>* hConnectServerA = NULL;
-Detour<tCreateInstanceEnumA>* hCreateInstanceEnumA = NULL;
-Detour<tNextA>* hNextA = NULL;
-Detour<tGetA>* hGetA = NULL;
+tCoUninitializeA hCoUninitializeA = NULL;
+tCoCreateInstanceA hCoCreateInstanceA = NULL;
+tConnectServerA hConnectServerA = NULL;
+tCreateInstanceEnumA hCreateInstanceEnumA = NULL;
+tNextA hNextA = NULL;
+tGetA hGetA = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +97,8 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 	/* [unique][in][out] */ CIMTYPE *pType,
 	/* [unique][in][out] */ long *plFlavor)
 {
-	HRESULT hr = hGetA->GetOriginalFunction()(This,wszName,lFlags,pVal,pType,plFlavor);
+	tGetA oGetW = (tGetA) HooksGetTrampolineAddress(hGetA);
+	HRESULT hr = oGetW(This,wszName,lFlags,pVal,pType,plFlavor);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -114,12 +113,12 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 	{
 		//WriteLog(L"%s"),pVal->bstrVal);
 		DWORD dwPid = 0, dwVid = 0;
-		char* strVid = strstr( pVal->bstrVal, "VID_" );
+		OLECHAR* strVid = strstr( pVal->bstrVal, "VID_" );
 
 		if(strVid && sscanf_s( strVid, "VID_%4X", &dwVid ) != 1 )
 			return hr;
 
-		char* strPid = strstr( pVal->bstrVal, "PID_" );
+		OLECHAR* strPid = strstr( pVal->bstrVal, "PID_" );
 
 		if(strPid && sscanf_s( strPid, "PID_%4X", &dwPid ) != 1 )
 			return hr;
@@ -129,12 +128,11 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
 			if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
 			{
-				char* strUSB = strstr( pVal->bstrVal, "USB" );
-				char tempstr[MAX_PATH];
+				OLECHAR* strUSB = strstr( pVal->bstrVal, "USB" );
+				OLECHAR tempstr[MAX_PATH];
 
 				if( strUSB )
 				{
-					BSTR Hookbstr=NULL;
 					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 
 					DWORD dwHookVid = NULL;
@@ -153,19 +151,25 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 
 					if(dwHookVid && dwHookPid)
 					{
-						sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d",dwHookVid,dwHookPid,i );
-						Hookbstr=SysAllocString(tempstr);
-						pVal->bstrVal = Hookbstr;
+						static VARIANT v;
+						OLECHAR* p = strrchr(pVal->bstrVal,L'\\');
+
+						sprintf_s(tempstr,"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+						BSTR Hookbstr = SysAllocString(tempstr);
+						SysFreeString(pVal->bstrVal);
+
+						v = *pVal;
+						v.bstrVal = Hookbstr;
+						pVal=&v;
 						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
-					continue;
+					break;
 				}
 
-				char* strHID = strstr( pVal->bstrVal, "HID" );
+				OLECHAR* strHID = strstr( pVal->bstrVal, "HID" );
 
 				if( strHID )
 				{
-					BSTR Hookbstr=NULL;
 					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
 
 					DWORD dwHookVid = NULL;
@@ -184,12 +188,19 @@ HRESULT STDMETHODCALLTYPE HookGetA(
 
 					if(dwHookVid && dwHookPid)
 					{
-						sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPid,i );
-						Hookbstr=SysAllocString(tempstr);
-						pVal->bstrVal = Hookbstr;
+						static VARIANT v;
+						OLECHAR* p = strrchr(pVal->bstrVal,L'\\');
+
+						sprintf_s(tempstr,"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid,i, p);
+						BSTR Hookbstr = SysAllocString(tempstr);
+						SysFreeString(pVal->bstrVal);
+
+						v = *pVal;
+						v.bstrVal = Hookbstr;
+						pVal=&v;
 						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
-					continue;
+					break;
 				}
 			}
 		}
@@ -207,7 +218,8 @@ HRESULT STDMETHODCALLTYPE HookNextA(
 	/* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 	/* [out] */ __RPC__out ULONG *puReturned)
 {
-	HRESULT hr = hNextA->GetOriginalFunction()(This,lTimeout,uCount,apObjects,puReturned);
+	tNextA oNextA = (tNextA) HooksGetTrampolineAddress(hNextA);
+	HRESULT hr = oNextA(This,lTimeout,uCount,apObjects,puReturned);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -225,8 +237,13 @@ HRESULT STDMETHODCALLTYPE HookNextA(
 
 			if(!hGetA && pDevices->lpVtbl->Get)
 			{
-				WriteLog(LOG_HOOKWMI,L"HookGetA:: Hooking");
-				hGetA = new Detour<tGetA>(pDevices->lpVtbl->Get, HookGetA);
+				hGetA = pDevices->lpVtbl->Get;
+				if(HooksSafeTransition(hGetA,true))
+				{
+					WriteLog(LOG_HOOKWMI,L"HookGetA:: Hooking");
+					HooksInsertNewRedirection(hGetA,HookGetA,TEE_HOOK_NRM_JUMP);
+					HooksSafeTransition(hGetA,false);
+				}
 			}
 		}
 	}
@@ -243,7 +260,8 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	HRESULT hr = hCreateInstanceEnumA->GetOriginalFunction()(This,strFilter,lFlags,pCtx,ppEnum);
+	tCreateInstanceEnumA oCreateInstanceEnumA = (tCreateInstanceEnumA) HooksGetTrampolineAddress(hCreateInstanceEnumA);
+	HRESULT hr = oCreateInstanceEnumA(This,strFilter,lFlags,pCtx,ppEnum);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -261,8 +279,13 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnumA(
 
 			if(!hNextA && pEnumDevices->lpVtbl->Next)
 			{
-				WriteLog(LOG_HOOKWMI,L"HookNextA:: Hooking");
-				hNextA = new Detour<tNextA>(pEnumDevices->lpVtbl->Next, HookNextA);
+				hNextA = pEnumDevices->lpVtbl->Next;
+				if(HooksSafeTransition(hNextA,true))
+				{
+					WriteLog(LOG_HOOKWMI,L"HookNextA:: Hooking");
+					HooksInsertNewRedirection(hNextA,HookNextA,TEE_HOOK_NRM_JUMP);
+					HooksSafeTransition(hNextA,false);
+				}
 			}
 		}
 	}
@@ -284,7 +307,8 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
 	/* [out] */ IWbemServices **ppNamespace)
 
 {
-	HRESULT hr = hConnectServerA->GetOriginalFunction()(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+	tConnectServerA oConnectServerA = (tConnectServerA) HooksGetTrampolineAddress(hConnectServerA);
+	HRESULT hr = oConnectServerA(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -302,8 +326,13 @@ HRESULT STDMETHODCALLTYPE HookConnectServerA(
 
 			if(!hCreateInstanceEnumA && pIWbemServices->lpVtbl->CreateInstanceEnum)
 			{
-				WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Hooking");
-				hCreateInstanceEnumA = new Detour<tCreateInstanceEnumA>(pIWbemServices->lpVtbl->CreateInstanceEnum, HookCreateInstanceEnumA);
+				hCreateInstanceEnumA = pIWbemServices->lpVtbl->CreateInstanceEnum;
+				if(HooksSafeTransition(hCreateInstanceEnumA,true))
+				{
+					WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Hooking");
+					HooksInsertNewRedirection(hCreateInstanceEnumA,HookCreateInstanceEnumA,TEE_HOOK_NRM_JUMP);
+					HooksSafeTransition(hCreateInstanceEnumA,false);
+				}
 			}
 		}
 	}
@@ -319,7 +348,8 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 									 __in     REFIID riid,
 									 __deref_out LPVOID FAR* ppv)
 {
-	HRESULT hr = hCoCreateInstanceA->GetOriginalFunction()(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+	tCoCreateInstanceA oCoCreateInstanceA = (tCoCreateInstanceA) HooksGetTrampolineAddress(hCoCreateInstanceA);
+	HRESULT hr = oCoCreateInstanceA(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hr;
 
@@ -336,8 +366,13 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 		{
 			if(!hConnectServerA && pIWbemLocator->lpVtbl->ConnectServer)
 			{
-				WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Hooking");
-				hConnectServerA = new Detour<tConnectServerA>(pIWbemLocator->lpVtbl->ConnectServer, HookConnectServerA);
+				hConnectServerA = pIWbemLocator->lpVtbl->ConnectServer;
+				if(HooksSafeTransition(hConnectServerA,true))
+				{
+					WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Hooking");
+					HooksInsertNewRedirection(hConnectServerA,HookConnectServerA,TEE_HOOK_NRM_JUMP);
+					HooksSafeTransition(hConnectServerA,false);
+				}
 			}
 		}
 	}
@@ -349,34 +384,55 @@ HRESULT WINAPI HookCoCreateInstanceA(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitializeA()
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return hCoUninitializeA->GetOriginalFunction()();
+	tCoUninitializeA oCoUninitializeA = (tCoUninitializeA) HooksGetTrampolineAddress(hCoUninitializeA);
+	if(!iHookThis->CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return oCoUninitializeA();
 	WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA");
 
 	if(hGetA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
-		SAFE_DELETE(hGetA);
+		if(HooksSafeTransition(hGetA,true))
+		{
+			HooksRemoveRedirection(hGetA,true);
+			HooksSafeTransition(hGetA,false);
+			hGetA = NULL;
+		}
 	}
 
 	if(hNextA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
-		SAFE_DELETE(hNextA);
+		if(HooksSafeTransition(hNextA,true))
+		{
+			HooksRemoveRedirection(hNextA,true);
+			HooksSafeTransition(hNextA,false);
+			hNextA = NULL;
+		}
 	}
 
 	if(hCreateInstanceEnumA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
-		SAFE_DELETE(hCreateInstanceEnumA);;
+		if(HooksSafeTransition(hCreateInstanceEnumA,true))
+		{
+			HooksRemoveRedirection(hCreateInstanceEnumA,true);
+			HooksSafeTransition(hCreateInstanceEnumA,false);
+			hCreateInstanceEnumA = NULL;
+		}
 	}
 
 	if(hConnectServerA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
-		SAFE_DELETE(hConnectServerA);
+		if(HooksSafeTransition(hConnectServerA,true))
+		{
+			HooksRemoveRedirection(hConnectServerA,true);
+			HooksSafeTransition(hConnectServerA,false);
+			hConnectServerA = NULL;
+		}
 	}
 
-	return hCoUninitializeA->GetOriginalFunction()();
+	return oCoUninitializeA();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -384,50 +440,98 @@ void WINAPI HookCoUninitializeA()
 void iHook::HookWMI_ANSI()
 {
 	if(!CheckHook(iHook::HOOK_WMI|iHook::HOOK_WMIA)) return;
+
 	WriteLog(LOG_HOOKWMI,L"HookWMI:: Hooking");
 	iHookThis = this;
 
-	if(!hCoCreateInstanceA) hCoCreateInstanceA = new Detour<tCoCreateInstanceA>(CoCreateInstance, HookCoCreateInstanceA);
-	if(!hCoUninitializeA) hCoUninitializeA = new Detour<tCoUninitializeA>(CoUninitialize, HookCoUninitializeA);
+	if(!hCoCreateInstanceA) 
+	{
+		hCoCreateInstanceA = CoCreateInstance;
+		if(HooksSafeTransition(hCoCreateInstanceA,true))
+		{
+			HooksInsertNewRedirection(hCoCreateInstanceA,HookCoCreateInstanceA,TEE_HOOK_NRM_JUMP);
+			HooksSafeTransition(hCoCreateInstanceA,false);
+		}
+	}
+	if(!hCoUninitializeA) 
+	{
+		hCoUninitializeA = CoUninitialize;
+		if(HooksSafeTransition(hCoUninitializeA,true))
+		{
+			HooksInsertNewRedirection(hCoUninitializeA,HookCoUninitializeA,TEE_HOOK_NRM_JUMP);
+			HooksSafeTransition(hCoUninitializeA,false);
+		}
+	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void iHook::HookWMI_ANSI_Clean()
 {
 	WriteLog(LOG_HOOKWMI,L"HookWMIA Clean");
+
 	if(hGetA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookGetA:: Removing Hook");
-		SAFE_DELETE(hGetA);
+		if(HooksSafeTransition(hGetA,true))
+		{
+			HooksRemoveRedirection(hGetA,true);
+			HooksSafeTransition(hGetA,false);
+			hGetA = NULL;
+		}
 	}
 
 	if(hNextA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookNextA:: Removing Hook");
-		SAFE_DELETE(hNextA);
+		if(HooksSafeTransition(hNextA,true))
+		{
+			HooksRemoveRedirection(hNextA,true);
+			HooksSafeTransition(hNextA,false);
+			hNextA = NULL;
+		}
 	}
 
 	if(hCreateInstanceEnumA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCreateInstanceEnumA:: Removing Hook");
-		SAFE_DELETE(hCreateInstanceEnumA);;
+		if(HooksSafeTransition(hCreateInstanceEnumA,true))
+		{
+			HooksRemoveRedirection(hCreateInstanceEnumA,true);
+			HooksSafeTransition(hCreateInstanceEnumA,false);
+			hCreateInstanceEnumA = NULL;
+		}
 	}
 
 	if(hConnectServerA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookConnectServerA:: Removing Hook");
-		SAFE_DELETE(hConnectServerA);
+		if(HooksSafeTransition(hConnectServerA,true))
+		{
+			HooksRemoveRedirection(hConnectServerA,true);
+			HooksSafeTransition(hConnectServerA,false);
+			hConnectServerA = NULL;
+		}
 	}
 
 	if(hCoCreateInstanceA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCoCreateInstanceA:: Removing Hook");
-		SAFE_DELETE(hCoCreateInstanceA);
+		if(HooksSafeTransition(hCoCreateInstanceA,true))
+		{
+			HooksRemoveRedirection(hCoCreateInstanceA,true);
+			HooksSafeTransition(hCoCreateInstanceA,false);
+			hCoCreateInstanceA = NULL;
+		}
 	}
 
 	if(hCoUninitializeA)
 	{
 		WriteLog(LOG_HOOKWMI,L"HookCoUninitializeA:: Removing Hook");
-		SAFE_DELETE(hCoUninitializeA);
+		if(HooksSafeTransition(hCoUninitializeA,true))
+		{
+			HooksRemoveRedirection(hCoUninitializeA,true);
+			HooksSafeTransition(hCoUninitializeA,false);
+			hCoUninitializeA = NULL;
+		}
 	}
 }
