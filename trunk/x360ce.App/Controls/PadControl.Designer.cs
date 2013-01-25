@@ -73,10 +73,6 @@
 			this.GamePadTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
-			this.PresetComboBox = new System.Windows.Forms.ComboBox();
-			this.SavePresetButton = new System.Windows.Forms.Button();
-			this.ResetPresetButton = new System.Windows.Forms.Button();
-			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
@@ -118,12 +114,12 @@
 			this.RightThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
 			this.ButtonBLabel = new System.Windows.Forms.Label();
 			this.LeftThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
-			this.BigButtonComboBox = new System.Windows.Forms.ComboBox();
+			this.ButtonBigComboBox = new System.Windows.Forms.ComboBox();
 			this.ButtonStartComboBox = new System.Windows.Forms.ComboBox();
 			this.ButtonBackComboBox = new System.Windows.Forms.ComboBox();
 			this.LeftShoulderComboBox = new System.Windows.Forms.ComboBox();
 			this.RightShoulderComboBox = new System.Windows.Forms.ComboBox();
-			this.BigButtonLabel = new System.Windows.Forms.Label();
+			this.ButtonBigLabel = new System.Windows.Forms.Label();
 			this.StartButtonLabel = new System.Windows.Forms.Label();
 			this.DPadDownLabel = new System.Windows.Forms.Label();
 			this.DPadRightLabel = new System.Windows.Forms.Label();
@@ -145,6 +141,10 @@
 			this.RightThumbAxisYComboBox = new System.Windows.Forms.ComboBox();
 			this.RightThumbButtonComboBox = new System.Windows.Forms.ComboBox();
 			this.TopPictureBox = new System.Windows.Forms.PictureBox();
+			this.PresetComboBox = new System.Windows.Forms.ComboBox();
+			this.SavePresetButton = new System.Windows.Forms.Button();
+			this.ResetPresetButton = new System.Windows.Forms.Button();
+			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
 			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
@@ -202,7 +202,7 @@
 			// 
 			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
-			this.DirectInputTabPage.Size = new System.Drawing.Size(620, 438);
+			this.DirectInputTabPage.Size = new System.Drawing.Size(620, 411);
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
@@ -217,7 +217,7 @@
 			this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
 			this.AdvancedTabPage.Name = "AdvancedTabPage";
 			this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.AdvancedTabPage.Size = new System.Drawing.Size(620, 438);
+			this.AdvancedTabPage.Size = new System.Drawing.Size(620, 411);
 			this.AdvancedTabPage.TabIndex = 0;
 			this.AdvancedTabPage.Text = "Advanced";
 			// 
@@ -734,12 +734,12 @@
 			this.GeneralTabPage.Controls.Add(this.RightThumbAxisXComboBox);
 			this.GeneralTabPage.Controls.Add(this.ButtonBLabel);
 			this.GeneralTabPage.Controls.Add(this.LeftThumbAxisXComboBox);
-			this.GeneralTabPage.Controls.Add(this.BigButtonComboBox);
+			this.GeneralTabPage.Controls.Add(this.ButtonBigComboBox);
 			this.GeneralTabPage.Controls.Add(this.ButtonStartComboBox);
 			this.GeneralTabPage.Controls.Add(this.ButtonBackComboBox);
 			this.GeneralTabPage.Controls.Add(this.LeftShoulderComboBox);
 			this.GeneralTabPage.Controls.Add(this.RightShoulderComboBox);
-			this.GeneralTabPage.Controls.Add(this.BigButtonLabel);
+			this.GeneralTabPage.Controls.Add(this.ButtonBigLabel);
 			this.GeneralTabPage.Controls.Add(this.StartButtonLabel);
 			this.GeneralTabPage.Controls.Add(this.DPadDownLabel);
 			this.GeneralTabPage.Controls.Add(this.DPadRightLabel);
@@ -767,50 +767,6 @@
 			this.GeneralTabPage.Size = new System.Drawing.Size(620, 411);
 			this.GeneralTabPage.TabIndex = 0;
 			this.GeneralTabPage.Text = "General";
-			// 
-			// PresetComboBox
-			// 
-			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.PresetComboBox.FormattingEnabled = true;
-			this.PresetComboBox.Location = new System.Drawing.Point(3, 446);
-			this.PresetComboBox.Name = "PresetComboBox";
-			this.PresetComboBox.Size = new System.Drawing.Size(385, 21);
-			this.PresetComboBox.TabIndex = 64;
-			// 
-			// SavePresetButton
-			// 
-			this.SavePresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SavePresetButton.Location = new System.Drawing.Point(556, 444);
-			this.SavePresetButton.Name = "SavePresetButton";
-			this.SavePresetButton.Size = new System.Drawing.Size(75, 23);
-			this.SavePresetButton.TabIndex = 67;
-			this.SavePresetButton.Text = "&Save";
-			this.SavePresetButton.UseVisualStyleBackColor = true;
-			this.SavePresetButton.Click += new System.EventHandler(this.SavePresetButton_Click);
-			// 
-			// ResetPresetButton
-			// 
-			this.ResetPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ResetPresetButton.Location = new System.Drawing.Point(475, 444);
-			this.ResetPresetButton.Name = "ResetPresetButton";
-			this.ResetPresetButton.Size = new System.Drawing.Size(75, 23);
-			this.ResetPresetButton.TabIndex = 66;
-			this.ResetPresetButton.Text = "&Reset";
-			this.ResetPresetButton.UseVisualStyleBackColor = true;
-			this.ResetPresetButton.Click += new System.EventHandler(this.ResetPresetButton_Click);
-			// 
-			// LoadPresetButton
-			// 
-			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.LoadPresetButton.Location = new System.Drawing.Point(394, 444);
-			this.LoadPresetButton.Name = "LoadPresetButton";
-			this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
-			this.LoadPresetButton.TabIndex = 65;
-			this.LoadPresetButton.Text = "&Load";
-			this.LoadPresetButton.UseVisualStyleBackColor = true;
-			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
 			// 
 			// DPadDownComboBox
 			// 
@@ -1261,16 +1217,16 @@
 			this.LeftThumbAxisXComboBox.TabIndex = 21;
 			this.LeftThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
-			// BigButtonComboBox
+			// ButtonBigComboBox
 			// 
-			this.BigButtonComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.BigButtonComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BigButtonComboBox.FormattingEnabled = true;
-			this.BigButtonComboBox.Location = new System.Drawing.Point(6, 140);
-			this.BigButtonComboBox.Name = "BigButtonComboBox";
-			this.BigButtonComboBox.Size = new System.Drawing.Size(89, 21);
-			this.BigButtonComboBox.TabIndex = 5;
-			this.BigButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+			this.ButtonBigComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ButtonBigComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.ButtonBigComboBox.FormattingEnabled = true;
+			this.ButtonBigComboBox.Location = new System.Drawing.Point(6, 140);
+			this.ButtonBigComboBox.Name = "ButtonBigComboBox";
+			this.ButtonBigComboBox.Size = new System.Drawing.Size(89, 21);
+			this.ButtonBigComboBox.TabIndex = 5;
+			this.ButtonBigComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonStartComboBox
 			// 
@@ -1317,14 +1273,14 @@
 			this.RightShoulderComboBox.TabIndex = 12;
 			this.RightShoulderComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
-			// BigButtonLabel
+			// ButtonBigLabel
 			// 
-			this.BigButtonLabel.AutoSize = true;
-			this.BigButtonLabel.Location = new System.Drawing.Point(101, 143);
-			this.BigButtonLabel.Name = "BigButtonLabel";
-			this.BigButtonLabel.Size = new System.Drawing.Size(35, 13);
-			this.BigButtonLabel.TabIndex = 0;
-			this.BigButtonLabel.Text = "Guide";
+			this.ButtonBigLabel.AutoSize = true;
+			this.ButtonBigLabel.Location = new System.Drawing.Point(101, 143);
+			this.ButtonBigLabel.Name = "ButtonBigLabel";
+			this.ButtonBigLabel.Size = new System.Drawing.Size(35, 13);
+			this.ButtonBigLabel.TabIndex = 0;
+			this.ButtonBigLabel.Text = "Guide";
 			// 
 			// StartButtonLabel
 			// 
@@ -1532,6 +1488,50 @@
 			this.TopPictureBox.TabStop = false;
 			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
 			// 
+			// PresetComboBox
+			// 
+			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.PresetComboBox.FormattingEnabled = true;
+			this.PresetComboBox.Location = new System.Drawing.Point(3, 446);
+			this.PresetComboBox.Name = "PresetComboBox";
+			this.PresetComboBox.Size = new System.Drawing.Size(385, 21);
+			this.PresetComboBox.TabIndex = 64;
+			// 
+			// SavePresetButton
+			// 
+			this.SavePresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.SavePresetButton.Location = new System.Drawing.Point(556, 444);
+			this.SavePresetButton.Name = "SavePresetButton";
+			this.SavePresetButton.Size = new System.Drawing.Size(75, 23);
+			this.SavePresetButton.TabIndex = 67;
+			this.SavePresetButton.Text = "&Save";
+			this.SavePresetButton.UseVisualStyleBackColor = true;
+			this.SavePresetButton.Click += new System.EventHandler(this.SavePresetButton_Click);
+			// 
+			// ResetPresetButton
+			// 
+			this.ResetPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.ResetPresetButton.Location = new System.Drawing.Point(475, 444);
+			this.ResetPresetButton.Name = "ResetPresetButton";
+			this.ResetPresetButton.Size = new System.Drawing.Size(75, 23);
+			this.ResetPresetButton.TabIndex = 66;
+			this.ResetPresetButton.Text = "&Reset";
+			this.ResetPresetButton.UseVisualStyleBackColor = true;
+			this.ResetPresetButton.Click += new System.EventHandler(this.ResetPresetButton_Click);
+			// 
+			// LoadPresetButton
+			// 
+			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.LoadPresetButton.Location = new System.Drawing.Point(394, 444);
+			this.LoadPresetButton.Name = "LoadPresetButton";
+			this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
+			this.LoadPresetButton.TabIndex = 65;
+			this.LoadPresetButton.Text = "&Load";
+			this.LoadPresetButton.UseVisualStyleBackColor = true;
+			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
+			// 
 			// PadTabControl
 			// 
 			this.PadTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1555,7 +1555,7 @@
 			this.KeyboardTabPage.Location = new System.Drawing.Point(4, 22);
 			this.KeyboardTabPage.Name = "KeyboardTabPage";
 			this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.KeyboardTabPage.Size = new System.Drawing.Size(620, 438);
+			this.KeyboardTabPage.Size = new System.Drawing.Size(620, 411);
 			this.KeyboardTabPage.TabIndex = 0;
 			this.KeyboardTabPage.Text = "Keyboard";
 			this.KeyboardTabPage.UseVisualStyleBackColor = true;
@@ -1567,7 +1567,7 @@
 			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
 			this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
 			this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(620, 438);
+			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(620, 411);
 			this.ForceFeedbackTabPage.TabIndex = 0;
 			this.ForceFeedbackTabPage.Text = "Force Feedback";
 			// 
@@ -1895,12 +1895,12 @@
 		private System.Windows.Forms.ComboBox RightThumbAxisXComboBox;
 		private System.Windows.Forms.Label ButtonBLabel;
 		private System.Windows.Forms.ComboBox LeftThumbAxisXComboBox;
-		private System.Windows.Forms.ComboBox BigButtonComboBox;
+		private System.Windows.Forms.ComboBox ButtonBigComboBox;
 		private System.Windows.Forms.ComboBox ButtonStartComboBox;
 		private System.Windows.Forms.ComboBox ButtonBackComboBox;
 		private System.Windows.Forms.ComboBox LeftShoulderComboBox;
 		private System.Windows.Forms.ComboBox RightShoulderComboBox;
-		private System.Windows.Forms.Label BigButtonLabel;
+		private System.Windows.Forms.Label ButtonBigLabel;
 		private System.Windows.Forms.Label StartButtonLabel;
 		private System.Windows.Forms.Label DPadDownLabel;
 		private System.Windows.Forms.Label DPadRightLabel;

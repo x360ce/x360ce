@@ -1,6 +1,10 @@
-﻿v2.1.2.186 (2013-01-23)
+﻿v2.1.2.188 (2013-01-25)
+- Fix: Default INI file will be created properly now.
+- Update: Updated to xinput1_3.dll v3.3.1.526.
+
+v2.1.2.186 (2013-01-23)
 - Fix: Exception with xinput1_1.dll, xinput1_2.dll or xinput9_1_0.dll file in the directory.
-- Update:  Update check for 'reset' code.
+- Update: Update check for 'reset' code.
 
 v2.1.2.184 (2013-01-22)
 - Fix:  Program offers message with download link if Microsoft DirectX not found.

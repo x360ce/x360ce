@@ -60,6 +60,7 @@ namespace x360ce.Web.WebServices
 			p1.AxisToDPadOffset = ps.AxisToDPadOffset;
 			p1.ButtonA = ps.ButtonA;
 			p1.ButtonB = ps.ButtonB;
+			p1.ButtonBig = ps.ButtonBig;
 			p1.ButtonBack = ps.ButtonBack;
 			p1.ButtonStart = ps.ButtonStart;
 			p1.ButtonX = ps.ButtonX;

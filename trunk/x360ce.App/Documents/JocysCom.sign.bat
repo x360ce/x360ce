@@ -1,4 +1,4 @@
-::@ECHO OFF
+@ECHO OFF
 ::"$(ProjectDir)Documents\JocysCom.sign.bat" "$(TargetPath)"
 SET file=%~1
 IF "%file%" == "" SET file=..\bin\Debug\x86\x360ce.exe

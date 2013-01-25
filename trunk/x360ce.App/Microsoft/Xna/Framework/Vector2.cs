@@ -1,22 +1,25 @@
 ﻿namespace Microsoft.Xna.Framework
 {
-	using Microsoft.Xna.Framework.Design;
-	using System;
-	using System.ComponentModel;
-	using System.Globalization;
-	using System.Runtime.InteropServices;
+    using Microsoft.Xna.Framework.Design;
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.Runtime.InteropServices;
 
-	[Serializable, StructLayout(LayoutKind.Sequential), TypeConverter(typeof(Vector2Converter))]
-	public struct Vector2 : IEquatable<Vector2>
-	{
-		public float X;
-		public float Y;
-		private static Vector2 _zero;
-		private static Vector2 _one;
-		private static Vector2 _unitX;
-		private static Vector2 _unitY;
-		public static Vector2 Zero
-		{
+    [Serializable, StructLayout(LayoutKind.Sequential), TypeConverter(typeof(Vector2Converter))]
+    public struct Vector2 : IEquatable<Vector2>
+    {
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+        public float X;
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+        public float Y;
+        private static Vector2 _zero;
+        private static Vector2 _one;
+        private static Vector2 _unitX;
+        private static Vector2 _unitY;
+        public static Vector2 Zero
+ 		{
 			get
 			{
 				return _zero;

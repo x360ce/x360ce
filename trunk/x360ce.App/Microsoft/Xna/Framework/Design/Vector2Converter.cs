@@ -5,6 +5,7 @@
     using System.Collections;
     using System.ComponentModel;
     using System.ComponentModel.Design.Serialization;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Reflection;
 
@@ -26,6 +27,7 @@
             return base.ConvertFrom(context, culture, value);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1800")]
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == null)

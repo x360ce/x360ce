@@ -216,6 +216,7 @@ namespace x360ce.Web.Data
         /// <param name="axisToDPadOffset">Initial value of the AxisToDPadOffset property.</param>
         /// <param name="buttonA">Initial value of the ButtonA property.</param>
         /// <param name="buttonB">Initial value of the ButtonB property.</param>
+        /// <param name="buttonBig">Initial value of the ButtonBig property.</param>
         /// <param name="buttonBack">Initial value of the ButtonBack property.</param>
         /// <param name="buttonStart">Initial value of the ButtonStart property.</param>
         /// <param name="buttonX">Initial value of the ButtonX property.</param>
@@ -261,7 +262,7 @@ namespace x360ce.Web.Data
         /// <param name="rightThumbUp">Initial value of the RightThumbUp property.</param>
         /// <param name="rightTrigger">Initial value of the RightTrigger property.</param>
         /// <param name="rightTriggerDeadZone">Initial value of the RightTriggerDeadZone property.</param>
-        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBack, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone)
+        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone)
         {
             PadSetting padSetting = new PadSetting();
             padSetting.PadSettingChecksum = padSettingChecksum;
@@ -270,6 +271,7 @@ namespace x360ce.Web.Data
             padSetting.AxisToDPadOffset = axisToDPadOffset;
             padSetting.ButtonA = buttonA;
             padSetting.ButtonB = buttonB;
+            padSetting.ButtonBig = buttonBig;
             padSetting.ButtonBack = buttonBack;
             padSetting.ButtonStart = buttonStart;
             padSetting.ButtonX = buttonX;
@@ -468,6 +470,30 @@ namespace x360ce.Web.Data
         private global::System.String _ButtonB;
         partial void OnButtonBChanging(global::System.String value);
         partial void OnButtonBChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonBig
+        {
+            get
+            {
+                return _ButtonBig;
+            }
+            set
+            {
+                OnButtonBigChanging(value);
+                ReportPropertyChanging("ButtonBig");
+                _ButtonBig = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonBig");
+                OnButtonBigChanged();
+            }
+        }
+        private global::System.String _ButtonBig;
+        partial void OnButtonBigChanging(global::System.String value);
+        partial void OnButtonBigChanged();
     
         /// <summary>
         /// No Metadata Documentation available.

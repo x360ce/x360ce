@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://x360ce.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s1="http://microsoft.com/wsdl/types/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://x360ce.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://x360ce.com/" xmlns:s1="http://microsoft.com/wsdl/types/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://x360ce.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://x360ce.com/">
       <s:import namespace="http://microsoft.com/wsdl/types/" />
@@ -71,6 +71,7 @@
               <s:element minOccurs="0" maxOccurs="1" name="AxisToDPadOffset" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonA" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonB" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonBig" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonBack" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonStart" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonX" type="s:string" />
@@ -226,6 +227,27 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetVendors">
+        <s:complexType />
+      </s:element>
+      <s:complexType name="Vendor">
+        <s:attribute name="VendorId" type="s:int" use="required" />
+        <s:attribute name="VendorName" type="s:string" />
+        <s:attribute name="ShortName" type="s:string" />
+        <s:attribute name="WebSite" type="s:string" />
+      </s:complexType>
+      <s:complexType name="ArrayOfVendor">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Vendor" nillable="true" type="tns:Vendor" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetVendorsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetVendorsResult" type="tns:ArrayOfVendor" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
     <s:schema elementFormDefault="qualified" targetNamespace="http://microsoft.com/wsdl/types/">
       <s:simpleType name="guid">
@@ -259,6 +281,12 @@
   <wsdl:message name="LoadSettingSoapOut">
     <wsdl:part name="parameters" element="tns:LoadSettingResponse" />
   </wsdl:message>
+  <wsdl:message name="GetVendorsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVendors" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVendorsResponse" />
+  </wsdl:message>
   <wsdl:portType name="x360ceSoap">
     <wsdl:operation name="SaveSetting">
       <wsdl:input message="tns:SaveSettingSoapIn" />
@@ -275,6 +303,10 @@
     <wsdl:operation name="LoadSetting">
       <wsdl:input message="tns:LoadSettingSoapIn" />
       <wsdl:output message="tns:LoadSettingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <wsdl:input message="tns:GetVendorsSoapIn" />
+      <wsdl:output message="tns:GetVendorsSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="x360ceSoap" type="tns:x360ceSoap">
@@ -315,6 +347,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <soap:operation soapAction="http://x360ce.com/GetVendors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="x360ceSoap12" type="tns:x360ceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -347,6 +388,15 @@
     </wsdl:operation>
     <wsdl:operation name="LoadSetting">
       <soap12:operation soapAction="http://x360ce.com/LoadSetting" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <soap12:operation soapAction="http://x360ce.com/GetVendors" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

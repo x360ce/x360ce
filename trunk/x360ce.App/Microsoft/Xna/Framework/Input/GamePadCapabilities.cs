@@ -1,8 +1,9 @@
 ﻿namespace Microsoft.Xna.Framework.Input
 {
+	using System.Diagnostics.CodeAnalysis;
 	using System.Runtime.InteropServices;
 
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Sequential), SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
 	public struct GamePadCapabilities
 	{
 		private bool _connected;
