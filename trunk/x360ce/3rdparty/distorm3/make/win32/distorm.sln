@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "distorm", "cdistorm.vcxproj", "{15051CE1-AB10-4239-973D-01B84F2AD0A9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		clib|Win32 = clib|Win32
+		clib|x64 = clib|x64
+		dll|Win32 = dll|Win32
+		dll|x64 = dll|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.clib|Win32.ActiveCfg = clib|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.clib|Win32.Build.0 = clib|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.clib|x64.ActiveCfg = clib|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.clib|x64.Build.0 = clib|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.dll|Win32.ActiveCfg = dll|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.dll|Win32.Build.0 = dll|Win32
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.dll|x64.ActiveCfg = dll|x64
+		{15051CE1-AB10-4239-973D-01B84F2AD0A9}.dll|x64.Build.0 = dll|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -19,7 +19,7 @@
 
 #include <CGuid.h>
 #include <vector>
-#include <detours.h>
+#include <TH.h>
 
 class iHookPadConfig
 {
@@ -173,8 +173,9 @@ public:
 		if(!GetState()) return;
 
 		if(CheckHook(HOOK_WMI | HOOK_WMIA))
-			HookWMI_ANSI();
-		else if(CheckHook(HOOK_WMI))
+			HookWMI_UNI();
+		else 
+			if(CheckHook(HOOK_WMI))
 			HookWMI_UNI();
 
 		if(CheckHook(HOOK_DI))

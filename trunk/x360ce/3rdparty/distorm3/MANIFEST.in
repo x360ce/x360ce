@@ -1,0 +1,4 @@
+include COPYING setup.cfg setup.py
+recursive-include src *.c *.h
+recursive-include include *.c *.h
+recursive-include . *.py

@@ -79,6 +79,8 @@ void Console()
         FILE* hf_out = _wfdopen(hCrt, L"w");
         setvbuf(hf_out, NULL, _IONBF, 1);
         *stdout = *hf_out;
+
+		ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
     }
 }
 
