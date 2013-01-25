@@ -84,6 +84,8 @@ static tCreateInstanceEnum hCreateInstanceEnum = NULL;
 static tNext hNext = NULL;
 static tGet hGet = NULL;
 
+static DWORD dwGets = NULL;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,12 +103,16 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
 
-	WriteLog(LOG_HOOKWMI,L"*Get*");
-
+	if(dwGets) 
+	{
+		WriteLog(LOG_HOOKCOM,L"*Gets*");
+		dwGets = NULL;
+	}
+		
 	if(FAILED(hr)) return hr;
 
-	//WriteLog(LOG_HOOKWMI, L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
-	//if( pVal->vt == VT_BSTR) WriteLog(LOG_HOOKWMI, L"%s",pVal->bstrVal);
+	//WriteLog(LOG_HOOKCOM, L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
+	//if( pVal->vt == VT_BSTR) WriteLog(LOG_HOOKCOM, L"%s",pVal->bstrVal);
 
 	if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL )
 	{
@@ -133,7 +139,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 				if( strUSB )
 				{
 					
-					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
+					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",pVal->bstrVal);
 
 					DWORD dwHookVid = NULL;
 					DWORD dwHookPid = NULL;
@@ -151,17 +157,14 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
 					if(dwHookVid && dwHookPid)
 					{
-						static VARIANT v;
 						OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
 
 						swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
 						BSTR Hookbstr = SysAllocString(tempstr);
 						SysFreeString(pVal->bstrVal);
 
-						v = *pVal;
-						v.bstrVal = Hookbstr;
-						pVal=&v;
-						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
+						pVal->bstrVal = Hookbstr;
+						WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
 					break;
 				}
@@ -170,7 +173,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
 				if( strHID )
 				{
-					WriteLog(LOG_HOOKWMI,L"Original DeviceID = %s",pVal->bstrVal);
+					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",pVal->bstrVal);
 
 					DWORD dwHookVid = NULL;
 					DWORD dwHookPid = NULL;
@@ -188,17 +191,14 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
 					if(dwHookVid && dwHookPid)
 					{
-						static VARIANT v;
 						OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
 
 						swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid,i, p);
 						BSTR Hookbstr = SysAllocString(tempstr);
 						SysFreeString(pVal->bstrVal);
 
-						v = *pVal;
-						v.bstrVal = Hookbstr;
-						pVal=&v;
-						WriteLog(LOG_HOOKWMI,L"Fake DeviceID = %s",pVal->bstrVal);
+						pVal->bstrVal = Hookbstr;
+						WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",pVal->bstrVal);
 					}
 					break;
 				}
@@ -223,7 +223,8 @@ HRESULT STDMETHODCALLTYPE HookNext(
 
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
 
-	WriteLog(LOG_HOOKWMI,L"*Next*");
+	WriteLog(LOG_HOOKCOM,L"*Next %u*",uCount);
+	dwGets = uCount;
 
 	if(FAILED(hr)) return hr;
 	if(hr != WBEM_S_NO_ERROR) return hr;
@@ -241,7 +242,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
 				hGet = pDevices->lpVtbl->Get;
 				if(HooksSafeTransition(hGet,true))
 				{
-					WriteLog(LOG_HOOKWMI,L"Hooking Get");
+					WriteLog(LOG_HOOKCOM,L"Hooking Get");
 					HooksInsertNewRedirection(hGet,HookGet,TEE_HOOK_NRM_JUMP);
 					HooksSafeTransition(hGet,false);
 				}
@@ -266,7 +267,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
 
-	WriteLog(LOG_HOOKWMI,L"*CreateInstanceEnum*");
+	WriteLog(LOG_HOOKCOM,L"*CreateInstanceEnum*");
 
 	if(FAILED(hr)) return hr;
 
@@ -283,7 +284,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 				hNext = pEnumDevices->lpVtbl->Next;
 				if(HooksSafeTransition(hNext,true))
 				{
-					WriteLog(LOG_HOOKWMI,L"Hooking Next");
+					WriteLog(LOG_HOOKCOM,L"Hooking Next");
 					HooksInsertNewRedirection(hNext,HookNext,TEE_HOOK_NRM_JUMP);
 					HooksSafeTransition(hNext,false);
 				}
@@ -313,7 +314,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
 
-	WriteLog(LOG_HOOKWMI,L"*ConnectServer*");
+	WriteLog(LOG_HOOKCOM,L"*ConnectServer*");
 
 	if(FAILED(hr)) return hr;
 
@@ -330,7 +331,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 				hCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
 				if(HooksSafeTransition(hCreateInstanceEnum,true))
 				{
-					WriteLog(LOG_HOOKWMI,L"Hooking CreateInstanceEnum");
+					WriteLog(LOG_HOOKCOM,L"Hooking CreateInstanceEnum");
 					HooksInsertNewRedirection(hCreateInstanceEnum,HookCreateInstanceEnum,TEE_HOOK_NRM_JUMP);
 					HooksSafeTransition(hCreateInstanceEnum,false);
 				}
@@ -353,7 +354,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 	HRESULT hr = oCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
-	WriteLog(LOG_HOOKWMI,L"*CoCreateInstance*");
+	WriteLog(LOG_HOOKCOM,L"*CoCreateInstance*");
 
 	if(FAILED(hr)) return hr;
 
@@ -370,7 +371,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 				hConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
 				if(HooksSafeTransition(hConnectServer,true))
 				{
-					WriteLog(LOG_HOOKWMI,L"Hooking ConnectServer");
+					WriteLog(LOG_HOOKCOM,L"Hooking ConnectServer");
 					HooksInsertNewRedirection(hConnectServer,HookConnectServer,TEE_HOOK_NRM_JUMP);
 					HooksSafeTransition(hConnectServer,false);
 				}
@@ -386,11 +387,11 @@ void WINAPI HookCoUninitialize()
 {
 	tCoUninitialize oCoUninitialize = (tCoUninitialize) HooksGetTrampolineAddress(hCoUninitialize);
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return oCoUninitialize();
-	WriteLog(LOG_HOOKWMI,L"*CoUninitialize*");
+	WriteLog(LOG_HOOKCOM,L"*CoUninitialize*");
 
 	if(hGet)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing HookGet Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing HookGet Hook");
 		if(HooksSafeTransition(hGet,true))
 		{
 			HooksRemoveRedirection(hGet,false);
@@ -401,7 +402,7 @@ void WINAPI HookCoUninitialize()
 
 	if(hNext)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing Next Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing Next Hook");
 		if(HooksSafeTransition(hNext,true))
 		{
 			HooksRemoveRedirection(hNext,false);
@@ -412,7 +413,7 @@ void WINAPI HookCoUninitialize()
 
 	if(hCreateInstanceEnum)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing CreateInstanceEnum Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing CreateInstanceEnum Hook");
 		if(HooksSafeTransition(hCreateInstanceEnum,true))
 		{
 			HooksRemoveRedirection(hCreateInstanceEnum,false);
@@ -423,7 +424,7 @@ void WINAPI HookCoUninitialize()
 
 	if(hConnectServer)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing ConnectServer Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing ConnectServer Hook");
 		if(HooksSafeTransition(hConnectServer,true))
 		{
 			HooksRemoveRedirection(hConnectServer,false);
@@ -440,7 +441,7 @@ void WINAPI HookCoUninitialize()
 void iHook::HookCOM()
 {
 	if(!CheckHook(iHook::HOOK_COM)) return;
-	WriteLog(LOG_HOOKWMI,L"Hooking COM");
+	WriteLog(LOG_HOOKCOM,L"Hooking COM");
 	iHookThis = this;
 
 	if(!hCoCreateInstance) 
@@ -470,7 +471,7 @@ void iHook::HookCOM_Cleanup()
 
 	if(hGet)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing HookGet Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing HookGet Hook");
 		if(HooksSafeTransition(hGet,true))
 		{
 			HooksRemoveRedirection(hGet,false);
@@ -481,7 +482,7 @@ void iHook::HookCOM_Cleanup()
 
 	if(hNext)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing Next Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing Next Hook");
 		if(HooksSafeTransition(hNext,true))
 		{
 			HooksRemoveRedirection(hNext,false);
@@ -492,7 +493,7 @@ void iHook::HookCOM_Cleanup()
 
 	if(hCreateInstanceEnum)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing CreateInstanceEnum Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing CreateInstanceEnum Hook");
 		if(HooksSafeTransition(hCreateInstanceEnum,true))
 		{
 			HooksRemoveRedirection(hCreateInstanceEnum,false);
@@ -503,7 +504,7 @@ void iHook::HookCOM_Cleanup()
 
 	if(hConnectServer)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing ConnectServer Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing ConnectServer Hook");
 		if(HooksSafeTransition(hConnectServer,true))
 		{
 			HooksRemoveRedirection(hConnectServer,false);
@@ -515,7 +516,7 @@ void iHook::HookCOM_Cleanup()
 
 	if(hCoCreateInstance)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing CoCreateInstance Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing CoCreateInstance Hook");
 		if(HooksSafeTransition(hCoCreateInstance,true))
 		{
 			HooksRemoveRedirection(hCoCreateInstance,true);
@@ -526,7 +527,7 @@ void iHook::HookCOM_Cleanup()
 
 	if(hCoUninitialize)
 	{
-		WriteLog(LOG_HOOKWMI,L"Removing CoUninitialize Hook");
+		WriteLog(LOG_HOOKCOM,L"Removing CoUninitialize Hook");
 		if(HooksSafeTransition(hCoUninitialize,true))
 		{
 			HooksRemoveRedirection(hCoUninitialize,true);
