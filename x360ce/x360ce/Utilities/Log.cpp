@@ -1,6 +1,6 @@
 /*  x360ce - XBOX360 Controler Emulator
  *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2011 Robert Krawczyk
+ *  Copyright (C) 2010-2013 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU Lesser General Public License as published by the Free Software Found-
@@ -41,7 +41,16 @@ void WriteStamp()
 {
     if(enableconsole)
     {
-        wprintf(L"%s",L"TIME           THREAD   TYPE      DATA");
+		for(int i=0;i < 80; i++ ) wprintf(L"=");
+		wprintf(L"x360ce - XBOX 360 Controller emulator\n");
+		wprintf(L"http://code.google.com/p/x360ce\n\n");
+		wprintf(L"Copyright (C) 2013 Robert Krawczyk\n\n");
+		wprintf(L"This program is free software you can redistribute it and/or modify it under\n"
+			L"the terms of the GNU General Public License as published bythe Free Software\n" 
+			L"Foundation, either version 3 of the License, or any later version.\n");
+		for(int i=0;i < 80; i++ ) wprintf(L"="); wprintf(L"\n");
+
+        wprintf(L"%s",L"TIME         THREAD   TYPE      DATA");
         wprintf(L"\n");
 		fflush(stdout);
     }
@@ -56,7 +65,7 @@ void WriteStamp()
         if (fp==NULL)
             return;
 
-        fwprintf(fp, L"%s",L"TIME           THREAD   TYPE      DATA");
+        fwprintf(fp, L"%s",L"TIME         THREAD   TYPE      DATA");
         fwprintf(fp, L"\n");
         fclose(fp);
     }
@@ -133,7 +142,7 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
 
     if(enableconsole)
     {
-        wprintf(L"%02u:%02u:%02u.%03u:: %08u %s",\
+        wprintf(L"%02u:%02u:%02u.%03u %08u %s",\
                 systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
         va_list arglist;
         va_start(arglist,str);
