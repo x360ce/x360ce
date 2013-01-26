@@ -385,7 +385,7 @@ namespace x360ce.App
 			foreach (string path in SettingsMap.Keys)
 			{
 				var r = SaveSetting(ini, path);
-				if (r) saved = r;
+				if (r) saved = true;
 			}
 			return saved;
 		}
@@ -597,12 +597,15 @@ namespace x360ce.App
 		}
 
 
-		public void CheckSettings(List<DeviceInstance> diInstances, List<DeviceInstance> diInstancesOld)
+		/// <summary>
+		/// Check settings.
+		/// </summary>
+		/// <returns>True if settings changed.</returns>
+		public bool CheckSettings(List<DeviceInstance> diInstances, List<DeviceInstance> diInstancesOld)
 		{
 			var updated = false;
 			var ini2 = new Ini(IniFileName);
 			var oldCount = diInstancesOld.Count;
-			var newCount = diInstances.Count;
 			for (int i = 0; i < 4; i++)
 			{
 				var pad = string.Format("PAD{0}", i + 1);
@@ -635,7 +638,8 @@ namespace x360ce.App
 						f.LoadData(diInstances[i], i);
 						f.StartPosition = FormStartPosition.CenterParent;
 						var result = f.ShowDialog(MainForm.Current);
-						updated = true;
+						f.Dispose();
+						updated = (result == DialogResult.OK);
 					}
 				}
 				else
@@ -647,9 +651,7 @@ namespace x360ce.App
 				// Update Mappings.
 				ini2.SetValue(SettingName.Mappings, pad, section);
 			}
-			if (updated){
-				if (SettingManager.Current.SaveSettings()) MainForm.Current.NotifySettingsChange();
-			}
+			return updated;
 		}
 
 	}
