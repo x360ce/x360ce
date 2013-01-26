@@ -180,12 +180,6 @@ HRESULT XInit(DINPUT_GAMEPAD &gamepad)
 
 		if(!gamepad.pGamepad)
 		{
-			if(g_iHook->CheckHook(iHook::HOOK_DI))
-			{
-				g_iHook->DisableHook(iHook::HOOK_DI);
-				WriteLog(LOG_CORE,L"Temporary disable HookDI");
-			}
-
 			WriteLog(LOG_CORE,L"[PAD%d] Initializing UserIndex %d",gamepad.dwUserIndex+1,gamepad.dwUserIndex);
 
 			hr = InitDirectInput(g_hWnd,gamepad);
@@ -199,12 +193,6 @@ HRESULT XInit(DINPUT_GAMEPAD &gamepad)
 
 				gamepad.initialized = TRUE;
 				WriteLog(LOG_CORE,L"[PAD%d] Device Initialized",gamepad.dwUserIndex+1);
-			}
-
-			if(!g_iHook->CheckHook(iHook::HOOK_DI) )
-			{
-				g_iHook->EnableHook(iHook::HOOK_DI);
-				WriteLog(LOG_CORE,L"Restore HookDI state");
 			}
 		}
 		LeaveCriticalSection(&cs);

@@ -21,6 +21,7 @@
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
+#include "InputHook\InputHook.h"
 
 //-----------------------------------------------------------------------------
 // Defines, constants, and global variables
@@ -29,6 +30,9 @@ std::vector<DINPUT_GAMEPAD> g_Gamepads;
 
 INT init[4] = {NULL};
 WORD lastforce = 0;
+
+extern CRITICAL_SECTION cs;
+extern iHook* g_iHook;
 
 //-----------------------------------------------------------------------------
 
@@ -152,6 +156,12 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 	HRESULT coophr=S_FALSE;
 	LoadDinput(); 
 
+	EnterCriticalSection(&cs);
+	if(g_iHook->CheckHook(iHook::HOOK_DI))
+	{
+		g_iHook->DisableHook(iHook::HOOK_DI);
+		WriteLog(LOG_CORE,L"Temporary disable HookDI");
+	}
 	if(!gamepad.useProduct)
 	{
 		hr = g_pDI->CreateDevice( gamepad.instanceGUID, &gamepad.pGamepad, NULL );
@@ -169,6 +179,13 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 		MessageBox(NULL,L"x360ce is misconfigured or device is disconnected",L"Error",MB_ICONERROR);
 		ExitProcess(hr);
 	}
+
+	if(!g_iHook->CheckHook(iHook::HOOK_DI) )
+	{
+		g_iHook->EnableHook(iHook::HOOK_DI);
+		WriteLog(LOG_CORE,L"Restore HookDI state");
+	}
+	LeaveCriticalSection(&cs);
 
 	if(!gamepad.pGamepad)
 	{ 
