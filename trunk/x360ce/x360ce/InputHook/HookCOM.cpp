@@ -132,27 +132,19 @@ HRESULT STDMETHODCALLTYPE HookGet(
 			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
 			if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
 			{
-				size_t size = (wcslen(pVal->bstrVal)+1)*sizeof(OLECHAR);
 				OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
-				OLECHAR* tempstr = new OLECHAR[size];
+				OLECHAR tempstr[MAX_PATH];
 
 				DWORD dwHookVid = iHookThis->CheckHook(iHook::HOOK_VIDPID) ? LOWORD(iHookThis->GetFakeVIDPID()) : LOWORD(padconf.GetProductVIDPID());
 				DWORD dwHookPid = iHookThis->CheckHook(iHook::HOOK_VIDPID) ? HIWORD(iHookThis->GetFakeVIDPID()) : HIWORD(padconf.GetProductVIDPID());
 
 				if( strUSB && dwHookVid && dwHookPid)
 				{	
-					VARIANT v;
-					VariantInit(&v);
-					VariantCopy(&v,pVal);
-					VariantClear(pVal);
-
-					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",v.bstrVal);
-					OLECHAR* p = wcsrchr(v.bstrVal,L'\\');
-					swprintf_s(tempstr,size,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
-					SysReAllocString(&v.bstrVal,tempstr);
-					WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",v.bstrVal);
-					if(tempstr) delete [] tempstr;
-					VariantCopy(pVal,&v);
+					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",pVal->bstrVal);
+					OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
+					swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+					SysReAllocString(&pVal->bstrVal,tempstr);
+					WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",pVal->bstrVal);
 					break;
 				}
 
@@ -160,18 +152,11 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
 				if( strHID && dwHookVid && dwHookPid )
 				{
-					VARIANT v;
-					VariantInit(&v);
-					VariantCopy(&v,pVal);
-					VariantClear(pVal);
-
-					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",v.bstrVal);
-					OLECHAR* p = wcsrchr(v.bstrVal,L'\\');
-					swprintf_s(tempstr,size,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
-					SysReAllocString(&v.bstrVal,tempstr);
-					WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",v.bstrVal);
-					if(tempstr) delete [] tempstr;
-					VariantCopy(pVal,&v);
+					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",pVal->bstrVal);
+					OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
+					swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+					SysReAllocString(&pVal->bstrVal,tempstr);
+					WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",pVal->bstrVal);
 					break;
 				}
 			}
