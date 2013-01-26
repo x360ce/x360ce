@@ -1,5 +1,6 @@
 ﻿v2.1.2.189 (2013-01-26)
 - Fix: Crash when [Cancel] is pressed on New Device Form.
+- Update: Updated to xinput1_3.dll v3.3.1.540.
 
 v2.1.2.188 (2013-01-25)
 - Fix: Default INI file will be created properly now.
