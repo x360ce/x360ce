@@ -20,6 +20,7 @@
 #include <CGuid.h>
 #include <vector>
 #include <TH.h>
+#include "Utilities\Log.h"
 
 class iHookPadConfig
 {
@@ -168,6 +169,7 @@ public:
 	inline VOID ExecuteHooks()
 	{
 		EnterCriticalSection(&cs);
+		WriteLog(LOG_IHOOK,L"InputHook starting with mask 0x%08X",dwHookMode);
 		if(!GetState()) return;
 
 		if(CheckHook(HOOK_COM))

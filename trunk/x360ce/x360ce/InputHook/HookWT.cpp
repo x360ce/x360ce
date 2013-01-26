@@ -60,7 +60,7 @@ void iHook::HookWT_Cleanup()
 {
 	if(hWinVerifyTrust)
 	{
-		WriteLog(LOG_HOOKCOM,L"Removing WinVerifyTrust Hook");
+		WriteLog(LOG_HOOKWT,L"Removing WinVerifyTrust Hook");
 		if(HooksSafeTransition(hWinVerifyTrust,true))
 		{
 			HooksRemoveRedirection(hWinVerifyTrust,true);

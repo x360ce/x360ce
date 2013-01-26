@@ -38,10 +38,10 @@ static iHook *iHookThis = NULL;
 typedef void (WINAPI *tCoUninitialize)();
 
 typedef HRESULT (WINAPI *tCoCreateInstance)(__in     REFCLSID rclsid,
-											 __in_opt LPUNKNOWN pUnkOuter,
-											 __in     DWORD dwClsContext,
-											 __in     REFIID riid,
-											 __deref_out LPVOID FAR* ppv);
+											__in_opt LPUNKNOWN pUnkOuter,
+											__in     DWORD dwClsContext,
+											__in     REFIID riid,
+											__deref_out LPVOID FAR* ppv);
 
 
 typedef HRESULT ( STDMETHODCALLTYPE *tConnectServer )(
@@ -108,7 +108,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 		WriteLog(LOG_HOOKCOM,L"*Gets*");
 		dwGets = NULL;
 	}
-		
+
 	if(FAILED(hr)) return hr;
 
 	//WriteLog(LOG_HOOKCOM, L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
@@ -118,13 +118,12 @@ HRESULT STDMETHODCALLTYPE HookGet(
 	{
 		//WriteLog(L"%s"),pVal->bstrVal);
 		DWORD dwPid = 0, dwVid = 0;
-		OLECHAR* strVid = wcsstr( pVal->bstrVal, L"VID_" );
 
+		OLECHAR* strVid = wcsstr( pVal->bstrVal, L"VID_" );
 		if(strVid && swscanf_s( strVid, L"VID_%4X", &dwVid ) != 1 )
 			return hr;
 
 		OLECHAR* strPid = wcsstr( pVal->bstrVal, L"PID_" );
-
 		if(strPid && swscanf_s( strPid, L"PID_%4X", &dwPid ) != 1 )
 			return hr;
 
@@ -133,73 +132,46 @@ HRESULT STDMETHODCALLTYPE HookGet(
 			iHookPadConfig &padconf = iHookThis->GetPadConfig(i);
 			if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
 			{
+				size_t size = (wcslen(pVal->bstrVal)+1)*sizeof(OLECHAR);
 				OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
-				OLECHAR tempstr[MAX_PATH];
+				OLECHAR* tempstr = new OLECHAR[size];
 
-				if( strUSB )
-				{
-					
-					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",pVal->bstrVal);
+				DWORD dwHookVid = iHookThis->CheckHook(iHook::HOOK_VIDPID) ? LOWORD(iHookThis->GetFakeVIDPID()) : LOWORD(padconf.GetProductVIDPID());
+				DWORD dwHookPid = iHookThis->CheckHook(iHook::HOOK_VIDPID) ? HIWORD(iHookThis->GetFakeVIDPID()) : HIWORD(padconf.GetProductVIDPID());
 
-					DWORD dwHookVid = NULL;
-					DWORD dwHookPid = NULL;
+				if( strUSB && dwHookVid && dwHookPid)
+				{	
+					VARIANT v;
+					VariantInit(&v);
+					VariantCopy(&v,pVal);
+					VariantClear(pVal);
 
-					if(iHookThis->CheckHook(iHook::HOOK_VIDPID))
-					{
-						dwHookVid = LOWORD(iHookThis->GetFakeVIDPID());
-						dwHookPid = HIWORD(iHookThis->GetFakeVIDPID());
-					}
-					else
-					{
-						dwHookVid = LOWORD(padconf.GetProductVIDPID());
-						dwHookPid = HIWORD(padconf.GetProductVIDPID());
-					}
-
-					if(dwHookVid && dwHookPid)
-					{
-						OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
-
-						swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
-						BSTR Hookbstr = SysAllocString(tempstr);
-						SysFreeString(pVal->bstrVal);
-
-						pVal->bstrVal = Hookbstr;
-						WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",pVal->bstrVal);
-					}
+					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",v.bstrVal);
+					OLECHAR* p = wcsrchr(v.bstrVal,L'\\');
+					swprintf_s(tempstr,size,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+					SysReAllocString(&v.bstrVal,tempstr);
+					WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",v.bstrVal);
+					if(tempstr) delete [] tempstr;
+					VariantCopy(pVal,&v);
 					break;
 				}
 
 				OLECHAR* strHID = wcsstr( pVal->bstrVal, L"HID" );
 
-				if( strHID )
+				if( strHID && dwHookVid && dwHookPid )
 				{
-					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",pVal->bstrVal);
+					VARIANT v;
+					VariantInit(&v);
+					VariantCopy(&v,pVal);
+					VariantClear(pVal);
 
-					DWORD dwHookVid = NULL;
-					DWORD dwHookPid = NULL;
-
-					if(iHookThis->CheckHook(iHook::HOOK_VIDPID))
-					{
-						dwHookVid = LOWORD(iHookThis->GetFakeVIDPID());
-						dwHookPid = HIWORD(iHookThis->GetFakeVIDPID());
-					}
-					else
-					{
-						dwHookVid = LOWORD(padconf.GetProductVIDPID());
-						dwHookPid = HIWORD(padconf.GetProductVIDPID());
-					}
-
-					if(dwHookVid && dwHookPid)
-					{
-						OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
-
-						swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid,i, p);
-						BSTR Hookbstr = SysAllocString(tempstr);
-						SysFreeString(pVal->bstrVal);
-
-						pVal->bstrVal = Hookbstr;
-						WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",pVal->bstrVal);
-					}
+					WriteLog(LOG_HOOKCOM,L"Original DeviceID = %s",v.bstrVal);
+					OLECHAR* p = wcsrchr(v.bstrVal,L'\\');
+					swprintf_s(tempstr,size,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+					SysReAllocString(&v.bstrVal,tempstr);
+					WriteLog(LOG_HOOKCOM,L"Fake DeviceID = %s",v.bstrVal);
+					if(tempstr) delete [] tempstr;
+					VariantCopy(pVal,&v);
 					break;
 				}
 			}
@@ -345,10 +317,10 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
-									 __in_opt LPUNKNOWN pUnkOuter,
-									 __in     DWORD dwClsContext,
-									 __in     REFIID riid,
-									 __deref_out LPVOID FAR* ppv)
+									__in_opt LPUNKNOWN pUnkOuter,
+									__in     DWORD dwClsContext,
+									__in     REFIID riid,
+									__deref_out LPVOID FAR* ppv)
 {
 	tCoCreateInstance oCoCreateInstance = (tCoCreateInstance) HooksGetTrampolineAddress(hCoCreateInstance);
 	HRESULT hr = oCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
