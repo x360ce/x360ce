@@ -1,6 +1,6 @@
 /*  x360ce - XBOX360 Controler Emulator
  *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2011 Robert Krawczyk
+ *  Copyright (C) 2010-2013 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU Lesser General Public License as published by the Free Software Found-
@@ -89,7 +89,6 @@ VOID ExitInstance()
 	FreeDinput();
 	SAFE_DELETE(g_iHook);
 
-	//we can deinit here
 	if(startThread == GetCurrentThreadId())
 	{
 		if(hNative)
@@ -107,7 +106,6 @@ VOID ExitInstance()
 		}
 		cleanDeinit = TRUE;
 	}
-	//else - try deinit in window proc
 	else if(IsWindow(g_hWnd)) SendMessage(g_hWnd,MYQUITMSG,NULL,NULL);
 
 	if(!cleanDeinit) WriteLog(LOG_CORE,L"Dirty deinit detected, please report issue");
@@ -136,7 +134,7 @@ VOID InitInstance(HINSTANCE hinstDLL)
 
 	startThread = GetCurrentThreadId();
 
-	g_iHook = new iHook;
+	g_iHook = new iHook();
 
 	InI ini;
     ini.SetIniFileName(L"x360ce.ini");
@@ -151,8 +149,6 @@ VOID InitInstance(HINSTANCE hinstDLL)
 #else
     WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName().c_str(),dwAppPID);
 #endif
-
-    WriteLog(LOG_CORE,L"http://code.google.com/p/x360ce");
 
     InstallInputHooks();
 	LeaveCriticalSection(&cs);

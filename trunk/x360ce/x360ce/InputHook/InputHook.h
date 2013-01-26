@@ -169,25 +169,22 @@ public:
 	inline VOID ExecuteHooks()
 	{
 		EnterCriticalSection(&cs);
-		WriteLog(LOG_IHOOK,L"InputHook starting with mask 0x%08X",dwHookMode);
-		if(!GetState()) return;
+		if(dwHookMode)
+		{
+			WriteLog(LOG_IHOOK,L"InputHook starting with mask 0x%08X",dwHookMode);
+			if(!GetState()) return;
 
-		if(CheckHook(HOOK_COM))
-			HookCOM();
+			if(CheckHook(HOOK_COM))
+				HookCOM();
 
-		if(CheckHook(HOOK_DI))
-			HookDI();
+			if(CheckHook(HOOK_DI))
+				HookDI();
 
-		if(CheckHook(HOOK_WT))
-			HookWT();
-
+			if(CheckHook(HOOK_WT))
+				HookWT();
+		}
 		LeaveCriticalSection(&cs);
 		return;
-	}
-
-	inline VOID Clean()
-	{
-
 	}
 
 
@@ -206,9 +203,5 @@ protected:
 	void HookDI_Cleanup();
 	void HookWT_Cleanup();
 };
-
-#ifdef _IN_HOOK
-extern iHook *iHookThis;
-#endif
 
 #endif
