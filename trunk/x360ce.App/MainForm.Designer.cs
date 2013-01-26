@@ -73,8 +73,6 @@ namespace x360ce.App
 			this.StatusIsAdminLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.CleanStatusTimer = new System.Windows.Forms.Timer(this.components);
-			this.SettingsTimer = new System.Windows.Forms.Timer(this.components);
 			this.TopPanel = new System.Windows.Forms.Panel();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
@@ -116,7 +114,6 @@ namespace x360ce.App
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.Size = new System.Drawing.Size(640, 496);
 			this.MainTabControl.TabIndex = 1;
-			this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// 
 			// Pad1TabPage
 			// 
@@ -506,16 +503,6 @@ namespace x360ce.App
 			this.StatusDllLabel.Size = new System.Drawing.Size(85, 19);
 			this.StatusDllLabel.Text = "StatusDllLabel";
 			// 
-			// CleanStatusTimer
-			// 
-			this.CleanStatusTimer.Interval = 3000;
-			this.CleanStatusTimer.Tick += new System.EventHandler(this.CleanStatusTimer_Tick);
-			// 
-			// SettingsTimer
-			// 
-			this.SettingsTimer.Interval = 500;
-			this.SettingsTimer.Tick += new System.EventHandler(this.SettingsTimer_Tick);
-			// 
 			// TopPanel
 			// 
 			this.TopPanel.BackColor = System.Drawing.SystemColors.Info;
@@ -639,7 +626,6 @@ namespace x360ce.App
 		private TabPage OptionsTabPage;
 		private CheckBox EnableLoggingCheckBox;
 		private CheckBox UseInitBeepCheckBox;
-		private Timer CleanStatusTimer;
 		private CheckBox InstallFilesX360ceCheckBox;
 		private CheckBox InstallFilesXinput910CheckBox;
 		private CheckBox InstallFilesXinput11CheckBox;
@@ -650,8 +636,7 @@ namespace x360ce.App
 		private TabPage Pad3TabPage;
 		private TabPage Pad4TabPage;
 		private ImageList BuletImageList;
-        public ToolStripStatusLabel StatusTimerLabel;
-		private Timer SettingsTimer;
+		public ToolStripStatusLabel StatusTimerLabel;
 		private ToolStripStatusLabel StatusEventsLabel;
 		private ToolStripStatusLabel StatusSaveLabel;
 		private ToolStripStatusLabel toolStripStatusLabel2;

@@ -15,6 +15,7 @@ using System.Security.AccessControl;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using x360ce.App.Controls;
+using System.Diagnostics;
 
 namespace x360ce.App
 {
@@ -56,14 +57,27 @@ namespace x360ce.App
 		public TabPage[] ControlPages;
 
 		public System.Timers.Timer UpdateTimer;
+		public System.Timers.Timer SettingsTimer;
+		public System.Timers.Timer CleanStatusTimer;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
-			UpdateTimer.Interval = 200;
 			UpdateTimer.SynchronizingObject = this;
+			UpdateTimer.Interval = 50;
 			UpdateTimer.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
+			SettingsTimer = new System.Timers.Timer();
+			SettingsTimer.AutoReset = false;
+			SettingsTimer.SynchronizingObject = this;
+			SettingsTimer.Interval = 500;
+			SettingsTimer.Elapsed += new System.Timers.ElapsedEventHandler(SettingsTimer_Elapsed);
+			CleanStatusTimer = new System.Timers.Timer();
+			CleanStatusTimer.AutoReset = false;
+			CleanStatusTimer.SynchronizingObject = this;
+			CleanStatusTimer.Interval = 3000;
+			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
+			// Start Timers.
 			UpdateTimer.Start();
 		}
 
@@ -128,6 +142,8 @@ namespace x360ce.App
 				// Init presets. Execute only after name of cIniFile is set.
 				ControlPads[i].InitPresets();
 			}
+			// Allow events after PAD control are loaded.
+			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// Load about control.
 			ControlAbout = new Controls.AboutControl();
 			ControlAbout.Dock = DockStyle.Fill;
@@ -266,10 +282,9 @@ namespace x360ce.App
 			StatusTimerLabel.Text = "";
 		}
 
-		private void CleanStatusTimer_Tick(object sender, EventArgs e)
+		private void CleanStatusTimer_Elapsed(object sender, EventArgs e)
 		{
 			StatusTimerLabel.Text = "";
-			CleanStatusTimer.Stop();
 		}
 
 		#region Setting Events
@@ -461,8 +476,6 @@ namespace x360ce.App
 
 		int _diCount = -1;
 		System.Collections.IEnumerator dl = null;
-		//Populate All devices
-		List<DeviceInstance> list = new List<DeviceInstance>();
 
 		bool forceRecountDevices = true;
 		int deviceCount = 0;
@@ -476,16 +489,20 @@ namespace x360ce.App
 			// If you encouter "LoaderLock was detected" Exception when debugging then:
 			// Make sure that you have reference to Microsoft.Directx.dll. 
 			bool instancesChanged = false;
+			DeviceList devices = null;
 			if (forceRecountDevices)
 			{
-				deviceCount = Manager.Devices.Count;
+				devices = Manager.Devices;
+				deviceCount = devices.Count;
 				forceRecountDevices = false;
 			}
+			//Populate All devices
 			if (deviceCount != _diCount)
 			{
-				_diCount = Manager.Devices.Count;
-				dl = Manager.Devices.GetEnumerator();
-				list.Clear();
+				_diCount = deviceCount;
+				if (devices == null) devices = Manager.Devices;
+				dl = devices.GetEnumerator();
+				var instances = new List<DeviceInstance>();
 				while (dl.MoveNext())
 				{
 					var di = (DeviceInstance)dl.Current;
@@ -493,7 +510,7 @@ namespace x360ce.App
 						|| di.DeviceType == DeviceType.Flight
 						|| di.DeviceType == DeviceType.Gamepad
 						|| di.DeviceType == DeviceType.Joystick
-					) list.Add(di);
+					) instances.Add(di);
 				}
 				// Dispose from previous list of devices.
 				for (int i = 0; i < diDevices.Count; i++)
@@ -504,34 +521,32 @@ namespace x360ce.App
 				}
 				diDevices.Clear();
 				// Create new list of devices.
-				for (int i = 0; i < list.Count; i++)
+				for (int i = 0; i < instances.Count; i++)
 				{
-					var ig = list[i].InstanceGuid;
+					var ig = instances[i].InstanceGuid;
 					var device = new Device(ig);
 					device.SetCooperativeLevel(this, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
 					device.Acquire();
 					diDevices.Add(device);
 				}
-				onlineUserControl1.BindDevices(list);
+				onlineUserControl1.BindDevices(instances);
 				onlineUserControl1.BindFiles();
 				// Assign new list of instances.
 				diInstancesOld.Clear();
 				diInstancesOld.AddRange(diInstances.ToArray());
 				diInstances.Clear();
-				diInstances.AddRange(list.ToArray());
+				diInstances.AddRange(instances.ToArray());
 				instancesChanged = true;
 			}
 			// Return true if instances changed.
 			return instancesChanged;
 		}
 
-		private void SettingsTimer_Tick(object sender, EventArgs e)
+		private void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
 			settingsChanged = true;
-			SettingsTimer.Stop();
 			UpdateTimer.Start();
 		}
-
 
 		bool settingsChanged = false;
 		GamePadState emptyState = new GamePadState();
@@ -540,23 +555,8 @@ namespace x360ce.App
 
 		private void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			// If this method is executed on separate thread than current control then...
-			if (InvokeRequired)
-			{
-				// Re-execute this method on same thread as current control.
-				EventHandler<System.Timers.ElapsedEventArgs> handler = UpdateTimer_Elapsed;
-				// Use 'BeginIvoke' instead of 'Invoke' to make sure that
-				// you will get proper error message if something fails.
-				BeginInvoke(handler, new object[] { sender, e });
-				return;
-			}
 			Program.TimerCount++;
-			if (!formLoaded)
-			{
-				LoadForm();
-				UpdateTimer.Interval = 50;
-				UpdateTimer.Start();
-			}
+			if (!formLoaded) LoadForm();
 			bool instancesChanged = RefreshCurrentInstances();
 			// Load direct input data.
 			for (int i = 0; i < 4; i++)
@@ -585,25 +585,45 @@ namespace x360ce.App
 			// If settings changed or directInput instances changed then...
 			if (settingsChanged || instancesChanged)
 			{
-				if (instancesChanged) SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
+				if (instancesChanged)
+				{
+					var updated = SettingManager.Current.CheckSettings(diInstances, diInstancesOld);
+					if (updated) SettingManager.Current.SaveSettings();
+				}
 				ReloadLibrary();
 			}
 			else
 			{
-				// Check all pads.
-				UpdateGamePadStatus();
 				for (int i = 0; i < 4; i++)
 				{
+					// DInput instance is ON.
+					var diOn = i < diInstances.Count;
+					// XInput instance is ON.
+					//XInput.Controllers[i].PollState();
+					var xiOn = false;
 					var currentPadControl = ControlPads[i];
 					if (UnsafeNativeMethods.IsLoaded)
 					{
 						var currentPad = GamePad.GetState((PlayerIndex)i);
 						currentPadControl.UpdateFromXInput(currentPad);
+						xiOn = currentPad.IsConnected;
 					}
 					else
 					{
 						currentPadControl.UpdateFromXInput(emptyState);
 					}
+					// Update LED of gamepad state.
+					string image = diOn
+						// di ON, xi ON 
+						? xiOn ? "green"
+						// di ON, xi OFF
+						: "red"
+						// di OFF, xi ON
+						: xiOn ? "yellow"
+						// di OFF, xi OFF
+						: "grey";
+					string bullet = string.Format("bullet_square_glass_{0}.png", image);
+					if (ControlPages[i].ImageKey != bullet) ControlPages[i].ImageKey = bullet;
 				}
 				UpdateStatus("");
 			}
@@ -661,30 +681,25 @@ namespace x360ce.App
 		public void ReloadLibrary()
 		{
 			Program.ReloadCount++;
-			//FixConfig(instances);
 			settingsChanged = false;
 			var dllInfo = new System.IO.FileInfo(dllFile);
 			if (dllInfo.Exists)
 			{
 				dllVersion = GetDllVersion(dllInfo.FullName);
 				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
+				// If fast reload od settings is supported then...
 				if (UnsafeNativeMethods.IsResetSupported)
 				{
-					// Fast: Notify x360ce to reload settings. 
 					UnsafeNativeMethods.Reset();
 				}
-				else
+				// Slow: Reload whole x360ce.dll.
+				else if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
 				{
-					// Slow: Reload whole x360ce.dll.
-					if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
-					{
-						var msg = string.Format("Failed to load '{0}'", dllFile);
-						var form = new MessageBoxForm();
-						form.StartPosition = FormStartPosition.CenterParent;
-						form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
+					var msg = string.Format("Failed to load '{0}'", dllFile);
+					var form = new MessageBoxForm();
+					form.StartPosition = FormStartPosition.CenterParent;
+					form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
-
 			}
 		}
 
@@ -693,34 +708,6 @@ namespace x360ce.App
 			StatusTimerLabel.Text = string.Format("Count: {0}, Reloads: {1}, Errors: {2} {3}",
 				Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
 		}
-
-		/// <summary>
-		/// Update GamePad state LED's.
-		/// </summary>
-		/// <param name="diInstances"></param>
-		void UpdateGamePadStatus()
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				// DInput instance is ON.
-				var diOn = i < diInstances.Count;
-				// XInput instance is ON.
-				//XInput.Controllers[i].PollState();
-				var xiOn = UnsafeNativeMethods.IsLoaded && GamePad.GetState((PlayerIndex)i).IsConnected;
-				string image = diOn
-					// di ON, xi ON 
-					? xiOn ? "green"
-					// di ON, xi OFF
-					: "red"
-					// di OFF, xi ON
-					: xiOn ? "yellow"
-					// di OFF, xi OFF
-					: "grey";
-				string bullet = string.Format("bullet_square_glass_{0}.png", image);
-				if (ControlPages[i].ImageKey != bullet) ControlPages[i].ImageKey = bullet;
-			}
-		}
-
 		#endregion
 
 		bool HelpInit = false;

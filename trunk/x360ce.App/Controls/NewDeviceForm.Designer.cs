@@ -39,6 +39,7 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.WizzardTabControl = new System.Windows.Forms.TabControl();
 			this.Step1TabPage = new System.Windows.Forms.TabPage();
+			this.SearchTheInternetCheckBox = new System.Windows.Forms.CheckBox();
 			this.IncludeSubfoldersCheckBox = new System.Windows.Forms.CheckBox();
 			this.DescriptionLabel = new System.Windows.Forms.Label();
 			this.FolderPathTextBox = new System.Windows.Forms.TextBox();
@@ -58,11 +59,10 @@
 			this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
 			this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.NextButton = new System.Windows.Forms.Button();
 			this.SettingsFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.BackButton = new System.Windows.Forms.Button();
-			this.SearchTheInternetCheckBox = new System.Windows.Forms.CheckBox();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.WizzardTabControl.SuspendLayout();
 			this.Step1TabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.BrowsePictureBox)).BeginInit();
@@ -157,6 +157,17 @@
 			this.Step1TabPage.TabIndex = 0;
 			this.Step1TabPage.Text = "Step 1";
 			this.Step1TabPage.UseVisualStyleBackColor = true;
+			// 
+			// SearchTheInternetCheckBox
+			// 
+			this.SearchTheInternetCheckBox.AutoSize = true;
+			this.SearchTheInternetCheckBox.Location = new System.Drawing.Point(48, 75);
+			this.SearchTheInternetCheckBox.Name = "SearchTheInternetCheckBox";
+			this.SearchTheInternetCheckBox.Size = new System.Drawing.Size(117, 17);
+			this.SearchTheInternetCheckBox.TabIndex = 4;
+			this.SearchTheInternetCheckBox.Text = "Search the Internet";
+			this.SearchTheInternetCheckBox.UseVisualStyleBackColor = true;
+			this.SearchTheInternetCheckBox.CheckedChanged += new System.EventHandler(this.SearchTheInternetCheckBox_CheckedChanged);
 			// 
 			// IncludeSubfoldersCheckBox
 			// 
@@ -396,6 +407,22 @@
 			this.MyFileColumn.Name = "MyFileColumn";
 			this.MyFileColumn.ReadOnly = true;
 			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(454, 6);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 21;
+			// 
 			// NextButton
 			// 
 			this.NextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -417,33 +444,6 @@
 			this.BackButton.Text = "< Back";
 			this.BackButton.UseVisualStyleBackColor = true;
 			this.BackButton.Click += new System.EventHandler(this.BackButton_Click);
-			// 
-			// SearchTheInternetCheckBox
-			// 
-			this.SearchTheInternetCheckBox.AutoSize = true;
-			this.SearchTheInternetCheckBox.Location = new System.Drawing.Point(48, 75);
-			this.SearchTheInternetCheckBox.Name = "SearchTheInternetCheckBox";
-			this.SearchTheInternetCheckBox.Size = new System.Drawing.Size(117, 17);
-			this.SearchTheInternetCheckBox.TabIndex = 4;
-			this.SearchTheInternetCheckBox.Text = "Search the Internet";
-			this.SearchTheInternetCheckBox.UseVisualStyleBackColor = true;
-			this.SearchTheInternetCheckBox.CheckedChanged += new System.EventHandler(this.SearchTheInternetCheckBox_CheckedChanged);
-			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(454, 6);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 21;
 			// 
 			// NewDeviceForm
 			// 
