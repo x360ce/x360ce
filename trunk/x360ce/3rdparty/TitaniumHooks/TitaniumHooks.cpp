@@ -48,20 +48,20 @@ bool MapFileEx(char* szFileName, DWORD ReadOrWrite, LPHANDLE FileHandle, LPDWORD
 
 	if(ReadOrWrite == UE_ACCESS_READ){
 		FileAccess = GENERIC_READ;
-		FileMapType = 2;
-		FileMapViewType = 4;
+		FileMapType = PAGE_READONLY;
+		FileMapViewType = FILE_MAP_READ;
 	}else if(ReadOrWrite == UE_ACCESS_WRITE){
 		FileAccess = GENERIC_WRITE;
-		FileMapType = 4;
-		FileMapViewType = 2;
+		FileMapType = PAGE_READWRITE;
+		FileMapViewType = FILE_MAP_WRITE;
 	}else if(ReadOrWrite == UE_ACCESS_ALL){
-		FileAccess = GENERIC_READ+GENERIC_WRITE;
-		FileMapType = 4;
-		FileMapViewType = 2;
+		FileAccess = GENERIC_READ+GENERIC_WRITE+GENERIC_EXECUTE;
+		FileMapType = PAGE_EXECUTE_READWRITE;
+		FileMapViewType = FILE_MAP_WRITE;
 	}else{
-		FileAccess = GENERIC_READ+GENERIC_WRITE;
-		FileMapType = 4;
-		FileMapViewType = 2;
+		FileAccess = GENERIC_READ+GENERIC_WRITE+GENERIC_EXECUTE;
+		FileMapType = PAGE_EXECUTE_READWRITE;
+		FileMapViewType = FILE_MAP_ALL_ACCESS;
 	}
 
 	hFile = CreateFileA(szFileName, FileAccess, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);

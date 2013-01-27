@@ -157,10 +157,11 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 	LoadDinput(); 
 
 	EnterCriticalSection(&cs);
-	if(g_iHook->CheckHook(iHook::HOOK_DI))
+	BOOL bHookDI = g_iHook->CheckHook(iHook::HOOK_DI);
+	if(bHookDI)
 	{
 		g_iHook->DisableHook(iHook::HOOK_DI);
-		WriteLog(LOG_CORE,L"Temporary disable HookDI");
+		WriteLog(LOG_HOOKDI,L"Temporarily disable HookDI");
 	}
 	if(!gamepad.useProduct)
 	{
@@ -172,18 +173,16 @@ HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad )
 		}
 	}	
 	else hr = g_pDI->CreateDevice( gamepad.productGUID, &gamepad.pGamepad, NULL );
-
+	if(bHookDI)
+	{
+		g_iHook->EnableHook(iHook::HOOK_DI);
+		WriteLog(LOG_HOOKDI,L"Restore HookDI state");
+	}
 	if(FAILED(hr)) 
 	{
 		WriteLog(LOG_CORE,L"x360ce is misconfigured or device is disconnected");
 		MessageBox(NULL,L"x360ce is misconfigured or device is disconnected",L"Error",MB_ICONERROR);
 		ExitProcess(hr);
-	}
-
-	if(!g_iHook->CheckHook(iHook::HOOK_DI) )
-	{
-		g_iHook->EnableHook(iHook::HOOK_DI);
-		WriteLog(LOG_CORE,L"Restore HookDI state");
 	}
 	LeaveCriticalSection(&cs);
 
