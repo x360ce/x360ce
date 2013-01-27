@@ -92,7 +92,6 @@ BOOL ButtonPressed(DWORD buttonidx, DINPUT_GAMEPAD &gamepad);
 HRESULT UpdateState(DINPUT_GAMEPAD &gamepad);
 WORD EnumPadCount();
 void FreeDinput();
-void Deactivate();
 BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
 HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);

@@ -684,22 +684,16 @@ bool __stdcall ThreaderImportRunningThreadData(DWORD ProcessId){
 
 	HANDLE hSnapShot;
 	THREADENTRY32 ThreadEntry = {};
-	PTHREAD_ITEM_DATA hListThreadPtr = NULL;
 
 	if(dbgProcessInformation.hProcess == NULL && ProcessId != NULL){
-		if(hListThread == NULL){
-			hListThread = VirtualAlloc(NULL, MAX_DEBUG_DATA * sizeof THREAD_ITEM_DATA, MEM_COMMIT, PAGE_READWRITE);
-		}
 		ThreadEntry.dwSize = sizeof THREADENTRY32;
-		hListThreadPtr = (PTHREAD_ITEM_DATA)hListThread;
 		hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, ProcessId);
 		if(hSnapShot != INVALID_HANDLE_VALUE){
 			if(Thread32First(hSnapShot, &ThreadEntry)){
 				do{
 					if(ThreadEntry.th32OwnerProcessID == ProcessId){
-						hListThreadPtr->dwThreadId = ThreadEntry.th32ThreadID;
-						hListThreadPtr->hThread = OpenThread(THREAD_GET_CONTEXT+THREAD_SET_CONTEXT+THREAD_QUERY_INFORMATION+THREAD_SUSPEND_RESUME, false, hListThreadPtr->dwThreadId);
-						hListThreadPtr = (PTHREAD_ITEM_DATA)((ULONG_PTR)hListThreadPtr + sizeof THREAD_ITEM_DATA);
+						HANDLE hThread = OpenThread(THREAD_GET_CONTEXT|THREAD_SET_CONTEXT|THREAD_QUERY_INFORMATION|THREAD_SUSPEND_RESUME, false, ThreadEntry.th32ThreadID);
+						EngineCloseHandle(hThread);
 					}
 				}while(Thread32Next(hSnapShot, &ThreadEntry));
 			}
