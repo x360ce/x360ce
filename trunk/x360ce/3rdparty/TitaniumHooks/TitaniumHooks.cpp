@@ -684,16 +684,25 @@ bool __stdcall ThreaderImportRunningThreadData(DWORD ProcessId){
 
 	HANDLE hSnapShot;
 	THREADENTRY32 ThreadEntry = {};
+	PTHREAD_ITEM_DATA hListThreadPtr = NULL;
 
 	if(dbgProcessInformation.hProcess == NULL && ProcessId != NULL){
+		if(hListThread == NULL){
+			hListThread = VirtualAlloc(NULL, MAX_DEBUG_DATA * sizeof THREAD_ITEM_DATA, MEM_COMMIT, PAGE_READWRITE);
+		}else{
+			RtlZeroMemory(hListThread, MAX_DEBUG_DATA * sizeof THREAD_ITEM_DATA);
+		}
 		ThreadEntry.dwSize = sizeof THREADENTRY32;
+		hListThreadPtr = (PTHREAD_ITEM_DATA)hListThread;
 		hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, ProcessId);
 		if(hSnapShot != INVALID_HANDLE_VALUE){
 			if(Thread32First(hSnapShot, &ThreadEntry)){
 				do{
 					if(ThreadEntry.th32OwnerProcessID == ProcessId){
-						HANDLE hThread = OpenThread(THREAD_GET_CONTEXT|THREAD_SET_CONTEXT|THREAD_QUERY_INFORMATION|THREAD_SUSPEND_RESUME, false, ThreadEntry.th32ThreadID);
-						EngineCloseHandle(hThread);
+					if(hListThread == NULL) return false;
+						hListThreadPtr->dwThreadId = ThreadEntry.th32ThreadID;
+						hListThreadPtr->hThread = OpenThread(THREAD_GET_CONTEXT|THREAD_SET_CONTEXT|THREAD_QUERY_INFORMATION|THREAD_SUSPEND_RESUME, false, ThreadEntry.th32ThreadID);
+						hListThreadPtr = (PTHREAD_ITEM_DATA)((ULONG_PTR)hListThreadPtr + sizeof THREAD_ITEM_DATA);
 					}
 				}while(Thread32Next(hSnapShot, &ThreadEntry));
 			}
@@ -795,7 +804,7 @@ bool ProcessHookScanAddNewHook(PHOOK_ENTRY HookDetails, void* ptrOriginalInstruc
 	return(true);
 }
 // Global.Engine.Hook.functions:
- bool __stdcall HooksSafeTransitionEx(LPVOID HookAddressArray, int NumberOfHooks, bool TransitionStart){
+bool __stdcall HooksSafeTransitionEx(LPVOID HookAddressArray, int NumberOfHooks, bool TransitionStart){
 
 	int i;
 	ULONG_PTR CurrentIP;

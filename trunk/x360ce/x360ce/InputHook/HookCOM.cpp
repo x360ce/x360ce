@@ -109,7 +109,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 		dwGets = NULL;
 	}
 
-	if(FAILED(hr)) return hr;
+	if(hr != NO_ERROR) return hr;
 
 	//WriteLog(LOG_HOOKCOM, L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
 	//if( pVal->vt == VT_BSTR) WriteLog(LOG_HOOKCOM, L"%s",pVal->bstrVal);
@@ -183,8 +183,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
 	WriteLog(LOG_HOOKCOM,L"*Next %u*",uCount);
 	dwGets = uCount;
 
-	if(FAILED(hr)) return hr;
-	if(hr != WBEM_S_NO_ERROR) return hr;
+	if(hr != NO_ERROR) return hr;
 
 	IWbemClassObject* pDevices;
 
@@ -226,7 +225,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
 
 	WriteLog(LOG_HOOKCOM,L"*CreateInstanceEnum*");
 
-	if(FAILED(hr)) return hr;
+	if(hr != NO_ERROR) return hr;
 
 	IEnumWbemClassObject* pEnumDevices = NULL;
 
@@ -273,7 +272,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 
 	WriteLog(LOG_HOOKCOM,L"*ConnectServer*");
 
-	if(FAILED(hr)) return hr;
+	if(hr != NO_ERROR) return hr;
 
 	IWbemServices* pIWbemServices = NULL;
 
@@ -313,7 +312,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 	if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
 	WriteLog(LOG_HOOKCOM,L"*CoCreateInstance*");
 
-	if(FAILED(hr)) return hr;
+	if(hr != NO_ERROR) return hr;
 
 	IWbemLocator* pIWbemLocator = NULL;
 
@@ -421,75 +420,3 @@ void iHook::HookCOM()
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void iHook::HookCOM_Cleanup()
-{
-	WriteLog(LOG_HOOKDI,L"Removing COM Hooks");
-
-	if(hGet)
-	{
-		WriteLog(LOG_HOOKCOM,L"Removing HookGet Hook");
-		if(HooksSafeTransition(hGet,true))
-		{
-			HooksRemoveRedirection(hGet,false);
-			HooksSafeTransition(hGet,false);
-			hGet = NULL;
-		}
-	}
-
-	if(hNext)
-	{
-		WriteLog(LOG_HOOKCOM,L"Removing Next Hook");
-		if(HooksSafeTransition(hNext,true))
-		{
-			HooksRemoveRedirection(hNext,false);
-			HooksSafeTransition(hNext,false);
-			hNext = NULL;
-		}
-	}
-
-	if(hCreateInstanceEnum)
-	{
-		WriteLog(LOG_HOOKCOM,L"Removing CreateInstanceEnum Hook");
-		if(HooksSafeTransition(hCreateInstanceEnum,true))
-		{
-			HooksRemoveRedirection(hCreateInstanceEnum,false);
-			HooksSafeTransition(hCreateInstanceEnum,false);
-			hCreateInstanceEnum = NULL;
-		}
-	}
-
-	if(hConnectServer)
-	{
-		WriteLog(LOG_HOOKCOM,L"Removing ConnectServer Hook");
-		if(HooksSafeTransition(hConnectServer,true))
-		{
-			HooksRemoveRedirection(hConnectServer,false);
-			HooksSafeTransition(hConnectServer,false);
-			hConnectServer = NULL;
-		}
-	}
-
-
-	if(hCoCreateInstance)
-	{
-		WriteLog(LOG_HOOKCOM,L"Removing CoCreateInstance Hook");
-		if(HooksSafeTransition(hCoCreateInstance,true))
-		{
-			HooksRemoveRedirection(hCoCreateInstance,true);
-			HooksSafeTransition(hCoCreateInstance,false);
-			hCoCreateInstance = NULL;
-		}
-	}
-
-	if(hCoUninitialize)
-	{
-		WriteLog(LOG_HOOKCOM,L"Removing CoUninitialize Hook");
-		if(HooksSafeTransition(hCoUninitialize,true))
-		{
-			HooksRemoveRedirection(hCoUninitialize,true);
-			HooksSafeTransition(hCoUninitialize,false);
-			hCoUninitialize = NULL;
-		}
-	}
-}
