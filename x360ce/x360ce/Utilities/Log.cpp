@@ -19,7 +19,7 @@
 #include "Utilities\Log.h"
 #include <Shlwapi.h>
 
-HANDLE hConsole = INVALID_HANDLE_VALUE;
+HANDLE hConsole = NULL;
 BOOL writelog = FALSE;
 BOOL enableconsole = FALSE;
 //LPWSTR lpLogFileName = NULL;
@@ -33,26 +33,34 @@ static LPCWSTR LogTypeNames[] =
     L"[DInput]  ",
     L"[IHook]   ",
     L"[HookDI]  ",
-    L"[HookWMI] ",
+    L"[HookCOM] ",
     L"[HookWT]  ",
 };
 
 void WriteStamp()
 {
-    if(enableconsole)
+    if(hConsole)
     {
-		for(int i=0;i < 80; i++ ) wprintf(L"=");
-		wprintf(L"x360ce - XBOX 360 Controller emulator\n");
-		wprintf(L"http://code.google.com/p/x360ce\n\n");
-		wprintf(L"Copyright (C) 2013 Robert Krawczyk\n\n");
-		wprintf(L"This program is free software you can redistribute it and/or modify it under\n"
-			L"the terms of the GNU General Public License as published bythe Free Software\n" 
-			L"Foundation, either version 3 of the License, or any later version.\n");
-		for(int i=0;i < 80; i++ ) wprintf(L"="); wprintf(L"\n");
+		DWORD dwChars = NULL;
 
-        wprintf(L"%s",L"TIME         THREAD   TYPE      DATA");
-        wprintf(L"\n");
-		fflush(stdout);
+		WCHAR* wcsLicense[] = {
+			L"x360ce - XBOX 360 Controller emulator\n",
+			L"Copyright (C) 2013 Robert Krawczyk\n\n",
+			L"This program is free software you can redistribute it and/or modify it under\n",
+			L"the terms of the GNU General Public License as published bythe Free Software\n",
+			L"Foundation, either version 3 of the License, or any later version.\n"
+		};
+
+
+		for(int i=0;i < 80; i++ ) WriteConsole(hConsole, L"=", 1,&dwChars,NULL);
+
+		for(int i=0;i < 5; i++)
+		{
+			WriteConsole(hConsole, wcsLicense[i],(DWORD) wcslen(wcsLicense[i]),&dwChars,NULL);
+		}
+
+		for(int i=0;i < 80; i++ ) WriteConsole(hConsole, L"=", 1,&dwChars,NULL);
+		WriteConsole(hConsole, L"\n", 1,&dwChars,NULL);
     }
 
     if (writelog)
@@ -78,18 +86,19 @@ void ConsoleEnable(BOOL console)
 
 void Console()
 {
-	static HANDLE handle_out = NULL;
-    if(enableconsole && !handle_out)
+    if(enableconsole)
     {
-        AllocConsole();
+		if(hConsole == NULL)
+		{
+			CONSOLE_SCREEN_BUFFER_INFO csbi;
+			AllocConsole();
+			hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleTitle(L"x360ce");
+			GetConsoleScreenBufferInfo(hConsole,&csbi);
+			ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
 
-        handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
-        int hCrt = _open_osfhandle((LONG) handle_out, _O_TEXT);
-        FILE* hf_out = _wfdopen(hCrt, L"w");
-        setvbuf(hf_out, NULL, _IONBF, 1);
-        *stdout = *hf_out;
-
-		ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
+			//SetConsoleTextAttribute(hConsole,csbi.wAttributes| FOREGROUND_INTENSITY);
+		}
     }
 }
 
@@ -105,9 +114,9 @@ void LogCleanup()
 
 BOOL CreateLog()
 {
-    static BOOL bRet = FALSE;
+    BOOL bRet = FALSE;
 
-    if (writelog && !bRet)
+    if (writelog)
     {
 		std::wstring name = L"x360ce";
 
@@ -116,12 +125,12 @@ BOOL CreateLog()
 
 		std::wostringstream s;
 		s << std::setfill(L'0') << name << L"\\" << name << L'_' 
-			<< std::setw(2) << systime.wYear 
-			<< std::setw(2) << systime.wMonth
-			<< std::setw(2) << systime.wDay << L'-' 
-			<< std::setw(2) << systime.wHour 
-			<< std::setw(2) << systime.wMinute 
-			<< std::setw(2) << systime.wSecond << L".log";
+			<< std::setfill(L'0') << std::setw(2) << systime.wYear 
+			<< std::setfill(L'0') << std::setw(2) << systime.wMonth
+			<< std::setfill(L'0') << std::setw(2) << systime.wDay << L'-' 
+			<< std::setfill(L'0') << std::setw(2) << systime.wHour 
+			<< std::setfill(L'0') << std::setw(2) << systime.wMinute 
+			<< std::setfill(L'0') << std::setw(2) << systime.wSecond << L".log";
 
 		logfilename = s.str();
 
@@ -129,7 +138,6 @@ BOOL CreateLog()
         bRet = TRUE;
     }
 
-	LogEnable(bRet);
     return bRet;
 }
 
@@ -138,40 +146,49 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
     SYSTEMTIME systime;
     GetLocalTime(&systime);
 
-    BOOL ret = FALSE;
+	DWORD ret = FALSE;
 
     if(enableconsole)
     {
-        wprintf(L"%02u:%02u:%02u.%03u %08u %s",\
+		WCHAR buf[MAX_PATH];
+		DWORD dwChars = NULL;
+
+        swprintf_s(buf,L"%02u:%02u:%02u.%03u %08u %s",\
                 systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
+
+		WriteConsole(hConsole, buf, (DWORD) wcslen(buf),&dwChars,NULL);
         va_list arglist;
         va_start(arglist,str);
-        vwprintf(str,arglist);
+        vswprintf_s(buf,str,arglist);
+		WriteConsole(hConsole, buf, (DWORD) wcslen(buf),&dwChars,NULL);
         va_end(arglist);
-        wprintf(L" \n");
+		WriteConsole(hConsole, L" \n", (DWORD) wcslen(L" \n"),&dwChars,NULL);
         ret = TRUE;
     }
 
     if (writelog)
     {
 		if(logfilename.empty()) return FALSE;
-        FILE * fp;
-        _wfopen_s(&fp, logfilename.c_str(), L"a");
 
-        //fp is null, file is not open.
-        if (fp==NULL)
-            return 0;
+		std::wofstream out;
+		out.open(logfilename,std::ios::app);
+		if(!out.is_open()) return FALSE;
 
-        fwprintf(fp, L"%02u:%02u:%02u.%03u %08u %s",\
-                 systime.wHour, systime.wMinute, systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(),LogTypeNames[logType]);
-        va_list arglist;
-        va_start(arglist,str);
-        vfwprintf(fp,str,arglist);
-        va_end(arglist);
-        fwprintf(fp, L" \n");
-        fclose(fp);
+		out << std::setfill(L'0') << std::setw(2) << std::dec << systime.wHour << L":"
+			<< std::setfill(L'0') << std::setw(2) << std::dec << systime.wMinute << L":"
+			<< std::setfill(L'0') << std::setw(2) << std::dec << systime.wSecond << L"."
+			<< std::setfill(L'0') << std::setw(3) << std::dec << systime.wMilliseconds << L" "
+			<< std::setfill(L'0') << std::setw(8) << std::dec << GetCurrentThreadId() << L" "
+			<< LogTypeNames[logType];
+
+        va_list argptr;
+        va_start(argptr,str);
+		WCHAR buff[MAX_PATH];
+		_vsnwprintf_s(buff,_TRUNCATE,str,argptr);
+        va_end(argptr);
+		out << buff << std::endl;
+		out.close();
         ret = TRUE;
     }
-
-    return ret;
+	return ret;
 }

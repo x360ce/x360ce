@@ -55,16 +55,3 @@ void iHook::HookWT()
 		}
 	}
 }
-
-void iHook::HookWT_Cleanup()
-{
-	if(hWinVerifyTrust)
-	{
-		WriteLog(LOG_HOOKWT,L"Removing WinVerifyTrust Hook");
-		if(HooksSafeTransition(hWinVerifyTrust,true))
-		{
-			HooksRemoveRedirection(hWinVerifyTrust,true);
-			HooksSafeTransition(hWinVerifyTrust,false);
-		}
-	}
-}

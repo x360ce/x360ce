@@ -91,9 +91,7 @@ public:
 	virtual ~iHook()
 	{
 		EnterCriticalSection(&cs);
-		HookCOM_Cleanup();
-		HookDI_Cleanup();
-		HookWT_Cleanup();
+		HooksRemoveRedirection(NULL,true);
 		LeaveCriticalSection(&cs);
 	};
 
@@ -198,10 +196,6 @@ protected:
 	void HookCOM();
 	void HookDI();
 	void HookWT();
-
-	void HookCOM_Cleanup();
-	void HookDI_Cleanup();
-	void HookWT_Cleanup();
 };
 
 #endif
