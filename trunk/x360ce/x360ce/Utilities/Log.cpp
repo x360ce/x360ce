@@ -19,7 +19,7 @@
 #include "Utilities\Log.h"
 #include <Shlwapi.h>
 
-HANDLE hConsole = NULL;
+HANDLE hConsole = INVALID_HANDLE_VALUE;
 BOOL writelog = FALSE;
 BOOL enableconsole = FALSE;
 //LPWSTR lpLogFileName = NULL;
@@ -39,26 +39,20 @@ static LPCWSTR LogTypeNames[] =
 
 void WriteStamp()
 {
-    if(hConsole)
+    if(hConsole != INVALID_HANDLE_VALUE)
     {
 		DWORD dwChars = NULL;
 
-		WCHAR* wcsLicense[] = {
-			L"x360ce - XBOX 360 Controller emulator\n",
-			L"Copyright (C) 2013 Robert Krawczyk\n\n",
-			L"This program is free software you can redistribute it and/or modify it under\n",
-			L"the terms of the GNU General Public License as published bythe Free Software\n",
-			L"Foundation, either version 3 of the License, or any later version.\n"
-		};
+		WCHAR wcsLicense[] = 
+			L"x360ce - XBOX 360 Controller emulator\n"
+			L"Copyright (C) 2013 Robert Krawczyk\n\n"
+			L"This program is free software you can redistribute it and/or modify it under\n"
+			L"the terms of the GNU Lesser General Public License as published by the Free\n"
+			L"Software Foundation, either version 3 of the License, or any later version.\n";
 
 
 		for(int i=0;i < 80; i++ ) WriteConsole(hConsole, L"=", 1,&dwChars,NULL);
-
-		for(int i=0;i < 5; i++)
-		{
-			WriteConsole(hConsole, wcsLicense[i],(DWORD) wcslen(wcsLicense[i]),&dwChars,NULL);
-		}
-
+		WriteConsole(hConsole, wcsLicense,(DWORD) wcslen(wcsLicense),&dwChars,NULL);
 		for(int i=0;i < 80; i++ ) WriteConsole(hConsole, L"=", 1,&dwChars,NULL);
 		WriteConsole(hConsole, L"\n", 1,&dwChars,NULL);
     }
@@ -66,16 +60,11 @@ void WriteStamp()
     if (writelog)
     {
 		if(logfilename.empty()) return;
-        FILE * fp;
-        _wfopen_s(&fp, logfilename.c_str(), L"a");
-
-        //fp is null, file is not open.
-        if (fp==NULL)
-            return;
-
-        fwprintf(fp, L"%s",L"TIME         THREAD   TYPE      DATA");
-        fwprintf(fp, L"\n");
-        fclose(fp);
+		std::wofstream out;
+		out.open(logfilename,std::ios::app);
+		if(!out.is_open()) return;
+		out << L"TIME         THREAD   TYPE      DATA" << std::endl;
+		out.close();
     }
 }
 
@@ -86,20 +75,16 @@ void ConsoleEnable(BOOL console)
 
 void Console()
 {
-    if(enableconsole)
-    {
-		if(hConsole == NULL)
-		{
-			CONSOLE_SCREEN_BUFFER_INFO csbi;
-			AllocConsole();
-			hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-			SetConsoleTitle(L"x360ce");
-			GetConsoleScreenBufferInfo(hConsole,&csbi);
-			ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
 
-			//SetConsoleTextAttribute(hConsole,csbi.wAttributes| FOREGROUND_INTENSITY);
-		}
-    }
+	if(enableconsole && hConsole == INVALID_HANDLE_VALUE)
+	{
+		CONSOLE_SCREEN_BUFFER_INFO csbi;
+		AllocConsole();
+		ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
+		hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTitle(L"x360ce");
+		GetConsoleScreenBufferInfo(hConsole,&csbi);
+	}
 }
 
 void LogEnable(BOOL log)
@@ -109,7 +94,11 @@ void LogEnable(BOOL log)
 
 void LogCleanup()
 {
-    if(enableconsole)FreeConsole();
+    if(hConsole != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(hConsole);
+		FreeConsole();
+	}
 }
 
 BOOL CreateLog()
@@ -148,7 +137,7 @@ BOOL WriteLog(LogType logType, LPWSTR str,...)
 
 	DWORD ret = FALSE;
 
-    if(enableconsole)
+    if(enableconsole && hConsole != INVALID_HANDLE_VALUE)
     {
 		WCHAR buf[MAX_PATH];
 		DWORD dwChars = NULL;
