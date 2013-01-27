@@ -758,8 +758,25 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	WORD vkey = NULL;
 	WORD curretFlags = NULL;
 
-	int i = 0;
-	for(i = 0; i < 14; i++)
+	static const WORD allButtonIDs[14] =
+	{
+		XINPUT_GAMEPAD_A,
+		XINPUT_GAMEPAD_B,
+		XINPUT_GAMEPAD_X,
+		XINPUT_GAMEPAD_Y,
+		XINPUT_GAMEPAD_LEFT_SHOULDER,
+		XINPUT_GAMEPAD_RIGHT_SHOULDER,
+		XINPUT_GAMEPAD_BACK,
+		XINPUT_GAMEPAD_START,
+		XINPUT_GAMEPAD_LEFT_THUMB,
+		XINPUT_GAMEPAD_RIGHT_THUMB,
+		XINPUT_GAMEPAD_DPAD_UP,
+		XINPUT_GAMEPAD_DPAD_DOWN,
+		XINPUT_GAMEPAD_DPAD_LEFT,
+		XINPUT_GAMEPAD_DPAD_RIGHT
+	};
+
+	for(int i = 0; i < 14; i++)
 	{
 		if(xState.Gamepad.wButtons & allButtonIDs[i])
 		{
