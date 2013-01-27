@@ -52,52 +52,6 @@ void FreeDinput()
 	}
 }
 
-void Deactivate(DINPUT_GAMEPAD &gamepad)
-{
-
-	for (int i=0; i<2; i++)
-	{
-		if (gamepad.ff.pEffect[i])
-		{
-			gamepad.ff.pEffect[i]->Stop();
-			gamepad.ff.pEffect[i]->Release();
-		}
-
-		free(gamepad.ff.pEffect[i]);
-		gamepad.ff.pEffect[i] = 0;
-	}
-
-	if (gamepad.connected)
-	{
-		gamepad.pGamepad->Unacquire();
-		gamepad.pGamepad->Release();
-		gamepad.pGamepad = 0;
-		gamepad.connected = 0;
-	}
-}
-
-void Deactivate()
-{
-    for (DWORD i=0; i<g_Gamepads.size(); i++) Deactivate(g_Gamepads[i]);
-}
-
-static bool AcquireDevice(LPDIRECTINPUTDEVICE8 lpDirectInputDevice)
-{
-	if (FAILED (lpDirectInputDevice->Acquire()))
-	{
-		HRESULT result = lpDirectInputDevice->Acquire();
-		if (result == DIERR_OTHERAPPHASPRIO)
-			return FALSE;
-		if (FAILED (result))
-		{
-			Deactivate();
-			return FALSE;
-		}
-
-	}
-	return TRUE;
-}
-
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
     DINPUT_GAMEPAD *gp = (DINPUT_GAMEPAD*) pContext;
@@ -262,10 +216,12 @@ HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD motor)
 
 	if ( force == 0) {
 		if (FAILED (gamepad.ff.pEffect[motor]->Stop())) {
-			AcquireDevice (gamepad.pGamepad);
+			gamepad.pGamepad->Acquire();
 			if (FAILED (gamepad.ff.pEffect[motor]->Stop()))
 			{
-				void FreeDinput();
+				gamepad.pGamepad->Unacquire();
+				gamepad.pGamepad->Acquire();
+				gamepad.ff.pEffect[motor]->Stop();
 				return S_FALSE;
 			}
 		}
@@ -273,7 +229,6 @@ HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD motor)
 	}
 
     if(gamepad.ff.type == 1) return SetDeviceForcesEjocys(gamepad,force,motor);
-
     if(gamepad.ff.type == 2) return SetDeviceForcesNew(gamepad,force,motor);
 
     return SetDeviceForcesFailsafe(gamepad,force,motor);
@@ -282,12 +237,8 @@ HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD motor)
 HRESULT PrepareForce(DINPUT_GAMEPAD &gamepad, WORD motor)
 {
     if(gamepad.ff.pEffect[motor]) return S_FALSE;
-
-
     if(gamepad.ff.type == 1) return PrepareForceEjocys(gamepad,motor);
-
     if(gamepad.ff.type == 2) return PrepareForceNew(gamepad,motor);
-
     return PrepareForceFailsafe(gamepad,motor);
 }
 
