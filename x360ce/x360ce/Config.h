@@ -1,18 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2013 Robert Krawczyk
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
+*  Copyright (C) 2002-2010 Racer_S
+*  Copyright (C) 2010-2013 Robert Krawczyk
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
@@ -49,7 +49,7 @@ struct TriggerMap
     }
 };
 
-struct GamepadMap
+struct Mapping
 {
     // Axis indexes are positive or negative numbers, zero is invalid.
     // All other indexer values start from zero.
@@ -57,11 +57,11 @@ struct GamepadMap
     WORD pov[4];
     TriggerMap Trigger[2];
     AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
-	WORD guide;
+    WORD guide;
     WORD DpadPOV; // Index of POV switch to use for the D-pad
     BOOL PovIsButton;
     BOOL enabled;
-    GamepadMap()
+    Mapping()
     {
         // Set default values
         for (INT i = 0; i < 10; ++i) Button[i] = (WORD) -1;
@@ -91,28 +91,28 @@ static const WORD buttonIDs[10] =
 
 static const WORD keyIDs[14] =
 {
-	VK_PAD_A,
-	VK_PAD_B,
-	VK_PAD_X,
-	VK_PAD_Y,
-	VK_PAD_LSHOULDER,
-	VK_PAD_RSHOULDER,
-	VK_PAD_BACK,
-	VK_PAD_START,
-	VK_PAD_LTHUMB_PRESS,
-	VK_PAD_RTHUMB_PRESS,
-	VK_PAD_DPAD_UP,
-	VK_PAD_DPAD_DOWN,
-	VK_PAD_DPAD_LEFT,
-	VK_PAD_DPAD_RIGHT
+    VK_PAD_A,
+    VK_PAD_B,
+    VK_PAD_X,
+    VK_PAD_Y,
+    VK_PAD_LSHOULDER,
+    VK_PAD_RSHOULDER,
+    VK_PAD_BACK,
+    VK_PAD_START,
+    VK_PAD_LTHUMB_PRESS,
+    VK_PAD_RTHUMB_PRESS,
+    VK_PAD_DPAD_UP,
+    VK_PAD_DPAD_DOWN,
+    VK_PAD_DPAD_LEFT,
+    VK_PAD_DPAD_RIGHT
 };
 
 enum ePovIDs
 {
-	GAMEPAD_DPAD_UP,
-	GAMEPAD_DPAD_DOWN,
-	GAMEPAD_DPAD_LEFT,
-	GAMEPAD_DPAD_RIGHT
+    GAMEPAD_DPAD_UP,
+    GAMEPAD_DPAD_DOWN,
+    GAMEPAD_DPAD_LEFT,
+    GAMEPAD_DPAD_RIGHT
 };
 
 static const WORD povIDs[4] =
@@ -123,16 +123,15 @@ static const WORD povIDs[4] =
     XINPUT_GAMEPAD_DPAD_RIGHT
 };
 
-extern BOOL bInitBeep;
-extern std::vector<GamepadMap> GamepadMapping;
-extern BOOL enableconsole;
-extern WORD wNativeMode;
+extern bool bInitBeep;
+extern std::vector<Mapping> g_Mappings;
 
-void InitConfig(LPCWSTR ininame);
-void ReadConfig(InI &ini);
-void ReadPadConfig(DWORD idx, InI &ini);
-MappingType getTriggerType(LPCWSTR);
+extern bool bNative;
+void InitConfig(char* ininame);
+void ReadConfig();
+void ReadPadConfig(DWORD idx, Ini &ini);
+MappingType getTriggerType(const char* s);
 
-extern BOOL g_Disable;
+extern bool g_Disable;
 
 #endif

@@ -19,183 +19,164 @@
 
 #include <CGuid.h>
 #include <vector>
-#include <TH.h>
-#include "Utilities\Log.h"
+#include <MinHook.h>
+#include "Log.h"
 
-class iHookPadConfig
+class iHookDevice
 {
 public:
-	iHookPadConfig()
-		:bEnabled(0)
-		,gProductGUID(GUID_NULL)
-		,gInstanceGUID(GUID_NULL)
-		,dwVIDPID(0)
-	{}
-	virtual ~iHookPadConfig(){};
+    iHookDevice(GUID productid, GUID instanceid)
+        :m_enabled(true)
+        ,m_productid(productid)
+        ,m_instanceid(instanceid)
+    {}
+    virtual ~iHookDevice() {};
 
-	inline BOOL Enable()
-	{
-		return bEnabled = TRUE;
-	}
+    inline void Enable()
+    {
+        m_enabled = true;
+    }
 
-	inline BOOL Disable()
-	{
-		return bEnabled = FALSE;
-	}
+    inline void Disable()
+    {
+        m_enabled = false;
+    }
 
-	inline GUID SetProductGUID(const GUID &guid)
-	{
-		dwVIDPID = guid.Data1;
-		return gProductGUID = guid;
-	}
+    inline bool GetHookState()
+    {
+        return m_enabled;
+    }
 
-	inline GUID SetInstanceGUID(GUID &guid)
-	{
-		return gInstanceGUID = guid;
-	}
+    inline GUID GetProductGUID()
+    {
+        return m_productid;
+    }
 
-	inline DWORD GetHookState()
-	{
-		return bEnabled;
-	}
+    inline GUID GetInstanceGUID()
+    {
+        return m_instanceid;
+    }
 
-	inline GUID GetProductGUID()
-	{
-		return gProductGUID;
-	}
-
-	inline GUID GetInstanceGUID()
-	{
-		return gInstanceGUID;
-	}
-
-	inline DWORD GetProductVIDPID()
-	{
-		return dwVIDPID;
-	}
+    inline DWORD GetProductVIDPID()
+    {
+        return m_productid.Data1;
+    }
 
 private:
-	BOOL  bEnabled;
-	GUID  gProductGUID;
-	GUID  gInstanceGUID;
-	DWORD dwVIDPID;
+    bool  m_enabled;
+    GUID  m_productid;
+    GUID  m_instanceid;
 };
 
 class iHook
 {
 public:
-	iHook()
-		:dwHookMode(0)
-		,dwHookVIDPID(MAKELONG(0x045E,0x028E)) 
-	{InitializeCriticalSection(&cs);}
-	virtual ~iHook()
-	{
-		EnterCriticalSection(&cs);
-		HooksRemoveRedirection(NULL,true);
-		LeaveCriticalSection(&cs);
-	};
+    iHook()
+        :m_hookmask(0)
+        ,m_fakepidvid(MAKELONG(0x045E,0x028E))
+    {
+    }
+    virtual ~iHook()
+    {
+        MH_Uninitialize();
+    };
 
-	static const DWORD HOOK_NONE        = 0x00000000;
-	static const DWORD HOOK_COM         = 0x00000001;
-	static const DWORD HOOK_DI          = 0x00000002;
-	static const DWORD HOOK_VIDPID      = 0x00000004;
-	static const DWORD HOOK_NAME        = 0x00000008;
-	static const DWORD HOOK_STOP        = 0x00000010;
-	static const DWORD HOOK_WT          = 0x00000020;
-	static const DWORD HOOK_ENABLE      = 0x80000000;
+    static const DWORD HOOK_NONE        = 0x00000000;
+    static const DWORD HOOK_COM         = 0x00000001;
+    static const DWORD HOOK_DI          = 0x00000002;
+    static const DWORD HOOK_VIDPID      = 0x00000004;
+    static const DWORD HOOK_NAME        = 0x00000008;
+    static const DWORD HOOK_STOP        = 0x00000010;
+    static const DWORD HOOK_WT          = 0x00000020;
+    static const DWORD HOOK_ENABLE      = 0x80000000;
 
-	inline VOID Enable()
-	{
-		dwHookMode |= HOOK_ENABLE;
-	}
+    inline VOID Enable()
+    {
+        m_hookmask |= HOOK_ENABLE;
+    }
 
-	inline VOID Disable()
-	{
-		dwHookMode &= ~HOOK_ENABLE;
-	}
+    inline VOID Disable()
+    {
+        m_hookmask &= ~HOOK_ENABLE;
+    }
 
-	inline VOID EnableHook(const DWORD flag)
-	{
-		dwHookMode |= flag;
-	}
+    inline VOID EnableHook(const DWORD flag)
+    {
+        m_hookmask |= flag;
+    }
 
-	inline VOID DisableHook(const DWORD flag)
-	{
-		dwHookMode &= ~flag;
-	}
+    inline VOID DisableHook(const DWORD flag)
+    {
+        m_hookmask &= ~flag;
+    }
 
-	inline BOOL CheckHook(const DWORD flag)
-	{
-		return (dwHookMode & (flag | HOOK_ENABLE)) == (flag | HOOK_ENABLE);
-	}
+    inline const bool CheckHook(const DWORD flag) const
+    {
+        return (m_hookmask & (flag | HOOK_ENABLE)) == (flag | HOOK_ENABLE);
+    }
 
-	inline BOOL GetState()
-	{
-		return (dwHookMode & HOOK_ENABLE) == HOOK_ENABLE;
-	}
+    inline const bool GetState() const
+    {
+        return (m_hookmask & HOOK_ENABLE) == HOOK_ENABLE;
+    }
 
-	inline DWORD SetMode(DWORD mode)
-	{
-		return dwHookMode = mode;
-	}
+    inline void SetMask(const DWORD mask)
+    {
+        m_hookmask = mask;
+    }
 
-	inline DWORD SetFakeVIDPID(DWORD vidpid)
-	{
-		return dwHookVIDPID = vidpid;
-	}
+    inline void SetFakePIDVID(const DWORD pidvid)
+    {
+        m_fakepidvid = pidvid;
+    }
 
-	inline DWORD GetFakeVIDPID()
-	{
-		return dwHookVIDPID;
-	}
+    inline DWORD GetFakePIDVID()
+    {
+        return m_fakepidvid;
+    }
 
-	inline size_t GetHookCount()
-	{
-		return vPadConf.size();
-	}
+    inline size_t GetHookCount()
+    {
+        return m_device.size();
+    }
 
-	inline iHookPadConfig& GetPadConfig(size_t dwUserIndex)
-	{
-		return vPadConf[dwUserIndex];
-	}
+    inline iHookDevice& GetPadConfig(const DWORD dwUserIndex)
+    {
+        return m_device[dwUserIndex];
+    }
 
-	inline VOID AddHook(iHookPadConfig &config)
-	{
-		vPadConf.push_back(config);
-	}
+    inline VOID AddHook(iHookDevice &config)
+    {
+        m_device.push_back(config);
+    }
 
-	inline VOID ExecuteHooks()
-	{
-		EnterCriticalSection(&cs);
-		if(dwHookMode)
-		{
-			WriteLog(LOG_IHOOK,L"InputHook starting with mask 0x%08X",dwHookMode);
-			if(!GetState()) return;
+    inline VOID ExecuteHooks()
+    {
 
-			if(CheckHook(HOOK_COM))
-				HookCOM();
+        if(!GetState()) return;
+        PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask);
 
-			if(CheckHook(HOOK_DI))
-				HookDI();
+        MH_Initialize();
 
-			if(CheckHook(HOOK_WT))
-				HookWT();
-		}
-		LeaveCriticalSection(&cs);
-		return;
-	}
+        if(CheckHook(HOOK_COM))
+            HookCOM();
 
+        if(CheckHook(HOOK_DI))
+            HookDI();
+
+        if(CheckHook(HOOK_WT))
+            HookWT();
+        return;
+    }
 
 private:
-	DWORD dwHookMode;
-	DWORD dwHookVIDPID;
-protected:
-	std::vector<iHookPadConfig> vPadConf;
-	CRITICAL_SECTION cs;
+    DWORD m_hookmask;
+    DWORD m_fakepidvid;
+    std::vector<iHookDevice> m_device;
 
-	void HookCOM();
-	void HookDI();
-	void HookWT();
+    void HookCOM();
+    void HookDI();
+    void HookWT();
 };
 
 #endif

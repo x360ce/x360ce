@@ -19,61 +19,77 @@
 
 #include "globals.h"
 #include <Shlwapi.h>
+#include "Utilities\CriticalSection.h"
 #include <string.h>
 
-class InI
+class Ini
 {
 public:
 
-	InI(){};
-	virtual ~InI(void){};
+    Ini() {};
+    virtual ~Ini(void) {}
 
-	inline void SetIniFileName(LPCWSTR ininame)
-	{
-		WCHAR strPath[MAX_PATH];
-		WCHAR tmp[MAX_PATH];
+    static CriticalSection& Mutex()
+    {
+        static CriticalSection lock;
+        return lock;
+    }
 
-		GetModuleFileName(NULL, strPath, MAX_PATH);
-		PathRemoveFileSpec(strPath);
-		PathAddBackslash(strPath);
+    void SetIniFileName(const char* ininame)
+    {
+        char strPath[MAX_PATH];
+        char tmp[MAX_PATH];
 
-		swprintf_s(tmp,MAX_PATH,L"%s%s",strPath, ininame);
-		wsConfigFile = tmp;
-	}
+        GetModuleFileNameA(NULL, strPath, MAX_PATH);
+        PathRemoveFileSpecA(strPath);
+        PathAddBackslashA(strPath);
 
-	inline DWORD ReadStringFromFile(LPCWSTR strFileSection, LPCWSTR strKey, LPWSTR strOutput, LPWSTR strDefault = 0)
-	{
-		if(wsConfigFile.empty()) return 0;
+        sprintf_s(tmp,MAX_PATH,"%s%s",strPath, ininame);
+        ini_file = tmp;
+    }
 
-		DWORD ret;
-		LPWSTR pStr;
-		ret = GetPrivateProfileString(strFileSection, strKey, strDefault, strOutput, MAX_PATH, wsConfigFile.c_str());
+    DWORD GetString(const char* strFileSection, const char* strKey, char* strOutput, char* strDefault = 0)
+    {
+        if(ini_file.empty()) return 0;
 
-		pStr = wcschr(strOutput, L'#');
-		if (pStr) *pStr=L'\0';
-		pStr = wcschr(strOutput, L';');
-		if (pStr) *pStr=L'\0';
+        Mutex().Lock();
 
-		return ret;
-	}
+        DWORD ret;
+        char* pStr;
+        ret = GetPrivateProfileStringA(strFileSection, strKey, strDefault, strOutput, MAX_PATH, ini_file.c_str());
 
-	inline long ReadLongFromFile(LPCWSTR strFileSection, LPCWSTR strKey, INT iDefault = 0)
-	{
+        pStr = strchr(strOutput, L'#');
+        if (pStr) *pStr=L'\0';
+        pStr = strchr(strOutput, L';');
+        if (pStr) *pStr=L'\0';
 
-		WCHAR tmp[MAX_PATH];
-		WCHAR def[MAX_PATH];
-		DWORD ret;
+        Mutex().Unlock();
 
-		swprintf_s(def,MAX_PATH,L"%d",iDefault);
-		ret = ReadStringFromFile(strFileSection,strKey,tmp,def);
+        return ret;
+    }
 
-		if(ret) return _wtol(tmp);
-		else return 0;
+    long GetLong(const char* strFileSection, const char* strKey, INT iDefault = 0)
+    {
 
-	}
+        char tmp[MAX_PATH];
+        char def[MAX_PATH];
+        DWORD ret;
+
+        sprintf_s(def,MAX_PATH,"%d",iDefault);
+        ret = GetString(strFileSection,strKey,tmp,def);
+
+        if(ret) return atol(tmp);
+        else return 0;
+
+    }
+
+    bool GetBool(const char* strFileSection, const char* strKey, INT iDefault = 0)
+    {
+        return GetLong(strFileSection,strKey,iDefault) !=0;
+    }
 
 private:
-	std::wstring wsConfigFile;
+    std::string ini_file;
 };
 
 #endif // _INI_H_

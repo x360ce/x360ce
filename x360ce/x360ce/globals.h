@@ -29,7 +29,8 @@
 #define TOSTRING(x) STRINGIFY(x)
 #define bytesof(a, b) ((a) * sizeof(b))
 
-#define MYQUITMSG WM_USER+1
+#define FFB_LEFTMOTOR 0
+#define FFB_RIGHTMOTOR 1
 
 #endif
 
