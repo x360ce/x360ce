@@ -123,7 +123,7 @@ VOID InitInstance(HINSTANCE instance)
              VERSION_PATCH,SVN_REV,Misc::GetFileNameA(),startProcessId);
 #else
     PrintLog(LOG_CORE,"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
-             VERSION_PATCH,SVN_REV,GetFileNameA(),startProcessId);
+             VERSION_PATCH,SVN_REV,Misc::GetFileNameA(),startProcessId);
 #endif
 
     InstallInputHooks();
