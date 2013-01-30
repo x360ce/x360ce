@@ -1,45 +1,44 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2013 Robert Krawczyk
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
+*  Copyright (C) 2002-2010 Racer_S
+*  Copyright (C) 2010-2013 Robert Krawczyk
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "stdafx.h"
 #include "globals.h"
 #include "version.h"
 #include "x360ce.h"
 #include "Utilities\Ini.h"
-#include "Utilities\Log.h"
+#include "Log.h"
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
-CRITICAL_SECTION cs;
-DWORD startThread = NULL;
-BOOL cleanDeinit = FALSE;
+DWORD startProcessId = NULL;
+DWORD startThreadId = NULL;
 
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
 
-iHook* g_iHook;
+iHook* pHooks;
 
 extern WNDPROC oldWndProc;
-extern HWND g_hWnd;
+extern HWND hMsgWnd;
 
 void LoadXInputDLL()
 {
-	if(hNative) return;
+    if(hNative) return;
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
@@ -47,77 +46,61 @@ void LoadXInputDLL()
     GetSystemDirectory(sysdir,MAX_PATH);
 
     // Append dll name
-    swprintf_s(buffer,L"%s\\%s",sysdir,GetFileName(hThis).c_str());
+    swprintf_s(buffer,L"%s\\%s",sysdir,Misc::GetFileNameW(hThis));
 
     // try to load the system's xinput dll, if pointer empty
-    WriteLog(LOG_CORE,L"Loading %s",buffer);
+    PrintLog(LOG_CORE,"Loading %ls",buffer);
 
-	hNative = LoadLibrary(buffer);
+    hNative = LoadLibrary(buffer);
 
     //Debug
     if (!hNative)
     {
-		HRESULT hr = GetLastError();
-		swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
-		WriteLog(LOG_CORE,L"%s", sysdir);
-		MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
-		ExitProcess(hr);
+        HRESULT hr = GetLastError();
+        swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
+        PrintLog(LOG_CORE,"%s", sysdir);
+        MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
+        ExitProcess(hr);
     }
 }
 
 VOID InstallInputHooks()
 {
-	if(g_iHook->GetState())
-	{
-		for(WORD i = 0; i < g_Gamepads.size(); i++)
-		{
-			iHookPadConfig padconf;
-			padconf.Enable();
-			padconf.SetProductGUID(g_Gamepads[i].productGUID);
-			padconf.SetInstanceGUID(g_Gamepads[i].instanceGUID);
-			g_iHook->AddHook(padconf);
-		}
-	}
-
-	g_iHook->ExecuteHooks();
+    if(pHooks->GetState())
+    {
+        for(size_t i = 0; i < g_Devices.size(); i++)
+        {
+            DInputDevice& device = g_Devices[i];
+            iHookDevice hdevice(device.productid,device.instanceid) ;
+            pHooks->AddHook(hdevice);
+        }
+    }
+    pHooks->ExecuteHooks();
 }
 
 VOID ExitInstance()
 {
-	EnterCriticalSection(&cs);
+    if(IsWindow(hMsgWnd))
+    {
+        if(DestroyWindow(hMsgWnd)) PrintLog(LOG_CORE,"Destroying message window");
+    }
+    else
+    {
+        FreeDinput();
+        SAFE_DELETE(pHooks);
+        if(hNative)
+        {
+            PrintLog(LOG_CORE,"Unloading %s",Misc::GetFilePathA(hNative));
+            FreeLibrary(hNative);
+            hNative = NULL;
+        }
+    }
 
-	FreeDinput();
-	SAFE_DELETE(g_iHook);
-
-	if(startThread == GetCurrentThreadId())
-	{
-		if(hNative)
-		{
-			WriteLog(LOG_CORE,L"Unloading %s",GetFilePath(hNative).c_str());
-			FreeLibrary(hNative);
-			hNative = NULL;
-		}
-		if(IsWindow(g_hWnd))
-		{
-			SetWindowLongPtr(g_hWnd, GWLP_WNDPROC, (LONG_PTR) oldWndProc);
-			WriteLog(LOG_CORE,L"Destroying message window");
-			DestroyWindow(g_hWnd);
-			g_hWnd = NULL;
-		}
-		cleanDeinit = TRUE;
-	}
-	else if(IsWindow(g_hWnd)) SendMessage(g_hWnd,MYQUITMSG,NULL,NULL);
-
-	if(!cleanDeinit) WriteLog(LOG_CORE,L"Dirty deinit detected, please report issue");
-	WriteLog(LOG_CORE,L"x360ce terminating, bye");
-
-	LogCleanup();
-
-	LeaveCriticalSection(&cs);
-	DeleteCriticalSection(&cs);
+    PrintLog(LOG_CORE,"x360ce terminating, bye");
+    DestroyLog();
 }
 
-VOID InitInstance(HINSTANCE hinstDLL)
+VOID InitInstance(HINSTANCE instance)
 {
 #if defined(DEBUG) | defined(_DEBUG)
     int CurrentFlags;
@@ -128,41 +111,35 @@ VOID InitInstance(HINSTANCE hinstDLL)
     _CrtSetDbgFlag(CurrentFlags);
 #endif
 
-	InitializeCriticalSection(&cs);
-	EnterCriticalSection(&cs);
-    hThis =  hinstDLL;
+    hThis =  instance;
+    startThreadId = GetCurrentThreadId();
+    startProcessId = GetCurrentProcessId();
 
-	startThread = GetCurrentThreadId();
+    pHooks = new iHook();
+    ReadConfig();
 
-	g_iHook = new iHook();
-
-	InI ini;
-    ini.SetIniFileName(L"x360ce.ini");
-    ReadConfig(ini);
-    Console();
-    CreateLog();
-    WriteStamp();
-
-	DWORD dwAppPID = GetCurrentProcessId();
 #if SVN_MODS != 0
-    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName().c_str(),dwAppPID);
+    PrintLog(LOG_CORE,"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
+             VERSION_PATCH,SVN_REV,Misc::GetFileNameA(),startProcessId);
 #else
-    WriteLog(LOG_CORE,L"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,VERSION_PATCH,SVN_REV,GetFileName().c_str(),dwAppPID);
+    PrintLog(LOG_CORE,"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
+             VERSION_PATCH,SVN_REV,GetFileNameA(),startProcessId);
 #endif
 
     InstallInputHooks();
-	LeaveCriticalSection(&cs);
 }
 
 extern "C" VOID WINAPI reset()
 {
-	FreeDinput();
-	SAFE_DELETE(g_iHook);
+    PrintLog(LOG_CORE,"%s", "Restarting");
 
-	g_Gamepads.clear();
-	GamepadMapping.clear();
+    FreeDinput();
+    SAFE_DELETE(pHooks);
 
-	InitInstance(hThis);
+    g_Devices.clear();
+    g_Mappings.clear();
+
+    InitInstance(hThis);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
@@ -172,6 +149,7 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
     switch( fdwReason )
     {
     case DLL_PROCESS_ATTACH:
+        DisableThreadLibraryCalls(hinstDLL);
         InitInstance(hinstDLL);
         break;
 

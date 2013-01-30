@@ -18,92 +18,145 @@
 #define _DIRECTINPUT_H_
 
 #include <dinput.h>
+#include "Config.h"
 
-struct FFB_CAPS
-{
-    BOOL ConstantForce;
-    BOOL PeriodicForce;
-};
+// disable C4351 - new behavior: elements of array 'array' will be default initialized
+#pragma warning( disable:4351 )
 
-struct DINPUT_FF
+// FIXME
+class DInputFFB
 {
-    BYTE type;
-    INT xForce;
-    INT yForce;
-    INT oldXForce;
-    INT oldYForce;
+public:
+
+    DInputFFB():
+        effect(),
+        eff(),
+        pf(),
+        cf(),
+        rf(),
+        xForce(0),
+        yForce(0),
+        oldXForce(0),
+        oldYForce(0),
+        axisffbcount(0),
+        oldMagnitude(0),
+        oldPeriod(0),
+        leftPeriod(0),
+        rightPeriod(0),
+        forcepercent(100),
+        type(0),
+        is_created(false),
+        ffbcaps()
+    {};
+
+    virtual ~DInputFFB()
+    {
+        if(effect[FFB_LEFTMOTOR]) effect[FFB_LEFTMOTOR]->Release();
+        if(effect[FFB_RIGHTMOTOR]) effect[FFB_RIGHTMOTOR]->Release();
+    }
+
+    LPDIRECTINPUTEFFECT effect[2];
+    DIEFFECT eff[2];
+    DIPERIODIC pf;
+    DICONSTANTFORCE cf;
+    DIRAMPFORCE rf;
+    LONG xForce;
+    LONG yForce;
+    LONG oldXForce;
+    LONG oldYForce;
+    DWORD axisffbcount;
     DWORD oldMagnitude;
     DWORD oldPeriod;
     DWORD leftPeriod;
     DWORD rightPeriod;
-    BOOL IsUpdateEffectCreated;
-    BOOL useforce;
-    DIPERIODIC pf;
-    DICONSTANTFORCE cf;
-    DIRAMPFORCE rf;
-    DIEFFECT eff[2];
-    LPDIRECTINPUTEFFECT pEffect[2];
-    DWORD dwNumForceFeedbackAxis;
     FLOAT forcepercent;
-    FFB_CAPS ffbcaps;
-    DINPUT_FF()
+    BYTE type;
+    bool is_created;
+    struct Caps
     {
-        ZeroMemory(this,sizeof(DINPUT_FF));
-        forcepercent = 100;
-    }
+        bool ConstantForce;
+        bool PeriodicForce;
+    } ffbcaps;
 };
 
-struct DINPUT_GAMEPAD
+// FIXME
+class DInputDevice
 {
-    LPDIRECTINPUTDEVICE8 pGamepad;
+public:
+
+    DInputDevice():
+        device(NULL),
+        state(),
+        ff(),
+        productid(GUID_NULL),
+        instanceid(GUID_NULL),
+        dwUserIndex((DWORD)-1),
+        axiscount(0),
+        triggerdeadzone(0),
+        a2ddeadzone(0),
+        a2doffset(0),
+        axisdeadzone(),
+        antideadzone(),
+        axislinear(),
+        gamepadtype(1),
+        swapmotor(false),
+        connected(false),
+        initialized(false),
+        passthrough(true),
+        fail(false),
+        axistodpad(false),
+        useproduct(false),
+        useforce(false)
+    {};
+    ~DInputDevice()
+    {
+        if(device) device->SendForceFeedbackCommand(DISFFC_RESET);
+        if(device) device->Release();
+    };
+
+    LPDIRECTINPUTDEVICE8 device;
     DIJOYSTATE2 state;
-    DINPUT_FF ff;
+    DInputFFB ff;
+    GUID productid;
+    GUID instanceid;
     DWORD dwUserIndex;
-    BOOL connected;
-    BOOL initialized;
-    BOOL passthrough;
-    BOOL enumfail;
-    BOOL axistodpad;
-    BOOL useProduct;
-    UINT dwAxisCount;
-    UINT swapmotor;
-    UINT tdeadzone;
-    GUID productGUID;
-    GUID instanceGUID;
-    SHORT adeadzone[4];
-    SHORT antidz[4];
-    INT axistodpaddeadzone;
-    INT axistodpadoffset;
+    DWORD axiscount;
+    DWORD triggerdeadzone;
+    LONG a2ddeadzone;
+    LONG a2doffset;
+    SHORT axisdeadzone[4];
+    SHORT antideadzone[4];
     SHORT axislinear[4];
     BYTE gamepadtype;
-
-    DINPUT_GAMEPAD()
-    {
-        ZeroMemory(this,sizeof(DINPUT_GAMEPAD));
-        gamepadtype = 1;
-        passthrough = 1;
-    }
+    bool swapmotor;
+    bool connected;
+    bool initialized;
+    bool passthrough;
+    bool fail;
+    bool axistodpad;
+    bool useproduct;
+    bool useforce;
 };
 
-extern std::vector<DINPUT_GAMEPAD> g_Gamepads;
+extern std::vector<DInputDevice> g_Devices;
 
-HRESULT InitDirectInput( HWND hDlg, DINPUT_GAMEPAD &gamepad );
-BOOL ButtonPressed(DWORD buttonidx, DINPUT_GAMEPAD &gamepad);
-HRESULT UpdateState(DINPUT_GAMEPAD &gamepad);
+HRESULT InitDirectInput( HWND hDlg, DInputDevice& device );
+BOOL ButtonPressed(DWORD buttonidx, DInputDevice& device);
+HRESULT UpdateState(DInputDevice& device);
 WORD EnumPadCount();
 void FreeDinput();
 BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
-HRESULT SetDeviceForces(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
-HRESULT PrepareForce(DINPUT_GAMEPAD &gamepad, WORD effidx);
+HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor);
+HRESULT PrepareForce(DInputDevice& device, bool motor);
 
-HRESULT SetDeviceForcesFailsafe(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
-HRESULT PrepareForceFailsafe(DINPUT_GAMEPAD &gamepad, WORD effidx);
+HRESULT SetDeviceForcesFailsafe(DInputDevice& device, WORD force, bool motor);
+HRESULT PrepareForceFailsafe(DInputDevice& device, bool motor);
 
-HRESULT SetDeviceForcesEjocys(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
-HRESULT PrepareForceEjocys(DINPUT_GAMEPAD &gamepad, WORD effidx);
+HRESULT SetDeviceForcesEjocys(DInputDevice& device, WORD force, bool motor);
+HRESULT PrepareForceEjocys(DInputDevice& device, bool motor);
 
-HRESULT SetDeviceForcesNew(DINPUT_GAMEPAD &gamepad, WORD force, WORD effidx);
-HRESULT PrepareForceNew(DINPUT_GAMEPAD &gamepad, WORD effidx);
+HRESULT SetDeviceForcesNew(DInputDevice& device, WORD force, bool motor);
+HRESULT PrepareForceNew(DInputDevice& device, bool motor);
 
 #endif

@@ -17,127 +17,137 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "Utilities\Ini.h"
-#include "Utilities\Log.h"
+#include "Log.h"
 #include "Utilities\Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
-BOOL bInitBeep=0;
-WORD wNativeMode=0;
+bool bInitBeep = false;
+bool bNative = false;
+bool g_Disable = false;
 
-BOOL g_Disable;
+extern iHook* pHooks;
 
-extern iHook* g_iHook;
-
-static LPCWSTR buttonNames[] =
+static const char* const buttonNames[] =
 {
-    L"A",
-    L"B",
-    L"X",
-    L"Y",
-    L"Left Shoulder",
-    L"Right Shoulder",
-    L"Back",
-    L"Start",
-    L"Left Thumb",
-    L"Right Thumb",
+    "A",
+    "B",
+    "X",
+    "Y",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Back",
+    "Start",
+    "Left Thumb",
+    "Right Thumb",
 };
 
-static LPCWSTR povNames[] =
+static const char* const povNames[] =
 {
-    L"D-pad Up",
-    L"D-pad Down",
-    L"D-pad Left",
-    L"D-pad Right"
+    "D-pad Up",
+    "D-pad Down",
+    "D-pad Left",
+    "D-pad Right"
 };
 
-static LPCWSTR axisNames[] =
+static const char* const axisNames[] =
 {
-    L"Left Analog X",
-    L"Left Analog Y",
-    L"Right Analog X",
-    L"Right Analog Y"
+    "Left Analog X",
+    "Left Analog Y",
+    "Right Analog X",
+    "Right Analog Y"
 };
 
-static LPCWSTR axisDZNames[] =
+static const char* const axisDZNames[] =
 {
-    L"Left Analog X DeadZone",
-    L"Left Analog Y DeadZone",
-    L"Right Analog X DeadZone",
-    L"Right Analog Y DeadZone",
+    "Left Analog X DeadZone",
+    "Left Analog Y DeadZone",
+    "Right Analog X DeadZone",
+    "Right Analog Y DeadZone",
 };
 
-static LPCWSTR axisADZNames[] =
+static const char* const axisADZNames[] =
 {
-    L"Left Analog X AntiDeadZone",
-    L"Left Analog Y AntiDeadZone",
-    L"Right Analog X AntiDeadZone",
-    L"Right Analog Y AntiDeadZone",
+    "Left Analog X AntiDeadZone",
+    "Left Analog Y AntiDeadZone",
+    "Right Analog X AntiDeadZone",
+    "Right Analog Y AntiDeadZone",
 };
 
-static LPCWSTR axisLNames[] =
+static const char* const axisLNames[] =
 {
-    L"Left Analog X Linear",
-    L"Left Analog Y Linear",
-    L"Right Analog X Linear",
-    L"Right Analog Y Linear"
+    "Left Analog X Linear",
+    "Left Analog Y Linear",
+    "Right Analog X Linear",
+    "Right Analog Y Linear"
 };
 
-static LPCWSTR axisBNames[] =
+static const char* const axisBNames[] =
 {
-    L"Left Analog X+ Button",
-    L"Left Analog X- Button",
-    L"Left Analog Y+ Button",
-    L"Left Analog Y- Button",
-    L"Right Analog X+ Button",
-    L"Right Analog X- Button",
-    L"Right Analog Y+ Button",
-    L"Right Analog Y- Button"
+    "Left Analog X+ Button",
+    "Left Analog X- Button",
+    "Left Analog Y+ Button",
+    "Left Analog Y- Button",
+    "Right Analog X+ Button",
+    "Right Analog X- Button",
+    "Right Analog Y+ Button",
+    "Right Analog Y- Button"
 };
 
-static LPCWSTR padNames[] =
+static const char* const padNames[] =
 {
-    L"PAD1",
-    L"PAD2",
-    L"PAD3",
-    L"PAD4",
+    "PAD1",
+    "PAD2",
+    "PAD3",
+    "PAD4",
 };
 
-//GamepadMap GamepadMapping[4];
-std::vector<GamepadMap> GamepadMapping;
+std::vector<Mapping> g_Mappings;
 
-void ReadConfig(InI &ini)
+void ReadConfig()
 {
+    Ini ini;
+    ini.SetIniFileName("x360ce.ini");
 
     // Read global options
-	g_Disable = ini.ReadLongFromFile(L"Options", L"Disable",0);
-    bInitBeep = static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"UseInitBeep",1));
-    LogEnable(static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"Log",0)));
-    enableconsole = static_cast<BOOL>(ini.ReadLongFromFile(L"Options", L"Console",0));
-	if(g_Disable) return;
+    g_Disable = ini.GetBool("Options", "Disable",0);
+    if(g_Disable) return;
+
+    bInitBeep = ini.GetBool("Options", "UseInitBeep",1);
+
+    bool log = ini.GetBool("Options", "Log",0);
+    bool con = ini.GetBool("Options", "Console",0);
+    InitLog(log,con);
 
     //InputHook
-	DWORD tmp;
-    tmp = ini.ReadLongFromFile(L"InputHook", L"HookMode",0);
+    DWORD hookMask = ini.GetLong("InputHook", "HookMask",0);
+    if(hookMask)
+    {
+        pHooks->SetMask(hookMask);
+        pHooks->Enable();
+    }
+    else
+    {
+        DWORD hookCheck = ini.GetLong("InputHook", "HookMode",0);
+        //TODO
+        if(hookCheck == 1) pHooks->SetMask(iHook::HOOK_COM);
+        if(hookCheck == 2) pHooks->SetMask(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI);
+        if(hookCheck == 3) pHooks->SetMask(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
+        if(hookCheck >  3) pHooks->SetMask(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
+        if(hookCheck >  0) pHooks->Enable();
 
-	//TODO: make this nicer
-	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_COM);
-	if(tmp == 2) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI);
-	if(tmp == 3) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
-	if(tmp >  3) g_iHook->SetMode(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
+        hookCheck = ini.GetLong("InputHook", "HookWinTrust",0);
+        if(hookCheck == 1) pHooks->SetMask(iHook::HOOK_WT);
+        if(hookCheck >  0) pHooks->Enable();
+    }
 
-	if(tmp > 0) g_iHook->Enable();
-
-    tmp = ini.ReadLongFromFile(L"InputHook", L"HookWinTrust",0);
-	if(tmp == 1) g_iHook->SetMode(iHook::HOOK_WT);
-
-	if(g_iHook->GetState())
-	{
-		DWORD vid = ini.ReadLongFromFile(L"InputHook", L"HookVID",0x045E);
-		DWORD pid = ini.ReadLongFromFile(L"InputHook", L"HookPID",0x028E);
-		if(vid != 0x045E || pid != 0x28E) g_iHook->SetFakeVIDPID(MAKELONG(vid,pid));
-	}
+    if(pHooks->GetState())
+    {
+        DWORD vid = ini.GetLong("InputHook", "HookVID",0x045E);
+        DWORD pid = ini.GetLong("InputHook", "HookPID",0x028E);
+        if(vid != 0x045E || pid != 0x28E) pHooks->SetFakePIDVID(MAKELONG(vid,pid));
+    }
 
     // Read pad mappings
     for (DWORD i = 0; i < 4; ++i)
@@ -145,222 +155,219 @@ void ReadConfig(InI &ini)
 }
 
 
-void ReadPadConfig(DWORD idx, InI &ini)
+void ReadPadConfig(DWORD idx, Ini &ini)
 {
     DWORD ret;
-    WCHAR section[MAX_PATH] = L"Mappings";
-    WCHAR key[MAX_PATH];
-    swprintf_s(key,L"PAD%u",idx+1);
+    char section[MAX_PATH] = "Mappings";
+    char key[MAX_PATH];
+    sprintf_s(key,"PAD%u",idx+1);
 
-    WCHAR buffer[MAX_PATH];
+    char buffer[MAX_PATH];
 
-    ret = ini.ReadStringFromFile(section, key, buffer);
+    ret = ini.GetString(section, key, buffer);
     if(!ret) return;
 
-	DINPUT_GAMEPAD gamepad;
-	GamepadMap PadMap;
+    DInputDevice device;
+    Mapping mapping;
 
     //store value as section name
-    wcscpy_s(section,buffer);
+    strcpy_s(section,buffer);
 
-    ini.ReadStringFromFile(section, L"ProductGUID", buffer, 0);
-    StringToGUID(&gamepad.productGUID,buffer);
+    ini.GetString(section, "ProductGUID", buffer, 0);
+    Misc::StringToGUID(buffer,device.productid);
 
-    ini.ReadStringFromFile(section, L"InstanceGUID", buffer, 0);
-    StringToGUID(&gamepad.instanceGUID,buffer);
+    ini.GetString(section, "InstanceGUID", buffer, 0);
+    Misc::StringToGUID(buffer,device.instanceid);
 
-	//TODO rework pass-trough handling code
-	for (int i=0; i<4; ++i)
-	{
-		SHORT tmp = static_cast<SHORT>(ini.ReadLongFromFile(section, axisADZNames[i], 0));
-		gamepad.antidz[i] =  static_cast<SHORT>(clamp(tmp,0,32767));
-	}
-
-    gamepad.passthrough = (ini.ReadLongFromFile(section, L"PassThrough",1) !=0);
-
-    if(gamepad.passthrough)
+    //TODO rework pass-trough handling code
+    for (int i=0; i<4; ++i)
     {
-        wNativeMode = 1;
-        //gamepad.configured = true;
-        PadMap.enabled = false;
-		GamepadMapping.push_back(PadMap);
-		g_Gamepads.push_back(gamepad);
+        SHORT tmp = static_cast<SHORT>(ini.GetLong(section, axisADZNames[i], 0));
+        device.antideadzone[i] =  static_cast<SHORT>(((Misc::clamp))(tmp,0,32767));
+    }
+
+    device.passthrough = ini.GetBool(section, "PassThrough",1);
+
+    if(device.passthrough)
+    {
+        mapping.enabled = false;
+        g_Mappings.push_back(mapping);
+        g_Devices.push_back(device);
         return;
     }
 
-    if (!(IsEqualGUID(gamepad.productGUID,GUID_NULL)) && !(IsEqualGUID(gamepad.instanceGUID,GUID_NULL)))
+    if (!(IsEqualGUID(device.productid,GUID_NULL))
+            && !(IsEqualGUID(device.instanceid,GUID_NULL)))
     {
-        //gamepad.configured = true;
-        PadMap.enabled = true;
-
+        mapping.enabled = true;
     }
     else return;
 
 
-    gamepad.dwUserIndex = idx;
+    device.dwUserIndex = idx;
 
-	gamepad.useProduct = ini.ReadLongFromFile(section, L"UseProductGUID",0)!=0;
-    gamepad.ff.type = (BYTE) ini.ReadLongFromFile(section, L"FFBType",0);
-    gamepad.swapmotor = ini.ReadLongFromFile(section, L"SwapMotor",0);
-    gamepad.tdeadzone = ini.ReadLongFromFile(section, L"TriggerDeadzone",0);
-    gamepad.ff.useforce = static_cast<BOOL>(ini.ReadLongFromFile(section, L"UseForceFeedback",0));
-    gamepad.gamepadtype = static_cast<BYTE>(ini.ReadLongFromFile(section, L"ControllerType",1));
-    gamepad.axistodpad = (ini.ReadLongFromFile(section, L"AxisToDPad",0) !=0);
-    gamepad.axistodpaddeadzone = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadDeadZone",0));
-    gamepad.axistodpadoffset = static_cast<INT>(ini.ReadLongFromFile(section, L"AxisToDPadOffset",0));
-    gamepad.ff.forcepercent = static_cast<FLOAT>(ini.ReadLongFromFile(section, L"ForcePercent",100) * 0.01);
-    gamepad.ff.leftPeriod = ini.ReadLongFromFile(section, L"LeftMotorPeriod",60);
-    gamepad.ff.rightPeriod = ini.ReadLongFromFile(section, L"RightMotorPeriod",20);
+    device.useproduct = ini.GetBool(section, "UseProductGUID",0);
+    device.ff.type = (BYTE) ini.GetLong(section, "FFBType",0);
+    device.swapmotor = ini.GetBool(section, "SwapMotor",0);
+    device.triggerdeadzone = ini.GetLong(section, "TriggerDeadzone",0);
+    device.useforce = ini.GetBool(section, "UseForceFeedback",0);
+    device.gamepadtype = static_cast<BYTE>(ini.GetLong(section, "ControllerType",1));
+    device.axistodpad = ini.GetBool(section, "AxisToDPad",0);
+    device.a2ddeadzone = static_cast<INT>(ini.GetLong(section, "AxisToDPadDeadZone",0));
+    device.a2doffset = static_cast<INT>(ini.GetLong(section, "AxisToDPadOffset",0));
+    device.ff.forcepercent = static_cast<FLOAT>(ini.GetLong(section, "ForcePercent",100) * 0.01);
+    device.ff.leftPeriod = ini.GetLong(section, "LeftMotorPeriod",60);
+    device.ff.rightPeriod = ini.GetLong(section, "RightMotorPeriod",20);
 
-	PadMap.guide = static_cast<WORD>(ini.ReadLongFromFile(section, L"GuideButton",0));
+    mapping.guide = static_cast<WORD>(ini.GetLong(section, "GuideButton",0));
 
-	//memset(PadMap.Button,-1,sizeof(PadMap.Button));
+    //memset(mapping.Button,-1,sizeof(mapping.Button));
 
-    for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].type = NONE;
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    for (INT i = 0; i < 2; ++i) PadMap.Trigger[i].but = -1;
+    for (INT i = 0; i < 2; ++i) mapping.Trigger[i].type = NONE;
 
     ///////////////////////////////////////////////////////////////////////////////////////
+    for (INT i = 0; i < 2; ++i) mapping.Trigger[i].but = -1;
 
-    PadMap.DpadPOV = (WORD) -1;
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    mapping.DpadPOV = (WORD) -1;
 
     for (INT i=0; i<10; ++i)
     {
-        if (ini.ReadLongFromFile(section,buttonNames[i],0) > 0)
+        if (ini.GetLong(section,buttonNames[i],0) > 0)
         {
-            PadMap.Button[i] = static_cast<WORD>(ini.ReadLongFromFile(section,buttonNames[i],0)) - 1;
+            mapping.Button[i] = static_cast<WORD>(ini.GetLong(section,buttonNames[i],0)) - 1;
         }
     }
 
     for (INT i=0; i<4; ++i)
     {
-        if (ini.ReadStringFromFile(section, povNames[i], buffer) > 0)
+        if (ini.GetString(section, povNames[i], buffer) > 0)
         {
-			int val = _wtoi(buffer);
-			if(val == 0)
-			{
-				//for compatibility with x360ce.App
-				if(wcsstr(buffer,L"UP")) PadMap.pov[i] = 36000;
-				if(wcsstr(buffer,L"DOWN")) PadMap.pov[i] = 18000;
-				if(wcsstr(buffer,L"LEFT")) PadMap.pov[i] = 27000;
-				if(wcsstr(buffer,L"RIGHT")) PadMap.pov[i] = 9000;
-				PadMap.PovIsButton = false;
-			}
-			else if(val < 100)
-			{
-				PadMap.pov[i] = static_cast<WORD>(val - 1);
-				PadMap.PovIsButton = true;
-			}
-			else 
-			{
-				PadMap.pov[i] = static_cast<WORD>(val);
-				PadMap.PovIsButton = false;
-			}
+            int val = atoi(buffer);
+            if(val == 0)
+            {
+                //for compatibility with x360ce.App
+                if(strstr(buffer,"UP")) mapping.pov[i] = 36000;
+                if(strstr(buffer,"DOWN")) mapping.pov[i] = 18000;
+                if(strstr(buffer,"LEFT")) mapping.pov[i] = 27000;
+                if(strstr(buffer,"RIGHT")) mapping.pov[i] = 9000;
+                mapping.PovIsButton = false;
+            }
+            else if(val < 100)
+            {
+                mapping.pov[i] = static_cast<WORD>(val - 1);
+                mapping.PovIsButton = true;
+            }
+            else
+            {
+                mapping.pov[i] = static_cast<WORD>(val);
+                mapping.PovIsButton = false;
+            }
         }
 
-        if (ini.ReadStringFromFile(section, axisNames[i], buffer) > 0)
+        if (ini.GetString(section, axisNames[i], buffer) > 0)
         {
-            LPWSTR a = buffer;
+            char* a = buffer;
 
             if (towlower(*a) == L's')   // Slider
             {
-                PadMap.Axis[i].analogType = SLIDER;
+                mapping.Axis[i].analogType = SLIDER;
                 ++a;
-                PadMap.Axis[i].id = _wtoi(a);
+                mapping.Axis[i].id = atoi(a);
             }
             else
             {
                 // Axis
-                PadMap.Axis[i].analogType = AXIS;
-                PadMap.Axis[i].id = _wtoi(a);
+                mapping.Axis[i].analogType = AXIS;
+                mapping.Axis[i].id = atoi(a);
             }
         }
 
-        gamepad.adeadzone[i] =  static_cast<SHORT>(ini.ReadLongFromFile(section, axisDZNames[i], 0));
-        gamepad.axislinear[i] = static_cast<SHORT>(ini.ReadLongFromFile(section, axisLNames[i], 0));
+        device.axisdeadzone[i] =  static_cast<SHORT>(ini.GetLong(section, axisDZNames[i], 0));
+        device.axislinear[i] = static_cast<SHORT>(ini.GetLong(section, axisLNames[i], 0));
 
-		INT ret = ini.ReadLongFromFile(section, axisBNames[i*2]);
+        INT ret = ini.GetLong(section, axisBNames[i*2]);
         if (ret > 0)
         {
-            PadMap.Axis[i].hasDigital = true;
-            PadMap.Axis[i].positiveButtonID = ret - 1;
+            mapping.Axis[i].hasDigital = true;
+            mapping.Axis[i].positiveButtonID = ret - 1;
         }
-		ret = ini.ReadLongFromFile(section, axisBNames[i*2+1]);
+        ret = ini.GetLong(section, axisBNames[i*2+1]);
         if (ret > 0)
         {
-            PadMap.Axis[i].hasDigital = true;
-            PadMap.Axis[i].negativeButtonID = ret - 1;
+            mapping.Axis[i].hasDigital = true;
+            mapping.Axis[i].negativeButtonID = ret - 1;
         }
     }
 
-    if (ini.ReadStringFromFile(section, L"Left Trigger", buffer) > 0)
+    if (ini.GetString(section, "Left Trigger", buffer) > 0)
     {
-        LPWSTR a = buffer;
+        char* a = buffer;
 
-        if ((PadMap.Trigger[0].type = getTriggerType(a)) == DIGITAL)
+        if ((mapping.Trigger[0].type = getTriggerType(a)) == DIGITAL)
         {
-            PadMap.Trigger[0].id = _wtoi(a) - 1;
+            mapping.Trigger[0].id = atoi(a) - 1;
         }
         else
         {
             ++a;
-            PadMap.Trigger[0].id = _wtoi(a);
+            mapping.Trigger[0].id = atoi(a);
         }
     }
 
-    if (ini.ReadStringFromFile(section, L"Right Trigger", buffer) > 0)
+    if (ini.GetString(section, "Right Trigger", buffer) > 0)
     {
-        LPWSTR a = buffer;
+        char* a = buffer;
 
-        if ((PadMap.Trigger[1].type = getTriggerType(a)) == DIGITAL)
+        if ((mapping.Trigger[1].type = getTriggerType(a)) == DIGITAL)
         {
-            PadMap.Trigger[1].id = _wtoi(a) - 1;
+            mapping.Trigger[1].id = atoi(a) - 1;
         }
         else
         {
             ++a;
-            PadMap.Trigger[1].id = _wtoi(a);
+            mapping.Trigger[1].id = atoi(a);
         }
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-    if (ini.ReadStringFromFile(section, L"Left Trigger But", buffer) > 0)
+    if (ini.GetString(section, "Left Trigger But", buffer) > 0)
     {
-        LPWSTR a = buffer;
-        PadMap.Trigger[0].but = _wtoi(a) - 1;
+        char* a = buffer;
+        mapping.Trigger[0].but = atoi(a) - 1;
     }
 
-    if (ini.ReadStringFromFile(section, L"Right Trigger But", buffer) > 0)
+    if (ini.GetString(section, "Right Trigger But", buffer) > 0)
     {
-        LPWSTR a = buffer;
-        PadMap.Trigger[1].but = _wtoi(a) - 1;
+        char* a = buffer;
+        mapping.Trigger[1].but = atoi(a) - 1;
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-    if (ini.ReadLongFromFile(section, L"D-pad POV") > 0)
+    if (ini.GetLong(section, "D-pad POV") > 0)
     {
-        PadMap.DpadPOV = static_cast<WORD>(ini.ReadLongFromFile(section, L"D-pad POV",0)) - 1;
+        mapping.DpadPOV = static_cast<WORD>(ini.GetLong(section, "D-pad POV",0)) - 1;
     }
 
-	GamepadMapping.push_back(PadMap);
-	g_Gamepads.push_back(gamepad);
+    g_Mappings.push_back(mapping);
+    g_Devices.push_back(device);
 }
 
 // NOTE: Letters corresponding to mapping types changed. Include in update notes.
-MappingType getTriggerType(LPCWSTR s)
+MappingType getTriggerType(const char* s)
 {
-    if (towlower(*s) == L'a') return AXIS;	// Axis
+    if (tolower(*s) == 'a') return AXIS;	// Axis
 
-    if (towlower(*s) == L's') return SLIDER;	// Slider
+    if (tolower(*s) == 's') return SLIDER;	// Slider
 
-    if (towlower(*s) == L'x') return HAXIS;	// Half range axis
+    if (tolower(*s) == 'x') return HAXIS;	// Half range axis
 
-    if (towlower(*s) == L'h') return HSLIDER;	// Half range slider
+    if (tolower(*s) == 'h') return HSLIDER;	// Half range slider
 
     ////////////////////////////////////////////////////////////////////
-    if (towlower(*s) == L'z') return CBUT;
+    if (tolower(*s) == 'z') return CBUT;
 
     ////////////////////////////////////////////////////////////////////
     return DIGITAL;							// Digital

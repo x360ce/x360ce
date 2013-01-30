@@ -16,42 +16,28 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "Utilities\Log.h"
+#include "Log.h"
 #include <Softpub.h>
 
 #include "InputHook.h"
 
 static iHook *iHookThis = NULL;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-typedef LONG (WINAPI *tWinVerifyTrust)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
-
-tWinVerifyTrust hWinVerifyTrust = NULL;
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-	if(!iHookThis->CheckHook(iHook::HOOK_WT)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
-	WriteLog(LOG_HOOKWT,L"*WinVerifyTrust*");
+    if(!iHookThis->CheckHook(iHook::HOOK_WT)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+    PrintLog(LOG_HOOKWT,"*WinVerifyTrust*");
 
-	UNREFERENCED_PARAMETER(hwnd);
-	UNREFERENCED_PARAMETER(pgActionID);
-	UNREFERENCED_PARAMETER(pWVTData);
-	return 0;
+    UNREFERENCED_PARAMETER(hwnd);
+    UNREFERENCED_PARAMETER(pgActionID);
+    UNREFERENCED_PARAMETER(pWVTData);
+    return 0;
 }
 
 void iHook::HookWT()
 {
-	if(!CheckHook(iHook::HOOK_WT)) return;
-	iHookThis = this;
-
-	if(!hWinVerifyTrust) 
-	{
-		hWinVerifyTrust = WinVerifyTrust;
-		if(HooksSafeTransition(hWinVerifyTrust,true))
-		{
-			HooksInsertNewRedirection(hWinVerifyTrust,HookWinVerifyTrust,TEE_HOOK_NRM_JUMP);
-			HooksSafeTransition(hWinVerifyTrust,false);
-		}
-	}
+    if(!CheckHook(iHook::HOOK_WT)) return;
+    iHookThis = this;
+    MH_CreateHook(WinVerifyTrust,HookWinVerifyTrust,NULL);
+    MH_EnableHook(WinVerifyTrust);
 }
