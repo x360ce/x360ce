@@ -37,22 +37,6 @@ extern iHook* pHooks;
 
 //-----------------------------------------------------------------------------
 
-LPDIRECTINPUT8 g_pDI = NULL;
-HRESULT LoadDinput()
-{
-    if(g_pDI) return S_OK;
-    return DirectInput8Create( hThis, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&g_pDI, NULL );
-}
-
-void FreeDinput()
-{
-    if (g_pDI)
-    {
-        g_pDI->Release();
-        g_pDI = 0;
-    }
-}
-
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
     DInputDevice *gp = (DInputDevice*) pContext;
@@ -109,7 +93,15 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     DIPROPDWORD dipdw;
     HRESULT hr=E_FAIL;
     HRESULT coophr=E_FAIL;
-    LoadDinput();
+
+    static DInputManager dinput;
+
+    if(FAILED(dinput.Init(hThis)))
+    {
+        PrintLog(LOG_CORE,"DirectInput cannot be initialized");
+        MessageBox(NULL,L"DirectInput cannot be initialized",L"Error",MB_ICONERROR);
+        ExitProcess(hr);
+    }
 
     static CriticalSection mutex;
     mutex.Lock();
@@ -122,14 +114,14 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     }
     if(!device.useproduct)
     {
-        hr = g_pDI->CreateDevice( device.instanceid,& device.device, NULL );
+        hr = dinput.Get()->CreateDevice( device.instanceid,& device.device, NULL );
         if(FAILED(hr))
         {
             PrintLog(LOG_CORE,"%s",L"InstanceGuid is incorrect trying ProductGuid");
-            hr = g_pDI->CreateDevice( device.productid,& device.device, NULL );
+            hr = dinput.Get()->CreateDevice( device.productid,& device.device, NULL );
         }
     }
-    else hr = g_pDI->CreateDevice( device.productid,& device.device, NULL );
+    else hr = dinput.Get()->CreateDevice( device.productid,& device.device, NULL );
     if(bHookDI)
     {
         pHooks->EnableHook(iHook::HOOK_DI);
@@ -235,10 +227,15 @@ HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
         return S_OK;
     }
 
-    if(device.ff.type == 1) return SetDeviceForcesEjocys(device,force,motor);
-    if(device.ff.type == 2) return SetDeviceForcesNew(device,force,motor);
+    static CriticalSection mutex;
 
-    return SetDeviceForcesFailsafe(device,force,motor);
+    mutex.Lock();
+    if(device.ff.type == 1) SetDeviceForcesEjocys(device,force,motor);
+    else if(device.ff.type == 2) SetDeviceForcesNew(device,force,motor);
+    else SetDeviceForcesFailsafe(device,force,motor);
+    mutex.Unlock();
+
+    return S_OK;
 }
 
 HRESULT PrepareForce(DInputDevice& device, bool motor)

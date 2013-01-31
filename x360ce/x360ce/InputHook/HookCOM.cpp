@@ -204,7 +204,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
                 PrintLog(LOG_HOOKCOM,"Hooking Get");
                 hGet = pDevices->lpVtbl->Get;
                 MH_CreateHook(hGet,HookGet,reinterpret_cast<void**>(&oGet));
-                MH_EnableHook(hConnectServer);
+                MH_EnableHook(hGet);
             }
         }
     }
@@ -242,7 +242,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
                 PrintLog(LOG_HOOKCOM,"Hooking Next");
                 hNext = pEnumDevices->lpVtbl->Next;
                 MH_CreateHook(hNext,HookNext,reinterpret_cast<void**>(&oNext));
-                MH_EnableHook(hConnectServer);
+                MH_EnableHook(hNext);
             }
         }
     }
@@ -285,7 +285,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
                 PrintLog(LOG_HOOKCOM,"Hooking CreateInstanceEnum");
                 hCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
                 MH_CreateHook(hCreateInstanceEnum,HookCreateInstanceEnum,reinterpret_cast<void**>(&oCreateInstanceEnum));
-                MH_EnableHook(hConnectServer);
+                MH_EnableHook(hCreateInstanceEnum);
             }
         }
     }

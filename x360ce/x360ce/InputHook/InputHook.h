@@ -79,6 +79,7 @@ public:
     virtual ~iHook()
     {
         MH_Uninitialize();
+        m_devices.clear();
     };
 
     static const DWORD HOOK_NONE        = 0x00000000;
@@ -137,17 +138,17 @@ public:
 
     inline size_t GetHookCount()
     {
-        return m_device.size();
+        return m_devices.size();
     }
 
     inline iHookDevice& GetPadConfig(const DWORD dwUserIndex)
     {
-        return m_device[dwUserIndex];
+        return m_devices[dwUserIndex];
     }
 
     inline VOID AddHook(iHookDevice &config)
     {
-        m_device.push_back(config);
+        m_devices.push_back(config);
     }
 
     inline VOID ExecuteHooks()
@@ -172,7 +173,7 @@ public:
 private:
     DWORD m_hookmask;
     DWORD m_fakepidvid;
-    std::vector<iHookDevice> m_device;
+    std::vector<iHookDevice> m_devices;
 
     void HookCOM();
     void HookDI();

@@ -123,15 +123,15 @@ static const WORD povIDs[4] =
     XINPUT_GAMEPAD_DPAD_RIGHT
 };
 
-extern bool bInitBeep;
+extern bool g_bInitBeep;
 extern std::vector<Mapping> g_Mappings;
 
-extern bool bNative;
+extern bool g_bNative;
 void InitConfig(char* ininame);
 void ReadConfig();
 void ReadPadConfig(DWORD idx, Ini &ini);
 MappingType getTriggerType(const char* s);
 
-extern bool g_Disable;
+extern bool g_bDisable;
 
 #endif

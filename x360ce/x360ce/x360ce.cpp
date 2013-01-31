@@ -41,7 +41,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch ( uMsg )
     {
     case WM_DESTROY:
-        FreeDinput();
+
+        g_Devices.clear();
+        g_Mappings.clear();
+
         SAFE_DELETE(pHooks);
         if(hNative)
         {
@@ -79,7 +82,7 @@ VOID MakeMsgWindow()
 
 HRESULT XInit(DInputDevice& device)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(!device.fail)
     {
@@ -97,7 +100,7 @@ HRESULT XInit(DInputDevice& device)
 
             if(SUCCEEDED(hr))
             {
-                if(bInitBeep) MessageBeep(MB_OK);
+                if(g_bInitBeep) MessageBeep(MB_OK);
                 device.initialized = true;
                 PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
             }
@@ -110,7 +113,7 @@ HRESULT XInit(DInputDevice& device)
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog(LOG_XINPUT,"XInputGetState");
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         return reinterpret_cast<XInputGetState_t>(GetXInputFunc(Native::GETSTATE))(dwUserIndex,pState);
@@ -457,7 +460,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         return reinterpret_cast<XInputSetState_t>(GetXInputFunc(Native::SETSTATE))(dwUserIndex,pVibration);
@@ -476,7 +479,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
     if(!device.useforce) return ERROR_SUCCESS;
 
-    WORD wLeftMotorSpeed = 0;
+  WORD wLeftMotorSpeed = 0;
     WORD wRightMotorSpeed = 0;
 
     PrepareForce(device,FFB_LEFTMOTOR);
@@ -510,7 +513,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         return reinterpret_cast<XInputGetCapabilities_t>(GetXInputFunc(Native::GETCAPS))(dwUserIndex,dwFlags,pCapabilities);
@@ -537,8 +540,8 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-    if(g_Disable) return;
-    if(bNative)
+    if(g_bDisable) return;
+    if(g_bNative)
         reinterpret_cast<XInputEnable_t>(GetXInputFunc(Native::ENABLE))(enable);
 
     /*
@@ -560,7 +563,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputGetDSoundAudioDeviceGuids_t>(GetXInputFunc(Native::AUDIO))(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
@@ -579,7 +582,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputGetBatteryInformation_t>(GetXInputFunc(Native::BATTERY))(dwUserIndex,devType,pBatteryInformation);
@@ -600,7 +603,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
     {
@@ -708,7 +711,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 //undocumented
 extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputGetStateEx_t>(GetXInputFunc(Native::GETSTATEEX))(dwUserIndex,pState);
@@ -727,7 +730,7 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 
 extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputWaitForGuideButton_t>(GetXInputFunc(Native::WAITGUIDE))(dwUserIndex,dwFlag,pVoid);
@@ -739,7 +742,7 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
 
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputCancelGuideButtonWait_t>(GetXInputFunc(Native::CANCELGUIDE))(dwUserIndex);
@@ -751,7 +754,7 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 
 extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
-    if(g_Disable) return ERROR_DEVICE_NOT_CONNECTED;
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputCancelGuideButtonWait_t>(GetXInputFunc(Native::POWEROFF))(dwUserIndex);
