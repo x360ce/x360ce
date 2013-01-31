@@ -28,8 +28,9 @@ const char* Log::TypeToString(LogType type)
         "[XInput ] ",
         "[DInput ] ",
         "[IHook  ] ",
-        "[HookDI ] ",
+        "[HookLL ] ",
         "[HookCOM] ",
+        "[HookDI ] ",
         "[HookWT ] ",
     };
     return buffer[type];

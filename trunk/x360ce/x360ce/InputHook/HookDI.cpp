@@ -422,7 +422,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 
     if(iHookThis->CheckHook(iHook::HOOK_NAME))
     {
-        if (&rguidProp == &DIPROP_PRODUCTNAME)
+        if(&rguidProp == &DIPROP_PRODUCTNAME)
         {
             wchar_t TrueName[MAX_PATH];
             wcscpy_s(TrueName,reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
@@ -613,8 +613,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void iHook::HookDI()
 {
-    if(!CheckHook(iHook::HOOK_DI)) return;
-    PrintLog(LOG_HOOKDI,"Hooking DirectInput8Create");
+    PrintLog(LOG_IHOOK,"Hooking DirectInput8Create");
     iHookThis = this;
 
     MH_CreateHook(DirectInput8Create,HookDirectInput8Create,reinterpret_cast<void**>(&oDirectInput8Create));

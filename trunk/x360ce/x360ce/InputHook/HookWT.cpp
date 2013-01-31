@@ -23,9 +23,13 @@
 
 static iHook *iHookThis = NULL;
 
+typedef LONG (WINAPI* WinVerifyTrust_t)(HWND hwnd, GUID *pgActionID,LPVOID pWVTData);
+
+WinVerifyTrust_t oWinVerifyTrust = NULL;
+
 LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 {
-    if(!iHookThis->CheckHook(iHook::HOOK_WT)) return HookWinVerifyTrust(hwnd,pgActionID,pWVTData);
+    if(!iHookThis->CheckHook(iHook::HOOK_WT)) return oWinVerifyTrust(hwnd,pgActionID,pWVTData);
     PrintLog(LOG_HOOKWT,"*WinVerifyTrust*");
 
     UNREFERENCED_PARAMETER(hwnd);
@@ -36,8 +40,9 @@ LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 
 void iHook::HookWT()
 {
-    if(!CheckHook(iHook::HOOK_WT)) return;
+    PrintLog(LOG_IHOOK,"Hooking WinVerifyTrust");
     iHookThis = this;
-    MH_CreateHook(WinVerifyTrust,HookWinVerifyTrust,NULL);
+
+    MH_CreateHook(WinVerifyTrust,HookWinVerifyTrust,reinterpret_cast<void**>(&oWinVerifyTrust));
     MH_EnableHook(WinVerifyTrust);
 }
