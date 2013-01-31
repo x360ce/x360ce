@@ -116,19 +116,25 @@ public:
         axistodpad(false),
         useproduct(false),
         useforce(false)
-    {Mutex();}
+    {
+        Mutex();
+    }
 
     ~DInputDevice()
     {
+        Mutex().Lock();
+
+        //check for broken ffd
+        bool brokenffd = false;
+        if(GetModuleHandle(L"tmffbdrv.dll")) brokenffd = true;
         //causes exception in tmffbdrv.dll (Thrustmaster FFB driver)
         //works fine with xiffd.dll (Mori's FFB driver for XInput)
-        if(device != NULL)
+        if(device && !brokenffd)
         {
-            Mutex().Lock();
             device->SendForceFeedbackCommand(DISFFC_RESET);
             device->Release();
-            Mutex().Unlock();
         }
+        Mutex().Unlock();
     }
 
     LPDIRECTINPUTDEVICE8 device;
