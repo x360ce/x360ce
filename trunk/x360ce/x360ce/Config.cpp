@@ -167,10 +167,10 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     ret = ini.GetString(section, key, buffer);
     if(!ret) return;
 
-    g_Devices.push_back(DInputDevice());
+    g_Devices.emplace_back();
     DInputDevice& device = g_Devices.back();
 
-    g_Mappings.push_back(Mapping());
+    g_Mappings.emplace_back();
     Mapping& mapping = g_Mappings.back();
 
     //store value as section name

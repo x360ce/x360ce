@@ -71,8 +71,13 @@ VOID InstallInputHooks()
         for(size_t i = 0; i < g_Devices.size(); i++)
         {
             DInputDevice& device = g_Devices[i];
-            iHookDevice hdevice(device.productid,device.instanceid) ;
+
+#if _MSC_VER < 1700
+            iHookDevice hdevice(device.productid,device.instanceid);
             pHooks->AddHook(hdevice);
+#else
+            pHooks->AddHook(device.productid,device.instanceid);
+#endif
         }
     }
     pHooks->ExecuteHooks();

@@ -146,9 +146,14 @@ public:
         return m_devices[dwUserIndex];
     }
 
-    inline VOID AddHook(iHookDevice &config)
+    inline VOID AddHook(iHookDevice& config)
     {
         m_devices.push_back(config);
+    }
+
+    inline VOID AddHook(GUID& productid, GUID& instanceid)
+    {
+        m_devices.emplace_back(productid,instanceid);
     }
 
     inline VOID ExecuteHooks()
