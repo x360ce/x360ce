@@ -22,12 +22,8 @@
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
-
 #include "Utilities\CriticalSection.h"
 
-//-----------------------------------------------------------------------------
-// Defines, constants, and global variables
-//-----------------------------------------------------------------------------
 std::vector<DInputDevice> g_Devices;
 
 INT init[4] = {NULL};
@@ -35,7 +31,6 @@ WORD lastforce = 0;
 
 extern iHook* pHooks;
 
-//-----------------------------------------------------------------------------
 
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
@@ -107,7 +102,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     mutex.Lock();
 
     PrintLog(LOG_DINPUT,"[PAD%d] Creating device",device.dwUserIndex+1);
-    BOOL bHookDI = pHooks->CheckHook(iHook::HOOK_DI);
+    bool bHookDI = pHooks->CheckHook(iHook::HOOK_DI);
     if(bHookDI)
     {
         pHooks->DisableHook(iHook::HOOK_DI);

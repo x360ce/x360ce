@@ -71,9 +71,10 @@ private:
 class iHook
 {
 public:
-    iHook()
+    iHook(HMODULE instance)
         :m_hookmask(0)
         ,m_fakepidvid(MAKELONG(0x045E,0x028E))
+        ,m_mod(instance)
     {
     }
     virtual ~iHook()
@@ -83,30 +84,32 @@ public:
     };
 
     static const DWORD HOOK_NONE        = 0x00000000;
-    static const DWORD HOOK_COM         = 0x00000001;
-    static const DWORD HOOK_DI          = 0x00000002;
-    static const DWORD HOOK_VIDPID      = 0x00000004;
-    static const DWORD HOOK_NAME        = 0x00000008;
-    static const DWORD HOOK_STOP        = 0x00000010;
-    static const DWORD HOOK_WT          = 0x00000020;
+    static const DWORD HOOK_LL          = 0x00000001;
+    static const DWORD HOOK_COM         = 0x00000002;
+    static const DWORD HOOK_DI          = 0x00000004;
+    static const DWORD HOOK_VIDPID      = 0x00000008;
+    static const DWORD HOOK_NAME        = 0x00000010;
+
+    static const DWORD HOOK_WT          = 0x00100000;
+    static const DWORD HOOK_STOP        = 0x01000000;
     static const DWORD HOOK_ENABLE      = 0x80000000;
 
-    inline VOID Enable()
+    inline void Enable()
     {
         m_hookmask |= HOOK_ENABLE;
     }
 
-    inline VOID Disable()
+    inline void Disable()
     {
         m_hookmask &= ~HOOK_ENABLE;
     }
 
-    inline VOID EnableHook(const DWORD flag)
+    inline void EnableHook(const DWORD flag)
     {
         m_hookmask |= flag;
     }
 
-    inline VOID DisableHook(const DWORD flag)
+    inline void DisableHook(const DWORD flag)
     {
         m_hookmask &= ~flag;
     }
@@ -146,23 +149,33 @@ public:
         return m_devices[dwUserIndex];
     }
 
-    inline VOID AddHook(iHookDevice& config)
+#if _MSC_VER < 1700
+    inline void AddHook(GUID& productid, GUID& instanceid)
     {
-        m_devices.push_back(config);
+        iHookDevice hdevice(device.productid,device.instanceid);
+        m_devices.push_back(hdevice);
     }
-
-    inline VOID AddHook(GUID& productid, GUID& instanceid)
+#else
+    inline void AddHook(GUID& productid, GUID& instanceid)
     {
         m_devices.emplace_back(productid,instanceid);
     }
+#endif
 
-    inline VOID ExecuteHooks()
+    inline HMODULE GetEmulator()
     {
+        return m_mod;
+    }
 
+    inline void ExecuteHooks()
+    {
         if(!GetState()) return;
         PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask);
 
         MH_Initialize();
+
+        if(CheckHook(HOOK_LL))
+            HookLL();
 
         if(CheckHook(HOOK_COM))
             HookCOM();
@@ -178,8 +191,11 @@ public:
 private:
     DWORD m_hookmask;
     DWORD m_fakepidvid;
+    HMODULE m_mod;
+
     std::vector<iHookDevice> m_devices;
 
+    void HookLL();
     void HookCOM();
     void HookDI();
     void HookWT();

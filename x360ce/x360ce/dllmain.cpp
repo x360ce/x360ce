@@ -51,7 +51,10 @@ void LoadXInputDLL()
     // try to load the system's xinput dll, if pointer empty
     PrintLog(LOG_CORE,"Loading %ls",buffer);
 
+    bool bHookLL = pHooks->CheckHook(iHook::HOOK_LL);
+    if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
     hNative = LoadLibrary(buffer);
+    if(bHookLL) pHooks->EnableHook(iHook::HOOK_LL);
 
     //Debug
     if (!hNative)
@@ -71,13 +74,7 @@ VOID InstallInputHooks()
         for(size_t i = 0; i < g_Devices.size(); i++)
         {
             DInputDevice& device = g_Devices[i];
-
-#if _MSC_VER < 1700
-            iHookDevice hdevice(device.productid,device.instanceid);
-            pHooks->AddHook(hdevice);
-#else
             pHooks->AddHook(device.productid,device.instanceid);
-#endif
         }
     }
     pHooks->ExecuteHooks();
@@ -119,7 +116,7 @@ VOID InitInstance(HINSTANCE instance)
     startThreadId = GetCurrentThreadId();
     startProcessId = GetCurrentProcessId();
 
-    pHooks = new iHook();
+    pHooks = new iHook(instance);
     ReadConfig();
 
 #if SVN_MODS != 0
@@ -145,15 +142,15 @@ extern "C" VOID WINAPI reset()
     InitInstance(hThis);
 }
 
-extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
+extern "C" BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
     UNREFERENCED_PARAMETER(lpReserved);
 
-    switch( fdwReason )
+    switch(ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        DisableThreadLibraryCalls(hinstDLL);
-        InitInstance(hinstDLL);
+        DisableThreadLibraryCalls(hModule);
+        InitInstance(hModule);
         break;
 
     case DLL_PROCESS_DETACH:

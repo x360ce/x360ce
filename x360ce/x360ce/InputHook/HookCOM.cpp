@@ -147,11 +147,12 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
                 if( strUSB && dwHookVid && dwHookPid)
                 {
-                    PrintLog(LOG_HOOKCOM,"Original DeviceID = %ls",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"Device string change:",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"from %ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
                     swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
                     SysReAllocString(&pVal->bstrVal,tempstr);
-                    PrintLog(LOG_HOOKCOM,"Fake DeviceID = %ls",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"to   %ls",pVal->bstrVal);
                     break;
                 }
 
@@ -159,11 +160,12 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
                 if( strHID && dwHookVid && dwHookPid )
                 {
-                    PrintLog(LOG_HOOKCOM,"Original DeviceID = %ls",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"Device string change:",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"from %ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
                     swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
                     SysReAllocString(&pVal->bstrVal,tempstr);
-                    PrintLog(LOG_HOOKCOM,"Fake DeviceID = %ls",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"to   %ls",pVal->bstrVal);
                     break;
                 }
             }
@@ -366,7 +368,6 @@ void WINAPI HookCoUninitialize()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void iHook::HookCOM()
 {
-    if(!CheckHook(iHook::HOOK_COM)) return;
     PrintLog(LOG_HOOKCOM,"Hooking COM");
     iHookThis = this;
 

@@ -47,7 +47,7 @@ private:
 
 public:
 
-    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKDI, LOG_HOOKCOM, LOG_HOOKWT };
+    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKWT };
 
     static Log& getInstance()
     {

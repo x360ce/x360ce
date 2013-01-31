@@ -131,14 +131,14 @@ void ReadConfig()
     {
         DWORD hookCheck = ini.GetLong("InputHook", "HookMode",0);
         //TODO
-        if(hookCheck == 1) pHooks->SetMask(iHook::HOOK_COM);
-        if(hookCheck == 2) pHooks->SetMask(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI);
-        if(hookCheck == 3) pHooks->SetMask(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
-        if(hookCheck >  3) pHooks->SetMask(iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
+        if(hookCheck == 1) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM);
+        if(hookCheck == 2) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI);
+        if(hookCheck == 3) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
+        if(hookCheck >  3) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
         if(hookCheck >  0) pHooks->Enable();
 
         hookCheck = ini.GetLong("InputHook", "HookWinTrust",0);
-        if(hookCheck == 1) pHooks->SetMask(iHook::HOOK_WT);
+        if(hookCheck == 1) pHooks->EnableHook(iHook::HOOK_WT);
         if(hookCheck >  0) pHooks->Enable();
     }
 

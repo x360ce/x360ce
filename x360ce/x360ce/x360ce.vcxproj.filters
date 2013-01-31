@@ -28,6 +28,9 @@
     <ClCompile Include="x360ce.cpp">
       <Filter>x360ce\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="InputHook\HookLL.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputHook\InputHook.h">

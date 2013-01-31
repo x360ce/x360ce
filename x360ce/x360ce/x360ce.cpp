@@ -479,7 +479,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
     if(!device.useforce) return ERROR_SUCCESS;
 
-  WORD wLeftMotorSpeed = 0;
+    WORD wLeftMotorSpeed = 0;
     WORD wRightMotorSpeed = 0;
 
     PrepareForce(device,FFB_LEFTMOTOR);
