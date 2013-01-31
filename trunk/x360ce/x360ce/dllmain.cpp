@@ -82,11 +82,10 @@ VOID ExitInstance()
 {
     if(IsWindow(hMsgWnd))
     {
-        if(DestroyWindow(hMsgWnd)) PrintLog(LOG_CORE,"Destroying message window");
+        if(DestroyWindow(hMsgWnd)) PrintLog(LOG_CORE,"Message window destroyed");
     }
     else
     {
-        FreeDinput();
         SAFE_DELETE(pHooks);
         if(hNative)
         {
@@ -96,7 +95,7 @@ VOID ExitInstance()
         }
     }
 
-    PrintLog(LOG_CORE,"x360ce terminating, bye");
+    PrintLog(LOG_CORE,"Terminating x360ce, bye");
     DestroyLog();
 }
 
@@ -133,7 +132,6 @@ extern "C" VOID WINAPI reset()
 {
     PrintLog(LOG_CORE,"%s", "Restarting");
 
-    FreeDinput();
     SAFE_DELETE(pHooks);
 
     g_Devices.clear();

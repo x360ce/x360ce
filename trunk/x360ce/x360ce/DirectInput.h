@@ -20,6 +20,8 @@
 #include <dinput.h>
 #include "Config.h"
 
+#include "Utilities\CriticalSection.h"
+
 // disable C4351 - new behavior: elements of array 'array' will be default initialized
 #pragma warning( disable:4351 )
 
@@ -72,6 +74,7 @@ public:
     FLOAT forcepercent;
     BYTE type;
     bool is_created;
+
     struct Caps
     {
         bool ConstantForce;
@@ -83,6 +86,12 @@ public:
 class DInputDevice
 {
 public:
+
+    static CriticalSection& Mutex()
+    {
+        static CriticalSection mutex;
+        return mutex;
+    }
 
     DInputDevice():
         device(NULL),
@@ -107,12 +116,20 @@ public:
         axistodpad(false),
         useproduct(false),
         useforce(false)
-    {};
+    {Mutex();}
+
     ~DInputDevice()
     {
-        if(device) device->SendForceFeedbackCommand(DISFFC_RESET);
-        if(device) device->Release();
-    };
+        //causes exception in tmffbdrv.dll (Thrustmaster FFB driver)
+        //works fine with xiffd.dll (Mori's FFB driver for XInput)
+        if(device != NULL)
+        {
+            Mutex().Lock();
+            device->SendForceFeedbackCommand(DISFFC_RESET);
+            device->Release();
+            Mutex().Unlock();
+        }
+    }
 
     LPDIRECTINPUTDEVICE8 device;
     DIJOYSTATE2 state;
@@ -138,13 +155,40 @@ public:
     bool useforce;
 };
 
+class DInputManager
+{
+private:
+    LPDIRECTINPUT8 m_pDI;
+public:
+
+    DInputManager():
+        m_pDI(NULL)
+    {}
+    virtual ~DInputManager()
+    {
+        if (m_pDI)
+        {
+            m_pDI->Release();
+        }
+    }
+
+    LPDIRECTINPUT8& Get()
+    {
+        return m_pDI;
+    }
+
+    HRESULT Init(HMODULE hMod)
+    {
+        return DirectInput8Create( hMod, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&m_pDI, NULL );;
+    }
+};
+
 extern std::vector<DInputDevice> g_Devices;
 
 HRESULT InitDirectInput( HWND hDlg, DInputDevice& device );
 BOOL ButtonPressed(DWORD buttonidx, DInputDevice& device);
 HRESULT UpdateState(DInputDevice& device);
 WORD EnumPadCount();
-void FreeDinput();
 BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
 HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor);

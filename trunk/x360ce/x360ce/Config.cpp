@@ -23,9 +23,9 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
-bool bInitBeep = false;
-bool bNative = false;
-bool g_Disable = false;
+bool g_bInitBeep = false;
+bool g_bNative = false;
+bool g_bDisable = false;
 
 extern iHook* pHooks;
 
@@ -111,10 +111,10 @@ void ReadConfig()
     ini.SetIniFileName("x360ce.ini");
 
     // Read global options
-    g_Disable = ini.GetBool("Options", "Disable",0);
-    if(g_Disable) return;
+    g_bDisable = ini.GetBool("Options", "Disable",0);
+    if(g_bDisable) return;
 
-    bInitBeep = ini.GetBool("Options", "UseInitBeep",1);
+    g_bInitBeep = ini.GetBool("Options", "UseInitBeep",1);
 
     bool log = ini.GetBool("Options", "Log",0);
     bool con = ini.GetBool("Options", "Console",0);
@@ -167,8 +167,11 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     ret = ini.GetString(section, key, buffer);
     if(!ret) return;
 
-    DInputDevice device;
-    Mapping mapping;
+    g_Devices.push_back(DInputDevice());
+    DInputDevice& device = g_Devices.back();
+
+    g_Mappings.push_back(Mapping());
+    Mapping& mapping = g_Mappings.back();
 
     //store value as section name
     strcpy_s(section,buffer);
@@ -178,13 +181,6 @@ void ReadPadConfig(DWORD idx, Ini &ini)
 
     ini.GetString(section, "InstanceGUID", buffer, 0);
     Misc::StringToGUID(buffer,device.instanceid);
-
-    //TODO rework pass-trough handling code
-    for (int i=0; i<4; ++i)
-    {
-        SHORT tmp = static_cast<SHORT>(ini.GetLong(section, axisADZNames[i], 0));
-        device.antideadzone[i] =  static_cast<SHORT>(((Misc::clamp))(tmp,0,32767));
-    }
 
     device.passthrough = ini.GetBool(section, "PassThrough",1);
 
@@ -203,11 +199,9 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     }
     else return;
 
-
     device.dwUserIndex = idx;
 
     device.useproduct = ini.GetBool(section, "UseProductGUID",0);
-    device.ff.type = (BYTE) ini.GetLong(section, "FFBType",0);
     device.swapmotor = ini.GetBool(section, "SwapMotor",0);
     device.triggerdeadzone = ini.GetLong(section, "TriggerDeadzone",0);
     device.useforce = ini.GetBool(section, "UseForceFeedback",0);
@@ -215,6 +209,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     device.axistodpad = ini.GetBool(section, "AxisToDPad",0);
     device.a2ddeadzone = static_cast<INT>(ini.GetLong(section, "AxisToDPadDeadZone",0));
     device.a2doffset = static_cast<INT>(ini.GetLong(section, "AxisToDPadOffset",0));
+    device.ff.type = (BYTE) ini.GetLong(section, "FFBType",0);
     device.ff.forcepercent = static_cast<FLOAT>(ini.GetLong(section, "ForcePercent",100) * 0.01);
     device.ff.leftPeriod = ini.GetLong(section, "LeftMotorPeriod",60);
     device.ff.rightPeriod = ini.GetLong(section, "RightMotorPeriod",20);
@@ -284,6 +279,9 @@ void ReadPadConfig(DWORD idx, Ini &ini)
             }
         }
 
+        SHORT tmp = static_cast<SHORT>(ini.GetLong(section, axisADZNames[i], 0));
+        device.antideadzone[i] =  static_cast<SHORT>(((Misc::clamp))(tmp,0,32767));
+
         device.axisdeadzone[i] =  static_cast<SHORT>(ini.GetLong(section, axisDZNames[i], 0));
         device.axislinear[i] = static_cast<SHORT>(ini.GetLong(section, axisLNames[i], 0));
 
@@ -350,9 +348,6 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     {
         mapping.DpadPOV = static_cast<WORD>(ini.GetLong(section, "D-pad POV",0)) - 1;
     }
-
-    g_Mappings.push_back(mapping);
-    g_Devices.push_back(device);
 }
 
 // NOTE: Letters corresponding to mapping types changed. Include in update notes.

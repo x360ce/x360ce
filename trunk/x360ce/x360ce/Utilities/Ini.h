@@ -26,13 +26,16 @@ class Ini
 {
 public:
 
-    Ini() {};
+    Ini()
+    {
+        Mutex();
+    };
     virtual ~Ini(void) {}
 
     static CriticalSection& Mutex()
     {
-        static CriticalSection lock;
-        return lock;
+        static CriticalSection mutex;
+        return mutex;
     }
 
     void SetIniFileName(const char* ininame)
