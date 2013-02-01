@@ -121,31 +121,45 @@ void ReadConfig()
     InitLog(log,con);
 
     //InputHook
-    DWORD hookMask = ini.GetLong("InputHook", "HookMask",0);
-    if(hookMask)
+    DWORD hookMask = ini.GetDword("InputHook", "HookMask",0);
+    if(hookMask) 
     {
         pHooks->SetMask(hookMask);
         pHooks->Enable();
     }
     else
     {
-        DWORD hookCheck = ini.GetLong("InputHook", "HookMode",0);
-        //TODO
-        if(hookCheck == 1) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM);
-        if(hookCheck == 2) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI);
-        if(hookCheck == 3) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME);
-        if(hookCheck >  3) pHooks->SetMask(iHook::HOOK_LL | iHook::HOOK_COM | iHook::HOOK_VIDPID | iHook::HOOK_DI | iHook::HOOK_NAME | iHook::HOOK_STOP);
-        if(hookCheck >  0) pHooks->Enable();
+        bool hookCheck = ini.GetBool("InputHook", "HookLL",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_LL);
 
-        hookCheck = ini.GetLong("InputHook", "HookWinTrust",0);
-        if(hookCheck == 1) pHooks->EnableHook(iHook::HOOK_WT);
-        if(hookCheck >  0) pHooks->Enable();
+        hookCheck = ini.GetBool("InputHook", "HookCOM",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_COM);
+
+        hookCheck = ini.GetBool("InputHook", "HookDI",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_DI);
+
+        hookCheck = ini.GetBool("InputHook", "HookVIDPID",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_VIDPID);
+
+        hookCheck = ini.GetBool("InputHook", "HookSA",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_SA);
+
+        hookCheck = ini.GetBool("InputHook", "HookNAME",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_NAME);
+
+        hookCheck = ini.GetBool("InputHook", "HookSTOP",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_STOP);
+
+        hookCheck = ini.GetBool("InputHook", "HookWT",0);
+        if(hookCheck) pHooks->EnableHook(iHook::HOOK_WT);
+
+        if(pHooks->GetMask()) pHooks->Enable();
     }
 
-    if(pHooks->GetState())
+    if(pHooks->CheckHook(iHook::HOOK_VIDPID))
     {
-        DWORD vid = ini.GetLong("InputHook", "HookVID",0x045E);
-        DWORD pid = ini.GetLong("InputHook", "HookPID",0x028E);
+        DWORD vid = ini.GetDword("InputHook", "FakeVID",0x045E);
+        DWORD pid = ini.GetDword("InputHook", "FakePID",0x028E);
         if(vid != 0x045E || pid != 0x28E) pHooks->SetFakePIDVID(MAKELONG(vid,pid));
     }
 
@@ -173,7 +187,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
 
 		g_Mappings.push_back(Mapping());
 		Mapping& mapping = g_Mappings.back();
-	#else
+#else
 		g_Devices.emplace_back();
 		DInputDevice& device = g_Devices.back();
 

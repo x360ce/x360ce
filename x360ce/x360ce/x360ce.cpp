@@ -128,11 +128,11 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     if(XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)
         hr = UpdateState(device);
 
-    if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
-
 #if defined(DEBUG) | defined(_DEBUG)
-    //PrintLog(LOG_XINPUT,"UpdateState %d %d",dwUserIndex,hr);
+    PrintLog(LOG_XINPUT,"UpdateState %d %d",dwUserIndex,hr);
 #endif
+
+    if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
     Mapping& mapping = g_Mappings[dwUserIndex];
     XINPUT_STATE& xstate = *pState;
@@ -568,11 +568,11 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputGetDSoundAudioDeviceGuids_t>(GetXInputFunc(Native::AUDIO))(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 
-    DInputDevice& device = g_Devices[dwUserIndex];
+     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+
+    //DInputDevice& device = g_Devices[dwUserIndex];
 
     if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
-
-    if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     *pDSoundRenderGuid = GUID_NULL;
     *pDSoundCaptureGuid = GUID_NULL;
@@ -735,6 +735,8 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputWaitForGuideButton_t>(GetXInputFunc(Native::WAITGUIDE))(dwUserIndex,dwFlag,pVoid);
 
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+
     //DInputDevice& device = g_Devices[dwUserIndex];
 
     return ERROR_SUCCESS;
@@ -747,6 +749,8 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputCancelGuideButtonWait_t>(GetXInputFunc(Native::CANCELGUIDE))(dwUserIndex);
 
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+
     //DInputDevice& device = g_Devices[dwUserIndex];
 
     return ERROR_SUCCESS;
@@ -758,6 +762,8 @@ extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputCancelGuideButtonWait_t>(GetXInputFunc(Native::POWEROFF))(dwUserIndex);
+
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
     //DInputDevice& device = g_Devices[dwUserIndex];
 

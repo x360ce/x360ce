@@ -47,7 +47,7 @@ private:
 
 public:
 
-    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKWT };
+    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKSA, LOG_HOOKWT };
 
     static Log& getInstance()
     {
@@ -59,7 +59,7 @@ public:
     }
 
     void Log::Init(bool file, bool console);
-    void Print(LogType logType, char* format, ...);
+    void Print(LogType logType, const char* format, ...);
     void Destroy();
 
 protected:

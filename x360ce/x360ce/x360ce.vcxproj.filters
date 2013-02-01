@@ -31,6 +31,9 @@
     <ClCompile Include="InputHook\HookLL.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
+    <ClCompile Include="InputHook\HookSA.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputHook\InputHook.h">

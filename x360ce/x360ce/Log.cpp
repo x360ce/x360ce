@@ -31,6 +31,7 @@ const char* Log::TypeToString(LogType type)
         "[HookLL ] ",
         "[HookCOM] ",
         "[HookDI ] ",
+        "[HookSA ] ",
         "[HookWT ] ",
     };
     return buffer[type];
@@ -99,7 +100,7 @@ void Log::Destroy()
     if(Stream().is_open()) Stream().close();
 }
 
-void Log::Print(LogType logType, char* format, ...)
+void Log::Print(LogType logType, const char* format, ...)
 {
     Mutex().Lock();
     SYSTEMTIME systime;
