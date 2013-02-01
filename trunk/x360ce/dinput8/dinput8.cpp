@@ -27,7 +27,7 @@ extern "C" HRESULT WINAPI DllCanUnloadNow(void)
     return hDllCanUnloadNow();
 }
 
-extern "C" HRESULT WINAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID FAR* ppv)
+extern "C" HRESULT WINAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _Out_ LPVOID FAR* ppv)
 {
     return hDllGetClassObject(rclsid,riid,ppv);
 }
