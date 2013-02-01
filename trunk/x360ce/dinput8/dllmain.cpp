@@ -87,19 +87,19 @@ void InitInstance(HMODULE hMod)
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
-					 )
+                     )
 {
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
+    switch (ul_reason_for_call)
+    {
+    case DLL_PROCESS_ATTACH:
         DisableThreadLibraryCalls(hModule);
         InitializeCriticalSection(&cs);
         InitInstance(hModule);
         break;
-	case DLL_PROCESS_DETACH:
+    case DLL_PROCESS_DETACH:
         DeleteCriticalSection(&cs);
-		break;
-	}
-	return TRUE;
+        break;
+    }
+    return TRUE;
 }
 

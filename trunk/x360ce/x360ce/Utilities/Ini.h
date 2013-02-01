@@ -73,7 +73,6 @@ public:
 
     long GetLong(const char* strFileSection, const char* strKey, INT iDefault = 0)
     {
-
         char tmp[MAX_PATH];
         char def[MAX_PATH];
         DWORD ret;
@@ -81,14 +80,26 @@ public:
         sprintf_s(def,MAX_PATH,"%d",iDefault);
         ret = GetString(strFileSection,strKey,tmp,def);
 
-        if(ret) return atol(tmp);
-        else return 0;
+        if(ret) return strtol(tmp,NULL,0);
+        return 0;
+    }
 
+    DWORD GetDword(const char* strFileSection, const char* strKey, INT iDefault = 0)
+    {
+        char tmp[MAX_PATH];
+        char def[MAX_PATH];
+        DWORD ret;
+
+        sprintf_s(def,MAX_PATH,"%d",iDefault);
+        ret = GetString(strFileSection,strKey,tmp,def);
+
+        if(ret) return strtoul(tmp,NULL,0);
+        return 0;
     }
 
     bool GetBool(const char* strFileSection, const char* strKey, INT iDefault = 0)
     {
-        return GetLong(strFileSection,strKey,iDefault) !=0;
+        return GetDword(strFileSection,strKey,iDefault) !=0;
     }
 
 private:

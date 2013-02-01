@@ -103,24 +103,25 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
 
     PrintLog(LOG_DINPUT,"[PAD%d] Creating device",device.dwUserIndex+1);
     bool bHookDI = pHooks->CheckHook(iHook::HOOK_DI);
-    if(bHookDI)
-    {
-        pHooks->DisableHook(iHook::HOOK_DI);
-    }
+    bool bHookSA = pHooks->CheckHook(iHook::HOOK_SA);
+
+    if(bHookDI) pHooks->DisableHook(iHook::HOOK_DI);
+    if(bHookSA) pHooks->DisableHook(iHook::HOOK_SA);
+
     if(!device.useproduct)
     {
         hr = dinput.Get()->CreateDevice( device.instanceid,& device.device, NULL );
         if(FAILED(hr))
         {
-            PrintLog(LOG_CORE,"%s",L"InstanceGuid is incorrect trying ProductGuid");
+            PrintLog(LOG_CORE,"%s","InstanceGuid is incorrect trying ProductGuid");
             hr = dinput.Get()->CreateDevice( device.productid,& device.device, NULL );
         }
     }
     else hr = dinput.Get()->CreateDevice( device.productid,& device.device, NULL );
-    if(bHookDI)
-    {
-        pHooks->EnableHook(iHook::HOOK_DI);
-    }
+
+    if(bHookDI) pHooks->EnableHook(iHook::HOOK_DI);
+    if(bHookSA) pHooks->EnableHook(iHook::HOOK_SA);
+
     if(FAILED(hr))
     {
         PrintLog(LOG_CORE,"x360ce is misconfigured or device is disconnected");
@@ -581,12 +582,7 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
     }
 
     // Enumerate effects
-    if (SUCCEEDED(hr = device.device->EnumEffects(&EnumEffectsCallback, device.device, DIEFT_ALL)))
-    {
-    }
-    else
-    {
-    }
+    device.device->EnumEffects(&EnumEffectsCallback, &device.ff, DIEFT_ALL);
 
     // This application needs only one effect: Applying raw forces.
     DWORD rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };

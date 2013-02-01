@@ -89,9 +89,10 @@ public:
     static const DWORD HOOK_DI          = 0x00000004;
     static const DWORD HOOK_VIDPID      = 0x00000008;
     static const DWORD HOOK_NAME        = 0x00000010;
+    static const DWORD HOOK_SA          = 0x00000020;
 
-    static const DWORD HOOK_WT          = 0x00100000;
-    static const DWORD HOOK_STOP        = 0x01000000;
+    static const DWORD HOOK_WT          = 0x01000000;
+    static const DWORD HOOK_STOP        = 0x02000000;
     static const DWORD HOOK_ENABLE      = 0x80000000;
 
     inline void Enable()
@@ -122,6 +123,11 @@ public:
     inline const bool GetState() const
     {
         return (m_hookmask & HOOK_ENABLE) == HOOK_ENABLE;
+    }
+
+    inline DWORD GetMask()
+    {
+        return m_hookmask;
     }
 
     inline void SetMask(const DWORD mask)
@@ -170,7 +176,8 @@ public:
     inline void ExecuteHooks()
     {
         if(!GetState()) return;
-        PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask);
+
+        PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask & ~HOOK_ENABLE);
 
         MH_Initialize();
 
@@ -183,10 +190,15 @@ public:
         if(CheckHook(HOOK_DI))
             HookDI();
 
+        if(CheckHook(HOOK_SA))
+            HookSA();
+
         if(CheckHook(HOOK_WT))
             HookWT();
-        return;
+
     }
+
+    void HookDICOM(REFIID riidltf, LPVOID *ppv);
 
 private:
     DWORD m_hookmask;
@@ -199,6 +211,7 @@ private:
     void HookCOM();
     void HookDI();
     void HookWT();
+    void HookSA();
 };
 
 #endif

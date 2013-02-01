@@ -25,6 +25,8 @@
 #include <ole2.h>
 #include <oleauto.h>
 
+#include <dinput.h>
+
 #include "InputHook.h"
 
 static iHook *iHookThis = NULL;
@@ -127,11 +129,11 @@ HRESULT STDMETHODCALLTYPE HookGet(
         DWORD dwPid = 0, dwVid = 0;
 
         OLECHAR* strVid = wcsstr( pVal->bstrVal, L"VID_" );
-        if(strVid && swscanf_s( strVid, L"VID_%4X", &dwVid ) != 1 )
+        if(!strVid || swscanf_s( strVid, L"VID_%4X", &dwVid ) < 1 )
             return hr;
 
         OLECHAR* strPid = wcsstr( pVal->bstrVal, L"PID_" );
-        if(strPid && swscanf_s( strPid, L"PID_%4X", &dwPid ) != 1 )
+        if(!strPid || swscanf_s( strPid, L"PID_%4X", &dwPid ) < 1 )
             return hr;
 
         for(WORD i = 0; i < iHookThis->GetHookCount(); i++)
@@ -139,7 +141,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
             iHookDevice &padconf = iHookThis->GetPadConfig(i);
             if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
-                OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB" );
+                OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB\\" );
                 OLECHAR tempstr[MAX_PATH];
 
                 DWORD dwHookVid = iHookThis->CheckHook(iHook::HOOK_VIDPID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductVIDPID());
@@ -148,25 +150,25 @@ HRESULT STDMETHODCALLTYPE HookGet(
                 if( strUSB && dwHookVid && dwHookPid)
                 {
                     PrintLog(LOG_HOOKCOM,"Device string change:",pVal->bstrVal);
-                    PrintLog(LOG_HOOKCOM,"from %ls",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
                     swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
                     SysReAllocString(&pVal->bstrVal,tempstr);
-                    PrintLog(LOG_HOOKCOM,"to   %ls",pVal->bstrVal);
-                    break;
+                    PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
+                    continue;
                 }
 
-                OLECHAR* strHID = wcsstr( pVal->bstrVal, L"HID" );
+                OLECHAR* strHID = wcsstr( pVal->bstrVal, L"HID\\" );
 
                 if( strHID && dwHookVid && dwHookPid )
                 {
                     PrintLog(LOG_HOOKCOM,"Device string change:",pVal->bstrVal);
-                    PrintLog(LOG_HOOKCOM,"from %ls",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
                     swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
                     SysReAllocString(&pVal->bstrVal,tempstr);
-                    PrintLog(LOG_HOOKCOM,"to   %ls",pVal->bstrVal);
-                    break;
+                    PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
+                    continue;
                 }
             }
         }
@@ -201,7 +203,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
         {
             pDevices = *apObjects;
 
-            if(pDevices->lpVtbl->Get)
+            if(!oGet && pDevices->lpVtbl->Get)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking Get");
                 hGet = pDevices->lpVtbl->Get;
@@ -239,7 +241,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
         {
             pEnumDevices = *ppEnum;
 
-            if(pEnumDevices->lpVtbl->Next)
+            if(!oNext && pEnumDevices->lpVtbl->Next)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking Next");
                 hNext = pEnumDevices->lpVtbl->Next;
@@ -282,7 +284,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
         {
             pIWbemServices = *ppNamespace;
 
-            if(pIWbemServices->lpVtbl->CreateInstanceEnum)
+            if(!oCreateInstanceEnum && pIWbemServices->lpVtbl->CreateInstanceEnum)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking CreateInstanceEnum");
                 hCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
@@ -305,20 +307,32 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 {
     HRESULT hr = oCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
 
+    //PrintLog(LOG_CORE,Misc::GUIDtoStringA(riid).c_str());
+
     if(!iHookThis->CheckHook(iHook::HOOK_COM)) return hr;
     PrintLog(LOG_HOOKCOM,"*CoCreateInstance*");
 
+    //PrintLog(LOG_CORE,"%x",hr);
+
+    //if(hr == CO_E_NOTINITIALIZED) CoInitialize(NULL);
+
     if(hr != NO_ERROR) return hr;
 
-    IWbemLocator* pIWbemLocator = NULL;
-
-    if(ppv && IsEqualGUID(riid,IID_IWbemLocator))
+    if(IsEqualGUID(riid,IID_IDirectInput8A) || IsEqualGUID(riid,IID_IDirectInput8W))
     {
+        PrintLog(LOG_IHOOK,"COM wants to create DirectInput8 instance");
+        MessageBox(NULL,L"COM wants to create DirectInput8 instance",L"Error",MB_ICONERROR);
+        //iHookThis->HookDICOM(riid,ppv);
+    }
+
+    if(IsEqualGUID(riid,IID_IWbemLocator))
+    {
+        IWbemLocator* pIWbemLocator = NULL;
         pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 
         if(pIWbemLocator)
         {
-            if(pIWbemLocator->lpVtbl->ConnectServer)
+            if(!oConnectServer && pIWbemLocator->lpVtbl->ConnectServer)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking ConnectServer");
                 hConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
@@ -337,31 +351,35 @@ void WINAPI HookCoUninitialize()
     if(!iHookThis->CheckHook(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog(LOG_HOOKCOM,"*CoUninitialize*");
 
-    if(hGet)
+    if(oGet)
     {
         PrintLog(LOG_HOOKCOM,"Removing HookGet Hook");
-        MH_DisableHook(hGet);
+        MH_DestroyHook(hGet);
+        oGet = NULL;
     }
 
-    if(hNext)
+    if(oNext)
     {
         PrintLog(LOG_HOOKCOM,"Removing Next Hook");
-        MH_DisableHook(hNext);
+        MH_DestroyHook(hNext);
+        oNext = NULL;
     }
 
-    if(hCreateInstanceEnum)
+    if(oCreateInstanceEnum)
     {
         PrintLog(LOG_HOOKCOM,"Removing CreateInstanceEnum Hook");
-        MH_DisableHook(hCreateInstanceEnum);
+        MH_DestroyHook(hCreateInstanceEnum);
+        oCreateInstanceEnum = NULL;
     }
 
-    if(hConnectServer)
+    if(oConnectServer)
     {
         PrintLog(LOG_HOOKCOM,"Removing ConnectServer Hook");
-        MH_DisableHook(hConnectServer);
+        MH_DestroyHook(hConnectServer);
+        oConnectServer = NULL;
     }
 
-    return oCoUninitialize();
+    oCoUninitialize();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
