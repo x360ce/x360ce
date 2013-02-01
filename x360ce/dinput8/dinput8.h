@@ -21,7 +21,7 @@
 
 typedef HRESULT (WINAPI* DirectInput8Create_t)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
 typedef HRESULT (WINAPI* DllCanUnloadNow_t)(void);
-typedef HRESULT (WINAPI* DllGetClassObject_t)(_In_ REFCLSID rclsid, _In_ REFIID riid, _Outptr_ LPVOID FAR* ppv);
+typedef HRESULT (WINAPI* DllGetClassObject_t)(_In_ REFCLSID rclsid, _In_ REFIID riid, _Out_ LPVOID FAR* ppv);
 typedef HRESULT (WINAPI* DllRegisterServer_t)(void);
 typedef HRESULT (WINAPI* DllUnregisterServer_t)(void);
 
