@@ -152,7 +152,7 @@ public:
 #if _MSC_VER < 1700
     inline void AddHook(GUID& productid, GUID& instanceid)
     {
-        iHookDevice hdevice(device.productid,device.instanceid);
+        iHookDevice hdevice(productid,instanceid);
         m_devices.push_back(hdevice);
     }
 #else
