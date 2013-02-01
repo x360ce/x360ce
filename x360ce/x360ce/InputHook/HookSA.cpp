@@ -32,9 +32,9 @@ typedef BOOL (WINAPI* SetupDiGetDeviceInstanceIdW_t)(
     _Out_opt_  PWSTR DeviceInstanceId,
     _In_       DWORD DeviceInstanceIdSize,
     _Out_opt_  PDWORD RequiredSize
-    );
+);
 
-// NOTE: SetupDiGetDeviceInstanceIdW is called inside SetupDiGetDeviceInstanceIdA 
+// NOTE: SetupDiGetDeviceInstanceIdW is called inside SetupDiGetDeviceInstanceIdA
 SetupDiGetDeviceInstanceIdW_t oSetupDiGetDeviceInstanceIdW = NULL;
 
 BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
@@ -43,7 +43,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
     _Out_opt_  PWSTR DeviceInstanceId,
     _In_       DWORD DeviceInstanceIdSize,
     _Out_opt_  PDWORD RequiredSize
-    )
+)
 {
     BOOL ret = oSetupDiGetDeviceInstanceIdW(DeviceInfoSet,DeviceInfoData,DeviceInstanceId,DeviceInstanceIdSize,RequiredSize);
     if(!iHookThis->CheckHook(iHook::HOOK_SA)) return ret;

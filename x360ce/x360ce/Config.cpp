@@ -122,7 +122,7 @@ void ReadConfig()
 
     //InputHook
     DWORD hookMask = ini.GetDword("InputHook", "HookMask",0);
-    if(hookMask) 
+    if(hookMask)
     {
         pHooks->SetMask(hookMask);
         pHooks->Enable();
@@ -182,17 +182,17 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     if(!ret) return;
 
 #if _MSC_VER < 1700
-		g_Devices.push_back(DInputDevice());
-		DInputDevice& device = g_Devices.back();
+    g_Devices.push_back(DInputDevice());
+    DInputDevice& device = g_Devices.back();
 
-		g_Mappings.push_back(Mapping());
-		Mapping& mapping = g_Mappings.back();
+    g_Mappings.push_back(Mapping());
+    Mapping& mapping = g_Mappings.back();
 #else
-		g_Devices.emplace_back();
-		DInputDevice& device = g_Devices.back();
+    g_Devices.emplace_back();
+    DInputDevice& device = g_Devices.back();
 
-		g_Mappings.emplace_back();
-		Mapping& mapping = g_Mappings.back();
+    g_Mappings.emplace_back();
+    Mapping& mapping = g_Mappings.back();
 #endif
 
     //store value as section name

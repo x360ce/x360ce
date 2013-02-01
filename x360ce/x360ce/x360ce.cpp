@@ -568,7 +568,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
     if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
         reinterpret_cast<XInputGetDSoundAudioDeviceGuids_t>(GetXInputFunc(Native::AUDIO))(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 
-     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
     //DInputDevice& device = g_Devices[dwUserIndex];
 
