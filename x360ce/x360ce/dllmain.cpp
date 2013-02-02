@@ -27,6 +27,7 @@
 
 DWORD startProcessId = NULL;
 DWORD startThreadId = NULL;
+std::string exename;
 
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
@@ -115,16 +116,17 @@ VOID InitInstance(HINSTANCE instance)
     hThis =  instance;
     startThreadId = GetCurrentThreadId();
     startProcessId = GetCurrentProcessId();
+    exename = Misc::GetFileNameA();
 
     pHooks = new iHook(instance);
     ReadConfig();
 
 #if SVN_MODS != 0
     PrintLog(LOG_CORE,"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
-             VERSION_PATCH,SVN_REV,Misc::GetFileNameA(),startProcessId);
+             VERSION_PATCH,SVN_REV,exename.c_str(),startProcessId);
 #else
     PrintLog(LOG_CORE,"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
-             VERSION_PATCH,SVN_REV,Misc::GetFileNameA(),startProcessId);
+             VERSION_PATCH,SVN_REV,exename.c_str(),startProcessId);
 #endif
 
     InstallInputHooks();

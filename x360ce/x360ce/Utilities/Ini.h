@@ -26,20 +26,9 @@ class Ini
 {
 public:
 
-    Ini()
+    Ini(const char* ininame)
     {
         Mutex();
-    };
-    virtual ~Ini(void) {}
-
-    static CriticalSection& Mutex()
-    {
-        static CriticalSection mutex;
-        return mutex;
-    }
-
-    void SetIniFileName(const char* ininame)
-    {
         char strPath[MAX_PATH];
         char tmp[MAX_PATH];
 
@@ -49,6 +38,13 @@ public:
 
         sprintf_s(tmp,MAX_PATH,"%s%s",strPath, ininame);
         ini_file = tmp;
+    }
+    virtual ~Ini(void) {}
+
+    static CriticalSection& Mutex()
+    {
+        static CriticalSection mutex;
+        return mutex;
     }
 
     DWORD GetString(const char* strFileSection, const char* strKey, char* strOutput, char* strDefault = 0)
@@ -104,6 +100,7 @@ public:
 
 private:
     std::string ini_file;
+    std::vector<std::string> section_names;
 };
 
 #endif // _INI_H_

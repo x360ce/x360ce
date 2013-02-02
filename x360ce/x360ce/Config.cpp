@@ -1,18 +1,18 @@
 /*  x360ce - XBOX360 Controler Emulator
- *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2013 Robert Krawczyk
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
+*  Copyright (C) 2002-2010 Racer_S
+*  Copyright (C) 2010-2013 Robert Krawczyk
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Found-
+*  ation, either version 3 of the License, or (at your option) any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "stdafx.h"
 #include "globals.h"
@@ -105,10 +105,17 @@ static const char* const padNames[] =
 
 std::vector<Mapping> g_Mappings;
 
+extern std::string exename;
+
+DWORD ReadGameDatabase()
+{
+    Ini ini("x360ce.gdb");
+    return ini.GetDword(exename.c_str(), "HookMask",0);
+}
+
 void ReadConfig()
 {
-    Ini ini;
-    ini.SetIniFileName("x360ce.ini");
+    Ini ini("x360ce.ini");
 
     // Read global options
     g_bDisable = ini.GetBool("Options", "Disable",0);
@@ -120,42 +127,53 @@ void ReadConfig()
     bool con = ini.GetBool("Options", "Console",0);
     InitLog(log,con);
 
-    //InputHook
-    DWORD hookMask = ini.GetDword("InputHook", "HookMask",0);
-    if(hookMask)
+    // Simple Game Database support
+    // InputHook
+    bool overrride = ini.GetBool("InputHook", "Override",0); 
+    DWORD hookMask = ReadGameDatabase();
+    if(hookMask && overrride == false)
     {
         pHooks->SetMask(hookMask);
         pHooks->Enable();
     }
-    else
+    else 
     {
-        bool hookCheck = ini.GetBool("InputHook", "HookLL",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_LL);
+        // InputHook
+        hookMask = ini.GetDword("InputHook", "HookMask",0);
+        if(hookMask)
+        {
+            pHooks->SetMask(hookMask);
+            pHooks->Enable();
+        }
+        else
+        {
+            bool hookCheck = ini.GetBool("InputHook", "HookLL",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_LL);
 
-        hookCheck = ini.GetBool("InputHook", "HookCOM",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_COM);
+            hookCheck = ini.GetBool("InputHook", "HookCOM",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_COM);
 
-        hookCheck = ini.GetBool("InputHook", "HookDI",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_DI);
+            hookCheck = ini.GetBool("InputHook", "HookDI",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_DI);
 
-        hookCheck = ini.GetBool("InputHook", "HookVIDPID",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_VIDPID);
+            hookCheck = ini.GetBool("InputHook", "HookVIDPID",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_VIDPID);
 
-        hookCheck = ini.GetBool("InputHook", "HookSA",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_SA);
+            hookCheck = ini.GetBool("InputHook", "HookSA",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_SA);
 
-        hookCheck = ini.GetBool("InputHook", "HookNAME",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_NAME);
+            hookCheck = ini.GetBool("InputHook", "HookNAME",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_NAME);
 
-        hookCheck = ini.GetBool("InputHook", "HookSTOP",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_STOP);
+            hookCheck = ini.GetBool("InputHook", "HookSTOP",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_STOP);
 
-        hookCheck = ini.GetBool("InputHook", "HookWT",0);
-        if(hookCheck) pHooks->EnableHook(iHook::HOOK_WT);
+            hookCheck = ini.GetBool("InputHook", "HookWT",0);
+            if(hookCheck) pHooks->EnableHook(iHook::HOOK_WT);
 
-        if(pHooks->GetMask()) pHooks->Enable();
+            if(pHooks->GetMask()) pHooks->Enable();
+        }
     }
-
     if(pHooks->CheckHook(iHook::HOOK_VIDPID))
     {
         DWORD vid = ini.GetDword("InputHook", "FakeVID",0x045E);
@@ -215,7 +233,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     }
 
     if (!(IsEqualGUID(device.productid,GUID_NULL))
-            && !(IsEqualGUID(device.instanceid,GUID_NULL)))
+        && !(IsEqualGUID(device.instanceid,GUID_NULL)))
     {
         mapping.enabled = true;
     }
@@ -351,7 +369,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
         }
     }
 
-///////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////
     if (ini.GetString(section, "Left Trigger But", buffer) > 0)
     {
         char* a = buffer;
@@ -364,7 +382,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
         mapping.Trigger[1].but = atoi(a) - 1;
     }
 
-///////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////
 
     if (ini.GetLong(section, "D-pad POV") > 0)
     {
