@@ -100,7 +100,6 @@ public:
 
 private:
     std::string ini_file;
-    std::vector<std::string> section_names;
 };
 
 #endif // _INI_H_

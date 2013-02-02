@@ -114,7 +114,7 @@ void Log::Print(LogType logType, const char* format, ...)
         DWORD written = NULL;
 
         sprintf_s(buf, "%02u:%02u:%02u.%03u %08u %s", systime.wHour, systime.wMinute,
-            systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(), TypeToString(logType));
+                  systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(), TypeToString(logType));
         if(con) WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf),&written,NULL);
         if(log) Stream() << buf;
 

@@ -129,14 +129,14 @@ void ReadConfig()
 
     // Simple Game Database support
     // InputHook
-    bool overrride = ini.GetBool("InputHook", "Override",0); 
+    bool overrride = ini.GetBool("InputHook", "Override",0);
     DWORD hookMask = ReadGameDatabase();
     if(hookMask && overrride == false)
     {
         pHooks->SetMask(hookMask);
         pHooks->Enable();
     }
-    else 
+    else
     {
         // InputHook
         hookMask = ini.GetDword("InputHook", "HookMask",0);
@@ -233,7 +233,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     }
 
     if (!(IsEqualGUID(device.productid,GUID_NULL))
-        && !(IsEqualGUID(device.instanceid,GUID_NULL)))
+            && !(IsEqualGUID(device.instanceid,GUID_NULL)))
     {
         mapping.enabled = true;
     }
