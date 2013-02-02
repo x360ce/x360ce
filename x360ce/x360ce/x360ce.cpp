@@ -23,18 +23,18 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
-XInputEnabled XInputIsEnabled;
-
-WNDPROC oldWndProc = NULL;
-HWND hMsgWnd = NULL;
-
+extern std::vector<Mapping> g_Mappings;
+extern std::vector<DInputDevice> g_Devices;
 extern DWORD startProcessId;
 extern DWORD startThreadId;
-
 extern iHook* pHooks;
+extern bool g_bNative;
+extern bool g_bInitBeep;
+extern bool g_bDisable;
 
-WNDPROC oldAppWndProc = NULL;
-HWND hAppWnd = NULL;
+XInputEnabled XInputIsEnabled;
+WNDPROC oldWndProc = NULL;
+HWND hMsgWnd = NULL;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

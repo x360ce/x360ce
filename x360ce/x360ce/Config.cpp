@@ -23,11 +23,14 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
+extern iHook* pHooks;
+extern std::string exename;
+extern std::vector<DInputDevice> g_Devices;
+
 bool g_bInitBeep = false;
 bool g_bNative = false;
 bool g_bDisable = false;
-
-extern iHook* pHooks;
+std::vector<Mapping> g_Mappings;
 
 static const char* const buttonNames[] =
 {
@@ -102,10 +105,6 @@ static const char* const padNames[] =
     "PAD3",
     "PAD4",
 };
-
-std::vector<Mapping> g_Mappings;
-
-extern std::string exename;
 
 DWORD ReadGameDatabase()
 {
