@@ -31,7 +31,6 @@ WORD lastforce = 0;
 
 extern iHook* pHooks;
 
-
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {
     DInputDevice *gp = (DInputDevice*) pContext;
@@ -119,8 +118,8 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     }
     else hr = dinput.Get()->CreateDevice( device.productid,& device.device, NULL );
 
-    if(bHookDI) pHooks->EnableHook(iHook::HOOK_DI);
     if(bHookSA) pHooks->EnableHook(iHook::HOOK_SA);
+    if(bHookDI) pHooks->EnableHook(iHook::HOOK_DI);
 
     if(FAILED(hr))
     {

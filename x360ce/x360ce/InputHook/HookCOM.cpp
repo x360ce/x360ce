@@ -149,7 +149,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
                 if( strUSB && dwHookVid && dwHookPid)
                 {
-                    PrintLog(LOG_HOOKCOM,"Device string change:",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
                     swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
@@ -162,7 +162,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
                 if( strHID && dwHookVid && dwHookPid )
                 {
-                    PrintLog(LOG_HOOKCOM,"Device string change:",pVal->bstrVal);
+                    PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
                     swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
@@ -321,7 +321,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
     if(IsEqualGUID(riid,IID_IDirectInput8A) || IsEqualGUID(riid,IID_IDirectInput8W))
     {
         PrintLog(LOG_IHOOK,"COM wants to create DirectInput8 instance");
-        MessageBox(NULL,L"COM wants to create DirectInput8 instance",L"Error",MB_ICONERROR);
+        MessageBoxA(NULL,"COM wants to create DirectInput8 instance","Error",MB_ICONERROR);
         //iHookThis->HookDICOM(riid,ppv);
     }
 
