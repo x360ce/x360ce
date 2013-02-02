@@ -19,7 +19,6 @@
 #include "Log.h"
 #include <Shlwapi.h>
 
-
 const char* Log::TypeToString(LogType type)
 {
     static const char* const buffer[] =
@@ -80,6 +79,7 @@ void Log::Init(bool file, bool console)
     if(console)
     {
         AllocConsole();
+        GetStdOut() = GetStdHandle(STD_OUTPUT_HANDLE);
         ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
         SetConsoleTitleA(name);
     }
@@ -102,19 +102,21 @@ void Log::Destroy()
 
 void Log::Print(LogType logType, const char* format, ...)
 {
-    Mutex().Lock();
-    SYSTEMTIME systime;
-    GetLocalTime(&systime);
-
-    if(GetStdOut() != INVALID_HANDLE_VALUE)
+    bool log = Stream().is_open();
+    bool con = GetStdOut() != INVALID_HANDLE_VALUE;
+    if(log || con)
     {
+        Mutex().Lock();
+        SYSTEMTIME systime;
+        GetLocalTime(&systime);
+
         char buf[MAX_PATH];
         DWORD written = NULL;
 
         sprintf_s(buf, "%02u:%02u:%02u.%03u %08u %s", systime.wHour, systime.wMinute,
-                  systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(), TypeToString(logType));
-        WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf),&written,NULL);
-        if(Stream().is_open())Stream() << buf;
+            systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(), TypeToString(logType));
+        if(con) WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf),&written,NULL);
+        if(log) Stream() << buf;
 
         va_list arglist;
         va_start(arglist,format);
@@ -122,13 +124,12 @@ void Log::Print(LogType logType, const char* format, ...)
         va_end(arglist);
 
         strcat_s(buf,"\n");
-
-        WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf), &written, NULL);
-        if(Stream().is_open())
+        if(con) WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf), &written, NULL);
+        if(log)
         {
             Stream() <<buf;
             Stream().flush();
         }
+        Mutex().Unlock();
     }
-    Mutex().Unlock();
 }

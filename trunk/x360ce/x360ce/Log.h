@@ -35,7 +35,7 @@ private:
 
     static HANDLE& GetStdOut()
     {
-        static HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        static HANDLE hStdOut = INVALID_HANDLE_VALUE;
         return hStdOut;
     }
 

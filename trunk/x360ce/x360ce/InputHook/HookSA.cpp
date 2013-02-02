@@ -47,7 +47,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
 {
     BOOL ret = oSetupDiGetDeviceInstanceIdW(DeviceInfoSet,DeviceInfoData,DeviceInstanceId,DeviceInstanceIdSize,RequiredSize);
     if(!iHookThis->CheckHook(iHook::HOOK_SA)) return ret;
-    PrintLog(LOG_HOOKSA,"*SetupDiGetDeviceInstanceIdA*");
+    PrintLog(LOG_HOOKSA,"*SetupDiGetDeviceInstanceIdW*");
 
     if(GetLastError() == ERROR_INSUFFICIENT_BUFFER) return ret;
 
