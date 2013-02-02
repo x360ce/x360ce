@@ -24,12 +24,11 @@
 #include "InputHook\InputHook.h"
 #include "Utilities\CriticalSection.h"
 
-std::vector<DInputDevice> g_Devices;
+extern iHook* pHooks;
 
 INT init[4] = {NULL};
 WORD lastforce = 0;
-
-extern iHook* pHooks;
+std::vector<DInputDevice> g_Devices;
 
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
 {

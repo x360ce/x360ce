@@ -189,8 +189,6 @@ public:
     }
 };
 
-extern std::vector<DInputDevice> g_Devices;
-
 HRESULT InitDirectInput( HWND hDlg, DInputDevice& device );
 BOOL ButtonPressed(DWORD buttonidx, DInputDevice& device);
 HRESULT UpdateState(DInputDevice& device);

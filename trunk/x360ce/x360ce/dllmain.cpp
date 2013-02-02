@@ -25,17 +25,17 @@
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
+extern WNDPROC oldWndProc;
+extern HWND hMsgWnd;
+extern std::vector<DInputDevice> g_Devices;
+extern std::vector<Mapping> g_Mappings;
+
 DWORD startProcessId = NULL;
 DWORD startThreadId = NULL;
 std::string exename;
-
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
-
 iHook* pHooks;
-
-extern WNDPROC oldWndProc;
-extern HWND hMsgWnd;
 
 void LoadXInputDLL()
 {

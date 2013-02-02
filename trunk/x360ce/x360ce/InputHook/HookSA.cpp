@@ -82,7 +82,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
                     if(DeviceInstanceIdSize < wcslen(tempstr))
                     {
                         SetLastError(ERROR_INSUFFICIENT_BUFFER);
-                        if(RequiredSize) *RequiredSize = wcslen(tempstr)+1;
+                        if(RequiredSize) *RequiredSize = (DWORD) wcslen(tempstr)+1;
                         //return FALSE; //NOTE: return FALSE here breaks Beat Hazard
                         continue;
                     }
@@ -92,7 +92,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
                         PrintLog(LOG_HOOKSA,"Device string change:",DeviceInstanceId);
                         PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
                         wcscpy_s(DeviceInstanceId,DeviceInstanceIdSize,tempstr);
-                        if(RequiredSize) *RequiredSize = wcslen(tempstr)+1;
+                        if(RequiredSize) *RequiredSize = (DWORD) wcslen(tempstr)+1;
                         PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
                         continue;
                     }
@@ -108,7 +108,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
                     if(DeviceInstanceIdSize < wcslen(tempstr))
                     {
                         SetLastError(ERROR_INSUFFICIENT_BUFFER);
-                        if(RequiredSize) *RequiredSize = wcslen(tempstr)+1;
+                        if(RequiredSize) *RequiredSize = (DWORD) wcslen(tempstr)+1;
                         //return FALSE; //NOTE: return FALSE here breaks Beat Hazard
                         continue;
                     }
@@ -118,7 +118,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
                         PrintLog(LOG_HOOKSA,"Device string change:",DeviceInstanceId);
                         PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
                         wcscpy_s(DeviceInstanceId,DeviceInstanceIdSize,tempstr);
-                        if(RequiredSize) *RequiredSize = wcslen(tempstr)+1;
+                        if(RequiredSize) *RequiredSize = (DWORD) wcslen(tempstr)+1;
                         PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
                         continue;
                     }
