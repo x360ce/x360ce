@@ -99,11 +99,6 @@ extern "C" {
     //   pTarget [in] A pointer to the target function.
     MH_STATUS WINAPI MH_DisableHook(void* pTarget);
 
-    // Destroys the already created hook.
-    // Parameters:
-    //   pTarget [in] A pointer to the target function.
-    MH_STATUS WINAPI MH_DestroyHook(void* pTarget);
-
 #if defined __cplusplus
 }
 #endif

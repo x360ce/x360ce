@@ -91,9 +91,6 @@ static CreateInstanceEnum_t oCreateInstanceEnum = NULL;
 static Next_t oNext = NULL;
 static Get_t oGet = NULL;
 
-CoUninitialize_t hCtfImmCoUninitialize = NULL;
-CoUninitialize_t oCtfImmCoUninitialize = NULL;
-
 bool bGets = false;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +200,7 @@ HRESULT STDMETHODCALLTYPE HookNext(
         {
             pDevices = *apObjects;
 
-            if(!oGet && pDevices->lpVtbl->Get)
+            if(pDevices->lpVtbl->Get)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking Get");
                 hGet = pDevices->lpVtbl->Get;
@@ -241,7 +238,7 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
         {
             pEnumDevices = *ppEnum;
 
-            if(!oNext && pEnumDevices->lpVtbl->Next)
+            if(pEnumDevices->lpVtbl->Next)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking Next");
                 hNext = pEnumDevices->lpVtbl->Next;
@@ -284,7 +281,7 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
         {
             pIWbemServices = *ppNamespace;
 
-            if(!oCreateInstanceEnum && pIWbemServices->lpVtbl->CreateInstanceEnum)
+            if(pIWbemServices->lpVtbl->CreateInstanceEnum)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking CreateInstanceEnum");
                 hCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
@@ -332,7 +329,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 
         if(pIWbemLocator)
         {
-            if(!oConnectServer && pIWbemLocator->lpVtbl->ConnectServer)
+            if(pIWbemLocator->lpVtbl->ConnectServer)
             {
                 PrintLog(LOG_HOOKCOM,"Hooking ConnectServer");
                 hConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
@@ -350,35 +347,19 @@ void WINAPI HookCoUninitialize()
 {
     if(!iHookThis->CheckHook(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog(LOG_HOOKCOM,"*CoUninitialize*");
+    
+    PrintLog(LOG_HOOKCOM,"Removing HookGet Hook");
+    MH_DisableHook(hGet);
 
-    if(oGet)
-    {
-        PrintLog(LOG_HOOKCOM,"Removing HookGet Hook");
-        MH_DestroyHook(hGet);
-        oGet = NULL;
-    }
+    PrintLog(LOG_HOOKCOM,"Removing Next Hook");
+    MH_DisableHook(hNext);
 
-    if(oNext)
-    {
-        PrintLog(LOG_HOOKCOM,"Removing Next Hook");
-        MH_DestroyHook(hNext);
-        oNext = NULL;
-    }
-
-    if(oCreateInstanceEnum)
-    {
-        PrintLog(LOG_HOOKCOM,"Removing CreateInstanceEnum Hook");
-        MH_DestroyHook(hCreateInstanceEnum);
-        oCreateInstanceEnum = NULL;
-    }
-
-    if(oConnectServer)
-    {
-        PrintLog(LOG_HOOKCOM,"Removing ConnectServer Hook");
-        MH_DestroyHook(hConnectServer);
-        oConnectServer = NULL;
-    }
-
+    PrintLog(LOG_HOOKCOM,"Removing CreateInstanceEnum Hook");
+    MH_DisableHook(hCreateInstanceEnum);
+    
+    PrintLog(LOG_HOOKCOM,"Removing ConnectServer Hook");
+    MH_DisableHook(hConnectServer);
+    
     oCoUninitialize();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

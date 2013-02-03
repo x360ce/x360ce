@@ -67,7 +67,6 @@ struct JMP_ABS
 };
 #pragma pack(pop)
 
-void        DeleteHook(void* const pTarget);
 HOOK_ENTRY* FindHook(void* const pTarget);
 bool		IsExecutableAddress(void* pAddress);
 void		WriteRelativeJump(void* pFrom, void* const pTo);
@@ -337,61 +336,11 @@ MH_STATUS DisableHook(void* pTarget)
 
     return MH_OK;
 }
-
-MH_STATUS DestroyHook(void* pTarget)
-{
-    CriticalSection::ScopedLock lock(gCS);
-
-    if (!gIsInitialized)
-    {
-        return MH_ERROR_NOT_INITIALIZED;
-    }
-
-    HOOK_ENTRY *pHook = FindHook(pTarget);
-    if (pHook == NULL)
-    {
-        return MH_ERROR_NOT_CREATED;
-    }
-
-    if (!pHook->isEnabled)
-    {
-        return MH_ERROR_DISABLED;
-    }
-
-    // ターゲット関数の冒頭を書き戻すだけ。他は再利用のため残しておく
-    {
-        ScopedThreadExclusive tex(pHook->oldIPs, pHook->newIPs);
-
-        DWORD oldProtect;
-        if (!VirtualProtect(pHook->pTarget, sizeof(JMP_REL), PAGE_EXECUTE_READWRITE, &oldProtect))
-        {
-            return MH_ERROR_MEMORY_PROTECT;
-        }
-
-        memcpy(pHook->pTarget, pHook->pBackup, sizeof(JMP_REL));
-
-        VirtualProtect(pHook->pTarget, sizeof(JMP_REL), oldProtect, &oldProtect);
-    }
-
-    DeleteHook(pHook);
-
-    return MH_OK;
-}
 }
 namespace MinHook
 {
 namespace
 {
-void DeleteHook(void* const pTarget)
-{
-    std::vector<HOOK_ENTRY>::iterator i
-        = std::lower_bound(gHooks.begin(), gHooks.end(), pTarget);
-    if (i != gHooks.end() && i->pTarget == pTarget)
-    {
-        gHooks.erase(i);
-    }
-}
-
 HOOK_ENTRY* FindHook(void* const pTarget)
 {
     std::vector<HOOK_ENTRY>::iterator i

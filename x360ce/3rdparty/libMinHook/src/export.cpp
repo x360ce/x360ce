@@ -57,8 +57,3 @@ MH_STATUS WINAPI MH_DisableHook(void* pTarget)
 {
     return DisableHook(pTarget);
 }
-
-MH_STATUS WINAPI MH_DestroyHook(void* pTarget)
-{
-    return DestroyHook(pTarget);
-}
