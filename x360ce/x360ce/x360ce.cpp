@@ -52,10 +52,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             FreeLibrary(hNative);
             hNative = NULL;
         }
-        if(oldWndProc)
-        {
-            SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR) oldWndProc);
-        }
+        SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR) oldWndProc);
         break;
     }
     return CallWindowProc(oldWndProc, hWnd, uMsg, wParam, lParam);

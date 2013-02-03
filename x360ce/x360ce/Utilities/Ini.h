@@ -21,23 +21,35 @@
 #include <Shlwapi.h>
 #include "Utilities\CriticalSection.h"
 #include <string.h>
+#include <Shlobj.h>
 
 class Ini
 {
 public:
 
-    Ini(const char* ininame)
+    Ini(const char* filename)
     {
         Mutex();
-        char strPath[MAX_PATH];
-        char tmp[MAX_PATH];
+        char buffer[MAX_PATH];
+        char path[MAX_PATH];
 
-        GetModuleFileNameA(NULL, strPath, MAX_PATH);
-        PathRemoveFileSpecA(strPath);
-        PathAddBackslashA(strPath);
+        // check curret directory
+        // get current module (dll) path and strip file specification
+        GetModuleFileNameA(NULL, buffer, MAX_PATH);
+        PathRemoveFileSpecA(buffer);
+        // add file name to buffer
+        PathCombineA(path,buffer,filename);
+        // check if path exist and is not a directory
+        if(PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) ini_file = path;
 
-        sprintf_s(tmp,MAX_PATH,"%s%s",strPath, ininame);
-        ini_file = tmp;
+        // if file was not found in current directory do same as above for ProgramData
+        if(ini_file.empty() && SHGetFolderPathA(NULL,CSIDL_COMMON_APPDATA,NULL,SHGFP_TYPE_CURRENT,path) == S_OK)
+        {
+            //add directory name
+            PathCombineA(buffer,path,"x360ce");
+            PathCombineA(path,buffer,filename);
+            if(PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) ini_file = path;
+        }
     }
     virtual ~Ini(void) {}
 

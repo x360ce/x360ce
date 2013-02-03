@@ -78,41 +78,27 @@ inline static DWORD flipLong(DWORD l)
 
 inline void StringToGUID(LPCSTR szBuf, GUID& id)
 {
-    if(!szBuf)
-        return;
+    if(!szBuf) return;
 
-    if ((strchr(szBuf,L'{')) && (strrchr(szBuf,L'}')))
-    {
-        sscanf_s(szBuf,"{%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX}",
-                 &id.Data1,&id.Data2,&id.Data3,
-                 &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
-    }
-    else
-    {
-        sscanf_s(szBuf,"%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX",
-                 &id.Data1,&id.Data2,&id.Data3,
-                 &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
-    }
+    if (strchr(szBuf,'{')) szBuf++;
+
+    sscanf_s(szBuf,"%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX",
+        &id.Data1,&id.Data2,&id.Data3,
+        &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
+
     return;
 }
 
 inline void StringToGUID(LPCWSTR szBuf, GUID& id)
 {
-    if(!szBuf)
-        return;
+    if(!szBuf) return;
 
-    if ((wcschr(szBuf,L'{')) && (wcsrchr(szBuf,L'}')))
-    {
-        swscanf_s(szBuf,L"{%%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX}",
-                  &id.Data1,&id.Data2,&id.Data3,
-                  &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
-    }
-    else
-    {
-        swscanf_s(szBuf,L"%%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX",
-                  &id.Data1,&id.Data2,&id.Data3,
-                  &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
-    }
+    if (wcschr(szBuf,L'{')) szBuf++;
+
+    swscanf_s(szBuf,L"%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX",
+        &id.Data1,&id.Data2,&id.Data3,
+        &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
+
     return;
 }
 
