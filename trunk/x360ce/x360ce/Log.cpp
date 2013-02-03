@@ -18,6 +18,9 @@
 #include "globals.h"
 #include "Log.h"
 #include <Shlwapi.h>
+#include <Shlobj.h>
+
+extern std::string exename;
 
 const char* Log::TypeToString(LogType type)
 {
@@ -61,19 +64,28 @@ void Log::PrintNotice()
 
 void Log::Init(bool file, bool console)
 {
-    char name[] = "x360ce";
-
-    SYSTEMTIME systime;
-    GetLocalTime(&systime);
-
-    char buf[MAX_PATH];
-    sprintf_s(buf, "%s\\%s_%u%02u%02u-%02u%02u%02u.log", name, name,
-              systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
-
     if(file)
     {
-        if(PathFileExistsA(name) == FALSE) CreateDirectoryA(name, NULL);
-        if(Stream().is_open() == false ) Stream().open(buf);
+        char path[MAX_PATH];
+        char buffer[MAX_PATH];
+        char logname[MAX_PATH];
+
+        SYSTEMTIME systime;
+        GetLocalTime(&systime);
+
+        if(SHGetFolderPathA(NULL,CSIDL_COMMON_APPDATA,NULL,SHGFP_TYPE_CURRENT,buffer) == S_OK)
+        {
+            PathCombineA(path,buffer,"x360ce");
+            if(PathFileExistsA(path) == FALSE) CreateDirectoryA(path, NULL);
+
+            PathCombineA(buffer,path,"logs");
+            if(PathFileExistsA(buffer) == FALSE) CreateDirectoryA(buffer, NULL);
+
+            sprintf_s(logname, "%s_%u%02u%02u-%02u%02u%02u.log", exename.c_str(),
+                systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
+            PathCombineA(path,buffer,logname);
+        }
+        if(Stream().is_open() == false ) Stream().open(path);
     }
 
     if(console)
@@ -81,7 +93,7 @@ void Log::Init(bool file, bool console)
         AllocConsole();
         GetStdOut() = GetStdHandle(STD_OUTPUT_HANDLE);
         ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
-        SetConsoleTitleA(name);
+        SetConsoleTitleA("x360ce");
     }
 
     static bool once = false;
