@@ -70,17 +70,26 @@ private:
 
 class iHook
 {
+private:
+    CriticalSection& Mutex()
+    {
+        static CriticalSection mutex;
+        return mutex;
+    }
 public:
     iHook(HMODULE instance)
         :m_hookmask(0)
         ,m_fakepidvid(MAKELONG(0x045E,0x028E))
         ,m_mod(instance)
     {
+        Mutex();
     }
     virtual ~iHook()
     {
+        Mutex().Lock();
         MH_Uninitialize();
         m_devices.clear();
+        Mutex().Unlock();
     };
 
     static const DWORD HOOK_NONE        = 0x00000000;
@@ -177,6 +186,8 @@ public:
     {
         if(!GetState()) return;
 
+        Mutex().Lock();
+
         PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask & ~HOOK_ENABLE);
 
         MH_Initialize();
@@ -195,6 +206,8 @@ public:
 
         if(CheckHook(HOOK_WT))
             HookWT();
+
+        Mutex().Unlock();
 
     }
 

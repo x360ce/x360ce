@@ -76,13 +76,25 @@ void LoadDInputDll()
 }
 
 void InitInstance(HMODULE hMod)
-{
+{ 
+    __try 
+    {
+        InitializeCriticalSection(&cs);
+    }
+    __except(GetExceptionCode() == STATUS_NO_MEMORY ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
+    {
+        MessageBoxA(NULL,"Cannot initialize critical section, fatal error","Error",MB_ICONERROR);
+        ExitProcess(1);
+    }
+
     EnterCriticalSection(&cs);
     LoadDInputDll();
     LoadXinputDLL();
     hThis = hMod;
     LeaveCriticalSection(&cs);
 }
+
+
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -93,7 +105,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
         DisableThreadLibraryCalls(hModule);
-        InitializeCriticalSection(&cs);
         InitInstance(hModule);
         break;
     case DLL_PROCESS_DETACH:

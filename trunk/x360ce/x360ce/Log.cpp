@@ -72,8 +72,8 @@ void Log::Init(bool file, bool console)
 
     if(file)
     {
-        if(!PathIsDirectoryA(name)) CreateDirectoryA(name, NULL);
-        if(!Stream().is_open()) Stream().open(buf);
+        if(PathFileExistsA(name) == FALSE) CreateDirectoryA(name, NULL);
+        if(Stream().is_open() == false ) Stream().open(buf);
     }
 
     if(console)

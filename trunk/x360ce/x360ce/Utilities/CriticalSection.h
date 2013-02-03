@@ -24,9 +24,18 @@ class CriticalSection
 private:
     CRITICAL_SECTION m_cs;
 public:
+
     CriticalSection()
     {
-        InitializeCriticalSection(&m_cs);
+        __try 
+        {
+            InitializeCriticalSection(&m_cs);
+        }
+        __except(GetExceptionCode() == STATUS_NO_MEMORY ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
+        {
+            MessageBoxA(NULL,"Cannot initialize critical section, fatal error","Error",MB_ICONERROR);
+            ExitProcess(1);
+        }
     }
 
     virtual ~CriticalSection()
@@ -44,6 +53,5 @@ public:
         LeaveCriticalSection(&m_cs);
     }
 };
-
 
 #endif // _CRITICALSECTION_H_

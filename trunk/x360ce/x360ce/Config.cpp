@@ -128,58 +128,60 @@ void ReadConfig()
 
     // Simple Game Database support
     // InputHook
-    bool overrride = ini.GetBool("InputHook", "Override",0);
-    DWORD hookMask = ReadGameDatabase();
-    if(hookMask && overrride == false)
+    if(pHooks)
     {
-        pHooks->SetMask(hookMask);
-        pHooks->Enable();
-    }
-    else
-    {
-        // InputHook
-        hookMask = ini.GetDword("InputHook", "HookMask",0);
-        if(hookMask)
+        bool overrride = ini.GetBool("InputHook", "Override",0);
+        DWORD hookMask = ReadGameDatabase();
+        if(hookMask && overrride == false)
         {
             pHooks->SetMask(hookMask);
             pHooks->Enable();
         }
         else
         {
-            bool hookCheck = ini.GetBool("InputHook", "HookLL",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_LL);
+            // InputHook
+            hookMask = ini.GetDword("InputHook", "HookMask",0);
+            if(hookMask)
+            {
+                pHooks->SetMask(hookMask);
+                pHooks->Enable();
+            }
+            else
+            {
+                bool hookCheck = ini.GetBool("InputHook", "HookLL",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_LL);
 
-            hookCheck = ini.GetBool("InputHook", "HookCOM",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_COM);
+                hookCheck = ini.GetBool("InputHook", "HookCOM",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_COM);
 
-            hookCheck = ini.GetBool("InputHook", "HookDI",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_DI);
+                hookCheck = ini.GetBool("InputHook", "HookDI",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_DI);
 
-            hookCheck = ini.GetBool("InputHook", "HookVIDPID",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_VIDPID);
+                hookCheck = ini.GetBool("InputHook", "HookVIDPID",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_VIDPID);
 
-            hookCheck = ini.GetBool("InputHook", "HookSA",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_SA);
+                hookCheck = ini.GetBool("InputHook", "HookSA",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_SA);
 
-            hookCheck = ini.GetBool("InputHook", "HookNAME",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_NAME);
+                hookCheck = ini.GetBool("InputHook", "HookNAME",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_NAME);
 
-            hookCheck = ini.GetBool("InputHook", "HookSTOP",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_STOP);
+                hookCheck = ini.GetBool("InputHook", "HookSTOP",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_STOP);
 
-            hookCheck = ini.GetBool("InputHook", "HookWT",0);
-            if(hookCheck) pHooks->EnableHook(iHook::HOOK_WT);
+                hookCheck = ini.GetBool("InputHook", "HookWT",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_WT);
 
-            if(pHooks->GetMask()) pHooks->Enable();
+                if(pHooks->GetMask()) pHooks->Enable();
+            }
+        }
+        if(pHooks->CheckHook(iHook::HOOK_VIDPID))
+        {
+            DWORD vid = ini.GetDword("InputHook", "FakeVID",0x045E);
+            DWORD pid = ini.GetDword("InputHook", "FakePID",0x028E);
+            if(vid != 0x045E || pid != 0x28E) pHooks->SetFakePIDVID(MAKELONG(vid,pid));
         }
     }
-    if(pHooks->CheckHook(iHook::HOOK_VIDPID))
-    {
-        DWORD vid = ini.GetDword("InputHook", "FakeVID",0x045E);
-        DWORD pid = ini.GetDword("InputHook", "FakePID",0x028E);
-        if(vid != 0x045E || pid != 0x28E) pHooks->SetFakePIDVID(MAKELONG(vid,pid));
-    }
-
     // Read pad mappings
     for (DWORD i = 0; i < 4; ++i)
         ReadPadConfig(i, ini);

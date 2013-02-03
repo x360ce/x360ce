@@ -100,11 +100,18 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     mutex.Lock();
 
     PrintLog(LOG_DINPUT,"[PAD%d] Creating device",device.dwUserIndex+1);
-    bool bHookDI = pHooks->CheckHook(iHook::HOOK_DI);
-    bool bHookSA = pHooks->CheckHook(iHook::HOOK_SA);
 
-    if(bHookDI) pHooks->DisableHook(iHook::HOOK_DI);
-    if(bHookSA) pHooks->DisableHook(iHook::HOOK_SA);
+    bool bHookDI = false;
+    bool bHookSA = false;
+
+    if(pHooks)
+    {
+        bHookDI = pHooks->CheckHook(iHook::HOOK_DI);
+        bHookSA = pHooks->CheckHook(iHook::HOOK_SA);
+
+        if(bHookDI) pHooks->DisableHook(iHook::HOOK_DI);
+        if(bHookSA) pHooks->DisableHook(iHook::HOOK_SA);
+    }
 
     if(!device.useproduct)
     {
@@ -123,7 +130,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     if(FAILED(hr))
     {
         PrintLog(LOG_CORE,"x360ce is misconfigured or device is disconnected");
-        MessageBox(NULL,L"x360ce is misconfigured or device is disconnected",L"Error",MB_ICONERROR);
+        MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","Error",MB_ICONERROR);
         ExitProcess(hr);
     }
 

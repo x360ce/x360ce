@@ -35,7 +35,7 @@ DWORD startThreadId = NULL;
 std::string exename;
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
-iHook* pHooks;
+iHook* pHooks = NULL;
 
 void LoadXInputDLL()
 {
@@ -43,18 +43,18 @@ void LoadXInputDLL()
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
-    // Getting path to system dir and to xinput1_3.dll
-    GetSystemDirectory(sysdir,MAX_PATH);
+    GetSystemDirectoryW(sysdir,MAX_PATH);
+    PathCombineW(buffer,sysdir,Misc::GetFileNameW(hThis));
 
-    // Append dll name
-    swprintf_s(buffer,L"%s\\%s",sysdir,Misc::GetFileNameW(hThis));
+    bool bHookLL = false;
+    if(pHooks)
+    {
+        bHookLL = pHooks->CheckHook(iHook::HOOK_LL);
+        if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
+    }
 
-    // try to load the system's xinput dll, if pointer empty
     PrintLog(LOG_CORE,"Loading %ls",buffer);
-
-    bool bHookLL = pHooks->CheckHook(iHook::HOOK_LL);
-    if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
-    hNative = LoadLibrary(buffer);
+    hNative = LoadLibraryW(buffer);
     if(bHookLL) pHooks->EnableHook(iHook::HOOK_LL);
 
     //Debug
@@ -63,7 +63,7 @@ void LoadXInputDLL()
         HRESULT hr = GetLastError();
         swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
         PrintLog(LOG_CORE,"%s", sysdir);
-        MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
+        MessageBoxW(NULL,sysdir,L"Error",MB_ICONERROR);
         ExitProcess(hr);
     }
 }
@@ -113,7 +113,7 @@ VOID InitInstance(HINSTANCE instance)
     _CrtSetDbgFlag(CurrentFlags);
 #endif
 
-    hThis =  instance;
+    hThis = instance;
     startThreadId = GetCurrentThreadId();
     startProcessId = GetCurrentProcessId();
     exename = Misc::GetFileNameA();
@@ -135,13 +135,12 @@ VOID InitInstance(HINSTANCE instance)
 extern "C" VOID WINAPI reset()
 {
     PrintLog(LOG_CORE,"%s", "Restarting");
-
     SAFE_DELETE(pHooks);
 
     g_Devices.clear();
     g_Mappings.clear();
-
-    InitInstance(hThis);
+    
+    ReadConfig();
 }
 
 extern "C" BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
