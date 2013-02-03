@@ -97,7 +97,6 @@ HRESULT XInit(DInputDevice& device)
 
             if(SUCCEEDED(hr))
             {
-                if(g_bInitBeep) MessageBeep(MB_OK);
                 device.initialized = true;
                 PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
             }
@@ -131,6 +130,15 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
     if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
+    // eliminate false init beeps
+    static int loop = 0;
+    if(g_bInitBeep) ++loop; 
+    if(g_bInitBeep && loop > 10) 
+    {
+        MessageBeep(MB_OK); 
+        g_bInitBeep = false;
+    }
+    
     Mapping& mapping = g_Mappings[dwUserIndex];
     XINPUT_STATE& xstate = *pState;
 

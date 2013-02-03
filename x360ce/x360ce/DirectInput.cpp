@@ -289,7 +289,7 @@ HRESULT PrepareForceFailsafe(DInputDevice& device, bool motor)
         // wLeftMotorSpeed
 
         DWORD    rgdwAxes[2]     = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
-        LONG rglDirection[2] = { 1, 0 };
+        LONG rglDirection[2] = { 0, 0 };
 
         DICONSTANTFORCE cf;
         DIEFFECT eff;
@@ -328,7 +328,7 @@ HRESULT PrepareForceFailsafe(DInputDevice& device, bool motor)
     else if(motor ==1)
     {
         DWORD    rgdwAxes[2]     = { DIJOFS_X, DIJOFS_Y };  // X- and y-axis
-        LONG rglDirection[2] = { 1, 0 };
+        LONG rglDirection[2] = { 0, 0 };
 
         DICONSTANTFORCE cf;
         DIEFFECT eff;
