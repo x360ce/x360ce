@@ -180,6 +180,7 @@ namespace x360ce.App
 			ps.AxisToDPadOffset = ini2.GetValue(padSectionName, SettingName.AxisToDPadOffset);
 			ps.ButtonA = ini2.GetValue(padSectionName, SettingName.ButtonA);
 			ps.ButtonB = ini2.GetValue(padSectionName, SettingName.ButtonB);
+			ps.ButtonGuide = ini2.GetValue(padSectionName, SettingName.ButtonGuide);
 			ps.ButtonBig = ini2.GetValue(padSectionName, SettingName.ButtonBig);
 			ps.ButtonBack = ini2.GetValue(padSectionName, SettingName.ButtonBack);
 			ps.ButtonStart = ini2.GetValue(padSectionName, SettingName.ButtonStart);
@@ -252,7 +253,7 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.AxisToDPadOffset, ps.AxisToDPadOffset);
 			ini2.SetValue(padSectionName, SettingName.ButtonA, ps.ButtonA);
 			ini2.SetValue(padSectionName, SettingName.ButtonB, ps.ButtonB);
-			ini2.SetValue(padSectionName, SettingName.ButtonBig, ps.ButtonBig); 
+			ini2.SetValue(padSectionName, SettingName.ButtonGuide, ps.ButtonBig); 
 			ini2.SetValue(padSectionName, SettingName.ButtonBack, ps.ButtonBack);
 			ini2.SetValue(padSectionName, SettingName.ButtonStart, ps.ButtonStart);
 			ini2.SetValue(padSectionName, SettingName.ButtonX, ps.ButtonX);

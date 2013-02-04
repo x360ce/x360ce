@@ -97,6 +97,10 @@
 			{
 				this._state.GamePad.Buttons = (ButtonValues)((ushort)(this._state.GamePad.Buttons | ButtonValues.BigButton));
 			}
+			if (this.Buttons.Guide == ButtonState.Pressed)
+			{
+				this._state.GamePad.Buttons = (ButtonValues)((ushort)(this._state.GamePad.Buttons | ButtonValues.Guide));
+			}
 			if (this.DPad.Up == ButtonState.Pressed)
 			{
 				this._state.GamePad.Buttons = (ButtonValues)((ushort)(this._state.GamePad.Buttons | ButtonValues.Up));
@@ -137,6 +141,7 @@
 			this._buttons._leftShoulder = (((ushort)(pState.GamePad.Buttons & ButtonValues.LeftShoulder)) == 0x100) ? ButtonState.Pressed : ButtonState.Released;
 			this._buttons._rightShoulder = (((ushort)(pState.GamePad.Buttons & ButtonValues.RightShoulder)) == 0x200) ? ButtonState.Pressed : ButtonState.Released;
 			this._buttons._bigButton = (((ushort)(pState.GamePad.Buttons & ButtonValues.BigButton)) == 0x800) ? ButtonState.Pressed : ButtonState.Released;
+			this._buttons._guide = (((ushort)(pState.GamePad.Buttons & ButtonValues.Guide)) == 0x400) ? ButtonState.Pressed : ButtonState.Released;
 			this._triggers._left = GamePadDeadZoneUtils.ApplyTriggerDeadZone(pState.GamePad.LeftTrigger, deadZoneMode);
 			this._triggers._right = GamePadDeadZoneUtils.ApplyTriggerDeadZone(pState.GamePad.RightTrigger, deadZoneMode);
 			this._thumbs._left = GamePadDeadZoneUtils.ApplyLeftStickDeadZone(pState.GamePad.ThumbLX, pState.GamePad.ThumbLY, deadZoneMode);
@@ -191,7 +196,7 @@
 		}
 		public bool IsButtonDown(Buttons button)
 		{
-			Buttons buttons = ((Buttons)this._state.GamePad.Buttons) & (Input.Buttons.Y | Input.Buttons.X | Input.Buttons.B | Input.Buttons.A | Input.Buttons.BigButton | Input.Buttons.RightShoulder | Input.Buttons.LeftShoulder | Input.Buttons.RightStick | Input.Buttons.LeftStick | Input.Buttons.Back | Input.Buttons.Start | Input.Buttons.DPadRight | Input.Buttons.DPadLeft | Input.Buttons.DPadDown | Input.Buttons.DPadUp);
+			Buttons buttons = ((Buttons)this._state.GamePad.Buttons) & (Input.Buttons.Y | Input.Buttons.X | Input.Buttons.B | Input.Buttons.A | Input.Buttons.BigButton | Input.Buttons.Guide | Input.Buttons.RightShoulder | Input.Buttons.LeftShoulder | Input.Buttons.RightStick | Input.Buttons.LeftStick | Input.Buttons.Back | Input.Buttons.Start | Input.Buttons.DPadRight | Input.Buttons.DPadLeft | Input.Buttons.DPadDown | Input.Buttons.DPadUp);
 			if (((button & Input.Buttons.LeftThumbstickLeft) == Input.Buttons.LeftThumbstickLeft) && (GamePadDeadZoneUtils.ApplyLeftStickDeadZone(this._state.GamePad.ThumbLX, this._state.GamePad.ThumbLY, GamePadDeadZone.IndependentAxes).X < 0f))
 			{
 				buttons |= Input.Buttons.LeftThumbstickLeft;

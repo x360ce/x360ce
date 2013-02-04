@@ -7,6 +7,7 @@
     [ButtonB]                 VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonB] DEFAULT ('') NOT NULL,
     [ButtonBig]               VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonBig] DEFAULT ('') NOT NULL,
     [ButtonBack]              VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonBack] DEFAULT ('') NOT NULL,
+    [ButtonGuide]             VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonGuide] DEFAULT ('') NOT NULL,
     [ButtonStart]             VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonStart] DEFAULT ('') NOT NULL,
     [ButtonX]                 VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonX] DEFAULT ('') NOT NULL,
     [ButtonY]                 VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonY] DEFAULT ('') NOT NULL,
@@ -53,6 +54,8 @@
     [RightTriggerDeadZone]    VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightTriggerDeadZone] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_x360ce_PadSettings] PRIMARY KEY CLUSTERED ([PadSettingChecksum] ASC)
 );
+
+
 
 
 

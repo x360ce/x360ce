@@ -16,6 +16,7 @@ namespace x360ce.Web.Data
 			list.Add(this.AxisToDPadOffset);
 			list.Add(this.ButtonA);
 			list.Add(this.ButtonB);
+			//list.Add(this.ButtonGuide); Don't add to checksum. Update checksums later.
 			//list.Add(this.ButtonBig); Don't add to checksum. Update checksums later.
 			list.Add(this.ButtonBack);
 			list.Add(this.ButtonStart);
