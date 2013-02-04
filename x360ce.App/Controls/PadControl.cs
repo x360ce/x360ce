@@ -344,7 +344,7 @@ namespace x360ce.App.Controls
 			Point dPadLeft = new Point(dPad.X - 13, dPad.Y);
 			Point dPadRight = new Point(dPad.X + 13, dPad.Y);
 			Point dPadDown = new Point(dPad.X, dPad.Y + 13);
-			Point buttonBig = new Point(127, 48);
+			Point buttonGuide = new Point(127, 48);
 			Point buttonBack = new Point(103, 48);
 			Point buttonStart = new Point(152, 48);
 			Point[] pads = new Point[4];
@@ -380,7 +380,7 @@ namespace x360ce.App.Controls
 				DrawState(Buttons.X, buttonX, ButtonXLabel, e);
 				DrawState(Buttons.B, buttonB, ButtonBLabel, e);
 				DrawState(Buttons.A, buttonA, ButtonALabel, e);
-				DrawState(Buttons.BigButton, buttonBig, ButtonBigLabel, e);
+				DrawState(Buttons.Guide, buttonGuide, ButtonGuideLabel, e);
 				DrawState(Buttons.Start, buttonStart, StartButtonLabel, e);
 				DrawState(Buttons.Back, buttonBack, BackButtonLabel, e);
 				DrawState(Buttons.DPadUp, dPadUp, DPadUpLabel, e);
@@ -473,7 +473,8 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
 			sm.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
-			sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox);
+			sm.Add(section + SettingName.ButtonGuide, ButtonGuideComboBox);
+			//sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox);
 			sm.Add(section + SettingName.ButtonBack, ButtonBackComboBox);
 			sm.Add(section + SettingName.ButtonStart, ButtonStartComboBox);
 			sm.Add(section + SettingName.ButtonA, ButtonAComboBox);

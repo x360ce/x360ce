@@ -114,12 +114,12 @@
 			this.RightThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
 			this.ButtonBLabel = new System.Windows.Forms.Label();
 			this.LeftThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
-			this.ButtonBigComboBox = new System.Windows.Forms.ComboBox();
+			this.ButtonGuideComboBox = new System.Windows.Forms.ComboBox();
 			this.ButtonStartComboBox = new System.Windows.Forms.ComboBox();
 			this.ButtonBackComboBox = new System.Windows.Forms.ComboBox();
 			this.LeftShoulderComboBox = new System.Windows.Forms.ComboBox();
 			this.RightShoulderComboBox = new System.Windows.Forms.ComboBox();
-			this.ButtonBigLabel = new System.Windows.Forms.Label();
+			this.ButtonGuideLabel = new System.Windows.Forms.Label();
 			this.StartButtonLabel = new System.Windows.Forms.Label();
 			this.DPadDownLabel = new System.Windows.Forms.Label();
 			this.DPadRightLabel = new System.Windows.Forms.Label();
@@ -734,12 +734,12 @@
 			this.GeneralTabPage.Controls.Add(this.RightThumbAxisXComboBox);
 			this.GeneralTabPage.Controls.Add(this.ButtonBLabel);
 			this.GeneralTabPage.Controls.Add(this.LeftThumbAxisXComboBox);
-			this.GeneralTabPage.Controls.Add(this.ButtonBigComboBox);
+			this.GeneralTabPage.Controls.Add(this.ButtonGuideComboBox);
 			this.GeneralTabPage.Controls.Add(this.ButtonStartComboBox);
 			this.GeneralTabPage.Controls.Add(this.ButtonBackComboBox);
 			this.GeneralTabPage.Controls.Add(this.LeftShoulderComboBox);
 			this.GeneralTabPage.Controls.Add(this.RightShoulderComboBox);
-			this.GeneralTabPage.Controls.Add(this.ButtonBigLabel);
+			this.GeneralTabPage.Controls.Add(this.ButtonGuideLabel);
 			this.GeneralTabPage.Controls.Add(this.StartButtonLabel);
 			this.GeneralTabPage.Controls.Add(this.DPadDownLabel);
 			this.GeneralTabPage.Controls.Add(this.DPadRightLabel);
@@ -1217,16 +1217,16 @@
 			this.LeftThumbAxisXComboBox.TabIndex = 21;
 			this.LeftThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
-			// ButtonBigComboBox
+			// ButtonGuideComboBox
 			// 
-			this.ButtonBigComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ButtonBigComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.ButtonBigComboBox.FormattingEnabled = true;
-			this.ButtonBigComboBox.Location = new System.Drawing.Point(6, 140);
-			this.ButtonBigComboBox.Name = "ButtonBigComboBox";
-			this.ButtonBigComboBox.Size = new System.Drawing.Size(89, 21);
-			this.ButtonBigComboBox.TabIndex = 5;
-			this.ButtonBigComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+			this.ButtonGuideComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ButtonGuideComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.ButtonGuideComboBox.FormattingEnabled = true;
+			this.ButtonGuideComboBox.Location = new System.Drawing.Point(6, 140);
+			this.ButtonGuideComboBox.Name = "ButtonGuideComboBox";
+			this.ButtonGuideComboBox.Size = new System.Drawing.Size(89, 21);
+			this.ButtonGuideComboBox.TabIndex = 5;
+			this.ButtonGuideComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonStartComboBox
 			// 
@@ -1273,14 +1273,14 @@
 			this.RightShoulderComboBox.TabIndex = 12;
 			this.RightShoulderComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
-			// ButtonBigLabel
+			// ButtonGuideLabel
 			// 
-			this.ButtonBigLabel.AutoSize = true;
-			this.ButtonBigLabel.Location = new System.Drawing.Point(101, 143);
-			this.ButtonBigLabel.Name = "ButtonBigLabel";
-			this.ButtonBigLabel.Size = new System.Drawing.Size(35, 13);
-			this.ButtonBigLabel.TabIndex = 0;
-			this.ButtonBigLabel.Text = "Guide";
+			this.ButtonGuideLabel.AutoSize = true;
+			this.ButtonGuideLabel.Location = new System.Drawing.Point(101, 143);
+			this.ButtonGuideLabel.Name = "ButtonGuideLabel";
+			this.ButtonGuideLabel.Size = new System.Drawing.Size(35, 13);
+			this.ButtonGuideLabel.TabIndex = 0;
+			this.ButtonGuideLabel.Text = "Guide";
 			// 
 			// StartButtonLabel
 			// 
@@ -1895,12 +1895,12 @@
 		private System.Windows.Forms.ComboBox RightThumbAxisXComboBox;
 		private System.Windows.Forms.Label ButtonBLabel;
 		private System.Windows.Forms.ComboBox LeftThumbAxisXComboBox;
-		private System.Windows.Forms.ComboBox ButtonBigComboBox;
+		private System.Windows.Forms.ComboBox ButtonGuideComboBox;
 		private System.Windows.Forms.ComboBox ButtonStartComboBox;
 		private System.Windows.Forms.ComboBox ButtonBackComboBox;
 		private System.Windows.Forms.ComboBox LeftShoulderComboBox;
 		private System.Windows.Forms.ComboBox RightShoulderComboBox;
-		private System.Windows.Forms.Label ButtonBigLabel;
+		private System.Windows.Forms.Label ButtonGuideLabel;
 		private System.Windows.Forms.Label StartButtonLabel;
 		private System.Windows.Forms.Label DPadDownLabel;
 		private System.Windows.Forms.Label DPadRightLabel;

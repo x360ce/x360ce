@@ -8,6 +8,7 @@
 		A = 0x1000,
 		B = 0x2000,
 		Back = 0x20,
+		Guide = 0x400,
 		BigButton = 0x800,
 		Down = 2,
 		Left = 4,

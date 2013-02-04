@@ -137,6 +137,13 @@
 				return (((ushort)(this._caps.GamePad.Buttons & ButtonValues.BigButton)) != 0);
 			}
 		}
+		public bool HasGuideButton
+		{
+			get
+			{
+				return (((ushort)(this._caps.GamePad.Buttons & ButtonValues.Guide)) != 0);
+			}
+		}
 		public bool HasLeftXThumbStick
 		{
 			get

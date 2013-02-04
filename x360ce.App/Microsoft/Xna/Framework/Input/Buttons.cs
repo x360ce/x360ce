@@ -13,6 +13,7 @@
 		DPadLeft = 4,
 		DPadRight = 8,
 		DPadUp = 1,
+		Guide = 0x400,
 		LeftShoulder = 0x100,
 		LeftStick = 0x40,
 		LeftThumbstickDown = 0x20000000,

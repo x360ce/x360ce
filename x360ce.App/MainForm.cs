@@ -510,6 +510,7 @@ namespace x360ce.App
 						|| di.DeviceType == DeviceType.Flight
 						|| di.DeviceType == DeviceType.Gamepad
 						|| di.DeviceType == DeviceType.Joystick
+						|| di.DeviceType == DeviceType.FirstPerson 
 					) instances.Add(di);
 				}
 				// Dispose from previous list of devices.

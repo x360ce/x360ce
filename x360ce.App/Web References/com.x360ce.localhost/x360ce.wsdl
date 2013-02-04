@@ -73,6 +73,7 @@
               <s:element minOccurs="0" maxOccurs="1" name="ButtonB" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonBig" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonBack" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonGuide" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonStart" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonX" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ButtonY" type="s:string" />

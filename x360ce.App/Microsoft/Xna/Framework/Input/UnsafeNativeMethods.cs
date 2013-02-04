@@ -39,7 +39,9 @@ namespace Microsoft.Xna.Framework.Input
 
 		internal static ErrorCodes GetState(PlayerIndex playerIndex, out XINPUT_STATE pState)
 		{
-			return GetMethod<_GetState>("XInputGetState")(playerIndex, out pState);
+			var name = _IsGetStateExSupported ? "XInputGetStateEx" : "XInputGetState";
+
+			return GetMethod<_GetState>(name)(playerIndex, out pState);
 		}
 
 		internal static ErrorCodes Enable(bool enable)
@@ -61,6 +63,16 @@ namespace Microsoft.Xna.Framework.Input
 				return procAddress != IntPtr.Zero;
 			}
 		}
+
+		private static bool _IsGetStateExSupported;
+		internal static bool IsGetStateExSupported
+		{
+			get
+			{
+				return _IsGetStateExSupported;
+			}
+		}
+
 
 		internal static T GetMethod<T>(string methodName)
 		{
@@ -85,6 +97,8 @@ namespace Microsoft.Xna.Framework.Input
 			_LibraryName = fileName;
 			if (IsLoaded) FreeLibrary();
 			libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(fileName);
+			IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
+			_IsGetStateExSupported = procAddress != IntPtr.Zero;
 			return IsLoaded;
 		}
 

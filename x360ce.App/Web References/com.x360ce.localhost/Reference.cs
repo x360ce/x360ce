@@ -784,6 +784,8 @@ namespace x360ce.App.com.x360ce.localhost {
         
         private string buttonBackField;
         
+        private string buttonGuideField;
+        
         private string buttonStartField;
         
         private string buttonXField;
@@ -949,6 +951,16 @@ namespace x360ce.App.com.x360ce.localhost {
             }
             set {
                 this.buttonBackField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ButtonGuide {
+            get {
+                return this.buttonGuideField;
+            }
+            set {
+                this.buttonGuideField = value;
             }
         }
         

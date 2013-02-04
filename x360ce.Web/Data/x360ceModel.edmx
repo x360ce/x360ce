@@ -24,6 +24,7 @@
 					<Property Name="ButtonB" Type="varchar" Nullable="false" MaxLength="16" />
 					<Property Name="ButtonBig" Type="varchar" Nullable="false" MaxLength="16" />
 					<Property Name="ButtonBack" Type="varchar" Nullable="false" MaxLength="16" />
+					<Property Name="ButtonGuide" Type="varchar" Nullable="false" MaxLength="16" />
 					<Property Name="ButtonStart" Type="varchar" Nullable="false" MaxLength="16" />
 					<Property Name="ButtonX" Type="varchar" Nullable="false" MaxLength="16" />
 					<Property Name="ButtonY" Type="varchar" Nullable="false" MaxLength="16" />
@@ -142,6 +143,7 @@
 					<Property Type="String" Name="ButtonB" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ButtonBig" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ButtonGuide" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ButtonX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ButtonY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
@@ -291,6 +293,7 @@
 								<ScalarProperty Name="ButtonY" ColumnName="ButtonY" />
 								<ScalarProperty Name="ButtonX" ColumnName="ButtonX" />
 								<ScalarProperty Name="ButtonStart" ColumnName="ButtonStart" />
+								<ScalarProperty Name="ButtonGuide" ColumnName="ButtonGuide" />
 								<ScalarProperty Name="ButtonBack" ColumnName="ButtonBack" />
 								<ScalarProperty Name="ButtonBig" ColumnName="ButtonBig" />
 								<ScalarProperty Name="ButtonB" ColumnName="ButtonB" />
@@ -375,12 +378,12 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="66" >
+			<Diagram Name="x360ceModel" ZoomLevel="59" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
-				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="3.375" PointY="0.75" Height="3.5186979166666656" />
-				<EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="5.375" PointY="0.75" Height="1.4033821614583326" />
-				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="5.375" PointY="3.75" Height="2.7494921874999996" />
-				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.375" PointY="0.75" Height="1.7879850260416674" />
+				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
+				<EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" Height="1.4033821614583326" />
+				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
+				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.875" PointY="0.5" Height="1.7879850260416674" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>
