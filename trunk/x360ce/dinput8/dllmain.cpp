@@ -1,4 +1,4 @@
-/*  x360ce - XBOX360 Controler Emulator
+/*  x360ce - XBOX360 Controller Emulator
 *  Copyright (C) 2002-2010 Racer_S
 *  Copyright (C) 2010-2011 Robert Krawczyk
 *
