@@ -563,7 +563,7 @@ namespace x360ce.App
 			this.HelpSubjectLabel.Name = "HelpSubjectLabel";
 			this.HelpSubjectLabel.Size = new System.Drawing.Size(584, 20);
 			this.HelpSubjectLabel.TabIndex = 5;
-			this.HelpSubjectLabel.Text = "Controler 1 - General";
+			this.HelpSubjectLabel.Text = "Controller 1 - General";
 			// 
 			// HeaderPictureBox
 			// 

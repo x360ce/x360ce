@@ -355,7 +355,7 @@ namespace x360ce.App.Controls
 			// Display controller.
 			bool on = gamePadState.IsConnected;
 			if (!on) return;
-			// Display controler index light.
+			// Display controller index light.
 			int mW = -this.markC.Width / 2;
 			int mH = -this.markC.Height / 2;
 			e.Graphics.DrawImage(this.markC, pads[ControllerIndex].X + mW, pads[ControllerIndex].Y + mH);

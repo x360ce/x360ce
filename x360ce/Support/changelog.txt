@@ -26,7 +26,7 @@ LeftMotorPeriod & RightMotorPeriod to manipulate FFB Period values (in milisecou
 Marged FakeWMI & FakeDI to FakeMode:
 	0 - Disabled
 	1 - Normal mode,game will detect gamepad as xinput compatibilie device.
-	2 - Compatbility mode, game will detect gamepad as XBOX 360 Controler for Windows.
+	2 - Compatbility mode, game will detect gamepad as XBOX 360 Controller for Windows.
 
 10/08/2010 - version 3.2.0.171
 crazycat fix main FakeDI problems by temporary disabling it for enumeration inside x360ce dll so FakeDI=2 will not break x360ce enumeration ! (BIG thanks for that, the idea was so simple ...).
