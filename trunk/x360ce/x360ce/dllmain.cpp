@@ -139,7 +139,7 @@ extern "C" VOID WINAPI reset()
 
     g_Devices.clear();
     g_Mappings.clear();
-    
+
     ReadConfig();
 }
 

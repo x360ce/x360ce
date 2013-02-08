@@ -140,6 +140,7 @@ inline FARPROC& GetXInputFunc(Native::funcType func)
         MessageBox(NULL,L"Cannot initalize xinput function!",L"Error",MB_ICONERROR);
         ExitProcess(1);
     }
+    }
 }
 
 #endif

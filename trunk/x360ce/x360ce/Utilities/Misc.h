@@ -83,8 +83,8 @@ inline void StringToGUID(LPCSTR szBuf, GUID& id)
     if (strchr(szBuf,'{')) szBuf++;
 
     sscanf_s(szBuf,"%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX",
-        &id.Data1,&id.Data2,&id.Data3,
-        &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
+             &id.Data1,&id.Data2,&id.Data3,
+             &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
 
     return;
 }
@@ -96,8 +96,8 @@ inline void StringToGUID(LPCWSTR szBuf, GUID& id)
     if (wcschr(szBuf,L'{')) szBuf++;
 
     swscanf_s(szBuf,L"%8X-%4hX-%4hX-%2hX%2hX-%2hX%2hX%2hX%2hX%2hX%2hX",
-        &id.Data1,&id.Data2,&id.Data3,
-        &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
+              &id.Data1,&id.Data2,&id.Data3,
+              &id.Data4[0],&id.Data4[1],&id.Data4[2],&id.Data4[3],&id.Data4[4],&id.Data4[5],&id.Data4[6],&id.Data4[7]);
 
     return;
 }

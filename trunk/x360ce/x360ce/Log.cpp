@@ -82,7 +82,7 @@ void Log::Init(bool file, bool console)
             if(PathFileExistsA(buffer) == FALSE) CreateDirectoryA(buffer, NULL);
 
             sprintf_s(logname, "%s_%u%02u%02u-%02u%02u%02u.log", exename.c_str(),
-                systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
+                      systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
             PathCombineA(path,buffer,logname);
         }
         if(Stream().is_open() == false ) Stream().open(path);

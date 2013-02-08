@@ -347,7 +347,7 @@ void WINAPI HookCoUninitialize()
 {
     if(!iHookThis->CheckHook(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog(LOG_HOOKCOM,"*CoUninitialize*");
-    
+
     PrintLog(LOG_HOOKCOM,"Removing HookGet Hook");
     MH_DisableHook(hGet);
 
@@ -356,10 +356,10 @@ void WINAPI HookCoUninitialize()
 
     PrintLog(LOG_HOOKCOM,"Removing CreateInstanceEnum Hook");
     MH_DisableHook(hCreateInstanceEnum);
-    
+
     PrintLog(LOG_HOOKCOM,"Removing ConnectServer Hook");
     MH_DisableHook(hConnectServer);
-    
+
     oCoUninitialize();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,7 @@ public:
 
     CriticalSection()
     {
-        __try 
+        __try
         {
             InitializeCriticalSection(&m_cs);
         }
