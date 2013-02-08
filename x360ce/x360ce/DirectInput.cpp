@@ -130,8 +130,17 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     if(FAILED(hr))
     {
         PrintLog(LOG_CORE,"x360ce is misconfigured or device is disconnected");
-        MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","Error",MB_ICONERROR);
-        ExitProcess(hr);
+        int response = MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","Error",MB_CANCELTRYCONTINUE|MB_ICONWARNING);
+        switch(response)
+        {
+        case IDCANCEL:
+            ExitProcess(1);
+        case IDTRYAGAIN:
+            return InitDirectInput(hDlg,device);
+        case IDCONTINUE:
+            device.passthrough = true;
+            return S_OK;
+        }
     }
 
     if(!device.device)
