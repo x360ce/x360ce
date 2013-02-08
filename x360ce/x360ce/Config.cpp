@@ -106,6 +106,16 @@ static const char* const padNames[] =
     "PAD4",
 };
 
+MappingType getMappingType(const char s)
+{
+    if (s == 'a') return AXIS;      // Axis
+    if (s == 's') return SLIDER;	// Slider
+    if (s == 'x') return HAXIS;     // Half range axis
+    if (s == 'h') return HSLIDER;	// Half range slider
+    if (s == 'z') return CBUT;      //
+    return DIGITAL;                 // Digital
+}
+
 DWORD ReadGameDatabase()
 {
     Ini ini("x360ce.gdb");
@@ -139,7 +149,6 @@ void ReadConfig()
         }
         else
         {
-            // InputHook
             hookMask = ini.GetDword("InputHook", "HookMask",0);
             if(hookMask)
             {
@@ -278,47 +287,20 @@ void ReadPadConfig(DWORD idx, Ini &ini)
 
     for (INT i=0; i<4; ++i)
     {
-        if (ini.GetString(section, povNames[i], buffer) > 0)
+        int val = ini.GetLong(section, povNames[i], -1);
+        if(val > 0 && val < 100)
         {
-            int val = atoi(buffer);
-            if(val == 0)
-            {
-                //for compatibility with x360ce.App
-                if(strstr(buffer,"UP")) mapping.pov[i] = 36000;
-                if(strstr(buffer,"DOWN")) mapping.pov[i] = 18000;
-                if(strstr(buffer,"LEFT")) mapping.pov[i] = 27000;
-                if(strstr(buffer,"RIGHT")) mapping.pov[i] = 9000;
-                mapping.PovIsButton = false;
-            }
-            else if(val < 100)
-            {
-                mapping.pov[i] = static_cast<WORD>(val - 1);
-                mapping.PovIsButton = true;
-            }
-            else
-            {
-                mapping.pov[i] = static_cast<WORD>(val);
-                mapping.PovIsButton = false;
-            }
+            mapping.pov[i] = static_cast<WORD>(val - 1);
+            mapping.PovIsButton = true;
+        }
+        else if(val > 0)
+        {
+            mapping.pov[i] = static_cast<WORD>(val);
+            mapping.PovIsButton = false;
         }
 
-        if (ini.GetString(section, axisNames[i], buffer) > 0)
-        {
-            char* a = buffer;
-
-            if (towlower(*a) == L's')   // Slider
-            {
-                mapping.Axis[i].analogType = SLIDER;
-                ++a;
-                mapping.Axis[i].id = atoi(a);
-            }
-            else
-            {
-                // Axis
-                mapping.Axis[i].analogType = AXIS;
-                mapping.Axis[i].id = atoi(a);
-            }
-        }
+        mapping.Axis[i].id = ini.GetLong(section, axisNames[i]);
+        mapping.Axis[i].analogType = getMappingType(ini.GetLastPrefix());
 
         SHORT tmp = static_cast<SHORT>(ini.GetLong(section, axisADZNames[i], 0));
         device.antideadzone[i] =  static_cast<SHORT>(((Misc::clamp))(tmp,0,32767));
@@ -340,71 +322,18 @@ void ReadPadConfig(DWORD idx, Ini &ini)
         }
     }
 
-    if (ini.GetString(section, "Left Trigger", buffer) > 0)
-    {
-        char* a = buffer;
+    mapping.Trigger[0].id = ini.GetLong(section, "Left Trigger");
+    mapping.Trigger[0].type = getMappingType(ini.GetLastPrefix());
 
-        if ((mapping.Trigger[0].type = getTriggerType(a)) == DIGITAL)
-        {
-            mapping.Trigger[0].id = atoi(a) - 1;
-        }
-        else
-        {
-            ++a;
-            mapping.Trigger[0].id = atoi(a);
-        }
-    }
+    mapping.Trigger[1].id = ini.GetLong(section, "Right Trigger");
+    mapping.Trigger[1].type = getMappingType(ini.GetLastPrefix());
 
-    if (ini.GetString(section, "Right Trigger", buffer) > 0)
-    {
-        char* a = buffer;
-
-        if ((mapping.Trigger[1].type = getTriggerType(a)) == DIGITAL)
-        {
-            mapping.Trigger[1].id = atoi(a) - 1;
-        }
-        else
-        {
-            ++a;
-            mapping.Trigger[1].id = atoi(a);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    if (ini.GetString(section, "Left Trigger But", buffer) > 0)
-    {
-        char* a = buffer;
-        mapping.Trigger[0].but = atoi(a) - 1;
-    }
-
-    if (ini.GetString(section, "Right Trigger But", buffer) > 0)
-    {
-        char* a = buffer;
-        mapping.Trigger[1].but = atoi(a) - 1;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////
+    // SeDoG mod
+    mapping.Trigger[0].but = ini.GetLong(section, "Left Trigger But");
+    mapping.Trigger[1].but = ini.GetLong(section, "Right Trigger But");
 
     if (ini.GetLong(section, "D-pad POV") > 0)
     {
         mapping.DpadPOV = static_cast<WORD>(ini.GetLong(section, "D-pad POV",0)) - 1;
     }
-}
-
-// NOTE: Letters corresponding to mapping types changed. Include in update notes.
-MappingType getTriggerType(const char* s)
-{
-    if (tolower(*s) == 'a') return AXIS;	// Axis
-
-    if (tolower(*s) == 's') return SLIDER;	// Slider
-
-    if (tolower(*s) == 'x') return HAXIS;	// Half range axis
-
-    if (tolower(*s) == 'h') return HSLIDER;	// Half range slider
-
-    ////////////////////////////////////////////////////////////////////
-    if (tolower(*s) == 'z') return CBUT;
-
-    ////////////////////////////////////////////////////////////////////
-    return DIGITAL;							// Digital
 }

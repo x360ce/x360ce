@@ -25,8 +25,24 @@
 
 class Ini
 {
-public:
+private:
+    void SetLastPrefix(char c)
+    {
+        m_prefix=c;
+    }
 
+    char CheckPrefix(char* str)
+    {
+        char c = (char) tolower(*str);
+
+        if (c == 'a') {SetLastPrefix(c); return c;}
+        else if (c == 's') {SetLastPrefix(c); return c;}
+        else if (c == 'x') {SetLastPrefix(c); return c;}
+        else if (c == 'h') {SetLastPrefix(c); return c;}
+        else if (c == 'z') {SetLastPrefix(c); return c;}
+        else return 0;
+    }
+public:
     Ini(const char* filename)
     {
         Mutex();
@@ -40,15 +56,15 @@ public:
         // add file name to buffer
         PathCombineA(path,buffer,filename);
         // check if path exist and is not a directory
-        if(PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) ini_file = path;
+        if(PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) m_inifile = path;
 
         // if file was not found in current directory do same as above for ProgramData
-        if(ini_file.empty() && SHGetFolderPathA(NULL,CSIDL_COMMON_APPDATA,NULL,SHGFP_TYPE_CURRENT,path) == S_OK)
+        if(m_inifile.empty() && SHGetFolderPathA(NULL,CSIDL_COMMON_APPDATA,NULL,SHGFP_TYPE_CURRENT,path) == S_OK)
         {
             //add directory name
             PathCombineA(buffer,path,"x360ce");
             PathCombineA(path,buffer,filename);
-            if(PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) ini_file = path;
+            if(PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) m_inifile = path;
         }
     }
     virtual ~Ini(void) {}
@@ -61,13 +77,13 @@ public:
 
     DWORD GetString(const char* strFileSection, const char* strKey, char* strOutput, char* strDefault = 0)
     {
-        if(ini_file.empty()) return 0;
+        if(m_inifile.empty()) return 0;
 
         Mutex().Lock();
 
         DWORD ret;
         char* pStr;
-        ret = GetPrivateProfileStringA(strFileSection, strKey, strDefault, strOutput, MAX_PATH, ini_file.c_str());
+        ret = GetPrivateProfileStringA(strFileSection, strKey, strDefault, strOutput, MAX_PATH, m_inifile.c_str());
 
         pStr = strchr(strOutput, L'#');
         if (pStr) *pStr=L'\0';
@@ -87,8 +103,11 @@ public:
 
         sprintf_s(def,MAX_PATH,"%d",iDefault);
         ret = GetString(strFileSection,strKey,tmp,def);
-
-        if(ret) return strtol(tmp,NULL,0);
+        if(ret)
+        {
+            if(CheckPrefix(tmp)) return strtol(tmp+1,NULL,0);
+            else return strtol(tmp,NULL,0);
+        }
         return 0;
     }
 
@@ -110,8 +129,14 @@ public:
         return GetDword(strFileSection,strKey,iDefault) !=0;
     }
 
+    char GetLastPrefix()
+    {
+        return m_prefix;
+    }
+
 private:
-    std::string ini_file;
+    std::string m_inifile;
+    char m_prefix;
 };
 
 #endif // _INI_H_
