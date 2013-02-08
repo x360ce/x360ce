@@ -42,6 +42,10 @@ HookMask=0x00000002
 [SFTK.exe]
 HookMask=0x00000002
 
+# Super Street Fighter IV - Arcade Edition
+[SSFIV.exe]
+HookMask=0x00000002
+
 # The Baconing
 [TheBaconing.exe]
 HookMask=0x00000003
