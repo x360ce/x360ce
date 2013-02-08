@@ -226,11 +226,15 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     //store value as section name
     strcpy_s(section,buffer);
 
+    device.dwUserIndex = idx;
+
     ini.GetString(section, "ProductGUID", buffer, 0);
     Misc::StringToGUID(buffer,device.productid);
 
     ini.GetString(section, "InstanceGUID", buffer, 0);
     Misc::StringToGUID(buffer,device.instanceid);
+
+    device.useproduct = ini.GetBool(section, "UseProductGUID",0);
 
     device.passthrough = ini.GetBool(section, "PassThrough",1);
 
@@ -249,34 +253,28 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     }
     else return;
 
-    device.dwUserIndex = idx;
 
-    device.useproduct = ini.GetBool(section, "UseProductGUID",0);
-    device.swapmotor = ini.GetBool(section, "SwapMotor",0);
+    device.axistodpad = ini.GetBool(section, "AxisToDPad",0); 
     device.triggerdeadzone = ini.GetLong(section, "TriggerDeadzone",0);
-    device.useforce = ini.GetBool(section, "UseForceFeedback",0);
-    device.gamepadtype = static_cast<BYTE>(ini.GetLong(section, "ControllerType",1));
-    device.axistodpad = ini.GetBool(section, "AxisToDPad",0);
+    device.gamepadtype = static_cast<BYTE>(ini.GetLong(section, "ControllerType",1));;
     device.a2ddeadzone = static_cast<INT>(ini.GetLong(section, "AxisToDPadDeadZone",0));
     device.a2doffset = static_cast<INT>(ini.GetLong(section, "AxisToDPadOffset",0));
+ 
+
+    // FFB
+    device.useforce = ini.GetBool(section, "UseForceFeedback",0);
+    device.swapmotor = ini.GetBool(section, "SwapMotor",0);
     device.ff.type = (BYTE) ini.GetLong(section, "FFBType",0);
     device.ff.forcepercent = static_cast<FLOAT>(ini.GetLong(section, "ForcePercent",100) * 0.01);
     device.ff.leftPeriod = ini.GetLong(section, "LeftMotorPeriod",60);
     device.ff.rightPeriod = ini.GetLong(section, "RightMotorPeriod",20);
 
+    // Mappings start
+
+    // Guide button
     mapping.guide = static_cast<WORD>(ini.GetLong(section, "GuideButton",0));
 
-    //memset(mapping.Button,-1,sizeof(mapping.Button));
-
-    for (INT i = 0; i < 2; ++i) mapping.Trigger[i].type = NONE;
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    for (INT i = 0; i < 2; ++i) mapping.Trigger[i].but = -1;
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-
-    mapping.DpadPOV = (WORD) -1;
-
+    // Fire buttons
     for (INT i=0; i<10; ++i)
     {
         if (ini.GetLong(section,buttonNames[i],0) > 0)
@@ -287,6 +285,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
 
     for (INT i=0; i<4; ++i)
     {
+        // D-PAD directions
         int val = ini.GetLong(section, povNames[i], -1);
         if(val > 0 && val < 100)
         {
@@ -299,15 +298,21 @@ void ReadPadConfig(DWORD idx, Ini &ini)
             mapping.PovIsButton = false;
         }
 
+        // Axes
         mapping.Axis[i].id = ini.GetLong(section, axisNames[i]);
         mapping.Axis[i].analogType = getMappingType(ini.GetLastPrefix());
 
+        // DeadZones
+        device.axisdeadzone[i] =  static_cast<SHORT>(ini.GetLong(section, axisDZNames[i], 0));
+
+        // Anti DeadZones
         SHORT tmp = static_cast<SHORT>(ini.GetLong(section, axisADZNames[i], 0));
         device.antideadzone[i] =  static_cast<SHORT>(((Misc::clamp))(tmp,0,32767));
 
-        device.axisdeadzone[i] =  static_cast<SHORT>(ini.GetLong(section, axisDZNames[i], 0));
+        // Linears
         device.axislinear[i] = static_cast<SHORT>(ini.GetLong(section, axisLNames[i], 0));
 
+        // Axis to button mappings
         INT ret = ini.GetLong(section, axisBNames[i*2]);
         if (ret > 0)
         {
@@ -322,6 +327,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
         }
     }
 
+    // Triggers
     mapping.Trigger[0].id = ini.GetLong(section, "Left Trigger");
     mapping.Trigger[0].type = getMappingType(ini.GetLastPrefix());
 
@@ -332,8 +338,10 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     mapping.Trigger[0].but = ini.GetLong(section, "Left Trigger But");
     mapping.Trigger[1].but = ini.GetLong(section, "Right Trigger But");
 
+    // D-PAD
     if (ini.GetLong(section, "D-pad POV") > 0)
     {
         mapping.DpadPOV = static_cast<WORD>(ini.GetLong(section, "D-pad POV",0)) - 1;
     }
+    else mapping.DpadPOV = (WORD) -1;
 }
