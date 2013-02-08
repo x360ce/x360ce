@@ -21,6 +21,14 @@
 
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };// add CBUT
 
+enum PovIDs
+{
+    GAMEPAD_DPAD_UP,
+    GAMEPAD_DPAD_DOWN,
+    GAMEPAD_DPAD_LEFT,
+    GAMEPAD_DPAD_RIGHT
+};
+
 struct AxisMap
 {
     INT id;
@@ -65,7 +73,11 @@ struct Mapping
     {
         // Set default values
         for (INT i = 0; i < 10; ++i) Button[i] = (WORD) -1;
-        for (INT i = 0; i < 4; ++i) pov[i] = (WORD) -1;
+
+        pov[GAMEPAD_DPAD_UP] = (WORD) 36000;
+        pov[GAMEPAD_DPAD_DOWN] = (WORD) 18000;
+        pov[GAMEPAD_DPAD_LEFT] = (WORD) 27000;
+        pov[GAMEPAD_DPAD_RIGHT] = (WORD) 9000;
 
         DpadPOV = (WORD) -1;
         PovIsButton = 0;
@@ -107,14 +119,6 @@ static const WORD keyIDs[14] =
     VK_PAD_DPAD_RIGHT
 };
 
-enum ePovIDs
-{
-    GAMEPAD_DPAD_UP,
-    GAMEPAD_DPAD_DOWN,
-    GAMEPAD_DPAD_LEFT,
-    GAMEPAD_DPAD_RIGHT
-};
-
 static const WORD povIDs[4] =
 {
     XINPUT_GAMEPAD_DPAD_UP,
@@ -126,6 +130,5 @@ static const WORD povIDs[4] =
 void InitConfig(char* ininame);
 void ReadConfig();
 void ReadPadConfig(DWORD idx, Ini &ini);
-MappingType getTriggerType(const char* s);
 
 #endif
