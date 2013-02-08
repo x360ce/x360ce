@@ -1,4 +1,4 @@
-/*  x360ce - XBOX360 Controller Emulator
+/*  x360ce - XBOX360 Controler Emulator
  *  Copyright (C) 2002-2010 Racer_S
  *  Copyright (C) 2010-2013 Robert Krawczyk
  *
@@ -101,7 +101,7 @@ inline FARPROC& GetXInputFunc(Native::funcType func)
 
     case Native::BATTERY:
     {
-        static FARPROC nXInputGetBatteryInformation = GetProcAddress(hNative,"nXInputGetBatteryInformation");
+        static FARPROC nXInputGetBatteryInformation = GetProcAddress(hNative,"XInputGetBatteryInformation");
         return nXInputGetBatteryInformation;
     }
 
@@ -136,6 +136,7 @@ inline FARPROC& GetXInputFunc(Native::funcType func)
         return nXInputPowerOffController;
     }
     default:
+    {
         MessageBox(NULL,L"Cannot initalize xinput function!",L"Error",MB_ICONERROR);
         ExitProcess(1);
     }

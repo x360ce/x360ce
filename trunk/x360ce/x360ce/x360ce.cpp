@@ -93,7 +93,7 @@ HRESULT XInit(DInputDevice& device)
             PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
 
             hr = InitDirectInput(hMsgWnd,device);
-            if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with %h",device.dwUserIndex+1,hr);
+            if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with %X",device.dwUserIndex+1,hr);
 
             if(SUCCEEDED(hr))
             {
