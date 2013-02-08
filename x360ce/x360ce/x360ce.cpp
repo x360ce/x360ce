@@ -132,13 +132,13 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
     // eliminate false init beeps
     static int loop = 0;
-    if(g_bInitBeep) ++loop; 
-    if(g_bInitBeep && loop > 10) 
+    if(g_bInitBeep) ++loop;
+    if(g_bInitBeep && loop > 10)
     {
-        MessageBeep(MB_OK); 
+        MessageBeep(MB_OK);
         g_bInitBeep = false;
     }
-    
+
     Mapping& mapping = g_Mappings[dwUserIndex];
     XINPUT_STATE& xstate = *pState;
 

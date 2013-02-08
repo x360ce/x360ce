@@ -76,8 +76,8 @@ void LoadDInputDll()
 }
 
 void InitInstance(HMODULE hMod)
-{ 
-    __try 
+{
+    __try
     {
         InitializeCriticalSection(&cs);
     }
