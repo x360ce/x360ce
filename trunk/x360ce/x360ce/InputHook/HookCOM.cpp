@@ -321,7 +321,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
     if(IsEqualGUID(riid,IID_IDirectInput8A) || IsEqualGUID(riid,IID_IDirectInput8W))
     {
         PrintLog(LOG_IHOOK,"COM wants to create DirectInput8 instance");
-        MessageBoxA(NULL,"COM wants to create DirectInput8 instance","Error",MB_ICONERROR);
+        MessageBoxA(NULL,"COM wants to create DirectInput8 instance","x360ce - Error",MB_ICONERROR);
         //iHookThis->HookDICOM(riid,ppv);
     }
 

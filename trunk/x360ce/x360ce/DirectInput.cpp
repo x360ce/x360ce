@@ -95,7 +95,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     if(FAILED(dinput.Init(hThis)))
     {
         PrintLog(LOG_CORE,"DirectInput cannot be initialized");
-        MessageBox(NULL,L"DirectInput cannot be initialized",L"Error",MB_ICONERROR);
+        MessageBox(NULL,L"DirectInput cannot be initialized",L"x360ce - Error",MB_ICONERROR);
         ExitProcess(hr);
     }
 
@@ -133,7 +133,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     if(FAILED(hr))
     {
         PrintLog(LOG_CORE,"x360ce is misconfigured or device is disconnected");
-        int response = MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","Error",MB_CANCELTRYCONTINUE|MB_ICONWARNING);
+        int response = MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","x360ce - Error",MB_CANCELTRYCONTINUE|MB_ICONWARNING);
         switch(response)
         {
         case IDCANCEL:

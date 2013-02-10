@@ -140,7 +140,7 @@ inline FARPROC& GetXInputFunc(Native::funcType func)
     }
     default:
     {
-        MessageBox(NULL,L"Cannot initalize xinput function!",L"Error",MB_ICONERROR);
+        MessageBox(NULL,L"Cannot initalize xinput function!",L"x360ce - Error",MB_ICONERROR);
         ExitProcess(1);
     }
     }
