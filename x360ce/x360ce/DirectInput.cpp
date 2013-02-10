@@ -1,10 +1,13 @@
 /*  x360ce - XBOX360 Controller Emulator
+ *
+ *  https://code.google.com/p/x360ce/
+ *
  *  Copyright (C) 2002-2010 Racer_S
  *  Copyright (C) 2010-2013 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
  *
  *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -106,8 +109,8 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
 
     if(pHooks)
     {
-        bHookDI = pHooks->CheckHook(iHook::HOOK_DI);
-        bHookSA = pHooks->CheckHook(iHook::HOOK_SA);
+        bHookDI = pHooks->GetState(iHook::HOOK_DI);
+        bHookSA = pHooks->GetState(iHook::HOOK_SA);
 
         if(bHookDI) pHooks->DisableHook(iHook::HOOK_DI);
         if(bHookSA) pHooks->DisableHook(iHook::HOOK_SA);
@@ -143,17 +146,8 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         }
     }
 
-    if(!device.device)
-    {
-        device.connected = 0;
-        device.fail = 1;
-        return ERROR_DEVICE_NOT_CONNECTED;
-    }
-    else
-    {
-        device.connected = 1;
-        PrintLog(LOG_DINPUT,"[PAD%d] Device created",device.dwUserIndex+1);
-    }
+    if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
+    else PrintLog(LOG_DINPUT,"[PAD%d] Device created",device.dwUserIndex+1);
 
     if( FAILED( hr = device.device->SetDataFormat( &c_dfDIJoystick2 ) ) )
         PrintLog(LOG_DINPUT,"[PAD%d] SetDataFormat failed with code HR = %X", device.dwUserIndex+1, hr);
@@ -646,7 +640,7 @@ HRESULT SetDeviceForcesNew(DInputDevice& device, WORD force, bool motor)
     if(EffectIsPlaying(device)) device.ff.effect[motor]->Stop();
 
     LONG nForce = MulDiv(force, DI_FFNOMINALMAX, 65535);
-    nForce = Misc::clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
+    nForce = clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
 
     if(motor == FFB_LEFTMOTOR)
     {

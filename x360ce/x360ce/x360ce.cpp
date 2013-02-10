@@ -1,18 +1,21 @@
 /*  x360ce - XBOX360 Controller Emulator
-*  Copyright (C) 2002-2010 Racer_S
-*  Copyright (C) 2010-2011 Robert Krawczyk
-*
-*  x360ce is free software: you can redistribute it and/or modify it under the terms
-*  of the GNU Lesser General Public License as published by the Free Software Found-
-*  ation, either version 3 of the License, or (at your option) any later version.
-*
-*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-*  PURPOSE.  See the GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along with x360ce.
-*  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *  https://code.google.com/p/x360ce/
+ *
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2013 Robert Krawczyk
+ *
+ *  x360ce is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
+ *
+ *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with x360ce.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "stdafx.h"
 #include "globals.h"
@@ -48,7 +51,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SAFE_DELETE(pHooks);
         if(hNative)
         {
-            PrintLog(LOG_CORE,"Unloading %s",Misc::GetFilePathA(hNative));
+            PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative));
             FreeLibrary(hNative);
             hNative = NULL;
         }
@@ -58,7 +61,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return CallWindowProc(oldWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-VOID MakeMsgWindow()
+VOID CreateMsgWnd()
 {
     hMsgWnd = CreateWindow(
                   L"Message",	// name of window class
@@ -77,35 +80,6 @@ VOID MakeMsgWindow()
     else oldWndProc = (WNDPROC) SetWindowLongPtr(hMsgWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
 }
 
-HRESULT XInit(DInputDevice& device)
-{
-    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
-
-    if(!device.fail)
-    {
-        HRESULT hr=ERROR_SUCCESS;
-
-        if(!hMsgWnd) MakeMsgWindow();
-
-        if(!device.device)
-        {
-            PrintLog(LOG_CORE,"[PAD%d] Starting",device.dwUserIndex+1);
-            PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
-
-            hr = InitDirectInput(hMsgWnd,device);
-            if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with %X",device.dwUserIndex+1,hr);
-
-            if(SUCCEEDED(hr))
-            {
-                device.initialized = true;
-                PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
-            }
-        }
-        return ERROR_SUCCESS;
-    }
-    return ERROR_DEVICE_NOT_CONNECTED;
-}
-
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog(LOG_XINPUT,"XInputGetState");
@@ -117,7 +91,20 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     DInputDevice& device = g_Devices[dwUserIndex];
     if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
-    HRESULT hr = XInit(device);
+    HRESULT hr = E_FAIL;
+
+    if(hMsgWnd == NULL) CreateMsgWnd();
+
+    if(device.device == NULL && device.dwUserIndex == dwUserIndex)
+    {
+        PrintLog(LOG_CORE,"[PAD%d] Starting",device.dwUserIndex+1);
+        PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
+
+        hr = InitDirectInput(hMsgWnd,device);
+        if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
+
+        if(SUCCEEDED(hr)) PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
+    }
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     //Update device state if enabled or we not use enable
@@ -296,7 +283,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
             //v2 = (v + offset) / scaling;
             // Add deadzones
-            //*(targetTrigger[i]) = (BYTE) Misc::deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+            //*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
 
             /////////////////////////////////////////////////////////////////////////////////////////
             if (triggerType == CBUT)
@@ -314,14 +301,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                 {
                     v2 = (offset-v) / scaling;
                     *(targetTrigger[0]) = 255;
-                    *(targetTrigger[1]) = 255 - (BYTE) Misc::deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                    *(targetTrigger[1]) = 255 - (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
                 }
 
                 if (!ButtonPressed(mapping.Trigger[0].but,device)
                         && ButtonPressed(mapping.Trigger[1].but,device))
                 {
                     v2 = (offset+v) / scaling;
-                    *(targetTrigger[0]) = 255 - (BYTE) Misc::deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                    *(targetTrigger[0]) = 255 - (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
                     *(targetTrigger[1]) = 255;
                 }
 
@@ -329,14 +316,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                         && !ButtonPressed(mapping.Trigger[1].but,device))
                 {
                     v2 = (offset+v) / scaling;
-                    *(targetTrigger[i]) = (BYTE) Misc::deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                    *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
                 }
 
             }
             else
             {
                 v2 = (offset+v) / scaling;
-                *(targetTrigger[i]) = (BYTE) Misc::deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////
@@ -375,12 +362,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                 if(mapping.Axis[i].id > 0 )
                 {
                     SHORT val = (SHORT) values[mapping.Axis[i].id - 1];
-                    *(targetAxis[i])= (SHORT) Misc::clamp(val,-32767,32767);
+                    *(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
                 }
                 else if(mapping.Axis[i].id < 0 )
                 {
                     SHORT val = (SHORT) -values[-mapping.Axis[i].id - 1];
-                    *(targetAxis[i]) = (SHORT) Misc::clamp(val,-32767,32767);
+                    *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
                 }
             }
 
@@ -445,7 +432,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
             if((val <= dz) && (val >= -dz) ) val = 0;
 
-            *(targetAxis[i]) = (SHORT) Misc::clamp(val,-32767,32767);
+            *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
         }
 
         // --- Do Linears ---
@@ -458,9 +445,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
         }
     }
 
-    if(SUCCEEDED(hr)) return ERROR_SUCCESS;
-
-    return ERROR_DEVICE_NOT_CONNECTED;
+    return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
@@ -546,6 +531,9 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
     if(g_bDisable) return;
+
+    if(hMsgWnd == NULL) CreateMsgWnd();
+
     if(g_bNative)
         reinterpret_cast<XInputEnable_t>(GetXInputFunc(Native::ENABLE))(enable);
 

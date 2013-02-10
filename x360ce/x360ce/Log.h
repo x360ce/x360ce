@@ -1,10 +1,13 @@
 /*  x360ce - XBOX360 Controller Emulator
+ *
+ *  https://code.google.com/p/x360ce/
+ *
  *  Copyright (C) 2002-2010 Racer_S
  *  Copyright (C) 2010-2013 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
  *
  *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -58,7 +61,7 @@ public:
         return instance;
     }
 
-    void Log::Init(bool file, bool console);
+    void Init(bool file, bool console, bool local);
     void Print(LogType logType, const char* format, ...);
     void Destroy();
 
@@ -67,7 +70,7 @@ protected:
     const char* TypeToString(LogType type);
 };
 
-#define InitLog(log,con) Log::getInstance().Init(log,con)
+#define InitLog(log,con,local) Log::getInstance().Init(log,con,local)
 #define PrintLog(type,format,...) Log::getInstance().Print(Log::type,format,__VA_ARGS__)
 #define DestroyLog() Log::getInstance().Destroy()
 

@@ -1,18 +1,21 @@
 /*  x360ce - XBOX360 Controller Emulator
-*  Copyright (C) 2002-2010 Racer_S
-*  Copyright (C) 2010-2013 Robert Krawczyk
-*
-*  x360ce is free software: you can redistribute it and/or modify it under the terms
-*  of the GNU Lesser General Public License as published by the Free Software Found-
-*  ation, either version 3 of the License, or (at your option) any later version.
-*
-*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-*  PURPOSE.  See the GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along with x360ce.
-*  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *  https://code.google.com/p/x360ce/
+ *
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2013 Robert Krawczyk
+ *
+ *  x360ce is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
+ *
+ *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with x360ce.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "stdafx.h"
 #include "globals.h"
@@ -132,9 +135,10 @@ void ReadConfig()
 
     g_bInitBeep = ini.GetBool("Options", "UseInitBeep",1);
 
+    bool local = ini.GetBool("Options", "LocalLog",0);
     bool log = ini.GetBool("Options", "Log",0);
     bool con = ini.GetBool("Options", "Console",0);
-    InitLog(log,con);
+    InitLog(log,con,local);
 
     // Simple Game Database support
     // InputHook
@@ -184,7 +188,7 @@ void ReadConfig()
                 if(pHooks->GetMask()) pHooks->Enable();
             }
         }
-        if(pHooks->CheckHook(iHook::HOOK_VIDPID))
+        if(pHooks->GetState(iHook::HOOK_VIDPID))
         {
             DWORD vid = ini.GetDword("InputHook", "FakeVID",0x045E);
             DWORD pid = ini.GetDword("InputHook", "FakePID",0x028E);
@@ -229,10 +233,10 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     device.dwUserIndex = idx;
 
     ini.GetString(section, "ProductGUID", buffer, 0);
-    Misc::StringToGUID(buffer,device.productid);
+    StringToGUID(buffer,device.productid);
 
     ini.GetString(section, "InstanceGUID", buffer, 0);
-    Misc::StringToGUID(buffer,device.instanceid);
+    StringToGUID(buffer,device.instanceid);
 
     device.useproduct = ini.GetBool(section, "UseProductGUID",0);
 
@@ -254,12 +258,12 @@ void ReadPadConfig(DWORD idx, Ini &ini)
     else return;
 
 
-    device.axistodpad = ini.GetBool(section, "AxisToDPad",0); 
+    device.axistodpad = ini.GetBool(section, "AxisToDPad",0);
     device.triggerdeadzone = ini.GetLong(section, "TriggerDeadzone",0);
     device.gamepadtype = static_cast<BYTE>(ini.GetLong(section, "ControllerType",1));;
     device.a2ddeadzone = static_cast<INT>(ini.GetLong(section, "AxisToDPadDeadZone",0));
     device.a2doffset = static_cast<INT>(ini.GetLong(section, "AxisToDPadOffset",0));
- 
+
 
     // FFB
     device.useforce = ini.GetBool(section, "UseForceFeedback",0);
@@ -307,7 +311,7 @@ void ReadPadConfig(DWORD idx, Ini &ini)
 
         // Anti DeadZones
         SHORT tmp = static_cast<SHORT>(ini.GetLong(section, axisADZNames[i], 0));
-        device.antideadzone[i] =  static_cast<SHORT>(((Misc::clamp))(tmp,0,32767));
+        device.antideadzone[i] =  static_cast<SHORT>(((clamp))(tmp,0,32767));
 
         // Linears
         device.axislinear[i] = static_cast<SHORT>(ini.GetLong(section, axisLNames[i], 0));
