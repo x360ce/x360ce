@@ -1,18 +1,21 @@
 /*  x360ce - XBOX360 Controller Emulator
-*  Copyright (C) 2002-2010 Racer_S
-*  Copyright (C) 2010-2013 Robert Krawczyk
-*
-*  x360ce is free software: you can redistribute it and/or modify it under the terms
-*  of the GNU Lesser General Public License as published by the Free Software Found-
-*  ation, either version 3 of the License, or (at your option) any later version.
-*
-*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-*  PURPOSE.  See the GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along with x360ce.
-*  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *  https://code.google.com/p/x360ce/
+ *
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2013 Robert Krawczyk
+ *
+ *  x360ce is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
+ *
+ *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with x360ce.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "stdafx.h"
 #include "globals.h"
@@ -44,12 +47,12 @@ void LoadXInputDLL()
     WCHAR buffer[MAX_PATH];
 
     GetSystemDirectoryW(sysdir,MAX_PATH);
-    PathCombineW(buffer,sysdir,Misc::GetFileNameW(hThis));
+    PathCombineW(buffer,sysdir,ModuleFileNameW(hThis));
 
     bool bHookLL = false;
     if(pHooks)
     {
-        bHookLL = pHooks->CheckHook(iHook::HOOK_LL);
+        bHookLL = pHooks->GetState(iHook::HOOK_LL);
         if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
     }
 
@@ -92,7 +95,7 @@ VOID ExitInstance()
         SAFE_DELETE(pHooks);
         if(hNative)
         {
-            PrintLog(LOG_CORE,"Unloading %s",Misc::GetFilePathA(hNative));
+            PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative));
             FreeLibrary(hNative);
             hNative = NULL;
         }
@@ -116,7 +119,7 @@ VOID InitInstance(HINSTANCE instance)
     hThis = instance;
     startThreadId = GetCurrentThreadId();
     startProcessId = GetCurrentProcessId();
-    exename = Misc::GetFileNameA();
+    exename = ModuleFileNameA();
 
     pHooks = new iHook(instance);
     ReadConfig();

@@ -1,18 +1,21 @@
 /*  x360ce - XBOX360 Controller Emulator
-*  Copyright (C) 2002-2010 Racer_S
-*  Copyright (C) 2010-2011 Robert Krawczyk
-*
-*  x360ce is free software: you can redistribute it and/or modify it under the terms
-*  of the GNU Lesser General Public License as published by the Free Software Found-
-*  ation, either version 3 of the License, or (at your option) any later version.
-*
-*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-*  PURPOSE.  See the GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along with x360ce.
-*  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *  https://code.google.com/p/x360ce/
+ *
+ *  Copyright (C) 2002-2010 Racer_S
+ *  Copyright (C) 2010-2013 Robert Krawczyk
+ *
+ *  x360ce is free software: you can redistribute it and/or modify it under the terms
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
+ *
+ *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ *  PURPOSE.  See the GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along with x360ce.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef _InputHook_H_
 #define _InputHook_H_
@@ -124,14 +127,9 @@ public:
         m_hookmask &= ~flag;
     }
 
-    inline const bool CheckHook(const DWORD flag) const
+    inline const bool GetState(const DWORD flag = HOOK_NONE) const
     {
         return (m_hookmask & (flag | HOOK_ENABLE)) == (flag | HOOK_ENABLE);
-    }
-
-    inline const bool GetState() const
-    {
-        return (m_hookmask & HOOK_ENABLE) == HOOK_ENABLE;
     }
 
     inline DWORD GetMask()
@@ -192,19 +190,19 @@ public:
 
         MH_Initialize();
 
-        if(CheckHook(HOOK_LL))
+        if(GetState(HOOK_LL))
             HookLL();
 
-        if(CheckHook(HOOK_COM))
+        if(GetState(HOOK_COM))
             HookCOM();
 
-        if(CheckHook(HOOK_DI))
+        if(GetState(HOOK_DI))
             HookDI();
 
-        if(CheckHook(HOOK_SA))
+        if(GetState(HOOK_SA))
             HookSA();
 
-        if(CheckHook(HOOK_WT))
+        if(GetState(HOOK_WT))
             HookWT();
 
         Mutex().Unlock();

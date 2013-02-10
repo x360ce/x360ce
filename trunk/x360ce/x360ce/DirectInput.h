@@ -1,10 +1,13 @@
 /*  x360ce - XBOX360 Controller Emulator
+ *
+ *  https://code.google.com/p/x360ce/
+ *
  *  Copyright (C) 2002-2010 Racer_S
  *  Copyright (C) 2010-2013 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
  *
  *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -86,7 +89,6 @@ public:
 class DInputDevice
 {
 public:
-
     static CriticalSection& Mutex()
     {
         static CriticalSection mutex;
@@ -109,10 +111,7 @@ public:
         axislinear(),
         gamepadtype(1),
         swapmotor(false),
-        connected(false),
-        initialized(false),
         passthrough(true),
-        fail(false),
         axistodpad(false),
         useproduct(false),
         useforce(false)
@@ -126,10 +125,10 @@ public:
 
         //check for broken ffd
         bool brokenffd = false;
-        if(GetModuleHandle(L"tmffbdrv.dll")) brokenffd = true;
+        if(GetModuleHandleA("tmffbdrv.dll")) brokenffd = true;
         //causes exception in tmffbdrv.dll (Thrustmaster FFB driver)
         //works fine with xiffd.dll (Mori's FFB driver for XInput)
-        if(device && !brokenffd)
+        if(device && brokenffd == false)
         {
             device->SendForceFeedbackCommand(DISFFC_RESET);
             device->Release();
@@ -152,10 +151,7 @@ public:
     SHORT axislinear[4];
     BYTE gamepadtype;
     bool swapmotor;
-    bool connected;
-    bool initialized;
     bool passthrough;
-    bool fail;
     bool axistodpad;
     bool useproduct;
     bool useforce;

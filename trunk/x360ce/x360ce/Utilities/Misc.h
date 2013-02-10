@@ -1,10 +1,13 @@
 /*  x360ce - XBOX360 Controller Emulator
+ *
+ *  https://code.google.com/p/x360ce/
+ *
  *  Copyright (C) 2002-2010 Racer_S
  *  Copyright (C) 2010-2013 Robert Krawczyk
  *
  *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
+ *  of the GNU Lesser General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or any later version.
  *
  *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
  *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -19,35 +22,48 @@
 
 #include <Shlwapi.h>
 
-namespace Misc
-{
-
-inline char* GetFilePathA(HMODULE hModule = NULL)
+inline char* ModuleFullPathA(HMODULE hModule = NULL)
 {
     static char strPath[MAX_PATH];
     GetModuleFileNameA(hModule, strPath, MAX_PATH);
     return strPath;
 }
 
-inline char* GetFileNameA(HMODULE hModule = NULL)
+inline wchar_t* ModuleFullPathW(HMODULE hModule = NULL)
+{
+    static wchar_t strPath[MAX_PATH];
+    GetModuleFileNameW(hModule, strPath, MAX_PATH);
+    return strPath;
+}
+
+inline char* ModulePathA(HMODULE hModule = NULL)
+{
+    static char strPath[MAX_PATH];
+    GetModuleFileNameA(hModule, strPath, MAX_PATH);
+    PathRemoveFileSpecA(strPath);
+    return strPath;
+}
+
+inline wchar_t* ModulePathW(HMODULE hModule = NULL)
+{
+    static wchar_t strPath[MAX_PATH];
+    GetModuleFileNameW(hModule, strPath, MAX_PATH);
+    PathRemoveFileSpecW(strPath);
+    return strPath;
+}
+
+inline char* ModuleFileNameA(HMODULE hModule = NULL)
 {
     static char strPath[MAX_PATH];
     GetModuleFileNameA(hModule, strPath, MAX_PATH);
     return PathFindFileNameA(strPath);
 }
 
-inline wchar_t* GetFilePathW(HMODULE hModule = NULL)
+inline wchar_t* ModuleFileNameW(HMODULE hModule = NULL)
 {
     static wchar_t strPath[MAX_PATH];
-    GetModuleFileName(hModule, strPath, MAX_PATH);
-    return strPath;
-}
-
-inline wchar_t* GetFileNameW(HMODULE hModule = NULL)
-{
-    static wchar_t strPath[MAX_PATH];
-    GetModuleFileName(hModule, strPath, MAX_PATH);
-    return PathFindFileName(strPath);
+    GetModuleFileNameW(hModule, strPath, MAX_PATH);
+    return PathFindFileNameW(strPath);
 }
 
 inline LONG clamp(LONG val, LONG min, LONG max)
@@ -118,7 +134,6 @@ inline const std::wstring GUIDtoStringW(const GUID &g)
     swprintf_s(str,40,L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
                g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
     return str;
-}
 }
 
 #endif // _MISC_H
