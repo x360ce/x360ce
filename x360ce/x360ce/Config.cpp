@@ -25,6 +25,7 @@
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
+#include "version.h"
 
 extern iHook* pHooks;
 extern std::string exename;
@@ -132,6 +133,12 @@ void ReadConfig()
     // Read global options
     g_bDisable = ini.GetBool("Options", "Disable",0);
     if(g_bDisable) return;
+
+    DWORD ver = ini.GetDword("Options", "Version",0);
+    if(ver != SVN_REV)
+        MessageBoxA(NULL,"Configuration file version does not match x360ce version.\n"
+                    "Some options may not work until configuration file will be updated.\n"
+                    ,"x360ce - Warning", MB_ICONWARNING);
 
     g_bInitBeep = ini.GetBool("Options", "UseInitBeep",1);
 
