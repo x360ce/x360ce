@@ -474,7 +474,6 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
             PrintLog(LOG_HOOKDI,"%s","Product Name change:");
             PrintLog(LOG_HOOKDI,"\"%ls\"",TrueName);
             PrintLog(LOG_HOOKDI,"\"%ls\"",reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
-
         }
     }
 
