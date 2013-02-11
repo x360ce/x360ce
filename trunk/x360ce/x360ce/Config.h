@@ -132,7 +132,7 @@ static const WORD povIDs[4] =
 };
 
 void InitConfig(char* ininame);
-void ReadConfig();
+void ReadConfig(bool skip);
 void ReadPadConfig(DWORD idx, Ini &ini);
 
 #endif

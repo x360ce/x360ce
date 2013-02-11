@@ -126,7 +126,7 @@ DWORD ReadGameDatabase()
     return ini.GetDword(exename.c_str(), "HookMask",0);
 }
 
-void ReadConfig()
+void ReadConfig(bool skip)
 {
     Ini ini("x360ce.ini");
 
@@ -135,7 +135,7 @@ void ReadConfig()
     if(g_bDisable) return;
 
     DWORD ver = ini.GetDword("Options", "Version",0);
-    if(ver != SVN_REV)
+    if(ver != SVN_REV && skip == false)
         MessageBoxA(NULL,"Configuration file version does not match x360ce version.\n"
                     "Some options may not work until configuration file will be updated.\n"
                     ,"x360ce - Warning", MB_ICONWARNING);

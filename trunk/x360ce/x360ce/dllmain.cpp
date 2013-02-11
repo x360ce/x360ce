@@ -122,7 +122,7 @@ VOID InitInstance(HINSTANCE instance)
     exename = ModuleFileNameA();
 
     pHooks = new iHook(instance);
-    ReadConfig();
+    ReadConfig(false);
 
 #if SVN_MODS != 0
     PrintLog(LOG_CORE,"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
@@ -143,7 +143,7 @@ extern "C" VOID WINAPI reset()
     g_Devices.clear();
     g_Mappings.clear();
 
-    ReadConfig();
+    ReadConfig(true);
 }
 
 extern "C" BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
