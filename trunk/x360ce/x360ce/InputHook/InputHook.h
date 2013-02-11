@@ -105,16 +105,16 @@ public:
 
     static const DWORD HOOK_WT          = 0x01000000;
     static const DWORD HOOK_STOP        = 0x02000000;
-    static const DWORD HOOK_ENABLE      = 0x80000000;
+    static const DWORD HOOK_DISABLE     = 0x80000000;
 
     inline void Enable()
     {
-        m_hookmask |= HOOK_ENABLE;
+        m_hookmask &= ~HOOK_DISABLE; 
     }
 
     inline void Disable()
     {
-        m_hookmask &= ~HOOK_ENABLE;
+        m_hookmask |= HOOK_DISABLE;
     }
 
     inline void EnableHook(const DWORD flag)
@@ -129,7 +129,8 @@ public:
 
     inline const bool GetState(const DWORD flag = HOOK_NONE) const
     {
-        return (m_hookmask & (flag | HOOK_ENABLE)) == (flag | HOOK_ENABLE);
+        if (m_hookmask & HOOK_DISABLE || m_hookmask == HOOK_NONE) return false; 
+        return (m_hookmask & flag) == flag;
     }
 
     inline DWORD GetMask()
@@ -186,7 +187,7 @@ public:
 
         Mutex().Lock();
 
-        PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask & ~HOOK_ENABLE);
+        PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask);
 
         MH_Initialize();
 
