@@ -50,6 +50,10 @@ HookMask = 0x00000002
 Name = The Baconing
 HookMask = 0x00000003
 
+[x360ce.exe]
+Name = x360ce.App
+HookMask = 0x80000000
+
 [XComGame.exe]
 Name = XCOM Enemy Unknown
 HookMask = 0x00000002
