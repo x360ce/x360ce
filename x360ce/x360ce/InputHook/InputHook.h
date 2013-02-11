@@ -81,7 +81,7 @@ private:
     }
 public:
     iHook(HMODULE instance)
-        :m_hookmask(0)
+        :m_hookmask(0x80000000)
         ,m_fakepidvid(MAKELONG(0x045E,0x028E))
         ,m_mod(instance)
     {
@@ -207,7 +207,6 @@ public:
             HookWT();
 
         Mutex().Unlock();
-
     }
 
     void HookDICOM(REFIID riidltf, LPVOID *ppv);

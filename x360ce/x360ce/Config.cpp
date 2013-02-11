@@ -135,7 +135,7 @@ void ReadConfig(bool skip)
     if(g_bDisable) return;
 
     DWORD ver = ini.GetDword("Options", "Version",0);
-    if(ver != SVN_REV && skip == false)
+    if(ver != VERSION_CONFIG && skip == false)
         MessageBoxA(NULL,"Configuration file version does not match x360ce version.\n"
                     "Some options may not work until configuration file will be updated.\n"
                     ,"x360ce - Warning", MB_ICONWARNING);
