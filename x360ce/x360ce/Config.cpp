@@ -123,6 +123,12 @@ MappingType getMappingType(const char s)
 DWORD ReadGameDatabase()
 {
     Ini ini("x360ce.gdb");
+
+    if(ini.is_open())
+    {
+        PrintLog(LOG_CORE,"Using game database file:");
+        PrintLog(LOG_CORE,"%s", ini.GetFilename());
+    }
     return ini.GetDword(exename.c_str(), "HookMask",0);
 }
 
@@ -151,9 +157,9 @@ void ReadConfig(bool skip)
     // InputHook
     if(pHooks)
     {
-        bool overrride = ini.GetBool("InputHook", "Override",0);
+        bool override = ini.GetBool("InputHook", "Override",0);
         DWORD hookMask = ReadGameDatabase();
-        if(hookMask && overrride == false)
+        if(hookMask && override == false)
         {
             pHooks->SetMask(hookMask);
             pHooks->Enable();
