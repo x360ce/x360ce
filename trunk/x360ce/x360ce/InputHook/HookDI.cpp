@@ -102,19 +102,24 @@ BOOL FAR PASCAL HookEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext
                 //DIDEVICEINSTANCEA HookInst;
                 //memcpy(&HookInst,pInst,pInst->dwSize);
 
-                GUID guidProduct = { iHookThis->GetFakePIDVID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
-                HookInst.guidProduct = guidProduct;
+                if(iHookThis->GetState(iHook::HOOK_PIDVID))
+                {
+                    std::string strTrueguidProduct;
+                    std::string strHookguidProduct;
 
-                std::string strTrueguidProduct = GUIDtoStringA(pInst->guidProduct);
-                std::string strHookguidProduct = GUIDtoStringA(HookInst.guidProduct);
+                    strTrueguidProduct = GUIDtoStringA(HookInst.guidProduct);
+                    HookInst.guidProduct.Data1 = iHookThis->GetFakePIDVID();
+                    strHookguidProduct = GUIDtoStringA(HookInst.guidProduct);
 
-                PrintLog(LOG_HOOKDI,"%s","GUID change:");
-                PrintLog(LOG_HOOKDI,"%s",strTrueguidProduct.c_str());
-                PrintLog(LOG_HOOKDI,"%s",strHookguidProduct.c_str());
+                    PrintLog(LOG_HOOKDI,"%s","GUID change:");
+                    PrintLog(LOG_HOOKDI,"%s",strTrueguidProduct.c_str());
+                    PrintLog(LOG_HOOKDI,"%s",strHookguidProduct.c_str());
+                }
 
-                HookInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
-                HookInst.wUsage = 0x05;
-                HookInst.wUsagePage = 0x01;
+                // This should not be required
+                //HookInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
+                //HookInst.wUsage = 0x05;
+                //HookInst.wUsagePage = 0x01;
 
                 if(iHookThis->GetState(iHook::HOOK_NAME))
                 {
@@ -165,7 +170,6 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
 
     if(pInst && pInst->dwSize == sizeof(DIDEVICEINSTANCEW))
     {
-
         for(DWORD i = 0; i < iHookThis->GetHookCount(); i++)
         {
             iHookDevice &padconf = iHookThis->GetPadConfig(i);
@@ -175,22 +179,24 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
                 //DIDEVICEINSTANCEW HookInst;
                 //memcpy(&HookInst,pInst,pInst->dwSize);
 
-                GUID guidProduct = { iHookThis->GetFakePIDVID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
-                HookInst.guidProduct = guidProduct;
+                if(iHookThis->GetState(iHook::HOOK_PIDVID))
+                {
+                    std::wstring strTrueguidProduct;
+                    std::wstring strHookguidProduct;
 
-                std::wstring strTrueguidProduct;
-                std::wstring strHookguidProduct;
+                    strTrueguidProduct = GUIDtoStringW(HookInst.guidProduct);
+                    HookInst.guidProduct.Data1 = iHookThis->GetFakePIDVID();
+                    strHookguidProduct = GUIDtoStringW(HookInst.guidProduct);
 
-                strTrueguidProduct = GUIDtoStringW(pInst->guidProduct);
-                strHookguidProduct = GUIDtoStringW(HookInst.guidProduct);
+                    PrintLog(LOG_HOOKDI,"%s","GUID change:");
+                    PrintLog(LOG_HOOKDI,"%ls",strTrueguidProduct.c_str());
+                    PrintLog(LOG_HOOKDI,"%ls",strHookguidProduct.c_str());
+                }
 
-                PrintLog(LOG_HOOKDI,"%s","GUID change:");
-                PrintLog(LOG_HOOKDI,"%ls",strTrueguidProduct.c_str());
-                PrintLog(LOG_HOOKDI,"%ls",strHookguidProduct.c_str());
-
-                HookInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
-                HookInst.wUsage = 0x05;
-                HookInst.wUsagePage = 0x01;
+                // This should not be required
+                //HookInst.dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
+                //HookInst.wUsage = 0x05;
+                //HookInst.wUsagePage = 0x01;
 
                 if(iHookThis->GetState(iHook::HOOK_NAME))
                 {
@@ -264,7 +270,6 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
 
     if(pdidi)
     {
-
         // Fast return if keyboard or mouse
         if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD))
         {
@@ -283,24 +288,24 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
             iHookDevice &padconf = iHookThis->GetPadConfig(i);
             if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(), pdidi->guidProduct))
             {
+                if(iHookThis->GetState(iHook::HOOK_PIDVID))
+                {
+                    std::string strTrueguidProduct;
+                    std::string strHookguidProduct;
 
-                std::string strTrueguidProduct;
-                std::string strHookguidProduct;
+                    strTrueguidProduct = GUIDtoStringA(pdidi->guidProduct);
+                    pdidi->guidProduct.Data1 = iHookThis->GetFakePIDVID();
+                    strHookguidProduct = GUIDtoStringA(pdidi->guidProduct);
 
-                strTrueguidProduct = GUIDtoStringA(pdidi->guidProduct);
+                    PrintLog(LOG_HOOKDI,"%s","GUID change:");
+                    PrintLog(LOG_HOOKDI,"%s",strTrueguidProduct.c_str());
+                    PrintLog(LOG_HOOKDI,"%s",strHookguidProduct.c_str());
+                }
 
-                GUID guidProduct = { iHookThis->GetFakePIDVID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
-                pdidi->guidProduct = guidProduct;
-
-                strHookguidProduct = GUIDtoStringA(pdidi->guidProduct);
-
-                PrintLog(LOG_HOOKDI,"%s","GUID change:");
-                PrintLog(LOG_HOOKDI,"%s",strTrueguidProduct.c_str());
-                PrintLog(LOG_HOOKDI,"%s",strHookguidProduct.c_str());
-
-                pdidi->dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
-                pdidi->wUsage = 0x05;
-                pdidi->wUsagePage = 0x01;
+                // This should not be required
+                //pdidi->dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
+                //pdidi->wUsage = 0x05;
+                //pdidi->wUsagePage = 0x01;
 
                 if(iHookThis->GetState(iHook::HOOK_NAME))
                 {
@@ -340,7 +345,6 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
 
     if(pdidi)
     {
-
         // Fast return if keyboard or mouse
         if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD))
         {
@@ -359,23 +363,24 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
             iHookDevice &padconf = iHookThis->GetPadConfig(i);
             if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(), pdidi->guidProduct))
             {
-                std::wstring strTrueguidProduct;
-                std::wstring strHookguidProduct;
+                if(iHookThis->GetState(iHook::HOOK_PIDVID))
+                {
+                    std::wstring strTrueguidProduct;
+                    std::wstring strHookguidProduct;
 
-                strTrueguidProduct = GUIDtoStringW(pdidi->guidProduct);
+                    strTrueguidProduct = GUIDtoStringW(pdidi->guidProduct);
+                    pdidi->guidProduct.Data1 = iHookThis->GetFakePIDVID();
+                    strHookguidProduct = GUIDtoStringW(pdidi->guidProduct);
 
-                GUID guidProduct = { iHookThis->GetFakePIDVID(), 0x0000, 0x0000, {0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44} };
-                pdidi->guidProduct = guidProduct;
+                    PrintLog(LOG_HOOKDI,"%s","GUID change:");
+                    PrintLog(LOG_HOOKDI,"%ls",strTrueguidProduct.c_str());
+                    PrintLog(LOG_HOOKDI,"%ls",strHookguidProduct.c_str());
+                }
 
-                strHookguidProduct =  GUIDtoStringW(pdidi->guidProduct);
-
-                PrintLog(LOG_HOOKDI,"%s","GUID change:");
-                PrintLog(LOG_HOOKDI,"%ls",strTrueguidProduct.c_str());
-                PrintLog(LOG_HOOKDI,"%ls",strHookguidProduct.c_str());
-
-                pdidi->dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
-                pdidi->wUsage = 0x05;
-                pdidi->wUsagePage = 0x01;
+                // This should not be required
+                //pdidi->dwDevType = (MAKEWORD(DI8DEVTYPE_GAMEPAD, DI8DEVTYPEGAMEPAD_STANDARD) | DIDEVTYPE_HID); //66069 == 0x00010215
+                //pdidi->wUsage = 0x05;
+                //pdidi->wUsagePage = 0x01;
 
                 if(iHookThis->GetState(iHook::HOOK_NAME))
                 {
@@ -413,7 +418,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
 
     if(hr != NO_ERROR) return hr;
 
-    if(&rguidProp == &DIPROP_VIDPID)
+    if(iHookThis->GetState(iHook::HOOK_PIDVID) && &rguidProp == &DIPROP_VIDPID)
     {
         DWORD dwHookPIDVID = iHookThis->GetFakePIDVID();
         DWORD dwTruePIDVID = reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData;
@@ -424,18 +429,15 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA (LPDIRECTINPUTDEVICE8A This, REFGUID 
         PrintLog(LOG_HOOKDI,"%08X",reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
     }
 
-    if(iHookThis->GetState(iHook::HOOK_NAME))
+    if(iHookThis->GetState(iHook::HOOK_NAME) && &rguidProp == &DIPROP_PRODUCTNAME)
     {
-        if(&rguidProp == &DIPROP_PRODUCTNAME)
-        {
-            wchar_t TrueName[MAX_PATH];
-            wcscpy_s(TrueName,reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
+        wchar_t TrueName[MAX_PATH];
+        wcscpy_s(TrueName,reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
 
-            swprintf_s(reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz, L"%s", L"XBOX 360 For Windows (Controller)" );
-            PrintLog(LOG_HOOKDI,"%s","Product Name change:");
-            PrintLog(LOG_HOOKDI,"\"%ls\"",TrueName);
-            PrintLog(LOG_HOOKDI,"\"%ls\"",reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
-        }
+        swprintf_s(reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz, L"%s", L"XBOX 360 For Windows (Controller)" );
+        PrintLog(LOG_HOOKDI,"%s","Product Name change:");
+        PrintLog(LOG_HOOKDI,"\"%ls\"",TrueName);
+        PrintLog(LOG_HOOKDI,"\"%ls\"",reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
     }
 
     return hr;
@@ -452,7 +454,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
 
     if(hr != NO_ERROR) return hr;
 
-    if(&rguidProp == &DIPROP_VIDPID)
+    if(iHookThis->GetState(iHook::HOOK_PIDVID) && &rguidProp == &DIPROP_VIDPID)
     {
         DWORD dwHookPIDVID = iHookThis->GetFakePIDVID();
         DWORD dwTruePIDVID = reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData;
@@ -463,18 +465,15 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW (LPDIRECTINPUTDEVICE8W This, REFGUID 
         PrintLog(LOG_HOOKDI,"%08X",reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
     }
 
-    if(iHookThis->GetState(iHook::HOOK_NAME))
+    if(iHookThis->GetState(iHook::HOOK_NAME) && &rguidProp == &DIPROP_PRODUCTNAME)
     {
-        if(&rguidProp == &DIPROP_PRODUCTNAME)
-        {
-            wchar_t TrueName[MAX_PATH];
-            wcscpy_s(TrueName,reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
+        wchar_t TrueName[MAX_PATH];
+        wcscpy_s(TrueName,reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
 
-            swprintf_s(reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz, L"%s", L"XBOX 360 For Windows (Controller)" );
-            PrintLog(LOG_HOOKDI,"%s","Product Name change:");
-            PrintLog(LOG_HOOKDI,"\"%ls\"",TrueName);
-            PrintLog(LOG_HOOKDI,"\"%ls\"",reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
-        }
+        swprintf_s(reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz, L"%s", L"XBOX 360 For Windows (Controller)" );
+        PrintLog(LOG_HOOKDI,"%s","Product Name change:");
+        PrintLog(LOG_HOOKDI,"\"%ls\"",TrueName);
+        PrintLog(LOG_HOOKDI,"\"%ls\"",reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
     }
 
     return hr;

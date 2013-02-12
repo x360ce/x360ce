@@ -139,15 +139,15 @@ HRESULT STDMETHODCALLTYPE HookGet(
         for(WORD i = 0; i < iHookThis->GetHookCount(); i++)
         {
             iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
+            if(padconf.GetHookState() && padconf.GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
                 OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB\\" );
                 OLECHAR tempstr[MAX_PATH];
 
-                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_VIDPID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductVIDPID());
-                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_VIDPID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padconf.GetProductVIDPID());
+                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductPIDVID());
+                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padconf.GetProductPIDVID());
 
-                if( strUSB && dwHookVid && dwHookPid)
+                if(strUSB)
                 {
                     PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
@@ -160,7 +160,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
                 OLECHAR* strHID = wcsstr( pVal->bstrVal, L"HID\\" );
 
-                if( strHID && dwHookVid && dwHookPid )
+                if(strHID)
                 {
                     PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);

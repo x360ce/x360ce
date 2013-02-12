@@ -60,7 +60,7 @@ public:
         return m_instanceid;
     }
 
-    inline DWORD GetProductVIDPID()
+    inline DWORD GetProductPIDVID()
     {
         return m_productid.Data1;
     }
@@ -99,7 +99,7 @@ public:
     static const DWORD HOOK_LL          = 0x00000001;
     static const DWORD HOOK_COM         = 0x00000002;
     static const DWORD HOOK_DI          = 0x00000004;
-    static const DWORD HOOK_VIDPID      = 0x00000008;
+    static const DWORD HOOK_PIDVID      = 0x00000008;
     static const DWORD HOOK_NAME        = 0x00000010;
     static const DWORD HOOK_SA          = 0x00000020;
 
@@ -109,7 +109,7 @@ public:
 
     inline void Enable()
     {
-        m_hookmask &= ~HOOK_DISABLE; 
+        m_hookmask &= ~HOOK_DISABLE;
     }
 
     inline void Disable()
@@ -129,7 +129,7 @@ public:
 
     inline const bool GetState(const DWORD flag = HOOK_NONE) const
     {
-        if (m_hookmask & HOOK_DISABLE || m_hookmask == HOOK_NONE) return false; 
+        if (m_hookmask & HOOK_DISABLE || m_hookmask == HOOK_NONE) return false;
         return (m_hookmask & flag) == flag;
     }
 
