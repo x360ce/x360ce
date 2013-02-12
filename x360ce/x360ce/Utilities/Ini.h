@@ -63,7 +63,11 @@ private:
             SetLastPrefix(c);
             return c;
         }
-        else return 0;
+        else
+        {
+            SetLastPrefix(0);
+            return 0;
+        }
     }
 public:
     Ini(const char* filename)
