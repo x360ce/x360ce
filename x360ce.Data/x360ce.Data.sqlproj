@@ -163,24 +163,14 @@
     <Folder Include="Schema Objects\Database Level Objects\Storage\Full Text Catalogs\" />
     <Folder Include="Schema Objects\Database Level Objects\Storage\Partition Functions\" />
     <Folder Include="Schema Objects\Database Level Objects\Storage\Partition Schemes\" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
   </ItemGroup>
   <ItemGroup>
     <BuildContributorArgument Include="OutDir=$(OutDir)" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Permissions.sql" />
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Settings_DateCreated.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Settings_DateUpdated.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Settings_DateSelected.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Settings_IsEnabled.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Summaries_SummaryId.defconst.sql">
       <SubType>Code</SubType>
     </Build>
@@ -203,9 +193,6 @@
       <SubType>Code</SubType>
     </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\Indexes\IX_x360ce_Summaries_ProductGuid_FileName_FileProductName.index.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\PK_x360ce_Settings.pkey.sql">
       <SubType>Code</SubType>
     </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\PK_x360ce_Products.pkey.sql">
@@ -275,6 +262,10 @@
     </Build>
     <Build Include="Schema Objects\Schemas\dbo\Tables\x360ce_Vendors.table.sql">
       <SubType>Code</SubType>
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\x360ce_Programs.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>

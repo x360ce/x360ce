@@ -28,6 +28,20 @@ BEGIN
 	GROUP BY ProductGuid, ProductName
 
 	-----------------------------------------------------------
+	-- Insert missing programs if they don't exist.	
+	-----------------------------------------------------------
+
+	INSERT INTO [dbo].[x360ce_Programs] ([FileName], FileProductName)
+	SELECT t2.[FileName], t2.FileProductName
+	FROM (
+		SELECT t1.[FileName], t1.FileProductName
+		FROM inserted t1
+		LEFT JOIN  [dbo].[x360ce_Programs] s ON
+			t1.[FileName] = s.[FileName]
+		WHERE s.[FileName] is null) t2
+	GROUP BY [FileName], FileProductName
+
+	-----------------------------------------------------------
 	-- Create table for which stats must be recalculated.
 	-----------------------------------------------------------
 
