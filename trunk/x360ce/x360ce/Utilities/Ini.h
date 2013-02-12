@@ -23,7 +23,6 @@
 #include "globals.h"
 #include <Shlwapi.h>
 #include "Utilities\CriticalSection.h"
-#include <string.h>
 #include <Shlobj.h>
 
 class Ini
@@ -159,6 +158,16 @@ public:
     char GetLastPrefix()
     {
         return m_prefix;
+    }
+
+    bool is_open()
+    {
+        return !m_inifile.empty();
+    }
+
+    const char* GetFilename()
+    {
+        return m_inifile.c_str();
     }
 
 private:
