@@ -213,8 +213,10 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     {
         MappingType triggerType = mapping.Trigger[i].type;
 
-        if (triggerType == DIGITAL && ButtonPressed(mapping.Trigger[i].id,device))
-            *(targetTrigger[i]) = 255;
+        if (triggerType == DIGITAL)
+        {
+            if(ButtonPressed(mapping.Trigger[i].id-1,device))*(targetTrigger[i]) = 255;
+        }
         else
         {
             LONG *values;
