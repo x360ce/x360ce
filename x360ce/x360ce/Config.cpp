@@ -177,8 +177,8 @@ void ReadConfig(bool skip)
                 hookCheck = ini.GetBool("InputHook", "HookDI",0);
                 if(hookCheck) pHooks->EnableHook(iHook::HOOK_DI);
 
-                hookCheck = ini.GetBool("InputHook", "HookVIDPID",0);
-                if(hookCheck) pHooks->EnableHook(iHook::HOOK_VIDPID);
+                hookCheck = ini.GetBool("InputHook", "HookPIDVID",0);
+                if(hookCheck) pHooks->EnableHook(iHook::HOOK_PIDVID);
 
                 hookCheck = ini.GetBool("InputHook", "HookSA",0);
                 if(hookCheck) pHooks->EnableHook(iHook::HOOK_SA);
@@ -195,7 +195,7 @@ void ReadConfig(bool skip)
                 if(pHooks->GetMask()) pHooks->Enable();
             }
         }
-        if(pHooks->GetState(iHook::HOOK_VIDPID))
+        if(pHooks->GetState(iHook::HOOK_PIDVID))
         {
             DWORD vid = ini.GetDword("InputHook", "FakeVID",0x045E);
             DWORD pid = ini.GetDword("InputHook", "FakePID",0x028E);

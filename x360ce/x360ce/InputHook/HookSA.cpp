@@ -69,15 +69,15 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
         for(WORD i = 0; i < iHookThis->GetHookCount(); i++)
         {
             iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && padconf.GetProductVIDPID() == (DWORD)MAKELONG(dwVid,dwPid))
+            if(padconf.GetHookState() && padconf.GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
                 wchar_t* strUSB = wcsstr( DeviceInstanceId, L"USB\\" );
                 wchar_t tempstr[MAX_PATH];
 
-                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_VIDPID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductVIDPID());
-                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_VIDPID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padconf.GetProductVIDPID());
+                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductPIDVID());
+                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padconf.GetProductPIDVID());
 
-                if( strUSB && dwHookVid && dwHookPid)
+                if(strUSB)
                 {
                     wchar_t* p = wcsrchr(DeviceInstanceId,L'\\');
                     swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
@@ -103,7 +103,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
 
                 wchar_t* strHID = wcsstr( DeviceInstanceId, L"HID\\" );
 
-                if( strHID && dwHookVid && dwHookPid )
+                if(strHID)
                 {
                     wchar_t* p = wcsrchr(DeviceInstanceId,L'\\');
                     swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
