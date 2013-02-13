@@ -631,25 +631,30 @@ namespace x360ce.App
 			UpdateTimer.Start();
 		}
 
+
+	
 		Version _dllVersion;
 		Version dllVersion
 		{
 			get
 			{
 				if (_dllVersion != null) return _dllVersion;
-				_dllVersion = GetDllVersion(dllFile);
+				bool byMicrosoft;
+				_dllVersion = GetDllVersion(dllFile, out byMicrosoft);
 				return _dllVersion;
 			}
 			set { _dllVersion = value; }
 		}
 
 
-		private Version GetDllVersion(string fileName)
+		private Version GetDllVersion(string fileName, out bool byMicrosoft)
 		{
 			var dllInfo = new System.IO.FileInfo(fileName);
+			byMicrosoft = false;
 			if (dllInfo.Exists)
 			{
 				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
+				byMicrosoft = !string.IsNullOrEmpty(vi.CompanyName) && vi.CompanyName.Contains("Microsoft");
 				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			}
 			return new Version(0, 0, 0, 0);
@@ -674,7 +679,7 @@ namespace x360ce.App
 			sr.Close();
 			sw.Close();
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tempFile);
-			var v = vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion);
+			var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			System.IO.File.Delete(tempFile);
 			return v;
 		}
@@ -686,8 +691,9 @@ namespace x360ce.App
 			var dllInfo = new System.IO.FileInfo(dllFile);
 			if (dllInfo.Exists)
 			{
-				dllVersion = GetDllVersion(dllInfo.FullName);
-				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString();
+				bool byMicrosoft;
+				dllVersion = GetDllVersion(dllInfo.FullName, out byMicrosoft);
+				StatusDllLabel.Text = dllFile + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
 				// If fast reload od settings is supported then...
 				if (UnsafeNativeMethods.IsResetSupported)
 				{
