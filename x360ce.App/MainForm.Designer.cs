@@ -59,8 +59,8 @@ namespace x360ce.App
 			this.FakeApiGroupBox = new System.Windows.Forms.GroupBox();
 			this.FakeModeLabel = new System.Windows.Forms.Label();
 			this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
+			this.ProgramsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsDatabaseTabPage = new System.Windows.Forms.TabPage();
-			this.onlineUserControl1 = new x360ce.App.Controls.InternetUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -74,12 +74,14 @@ namespace x360ce.App
 			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.TopPanel = new System.Windows.Forms.Panel();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
 			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
 			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
 			this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.onlineUserControl1 = new x360ce.App.Controls.OnlineUserControl();
+			this.programsControl1 = new x360ce.App.Controls.ProgramsControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
@@ -87,6 +89,7 @@ namespace x360ce.App
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
 			this.FakeApiGroupBox.SuspendLayout();
+			this.ProgramsTabPage.SuspendLayout();
 			this.SettingsDatabaseTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
 			this.MainStatusStrip.SuspendLayout();
@@ -105,6 +108,7 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.Pad3TabPage);
 			this.MainTabControl.Controls.Add(this.Pad4TabPage);
 			this.MainTabControl.Controls.Add(this.OptionsTabPage);
+			this.MainTabControl.Controls.Add(this.ProgramsTabPage);
 			this.MainTabControl.Controls.Add(this.SettingsDatabaseTabPage);
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
@@ -384,6 +388,17 @@ namespace x360ce.App
 			this.FakeModeComboBox.Size = new System.Drawing.Size(159, 21);
 			this.FakeModeComboBox.TabIndex = 0;
 			// 
+			// ProgramsTabPage
+			// 
+			this.ProgramsTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.ProgramsTabPage.Controls.Add(this.programsControl1);
+			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 23);
+			this.ProgramsTabPage.Name = "ProgramsTabPage";
+			this.ProgramsTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.ProgramsTabPage.Size = new System.Drawing.Size(632, 469);
+			this.ProgramsTabPage.TabIndex = 2;
+			this.ProgramsTabPage.Text = "Programs";
+			// 
 			// SettingsDatabaseTabPage
 			// 
 			this.SettingsDatabaseTabPage.Controls.Add(this.onlineUserControl1);
@@ -393,14 +408,6 @@ namespace x360ce.App
 			this.SettingsDatabaseTabPage.Size = new System.Drawing.Size(632, 469);
 			this.SettingsDatabaseTabPage.TabIndex = 1;
 			this.SettingsDatabaseTabPage.Text = "Settings Database";
-			// 
-			// onlineUserControl1
-			// 
-			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
-			this.onlineUserControl1.Name = "onlineUserControl1";
-			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
-			this.onlineUserControl1.TabIndex = 0;
 			// 
 			// HelpTabPage
 			// 
@@ -517,22 +524,6 @@ namespace x360ce.App
 			this.TopPanel.Size = new System.Drawing.Size(650, 64);
 			this.TopPanel.TabIndex = 3;
 			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
-			// 
 			// HelpBodyLabel
 			// 
 			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -579,6 +570,38 @@ namespace x360ce.App
 			// 
 			this.LoadinngCircleTimeout.Tick += new System.EventHandler(this.LoadinngCircleTimeout_Tick);
 			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 9;
+			// 
+			// onlineUserControl1
+			// 
+			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
+			this.onlineUserControl1.Name = "onlineUserControl1";
+			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
+			this.onlineUserControl1.TabIndex = 0;
+			// 
+			// programsControl1
+			// 
+			this.programsControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.programsControl1.Location = new System.Drawing.Point(3, 3);
+			this.programsControl1.Name = "programsControl1";
+			this.programsControl1.Size = new System.Drawing.Size(626, 463);
+			this.programsControl1.TabIndex = 1;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -607,6 +630,7 @@ namespace x360ce.App
 			this.InternetGroupBox.PerformLayout();
 			this.FakeApiGroupBox.ResumeLayout(false);
 			this.FakeApiGroupBox.PerformLayout();
+			this.ProgramsTabPage.ResumeLayout(false);
 			this.SettingsDatabaseTabPage.ResumeLayout(false);
 			this.HelpTabPage.ResumeLayout(false);
 			this.MainStatusStrip.ResumeLayout(false);
@@ -663,11 +687,13 @@ namespace x360ce.App
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		private Timer LoadinngCircleTimeout;
 		public CheckBox InternetCheckBox;
-		public Controls.InternetUserControl onlineUserControl1;
+		public Controls.OnlineUserControl onlineUserControl1;
 		public CheckBox InternetAutoloadCheckBox;
 		public TabControl MainTabControl;
 		private GroupBox OperationGroupBox;
 		public CheckBox AllowOnlyOneCopyCheckBox;
+		private TabPage ProgramsTabPage;
+		private Controls.ProgramsControl programsControl1;
 
 	}
 }

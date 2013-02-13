@@ -11,9 +11,9 @@ using x360ce.App.com.x360ce.localhost;
 
 namespace x360ce.App.Controls
 {
-	public partial class InternetUserControl : UserControl
+	public partial class OnlineUserControl : UserControl
 	{
-		public InternetUserControl()
+		public OnlineUserControl()
 		{
 			InitializeComponent();
 			_Settings = new SortableBindingList<Setting>();

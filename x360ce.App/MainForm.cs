@@ -510,7 +510,7 @@ namespace x360ce.App
 						|| di.DeviceType == DeviceType.Flight
 						|| di.DeviceType == DeviceType.Gamepad
 						|| di.DeviceType == DeviceType.Joystick
-						|| di.DeviceType == DeviceType.FirstPerson 
+						|| di.DeviceType == DeviceType.FirstPerson
 					) instances.Add(di);
 				}
 				// Dispose from previous list of devices.
@@ -650,9 +650,9 @@ namespace x360ce.App
 			if (dllInfo.Exists)
 			{
 				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				return vi.FileVersion == null ? new Version("0.0.0.0") : new Version(vi.FileVersion.Replace(',', '.'));
+				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			}
-			return new Version("0.0.0.0");
+			return new Version(0, 0, 0, 0);
 		}
 
 		Version GetEmbeddedDllVersion()

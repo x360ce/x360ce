@@ -144,6 +144,7 @@
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\HookMask.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
@@ -206,6 +207,12 @@
     </Compile>
     <Compile Include="Controls\PadControl.Designer.cs">
       <DependentUpon>PadControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProgramsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ProgramsControl.Designer.cs">
+      <DependentUpon>ProgramsControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Microsoft\Xna\Framework\Design\FieldPropertyDescriptor.cs">
@@ -328,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ProgramsControl.resx">
+      <DependentUpon>ProgramsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Microsoft\Xna\Framework\FrameworkResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
