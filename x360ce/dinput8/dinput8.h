@@ -19,16 +19,11 @@
 
 #include <windows.h>
 
-typedef HRESULT (WINAPI* DirectInput8Create_t)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
-typedef HRESULT (WINAPI* DllCanUnloadNow_t)(void);
-typedef HRESULT (WINAPI* DllGetClassObject_t)(_In_ REFCLSID rclsid, _In_ REFIID riid, _Out_ LPVOID FAR* ppv);
-typedef HRESULT (WINAPI* DllRegisterServer_t)(void);
-typedef HRESULT (WINAPI* DllUnregisterServer_t)(void);
+extern HINSTANCE hThis;
+extern HINSTANCE hXInput;
+extern HINSTANCE hDInput;
 
-extern DirectInput8Create_t hDirectInput8Create ;
-extern DllCanUnloadNow_t hDllCanUnloadNow;
-extern DllGetClassObject_t hDllGetClassObject;
-extern DllRegisterServer_t hDllRegisterServer;
-extern DllUnregisterServer_t hDllUnregisterServer;
+extern void LoadXinputDLL();
+extern void LoadDInputDll();
 
 #endif

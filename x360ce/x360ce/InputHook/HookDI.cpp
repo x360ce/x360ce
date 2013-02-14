@@ -495,10 +495,10 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
         LPDIRECTINPUTDEVICE8A &ref = *lplpDirectInputDevice;
         if(ref->lpVtbl->GetDeviceInfo)
         {
-            PrintLog(LOG_HOOKDI,"Hooking GetDeviceInfoA");
+
             hGetDeviceInfoA = ref->lpVtbl->GetDeviceInfo;
             MH_CreateHook(hGetDeviceInfoA,HookGetDeviceInfoA,reinterpret_cast<void**>(&oGetDeviceInfoA));
-            MH_EnableHook(hGetDeviceInfoA);
+            if(MH_EnableHook(hGetDeviceInfoA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking GetDeviceInfoA");
         }
 
         if(ref->lpVtbl->GetProperty)
@@ -506,7 +506,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA (LPDIRECTINPUT8A This, REFGUID rguid
             PrintLog(LOG_HOOKDI,"Hooking GetPropertyA");
             hGetPropertyA = ref->lpVtbl->GetProperty;
             MH_CreateHook(hGetPropertyA,HookGetPropertyA,reinterpret_cast<void**>(&oGetPropertyA));
-            MH_EnableHook(hGetPropertyA);
+            if(MH_EnableHook(hGetPropertyA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking GetPropertyA");
         }
     }
 
@@ -529,18 +529,16 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW (LPDIRECTINPUT8W This, REFGUID rguid
         LPDIRECTINPUTDEVICE8W &ref = *lplpDirectInputDevice;
         if(ref->lpVtbl->GetDeviceInfo)
         {
-            PrintLog(LOG_HOOKDI,"Hooking GetDeviceInfoW");
             hGetDeviceInfoW = ref->lpVtbl->GetDeviceInfo;
             MH_CreateHook(hGetDeviceInfoW,HookGetDeviceInfoW,reinterpret_cast<void**>(&oGetDeviceInfoW));
-            MH_EnableHook(hGetDeviceInfoW);
+            if(MH_EnableHook(hGetDeviceInfoW) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking GetDeviceInfoW");
         }
 
         if(ref->lpVtbl->GetProperty)
         {
-            PrintLog(LOG_HOOKDI,"Hooking GetPropertyW");
             hGetPropertyW = ref->lpVtbl->GetProperty;
             MH_CreateHook(hGetPropertyW,HookGetPropertyW,reinterpret_cast<void**>(&oGetPropertyW));
-            MH_EnableHook(hGetPropertyW);
+            if(MH_EnableHook(hGetPropertyW) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking GetPropertyW");
         }
     }
 
@@ -563,17 +561,16 @@ void iHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
             PrintLog(LOG_HOOKDI,"DirectInput8Create - ANSI interface");
             if(pDIA->lpVtbl->CreateDevice)
             {
-                PrintLog(LOG_HOOKDI,"Hooking CreateDeviceA");
                 hCreateDeviceA = pDIA->lpVtbl->CreateDevice;
                 MH_CreateHook(hCreateDeviceA,HookCreateDeviceA,reinterpret_cast<void**>(&oCreateDeviceA));
-                MH_EnableHook(hCreateDeviceA);
+                if(MH_EnableHook(hCreateDeviceA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking CreateDeviceA");
             }
             if(pDIA->lpVtbl->EnumDevices)
             {
-                PrintLog(LOG_HOOKDI,"Hooking EnumDevicesA");
+
                 hEnumDevicesA = pDIA->lpVtbl->EnumDevices;
                 MH_CreateHook(hEnumDevicesA,HookEnumDevicesA,reinterpret_cast<void**>(&oEnumDevicesA));
-                MH_EnableHook(hEnumDevicesA);
+                if(MH_EnableHook(hEnumDevicesA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking EnumDevicesA");
             }
         }
     }
@@ -587,17 +584,15 @@ void iHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
             PrintLog(LOG_HOOKDI,"DirectInput8Create - UNICODE interface");
             if(pDIW->lpVtbl->CreateDevice)
             {
-                PrintLog(LOG_HOOKDI,"Hooking CreateDeviceW");
                 hCreateDeviceW = pDIW->lpVtbl->CreateDevice;
                 MH_CreateHook(hCreateDeviceW,HookCreateDeviceW,reinterpret_cast<void**>(&oCreateDeviceW));
-                MH_EnableHook(hCreateDeviceW);
+                if(MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking CreateDeviceW");
             }
             if(pDIW->lpVtbl->EnumDevices)
             {
-                PrintLog(LOG_HOOKDI,"Hooking EnumDevicesW");
                 hEnumDevicesW = pDIW->lpVtbl->EnumDevices;
                 MH_CreateHook(hEnumDevicesW,HookEnumDevicesW,reinterpret_cast<void**>(&oEnumDevicesW));
-                MH_EnableHook(hEnumDevicesW);
+                if(MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking EnumDevicesW");
             }
         }
     }
@@ -621,17 +616,15 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
             PrintLog(LOG_HOOKDI,"DirectInput8Create - ANSI interface");
             if(pDIA->lpVtbl->CreateDevice)
             {
-                PrintLog(LOG_HOOKDI,"Hooking CreateDeviceA");
                 hCreateDeviceA = pDIA->lpVtbl->CreateDevice;
                 MH_CreateHook(hCreateDeviceA,HookCreateDeviceA,reinterpret_cast<void**>(&oCreateDeviceA));
-                MH_EnableHook(hCreateDeviceA);
+                if(MH_EnableHook(hCreateDeviceA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking CreateDeviceA");
             }
             if(pDIA->lpVtbl->EnumDevices)
             {
-                PrintLog(LOG_HOOKDI,"Hooking EnumDevicesA");
                 hEnumDevicesA = pDIA->lpVtbl->EnumDevices;
                 MH_CreateHook(hEnumDevicesA,HookEnumDevicesA,reinterpret_cast<void**>(&oEnumDevicesA));
-                MH_EnableHook(hEnumDevicesA);
+                if(MH_EnableHook(hEnumDevicesA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking EnumDevicesA");
             }
         }
     }
@@ -645,17 +638,15 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
             PrintLog(LOG_HOOKDI,"DirectInput8Create - UNICODE interface");
             if(pDIW->lpVtbl->CreateDevice)
             {
-                PrintLog(LOG_HOOKDI,"Hooking CreateDeviceW");
                 hCreateDeviceW = pDIW->lpVtbl->CreateDevice;
                 MH_CreateHook(hCreateDeviceW,HookCreateDeviceW,reinterpret_cast<void**>(&oCreateDeviceW));
-                MH_EnableHook(hCreateDeviceW);
+                if(MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking CreateDeviceW");
             }
             if(pDIW->lpVtbl->EnumDevices)
             {
-                PrintLog(LOG_HOOKDI,"Hooking EnumDevicesW");
                 hEnumDevicesW = pDIW->lpVtbl->EnumDevices;
                 MH_CreateHook(hEnumDevicesW,HookEnumDevicesW,reinterpret_cast<void**>(&oEnumDevicesW));
-                MH_EnableHook(hEnumDevicesW);
+                if(MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking EnumDevicesW");
             }
         }
     }
@@ -667,10 +658,10 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void iHook::HookDI()
 {
-    PrintLog(LOG_IHOOK,"Hooking DirectInput8Create");
+    PrintLog(LOG_IHOOK,"Hooking DirectInput");
     iHookThis = this;
 
     MH_CreateHook(DirectInput8Create,HookDirectInput8Create,reinterpret_cast<void**>(&oDirectInput8Create));
-    MH_EnableHook(DirectInput8Create);
+    if(MH_EnableHook(DirectInput8Create) == MH_OK) PrintLog(LOG_IHOOK,"Hooking DirectInput8Create");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

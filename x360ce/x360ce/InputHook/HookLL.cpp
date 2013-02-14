@@ -36,10 +36,10 @@ HMODULE WINAPI HookLoadLibraryW(LPCWSTR lpLibFileName)
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oLoadLibraryW(lpLibFileName);
     PrintLog(LOG_HOOKLL,"*LoadLibraryW*");
 
-    if(wcsstr(lpLibFileName,L"xinput9_1_0")) return iHookThis->GetEmulator();
-    if(wcsstr(lpLibFileName,L"xinput1_1")) return iHookThis->GetEmulator();
-    if(wcsstr(lpLibFileName,L"xinput1_2")) return iHookThis->GetEmulator();
     if(wcsstr(lpLibFileName,L"xinput1_3")) return iHookThis->GetEmulator();
+    if(wcsstr(lpLibFileName,L"xinput1_2")) return iHookThis->GetEmulator();
+    if(wcsstr(lpLibFileName,L"xinput1_1")) return iHookThis->GetEmulator();
+    if(wcsstr(lpLibFileName,L"xinput9_1_0")) return iHookThis->GetEmulator();
 
     return oLoadLibraryW(lpLibFileName);
 }
@@ -49,10 +49,10 @@ HMODULE WINAPI HookLoadLibraryA(LPCSTR lpLibFileName)
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oLoadLibraryA(lpLibFileName);
     PrintLog(LOG_HOOKLL,"*LoadLibraryA*");
 
-    if(strstr(lpLibFileName,"xinput9_1_0")) return iHookThis->GetEmulator();
-    if(strstr(lpLibFileName,"xinput1_1")) return iHookThis->GetEmulator();
-    if(strstr(lpLibFileName,"xinput1_2")) return iHookThis->GetEmulator();
     if(strstr(lpLibFileName,"xinput1_3")) return iHookThis->GetEmulator();
+    if(strstr(lpLibFileName,"xinput1_2")) return iHookThis->GetEmulator();
+    if(strstr(lpLibFileName,"xinput1_1")) return iHookThis->GetEmulator();
+    if(strstr(lpLibFileName,"xinput9_1_0")) return iHookThis->GetEmulator();
 
     return oLoadLibraryA(lpLibFileName);
 }
@@ -64,9 +64,9 @@ void iHook::HookLL()
     iHookThis = this;
 
     MH_CreateHook(LoadLibraryW,HookLoadLibraryW,reinterpret_cast<void**>(&oLoadLibraryW));
-    MH_EnableHook(LoadLibraryW);
+    if(MH_EnableHook(LoadLibraryW) == MH_OK) PrintLog(LOG_HOOKLL,"Hooking LoadLibraryW");
 
     MH_CreateHook(LoadLibraryA,HookLoadLibraryA,reinterpret_cast<void**>(&oLoadLibraryA));
-    MH_EnableHook(LoadLibraryA);
+    if(MH_EnableHook(LoadLibraryA) == MH_OK) PrintLog(LOG_HOOKLL,"Hooking LoadLibraryA");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
