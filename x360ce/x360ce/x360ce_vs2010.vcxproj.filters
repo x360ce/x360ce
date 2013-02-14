@@ -28,6 +28,12 @@
     <ClCompile Include="x360ce.cpp">
       <Filter>x360ce\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="InputHook\HookLL.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook\HookSA.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputHook\InputHook.h">
@@ -67,6 +73,9 @@
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="x360ce.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pstdint.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
