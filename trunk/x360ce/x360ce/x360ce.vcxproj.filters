@@ -75,6 +75,9 @@
     <ClInclude Include="x360ce.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pstdint.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="InputHook">
