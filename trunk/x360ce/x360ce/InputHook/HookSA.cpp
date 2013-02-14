@@ -140,6 +140,6 @@ void iHook::HookSA()
     iHookThis = this;
 
     MH_CreateHook(SetupDiGetDeviceInstanceIdW,HookSetupDiGetDeviceInstanceIdW,reinterpret_cast<void**>(&oSetupDiGetDeviceInstanceIdW));
-    MH_EnableHook(SetupDiGetDeviceInstanceIdW);
+    if(MH_EnableHook(SetupDiGetDeviceInstanceIdW) == MH_OK) PrintLog(LOG_IHOOK,"Hooking SetupDiGetDeviceInstanceId");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -18,48 +18,54 @@
 #include "dinput8.h"
 
 HINSTANCE hThis = NULL;
+HINSTANCE hXInput = NULL;
+HINSTANCE hDInput = NULL;
+
 CRITICAL_SECTION cs;
 
 #pragma comment(lib,"Shlwapi.lib")
 
-DirectInput8Create_t hDirectInput8Create = NULL;
-DllCanUnloadNow_t hDllCanUnloadNow = NULL;
-DllGetClassObject_t hDllGetClassObject = NULL;
-DllRegisterServer_t hDllRegisterServer = NULL;
-DllUnregisterServer_t hDllUnregisterServer = NULL;
-
 void LoadXinputDLL()
 {
+    EnterCriticalSection(&cs);
+
     wchar_t buffer[MAX_PATH];
     wchar_t strPath[MAX_PATH];
 
     GetModuleFileName(hThis, strPath, MAX_PATH);
     PathRemoveFileSpec(strPath);
 
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput9_1_0.dll");
-    LoadLibrary(buffer);
-
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_1.dll");
-    LoadLibrary(buffer);
+    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_3.dll");
+    hXInput = LoadLibrary(buffer);
+    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
 
     swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_2.dll");
-    LoadLibrary(buffer);
+    hXInput = LoadLibrary(buffer);
+    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
 
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_3.dll");
-    LoadLibrary(buffer);
+    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_1.dll");
+    hXInput = LoadLibrary(buffer);
+    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
+
+    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput9_1_0.dll");
+    hXInput = LoadLibrary(buffer);
+    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
+
+    LeaveCriticalSection(&cs);
 }
 
 void LoadDInputDll()
 {
+    EnterCriticalSection(&cs);
+
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
     GetSystemDirectory(sysdir,MAX_PATH);
     swprintf_s(buffer,L"%s\\%s",sysdir,L"dinput8.dll");
 
-    HINSTANCE hDInput = LoadLibrary(buffer);
+    hDInput = LoadLibrary(buffer);
 
-    //Debug
     if (!hDInput)
     {
         HRESULT hr = GetLastError();
@@ -68,11 +74,15 @@ void LoadDInputDll()
         ExitProcess(hr);
     }
 
-    hDirectInput8Create = (DirectInput8Create_t) GetProcAddress(hDInput,"DirectInput8Create");
-    hDllCanUnloadNow = (DllCanUnloadNow_t) GetProcAddress(hDInput,"DllCanUnloadNow");
-    hDllGetClassObject = (DllGetClassObject_t) GetProcAddress(hDInput,"DllGetClassObject");
-    hDllRegisterServer = (DllRegisterServer_t) GetProcAddress(hDInput,"DllRegisterServer");
-    hDllUnregisterServer = (DllUnregisterServer_t) GetProcAddress(hDInput,"DllUnregisterServer");
+    LeaveCriticalSection(&cs);
+}
+
+void ExitInstance()
+{
+    if(hDInput) FreeLibrary(hDInput);
+    if(hXInput) FreeLibrary(hXInput);
+
+    DeleteCriticalSection(&cs);
 }
 
 void InitInstance(HMODULE hMod)
@@ -88,13 +98,13 @@ void InitInstance(HMODULE hMod)
     }
 
     EnterCriticalSection(&cs);
-    LoadDInputDll();
-    LoadXinputDLL();
     hThis = hMod;
+
+    // TODO: Find better place for this if possible
+    LoadXinputDLL();
+
     LeaveCriticalSection(&cs);
 }
-
-
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -108,7 +118,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         InitInstance(hModule);
         break;
     case DLL_PROCESS_DETACH:
-        DeleteCriticalSection(&cs);
+        ExitInstance();
         break;
     }
     return TRUE;

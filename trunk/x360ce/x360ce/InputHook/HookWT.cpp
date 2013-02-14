@@ -43,9 +43,8 @@ LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID,LPVOID pWVTData)
 
 void iHook::HookWT()
 {
-    PrintLog(LOG_IHOOK,"Hooking WinVerifyTrust");
     iHookThis = this;
 
     MH_CreateHook(WinVerifyTrust,HookWinVerifyTrust,reinterpret_cast<void**>(&oWinVerifyTrust));
-    MH_EnableHook(WinVerifyTrust);
+    if(MH_EnableHook(WinVerifyTrust) == MH_OK) PrintLog(LOG_IHOOK,"Hooking WinVerifyTrust");
 }
