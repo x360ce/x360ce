@@ -325,7 +325,7 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
             else os <<  "Server";
         }
     } // Include service pack (if any) and build number.
-    if(wcslen(osvi.szCSDVersion) > 0)
+    if(osvi.szCSDVersion[0] != L'\0')
     {
         os << " " << osvi.szCSDVersion;
     }
