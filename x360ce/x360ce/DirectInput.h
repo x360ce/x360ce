@@ -33,25 +33,25 @@ class DInputFFB
 {
 public:
 
-    DInputFFB():
-        effect(),
-        eff(),
-        pf(),
-        cf(),
-        rf(),
-        xForce(0),
-        yForce(0),
-        oldXForce(0),
-        oldYForce(0),
-        axisffbcount(0),
-        oldMagnitude(0),
-        oldPeriod(0),
-        leftPeriod(0),
-        rightPeriod(0),
-        forcepercent(100),
-        type(0),
-        is_created(false),
-        ffbcaps()
+    DInputFFB()
+        :effect()
+        ,eff()
+        ,pf()
+        ,cf()
+        ,rf()
+        ,xForce(0)
+        ,yForce(0)
+        ,oldXForce(0)
+        ,oldYForce(0)
+        ,axisffbcount(0)
+        ,oldMagnitude(0)
+        ,oldPeriod(0)
+        ,leftPeriod(0)
+        ,rightPeriod(0)
+        ,forcepercent(100)
+        ,type(0)
+        ,is_created(false)
+        ,ffbcaps()
     {};
 
     virtual ~DInputFFB()
@@ -65,17 +65,17 @@ public:
     DIPERIODIC pf;
     DICONSTANTFORCE cf;
     DIRAMPFORCE rf;
-    LONG xForce;
-    LONG yForce;
-    LONG oldXForce;
-    LONG oldYForce;
-    DWORD axisffbcount;
-    DWORD oldMagnitude;
-    DWORD oldPeriod;
-    DWORD leftPeriod;
-    DWORD rightPeriod;
-    FLOAT forcepercent;
-    BYTE type;
+    int32_t xForce;
+    int32_t yForce;
+    int32_t oldXForce;
+    int32_t oldYForce;
+    uint32_t oldMagnitude;
+    uint32_t oldPeriod;
+    uint32_t leftPeriod;
+    uint32_t rightPeriod;
+    float forcepercent;
+    uint8_t axisffbcount;
+    uint8_t type;
     bool is_created;
 
     struct Caps
@@ -95,26 +95,26 @@ public:
         return mutex;
     }
 
-    DInputDevice():
-        device(NULL),
-        state(),
-        ff(),
-        productid(GUID_NULL),
-        instanceid(GUID_NULL),
-        dwUserIndex((DWORD)-1),
-        axiscount(0),
-        triggerdeadzone(0),
-        a2ddeadzone(0),
-        a2doffset(0),
-        axisdeadzone(),
-        antideadzone(),
-        axislinear(),
-        gamepadtype(1),
-        swapmotor(false),
-        passthrough(true),
-        axistodpad(false),
-        useproduct(false),
-        useforce(false)
+    DInputDevice()
+        :device(NULL)
+        ,state()
+        ,ff()
+        ,productid(GUID_NULL)
+        ,instanceid(GUID_NULL)
+        ,dwUserIndex((DWORD)-1)
+        ,axiscount(0)
+        ,triggerdz()
+        ,a2ddeadzone(0)
+        ,a2doffset(0)
+        ,axisdeadzone()
+        ,antideadzone()
+        ,axislinear()
+        ,gamepadtype(1)
+        ,swapmotor(false)
+        ,passthrough(true)
+        ,axistodpad(false)
+        ,useproduct(false)
+        ,useforce(false)
     {
         Mutex();
     }
@@ -141,15 +141,15 @@ public:
     DInputFFB ff;
     GUID productid;
     GUID instanceid;
-    DWORD dwUserIndex;
-    DWORD axiscount;
-    DWORD triggerdeadzone;
-    LONG a2ddeadzone;
-    LONG a2doffset;
-    SHORT axisdeadzone[4];
-    SHORT antideadzone[4];
-    SHORT axislinear[4];
-    BYTE gamepadtype;
+    uint32_t dwUserIndex;
+    uint32_t axiscount;
+    int32_t a2ddeadzone;
+    int32_t a2doffset;
+    int16_t axisdeadzone[4];
+    int16_t antideadzone[4];
+    int16_t axislinear[4];
+    uint8_t triggerdz[2];
+    uint8_t gamepadtype;
     bool swapmotor;
     bool passthrough;
     bool axistodpad;

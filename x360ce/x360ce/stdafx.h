@@ -58,3 +58,5 @@
 #include <map>
 
 #include <xinput.h>
+
+#include "pstdint.h"

@@ -35,7 +35,7 @@ private:
 
     char CheckPrefix(char* str)
     {
-        char c = (char) tolower(*str);
+        char c = static_cast<char>(tolower(*str));
 
         if (c == 'a')
         {
@@ -101,56 +101,77 @@ public:
         return mutex;
     }
 
-    DWORD GetString(const char* strFileSection, const char* strKey, char* strOutput, char* strDefault = 0)
+    uint32_t GetString(const char* strFileSection, const char* strKey, char* strOutput, char* strDefault = 0)
     {
         if(m_inifile.empty()) return 0;
 
         Mutex().Lock();
 
-        DWORD ret;
-        char* pStr;
-        ret = GetPrivateProfileStringA(strFileSection, strKey, strDefault, strOutput, MAX_PATH, m_inifile.c_str());
+        uint32_t ret = GetPrivateProfileStringA(strFileSection, strKey, strDefault, strOutput, MAX_PATH, m_inifile.c_str());
 
-        pStr = strchr(strOutput, L'#');
-        if (pStr) *pStr=L'\0';
-        pStr = strchr(strOutput, L';');
-        if (pStr) *pStr=L'\0';
+        if(strOutput)
+        {
+            char* pStr = strchr(strOutput, L'#');
+            if (pStr) *pStr=L'\0';
+
+            pStr = strchr(strOutput, L';');
+            if (pStr) *pStr=L'\0';
+        }
 
         Mutex().Unlock();
 
         return ret;
     }
 
-    long GetLong(const char* strFileSection, const char* strKey, INT iDefault = 0)
+    int32_t GetLong(const char* strFileSection, const char* strKey, int iDefault = 0)
     {
-        char tmp[MAX_PATH];
+        char out[MAX_PATH];
         char def[MAX_PATH];
-        DWORD ret;
 
         sprintf_s(def,MAX_PATH,"%d",iDefault);
-        ret = GetString(strFileSection,strKey,tmp,def);
-        if(ret)
+        if(GetString(strFileSection,strKey,out,def))
         {
-            if(CheckPrefix(tmp)) return strtol(tmp+1,NULL,0);
-            else return strtol(tmp,NULL,0);
+            if(CheckPrefix(out)) return strtol(out+1,NULL,0);
+            else return strtol(out,NULL,0);
         }
         return 0;
     }
 
-    DWORD GetDword(const char* strFileSection, const char* strKey, INT iDefault = 0)
+    int16_t GetShort(const char* strFileSection, const char* strKey, int iDefault = 0)
     {
-        char tmp[MAX_PATH];
+        return static_cast<short>(GetLong(strFileSection,strKey,iDefault));
+    }
+
+    int8_t GetSByte(const char* strFileSection, const char* strKey, int iDefault = 0)
+    {
+        return static_cast<int8_t>(GetLong(strFileSection,strKey,iDefault));
+    }
+
+    uint32_t GetDword(const char* strFileSection, const char* strKey, int iDefault = 0)
+    {
+        char out[MAX_PATH];
         char def[MAX_PATH];
-        DWORD ret;
 
         sprintf_s(def,MAX_PATH,"%d",iDefault);
-        ret = GetString(strFileSection,strKey,tmp,def);
-
-        if(ret) return strtoul(tmp,NULL,0);
+        if(GetString(strFileSection,strKey,out,def))
+        {
+            if(CheckPrefix(out)) return strtoul(out+1,NULL,0);
+            else return strtoul(out,NULL,0);
+        }
         return 0;
     }
 
-    bool GetBool(const char* strFileSection, const char* strKey, INT iDefault = 0)
+    uint16_t GetWord(const char* strFileSection, const char* strKey, int iDefault = 0)
+    {
+        return static_cast<unsigned short>(GetDword(strFileSection,strKey,iDefault));
+    }
+
+    uint8_t GetUByte(const char* strFileSection, const char* strKey, int iDefault = 0)
+    {
+        return static_cast<unsigned char>(GetDword(strFileSection,strKey,iDefault));
+    }
+
+    bool GetBool(const char* strFileSection, const char* strKey, int iDefault = 0)
     {
         return GetDword(strFileSection,strKey,iDefault) !=0;
     }

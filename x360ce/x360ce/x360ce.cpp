@@ -150,11 +150,11 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     }
 
     // --- Map POV to the D-pad ---
-    if (((int)mapping.DpadPOV >= 0) && !mapping.PovIsButton)
+    if (mapping.DpadPOV > 0 && mapping.PovIsButton == false)
     {
         //INT pov = POVState(mapping.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
-        int povdeg = device.state.rgdwPOV[mapping.DpadPOV];
+        int povdeg = device.state.rgdwPOV[mapping.DpadPOV-1];
         if(povdeg >= 0)
         {
             // Up-left, up, up-right, up (at 360 degrees)
@@ -174,7 +174,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                 xstate.Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
         }
     }
-    else if(((int)mapping.DpadPOV < 0) && mapping.PovIsButton)
+    else if(mapping.PovIsButton == true)
     {
         for (int i = 0; i < 4; ++i)
         {
@@ -215,7 +215,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
         if (triggerType == DIGITAL)
         {
-            if(ButtonPressed(mapping.Trigger[i].id-1,device))*(targetTrigger[i]) = 255;
+            if(ButtonPressed(mapping.Trigger[i].id,device))*(targetTrigger[i]) = 255;
         }
         else
         {
@@ -285,7 +285,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
             //v2 = (v + offset) / scaling;
             // Add deadzones
-            //*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+            //*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdz, 255);
 
             /////////////////////////////////////////////////////////////////////////////////////////
             if (triggerType == CBUT)
@@ -303,14 +303,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                 {
                     v2 = (offset-v) / scaling;
                     *(targetTrigger[0]) = 255;
-                    *(targetTrigger[1]) = 255 - (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                    *(targetTrigger[1]) = 255 - (BYTE) deadzone(v2, 0, 255, device.triggerdz[1], 255);
                 }
 
                 if (!ButtonPressed(mapping.Trigger[0].but,device)
                         && ButtonPressed(mapping.Trigger[1].but,device))
                 {
                     v2 = (offset+v) / scaling;
-                    *(targetTrigger[0]) = 255 - (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                    *(targetTrigger[0]) = 255 - (BYTE) deadzone(v2, 0, 255, device.triggerdz[0], 255);
                     *(targetTrigger[1]) = 255;
                 }
 
@@ -318,14 +318,14 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                         && !ButtonPressed(mapping.Trigger[1].but,device))
                 {
                     v2 = (offset+v) / scaling;
-                    *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                    *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdz[i], 255);
                 }
 
             }
             else
             {
                 v2 = (offset+v) / scaling;
-                *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdeadzone, 255);
+                *(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, device.triggerdz[i], 255);
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////
@@ -641,6 +641,24 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
         XINPUT_GAMEPAD_DPAD_DOWN,
         XINPUT_GAMEPAD_DPAD_LEFT,
         XINPUT_GAMEPAD_DPAD_RIGHT
+    };
+
+    static const uint16_t keyIDs[14] =
+    {
+        VK_PAD_A,
+        VK_PAD_B,
+        VK_PAD_X,
+        VK_PAD_Y,
+        VK_PAD_LSHOULDER,
+        VK_PAD_RSHOULDER,
+        VK_PAD_BACK,
+        VK_PAD_START,
+        VK_PAD_LTHUMB_PRESS,
+        VK_PAD_RTHUMB_PRESS,
+        VK_PAD_DPAD_UP,
+        VK_PAD_DPAD_DOWN,
+        VK_PAD_DPAD_LEFT,
+        VK_PAD_DPAD_RIGHT
     };
 
     for(int i = 0; i < 14; i++)
