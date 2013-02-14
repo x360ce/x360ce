@@ -139,7 +139,7 @@ public:
 
     int16_t GetShort(const char* strFileSection, const char* strKey, int iDefault = 0)
     {
-        return static_cast<short>(GetLong(strFileSection,strKey,iDefault));
+        return static_cast<int16_t>(GetLong(strFileSection,strKey,iDefault));
     }
 
     int8_t GetSByte(const char* strFileSection, const char* strKey, int iDefault = 0)
@@ -163,12 +163,12 @@ public:
 
     uint16_t GetWord(const char* strFileSection, const char* strKey, int iDefault = 0)
     {
-        return static_cast<unsigned short>(GetDword(strFileSection,strKey,iDefault));
+        return static_cast<uint16_t>(GetDword(strFileSection,strKey,iDefault));
     }
 
     uint8_t GetUByte(const char* strFileSection, const char* strKey, int iDefault = 0)
     {
-        return static_cast<unsigned char>(GetDword(strFileSection,strKey,iDefault));
+        return static_cast<uint8_t>(GetDword(strFileSection,strKey,iDefault));
     }
 
     bool GetBool(const char* strFileSection, const char* strKey, int iDefault = 0)
