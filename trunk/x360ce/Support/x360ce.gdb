@@ -2,6 +2,38 @@
 Name = Assassin's Creed Brotherhood
 HookMask = 0x00000002
 
+[ACBMP.exe]
+Name = Assassin's Creed Brotherhood Multiplayer
+HookMask = 0x00000002
+
+[ACRSP.exe]
+Name = Assassin's Creed Brotherhood
+HookMask = 0x00000002
+
+[ACRMP.exe]
+Name = Assassin's Creed Brotherhood Multiplayer
+HookMask = 0x00000002
+
+[AC3SP.exe]
+Name = Assassin's Creed 3
+HookMask = 0x00000002
+
+[AC3MP.exe]
+Name = Assassin's Creed 3 Multiplayer
+HookMask = 0x00000002
+
+[AssassinsCreed_Dx10.exe]
+Name = Assasin's Creed DX10
+HookMask = 0x00000014
+
+[AssassinsCreed_Dx9.exe]
+Name = Assasin's Creed DX10
+HookMask = 0x00000014
+
+[AssassinsCreedIIGame.exe]
+Name = Assasin's Creed II
+HookMask = 0x00000002
+
 [BeatHazard.exe]
 Name = Beat Hazard
 HookMask = 0x00000020
