@@ -24,11 +24,11 @@ HookMask = 0x00000002
 
 [AssassinsCreed_Dx10.exe]
 Name = Assasin's Creed DX10
-HookMask = 0x00000014
+HookMask = 0x000000E
 
 [AssassinsCreed_Dx9.exe]
 Name = Assasin's Creed DX10
-HookMask = 0x00000014
+HookMask = 0x0000000E
 
 [AssassinsCreedIIGame.exe]
 Name = Assasin's Creed II
