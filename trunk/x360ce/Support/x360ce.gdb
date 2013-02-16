@@ -70,6 +70,22 @@ HookMask = 0x00000002
 Name = Shank 2
 HookMask = 0x00000002
 
+[HAWX.exe]
+Name = Tom Clancy's H.A.W.X
+HookMask=0x0000000E
+
+[HAWX_dx10.exe]
+Name = Tom Clancy's H.A.W.X
+HookMask=0x0000000E
+
+[HAWX2.exe]
+Name = Tom Clancy's H.A.W.X 2
+HookMask=0x0000000E
+
+[HAWX2_DX11.exe]
+Name = Tom Clancy's H.A.W.X 2
+HookMask=0x0000000E
+
 [SFTK.exe]
 Name = Street Fighter X Tekken
 HookMask = 0x00000002
