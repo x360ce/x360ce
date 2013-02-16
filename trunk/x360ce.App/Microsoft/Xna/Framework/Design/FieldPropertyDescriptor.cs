@@ -5,7 +5,7 @@
 
     internal class FieldPropertyDescriptor : MemberPropertyDescriptor
     {
-        private FieldInfo _field;
+        FieldInfo _field;
 
         public FieldPropertyDescriptor(FieldInfo field) : base(field)
         {

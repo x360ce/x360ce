@@ -6,8 +6,8 @@
 	public static class GamePad
 	{
 		// Fields
-		private static bool[] _disconnected = new bool[4];
-		private static long[] _lastReadTime = new long[4];
+		static bool[] _disconnected = new bool[4];
+		static long[] _lastReadTime = new long[4];
 		internal const string XinputNativeDll = "xinput1_3.dll";
 
 		// Methods
@@ -56,7 +56,7 @@
 			return new GamePadState(ref pState, success, deadZoneMode);
 		}
 
-		private static void ResetThrottleState(PlayerIndex playerIndex, ErrorCodes result)
+		static void ResetThrottleState(PlayerIndex playerIndex, ErrorCodes result)
 		{
 			if ((playerIndex >= PlayerIndex.One) && (playerIndex <= PlayerIndex.Four))
 			{
@@ -98,7 +98,7 @@
 			return false;
 		}
 
-		private static bool ThrottleDisconnectedRetries(PlayerIndex playerIndex)
+		static bool ThrottleDisconnectedRetries(PlayerIndex playerIndex)
 		{
 			if (((playerIndex >= PlayerIndex.One) && (playerIndex <= PlayerIndex.Four)) && _disconnected[(int)playerIndex])
 			{

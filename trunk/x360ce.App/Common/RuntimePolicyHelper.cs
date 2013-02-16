@@ -13,7 +13,7 @@ namespace x360ce.App
 	public class RuntimePolicyHelper
 	{
 	
-		public static bool LegacyV2RuntimeEnabledSuccessfully { get; private set; }
+		public static bool LegacyV2RuntimeEnabledSuccessfully { get; set; }
 
 		static RuntimePolicyHelper()
 		{
@@ -34,7 +34,7 @@ namespace x360ce.App
 		[ComImport]
 		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 		[Guid("BD39D1D2-BA2F-486A-89B0-B4B0CB466891")]
-		private interface ICLRRuntimeInfo
+		interface ICLRRuntimeInfo
 		{
 			void xGetVersionString();
 			void xGetRuntimeDirectory();

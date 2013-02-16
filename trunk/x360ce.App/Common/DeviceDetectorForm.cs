@@ -30,7 +30,7 @@ namespace x360ce.App
 			InfoLabel.Text = e.ChangeType.ToString();
 		}
 
-		private DeviceDetector _Detector = null;
+		DeviceDetector _Detector = null;
 
 		/// <summary>
 		/// This function receives all the windows messages for this window (form).

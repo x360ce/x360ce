@@ -5,7 +5,7 @@
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			this.InfoLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -59,7 +59,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label InfoLabel;
+		System.Windows.Forms.Label InfoLabel;
 
 	}
 }

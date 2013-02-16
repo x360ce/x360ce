@@ -18,13 +18,13 @@ namespace x360ce.App
 			_VolumeInfo = volumeInfo;
 		}
 
-		private WM_DEVICECHANGE _ChangeType;
+		WM_DEVICECHANGE _ChangeType;
 		public WM_DEVICECHANGE ChangeType
 		{
 			get { return _ChangeType; }
 		}
 
-		private DEV_BROADCAST_VOLUME _VolumeInfo;
+		DEV_BROADCAST_VOLUME _VolumeInfo;
 		public DEV_BROADCAST_VOLUME VolumeInfo
 		{
 			get { return _VolumeInfo; }

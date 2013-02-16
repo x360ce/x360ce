@@ -60,7 +60,7 @@ namespace x360ce.App
 		public System.Timers.Timer SettingsTimer;
 		public System.Timers.Timer CleanStatusTimer;
 
-		private void MainForm_Load(object sender, EventArgs e)
+		void MainForm_Load(object sender, EventArgs e)
 		{
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
@@ -169,7 +169,7 @@ namespace x360ce.App
 			////XInput.ReLoadLibrary(cXinput3File);
 			////XInput.ReLoadLibrary(cXinput3File);
 			//// start capture events.
-			if (Win32.WinAPI.IsVista && Win32.WinAPI.IsElevated && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+			if (Win32.WinAPI.IsVista && Win32.WinAPI.IsElevated() && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 			////ReloadXInputLibrary();
 		}
 
@@ -267,7 +267,7 @@ namespace x360ce.App
 			//    AccessControlType.Allow);
 		}
 
-		private void MainForm_KeyDown(object sender, KeyEventArgs e)
+		void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
@@ -282,7 +282,7 @@ namespace x360ce.App
 			StatusTimerLabel.Text = "";
 		}
 
-		private void CleanStatusTimer_Elapsed(object sender, EventArgs e)
+		void CleanStatusTimer_Elapsed(object sender, EventArgs e)
 		{
 			StatusTimerLabel.Text = "";
 		}
@@ -365,19 +365,19 @@ namespace x360ce.App
 			SettingsTimer.Start();
 		}
 
-		private void Control_TextChanged(object sender, EventArgs e)
+		void Control_TextChanged(object sender, EventArgs e)
 		{
 			// Save setting and notify if vaue changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
-		private void Control_ValueChanged(object sender, EventArgs e)
+		void Control_ValueChanged(object sender, EventArgs e)
 		{
 			// Save setting and notify if vaue changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
-		private void Control_CheckedChanged(object sender, EventArgs e)
+		void Control_CheckedChanged(object sender, EventArgs e)
 		{
 			// Save setting and notify if vaue changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
@@ -393,7 +393,7 @@ namespace x360ce.App
 		#endregion
 
 
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
@@ -543,7 +543,7 @@ namespace x360ce.App
 			return instancesChanged;
 		}
 
-		private void SettingsTimer_Elapsed(object sender, EventArgs e)
+		void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
 			settingsChanged = true;
 			UpdateTimer.Start();
@@ -554,7 +554,7 @@ namespace x360ce.App
 
 		bool[] cleanPadStatus = new bool[4];
 
-		private void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			Program.TimerCount++;
 			if (!formLoaded) LoadForm();
@@ -632,7 +632,7 @@ namespace x360ce.App
 		}
 
 
-	
+
 		Version _dllVersion;
 		Version dllVersion
 		{
@@ -647,7 +647,7 @@ namespace x360ce.App
 		}
 
 
-		private Version GetDllVersion(string fileName, out bool byMicrosoft)
+		Version GetDllVersion(string fileName, out bool byMicrosoft)
 		{
 			var dllInfo = new System.IO.FileInfo(fileName);
 			byMicrosoft = false;
@@ -719,7 +719,7 @@ namespace x360ce.App
 
 		bool HelpInit = false;
 
-		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (MainTabControl.SelectedTab == HelpTabPage && !HelpInit)
 			{
@@ -746,14 +746,14 @@ namespace x360ce.App
 			UpdateHelpHeader();
 		}
 
-		private void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
+		void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			var cbx = (CheckBox)sender;
 			if (!cbx.Checked) Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 			else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
 
-		private void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
+		void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
 		}
@@ -852,7 +852,7 @@ namespace x360ce.App
 			}
 			// Set status labels.
 			StatusIsAdminLabel.Text = Win32.WinAPI.IsVista
-				? string.Format("Elevated: {0}", Win32.WinAPI.IsElevated)
+				? string.Format("Elevated: {0}", Win32.WinAPI.IsElevated())
 				: "";
 			StatusIniLabel.Text = SettingManager.IniFileName;
 			return true;
@@ -942,7 +942,7 @@ namespace x360ce.App
 		void Elevate()
 		{
 			// If this is Vista/7 and is not elevated then elevate.
-			if (x360ce.App.Win32.WinAPI.IsVista && !x360ce.App.Win32.WinAPI.IsElevated) x360ce.App.Win32.WinAPI.RunElevated();
+			if (x360ce.App.Win32.WinAPI.IsVista && !x360ce.App.Win32.WinAPI.IsElevated()) x360ce.App.Win32.WinAPI.RunElevated();
 		}
 
 		#endregion
@@ -973,7 +973,7 @@ namespace x360ce.App
 			}
 		}
 
-		private void LoadinngCircleTimeout_Tick(object sender, EventArgs e)
+		void LoadinngCircleTimeout_Tick(object sender, EventArgs e)
 		{
 			LoadinngCircleTimeout.Enabled = false;
 			BusyLoadingCircle.Active = false;
@@ -982,22 +982,22 @@ namespace x360ce.App
 
 		#endregion
 
-		private void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
+		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
 		}
 
-		private void InstallFilesXinput12CheckBox_CheckedChanged(object sender, EventArgs e)
+		void InstallFilesXinput12CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			CreateDllFile(InstallFilesXinput12CheckBox.Checked, dllFile2);
 		}
 
-		private void InstallFilesXinput11CheckBox_CheckedChanged(object sender, EventArgs e)
+		void InstallFilesXinput11CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			CreateDllFile(InstallFilesXinput11CheckBox.Checked, dllFile1);
 		}
 
-		private void InstallFilesXinput910CheckBox_CheckedChanged(object sender, EventArgs e)
+		void InstallFilesXinput910CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			CreateDllFile(InstallFilesXinput910CheckBox.Checked, dllFile0);
 		}
@@ -1078,8 +1078,19 @@ namespace x360ce.App
 
 		#endregion
 
-
-
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				_Mutex.Dispose();
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
 	}
 }

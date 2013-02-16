@@ -34,7 +34,7 @@ namespace x360ce.App.Controls
 			this.ResumeLayout();
 		}
 
-		private KeyboardControl PadKeyboardControl;
+		KeyboardControl PadKeyboardControl;
 
 		public void InitPresets()
 		{
@@ -187,11 +187,11 @@ namespace x360ce.App.Controls
 
 		DirectInputControl diControl;
 
-		private void PadControl_Load(object sender, EventArgs e)
+		void PadControl_Load(object sender, EventArgs e)
 		{
 		}
 
-		private void ComboBox_DropDown(object sender, EventArgs e)
+		void ComboBox_DropDown(object sender, EventArgs e)
 		{
 			var cbx = (ComboBox)sender;
 			// Force the combo box to re-create its window handle. This seems
@@ -202,9 +202,9 @@ namespace x360ce.App.Controls
 			BeginInvoke(new ComboBoxDropDownDelegate(ComboBoxDropDown), new object[] { cbx });
 		}
 
-		private delegate void ComboBoxDropDownDelegate(ComboBox cbx);
+		delegate void ComboBoxDropDownDelegate(ComboBox cbx);
 
-		private void ComboBoxDropDown(ComboBox cbx)
+		void ComboBoxDropDown(ComboBox cbx)
 		{
 			mainForm.SuspendEvents();
 			cbx.DroppedDown = false;
@@ -230,10 +230,10 @@ namespace x360ce.App.Controls
 
 		#region Images
 
-		private Bitmap markB;
-		private Bitmap markA;
-		private Bitmap markC;
-		private Bitmap markR;
+		Bitmap markB;
+		Bitmap markA;
+		Bitmap markC;
+		Bitmap markR;
 
 		Bitmap _topImage;
 		Bitmap topImage
@@ -279,7 +279,7 @@ namespace x360ce.App.Controls
 
 
 
-		private void TopPictureBox_Paint(object sender, PaintEventArgs e)
+		void TopPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			// Display controller.
 			bool on = gamePadState.IsConnected;
@@ -330,7 +330,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void FrontPictureBox_Paint(object sender, PaintEventArgs e)
+		void FrontPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			// Button coordinates.
 			Point buttonY = new Point(196, 29);
@@ -520,14 +520,14 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private float leftX;
-		private float leftY;
-		private float rightX;
-		private float rightY;
+		float leftX;
+		float leftY;
+		float rightX;
+		float rightY;
 
 		GamePadState gamePadState;
 		//XINPUT_GAMEPAD GamePad;
-		private Guid instanceGuid;
+		Guid instanceGuid;
 
 		public void UpdateFromDirectInput(Device device)
 		{
@@ -725,7 +725,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		private void DiMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+		void DiMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
 		{
 			EnableDPadMenu(false);
 		}
@@ -786,58 +786,58 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void ForceOverallTrackBar_ValueChanged(object sender, EventArgs e)
+		void ForceOverallTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 
-		private void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+		void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			LeftTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 
-		private void RightTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+		void RightTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void LeftThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
+		void LeftThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			LeftThumbDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void LeftThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		void LeftThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			LeftThumbDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 
-		private void RightThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
+		void RightThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			RightThumbDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void RightThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
+		void RightThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			RightThumbDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void MotorTrackBar_ValueChanged(object sender, EventArgs e)
+		void MotorTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			if (gamePadState == null) return;
 			UpdateForceFeedBack();
 		}
 
-		private void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
+		void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			if (gamePadState == null) return;
 			UpdateForceFeedBack2();
@@ -865,19 +865,19 @@ namespace x360ce.App.Controls
 			//UnsafeNativeMethods.Enable(true);
 		}
 
-		private void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
+		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			AxisToDPadOffsetTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void AxisToDPadDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+		void AxisToDPadDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-		private void ThumbAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		void ThumbAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			int XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE = 7849;
 			int XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE = 8689;
@@ -890,19 +890,19 @@ namespace x360ce.App.Controls
 			RightThumbYAntiDeadZoneNumericUpDown.Value = (int)((float)XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE * n);
 		}
 
-		private void LoadPresetButton_Click(object sender, EventArgs e)
+		void LoadPresetButton_Click(object sender, EventArgs e)
 		{
 			if (string.IsNullOrEmpty(PresetComboBox.Text)) return;
 			string name = PresetComboBox.Text.Replace(" ", "_");
 		mainForm.LoadPreset(name);
 		}
 
-		private void ResetPresetButton_Click(object sender, EventArgs e)
+		void ResetPresetButton_Click(object sender, EventArgs e)
 		{
 			mainForm.ReloadXinputSettings();
 		}
 
-		private void SavePresetButton_Click(object sender, EventArgs e)
+		void SavePresetButton_Click(object sender, EventArgs e)
 		{
 			mainForm.UpdateTimer.Stop();
 			// Save settigns to INI file.
@@ -914,9 +914,26 @@ namespace x360ce.App.Controls
 			mainForm.UpdateTimer.Start();
 		}
 
-		private void PadTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		void PadTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			mainForm.UpdateHelpHeader();
+		}
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				markA.Dispose();
+				markB.Dispose();
+				markC.Dispose();
+				markR.Dispose();
+				components.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 	}

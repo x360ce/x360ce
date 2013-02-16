@@ -8,20 +8,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
-
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+		System.ComponentModel.IContainer components = null;
 
 		#region Windows Form Designer generated code
 
@@ -29,7 +16,7 @@ namespace x360ce.App
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
@@ -645,55 +632,55 @@ namespace x360ce.App
 
 		#endregion
 
-		private TabPage AboutTabPage;
-		private StatusStrip MainStatusStrip;
-		private TabPage OptionsTabPage;
-		private CheckBox EnableLoggingCheckBox;
-		private CheckBox UseInitBeepCheckBox;
-		private CheckBox InstallFilesX360ceCheckBox;
-		private CheckBox InstallFilesXinput910CheckBox;
-		private CheckBox InstallFilesXinput11CheckBox;
-		private CheckBox InstallFilesXinput12CheckBox;
-		private CheckBox InstallFilesXinput13CheckBox;
-		private TabPage Pad1TabPage;
-		private TabPage Pad2TabPage;
-		private TabPage Pad3TabPage;
-		private TabPage Pad4TabPage;
-		private ImageList BuletImageList;
+		TabPage AboutTabPage;
+		StatusStrip MainStatusStrip;
+		TabPage OptionsTabPage;
+		CheckBox EnableLoggingCheckBox;
+		CheckBox UseInitBeepCheckBox;
+		CheckBox InstallFilesX360ceCheckBox;
+		CheckBox InstallFilesXinput910CheckBox;
+		CheckBox InstallFilesXinput11CheckBox;
+		CheckBox InstallFilesXinput12CheckBox;
+		CheckBox InstallFilesXinput13CheckBox;
+		TabPage Pad1TabPage;
+		TabPage Pad2TabPage;
+		TabPage Pad3TabPage;
+		TabPage Pad4TabPage;
+		ImageList BuletImageList;
 		public ToolStripStatusLabel StatusTimerLabel;
-		private ToolStripStatusLabel StatusEventsLabel;
-		private ToolStripStatusLabel StatusSaveLabel;
-		private ToolStripStatusLabel toolStripStatusLabel2;
-		private TabPage HelpTabPage;
-        private RichTextBox HelpRichTextBox;
-		private ToolStripStatusLabel StatusIsAdminLabel;
-		private ToolStripStatusLabel StatusIniLabel;
-		private ToolStripStatusLabel StatusDllLabel;
-        private ComboBox FakeModeComboBox;
-        private Label FakeModeLabel;
-		private GroupBox FakeApiGroupBox;
-        private GroupBox InstalledFilesGroupBox;
-		private GroupBox TestingAndLoggingGroupBox;
-		private CheckBox DebugModeCheckBox;
-		private CheckBox XInputEnableCheckBox;
-		private CheckBox ConsoleCheckBox;
-		private TabPage SettingsDatabaseTabPage;
-		private GroupBox InternetGroupBox;
-		private Panel TopPanel;
+		ToolStripStatusLabel StatusEventsLabel;
+		ToolStripStatusLabel StatusSaveLabel;
+		ToolStripStatusLabel toolStripStatusLabel2;
+		TabPage HelpTabPage;
+        RichTextBox HelpRichTextBox;
+		ToolStripStatusLabel StatusIsAdminLabel;
+		ToolStripStatusLabel StatusIniLabel;
+		ToolStripStatusLabel StatusDllLabel;
+        ComboBox FakeModeComboBox;
+        Label FakeModeLabel;
+		GroupBox FakeApiGroupBox;
+        GroupBox InstalledFilesGroupBox;
+		GroupBox TestingAndLoggingGroupBox;
+		CheckBox DebugModeCheckBox;
+		CheckBox XInputEnableCheckBox;
+		CheckBox ConsoleCheckBox;
+		TabPage SettingsDatabaseTabPage;
+		GroupBox InternetGroupBox;
+		Panel TopPanel;
 		internal Label HelpBodyLabel;
 		internal PictureBox HelpPictureBox;
 		internal Label HelpSubjectLabel;
 		internal PictureBox HeaderPictureBox;
-		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-		private Timer LoadinngCircleTimeout;
+		MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
+		Timer LoadinngCircleTimeout;
 		public CheckBox InternetCheckBox;
 		public Controls.OnlineUserControl onlineUserControl1;
 		public CheckBox InternetAutoloadCheckBox;
 		public TabControl MainTabControl;
-		private GroupBox OperationGroupBox;
+		GroupBox OperationGroupBox;
 		public CheckBox AllowOnlyOneCopyCheckBox;
-		private TabPage ProgramsTabPage;
-		private Controls.ProgramsControl programsControl1;
+		TabPage ProgramsTabPage;
+		Controls.ProgramsControl programsControl1;
 
 	}
 }

@@ -6,14 +6,14 @@
 	[StructLayout(LayoutKind.Sequential)]
 	public struct GamePadState
 	{
-		private const int _normalButtonMask = 0xfbff;
-		private bool _connected;
-		private int _packet;
-		private GamePadThumbSticks _thumbs;
-		private GamePadTriggers _triggers;
-		private GamePadButtons _buttons;
-		private GamePadDPad _dpad;
-		private XINPUT_STATE _state;
+		const int _normalButtonMask = 0xfbff;
+		bool _connected;
+		int _packet;
+		GamePadThumbSticks _thumbs;
+		GamePadTriggers _triggers;
+		GamePadButtons _buttons;
+		GamePadDPad _dpad;
+		XINPUT_STATE _state;
 		public GamePadState(GamePadThumbSticks thumbSticks, GamePadTriggers triggers, GamePadButtons buttons, GamePadDPad dPad)
 		{
 			this._packet = 0;
@@ -50,7 +50,7 @@
 			this.FillInternalState();
 		}
 
-		private void FillInternalState()
+		void FillInternalState()
 		{
 			this._state.PacketNumber = 0;
 			if (this.Buttons.A == ButtonState.Pressed)

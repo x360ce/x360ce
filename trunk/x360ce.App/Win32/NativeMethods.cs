@@ -20,17 +20,7 @@ namespace x360ce.App.Win32
 
 		[DllImport("shell32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern Boolean IsUserAnAdmin();
-
-
-		//[DllImport("coredll")]
-		//private static extern bool GetFileVersionInfo(string filename, UInt32 handle, UInt32 len, IntPtr buffer);
-
-		//[DllImport("coredll")]
-		//private static extern UInt32 GetFileVersionInfoSize(string filename, out UInt32 handle);
-
-		//[DllImport("coredll")]
-		//private static extern bool VerQueryValue(IntPtr buffer, string subblock, out IntPtr blockbuffer, out int len);
+		internal static extern Boolean IsUserAnAdmin();
 
 		#endregion
 
@@ -38,7 +28,7 @@ namespace x360ce.App.Win32
 
 		[DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = false)]
 		[return: MarshalAs(UnmanagedType.Interface)]
-		public static extern object CoGetObject(
+		internal static extern object CoGetObject(
 		   string pszName,
 		   [In] ref BIND_OPTS3 pBindOptions,
 		   [In, MarshalAs(UnmanagedType.LPStruct)] Guid riid);
@@ -51,7 +41,7 @@ namespace x360ce.App.Win32
 		/// Sends the specified message to a window or windows.
 		/// </summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+		internal static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
 		/// <summary>
 		/// Sends the specified message to a window or windows.
@@ -62,7 +52,7 @@ namespace x360ce.App.Win32
 		/// <param name="lParam"></param>
 		/// <returns></returns>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr SendMessage(HandleRef hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+		internal static extern IntPtr SendMessage(HandleRef hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
 		/// <summary>
 		/// Registers the device or type of device for which a window will receive notifications.
@@ -72,7 +62,7 @@ namespace x360ce.App.Win32
 		/// <param name="Flags">This parameter can be one of the following values.</param>
 		/// <returns>If the function succeeds, the return value is a device notification handle. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, uint Flags);
+		internal static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, uint Flags);
 
 		/// <summary>
 		/// Closes the specified device notification handle.
@@ -80,7 +70,7 @@ namespace x360ce.App.Win32
 		/// <param name="Handle">Device notification handle returned by the RegisterDeviceNotification function.</param>
 		/// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		public static extern uint UnregisterDeviceNotification(IntPtr Handle);
+		internal static extern uint UnregisterDeviceNotification(IntPtr Handle);
 
 		/// <summary>
 		/// Sends a message to the specified recipients. The recipients can be applications, installable drivers,
@@ -93,7 +83,7 @@ namespace x360ce.App.Win32
 		/// <param name="lParam">Additional message-specific information.</param>
 		/// <returns>Positive value if the function succeeds, -1 if the function is unable to broadcast the message.</returns>
 		[DllImport("user32.dll", EntryPoint = "BroadcastSystemMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-		public static extern int BroadcastSystemMessage(Int32 dwFlags, ref Int32 pdwRecipients, int uiMessage, int wParam, int lParam);
+		internal static extern int BroadcastSystemMessage(Int32 dwFlags, ref Int32 pdwRecipients, int uiMessage, int wParam, int lParam);
 
 		/// <summary>
 		/// Defines a new window message that is guaranteed to be unique throughout the system.
@@ -105,7 +95,7 @@ namespace x360ce.App.Win32
 		/// If the function fails, the return value is zero. To get extended error information, call GetLastError.
 		/// </returns>
 		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-		public static extern int RegisterWindowMessage(String pString);
+		internal static extern int RegisterWindowMessage(String pString);
 
 		#endregion
 
@@ -116,21 +106,21 @@ namespace x360ce.App.Win32
 		/// </summary>
 		[DllImport("advapi32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern Boolean OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
+		internal static extern Boolean OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
 
 		/// <summary>
 		/// The function opens the access token associated with a process.
 		/// </summary>
 		[DllImport("advapi32", CharSet = CharSet.Auto, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool OpenProcessToken(IntPtr hProcess, UInt32 desiredAccess, out SafeTokenHandle hToken);
+		internal static extern bool OpenProcessToken(IntPtr hProcess, UInt32 desiredAccess, out SafeTokenHandle hToken);
 
 		/// <summary>
 		/// Retrieves a specified type of information about an access token.
 		/// </summary>
 		[DllImport("advapi32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool GetTokenInformation(
+		internal static extern bool GetTokenInformation(
 			IntPtr TokenHandle,
 			TOKEN_INFORMATION_CLASS TokenInformationClass,
 			IntPtr TokenInformation,
@@ -139,7 +129,7 @@ namespace x360ce.App.Win32
 
 		[DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool GetTokenInformation(
+		internal static extern bool GetTokenInformation(
 			SafeTokenHandle hToken,
 			TOKEN_INFORMATION_CLASS tokenInfoClass,
 			IntPtr pTokenInfo,
@@ -152,7 +142,7 @@ namespace x360ce.App.Win32
 		/// identifier (RID).
 		/// </summary>
 		[DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		public static extern IntPtr GetSidSubAuthority(IntPtr pSid, UInt32 nSubAuthority);
+		internal static extern IntPtr GetSidSubAuthority(IntPtr pSid, UInt32 nSubAuthority);
 
 		#endregion
 
@@ -162,41 +152,67 @@ namespace x360ce.App.Win32
 		/// Retrieves a pseudo handle for the current process.
 		/// </summary>
 		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		public static extern IntPtr GetCurrentProcess();
+		internal static extern IntPtr GetCurrentProcess();
 
 		/// <summary>
 		/// Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
 		/// </summary>
-		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		public static extern IntPtr GetProcAddress(IntPtr hModule, [In, MarshalAs(UnmanagedType.LPStr)] string lpProcName);
+		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+		internal static extern IntPtr GetProcAddress(IntPtr hModule, [In, MarshalAs(UnmanagedType.LPStr)] string lpProcName);
 
 		/// <summary>
 		/// Closes an open object handle.
 		/// </summary>
 		[return: MarshalAs(UnmanagedType.Bool)]
 		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", SetLastError = true)]
-		public static extern bool CloseHandle(IntPtr handle);
+		internal static extern bool CloseHandle(IntPtr handle);
 
 		/// <summary>
 		/// Loads the specified module into the address space of the calling process.
 		/// The specified module may cause other modules to be loaded.
 		/// </summary>
-		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		public static extern IntPtr LoadLibrary(string libFilename);
+		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", EntryPoint = "LoadLibraryA", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping=false, ThrowOnUnmappableChar=true)]
+		internal static extern IntPtr LoadLibrary([In, MarshalAs(UnmanagedType.LPStr)] string lpFileName);
 
 		/// <summary>
 		/// Loads the specified module into the address space of the calling process.
 		/// The specified module may cause other modules to be loaded.
 		/// </summary>
 		[SuppressUnmanagedCodeSecurity, SecurityCritical, DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-		public static extern SafeLibraryHandle LoadLibraryEx(string libFilename, IntPtr reserved, int flags);
+		internal static extern SafeLibraryHandle LoadLibraryEx(string libFilename, IntPtr reserved, int flags);
 
 		/// <summary>
 		/// Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
 		/// </summary>
 		[return: MarshalAs(UnmanagedType.Bool)]
 		[SuppressUnmanagedCodeSecurity, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-		public static extern bool FreeLibrary(IntPtr hModule);
+		internal static extern bool FreeLibrary(IntPtr hModule);
+
+		/// <summary>
+		/// Retrieves a string from the specified section in an initialization file. http://msdn2.microsoft.com/en-us/library/ms724353.aspx
+		/// </summary>
+		/// <param name="lpAppName">The name of the section containing the key name. If this parameter is NULL, the GetPrivateProfileString function copies all section names in the file to the supplied buffer.</param>
+		/// <param name="lpKeyName">The name of the key whose associated string is to be retrieved. If this parameter is NULL, all key names in the section specified by the lpAppName parameter are copied to the buffer specified by the lpReturnedString parameter.</param>
+		/// <param name="lpDefault">A default string. If the lpKeyName key cannot be found in the initialization file, GetPrivateProfileString copies the default string to the lpReturnedString buffer. If this parameter is NULL, the default is an empty string, "". Avoid specifying a default string with trailing blank characters. The function inserts a null character in the lpReturnedString buffer to strip any trailing blanks.</param>
+		/// <param name="lpReturnedString">[out] A pointer to the buffer that receives the retrieved string.</param>
+		/// <param name="nSize">The size of the buffer pointed to by the lpReturnedString parameter, in characters.</param>
+		/// <param name="lpFileName">The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the Windows directory.</param>
+		/// <returns>The return value is the number of characters copied to the buffer, not including the terminating null character.</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
+		DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+		internal static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, byte[] lpReturnedString, int nSize, string lpFileName);
+
+		/// <summary>
+		/// Copies a string into the specified section of an initialization file. http://msdn2.microsoft.com/en-us/library/ms725501.aspx
+		/// </summary>
+		/// <param name="lpAppName">The name of the section to which the string will be copied. If the section does not exist, it is created. The name of the section is case-independent; the string can be any combination of uppercase and lowercase letters.</param>
+		/// <param name="lpKeyName">The name of the key to be associated with a string. If the key does not exist in the specified section, it is created. If this parameter is NULL, the entire section, including all entries within the section, is deleted.</param>
+		/// <param name="lpString">A null-terminated string to be written to the file. If this parameter is NULL, the key pointed to by the lpKeyName parameter is deleted.</param>
+		/// <param name="lpFileName">The name of the initialization file. If the file was created using Unicode characters, the function writes Unicode characters to the file. Otherwise, the function writes ANSI characters.</param>
+		/// <returns>If the function successfully copies the string to the initialization file, the return value is nonzero. If the function fails, or if it flushes the cached version of the most recently accessed initialization file, the return value is zero.</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "2#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
+		DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+		internal static extern int WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
 
 		#endregion
 

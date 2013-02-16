@@ -21,10 +21,8 @@ namespace x360ce.App.Win32
 		/// <summary>
 		/// </summary>
 		/// <returns>Bool indicating whether the current process is elevated</returns>
-		public static bool IsElevated
+		public static bool IsElevated()
 		{
-			get
-			{
 				//if (!IsVista) throw new ApplicationException("Function requires Vista or higher");
 				// METHOD 1
 				//AppDomain myDomain = Thread.GetDomain();
@@ -35,9 +33,9 @@ namespace x360ce.App.Win32
 				bool bRetVal = false;
 				IntPtr hToken = IntPtr.Zero;
 				IntPtr hProcess = Win32.NativeMethods.GetCurrentProcess();
-				if (hProcess == IntPtr.Zero) throw new ApplicationException("Error getting current process handle");
+				if (hProcess == IntPtr.Zero) throw new Exception("Error getting current process handle");
 				bRetVal = Win32.NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
-				if (!bRetVal) throw new ApplicationException("Error opening process token");
+				if (!bRetVal) throw new Win32Exception();
 				try
 				{
 					TOKEN_ELEVATION te;
@@ -50,10 +48,8 @@ namespace x360ce.App.Win32
 					{
 						System.Runtime.InteropServices.Marshal.StructureToPtr(te, tePtr, true);
 						bRetVal = Win32.NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevation, tePtr, (UInt32)teSize, out dwReturnLength);
-						if ((!bRetVal) | (teSize != dwReturnLength))
-						{
-							throw new ApplicationException("Error getting token information");
-						}
+						if (!bRetVal) throw new Win32Exception();
+						if (teSize != dwReturnLength) throw new Exception("Error getting token information");
 						te = (TOKEN_ELEVATION)Marshal.PtrToStructure(tePtr, typeof(TOKEN_ELEVATION));
 					}
 					finally
@@ -66,7 +62,6 @@ namespace x360ce.App.Win32
 				{
 					Win32.NativeMethods.CloseHandle(hToken);
 				}
-			}
 		}
 
 		/// <summary>
@@ -216,7 +211,7 @@ namespace x360ce.App.Win32
 		// Restart curent app in elevated mode.
 		public static void RunElevated()
 		{
-			if (IsElevated) throw new ApplicationException("Elevated already");
+			if (IsElevated()) throw new ApplicationException("Elevated already");
 			RunElevatedAsync(Application.ExecutablePath, null);
 			//Close this instance because we have an elevated instance
 			Application.Exit();
@@ -279,7 +274,7 @@ namespace x360ce.App.Win32
 				// Open the access token of the current process with TOKEN_QUERY.
 				if (!Win32.NativeMethods.OpenProcessToken(Process.GetCurrentProcess().Handle, WinNT.TOKEN_QUERY, out hToken))
 				{
-					throw new Win32Exception(Marshal.GetLastWin32Error());
+					throw new Win32Exception();
 				}
 
 				// Then we must query the size of the integrity level information 
@@ -306,7 +301,7 @@ namespace x360ce.App.Win32
 				pTokenIL = Marshal.AllocHGlobal(cbTokenIL);
 				if (pTokenIL == IntPtr.Zero)
 				{
-					throw new Win32Exception(Marshal.GetLastWin32Error());
+					throw new Win32Exception();
 				}
 
 				// Now we ask for the integrity level information again. This may fail 
@@ -316,7 +311,7 @@ namespace x360ce.App.Win32
 					TOKEN_INFORMATION_CLASS.TokenIntegrityLevel, pTokenIL, cbTokenIL,
 					out cbTokenIL))
 				{
-					throw new Win32Exception(Marshal.GetLastWin32Error());
+					throw new Win32Exception();
 				}
 
 				// Marshal the TOKEN_MANDATORY_LABEL struct from native to .NET object.

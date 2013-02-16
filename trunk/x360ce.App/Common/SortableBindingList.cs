@@ -12,10 +12,10 @@ namespace x360ce.App
 	/// <typeparam name="T"></typeparam>
 	public class SortableBindingList<T> : BindingList<T>
 	{
-		private readonly Dictionary<Type, PropertyComparer<T>> comparers;
-		private bool isSorted;
-		private ListSortDirection listSortDirection;
-		private PropertyDescriptor propertyDescriptor;
+		readonly Dictionary<Type, PropertyComparer<T>> comparers;
+		bool isSorted;
+		ListSortDirection listSortDirection;
+		PropertyDescriptor propertyDescriptor;
 
 		public SortableBindingList()
 			: base(new List<T>())

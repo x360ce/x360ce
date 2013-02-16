@@ -5,7 +5,7 @@
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -538,45 +538,45 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView DiEffectsDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
-		private System.Windows.Forms.Label DiCapDPadsLabel;
-		private System.Windows.Forms.Label DiCapButtonsLabel;
-		private System.Windows.Forms.Label DiDPadLabel;
-		private System.Windows.Forms.Label DiCapAxesLabel;
-		private System.Windows.Forms.Label DiUvaLabel;
-		private System.Windows.Forms.Label DiCapFfLabel;
-		private System.Windows.Forms.Label DiExtraVLabel;
-		private System.Windows.Forms.Label DiExtraFLabel;
-		private System.Windows.Forms.Label DiExtraALabel;
-		private System.Windows.Forms.Label DiButtonsLabel;
-		private System.Windows.Forms.DataGridView DiAxisDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnAxis;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnM;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnR;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnA;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnAR;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnF;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnFr;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnV;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnVr;
-		private System.Windows.Forms.TextBox DiDPadTextBox;
-		private System.Windows.Forms.TextBox DiUvSliderTextBox;
-		private System.Windows.Forms.TextBox DiVSliderTextBox;
-		private System.Windows.Forms.TextBox DiFSliderTextBox;
-		private System.Windows.Forms.TextBox DiASliderTextBox;
-		private System.Windows.Forms.TextBox DiButtonsTextBox;
-		private System.Windows.Forms.TextBox DeviceTypeTextBox;
-		private System.Windows.Forms.Label DiDevicePidLabel;
-		private System.Windows.Forms.Label DiDeviceVidLabel;
-		private System.Windows.Forms.Label DiDeviceTypeLabel;
+		System.Windows.Forms.DataGridView DiEffectsDataGridView;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
+		System.Windows.Forms.Label DiCapDPadsLabel;
+		System.Windows.Forms.Label DiCapButtonsLabel;
+		System.Windows.Forms.Label DiDPadLabel;
+		System.Windows.Forms.Label DiCapAxesLabel;
+		System.Windows.Forms.Label DiUvaLabel;
+		System.Windows.Forms.Label DiCapFfLabel;
+		System.Windows.Forms.Label DiExtraVLabel;
+		System.Windows.Forms.Label DiExtraFLabel;
+		System.Windows.Forms.Label DiExtraALabel;
+		System.Windows.Forms.Label DiButtonsLabel;
+		System.Windows.Forms.DataGridView DiAxisDataGridView;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnAxis;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnM;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnR;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnA;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnAR;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnF;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnFr;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnV;
+		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnVr;
+		System.Windows.Forms.TextBox DiDPadTextBox;
+		System.Windows.Forms.TextBox DiUvSliderTextBox;
+		System.Windows.Forms.TextBox DiVSliderTextBox;
+		System.Windows.Forms.TextBox DiFSliderTextBox;
+		System.Windows.Forms.TextBox DiASliderTextBox;
+		System.Windows.Forms.TextBox DiButtonsTextBox;
+		System.Windows.Forms.TextBox DeviceTypeTextBox;
+		System.Windows.Forms.Label DiDevicePidLabel;
+		System.Windows.Forms.Label DiDeviceVidLabel;
+		System.Windows.Forms.Label DiDeviceTypeLabel;
 		public System.Windows.Forms.TextBox DevicePidTextBox;
         public System.Windows.Forms.TextBox DeviceVidTextBox;
-		private System.Windows.Forms.Label DiProductGuidLabel;
-		private System.Windows.Forms.Label DiInstanceGuidLabel;
-		private System.Windows.Forms.Label DiProductNameLabel;
+		System.Windows.Forms.Label DiProductGuidLabel;
+		System.Windows.Forms.Label DiInstanceGuidLabel;
+		System.Windows.Forms.Label DiProductNameLabel;
 		public System.Windows.Forms.TextBox DeviceProductNameTextBox;
         public System.Windows.Forms.TextBox DeviceInstanceGuidTextBox;
         public System.Windows.Forms.TextBox DeviceProductGuidTextBox;

@@ -6,8 +6,8 @@
 	[StructLayout(LayoutKind.Sequential), SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
 	public struct GamePadCapabilities
 	{
-		private bool _connected;
-		private XINPUT_CAPABILITIES _caps;
+		bool _connected;
+		XINPUT_CAPABILITIES _caps;
 		internal GamePadCapabilities(ref XINPUT_CAPABILITIES caps, ErrorCodes result)
 		{
 			this._connected = result != ErrorCodes.NotConnected;

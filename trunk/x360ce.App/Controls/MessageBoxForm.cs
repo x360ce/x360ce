@@ -16,8 +16,8 @@ namespace x360ce.App.Controls
 		}
 
 		public bool PlaySounds { get; set; }
-		private int h;
-		private int w;
+		int h;
+		int w;
 
 		/// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
 		/// <param name="text">The text to display in the message box.</param>
@@ -177,13 +177,13 @@ namespace x360ce.App.Controls
 			CancelButton = Button3;
 		}
 
-		private void Button_Click(object sender, EventArgs e)
+		void Button_Click(object sender, EventArgs e)
 		{
 			Button button = (Button)sender;
 			this.DialogResult = button.DialogResult;
 		}
 
-		private void Form_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		void Form_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if (e.Control & e.KeyCode == Keys.C)
 			{
@@ -201,7 +201,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void Message_Resize(System.Object sender, System.EventArgs e)
+		void Message_Resize(System.Object sender, System.EventArgs e)
 		{
 			this.Height = Math.Max(h + TextLabel.Height, this.MinimumSize.Height);
 			this.Width = Math.Max(w + TextLabel.Width, this.MinimumSize.Width);
@@ -219,17 +219,17 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void MessageBoxForm_Load(System.Object sender, System.EventArgs e)
+		void MessageBoxForm_Load(System.Object sender, System.EventArgs e)
 		{
 			ActiveControl.Select();
 		}
 
-		private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+		void copyToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Clipboard.SetText(TextLabel.Text);
 		}
 
-		private void MainLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		void MainLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			Helper.OpenUrl(MainLinkLabel.Text);
 		}

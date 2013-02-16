@@ -5,7 +5,7 @@
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -478,35 +478,35 @@
 
 		#endregion
 
-		private System.Windows.Forms.PictureBox SearchPictureBox;
-		private System.Windows.Forms.Label SearchLabel;
-		private System.Windows.Forms.Label BrowseLabel;
-		private System.Windows.Forms.Button CloseButton;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.TabControl WizzardTabControl;
-		private System.Windows.Forms.TabPage Step1TabPage;
-		private System.Windows.Forms.TabPage Step2TabPage;
-		private System.Windows.Forms.PictureBox BrowsePictureBox;
-		private System.Windows.Forms.RadioButton BrowseRadioButton;
-		private System.Windows.Forms.RadioButton SearchRadioButton;
-		private System.Windows.Forms.Button NextButton;
-		private System.Windows.Forms.TextBox FolderPathTextBox;
-		private System.Windows.Forms.Button BrowseButton;
-		private System.Windows.Forms.Label DescriptionLabel;
-		private System.Windows.Forms.FolderBrowserDialog SettingsFolderBrowserDialog;
-		private System.Windows.Forms.TabControl SettingsListTabControl;
-		private System.Windows.Forms.TabPage MySettingsTabPage;
-		private System.Windows.Forms.DataGridView MySettingsDataGridView;
-		private System.Windows.Forms.CheckBox IncludeSubfoldersCheckBox;
-		private System.Windows.Forms.Label ResultsLabel;
-		private System.Windows.Forms.Label LocalLabel;
-		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-		private System.Windows.Forms.Label InternetLabel;
-		private System.Windows.Forms.PictureBox InternetPictureBox;
-		private System.Windows.Forms.PictureBox LocalPictureBox;
-		private System.Windows.Forms.Button BackButton;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		private System.Windows.Forms.CheckBox SearchTheInternetCheckBox;
+		System.Windows.Forms.PictureBox SearchPictureBox;
+		System.Windows.Forms.Label SearchLabel;
+		System.Windows.Forms.Label BrowseLabel;
+		System.Windows.Forms.Button CloseButton;
+		System.Windows.Forms.Label label5;
+		System.Windows.Forms.TabControl WizzardTabControl;
+		System.Windows.Forms.TabPage Step1TabPage;
+		System.Windows.Forms.TabPage Step2TabPage;
+		System.Windows.Forms.PictureBox BrowsePictureBox;
+		System.Windows.Forms.RadioButton BrowseRadioButton;
+		System.Windows.Forms.RadioButton SearchRadioButton;
+		System.Windows.Forms.Button NextButton;
+		System.Windows.Forms.TextBox FolderPathTextBox;
+		System.Windows.Forms.Button BrowseButton;
+		System.Windows.Forms.Label DescriptionLabel;
+		System.Windows.Forms.FolderBrowserDialog SettingsFolderBrowserDialog;
+		System.Windows.Forms.TabControl SettingsListTabControl;
+		System.Windows.Forms.TabPage MySettingsTabPage;
+		System.Windows.Forms.DataGridView MySettingsDataGridView;
+		System.Windows.Forms.CheckBox IncludeSubfoldersCheckBox;
+		System.Windows.Forms.Label ResultsLabel;
+		System.Windows.Forms.Label LocalLabel;
+		MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
+		System.Windows.Forms.Label InternetLabel;
+		System.Windows.Forms.PictureBox InternetPictureBox;
+		System.Windows.Forms.PictureBox LocalPictureBox;
+		System.Windows.Forms.Button BackButton;
+		System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		System.Windows.Forms.CheckBox SearchTheInternetCheckBox;
 	}
 }

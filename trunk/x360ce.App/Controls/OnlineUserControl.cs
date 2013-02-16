@@ -22,7 +22,7 @@ namespace x360ce.App.Controls
 
 		MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
 
-		private void InternetUserControl_Load(object sender, EventArgs e)
+		void InternetUserControl_Load(object sender, EventArgs e)
 		{
 			SettingsDataGridView.AutoGenerateColumns = false;
 			SummariesDataGridView.AutoGenerateColumns = false;
@@ -43,7 +43,7 @@ namespace x360ce.App.Controls
 			SummariesTabPage.Text = _Summaries.Count == 0 ? "Global Settings" : string.Format("Global Settings [{0}]", _Summaries.Count);
 		}
 
-		private void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
+		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateActionButtons();
 		}
@@ -184,12 +184,12 @@ namespace x360ce.App.Controls
 			UpdateActionButtons();
 		}
 
-		private void ControllerComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		void ControllerComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateActionButtons();
 		}
 
-		private void GameComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		void GameComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateActionButtons();
 		}
@@ -247,7 +247,7 @@ namespace x360ce.App.Controls
 			return s;
 		}
 
-		private void SaveButton_Click(object sender, EventArgs e)
+		void SaveButton_Click(object sender, EventArgs e)
 		{
 			mainForm.LoadingCircle = true;
 			var s = new Setting();
@@ -297,7 +297,7 @@ namespace x360ce.App.Controls
 			RefreshGrid(false);
 		}
 
-		private void DeleteButton_Click(object sender, EventArgs e)
+		void DeleteButton_Click(object sender, EventArgs e)
 		{
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -332,7 +332,7 @@ namespace x360ce.App.Controls
 			RefreshGrid(false);
 		}
 
-		private void RefreshButton_Click(object sender, EventArgs e)
+		void RefreshButton_Click(object sender, EventArgs e)
 		{
 			RefreshGrid(true);
 		}
@@ -377,7 +377,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		private void LoadSetting()
+		void LoadSetting()
 		{
 			mainForm.UpdateTimer.Stop();
 			var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
@@ -477,7 +477,7 @@ namespace x360ce.App.Controls
 			mainForm.LoadingCircle = false;
 		}
 
-		private void LoadButton_Click(object sender, EventArgs e)
+		void LoadButton_Click(object sender, EventArgs e)
 		{
 			LoadSetting();
 		}
@@ -499,7 +499,7 @@ namespace x360ce.App.Controls
 
 		Color currentColor = System.Drawing.Color.FromArgb(255, 191, 210, 249);
 
-		private void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			var setting = ((Setting)grid.Rows[e.RowIndex].DataBoundItem);
@@ -519,7 +519,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void SettingsDataGridView_SelectionChanged(object sender, EventArgs e)
+		void SettingsDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			SettingSelection = grid.SelectedRows.Count == 0 ? null : (Setting)grid.SelectedRows[0].DataBoundItem;
@@ -533,7 +533,7 @@ namespace x360ce.App.Controls
 
 		Summary SummariesSelection;
 
-		private void SummariesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		void SummariesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			if (e.ColumnIndex == grid.Columns[SidColumn.Name].Index)
@@ -542,7 +542,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void SummariesDataGridView_SelectionChanged(object sender, EventArgs e)
+		void SummariesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			SummariesSelection = grid.SelectedRows.Count == 0 ? null : (Summary)grid.SelectedRows[0].DataBoundItem;
@@ -551,7 +551,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void InternetUserControl_KeyDown(object sender, KeyEventArgs e)
+		void InternetUserControl_KeyDown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode)
 			{
@@ -572,22 +572,22 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void SettingsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+		void SettingsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
 			LoadSetting();
 		}
 
-		private void SummariesDataGridView_DoubleClick(object sender, EventArgs e)
+		void SummariesDataGridView_DoubleClick(object sender, EventArgs e)
 		{
 			LoadSetting();
 		}
 
-		private void SettingsListTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		void SettingsListTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateActionButtons();
 		}
 
-		private void InternetDatabaseUrlTextBox_DoubleClick(object sender, EventArgs e)
+		void InternetDatabaseUrlTextBox_DoubleClick(object sender, EventArgs e)
 		{
 			InternetDatabaseUrlTextBox.ReadOnly = false;
 		}

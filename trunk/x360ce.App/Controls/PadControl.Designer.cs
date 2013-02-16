@@ -5,20 +5,7 @@
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
-
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+		System.ComponentModel.IContainer components = null;
 
 		#region Component Designer generated code
 
@@ -26,7 +13,7 @@
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
@@ -1845,145 +1832,145 @@
 
 		#endregion
 
-		private System.Windows.Forms.TabPage DirectInputTabPage;
-		private System.Windows.Forms.TabPage AdvancedTabPage;
-		private System.Windows.Forms.TextBox RightThumbDeadZoneXTextBox;
-		private System.Windows.Forms.TextBox LeftThumbDeadZoneXTextBox;
-		private System.Windows.Forms.TrackBar LeftThumbDeadZoneXTrackBar;
-		private System.Windows.Forms.TrackBar RightThumbDeadZoneXTrackBar;
-		private System.Windows.Forms.Label RightTriggerDeadZoneLabel;
-		private System.Windows.Forms.Label LeftTriggerDeadZoneLabel;
-		private System.Windows.Forms.TabPage GeneralTabPage;
-		private System.Windows.Forms.ComboBox DPadDownComboBox;
-		private System.Windows.Forms.ComboBox DPadRightComboBox;
-		private System.Windows.Forms.ComboBox DPadUpComboBox;
-		private System.Windows.Forms.ComboBox DPadLeftComboBox;
-		private System.Windows.Forms.ComboBox LeftThumbDownComboBox;
-		private System.Windows.Forms.ComboBox LeftThumbRightComboBox;
-		private System.Windows.Forms.ComboBox LeftThumbLeftComboBox;
-		private System.Windows.Forms.ComboBox LeftThumbUpComboBox;
-		private System.Windows.Forms.ComboBox RightThumbDownComboBox;
-		private System.Windows.Forms.ComboBox RightThumbRightComboBox;
-		private System.Windows.Forms.ComboBox RightThumbLeftComboBox;
-		private System.Windows.Forms.ComboBox RightThumbUpComboBox;
-		private System.Windows.Forms.Label LeftThumbDownLabel;
-		private System.Windows.Forms.Label AdvancedDownLabel;
-		private System.Windows.Forms.Label LeftThumbUpLabel;
-		private System.Windows.Forms.Label LeftThumbRightLabel;
-		private System.Windows.Forms.Label AdvancedUpLabel;
-		private System.Windows.Forms.Label LeftThumbLeftLabel;
-		private System.Windows.Forms.Label AdvancedRightLabel;
-		private System.Windows.Forms.Label AdvancedLeftLabel;
-		private System.Windows.Forms.ComboBox DPadComboBox;
-		private System.Windows.Forms.TextBox RightTriggerTextBox;
-		private System.Windows.Forms.TextBox LeftTriggerTextBox;
-		private System.Windows.Forms.TextBox RightThumbTextBox;
-		private System.Windows.Forms.TextBox LeftThumbTextBox;
-		private System.Windows.Forms.ComboBox LeftTriggerComboBox;
-		private System.Windows.Forms.PictureBox FrontPictureBox;
-		private System.Windows.Forms.ComboBox ButtonAComboBox;
-		private System.Windows.Forms.Label ButtonALabel;
-		private System.Windows.Forms.ComboBox ButtonXComboBox;
-		private System.Windows.Forms.Label RightTriggerLabel;
-		private System.Windows.Forms.ComboBox RightTriggerComboBox;
-		private System.Windows.Forms.ComboBox ButtonBComboBox;
-		private System.Windows.Forms.Label RightThumbAxisXLabel;
-		private System.Windows.Forms.Label LeftThumbAxisXLabel;
-		private System.Windows.Forms.Label ButtonXLabel;
-		private System.Windows.Forms.Label RightShoulderLabel;
-		private System.Windows.Forms.ComboBox ButtonYComboBox;
-		private System.Windows.Forms.ComboBox RightThumbAxisXComboBox;
-		private System.Windows.Forms.Label ButtonBLabel;
-		private System.Windows.Forms.ComboBox LeftThumbAxisXComboBox;
-		private System.Windows.Forms.ComboBox ButtonGuideComboBox;
-		private System.Windows.Forms.ComboBox ButtonStartComboBox;
-		private System.Windows.Forms.ComboBox ButtonBackComboBox;
-		private System.Windows.Forms.ComboBox LeftShoulderComboBox;
-		private System.Windows.Forms.ComboBox RightShoulderComboBox;
-		private System.Windows.Forms.Label ButtonGuideLabel;
-		private System.Windows.Forms.Label StartButtonLabel;
-		private System.Windows.Forms.Label DPadDownLabel;
-		private System.Windows.Forms.Label DPadRightLabel;
-		private System.Windows.Forms.Label DPadLeftLabel;
-		private System.Windows.Forms.Label DPadUpLabel;
-		private System.Windows.Forms.Label DPadLabel;
-		private System.Windows.Forms.Label BackButtonLabel;
-		private System.Windows.Forms.Label RightThumbAxisYLabel;
-		private System.Windows.Forms.Label ButtonYLabel;
-		private System.Windows.Forms.Label LeftThumbAxisYLabel;
-		private System.Windows.Forms.Label LeftShoulderLabel;
-		private System.Windows.Forms.Label LeftTriggerLabel;
-		private System.Windows.Forms.Label RightThumbButtonLabel;
-		private System.Windows.Forms.ComboBox LeftThumbButtonComboBox;
-		private System.Windows.Forms.Label LeftThumbButtonLabel;
-		private System.Windows.Forms.ComboBox LeftThumbAxisYComboBox;
-		private System.Windows.Forms.ComboBox RightThumbAxisYComboBox;
-		private System.Windows.Forms.ComboBox RightThumbButtonComboBox;
-		private System.Windows.Forms.PictureBox TopPictureBox;
-		private System.Windows.Forms.Label RightLabel;
-		private System.Windows.Forms.Label LeftLabel;
-		private System.Windows.Forms.Label OptionsDeviceTypeLabel;
-		private System.Windows.Forms.ComboBox GamePadTypeComboBox;
+		System.Windows.Forms.TabPage DirectInputTabPage;
+		System.Windows.Forms.TabPage AdvancedTabPage;
+		System.Windows.Forms.TextBox RightThumbDeadZoneXTextBox;
+		System.Windows.Forms.TextBox LeftThumbDeadZoneXTextBox;
+		System.Windows.Forms.TrackBar LeftThumbDeadZoneXTrackBar;
+		System.Windows.Forms.TrackBar RightThumbDeadZoneXTrackBar;
+		System.Windows.Forms.Label RightTriggerDeadZoneLabel;
+		System.Windows.Forms.Label LeftTriggerDeadZoneLabel;
+		System.Windows.Forms.TabPage GeneralTabPage;
+		System.Windows.Forms.ComboBox DPadDownComboBox;
+		System.Windows.Forms.ComboBox DPadRightComboBox;
+		System.Windows.Forms.ComboBox DPadUpComboBox;
+		System.Windows.Forms.ComboBox DPadLeftComboBox;
+		System.Windows.Forms.ComboBox LeftThumbDownComboBox;
+		System.Windows.Forms.ComboBox LeftThumbRightComboBox;
+		System.Windows.Forms.ComboBox LeftThumbLeftComboBox;
+		System.Windows.Forms.ComboBox LeftThumbUpComboBox;
+		System.Windows.Forms.ComboBox RightThumbDownComboBox;
+		System.Windows.Forms.ComboBox RightThumbRightComboBox;
+		System.Windows.Forms.ComboBox RightThumbLeftComboBox;
+		System.Windows.Forms.ComboBox RightThumbUpComboBox;
+		System.Windows.Forms.Label LeftThumbDownLabel;
+		System.Windows.Forms.Label AdvancedDownLabel;
+		System.Windows.Forms.Label LeftThumbUpLabel;
+		System.Windows.Forms.Label LeftThumbRightLabel;
+		System.Windows.Forms.Label AdvancedUpLabel;
+		System.Windows.Forms.Label LeftThumbLeftLabel;
+		System.Windows.Forms.Label AdvancedRightLabel;
+		System.Windows.Forms.Label AdvancedLeftLabel;
+		System.Windows.Forms.ComboBox DPadComboBox;
+		System.Windows.Forms.TextBox RightTriggerTextBox;
+		System.Windows.Forms.TextBox LeftTriggerTextBox;
+		System.Windows.Forms.TextBox RightThumbTextBox;
+		System.Windows.Forms.TextBox LeftThumbTextBox;
+		System.Windows.Forms.ComboBox LeftTriggerComboBox;
+		System.Windows.Forms.PictureBox FrontPictureBox;
+		System.Windows.Forms.ComboBox ButtonAComboBox;
+		System.Windows.Forms.Label ButtonALabel;
+		System.Windows.Forms.ComboBox ButtonXComboBox;
+		System.Windows.Forms.Label RightTriggerLabel;
+		System.Windows.Forms.ComboBox RightTriggerComboBox;
+		System.Windows.Forms.ComboBox ButtonBComboBox;
+		System.Windows.Forms.Label RightThumbAxisXLabel;
+		System.Windows.Forms.Label LeftThumbAxisXLabel;
+		System.Windows.Forms.Label ButtonXLabel;
+		System.Windows.Forms.Label RightShoulderLabel;
+		System.Windows.Forms.ComboBox ButtonYComboBox;
+		System.Windows.Forms.ComboBox RightThumbAxisXComboBox;
+		System.Windows.Forms.Label ButtonBLabel;
+		System.Windows.Forms.ComboBox LeftThumbAxisXComboBox;
+		System.Windows.Forms.ComboBox ButtonGuideComboBox;
+		System.Windows.Forms.ComboBox ButtonStartComboBox;
+		System.Windows.Forms.ComboBox ButtonBackComboBox;
+		System.Windows.Forms.ComboBox LeftShoulderComboBox;
+		System.Windows.Forms.ComboBox RightShoulderComboBox;
+		System.Windows.Forms.Label ButtonGuideLabel;
+		System.Windows.Forms.Label StartButtonLabel;
+		System.Windows.Forms.Label DPadDownLabel;
+		System.Windows.Forms.Label DPadRightLabel;
+		System.Windows.Forms.Label DPadLeftLabel;
+		System.Windows.Forms.Label DPadUpLabel;
+		System.Windows.Forms.Label DPadLabel;
+		System.Windows.Forms.Label BackButtonLabel;
+		System.Windows.Forms.Label RightThumbAxisYLabel;
+		System.Windows.Forms.Label ButtonYLabel;
+		System.Windows.Forms.Label LeftThumbAxisYLabel;
+		System.Windows.Forms.Label LeftShoulderLabel;
+		System.Windows.Forms.Label LeftTriggerLabel;
+		System.Windows.Forms.Label RightThumbButtonLabel;
+		System.Windows.Forms.ComboBox LeftThumbButtonComboBox;
+		System.Windows.Forms.Label LeftThumbButtonLabel;
+		System.Windows.Forms.ComboBox LeftThumbAxisYComboBox;
+		System.Windows.Forms.ComboBox RightThumbAxisYComboBox;
+		System.Windows.Forms.ComboBox RightThumbButtonComboBox;
+		System.Windows.Forms.PictureBox TopPictureBox;
+		System.Windows.Forms.Label RightLabel;
+		System.Windows.Forms.Label LeftLabel;
+		System.Windows.Forms.Label OptionsDeviceTypeLabel;
+		System.Windows.Forms.ComboBox GamePadTypeComboBox;
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
-		private System.Windows.Forms.CheckBox PassThroughCheckBox;
-		private System.Windows.Forms.GroupBox ThumbsGroupBox;
-        private System.Windows.Forms.GroupBox AxisToDPadGroupBox;
-        private System.Windows.Forms.CheckBox AxisToDPadEnabledCheckBox;
-        private System.Windows.Forms.TrackBar AxisToDPadDeadZoneTrackBar;
-        private System.Windows.Forms.Label DeadZoneLabel;
-        private System.Windows.Forms.TextBox AxisToDPadDeadZoneTextBox;
-        private System.Windows.Forms.TrackBar AxisToDPadOffsetTrackBar;
-        private System.Windows.Forms.Label OffsetLabel;
-        private System.Windows.Forms.TextBox AxisToDPadOffsetTextBox;
-		private System.Windows.Forms.ToolTip MainToolTip;
-		private System.Windows.Forms.TabPage KeyboardTabPage;
-		private System.Windows.Forms.TrackBar RightThumbDeadZoneYTrackBar;
-		private System.Windows.Forms.TrackBar LeftThumbDeadZoneYTrackBar;
-		private System.Windows.Forms.TextBox RightThumbDeadZoneYTextBox;
-		private System.Windows.Forms.TextBox LeftThumbDeadZoneYTextBox;
-		private System.Windows.Forms.Label LeftTriggerDeadZoneXLabel;
-		private System.Windows.Forms.Label LeftTriggerDeadZoneYLabel;
-		private System.Windows.Forms.TabPage ForceFeedbackTabPage;
-		private System.Windows.Forms.GroupBox ForceFeedbackGroupBox;
-		private System.Windows.Forms.CheckBox ForceEnableCheckBox;
-		private System.Windows.Forms.TrackBar RightMotorPeriodTrackBar;
+		System.Windows.Forms.CheckBox PassThroughCheckBox;
+		System.Windows.Forms.GroupBox ThumbsGroupBox;
+        System.Windows.Forms.GroupBox AxisToDPadGroupBox;
+        System.Windows.Forms.CheckBox AxisToDPadEnabledCheckBox;
+        System.Windows.Forms.TrackBar AxisToDPadDeadZoneTrackBar;
+        System.Windows.Forms.Label DeadZoneLabel;
+        System.Windows.Forms.TextBox AxisToDPadDeadZoneTextBox;
+        System.Windows.Forms.TrackBar AxisToDPadOffsetTrackBar;
+        System.Windows.Forms.Label OffsetLabel;
+        System.Windows.Forms.TextBox AxisToDPadOffsetTextBox;
+		System.Windows.Forms.ToolTip MainToolTip;
+		System.Windows.Forms.TabPage KeyboardTabPage;
+		System.Windows.Forms.TrackBar RightThumbDeadZoneYTrackBar;
+		System.Windows.Forms.TrackBar LeftThumbDeadZoneYTrackBar;
+		System.Windows.Forms.TextBox RightThumbDeadZoneYTextBox;
+		System.Windows.Forms.TextBox LeftThumbDeadZoneYTextBox;
+		System.Windows.Forms.Label LeftTriggerDeadZoneXLabel;
+		System.Windows.Forms.Label LeftTriggerDeadZoneYLabel;
+		System.Windows.Forms.TabPage ForceFeedbackTabPage;
+		System.Windows.Forms.GroupBox ForceFeedbackGroupBox;
+		System.Windows.Forms.CheckBox ForceEnableCheckBox;
+		System.Windows.Forms.TrackBar RightMotorPeriodTrackBar;
 		public System.Windows.Forms.TrackBar RightMotorTestTrackBar;
-		private System.Windows.Forms.Label LeftMotorPeriodLabel;
-		private System.Windows.Forms.Label TestLeftMotorLabel;
-		private System.Windows.Forms.TextBox RightMotorPeriodTextBox;
-		private System.Windows.Forms.TextBox RightMotorTestTextBox;
-		private System.Windows.Forms.TrackBar LeftMotorPeriodTrackBar;
-		private System.Windows.Forms.TextBox LeftMotorPeriodTextBox;
+		System.Windows.Forms.Label LeftMotorPeriodLabel;
+		System.Windows.Forms.Label TestLeftMotorLabel;
+		System.Windows.Forms.TextBox RightMotorPeriodTextBox;
+		System.Windows.Forms.TextBox RightMotorTestTextBox;
+		System.Windows.Forms.TrackBar LeftMotorPeriodTrackBar;
+		System.Windows.Forms.TextBox LeftMotorPeriodTextBox;
 		public System.Windows.Forms.TrackBar LeftMotorTestTrackBar;
-		private System.Windows.Forms.Label RightMotorPeriodLabel;
-		private System.Windows.Forms.TextBox LeftMotorTestTextBox;
-		private System.Windows.Forms.Label TestRightMotorLabel;
-		private System.Windows.Forms.TextBox ForceOverallTextBox;
-		private System.Windows.Forms.CheckBox ForceSwapMotorCheckBox;
-		private System.Windows.Forms.Label OveralEffectsStengthLabel;
-		private System.Windows.Forms.TrackBar ForceOverallTrackBar;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.TrackBar RightTriggerDeadZoneTrackBar;
-		private System.Windows.Forms.TrackBar LeftTriggerDeadZoneTrackBar;
-		private System.Windows.Forms.TextBox RightTriggerDeadZoneTextBox;
-		private System.Windows.Forms.TextBox LeftTriggerDeadZoneTextBox;
-		private System.Windows.Forms.NumericUpDown RightThumbYAntiDeadZoneNumericUpDown;
-		private System.Windows.Forms.NumericUpDown LeftThumbYAntiDeadZoneNumericUpDown;
-		private System.Windows.Forms.NumericUpDown RightThumbXAntiDeadZoneNumericUpDown;
-		private System.Windows.Forms.NumericUpDown LeftThumbXAntiDeadZoneNumericUpDown;
-		private System.Windows.Forms.Label RightThumbYAntiDeadZoneLabel;
-		private System.Windows.Forms.Label LeftThumbYAntiDeadZoneLabel;
-		private System.Windows.Forms.Label RightThumbXAntiDeadZoneLabel;
-		private System.Windows.Forms.Label LeftThumbXAntiDeadZoneLabel;
-		private System.Windows.Forms.ComboBox ThumbAntiDeadZoneComboBox;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox ForceTypeComboBox;
-		private System.Windows.Forms.ComboBox PresetComboBox;
-		private System.Windows.Forms.Button SavePresetButton;
-		private System.Windows.Forms.Button ResetPresetButton;
-		private System.Windows.Forms.Button LoadPresetButton;
+		System.Windows.Forms.Label RightMotorPeriodLabel;
+		System.Windows.Forms.TextBox LeftMotorTestTextBox;
+		System.Windows.Forms.Label TestRightMotorLabel;
+		System.Windows.Forms.TextBox ForceOverallTextBox;
+		System.Windows.Forms.CheckBox ForceSwapMotorCheckBox;
+		System.Windows.Forms.Label OveralEffectsStengthLabel;
+		System.Windows.Forms.TrackBar ForceOverallTrackBar;
+		System.Windows.Forms.GroupBox groupBox1;
+		System.Windows.Forms.Label label3;
+		System.Windows.Forms.Label label4;
+		System.Windows.Forms.TrackBar RightTriggerDeadZoneTrackBar;
+		System.Windows.Forms.TrackBar LeftTriggerDeadZoneTrackBar;
+		System.Windows.Forms.TextBox RightTriggerDeadZoneTextBox;
+		System.Windows.Forms.TextBox LeftTriggerDeadZoneTextBox;
+		System.Windows.Forms.NumericUpDown RightThumbYAntiDeadZoneNumericUpDown;
+		System.Windows.Forms.NumericUpDown LeftThumbYAntiDeadZoneNumericUpDown;
+		System.Windows.Forms.NumericUpDown RightThumbXAntiDeadZoneNumericUpDown;
+		System.Windows.Forms.NumericUpDown LeftThumbXAntiDeadZoneNumericUpDown;
+		System.Windows.Forms.Label RightThumbYAntiDeadZoneLabel;
+		System.Windows.Forms.Label LeftThumbYAntiDeadZoneLabel;
+		System.Windows.Forms.Label RightThumbXAntiDeadZoneLabel;
+		System.Windows.Forms.Label LeftThumbXAntiDeadZoneLabel;
+		System.Windows.Forms.ComboBox ThumbAntiDeadZoneComboBox;
+		System.Windows.Forms.Label label1;
+		System.Windows.Forms.ComboBox ForceTypeComboBox;
+		System.Windows.Forms.ComboBox PresetComboBox;
+		System.Windows.Forms.Button SavePresetButton;
+		System.Windows.Forms.Button ResetPresetButton;
+		System.Windows.Forms.Button LoadPresetButton;
 		public System.Windows.Forms.TabControl PadTabControl;
 	}
 }
