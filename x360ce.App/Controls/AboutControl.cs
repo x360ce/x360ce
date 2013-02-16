@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 		}
 
-		private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			OpenUrl(((Control)sender).Text);
 		}
@@ -39,7 +39,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void AboutControl_Load(object sender, EventArgs e)
+		void AboutControl_Load(object sender, EventArgs e)
 		{
 			var stream = Helper.GetResource("ChangeLog.txt");
 			var sr = new StreamReader(stream);

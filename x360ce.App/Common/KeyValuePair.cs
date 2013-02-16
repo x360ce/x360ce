@@ -12,8 +12,8 @@ namespace x360ce.App
     [Serializable, StructLayout(LayoutKind.Sequential)]
     public class KeyValuePair
     {
-        private string _key;
-        private string _value;
+        string _key;
+        string _value;
         /// <summary>
         /// Initializes an instance of the key/value pair type with the specified key and value.
         /// </summary>

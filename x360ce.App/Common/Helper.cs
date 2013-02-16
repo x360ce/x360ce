@@ -93,7 +93,7 @@ namespace x360ce.App
 
 		#region Comparisons
 
-		private static Regex _GuidRegex;
+		static Regex _GuidRegex;
 		public static Regex GuidRegex
 		{
 			get

@@ -5,9 +5,9 @@
 	internal static class GamePadDeadZoneUtils
 	{
 		// Fields
-		private const int LeftStickDeadZoneSize = 0x1ea9;
-		private const int RightStickDeadZoneSize = 0x21f1;
-		private const int TriggerDeadZoneSize = 30;
+		const int LeftStickDeadZoneSize = 0x1ea9;
+		const int RightStickDeadZoneSize = 0x21f1;
+		const int TriggerDeadZoneSize = 30;
 
 		// Methods
 		internal static Vector2 ApplyLeftStickDeadZone(int x, int y, GamePadDeadZone deadZoneMode)
@@ -15,7 +15,7 @@
 			return ApplyStickDeadZone(x, y, deadZoneMode, 0x1ea9);
 		}
 
-		private static float ApplyLinearDeadZone(float value, float maxValue, float deadZoneSize)
+		static float ApplyLinearDeadZone(float value, float maxValue, float deadZoneSize)
 		{
 			if (value < -deadZoneSize)
 			{
@@ -38,7 +38,7 @@
 			return ApplyStickDeadZone(x, y, deadZoneMode, 0x21f1);
 		}
 
-		private static Vector2 ApplyStickDeadZone(int x, int y, GamePadDeadZone deadZoneMode, int deadZoneSize)
+		static Vector2 ApplyStickDeadZone(int x, int y, GamePadDeadZone deadZoneMode, int deadZoneSize)
 		{
 			Vector2 vector;
 			if (deadZoneMode == GamePadDeadZone.IndependentAxes)

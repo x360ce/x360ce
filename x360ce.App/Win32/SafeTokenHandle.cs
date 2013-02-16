@@ -10,7 +10,7 @@ namespace x360ce.App.Win32
 	/// </summary>
 	public class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
-		private SafeTokenHandle()
+		SafeTokenHandle()
 			: base(true)
 		{
 		}

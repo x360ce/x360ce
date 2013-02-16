@@ -5,7 +5,7 @@
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
 			this.Button3 = new System.Windows.Forms.Button();
@@ -177,10 +177,10 @@
 		internal System.Windows.Forms.Button Button1;
 		internal System.Windows.Forms.PictureBox IconPictureBox;
 		internal System.Windows.Forms.Label TextLabel;
-		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
-		private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.TextBox textBox1;
+		System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
+		System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+		System.Windows.Forms.Panel panel1;
+		System.Windows.Forms.TextBox textBox1;
 		public System.Windows.Forms.LinkLabel MainLinkLabel;
 
 

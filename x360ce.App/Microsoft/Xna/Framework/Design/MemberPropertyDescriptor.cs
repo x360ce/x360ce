@@ -6,7 +6,7 @@
 
     internal abstract class MemberPropertyDescriptor : PropertyDescriptor
     {
-        private MemberInfo _member;
+        MemberInfo _member;
 
         public MemberPropertyDescriptor(MemberInfo member) : base(member.Name, (Attribute[]) member.GetCustomAttributes(typeof(Attribute), true))
         {

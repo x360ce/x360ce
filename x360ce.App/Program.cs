@@ -35,7 +35,6 @@ namespace x360ce.App
 					OpenSettingsFolder(Application.LocalUserAppDataPath);
 					return;
 				}
-
 				if (!CheckSettings()) return;
 				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 				MainForm.Current = new MainForm();
@@ -70,7 +69,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>Add information about missing libraries and DLLs</summary>
-		private static void AddExceptionMessage(Exception ex, ref string message)
+		static void AddExceptionMessage(Exception ex, ref string message)
 		{
 			var ex1 = ex as ConfigurationErrorsException;
 			var ex2 = ex as ReflectionTypeLoadException;

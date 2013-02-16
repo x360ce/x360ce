@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 		}
 
-		private void NewDeviceForm_Load(object sender, EventArgs e)
+		void NewDeviceForm_Load(object sender, EventArgs e)
 		{
 			configs = new SortableBindingList<Summary>();
 			MySettingsDataGridView.AutoGenerateColumns = false;
@@ -46,7 +46,7 @@ namespace x360ce.App.Controls
 			UpdateButtons();
 		}
 
-		private void BrowseButton_Click(object sender, EventArgs e)
+		void BrowseButton_Click(object sender, EventArgs e)
 		{
 			SettingsFolderBrowserDialog.Description = string.Format("Browse for {0} (*.ini)", GetFileDescription(".ini"));
 			SettingsFolderBrowserDialog.SelectedPath = FolderPathTextBox.Text;
@@ -57,11 +57,11 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void BrowseRadioButton_CheckedChanged(object sender, EventArgs e)
+		void BrowseRadioButton_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateButtons();
 		}
-		private void SearchRadioButton_CheckedChanged(object sender, EventArgs e)
+		void SearchRadioButton_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateButtons();
 		}
@@ -76,7 +76,7 @@ namespace x360ce.App.Controls
 			NextButton.Enabled = SearchRadioButton.Checked || BrowseRadioButton.Checked;
 		}
 
-		private void NextButton_Click(object sender, EventArgs e)
+		void NextButton_Click(object sender, EventArgs e)
 		{
 			if (WizzardTabControl.TabPages.Contains(Step1TabPage))
 			{
@@ -156,7 +156,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void BackButton_Click(object sender, EventArgs e)
+		void BackButton_Click(object sender, EventArgs e)
 		{
 			WizzardTabControl.TabPages.Remove(Step2TabPage);
 			WizzardTabControl.TabPages.Add(Step1TabPage);
@@ -168,12 +168,12 @@ namespace x360ce.App.Controls
 			InternetPictureBox.Image = Properties.Resources.check_disabled_16x16;
 		}
 
-		private void SearchLabel_Click(object sender, EventArgs e)
+		void SearchLabel_Click(object sender, EventArgs e)
 		{
 			SearchRadioButton.Checked = true;
 		}
 
-		private void BrowseLabel_Click(object sender, EventArgs e)
+		void BrowseLabel_Click(object sender, EventArgs e)
 		{
 			BrowseRadioButton.Checked = true;
 		}
@@ -395,7 +395,7 @@ namespace x360ce.App.Controls
 			LoadingCircle = false;
 		}
 
-		private void SearchTheInternetCheckBox_CheckedChanged(object sender, EventArgs e)
+		void SearchTheInternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			InternetPictureBox.Visible = SearchTheInternetCheckBox.Checked;
 			InternetLabel.Visible = SearchTheInternetCheckBox.Checked;

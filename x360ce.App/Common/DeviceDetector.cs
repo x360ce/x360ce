@@ -14,13 +14,13 @@ namespace x360ce.App
 		/// <summary>
 		/// Handle of the window which receives messages from Windows. This will be a form.
 		/// </summary>
-		private IntPtr _RecipientHandle;
+		IntPtr _RecipientHandle;
 
 		// Win32 constants.
-		private const int BROADCAST_QUERY_DENY = 0x424D5144;
-		private const int WM_DEVICECHANGE = 0x0219;
-		private const int DBT_DEVTYP_HANDLE = 6;
-		private const int DBT_DEVTYP_VOLUME = 0x00000002; // drive type is logical volume
+		const int BROADCAST_QUERY_DENY = 0x424D5144;
+		const int WM_DEVICECHANGE = 0x0219;
+		const int DBT_DEVTYP_HANDLE = 6;
+		const int DBT_DEVTYP_VOLUME = 0x00000002; // drive type is logical volume
 
 		public delegate void DeviceDetectorEventHandler(Object sender, DeviceDetectorEventArgs e);
 

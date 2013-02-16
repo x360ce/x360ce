@@ -18,25 +18,25 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 		}
 
-		private void MapKeyboardControl_Load(object sender, EventArgs e)
+		void MapKeyboardControl_Load(object sender, EventArgs e)
 		{
 
 
 			//KeyboardContextMenuStrip.Items.Add(
 		}
 
-		private void MapDataGridView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		void MapDataGridView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
 		{
 			//e.KeyCode 
 		}
 
-		private void textBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		void textBox1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
 		{
 
 		}
 
 	
-		private void KeyboardTextBox_KeyDown(object sender, KeyEventArgs e)
+		void KeyboardTextBox_KeyDown(object sender, KeyEventArgs e)
 		{
 			//Control.ModifierKeys == Keys.Shift
 
@@ -60,28 +60,28 @@ namespace x360ce.App.Controls
 
 		}
 
-		private void AppendButton_Click(object sender, EventArgs e)
+		void AppendButton_Click(object sender, EventArgs e)
 		{
 			var m = string.Format("{0},{1},{2};", KeyboardTextBox.Text, DelayNumericUpDown.Value, LoopCheckBox.Checked ? "1" : "0");
 			ScriptTextBox.AppendText(m);
 		}
 
-		private void KeyboardTextBox_KeyPress(object sender, KeyPressEventArgs e)
+		void KeyboardTextBox_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			e.Handled = true;
 		}
 
-		private void KeyboardTextBox_KeyUp(object sender, KeyEventArgs e)
+		void KeyboardTextBox_KeyUp(object sender, KeyEventArgs e)
 		{
 			e.Handled = true;
 			e.SuppressKeyPress = true;
 		}
 
-		private void KeyboardTextBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		void KeyboardTextBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
 		{
 		}
 
-		private void TriggerButton_Click(object sender, EventArgs e)
+		void TriggerButton_Click(object sender, EventArgs e)
 		{
 			timer1.Enabled = !timer1.Enabled;
 			TriggerButton.Text = timer1.Enabled ? "Enabled" : "Disabled";
@@ -89,9 +89,9 @@ namespace x360ce.App.Controls
 		}
 
 
-		private int h = 0;
+		int h = 0;
 
-		private void timer1_Tick(object sender, EventArgs e)
+		void timer1_Tick(object sender, EventArgs e)
 		{
 			h++;
 			SendKeys.Send("{8}");

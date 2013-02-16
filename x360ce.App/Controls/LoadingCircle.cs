@@ -38,28 +38,28 @@ namespace MRG.Controls.UI
     public partial class LoadingCircle : Control
     {
         // Constants =========================================================
-        private const double NumberOfDegreesInCircle = 360;
-        private const double NumberOfDegreesInHalfCircle = NumberOfDegreesInCircle / 2;
-        private const int DefaultInnerCircleRadius = 8;
-        private const int DefaultOuterCircleRadius = 10;
-        private const int DefaultNumberOfSpoke = 10;
-        private const int DefaultSpokeThickness = 4;
-        private readonly Color DefaultColor = Color.DarkGray;
+        const double NumberOfDegreesInCircle = 360;
+        const double NumberOfDegreesInHalfCircle = NumberOfDegreesInCircle / 2;
+        const int DefaultInnerCircleRadius = 8;
+        const int DefaultOuterCircleRadius = 10;
+        const int DefaultNumberOfSpoke = 10;
+        const int DefaultSpokeThickness = 4;
+        readonly Color DefaultColor = Color.DarkGray;
 
-        private const int MacOSXInnerCircleRadius = 5;
-        private const int MacOSXOuterCircleRadius = 11;
-        private const int MacOSXNumberOfSpoke = 12;
-        private const int MacOSXSpokeThickness = 2;
+        const int MacOSXInnerCircleRadius = 5;
+        const int MacOSXOuterCircleRadius = 11;
+        const int MacOSXNumberOfSpoke = 12;
+        const int MacOSXSpokeThickness = 2;
 
-        private const int FireFoxInnerCircleRadius = 6;
-        private const int FireFoxOuterCircleRadius = 7;
-        private const int FireFoxNumberOfSpoke = 9;
-        private const int FireFoxSpokeThickness = 4;
+        const int FireFoxInnerCircleRadius = 6;
+        const int FireFoxOuterCircleRadius = 7;
+        const int FireFoxNumberOfSpoke = 9;
+        const int FireFoxSpokeThickness = 4;
 
-        private const int IE7InnerCircleRadius = 8;
-        private const int IE7OuterCircleRadius = 9;
-        private const int IE7NumberOfSpoke = 24;
-        private const int IE7SpokeThickness = 4;
+        const int IE7InnerCircleRadius = 8;
+        const int IE7OuterCircleRadius = 9;
+        const int IE7NumberOfSpoke = 24;
+        const int IE7SpokeThickness = 4;
 
         // Enumeration =======================================================
         public enum StylePresets
@@ -71,18 +71,18 @@ namespace MRG.Controls.UI
         }
 
         // Attributes ========================================================
-        private Timer m_Timer;
-        private bool m_IsTimerActive;
-        private int m_NumberOfSpoke;
-        private int m_SpokeThickness;
-        private int m_ProgressValue;
-        private int m_OuterCircleRadius;
-        private int m_InnerCircleRadius;
-        private PointF m_CenterPoint;
-        private Color m_Color;
-        private Color[] m_Colors;
-        private double[] m_Angles;
-        private StylePresets m_StylePreset;
+        Timer m_Timer;
+        bool m_IsTimerActive;
+        int m_NumberOfSpoke;
+        int m_SpokeThickness;
+        int m_ProgressValue;
+        int m_OuterCircleRadius;
+        int m_InnerCircleRadius;
+        PointF m_CenterPoint;
+        Color m_Color;
+        Color[] m_Colors;
+        double[] m_Angles;
+        StylePresets m_StylePreset;
 
         // Properties ========================================================
         /// <summary>
@@ -374,7 +374,7 @@ namespace MRG.Controls.UI
         /// <param name="_objColor">Color to darken.</param>
         /// <param name="_intPercent">The percent of darken.</param>
         /// <returns>The new color generated.</returns>
-        private Color Darken(Color _objColor, int _intPercent)
+        Color Darken(Color _objColor, int _intPercent)
         {
             int intRed = _objColor.R;
             int intGreen = _objColor.G;
@@ -385,7 +385,7 @@ namespace MRG.Controls.UI
         /// <summary>
         /// Generates the colors pallet.
         /// </summary>
-        private void GenerateColorsPallet()
+        void GenerateColorsPallet()
         {
             m_Colors = GenerateColorsPallet(m_Color, Active, m_NumberOfSpoke);
         }
@@ -396,7 +396,7 @@ namespace MRG.Controls.UI
         /// <param name="_objColor">Color of the lightest spoke.</param>
         /// <param name="_blnShadeColor">if set to <c>true</c> the color will be shaded on X spoke.</param>
         /// <returns>An array of color used to draw the circle.</returns>
-        private Color[] GenerateColorsPallet(Color _objColor, bool _blnShadeColor, int _intNbSpoke)
+        Color[] GenerateColorsPallet(Color _objColor, bool _blnShadeColor, int _intNbSpoke)
         {
             Color[] objColors = new Color[NumberSpoke];
 
@@ -437,7 +437,7 @@ namespace MRG.Controls.UI
         /// <summary>
         /// Gets the control center point.
         /// </summary>
-        private void GetControlCenterPoint()
+        void GetControlCenterPoint()
         {
             m_CenterPoint = GetControlCenterPoint(this);
         }
@@ -446,7 +446,7 @@ namespace MRG.Controls.UI
         /// Gets the control center point.
         /// </summary>
         /// <returns>PointF object</returns>
-        private PointF GetControlCenterPoint(Control _objControl)
+        PointF GetControlCenterPoint(Control _objControl)
         {
             return new PointF(_objControl.Width / 2, _objControl.Height / 2 - 1);
         }
@@ -459,7 +459,7 @@ namespace MRG.Controls.UI
         /// <param name="_objPointTwo">The point two.</param>
         /// <param name="_objColor">Color of the spoke.</param>
         /// <param name="_intLineThickness">The thickness of spoke.</param>
-        private void DrawLine(Graphics _objGraphics, PointF _objPointOne, PointF _objPointTwo,
+        void DrawLine(Graphics _objGraphics, PointF _objPointOne, PointF _objPointTwo,
                               Color _objColor, int _intLineThickness)
         {
             using(Pen objPen = new Pen(new SolidBrush(_objColor), _intLineThickness))
@@ -477,7 +477,7 @@ namespace MRG.Controls.UI
         /// <param name="_intRadius">The radius.</param>
         /// <param name="_dblAngle">The angle.</param>
         /// <returns></returns>
-        private PointF GetCoordinate(PointF _objCircleCenter, int _intRadius, double _dblAngle)
+        PointF GetCoordinate(PointF _objCircleCenter, int _intRadius, double _dblAngle)
         {
             double dblAngle = Math.PI * _dblAngle / NumberOfDegreesInHalfCircle;
 
@@ -488,7 +488,7 @@ namespace MRG.Controls.UI
         /// <summary>
         /// Gets the spokes angles.
         /// </summary>
-        private void GetSpokesAngles()
+        void GetSpokesAngles()
         {
             m_Angles = GetSpokesAngles(NumberSpoke);
         }
@@ -498,7 +498,7 @@ namespace MRG.Controls.UI
         /// </summary>
         /// <param name="_shtNumberSpoke">The number spoke.</param>
         /// <returns>An array of angle.</returns>
-        private double[] GetSpokesAngles(int _intNumberSpoke)
+        double[] GetSpokesAngles(int _intNumberSpoke)
         {
             double[] Angles = new double[_intNumberSpoke];
             double dblAngle = (double) NumberOfDegreesInCircle / _intNumberSpoke;
@@ -512,7 +512,7 @@ namespace MRG.Controls.UI
         /// <summary>
         /// Actives the timer.
         /// </summary>
-        private void ActiveTimer()
+        void ActiveTimer()
         {
             if (m_IsTimerActive)
                 m_Timer.Start();

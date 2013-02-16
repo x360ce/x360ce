@@ -13,9 +13,9 @@ namespace x360ce.App
 	/// </summary>
 	public class PropertyComparer<T> : IComparer<T>
 	{
-		private readonly IComparer comparer;
-		private PropertyDescriptor propertyDescriptor;
-		private int reverse;
+		readonly IComparer comparer;
+		PropertyDescriptor propertyDescriptor;
+		int reverse;
 
 		public PropertyComparer(PropertyDescriptor property, ListSortDirection direction)
 		{
@@ -34,12 +34,12 @@ namespace x360ce.App
 
 		#endregion
 
-		private void SetPropertyDescriptor(PropertyDescriptor descriptor)
+		void SetPropertyDescriptor(PropertyDescriptor descriptor)
 		{
 			this.propertyDescriptor = descriptor;
 		}
 
-		private void SetListSortDirection(ListSortDirection direction)
+		void SetListSortDirection(ListSortDirection direction)
 		{
 			this.reverse = direction == ListSortDirection.Ascending ? 1 : -1;
 		}

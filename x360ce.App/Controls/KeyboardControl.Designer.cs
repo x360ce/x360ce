@@ -5,7 +5,7 @@
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
 			this.MapDataGridView = new System.Windows.Forms.DataGridView();
@@ -238,22 +238,22 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView MapDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn KeyboardKeyColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DirectInputColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
-		private System.Windows.Forms.ContextMenuStrip KeyboardContextMenuStrip;
-		private System.Windows.Forms.TextBox KeyboardTextBox;
-		private System.Windows.Forms.Button AddButton;
-		private System.Windows.Forms.ComboBox LeftTriggerComboBox;
-		private System.Windows.Forms.Label KeyboardLabel;
-		private System.Windows.Forms.CheckBox LoopCheckBox;
-		private System.Windows.Forms.NumericUpDown DelayNumericUpDown;
-		private System.Windows.Forms.Label DelayLabel;
-		private System.Windows.Forms.TextBox ScriptTextBox;
-		private System.Windows.Forms.Button AppendButton;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Button TriggerButton;
-		private System.Windows.Forms.Timer timer1;
+		System.Windows.Forms.DataGridView MapDataGridView;
+		System.Windows.Forms.DataGridViewTextBoxColumn KeyboardKeyColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn DirectInputColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
+		System.Windows.Forms.ContextMenuStrip KeyboardContextMenuStrip;
+		System.Windows.Forms.TextBox KeyboardTextBox;
+		System.Windows.Forms.Button AddButton;
+		System.Windows.Forms.ComboBox LeftTriggerComboBox;
+		System.Windows.Forms.Label KeyboardLabel;
+		System.Windows.Forms.CheckBox LoopCheckBox;
+		System.Windows.Forms.NumericUpDown DelayNumericUpDown;
+		System.Windows.Forms.Label DelayLabel;
+		System.Windows.Forms.TextBox ScriptTextBox;
+		System.Windows.Forms.Button AppendButton;
+		System.Windows.Forms.TextBox textBox1;
+		System.Windows.Forms.Button TriggerButton;
+		System.Windows.Forms.Timer timer1;
 	}
 }

@@ -5,7 +5,7 @@
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutControl));
 			this.ChangeLogTextBox = new System.Windows.Forms.TextBox();
@@ -215,19 +215,19 @@
 
 		#endregion
 
-		private System.Windows.Forms.TextBox ChangeLogTextBox;
-		private System.Windows.Forms.Label AboutDescriptionLabel;
-		private System.Windows.Forms.LinkLabel AboutWikiLinkLabel;
-		private System.Windows.Forms.Label AboutWikiLabel;
-		private System.Windows.Forms.LinkLabel AboutTocaEditLinkLabel;
-		private System.Windows.Forms.Label AboutTocaLabel;
-		private System.Windows.Forms.LinkLabel AboutJocysLinkLabel;
-		private System.Windows.Forms.LinkLabel AboutVirusLinkLabel;
-		private System.Windows.Forms.Label AboutJocysLabel;
-		private System.Windows.Forms.Label AboutVirusLabel;
-		private System.Windows.Forms.Label AboutProductLabel;
-		private System.Windows.Forms.PictureBox ProductPictureBox;
-		private System.Windows.Forms.Label GoogleProjectLabel;
-		private System.Windows.Forms.LinkLabel GoogleProjectLinkLabel;
+		System.Windows.Forms.TextBox ChangeLogTextBox;
+		System.Windows.Forms.Label AboutDescriptionLabel;
+		System.Windows.Forms.LinkLabel AboutWikiLinkLabel;
+		System.Windows.Forms.Label AboutWikiLabel;
+		System.Windows.Forms.LinkLabel AboutTocaEditLinkLabel;
+		System.Windows.Forms.Label AboutTocaLabel;
+		System.Windows.Forms.LinkLabel AboutJocysLinkLabel;
+		System.Windows.Forms.LinkLabel AboutVirusLinkLabel;
+		System.Windows.Forms.Label AboutJocysLabel;
+		System.Windows.Forms.Label AboutVirusLabel;
+		System.Windows.Forms.Label AboutProductLabel;
+		System.Windows.Forms.PictureBox ProductPictureBox;
+		System.Windows.Forms.Label GoogleProjectLabel;
+		System.Windows.Forms.LinkLabel GoogleProjectLinkLabel;
 	}
 }

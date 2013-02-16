@@ -5,7 +5,7 @@
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -376,29 +376,29 @@
 
 		#endregion
 
-		private System.Windows.Forms.TabControl ProgramsListTabControl;
-		private System.Windows.Forms.TabPage ProgramsTabPage;
-		private System.Windows.Forms.DataGridView SettingsDataGridView;
-		private System.Windows.Forms.GroupBox HookMaskGroupBox;
-		private System.Windows.Forms.CheckBox HookDISABLECheckBox;
-		private System.Windows.Forms.CheckBox HookNameCheckBox;
-		private System.Windows.Forms.CheckBox HookSTOPCheckBox;
-		private System.Windows.Forms.CheckBox HookPIDVIDCheckBox;
-		private System.Windows.Forms.CheckBox HookDICheckBox;
-		private System.Windows.Forms.CheckBox HookWTCheckBox;
-		private System.Windows.Forms.CheckBox HookSACheckBox;
-		private System.Windows.Forms.CheckBox HookCOMCheckBox;
-		private System.Windows.Forms.CheckBox HookLLCheckBox;
-		private System.Windows.Forms.TextBox HookMaskTextBox;
-		private System.Windows.Forms.GroupBox InstalledFilesGroupBox;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.CheckBox checkBox1;
-		private System.Windows.Forms.CheckBox InstallFilesXinput13CheckBox;
-		private System.Windows.Forms.CheckBox InstallFilesXinput12CheckBox;
-		private System.Windows.Forms.CheckBox InstallFilesXinput11CheckBox;
-		private System.Windows.Forms.CheckBox InstallFilesXinput910CheckBox;
-		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
+		System.Windows.Forms.TabControl ProgramsListTabControl;
+		System.Windows.Forms.TabPage ProgramsTabPage;
+		System.Windows.Forms.DataGridView SettingsDataGridView;
+		System.Windows.Forms.GroupBox HookMaskGroupBox;
+		System.Windows.Forms.CheckBox HookDISABLECheckBox;
+		System.Windows.Forms.CheckBox HookNameCheckBox;
+		System.Windows.Forms.CheckBox HookSTOPCheckBox;
+		System.Windows.Forms.CheckBox HookPIDVIDCheckBox;
+		System.Windows.Forms.CheckBox HookDICheckBox;
+		System.Windows.Forms.CheckBox HookWTCheckBox;
+		System.Windows.Forms.CheckBox HookSACheckBox;
+		System.Windows.Forms.CheckBox HookCOMCheckBox;
+		System.Windows.Forms.CheckBox HookLLCheckBox;
+		System.Windows.Forms.TextBox HookMaskTextBox;
+		System.Windows.Forms.GroupBox InstalledFilesGroupBox;
+		System.Windows.Forms.TextBox textBox1;
+		System.Windows.Forms.CheckBox checkBox1;
+		System.Windows.Forms.CheckBox InstallFilesXinput13CheckBox;
+		System.Windows.Forms.CheckBox InstallFilesXinput12CheckBox;
+		System.Windows.Forms.CheckBox InstallFilesXinput11CheckBox;
+		System.Windows.Forms.CheckBox InstallFilesXinput910CheckBox;
+		System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
 	}
 }

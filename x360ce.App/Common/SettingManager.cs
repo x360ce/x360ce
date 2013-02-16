@@ -410,10 +410,8 @@ namespace x360ce.App
 			return saved;
 		}
 
-		string GetInstanceSection(int padIndex)
+		static string GetInstanceSection(int padIndex)
 		{
-			
-			
 			string pad = string.Format("PAD{0}", padIndex + 1);
 			string guidString = SettingManager.Current.SettingsMap[pad + "\\" + SettingName.InstanceGuid].Text;
 			// If instanceGuid value is not a GUID then exit.

@@ -5,7 +5,7 @@
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+		System.ComponentModel.IContainer components = null;
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -26,7 +26,7 @@
 		/// Required method for Designer support - do not modify 
 		/// the contents of this method with the code editor.
 		/// </summary>
-		private void InitializeComponent()
+		void InitializeComponent()
 		{
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -464,32 +464,32 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView SettingsDataGridView;
-		private System.Windows.Forms.Button RefreshButton;
-		private System.Windows.Forms.Button SaveButton;
-		private System.Windows.Forms.Button LoadButton;
-		private System.Windows.Forms.ComboBox ControllerComboBox;
-		private System.Windows.Forms.Label ControllerLabel;
-		private System.Windows.Forms.ComboBox GameComboBox;
-		private System.Windows.Forms.Label GameLabel;
-		private System.Windows.Forms.Button DeleteButton;
-		private System.Windows.Forms.TextBox CommentTextBox;
-		private System.Windows.Forms.Label CommentLabel;
+		System.Windows.Forms.DataGridView SettingsDataGridView;
+		System.Windows.Forms.Button RefreshButton;
+		System.Windows.Forms.Button SaveButton;
+		System.Windows.Forms.Button LoadButton;
+		System.Windows.Forms.ComboBox ControllerComboBox;
+		System.Windows.Forms.Label ControllerLabel;
+		System.Windows.Forms.ComboBox GameComboBox;
+		System.Windows.Forms.Label GameLabel;
+		System.Windows.Forms.Button DeleteButton;
+		System.Windows.Forms.TextBox CommentTextBox;
+		System.Windows.Forms.Label CommentLabel;
 		public System.Windows.Forms.TextBox InternetDatabaseUrlTextBox;
-		private System.Windows.Forms.TextBox CommentSelectedTextBox;
-		private System.Windows.Forms.TabControl SettingsListTabControl;
-		private System.Windows.Forms.TabPage SettingsTabPage;
-		private System.Windows.Forms.TabPage SummariesTabPage;
-		private System.Windows.Forms.DataGridView SummariesDataGridView;
-		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyControllerColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn SidColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+		System.Windows.Forms.TextBox CommentSelectedTextBox;
+		System.Windows.Forms.TabControl SettingsListTabControl;
+		System.Windows.Forms.TabPage SettingsTabPage;
+		System.Windows.Forms.TabPage SummariesTabPage;
+		System.Windows.Forms.DataGridView SummariesDataGridView;
+		System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MyControllerColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn SidColumn;
+		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
 	}
 }
