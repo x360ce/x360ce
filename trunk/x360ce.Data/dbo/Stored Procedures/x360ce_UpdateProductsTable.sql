@@ -10,6 +10,7 @@ BEGIN
 
 	/*
 	-- To update all records run:
+	DELETE [dbo].[x360ce_Products]
 	DECLARE @updated as x360ce_SummariesTableType
 	exec [dbo].[x360ce_UpdateProductsTable] @updated, @updated, 1
 	*/

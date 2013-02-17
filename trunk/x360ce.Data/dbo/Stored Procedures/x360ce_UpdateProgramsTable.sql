@@ -10,6 +10,7 @@ BEGIN
 
 	/*
 	-- To update all records run:
+	DELETE [dbo].[x360ce_Programs]
 	DECLARE @updated as x360ce_ProgramsTableType
 	exec [dbo].[x360ce_UpdateProgramsTable] @updated, @updated, 1
 	*/
