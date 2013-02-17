@@ -31,17 +31,17 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityKeyMember[]))]
     public partial class x360ce : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
-        System.Threading.SendOrPostCallback SaveSettingOperationCompleted;
+        private System.Threading.SendOrPostCallback SaveSettingOperationCompleted;
         
-        System.Threading.SendOrPostCallback SearchSettingsOperationCompleted;
+        private System.Threading.SendOrPostCallback SearchSettingsOperationCompleted;
         
-        System.Threading.SendOrPostCallback DeleteSettingOperationCompleted;
+        private System.Threading.SendOrPostCallback DeleteSettingOperationCompleted;
         
-        System.Threading.SendOrPostCallback LoadSettingOperationCompleted;
+        private System.Threading.SendOrPostCallback LoadSettingOperationCompleted;
         
-        System.Threading.SendOrPostCallback GetVendorsOperationCompleted;
+        private System.Threading.SendOrPostCallback GetVendorsOperationCompleted;
         
-        bool useDefaultCredentialsSetExplicitly;
+        private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
         public x360ce() {
@@ -118,7 +118,7 @@ namespace x360ce.App.com.x360ce.localhost {
                         ps}, this.SaveSettingOperationCompleted, userState);
         }
         
-        void OnSaveSettingOperationCompleted(object arg) {
+        private void OnSaveSettingOperationCompleted(object arg) {
             if ((this.SaveSettingCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SaveSettingCompleted(this, new SaveSettingCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
@@ -147,7 +147,7 @@ namespace x360ce.App.com.x360ce.localhost {
                         args}, this.SearchSettingsOperationCompleted, userState);
         }
         
-        void OnSearchSettingsOperationCompleted(object arg) {
+        private void OnSearchSettingsOperationCompleted(object arg) {
             if ((this.SearchSettingsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SearchSettingsCompleted(this, new SearchSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
@@ -176,7 +176,7 @@ namespace x360ce.App.com.x360ce.localhost {
                         s}, this.DeleteSettingOperationCompleted, userState);
         }
         
-        void OnDeleteSettingOperationCompleted(object arg) {
+        private void OnDeleteSettingOperationCompleted(object arg) {
             if ((this.DeleteSettingCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.DeleteSettingCompleted(this, new DeleteSettingCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
@@ -205,7 +205,7 @@ namespace x360ce.App.com.x360ce.localhost {
                         checksum}, this.LoadSettingOperationCompleted, userState);
         }
         
-        void OnLoadSettingOperationCompleted(object arg) {
+        private void OnLoadSettingOperationCompleted(object arg) {
             if ((this.LoadSettingCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.LoadSettingCompleted(this, new LoadSettingCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
@@ -232,7 +232,7 @@ namespace x360ce.App.com.x360ce.localhost {
             this.InvokeAsync("GetVendors", new object[0], this.GetVendorsOperationCompleted, userState);
         }
         
-        void OnGetVendorsOperationCompleted(object arg) {
+        private void OnGetVendorsOperationCompleted(object arg) {
             if ((this.GetVendorsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetVendorsCompleted(this, new GetVendorsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
@@ -244,7 +244,7 @@ namespace x360ce.App.com.x360ce.localhost {
             base.CancelAsync(userState);
         }
         
-        bool IsLocalFileSystemWebService(string url) {
+        private bool IsLocalFileSystemWebService(string url) {
             if (((url == null) 
                         || (url == string.Empty))) {
                 return false;
@@ -266,33 +266,33 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class Setting : EntityObject {
         
-        System.Guid settingIdField;
+        private System.Guid settingIdField;
         
-        System.Guid instanceGuidField;
+        private System.Guid instanceGuidField;
         
-        string instanceNameField;
+        private string instanceNameField;
         
-        System.Guid productGuidField;
+        private System.Guid productGuidField;
         
-        string productNameField;
+        private string productNameField;
         
-        int deviceTypeField;
+        private int deviceTypeField;
         
-        string fileNameField;
+        private string fileNameField;
         
-        string fileProductNameField;
+        private string fileProductNameField;
         
-        string commentField;
+        private string commentField;
         
-        System.DateTime dateCreatedField;
+        private System.DateTime dateCreatedField;
         
-        System.DateTime dateUpdatedField;
+        private System.DateTime dateUpdatedField;
         
-        bool isEnabledField;
+        private bool isEnabledField;
         
-        System.Guid padSettingChecksumField;
+        private System.Guid padSettingChecksumField;
         
-        System.DateTime dateSelectedField;
+        private System.DateTime dateSelectedField;
         
         /// <remarks/>
         public System.Guid SettingId {
@@ -446,7 +446,7 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public abstract partial class EntityObject : StructuralObject {
         
-        EntityKey entityKeyField;
+        private EntityKey entityKeyField;
         
         /// <remarks/>
         public EntityKey EntityKey {
@@ -467,11 +467,11 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class EntityKey {
         
-        string entitySetNameField;
+        private string entitySetNameField;
         
-        string entityContainerNameField;
+        private string entityContainerNameField;
         
-        EntityKeyMember[] entityKeyValuesField;
+        private EntityKeyMember[] entityKeyValuesField;
         
         /// <remarks/>
         public string EntitySetName {
@@ -512,9 +512,9 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class EntityKeyMember {
         
-        string keyField;
+        private string keyField;
         
-        object valueField;
+        private object valueField;
         
         /// <remarks/>
         public string Key {
@@ -545,13 +545,13 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class Vendor {
         
-        int vendorIdField;
+        private int vendorIdField;
         
-        string vendorNameField;
+        private string vendorNameField;
         
-        string shortNameField;
+        private string shortNameField;
         
-        string webSiteField;
+        private string webSiteField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -606,11 +606,11 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class SearchResult {
         
-        Setting[] settingsField;
+        private Setting[] settingsField;
         
-        Summary[] summariesField;
+        private Summary[] summariesField;
         
-        PadSetting[] padSettingsField;
+        private PadSetting[] padSettingsField;
         
         /// <remarks/>
         public Setting[] Settings {
@@ -651,23 +651,23 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class Summary : EntityObject {
         
-        System.Guid summaryIdField;
+        private System.Guid summaryIdField;
         
-        int usersField;
+        private int usersField;
         
-        System.Guid padSettingChecksumField;
+        private System.Guid padSettingChecksumField;
         
-        System.Guid productGuidField;
+        private System.Guid productGuidField;
         
-        string productNameField;
+        private string productNameField;
         
-        string fileNameField;
+        private string fileNameField;
         
-        string fileProductNameField;
+        private string fileProductNameField;
         
-        System.DateTime dateCreatedField;
+        private System.DateTime dateCreatedField;
         
-        System.DateTime dateUpdatedField;
+        private System.DateTime dateUpdatedField;
         
         /// <remarks/>
         public System.Guid SummaryId {
@@ -768,111 +768,111 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class PadSetting : EntityObject {
         
-        System.Guid padSettingChecksumField;
+        private System.Guid padSettingChecksumField;
         
-        string axisToDPadDeadZoneField;
+        private string axisToDPadDeadZoneField;
         
-        string axisToDPadEnabledField;
+        private string axisToDPadEnabledField;
         
-        string axisToDPadOffsetField;
+        private string axisToDPadOffsetField;
         
-        string buttonAField;
+        private string buttonAField;
         
-        string buttonBField;
+        private string buttonBField;
         
-        string buttonBigField;
+        private string buttonBigField;
         
-        string buttonBackField;
+        private string buttonBackField;
         
-        string buttonGuideField;
+        private string buttonGuideField;
         
-        string buttonStartField;
+        private string buttonStartField;
         
-        string buttonXField;
+        private string buttonXField;
         
-        string buttonYField;
+        private string buttonYField;
         
-        string dPadField;
+        private string dPadField;
         
-        string dPadDownField;
+        private string dPadDownField;
         
-        string dPadLeftField;
+        private string dPadLeftField;
         
-        string dPadRightField;
+        private string dPadRightField;
         
-        string dPadUpField;
+        private string dPadUpField;
         
-        string forceEnableField;
+        private string forceEnableField;
         
-        string forceOverallField;
+        private string forceOverallField;
         
-        string forceSwapMotorField;
+        private string forceSwapMotorField;
         
-        string forceTypeField;
+        private string forceTypeField;
         
-        string gamePadTypeField;
+        private string gamePadTypeField;
         
-        string leftMotorPeriodField;
+        private string leftMotorPeriodField;
         
-        string leftShoulderField;
+        private string leftShoulderField;
         
-        string leftThumbAntiDeadZoneXField;
+        private string leftThumbAntiDeadZoneXField;
         
-        string leftThumbAntiDeadZoneYField;
+        private string leftThumbAntiDeadZoneYField;
         
-        string leftThumbAxisXField;
+        private string leftThumbAxisXField;
         
-        string leftThumbAxisYField;
+        private string leftThumbAxisYField;
         
-        string leftThumbButtonField;
+        private string leftThumbButtonField;
         
-        string leftThumbDeadZoneXField;
+        private string leftThumbDeadZoneXField;
         
-        string leftThumbDeadZoneYField;
+        private string leftThumbDeadZoneYField;
         
-        string leftThumbDownField;
+        private string leftThumbDownField;
         
-        string leftThumbLeftField;
+        private string leftThumbLeftField;
         
-        string leftThumbRightField;
+        private string leftThumbRightField;
         
-        string leftThumbUpField;
+        private string leftThumbUpField;
         
-        string leftTriggerField;
+        private string leftTriggerField;
         
-        string leftTriggerDeadZoneField;
+        private string leftTriggerDeadZoneField;
         
-        string passThroughField;
+        private string passThroughField;
         
-        string rightMotorPeriodField;
+        private string rightMotorPeriodField;
         
-        string rightShoulderField;
+        private string rightShoulderField;
         
-        string rightThumbAntiDeadZoneXField;
+        private string rightThumbAntiDeadZoneXField;
         
-        string rightThumbAntiDeadZoneYField;
+        private string rightThumbAntiDeadZoneYField;
         
-        string rightThumbAxisXField;
+        private string rightThumbAxisXField;
         
-        string rightThumbAxisYField;
+        private string rightThumbAxisYField;
         
-        string rightThumbButtonField;
+        private string rightThumbButtonField;
         
-        string rightThumbDeadZoneXField;
+        private string rightThumbDeadZoneXField;
         
-        string rightThumbDeadZoneYField;
+        private string rightThumbDeadZoneYField;
         
-        string rightThumbDownField;
+        private string rightThumbDownField;
         
-        string rightThumbLeftField;
+        private string rightThumbLeftField;
         
-        string rightThumbRightField;
+        private string rightThumbRightField;
         
-        string rightThumbUpField;
+        private string rightThumbUpField;
         
-        string rightTriggerField;
+        private string rightTriggerField;
         
-        string rightTriggerDeadZoneField;
+        private string rightTriggerDeadZoneField;
         
         /// <remarks/>
         public System.Guid PadSettingChecksum {
@@ -1413,13 +1413,13 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
     public partial class SearchParameter {
         
-        System.Guid productGuidField;
+        private System.Guid productGuidField;
         
-        System.Guid instanceGuidField;
+        private System.Guid instanceGuidField;
         
-        string fileNameField;
+        private string fileNameField;
         
-        string fileProductNameField;
+        private string fileProductNameField;
         
         /// <remarks/>
         public System.Guid ProductGuid {
@@ -1485,7 +1485,7 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class SaveSettingCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
-        object[] results;
+        private object[] results;
         
         internal SaveSettingCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
@@ -1511,7 +1511,7 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class SearchSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
-        object[] results;
+        private object[] results;
         
         internal SearchSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
@@ -1537,7 +1537,7 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class DeleteSettingCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
-        object[] results;
+        private object[] results;
         
         internal DeleteSettingCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
@@ -1563,7 +1563,7 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class LoadSettingCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
-        object[] results;
+        private object[] results;
         
         internal LoadSettingCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
@@ -1589,7 +1589,7 @@ namespace x360ce.App.com.x360ce.localhost {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GetVendorsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
-        object[] results;
+        private object[] results;
         
         internal GetVendorsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
