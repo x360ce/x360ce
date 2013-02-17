@@ -128,6 +128,8 @@ namespace x360ce.App
 			MainStatusStrip.Visible = false;
 			// Check if ini and dll is on disk.
 			if (!CheckFiles(true)) return;
+			CheckEncoding(SettingManager.TmpFileName);
+			CheckEncoding(SettingManager.IniFileName);
 			// Show status values.
 			MainStatusStrip.Visible = true;
 			// Load PAD controls.
@@ -284,6 +286,7 @@ namespace x360ce.App
 
 		void CleanStatusTimer_Elapsed(object sender, EventArgs e)
 		{
+			if (Program.IsClosing) return;
 			StatusTimerLabel.Text = "";
 		}
 
@@ -395,6 +398,7 @@ namespace x360ce.App
 
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			Program.IsClosing = true;
 			UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
 			try
@@ -545,6 +549,7 @@ namespace x360ce.App
 
 		void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
+			if (Program.IsClosing) return;
 			settingsChanged = true;
 			UpdateTimer.Start();
 		}
@@ -556,6 +561,7 @@ namespace x360ce.App
 
 		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			if (Program.IsClosing) return;
 			Program.TimerCount++;
 			if (!formLoaded) LoadForm();
 			bool instancesChanged = RefreshCurrentInstances();
@@ -856,6 +862,18 @@ namespace x360ce.App
 				: "";
 			StatusIniLabel.Text = SettingManager.IniFileName;
 			return true;
+		}
+
+		void CheckEncoding(string path)
+		{
+			if (!System.IO.File.Exists(path)) return;
+			var sr = new StreamReader(path, true);
+			var content = sr.ReadToEnd();
+			sr.Close();
+			if (sr.CurrentEncoding != System.Text.Encoding.Unicode)
+			{
+				System.IO.File.WriteAllText(path, content, System.Text.Encoding.Unicode);
+			}
 		}
 
 		bool IsFileSame(string fileName)

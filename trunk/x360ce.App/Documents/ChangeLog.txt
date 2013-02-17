@@ -1,9 +1,11 @@
-﻿v2.1.2.194 (2013-02-16)
+﻿v2.1.2.196 (2013-02-17)
 - Fix: Fix crash on reading DLL version.
 - Fix: Application crash on Process Corrupted State Exceptions
 - New: Added 'FirstPerson' device to supported list.
+- New: Auto-upgrade INI file to Unicode format.
 - Update: Updated to xinput1_3.dll v3.4.0.584.
 - Update: Code validation against Microsoft Managed Recommended Rules.
+- Update: Show most popular settings on the top on [Global Settings] list.
 
 v2.1.2.189 (2013-01-26)
 - Fix: Crash when [Cancel] is pressed on New Device Form.

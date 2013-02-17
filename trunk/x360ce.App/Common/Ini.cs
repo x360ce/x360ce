@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace x360ce.App
 {
@@ -26,9 +27,11 @@ namespace x360ce.App
 		string _getPrivateProfileString(string section, string key, string defaultValue)
 		{
 			string results = defaultValue;
+
+			var sb = new StringBuilder(bufferLength);
 			byte[] bytes = new byte[bufferLength];
-			int size = Win32.NativeMethods.GetPrivateProfileString(section, key, defaultValue, bytes, bufferLength, this.File.FullName);
-			results = System.Text.Encoding.GetEncoding(1252).GetString(bytes, 0, size).TrimEnd((char)0);
+			int size = Win32.NativeMethods.GetPrivateProfileString(section, key, defaultValue, sb, sb.Capacity, this.File.FullName);
+			results = sb.ToString();
 			// remove comments.
 			var cIndex = results.IndexOf(';');
 			if (cIndex > -1) results = results.Substring(0, cIndex);
