@@ -9,6 +9,7 @@ using Microsoft.DirectX.DirectInput;
 using System.IO;
 using Microsoft.Win32;
 using x360ce.App.com.x360ce.localhost;
+using System.Linq;
 
 namespace x360ce.App.Controls
 {
@@ -244,6 +245,8 @@ namespace x360ce.App.Controls
 			InternetPictureBox.Image = Properties.Resources.check_16x16;
 			InternetLabel.Text += " Done";
 			sr = e.Result;
+			// Reorder summaries
+			sr.Summaries = sr.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
 			var s = GetBestSetting(e.Result);
 			if (s != null) configs.Add(s);
 			Complete();
@@ -290,10 +293,11 @@ namespace x360ce.App.Controls
 					}
 				}
 			}
-			for (int i = 0; i < sr.Summaries.Length; i++)
+			// Order so non empty names and most popular record will come first.
+			var summaries = sr.Summaries.OrderByDescending(x => x.ProductName).ThenByDescending(x => x.FileName).ThenByDescending(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
+			for (int i = 0; i < summaries.Length; i++)
 			{
-				// reverse order so records with non empty file name will come first.
-				var s2 = sr.Summaries[sr.Summaries.Length - i - 1];
+				var s2 = summaries[i];
 				// Look inside global settings.
 				for (int f = 0; f < _sp.Count; f++)
 				{

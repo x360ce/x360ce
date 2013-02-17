@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System;
 using System.Runtime.ConstrainedExecution;
+using System.Text;
 
 namespace x360ce.App.Win32
 {
@@ -185,8 +186,10 @@ namespace x360ce.App.Win32
 		/// Frees the loaded dynamic-link library (DLL) module and, if necessary, decrements its reference count.
 		/// </summary>
 		[return: MarshalAs(UnmanagedType.Bool)]
-		[SuppressUnmanagedCodeSecurity, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+		[SuppressUnmanagedCodeSecurity, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success),
+		DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
 		internal static extern bool FreeLibrary(IntPtr hModule);
+
 
 		/// <summary>
 		/// Retrieves a string from the specified section in an initialization file. http://msdn2.microsoft.com/en-us/library/ms724353.aspx
@@ -200,7 +203,7 @@ namespace x360ce.App.Win32
 		/// <returns>The return value is the number of characters copied to the buffer, not including the terminating null character.</returns>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
 		DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
-		internal static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, byte[] lpReturnedString, int nSize, string lpFileName);
+		internal static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, StringBuilder lpReturnedString, int nSize, string lpFileName);
 
 		/// <summary>
 		/// Copies a string into the specified section of an initialization file. http://msdn2.microsoft.com/en-us/library/ms725501.aspx
@@ -213,6 +216,9 @@ namespace x360ce.App.Win32
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "2#"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
 		DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern int WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
+
+
+
 
 		#endregion
 

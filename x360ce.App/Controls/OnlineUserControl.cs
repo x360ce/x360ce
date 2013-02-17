@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Microsoft.DirectX.DirectInput;
 using System.IO;
 using x360ce.App.com.x360ce.localhost;
+using System.Linq;
 
 namespace x360ce.App.Controls
 {
@@ -467,6 +468,8 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
+				// Reorder summaries.
+				e.Result.Summaries = e.Result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
 				UpdateList(e.Result.Settings, _Settings);
 				UpdateList(e.Result.Summaries, _Summaries);
 				if ((bool)e.UserState)

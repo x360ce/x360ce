@@ -68,6 +68,8 @@ namespace x360ce.App
 			}
 		}
 
+		public static bool IsClosing;
+
 		/// <summary>Add information about missing libraries and DLLs</summary>
 		static void AddExceptionMessage(Exception ex, ref string message)
 		{
@@ -107,6 +109,7 @@ namespace x360ce.App
 
 		public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
+			if (IsClosing) return;
 			ErrorCount++;
 			MainForm.Current.UpdateTimer.Stop();
 			MainForm.Current.UpdateStatus("- " + e.Exception.Message);
