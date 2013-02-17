@@ -4,132 +4,148 @@
 	<edmx:Runtime>
 		<!-- SSDL content -->
 		<edmx:StorageModels>
-			<Schema Namespace="x360ceModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-				<EntityContainer Name="x360ceModelStoreContainer">
-					<EntitySet Name="x360ce_PadSettings" EntityType="x360ceModel.Store.x360ce_PadSettings" store:Type="Tables" Schema="dbo" />
-					<EntitySet Name="x360ce_Products" EntityType="x360ceModel.Store.x360ce_Products" store:Type="Tables" Schema="dbo" />
-					<EntitySet Name="x360ce_Settings" EntityType="x360ceModel.Store.x360ce_Settings" store:Type="Tables" Schema="dbo" />
-					<EntitySet Name="x360ce_Summaries" EntityType="x360ceModel.Store.x360ce_Summaries" store:Type="Tables" Schema="dbo" />
-					<EntitySet Name="x360ce_Vendors" EntityType="x360ceModel.Store.x360ce_Vendors" store:Type="Tables" Schema="dbo" />
-				</EntityContainer>
-				<EntityType Name="x360ce_PadSettings">
-					<Key>
-						<PropertyRef Name="PadSettingChecksum" />
-					</Key>
-					<Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="AxisToDPadDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="AxisToDPadEnabled" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="AxisToDPadOffset" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonA" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonB" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonBig" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonBack" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonGuide" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonStart" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ButtonY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="DPad" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="DPadDown" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="DPadLeft" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="DPadRight" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="DPadUp" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ForceEnable" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ForceOverall" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ForceSwapMotor" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="ForceType" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="GamePadType" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftMotorPeriod" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftShoulder" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbAntiDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbAntiDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbAxisX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbAxisY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbButton" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbDown" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbLeft" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbRight" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftThumbUp" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftTrigger" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="LeftTriggerDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="PassThrough" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightMotorPeriod" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightShoulder" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbAntiDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbAntiDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbAxisX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbAxisY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbButton" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbDown" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbLeft" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbRight" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightThumbUp" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightTrigger" Type="varchar" Nullable="false" MaxLength="16" />
-					<Property Name="RightTriggerDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
-				</EntityType>
-				<EntityType Name="x360ce_Products">
-					<Key>
-						<PropertyRef Name="ProductGuid" />
-					</Key>
-					<Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
-				</EntityType>
-				<EntityType Name="x360ce_Settings">
-					<Key>
-						<PropertyRef Name="SettingId" />
-					</Key>
-					<Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="InstanceName" Type="nvarchar" Nullable="false" MaxLength="256" />
-					<Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
-					<Property Name="DeviceType" Type="int" Nullable="false" />
-					<Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
-					<Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
-					<Property Name="Comment" Type="nvarchar" Nullable="false" MaxLength="1024" />
-					<Property Name="DateCreated" Type="datetime" Nullable="false" />
-					<Property Name="DateUpdated" Type="datetime" Nullable="false" />
-					<Property Name="DateSelected" Type="datetime" Nullable="false" />
-					<Property Name="IsEnabled" Type="bit" Nullable="false" />
-					<Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
-				</EntityType>
-				<EntityType Name="x360ce_Summaries">
-					<Key>
-						<PropertyRef Name="SummaryId" />
-					</Key>
-					<Property Name="SummaryId" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="Users" Type="int" Nullable="false" />
-					<Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
-					<Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
-					<Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
-					<Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
-					<Property Name="DateCreated" Type="datetime" Nullable="false" />
-					<Property Name="DateUpdated" Type="datetime" Nullable="false" />
-				</EntityType>
-				<EntityType Name="x360ce_Vendors">
-					<Key>
-						<PropertyRef Name="VendorId" />
-					</Key>
-					<Property Name="VendorId" Type="int" Nullable="false" />
-					<Property Name="VendorName" Type="nvarchar" Nullable="false" MaxLength="256" />
-					<Property Name="ShortName" Type="nvarchar" Nullable="false" MaxLength="32" />
-					<Property Name="WebSite" Type="nvarchar" Nullable="false" MaxLength="256" />
-				</EntityType>
-			</Schema>
-		</edmx:StorageModels>
+		<Schema Namespace="x360ceModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="x360ceModelStoreContainer">
+          <EntitySet Name="x360ce_PadSettings" EntityType="x360ceModel.Store.x360ce_PadSettings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Products" EntityType="x360ceModel.Store.x360ce_Products" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Programs" EntityType="x360ceModel.Store.x360ce_Programs" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Settings" EntityType="x360ceModel.Store.x360ce_Settings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Summaries" EntityType="x360ceModel.Store.x360ce_Summaries" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="x360ce_Vendors" EntityType="x360ceModel.Store.x360ce_Vendors" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="x360ce_PadSettings">
+          <Key>
+            <PropertyRef Name="PadSettingChecksum" />
+          </Key>
+          <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="AxisToDPadDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="AxisToDPadEnabled" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="AxisToDPadOffset" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonA" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonB" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonBig" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonBack" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonGuide" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonStart" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ButtonY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPad" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadDown" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadLeft" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadRight" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="DPadUp" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceEnable" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceOverall" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceSwapMotor" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="ForceType" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="GamePadType" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftMotorPeriod" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftShoulder" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAxisX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbAxisY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbButton" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbDown" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbLeft" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbRight" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftThumbUp" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftTrigger" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="LeftTriggerDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="PassThrough" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightMotorPeriod" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightShoulder" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAntiDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAntiDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAxisX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbAxisY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbButton" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbDeadZoneX" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbDeadZoneY" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbDown" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbLeft" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbRight" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightThumbUp" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightTrigger" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="RightTriggerDeadZone" Type="varchar" Nullable="false" MaxLength="16" />
+        </EntityType>
+        <EntityType Name="x360ce_Products">
+          <Key>
+            <PropertyRef Name="ProductGuid" />
+          </Key>
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="InstanceCount" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="x360ce_Programs">
+          <Key>
+            <PropertyRef Name="ProgramId" />
+          </Key>
+          <Property Name="ProgramId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="HookMask" Type="int" Nullable="false" />
+          <Property Name="XInputMask" Type="int" Nullable="false" />
+          <Property Name="InstanceCount" Type="int" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" />
+        </EntityType>
+        <EntityType Name="x360ce_Settings">
+          <Key>
+            <PropertyRef Name="SettingId" />
+          </Key>
+          <Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InstanceName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="DeviceType" Type="int" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="Comment" Type="nvarchar" Nullable="false" MaxLength="1024" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+          <Property Name="DateSelected" Type="datetime" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="x360ce_Summaries">
+          <Key>
+            <PropertyRef Name="SummaryId" />
+          </Key>
+          <Property Name="SummaryId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Users" Type="int" Nullable="false" />
+          <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="x360ce_Vendors">
+          <Key>
+            <PropertyRef Name="VendorId" />
+          </Key>
+          <Property Name="VendorId" Type="int" Nullable="false" />
+          <Property Name="VendorName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="ShortName" Type="nvarchar" Nullable="false" MaxLength="32" />
+          <Property Name="WebSite" Type="nvarchar" Nullable="false" MaxLength="256" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
 		<!-- CSDL content -->
 		<edmx:ConceptualModels>
 			<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="x360ceModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 				<EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true">
 					<EntitySet Name="PadSettings" EntityType="x360ceModel.PadSetting" />
 					<EntitySet Name="Settings" EntityType="x360ceModel.Setting" />
-					<EntitySet Name="Products" EntityType="x360ceModel.Product" />
 					<EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
 					<EntitySet Name="Vendors" EntityType="x360ceModel.Vendor" />
+          <EntitySet Name="Products" EntityType="x360ceModel.Product" />
+          <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -208,13 +224,6 @@
 					<Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
 					<Property Type="DateTime" Name="DateSelected" Nullable="false" Precision="3" />
 				</EntityType>
-				<EntityType Name="Product">
-					<Key>
-						<PropertyRef Name="ProductGuid" />
-					</Key>
-					<Property Type="Guid" Name="ProductGuid" Nullable="false" />
-					<Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-				</EntityType>
 				<EntityType Name="Summary">
 					<Key>
 						<PropertyRef Name="SummaryId" />
@@ -238,6 +247,28 @@
 					<Property Type="String" Name="ShortName" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
 					<Property Type="String" Name="WebSite" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
 				</EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="ProductGuid" />
+          </Key>
+          <Property Type="Guid" Name="ProductGuid" Nullable="false" />
+          <Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="InstanceCount" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Program">
+          <Key>
+            <PropertyRef Name="ProgramId" />
+          </Key>
+          <Property Type="Guid" Name="ProgramId" Nullable="false" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="HookMask" Nullable="false" />
+          <Property Type="Int32" Name="XInputMask" Nullable="false" />
+          <Property Type="Int32" Name="InstanceCount" Nullable="false" />
+          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
+          <Property Type="DateTime" Name="DateUpdated" Precision="3" />
+        </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
 		<!-- C-S mapping content -->
@@ -325,14 +356,6 @@
 							</MappingFragment>
 						</EntityTypeMapping>
 					</EntitySetMapping>
-					<EntitySetMapping Name="Products">
-						<EntityTypeMapping TypeName="x360ceModel.Product">
-							<MappingFragment StoreEntitySet="x360ce_Products">
-								<ScalarProperty Name="ProductName" ColumnName="ProductName" />
-								<ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
-							</MappingFragment>
-						</EntityTypeMapping>
-					</EntitySetMapping>
 					<EntitySetMapping Name="Summaries">
 						<EntityTypeMapping TypeName="x360ceModel.Summary">
 							<MappingFragment StoreEntitySet="x360ce_Summaries">
@@ -358,6 +381,30 @@
 							</MappingFragment>
 						</EntityTypeMapping>
 					</EntitySetMapping>
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="x360ceModel.Product">
+              <MappingFragment StoreEntitySet="x360ce_Products">
+                <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Programs">
+            <EntityTypeMapping TypeName="x360ceModel.Program">
+              <MappingFragment StoreEntitySet="x360ce_Programs">
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
+                <ScalarProperty Name="XInputMask" ColumnName="XInputMask" />
+                <ScalarProperty Name="HookMask" ColumnName="HookMask" />
+                <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
 				</EntityContainerMapping>
 			</Mapping>
 		</edmx:Mappings>
@@ -378,12 +425,13 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="59" >
+			<Diagram Name="x360ceModel" ZoomLevel="57" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
-				<EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" Height="1.4033821614583326" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.875" PointY="0.5" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

@@ -100,22 +100,6 @@ namespace x360ce.Web.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<Product> Products
-        {
-            get
-            {
-                if ((_Products == null))
-                {
-                    _Products = base.CreateObjectSet<Product>("Products");
-                }
-                return _Products;
-            }
-        }
-        private ObjectSet<Product> _Products;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<Summary> Summaries
         {
             get
@@ -144,6 +128,38 @@ namespace x360ce.Web.Data
             }
         }
         private ObjectSet<Vendor> _Vendors;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Product> Products
+        {
+            get
+            {
+                if ((_Products == null))
+                {
+                    _Products = base.CreateObjectSet<Product>("Products");
+                }
+                return _Products;
+            }
+        }
+        private ObjectSet<Product> _Products;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Program> Programs
+        {
+            get
+            {
+                if ((_Programs == null))
+                {
+                    _Programs = base.CreateObjectSet<Program>("Programs");
+                }
+                return _Programs;
+            }
+        }
+        private ObjectSet<Program> _Programs;
 
         #endregion
 
@@ -166,14 +182,6 @@ namespace x360ce.Web.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the Products EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToProducts(Product product)
-        {
-            base.AddObject("Products", product);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the Summaries EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToSummaries(Summary summary)
@@ -187,6 +195,22 @@ namespace x360ce.Web.Data
         public void AddToVendors(Vendor vendor)
         {
             base.AddObject("Vendors", vendor);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Products EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToProducts(Product product)
+        {
+            base.AddObject("Products", product);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Programs EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToPrograms(Program program)
+        {
+            base.AddObject("Programs", program);
         }
 
         #endregion
@@ -1621,11 +1645,13 @@ namespace x360ce.Web.Data
         /// </summary>
         /// <param name="productGuid">Initial value of the ProductGuid property.</param>
         /// <param name="productName">Initial value of the ProductName property.</param>
-        public static Product CreateProduct(global::System.Guid productGuid, global::System.String productName)
+        /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
+        public static Product CreateProduct(global::System.Guid productGuid, global::System.String productName, global::System.Int32 instanceCount)
         {
             Product product = new Product();
             product.ProductGuid = productGuid;
             product.ProductName = productName;
+            product.InstanceCount = instanceCount;
             return product;
         }
 
@@ -1683,6 +1709,293 @@ namespace x360ce.Web.Data
         private global::System.String _ProductName;
         partial void OnProductNameChanging(global::System.String value);
         partial void OnProductNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 InstanceCount
+        {
+            get
+            {
+                return _InstanceCount;
+            }
+            set
+            {
+                OnInstanceCountChanging(value);
+                ReportPropertyChanging("InstanceCount");
+                _InstanceCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("InstanceCount");
+                OnInstanceCountChanged();
+            }
+        }
+        private global::System.Int32 _InstanceCount;
+        partial void OnInstanceCountChanging(global::System.Int32 value);
+        partial void OnInstanceCountChanged();
+
+        #endregion
+
+    
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="Program")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Program : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Program object.
+        /// </summary>
+        /// <param name="programId">Initial value of the ProgramId property.</param>
+        /// <param name="fileName">Initial value of the FileName property.</param>
+        /// <param name="fileProductName">Initial value of the FileProductName property.</param>
+        /// <param name="hookMask">Initial value of the HookMask property.</param>
+        /// <param name="xInputMask">Initial value of the XInputMask property.</param>
+        /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
+        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 instanceCount, global::System.Boolean isEnabled, global::System.DateTime dateCreated)
+        {
+            Program program = new Program();
+            program.ProgramId = programId;
+            program.FileName = fileName;
+            program.FileProductName = fileProductName;
+            program.HookMask = hookMask;
+            program.XInputMask = xInputMask;
+            program.InstanceCount = instanceCount;
+            program.IsEnabled = isEnabled;
+            program.DateCreated = dateCreated;
+            return program;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProgramId
+        {
+            get
+            {
+                return _ProgramId;
+            }
+            set
+            {
+                if (_ProgramId != value)
+                {
+                    OnProgramIdChanging(value);
+                    ReportPropertyChanging("ProgramId");
+                    _ProgramId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("ProgramId");
+                    OnProgramIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _ProgramId;
+        partial void OnProgramIdChanging(global::System.Guid value);
+        partial void OnProgramIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileName
+        {
+            get
+            {
+                return _FileName;
+            }
+            set
+            {
+                OnFileNameChanging(value);
+                ReportPropertyChanging("FileName");
+                _FileName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileName");
+                OnFileNameChanged();
+            }
+        }
+        private global::System.String _FileName;
+        partial void OnFileNameChanging(global::System.String value);
+        partial void OnFileNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileProductName
+        {
+            get
+            {
+                return _FileProductName;
+            }
+            set
+            {
+                OnFileProductNameChanging(value);
+                ReportPropertyChanging("FileProductName");
+                _FileProductName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileProductName");
+                OnFileProductNameChanged();
+            }
+        }
+        private global::System.String _FileProductName;
+        partial void OnFileProductNameChanging(global::System.String value);
+        partial void OnFileProductNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 HookMask
+        {
+            get
+            {
+                return _HookMask;
+            }
+            set
+            {
+                OnHookMaskChanging(value);
+                ReportPropertyChanging("HookMask");
+                _HookMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HookMask");
+                OnHookMaskChanged();
+            }
+        }
+        private global::System.Int32 _HookMask;
+        partial void OnHookMaskChanging(global::System.Int32 value);
+        partial void OnHookMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 XInputMask
+        {
+            get
+            {
+                return _XInputMask;
+            }
+            set
+            {
+                OnXInputMaskChanging(value);
+                ReportPropertyChanging("XInputMask");
+                _XInputMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("XInputMask");
+                OnXInputMaskChanged();
+            }
+        }
+        private global::System.Int32 _XInputMask;
+        partial void OnXInputMaskChanging(global::System.Int32 value);
+        partial void OnXInputMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 InstanceCount
+        {
+            get
+            {
+                return _InstanceCount;
+            }
+            set
+            {
+                OnInstanceCountChanging(value);
+                ReportPropertyChanging("InstanceCount");
+                _InstanceCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("InstanceCount");
+                OnInstanceCountChanged();
+            }
+        }
+        private global::System.Int32 _InstanceCount;
+        partial void OnInstanceCountChanging(global::System.Int32 value);
+        partial void OnInstanceCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsEnabled
+        {
+            get
+            {
+                return _IsEnabled;
+            }
+            set
+            {
+                OnIsEnabledChanging(value);
+                ReportPropertyChanging("IsEnabled");
+                _IsEnabled = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsEnabled");
+                OnIsEnabledChanged();
+            }
+        }
+        private global::System.Boolean _IsEnabled;
+        partial void OnIsEnabledChanging(global::System.Boolean value);
+        partial void OnIsEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _DateUpdated;
+        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
+        partial void OnDateUpdatedChanged();
 
         #endregion
 
