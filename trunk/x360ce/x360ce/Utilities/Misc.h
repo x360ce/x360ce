@@ -185,42 +185,91 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
     os << L"Microsoft "; // Test for the specific product.
     if ( osvi.dwMajorVersion == 6 )
     {
-        if( osvi.dwMinorVersion == 0 )
-        {
-            if( osvi.wProductType == VER_NT_WORKSTATION )
-                os << "Windows Vista ";
-            else os << "Windows Server 2008 ";
-        }
-        if ( osvi.dwMinorVersion == 1 )
-        {
-            if( osvi.wProductType == VER_NT_WORKSTATION )
-                os << "Windows 7 ";
-            else os << "Windows Server 2008 R2 ";
-        }
         PGPI pGPI = (PGPI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetProductInfo");
         pGPI( osvi.dwMajorVersion, osvi.dwMinorVersion, 0, 0, &dwType);
+
+        if(osvi.dwMinorVersion <= 1 )
+        {
+            if( osvi.dwMinorVersion == 0 )
+            {
+                if( osvi.wProductType == VER_NT_WORKSTATION )
+                    os << "Windows Vista ";
+                else os << "Windows Server 2008 ";
+            }
+            if ( osvi.dwMinorVersion == 1 )
+            {
+                if( osvi.wProductType == VER_NT_WORKSTATION )
+                    os << "Windows 7 ";
+                else os << "Windows Server 2008 R2 ";
+            }
+            switch( dwType )
+            {
+            case PRODUCT_ULTIMATE:
+                os << "Ultimate Edition";
+                break;
+            case PRODUCT_PROFESSIONAL:
+                os << "Professional";
+                break;
+            case PRODUCT_HOME_PREMIUM:
+                os << "Home Premium Edition";
+                break;
+            case PRODUCT_HOME_BASIC:
+                os << "Home Basic Edition";
+                break;
+            case PRODUCT_ENTERPRISE:
+                os << "Enterprise Edition";
+                break;
+            case PRODUCT_BUSINESS:
+                os << "Business Edition";
+                break;
+            case PRODUCT_STARTER:
+                os << "Starter Edition";
+                break;
+            case PRODUCT_CLUSTER_SERVER:
+                os << "Cluster Server Edition";
+                break;
+            case PRODUCT_DATACENTER_SERVER:
+                os << "Datacenter Edition";
+                break;
+            case PRODUCT_DATACENTER_SERVER_CORE:
+                os << "Datacenter Edition (core installation)";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER:
+                os << "Enterprise Edition";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER_CORE:
+                os << "Enterprise Edition (core installation)";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER_IA64:
+                os << "Enterprise Edition for Itanium-based Systems";
+                break;
+            case PRODUCT_SMALLBUSINESS_SERVER:
+                os << "Small Business Server";
+                break;
+            case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+                os << "Small Business Server Premium Edition";
+                break;
+            case PRODUCT_STANDARD_SERVER:
+                os << "Standard Edition";
+                break;
+            case PRODUCT_STANDARD_SERVER_CORE:
+                os << "Standard Edition (core installation)";
+                break;
+            case PRODUCT_WEB_SERVER:
+                os << "Web Server Edition";
+                break;
+            }
+        }
+        if ( osvi.dwMinorVersion == 2 )
+        {
+            if( osvi.wProductType == VER_NT_WORKSTATION )
+                os << "Windows 8 ";
+            else os << "Windows Server 2012 ";
+        }
         switch( dwType )
         {
-        case PRODUCT_ULTIMATE:
-            os << "Ultimate Edition";
-            break;
         case PRODUCT_PROFESSIONAL:
-            os << "Professional";
-            break;
-        case PRODUCT_HOME_PREMIUM:
-            os << "Home Premium Edition";
-            break;
-        case PRODUCT_HOME_BASIC:
-            os << "Home Basic Edition";
-            break;
-        case PRODUCT_ENTERPRISE:
-            os << "Enterprise Edition";
-            break;
-        case PRODUCT_BUSINESS:
-            os << "Business Edition";
-            break;
-        case PRODUCT_STARTER:
-            os << "Starter Edition";
+            os << "Pro";
             break;
         case PRODUCT_CLUSTER_SERVER:
             os << "Cluster Server Edition";
@@ -228,14 +277,8 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
         case PRODUCT_DATACENTER_SERVER:
             os << "Datacenter Edition";
             break;
-        case PRODUCT_DATACENTER_SERVER_CORE:
-            os << "Datacenter Edition (core installation)";
-            break;
         case PRODUCT_ENTERPRISE_SERVER:
             os << "Enterprise Edition";
-            break;
-        case PRODUCT_ENTERPRISE_SERVER_CORE:
-            os << "Enterprise Edition (core installation)";
             break;
         case PRODUCT_ENTERPRISE_SERVER_IA64:
             os << "Enterprise Edition for Itanium-based Systems";
@@ -248,9 +291,6 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
             break;
         case PRODUCT_STANDARD_SERVER:
             os << "Standard Edition";
-            break;
-        case PRODUCT_STANDARD_SERVER_CORE:
-            os << "Standard Edition (core installation)";
             break;
         case PRODUCT_WEB_SERVER:
             os << "Web Server Edition";
