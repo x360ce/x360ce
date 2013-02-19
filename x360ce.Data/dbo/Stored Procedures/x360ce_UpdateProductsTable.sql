@@ -10,7 +10,6 @@ BEGIN
 
 	/*
 	-- To update all records run:
-	DELETE [dbo].[x360ce_Products]
 	DECLARE @updated as x360ce_SummariesTableType
 	exec [dbo].[x360ce_UpdateProductsTable] @updated, @updated, 1
 	*/
@@ -59,6 +58,8 @@ BEGIN
 		WHERE s.ProductName is null) t2
 	GROUP BY ProductGuid, ProductName
 
+	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
+
 	-- Update count.
 	UPDATE xp SET
 		xp.InstanceCount = t3.InstanceCount
@@ -66,15 +67,17 @@ BEGIN
 	INNER JOIN (
 		SELECT t1.ProductGuid, COUNT(*) AS InstanceCount FROM (
 			SELECT DISTINCT s.ProductGuid, s.InstanceGuid
-			FROM dbo.x360ce_Settings s
+			FROM dbo.x360ce_Settings s WITH(NOLOCK)
 			-- Limit select to updated records only.
 			INNER JOIN (
-				SELECT * FROM @inserted UNION
-				SELECT * FROM @deleted
+				SELECT ProductGuid FROM @inserted UNION
+				SELECT ProductGuid FROM @deleted
 			) p ON
 			s.ProductGuid = p.ProductGuid
 		) t1
 		GROUP BY ProductGuid
 	) t3 ON xp.ProductGuid = t3.ProductGuid
+
+	PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
 
 END

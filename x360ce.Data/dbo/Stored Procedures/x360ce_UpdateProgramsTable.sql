@@ -10,7 +10,6 @@ BEGIN
 
 	/*
 	-- To update all records run:
-	DELETE [dbo].[x360ce_Programs]
 	DECLARE @updated as x360ce_ProgramsTableType
 	exec [dbo].[x360ce_UpdateProgramsTable] @updated, @updated, 1
 	*/
@@ -45,6 +44,8 @@ BEGIN
 		xp.FileProductName = t1.FileProductName
 	WHERE t1.[FileName] IS NULL
 
+	PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
+
 	-- Insert missing records.
 	INSERT INTO dbo.x360ce_Programs(p.[FileName], p.FileProductName)
 	SELECT p.[FileName], p.FileProductName
@@ -53,6 +54,8 @@ BEGIN
 		p.[FileName] = xp.[FileName] AND
 		p.FileProductName = xp.FileProductName
 	WHERE xp.[FileName] IS NULL
+
+	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
 
 	-- Update records.
 	UPDATE t1 SET
@@ -65,9 +68,8 @@ BEGIN
 			FROM [dbo].[x360ce_Settings] s
 			-- Limit select to updated records only.
 			INNER JOIN (
-				SELECT *
-				FROM @inserted UNION
-				SELECT * FROM @deleted
+				SELECT [FileName], FileProductName FROM @inserted UNION
+				SELECT [FileName], FileProductName FROM @deleted
 			) p ON
 			s.[FileName] = p.[FileName] AND
 			s.FileProductName = p.FileProductName
@@ -76,5 +78,7 @@ BEGIN
 	) t3 ON
 		t1.[FileName] = t3.[FileName] AND
 		t1.FileProductName = t3.FileProductName
+
+	PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 
 END

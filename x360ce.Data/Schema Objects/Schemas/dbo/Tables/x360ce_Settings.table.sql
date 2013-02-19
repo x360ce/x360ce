@@ -22,3 +22,15 @@
 
 
 
+
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_x360ce_Settings_ProductGuid_ProductName_FileName]
+    ON [dbo].[x360ce_Settings]([ProductGuid] ASC, [ProductName] ASC, [FileName] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_x360ce_Settings_ProductGuid_InstanceGuid]
+    ON [dbo].[x360ce_Settings]([ProductGuid] ASC, [InstanceGuid] ASC);
+
