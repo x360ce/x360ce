@@ -6,10 +6,6 @@
 );
 
 
-
-
-
-
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_Products_InstanceCount]
     ON [dbo].[x360ce_Products]([InstanceCount] DESC);

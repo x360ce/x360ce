@@ -1,0 +1,1 @@
+﻿EXEC sp_addrolemember 'db_owner', 'x360ceAdmin'

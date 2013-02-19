@@ -96,6 +96,7 @@
     </TargetDatabase>
     <TreatTSqlWarningsAsErrors>False</TreatTSqlWarningsAsErrors>
     <SuppressTSqlWarnings />
+    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
   </PropertyGroup>
   <!--Import the settings-->
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
@@ -106,130 +107,17 @@
     <Folder Include="Data Generation Plans" />
     <Folder Include="Schema Comparisons" />
     <Folder Include="Properties\" />
-    <Folder Include="Schema Objects\" />
-    <Folder Include="Schema Objects\Schemas\" />
-    <Folder Include="Schema Objects\Schemas\dbo\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Defaults\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Functions\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Rules\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Stored Procedures\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Types\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Types\User Defined Data Types\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Types\User Defined Types CLR\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Types\User Defined Table Types\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Programmability\Types\XML Schema Collections\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Service Broker\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Service Broker\Queues\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Synonyms\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Tables\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Tables\Constraints\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Tables\Indexes\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Tables\Keys\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Tables\Triggers\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Tables\Statistics\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Views\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Views\Indexes\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Views\Triggers\" />
-    <Folder Include="Schema Objects\Schemas\dbo\Views\Statistics\" />
-    <Folder Include="Schema Objects\Database Level Objects\" />
-    <Folder Include="Schema Objects\Database Level Objects\Assemblies\" />
-    <Folder Include="Schema Objects\Database Level Objects\Database Triggers\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Schemas\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Users\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Certificates\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Asymmetric Keys\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Master Keys\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Signatures\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Symmetric Keys\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Database Encryption Keys\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Database Audit Specification\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Roles\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Roles\Application Roles\" />
-    <Folder Include="Schema Objects\Database Level Objects\Security\Roles\Database Roles\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Broker Priorities\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Contracts\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Event Notifications\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Message Types\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Remote Service Binding\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Routes\" />
-    <Folder Include="Schema Objects\Database Level Objects\Service Broker\Services\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\Full Text Stoplists\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\Filegroups\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\Files\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\Full Text Catalogs\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\Partition Functions\" />
-    <Folder Include="Schema Objects\Database Level Objects\Storage\Partition Schemes\" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
+    <Folder Include="Security\" />
   </ItemGroup>
   <ItemGroup>
     <BuildContributorArgument Include="OutDir=$(OutDir)" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Permissions.sql" />
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Indexes\IX_x360ce_Settings.index.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Indexes\IX_x360ce_Settings_InstanceGuid_IsEnabled.index.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\x360ce.Data.rolememberships.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Triggers\TR_x360ce_Settings_AfterAction.trigger.sql">
-      <SubType>Code</SubType>
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Schema Objects\Database Level Objects\Security\Users\x360ceAdmin.user.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\x360ce_Products.table.sql">
-      <SubType>Code</SubType>
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\x360ce_Summaries.table.sql">
-      <SubType>Code</SubType>
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\x360ce_PadSettings.table.sql">
-      <SubType>Code</SubType>
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\x360ce_Settings.table.sql">
-      <SubType>Code</SubType>
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="Schema Objects\Database Level Objects\Service Broker\Routes\AutoCreatedLocal.route.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Vendors_VendorName.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Vendors_WebSite.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Constraints\DF_x360ce_Vendors_ShortName.defconst.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\Keys\PK_x360ce_Vendors.pkey.sql">
-      <SubType>Code</SubType>
-    </Build>
-    <Build Include="Schema Objects\Schemas\dbo\Tables\x360ce_Vendors.table.sql">
-      <SubType>Code</SubType>
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\x360ce_Programs.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -248,6 +136,28 @@
     </Build>
     <Build Include="dbo\User Defined Types\x360ce_SummariesTableType.sql" />
     <Build Include="dbo\User Defined Types\x360ce_ProgramsTableType.sql" />
+    <Build Include="dbo\Tables\x360ce_Vendors.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\x360ce_Summaries.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\x360ce_Settings.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\x360ce_Products.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\x360ce_PadSettings.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Security\x360ceAdmin.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\x360ce.Master\x360ce.Master.sqlproj">

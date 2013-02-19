@@ -22,7 +22,7 @@ BEGIN
 		INSERT INTO @summaries(ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum)
 		SELECT ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum
 		FROM (
-			SELECT * FROM dbo.x360ce_Settings
+			SELECT ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum FROM dbo.x360ce_Settings
 		) t1
 		GROUP BY ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum
 		-- Execute procedure.
@@ -78,7 +78,7 @@ BEGIN
 	FROM [dbo].[x360ce_Summaries] t1
 	INNER JOIN (	
 		SELECT ProductGuid, [FileName], FileProductName, PadSettingChecksum, COUNT(*) AS Users FROM (
-			SELECT t1.* FROM (
+			SELECT t1.ProductGuid, t1.[FileName], t1.FileProductName, t1.PadSettingChecksum FROM (
 				SELECT ProductGuid, [FileName], FileProductName, PadSettingChecksum FROM @inserted UNION
 				SELECT ProductGuid, [FileName], FileProductName, PadSettingChecksum FROM @deleted
 			) t1

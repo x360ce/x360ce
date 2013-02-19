@@ -22,7 +22,7 @@ BEGIN
 		INSERT INTO @summaries(ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum)
 		SELECT ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum
 		FROM (
-			SELECT * FROM dbo.x360ce_Settings
+			SELECT ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum FROM dbo.x360ce_Settings
 		) t1
 		GROUP BY ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum
 		-- Execute procedure.
@@ -78,6 +78,6 @@ BEGIN
 		GROUP BY ProductGuid
 	) t3 ON xp.ProductGuid = t3.ProductGuid
 
-	PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
+	PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 
 END

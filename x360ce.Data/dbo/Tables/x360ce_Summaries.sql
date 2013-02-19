@@ -12,10 +12,6 @@
 );
 
 
-
-
-
-
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_Summaries_ProductGuid_FileName_FileProductName_PadSettingChecksum]
     ON [dbo].[x360ce_Summaries]([ProductGuid] ASC, [FileName] ASC, [FileProductName] ASC, [PadSettingChecksum] ASC);

@@ -55,9 +55,3 @@
     CONSTRAINT [PK_x360ce_PadSettings] PRIMARY KEY CLUSTERED ([PadSettingChecksum] ASC)
 );
 
-
-
-
-
-
-
