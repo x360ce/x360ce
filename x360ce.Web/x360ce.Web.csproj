@@ -20,6 +20,10 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -76,8 +80,11 @@
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\KeyValue.cs" />
+    <Compile Include="Common\KeyValueList.cs" />
     <Compile Include="Common\SearchParameter.cs" />
     <Compile Include="Common\SearchResult.cs" />
+    <Compile Include="Common\SettingsData.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Vendor.cs" />

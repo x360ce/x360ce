@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace x360ce.Web.Common
+namespace x360ce.Web
 {
 	public class SearchParameter
 	{
