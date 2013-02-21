@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using x360ce.Web.Data;
 
-namespace x360ce.Web.Common
+namespace x360ce.Web
 {
 	public class SearchResult
 	{
