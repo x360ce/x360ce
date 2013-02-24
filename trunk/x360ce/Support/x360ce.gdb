@@ -78,6 +78,10 @@ HookMask = 0x00000002
 Name = FIFA 13
 HookMask = 0x00000002
 
+[fouc.exe]
+Name = FlatOut Ultimate Carnage
+HookMask = 0x00000002
+
 [Game.exe]
 Name = Shank 2
 HookMask = 0x00000002
