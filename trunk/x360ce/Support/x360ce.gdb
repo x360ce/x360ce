@@ -102,12 +102,20 @@ HookMask=0x0000000E
 Name = Tom Clancy's H.A.W.X 2
 HookMask=0x0000000E
 
+[SR2_pc.exe]
+Name = Saints Row 2
+HookMask = 0x00000002
+
 [SFTK.exe]
 Name = Street Fighter X Tekken
 HookMask = 0x00000002
 
 [SSFIV.exe]
 Name = Super Street Fighter IV - Arcade Edition
+HookMask = 0x00000002
+
+[StreetFighterIV.exe]
+Name = Street Fighter IV
 HookMask = 0x00000002
 
 [TheBaconing.exe]
