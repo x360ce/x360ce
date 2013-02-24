@@ -66,6 +66,18 @@ HookMask = 0x00000002
 Name = DmC - Devil May Cry
 HookMask = 0x00000002
 
+[FIFA.exe]
+Name = FIFA 11 and 12
+HookMask = 0x00000002
+
+[FIFA10.exe]
+Name = FIFA 10
+HookMask = 0x00000002
+
+[FIFA13.exe]
+Name = FIFA 13
+HookMask = 0x00000002
+
 [Game.exe]
 Name = Shank 2
 HookMask = 0x00000002
