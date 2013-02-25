@@ -210,6 +210,16 @@ namespace x360ce.Web.WebServices
 		}
 
 		[WebMethod(EnableSession = true)]
+		public List<Program> GetPrograms(bool? isEnabled, int? minInstanceCount)
+		{
+			var db = new Data.x360ceModelContainer();
+			IQueryable<Program> list = db.Programs;
+			if (isEnabled.HasValue) list = list.Where(x => x.IsEnabled == isEnabled.Value);
+			if (minInstanceCount.HasValue) list = list.Where(x => x.InstanceCount == minInstanceCount.Value);
+			return list.ToList();
+		}
+
+		[WebMethod(EnableSession = true)]
 		public Program GetProgram(string fileName, string fileProductName){
 			var db = new Data.x360ceModelContainer();
 			var o = db.Programs.FirstOrDefault(x => x.FileName == fileName && x.FileProductName == fileProductName);
@@ -251,8 +261,19 @@ namespace x360ce.Web.WebServices
 			}
 		}
 
+		[WebMethod(EnableSession = true, Description = "Sign out..")]
+		public KeyValueList SignOut()
+		{
+			FormsAuthentication.SignOut();
+			var results = new KeyValueList();
+			results.Add("Status", true);
+			results.Add("Message", "Good bye!");
+			
+			return results;
+		}
+
 		[WebMethod(EnableSession = true, Description = "Authenticate user.")]
-		public KeyValueList LoginToDatabase(string username, string password)
+		public KeyValueList SignIn(string username, string password)
 		{
 			string errorMessage = string.Empty;
 			if (password.Length == 0) errorMessage = "Please enter password";
