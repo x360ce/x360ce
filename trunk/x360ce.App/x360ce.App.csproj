@@ -394,11 +394,20 @@
     <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="Win32\WinAPI.cs" />
     <Compile Include="Win32\WinNT.cs" />
+    <None Include="Web References\com.x360ce.localhost\KeyValue.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\com.x360ce.localhost\Program.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\com.x360ce.localhost\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <None Include="Web References\com.x360ce.localhost\SearchResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\com.x360ce.localhost\SettingsData.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\com.x360ce.localhost\Vendor.datasource">

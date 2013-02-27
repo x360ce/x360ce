@@ -41,6 +41,18 @@ namespace x360ce.App.com.x360ce.localhost {
         
         private System.Threading.SendOrPostCallback GetVendorsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetSettingsDataOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetProgramsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetProgramOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetProgramOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SignOutOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SignInOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -93,6 +105,24 @@ namespace x360ce.App.com.x360ce.localhost {
         
         /// <remarks/>
         public event GetVendorsCompletedEventHandler GetVendorsCompleted;
+        
+        /// <remarks/>
+        public event GetSettingsDataCompletedEventHandler GetSettingsDataCompleted;
+        
+        /// <remarks/>
+        public event GetProgramsCompletedEventHandler GetProgramsCompleted;
+        
+        /// <remarks/>
+        public event GetProgramCompletedEventHandler GetProgramCompleted;
+        
+        /// <remarks/>
+        public event SetProgramCompletedEventHandler SetProgramCompleted;
+        
+        /// <remarks/>
+        public event SignOutCompletedEventHandler SignOutCompleted;
+        
+        /// <remarks/>
+        public event SignInCompletedEventHandler SignInCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/SaveSetting", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -236,6 +266,182 @@ namespace x360ce.App.com.x360ce.localhost {
             if ((this.GetVendorsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetVendorsCompleted(this, new GetVendorsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/GetSettingsData", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SettingsData GetSettingsData() {
+            object[] results = this.Invoke("GetSettingsData", new object[0]);
+            return ((SettingsData)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetSettingsDataAsync() {
+            this.GetSettingsDataAsync(null);
+        }
+        
+        /// <remarks/>
+        public void GetSettingsDataAsync(object userState) {
+            if ((this.GetSettingsDataOperationCompleted == null)) {
+                this.GetSettingsDataOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSettingsDataOperationCompleted);
+            }
+            this.InvokeAsync("GetSettingsData", new object[0], this.GetSettingsDataOperationCompleted, userState);
+        }
+        
+        private void OnGetSettingsDataOperationCompleted(object arg) {
+            if ((this.GetSettingsDataCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSettingsDataCompleted(this, new GetSettingsDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/GetPrograms", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public Program[] GetPrograms([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<bool> isEnabled, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<int> minInstanceCount) {
+            object[] results = this.Invoke("GetPrograms", new object[] {
+                        isEnabled,
+                        minInstanceCount});
+            return ((Program[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetProgramsAsync(System.Nullable<bool> isEnabled, System.Nullable<int> minInstanceCount) {
+            this.GetProgramsAsync(isEnabled, minInstanceCount, null);
+        }
+        
+        /// <remarks/>
+        public void GetProgramsAsync(System.Nullable<bool> isEnabled, System.Nullable<int> minInstanceCount, object userState) {
+            if ((this.GetProgramsOperationCompleted == null)) {
+                this.GetProgramsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetProgramsOperationCompleted);
+            }
+            this.InvokeAsync("GetPrograms", new object[] {
+                        isEnabled,
+                        minInstanceCount}, this.GetProgramsOperationCompleted, userState);
+        }
+        
+        private void OnGetProgramsOperationCompleted(object arg) {
+            if ((this.GetProgramsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetProgramsCompleted(this, new GetProgramsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/GetProgram", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public Program GetProgram(string fileName, string fileProductName) {
+            object[] results = this.Invoke("GetProgram", new object[] {
+                        fileName,
+                        fileProductName});
+            return ((Program)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetProgramAsync(string fileName, string fileProductName) {
+            this.GetProgramAsync(fileName, fileProductName, null);
+        }
+        
+        /// <remarks/>
+        public void GetProgramAsync(string fileName, string fileProductName, object userState) {
+            if ((this.GetProgramOperationCompleted == null)) {
+                this.GetProgramOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetProgramOperationCompleted);
+            }
+            this.InvokeAsync("GetProgram", new object[] {
+                        fileName,
+                        fileProductName}, this.GetProgramOperationCompleted, userState);
+        }
+        
+        private void OnGetProgramOperationCompleted(object arg) {
+            if ((this.GetProgramCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetProgramCompleted(this, new GetProgramCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/SetProgram", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string SetProgram(Program p) {
+            object[] results = this.Invoke("SetProgram", new object[] {
+                        p});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SetProgramAsync(Program p) {
+            this.SetProgramAsync(p, null);
+        }
+        
+        /// <remarks/>
+        public void SetProgramAsync(Program p, object userState) {
+            if ((this.SetProgramOperationCompleted == null)) {
+                this.SetProgramOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetProgramOperationCompleted);
+            }
+            this.InvokeAsync("SetProgram", new object[] {
+                        p}, this.SetProgramOperationCompleted, userState);
+        }
+        
+        private void OnSetProgramOperationCompleted(object arg) {
+            if ((this.SetProgramCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetProgramCompleted(this, new SetProgramCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/SignOut", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public KeyValue[] SignOut() {
+            object[] results = this.Invoke("SignOut", new object[0]);
+            return ((KeyValue[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SignOutAsync() {
+            this.SignOutAsync(null);
+        }
+        
+        /// <remarks/>
+        public void SignOutAsync(object userState) {
+            if ((this.SignOutOperationCompleted == null)) {
+                this.SignOutOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSignOutOperationCompleted);
+            }
+            this.InvokeAsync("SignOut", new object[0], this.SignOutOperationCompleted, userState);
+        }
+        
+        private void OnSignOutOperationCompleted(object arg) {
+            if ((this.SignOutCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SignOutCompleted(this, new SignOutCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://x360ce.com/SignIn", RequestNamespace="http://x360ce.com/", ResponseNamespace="http://x360ce.com/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public KeyValue[] SignIn(string username, string password) {
+            object[] results = this.Invoke("SignIn", new object[] {
+                        username,
+                        password});
+            return ((KeyValue[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SignInAsync(string username, string password) {
+            this.SignInAsync(username, password, null);
+        }
+        
+        /// <remarks/>
+        public void SignInAsync(string username, string password, object userState) {
+            if ((this.SignInOperationCompleted == null)) {
+                this.SignInOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSignInOperationCompleted);
+            }
+            this.InvokeAsync("SignIn", new object[] {
+                        username,
+                        password}, this.SignInOperationCompleted, userState);
+        }
+        
+        private void OnSignInOperationCompleted(object arg) {
+            if ((this.SignInCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SignInCompleted(this, new SignInCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -436,6 +642,7 @@ namespace x360ce.App.com.x360ce.localhost {
     }
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Program))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(PadSetting))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(Summary))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(Setting))]
@@ -533,6 +740,178 @@ namespace x360ce.App.com.x360ce.localhost {
             }
             set {
                 this.valueField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18033")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
+    public partial class KeyValue {
+        
+        private object keyField;
+        
+        private object valueField;
+        
+        /// <remarks/>
+        public object Key {
+            get {
+                return this.keyField;
+            }
+            set {
+                this.keyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public object Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18033")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
+    public partial class SettingsData {
+        
+        private Program[] programsField;
+        
+        /// <remarks/>
+        public Program[] Programs {
+            get {
+                return this.programsField;
+            }
+            set {
+                this.programsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18033")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://x360ce.com/")]
+    public partial class Program : EntityObject {
+        
+        private System.Guid programIdField;
+        
+        private string fileNameField;
+        
+        private string fileProductNameField;
+        
+        private int hookMaskField;
+        
+        private int xInputMaskField;
+        
+        private int instanceCountField;
+        
+        private bool isEnabledField;
+        
+        private System.DateTime dateCreatedField;
+        
+        private System.Nullable<System.DateTime> dateUpdatedField;
+        
+        /// <remarks/>
+        public System.Guid ProgramId {
+            get {
+                return this.programIdField;
+            }
+            set {
+                this.programIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string FileName {
+            get {
+                return this.fileNameField;
+            }
+            set {
+                this.fileNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string FileProductName {
+            get {
+                return this.fileProductNameField;
+            }
+            set {
+                this.fileProductNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int HookMask {
+            get {
+                return this.hookMaskField;
+            }
+            set {
+                this.hookMaskField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int XInputMask {
+            get {
+                return this.xInputMaskField;
+            }
+            set {
+                this.xInputMaskField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int InstanceCount {
+            get {
+                return this.instanceCountField;
+            }
+            set {
+                this.instanceCountField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsEnabled {
+            get {
+                return this.isEnabledField;
+            }
+            set {
+                this.isEnabledField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime DateCreated {
+            get {
+                return this.dateCreatedField;
+            }
+            set {
+                this.dateCreatedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<System.DateTime> DateUpdated {
+            get {
+                return this.dateUpdatedField;
+            }
+            set {
+                this.dateUpdatedField = value;
             }
         }
     }
@@ -1464,6 +1843,7 @@ namespace x360ce.App.com.x360ce.localhost {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityObject))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Program))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(PadSetting))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(Summary))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(Setting))]
@@ -1601,6 +1981,162 @@ namespace x360ce.App.com.x360ce.localhost {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((Vendor[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    public delegate void GetSettingsDataCompletedEventHandler(object sender, GetSettingsDataCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSettingsDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetSettingsDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SettingsData Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SettingsData)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    public delegate void GetProgramsCompletedEventHandler(object sender, GetProgramsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetProgramsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetProgramsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Program[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Program[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    public delegate void GetProgramCompletedEventHandler(object sender, GetProgramCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetProgramCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetProgramCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Program Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Program)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    public delegate void SetProgramCompletedEventHandler(object sender, SetProgramCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetProgramCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SetProgramCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    public delegate void SignOutCompletedEventHandler(object sender, SignOutCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SignOutCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SignOutCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public KeyValue[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((KeyValue[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    public delegate void SignInCompletedEventHandler(object sender, SignInCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SignInCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SignInCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public KeyValue[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((KeyValue[])(this.results[0]));
             }
         }
     }

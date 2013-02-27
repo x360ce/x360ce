@@ -249,6 +249,123 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetSettingsData">
+        <s:complexType />
+      </s:element>
+      <s:complexType name="SettingsData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Programs" type="tns:ArrayOfProgram" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfProgram">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Program" nillable="true" type="tns:Program" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Program">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="ProgramId" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileProductName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="HookMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="XInputMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="InstanceCount" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsEnabled" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" nillable="true" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="GetSettingsDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSettingsDataResult" type="tns:SettingsData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPrograms">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="isEnabled" nillable="true" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="minInstanceCount" nillable="true" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProgramsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProgramsResult" type="tns:ArrayOfProgram" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProgram">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fileName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fileProductName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProgramResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProgramResult" type="tns:Program" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetProgram">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="p" type="tns:Program" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetProgramResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetProgramResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SignOut">
+        <s:complexType />
+      </s:element>
+      <s:complexType name="KeyValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Key" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfKeyValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="KeyValue" nillable="true" type="tns:KeyValue" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SignOutResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SignOutResult" type="tns:ArrayOfKeyValue" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SignIn">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="username" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SignInResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SignInResult" type="tns:ArrayOfKeyValue" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
     <s:schema elementFormDefault="qualified" targetNamespace="http://microsoft.com/wsdl/types/">
       <s:simpleType name="guid">
@@ -288,6 +405,42 @@
   <wsdl:message name="GetVendorsSoapOut">
     <wsdl:part name="parameters" element="tns:GetVendorsResponse" />
   </wsdl:message>
+  <wsdl:message name="GetSettingsDataSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSettingsData" />
+  </wsdl:message>
+  <wsdl:message name="GetSettingsDataSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSettingsDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPrograms" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProgramsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProgram" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProgramResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetProgramSoapIn">
+    <wsdl:part name="parameters" element="tns:SetProgram" />
+  </wsdl:message>
+  <wsdl:message name="SetProgramSoapOut">
+    <wsdl:part name="parameters" element="tns:SetProgramResponse" />
+  </wsdl:message>
+  <wsdl:message name="SignOutSoapIn">
+    <wsdl:part name="parameters" element="tns:SignOut" />
+  </wsdl:message>
+  <wsdl:message name="SignOutSoapOut">
+    <wsdl:part name="parameters" element="tns:SignOutResponse" />
+  </wsdl:message>
+  <wsdl:message name="SignInSoapIn">
+    <wsdl:part name="parameters" element="tns:SignIn" />
+  </wsdl:message>
+  <wsdl:message name="SignInSoapOut">
+    <wsdl:part name="parameters" element="tns:SignInResponse" />
+  </wsdl:message>
   <wsdl:portType name="x360ceSoap">
     <wsdl:operation name="SaveSetting">
       <wsdl:input message="tns:SaveSettingSoapIn" />
@@ -308,6 +461,32 @@
     <wsdl:operation name="GetVendors">
       <wsdl:input message="tns:GetVendorsSoapIn" />
       <wsdl:output message="tns:GetVendorsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSettingsData">
+      <wsdl:input message="tns:GetSettingsDataSoapIn" />
+      <wsdl:output message="tns:GetSettingsDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <wsdl:input message="tns:GetProgramsSoapIn" />
+      <wsdl:output message="tns:GetProgramsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <wsdl:input message="tns:GetProgramSoapIn" />
+      <wsdl:output message="tns:GetProgramSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetProgram">
+      <wsdl:input message="tns:SetProgramSoapIn" />
+      <wsdl:output message="tns:SetProgramSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SignOut">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Sign out..</wsdl:documentation>
+      <wsdl:input message="tns:SignOutSoapIn" />
+      <wsdl:output message="tns:SignOutSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SignIn">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Authenticate user.</wsdl:documentation>
+      <wsdl:input message="tns:SignInSoapIn" />
+      <wsdl:output message="tns:SignInSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="x360ceSoap" type="tns:x360ceSoap">
@@ -357,6 +536,60 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetSettingsData">
+      <soap:operation soapAction="http://x360ce.com/GetSettingsData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <soap:operation soapAction="http://x360ce.com/GetPrograms" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <soap:operation soapAction="http://x360ce.com/GetProgram" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetProgram">
+      <soap:operation soapAction="http://x360ce.com/SetProgram" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SignOut">
+      <soap:operation soapAction="http://x360ce.com/SignOut" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SignIn">
+      <soap:operation soapAction="http://x360ce.com/SignIn" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="x360ceSoap12" type="tns:x360ceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -398,6 +631,60 @@
     </wsdl:operation>
     <wsdl:operation name="GetVendors">
       <soap12:operation soapAction="http://x360ce.com/GetVendors" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSettingsData">
+      <soap12:operation soapAction="http://x360ce.com/GetSettingsData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <soap12:operation soapAction="http://x360ce.com/GetPrograms" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <soap12:operation soapAction="http://x360ce.com/GetProgram" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetProgram">
+      <soap12:operation soapAction="http://x360ce.com/SetProgram" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SignOut">
+      <soap12:operation soapAction="http://x360ce.com/SignOut" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SignIn">
+      <soap12:operation soapAction="http://x360ce.com/SignIn" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

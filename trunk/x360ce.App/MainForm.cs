@@ -194,7 +194,7 @@ namespace x360ce.App
 			sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(section + SettingName.Console, ConsoleCheckBox);
-			sm.Add(section + SettingName.InternetDatabaseUrl, onlineUserControl1.InternetDatabaseUrlTextBox);
+			sm.Add(section + SettingName.InternetDatabaseUrl, InternetDatabaseUrlTextBox);
 			sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
 			sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
 			sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
@@ -798,22 +798,7 @@ namespace x360ce.App
 
 		bool CheckFiles(bool createIfNotExist)
 		{
-			InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.IniFileName);
-			InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
-			InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.IniFileName);
-			InstallFilesXinput910CheckBox.SuspendLayout();
-			InstallFilesXinput11CheckBox.SuspendLayout();
-			InstallFilesXinput12CheckBox.SuspendLayout();
-			InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
-			InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
-			InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
-			InstallFilesXinput910CheckBox.ResumeLayout(false);
-			InstallFilesXinput11CheckBox.ResumeLayout(false);
-			InstallFilesXinput12CheckBox.ResumeLayout(false);
-			//InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
-			//InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
-			//InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
-			InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
+			
 			if (createIfNotExist)
 			{
 				// If ini file doesn't exists.
@@ -1003,21 +988,6 @@ namespace x360ce.App
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
-		}
-
-		void InstallFilesXinput12CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			CreateDllFile(InstallFilesXinput12CheckBox.Checked, dllFile2);
-		}
-
-		void InstallFilesXinput11CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			CreateDllFile(InstallFilesXinput11CheckBox.Checked, dllFile1);
-		}
-
-		void InstallFilesXinput910CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			CreateDllFile(InstallFilesXinput910CheckBox.Checked, dllFile0);
 		}
 
 		void CreateDllFile(bool create, string file)

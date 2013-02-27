@@ -274,7 +274,7 @@ namespace x360ce.App.Controls
 			var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
 			var ps = SettingManager.Current.GetPadSetting(padSectionName);
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = InternetDatabaseUrlTextBox.Text;
+			ws.Url = MainForm.Current.InternetDatabaseUrlTextBox.Text;
 			ws.SaveSettingCompleted += new SaveSettingCompletedEventHandler(ws_SaveSettingCompleted);
 			ws.SaveSettingAsync(s, ps);
 		}
@@ -308,7 +308,7 @@ namespace x360ce.App.Controls
 				mainForm.LoadingCircle = true;
 				var setting = (Setting)SettingsDataGridView.SelectedRows[0].DataBoundItem;
 				var ws = new com.x360ce.localhost.x360ce();
-				ws.Url = InternetDatabaseUrlTextBox.Text;
+				ws.Url = MainForm.Current.InternetDatabaseUrlTextBox.Text;
 				ws.DeleteSettingCompleted += new DeleteSettingCompletedEventHandler(ws_DeleteSettingCompleted);
 				ws.DeleteSettingAsync(setting);
 			}
@@ -345,7 +345,7 @@ namespace x360ce.App.Controls
 			FillSearchParameterWithDevices(sp);
 			FillSearchParameterWithFiles(sp);
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = InternetDatabaseUrlTextBox.Text;
+			ws.Url = MainForm.Current.InternetDatabaseUrlTextBox.Text;
 			ws.SearchSettingsCompleted += new SearchSettingsCompletedEventHandler(ws_SearchSettingsCompleted);
 			ws.SearchSettingsAsync(sp.ToArray(), showResult);
 		}
@@ -422,7 +422,7 @@ namespace x360ce.App.Controls
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new com.x360ce.localhost.x360ce();
-			ws.Url = InternetDatabaseUrlTextBox.Text;
+			ws.Url = MainForm.Current.InternetDatabaseUrlTextBox.Text;
 			ws.LoadSettingCompleted += new LoadSettingCompletedEventHandler(ws_LoadSettingCompleted);
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
@@ -592,7 +592,7 @@ namespace x360ce.App.Controls
 
 		void InternetDatabaseUrlTextBox_DoubleClick(object sender, EventArgs e)
 		{
-			InternetDatabaseUrlTextBox.ReadOnly = false;
+			MainForm.Current.InternetDatabaseUrlTextBox.ReadOnly = false;
 		}
 
 	}

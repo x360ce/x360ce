@@ -32,12 +32,6 @@ namespace x360ce.App
 			this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
 			this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
 			this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
-			this.InstalledFilesGroupBox = new System.Windows.Forms.GroupBox();
-			this.InstallFilesX360ceCheckBox = new System.Windows.Forms.CheckBox();
-			this.InstallFilesXinput13CheckBox = new System.Windows.Forms.CheckBox();
-			this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
-			this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
-			this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
 			this.OperationGroupBox = new System.Windows.Forms.GroupBox();
 			this.AllowOnlyOneCopyCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetGroupBox = new System.Windows.Forms.GroupBox();
@@ -47,7 +41,9 @@ namespace x360ce.App
 			this.FakeModeLabel = new System.Windows.Forms.Label();
 			this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
 			this.ProgramsTabPage = new System.Windows.Forms.TabPage();
+			this.programsControl1 = new x360ce.App.Controls.ProgramsControl();
 			this.SettingsDatabaseTabPage = new System.Windows.Forms.TabPage();
+			this.onlineUserControl1 = new x360ce.App.Controls.OnlineUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -61,18 +57,17 @@ namespace x360ce.App
 			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.TopPanel = new System.Windows.Forms.Panel();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
 			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
 			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
 			this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.onlineUserControl1 = new x360ce.App.Controls.OnlineUserControl();
-			this.programsControl1 = new x360ce.App.Controls.ProgramsControl();
+			this.InternetDatabaseUrlTextBox = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
-			this.InstalledFilesGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
 			this.FakeApiGroupBox.SuspendLayout();
@@ -142,7 +137,6 @@ namespace x360ce.App
 			// 
 			this.OptionsTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.OptionsTabPage.Controls.Add(this.TestingAndLoggingGroupBox);
-			this.OptionsTabPage.Controls.Add(this.InstalledFilesGroupBox);
 			this.OptionsTabPage.Controls.Add(this.OperationGroupBox);
 			this.OptionsTabPage.Controls.Add(this.InternetGroupBox);
 			this.OptionsTabPage.Controls.Add(this.FakeApiGroupBox);
@@ -154,16 +148,14 @@ namespace x360ce.App
 			// 
 			// TestingAndLoggingGroupBox
 			// 
-			this.TestingAndLoggingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(455, 3);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 106);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(174, 143);
+			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(241, 143);
 			this.TestingAndLoggingGroupBox.TabIndex = 0;
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
@@ -225,77 +217,10 @@ namespace x360ce.App
 			this.EnableLoggingCheckBox.Text = "Enable Logging";
 			this.EnableLoggingCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// InstalledFilesGroupBox
-			// 
-			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesX360ceCheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput13CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput12CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput11CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput910CheckBox);
-			this.InstalledFilesGroupBox.Location = new System.Drawing.Point(250, 3);
-			this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
-			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(199, 143);
-			this.InstalledFilesGroupBox.TabIndex = 0;
-			this.InstalledFilesGroupBox.TabStop = false;
-			this.InstalledFilesGroupBox.Text = "Installed Files";
-			// 
-			// InstallFilesX360ceCheckBox
-			// 
-			this.InstallFilesX360ceCheckBox.AutoSize = true;
-			this.InstallFilesX360ceCheckBox.Location = new System.Drawing.Point(6, 27);
-			this.InstallFilesX360ceCheckBox.Name = "InstallFilesX360ceCheckBox";
-			this.InstallFilesX360ceCheckBox.Size = new System.Drawing.Size(74, 17);
-			this.InstallFilesX360ceCheckBox.TabIndex = 0;
-			this.InstallFilesX360ceCheckBox.Text = "x360ce.ini";
-			this.InstallFilesX360ceCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// InstallFilesXinput13CheckBox
-			// 
-			this.InstallFilesXinput13CheckBox.AutoSize = true;
-			this.InstallFilesXinput13CheckBox.Location = new System.Drawing.Point(6, 50);
-			this.InstallFilesXinput13CheckBox.Name = "InstallFilesXinput13CheckBox";
-			this.InstallFilesXinput13CheckBox.Size = new System.Drawing.Size(166, 17);
-			this.InstallFilesXinput13CheckBox.TabIndex = 0;
-			this.InstallFilesXinput13CheckBox.Text = "xinput1_3.dll (Recommended)";
-			this.InstallFilesXinput13CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// InstallFilesXinput12CheckBox
-			// 
-			this.InstallFilesXinput12CheckBox.AutoSize = true;
-			this.InstallFilesXinput12CheckBox.Location = new System.Drawing.Point(6, 73);
-			this.InstallFilesXinput12CheckBox.Name = "InstallFilesXinput12CheckBox";
-			this.InstallFilesXinput12CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.InstallFilesXinput12CheckBox.TabIndex = 0;
-			this.InstallFilesXinput12CheckBox.Text = "xinput1_2.dll";
-			this.InstallFilesXinput12CheckBox.UseVisualStyleBackColor = true;
-			this.InstallFilesXinput12CheckBox.CheckedChanged += new System.EventHandler(this.InstallFilesXinput12CheckBox_CheckedChanged);
-			// 
-			// InstallFilesXinput11CheckBox
-			// 
-			this.InstallFilesXinput11CheckBox.AutoSize = true;
-			this.InstallFilesXinput11CheckBox.Location = new System.Drawing.Point(6, 96);
-			this.InstallFilesXinput11CheckBox.Name = "InstallFilesXinput11CheckBox";
-			this.InstallFilesXinput11CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.InstallFilesXinput11CheckBox.TabIndex = 0;
-			this.InstallFilesXinput11CheckBox.Text = "xinput1_1.dll";
-			this.InstallFilesXinput11CheckBox.UseVisualStyleBackColor = true;
-			this.InstallFilesXinput11CheckBox.CheckedChanged += new System.EventHandler(this.InstallFilesXinput11CheckBox_CheckedChanged);
-			// 
-			// InstallFilesXinput910CheckBox
-			// 
-			this.InstallFilesXinput910CheckBox.AutoSize = true;
-			this.InstallFilesXinput910CheckBox.Location = new System.Drawing.Point(6, 119);
-			this.InstallFilesXinput910CheckBox.Name = "InstallFilesXinput910CheckBox";
-			this.InstallFilesXinput910CheckBox.Size = new System.Drawing.Size(97, 17);
-			this.InstallFilesXinput910CheckBox.TabIndex = 0;
-			this.InstallFilesXinput910CheckBox.Text = "xinput9_1_0.dll";
-			this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
-			this.InstallFilesXinput910CheckBox.CheckedChanged += new System.EventHandler(this.InstallFilesXinput910CheckBox_CheckedChanged);
-			// 
 			// OperationGroupBox
 			// 
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
-			this.OperationGroupBox.Location = new System.Drawing.Point(3, 122);
+			this.OperationGroupBox.Location = new System.Drawing.Point(3, 53);
 			this.OperationGroupBox.Name = "OperationGroupBox";
 			this.OperationGroupBox.Size = new System.Drawing.Size(241, 47);
 			this.OperationGroupBox.TabIndex = 0;
@@ -315,11 +240,15 @@ namespace x360ce.App
 			// 
 			// InternetGroupBox
 			// 
+			this.InternetGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.InternetGroupBox.Controls.Add(this.label1);
+			this.InternetGroupBox.Controls.Add(this.InternetDatabaseUrlTextBox);
 			this.InternetGroupBox.Controls.Add(this.InternetAutoloadCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
-			this.InternetGroupBox.Location = new System.Drawing.Point(3, 53);
+			this.InternetGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(241, 63);
+			this.InternetGroupBox.Size = new System.Drawing.Size(378, 114);
 			this.InternetGroupBox.TabIndex = 0;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -386,6 +315,14 @@ namespace x360ce.App
 			this.ProgramsTabPage.TabIndex = 2;
 			this.ProgramsTabPage.Text = "Programs";
 			// 
+			// programsControl1
+			// 
+			this.programsControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.programsControl1.Location = new System.Drawing.Point(3, 3);
+			this.programsControl1.Name = "programsControl1";
+			this.programsControl1.Size = new System.Drawing.Size(626, 463);
+			this.programsControl1.TabIndex = 1;
+			// 
 			// SettingsDatabaseTabPage
 			// 
 			this.SettingsDatabaseTabPage.Controls.Add(this.onlineUserControl1);
@@ -395,6 +332,14 @@ namespace x360ce.App
 			this.SettingsDatabaseTabPage.Size = new System.Drawing.Size(632, 469);
 			this.SettingsDatabaseTabPage.TabIndex = 1;
 			this.SettingsDatabaseTabPage.Text = "Settings Database";
+			// 
+			// onlineUserControl1
+			// 
+			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
+			this.onlineUserControl1.Name = "onlineUserControl1";
+			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
+			this.onlineUserControl1.TabIndex = 0;
 			// 
 			// HelpTabPage
 			// 
@@ -511,6 +456,22 @@ namespace x360ce.App
 			this.TopPanel.Size = new System.Drawing.Size(650, 64);
 			this.TopPanel.TabIndex = 3;
 			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 9;
+			// 
 			// HelpBodyLabel
 			// 
 			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -557,37 +518,24 @@ namespace x360ce.App
 			// 
 			this.LoadinngCircleTimeout.Tick += new System.EventHandler(this.LoadinngCircleTimeout_Tick);
 			// 
-			// BusyLoadingCircle
+			// InternetDatabaseUrlTextBox
 			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(577, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
+			this.InternetDatabaseUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.InternetDatabaseUrlTextBox.Location = new System.Drawing.Point(6, 82);
+			this.InternetDatabaseUrlTextBox.Name = "InternetDatabaseUrlTextBox";
+			this.InternetDatabaseUrlTextBox.ReadOnly = true;
+			this.InternetDatabaseUrlTextBox.Size = new System.Drawing.Size(366, 20);
+			this.InternetDatabaseUrlTextBox.TabIndex = 13;
 			// 
-			// onlineUserControl1
+			// label1
 			// 
-			this.onlineUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.onlineUserControl1.Location = new System.Drawing.Point(3, 3);
-			this.onlineUserControl1.Name = "onlineUserControl1";
-			this.onlineUserControl1.Size = new System.Drawing.Size(626, 463);
-			this.onlineUserControl1.TabIndex = 0;
-			// 
-			// programsControl1
-			// 
-			this.programsControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.programsControl1.Location = new System.Drawing.Point(3, 3);
-			this.programsControl1.Name = "programsControl1";
-			this.programsControl1.Size = new System.Drawing.Size(626, 463);
-			this.programsControl1.TabIndex = 1;
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(6, 62);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(97, 13);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Web Service URL:";
 			// 
 			// MainForm
 			// 
@@ -609,8 +557,6 @@ namespace x360ce.App
 			this.OptionsTabPage.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.PerformLayout();
-			this.InstalledFilesGroupBox.ResumeLayout(false);
-			this.InstalledFilesGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
 			this.OperationGroupBox.PerformLayout();
 			this.InternetGroupBox.ResumeLayout(false);
@@ -637,11 +583,6 @@ namespace x360ce.App
 		TabPage OptionsTabPage;
 		CheckBox EnableLoggingCheckBox;
 		CheckBox UseInitBeepCheckBox;
-		CheckBox InstallFilesX360ceCheckBox;
-		CheckBox InstallFilesXinput910CheckBox;
-		CheckBox InstallFilesXinput11CheckBox;
-		CheckBox InstallFilesXinput12CheckBox;
-		CheckBox InstallFilesXinput13CheckBox;
 		TabPage Pad1TabPage;
 		TabPage Pad2TabPage;
 		TabPage Pad3TabPage;
@@ -659,7 +600,6 @@ namespace x360ce.App
         ComboBox FakeModeComboBox;
         Label FakeModeLabel;
 		GroupBox FakeApiGroupBox;
-        GroupBox InstalledFilesGroupBox;
 		GroupBox TestingAndLoggingGroupBox;
 		CheckBox DebugModeCheckBox;
 		CheckBox XInputEnableCheckBox;
@@ -681,6 +621,8 @@ namespace x360ce.App
 		public CheckBox AllowOnlyOneCopyCheckBox;
 		TabPage ProgramsTabPage;
 		Controls.ProgramsControl programsControl1;
+		public TextBox InternetDatabaseUrlTextBox;
+		private Label label1;
 
 	}
 }
