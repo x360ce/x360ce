@@ -28,9 +28,9 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.ProgramsListTabControl = new System.Windows.Forms.TabControl();
 			this.ProgramsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsDataGridView = new System.Windows.Forms.DataGridView();
@@ -46,13 +46,23 @@
 			this.HookCOMCheckBox = new System.Windows.Forms.CheckBox();
 			this.HookLLCheckBox = new System.Windows.Forms.CheckBox();
 			this.InstalledFilesGroupBox = new System.Windows.Forms.GroupBox();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput13CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput12CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput11CheckBox = new System.Windows.Forms.CheckBox();
 			this.InstallFilesXinput910CheckBox = new System.Windows.Forms.CheckBox();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.SearchFilterTextBox = new System.Windows.Forms.TextBox();
+			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
+			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
+			this.ExportButton = new System.Windows.Forms.Button();
+			this.SaveButton = new System.Windows.Forms.Button();
+			this.DeleteButton = new System.Windows.Forms.Button();
+			this.RefreshButton = new System.Windows.Forms.Button();
+			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
+			this.RefreshAllButton = new System.Windows.Forms.Button();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.ProgramIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProgramsListTabControl.SuspendLayout();
@@ -60,6 +70,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).BeginInit();
 			this.HookMaskGroupBox.SuspendLayout();
 			this.InstalledFilesGroupBox.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// ProgramsListTabControl
@@ -68,18 +79,19 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramsListTabControl.Controls.Add(this.ProgramsTabPage);
-			this.ProgramsListTabControl.Location = new System.Drawing.Point(3, 3);
+			this.ProgramsListTabControl.ItemSize = new System.Drawing.Size(116, 24);
+			this.ProgramsListTabControl.Location = new System.Drawing.Point(3, 68);
 			this.ProgramsListTabControl.Name = "ProgramsListTabControl";
 			this.ProgramsListTabControl.SelectedIndex = 0;
-			this.ProgramsListTabControl.Size = new System.Drawing.Size(330, 426);
+			this.ProgramsListTabControl.Size = new System.Drawing.Size(552, 363);
 			this.ProgramsListTabControl.TabIndex = 19;
 			// 
 			// ProgramsTabPage
 			// 
 			this.ProgramsTabPage.Controls.Add(this.SettingsDataGridView);
-			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 28);
 			this.ProgramsTabPage.Name = "ProgramsTabPage";
-			this.ProgramsTabPage.Size = new System.Drawing.Size(322, 400);
+			this.ProgramsTabPage.Size = new System.Drawing.Size(544, 331);
 			this.ProgramsTabPage.TabIndex = 0;
 			this.ProgramsTabPage.Text = "Programs and Games:";
 			this.ProgramsTabPage.UseVisualStyleBackColor = true;
@@ -92,44 +104,46 @@
 			this.SettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.SettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.SettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.SettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.SettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.SettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.SettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MyIconColumn,
+            this.ProgramIdColumn,
             this.MyFileColumn,
             this.MyGameColumn});
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.SettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.SettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.SettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.SettingsDataGridView.MultiSelect = false;
 			this.SettingsDataGridView.Name = "SettingsDataGridView";
 			this.SettingsDataGridView.ReadOnly = true;
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.SettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.SettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.SettingsDataGridView.RowHeadersVisible = false;
 			this.SettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.SettingsDataGridView.Size = new System.Drawing.Size(322, 400);
+			this.SettingsDataGridView.Size = new System.Drawing.Size(544, 331);
 			this.SettingsDataGridView.TabIndex = 0;
+			this.SettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
 			// 
 			// HookMaskGroupBox
 			// 
@@ -144,9 +158,9 @@
 			this.HookMaskGroupBox.Controls.Add(this.HookSACheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookCOMCheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookLLCheckBox);
-			this.HookMaskGroupBox.Location = new System.Drawing.Point(339, 3);
+			this.HookMaskGroupBox.Location = new System.Drawing.Point(561, 3);
 			this.HookMaskGroupBox.Name = "HookMaskGroupBox";
-			this.HookMaskGroupBox.Size = new System.Drawing.Size(181, 253);
+			this.HookMaskGroupBox.Size = new System.Drawing.Size(137, 253);
 			this.HookMaskGroupBox.TabIndex = 20;
 			this.HookMaskGroupBox.TabStop = false;
 			this.HookMaskGroupBox.Text = "Hook Mask";
@@ -260,12 +274,31 @@
 			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput12CheckBox);
 			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput11CheckBox);
 			this.InstalledFilesGroupBox.Controls.Add(this.InstallFilesXinput910CheckBox);
-			this.InstalledFilesGroupBox.Location = new System.Drawing.Point(339, 262);
+			this.InstalledFilesGroupBox.Location = new System.Drawing.Point(561, 262);
 			this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
-			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(181, 162);
+			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(137, 162);
 			this.InstalledFilesGroupBox.TabIndex = 21;
 			this.InstalledFilesGroupBox.TabStop = false;
 			this.InstalledFilesGroupBox.Text = "Installed XInput Files";
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(6, 134);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.ReadOnly = true;
+			this.textBox1.Size = new System.Drawing.Size(71, 20);
+			this.textBox1.TabIndex = 1;
+			this.textBox1.Text = "0x00000000";
+			// 
+			// checkBox1
+			// 
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.Location = new System.Drawing.Point(6, 111);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(85, 17);
+			this.checkBox1.TabIndex = 0;
+			this.checkBox1.Text = "xinput1_4.dll";
+			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
 			// InstallFilesXinput13CheckBox
 			// 
@@ -307,24 +340,119 @@
 			this.InstallFilesXinput910CheckBox.Text = "xinput9_1_0.dll";
 			this.InstallFilesXinput910CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// checkBox1
+			// SearchFilterTextBox
 			// 
-			this.checkBox1.AutoSize = true;
-			this.checkBox1.Location = new System.Drawing.Point(6, 111);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(85, 17);
-			this.checkBox1.TabIndex = 0;
-			this.checkBox1.Text = "xinput1_4.dll";
-			this.checkBox1.UseVisualStyleBackColor = true;
+			this.SearchFilterTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.SearchFilterTextBox.Location = new System.Drawing.Point(128, 68);
+			this.SearchFilterTextBox.Name = "SearchFilterTextBox";
+			this.SearchFilterTextBox.Size = new System.Drawing.Size(425, 20);
+			this.SearchFilterTextBox.TabIndex = 22;
 			// 
-			// textBox1
+			// IncludeEnabledCheckBox
 			// 
-			this.textBox1.Location = new System.Drawing.Point(6, 134);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.ReadOnly = true;
-			this.textBox1.Size = new System.Drawing.Size(71, 20);
-			this.textBox1.TabIndex = 1;
-			this.textBox1.Text = "0x00000000";
+			this.IncludeEnabledCheckBox.AutoSize = true;
+			this.IncludeEnabledCheckBox.Checked = true;
+			this.IncludeEnabledCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.IncludeEnabledCheckBox.Location = new System.Drawing.Point(3, 8);
+			this.IncludeEnabledCheckBox.Name = "IncludeEnabledCheckBox";
+			this.IncludeEnabledCheckBox.Size = new System.Drawing.Size(103, 17);
+			this.IncludeEnabledCheckBox.TabIndex = 23;
+			this.IncludeEnabledCheckBox.Text = "Include Enabled";
+			this.IncludeEnabledCheckBox.ThreeState = true;
+			this.IncludeEnabledCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// MinimumInstanceCountNumericUpDown
+			// 
+			this.MinimumInstanceCountNumericUpDown.Location = new System.Drawing.Point(109, 38);
+			this.MinimumInstanceCountNumericUpDown.Name = "MinimumInstanceCountNumericUpDown";
+			this.MinimumInstanceCountNumericUpDown.Size = new System.Drawing.Size(59, 20);
+			this.MinimumInstanceCountNumericUpDown.TabIndex = 24;
+			this.MinimumInstanceCountNumericUpDown.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+			// 
+			// ExportButton
+			// 
+			this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ExportButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.ExportButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ExportButton.Location = new System.Drawing.Point(435, 34);
+			this.ExportButton.Name = "ExportButton";
+			this.ExportButton.Size = new System.Drawing.Size(116, 25);
+			this.ExportButton.TabIndex = 25;
+			this.ExportButton.Text = "&Export to GDB";
+			this.ExportButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ExportButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.ExportButton.UseVisualStyleBackColor = true;
+			// 
+			// SaveButton
+			// 
+			this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.SaveButton.Location = new System.Drawing.Point(313, 34);
+			this.SaveButton.Name = "SaveButton";
+			this.SaveButton.Size = new System.Drawing.Size(116, 25);
+			this.SaveButton.TabIndex = 26;
+			this.SaveButton.Text = "&Save on Internet";
+			this.SaveButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.SaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.SaveButton.UseVisualStyleBackColor = true;
+			// 
+			// DeleteButton
+			// 
+			this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.DeleteButton.Location = new System.Drawing.Point(481, 3);
+			this.DeleteButton.Name = "DeleteButton";
+			this.DeleteButton.Size = new System.Drawing.Size(70, 25);
+			this.DeleteButton.TabIndex = 27;
+			this.DeleteButton.Text = "&Delete";
+			this.DeleteButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.DeleteButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.DeleteButton.UseVisualStyleBackColor = true;
+			// 
+			// RefreshButton
+			// 
+			this.RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.RefreshButton.Location = new System.Drawing.Point(405, 3);
+			this.RefreshButton.Name = "RefreshButton";
+			this.RefreshButton.Size = new System.Drawing.Size(70, 25);
+			this.RefreshButton.TabIndex = 28;
+			this.RefreshButton.Text = "&Refresh";
+			this.RefreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.RefreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.RefreshButton.UseVisualStyleBackColor = true;
+			// 
+			// MinimumInstanceCountLabel
+			// 
+			this.MinimumInstanceCountLabel.AutoSize = true;
+			this.MinimumInstanceCountLabel.Location = new System.Drawing.Point(3, 40);
+			this.MinimumInstanceCountLabel.Name = "MinimumInstanceCountLabel";
+			this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(100, 13);
+			this.MinimumInstanceCountLabel.TabIndex = 29;
+			this.MinimumInstanceCountLabel.Text = "Minimum Instances:";
+			// 
+			// RefreshAllButton
+			// 
+			this.RefreshAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.RefreshAllButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshAllButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.RefreshAllButton.Location = new System.Drawing.Point(313, 3);
+			this.RefreshAllButton.Name = "RefreshAllButton";
+			this.RefreshAllButton.Size = new System.Drawing.Size(86, 25);
+			this.RefreshAllButton.TabIndex = 28;
+			this.RefreshAllButton.Text = "Refresh &All";
+			this.RefreshAllButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.RefreshAllButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.RefreshAllButton.UseVisualStyleBackColor = true;
+			this.RefreshAllButton.Click += new System.EventHandler(this.RefreshAllButton_Click);
 			// 
 			// MyIconColumn
 			// 
@@ -337,20 +465,29 @@
 			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.MyIconColumn.Width = 24;
 			// 
+			// ProgramIdColumn
+			// 
+			this.ProgramIdColumn.DataPropertyName = "ProgramId";
+			this.ProgramIdColumn.HeaderText = "ID";
+			this.ProgramIdColumn.Name = "ProgramIdColumn";
+			this.ProgramIdColumn.ReadOnly = true;
+			this.ProgramIdColumn.Visible = false;
+			// 
 			// MyFileColumn
 			// 
-			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.MyFileColumn.DataPropertyName = "FileName";
+			this.MyFileColumn.FillWeight = 30F;
 			this.MyFileColumn.HeaderText = "File Name";
 			this.MyFileColumn.Name = "MyFileColumn";
 			this.MyFileColumn.ReadOnly = true;
-			this.MyFileColumn.Width = 79;
 			// 
 			// MyGameColumn
 			// 
 			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.MyGameColumn.DataPropertyName = "FileProductName";
-			this.MyGameColumn.HeaderText = "File Product Title";
+			this.MyGameColumn.FillWeight = 70F;
+			this.MyGameColumn.HeaderText = "Product Name";
 			this.MyGameColumn.Name = "MyGameColumn";
 			this.MyGameColumn.ReadOnly = true;
 			// 
@@ -358,11 +495,20 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.MinimumInstanceCountLabel);
+			this.Controls.Add(this.SearchFilterTextBox);
+			this.Controls.Add(this.RefreshAllButton);
+			this.Controls.Add(this.RefreshButton);
+			this.Controls.Add(this.DeleteButton);
+			this.Controls.Add(this.SaveButton);
+			this.Controls.Add(this.ExportButton);
+			this.Controls.Add(this.MinimumInstanceCountNumericUpDown);
+			this.Controls.Add(this.IncludeEnabledCheckBox);
 			this.Controls.Add(this.InstalledFilesGroupBox);
 			this.Controls.Add(this.HookMaskGroupBox);
 			this.Controls.Add(this.ProgramsListTabControl);
 			this.Name = "ProgramsControl";
-			this.Size = new System.Drawing.Size(523, 432);
+			this.Size = new System.Drawing.Size(701, 434);
 			this.ProgramsListTabControl.ResumeLayout(false);
 			this.ProgramsTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).EndInit();
@@ -370,7 +516,9 @@
 			this.HookMaskGroupBox.PerformLayout();
 			this.InstalledFilesGroupBox.ResumeLayout(false);
 			this.InstalledFilesGroupBox.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -397,8 +545,18 @@
 		System.Windows.Forms.CheckBox InstallFilesXinput12CheckBox;
 		System.Windows.Forms.CheckBox InstallFilesXinput11CheckBox;
 		System.Windows.Forms.CheckBox InstallFilesXinput910CheckBox;
-		System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
-		System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
+		private System.Windows.Forms.TextBox SearchFilterTextBox;
+		private System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
+		private System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
+		private System.Windows.Forms.Button ExportButton;
+		private System.Windows.Forms.Button SaveButton;
+		private System.Windows.Forms.Button DeleteButton;
+		private System.Windows.Forms.Button RefreshButton;
+		private System.Windows.Forms.Label MinimumInstanceCountLabel;
+		private System.Windows.Forms.Button RefreshAllButton;
+		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramIdColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
 	}
 }
