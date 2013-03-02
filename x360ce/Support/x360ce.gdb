@@ -102,6 +102,10 @@ HookMask=0x0000000E
 Name = Tom Clancy's H.A.W.X 2
 HookMask=0x0000000E
 
+[HKShip.exe]
+Name = Sleeping Dogs
+HookMask = 0x00000002
+
 [SR2_pc.exe]
 Name = Saints Row 2
 HookMask = 0x00000002
