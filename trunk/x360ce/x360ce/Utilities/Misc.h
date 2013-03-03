@@ -1,21 +1,21 @@
 /*  x360ce - XBOX360 Controller Emulator
- *
- *  https://code.google.com/p/x360ce/
- *
- *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2013 Robert Krawczyk
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Foundation,
- *  either version 3 of the License, or any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
+*
+*  https://code.google.com/p/x360ce/
+*
+*  Copyright (C) 2002-2010 Racer_S
+*  Copyright (C) 2010-2013 Robert Krawczyk
+*
+*  x360ce is free software: you can redistribute it and/or modify it under the terms
+*  of the GNU Lesser General Public License as published by the Free Software Foundation,
+*  either version 3 of the License, or any later version.
+*
+*  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+*  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+*  PURPOSE.  See the GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License along with x360ce.
+*  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef _MISC_H
 #define _MISC_H
@@ -103,7 +103,7 @@ inline void StringToGUID(LPCSTR szBuf, GUID& id)
     int32_t b[8];
 
     sscanf_s(szBuf,"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-             &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
+        &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
 
     id.Data1 = d1;
     id.Data2 = (uint16_t) d2;
@@ -126,7 +126,7 @@ inline void StringToGUID(LPCWSTR szBuf, GUID& id)
     int32_t b[8];
 
     swscanf_s(szBuf,L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-              &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
+        &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
 
     id.Data1 = d1;
     id.Data2 = (uint16_t) d2;
@@ -143,7 +143,7 @@ inline const std::string GUIDtoStringA(const GUID &g)
     char tmp[40];
 
     sprintf_s(tmp,40,"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-              g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
+        g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
     return tmp;
 }
 
@@ -152,7 +152,7 @@ inline const std::wstring GUIDtoStringW(const GUID &g)
     WCHAR str[40];
 
     swprintf_s(str,40,L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-               g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
+        g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
     return str;
 }
 
@@ -188,20 +188,18 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
         PGPI pGPI = (PGPI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetProductInfo");
         pGPI( osvi.dwMajorVersion, osvi.dwMinorVersion, 0, 0, &dwType);
 
-        if(osvi.dwMinorVersion <= 1 )
+        if( osvi.dwMinorVersion == 0 )
         {
-            if( osvi.dwMinorVersion == 0 )
-            {
-                if( osvi.wProductType == VER_NT_WORKSTATION )
-                    os << "Windows Vista ";
-                else os << "Windows Server 2008 ";
-            }
-            if ( osvi.dwMinorVersion == 1 )
-            {
-                if( osvi.wProductType == VER_NT_WORKSTATION )
-                    os << "Windows 7 ";
-                else os << "Windows Server 2008 R2 ";
-            }
+            if( osvi.wProductType == VER_NT_WORKSTATION )
+                os << "Windows Vista ";
+            else os << "Windows Server 2008 ";
+        }
+        if ( osvi.dwMinorVersion == 1 )
+        {
+            if( osvi.wProductType == VER_NT_WORKSTATION )
+                os << "Windows 7 ";
+            else os << "Windows Server 2008 R2 ";
+
             switch( dwType )
             {
             case PRODUCT_ULTIMATE:
@@ -260,41 +258,42 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
                 break;
             }
         }
-        if ( osvi.dwMinorVersion == 2 )
+        else if ( osvi.dwMinorVersion == 2 )
         {
             if( osvi.wProductType == VER_NT_WORKSTATION )
                 os << "Windows 8 ";
             else os << "Windows Server 2012 ";
-        }
-        switch( dwType )
-        {
-        case PRODUCT_PROFESSIONAL:
-            os << "Pro";
-            break;
-        case PRODUCT_CLUSTER_SERVER:
-            os << "Cluster Server Edition";
-            break;
-        case PRODUCT_DATACENTER_SERVER:
-            os << "Datacenter Edition";
-            break;
-        case PRODUCT_ENTERPRISE_SERVER:
-            os << "Enterprise Edition";
-            break;
-        case PRODUCT_ENTERPRISE_SERVER_IA64:
-            os << "Enterprise Edition for Itanium-based Systems";
-            break;
-        case PRODUCT_SMALLBUSINESS_SERVER:
-            os << "Small Business Server";
-            break;
-        case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-            os << "Small Business Server Premium Edition";
-            break;
-        case PRODUCT_STANDARD_SERVER:
-            os << "Standard Edition";
-            break;
-        case PRODUCT_WEB_SERVER:
-            os << "Web Server Edition";
-            break;
+
+            switch( dwType )
+            {
+            case PRODUCT_PROFESSIONAL:
+                os << "Pro";
+                break;
+            case PRODUCT_CLUSTER_SERVER:
+                os << "Cluster Server Edition";
+                break;
+            case PRODUCT_DATACENTER_SERVER:
+                os << "Datacenter Edition";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER:
+                os << "Enterprise Edition";
+                break;
+            case PRODUCT_ENTERPRISE_SERVER_IA64:
+                os << "Enterprise Edition for Itanium-based Systems";
+                break;
+            case PRODUCT_SMALLBUSINESS_SERVER:
+                os << "Small Business Server";
+                break;
+            case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+                os << "Small Business Server Premium Edition";
+                break;
+            case PRODUCT_STANDARD_SERVER:
+                os << "Standard Edition";
+                break;
+            case PRODUCT_WEB_SERVER:
+                os << "Web Server Edition";
+                break;
+            }
         }
     }
     if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2 )
@@ -306,7 +305,7 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
         else if ( osvi.wSuiteMask & VER_SUITE_WH_SERVER )
             os <<  "Windows Home Server";
         else if( osvi.wProductType == VER_NT_WORKSTATION &&
-                 si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)
+            si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)
         {
             os <<  "Windows XP Professional x64 Edition";
         }
