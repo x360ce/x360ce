@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace x360ce.App.Common
+namespace x360ce.App
 {
 	[Flags]
 	public enum HookMask: uint
