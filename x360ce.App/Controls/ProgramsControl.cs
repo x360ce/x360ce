@@ -14,7 +14,103 @@ namespace x360ce.App.Controls
 		public ProgramsControl()
 		{
 			InitializeComponent();
-			SettingsDataGridView.AutoGenerateColumns = false;
+			ProgramsDataGridView.AutoGenerateColumns = false;
+		}
+
+		com.x360ce.localhost.Program _CurrentProgram;
+		public com.x360ce.localhost.Program CurrentProgram
+		{
+			get { return _CurrentProgram; }
+			set
+			{
+				DisableEvents();
+				_CurrentProgram = value;
+				Xinput11CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput11);
+				Xinput12CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput12);
+				Xinput13CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput13);
+				Xinput14CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput14);
+				Xinput91CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput91);
+				HookCOMCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.COM);
+				HookDICheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.DI);
+				HookDISABLECheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.DISABLE);
+				HookLLCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.LL);
+				HookNameCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.NAME);
+				HookPIDVIDCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.PIDVID);
+				HookSACheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.SA);
+				HookSTOPCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.STOP);
+				HookWTCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.WT);
+				HookMaskTextBox.Text = value.HookMask.ToString("X8");
+				XInputMaskTextBox.Text = value.XInputMask.ToString("X8");
+				EnableEvents();
+			}
+		}
+
+		void EnableEvents()
+		{
+			Xinput11CheckBox.CheckedChanged += CheckBox_Changed;
+			Xinput12CheckBox.CheckedChanged += CheckBox_Changed;
+			Xinput13CheckBox.CheckedChanged += CheckBox_Changed;
+			Xinput14CheckBox.CheckedChanged += CheckBox_Changed;
+			Xinput91CheckBox.CheckedChanged += CheckBox_Changed;
+			HookCOMCheckBox.CheckedChanged += CheckBox_Changed;
+			HookDICheckBox.CheckedChanged += CheckBox_Changed;
+			HookDISABLECheckBox.CheckedChanged += CheckBox_Changed;
+			HookLLCheckBox.CheckedChanged += CheckBox_Changed;
+			HookNameCheckBox.CheckedChanged += CheckBox_Changed;
+			HookPIDVIDCheckBox.CheckedChanged += CheckBox_Changed;
+			HookSACheckBox.CheckedChanged += CheckBox_Changed;
+			HookSTOPCheckBox.CheckedChanged += CheckBox_Changed;
+			HookWTCheckBox.CheckedChanged += CheckBox_Changed;
+		}
+
+		void DisableEvents()
+		{
+			Xinput11CheckBox.CheckedChanged -= CheckBox_Changed;
+			Xinput12CheckBox.CheckedChanged -= CheckBox_Changed;
+			Xinput13CheckBox.CheckedChanged -= CheckBox_Changed;
+			Xinput14CheckBox.CheckedChanged -= CheckBox_Changed;
+			Xinput91CheckBox.CheckedChanged -= CheckBox_Changed;
+			HookCOMCheckBox.CheckedChanged -= CheckBox_Changed;
+			HookDICheckBox.CheckedChanged -= CheckBox_Changed;
+			HookDISABLECheckBox.CheckedChanged -= CheckBox_Changed;
+			HookLLCheckBox.CheckedChanged -= CheckBox_Changed;
+			HookNameCheckBox.CheckedChanged -= CheckBox_Changed;
+			HookPIDVIDCheckBox.CheckedChanged -= CheckBox_Changed;
+			HookSACheckBox.CheckedChanged -= CheckBox_Changed;
+			HookSTOPCheckBox.CheckedChanged -= CheckBox_Changed;
+			HookWTCheckBox.CheckedChanged -= CheckBox_Changed;
+		}
+
+		void CheckBox_Changed(object sender, EventArgs e)
+		{
+			if (CurrentProgram == null) return;
+			var xm = XInputMask.None;
+			if (Xinput11CheckBox.Checked) xm |= XInputMask.Xinput11;
+			if (Xinput12CheckBox.Checked) xm |= XInputMask.Xinput12;
+			if (Xinput13CheckBox.Checked) xm |= XInputMask.Xinput13;
+			if (Xinput14CheckBox.Checked) xm |= XInputMask.Xinput14;
+			if (Xinput91CheckBox.Checked) xm |= XInputMask.Xinput91;
+			if (CurrentProgram.XInputMask != (int)xm)
+			{
+				CurrentProgram.XInputMask = (int)xm;
+				XInputMaskTextBox.Text = CurrentProgram.XInputMask.ToString("X8");
+			}
+			var hm = HookMask.NONE;
+			if (HookCOMCheckBox.Checked) hm |= HookMask.COM;
+			if (HookDICheckBox.Checked) hm |= HookMask.DI;
+			if (HookDISABLECheckBox.Checked) hm |= HookMask.DISABLE;
+			if (HookLLCheckBox.Checked) hm |= HookMask.LL;
+			if (HookNameCheckBox.Checked) hm |= HookMask.NAME;
+			if (HookPIDVIDCheckBox.Checked) hm |= HookMask.PIDVID;
+			if (HookSACheckBox.Checked) hm |= HookMask.SA;
+			if (HookSTOPCheckBox.Checked) hm |= HookMask.STOP;
+			if (HookWTCheckBox.Checked) hm |= HookMask.WT;
+			if (CurrentProgram.HookMask != (int)xm)
+			{
+				CurrentProgram.HookMask = (int)hm;
+				HookMaskTextBox.Text = CurrentProgram.HookMask.ToString("X8");
+			}
+
 		}
 
 		private void RefreshAllButton_Click(object sender, EventArgs e)
@@ -49,14 +145,12 @@ namespace x360ce.App.Controls
 			else
 			{
 				int count = e.Result.Length;
-				SettingsDataGridView.DataSource = e.Result;
+				ProgramsDataGridView.DataSource = e.Result;
 				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, count), MessageBoxIcon.Information);
 			}
 		}
 
-		com.x360ce.localhost.Program CurrentProgram;
-
-		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		void ProgramsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			var setting = ((com.x360ce.localhost.Program)grid.Rows[e.RowIndex].DataBoundItem);
@@ -76,6 +170,14 @@ namespace x360ce.App.Controls
 				//e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
 			}
 		}
+
+		private void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			var item = (com.x360ce.localhost.Program)ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault().DataBoundItem;
+			CurrentProgram = item;
+		}
+
+
 
 		//void UpdateCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, Guid? checksum)
 		//{

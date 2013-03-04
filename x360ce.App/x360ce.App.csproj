@@ -153,6 +153,7 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="Common\Vendor.cs" />
+    <Compile Include="Common\XInputMask.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
