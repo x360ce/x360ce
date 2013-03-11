@@ -126,6 +126,10 @@ HookMask = 0x00000002
 Name = The Baconing
 HookMask = 0x00000003
 
+[trine2_32bit.exe]
+Name = Trine 2
+HookMask = 0x00000002
+
 [Vessel.exe]
 Name = Vessel
 HookMask = 0x00000002
