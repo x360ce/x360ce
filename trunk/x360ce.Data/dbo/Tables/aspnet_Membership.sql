@@ -2,7 +2,7 @@
     [ApplicationId]                          UNIQUEIDENTIFIER NOT NULL,
     [UserId]                                 UNIQUEIDENTIFIER NOT NULL,
     [Password]                               NVARCHAR (128)   NOT NULL,
-    [PasswordFormat]                         INT              DEFAULT ((0)) NOT NULL,
+    [PasswordFormat]                         INT              CONSTRAINT [DF__aspnet_Membership__PasswordFormat] DEFAULT ((0)) NOT NULL,
     [PasswordSalt]                           NVARCHAR (128)   NOT NULL,
     [MobilePIN]                              NVARCHAR (16)    NULL,
     [Email]                                  NVARCHAR (256)   NULL,
@@ -20,9 +20,9 @@
     [FailedPasswordAnswerAttemptCount]       INT              NOT NULL,
     [FailedPasswordAnswerAttemptWindowStart] DATETIME         NOT NULL,
     [Comment]                                NTEXT            NULL,
-    PRIMARY KEY NONCLUSTERED ([UserId] ASC),
-    FOREIGN KEY ([ApplicationId]) REFERENCES [dbo].[aspnet_Applications] ([ApplicationId]),
-    FOREIGN KEY ([UserId]) REFERENCES [dbo].[aspnet_Users] ([UserId])
+    CONSTRAINT [PK__aspnet_Membership__UserId] PRIMARY KEY NONCLUSTERED ([UserId] ASC),
+    CONSTRAINT [FK__aspnet_Membership__ApplicationId] FOREIGN KEY ([ApplicationId]) REFERENCES [dbo].[aspnet_Applications] ([ApplicationId]),
+    CONSTRAINT [FK__aspnet_Membership__UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[aspnet_Users] ([UserId])
 );
 
 
@@ -31,6 +31,6 @@ EXECUTE sp_tableoption @TableNamePattern = N'[dbo].[aspnet_Membership]', @Option
 
 
 GO
-CREATE CLUSTERED INDEX [aspnet_Membership_index]
+CREATE CLUSTERED INDEX [IX__aspnet_Membership__LoweredEmail]
     ON [dbo].[aspnet_Membership]([ApplicationId] ASC, [LoweredEmail] ASC);
 
