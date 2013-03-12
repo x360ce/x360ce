@@ -198,6 +198,41 @@
     <Build Include="dbo\Views\vw_aspnet_Applications.sql">
       <AnsiNulls>On</AnsiNulls>
     </Build>
+    <Build Include="dbo\Stored Procedures\aspnet_AnyDataInTables.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Applications_CreateApplication.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_CheckSchemaVersion.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_ChangePasswordQuestionAndAnswer.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_CreateUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_FindUsersByEmail.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_FindUsersByName.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetAllUsers.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetNumberOfUsersOnline.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetPassword.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetPasswordWithFormat.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetUserByEmail.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetUserByName.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_GetUserByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_ResetPassword.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_SetPassword.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_UnlockUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_UpdateUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Membership_UpdateUserInfo.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_RegisterSchemaVersion.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Roles_CreateRole.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Roles_DeleteRole.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Roles_GetAllRoles.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Roles_RoleExists.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Setup_RemoveAllRoleMembers.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Setup_RestorePermissions.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UnRegisterSchemaVersion.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Users_CreateUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Users_DeleteUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_AddUsersToRoles.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_FindUsersInRole.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_GetRolesForUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_GetUsersInRoles.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_IsUserInRole.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_RemoveUsersFromRoles.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\x360ce.Master\x360ce.Master.sqlproj">
