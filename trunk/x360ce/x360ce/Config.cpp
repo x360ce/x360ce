@@ -207,15 +207,11 @@ void ReadConfig(bool skip)
 
 void ReadPadConfig(DWORD dwUserIndex, Ini &ini)
 {
-    DWORD ret;
     char section[MAX_PATH] = "Mappings";
     char key[MAX_PATH];
     sprintf_s(key,"PAD%u",dwUserIndex+1);
-
-    char buffer[MAX_PATH];
-
-    ret = ini.GetString(section, key, buffer);
-    if(!ret) return;
+    std::string strBuf = ini.GetString(section, key);
+    if(strBuf.empty()) return;
 
 #if _MSC_VER < 1700
     g_Devices.push_back(DInputDevice());
@@ -232,15 +228,15 @@ void ReadPadConfig(DWORD dwUserIndex, Ini &ini)
 #endif
 
     //store value as section name
-    strcpy_s(section,buffer);
+    strcpy_s(section,strBuf.c_str());
 
     device.dwUserIndex = dwUserIndex;
 
-    ini.GetString(section, "ProductGUID", buffer);
-    StringToGUID(buffer,device.productid);
+    strBuf = ini.GetString(section, "ProductGUID");
+    StringToGUID(strBuf.c_str(),device.productid);
 
-    ini.GetString(section, "InstanceGUID", buffer);
-    StringToGUID(buffer,device.instanceid);
+    strBuf = ini.GetString(section, "InstanceGUID");
+    StringToGUID(strBuf.c_str(),device.instanceid);
 
     device.useproduct = ini.GetBool(section, "UseProductGUID");
     device.passthrough = ini.GetBool(section, "PassThrough",1);

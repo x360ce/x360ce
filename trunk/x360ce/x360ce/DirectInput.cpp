@@ -565,7 +565,7 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
     device.ff.is_created = false;
     // Constant:  Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay
     // Sine Wave: Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay, SamplePeriod
-    HRESULT hr = E_FAIL;
+    
     LONG rglDirection[2] = { 0, 0 };
     // Create effect
     ZeroMemory( &eff, sizeof( eff ) );
@@ -605,7 +605,7 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
     eff.lpvTypeSpecificParams =& device.ff.pf;
 
     // Create the prepared effect
-	 hr = device.device->CreateEffect(effGuid,&eff,&device.ff.effect[motor],NULL);
+	HRESULT hr = device.device->CreateEffect(effGuid,&eff,&device.ff.effect[motor],NULL);
     if(FAILED(hr))
     {
         PrintLog(LOG_DINPUT,"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %X", device.dwUserIndex+1,motor, hr);
@@ -670,7 +670,7 @@ HRESULT PrepareForceNew(DInputDevice& device, bool motor)
 {
     if(!device.ff.effect[motor])
     {
-        HRESULT hr = E_FAIL;
+        
         LONG rglDirection[2] = { 0, 0 };
 
         // Create effect
@@ -698,7 +698,7 @@ HRESULT PrepareForceNew(DInputDevice& device, bool motor)
         }
 
         // Enumerate effects
-		hr = device.device->EnumEffects(&EnumEffectsCallback,& device, DIEFT_ALL);
+		HRESULT hr = device.device->EnumEffects(&EnumEffectsCallback,& device, DIEFT_ALL);
 		if (FAILED(hr))
         {
             PrintLog(LOG_DINPUT,"[PAD%d] EnumEffectsCallback failed");
