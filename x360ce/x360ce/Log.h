@@ -23,6 +23,8 @@
 #include <Shlwapi.h>
 #include "Utilities\CriticalSection.h"
 
+#pragma warning( disable : 4127 )
+
 class Log
 {
 public:
@@ -46,7 +48,7 @@ private:
 };
 
 extern Log* logger;
-#define InitLog(log,con,local) logger = new Log(log,con,local);
-#define PrintLog(type,format,...) if(logger) logger->Print(Log::type,format,__VA_ARGS__)
-#define DestroyLog() delete logger; logger = NULL;
+#define InitLog(log,con,local) {logger = new Log(log,con,local);}
+#define PrintLog(type,format,...) do {logger->Print(Log::type,format,__VA_ARGS__);} while(false)
+#define DestroyLog() {delete logger; logger = NULL;}
 #endif // _LOG_H_
