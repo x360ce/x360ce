@@ -25,6 +25,7 @@
 #include <Shlobj.h>
 
 extern std::string exename;
+Log* logger;
 
 const char* Log::TypeToString(LogType type)
 {
@@ -46,7 +47,7 @@ const char* Log::TypeToString(LogType type)
 void Log::PrintNotice()
 {
     char stamp[] = "TIME         THREAD   TYPE      DATA\n";
-    if(GetStdOut()  != INVALID_HANDLE_VALUE)
+    if(m_stdout != INVALID_HANDLE_VALUE)
     {
         char wcsNotice[] =
             "x360ce - XBOX 360 Controller emulator\n"
@@ -57,16 +58,17 @@ void Log::PrintNotice()
             "Software Foundation, either version 3 of the License, or any later version.\n";
 
         DWORD written = NULL;
-        for(int i=0; i < 80; i++ ) WriteConsoleA(GetStdOut() , "=", 1, &written,NULL);
-        WriteConsoleA(GetStdOut() , wcsNotice,(DWORD) strlen(wcsNotice), &written,NULL);
-        for(int i=0; i < 80; i++ ) WriteConsoleA(GetStdOut() , "=", 1, &written,NULL);
-        WriteConsoleA(GetStdOut() , "\n", 1, &written,NULL);
-        WriteConsoleA(GetStdOut() , stamp, (DWORD) strlen(stamp), &written,NULL);
+        for(int i=0; i < 80; i++ ) WriteConsoleA(m_stdout , "=", 1, &written,NULL);
+        WriteConsoleA(m_stdout , wcsNotice,(DWORD) strlen(wcsNotice), &written,NULL);
+        for(int i=0; i < 80; i++ ) WriteConsoleA(m_stdout , "=", 1, &written,NULL);
+        WriteConsoleA(m_stdout , "\n", 1, &written,NULL);
+        WriteConsoleA(m_stdout , stamp, (DWORD) strlen(stamp), &written,NULL);
     }
-    if(Stream().is_open())Stream() << stamp;
+    if(m_stream.is_open()) m_stream << stamp;
 }
 
-void Log::Init(bool file, bool console, bool local)
+Log::Log(bool file, bool console, bool local)
+    :m_stdout(INVALID_HANDLE_VALUE)
 {
     if(file)
     {
@@ -99,14 +101,13 @@ void Log::Init(bool file, bool console, bool local)
                       systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
             PathCombineA(path,buffer,logname);
         }
-
-        if(Stream().is_open() == false ) Stream().open(path);
+        m_stream.open(path);
     }
 
     if(console)
     {
         AllocConsole();
-        GetStdOut() = GetStdHandle(STD_OUTPUT_HANDLE);
+        m_stdout = GetStdHandle(STD_OUTPUT_HANDLE);
         ShowWindow(GetConsoleWindow(),SW_MAXIMIZE);
         SetConsoleTitleA("x360ce");
     }
@@ -117,20 +118,20 @@ void Log::Init(bool file, bool console, bool local)
     once = true;
 }
 
-void Log::Destroy()
+Log::~Log()
 {
-    if(GetStdOut() != INVALID_HANDLE_VALUE)
+    if(m_stdout != INVALID_HANDLE_VALUE)
     {
-        CloseHandle(GetStdOut());
+        CloseHandle(m_stdout);
         FreeConsole();
     }
-    if(Stream().is_open()) Stream().close();
+    if(m_stream.is_open()) m_stream.close();
 }
 
 void Log::Print(LogType logType, const char* format, ...)
 {
-    bool log = Stream().is_open();
-    bool con = GetStdOut() != INVALID_HANDLE_VALUE;
+    bool log = m_stream.is_open();
+    bool con = m_stdout != INVALID_HANDLE_VALUE;
     if(log || con)
     {
         Mutex().Lock();
@@ -142,8 +143,8 @@ void Log::Print(LogType logType, const char* format, ...)
 
         sprintf_s(buf, "%02u:%02u:%02u.%03u %08u %s", systime.wHour, systime.wMinute,
                   systime.wSecond, systime.wMilliseconds,GetCurrentThreadId(), TypeToString(logType));
-        if(con) WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf),&written,NULL);
-        if(log) Stream() << buf;
+        if(con) WriteConsoleA(m_stdout , buf, (DWORD) strlen(buf),&written,NULL);
+        if(log) m_stream << buf;
 
         va_list arglist;
         va_start(arglist,format);
@@ -151,11 +152,11 @@ void Log::Print(LogType logType, const char* format, ...)
         va_end(arglist);
 
         strcat_s(buf,"\n");
-        if(con) WriteConsoleA(GetStdOut() , buf, (DWORD) strlen(buf), &written, NULL);
+        if(con) WriteConsoleA(m_stdout , buf, (DWORD) strlen(buf), &written, NULL);
         if(log)
         {
-            Stream() <<buf;
-            Stream().flush();
+            m_stream << buf;
+            m_stream.flush();
         }
         Mutex().Unlock();
     }

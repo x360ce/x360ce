@@ -25,53 +25,28 @@
 
 class Log
 {
+public:
+    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKSA, LOG_HOOKWT };
+    Log(bool file, bool console, bool local);
+    ~Log();
+    void Print(LogType logType, const char* format, ...);
+
 private:
-    Log::Log() {};
-    Log(const Log &) {};
-    Log& operator=(const Log&) {};
-
-    static std::ofstream& Stream()
-    {
-        static std::ofstream stream;
-        return stream;
-    }
-
-    static HANDLE& GetStdOut()
-    {
-        static HANDLE hStdOut = INVALID_HANDLE_VALUE;
-        return hStdOut;
-    }
-
     static CriticalSection& Mutex()
     {
         static CriticalSection lock;
         return lock;
     }
 
-public:
-
-    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKSA, LOG_HOOKWT };
-
-    static Log& getInstance()
-    {
-        Mutex().Lock();
-        static Log instance;
-        Mutex().Unlock();
-
-        return instance;
-    }
-
-    void Init(bool file, bool console, bool local);
-    void Print(LogType logType, const char* format, ...);
-    void Destroy();
-
-protected:
     void PrintNotice();
     const char* TypeToString(LogType type);
+
+    std::ofstream m_stream;
+    HANDLE m_stdout;
 };
 
-#define InitLog(log,con,local) Log::getInstance().Init(log,con,local)
-#define PrintLog(type,format,...) Log::getInstance().Print(Log::type,format,__VA_ARGS__)
-#define DestroyLog() Log::getInstance().Destroy()
-
+extern Log* logger;
+#define InitLog(log,con,local) logger = new Log(log,con,local);
+#define PrintLog(type,format,...) if(logger) logger->Print(Log::type,format,__VA_ARGS__)
+#define DestroyLog() delete logger; logger = NULL;
 #endif // _LOG_H_

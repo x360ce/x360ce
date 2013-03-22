@@ -44,16 +44,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch ( uMsg )
     {
     case WM_DESTROY:
-
-        g_Devices.clear();
-        g_Mappings.clear();
-
-        SAFE_DELETE(pHooks);
-        if(hNative)
+        if (InSendMessage()) 
+            ReplyMessage(TRUE); 
+        else
         {
-            PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative));
-            FreeLibrary(hNative);
-            hNative = NULL;
+            g_Devices.clear();
+            g_Mappings.clear();
+
+            SAFE_DELETE(pHooks);
+            if(hNative)
+            {
+                PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative));
+                FreeLibrary(hNative);
+                hNative = NULL;
+            }
         }
         SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR) oldWndProc);
         break;

@@ -33,7 +33,7 @@ private:
         m_prefix=c;
     }
 
-    char CheckPrefix(char* str)
+    char CheckPrefix(const char* str)
     {
         char c = static_cast<char>(tolower(*str));
 
@@ -101,79 +101,88 @@ public:
         return mutex;
     }
 
-    uint32_t GetString(const char* strFileSection, const char* strKey, char* strOutput, char* strDefault = 0)
+    std::string& GetString(const char* strSection, const char* strKey, std::string defVal = std::string())
     {
-        if(m_inifile.empty()) return 0;
-
         Mutex().Lock();
+        m_strRet.clear();
 
-        uint32_t ret = GetPrivateProfileStringA(strFileSection, strKey, strDefault, strOutput, MAX_PATH, m_inifile.c_str());
-
-        if(strOutput)
+        if(m_inifile.empty()) 
         {
-            char* pStr = strchr(strOutput, L'#');
-            if (pStr) *pStr=L'\0';
+            m_strRet = defVal;
 
-            pStr = strchr(strOutput, L';');
-            if (pStr) *pStr=L'\0';
+            Mutex().Unlock();
+            return m_strRet;
         }
+    
+        char* strOut = new char[MAX_PATH];
+        ULONG32 size = GetPrivateProfileStringA(strSection, strKey, defVal.c_str(), strOut, MAX_PATH, m_inifile.c_str());
+
+        if(size > 0 && *strOut != '\0')
+        {
+            char* pStr = strchr(strOut, '#');
+            if (pStr) *pStr='\0';
+
+            pStr = strchr(strOut, ';');
+            if (pStr) *pStr='\0';
+        }
+        else
+        {
+            delete [] strOut;          
+            m_strRet = defVal;
+
+            Mutex().Unlock();
+            return m_strRet;
+        }
+        m_strRet = strOut;
+        delete [] strOut;
 
         Mutex().Unlock();
-
-        return ret;
+        return m_strRet;
     }
 
-    int32_t GetLong(const char* strFileSection, const char* strKey, int iDefault = 0)
+    int32_t GetLong(const char* strSection, const char* strKey, int32_t defVal = 0)
     {
-        char out[MAX_PATH];
-        char def[MAX_PATH];
+        std::stringstream ss;
+        ss << defVal;
+        std::string str = GetString(strSection, strKey, ss.str());
 
-        sprintf_s(def,MAX_PATH,"%d",iDefault);
-        if(GetString(strFileSection,strKey,out,def))
-        {
-            if(CheckPrefix(out)) return strtol(out+1,NULL,0);
-            else return strtol(out,NULL,0);
-        }
-        return 0;
+        if(CheckPrefix(str.c_str())) return strtol(str.c_str()+1,NULL,0);
+        else return strtol(str.c_str(),NULL,0);   
     }
 
-    int16_t GetShort(const char* strFileSection, const char* strKey, int iDefault = 0)
+    int16_t GetShort(const char* strFileSection, const char* strKey, int16_t iDefault = 0)
     {
         return static_cast<int16_t>(GetLong(strFileSection,strKey,iDefault));
     }
 
-    int8_t GetSByte(const char* strFileSection, const char* strKey, int iDefault = 0)
+    int8_t GetSByte(const char* strFileSection, const char* strKey, int8_t iDefault = 0)
     {
         return static_cast<int8_t>(GetLong(strFileSection,strKey,iDefault));
     }
 
-    uint32_t GetDword(const char* strFileSection, const char* strKey, int iDefault = 0)
+    uint32_t GetDword(const char* strSection, const char* strKey, uint32_t defVal = 0)
     {
-        char out[MAX_PATH];
-        char def[MAX_PATH];
+        std::stringstream ss;
+        ss << defVal;
+        std::string str = GetString(strSection, strKey, ss.str());
 
-        sprintf_s(def,MAX_PATH,"%d",iDefault);
-        if(GetString(strFileSection,strKey,out,def))
-        {
-            if(CheckPrefix(out)) return strtoul(out+1,NULL,0);
-            else return strtoul(out,NULL,0);
-        }
-        return 0;
+        if(CheckPrefix(str.c_str())) return strtoul(str.c_str()+1,NULL,0);
+        else return strtoul(str.c_str(),NULL,0);  
     }
 
-    uint16_t GetWord(const char* strFileSection, const char* strKey, int iDefault = 0)
+    uint16_t GetWord(const char* strFileSection, const char* strKey, uint16_t defVal = 0)
     {
-        return static_cast<uint16_t>(GetDword(strFileSection,strKey,iDefault));
+        return static_cast<uint16_t>(GetDword(strFileSection,strKey,defVal));
     }
 
-    uint8_t GetUByte(const char* strFileSection, const char* strKey, int iDefault = 0)
+    uint8_t GetUByte(const char* strFileSection, const char* strKey, uint8_t defVal = 0)
     {
-        return static_cast<uint8_t>(GetDword(strFileSection,strKey,iDefault));
+        return static_cast<uint8_t>(GetDword(strFileSection,strKey,defVal));
     }
 
-    bool GetBool(const char* strFileSection, const char* strKey, int iDefault = 0)
+    bool GetBool(const char* strFileSection, const char* strKey, bool defVal = false)
     {
-        return GetDword(strFileSection,strKey,iDefault) !=0;
+        return GetDword(strFileSection,strKey,defVal) != 0;
     }
 
     char GetLastPrefix()
@@ -194,6 +203,8 @@ public:
 private:
     std::string m_inifile;
     char m_prefix;
+
+    std::string m_strRet;
 };
 
 #endif // _INI_H_
