@@ -142,7 +142,7 @@ void ReadConfig(bool skip)
     bool local = ini.GetBool("Options", "LocalLog");
     bool log = ini.GetBool("Options", "Log");
     bool con = ini.GetBool("Options", "Console");
-    if(skip == false) InitLog(log,con,local);
+    InitLog(log,con,local);
 
     // Simple Game Database support
     // InputHook
