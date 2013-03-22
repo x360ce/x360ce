@@ -25,7 +25,7 @@
 #include <Shlobj.h>
 
 extern std::string exename;
-Log* logger;
+Log* logger = NULL;
 
 const char* Log::TypeToString(LogType type)
 {
