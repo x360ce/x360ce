@@ -42,6 +42,10 @@ HookMask = 0x00000020
 Name = Beat Hazard Classic
 HookMask = 0x00000020
 
+[BH6.exe]
+Name = Resident Evil 6
+HookMask = 0x00000002
+
 [Bladekitten.exe]
 Name = Blade Kitten
 HookMask = 0x00000002
