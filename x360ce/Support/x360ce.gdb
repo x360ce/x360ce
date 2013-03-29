@@ -46,6 +46,10 @@ HookMask = 0x00000020
 Name = BioHazard 6
 HookMask = 0x00000002
 
+[BioShockInfinite.exe]
+Name = BioShock Infinite
+HookMask = 0x00000002 
+
 [Bladekitten.exe]
 Name = Blade Kitten
 HookMask = 0x00000002
