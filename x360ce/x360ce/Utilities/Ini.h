@@ -142,12 +142,13 @@ public:
 
     int32_t GetLong(const char* strSection, const char* strKey, int32_t defVal = 0)
     {
-        std::stringstream ss;
-        ss << defVal;
-        std::string str = GetString(strSection, strKey, ss.str());
+		char buf[2 * 32];
+		sprintf_s(buf, "%ld", defVal);
+        std::string str = GetString(strSection, strKey, std::string(buf));
 
-        if(CheckPrefix(str.c_str())) return strtol(str.c_str()+1,NULL,0);
-        else return strtol(str.c_str(),NULL,0);   
+		const char* cstr = str.c_str();
+        if(CheckPrefix(cstr)) return strtol(cstr+1,NULL,0);
+        else return strtol(cstr,NULL,0);   
     }
 
     int16_t GetShort(const char* strFileSection, const char* strKey, int16_t iDefault = 0)
@@ -162,12 +163,13 @@ public:
 
     uint32_t GetDword(const char* strSection, const char* strKey, uint32_t defVal = 0)
     {
-        std::stringstream ss;
-        ss << defVal;
-        std::string str = GetString(strSection, strKey, ss.str());
+		char buf[2 * 32];
+		sprintf_s(buf, "%lu", defVal);
+        std::string str = GetString(strSection, strKey, buf);
 
-        if(CheckPrefix(str.c_str())) return strtoul(str.c_str()+1,NULL,0);
-        else return strtoul(str.c_str(),NULL,0);  
+		const char* cstr = str.c_str();
+		if(CheckPrefix(cstr)) return strtoul(cstr+1,NULL,0);
+		else return strtoul(cstr,NULL,0);   
     }
 
     uint16_t GetWord(const char* strFileSection, const char* strKey, uint16_t defVal = 0)

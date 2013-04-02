@@ -132,9 +132,9 @@ VOID InitInstance(HINSTANCE instance)
              VERSION_PATCH,SVN_REV,exename.c_str(),startProcessId);
 #endif
 
-    wchar_t osname[MAX_PATH];
+    char osname[128];
     windowsVersionName(osname,MAX_PATH);
-    PrintLog(LOG_CORE,"%ls",osname);
+    PrintLog(LOG_CORE,"%s",osname);
 
     InstallInputHooks();
 }

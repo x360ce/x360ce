@@ -161,16 +161,16 @@ typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 #define PRODUCT_PROFESSIONAL	0x00000030
 #define VER_SUITE_WH_SERVER	0x00008000
 
-inline bool windowsVersionName(wchar_t* str, int bufferSize)
+inline bool windowsVersionName(char* str, int bufferSize)
 {
-    OSVERSIONINFOEX osvi;
+    OSVERSIONINFOEXA osvi;
     SYSTEM_INFO si;
     BOOL bOsVersionInfoEx;
     DWORD dwType;
     ZeroMemory(&si, sizeof(SYSTEM_INFO));
-    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEXA));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
+    bOsVersionInfoEx = GetVersionExA((OSVERSIONINFOA*) &osvi);
     if(bOsVersionInfoEx == 0)
         return false; // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
     PGNSI pGNSI = (PGNSI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
@@ -181,8 +181,8 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
     {
         return false;
     }
-    std::wstringstream os;
-    os << L"Microsoft "; // Test for the specific product.
+    std::string buf;
+    buf.append("Microsoft "); // Test for the specific product.
     if ( osvi.dwMajorVersion == 6 )
     {
         PGPI pGPI = (PGPI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetProductInfo");
@@ -191,107 +191,107 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
         if( osvi.dwMinorVersion == 0 )
         {
             if( osvi.wProductType == VER_NT_WORKSTATION )
-                os << "Windows Vista ";
-            else os << "Windows Server 2008 ";
+                buf.append("Windows Vista ");
+            else buf.append("Windows Server 2008 ");
         }
         if ( osvi.dwMinorVersion == 1 )
         {
             if( osvi.wProductType == VER_NT_WORKSTATION )
-                os << "Windows 7 ";
-            else os << "Windows Server 2008 R2 ";
+                buf.append("Windows 7 ");
+            else buf.append("Windows Server 2008 R2 ");
 
             switch( dwType )
             {
             case PRODUCT_ULTIMATE:
-                os << "Ultimate Edition";
+                buf.append("Ultimate Edition");
                 break;
             case PRODUCT_PROFESSIONAL:
-                os << "Professional";
+                buf.append("Professional");
                 break;
             case PRODUCT_HOME_PREMIUM:
-                os << "Home Premium Edition";
+                buf.append("Home Premium Edition");
                 break;
             case PRODUCT_HOME_BASIC:
-                os << "Home Basic Edition";
+                buf.append("Home Basic Edition");
                 break;
             case PRODUCT_ENTERPRISE:
-                os << "Enterprise Edition";
+                buf.append("Enterprise Edition");
                 break;
             case PRODUCT_BUSINESS:
-                os << "Business Edition";
+                buf.append("Business Edition");
                 break;
             case PRODUCT_STARTER:
-                os << "Starter Edition";
+                buf.append("Starter Edition");
                 break;
             case PRODUCT_CLUSTER_SERVER:
-                os << "Cluster Server Edition";
+                buf.append("Cluster Server Edition");
                 break;
             case PRODUCT_DATACENTER_SERVER:
-                os << "Datacenter Edition";
+                buf.append("Datacenter Edition");
                 break;
             case PRODUCT_DATACENTER_SERVER_CORE:
-                os << "Datacenter Edition (core installation)";
+                buf.append("Datacenter Edition (core installation)");
                 break;
             case PRODUCT_ENTERPRISE_SERVER:
-                os << "Enterprise Edition";
+                buf.append("Enterprise Edition");
                 break;
             case PRODUCT_ENTERPRISE_SERVER_CORE:
-                os << "Enterprise Edition (core installation)";
+                buf.append("Enterprise Edition (core installation)");
                 break;
             case PRODUCT_ENTERPRISE_SERVER_IA64:
-                os << "Enterprise Edition for Itanium-based Systems";
+                buf.append("Enterprise Edition for Itanium-based Systems");
                 break;
             case PRODUCT_SMALLBUSINESS_SERVER:
-                os << "Small Business Server";
+                buf.append("Small Business Server");
                 break;
             case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-                os << "Small Business Server Premium Edition";
+                buf.append("Small Business Server Premium Edition");
                 break;
             case PRODUCT_STANDARD_SERVER:
-                os << "Standard Edition";
+                buf.append("Standard Edition");
                 break;
             case PRODUCT_STANDARD_SERVER_CORE:
-                os << "Standard Edition (core installation)";
+                buf.append("Standard Edition (core installation)");
                 break;
             case PRODUCT_WEB_SERVER:
-                os << "Web Server Edition";
+                buf.append("Web Server Edition");
                 break;
             }
         }
         else if ( osvi.dwMinorVersion == 2 )
         {
             if( osvi.wProductType == VER_NT_WORKSTATION )
-                os << "Windows 8 ";
-            else os << "Windows Server 2012 ";
+                buf.append("Windows 8 ");
+            else buf.append("Windows Server 2012 ");
 
             switch( dwType )
             {
             case PRODUCT_PROFESSIONAL:
-                os << "Pro";
+                buf.append("Pro");
                 break;
             case PRODUCT_CLUSTER_SERVER:
-                os << "Cluster Server Edition";
+                buf.append("Cluster Server Edition");
                 break;
             case PRODUCT_DATACENTER_SERVER:
-                os << "Datacenter Edition";
+                buf.append("Datacenter Edition");
                 break;
             case PRODUCT_ENTERPRISE_SERVER:
-                os << "Enterprise Edition";
+                buf.append("Enterprise Edition");
                 break;
             case PRODUCT_ENTERPRISE_SERVER_IA64:
-                os << "Enterprise Edition for Itanium-based Systems";
+                buf.append("Enterprise Edition for Itanium-based Systems");
                 break;
             case PRODUCT_SMALLBUSINESS_SERVER:
-                os << "Small Business Server";
+                buf.append("Small Business Server");
                 break;
             case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-                os << "Small Business Server Premium Edition";
+                buf.append("Small Business Server Premium Edition");
                 break;
             case PRODUCT_STANDARD_SERVER:
-                os << "Standard Edition";
+                buf.append("Standard Edition");
                 break;
             case PRODUCT_WEB_SERVER:
-                os << "Web Server Edition";
+                buf.append("Web Server Edition");
                 break;
             }
         }
@@ -299,84 +299,89 @@ inline bool windowsVersionName(wchar_t* str, int bufferSize)
     if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2 )
     {
         if( GetSystemMetrics(SM_SERVERR2) )
-            os <<  "Windows Server 2003 R2, ";
+            buf.append("Windows Server 2003 R2, ");
         else if ( osvi.wSuiteMask & VER_SUITE_STORAGE_SERVER )
-            os <<  "Windows Storage Server 2003";
+            buf.append("Windows Storage Server 2003");
         else if ( osvi.wSuiteMask & VER_SUITE_WH_SERVER )
-            os <<  "Windows Home Server";
+            buf.append("Windows Home Server");
         else if( osvi.wProductType == VER_NT_WORKSTATION &&
             si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)
         {
-            os <<  "Windows XP Professional x64 Edition";
+            buf.append("Windows XP Professional x64 Edition");
         }
-        else os << "Windows Server 2003, ";  // Test for the server type.
+        else buf.append("Windows Server 2003, ");  // Test for the server type.
         if ( osvi.wProductType != VER_NT_WORKSTATION )
         {
             if ( si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_IA64 )
             {
                 if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                    os <<  "Datacenter Edition for Itanium-based Systems";
+                    buf.append("Datacenter Edition for Itanium-based Systems");
                 else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                    os <<  "Enterprise Edition for Itanium-based Systems";
+                    buf.append("Enterprise Edition for Itanium-based Systems");
             }
             else if ( si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
             {
                 if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                    os <<  "Datacenter x64 Edition";
+                    buf.append("Datacenter x64 Edition");
                 else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                    os <<  "Enterprise x64 Edition";
-                else os <<  "Standard x64 Edition";
+                    buf.append("Enterprise x64 Edition");
+                else buf.append("Standard x64 Edition");
             }
             else
             {
                 if ( osvi.wSuiteMask & VER_SUITE_COMPUTE_SERVER )
-                    os <<  "Compute Cluster Edition";
+                    buf.append("Compute Cluster Edition");
                 else if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                    os <<  "Datacenter Edition";
+                    buf.append("Datacenter Edition");
                 else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                    os <<  "Enterprise Edition";
+                    buf.append("Enterprise Edition");
                 else if ( osvi.wSuiteMask & VER_SUITE_BLADE )
-                    os <<  "Web Edition";
-                else os <<  "Standard Edition";
+                    buf.append("Web Edition");
+                else buf.append("Standard Edition");
             }
         }
     }
     if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 )
     {
-        os << "Windows XP ";
+        buf.append("Windows XP ");
         if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
-            os <<  "Home Edition";
-        else os <<  "Professional";
+            buf.append("Home Edition");
+        else buf.append("Professional");
     }
     if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 )
     {
-        os << "Windows 2000 ";
+        buf.append("Windows 2000 ");
         if ( osvi.wProductType == VER_NT_WORKSTATION )
         {
-            os <<  "Professional";
+            buf.append("Professional");
         }
         else
         {
             if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                os <<  "Datacenter Server";
+                buf.append("Datacenter Server");
             else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                os <<  "Advanced Server";
-            else os <<  "Server";
+                buf.append("Advanced Server");
+            else buf.append("Server");
         }
     } // Include service pack (if any) and build number.
     if(osvi.szCSDVersion[0] != L'\0')
     {
-        os << " " << osvi.szCSDVersion;
+        buf.append(" ");
+		buf.append(osvi.szCSDVersion);
     }
-    os << L" (build " << osvi.dwBuildNumber << L")";
+    buf.append(" (build "); 
+	char tmp[2 * 32];
+	sprintf_s(tmp, "%lu", osvi.dwBuildNumber);
+	buf.append(tmp);
+	buf.append(")");
     if ( osvi.dwMajorVersion >= 6 )
     {
         if ( si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
-            os <<  ", 64-bit";
+            buf.append(", 64-bit");
         else if (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_INTEL )
-            os << ", 32-bit";
+            buf.append(", 32-bit");
     }
-    wcscpy_s(str, bufferSize, os.str().c_str());
+    strcpy_s(str, bufferSize, buf.c_str());
     return true;
 }
 

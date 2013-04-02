@@ -42,21 +42,13 @@
 
 // Windows Header Files:
 #include <windows.h>
-#include <math.h>
-#include <time.h>
-#include <io.h>
-#include <fcntl.h>
-
-//C++
-#include <ios>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <string>
-#include <vector>
-#include <map>
-
 #include <xinput.h>
 
+//C++
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+// Portable STDINT
 #include "pstdint.h"
