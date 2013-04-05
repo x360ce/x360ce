@@ -65,6 +65,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Controls\ControllersControl.ascx" />
+    <Content Include="Controls\GamesControl.ascx" />
     <Content Include="Default.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -86,6 +88,20 @@
     <Compile Include="Common\SearchResult.cs" />
     <Compile Include="Common\SettingsData.cs" />
     <Compile Include="Common\Vendor.cs" />
+    <Compile Include="Controls\ControllersControl.ascx.cs">
+      <DependentUpon>ControllersControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ControllersControl.ascx.designer.cs">
+      <DependentUpon>ControllersControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GamesControl.ascx.cs">
+      <DependentUpon>GamesControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GamesControl.ascx.designer.cs">
+      <DependentUpon>GamesControl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Vendor.cs" />
     <Compile Include="Data\x360ceModel.Designer.cs">
