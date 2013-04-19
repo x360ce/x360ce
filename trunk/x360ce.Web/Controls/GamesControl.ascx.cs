@@ -13,7 +13,7 @@ namespace x360ce.Web.Controls
         public class GameItem
         {
             public int InstanceCount { get; set; }
-            public string FileName { get; set; }
+            public string FileProductName { get; set; }
             //public Guid InstanceGuid { get; set; }        
         }
 
