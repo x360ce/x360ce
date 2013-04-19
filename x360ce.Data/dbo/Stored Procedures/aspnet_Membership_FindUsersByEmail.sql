@@ -5,9 +5,16 @@
     @PageSize              int
 AS
 BEGIN
+
+    DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
+	DECLARE @LoweredEmailToMatch nvarchar(256)
+	SET @LoweredEmailToMatch = LOWER(@EmailToMatch)
+
     DECLARE @ApplicationId uniqueidentifier
     SELECT  @ApplicationId = NULL
-    SELECT  @ApplicationId = ApplicationId FROM dbo.aspnet_Applications WHERE LOWER(@ApplicationName) = LoweredApplicationName
+    SELECT  @ApplicationId = ApplicationId FROM dbo.aspnet_Applications WHERE @LoweredApplicationName = LoweredApplicationName
     IF (@ApplicationId IS NULL)
         RETURN 0
 
@@ -36,7 +43,7 @@ BEGIN
         INSERT INTO #PageIndexForUsers (UserId)
             SELECT u.UserId
             FROM   dbo.aspnet_Users u, dbo.aspnet_Membership m
-            WHERE  u.ApplicationId = @ApplicationId AND m.UserId = u.UserId AND m.LoweredEmail LIKE LOWER(@EmailToMatch)
+            WHERE  u.ApplicationId = @ApplicationId AND m.UserId = u.UserId AND m.LoweredEmail LIKE @LoweredEmailToMatch
             ORDER BY m.LoweredEmail
 
     SELECT  u.UserName, m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,

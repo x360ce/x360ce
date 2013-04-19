@@ -24,39 +24,6 @@ BEGIN
         END
     END
 
-    -- Check aspnet_Profile table if (@TablesToCheck & 4) is set
-    IF ((@TablesToCheck & 4) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_Profiles') AND (type = 'V'))) )
-    BEGIN
-        IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_Profile))
-        BEGIN
-            SELECT N'aspnet_Profile'
-            RETURN
-        END
-    END
-
-    -- Check aspnet_PersonalizationPerUser table if (@TablesToCheck & 8) is set
-    IF ((@TablesToCheck & 8) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_WebPartState_User') AND (type = 'V'))) )
-    BEGIN
-        IF (EXISTS(SELECT TOP 1 UserId FROM dbo.aspnet_PersonalizationPerUser))
-        BEGIN
-            SELECT N'aspnet_PersonalizationPerUser'
-            RETURN
-        END
-    END
-
-    -- Check aspnet_PersonalizationPerUser table if (@TablesToCheck & 16) is set
-    IF ((@TablesToCheck & 16) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'aspnet_WebEvent_LogEvent') AND (type = 'P'))) )
-    BEGIN
-        IF (EXISTS(SELECT TOP 1 * FROM dbo.aspnet_WebEvent_Events))
-        BEGIN
-            SELECT N'aspnet_WebEvent_Events'
-            RETURN
-        END
-    END
-
     -- Check aspnet_Users table if (@TablesToCheck & 1,2,4 & 8) are all set
     IF ((@TablesToCheck & 1) <> 0 AND
         (@TablesToCheck & 2) <> 0 AND

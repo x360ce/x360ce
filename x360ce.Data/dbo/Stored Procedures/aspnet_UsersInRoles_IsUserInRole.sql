@@ -4,9 +4,19 @@
     @RoleName         nvarchar(256)
 AS
 BEGIN
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @LoweredRoleName  nvarchar(256)
+	SET @LoweredRoleName = LOWER(@RoleName)
+
     DECLARE @ApplicationId uniqueidentifier
     SELECT  @ApplicationId = NULL
-    SELECT  @ApplicationId = ApplicationId FROM aspnet_Applications WHERE LOWER(@ApplicationName) = LoweredApplicationName
+    SELECT  @ApplicationId = ApplicationId FROM aspnet_Applications WHERE @LoweredApplicationName = LoweredApplicationName
     IF (@ApplicationId IS NULL)
         RETURN(2)
     DECLARE @UserId uniqueidentifier
@@ -16,14 +26,14 @@ BEGIN
 
     SELECT  @UserId = UserId
     FROM    dbo.aspnet_Users
-    WHERE   LoweredUserName = LOWER(@UserName) AND ApplicationId = @ApplicationId
+    WHERE   LoweredUserName = @LoweredUserName AND ApplicationId = @ApplicationId
 
     IF (@UserId IS NULL)
         RETURN(2)
 
     SELECT  @RoleId = RoleId
     FROM    dbo.aspnet_Roles
-    WHERE   LoweredRoleName = LOWER(@RoleName) AND ApplicationId = @ApplicationId
+    WHERE   LoweredRoleName = @LoweredRoleName AND ApplicationId = @ApplicationId
 
     IF (@RoleId IS NULL)
         RETURN(3)

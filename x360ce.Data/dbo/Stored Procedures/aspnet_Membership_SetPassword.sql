@@ -7,21 +7,29 @@
     @PasswordFormat   int = 0
 AS
 BEGIN
-    DECLARE @UserId uniqueidentifier
+    DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+	
+	DECLARE @UserId uniqueidentifier
     SELECT  @UserId = NULL
     SELECT  @UserId = u.UserId
-    FROM    dbo.aspnet_Users u, dbo.aspnet_Applications a, dbo.aspnet_Membership m
-    WHERE   LoweredUserName = LOWER(@UserName) AND
-            u.ApplicationId = a.ApplicationId  AND
-            LOWER(@ApplicationName) = a.LoweredApplicationName AND
-            u.UserId = m.UserId
+    FROM    dbo.aspnet_Users u
+			INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+			INNER JOIN  dbo.aspnet_Membership m ON u.UserId = m.UserId
+    WHERE   LoweredUserName = @LoweredUserName AND
+            @LoweredApplicationName = a.LoweredApplicationName
 
     IF (@UserId IS NULL)
         RETURN(1)
 
     UPDATE dbo.aspnet_Membership
-    SET Password = @NewPassword, PasswordFormat = @PasswordFormat, PasswordSalt = @PasswordSalt,
-        LastPasswordChangedDate = @CurrentTimeUtc
+    SET [Password] = @NewPassword,
+		PasswordFormat = @PasswordFormat,
+		PasswordSalt = @PasswordSalt,
+		LastPasswordChangedDate = @CurrentTimeUtc
     WHERE @UserId = UserId
     RETURN(0)
 END

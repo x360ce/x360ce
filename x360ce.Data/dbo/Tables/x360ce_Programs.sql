@@ -5,6 +5,7 @@
     [HookMask]        INT              CONSTRAINT [DF_x360ce_Programs_HookMask] DEFAULT ((0)) NOT NULL,
     [XInputMask]      INT              CONSTRAINT [DF_x360ce_Programs_XInputFileName] DEFAULT ((4)) NOT NULL,
     [InstanceCount]   INT              CONSTRAINT [DF_x360ce_Programs_InstanceCount] DEFAULT ((0)) NOT NULL,
+    [Comment]         NVARCHAR (1024)  CONSTRAINT [DF_x360ce_Programs_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]       BIT              CONSTRAINT [DF_x360ce_Programs_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]     DATETIME         CONSTRAINT [DF_x360ce_Programs_DateCreated] DEFAULT (getdate()) NOT NULL,
     [DateUpdated]     DATETIME         NULL,

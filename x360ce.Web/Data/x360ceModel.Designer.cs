@@ -1760,7 +1760,8 @@ namespace x360ce.Web.Data
         /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 instanceCount, global::System.Boolean isEnabled, global::System.DateTime dateCreated)
+        /// <param name="comment">Initial value of the Comment property.</param>
+        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 instanceCount, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.String comment)
         {
             Program program = new Program();
             program.ProgramId = programId;
@@ -1771,6 +1772,7 @@ namespace x360ce.Web.Data
             program.InstanceCount = instanceCount;
             program.IsEnabled = isEnabled;
             program.DateCreated = dateCreated;
+            program.Comment = comment;
             return program;
         }
 
@@ -1996,6 +1998,30 @@ namespace x360ce.Web.Data
         private Nullable<global::System.DateTime> _DateUpdated;
         partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
         partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+            set
+            {
+                OnCommentChanging(value);
+                ReportPropertyChanging("Comment");
+                _Comment = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Comment");
+                OnCommentChanged();
+            }
+        }
+        private global::System.String _Comment;
+        partial void OnCommentChanging(global::System.String value);
+        partial void OnCommentChanged();
 
         #endregion
 

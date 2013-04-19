@@ -22,7 +22,7 @@ namespace x360ce.Web.Controls
                if (!IsPostBack)
             {
                 var db = new Data.x360ceModelContainer();
-                var rows = db.ExecuteStoreQuery<GameItem>("exec x360ce_GetMostPopularGames");
+                var rows = db.Programs.OrderByDescending(x=>x.InstanceCount).Take(20).ToArray();
                 GamesGridView.DataSource = rows;
                 GamesGridView.DataBind();
             }
