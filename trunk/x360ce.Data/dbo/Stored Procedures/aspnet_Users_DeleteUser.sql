@@ -69,38 +69,6 @@ BEGIN
             SELECT  @NumTablesDeletedFrom = @NumTablesDeletedFrom + 1
     END
 
-    -- Delete from aspnet_Profile table if (@TablesToDeleteFrom & 4) is set
-    IF ((@TablesToDeleteFrom & 4) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_Profiles') AND (type = 'V'))) )
-    BEGIN
-        DELETE FROM dbo.aspnet_Profile WHERE @UserId = UserId
-
-        SELECT @ErrorCode = @@ERROR,
-                @RowCount = @@ROWCOUNT
-
-        IF( @ErrorCode <> 0 )
-            GOTO Cleanup
-
-        IF (@RowCount <> 0)
-            SELECT  @NumTablesDeletedFrom = @NumTablesDeletedFrom + 1
-    END
-
-    -- Delete from aspnet_PersonalizationPerUser table if (@TablesToDeleteFrom & 8) is set
-    IF ((@TablesToDeleteFrom & 8) <> 0  AND
-        (EXISTS (SELECT name FROM sysobjects WHERE (name = N'vw_aspnet_WebPartState_User') AND (type = 'V'))) )
-    BEGIN
-        DELETE FROM dbo.aspnet_PersonalizationPerUser WHERE @UserId = UserId
-
-        SELECT @ErrorCode = @@ERROR,
-                @RowCount = @@ROWCOUNT
-
-        IF( @ErrorCode <> 0 )
-            GOTO Cleanup
-
-        IF (@RowCount <> 0)
-            SELECT  @NumTablesDeletedFrom = @NumTablesDeletedFrom + 1
-    END
-
     -- Delete from aspnet_Users table if (@TablesToDeleteFrom & 1,2,4 & 8) are all set
     IF ((@TablesToDeleteFrom & 1) <> 0 AND
         (@TablesToDeleteFrom & 2) <> 0 AND

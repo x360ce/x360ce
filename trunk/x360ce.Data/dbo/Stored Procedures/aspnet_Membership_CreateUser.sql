@@ -14,7 +14,14 @@
     @UserId                                 uniqueidentifier OUTPUT
 AS
 BEGIN
-    DECLARE @ApplicationId uniqueidentifier
+    
+	DECLARE @LoweredEmail nvarchar(256)
+	SET @LoweredEmail = LOWER(@Email)
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @ApplicationId uniqueidentifier
     SELECT  @ApplicationId = NULL
 
     DECLARE @NewUserId uniqueidentifier
@@ -66,7 +73,7 @@ BEGIN
 
     SET @CreateDate = @CurrentTimeUtc
 
-    SELECT  @NewUserId = UserId FROM dbo.aspnet_Users WHERE LOWER(@UserName) = LoweredUserName AND @ApplicationId = ApplicationId
+    SELECT  @NewUserId = UserId FROM dbo.aspnet_Users WHERE @LoweredUserName = LoweredUserName AND @ApplicationId = ApplicationId
     IF ( @NewUserId IS NULL )
     BEGIN
         SET @NewUserId = @UserId
@@ -109,7 +116,7 @@ BEGIN
     BEGIN
         IF (EXISTS (SELECT *
                     FROM  dbo.aspnet_Membership m WITH ( UPDLOCK, HOLDLOCK )
-                    WHERE ApplicationId = @ApplicationId AND LoweredEmail = LOWER(@Email)))
+                    WHERE ApplicationId = @ApplicationId AND LoweredEmail = @LoweredEmail))
         BEGIN
             SET @ErrorCode = 7
             GOTO Cleanup

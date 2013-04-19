@@ -4,12 +4,15 @@
 	@RoleNames		  nvarchar(4000)
 AS
 BEGIN
+
+    DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
 	DECLARE @AppId uniqueidentifier
 	SELECT  @AppId = NULL
-	SELECT  @AppId = ApplicationId FROM aspnet_Applications WHERE LOWER(@ApplicationName) = LoweredApplicationName
+	SELECT  @AppId = ApplicationId FROM aspnet_Applications WHERE @LoweredApplicationName = LoweredApplicationName
 	IF (@AppId IS NULL)
 		RETURN(2)
-
 
 	DECLARE @TranStarted   bit
 	SET @TranStarted = 0
@@ -48,8 +51,9 @@ BEGIN
 
 	INSERT INTO @tbRoles
 	  SELECT RoleId
-	  FROM   dbo.aspnet_Roles ar, @tbNames t
-	  WHERE  LOWER(t.Name) = ar.LoweredRoleName AND ar.ApplicationId = @AppId
+	  FROM   dbo.aspnet_Roles ar
+		INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredRoleName
+	  WHERE  ar.ApplicationId = @AppId
 	SELECT @CountR = @@ROWCOUNT
 
 	IF (@CountR <> @Num)
@@ -82,8 +86,9 @@ BEGIN
 
 	INSERT INTO @tbUsers
 	  SELECT UserId
-	  FROM   dbo.aspnet_Users ar, @tbNames t
-	  WHERE  LOWER(t.Name) = ar.LoweredUserName AND ar.ApplicationId = @AppId
+	  FROM   dbo.aspnet_Users ar
+		INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredUserName
+	  WHERE  ar.ApplicationId = @AppId
 
 	SELECT @CountU = @@ROWCOUNT
 	IF (@CountU <> @Num)
@@ -98,13 +103,17 @@ BEGIN
 	END
 
 	SELECT  @CountAll = COUNT(*)
-	FROM	dbo.aspnet_UsersInRoles ur, @tbUsers u, @tbRoles r
-	WHERE   ur.UserId = u.UserId AND ur.RoleId = r.RoleId
+	FROM	dbo.aspnet_UsersInRoles ur
+		INNER JOIN @tbUsers u ON ur.UserId = u.UserId
+		INNER JOIN @tbRoles r ON ur.RoleId = r.RoleId
 
 	IF (@CountAll <> @CountU * @CountR)
 	BEGIN
 		SELECT TOP 1 UserName, RoleName
-		FROM		 @tbUsers tu, @tbRoles tr, dbo.aspnet_Users u, dbo.aspnet_Roles r
+		FROM		 @tbUsers tu,
+					@tbRoles tr,
+					dbo.aspnet_Users u,
+					dbo.aspnet_Roles r
 		WHERE		 u.UserId = tu.UserId AND r.RoleId = tr.RoleId AND
 					 tu.UserId NOT IN (SELECT ur.UserId FROM dbo.aspnet_UsersInRoles ur WHERE ur.RoleId = tr.RoleId) AND
 					 tr.RoleId NOT IN (SELECT ur.RoleId FROM dbo.aspnet_UsersInRoles ur WHERE ur.UserId = tu.UserId)

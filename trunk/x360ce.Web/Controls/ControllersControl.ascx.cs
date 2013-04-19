@@ -22,7 +22,7 @@ namespace x360ce.Web.Controls
                if (!IsPostBack)
             {
                 var db = new Data.x360ceModelContainer();
-                var rows = db.ExecuteStoreQuery<ControllerItem>("exec x360ce_GetMostPopularControllers");
+                var rows = db.Products.OrderByDescending(x=>x.InstanceCount).Take(20).ToArray();
                 ControllersGridView.DataSource = rows;
                 ControllersGridView.DataBind();
             }

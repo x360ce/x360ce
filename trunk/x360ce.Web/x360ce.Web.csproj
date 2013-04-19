@@ -68,6 +68,7 @@
     <Content Include="Controls\ControllersControl.ascx" />
     <Content Include="Controls\GamesControl.ascx" />
     <Content Include="Default.aspx" />
+    <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -116,6 +117,25 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
+    <Compile Include="JocysCom\Common\ItemType.cs" />
+    <Compile Include="JocysCom\Common\LinkItem.cs" />
+    <Compile Include="JocysCom\Security\BuildInRoles.cs" />
+    <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
+    <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="JocysCom\Security\Data\Role.cs" />
+    <Compile Include="JocysCom\Security\Data\SecurityEntities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SecurityModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Security\Data\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebServices\x360ce.asmx.cs">
       <DependentUpon>x360ce.asmx</DependentUpon>
@@ -127,8 +147,12 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EntityDeploy Include="JocysCom\Security\Data\SecurityModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SecurityModel.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>JocysCom.WebSites.Engine.Security.Data</CustomToolNamespace>
+    </EntityDeploy>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

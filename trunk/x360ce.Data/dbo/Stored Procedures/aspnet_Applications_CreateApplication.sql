@@ -3,7 +3,11 @@
     @ApplicationId        uniqueidentifier OUTPUT
 AS
 BEGIN
-    SELECT  @ApplicationId = ApplicationId FROM dbo.aspnet_Applications WHERE LOWER(@ApplicationName) = LoweredApplicationName
+	
+    DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
+	SELECT  @ApplicationId = ApplicationId FROM dbo.aspnet_Applications WHERE @LoweredApplicationName = LoweredApplicationName
 
     IF(@ApplicationId IS NULL)
     BEGIN
@@ -20,13 +24,13 @@ BEGIN
 
         SELECT  @ApplicationId = ApplicationId
         FROM dbo.aspnet_Applications WITH (UPDLOCK, HOLDLOCK)
-        WHERE LOWER(@ApplicationName) = LoweredApplicationName
+        WHERE @LoweredApplicationName = LoweredApplicationName
 
         IF(@ApplicationId IS NULL)
         BEGIN
             SELECT  @ApplicationId = NEWID()
             INSERT  dbo.aspnet_Applications (ApplicationId, ApplicationName, LoweredApplicationName)
-            VALUES  (@ApplicationId, @ApplicationName, LOWER(@ApplicationName))
+            VALUES  (@ApplicationId, @ApplicationName, @LoweredApplicationName)
         END
 
 

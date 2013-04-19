@@ -89,6 +89,7 @@
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
           <Property Name="InstanceCount" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" Nullable="false" MaxLength="1024" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" />
@@ -268,6 +269,7 @@
           <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="DateUpdated" Precision="3" />
+          <Property Type="String" Name="Comment" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -393,6 +395,7 @@
           <EntitySetMapping Name="Programs">
             <EntityTypeMapping TypeName="x360ceModel.Program">
               <MappingFragment StoreEntitySet="x360ce_Programs">
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
