@@ -5,16 +5,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App", "x360ce.App.cs
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|x64.ActiveCfg = Debug|x64
-		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|x64.Build.0 = Debug|x64
+		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|x64.Build.0 = Debug|Any CPU
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|x86.ActiveCfg = Debug|x86
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Debug|x86.Build.0 = Debug|x86
+		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|x64.ActiveCfg = Release|x64
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|x64.Build.0 = Release|x64
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|x86.ActiveCfg = Release|x86
