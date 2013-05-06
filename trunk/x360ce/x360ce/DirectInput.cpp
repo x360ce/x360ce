@@ -640,18 +640,28 @@ HRESULT SetDeviceForcesNew(DInputDevice& device, WORD force, bool motor)
     nForce = clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
 
     if(motor == FFB_LEFTMOTOR)
-    {
-        device.ff.eff[motor].dwDuration = device.ff.leftPeriod*1000;
-        device.ff.pf.dwMagnitude = (DWORD) nForce;
-        device.ff.pf.dwPeriod = device.ff.leftPeriod*1000;
-    }
+	if(device.swapmotor)
+	{
+		device.ff.eff[motor].dwDuration = device.ff.rightPeriod*1000;
+		device.ff.pf.dwMagnitude = (DWORD) nForce;
+		device.ff.pf.dwPeriod = device.ff.rightPeriod*1000;
+	} else {
+		device.ff.eff[motor].dwDuration = device.ff.leftPeriod*1000;
+		device.ff.pf.dwMagnitude = (DWORD) nForce;
+		device.ff.pf.dwPeriod = device.ff.leftPeriod*1000;
+    	}
 
     if(motor == FFB_RIGHTMOTOR)
-    {
-        device.ff.eff[motor].dwDuration = device.ff.rightPeriod*1000;
-        device.ff.pf.dwMagnitude = (DWORD) nForce;
-        device.ff.pf.dwPeriod = device.ff.rightPeriod*1000;
-    }
+	if(device.swapmotor)
+	{
+		device.ff.eff[motor].dwDuration = device.ff.leftPeriod*1000;
+		device.ff.pf.dwMagnitude = (DWORD) nForce;
+		device.ff.pf.dwPeriod = device.ff.leftPeriod*1000;
+	} else {
+		device.ff.eff[motor].dwDuration = device.ff.rightPeriod*1000;
+		device.ff.pf.dwMagnitude = (DWORD) nForce;
+		device.ff.pf.dwPeriod = device.ff.rightPeriod*1000;
+	}
 
     device.ff.eff[motor].lpvTypeSpecificParams =& device.ff.pf;
 
