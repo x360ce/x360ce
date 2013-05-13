@@ -22,6 +22,10 @@ HookMask = 0x00000002
 Name = Assassin's Creed 3 Multiplayer
 HookMask = 0x00000002
 
+[ASN_App_PcDx9_Final.exe]
+Name = Sonic & All-Stars Racing Transformed
+HookMask = 0x00000002
+
 [AssassinsCreed_Dx10.exe]
 Name = Assasin's Creed DX10
 HookMask = 0x000001E
