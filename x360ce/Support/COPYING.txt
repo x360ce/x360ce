@@ -1,4 +1,0 @@
-This software is licensed under the terms of the GNU Lesser General Public License 3.0.
-Full text of license is provided in lgpl-3.0.txt file.
-
-Software uses modified build of detours library designed for MPC-HC player (http://sourceforge.net/projects/mpc-hc/)
