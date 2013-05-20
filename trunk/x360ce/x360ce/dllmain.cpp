@@ -124,13 +124,7 @@ VOID InitInstance(HINSTANCE instance)
     pHooks = new iHook(instance);
     ReadConfig(false);
 
-#if SVN_MODS != 0
-    PrintLog(LOG_CORE,"x360ce %d.%d.%d.%dM [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
-             VERSION_PATCH,SVN_REV,exename.c_str(),startProcessId);
-#else
-    PrintLog(LOG_CORE,"x360ce %d.%d.%d.%d [%s - %d]",VERSION_MAJOR,VERSION_MINOR,
-             VERSION_PATCH,SVN_REV,exename.c_str(),startProcessId);
-#endif
+    PrintLog(LOG_CORE,"x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
 
     char osname[128];
     windowsVersionName(osname,MAX_PATH);

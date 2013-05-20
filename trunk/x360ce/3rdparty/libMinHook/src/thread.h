@@ -1,11 +1,11 @@
-/*
- *  MinHook - Minimalistic API Hook Library
+/* 
+ *  MinHook - Minimalistic API Hook Library	
  *  Copyright (C) 2009 Tsuda Kageyu. All rights reserved.
- *
+ *  
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
- *
+ *  
  *  1. Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     documentation and/or other materials provided with the distribution.
  *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
- *
+ *  
  *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -35,47 +35,45 @@
 
 namespace MinHook
 {
-// ScopedLock 付きクリティカルセクション
-class CriticalSection
-{
-public:
-    class ScopedLock
-    {
-    private:
-        CriticalSection& cs_;
-    public:
-        ScopedLock(CriticalSection& cs);
-        ~ScopedLock();
-    private:
-        ScopedLock(const ScopedLock&);
-        const ScopedLock& operator=(const ScopedLock&);
-    };
+	// ScopedLock 付きクリティカルセクション
+	class CriticalSection
+	{
+		CriticalSection(const CriticalSection&);
+		void operator=(const CriticalSection&);
+	public:
+		class ScopedLock
+		{
+			ScopedLock(const ScopedLock&);
+			void operator=(const ScopedLock&);
+		private:
+			CriticalSection& cs_;
+		public:
+			ScopedLock(CriticalSection& cs);
+			~ScopedLock();
+		};
 
-private:
-    CRITICAL_SECTION cs_;
-public:
-    CriticalSection();
-    ~CriticalSection();
-    void enter();
-    void leave();
-private:
-    CriticalSection(const CriticalSection&);
-    const CriticalSection& operator=(const CriticalSection&);
-};
+	private:
+		CRITICAL_SECTION cs_;
+	public:
+		CriticalSection();
+		~CriticalSection();
+		void enter();
+		void leave();
+	};
 
-// 同一プロセス内の他のスレッドをすべて停止
-class ScopedThreadExclusive
-{
-private:
-    std::vector<DWORD> threads_;
-public:
-    ScopedThreadExclusive(const std::vector<uintptr_t>& oldIPs, const std::vector<uintptr_t>& newIPs);
-    ~ScopedThreadExclusive();
-private:
-    static void GetThreads(std::vector<DWORD>& threads);
-    static void Freeze(
-        const std::vector<DWORD>& threads, const std::vector<uintptr_t>& oldIPs, const std::vector<uintptr_t>& newIPs);
-    static void Unfreeze(const std::vector<DWORD>& threads);
-};
+	// 同一プロセス内の他のスレッドをすべて停止
+	class ScopedThreadExclusive
+	{
+	private:
+		std::vector<DWORD> threads_;
+	public:
+		ScopedThreadExclusive(const std::vector<uintptr_t>& oldIPs, const std::vector<uintptr_t>& newIPs);
+		~ScopedThreadExclusive();
+	private:
+		static void GetThreads(std::vector<DWORD>& threads);
+		static void Freeze(
+			const std::vector<DWORD>& threads, const std::vector<uintptr_t>& oldIPs, const std::vector<uintptr_t>& newIPs);
+		static void Unfreeze(const std::vector<DWORD>& threads);
+	};
 }
 
