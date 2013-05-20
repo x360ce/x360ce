@@ -42,7 +42,7 @@ static iHook *iHookThis = NULL;
 
 typedef void (WINAPI *CoUninitialize_t)();
 
-typedef HRESULT (WINAPI *tCoCreateInstance)(__in     REFCLSID rclsid,
+typedef HRESULT (WINAPI *CoCreateInstance_t)(__in     REFCLSID rclsid,
         __in_opt LPUNKNOWN pUnkOuter,
         __in     DWORD dwClsContext,
         __in     REFIID riid,
@@ -88,13 +88,11 @@ static Next_t hNext = NULL;
 static Get_t hGet = NULL;
 
 static CoUninitialize_t oCoUninitialize = NULL;
-static tCoCreateInstance oCoCreateInstance = NULL;
+static CoCreateInstance_t oCoCreateInstance = NULL;
 static ConnectServer_t oConnectServer = NULL;
 static CreateInstanceEnum_t oCreateInstanceEnum = NULL;
 static Next_t oNext = NULL;
 static Get_t oGet = NULL;
-
-bool bGets = false;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,11 +110,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
     if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
-    if(bGets)
-    {
-        PrintLog(LOG_HOOKCOM,"*Gets*");
-        bGets = false;
-    }
+    PrintLog(LOG_HOOKCOM,"*Gets*");
 
     if(hr != NO_ERROR) return hr;
 
@@ -191,7 +185,6 @@ HRESULT STDMETHODCALLTYPE HookNext(
     if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
     PrintLog(LOG_HOOKCOM,"*Next %u*",uCount);
-    if(uCount) bGets = true;
 
     if(hr != NO_ERROR) return hr;
 
@@ -347,17 +340,15 @@ void WINAPI HookCoUninitialize()
     if(!iHookThis->GetState(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog(LOG_HOOKCOM,"*CoUninitialize*");
 
-    if(MH_DisableHook(hGet) == MH_OK)
-        PrintLog(LOG_HOOKCOM,"Removing HookGet Hook");
+    VOID* func[] =
+    {
+        hGet,
+        hNext,
+        hCreateInstanceEnum,
+        hConnectServer
+    };
 
-    if(MH_DisableHook(hNext) == MH_OK)
-        PrintLog(LOG_HOOKCOM,"Removing Next Hook");
-
-    if(MH_DisableHook(hCreateInstanceEnum) == MH_OK)
-        PrintLog(LOG_HOOKCOM,"Removing CreateInstanceEnum Hook");
-
-    if(MH_DisableHook(hConnectServer) == MH_OK)
-        PrintLog(LOG_HOOKCOM,"Removing ConnectServer Hook");
+    MH_DisableMultipleHooks(func,4);
 
     oCoUninitialize();
 }
@@ -368,11 +359,10 @@ void iHook::HookCOM()
 {
     PrintLog(LOG_HOOKCOM,"Hooking COM");
     iHookThis = this;
+    if(MH_CreateHook(CoCreateInstance,HookCoCreateInstance,reinterpret_cast<void**>(&oCoCreateInstance)) == MH_OK)
+        PrintLog(LOG_HOOKCOM,"Hooking CoCreateInstance");
 
-    MH_CreateHook(CoCreateInstance,HookCoCreateInstance,reinterpret_cast<void**>(&oCoCreateInstance));
-    if(MH_EnableHook(CoCreateInstance) == MH_OK) PrintLog(LOG_HOOKCOM,"Hooking CoCreateInstance");
-
-    MH_CreateHook(CoUninitialize,HookCoUninitialize,reinterpret_cast<void**>(&oCoUninitialize));
-    if(MH_EnableHook(CoUninitialize) == MH_OK) PrintLog(LOG_HOOKCOM,"Hooking CoUninitialize");
+    if(MH_CreateHook(CoUninitialize,HookCoUninitialize,reinterpret_cast<void**>(&oCoUninitialize)) == MH_OK)
+        PrintLog(LOG_HOOKCOM,"Hooking CoUninitialize");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

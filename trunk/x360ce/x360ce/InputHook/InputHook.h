@@ -206,6 +206,8 @@ public:
         if(GetState(HOOK_WT))
             HookWT();
 
+        MH_EnableAllHooks();
+
         Mutex().Unlock();
     }
 
