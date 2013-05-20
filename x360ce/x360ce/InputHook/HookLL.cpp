@@ -62,11 +62,11 @@ void iHook::HookLL()
 {
     PrintLog(LOG_HOOKLL,"Hooking LoadLibrary");
     iHookThis = this;
+    
+    if(MH_CreateHook(LoadLibraryW,HookLoadLibraryW,reinterpret_cast<void**>(&oLoadLibraryW)) == MH_OK) 
+        PrintLog(LOG_HOOKLL,"Hooking LoadLibraryW");
 
-    MH_CreateHook(LoadLibraryW,HookLoadLibraryW,reinterpret_cast<void**>(&oLoadLibraryW));
-    if(MH_EnableHook(LoadLibraryW) == MH_OK) PrintLog(LOG_HOOKLL,"Hooking LoadLibraryW");
-
-    MH_CreateHook(LoadLibraryA,HookLoadLibraryA,reinterpret_cast<void**>(&oLoadLibraryA));
-    if(MH_EnableHook(LoadLibraryA) == MH_OK) PrintLog(LOG_HOOKLL,"Hooking LoadLibraryA");
+    if(MH_CreateHook(LoadLibraryA,HookLoadLibraryA,reinterpret_cast<void**>(&oLoadLibraryA)) == MH_OK)
+        PrintLog(LOG_HOOKLL,"Hooking LoadLibraryA");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

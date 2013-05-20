@@ -661,7 +661,7 @@ void iHook::HookDI()
     PrintLog(LOG_IHOOK,"Hooking DirectInput");
     iHookThis = this;
 
-    MH_CreateHook(DirectInput8Create,HookDirectInput8Create,reinterpret_cast<void**>(&oDirectInput8Create));
-    if(MH_EnableHook(DirectInput8Create) == MH_OK) PrintLog(LOG_IHOOK,"Hooking DirectInput8Create");
+    if(MH_CreateHook(DirectInput8Create,HookDirectInput8Create,reinterpret_cast<void**>(&oDirectInput8Create)) == MH_OK)
+        PrintLog(LOG_IHOOK,"Hooking DirectInput8Create");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
