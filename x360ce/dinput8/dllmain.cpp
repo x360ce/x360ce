@@ -21,14 +21,10 @@ HINSTANCE hThis = NULL;
 HINSTANCE hXInput = NULL;
 HINSTANCE hDInput = NULL;
 
-CRITICAL_SECTION cs;
-
 #pragma comment(lib,"Shlwapi.lib")
 
 void LoadXinputDLL()
 {
-    EnterCriticalSection(&cs);
-
     wchar_t buffer[MAX_PATH];
     wchar_t strPath[MAX_PATH];
 
@@ -37,27 +33,27 @@ void LoadXinputDLL()
 
     swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_3.dll");
     hXInput = LoadLibrary(buffer);
-    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
+    if(GetProcAddress(hXInput,"reset")) return;
+    else FreeLibrary(hXInput);
 
     swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_2.dll");
     hXInput = LoadLibrary(buffer);
-    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
+    if(GetProcAddress(hXInput,"reset")) return;
+    else FreeLibrary(hXInput);
 
     swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_1.dll");
     hXInput = LoadLibrary(buffer);
-    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
+    if(GetProcAddress(hXInput,"reset")) return;
+    else FreeLibrary(hXInput);
 
     swprintf_s(buffer,L"%s\\%s",strPath,L"xinput9_1_0.dll");
     hXInput = LoadLibrary(buffer);
-    if(hXInput != NULL && GetProcAddress(hXInput,"reset") != nullptr) return;
-
-    LeaveCriticalSection(&cs);
+    if(GetProcAddress(hXInput,"reset")) return;
+    else FreeLibrary(hXInput);
 }
 
 void LoadDInputDll()
 {
-    EnterCriticalSection(&cs);
-
     WCHAR sysdir[MAX_PATH];
     WCHAR buffer[MAX_PATH];
 
@@ -73,37 +69,20 @@ void LoadDInputDll()
         MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
         ExitProcess(hr);
     }
-
-    LeaveCriticalSection(&cs);
 }
 
 void ExitInstance()
 {
     if(hDInput) FreeLibrary(hDInput);
     if(hXInput) FreeLibrary(hXInput);
-
-    DeleteCriticalSection(&cs);
 }
 
 void InitInstance(HMODULE hMod)
 {
-    __try
-    {
-        InitializeCriticalSection(&cs);
-    }
-    __except(GetExceptionCode() == STATUS_NO_MEMORY ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
-    {
-        MessageBoxA(NULL,"Cannot initialize critical section, fatal error","Error",MB_ICONERROR);
-        ExitProcess(1);
-    }
-
-    EnterCriticalSection(&cs);
     hThis = hMod;
 
     // TODO: Find better place for this if possible
     LoadXinputDLL();
-
-    LeaveCriticalSection(&cs);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
