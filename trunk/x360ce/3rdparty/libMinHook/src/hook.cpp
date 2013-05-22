@@ -470,9 +470,10 @@ namespace MinHook { namespace
 		std::vector<uintptr_t> oldIPs;
 		std::vector<uintptr_t> newIPs;
 
-		for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+		//for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+        for(auto it = gHooks.begin(); it != gHooks.end(); ++it)
 		{
-			HOOK_ENTRY& hook = gHooks[i];
+			HOOK_ENTRY& hook = *it;
 			if (!hook.isEnabled)
 			{
 				oldIPs.insert(oldIPs.end(), hook.oldIPs.begin(), hook.oldIPs.end());
@@ -484,9 +485,10 @@ namespace MinHook { namespace
 		{
 			ScopedThreadExclusive tex(oldIPs, newIPs);
 
-			for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+			//for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+            for(auto it = gHooks.begin(); it != gHooks.end(); ++it)
 			{
-				HOOK_ENTRY& hook = gHooks[i];
+				HOOK_ENTRY& hook = *it;
 				if (!hook.isEnabled)
 				{
 					MH_STATUS status = EnableHookLL(&hook);
@@ -506,9 +508,11 @@ namespace MinHook { namespace
 		std::vector<uintptr_t> oldIPs;
 		std::vector<uintptr_t> newIPs;
 
-		for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+		//for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+        for(auto it = gHooks.begin(); it != gHooks.end(); ++it)
 		{
-			HOOK_ENTRY& hook = gHooks[i];
+            //HOOK_ENTRY& hook = gHooks[i];
+			HOOK_ENTRY& hook = *it;
 			if (hook.isEnabled)
 			{
 				oldIPs.insert(oldIPs.end(), hook.oldIPs.begin(), hook.oldIPs.end());
@@ -520,9 +524,11 @@ namespace MinHook { namespace
 		{
 			ScopedThreadExclusive tex(oldIPs, newIPs);
 
-			for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+			//for (size_t i = 0, count = gHooks.size(); i < count; ++i)
+            for(auto it = gHooks.begin(); it != gHooks.end(); ++it)
 			{
-				HOOK_ENTRY& hook = gHooks[i];
+				//HOOK_ENTRY& hook = gHooks[i];
+                HOOK_ENTRY& hook = *it;
 				if (hook.isEnabled)
 				{
 					MH_STATUS status = DisableHookLL(&hook);

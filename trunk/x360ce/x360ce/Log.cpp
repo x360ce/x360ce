@@ -96,7 +96,7 @@ Log::Log(bool file, bool console, bool local)
         }
         else
         {
-            strcpy_s(buffer,ModulePathA());
+            strcpy_s(buffer,ModulePathA().c_str());
             sprintf_s(logname, "%s_%u%02u%02u-%02u%02u%02u.log", exename.c_str(),
                       systime.wYear, systime.wMonth, systime.wDay, systime.wHour, systime.wMinute, systime.wSecond);
             PathCombineA(path,buffer,logname);

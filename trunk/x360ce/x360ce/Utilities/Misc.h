@@ -22,46 +22,46 @@
 
 #include <Shlwapi.h>
 
-inline char* ModuleFullPathA(HMODULE hModule = NULL)
+inline std::string ModuleFullPathA(HMODULE hModule = NULL)
 {
-    static char strPath[MAX_PATH];
+    char strPath[MAX_PATH];
     GetModuleFileNameA(hModule, strPath, MAX_PATH);
     return strPath;
 }
 
-inline wchar_t* ModuleFullPathW(HMODULE hModule = NULL)
+inline std::wstring ModuleFullPathW(HMODULE hModule = NULL)
 {
-    static wchar_t strPath[MAX_PATH];
+    wchar_t strPath[MAX_PATH];
     GetModuleFileNameW(hModule, strPath, MAX_PATH);
     return strPath;
 }
 
-inline char* ModulePathA(HMODULE hModule = NULL)
+inline std::string ModulePathA(HMODULE hModule = NULL)
 {
-    static char strPath[MAX_PATH];
+    char strPath[MAX_PATH];
     GetModuleFileNameA(hModule, strPath, MAX_PATH);
     PathRemoveFileSpecA(strPath);
     return strPath;
 }
 
-inline wchar_t* ModulePathW(HMODULE hModule = NULL)
+inline std::wstring ModulePathW(HMODULE hModule = NULL)
 {
-    static wchar_t strPath[MAX_PATH];
+    wchar_t strPath[MAX_PATH];
     GetModuleFileNameW(hModule, strPath, MAX_PATH);
     PathRemoveFileSpecW(strPath);
     return strPath;
 }
 
-inline char* ModuleFileNameA(HMODULE hModule = NULL)
+inline std::string ModuleFileNameA(HMODULE hModule = NULL)
 {
-    static char strPath[MAX_PATH];
+    char strPath[MAX_PATH];
     GetModuleFileNameA(hModule, strPath, MAX_PATH);
     return PathFindFileNameA(strPath);
 }
 
-inline wchar_t* ModuleFileNameW(HMODULE hModule = NULL)
+inline std::wstring ModuleFileNameW(HMODULE hModule = NULL)
 {
-    static wchar_t strPath[MAX_PATH];
+    wchar_t strPath[MAX_PATH];
     GetModuleFileNameW(hModule, strPath, MAX_PATH);
     return PathFindFileNameW(strPath);
 }

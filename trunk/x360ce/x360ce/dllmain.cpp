@@ -47,7 +47,7 @@ void LoadXInputDLL()
     WCHAR buffer[MAX_PATH];
 
     GetSystemDirectoryW(sysdir,MAX_PATH);
-    PathCombineW(buffer,sysdir,ModuleFileNameW(hThis));
+    PathCombineW(buffer,sysdir,ModuleFileNameW(hThis).c_str());
 
     bool bHookLL = false;
     if(pHooks)
