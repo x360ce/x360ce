@@ -95,7 +95,7 @@ VOID ExitInstance()
         SAFE_DELETE(pHooks);
         if(hNative)
         {
-            PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative));
+            PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative).c_str());
             FreeLibrary(hNative);
             hNative = NULL;
         }
