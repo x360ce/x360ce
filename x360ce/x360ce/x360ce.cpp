@@ -54,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             SAFE_DELETE(pHooks);
             if(hNative)
             {
-                PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative));
+                PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative).c_str());
                 FreeLibrary(hNative);
                 hNative = NULL;
             }

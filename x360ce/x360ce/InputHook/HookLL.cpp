@@ -50,17 +50,39 @@ GetModuleHandleW_t oGetModuleHandleW = NULL;
 GetModuleHandleExA_t oGetModuleHandleExA = NULL;
 GetModuleHandleExW_t oGetModuleHandleExW = NULL;
 
+
+BOOL SelfCheckA(LPCSTR lpLibFileName)
+{
+    if(!lpLibFileName) return FALSE;
+    if(strstr(lpLibFileName,"xinput1_3") ||
+        strstr(lpLibFileName,"xinput1_2") ||
+        strstr(lpLibFileName,"xinput1_1") ||
+        strstr(lpLibFileName,"xinput9_1_0"))
+    {
+        return TRUE;
+    }
+    else return FALSE;
+}
+
+BOOL SelfCheckW(LPCWSTR lpLibFileName)
+{
+    if(!lpLibFileName) return FALSE;
+    if(wcsstr(lpLibFileName,L"xinput1_3") ||
+        wcsstr(lpLibFileName,L"xinput1_2") ||
+        wcsstr(lpLibFileName,L"xinput1_1") ||
+        wcsstr(lpLibFileName,L"xinput9_1_0"))
+    {
+        return TRUE;
+    }
+    else return FALSE;
+}
+
 HMODULE WINAPI HookLoadLibraryA(LPCSTR lpLibFileName)
 {
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oLoadLibraryA(lpLibFileName);
     PrintLog(LOG_HOOKLL,"*LoadLibraryA*");
 
-    if(!lpLibFileName) return oLoadLibraryA(lpLibFileName);
-
-    if(strstr(lpLibFileName,"xinput1_3") ||
-        strstr(lpLibFileName,"xinput1_2") ||
-        strstr(lpLibFileName,"xinput1_1") ||
-        strstr(lpLibFileName,"xinput9_1_0"))
+    if(SelfCheckA(lpLibFileName))
     {
         return oLoadLibraryA(ModuleFullPathA(iHookThis->GetEmulator()).c_str());
     }
@@ -73,12 +95,7 @@ HMODULE WINAPI HookLoadLibraryW(LPCWSTR lpLibFileName)
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oLoadLibraryW(lpLibFileName);
     PrintLog(LOG_HOOKLL,"*LoadLibraryW*");
 
-    if(!lpLibFileName) return oLoadLibraryW(lpLibFileName);
-
-    if(wcsstr(lpLibFileName,L"xinput1_3") ||
-        wcsstr(lpLibFileName,L"xinput1_2") ||
-        wcsstr(lpLibFileName,L"xinput1_1") ||
-        wcsstr(lpLibFileName,L"xinput9_1_0")) 
+    if(SelfCheckW(lpLibFileName))
     {
         return oLoadLibraryW(ModuleFullPathW(iHookThis->GetEmulator()).c_str());
     }
@@ -91,12 +108,7 @@ HMODULE WINAPI HookLoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFl
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oLoadLibraryExA(lpLibFileName,hFile,dwFlags);
     PrintLog(LOG_HOOKLL,"*LoadLibraryExA*");
 
-    if(!lpLibFileName) return oLoadLibraryExA(lpLibFileName,hFile,dwFlags);
-
-    if(strstr(lpLibFileName,"xinput1_3") ||
-        strstr(lpLibFileName,"xinput1_2") ||
-        strstr(lpLibFileName,"xinput1_1") ||
-        strstr(lpLibFileName,"xinput9_1_0"))
+    if(SelfCheckA(lpLibFileName))
     {
         return oLoadLibraryExA(ModuleFullPathA(iHookThis->GetEmulator()).c_str(),hFile,dwFlags);
     }
@@ -109,12 +121,7 @@ HMODULE WINAPI HookLoadLibraryExW(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwF
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oLoadLibraryExW(lpLibFileName,hFile,dwFlags);
     PrintLog(LOG_HOOKLL,"*LoadLibraryExW*");
 
-    if(!lpLibFileName) return oLoadLibraryExW(lpLibFileName,hFile,dwFlags);
-
-    if(wcsstr(lpLibFileName,L"xinput1_3") ||
-        wcsstr(lpLibFileName,L"xinput1_2") ||
-        wcsstr(lpLibFileName,L"xinput1_1") ||
-        wcsstr(lpLibFileName,L"xinput9_1_0")) 
+    if(SelfCheckW(lpLibFileName))
     {
         return oLoadLibraryExW(ModuleFullPathW(iHookThis->GetEmulator()).c_str(),hFile,dwFlags);
     }
@@ -127,12 +134,7 @@ HMODULE WINAPI HookGetModuleHandleA(LPCSTR lpModuleName)
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oGetModuleHandleA(lpModuleName);
     PrintLog(LOG_HOOKLL,"*GetModuleHandleA*");
 
-    if(!lpModuleName) return oGetModuleHandleA(lpModuleName);
-
-    if(strstr(lpModuleName,"xinput1_3") ||
-        strstr(lpModuleName,"xinput1_2") ||
-        strstr(lpModuleName,"xinput1_1") ||
-        strstr(lpModuleName,"xinput9_1_0"))
+    if(SelfCheckA(lpModuleName))
     {
         return iHookThis->GetEmulator();
     }
@@ -145,12 +147,7 @@ HMODULE WINAPI HookGetModuleHandleW(LPCWSTR lpModuleName)
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oGetModuleHandleW(lpModuleName);
     PrintLog(LOG_HOOKLL,"*GetModuleHandleW*");
 
-    if(!lpModuleName) return oGetModuleHandleW(lpModuleName);
-
-    if(wcsstr(lpModuleName,L"xinput1_3") ||
-        wcsstr(lpModuleName,L"xinput1_2") ||
-        wcsstr(lpModuleName,L"xinput1_1") ||
-        wcsstr(lpModuleName,L"xinput9_1_0")) 
+    if(SelfCheckW(lpModuleName))
     {
         return iHookThis->GetEmulator();
     }
@@ -163,12 +160,7 @@ BOOL WINAPI HookGetModuleHandleExA(DWORD dwFlags, LPCSTR lpModuleName, HMODULE* 
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oGetModuleHandleExA(dwFlags,lpModuleName,phModule);
     PrintLog(LOG_HOOKLL,"*GetModuleHandleExA*");
 
-    if(!lpModuleName) return oGetModuleHandleExA(dwFlags,lpModuleName,phModule);
-
-    if(strstr(lpModuleName,"xinput1_3") ||
-        strstr(lpModuleName,"xinput1_2") ||
-        strstr(lpModuleName,"xinput1_1") ||
-        strstr(lpModuleName,"xinput9_1_0"))
+    if(SelfCheckA(lpModuleName))
     {
         static HMODULE hModExA = iHookThis->GetEmulator();
         phModule = &hModExA;
@@ -183,12 +175,7 @@ BOOL WINAPI HookGetModuleHandleExW(DWORD dwFlags, LPCWSTR lpModuleName, HMODULE*
     if(!iHookThis->GetState(iHook::HOOK_LL)) return oGetModuleHandleExW(dwFlags,lpModuleName,phModule);
     PrintLog(LOG_HOOKLL,"*GetModuleHandleExW*");
 
-    if(!lpModuleName) return oGetModuleHandleExW(dwFlags,lpModuleName,phModule);
-
-    if(wcsstr(lpModuleName,L"xinput1_3") ||
-        wcsstr(lpModuleName,L"xinput1_2") ||
-        wcsstr(lpModuleName,L"xinput1_1") ||
-        wcsstr(lpModuleName,L"xinput9_1_0"))
+    if(SelfCheckW(lpModuleName))
     {
         static HMODULE hModExW = iHookThis->GetEmulator();
         phModule = &hModExW;
