@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using x360ce.App.Properties;
@@ -18,9 +19,10 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
-			try
+            try
 			{
-				if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
+                AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+                if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
 				{
 					// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
 				}
@@ -160,6 +162,33 @@ namespace x360ce.App
 			}
 			return true;
 		}
+
+
+        static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
+        {
+            // x360ce.App.Resources.SharpDX.SharpDX.dll
+            // x360ce.App.Resources.SharpDX.SharpDX.DirectInput.dll
+            string dllName = e.Name.Contains(",") ? e.Name.Substring(0, e.Name.IndexOf(',')) : e.Name.Replace(".dll", "");
+            string path = null;
+            switch (dllName)
+            {
+                case "SharpDX":
+                    path = "Resources.SharpDX.SharpDX.dll";
+                    break;
+                case "SharpDX.DirectInput":
+                    path = "Resources.SharpDX.SharpDX.DirectInput.dll";
+                    break;
+                default:
+                    break;
+            }
+            if (path == null) return null;
+            var assembly = Assembly.GetExecutingAssembly();
+            var sr = assembly.GetManifestResourceStream(typeof(MainForm).Namespace + "." + path);
+            if (sr == null) return null;
+            byte[] bytes = new byte[sr.Length];
+            sr.Read(bytes, 0, bytes.Length);
+            return System.Reflection.Assembly.Load(bytes);
+        }
 
 	}
 }

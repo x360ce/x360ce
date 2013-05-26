@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 using System.IO;
 using x360ce.App.com.x360ce.localhost;
 using System.Linq;
@@ -50,7 +50,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		List<DeviceInstance> _devices;
+		IList<DeviceInstance> _devices;
 
 		/// <summary>
 		/// Update DataGridView is such way that it won't loose selection.
@@ -73,7 +73,7 @@ namespace x360ce.App.Controls
 			UpdateActionButtons();
 		}
 
-		public void BindDevices(List<DeviceInstance> list)
+		public void BindDevices(IList<DeviceInstance> list)
 		{
 
 			// Check if new device is available
@@ -258,7 +258,7 @@ namespace x360ce.App.Controls
 			s.InstanceName = di.InstanceName;
 			s.ProductGuid = di.ProductGuid;
 			s.ProductName = di.ProductName;
-			s.DeviceType = (int)di.DeviceType;
+			s.DeviceType = (int)di.Type;
 			s.IsEnabled = true;
 			if (GameComboBox.SelectedIndex > 0)
 			{

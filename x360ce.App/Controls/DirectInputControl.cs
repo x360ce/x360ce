@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 
 namespace x360ce.App.Controls
 {
@@ -62,21 +62,21 @@ namespace x360ce.App.Controls
 				DiEffectsTable.Rows.Clear();
 				return;
 			}
-			DiCapFfLabel.Text = string.Format("Force Feedback: {0}", device.Caps.ForceFeedback ? "YES" : "NO");
-			DiCapAxesLabel.Text = string.Format("Axes: {0}", device.Caps.NumberAxes);
-			DiCapButtonsLabel.Text = string.Format("Buttons: {0}", device.Caps.NumberButtons);
-			DiCapDPadsLabel.Text = string.Format("D-Pads: {0}", device.Caps.NumberPointOfViews);
+			DiCapFfLabel.Text = string.Format("Force Feedback: {0}", device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback) ? "YES" : "NO");
+            DiCapAxesLabel.Text = string.Format("Axes: {0}", device.Capabilities.AxeCount);
+            DiCapButtonsLabel.Text = string.Format("Buttons: {0}", device.Capabilities.ButtonCount);
+            DiCapDPadsLabel.Text = string.Format("D-Pads: {0}", device.Capabilities.PovCount);
 			DiEffectsTable.Rows.Clear();
-			EffectList effects = device.GetEffects(EffectType.All);
-			foreach (EffectInformation eff in effects)
+			var effects = device.GetEffects(EffectType.All);
+			foreach (var eff in effects)
 			{
 				DiEffectsTable.Rows.Add(new object[]{
 		            eff.Name,
-		            ((EffectParameterFlags)eff.StaticParams).ToString(),
-		            ((EffectParameterFlags)eff.DynamicParams).ToString()
+		            ((EffectParameterFlags)eff.StaticParameters).ToString(),
+		            ((EffectParameterFlags)eff.DynamicParameters).ToString()
 		        });
 			}
-			var di = device.DeviceInformation;
+			var di = device.Information;
 			// Update pid and vid always so they wont be overwritten by load settings.
 			short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
 			short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
@@ -85,7 +85,7 @@ namespace x360ce.App.Controls
 			SetValue(DeviceProductNameTextBox, di.ProductName);
 			SetValue(DeviceProductGuidTextBox, di.ProductGuid.ToString());
 			SetValue(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
-			SetValue(DeviceTypeTextBox, di.DeviceType.ToString());
+			SetValue(DeviceTypeTextBox, di.Type.ToString());
 		}
 
 		void SetValue(Control control, string value, params object[] args)
@@ -94,25 +94,27 @@ namespace x360ce.App.Controls
 			control.Text = string.Format(value, args);
 		}
 
+        JoystickState _emptyState;
 		JoystickState emptyState
 		{
 			get
 			{
-				return default(JoystickState);
+				return _emptyState = _emptyState ?? new JoystickState();
 			}
 		}
 
 		JoystickState oldState;
 		List<string> actions = new List<string>();
 
-		List<string> ShowDirectInputState(Device device)
+		List<string> ShowDirectInputState(Joystick device)
 		{
-			JoystickState state = emptyState;
+            JoystickState state = emptyState;
 			if (device != null)
 			{
 				try {
 					device.Acquire();
-					state = device.CurrentJoystickState; }
+                    device.GetCurrentState(ref state);
+                }
 				catch (Exception) { }
 			}
 			if (state.Equals(oldState)) return actions;
@@ -120,31 +122,31 @@ namespace x360ce.App.Controls
 			actions.Clear();
 			// X-axis.
 			DiAxisTable.Rows[0][1] = state.X;
-			DiAxisTable.Rows[0][2] = state.Rx;
-			DiAxisTable.Rows[0][3] = state.AX;
-			DiAxisTable.Rows[0][4] = state.ARx;
-			DiAxisTable.Rows[0][5] = state.FX;
-			DiAxisTable.Rows[0][6] = state.FRx;
-			DiAxisTable.Rows[0][7] = state.VX;
-			DiAxisTable.Rows[0][8] = state.VRx;
+			DiAxisTable.Rows[0][2] = state.RotationX;
+			DiAxisTable.Rows[0][3] = state.AccelerationX;
+			DiAxisTable.Rows[0][4] = state.AngularAccelerationX;
+			DiAxisTable.Rows[0][5] = state.ForceX;
+			DiAxisTable.Rows[0][6] = state.TorqueX;
+			DiAxisTable.Rows[0][7] = state.VelocityX;
+			DiAxisTable.Rows[0][8] = state.AngularVelocityX;
 			// Y-axis.
 			DiAxisTable.Rows[1][1] = state.Y;
-			DiAxisTable.Rows[1][2] = state.Ry;
-			DiAxisTable.Rows[1][3] = state.AY;
-			DiAxisTable.Rows[1][4] = state.ARy;
-			DiAxisTable.Rows[1][5] = state.FY;
-			DiAxisTable.Rows[1][6] = state.FRy;
-			DiAxisTable.Rows[1][7] = state.VY;
-			DiAxisTable.Rows[1][8] = state.VRy;
+            DiAxisTable.Rows[1][2] = state.RotationY;
+            DiAxisTable.Rows[1][3] = state.AccelerationY;
+            DiAxisTable.Rows[1][4] = state.AngularAccelerationY;
+            DiAxisTable.Rows[1][5] = state.ForceY;
+            DiAxisTable.Rows[1][6] = state.TorqueY;
+            DiAxisTable.Rows[1][7] = state.VelocityY;
+            DiAxisTable.Rows[1][8] = state.AngularVelocityY;
 			// Z-axis.
 			DiAxisTable.Rows[2][1] = state.Z;
-			DiAxisTable.Rows[2][2] = state.Rz;
-			DiAxisTable.Rows[2][3] = state.AZ;
-			DiAxisTable.Rows[2][4] = state.ARz;
-			DiAxisTable.Rows[2][5] = state.FZ;
-			DiAxisTable.Rows[2][6] = state.FRz;
-			DiAxisTable.Rows[2][7] = state.VZ;
-			DiAxisTable.Rows[2][8] = state.VRz;
+            DiAxisTable.Rows[2][2] = state.RotationZ;
+            DiAxisTable.Rows[2][3] = state.AccelerationZ;
+            DiAxisTable.Rows[2][4] = state.AngularAccelerationZ;
+            DiAxisTable.Rows[2][5] = state.ForceZ;
+            DiAxisTable.Rows[2][6] = state.TorqueZ;
+            DiAxisTable.Rows[2][7] = state.VelocityZ;
+            DiAxisTable.Rows[2][8] = state.AngularVelocityZ;
 
 			var rows = DiAxisTable.Rows;
 			var cols = DiAxisTable.Columns;
@@ -161,7 +163,7 @@ namespace x360ce.App.Controls
 				}
 			}
 
-			byte[] buttons = state.GetButtons();
+			bool[] buttons = state.Buttons;
 			DiButtonsTextBox.Text = "";
 			if (buttons != null)
 			{
@@ -169,7 +171,7 @@ namespace x360ce.App.Controls
 				for (int i = 0; i < buttons.Length; i++)
 				{
 					if (DiButtonsTextBox.Text.Length > 0) DiButtonsTextBox.Text += " ";
-					if (0 != (buttons[i] & 0x80))
+					if (buttons[i])
 					{
 						actions.Add(string.Format("Button {0}", i + 1));
 						DiButtonsTextBox.Text += (i + 1).ToString("00");
@@ -178,13 +180,13 @@ namespace x360ce.App.Controls
 			}
 			// Sliders
 			var sNum = 1;
-			ProcessSlider(actions, state.GetSlider(), DiUvSliderTextBox, ref sNum);
-			ProcessSlider(actions, state.GetASlider(), DiASliderTextBox, ref sNum);
-			ProcessSlider(actions, state.GetFSlider(), DiFSliderTextBox, ref sNum);
-			ProcessSlider(actions, state.GetVSlider(), DiVSliderTextBox, ref sNum);
+			ProcessSlider(actions, state.Sliders, DiUvSliderTextBox, ref sNum);
+            ProcessSlider(actions, state.Sliders, DiASliderTextBox, ref sNum);
+            ProcessSlider(actions, state.Sliders, DiFSliderTextBox, ref sNum);
+            ProcessSlider(actions, state.Sliders, DiVSliderTextBox, ref sNum);
 
 			// Poin of view buttons
-			int[] dPad = state.GetPointOfView();
+			int[] dPad = state.PointOfViewControllers;
 			DiDPadTextBox.Text = "";
 			if (dPad != null)
 			{
@@ -251,7 +253,7 @@ namespace x360ce.App.Controls
 		Guid deviceInstanceGuid;
 		bool isWheel = false;
 
-		public List<string> UpdateFrom(Device device)
+		public List<string> UpdateFrom(Joystick device)
 		{
 			if (!Helper.IsSameDevice(device, deviceInstanceGuid))
 			{
@@ -259,8 +261,8 @@ namespace x360ce.App.Controls
 				deviceInstanceGuid = Guid.Empty;
 				if (device != null)
 				{
-					deviceInstanceGuid = device.DeviceInformation.InstanceGuid;
-					isWheel = device.DeviceInformation.DeviceType == DeviceType.Driving;
+					deviceInstanceGuid = device.Information.InstanceGuid;
+					isWheel = device.Information.Type == DeviceType.Driving;
 				}
 			}
 			return ShowDirectInputState(device);
