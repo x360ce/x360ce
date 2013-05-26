@@ -495,9 +495,9 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
-    <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.xml" />
+    <None Include="Resources\SharpDX\SharpDX.DirectInput.xml" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
-    <EmbeddedResource Include="Resources\SharpDX\SharpDX.xml" />
+    <None Include="Resources\SharpDX\SharpDX.xml" />
     <EmbeddedResource Include="Presets\Vendors.xml">
       <SubType>Form</SubType>
     </EmbeddedResource>
