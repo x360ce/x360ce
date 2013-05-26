@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 using Microsoft.Xna.Framework.Input;
 
 namespace x360ce.App.Controls
@@ -529,7 +529,7 @@ namespace x360ce.App.Controls
 		//XINPUT_GAMEPAD GamePad;
 		Guid instanceGuid;
 
-		public void UpdateFromDirectInput(Device device)
+		public void UpdateFromDirectInput(Joystick device)
 		{
 			List<string> actions = diControl.UpdateFrom(device);
 			if (Recording) RecordingStop(actions);
@@ -545,7 +545,7 @@ namespace x360ce.App.Controls
 			}
 			if (device != null)
 			{
-				UpdateControl(DirectInputTabPage, device.DeviceInformation.InstanceName);
+				UpdateControl(DirectInputTabPage, device.Information.InstanceName);
 			}
 			else
 			{
@@ -556,7 +556,7 @@ namespace x360ce.App.Controls
 				Guid iGuid = Guid.Empty;
 				if (device != null)
 				{
-					try { iGuid = device.DeviceInformation.InstanceGuid; }
+					try { iGuid = device.Information.InstanceGuid; }
 					catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
 				}
 				instanceGuid = (device == null) ? Guid.Empty : iGuid;
@@ -665,11 +665,11 @@ namespace x360ce.App.Controls
 			// Add Buttons.
 			mi = new ToolStripMenuItem("Buttons");
 			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "Button {0}", "b{0}", device.Caps.NumberButtons);
+			CreateItems(mi, "Button {0}", "b{0}", device.Capabilities.ButtonCount);
 			// Add Axes.
 			mi = new ToolStripMenuItem("Axes");
 			DiMenuStrip.Items.Add(mi);
-			var axisCount = device.Caps.NumberAxes * 2;
+			var axisCount = device.Capabilities.AxeCount * 2;
 			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", axisCount);
 			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", axisCount);
 			CreateItems(mi, "Half", "HAxis {0}", "x{0}", axisCount);
@@ -684,7 +684,7 @@ namespace x360ce.App.Controls
 			// Add D-Pads.
 			mi = new ToolStripMenuItem("DPads");
 			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "DPad {0}", "p{0}", device.Caps.NumberPointOfViews);
+			CreateItems(mi, "DPad {0}", "p{0}", device.Capabilities.PovCount);
 			// Add D-Pad Top, Right, Bottom, Left button.
 			for (int i = 0; i < mi.DropDownItems.Count; i++)
 			{

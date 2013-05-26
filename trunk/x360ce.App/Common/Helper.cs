@@ -4,7 +4,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 using System.Text.RegularExpressions;
 using x360ce.App.com.x360ce.localhost;
 using System.Windows.Forms;
@@ -70,7 +70,7 @@ namespace x360ce.App
 		// Use special function or comparison fails.
 		public static bool IsSameDevice(Device device, Guid instanceGuid)
 		{
-			return instanceGuid.Equals(device == null ? Guid.Empty : device.DeviceInformation.InstanceGuid);
+			return instanceGuid.Equals(device == null ? Guid.Empty : device.Information.InstanceGuid);
 		}
 
 		public static void OpenUrl(string url)

@@ -95,7 +95,8 @@ namespace Microsoft.Xna.Framework.Input
 			if (IsLoaded) FreeLibrary();
 			libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(fileName);
 			var procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
-			_IsGetStateExSupported = procAddress != IntPtr.Zero;
+			// TODO: Uncomment this later.
+            //_IsGetStateExSupported = procAddress != IntPtr.Zero;
 			procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "reset");
 			_IsResetSupported = procAddress != IntPtr.Zero;
 			return IsLoaded;

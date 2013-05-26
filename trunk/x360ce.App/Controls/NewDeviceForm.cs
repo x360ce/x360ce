@@ -5,7 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 using System.IO;
 using Microsoft.Win32;
 using x360ce.App.com.x360ce.localhost;

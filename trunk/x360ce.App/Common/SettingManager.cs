@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Input;
 using x360ce.App.com.x360ce.localhost;
-using Microsoft.DirectX.DirectInput;
+using SharpDX.DirectInput;
 using x360ce.App.Controls;
 
 namespace x360ce.App
