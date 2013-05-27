@@ -58,6 +58,10 @@ HookMask = 0x00000002
 Name = Blade Kitten
 HookMask = 0x00000002
 
+[DarksidersPC.exe]
+Name = Darksiders
+HookMask = 0x00000002
+
 [DATA.exe]
 Name = Dark Souls
 HookMask = 0x00000002
