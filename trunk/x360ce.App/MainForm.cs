@@ -396,6 +396,7 @@ namespace x360ce.App
 
         #endregion
 
+        public static object XInputLock = new object();
 
         void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -404,14 +405,16 @@ namespace x360ce.App
             // Disable force feedback effect before closing app.
             try
             {
-                for (int i = 0; i < 4; i++)
+                lock (XInputLock)
                 {
-                    if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
-                        GamePad.SetVibration((PlayerIndex)i, 0, 0);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
+                            GamePad.SetVibration((PlayerIndex)i, 0, 0);
+                    }
+                    UnsafeNativeMethods.FreeLibrary();
                 }
-                UnsafeNativeMethods.FreeLibrary();
                 System.Threading.Thread.Sleep(100);
-
             }
             catch (Exception) { }
             var tmp = new FileInfo(SettingManager.TmpFileName);
@@ -600,17 +603,17 @@ namespace x360ce.App
                     // XInput instance is ON.
                     //XInput.Controllers[i].PollState();
                     var xiOn = false;
+                    GamePadState currentPad = emptyState;
                     var currentPadControl = ControlPads[i];
-                    if (UnsafeNativeMethods.IsLoaded)
+                    lock (XInputLock)
                     {
-                        var currentPad = GamePad.GetState((PlayerIndex)i);
-                        currentPadControl.UpdateFromXInput(currentPad);
-                        xiOn = currentPad.IsConnected;
+                        if (UnsafeNativeMethods.IsLoaded)
+                        {
+                            currentPad = GamePad.GetState((PlayerIndex)i);
+                            xiOn = currentPad.IsConnected;
+                        }
                     }
-                    else
-                    {
-                        currentPadControl.UpdateFromXInput(emptyState);
-                    }
+                    currentPadControl.UpdateFromXInput(currentPad);
                     // Update LED of gamepad state.
                     string image = diOn
                         // di ON, xi ON 
@@ -693,17 +696,20 @@ namespace x360ce.App
                 dllVersion = GetDllVersion(dllInfo.FullName, out byMicrosoft);
                 StatusDllLabel.Text = dllFile + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
                 // If fast reload od settings is supported then...
-                if (UnsafeNativeMethods.IsResetSupported)
+                lock (XInputLock)
                 {
-                    UnsafeNativeMethods.Reset();
-                }
-                // Slow: Reload whole x360ce.dll.
-                else if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
-                {
-                    var msg = string.Format("Failed to load '{0}'", dllFile);
-                    var form = new MessageBoxForm();
-                    form.StartPosition = FormStartPosition.CenterParent;
-                    form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (UnsafeNativeMethods.IsResetSupported)
+                    {
+                        UnsafeNativeMethods.Reset();
+                    }
+                    // Slow: Reload whole x360ce.dll.
+                    else if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
+                    {
+                        var msg = string.Format("Failed to load '{0}'", dllFile);
+                        var form = new MessageBoxForm();
+                        form.StartPosition = FormStartPosition.CenterParent;
+                        form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -753,7 +759,10 @@ namespace x360ce.App
 
         void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
+            lock (XInputLock)
+            {
+                UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
+            }
         }
 
         #region Help Header
