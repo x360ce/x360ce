@@ -191,40 +191,42 @@ namespace x360ce.App.Controls
 		{
 		}
 
-		void ComboBox_DropDown(object sender, EventArgs e)
-		{
-			var cbx = (ComboBox)sender;
-			// Force the combo box to re-create its window handle. This seems
-			// to be the only way to prevent it from dropping down. Toggle the
-			// property twice, which leaves it unchanged but calls RecreateHandle.
-			cbx.IntegralHeight = !cbx.IntegralHeight;
-			// Don't try to close DropDown imediatly or it will fail.
-			BeginInvoke(new ComboBoxDropDownDelegate(ComboBoxDropDown), new object[] { cbx });
-		}
+        void ComboBox_DropDown(object sender, EventArgs e)
+        {
+            var cbx = (ComboBox)sender;
+            var oldLeft = cbx.Left;
+            // Move default dropdown away from the screen.
+            cbx.Left = -10000;
+            var del = new ComboBoxDropDownDelegate(ComboBoxDropDown);
+            BeginInvoke(del, new object[] { cbx, oldLeft });
+        }
 
-		delegate void ComboBoxDropDownDelegate(ComboBox cbx);
+        delegate void ComboBoxDropDownDelegate(ComboBox cbx, int oldLeft);
 
-		void ComboBoxDropDown(ComboBox cbx)
-		{
-			mainForm.SuspendEvents();
-			cbx.DroppedDown = false;
-			if (CurrentCbx == cbx)
-			{
-				CurrentCbx = null;
-				cbx.ContextMenuStrip.Hide();
-			}
-			else
-			{
-				if (cbx == DPadComboBox) EnableDPadMenu(true);
-				cbx.ContextMenuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
-				CurrentCbx = cbx;
-			}
-			if (cbx.Items.Count > 0)
-			{
-				cbx.SelectedIndex = 0;
-			}
-			mainForm.ResumeEvents();
-		}
+        void ComboBoxDropDown(ComboBox cbx, int oldLeft)
+        {
+            //mainForm.SuspendEvents();
+            //if (cbx.Items.Count > 0) cbx.DroppedDown = false;
+            cbx.IntegralHeight = !cbx.IntegralHeight;
+            cbx.IntegralHeight = !cbx.IntegralHeight;
+            cbx.Left = oldLeft;
+            if (CurrentCbx == cbx)
+            {
+                CurrentCbx = null;
+                cbx.ContextMenuStrip.Hide();
+            }
+            else
+            {
+                if (cbx == DPadComboBox) EnableDPadMenu(true);
+                cbx.ContextMenuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
+                CurrentCbx = cbx;
+            }
+            if (cbx.Items.Count > 0)
+            {
+                cbx.SelectedIndex = 0;
+            }
+            //mainForm.ResumeEvents();
+        }
 
 		#endregion
 
@@ -860,7 +862,10 @@ namespace x360ce.App.Controls
 			float rightMotor = (float)RightMotorTestTrackBar.Value / 100F;
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
-			GamePad.SetVibration((Microsoft.Xna.Framework.PlayerIndex)mainForm.ControllerIndex, leftMotor, rightMotor);
+            lock (MainForm.XInputLock)
+            {
+                GamePad.SetVibration((Microsoft.Xna.Framework.PlayerIndex)mainForm.ControllerIndex, leftMotor, rightMotor);
+            }
 			//UnsafeNativeMethods.Enable(false);
 			//UnsafeNativeMethods.Enable(true);
 		}
