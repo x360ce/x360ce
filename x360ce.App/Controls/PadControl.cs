@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using SharpDX.DirectInput;
-using Microsoft.Xna.Framework.Input;
+using SharpDX.XInput;
 
 namespace x360ce.App.Controls
 {
@@ -95,7 +95,7 @@ namespace x360ce.App.Controls
 			this.markC.SetResolution(rH, rV);
 			this.markR.SetResolution(rH, rV);
 			// Add gamepad typed to ComboBox.
-			var types = (GamePadType[])Enum.GetValues(typeof(GamePadType));
+            var types = (SharpDX.DirectInput.DeviceType[])Enum.GetValues(typeof(SharpDX.DirectInput.DeviceType));
 			foreach (var item in types) GamePadTypeComboBox.Items.Add(item);
 			// Add force feedback typed to ComboBox.
 			var fTypes = (ForceFeedBackType[])Enum.GetValues(typeof(ForceFeedBackType));
@@ -284,7 +284,7 @@ namespace x360ce.App.Controls
 		void TopPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			// Display controller.
-			bool on = gamePadState.IsConnected;
+			bool on = gamePadStateIsConnected;
 			if (!on) return;
 			// Half mark position adjust.
 			int mW = -this.markB.Width / 2;
@@ -296,8 +296,8 @@ namespace x360ce.App.Controls
 			Point triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
 			if (!Recording)
 			{
-				var tl = FloatToByte(gamePadState.Triggers.Left);
-				var tr = FloatToByte(gamePadState.Triggers.Right);
+				var tl = FloatToByte(gamePadState.Gamepad.LeftTrigger);
+				var tr = FloatToByte(gamePadState.Gamepad.RightTrigger);
 				// Temp workaround: when initialized triggers have default value of 127);
 				if (tl == 110 && tr == 110)
 				{
@@ -315,10 +315,10 @@ namespace x360ce.App.Controls
 					setLabelColor(on, RightTriggerLabel);
 					if (on) e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
 				}
-				on = gamePadState.IsButtonDown(Buttons.LeftShoulder);
+                on = gamePadState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
 				setLabelColor(on, LeftShoulderLabel);
 				if (on) e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
-				on = gamePadState.IsButtonDown(Buttons.RightShoulder);
+                on = gamePadState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 				setLabelColor(on, RightShoulderLabel);
 				if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
 			}
@@ -355,7 +355,7 @@ namespace x360ce.App.Controls
 			pads[2] = new Point(116, 62);
 			pads[3] = new Point(139, 62);
 			// Display controller.
-			bool on = gamePadState.IsConnected;
+			bool on = gamePadStateIsConnected;
 			if (!on) return;
 			// Display controller index light.
 			int mW = -this.markC.Width / 2;
@@ -378,19 +378,19 @@ namespace x360ce.App.Controls
 				setLabelColor(this.rightY > 2000, RightThumbAxisYLabel);
 				if (this.rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
 				// Draw button state green led image.
-				DrawState(Buttons.Y, buttonY, ButtonYLabel, e);
-				DrawState(Buttons.X, buttonX, ButtonXLabel, e);
-				DrawState(Buttons.B, buttonB, ButtonBLabel, e);
-				DrawState(Buttons.A, buttonA, ButtonALabel, e);
-				DrawState(Buttons.Guide, buttonGuide, ButtonGuideLabel, e);
-				DrawState(Buttons.Start, buttonStart, StartButtonLabel, e);
-				DrawState(Buttons.Back, buttonBack, BackButtonLabel, e);
-				DrawState(Buttons.DPadUp, dPadUp, DPadUpLabel, e);
-				DrawState(Buttons.DPadDown, dPadDown, DPadDownLabel, e);
-				DrawState(Buttons.DPadLeft, dPadLeft, DPadLeftLabel, e);
-				DrawState(Buttons.DPadRight, dPadRight, DPadRightLabel, e);
-				DrawState(Buttons.RightStick, thumbRight, RightThumbButtonLabel, e);
-				DrawState(Buttons.LeftStick, thumbLeft, LeftThumbButtonLabel, e);
+                DrawState(GamepadButtonFlags.Y, buttonY, ButtonYLabel, e);
+                DrawState(GamepadButtonFlags.X, buttonX, ButtonXLabel, e);
+                DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
+                DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
+                //DrawState(GamepadButtonFlags.Guide, buttonGuide, ButtonGuideLabel, e);
+                DrawState(GamepadButtonFlags.Start, buttonStart, StartButtonLabel, e);
+                DrawState(GamepadButtonFlags.Back, buttonBack, BackButtonLabel, e);
+                DrawState(GamepadButtonFlags.DPadUp, dPadUp, DPadUpLabel, e);
+                DrawState(GamepadButtonFlags.DPadDown, dPadDown, DPadDownLabel, e);
+                DrawState(GamepadButtonFlags.DPadLeft, dPadLeft, DPadLeftLabel, e);
+                DrawState(GamepadButtonFlags.DPadRight, dPadRight, DPadRightLabel, e);
+                DrawState(GamepadButtonFlags.RightThumb, thumbRight, RightThumbButtonLabel, e);
+                DrawState(GamepadButtonFlags.LeftThumb, thumbLeft, LeftThumbButtonLabel, e);
 				// Draw axis state green cross image.
 				e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (this.rightX * padSize)), (float)((thumbRight.Y + mH) + (-this.rightY * padSize)));
 				e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (this.leftX * padSize)), (float)((thumbLeft.Y + mH) + (-this.leftY * padSize)));
@@ -419,11 +419,11 @@ namespace x360ce.App.Controls
 			recordignFlashPause++;
 		}
 
-		void DrawState(Buttons button, Point location, Label label, PaintEventArgs e)
+		void DrawState(GamepadButtonFlags button, Point location, Label label, PaintEventArgs e)
 		{
 			var mW = -this.markB.Width / 2;
 			var mH = -this.markB.Height / 2;
-			var on = gamePadState.IsButtonDown(button);
+			var on = gamePadState.Gamepad.Buttons.HasFlag(button);
 			if (on) e.Graphics.DrawImage(this.markB, location.X + mW, location.Y + mH);
 			if (label != null) setLabelColor(on, label);
 		}
@@ -522,12 +522,13 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		float leftX;
-		float leftY;
-		float rightX;
-		float rightY;
+		short leftX;
+        short leftY;
+        short rightX;
+        short rightY;
 
-		GamePadState gamePadState;
+		State gamePadState;
+        bool gamePadStateIsConnected;
 		//XINPUT_GAMEPAD GamePad;
 		Guid instanceGuid;
 
@@ -575,16 +576,17 @@ namespace x360ce.App.Controls
 		//    return true;
 		//}
 
-		GamePadState oldState;
+		State oldState;
 
-		public void UpdateFromXInput(GamePadState state)
+		public void UpdateFromXInput(State state, bool IsConnected)
 		{
 			// If nothing changed then return.
 			if (state.Equals(oldState)) return;
 			oldState = state;
-			var wasConnected = gamePadState.IsConnected;
-			var nowConnected = state.IsConnected;
-			gamePadState = state;
+			var wasConnected = gamePadStateIsConnected;
+			var nowConnected = IsConnected;
+            gamePadStateIsConnected = IsConnected;
+            gamePadState = state;
 			// If form was disabled and no data is comming then just return.
 			if (!wasConnected && !nowConnected) return;
 			// If device connection changed then...
@@ -606,10 +608,10 @@ namespace x360ce.App.Controls
 			}
 			if (nowConnected)
 			{
-				this.leftX = FloatToInt(state.ThumbSticks.Left.X);
-				this.leftY = FloatToInt(state.ThumbSticks.Left.Y);
-				this.rightX = FloatToInt(state.ThumbSticks.Right.X);
-				this.rightY = FloatToInt(state.ThumbSticks.Right.Y);
+				this.leftX = state.Gamepad.LeftThumbX;
+                this.leftY = state.Gamepad.LeftThumbY;
+				this.rightX = state.Gamepad.RightThumbX;
+                this.rightY = state.Gamepad.RightThumbY;
 			}
 			else
 			{
@@ -622,13 +624,6 @@ namespace x360ce.App.Controls
 			UpdateControl(RightThumbTextBox, string.Format("{0};{1}", this.rightX, this.rightY));
 			this.TopPictureBox.Refresh();
 			this.FrontPictureBox.Refresh();
-		}
-
-		// Check left thumbStick
-		public float FloatToInt(float v)
-		{
-			// -1 to 1 int16.MinValue int16.MaxValue.
-			return (UInt16)Math.Round((((double)v + 1) / 2) * (double)UInt16.MaxValue) + Int16.MinValue;
 		}
 
 		// Check left thumbStick
@@ -835,13 +830,13 @@ namespace x360ce.App.Controls
 
 		void MotorTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			if (gamePadState == null) return;
+			//if (gamePadState == null) return;
 			UpdateForceFeedBack();
 		}
 
 		void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			if (gamePadState == null) return;
+			//if (gamePadState == null) return;
 			UpdateForceFeedBack2();
 		}
 
@@ -858,13 +853,20 @@ namespace x360ce.App.Controls
 		{
 			if (mainForm.ControllerIndex == -1) return; 
 			// Convert 100% trackbar to MotorSpeed's 0 - 1.0
-			float leftMotor = (float)LeftMotorTestTrackBar.Value / 100F;
-			float rightMotor = (float)RightMotorTestTrackBar.Value / 100F;
+			var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F);
+			var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F);
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
             lock (MainForm.XInputLock)
             {
-                GamePad.SetVibration((Microsoft.Xna.Framework.PlayerIndex)mainForm.ControllerIndex, leftMotor, rightMotor);
+                var gPad = mainForm.GamePads[mainForm.ControllerIndex];
+                if (XInput.IsLoaded && gPad.IsConnected)
+                {
+                    var vibration = new Vibration();
+                    vibration.LeftMotorSpeed = leftMotor;
+                    vibration.RightMotorSpeed = rightMotor;
+                    gPad.SetVibration(vibration);
+                }
             }
 			//UnsafeNativeMethods.Enable(false);
 			//UnsafeNativeMethods.Enable(true);

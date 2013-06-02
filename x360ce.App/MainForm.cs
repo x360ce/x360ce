@@ -12,11 +12,10 @@ using System.Collections.Specialized;
 using System.Security.Principal;
 using SharpDX.DirectInput;
 using System.Security.AccessControl;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
 using x360ce.App.Controls;
 using System.Diagnostics;
 using System.Linq;
+using SharpDX.XInput;
 
 namespace x360ce.App
 {
@@ -61,8 +60,14 @@ namespace x360ce.App
         public System.Timers.Timer SettingsTimer;
         public System.Timers.Timer CleanStatusTimer;
 
+        public Controller[] GamePads = new Controller[4];
+
         void MainForm_Load(object sender, EventArgs e)
         {
+            for (int i = 0; i < 4; i++)
+            {
+                GamePads[i] = new Controller((UserIndex)i);
+            }
             UpdateTimer = new System.Timers.Timer();
             UpdateTimer.AutoReset = false;
             UpdateTimer.SynchronizingObject = this;
@@ -410,9 +415,16 @@ namespace x360ce.App
                     for (int i = 0; i < 4; i++)
                     {
                         if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
-                            GamePad.SetVibration((PlayerIndex)i, 0, 0);
+                        {
+                            var gamePad = GamePads[i];
+                            if (XInput.IsLoaded && gamePad.IsConnected)
+                            {
+                                gamePad.SetVibration(new Vibration());
+                            }
+                        }
+
                     }
-                    UnsafeNativeMethods.FreeLibrary();
+                    XInput.FreeLibrary();
                 }
                 System.Threading.Thread.Sleep(100);
             }
@@ -525,8 +537,8 @@ namespace x360ce.App
                 {
                     var ig = instances[i].InstanceGuid;
                     var device = new Joystick(Manager, ig);
-                    device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-                    device.Acquire();
+                    //device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+                    //device.Acquire();
                     diDevices.Add(device);
                 }
                 onlineUserControl1.BindDevices(instances);
@@ -550,7 +562,7 @@ namespace x360ce.App
         }
 
         bool settingsChanged = false;
-        GamePadState emptyState = new GamePadState();
+        State emptyState = new State();
 
         bool[] cleanPadStatus = new bool[4];
 
@@ -603,17 +615,18 @@ namespace x360ce.App
                     // XInput instance is ON.
                     //XInput.Controllers[i].PollState();
                     var xiOn = false;
-                    GamePadState currentPad = emptyState;
+                    State currentPad = emptyState;
                     var currentPadControl = ControlPads[i];
                     lock (XInputLock)
                     {
-                        if (UnsafeNativeMethods.IsLoaded)
+                        var gamePad = GamePads[i];
+                        if (XInput.IsLoaded && gamePad.IsConnected)
                         {
-                            currentPad = GamePad.GetState((PlayerIndex)i);
-                            xiOn = currentPad.IsConnected;
+                            currentPad = gamePad.GetState();
+                            xiOn = true;
                         }
                     }
-                    currentPadControl.UpdateFromXInput(currentPad);
+                    currentPadControl.UpdateFromXInput(currentPad, xiOn);
                     // Update LED of gamepad state.
                     string image = diOn
                         // di ON, xi ON 
@@ -698,12 +711,13 @@ namespace x360ce.App
                 // If fast reload od settings is supported then...
                 lock (XInputLock)
                 {
-                    if (UnsafeNativeMethods.IsResetSupported)
+                    if (XInput.IsResetSupported)
                     {
-                        UnsafeNativeMethods.Reset();
+                        XInput.Reset();
                     }
                     // Slow: Reload whole x360ce.dll.
-                    else if (!UnsafeNativeMethods.ReLoadLibrary(dllFile))
+                    XInput.ReLoadLibrary(dllFile);
+                    if (!XInput.IsLoaded)
                     {
                         var msg = string.Format("Failed to load '{0}'", dllFile);
                         var form = new MessageBoxForm();
@@ -761,7 +775,7 @@ namespace x360ce.App
         {
             lock (XInputLock)
             {
-                UnsafeNativeMethods.Enable(XInputEnableCheckBox.Checked);
+                XInput.XInputEnable(XInputEnableCheckBox.Checked);
             }
         }
 
