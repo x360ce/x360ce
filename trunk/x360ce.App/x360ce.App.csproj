@@ -223,97 +223,31 @@
       <DependentUpon>ProgramsControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
-    <Compile Include="Microsoft\Xna\Framework\Design\FieldPropertyDescriptor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Design\MathTypeConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Design\MemberPropertyDescriptor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Design\Vector2Converter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\ErrorCodes.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\FrameworkResources.Designer.cs">
-      <DependentUpon>FrameworkResources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Helpers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\Buttons.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\ButtonState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\ButtonValues.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePad.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadButtons.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadCapabilities.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadDeadZone.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadDeadZoneUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadDPad.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadThumbSticks.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadTriggers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\GamePadType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\UnsafeNativeMethods.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_CAPABILITIES.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_GAMEPAD.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_STATE.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Input\XINPUT_VIBRATION.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\MathHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\PlayerIndex.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Microsoft\Xna\Framework\Vector2.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
+    <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
+    <Compile Include="SharpDX.XInput\BatteryLevel.cs" />
+    <Compile Include="SharpDX.XInput\BatteryType.cs" />
+    <Compile Include="SharpDX.XInput\Capabilities.cs" />
+    <Compile Include="SharpDX.XInput\CapabilityFlags.cs" />
+    <Compile Include="SharpDX.XInput\Controller.cs" />
+    <Compile Include="SharpDX.XInput\DeviceQueryType.cs" />
+    <Compile Include="SharpDX.XInput\DeviceSubType.cs" />
+    <Compile Include="SharpDX.XInput\DeviceType.cs" />
+    <Compile Include="SharpDX.XInput\Gamepad.cs" />
+    <Compile Include="SharpDX.XInput\GamepadButtonFlags.cs" />
+    <Compile Include="SharpDX.XInput\GamepadKeyCode.cs" />
+    <Compile Include="SharpDX.XInput\Keystroke.cs" />
+    <Compile Include="SharpDX.XInput\KeyStrokeFlags.cs" />
+    <Compile Include="SharpDX.XInput\ResultCode.cs" />
+    <Compile Include="SharpDX.XInput\State.cs" />
+    <Compile Include="SharpDX.XInput\UserIndex.cs" />
+    <Compile Include="SharpDX.XInput\Vibration.cs" />
+    <Compile Include="SharpDX.XInput\XInput.cs" />
     <Compile Include="Win32\BSF.cs" />
     <Compile Include="Win32\BSM.cs" />
     <Compile Include="Win32\WM_DEVICECHANGE.cs" />
@@ -337,6 +271,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\NewDeviceForm.resx">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OnlineUserControl.resx">
       <DependentUpon>OnlineUserControl.cs</DependentUpon>
@@ -346,12 +281,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProgramsControl.resx">
       <DependentUpon>ProgramsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Microsoft\Xna\Framework\FrameworkResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FrameworkResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.Xna.Framework</CustomToolNamespace>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
