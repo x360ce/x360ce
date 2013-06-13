@@ -84,13 +84,64 @@ VOID CreateMsgWnd()
     else oldWndProc = (WNDPROC) SetWindowLongPtr(hMsgWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
 }
 
+// XInput 1.3 function pointers 
+XInputGetState_t nXInputGetState = NULL;
+XInputSetState_t nXInputSetState = NULL;
+XInputGetCapabilities_t nXInputGetCapabilities = NULL;
+XInputEnable_t nXInputEnable = NULL;
+XInputGetDSoundAudioDeviceGuids_t nXInputGetDSoundAudioDeviceGuids = NULL;
+XInputGetBatteryInformation_t nXInputGetBatteryInformation = NULL;
+XInputGetKeystroke_t nXInputGetKeystroke = NULL;
+
+// XInput 1.3 undocumented function pointers
+XInputGetStateEx_t nXInputGetStateEx = NULL;
+XInputWaitForGuideButton_t nXInputWaitForGuideButton = NULL;
+XInputCancelGuideButtonWait_t nXInputCancelGuideButtonWait = NULL;
+XInputPowerOffController_t nXInputPowerOffController = NULL;
+
+// XInput 1.4 function pointers 
+XInputGetAudioDeviceIds_t nXInputGetAudioDeviceIds = NULL;
+
+// XInput 1.4 undocumented function pointers
+XInputGetBaseBusInformation_t nXInputGetBaseBusInformation = NULL;
+XInputGetCapabilitiesEx_t nXInputGetCapabilitiesEx = NULL;
+
+bool XInputInitialize()
+{
+    LoadXInputDLL();
+
+    if(hNative)
+    {
+        nXInputGetState = (XInputGetState_t)GetProcAddress(hNative,"XInputGetState");
+        nXInputSetState = (XInputSetState_t)GetProcAddress(hNative,"XInputSetState");
+        nXInputGetCapabilities = (XInputGetCapabilities_t)GetProcAddress(hNative,"XInputGetCapabilities");
+        nXInputEnable = (XInputEnable_t)GetProcAddress(hNative,"XInputEnable");
+        nXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t)GetProcAddress(hNative,"XInputGetDSoundAudioDeviceGuids");
+        nXInputGetBatteryInformation = (XInputGetBatteryInformation_t)GetProcAddress(hNative,"XInputGetBatteryInformation");
+        nXInputGetKeystroke = (XInputGetKeystroke_t)GetProcAddress(hNative,"XInputGetKeystroke");
+
+        nXInputGetStateEx = (XInputGetStateEx_t)GetProcAddress(hNative,(LPCSTR)100);
+        nXInputWaitForGuideButton = (XInputWaitForGuideButton_t)GetProcAddress(hNative,(LPCSTR)101);
+        nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t)GetProcAddress(hNative,(LPCSTR)102);
+        nXInputPowerOffController = (XInputPowerOffController_t)GetProcAddress(hNative,(LPCSTR)103);
+
+        nXInputGetAudioDeviceIds = (XInputGetAudioDeviceIds_t)GetProcAddress(hNative,"XInputGetAudioDeviceIds");
+        nXInputGetBaseBusInformation = (XInputGetBaseBusInformation_t)GetProcAddress(hNative,(LPCSTR)104);
+        nXInputGetCapabilitiesEx = (XInputGetCapabilitiesEx_t)GetProcAddress(hNative,(LPCSTR)108);
+
+        return true;
+    }
+
+    return false;
+}
+
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog(LOG_XINPUT,"XInputGetState");
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        return reinterpret_cast<XInputGetState_t>(GetXInputFunc(Native::GETSTATE))(dwUserIndex,pState);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetState(dwUserIndex,pState);
 
     DInputDevice& device = g_Devices[dwUserIndex];
     if (!pState || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
@@ -458,8 +509,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        return reinterpret_cast<XInputSetState_t>(GetXInputFunc(Native::SETSTATE))(dwUserIndex,pVibration);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputSetState(dwUserIndex,pVibration);
 
     DInputDevice& device = g_Devices[dwUserIndex];
     if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
@@ -511,8 +562,8 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        return reinterpret_cast<XInputGetCapabilities_t>(GetXInputFunc(Native::GETCAPS))(dwUserIndex,dwFlags,pCapabilities);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 
     DInputDevice& device = g_Devices[dwUserIndex];
 
@@ -541,7 +592,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
     if(hMsgWnd == NULL) CreateMsgWnd();
 
     if(g_bNative)
-        reinterpret_cast<XInputEnable_t>(GetXInputFunc(Native::ENABLE))(enable);
+       nXInputEnable(enable);
 
     /*
     Nasty trick to support XInputEnable states, because not every game calls it so:
@@ -564,8 +615,8 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        reinterpret_cast<XInputGetDSoundAudioDeviceGuids_t>(GetXInputFunc(Native::AUDIO))(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 
     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
@@ -583,8 +634,8 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        reinterpret_cast<XInputGetBatteryInformation_t>(GetXInputFunc(Native::BATTERY))(dwUserIndex,devType,pBatteryInformation);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
 
     DInputDevice& device = g_Devices[dwUserIndex];
 
@@ -604,11 +655,10 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
     {
         //PrintLog(LOG_XINPUT,"flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
-
-        reinterpret_cast<XInputGetKeystroke_t>(GetXInputFunc(Native::KEYSTROKE))(dwUserIndex,dwReserved,pKeystroke);
+        return nXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
     }
 
     DInputDevice& device = g_Devices[dwUserIndex];
@@ -730,8 +780,8 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        reinterpret_cast<XInputGetStateEx_t>(GetXInputFunc(Native::GETSTATEEX))(dwUserIndex,pState);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetStateEx(dwUserIndex,pState);
 
     DInputDevice& device = g_Devices[dwUserIndex];
     Mapping& mapping = g_Mappings[dwUserIndex];
@@ -749,8 +799,8 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        reinterpret_cast<XInputWaitForGuideButton_t>(GetXInputFunc(Native::WAITGUIDE))(dwUserIndex,dwFlag,pVoid);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputWaitForGuideButton(dwUserIndex,dwFlag,pVoid);
 
     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
@@ -763,8 +813,8 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        reinterpret_cast<XInputCancelGuideButtonWait_t>(GetXInputFunc(Native::CANCELGUIDE))(dwUserIndex);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputCancelGuideButtonWait(dwUserIndex);
 
     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
@@ -777,12 +827,50 @@ extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
-    if(dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough)
-        reinterpret_cast<XInputCancelGuideButtonWait_t>(GetXInputFunc(Native::POWEROFF))(dwUserIndex);
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputCancelGuideButtonWait(dwUserIndex);
 
     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
     //DInputDevice& device = g_Devices[dwUserIndex];
+
+    return ERROR_SUCCESS;
+}
+
+extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount)
+{
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
+
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetAudioDeviceIds(dwUserIndex,pRenderDeviceId,pRenderCount,pCaptureDeviceId,pCaptureCount);
+
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+
+    return ERROR_SUCCESS;
+}
+
+extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo)
+{
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
+
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetBaseBusInformation(dwUserIndex,pBusinfo);
+
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+
+    return ERROR_SUCCESS;
+}
+
+// XInput 1.4 uses this in XInputGetCapabilities and calls memcpy(pCapabilities, &CapabilitiesEx, 20u);
+// so XINPUT_CAPABILITIES is first 20 bytes of XINPUT_CAPABILITIESEX
+extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
+{
+    if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
+
+    if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
+        return nXInputGetCapabilitiesEx(unk1,dwUserIndex,dwFlags,pCapabilitiesEx);
+
+    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
     return ERROR_SUCCESS;
 }

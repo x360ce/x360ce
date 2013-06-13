@@ -10,10 +10,18 @@ EXPORTS
 		XInputGetBatteryInformation @7
 		XInputGetKeystroke @8
 
-		;undocumented
+        ; XInput 1.4
+        XInputGetAudioDeviceIds @10
+
+		; XInput 1.3 undocumented
 		XInputGetStateEx @100
 		XInputWaitForGuideButton @101
 		XInputCancelGuideButtonWait @102
 		XInputPowerOffController @103
 
-		reset @128
+        ; XInput 1.4 undocumented
+        XInputGetBaseBusInformation @104
+        XInputGetCapabilitiesEx @108
+
+        ; reset helper
+		reset @256

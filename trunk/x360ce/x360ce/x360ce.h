@@ -38,112 +38,26 @@ public:
 
 void LoadXInputDLL();
 
-
-
-/**********************************************************************************************/
-/**********************************************************************************************/
-/**********************************************************************************************/
-
-// XINPUT FUNCTIONS TYPES
+// XInput 1.3 function types 
 typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
-typedef VOID (WINAPI* XInputEnable_t)(BOOL enable);
+typedef VOID  (WINAPI* XInputEnable_t)(BOOL enable);
 typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
 typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
 typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
 
-typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState);
-typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid);
-typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex);
-typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex);
+// XInput 1.3 undocumented function types
+typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState); // 100
+typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid); // 101
+typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex); // 102
+typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex); // 103
 
-/**********************************************************************************************/
-/**********************************************************************************************/
-/**********************************************************************************************/
+// XInput 1.4 function types 
+typedef DWORD (WINAPI* XInputGetAudioDeviceIds_t)(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount);
 
-namespace Native
-{
-enum funcType {GETSTATE, SETSTATE, GETCAPS, ENABLE, AUDIO, BATTERY, KEYSTROKE, GETSTATEEX, WAITGUIDE, CANCELGUIDE, POWEROFF};
-}
-
-inline FARPROC& GetXInputFunc(Native::funcType func)
-{
-    LoadXInputDLL();
-
-    switch(func)
-    {
-    case Native::GETSTATE:
-    {
-        static FARPROC nXInputGetState = GetProcAddress(hNative,"XInputGetState");
-        return nXInputGetState;
-    }
-    case Native::SETSTATE:
-    {
-        static FARPROC nXInputSetState = GetProcAddress(hNative,"XInputSetState");
-        return nXInputSetState;
-    }
-
-    case Native::GETCAPS:
-    {
-        static FARPROC nXInputGetCapabilities = GetProcAddress(hNative,"XInputGetCapabilities");
-        return nXInputGetCapabilities;
-    }
-
-    case Native::ENABLE:
-    {
-        static FARPROC nXInputEnable = GetProcAddress(hNative,"XInputEnable");
-        return nXInputEnable;
-    }
-
-    case Native::AUDIO:
-    {
-        static FARPROC nXInputGetDSoundAudioDeviceGuids = GetProcAddress(hNative,"XInputGetDSoundAudioDeviceGuids");
-        return nXInputGetDSoundAudioDeviceGuids;
-    }
-
-    case Native::BATTERY:
-    {
-        static FARPROC nXInputGetBatteryInformation = GetProcAddress(hNative,"XInputGetBatteryInformation");
-        return nXInputGetBatteryInformation;
-    }
-
-    case Native::KEYSTROKE:
-    {
-        static FARPROC nXInputGetKeystroke = GetProcAddress(hNative,"XInputGetKeystroke");
-        return nXInputGetKeystroke;
-    }
-
-
-    case Native::GETSTATEEX:
-    {
-        static FARPROC nXInputGetStateEx = GetProcAddress(hNative,(LPCSTR)100);
-        return nXInputGetStateEx;
-    }
-
-    case Native::WAITGUIDE:
-    {
-        static FARPROC nXInputWaitForGuideButton = GetProcAddress(hNative,(LPCSTR)101);
-        return nXInputWaitForGuideButton;
-    }
-
-    case Native::CANCELGUIDE:
-    {
-        static FARPROC nXInputCancelGuideButtonWait = GetProcAddress(hNative,(LPCSTR)102);
-        return nXInputCancelGuideButtonWait;
-    }
-
-    case Native::POWEROFF:
-    {
-        static FARPROC nXInputPowerOffController = GetProcAddress(hNative,(LPCSTR)103);
-        return nXInputPowerOffController;
-    }
-    default:
-    {
-        MessageBox(NULL,L"Cannot initalize xinput function!",L"x360ce - Error",MB_ICONERROR);
-        ExitProcess(1);
-    }
-    }
-}
+// XInput 1.4 undocumented functions types
+typedef DWORD (WINAPI* XInputGetBaseBusInformation_t)(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo); // 104
+typedef DWORD (WINAPI* XInputGetCapabilitiesEx_t)(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx); // 108
 
 #endif
