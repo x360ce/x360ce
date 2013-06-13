@@ -125,10 +125,7 @@ VOID InitInstance(HINSTANCE instance)
     ReadConfig(false);
 
     PrintLog(LOG_CORE,"x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
-
-    char osname[128];
-    windowsVersionName(osname,MAX_PATH);
-    PrintLog(LOG_CORE,"%s",osname);
+    PrintLog(LOG_CORE,"%s",windowsVersionName().c_str());
 
     InstallInputHooks();
 }

@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "dinput8.h"
 
+#include <string>
+
 HINSTANCE hThis = NULL;
 HINSTANCE hXInput = NULL;
 HINSTANCE hDInput = NULL;
@@ -25,48 +27,55 @@ HINSTANCE hDInput = NULL;
 
 void LoadXinputDLL()
 {
-    wchar_t buffer[MAX_PATH];
-    wchar_t strPath[MAX_PATH];
+    char* buffer = new char[2048];
+    GetModuleFileNameA(hThis, buffer, MAX_PATH);
+    PathRemoveFileSpecA(buffer);
+    std::string path(buffer);
+    delete [] buffer;
 
-    GetModuleFileName(hThis, strPath, MAX_PATH);
-    PathRemoveFileSpec(strPath);
+    hXInput = LoadLibraryA((path + "\\xinput1_4.dll").c_str());
+    LPVOID hReset = GetProcAddress(hXInput,"reset");
+    if(!hReset) FreeLibrary(hXInput);
 
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_3.dll");
-    hXInput = LoadLibrary(buffer);
-    if(GetProcAddress(hXInput,"reset")) return;
-    else FreeLibrary(hXInput);
+    hXInput = LoadLibraryA((path + "\\xinput1_3.dll").c_str());
+    hReset = GetProcAddress(hXInput,"reset");
+    if(!hReset) FreeLibrary(hXInput);
 
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_2.dll");
-    hXInput = LoadLibrary(buffer);
-    if(GetProcAddress(hXInput,"reset")) return;
-    else FreeLibrary(hXInput);
+    hXInput = LoadLibraryA((path + "\\xinput1_2.dll").c_str());
+    hReset = GetProcAddress(hXInput,"reset");
+    if(!hReset) FreeLibrary(hXInput);
 
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput1_1.dll");
-    hXInput = LoadLibrary(buffer);
-    if(GetProcAddress(hXInput,"reset")) return;
-    else FreeLibrary(hXInput);
+    hXInput = LoadLibraryA((path + "\\xinput1_1.dll").c_str());
+    hReset = GetProcAddress(hXInput,"reset");
+    if(!hReset) FreeLibrary(hXInput);
 
-    swprintf_s(buffer,L"%s\\%s",strPath,L"xinput9_1_0.dll");
-    hXInput = LoadLibrary(buffer);
-    if(GetProcAddress(hXInput,"reset")) return;
-    else FreeLibrary(hXInput);
+    hXInput = LoadLibraryA((path + "\\xinput9_1_0.dll").c_str());
+    hReset = GetProcAddress(hXInput,"reset");
+    if(!hReset) FreeLibrary(hXInput);
+
+    if(!hReset) 
+    {
+        hXInput = LoadLibraryA((path + "\\x360ce.dll").c_str());
+    }
 }
 
 void LoadDInputDll()
 {
-    WCHAR sysdir[MAX_PATH];
-    WCHAR buffer[MAX_PATH];
+    char* buffer = new char[2048];
+    GetSystemDirectoryA(buffer,MAX_PATH);
+    std::string path(buffer);
+    delete [] buffer;
 
-    GetSystemDirectory(sysdir,MAX_PATH);
-    swprintf_s(buffer,L"%s\\%s",sysdir,L"dinput8.dll");
-
-    hDInput = LoadLibrary(buffer);
+    path.append("\\dinput8.dll");
+    hDInput = LoadLibraryA(path.c_str());
 
     if (!hDInput)
     {
+        char* buf = new char[2048];
         HRESULT hr = GetLastError();
-        swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
-        MessageBox(NULL,sysdir,L"Error",MB_ICONERROR);
+        sprintf_s(buf,2048,"Cannot load %s error: 0x%x", path.c_str(), hr);
+        MessageBoxA(NULL,buf,"Error",MB_ICONERROR);
+        delete [] buf;
         ExitProcess(hr);
     }
 }

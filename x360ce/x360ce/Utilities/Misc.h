@@ -161,7 +161,7 @@ typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 #define PRODUCT_PROFESSIONAL	0x00000030
 #define VER_SUITE_WH_SERVER	0x00008000
 
-inline bool windowsVersionName(char* str, int bufferSize)
+inline std::string windowsVersionName()
 {
     OSVERSIONINFOEXA osvi;
     SYSTEM_INFO si;
@@ -381,8 +381,7 @@ inline bool windowsVersionName(char* str, int bufferSize)
         else if (si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_INTEL )
             buf.append(", 32-bit");
     }
-    strcpy_s(str, bufferSize, buf.c_str());
-    return true;
+    return buf;
 }
 
 #endif // _MISC_H
