@@ -27,53 +27,55 @@ HINSTANCE hDInput = NULL;
 
 void LoadXinputDLL()
 {
-    char* buffer = new char[2048];
+    char* buffer = new char[MAX_PATH];
     GetModuleFileNameA(hThis, buffer, MAX_PATH);
     PathRemoveFileSpecA(buffer);
+    PathAddBackslashA(buffer);
     std::string path(buffer);
     delete [] buffer;
 
-    hXInput = LoadLibraryA((path + "\\xinput1_4.dll").c_str());
+    hXInput = LoadLibraryA((path + "xinput1_4.dll").c_str());
     LPVOID hReset = GetProcAddress(hXInput,"reset");
     if(!hReset) FreeLibrary(hXInput);
 
-    hXInput = LoadLibraryA((path + "\\xinput1_3.dll").c_str());
+    hXInput = LoadLibraryA((path + "xinput1_3.dll").c_str());
     hReset = GetProcAddress(hXInput,"reset");
     if(!hReset) FreeLibrary(hXInput);
 
-    hXInput = LoadLibraryA((path + "\\xinput1_2.dll").c_str());
+    hXInput = LoadLibraryA((path + "xinput1_2.dll").c_str());
     hReset = GetProcAddress(hXInput,"reset");
     if(!hReset) FreeLibrary(hXInput);
 
-    hXInput = LoadLibraryA((path + "\\xinput1_1.dll").c_str());
+    hXInput = LoadLibraryA((path + "xinput1_1.dll").c_str());
     hReset = GetProcAddress(hXInput,"reset");
     if(!hReset) FreeLibrary(hXInput);
 
-    hXInput = LoadLibraryA((path + "\\xinput9_1_0.dll").c_str());
+    hXInput = LoadLibraryA((path + "xinput9_1_0.dll").c_str());
     hReset = GetProcAddress(hXInput,"reset");
     if(!hReset) FreeLibrary(hXInput);
 
     if(!hReset) 
     {
-        hXInput = LoadLibraryA((path + "\\x360ce.dll").c_str());
+        hXInput = LoadLibraryA((path + "x360ce.dll").c_str());
     }
 }
 
 void LoadDInputDll()
 {
-    char* buffer = new char[2048];
+    char* buffer = new char[MAX_PATH];
     GetSystemDirectoryA(buffer,MAX_PATH);
+    PathAddBackslashA(buffer);
     std::string path(buffer);
     delete [] buffer;
 
-    path.append("\\dinput8.dll");
+    path.append("dinput8.dll");
     hDInput = LoadLibraryA(path.c_str());
 
     if (!hDInput)
     {
-        char* buf = new char[2048];
+        char* buf = new char[MAX_PATH];
         HRESULT hr = GetLastError();
-        sprintf_s(buf,2048,"Cannot load %s error: 0x%x", path.c_str(), hr);
+        sprintf_s(buf,MAX_PATH,"Cannot load %s error: 0x%x", path.c_str(), hr);
         MessageBoxA(NULL,buf,"Error",MB_ICONERROR);
         delete [] buf;
         ExitProcess(hr);
