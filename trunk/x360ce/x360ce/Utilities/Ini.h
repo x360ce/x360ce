@@ -106,14 +106,14 @@ public:
         Mutex().Lock();
         m_strRet.clear();
 
-        if(m_inifile.empty()) 
+        if(m_inifile.empty())
         {
             m_strRet = defVal;
 
             Mutex().Unlock();
             return m_strRet;
         }
-    
+
         char* strOut = new char[MAX_PATH];
         ULONG32 size = GetPrivateProfileStringA(strSection, strKey, defVal.c_str(), strOut, MAX_PATH, m_inifile.c_str());
 
@@ -127,7 +127,7 @@ public:
         }
         else
         {
-            delete [] strOut;          
+            delete [] strOut;
             m_strRet = defVal;
 
             Mutex().Unlock();
@@ -142,13 +142,13 @@ public:
 
     int32_t GetLong(const char* strSection, const char* strKey, int32_t defVal = 0)
     {
-		char buf[2 * 32];
-		sprintf_s(buf, "%ld", defVal);
+        char buf[2 * 32];
+        sprintf_s(buf, "%ld", defVal);
         std::string str = GetString(strSection, strKey, std::string(buf));
 
-		const char* cstr = str.c_str();
+        const char* cstr = str.c_str();
         if(CheckPrefix(cstr)) return strtol(cstr+1,NULL,0);
-        else return strtol(cstr,NULL,0);   
+        else return strtol(cstr,NULL,0);
     }
 
     int16_t GetShort(const char* strFileSection, const char* strKey, int16_t iDefault = 0)
@@ -163,13 +163,13 @@ public:
 
     uint32_t GetDword(const char* strSection, const char* strKey, uint32_t defVal = 0)
     {
-		char buf[2 * 32];
-		sprintf_s(buf, "%lu", defVal);
+        char buf[2 * 32];
+        sprintf_s(buf, "%lu", defVal);
         std::string str = GetString(strSection, strKey, buf);
 
-		const char* cstr = str.c_str();
-		if(CheckPrefix(cstr)) return strtoul(cstr+1,NULL,0);
-		else return strtoul(cstr,NULL,0);   
+        const char* cstr = str.c_str();
+        if(CheckPrefix(cstr)) return strtoul(cstr+1,NULL,0);
+        else return strtoul(cstr,NULL,0);
     }
 
     uint16_t GetWord(const char* strFileSection, const char* strKey, uint16_t defVal = 0)

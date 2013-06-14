@@ -48,7 +48,7 @@ private:
 };
 
 extern Log* logger;
-#define InitLog(log,con,local) do {if(!logger) logger = new Log(log,con,local);} while(false) 
+#define InitLog(log,con,local) do {if(!logger) logger = new Log(log,con,local);} while(false)
 #define PrintLog(type,format,...) do {if(logger) logger->Print(Log::type,format,__VA_ARGS__);} while(false)
 #define DestroyLog() {delete logger; logger = NULL;}
 #endif // _LOG_H_

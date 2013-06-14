@@ -54,7 +54,7 @@ void LoadXinputDLL()
     hReset = GetProcAddress(hXInput,"reset");
     if(!hReset) FreeLibrary(hXInput);
 
-    if(!hReset) 
+    if(!hReset)
     {
         hXInput = LoadLibraryA((path + "x360ce.dll").c_str());
     }

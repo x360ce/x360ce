@@ -36,9 +36,9 @@ public:
     virtual ~XInputEnabled() {};
 };
 
-void LoadXInputDLL();
+void LoadXInputDLL(HINSTANCE& hNative);
 
-// XInput 1.3 function types 
+// XInput 1.3 function types
 typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
@@ -53,7 +53,7 @@ typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFl
 typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex); // 102
 typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex); // 103
 
-// XInput 1.4 function types 
+// XInput 1.4 function types
 typedef DWORD (WINAPI* XInputGetAudioDeviceIds_t)(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount);
 
 // XInput 1.4 undocumented functions types
