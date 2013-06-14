@@ -40,37 +40,6 @@ HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
 iHook* pHooks = NULL;
 
-void LoadXInputDLL()
-{
-    if(hNative) return;
-    WCHAR sysdir[MAX_PATH];
-    WCHAR buffer[MAX_PATH];
-
-    GetSystemDirectoryW(sysdir,MAX_PATH);
-    PathCombineW(buffer,sysdir,ModuleFileNameW(hThis).c_str());
-
-    bool bHookLL = false;
-    if(pHooks)
-    {
-        bHookLL = pHooks->GetState(iHook::HOOK_LL);
-        if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
-    }
-
-    PrintLog(LOG_CORE,"Loading %ls",buffer);
-    hNative = LoadLibraryW(buffer);
-    if(bHookLL) pHooks->EnableHook(iHook::HOOK_LL);
-
-    //Debug
-    if (!hNative)
-    {
-        HRESULT hr = GetLastError();
-        swprintf_s(sysdir,L"Cannot load %s error: 0x%x", buffer, hr);
-        PrintLog(LOG_CORE,"%s", sysdir);
-        MessageBoxW(NULL,sysdir,L"Error",MB_ICONERROR);
-        ExitProcess(hr);
-    }
-}
-
 VOID InstallInputHooks()
 {
     if(pHooks->GetState())

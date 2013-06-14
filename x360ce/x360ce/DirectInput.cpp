@@ -149,11 +149,11 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
     else PrintLog(LOG_DINPUT,"[PAD%d] Device created",device.dwUserIndex+1);
 
-	hr = device.device->SetDataFormat( &c_dfDIJoystick2 );
+    hr = device.device->SetDataFormat( &c_dfDIJoystick2 );
 
     if(FAILED(hr)) PrintLog(LOG_DINPUT,"[PAD%d] SetDataFormat failed with code HR = %X", device.dwUserIndex+1, hr);
 
-	coophr = device.device->SetCooperativeLevel(hDlg, DISCL_EXCLUSIVE | DISCL_BACKGROUND);
+    coophr = device.device->SetCooperativeLevel(hDlg, DISCL_EXCLUSIVE | DISCL_BACKGROUND);
     if(FAILED(coophr)) PrintLog(LOG_DINPUT,"[PAD%d] SetCooperativeLevel (1) failed with code HR = %X", device.dwUserIndex+1, coophr);
 
     if(coophr != DI_OK)
@@ -161,7 +161,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         PrintLog(LOG_DINPUT,"Device not exclusive acquired, disabling ForceFeedback");
         device.useforce = 0;
 
-		coophr = device.device->SetCooperativeLevel(hDlg, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+        coophr = device.device->SetCooperativeLevel(hDlg, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
         if(FAILED(coophr)) PrintLog(LOG_DINPUT,"[PAD%d] SetCooperativeLevel (2) failed with code HR = %X", device.dwUserIndex+1, coophr);
     }
 
@@ -172,11 +172,11 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     dipdw.dwData = FALSE;
     device.device->SetProperty( DIPROP_AUTOCENTER, &dipdw.diph );
 
-	hr = device.device->EnumObjects(EnumObjectsCallback, ( VOID* )&device, DIDFT_AXIS);
+    hr = device.device->EnumObjects(EnumObjectsCallback, ( VOID* )&device, DIDFT_AXIS);
     if(FAILED(hr)) PrintLog(LOG_DINPUT,"[PAD%d] EnumObjects failed with code HR = %X", device.dwUserIndex+1, hr);
     else PrintLog(LOG_DINPUT,"[PAD%d] Detected axis count: %d",device.dwUserIndex+1,device.axiscount);
-	
-	hr = device.device->EnumObjects(EnumFFAxesCallback, ( VOID* )&device.ff.axisffbcount, DIDFT_AXIS);
+
+    hr = device.device->EnumObjects(EnumFFAxesCallback, ( VOID* )&device.ff.axisffbcount, DIDFT_AXIS);
     if(FAILED(hr)) PrintLog(LOG_DINPUT,"[PAD%d] EnumFFAxesCallback failed with code HR = %X", device.dwUserIndex+1, hr);
 
 
@@ -312,7 +312,7 @@ HRESULT PrepareForceFailsafe(DInputDevice& device, bool motor)
         eff.dwStartDelay = 0;
 
         // Create the prepared effect
-		hr = device.device->CreateEffect(GUID_ConstantForce, &eff, &device.ff.effect[motor] , NULL);
+        hr = device.device->CreateEffect(GUID_ConstantForce, &eff, &device.ff.effect[motor] , NULL);
         if(FAILED(hr))
         {
             PrintLog(LOG_DINPUT,"[PAD%d] CreateEffect (1) failed with code HR = %X", device.dwUserIndex+1, hr);
@@ -353,7 +353,7 @@ HRESULT PrepareForceFailsafe(DInputDevice& device, bool motor)
         eff.dwStartDelay = 0;
 
         // Create the prepared effect
-		hr = device.device->CreateEffect(GUID_ConstantForce, &eff,& device.ff.effect[motor], NULL);
+        hr = device.device->CreateEffect(GUID_ConstantForce, &eff,& device.ff.effect[motor], NULL);
         if(FAILED(hr))
         {
             PrintLog(LOG_DINPUT,"[PAD%d] CreateEffect (2) failed with code HR = %X", device.dwUserIndex+1, hr);
@@ -503,7 +503,7 @@ HRESULT SetDeviceForcesEjocys(DInputDevice& device, WORD force, bool motor)
 
         //PrintLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !7! HR = %s"), idx+1,motor, DXErrStr(hr));
         // Set the new parameters and start the effect immediately.
-		hr = device.ff.effect[motor]->SetParameters(&device.ff.eff[0], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START);
+        hr = device.ff.effect[motor]->SetParameters(&device.ff.eff[0], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START);
         if(FAILED(hr))
         {
             PrintLog(LOG_DINPUT,"[PAD%d] SetDeviceForces (%d) failed with code HR = %X", device.dwUserIndex+1,motor, hr);
@@ -565,7 +565,7 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
     device.ff.is_created = false;
     // Constant:  Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay
     // Sine Wave: Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay, SamplePeriod
-    
+
     LONG rglDirection[2] = { 0, 0 };
     // Create effect
     ZeroMemory( &eff, sizeof( eff ) );
@@ -605,7 +605,7 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
     eff.lpvTypeSpecificParams =& device.ff.pf;
 
     // Create the prepared effect
-	HRESULT hr = device.device->CreateEffect(effGuid,&eff,&device.ff.effect[motor],NULL);
+    HRESULT hr = device.device->CreateEffect(effGuid,&eff,&device.ff.effect[motor],NULL);
     if(FAILED(hr))
     {
         PrintLog(LOG_DINPUT,"[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %X", device.dwUserIndex+1,motor, hr);
@@ -639,7 +639,7 @@ HRESULT SetDeviceForcesNew(DInputDevice& device, WORD force, bool motor)
     LONG nForce = MulDiv(force, DI_FFNOMINALMAX, 65535);
     nForce = clamp(nForce,-DI_FFNOMINALMAX,DI_FFNOMINALMAX);
 
-	bool bMotor = device.swapmotor ? !motor : motor;
+    bool bMotor = device.swapmotor ? !motor : motor;
 
     if(bMotor == FFB_LEFTMOTOR)
     {
@@ -671,7 +671,7 @@ HRESULT PrepareForceNew(DInputDevice& device, bool motor)
 {
     if(!device.ff.effect[motor])
     {
-        
+
         LONG rglDirection[2] = { 0, 0 };
 
         // Create effect
@@ -699,8 +699,8 @@ HRESULT PrepareForceNew(DInputDevice& device, bool motor)
         }
 
         // Enumerate effects
-		HRESULT hr = device.device->EnumEffects(&EnumEffectsCallback,& device, DIEFT_ALL);
-		if (FAILED(hr))
+        HRESULT hr = device.device->EnumEffects(&EnumEffectsCallback,& device, DIEFT_ALL);
+        if (FAILED(hr))
         {
             PrintLog(LOG_DINPUT,"[PAD%d] EnumEffectsCallback failed");
         }

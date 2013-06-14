@@ -44,8 +44,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch ( uMsg )
     {
     case WM_DESTROY:
-        if (InSendMessage()) 
-            ReplyMessage(TRUE); 
+        if (InSendMessage())
+            ReplyMessage(TRUE);
         else
         {
             g_Devices.clear();
@@ -84,7 +84,7 @@ VOID CreateMsgWnd()
     else oldWndProc = (WNDPROC) SetWindowLongPtr(hMsgWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
 }
 
-// XInput 1.3 function pointers 
+// XInput 1.3 function pointers
 XInputGetState_t nXInputGetState = NULL;
 XInputSetState_t nXInputSetState = NULL;
 XInputGetCapabilities_t nXInputGetCapabilities = NULL;
@@ -99,7 +99,7 @@ XInputWaitForGuideButton_t nXInputWaitForGuideButton = NULL;
 XInputCancelGuideButtonWait_t nXInputCancelGuideButtonWait = NULL;
 XInputPowerOffController_t nXInputPowerOffController = NULL;
 
-// XInput 1.4 function pointers 
+// XInput 1.4 function pointers
 XInputGetAudioDeviceIds_t nXInputGetAudioDeviceIds = NULL;
 
 // XInput 1.4 undocumented function pointers
@@ -108,31 +108,52 @@ XInputGetCapabilitiesEx_t nXInputGetCapabilitiesEx = NULL;
 
 bool XInputInitialize()
 {
-    LoadXInputDLL();
+    if(hNative) return true;
+    WCHAR buffer[MAX_PATH];
+    GetSystemDirectoryW(buffer,MAX_PATH);
 
-    if(hNative)
+    std::wstring str(buffer);
+    str.append(L"\\");
+    str.append(ModuleFileNameW(hThis));
+
+    bool bHookLL = false;
+    if(pHooks)
     {
-        nXInputGetState = (XInputGetState_t)GetProcAddress(hNative,"XInputGetState");
-        nXInputSetState = (XInputSetState_t)GetProcAddress(hNative,"XInputSetState");
-        nXInputGetCapabilities = (XInputGetCapabilities_t)GetProcAddress(hNative,"XInputGetCapabilities");
-        nXInputEnable = (XInputEnable_t)GetProcAddress(hNative,"XInputEnable");
-        nXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t)GetProcAddress(hNative,"XInputGetDSoundAudioDeviceGuids");
-        nXInputGetBatteryInformation = (XInputGetBatteryInformation_t)GetProcAddress(hNative,"XInputGetBatteryInformation");
-        nXInputGetKeystroke = (XInputGetKeystroke_t)GetProcAddress(hNative,"XInputGetKeystroke");
-
-        nXInputGetStateEx = (XInputGetStateEx_t)GetProcAddress(hNative,(LPCSTR)100);
-        nXInputWaitForGuideButton = (XInputWaitForGuideButton_t)GetProcAddress(hNative,(LPCSTR)101);
-        nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t)GetProcAddress(hNative,(LPCSTR)102);
-        nXInputPowerOffController = (XInputPowerOffController_t)GetProcAddress(hNative,(LPCSTR)103);
-
-        nXInputGetAudioDeviceIds = (XInputGetAudioDeviceIds_t)GetProcAddress(hNative,"XInputGetAudioDeviceIds");
-        nXInputGetBaseBusInformation = (XInputGetBaseBusInformation_t)GetProcAddress(hNative,(LPCSTR)104);
-        nXInputGetCapabilitiesEx = (XInputGetCapabilitiesEx_t)GetProcAddress(hNative,(LPCSTR)108);
-
-        return true;
+        bHookLL = pHooks->GetState(iHook::HOOK_LL);
+        if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
     }
 
-    return false;
+    PrintLog(LOG_CORE,"Loading %ls",str.c_str());
+    hNative = LoadLibraryW(str.c_str());
+    if(bHookLL) pHooks->EnableHook(iHook::HOOK_LL);
+
+    if (!hNative)
+    {
+        HRESULT hr = GetLastError();
+        swprintf_s(buffer,L"Cannot load %s error: 0x%x", str.c_str(), hr);
+        PrintLog(LOG_CORE,"%s", buffer);
+        MessageBoxW(NULL,buffer,L"Error",MB_ICONERROR);
+        ExitProcess(hr);
+    }
+
+    nXInputGetState = (XInputGetState_t)GetProcAddress(hNative,"XInputGetState");
+    nXInputSetState = (XInputSetState_t)GetProcAddress(hNative,"XInputSetState");
+    nXInputGetCapabilities = (XInputGetCapabilities_t)GetProcAddress(hNative,"XInputGetCapabilities");
+    nXInputEnable = (XInputEnable_t)GetProcAddress(hNative,"XInputEnable");
+    nXInputGetDSoundAudioDeviceGuids = (XInputGetDSoundAudioDeviceGuids_t)GetProcAddress(hNative,"XInputGetDSoundAudioDeviceGuids");
+    nXInputGetBatteryInformation = (XInputGetBatteryInformation_t)GetProcAddress(hNative,"XInputGetBatteryInformation");
+    nXInputGetKeystroke = (XInputGetKeystroke_t)GetProcAddress(hNative,"XInputGetKeystroke");
+
+    nXInputGetStateEx = (XInputGetStateEx_t)GetProcAddress(hNative,(LPCSTR)100);
+    nXInputWaitForGuideButton = (XInputWaitForGuideButton_t)GetProcAddress(hNative,(LPCSTR)101);
+    nXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t)GetProcAddress(hNative,(LPCSTR)102);
+    nXInputPowerOffController = (XInputPowerOffController_t)GetProcAddress(hNative,(LPCSTR)103);
+
+    nXInputGetAudioDeviceIds = (XInputGetAudioDeviceIds_t)GetProcAddress(hNative,"XInputGetAudioDeviceIds");
+    nXInputGetBaseBusInformation = (XInputGetBaseBusInformation_t)GetProcAddress(hNative,(LPCSTR)104);
+    nXInputGetCapabilitiesEx = (XInputGetCapabilitiesEx_t)GetProcAddress(hNative,(LPCSTR)108);
+
+    return true;
 }
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
@@ -592,7 +613,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
     if(hMsgWnd == NULL) CreateMsgWnd();
 
     if(g_bNative)
-       nXInputEnable(enable);
+        nXInputEnable(enable);
 
     /*
     Nasty trick to support XInputEnable states, because not every game calls it so:

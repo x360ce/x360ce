@@ -103,7 +103,7 @@ inline void StringToGUID(LPCSTR szBuf, GUID& id)
     int32_t b[8];
 
     sscanf_s(szBuf,"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-        &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
+             &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
 
     id.Data1 = d1;
     id.Data2 = (uint16_t) d2;
@@ -126,7 +126,7 @@ inline void StringToGUID(LPCWSTR szBuf, GUID& id)
     int32_t b[8];
 
     swscanf_s(szBuf,L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-        &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
+              &d1,&d2,&d3,&b[0],&b[1],&b[2],&b[3],&b[4],&b[5],&b[6],&b[7]);
 
     id.Data1 = d1;
     id.Data2 = (uint16_t) d2;
@@ -143,7 +143,7 @@ inline const std::string GUIDtoStringA(const GUID &g)
     char tmp[40];
 
     sprintf_s(tmp,40,"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-        g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
+              g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
     return tmp;
 }
 
@@ -152,7 +152,7 @@ inline const std::wstring GUIDtoStringW(const GUID &g)
     WCHAR str[40];
 
     swprintf_s(str,40,L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-        g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
+               g.Data1,g.Data2,g.Data3,g.Data4[0],g.Data4[1],g.Data4[2],g.Data4[3],g.Data4[4],g.Data4[5],g.Data4[6],g.Data4[7]);
     return str;
 }
 
@@ -305,7 +305,7 @@ inline std::string windowsVersionName()
         else if ( osvi.wSuiteMask & VER_SUITE_WH_SERVER )
             buf.append("Windows Home Server");
         else if( osvi.wProductType == VER_NT_WORKSTATION &&
-            si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)
+                 si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)
         {
             buf.append("Windows XP Professional x64 Edition");
         }
@@ -367,13 +367,13 @@ inline std::string windowsVersionName()
     if(osvi.szCSDVersion[0] != L'\0')
     {
         buf.append(" ");
-		buf.append(osvi.szCSDVersion);
+        buf.append(osvi.szCSDVersion);
     }
-    buf.append(" (build "); 
-	char tmp[2 * 32];
-	sprintf_s(tmp, "%lu", osvi.dwBuildNumber);
-	buf.append(tmp);
-	buf.append(")");
+    buf.append(" (build ");
+    char tmp[2 * 32];
+    sprintf_s(tmp, "%lu", osvi.dwBuildNumber);
+    buf.append(tmp);
+    buf.append(")");
     if ( osvi.dwMajorVersion >= 6 )
     {
         if ( si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
