@@ -36,8 +36,6 @@ public:
     virtual ~XInputEnabled() {};
 };
 
-void LoadXInputDLL(HINSTANCE& hNative);
-
 // XInput 1.3 function types
 typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
