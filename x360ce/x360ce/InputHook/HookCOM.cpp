@@ -308,14 +308,14 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 
     if(hr != NO_ERROR) return hr;
 
-    if(IsEqualGUID(riid,IID_IDirectInput8A) || IsEqualGUID(riid,IID_IDirectInput8W))
+    if(IsEqualCLSID(rclsid,CLSID_DirectInput8))
     {
         PrintLog(LOG_IHOOK,"COM wants to create DirectInput8 instance");
-        MessageBoxA(NULL,"COM wants to create DirectInput8 instance","x360ce - Error",MB_ICONERROR);
+        //MessageBoxA(NULL,"COM wants to create DirectInput8 instance","x360ce - Error",MB_ICONWARNING);
         //iHookThis->HookDICOM(riid,ppv);
     }
 
-    if(IsEqualGUID(riid,IID_IWbemLocator))
+    if(IsEqualIID(riid,IID_IWbemLocator))
     {
         IWbemLocator* pIWbemLocator = NULL;
         pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
