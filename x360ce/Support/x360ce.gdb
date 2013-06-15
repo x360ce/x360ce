@@ -82,6 +82,10 @@ HookMask = 0x00000002
 Name = DmC - Devil May Cry
 HookMask = 0x00000002
 
+[ffxiv.exe]
+Name = Final Fantasy XIV: A Realm Reborn
+HookMask = 0x0000001E
+
 [FIFA.exe]
 Name = FIFA 11 and 12
 HookMask = 0x00000002
@@ -145,6 +149,10 @@ HookMask = 0x00000002
 [TheBaconing.exe]
 Name = The Baconing
 HookMask = 0x00000003
+
+[trine.exe]
+Name = Trine
+HookMask = 0x00000002
 
 [trine2_32bit.exe]
 Name = Trine 2
