@@ -126,6 +126,10 @@ HookMask=0x0000000E
 Name = Sleeping Dogs
 HookMask = 0x00000002
 
+[Magicka.exe]
+Name = Magicka
+HookMask = 0x00000002
+
 [RE6.exe]
 Name = Resident Evil 6
 HookMask = 0x00000002
