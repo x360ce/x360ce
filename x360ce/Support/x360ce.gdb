@@ -138,6 +138,14 @@ HookMask = 0x00000002
 Name = Resident Evil 6
 HookMask = 0x00000002
 
+[SaintsRowTheThird.exe]
+Name = Saints Row: The Third
+HookMask = 0x00000002
+
+[SaintsRowTheThird_DX11.exe]
+Name = Saints Row: The Third
+HookMask = 0x00000002
+
 [SR2_pc.exe]
 Name = Saints Row 2
 HookMask = 0x00000002
