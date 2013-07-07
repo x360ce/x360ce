@@ -132,8 +132,14 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
 
     if(FAILED(hr))
     {
+		Ini ini("x360ce.ini");
+		if (ini.GetBool("Options","Continue"))
+		{
+			device.passthrough = true;
+            return S_OK;
+		}
         PrintLog(LOG_CORE,"x360ce is misconfigured or device is disconnected");
-        int response = MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","x360ce - Error",MB_CANCELTRYCONTINUE|MB_ICONWARNING);
+        int response = MessageBoxA(NULL,"x360ce is misconfigured or device is disconnected","x360ce - Error",MB_CANCELTRYCONTINUE|MB_ICONWARNING|MB_SYSTEMMODAL);
         switch(response)
         {
         case IDCANCEL:
