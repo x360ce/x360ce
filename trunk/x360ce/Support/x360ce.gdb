@@ -7,11 +7,11 @@ Name = Assassin's Creed Brotherhood Multiplayer
 HookMask = 0x00000002
 
 [ACRSP.exe]
-Name = Assassin's Creed Brotherhood
+Name = Assassin's Creed Revelations
 HookMask = 0x00000002
 
 [ACRMP.exe]
-Name = Assassin's Creed Brotherhood Multiplayer
+Name = Assassin's Creed Revelations Multiplayer
 HookMask = 0x00000002
 
 [AC3SP.exe]
@@ -160,6 +160,10 @@ HookMask = 0x00000002
 
 [StreetFighterIV.exe]
 Name = Street Fighter IV
+HookMask = 0x00000002
+
+[SuperMeatBoy.exe]
+Name = Super Meat Boy
 HookMask = 0x00000002
 
 [TheBaconing.exe]
