@@ -182,6 +182,10 @@ HookMask = 0x00000002
 Name = Vessel
 HookMask = 0x00000002
 
+[WormsRevolution.exe]
+Name = Worms Revolution
+HookMask = 0x00000002
+
 [x360ce.exe]
 Name = x360ce.App
 HookMask = 0x80000000
