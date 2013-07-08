@@ -138,6 +138,10 @@ HookMask = 0x00000002
 Name = Mirrors Edge
 HookMask = 0x00000002
 
+[NFS13.exe]
+Name = Need For Speed Most Wanted 2012
+HookMask = 0x00000002
+
 [RE6.exe]
 Name = Resident Evil 6
 HookMask = 0x00000002
@@ -149,6 +153,10 @@ HookMask = 0x00000002
 [SaintsRowTheThird_DX11.exe]
 Name = Saints Row: The Third
 HookMask = 0x00000002
+
+[SBS.exe]
+Name = Slam Bolt Scrappers
+HookMask = 0x0000000E
 
 [SR2_pc.exe]
 Name = Saints Row 2
