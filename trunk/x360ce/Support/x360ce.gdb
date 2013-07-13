@@ -106,10 +106,6 @@ HookMask = 0x00000002
 Name = FlatOut Ultimate Carnage
 HookMask = 0x00000002
 
-[Game.exe]
-Name = Shank 2
-HookMask = 0x00000002
-
 [HAWX.exe]
 Name = Tom Clancy's H.A.W.X
 HookMask=0x0000000E
@@ -164,6 +160,10 @@ HookMask = 0x00000002
 
 [SFTK.exe]
 Name = Street Fighter X Tekken
+HookMask = 0x00000002
+
+[shank2.exe]
+Name = Shank 2
 HookMask = 0x00000002
 
 [SSFIV.exe]
