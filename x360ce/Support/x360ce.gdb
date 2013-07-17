@@ -134,6 +134,14 @@ HookMask = 0x00000002
 Name = Mirrors Edge
 HookMask = 0x00000002
 
+[MKHDGame.exe]
+Name = Mortal Kombat Arcade Kollection
+HookMask = 0x00000002
+
+[MKKE.exe]
+Name = Mortal Kombat Komplete Edition
+HookMask = 0x00000002
+
 [NFS13.exe]
 Name = Need For Speed Most Wanted 2012
 HookMask = 0x00000002
