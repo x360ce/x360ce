@@ -130,6 +130,10 @@ HookMask = 0x00000002
 Name = Magicka
 HookMask = 0x00000002
 
+[Game.exe]
+Name = Mark of the Ninja
+HookMask = 0x00000002
+
 [MirrorsEdge.exe]
 Name = Mirrors Edge
 HookMask = 0x00000002
