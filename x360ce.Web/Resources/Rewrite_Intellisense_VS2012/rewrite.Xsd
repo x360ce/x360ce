@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vs="http://schemas.microsoft.com/Visual-Studio-Intellisense" elementFormDefault="qualified" attributeFormDefault="unqualified" vs:helpNamespace="http://schemas.microsoft.com/.NetConfiguration/v2.0">
+  <xs:element name="rewrite" vs:help="configuration/system.webServer/rewrite">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="globalRules" vs:help="configuration/system.webServer/rewrite/globalRules">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="rule" vs:help="configuration/system.webServer/rewrite/globalRules/rule">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="match" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match">
+                      <xs:complexType>
+                        <xs:attribute name="url" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match/url">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:minLength value="1" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match/ignoreCase" />
+                        <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match/negate" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="conditions" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="trackAllCaptures" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/trackAllCaptures" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="serverVariables" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="set" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set/name" />
+                              <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set/value" />
+                              <xs:attribute name="replace" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set/replace" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="action" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/type">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="None" />
+                              <xs:enumeration value="Rewrite" />
+                              <xs:enumeration value="Redirect" />
+                              <xs:enumeration value="CustomResponse" />
+                              <xs:enumeration value="AbortRequest" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="url" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/url" />
+                        <xs:attribute name="appendQueryString" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/appendQueryString" />
+                        <xs:attribute name="redirectType" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/redirectType">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="Permanent" />
+                              <xs:enumeration value="Found" />
+                              <xs:enumeration value="SeeOther" />
+                              <xs:enumeration value="Temporary" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="statusCode" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/statusCode" />
+                        <xs:attribute name="subStatusCode" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/subStatusCode" />
+                        <xs:attribute name="statusReason" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/statusReason" />
+                        <xs:attribute name="statusDescription" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/statusDescription" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/globalRules/rule/name" />
+                  <xs:attribute name="enabled" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/enabled" />
+                  <xs:attribute name="patternSyntax" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/patternSyntax">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:NMTOKEN">
+                        <xs:enumeration value="ECMAScript" />
+                        <xs:enumeration value="Wildcard" />
+                        <xs:enumeration value="ExactMatch" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="stopProcessing" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/stopProcessing" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/globalRules/rule">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="match" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match">
+                      <xs:complexType>
+                        <xs:attribute name="url" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match/url">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:minLength value="1" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match/ignoreCase" />
+                        <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/match/negate" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="conditions" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="trackAllCaptures" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/conditions/trackAllCaptures" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="serverVariables" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="set" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set/name" />
+                              <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set/value" />
+                              <xs:attribute name="replace" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/serverVariables/set/replace" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="action" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/type">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="None" />
+                              <xs:enumeration value="Rewrite" />
+                              <xs:enumeration value="Redirect" />
+                              <xs:enumeration value="CustomResponse" />
+                              <xs:enumeration value="AbortRequest" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="url" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/url" />
+                        <xs:attribute name="appendQueryString" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/appendQueryString" />
+                        <xs:attribute name="redirectType" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/redirectType">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="Permanent" />
+                              <xs:enumeration value="Found" />
+                              <xs:enumeration value="SeeOther" />
+                              <xs:enumeration value="Temporary" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="statusCode" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/statusCode" />
+                        <xs:attribute name="subStatusCode" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/subStatusCode" />
+                        <xs:attribute name="statusReason" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/statusReason" />
+                        <xs:attribute name="statusDescription" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/globalRules/rule/action/statusDescription" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/globalRules/rule/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/globalRules/rule" />
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="allowedServerVariables" vs:help="configuration/system.webServer/rewrite/allowedServerVariables">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="add" vs:help="configuration/system.webServer/rewrite/allowedServerVariables/add">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/allowedServerVariables/add/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/allowedServerVariables/add">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/allowedServerVariables/add/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/allowedServerVariables/add" />
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="rules" vs:help="configuration/system.webServer/rewrite/rules">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="rule" vs:help="configuration/system.webServer/rewrite/rules/rule">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="match" vs:help="configuration/system.webServer/rewrite/rules/rule/match">
+                      <xs:complexType>
+                        <xs:attribute name="url" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/match/url">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:minLength value="1" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/match/ignoreCase" />
+                        <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/match/negate" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="conditions" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                    <xs:enumeration value="IsFile" />
+                                    <xs:enumeration value="IsDirectory" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="trackAllCaptures" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/trackAllCaptures" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="serverVariables" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="set" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set/name" />
+                              <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set/value" />
+                              <xs:attribute name="replace" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set/replace" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="action" vs:help="configuration/system.webServer/rewrite/rules/rule/action">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/type">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="None" />
+                              <xs:enumeration value="Rewrite" />
+                              <xs:enumeration value="Redirect" />
+                              <xs:enumeration value="CustomResponse" />
+                              <xs:enumeration value="AbortRequest" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="url" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/url" />
+                        <xs:attribute name="appendQueryString" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/appendQueryString" />
+                        <xs:attribute name="logRewrittenUrl" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/logRewrittenUrl" />
+                        <xs:attribute name="redirectType" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/redirectType">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="Permanent" />
+                              <xs:enumeration value="Found" />
+                              <xs:enumeration value="SeeOther" />
+                              <xs:enumeration value="Temporary" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="statusCode" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/statusCode" />
+                        <xs:attribute name="subStatusCode" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/subStatusCode" />
+                        <xs:attribute name="statusReason" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/statusReason" />
+                        <xs:attribute name="statusDescription" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/statusDescription" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rules/rule/name" />
+                  <xs:attribute name="enabled" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/enabled" />
+                  <xs:attribute name="patternSyntax" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/patternSyntax">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:NMTOKEN">
+                        <xs:enumeration value="ECMAScript" />
+                        <xs:enumeration value="Wildcard" />
+                        <xs:enumeration value="ExactMatch" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="stopProcessing" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/stopProcessing" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/rules/rule">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="match" vs:help="configuration/system.webServer/rewrite/rules/rule/match">
+                      <xs:complexType>
+                        <xs:attribute name="url" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/match/url">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:minLength value="1" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/match/ignoreCase" />
+                        <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/match/negate" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="conditions" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                    <xs:enumeration value="IsFile" />
+                                    <xs:enumeration value="IsDirectory" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="trackAllCaptures" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/conditions/trackAllCaptures" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="serverVariables" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="set" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set/name" />
+                              <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set/value" />
+                              <xs:attribute name="replace" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/serverVariables/set/replace" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="action" vs:help="configuration/system.webServer/rewrite/rules/rule/action">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/type">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="None" />
+                              <xs:enumeration value="Rewrite" />
+                              <xs:enumeration value="Redirect" />
+                              <xs:enumeration value="CustomResponse" />
+                              <xs:enumeration value="AbortRequest" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="url" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/url" />
+                        <xs:attribute name="appendQueryString" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/appendQueryString" />
+                        <xs:attribute name="logRewrittenUrl" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/logRewrittenUrl" />
+                        <xs:attribute name="redirectType" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/redirectType">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="Permanent" />
+                              <xs:enumeration value="Found" />
+                              <xs:enumeration value="SeeOther" />
+                              <xs:enumeration value="Temporary" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="statusCode" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/statusCode" />
+                        <xs:attribute name="subStatusCode" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/subStatusCode" />
+                        <xs:attribute name="statusReason" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/statusReason" />
+                        <xs:attribute name="statusDescription" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rules/rule/action/statusDescription" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rules/rule/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/rules/rule" />
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="outboundRules" vs:help="configuration/system.webServer/rewrite/outboundRules">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="customTags" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="tags" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="tag" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag">
+                            <xs:complexType>
+                              <xs:attribute name="name" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/name">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="attribute" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/attribute">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag">
+                            <xs:complexType>
+                              <xs:attribute name="name" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/name">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="attribute" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/attribute">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag" />
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/name" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="tag" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag">
+                            <xs:complexType>
+                              <xs:attribute name="name" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/name">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="attribute" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/attribute">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag">
+                            <xs:complexType>
+                              <xs:attribute name="name" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/name">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="attribute" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag/attribute">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/tag" />
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags/name" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/outboundRules/customTags/tags" />
+                  </xs:choice>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="preConditions" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="preCondition" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/name" />
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="patternSyntax" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/patternSyntax">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="ECMAScript" />
+                              <xs:enumeration value="Wildcard" />
+                              <xs:enumeration value="ExactMatch" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition/name" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/outboundRules/preConditions/preCondition" />
+                  </xs:choice>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="rule" vs:help="configuration/system.webServer/rewrite/outboundRules/rule">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="match" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match">
+                      <xs:complexType>
+                        <xs:attribute name="filterByTags" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/filterByTags">
+                          <xs:simpleType>
+                            <xs:union>
+                              <xs:simpleType>
+                                <xs:restriction base="xs:NMTOKEN">
+                                  <xs:enumeration value="None" />
+                                  <xs:enumeration value="A" />
+                                  <xs:enumeration value="Area" />
+                                  <xs:enumeration value="Base" />
+                                  <xs:enumeration value="Form" />
+                                  <xs:enumeration value="Frame" />
+                                  <xs:enumeration value="Head" />
+                                  <xs:enumeration value="IFrame" />
+                                  <xs:enumeration value="Img" />
+                                  <xs:enumeration value="Input" />
+                                  <xs:enumeration value="Link" />
+                                  <xs:enumeration value="Script" />
+                                  <xs:enumeration value="CustomTags" />
+                                </xs:restriction>
+                              </xs:simpleType>
+                              <xs:simpleType>
+                                <xs:restriction base="xs:string" />
+                              </xs:simpleType>
+                            </xs:union>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="customTags" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/customTags" />
+                        <xs:attribute name="serverVariable" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/serverVariable" />
+                        <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/pattern" />
+                        <xs:attribute name="occurrences" type="xs:int" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/occurrences" />
+                        <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/ignoreCase" />
+                        <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/negate" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="conditions" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="trackAllCaptures" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/trackAllCaptures" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="action" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action/type">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="None" />
+                              <xs:enumeration value="Rewrite" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action/value" />
+                        <xs:attribute name="replace" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action/replace" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/name" />
+                  <xs:attribute name="preCondition" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/preCondition" />
+                  <xs:attribute name="enabled" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/enabled" />
+                  <xs:attribute name="patternSyntax" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/patternSyntax">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:NMTOKEN">
+                        <xs:enumeration value="ECMAScript" />
+                        <xs:enumeration value="Wildcard" />
+                        <xs:enumeration value="ExactMatch" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="stopProcessing" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/stopProcessing" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/outboundRules/rule">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="match" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match">
+                      <xs:complexType>
+                        <xs:attribute name="filterByTags" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/filterByTags">
+                          <xs:simpleType>
+                            <xs:union>
+                              <xs:simpleType>
+                                <xs:restriction base="xs:NMTOKEN">
+                                  <xs:enumeration value="None" />
+                                  <xs:enumeration value="A" />
+                                  <xs:enumeration value="Area" />
+                                  <xs:enumeration value="Base" />
+                                  <xs:enumeration value="Form" />
+                                  <xs:enumeration value="Frame" />
+                                  <xs:enumeration value="Head" />
+                                  <xs:enumeration value="IFrame" />
+                                  <xs:enumeration value="Img" />
+                                  <xs:enumeration value="Input" />
+                                  <xs:enumeration value="Link" />
+                                  <xs:enumeration value="Script" />
+                                  <xs:enumeration value="CustomTags" />
+                                </xs:restriction>
+                              </xs:simpleType>
+                              <xs:simpleType>
+                                <xs:restriction base="xs:string" />
+                              </xs:simpleType>
+                            </xs:union>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="customTags" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/customTags" />
+                        <xs:attribute name="serverVariable" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/serverVariable" />
+                        <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/pattern" />
+                        <xs:attribute name="occurrences" type="xs:int" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/occurrences" />
+                        <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/ignoreCase" />
+                        <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/match/negate" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="conditions" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add">
+                            <xs:complexType>
+                              <xs:attribute name="input" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/input" />
+                              <xs:attribute name="matchType" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/matchType">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:NMTOKEN">
+                                    <xs:enumeration value="Pattern" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="pattern" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/pattern" />
+                              <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/ignoreCase" />
+                              <xs:attribute name="negate" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/add/negate" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:choice>
+                        <xs:attribute name="logicalGrouping" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/logicalGrouping">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="MatchAll" />
+                              <xs:enumeration value="MatchAny" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="trackAllCaptures" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/conditions/trackAllCaptures" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="action" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action/type">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:NMTOKEN">
+                              <xs:enumeration value="None" />
+                              <xs:enumeration value="Rewrite" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action/value" />
+                        <xs:attribute name="replace" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/action/replace" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/outboundRules/rule/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/outboundRules/rule" />
+            </xs:choice>
+            <xs:attribute name="rewriteBeforeCache" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/outboundRules/rewriteBeforeCache" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="providers" vs:help="configuration/system.webServer/rewrite/providers">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="provider" vs:help="configuration/system.webServer/rewrite/providers/provider">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="settings" vs:help="configuration/system.webServer/rewrite/providers/provider/settings">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add">
+                            <xs:complexType>
+                              <xs:attribute name="key" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/key">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/value" />
+                              <xs:attribute name="encryptedValue" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/encryptedValue" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add">
+                            <xs:complexType>
+                              <xs:attribute name="key" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/key">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add"/>
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/name" />
+                  <xs:attribute name="type" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/type" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/providers/provider">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="settings" vs:help="configuration/system.webServer/rewrite/providers/provider/settings">
+                      <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="add" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add">
+                            <xs:complexType>
+                              <xs:attribute name="key" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/key">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                              <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/value" />
+                              <xs:attribute name="encryptedValue" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/encryptedValue" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add">
+                            <xs:complexType>
+                              <xs:attribute name="key" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add/key">
+                                <xs:simpleType>
+                                  <xs:restriction base="xs:string">
+                                    <xs:minLength value="1" />
+                                  </xs:restriction>
+                                </xs:simpleType>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/providers/provider/settings/add" />
+                        </xs:choice>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/providers/provider/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/providers/provider" />
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="rewriteMaps" vs:help="configuration/system.webServer/rewrite/rewriteMaps">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="rewriteMap" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="add" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add">
+                      <xs:complexType>
+                        <xs:attribute name="key" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add/key" />
+                        <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add/value" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add">
+                      <xs:complexType>
+                        <xs:attribute name="key" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add/key" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add" />
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/name" />
+                  <xs:attribute name="defaultValue" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/defaultValue" />
+                  <xs:attribute name="ignoreCase" type="small_boolean_Type" use="optional" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/ignoreCase" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap">
+                <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="add" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add">
+                      <xs:complexType>
+                        <xs:attribute name="key" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add/key" />
+                        <xs:attribute name="value" type="xs:string" use="optional" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add/value" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="remove" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add">
+                      <xs:complexType>
+                        <xs:attribute name="key" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add/key" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/add" />
+                  </xs:choice>
+                  <xs:attribute name="name" type="xs:string" use="required" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap/name" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="clear" vs:help="configuration/system.webServer/rewrite/rewriteMaps/rewriteMap" />
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
