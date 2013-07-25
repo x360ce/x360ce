@@ -428,7 +428,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="57" >
+			<Diagram Name="x360ceModel" ZoomLevel="40" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
