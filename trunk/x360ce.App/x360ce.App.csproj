@@ -425,6 +425,7 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <Content Include="Documents\HowToBuild.txt" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <None Include="Resources\SharpDX\SharpDX.DirectInput.xml" />
