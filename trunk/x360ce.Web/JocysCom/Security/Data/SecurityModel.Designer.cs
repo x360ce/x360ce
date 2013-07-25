@@ -19,10 +19,10 @@ using System.Xml.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__Appli__477199F1", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.Application), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.Membership), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.Application), "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.Role), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Us__Appli__373B3228", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.Application), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.User), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.User), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(JocysCom.WebSites.Engine.Security.Data.Membership), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.Application), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.Membership), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.Application), "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.Role), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Us__Appli__7C6F7215", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.Application), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.User), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__UserI__0D99FE17", "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.WebSites.Engine.Security.Data.User), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(JocysCom.WebSites.Engine.Security.Data.Membership), true)]
 [assembly: EdmRelationshipAttribute("SecurityModel", "aspnet_UsersInRoles", "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.Role), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.WebSites.Engine.Security.Data.User))]
 
 #endregion
@@ -346,18 +346,18 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__Appli__477199F1", "aspnet_Membership")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Membership")]
         public EntityCollection<Membership> Memberships
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Membership>("SecurityModel.FK__aspnet_Me__Appli__477199F1", "aspnet_Membership");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Membership>("SecurityModel.FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Membership");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Membership>("SecurityModel.FK__aspnet_Me__Appli__477199F1", "aspnet_Membership", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Membership>("SecurityModel.FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Membership", value);
                 }
             }
         }
@@ -368,18 +368,18 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Roles")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Roles")]
         public EntityCollection<Role> Roles
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Role>("SecurityModel.FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Roles");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Role>("SecurityModel.FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Roles");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("SecurityModel.FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Roles", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Role>("SecurityModel.FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Roles", value);
                 }
             }
         }
@@ -390,18 +390,18 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Us__Appli__373B3228", "aspnet_Users")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Us__Appli__7C6F7215", "aspnet_Users")]
         public EntityCollection<User> Users
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<User>("SecurityModel.FK__aspnet_Us__Appli__373B3228", "aspnet_Users");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<User>("SecurityModel.FK__aspnet_Us__Appli__7C6F7215", "aspnet_Users");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<User>("SecurityModel.FK__aspnet_Us__Appli__373B3228", "aspnet_Users", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<User>("SecurityModel.FK__aspnet_Us__Appli__7C6F7215", "aspnet_Users", value);
                 }
             }
         }
@@ -981,16 +981,16 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__Appli__477199F1", "aspnet_Applications")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Applications")]
         public Application Application
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__477199F1", "aspnet_Applications").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Applications").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__477199F1", "aspnet_Applications").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Applications").Value = value;
             }
         }
         /// <summary>
@@ -1002,13 +1002,13 @@ namespace JocysCom.WebSites.Engine.Security.Data
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__477199F1", "aspnet_Applications");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Applications");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__477199F1", "aspnet_Applications", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Application>("SecurityModel.FK__aspnet_Me__Appli__0CA5D9DE", "aspnet_Applications", value);
                 }
             }
         }
@@ -1019,16 +1019,16 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__UserI__0D99FE17", "aspnet_Users")]
         public User User
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Users").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Users").Value = value;
             }
         }
         /// <summary>
@@ -1040,13 +1040,13 @@ namespace JocysCom.WebSites.Engine.Security.Data
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Users");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Users", value);
                 }
             }
         }
@@ -1220,16 +1220,16 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Applications")]
         public Application Application
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Applications").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Applications").Value = value;
             }
         }
         /// <summary>
@@ -1241,13 +1241,13 @@ namespace JocysCom.WebSites.Engine.Security.Data
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Applications");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Application>("SecurityModel.FK__aspnet_Ro__Appli__21A0F6C4", "aspnet_Applications", value);
                 }
             }
         }
@@ -1735,16 +1735,16 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Us__Appli__373B3228", "aspnet_Applications")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Us__Appli__7C6F7215", "aspnet_Applications")]
         public Application Application
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__373B3228", "aspnet_Applications").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__7C6F7215", "aspnet_Applications").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__373B3228", "aspnet_Applications").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__7C6F7215", "aspnet_Applications").Value = value;
             }
         }
         /// <summary>
@@ -1756,13 +1756,13 @@ namespace JocysCom.WebSites.Engine.Security.Data
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__373B3228", "aspnet_Applications");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__7C6F7215", "aspnet_Applications");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__373B3228", "aspnet_Applications", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Application>("SecurityModel.FK__aspnet_Us__Appli__7C6F7215", "aspnet_Applications", value);
                 }
             }
         }
@@ -1773,16 +1773,16 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__UserI__4865BE2A", "aspnet_Membership")]
+        [EdmRelationshipNavigationPropertyAttribute("SecurityModel", "FK__aspnet_Me__UserI__0D99FE17", "aspnet_Membership")]
         public Membership Membership
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Membership").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Membership").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Membership").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Membership").Value = value;
             }
         }
         /// <summary>
@@ -1794,13 +1794,13 @@ namespace JocysCom.WebSites.Engine.Security.Data
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Membership");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Membership");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__4865BE2A", "aspnet_Membership", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Membership>("SecurityModel.FK__aspnet_Me__UserI__0D99FE17", "aspnet_Membership", value);
                 }
             }
         }
