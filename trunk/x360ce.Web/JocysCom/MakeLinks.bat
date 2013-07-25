@@ -11,9 +11,13 @@ SET upr=d:\Projects\Jocys.com\WebSites\Engine
 CALL:MKL Common\LinkItem.cs
 CALL:MKL Common\ItemType.cs
 CALL:MKL Common\GuidValueAttribute.cs
+CALL:MKL Common\GuidEnum.cs
+CALL:MKL Common\DataContextFactoryT.cs
 CALL:MKL Security\BuildInRoles.cs
 CALL:MKL Security\BuiltInUsers.cs
 CALL:MKL Security\Check.cs
+CALL:MKL Security\RoleQueryName.cs
+CALL:MKL Security\UserQueryName.cs
 CALL:MKL Security\Data\Role.cs
 CALL:MKL Security\Data\SecurityEntities.cs
 CALL:MKL Security\Data\SecurityModel.edmx

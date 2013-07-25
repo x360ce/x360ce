@@ -120,6 +120,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
+    <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
@@ -136,6 +138,8 @@
       <DependentUpon>SecurityModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="JocysCom\Security\RoleQueryName.cs" />
+    <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebServices\x360ce.asmx.cs">
       <DependentUpon>x360ce.asmx</DependentUpon>
