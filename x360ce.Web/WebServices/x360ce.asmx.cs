@@ -116,7 +116,7 @@ namespace x360ce.Web.WebServices
 		{
 			var sr = new SearchResult();
 			var db = new Data.x360ceModelContainer();
-			// All instances of user.
+			// All instances of the user.
 			var instances = args.Where(x => x.InstanceGuid != Guid.Empty).Select(x => x.InstanceGuid).Distinct().ToArray();
 			if (instances.Length == 0)
 			{
