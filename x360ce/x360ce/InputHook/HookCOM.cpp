@@ -82,17 +82,17 @@ typedef HRESULT ( STDMETHODCALLTYPE *Get_t )(
     /* [unique][in][out] */ CIMTYPE *pType,
     /* [unique][in][out] */ long *plFlavor);
 
-static ConnectServer_t hConnectServer = NULL;
-static CreateInstanceEnum_t hCreateInstanceEnum = NULL;
-static Next_t hNext = NULL;
-static Get_t hGet = NULL;
+ConnectServer_t hConnectServer = NULL;
+CreateInstanceEnum_t hCreateInstanceEnum = NULL;
+Next_t hNext = NULL;
+Get_t hGet = NULL;
 
-static CoUninitialize_t oCoUninitialize = NULL;
-static CoCreateInstance_t oCoCreateInstance = NULL;
-static ConnectServer_t oConnectServer = NULL;
-static CreateInstanceEnum_t oCreateInstanceEnum = NULL;
-static Next_t oNext = NULL;
-static Get_t oGet = NULL;
+CoUninitialize_t oCoUninitialize = NULL;
+CoCreateInstance_t oCoCreateInstance = NULL;
+ConnectServer_t oConnectServer = NULL;
+CreateInstanceEnum_t oCreateInstanceEnum = NULL;
+Next_t oNext = NULL;
+Get_t oGet = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,23 +130,22 @@ HRESULT STDMETHODCALLTYPE HookGet(
         if(!strPid || swscanf_s( strPid, L"PID_%4X", &dwPid ) < 1 )
             return hr;
 
-        for(WORD i = 0; i < iHookThis->GetHookCount(); i++)
+		for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && padconf.GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
+            if(padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
                 OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB\\" );
                 OLECHAR tempstr[MAX_PATH];
 
-                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductPIDVID());
-                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padconf.GetProductPIDVID());
+                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
+                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
 
                 if(strUSB)
                 {
                     PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
-                    swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+                    swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
                     SysReAllocString(&pVal->bstrVal,tempstr);
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     continue;
@@ -159,7 +158,7 @@ HRESULT STDMETHODCALLTYPE HookGet(
                     PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
-                    swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+                    swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
                     SysReAllocString(&pVal->bstrVal,tempstr);
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     continue;

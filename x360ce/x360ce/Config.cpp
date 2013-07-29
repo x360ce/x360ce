@@ -230,13 +230,14 @@ void ReadPadConfig(DWORD dwUserIndex, Ini &ini)
     //store value as section name
     strcpy_s(section,strBuf.c_str());
 
-    device.dwUserIndex = dwUserIndex;
+    device.dwUserIndex = ini.GetDword(section, "UserIndex", (uint32_t)-1);
+    if(device.dwUserIndex == (uint32_t)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
 
     strBuf = ini.GetString(section, "ProductGUID");
-    StringToGUID(strBuf.c_str(),device.productid);
+    StringToGUID(device.productid,strBuf.c_str());
 
     strBuf = ini.GetString(section, "InstanceGUID");
-    StringToGUID(strBuf.c_str(),device.instanceid);
+    StringToGUID(device.instanceid,strBuf.c_str());
 
     device.useproduct = ini.GetBool(section, "UseProductGUID");
     device.passthrough = ini.GetBool(section, "PassThrough",1);

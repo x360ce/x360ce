@@ -28,10 +28,11 @@
 class iHookDevice
 {
 public:
-    iHookDevice(GUID productid, GUID instanceid)
+    iHookDevice(DWORD userindex, GUID productid, GUID instanceid)
         :m_enabled(true)
         ,m_productid(productid)
         ,m_instanceid(instanceid)
+		,m_userindex(userindex)
     {}
     virtual ~iHookDevice() {};
 
@@ -65,10 +66,16 @@ public:
         return m_productid.Data1;
     }
 
+	inline DWORD GetUserIndex()
+	{
+		return m_userindex;
+	}
+
 private:
     bool  m_enabled;
     GUID  m_productid;
     GUID  m_instanceid;
+	DWORD m_userindex;
 };
 
 class iHook
@@ -106,6 +113,14 @@ public:
     static const DWORD HOOK_WT          = 0x01000000;
     static const DWORD HOOK_STOP        = 0x02000000;
     static const DWORD HOOK_DISABLE     = 0x80000000;
+
+	typedef std::vector<iHookDevice>::iterator iterator;
+    typedef std::vector<iHookDevice>::const_iterator const_iterator;
+
+    iterator begin() { return m_devices.begin(); }
+    const_iterator cbegin() const { return m_devices.cbegin(); }
+    iterator end() { return m_devices.end(); }
+    const_iterator cend() const { return m_devices.cend(); }
 
     inline void Enable()
     {
@@ -153,26 +168,21 @@ public:
         return m_fakepidvid;
     }
 
-    inline size_t GetHookCount()
-    {
-        return m_devices.size();
-    }
-
     inline iHookDevice& GetPadConfig(const DWORD dwUserIndex)
     {
-        return m_devices[dwUserIndex];
+        return m_devices.at(dwUserIndex);
     }
 
 #if _MSC_VER < 1700
-    inline void AddHook(GUID& productid, GUID& instanceid)
+    inline void AddHook(DWORD userindex, GUID productid, GUID instanceid)
     {
-        iHookDevice hdevice(productid,instanceid);
+        iHookDevice hdevice(userindex, productid, instanceid);
         m_devices.push_back(hdevice);
     }
 #else
-    inline void AddHook(GUID& productid, GUID& instanceid)
+    inline void AddHook(DWORD userindex, GUID productid, GUID instanceid)
     {
-        m_devices.emplace_back(productid,instanceid);
+        m_devices.emplace_back(userindex, productid, instanceid);
     }
 #endif
 
@@ -183,7 +193,11 @@ public:
 
     inline void ExecuteHooks()
     {
-        if(!GetState()) return;
+        if(!GetState()) 
+        {
+            m_devices.clear();
+            return;
+        }
 
         Mutex().Lock();
 

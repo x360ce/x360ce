@@ -19,6 +19,7 @@
 
 // Windows Header Files:
 #include <windows.h>
+#include <tchar.h>
 #include <Shlwapi.h>
 #include <xinput.h>
 #include <dinput.h>

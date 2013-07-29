@@ -66,21 +66,20 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
         if(!strPid || swscanf_s( strPid, L"PID_%4X", &dwPid ) < 1 )
             return ret;
 
-        for(WORD i = 0; i < iHookThis->GetHookCount(); i++)
+		for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && padconf.GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
+            if(padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
                 wchar_t* strUSB = wcsstr( DeviceInstanceId, L"USB\\" );
                 wchar_t tempstr[MAX_PATH];
 
-                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padconf.GetProductPIDVID());
-                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padconf.GetProductPIDVID());
+                DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
+                DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
 
                 if(strUSB)
                 {
                     wchar_t* p = wcsrchr(DeviceInstanceId,L'\\');
-                    swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+                    swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
 
                     if(DeviceInstanceIdSize < wcslen(tempstr))
                     {
@@ -106,7 +105,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
                 if(strHID)
                 {
                     wchar_t* p = wcsrchr(DeviceInstanceId,L'\\');
-                    swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid,i, p );
+                    swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
 
                     if(DeviceInstanceIdSize < wcslen(tempstr))
                     {
