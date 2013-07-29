@@ -179,7 +179,11 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
         hr = InitDirectInput(hMsgWnd,device);
         if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
 
-        if(SUCCEEDED(hr)) PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
+        if(SUCCEEDED(hr)) 
+        {
+            PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
+            if(g_bInitBeep) MessageBeep(MB_OK);
+        }
     }
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
@@ -192,15 +196,6 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 #endif
 
     if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
-
-    // eliminate false init beeps
-    static int loop = 0;
-    if(g_bInitBeep) ++loop;
-    if(g_bInitBeep && loop > 10)
-    {
-        MessageBeep(MB_OK);
-        g_bInitBeep = false;
-    }
 
     Mapping& mapping = g_Mappings[dwUserIndex];
     XINPUT_STATE& xstate = *pState;
