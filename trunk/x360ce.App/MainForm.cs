@@ -30,13 +30,6 @@ namespace x360ce.App
 
         public static MainForm Current { get; set; }
 
-        string dllFile0 = "xinput9_1_0.dll";
-        string dllFile1 = "xinput1_1.dll";
-        string dllFile2 = "xinput1_2.dll";
-        string dllFile3 = "xinput1_3.dll";
-        // Will be set to default values.
-        string dllFile;
-
         public int oldIndex;
 
         public int ControllerIndex
@@ -111,12 +104,6 @@ namespace x360ce.App
             // Set status.
             StatusSaveLabel.Visible = false;
             StatusEventsLabel.Visible = false;
-            // Set default cXinputFile.
-            if (System.IO.File.Exists(dllFile3)) dllFile = dllFile3;
-            else if (System.IO.File.Exists(dllFile2)) dllFile = dllFile2;
-            else if (System.IO.File.Exists(dllFile1)) dllFile = dllFile1;
-            else if (System.IO.File.Exists(dllFile0)) dllFile = dllFile0;
-            else dllFile = dllFile3;
             // Load Tab pages.
             ControlPages = new TabPage[4];
             ControlPages[0] = Pad1TabPage;
@@ -130,7 +117,7 @@ namespace x360ce.App
             BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
             foreach (var item in ControlPages) item.ImageKey = "bullet_square_glass_grey.png";
             // Hide status values.
-            StatusDllLabel.Text = dllFile;
+            StatusDllLabel.Text = "";
             MainStatusStrip.Visible = false;
             // Check if ini and dll is on disk.
             if (!CheckFiles(true)) return;
@@ -424,7 +411,10 @@ namespace x360ce.App
                         }
 
                     }
-                    XInput.FreeLibrary();
+                    BeginInvoke((MethodInvoker)delegate()
+                    {
+                        XInput.FreeLibrary();    
+                    });
                 }
                 System.Threading.Thread.Sleep(100);
             }
@@ -647,18 +637,18 @@ namespace x360ce.App
 
 
 
-        Version _dllVersion;
-        Version dllVersion
-        {
-            get
-            {
-                if (_dllVersion != null) return _dllVersion;
-                bool byMicrosoft;
-                _dllVersion = GetDllVersion(dllFile, out byMicrosoft);
-                return _dllVersion;
-            }
-            set { _dllVersion = value; }
-        }
+        //Version _dllVersion;
+        //Version dllVersion
+        //{
+        //    get
+        //    {
+        //        if (_dllVersion != null) return _dllVersion;
+        //        bool byMicrosoft;
+        //        _dllVersion = GetDllVersion(dllFile, out byMicrosoft);
+        //        return _dllVersion;
+        //    }
+        //    set { _dllVersion = value; }
+        //}
 
 
         Version GetDllVersion(string fileName, out bool byMicrosoft)
@@ -674,40 +664,16 @@ namespace x360ce.App
             return new Version(0, 0, 0, 0);
         }
 
-        Version GetEmbeddedDllVersion()
-        {
-            // There must be an easier way to check embeded non managed dll version.
-            var assembly = Assembly.GetExecutingAssembly();
-            var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + dllFile3);
-            string tempPath = Path.GetTempPath();
-            FileStream sw = null;
-            var tempFile = Path.Combine(Path.GetTempPath(), dllFile);
-            sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
-            var buffer = new byte[1024];
-            while (true)
-            {
-                var count = sr.Read(buffer, 0, buffer.Length);
-                if (count == 0) break;
-                sw.Write(buffer, 0, count);
-            }
-            sr.Close();
-            sw.Close();
-            var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tempFile);
-            var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-            System.IO.File.Delete(tempFile);
-            return v;
-        }
-
         public void ReloadLibrary()
         {
             Program.ReloadCount++;
             settingsChanged = false;
-            var dllInfo = new System.IO.FileInfo(dllFile);
-            if (dllInfo.Exists)
+            var dllInfo = Helper.GetDefaultDll();
+            if (dllInfo != null && dllInfo.Exists)
             {
                 bool byMicrosoft;
-                dllVersion = GetDllVersion(dllInfo.FullName, out byMicrosoft);
-                StatusDllLabel.Text = dllFile + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
+                var dllVersion = GetDllVersion(dllInfo.FullName, out byMicrosoft);
+                StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
                 // If fast reload od settings is supported then...
                 lock (XInputLock)
                 {
@@ -716,15 +682,19 @@ namespace x360ce.App
                         XInput.Reset();
                     }
                     // Slow: Reload whole x360ce.dll.
-                    XInput.ReLoadLibrary(dllFile);
+                    XInput.ReLoadLibrary(dllInfo.Name);
                     if (!XInput.IsLoaded)
                     {
-                        var msg = string.Format("Failed to load '{0}'", dllFile);
+                        var msg = string.Format("Failed to load '{0}'", dllInfo.Name);
                         var form = new MessageBoxForm();
                         form.StartPosition = FormStartPosition.CenterParent;
                         form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+            }
+            else
+            {
+                StatusDllLabel.Text = "";
             }
         }
 
@@ -813,24 +783,29 @@ namespace x360ce.App
 
         bool CheckFiles(bool createIfNotExist)
         {
-
             if (createIfNotExist)
             {
                 // If ini file doesn't exists.
                 if (!System.IO.File.Exists(SettingManager.IniFileName))
                 {
-                    if (!CreateFile(SettingManager.IniFileName, null)) return false;
+                    if (!CreateFile(SettingManager.IniFileName)) return false;
                 }
                 // If xinput file doesn't exists.
-                var embeddedDllVersion = GetEmbeddedDllVersion();
-                if (!System.IO.File.Exists(dllFile))
+                var embeddedDllVersion = Helper.GetEmbeddedDllVersion();
+                var file = Helper.GetDefaultDll();
+                if (file == null)
                 {
-                    if (!CreateFile(dllFile, null)) return false;
+                    if (!CreateFile(Helper.dllFile3)) return false;
                 }
-                else if (dllVersion < embeddedDllVersion)
+                else
                 {
-                    CreateFile(dllFile, embeddedDllVersion);
-                    return true;
+                    bool byMicrosoft;
+                    var dllVersion = GetDllVersion(file.Name, out byMicrosoft);
+                    if (dllVersion < embeddedDllVersion)
+                    {
+                        CreateFile(Helper.dllFile3, file.Name, dllVersion,  embeddedDllVersion);
+                        return true;
+                    }
                 }
             }
             // Can't run witout ini.
@@ -911,33 +886,34 @@ namespace x360ce.App
             return true;
         }
 
-        bool CreateFile(string fileName, Version newVersion)
+        public bool CreateFile(string sourceFileName, string destinationFileName = null, Version dllVersion = null, Version newVersion = null)
         {
+            if (destinationFileName == null) destinationFileName = sourceFileName;
             DialogResult answer;
             var form = new MessageBoxForm();
             form.StartPosition = FormStartPosition.CenterParent;
             if (newVersion == null)
             {
                 answer = form.ShowForm(
-                    string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(fileName).FullName),
-                    string.Format("'{0}' was not found.", fileName),
+                    string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", new System.IO.FileInfo(destinationFileName).FullName),
+                    string.Format("'{0}' was not found.", destinationFileName),
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             }
             else
             {
                 answer = form.ShowForm(
-                    string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", new System.IO.FileInfo(fileName).FullName, dllVersion, newVersion),
-                    string.Format("New version of '{0}' file is available.", fileName),
+                    string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", new System.IO.FileInfo(destinationFileName).FullName, dllVersion, newVersion),
+                    string.Format("New version of '{0}' file is available.", destinationFileName),
                     MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             }
             if (answer == DialogResult.Yes)
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + fileName);
+                var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + sourceFileName);
                 FileStream sw = null;
                 try
                 {
-                    sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                    sw = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write);
                 }
                 catch (Exception)
                 {
@@ -1003,18 +979,6 @@ namespace x360ce.App
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
-        }
-
-        void CreateDllFile(bool create, string file)
-        {
-            if (create)
-            {
-                if (!System.IO.File.Exists(file)) System.IO.File.Copy(dllFile, file, true);
-            }
-            else
-            {
-                if (System.IO.File.Exists(file)) System.IO.File.Delete(file);
-            }
         }
 
         #region Allow only one copy of Application at a time
