@@ -92,7 +92,7 @@ inline static DWORD flipLong(DWORD l)
     return (((DWORD)flipShort((WORD)l))<<16) | flipShort((WORD)(l>>16));
 }
 
-inline void StringToGUID(LPCSTR szBuf, GUID& id)
+inline void StringToGUID(GUID& id, LPCSTR szBuf)
 {
     if(!szBuf) return;
 
@@ -115,7 +115,7 @@ inline void StringToGUID(LPCSTR szBuf, GUID& id)
     return;
 }
 
-inline void StringToGUID(LPCWSTR szBuf, GUID& id)
+inline void StringToGUID(GUID& id, LPCWSTR szBuf)
 {
     if(!szBuf) return;
 

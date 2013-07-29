@@ -27,57 +27,78 @@ HINSTANCE hDInput = NULL;
 
 void LoadXinputDLL()
 {
-    char* buffer = new char[MAX_PATH];
-    GetModuleFileNameA(hThis, buffer, MAX_PATH);
-    PathRemoveFileSpecA(buffer);
-    PathAddBackslashA(buffer);
-    std::string path(buffer);
-    delete [] buffer;
+	LPVOID pReset = NULL;
+    LPTSTR pFile = NULL;
 
-    hXInput = LoadLibraryA((path + "xinput1_4.dll").c_str());
-    LPVOID hReset = GetProcAddress(hXInput,"reset");
-    if(!hReset) FreeLibrary(hXInput);
+    TCHAR path[MAX_PATH];
+	TCHAR buffer[MAX_PATH];
+    GetModuleFileName(hThis, path, MAX_PATH);
+    PathRemoveFileSpec(path);
+    PathAddBackslash(path);
 
-    hXInput = LoadLibraryA((path + "xinput1_3.dll").c_str());
-    hReset = GetProcAddress(hXInput,"reset");
-    if(!hReset) FreeLibrary(hXInput);
-
-    hXInput = LoadLibraryA((path + "xinput1_2.dll").c_str());
-    hReset = GetProcAddress(hXInput,"reset");
-    if(!hReset) FreeLibrary(hXInput);
-
-    hXInput = LoadLibraryA((path + "xinput1_1.dll").c_str());
-    hReset = GetProcAddress(hXInput,"reset");
-    if(!hReset) FreeLibrary(hXInput);
-
-    hXInput = LoadLibraryA((path + "xinput9_1_0.dll").c_str());
-    hReset = GetProcAddress(hXInput,"reset");
-    if(!hReset) FreeLibrary(hXInput);
-
-    if(!hReset)
+	pFile = PathCombine(buffer,path,_T("xinput1_4.dll")); 
+    if(pFile)
     {
-        hXInput = LoadLibraryA((path + "x360ce.dll").c_str());
+        hXInput = LoadLibrary(pFile);
+        pReset = GetProcAddress(hXInput,"reset");
+        if(!pReset) FreeLibrary(hXInput);
+    }
+
+    pFile = PathCombine(buffer,path,_T("xinput1_3.dll")); 
+    if(pFile)
+    {
+        hXInput = LoadLibrary(pFile);
+        pReset = GetProcAddress(hXInput,"reset");
+        if(!pReset) FreeLibrary(hXInput);
+    }
+
+    pFile = PathCombine(buffer,path,_T("xinput1_2.dll")); 
+    if(pFile)
+    {
+        hXInput = LoadLibrary(pFile);
+        pReset = GetProcAddress(hXInput,"reset");
+        if(!pReset) FreeLibrary(hXInput);
+    }
+
+    pFile = PathCombine(buffer,path,_T("xinput1_1.dll")); 
+    if(pFile)
+    {
+        hXInput = LoadLibrary(pFile);
+        pReset = GetProcAddress(hXInput,"reset");
+        if(!pReset) FreeLibrary(hXInput);
+    }
+
+    pFile = PathCombine(buffer,path,_T("xinput9_1_0.dll")); 
+    if(pFile)
+    {
+        hXInput = LoadLibrary(pFile);
+        pReset = GetProcAddress(hXInput,"reset");
+        if(!pReset) FreeLibrary(hXInput);
+    }
+
+    if(!pReset)
+    {
+        pFile = PathCombine(buffer,path,_T("xinput9_1_0.dll")); 
+        if(pFile) hXInput = LoadLibrary(pFile);
+
     }
 }
 
 void LoadDInputDll()
 {
-    char* buffer = new char[MAX_PATH];
-    GetSystemDirectoryA(buffer,MAX_PATH);
-    PathAddBackslashA(buffer);
-    std::string path(buffer);
-    delete [] buffer;
+    LPTSTR pFile = NULL;
+    TCHAR buffer[MAX_PATH];
+    GetSystemDirectory(buffer,MAX_PATH);
+    PathAddBackslash(buffer);
+	pFile = PathCombine(buffer,buffer,_T("dinput8.dll"));
+    if(pFile) hDInput = LoadLibrary(pFile);
 
-    path.append("dinput8.dll");
-    hDInput = LoadLibraryA(path.c_str());
-
-    if (!hDInput)
+    if (hDInput == NULL)
     {
-        char* buf = new char[MAX_PATH];
+        TCHAR error[MAX_PATH];
         HRESULT hr = GetLastError();
-        sprintf_s(buf,MAX_PATH,"Cannot load %s error: 0x%x", path.c_str(), hr);
-        MessageBoxA(NULL,buf,"Error",MB_ICONERROR);
-        delete [] buf;
+        _stprintf_s(error,MAX_PATH,_T("Cannot load %s error: 0x%x"), pFile, hr);
+        MessageBox(NULL,error,_T("Error"),MB_ICONERROR);;
         ExitProcess(hr);
     }
 }
@@ -88,14 +109,6 @@ void ExitInstance()
     if(hXInput) FreeLibrary(hXInput);
 }
 
-void InitInstance(HMODULE hMod)
-{
-    hThis = hMod;
-
-    // TODO: Find better place for this if possible
-    LoadXinputDLL();
-}
-
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -104,8 +117,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
+		hThis = hModule;
         DisableThreadLibraryCalls(hModule);
-        InitInstance(hModule);
         break;
     case DLL_PROCESS_DETACH:
         ExitInstance();

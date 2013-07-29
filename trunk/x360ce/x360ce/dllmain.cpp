@@ -42,13 +42,10 @@ iHook* pHooks = NULL;
 
 VOID InstallInputHooks()
 {
-    if(pHooks->GetState())
+    if(pHooks)
     {
-        for(size_t i = 0; i < g_Devices.size(); i++)
-        {
-            DInputDevice& device = g_Devices[i];
-            pHooks->AddHook(device.productid,device.instanceid);
-        }
+        for(auto device = g_Devices.begin(); device != g_Devices.end(); ++device)
+            pHooks->AddHook(device->dwUserIndex, device->productid, device->instanceid);
     }
     pHooks->ExecuteHooks();
 }

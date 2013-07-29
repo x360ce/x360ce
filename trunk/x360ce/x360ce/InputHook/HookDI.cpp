@@ -45,27 +45,27 @@ typedef HRESULT (STDMETHODCALLTYPE *EnumDevicesW_t) (LPDIRECTINPUT8W This, DWORD
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static CreateDeviceA_t hCreateDeviceA = NULL;
-static CreateDeviceW_t hCreateDeviceW = NULL;
-static GetPropertyA_t hGetPropertyA = NULL;
-static GetPropertyW_t hGetPropertyW = NULL;
-static GetDeviceInfoA_t hGetDeviceInfoA = NULL;
-static GetDeviceInfoW_t hGetDeviceInfoW = NULL;
-static EnumDevicesA_t hEnumDevicesA = NULL;
-static EnumDevicesW_t hEnumDevicesW = NULL;
+CreateDeviceA_t hCreateDeviceA = NULL;
+CreateDeviceW_t hCreateDeviceW = NULL;
+GetPropertyA_t hGetPropertyA = NULL;
+GetPropertyW_t hGetPropertyW = NULL;
+GetDeviceInfoA_t hGetDeviceInfoA = NULL;
+GetDeviceInfoW_t hGetDeviceInfoW = NULL;
+EnumDevicesA_t hEnumDevicesA = NULL;
+EnumDevicesW_t hEnumDevicesW = NULL;
 
-static DirectInput8Create_t oDirectInput8Create = NULL;
-static CreateDeviceA_t oCreateDeviceA = NULL;
-static CreateDeviceW_t oCreateDeviceW = NULL;
-static GetPropertyA_t oGetPropertyA = NULL;
-static GetPropertyW_t oGetPropertyW = NULL;
-static GetDeviceInfoA_t oGetDeviceInfoA = NULL;
-static GetDeviceInfoW_t oGetDeviceInfoW = NULL;
-static EnumDevicesA_t oEnumDevicesA = NULL;
-static EnumDevicesW_t oEnumDevicesW = NULL;
+DirectInput8Create_t oDirectInput8Create = NULL;
+CreateDeviceA_t oCreateDeviceA = NULL;
+CreateDeviceW_t oCreateDeviceW = NULL;
+GetPropertyA_t oGetPropertyA = NULL;
+GetPropertyW_t oGetPropertyW = NULL;
+GetDeviceInfoA_t oGetDeviceInfoA = NULL;
+GetDeviceInfoW_t oGetDeviceInfoW = NULL;
+EnumDevicesA_t oEnumDevicesA = NULL;
+EnumDevicesW_t oEnumDevicesW = NULL;
 
-static LPDIENUMDEVICESCALLBACKA lpTrueCallbackA= NULL;
-static LPDIENUMDEVICESCALLBACKW lpTrueCallbackW= NULL;
+LPDIENUMDEVICESCALLBACKA lpTrueCallbackA= NULL;
+LPDIENUMDEVICESCALLBACKW lpTrueCallbackW= NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,10 +93,9 @@ BOOL FAR PASCAL HookEnumCallbackA( const DIDEVICEINSTANCEA* pInst,VOID* pContext
 
     if(pInst && pInst->dwSize == sizeof(DIDEVICEINSTANCEA))
     {
-        for(DWORD i = 0; i < iHookThis->GetHookCount(); i++)
+        for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(),pInst->guidProduct))
+            if(padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(),pInst->guidProduct))
             {
                 DIDEVICEINSTANCEA& HookInst = *(const_cast<DIDEVICEINSTANCEA*>(pInst));
                 //DIDEVICEINSTANCEA HookInst;
@@ -170,10 +169,9 @@ BOOL FAR PASCAL HookEnumCallbackW( const DIDEVICEINSTANCEW* pInst,VOID* pContext
 
     if(pInst && pInst->dwSize == sizeof(DIDEVICEINSTANCEW))
     {
-        for(DWORD i = 0; i < iHookThis->GetHookCount(); i++)
+		for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(),pInst->guidProduct))
+            if(padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(),pInst->guidProduct))
             {
                 DIDEVICEINSTANCEW& HookInst = *(const_cast<DIDEVICEINSTANCEW*>(pInst));
                 //DIDEVICEINSTANCEW HookInst;
@@ -283,10 +281,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA (LPDIRECTINPUTDEVICE8A This, LPDIDE
             return hr;
         }
 
-        for(DWORD i = 0; i < iHookThis->GetHookCount(); i++)
+        for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(), pdidi->guidProduct))
+            if(padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(), pdidi->guidProduct))
             {
                 if(iHookThis->GetState(iHook::HOOK_PIDVID))
                 {
@@ -358,10 +355,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW (LPDIRECTINPUTDEVICE8W This, LPDIDE
             return hr;
         }
 
-        for(DWORD i = 0; i < iHookThis->GetHookCount(); i++)
+        for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            iHookDevice &padconf = iHookThis->GetPadConfig(i);
-            if(padconf.GetHookState() && IsEqualGUID(padconf.GetProductGUID(), pdidi->guidProduct))
+            if(padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(), pdidi->guidProduct))
             {
                 if(iHookThis->GetState(iHook::HOOK_PIDVID))
                 {
