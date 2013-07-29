@@ -14,14 +14,14 @@ EXPORTS
         XInputGetAudioDeviceIds @10
 
 		; XInput 1.3 undocumented
-		XInputGetStateEx @100
-		XInputWaitForGuideButton @101
-		XInputCancelGuideButtonWait @102
-		XInputPowerOffController @103
+		XInputGetStateEx @100 NONAME
+		XInputWaitForGuideButton @101 NONAME
+		XInputCancelGuideButtonWait @102 NONAME
+		XInputPowerOffController @103 NONAME
 
         ; XInput 1.4 undocumented
-        XInputGetBaseBusInformation @104
-        XInputGetCapabilitiesEx @108
+        XInputGetBaseBusInformation @104 NONAME
+        XInputGetCapabilitiesEx @108 NONAME
 
         ; reset helper
 		reset @256
