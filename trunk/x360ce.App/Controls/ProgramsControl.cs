@@ -26,22 +26,31 @@ namespace x360ce.App.Controls
             {
                 DisableEvents();
                 _CurrentProgram = value;
-                Xinput11CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput11);
-                Xinput12CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput12);
-                Xinput13CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput13);
-                Xinput14CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput14);
-                Xinput91CheckBox.Checked = ((XInputMask)value.XInputMask).HasFlag(XInputMask.Xinput91);
-                HookCOMCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.COM);
-                HookDICheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.DI);
-                HookDISABLECheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.DISABLE);
-                HookLLCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.LL);
-                HookNameCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.NAME);
-                HookPIDVIDCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.PIDVID);
-                HookSACheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.SA);
-                HookSTOPCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.STOP);
-                HookWTCheckBox.Checked = ((HookMask)value.HookMask).HasFlag(HookMask.WT);
-                HookMaskTextBox.Text = value.HookMask.ToString("X8");
-                XInputMaskTextBox.Text = value.XInputMask.ToString("X8");
+                var en = (value != null);
+                HookMaskGroupBox.Enabled = en;
+                InstalledFilesGroupBox.Enabled = en;
+                var item = value ?? new com.x360ce.localhost.Program();
+                // Update XINput mask.
+                var inputMask = (XInputMask)item.XInputMask;
+                Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
+                Xinput12CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput12);
+                Xinput13CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput13);
+                Xinput14CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput14);
+                Xinput91CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput91);
+                XInputMaskTextBox.Text = item.XInputMask.ToString("X8");
+                // Update hook mask.
+                var hookMask = (HookMask)item.HookMask;
+                HookCOMCheckBox.Checked = hookMask.HasFlag(HookMask.COM);
+                HookDICheckBox.Checked = hookMask.HasFlag(HookMask.DI);
+                HookDISABLECheckBox.Checked = hookMask.HasFlag(HookMask.DISABLE);
+                HookLLCheckBox.Checked = hookMask.HasFlag(HookMask.LL);
+                HookNameCheckBox.Checked = hookMask.HasFlag(HookMask.NAME);
+                HookPIDVIDCheckBox.Checked = hookMask.HasFlag(HookMask.PIDVID);
+                HookSACheckBox.Checked = hookMask.HasFlag(HookMask.SA);
+                HookSTOPCheckBox.Checked = hookMask.HasFlag(HookMask.STOP);
+                HookWTCheckBox.Checked = hookMask.HasFlag(HookMask.WT);
+                HookMaskTextBox.Text = item.HookMask.ToString("X8");
+                // Enable events.
                 EnableEvents();
             }
         }
@@ -145,7 +154,8 @@ namespace x360ce.App.Controls
             }
             else
             {
-                ProgramsDataGridView.DataSource = e.Result;
+                Programs.Clear();
+                foreach (var item in e.Result) Programs.Add(item);
                 var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, e.Result.Count());
                 MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
             }
@@ -174,13 +184,19 @@ namespace x360ce.App.Controls
 
         void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            var item = (com.x360ce.localhost.Program)ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault().DataBoundItem;
+            // List can't be empty, so return.
+            // Issue: When Datasource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+            if (ProgramsDataGridView.SelectedRows.Count == 0) return;
+            var row = ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+            var item = (com.x360ce.localhost.Program)row.DataBoundItem;
             CurrentProgram = item;
         }
 
+        BindingList<com.x360ce.localhost.Program> Programs = new BindingList<com.x360ce.localhost.Program>();
+
         void InitDefaultList()
         {
-            var programs = new List<com.x360ce.localhost.Program>();
+            ProgramsDataGridView.DataSource = Programs;
             var item = new com.x360ce.localhost.Program();
             item.DateCreated = DateTime.Now;
             item.DateUpdated = DateTime.Now;
@@ -191,7 +207,7 @@ namespace x360ce.App.Controls
             item.IsEnabled = true;
             item.ProgramId = Guid.Empty;
             item.XInputMask = 0;
-            ProgramsDataGridView.DataSource = programs.ToArray();
+            Programs.Add(item);
         }
 
         void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
