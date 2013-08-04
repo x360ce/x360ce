@@ -28,10 +28,10 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.ProgramsListTabControl = new System.Windows.Forms.TabControl();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.ProgramsTabControl = new System.Windows.Forms.TabControl();
             this.ProgramsTabPage = new System.Windows.Forms.TabPage();
             this.ProgramsDataGridView = new System.Windows.Forms.DataGridView();
             this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -59,13 +59,13 @@
             this.SearchFilterTextBox = new System.Windows.Forms.TextBox();
             this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
             this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.ExportButton = new System.Windows.Forms.Button();
-            this.SaveButton = new System.Windows.Forms.Button();
-            this.DeleteButton = new System.Windows.Forms.Button();
-            this.RefreshButton = new System.Windows.Forms.Button();
             this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
             this.RefreshAllButton = new System.Windows.Forms.Button();
-            this.ProgramsListTabControl.SuspendLayout();
+            this.RefreshButton = new System.Windows.Forms.Button();
+            this.DeleteButton = new System.Windows.Forms.Button();
+            this.SaveButton = new System.Windows.Forms.Button();
+            this.ExportButton = new System.Windows.Forms.Button();
+            this.ProgramsTabControl.SuspendLayout();
             this.ProgramsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).BeginInit();
             this.HookMaskGroupBox.SuspendLayout();
@@ -73,18 +73,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
-            // ProgramsListTabControl
+            // ProgramsTabControl
             // 
-            this.ProgramsListTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ProgramsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProgramsListTabControl.Controls.Add(this.ProgramsTabPage);
-            this.ProgramsListTabControl.ItemSize = new System.Drawing.Size(116, 24);
-            this.ProgramsListTabControl.Location = new System.Drawing.Point(3, 68);
-            this.ProgramsListTabControl.Name = "ProgramsListTabControl";
-            this.ProgramsListTabControl.SelectedIndex = 0;
-            this.ProgramsListTabControl.Size = new System.Drawing.Size(552, 363);
-            this.ProgramsListTabControl.TabIndex = 19;
+            this.ProgramsTabControl.Controls.Add(this.ProgramsTabPage);
+            this.ProgramsTabControl.ItemSize = new System.Drawing.Size(116, 24);
+            this.ProgramsTabControl.Location = new System.Drawing.Point(3, 68);
+            this.ProgramsTabControl.Name = "ProgramsTabControl";
+            this.ProgramsTabControl.SelectedIndex = 0;
+            this.ProgramsTabControl.Size = new System.Drawing.Size(552, 363);
+            this.ProgramsTabControl.TabIndex = 19;
             // 
             // ProgramsTabPage
             // 
@@ -104,41 +104,41 @@
             this.ProgramsDataGridView.BackgroundColor = System.Drawing.Color.White;
             this.ProgramsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ProgramsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle13.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ProgramsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ProgramsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.ProgramsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ProgramsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MyIconColumn,
             this.ProgramIdColumn,
             this.MyFileColumn,
             this.MyGameColumn});
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ProgramsDataGridView.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ProgramsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.ProgramsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ProgramsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.ProgramsDataGridView.Location = new System.Drawing.Point(0, 0);
             this.ProgramsDataGridView.MultiSelect = false;
             this.ProgramsDataGridView.Name = "ProgramsDataGridView";
             this.ProgramsDataGridView.ReadOnly = true;
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ProgramsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ProgramsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.ProgramsDataGridView.RowHeadersVisible = false;
             this.ProgramsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ProgramsDataGridView.Size = new System.Drawing.Size(544, 331);
@@ -418,62 +418,6 @@
             0,
             0});
             // 
-            // ExportButton
-            // 
-            this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ExportButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
-            this.ExportButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ExportButton.Location = new System.Drawing.Point(435, 34);
-            this.ExportButton.Name = "ExportButton";
-            this.ExportButton.Size = new System.Drawing.Size(116, 25);
-            this.ExportButton.TabIndex = 25;
-            this.ExportButton.Text = "&Export to GDB";
-            this.ExportButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ExportButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.ExportButton.UseVisualStyleBackColor = true;
-            // 
-            // SaveButton
-            // 
-            this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-            this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.SaveButton.Location = new System.Drawing.Point(313, 34);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(116, 25);
-            this.SaveButton.TabIndex = 26;
-            this.SaveButton.Text = "&Save on Internet";
-            this.SaveButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.SaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.SaveButton.UseVisualStyleBackColor = true;
-            // 
-            // DeleteButton
-            // 
-            this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-            this.DeleteButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DeleteButton.Location = new System.Drawing.Point(481, 3);
-            this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(70, 25);
-            this.DeleteButton.TabIndex = 27;
-            this.DeleteButton.Text = "&Delete";
-            this.DeleteButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DeleteButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.DeleteButton.UseVisualStyleBackColor = true;
-            // 
-            // RefreshButton
-            // 
-            this.RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-            this.RefreshButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.RefreshButton.Location = new System.Drawing.Point(405, 3);
-            this.RefreshButton.Name = "RefreshButton";
-            this.RefreshButton.Size = new System.Drawing.Size(70, 25);
-            this.RefreshButton.TabIndex = 28;
-            this.RefreshButton.Text = "&Refresh";
-            this.RefreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.RefreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.RefreshButton.UseVisualStyleBackColor = true;
-            // 
             // MinimumInstanceCountLabel
             // 
             this.MinimumInstanceCountLabel.AutoSize = true;
@@ -498,6 +442,62 @@
             this.RefreshAllButton.UseVisualStyleBackColor = true;
             this.RefreshAllButton.Click += new System.EventHandler(this.RefreshAllButton_Click);
             // 
+            // RefreshButton
+            // 
+            this.RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.RefreshButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.RefreshButton.Location = new System.Drawing.Point(405, 3);
+            this.RefreshButton.Name = "RefreshButton";
+            this.RefreshButton.Size = new System.Drawing.Size(70, 25);
+            this.RefreshButton.TabIndex = 28;
+            this.RefreshButton.Text = "&Refresh";
+            this.RefreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.RefreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.RefreshButton.UseVisualStyleBackColor = true;
+            // 
+            // DeleteButton
+            // 
+            this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.DeleteButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.DeleteButton.Location = new System.Drawing.Point(481, 3);
+            this.DeleteButton.Name = "DeleteButton";
+            this.DeleteButton.Size = new System.Drawing.Size(70, 25);
+            this.DeleteButton.TabIndex = 27;
+            this.DeleteButton.Text = "&Delete";
+            this.DeleteButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.DeleteButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.DeleteButton.UseVisualStyleBackColor = true;
+            // 
+            // SaveButton
+            // 
+            this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+            this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SaveButton.Location = new System.Drawing.Point(313, 34);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(116, 25);
+            this.SaveButton.TabIndex = 26;
+            this.SaveButton.Text = "&Save on Internet";
+            this.SaveButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.SaveButton.UseVisualStyleBackColor = true;
+            // 
+            // ExportButton
+            // 
+            this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ExportButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+            this.ExportButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ExportButton.Location = new System.Drawing.Point(435, 34);
+            this.ExportButton.Name = "ExportButton";
+            this.ExportButton.Size = new System.Drawing.Size(116, 25);
+            this.ExportButton.TabIndex = 25;
+            this.ExportButton.Text = "&Export to GDB";
+            this.ExportButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ExportButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.ExportButton.UseVisualStyleBackColor = true;
+            // 
             // ProgramsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -513,10 +513,10 @@
             this.Controls.Add(this.IncludeEnabledCheckBox);
             this.Controls.Add(this.InstalledFilesGroupBox);
             this.Controls.Add(this.HookMaskGroupBox);
-            this.Controls.Add(this.ProgramsListTabControl);
+            this.Controls.Add(this.ProgramsTabControl);
             this.Name = "ProgramsControl";
             this.Size = new System.Drawing.Size(701, 434);
-            this.ProgramsListTabControl.ResumeLayout(false);
+            this.ProgramsTabControl.ResumeLayout(false);
             this.ProgramsTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).EndInit();
             this.HookMaskGroupBox.ResumeLayout(false);
@@ -531,7 +531,7 @@
 
 		#endregion
 
-		System.Windows.Forms.TabControl ProgramsListTabControl;
+		System.Windows.Forms.TabControl ProgramsTabControl;
 		System.Windows.Forms.TabPage ProgramsTabPage;
 		System.Windows.Forms.DataGridView ProgramsDataGridView;
 		System.Windows.Forms.GroupBox HookMaskGroupBox;

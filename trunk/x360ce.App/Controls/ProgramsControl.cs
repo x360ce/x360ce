@@ -15,6 +15,7 @@ namespace x360ce.App.Controls
         {
             InitializeComponent();
             ProgramsDataGridView.AutoGenerateColumns = false;
+            if (DesignMode) return;
             InitDefaultList();
         }
 
@@ -127,7 +128,7 @@ namespace x360ce.App.Controls
         {
             MainForm.Current.LoadingCircle = true;
             var ws = new com.x360ce.localhost.x360ce();
-            ws.Url = MainForm.Current.InternetDatabaseUrlTextBox.Text;
+            ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
             bool? enabled = null;
             int? minInstances = null;
             if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = true;
