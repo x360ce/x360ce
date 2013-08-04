@@ -93,14 +93,7 @@ namespace x360ce.App
             defaultBody = HelpBodyLabel.Text;
             //if (DesignMode) return;
             // init default
-            DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
-            // Fill FakeWmi ComboBox.
-            var fakeModeOptions = new List<KeyValuePair>();
-            var fakeModeTypes = (HookMode[])Enum.GetValues(typeof(HookMode));
-            foreach (var item in fakeModeTypes) fakeModeOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-            FakeModeComboBox.DataSource = fakeModeOptions;
-            FakeModeComboBox.DisplayMember = "Key";
-            FakeModeComboBox.ValueMember = "Value";
+            OptionsPanel.InitOptions();
             // Set status.
             StatusSaveLabel.Visible = false;
             StatusEventsLabel.Visible = false;
@@ -179,20 +172,10 @@ namespace x360ce.App
         void UpdateSettingsMap()
         {
             // INI setting keys with controls.
-            var sm = SettingManager.Current.SettingsMap;
             SettingManager.Current.ConfigSaved += new EventHandler<SettingEventArgs>(Current_ConfigSaved);
             SettingManager.Current.ConfigLoaded += new EventHandler<SettingEventArgs>(Current_ConfigLoaded);
-            string section = @"Options\";
-            sm.Add(section + SettingName.UseInitBeep, UseInitBeepCheckBox);
-            sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
-            sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
-            sm.Add(section + SettingName.Console, ConsoleCheckBox);
-            sm.Add(section + SettingName.InternetDatabaseUrl, InternetDatabaseUrlTextBox);
-            sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
-            sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
-            sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-            section = @"InputHook\";
-            sm.Add(section + SettingName.HookMode, FakeModeComboBox);
+            OptionsPanel.InitSettingsManager();
+            var sm = SettingManager.Current.SettingsMap;
             for (int i = 0; i < ControlPads.Length; i++)
             {
                 var map = ControlPads[i].SettingsMap;
@@ -496,7 +479,6 @@ namespace x360ce.App
         /// </summary>
         bool RefreshCurrentInstances()
         {
-
             // If you encouter "LoaderLock was detected" Exception when debugging then:
             // Make sure that you have reference to Microsoft.Directx.dll. 
             bool instancesChanged = false;
@@ -726,7 +708,7 @@ namespace x360ce.App
             }
             else if (MainTabControl.SelectedTab == SettingsDatabaseTabPage)
             {
-                if (InternetCheckBox.Checked && InternetAutoloadCheckBox.Checked)
+                if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoloadCheckBox.Checked)
                 {
                     onlineUserControl1.RefreshGrid(true);
                 }
@@ -734,18 +716,11 @@ namespace x360ce.App
             UpdateHelpHeader();
         }
 
-        void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            var cbx = (CheckBox)sender;
-            if (!cbx.Checked) Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-            else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-        }
-
-        void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
+        public void XInputEnable(bool enable)
         {
             lock (XInputLock)
             {
-                XInput.XInputEnable(XInputEnableCheckBox.Checked);
+                XInput.XInputEnable(enable);
             }
         }
 
@@ -976,11 +951,6 @@ namespace x360ce.App
 
         #endregion
 
-        void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
-        }
-
         #region Allow only one copy of Application at a time
 
         /// <summary>Stores the unique windows message id from the RegisterWindowMessage call.</summary>
@@ -1060,6 +1030,7 @@ namespace x360ce.App
             }
             base.Dispose(disposing);
         }
+
 
     }
 }

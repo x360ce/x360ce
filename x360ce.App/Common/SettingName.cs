@@ -59,6 +59,9 @@ namespace x360ce.App
 		public const string InternetAutoload = "InternetAutoload";
 		[DefaultValue("1"), Description("Allow only one copy of Application at a time: 0 - Disable; 1 - Enable.")]
 		public const string AllowOnlyOneCopy = "AllowOnlyOneCopy";
+        [DefaultValue(""), Description("Game Scan Locations. Separated by semicolon (;).")]
+        public const string ProgramScanLocations = "ProgramScanLocations";
+
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]

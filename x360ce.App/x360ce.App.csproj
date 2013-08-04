@@ -213,6 +213,12 @@
     <Compile Include="Controls\OnlineUserControl.Designer.cs">
       <DependentUpon>OnlineUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsControl.Designer.cs">
+      <DependentUpon>OptionsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -278,6 +284,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OnlineUserControl.resx">
       <DependentUpon>OnlineUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OptionsControl.resx">
+      <DependentUpon>OptionsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
@@ -426,6 +435,7 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <Content Include="Documents\HowToBuild.txt" />
+    <None Include="Images\add_16x16.png" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <None Include="Resources\SharpDX\SharpDX.DirectInput.xml" />
@@ -443,6 +453,7 @@
     <None Include="Images\arrow_right_16x16.png" />
     <None Include="Images\check_16x16.png" />
     <None Include="Images\check_disabled_16x16.png" />
+    <None Include="Images\remove_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <Content Include="Presets\ReadMe.txt" />
     <None Include="Web References\com.x360ce.localhost\x360ce.disco" />
