@@ -112,7 +112,7 @@ namespace x360ce.App
                 }
                 else
                 {
-                    lbx.Items.AddRange(value.Split(';'));
+                    lbx.Items.AddRange(value.Split(','));
                 }
             }
             else if (control is NumericUpDown)
@@ -502,7 +502,7 @@ namespace x360ce.App
             else if (control is ListBox)
             {
                 var lbx = (ListBox)control;
-                v = string.Join(";", lbx.Items.Cast<string>().ToArray());
+                v = string.Join(",", lbx.Items.Cast<string>().ToArray());
             }
             else if (control is NumericUpDown)
             {
