@@ -166,6 +166,7 @@
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingName.cs" />
     <Compile Include="Common\SettingsData.cs" />
+    <Compile Include="Common\SettingsFile.cs" />
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="Common\Vendor.cs" />
