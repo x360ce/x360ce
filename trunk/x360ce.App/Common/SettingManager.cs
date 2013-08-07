@@ -184,6 +184,8 @@ namespace x360ce.App
             }
             loadCount++;
             if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(ini2.File.Name, loadCount));
+			// Read XML too.
+			SettingsFile.Current.Load();
         }
 
         /// <summary>
@@ -571,7 +573,9 @@ namespace x360ce.App
                 saved = true;
                 if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(IniFileName, saveCount));
             }
-            return saved;
+			// Flush XML too.
+			SettingsFile.Current.Save();
+			return saved;
         }
 
         public string GetInstanceSection(Guid instanceGuid)

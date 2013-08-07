@@ -155,8 +155,8 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				Programs.Clear();
-				foreach (var item in e.Result) Programs.Add(item);
+				SettingsFile.Current.Programs.Clear();
+				foreach (var item in e.Result) SettingsFile.Current.Programs.Add(item);
 				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, e.Result.Count());
 				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			}
@@ -193,11 +193,9 @@ namespace x360ce.App.Controls
 			CurrentProgram = item;
 		}
 
-		BindingList<com.x360ce.localhost.Program> Programs = new BindingList<com.x360ce.localhost.Program>();
-
 		void InitDefaultList()
 		{
-			ProgramsDataGridView.DataSource = Programs;
+			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
 			var item = new com.x360ce.localhost.Program();
 			item.DateCreated = DateTime.Now;
 			item.DateUpdated = DateTime.Now;
@@ -208,9 +206,9 @@ namespace x360ce.App.Controls
 			item.IsEnabled = true;
 			item.ProgramId = Guid.Empty;
 			item.XInputMask = 0;
-			Programs.Add(item);
+			SettingsFile.Current.Programs.Add(item);
 			var ps = Helper.GetLocalFiles();
-			foreach (var p in ps) Programs.Add(p);
+			foreach (var p in ps) SettingsFile.Current.Programs.Add(p);
 		}
 
 		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
