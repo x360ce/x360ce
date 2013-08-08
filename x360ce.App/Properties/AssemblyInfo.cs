@@ -6,12 +6,12 @@ using System.Resources;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("X360 Controller Emulator")]
+[assembly: AssemblyTitle("TocaEdit X360 Controller Emulator")]
 [assembly: AssemblyDescription("Wrapper library that translates XInput calls to DirectInput calls, for support old, no XInput compatible gamepads.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TocaEdit")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
-[assembly: AssemblyCopyright("Copyright © TocaEdit 2012")]
+[assembly: AssemblyCopyright("Copyright © TocaEdit 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

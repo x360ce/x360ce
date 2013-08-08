@@ -436,6 +436,7 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <Content Include="Documents\HowToBuild.txt" />
+    <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
@@ -510,6 +511,13 @@
       <CachedSettingsPropName>x360ce_com_x360ce_localhost_x360ce</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
+      <Project>{F980D78A-9448-4834-A6FE-84797077D309}</Project>
+      <Name>x360ce.Engine</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -524,5 +532,9 @@ if $(PlatformName) == x86 $(SolutionDir)\Resources\NetZ\netz.exe -pl x86 -s -so 
 if $(PlatformName) == x64 $(SolutionDir)\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
 if $(PlatformName) == AnyCPU $(SolutionDir)\Resources\NetZ\netz.exe -s -so -z $(TargetPath)
 )</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

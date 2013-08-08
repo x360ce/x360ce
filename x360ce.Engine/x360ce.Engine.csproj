@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F980D78A-9448-4834-A6FE-84797077D309}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>x360ce.Engine</RootNamespace>
+    <AssemblyName>x360ce.Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\KeyValue.cs" />
+    <Compile Include="Common\KeyValueList.cs" />
+    <Compile Include="Common\SearchParameter.cs" />
+    <Compile Include="Common\SearchResult.cs" />
+    <Compile Include="Common\SettingsData.cs" />
+    <Compile Include="Common\Vendor.cs" />
+    <Compile Include="Data\PadSetting.cs" />
+    <Compile Include="Data\Vendor.cs" />
+    <Compile Include="Data\x360ceModel.Designer.cs">
+      <DependentUpon>x360ceModel.edmx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
+    <Compile Include="JocysCom\Common\GuidEnum.cs" />
+    <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
+    <Compile Include="JocysCom\Common\ItemType.cs" />
+    <Compile Include="JocysCom\Common\LinkItem.cs" />
+    <Compile Include="JocysCom\Security\BuildInRoles.cs" />
+    <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
+    <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="JocysCom\Security\Data\Role.cs" />
+    <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
+    <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
+      <DependentUpon>SecurityModel.edmx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="JocysCom\Security\RoleQueryName.cs" />
+    <Compile Include="JocysCom\Security\UserQueryName.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Data\x360ceModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="JocysCom\Security\Data\SecurityModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SecurityModel.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>JocysCom.WebSites.Engine.Security.Data</CustomToolNamespace>
+    </EntityDeploy>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /y "$(TargetDir)x360ce.Engine.dll" "$(SolutionDir)x360ce.App\Resources"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
