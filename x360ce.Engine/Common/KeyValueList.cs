@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace x360ce.Web
+namespace x360ce.Engine
 {
 	[Serializable]
 	public class KeyValueList : List<KeyValue>
