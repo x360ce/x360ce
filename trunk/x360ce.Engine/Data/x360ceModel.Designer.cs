@@ -17,7 +17,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
-namespace x360ce.Web.Data
+namespace x360ce.Engine.Data
 {
     #region Contexts
     

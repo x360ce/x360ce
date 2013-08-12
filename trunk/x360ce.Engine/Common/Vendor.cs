@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace x360ce.Web
+namespace x360ce.Engine
 {
 
 	[Serializable]

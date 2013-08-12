@@ -5,7 +5,7 @@ using System.Web;
 using System.Xml.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace x360ce.Web.Data
+namespace x360ce.Engine.Data
 {
 
 	[MetadataType(typeof(VendorMetadata))]

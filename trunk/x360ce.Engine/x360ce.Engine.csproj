@@ -39,6 +39,7 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,6 +53,7 @@
     <Compile Include="Common\SearchResult.cs" />
     <Compile Include="Common\SettingsData.cs" />
     <Compile Include="Common\Vendor.cs" />
+    <Compile Include="Common\WebServiceClient.cs" />
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Vendor.cs" />
     <Compile Include="Data\x360ceModel.Designer.cs">

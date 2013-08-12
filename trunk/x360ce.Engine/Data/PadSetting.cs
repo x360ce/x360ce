@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace x360ce.Web.Data
+namespace x360ce.Engine.Data
 {
 	public partial class PadSetting
 	{
