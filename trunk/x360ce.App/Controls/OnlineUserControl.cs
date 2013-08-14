@@ -350,7 +350,6 @@ namespace x360ce.App.Controls
 			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
-            var result = ws.SearchSettings(sp.ToArray());
             ws.SearchSettingsAsync(sp.ToArray(), showResult);
 		}
 
