@@ -54,6 +54,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release\x86\</OutputPath>
@@ -136,6 +137,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
@@ -332,11 +334,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\SettingsConverter.cs" />
-    <Compile Include="Web References\com.x360ce.localhost\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Win32\BIND_OPTS3.cs" />
     <Compile Include="Win32\CLSCTX.cs" />
     <Compile Include="Win32\DEV_BROADCAST_VOLUME.cs" />
@@ -350,26 +347,6 @@
     <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="Win32\WinAPI.cs" />
     <Compile Include="Win32\WinNT.cs" />
-    <None Include="Web References\com.x360ce.localhost\KeyValue.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.x360ce.localhost\Program.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.x360ce.localhost\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\com.x360ce.localhost\SearchResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.x360ce.localhost\SettingsData.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.x360ce.localhost\Vendor.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\com.x360ce.localhost\x360ce.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -458,7 +435,6 @@
     <None Include="Images\remove_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <Content Include="Presets\ReadMe.txt" />
-    <None Include="Web References\com.x360ce.localhost\x360ce.disco" />
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
     <EmbeddedResource Include="Documents\Help.htm" />
@@ -496,24 +472,8 @@
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferences Include="Web References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferenceUrl Include="http://localhost.x360ce.com/webservices/x360ce.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\com.x360ce.localhost\</RelPath>
-      <UpdateFromURL>http://localhost.x360ce.com/webservices/x360ce.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>x360ce_com_x360ce_localhost_x360ce</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
-      <Project>{F980D78A-9448-4834-A6FE-84797077D309}</Project>
+      <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
       <Name>x360ce.Engine</Name>
       <Private>False</Private>
     </ProjectReference>

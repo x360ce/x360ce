@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -19,8 +20,8 @@ namespace x360ce.App.Controls
 			InitDefaultList();
 		}
 
-		com.x360ce.localhost.Program _CurrentProgram;
-		public com.x360ce.localhost.Program CurrentProgram
+		x360ce.Engine.Data.Program _CurrentProgram;
+		public x360ce.Engine.Data.Program CurrentProgram
 		{
 			get { return _CurrentProgram; }
 			set
@@ -30,7 +31,7 @@ namespace x360ce.App.Controls
 				var en = (value != null);
 				HookMaskGroupBox.Enabled = en;
 				InstalledFilesGroupBox.Enabled = en;
-				var item = value ?? new com.x360ce.localhost.Program();
+				var item = value ?? new x360ce.Engine.Data.Program();
 				// Update XINput mask.
 				var inputMask = (XInputMask)item.XInputMask;
 				Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
@@ -127,7 +128,7 @@ namespace x360ce.App.Controls
 		void RefreshAllButton_Click(object sender, EventArgs e)
 		{
 			MainForm.Current.LoadingCircle = true;
-			var ws = new com.x360ce.localhost.x360ce();
+			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
 			bool? enabled = null;
 			int? minInstances = null;
@@ -141,7 +142,7 @@ namespace x360ce.App.Controls
 			ws.GetProgramsAsync(enabled, minInstances);
 		}
 
-		void ws_GetProgramsCompleted(object sender, com.x360ce.localhost.GetProgramsCompletedEventArgs e)
+        void ws_GetProgramsCompleted(object sender, ResultEventArgs e)
 		{
 			MainForm.Current.LoadingCircle = false;
 			if (e.Error != null)
@@ -156,8 +157,9 @@ namespace x360ce.App.Controls
 			else
 			{
 				SettingsFile.Current.Programs.Clear();
-				foreach (var item in e.Result) SettingsFile.Current.Programs.Add(item);
-				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, e.Result.Count());
+                var result = (List<x360ce.Engine.Data.Program>)e.Result;
+                foreach (var item in result) SettingsFile.Current.Programs.Add(item);
+				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
 				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			}
 		}
@@ -165,7 +167,7 @@ namespace x360ce.App.Controls
 		void ProgramsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var setting = ((com.x360ce.localhost.Program)grid.Rows[e.RowIndex].DataBoundItem);
+            var setting = ((x360ce.Engine.Data.Program)grid.Rows[e.RowIndex].DataBoundItem);
 			var isCurrent = CurrentProgram != null && setting.ProgramId == CurrentProgram.ProgramId;
 			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
 			//{
@@ -189,14 +191,14 @@ namespace x360ce.App.Controls
 			// Issue: When Datasource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
 			if (ProgramsDataGridView.SelectedRows.Count == 0) return;
 			var row = ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			var item = (com.x360ce.localhost.Program)row.DataBoundItem;
+            var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
 			CurrentProgram = item;
 		}
 
 		void InitDefaultList()
 		{
 			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
-			var item = new com.x360ce.localhost.Program();
+            var item = new x360ce.Engine.Data.Program();
 			item.DateCreated = DateTime.Now;
 			item.DateUpdated = DateTime.Now;
 			item.FileName = "<All>";
@@ -266,6 +268,20 @@ namespace x360ce.App.Controls
 		{
 			Helper.CreateDllFile(Xinput14CheckBox.Checked, Helper.dllFile4);
 		}
+
+        private void RefreshButton_Click(object sender, EventArgs e)
+        {
+            //var ws = new WebServiceClient();
+            //ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
+            //ws.LoadSettingCompleted += ws_LoadSettingCompleted;
+            //ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
+
+        }
+
+        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+        {
+            //var x = e;
+        }
 
 	}
 }
