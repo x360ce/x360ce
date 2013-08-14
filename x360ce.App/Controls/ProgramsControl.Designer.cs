@@ -455,6 +455,7 @@
             this.RefreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.RefreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.RefreshButton.UseVisualStyleBackColor = true;
+            this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
             // 
             // DeleteButton
             // 

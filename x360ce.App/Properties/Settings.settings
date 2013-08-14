@@ -5,8 +5,5 @@
     <Setting Name="EnableKeyboardControl" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="x360ce_com_x360ce_localhost_x360ce" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://localhost.x360ce.com/webservices/x360ce.asmx</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

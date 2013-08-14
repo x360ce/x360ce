@@ -7,8 +7,9 @@ using System.Text;
 using System.Windows.Forms;
 using SharpDX.DirectInput;
 using System.IO;
-using x360ce.App.com.x360ce.localhost;
 using System.Linq;
+using x360ce.Engine.Data;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -273,22 +274,23 @@ namespace x360ce.App.Controls
 			}
 			var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
 			var ps = SettingManager.Current.GetPadSetting(padSectionName);
-			var ws = new com.x360ce.localhost.x360ce();
+			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-			ws.SaveSettingCompleted += new SaveSettingCompletedEventHandler(ws_SaveSettingCompleted);
+			ws.SaveSettingCompleted += ws_SaveSettingCompleted;
 			ws.SaveSettingAsync(s, ps);
 		}
 
-		void ws_SaveSettingCompleted(object sender, SaveSettingCompletedEventArgs e)
+        void ws_SaveSettingCompleted(object sender, ResultEventArgs e)
 		{
 			if (e.Error != null)
 			{
 				mainForm.UpdateHelpHeader(e.Error.Message, MessageBoxIcon.Error);
 				throw e.Error;
 			}
-			else if (!string.IsNullOrEmpty(e.Result))
+            var result = (string)e.Result;
+            if (!string.IsNullOrEmpty(result))
 			{
-				mainForm.UpdateHelpHeader(e.Result, MessageBoxIcon.Error);
+				mainForm.UpdateHelpHeader(result, MessageBoxIcon.Error);
 			}
 			else
 			{
@@ -307,23 +309,24 @@ namespace x360ce.App.Controls
 			{
 				mainForm.LoadingCircle = true;
 				var setting = (Setting)SettingsDataGridView.SelectedRows[0].DataBoundItem;
-				var ws = new com.x360ce.localhost.x360ce();
+				var ws = new WebServiceClient();
 				ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-				ws.DeleteSettingCompleted += new DeleteSettingCompletedEventHandler(ws_DeleteSettingCompleted);
+				ws.DeleteSettingCompleted += ws_DeleteSettingCompleted;
 				ws.DeleteSettingAsync(setting);
 			}
 		}
 
-		void ws_DeleteSettingCompleted(object sender, DeleteSettingCompletedEventArgs e)
+        void ws_DeleteSettingCompleted(object sender, ResultEventArgs e)
 		{
 			if (e.Error != null)
 			{
 				mainForm.UpdateHelpHeader(e.Error.Message, MessageBoxIcon.Error);
 				throw e.Error;
 			}
-			else if (!string.IsNullOrEmpty(e.Result))
+            var result = (string)e.Result;
+            if (!string.IsNullOrEmpty(result))
 			{
-				mainForm.UpdateHelpHeader(e.Result, MessageBoxIcon.Error);
+				mainForm.UpdateHelpHeader(result, MessageBoxIcon.Error);
 			}
 			else
 			{
@@ -344,12 +347,12 @@ namespace x360ce.App.Controls
 			var sp = new List<SearchParameter>();
 			FillSearchParameterWithDevices(sp);
 			FillSearchParameterWithFiles(sp);
-			var ws = new com.x360ce.localhost.x360ce();
+			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-			ws.SearchSettingsCompleted += new SearchSettingsCompletedEventHandler(ws_SearchSettingsCompleted);
-			ws.SearchSettingsAsync(sp.ToArray(), showResult);
+			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
+            var result = ws.SearchSettings(sp.ToArray());
+            ws.SearchSettingsAsync(sp.ToArray(), showResult);
 		}
-
 
 		public void FillSearchParameterWithDevices(List<SearchParameter> sp)
 		{
@@ -421,15 +424,16 @@ namespace x360ce.App.Controls
 
 		public void LoadSetting(Guid padSettingChecksum)
 		{
-			var ws = new com.x360ce.localhost.x360ce();
+            var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-			ws.LoadSettingCompleted += new LoadSettingCompletedEventHandler(ws_LoadSettingCompleted);
+			ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
 
-		void ws_LoadSettingCompleted(object sender, LoadSettingCompletedEventArgs e)
+        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
-			if (e.Result.PadSettings.Length == 0)
+            var result = (SearchResult)e.Result;
+			if (result.PadSettings.Length == 0)
 			{
 				mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Setting was not found.", DateTime.Now), MessageBoxIcon.Information);
 			}
@@ -438,7 +442,7 @@ namespace x360ce.App.Controls
 				var di = _devices[ControllerComboBox.SelectedIndex];
 				var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
 				SettingManager.Current.SetPadSetting(padSectionName, di);
-				SettingManager.Current.SetPadSetting(padSectionName, e.Result.PadSettings[0]);
+				SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
 				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, ControllerComboBox.SelectedIndex);
 				MainForm.Current.ResumeEvents();
@@ -454,7 +458,7 @@ namespace x360ce.App.Controls
 		BindingList<Setting> _Settings;
 		BindingList<Summary> _Summaries;
 
-		void ws_SearchSettingsCompleted(object sender, SearchSettingsCompletedEventArgs e)
+        void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
 			refreshed = true;
 			if (e.Result == null)
@@ -468,13 +472,14 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				// Reorder summaries.
-				e.Result.Summaries = e.Result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-				UpdateList(e.Result.Settings, _Settings);
-				UpdateList(e.Result.Summaries, _Summaries);
+                var result = (SearchResult)e.Result;
+                // Reorder summaries.
+				result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
+				UpdateList(result.Settings, _Settings);
+				UpdateList(result.Summaries, _Summaries);
 				if ((bool)e.UserState)
 				{
-					mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1} Your Settings and {2} General Settings received.", DateTime.Now, e.Result.Settings.Length, e.Result.Summaries.Length), MessageBoxIcon.Information);
+					mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1} Your Settings and {2} General Settings received.", DateTime.Now, result.Settings.Length, result.Summaries.Length), MessageBoxIcon.Information);
 				}
 			}
 			mainForm.LoadingCircle = false;

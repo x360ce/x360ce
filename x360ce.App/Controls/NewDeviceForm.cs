@@ -8,8 +8,10 @@ using System.Windows.Forms;
 using SharpDX.DirectInput;
 using System.IO;
 using Microsoft.Win32;
-using x360ce.App.com.x360ce.localhost;
+//using x360ce.App.com.x360ce.localhost;
 using System.Linq;
+using x360ce.Engine.Data;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -130,15 +132,16 @@ namespace x360ce.App.Controls
 
 		public void LoadSetting(Guid padSettingChecksum)
 		{
-			var ws = new com.x360ce.localhost.x360ce();
+			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-			ws.LoadSettingCompleted += new LoadSettingCompletedEventHandler(ws_LoadSettingCompleted);
+			ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
 
-		void ws_LoadSettingCompleted(object sender, LoadSettingCompletedEventArgs e)
+        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
-			if (e.Result.PadSettings.Length == 0)
+            var result = (SearchResult)e.Result;
+            if (result.PadSettings.Length == 0)
 			{
 				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Setting was not found.", DateTime.Now), MessageBoxIcon.Information);
 			}
@@ -146,7 +149,7 @@ namespace x360ce.App.Controls
 			{
 				var padSectionName = SettingManager.Current.GetInstanceSection(_di.InstanceGuid);
 				SettingManager.Current.SetPadSetting(padSectionName, _di);
-				SettingManager.Current.SetPadSetting(padSectionName, e.Result.PadSettings[0]);
+				SettingManager.Current.SetPadSetting(padSectionName,result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
 				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
 				MainForm.Current.ResumeEvents();
@@ -223,9 +226,9 @@ namespace x360ce.App.Controls
 
 		void LoadSettingsFromInternet()
 		{
-			var ws = new com.x360ce.localhost.x360ce();
+			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-			ws.SearchSettingsCompleted += new SearchSettingsCompletedEventHandler(ws_SearchSettingsCompleted);
+			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
 			_sp = new List<SearchParameter>();
 			_sp.Add(new SearchParameter() { InstanceGuid = _di.InstanceGuid, ProductGuid = _di.ProductGuid });
 			MainForm.Current.onlineUserControl1.FillSearchParameterWithFiles(_sp);
@@ -234,7 +237,7 @@ namespace x360ce.App.Controls
 
 		SearchResult sr;
 
-		void ws_SearchSettingsCompleted(object sender, SearchSettingsCompletedEventArgs e)
+        void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
 			sr = null;
 			if (e.Error != null)
@@ -244,15 +247,16 @@ namespace x360ce.App.Controls
 			}
 			InternetPictureBox.Image = Properties.Resources.check_16x16;
 			InternetLabel.Text += " Done";
-			sr = e.Result;
+            var result = (SearchResult)e.Result;
+            sr = result;
 			// Reorder summaries
 			sr.Summaries = sr.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-			var s = GetBestSetting(e.Result);
+			var s = GetBestSetting(result);
 			if (s != null) configs.Add(s);
 			Complete();
 		}
 
-		Summary GetBestSetting(SearchResult sr)
+        Summary GetBestSetting(x360ce.Engine.SearchResult sr)
 		{
 			var sum = new Summary();
 			for (int i = 0; i < sr.Settings.Length; i++)

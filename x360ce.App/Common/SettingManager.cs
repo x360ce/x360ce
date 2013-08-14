@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using x360ce.App.com.x360ce.localhost;
 using SharpDX.DirectInput;
 using x360ce.App.Controls;
 using System.Linq;
+using x360ce.Engine.Data;
 
 namespace x360ce.App
 {

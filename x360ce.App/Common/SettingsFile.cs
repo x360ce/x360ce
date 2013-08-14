@@ -12,12 +12,12 @@ namespace x360ce.App
 	public class SettingsFile
 	{
 
-		BindingList<com.x360ce.localhost.Program> _Programs;
-		BindingList<com.x360ce.localhost.PadSetting> _Pads;
+        BindingList<x360ce.Engine.Data.Program> _Programs;
+        BindingList<x360ce.Engine.Data.PadSetting> _Pads;
 
 		public SettingsFile(){
-			_Programs = new BindingList<com.x360ce.localhost.Program>();
-			_Pads = new BindingList<com.x360ce.localhost.PadSetting>();
+            _Programs = new BindingList<x360ce.Engine.Data.Program>();
+            _Pads = new BindingList<x360ce.Engine.Data.PadSetting>();
 		}
 
 		static SettingsFile _current;
@@ -26,8 +26,8 @@ namespace x360ce.App
 			get { return _current = _current ?? new SettingsFile(); }
 		}
 
-		public BindingList<com.x360ce.localhost.Program> Programs { get { return _Programs; } }
-		public BindingList<com.x360ce.localhost.PadSetting> Pads { get { return _Pads; } }
+		public BindingList<x360ce.Engine.Data.Program> Programs { get { return _Programs; } }
+        public BindingList<x360ce.Engine.Data.PadSetting> Pads { get { return _Pads; } }
 
 		const string FileName = "x360ce.xml";
 
