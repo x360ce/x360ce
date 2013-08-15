@@ -280,15 +280,15 @@ namespace x360ce.App.Controls
 			ws.SaveSettingAsync(s, ps);
 		}
 
-        void ws_SaveSettingCompleted(object sender, ResultEventArgs e)
+		void ws_SaveSettingCompleted(object sender, ResultEventArgs e)
 		{
 			if (e.Error != null)
 			{
 				mainForm.UpdateHelpHeader(e.Error.Message, MessageBoxIcon.Error);
 				throw e.Error;
 			}
-            var result = (string)e.Result;
-            if (!string.IsNullOrEmpty(result))
+			var result = (string)e.Result;
+			if (!string.IsNullOrEmpty(result))
 			{
 				mainForm.UpdateHelpHeader(result, MessageBoxIcon.Error);
 			}
@@ -316,15 +316,15 @@ namespace x360ce.App.Controls
 			}
 		}
 
-        void ws_DeleteSettingCompleted(object sender, ResultEventArgs e)
+		void ws_DeleteSettingCompleted(object sender, ResultEventArgs e)
 		{
 			if (e.Error != null)
 			{
 				mainForm.UpdateHelpHeader(e.Error.Message, MessageBoxIcon.Error);
 				throw e.Error;
 			}
-            var result = (string)e.Result;
-            if (!string.IsNullOrEmpty(result))
+			var result = (string)e.Result;
+			if (!string.IsNullOrEmpty(result))
 			{
 				mainForm.UpdateHelpHeader(result, MessageBoxIcon.Error);
 			}
@@ -350,7 +350,7 @@ namespace x360ce.App.Controls
 			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
-            ws.SearchSettingsAsync(sp.ToArray(), showResult);
+			ws.SearchSettingsAsync(sp.ToArray(), showResult);
 		}
 
 		public void FillSearchParameterWithDevices(List<SearchParameter> sp)
@@ -423,15 +423,15 @@ namespace x360ce.App.Controls
 
 		public void LoadSetting(Guid padSettingChecksum)
 		{
-            var ws = new WebServiceClient();
+			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
 			ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
 
-        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
-            var result = (SearchResult)e.Result;
+			var result = (SearchResult)e.Result;
 			if (result.PadSettings.Length == 0)
 			{
 				mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Setting was not found.", DateTime.Now), MessageBoxIcon.Information);
@@ -457,7 +457,7 @@ namespace x360ce.App.Controls
 		BindingList<Setting> _Settings;
 		BindingList<Summary> _Summaries;
 
-        void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
 			refreshed = true;
 			if (e.Result == null)
@@ -471,8 +471,8 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-                var result = (SearchResult)e.Result;
-                // Reorder summaries.
+				var result = (SearchResult)e.Result;
+				// Reorder summaries.
 				result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
 				UpdateList(result.Settings, _Settings);
 				UpdateList(result.Summaries, _Summaries);
