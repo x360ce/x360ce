@@ -138,10 +138,10 @@ namespace x360ce.App.Controls
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
 
-        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
-            var result = (SearchResult)e.Result;
-            if (result.PadSettings.Length == 0)
+			var result = (SearchResult)e.Result;
+			if (result.PadSettings.Length == 0)
 			{
 				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Setting was not found.", DateTime.Now), MessageBoxIcon.Information);
 			}
@@ -237,7 +237,7 @@ namespace x360ce.App.Controls
 
 		SearchResult sr;
 
-        void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
 			sr = null;
 			if (e.Error != null)
@@ -247,8 +247,8 @@ namespace x360ce.App.Controls
 			}
 			InternetPictureBox.Image = Properties.Resources.check_16x16;
 			InternetLabel.Text += " Done";
-            var result = (SearchResult)e.Result;
-            sr = result;
+			var result = (SearchResult)e.Result;
+			sr = result;
 			// Reorder summaries
 			sr.Summaries = sr.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
 			var s = GetBestSetting(result);
@@ -256,7 +256,7 @@ namespace x360ce.App.Controls
 			Complete();
 		}
 
-        Summary GetBestSetting(x360ce.Engine.SearchResult sr)
+		Summary GetBestSetting(x360ce.Engine.SearchResult sr)
 		{
 			var sum = new Summary();
 			for (int i = 0; i < sr.Settings.Length; i++)
