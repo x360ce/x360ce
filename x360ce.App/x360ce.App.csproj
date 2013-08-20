@@ -433,6 +433,7 @@
     <None Include="Images\check_16x16.png" />
     <None Include="Images\check_disabled_16x16.png" />
     <None Include="Images\remove_16x16.png" />
+    <None Include="Images\folder_view_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Images\MarkController.png" />

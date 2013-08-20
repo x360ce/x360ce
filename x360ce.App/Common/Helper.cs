@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Xml;
+using Microsoft.Win32;
 
 namespace x360ce.App
 {
@@ -196,6 +197,36 @@ namespace x360ce.App
             return string.IsNullOrEmpty(s)
                 ? false
                 : GuidRegex.IsMatch(s);
+        }
+
+        /// <summary>
+        /// Gets a value that determines what the friendly name of the file is.
+        /// </summary>
+        /// <param name="fileExtension">File extension.</param>
+        public static string GetFileDescription(string fileExtension)
+        {
+            var progId = GetProgId(fileExtension);
+            if (string.IsNullOrEmpty(progId)) return string.Empty;
+            var key = Registry.ClassesRoot;
+            key = key.OpenSubKey(progId);
+            if (key == null) return null;
+            var val = key.GetValue("", null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+            if (val == null) return string.Empty;
+            return val.ToString();
+        }
+
+        /// <summary>
+        /// Gets a value that indicates the name of the associated application with the behavior to handle this extension.
+        /// </summary>
+        /// <param name="fileExtension">File extension.</param>
+        public static string GetProgId(string fileExtension)
+        {
+            var key = Registry.ClassesRoot;
+            key = key.OpenSubKey(fileExtension);
+            if (key == null) return null;
+            var val = key.GetValue("", null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+            if (val == null) return string.Empty;
+            return val.ToString();
         }
 
         public static Guid GetFileChecksum(string fileName)

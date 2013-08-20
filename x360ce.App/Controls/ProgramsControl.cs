@@ -288,5 +288,33 @@ namespace x360ce.App.Controls
 
 		}
 
+        private void BrowseButton_Click(object sender, EventArgs e)
+        {
+            var path = "";
+            ProgramOpenFileDialog.DefaultExt = ".exe";
+            if (!string.IsNullOrEmpty(ProgramLocationTextBox.Text))
+            {
+                var fi = new System.IO.FileInfo(ProgramLocationTextBox.Text);
+                if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
+                ProgramOpenFileDialog.FileName = fi.Name;
+            }
+            ProgramOpenFileDialog.Filter = Helper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+            ProgramOpenFileDialog.FilterIndex = 1;
+            ProgramOpenFileDialog.RestoreDirectory = true;
+            if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+            ProgramOpenFileDialog.InitialDirectory = path;
+            ProgramOpenFileDialog.Title = "Browse for Executable";
+            var result = ProgramOpenFileDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                ProgramLocationTextBox.Text = ProgramOpenFileDialog.FileName;
+            }
+        }
+
+        private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
 	}
 }

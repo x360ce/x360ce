@@ -51,7 +51,7 @@ namespace x360ce.App.Controls
 
 		void BrowseButton_Click(object sender, EventArgs e)
 		{
-			SettingsFolderBrowserDialog.Description = string.Format("Browse for {0} (*.ini)", GetFileDescription(".ini"));
+			SettingsFolderBrowserDialog.Description = string.Format("Browse for {0} (*.ini)", Helper.GetFileDescription(".ini"));
 			SettingsFolderBrowserDialog.SelectedPath = FolderPathTextBox.Text;
 			var result = SettingsFolderBrowserDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
@@ -340,20 +340,6 @@ namespace x360ce.App.Controls
 			return null;
 		}
 
-		/// <summary>
-		/// Gets a value that indicates the name of the associated application with the behavior to handle this extension.
-		/// </summary>
-		/// <param name="fileExtension">File extension.</param>
-		public static string GetProgId(string fileExtension)
-		{
-			var key = Registry.ClassesRoot;
-			key = key.OpenSubKey(fileExtension);
-			if (key == null) return null;
-			var val = key.GetValue("", null, RegistryValueOptions.DoNotExpandEnvironmentNames);
-			if (val == null) return string.Empty;
-			return val.ToString();
-		}
-
 		public bool LoadingCircle
 		{
 			get { return BusyLoadingCircle.Active; }
@@ -371,22 +357,6 @@ namespace x360ce.App.Controls
 				BusyLoadingCircle.Active = value;
 				BusyLoadingCircle.Visible = value;
 			}
-		}
-
-		/// <summary>
-		/// Gets a value that determines what the friendly name of the file is.
-		/// </summary>
-		/// <param name="fileExtension">File extension.</param>
-		public static string GetFileDescription(string fileExtension)
-		{
-			var progId = GetProgId(fileExtension);
-			if (string.IsNullOrEmpty(progId)) return string.Empty;
-			var key = Registry.ClassesRoot;
-			key = key.OpenSubKey(progId);
-			if (key == null) return null;
-			var val = key.GetValue("", null, RegistryValueOptions.DoNotExpandEnvironmentNames);
-			if (val == null) return string.Empty;
-			return val.ToString();
 		}
 
 		void Complete()

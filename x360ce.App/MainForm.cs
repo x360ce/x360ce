@@ -424,10 +424,10 @@ namespace x360ce.App
 						}
 
 					}
-					BeginInvoke((MethodInvoker)delegate()
-					{
-						XInput.FreeLibrary();    
-					});
+					//BeginInvoke((MethodInvoker)delegate()
+					//{
+					//	XInput.FreeLibrary();    
+					//});
 				}
 				System.Threading.Thread.Sleep(100);
 			}
