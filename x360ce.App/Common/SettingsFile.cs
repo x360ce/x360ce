@@ -12,11 +12,11 @@ namespace x360ce.App
 	public class SettingsFile
 	{
 
-        BindingList<x360ce.Engine.Data.Program> _Programs;
+        BindingList<x360ce.Engine.Data.Program> _Games;
         BindingList<x360ce.Engine.Data.PadSetting> _Pads;
 
 		public SettingsFile(){
-            _Programs = new BindingList<x360ce.Engine.Data.Program>();
+            _Games = new BindingList<x360ce.Engine.Data.Program>();
             _Pads = new BindingList<x360ce.Engine.Data.PadSetting>();
 		}
 
@@ -26,7 +26,7 @@ namespace x360ce.App
 			get { return _current = _current ?? new SettingsFile(); }
 		}
 
-		public BindingList<x360ce.Engine.Data.Program> Programs { get { return _Programs; } }
+		public BindingList<x360ce.Engine.Data.Program> Games { get { return _Games; } }
         public BindingList<x360ce.Engine.Data.PadSetting> Pads { get { return _Pads; } }
 
 		const string FileName = "x360ce.xml";
@@ -44,8 +44,8 @@ namespace x360ce.App
 			}
 			var data = (SettingsFile)Helper.DeserializeFromXmlFile(FileName, typeof(SettingsFile));
 			if (data == null) return;
-			Programs.Clear();
-			if (data.Programs != null) for (int i = 0; i < data.Programs.Count; i++) Programs.Add(data.Programs[i]);
+			Games.Clear();
+			if (data.Games != null) for (int i = 0; i < data.Games.Count; i++) Games.Add(data.Games[i]);
 			Pads.Clear();
 			if (data.Pads != null) for (int i = 0; i < data.Pads.Count; i++) Pads.Add(data.Pads[i]);
 		}

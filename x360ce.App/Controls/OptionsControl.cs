@@ -57,7 +57,7 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
 			sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
 			sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-			sm.Add(section + SettingName.ProgramScanLocations, ProgramScanLocationsListBox);
+			sm.Add(section + SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			section = @"InputHook\";
 			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
 		}
@@ -70,34 +70,34 @@ namespace x360ce.App.Controls
 		private void AddLocationButton_Click(object sender, EventArgs e)
 		{
 			var path = LocationFolderBrowserDialog.SelectedPath;
-			if (string.IsNullOrEmpty(path)) path = ProgramScanLocationsListBox.Text;
+			if (string.IsNullOrEmpty(path)) path = GameScanLocationsListBox.Text;
 			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 			LocationFolderBrowserDialog.SelectedPath = path;
 			LocationFolderBrowserDialog.Description = "Browse for Scan Location";
 			var result = LocationFolderBrowserDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
-				if (!ProgramScanLocationsListBox.Items.Contains(LocationFolderBrowserDialog.SelectedPath))
+				if (!GameScanLocationsListBox.Items.Contains(LocationFolderBrowserDialog.SelectedPath))
 				{
-					ProgramScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
+					GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
 					// Change selectd index for change event to fire.
-					ProgramScanLocationsListBox.SelectedIndex = ProgramScanLocationsListBox.Items.Count - 1;
+					GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
 				}
 			}
 		}
 
 		private void RemoveLocationButton_Click(object sender, EventArgs e)
 		{
-			if (ProgramScanLocationsListBox.SelectedIndex == -1) return;
-			var currentIndex = ProgramScanLocationsListBox.SelectedIndex;
-			ProgramScanLocationsListBox.Items.RemoveAt(currentIndex);
+			if (GameScanLocationsListBox.SelectedIndex == -1) return;
+			var currentIndex = GameScanLocationsListBox.SelectedIndex;
+			GameScanLocationsListBox.Items.RemoveAt(currentIndex);
 			// Change selectd index for change event to fire.
-			ProgramScanLocationsListBox.SelectedIndex = Math.Min(currentIndex, ProgramScanLocationsListBox.Items.Count - 1);
+			GameScanLocationsListBox.SelectedIndex = Math.Min(currentIndex, GameScanLocationsListBox.Items.Count - 1);
 		}
 
 		private void ProgramScanLocationsListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			RemoveLocationButton.Enabled = ProgramScanLocationsListBox.SelectedIndex > -1;
+			RemoveLocationButton.Enabled = GameScanLocationsListBox.SelectedIndex > -1;
 		}
 
 	}
