@@ -55,7 +55,6 @@
     <Compile Include="Common\SearchParameter.cs" />
     <Compile Include="Common\SearchResult.cs" />
     <Compile Include="Common\SettingsData.cs" />
-    <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>

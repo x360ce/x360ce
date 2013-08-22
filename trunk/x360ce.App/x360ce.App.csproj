@@ -310,7 +310,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power.ini" />
