@@ -65,6 +65,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Controls\ControllersControl.ascx" />
+    <Content Include="Controls\GamesControl.ascx" />
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -81,6 +83,20 @@
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ControllersControl.ascx.cs">
+      <DependentUpon>ControllersControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ControllersControl.ascx.designer.cs">
+      <DependentUpon>ControllersControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GamesControl.ascx.cs">
+      <DependentUpon>GamesControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GamesControl.ascx.designer.cs">
+      <DependentUpon>GamesControl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -114,9 +130,9 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>9663</DevelopmentServerPort>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>20360</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost.x360ce.com</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

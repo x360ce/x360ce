@@ -233,6 +233,10 @@
     <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_GetUsersInRoles.sql" />
     <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_IsUserInRole.sql" />
     <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_RemoveUsersFromRoles.sql" />
+    <Build Include="dbo\Tables\x360ce_Games.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\x360ce.Master\x360ce.Master.sqlproj">

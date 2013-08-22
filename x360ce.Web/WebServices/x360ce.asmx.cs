@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-using x360ce.Web.Data;
 using System.Data.Objects;
 using System.Linq.Expressions;
 using System.Web.Security;
+using x360ce.Engine.Data;
+using x360ce.Engine;
 
 namespace x360ce.Web.WebServices
 {
@@ -25,7 +26,7 @@ namespace x360ce.Web.WebServices
 		public string SaveSetting(Setting s, PadSetting ps)
 		{
 			var checksum = ps.GetCheckSum();
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			var s1 = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			var n = DateTime.Now;
 			if (s1 == null)
@@ -115,7 +116,7 @@ namespace x360ce.Web.WebServices
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
 			var sr = new SearchResult();
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			// All instances of the user.
 			var instances = args.Where(x => x.InstanceGuid != Guid.Empty).Select(x => x.InstanceGuid).Distinct().ToArray();
 			if (instances.Length == 0)
@@ -167,7 +168,7 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true)]
 		public string DeleteSetting(Setting s)
 		{
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			var setting = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			if (setting == null) return "Setting not found";
 			db.Settings.DeleteObject(setting);
@@ -179,7 +180,7 @@ namespace x360ce.Web.WebServices
 		public SearchResult LoadSetting(Guid[] checksum)
 		{
 			var sr = new SearchResult();
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			sr.PadSettings = db.PadSettings.Where(x => checksum.Contains(x.PadSettingChecksum)).ToArray();
 			return sr;
 		}
@@ -187,7 +188,7 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true)]
 		public List<Vendor> GetVendors()
 		{
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			var q = from row in db.Vendors
 					select new Vendor
 					{
@@ -204,7 +205,7 @@ namespace x360ce.Web.WebServices
 		public SettingsData GetSettingsData()
 		{
 			var data = new SettingsData();
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			data.Programs = db.Programs.Where(x=>x.IsEnabled && x.InstanceCount > 1).ToList();
 			return data;
 		}
@@ -212,7 +213,7 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true)]
 		public List<Program> GetPrograms(bool? isEnabled, int? minInstanceCount)
 		{
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			IQueryable<Program> list = db.Programs;
 			if (isEnabled.HasValue) list = list.Where(x => x.IsEnabled == isEnabled.Value);
 			if (minInstanceCount.HasValue) list = list.Where(x => x.InstanceCount == minInstanceCount.Value);
@@ -221,7 +222,7 @@ namespace x360ce.Web.WebServices
 
 		[WebMethod(EnableSession = true)]
 		public Program GetProgram(string fileName, string fileProductName){
-			var db = new Data.x360ceModelContainer();
+			var db = new x360ceModelContainer();
 			var o = db.Programs.FirstOrDefault(x => x.FileName == fileName && x.FileProductName == fileProductName);
 			if (o != null) return o;
 			o = db.Programs.FirstOrDefault(x => x.FileName == fileName);
@@ -233,7 +234,7 @@ namespace x360ce.Web.WebServices
 		{
 			if (HttpContext.Current.User.Identity.IsAuthenticated)
 			{
-				var db = new Data.x360ceModelContainer();
+				var db = new x360ceModelContainer();
 				var o = db.Programs.FirstOrDefault(x => x.FileName == p.FileName && x.FileProductName == p.FileProductName);
 				if (o == null)
 				{

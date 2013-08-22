@@ -6,6 +6,7 @@
 		<edmx:StorageModels>
 		<Schema Namespace="x360ceModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="x360ceModelStoreContainer">
+          <EntitySet Name="x360ce_Games" EntityType="x360ceModel.Store.x360ce_Games" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="x360ce_PadSettings" EntityType="x360ceModel.Store.x360ce_PadSettings" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="x360ce_Products" EntityType="x360ceModel.Store.x360ce_Products" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="x360ce_Programs" EntityType="x360ceModel.Store.x360ce_Programs" store:Type="Tables" Schema="dbo" />
@@ -13,6 +14,24 @@
           <EntitySet Name="x360ce_Summaries" EntityType="x360ceModel.Store.x360ce_Summaries" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="x360ce_Vendors" EntityType="x360ceModel.Store.x360ce_Vendors" store:Type="Tables" Schema="dbo" />
         </EntityContainer>
+        <EntityType Name="x360ce_Games">
+          <Key>
+            <PropertyRef Name="GameId" />
+          </Key>
+          <Property Name="GameId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DiskDriveId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="FileProductName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="FileVersion" Type="nvarchar" Nullable="false" MaxLength="32" />
+          <Property Name="FullPath" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="CompanyName" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="HookMask" Type="int" Nullable="false" />
+          <Property Name="XInputMask" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" Nullable="false" MaxLength="1024" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" />
+        </EntityType>
         <EntityType Name="x360ce_PadSettings">
           <Key>
             <PropertyRef Name="PadSettingChecksum" />
@@ -147,6 +166,7 @@
 					<EntitySet Name="Vendors" EntityType="x360ceModel.Vendor" />
           <EntitySet Name="Products" EntityType="x360ceModel.Product" />
           <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
+          <EntitySet Name="Games" EntityType="x360ceModel.Game" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -270,6 +290,24 @@
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="DateUpdated" Precision="3" />
           <Property Type="String" Name="Comment" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Game">
+          <Key>
+            <PropertyRef Name="GameId" />
+          </Key>
+          <Property Type="Guid" Name="GameId" Nullable="false" />
+          <Property Type="Guid" Name="DiskDriveId" Nullable="false" />
+          <Property Type="String" Name="FileName" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FileVersion" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FullPath" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="HookMask" Nullable="false" />
+          <Property Type="Int32" Name="XInputMask" Nullable="false" />
+          <Property Type="String" Name="Comment" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
+          <Property Type="DateTime" Name="DateUpdated" Precision="3" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -408,6 +446,25 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Games">
+            <EntityTypeMapping TypeName="x360ceModel.Game">
+              <MappingFragment StoreEntitySet="x360ce_Games">
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="XInputMask" ColumnName="XInputMask" />
+                <ScalarProperty Name="HookMask" ColumnName="HookMask" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="FullPath" ColumnName="FullPath" />
+                <ScalarProperty Name="FileVersion" ColumnName="FileVersion" />
+                <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="DiskDriveId" ColumnName="DiskDriveId" />
+                <ScalarProperty Name="GameId" ColumnName="GameId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
 				</EntityContainerMapping>
 			</Mapping>
 		</edmx:Mappings>
@@ -428,13 +485,14 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="40" >
+			<Diagram Name="x360ceModel" ZoomLevel="60" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.875" PointY="0.5" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.5" />
+        <EntityTypeShape EntityType="x360ceModel.Game" Width="1.5" PointX="7.875" PointY="2.625" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>
