@@ -10,12 +10,12 @@ using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
-	public partial class ProgramsControl : UserControl
+	public partial class GamesControl : UserControl
 	{
-		public ProgramsControl()
+		public GamesControl()
 		{
 			InitializeComponent();
-			ProgramsDataGridView.AutoGenerateColumns = false;
+			GamesDataGridView.AutoGenerateColumns = false;
 			if (DesignMode) return;
 			InitDefaultList();
 		}
@@ -122,7 +122,7 @@ namespace x360ce.App.Controls
 				CurrentProgram.HookMask = (int)hm;
 				HookMaskTextBox.Text = CurrentProgram.HookMask.ToString("X8");
 			}
-
+			SettingsFile.Current.Save();
 		}
 
 		void RefreshAllButton_Click(object sender, EventArgs e)
@@ -142,7 +142,7 @@ namespace x360ce.App.Controls
 			ws.GetProgramsAsync(enabled, minInstances);
 		}
 
-        void ws_GetProgramsCompleted(object sender, ResultEventArgs e)
+		void ws_GetProgramsCompleted(object sender, ResultEventArgs e)
 		{
 			MainForm.Current.LoadingCircle = false;
 			if (e.Error != null)
@@ -156,9 +156,9 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				SettingsFile.Current.Programs.Clear();
-                var result = (List<x360ce.Engine.Data.Program>)e.Result;
-                foreach (var item in result) SettingsFile.Current.Programs.Add(item);
+				SettingsFile.Current.Games.Clear();
+				var result = (List<x360ce.Engine.Data.Program>)e.Result;
+				foreach (var item in result) SettingsFile.Current.Games.Add(item);
 				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
 				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			}
@@ -167,7 +167,7 @@ namespace x360ce.App.Controls
 		void ProgramsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-            var setting = ((x360ce.Engine.Data.Program)grid.Rows[e.RowIndex].DataBoundItem);
+			var setting = ((x360ce.Engine.Data.Program)grid.Rows[e.RowIndex].DataBoundItem);
 			var isCurrent = CurrentProgram != null && setting.ProgramId == CurrentProgram.ProgramId;
 			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
 			//{
@@ -189,16 +189,16 @@ namespace x360ce.App.Controls
 		{
 			// List can't be empty, so return.
 			// Issue: When Datasource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-			if (ProgramsDataGridView.SelectedRows.Count == 0) return;
-			var row = ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-            var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
+			if (GamesDataGridView.SelectedRows.Count == 0) return;
+			var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
 			CurrentProgram = item;
 		}
 
 		void InitDefaultList()
 		{
-			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
-            var item = new x360ce.Engine.Data.Program();
+			GamesDataGridView.DataSource = SettingsFile.Current.Games;
+			var item = new x360ce.Engine.Data.Program();
 			item.DateCreated = DateTime.Now;
 			item.DateUpdated = DateTime.Now;
 			item.FileName = "<All>";
@@ -208,9 +208,9 @@ namespace x360ce.App.Controls
 			item.IsEnabled = true;
 			item.ProgramId = Guid.Empty;
 			item.XInputMask = 0;
-			SettingsFile.Current.Programs.Add(item);
+			SettingsFile.Current.Games.Add(item);
 			var ps = Helper.GetLocalFiles();
-			foreach (var p in ps) SettingsFile.Current.Programs.Add(p);
+			foreach (var p in ps) SettingsFile.Current.Games.Add(p);
 		}
 
 		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
@@ -269,52 +269,67 @@ namespace x360ce.App.Controls
 			Helper.CreateDllFile(Xinput14CheckBox.Checked, Helper.dllFile4);
 		}
 
-        private void RefreshButton_Click(object sender, EventArgs e)
-        {
-            //var ws = new WebServiceClient();
-            //ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-            //ws.LoadSettingCompleted += ws_LoadSettingCompleted;
-            //ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
+		private void RefreshButton_Click(object sender, EventArgs e)
+		{
+			//var ws = new WebServiceClient();
+			//ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
+			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
+			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
 
-        }
+		}
 
-        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
-        {
-            //var x = e;
-        }
+		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+		{
+			//var x = e;
+		}
 
 		private void ExportButton_Click(object sender, EventArgs e)
 		{
 
 		}
 
-        private void BrowseButton_Click(object sender, EventArgs e)
-        {
-            var path = "";
-            ProgramOpenFileDialog.DefaultExt = ".exe";
-            if (!string.IsNullOrEmpty(ProgramLocationTextBox.Text))
-            {
-                var fi = new System.IO.FileInfo(ProgramLocationTextBox.Text);
-                if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
-                ProgramOpenFileDialog.FileName = fi.Name;
-            }
-            ProgramOpenFileDialog.Filter = Helper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
-            ProgramOpenFileDialog.FilterIndex = 1;
-            ProgramOpenFileDialog.RestoreDirectory = true;
-            if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-            ProgramOpenFileDialog.InitialDirectory = path;
-            ProgramOpenFileDialog.Title = "Browse for Executable";
-            var result = ProgramOpenFileDialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                ProgramLocationTextBox.Text = ProgramOpenFileDialog.FileName;
-            }
-        }
+		private void BrowseButton_Click(object sender, EventArgs e)
+		{
+			var path = "";
+			GameApplicationOpenFileDialog.DefaultExt = ".exe";
+			if (!string.IsNullOrEmpty(GameApplicationLocationTextBox.Text))
+			{
+				var fi = new System.IO.FileInfo(GameApplicationLocationTextBox.Text);
+				if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
+				GameApplicationOpenFileDialog.FileName = fi.Name;
+			}
+			GameApplicationOpenFileDialog.Filter = Helper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+			GameApplicationOpenFileDialog.FilterIndex = 1;
+			GameApplicationOpenFileDialog.RestoreDirectory = true;
+			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+			GameApplicationOpenFileDialog.InitialDirectory = path;
+			GameApplicationOpenFileDialog.Title = "Browse for Executable";
+			var result = GameApplicationOpenFileDialog.ShowDialog();
+			if (result == System.Windows.Forms.DialogResult.OK)
+			{
+				GameApplicationLocationTextBox.Text = GameApplicationOpenFileDialog.FileName;
+				ProcessExecutable(GameApplicationOpenFileDialog.FileName);
+			}
+		}
 
-        private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
-        {
+		private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
+		{
 
-        }
+		}
+
+		void ProcessExecutable(string filePath)
+		{
+			var fi = new System.IO.FileInfo(filePath);
+			if (!fi.Exists) return;
+			// Check if item already exists.
+			var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
+			if (game == null)
+			{
+				game = x360ce.Engine.Data.Program.FromDisk(fi.FullName);
+				SettingsFile.Current.Games.Add(game);
+			}
+			SettingsFile.Current.Save();
+		}
 
 	}
 }

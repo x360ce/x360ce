@@ -46,7 +46,7 @@
 			this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
 			this.ProgramScanLocationsTabControl = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.ProgramScanLocationsListBox = new System.Windows.Forms.ListBox();
+			this.GameScanLocationsListBox = new System.Windows.Forms.ListBox();
 			this.AddLocationButton = new System.Windows.Forms.Button();
 			this.RemoveLocationButton = new System.Windows.Forms.Button();
 			this.LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -244,7 +244,7 @@
 			// 
 			// tabPage1
 			// 
-			this.tabPage1.Controls.Add(this.ProgramScanLocationsListBox);
+			this.tabPage1.Controls.Add(this.GameScanLocationsListBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 28);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Size = new System.Drawing.Size(383, 94);
@@ -252,16 +252,16 @@
 			this.tabPage1.Text = "Game Scan Locations:";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
-			// ProgramScanLocationsListBox
+			// GameScanLocationsListBox
 			// 
-			this.ProgramScanLocationsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.ProgramScanLocationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProgramScanLocationsListBox.FormattingEnabled = true;
-			this.ProgramScanLocationsListBox.Location = new System.Drawing.Point(0, 0);
-			this.ProgramScanLocationsListBox.Name = "ProgramScanLocationsListBox";
-			this.ProgramScanLocationsListBox.Size = new System.Drawing.Size(383, 94);
-			this.ProgramScanLocationsListBox.TabIndex = 0;
-			this.ProgramScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
+			this.GameScanLocationsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.GameScanLocationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.GameScanLocationsListBox.FormattingEnabled = true;
+			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 0);
+			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
+			this.GameScanLocationsListBox.Size = new System.Drawing.Size(383, 94);
+			this.GameScanLocationsListBox.TabIndex = 0;
+			this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
 			// 
 			// AddLocationButton
 			// 
@@ -342,7 +342,7 @@
         private System.Windows.Forms.ComboBox FakeModeComboBox;
         private System.Windows.Forms.TabControl ProgramScanLocationsTabControl;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.ListBox ProgramScanLocationsListBox;
+        private System.Windows.Forms.ListBox GameScanLocationsListBox;
 		private System.Windows.Forms.FolderBrowserDialog LocationFolderBrowserDialog;
     }
 }

@@ -228,11 +228,11 @@
     <Compile Include="Controls\PadControl.Designer.cs">
       <DependentUpon>PadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ProgramsControl.cs">
+    <Compile Include="Controls\GamesControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ProgramsControl.Designer.cs">
-      <DependentUpon>ProgramsControl.cs</DependentUpon>
+    <Compile Include="Controls\GamesControl.Designer.cs">
+      <DependentUpon>GamesControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Program.cs" />
@@ -294,8 +294,8 @@
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ProgramsControl.resx">
-      <DependentUpon>ProgramsControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\GamesControl.resx">
+      <DependentUpon>GamesControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -495,7 +495,6 @@ if $(PlatformName) == AnyCPU $(SolutionDir)\Resources\NetZ\netz.exe -s -so -z $(
 )</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\bin\$(ConfigurationName)\x360ce.Engine.dll" "$(SolutionDir)x360ce.App\Resources"</PreBuildEvent>
   </PropertyGroup>
 </Project>
