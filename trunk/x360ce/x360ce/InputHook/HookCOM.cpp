@@ -114,21 +114,29 @@ HRESULT STDMETHODCALLTYPE HookGet(
 
     if(hr != NO_ERROR) return hr;
 
-    //PrintLog(LOG_HOOKCOM, L"wszName %s pVal->vt %d pType %d",wszName,pVal->vt,&pType);
+    //PrintLog(LOG_HOOKCOM, "wszName %ls pVal->vt %d pType %d", wszName, pVal->vt, &pType);
     //if( pVal->vt == VT_BSTR) PrintLog(LOG_HOOKCOM, L"%s",pVal->bstrVal);
 
     if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL )
     {
-        //PrintLog(L"%s"),pVal->bstrVal);
-        DWORD dwPid = 0, dwVid = 0;
+        //PrintLog(LOG_HOOKCOM, "  Got device ID '%ls'", pVal->bstrVal);
+        DWORD dwPid = 0, dwVid = 0, dummy;
 
         OLECHAR* strVid = wcsstr( pVal->bstrVal, L"VID_" );
-        if(!strVid || swscanf_s( strVid, L"VID_%4X", &dwVid ) < 1 )
-            return hr;
+        if(!strVid || swscanf_s( strVid, L"VID_%4X", &dwVid ) < 1 ) {
+		// Fallback VID match for OUYA style device IDs
+		strVid = wcsstr(pVal->bstrVal, L"VID&");
+		if (!strVid || swscanf_s(strVid, L"VID&%4X%4X", &dummy, &dwVid) < 1)
+			return hr;
+ 		}
 
         OLECHAR* strPid = wcsstr( pVal->bstrVal, L"PID_" );
-        if(!strPid || swscanf_s( strPid, L"PID_%4X", &dwPid ) < 1 )
-            return hr;
+        if(!strPid || swscanf_s( strPid, L"PID_%4X", &dwPid ) < 1 ) {
+		// Fallback PID match for OUYA style device IDs
+		strPid = wcsstr(pVal->bstrVal, L"PID&");
+		if (!strPid || swscanf_s(strPid, L"PID&%4X", &dwPid) < 1)
+			return hr;
+ 		}
 
 		for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
