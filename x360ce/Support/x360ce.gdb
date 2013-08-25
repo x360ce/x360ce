@@ -54,6 +54,14 @@ HookMask = 0x00000002
 Name = BioShock Infinite
 HookMask = 0x00000002 
 
+[Blacklist_game.exe]
+Name = Tom Clancy's Splinter Cell Blacklist
+HookMask=0x0000000E
+
+[Blacklist_DX11_game.exe]
+Name = Tom Clancy's Splinter Cell Blacklist DX11
+HookMask=0x0000000E
+
 [Bladekitten.exe]
 Name = Blade Kitten
 HookMask = 0x00000002
@@ -111,7 +119,7 @@ Name = Tom Clancy's H.A.W.X
 HookMask=0x0000000E
 
 [HAWX_dx10.exe]
-Name = Tom Clancy's H.A.W.X
+Name = Tom Clancy's H.A.W.X DX10
 HookMask=0x0000000E
 
 [HAWX2.exe]
@@ -158,6 +166,10 @@ HookMask = 0x00000002
 Name = Resident Evil 6
 HookMask = 0x00000002
 
+[SaintsRowIV.exe]
+Name = Saints Row IV
+HookMask = 0x00000002
+
 [SaintsRowTheThird.exe]
 Name = Saints Row: The Third
 HookMask = 0x00000002
@@ -180,6 +192,10 @@ HookMask = 0x00000002
 
 [shank2.exe]
 Name = Shank 2
+HookMask = 0x00000002
+
+[SkullGirls.exe]
+Name = Skullgirls
 HookMask = 0x00000002
 
 [SSFIV.exe]
