@@ -56,7 +56,6 @@
 			this.Xinput12CheckBox = new System.Windows.Forms.CheckBox();
 			this.Xinput11CheckBox = new System.Windows.Forms.CheckBox();
 			this.Xinput91CheckBox = new System.Windows.Forms.CheckBox();
-			this.SearchFilterTextBox = new System.Windows.Forms.TextBox();
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
@@ -387,15 +386,6 @@
 			this.Xinput91CheckBox.UseVisualStyleBackColor = true;
 			this.Xinput91CheckBox.CheckedChanged += new System.EventHandler(this.Xinput91CheckBox_CheckedChanged);
 			// 
-			// SearchFilterTextBox
-			// 
-			this.SearchFilterTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.SearchFilterTextBox.Location = new System.Drawing.Point(58, 68);
-			this.SearchFilterTextBox.Name = "SearchFilterTextBox";
-			this.SearchFilterTextBox.Size = new System.Drawing.Size(487, 20);
-			this.SearchFilterTextBox.TabIndex = 22;
-			// 
 			// IncludeEnabledCheckBox
 			// 
 			this.IncludeEnabledCheckBox.AutoSize = true;
@@ -520,7 +510,6 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MinimumInstanceCountLabel);
-			this.Controls.Add(this.SearchFilterTextBox);
 			this.Controls.Add(this.RefreshButton);
 			this.Controls.Add(this.DeleteButton);
 			this.Controls.Add(this.SaveButton);
@@ -570,7 +559,6 @@
 		System.Windows.Forms.CheckBox Xinput12CheckBox;
 		System.Windows.Forms.CheckBox Xinput11CheckBox;
 		System.Windows.Forms.CheckBox Xinput91CheckBox;
-		private System.Windows.Forms.TextBox SearchFilterTextBox;
 		private System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
 		private System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
 		private System.Windows.Forms.Button SaveButton;

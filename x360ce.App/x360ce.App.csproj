@@ -148,7 +148,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\BoardInfo.cs" />
     <Compile Include="Common\DeviceDetector.cs" />
     <Compile Include="Common\DeviceDetectorEventArgs.cs" />
     <Compile Include="Common\DeviceDetectorForm.cs">

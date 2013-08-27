@@ -6,12 +6,12 @@ using System.IO;
 
 namespace x360ce.Engine.Data
 {
-	public partial class Program
+	public partial class Game
 	{
 
-		public static Program FromDisk(string fileName)
+		public static Game FromDisk(string fileName)
 		{
-			var item = new Program();
+			var item = new Game();
 			var fi = new FileInfo(fileName);
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
 			item.Comment = vi.Comments;
@@ -19,12 +19,22 @@ namespace x360ce.Engine.Data
 			item.DateUpdated = item.DateCreated;
 			item.FileName = fi.Name;
 			item.FileProductName = vi.ProductName;
+			item.CompanyName = vi.CompanyName;
+			item.DiskDriveId = BoardInfo.GetDiskDriveIdGuid();
+			item.FileVersion = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart).ToString();
+			item.FullPath = fi.FullName;
+			item.GameId = Guid.NewGuid();
 			item.HookMask = 0;
-			item.InstanceCount = 0;
 			item.IsEnabled = true;
-			item.ProgramId = Guid.NewGuid();
 			item.XInputMask = 0;
 			return item;
+		}
+
+		public void LoadDefault(Program program)
+		{
+			if (program == null) return;
+			HookMask = program.HookMask;
+			XInputMask = program.XInputMask;
 		}
 
 	}

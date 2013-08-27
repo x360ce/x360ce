@@ -20,18 +20,18 @@ namespace x360ce.App.Controls
 			InitDefaultList();
 		}
 
-		x360ce.Engine.Data.Program _CurrentProgram;
-		public x360ce.Engine.Data.Program CurrentProgram
+		x360ce.Engine.Data.Game _CurrentGame;
+		public x360ce.Engine.Data.Game CurrentGame
 		{
-			get { return _CurrentProgram; }
+			get { return _CurrentGame; }
 			set
 			{
 				DisableEvents();
-				_CurrentProgram = value;
+				_CurrentGame = value;
 				var en = (value != null);
 				HookMaskGroupBox.Enabled = en;
 				InstalledFilesGroupBox.Enabled = en;
-				var item = value ?? new x360ce.Engine.Data.Program();
+				var item = value ?? new x360ce.Engine.Data.Game();
 				// Update XINput mask.
 				var inputMask = (XInputMask)item.XInputMask;
 				Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
@@ -52,6 +52,8 @@ namespace x360ce.App.Controls
 				HookSTOPCheckBox.Checked = hookMask.HasFlag(HookMask.STOP);
 				HookWTCheckBox.Checked = hookMask.HasFlag(HookMask.WT);
 				HookMaskTextBox.Text = item.HookMask.ToString("X8");
+				// Location
+				GameApplicationLocationTextBox.Text = item.FullPath;
 				// Enable events.
 				EnableEvents();
 			}
@@ -95,17 +97,17 @@ namespace x360ce.App.Controls
 
 		void CheckBox_Changed(object sender, EventArgs e)
 		{
-			if (CurrentProgram == null) return;
+			if (CurrentGame == null) return;
 			var xm = XInputMask.None;
 			if (Xinput11CheckBox.Checked) xm |= XInputMask.Xinput11;
 			if (Xinput12CheckBox.Checked) xm |= XInputMask.Xinput12;
 			if (Xinput13CheckBox.Checked) xm |= XInputMask.Xinput13;
 			if (Xinput14CheckBox.Checked) xm |= XInputMask.Xinput14;
 			if (Xinput91CheckBox.Checked) xm |= XInputMask.Xinput91;
-			if (CurrentProgram.XInputMask != (int)xm)
+			if (CurrentGame.XInputMask != (int)xm)
 			{
-				CurrentProgram.XInputMask = (int)xm;
-				XInputMaskTextBox.Text = CurrentProgram.XInputMask.ToString("X8");
+				CurrentGame.XInputMask = (int)xm;
+				XInputMaskTextBox.Text = CurrentGame.XInputMask.ToString("X8");
 			}
 			var hm = HookMask.NONE;
 			if (HookCOMCheckBox.Checked) hm |= HookMask.COM;
@@ -117,10 +119,10 @@ namespace x360ce.App.Controls
 			if (HookSACheckBox.Checked) hm |= HookMask.SA;
 			if (HookSTOPCheckBox.Checked) hm |= HookMask.STOP;
 			if (HookWTCheckBox.Checked) hm |= HookMask.WT;
-			if (CurrentProgram.HookMask != (int)xm)
+			if (CurrentGame.HookMask != (int)xm)
 			{
-				CurrentProgram.HookMask = (int)hm;
-				HookMaskTextBox.Text = CurrentProgram.HookMask.ToString("X8");
+				CurrentGame.HookMask = (int)hm;
+				HookMaskTextBox.Text = CurrentGame.HookMask.ToString("X8");
 			}
 			SettingsFile.Current.Save();
 		}
@@ -158,7 +160,7 @@ namespace x360ce.App.Controls
 			{
 				SettingsFile.Current.Games.Clear();
 				var result = (List<x360ce.Engine.Data.Program>)e.Result;
-				foreach (var item in result) SettingsFile.Current.Games.Add(item);
+				foreach (var item in result) SettingsFile.Current.Programs.Add(item);
 				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
 				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			}
@@ -167,8 +169,8 @@ namespace x360ce.App.Controls
 		void ProgramsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var setting = ((x360ce.Engine.Data.Program)grid.Rows[e.RowIndex].DataBoundItem);
-			var isCurrent = CurrentProgram != null && setting.ProgramId == CurrentProgram.ProgramId;
+			var setting = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
+			var isCurrent = CurrentGame != null && setting.GameId == CurrentGame.GameId;
 			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
 			//{
 			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
@@ -191,26 +193,14 @@ namespace x360ce.App.Controls
 			// Issue: When Datasource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
 			if (GamesDataGridView.SelectedRows.Count == 0) return;
 			var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
-			CurrentProgram = item;
+			var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+			CurrentGame = item;
 		}
 
 		void InitDefaultList()
 		{
+			SettingsFile.Current.Load();
 			GamesDataGridView.DataSource = SettingsFile.Current.Games;
-			var item = new x360ce.Engine.Data.Program();
-			item.DateCreated = DateTime.Now;
-			item.DateUpdated = DateTime.Now;
-			item.FileName = "<All>";
-			item.FileProductName = "Default (Current Folder)";
-			item.HookMask = 0;
-			item.InstanceCount = 1;
-			item.IsEnabled = true;
-			item.ProgramId = Guid.Empty;
-			item.XInputMask = 0;
-			SettingsFile.Current.Games.Add(item);
-			var ps = Helper.GetLocalFiles();
-			foreach (var p in ps) SettingsFile.Current.Games.Add(p);
 		}
 
 		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
@@ -325,8 +315,15 @@ namespace x360ce.App.Controls
 			var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
 			if (game == null)
 			{
-				game = x360ce.Engine.Data.Program.FromDisk(fi.FullName);
+				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+				// Load default settings.
+				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
+				game.LoadDefault(program);
 				SettingsFile.Current.Games.Add(game);
+			}
+			else
+			{
+				game.FullPath = fi.FullName;
 			}
 			SettingsFile.Current.Save();
 		}
