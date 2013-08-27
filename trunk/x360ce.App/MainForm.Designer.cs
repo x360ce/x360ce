@@ -145,7 +145,7 @@ namespace x360ce.App
 			// 
 			// programsControl1
 			// 
-			this.programsControl1.CurrentProgram = ((x360ce.Engine.Data.Program)(resources.GetObject("programsControl1.CurrentProgram")));
+			this.programsControl1.CurrentGame = ((x360ce.Engine.Data.Game)(resources.GetObject("programsControl1.CurrentGame")));
 			this.programsControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.programsControl1.Location = new System.Drawing.Point(3, 3);
 			this.programsControl1.Name = "programsControl1";

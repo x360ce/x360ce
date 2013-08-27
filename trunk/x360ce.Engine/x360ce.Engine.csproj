@@ -37,6 +37,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
@@ -50,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\BoardInfo.cs" />
     <Compile Include="Common\KeyValue.cs" />
     <Compile Include="Common\KeyValueList.cs" />
     <Compile Include="Common\SearchParameter.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Data\Game.cs" />
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Program.cs" />
     <Compile Include="Data\Vendor.cs" />
