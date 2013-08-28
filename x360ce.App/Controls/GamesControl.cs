@@ -17,6 +17,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			GamesDataGridView.AutoGenerateColumns = false;
 			if (DesignMode) return;
+			ScanProgressLabel.Text = "";
 			InitDefaultList();
 		}
 
@@ -169,8 +170,11 @@ namespace x360ce.App.Controls
 		void ProgramsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var setting = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
-			var isCurrent = CurrentGame != null && setting.GameId == CurrentGame.GameId;
+			var item = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
+			var isCurrent = CurrentGame != null && item.GameId == CurrentGame.GameId;
+			e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
+				? System.Drawing.Color.Gray
+				: grid.DefaultCellStyle.ForeColor;
 			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
 			//{
 			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
@@ -326,6 +330,77 @@ namespace x360ce.App.Controls
 				game.FullPath = fi.FullName;
 			}
 			SettingsFile.Current.Save();
+		}
+
+		/// <summary>
+		/// Scan for games
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ScanButton_Click(object sender, EventArgs e)
+		{
+			var thread = new System.Threading.Thread(ScanFunction);
+			thread.Start();
+		}
+
+		void ScanFunction()
+		{
+			string[] paths = null;
+			Invoke((MethodInvoker)delegate()
+{
+	ScanButton.Enabled = false;
+	paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+	ScanProgressLabel.Text = "Scaning...";
+});
+			var skipped = 0;
+			var added = 0;
+			var updated = 0;
+			for (int i = 0; i < paths.Length; i++)
+			{
+				var path = (string)paths[i];
+				var di = new System.IO.DirectoryInfo(path);
+				// Skip folders if don't exists.
+				if (!di.Exists) continue;
+				var exes = di.GetFiles("*.exe", System.IO.SearchOption.AllDirectories);
+				for (int f = 0; f < exes.Length; f++)
+				{
+
+					var exe = exes[f];
+					var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == exe.Name);
+					// If file doesn't exist in the game list then continue.
+					if (program == null)
+					{
+						skipped++;
+					}
+					else
+					{
+						var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == exe.Name);
+						// If file doesn't exist in the game list then continue.
+						if (game == null)
+						{
+							game = new Engine.Data.Game();
+							game.LoadDefault(program);
+							SettingsFile.Current.Games.Add(game);
+							added++;
+						}
+						else
+						{
+							game.FullPath = exe.FullName;
+							updated++;
+						}
+					}
+					Invoke((MethodInvoker)delegate()
+						{
+							ScanProgressLabel.Text = string.Format("Scaning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i+1, paths.Length, path, skipped, added, updated);
+						});
+				}
+				SettingsFile.Current.Save();
+			}
+			Invoke((MethodInvoker)delegate()
+			{
+				//ScanProgressLabel.Text = "Scan Completed";
+				ScanButton.Enabled = true;
+			});
 		}
 
 	}

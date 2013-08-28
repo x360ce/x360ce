@@ -28,16 +28,16 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.GamesTabControl = new System.Windows.Forms.TabControl();
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
 			this.GamesDataGridView = new System.Windows.Forms.DataGridView();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.ProgramIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.HookMaskGroupBox = new System.Windows.Forms.GroupBox();
 			this.HookMaskTextBox = new System.Windows.Forms.TextBox();
 			this.HookDISABLECheckBox = new System.Windows.Forms.CheckBox();
@@ -66,6 +66,8 @@
 			this.DeleteButton = new System.Windows.Forms.Button();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.GameApplicationOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.ScanButton = new System.Windows.Forms.Button();
+			this.ScanProgressLabel = new System.Windows.Forms.Label();
 			this.GamesTabControl.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
@@ -95,7 +97,7 @@
 			this.GamesTabPage.Name = "GamesTabPage";
 			this.GamesTabPage.Size = new System.Drawing.Size(535, 324);
 			this.GamesTabPage.TabIndex = 0;
-			this.GamesTabPage.Text = "Games";
+			this.GamesTabPage.Text = "My Games";
 			this.GamesTabPage.UseVisualStyleBackColor = true;
 			// 
 			// GamesDataGridView
@@ -106,41 +108,41 @@
 			this.GamesDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.GamesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GamesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.GamesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.GamesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MyIconColumn,
-            this.ProgramIdColumn,
-            this.MyFileColumn,
-            this.MyGameColumn});
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            this.GameIdColumn,
+            this.FileNameColumn,
+            this.ProductNameColumn});
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
 			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.GamesDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.GamesDataGridView.MultiSelect = false;
 			this.GamesDataGridView.Name = "GamesDataGridView";
 			this.GamesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
 			this.GamesDataGridView.RowHeadersVisible = false;
 			this.GamesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.GamesDataGridView.Size = new System.Drawing.Size(535, 324);
@@ -160,31 +162,31 @@
 			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.MyIconColumn.Width = 24;
 			// 
-			// ProgramIdColumn
+			// GameIdColumn
 			// 
-			this.ProgramIdColumn.DataPropertyName = "ProgramId";
-			this.ProgramIdColumn.HeaderText = "ID";
-			this.ProgramIdColumn.Name = "ProgramIdColumn";
-			this.ProgramIdColumn.ReadOnly = true;
-			this.ProgramIdColumn.Visible = false;
+			this.GameIdColumn.DataPropertyName = "GameId";
+			this.GameIdColumn.HeaderText = "ID";
+			this.GameIdColumn.Name = "GameIdColumn";
+			this.GameIdColumn.ReadOnly = true;
+			this.GameIdColumn.Visible = false;
 			// 
-			// MyFileColumn
+			// FileNameColumn
 			// 
-			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.MyFileColumn.DataPropertyName = "FileName";
-			this.MyFileColumn.FillWeight = 30F;
-			this.MyFileColumn.HeaderText = "File Name";
-			this.MyFileColumn.Name = "MyFileColumn";
-			this.MyFileColumn.ReadOnly = true;
+			this.FileNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.FileNameColumn.DataPropertyName = "FileName";
+			this.FileNameColumn.FillWeight = 30F;
+			this.FileNameColumn.HeaderText = "File Name";
+			this.FileNameColumn.Name = "FileNameColumn";
+			this.FileNameColumn.ReadOnly = true;
 			// 
-			// MyGameColumn
+			// ProductNameColumn
 			// 
-			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.MyGameColumn.DataPropertyName = "FileProductName";
-			this.MyGameColumn.FillWeight = 70F;
-			this.MyGameColumn.HeaderText = "Product Name";
-			this.MyGameColumn.Name = "MyGameColumn";
-			this.MyGameColumn.ReadOnly = true;
+			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.ProductNameColumn.DataPropertyName = "FileProductName";
+			this.ProductNameColumn.FillWeight = 70F;
+			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.Name = "ProductNameColumn";
+			this.ProductNameColumn.ReadOnly = true;
 			// 
 			// HookMaskGroupBox
 			// 
@@ -463,7 +465,7 @@
 			this.RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
 			this.RefreshButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.RefreshButton.Location = new System.Drawing.Point(476, 34);
+			this.RefreshButton.Location = new System.Drawing.Point(472, 3);
 			this.RefreshButton.Name = "RefreshButton";
 			this.RefreshButton.Size = new System.Drawing.Size(70, 25);
 			this.RefreshButton.TabIndex = 28;
@@ -478,7 +480,7 @@
 			this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
 			this.DeleteButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.DeleteButton.Location = new System.Drawing.Point(400, 34);
+			this.DeleteButton.Location = new System.Drawing.Point(396, 3);
 			this.DeleteButton.Name = "DeleteButton";
 			this.DeleteButton.Size = new System.Drawing.Size(70, 25);
 			this.DeleteButton.TabIndex = 27;
@@ -492,7 +494,7 @@
 			this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
 			this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SaveButton.Location = new System.Drawing.Point(326, 34);
+			this.SaveButton.Location = new System.Drawing.Point(322, 3);
 			this.SaveButton.Name = "SaveButton";
 			this.SaveButton.Size = new System.Drawing.Size(68, 25);
 			this.SaveButton.TabIndex = 26;
@@ -505,13 +507,40 @@
 			// 
 			this.GameApplicationOpenFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.ProgramOpenFileDialog_FileOk);
 			// 
+			// ScanButton
+			// 
+			this.ScanButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ScanButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
+			this.ScanButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ScanButton.Location = new System.Drawing.Point(248, 3);
+			this.ScanButton.Name = "ScanButton";
+			this.ScanButton.Size = new System.Drawing.Size(68, 25);
+			this.ScanButton.TabIndex = 26;
+			this.ScanButton.Text = "S&can";
+			this.ScanButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ScanButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.ScanButton.UseVisualStyleBackColor = true;
+			this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
+			// 
+			// ScanProgressLabel
+			// 
+			this.ScanProgressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ScanProgressLabel.AutoSize = true;
+			this.ScanProgressLabel.Location = new System.Drawing.Point(245, 40);
+			this.ScanProgressLabel.Name = "ScanProgressLabel";
+			this.ScanProgressLabel.Size = new System.Drawing.Size(105, 13);
+			this.ScanProgressLabel.TabIndex = 0;
+			this.ScanProgressLabel.Text = "[ScanProgressLabel]";
+			// 
 			// GamesControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.ScanProgressLabel);
 			this.Controls.Add(this.MinimumInstanceCountLabel);
 			this.Controls.Add(this.RefreshButton);
 			this.Controls.Add(this.DeleteButton);
+			this.Controls.Add(this.ScanButton);
 			this.Controls.Add(this.SaveButton);
 			this.Controls.Add(this.MinimumInstanceCountNumericUpDown);
 			this.Controls.Add(this.IncludeEnabledCheckBox);
@@ -565,13 +594,15 @@
 		private System.Windows.Forms.Button DeleteButton;
 		private System.Windows.Forms.Button RefreshButton;
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
-		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramIdColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button BrowseButton;
         private System.Windows.Forms.TextBox GameApplicationLocationTextBox;
-        private System.Windows.Forms.OpenFileDialog GameApplicationOpenFileDialog;
+		private System.Windows.Forms.OpenFileDialog GameApplicationOpenFileDialog;
+		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
+		private System.Windows.Forms.Button ScanButton;
+		private System.Windows.Forms.Label ScanProgressLabel;
 	}
 }
