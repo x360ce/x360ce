@@ -341,8 +341,8 @@
         private System.Windows.Forms.Label FakeModeLabel;
         private System.Windows.Forms.ComboBox FakeModeComboBox;
         private System.Windows.Forms.TabControl ProgramScanLocationsTabControl;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.ListBox GameScanLocationsListBox;
+		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.FolderBrowserDialog LocationFolderBrowserDialog;
+		public System.Windows.Forms.ListBox GameScanLocationsListBox;
     }
 }
