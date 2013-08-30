@@ -33,7 +33,7 @@ namespace x360ce.App.Controls
 				HookMaskGroupBox.Enabled = en;
 				InstalledFilesGroupBox.Enabled = en;
 				var item = value ?? new x360ce.Engine.Data.Game();
-				// Update XINput mask.
+				// Update XInput mask.
 				var inputMask = (XInputMask)item.XInputMask;
 				Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
 				Xinput12CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput12);
@@ -59,6 +59,12 @@ namespace x360ce.App.Controls
 				EnableEvents();
 			}
 		}
+
+		//XInputMask GetmaskFromFolder(string path)
+		//{
+		//	return;
+		//}
+		
 
 		void EnableEvents()
 		{
@@ -238,29 +244,38 @@ namespace x360ce.App.Controls
 		////InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
 		//InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
 
+		void SetCheckXinput(object sender, string name)
+		{
+			var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
+			var fullPath = System.IO.Path.Combine(path, name);
+			var box = (CheckBox)sender;
+			var exists = Helper.CreateDllFile(box.Checked, fullPath);
+			if (exists != box.Checked) box.Checked = exists;
+		}
+
 		private void Xinput91CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			Helper.CreateDllFile(Xinput91CheckBox.Checked, Helper.dllFile0);
+			SetCheckXinput(sender, Helper.dllFile0);
 		}
 
 		private void Xinput11CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			Helper.CreateDllFile(Xinput11CheckBox.Checked, Helper.dllFile1);
+			SetCheckXinput(sender, Helper.dllFile1);
 		}
 
 		private void Xinput12CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			Helper.CreateDllFile(Xinput12CheckBox.Checked, Helper.dllFile2);
+			SetCheckXinput(sender, Helper.dllFile2);
 		}
 
 		private void Xinput13CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			Helper.CreateDllFile(Xinput13CheckBox.Checked, Helper.dllFile3);
+			SetCheckXinput(sender, Helper.dllFile3);
 		}
 
 		private void Xinput14CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			Helper.CreateDllFile(Xinput14CheckBox.Checked, Helper.dllFile4);
+			SetCheckXinput(sender, Helper.dllFile4);
 		}
 
 		private void RefreshButton_Click(object sender, EventArgs e)
@@ -301,8 +316,17 @@ namespace x360ce.App.Controls
 			var result = GameApplicationOpenFileDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
-				GameApplicationLocationTextBox.Text = GameApplicationOpenFileDialog.FileName;
-				ProcessExecutable(GameApplicationOpenFileDialog.FileName);
+				// Don't allow to add windows folder.
+				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (GameApplicationOpenFileDialog.FileName.StartsWith(winFolder))
+				{
+					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					GameApplicationLocationTextBox.Text = GameApplicationOpenFileDialog.FileName;
+					ProcessExecutable(GameApplicationOpenFileDialog.FileName);
+				}
 			}
 		}
 
@@ -358,6 +382,9 @@ namespace x360ce.App.Controls
 			for (int i = 0; i < paths.Length; i++)
 			{
 				var path = (string)paths[i];
+				// Don't allow to scan windows folder.
+				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (path.StartsWith(winFolder)) continue;
 				var di = new System.IO.DirectoryInfo(path);
 				// Skip folders if don't exists.
 				if (!di.Exists) continue;
@@ -391,7 +418,7 @@ namespace x360ce.App.Controls
 					}
 					Invoke((MethodInvoker)delegate()
 						{
-							ScanProgressLabel.Text = string.Format("Scaning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i+1, paths.Length, path, skipped, added, updated);
+							ScanProgressLabel.Text = string.Format("Scaning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
 						});
 				}
 				SettingsFile.Current.Save();

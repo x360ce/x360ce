@@ -77,11 +77,20 @@ namespace x360ce.App.Controls
 			var result = LocationFolderBrowserDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
-				if (!GameScanLocationsListBox.Items.Contains(LocationFolderBrowserDialog.SelectedPath))
+				// Don't allow to add windows folder.
+				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder))
 				{
-					GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
-					// Change selectd index for change event to fire.
-					GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
+					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					if (!GameScanLocationsListBox.Items.Contains(LocationFolderBrowserDialog.SelectedPath))
+					{
+						GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
+						// Change selectd index for change event to fire.
+						GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
+					}
 				}
 			}
 		}

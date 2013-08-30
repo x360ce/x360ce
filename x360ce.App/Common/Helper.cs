@@ -41,7 +41,9 @@ namespace x360ce.App
 			return files.FirstOrDefault(x => x.Exists);
 		}
 
-		public static void CreateDllFile(bool create, string file)
+		/// <summary></summary>
+		/// <returns>True if file exists.</returns>
+		public static bool CreateDllFile(bool create, string file)
 		{
 			if (create)
 			{
@@ -60,11 +62,14 @@ namespace x360ce.App
 			{
 				if (System.IO.File.Exists(file))
 				{
-					//SharpDX.XInput.XInput.FreeLibrary();
-					System.IO.File.Delete(file);
-					//MainForm.Current.ReloadLibrary();
+					try
+					{
+						System.IO.File.Delete(file);
+					}
+					catch (Exception) { }
 				}
 			}
+			return System.IO.File.Exists(file);
 		}
 
 		public static Version _embededVersion;
