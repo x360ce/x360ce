@@ -38,6 +38,10 @@ HookMask = 0x0000001E
 Name = Assasin's Creed II
 HookMask = 0x00000002
 
+[BatmanAC.exe]
+Name = Batman: Arkham City
+HookMask = 0x00000002
+
 [BeatHazard.exe]
 Name = Beat Hazard
 HookMask = 0x00000020
@@ -92,6 +96,10 @@ HookMask = 0x00000002
 
 [DMC-DevilMayCry.exe]
 Name = DmC - Devil May Cry
+HookMask = 0x00000002
+
+[DunDefGame.exe]
+Name = Dungeon Defenders
 HookMask = 0x00000002
 
 [ffxiv.exe]
@@ -192,6 +200,10 @@ HookMask = 0x00000002
 
 [shank2.exe]
 Name = Shank 2
+HookMask = 0x00000002
+
+[ShippingPC-BmGame.exe]
+Name = Batman: Arkham Asylum
 HookMask = 0x00000002
 
 [SkullGirls.exe]
