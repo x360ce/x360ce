@@ -122,6 +122,22 @@ HookMask = 0x00000002
 Name = FlatOut Ultimate Carnage
 HookMask = 0x00000002
 
+[Game.exe]
+Name = Mark of the Ninja
+HookMask = 0x00000002
+
+[grid.exe]
+Name = Grid
+HookMask = 0x00000002
+
+[grid2.exe]
+Name = Grid 2
+HookMask = 0x00000002
+
+[grid2_avx.exe]
+Name = Grid 2
+HookMask = 0x00000002
+
 [HAWX.exe]
 Name = Tom Clancy's H.A.W.X
 HookMask=0x0000000E
@@ -148,10 +164,6 @@ HookMask = 0x00000002
 
 [Magicka.exe]
 Name = Magicka
-HookMask = 0x00000002
-
-[Game.exe]
-Name = Mark of the Ninja
 HookMask = 0x00000002
 
 [MirrorsEdge.exe]
