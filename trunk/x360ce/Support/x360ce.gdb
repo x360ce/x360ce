@@ -50,6 +50,10 @@ HookMask = 0x00000020
 Name = Beat Hazard Classic
 HookMask = 0x00000020
 
+[bf3.exe]
+Name = Battlefield 3
+HookMask = 0x00000002
+
 [BH6.exe]
 Name = BioHazard 6
 HookMask = 0x00000002
