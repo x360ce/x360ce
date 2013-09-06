@@ -19,7 +19,7 @@ namespace x360ce.Web.WebServices
 	[System.ComponentModel.ToolboxItem(false)]
 	// To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
 	[System.Web.Script.Services.ScriptService]
-	public class x360ce : System.Web.Services.WebService
+	public class x360ce : System.Web.Services.WebService, IWebService
 	{
 
 		[WebMethod(EnableSession = true)]
@@ -206,7 +206,7 @@ namespace x360ce.Web.WebServices
 		{
 			var data = new SettingsData();
 			var db = new x360ceModelContainer();
-			data.Programs = db.Programs.Where(x=>x.IsEnabled && x.InstanceCount > 1).ToList();
+			data.Programs = db.Programs.Where(x => x.IsEnabled && x.InstanceCount > 1).ToList();
 			return data;
 		}
 
@@ -221,7 +221,8 @@ namespace x360ce.Web.WebServices
 		}
 
 		[WebMethod(EnableSession = true)]
-		public Program GetProgram(string fileName, string fileProductName){
+		public Program GetProgram(string fileName, string fileProductName)
+		{
 			var db = new x360ceModelContainer();
 			var o = db.Programs.FirstOrDefault(x => x.FileName == fileName && x.FileProductName == fileProductName);
 			if (o != null) return o;
@@ -253,7 +254,7 @@ namespace x360ce.Web.WebServices
 				o.InstanceCount = p.InstanceCount;
 				o.IsEnabled = p.IsEnabled;
 				o.XInputMask = p.XInputMask;
-				db.SaveChanges();				
+				db.SaveChanges();
 				return "";
 			}
 			else
@@ -269,7 +270,7 @@ namespace x360ce.Web.WebServices
 			var results = new KeyValueList();
 			results.Add("Status", true);
 			results.Add("Message", "Good bye!");
-			
+
 			return results;
 		}
 
@@ -326,7 +327,7 @@ namespace x360ce.Web.WebServices
 					HttpContext.Current.User = new System.Security.Principal.GenericPrincipal(identity, roles);
 					results.Add("Status", true);
 					results.Add("Message", "Welcome!");
-				} 
+				}
 			}
 			return results;
 		}

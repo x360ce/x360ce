@@ -64,7 +64,7 @@ namespace x360ce.App.Controls
 		//{
 		//	return;
 		//}
-		
+
 
 		void EnableEvents()
 		{
@@ -134,7 +134,7 @@ namespace x360ce.App.Controls
 			SettingsFile.Current.Save();
 		}
 
-		void RefreshAllButton_Click(object sender, EventArgs e)
+		void GetPrograms()
 		{
 			MainForm.Current.LoadingCircle = true;
 			var ws = new WebServiceClient();
@@ -200,7 +200,7 @@ namespace x360ce.App.Controls
 		void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			// List can't be empty, so return.
-			// Issue: When Datasource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
 			if (GamesDataGridView.SelectedRows.Count == 0) return;
 			var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
@@ -280,8 +280,10 @@ namespace x360ce.App.Controls
 
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
-			//var ws = new WebServiceClient();
-			//ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
+			var ws = new WebServiceClient();
+			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
+			GetPrograms();
+			//ws.GetProgram()
 			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
 
@@ -374,7 +376,7 @@ namespace x360ce.App.Controls
 {
 	ScanButton.Enabled = false;
 	paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
-	ScanProgressLabel.Text = "Scaning...";
+	ScanProgressLabel.Text = "Scanning...";
 });
 			var skipped = 0;
 			var added = 0;
@@ -418,7 +420,7 @@ namespace x360ce.App.Controls
 					}
 					Invoke((MethodInvoker)delegate()
 						{
-							ScanProgressLabel.Text = string.Format("Scaning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
+							ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
 						});
 				}
 				SettingsFile.Current.Save();

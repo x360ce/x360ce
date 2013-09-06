@@ -88,7 +88,7 @@ namespace x360ce.App.Controls
 					if (!GameScanLocationsListBox.Items.Contains(LocationFolderBrowserDialog.SelectedPath))
 					{
 						GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
-						// Change selectd index for change event to fire.
+						// Change selected index for change event to fire.
 						GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
 					}
 				}

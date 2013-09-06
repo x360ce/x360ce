@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
+    <Compile Include="Common\IWebService.cs" />
     <Compile Include="Common\KeyValue.cs" />
     <Compile Include="Common\KeyValueList.cs" />
     <Compile Include="Common\SearchParameter.cs" />
