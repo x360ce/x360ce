@@ -76,7 +76,7 @@ namespace x360ce.App
 		public static Version GetEmbeddedDllVersion()
 		{
 			if (_embededVersion != null) return _embededVersion;
-			// There must be an easier way to check embeded non managed dll version.
+			// There must be an easier way to check embedded non managed DLL version.
 			var assembly = Assembly.GetExecutingAssembly();
 			var sr = assembly.GetManifestResourceStream(typeof(MainForm).Namespace + ".Presets." + dllFile3);
 			string tempPath = Path.GetTempPath();
@@ -112,7 +112,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Make bitmap grayscale
+		/// Make bitmap gray scale
 		/// </summary>
 		/// <param name="b"></param>
 		/// <returns></returns>
@@ -132,7 +132,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Make bitmap grayscale
+		/// Make bitmap gray scale
 		/// </summary>
 		/// <param name="b"></param>
 		/// <param name="alpha">256 max</param>
@@ -293,7 +293,7 @@ namespace x360ce.App
 		/// <param name="encoding">The encoding to generate.</param>
 		public static void SerializeToXmlFile(object o, string filename, Encoding encoding)
 		{
-			var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+			var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 			var xw = new XmlTextWriter(fs, encoding);
 			xw.Formatting = System.Xml.Formatting.Indented;
 			XmlSerializer serializer = GetXmlSerializer(o.GetType());
@@ -301,9 +301,9 @@ namespace x360ce.App
 			{
 				try { serializer.Serialize(xw, o); }
 				catch (Exception) { fs.Close(); throw; }
+				xw.Flush();
+				fs.Close();
 			}
-			xw.Flush();
-			fs.Close();
 		}
 
 		/// <summary>
@@ -316,14 +316,23 @@ namespace x360ce.App
 			// FileStream allows to deserialize without locking the file. FileShare.ReadWrite is the key.
 			var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			XmlSerializer serializer = GetXmlSerializer(type);
-			object o;
+			object o = null;
 			lock (serializer)
 			{
 				try { o = serializer.Deserialize(fs); }
-				catch (Exception) { fs.Close(); throw; }
+				catch (Exception)
+				{
+					fs.Close();
+					// copy file.
+					try
+					{
+						System.IO.File.Copy(filename, filename + "." + DateTime.Now.ToString("yyyyMMdd_hhmmss.ffffff"));
+						System.IO.File.Delete(filename);
+					}
+					catch (Exception) { }
+				}
+				return o;
 			}
-			fs.Close();
-			return o;
 		}
 
 		#endregion
