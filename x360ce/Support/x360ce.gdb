@@ -74,6 +74,10 @@ HookMask=0x0000000E
 Name = Blade Kitten
 HookMask = 0x00000002
 
+[Brothers.exe]
+Name = Brothers: A Tale of Two Sons
+HookMask = 0x00000002
+
 [DarksidersPC.exe]
 Name = Darksiders
 HookMask = 0x00000002
@@ -212,6 +216,10 @@ HookMask = 0x00000002
 
 [SFTK.exe]
 Name = Street Fighter X Tekken
+HookMask = 0x00000002
+
+[shank.exe]
+Name = Shank
 HookMask = 0x00000002
 
 [shank2.exe]
