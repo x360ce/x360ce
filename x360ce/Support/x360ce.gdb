@@ -190,6 +190,10 @@ HookMask = 0x00000002
 Name = Need For Speed Most Wanted 2012
 HookMask = 0x00000002
 
+[OLGame.exe]
+Name = Outlast
+HookMask = 0x00000002
+
 [RE6.exe]
 Name = Resident Evil 6
 HookMask = 0x00000002
