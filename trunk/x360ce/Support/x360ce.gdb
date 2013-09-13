@@ -234,6 +234,10 @@ HookMask = 0x00000002
 Name = Batman: Arkham Asylum
 HookMask = 0x00000002
 
+[ShippingPC-StormGame.exe]
+Name = BulletStorm
+HookMask = 0x00000002
+
 [SkullGirls.exe]
 Name = Skullgirls
 HookMask = 0x00000002
