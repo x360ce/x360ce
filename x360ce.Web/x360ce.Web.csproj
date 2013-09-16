@@ -32,6 +32,8 @@
     <ErrorReport>prompt</ErrorReport>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <PublishDatabases>false</PublishDatabases>
+    <PackageAsSingleFile>false</PackageAsSingleFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>

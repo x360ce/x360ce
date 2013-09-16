@@ -156,12 +156,13 @@ namespace x360ce.App.Controls
 			MainForm.Current.LoadingCircle = false;
 			if (e.Error != null)
 			{
-				MainForm.Current.UpdateHelpHeader(e.Error.Message, MessageBoxIcon.Error);
-				throw e.Error;
+				var error = e.Error.Message;
+				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
+				MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
 			}
 			else if (e.Result == null)
 			{
-				MainForm.Current.UpdateHelpHeader("", MessageBoxIcon.Error);
+				MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
 			}
 			else
 			{
