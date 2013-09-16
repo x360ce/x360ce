@@ -509,7 +509,7 @@ namespace x360ce.App
 		/// </summary>
 		bool RefreshCurrentInstances()
 		{
-			// If you encouter "LoaderLock was detected" Exception when debugging then:
+			// If you encounter "LoaderLock was detected" Exception when debugging then:
 			// Make sure that you have reference to Microsoft.Directx.dll. 
 			bool instancesChanged = false;
 			IList<DeviceInstance> devices = null;
