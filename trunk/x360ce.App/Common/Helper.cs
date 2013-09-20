@@ -293,7 +293,7 @@ namespace x360ce.App
 		/// <param name="encoding">The encoding to generate.</param>
 		public static void SerializeToXmlFile(object o, string filename, Encoding encoding)
 		{
-			var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+			var fs = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.None);
 			var xw = new XmlTextWriter(fs, encoding);
 			xw.Formatting = System.Xml.Formatting.Indented;
 			XmlSerializer serializer = GetXmlSerializer(o.GetType());
