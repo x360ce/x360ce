@@ -352,7 +352,6 @@
     <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="Win32\WinAPI.cs" />
     <Compile Include="Win32\WinNT.cs" />
-    <EmbeddedResource Include="x360ce.ini" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">

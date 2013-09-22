@@ -22,7 +22,7 @@ namespace x360ce.Web.WebServices
 	public class x360ce : System.Web.Services.WebService, IWebService
 	{
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Save controller settings.")]
 		public string SaveSetting(Setting s, PadSetting ps)
 		{
 			var checksum = ps.GetCheckSum();
@@ -112,7 +112,7 @@ namespace x360ce.Web.WebServices
 			return "";
 		}
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Search controller settings.")]
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
 			var sr = new SearchResult();
@@ -165,7 +165,7 @@ namespace x360ce.Web.WebServices
 			return sr;
 		}
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Delete controller settings.")]
 		public string DeleteSetting(Setting s)
 		{
 			var db = new x360ceModelContainer();
@@ -176,7 +176,7 @@ namespace x360ce.Web.WebServices
 			return "";
 		}
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Load controller settings.")]
 		public SearchResult LoadSetting(Guid[] checksum)
 		{
 			var sr = new SearchResult();
@@ -185,7 +185,7 @@ namespace x360ce.Web.WebServices
 			return sr;
 		}
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Get vendors of controllers.")]
 		public List<Vendor> GetVendors()
 		{
 			var db = new x360ceModelContainer();
@@ -201,7 +201,7 @@ namespace x360ce.Web.WebServices
 		}
 
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Get default list of games.")]
 		public SettingsData GetSettingsData()
 		{
 			var data = new SettingsData();
@@ -210,17 +210,18 @@ namespace x360ce.Web.WebServices
 			return data;
 		}
 
-		[WebMethod(EnableSession = true)]
-		public List<Program> GetPrograms(bool? isEnabled, int? minInstanceCount)
+        [WebMethod(EnableSession = true, Description = "Get list of games.")]
+		public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
 		{
 			var db = new x360ceModelContainer();
 			IQueryable<Program> list = db.Programs;
-			if (isEnabled.HasValue) list = list.Where(x => x.IsEnabled == isEnabled.Value);
-			if (minInstanceCount.HasValue) list = list.Where(x => x.InstanceCount == minInstanceCount.Value);
+			if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
+            else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
+            if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
 			return list.ToList();
 		}
 
-		[WebMethod(EnableSession = true)]
+		[WebMethod(EnableSession = true,  Description = "Search games.")]
 		public Program GetProgram(string fileName, string fileProductName)
 		{
 			var db = new x360ceModelContainer();
@@ -230,7 +231,7 @@ namespace x360ce.Web.WebServices
 			return o;
 		}
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true, Description = "Save program settings.")]
 		public string SetProgram(Program p)
 		{
 			if (HttpContext.Current.User.Identity.IsAuthenticated)
@@ -263,7 +264,7 @@ namespace x360ce.Web.WebServices
 			}
 		}
 
-		[WebMethod(EnableSession = true, Description = "Sign out..")]
+		[WebMethod(EnableSession = true, Description = "Sign out.")]
 		public KeyValueList SignOut()
 		{
 			FormsAuthentication.SignOut();
@@ -274,7 +275,7 @@ namespace x360ce.Web.WebServices
 			return results;
 		}
 
-		[WebMethod(EnableSession = true, Description = "Authenticate user.")]
+		[WebMethod(EnableSession = true, Description = "Sign in.")]
 		public KeyValueList SignIn(string username, string password)
 		{
 			string errorMessage = string.Empty;

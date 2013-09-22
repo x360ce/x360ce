@@ -138,15 +138,11 @@ namespace x360ce.App.Controls
 		{
 			MainForm.Current.LoadingCircle = true;
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
-			bool? enabled = null;
-			int? minInstances = null;
-			if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = true;
-			if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled = false;
-			if (MinimumInstanceCountNumericUpDown.Value > 0)
-			{
-				minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
-			}
+            ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			EnabledState enabled = EnabledState.None;
+			if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = EnabledState.Enabled;
+			if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled =  EnabledState.Disabled;
+            int minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
 			ws.GetProgramsCompleted += ws_GetProgramsCompleted;
 			ws.GetProgramsAsync(enabled, minInstances);
 		}
@@ -281,8 +277,6 @@ namespace x360ce.App.Controls
 
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
-			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
 			GetPrograms();
 			//ws.GetProgram()
 			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
