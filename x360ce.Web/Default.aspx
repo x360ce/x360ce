@@ -99,7 +99,7 @@
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/w/list">Wiki</a></td>
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/issues/list">Issues</a></td>
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/source/checkout">Source</a></td>
-                                <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.191.zip">Download x360ce 2.1.2.191 with 32bit library 3.4.0.584.</a></td>
+                                <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.191.zip">Download x360ce 2.1.2.191 with 32bit library 3.4.0.584</a></td>
                             </tr>
                         </table>
 
