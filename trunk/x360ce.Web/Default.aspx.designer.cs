@@ -31,15 +31,6 @@ namespace x360ce.Web {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// ControllersControl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::x360ce.Web.Controls.ControllersControl ControllersControl;
-        
-        /// <summary>
         /// GamesControl control.
         /// </summary>
         /// <remarks>
@@ -47,5 +38,14 @@ namespace x360ce.Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::x360ce.Web.Controls.GamesControl GamesControl;
+        
+        /// <summary>
+        /// ControllersControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::x360ce.Web.Controls.ControllersControl ControllersControl;
     }
 }

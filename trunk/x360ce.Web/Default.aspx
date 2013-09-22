@@ -18,21 +18,21 @@
             margin: auto;
             border: 0;
             padding: 0;
-            border-collapse: separate;
+            border-collapse: collapse;
             border-spacing: 0;
         }
 
         td {
             color: #ffffff;
             font-family: Calibri, 'Trebuchet MS', Arial;
-            font-size: 11pt;
+            font-size: 14px;
             border: 0;
             vertical-align: top;
             padding: 0;
         }
 
         .title {
-            font-size: 14pt;
+            font-size: 18px;
         }
 
         img {
@@ -84,13 +84,14 @@
         <img src="/Images/Background_4.png" style="position: absolute; bottom: 0; right: 0; z-index: -1" />
 
         <form id="form1" runat="server">
-            <table style="border-spacing: 4px; width: 802px;">
+
+            <table><tr><td style="padding: 4px;">
+            
+            <table style="width: 804px;">
                 <tr>
                     <td colspan="2" style="background-color: #2674ec; padding: 10px; text-align: center; border-radius: 14px;">
 
-
-                       <p style="font-size: 18pt; vertical-align: middle; color: #80ceff; margin-top: 0; margin-bottom: 12px;">TocaEdit Xbox 360 Controller Emulator</p>
-             
+                        <p style="font-size: 18pt; vertical-align: middle; color: #80ceff; margin-top: 0; margin-bottom: 12px;">TocaEdit Xbox 360 Controller Emulator</p>
 
                         <table style="border-collapse: separate; border-spacing: 4px;">
                             <tr>
@@ -107,23 +108,35 @@
 
                     </td>
                 </tr>
+            </table>
 
+            <table style="width: 804px; margin-top: 4px;">
                 <tr>
-                    <td style="background-color: #dddddd; padding: 0px; width: 400px;">
-                        <img src="/Images/x360ce_General_400px.png" style="width: 400px; height: auto;" /></td>
-                    <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 50%;" rowspan="2" class="Controllers">
+                    <td style="width: 404px;">
+
+                        <table style="width: 400px; margin-left: 0;">
+                            <tr>
+                                <td style="padding-bottom: 4px;"><img src="/Images/x360ce_General_400px.png" style="width: 400px; height: 338px;" /></td>
+                            </tr>
+                            <tr>
+                                <td style="width: 400px; background-color: #ae1919; padding-bottom: 20px; border-radius: 14px;" class="Games">
+                                    <p style="text-align: center; margin-top: 20px; color: #ff7373;">TOP GAMES</p>
+                                    <uc1:GamesControl runat="server" ID="GamesControl" />
+                                </td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                    <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 400px;" class="Controllers">
                         <p style="text-align: center; margin-top: 20px; color: #84e68c;">TOP CONTROLLERS</p>
                         <uc1:ControllersControl runat="server" ID="ControllersControl" />
                     </td>
                 </tr>
+            </table>
+
+            <table style="width: 804px; margin-top: 4px;">
                 <tr>
-                    <td style="background-color: #ae1919; padding-bottom: 20px; border-radius: 14px;" class="Games">
-                        <p style="text-align: center; margin-top: 20px; color: #ff7373;">TOP GAMES</p>
-                        <uc1:GamesControl runat="server" ID="GamesControl" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; font-size: 11pt; border-radius: 14px;">
+                    <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; font-size: 11pt; border-radius: 14px; width: 804px;">
                         <span class="title">System Requirements</span><br />
                         <br />
                         • Windows XP SP3 and newer.<br />
@@ -184,6 +197,8 @@
                     </td>
                 </tr>
             </table>
+
+                </td></tr></table>
         </form>
 
     </div>
