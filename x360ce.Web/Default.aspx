@@ -109,9 +109,9 @@
                 </tr>
 
                 <tr>
-                    <td style="background-color: #dddddd; padding: 0px; width: 400px;">
+                    <td style="background-color: #dddddd; padding: 0px;">
                         <img src="http://localhost.jocys.com/projects/x360ce/Images/x360ce_General_400px.png" style="width: 400px; height: auto;" /></td>
-                    <td style="background-color: #34963c; padding: 10px; width: 50%; border-radius: 14px;" rowspan="2" class="Controllers">
+                    <td style="background-color: #34963c; padding: 10px; border-radius: 14px;" rowspan="2" class="Controllers">
                         <p style="text-align: center; margin-top: 10px; color: #84e68c;">TOP CONTROLLERS</p>
                         <uc1:ControllersControl runat="server" ID="ControllersControl" />
                     </td>

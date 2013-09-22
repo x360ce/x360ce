@@ -53,7 +53,7 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
 			sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
 			sm.Add(section + SettingName.Console, ConsoleCheckBox);
-			sm.Add(section + SettingName.InternetDatabaseUrl, InternetDatabaseUrlTextBox);
+			sm.Add(section + SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
 			sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
 			sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
 			sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);

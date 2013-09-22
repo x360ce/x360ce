@@ -133,7 +133,7 @@ namespace x360ce.App.Controls
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
+			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
 			ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
@@ -227,7 +227,7 @@ namespace x360ce.App.Controls
 		void LoadSettingsFromInternet()
 		{
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlTextBox.Text;
+            ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
 			_sp = new List<SearchParameter>();
 			_sp.Add(new SearchParameter() { InstanceGuid = _di.InstanceGuid, ProductGuid = _di.ProductGuid });

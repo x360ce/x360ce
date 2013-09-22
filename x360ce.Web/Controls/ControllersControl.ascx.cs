@@ -20,13 +20,38 @@ namespace x360ce.Web.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-               if (!IsPostBack)
+            if (!IsPostBack)
             {
                 var db = new x360ceModelContainer();
-                var rows = db.Products.OrderByDescending(x=>x.InstanceCount).Take(20).ToArray();
-                ControllersGridView.DataSource = rows;
-                ControllersGridView.DataBind();
+                var rows = db.Products.OrderByDescending(x => x.InstanceCount).Take(20).ToArray();
+                ControllersListView.DataSource = rows;
+                ControllersListView.DataBind();
             }
         }
+
+        public const int CropTextDefauldMaxLength = 128;
+
+        public static string CropText(object s, int maxLength)
+        {
+            if (s == null) return string.Empty;
+            return CropText(s.ToString(), maxLength);
+        }
+
+        public static string CropText(string s, int maxLength)
+        {
+            if (string.IsNullOrEmpty(s) || maxLength == -1) return string.Empty;
+            if (maxLength == 0) return s;
+            if (maxLength == 0) maxLength = CropTextDefauldMaxLength;
+            if (s.Length > maxLength)
+            {
+                s = s.Substring(0, maxLength - 3);
+                // Find last separatorand crop there...
+                int ls = s.LastIndexOf(' ');
+                if (ls > 0) s = s.Substring(0, ls);
+                s += "...";
+            }
+            return s;
+        }
+
     }
 }

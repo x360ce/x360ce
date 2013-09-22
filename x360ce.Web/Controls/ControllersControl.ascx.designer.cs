@@ -13,12 +13,12 @@ namespace x360ce.Web.Controls {
     public partial class ControllersControl {
         
         /// <summary>
-        /// ControllersGridView control.
+        /// ControllersListView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView ControllersGridView;
+        protected global::System.Web.UI.WebControls.ListView ControllersListView;
     }
 }

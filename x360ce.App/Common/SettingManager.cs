@@ -78,14 +78,20 @@ namespace x360ce.App
 				}
 			}
 			// If Di menu strip attached.
-			else if (control is ComboBox && control.ContextMenuStrip != null)
+			else if (control is ComboBox)
 			{
-				var cbx = (ComboBox)control;
-				var text = new SettingsConverter(value, key).ToFrmSetting();
-				SetComboBoxValue(cbx, text);
+                var cbx = (ComboBox)control;
+                if (control.ContextMenuStrip == null)
+                {
+                    control.Text = value;
+                }
+                else
+                {
+                    var text = new SettingsConverter(value, key).ToFrmSetting();
+                    SetComboBoxValue(cbx, text);
+                }
 			}
-
-			else if (control is TextBox)
+            else if (control is TextBox)
 			{
 				// if setting is readonly.
 				if (key == SettingName.ProductName) return;
@@ -486,11 +492,19 @@ namespace x360ce.App
 				else { v = ((int)v1).ToString(); }
 			}
 			// If di menu strip attached.
-			else if (control is ComboBox && control.ContextMenuStrip != null)
+			else if (control is ComboBox)
 			{
-				v = new SettingsConverter(control.Text, key).ToIniSetting();
-				// make sure that disabled button value is "0".
-				if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
+                var cbx = (ComboBox)control;
+                if (control.ContextMenuStrip == null)
+                {
+                    v = control.Text;
+                }
+                else
+                {
+                    v = new SettingsConverter(control.Text, key).ToIniSetting();
+                    // make sure that disabled button value is "0".
+                    if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
+                }
 			}
 			else if (control is TextBox)
 			{

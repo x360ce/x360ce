@@ -17,7 +17,7 @@ namespace x360ce.Engine
 		SearchResult LoadSetting(Guid[] checksum);
 		List<Vendor> GetVendors();
 		SettingsData GetSettingsData();
-		List<Program> GetPrograms(bool? isEnabled, int? minInstanceCount);
+        List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount);
 		Program GetProgram(string fileName, string fileProductName);
 		string SetProgram(Program p);
 		KeyValueList SignOut();
