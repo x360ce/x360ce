@@ -104,7 +104,7 @@
                             </tr>
                         </table>
 
-                        <p style="text-align: justify; font-size: 11pt; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto” (GTA) or “Mafia II” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
+                        <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto” (GTA) or “Mafia II” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
 
                     </td>
                 </tr>
@@ -136,7 +136,7 @@
 
             <table style="width: 804px; margin-top: 4px;">
                 <tr>
-                    <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; font-size: 11pt; border-radius: 14px; width: 804px;">
+                    <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; border-radius: 14px; width: 804px;">
                         <span class="title">System Requirements</span><br />
                         <br />
                         • Windows XP SP3 and newer.<br />
