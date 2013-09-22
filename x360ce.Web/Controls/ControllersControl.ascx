@@ -11,7 +11,7 @@
     <ItemTemplate>
         <tr>
             <td style="padding-right: 4px; text-align: right; white-space: nowrap"><%# ((int)Eval("InstanceCount")).ToString("0,00") %> - </td>
-            <td><%# CropText(Eval("ProductName"), 52) %></td>
+            <td><%# CropText(Eval("ProductName"), 48) %></td>
         </tr>
     </ItemTemplate>
 </asp:ListView>
