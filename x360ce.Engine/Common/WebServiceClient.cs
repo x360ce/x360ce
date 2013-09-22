@@ -146,7 +146,7 @@
 
         public void SearchSettingsAsync(SearchParameter[] args, object userState = null)
         {
-            InvokeAsync("SearchSettings", SearchSettingsCompleted, userState, args);
+            InvokeAsync("SearchSettings", SearchSettingsCompleted, userState, new object[] { args });
         }
 
         #endregion
