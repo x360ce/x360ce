@@ -99,7 +99,7 @@
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/w/list">Wiki</a></td>
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/issues/list">Issues</a></td>
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/source/checkout">Source</a></td>
-                                <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.190.zip">Download x360ce 2.1.2.190 with 32bit library 3.3.1.540</a></td>
+                                <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.191.zip">Download x360ce 2.1.2.191 with 32bit library 3.4.0.584.</a></td>
                             </tr>
                         </table>
 
@@ -109,8 +109,8 @@
                 </tr>
 
                 <tr>
-                    <td style="background-color: #dddddd; padding: 0px;">
-                        <img src="http://localhost.jocys.com/projects/x360ce/Images/x360ce_General_400px.png" style="width: 400px; height: auto;" /></td>
+                    <td style="background-color: #dddddd; padding: 0px; width: 400px;">
+                        <img src="/Images/x360ce_General_400px.png" style="width: 400px; height: auto;" /></td>
                     <td style="background-color: #34963c; padding: 10px; border-radius: 14px;" rowspan="2" class="Controllers">
                         <p style="text-align: center; margin-top: 10px; color: #84e68c;">TOP CONTROLLERS</p>
                         <uc1:ControllersControl runat="server" ID="ControllersControl" />
