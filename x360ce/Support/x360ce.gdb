@@ -78,6 +78,10 @@ HookMask = 0x00000002
 Name = Brothers: A Tale of Two Sons
 HookMask = 0x00000002
 
+[BurnoutParadise.exe]
+Name = Burnout Paradise - The Ultimate Box
+HookMask=0x0000000E
+
 [DarksidersPC.exe]
 Name = Darksiders
 HookMask = 0x00000002
@@ -124,6 +128,10 @@ HookMask = 0x00000002
 
 [FIFA13.exe]
 Name = FIFA 13
+HookMask = 0x00000002
+
+[FIFA14.exe]
+Name = FIFA 14
 HookMask = 0x00000002
 
 [fouc.exe]
