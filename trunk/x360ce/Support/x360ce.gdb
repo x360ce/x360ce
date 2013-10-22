@@ -194,6 +194,10 @@ HookMask = 0x00000002
 Name = Mortal Kombat Komplete Edition
 HookMask = 0x00000002
 
+[NBA2K14.exe]
+Name = NBA 2k14
+HookMask = 0x00000002
+
 [NFS13.exe]
 Name = Need For Speed Most Wanted 2012
 HookMask = 0x00000002
