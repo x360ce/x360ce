@@ -82,6 +82,10 @@ HookMask = 0x00000002
 Name = Burnout Paradise - The Ultimate Box
 HookMask=0x0000000E
 
+[Cave.exe]
+Name = The Cave
+HookMask = 0x00000002
+
 [DarksidersPC.exe]
 Name = Darksiders
 HookMask = 0x00000002
