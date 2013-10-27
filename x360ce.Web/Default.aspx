@@ -128,7 +128,8 @@
                     
                     </td>
                     <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 400px;" class="Controllers">
-                        <p style="text-align: center; margin-top: 20px; color: #84e68c;">TOP CONTROLLERS</p>
+<p style="text-align: center; margin-top: 20px; color: #84e68c;"><img src="/Images/x360ce_Logo.png" /></p>
+                        <p style="text-align: center; margin-top: 0px; color: #84e68c;">TOP CONTROLLERS</p>
                         <uc1:ControllersControl runat="server" ID="ControllersControl" />
                     </td>
                 </tr>
