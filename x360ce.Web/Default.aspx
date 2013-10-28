@@ -105,6 +105,9 @@
                         </table>
 
                         <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto” (GTA) or “Mafia II” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
+<p style="text-align: justify; color: #80ceff;">If you encounter problems, try to <a class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">download older versions...</a></p>
+
+</p>
 
                     </td>
                 </tr>
