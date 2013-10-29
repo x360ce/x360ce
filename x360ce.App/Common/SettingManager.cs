@@ -98,7 +98,9 @@ namespace x360ce.App
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
 				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.DefaultInternetDatabaseUrl;
-				control.Text = value;
+                // Always override version.
+                if (key == SettingName.Version) value = SettingName.DefaultVersion;
+                control.Text = value;
 			}
 			else if (control is ListBox)
 			{
