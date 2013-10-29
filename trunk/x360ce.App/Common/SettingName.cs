@@ -40,7 +40,8 @@ namespace x360ce.App
 		}
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
-		public const string Mappings = "Mappings";
+        public const string DefaultVersion = "1";
+        public const string Mappings = "Mappings";
 
 		// [Options] section.
 		[DefaultValue("1"), Description("Use 0 to 1; default 1; beep on init.")]
@@ -61,7 +62,8 @@ namespace x360ce.App
 		public const string AllowOnlyOneCopy = "AllowOnlyOneCopy";
         [DefaultValue(""), Description("Game Scan Locations. Separated by semicolon (;).")]
         public const string ProgramScanLocations = "ProgramScanLocations";
-
+        [DefaultValue("1"), Description("Configuration file version.")]
+        public const string Version = "Version";
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]

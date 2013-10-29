@@ -58,6 +58,7 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
 			sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			sm.Add(section + SettingName.ProgramScanLocations, GameScanLocationsListBox);
+            sm.Add(section + SettingName.Version, ConfigurationVersionTextBox);
 			section = @"InputHook\";
 			sm.Add(section + SettingName.HookMode, FakeModeComboBox);
 		}
