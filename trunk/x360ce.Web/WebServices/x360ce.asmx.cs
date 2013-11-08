@@ -160,7 +160,8 @@ namespace x360ce.Web.WebServices
 					}
 				}
 				var lambda = Expression.Lambda<Func<Summary, bool>>(body, param);
-				sr.Summaries = db.Summaries.Where(lambda).OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
+                var summaries = db.Summaries.Where(lambda).OrderByDescending(x => x.Users).Take(50);
+                sr.Summaries = summaries.Where(lambda).OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
 			}
 			return sr;
 		}
