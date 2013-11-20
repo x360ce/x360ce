@@ -186,8 +186,12 @@ HookMask=0x0000000E
 Name = Sleeping Dogs
 HookMask = 0x00000002
 
+[IAmAlive_game.exe]
+Name = I Am Alive
+HookMask = 0x0000001E
+
 [LOTDGame.exe]
-Name - DeadLight
+Name = DeadLight
 HookMask = 0x00000002
 
 [Magicka.exe]
@@ -313,6 +317,10 @@ HookMask = 0x00000002
 [x360ce.exe]
 Name = x360ce.App
 HookMask = 0x80000000
+
+[XComEW.exe]
+Name = XCOM Enemy Within
+HookMask = 0x00000002
 
 [XComGame.exe]
 Name = XCOM Enemy Unknown
