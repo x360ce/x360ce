@@ -42,6 +42,10 @@ HookMask = 0x00000002
 Name = Batman: Arkham City
 HookMask = 0x00000002
 
+[BatmanOrigins.exe]
+Name = Batman: Arkham Origins
+HookMask = 0x00000002
+
 [BeatHazard.exe]
 Name = Beat Hazard
 HookMask = 0x00000020
@@ -116,6 +120,10 @@ HookMask = 0x00000002
 
 [DunDefGame.exe]
 Name = Dungeon Defenders
+HookMask = 0x00000002
+
+[Enslaved.exe]
+Name = Enslaved: Odyssey to the West
 HookMask = 0x00000002
 
 [ffxiv.exe]
@@ -208,6 +216,18 @@ HookMask = 0x00000002
 
 [OLGame.exe]
 Name = Outlast
+HookMask = 0x00000002
+
+[Rayman Legends.exe]
+Name = Rayman Origins
+HookMask = 0x00000002
+
+[Rayman Origins.exe]
+Name = Rayman Origins
+HookMask = 0x00000002
+
+[RememberMe.exe]
+Name = Remember Me
 HookMask = 0x00000002
 
 [RE6.exe]
