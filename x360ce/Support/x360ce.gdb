@@ -218,6 +218,14 @@ HookMask = 0x00000002
 Name = Need For Speed Most Wanted 2012
 HookMask = 0x00000002
 
+[NFS14.exe]
+Name = Need For Speed: Rivals
+HookMask = 0x0000001E
+
+[NFS14_x86.exe]
+Name = Need For Speed: Rivals
+HookMask = 0x0000001E
+
 [OLGame.exe]
 Name = Outlast
 HookMask = 0x00000002
