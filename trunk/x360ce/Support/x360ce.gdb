@@ -190,6 +190,10 @@ HookMask = 0x00000002
 Name = I Am Alive
 HookMask = 0x0000001E
 
+[Injustice.exe]
+Name = Injustice: Gods Among Us Ultimate Edition
+HookMask = 0x00000002
+
 [LOTDGame.exe]
 Name = DeadLight
 HookMask = 0x00000002
