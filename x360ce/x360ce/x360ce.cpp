@@ -156,6 +156,22 @@ bool XInputInitialize()
     return true;
 }
 
+static void DeviceInitialize(DInputDevice& device)
+{
+    PrintLog(LOG_CORE,"[PAD%d] Starting",device.dwUserIndex+1);
+    PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
+
+    HRESULT hr = E_FAIL;
+    hr = InitDirectInput(hMsgWnd,device);
+    if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
+
+    if(SUCCEEDED(hr)) 
+    {
+        PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
+        if(g_bInitBeep) MessageBeep(MB_OK);
+    }
+}
+
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog(LOG_XINPUT,"XInputGetState");
@@ -172,19 +188,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     if(hMsgWnd == NULL) CreateMsgWnd();
 
     if(device.device == NULL && device.dwUserIndex == dwUserIndex)
-    {
-        PrintLog(LOG_CORE,"[PAD%d] Starting",device.dwUserIndex+1);
-        PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
-
-        hr = InitDirectInput(hMsgWnd,device);
-        if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
-
-        if(SUCCEEDED(hr)) 
-        {
-            PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
-            if(g_bInitBeep) MessageBeep(MB_OK);
-        }
-    }
+        DeviceInitialize(device);
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     //Update device state if enabled or we not use enable
@@ -538,6 +542,10 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
     //PrintLog(LOG_XINPUT,"%u",xvib.wLeftMotorSpeed);
     //PrintLog(LOG_XINPUT,"%u",xvib.wRightMotorSpeed);
 
+    if(hMsgWnd == NULL) CreateMsgWnd();
+
+    if(device.device == NULL && device.dwUserIndex == dwUserIndex)
+        DeviceInitialize(device);
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     if(!device.useforce) return ERROR_SUCCESS;
@@ -581,9 +589,15 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputGetCapabilities(dwUserIndex,dwFlags,pCapabilities);
 
+    if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
+
     DInputDevice& device = g_Devices[dwUserIndex];
 
-    if (!pCapabilities || !(dwUserIndex < XUSER_MAX_COUNT) || (dwFlags > XINPUT_FLAG_GAMEPAD) ) return ERROR_BAD_ARGUMENTS;
+    if(hMsgWnd == NULL) CreateMsgWnd();
+
+    if(device.device == NULL && device.dwUserIndex == dwUserIndex)
+        DeviceInitialize(device);
+    if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     XINPUT_CAPABILITIES& xcaps = *pCapabilities;
     xcaps.Type = 0;
@@ -636,9 +650,15 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
     PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
 
-    //DInputDevice& device = g_Devices[dwUserIndex];
-
     if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
+
+    DInputDevice& device = g_Devices[dwUserIndex];
+
+    if(hMsgWnd == NULL) CreateMsgWnd();
+
+    if(device.device == NULL && device.dwUserIndex == dwUserIndex)
+        DeviceInitialize(device);
+    if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     *pDSoundRenderGuid = GUID_NULL;
     *pDSoundCaptureGuid = GUID_NULL;
@@ -653,10 +673,12 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputGetBatteryInformation(dwUserIndex,devType,pBatteryInformation);
 
-    DInputDevice& device = g_Devices[dwUserIndex];
-
     if (!pBatteryInformation || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
+    DInputDevice& device = g_Devices[dwUserIndex];
+
+    if(device.device == NULL && device.dwUserIndex == dwUserIndex)
+        DeviceInitialize(device);
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     // Report a wired controller
@@ -677,10 +699,14 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
         return nXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
     }
 
-    DInputDevice& device = g_Devices[dwUserIndex];
-
     if (!pKeystroke || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
+    DInputDevice& device = g_Devices[dwUserIndex];
+
+    if(hMsgWnd == NULL) CreateMsgWnd();
+
+    if(device.device == NULL && device.dwUserIndex == dwUserIndex)
+        DeviceInitialize(device);
     if(!device.device) return ERROR_DEVICE_NOT_CONNECTED;
 
     XINPUT_KEYSTROKE& xkey = *pKeystroke;
