@@ -84,7 +84,7 @@ HookMask = 0x00000002
 
 [BurnoutParadise.exe]
 Name = Burnout Paradise - The Ultimate Box
-HookMask=0x0000000E
+HookMask=0x0000001E
 
 [Cave.exe]
 Name = The Cave
@@ -128,7 +128,7 @@ HookMask = 0x00000002
 
 [ffxiv.exe]
 Name = Final Fantasy XIV: A Realm Reborn
-HookMask = 0x0000001E
+HookMask = 0x0000000E
 
 [FIFA.exe]
 Name = FIFA 11 and 12
@@ -188,7 +188,7 @@ HookMask = 0x00000002
 
 [IAmAlive_game.exe]
 Name = I Am Alive
-HookMask = 0x0000001E
+HookMask = 0x0000000E
 
 [Injustice.exe]
 Name = Injustice: Gods Among Us Ultimate Edition
@@ -224,11 +224,11 @@ HookMask = 0x00000002
 
 [NFS14.exe]
 Name = Need For Speed: Rivals
-HookMask = 0x0000001E
+HookMask = 0x0000000E
 
 [NFS14_x86.exe]
 Name = Need For Speed: Rivals
-HookMask = 0x0000001E
+HookMask = 0x0000000E
 
 [OLGame.exe]
 Name = Outlast
