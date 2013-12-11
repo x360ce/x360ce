@@ -499,7 +499,10 @@ if $(PlatformName) == AnyCPU $(SolutionDir)\Resources\NetZ\netz.exe -s -so -z $(
 )</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\bin\$(ConfigurationName)\x360ce.Engine.dll" "$(SolutionDir)x360ce.App\Resources"
-IF NOT EXIST "$(ProjectDir)$(OutDir)x360ce.ini" copy "$(ProjectDir)x360ce.ini" "$(ProjectDir)$(OutDir)x360ce.ini"</PreBuildEvent>
+    <PreBuildEvent>if $(PlatformName) == x86 copy "$(ProjectDir)presets\x360ce.lib\xinput1_3_32.dll" "$(ProjectDir)presets\xinput1_3.dll"
+if $(PlatformName) == x64  copy "$(ProjectDir)presets\x360ce.lib\xinput1_3_64.dll" "$(ProjectDir)presets\xinput1_3.dll"
+if $(PlatformName) == AnyCPU copy "$(ProjectDir)presets\x360ce.lib\xinput1_3_32.dll" "$(ProjectDir)presets\xinput1_3.dll"
+
+IF NOT EXIST "$(ProjectDir)$(OutDir)x360ce.ini" copy "$(ProjectDir)presets\x360ce.ini" "$(ProjectDir)$(OutDir)x360ce.ini"</PreBuildEvent>
   </PropertyGroup>
 </Project>
