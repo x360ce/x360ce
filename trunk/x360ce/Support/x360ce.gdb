@@ -194,6 +194,14 @@ HookMask = 0x0000000E
 Name = Injustice: Gods Among Us Ultimate Edition
 HookMask = 0x00000002
 
+[LEGOPirates.exe]
+Name = LEGO Pirates of the Caribbean: The Video Game
+HookMask = 0x00000002
+
+[LEGOIndy.exe]
+Name = LEGO Indiana Jones: The Original Adventures
+HookMask = 0x00000002
+
 [LOTDGame.exe]
 Name = DeadLight
 HookMask = 0x00000002
