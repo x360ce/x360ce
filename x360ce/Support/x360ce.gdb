@@ -243,7 +243,7 @@ Name = Outlast
 HookMask = 0x00000002
 
 [Rayman Legends.exe]
-Name = Rayman Origins
+Name = Rayman Legends
 HookMask = 0x00000002
 
 [Rayman Origins.exe]
@@ -317,6 +317,10 @@ HookMask = 0x00000002
 [TheBaconing.exe]
 Name = The Baconing
 HookMask = 0x00000003
+
+[TinyBrains.exe]
+Name = Tiny Brains
+HookMask = 0x00000002
 
 [trine.exe]
 Name = Trine
