@@ -13,3 +13,6 @@ HOOK_VIDPID		= 0x00000008;
 HOOK_NAME		= 0x00000010;
 
 HOOK_ENABLE		= 0x80000000;
+
+C# enum: 
+C:\Projects\Racer_S\x360ce\x360ce.App\Common\HookMask.cs
