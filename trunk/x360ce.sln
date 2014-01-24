@@ -1,14 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject
 		x360ce\Support\changelog.txt = x360ce\Support\changelog.txt
 		x360ce\Support\COPYING.txt = x360ce\Support\COPYING.txt
 		x360ce\Support\HowToBuild.txt = x360ce\Support\HowToBuild.txt
 		x360ce\Support\lgpl-3.0.txt = x360ce\Support\lgpl-3.0.txt
+		x360ce\Support\ReadMe.RTF = x360ce\Support\ReadMe.RTF
 		x360ce\Support\Readme.txt = x360ce\Support\Readme.txt
-		x360ce\Support\x360ce_template.ini = x360ce\Support\x360ce_template.ini
+		x360ce\Support\usb-detection.pdf = x360ce\Support\usb-detection.pdf
+		x360ce\Support\x360ce.gdb = x360ce\Support\x360ce.gdb
+		x360ce\Support\x360ce.sample.ini = x360ce\Support\x360ce.sample.ini
+		x360ce\Support\x360ce_gdb.info.txt = x360ce\Support\x360ce_gdb.info.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App", "x360ce.App\x360ce.App.csproj", "{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}"
