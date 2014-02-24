@@ -127,10 +127,10 @@ namespace x360ce.App
 				ControlPads[i].Dock = DockStyle.Fill;
 				ControlPages[i].Controls.Add(ControlPads[i]);
 				ControlPads[i].InitPadControl();
-				// Init presets. Execute only after name of cIniFile is set.
-				ControlPads[i].InitPresets();
 			}
-			// Allow events after PAD control are loaded.
+            // Init presets. Execute only after name of cIniFile is set.
+            SettingsDatabasePanel.InitPresets();
+            // Allow events after PAD control are loaded.
 			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// Load about control.
 			ControlAbout = new Controls.AboutControl();
@@ -268,9 +268,8 @@ namespace x360ce.App
 
 		#region Setting Events
 
-		public void LoadPreset(string name)
+		public void LoadPreset(string name, int index)
 		{
-			if (ControllerIndex == -1) return;
 			// exit if "Presets:" or "Embedded:".
 			if (name.Contains(":")) return;
 			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
@@ -286,7 +285,7 @@ namespace x360ce.App
 			}
 			SuspendEvents();
 			// preset will be stored in inside [PAD1] section;
-			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", ControllerIndex);
+			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", index);
 			ResumeEvents();
 			// Save setting and notify if vaue changed.
 			if (SettingManager.Current.SaveSettings()) NotifySettingsChange();
@@ -543,8 +542,8 @@ namespace x360ce.App
 					//device.Acquire();
 					diDevices.Add(device);
 				}
-				onlineUserControl1.BindDevices(instances);
-				onlineUserControl1.BindFiles();
+				SettingsDatabasePanel.BindDevices(instances);
+				SettingsDatabasePanel.BindFiles();
 				// Assign new list of instances.
 				diInstancesOld.Clear();
 				diInstancesOld.AddRange(diInstances.ToArray());
@@ -740,7 +739,7 @@ namespace x360ce.App
 			{
 				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoloadCheckBox.Checked)
 				{
-					onlineUserControl1.RefreshGrid(true);
+					SettingsDatabasePanel.RefreshGrid(true);
 				}
 			}
 			UpdateHelpHeader();

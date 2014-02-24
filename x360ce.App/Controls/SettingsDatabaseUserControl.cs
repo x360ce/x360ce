@@ -10,12 +10,13 @@ using System.IO;
 using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
+using System.Text.RegularExpressions;
 
 namespace x360ce.App.Controls
 {
-    public partial class OnlineUserControl : UserControl
+    public partial class SettingsDatabaseUserControl : UserControl
     {
-        public OnlineUserControl()
+        public SettingsDatabaseUserControl()
         {
             InitializeComponent();
             _Settings = new SortableBindingList<Setting>();
@@ -202,14 +203,23 @@ namespace x360ce.App.Controls
 
         void UpdateActionButtons()
         {
-            SaveButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsListTabControl.SelectedTab == SettingsTabPage && refreshed;
-            LoadButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsDataGridView.SelectedRows.Count == 1;
+            var settingsSelected = SettingsListTabControl.SelectedTab == SettingsTabPage;
+            var presetsSelected = SettingsListTabControl.SelectedTab == PresetsTabPage;
+            var summariesSelected = SettingsListTabControl.SelectedTab == SummariesTabPage;
+            SaveButton.Enabled = ControllerComboBox.Items.Count > 0 && settingsSelected && refreshed;
+            LoadButton.Enabled = ControllerComboBox.Items.Count > 0 && (
+                (settingsSelected && SettingsDataGridView.SelectedRows.Count == 1) ||
+                (presetsSelected && PresetsDataGridView.SelectedRows.Count == 1)
+                );
             DeleteButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsListTabControl.SelectedTab == SettingsTabPage &&
-                ((SettingsDataGridView.SelectedRows.Count == 1 && SettingsListTabControl.SelectedTab == SettingsTabPage) ||
-                (SummariesDataGridView.SelectedRows.Count == 1 && SettingsListTabControl.SelectedTab == SummariesTabPage));
+                ((SettingsDataGridView.SelectedRows.Count == 1 && settingsSelected) ||
+                (SummariesDataGridView.SelectedRows.Count == 1 && summariesSelected));
+            RefreshButton.Enabled = summariesSelected || summariesSelected;
             CurrentSetting = GetCurrentSetting();
             SaveButton.Image = ContainsSetting(CurrentSetting) ? Properties.Resources.save_16x16 : Properties.Resources.save_add_16x16;
             SettingsDataGridView.Refresh();
+            //PresetsDataGridView.Enabled = ControllerComboBox.Items.Count > 0;
+            //PresetsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
         }
 
         bool ContainsSetting(Setting setting)
@@ -383,10 +393,15 @@ namespace x360ce.App.Controls
         void LoadSetting()
         {
             mainForm.UpdateTimer.Stop();
+            if (ControllerComboBox.SelectedItem == null)
+            {
+                return;
+            }
             var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
             var message = "";
             Setting setting = null;
             Summary summary = null;
+            PresetItem preset = null;
             var title = "";
             if (SettingsListTabControl.SelectedTab == SettingsTabPage)
             {
@@ -406,6 +421,14 @@ namespace x360ce.App.Controls
                 summary = (Summary)SummariesDataGridView.SelectedRows[0].DataBoundItem;
                 message += "\r\n\r\n    " + summary.ToString();
             }
+            else if (SettingsListTabControl.SelectedTab == PresetsTabPage)
+            {
+                if (PresetsDataGridView.SelectedRows.Count == 0) return;
+                message = "Do you want to load Preset Setting:";
+                title = "Load Preset Setting?";
+                preset = (PresetItem)PresetsDataGridView.SelectedRows[0].DataBoundItem;
+                message += "\r\n\r\n    " + summary.ToString();
+            }
             message += "\r\n\r\nFor " + name + "?";
             MessageBoxForm form = new MessageBoxForm();
             form.StartPosition = FormStartPosition.CenterParent;
@@ -414,11 +437,18 @@ namespace x360ce.App.Controls
             {
                 if (SettingsListTabControl.SelectedTab == SettingsTabPage) LoadSetting(setting.PadSettingChecksum);
                 if (SettingsListTabControl.SelectedTab == SummariesTabPage) LoadSetting(summary.PadSettingChecksum);
+                if (SettingsListTabControl.SelectedTab == PresetsTabPage) LoadPreset(preset.Name);
             }
             else
             {
                 mainForm.UpdateTimer.Start();
             }
+        }
+
+        public void LoadPreset(string controllerName)
+        {
+            string name = controllerName.Replace(" ", "_");
+            mainForm.LoadPreset(name, ControllerComboBox.SelectedIndex);
         }
 
         public void LoadSetting(Guid padSettingChecksum)
@@ -558,6 +588,57 @@ namespace x360ce.App.Controls
 
         #endregion
 
+        #region Presets Grid
+
+        BindingList<PresetItem> PresetsList = new BindingList<PresetItem>();
+
+        public void InitPresets()
+        {
+            PresetsDataGridView.DataSource = null;
+            PresetsList.Clear();
+            var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
+            var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
+            string name;
+            // Presets: Embedded.
+            var embeddedPresets = new List<string>();
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            string[] files = assembly.GetManifestResourceNames();
+            var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
+            Regex rx = new Regex(pattern);
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (rx.IsMatch(files[i]))
+                {
+                    name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
+                    embeddedPresets.Add(name);
+                }
+            }
+            // Presets: Custom.
+            var dir = new System.IO.DirectoryInfo(".");
+            var fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
+            List<string> customPresets = new List<string>();
+            for (int i = 0; i < fis.Length; i++)
+            {
+                name = fis[i].Name.Substring(prefix.Length + 1);
+                name = name.Substring(0, name.Length - ext.Length);
+                name = name.Replace("_", " ");
+                if (!embeddedPresets.Contains(name)) customPresets.Add(name);
+            }
+            string[] cNames = customPresets.ToArray();
+            Array.Sort(cNames);
+            foreach (var item in cNames) PresetsList.Add(new PresetItem("Custom", item));
+            PresetTypeColumn.Visible = cNames.Count() > 0;
+            string[] eNames = embeddedPresets.ToArray();
+            Array.Sort(eNames);
+            foreach (var item in eNames)
+            {
+                if (item != "Clear") PresetsList.Add(new PresetItem("Embedded", item));
+            }
+            PresetsDataGridView.DataSource = PresetsList;
+        }
+
+        #endregion
+
         void InternetUserControl_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
@@ -590,6 +671,16 @@ namespace x360ce.App.Controls
         }
 
         void SettingsListTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateActionButtons();
+        }
+
+        private void PresetsDataGridView_DoubleClick(object sender, EventArgs e)
+        {
+            LoadSetting();
+        }
+
+        private void PresetsDataGridView_SelectionChanged(object sender, EventArgs e)
         {
             UpdateActionButtons();
         }

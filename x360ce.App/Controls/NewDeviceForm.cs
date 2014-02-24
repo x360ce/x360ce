@@ -231,7 +231,7 @@ namespace x360ce.App.Controls
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
 			_sp = new List<SearchParameter>();
 			_sp.Add(new SearchParameter() { InstanceGuid = _di.InstanceGuid, ProductGuid = _di.ProductGuid });
-			MainForm.Current.onlineUserControl1.FillSearchParameterWithFiles(_sp);
+			MainForm.Current.SettingsDatabasePanel.FillSearchParameterWithFiles(_sp);
 			ws.SearchSettingsAsync(_sp.ToArray(), false);
 		}
 

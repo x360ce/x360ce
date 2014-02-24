@@ -164,6 +164,7 @@
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
+    <Compile Include="Common\PresetItem.cs" />
     <Compile Include="Common\PropertyComparer.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
@@ -212,11 +213,11 @@
     <Compile Include="Controls\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\OnlineUserControl.cs">
+    <Compile Include="Controls\SettingsDatabaseUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\OnlineUserControl.Designer.cs">
-      <DependentUpon>OnlineUserControl.cs</DependentUpon>
+    <Compile Include="Controls\SettingsDatabaseUserControl.Designer.cs">
+      <DependentUpon>SettingsDatabaseUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsControl.cs">
       <SubType>UserControl</SubType>
@@ -287,8 +288,8 @@
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\OnlineUserControl.resx">
-      <DependentUpon>OnlineUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\SettingsDatabaseUserControl.resx">
+      <DependentUpon>SettingsDatabaseUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OptionsControl.resx">
       <DependentUpon>OptionsControl.cs</DependentUpon>
