@@ -26,7 +26,7 @@
             this.AxisToDPadOffsetTextBox = new System.Windows.Forms.TextBox();
             this.DeadZoneLabel = new System.Windows.Forms.Label();
             this.AxisToDPadDeadZoneTextBox = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.TriggersGroupBox = new System.Windows.Forms.GroupBox();
             this.LeftTriggerDeadZoneLabel = new System.Windows.Forms.Label();
             this.RightTriggerDeadZoneLabel = new System.Windows.Forms.Label();
             this.RightTriggerDeadZoneTrackBar = new System.Windows.Forms.TrackBar();
@@ -130,10 +130,8 @@
             this.RightThumbAxisYComboBox = new System.Windows.Forms.ComboBox();
             this.RightThumbButtonComboBox = new System.Windows.Forms.ComboBox();
             this.TopPictureBox = new System.Windows.Forms.PictureBox();
-            this.PresetComboBox = new System.Windows.Forms.ComboBox();
             this.SavePresetButton = new System.Windows.Forms.Button();
             this.ResetPresetButton = new System.Windows.Forms.Button();
-            this.LoadPresetButton = new System.Windows.Forms.Button();
             this.PadTabControl = new System.Windows.Forms.TabControl();
             this.KeyboardTabPage = new System.Windows.Forms.TabPage();
             this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
@@ -158,11 +156,12 @@
             this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
             this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.ClearPresetButton = new System.Windows.Forms.Button();
             this.AdvancedTabPage.SuspendLayout();
             this.AxisToDPadGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.TriggersGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RightTriggerDeadZoneTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftTriggerDeadZoneTrackBar)).BeginInit();
             this.ThumbsGroupBox.SuspendLayout();
@@ -198,7 +197,7 @@
             // AdvancedTabPage
             // 
             this.AdvancedTabPage.Controls.Add(this.AxisToDPadGroupBox);
-            this.AdvancedTabPage.Controls.Add(this.groupBox1);
+            this.AdvancedTabPage.Controls.Add(this.TriggersGroupBox);
             this.AdvancedTabPage.Controls.Add(this.ThumbsGroupBox);
             this.AdvancedTabPage.Controls.Add(this.OptionsDeviceTypeLabel);
             this.AdvancedTabPage.Controls.Add(this.GamePadTypeComboBox);
@@ -252,7 +251,7 @@
             // AxisToDPadDeadZoneTrackBar
             // 
             this.AxisToDPadDeadZoneTrackBar.AutoSize = false;
-            this.AxisToDPadDeadZoneTrackBar.Location = new System.Drawing.Point(12, 55);
+            this.AxisToDPadDeadZoneTrackBar.Location = new System.Drawing.Point(32, 59);
             this.AxisToDPadDeadZoneTrackBar.Maximum = 100;
             this.AxisToDPadDeadZoneTrackBar.Name = "AxisToDPadDeadZoneTrackBar";
             this.AxisToDPadDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -284,7 +283,7 @@
             // DeadZoneLabel
             // 
             this.DeadZoneLabel.AutoSize = true;
-            this.DeadZoneLabel.Location = new System.Drawing.Point(6, 39);
+            this.DeadZoneLabel.Location = new System.Drawing.Point(9, 39);
             this.DeadZoneLabel.Name = "DeadZoneLabel";
             this.DeadZoneLabel.Size = new System.Drawing.Size(61, 13);
             this.DeadZoneLabel.TabIndex = 0;
@@ -301,22 +300,22 @@
             this.AxisToDPadDeadZoneTextBox.Text = "100 % ";
             this.AxisToDPadDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // groupBox1
+            // TriggersGroupBox
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.TriggersGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.LeftTriggerDeadZoneLabel);
-            this.groupBox1.Controls.Add(this.RightTriggerDeadZoneLabel);
-            this.groupBox1.Controls.Add(this.RightTriggerDeadZoneTrackBar);
-            this.groupBox1.Controls.Add(this.LeftTriggerDeadZoneTrackBar);
-            this.groupBox1.Controls.Add(this.RightTriggerDeadZoneTextBox);
-            this.groupBox1.Controls.Add(this.LeftTriggerDeadZoneTextBox);
-            this.groupBox1.Location = new System.Drawing.Point(6, 33);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(608, 68);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Triggers";
+            this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneLabel);
+            this.TriggersGroupBox.Controls.Add(this.RightTriggerDeadZoneLabel);
+            this.TriggersGroupBox.Controls.Add(this.RightTriggerDeadZoneTrackBar);
+            this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneTrackBar);
+            this.TriggersGroupBox.Controls.Add(this.RightTriggerDeadZoneTextBox);
+            this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneTextBox);
+            this.TriggersGroupBox.Location = new System.Drawing.Point(6, 33);
+            this.TriggersGroupBox.Name = "TriggersGroupBox";
+            this.TriggersGroupBox.Size = new System.Drawing.Size(608, 68);
+            this.TriggersGroupBox.TabIndex = 0;
+            this.TriggersGroupBox.TabStop = false;
+            this.TriggersGroupBox.Text = "Triggers";
             // 
             // LeftTriggerDeadZoneLabel
             // 
@@ -1536,17 +1535,6 @@
             this.TopPictureBox.TabStop = false;
             this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
             // 
-            // PresetComboBox
-            // 
-            this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.PresetComboBox.FormattingEnabled = true;
-            this.PresetComboBox.Location = new System.Drawing.Point(3, 446);
-            this.PresetComboBox.Name = "PresetComboBox";
-            this.PresetComboBox.Size = new System.Drawing.Size(385, 21);
-            this.PresetComboBox.TabIndex = 64;
-            // 
             // SavePresetButton
             // 
             this.SavePresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1568,17 +1556,6 @@
             this.ResetPresetButton.Text = "&Reset";
             this.ResetPresetButton.UseVisualStyleBackColor = true;
             this.ResetPresetButton.Click += new System.EventHandler(this.ResetPresetButton_Click);
-            // 
-            // LoadPresetButton
-            // 
-            this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.LoadPresetButton.Location = new System.Drawing.Point(394, 444);
-            this.LoadPresetButton.Name = "LoadPresetButton";
-            this.LoadPresetButton.Size = new System.Drawing.Size(75, 23);
-            this.LoadPresetButton.TabIndex = 65;
-            this.LoadPresetButton.Text = "&Load";
-            this.LoadPresetButton.UseVisualStyleBackColor = true;
-            this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
             // 
             // PadTabControl
             // 
@@ -1842,15 +1819,25 @@
             this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
             this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
             // 
+            // ClearPresetButton
+            // 
+            this.ClearPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ClearPresetButton.Location = new System.Drawing.Point(394, 444);
+            this.ClearPresetButton.Name = "ClearPresetButton";
+            this.ClearPresetButton.Size = new System.Drawing.Size(75, 23);
+            this.ClearPresetButton.TabIndex = 66;
+            this.ClearPresetButton.Text = "&Clear";
+            this.ClearPresetButton.UseVisualStyleBackColor = true;
+            this.ClearPresetButton.Click += new System.EventHandler(this.ClearPresetButton_Click);
+            // 
             // PadControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.PresetComboBox);
             this.Controls.Add(this.SavePresetButton);
             this.Controls.Add(this.PadTabControl);
+            this.Controls.Add(this.ClearPresetButton);
             this.Controls.Add(this.ResetPresetButton);
-            this.Controls.Add(this.LoadPresetButton);
             this.Name = "PadControl";
             this.Size = new System.Drawing.Size(634, 470);
             this.Load += new System.EventHandler(this.PadControl_Load);
@@ -1860,8 +1847,8 @@
             this.AxisToDPadGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.TriggersGroupBox.ResumeLayout(false);
+            this.TriggersGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RightTriggerDeadZoneTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftTriggerDeadZoneTrackBar)).EndInit();
             this.ThumbsGroupBox.ResumeLayout(false);
@@ -2010,7 +1997,7 @@
 		System.Windows.Forms.CheckBox ForceSwapMotorCheckBox;
 		System.Windows.Forms.Label OveralEffectsStengthLabel;
 		System.Windows.Forms.TrackBar ForceOverallTrackBar;
-		System.Windows.Forms.GroupBox groupBox1;
+		System.Windows.Forms.GroupBox TriggersGroupBox;
 		System.Windows.Forms.Label LeftTriggerDeadZoneLabel;
 		System.Windows.Forms.Label RightTriggerDeadZoneLabel;
 		System.Windows.Forms.TrackBar RightTriggerDeadZoneTrackBar;
@@ -2025,15 +2012,14 @@
 		System.Windows.Forms.Label LeftThumbXAntiDeadZoneLabel;
 		System.Windows.Forms.ComboBox LeftThumbXAntiDeadZoneComboBox;
 		System.Windows.Forms.Label LeftThumbAntiDeadZoneLabel;
-		System.Windows.Forms.ComboBox ForceTypeComboBox;
-		System.Windows.Forms.ComboBox PresetComboBox;
+        System.Windows.Forms.ComboBox ForceTypeComboBox;
 		System.Windows.Forms.Button SavePresetButton;
-		System.Windows.Forms.Button ResetPresetButton;
-		System.Windows.Forms.Button LoadPresetButton;
+        System.Windows.Forms.Button ResetPresetButton;
 		public System.Windows.Forms.TabControl PadTabControl;
         private System.Windows.Forms.ComboBox RightThumbYAntiDeadZoneComboBox;
         private System.Windows.Forms.ComboBox LeftThumbYAntiDeadZoneComboBox;
         private System.Windows.Forms.ComboBox RightThumbXAntiDeadZoneComboBox;
         private System.Windows.Forms.Label RightThumbAntiDeadZoneLabel;
+        private System.Windows.Forms.Button ClearPresetButton;
 	}
 }

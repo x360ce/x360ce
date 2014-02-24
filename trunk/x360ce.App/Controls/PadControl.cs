@@ -36,48 +36,6 @@ namespace x360ce.App.Controls
 
         KeyboardControl PadKeyboardControl;
 
-        public void InitPresets()
-        {
-            PresetComboBox.Items.Clear();
-            var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
-            var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
-            string name;
-            // Presets: Embedded.
-            var embeddedPresets = new List<string>();
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            string[] files = assembly.GetManifestResourceNames();
-            var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
-            Regex rx = new Regex(pattern);
-            for (int i = 0; i < files.Length; i++)
-            {
-                if (rx.IsMatch(files[i]))
-                {
-                    name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
-                    embeddedPresets.Add(name);
-                }
-            }
-            // Presets: Custom.
-            var dir = new System.IO.DirectoryInfo(".");
-            var fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
-            List<string> customPresets = new List<string>();
-            for (int i = 0; i < fis.Length; i++)
-            {
-                name = fis[i].Name.Substring(prefix.Length + 1);
-                name = name.Substring(0, name.Length - ext.Length);
-                name = name.Replace("_", " ");
-                if (!embeddedPresets.Contains(name)) customPresets.Add(name);
-            }
-            PresetComboBox.Items.Add("Presets:");
-            string[] cNames = customPresets.ToArray();
-            string[] eNames = embeddedPresets.ToArray();
-            Array.Sort(cNames);
-            Array.Sort(eNames);
-            foreach (var item in cNames) PresetComboBox.Items.Add(item);
-            if (cNames.Length > 0) PresetComboBox.Items.Add("Embeded:");
-            foreach (var item in eNames) PresetComboBox.Items.Add(item);
-            PresetComboBox.SelectedIndex = 0;
-        }
-
         public void InitPadControl()
         {
             // Initialize images.
@@ -536,33 +494,34 @@ namespace x360ce.App.Controls
         {
             List<string> actions = diControl.UpdateFrom(device);
             if (Recording) RecordingStop(actions);
-
             var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
-            if (device == null && contains)
+            var enable = device != null;
+            if (!enable && contains)
             {
                 PadTabControl.TabPages.Remove(DirectInputTabPage);
             }
-            if (device != null && !contains)
+            if (enable && !contains)
             {
                 PadTabControl.TabPages.Add(DirectInputTabPage);
             }
-            if (device != null)
+            ForceFeedbackGroupBox.Enabled = enable;
+            TriggersGroupBox.Enabled = enable;
+            ThumbsGroupBox.Enabled = enable;
+            AxisToDPadGroupBox.Enabled = enable;
+            if (enable)
             {
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);
             }
-            else
-            {
-            }
-            // if this is different device;
+            // If this is different device.
             if (!Helper.IsSameDevice(device, instanceGuid))
             {
                 Guid iGuid = Guid.Empty;
-                if (device != null)
+                if (enable)
                 {
                     try { iGuid = device.Information.InstanceGuid; }
                     catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
                 }
-                instanceGuid = (device == null) ? Guid.Empty : iGuid;
+                instanceGuid = !enable ? Guid.Empty : iGuid;
                 ResetDiMenuStrip(device);
             }
         }
@@ -913,11 +872,9 @@ namespace x360ce.App.Controls
             nud.Value = (int)((float)deadzone * n);
         }
 
-        void LoadPresetButton_Click(object sender, EventArgs e)
+        void ClearPresetButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(PresetComboBox.Text)) return;
-            string name = PresetComboBox.Text.Replace(" ", "_");
-            mainForm.LoadPreset(name);
+            mainForm.LoadPreset("Clear", ControllerIndex);
         }
 
         void ResetPresetButton_Click(object sender, EventArgs e)
@@ -958,6 +915,7 @@ namespace x360ce.App.Controls
             }
             base.Dispose(disposing);
         }
+
 
     }
 }

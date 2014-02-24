@@ -117,20 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="programsControl1.CurrentProgram" mimetype="application/x-microsoft.net.object.binary.base64">
+  <data name="programsControl1.CurrentGame" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAER4MzYwY2UuRW5naW5lLCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1
         cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAwDAAAAVVN5c3RlbS5EYXRhLkVudGl0eSwgVmVy
         c2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUw
-        ODkFAQAAABp4MzYwY2UuRW5naW5lLkRhdGEuUHJvZ3JhbQwAAAAKX1Byb2dyYW1JZAlfRmlsZU5hbWUQ
-        X0ZpbGVQcm9kdWN0TmFtZQlfSG9va01hc2sLX1hJbnB1dE1hc2sOX0luc3RhbmNlQ291bnQKX0lzRW5h
-        YmxlZAxfRGF0ZUNyZWF0ZWQMX0RhdGVVcGRhdGVkCF9Db21tZW50G0VudGl0eU9iamVjdCtfcmVsYXRp
-        b25zaGlwcxdFbnRpdHlPYmplY3QrX2VudGl0eUtleQMBAQAAAAAAAwEEBAtTeXN0ZW0uR3VpZAgICAEN
-        D1N5c3RlbS5EYXRlVGltZTNTeXN0ZW0uRGF0YS5PYmplY3RzLkRhdGFDbGFzc2VzLlJlbGF0aW9uc2hp
-        cE1hbmFnZXIDAAAAFVN5c3RlbS5EYXRhLkVudGl0eUtleQMAAAACAAAABPz///8LU3lzdGVtLkd1aWQL
-        AAAAAl9hAl9iAl9jAl9kAl9lAl9mAl9nAl9oAl9pAl9qAl9rAAAAAAAAAAAAAAAIBwcCAgICAgICAgAA
-        AAAAAAAAAAAAAAAAAAAGBQAAAAU8QWxsPgYGAAAAGERlZmF1bHQgKEN1cnJlbnQgRm9sZGVyKQAAAAAA
-        AAAAAQAAAAHSpyfpa23QiAgNMgkq6Wtt0IgKCgoL
+        ODkFAQAAABd4MzYwY2UuRW5naW5lLkRhdGEuR2FtZQ8AAAAHX0dhbWVJZAxfRGlza0RyaXZlSWQJX0Zp
+        bGVOYW1lEF9GaWxlUHJvZHVjdE5hbWUMX0ZpbGVWZXJzaW9uCV9GdWxsUGF0aAxfQ29tcGFueU5hbWUJ
+        X0hvb2tNYXNrC19YSW5wdXRNYXNrCF9Db21tZW50Cl9Jc0VuYWJsZWQMX0RhdGVDcmVhdGVkDF9EYXRl
+        VXBkYXRlZBtFbnRpdHlPYmplY3QrX3JlbGF0aW9uc2hpcHMXRW50aXR5T2JqZWN0K19lbnRpdHlLZXkD
+        AwEBAQEBAAABAAADBAQLU3lzdGVtLkd1aWQLU3lzdGVtLkd1aWQICAEND1N5c3RlbS5EYXRlVGltZTNT
+        eXN0ZW0uRGF0YS5PYmplY3RzLkRhdGFDbGFzc2VzLlJlbGF0aW9uc2hpcE1hbmFnZXIDAAAAFVN5c3Rl
+        bS5EYXRhLkVudGl0eUtleQMAAAACAAAABPz///8LU3lzdGVtLkd1aWQLAAAAAl9hAl9iAl9jAl9kAl9l
+        Al9mAl9nAl9oAl9pAl9qAl9rAAAAAAAAAAAAAAAIBwcCAgICAgICAob+2BKUrhxOjminUVMopPoB+///
+        //z///8rKVZ8qtY3B8OTFGSzTRdlBgYAAAAKZGV2ZW52LmV4ZQYHAAAAIE1pY3Jvc29mdMKuIFZpc3Vh
+        bCBTdHVkaW/CriAyMDEzBggAAAAMMTIuMC4zMDExMC4wBgkAAABKQzpcUHJvZ3JhbSBGaWxlcyAoeDg2
+        KVxNaWNyb3NvZnQgVmlzdWFsIFN0dWRpbyAxMi4wXENvbW1vbjdcSURFXGRldmVudi5leGUGCgAAABVN
+        aWNyb3NvZnQgQ29ycG9yYXRpb24AAAAAAAAAAAYLAAAAAAGR0vdcZ//QiAgNkdL3XGf/0IgKCgs=
 </value>
   </data>
   <metadata name="BuletImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
