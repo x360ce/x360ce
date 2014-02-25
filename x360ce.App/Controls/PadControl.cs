@@ -510,6 +510,7 @@ namespace x360ce.App.Controls
             TriggersGroupBox.Enabled = enable;
             ThumbsGroupBox.Enabled = enable;
             AxisToDPadGroupBox.Enabled = enable;
+            DeviceGroupBox.Enabled = enable;
             if (enable)
             {
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);

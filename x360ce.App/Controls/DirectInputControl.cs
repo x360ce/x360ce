@@ -70,13 +70,15 @@ namespace x360ce.App.Controls
                 device.Unacquire();
                 device.SetCooperativeLevel(MainForm.Current, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
                 effects = new List<EffectInfo>();
-                try {
+                try
+                {
                     device.Acquire();
                     var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
                     forceFeedbackState = forceFeedback ? "YES" : "NO";
                     effects = device.GetEffects(EffectType.All);
                 }
-                catch (Exception) {
+                catch (Exception)
+                {
                     forceFeedbackState = "ERROR";
                 }
                 DiEffectsTable.Rows.Clear();
@@ -110,8 +112,9 @@ namespace x360ce.App.Controls
 
         void SetValue(Control control, string value, params object[] args)
         {
-            //if (control.Text != value)
-            control.Text = string.Format(value, args);
+            var s = string.Format(value, args);
+            if (control.Text == s) return;
+            control.Text = s;
         }
 
         JoystickState oldState;
@@ -226,17 +229,19 @@ namespace x360ce.App.Controls
 
         void ProcessSlider(List<string> actions, int[] sliders, TextBox control, ref int num)
         {
-            control.Text = "";
-            if (sliders == null) return;
-            int v;
-            for (int i = 0; i < sliders.Length; i++)
+            var s = "";
+            if (sliders != null)
             {
-                v = sliders[i];
-                if (control.Text.Length > 0) control.Text += " ";
-                control.Text += v.ToString("00000");
-                addAction(actions, v, "Slider", num++);
+                int v;
+                for (int i = 0; i < sliders.Length; i++)
+                {
+                    v = sliders[i];
+                    if (s.Length > 0) s += " ";
+                    s += v.ToString("00000");
+                    addAction(actions, v, "Slider", num++);
+                }
             }
-
+            SetValue(control, s);
         }
 
         void addAction(List<string> actions, int v, string type, int index)
