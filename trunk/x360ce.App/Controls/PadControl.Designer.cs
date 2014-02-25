@@ -157,6 +157,7 @@
             this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ClearPresetButton = new System.Windows.Forms.Button();
+            this.DeviceGroupBox = new System.Windows.Forms.GroupBox();
             this.AdvancedTabPage.SuspendLayout();
             this.AxisToDPadGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
@@ -184,6 +185,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorPeriodTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
+            this.DeviceGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // DirectInputTabPage
@@ -196,12 +198,10 @@
             // 
             // AdvancedTabPage
             // 
+            this.AdvancedTabPage.Controls.Add(this.DeviceGroupBox);
             this.AdvancedTabPage.Controls.Add(this.AxisToDPadGroupBox);
             this.AdvancedTabPage.Controls.Add(this.TriggersGroupBox);
             this.AdvancedTabPage.Controls.Add(this.ThumbsGroupBox);
-            this.AdvancedTabPage.Controls.Add(this.OptionsDeviceTypeLabel);
-            this.AdvancedTabPage.Controls.Add(this.GamePadTypeComboBox);
-            this.AdvancedTabPage.Controls.Add(this.PassThroughCheckBox);
             this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
             this.AdvancedTabPage.Name = "AdvancedTabPage";
             this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -215,14 +215,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadEnabledCheckBox);
             this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTrackBar);
+            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTextBox);
             this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTrackBar);
             this.AxisToDPadGroupBox.Controls.Add(this.OffsetLabel);
-            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTextBox);
             this.AxisToDPadGroupBox.Controls.Add(this.DeadZoneLabel);
             this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
-            this.AxisToDPadGroupBox.Location = new System.Drawing.Point(6, 308);
+            this.AxisToDPadGroupBox.Location = new System.Drawing.Point(242, 6);
             this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-            this.AxisToDPadGroupBox.Size = new System.Drawing.Size(608, 97);
+            this.AxisToDPadGroupBox.Size = new System.Drawing.Size(372, 125);
             this.AxisToDPadGroupBox.TabIndex = 14;
             this.AxisToDPadGroupBox.TabStop = false;
             this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -240,7 +240,7 @@
             // AxisToDPadOffsetTrackBar
             // 
             this.AxisToDPadOffsetTrackBar.AutoSize = false;
-            this.AxisToDPadOffsetTrackBar.Location = new System.Drawing.Point(322, 55);
+            this.AxisToDPadOffsetTrackBar.Location = new System.Drawing.Point(90, 87);
             this.AxisToDPadOffsetTrackBar.Maximum = 100;
             this.AxisToDPadOffsetTrackBar.Name = "AxisToDPadOffsetTrackBar";
             this.AxisToDPadOffsetTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -251,7 +251,7 @@
             // AxisToDPadDeadZoneTrackBar
             // 
             this.AxisToDPadDeadZoneTrackBar.AutoSize = false;
-            this.AxisToDPadDeadZoneTrackBar.Location = new System.Drawing.Point(32, 59);
+            this.AxisToDPadDeadZoneTrackBar.Location = new System.Drawing.Point(90, 36);
             this.AxisToDPadDeadZoneTrackBar.Maximum = 100;
             this.AxisToDPadDeadZoneTrackBar.Name = "AxisToDPadDeadZoneTrackBar";
             this.AxisToDPadDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -263,7 +263,7 @@
             // OffsetLabel
             // 
             this.OffsetLabel.AutoSize = true;
-            this.OffsetLabel.Location = new System.Drawing.Point(319, 39);
+            this.OffsetLabel.Location = new System.Drawing.Point(87, 71);
             this.OffsetLabel.Name = "OffsetLabel";
             this.OffsetLabel.Size = new System.Drawing.Size(35, 13);
             this.OffsetLabel.TabIndex = 0;
@@ -271,7 +271,7 @@
             // 
             // AxisToDPadOffsetTextBox
             // 
-            this.AxisToDPadOffsetTextBox.Location = new System.Drawing.Point(555, 55);
+            this.AxisToDPadOffsetTextBox.Location = new System.Drawing.Point(323, 87);
             this.AxisToDPadOffsetTextBox.Name = "AxisToDPadOffsetTextBox";
             this.AxisToDPadOffsetTextBox.ReadOnly = true;
             this.AxisToDPadOffsetTextBox.Size = new System.Drawing.Size(43, 20);
@@ -283,7 +283,7 @@
             // DeadZoneLabel
             // 
             this.DeadZoneLabel.AutoSize = true;
-            this.DeadZoneLabel.Location = new System.Drawing.Point(9, 39);
+            this.DeadZoneLabel.Location = new System.Drawing.Point(87, 20);
             this.DeadZoneLabel.Name = "DeadZoneLabel";
             this.DeadZoneLabel.Size = new System.Drawing.Size(61, 13);
             this.DeadZoneLabel.TabIndex = 0;
@@ -291,7 +291,7 @@
             // 
             // AxisToDPadDeadZoneTextBox
             // 
-            this.AxisToDPadDeadZoneTextBox.Location = new System.Drawing.Point(261, 55);
+            this.AxisToDPadDeadZoneTextBox.Location = new System.Drawing.Point(323, 36);
             this.AxisToDPadDeadZoneTextBox.Name = "AxisToDPadDeadZoneTextBox";
             this.AxisToDPadDeadZoneTextBox.ReadOnly = true;
             this.AxisToDPadDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -310,7 +310,7 @@
             this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneTrackBar);
             this.TriggersGroupBox.Controls.Add(this.RightTriggerDeadZoneTextBox);
             this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneTextBox);
-            this.TriggersGroupBox.Location = new System.Drawing.Point(6, 33);
+            this.TriggersGroupBox.Location = new System.Drawing.Point(6, 137);
             this.TriggersGroupBox.Name = "TriggersGroupBox";
             this.TriggersGroupBox.Size = new System.Drawing.Size(608, 68);
             this.TriggersGroupBox.TabIndex = 0;
@@ -320,7 +320,7 @@
             // LeftTriggerDeadZoneLabel
             // 
             this.LeftTriggerDeadZoneLabel.AutoSize = true;
-            this.LeftTriggerDeadZoneLabel.Location = new System.Drawing.Point(6, 16);
+            this.LeftTriggerDeadZoneLabel.Location = new System.Drawing.Point(29, 16);
             this.LeftTriggerDeadZoneLabel.Name = "LeftTriggerDeadZoneLabel";
             this.LeftTriggerDeadZoneLabel.Size = new System.Drawing.Size(118, 13);
             this.LeftTriggerDeadZoneLabel.TabIndex = 0;
@@ -329,7 +329,7 @@
             // RightTriggerDeadZoneLabel
             // 
             this.RightTriggerDeadZoneLabel.AutoSize = true;
-            this.RightTriggerDeadZoneLabel.Location = new System.Drawing.Point(319, 16);
+            this.RightTriggerDeadZoneLabel.Location = new System.Drawing.Point(323, 16);
             this.RightTriggerDeadZoneLabel.Name = "RightTriggerDeadZoneLabel";
             this.RightTriggerDeadZoneLabel.Size = new System.Drawing.Size(125, 13);
             this.RightTriggerDeadZoneLabel.TabIndex = 0;
@@ -338,7 +338,7 @@
             // RightTriggerDeadZoneTrackBar
             // 
             this.RightTriggerDeadZoneTrackBar.AutoSize = false;
-            this.RightTriggerDeadZoneTrackBar.Location = new System.Drawing.Point(322, 32);
+            this.RightTriggerDeadZoneTrackBar.Location = new System.Drawing.Point(326, 32);
             this.RightTriggerDeadZoneTrackBar.Maximum = 100;
             this.RightTriggerDeadZoneTrackBar.Name = "RightTriggerDeadZoneTrackBar";
             this.RightTriggerDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -349,7 +349,7 @@
             // LeftTriggerDeadZoneTrackBar
             // 
             this.LeftTriggerDeadZoneTrackBar.AutoSize = false;
-            this.LeftTriggerDeadZoneTrackBar.Location = new System.Drawing.Point(32, 30);
+            this.LeftTriggerDeadZoneTrackBar.Location = new System.Drawing.Point(32, 32);
             this.LeftTriggerDeadZoneTrackBar.Maximum = 100;
             this.LeftTriggerDeadZoneTrackBar.Name = "LeftTriggerDeadZoneTrackBar";
             this.LeftTriggerDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -359,7 +359,7 @@
             // 
             // RightTriggerDeadZoneTextBox
             // 
-            this.RightTriggerDeadZoneTextBox.Location = new System.Drawing.Point(555, 32);
+            this.RightTriggerDeadZoneTextBox.Location = new System.Drawing.Point(559, 32);
             this.RightTriggerDeadZoneTextBox.Name = "RightTriggerDeadZoneTextBox";
             this.RightTriggerDeadZoneTextBox.ReadOnly = true;
             this.RightTriggerDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -407,9 +407,9 @@
             this.ThumbsGroupBox.Controls.Add(this.LeftThumbDeadZoneYTextBox);
             this.ThumbsGroupBox.Controls.Add(this.RightThumbDeadZoneXTextBox);
             this.ThumbsGroupBox.Controls.Add(this.LeftThumbDeadZoneXTextBox);
-            this.ThumbsGroupBox.Location = new System.Drawing.Point(9, 107);
+            this.ThumbsGroupBox.Location = new System.Drawing.Point(6, 211);
             this.ThumbsGroupBox.Name = "ThumbsGroupBox";
-            this.ThumbsGroupBox.Size = new System.Drawing.Size(608, 195);
+            this.ThumbsGroupBox.Size = new System.Drawing.Size(608, 194);
             this.ThumbsGroupBox.TabIndex = 0;
             this.ThumbsGroupBox.TabStop = false;
             this.ThumbsGroupBox.Text = "Thumbs";
@@ -430,7 +430,7 @@
             "Enabled, 80% (Recommended)",
             "Enabled, 90%",
             "Enabled, 100%"});
-            this.RightThumbYAntiDeadZoneComboBox.Location = new System.Drawing.Point(322, 163);
+            this.RightThumbYAntiDeadZoneComboBox.Location = new System.Drawing.Point(326, 163);
             this.RightThumbYAntiDeadZoneComboBox.Name = "RightThumbYAntiDeadZoneComboBox";
             this.RightThumbYAntiDeadZoneComboBox.Size = new System.Drawing.Size(195, 21);
             this.RightThumbYAntiDeadZoneComboBox.TabIndex = 9;
@@ -452,9 +452,9 @@
             "Enabled, 80% (Recommended)",
             "Enabled, 90%",
             "Enabled, 100%"});
-            this.LeftThumbYAntiDeadZoneComboBox.Location = new System.Drawing.Point(29, 163);
+            this.LeftThumbYAntiDeadZoneComboBox.Location = new System.Drawing.Point(32, 163);
             this.LeftThumbYAntiDeadZoneComboBox.Name = "LeftThumbYAntiDeadZoneComboBox";
-            this.LeftThumbYAntiDeadZoneComboBox.Size = new System.Drawing.Size(201, 21);
+            this.LeftThumbYAntiDeadZoneComboBox.Size = new System.Drawing.Size(195, 21);
             this.LeftThumbYAntiDeadZoneComboBox.TabIndex = 9;
             this.LeftThumbYAntiDeadZoneComboBox.SelectedIndexChanged += new System.EventHandler(this.LeftThumbYAntiDeadZoneComboBox_SelectedIndexChanged);
             // 
@@ -474,7 +474,7 @@
             "Enabled, 80% (Recommended)",
             "Enabled, 90%",
             "Enabled, 100%"});
-            this.RightThumbXAntiDeadZoneComboBox.Location = new System.Drawing.Point(322, 136);
+            this.RightThumbXAntiDeadZoneComboBox.Location = new System.Drawing.Point(326, 136);
             this.RightThumbXAntiDeadZoneComboBox.Name = "RightThumbXAntiDeadZoneComboBox";
             this.RightThumbXAntiDeadZoneComboBox.Size = new System.Drawing.Size(195, 21);
             this.RightThumbXAntiDeadZoneComboBox.TabIndex = 9;
@@ -496,15 +496,15 @@
             "Enabled, 80% (Recommended)",
             "Enabled, 90%",
             "Enabled, 100%"});
-            this.LeftThumbXAntiDeadZoneComboBox.Location = new System.Drawing.Point(30, 136);
+            this.LeftThumbXAntiDeadZoneComboBox.Location = new System.Drawing.Point(32, 136);
             this.LeftThumbXAntiDeadZoneComboBox.Name = "LeftThumbXAntiDeadZoneComboBox";
-            this.LeftThumbXAntiDeadZoneComboBox.Size = new System.Drawing.Size(200, 21);
+            this.LeftThumbXAntiDeadZoneComboBox.Size = new System.Drawing.Size(195, 21);
             this.LeftThumbXAntiDeadZoneComboBox.TabIndex = 9;
             this.LeftThumbXAntiDeadZoneComboBox.SelectedIndexChanged += new System.EventHandler(this.LeftThumbXAntiDeadZoneComboBox_SelectedIndexChanged);
             // 
             // RightThumbYAntiDeadZoneNumericUpDown
             // 
-            this.RightThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(523, 163);
+            this.RightThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(527, 163);
             this.RightThumbYAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -516,19 +516,19 @@
             // 
             // LeftThumbYAntiDeadZoneNumericUpDown
             // 
-            this.LeftThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(236, 163);
+            this.LeftThumbYAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(233, 163);
             this.LeftThumbYAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
             0,
             0});
             this.LeftThumbYAntiDeadZoneNumericUpDown.Name = "LeftThumbYAntiDeadZoneNumericUpDown";
-            this.LeftThumbYAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(69, 20);
+            this.LeftThumbYAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(75, 20);
             this.LeftThumbYAntiDeadZoneNumericUpDown.TabIndex = 11;
             // 
             // RightThumbXAntiDeadZoneNumericUpDown
             // 
-            this.RightThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(523, 138);
+            this.RightThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(527, 136);
             this.RightThumbXAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -540,20 +540,20 @@
             // 
             // LeftThumbXAntiDeadZoneNumericUpDown
             // 
-            this.LeftThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(236, 138);
+            this.LeftThumbXAntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(233, 136);
             this.LeftThumbXAntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
             0,
             0});
             this.LeftThumbXAntiDeadZoneNumericUpDown.Name = "LeftThumbXAntiDeadZoneNumericUpDown";
-            this.LeftThumbXAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(69, 20);
+            this.LeftThumbXAntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(75, 20);
             this.LeftThumbXAntiDeadZoneNumericUpDown.TabIndex = 10;
             // 
             // LeftTriggerDeadZoneYLabel
             // 
             this.LeftTriggerDeadZoneYLabel.AutoSize = true;
-            this.LeftTriggerDeadZoneYLabel.Location = new System.Drawing.Point(6, 77);
+            this.LeftTriggerDeadZoneYLabel.Location = new System.Drawing.Point(6, 73);
             this.LeftTriggerDeadZoneYLabel.Name = "LeftTriggerDeadZoneYLabel";
             this.LeftTriggerDeadZoneYLabel.Size = new System.Drawing.Size(17, 13);
             this.LeftTriggerDeadZoneYLabel.TabIndex = 0;
@@ -562,7 +562,7 @@
             // LeftTriggerDeadZoneXLabel
             // 
             this.LeftTriggerDeadZoneXLabel.AutoSize = true;
-            this.LeftTriggerDeadZoneXLabel.Location = new System.Drawing.Point(6, 39);
+            this.LeftTriggerDeadZoneXLabel.Location = new System.Drawing.Point(6, 35);
             this.LeftTriggerDeadZoneXLabel.Name = "LeftTriggerDeadZoneXLabel";
             this.LeftTriggerDeadZoneXLabel.Size = new System.Drawing.Size(17, 13);
             this.LeftTriggerDeadZoneXLabel.TabIndex = 0;
@@ -580,7 +580,7 @@
             // RightThumbAntiDeadZoneLabel
             // 
             this.RightThumbAntiDeadZoneLabel.AutoSize = true;
-            this.RightThumbAntiDeadZoneLabel.Location = new System.Drawing.Point(319, 108);
+            this.RightThumbAntiDeadZoneLabel.Location = new System.Drawing.Point(323, 120);
             this.RightThumbAntiDeadZoneLabel.Name = "RightThumbAntiDeadZoneLabel";
             this.RightThumbAntiDeadZoneLabel.Size = new System.Drawing.Size(149, 13);
             this.RightThumbAntiDeadZoneLabel.TabIndex = 0;
@@ -589,7 +589,7 @@
             // LeftThumbAntiDeadZoneLabel
             // 
             this.LeftThumbAntiDeadZoneLabel.AutoSize = true;
-            this.LeftThumbAntiDeadZoneLabel.Location = new System.Drawing.Point(6, 108);
+            this.LeftThumbAntiDeadZoneLabel.Location = new System.Drawing.Point(29, 120);
             this.LeftThumbAntiDeadZoneLabel.Name = "LeftThumbAntiDeadZoneLabel";
             this.LeftThumbAntiDeadZoneLabel.Size = new System.Drawing.Size(142, 13);
             this.LeftThumbAntiDeadZoneLabel.TabIndex = 0;
@@ -598,7 +598,7 @@
             // LeftThumbXAntiDeadZoneLabel
             // 
             this.LeftThumbXAntiDeadZoneLabel.AutoSize = true;
-            this.LeftThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(6, 140);
+            this.LeftThumbXAntiDeadZoneLabel.Location = new System.Drawing.Point(6, 138);
             this.LeftThumbXAntiDeadZoneLabel.Name = "LeftThumbXAntiDeadZoneLabel";
             this.LeftThumbXAntiDeadZoneLabel.Size = new System.Drawing.Size(17, 13);
             this.LeftThumbXAntiDeadZoneLabel.TabIndex = 0;
@@ -607,7 +607,7 @@
             // LeftThumbDeadZoneLabel
             // 
             this.LeftThumbDeadZoneLabel.AutoSize = true;
-            this.LeftThumbDeadZoneLabel.Location = new System.Drawing.Point(6, 16);
+            this.LeftThumbDeadZoneLabel.Location = new System.Drawing.Point(29, 16);
             this.LeftThumbDeadZoneLabel.Name = "LeftThumbDeadZoneLabel";
             this.LeftThumbDeadZoneLabel.Size = new System.Drawing.Size(118, 13);
             this.LeftThumbDeadZoneLabel.TabIndex = 0;
@@ -616,7 +616,7 @@
             // RightThumbDeadZoneLabel
             // 
             this.RightThumbDeadZoneLabel.AutoSize = true;
-            this.RightThumbDeadZoneLabel.Location = new System.Drawing.Point(319, 16);
+            this.RightThumbDeadZoneLabel.Location = new System.Drawing.Point(323, 16);
             this.RightThumbDeadZoneLabel.Name = "RightThumbDeadZoneLabel";
             this.RightThumbDeadZoneLabel.Size = new System.Drawing.Size(125, 13);
             this.RightThumbDeadZoneLabel.TabIndex = 0;
@@ -625,7 +625,7 @@
             // RightThumbDeadZoneYTrackBar
             // 
             this.RightThumbDeadZoneYTrackBar.AutoSize = false;
-            this.RightThumbDeadZoneYTrackBar.Location = new System.Drawing.Point(322, 70);
+            this.RightThumbDeadZoneYTrackBar.Location = new System.Drawing.Point(326, 70);
             this.RightThumbDeadZoneYTrackBar.Maximum = 100;
             this.RightThumbDeadZoneYTrackBar.Name = "RightThumbDeadZoneYTrackBar";
             this.RightThumbDeadZoneYTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -636,7 +636,7 @@
             // RightThumbDeadZoneXTrackBar
             // 
             this.RightThumbDeadZoneXTrackBar.AutoSize = false;
-            this.RightThumbDeadZoneXTrackBar.Location = new System.Drawing.Point(322, 32);
+            this.RightThumbDeadZoneXTrackBar.Location = new System.Drawing.Point(326, 32);
             this.RightThumbDeadZoneXTrackBar.Maximum = 100;
             this.RightThumbDeadZoneXTrackBar.Name = "RightThumbDeadZoneXTrackBar";
             this.RightThumbDeadZoneXTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -647,7 +647,7 @@
             // LeftThumbDeadZoneYTrackBar
             // 
             this.LeftThumbDeadZoneYTrackBar.AutoSize = false;
-            this.LeftThumbDeadZoneYTrackBar.Location = new System.Drawing.Point(29, 73);
+            this.LeftThumbDeadZoneYTrackBar.Location = new System.Drawing.Point(32, 70);
             this.LeftThumbDeadZoneYTrackBar.Maximum = 100;
             this.LeftThumbDeadZoneYTrackBar.Name = "LeftThumbDeadZoneYTrackBar";
             this.LeftThumbDeadZoneYTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -657,7 +657,7 @@
             // 
             // RightThumbDeadZoneYTextBox
             // 
-            this.RightThumbDeadZoneYTextBox.Location = new System.Drawing.Point(555, 70);
+            this.RightThumbDeadZoneYTextBox.Location = new System.Drawing.Point(559, 70);
             this.RightThumbDeadZoneYTextBox.Name = "RightThumbDeadZoneYTextBox";
             this.RightThumbDeadZoneYTextBox.ReadOnly = true;
             this.RightThumbDeadZoneYTextBox.Size = new System.Drawing.Size(43, 20);
@@ -669,7 +669,7 @@
             // LeftThumbDeadZoneXTrackBar
             // 
             this.LeftThumbDeadZoneXTrackBar.AutoSize = false;
-            this.LeftThumbDeadZoneXTrackBar.Location = new System.Drawing.Point(29, 35);
+            this.LeftThumbDeadZoneXTrackBar.Location = new System.Drawing.Point(32, 32);
             this.LeftThumbDeadZoneXTrackBar.Maximum = 100;
             this.LeftThumbDeadZoneXTrackBar.Name = "LeftThumbDeadZoneXTrackBar";
             this.LeftThumbDeadZoneXTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -679,7 +679,7 @@
             // 
             // LeftThumbDeadZoneYTextBox
             // 
-            this.LeftThumbDeadZoneYTextBox.Location = new System.Drawing.Point(262, 70);
+            this.LeftThumbDeadZoneYTextBox.Location = new System.Drawing.Point(265, 70);
             this.LeftThumbDeadZoneYTextBox.Name = "LeftThumbDeadZoneYTextBox";
             this.LeftThumbDeadZoneYTextBox.ReadOnly = true;
             this.LeftThumbDeadZoneYTextBox.Size = new System.Drawing.Size(43, 20);
@@ -690,7 +690,7 @@
             // 
             // RightThumbDeadZoneXTextBox
             // 
-            this.RightThumbDeadZoneXTextBox.Location = new System.Drawing.Point(555, 32);
+            this.RightThumbDeadZoneXTextBox.Location = new System.Drawing.Point(559, 32);
             this.RightThumbDeadZoneXTextBox.Name = "RightThumbDeadZoneXTextBox";
             this.RightThumbDeadZoneXTextBox.ReadOnly = true;
             this.RightThumbDeadZoneXTextBox.Size = new System.Drawing.Size(43, 20);
@@ -701,7 +701,7 @@
             // 
             // LeftThumbDeadZoneXTextBox
             // 
-            this.LeftThumbDeadZoneXTextBox.Location = new System.Drawing.Point(262, 32);
+            this.LeftThumbDeadZoneXTextBox.Location = new System.Drawing.Point(265, 32);
             this.LeftThumbDeadZoneXTextBox.Name = "LeftThumbDeadZoneXTextBox";
             this.LeftThumbDeadZoneXTextBox.ReadOnly = true;
             this.LeftThumbDeadZoneXTextBox.Size = new System.Drawing.Size(43, 20);
@@ -713,7 +713,7 @@
             // OptionsDeviceTypeLabel
             // 
             this.OptionsDeviceTypeLabel.AutoSize = true;
-            this.OptionsDeviceTypeLabel.Location = new System.Drawing.Point(3, 11);
+            this.OptionsDeviceTypeLabel.Location = new System.Drawing.Point(6, 42);
             this.OptionsDeviceTypeLabel.Name = "OptionsDeviceTypeLabel";
             this.OptionsDeviceTypeLabel.Size = new System.Drawing.Size(71, 13);
             this.OptionsDeviceTypeLabel.TabIndex = 0;
@@ -721,17 +721,19 @@
             // 
             // GamePadTypeComboBox
             // 
+            this.GamePadTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.GamePadTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.GamePadTypeComboBox.FormattingEnabled = true;
-            this.GamePadTypeComboBox.Location = new System.Drawing.Point(80, 6);
+            this.GamePadTypeComboBox.Location = new System.Drawing.Point(83, 39);
             this.GamePadTypeComboBox.Name = "GamePadTypeComboBox";
-            this.GamePadTypeComboBox.Size = new System.Drawing.Size(121, 21);
+            this.GamePadTypeComboBox.Size = new System.Drawing.Size(138, 21);
             this.GamePadTypeComboBox.TabIndex = 1;
             // 
             // PassThroughCheckBox
             // 
             this.PassThroughCheckBox.AutoSize = true;
-            this.PassThroughCheckBox.Location = new System.Drawing.Point(331, 10);
+            this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 19);
             this.PassThroughCheckBox.Name = "PassThroughCheckBox";
             this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
             this.PassThroughCheckBox.TabIndex = 2;
@@ -1830,6 +1832,20 @@
             this.ClearPresetButton.UseVisualStyleBackColor = true;
             this.ClearPresetButton.Click += new System.EventHandler(this.ClearPresetButton_Click);
             // 
+            // DeviceGroupBox
+            // 
+            this.DeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeviceGroupBox.Controls.Add(this.GamePadTypeComboBox);
+            this.DeviceGroupBox.Controls.Add(this.OptionsDeviceTypeLabel);
+            this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
+            this.DeviceGroupBox.Location = new System.Drawing.Point(6, 6);
+            this.DeviceGroupBox.Name = "DeviceGroupBox";
+            this.DeviceGroupBox.Size = new System.Drawing.Size(227, 124);
+            this.DeviceGroupBox.TabIndex = 14;
+            this.DeviceGroupBox.TabStop = false;
+            this.DeviceGroupBox.Text = "Device";
+            // 
             // PadControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1842,7 +1858,6 @@
             this.Size = new System.Drawing.Size(634, 470);
             this.Load += new System.EventHandler(this.PadControl_Load);
             this.AdvancedTabPage.ResumeLayout(false);
-            this.AdvancedTabPage.PerformLayout();
             this.AxisToDPadGroupBox.ResumeLayout(false);
             this.AxisToDPadGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).EndInit();
@@ -1874,6 +1889,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorPeriodTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
+            this.DeviceGroupBox.ResumeLayout(false);
+            this.DeviceGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -2021,5 +2038,6 @@
         private System.Windows.Forms.ComboBox RightThumbXAntiDeadZoneComboBox;
         private System.Windows.Forms.Label RightThumbAntiDeadZoneLabel;
         private System.Windows.Forms.Button ClearPresetButton;
+        private System.Windows.Forms.GroupBox DeviceGroupBox;
 	}
 }
