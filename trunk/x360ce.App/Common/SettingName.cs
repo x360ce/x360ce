@@ -91,6 +91,10 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("Pass Through mode, calls system's native xinput1_3.dll to support xinput compatible controller together with emulated.")]
 		public const string PassThrough = "PassThrough";
 
+        // Default Mapping.
+        [DefaultValue("0"), Description("Index of PAD which will be used to map this controller. Auto = 0, PAD Index = 1-4.")]
+        public const string MapToPad = "MapToPad";
+
 		// Left Thumb.
 		[DefaultValue("0"), Description("Left stick button. Disable = 0.")]
 		public const string LeftThumbButton = "Left Thumb";

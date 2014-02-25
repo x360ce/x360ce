@@ -33,15 +33,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.DiEffectsDataGridView = new System.Windows.Forms.DataGridView();
-            this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DiCapDPadsLabel = new System.Windows.Forms.Label();
-            this.DiCapButtonsLabel = new System.Windows.Forms.Label();
             this.DiDPadLabel = new System.Windows.Forms.Label();
-            this.DiCapAxesLabel = new System.Windows.Forms.Label();
             this.DiUvaLabel = new System.Windows.Forms.Label();
-            this.DiCapFfLabel = new System.Windows.Forms.Label();
             this.DiExtraVLabel = new System.Windows.Forms.Label();
             this.DiExtraFLabel = new System.Windows.Forms.Label();
             this.DiExtraALabel = new System.Windows.Forms.Label();
@@ -74,11 +67,19 @@
             this.DiInstanceGuidLabel = new System.Windows.Forms.Label();
             this.DeviceProductNameTextBox = new System.Windows.Forms.TextBox();
             this.DiProductNameLabel = new System.Windows.Forms.Label();
-            this.MapToPed1Button = new System.Windows.Forms.Button();
-            this.MapToPed2Button = new System.Windows.Forms.Button();
-            this.MapToPed3Button = new System.Windows.Forms.Button();
-            this.MapToPed4Button = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.MapToControllerLabel = new System.Windows.Forms.Label();
+            this.MapToPadComboBox = new System.Windows.Forms.ComboBox();
+            this.DiCapFfStateTextBox = new System.Windows.Forms.TextBox();
+            this.DiCapFfLabel = new System.Windows.Forms.Label();
+            this.DiCapAxesTextBox = new System.Windows.Forms.TextBox();
+            this.AxeCountLabel = new System.Windows.Forms.Label();
+            this.DiCapButtonsTextBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.DiCapDPadsTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -99,101 +100,37 @@
             this.DiEffectParamsColumn,
             this.DiEffectDynamicParameters});
             this.DiEffectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.DiEffectsDataGridView.Location = new System.Drawing.Point(3, 201);
+            this.DiEffectsDataGridView.Location = new System.Drawing.Point(3, 160);
             this.DiEffectsDataGridView.Name = "DiEffectsDataGridView";
             this.DiEffectsDataGridView.ReadOnly = true;
             this.DiEffectsDataGridView.RowHeadersVisible = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.DiEffectsDataGridView.Size = new System.Drawing.Size(609, 204);
+            this.DiEffectsDataGridView.Size = new System.Drawing.Size(609, 245);
             this.DiEffectsDataGridView.TabIndex = 0;
-            // 
-            // DiEffectNameColumn
-            // 
-            this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.DiEffectNameColumn.DataPropertyName = "Effect";
-            this.DiEffectNameColumn.HeaderText = "FF Effect";
-            this.DiEffectNameColumn.Name = "DiEffectNameColumn";
-            this.DiEffectNameColumn.ReadOnly = true;
-            this.DiEffectNameColumn.ToolTipText = "Supported force feedback effects";
-            this.DiEffectNameColumn.Width = 69;
-            // 
-            // DiEffectParamsColumn
-            // 
-            this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DiEffectParamsColumn.DataPropertyName = "Parameters";
-            this.DiEffectParamsColumn.HeaderText = "Parameters";
-            this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
-            this.DiEffectParamsColumn.ReadOnly = true;
-            this.DiEffectParamsColumn.ToolTipText = "Parameters supported by the effect";
-            // 
-            // DiEffectDynamicParameters
-            // 
-            this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
-            this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
-            this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
-            this.DiEffectDynamicParameters.ReadOnly = true;
-            this.DiEffectDynamicParameters.ToolTipText = "Parameters of the effect that can be modified while the effect is playing";
-            // 
-            // DiCapDPadsLabel
-            // 
-            this.DiCapDPadsLabel.AutoSize = true;
-            this.DiCapDPadsLabel.Location = new System.Drawing.Point(427, 170);
-            this.DiCapDPadsLabel.Name = "DiCapDPadsLabel";
-            this.DiCapDPadsLabel.Size = new System.Drawing.Size(86, 13);
-            this.DiCapDPadsLabel.TabIndex = 0;
-            this.DiCapDPadsLabel.Text = "DiCapPovsLabel";
-            // 
-            // DiCapButtonsLabel
-            // 
-            this.DiCapButtonsLabel.AutoSize = true;
-            this.DiCapButtonsLabel.Location = new System.Drawing.Point(427, 153);
-            this.DiCapButtonsLabel.Name = "DiCapButtonsLabel";
-            this.DiCapButtonsLabel.Size = new System.Drawing.Size(98, 13);
-            this.DiCapButtonsLabel.TabIndex = 0;
-            this.DiCapButtonsLabel.Text = "DiCapButtonsLabel";
             // 
             // DiDPadLabel
             // 
             this.DiDPadLabel.AutoSize = true;
-            this.DiDPadLabel.Location = new System.Drawing.Point(228, 59);
+            this.DiDPadLabel.Location = new System.Drawing.Point(228, 32);
             this.DiDPadLabel.Name = "DiDPadLabel";
             this.DiDPadLabel.Size = new System.Drawing.Size(40, 13);
             this.DiDPadLabel.TabIndex = 0;
             this.DiDPadLabel.Text = "D-Pad:";
             // 
-            // DiCapAxesLabel
-            // 
-            this.DiCapAxesLabel.AutoSize = true;
-            this.DiCapAxesLabel.Location = new System.Drawing.Point(427, 136);
-            this.DiCapAxesLabel.Name = "DiCapAxesLabel";
-            this.DiCapAxesLabel.Size = new System.Drawing.Size(85, 13);
-            this.DiCapAxesLabel.TabIndex = 0;
-            this.DiCapAxesLabel.Text = "DiCapAxesLabel";
-            // 
             // DiUvaLabel
             // 
             this.DiUvaLabel.AutoSize = true;
-            this.DiUvaLabel.Location = new System.Drawing.Point(228, 85);
+            this.DiUvaLabel.Location = new System.Drawing.Point(228, 58);
             this.DiUvaLabel.Name = "DiUvaLabel";
             this.DiUvaLabel.Size = new System.Drawing.Size(40, 13);
             this.DiUvaLabel.TabIndex = 0;
             this.DiUvaLabel.Text = "U/V A:";
             // 
-            // DiCapFfLabel
-            // 
-            this.DiCapFfLabel.AutoSize = true;
-            this.DiCapFfLabel.Location = new System.Drawing.Point(427, 119);
-            this.DiCapFfLabel.Name = "DiCapFfLabel";
-            this.DiCapFfLabel.Size = new System.Drawing.Size(71, 13);
-            this.DiCapFfLabel.TabIndex = 0;
-            this.DiCapFfLabel.Text = "DiCapFfLabel";
-            // 
             // DiExtraVLabel
             // 
             this.DiExtraVLabel.AutoSize = true;
-            this.DiExtraVLabel.Location = new System.Drawing.Point(102, 85);
+            this.DiExtraVLabel.Location = new System.Drawing.Point(102, 58);
             this.DiExtraVLabel.Name = "DiExtraVLabel";
             this.DiExtraVLabel.Size = new System.Drawing.Size(44, 13);
             this.DiExtraVLabel.TabIndex = 0;
@@ -202,7 +139,7 @@
             // DiExtraFLabel
             // 
             this.DiExtraFLabel.AutoSize = true;
-            this.DiExtraFLabel.Location = new System.Drawing.Point(103, 59);
+            this.DiExtraFLabel.Location = new System.Drawing.Point(103, 32);
             this.DiExtraFLabel.Name = "DiExtraFLabel";
             this.DiExtraFLabel.Size = new System.Drawing.Size(43, 13);
             this.DiExtraFLabel.TabIndex = 0;
@@ -211,7 +148,7 @@
             // DiExtraALabel
             // 
             this.DiExtraALabel.AutoSize = true;
-            this.DiExtraALabel.Location = new System.Drawing.Point(103, 33);
+            this.DiExtraALabel.Location = new System.Drawing.Point(103, 6);
             this.DiExtraALabel.Name = "DiExtraALabel";
             this.DiExtraALabel.Size = new System.Drawing.Size(44, 13);
             this.DiExtraALabel.TabIndex = 0;
@@ -220,7 +157,7 @@
             // DiButtonsLabel
             // 
             this.DiButtonsLabel.AutoSize = true;
-            this.DiButtonsLabel.Location = new System.Drawing.Point(228, 33);
+            this.DiButtonsLabel.Location = new System.Drawing.Point(228, 6);
             this.DiButtonsLabel.Name = "DiButtonsLabel";
             this.DiButtonsLabel.Size = new System.Drawing.Size(46, 13);
             this.DiButtonsLabel.TabIndex = 0;
@@ -256,7 +193,7 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.DiAxisDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.DiAxisDataGridView.Location = new System.Drawing.Point(5, 111);
+            this.DiAxisDataGridView.Location = new System.Drawing.Point(3, 84);
             this.DiAxisDataGridView.Name = "DiAxisDataGridView";
             this.DiAxisDataGridView.ReadOnly = true;
             this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -264,7 +201,7 @@
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.DiAxisDataGridView.Size = new System.Drawing.Size(345, 84);
+            this.DiAxisDataGridView.Size = new System.Drawing.Size(347, 70);
             this.DiAxisDataGridView.TabIndex = 0;
             // 
             // DiColumnAxis
@@ -344,7 +281,7 @@
             // 
             // DevicePidTextBox
             // 
-            this.DevicePidTextBox.Location = new System.Drawing.Point(39, 82);
+            this.DevicePidTextBox.Location = new System.Drawing.Point(39, 55);
             this.DevicePidTextBox.Name = "DevicePidTextBox";
             this.DevicePidTextBox.ReadOnly = true;
             this.DevicePidTextBox.Size = new System.Drawing.Size(57, 20);
@@ -352,7 +289,7 @@
             // 
             // DeviceVidTextBox
             // 
-            this.DeviceVidTextBox.Location = new System.Drawing.Point(39, 56);
+            this.DeviceVidTextBox.Location = new System.Drawing.Point(39, 29);
             this.DeviceVidTextBox.Name = "DeviceVidTextBox";
             this.DeviceVidTextBox.ReadOnly = true;
             this.DeviceVidTextBox.Size = new System.Drawing.Size(57, 20);
@@ -360,7 +297,7 @@
             // 
             // DiDPadTextBox
             // 
-            this.DiDPadTextBox.Location = new System.Drawing.Point(280, 56);
+            this.DiDPadTextBox.Location = new System.Drawing.Point(280, 29);
             this.DiDPadTextBox.Name = "DiDPadTextBox";
             this.DiDPadTextBox.ReadOnly = true;
             this.DiDPadTextBox.Size = new System.Drawing.Size(70, 20);
@@ -368,7 +305,7 @@
             // 
             // DiUvSliderTextBox
             // 
-            this.DiUvSliderTextBox.Location = new System.Drawing.Point(280, 82);
+            this.DiUvSliderTextBox.Location = new System.Drawing.Point(280, 55);
             this.DiUvSliderTextBox.Name = "DiUvSliderTextBox";
             this.DiUvSliderTextBox.ReadOnly = true;
             this.DiUvSliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -376,7 +313,7 @@
             // 
             // DiVSliderTextBox
             // 
-            this.DiVSliderTextBox.Location = new System.Drawing.Point(152, 82);
+            this.DiVSliderTextBox.Location = new System.Drawing.Point(152, 55);
             this.DiVSliderTextBox.Name = "DiVSliderTextBox";
             this.DiVSliderTextBox.ReadOnly = true;
             this.DiVSliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -384,7 +321,7 @@
             // 
             // DiFSliderTextBox
             // 
-            this.DiFSliderTextBox.Location = new System.Drawing.Point(152, 56);
+            this.DiFSliderTextBox.Location = new System.Drawing.Point(152, 29);
             this.DiFSliderTextBox.Name = "DiFSliderTextBox";
             this.DiFSliderTextBox.ReadOnly = true;
             this.DiFSliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -392,7 +329,7 @@
             // 
             // DiASliderTextBox
             // 
-            this.DiASliderTextBox.Location = new System.Drawing.Point(152, 30);
+            this.DiASliderTextBox.Location = new System.Drawing.Point(152, 3);
             this.DiASliderTextBox.Name = "DiASliderTextBox";
             this.DiASliderTextBox.ReadOnly = true;
             this.DiASliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -400,7 +337,7 @@
             // 
             // DiButtonsTextBox
             // 
-            this.DiButtonsTextBox.Location = new System.Drawing.Point(280, 30);
+            this.DiButtonsTextBox.Location = new System.Drawing.Point(280, 3);
             this.DiButtonsTextBox.Name = "DiButtonsTextBox";
             this.DiButtonsTextBox.ReadOnly = true;
             this.DiButtonsTextBox.Size = new System.Drawing.Size(70, 20);
@@ -408,7 +345,7 @@
             // 
             // DeviceTypeTextBox
             // 
-            this.DeviceTypeTextBox.Location = new System.Drawing.Point(39, 30);
+            this.DeviceTypeTextBox.Location = new System.Drawing.Point(39, 3);
             this.DeviceTypeTextBox.Name = "DeviceTypeTextBox";
             this.DeviceTypeTextBox.ReadOnly = true;
             this.DeviceTypeTextBox.Size = new System.Drawing.Size(57, 20);
@@ -417,7 +354,7 @@
             // DiDevicePidLabel
             // 
             this.DiDevicePidLabel.AutoSize = true;
-            this.DiDevicePidLabel.Location = new System.Drawing.Point(5, 85);
+            this.DiDevicePidLabel.Location = new System.Drawing.Point(5, 58);
             this.DiDevicePidLabel.Name = "DiDevicePidLabel";
             this.DiDevicePidLabel.Size = new System.Drawing.Size(28, 13);
             this.DiDevicePidLabel.TabIndex = 0;
@@ -426,7 +363,7 @@
             // DiDeviceVidLabel
             // 
             this.DiDeviceVidLabel.AutoSize = true;
-            this.DiDeviceVidLabel.Location = new System.Drawing.Point(5, 59);
+            this.DiDeviceVidLabel.Location = new System.Drawing.Point(5, 32);
             this.DiDeviceVidLabel.Name = "DiDeviceVidLabel";
             this.DiDeviceVidLabel.Size = new System.Drawing.Size(28, 13);
             this.DiDeviceVidLabel.TabIndex = 0;
@@ -435,7 +372,7 @@
             // DiDeviceTypeLabel
             // 
             this.DiDeviceTypeLabel.AutoSize = true;
-            this.DiDeviceTypeLabel.Location = new System.Drawing.Point(5, 33);
+            this.DiDeviceTypeLabel.Location = new System.Drawing.Point(5, 6);
             this.DiDeviceTypeLabel.Name = "DiDeviceTypeLabel";
             this.DiDeviceTypeLabel.Size = new System.Drawing.Size(34, 13);
             this.DiDeviceTypeLabel.TabIndex = 0;
@@ -445,26 +382,26 @@
             // 
             this.DeviceInstanceGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceInstanceGuidTextBox.Location = new System.Drawing.Point(387, 82);
+            this.DeviceInstanceGuidTextBox.Location = new System.Drawing.Point(408, 55);
             this.DeviceInstanceGuidTextBox.Name = "DeviceInstanceGuidTextBox";
             this.DeviceInstanceGuidTextBox.ReadOnly = true;
-            this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(225, 20);
+            this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(204, 20);
             this.DeviceInstanceGuidTextBox.TabIndex = 0;
             // 
             // DeviceProductGuidTextBox
             // 
             this.DeviceProductGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceProductGuidTextBox.Location = new System.Drawing.Point(387, 56);
+            this.DeviceProductGuidTextBox.Location = new System.Drawing.Point(408, 29);
             this.DeviceProductGuidTextBox.Name = "DeviceProductGuidTextBox";
             this.DeviceProductGuidTextBox.ReadOnly = true;
-            this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(225, 20);
+            this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(204, 20);
             this.DeviceProductGuidTextBox.TabIndex = 0;
             // 
             // DiProductGuidLabel
             // 
             this.DiProductGuidLabel.AutoSize = true;
-            this.DiProductGuidLabel.Location = new System.Drawing.Point(356, 59);
+            this.DiProductGuidLabel.Location = new System.Drawing.Point(356, 32);
             this.DiProductGuidLabel.Name = "DiProductGuidLabel";
             this.DiProductGuidLabel.Size = new System.Drawing.Size(25, 13);
             this.DiProductGuidLabel.TabIndex = 0;
@@ -473,7 +410,7 @@
             // DiInstanceGuidLabel
             // 
             this.DiInstanceGuidLabel.AutoSize = true;
-            this.DiInstanceGuidLabel.Location = new System.Drawing.Point(356, 85);
+            this.DiInstanceGuidLabel.Location = new System.Drawing.Point(356, 58);
             this.DiInstanceGuidLabel.Name = "DiInstanceGuidLabel";
             this.DiInstanceGuidLabel.Size = new System.Drawing.Size(21, 13);
             this.DiInstanceGuidLabel.TabIndex = 0;
@@ -483,88 +420,168 @@
             // 
             this.DeviceProductNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceProductNameTextBox.Location = new System.Drawing.Point(387, 30);
+            this.DeviceProductNameTextBox.Location = new System.Drawing.Point(408, 3);
             this.DeviceProductNameTextBox.Name = "DeviceProductNameTextBox";
             this.DeviceProductNameTextBox.ReadOnly = true;
-            this.DeviceProductNameTextBox.Size = new System.Drawing.Size(225, 20);
+            this.DeviceProductNameTextBox.Size = new System.Drawing.Size(204, 20);
             this.DeviceProductNameTextBox.TabIndex = 0;
             // 
             // DiProductNameLabel
             // 
             this.DiProductNameLabel.AutoSize = true;
-            this.DiProductNameLabel.Location = new System.Drawing.Point(356, 33);
+            this.DiProductNameLabel.Location = new System.Drawing.Point(356, 6);
             this.DiProductNameLabel.Name = "DiProductNameLabel";
             this.DiProductNameLabel.Size = new System.Drawing.Size(25, 13);
             this.DiProductNameLabel.TabIndex = 0;
             this.DiProductNameLabel.Text = "PN:";
             // 
-            // MapToPed1Button
+            // MapToControllerLabel
             // 
-            this.MapToPed1Button.Location = new System.Drawing.Point(387, 3);
-            this.MapToPed1Button.Name = "MapToPed1Button";
-            this.MapToPed1Button.Size = new System.Drawing.Size(45, 23);
-            this.MapToPed1Button.TabIndex = 1;
-            this.MapToPed1Button.Text = "1";
-            this.MapToPed1Button.UseVisualStyleBackColor = true;
+            this.MapToControllerLabel.AutoSize = true;
+            this.MapToControllerLabel.Location = new System.Drawing.Point(444, 136);
+            this.MapToControllerLabel.Name = "MapToControllerLabel";
+            this.MapToControllerLabel.Size = new System.Drawing.Size(90, 13);
+            this.MapToControllerLabel.TabIndex = 0;
+            this.MapToControllerLabel.Text = "Map to Controller:";
             // 
-            // MapToPed2Button
+            // MapToPadComboBox
             // 
-            this.MapToPed2Button.Location = new System.Drawing.Point(438, 3);
-            this.MapToPed2Button.Name = "MapToPed2Button";
-            this.MapToPed2Button.Size = new System.Drawing.Size(45, 23);
-            this.MapToPed2Button.TabIndex = 1;
-            this.MapToPed2Button.Text = "2";
-            this.MapToPed2Button.UseVisualStyleBackColor = true;
+            this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MapToPadComboBox.FormattingEnabled = true;
+            this.MapToPadComboBox.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.MapToPadComboBox.Location = new System.Drawing.Point(542, 133);
+            this.MapToPadComboBox.Name = "MapToPadComboBox";
+            this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
+            this.MapToPadComboBox.TabIndex = 1;
             // 
-            // MapToPed3Button
+            // DiCapFfStateTextBox
             // 
-            this.MapToPed3Button.Location = new System.Drawing.Point(489, 3);
-            this.MapToPed3Button.Name = "MapToPed3Button";
-            this.MapToPed3Button.Size = new System.Drawing.Size(45, 23);
-            this.MapToPed3Button.TabIndex = 1;
-            this.MapToPed3Button.Text = "3";
-            this.MapToPed3Button.UseVisualStyleBackColor = true;
+            this.DiCapFfStateTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(542, 81);
+            this.DiCapFfStateTextBox.Name = "DiCapFfStateTextBox";
+            this.DiCapFfStateTextBox.ReadOnly = true;
+            this.DiCapFfStateTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapFfStateTextBox.TabIndex = 0;
             // 
-            // MapToPed4Button
+            // DiCapFfLabel
             // 
-            this.MapToPed4Button.Location = new System.Drawing.Point(540, 3);
-            this.MapToPed4Button.Name = "MapToPed4Button";
-            this.MapToPed4Button.Size = new System.Drawing.Size(45, 23);
-            this.MapToPed4Button.TabIndex = 1;
-            this.MapToPed4Button.Text = "4";
-            this.MapToPed4Button.UseVisualStyleBackColor = true;
+            this.DiCapFfLabel.AutoSize = true;
+            this.DiCapFfLabel.Location = new System.Drawing.Point(484, 84);
+            this.DiCapFfLabel.Name = "DiCapFfLabel";
+            this.DiCapFfLabel.Size = new System.Drawing.Size(50, 13);
+            this.DiCapFfLabel.TabIndex = 0;
+            this.DiCapFfLabel.Text = "FF State:";
             // 
-            // label1
+            // DiCapAxesTextBox
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(291, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Map to Controller:";
+            this.DiCapAxesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapAxesTextBox.Location = new System.Drawing.Point(542, 107);
+            this.DiCapAxesTextBox.Name = "DiCapAxesTextBox";
+            this.DiCapAxesTextBox.ReadOnly = true;
+            this.DiCapAxesTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapAxesTextBox.TabIndex = 0;
+            // 
+            // AxeCountLabel
+            // 
+            this.AxeCountLabel.AutoSize = true;
+            this.AxeCountLabel.Location = new System.Drawing.Point(484, 110);
+            this.AxeCountLabel.Name = "AxeCountLabel";
+            this.AxeCountLabel.Size = new System.Drawing.Size(33, 13);
+            this.AxeCountLabel.TabIndex = 0;
+            this.AxeCountLabel.Text = "Axes:";
+            // 
+            // DiCapButtonsTextBox
+            // 
+            this.DiCapButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapButtonsTextBox.Location = new System.Drawing.Point(408, 81);
+            this.DiCapButtonsTextBox.Name = "DiCapButtonsTextBox";
+            this.DiCapButtonsTextBox.ReadOnly = true;
+            this.DiCapButtonsTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapButtonsTextBox.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(356, 84);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(46, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Buttons:";
+            // 
+            // DiCapDPadsTextBox
+            // 
+            this.DiCapDPadsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapDPadsTextBox.Location = new System.Drawing.Point(408, 107);
+            this.DiCapDPadsTextBox.Name = "DiCapDPadsTextBox";
+            this.DiCapDPadsTextBox.ReadOnly = true;
+            this.DiCapDPadsTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapDPadsTextBox.TabIndex = 0;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(356, 110);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(45, 13);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "D-Pads:";
+            // 
+            // DiEffectNameColumn
+            // 
+            this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DiEffectNameColumn.DataPropertyName = "Effect";
+            this.DiEffectNameColumn.HeaderText = "FF Effect";
+            this.DiEffectNameColumn.Name = "DiEffectNameColumn";
+            this.DiEffectNameColumn.ReadOnly = true;
+            this.DiEffectNameColumn.ToolTipText = "Supported force feedback effects";
+            this.DiEffectNameColumn.Width = 75;
+            // 
+            // DiEffectParamsColumn
+            // 
+            this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DiEffectParamsColumn.DataPropertyName = "Parameters";
+            this.DiEffectParamsColumn.HeaderText = "Parameters";
+            this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
+            this.DiEffectParamsColumn.ReadOnly = true;
+            this.DiEffectParamsColumn.ToolTipText = "Parameters supported by the effect";
+            // 
+            // DiEffectDynamicParameters
+            // 
+            this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
+            this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
+            this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
+            this.DiEffectDynamicParameters.ReadOnly = true;
+            this.DiEffectDynamicParameters.ToolTipText = "Parameters of the effect that can be modified while the effect is playing";
             // 
             // DirectInputControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.MapToPed4Button);
-            this.Controls.Add(this.MapToPed3Button);
-            this.Controls.Add(this.MapToPed2Button);
-            this.Controls.Add(this.MapToPed1Button);
+            this.Controls.Add(this.MapToPadComboBox);
             this.Controls.Add(this.DiEffectsDataGridView);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.AxeCountLabel);
+            this.Controls.Add(this.DiCapFfLabel);
             this.Controls.Add(this.DiInstanceGuidLabel);
             this.Controls.Add(this.DiProductNameLabel);
             this.Controls.Add(this.DiProductGuidLabel);
-            this.Controls.Add(this.DiCapDPadsLabel);
-            this.Controls.Add(this.DiCapButtonsLabel);
             this.Controls.Add(this.DiDPadLabel);
-            this.Controls.Add(this.DiCapAxesLabel);
             this.Controls.Add(this.DiUvaLabel);
-            this.Controls.Add(this.DiCapFfLabel);
             this.Controls.Add(this.DiExtraVLabel);
             this.Controls.Add(this.DiExtraFLabel);
             this.Controls.Add(this.DiExtraALabel);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.MapToControllerLabel);
             this.Controls.Add(this.DiButtonsLabel);
             this.Controls.Add(this.DiAxisDataGridView);
             this.Controls.Add(this.DevicePidTextBox);
@@ -572,6 +589,10 @@
             this.Controls.Add(this.DiDPadTextBox);
             this.Controls.Add(this.DeviceProductNameTextBox);
             this.Controls.Add(this.DeviceProductGuidTextBox);
+            this.Controls.Add(this.DiCapDPadsTextBox);
+            this.Controls.Add(this.DiCapButtonsTextBox);
+            this.Controls.Add(this.DiCapAxesTextBox);
+            this.Controls.Add(this.DiCapFfStateTextBox);
             this.Controls.Add(this.DeviceInstanceGuidTextBox);
             this.Controls.Add(this.DiUvSliderTextBox);
             this.Controls.Add(this.DiVSliderTextBox);
@@ -593,16 +614,9 @@
 
 		#endregion
 
-		System.Windows.Forms.DataGridView DiEffectsDataGridView;
-		System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
-		System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
-		System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
-		System.Windows.Forms.Label DiCapDPadsLabel;
-		System.Windows.Forms.Label DiCapButtonsLabel;
-		System.Windows.Forms.Label DiDPadLabel;
-		System.Windows.Forms.Label DiCapAxesLabel;
-		System.Windows.Forms.Label DiUvaLabel;
-		System.Windows.Forms.Label DiCapFfLabel;
+        System.Windows.Forms.DataGridView DiEffectsDataGridView;
+        System.Windows.Forms.Label DiDPadLabel;
+        System.Windows.Forms.Label DiUvaLabel;
 		System.Windows.Forms.Label DiExtraVLabel;
 		System.Windows.Forms.Label DiExtraFLabel;
 		System.Windows.Forms.Label DiExtraALabel;
@@ -635,10 +649,18 @@
 		public System.Windows.Forms.TextBox DeviceProductNameTextBox;
         public System.Windows.Forms.TextBox DeviceInstanceGuidTextBox;
         public System.Windows.Forms.TextBox DeviceProductGuidTextBox;
-        private System.Windows.Forms.Button MapToPed1Button;
-        private System.Windows.Forms.Button MapToPed2Button;
-        private System.Windows.Forms.Button MapToPed3Button;
-        private System.Windows.Forms.Button MapToPed4Button;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label MapToControllerLabel;
+        public System.Windows.Forms.TextBox DiCapFfStateTextBox;
+        private System.Windows.Forms.Label DiCapFfLabel;
+        public System.Windows.Forms.TextBox DiCapAxesTextBox;
+        private System.Windows.Forms.Label AxeCountLabel;
+        public System.Windows.Forms.TextBox DiCapButtonsTextBox;
+        private System.Windows.Forms.Label label3;
+        public System.Windows.Forms.TextBox DiCapDPadsTextBox;
+        private System.Windows.Forms.Label label4;
+        public System.Windows.Forms.ComboBox MapToPadComboBox;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
 	}
 }
