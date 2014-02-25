@@ -56,10 +56,10 @@ namespace x360ce.App.Controls
                 SetValue(DeviceProductNameTextBox, "");
                 SetValue(DeviceProductGuidTextBox, "");
                 SetValue(DeviceInstanceGuidTextBox, "");
-                DiCapFfLabel.Text = string.Empty;
-                DiCapAxesLabel.Text = string.Empty;
-                DiCapButtonsLabel.Text = string.Empty;
-                DiCapDPadsLabel.Text = string.Empty;
+                DiCapFfStateTextBox.Text = string.Empty;
+                DiCapAxesTextBox.Text = string.Empty;
+                DiCapButtonsTextBox.Text = string.Empty;
+                DiCapDPadsTextBox.Text = string.Empty;
                 DiEffectsTable.Rows.Clear();
                 return;
             }
@@ -92,10 +92,10 @@ namespace x360ce.App.Controls
                 device.SetCooperativeLevel(MainForm.Current, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
                 if (isLoaded) XInput.ReLoadLibrary(XInput.LibraryName);
             }
-            DiCapFfLabel.Text = string.Format("Force Feedback: {0}", forceFeedbackState);
-            DiCapAxesLabel.Text = string.Format("Axes: {0}", device.Capabilities.AxeCount);
-            DiCapButtonsLabel.Text = string.Format("Buttons: {0}", device.Capabilities.ButtonCount);
-            DiCapDPadsLabel.Text = string.Format("D-Pads: {0}", device.Capabilities.PovCount);
+            DiCapFfStateTextBox.Text = forceFeedbackState;
+            DiCapAxesTextBox.Text = device.Capabilities.AxeCount.ToString();
+            DiCapButtonsTextBox.Text = device.Capabilities.ButtonCount.ToString();
+            DiCapDPadsTextBox.Text = device.Capabilities.PovCount.ToString();
             var di = device.Information;
             // Update pid and vid always so they wont be overwritten by load settings.
             short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);

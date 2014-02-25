@@ -417,6 +417,8 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
             sm.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
             sm.Add(section + SettingName.PassThrough, PassThroughCheckBox);
+            // Mapping
+            sm.Add(section + SettingName.MapToPad, diControl.MapToPadComboBox);
             // Triggers
             sm.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
             sm.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
@@ -526,16 +528,7 @@ namespace x360ce.App.Controls
             }
         }
 
-        //public bool IsSameState(GamePadState s1, GamePadState s2){
-        //    if (s1.Buttons.A != s2.Buttons.A) return false;
-        //    if (s1.Buttons.A != s2.Buttons.A) return false;
-        //    if (s1.Buttons.A != s2.Buttons.A) return false;
-        //    if (s1.Buttons.A != s2.Buttons.A) return false;
-
-        //    return true;
-        //}
-
-        State oldState;
+       State oldState;
 
         public void UpdateFromXInput(State state, bool IsConnected)
         {
