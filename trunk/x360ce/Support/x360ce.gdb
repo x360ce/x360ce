@@ -194,6 +194,10 @@ HookMask = 0x0000000E
 Name = Injustice: Gods Among Us Ultimate Edition
 HookMask = 0x00000002
 
+[LANoire.exe]
+Name = L.A. Noire
+HookMask = 0x00000002
+
 [LEGOPirates.exe]
 Name = LEGO Pirates of the Caribbean: The Video Game
 HookMask = 0x00000002
@@ -220,6 +224,10 @@ HookMask = 0x00000002
 
 [MKKE.exe]
 Name = Mortal Kombat Komplete Edition
+HookMask = 0x00000002
+
+[NBA2K13.exe]
+Name = NBA 2k13
 HookMask = 0x00000002
 
 [NBA2K14.exe]
