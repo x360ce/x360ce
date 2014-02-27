@@ -22,6 +22,12 @@ namespace x360ce.Web.WebServices
     public class x360ce : System.Web.Services.WebService, IWebService
     {
 
+        /// <summary>
+        /// Save controller settings.
+        /// </summary>
+        /// <param name="s">Setting object which contains information about DirectInput device and file/game name it is used for.</param>
+        /// <param name="ps">PAD settings which contains maping between DirectInput device and virtual XBox controller.</param>
+        /// <returns>Status of operation. Empty if success.</returns>
         [WebMethod(EnableSession = true, Description = "Save controller settings.")]
         public string SaveSetting(Setting s, PadSetting ps)
         {
@@ -109,15 +115,22 @@ namespace x360ce.Web.WebServices
             p1.RightTrigger = ps.RightTrigger;
             p1.RightTriggerDeadZone = ps.RightTriggerDeadZone;
             db.SaveChanges();
+            db.Dispose();
+            db = null;
             return "";
         }
 
+        /// <summary>
+        /// Search controller settings.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         [WebMethod(EnableSession = true, Description = "Search controller settings.")]
         public SearchResult SearchSettings(SearchParameter[] args)
         {
             var sr = new SearchResult();
             var db = new x360ceModelContainer();
-            // All instances of the user.
+            // Get all device instances of the user.
             var instances = args.Where(x => x.InstanceGuid != Guid.Empty).Select(x => x.InstanceGuid).Distinct().ToArray();
             if (instances.Length == 0)
             {
@@ -125,10 +138,11 @@ namespace x360ce.Web.WebServices
             }
             else
             {
+                // Get all settings attached to user's device instances.
                 sr.Settings = db.Settings.Where(x => instances.Contains(x.InstanceGuid))
                     .OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ToArray();
             }
-            // Global Configurations.
+            // Get list of products (unique identifiers).
             var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
             var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToList();
             if (products.Length == 0)
@@ -175,6 +189,8 @@ namespace x360ce.Web.WebServices
                 }
                 sr.Summaries = topSummaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
             }
+            db.Dispose();
+            db = null;
             return sr;
         }
 
@@ -186,15 +202,24 @@ namespace x360ce.Web.WebServices
             if (setting == null) return "Setting not found";
             db.Settings.DeleteObject(setting);
             db.SaveChanges();
+            db.Dispose();
+            db = null;
             return "";
         }
 
+        /// <summary>
+        /// Load controller settings.
+        /// </summary>
+        /// <param name="checksum">List of unique identifiers of PAD setting</param>
+        /// <returns>List of PAD settings.</returns>
         [WebMethod(EnableSession = true, Description = "Load controller settings.")]
         public SearchResult LoadSetting(Guid[] checksum)
         {
             var sr = new SearchResult();
             var db = new x360ceModelContainer();
             sr.PadSettings = db.PadSettings.Where(x => checksum.Contains(x.PadSettingChecksum)).ToArray();
+            db.Dispose();
+            db = null;
             return sr;
         }
 
@@ -210,9 +235,11 @@ namespace x360ce.Web.WebServices
                         ShortName = row.ShortName,
                         WebSite = row.WebSite
                     };
-            return q.ToList();
+            var vendors = q.ToList();
+            db.Dispose();
+            db = null;
+            return vendors;
         }
-
 
         [WebMethod(EnableSession = true, Description = "Get default list of games.")]
         public SettingsData GetSettingsData()
@@ -220,6 +247,8 @@ namespace x360ce.Web.WebServices
             var data = new SettingsData();
             var db = new x360ceModelContainer();
             data.Programs = db.Programs.Where(x => x.IsEnabled && x.InstanceCount > 1).ToList();
+            db.Dispose();
+            db = null;
             return data;
         }
 
@@ -231,7 +260,56 @@ namespace x360ce.Web.WebServices
             if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
             else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
             if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
-            return list.ToList();
+            var programs = list.ToList();
+            db.Dispose();
+            db = null;
+            return programs;
+        }
+
+        [WebMethod(EnableSession = true, Description = "Get most popular presets.")]
+        public SearchResult GetPresets()
+        {
+            var sr = new SearchResult();
+            var db = new x360ceModelContainer();
+            IQueryable<Program> list = db.Programs;
+            // Not used.          
+            sr.Settings = new Setting[0];
+            // Contains TOP 20 most popular DirectInput devices.
+            var query = db.Products.OrderByDescending(x => x.InstanceCount).Take(20);
+            var products = query.ToArray();
+            var productGuids = products.Select(x => x.ProductGuid).ToArray();
+            // Select TOP products
+            var query2 =
+                // Select most popular devices.
+                from row in query
+                // Join all sumaries for these devices.
+                join sum in db.Summaries on row.ProductGuid equals sum.ProductGuid
+                // Group in order to identify most popular PAD setting for the device.
+                group sum by new { sum.ProductGuid, sum.PadSettingChecksum } into g
+                select g.OrderByDescending(x => x.Users).First();
+
+            var padSettingGuids = query2.ToList();
+            // Fill summaries.
+            sr.Summaries = padSettingGuids.Select(x => new Summary()
+            {
+                ProductGuid = x.ProductGuid,
+                ProductName = x.ProductName,
+                PadSettingChecksum = x.PadSettingChecksum,
+            }).ToArray();
+            var settingChecksums = padSettingGuids.Select(x => x.PadSettingChecksum).ToArray();
+            //// Join all pad setings related to summaries.
+            //join pad in db.PadSettings on sum.PadSettingChecksum equals pad.PadSettingChecksum
+            //select new
+            //{
+            //    Summary = sum,
+            //    PadSetting = pad,
+            //};
+            // Contains most popular PAD Setting for device.
+            sr.PadSettings = new PadSetting[0];
+            // Code here.
+            db.Dispose();
+            db = null;
+            return sr;
         }
 
         [WebMethod(EnableSession = true, Description = "Search games.")]
@@ -241,6 +319,8 @@ namespace x360ce.Web.WebServices
             var o = db.Programs.FirstOrDefault(x => x.FileName == fileName && x.FileProductName == fileProductName);
             if (o != null) return o;
             o = db.Programs.FirstOrDefault(x => x.FileName == fileName);
+            db.Dispose();
+            db = null;
             return o;
         }
 
@@ -269,6 +349,8 @@ namespace x360ce.Web.WebServices
                 o.IsEnabled = p.IsEnabled;
                 o.XInputMask = p.XInputMask;
                 db.SaveChanges();
+                db.Dispose();
+                db = null;
                 return "";
             }
             else
@@ -284,7 +366,6 @@ namespace x360ce.Web.WebServices
             var results = new KeyValueList();
             results.Add("Status", true);
             results.Add("Message", "Good bye!");
-
             return results;
         }
 
