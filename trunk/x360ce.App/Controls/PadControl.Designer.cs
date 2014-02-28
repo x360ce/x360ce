@@ -18,12 +18,16 @@
             this.components = new System.ComponentModel.Container();
             this.DirectInputTabPage = new System.Windows.Forms.TabPage();
             this.AdvancedTabPage = new System.Windows.Forms.TabPage();
+            this.DeviceGroupBox = new System.Windows.Forms.GroupBox();
+            this.GamePadTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.OptionsDeviceTypeLabel = new System.Windows.Forms.Label();
+            this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
             this.AxisToDPadGroupBox = new System.Windows.Forms.GroupBox();
             this.AxisToDPadEnabledCheckBox = new System.Windows.Forms.CheckBox();
             this.AxisToDPadOffsetTrackBar = new System.Windows.Forms.TrackBar();
+            this.AxisToDPadOffsetTextBox = new System.Windows.Forms.TextBox();
             this.AxisToDPadDeadZoneTrackBar = new System.Windows.Forms.TrackBar();
             this.OffsetLabel = new System.Windows.Forms.Label();
-            this.AxisToDPadOffsetTextBox = new System.Windows.Forms.TextBox();
             this.DeadZoneLabel = new System.Windows.Forms.Label();
             this.AxisToDPadDeadZoneTextBox = new System.Windows.Forms.TextBox();
             this.TriggersGroupBox = new System.Windows.Forms.GroupBox();
@@ -58,9 +62,6 @@
             this.LeftThumbDeadZoneYTextBox = new System.Windows.Forms.TextBox();
             this.RightThumbDeadZoneXTextBox = new System.Windows.Forms.TextBox();
             this.LeftThumbDeadZoneXTextBox = new System.Windows.Forms.TextBox();
-            this.OptionsDeviceTypeLabel = new System.Windows.Forms.Label();
-            this.GamePadTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
             this.GeneralTabPage = new System.Windows.Forms.TabPage();
             this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
             this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
@@ -157,8 +158,9 @@
             this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ClearPresetButton = new System.Windows.Forms.Button();
-            this.DeviceGroupBox = new System.Windows.Forms.GroupBox();
+            this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
             this.AdvancedTabPage.SuspendLayout();
+            this.DeviceGroupBox.SuspendLayout();
             this.AxisToDPadGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).BeginInit();
@@ -185,7 +187,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorPeriodTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
-            this.DeviceGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // DirectInputTabPage
@@ -208,6 +209,50 @@
             this.AdvancedTabPage.Size = new System.Drawing.Size(620, 411);
             this.AdvancedTabPage.TabIndex = 0;
             this.AdvancedTabPage.Text = "Advanced";
+            // 
+            // DeviceGroupBox
+            // 
+            this.DeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeviceGroupBox.Controls.Add(this.GamePadTypeComboBox);
+            this.DeviceGroupBox.Controls.Add(this.OptionsDeviceTypeLabel);
+            this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
+            this.DeviceGroupBox.Location = new System.Drawing.Point(6, 6);
+            this.DeviceGroupBox.Name = "DeviceGroupBox";
+            this.DeviceGroupBox.Size = new System.Drawing.Size(227, 124);
+            this.DeviceGroupBox.TabIndex = 14;
+            this.DeviceGroupBox.TabStop = false;
+            this.DeviceGroupBox.Text = "Device";
+            // 
+            // GamePadTypeComboBox
+            // 
+            this.GamePadTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.GamePadTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GamePadTypeComboBox.FormattingEnabled = true;
+            this.GamePadTypeComboBox.Location = new System.Drawing.Point(83, 39);
+            this.GamePadTypeComboBox.Name = "GamePadTypeComboBox";
+            this.GamePadTypeComboBox.Size = new System.Drawing.Size(138, 21);
+            this.GamePadTypeComboBox.TabIndex = 1;
+            // 
+            // OptionsDeviceTypeLabel
+            // 
+            this.OptionsDeviceTypeLabel.AutoSize = true;
+            this.OptionsDeviceTypeLabel.Location = new System.Drawing.Point(6, 42);
+            this.OptionsDeviceTypeLabel.Name = "OptionsDeviceTypeLabel";
+            this.OptionsDeviceTypeLabel.Size = new System.Drawing.Size(71, 13);
+            this.OptionsDeviceTypeLabel.TabIndex = 0;
+            this.OptionsDeviceTypeLabel.Text = "Device Type:";
+            // 
+            // PassThroughCheckBox
+            // 
+            this.PassThroughCheckBox.AutoSize = true;
+            this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 19);
+            this.PassThroughCheckBox.Name = "PassThroughCheckBox";
+            this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
+            this.PassThroughCheckBox.TabIndex = 2;
+            this.PassThroughCheckBox.Text = "Pass Through";
+            this.PassThroughCheckBox.UseVisualStyleBackColor = true;
             // 
             // AxisToDPadGroupBox
             // 
@@ -248,6 +293,17 @@
             this.AxisToDPadOffsetTrackBar.TickFrequency = 2;
             this.AxisToDPadOffsetTrackBar.ValueChanged += new System.EventHandler(this.AxisToDPadOffsetTrackBar_ValueChanged);
             // 
+            // AxisToDPadOffsetTextBox
+            // 
+            this.AxisToDPadOffsetTextBox.Location = new System.Drawing.Point(323, 87);
+            this.AxisToDPadOffsetTextBox.Name = "AxisToDPadOffsetTextBox";
+            this.AxisToDPadOffsetTextBox.ReadOnly = true;
+            this.AxisToDPadOffsetTextBox.Size = new System.Drawing.Size(43, 20);
+            this.AxisToDPadOffsetTextBox.TabIndex = 0;
+            this.AxisToDPadOffsetTextBox.TabStop = false;
+            this.AxisToDPadOffsetTextBox.Text = "0 % ";
+            this.AxisToDPadOffsetTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // AxisToDPadDeadZoneTrackBar
             // 
             this.AxisToDPadDeadZoneTrackBar.AutoSize = false;
@@ -268,17 +324,6 @@
             this.OffsetLabel.Size = new System.Drawing.Size(35, 13);
             this.OffsetLabel.TabIndex = 0;
             this.OffsetLabel.Text = "Offset";
-            // 
-            // AxisToDPadOffsetTextBox
-            // 
-            this.AxisToDPadOffsetTextBox.Location = new System.Drawing.Point(323, 87);
-            this.AxisToDPadOffsetTextBox.Name = "AxisToDPadOffsetTextBox";
-            this.AxisToDPadOffsetTextBox.ReadOnly = true;
-            this.AxisToDPadOffsetTextBox.Size = new System.Drawing.Size(43, 20);
-            this.AxisToDPadOffsetTextBox.TabIndex = 0;
-            this.AxisToDPadOffsetTextBox.TabStop = false;
-            this.AxisToDPadOffsetTextBox.Text = "0 % ";
-            this.AxisToDPadOffsetTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // DeadZoneLabel
             // 
@@ -709,36 +754,6 @@
             this.LeftThumbDeadZoneXTextBox.TabStop = false;
             this.LeftThumbDeadZoneXTextBox.Text = "0 % ";
             this.LeftThumbDeadZoneXTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // OptionsDeviceTypeLabel
-            // 
-            this.OptionsDeviceTypeLabel.AutoSize = true;
-            this.OptionsDeviceTypeLabel.Location = new System.Drawing.Point(6, 42);
-            this.OptionsDeviceTypeLabel.Name = "OptionsDeviceTypeLabel";
-            this.OptionsDeviceTypeLabel.Size = new System.Drawing.Size(71, 13);
-            this.OptionsDeviceTypeLabel.TabIndex = 0;
-            this.OptionsDeviceTypeLabel.Text = "Device Type:";
-            // 
-            // GamePadTypeComboBox
-            // 
-            this.GamePadTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.GamePadTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.GamePadTypeComboBox.FormattingEnabled = true;
-            this.GamePadTypeComboBox.Location = new System.Drawing.Point(83, 39);
-            this.GamePadTypeComboBox.Name = "GamePadTypeComboBox";
-            this.GamePadTypeComboBox.Size = new System.Drawing.Size(138, 21);
-            this.GamePadTypeComboBox.TabIndex = 1;
-            // 
-            // PassThroughCheckBox
-            // 
-            this.PassThroughCheckBox.AutoSize = true;
-            this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 19);
-            this.PassThroughCheckBox.Name = "PassThroughCheckBox";
-            this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
-            this.PassThroughCheckBox.TabIndex = 2;
-            this.PassThroughCheckBox.Text = "Pass Through";
-            this.PassThroughCheckBox.UseVisualStyleBackColor = true;
             // 
             // GeneralTabPage
             // 
@@ -1832,19 +1847,9 @@
             this.ClearPresetButton.UseVisualStyleBackColor = true;
             this.ClearPresetButton.Click += new System.EventHandler(this.ClearPresetButton_Click);
             // 
-            // DeviceGroupBox
+            // RecordingTimer
             // 
-            this.DeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceGroupBox.Controls.Add(this.GamePadTypeComboBox);
-            this.DeviceGroupBox.Controls.Add(this.OptionsDeviceTypeLabel);
-            this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
-            this.DeviceGroupBox.Location = new System.Drawing.Point(6, 6);
-            this.DeviceGroupBox.Name = "DeviceGroupBox";
-            this.DeviceGroupBox.Size = new System.Drawing.Size(227, 124);
-            this.DeviceGroupBox.TabIndex = 14;
-            this.DeviceGroupBox.TabStop = false;
-            this.DeviceGroupBox.Text = "Device";
+            this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
             // 
             // PadControl
             // 
@@ -1858,6 +1863,8 @@
             this.Size = new System.Drawing.Size(634, 470);
             this.Load += new System.EventHandler(this.PadControl_Load);
             this.AdvancedTabPage.ResumeLayout(false);
+            this.DeviceGroupBox.ResumeLayout(false);
+            this.DeviceGroupBox.PerformLayout();
             this.AxisToDPadGroupBox.ResumeLayout(false);
             this.AxisToDPadGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).EndInit();
@@ -1889,8 +1896,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorPeriodTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
-            this.DeviceGroupBox.ResumeLayout(false);
-            this.DeviceGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -2039,5 +2044,6 @@
         private System.Windows.Forms.Label RightThumbAntiDeadZoneLabel;
         private System.Windows.Forms.Button ClearPresetButton;
         private System.Windows.Forms.GroupBox DeviceGroupBox;
+        private System.Windows.Forms.Timer RecordingTimer;
 	}
 }

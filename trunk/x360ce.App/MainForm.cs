@@ -249,12 +249,15 @@ namespace x360ce.App
 		{
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
-				// Stop recording on all panels.
-				if (e.KeyCode == System.Windows.Forms.Keys.Escape && ControlPads[i].Recording)
+                // If Escape key was pressed while recording then...
+				if (e.KeyCode == System.Windows.Forms.Keys.Escape)
 				{
-					ControlPads[i].RecordingStop(null);
-					e.Handled = true;
-					e.SuppressKeyPress = true;
+                    var recordingWasStopped = ControlPads[i].StopRecording();
+                    if (recordingWasStopped)
+                    {
+                        e.Handled = true;
+                        e.SuppressKeyPress = true;
+                    };
 				}
 			}
 			StatusTimerLabel.Text = "";

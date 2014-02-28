@@ -76,65 +76,78 @@ namespace x360ce.App.Controls
 
         #region Recording
 
-        public bool Recording;
+        bool Recording;
+        Regex dPadRx = new Regex("(DPad [0-9]+)");
+        bool drawRecordingImage;
+        object recordingLock = new object();
 
-        int recordignFlashPause;
+        private void RecordingTimer_Tick(object sender, EventArgs e)
+        {
+            drawRecordingImage = !drawRecordingImage;
+        }
 
-        public void drawMarkR(PaintEventArgs e, Point position)
+        void drawMarkR(PaintEventArgs e, Point position)
         {
             int rW = -this.markR.Width / 2;
             int rH = -this.markR.Height / 2;
             e.Graphics.DrawImage(this.markR, position.X + rW, position.Y + rH);
         }
 
-        void RecordingStart()
+        void StartRecording()
         {
-            Recording = true;
-            recordignFlashPause = 0;
-            CurrentCbx.ForeColor = SystemColors.GrayText;
-            if (CurrentCbx == DPadComboBox)
+            lock (recordingLock)
             {
-                mainForm.StatusTimerLabel.Text = "Recording - press any D-Pad button on your direct input device. Press ESC to cancel...";
-            }
-            else
-            {
-                mainForm.StatusTimerLabel.Text = "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
+                // If recording is not in progress then return.
+                if (Recording) return;
+                Recording = true;
+                drawRecordingImage = true;
+                RecordingTimer.Start();
+                CurrentCbx.ForeColor = SystemColors.GrayText;
+                mainForm.StatusTimerLabel.Text = (CurrentCbx == DPadComboBox)
+                     ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
+                     : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
             }
         }
 
-        public void RecordingStop(List<string> actions)
+        public bool StopRecording(List<string> actions = null)
         {
-            // If null passed then recording must stop imediately.
-            if (actions == null)
+            lock (recordingLock)
             {
-                CurrentCbx.Items.Clear();
-                CurrentCbx.ForeColor = SystemColors.WindowText;
-                //mainForm.toolStripStatusLabel1.Text = "Recording Cancelled";
-                CurrentCbx = null;
-                Recording = false;
-                return;
-            }
-            // If actions are not null then recording is still in progress....
-            if (actions.Count > 0)
-            {
-                if (CurrentCbx == DPadComboBox)
+
+                // If recording is not in progress then return false.
+                if (!Recording) return false;
+                // Must stop recording if null passed or at least one action was recorded.
+                var stop = (actions == null || actions.Count > 0);
+                // If recording must stop then...
+                if (stop)
                 {
-                    Regex rx = new Regex("(DPad [0-9]+)");
-                    if (rx.IsMatch(actions[0]))
+                    Recording = false;
+                    RecordingTimer.Stop();
+                    // If stop was initiaded before action was recorded then...
+                    if (actions == null)
                     {
-                        actions[0] = rx.Match(actions[0]).Groups[0].Value;
+                        CurrentCbx.Items.Clear();
                     }
+                    // If action was recorded then...
+                    else
+                    {
+                        // Get first recorded action.
+                        var name = actions[0];
+                        // If this is DPad ComboBox and recorded action is DPad then...
+                        if (CurrentCbx == DPadComboBox && dPadRx.IsMatch(name))
+                        {
+                            name = dPadRx.Match(name).Groups[0].Value;
+                        }
+                        SettingManager.Current.SetComboBoxValue(CurrentCbx, name);
+                        // Save setting and notify if vaue changed.
+                        if (SettingManager.Current.SaveSetting(CurrentCbx)) mainForm.NotifySettingsChange();
+                    }
+                    CurrentCbx.ForeColor = SystemColors.WindowText;
+                    CurrentCbx = null;
                 }
-                SettingManager.Current.SetComboBoxValue(CurrentCbx, actions[0]);
-                CurrentCbx.ForeColor = SystemColors.WindowText;
-                // Save setting and notify if vaue changed.
-                if (SettingManager.Current.SaveSetting(CurrentCbx)) mainForm.NotifySettingsChange();
-                //mainForm.toolStripStatusLabel1.Text = "Recorded: " + CurrentCbx.Text;
-                CurrentCbx = null;
-                Recording = false;
+                return true;
             }
         }
-
 
         #endregion
 
@@ -237,8 +250,6 @@ namespace x360ce.App.Controls
             }
         }
 
-
-
         void TopPictureBox_Paint(object sender, PaintEventArgs e)
         {
             // Display controller.
@@ -280,9 +291,10 @@ namespace x360ce.App.Controls
                 setLabelColor(on, RightShoulderLabel);
                 if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
             }
-            // Recording LED.
-            if (Recording && recordignFlashPause < 8)
+            // If recording is in progress and recording image must be drawn then...
+            else if (drawRecordingImage)
             {
+                // Draw recording mark on controller.
                 if (CurrentCbx == LeftTriggerComboBox) drawMarkR(e, triggerLeft);
                 if (CurrentCbx == LeftShoulderComboBox) drawMarkR(e, shoulderLeft);
                 if (CurrentCbx == RightTriggerComboBox) drawMarkR(e, triggerRight);
@@ -353,8 +365,8 @@ namespace x360ce.App.Controls
                 e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (this.rightX * padSize)), (float)((thumbRight.Y + mH) + (-this.rightY * padSize)));
                 e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (this.leftX * padSize)), (float)((thumbLeft.Y + mH) + (-this.leftY * padSize)));
             }
-            // Recording LED.
-            if (Recording && recordignFlashPause < 8)
+            // If recording is in progress and recording image must be drawn then...
+            else if (drawRecordingImage)
             {
                 if (CurrentCbx == ButtonBackComboBox) drawMarkR(e, buttonBack);
                 if (CurrentCbx == ButtonStartComboBox) drawMarkR(e, buttonStart);
@@ -373,8 +385,6 @@ namespace x360ce.App.Controls
                 if (CurrentCbx == RightThumbAxisYComboBox) drawMarkR(e, new Point(thumbRight.X, thumbRight.Y - 10));
                 if (CurrentCbx == RightThumbButtonComboBox) drawMarkR(e, thumbRight);
             }
-            if (recordignFlashPause == 16) recordignFlashPause = 0;
-            recordignFlashPause++;
         }
 
         void DrawState(GamepadButtonFlags button, Point location, Label label, PaintEventArgs e)
@@ -492,10 +502,14 @@ namespace x360ce.App.Controls
         //XINPUT_GAMEPAD GamePad;
         Guid instanceGuid;
 
+        /// <summary>
+        /// This function will be called when DirectInput activity is detected.
+        /// </summary>
+        /// <param name="device">Device responsible for activity.</param>
         public void UpdateFromDirectInput(Joystick device)
         {
             List<string> actions = diControl.UpdateFrom(device);
-            if (Recording) RecordingStop(actions);
+            StopRecording(actions);
             var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
             var enable = device != null;
             if (!enable && contains)
@@ -529,7 +543,7 @@ namespace x360ce.App.Controls
             }
         }
 
-       State oldState;
+        State oldState;
 
         public void UpdateFromXInput(State state, bool IsConnected)
         {
@@ -698,7 +712,7 @@ namespace x360ce.App.Controls
             {
                 if (item.Text == cRecord)
                 {
-                    RecordingStart();
+                    StartRecording();
                 }
                 else if (item.Text == cEmpty)
                 {
@@ -909,7 +923,6 @@ namespace x360ce.App.Controls
             }
             base.Dispose(disposing);
         }
-
 
     }
 }
