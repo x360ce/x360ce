@@ -22,6 +22,14 @@ HookMask = 0x00000002
 Name = Assassin's Creed 3 Multiplayer
 HookMask = 0x00000002
 
+[AC4BFSP.exe]
+Name =  Assassin's Creed 4
+HookMask = 0x00000002
+
+[AC4BFMP.exe]
+Name =  Assassin's Creed 4 Multiplayer
+HookMask = 0x00000002
+
 [ASN_App_PcDx9_Final.exe]
 Name = Sonic & All-Stars Racing Transformed
 HookMask = 0x00000002
@@ -31,7 +39,7 @@ Name = Assasin's Creed DX10
 HookMask = 0x000001E
 
 [AssassinsCreed_Dx9.exe]
-Name = Assasin's Creed DX10
+Name = Assasin's Creed DX9
 HookMask = 0x0000001E
 
 [AssassinsCreedIIGame.exe]
