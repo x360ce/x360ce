@@ -6,6 +6,10 @@ HookMask = 0x00000002
 Name = Assassin's Creed Brotherhood Multiplayer
 HookMask = 0x00000002
 
+[Ace Combat_AH.exe]
+Name = Ace Combat Assault Horizon
+HookMask = 0x00000002
+
 [ACRSP.exe]
 Name = Assassin's Creed Revelations
 HookMask = 0x00000002
@@ -190,6 +194,10 @@ HookMask=0x0000000E
 Name = Tom Clancy's H.A.W.X 2
 HookMask=0x0000000E
 
+[HotlineGL.exe]
+Name = Hotline Miami
+HookMask = 0x00000002
+
 [HKShip.exe]
 Name = Sleeping Dogs
 HookMask = 0x00000002
@@ -253,6 +261,10 @@ HookMask = 0x0000000E
 [NFS14_x86.exe]
 Name = Need For Speed: Rivals
 HookMask = 0x0000000E
+
+[NRZGame.exe]
+Name = Yaiba - Ninja Gaiden Z
+HookMask = 0x00000002
 
 [OLGame.exe]
 Name = Outlast
@@ -344,6 +356,10 @@ HookMask = 0x00000002
 
 [trine2_32bit.exe]
 Name = Trine 2
+HookMask = 0x00000002
+
+[UDK.exe]
+Name = Antichamber
 HookMask = 0x00000002
 
 [Vessel.exe]
