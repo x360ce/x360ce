@@ -17,38 +17,20 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// UGLY
+
 #ifndef _LOG_H_
 #define _LOG_H_
 
 #include <Shlwapi.h>
-#include "Utilities\CriticalSection.h"
+#include "Logger.h"
 
 #pragma warning( disable : 4127 )
 
-class Log
-{
-public:
-    enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKSA, LOG_HOOKWT };
-    Log(bool file, bool console, bool local);
-    ~Log();
-    void Print(LogType logType, const char* format, ...);
+enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKSA, LOG_HOOKWT };
+void PrintLog(LogType type, const char* format, ...);
+void InitLog(char * logfilename, bool con);
 
-private:
-    static CriticalSection& Mutex()
-    {
-        static CriticalSection lock;
-        return lock;
-    }
+void PrintNotice();
 
-    void PrintNotice();
-    const char* TypeToString(LogType type);
-
-    std::ofstream m_stream;
-    HANDLE m_stdout;
-};
-
-extern Log* logger;
-#define InitLog(log,con,local) do {if(!logger) logger = new Log(log,con,local);} while(false)
-#define PrintLog(type,format,...) do {if(logger) logger->Print(Log::type,format,__VA_ARGS__);} while(false)
-#define DestroyLog() {delete logger; logger = NULL;}
 #endif // _LOG_H_

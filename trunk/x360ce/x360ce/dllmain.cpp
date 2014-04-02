@@ -21,9 +21,9 @@
 #include "globals.h"
 #include "version.h"
 #include "x360ce.h"
-#include "Utilities\Ini.h"
+#include "SWIP.h"
 #include "Log.h"
-#include "Utilities\Misc.h"
+#include "Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
@@ -39,6 +39,8 @@ std::string exename;
 HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
 iHook* pHooks = NULL;
+
+INITIALIZE_LOGGER;
 
 VOID InstallInputHooks()
 {
@@ -68,7 +70,6 @@ VOID ExitInstance()
     }
 
     PrintLog(LOG_CORE,"Terminating x360ce, bye");
-    DestroyLog();
 }
 
 VOID InitInstance(HINSTANCE instance)
@@ -88,8 +89,9 @@ VOID InitInstance(HINSTANCE instance)
     exename = ModuleFileNameA();
 
     pHooks = new iHook(instance);
-    ReadConfig(false);
+    ReadConfig();
 
+	PrintNotice();
     PrintLog(LOG_CORE,"x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
     PrintLog(LOG_CORE,"%s",windowsVersionName().c_str());
 
@@ -104,7 +106,7 @@ extern "C" VOID WINAPI reset()
     g_Devices.clear();
     g_Mappings.clear();
 
-    ReadConfig(true);
+    ReadConfig();
 }
 
 extern "C" BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

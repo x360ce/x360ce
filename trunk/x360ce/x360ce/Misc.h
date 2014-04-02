@@ -156,6 +156,8 @@ inline const std::wstring GUIDtoStringW(const GUID &g)
     return str;
 }
 
+
+// Add Windows 8.1 support
 typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 #define PRODUCT_PROFESSIONAL	0x00000030
@@ -172,14 +174,14 @@ inline std::string windowsVersionName()
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
     bOsVersionInfoEx = GetVersionExA((OSVERSIONINFOA*) &osvi);
     if(bOsVersionInfoEx == 0)
-        return false; // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
+        return ""; // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
     PGNSI pGNSI = (PGNSI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
     if(NULL != pGNSI)
         pGNSI(&si);
     else GetSystemInfo(&si); // Check for unsupported OS
     if (VER_PLATFORM_WIN32_NT != osvi.dwPlatformId || osvi.dwMajorVersion <= 4 )
     {
-        return false;
+        return "";
     }
     std::string buf;
     buf.append("Microsoft "); // Test for the specific product.

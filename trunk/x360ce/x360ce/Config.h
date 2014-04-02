@@ -20,7 +20,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include "Utilities\Ini.h"
+#include "x360ce.h"
+#include "SWIP.h"
 
 // disable C4351 - new behavior: elements of array 'array' will be default initialized
 #pragma warning( disable:4351 )
@@ -114,7 +115,7 @@ static const uint16_t povIDs[4] =
 };
 
 void InitConfig(char* ininame);
-void ReadConfig(bool skip);
-void ReadPadConfig(DWORD dwUserIndex, Ini &ini);
+void ReadConfig();
+void ReadPadConfig(DWORD dwUserIndex, const SWIP& ini);
 
 #endif

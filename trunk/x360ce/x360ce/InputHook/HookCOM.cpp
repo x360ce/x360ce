@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "Log.h"
-#include "Utilities\Misc.h"
+#include "Misc.h"
 
 #define CINTERFACE
 #define _WIN32_DCOM

@@ -25,6 +25,8 @@
 #include <MinHook.h>
 #include "Log.h"
 
+#include "mutex.h"
+
 class iHookDevice
 {
 public:
@@ -81,38 +83,33 @@ private:
 class iHook
 {
 private:
-    CriticalSection& Mutex()
-    {
-        static CriticalSection mutex;
-        return mutex;
-    }
+	recursive_mutex m_mutex;
+
 public:
     iHook(HMODULE instance)
         :m_hookmask(0x80000000)
         ,m_fakepidvid(MAKELONG(0x045E,0x028E))
         ,m_mod(instance)
     {
-        Mutex();
     }
     virtual ~iHook()
     {
-        Mutex().Lock();
+		lock_guard lock(m_mutex);
         MH_Uninitialize();
         m_devices.clear();
-        Mutex().Unlock();
     };
 
-    static const DWORD HOOK_NONE        = 0x00000000;
-    static const DWORD HOOK_LL          = 0x00000001;
-    static const DWORD HOOK_COM         = 0x00000002;
-    static const DWORD HOOK_DI          = 0x00000004;
-    static const DWORD HOOK_PIDVID      = 0x00000008;
-    static const DWORD HOOK_NAME        = 0x00000010;
-    static const DWORD HOOK_SA          = 0x00000020;
+    static const DWORD HOOK_NONE        = 0;
+    static const DWORD HOOK_LL          = 1;
+    static const DWORD HOOK_COM         = 1<<1;
+    static const DWORD HOOK_DI          = 1<<2;
+    static const DWORD HOOK_PIDVID      = 1<<3;
+    static const DWORD HOOK_NAME        = 1<<4;
+    static const DWORD HOOK_SA          = 1<<5;
 
-    static const DWORD HOOK_WT          = 0x01000000;
-    static const DWORD HOOK_STOP        = 0x02000000;
-    static const DWORD HOOK_DISABLE     = 0x80000000;
+    static const DWORD HOOK_WT          = 1<<24;
+    static const DWORD HOOK_STOP        = 1<<25;
+    static const DWORD HOOK_DISABLE     = 1<<31;
 
 	typedef std::vector<iHookDevice>::iterator iterator;
     typedef std::vector<iHookDevice>::const_iterator const_iterator;
@@ -199,7 +196,7 @@ public:
             return;
         }
 
-        Mutex().Lock();
+		lock_guard lock(m_mutex);
 
         PrintLog(LOG_IHOOK,"InputHook starting with mask 0x%08X",m_hookmask);
 
@@ -221,8 +218,6 @@ public:
             HookWT();
 
         MH_EnableAllHooks();
-
-        Mutex().Unlock();
     }
 
     void HookDICOM(REFIID riidltf, LPVOID *ppv);

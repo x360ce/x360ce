@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "Log.h"
-#include "Utilities\Misc.h"
+#include "Misc.h"
 
 #include <Setupapi.h>
 #pragma comment(lib,"Setupapi.lib")
