@@ -39,15 +39,6 @@
     <ClInclude Include="InputHook\InputHook.h">
       <Filter>InputHook</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\Ini.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\Misc.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\CriticalSection.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
@@ -76,6 +67,18 @@
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pstdint.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SWIP.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

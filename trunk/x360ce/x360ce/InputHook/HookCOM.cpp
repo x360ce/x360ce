@@ -142,18 +142,20 @@ HRESULT STDMETHODCALLTYPE HookGet(
         {
             if(padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
-                OLECHAR* strUSB = wcsstr( pVal->bstrVal, L"USB\\" );
+                const wchar_t* strUSB = wcsstr( pVal->bstrVal, L"USB\\" );
+				const wchar_t* strRoot = wcsstr( pVal->bstrVal, L"root\\" );
                 OLECHAR tempstr[MAX_PATH];
 
                 DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
                 DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
 
-                if(strUSB)
+                if(strUSB || strRoot)
                 {
                     PrintLog(LOG_HOOKCOM,"%s","Device string change:");
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
-                    OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
-                    swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
+                    const wchar_t* p = wcsrchr(pVal->bstrVal,L'\\');
+					if(p) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
+					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d",dwHookVid,dwHookPid, padcfg->GetUserIndex() );
                     SysReAllocString(&pVal->bstrVal,tempstr);
                     PrintLog(LOG_HOOKCOM,"%ls",pVal->bstrVal);
                     continue;
