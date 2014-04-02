@@ -94,6 +94,10 @@ HookMask = 0x00000002
 Name = Brothers: A Tale of Two Sons
 HookMask = 0x00000002
 
+[BrutalLegend.exe]
+Name = Brutal Legend
+HookMask = 0x00000002
+
 [BurnoutParadise.exe]
 Name = Burnout Paradise - The Ultimate Box
 HookMask=0x0000001E
@@ -136,6 +140,14 @@ HookMask = 0x00000002
 
 [Enslaved.exe]
 Name = Enslaved: Odyssey to the West
+HookMask = 0x00000002
+
+[farcry3.exe]
+Name = Farcry 3 D3X9
+HookMask = 0x00000002
+
+[farcry3_d3d11.exe]
+Name = Farcry 3 DX11
 HookMask = 0x00000002
 
 [ffxiv.exe]
