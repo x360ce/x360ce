@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "Utilities\Misc.h"
+#include "Misc.h"
 #include "x360ce.h"
 #include "Config.h"
 #include "Log.h"
@@ -161,8 +161,7 @@ static void DeviceInitialize(DInputDevice& device)
     PrintLog(LOG_CORE,"[PAD%d] Starting",device.dwUserIndex+1);
     PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
 
-    HRESULT hr = E_FAIL;
-    hr = InitDirectInput(hMsgWnd,device);
+    HRESULT hr = InitDirectInput(hMsgWnd,device);
     if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
 
     if(SUCCEEDED(hr)) 

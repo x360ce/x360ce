@@ -23,7 +23,7 @@
 #include <dinput.h>
 #include "Config.h"
 
-#include "Utilities\CriticalSection.h"
+#include "mutex.h"
 
 // disable C4351 - new behavior: elements of array 'array' will be default initialized
 #pragma warning( disable:4351 )
@@ -89,12 +89,6 @@ public:
 class DInputDevice
 {
 public:
-    static CriticalSection& Mutex()
-    {
-        static CriticalSection mutex;
-        return mutex;
-    }
-
     DInputDevice()
         :device(NULL)
         ,state()
@@ -116,12 +110,11 @@ public:
         ,useproduct(false)
         ,useforce(false)
     {
-        Mutex();
     }
 
     ~DInputDevice()
     {
-        Mutex().Lock();
+		//lock_guard lock(m_mutex);
 
         //check for broken ffd
         bool brokenffd = false;
@@ -133,8 +126,10 @@ public:
             device->SendForceFeedbackCommand(DISFFC_RESET);
             device->Release();
         }
-        Mutex().Unlock();
     }
+
+	// FIXME
+	//recursive_mutex m_mutex;
 
     LPDIRECTINPUTDEVICE8 device;
     DIJOYSTATE2 state;

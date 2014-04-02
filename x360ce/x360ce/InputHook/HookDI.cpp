@@ -26,7 +26,7 @@
 #include "InputHook.h"
 
 #include "Log.h"
-#include "Utilities\Misc.h"
+#include "Misc.h"
 
 
 static iHook* iHookThis;

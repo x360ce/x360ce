@@ -21,11 +21,11 @@
 #include "globals.h"
 #include "x360ce.h"
 #include "Log.h"
-#include "Utilities\Misc.h"
+#include "Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
-#include "Utilities\CriticalSection.h"
+#include "mutex.h"
 
 extern iHook* pHooks;
 
@@ -99,8 +99,8 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         ExitProcess(hr);
     }
 
-    static CriticalSection mutex;
-    mutex.Lock();
+    static recursive_mutex mutex;
+	lock_guard lock(mutex);
 
     PrintLog(LOG_DINPUT,"[PAD%d] Creating device",device.dwUserIndex+1);
 
@@ -132,8 +132,8 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
 
     if(FAILED(hr))
     {
-		Ini ini("x360ce.ini");
-		if (ini.GetBool("Options","Continue"))
+		SWIP ini("x360ce.ini");
+		if (ini.get_bool("Options","Continue"))
 		{
 			device.passthrough = true;
             return S_OK;
@@ -194,8 +194,6 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
 
     hr = device.device->Acquire();
 
-    mutex.Unlock();
-
     return hr;
 }
 
@@ -235,13 +233,12 @@ HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
         return S_OK;
     }
 
-    static CriticalSection mutex;
-
-    mutex.Lock();
+    static recursive_mutex mutex;
+	lock_guard lock(mutex);
+		
     if(device.ff.type == 1) SetDeviceForcesEjocys(device,force,motor);
     else if(device.ff.type == 2) SetDeviceForcesNew(device,force,motor);
     else SetDeviceForcesFailsafe(device,force,motor);
-    mutex.Unlock();
 
     return S_OK;
 }
