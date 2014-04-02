@@ -70,16 +70,18 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
         {
             if(padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
             {
-                wchar_t* strUSB = wcsstr( DeviceInstanceId, L"USB\\" );
-                wchar_t tempstr[MAX_PATH];
+                const wchar_t* strUSB = wcsstr( DeviceInstanceId, L"USB\\" );
+				const wchar_t* strRoot = wcsstr( DeviceInstanceId, L"root\\" );
+                OLECHAR tempstr[MAX_PATH];
 
                 DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
                 DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
 
-                if(strUSB)
+                if(strUSB || strRoot)
                 {
-                    wchar_t* p = wcsrchr(DeviceInstanceId,L'\\');
-                    swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
+                    const wchar_t* p = wcsrchr(DeviceInstanceId,L'\\');
+					if(p) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
+					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d",dwHookVid,dwHookPid, padcfg->GetUserIndex() );
 
                     if(DeviceInstanceIdSize < wcslen(tempstr))
                     {
