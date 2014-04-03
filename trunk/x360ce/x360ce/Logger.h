@@ -21,7 +21,7 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
 #endif
 
-#define INITIALIZE_LOGGER Logger* Logger::m_logger = nullptr;   
+#define INITIALIZE_LOGGER Logger* Logger::m_logger = nullptr; const char* Logger::m_stamp = "[TIME]\t\t\t[THREAD]\t[LOG]\r\n";   
 
 #define LOGMAXBUFFER 1024
 #define LOGTIMECHARCOUNT 22
@@ -123,7 +123,7 @@ public:
 	}
 
 private:
-	const char* m_stamp = "[TIME]\t\t\t[THREAD]\t[LOG]\r\n";
+	static const char* m_stamp;
 	bool m_printed_stamp;
 
 	static Logger* m_logger;
