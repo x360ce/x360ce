@@ -5,6 +5,7 @@
 #include <wbemidl.h>
 #include "IEnumWbemClassObject.h"
 #include "IWbemServices.h"
+#include "IClientSecurity.h"
 
 hkIWbemServices::hkIWbemServices(IWbemServices **ppIWbemLocator) {
 	m_pWrapped = *ppIWbemLocator;
@@ -15,7 +16,15 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::QueryInterface(
 	/* [in] */ REFIID riid,
 	/* [iid_is][out] */ __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
 {
-	return m_pWrapped->QueryInterface(riid, ppvObject);
+	HRESULT hr = m_pWrapped->QueryInterface(riid, ppvObject);
+
+	if (IsEqualIID(riid, IID_IClientSecurity))
+	{
+		LogPrint("IID_IClientSecurity");
+		IClientSecurity** ppIClientSecurity = reinterpret_cast<IClientSecurity**>(ppvObject);
+		new hkIClientSecurity(ppIClientSecurity, &m_pWrapped);
+	}
+	return hr;
 }
 
 ULONG STDMETHODCALLTYPE hkIWbemServices::AddRef(void)
@@ -168,10 +177,13 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
+	LogPrint("CreateInstanceEnum");
 	HRESULT hr = m_pWrapped->CreateInstanceEnum(strFilter, lFlags, pCtx, ppEnum);
 
 	// wrapp IEnumWbemClassObject
-	new hkIEnumWbemClassObject(ppEnum);
+	if (SUCCEEDED(hr)) new hkIEnumWbemClassObject(ppEnum);
+	else LogPrint("COMERROR: %X", hr);
+
 	return hr;
 }
 

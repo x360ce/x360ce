@@ -134,17 +134,18 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 	HRESULT hr = oCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
 
 	if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
-	PrintLog(LOG_HOOKCOM, "*CoCreateInstance*");
+	//PrintLog(LOG_HOOKCOM, "*CoCreateInstance*");
 
 	if (hr != NO_ERROR) return hr;
 
 	if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
 		PrintLog(LOG_IHOOK, "COM wants to create DirectInput8 instance");
 
-	if (IsEqualIID(riid, IID_IWbemLocator))
+	if (IsEqualIID(riid, IID_IWbemLocator) && ppv)
 	{
-		IWbemLocator* pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
-		new hkIWbemLocator(&pIWbemLocator);
+		LogPrint("IID_IWbemLocator");
+		IWbemLocator** ppIWbemLocator = reinterpret_cast<IWbemLocator**>(ppv);
+		new hkIWbemLocator(ppIWbemLocator);
 	}
 
 	return hr;

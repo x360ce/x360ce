@@ -38,10 +38,13 @@ HRESULT STDMETHODCALLTYPE hkIWbemLocator::ConnectServer(
 	/* [in] */ IWbemContext *pCtx,
 	/* [out] */ IWbemServices **ppNamespace)
 {
+	LogPrint("ConnectServer");
 	HRESULT hr = m_pWrapped->ConnectServer(strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
 
 	// wrapp IWbemServices
-	new hkIWbemServices(ppNamespace);
+	if (SUCCEEDED(hr)) new hkIWbemServices(ppNamespace); 
+	else LogPrint("COMERROR: %X", hr);
+
 	return hr;
 }
 

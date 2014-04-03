@@ -42,7 +42,10 @@ HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::Next(
 	HRESULT hr = m_pWrapped->Next(lTimeout, uCount, apObjects, puReturned);
 
 	//wrap IWbemClassObject
-	new hkIWbemClassObject(apObjects);
+	LogPrint("Next");
+	if (SUCCEEDED(hr)) new hkIWbemClassObject(apObjects);
+	else LogPrint("COMERROR: %X", hr);
+
 	return hr;
 }
 
