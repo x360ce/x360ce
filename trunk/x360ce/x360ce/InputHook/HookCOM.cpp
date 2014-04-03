@@ -34,8 +34,6 @@
 #include "HookCOM\IWbemLocator.h"
 #include "HookCOM\IWbemClassObject.h"
 
-hkIWbemLocator* phkIWbemLocator = nullptr;
-
 static iHook *iHookThis = NULL;
 
 // COM CLSIDs
@@ -150,7 +148,10 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 		PrintLog(LOG_IHOOK, "COM wants to create DirectInput8 instance");
 
 	if (IsEqualIID(riid, IID_IWbemLocator))
+	{
 		IWbemLocator* pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
+		new hkIWbemLocator(&pIWbemLocator);
+	}
 
 	return hr;
 }

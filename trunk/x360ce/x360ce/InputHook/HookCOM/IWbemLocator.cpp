@@ -13,12 +13,12 @@ HRESULT STDMETHODCALLTYPE hkIWbemLocator::QueryInterface(
 	/* [in] */ REFIID riid,
 	/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject)
 {
-	m_pWrapped->QueryInterface(riid, ppvObject);
+	return m_pWrapped->QueryInterface(riid, ppvObject);
 }
 
 ULONG STDMETHODCALLTYPE hkIWbemLocator::AddRef(void)
 {
-	m_pWrapped->AddRef();
+	return m_pWrapped->AddRef();
 }
 
 ULONG STDMETHODCALLTYPE hkIWbemLocator::Release(void)
@@ -38,9 +38,10 @@ HRESULT STDMETHODCALLTYPE hkIWbemLocator::ConnectServer(
 	/* [in] */ IWbemContext *pCtx,
 	/* [out] */ IWbemServices **ppNamespace)
 {
-	m_pWrapped->ConnectServer(strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
+	HRESULT hr = m_pWrapped->ConnectServer(strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
 
 	// wrapp IWbemServices
 	new hkIWbemServices(ppNamespace);
+	return hr;
 }
 
