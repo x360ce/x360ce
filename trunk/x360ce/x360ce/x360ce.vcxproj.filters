@@ -43,6 +43,9 @@
     <ClCompile Include="InputHook\HookCOM\IWbemClassObject.cpp">
       <Filter>InputHook\HookCOM</Filter>
     </ClCompile>
+    <ClCompile Include="InputHook\HookCOM\IClientSecurity.cpp">
+      <Filter>InputHook\HookCOM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputHook\InputHook.h">
@@ -100,6 +103,9 @@
       <Filter>InputHook\HookCOM</Filter>
     </ClInclude>
     <ClInclude Include="InputHook\HookCOM\IWbemClassObject.h">
+      <Filter>InputHook\HookCOM</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHook\HookCOM\IClientSecurity.h">
       <Filter>InputHook\HookCOM</Filter>
     </ClInclude>
   </ItemGroup>

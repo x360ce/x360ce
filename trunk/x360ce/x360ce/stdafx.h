@@ -54,3 +54,5 @@
 
 // Portable STDINT
 #include "pstdint.h"
+
+#include "Logger.h"

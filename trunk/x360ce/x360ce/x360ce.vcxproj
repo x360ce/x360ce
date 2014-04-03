@@ -260,6 +260,7 @@
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="InputHook\HookCOM\IClientSecurity.cpp" />
     <ClCompile Include="InputHook\HookCOM\IEnumWbemClassObject.cpp" />
     <ClCompile Include="InputHook\HookCOM\IWbemClassObject.cpp" />
     <ClCompile Include="InputHook\HookCOM\IWbemLocator.cpp" />
@@ -283,6 +284,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="InputHook\HookCOM\IClientSecurity.h" />
     <ClInclude Include="InputHook\HookCOM\IEnumWbemClassObject.h" />
     <ClInclude Include="InputHook\HookCOM\IWbemClassObject.h" />
     <ClInclude Include="InputHook\HookCOM\IWbemLocator.h" />
