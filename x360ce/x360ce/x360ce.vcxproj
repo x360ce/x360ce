@@ -264,7 +264,9 @@
     <ClCompile Include="InputHook\HookCOM\IWbemClassObject.cpp" />
     <ClCompile Include="InputHook\HookCOM\IWbemLocator.cpp" />
     <ClCompile Include="InputHook\HookCOM\IWbemServices.cpp" />
-    <ClCompile Include="InputHook\HookDI.cpp" />
+    <ClCompile Include="InputHook\HookDI.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="InputHook\HookSA.cpp" />
     <ClCompile Include="InputHook\HookLL.cpp" />
     <ClCompile Include="InputHook\HookWT.cpp" />
