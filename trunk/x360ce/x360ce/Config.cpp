@@ -131,9 +131,9 @@ void ParsePrefix(const std::string& input, MappingType* mapping_type, int8_t* va
 	if (value)
 	{
 		if (mapping_type && *mapping_type != DIGITAL)
-			*value = strtol(input.c_str() + 1, NULL, 0);
+			*value = (int8_t)strtol(input.c_str() + 1, NULL, 0);
 		else
-			*value = strtol(input.c_str(), NULL, 0);
+			*value = (int8_t)strtol(input.c_str(), NULL, 0);
 	}
 }
 
@@ -275,7 +275,7 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     if(device.passthrough) return;
 
     // Device type
-    device.gamepadtype = ini.get_uint(section, "ControllerType",1);
+	device.gamepadtype = (int8_t)ini.get_uint(section, "ControllerType", 1);
 
     // Axis to DPAD options
 	device.axistodpad = ini.get_bool(section, "AxisToDPad");
@@ -285,7 +285,7 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     // FFB options
 	device.useforce = ini.get_bool(section, "UseForceFeedback");
 	device.swapmotor = ini.get_bool(section, "SwapMotor");
-    device.ff.type = ini.get_uint(section, "FFBType");
+	device.ff.type = (int8_t)ini.get_uint(section, "FFBType");
     device.ff.forcepercent = static_cast<float>(ini.get_uint(section, "ForcePercent",100) * 0.01);
 	device.ff.leftPeriod = ini.get_uint(section, "LeftMotorPeriod", 60);
 	device.ff.rightPeriod = ini.get_uint(section, "RightMotorPeriod", 20);
@@ -293,20 +293,20 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     /* ==================================== Mapping start ============================================*/
 
     // Guide button
-	mapping.guide = ini.get_int(section, "GuideButton", 0);
+	mapping.guide = (int8_t)ini.get_int(section, "GuideButton", 0);
 
     // Fire buttons
     for (int8_t i=0; i<10; ++i)
-		mapping.Button[i] = ini.get_int(section, buttonNames[i]) - 1;
+		mapping.Button[i] = (int8_t)ini.get_int(section, buttonNames[i]) - 1;
 
     // D-PAD
-	mapping.DpadPOV = ini.get_int(section, "D-pad POV");
+	mapping.DpadPOV = (int8_t)ini.get_int(section, "D-pad POV");
     if(mapping.DpadPOV == 0)
     {
         for (int8_t i=0; i<4; ++i)
         {
             // D-PAD directions
-			int16_t val = ini.get_int(section, povNames[i], -1);
+			int16_t val = (int16_t)ini.get_int(section, povNames[i], -1);
             if(val > 0 && val < 128)
             {
                 mapping.pov[i] = val - 1;
@@ -327,22 +327,22 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
 		ParsePrefix(axis, &mapping.Axis[i].analogType, &mapping.Axis[i].id);
         
         // DeadZones
-		device.axisdeadzone[i] = ini.get_int(section, axisDZNames[i]);
+		device.axisdeadzone[i] = (int16_t)ini.get_int(section, axisDZNames[i]);
 
         // Anti DeadZones
-		device.antideadzone[i] = ini.get_int(section, axisADZNames[i]);
+		device.antideadzone[i] = (int16_t)ini.get_int(section, axisADZNames[i]);
 
         // Linearity
-		device.axislinear[i] = ini.get_int(section, axisLNames[i]);
+		device.axislinear[i] = (int16_t)ini.get_int(section, axisLNames[i]);
 
         // Axis to button mappings
-		char ret = ini.get_int(section, axisBNames[i * 2]);
+		int8_t ret = (int8_t)ini.get_int(section, axisBNames[i * 2]);
         if (ret > 0)
         {
             mapping.Axis[i].hasDigital = true;
             mapping.Axis[i].positiveButtonID = ret - 1;
         }
-		ret = ini.get_int(section, axisBNames[i * 2 + 1]);
+		ret = (int8_t)ini.get_int(section, axisBNames[i * 2 + 1]);
         if (ret > 0)
         {
             mapping.Axis[i].hasDigital = true;
@@ -357,10 +357,10 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
 	ParsePrefix(trigger_left, &mapping.Trigger[0].type, &mapping.Trigger[0].id);
 	ParsePrefix(trigger_right, &mapping.Trigger[1].type, &mapping.Trigger[1].id);
 
-	device.triggerdz[0] = ini.get_uint(section, "Left Trigger DZ");
-	device.triggerdz[1] = ini.get_uint(section, "Right Trigger DZ");
+	device.triggerdz[0] = (int8_t)ini.get_uint(section, "Left Trigger DZ");
+	device.triggerdz[1] = (int8_t)ini.get_uint(section, "Right Trigger DZ");
 
     // SeDoG mod
-	mapping.Trigger[0].but = ini.get_int(section, "Left Trigger But");
-	mapping.Trigger[1].but = ini.get_int(section, "Right Trigger But");
+	mapping.Trigger[0].but = (int8_t)ini.get_int(section, "Left Trigger But");
+	mapping.Trigger[1].but = (int8_t)ini.get_int(section, "Right Trigger But");
 }

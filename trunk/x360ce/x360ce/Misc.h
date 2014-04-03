@@ -172,7 +172,7 @@ inline std::string windowsVersionName()
     ZeroMemory(&si, sizeof(SYSTEM_INFO));
     ZeroMemory(&osvi, sizeof(OSVERSIONINFOEXA));
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
-    bOsVersionInfoEx = GetVersionExA((OSVERSIONINFOA*) &osvi);
+    bOsVersionInfoEx = GetVersionExA((OSVERSIONINFOA*) &osvi);    // GetVersionExA is deprecate as Windows 8, should we worry ?
     if(bOsVersionInfoEx == 0)
         return ""; // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
     PGNSI pGNSI = (PGNSI) GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");

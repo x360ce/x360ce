@@ -7,6 +7,7 @@
 #include <iomanip>
 
 // Windows headers
+#include <windows.h>
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
@@ -23,7 +24,8 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define INITIALIZE_LOGGER Logger* Logger::m_logger = nullptr;   
 
 #define LOGMAXBUFFER 1024
-#define TIMECHARCOUNT 22
+#define LOGTIMECHARCOUNT 22
+#define LOGSTAMPCOUNT 25
 
 class Logger
 {
@@ -65,12 +67,12 @@ public:
 
 	bool is_file()
 	{
-		m_file != INVALID_HANDLE_VALUE;
+		return m_file != INVALID_HANDLE_VALUE;
 	}
 
 	bool is_console()
 	{
-		m_console != INVALID_HANDLE_VALUE;
+		return m_console != INVALID_HANDLE_VALUE;
 	}
 
 	void print_console(const char* format, va_list vaargs)
@@ -80,13 +82,13 @@ public:
 		{
 			lock_guard lock(m_mtx);
 
-			if (!m_printednotice) { print_notice(); m_printednotice = true; }
+			if (!m_printed_stamp) { print_stamp(); m_printed_stamp = true; }
 
 			GetLocalTime(&m_systime);
-			print_time_con("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
+			print_timestamp(false, con, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
 				m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
 
-			vsnprintf_s(m_buffer, LOGMAXBUFFER, LOGMAXBUFFER - TIMECHARCOUNT - 2 - 1, format, vaargs);
+			vsnprintf_s(m_buffer, LOGMAXBUFFER, LOGMAXBUFFER - LOGTIMECHARCOUNT - 2 - 1, format, vaargs);
 			strncat_s(m_buffer, LOGMAXBUFFER, "\r\n", _TRUNCATE);
 
 			size_t len = strlen(m_buffer);
@@ -103,14 +105,13 @@ public:
 		if ((log || con) && format)
 		{
 			lock_guard lock(m_mtx);
-
-			if (!m_printednotice) { print_notice(); m_printednotice = true; }
+			if (!m_printed_stamp) { print_stamp(); m_printed_stamp = true; }
 
 			GetLocalTime(&m_systime);
-			print_time("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
+			print_timestamp(log, con, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
 				m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
 
-			vsnprintf_s(m_buffer, LOGMAXBUFFER, LOGMAXBUFFER - TIMECHARCOUNT - 2 - 1, format, vaargs);
+			vsnprintf_s(m_buffer, LOGMAXBUFFER, LOGMAXBUFFER - LOGTIMECHARCOUNT - 2 - 1, format, vaargs);
 			strncat_s(m_buffer, LOGMAXBUFFER, "\r\n", _TRUNCATE);
 
 			size_t len = strlen(m_buffer);
@@ -122,8 +123,8 @@ public:
 	}
 
 private:
-	const char* m_notice = "[TIME]\t\t\t[THREAD]\t[LOG]\r\n";
-	bool m_printednotice;
+	const char* m_stamp = "[TIME]\t\t\t[THREAD]\t[LOG]\r\n";
+	bool m_printed_stamp;
 
 	static Logger* m_logger;
 
@@ -179,26 +180,21 @@ private:
 		return filename;
 	}
 
-	void print_notice()
+	void print_stamp()
 	{
 		bool log = m_file != INVALID_HANDLE_VALUE;
 		bool con = m_console != INVALID_HANDLE_VALUE;
-		if ((log || con) && m_notice)
-		{
-			DWORD lenout = 0;
 
-			if (con) WriteConsoleA(m_console, m_notice, 25, &lenout, NULL);
-			if (log) WriteFile(m_file, m_notice, 25, &lenout, NULL);
-		}
+		DWORD lenout = 0;
+		if (con) WriteConsoleA(m_console, m_stamp, LOGSTAMPCOUNT, &lenout, NULL);
+		if (log) WriteFile(m_file, m_stamp, LOGSTAMPCOUNT, &lenout, NULL);
 	}
 
-	void print_time(const char* format, ...)
+	void print_timestamp(bool file, bool console, const char* format, ...)
 	{
-		bool log = m_file != INVALID_HANDLE_VALUE;
-		bool con = m_console != INVALID_HANDLE_VALUE;
-		if ((log || con) && format)
+		if ((file || console) && format)
 		{
-			char buffer[TIMECHARCOUNT + 1];
+			char buffer[LOGTIMECHARCOUNT + 1];
 
 			va_list arglist;
 			va_start(arglist, format);
@@ -207,26 +203,8 @@ private:
 
 			DWORD lenout = 0;
 
-			if (con) WriteConsoleA(m_console, buffer, TIMECHARCOUNT, &lenout, NULL);
-			if (log) WriteFile(m_file, buffer, TIMECHARCOUNT, &lenout, NULL);
-		}
-	}
-
-	void print_time_con(const char* format, ...)
-	{
-		bool con = m_console != INVALID_HANDLE_VALUE;
-		if (con && format)
-		{
-			char buffer[TIMECHARCOUNT + 1];
-
-			va_list arglist;
-			va_start(arglist, format);
-			vsprintf_s(buffer, format, arglist);
-			va_end(arglist);
-
-			DWORD lenout = 0;
-
-			if (con) WriteConsoleA(m_console, buffer, TIMECHARCOUNT, &lenout, NULL);
+			if (console) WriteConsoleA(m_console, buffer, LOGTIMECHARCOUNT, &lenout, NULL);
+			if (file) WriteFile(m_file, buffer, LOGTIMECHARCOUNT, &lenout, NULL);
 		}
 	}
 };
@@ -248,13 +226,6 @@ inline void LogPrint(const char* format, ...)
 	va_start(vaargs, format);
 	Logger::getInstance()->print(format, vaargs);
 	va_end(vaargs);
-}
-
-inline void LogPrint(const char* format, va_list valist)
-{
-	va_start(valist, format);
-	Logger::getInstance()->print(format, valist);
-	va_end(valist);
 }
 
 inline void LogPrintConsole(const char* format, ...)

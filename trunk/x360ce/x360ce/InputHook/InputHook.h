@@ -99,17 +99,17 @@ public:
         m_devices.clear();
     };
 
-    static const DWORD HOOK_NONE        = 0;
-    static const DWORD HOOK_LL          = 1;
-    static const DWORD HOOK_COM         = 1<<1;
-    static const DWORD HOOK_DI          = 1<<2;
-    static const DWORD HOOK_PIDVID      = 1<<3;
-    static const DWORD HOOK_NAME        = 1<<4;
-    static const DWORD HOOK_SA          = 1<<5;
+	static const DWORD HOOK_NONE		= (DWORD)0;
+	static const DWORD HOOK_LL			= (DWORD)1;
+	static const DWORD HOOK_COM			= (DWORD)1 << 1;
+	static const DWORD HOOK_DI			= (DWORD)1 << 2;
+	static const DWORD HOOK_PIDVID		= (DWORD)1 << 3;
+	static const DWORD HOOK_NAME		= (DWORD)1 << 4;
+	static const DWORD HOOK_SA			= (DWORD)1 << 5;
 
-    static const DWORD HOOK_WT          = 1<<24;
-    static const DWORD HOOK_STOP        = 1<<25;
-    static const DWORD HOOK_DISABLE     = 1<<31;
+	static const DWORD HOOK_WT			= (DWORD)1 << 24;
+	static const DWORD HOOK_STOP		= (DWORD)1 << 25;
+	static const DWORD HOOK_DISABLE		= (DWORD)1 << 31;
 
 	typedef std::vector<iHookDevice>::iterator iterator;
     typedef std::vector<iHookDevice>::const_iterator const_iterator;

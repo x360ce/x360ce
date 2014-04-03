@@ -42,6 +42,14 @@ iHook* pHooks = NULL;
 
 INITIALIZE_LOGGER;
 
+const char notice[] =
+"\nx360ce - XBOX 360 Controller emulator\n"
+"https://code.google.com/p/x360ce/\n\n"
+"Copyright (C) 2013 Robert Krawczyk\n\n"
+"This program is free software you can redistribute it and/or modify it under\n"
+"the terms of the GNU Lesser General Public License as published by the Free\n"
+"Software Foundation, either version 3 of the License, or any later version.\n";
+
 VOID InstallInputHooks()
 {
     if(pHooks)
@@ -91,7 +99,7 @@ VOID InitInstance(HINSTANCE instance)
     pHooks = new iHook(instance);
     ReadConfig();
 
-	PrintNotice();
+	LogPrintConsole(notice);
     PrintLog(LOG_CORE,"x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
     PrintLog(LOG_CORE,"%s",windowsVersionName().c_str());
 
