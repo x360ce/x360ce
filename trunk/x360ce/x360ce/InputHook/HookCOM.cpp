@@ -32,7 +32,6 @@
 #include "InputHook.h"
 
 #include "HookCOM\IWbemLocator.h"
-#include "HookCOM\IWbemClassObject.h"
 
 static iHook *iHookThis = NULL;
 
