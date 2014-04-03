@@ -42,6 +42,9 @@ public:
 	}
 
 	atomic_flag(const atomic_flag_init &v) : value(0) {
+#if defined(_WIN32)
+		UNREFERENCED_PARAMETER(v);
+#endif
 	}
 
 	void clear() {
@@ -187,6 +190,7 @@ public:
 
 	void wait_for(recursive_mutex &mtx, int milliseconds) {
 #ifdef _WIN32
+		UNREFERENCED_PARAMETER(mtx);
 		//mtx.unlock();
 		WaitForSingleObject(event_, milliseconds);
 		ResetEvent(event_); // necessary?

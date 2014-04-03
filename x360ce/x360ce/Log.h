@@ -22,15 +22,21 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
-#include <Shlwapi.h>
 #include "Logger.h"
 
-#pragma warning( disable : 4127 )
-
+// not used
 enum LogType { LOG_CORE, LOG_XINPUT, LOG_DINPUT, LOG_IHOOK, LOG_HOOKLL, LOG_HOOKCOM, LOG_HOOKDI, LOG_HOOKSA, LOG_HOOKWT };
-void PrintLog(LogType type, const char* format, ...);
-void InitLog(char * logfilename, bool con);
 
-void PrintNotice();
+inline void InitLog(char * logfilename, bool con)
+{
+	if (con) LogConsole("x360ce");
+	if (logfilename)
+	{
+		LogFile(logfilename);
+	}
+}
+
+// ugly hack
+#define PrintLog(notused, format, ...) LogPrint(format, __VA_ARGS__)
 
 #endif // _LOG_H_
