@@ -19,9 +19,6 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>x360ce\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>x360ce\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>x360ce\Source Files</Filter>
     </ClCompile>
@@ -96,9 +93,6 @@
     <Filter Include="x360ce\Source Files">
       <UniqueIdentifier>{bd40fb4f-4687-4d4e-b894-2d6bcc890685}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Utilities">
-      <UniqueIdentifier>{3283c799-9d37-401b-8a6d-30154413c677}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
