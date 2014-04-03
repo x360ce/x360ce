@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <wbemidl.h>
+#include "IWbemClassObject.h"
 #include "IEnumWbemClassObject.h"
 
 hkIEnumWbemClassObject::hkIEnumWbemClassObject(IEnumWbemClassObject **ppIEnumWbemClassObject) {
@@ -12,12 +13,12 @@ HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::QueryInterface(
 	/* [in] */ REFIID riid,
 	/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject)
 {
-	m_pWrapped->QueryInterface(riid, ppvObject);
+	return m_pWrapped->QueryInterface(riid, ppvObject);
 }
 
 ULONG STDMETHODCALLTYPE hkIEnumWbemClassObject::AddRef(void)
 {
-	m_pWrapped->AddRef();
+	return m_pWrapped->AddRef();
 }
 
 ULONG STDMETHODCALLTYPE hkIEnumWbemClassObject::Release(void)
@@ -29,7 +30,7 @@ ULONG STDMETHODCALLTYPE hkIEnumWbemClassObject::Release(void)
 
 HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::Reset(void)
 {
-	m_pWrapped->Reset();
+	return m_pWrapped->Reset();
 }
 
 HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::Next(
@@ -38,27 +39,29 @@ HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::Next(
 	/* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
 	/* [out] */ __RPC__out ULONG *puReturned)
 {
-	m_pWrapped->Next(lTimeout, uCount, apObjects, puReturned);
+	HRESULT hr = m_pWrapped->Next(lTimeout, uCount, apObjects, puReturned);
 
 	//wrap IWbemClassObject
+	new hkIWbemClassObject(apObjects);
+	return hr;
 }
 
 HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::NextAsync(
 	/* [in] */ ULONG uCount,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pSink)
 {
-	m_pWrapped->NextAsync(uCount, pSink);
+	return m_pWrapped->NextAsync(uCount, pSink);
 }
 
 HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::Clone(
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	m_pWrapped->Clone(ppEnum);
+	return m_pWrapped->Clone(ppEnum);
 }
 
 HRESULT STDMETHODCALLTYPE hkIEnumWbemClassObject::Skip(
 	/* [in] */ long lTimeout,
 	/* [in] */ ULONG nCount)
 {
-	m_pWrapped->Skip(lTimeout, nCount);
+	return m_pWrapped->Skip(lTimeout, nCount);
 }

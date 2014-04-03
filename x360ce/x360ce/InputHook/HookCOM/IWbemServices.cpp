@@ -15,12 +15,12 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::QueryInterface(
 	/* [in] */ REFIID riid,
 	/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject)
 {
-	m_pWrapped->QueryInterface(riid, ppvObject);
+	return m_pWrapped->QueryInterface(riid, ppvObject);
 }
 
 ULONG STDMETHODCALLTYPE hkIWbemServices::AddRef(void)
 {
-	m_pWrapped->AddRef();
+	return m_pWrapped->AddRef();
 }
 
 ULONG STDMETHODCALLTYPE hkIWbemServices::Release(void)
@@ -37,20 +37,20 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::OpenNamespace(
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemServices **ppWorkingNamespace,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppResult)
 {
-	m_pWrapped->OpenNamespace(strNamespace, lFlags, pCtx, ppWorkingNamespace, ppResult);
+	return m_pWrapped->OpenNamespace(strNamespace, lFlags, pCtx, ppWorkingNamespace, ppResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::CancelAsyncCall(
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pSink)
 {
-	m_pWrapped->CancelAsyncCall(pSink);
+	return m_pWrapped->CancelAsyncCall(pSink);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::QueryObjectSink(
 	/* [in] */ long lFlags,
 	/* [out] */ __RPC__deref_out_opt IWbemObjectSink **ppResponseHandler)
 {
-	m_pWrapped->QueryObjectSink(lFlags, ppResponseHandler);
+	return m_pWrapped->QueryObjectSink(lFlags, ppResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::GetObject(
@@ -60,7 +60,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::GetObject(
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemClassObject **ppObject,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppCallResult)
 {
-	m_pWrapped->GetObject(strObjectPath, lFlags, pCtx, ppObject, ppCallResult);
+	return m_pWrapped->GetObject(strObjectPath, lFlags, pCtx, ppObject, ppCallResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::GetObjectAsync(
@@ -69,7 +69,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::GetObjectAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->GetObjectAsync(strObjectPath, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->GetObjectAsync(strObjectPath, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::PutClass(
@@ -78,7 +78,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::PutClass(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppCallResult)
 {
-	m_pWrapped->PutClass(pObject, lFlags, pCtx, ppCallResult);
+	return m_pWrapped->PutClass(pObject, lFlags, pCtx, ppCallResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::PutClassAsync(
@@ -87,7 +87,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::PutClassAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->PutClassAsync(pObject, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->PutClassAsync(pObject, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteClass(
@@ -96,7 +96,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteClass(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppCallResult)
 {
-	m_pWrapped->DeleteClass(strClass, lFlags, pCtx, ppCallResult);
+	return m_pWrapped->DeleteClass(strClass, lFlags, pCtx, ppCallResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteClassAsync(
@@ -105,7 +105,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteClassAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->DeleteClassAsync(strClass, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->DeleteClassAsync(strClass, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateClassEnum(
@@ -114,7 +114,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateClassEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	m_pWrapped->CreateClassEnum(strSuperclass, lFlags, pCtx, ppEnum);
+	return m_pWrapped->CreateClassEnum(strSuperclass, lFlags, pCtx, ppEnum);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateClassEnumAsync(
@@ -123,7 +123,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateClassEnumAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->CreateClassEnumAsync(strSuperclass, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->CreateClassEnumAsync(strSuperclass, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::PutInstance(
@@ -132,7 +132,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::PutInstance(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppCallResult)
 {
-	m_pWrapped->PutInstance(pInst, lFlags, pCtx, ppCallResult);
+	return m_pWrapped->PutInstance(pInst, lFlags, pCtx, ppCallResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::PutInstanceAsync(
@@ -141,7 +141,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::PutInstanceAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->PutInstanceAsync(pInst, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->PutInstanceAsync(pInst, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteInstance(
@@ -150,7 +150,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteInstance(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppCallResult)
 {
-	m_pWrapped->DeleteInstance(strObjectPath, lFlags, pCtx, ppCallResult);
+	return m_pWrapped->DeleteInstance(strObjectPath, lFlags, pCtx, ppCallResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteInstanceAsync(
@@ -159,7 +159,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::DeleteInstanceAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->DeleteInstanceAsync(strObjectPath, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->DeleteInstanceAsync(strObjectPath, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateInstanceEnum(
@@ -168,10 +168,11 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateInstanceEnum(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	m_pWrapped->CreateInstanceEnum(strFilter, lFlags, pCtx, ppEnum);
+	HRESULT hr = m_pWrapped->CreateInstanceEnum(strFilter, lFlags, pCtx, ppEnum);
 
 	// wrapp IEnumWbemClassObject
 	new hkIEnumWbemClassObject(ppEnum);
+	return hr;
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateInstanceEnumAsync(
@@ -180,7 +181,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::CreateInstanceEnumAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->CreateInstanceEnumAsync(strFilter, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->CreateInstanceEnumAsync(strFilter, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecQuery(
@@ -190,7 +191,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecQuery(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	m_pWrapped->ExecQuery(strQueryLanguage, strQuery, lFlags, pCtx, ppEnum);
+	return m_pWrapped->ExecQuery(strQueryLanguage, strQuery, lFlags, pCtx, ppEnum);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecQueryAsync(
@@ -200,7 +201,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecQueryAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->ExecQueryAsync(strQueryLanguage, strQuery, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->ExecQueryAsync(strQueryLanguage, strQuery, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecNotificationQuery(
@@ -210,7 +211,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecNotificationQuery(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-	m_pWrapped->ExecNotificationQuery(strQueryLanguage, strQuery, lFlags, pCtx, ppEnum);
+	return m_pWrapped->ExecNotificationQuery(strQueryLanguage, strQuery, lFlags, pCtx, ppEnum);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecNotificationQueryAsync(
@@ -220,7 +221,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecNotificationQueryAsync(
 	/* [in] */ __RPC__in_opt IWbemContext *pCtx,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->ExecNotificationQueryAsync(strQueryLanguage, strQuery, lFlags, pCtx, pResponseHandler);
+	return m_pWrapped->ExecNotificationQueryAsync(strQueryLanguage, strQuery, lFlags, pCtx, pResponseHandler);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecMethod(
@@ -232,7 +233,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecMethod(
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemClassObject **ppOutParams,
 	/* [unique][in][out] */ __RPC__deref_opt_inout_opt IWbemCallResult **ppCallResult)
 {
-	m_pWrapped->ExecMethod(strObjectPath, strMethodName, lFlags, pCtx, pInParams, ppOutParams, ppCallResult);
+	return m_pWrapped->ExecMethod(strObjectPath, strMethodName, lFlags, pCtx, pInParams, ppOutParams, ppCallResult);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecMethodAsync(
@@ -243,5 +244,5 @@ HRESULT STDMETHODCALLTYPE hkIWbemServices::ExecMethodAsync(
 	/* [in] */ __RPC__in_opt IWbemClassObject *pInParams,
 	/* [in] */ __RPC__in_opt IWbemObjectSink *pResponseHandler)
 {
-	m_pWrapped->ExecMethodAsync(strObjectPath, strMethodName, lFlags, pCtx, pInParams, pResponseHandler);
+	return m_pWrapped->ExecMethodAsync(strObjectPath, strMethodName, lFlags, pCtx, pInParams, pResponseHandler);
 }
