@@ -171,13 +171,13 @@ public:
     }
 
 #if _MSC_VER < 1700
-    inline void AddHook(DWORD userindex, GUID productid, GUID instanceid)
+	inline void AddHook(DWORD userindex, const GUID& productid, const GUID& instanceid)
     {
         iHookDevice hdevice(userindex, productid, instanceid);
         m_devices.push_back(hdevice);
     }
 #else
-    inline void AddHook(DWORD userindex, GUID productid, GUID instanceid)
+	inline void AddHook(DWORD userindex, const GUID& productid, const GUID& instanceid)
     {
         m_devices.emplace_back(userindex, productid, instanceid);
     }
