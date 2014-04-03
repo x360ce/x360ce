@@ -11,7 +11,7 @@ hkIWbemLocator::hkIWbemLocator(IWbemLocator **ppIWbemLocator) {
 
 HRESULT STDMETHODCALLTYPE hkIWbemLocator::QueryInterface(
 	/* [in] */ REFIID riid,
-	/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject)
+	/* [iid_is][out] */ __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
 {
 	return m_pWrapped->QueryInterface(riid, ppvObject);
 }
