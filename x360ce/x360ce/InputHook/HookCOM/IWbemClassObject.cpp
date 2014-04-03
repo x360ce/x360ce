@@ -3,13 +3,7 @@
 #include <wbemidl.h>
 #include "IWbemClassObject.h"
 
-HRESULT HookGet(
-	HRESULT hr,
-	/* [std::string][in] */ LPCWSTR wszName,
-	/* [in] */ long lFlags,
-	/* [unique][in][out] */ VARIANT *pVal,
-	/* [unique][in][out] */ CIMTYPE *pType,
-	/* [unique][in][out] */ long *plFlavor);
+HRESULT HookGet(HRESULT hr, VARIANT **ppVal);
 
 hkIWbemClassObject::hkIWbemClassObject(IWbemClassObject **ppIWbemClassObject) {
 	m_pWrapped = *ppIWbemClassObject;
@@ -49,7 +43,7 @@ HRESULT STDMETHODCALLTYPE hkIWbemClassObject::Get(
 	/* [unique][in][out] */ long *plFlavor)
 {
 	HRESULT hr = m_pWrapped->Get(wszName, lFlags, pVal, pType, plFlavor);
-	return HookGet(hr, wszName, lFlags, pVal, pType, plFlavor);
+	return HookGet(hr, &pVal);
 }
 
 HRESULT STDMETHODCALLTYPE hkIWbemClassObject::Put(

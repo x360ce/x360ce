@@ -50,23 +50,18 @@ CoUninitialize_t oCoUninitialize = NULL;
 CoCreateInstance_t oCoCreateInstance = NULL;
 
 
-HRESULT HookGet(
-	HRESULT hr,
-	/* [std::string][in] */ LPCWSTR wszName,
-	/* [in] */ long lFlags,
-	/* [unique][in][out] */ VARIANT *pVal,
-	/* [unique][in][out] */ CIMTYPE *pType,
-	/* [unique][in][out] */ long *plFlavor)
+HRESULT HookGet(HRESULT hr, VARIANT **ppVal)
 {
 	if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
 	PrintLog(LOG_HOOKCOM, "*Gets*");
 
-	if (hr != NO_ERROR) return hr;
+	if (hr != NO_ERROR || ppVal == nullptr) return hr;
 
 	//PrintLog(LOG_HOOKCOM, "wszName %ls pVal->vt %d pType %d", wszName, pVal->vt, &pType);
 	//if( pVal->vt == VT_BSTR) PrintLog(LOG_HOOKCOM, L"%s",pVal->bstrVal);
 
+	VARIANT *pVal = *ppVal;
 	if (pVal->vt == VT_BSTR && pVal->bstrVal != NULL)
 	{
 		//PrintLog(LOG_HOOKCOM, "  Got device ID '%ls'", pVal->bstrVal);
