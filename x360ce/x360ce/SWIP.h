@@ -284,12 +284,18 @@ private:
     {
         if(m_inimap.empty()) return std::string();
 
+		std::string internal_section = section;
+		std::string internal_key = key;
+
+		std::transform(internal_section.begin(), internal_section.end(), internal_section.begin(), tolower);
+		std::transform(internal_key.begin(), internal_key.end(), internal_key.begin(), tolower);
+
         // find section
-        auto secit = m_inimap.find(section);
+		auto secit = m_inimap.find(internal_section);
         if(secit != m_inimap.end())
         {
             // find key
-            auto keyit = secit->second.find(key);
+			auto keyit = secit->second.find(internal_key);
             if(keyit != secit->second.end())
             {
                 // return value
@@ -387,6 +393,8 @@ private:
 
         if(str == nullptr)
             return;
+
+		std::transform(str->begin(), str->end(), str->begin(), tolower);
 
 		pos = str->find('#');
         if( pos != std::string::npos)

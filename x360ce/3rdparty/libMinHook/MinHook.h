@@ -1,11 +1,11 @@
-/*
- *  MinHook - Minimalistic API Hook Library
+/* 
+ *  MinHook - Minimalistic API Hook Library	
  *  Copyright (C) 2009 Tsuda Kageyu. All rights reserved.
- *
+ *  
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
- *
+ *  
  *  1. Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  *  2. Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     documentation and/or other materials provided with the distribution.
  *  3. The name of the author may not be used to endorse or promote products
  *     derived from this software without specific prior written permission.
- *
+ *  
  *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -33,94 +33,95 @@
 // MinHook Error Codes.
 typedef enum MH_STATUS
 {
-    // Unknown error. Should not be returned.
-    MH_UNKNOWN = -1,
+	// Unknown error. Should not be returned.
+	MH_UNKNOWN = -1,
 
-    // Successful.
-    MH_OK = 0,
+	// Successful.
+	MH_OK = 0,
 
+	// MinHook is already initialized.
+	MH_ERROR_ALREADY_INITIALIZED,
 
-    // MinHook is already initialized.
-    MH_ERROR_ALREADY_INITIALIZED,
+	// MinHook is not initialized yet, or already uninitialized.
+	MH_ERROR_NOT_INITIALIZED,
 
-    // MinHook is not initialized yet, or already uninitialized.
-    MH_ERROR_NOT_INITIALIZED,
+	// The hook for the specified target function is already created.
+	MH_ERROR_ALREADY_CREATED,
 
-    // The hook for the specified target function is already created.
-    MH_ERROR_ALREADY_CREATED,
+	// The hook for the specified target function is not created yet.
+	MH_ERROR_NOT_CREATED,
 
-    // The hook for the specified target function is not created yet.
-    MH_ERROR_NOT_CREATED,
+	// The hook for the specified target function is already enabled.
+	MH_ERROR_ENABLED,
 
-    // The hook for the specified target function is already enabled.
-    MH_ERROR_ENABLED,
+	// The hook for the specified target function is not enabled yet, or already disabled.
+	MH_ERROR_DISABLED,
 
-    // The hook for the specified target function is not enabled yet, or already disabled.
-    MH_ERROR_DISABLED,
+	// The specified pointer is invalid. It points the address of non-allocated and/or non-executable region.
+	MH_ERROR_NOT_EXECUTABLE,
 
-    // The specified pointer is invalid. It points the address of non-allocated and/or non-executable region.
-    MH_ERROR_NOT_EXECUTABLE,
+	// The specified target function cannot be hooked.
+	MH_ERROR_UNSUPPORTED_FUNCTION,
 
-    // The specified target function cannot be hooked.
-    MH_ERROR_UNSUPPORTED_FUNCTION,
+	// Failed to allocate memory.
+	MH_ERROR_MEMORY_ALLOC,
 
-    // Failed to allocate memory.
-    MH_ERROR_MEMORY_ALLOC,
-
-    // Failed to change the memory protection.
-    MH_ERROR_MEMORY_PROTECT
+	// Failed to change the memory protection.
+	MH_ERROR_MEMORY_PROTECT
 }
 MH_STATUS;
+
+// Can be passed as a parameter to MH_EnableHook, MH_DisableHook, MH_QueueEnableHook or MH_QueueDisableHook.
+#define MH_ALL_HOOKS NULL
 
 #if defined __cplusplus
 extern "C" {
 #endif
 
-    // Initialize the MinHook library.
-    MH_STATUS WINAPI MH_Initialize();
+	// Initialize the MinHook library.
+	MH_STATUS WINAPI MH_Initialize();
 
-    // Uninitialize the MinHook library.
-    MH_STATUS WINAPI MH_Uninitialize();
+	// Uninitialize the MinHook library.
+	MH_STATUS WINAPI MH_Uninitialize();
 
-    // Creates the Hook for the specified target function, in disabled state.
-    // Parameters:
-    //   pTarget    [in]  A pointer to the target function, which will be overridden by the detour function.
-    //   pDetour    [in]  A pointer to the detour function, which will override the target function.
-    //   ppOriginal [out] A pointer to the trampoline function, which will be used to call the original target function.
-    MH_STATUS WINAPI MH_CreateHook(void* pTarget, void* const pDetour, void** ppOriginal);
+	// Creates the Hook for the specified target function, in disabled state.
+	// Parameters:
+	//   pTarget    [in]  A pointer to the target function, which will be overridden by the detour function.
+	//   pDetour    [in]  A pointer to the detour function, which will override the target function.
+	//   ppOriginal [out] A pointer to the trampoline function, which will be used to call the original target function.
+	MH_STATUS WINAPI MH_CreateHook(void* pTarget, void* const pDetour, void** ppOriginal);
 
-    // Removes the already created hook.
-    // Parameters:
-    //   pTarget [in] A pointer to the target function.
-    MH_STATUS WINAPI MH_RemoveHook(void* pTarget);
+	// Removes the already created hook.
+	// Parameters:
+	//   pTarget [in] A pointer to the target function.
+	MH_STATUS WINAPI MH_RemoveHook(void* pTarget);
 
-    // Enables the already created hook.
-    // Parameters:
-    //   pTarget [in] A pointer to the target function.
-    MH_STATUS WINAPI MH_EnableHook(void* pTarget);
+	// Enables the already created hook.
+	// Parameters:
+	//   pTarget [in] A pointer to the target function.
+	//                If this parameter is MH_ALL_HOOKS, all created hooks are enabled in one go.
+	MH_STATUS WINAPI MH_EnableHook(void* pTarget);
 
-    // Disables the already created hook.
-    // Parameters:
-    //   pTarget [in] A pointer to the target function.
-    MH_STATUS WINAPI MH_DisableHook(void* pTarget);
+	// Disables the already created hook.
+	// Parameters:
+	//   pTarget [in] A pointer to the target function.
+	//                If this parameter is MH_ALL_HOOKS, all created hooks are disabled in one go.
+	MH_STATUS WINAPI MH_DisableHook(void* pTarget);
 
-    // Enables all created hooks in one go.
-    MH_STATUS WINAPI MH_EnableAllHooks();
+	// Queues to enable the already created hook.
+	// Parameters:
+	//   pTarget [in] A pointer to the target function.
+	//                If this parameter is MH_ALL_HOOKS, all created hooks are queued to be enabled.
+	MH_STATUS WINAPI MH_QueueEnableHook(void* pTarget);
 
-    // Disables all created hooks in one go.
-    MH_STATUS WINAPI MH_DisableAllHooks();
+	// Queues to disable the already created hook.
+	// Parameters:
+	//   pTarget [in] A pointer to the target function.
+	//                If this parameter is MH_ALL_HOOKS, all created hooks are queued to be disabled.
+	MH_STATUS WINAPI MH_QueueDisableHook(void* pTarget);
 
-    // Enables multiple hooks in one go. Hooks which are already enabled are ignored.
-    // Parameters:
-    //   ppTargets     [in] An array of pointers to the target function.
-    //   nTargetsCount [in] The number of pointers in the array pointed to by ppTargets.
-    MH_STATUS WINAPI MH_EnableMultipleHooks(void** const ppTargets, size_t nTargetsCount);
-
-    // Disables multiple hooks in one go. Hooks which are already disabled are ignored.
-    // Parameters:
-    //   ppTargets     [in] An array of pointers to the target function.
-    //   nTargetsCount [in] The number of pointers in the array pointed to by ppTargets.
-    MH_STATUS WINAPI MH_DisableMultipleHooks(void** const ppTargets, size_t nTargetsCount);
+	// Applies all queued changes in one go.
+	MH_STATUS WINAPI MH_ApplyQueued();
 
 #if defined __cplusplus
 }

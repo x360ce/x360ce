@@ -121,7 +121,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         hr = dinput.Get()->CreateDevice( device.instanceid,&device.device, NULL );
         if(FAILED(hr))
         {
-            PrintLog(LOG_CORE,"%s","InstanceGuid is incorrect trying ProductGuid");
+			LogPrint("InstanceGUID %s is incorrect trying ProductGUID", GUIDtoStringA(device.instanceid).c_str());
             hr = dinput.Get()->CreateDevice( device.productid,&device.device, NULL );
         }
     }
