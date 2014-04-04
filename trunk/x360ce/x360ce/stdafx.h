@@ -42,8 +42,6 @@
 
 // Windows Header Files:
 #include <windows.h>
-#include <shlwapi.h>
-#include <Shlobj.h>
 
 //C++
 #include <iostream>
@@ -54,5 +52,3 @@
 
 // Portable STDINT
 #include "pstdint.h"
-
-#include "Logger.h"

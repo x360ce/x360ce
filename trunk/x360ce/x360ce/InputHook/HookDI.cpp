@@ -17,8 +17,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define CINTERFACE
 #include "stdafx.h"
+#define CINTERFACE
 
 #include <dinput.h>
 #include "globals.h"

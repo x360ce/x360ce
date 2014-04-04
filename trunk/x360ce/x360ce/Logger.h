@@ -21,13 +21,11 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
 #endif
 
-#define INITIALIZE_LOGGER Logger* Logger::m_logger = nullptr;
+#define INITIALIZE_LOGGER Logger* Logger::m_logger = nullptr; const char* Logger::m_stamp = "[TIME]\t\t\t[THREAD]\t[LOG]\r\n";   
 
 #define LOGMAXBUFFER 1024
 #define LOGTIMECHARCOUNT 22
 #define LOGSTAMPCOUNT 25
-
-#define LOGTIMESTAMP "[TIME]\t\t\t[THREAD]\t[LOG]\r\n"
 
 class Logger
 {
@@ -125,6 +123,7 @@ public:
 	}
 
 private:
+	static const char* m_stamp;
 	bool m_printed_stamp;
 
 	static Logger* m_logger;
@@ -187,8 +186,8 @@ private:
 		bool con = m_console != INVALID_HANDLE_VALUE;
 
 		DWORD lenout = 0;
-		if (con) WriteConsoleA(m_console, LOGTIMESTAMP, LOGSTAMPCOUNT, &lenout, NULL);
-		if (log) WriteFile(m_file, LOGTIMESTAMP, LOGSTAMPCOUNT, &lenout, NULL);
+		if (con) WriteConsoleA(m_console, m_stamp, LOGSTAMPCOUNT, &lenout, NULL);
+		if (log) WriteFile(m_file, m_stamp, LOGSTAMPCOUNT, &lenout, NULL);
 	}
 
 	void print_timestamp(bool file, bool console, const char* format, ...)
