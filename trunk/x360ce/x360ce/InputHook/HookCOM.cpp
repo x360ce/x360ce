@@ -349,15 +349,12 @@ void WINAPI HookCoUninitialize()
     if(!iHookThis->GetState(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog(LOG_HOOKCOM,"*CoUninitialize*");
 
-    VOID* func[] =
-    {
-        hGet,
-        hNext,
-        hCreateInstanceEnum,
-        hConnectServer
-    };
+	MH_QueueDisableHook(hGet);
+	MH_QueueDisableHook(hNext);
+	MH_QueueDisableHook(hCreateInstanceEnum);
+	MH_QueueDisableHook(hConnectServer);
 
-    MH_DisableMultipleHooks(func,4);
+	MH_ApplyQueued();
 
     oCoUninitialize();
 }
