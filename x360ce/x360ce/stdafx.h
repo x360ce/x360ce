@@ -42,6 +42,7 @@
 
 // Windows Header Files:
 #include <windows.h>
+#include <xinput.h>
 
 //C++
 #include <iostream>
