@@ -24,14 +24,11 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-
-#include "mutex.h"
+#include <mutex.h>
 
 // Windows headers
 #include <shlwapi.h>
-#include <Shlobj.h>
 #pragma comment(lib, "shlwapi.lib")
-#pragma comment(lib, "Shell32.lib")
 
 // 'identifier' : decorated name length exceeded, name was truncated
 #pragma warning(disable: 4503)
@@ -65,28 +62,54 @@ public:
         m_inimap() 
     {}
 
-	explicit SWIP(const std::string& filename)
+    explicit SWIP(const std::string& filename)
         :m_inipath(),
         m_inimap()
     {
-		this->open(filename);
+        this->open(filename);
     }
 
     virtual ~SWIP(void) 
     {}
 
-	bool open(const std::string& filename)
-	{
-		if (this->internal_open(filename)) return true;
+    bool open(const std::string& filename)
+    {
+        // buffer for WinAPI functions
+        char path[MAX_PATH];
 
-		// buffer for WinAPI functions
-		char path[MAX_PATH];
-		std::string filename_internal(filename);
+        // check is path is relative
+        if(PathIsRelativeA(filename.c_str()))
+        {
+            // if path is relative get full path to ini file
+			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, path, MAX_PATH);
+			if (dwLen > 0 && PathRemoveFileSpecA(path))
+			{
+				PathAppendA(path, filename.c_str());
+				m_inipath = path;
 
-		SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path);
-		filename_internal = path + std::string("\\x360ce\\") + filename_internal;
-		return this->internal_open(filename);
-	}
+				// check if file exist and is not a directory
+				if (PathFileExistsA(m_inipath.c_str())
+					&& PathIsDirectoryA(m_inipath.c_str()) == FALSE)
+				{
+					return m_is_open = this->populate_ini();
+				}
+			}
+			else return m_is_open = false;
+        }
+        else
+        {
+            // if path is absolute copy path
+            m_inipath = filename;
+
+            // check if file exist and is not a directory
+            if(PathFileExistsA(m_inipath.c_str()) 
+                && PathIsDirectoryA(m_inipath.c_str()) == FALSE)
+            {
+				return m_is_open = this->populate_ini();
+            }
+        }
+		return m_is_open = false;
+    }
 
 	bool is_open() const
 	{
@@ -257,61 +280,16 @@ public:
     }
 
 private:
-	bool internal_open(const std::string& filename)
-	{
-		// check is path is relative
-		if (PathIsRelativeA(filename.c_str()))
-		{
-			// buffer for WinAPI functions
-			char path[MAX_PATH];
-
-			// if path is relative get full path to ini file
-			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, path, MAX_PATH);
-			if (dwLen > 0 && PathRemoveFileSpecA(path))
-			{
-				PathAppendA(path, filename.c_str());
-				m_inipath = path;
-
-				// check if file exist and is not a directory
-				if (PathFileExistsA(m_inipath.c_str())
-					&& PathIsDirectoryA(m_inipath.c_str()) == FALSE)
-				{
-					return m_is_open = this->populate_ini();
-				}
-			}
-			else return m_is_open = false;
-		}
-		else
-		{
-			// if path is absolute copy path
-			m_inipath = filename;
-
-			// check if file exist and is not a directory
-			if (PathFileExistsA(m_inipath.c_str())
-				&& PathIsDirectoryA(m_inipath.c_str()) == FALSE)
-			{
-				return m_is_open = this->populate_ini();
-			}
-		}
-		return m_is_open = false;
-	}
-
     std::string internal_get_string(const std::string& section, const std::string& key) const
     {
         if(m_inimap.empty()) return std::string();
 
-		std::string internal_section = section;
-		std::string internal_key = key;
-
-		std::transform(internal_section.begin(), internal_section.end(), internal_section.begin(), tolower);
-		std::transform(internal_key.begin(), internal_key.end(), internal_key.begin(), tolower);
-
         // find section
-		auto secit = m_inimap.find(internal_section);
+        auto secit = m_inimap.find(section);
         if(secit != m_inimap.end())
         {
             // find key
-			auto keyit = secit->second.find(internal_key);
+            auto keyit = secit->second.find(key);
             if(keyit != secit->second.end())
             {
                 // return value
@@ -433,8 +411,6 @@ private:
 		pos = str->find_last_not_of('"') + 1;
         if( pos != std::string::npos)
 			str->resize(pos);
-
-		std::transform(str->begin(), str->end(), str->begin(), tolower);
 
 		return;
     }

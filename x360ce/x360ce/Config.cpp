@@ -264,12 +264,10 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     if(device.dwUserIndex == (uint32_t)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
 
     strBuf = ini.get_string(section, "ProductGUID");
-	if (strBuf.empty()) LogPrint("ProductGUID is empty");
-	else StringToGUID(device.productid, strBuf.c_str());
+    StringToGUID(device.productid,strBuf.c_str());
 
 	strBuf = ini.get_string(section, "InstanceGUID");
-	if (strBuf.empty()) LogPrint("InstanceGUID is empty");
-	else StringToGUID(device.instanceid, strBuf.c_str());
+    StringToGUID(device.instanceid,strBuf.c_str());
 
     device.useproduct = ini.get_bool(section, "UseProductGUID");
 	device.passthrough = ini.get_bool(section, "PassThrough", 1);
