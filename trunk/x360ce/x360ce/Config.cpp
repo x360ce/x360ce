@@ -170,6 +170,9 @@ void ReadConfig()
 	InitLog(logfilename, con);
 	delete[] logfilename;
 
+	PrintLog(LOG_CORE, "Using config file:");
+	PrintLog(LOG_CORE, "%s", ini.get_inipath().c_str());
+
 	DWORD ver = ini.get_uint("Options", "Version");
 	if (ver != VERSION_CONFIG)
 		PrintLog(LOG_CORE, "WARNING: Configuration file version mismatch detected");

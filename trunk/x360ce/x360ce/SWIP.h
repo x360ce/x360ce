@@ -28,7 +28,9 @@
 
 // Windows headers
 #include <shlwapi.h>
+#include <Shlobj.h>
 #pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "shell32.lib")
 
 // 'identifier' : decorated name length exceeded, name was truncated
 #pragma warning(disable: 4503)
@@ -69,47 +71,26 @@ public:
         this->open(filename);
     }
 
+	bool open(const std::string& filename)
+	{
+		if (this->internal_open(filename)) return false;
+		if (!PathIsRelativeA(filename.c_str())) return false;
+
+		char buffer[MAX_PATH];
+		char path[MAX_PATH];
+		if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path) == S_OK)
+		{
+			PathCombineA(buffer, path, "x360ce");
+			PathCombineA(path, buffer, filename.c_str());
+			if (PathFileExistsA(path) && PathIsDirectoryA(path) == FALSE) return this->internal_open(path);
+			else return false;
+		}
+		return false;
+	}
+
     virtual ~SWIP(void) 
     {}
 
-    bool open(const std::string& filename)
-    {
-        // buffer for WinAPI functions
-        char path[MAX_PATH];
-
-        // check is path is relative
-        if(PathIsRelativeA(filename.c_str()))
-        {
-            // if path is relative get full path to ini file
-			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, path, MAX_PATH);
-			if (dwLen > 0 && PathRemoveFileSpecA(path))
-			{
-				PathAppendA(path, filename.c_str());
-				m_inipath = path;
-
-				// check if file exist and is not a directory
-				if (PathFileExistsA(m_inipath.c_str())
-					&& PathIsDirectoryA(m_inipath.c_str()) == FALSE)
-				{
-					return m_is_open = this->populate_ini();
-				}
-			}
-			else return m_is_open = false;
-        }
-        else
-        {
-            // if path is absolute copy path
-            m_inipath = filename;
-
-            // check if file exist and is not a directory
-            if(PathFileExistsA(m_inipath.c_str()) 
-                && PathIsDirectoryA(m_inipath.c_str()) == FALSE)
-            {
-				return m_is_open = this->populate_ini();
-            }
-        }
-		return m_is_open = false;
-    }
 
 	bool is_open() const
 	{
@@ -280,6 +261,45 @@ public:
     }
 
 private:
+	bool internal_open(const std::string& filename)
+	{
+		// buffer for WinAPI functions
+		char path[MAX_PATH];
+
+		// check is path is relative
+		if (PathIsRelativeA(filename.c_str()))
+		{
+			// if path is relative get full path to ini file
+			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, path, MAX_PATH);
+			if (dwLen > 0 && PathRemoveFileSpecA(path))
+			{
+				PathAppendA(path, filename.c_str());
+				m_inipath = path;
+
+				// check if file exist and is not a directory
+				if (PathFileExistsA(m_inipath.c_str())
+					&& PathIsDirectoryA(m_inipath.c_str()) == FALSE)
+				{
+					return m_is_open = this->populate_ini();
+				}
+			}
+			else return m_is_open = false;
+		}
+		else
+		{
+			// if path is absolute copy path
+			m_inipath = filename;
+
+			// check if file exist and is not a directory
+			if (PathFileExistsA(m_inipath.c_str())
+				&& PathIsDirectoryA(m_inipath.c_str()) == FALSE)
+			{
+				return m_is_open = this->populate_ini();
+			}
+		}
+		return m_is_open = false;
+	}
+
     std::string internal_get_string(const std::string& section, const std::string& key) const
     {
         if(m_inimap.empty()) return std::string();

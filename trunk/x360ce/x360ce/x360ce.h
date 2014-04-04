@@ -20,33 +20,6 @@
 #ifndef _X360CE_H_
 #define _X360CE_H_
 
-// hack for compiling on vs2012/13 without DXSDK by using xinput 1.4
-// macro redifinitions should be fixed
-#if _MSC_VER >= 1700
-#define OLD_WIN32_WINNT _WIN32_WINNT
-
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-
-#define _WIN32_WINNT _WIN32_WINNT_WIN8
-#include <xinput.h>
-
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-
-#define _WIN32_WINNT OLD_WIN32_WINNT
-
-#ifdef WINVER
-#undef WINVER
-#endif
-
-#define WINVER _WIN32_WINNT
-#else
-#include <xinput.h>
-#endif
-
 extern HINSTANCE hThis;
 extern HINSTANCE hNative;
 extern HWND hMsgWnd;
@@ -62,6 +35,7 @@ public:
     {}
     virtual ~XInputEnabled() {};
 };
+
 
 // XInput 1.3 function types
 typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
