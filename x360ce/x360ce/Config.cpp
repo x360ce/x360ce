@@ -235,7 +235,7 @@ void ReadConfig()
             if(vid != 0x045E || pid != 0x28E) pHooks->SetFakePIDVID(MAKELONG(vid,pid));
         }
 
-		DWORD timeout = ini.get_uint("InputHook", "Timeout");
+		DWORD timeout = ini.get_uint("InputHook", "Timeout", 30);
 		pHooks->SetTimeout(timeout);
     }
     // Read pad mappings
