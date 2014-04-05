@@ -202,7 +202,10 @@ public:
 		DWORD* pTimeout = reinterpret_cast<DWORD*>(lpParameter);
 		if (!pTimeout) return 0;
 
+		LogPrint("Waiting for hooks...");
 		Sleep(*pTimeout * 1000);
+
+		LogPrint("Hook timeout");
 		MH_Uninitialize();
 
 		ExitThread(0);
