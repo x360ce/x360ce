@@ -222,6 +222,9 @@ void ReadConfig()
 				hookCheck = ini.get_bool("InputHook", "HookWT");
                 if(hookCheck) pHooks->EnableHook(iHook::HOOK_WT);
 
+				hookCheck = ini.get_bool("InputHook", "HookNoTimeout");
+				if (hookCheck) pHooks->EnableHook(iHook::HOOK_NOTIMEOUT);
+
                 if(pHooks->GetMask()) pHooks->Enable();
             }
         }
