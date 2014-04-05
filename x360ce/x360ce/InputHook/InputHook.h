@@ -30,7 +30,7 @@
 class iHookDevice
 {
 public:
-    iHookDevice(DWORD userindex, GUID productid, GUID instanceid)
+	iHookDevice(DWORD userindex, const GUID& productid, const GUID& instanceid)
         :m_enabled(true)
         ,m_productid(productid)
         ,m_instanceid(instanceid)
@@ -90,6 +90,7 @@ public:
         :m_hookmask(0x80000000)
         ,m_fakepidvid(MAKELONG(0x045E,0x028E))
         ,m_mod(instance)
+		,m_timeout(30)
     {
     }
     virtual ~iHook()
@@ -129,17 +130,17 @@ public:
         m_hookmask |= HOOK_DISABLE;
     }
 
-    inline void EnableHook(const DWORD flag)
+	inline void EnableHook(const DWORD& flag)
     {
         m_hookmask |= flag;
     }
 
-    inline void DisableHook(const DWORD flag)
+	inline void DisableHook(const DWORD& flag)
     {
         m_hookmask &= ~flag;
     }
 
-    inline const bool GetState(const DWORD flag = HOOK_NONE) const
+	inline const bool GetState(const DWORD& flag = HOOK_NONE) const
     {
         if (m_hookmask & HOOK_DISABLE || m_hookmask == HOOK_NONE) return false;
         return (m_hookmask & flag) == flag;
@@ -150,12 +151,12 @@ public:
         return m_hookmask;
     }
 
-    inline void SetMask(const DWORD mask)
+	inline void SetMask(const DWORD& mask)
     {
         m_hookmask = mask;
     }
 
-    inline void SetFakePIDVID(const DWORD pidvid)
+    inline void SetFakePIDVID(const DWORD& pidvid)
     {
         m_fakepidvid = pidvid;
     }
@@ -165,7 +166,12 @@ public:
         return m_fakepidvid;
     }
 
-    inline iHookDevice& GetPadConfig(const DWORD dwUserIndex)
+	inline void SetTimeout(const DWORD& timeout)
+	{
+		m_timeout = timeout;
+	}
+
+	inline iHookDevice& GetPadConfig(const DWORD& dwUserIndex)
     {
         return m_devices.at(dwUserIndex);
     }
@@ -187,6 +193,17 @@ public:
     {
         return m_mod;
     }
+
+	inline static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)
+	{
+		DWORD* pTimeout = reinterpret_cast<DWORD*>(lpParameter);
+		if (!pTimeout) return 0;
+		
+		Sleep(*pTimeout * 1000);
+		MH_Uninitialize();
+
+		ExitThread(0);
+	}
 
     inline void ExecuteHooks()
     {
@@ -218,6 +235,8 @@ public:
             HookWT();
 
         MH_EnableHook(MH_ALL_HOOKS);
+
+		if (m_timeout > 0) m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, (LPVOID*) &m_timeout, NULL, NULL);
     }
 
     void HookDICOM(REFIID riidltf, LPVOID *ppv);
@@ -226,6 +245,8 @@ private:
     DWORD m_hookmask;
     DWORD m_fakepidvid;
     HMODULE m_mod;
+	DWORD m_timeout;
+	HANDLE m_timeout_thread;
 
     std::vector<iHookDevice> m_devices;
 

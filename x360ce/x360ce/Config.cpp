@@ -170,12 +170,12 @@ void ReadConfig()
 	InitLog(logfilename, con);
 	delete[] logfilename;
 
-	PrintLog(LOG_CORE, "Using config file:");
-	PrintLog(LOG_CORE, "%s", ini.get_inipath().c_str());
+	LogPrint("Using config file:");
+	LogPrint("%s", ini.get_inipath().c_str());
 
 	DWORD ver = ini.get_uint("Options", "Version");
 	if (ver != VERSION_CONFIG)
-		PrintLog(LOG_CORE, "WARNING: Configuration file version mismatch detected");
+		LogPrint("WARNING: Configuration file version mismatch detected");
 
     // Simple Game Database support
     // InputHook
@@ -231,6 +231,9 @@ void ReadConfig()
 			DWORD pid = ini.get_uint("InputHook", "FakePID", 0x028E);
             if(vid != 0x045E || pid != 0x28E) pHooks->SetFakePIDVID(MAKELONG(vid,pid));
         }
+
+		DWORD timeout = ini.get_uint("InputHook", "Timeout");
+		pHooks->SetTimeout(timeout);
     }
     // Read pad mappings
     for (DWORD i = 0; i < 4; ++i)
