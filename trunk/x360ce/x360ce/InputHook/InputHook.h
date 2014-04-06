@@ -86,10 +86,9 @@ private:
 	recursive_mutex m_mutex;
 
 public:
-	iHook(HMODULE instance)
+	iHook()
 		:m_hookmask(0x80000000)
 		, m_fakepidvid(MAKELONG(0x045E, 0x028E))
-		, m_mod(instance)
 		, m_timeout(30)
 	{
 	}
@@ -194,7 +193,7 @@ public:
 
 	inline HMODULE GetEmulator()
 	{
-		return m_mod;
+		return CURRENT_MODULE;
 	}
 
 	inline static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)
@@ -250,7 +249,6 @@ public:
 private:
 	DWORD m_hookmask;
 	DWORD m_fakepidvid;
-	HMODULE m_mod;
 	DWORD m_timeout;
 	HANDLE m_timeout_thread;
 

@@ -36,7 +36,6 @@ extern std::vector<Mapping> g_Mappings;
 DWORD startProcessId = NULL;
 DWORD startThreadId = NULL;
 std::string exename;
-HINSTANCE hThis = NULL;
 HINSTANCE hNative = NULL;
 iHook* pHooks = NULL;
 
@@ -79,7 +78,7 @@ VOID ExitInstance()
     PrintLog(LOG_CORE,"Terminating x360ce, bye");
 }
 
-VOID InitInstance(HINSTANCE instance)
+VOID InitInstance()
 {
 #if defined(DEBUG) | defined(_DEBUG)
     int CurrentFlags;
@@ -90,12 +89,11 @@ VOID InitInstance(HINSTANCE instance)
     _CrtSetDbgFlag(CurrentFlags);
 #endif
 
-    hThis = instance;
     startThreadId = GetCurrentThreadId();
     startProcessId = GetCurrentProcessId();
     exename = ModuleFileNameA();
 
-    pHooks = new iHook(instance);
+    pHooks = new iHook();
     ReadConfig();
 
 	LogPrintConsole(X360CELEGALNOTICE);
@@ -124,7 +122,7 @@ extern "C" BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPV
     {
     case DLL_PROCESS_ATTACH:
         DisableThreadLibraryCalls(hModule);
-        InitInstance(hModule);
+        InitInstance();
         break;
 
     case DLL_PROCESS_DETACH:

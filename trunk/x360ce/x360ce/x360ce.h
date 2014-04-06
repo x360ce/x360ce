@@ -20,7 +20,6 @@
 #ifndef _X360CE_H_
 #define _X360CE_H_
 
-extern HINSTANCE hThis;
 extern HINSTANCE hNative;
 extern HWND hMsgWnd;
 

@@ -77,7 +77,7 @@ VOID CreateMsgWnd()
                   CW_USEDEFAULT,		// default height
                   HWND_MESSAGE,		// message-only window
                   NULL,				// no class menu
-                  hThis,	// handle to application instance
+                  CURRENT_MODULE,	// handle to application instance
                   NULL);				// no window-creation data
 
     if(!hMsgWnd) PrintLog(LOG_CORE,"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
@@ -114,7 +114,7 @@ bool XInputInitialize()
 
     std::wstring str(buffer);
     str.append(L"\\");
-    str.append(ModuleFileNameW(hThis));
+    str.append(ModuleFileNameW(CURRENT_MODULE));
 
     bool bHookLL = false;
     if(pHooks)
