@@ -28,9 +28,7 @@
 #include "mutex.h"
 
 extern iHook* pHooks;
-
-INT init[4] = {NULL};
-WORD lastforce = 0;
+DInputManager dinput;
 std::vector<DInputDevice> g_Devices;
 
 BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,VOID* pContext )
@@ -90,9 +88,7 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
     HRESULT hr=E_FAIL;
     HRESULT coophr=E_FAIL;
 
-    static DInputManager dinput;
-
-    if(FAILED(dinput.Init(hThis)))
+    if(FAILED(dinput.Init()))
     {
         PrintLog(LOG_CORE,"DirectInput cannot be initialized");
         MessageBox(NULL,L"DirectInput cannot be initialized",L"x360ce - Error",MB_ICONERROR);
@@ -126,9 +122,6 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         }
     }
     else hr = dinput.Get()->CreateDevice( device.productid,&device.device, NULL );
-
-    if(bHookSA) pHooks->EnableHook(iHook::HOOK_SA);
-    if(bHookDI) pHooks->EnableHook(iHook::HOOK_DI);
 
     if(FAILED(hr))
     {
@@ -193,6 +186,9 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         device.useforce = 0;
 
     hr = device.device->Acquire();
+
+	if (bHookSA) pHooks->EnableHook(iHook::HOOK_SA);
+	if (bHookDI) pHooks->EnableHook(iHook::HOOK_DI);
 
     return hr;
 }
