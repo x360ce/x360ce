@@ -25,7 +25,11 @@
 #include <MinHook.h>
 #include "Logger.h"
 
+#if _MSC_VER < 1700
 #include "mutex.h"
+#else
+#include <mutex>
+#endif
 
 class iHookDevice
 {
@@ -83,7 +87,11 @@ private:
 class iHook
 {
 private:
+#if _MSC_VER < 1700
 	recursive_mutex m_mutex;
+#else
+	std::mutex m_mutex;
+#endif
 
 public:
 	iHook()
@@ -94,7 +102,11 @@ public:
 	}
 	virtual ~iHook()
 	{
+#if _MSC_VER < 1700
 		lock_guard lock(m_mutex);
+#else
+		std::lock_guard<std::mutex> lock(m_mutex);
+#endif
 		MH_Uninitialize();
 		m_devices.clear();
 
@@ -218,7 +230,11 @@ public:
 			return;
 		}
 
+#if _MSC_VER < 1700
 		lock_guard lock(m_mutex);
+#else
+		std::lock_guard<std::mutex> lock(m_mutex);
+#endif
 
 		PrintLog("InputHook starting with mask 0x%08X", m_hookmask);
 

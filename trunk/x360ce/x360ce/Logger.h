@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <string>
 #include <memory>
-#include <mutex>
 
 #include <io.h>
 #include <fcntl.h> 
@@ -15,8 +14,11 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-// Local headers
+#if _MSC_VER < 1700
+#include "mutex.h"
+#else
 #include <mutex>
+#endif
 
 // warning C4127: conditional expression is constant
 #pragma warning(disable: 4127)
@@ -84,8 +86,8 @@ public:
 		{
 			int hConHandle;
 			intptr_t lStdHandle;
-			
-			lStdHandle = (intptr_t) GetStdHandle(STD_OUTPUT_HANDLE);
+
+			lStdHandle = (intptr_t)GetStdHandle(STD_OUTPUT_HANDLE);
 			hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 
 			m_console = _fdopen(hConHandle, "w");
@@ -109,28 +111,31 @@ public:
 		bool con = m_console != nullptr;
 		if ((log || con) && format)
 		{
+#if _MSC_VER < 1700
+			lock_guard lock(m_mtx);
+#else
 			std::lock_guard<std::mutex> lock(m_mtx);
-
-			static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
+#endif
+			static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]";
 			if (stamp)
 			{
-				if (con) printf(stamp);
-				if (log) fprintf(m_file, stamp);
+				if (con) puts(stamp);
+				if (log) { fputs(stamp, m_file); putc('\n', m_file); }
 				stamp = nullptr;
 			}
 
 			GetLocalTime(&m_systime);
-			if (con) { 
+			if (con) {
 				printf_s("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
 					m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
-				vprintf_s(format, vaargs); 
+				vprintf_s(format, vaargs);
 				putc('\n', stdout);
 			}
 			if (log) {
 				fprintf_s(m_file, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
 					m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
 				vfprintf_s(m_file, format, vaargs);
-				putc('\n', m_file);  
+				putc('\n', m_file);
 				fflush(m_file);
 			}
 		}
@@ -150,8 +155,12 @@ private:
 	FILE* m_console;
 	FILE* m_file;
 
+#if _MSC_VER < 1700
+	recursive_mutex m_mtx;
+#else
 	std::mutex m_mtx;
-	
+#endif
+
 	Logger()
 	{
 		m_file = nullptr;
