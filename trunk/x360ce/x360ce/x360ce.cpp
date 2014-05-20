@@ -22,7 +22,7 @@
 #include "Misc.h"
 #include "x360ce.h"
 #include "Config.h"
-#include "Log.h"
+#include "Logger.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
 
@@ -54,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             SAFE_DELETE(pHooks);
             if(hNative)
             {
-                PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative).c_str());
+                PrintLog("Unloading %s",ModuleFullPathA(hNative).c_str());
                 FreeLibrary(hNative);
                 hNative = NULL;
             }
@@ -68,8 +68,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 VOID CreateMsgWnd()
 {
     hMsgWnd = CreateWindow(
-                  L"Message",	// name of window class
-                  L"x360ce",			// title-bar std::string
+                  "Message",	// name of window class
+                  "x360ce",			// title-bar std::string
                   WS_TILED,			// normal window
                   CW_USEDEFAULT,		// default horizontal position
                   CW_USEDEFAULT,		// default vertical position
@@ -80,7 +80,7 @@ VOID CreateMsgWnd()
                   CURRENT_MODULE,	// handle to application instance
                   NULL);				// no window-creation data
 
-    if(!hMsgWnd) PrintLog(LOG_CORE,"CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+    if(!hMsgWnd) PrintLog("CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
     else oldWndProc = (WNDPROC) SetWindowLongPtr(hMsgWnd,GWLP_WNDPROC,(LONG_PTR) WndProc);
 }
 
@@ -123,7 +123,7 @@ bool XInputInitialize()
         if(bHookLL) pHooks->DisableHook(iHook::HOOK_LL);
     }
 
-    PrintLog(LOG_CORE,"Loading %ls",str.c_str());
+    PrintLog("Loading %ls",str.c_str());
     hNative = LoadLibraryW(str.c_str());
     if(bHookLL) pHooks->EnableHook(iHook::HOOK_LL);
 
@@ -131,7 +131,7 @@ bool XInputInitialize()
     {
         HRESULT hr = GetLastError();
         swprintf_s(buffer,L"Cannot load %s error: 0x%x", str.c_str(), hr);
-        PrintLog(LOG_CORE,"%s", buffer);
+        PrintLog("%s", buffer);
         MessageBoxW(NULL,buffer,L"Error",MB_ICONERROR);
         ExitProcess(hr);
     }
@@ -158,22 +158,22 @@ bool XInputInitialize()
 
 static void DeviceInitialize(DInputDevice& device)
 {
-    PrintLog(LOG_CORE,"[PAD%d] Starting",device.dwUserIndex+1);
-    PrintLog(LOG_CORE,"[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
+    PrintLog("[PAD%d] Starting",device.dwUserIndex+1);
+    PrintLog("[PAD%d] Initializing as UserIndex %d",device.dwUserIndex+1,device.dwUserIndex);
 
     HRESULT hr = InitDirectInput(hMsgWnd,device);
-    if(FAILED(hr)) PrintLog(LOG_CORE,"[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
+    if(FAILED(hr)) PrintLog("[PAD%d] Fail with 0x%08X",device.dwUserIndex+1,hr);
 
     if(SUCCEEDED(hr)) 
     {
-        PrintLog(LOG_CORE,"[PAD%d] Done",device.dwUserIndex+1);
+        PrintLog("[PAD%d] Done",device.dwUserIndex+1);
         if(g_bInitBeep) MessageBeep(MB_OK);
     }
 }
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-    //PrintLog(LOG_XINPUT,"XInputGetState");
+    //PrintLog("XInputGetState");
     if(g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
@@ -195,7 +195,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
         hr = UpdateState(device);
 
 #if defined(DEBUG) | defined(_DEBUG)
-    PrintLog(LOG_XINPUT,"UpdateState %d %d",dwUserIndex,hr);
+    PrintLog("UpdateState %d %d",dwUserIndex,hr);
 #endif
 
     if(FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
@@ -538,8 +538,8 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
     XINPUT_VIBRATION &xvib = *pVibration;
 
-    //PrintLog(LOG_XINPUT,"%u",xvib.wLeftMotorSpeed);
-    //PrintLog(LOG_XINPUT,"%u",xvib.wRightMotorSpeed);
+    //PrintLog("%u",xvib.wLeftMotorSpeed);
+    //PrintLog("%u",xvib.wRightMotorSpeed);
 
     if(hMsgWnd == NULL) CreateMsgWnd();
 
@@ -571,12 +571,12 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
     hr = SetDeviceForces(device,wLeftMotorSpeed,FFB_LEFTMOTOR);
 
     if(FAILED(hr))
-        PrintLog(LOG_XINPUT,"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
+        PrintLog("SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
 
     hr = SetDeviceForces(device,wRightMotorSpeed,FFB_RIGHTMOTOR);
 
     if(FAILED(hr))
-        PrintLog(LOG_XINPUT,"SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
+        PrintLog("SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
 
     return ERROR_SUCCESS;
 }
@@ -635,8 +635,8 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
     XInputIsEnabled.bEnabled = (enable != 0);
     XInputIsEnabled.bUseEnabled = true;
 
-    if(enable) PrintLog(LOG_XINPUT,"XInput Enabled");
-    else PrintLog(LOG_XINPUT,"XInput Disabled");
+    if(enable) PrintLog("XInput Enabled");
+    else PrintLog("XInput Disabled");
 
 }
 
@@ -647,7 +647,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputGetDSoundAudioDeviceGuids(dwUserIndex,pDSoundRenderGuid,pDSoundCaptureGuid);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     if(!pDSoundRenderGuid || !pDSoundCaptureGuid || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
 
@@ -694,7 +694,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
     {
-        //PrintLog(LOG_XINPUT,"flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+        //PrintLog("flags: %u, hidcode: %u, unicode: %c, user: %u, vk: 0x%X",pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
         return nXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
     }
 
@@ -811,7 +811,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
         ret = ERROR_SUCCESS;
     }
 
-    //PrintLog(LOG_XINPUT,"ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+    //PrintLog("ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
     return ret;
 }
@@ -831,7 +831,7 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
     if (mapping.guide && ButtonPressed(mapping.guide,device))
         xState.Gamepad.wButtons |= 0x400;
 
-    //PrintLog(LOG_XINPUT,"XInputGetStateEx %u",xstate.Gamepad.wButtons);
+    //PrintLog("XInputGetStateEx %u",xstate.Gamepad.wButtons);
 
     return XInputGetState(dwUserIndex,pState);
 }
@@ -843,7 +843,7 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputWaitForGuideButton(dwUserIndex,dwFlag,pVoid);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     //DInputDevice& device = g_Devices[dwUserIndex];
 
@@ -857,7 +857,7 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputCancelGuideButtonWait(dwUserIndex);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     //DInputDevice& device = g_Devices[dwUserIndex];
 
@@ -871,7 +871,7 @@ extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputCancelGuideButtonWait(dwUserIndex);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     //DInputDevice& device = g_Devices[dwUserIndex];
 
@@ -885,7 +885,7 @@ extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRende
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputGetAudioDeviceIds(dwUserIndex,pRenderDeviceId,pRenderCount,pCaptureDeviceId,pCaptureCount);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     return ERROR_SUCCESS;
 }
@@ -897,7 +897,7 @@ extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XI
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputGetBaseBusInformation(dwUserIndex,pBusinfo);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     return ERROR_SUCCESS;
 }
@@ -911,7 +911,7 @@ extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD unk1, DWORD dwUserIndex, D
     if((dwUserIndex+1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
         return nXInputGetCapabilitiesEx(unk1,dwUserIndex,dwFlags,pCapabilitiesEx);
 
-    PrintLog(LOG_XINPUT,"%s %s","Call to unimplemented function", __FUNCTION__);
+    PrintLog("%s %s","Call to unimplemented function", __FUNCTION__);
 
     return ERROR_SUCCESS;
 }

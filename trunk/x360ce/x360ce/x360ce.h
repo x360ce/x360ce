@@ -20,42 +20,50 @@
 #ifndef _X360CE_H_
 #define _X360CE_H_
 
+static const char * legal_notice = {
+	"\nx360ce - XBOX 360 Controller emulator\n"
+	"https://code.google.com/p/x360ce/\n\n"
+	"Copyright (C) 2013 Robert Krawczyk\n\n"
+	"This program is free software you can redistribute it and/or modify it under\n"
+	"the terms of the GNU Lesser General Public License as published by the Free\n"
+	"Software Foundation, either version 3 of the License, or any later version.\n" };
+
 extern HINSTANCE hNative;
 extern HWND hMsgWnd;
 
 class XInputEnabled
 {
 public:
-    bool bEnabled;
-    bool bUseEnabled;
-    XInputEnabled():
-        bEnabled(false),
-        bUseEnabled(false)
-    {}
-    virtual ~XInputEnabled() {};
+	bool bEnabled;
+	bool bUseEnabled;
+	XInputEnabled() :
+		bEnabled(false),
+		bUseEnabled(false)
+	{}
+	virtual ~XInputEnabled() {};
 };
 
 
 // XInput 1.3 function types
-typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
-typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
-typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
-typedef VOID  (WINAPI* XInputEnable_t)(BOOL enable);
-typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
-typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
-typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
+typedef DWORD(WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
+typedef DWORD(WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+typedef DWORD(WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
+typedef VOID(WINAPI* XInputEnable_t)(BOOL enable);
+typedef DWORD(WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
+typedef DWORD(WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
+typedef DWORD(WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
 
 // XInput 1.3 undocumented function types
-typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState); // 100
-typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid); // 101
-typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex); // 102
-typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex); // 103
+typedef DWORD(WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState); // 100
+typedef DWORD(WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid); // 101
+typedef DWORD(WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex); // 102
+typedef DWORD(WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex); // 103
 
 // XInput 1.4 function types
-typedef DWORD (WINAPI* XInputGetAudioDeviceIds_t)(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount);
+typedef DWORD(WINAPI* XInputGetAudioDeviceIds_t)(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount);
 
 // XInput 1.4 undocumented functions types
-typedef DWORD (WINAPI* XInputGetBaseBusInformation_t)(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo); // 104
-typedef DWORD (WINAPI* XInputGetCapabilitiesEx_t)(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx); // 108
+typedef DWORD(WINAPI* XInputGetBaseBusInformation_t)(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo); // 104
+typedef DWORD(WINAPI* XInputGetCapabilitiesEx_t)(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx); // 108
 
 #endif

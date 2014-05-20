@@ -23,7 +23,7 @@
 #include <CGuid.h>
 #include <vector>
 #include <MinHook.h>
-#include "Log.h"
+#include "Logger.h"
 
 #include "mutex.h"
 
@@ -201,10 +201,10 @@ public:
 		DWORD* pTimeout = reinterpret_cast<DWORD*>(lpParameter);
 		if (!pTimeout) return 0;
 
-		LogPrint("Waiting for hooks...");
+		PrintLog("Waiting for hooks...");
 		Sleep(*pTimeout * 1000);
 
-		LogPrint("Hook timeout");
+		PrintLog("Hook timeout");
 		MH_Uninitialize();
 
 		ExitThread(0);
@@ -220,7 +220,7 @@ public:
 
 		lock_guard lock(m_mutex);
 
-		PrintLog(LOG_IHOOK, "InputHook starting with mask 0x%08X", m_hookmask);
+		PrintLog("InputHook starting with mask 0x%08X", m_hookmask);
 
 		MH_Initialize();
 

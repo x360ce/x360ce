@@ -19,7 +19,7 @@
 
 #include "stdafx.h"
 #include "globals.h"
-#include "Log.h"
+#include "Logger.h"
 #include "Misc.h"
 
 #include <Setupapi.h>
@@ -50,7 +50,7 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
 {
     BOOL ret = oSetupDiGetDeviceInstanceIdW(DeviceInfoSet,DeviceInfoData,DeviceInstanceId,DeviceInstanceIdSize,RequiredSize);
     if(!iHookThis->GetState(iHook::HOOK_SA)) return ret;
-    PrintLog(LOG_HOOKSA,"*SetupDiGetDeviceInstanceIdW*");
+    PrintLog("*SetupDiGetDeviceInstanceIdW*");
 
     if(GetLastError() == ERROR_INSUFFICIENT_BUFFER) return ret;
 
@@ -93,11 +93,11 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
 
                     if(DeviceInstanceIdSize > wcslen(tempstr))
                     {
-                        PrintLog(LOG_HOOKSA,"Device string change:",DeviceInstanceId);
-                        PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
+                        PrintLog("Device string change:",DeviceInstanceId);
+                        PrintLog("%ls",DeviceInstanceId);
                         wcscpy_s(DeviceInstanceId,DeviceInstanceIdSize,tempstr);
                         if(RequiredSize) *RequiredSize = (DWORD) wcslen(tempstr)+1;
-                        PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
+                        PrintLog("%ls",DeviceInstanceId);
                         continue;
                     }
                 }
@@ -119,11 +119,11 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
 
                     if(DeviceInstanceIdSize > wcslen(tempstr))
                     {
-                        PrintLog(LOG_HOOKSA,"Device string change:",DeviceInstanceId);
-                        PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
+                        PrintLog("Device string change:",DeviceInstanceId);
+                        PrintLog("%ls",DeviceInstanceId);
                         wcscpy_s(DeviceInstanceId,DeviceInstanceIdSize,tempstr);
                         if(RequiredSize) *RequiredSize = (DWORD) wcslen(tempstr)+1;
-                        PrintLog(LOG_HOOKSA,"%ls",DeviceInstanceId);
+                        PrintLog("%ls",DeviceInstanceId);
                         continue;
                     }
                 }
@@ -137,10 +137,10 @@ BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void iHook::HookSA()
 {
-    PrintLog(LOG_IHOOK,"Hooking SetupApi");
+    PrintLog("Hooking SetupApi");
     iHookThis = this;
 
     if(MH_CreateHook(SetupDiGetDeviceInstanceIdW,HookSetupDiGetDeviceInstanceIdW,reinterpret_cast<void**>(&oSetupDiGetDeviceInstanceIdW)) == MH_OK)
-        PrintLog(LOG_IHOOK,"Hooking SetupDiGetDeviceInstanceId");
+        PrintLog("Hooking SetupDiGetDeviceInstanceId");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

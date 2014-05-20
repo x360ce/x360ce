@@ -27,10 +27,6 @@
 #define VC_EXTRALEAN
 #define STRICT
 
-#ifndef UNICODE
-#define UNICODE
-#endif
-
 #ifdef DEBUG
 #define _SECURE_SCL 1
 #include <crtdbg.h>
@@ -52,4 +48,9 @@
 #include <algorithm>
 
 // Portable STDINT
+
+#if _MSC_VER < 1700
 #include "pstdint.h"
+#else
+#include <stdint.h>
+#endif

@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "globals.h"
 #include "SWIP.h"
-#include "Log.h"
+#include "Logger.h"
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
@@ -143,8 +143,8 @@ DWORD ReadGameDatabase()
 
     if(ini.is_open())
     {
-        PrintLog(LOG_CORE,"Using game database file:");
-        PrintLog(LOG_CORE,"%s", ini.get_inipath().c_str());
+        PrintLog("Using game database file:");
+        PrintLog("%s", ini.get_inipath().c_str());
     }
     return ini.get_uint(exename, "HookMask");
 }
@@ -161,21 +161,21 @@ void ReadConfig()
 
 	bool file = ini.get_bool("Options", "Log");
 	bool con = ini.get_bool("Options", "Console");
-	char* logfilename = NULL;
+
+	if (con) LogConsole("x360ce", legal_notice);
 	if (file)
 	{
-		logfilename = new char[MAX_PATH];
-		sprintf_s(logfilename, MAX_PATH, "x360ce_%s_%u.log", exename.c_str(), GetTickCount());
+		char logfilename[MAX_PATH];
+		sprintf_s(logfilename, "x360ce_%s_%u.log", exename.c_str(), GetTickCount());
+		LogFile(logfilename);
 	}
-	InitLog(logfilename, con);
-	delete[] logfilename;
 
-	LogPrint("Using config file:");
-	LogPrint("%s", ini.get_inipath().c_str());
+	PrintLog("Using config file:");
+	PrintLog("%s", ini.get_inipath().c_str());
 
 	DWORD ver = ini.get_uint("Options", "Version");
 	if (ver != VERSION_CONFIG)
-		LogPrint("WARNING: Configuration file version mismatch detected");
+		PrintLog("WARNING: Configuration file version mismatch detected");
 
     // Simple Game Database support
     // InputHook
@@ -273,11 +273,11 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     if(device.dwUserIndex == (uint32_t)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
 
     strBuf = ini.get_string(section, "ProductGUID");
-	if (strBuf.empty()) LogPrint("ProductGUID is empty");
+	if (strBuf.empty()) PrintLog("ProductGUID is empty");
     else StringToGUID(device.productid,strBuf.c_str());
 
 	strBuf = ini.get_string(section, "InstanceGUID");
-	if (strBuf.empty()) LogPrint("InstanceGUID is empty");
+	if (strBuf.empty()) PrintLog("InstanceGUID is empty");
     else StringToGUID(device.instanceid,strBuf.c_str());
 
     device.useproduct = ini.get_bool(section, "UseProductGUID");
