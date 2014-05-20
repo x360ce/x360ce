@@ -27,17 +27,25 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
 #endif
 
+#if _MSC_VER < 1700
+#define INITIALIZE_LOGGER std::unique_ptr<Logger> Logger::m_instance;
+#else
 #define INITIALIZE_LOGGER std::unique_ptr<Logger> Logger::m_instance; std::once_flag Logger::m_onceFlag;
+#endif
 
 class Logger
 {
 public:
 	static Logger& GetInstance()
 	{
+#if _MSC_VER < 1700
+		m_instance.reset(new Logger);
+#else
 		std::call_once(m_onceFlag,
 			[] {
 			m_instance.reset(new Logger);
 		});
+#endif
 		return *m_instance.get();
 	}
 
@@ -129,7 +137,9 @@ public:
 	}
 private:
 	static std::unique_ptr<Logger> m_instance;
+#if _MSC_VER >= 1700
 	static std::once_flag m_onceFlag;
+#endif
 
 	// block constructors
 	Logger(const Logger& src);
