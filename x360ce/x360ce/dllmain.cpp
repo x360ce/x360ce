@@ -36,91 +36,87 @@ extern std::vector<Mapping> g_Mappings;
 DWORD startProcessId = NULL;
 DWORD startThreadId = NULL;
 std::string exename;
-HINSTANCE hNative = NULL;
 iHook* pHooks = NULL;
 
 INITIALIZE_LOGGER;
 
 VOID InstallInputHooks()
 {
-    if(pHooks)
-    {
-        for(auto device = g_Devices.begin(); device != g_Devices.end(); ++device)
-            pHooks->AddHook(device->dwUserIndex, device->productid, device->instanceid);
-    }
-    pHooks->ExecuteHooks();
+	if (pHooks)
+	{
+		for (auto & device = g_Devices.begin(); device != g_Devices.end(); ++device)
+			pHooks->AddHook(device->dwUserIndex, device->productid, device->instanceid);
+	}
+	pHooks->ExecuteHooks();
 }
 
-VOID ExitInstance()
+void __cdecl ExitInstance()
 {
-    if(IsWindow(hMsgWnd))
-    {
-        if(DestroyWindow(hMsgWnd)) PrintLog("Message window destroyed");
-    }
-    else
-    {
-        SAFE_DELETE(pHooks);
-        if(hNative)
-        {
-            PrintLog("Unloading %s",ModuleFullPathA(hNative).c_str());
-            FreeLibrary(hNative);
-            hNative = NULL;
-        }
-    }
+	if (hMsgWnd && DestroyWindow(hMsgWnd)) 
+		PrintLog("Message window destroyed");
 
-    PrintLog("Terminating x360ce, bye");
+	SAFE_DELETE(pHooks);
+	if (xinput.dll)
+	{
+		PrintLog("Unloading %s", ModuleFullPathA(xinput.dll).c_str());
+		FreeLibrary(xinput.dll);
+		xinput.dll = NULL;
+	}
+
+	PrintLog("Terminating x360ce, bye");
 }
 
 VOID InitInstance()
 {
 #if defined(DEBUG) | defined(_DEBUG)
-    int CurrentFlags;
-    CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-    CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
-    CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
-    CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
-    _CrtSetDbgFlag(CurrentFlags);
+	int CurrentFlags;
+	CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
+	CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
+	CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
+	_CrtSetDbgFlag(CurrentFlags);
 #endif
 
-    startThreadId = GetCurrentThreadId();
-    startProcessId = GetCurrentProcessId();
-    exename = ModuleFileNameA();
+	atexit(ExitInstance);
 
-    pHooks = new iHook();
-    ReadConfig();
+	startThreadId = GetCurrentThreadId();
+	startProcessId = GetCurrentProcessId();
+	exename = ModuleFileNameA();
 
-    PrintLog("x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
-    PrintLog("%s",windowsVersionName().c_str());
+	pHooks = new iHook();
+	ReadConfig();
 
-    InstallInputHooks();
+	PrintLog("x360ce %s [%s - %d]", PRODUCT_VERSION, exename.c_str(), startProcessId);
+	PrintLog("%s", windowsVersionName().c_str());
+
+	InstallInputHooks();
 }
 
 extern "C" VOID WINAPI reset()
 {
-    PrintLog("%s", "Restarting");
-    SAFE_DELETE(pHooks);
+	PrintLog("%s", "Restarting");
+	SAFE_DELETE(pHooks);
 
-    g_Devices.clear();
-    g_Mappings.clear();
+	g_Devices.clear();
+	g_Mappings.clear();
 
-    ReadConfig();
+	ReadConfig();
 }
 
-extern "C" BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-    UNREFERENCED_PARAMETER(lpReserved);
+	UNREFERENCED_PARAMETER(lpReserved);
 
-    switch(ul_reason_for_call)
-    {
-    case DLL_PROCESS_ATTACH:
-        DisableThreadLibraryCalls(hModule);
-        InitInstance();
-        break;
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		DisableThreadLibraryCalls(hModule);
+		InitInstance();
+		break;
 
-    case DLL_PROCESS_DETACH:
-        ExitInstance();
-        break;
-    }
+	case DLL_PROCESS_DETACH:
+		break;
+	}
 
-    return TRUE;
+	return TRUE;
 }

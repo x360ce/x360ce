@@ -25,7 +25,12 @@
 #include "Config.h"
 #include "DirectInput.h"
 #include "InputHook\InputHook.h"
+
+#if _MSC_VER < 1700
 #include "mutex.h"
+#else
+#include <mutex>
+#endif
 
 extern iHook* pHooks;
 DInputManager dinput;
@@ -95,8 +100,13 @@ HRESULT InitDirectInput( HWND hDlg, DInputDevice& device )
         ExitProcess(hr);
     }
 
-    static recursive_mutex mutex;
+#if _MSC_VER < 1700
+	static recursive_mutex mutex;
 	lock_guard lock(mutex);
+#else
+	static std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
+#endif
 
     PrintLog("[PAD%d] Creating device",device.dwUserIndex+1);
 
@@ -229,8 +239,13 @@ HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
         return S_OK;
     }
 
-    static recursive_mutex mutex;
+#if _MSC_VER < 1700
+	static recursive_mutex mutex;
 	lock_guard lock(mutex);
+#else
+	static std::mutex mutex;
+	std::lock_guard<std::mutex> lock(mutex);
+#endif
 		
     if(device.ff.type == 1) SetDeviceForcesEjocys(device,force,motor);
     else if(device.ff.type == 2) SetDeviceForcesNew(device,force,motor);

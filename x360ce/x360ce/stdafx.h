@@ -21,6 +21,9 @@
 
 #include "targetver.h"
 
+#pragma warning(disable: 4503)
+#pragma warning(disable: 4239)
+
 #define _BIND_TO_CURRENT_CRT_VERSION 1
 
 #define WIN32_LEAN_AND_MEAN
