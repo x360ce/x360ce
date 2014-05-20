@@ -19,7 +19,13 @@
 #define _SWIP_H_
 
 // C++ headers
-#include <pstdint.h>
+
+#if _MSC_VER < 1700
+#include "pstdint.h"
+#else
+#include <stdint.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <algorithm>

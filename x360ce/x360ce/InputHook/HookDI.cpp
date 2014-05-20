@@ -25,7 +25,7 @@
 
 #include "InputHook.h"
 
-#include "Log.h"
+#include "Logger.h"
 #include "Misc.h"
 
 
@@ -83,18 +83,18 @@ LPDIENUMDEVICESCALLBACKW lpTrueCallbackW = NULL;
 BOOL FAR PASCAL HookEnumCallbackA(const DIDEVICEINSTANCEA* pInst, VOID* pContext)
 {
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return lpTrueCallbackA(pInst, pContext);
-	PrintLog(LOG_HOOKDI, "*EnumCallbackA*");
+	PrintLog("*EnumCallbackA*");
 
 	// Fast return if keyboard or mouse
 	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD))
 	{
-		PrintLog(LOG_HOOKDI, "Keyboard detected - skipping");
+		PrintLog("Keyboard detected - skipping");
 		return lpTrueCallbackA(pInst, pContext);
 	}
 
 	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE))
 	{
-		PrintLog(LOG_HOOKDI, "Mouse detected - skipping");
+		PrintLog("Mouse detected - skipping");
 		return lpTrueCallbackA(pInst, pContext);
 	}
 
@@ -119,9 +119,9 @@ BOOL FAR PASCAL HookEnumCallbackA(const DIDEVICEINSTANCEA* pInst, VOID* pContext
 					HookInst.guidProduct.Data1 = iHookThis->GetFakePIDVID();
 					strHookguidProduct = GUIDtoStringA(HookInst.guidProduct);
 
-					PrintLog(LOG_HOOKDI, "%s", "GUID change:");
-					PrintLog(LOG_HOOKDI, "%s", strTrueguidProduct.c_str());
-					PrintLog(LOG_HOOKDI, "%s", strHookguidProduct.c_str());
+					PrintLog("%s", "GUID change:");
+					PrintLog("%s", strTrueguidProduct.c_str());
+					PrintLog("%s", strHookguidProduct.c_str());
 				}
 
 				// This should not be required
@@ -137,13 +137,13 @@ BOOL FAR PASCAL HookEnumCallbackA(const DIDEVICEINSTANCEA* pInst, VOID* pContext
 					strcpy_s(HookInst.tszProductName, "XBOX 360 For Windows (Controller)");
 					strcpy_s(HookInst.tszInstanceName, "XBOX 360 For Windows (Controller)");
 
-					PrintLog(LOG_HOOKDI, "%s", "Product Name change:");
-					PrintLog(LOG_HOOKDI, "\"%s\"", OldProductName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%s\"", HookInst.tszProductName);
+					PrintLog("%s", "Product Name change:");
+					PrintLog("\"%s\"", OldProductName.c_str());
+					PrintLog("\"%s\"", HookInst.tszProductName);
 
-					PrintLog(LOG_HOOKDI, "%s", "Instance Name change:");
-					PrintLog(LOG_HOOKDI, "\"%s\"", OldInstanceName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%s\"", HookInst.tszInstanceName);
+					PrintLog("%s", "Instance Name change:");
+					PrintLog("\"%s\"", OldInstanceName.c_str());
+					PrintLog("\"%s\"", HookInst.tszInstanceName);
 				}
 
 				return lpTrueCallbackA(&HookInst, pContext);
@@ -159,18 +159,18 @@ BOOL FAR PASCAL HookEnumCallbackA(const DIDEVICEINSTANCEA* pInst, VOID* pContext
 BOOL FAR PASCAL HookEnumCallbackW(const DIDEVICEINSTANCEW* pInst, VOID* pContext)
 {
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return lpTrueCallbackW(pInst, pContext);
-	PrintLog(LOG_HOOKDI, "*EnumCallbackW*");
+	PrintLog("*EnumCallbackW*");
 
 	// Fast return if keyboard or mouse
 	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD))
 	{
-		PrintLog(LOG_HOOKDI, "Keyboard detected - skipping");
+		PrintLog("Keyboard detected - skipping");
 		return lpTrueCallbackW(pInst, pContext);
 	}
 
 	if (((pInst->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE))
 	{
-		PrintLog(LOG_HOOKDI, "Mouse detected - skipping");
+		PrintLog("Mouse detected - skipping");
 		return lpTrueCallbackW(pInst, pContext);
 	}
 
@@ -195,9 +195,9 @@ BOOL FAR PASCAL HookEnumCallbackW(const DIDEVICEINSTANCEW* pInst, VOID* pContext
 					HookInst.guidProduct.Data1 = iHookThis->GetFakePIDVID();
 					strHookguidProduct = GUIDtoStringW(HookInst.guidProduct);
 
-					PrintLog(LOG_HOOKDI, "%s", "GUID change:");
-					PrintLog(LOG_HOOKDI, "%ls", strTrueguidProduct.c_str());
-					PrintLog(LOG_HOOKDI, "%ls", strHookguidProduct.c_str());
+					PrintLog("%s", "GUID change:");
+					PrintLog("%ls", strTrueguidProduct.c_str());
+					PrintLog("%ls", strHookguidProduct.c_str());
 				}
 
 				// This should not be required
@@ -213,13 +213,13 @@ BOOL FAR PASCAL HookEnumCallbackW(const DIDEVICEINSTANCEW* pInst, VOID* pContext
 					wcscpy_s(HookInst.tszProductName, L"XBOX 360 For Windows (Controller)");
 					wcscpy_s(HookInst.tszInstanceName, L"XBOX 360 For Windows (Controller)");
 
-					PrintLog(LOG_HOOKDI, "%s", "Product Name change:");
-					PrintLog(LOG_HOOKDI, "\"%ls\"", OldProductName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%ls\"", HookInst.tszProductName);
+					PrintLog("%s", "Product Name change:");
+					PrintLog("\"%ls\"", OldProductName.c_str());
+					PrintLog("\"%ls\"", HookInst.tszProductName);
 
-					PrintLog(LOG_HOOKDI, "%s", "Instance Name change:");
-					PrintLog(LOG_HOOKDI, "\"%ls\"", OldInstanceName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%ls\"", HookInst.tszInstanceName);
+					PrintLog("%s", "Instance Name change:");
+					PrintLog("\"%ls\"", OldInstanceName.c_str());
+					PrintLog("\"%ls\"", HookInst.tszInstanceName);
 				}
 
 				return lpTrueCallbackW(&HookInst, pContext);
@@ -236,7 +236,7 @@ HRESULT STDMETHODCALLTYPE HookEnumDevicesA(LPDIRECTINPUT8A This, DWORD dwDevType
 {
 	if (iHookThis->GetState(iHook::HOOK_DI))
 	{
-		PrintLog(LOG_HOOKDI, "*EnumDevicesA*");
+		PrintLog("*EnumDevicesA*");
 
 		if (lpCallback)
 		{
@@ -253,7 +253,7 @@ HRESULT STDMETHODCALLTYPE HookEnumDevicesW(LPDIRECTINPUT8W This, DWORD dwDevType
 {
 	if (iHookThis->GetState(iHook::HOOK_DI))
 	{
-		PrintLog(LOG_HOOKDI, "*EnumDevicesW*");
+		PrintLog("*EnumDevicesW*");
 
 		if (lpCallback)
 		{
@@ -271,7 +271,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA(LPDIRECTINPUTDEVICE8A This, LPDIDEV
 	HRESULT hr = oGetDeviceInfoA(This, pdidi);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*GetDeviceInfoA*");
+	PrintLog("*GetDeviceInfoA*");
 
 	if (hr != NO_ERROR) return hr;
 
@@ -280,13 +280,13 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA(LPDIRECTINPUTDEVICE8A This, LPDIDEV
 		// Fast return if keyboard or mouse
 		if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD))
 		{
-			PrintLog(LOG_HOOKDI, "Keyboard detected - skipping");
+			PrintLog("Keyboard detected - skipping");
 			return hr;
 		}
 
 		if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE))
 		{
-			PrintLog(LOG_HOOKDI, "Mouse detected - skipping");
+			PrintLog("Mouse detected - skipping");
 			return hr;
 		}
 
@@ -303,9 +303,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA(LPDIRECTINPUTDEVICE8A This, LPDIDEV
 					pdidi->guidProduct.Data1 = iHookThis->GetFakePIDVID();
 					strHookguidProduct = GUIDtoStringA(pdidi->guidProduct);
 
-					PrintLog(LOG_HOOKDI, "%s", "GUID change:");
-					PrintLog(LOG_HOOKDI, "%s", strTrueguidProduct.c_str());
-					PrintLog(LOG_HOOKDI, "%s", strHookguidProduct.c_str());
+					PrintLog("%s", "GUID change:");
+					PrintLog("%s", strTrueguidProduct.c_str());
+					PrintLog("%s", strHookguidProduct.c_str());
 				}
 
 				// This should not be required
@@ -321,13 +321,13 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA(LPDIRECTINPUTDEVICE8A This, LPDIDEV
 					strcpy_s(pdidi->tszProductName, "XBOX 360 For Windows (Controller)");
 					strcpy_s(pdidi->tszInstanceName, "XBOX 360 For Windows (Controller)");
 
-					PrintLog(LOG_HOOKDI, "%s", "Product Name change:");
-					PrintLog(LOG_HOOKDI, "\"%s\"", OldProductName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%s\"", pdidi->tszProductName);
+					PrintLog("%s", "Product Name change:");
+					PrintLog("\"%s\"", OldProductName.c_str());
+					PrintLog("\"%s\"", pdidi->tszProductName);
 
-					PrintLog(LOG_HOOKDI, "%s", "Instance Name change:");
-					PrintLog(LOG_HOOKDI, "\"%s\"", OldInstanceName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%s\"", pdidi->tszInstanceName);
+					PrintLog("%s", "Instance Name change:");
+					PrintLog("\"%s\"", OldInstanceName.c_str());
+					PrintLog("\"%s\"", pdidi->tszInstanceName);
 				}
 
 				hr = DI_OK;
@@ -345,7 +345,7 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW(LPDIRECTINPUTDEVICE8W This, LPDIDEV
 	HRESULT hr = oGetDeviceInfoW(This, pdidi);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*GetDeviceInfoW*");
+	PrintLog("*GetDeviceInfoW*");
 
 	if (hr != NO_ERROR) return hr;
 
@@ -354,13 +354,13 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW(LPDIRECTINPUTDEVICE8W This, LPDIDEV
 		// Fast return if keyboard or mouse
 		if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_KEYBOARD))
 		{
-			PrintLog(LOG_HOOKDI, "Keyboard detected - skipping");
+			PrintLog("Keyboard detected - skipping");
 			return hr;
 		}
 
 		if (((pdidi->dwDevType & 0xFF) == DI8DEVTYPE_MOUSE))
 		{
-			PrintLog(LOG_HOOKDI, "Mouse detected - skipping");
+			PrintLog("Mouse detected - skipping");
 			return hr;
 		}
 
@@ -377,9 +377,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW(LPDIRECTINPUTDEVICE8W This, LPDIDEV
 					pdidi->guidProduct.Data1 = iHookThis->GetFakePIDVID();
 					strHookguidProduct = GUIDtoStringW(pdidi->guidProduct);
 
-					PrintLog(LOG_HOOKDI, "%s", "GUID change:");
-					PrintLog(LOG_HOOKDI, "%ls", strTrueguidProduct.c_str());
-					PrintLog(LOG_HOOKDI, "%ls", strHookguidProduct.c_str());
+					PrintLog("%s", "GUID change:");
+					PrintLog("%ls", strTrueguidProduct.c_str());
+					PrintLog("%ls", strHookguidProduct.c_str());
 				}
 
 				// This should not be required
@@ -395,13 +395,13 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW(LPDIRECTINPUTDEVICE8W This, LPDIDEV
 					wcscpy_s(pdidi->tszProductName, L"XBOX 360 For Windows (Controller)");
 					wcscpy_s(pdidi->tszInstanceName, L"XBOX 360 For Windows (Controller)");
 
-					PrintLog(LOG_HOOKDI, "%s", "Product Name change:");
-					PrintLog(LOG_HOOKDI, "\"%ls\"", OldProductName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%ls\"", pdidi->tszProductName);
+					PrintLog("%s", "Product Name change:");
+					PrintLog("\"%ls\"", OldProductName.c_str());
+					PrintLog("\"%ls\"", pdidi->tszProductName);
 
-					PrintLog(LOG_HOOKDI, "%s", "Instance Name change:");
-					PrintLog(LOG_HOOKDI, "\"%ls\"", OldInstanceName.c_str());
-					PrintLog(LOG_HOOKDI, "\"%ls\"", pdidi->tszInstanceName);
+					PrintLog("%s", "Instance Name change:");
+					PrintLog("\"%ls\"", OldInstanceName.c_str());
+					PrintLog("\"%ls\"", pdidi->tszInstanceName);
 				}
 
 				hr = DI_OK;
@@ -419,7 +419,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA(LPDIRECTINPUTDEVICE8A This, REFGUID r
 	HRESULT hr = oGetPropertyA(This, rguidProp, pdiph);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*GetPropertyA*");
+	PrintLog("*GetPropertyA*");
 
 	if (hr != NO_ERROR) return hr;
 
@@ -429,9 +429,9 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA(LPDIRECTINPUTDEVICE8A This, REFGUID r
 		DWORD dwTruePIDVID = reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData;
 
 		reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData = dwHookPIDVID;
-		PrintLog(LOG_HOOKDI, "%s", "VIDPID change:");
-		PrintLog(LOG_HOOKDI, "%08X", dwTruePIDVID);
-		PrintLog(LOG_HOOKDI, "%08X", reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
+		PrintLog("%s", "VIDPID change:");
+		PrintLog("%08X", dwTruePIDVID);
+		PrintLog("%08X", reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
 	}
 
 	if (iHookThis->GetState(iHook::HOOK_NAME) && &rguidProp == &DIPROP_PRODUCTNAME)
@@ -440,9 +440,9 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyA(LPDIRECTINPUTDEVICE8A This, REFGUID r
 		wcscpy_s(TrueName, reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
 
 		swprintf_s(reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz, L"%s", L"XBOX 360 For Windows (Controller)");
-		PrintLog(LOG_HOOKDI, "%s", "Product Name change:");
-		PrintLog(LOG_HOOKDI, "\"%ls\"", TrueName);
-		PrintLog(LOG_HOOKDI, "\"%ls\"", reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
+		PrintLog("%s", "Product Name change:");
+		PrintLog("\"%ls\"", TrueName);
+		PrintLog("\"%ls\"", reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
 	}
 
 	return hr;
@@ -455,7 +455,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW(LPDIRECTINPUTDEVICE8W This, REFGUID r
 	HRESULT hr = oGetPropertyW(This, rguidProp, pdiph);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*GetPropertyW*");
+	PrintLog("*GetPropertyW*");
 
 	if (hr != NO_ERROR) return hr;
 
@@ -465,9 +465,9 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW(LPDIRECTINPUTDEVICE8W This, REFGUID r
 		DWORD dwTruePIDVID = reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData;
 
 		reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData = dwHookPIDVID;
-		PrintLog(LOG_HOOKDI, "%s", "VIDPID change:");
-		PrintLog(LOG_HOOKDI, "%08X", dwTruePIDVID);
-		PrintLog(LOG_HOOKDI, "%08X", reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
+		PrintLog("%s", "VIDPID change:");
+		PrintLog("%08X", dwTruePIDVID);
+		PrintLog("%08X", reinterpret_cast<LPDIPROPDWORD>(pdiph)->dwData);
 	}
 
 	if (iHookThis->GetState(iHook::HOOK_NAME) && &rguidProp == &DIPROP_PRODUCTNAME)
@@ -476,9 +476,9 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW(LPDIRECTINPUTDEVICE8W This, REFGUID r
 		wcscpy_s(TrueName, reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
 
 		swprintf_s(reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz, L"%s", L"XBOX 360 For Windows (Controller)");
-		PrintLog(LOG_HOOKDI, "%s", "Product Name change:");
-		PrintLog(LOG_HOOKDI, "\"%ls\"", TrueName);
-		PrintLog(LOG_HOOKDI, "\"%ls\"", reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
+		PrintLog("%s", "Product Name change:");
+		PrintLog("\"%ls\"", TrueName);
+		PrintLog("\"%ls\"", reinterpret_cast<LPDIPROPSTRING>(pdiph)->wsz);
 	}
 
 	return hr;
@@ -488,7 +488,7 @@ HRESULT STDMETHODCALLTYPE HookGetPropertyW(LPDIRECTINPUTDEVICE8W This, REFGUID r
 HRESULT STDMETHODCALLTYPE HookSetCooperativeLevelA(LPDIRECTINPUTDEVICE8A This, HWND hWnd, DWORD dwFlags)
 {
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return oSetCooperativeLevelA(This, hWnd, dwFlags);
-	PrintLog(LOG_HOOKDI, "*SetCooperativeLevelA*");
+	PrintLog("*SetCooperativeLevelA*");
 
 	if (dwFlags & DISCL_EXCLUSIVE)
 	{
@@ -501,7 +501,7 @@ HRESULT STDMETHODCALLTYPE HookSetCooperativeLevelA(LPDIRECTINPUTDEVICE8A This, H
 HRESULT STDMETHODCALLTYPE HookSetCooperativeLevelW(LPDIRECTINPUTDEVICE8W This, HWND hWnd, DWORD dwFlags)
 {
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return oSetCooperativeLevelW(This, hWnd, dwFlags);
-	PrintLog(LOG_HOOKDI, "*SetCooperativeLevelW*");
+	PrintLog("*SetCooperativeLevelW*");
 
 	if (dwFlags & DISCL_EXCLUSIVE)
 	{
@@ -517,7 +517,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA(LPDIRECTINPUT8A This, REFGUID rguid,
 	HRESULT hr = oCreateDeviceA(This, rguid, lplpDirectInputDevice, pUnkOuter);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*CreateDeviceA*");
+	PrintLog("*CreateDeviceA*");
 
 	if (hr != NO_ERROR) return hr;
 
@@ -529,22 +529,22 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA(LPDIRECTINPUT8A This, REFGUID rguid,
 
 			hGetDeviceInfoA = ref->lpVtbl->GetDeviceInfo;
 			MH_CreateHook(hGetDeviceInfoA, HookGetDeviceInfoA, reinterpret_cast<void**>(&oGetDeviceInfoA));
-			if (MH_EnableHook(hGetDeviceInfoA) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking GetDeviceInfoA");
+			if (MH_EnableHook(hGetDeviceInfoA) == MH_OK) PrintLog("Hooking GetDeviceInfoA");
 		}
 
 		if (ref->lpVtbl->GetProperty)
 		{
-			PrintLog(LOG_HOOKDI, "Hooking GetPropertyA");
+			PrintLog("Hooking GetPropertyA");
 			hGetPropertyA = ref->lpVtbl->GetProperty;
 			MH_CreateHook(hGetPropertyA, HookGetPropertyA, reinterpret_cast<void**>(&oGetPropertyA));
-			if (MH_EnableHook(hGetPropertyA) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking GetPropertyA");
+			if (MH_EnableHook(hGetPropertyA) == MH_OK) PrintLog("Hooking GetPropertyA");
 		}
 
 		if (ref->lpVtbl->SetCooperativeLevel)
 		{
 			hSetCooperativeLevelA = ref->lpVtbl->SetCooperativeLevel;
 			MH_CreateHook(hSetCooperativeLevelA, HookSetCooperativeLevelA, reinterpret_cast<void**>(&oSetCooperativeLevelA));
-			if (MH_EnableHook(hSetCooperativeLevelA) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking SetCooperativeLevelA");
+			if (MH_EnableHook(hSetCooperativeLevelA) == MH_OK) PrintLog("Hooking SetCooperativeLevelA");
 		}
 	}
 
@@ -558,7 +558,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW(LPDIRECTINPUT8W This, REFGUID rguid,
 	HRESULT hr = oCreateDeviceW(This, rguid, lplpDirectInputDevice, pUnkOuter);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*CreateDeviceW*");
+	PrintLog("*CreateDeviceW*");
 
 	if (hr != NO_ERROR) return hr;
 
@@ -569,21 +569,21 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW(LPDIRECTINPUT8W This, REFGUID rguid,
 		{
 			hGetDeviceInfoW = ref->lpVtbl->GetDeviceInfo;
 			MH_CreateHook(hGetDeviceInfoW, HookGetDeviceInfoW, reinterpret_cast<void**>(&oGetDeviceInfoW));
-			if (MH_EnableHook(hGetDeviceInfoW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking GetDeviceInfoW");
+			if (MH_EnableHook(hGetDeviceInfoW) == MH_OK) PrintLog("Hooking GetDeviceInfoW");
 		}
 
 		if (ref->lpVtbl->GetProperty)
 		{
 			hGetPropertyW = ref->lpVtbl->GetProperty;
 			MH_CreateHook(hGetPropertyW, HookGetPropertyW, reinterpret_cast<void**>(&oGetPropertyW));
-			if (MH_EnableHook(hGetPropertyW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking GetPropertyW");
+			if (MH_EnableHook(hGetPropertyW) == MH_OK) PrintLog("Hooking GetPropertyW");
 		}
 
 		if (ref->lpVtbl->SetCooperativeLevel)
 		{
 			hSetCooperativeLevelW = ref->lpVtbl->SetCooperativeLevel;
 			MH_CreateHook(hSetCooperativeLevelW, HookSetCooperativeLevelW, reinterpret_cast<void**>(&oSetCooperativeLevelW));
-			if (MH_EnableHook(hSetCooperativeLevelW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking SetCooperativeLevelW");
+			if (MH_EnableHook(hSetCooperativeLevelW) == MH_OK) PrintLog("Hooking SetCooperativeLevelW");
 		}
 	}
 
@@ -594,7 +594,7 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW(LPDIRECTINPUT8W This, REFGUID rguid,
 #if 0
 void iHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
 {
-	PrintLog(LOG_IHOOK,"Hooking HookDICOM");
+	PrintLog("Hooking HookDICOM");
 	iHookThis = this;
 
 	if(IsEqualIID(riidltf,IID_IDirectInput8A))
@@ -631,13 +631,13 @@ void iHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
 			{
 				hCreateDeviceW = pDIW->lpVtbl->CreateDevice;
 				MH_CreateHook(hCreateDeviceW, HookCreateDeviceW, reinterpret_cast<void**>(&oCreateDeviceW));
-				if (MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking CreateDeviceW");
+				if (MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog("Hooking CreateDeviceW");
 			}
 			if (pDIW->lpVtbl->EnumDevices)
 			{
 				hEnumDevicesW = pDIW->lpVtbl->EnumDevices;
 				MH_CreateHook(hEnumDevicesW, HookEnumDevicesW, reinterpret_cast<void**>(&oEnumDevicesW));
-				if (MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking EnumDevicesW");
+				if (MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog("Hooking EnumDevicesW");
 			}
 		}
 	}
@@ -650,7 +650,7 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 	HRESULT hr = oDirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 
 	if (!iHookThis->GetState(iHook::HOOK_DI)) return hr;
-	PrintLog(LOG_HOOKDI, "*DirectInput8Create*");
+	PrintLog("*DirectInput8Create*");
 
 	if (IsEqualIID(riidltf, IID_IDirectInput8A))
 	{
@@ -658,18 +658,18 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 
 		if (pDIA)
 		{
-			PrintLog(LOG_HOOKDI, "DirectInput8Create - ANSI interface");
+			PrintLog("DirectInput8Create - ANSI interface");
 			if (pDIA->lpVtbl->CreateDevice)
 			{
 				hCreateDeviceA = pDIA->lpVtbl->CreateDevice;
 				MH_CreateHook(hCreateDeviceA, HookCreateDeviceA, reinterpret_cast<void**>(&oCreateDeviceA));
-				if (MH_EnableHook(hCreateDeviceA) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking CreateDeviceA");
+				if (MH_EnableHook(hCreateDeviceA) == MH_OK) PrintLog("Hooking CreateDeviceA");
 			}
 			if (pDIA->lpVtbl->EnumDevices)
 			{
 				hEnumDevicesA = pDIA->lpVtbl->EnumDevices;
 				MH_CreateHook(hEnumDevicesA, HookEnumDevicesA, reinterpret_cast<void**>(&oEnumDevicesA));
-				if (MH_EnableHook(hEnumDevicesA) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking EnumDevicesA");
+				if (MH_EnableHook(hEnumDevicesA) == MH_OK) PrintLog("Hooking EnumDevicesA");
 			}
 		}
 	}
@@ -680,18 +680,18 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 
 		if (pDIW)
 		{
-			PrintLog(LOG_HOOKDI, "DirectInput8Create - UNICODE interface");
+			PrintLog("DirectInput8Create - UNICODE interface");
 			if (pDIW->lpVtbl->CreateDevice)
 			{
 				hCreateDeviceW = pDIW->lpVtbl->CreateDevice;
 				MH_CreateHook(hCreateDeviceW, HookCreateDeviceW, reinterpret_cast<void**>(&oCreateDeviceW));
-				if (MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking CreateDeviceW");
+				if (MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog("Hooking CreateDeviceW");
 			}
 			if (pDIW->lpVtbl->EnumDevices)
 			{
 				hEnumDevicesW = pDIW->lpVtbl->EnumDevices;
 				MH_CreateHook(hEnumDevicesW, HookEnumDevicesW, reinterpret_cast<void**>(&oEnumDevicesW));
-				if (MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog(LOG_HOOKDI, "Hooking EnumDevicesW");
+				if (MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog("Hooking EnumDevicesW");
 			}
 		}
 	}
@@ -703,10 +703,10 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void iHook::HookDI()
 {
-	PrintLog(LOG_IHOOK, "Hooking DirectInput");
+	PrintLog( "Hooking DirectInput");
 	iHookThis = this;
 
 	if (MH_CreateHook(DirectInput8Create, HookDirectInput8Create, reinterpret_cast<void**>(&oDirectInput8Create)) == MH_OK)
-		PrintLog(LOG_IHOOK, "Hooking DirectInput8Create");
+		PrintLog( "Hooking DirectInput8Create");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

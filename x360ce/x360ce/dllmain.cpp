@@ -22,7 +22,7 @@
 #include "version.h"
 #include "x360ce.h"
 #include "SWIP.h"
-#include "Log.h"
+#include "Logger.h"
 #include "Misc.h"
 #include "Config.h"
 #include "DirectInput.h"
@@ -41,13 +41,6 @@ iHook* pHooks = NULL;
 
 INITIALIZE_LOGGER;
 
-#define X360CELEGALNOTICE "\nx360ce - XBOX 360 Controller emulator\n" \
-"https://code.google.com/p/x360ce/\n\n" \
-"Copyright (C) 2013 Robert Krawczyk\n\n" \
-"This program is free software you can redistribute it and/or modify it under\n" \
-"the terms of the GNU Lesser General Public License as published by the Free\n" \
-"Software Foundation, either version 3 of the License, or any later version.\n"
-
 VOID InstallInputHooks()
 {
     if(pHooks)
@@ -62,20 +55,20 @@ VOID ExitInstance()
 {
     if(IsWindow(hMsgWnd))
     {
-        if(DestroyWindow(hMsgWnd)) PrintLog(LOG_CORE,"Message window destroyed");
+        if(DestroyWindow(hMsgWnd)) PrintLog("Message window destroyed");
     }
     else
     {
         SAFE_DELETE(pHooks);
         if(hNative)
         {
-            PrintLog(LOG_CORE,"Unloading %s",ModuleFullPathA(hNative).c_str());
+            PrintLog("Unloading %s",ModuleFullPathA(hNative).c_str());
             FreeLibrary(hNative);
             hNative = NULL;
         }
     }
 
-    PrintLog(LOG_CORE,"Terminating x360ce, bye");
+    PrintLog("Terminating x360ce, bye");
 }
 
 VOID InitInstance()
@@ -96,16 +89,15 @@ VOID InitInstance()
     pHooks = new iHook();
     ReadConfig();
 
-	LogPrintConsole(X360CELEGALNOTICE);
-    PrintLog(LOG_CORE,"x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
-    PrintLog(LOG_CORE,"%s",windowsVersionName().c_str());
+    PrintLog("x360ce %s [%s - %d]",PRODUCT_VERSION,exename.c_str(),startProcessId);
+    PrintLog("%s",windowsVersionName().c_str());
 
     InstallInputHooks();
 }
 
 extern "C" VOID WINAPI reset()
 {
-    PrintLog(LOG_CORE,"%s", "Restarting");
+    PrintLog("%s", "Restarting");
     SAFE_DELETE(pHooks);
 
     g_Devices.clear();
