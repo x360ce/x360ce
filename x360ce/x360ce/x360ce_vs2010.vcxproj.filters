@@ -45,9 +45,6 @@
     <ClInclude Include="globals.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Misc.h">
+      <Filter>x360ce\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="svnrev_template.h">
       <Filter>x360ce\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
