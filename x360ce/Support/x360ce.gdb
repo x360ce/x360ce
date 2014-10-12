@@ -378,6 +378,10 @@ HookMask = 0x00000002
 Name = Super Meat Boy
 HookMask = 0x00000002
 
+[TERA.exe]
+Name = TERA
+HookMask = 0x00000002
+
 [TheBaconing.exe]
 Name = The Baconing
 HookMask = 0x00000003
