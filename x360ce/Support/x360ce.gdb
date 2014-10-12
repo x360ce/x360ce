@@ -54,6 +54,10 @@ HookMask = 0x0000001E
 Name = Assasin's Creed II
 HookMask = 0x00000002
 
+[Awesomenauts.exe]
+Name = Awesomenauts
+HookMask = 0x00000002
+
 [BatmanAC.exe]
 Name = Batman: Arkham City
 HookMask = 0x00000002
@@ -118,6 +122,10 @@ HookMask = 0x00000002
 Name = Darksiders 2
 HookMask = 0x00000002
 
+[DarkSoulsII.exe]
+Name = Dark Souls II
+HookMask = 0x00000002
+
 [DATA.exe]
 Name = Dark Souls
 HookMask = 0x00000002
@@ -172,6 +180,10 @@ HookMask = 0x00000002
 
 [FIFA14.exe]
 Name = FIFA 14
+HookMask = 0x0000001E
+
+[FIFA15.exe]
+Name = FIFA 15
 HookMask = 0x00000002
 
 [fouc.exe]
@@ -377,6 +389,10 @@ HookMask = 0x00000002
 [TLR.exe]
 Name = The Last Remnant
 HookMask = 0x00000002
+
+[TMNT-OotS.exe]
+Name = Teenage Mutant Ninja Turtles: Out of Shadows
+HookMask = 0x0000000E
 
 [trine.exe]
 Name = Trine
