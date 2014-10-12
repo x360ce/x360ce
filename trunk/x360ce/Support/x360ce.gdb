@@ -34,6 +34,10 @@ HookMask = 0x00000002
 Name =  Assassin's Creed 4 Multiplayer
 HookMask = 0x00000002
 
+[AliceMadnessReturns.exe]
+Name = Alice: Madness Returns
+HookMask = 0x00000002
+
 [ASN_App_PcDx9_Final.exe]
 Name = Sonic & All-Stars Racing Transformed
 HookMask = 0x00000002
@@ -222,6 +226,10 @@ HookMask = 0x0000000E
 Name = Injustice: Gods Among Us Ultimate Edition
 HookMask = 0x00000002
 
+[InSanity-Win32-Shipping.exe]
+Name = Afterfall Insanity: Extended Edition
+HookMask = 0x00000002 
+
 [LANoire.exe]
 Name = L.A. Noire
 HookMask = 0x00000002
@@ -298,6 +306,10 @@ HookMask = 0x00000002
 Name = Resident Evil 6
 HookMask = 0x00000002
 
+[ROTT.exe]
+Name =  Rise of the Triad (2013)
+HookMask = 0x00000002
+
 [SaintsRowIV.exe]
 Name = Saints Row IV
 HookMask = 0x00000002
@@ -360,6 +372,10 @@ HookMask = 0x00000003
 
 [TinyBrains.exe]
 Name = Tiny Brains
+HookMask = 0x00000002
+
+[TLR.exe]
+Name = The Last Remnant
 HookMask = 0x00000002
 
 [trine.exe]
