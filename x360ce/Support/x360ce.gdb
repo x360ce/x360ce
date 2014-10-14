@@ -338,12 +338,8 @@ HookMask = 0x00000002
 Name = Slam Bolt Scrappers
 HookMask = 0x0000000E
 
-[SR2_pc.exe]
-Name = Saints Row 2
-HookMask = 0x00000002
-
-[SFTK.exe]
-Name = Street Fighter X Tekken
+[SDHDShip.exe]
+Name = Sleeping Dogs: Definitive Edition
 HookMask = 0x00000002
 
 [shank.exe]
@@ -364,6 +360,14 @@ HookMask = 0x00000002
 
 [SkullGirls.exe]
 Name = Skullgirls
+HookMask = 0x00000002
+
+[SR2_pc.exe]
+Name = Saints Row 2
+HookMask = 0x00000002
+
+[SFTK.exe]
+Name = Street Fighter X Tekken
 HookMask = 0x00000002
 
 [SSFIV.exe]
