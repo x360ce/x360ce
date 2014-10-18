@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TocaEdit")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
-[assembly: AssemblyCopyright("Copyright © TocaEdit 2013")]
+[assembly: AssemblyCopyright("Copyright © TocaEdit 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,7 +32,7 @@ using System.Resources;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("2.1.2.194")]
-[assembly: AssemblyFileVersionAttribute("2.1.2.194")]
+[assembly: AssemblyVersion("2.1.3.198")]
+[assembly: AssemblyFileVersionAttribute("2.1.3.198")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: NeutralResourcesLanguageAttribute("en")]
