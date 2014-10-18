@@ -17,7 +17,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Name>x360ce.Data</Name>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectVersion>4.0</ProjectVersion>
+    <ProjectVersion>4.1</ProjectVersion>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql100DatabaseSchemaProvider</DSP>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ShowWizard>True</ShowWizard>
@@ -30,7 +30,7 @@
     <LoadSqlClrTypes>True</LoadSqlClrTypes>
     <RootNamespace>x360ce.Data</RootNamespace>
     <DefaultSchema>dbo</DefaultSchema>
-    <PreviousProjectVersion>4.0</PreviousProjectVersion>
+    <PreviousProjectVersion>4.1</PreviousProjectVersion>
     <ValidateCasingOnIdentifiers>False</ValidateCasingOnIdentifiers>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{2db521f4-e49d-4e7a-b1b9-52a8acd37415}</ProjectGuid>
@@ -99,7 +99,8 @@
     <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
   </PropertyGroup>
   <!--Import the settings-->
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" Condition="'$(SQLDBExtensionsRefPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" Condition="'$(SQLDBExtensionsRefPath)' == ''" />
   <ItemGroup>
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Pre-Deployment" />

@@ -23,18 +23,8 @@ namespace x360ce.App.Controls
             diControl.Dock = DockStyle.Fill;
             DirectInputTabPage.Controls.Add(diControl);
             PadTabControl.TabPages.Remove(DirectInputTabPage);
-            // PadKeyboardControl
-            this.PadKeyboardControl = new x360ce.App.Controls.KeyboardControl();
-            this.PadKeyboardControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PadKeyboardControl.Location = new System.Drawing.Point(3, 3);
-            this.PadKeyboardControl.Name = "PadKeyboardControl";
-            this.PadKeyboardControl.Size = new System.Drawing.Size(614, 405);
-            this.PadKeyboardControl.TabIndex = 1;
-            this.KeyboardTabPage.Controls.Add(this.PadKeyboardControl);
             this.ResumeLayout();
         }
-
-        KeyboardControl PadKeyboardControl;
 
         public void InitPadControl()
         {

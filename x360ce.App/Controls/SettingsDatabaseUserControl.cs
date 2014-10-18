@@ -247,8 +247,9 @@ namespace x360ce.App.Controls
                 if (GameComboBox.SelectedIndex > 0)
                 {
                     var fi = _files[GameComboBox.SelectedIndex - 1];
-                    s.FileName = System.IO.Path.GetFileName(fi.FileName);
-                    s.FileProductName = fi.ProductName;
+                    var fileName = fi.FileName;
+                    s.FileName = System.IO.Path.GetFileName(fileName);
+                    s.FileProductName = fi.ProductName ?? fileName;
                 }
                 else
                 {
