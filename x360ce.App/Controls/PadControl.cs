@@ -255,8 +255,8 @@ namespace x360ce.App.Controls
             Point triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
             if (!Recording)
             {
-                var tl = FloatToByte(gamePadState.Gamepad.LeftTrigger);
-                var tr = FloatToByte(gamePadState.Gamepad.RightTrigger);
+                var tl = gamePadState.Gamepad.LeftTrigger;
+                var tr = gamePadState.Gamepad.RightTrigger;
                 // Temp workaround: when initialized triggers have default value of 127);
                 if (tl == 110 && tr == 110)
                 {
