@@ -415,7 +415,9 @@
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <None Include="Resources\SharpDX\SharpDX.DirectInput.xml" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
-    <None Include="Resources\SharpDX\SharpDX.xml" />
+    <None Include="Resources\SharpDX\SharpDX.xml">
+      <SubType>Designer</SubType>
+    </None>
     <EmbeddedResource Include="Presets\Vendors.xml">
       <SubType>Form</SubType>
     </EmbeddedResource>
