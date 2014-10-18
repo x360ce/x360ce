@@ -361,19 +361,19 @@ namespace x360ce.App.Controls
         /// <param name="e"></param>
         private void ScanButton_Click(object sender, EventArgs e)
         {
-            var thread = new System.Threading.Thread(ScanFunction);
-            thread.Start();
+            var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanFunction);
+            if (!success) ScanProgressLabel.Text = "Scan failed!";
         }
 
-        void ScanFunction()
+        void ScanFunction(object state)
         {
             string[] paths = null;
             Invoke((MethodInvoker)delegate()
-{
-    ScanButton.Enabled = false;
-    paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
-    ScanProgressLabel.Text = "Scanning...";
-});
+            {
+                ScanButton.Enabled = false;
+                paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+                ScanProgressLabel.Text = "Scanning...";
+            });
             var skipped = 0;
             var added = 0;
             var updated = 0;
