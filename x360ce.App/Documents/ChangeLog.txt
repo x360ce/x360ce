@@ -1,4 +1,11 @@
-﻿v2.1.3.198 (2014-10-18)
+﻿v2.1.3.203 (2014-10-20)
+- Fix: Force feedback test fixed.
+- Fix: Ant-deadzone dropdown default value selection fix.
+- Fix: x360ce.Engine.XmlSerializers.dll library is properly embeded as a resource.
+- Fix: x360ce.Engine post build command line fixed.
+- Update: Experimental keyboard feature removed.
+
+v2.1.3.198 (2014-10-18)
 - Fix: Left and Right trigger display value.
 - Fix: Crash when file product name is not set.
 - Update: Use of thread pool when scanning games.
