@@ -134,7 +134,6 @@
             this.SavePresetButton = new System.Windows.Forms.Button();
             this.ResetPresetButton = new System.Windows.Forms.Button();
             this.PadTabControl = new System.Windows.Forms.TabControl();
-            this.KeyboardTabPage = new System.Windows.Forms.TabPage();
             this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
             this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
             this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
@@ -1580,7 +1579,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PadTabControl.Controls.Add(this.GeneralTabPage);
-            this.PadTabControl.Controls.Add(this.KeyboardTabPage);
             this.PadTabControl.Controls.Add(this.AdvancedTabPage);
             this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
             this.PadTabControl.Controls.Add(this.DirectInputTabPage);
@@ -1591,16 +1589,6 @@
             this.PadTabControl.Size = new System.Drawing.Size(628, 437);
             this.PadTabControl.TabIndex = 0;
             this.PadTabControl.SelectedIndexChanged += new System.EventHandler(this.PadTabControl_SelectedIndexChanged);
-            // 
-            // KeyboardTabPage
-            // 
-            this.KeyboardTabPage.Location = new System.Drawing.Point(4, 22);
-            this.KeyboardTabPage.Name = "KeyboardTabPage";
-            this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.KeyboardTabPage.Size = new System.Drawing.Size(620, 411);
-            this.KeyboardTabPage.TabIndex = 0;
-            this.KeyboardTabPage.Text = "Keyboard";
-            this.KeyboardTabPage.UseVisualStyleBackColor = true;
             // 
             // ForceFeedbackTabPage
             // 
@@ -1992,8 +1980,7 @@
         System.Windows.Forms.TrackBar AxisToDPadOffsetTrackBar;
         System.Windows.Forms.Label OffsetLabel;
         System.Windows.Forms.TextBox AxisToDPadOffsetTextBox;
-		System.Windows.Forms.ToolTip MainToolTip;
-		System.Windows.Forms.TabPage KeyboardTabPage;
+        System.Windows.Forms.ToolTip MainToolTip;
 		System.Windows.Forms.TrackBar RightThumbDeadZoneYTrackBar;
 		System.Windows.Forms.TrackBar LeftThumbDeadZoneYTrackBar;
 		System.Windows.Forms.TextBox RightThumbDeadZoneYTextBox;

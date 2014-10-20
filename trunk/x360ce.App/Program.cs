@@ -175,7 +175,10 @@ namespace x360ce.App
 				case "x360ce.Engine":
 					path = "Resources.x360ce.Engine.dll";
 					break;
-				case "SharpDX":
+                case "x360ce.Engine.XmlSerializers":
+                    path = "Resources.x360ce.Engine.XmlSerializers.dll";
+                    break;
+                case "SharpDX":
 					path = "Resources.SharpDX.SharpDX.dll";
 					break;
 				case "SharpDX.DirectInput":

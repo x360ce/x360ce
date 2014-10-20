@@ -56,12 +56,6 @@ namespace x360ce.App.Controls
                     ((ComboBox)control).ContextMenuStrip = DiMenuStrip;
                 }
             }
-
-            // hide experimental option.
-            if (!Properties.Settings.Default.EnableKeyboardControl)
-            {
-                PadTabControl.TabPages.Remove(KeyboardTabPage);
-            }
         }
 
         #region Recording
@@ -150,6 +144,10 @@ namespace x360ce.App.Controls
 
         void PadControl_Load(object sender, EventArgs e)
         {
+            LeftThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
+            LeftThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
+            RightThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
+            RightThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
         }
 
         void ComboBox_DropDown(object sender, EventArgs e)
@@ -809,9 +807,9 @@ namespace x360ce.App.Controls
         public void UpdateForceFeedBack()
         {
             if (mainForm.ControllerIndex == -1) return;
-            // Convert 100% trackbar to MotorSpeed's 0 - 1.0
-            var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F);
-            var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F);
+            // Convert 100% trackbar to MotorSpeed's 0 - 65,535 (100%).
+            var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F * ushort.MaxValue);
+            var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
             LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
             RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
             lock (MainForm.XInputLock)
