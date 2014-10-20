@@ -144,10 +144,10 @@ namespace x360ce.App.Controls
 
         void PadControl_Load(object sender, EventArgs e)
         {
-            LeftThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
-            LeftThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
-            RightThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
-            RightThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
+            //LeftThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
+            //LeftThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
+            //RightThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
+            //RightThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
         }
 
         void ComboBox_DropDown(object sender, EventArgs e)
