@@ -11,7 +11,7 @@ namespace x360ce.Engine.Data
 
 		public static Game FromDisk(string fileName)
 		{
-			var item = new Game();
+            var item = new Game();
 			var fi = new FileInfo(fileName);
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
 			item.Comment = vi.Comments ?? "";

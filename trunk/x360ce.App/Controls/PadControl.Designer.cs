@@ -211,8 +211,6 @@
             // 
             // DeviceGroupBox
             // 
-            this.DeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.DeviceGroupBox.Controls.Add(this.GamePadTypeComboBox);
             this.DeviceGroupBox.Controls.Add(this.OptionsDeviceTypeLabel);
             this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);

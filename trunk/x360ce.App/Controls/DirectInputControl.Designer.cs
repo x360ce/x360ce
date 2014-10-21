@@ -29,13 +29,16 @@
 		void InitializeComponent()
 		{
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.DiEffectsDataGridView = new System.Windows.Forms.DataGridView();
+            this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DiDPadLabel = new System.Windows.Forms.Label();
             this.DiUvaLabel = new System.Windows.Forms.Label();
             this.DiExtraVLabel = new System.Windows.Forms.Label();
@@ -80,9 +83,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.DiCapDPadsTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -112,6 +112,41 @@
             this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.DiEffectsDataGridView.Size = new System.Drawing.Size(609, 225);
             this.DiEffectsDataGridView.TabIndex = 0;
+            // 
+            // DiEffectNameColumn
+            // 
+            this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DiEffectNameColumn.DataPropertyName = "Effect";
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            this.DiEffectNameColumn.HeaderText = "FF Effect";
+            this.DiEffectNameColumn.MinimumWidth = 75;
+            this.DiEffectNameColumn.Name = "DiEffectNameColumn";
+            this.DiEffectNameColumn.ReadOnly = true;
+            this.DiEffectNameColumn.ToolTipText = "Supported force feedback effects";
+            this.DiEffectNameColumn.Width = 75;
+            // 
+            // DiEffectParamsColumn
+            // 
+            this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DiEffectParamsColumn.DataPropertyName = "Parameters";
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            this.DiEffectParamsColumn.HeaderText = "Parameters";
+            this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
+            this.DiEffectParamsColumn.ReadOnly = true;
+            this.DiEffectParamsColumn.ToolTipText = "Parameters supported by the effect";
+            // 
+            // DiEffectDynamicParameters
+            // 
+            this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle3;
+            this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
+            this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
+            this.DiEffectDynamicParameters.ReadOnly = true;
+            this.DiEffectDynamicParameters.ToolTipText = "Parameters of the effect that can be modified while the effect is playing";
             // 
             // DiDPadLabel
             // 
@@ -539,41 +574,6 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "D-Pads:";
             // 
-            // DiEffectNameColumn
-            // 
-            this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.DiEffectNameColumn.DataPropertyName = "Effect";
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle1;
-            this.DiEffectNameColumn.HeaderText = "FF Effect";
-            this.DiEffectNameColumn.MinimumWidth = 75;
-            this.DiEffectNameColumn.Name = "DiEffectNameColumn";
-            this.DiEffectNameColumn.ReadOnly = true;
-            this.DiEffectNameColumn.ToolTipText = "Supported force feedback effects";
-            this.DiEffectNameColumn.Width = 75;
-            // 
-            // DiEffectParamsColumn
-            // 
-            this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DiEffectParamsColumn.DataPropertyName = "Parameters";
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            this.DiEffectParamsColumn.HeaderText = "Parameters";
-            this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
-            this.DiEffectParamsColumn.ReadOnly = true;
-            this.DiEffectParamsColumn.ToolTipText = "Parameters supported by the effect";
-            // 
-            // DiEffectDynamicParameters
-            // 
-            this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle3;
-            this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
-            this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
-            this.DiEffectDynamicParameters.ReadOnly = true;
-            this.DiEffectDynamicParameters.ToolTipText = "Parameters of the effect that can be modified while the effect is playing";
-            // 
             // DirectInputControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -616,6 +616,7 @@
             this.Controls.Add(this.DiDeviceTypeLabel);
             this.Name = "DirectInputControl";
             this.Size = new System.Drawing.Size(615, 408);
+            this.Load += new System.EventHandler(this.DirectInputControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
             this.ResumeLayout(false);

@@ -103,11 +103,11 @@ namespace x360ce.App
 			ControlPages[1] = Pad2TabPage;
 			ControlPages[2] = Pad3TabPage;
 			ControlPages[3] = Pad4TabPage;
-			BuletImageList.Images.Add("bullet_square_glass_blue.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_blue.png")));
-			BuletImageList.Images.Add("bullet_square_glass_green.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_green.png")));
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
-			BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
-			BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_blue.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_blue.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_green.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_green.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
 			foreach (var item in ControlPages) item.ImageKey = "bullet_square_glass_grey.png";
 			// Hide status values.
 			StatusDllLabel.Text = "";
@@ -738,7 +738,7 @@ namespace x360ce.App
 				HelpRichTextBox.SelectionRightIndent = 8;
 				HelpRichTextBox.DeselectAll();
 			}
-			else if (MainTabControl.SelectedTab == SettingsDatabaseTabPage)
+			else if (MainTabControl.SelectedTab == ControllerSettingsTabPage)
 			{
 				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoloadCheckBox.Checked)
 				{
