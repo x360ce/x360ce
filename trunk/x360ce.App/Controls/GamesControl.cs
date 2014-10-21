@@ -401,18 +401,26 @@ namespace x360ce.App.Controls
                     }
                     else
                     {
-                        var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == exe.Name);
+                       // Get game my game by executable name.
+                        var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exe.Name.ToLower());
                         // If file doesn't exist in the game list then continue.
                         if (game == null)
                         {
-                            game = new Engine.Data.Game();
-                            game.LoadDefault(program);
-                            SettingsFile.Current.Games.Add(game);
-                            added++;
+                            Invoke((MethodInvoker)delegate()
+                            {
+                                game = x360ce.Engine.Data.Game.FromDisk(exe.FullName);
+                                game.LoadDefault(program);
+                                SettingsFile.Current.Games.Add(game);
+                                added++;
+                            });
                         }
                         else
                         {
                             game.FullPath = exe.FullName;
+                            if (string.IsNullOrEmpty(game.FileProductName) && !string.IsNullOrEmpty(program.FileProductName))
+                            {
+                                game.FileProductName = program.FileProductName;
+                            }
                             updated++;
                         }
                     }
@@ -464,7 +472,7 @@ namespace x360ce.App.Controls
             var sections = ini.GetSections();
             foreach (var section in sections)
             {
-                var program = SettingsFile.Current.Programs.FirstOrDefault(x=>x.FileName.ToLower() == section.ToLower());
+                var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
                 if (program == null)
                 {
                     program = new Engine.Data.Program();

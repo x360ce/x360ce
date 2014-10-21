@@ -35,6 +35,10 @@ namespace x360ce.Engine.Data
 			if (program == null) return;
 			HookMask = program.HookMask;
 			XInputMask = program.XInputMask;
+            if (string.IsNullOrEmpty(FileProductName) && !string.IsNullOrEmpty(program.FileProductName))
+            {
+                FileProductName = program.FileProductName;
+            }
 		}
 
 	}
