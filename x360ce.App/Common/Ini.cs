@@ -3,6 +3,7 @@ using System.Data;
 using System.Configuration;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Collections.Generic;
 
 namespace x360ce.App
 {
@@ -11,33 +12,26 @@ namespace x360ce.App
 	/// </summary>
 	public class Ini
 	{
-	
+
 		#region Kernel32 Functions
 
-		/// <summary>
-		/// The size of the buffer for return value. The maximum buffer size is 32767 characters.
-		/// </summary>
-		public short BufferLength
+		string[] _getPrivateProfileString(string section, string key, string defaultValue, int bufferLength)
 		{
-			get { return bufferLength; }
-			set { bufferLength = value; }
+			char[] returnString = new char[bufferLength];
+			int size = Win32.NativeMethods.GetPrivateProfileString(section, key, defaultValue, returnString, returnString.Length, this.File.FullName);
+			string values = new string(returnString, 0, size);
+			string[] list = values.Split(new[] { (char)0 }, StringSplitOptions.RemoveEmptyEntries);
+			return list;
 		}
-		short bufferLength = 256;
 
-		string _getPrivateProfileString(string section, string key, string defaultValue)
+		static string RemoveComments(string s)
 		{
-			string results = defaultValue;
-
-			var sb = new StringBuilder(bufferLength);
-			byte[] bytes = new byte[bufferLength];
-			int size = Win32.NativeMethods.GetPrivateProfileString(section, key, defaultValue, sb, sb.Capacity, this.File.FullName);
-			results = sb.ToString();
-			// remove comments.
-			var cIndex = results.IndexOf(';');
-			if (cIndex > -1) results = results.Substring(0, cIndex);
-			cIndex = results.IndexOf('#');
-			if (cIndex > -1) results = results.Substring(0, cIndex);
-			return results.Trim(' ', '\t');
+			// Remove comments.
+			var cIndex = s.IndexOf(';');
+			if (cIndex > -1) s = s.Substring(0, cIndex);
+			cIndex = s.IndexOf('#');
+			if (cIndex > -1) s = s.Substring(0, cIndex);
+			return s.Trim(' ', '\t');
 		}
 
 		#endregion
@@ -73,8 +67,6 @@ namespace x360ce.App
 			return table;
 		}
 
-
-
 		#endregion
 
 		#region Get, Set and Remove
@@ -87,7 +79,9 @@ namespace x360ce.App
 		/// <param name="defaultValue">If the key cannot be found in the initialization file then return default value.</param>
 		public string GetValue(string section, string key, string defaultValue)
 		{
-			return _getPrivateProfileString(section, key, defaultValue);
+			string[] list = _getPrivateProfileString(section, key, defaultValue, byte.MaxValue);
+			if (list.Length > 0) return list[0];
+			return null;
 		}
 
 		/// <summary>
@@ -97,7 +91,9 @@ namespace x360ce.App
 		/// <param name="key">The key of the element to add.</param>
 		public string GetValue(string section, string key)
 		{
-			return _getPrivateProfileString(section, key, "");
+			string[] list = _getPrivateProfileString(section, key, null, byte.MaxValue);
+			if (list.Length > 0) return list[0];
+			return "";
 		}
 
 		/// <summary>
@@ -112,21 +108,21 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Get values in a section from INI File.
-		/// </summary>
-		/// <param name="section">The name of the section.</param>
-		/// <returns>The array of values.</returns>
-		public string[] GetValues(string section)
-		{
-			return _getPrivateProfileString(section, null, null).Split((char)0);
-		}
-
-		/// <summary>
 		/// Get sections from INI File.
 		/// </summary>
 		public string[] GetSections()
 		{
-			return _getPrivateProfileString(null, null, null).Split((char)0);
+			return _getPrivateProfileString(null, null, null, short.MaxValue);
+		}
+
+		/// <summary>
+		/// Get section keys from INI File.
+		/// </summary>
+		/// <param name="section">The name of the section.</param>
+		/// <returns>The array of values.</returns>
+		public string[] GetKeys(string section)
+		{
+			return _getPrivateProfileString(section, null, null, short.MaxValue);
 		}
 
 		/// <summary>
@@ -147,6 +143,39 @@ namespace x360ce.App
 		{
 			Win32.NativeMethods.WritePrivateProfileString(section, null, null, this.File.FullName);
 		}
+
+		///// <summary>
+		///// Get all sections (tagged with brackets).
+		///// </summary>
+		///// <remarks>
+		///// The API GetPriveProfileString fills an internal buffer separated by \0.
+		///// In order to get a generic list we have to split that buffer with the token \0.
+		///// </remarks>
+		///// <returns>List of values.</returns>
+		//public List<string> GetSections()
+		//{
+		//	var sb = new StringBuilder(ushort.MaxValue);
+		//	Win32.NativeMethods.GetPrivateProfileString(null, null, null, sb, ushort.MaxValue, this.File.FullName);
+		//	List<string> result = new List<string>(sb.ToString().Split((char)0));
+		//	// The last 2 values can be removed, because they are always empty.
+		//	result.RemoveRange(result.Count - 2, 2);
+		//	return result;
+		//}
+
+		///// <summary>
+		///// Get all keys by section.
+		///// </summary>
+		///// <param name="section">The name of the section.</param>
+		///// <returns>List of values.</returns>
+		//private static List<string> GetKeys(string section)
+		//{
+		//	var sb = new StringBuilder(short.MaxValue);
+		//	Win32.NativeMethods.GetPrivateProfileString(section, null, null, sb, short.MaxValue, this.File.FullName);
+		//	List<string> result = new List<string>(sb.ToString().Split((char)0));
+		//	// The last 2 values can be removed, because they are always empty.
+		//	result.RemoveRange(result.Count - 2, 2);
+		//	return result;
+		//}
 
 		#endregion
 	}
