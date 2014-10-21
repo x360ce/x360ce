@@ -80,7 +80,7 @@ namespace x360ce.App
 		public string GetValue(string section, string key, string defaultValue)
 		{
 			string[] list = _getPrivateProfileString(section, key, defaultValue, byte.MaxValue);
-			if (list.Length > 0) return list[0];
+			if (list.Length > 0) return RemoveComments(list[0]);
 			return null;
 		}
 
@@ -92,7 +92,7 @@ namespace x360ce.App
 		public string GetValue(string section, string key)
 		{
 			string[] list = _getPrivateProfileString(section, key, null, byte.MaxValue);
-			if (list.Length > 0) return list[0];
+			if (list.Length > 0) return RemoveComments(list[0]);
 			return "";
 		}
 
