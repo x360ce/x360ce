@@ -203,7 +203,7 @@ namespace x360ce.App.Win32
 		/// <returns>The return value is the number of characters copied to the buffer, not including the terminating null character.</returns>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"),
 		DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
-		internal static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, StringBuilder lpReturnedString, int nSize, string lpFileName);
+		internal static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, [Out] char[] lpReturnedString, int nSize, string lpFileName);
 
 		/// <summary>
 		/// Copies a string into the specified section of an initialization file. http://msdn2.microsoft.com/en-us/library/ms725501.aspx

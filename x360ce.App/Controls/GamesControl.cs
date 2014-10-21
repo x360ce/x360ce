@@ -16,8 +16,9 @@ namespace x360ce.App.Controls
         public GamesControl()
         {
             InitializeComponent();
-            GamesDataGridView.AutoGenerateColumns = false;
             if (DesignMode) return;
+            MySettingsDataGridView.AutoGenerateColumns = false;
+            GlobalSettingsDataGridView.AutoGenerateColumns = false;
             ScanProgressLabel.Text = "";
             InitDefaultList();
         }
@@ -199,8 +200,8 @@ namespace x360ce.App.Controls
         {
             // List can't be empty, so return.
             // Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-            if (GamesDataGridView.SelectedRows.Count == 0) return;
-            var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+            if (MySettingsDataGridView.SelectedRows.Count == 0) return;
+            var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
             var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
             CurrentGame = item;
         }
@@ -208,7 +209,7 @@ namespace x360ce.App.Controls
         void InitDefaultList()
         {
             SettingsFile.Current.Load();
-            GamesDataGridView.DataSource = SettingsFile.Current.Games;
+            MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
         }
 
         void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
@@ -447,6 +448,39 @@ namespace x360ce.App.Controls
                 }
             }
             catch { }
+        }
+
+        private void GamesControl_Load(object sender, EventArgs e)
+        {
+            Helper.EnableDoubleBuffering(MySettingsDataGridView);
+            Helper.EnableDoubleBuffering(GlobalSettingsDataGridView);
+            GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
+            LoadProgramsFromLocalFile();
+        }
+
+        void LoadProgramsFromLocalFile()
+        {
+            var ini = new Ini(SettingManager.GdbFileName);
+            var sections = ini.GetSections();
+            foreach (var section in sections)
+            {
+                var program = SettingsFile.Current.Programs.FirstOrDefault(x=>x.FileName.ToLower() == section.ToLower());
+                if (program == null)
+                {
+                    program = new Engine.Data.Program();
+                    program.FileName = section;
+                    program.HookMask = 0x00000002;
+                    program.XInputMask = 0x00000004;
+                    SettingsFile.Current.Programs.Add(program);
+                }
+                program.FileProductName = ini.GetValue(section, "Name", section);
+                int hookMask;
+                var hookMaskValue = ini.GetValue(section, "HookMask", "0x00000002");
+                if (int.TryParse(hookMaskValue, out hookMask))
+                {
+                    program.HookMask = hookMask;
+                }
+            }
         }
 
     }

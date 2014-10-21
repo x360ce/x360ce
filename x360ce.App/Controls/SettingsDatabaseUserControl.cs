@@ -27,11 +27,14 @@ namespace x360ce.App.Controls
 
         void InternetUserControl_Load(object sender, EventArgs e)
         {
-            SettingsDataGridView.AutoGenerateColumns = false;
+            Helper.EnableDoubleBuffering(MySettingsDataGridView);
+            Helper.EnableDoubleBuffering(SummariesDataGridView);
+            Helper.EnableDoubleBuffering(PresetsDataGridView);
+            MySettingsDataGridView.AutoGenerateColumns = false;
             SummariesDataGridView.AutoGenerateColumns = false;
             _Summaries.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
             _Settings.ListChanged += new ListChangedEventHandler(_Settings_ListChanged);
-            SettingsDataGridView.DataSource = _Settings;
+            MySettingsDataGridView.DataSource = _Settings;
             SummariesDataGridView.DataSource = _Summaries;
             InternetCheckBox_CheckedChanged(null, null);
         }
@@ -208,16 +211,16 @@ namespace x360ce.App.Controls
             var summariesSelected = SettingsListTabControl.SelectedTab == SummariesTabPage;
             SaveButton.Enabled = ControllerComboBox.Items.Count > 0 && settingsSelected && refreshed;
             LoadButton.Enabled = ControllerComboBox.Items.Count > 0 && (
-                (settingsSelected && SettingsDataGridView.SelectedRows.Count == 1) ||
+                (settingsSelected && MySettingsDataGridView.SelectedRows.Count == 1) ||
                 (presetsSelected && PresetsDataGridView.SelectedRows.Count == 1)
                 );
             DeleteButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsListTabControl.SelectedTab == SettingsTabPage &&
-                ((SettingsDataGridView.SelectedRows.Count == 1 && settingsSelected) ||
+                ((MySettingsDataGridView.SelectedRows.Count == 1 && settingsSelected) ||
                 (SummariesDataGridView.SelectedRows.Count == 1 && summariesSelected));
             RefreshButton.Enabled = summariesSelected || summariesSelected;
             CurrentSetting = GetCurrentSetting();
             SaveButton.Image = ContainsSetting(CurrentSetting) ? Properties.Resources.save_16x16 : Properties.Resources.save_add_16x16;
-            SettingsDataGridView.Refresh();
+            MySettingsDataGridView.Refresh();
             //PresetsDataGridView.Enabled = ControllerComboBox.Items.Count > 0;
             //PresetsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
         }
@@ -319,7 +322,7 @@ namespace x360ce.App.Controls
             if (result == DialogResult.Yes)
             {
                 mainForm.LoadingCircle = true;
-                var setting = (Setting)SettingsDataGridView.SelectedRows[0].DataBoundItem;
+                var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
                 var ws = new WebServiceClient();
                 ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
                 ws.DeleteSettingCompleted += ws_DeleteSettingCompleted;
@@ -406,10 +409,10 @@ namespace x360ce.App.Controls
             var title = "";
             if (SettingsListTabControl.SelectedTab == SettingsTabPage)
             {
-                if (SettingsDataGridView.SelectedRows.Count == 0) return;
+                if (MySettingsDataGridView.SelectedRows.Count == 0) return;
                 message = "Do you want to load My Setting:";
                 title = "Load My Setting?";
-                setting = (Setting)SettingsDataGridView.SelectedRows[0].DataBoundItem;
+                setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
                 message += "\r\n\r\n    " + setting.ProductName;
                 if (!string.IsNullOrEmpty(setting.FileName)) message += " | " + setting.FileName;
                 if (!string.IsNullOrEmpty(setting.FileProductName)) message += " | " + setting.FileProductName;

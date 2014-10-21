@@ -23,6 +23,7 @@ namespace x360ce.App
 
 		public const string IniFileName = "x360ce.ini";
 		public const string TmpFileName = "x360ce.tmp";
+        public const string GdbFileName = "x360ce.gdb";
 
 		public int saveCount = 0;
 		public int loadCount = 0;

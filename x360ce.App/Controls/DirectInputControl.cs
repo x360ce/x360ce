@@ -290,6 +290,12 @@ namespace x360ce.App.Controls
             return ShowDirectInputState(device);
         }
 
+        private void DirectInputControl_Load(object sender, EventArgs e)
+        {
+            Helper.EnableDoubleBuffering(DiAxisDataGridView);
+            Helper.EnableDoubleBuffering(DiEffectsDataGridView);
+        }
+
     }
 
 }
