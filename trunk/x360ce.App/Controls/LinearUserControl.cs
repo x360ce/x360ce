@@ -24,10 +24,13 @@ namespace x360ce.App.Controls
 			var nativeBrush = new SolidBrush(System.Drawing.Color.Gray);
 			var transBrush = new SolidBrush(System.Drawing.Color.Red);
 			var w = bmp.Width;
+			var param = (float)LinearTrackBar.Value / (float)100;
 			for (int i = 0; i < w; i++)
 			{
 				g.FillEllipse(nativeBrush, i - 1, w - i - 1, 2, 2);
-				g.FillEllipse(transBrush, i - 1, w - (GetValue(i * 256) / 256) - 1, 2, 2);
+				float value = (float)i / (float)(w - 1);
+				float result = GetValue(value, param) * w;
+				g.FillEllipse(transBrush, i - 1, w - result - 1, 2, 2);
 			}
 		}
 
@@ -37,5 +40,23 @@ namespace x360ce.App.Controls
 			v = v > 0 ? absval : -absval;
 			return v;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="value">[0.0;1.0]</param>
+		/// <param name="strength">[-1.0;1.0]</param>
+		/// <returns></returns>
+		float GetValue(float value, float param)
+		{
+			var x = (float)value;
+			if (param >= 0) x = (float)1 - x;
+			var a = (float)Math.Sqrt((float)1 - Math.Pow(x, 2));
+			if (param < 0) a = 1 - a;
+			float delta = (a - value) * Math.Abs(param);
+			var v = (value + delta);
+			return v;
+		}
+
 	}
 }
