@@ -90,6 +90,7 @@
     <Compile Include="JocysCom\Security\Data\User.cs" />
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
+    <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

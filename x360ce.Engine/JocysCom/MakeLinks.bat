@@ -23,6 +23,7 @@ CALL:MKL Security\Data\SecurityEntities.cs
 CALL:MKL Security\Data\SecurityModel.edmx
 CALL:MKL Security\Data\SecurityModel.Designer.cs
 CALL:MKL Security\Data\User.cs
+CALL:MKL Threading\QueueTimer.cs
 SET upr=D:\Projects\Jocys.com\Class Library
 
 pause

@@ -110,14 +110,19 @@ namespace x360ce.App
 		public const string LeftThumbUp = "Left Analog Y+ Button";
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
 		public const string LeftThumbDown = "Left Analog Y- Button";
-		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to left thumb X.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0; add deadzone to left thumb X.")]
 		public const string LeftThumbDeadZoneX = "Left Analog X DeadZone";
-		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to left thumb Y.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0; add deadzone to left thumb Y.")]
 		public const string LeftThumbDeadZoneY = "Left Analog Y DeadZone";
-		[DefaultValue("0"), Description("[0-32767]; default 0; remove in-game deadzone for left thumb X.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0; remove in-game deadzone for left thumb X.")]
 		public const string LeftThumbAntiDeadZoneX = "Left Analog X AntiDeadZone";
-		[DefaultValue("0"), Description("[0-32767]; default 0;  remove in-game deadzone for Left thumb Y.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0;  remove in-game deadzone for Left thumb Y.")]
 		public const string LeftThumbAntiDeadZoneY = "Left Analog Y AntiDeadZone";
+		[DefaultValue("0"), Description("[-100;100]; default 0; Raise this number to increase sensitivity near center")]
+		public const string LeftThumbLinearX = "Left Analog X Linear";
+		[DefaultValue("0"), Description("[-100;100]; default 0; Raise this number to increase sensitivity near center")]
+		public const string LeftThumbLinearY = "Left Analog Y Linear";
+
 
 		// Right Thumb.
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
@@ -134,14 +139,18 @@ namespace x360ce.App
 		public const string RightThumbUp = "Right Analog Y+ Button";
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
 		public const string RightThumbDown = "Right Analog Y- Button";
-		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to right thumb X.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0; add deadzone to right thumb X.")]
 		public const string RightThumbDeadZoneX = "Right Analog X DeadZone";
-		[DefaultValue("0"), Description("[0-32767]; default 0; add deadzone to right thumb Y.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0; add deadzone to right thumb Y.")]
 		public const string RightThumbDeadZoneY = "Right Analog Y DeadZone";
-		[DefaultValue("0"), Description("[0-32767]; default 0; remove in-game deadzone for right thumb X.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0; remove in-game deadzone for right thumb X.")]
 		public const string RightThumbAntiDeadZoneX = "Right Analog X AntiDeadZone";
-		[DefaultValue("0"), Description("[0-32767]; default 0;  remove in-game deadzone for right thumb Y.")]
+		[DefaultValue("0"), Description("[0;32767]; default 0;  remove in-game deadzone for right thumb Y.")]
 		public const string RightThumbAntiDeadZoneY = "Right Analog Y AntiDeadZone";
+		[DefaultValue("0"), Description("[-100;100]; default 0; Raise this number to increase sensitivity near center")]
+		public const string RightThumbLinearX = "Right Analog X Linear";
+		[DefaultValue("0"), Description("[-100;100]; default 0; Raise this number to increase sensitivity near center")]
+		public const string RightThumbLinearY = "Right Analog Y Linear";
 
 		// D-Pad.
 		[DefaultValue("0"), Description("Disable = 0, POV Index = N.")]
