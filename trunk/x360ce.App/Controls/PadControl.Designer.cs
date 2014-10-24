@@ -134,9 +134,11 @@
 			this.SavePresetButton = new System.Windows.Forms.Button();
 			this.ResetPresetButton = new System.Windows.Forms.Button();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
-			this.LinearityTabPage = new System.Windows.Forms.TabPage();
-			this.linearUserControl2 = new x360ce.App.Controls.LinearUserControl();
-			this.linearUserControl1 = new x360ce.App.Controls.LinearUserControl();
+			this.SensitivityTabPage = new System.Windows.Forms.TabPage();
+			this.RightThumbYLinearUserControl = new x360ce.App.Controls.LinearUserControl();
+			this.RightThumbXLinearUserControl = new x360ce.App.Controls.LinearUserControl();
+			this.LeftThumbYLinearUserControl = new x360ce.App.Controls.LinearUserControl();
+			this.LeftThumbXLinearUserControl = new x360ce.App.Controls.LinearUserControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
 			this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
@@ -161,8 +163,6 @@
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.ClearPresetButton = new System.Windows.Forms.Button();
 			this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
-			this.linearUserControl3 = new x360ce.App.Controls.LinearUserControl();
-			this.linearUserControl4 = new x360ce.App.Controls.LinearUserControl();
 			this.AdvancedTabPage.SuspendLayout();
 			this.DeviceGroupBox.SuspendLayout();
 			this.AxisToDPadGroupBox.SuspendLayout();
@@ -184,7 +184,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).BeginInit();
 			this.PadTabControl.SuspendLayout();
-			this.LinearityTabPage.SuspendLayout();
+			this.SensitivityTabPage.SuspendLayout();
 			this.ForceFeedbackTabPage.SuspendLayout();
 			this.ForceFeedbackGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
@@ -1584,7 +1584,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.PadTabControl.Controls.Add(this.GeneralTabPage);
 			this.PadTabControl.Controls.Add(this.AdvancedTabPage);
-			this.PadTabControl.Controls.Add(this.LinearityTabPage);
+			this.PadTabControl.Controls.Add(this.SensitivityTabPage);
 			this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
 			this.PadTabControl.Controls.Add(this.DirectInputTabPage);
 			this.PadTabControl.Location = new System.Drawing.Point(3, 3);
@@ -1595,33 +1595,51 @@
 			this.PadTabControl.TabIndex = 0;
 			this.PadTabControl.SelectedIndexChanged += new System.EventHandler(this.PadTabControl_SelectedIndexChanged);
 			// 
-			// LinearityTabPage
+			// SensitivityTabPage
 			// 
-			this.LinearityTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.LinearityTabPage.Controls.Add(this.linearUserControl4);
-			this.LinearityTabPage.Controls.Add(this.linearUserControl2);
-			this.LinearityTabPage.Controls.Add(this.linearUserControl3);
-			this.LinearityTabPage.Controls.Add(this.linearUserControl1);
-			this.LinearityTabPage.Location = new System.Drawing.Point(4, 22);
-			this.LinearityTabPage.Name = "LinearityTabPage";
-			this.LinearityTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.LinearityTabPage.Size = new System.Drawing.Size(620, 411);
-			this.LinearityTabPage.TabIndex = 1;
-			this.LinearityTabPage.Text = "Linearity";
+			this.SensitivityTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.SensitivityTabPage.Controls.Add(this.RightThumbYLinearUserControl);
+			this.SensitivityTabPage.Controls.Add(this.RightThumbXLinearUserControl);
+			this.SensitivityTabPage.Controls.Add(this.LeftThumbYLinearUserControl);
+			this.SensitivityTabPage.Controls.Add(this.LeftThumbXLinearUserControl);
+			this.SensitivityTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SensitivityTabPage.Name = "SensitivityTabPage";
+			this.SensitivityTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.SensitivityTabPage.Size = new System.Drawing.Size(620, 411);
+			this.SensitivityTabPage.TabIndex = 1;
+			this.SensitivityTabPage.Text = "Sensitivity";
 			// 
-			// linearUserControl2
+			// RightThumbYLinearUserControl
 			// 
-			this.linearUserControl2.Location = new System.Drawing.Point(256, 3);
-			this.linearUserControl2.Name = "linearUserControl2";
-			this.linearUserControl2.Size = new System.Drawing.Size(287, 178);
-			this.linearUserControl2.TabIndex = 0;
+			this.RightThumbYLinearUserControl.HeaderText = "Right Thumb Y";
+			this.RightThumbYLinearUserControl.Location = new System.Drawing.Point(264, 204);
+			this.RightThumbYLinearUserControl.Name = "RightThumbYLinearUserControl";
+			this.RightThumbYLinearUserControl.Size = new System.Drawing.Size(252, 192);
+			this.RightThumbYLinearUserControl.TabIndex = 0;
 			// 
-			// linearUserControl1
+			// RightThumbXLinearUserControl
 			// 
-			this.linearUserControl1.Location = new System.Drawing.Point(7, 7);
-			this.linearUserControl1.Name = "linearUserControl1";
-			this.linearUserControl1.Size = new System.Drawing.Size(234, 174);
-			this.linearUserControl1.TabIndex = 0;
+			this.RightThumbXLinearUserControl.HeaderText = "Right Thumb X";
+			this.RightThumbXLinearUserControl.Location = new System.Drawing.Point(264, 6);
+			this.RightThumbXLinearUserControl.Name = "RightThumbXLinearUserControl";
+			this.RightThumbXLinearUserControl.Size = new System.Drawing.Size(252, 192);
+			this.RightThumbXLinearUserControl.TabIndex = 0;
+			// 
+			// LeftThumbYLinearUserControl
+			// 
+			this.LeftThumbYLinearUserControl.HeaderText = "Left Thumb Y";
+			this.LeftThumbYLinearUserControl.Location = new System.Drawing.Point(6, 204);
+			this.LeftThumbYLinearUserControl.Name = "LeftThumbYLinearUserControl";
+			this.LeftThumbYLinearUserControl.Size = new System.Drawing.Size(252, 192);
+			this.LeftThumbYLinearUserControl.TabIndex = 0;
+			// 
+			// LeftThumbXLinearUserControl
+			// 
+			this.LeftThumbXLinearUserControl.HeaderText = "Left Thumb X";
+			this.LeftThumbXLinearUserControl.Location = new System.Drawing.Point(6, 6);
+			this.LeftThumbXLinearUserControl.Name = "LeftThumbXLinearUserControl";
+			this.LeftThumbXLinearUserControl.Size = new System.Drawing.Size(252, 192);
+			this.LeftThumbXLinearUserControl.TabIndex = 0;
 			// 
 			// ForceFeedbackTabPage
 			// 
@@ -1872,20 +1890,6 @@
 			// 
 			this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
 			// 
-			// linearUserControl3
-			// 
-			this.linearUserControl3.Location = new System.Drawing.Point(7, 187);
-			this.linearUserControl3.Name = "linearUserControl3";
-			this.linearUserControl3.Size = new System.Drawing.Size(234, 174);
-			this.linearUserControl3.TabIndex = 0;
-			// 
-			// linearUserControl4
-			// 
-			this.linearUserControl4.Location = new System.Drawing.Point(256, 183);
-			this.linearUserControl4.Name = "linearUserControl4";
-			this.linearUserControl4.Size = new System.Drawing.Size(287, 178);
-			this.linearUserControl4.TabIndex = 0;
-			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1923,7 +1927,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).EndInit();
 			this.PadTabControl.ResumeLayout(false);
-			this.LinearityTabPage.ResumeLayout(false);
+			this.SensitivityTabPage.ResumeLayout(false);
 			this.ForceFeedbackTabPage.ResumeLayout(false);
 			this.ForceFeedbackGroupBox.ResumeLayout(false);
 			this.ForceFeedbackGroupBox.PerformLayout();
@@ -2080,10 +2084,10 @@
         private System.Windows.Forms.Button ClearPresetButton;
         private System.Windows.Forms.GroupBox DeviceGroupBox;
         private System.Windows.Forms.Timer RecordingTimer;
-		private System.Windows.Forms.TabPage LinearityTabPage;
-		private LinearUserControl linearUserControl2;
-		private LinearUserControl linearUserControl1;
-		private LinearUserControl linearUserControl4;
-		private LinearUserControl linearUserControl3;
+		private System.Windows.Forms.TabPage SensitivityTabPage;
+		private LinearUserControl RightThumbXLinearUserControl;
+		private LinearUserControl LeftThumbXLinearUserControl;
+		private LinearUserControl RightThumbYLinearUserControl;
+		private LinearUserControl LeftThumbYLinearUserControl;
 	}
 }

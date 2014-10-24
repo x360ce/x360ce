@@ -232,6 +232,8 @@ namespace x360ce.App
 			ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
 			ps.LeftThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX);
 			ps.LeftThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY);
+			//ps.LeftThumbLinearX = ini2.GetValue(padSectionName, SettingName.LeftThumbLinearX);
+			//ps.LeftThumbLinearY = ini2.GetValue(padSectionName, SettingName.LeftThumbLinearY);
 			ps.LeftThumbAxisX = ini2.GetValue(padSectionName, SettingName.LeftThumbAxisX);
 			ps.LeftThumbAxisY = ini2.GetValue(padSectionName, SettingName.LeftThumbAxisY);
 			ps.LeftThumbButton = ini2.GetValue(padSectionName, SettingName.LeftThumbButton);
@@ -253,6 +255,8 @@ namespace x360ce.App
 			ps.RightThumbButton = ini2.GetValue(padSectionName, SettingName.RightThumbButton);
 			ps.RightThumbDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbDeadZoneX);
 			ps.RightThumbDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbDeadZoneY);
+			//ps.RightThumbLinearX = ini2.GetValue(padSectionName, SettingName.RightThumbLinearX);
+			//ps.RightThumbLinearY = ini2.GetValue(padSectionName, SettingName.RightThumbLinearY);
 			ps.RightThumbDown = ini2.GetValue(padSectionName, SettingName.RightThumbDown);
 			ps.RightThumbLeft = ini2.GetValue(padSectionName, SettingName.RightThumbLeft);
 			ps.RightThumbRight = ini2.GetValue(padSectionName, SettingName.RightThumbRight);
@@ -304,6 +308,8 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX, ps.LeftThumbAntiDeadZoneX);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY, ps.LeftThumbAntiDeadZoneY);
+			//ini2.SetValue(padSectionName, SettingName.LeftThumbLinearX, ps.LeftThumbLinearX);
+			//ini2.SetValue(padSectionName, SettingName.LeftThumbLinearY, ps.LeftThumbLinearY);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAxisX, ps.LeftThumbAxisX);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAxisY, ps.LeftThumbAxisY);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbButton, ps.LeftThumbButton);
@@ -320,6 +326,8 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX, ps.RightThumbAntiDeadZoneX);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY, ps.RightThumbAntiDeadZoneY);
+			//ini2.SetValue(padSectionName, SettingName.RightThumbLinearX, ps.RightThumbLinearX);
+			//ini2.SetValue(padSectionName, SettingName.RightThumbLinearY, ps.RightThumbLinearY);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAxisX, ps.RightThumbAxisX);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAxisY, ps.RightThumbAxisY);
 			ini2.SetValue(padSectionName, SettingName.RightThumbButton, ps.RightThumbButton);

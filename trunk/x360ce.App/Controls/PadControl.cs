@@ -456,6 +456,8 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbDeadZoneYTrackBar);
             sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXAntiDeadZoneNumericUpDown);
             sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYAntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXLinearUserControl.LinearTrackBar);
+			sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYLinearUserControl.LinearTrackBar);
             // Right Thumb
             sm.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
             sm.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
@@ -468,7 +470,9 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbDeadZoneYTrackBar);
             sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXAntiDeadZoneNumericUpDown);
             sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
-            // Force Feedback
+			sm.Add(section + SettingName.RightThumbLinearX, RightThumbXLinearUserControl.LinearTrackBar);
+			sm.Add(section + SettingName.RightThumbLinearY, RightThumbYLinearUserControl.LinearTrackBar);
+			// Force Feedback
             sm.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
             sm.Add(section + SettingName.ForceType, ForceTypeComboBox);
             sm.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
@@ -513,6 +517,10 @@ namespace x360ce.App.Controls
             ThumbsGroupBox.Enabled = enable;
             AxisToDPadGroupBox.Enabled = enable;
             DeviceGroupBox.Enabled = enable;
+			LeftThumbXLinearUserControl.Enabled = enable;
+			LeftThumbYLinearUserControl.Enabled = enable;
+			RightThumbXLinearUserControl.Enabled = enable;
+			RightThumbYLinearUserControl.Enabled = enable;
             if (enable)
             {
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);
