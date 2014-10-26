@@ -138,7 +138,7 @@
                     <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 400px;" class="Controllers">
 <p style="text-align: center; margin-top: 20px; color: #84e68c;"><img src="/Images/x360ce_Logo.png" /></p>
                         
-<p style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_Wheel_160H.png" style="border-radius: 14px;" /></a><a  target="_blank" href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="margin-left: 14px;"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_160H.png" style="border-radius: 14px;"/></a></p>
+<p style="text-align: center;"><a title="Logitech G27 Racing Wheel" href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_Wheel_160H.png" style="width: 203px; height: 160px; border-radius: 14px;" /></a><a title="Logitech Driving Force GT"  target="_blank" href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="margin-left: 14px;"><img src="http://www.jocys.com/files/hardware/Logitech_Driving_Force_GT_160H.png" style="width: 155px; height: 160px; border-radius: 14px;"/></a></p>
 
 <p style="text-align: center; margin-top: 0px; color: #84e68c;">TOP CONTROLLERS</p>
                         <uc1:ControllersControl runat="server" ID="ControllersControl" />
