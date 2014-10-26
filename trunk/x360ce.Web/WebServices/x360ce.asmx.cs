@@ -92,6 +92,8 @@ namespace x360ce.Web.WebServices
             p1.LeftThumbButton = ps.LeftThumbButton;
             p1.LeftThumbDeadZoneX = ps.LeftThumbDeadZoneX;
             p1.LeftThumbDeadZoneY = ps.LeftThumbDeadZoneY;
+            p1.LeftThumbLinearX = string.IsNullOrEmpty(ps.LeftThumbLinearX) ? "" : ps.LeftThumbLinearX;
+            p1.LeftThumbLinearY = string.IsNullOrEmpty(ps.LeftThumbLinearY) ? "" : ps.LeftThumbLinearY;
             p1.LeftThumbDown = ps.LeftThumbDown;
             p1.LeftThumbLeft = ps.LeftThumbLeft;
             p1.LeftThumbRight = ps.LeftThumbRight;
@@ -103,6 +105,8 @@ namespace x360ce.Web.WebServices
             p1.RightShoulder = ps.RightShoulder;
             p1.RightThumbAntiDeadZoneX = ps.RightThumbAntiDeadZoneX;
             p1.RightThumbAntiDeadZoneY = ps.RightThumbAntiDeadZoneY;
+            p1.RightThumbLinearX = string.IsNullOrEmpty(ps.RightThumbLinearX) ? "" : ps.RightThumbLinearX;
+            p1.RightThumbLinearY = string.IsNullOrEmpty(ps.RightThumbLinearY) ? "" : ps.RightThumbLinearY;
             p1.RightThumbAxisX = ps.RightThumbAxisX;
             p1.RightThumbAxisY = ps.RightThumbAxisY;
             p1.RightThumbButton = ps.RightThumbButton;

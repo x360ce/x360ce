@@ -279,7 +279,7 @@ namespace x360ce.App.Controls
             {
                 var fi = _files[GameComboBox.SelectedIndex - 1];
                 s.FileName = System.IO.Path.GetFileName(fi.FileName);
-                s.FileProductName = fi.ProductName;
+                s.FileProductName = fi.ProductName ?? s.FileName;
             }
             else
             {
