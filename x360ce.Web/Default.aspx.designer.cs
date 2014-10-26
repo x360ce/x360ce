@@ -47,5 +47,14 @@ namespace x360ce.Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::x360ce.Web.Controls.ControllersControl ControllersControl;
+        
+        /// <summary>
+        /// ControllersChartControl1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::x360ce.Web.Controls.ControllersChartControl ControllersChartControl1;
     }
 }
