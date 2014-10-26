@@ -795,14 +795,14 @@ namespace x360ce.App
 				// If ini file doesn't exists.
 				if (!System.IO.File.Exists(SettingManager.IniFileName))
 				{
-					if (!CreateFile(SettingManager.IniFileName)) return false;
+                    if (!CreateFile(this.GetType().Namespace + ".Presets." + SettingManager.IniFileName, SettingManager.IniFileName)) return false;
 				}
 				// If xinput file doesn't exists.
 				var embeddedDllVersion = Helper.GetEmbeddedDllVersion();
 				var file = Helper.GetDefaultDll();
 				if (file == null)
 				{
-					if (!CreateFile(Helper.dllFile3)) return false;
+					if (!CreateFile(Helper.GetXInputResoureceName(), Helper.dllFile3)) return false;
 				}
 				else
 				{
@@ -810,7 +810,7 @@ namespace x360ce.App
 					var dllVersion = GetDllVersion(file.Name, out byMicrosoft);
 					if (dllVersion < embeddedDllVersion)
 					{
-						CreateFile(Helper.dllFile3, file.Name, dllVersion,  embeddedDllVersion);
+                        CreateFile(Helper.GetXInputResoureceName(), file.Name, dllVersion, embeddedDllVersion);
 						return true;
 					}
 				}
@@ -893,9 +893,9 @@ namespace x360ce.App
 			return true;
 		}
 
-		public bool CreateFile(string sourceFileName, string destinationFileName = null, Version dllVersion = null, Version newVersion = null)
+		public bool CreateFile(string resourceName, string destinationFileName, Version dllVersion = null, Version newVersion = null)
 		{
-			if (destinationFileName == null) destinationFileName = sourceFileName;
+			if (destinationFileName == null) destinationFileName = resourceName;
 			DialogResult answer;
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -916,7 +916,7 @@ namespace x360ce.App
 			if (answer == DialogResult.Yes)
 			{
 				var assembly = Assembly.GetExecutingAssembly();
-				var sr = assembly.GetManifestResourceStream(this.GetType().Namespace + ".Presets." + sourceFileName);
+				var sr = assembly.GetManifestResourceStream(resourceName);
 				FileStream sw = null;
 				try
 				{

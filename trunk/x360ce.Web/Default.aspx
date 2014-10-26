@@ -100,14 +100,19 @@
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/w/list">Wiki</a></td>
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/issues/list">Issues</a></td>
                                 <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/source/checkout">Source</a></td>
-                                <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.191.zip">Download x360ce 2.1.2.191 with 32bit library 3.4.0.584</a></td>
+                                <td style="vertical-align: bottom;"><a style="display: inline-block; width: 350px;" class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.191.zip">Download x360ce 2.1.2.191 with 32bit library 3.4.0.584</a></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="vertical-align: bottom;"><a target="_blank" style="display: inline-block; width: 350px;" class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">If you encounter problems, try to download older versions...</a></td>
                             </tr>
                         </table>
 
                         <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto” (GTA) or “Mafia II” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
-<p style="text-align: justify; color: #80ceff;">If you encounter problems, try to <a class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">download older versions...</a></p>
-
-</p>
 
                     </td>
                 </tr>

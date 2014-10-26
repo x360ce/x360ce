@@ -123,7 +123,6 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("[-100;100]; default 0; Raise this number to increase sensitivity near center")]
 		public const string LeftThumbLinearY = "Left Analog Y Linear";
 
-
 		// Right Thumb.
 		[DefaultValue("0"), Description("Button Id. Disable = 0.")]
 		public const string RightThumbButton = "Right Thumb";

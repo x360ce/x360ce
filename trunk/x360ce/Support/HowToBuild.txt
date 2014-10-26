@@ -67,7 +67,23 @@ Solution: http://support.microsoft.com/kb/2728613
    Microsoft Visual C++ 2010 SP1 x86 Redistributable
    Microsoft Visual C++ 2010 SP1 x64 Redistributable
    http://www.microsoft.com/en-us/download/details.aspx?id=26999
-   
+
+-------------------------------------------------------------------------------
+ERROR: Visual Studio 2010/2012/2013 cannot open x360ce.Data.sqlproj.
+-------------------------------------------------------------------------------
+
+Solution: Download and install Microsoft SQL Server Data Tools.
+
+http://msdn.microsoft.com/en-gb/data/tools.aspx
+
+Creating an administrative install of SSDT:
+
+1. Download SSDTSetup.exe from http://go.microsoft.com/fwlink/?LinkID=393521
+2. Run the following command using an administrator command prompt (cmd.exe run as administrator):
+      start SSDTSetup.exe /layout SSDT
+3. Follow instructions.
+4. Start SSDTSetup.exe from the SSDT folder with no arguments.
+
 -------------------------------------------------------------------------------
 ERROR: Visual Studio 2012 (Platform Toolset = 'v110') cannot be found.
 When trying to build with Visual Studio 2013

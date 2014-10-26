@@ -26,6 +26,9 @@ namespace x360ce.App
         public const string dllFile3 = "xinput1_3.dll";
         public const string dllFile4 = "xinput1_4.dll";
 
+        public const string dllFile3ce32 = "Resources.xinput1_3_32.dll";
+        public const string dllFile3ce64 = "Resources.xinput1_3_64.dll";
+
         public static FileInfo[] GetDllInfos()
         {
             var files = new string[] { dllFile0, dllFile1, dllFile2, dllFile3, dllFile4 };
@@ -51,7 +54,7 @@ namespace x360ce.App
                 var present = GetDefaultDll();
                 if (present == null)
                 {
-                    MainForm.Current.CreateFile(Helper.dllFile3);
+                    MainForm.Current.CreateFile(GetXInputResoureceName(), Helper.dllFile3);
                 }
                 else if (!System.IO.File.Exists(file))
                 {
@@ -72,18 +75,26 @@ namespace x360ce.App
             return System.IO.File.Exists(file);
         }
 
+        public static string GetXInputResoureceName()
+        {
+            // There must be an easier way to check embedded non managed DLL version.
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = dllFile3ce32;
+            if (assembly.GetName().ProcessorArchitecture == ProcessorArchitecture.Amd64) resourceName = dllFile3ce64;
+            return typeof(MainForm).Namespace + "." + resourceName;
+        }
+
         public static Version _embededVersion;
         public static Version GetEmbeddedDllVersion()
         {
             if (_embededVersion != null) return _embededVersion;
-            // There must be an easier way to check embedded non managed DLL version.
-            var assembly = Assembly.GetExecutingAssembly();
-            var sr = assembly.GetManifestResourceStream(typeof(MainForm).Namespace + ".Presets." + dllFile3);
             string tempPath = Path.GetTempPath();
             FileStream sw = null;
             var tempFile = Path.Combine(Path.GetTempPath(), "xinput.tmp.dll");
             sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
             var buffer = new byte[1024];
+            var assembly = Assembly.GetExecutingAssembly();
+            var sr = assembly.GetManifestResourceStream(GetXInputResoureceName());
             while (true)
             {
                 var count = sr.Read(buffer, 0, buffer.Length);
