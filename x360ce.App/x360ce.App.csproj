@@ -418,9 +418,9 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\xinput1_3_32.dll" />
     <EmbeddedResource Include="Resources\xinput1_3_64.dll" />
-    <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <Content Include="Images\app_48x48.png" />
