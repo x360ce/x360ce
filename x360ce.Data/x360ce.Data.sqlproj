@@ -105,7 +105,6 @@
     <Folder Include="Scripts" />
     <Folder Include="Scripts\Pre-Deployment" />
     <Folder Include="Scripts\Post-Deployment" />
-    <Folder Include="Data Generation Plans" />
     <Folder Include="Schema Comparisons" />
     <Folder Include="Properties\" />
     <Folder Include="dbo\" />
@@ -158,8 +157,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="Security\x360ceAdmin.sql" />
-    <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Tables\aspnet_UsersInRoles.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -240,16 +237,12 @@
     </Build>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\x360ce.Master\x360ce.Master.sqlproj">
-      <Name>x360ce.Master</Name>
-      <Project>{9ac47e19-cf57-40f9-bc5f-1ddbf98e923a}</Project>
-      <Private>True</Private>
-      <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Debug.publish.xml" />
     <None Include="Release.publish.xml" />
+    <None Include="Schema Comparisons\DatabaseToProject.Test.scmp" />
+    <None Include="Schema Comparisons\ProjectToDatabase.Test.scmp" />
+    <None Include="Schema Comparisons\DatabaseToProject.Live.scmp" />
+    <None Include="Schema Comparisons\ProjectToDatabase.Live.scmp" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Scripts\Pre-Deployment\Script.PreDeployment.sql" />
@@ -258,8 +251,8 @@
     <PostDeploy Include="Scripts\Post-Deployment\Script.PostDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
-    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\100\SqlSchemas\master.dacpac">
-      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\100\SqlSchemas\master.dacpac</HintPath>
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\120\SqlSchemas\master.dacpac">
+      <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\120\SqlSchemas\master.dacpac</HintPath>
       <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
       <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
     </ArtifactReference>

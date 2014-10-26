@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App", "x360ce.App\x360ce.App.csproj", "{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}"
-EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Master", "x360ce.Master\x360ce.Master.sqlproj", "{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Data", "x360ce.Data\x360ce.Data.sqlproj", "{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}"
 EndProject
@@ -61,17 +59,6 @@ Global
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|Win32.Build.0 = Release|x86
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|x64.ActiveCfg = Release|x64
 		{1D4EDC24-FD61-4234-AE60-5FA676DDEC3C}.Release|x64.Build.0 = Release|x64
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|Win32.ActiveCfg = Release|Any CPU
-		{9AC47E19-CF57-40F9-BC5F-1DDBF98E923A}.Release|x64.ActiveCfg = Release|Any CPU
 		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU

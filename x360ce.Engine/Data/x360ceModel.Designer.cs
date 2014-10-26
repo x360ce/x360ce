@@ -625,7 +625,8 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// Create a new PadSetting object.
         /// </summary>
-        /// <param name="padSettingChecksum">Initial value of the PadSettingChecksum property.</param>
+        /// <param name="
+        /// ">Initial value of the PadSettingChecksum property.</param>
         /// <param name="axisToDPadDeadZone">Initial value of the AxisToDPadDeadZone property.</param>
         /// <param name="axisToDPadEnabled">Initial value of the AxisToDPadEnabled property.</param>
         /// <param name="axisToDPadOffset">Initial value of the AxisToDPadOffset property.</param>
@@ -678,7 +679,11 @@ namespace x360ce.Engine.Data
         /// <param name="rightThumbUp">Initial value of the RightThumbUp property.</param>
         /// <param name="rightTrigger">Initial value of the RightTrigger property.</param>
         /// <param name="rightTriggerDeadZone">Initial value of the RightTriggerDeadZone property.</param>
-        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone)
+        /// <param name="leftThumbLinearX">Initial value of the LeftThumbLinearX property.</param>
+        /// <param name="leftThumbLinearY">Initial value of the LeftThumbLinearY property.</param>
+        /// <param name="rightThumbLinearX">Initial value of the RightThumbLinearX property.</param>
+        /// <param name="rightThumbLinearY">Initial value of the RightThumbLinearY property.</param>
+        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY)
         {
             PadSetting padSetting = new PadSetting();
             padSetting.PadSettingChecksum = padSettingChecksum;
@@ -734,6 +739,10 @@ namespace x360ce.Engine.Data
             padSetting.RightThumbUp = rightThumbUp;
             padSetting.RightTrigger = rightTrigger;
             padSetting.RightTriggerDeadZone = rightTriggerDeadZone;
+            padSetting.LeftThumbLinearX = leftThumbLinearX;
+            padSetting.LeftThumbLinearY = leftThumbLinearY;
+            padSetting.RightThumbLinearX = rightThumbLinearX;
+            padSetting.RightThumbLinearY = rightThumbLinearY;
             return padSetting;
         }
 
@@ -2015,6 +2024,102 @@ namespace x360ce.Engine.Data
         private global::System.String _RightTriggerDeadZone;
         partial void OnRightTriggerDeadZoneChanging(global::System.String value);
         partial void OnRightTriggerDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbLinearX
+        {
+            get
+            {
+                return _LeftThumbLinearX;
+            }
+            set
+            {
+                OnLeftThumbLinearXChanging(value);
+                ReportPropertyChanging("LeftThumbLinearX");
+                _LeftThumbLinearX = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbLinearX");
+                OnLeftThumbLinearXChanged();
+            }
+        }
+        private global::System.String _LeftThumbLinearX;
+        partial void OnLeftThumbLinearXChanging(global::System.String value);
+        partial void OnLeftThumbLinearXChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbLinearY
+        {
+            get
+            {
+                return _LeftThumbLinearY;
+            }
+            set
+            {
+                OnLeftThumbLinearYChanging(value);
+                ReportPropertyChanging("LeftThumbLinearY");
+                _LeftThumbLinearY = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbLinearY");
+                OnLeftThumbLinearYChanged();
+            }
+        }
+        private global::System.String _LeftThumbLinearY;
+        partial void OnLeftThumbLinearYChanging(global::System.String value);
+        partial void OnLeftThumbLinearYChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbLinearX
+        {
+            get
+            {
+                return _RightThumbLinearX;
+            }
+            set
+            {
+                OnRightThumbLinearXChanging(value);
+                ReportPropertyChanging("RightThumbLinearX");
+                _RightThumbLinearX = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbLinearX");
+                OnRightThumbLinearXChanged();
+            }
+        }
+        private global::System.String _RightThumbLinearX;
+        partial void OnRightThumbLinearXChanging(global::System.String value);
+        partial void OnRightThumbLinearXChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbLinearY
+        {
+            get
+            {
+                return _RightThumbLinearY;
+            }
+            set
+            {
+                OnRightThumbLinearYChanging(value);
+                ReportPropertyChanging("RightThumbLinearY");
+                _RightThumbLinearY = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbLinearY");
+                OnRightThumbLinearYChanged();
+            }
+        }
+        private global::System.String _RightThumbLinearY;
+        partial void OnRightThumbLinearYChanging(global::System.String value);
+        partial void OnRightThumbLinearYChanged();
 
         #endregion
 
