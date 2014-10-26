@@ -45,6 +45,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System.Web.DataVisualization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.Entity" />
@@ -67,6 +68,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Controls\ControllersChartControl.ascx" />
     <Content Include="Controls\ControllersControl.ascx" />
     <Content Include="Controls\GamesControl.ascx" />
     <Content Include="Default.aspx" />
@@ -85,6 +87,13 @@
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ControllersChartControl.ascx.cs">
+      <DependentUpon>ControllersChartControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ControllersChartControl.ascx.designer.cs">
+      <DependentUpon>ControllersChartControl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ControllersControl.ascx.cs">
       <DependentUpon>ControllersControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
