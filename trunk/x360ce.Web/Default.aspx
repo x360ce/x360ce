@@ -157,8 +157,8 @@
                         </table>
                         <table style="width: 804px; margin-top: 4px;">
                             <tr>
-                                <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: center; border-radius: 14px; width: 804px;">
-                                    <uc2:ControllersChartControl ID="ControllersChartControl1" runat="server" />
+                                <td colspan="2" style="background-color: #ffbf00; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; color: #111111; text-align: center; border-radius: 14px; width: 804px;">
+					<uc2:ControllersChartControl ID="ControllersChartControl1" runat="server" />
                                 </td>
                             </tr>
                         </table>
