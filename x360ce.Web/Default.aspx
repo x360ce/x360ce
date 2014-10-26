@@ -112,7 +112,7 @@
                             </tr>
                         </table>
 
-                        <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto” (GTA) or “Mafia II” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
+                        <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto”, “Mafia” or “Saints Row” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
 
                     </td>
                 </tr>
@@ -137,7 +137,10 @@
                     </td>
                     <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 400px;" class="Controllers">
 <p style="text-align: center; margin-top: 20px; color: #84e68c;"><img src="/Images/x360ce_Logo.png" /></p>
-                        <p style="text-align: center; margin-top: 0px; color: #84e68c;">TOP CONTROLLERS</p>
+                        
+<p style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_Wheel_160H.png" style="border-radius: 14px;" /></a><a  target="_blank" href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="margin-left: 14px;"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_160H.png" style="border-radius: 14px;"/></a></p>
+
+<p style="text-align: center; margin-top: 0px; color: #84e68c;">TOP CONTROLLERS</p>
                         <uc1:ControllersControl runat="server" ID="ControllersControl" />
                     </td>
                 </tr>
