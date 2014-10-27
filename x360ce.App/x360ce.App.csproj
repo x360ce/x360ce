@@ -497,9 +497,9 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
-if $(PlatformName) == x86 $(SolutionDir)\Resources\NetZ\netz.exe -pl x86 -s -so -z $(TargetPath)
-if $(PlatformName) == x64 $(SolutionDir)\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
-if $(PlatformName) == AnyCPU $(SolutionDir)\Resources\NetZ\netz.exe -s -so -z $(TargetPath)
+if $(PlatformName) == x86 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x86 -s -so -z $(TargetPath)
+if $(PlatformName) == x64 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
+if $(PlatformName) == AnyCPU $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -s -so -z $(TargetPath)
 )</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
