@@ -115,14 +115,27 @@
 
 		#region Custom Functions
 
-		internal delegate ErrorCode _Reset();
+		internal delegate ErrorCode ResetDelegate();
+		internal delegate ErrorCode GetThumbValueDelegate(ThumbIndex index, ushort dInputValue, out ushort xInputValue);
 
 		/// <summary>Reloads settings from INI file.</summary>
 		[HandleProcessCorruptedStateExceptions]
 		internal static ErrorCode Reset()
 		{
 			if (!IsResetSupported) return ErrorCode.NotSupported;
-			try { return GetMethod<_Reset>("reset")(); }
+			try { return GetMethod<ResetDelegate>("reset")(); }
+			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (Exception) { throw; }
+		}
+
+		/// <summary>Get XInput thumb value by DINput value</summary>
+		/// <remarks>Used to create graphs pictures.</remarks>
+		[HandleProcessCorruptedStateExceptions]
+		internal static ErrorCode GetThumbValue(ThumbIndex index, ushort dInputValue, out ushort xInputValue)
+		{
+			xInputValue = 0;
+			if (!IsGetThumbValueSupported) return ErrorCode.NotSupported;
+			try { return GetMethod<GetThumbValueDelegate>("GetThumbValue")(index, dInputValue, out xInputValue); }
 			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
 			catch (Exception) { throw; }
 		}
@@ -133,6 +146,9 @@
 
 		static bool _IsResetSupported;
 		internal static bool IsResetSupported { get { return _IsResetSupported; } }
+
+		static bool _IsGetThumbValueSupported;
+		internal static bool IsGetThumbValueSupported { get { return _IsGetThumbValueSupported; } }
 
 		static bool _IsGetStateExSupported;
 		internal static bool IsGetStateExSupported { get { return _IsGetStateExSupported; } }
@@ -190,6 +206,9 @@
 				// Check if Reset function is supported.
 				procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "reset");
 				_IsResetSupported = procAddress != IntPtr.Zero;
+				// Check if GetThumbValue function is supported.
+				procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "GetThumbValue");
+				_IsGetThumbValueSupported = procAddress != IntPtr.Zero;
 			}
 		}
 
