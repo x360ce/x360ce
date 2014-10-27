@@ -538,8 +538,6 @@
             // 
             // DiCapButtonsTextBox
             // 
-            this.DiCapButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.DiCapButtonsTextBox.Location = new System.Drawing.Point(408, 81);
             this.DiCapButtonsTextBox.Name = "DiCapButtonsTextBox";
             this.DiCapButtonsTextBox.ReadOnly = true;
@@ -557,8 +555,6 @@
             // 
             // DiCapDPadsTextBox
             // 
-            this.DiCapDPadsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.DiCapDPadsTextBox.Location = new System.Drawing.Point(408, 107);
             this.DiCapDPadsTextBox.Name = "DiCapDPadsTextBox";
             this.DiCapDPadsTextBox.ReadOnly = true;
