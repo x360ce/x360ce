@@ -260,6 +260,7 @@
     <Compile Include="SharpDX.XInput\KeyStrokeFlags.cs" />
     <Compile Include="SharpDX.XInput\ResultCode.cs" />
     <Compile Include="SharpDX.XInput\State.cs" />
+    <Compile Include="SharpDX.XInput\ThumbIndex.cs" />
     <Compile Include="SharpDX.XInput\UserIndex.cs" />
     <Compile Include="SharpDX.XInput\Vibration.cs" />
     <Compile Include="SharpDX.XInput\XInput.cs" />
