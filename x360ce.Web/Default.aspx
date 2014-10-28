@@ -172,15 +172,11 @@
                                     • Visual C++ Redistributable for Visual Studio 2012 Update 1 (Most titles use the x86 runtime whether your OS is 64bit or not)<br />
                                     • .NET 4.0 (link to 4.5, also installs 4.0)<br />
                                     <br />
-                                    <span class="title">Introduction</span><br />
+                                    <span class="title">Files</span><br />
                                     <br />
-                                    "Xbox 360 Controller Emulator" files:<br />
-                                    <br />
-                                    xinput1_3.dll (Library) - Wrapper library that translates the XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.<br />
-                                    <br />
-                                    x360ce.exe - (Application) - Allows edit and test Library settings.<br />
-                                    <br />
-                                    x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
+                                    • xinput1_3.dll (Library) - Translates the XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.<br />
+                                    • x360ce.exe - (Application) - Allows edit and test Library settings.<br />
+                                    • x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
                                     <br />
                                     <span class="title">Installation</span><br />
                                     <br />
