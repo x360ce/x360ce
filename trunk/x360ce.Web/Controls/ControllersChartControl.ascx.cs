@@ -30,7 +30,7 @@ namespace x360ce.Web.Controls
                 if (i == 0) fromDate = date;
                 toDate = date;
             }
-            this.Chart1.Titles["Title1"].Text = string.Format("Controllers in Database (Monthly, {0:yyyy-MM} - {1:yyyy-MM})", fromDate, toDate);
+            this.Chart1.Titles["Title1"].Text = string.Format("Controllers in Database • Monthly, {0:yyyy-MM} - {1:yyyy-MM}", fromDate, toDate);
         }
 
         public static DataSet ExecuteStoredProcedure(ObjectContext db, string storedProcedureName, IEnumerable<SqlParameter> parameters)
