@@ -174,7 +174,7 @@
                                     <br />
                                     <span class="title">Files</span><br />
                                     <br />
-                                    • xinput1_3.dll (Library) - Translates the XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.<br />
+                                    • xinput1_3.dll (Library) - Translates XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.<br />
                                     • x360ce.exe - (Application) - Allows edit and test Library settings.<br />
                                     • x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
                                     <br />
