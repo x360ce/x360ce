@@ -517,7 +517,7 @@ namespace x360ce.App.Controls
             ThumbsGroupBox.Enabled = enable;
             AxisToDPadGroupBox.Enabled = enable;
             DeviceGroupBox.Enabled = enable;
-			LeftThumbXLinearUserControl.Enabled = enable;
+			//LeftThumbXLinearUserControl.Enabled = enable;
 			LeftThumbYLinearUserControl.Enabled = enable;
 			RightThumbXLinearUserControl.Enabled = enable;
 			RightThumbYLinearUserControl.Enabled = enable;
