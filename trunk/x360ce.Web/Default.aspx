@@ -180,7 +180,7 @@
                                     <br />
                                     <span class="title">Installation</span><br />
                                     <br />
-                                    Run this program from the directory the game executable. Xinput file occurs in several versions and some games require a change in its name. Know names:<br />
+                                    Run this program from game executable directory. Xinput file occurs in several versions and some games require a change in its name. Known names:<br />
                                     <br />
                                     • xinput1_3.dll<br />
                                     • xinput1_2.dll<br />
