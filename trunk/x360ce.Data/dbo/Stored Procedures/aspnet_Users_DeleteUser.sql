@@ -5,6 +5,13 @@
     @NumTablesDeletedFrom int OUTPUT
 AS
 BEGIN
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
+	DECLARE @LoweredUserName nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
     DECLARE @UserId               uniqueidentifier
     SELECT  @UserId               = NULL
     SELECT  @NumTablesDeletedFrom = 0
@@ -27,10 +34,10 @@ BEGIN
     SET @RowCount  = 0
 
     SELECT  @UserId = u.UserId
-    FROM    dbo.aspnet_Users u, dbo.aspnet_Applications a
-    WHERE   u.LoweredUserName       = LOWER(@UserName)
-        AND u.ApplicationId         = a.ApplicationId
-        AND LOWER(@ApplicationName) = a.LoweredApplicationName
+	FROM    dbo.aspnet_Users u
+    INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+    WHERE   u.LoweredUserName        = @LoweredUserName
+        AND a.LoweredApplicationName = @LoweredApplicationName
 
     IF (@UserId IS NULL)
     BEGIN

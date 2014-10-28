@@ -7,23 +7,24 @@ BEGIN
 	DECLARE @LoweredApplicationName  nvarchar(256)
 	SET @LoweredApplicationName = LOWER(@ApplicationName)
 
+	DECLARE @LoweredEmail nvarchar(256)
+	SET @LoweredEmail = LOWER(@Email)
+
 	IF( @Email IS NULL )
 		SELECT  u.UserName
-		FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
+		FROM    dbo.aspnet_Users u
+		INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+		INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
 		WHERE   @LoweredApplicationName = a.LoweredApplicationName AND
-				u.ApplicationId = a.ApplicationId    AND
-				u.UserId = m.UserId AND
 				m.LoweredEmail IS NULL
 	ELSE
-		DECLARE @LoweredEmail nvarchar(256)
-		SET @LoweredEmail = LOWER(@Email)
 
 		SELECT  u.UserName
-		FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
+		FROM    dbo.aspnet_Users u
+		INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+		INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
 		WHERE   @LoweredApplicationName = a.LoweredApplicationName AND
-				u.ApplicationId = a.ApplicationId    AND
-				u.UserId = m.UserId AND
-				@LoweredEmail = m.LoweredEmail
+				@LoweredEmail = ISNULL(m.LoweredEmail, '')
 
 	IF (@@rowcount = 0)
 		RETURN(1)

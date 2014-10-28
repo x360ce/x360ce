@@ -10,16 +10,27 @@
     @CurrentTimeUtc       datetime
 AS
 BEGIN
+
+   	DECLARE @LoweredUserName nvarchar(256)
+	SET     @LoweredUserName = LOWER(@UserName)
+
+   	DECLARE @LoweredApplicationName nvarchar(256)
+	SET     @LoweredApplicationName = LOWER(@ApplicationName)
+
+   	DECLARE @LoweredEmail nvarchar(256)
+	SET     @LoweredEmail = LOWER(@Email)
+
     DECLARE @UserId uniqueidentifier
     DECLARE @ApplicationId uniqueidentifier
     SELECT  @UserId = NULL
+   
     SELECT  @UserId = u.UserId, @ApplicationId = a.ApplicationId
-    FROM    dbo.aspnet_Users u, dbo.aspnet_Applications a, dbo.aspnet_Membership m
-    WHERE   LoweredUserName = LOWER(@UserName) AND
-            u.ApplicationId = a.ApplicationId  AND
-            LOWER(@ApplicationName) = a.LoweredApplicationName AND
-            u.UserId = m.UserId
-
+    FROM    dbo.aspnet_Users u
+    INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
+	WHERE   u.LoweredUserName = @LoweredUserName AND
+            a.LoweredApplicationName = @LoweredApplicationName
+            
     IF (@UserId IS NULL)
         RETURN(1)
 
@@ -27,7 +38,7 @@ BEGIN
     BEGIN
         IF (EXISTS (SELECT *
                     FROM  dbo.aspnet_Membership WITH (UPDLOCK, HOLDLOCK)
-                    WHERE ApplicationId = @ApplicationId  AND @UserId <> UserId AND LoweredEmail = LOWER(@Email)))
+                    WHERE ApplicationId = @ApplicationId  AND @UserId <> UserId AND LoweredEmail = @LoweredEmail))
         BEGIN
             RETURN(7)
         END
@@ -56,7 +67,7 @@ BEGIN
     UPDATE dbo.aspnet_Membership WITH (ROWLOCK)
     SET
          Email            = @Email,
-         LoweredEmail     = LOWER(@Email),
+         LoweredEmail     = @LoweredEmail,
          Comment          = @Comment,
          IsApproved       = @IsApproved,
          LastLoginDate    = @LastLoginDate

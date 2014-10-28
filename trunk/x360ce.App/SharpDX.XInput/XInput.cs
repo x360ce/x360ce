@@ -116,7 +116,6 @@
 		#region Custom Functions
 
 		internal delegate ErrorCode ResetDelegate();
-		internal delegate ErrorCode GetThumbValueDelegate(ThumbIndex index, ushort dInputValue, out ushort xInputValue);
 
 		/// <summary>Reloads settings from INI file.</summary>
 		[HandleProcessCorruptedStateExceptions]
@@ -130,14 +129,69 @@
 
 		/// <summary>Get XInput thumb value by DINput value</summary>
 		/// <remarks>Used to create graphs pictures.</remarks>
-		[HandleProcessCorruptedStateExceptions]
-		internal static ErrorCode GetThumbValue(ThumbIndex index, ushort dInputValue, out ushort xInputValue)
+		public static short GetThumbValue(short dInputValue, int deadZone, int antiDeadZone, int linear)
 		{
-			xInputValue = 0;
-			if (!IsGetThumbValueSupported) return ErrorCode.NotSupported;
-			try { return GetMethod<GetThumbValueDelegate>("GetThumbValue")(index, dInputValue, out xInputValue); }
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
-			catch (Exception) { throw; }
+			var xInput = dInputValue;
+			// If anti-deadzone value is set then...
+			if (antiDeadZone > 0)
+			{
+				//	SHORT antidz = device.antideadzone[i];
+				//	LONG val = *(targetAxis[i]);
+				//	SHORT direction = val > 0 ? 1 : -1;
+				//	val = (LONG)(abs(val) / (32767 / (32767 - antidz * 1.0)) + antidz);
+				//	val = min(val, 32767);
+				//	if (val == device.antideadzone[i] || val == -device.antideadzone[i]) val = 0;
+				//	*(targetAxis[i]) = (SHORT)(direction * val);
+			}
+			// If deadzone value is set then...
+			if (deadZone > 0)
+			{
+				//	SHORT dz = device.axisdeadzone[i];
+				//	LONG val = *(targetAxis[i]);
+				//	if ((val <= dz) && (val >= -dz)) val = 0;
+				//	*(targetAxis[i]) = (SHORT)clamp(val, -32767, 32767);
+			}
+			// If linear value is set then...
+			if (linear != 0)
+			{
+				var linearF = (float)linear / 100f;
+				var xInputF = ConvertToFloat(xInput);
+				xInputF = GetValue(xInputF, linearF);
+				xInput = ConvertToShort(xInputF);
+			}
+			return xInput;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="value">[-1.0;1.0]</param>
+		/// <param name="strength">[-1.0;1.0]</param>
+		/// <returns>[-1.0;1.0]</returns>
+		static float GetValue(float value, float param)
+		{
+			var x = value;
+			if (value > 0f) x = 0f - x;
+			if (param < 0f) x = 1f + x;
+			var v = ((float)Math.Sqrt(1f - x * x));
+			if (param < 0f) v = 1f - v;
+			if (value > 0f) v = 2f - v;
+			var val = value + (v - value - 1f) * Math.Abs(param);
+			return val;
+		}
+
+		/// <summary>Convert short [-32768;32767] to float range [-1.0f;1.0f].</summary>
+		public static float ConvertToFloat(short v)
+		{
+			float maxValue = v >= 0 ? (float)short.MaxValue : -((float)short.MinValue);
+			return ((float)v) / maxValue;
+		}
+
+		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
+		public static short ConvertToShort(float v)
+		{
+			float maxValue = v >= 0 ? (float)short.MaxValue : -((float)short.MinValue);
+			return (short)(v * maxValue);
 		}
 
 		#endregion
@@ -146,9 +200,6 @@
 
 		static bool _IsResetSupported;
 		internal static bool IsResetSupported { get { return _IsResetSupported; } }
-
-		static bool _IsGetThumbValueSupported;
-		internal static bool IsGetThumbValueSupported { get { return _IsGetThumbValueSupported; } }
 
 		static bool _IsGetStateExSupported;
 		internal static bool IsGetStateExSupported { get { return _IsGetStateExSupported; } }
@@ -206,9 +257,6 @@
 				// Check if Reset function is supported.
 				procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "reset");
 				_IsResetSupported = procAddress != IntPtr.Zero;
-				// Check if GetThumbValue function is supported.
-				procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "GetThumbValue");
-				_IsGetThumbValueSupported = procAddress != IntPtr.Zero;
 			}
 		}
 

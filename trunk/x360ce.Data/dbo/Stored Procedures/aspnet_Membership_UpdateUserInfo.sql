@@ -10,6 +10,13 @@
     @LastActivityDate               datetime
 AS
 BEGIN
+
+	DECLARE @LoweredApplicationName nvarchar(256)
+	SET     @LoweredApplicationName = LOWER(@ApplicationName)
+
+	DECLARE @LoweredUserName nvarchar(256)
+	SET     @LoweredUserName = LOWER(@UserName)
+
     DECLARE @UserId                                 uniqueidentifier
     DECLARE @IsApproved                             bit
     DECLARE @IsLockedOut                            bit
@@ -41,11 +48,11 @@ BEGIN
             @FailedPasswordAttemptWindowStart = m.FailedPasswordAttemptWindowStart,
             @FailedPasswordAnswerAttemptCount = m.FailedPasswordAnswerAttemptCount,
             @FailedPasswordAnswerAttemptWindowStart = m.FailedPasswordAnswerAttemptWindowStart
-    FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m WITH ( UPDLOCK )
-    WHERE   LOWER(@ApplicationName) = a.LoweredApplicationName AND
-            u.ApplicationId = a.ApplicationId    AND
-            u.UserId = m.UserId AND
-            LOWER(@UserName) = u.LoweredUserName
+    FROM    dbo.aspnet_Users u WITH ( UPDLOCK )
+    INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
+	WHERE   @LoweredApplicationName = a.LoweredApplicationName AND
+            @LoweredUserName = u.LoweredUserName
 
     IF ( @@rowcount = 0 )
     BEGIN

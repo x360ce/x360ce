@@ -3,6 +3,10 @@
     @RoleName         nvarchar(256)
 AS
 BEGIN
+
+	DECLARE @LoweredRoleName nvarchar(256)
+	SELECT  @LoweredRoleName = LOWER(@RoleName)
+
     DECLARE @ApplicationId uniqueidentifier
     SELECT  @ApplicationId = NULL
 
@@ -28,7 +32,7 @@ BEGIN
         GOTO Cleanup
     END
 
-    IF (EXISTS(SELECT RoleId FROM dbo.aspnet_Roles WHERE LoweredRoleName = LOWER(@RoleName) AND ApplicationId = @ApplicationId))
+    IF (EXISTS(SELECT RoleId FROM dbo.aspnet_Roles WHERE LoweredRoleName = @LoweredRoleName AND ApplicationId = @ApplicationId))
     BEGIN
         SET @ErrorCode = 1
         GOTO Cleanup
@@ -36,7 +40,7 @@ BEGIN
 
     INSERT INTO dbo.aspnet_Roles
                 (ApplicationId, RoleName, LoweredRoleName)
-         VALUES (@ApplicationId, @RoleName, LOWER(@RoleName))
+         VALUES (@ApplicationId, @RoleName, @LoweredRoleName)
 
     IF( @@ERROR <> 0 )
     BEGIN
