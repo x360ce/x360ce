@@ -122,6 +122,8 @@ namespace x360ce.App.Controls
         IList<EffectInfo> effects;
         string forceFeedbackState;
 
+        public int[] Axis = new int[0xf];
+
         List<string> ShowDirectInputState(Joystick device)
         {
             JoystickState state = null;
@@ -137,7 +139,17 @@ namespace x360ce.App.Controls
                     var error = ex;
                 }
             }
+           
             if (state == null || state.Equals(oldState)) return actions;
+
+            // Fill axis.
+            Axis[0] = state.X;
+            Axis[1] = state.Y;
+            Axis[2] = state.Z;
+            Axis[3] = state.RotationX;
+            Axis[4] = state.RotationY;
+            Axis[5] = state.RotationZ;
+            
             oldState = state;
             actions.Clear();
             // X-axis.

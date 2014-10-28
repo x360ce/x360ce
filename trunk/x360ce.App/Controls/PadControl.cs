@@ -327,14 +327,14 @@ namespace x360ce.App.Controls
 
             if (!Recording)
             {
-                setLabelColor(this.leftX > 2000, LeftThumbAxisXLabel);
-                if (this.leftX < -2000) LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
-                setLabelColor(this.leftY > 2000, LeftThumbAxisYLabel);
-                if (this.leftY < -2000) LeftThumbAxisYLabel.ForeColor = Color.DarkRed;
-                setLabelColor(this.rightX > 2000, RightThumbAxisXLabel);
-                if (this.rightX < -2000) RightThumbAxisXLabel.ForeColor = Color.DarkRed;
-                setLabelColor(this.rightY > 2000, RightThumbAxisYLabel);
-                if (this.rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
+                setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
+                if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
+                setLabelColor(_leftY > 2000, LeftThumbAxisYLabel);
+                if (_leftY < -2000) LeftThumbAxisYLabel.ForeColor = Color.DarkRed;
+                setLabelColor(_rightX > 2000, RightThumbAxisXLabel);
+                if (_rightX < -2000) RightThumbAxisXLabel.ForeColor = Color.DarkRed;
+                setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
+                if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
                 // Draw button state green led image.
                 DrawState(GamepadButtonFlags.Y, buttonY, ButtonYLabel, e);
                 DrawState(GamepadButtonFlags.X, buttonX, ButtonXLabel, e);
@@ -350,8 +350,8 @@ namespace x360ce.App.Controls
                 DrawState(GamepadButtonFlags.RightThumb, thumbRight, RightThumbButtonLabel, e);
                 DrawState(GamepadButtonFlags.LeftThumb, thumbLeft, LeftThumbButtonLabel, e);
                 // Draw axis state green cross image.
-                e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (this.rightX * padSize)), (float)((thumbRight.Y + mH) + (-this.rightY * padSize)));
-                e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (this.leftX * padSize)), (float)((thumbLeft.Y + mH) + (-this.leftY * padSize)));
+                e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (_rightX * padSize)), (float)((thumbRight.Y + mH) + (-_rightY * padSize)));
+                e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (_leftX * padSize)), (float)((thumbLeft.Y + mH) + (-_leftY * padSize)));
             }
             // If recording is in progress and recording image must be drawn then...
             else if (drawRecordingImage)
@@ -366,12 +366,12 @@ namespace x360ce.App.Controls
                 if (CurrentCbx == DPadRightComboBox) drawMarkR(e, dPadRight);
                 if (CurrentCbx == DPadDownComboBox) drawMarkR(e, dPadDown);
                 if (CurrentCbx == DPadLeftComboBox) drawMarkR(e, dPadLeft);
+                if (CurrentCbx == LeftThumbButtonComboBox) drawMarkR(e, thumbLeft);
+                if (CurrentCbx == RightThumbButtonComboBox) drawMarkR(e, thumbRight);
                 if (CurrentCbx == LeftThumbAxisXComboBox) drawMarkR(e, new Point(thumbLeft.X + 10, thumbLeft.Y));
                 if (CurrentCbx == LeftThumbAxisYComboBox) drawMarkR(e, new Point(thumbLeft.X, thumbLeft.Y - 10));
-                if (CurrentCbx == LeftThumbButtonComboBox) drawMarkR(e, thumbLeft);
                 if (CurrentCbx == RightThumbAxisXComboBox) drawMarkR(e, new Point(thumbRight.X + 10, thumbRight.Y));
                 if (CurrentCbx == RightThumbAxisYComboBox) drawMarkR(e, new Point(thumbRight.X, thumbRight.Y - 10));
-                if (CurrentCbx == RightThumbButtonComboBox) drawMarkR(e, thumbRight);
             }
         }
 
@@ -456,8 +456,8 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbDeadZoneYTrackBar);
             sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXAntiDeadZoneNumericUpDown);
             sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYAntiDeadZoneNumericUpDown);
-			sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXLinearUserControl.LinearTrackBar);
-			sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYLinearUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXLinearUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYLinearUserControl.LinearTrackBar);
             // Right Thumb
             sm.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
             sm.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
@@ -470,9 +470,9 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbDeadZoneYTrackBar);
             sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXAntiDeadZoneNumericUpDown);
             sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
-			sm.Add(section + SettingName.RightThumbLinearX, RightThumbXLinearUserControl.LinearTrackBar);
-			sm.Add(section + SettingName.RightThumbLinearY, RightThumbYLinearUserControl.LinearTrackBar);
-			// Force Feedback
+            sm.Add(section + SettingName.RightThumbLinearX, RightThumbXLinearUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.RightThumbLinearY, RightThumbYLinearUserControl.LinearTrackBar);
+            // Force Feedback
             sm.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
             sm.Add(section + SettingName.ForceType, ForceTypeComboBox);
             sm.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
@@ -484,10 +484,10 @@ namespace x360ce.App.Controls
 
         #endregion
 
-        short leftX;
-        short leftY;
-        short rightX;
-        short rightY;
+        short _leftX;
+        short _leftY;
+        short _rightX;
+        short _rightY;
 
         State gamePadState;
         bool gamePadStateIsConnected;
@@ -517,10 +517,10 @@ namespace x360ce.App.Controls
             ThumbsGroupBox.Enabled = enable;
             AxisToDPadGroupBox.Enabled = enable;
             DeviceGroupBox.Enabled = enable;
-			//LeftThumbXLinearUserControl.Enabled = enable;
-			LeftThumbYLinearUserControl.Enabled = enable;
-			RightThumbXLinearUserControl.Enabled = enable;
-			RightThumbYLinearUserControl.Enabled = enable;
+            //LeftThumbXLinearUserControl.Enabled = enable;
+            LeftThumbYLinearUserControl.Enabled = enable;
+            RightThumbXLinearUserControl.Enabled = enable;
+            RightThumbYLinearUserControl.Enabled = enable;
             if (enable)
             {
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);
@@ -571,20 +571,34 @@ namespace x360ce.App.Controls
             }
             if (nowConnected)
             {
-                this.leftX = state.Gamepad.LeftThumbX;
-                this.leftY = state.Gamepad.LeftThumbY;
-                this.rightX = state.Gamepad.RightThumbX;
-                this.rightY = state.Gamepad.RightThumbY;
+                _leftX = state.Gamepad.LeftThumbX;
+                _leftY = state.Gamepad.LeftThumbY;
+                _rightX = state.Gamepad.RightThumbX;
+                _rightY = state.Gamepad.RightThumbY;
             }
             else
             {
-                this.leftX = 0;
-                this.leftY = 0;
-                this.rightX = 0;
-                this.rightY = 0;
+                _leftX = 0;
+                _leftY = 0;
+                _rightX = 0;
+                _rightY = 0;
             }
-            UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", this.leftX, this.leftY));
-            UpdateControl(RightThumbTextBox, string.Format("{0};{1}", this.rightX, this.rightY));
+            UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", _leftX, _leftY));
+            UpdateControl(RightThumbTextBox, string.Format("{0};{1}", _rightX, _rightY));
+
+            var axis = diControl.Axis;
+            bool success;
+            int index;
+            SettingType type;
+            success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
+            if (success) LeftThumbXLinearUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
+            success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
+            if (success) LeftThumbYLinearUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
+            success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
+            if (success) RightThumbXLinearUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
+            success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
+            if (success) RightThumbYLinearUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+
             this.TopPictureBox.Refresh();
             this.FrontPictureBox.Refresh();
         }
