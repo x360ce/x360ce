@@ -6,44 +6,56 @@ using System.Text.RegularExpressions;
 namespace x360ce.App
 {
 
-	/// <summary>
-	/// Convert setting value between Enums and INI string.
-	/// </summary>
-	public partial class SettingsConverter
-	{
+    /// <summary>
+    /// Convert setting value between Enums and INI string.
+    /// </summary>
+    public partial class SettingsConverter
+    {
 
-		public SettingsConverter(string value)
+        public SettingsConverter(string value)
+        {
+            this.FromSetting(value);
+        }
+
+        public SettingsConverter(string value, string key)
+        {
+            this.FromSetting(value, key);
+        }
+
+        // Maybe index D-Pads buttons like [1,2,3,4][5,6,7,8][9,10,11,12]... and use 'BDpad' type. 
+        static Regex frmRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|DPad|DPadButton) (?<num>[0-9]+)[ ]*(?<ext>Up|Left|Right|Down)?$");
+        static Regex iniRegex = new Regex("^(?<type>[asxhpv])?(?<neg>[-]*)?(?<num>[0-9]+)$");
+
+        int _Index;
+        public int Index { get { return _Index; } }
+        //string _Ext;
+        //public string Ext { get { return _Ext; } }
+        SettingType _Type;
+        public SettingType Type { get { return _Type; } }
+
+        public void FromSetting(string value)
+        {
+            FromSetting(value, string.Empty);
+        }
+
+        public static bool TryParseIndexAndType(string value, out int index, out SettingType type)
+        {
+            var m = frmRegex.Match(value);
+            index = 0;
+            type = SettingType.None;
+            if (m.Success)
+            {
+                type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);
+                index = int.Parse(m.Groups["num"].Value);
+            }
+            return m.Success;
+        }
+
+        public void FromSetting(string value, string key)
 		{
-			this.FromSetting(value);
-		}
-
-		public SettingsConverter(string value, string key)
-		{
-			this.FromSetting(value, key);
-		}
-
-		// Maybe index D-Pads buttons like [1,2,3,4][5,6,7,8][9,10,11,12]... and use 'BDpad' type. 
-		static Regex frmRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|DPad|DPadButton) (?<num>[0-9]+)[ ]*(?<ext>Up|Left|Right|Down)?$");
-		static Regex iniRegex = new Regex("^(?<type>[asxhpv])?(?<neg>[-]*)?(?<num>[0-9]+)$");
-
-		int _Index;
-		public int Index { get { return _Index; } }
-		//string _Ext;
-		//public string Ext { get { return _Ext; } }
-		SettingType _Type;
-		public SettingType Type { get { return _Type; } }
-
-		public void FromSetting(string value)
-		{
-			FromSetting(value, string.Empty);
-		}
-
-		public void FromSetting(string value, string key)
-		{
-			Match m;
-			if (frmRegex.IsMatch(value))
+			Match m = frmRegex.Match(value);
+			if (m.Success)
 			{
-				m = frmRegex.Match(value);
 				_Type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);
 				_Index = int.Parse(m.Groups["num"].Value);
 				if (m.Groups["ext"].Success)
@@ -61,9 +73,9 @@ namespace x360ce.App
 					}
 				}
 			}
-			if (iniRegex.IsMatch(value))
+            m = iniRegex.Match(value);
+			if (m.Success)
 			{
-				m = iniRegex.Match(value);
 				string t = m.Groups["type"].Value;
 				string n = m.Groups["neg"].Value;
 				_Index = int.Parse(m.Groups["num"].Value);
@@ -98,32 +110,32 @@ namespace x360ce.App
 			}
 		}
 
-		public string ToIniSetting()
-		{
-			switch (Type)
-			{
-				case SettingType.Button: return string.Format("{0}", Index);
-				case SettingType.Axis: return string.Format("a{0}", Index);
-				case SettingType.IAxis: return string.Format("a-{0}", Index);
-				case SettingType.HAxis: return string.Format("x{0}", Index);
-				case SettingType.IHAxis: return string.Format("x-{0}", Index);
-				case SettingType.Slider: return string.Format("s{0}", Index);
-				case SettingType.ISlider: return string.Format("s-{0}", Index);
-				case SettingType.HSlider: return string.Format("h{0}", Index);
-				case SettingType.IHSlider: return string.Format("h-{0}", Index);
-				case SettingType.DPad: return string.Format("p{0}", Index);
-				case SettingType.DPadButton: return string.Format("v{0}", Index);
-			}
-			return string.Empty;
-		}
+        public string ToIniSetting()
+        {
+            switch (Type)
+            {
+                case SettingType.Button: return string.Format("{0}", Index);
+                case SettingType.Axis: return string.Format("a{0}", Index);
+                case SettingType.IAxis: return string.Format("a-{0}", Index);
+                case SettingType.HAxis: return string.Format("x{0}", Index);
+                case SettingType.IHAxis: return string.Format("x-{0}", Index);
+                case SettingType.Slider: return string.Format("s{0}", Index);
+                case SettingType.ISlider: return string.Format("s-{0}", Index);
+                case SettingType.HSlider: return string.Format("h{0}", Index);
+                case SettingType.IHSlider: return string.Format("h-{0}", Index);
+                case SettingType.DPad: return string.Format("p{0}", Index);
+                case SettingType.DPadButton: return string.Format("v{0}", Index);
+            }
+            return string.Empty;
+        }
 
-		public string ToFrmSetting()
-		{
-			return Type == SettingType.None
-				? string.Empty
-				: string.Format("{0} {1}", Type, Index);
-		}
+        public string ToFrmSetting()
+        {
+            return Type == SettingType.None
+                ? string.Empty
+                : string.Format("{0} {1}", Type, Index);
+        }
 
 
-	}
+    }
 }
