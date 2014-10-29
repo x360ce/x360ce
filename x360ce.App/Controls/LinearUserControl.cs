@@ -52,7 +52,11 @@ namespace x360ce.App.Controls
                 // Get value range [-1;1].
                 float value = (float)i / (float)(w - 1) * 2f - 1f;
                 short dInputValue = SharpDX.XInput.XInput.ConvertToShort(value);
-                short result = SharpDX.XInput.XInput.GetThumbValue(dInputValue, 0, 0, linear);
+
+                var padControl = ((PadControl)this.Parent.Parent.Parent);
+                int deadZone = (int)((float)padControl.LeftThumbDeadZoneXTrackBar.Value / 100f * (float)short.MaxValue);
+                int antiDeadZone = (int)padControl.LeftThumbXAntiDeadZoneNumericUpDown.Value;
+                short result = SharpDX.XInput.XInput.GetThumbValue(dInputValue, deadZone, antiDeadZone, linear);
                 var resultInt = (int)((SharpDX.XInput.XInput.ConvertToFloat(result) + 1f) / 2 * w);
                 g.FillEllipse(transBrush, i - 1, w - resultInt - 1, 2, 2);
             }
