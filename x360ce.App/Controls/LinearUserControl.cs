@@ -40,6 +40,9 @@ namespace x360ce.App.Controls
             var linear = (int)state;
             var bmp = new Bitmap(128, 128);
             var g = Graphics.FromImage(bmp);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             var nativeBrush = new SolidBrush(System.Drawing.Color.Gray);
             var transBrush = new SolidBrush(System.Drawing.Color.Red);
             var w = bmp.Width;
@@ -129,7 +132,11 @@ namespace x360ce.App.Controls
             var y = (int)((float)(_xInput - short.MinValue) / (ushort)ushort.MaxValue * (float)(w - 1));
             var xInputBrush = new SolidBrush(System.Drawing.Color.Blue);
             if (_invert) x = w - x - 1;
-            e.Graphics.FillEllipse(xInputBrush, x - radius, w - y - 1 - radius, radius * 2, radius * 2);
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.FillEllipse(xInputBrush, x - radius, w - y - 1 - radius, radius * 2, radius * 2);
         }
 
     }
