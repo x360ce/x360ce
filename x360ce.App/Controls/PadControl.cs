@@ -452,12 +452,12 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.LeftThumbUp, LeftThumbUpComboBox);
             sm.Add(section + SettingName.LeftThumbDown, LeftThumbDownComboBox);
             sm.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
-            sm.Add(section + SettingName.LeftThumbDeadZoneX, LeftThumbDeadZoneXTrackBar);
-            sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbDeadZoneYTrackBar);
-            sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXAntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYAntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXLinearUserControl.LinearTrackBar);
-            sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYLinearUserControl.LinearTrackBar);
+			sm.Add(section + SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
+			sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
+			sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
+            sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYUserControl.LinearTrackBar);
             // Right Thumb
             sm.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
             sm.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
@@ -466,12 +466,12 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.RightThumbUp, RightThumbUpComboBox);
             sm.Add(section + SettingName.RightThumbDown, RightThumbDownComboBox);
             sm.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
-            sm.Add(section + SettingName.RightThumbDeadZoneX, RightThumbDeadZoneXTrackBar);
-            sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbDeadZoneYTrackBar);
-            sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXAntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYAntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.RightThumbLinearX, RightThumbXLinearUserControl.LinearTrackBar);
-            sm.Add(section + SettingName.RightThumbLinearY, RightThumbYLinearUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
+			sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
+			sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
+			sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
+            sm.Add(section + SettingName.RightThumbLinearX, RightThumbXUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.RightThumbLinearY, RightThumbYUserControl.LinearTrackBar);
             // Force Feedback
             sm.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
             sm.Add(section + SettingName.ForceType, ForceTypeComboBox);
@@ -514,13 +514,12 @@ namespace x360ce.App.Controls
             }
             ForceFeedbackGroupBox.Enabled = enable;
             TriggersGroupBox.Enabled = enable;
-            ThumbsGroupBox.Enabled = enable;
             AxisToDPadGroupBox.Enabled = enable;
             DeviceGroupBox.Enabled = enable;
             //LeftThumbXLinearUserControl.Enabled = enable;
-            LeftThumbYLinearUserControl.Enabled = enable;
-            RightThumbXLinearUserControl.Enabled = enable;
-            RightThumbYLinearUserControl.Enabled = enable;
+            LeftThumbYUserControl.Enabled = enable;
+            RightThumbXUserControl.Enabled = enable;
+            RightThumbYUserControl.Enabled = enable;
             if (enable)
             {
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);
@@ -591,13 +590,13 @@ namespace x360ce.App.Controls
             int index;
             SettingType type;
             success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
-            if (success) LeftThumbXLinearUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
+            if (success) LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
             success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
-            if (success) LeftThumbYLinearUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
+            if (success) LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
             success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
-            if (success) RightThumbXLinearUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
+            if (success) RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
             success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
-            if (success) RightThumbYLinearUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+            if (success) RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
 
             this.TopPictureBox.Refresh();
             this.FrontPictureBox.Refresh();
@@ -780,31 +779,6 @@ namespace x360ce.App.Controls
             RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
         }
 
-        void LeftThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
-        {
-            TrackBar control = (TrackBar)sender;
-            LeftThumbDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
-        }
-
-        void LeftThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
-        {
-            TrackBar control = (TrackBar)sender;
-            LeftThumbDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
-        }
-
-
-        void RightThumbDeadZoneXTrackBar_ValueChanged(object sender, EventArgs e)
-        {
-            TrackBar control = (TrackBar)sender;
-            RightThumbDeadZoneXTextBox.Text = string.Format("{0} % ", control.Value);
-        }
-
-        void RightThumbDeadZoneYTrackBar_ValueChanged(object sender, EventArgs e)
-        {
-            TrackBar control = (TrackBar)sender;
-            RightThumbDeadZoneYTextBox.Text = string.Format("{0} % ", control.Value);
-        }
-
         void MotorTrackBar_ValueChanged(object sender, EventArgs e)
         {
             //if (gamePadState == null) return;
@@ -861,36 +835,7 @@ namespace x360ce.App.Controls
             AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
         }
 
-        void LeftThumbXAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDeadZone(LeftThumbXAntiDeadZoneComboBox, LeftThumbXAntiDeadZoneNumericUpDown, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-        }
-
-        void LeftThumbYAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDeadZone(LeftThumbYAntiDeadZoneComboBox, LeftThumbYAntiDeadZoneNumericUpDown, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-        }
-
-        void RightThumbXAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDeadZone(RightThumbXAntiDeadZoneComboBox, RightThumbXAntiDeadZoneNumericUpDown, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-        }
-
-        void RightThumbYAntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SetDeadZone(RightThumbYAntiDeadZoneComboBox, RightThumbYAntiDeadZoneNumericUpDown, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-        }
-
-        const int XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE = 7849;
-        const int XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE = 8689;
-
-        void SetDeadZone(ComboBox box, NumericUpDown nud, int deadzone)
-        {
-            var n = box.Text == "Disabled" ? 0 : float.Parse(new Regex("[^0-9]").Replace(box.Text, "")) / 100;
-            nud.Value = (int)((float)deadzone * n);
-        }
-
-        void ClearPresetButton_Click(object sender, EventArgs e)
+		void ClearPresetButton_Click(object sender, EventArgs e)
         {
             mainForm.LoadPreset("Clear", ControllerIndex);
         }
