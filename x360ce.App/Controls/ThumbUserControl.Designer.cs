@@ -75,7 +75,7 @@
 			this.LinearPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.LinearPictureBox.Location = new System.Drawing.Point(6, 19);
 			this.LinearPictureBox.Name = "LinearPictureBox";
-			this.LinearPictureBox.Size = new System.Drawing.Size(168, 167);
+			this.LinearPictureBox.Size = new System.Drawing.Size(167, 167);
 			this.LinearPictureBox.TabIndex = 10;
 			this.LinearPictureBox.TabStop = false;
 			this.LinearPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.LinearPictureBox_Paint);
