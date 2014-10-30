@@ -52,7 +52,7 @@ namespace x360ce.App.Controls
 		{
 			var linear = (int)state;
 			var w = LinearPictureBox.Width - 2;
-			var h = LinearPictureBox.Width - 2;
+			var h = LinearPictureBox.Height - 2;
 			var bmp = new Bitmap(w, h);
 			var g = Graphics.FromImage(bmp);
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
