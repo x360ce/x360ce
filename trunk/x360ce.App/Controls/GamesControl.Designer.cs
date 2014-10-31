@@ -41,6 +41,12 @@
             this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
+            this.GlobalSettingsDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.HookMaskGroupBox = new System.Windows.Forms.GroupBox();
             this.HookMaskTextBox = new System.Windows.Forms.TextBox();
             this.HookDISABLECheckBox = new System.Windows.Forms.CheckBox();
@@ -71,21 +77,15 @@
             this.GameApplicationOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ScanButton = new System.Windows.Forms.Button();
             this.ScanProgressLabel = new System.Windows.Forms.Label();
-            this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
-            this.GlobalSettingsDataGridView = new System.Windows.Forms.DataGridView();
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GamesTabControl.SuspendLayout();
             this.GamesTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).BeginInit();
+            this.GlobalSettingsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).BeginInit();
             this.HookMaskGroupBox.SuspendLayout();
             this.InstalledFilesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
             this.groupBox1.SuspendLayout();
-            this.GlobalSettingsTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // GamesTabControl
@@ -199,6 +199,101 @@
             this.ProductNameColumn.HeaderText = "Product Name";
             this.ProductNameColumn.Name = "ProductNameColumn";
             this.ProductNameColumn.ReadOnly = true;
+            // 
+            // GlobalSettingsTabPage
+            // 
+            this.GlobalSettingsTabPage.Controls.Add(this.GlobalSettingsDataGridView);
+            this.GlobalSettingsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.GlobalSettingsTabPage.Name = "GlobalSettingsTabPage";
+            this.GlobalSettingsTabPage.Size = new System.Drawing.Size(535, 330);
+            this.GlobalSettingsTabPage.TabIndex = 1;
+            this.GlobalSettingsTabPage.Text = "Global Settings";
+            this.GlobalSettingsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // GlobalSettingsDataGridView
+            // 
+            this.GlobalSettingsDataGridView.AllowUserToAddRows = false;
+            this.GlobalSettingsDataGridView.AllowUserToDeleteRows = false;
+            this.GlobalSettingsDataGridView.AllowUserToResizeRows = false;
+            this.GlobalSettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
+            this.GlobalSettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.GlobalSettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GlobalSettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.GlobalSettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.GlobalSettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewImageColumn1,
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3});
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.GlobalSettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+            this.GlobalSettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GlobalSettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+            this.GlobalSettingsDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.GlobalSettingsDataGridView.MultiSelect = false;
+            this.GlobalSettingsDataGridView.Name = "GlobalSettingsDataGridView";
+            this.GlobalSettingsDataGridView.ReadOnly = true;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GlobalSettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            this.GlobalSettingsDataGridView.RowHeadersVisible = false;
+            this.GlobalSettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.GlobalSettingsDataGridView.Size = new System.Drawing.Size(535, 330);
+            this.GlobalSettingsDataGridView.TabIndex = 1;
+            // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.dataGridViewImageColumn1.HeaderText = "";
+            this.dataGridViewImageColumn1.MinimumWidth = 24;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.ReadOnly = true;
+            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridViewImageColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.dataGridViewImageColumn1.Width = 24;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "GameId";
+            this.dataGridViewTextBoxColumn1.HeaderText = "ID";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "FileName";
+            this.dataGridViewTextBoxColumn2.FillWeight = 30F;
+            this.dataGridViewTextBoxColumn2.HeaderText = "File Name";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "FileProductName";
+            this.dataGridViewTextBoxColumn3.FillWeight = 70F;
+            this.dataGridViewTextBoxColumn3.HeaderText = "Product Name";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
             // HookMaskGroupBox
             // 
@@ -419,6 +514,7 @@
             this.MinimumInstanceCountNumericUpDown.Name = "MinimumInstanceCountNumericUpDown";
             this.MinimumInstanceCountNumericUpDown.Size = new System.Drawing.Size(59, 20);
             this.MinimumInstanceCountNumericUpDown.TabIndex = 24;
+            this.MinimumInstanceCountNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.MinimumInstanceCountNumericUpDown.Value = new decimal(new int[] {
             2,
             0,
@@ -544,101 +640,6 @@
             this.ScanProgressLabel.TabIndex = 0;
             this.ScanProgressLabel.Text = "[ScanProgressLabel]";
             // 
-            // GlobalSettingsTabPage
-            // 
-            this.GlobalSettingsTabPage.Controls.Add(this.GlobalSettingsDataGridView);
-            this.GlobalSettingsTabPage.Location = new System.Drawing.Point(4, 22);
-            this.GlobalSettingsTabPage.Name = "GlobalSettingsTabPage";
-            this.GlobalSettingsTabPage.Size = new System.Drawing.Size(535, 330);
-            this.GlobalSettingsTabPage.TabIndex = 1;
-            this.GlobalSettingsTabPage.Text = "Global Settings";
-            this.GlobalSettingsTabPage.UseVisualStyleBackColor = true;
-            // 
-            // GlobalSettingsDataGridView
-            // 
-            this.GlobalSettingsDataGridView.AllowUserToAddRows = false;
-            this.GlobalSettingsDataGridView.AllowUserToDeleteRows = false;
-            this.GlobalSettingsDataGridView.AllowUserToResizeRows = false;
-            this.GlobalSettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.GlobalSettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.GlobalSettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GlobalSettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.GlobalSettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.GlobalSettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewImageColumn1,
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2,
-            this.dataGridViewTextBoxColumn3});
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.GlobalSettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
-            this.GlobalSettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GlobalSettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.GlobalSettingsDataGridView.Location = new System.Drawing.Point(0, 0);
-            this.GlobalSettingsDataGridView.MultiSelect = false;
-            this.GlobalSettingsDataGridView.Name = "GlobalSettingsDataGridView";
-            this.GlobalSettingsDataGridView.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GlobalSettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.GlobalSettingsDataGridView.RowHeadersVisible = false;
-            this.GlobalSettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.GlobalSettingsDataGridView.Size = new System.Drawing.Size(535, 330);
-            this.GlobalSettingsDataGridView.TabIndex = 1;
-            // 
-            // dataGridViewImageColumn1
-            // 
-            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.dataGridViewImageColumn1.HeaderText = "";
-            this.dataGridViewImageColumn1.MinimumWidth = 24;
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.ReadOnly = true;
-            this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridViewImageColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.dataGridViewImageColumn1.Width = 24;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "GameId";
-            this.dataGridViewTextBoxColumn1.HeaderText = "ID";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            this.dataGridViewTextBoxColumn1.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "FileName";
-            this.dataGridViewTextBoxColumn2.FillWeight = 30F;
-            this.dataGridViewTextBoxColumn2.HeaderText = "File Name";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "FileProductName";
-            this.dataGridViewTextBoxColumn3.FillWeight = 70F;
-            this.dataGridViewTextBoxColumn3.HeaderText = "Product Name";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.ReadOnly = true;
-            // 
             // GamesControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -661,6 +662,8 @@
             this.GamesTabControl.ResumeLayout(false);
             this.GamesTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).EndInit();
+            this.GlobalSettingsTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).EndInit();
             this.HookMaskGroupBox.ResumeLayout(false);
             this.HookMaskGroupBox.PerformLayout();
             this.InstalledFilesGroupBox.ResumeLayout(false);
@@ -668,8 +671,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.GlobalSettingsTabPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

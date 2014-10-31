@@ -456,8 +456,8 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
 			sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
 			sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXUserControl.LinearTrackBar);
-            sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityTrackBar);
+            sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityTrackBar);
             // Right Thumb
             sm.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
             sm.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
@@ -470,8 +470,8 @@ namespace x360ce.App.Controls
 			sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
 			sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
 			sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.RightThumbLinearX, RightThumbXUserControl.LinearTrackBar);
-            sm.Add(section + SettingName.RightThumbLinearY, RightThumbYUserControl.LinearTrackBar);
+            sm.Add(section + SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityTrackBar);
+            sm.Add(section + SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityTrackBar);
             // Force Feedback
             sm.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
             sm.Add(section + SettingName.ForceType, ForceTypeComboBox);
