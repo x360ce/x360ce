@@ -84,7 +84,7 @@ namespace x360ce.App.Controls
 
 		void RefreshBackgroundImageAsync()
 		{
-			var param = (int)LinearTrackBar.Value;
+			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.AddToQueue(param);
 		}
 
@@ -110,16 +110,16 @@ namespace x360ce.App.Controls
 		private void LinearTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			ValueTextBox.Text = string.Format("{0} % ", control.Value);
+			SensitivityTextBox.Text = string.Format("{0} % ", control.Value);
 			RefreshBackgroundImageAsync();
 		}
 
-		private void ValueComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var box = (ComboBox)sender;
-			var n = box.Text == "Disabled" ? 0 : int.Parse(new Regex("[^0-9-]").Replace(box.Text, ""));
-			LinearTrackBar.Value = n;
-		}
+        //private void ValueComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    var box = (ComboBox)sender;
+        //    var n = box.Text == "Disabled" ? 0 : int.Parse(new Regex("[^0-9-]").Replace(box.Text, ""));
+        //    LinearTrackBar.Value = n;
+        //}
 
 		private void LinearUserControl_EnabledChanged(object sender, EventArgs e)
 		{
@@ -158,24 +158,99 @@ namespace x360ce.App.Controls
 			g.FillEllipse(xInputBrush, x - radius, w - y - 1 - radius, radius * 2, radius * 2);
 		}
 
-		private void DeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			DeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
 		const int XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE = 7849;
 		const int XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE = 8689;
 
-		private void AntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var deadzone = ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX || ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX
-				? XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
-				: XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+        //private void AntiDeadZoneComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    var deadzone = ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX || ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX
+        //        ? XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
+        //        : XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
 
-			var n = AntiDeadZoneComboBox.Text == "Disabled" ? 0 : float.Parse(new Regex("[^0-9]").Replace(AntiDeadZoneComboBox.Text, "")) / 100;
-			AntiDeadZoneNumericUpDown.Value = (int)((float)deadzone * n);
-		}
+        //    var n = AntiDeadZoneComboBox.Text == "Disabled" ? 0 : float.Parse(new Regex("[^0-9]").Replace(AntiDeadZoneComboBox.Text, "")) / 100;
+        //    AntiDeadZoneNumericUpDown.Value = (int)((float)deadzone * n);
+        //}
+
+        #region Dead Zone
+
+        object DeadZoneLock = new object();
+
+        private void DeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            var control = (TrackBar)sender;
+            lock (DeadZoneLock)
+            {
+                DeadZoneNumericUpDown.ValueChanged -= new System.EventHandler(this.DeadZoneNumericUpDown_ValueChanged);
+                var percent = control.Value;
+                var percentString = string.Format("{0} % ", percent);
+                // Update percent TextBox.
+                if (DeadZoneTextBox.Text != percentString) DeadZoneTextBox.Text = percentString;
+                // Update NumericUpDown.
+                var value = (decimal)Math.Round((float)percent / 100f * short.MaxValue);
+                if (DeadZoneNumericUpDown.Value != value) DeadZoneNumericUpDown.Value = value;
+                DeadZoneNumericUpDown.ValueChanged += new System.EventHandler(this.DeadZoneNumericUpDown_ValueChanged);
+            }
+        }
+
+
+        private void DeadZoneNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            var control = (NumericUpDown)sender;
+            lock (DeadZoneLock)
+            {
+                DeadZoneTrackBar.ValueChanged -= new System.EventHandler(this.DeadZoneTrackBar_ValueChanged);
+                var percent = (int)Math.Round(((float)control.Value / (float)short.MaxValue) * 100f);
+                var percentString = string.Format("{0} % ", percent);
+                // Update percent TextBox.
+                if (DeadZoneTextBox.Text != percentString) DeadZoneTextBox.Text = percentString;
+                // Update TrackBar;
+                if (DeadZoneTrackBar.Value != percent) DeadZoneTrackBar.Value = percent;
+                DeadZoneTrackBar.ValueChanged += new System.EventHandler(this.DeadZoneTrackBar_ValueChanged);
+            }
+        }
+
+        #endregion
+
+        object AntiDeadZoneLock = new object();
+
+        private void AntiDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            var control = (TrackBar)sender;
+            lock (AntiDeadZoneLock)
+            {
+                AntiDeadZoneNumericUpDown.ValueChanged -= new System.EventHandler(this.AntiDeadZoneNumericUpDown_ValueChanged);
+                var percent = control.Value;
+                var percentString = string.Format("{0} % ", percent);
+                // Update percent TextBox.
+                if (AntiDeadZoneTextBox.Text != percentString) AntiDeadZoneTextBox.Text = percentString;
+                // Update NumericUpDown.
+                var value = (decimal)Math.Round((float)percent / 100f * short.MaxValue);
+                if (AntiDeadZoneNumericUpDown.Value != value) AntiDeadZoneNumericUpDown.Value = value;
+                AntiDeadZoneNumericUpDown.ValueChanged += new System.EventHandler(this.AntiDeadZoneNumericUpDown_ValueChanged);
+            }
+        }
+
+
+        private void AntiDeadZoneNumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            var control = (NumericUpDown)sender;
+            lock (AntiDeadZoneLock)
+            {
+                AntiDeadZoneTrackBar.ValueChanged -= new System.EventHandler(this.AntiDeadZoneTrackBar_ValueChanged);
+                var percent = (int)Math.Round(((float)control.Value / (float)short.MaxValue) * 100f);
+                var percentString = string.Format("{0} % ", percent);
+                // Update percent TextBox.
+                if (AntiDeadZoneTextBox.Text != percentString) AntiDeadZoneTextBox.Text = percentString;
+                // Update TrackBar;
+                if (AntiDeadZoneTrackBar.Value != percent) AntiDeadZoneTrackBar.Value = percent;
+                AntiDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.AntiDeadZoneTrackBar_ValueChanged);
+            }
+        }
+
+        private void SensitivityCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
 
 	}
 }
