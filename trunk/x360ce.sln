@@ -136,6 +136,7 @@ Global
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Win32.Build.0 = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

@@ -396,12 +396,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                 if(mapping.Axis[i].id > 0 )
                 {
                     SHORT val = (SHORT) values[mapping.Axis[i].id - 1];
-                    *(targetAxis[i])= (SHORT) clamp(val,-32767,32767);
+                    *(targetAxis[i])= (SHORT) clamp(val,-32768,32767);
                 }
                 else if(mapping.Axis[i].id < 0 )
                 {
                     SHORT val = (SHORT) -values[-mapping.Axis[i].id - 1];
-                    *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
+                    *(targetAxis[i]) = (SHORT) clamp(val,-32768,32767);
                 }
             }
 
@@ -418,7 +418,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
             {
 
                 if (ButtonPressed(mapping.Axis[i].negativeButtonID,device))
-                    *(targetAxis[i]) = -32767;
+                    *(targetAxis[i]) = -32768;
             }
         }
     }
@@ -445,38 +445,91 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
     for (int i = 0; i < 4; ++i)
     {
+		LONG xInput = *(targetAxis[i]);
+		LONG deadZone = (LONG)device.axisdeadzone[i];
+		LONG max = 32767;
+		LONG min = -32768;
+		// If deadzone value is set then...
+		if (deadZone > 0)
+		{
+			if (xInput > deadZone)
+			{
+				//	[deadzone;32767] => [0;32767];
+				xInput = (LONG)((FLOAT)(xInput - deadZone) / (FLOAT)(max - deadZone) * (FLOAT)max);
+			}
+			else if (xInput < -deadZone)
+			{
+				//	[-32768;deadzone] => [-32768;0];
+				xInput = (LONG)((FLOAT)(-xInput - deadZone) / (FLOAT)(-min - deadZone) * (FLOAT)min);
+			}
+			else
+			{
+				xInput = 0;
+			}
+		}
+		LONG antiDeadZone = (LONG)device.antideadzone[i];
+		// If anti-deadzone value is set then...
+		if (antiDeadZone > 0)
+		{
+			if (xInput > 0)
+			{
+				//	[0;32767] => [antiDeadZone;32767];
+				xInput = (LONG)((FLOAT)(xInput) / (FLOAT)max * (FLOAT)(max - antiDeadZone) + antiDeadZone);
+			}
+			else if (xInput < 0)
+			{
+				//	[-32768;0] => [-32768;-antiDeadZone];
+				xInput = (LONG)((FLOAT)(-xInput) / (FLOAT)(min)* (FLOAT)(-min - antiDeadZone) - antiDeadZone);
+			}
+		}
+		LONG linear = (LONG)device.axislinear[i];
+		// If linear value is set then...
+		if (linear != 0)
+		{
+			FLOAT linearF = (FLOAT)linear / 100.f;
+			FLOAT xInputF = ConvertToFloat((SHORT)xInput);
+			FLOAT x = xInputF;
+			if (xInputF > 0.f) x = 0.f - x;
+			if (linearF < 0.f) x = 1.f + x;
+			FLOAT v = ((FLOAT)sqrt(1.f - x * x));
+			if (linearF < 0.f) v = 1.f - v;
+			if (xInputF > 0.f) v = 2.f - v;
+			xInputF = xInputF + (v - xInputF - 1.f) * abs(linearF);
+			xInput = ConvertToShort(xInputF);
+		}
+		*(targetAxis[i]) = (SHORT)clamp(xInput, min, max);
 
-        if (device.antideadzone[i])
-        {
-            SHORT antidz = device.antideadzone[i];
-            LONG val = *(targetAxis[i]);
-            SHORT direction = val > 0 ? 1 : -1;
-            val = (LONG)(abs(val) / (32767 / (32767 - antidz * 1.0)) + antidz);
-            val = min(val, 32767);
+        //if (device.antideadzone[i])
+        //{
+        //    SHORT antidz = device.antideadzone[i];
+        //    LONG val = *(targetAxis[i]);
+        //    SHORT direction = val > 0 ? 1 : -1;
+        //    val = (LONG)(abs(val) / (32767 / (32767 - antidz * 1.0)) + antidz);
+        //    val = min(val, 32767);
 
-            if(val == device.antideadzone[i] || val == -device.antideadzone[i]) val = 0;
+        //    if(val == device.antideadzone[i] || val == -device.antideadzone[i]) val = 0;
 
-            *(targetAxis[i]) = (SHORT) (direction * val);
-        }
+        //    *(targetAxis[i]) = (SHORT) (direction * val);
+        //}
 
-        if (device.axisdeadzone[i])
-        {
-            SHORT dz = device.axisdeadzone[i];
-            LONG val = *(targetAxis[i]);
+        //if (device.axisdeadzone[i])
+        //{
+        //    SHORT dz = device.axisdeadzone[i];
+        //    LONG val = *(targetAxis[i]);
 
-            if((val <= dz) && (val >= -dz) ) val = 0;
+        //    if((val <= dz) && (val >= -dz) ) val = 0;
 
-            *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
-        }
+        //    *(targetAxis[i]) = (SHORT) clamp(val,-32767,32767);
+        //}
 
-        // --- Do Linears ---
+        //// --- Do Linears ---
 
-        if (device.axislinear[i])
-        {
+        //if (device.axislinear[i])
+        //{
 
-            SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (device.axislinear[i] * 0.01))));
-            *(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
-        }
+        //    SHORT absval = (SHORT)((abs(*(targetAxis[i])) + (((32767.0 / 2.0) - (((abs((abs(*(targetAxis[i]))) - (32767.0 / 2.0)))))) * (device.axislinear[i] * 0.01))));
+        //    *(targetAxis[i]) = *(targetAxis[i]) > 0 ? absval : -absval;
+        //}
     }
 
     return ERROR_SUCCESS;

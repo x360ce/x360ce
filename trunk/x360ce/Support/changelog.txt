@@ -4,6 +4,9 @@ Google Code Project page: http://code.google.com/p/x360ce
 
 History:
 
+01/11/2014 - version 3.4.0.956
+New implementation of DeadZone, Anti-DeadZone and Sensitivity feature.
+
 13/12/2010 - version 3.3.1.368
 Rename FakeAPI to InputHook - rename ini section "FakeAPI" to "InputHook", and key "FakeMode" to "HookMode".
 Use EasyHook insted of MS Deutors
