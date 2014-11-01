@@ -1,8 +1,10 @@
 @ECHO OFF
 SET file=%~1
-IF "%file%" == "" SET file=..\..\x360ce.App\Presets\xinput1_3.dll
-::IF "%file%" == "" SET file=..\..\x360ce.App\bin\Debug\xinput1_3.dll
-CALL:SIG "%file%"
+IF "%file%" == "" (
+	CALL:SIG "..\..\x360ce.App\Resources\xinput1_3_32.dll"
+	CALL:SIG "..\..\x360ce.App\Resources\xinput1_3_64.dll"
+)
+IF NOT "%file%" == "" CALL:SIG "%file%"
 pause
 
 GOTO:EOF

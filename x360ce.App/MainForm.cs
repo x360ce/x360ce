@@ -696,10 +696,11 @@ namespace x360ce.App
 						XInput.Reset();
 					}
 					// Slow: Reload whole x360ce.dll.
-					XInput.ReLoadLibrary(dllInfo.Name);
+                    Exception error;
+                    XInput.ReLoadLibrary(dllInfo.Name, out error);
 					if (!XInput.IsLoaded)
 					{
-						var msg = string.Format("Failed to load '{0}'", dllInfo.Name);
+                        var msg = string.Format("Failed to load '{0}': {1}", dllInfo.Name, error == null ? "Unknown error" : error.Message);
 						var form = new MessageBoxForm();
 						form.StartPosition = FormStartPosition.CenterParent;
 						form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -92,7 +92,11 @@ namespace x360ce.App.Controls
                 }
                 device.Unacquire();
                 device.SetCooperativeLevel(MainForm.Current, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-                if (isLoaded) XInput.ReLoadLibrary(XInput.LibraryName);
+                if (isLoaded)
+                {
+                    Exception error;
+                    XInput.ReLoadLibrary(XInput.LibraryName, out error);
+                }
             }
             DiCapFfStateTextBox.Text = forceFeedbackState;
             DiCapAxesTextBox.Text = device.Capabilities.AxeCount.ToString();

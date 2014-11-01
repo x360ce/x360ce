@@ -74,6 +74,20 @@ inline LONG clamp(LONG val, LONG min, LONG max)
     return val;
 }
 
+/// <summary>Convert short [-32768;32767] to float range [-1.0f;1.0f].</summary>
+inline FLOAT ConvertToFloat(SHORT val)
+{
+	FLOAT maxValue = val >= 0 ? (float)32767 : (FLOAT)32768;
+	return ((float)val) / maxValue;
+}
+
+/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
+inline SHORT ConvertToShort(float val)
+{
+	FLOAT maxValue = val >= 0 ? (FLOAT)32767 : (FLOAT)32768;
+	return (SHORT)(val * maxValue);
+}
+
 inline LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
 {
     if (val < lowerDZ) return min;

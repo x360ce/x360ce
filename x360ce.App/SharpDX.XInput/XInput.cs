@@ -7,6 +7,7 @@
     using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
     using System.Security;
+    using System.Threading;
 
     internal static class XInput
     {
@@ -239,8 +240,10 @@
         }
 
         private static object loadLock = new object();
+        private static ManualResetEvent resetEvent = new ManualResetEvent(false);
+        private static Exception LastLoadException;
 
-        public static void ReLoadLibrary(string fileName)
+        public static void ReLoadLibrary(string fileName, out Exception error)
         {
             lock (loadLock)
             {
@@ -248,18 +251,19 @@
                 {
                     x360ce.App.Win32.NativeMethods.FreeLibrary(libHandle);
                     libHandle = IntPtr.Zero;
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
                 _LibraryName = fileName;
                 // Wrap into separate thread in order to avoid error:
                 // LoaderLock was detected Message: Attempting managed execution inside OS Loader lock.
                 // Do not attempt to run managed code inside a DllMain or image initialization function
                 // since doing so can cause the application to hang.
-                var thread = new System.Threading.Thread(delegate()
-                {
-                    libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(fileName);
-                });
-                thread.Start();
-                thread.Join(5000);
+                LastLoadException = null;
+                resetEvent.Reset();
+                var success = System.Threading.ThreadPool.QueueUserWorkItem(LoadLibraryCallBack);
+                resetEvent.WaitOne(5000);
+                error = LastLoadException; 
                 IntPtr procAddress;
                 // Check if XInputGetStateEx function is supported.
                 procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
@@ -271,6 +275,24 @@
                 procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "reset");
                 _IsResetSupported = procAddress != IntPtr.Zero;
             }
+        }
+
+        static void LoadLibraryCallBack(object state)
+        {
+            try
+            {
+                libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(_LibraryName);
+                if (libHandle == IntPtr.Zero)
+                {
+                    var win32ex = new Win32Exception();
+                    LastLoadException = new Exception(win32ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LastLoadException = ex;
+            }
+            resetEvent.Set();
         }
 
         public static void FreeLibrary()
