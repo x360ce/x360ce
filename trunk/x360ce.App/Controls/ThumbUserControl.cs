@@ -150,9 +150,11 @@ namespace x360ce.App.Controls
             var radius = 2f;
             var di = ((float)_dInput / (float)ushort.MaxValue * (w - 1f));
             var xi = ((float)(_xInput - short.MinValue) / (float)ushort.MaxValue * (w - 1f));
-            var xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(128, 0, 0, 255));
+            var xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 0, 255));
+            var xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 0, 255));
             var xInputPen = new Pen(xInputBrush);
-            var dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(128, 0, 128, 0));
+            var dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 128, 0));
+            var dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 128, 0));
             var dInputPen = new Pen(dInputBrush);
             var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
             var nInputPen = new Pen(nInputBrush);
@@ -166,8 +168,8 @@ namespace x360ce.App.Controls
             g.DrawLine(nInputPen, x1, 0, x1, h);
             g.DrawLine(dInputPen, 0, h - x1 - 1f, w, h - x1 - 1f);
             g.DrawLine(xInputPen, 0, y1, w, y1);
-            g.FillEllipse(dInputBrush, x1 - radius, (h - x1 - 1f) - radius, radius * 2f, radius * 2f);
-            g.FillEllipse(xInputBrush, x1 - radius, y1 - radius, radius * 2f, radius * 2f);
+            g.FillEllipse(dInputPoint, x1 - radius, (h - x1 - 1f) - radius, radius * 2f, radius * 2f);
+            g.FillEllipse(xInputPoint, x1 - radius, y1 - radius, radius * 2f, radius * 2f);
         }
 
         #region Dead Zone
