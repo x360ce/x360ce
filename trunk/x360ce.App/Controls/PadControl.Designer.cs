@@ -190,7 +190,7 @@
             this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
             this.DeviceGroupBox.Location = new System.Drawing.Point(6, 6);
             this.DeviceGroupBox.Name = "DeviceGroupBox";
-            this.DeviceGroupBox.Size = new System.Drawing.Size(608, 124);
+            this.DeviceGroupBox.Size = new System.Drawing.Size(180, 125);
             this.DeviceGroupBox.TabIndex = 14;
             this.DeviceGroupBox.TabStop = false;
             this.DeviceGroupBox.Text = "Device";
@@ -203,7 +203,7 @@
             this.GamePadTypeComboBox.FormattingEnabled = true;
             this.GamePadTypeComboBox.Location = new System.Drawing.Point(83, 39);
             this.GamePadTypeComboBox.Name = "GamePadTypeComboBox";
-            this.GamePadTypeComboBox.Size = new System.Drawing.Size(519, 21);
+            this.GamePadTypeComboBox.Size = new System.Drawing.Size(91, 21);
             this.GamePadTypeComboBox.TabIndex = 1;
             // 
             // OptionsDeviceTypeLabel
@@ -236,9 +236,9 @@
             this.AxisToDPadGroupBox.Controls.Add(this.OffsetLabel);
             this.AxisToDPadGroupBox.Controls.Add(this.DeadZoneLabel);
             this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
-            this.AxisToDPadGroupBox.Location = new System.Drawing.Point(242, 6);
+            this.AxisToDPadGroupBox.Location = new System.Drawing.Point(192, 6);
             this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-            this.AxisToDPadGroupBox.Size = new System.Drawing.Size(0, 125);
+            this.AxisToDPadGroupBox.Size = new System.Drawing.Size(422, 125);
             this.AxisToDPadGroupBox.TabIndex = 14;
             this.AxisToDPadGroupBox.TabStop = false;
             this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
