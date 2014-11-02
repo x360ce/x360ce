@@ -400,7 +400,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
                 }
                 else if(mapping.Axis[i].id < 0 )
                 {
-                    SHORT val = (SHORT) -values[-mapping.Axis[i].id - 1];
+                    SHORT val = (SHORT)(-1 -values[-mapping.Axis[i].id - 1]);
                     *(targetAxis[i]) = (SHORT) clamp(val,-32768,32767);
                 }
             }
