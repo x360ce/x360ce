@@ -132,24 +132,46 @@
         /// <remarks>Used to create graphs pictures.</remarks>
         public static short GetThumbValue(short dInputValue, int deadZone, int antiDeadZone, int linear)
         {
-            var xInput = dInputValue;
+            //        [ 32768 steps | 32768 steps ]
+            // DInput [ 0     32767 | 32768 65535 ] 
+            // XInput [ 32768    -1 | 0     32767 ]
+            //
+            //int xInput = *(targetAxis[i]);
+            //int deadZone = (int)device.axisdeadzone[i];
+            //int antiDeadZone = (int)device.antideadzone[i];
+            //int linear = (int)device.axislinear[i];
+            int xInput = dInputValue;
+            int max = 32767;
             // If deadzone value is set then...
+            bool invert = xInput < 0;
+            // Convert [-32768;-1] -> [32767;0]
+            if (invert) xInput = -1 - xInput;
+            //if  invert 
             if (deadZone > 0)
             {
                 if (xInput > deadZone)
                 {
                     //	[deadzone;32767] => [0;32767];
-                    xInput = (short)((float)(xInput - deadZone) / (float)(short.MaxValue - deadZone) * (float)short.MaxValue);
-                }
-                else if (xInput < -deadZone)
-                {
-                    //	[-32768;deadzone] => [-32768;0];
-                    xInput = (short)((float)(-xInput - deadZone) / (float)(-short.MinValue - deadZone) * (float)short.MinValue);
+                    xInput = (int)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
                 }
                 else
                 {
                     xInput = 0;
                 }
+            }
+            // If linear value is set then...
+            if (linear != 0)
+            {
+                float linearF = (float)linear / 100f;
+                float xInputF = ConvertToFloat((short)xInput);
+                float x = xInputF;
+                if (xInputF > 0f) x = 0f - x;
+                if (linearF < 0f) x = 1f + x;
+                float v = ((float)Math.Sqrt(1f - x * x));
+                if (linearF < 0f) v = 1f - v;
+                if (xInputF > 0f) v = 2f - v;
+                xInputF = xInputF + (v - xInputF - 1f) * Math.Abs(linearF);
+                xInput = ConvertToShort(xInputF);
             }
             // If anti-deadzone value is set then...
             if (antiDeadZone > 0)
@@ -157,23 +179,14 @@
                 if (xInput > 0)
                 {
                     //	[0;32767] => [antiDeadZone;32767];
-                    xInput = (short)((float)(xInput) / (float)(short.MaxValue) * (float)(short.MaxValue - antiDeadZone) + antiDeadZone);
-                }
-                else if (xInput < 0)
-                {
-                    //	[-32768;0] => [-32768;-antiDeadZone];
-                    xInput = (short)((float)(-xInput) / (float)(short.MinValue) * (float)(-short.MinValue - antiDeadZone) - antiDeadZone);
+                    xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
                 }
             }
-            // If linear value is set then...
-            if (linear != 0)
-            {
-                var linearF = (float)linear / 100f;
-                var xInputF = ConvertToFloat(xInput);
-                xInputF = GetValue(xInputF, linearF);
-                xInput = ConvertToShort(xInputF);
-            }
-            return xInput;
+
+            // Convert [32767;0] -> [-32768;-1]
+            if (invert) xInput = -1 - xInput;
+            //*(targetAxis[i]) = (SHORT)clamp(xInput, min, max);
+            return (short)xInput;
         }
 
         /// <summary>
@@ -263,7 +276,7 @@
                 resetEvent.Reset();
                 var success = System.Threading.ThreadPool.QueueUserWorkItem(LoadLibraryCallBack);
                 resetEvent.WaitOne(5000);
-                error = LastLoadException; 
+                error = LastLoadException;
                 IntPtr procAddress;
                 // Check if XInputGetStateEx function is supported.
                 procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
