@@ -14,9 +14,9 @@ using System.Text.RegularExpressions;
 
 namespace x360ce.App.Controls
 {
-    public partial class SettingsDatabaseUserControl : UserControl
+    public partial class ControllerSettingsUserControl : UserControl
     {
-        public SettingsDatabaseUserControl()
+        public ControllerSettingsUserControl()
         {
             InitializeComponent();
             _Settings = new SortableBindingList<Setting>();
@@ -206,23 +206,15 @@ namespace x360ce.App.Controls
 
         void UpdateActionButtons()
         {
-            var settingsSelected = SettingsListTabControl.SelectedTab == SettingsTabPage;
-            var presetsSelected = SettingsListTabControl.SelectedTab == PresetsTabPage;
-            var summariesSelected = SettingsListTabControl.SelectedTab == SummariesTabPage;
-            SaveButton.Enabled = ControllerComboBox.Items.Count > 0 && settingsSelected && refreshed;
-            LoadButton.Enabled = ControllerComboBox.Items.Count > 0 && (
-                (settingsSelected && MySettingsDataGridView.SelectedRows.Count == 1) ||
-                (presetsSelected && PresetsDataGridView.SelectedRows.Count == 1)
-                );
-            DeleteButton.Enabled = ControllerComboBox.Items.Count > 0 && SettingsListTabControl.SelectedTab == SettingsTabPage &&
-                ((MySettingsDataGridView.SelectedRows.Count == 1 && settingsSelected) ||
-                (SummariesDataGridView.SelectedRows.Count == 1 && summariesSelected));
-            RefreshButton.Enabled = summariesSelected || summariesSelected;
+            var controllerSelected = ControllerComboBox.Items.Count > 0;
+            MySettingsLoadButton.Enabled = controllerSelected && MySettingsDataGridView.SelectedRows.Count > 0;
+            GlobalSettingsLoadButton.Enabled = controllerSelected && SummariesDataGridView.SelectedRows.Count > 0;
+            PresetsLoadButton.Enabled = controllerSelected && PresetsDataGridView.SelectedRows.Count > 0;
             CurrentSetting = GetCurrentSetting();
-            SaveButton.Image = ContainsSetting(CurrentSetting) ? Properties.Resources.save_16x16 : Properties.Resources.save_add_16x16;
+            MySettingsSaveButton.Enabled = controllerSelected && refreshed;
+            MySettingsSaveButton.Image = ContainsSetting(CurrentSetting) ? Properties.Resources.save_16x16 : Properties.Resources.save_add_16x16;
+            MySettingsDeleteButton.Enabled = MySettingsDataGridView.SelectedRows.Count == 1;
             MySettingsDataGridView.Refresh();
-            //PresetsDataGridView.Enabled = ControllerComboBox.Items.Count > 0;
-            //PresetsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
         }
 
         bool ContainsSetting(Setting setting)
@@ -263,37 +255,6 @@ namespace x360ce.App.Controls
             return s;
         }
 
-        void SaveButton_Click(object sender, EventArgs e)
-        {
-            mainForm.LoadingCircle = true;
-            var s = new Setting();
-            var di = _devices[ControllerComboBox.SelectedIndex];
-            s.Comment = CommentTextBox.Text;
-            s.InstanceGuid = di.InstanceGuid;
-            s.InstanceName = di.InstanceName;
-            s.ProductGuid = di.ProductGuid;
-            s.ProductName = di.ProductName;
-            s.DeviceType = (int)di.Type;
-            s.IsEnabled = true;
-            if (GameComboBox.SelectedIndex > 0)
-            {
-                var fi = _files[GameComboBox.SelectedIndex - 1];
-                s.FileName = System.IO.Path.GetFileName(fi.FileName);
-                s.FileProductName = fi.ProductName ?? s.FileName;
-            }
-            else
-            {
-                s.FileName = "";
-                s.FileProductName = "";
-            }
-            var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
-            var ps = SettingManager.Current.GetPadSetting(padSectionName);
-            var ws = new WebServiceClient();
-            ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-            ws.SaveSettingCompleted += ws_SaveSettingCompleted;
-            ws.SaveSettingAsync(s, ps);
-        }
-
         void ws_SaveSettingCompleted(object sender, ResultEventArgs e)
         {
             if (e.Error != null)
@@ -314,22 +275,6 @@ namespace x360ce.App.Controls
             RefreshGrid(false);
         }
 
-        void DeleteButton_Click(object sender, EventArgs e)
-        {
-            var form = new MessageBoxForm();
-            form.StartPosition = FormStartPosition.CenterParent;
-            var result = form.ShowForm("Do you really want to delete selected setting from Internet Settings Database?", MainForm.Current.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
-                mainForm.LoadingCircle = true;
-                var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
-                var ws = new WebServiceClient();
-                ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-                ws.DeleteSettingCompleted += ws_DeleteSettingCompleted;
-                ws.DeleteSettingAsync(setting);
-            }
-        }
-
         void ws_DeleteSettingCompleted(object sender, ResultEventArgs e)
         {
             if (e.Error != null)
@@ -348,11 +293,6 @@ namespace x360ce.App.Controls
                 mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' setting deleted successfully.", DateTime.Now, name), MessageBoxIcon.Information);
             }
             RefreshGrid(false);
-        }
-
-        void RefreshButton_Click(object sender, EventArgs e)
-        {
-            RefreshGrid(true);
         }
 
         public void RefreshGrid(bool showResult)
@@ -390,62 +330,6 @@ namespace x360ce.App.Controls
                 p.FileName = System.IO.Path.GetFileName(_files[i].FileName);
                 p.FileProductName = _files[i].ProductName;
                 sp.Add(p);
-            }
-        }
-
-
-        void LoadSetting()
-        {
-            mainForm.UpdateTimer.Stop();
-            if (ControllerComboBox.SelectedItem == null)
-            {
-                return;
-            }
-            var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
-            var message = "";
-            Setting setting = null;
-            Summary summary = null;
-            PresetItem preset = null;
-            var title = "";
-            if (SettingsListTabControl.SelectedTab == SettingsTabPage)
-            {
-                if (MySettingsDataGridView.SelectedRows.Count == 0) return;
-                message = "Do you want to load My Setting:";
-                title = "Load My Setting?";
-                setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
-                message += "\r\n\r\n    " + setting.ProductName;
-                if (!string.IsNullOrEmpty(setting.FileName)) message += " | " + setting.FileName;
-                if (!string.IsNullOrEmpty(setting.FileProductName)) message += " | " + setting.FileProductName;
-            }
-            else if (SettingsListTabControl.SelectedTab == SummariesTabPage)
-            {
-                if (SummariesDataGridView.SelectedRows.Count == 0) return;
-                message = "Do you want to load Global Setting:";
-                title = "Load Global Setting?";
-                summary = (Summary)SummariesDataGridView.SelectedRows[0].DataBoundItem;
-                message += "\r\n\r\n    " + summary.ToString();
-            }
-            else if (SettingsListTabControl.SelectedTab == PresetsTabPage)
-            {
-                if (PresetsDataGridView.SelectedRows.Count == 0) return;
-                message = "Do you want to load Preset Setting:";
-                title = "Load Preset Setting?";
-                preset = (PresetItem)PresetsDataGridView.SelectedRows[0].DataBoundItem;
-                message += "\r\n\r\n    " + summary.ToString();
-            }
-            message += "\r\n\r\nFor " + name + "?";
-            MessageBoxForm form = new MessageBoxForm();
-            form.StartPosition = FormStartPosition.CenterParent;
-            var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-            if (result == DialogResult.Yes)
-            {
-                if (SettingsListTabControl.SelectedTab == SettingsTabPage) LoadSetting(setting.PadSettingChecksum);
-                if (SettingsListTabControl.SelectedTab == SummariesTabPage) LoadSetting(summary.PadSettingChecksum);
-                if (SettingsListTabControl.SelectedTab == PresetsTabPage) LoadPreset(preset.Name);
-            }
-            else
-            {
-                mainForm.UpdateTimer.Start();
             }
         }
 
@@ -518,11 +402,6 @@ namespace x360ce.App.Controls
             mainForm.LoadingCircle = false;
         }
 
-        void LoadButton_Click(object sender, EventArgs e)
-        {
-            LoadSetting();
-        }
-
         #endregion
 
         void UpdateCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, Guid? checksum)
@@ -551,7 +430,7 @@ namespace x360ce.App.Controls
             }
             else if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
             {
-                e.Value = isCurrent ? SaveButton.Image : Properties.Resources.empty_16x16;
+                e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_16x16;
             }
             else
             {
@@ -565,6 +444,7 @@ namespace x360ce.App.Controls
             var grid = (DataGridView)sender;
             SettingSelection = grid.SelectedRows.Count == 0 ? null : (Setting)grid.SelectedRows[0].DataBoundItem;
             CommentSelectedTextBox.Text = grid.SelectedRows.Count == 0 ? "" : SettingSelection.Comment;
+            UpdateActionButtons();
             grid.Refresh();
         }
 
@@ -664,29 +544,162 @@ namespace x360ce.App.Controls
             }
         }
 
-        void SettingsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            LoadSetting();
-        }
-
-        void SummariesDataGridView_DoubleClick(object sender, EventArgs e)
-        {
-            LoadSetting();
-        }
-
         void SettingsListTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateActionButtons();
         }
 
-        private void PresetsDataGridView_DoubleClick(object sender, EventArgs e)
-        {
-            LoadSetting();
-        }
-
         private void PresetsDataGridView_SelectionChanged(object sender, EventArgs e)
         {
             UpdateActionButtons();
+        }
+
+        private void MySettingsSaveButton_Click(object sender, EventArgs e)
+        {
+            mainForm.LoadingCircle = true;
+            var s = new Setting();
+            var di = _devices[ControllerComboBox.SelectedIndex];
+            s.Comment = CommentTextBox.Text;
+            s.InstanceGuid = di.InstanceGuid;
+            s.InstanceName = di.InstanceName;
+            s.ProductGuid = di.ProductGuid;
+            s.ProductName = di.ProductName;
+            s.DeviceType = (int)di.Type;
+            s.IsEnabled = true;
+            if (GameComboBox.SelectedIndex > 0)
+            {
+                var fi = _files[GameComboBox.SelectedIndex - 1];
+                s.FileName = System.IO.Path.GetFileName(fi.FileName);
+                s.FileProductName = fi.ProductName ?? s.FileName;
+            }
+            else
+            {
+                s.FileName = "";
+                s.FileProductName = "";
+            }
+            var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
+            var ps = SettingManager.Current.GetPadSetting(padSectionName);
+            var ws = new WebServiceClient();
+            ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+            ws.SaveSettingCompleted += ws_SaveSettingCompleted;
+            ws.SaveSettingAsync(s, ps);
+        }
+
+        private void MySettingsDeleteButton_Click(object sender, EventArgs e)
+        {
+            var form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowForm("Do you really want to delete selected setting from Internet Settings Database?", MainForm.Current.Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                mainForm.LoadingCircle = true;
+                var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
+                var ws = new WebServiceClient();
+                ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+                ws.DeleteSettingCompleted += ws_DeleteSettingCompleted;
+                ws.DeleteSettingAsync(setting);
+            }
+        }
+
+        void LoadMySetting()
+        {
+            mainForm.UpdateTimer.Stop();
+            if (ControllerComboBox.SelectedItem == null) return;
+            var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
+            if (MySettingsDataGridView.SelectedRows.Count == 0) return;
+            var title = "Load My Setting?";
+            var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
+            var message = "Do you want to load My Setting:";
+            message += "\r\n\r\n    " + setting.ProductName;
+            if (!string.IsNullOrEmpty(setting.FileName)) message += " | " + setting.FileName;
+            if (!string.IsNullOrEmpty(setting.FileProductName)) message += " | " + setting.FileProductName;
+            message += "\r\n\r\nfor \"" + name + "\" controller?";
+            MessageBoxForm form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Yes) LoadSetting(setting.PadSettingChecksum);
+            else mainForm.UpdateTimer.Start();
+        }
+
+        void SettingsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            LoadMySetting();
+        }
+
+        private void MySettingsLoadButton_Click(object sender, EventArgs e)
+        {
+            LoadMySetting();
+        }
+
+        private void MySettingsRefreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshGrid(true);
+        }
+
+        void LoadGlobalSetting()
+        {
+            mainForm.UpdateTimer.Stop();
+            if (ControllerComboBox.SelectedItem == null) return;
+            var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
+            if (SummariesDataGridView.SelectedRows.Count == 0) return;
+            var title = "Load Global Setting?";
+            var summary = (Summary)SummariesDataGridView.SelectedRows[0].DataBoundItem;
+            var message = "Do you want to load Global Setting:";
+            message += "\r\n\r\n    " + summary.ProductName;
+            message += "\r\n\r\nfor \"" + name + "\" controller?";
+            MessageBoxForm form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Yes) LoadSetting(summary.PadSettingChecksum);
+            else mainForm.UpdateTimer.Start();
+        }
+
+        private void GlobalSettingsLoadButton_Click(object sender, EventArgs e)
+        {
+            LoadGlobalSetting();
+        }
+
+        void SummariesDataGridView_DoubleClick(object sender, EventArgs e)
+        {
+            LoadGlobalSetting();
+        }
+
+        private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshGrid(true);
+        }
+
+        void LoadPreset()
+        {
+            mainForm.UpdateTimer.Stop();
+            if (ControllerComboBox.SelectedItem == null) return;
+            var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
+            if (PresetsDataGridView.SelectedRows.Count == 0) return;
+            var title = "Load Preset Setting?";
+            var preset = (PresetItem)PresetsDataGridView.SelectedRows[0].DataBoundItem;
+            var message = "Do you want to load Preset Setting:";
+            message += "\r\n\r\n    " + preset.Name;
+            message += "\r\n\r\nfor \"" + name + "\" controller?";
+            MessageBoxForm form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+            if (result == DialogResult.Yes) LoadPreset(preset.Name);
+            else mainForm.UpdateTimer.Start();
+        }
+
+        private void PresetsLoadButton_Click(object sender, EventArgs e)
+        {
+            LoadPreset();
+        }
+
+        private void PresetsDataGridView_DoubleClick(object sender, EventArgs e)
+        {
+            LoadPreset();
+        }
+
+        private void PresetRefreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshGrid(true);
         }
 
     }

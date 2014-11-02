@@ -11,9 +11,9 @@ using System.IO;
 
 namespace x360ce.App.Controls
 {
-    public partial class GamesControl : UserControl
+    public partial class GameSettingsUserControl : UserControl
     {
-        public GamesControl()
+        public GameSettingsUserControl()
         {
             InitializeComponent();
             if (DesignMode) return;
