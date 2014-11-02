@@ -141,7 +141,6 @@
             //int deadZone = (int)device.axisdeadzone[i];
             //int antiDeadZone = (int)device.antideadzone[i];
             //int linear = (int)device.axislinear[i];
-            int min = -32768;
             int max = 32767;
             // If deadzone value is set then...
             bool invert = xInput < 0;
