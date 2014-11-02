@@ -48,8 +48,8 @@ namespace x360ce.App
             this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
             this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
             this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
-            this.programsControl1 = new x360ce.App.Controls.GamesControl();
-            this.SettingsDatabasePanel = new x360ce.App.Controls.SettingsDatabaseUserControl();
+            this.programsControl1 = new x360ce.App.Controls.GameSettingsUserControl();
+            this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
             this.MainTabControl.SuspendLayout();
             this.OptionsTabPage.SuspendLayout();
             this.GameSettingsTabPage.SuspendLayout();
@@ -413,10 +413,10 @@ namespace x360ce.App
 		internal PictureBox HeaderPictureBox;
 		MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
         Timer LoadinngCircleTimeout;
-        public Controls.SettingsDatabaseUserControl SettingsDatabasePanel;
+        public Controls.ControllerSettingsUserControl SettingsDatabasePanel;
         public TabControl MainTabControl;
 		TabPage GameSettingsTabPage;
-        Controls.GamesControl programsControl1;
+        Controls.GameSettingsUserControl programsControl1;
         public Controls.OptionsControl OptionsPanel;
 
 	}

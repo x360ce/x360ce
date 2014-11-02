@@ -213,11 +213,11 @@
     <Compile Include="Controls\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SettingsDatabaseUserControl.cs">
+    <Compile Include="Controls\ControllerSettingsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\SettingsDatabaseUserControl.Designer.cs">
-      <DependentUpon>SettingsDatabaseUserControl.cs</DependentUpon>
+    <Compile Include="Controls\ControllerSettingsUserControl.Designer.cs">
+      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsControl.cs">
       <SubType>UserControl</SubType>
@@ -231,11 +231,11 @@
     <Compile Include="Controls\PadControl.Designer.cs">
       <DependentUpon>PadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GamesControl.cs">
+    <Compile Include="Controls\GameSettingsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\GamesControl.Designer.cs">
-      <DependentUpon>GamesControl.cs</DependentUpon>
+    <Compile Include="Controls\GameSettingsUserControl.Designer.cs">
+      <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Program.cs" />
@@ -289,8 +289,8 @@
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\SettingsDatabaseUserControl.resx">
-      <DependentUpon>SettingsDatabaseUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\ControllerSettingsUserControl.resx">
+      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OptionsControl.resx">
       <DependentUpon>OptionsControl.cs</DependentUpon>
@@ -298,8 +298,8 @@
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\GamesControl.resx">
-      <DependentUpon>GamesControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\GameSettingsUserControl.resx">
+      <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

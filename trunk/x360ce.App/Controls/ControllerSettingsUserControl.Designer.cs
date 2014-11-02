@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class SettingsDatabaseUserControl
+	partial class ControllerSettingsUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -53,6 +53,10 @@
             this.CommentSelectedTextBox = new System.Windows.Forms.TextBox();
             this.SettingsListTabControl = new System.Windows.Forms.TabControl();
             this.SettingsTabPage = new System.Windows.Forms.TabPage();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.MySettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+            this.MySettingsLoadButton = new System.Windows.Forms.ToolStripButton();
+            this.MySettingsDeleteButton = new System.Windows.Forms.ToolStripButton();
             this.SummariesTabPage = new System.Windows.Forms.TabPage();
             this.SummariesDataGridView = new System.Windows.Forms.DataGridView();
             this.SidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -65,17 +69,23 @@
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DeleteButton = new System.Windows.Forms.Button();
-            this.LoadButton = new System.Windows.Forms.Button();
-            this.SaveButton = new System.Windows.Forms.Button();
-            this.RefreshButton = new System.Windows.Forms.Button();
+            this.MySettingsSaveButton = new System.Windows.Forms.Button();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+            this.GlobalSettingsLoadButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+            this.PresetRefreshButton = new System.Windows.Forms.ToolStripButton();
+            this.PresetsLoadButton = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).BeginInit();
             this.SettingsListTabControl.SuspendLayout();
             this.SettingsTabPage.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SummariesTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).BeginInit();
             this.PresetsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).BeginInit();
+            this.toolStrip2.SuspendLayout();
+            this.toolStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
             // MySettingsDataGridView
@@ -110,7 +120,7 @@
             this.MySettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.MySettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MySettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.MySettingsDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.MySettingsDataGridView.Location = new System.Drawing.Point(0, 25);
             this.MySettingsDataGridView.MultiSelect = false;
             this.MySettingsDataGridView.Name = "MySettingsDataGridView";
             this.MySettingsDataGridView.ReadOnly = true;
@@ -124,7 +134,7 @@
             this.MySettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.MySettingsDataGridView.RowHeadersVisible = false;
             this.MySettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.MySettingsDataGridView.Size = new System.Drawing.Size(590, 270);
+            this.MySettingsDataGridView.Size = new System.Drawing.Size(590, 256);
             this.MySettingsDataGridView.TabIndex = 0;
             this.MySettingsDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SettingsDataGridView_CellContentDoubleClick);
             this.MySettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
@@ -204,7 +214,7 @@
             this.GameComboBox.FormattingEnabled = true;
             this.GameComboBox.Location = new System.Drawing.Point(283, 16);
             this.GameComboBox.Name = "GameComboBox";
-            this.GameComboBox.Size = new System.Drawing.Size(318, 21);
+            this.GameComboBox.Size = new System.Drawing.Size(237, 21);
             this.GameComboBox.TabIndex = 4;
             this.GameComboBox.SelectedIndexChanged += new System.EventHandler(this.GameComboBox_SelectedIndexChanged);
             // 
@@ -255,29 +265,75 @@
             this.SettingsListTabControl.Controls.Add(this.SettingsTabPage);
             this.SettingsListTabControl.Controls.Add(this.SummariesTabPage);
             this.SettingsListTabControl.Controls.Add(this.PresetsTabPage);
-            this.SettingsListTabControl.Location = new System.Drawing.Point(3, 80);
+            this.SettingsListTabControl.Location = new System.Drawing.Point(3, 69);
             this.SettingsListTabControl.Name = "SettingsListTabControl";
             this.SettingsListTabControl.SelectedIndex = 0;
-            this.SettingsListTabControl.Size = new System.Drawing.Size(598, 296);
+            this.SettingsListTabControl.Size = new System.Drawing.Size(598, 307);
             this.SettingsListTabControl.TabIndex = 18;
             this.SettingsListTabControl.SelectedIndexChanged += new System.EventHandler(this.SettingsListTabControl_SelectedIndexChanged);
             // 
             // SettingsTabPage
             // 
             this.SettingsTabPage.Controls.Add(this.MySettingsDataGridView);
+            this.SettingsTabPage.Controls.Add(this.toolStrip1);
             this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
             this.SettingsTabPage.Name = "SettingsTabPage";
-            this.SettingsTabPage.Size = new System.Drawing.Size(590, 270);
+            this.SettingsTabPage.Size = new System.Drawing.Size(590, 281);
             this.SettingsTabPage.TabIndex = 0;
             this.SettingsTabPage.Text = "My Settings";
             this.SettingsTabPage.UseVisualStyleBackColor = true;
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MySettingsRefreshButton,
+            this.MySettingsLoadButton,
+            this.MySettingsDeleteButton});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip1.Size = new System.Drawing.Size(590, 25);
+            this.toolStrip1.TabIndex = 1;
+            this.toolStrip1.Text = "MySettingsToolStrip";
+            // 
+            // MySettingsRefreshButton
+            // 
+            this.MySettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.MySettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.MySettingsRefreshButton.Name = "MySettingsRefreshButton";
+            this.MySettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+            this.MySettingsRefreshButton.Text = "&Refresh";
+            this.MySettingsRefreshButton.Click += new System.EventHandler(this.MySettingsRefreshButton_Click);
+            // 
+            // MySettingsLoadButton
+            // 
+            this.MySettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+            this.MySettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.MySettingsLoadButton.Name = "MySettingsLoadButton";
+            this.MySettingsLoadButton.Size = new System.Drawing.Size(53, 22);
+            this.MySettingsLoadButton.Text = "&Load";
+            this.MySettingsLoadButton.Click += new System.EventHandler(this.MySettingsLoadButton_Click);
+            // 
+            // MySettingsDeleteButton
+            // 
+            this.MySettingsDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.MySettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.MySettingsDeleteButton.Name = "MySettingsDeleteButton";
+            this.MySettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
+            this.MySettingsDeleteButton.Text = "&Delete";
+            this.MySettingsDeleteButton.Click += new System.EventHandler(this.MySettingsDeleteButton_Click);
+            // 
             // SummariesTabPage
             // 
             this.SummariesTabPage.Controls.Add(this.SummariesDataGridView);
+            this.SummariesTabPage.Controls.Add(this.toolStrip2);
             this.SummariesTabPage.Location = new System.Drawing.Point(4, 22);
             this.SummariesTabPage.Name = "SummariesTabPage";
-            this.SummariesTabPage.Size = new System.Drawing.Size(590, 270);
+            this.SummariesTabPage.Size = new System.Drawing.Size(590, 281);
             this.SummariesTabPage.TabIndex = 1;
             this.SummariesTabPage.Text = "Global Settings";
             this.SummariesTabPage.UseVisualStyleBackColor = true;
@@ -314,7 +370,7 @@
             this.SummariesDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
             this.SummariesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SummariesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.SummariesDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.SummariesDataGridView.Location = new System.Drawing.Point(0, 25);
             this.SummariesDataGridView.MultiSelect = false;
             this.SummariesDataGridView.Name = "SummariesDataGridView";
             this.SummariesDataGridView.ReadOnly = true;
@@ -328,7 +384,7 @@
             this.SummariesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.SummariesDataGridView.RowHeadersVisible = false;
             this.SummariesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.SummariesDataGridView.Size = new System.Drawing.Size(590, 270);
+            this.SummariesDataGridView.Size = new System.Drawing.Size(590, 256);
             this.SummariesDataGridView.TabIndex = 1;
             this.SummariesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SummariesDataGridView_CellFormatting);
             this.SummariesDataGridView.SelectionChanged += new System.EventHandler(this.SummariesDataGridView_SelectionChanged);
@@ -382,9 +438,10 @@
             // PresetsTabPage
             // 
             this.PresetsTabPage.Controls.Add(this.PresetsDataGridView);
+            this.PresetsTabPage.Controls.Add(this.toolStrip3);
             this.PresetsTabPage.Location = new System.Drawing.Point(4, 22);
             this.PresetsTabPage.Name = "PresetsTabPage";
-            this.PresetsTabPage.Size = new System.Drawing.Size(590, 270);
+            this.PresetsTabPage.Size = new System.Drawing.Size(590, 281);
             this.PresetsTabPage.TabIndex = 2;
             this.PresetsTabPage.Text = "Presets";
             this.PresetsTabPage.UseVisualStyleBackColor = true;
@@ -419,7 +476,7 @@
             this.PresetsDataGridView.DefaultCellStyle = dataGridViewCellStyle9;
             this.PresetsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PresetsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.PresetsDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.PresetsDataGridView.Location = new System.Drawing.Point(0, 25);
             this.PresetsDataGridView.MultiSelect = false;
             this.PresetsDataGridView.Name = "PresetsDataGridView";
             this.PresetsDataGridView.ReadOnly = true;
@@ -433,7 +490,7 @@
             this.PresetsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.PresetsDataGridView.RowHeadersVisible = false;
             this.PresetsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.PresetsDataGridView.Size = new System.Drawing.Size(590, 270);
+            this.PresetsDataGridView.Size = new System.Drawing.Size(590, 256);
             this.PresetsDataGridView.TabIndex = 2;
             this.PresetsDataGridView.SelectionChanged += new System.EventHandler(this.PresetsDataGridView_SelectionChanged);
             this.PresetsDataGridView.DoubleClick += new System.EventHandler(this.PresetsDataGridView_DoubleClick);
@@ -464,62 +521,90 @@
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
             // 
-            // DeleteButton
+            // MySettingsSaveButton
             // 
-            this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-            this.DeleteButton.Location = new System.Drawing.Point(364, 69);
-            this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(75, 25);
-            this.DeleteButton.TabIndex = 10;
-            this.DeleteButton.Text = "&Delete";
-            this.DeleteButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.DeleteButton.UseVisualStyleBackColor = true;
-            this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
+            this.MySettingsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+            this.MySettingsSaveButton.Location = new System.Drawing.Point(526, 15);
+            this.MySettingsSaveButton.Name = "MySettingsSaveButton";
+            this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);
+            this.MySettingsSaveButton.TabIndex = 16;
+            this.MySettingsSaveButton.Text = "&Save";
+            this.MySettingsSaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.MySettingsSaveButton.UseVisualStyleBackColor = true;
+            this.MySettingsSaveButton.Click += new System.EventHandler(this.MySettingsSaveButton_Click);
             // 
-            // LoadButton
+            // toolStrip2
             // 
-            this.LoadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
-            this.LoadButton.Location = new System.Drawing.Point(445, 69);
-            this.LoadButton.Name = "LoadButton";
-            this.LoadButton.Size = new System.Drawing.Size(75, 25);
-            this.LoadButton.TabIndex = 16;
-            this.LoadButton.Text = "&Load";
-            this.LoadButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.LoadButton.UseVisualStyleBackColor = true;
-            this.LoadButton.Click += new System.EventHandler(this.LoadButton_Click);
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.GlobalSettingsRefreshButton,
+            this.GlobalSettingsLoadButton});
+            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip2.Size = new System.Drawing.Size(590, 25);
+            this.toolStrip2.TabIndex = 2;
+            this.toolStrip2.Text = "MySettingsToolStrip";
             // 
-            // SaveButton
+            // GlobalSettingsRefreshButton
             // 
-            this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-            this.SaveButton.Location = new System.Drawing.Point(283, 69);
-            this.SaveButton.Name = "SaveButton";
-            this.SaveButton.Size = new System.Drawing.Size(75, 25);
-            this.SaveButton.TabIndex = 8;
-            this.SaveButton.Text = "&Save";
-            this.SaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.SaveButton.UseVisualStyleBackColor = true;
-            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+            this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
+            this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+            this.GlobalSettingsRefreshButton.Text = "&Refresh";
+            this.GlobalSettingsRefreshButton.Click += new System.EventHandler(this.GlobalSettingsRefreshButton_Click);
             // 
-            // RefreshButton
+            // GlobalSettingsLoadButton
             // 
-            this.RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-            this.RefreshButton.Location = new System.Drawing.Point(526, 69);
-            this.RefreshButton.Name = "RefreshButton";
-            this.RefreshButton.Size = new System.Drawing.Size(75, 25);
-            this.RefreshButton.TabIndex = 14;
-            this.RefreshButton.Text = "&Refresh";
-            this.RefreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.RefreshButton.UseVisualStyleBackColor = true;
-            this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+            this.GlobalSettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+            this.GlobalSettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.GlobalSettingsLoadButton.Name = "GlobalSettingsLoadButton";
+            this.GlobalSettingsLoadButton.Size = new System.Drawing.Size(53, 22);
+            this.GlobalSettingsLoadButton.Text = "&Load";
+            this.GlobalSettingsLoadButton.Click += new System.EventHandler(this.GlobalSettingsLoadButton_Click);
             // 
-            // SettingsDatabaseUserControl
+            // toolStrip3
+            // 
+            this.toolStrip3.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.PresetRefreshButton,
+            this.PresetsLoadButton});
+            this.toolStrip3.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip3.Name = "toolStrip3";
+            this.toolStrip3.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.toolStrip3.Size = new System.Drawing.Size(590, 25);
+            this.toolStrip3.TabIndex = 3;
+            this.toolStrip3.Text = "MySettingsToolStrip";
+            // 
+            // PresetRefreshButton
+            // 
+            this.PresetRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.PresetRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.PresetRefreshButton.Name = "PresetRefreshButton";
+            this.PresetRefreshButton.Size = new System.Drawing.Size(66, 22);
+            this.PresetRefreshButton.Text = "&Refresh";
+            this.PresetRefreshButton.Click += new System.EventHandler(this.PresetRefreshButton_Click);
+            // 
+            // PresetsLoadButton
+            // 
+            this.PresetsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.PresetsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+            this.PresetsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.PresetsLoadButton.Name = "PresetsLoadButton";
+            this.PresetsLoadButton.Size = new System.Drawing.Size(53, 22);
+            this.PresetsLoadButton.Text = "&Load";
+            this.PresetsLoadButton.Click += new System.EventHandler(this.PresetsLoadButton_Click);
+            // 
+            // ControllerSettingsUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.MySettingsSaveButton);
             this.Controls.Add(this.CommentSelectedTextBox);
             this.Controls.Add(this.CommentTextBox);
             this.Controls.Add(this.GameLabel);
@@ -527,22 +612,27 @@
             this.Controls.Add(this.CommentLabel);
             this.Controls.Add(this.GameComboBox);
             this.Controls.Add(this.ControllerComboBox);
-            this.Controls.Add(this.DeleteButton);
-            this.Controls.Add(this.LoadButton);
-            this.Controls.Add(this.SaveButton);
-            this.Controls.Add(this.RefreshButton);
             this.Controls.Add(this.SettingsListTabControl);
-            this.Name = "SettingsDatabaseUserControl";
+            this.Name = "ControllerSettingsUserControl";
             this.Size = new System.Drawing.Size(604, 405);
             this.Load += new System.EventHandler(this.InternetUserControl_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InternetUserControl_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).EndInit();
             this.SettingsListTabControl.ResumeLayout(false);
             this.SettingsTabPage.ResumeLayout(false);
+            this.SettingsTabPage.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.SummariesTabPage.ResumeLayout(false);
+            this.SummariesTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).EndInit();
             this.PresetsTabPage.ResumeLayout(false);
+            this.PresetsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).EndInit();
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
+            this.toolStrip3.ResumeLayout(false);
+            this.toolStrip3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -550,15 +640,11 @@
 
 		#endregion
 
-		System.Windows.Forms.DataGridView MySettingsDataGridView;
-		System.Windows.Forms.Button RefreshButton;
-		System.Windows.Forms.Button SaveButton;
-		System.Windows.Forms.Button LoadButton;
+        System.Windows.Forms.DataGridView MySettingsDataGridView;
 		System.Windows.Forms.ComboBox ControllerComboBox;
 		System.Windows.Forms.Label ControllerLabel;
 		System.Windows.Forms.ComboBox GameComboBox;
-		System.Windows.Forms.Label GameLabel;
-		System.Windows.Forms.Button DeleteButton;
+        System.Windows.Forms.Label GameLabel;
 		System.Windows.Forms.TextBox CommentTextBox;
 		System.Windows.Forms.Label CommentLabel;
 		System.Windows.Forms.TextBox CommentSelectedTextBox;
@@ -581,5 +667,16 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private System.Windows.Forms.DataGridViewTextBoxColumn PresetTypeColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton MySettingsDeleteButton;
+        private System.Windows.Forms.Button MySettingsSaveButton;
+        private System.Windows.Forms.ToolStripButton MySettingsLoadButton;
+        private System.Windows.Forms.ToolStripButton MySettingsRefreshButton;
+        private System.Windows.Forms.ToolStrip toolStrip2;
+        private System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
+        private System.Windows.Forms.ToolStripButton GlobalSettingsLoadButton;
+        private System.Windows.Forms.ToolStrip toolStrip3;
+        private System.Windows.Forms.ToolStripButton PresetRefreshButton;
+        private System.Windows.Forms.ToolStripButton PresetsLoadButton;
 	}
 }
