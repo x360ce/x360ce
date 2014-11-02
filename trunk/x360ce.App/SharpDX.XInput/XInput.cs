@@ -136,11 +136,12 @@
             // DInput [ 0     32767 | 32768 65535 ] 
             // XInput [ 32768    -1 | 0     32767 ]
             //
+            int xInput = dInputValue;
             //int xInput = *(targetAxis[i]);
             //int deadZone = (int)device.axisdeadzone[i];
             //int antiDeadZone = (int)device.antideadzone[i];
             //int linear = (int)device.axislinear[i];
-            int xInput = dInputValue;
+            int min = -32768;
             int max = 32767;
             // If deadzone value is set then...
             bool invert = xInput < 0;
@@ -151,7 +152,7 @@
             {
                 if (xInput > deadZone)
                 {
-                    //	[deadzone;32767] => [0;32767];
+                    // [deadZone;32767] => [0;32767];
                     xInput = (int)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
                 }
                 else
@@ -159,30 +160,31 @@
                     xInput = 0;
                 }
             }
-            // If linear value is set then...
-            if (linear != 0)
-            {
-                float linearF = (float)linear / 100f;
-                float xInputF = ConvertToFloat((short)xInput);
-                float x = xInputF;
-                if (xInputF > 0f) x = 0f - x;
-                if (linearF < 0f) x = 1f + x;
-                float v = ((float)Math.Sqrt(1f - x * x));
-                if (linearF < 0f) v = 1f - v;
-                if (xInputF > 0f) v = 2f - v;
-                xInputF = xInputF + (v - xInputF - 1f) * Math.Abs(linearF);
-                xInput = ConvertToShort(xInputF);
-            }
             // If anti-deadzone value is set then...
             if (antiDeadZone > 0)
             {
                 if (xInput > 0)
                 {
-                    //	[0;32767] => [antiDeadZone;32767];
+                    // [0;32767] => [antiDeadZone;32767];
                     xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
                 }
             }
-
+            // If linear value is set then...
+            if (linear != 0 && xInput > 0)
+            {
+                // [antiDeadZone;32767] => [0;32767];
+                float xInputF = (float)(xInput - antiDeadZone) / (float)(max - antiDeadZone) * (float)max;
+                float linearF = (float)linear / 100f;
+                xInputF = ConvertToFloat((short)xInputF);
+                float x = -xInputF;
+                if (linearF < 0f) x = 1f + x;
+                float v = ((float)Math.Sqrt(1f - x * x));
+                if (linearF < 0f) v = 1f - v;
+                xInputF = xInputF + (2f - v - xInputF - 1f) * Math.Abs(linearF);
+                xInput = ConvertToShort(xInputF);
+                // [0;32767] => [antiDeadZone;32767];
+                xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
+            }
             // Convert [32767;0] -> [-32768;-1]
             if (invert) xInput = -1 - xInput;
             //*(targetAxis[i]) = (SHORT)clamp(xInput, min, max);
