@@ -448,13 +448,13 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		// DInput [ 0     32767 | 32768 65535 ] 
 		// XInput [ 32768    -1 | 0     32767 ]
 		//
+		//int xInput = dInputValue;
 		int xInput = *(targetAxis[i]);
 		int deadZone = (int)device.axisdeadzone[i];
 		int antiDeadZone = (int)device.antideadzone[i];
 		int linear = (int)device.axislinear[i];
-		//int xInput = dInputValue;
-		int max = 32767;
 		int min = -32768;
+		int max = 32767;
 		// If deadzone value is set then...
 		bool invert = xInput < 0;
 		// Convert [-32768;-1] -> [32767;0]
@@ -464,7 +464,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 		{
 			if (xInput > deadZone)
 			{
-				//	[deadzone;32767] => [0;32767];
+				// [deadZone;32767] => [0;32767];
 				xInput = (int)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
 			}
 			else
@@ -472,33 +472,36 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 				xInput = 0;
 			}
 		}
-		// If linear value is set then...
-		if (linear != 0)
-		{
-			float linearF = (float)linear / 100.f;
-			float xInputF = ConvertToFloat((short)xInput);
-			float x = xInputF;
-			if (xInputF > 0.f) x = 0.f - x;
-			if (linearF < 0.f) x = 1.f + x;
-			float v = ((float)sqrt(1.f - x * x));
-			if (linearF < 0.f) v = 1.f - v;
-			if (xInputF > 0.f) v = 2.f - v;
-			xInputF = xInputF + (v - xInputF - 1.f) * abs(linearF);
-			xInput = ConvertToShort(xInputF);
-		}
 		// If anti-deadzone value is set then...
 		if (antiDeadZone > 0)
 		{
 			if (xInput > 0)
 			{
-				//	[0;32767] => [antiDeadZone;32767];
+				// [0;32767] => [antiDeadZone;32767];
 				xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
 			}
+		}
+		// If linear value is set then...
+		if (linear != 0 && xInput > 0)
+		{
+			// [antiDeadZone;32767] => [0;32767];
+			float xInputF = (float)(xInput - antiDeadZone) / (float)(max - antiDeadZone) * (float)max;
+			float linearF = (float)linear / 100.f;
+			xInputF = ConvertToFloat((short)xInputF);
+			float x = -xInputF;
+			if (linearF < 0.f) x = 1.f + x;
+			float v = ((float)sqrt(1.f - x * x));
+			if (linearF < 0.f) v = 1.f - v;
+			xInputF = xInputF + (2.f - v - xInputF - 1.f) * abs(linearF);
+			xInput = ConvertToShort(xInputF);
+			// [0;32767] => [antiDeadZone;32767];
+			xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
 		}
 		// Convert [32767;0] -> [-32768;-1]
 		if (invert) xInput = -1 - xInput;
 		*(targetAxis[i]) = (SHORT)clamp(xInput, min, max);
 		//return (short)xInput;
+
     }
     return ERROR_SUCCESS;
 }

@@ -13,6 +13,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define SVN_REV 968
+#define SVN_REV 971
 #define SVN_MODS 1
 
