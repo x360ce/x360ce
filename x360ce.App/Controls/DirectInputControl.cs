@@ -49,9 +49,12 @@ namespace x360ce.App.Controls
             DiEffectsTable.Columns.Add("DynamicParameters", typeof(string));
             DiEffectsDataGridView.DataSource = DiEffectsTable;
             DiObjectsTable = new DataTable();
+            DiObjectsTable.Columns.Add("Offset", typeof(string));
             DiObjectsTable.Columns.Add("Instance", typeof(string));
             DiObjectsTable.Columns.Add("Usage", typeof(string));
             DiObjectsTable.Columns.Add("Name", typeof(string));
+            DiObjectsTable.Columns.Add("Aspect", typeof(string));
+            DiObjectsTable.Columns.Add("Guid", typeof(string));
             DiObjectsTable.Columns.Add("Flags", typeof(string));
             DiObjectsDataGridView.DataSource = DiObjectsTable;
         }
@@ -110,15 +113,22 @@ namespace x360ce.App.Controls
             DiCapAxesTextBox.Text = device.Capabilities.AxeCount.ToString();
             DiCapButtonsTextBox.Text = device.Capabilities.ButtonCount.ToString();
             DiCapDPadsTextBox.Text = device.Capabilities.PovCount.ToString();
-            var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x=>x.Usage).ToArray();
+            var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.Offset).ToArray();
             DiObjectsTable.Rows.Clear();
+            var og = typeof(SharpDX.DirectInput.ObjectGuid);
+            var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
+            List<Guid> guids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
+            List<string> names = guidFileds.Select(x => x.Name).ToList();
             foreach (var o in objects)
             {
                 DiObjectsTable.Rows.Add(new object[]{
+                                o.Offset,
                                 o.ObjectId.InstanceNumber,  
                                 o.Usage,
                                 o.Name,
-		                        o.ObjectId.Flags,
+                                o.Aspect,
+                                guids.Contains(o.ObjectType) ?  names[guids.IndexOf(o.ObjectType)] : o.ObjectType.ToString(), 
+                                o.ObjectId.Flags,
 		                    });
             }
             var actuators = objects.Where(x => x.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
