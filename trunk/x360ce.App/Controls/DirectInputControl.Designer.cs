@@ -28,13 +28,16 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
             this.DiEffectsDataGridView = new System.Windows.Forms.DataGridView();
             this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -83,17 +86,28 @@
             this.label3 = new System.Windows.Forms.Label();
             this.DiCapDPadsTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.ActuatorsTextBox = new System.Windows.Forms.TextBox();
+            this.ActuatorsLabel = new System.Windows.Forms.Label();
+            this.DeviceDetailsTabControl = new System.Windows.Forms.TabControl();
+            this.DiObjectsTabPage = new System.Windows.Forms.TabPage();
+            this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
+            this.DiObjectsDataGridView = new System.Windows.Forms.DataGridView();
+            this.ObjectsUsageColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ObjectsInstanceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ObjectsNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
+            this.DeviceDetailsTabControl.SuspendLayout();
+            this.DiObjectsTabPage.SuspendLayout();
+            this.DiEffectsDataTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // DiEffectsDataGridView
             // 
             this.DiEffectsDataGridView.AllowUserToAddRows = false;
             this.DiEffectsDataGridView.AllowUserToDeleteRows = false;
-            this.DiEffectsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.DiEffectsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.DiEffectsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
             this.DiEffectsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -103,22 +117,23 @@
             this.DiEffectNameColumn,
             this.DiEffectParamsColumn,
             this.DiEffectDynamicParameters});
+            this.DiEffectsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DiEffectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.DiEffectsDataGridView.Location = new System.Drawing.Point(3, 180);
+            this.DiEffectsDataGridView.Location = new System.Drawing.Point(0, 0);
             this.DiEffectsDataGridView.Name = "DiEffectsDataGridView";
             this.DiEffectsDataGridView.ReadOnly = true;
             this.DiEffectsDataGridView.RowHeadersVisible = false;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
-            this.DiEffectsDataGridView.Size = new System.Drawing.Size(609, 225);
+            dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
+            this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle14;
+            this.DiEffectsDataGridView.Size = new System.Drawing.Size(601, 199);
             this.DiEffectsDataGridView.TabIndex = 0;
             // 
             // DiEffectNameColumn
             // 
             this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.DiEffectNameColumn.DataPropertyName = "Effect";
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle11;
             this.DiEffectNameColumn.HeaderText = "FF Effect";
             this.DiEffectNameColumn.MinimumWidth = 75;
             this.DiEffectNameColumn.Name = "DiEffectNameColumn";
@@ -130,8 +145,8 @@
             // 
             this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DiEffectParamsColumn.DataPropertyName = "Parameters";
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle12;
             this.DiEffectParamsColumn.HeaderText = "Parameters";
             this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
             this.DiEffectParamsColumn.ReadOnly = true;
@@ -141,8 +156,8 @@
             // 
             this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle13;
             this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
             this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
             this.DiEffectDynamicParameters.ReadOnly = true;
@@ -223,22 +238,22 @@
             this.DiColumnFr,
             this.DiColumnV,
             this.DiColumnVr});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle16.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle16.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle16;
             this.DiAxisDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.DiAxisDataGridView.Location = new System.Drawing.Point(3, 84);
             this.DiAxisDataGridView.Name = "DiAxisDataGridView";
             this.DiAxisDataGridView.ReadOnly = true;
             this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.DiAxisDataGridView.RowHeadersVisible = false;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
+            this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle17;
             this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.DiAxisDataGridView.Size = new System.Drawing.Size(347, 90);
             this.DiAxisDataGridView.TabIndex = 0;
@@ -247,8 +262,8 @@
             // 
             this.DiColumnAxis.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.DiColumnAxis.DataPropertyName = "Axis";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle15;
             this.DiColumnAxis.HeaderText = "Axis";
             this.DiColumnAxis.Name = "DiColumnAxis";
             this.DiColumnAxis.ReadOnly = true;
@@ -477,14 +492,16 @@
             // MapToControllerLabel
             // 
             this.MapToControllerLabel.AutoSize = true;
-            this.MapToControllerLabel.Location = new System.Drawing.Point(444, 136);
+            this.MapToControllerLabel.Location = new System.Drawing.Point(484, 136);
             this.MapToControllerLabel.Name = "MapToControllerLabel";
-            this.MapToControllerLabel.Size = new System.Drawing.Size(90, 13);
+            this.MapToControllerLabel.Size = new System.Drawing.Size(41, 13);
             this.MapToControllerLabel.TabIndex = 0;
-            this.MapToControllerLabel.Text = "Map to Controller:";
+            this.MapToControllerLabel.Text = "Priority:";
             // 
             // MapToPadComboBox
             // 
+            this.MapToPadComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MapToPadComboBox.FormattingEnabled = true;
             this.MapToPadComboBox.Items.AddRange(new object[] {
@@ -493,19 +510,19 @@
             "2",
             "3",
             "4"});
-            this.MapToPadComboBox.Location = new System.Drawing.Point(542, 133);
+            this.MapToPadComboBox.Location = new System.Drawing.Point(560, 133);
             this.MapToPadComboBox.Name = "MapToPadComboBox";
-            this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
+            this.MapToPadComboBox.Size = new System.Drawing.Size(52, 21);
             this.MapToPadComboBox.TabIndex = 1;
             // 
             // DiCapFfStateTextBox
             // 
             this.DiCapFfStateTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(542, 81);
+            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(560, 81);
             this.DiCapFfStateTextBox.Name = "DiCapFfStateTextBox";
             this.DiCapFfStateTextBox.ReadOnly = true;
-            this.DiCapFfStateTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapFfStateTextBox.Size = new System.Drawing.Size(52, 20);
             this.DiCapFfStateTextBox.TabIndex = 0;
             // 
             // DiCapFfLabel
@@ -519,9 +536,7 @@
             // 
             // DiCapAxesTextBox
             // 
-            this.DiCapAxesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiCapAxesTextBox.Location = new System.Drawing.Point(542, 107);
+            this.DiCapAxesTextBox.Location = new System.Drawing.Point(408, 133);
             this.DiCapAxesTextBox.Name = "DiCapAxesTextBox";
             this.DiCapAxesTextBox.ReadOnly = true;
             this.DiCapAxesTextBox.Size = new System.Drawing.Size(70, 20);
@@ -530,7 +545,7 @@
             // AxeCountLabel
             // 
             this.AxeCountLabel.AutoSize = true;
-            this.AxeCountLabel.Location = new System.Drawing.Point(484, 110);
+            this.AxeCountLabel.Location = new System.Drawing.Point(356, 136);
             this.AxeCountLabel.Name = "AxeCountLabel";
             this.AxeCountLabel.Size = new System.Drawing.Size(33, 13);
             this.AxeCountLabel.TabIndex = 0;
@@ -570,12 +585,130 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "D-Pads:";
             // 
+            // ActuatorsTextBox
+            // 
+            this.ActuatorsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ActuatorsTextBox.Location = new System.Drawing.Point(560, 107);
+            this.ActuatorsTextBox.Name = "ActuatorsTextBox";
+            this.ActuatorsTextBox.ReadOnly = true;
+            this.ActuatorsTextBox.Size = new System.Drawing.Size(52, 20);
+            this.ActuatorsTextBox.TabIndex = 0;
+            // 
+            // ActuatorsLabel
+            // 
+            this.ActuatorsLabel.AutoSize = true;
+            this.ActuatorsLabel.Location = new System.Drawing.Point(484, 110);
+            this.ActuatorsLabel.Name = "ActuatorsLabel";
+            this.ActuatorsLabel.Size = new System.Drawing.Size(70, 13);
+            this.ActuatorsLabel.TabIndex = 0;
+            this.ActuatorsLabel.Text = "FF Actuators:";
+            // 
+            // DeviceDetailsTabControl
+            // 
+            this.DeviceDetailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeviceDetailsTabControl.Controls.Add(this.DiEffectsDataTabPage);
+            this.DeviceDetailsTabControl.Controls.Add(this.DiObjectsTabPage);
+            this.DeviceDetailsTabControl.Location = new System.Drawing.Point(3, 180);
+            this.DeviceDetailsTabControl.Name = "DeviceDetailsTabControl";
+            this.DeviceDetailsTabControl.SelectedIndex = 0;
+            this.DeviceDetailsTabControl.Size = new System.Drawing.Size(609, 225);
+            this.DeviceDetailsTabControl.TabIndex = 2;
+            // 
+            // DiObjectsTabPage
+            // 
+            this.DiObjectsTabPage.Controls.Add(this.DiObjectsDataGridView);
+            this.DiObjectsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.DiObjectsTabPage.Name = "DiObjectsTabPage";
+            this.DiObjectsTabPage.Size = new System.Drawing.Size(601, 199);
+            this.DiObjectsTabPage.TabIndex = 0;
+            this.DiObjectsTabPage.Text = "Device Objects";
+            this.DiObjectsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // DiEffectsDataTabPage
+            // 
+            this.DiEffectsDataTabPage.Controls.Add(this.DiEffectsDataGridView);
+            this.DiEffectsDataTabPage.Location = new System.Drawing.Point(4, 22);
+            this.DiEffectsDataTabPage.Name = "DiEffectsDataTabPage";
+            this.DiEffectsDataTabPage.Size = new System.Drawing.Size(601, 199);
+            this.DiEffectsDataTabPage.TabIndex = 1;
+            this.DiEffectsDataTabPage.Text = "Force Feedback Effects";
+            this.DiEffectsDataTabPage.UseVisualStyleBackColor = true;
+            // 
+            // DiObjectsDataGridView
+            // 
+            this.DiObjectsDataGridView.AllowUserToAddRows = false;
+            this.DiObjectsDataGridView.AllowUserToDeleteRows = false;
+            this.DiObjectsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.DiObjectsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.DiObjectsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.DiObjectsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.DiObjectsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DiObjectsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ObjectsUsageColumn,
+            this.ObjectsInstanceColumn,
+            this.ObjectsNameColumn,
+            this.ObjectsFlagsColumn});
+            this.DiObjectsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DiObjectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+            this.DiObjectsDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.DiObjectsDataGridView.Name = "DiObjectsDataGridView";
+            this.DiObjectsDataGridView.ReadOnly = true;
+            this.DiObjectsDataGridView.RowHeadersVisible = false;
+            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
+            this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle20;
+            this.DiObjectsDataGridView.Size = new System.Drawing.Size(601, 199);
+            this.DiObjectsDataGridView.TabIndex = 1;
+            // 
+            // ObjectsUsageColumn
+            // 
+            this.ObjectsUsageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ObjectsUsageColumn.DataPropertyName = "Usage";
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ObjectsUsageColumn.DefaultCellStyle = dataGridViewCellStyle18;
+            this.ObjectsUsageColumn.HeaderText = "Usage";
+            this.ObjectsUsageColumn.Name = "ObjectsUsageColumn";
+            this.ObjectsUsageColumn.ReadOnly = true;
+            this.ObjectsUsageColumn.Width = 63;
+            // 
+            // ObjectsInstanceColumn
+            // 
+            this.ObjectsInstanceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ObjectsInstanceColumn.DataPropertyName = "Instance";
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ObjectsInstanceColumn.DefaultCellStyle = dataGridViewCellStyle19;
+            this.ObjectsInstanceColumn.HeaderText = "Instance";
+            this.ObjectsInstanceColumn.Name = "ObjectsInstanceColumn";
+            this.ObjectsInstanceColumn.ReadOnly = true;
+            this.ObjectsInstanceColumn.Width = 73;
+            // 
+            // ObjectsNameColumn
+            // 
+            this.ObjectsNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ObjectsNameColumn.DataPropertyName = "Name";
+            this.ObjectsNameColumn.HeaderText = "Name";
+            this.ObjectsNameColumn.Name = "ObjectsNameColumn";
+            this.ObjectsNameColumn.ReadOnly = true;
+            this.ObjectsNameColumn.Width = 60;
+            // 
+            // ObjectsFlagsColumn
+            // 
+            this.ObjectsFlagsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ObjectsFlagsColumn.DataPropertyName = "Flags";
+            this.ObjectsFlagsColumn.HeaderText = "Flags";
+            this.ObjectsFlagsColumn.Name = "ObjectsFlagsColumn";
+            this.ObjectsFlagsColumn.ReadOnly = true;
+            // 
             // DirectInputControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.DeviceDetailsTabControl);
             this.Controls.Add(this.MapToPadComboBox);
-            this.Controls.Add(this.DiEffectsDataGridView);
+            this.Controls.Add(this.ActuatorsLabel);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.AxeCountLabel);
@@ -596,6 +729,7 @@
             this.Controls.Add(this.DiDPadTextBox);
             this.Controls.Add(this.DeviceProductNameTextBox);
             this.Controls.Add(this.DeviceProductGuidTextBox);
+            this.Controls.Add(this.ActuatorsTextBox);
             this.Controls.Add(this.DiCapDPadsTextBox);
             this.Controls.Add(this.DiCapButtonsTextBox);
             this.Controls.Add(this.DiCapAxesTextBox);
@@ -615,6 +749,10 @@
             this.Load += new System.EventHandler(this.DirectInputControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
+            this.DeviceDetailsTabControl.ResumeLayout(false);
+            this.DiObjectsTabPage.ResumeLayout(false);
+            this.DiEffectsDataTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -670,5 +808,15 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
+        public System.Windows.Forms.TextBox ActuatorsTextBox;
+        private System.Windows.Forms.Label ActuatorsLabel;
+        private System.Windows.Forms.TabControl DeviceDetailsTabControl;
+        private System.Windows.Forms.TabPage DiEffectsDataTabPage;
+        private System.Windows.Forms.TabPage DiObjectsTabPage;
+        private System.Windows.Forms.DataGridView DiObjectsDataGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsUsageColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsFlagsColumn;
 	}
 }

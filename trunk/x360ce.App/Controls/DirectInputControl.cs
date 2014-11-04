@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
+using System.Linq;
 
 namespace x360ce.App.Controls
 {
@@ -20,6 +21,7 @@ namespace x360ce.App.Controls
 
         DataTable DiAxisTable;
         DataTable DiEffectsTable;
+        DataTable DiObjectsTable;
 
         void InitDirectInputTab()
         {
@@ -46,9 +48,15 @@ namespace x360ce.App.Controls
             DiEffectsTable.Columns.Add("Parameters", typeof(string));
             DiEffectsTable.Columns.Add("DynamicParameters", typeof(string));
             DiEffectsDataGridView.DataSource = DiEffectsTable;
+            DiObjectsTable = new DataTable();
+            DiObjectsTable.Columns.Add("Instance", typeof(string));
+            DiObjectsTable.Columns.Add("Usage", typeof(string));
+            DiObjectsTable.Columns.Add("Name", typeof(string));
+            DiObjectsTable.Columns.Add("Flags", typeof(string));
+            DiObjectsDataGridView.DataSource = DiObjectsTable;
         }
 
-        void ShowDeviceInfo(Device device)
+        void ShowDeviceInfo(Joystick device)
         {
             if (device == null)
             {
@@ -102,6 +110,19 @@ namespace x360ce.App.Controls
             DiCapAxesTextBox.Text = device.Capabilities.AxeCount.ToString();
             DiCapButtonsTextBox.Text = device.Capabilities.ButtonCount.ToString();
             DiCapDPadsTextBox.Text = device.Capabilities.PovCount.ToString();
+            var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x=>x.Usage).ToArray();
+            DiObjectsTable.Rows.Clear();
+            foreach (var o in objects)
+            {
+                DiObjectsTable.Rows.Add(new object[]{
+                                o.ObjectId.InstanceNumber,  
+                                o.Usage,
+                                o.Name,
+		                        o.ObjectId.Flags,
+		                    });
+            }
+            var actuators = objects.Where(x => x.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
+            ActuatorsTextBox.Text = actuators.Count().ToString();
             var di = device.Information;
             // Update pid and vid always so they wont be overwritten by load settings.
             short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
@@ -143,7 +164,7 @@ namespace x360ce.App.Controls
                     var error = ex;
                 }
             }
-           
+
             if (state == null || state.Equals(oldState)) return actions;
 
             // Fill axis.
@@ -153,7 +174,7 @@ namespace x360ce.App.Controls
             Axis[3] = state.RotationX;
             Axis[4] = state.RotationY;
             Axis[5] = state.RotationZ;
-            
+
             oldState = state;
             actions.Clear();
             // X-axis.
@@ -203,13 +224,12 @@ namespace x360ce.App.Controls
             DiButtonsTextBox.Text = "";
             if (buttons != null)
             {
-
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    if (DiButtonsTextBox.Text.Length > 0) DiButtonsTextBox.Text += " ";
                     if (buttons[i])
                     {
                         actions.Add(string.Format("Button {0}", i + 1));
+                        if (DiButtonsTextBox.Text.Length > 0) DiButtonsTextBox.Text += " ";
                         DiButtonsTextBox.Text += (i + 1).ToString("00");
                     }
                 }
