@@ -229,6 +229,7 @@ namespace x360ce.App
 			ps.ForceType = ini2.GetValue(padSectionName, SettingName.ForceType);
 			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.GamePadType);
 			ps.LeftMotorPeriod = ini2.GetValue(padSectionName, SettingName.LeftMotorPeriod);
+            ps.LeftMotorStrength = ini2.GetValue(padSectionName, SettingName.LeftMotorStrength);
 			ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
 			ps.LeftThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX);
 			ps.LeftThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY);
@@ -247,7 +248,8 @@ namespace x360ce.App
 			ps.LeftTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.LeftTriggerDeadZone);
 			ps.PassThrough = ini2.GetValue(padSectionName, SettingName.PassThrough);
 			ps.RightMotorPeriod = ini2.GetValue(padSectionName, SettingName.RightMotorPeriod);
-			ps.RightShoulder = ini2.GetValue(padSectionName, SettingName.RightShoulder);
+            ps.RightMotorStrength = ini2.GetValue(padSectionName, SettingName.RightMotorStrength);
+            ps.RightShoulder = ini2.GetValue(padSectionName, SettingName.RightShoulder);
 			ps.RightThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX);
 			ps.RightThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY);
 			ps.RightThumbAxisX = ini2.GetValue(padSectionName, SettingName.RightThumbAxisX);
@@ -305,7 +307,8 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.ForceType, ps.ForceType);
 			ini2.SetValue(padSectionName, SettingName.GamePadType, ps.GamePadType);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorPeriod, ps.LeftMotorPeriod);
-			ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
+            ini2.SetValue(padSectionName, SettingName.LeftMotorStrength, ps.LeftMotorStrength);
+            ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX, ps.LeftThumbAntiDeadZoneX);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY, ps.LeftThumbAntiDeadZoneY);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbLinearX, ps.LeftThumbLinearX);
@@ -323,7 +326,8 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.LeftTriggerDeadZone, ps.LeftTriggerDeadZone);
 			ini2.SetValue(padSectionName, SettingName.PassThrough, ps.PassThrough);
 			ini2.SetValue(padSectionName, SettingName.RightMotorPeriod, ps.RightMotorPeriod);
-			ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
+            ini2.SetValue(padSectionName, SettingName.RightMotorStrength, ps.RightMotorStrength);
+            ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX, ps.RightThumbAntiDeadZoneX);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY, ps.RightThumbAntiDeadZoneY);
 			ini2.SetValue(padSectionName, SettingName.RightThumbLinearX, ps.RightThumbLinearX);

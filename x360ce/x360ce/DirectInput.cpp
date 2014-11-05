@@ -447,7 +447,6 @@ HRESULT SetDeviceForcesEjocys(DInputDevice& device, WORD force, bool motor)
         period = 120000;
     }
 
-    DWORD magnitude = 0;
     // Constant:  Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay
     // Sine Wave: Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay, SamplePeriod
     HRESULT hr = S_OK;
@@ -472,15 +471,18 @@ HRESULT SetDeviceForcesEjocys(DInputDevice& device, WORD force, bool motor)
 
     eff =  device.ff.eff[0];
 
-    //PrintLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !2! HR = %s"), idx+1,motor, DXErrStr(hr));
+	DWORD magnitude = 0;
+	//PrintLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !2! HR = %s"), idx+1,motor, DXErrStr(hr));
     // When modifying an effect you need only specify the parameters you are modifying
     if(  device.ff.axisffbcount == 1 )
     {
         //PrintLog(_T("[DINPUT]  [PAD%d] SetDeviceForces (%d) !3a! HR = %s"), idx+1,motor, DXErrStr(hr));
         // Apply only one direction and keep the direction at zero
-        magnitude = ( DWORD )sqrt( ( double )device.ff.xForce * ( double )device.ff.xForce + ( double )device.ff.yForce * ( double )device.ff.yForce );
+        // magnitude = ( DWORD )sqrt( ( double )device.ff.xForce * ( double )device.ff.xForce + ( double )device.ff.yForce * ( double )device.ff.yForce );
+		magnitude = max(device.ff.xForce, device.ff.yForce);
+		period = (device.ff.leftPeriod * 1000 * device.ff.xForce + device.ff.rightPeriod * 1000 * device.ff.yForce) / (device.ff.xForce + device.ff.yForce);
         rglDirection[0] = 0;
-        device.ff.pf.dwMagnitude = device.ff.xForce;
+		device.ff.pf.dwMagnitude = magnitude;
         device.ff.pf.dwPeriod = period;
     }
     else

@@ -214,8 +214,12 @@ namespace x360ce.App
 		public const string ForceOverall = "ForcePercent";
 		[DefaultValue("60"), Description("Left motor period. Use 0 to 500.")]
 		public const string LeftMotorPeriod = "LeftMotorPeriod";
+        [DefaultValue("100"), Description("Left motor strength. Use 0 to 100.")]
+        public const string LeftMotorStrength = "LeftMotorStrength";
 		[DefaultValue("120"), Description("Right motor period. Use 0 to 500.")]
 		public const string RightMotorPeriod = "RightMotorPeriod";
+        [DefaultValue("100"), Description("Right motor strength. Use 0 to 100.")]
+        public const string RightMotorStrength = "RightMotorStrength";
 
 		public static int GetPadIndex(string path)
 		{

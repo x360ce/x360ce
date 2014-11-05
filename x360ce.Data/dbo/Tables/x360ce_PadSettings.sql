@@ -22,6 +22,7 @@
     [ForceType]               VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ForceType] DEFAULT ('') NOT NULL,
     [GamePadType]             VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_GamePadType] DEFAULT ('') NOT NULL,
     [LeftMotorPeriod]         VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftMotorPeriod] DEFAULT ('') NOT NULL,
+    [LeftMotorStrength]       VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftMotorStrength] DEFAULT ((100)) NOT NULL,
     [LeftShoulder]            VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftShoulder] DEFAULT ('') NOT NULL,
     [LeftThumbAntiDeadZoneX]  VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftThumbAntiDeadZoneX] DEFAULT ('') NOT NULL,
     [LeftThumbAntiDeadZoneY]  VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftThumbAntiDeadZoneY] DEFAULT ('') NOT NULL,
@@ -40,6 +41,7 @@
     [LeftTriggerDeadZone]     VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftTriggerDeadZone] DEFAULT ('') NOT NULL,
     [PassThrough]             VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_PassThrough] DEFAULT ('') NOT NULL,
     [RightMotorPeriod]        VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightMotorPeriod] DEFAULT ('') NOT NULL,
+    [RightMotorStrength]      VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightMotorStrength] DEFAULT ((100)) NOT NULL,
     [RightShoulder]           VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightShoulder] DEFAULT ('') NOT NULL,
     [RightThumbAntiDeadZoneX] VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightThumbAntiDeadZoneX] DEFAULT ('') NOT NULL,
     [RightThumbAntiDeadZoneY] VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightThumbAntiDeadZoneY] DEFAULT ('') NOT NULL,
@@ -58,6 +60,8 @@
     [RightTriggerDeadZone]    VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightTriggerDeadZone] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_x360ce_PadSettings] PRIMARY KEY CLUSTERED ([PadSettingChecksum] ASC)
 );
+
+
 
 
 
