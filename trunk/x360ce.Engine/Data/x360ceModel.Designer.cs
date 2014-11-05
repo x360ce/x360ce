@@ -625,8 +625,7 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// Create a new PadSetting object.
         /// </summary>
-        /// <param name="
-        /// ">Initial value of the PadSettingChecksum property.</param>
+        /// <param name="padSettingChecksum">Initial value of the PadSettingChecksum property.</param>
         /// <param name="axisToDPadDeadZone">Initial value of the AxisToDPadDeadZone property.</param>
         /// <param name="axisToDPadEnabled">Initial value of the AxisToDPadEnabled property.</param>
         /// <param name="axisToDPadOffset">Initial value of the AxisToDPadOffset property.</param>
@@ -683,7 +682,9 @@ namespace x360ce.Engine.Data
         /// <param name="leftThumbLinearY">Initial value of the LeftThumbLinearY property.</param>
         /// <param name="rightThumbLinearX">Initial value of the RightThumbLinearX property.</param>
         /// <param name="rightThumbLinearY">Initial value of the RightThumbLinearY property.</param>
-        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY)
+        /// <param name="leftMotorStrength">Initial value of the LeftMotorStrength property.</param>
+        /// <param name="rightMotorStrength">Initial value of the RightMotorStrength property.</param>
+        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY, global::System.String leftMotorStrength, global::System.String rightMotorStrength)
         {
             PadSetting padSetting = new PadSetting();
             padSetting.PadSettingChecksum = padSettingChecksum;
@@ -743,6 +744,8 @@ namespace x360ce.Engine.Data
             padSetting.LeftThumbLinearY = leftThumbLinearY;
             padSetting.RightThumbLinearX = rightThumbLinearX;
             padSetting.RightThumbLinearY = rightThumbLinearY;
+            padSetting.LeftMotorStrength = leftMotorStrength;
+            padSetting.RightMotorStrength = rightMotorStrength;
             return padSetting;
         }
 
@@ -2120,6 +2123,54 @@ namespace x360ce.Engine.Data
         private global::System.String _RightThumbLinearY;
         partial void OnRightThumbLinearYChanging(global::System.String value);
         partial void OnRightThumbLinearYChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftMotorStrength
+        {
+            get
+            {
+                return _LeftMotorStrength;
+            }
+            set
+            {
+                OnLeftMotorStrengthChanging(value);
+                ReportPropertyChanging("LeftMotorStrength");
+                _LeftMotorStrength = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftMotorStrength");
+                OnLeftMotorStrengthChanged();
+            }
+        }
+        private global::System.String _LeftMotorStrength;
+        partial void OnLeftMotorStrengthChanging(global::System.String value);
+        partial void OnLeftMotorStrengthChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightMotorStrength
+        {
+            get
+            {
+                return _RightMotorStrength;
+            }
+            set
+            {
+                OnRightMotorStrengthChanging(value);
+                ReportPropertyChanging("RightMotorStrength");
+                _RightMotorStrength = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightMotorStrength");
+                OnRightMotorStrengthChanged();
+            }
+        }
+        private global::System.String _RightMotorStrength;
+        partial void OnRightMotorStrengthChanging(global::System.String value);
+        partial void OnRightMotorStrengthChanged();
 
         #endregion
 
@@ -2142,12 +2193,16 @@ namespace x360ce.Engine.Data
         /// <param name="productGuid">Initial value of the ProductGuid property.</param>
         /// <param name="productName">Initial value of the ProductName property.</param>
         /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
-        public static Product CreateProduct(global::System.Guid productGuid, global::System.String productName, global::System.Int32 instanceCount)
+        /// <param name="vendorId">Initial value of the VendorId property.</param>
+        /// <param name="productId">Initial value of the ProductId property.</param>
+        public static Product CreateProduct(global::System.Guid productGuid, global::System.String productName, global::System.Int32 instanceCount, global::System.Int32 vendorId, global::System.Int32 productId)
         {
             Product product = new Product();
             product.ProductGuid = productGuid;
             product.ProductName = productName;
             product.InstanceCount = instanceCount;
+            product.VendorId = vendorId;
+            product.ProductId = productId;
             return product;
         }
 
@@ -2229,6 +2284,54 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _InstanceCount;
         partial void OnInstanceCountChanging(global::System.Int32 value);
         partial void OnInstanceCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 VendorId
+        {
+            get
+            {
+                return _VendorId;
+            }
+            set
+            {
+                OnVendorIdChanging(value);
+                ReportPropertyChanging("VendorId");
+                _VendorId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("VendorId");
+                OnVendorIdChanged();
+            }
+        }
+        private global::System.Int32 _VendorId;
+        partial void OnVendorIdChanging(global::System.Int32 value);
+        partial void OnVendorIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ProductId
+        {
+            get
+            {
+                return _ProductId;
+            }
+            set
+            {
+                OnProductIdChanging(value);
+                ReportPropertyChanging("ProductId");
+                _ProductId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProductId");
+                OnProductIdChanged();
+            }
+        }
+        private global::System.Int32 _ProductId;
+        partial void OnProductIdChanging(global::System.Int32 value);
+        partial void OnProductIdChanged();
 
         #endregion
 

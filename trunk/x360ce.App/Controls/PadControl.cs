@@ -779,6 +779,8 @@ namespace x360ce.App.Controls
             RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
         }
 
+
+
         void MotorTrackBar_ValueChanged(object sender, EventArgs e)
         {
             //if (gamePadState == null) return;
@@ -877,6 +879,18 @@ namespace x360ce.App.Controls
                 components.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private void LeftMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            var control = (TrackBar)sender;
+            LeftMotorStrengthTrackBar.Text = string.Format("{0} % ", control.Value);
+        }
+
+        private void RightMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            var control = (TrackBar)sender;
+            RightMotorStrengthTrackBar.Text = string.Format("{0} % ", control.Value);
         }
 
     }

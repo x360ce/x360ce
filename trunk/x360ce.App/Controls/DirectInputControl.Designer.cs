@@ -90,8 +90,8 @@
             this.ActuatorsTextBox = new System.Windows.Forms.TextBox();
             this.ActuatorsLabel = new System.Windows.Forms.Label();
             this.DeviceDetailsTabControl = new System.Windows.Forms.TabControl();
-            this.DiObjectsTabPage = new System.Windows.Forms.TabPage();
             this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
+            this.DiObjectsTabPage = new System.Windows.Forms.TabPage();
             this.DiObjectsDataGridView = new System.Windows.Forms.DataGridView();
             this.ObjectsOffsetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ObjectsUsageColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -103,8 +103,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
             this.DeviceDetailsTabControl.SuspendLayout();
-            this.DiObjectsTabPage.SuspendLayout();
             this.DiEffectsDataTabPage.SuspendLayout();
+            this.DiObjectsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,7 +129,7 @@
             this.DiEffectsDataGridView.RowHeadersVisible = false;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
-            this.DiEffectsDataGridView.Size = new System.Drawing.Size(601, 199);
+            this.DiEffectsDataGridView.Size = new System.Drawing.Size(764, 199);
             this.DiEffectsDataGridView.TabIndex = 0;
             // 
             // DiEffectNameColumn
@@ -169,8 +169,9 @@
             // 
             // DiDPadLabel
             // 
+            this.DiDPadLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDPadLabel.AutoSize = true;
-            this.DiDPadLabel.Location = new System.Drawing.Point(228, 32);
+            this.DiDPadLabel.Location = new System.Drawing.Point(552, 162);
             this.DiDPadLabel.Name = "DiDPadLabel";
             this.DiDPadLabel.Size = new System.Drawing.Size(40, 13);
             this.DiDPadLabel.TabIndex = 0;
@@ -178,44 +179,49 @@
             // 
             // DiUvaLabel
             // 
+            this.DiUvaLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiUvaLabel.AutoSize = true;
-            this.DiUvaLabel.Location = new System.Drawing.Point(228, 58);
+            this.DiUvaLabel.Location = new System.Drawing.Point(552, 6);
             this.DiUvaLabel.Name = "DiUvaLabel";
-            this.DiUvaLabel.Size = new System.Drawing.Size(40, 13);
+            this.DiUvaLabel.Size = new System.Drawing.Size(41, 13);
             this.DiUvaLabel.TabIndex = 0;
-            this.DiUvaLabel.Text = "U/V A:";
+            this.DiUvaLabel.Text = "Sliders:";
             // 
             // DiExtraVLabel
             // 
+            this.DiExtraVLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiExtraVLabel.AutoSize = true;
-            this.DiExtraVLabel.Location = new System.Drawing.Point(102, 58);
+            this.DiExtraVLabel.Location = new System.Drawing.Point(552, 84);
             this.DiExtraVLabel.Name = "DiExtraVLabel";
-            this.DiExtraVLabel.Size = new System.Drawing.Size(44, 13);
+            this.DiExtraVLabel.Size = new System.Drawing.Size(48, 13);
             this.DiExtraVLabel.TabIndex = 0;
-            this.DiExtraVLabel.Text = "Extra V:";
+            this.DiExtraVLabel.Text = "VSliders:";
             // 
             // DiExtraFLabel
             // 
+            this.DiExtraFLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiExtraFLabel.AutoSize = true;
-            this.DiExtraFLabel.Location = new System.Drawing.Point(103, 32);
+            this.DiExtraFLabel.Location = new System.Drawing.Point(552, 58);
             this.DiExtraFLabel.Name = "DiExtraFLabel";
-            this.DiExtraFLabel.Size = new System.Drawing.Size(43, 13);
+            this.DiExtraFLabel.Size = new System.Drawing.Size(47, 13);
             this.DiExtraFLabel.TabIndex = 0;
-            this.DiExtraFLabel.Text = "Extra F:";
+            this.DiExtraFLabel.Text = "FSliders:";
             // 
             // DiExtraALabel
             // 
+            this.DiExtraALabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiExtraALabel.AutoSize = true;
-            this.DiExtraALabel.Location = new System.Drawing.Point(103, 6);
+            this.DiExtraALabel.Location = new System.Drawing.Point(552, 32);
             this.DiExtraALabel.Name = "DiExtraALabel";
-            this.DiExtraALabel.Size = new System.Drawing.Size(44, 13);
+            this.DiExtraALabel.Size = new System.Drawing.Size(48, 13);
             this.DiExtraALabel.TabIndex = 0;
-            this.DiExtraALabel.Text = "Extra A:";
+            this.DiExtraALabel.Text = "ASliders:";
             // 
             // DiButtonsLabel
             // 
+            this.DiButtonsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiButtonsLabel.AutoSize = true;
-            this.DiButtonsLabel.Location = new System.Drawing.Point(228, 6);
+            this.DiButtonsLabel.Location = new System.Drawing.Point(552, 136);
             this.DiButtonsLabel.Name = "DiButtonsLabel";
             this.DiButtonsLabel.Size = new System.Drawing.Size(46, 13);
             this.DiButtonsLabel.TabIndex = 0;
@@ -339,23 +345,26 @@
             // 
             // DevicePidTextBox
             // 
-            this.DevicePidTextBox.Location = new System.Drawing.Point(39, 55);
+            this.DevicePidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DevicePidTextBox.Location = new System.Drawing.Point(476, 55);
             this.DevicePidTextBox.Name = "DevicePidTextBox";
             this.DevicePidTextBox.ReadOnly = true;
-            this.DevicePidTextBox.Size = new System.Drawing.Size(57, 20);
+            this.DevicePidTextBox.Size = new System.Drawing.Size(56, 20);
             this.DevicePidTextBox.TabIndex = 0;
             // 
             // DeviceVidTextBox
             // 
-            this.DeviceVidTextBox.Location = new System.Drawing.Point(39, 29);
+            this.DeviceVidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeviceVidTextBox.Location = new System.Drawing.Point(476, 29);
             this.DeviceVidTextBox.Name = "DeviceVidTextBox";
             this.DeviceVidTextBox.ReadOnly = true;
-            this.DeviceVidTextBox.Size = new System.Drawing.Size(57, 20);
+            this.DeviceVidTextBox.Size = new System.Drawing.Size(56, 20);
             this.DeviceVidTextBox.TabIndex = 0;
             // 
             // DiDPadTextBox
             // 
-            this.DiDPadTextBox.Location = new System.Drawing.Point(280, 29);
+            this.DiDPadTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiDPadTextBox.Location = new System.Drawing.Point(606, 159);
             this.DiDPadTextBox.Name = "DiDPadTextBox";
             this.DiDPadTextBox.ReadOnly = true;
             this.DiDPadTextBox.Size = new System.Drawing.Size(70, 20);
@@ -363,7 +372,8 @@
             // 
             // DiUvSliderTextBox
             // 
-            this.DiUvSliderTextBox.Location = new System.Drawing.Point(280, 55);
+            this.DiUvSliderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiUvSliderTextBox.Location = new System.Drawing.Point(606, 3);
             this.DiUvSliderTextBox.Name = "DiUvSliderTextBox";
             this.DiUvSliderTextBox.ReadOnly = true;
             this.DiUvSliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -371,7 +381,8 @@
             // 
             // DiVSliderTextBox
             // 
-            this.DiVSliderTextBox.Location = new System.Drawing.Point(152, 55);
+            this.DiVSliderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiVSliderTextBox.Location = new System.Drawing.Point(606, 81);
             this.DiVSliderTextBox.Name = "DiVSliderTextBox";
             this.DiVSliderTextBox.ReadOnly = true;
             this.DiVSliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -379,7 +390,8 @@
             // 
             // DiFSliderTextBox
             // 
-            this.DiFSliderTextBox.Location = new System.Drawing.Point(152, 29);
+            this.DiFSliderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiFSliderTextBox.Location = new System.Drawing.Point(606, 55);
             this.DiFSliderTextBox.Name = "DiFSliderTextBox";
             this.DiFSliderTextBox.ReadOnly = true;
             this.DiFSliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -387,7 +399,8 @@
             // 
             // DiASliderTextBox
             // 
-            this.DiASliderTextBox.Location = new System.Drawing.Point(152, 3);
+            this.DiASliderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiASliderTextBox.Location = new System.Drawing.Point(606, 29);
             this.DiASliderTextBox.Name = "DiASliderTextBox";
             this.DiASliderTextBox.ReadOnly = true;
             this.DiASliderTextBox.Size = new System.Drawing.Size(70, 20);
@@ -395,24 +408,27 @@
             // 
             // DiButtonsTextBox
             // 
-            this.DiButtonsTextBox.Location = new System.Drawing.Point(280, 3);
+            this.DiButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiButtonsTextBox.Location = new System.Drawing.Point(606, 133);
             this.DiButtonsTextBox.Name = "DiButtonsTextBox";
             this.DiButtonsTextBox.ReadOnly = true;
-            this.DiButtonsTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiButtonsTextBox.Size = new System.Drawing.Size(169, 20);
             this.DiButtonsTextBox.TabIndex = 0;
             // 
             // DeviceTypeTextBox
             // 
-            this.DeviceTypeTextBox.Location = new System.Drawing.Point(39, 3);
+            this.DeviceTypeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeviceTypeTextBox.Location = new System.Drawing.Point(476, 3);
             this.DeviceTypeTextBox.Name = "DeviceTypeTextBox";
             this.DeviceTypeTextBox.ReadOnly = true;
-            this.DeviceTypeTextBox.Size = new System.Drawing.Size(57, 20);
+            this.DeviceTypeTextBox.Size = new System.Drawing.Size(56, 20);
             this.DeviceTypeTextBox.TabIndex = 0;
             // 
             // DiDevicePidLabel
             // 
+            this.DiDevicePidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDevicePidLabel.AutoSize = true;
-            this.DiDevicePidLabel.Location = new System.Drawing.Point(5, 58);
+            this.DiDevicePidLabel.Location = new System.Drawing.Point(436, 58);
             this.DiDevicePidLabel.Name = "DiDevicePidLabel";
             this.DiDevicePidLabel.Size = new System.Drawing.Size(28, 13);
             this.DiDevicePidLabel.TabIndex = 0;
@@ -420,8 +436,9 @@
             // 
             // DiDeviceVidLabel
             // 
+            this.DiDeviceVidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDeviceVidLabel.AutoSize = true;
-            this.DiDeviceVidLabel.Location = new System.Drawing.Point(5, 32);
+            this.DiDeviceVidLabel.Location = new System.Drawing.Point(436, 32);
             this.DiDeviceVidLabel.Name = "DiDeviceVidLabel";
             this.DiDeviceVidLabel.Size = new System.Drawing.Size(28, 13);
             this.DiDeviceVidLabel.TabIndex = 0;
@@ -429,8 +446,9 @@
             // 
             // DiDeviceTypeLabel
             // 
+            this.DiDeviceTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDeviceTypeLabel.AutoSize = true;
-            this.DiDeviceTypeLabel.Location = new System.Drawing.Point(5, 6);
+            this.DiDeviceTypeLabel.Location = new System.Drawing.Point(436, 6);
             this.DiDeviceTypeLabel.Name = "DiDeviceTypeLabel";
             this.DiDeviceTypeLabel.Size = new System.Drawing.Size(34, 13);
             this.DiDeviceTypeLabel.TabIndex = 0;
@@ -440,26 +458,26 @@
             // 
             this.DeviceInstanceGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceInstanceGuidTextBox.Location = new System.Drawing.Point(387, 55);
+            this.DeviceInstanceGuidTextBox.Location = new System.Drawing.Point(34, 55);
             this.DeviceInstanceGuidTextBox.Name = "DeviceInstanceGuidTextBox";
             this.DeviceInstanceGuidTextBox.ReadOnly = true;
-            this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(225, 20);
+            this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(396, 20);
             this.DeviceInstanceGuidTextBox.TabIndex = 0;
             // 
             // DeviceProductGuidTextBox
             // 
             this.DeviceProductGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceProductGuidTextBox.Location = new System.Drawing.Point(387, 29);
+            this.DeviceProductGuidTextBox.Location = new System.Drawing.Point(34, 29);
             this.DeviceProductGuidTextBox.Name = "DeviceProductGuidTextBox";
             this.DeviceProductGuidTextBox.ReadOnly = true;
-            this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(225, 20);
+            this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(396, 20);
             this.DeviceProductGuidTextBox.TabIndex = 0;
             // 
             // DiProductGuidLabel
             // 
             this.DiProductGuidLabel.AutoSize = true;
-            this.DiProductGuidLabel.Location = new System.Drawing.Point(356, 32);
+            this.DiProductGuidLabel.Location = new System.Drawing.Point(3, 32);
             this.DiProductGuidLabel.Name = "DiProductGuidLabel";
             this.DiProductGuidLabel.Size = new System.Drawing.Size(25, 13);
             this.DiProductGuidLabel.TabIndex = 0;
@@ -468,7 +486,7 @@
             // DiInstanceGuidLabel
             // 
             this.DiInstanceGuidLabel.AutoSize = true;
-            this.DiInstanceGuidLabel.Location = new System.Drawing.Point(356, 58);
+            this.DiInstanceGuidLabel.Location = new System.Drawing.Point(3, 58);
             this.DiInstanceGuidLabel.Name = "DiInstanceGuidLabel";
             this.DiInstanceGuidLabel.Size = new System.Drawing.Size(21, 13);
             this.DiInstanceGuidLabel.TabIndex = 0;
@@ -478,16 +496,16 @@
             // 
             this.DeviceProductNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceProductNameTextBox.Location = new System.Drawing.Point(387, 3);
+            this.DeviceProductNameTextBox.Location = new System.Drawing.Point(34, 3);
             this.DeviceProductNameTextBox.Name = "DeviceProductNameTextBox";
             this.DeviceProductNameTextBox.ReadOnly = true;
-            this.DeviceProductNameTextBox.Size = new System.Drawing.Size(225, 20);
+            this.DeviceProductNameTextBox.Size = new System.Drawing.Size(396, 20);
             this.DeviceProductNameTextBox.TabIndex = 0;
             // 
             // DiProductNameLabel
             // 
             this.DiProductNameLabel.AutoSize = true;
-            this.DiProductNameLabel.Location = new System.Drawing.Point(356, 6);
+            this.DiProductNameLabel.Location = new System.Drawing.Point(3, 6);
             this.DiProductNameLabel.Name = "DiProductNameLabel";
             this.DiProductNameLabel.Size = new System.Drawing.Size(25, 13);
             this.DiProductNameLabel.TabIndex = 0;
@@ -495,8 +513,9 @@
             // 
             // MapToControllerLabel
             // 
+            this.MapToControllerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MapToControllerLabel.AutoSize = true;
-            this.MapToControllerLabel.Location = new System.Drawing.Point(484, 136);
+            this.MapToControllerLabel.Location = new System.Drawing.Point(552, 109);
             this.MapToControllerLabel.Name = "MapToControllerLabel";
             this.MapToControllerLabel.Size = new System.Drawing.Size(41, 13);
             this.MapToControllerLabel.TabIndex = 0;
@@ -504,8 +523,7 @@
             // 
             // MapToPadComboBox
             // 
-            this.MapToPadComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MapToPadComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MapToPadComboBox.FormattingEnabled = true;
             this.MapToPadComboBox.Items.AddRange(new object[] {
@@ -514,25 +532,25 @@
             "2",
             "3",
             "4"});
-            this.MapToPadComboBox.Location = new System.Drawing.Point(560, 133);
+            this.MapToPadComboBox.Location = new System.Drawing.Point(606, 106);
             this.MapToPadComboBox.Name = "MapToPadComboBox";
-            this.MapToPadComboBox.Size = new System.Drawing.Size(52, 21);
+            this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
             this.MapToPadComboBox.TabIndex = 1;
             // 
             // DiCapFfStateTextBox
             // 
-            this.DiCapFfStateTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(560, 81);
+            this.DiCapFfStateTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(743, 107);
             this.DiCapFfStateTextBox.Name = "DiCapFfStateTextBox";
             this.DiCapFfStateTextBox.ReadOnly = true;
-            this.DiCapFfStateTextBox.Size = new System.Drawing.Size(52, 20);
+            this.DiCapFfStateTextBox.Size = new System.Drawing.Size(32, 20);
             this.DiCapFfStateTextBox.TabIndex = 0;
             // 
             // DiCapFfLabel
             // 
+            this.DiCapFfLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiCapFfLabel.AutoSize = true;
-            this.DiCapFfLabel.Location = new System.Drawing.Point(484, 84);
+            this.DiCapFfLabel.Location = new System.Drawing.Point(682, 110);
             this.DiCapFfLabel.Name = "DiCapFfLabel";
             this.DiCapFfLabel.Size = new System.Drawing.Size(50, 13);
             this.DiCapFfLabel.TabIndex = 0;
@@ -540,16 +558,19 @@
             // 
             // DiCapAxesTextBox
             // 
-            this.DiCapAxesTextBox.Location = new System.Drawing.Point(408, 133);
+            this.DiCapAxesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapAxesTextBox.Location = new System.Drawing.Point(743, 3);
             this.DiCapAxesTextBox.Name = "DiCapAxesTextBox";
             this.DiCapAxesTextBox.ReadOnly = true;
-            this.DiCapAxesTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapAxesTextBox.Size = new System.Drawing.Size(32, 20);
             this.DiCapAxesTextBox.TabIndex = 0;
+            this.DiCapAxesTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // AxeCountLabel
             // 
+            this.AxeCountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AxeCountLabel.AutoSize = true;
-            this.AxeCountLabel.Location = new System.Drawing.Point(356, 136);
+            this.AxeCountLabel.Location = new System.Drawing.Point(682, 6);
             this.AxeCountLabel.Name = "AxeCountLabel";
             this.AxeCountLabel.Size = new System.Drawing.Size(33, 13);
             this.AxeCountLabel.TabIndex = 0;
@@ -557,16 +578,19 @@
             // 
             // DiCapButtonsTextBox
             // 
-            this.DiCapButtonsTextBox.Location = new System.Drawing.Point(408, 81);
+            this.DiCapButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapButtonsTextBox.Location = new System.Drawing.Point(743, 29);
             this.DiCapButtonsTextBox.Name = "DiCapButtonsTextBox";
             this.DiCapButtonsTextBox.ReadOnly = true;
-            this.DiCapButtonsTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapButtonsTextBox.Size = new System.Drawing.Size(32, 20);
             this.DiCapButtonsTextBox.TabIndex = 0;
+            this.DiCapButtonsTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(356, 84);
+            this.label3.Location = new System.Drawing.Point(682, 32);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(46, 13);
             this.label3.TabIndex = 0;
@@ -574,16 +598,19 @@
             // 
             // DiCapDPadsTextBox
             // 
-            this.DiCapDPadsTextBox.Location = new System.Drawing.Point(408, 107);
+            this.DiCapDPadsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DiCapDPadsTextBox.Location = new System.Drawing.Point(743, 55);
             this.DiCapDPadsTextBox.Name = "DiCapDPadsTextBox";
             this.DiCapDPadsTextBox.ReadOnly = true;
-            this.DiCapDPadsTextBox.Size = new System.Drawing.Size(70, 20);
+            this.DiCapDPadsTextBox.Size = new System.Drawing.Size(32, 20);
             this.DiCapDPadsTextBox.TabIndex = 0;
+            this.DiCapDPadsTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label4
             // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(356, 110);
+            this.label4.Location = new System.Drawing.Point(682, 58);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(45, 13);
             this.label4.TabIndex = 0;
@@ -591,22 +618,23 @@
             // 
             // ActuatorsTextBox
             // 
-            this.ActuatorsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ActuatorsTextBox.Location = new System.Drawing.Point(560, 107);
+            this.ActuatorsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ActuatorsTextBox.Location = new System.Drawing.Point(743, 81);
             this.ActuatorsTextBox.Name = "ActuatorsTextBox";
             this.ActuatorsTextBox.ReadOnly = true;
-            this.ActuatorsTextBox.Size = new System.Drawing.Size(52, 20);
+            this.ActuatorsTextBox.Size = new System.Drawing.Size(32, 20);
             this.ActuatorsTextBox.TabIndex = 0;
+            this.ActuatorsTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // ActuatorsLabel
             // 
+            this.ActuatorsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ActuatorsLabel.AutoSize = true;
-            this.ActuatorsLabel.Location = new System.Drawing.Point(484, 110);
+            this.ActuatorsLabel.Location = new System.Drawing.Point(682, 84);
             this.ActuatorsLabel.Name = "ActuatorsLabel";
-            this.ActuatorsLabel.Size = new System.Drawing.Size(70, 13);
+            this.ActuatorsLabel.Size = new System.Drawing.Size(55, 13);
             this.ActuatorsLabel.TabIndex = 0;
-            this.ActuatorsLabel.Text = "FF Actuators:";
+            this.ActuatorsLabel.Text = "Actuators:";
             // 
             // DeviceDetailsTabControl
             // 
@@ -618,28 +646,28 @@
             this.DeviceDetailsTabControl.Location = new System.Drawing.Point(3, 180);
             this.DeviceDetailsTabControl.Name = "DeviceDetailsTabControl";
             this.DeviceDetailsTabControl.SelectedIndex = 0;
-            this.DeviceDetailsTabControl.Size = new System.Drawing.Size(609, 225);
+            this.DeviceDetailsTabControl.Size = new System.Drawing.Size(772, 225);
             this.DeviceDetailsTabControl.TabIndex = 2;
-            // 
-            // DiObjectsTabPage
-            // 
-            this.DiObjectsTabPage.Controls.Add(this.DiObjectsDataGridView);
-            this.DiObjectsTabPage.Location = new System.Drawing.Point(4, 22);
-            this.DiObjectsTabPage.Name = "DiObjectsTabPage";
-            this.DiObjectsTabPage.Size = new System.Drawing.Size(601, 199);
-            this.DiObjectsTabPage.TabIndex = 0;
-            this.DiObjectsTabPage.Text = "Device Objects";
-            this.DiObjectsTabPage.UseVisualStyleBackColor = true;
             // 
             // DiEffectsDataTabPage
             // 
             this.DiEffectsDataTabPage.Controls.Add(this.DiEffectsDataGridView);
             this.DiEffectsDataTabPage.Location = new System.Drawing.Point(4, 22);
             this.DiEffectsDataTabPage.Name = "DiEffectsDataTabPage";
-            this.DiEffectsDataTabPage.Size = new System.Drawing.Size(601, 199);
+            this.DiEffectsDataTabPage.Size = new System.Drawing.Size(764, 199);
             this.DiEffectsDataTabPage.TabIndex = 1;
             this.DiEffectsDataTabPage.Text = "Force Feedback Effects";
             this.DiEffectsDataTabPage.UseVisualStyleBackColor = true;
+            // 
+            // DiObjectsTabPage
+            // 
+            this.DiObjectsTabPage.Controls.Add(this.DiObjectsDataGridView);
+            this.DiObjectsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.DiObjectsTabPage.Name = "DiObjectsTabPage";
+            this.DiObjectsTabPage.Size = new System.Drawing.Size(764, 199);
+            this.DiObjectsTabPage.TabIndex = 0;
+            this.DiObjectsTabPage.Text = "Device Objects";
+            this.DiObjectsTabPage.UseVisualStyleBackColor = true;
             // 
             // DiObjectsDataGridView
             // 
@@ -666,7 +694,7 @@
             this.DiObjectsDataGridView.RowHeadersVisible = false;
             dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
             this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle11;
-            this.DiObjectsDataGridView.Size = new System.Drawing.Size(601, 199);
+            this.DiObjectsDataGridView.Size = new System.Drawing.Size(764, 199);
             this.DiObjectsDataGridView.TabIndex = 1;
             // 
             // ObjectsOffsetColumn
@@ -730,7 +758,6 @@
             this.ObjectsAspectColumn.ReadOnly = true;
             this.ObjectsAspectColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.ObjectsAspectColumn.Visible = false;
-            this.ObjectsAspectColumn.Width = 46;
             // 
             // ObjectsGuidColumn
             // 
@@ -764,9 +791,6 @@
             this.Controls.Add(this.DiProductGuidLabel);
             this.Controls.Add(this.DiDPadLabel);
             this.Controls.Add(this.DiUvaLabel);
-            this.Controls.Add(this.DiExtraVLabel);
-            this.Controls.Add(this.DiExtraFLabel);
-            this.Controls.Add(this.DiExtraALabel);
             this.Controls.Add(this.MapToControllerLabel);
             this.Controls.Add(this.DiButtonsLabel);
             this.Controls.Add(this.DiAxisDataGridView);
@@ -790,14 +814,17 @@
             this.Controls.Add(this.DiDevicePidLabel);
             this.Controls.Add(this.DiDeviceVidLabel);
             this.Controls.Add(this.DiDeviceTypeLabel);
+            this.Controls.Add(this.DiExtraVLabel);
+            this.Controls.Add(this.DiExtraFLabel);
+            this.Controls.Add(this.DiExtraALabel);
             this.Name = "DirectInputControl";
-            this.Size = new System.Drawing.Size(615, 408);
+            this.Size = new System.Drawing.Size(778, 408);
             this.Load += new System.EventHandler(this.DirectInputControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
             this.DeviceDetailsTabControl.ResumeLayout(false);
-            this.DiObjectsTabPage.ResumeLayout(false);
             this.DiEffectsDataTabPage.ResumeLayout(false);
+            this.DiObjectsTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

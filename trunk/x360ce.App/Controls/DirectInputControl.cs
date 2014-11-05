@@ -247,9 +247,9 @@ namespace x360ce.App.Controls
             // Sliders
             var sNum = 1;
             ProcessSlider(actions, state.Sliders, DiUvSliderTextBox, ref sNum);
-            ProcessSlider(actions, state.Sliders, DiASliderTextBox, ref sNum);
-            ProcessSlider(actions, state.Sliders, DiFSliderTextBox, ref sNum);
-            ProcessSlider(actions, state.Sliders, DiVSliderTextBox, ref sNum);
+            ProcessSlider(actions, state.AccelerationSliders, DiASliderTextBox, ref sNum);
+            ProcessSlider(actions, state.ForceSliders, DiFSliderTextBox, ref sNum);
+            ProcessSlider(actions, state.VelocitySliders, DiVSliderTextBox, ref sNum);
 
             // Poin of view buttons
             int[] dPad = state.PointOfViewControllers;

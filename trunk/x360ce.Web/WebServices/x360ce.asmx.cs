@@ -84,6 +84,7 @@ namespace x360ce.Web.WebServices
             p1.ForceType = ps.ForceType;
             p1.GamePadType = ps.GamePadType;
             p1.LeftMotorPeriod = ps.LeftMotorPeriod;
+            p1.LeftMotorStrength = string.IsNullOrEmpty(ps.LeftMotorStrength) ? "100" : ps.LeftMotorStrength;
             p1.LeftShoulder = ps.LeftShoulder;
             p1.LeftThumbAntiDeadZoneX = ps.LeftThumbAntiDeadZoneX;
             p1.LeftThumbAntiDeadZoneY = ps.LeftThumbAntiDeadZoneY;
@@ -102,6 +103,7 @@ namespace x360ce.Web.WebServices
             p1.LeftTriggerDeadZone = ps.LeftTriggerDeadZone;
             p1.PassThrough = ps.PassThrough;
             p1.RightMotorPeriod = ps.RightMotorPeriod;
+            p1.RightMotorStrength = string.IsNullOrEmpty(ps.RightMotorStrength) ? "100" : ps.RightMotorStrength;
             p1.RightShoulder = ps.RightShoulder;
             p1.RightThumbAntiDeadZoneX = ps.RightThumbAntiDeadZoneX;
             p1.RightThumbAntiDeadZoneY = ps.RightThumbAntiDeadZoneY;

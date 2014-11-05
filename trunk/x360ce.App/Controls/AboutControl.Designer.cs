@@ -123,10 +123,10 @@
             this.AboutVirusLinkLabel.AutoSize = true;
             this.AboutVirusLinkLabel.Location = new System.Drawing.Point(219, 87);
             this.AboutVirusLinkLabel.Name = "AboutVirusLinkLabel";
-            this.AboutVirusLinkLabel.Size = new System.Drawing.Size(117, 13);
+            this.AboutVirusLinkLabel.Size = new System.Drawing.Size(119, 13);
             this.AboutVirusLinkLabel.TabIndex = 0;
             this.AboutVirusLinkLabel.TabStop = true;
-            this.AboutVirusLinkLabel.Text = "http://virusdev.ovh.org";
+            this.AboutVirusLinkLabel.Text = "http://dev.tapek.shst.pl";
             this.AboutVirusLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
             // 
             // AboutJocysLabel

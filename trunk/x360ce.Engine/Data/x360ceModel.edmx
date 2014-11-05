@@ -50,6 +50,7 @@
           <Property Name="ForceType" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="GamePadType" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftShoulder" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
@@ -68,6 +69,7 @@
           <Property Name="LeftTriggerDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="PassThrough" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightShoulder" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
@@ -92,6 +94,8 @@
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="InstanceCount" Type="int" Nullable="false" />
+          <Property Name="VendorId" Type="int" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="ProductId" Type="int" StoreGeneratedPattern="Computed" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Programs">
           <Key>
@@ -233,6 +237,8 @@
           <Property Name="LeftThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="RightThumbLinearX" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="RightThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="LeftMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="RightMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="Setting">
 					<Key>
@@ -283,6 +289,8 @@
           <Property Type="Guid" Name="ProductGuid" Nullable="false" />
           <Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="InstanceCount" Nullable="false" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="Program">
           <Key>
@@ -328,7 +336,9 @@
 					<EntitySetMapping Name="PadSettings">
 						<EntityTypeMapping TypeName="x360ceModel.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
-								<ScalarProperty Name="RightThumbLinearY" ColumnName="RightThumbLinearY" />
+								<ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
+                <ScalarProperty Name="LeftMotorStrength" ColumnName="LeftMotorStrength" />
+                <ScalarProperty Name="RightThumbLinearY" ColumnName="RightThumbLinearY" />
                 <ScalarProperty Name="RightThumbLinearX" ColumnName="RightThumbLinearX" />
                 <ScalarProperty Name="LeftThumbLinearY" ColumnName="LeftThumbLinearY" />
                 <ScalarProperty Name="LeftThumbLinearX" ColumnName="LeftThumbLinearX" />
@@ -436,6 +446,8 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="x360ceModel.Product">
               <MappingFragment StoreEntitySet="x360ce_Products">
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="VendorId" ColumnName="VendorId" />
                 <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
@@ -498,7 +510,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="59" >
+			<Diagram Name="x360ceModel" ZoomLevel="56" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
