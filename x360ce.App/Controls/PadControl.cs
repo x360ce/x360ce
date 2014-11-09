@@ -812,7 +812,7 @@ namespace x360ce.App.Controls
             RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
             lock (MainForm.XInputLock)
             {
-                var gPad = mainForm.GamePads[mainForm.ControllerIndex];
+                var gPad = mainForm.GamePads[ControllerIndex];
                 if (XInput.IsLoaded && gPad.IsConnected)
                 {
                     var vibration = new Vibration();

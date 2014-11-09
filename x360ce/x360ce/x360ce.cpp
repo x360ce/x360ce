@@ -247,7 +247,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 		if (triggerType == DIGITAL)
 		{
-            if (ButtonPressed(mapping.Trigger[i].id-1,device))*(targetTrigger[i]) = 255;
+			if (ButtonPressed(mapping.Trigger[i].id - 1, device))*(targetTrigger[i]) = 255;
 		}
 		else
 		{
@@ -508,58 +508,41 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
+	PrintLog("[x360ce] [PAD%d] XInputSetState", dwUserIndex + 1);
 	if (g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
-
+	// If bad arguments were supplied then return.
+	if (!pVibration || dwUserIndex >= XUSER_MAX_COUNT) return ERROR_BAD_ARGUMENTS;
+	// If pass through then call function on xInput.
 	if ((dwUserIndex + 1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
 		return xinput.XInputSetState(dwUserIndex, pVibration);
-
+	// Get device by index.
 	DInputDevice& device = g_Devices[dwUserIndex];
-	if (!pVibration || !(dwUserIndex < XUSER_MAX_COUNT)) return ERROR_BAD_ARGUMENTS;
-
-	HRESULT hr = ERROR_SUCCESS;
-
-	XINPUT_VIBRATION &xvib = *pVibration;
-
 	//PrintLog("%u",xvib.wLeftMotorSpeed);
 	//PrintLog("%u",xvib.wRightMotorSpeed);
-
 	if (hMsgWnd == NULL) CreateMsgWnd();
-
-	if (device.device == NULL && device.dwUserIndex == dwUserIndex)
-		DeviceInitialize(device);
+	// If device was not initialized yet then initialize device.
+	if (device.device == NULL && device.dwUserIndex == dwUserIndex) DeviceInitialize(device);
 	if (!device.device) return ERROR_DEVICE_NOT_CONNECTED;
-
 	if (!device.useforce) return ERROR_SUCCESS;
-
+	if (!device.ff.IsSupportChecked){
+		device.ff.IsSupportChecked = true;
+		device.ff.IsSupported = IsForceSupported(device);
+	}
+	// If is not suported then return.
+	if (!device.ff.IsSupported) return ERROR_SUCCESS;
 	WORD wLeftMotorSpeed = 0;
 	WORD wRightMotorSpeed = 0;
-
-	PrepareForce(device, FFB_LEFTMOTOR);
-	PrepareForce(device, FFB_RIGHTMOTOR);
-
-	if (!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
-	{
-		SetDeviceForces(device, 0, FFB_LEFTMOTOR);
-		SetDeviceForces(device, 0, FFB_RIGHTMOTOR);
-		return ERROR_SUCCESS;
+	// If device is enabled or XInputEnable(BOOL enable) method was not used then...
+	if (XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled){
+		XINPUT_VIBRATION &xvib = *pVibration;
+		WORD left = static_cast<WORD>(xvib.wLeftMotorSpeed * device.ff.forcepercent);
+		WORD right = static_cast<WORD>(xvib.wRightMotorSpeed * device.ff.forcepercent);
+		wLeftMotorSpeed = device.swapmotor ? right : left;
+		wRightMotorSpeed = device.swapmotor ? left : right;
 	}
-
-	WORD left = static_cast<WORD>(xvib.wLeftMotorSpeed * device.ff.forcepercent);
-	WORD right = static_cast<WORD>(xvib.wRightMotorSpeed * device.ff.forcepercent);
-
-	wLeftMotorSpeed = device.swapmotor ? right : left;
-	wRightMotorSpeed = device.swapmotor ? left : right;
-
-	hr = SetDeviceForces(device, wLeftMotorSpeed, FFB_LEFTMOTOR);
-
-	if (FAILED(hr))
-		PrintLog("SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
-
-	hr = SetDeviceForces(device, wRightMotorSpeed, FFB_RIGHTMOTOR);
-
-	if (FAILED(hr))
-		PrintLog("SetDeviceForces for pad %d failed with code HR = %X", dwUserIndex, hr);
-
+	DInputSetState(device, wLeftMotorSpeed, FFB_LEFTMOTOR);
+	DInputSetState(device, wRightMotorSpeed, FFB_RIGHTMOTOR);
+	// Return result.
 	return ERROR_SUCCESS;
 }
 
