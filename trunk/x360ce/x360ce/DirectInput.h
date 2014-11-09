@@ -83,10 +83,10 @@ public:
 	float forcepercent;
 	uint8_t axisffbcount;
 	uint8_t type;
-	bool is_created[2];
-	bool IsMotorInitialized[2];
-	bool IsSupported;
-	bool IsSupportChecked;
+	BOOL is_created[2];
+	BOOL IsMotorInitialized[2];
+	BOOL IsSupported;
+	BOOL IsSupportChecked;
 	struct Caps
 	{
 		bool ConstantForce;
