@@ -29,26 +29,14 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
 #endif
 
-#if _MSC_VER < 1700
-#define INITIALIZE_LOGGER std::unique_ptr<Logger> Logger::m_instance;
-#else
-#define INITIALIZE_LOGGER std::unique_ptr<Logger> Logger::m_instance; std::once_flag Logger::m_onceFlag;
-#endif
-
+#define INITIALIZE_LOGGER Logger* Logger::m_instance;
 class Logger
 {
 public:
-	static Logger& GetInstance()
+	static Logger* GetInstance()
 	{
-#if _MSC_VER < 1700
-		m_instance.reset(new Logger);
-#else
-		std::call_once(m_onceFlag,
-			[] {
-			m_instance.reset(new Logger);
-		});
-#endif
-		return *m_instance.get();
+		if (!m_instance) m_instance = new Logger;
+		return m_instance;
 	}
 
 	virtual ~Logger()
@@ -56,59 +44,76 @@ public:
 		if (m_console != nullptr)
 		{
 			FreeConsole();
-			fclose(m_console);
+			CloseHandle(m_console);
 		}
 
 		if (m_file != nullptr)
 		{
-			fclose(m_file);
+			CloseHandle(m_file);
 		}
 	}
 
 	bool file(const char* filename)
 	{
-		char logpath[MAX_PATH];
+		std::string logpath;
 		if (PathIsRelativeA(filename))
 		{
-			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, logpath, MAX_PATH);
-			if (dwLen > 0 && PathRemoveFileSpecA(logpath))
-				PathAppendA(logpath, filename);
-			else strncpy_s(logpath, filename, _TRUNCATE);
+			char tmp_logpath[MAX_PATH];
+			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, tmp_logpath, MAX_PATH);
+			if (dwLen > 0 && PathRemoveFileSpecA(tmp_logpath))
+				PathAppendA(tmp_logpath, filename);
+			logpath = tmp_logpath;
 		}
 
-		m_file = _fsopen(logpath, "wt", _SH_DENYWR);
-		return m_file != nullptr;
+		m_file = CreateFileA(logpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		return m_file != INVALID_HANDLE_VALUE;
 	}
 
 	bool console(const char* title = nullptr, const char* console_notice = nullptr)
 	{
 		if (AllocConsole())
 		{
-			int hConHandle;
-			intptr_t lStdHandle;
-
-			lStdHandle = (intptr_t)GetStdHandle(STD_OUTPUT_HANDLE);
-			hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-
-			m_console = _fdopen(hConHandle, "w");
-			if (m_console)
+			m_console = GetStdHandle(STD_OUTPUT_HANDLE);
+			if (m_console != INVALID_HANDLE_VALUE)
 			{
-				*stdout = *m_console;
-				setvbuf(stdout, NULL, _IONBF, 0);
-
 				ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-				if (title) SetConsoleTitle(title);
-				if (console_notice) puts(console_notice);
-				return true;
+				if (title) SetConsoleTitleA(title);
+				if (console_notice)
+				{
+					DWORD len = strlen(console_notice);
+					DWORD lenout = 0;
+					WriteConsoleA(m_console, console_notice, len, &lenout, NULL);
+				}
 			}
+			return m_console != INVALID_HANDLE_VALUE;
 		}
 		return false;
 	}
 
+	void print_timestamp(bool file, bool console, const char* format, ...)
+	{
+		if ((file || console) && format)
+		{
+			char buffer[1024];
+
+			va_list arglist;
+			va_start(arglist, format);
+			vsprintf_s(buffer, format, arglist);
+			va_end(arglist);
+
+			DWORD len = strlen(buffer);
+			DWORD lenout = 0;
+
+			if (console) WriteConsoleA(m_console, buffer, len, &lenout, NULL);
+			if (file) WriteFile(m_file, buffer, len, &lenout, NULL);
+		}
+	}
+
 	void print(const char* format, va_list vaargs)
 	{
-		bool log = m_file != nullptr;
-		bool con = m_console != nullptr;
+		bool log = m_file != INVALID_HANDLE_VALUE;
+		bool con = m_console != INVALID_HANDLE_VALUE;
+
 		if ((log || con) && format)
 		{
 #if _MSC_VER < 1700
@@ -116,44 +121,44 @@ public:
 #else
 			std::lock_guard<std::mutex> lock(m_mtx);
 #endif
-			static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]";
+
+			DWORD len = 0;
+			DWORD lenout = 0;
+			static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
 			if (stamp)
 			{
-				if (con) puts(stamp);
-				if (log) { fputs(stamp, m_file); putc('\n', m_file); }
+				len = strlen(stamp);
+				if (con) WriteConsoleA(m_console, stamp, len, &lenout, NULL);
+				if (log) WriteFile(m_file, stamp, len, &lenout, NULL);
 				stamp = nullptr;
 			}
 
 			GetLocalTime(&m_systime);
-			if (con) {
-				printf_s("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
-					m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
-				vprintf_s(format, vaargs);
-				putc('\n', stdout);
-			}
-			if (log) {
-				fprintf_s(m_file, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
-					m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
-				vfprintf_s(m_file, format, vaargs);
-				putc('\n', m_file);
-				fflush(m_file);
-			}
+			print_timestamp(log, con, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
+				m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
+
+			vsnprintf_s(m_print_buffer, 1024, 1024, format, vaargs);
+			strncat_s(m_print_buffer, 1024, "\r\n", _TRUNCATE);
+
+			len = strlen(m_print_buffer);
+			lenout = 0;
+
+			if (con) WriteConsoleA(m_console, m_print_buffer, len, &lenout, NULL);
+			if (log) WriteFile(m_file, m_print_buffer, len, &lenout, NULL);
+
 		}
 	}
 private:
-	static std::unique_ptr<Logger> m_instance;
-#if _MSC_VER >= 1700
-	static std::once_flag m_onceFlag;
-#endif
-
+	static Logger* m_instance;
 	// block constructors
 	Logger(const Logger& src);
 	Logger& operator=(const Logger& rhs);
 
-	SYSTEMTIME m_systime;
+	char m_print_buffer[1024];
 
-	FILE* m_console;
-	FILE* m_file;
+	SYSTEMTIME m_systime;
+	HANDLE m_console;
+	HANDLE m_file;
 
 #if _MSC_VER < 1700
 	recursive_mutex m_mtx;
@@ -170,19 +175,19 @@ private:
 
 inline void LogFile(const char* logname)
 {
-	Logger::GetInstance().file(logname);
+	Logger::GetInstance()->file(logname);
 }
 
 inline void LogConsole(const char* title = nullptr, const char* console_notice = nullptr)
 {
-	Logger::GetInstance().console(title, console_notice);
+	Logger::GetInstance()->console(title, console_notice);
 }
 
 inline void PrintLog(const char* format, ...)
 {
 	va_list vaargs;
 	va_start(vaargs, format);
-	Logger::GetInstance().print(format, vaargs);
+	Logger::GetInstance()->print(format, vaargs);
 	va_end(vaargs);
 }
 
