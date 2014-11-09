@@ -219,10 +219,33 @@ BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef)
 	return DIENUM_CONTINUE;
 }
 
+HRESULT DInputSetState(DInputDevice& device, WORD force, bool motor){
+	// If device was not initialized previously.
+	if (!device.ff.IsMotorInitialized[motor]){
+		// Mark as initialized.
+		device.ff.IsMotorInitialized[motor] = true;
+		// Prepare force feedback effect.
+		HRESULT prepareResult = PrepareForce(device, motor);
+		PrintLog("[DINPUT] [PAD%d] [M%d] DInputSetState: PrepareForce returned HR = %X", device.dwUserIndex + 1, motor, prepareResult);
+		if (SUCCEEDED(prepareResult)){
+			if (device.ff.effect[motor] != NULL){
+				// Initialize will stop motor and aquire device.
+				HRESULT initializeResult = SetDeviceForces(device, 0, motor);
+				PrintLog("[DINPUT] [PAD%d] [M%d] DInputSetState: SetDeviceForces returned HR = %X // Initializing", device.dwUserIndex + 1, motor, initializeResult);
+			}
+		}
+	}
+	if (device.ff.effect[motor] != NULL){
+		HRESULT setForceResult = SetDeviceForces(device, force, motor);
+		PrintLog("[DINPUT] [PAD%d] [M%d] DInputSetState: returned HR = %X", device.dwUserIndex + 1, motor, setForceResult);
+	}
+	return ERROR_SUCCESS;
+}
+
 HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
 {
+	PrintLog("[DINPUT] [PAD%d] [M%d] SetDeviceForces: force = %d", device.dwUserIndex + 1, motor, force);
 	if (!device.ff.effect[motor]) return E_FAIL;
-
 	if (force == 0)
 	{
 		if (FAILED(device.ff.effect[motor]->Stop()))
@@ -256,7 +279,7 @@ HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
 
 HRESULT PrepareForce(DInputDevice& device, bool motor)
 {
-	if (device.ff.effect[motor]) return E_FAIL;
+	//if (device.ff.effect[motor]) return E_FAIL;
 	if (device.ff.type == 1) return PrepareForceEjocys(device, motor);
 	if (device.ff.type == 2) return PrepareForceNew(device, motor);
 	return PrepareForceFailsafe(device, motor);
@@ -386,24 +409,28 @@ HRESULT PrepareForceFailsafe(DInputDevice& device, bool motor)
 	return E_FAIL;
 }
 
+BOOL IsForceSupported(DInputDevice& device)
+{
+	// Check if force feedback is available.
+	DIDEVCAPS didcaps;
+	didcaps.dwSize = sizeof(didcaps);
+	// Get device capabilites.
+	HRESULT hr = device.device->GetCapabilities(&didcaps);
+	if (hr != DI_OK){
+		PrintLog("[DINPUT] [PAD%d] IsForceSupported: GetCapabilities returned HR = %X", device.dwUserIndex + 1, hr);
+		return false;
+	}
+	bool ffSupported = ((didcaps.dwFlags & DIDC_FORCEFEEDBACK) == DIDC_FORCEFEEDBACK);
+	PrintLog("[DINPUT] [PAD%d] IsForceSupported: %d %s", device.dwUserIndex + 1, didcaps.dwFlags, ffSupported == true ? "YES" : "NO");
+	return ffSupported;
+}
+
 //-----------------------------------------------------------------------------
 // Name: PrepareDeviceForces()
 // Desc: Prepare force feedback effect.
 //-----------------------------------------------------------------------------
 HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
 {
-	// Check if force feedback is available.
-	DIDEVCAPS didcaps;
-	didcaps.dwSize = sizeof didcaps;
-	if (SUCCEEDED(device.device->GetCapabilities(&didcaps)) && (didcaps.dwFlags & DIDC_FORCEFEEDBACK))
-	{
-		PrintLog("[PAD%d] PrepareForce (%d) Force Feedback is available", device.dwUserIndex + 1, motor);
-	}
-	else
-	{
-		PrintLog("[PAD%d] PrepareForce (%d) Force Feedback is NOT available", device.dwUserIndex + 1, motor);
-		return E_FAIL;
-	}
 	// Sine Wave: Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay, SamplePeriod
 	GUID effGuid = GUID_Sine;
 	// Clear original effect values.
@@ -415,11 +442,12 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
 	device.ff.oldYForce = 0;
 	device.ff.oldMagnitude = 0;
 	device.ff.oldPeriod = 0;
-	device.ff.is_created = false;
+	device.ff.is_created[motor] = false;
 	// Enumerate effects.
 	device.device->EnumEffects(&EnumEffectsCallback, &device.ff, DIEFT_ALL);
 	// Create structure that provides parameters for the effect.
 	DIEFFECT eff;
+	// Fills a block of memory with zeros.
 	ZeroMemory(&eff, sizeof(eff));
 	eff.dwSize = sizeof(DIEFFECT);
 	eff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -441,7 +469,8 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
 	HRESULT hr = device.device->CreateEffect(effGuid, &device.ff.eff[motor], &device.ff.effect[motor], NULL);
 	if (FAILED(hr))
 	{
-		PrintLog("[DINPUT]  [PAD%d] PrepareForce (%d) failed with code HR = %X", device.dwUserIndex + 1, motor, hr);
+		//DIERR_DEVICEFULL, DIERR_DEVICENOTREG, DIERR_INVALIDPARAM, DIERR_NOTINITIALIZED.
+		PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", device.dwUserIndex + 1, motor, hr);
 		return hr;
 	}
 	// If pointer to the IDirectInputEffect Interface is empty then return faield state.
@@ -456,7 +485,7 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
 //-----------------------------------------------------------------------------
 HRESULT SetDeviceForcesEjocys(DInputDevice& device, WORD force, bool motor)
 {
-	PrintLog("[PAD%d] SetDeviceForces (%d) %d", device.dwUserIndex + 1, motor, force);
+	PrintLog("[DINPUT] [PAD%d] [M%d] SetDeviceForcesEJocys: force = %d", device.dwUserIndex + 1, motor, force);
 	// Convert [0;65535] range to [0:10000] range.
 	INT nForce = MulDiv(force, DI_FFNOMINALMAX, USHRT_MAX);
 	DWORD period;
@@ -524,7 +553,7 @@ HRESULT SetDeviceForcesEjocys(DInputDevice& device, WORD force, bool motor)
 		hr = device.ff.effect[motor]->SetParameters(&device.ff.eff[motor], DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START);
 		if (FAILED(hr))
 		{
-			PrintLog("[PAD%d] SetDeviceForces (%d) failed with code HR = %X", device.dwUserIndex + 1, motor, hr);
+			PrintLog("[DINPUT] [PAD%d] [M%d] SetDeviceForcesEJocys: failed with code HR = %X", device.dwUserIndex + 1, motor, hr);
 			return hr;
 		};
 	}
@@ -598,19 +627,6 @@ HRESULT PrepareForceNew(DInputDevice& device, bool motor)
 		device.ff.eff[motor].lpEnvelope = 0;
 		device.ff.eff[motor].dwStartDelay = 0;
 		device.ff.eff[motor].cbTypeSpecificParams = sizeof(DIPERIODIC);
-
-		// Force feedback
-		DIDEVCAPS didcaps;
-		didcaps.dwSize = sizeof didcaps;
-
-		if (SUCCEEDED(device.device->GetCapabilities(&didcaps)) && (didcaps.dwFlags & DIDC_FORCEFEEDBACK))
-		{
-			PrintLog("[[PAD%d] PrepareForce (%d) Force Feedback is available", device.dwUserIndex + 1, motor);
-		}
-		else
-		{
-			PrintLog("[PAD%d] PrepareForce (%d) Force Feedback is NOT available", device.dwUserIndex + 1, motor);
-		}
 
 		// Enumerate effects
 		HRESULT hr = device.device->EnumEffects(&EnumEffectsCallback, &device, DIEFT_ALL);
