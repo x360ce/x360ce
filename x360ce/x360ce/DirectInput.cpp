@@ -431,6 +431,8 @@ BOOL IsForceSupported(DInputDevice& device)
 //-----------------------------------------------------------------------------
 HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
 {
+	DWORD rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };
+	LONG rglDirection[2] = { 0, 0 };
 	// Sine Wave: Duration, Gain, TriggerButton, Axes, Direction, Envelope, TypeSpecificParams, StartDelay, SamplePeriod
 	GUID effGuid = GUID_Sine;
 	// Clear original effect values.
@@ -460,8 +462,8 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor)
 	eff.dwGain = DI_FFNOMINALMAX; // no scaling
 	eff.dwTriggerButton = DIEB_NOTRIGGER;
 	eff.dwTriggerRepeatInterval = 0;
-	eff.rgdwAxes = new DWORD[] { DIJOFS_X, DIJOFS_Y };
-	eff.rglDirection = new LONG[] { 0, 0 };
+	eff.rgdwAxes = rgdwAxes;
+	eff.rglDirection = rglDirection;
 	eff.lpvTypeSpecificParams = &device.ff.pf;
 	// Store motor effect.
 	device.ff.eff[motor] = eff;
