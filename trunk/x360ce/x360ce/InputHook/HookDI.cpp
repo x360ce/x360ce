@@ -528,23 +528,23 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceA(LPDIRECTINPUT8A This, REFGUID rguid,
 		{
 
 			hGetDeviceInfoA = ref->lpVtbl->GetDeviceInfo;
-			MH_CreateHook(hGetDeviceInfoA, HookGetDeviceInfoA, reinterpret_cast<void**>(&oGetDeviceInfoA));
-			if (MH_EnableHook(hGetDeviceInfoA) == MH_OK) PrintLog("Hooking GetDeviceInfoA");
+            IH_CreateHook(hGetDeviceInfoA, HookGetDeviceInfoA, &oGetDeviceInfoA);
+            IH_EnableHook(hGetDeviceInfoA);
 		}
 
 		if (ref->lpVtbl->GetProperty)
 		{
 			PrintLog("Hooking GetPropertyA");
 			hGetPropertyA = ref->lpVtbl->GetProperty;
-			MH_CreateHook(hGetPropertyA, HookGetPropertyA, reinterpret_cast<void**>(&oGetPropertyA));
-			if (MH_EnableHook(hGetPropertyA) == MH_OK) PrintLog("Hooking GetPropertyA");
+            IH_CreateHook(hGetPropertyA, HookGetPropertyA, &oGetPropertyA);
+            IH_EnableHook(hGetPropertyA);
 		}
 
 		if (ref->lpVtbl->SetCooperativeLevel)
 		{
 			hSetCooperativeLevelA = ref->lpVtbl->SetCooperativeLevel;
-			MH_CreateHook(hSetCooperativeLevelA, HookSetCooperativeLevelA, reinterpret_cast<void**>(&oSetCooperativeLevelA));
-			if (MH_EnableHook(hSetCooperativeLevelA) == MH_OK) PrintLog("Hooking SetCooperativeLevelA");
+            IH_CreateHook(hSetCooperativeLevelA, HookSetCooperativeLevelA, &oSetCooperativeLevelA);
+            IH_EnableHook(hSetCooperativeLevelA);
 		}
 	}
 
@@ -568,22 +568,22 @@ HRESULT STDMETHODCALLTYPE HookCreateDeviceW(LPDIRECTINPUT8W This, REFGUID rguid,
 		if (ref->lpVtbl->GetDeviceInfo)
 		{
 			hGetDeviceInfoW = ref->lpVtbl->GetDeviceInfo;
-			MH_CreateHook(hGetDeviceInfoW, HookGetDeviceInfoW, reinterpret_cast<void**>(&oGetDeviceInfoW));
-			if (MH_EnableHook(hGetDeviceInfoW) == MH_OK) PrintLog("Hooking GetDeviceInfoW");
+            IH_CreateHook(hGetDeviceInfoW, HookGetDeviceInfoW, &oGetDeviceInfoW);
+            IH_EnableHook(hGetDeviceInfoW);
 		}
 
 		if (ref->lpVtbl->GetProperty)
 		{
 			hGetPropertyW = ref->lpVtbl->GetProperty;
-			MH_CreateHook(hGetPropertyW, HookGetPropertyW, reinterpret_cast<void**>(&oGetPropertyW));
-			if (MH_EnableHook(hGetPropertyW) == MH_OK) PrintLog("Hooking GetPropertyW");
+            IH_CreateHook(hGetPropertyW, HookGetPropertyW, &oGetPropertyW);
+            IH_EnableHook(hGetPropertyW);
 		}
 
 		if (ref->lpVtbl->SetCooperativeLevel)
 		{
 			hSetCooperativeLevelW = ref->lpVtbl->SetCooperativeLevel;
-			MH_CreateHook(hSetCooperativeLevelW, HookSetCooperativeLevelW, reinterpret_cast<void**>(&oSetCooperativeLevelW));
-			if (MH_EnableHook(hSetCooperativeLevelW) == MH_OK) PrintLog("Hooking SetCooperativeLevelW");
+            IH_CreateHook(hSetCooperativeLevelW, HookSetCooperativeLevelW, &oSetCooperativeLevelW);
+            IH_EnableHook(hSetCooperativeLevelW);
 		}
 	}
 
@@ -603,19 +603,19 @@ void iHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
 
 		if(pDIA)
 		{
-			PrintLog(LOG_HOOKDI,"DirectInput8Create - ANSI interface");
+			PrintLog("DirectInput8Create - ANSI interface");
 			if(pDIA->lpVtbl->CreateDevice)
 			{
 				hCreateDeviceA = pDIA->lpVtbl->CreateDevice;
-				MH_CreateHook(hCreateDeviceA,HookCreateDeviceA,reinterpret_cast<void**>(&oCreateDeviceA));
-				if(MH_EnableHook(hCreateDeviceA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking CreateDeviceA");
+                IH_CreateHook(hCreateDeviceA, HookCreateDeviceA, &oCreateDeviceA);
+                IH_EnableHook(hCreateDeviceA);
 			}
 			if(pDIA->lpVtbl->EnumDevices)
 			{
 
 				hEnumDevicesA = pDIA->lpVtbl->EnumDevices;
-				MH_CreateHook(hEnumDevicesA,HookEnumDevicesA,reinterpret_cast<void**>(&oEnumDevicesA));
-				if(MH_EnableHook(hEnumDevicesA) == MH_OK) PrintLog(LOG_HOOKDI,"Hooking EnumDevicesA");
+                IH_CreateHook(hEnumDevicesA, HookEnumDevicesA, &oEnumDevicesA);
+                IH_EnableHook(hEnumDevicesA);
 			}
 		}
 	}
@@ -626,18 +626,18 @@ void iHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
 
 		if(pDIW)
 		{
-			PrintLog(LOG_HOOKDI,"DirectInput8Create - UNICODE interface");
+			PrintLog("DirectInput8Create - UNICODE interface");
 			if(pDIW->lpVtbl->CreateDevice)
 			{
 				hCreateDeviceW = pDIW->lpVtbl->CreateDevice;
-				MH_CreateHook(hCreateDeviceW, HookCreateDeviceW, reinterpret_cast<void**>(&oCreateDeviceW));
-				if (MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog("Hooking CreateDeviceW");
+                IH_CreateHook(hCreateDeviceW, HookCreateDeviceW, &oCreateDeviceW);
+                IH_EnableHook(hCreateDeviceW);
 			}
 			if (pDIW->lpVtbl->EnumDevices)
 			{
 				hEnumDevicesW = pDIW->lpVtbl->EnumDevices;
-				MH_CreateHook(hEnumDevicesW, HookEnumDevicesW, reinterpret_cast<void**>(&oEnumDevicesW));
-				if (MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog("Hooking EnumDevicesW");
+                IH_CreateHook(hEnumDevicesW, HookEnumDevicesW, &oEnumDevicesW);
+                IH_EnableHook(hEnumDevicesW);
 			}
 		}
 	}
@@ -662,14 +662,14 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 			if (pDIA->lpVtbl->CreateDevice)
 			{
 				hCreateDeviceA = pDIA->lpVtbl->CreateDevice;
-				MH_CreateHook(hCreateDeviceA, HookCreateDeviceA, reinterpret_cast<void**>(&oCreateDeviceA));
-				if (MH_EnableHook(hCreateDeviceA) == MH_OK) PrintLog("Hooking CreateDeviceA");
+                IH_CreateHook(hCreateDeviceA, HookCreateDeviceA, &oCreateDeviceA);
+                IH_EnableHook(hCreateDeviceA);
 			}
 			if (pDIA->lpVtbl->EnumDevices)
 			{
 				hEnumDevicesA = pDIA->lpVtbl->EnumDevices;
-				MH_CreateHook(hEnumDevicesA, HookEnumDevicesA, reinterpret_cast<void**>(&oEnumDevicesA));
-				if (MH_EnableHook(hEnumDevicesA) == MH_OK) PrintLog("Hooking EnumDevicesA");
+                IH_CreateHook(hEnumDevicesA, HookEnumDevicesA, &oEnumDevicesA);
+                IH_EnableHook(hEnumDevicesA);
 			}
 		}
 	}
@@ -684,14 +684,14 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 			if (pDIW->lpVtbl->CreateDevice)
 			{
 				hCreateDeviceW = pDIW->lpVtbl->CreateDevice;
-				MH_CreateHook(hCreateDeviceW, HookCreateDeviceW, reinterpret_cast<void**>(&oCreateDeviceW));
-				if (MH_EnableHook(hCreateDeviceW) == MH_OK) PrintLog("Hooking CreateDeviceW");
+                IH_CreateHook(hCreateDeviceW, HookCreateDeviceW, &oCreateDeviceW);
+                IH_EnableHook(hCreateDeviceW);
 			}
 			if (pDIW->lpVtbl->EnumDevices)
 			{
 				hEnumDevicesW = pDIW->lpVtbl->EnumDevices;
-				MH_CreateHook(hEnumDevicesW, HookEnumDevicesW, reinterpret_cast<void**>(&oEnumDevicesW));
-				if (MH_EnableHook(hEnumDevicesW) == MH_OK) PrintLog("Hooking EnumDevicesW");
+                IH_CreateHook(hEnumDevicesW, HookEnumDevicesW, &oEnumDevicesW);
+                IH_EnableHook(hEnumDevicesW);
 			}
 		}
 	}
@@ -703,10 +703,9 @@ HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID r
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void iHook::HookDI()
 {
-	PrintLog( "Hooking DirectInput");
-	iHookThis = this;
+    PrintLog("Hooking DirectInput");
+    iHookThis = this;
 
-	if (MH_CreateHook(DirectInput8Create, HookDirectInput8Create, reinterpret_cast<void**>(&oDirectInput8Create)) == MH_OK)
-		PrintLog( "Hooking DirectInput8Create");
+    IH_CreateHook(DirectInput8Create, HookDirectInput8Create, &oDirectInput8Create);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

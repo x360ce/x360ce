@@ -140,7 +140,6 @@ void iHook::HookSA()
     PrintLog("Hooking SetupApi");
     iHookThis = this;
 
-    if(MH_CreateHook(SetupDiGetDeviceInstanceIdW,HookSetupDiGetDeviceInstanceIdW,reinterpret_cast<void**>(&oSetupDiGetDeviceInstanceIdW)) == MH_OK)
-        PrintLog("Hooking SetupDiGetDeviceInstanceId");
+    IH_CreateHook(SetupDiGetDeviceInstanceIdW, HookSetupDiGetDeviceInstanceIdW, &oSetupDiGetDeviceInstanceIdW);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

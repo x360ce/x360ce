@@ -203,35 +203,23 @@ void iHook::HookLL()
     iHookThis = this;
 
 #if 1
-    if(MH_CreateHook(LoadLibraryA,HookLoadLibraryA,reinterpret_cast<void**>(&oLoadLibraryA)) == MH_OK)
-        PrintLog("Hooking LoadLibraryA");
-
-    if(MH_CreateHook(LoadLibraryW,HookLoadLibraryW,reinterpret_cast<void**>(&oLoadLibraryW)) == MH_OK)
-        PrintLog("Hooking LoadLibraryW");
+    IH_CreateHook(LoadLibraryA, HookLoadLibraryA, &oLoadLibraryA);
+    IH_CreateHook(LoadLibraryW, HookLoadLibraryW, &oLoadLibraryW);
 #endif
 
 #if 1
-    if(MH_CreateHook(LoadLibraryExA,HookLoadLibraryExA,reinterpret_cast<void**>(&oLoadLibraryExA)) == MH_OK)
-        PrintLog("Hooking LoadLibraryExA");
-
-    if(MH_CreateHook(LoadLibraryExW,HookLoadLibraryExW,reinterpret_cast<void**>(&oLoadLibraryExW)) == MH_OK)
-        PrintLog("Hooking LoadLibraryExW");
+    IH_CreateHook(LoadLibraryExA, HookLoadLibraryExA, &oLoadLibraryExA);
+    IH_CreateHook(LoadLibraryExW, HookLoadLibraryExW, &oLoadLibraryExW);
 #endif
 
 #if 1
-    if(MH_CreateHook(GetModuleHandleA,HookGetModuleHandleA,reinterpret_cast<void**>(&oGetModuleHandleA)) == MH_OK)
-        PrintLog("Hooking GetModuleHandleA");
-
-    if(MH_CreateHook(GetModuleHandleW,HookGetModuleHandleW,reinterpret_cast<void**>(&oGetModuleHandleW)) == MH_OK)
-        PrintLog("Hooking GetModuleHandleW");
+    IH_CreateHook(GetModuleHandleA, HookGetModuleHandleA, &oGetModuleHandleA);
+    IH_CreateHook(GetModuleHandleW, HookGetModuleHandleW, &oGetModuleHandleW);
 #endif
 
 #if 1
-    if(MH_CreateHook(GetModuleHandleExA,HookGetModuleHandleExA,reinterpret_cast<void**>(&oGetModuleHandleExA)) == MH_OK)
-        PrintLog("Hooking GetModuleHandleExA");
-
-    if(MH_CreateHook(GetModuleHandleExW,HookGetModuleHandleExW,reinterpret_cast<void**>(&oGetModuleHandleExW)) == MH_OK)
-        PrintLog("Hooking GetModuleHandleExW");
+    IH_CreateHook(GetModuleHandleExA, HookGetModuleHandleExA, &oGetModuleHandleExA);
+    IH_CreateHook(GetModuleHandleExW, HookGetModuleHandleExW, &oGetModuleHandleExW);
 #endif
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
