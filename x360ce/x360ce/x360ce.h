@@ -74,13 +74,13 @@ struct xinput_dll
 extern xinput_dll xinput;
 
 template<typename N>
-inline void LoadFunctionTemplate(HMODULE module, const char* funcname, N* ppfunc)
+inline void LoadFunctionF(HMODULE module, const char* funcname, N* ppfunc)
 {
 	if (ppfunc) *ppfunc = reinterpret_cast<N>(GetProcAddress(module, funcname));
 }
 
-#define LoadFunction(handle_struct, func) LoadFunctionTemplate(handle_struct ## .dll, #func, &handle_struct ## .func)
-#define LoadFunctionOrdinal(handle_struct, ordinal, func) LoadFunctionTemplate(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .func)
-#define LoadFunctionOrdinal2(handle_struct, ordinal) LoadFunctionTemplate(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .___XXX___ ## ordinal)
+#define LoadFunction(handle_struct, func) LoadFunctionF(handle_struct ## .dll, #func, &handle_struct ## .func)
+#define LoadFunctionOrdinal(handle_struct, ordinal, func) LoadFunctionF(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .func)
+#define LoadFunctionOrdinal2(handle_struct, ordinal) LoadFunctionF(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .___XXX___ ## ordinal)
 
 #endif
