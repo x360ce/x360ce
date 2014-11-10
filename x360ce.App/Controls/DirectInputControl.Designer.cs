@@ -100,6 +100,8 @@
             this.ObjectsAspectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ObjectsGuidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SlidersTextBox = new System.Windows.Forms.TextBox();
+            this.SlidersLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
             this.DeviceDetailsTabControl.SuspendLayout();
@@ -171,7 +173,7 @@
             // 
             this.DiDPadLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDPadLabel.AutoSize = true;
-            this.DiDPadLabel.Location = new System.Drawing.Point(552, 162);
+            this.DiDPadLabel.Location = new System.Drawing.Point(552, 136);
             this.DiDPadLabel.Name = "DiDPadLabel";
             this.DiDPadLabel.Size = new System.Drawing.Size(40, 13);
             this.DiDPadLabel.TabIndex = 0;
@@ -221,7 +223,7 @@
             // 
             this.DiButtonsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiButtonsLabel.AutoSize = true;
-            this.DiButtonsLabel.Location = new System.Drawing.Point(552, 136);
+            this.DiButtonsLabel.Location = new System.Drawing.Point(552, 162);
             this.DiButtonsLabel.Name = "DiButtonsLabel";
             this.DiButtonsLabel.Size = new System.Drawing.Size(46, 13);
             this.DiButtonsLabel.TabIndex = 0;
@@ -364,7 +366,7 @@
             // DiDPadTextBox
             // 
             this.DiDPadTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiDPadTextBox.Location = new System.Drawing.Point(606, 159);
+            this.DiDPadTextBox.Location = new System.Drawing.Point(606, 133);
             this.DiDPadTextBox.Name = "DiDPadTextBox";
             this.DiDPadTextBox.ReadOnly = true;
             this.DiDPadTextBox.Size = new System.Drawing.Size(70, 20);
@@ -409,7 +411,7 @@
             // DiButtonsTextBox
             // 
             this.DiButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiButtonsTextBox.Location = new System.Drawing.Point(606, 133);
+            this.DiButtonsTextBox.Location = new System.Drawing.Point(606, 159);
             this.DiButtonsTextBox.Name = "DiButtonsTextBox";
             this.DiButtonsTextBox.ReadOnly = true;
             this.DiButtonsTextBox.Size = new System.Drawing.Size(169, 20);
@@ -540,7 +542,7 @@
             // DiCapFfStateTextBox
             // 
             this.DiCapFfStateTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(743, 107);
+            this.DiCapFfStateTextBox.Location = new System.Drawing.Point(743, 133);
             this.DiCapFfStateTextBox.Name = "DiCapFfStateTextBox";
             this.DiCapFfStateTextBox.ReadOnly = true;
             this.DiCapFfStateTextBox.Size = new System.Drawing.Size(32, 20);
@@ -550,7 +552,7 @@
             // 
             this.DiCapFfLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiCapFfLabel.AutoSize = true;
-            this.DiCapFfLabel.Location = new System.Drawing.Point(682, 110);
+            this.DiCapFfLabel.Location = new System.Drawing.Point(682, 136);
             this.DiCapFfLabel.Name = "DiCapFfLabel";
             this.DiCapFfLabel.Size = new System.Drawing.Size(50, 13);
             this.DiCapFfLabel.TabIndex = 0;
@@ -775,12 +777,33 @@
             this.ObjectsFlagsColumn.ReadOnly = true;
             this.ObjectsFlagsColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // SlidersTextBox
+            // 
+            this.SlidersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SlidersTextBox.Location = new System.Drawing.Point(743, 107);
+            this.SlidersTextBox.Name = "SlidersTextBox";
+            this.SlidersTextBox.ReadOnly = true;
+            this.SlidersTextBox.Size = new System.Drawing.Size(32, 20);
+            this.SlidersTextBox.TabIndex = 0;
+            this.SlidersTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // SlidersLabel
+            // 
+            this.SlidersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.SlidersLabel.AutoSize = true;
+            this.SlidersLabel.Location = new System.Drawing.Point(682, 110);
+            this.SlidersLabel.Name = "SlidersLabel";
+            this.SlidersLabel.Size = new System.Drawing.Size(41, 13);
+            this.SlidersLabel.TabIndex = 0;
+            this.SlidersLabel.Text = "Sliders:";
+            // 
             // DirectInputControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.DeviceDetailsTabControl);
             this.Controls.Add(this.MapToPadComboBox);
+            this.Controls.Add(this.SlidersLabel);
             this.Controls.Add(this.ActuatorsLabel);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -799,6 +822,7 @@
             this.Controls.Add(this.DiDPadTextBox);
             this.Controls.Add(this.DeviceProductNameTextBox);
             this.Controls.Add(this.DeviceProductGuidTextBox);
+            this.Controls.Add(this.SlidersTextBox);
             this.Controls.Add(this.ActuatorsTextBox);
             this.Controls.Add(this.DiCapDPadsTextBox);
             this.Controls.Add(this.DiCapButtonsTextBox);
@@ -894,5 +918,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsAspectColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsGuidColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsFlagsColumn;
+        public System.Windows.Forms.TextBox SlidersTextBox;
+        private System.Windows.Forms.Label SlidersLabel;
 	}
 }
