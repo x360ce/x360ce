@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F142A341-5EE0-442D-A15F-98AE9B48DBAE}</ProjectGuid>
+    <ProjectGuid>{65021938-D251-46FA-BC3D-85C385D4C06D}</ProjectGuid>
     <RootNamespace>libMinHook</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

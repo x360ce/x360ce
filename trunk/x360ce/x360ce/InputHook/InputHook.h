@@ -257,7 +257,7 @@ public:
 
 		MH_EnableHook(MH_ALL_HOOKS);
 
-		if (m_timeout > 0 && !GetState(HOOK_NOTIMEOUT)) m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, (LPVOID*)&m_timeout, NULL, NULL);
+		if (m_timeout > 0 && !GetState(HOOK_NOTIMEOUT)) m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, NULL, NULL);
 	}
 
 	void HookDICOM(REFIID riidltf, LPVOID *ppv);
