@@ -298,8 +298,8 @@
     <ResourceCompile Include="x360ce.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rdparty\libMinHook\libMinHook_vs2010.vcxproj">
-      <Project>{f142a341-5ee0-442d-a15f-98ae9b48dbae}</Project>
+    <ProjectReference Include="..\3rdparty\libMinHook\libMinHook.vcxproj">
+      <Project>{65021938-d251-46fa-bc3d-85c385d4c06d}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
