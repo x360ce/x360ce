@@ -367,6 +367,6 @@ void iHook::HookCOM()
     iHookThis = this;
 
     IH_CreateHook(CoCreateInstance, HookCoCreateInstance, &oCoCreateInstance);
-    IH_CreateHook(CoUninitialize, HookCoUninitialize, &oCoCreateInstance);
+    IH_CreateHook(CoUninitialize, HookCoUninitialize, &oCoUninitialize);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
