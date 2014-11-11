@@ -82,17 +82,18 @@ typedef HRESULT ( STDMETHODCALLTYPE *Get_t )(
     /* [unique][in][out] */ CIMTYPE *pType,
     /* [unique][in][out] */ long *plFlavor);
 
-ConnectServer_t hConnectServer = NULL;
-CreateInstanceEnum_t hCreateInstanceEnum = NULL;
-Next_t hNext = NULL;
-Get_t hGet = NULL;
+static CoCreateInstance_t oCoCreateInstance = NULL;
+static CoUninitialize_t oCoUninitialize = NULL;
 
-CoUninitialize_t oCoUninitialize = NULL;
-CoCreateInstance_t oCoCreateInstance = NULL;
-ConnectServer_t oConnectServer = NULL;
-CreateInstanceEnum_t oCreateInstanceEnum = NULL;
-Next_t oNext = NULL;
-Get_t oGet = NULL;
+static ConnectServer_t hConnectServer = NULL;
+static CreateInstanceEnum_t hCreateInstanceEnum = NULL;
+static Next_t hNext = NULL;
+static Get_t hGet = NULL;
+
+static ConnectServer_t oConnectServer = NULL;
+static CreateInstanceEnum_t oCreateInstanceEnum = NULL;
+static Next_t oNext = NULL;
+static Get_t oGet = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -349,10 +350,10 @@ void WINAPI HookCoUninitialize()
     if(!iHookThis->GetState(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog("*CoUninitialize*");
 
-	MH_QueueDisableHook(hGet);
-	MH_QueueDisableHook(hNext);
-	MH_QueueDisableHook(hCreateInstanceEnum);
-	MH_QueueDisableHook(hConnectServer);
+    if (oGet) MH_QueueDisableHook(hGet);
+    if (oNext) MH_QueueDisableHook(hNext);
+    if (oCreateInstanceEnum) MH_QueueDisableHook(hCreateInstanceEnum);
+    if (oConnectServer) MH_QueueDisableHook(hConnectServer);
 
 	MH_ApplyQueued();
 

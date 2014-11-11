@@ -143,7 +143,7 @@ public:
     iHook()
         :m_hookmask(0x80000000)
         , m_fakepidvid(MAKELONG(0x045E, 0x028E))
-        , m_timeout(30)
+        , m_timeout(60)
     {
     }
     virtual ~iHook()
