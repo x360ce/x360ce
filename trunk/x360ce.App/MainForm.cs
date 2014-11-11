@@ -641,21 +641,6 @@ namespace x360ce.App
         }
 
 
-
-        //Version _dllVersion;
-        //Version dllVersion
-        //{
-        //    get
-        //    {
-        //        if (_dllVersion != null) return _dllVersion;
-        //        bool byMicrosoft;
-        //        _dllVersion = GetDllVersion(dllFile, out byMicrosoft);
-        //        return _dllVersion;
-        //    }
-        //    set { _dllVersion = value; }
-        //}
-
-
         Version GetDllVersion(string fileName, out bool byMicrosoft)
         {
             var dllInfo = new System.IO.FileInfo(fileName);
