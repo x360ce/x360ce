@@ -21,8 +21,9 @@ namespace x360ce.App
 		{
 			try
 			{
-				// var proc = Helper.GetProcessorArchitecture("x360ce.exe");
-				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+				var proc = Helper.GetProcessorArchitecture("x360ce.exe");
+				
+                AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 				if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
 				{
 					// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.

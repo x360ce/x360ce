@@ -266,6 +266,7 @@
     <Compile Include="SharpDX.XInput\XInput.cs" />
     <Compile Include="Win32\BSF.cs" />
     <Compile Include="Win32\BSM.cs" />
+    <Compile Include="Win32\PEReader.cs" />
     <Compile Include="Win32\WM_DEVICECHANGE.cs" />
     <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
