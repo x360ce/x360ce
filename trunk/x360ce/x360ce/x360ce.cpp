@@ -111,6 +111,7 @@ bool XInputInitialize()
 	LoadFunctionOrdinal(xinput, 104, XInputGetBaseBusInformation);
 	LoadFunctionOrdinal(xinput, 108, XInputGetCapabilitiesEx);
 
+    if (pHooks) pHooks->StartTimeoutThread();
 	return true;
 }
 
@@ -131,7 +132,7 @@ static void DeviceInitialize(DInputDevice& device)
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	//PrintLog("XInputGetState");
+    //PrintLog("XInputGetState");
 	if (g_bDisable) return ERROR_DEVICE_NOT_CONNECTED;
 
 	if ((dwUserIndex + 1 > g_Devices.size() || g_Devices[dwUserIndex].passthrough) && XInputInitialize())
@@ -152,7 +153,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if (XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)
 		hr = UpdateState(device);
 
-#if defined(DEBUG) | defined(_DEBUG)
+#ifdef _DEBUG
 	PrintLog("UpdateState %d %d",dwUserIndex,hr);
 #endif
 

@@ -145,7 +145,6 @@ public:
         , m_fakepidvid(MAKELONG(0x045E, 0x028E))
         , m_timeout(30)
     {
-        m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, CREATE_SUSPENDED, NULL);
     }
     virtual ~iHook()
     {
@@ -301,9 +300,12 @@ public:
             HookWT();
 
         MH_EnableHook(MH_ALL_HOOKS);
+    }
 
-        if (m_timeout > 0 && !GetState(HOOK_NOTIMEOUT)) ResumeThread(m_timeout_thread);
-        else CloseHandle(m_timeout_thread);
+    void StartTimeoutThread()
+    {
+        if (!m_timeout_thread && m_timeout > 0 && !GetState(HOOK_NOTIMEOUT))
+            m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, NULL, NULL);
     }
 
     void HookDICOM(REFIID riidltf, LPVOID *ppv);
