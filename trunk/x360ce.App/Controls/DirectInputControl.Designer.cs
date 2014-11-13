@@ -28,17 +28,17 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
             this.DiEffectsDataGridView = new System.Windows.Forms.DataGridView();
             this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -129,8 +129,8 @@
             this.DiEffectsDataGridView.Name = "DiEffectsDataGridView";
             this.DiEffectsDataGridView.ReadOnly = true;
             this.DiEffectsDataGridView.RowHeadersVisible = false;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
+            this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle15;
             this.DiEffectsDataGridView.Size = new System.Drawing.Size(764, 199);
             this.DiEffectsDataGridView.TabIndex = 0;
             // 
@@ -138,8 +138,8 @@
             // 
             this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.DiEffectNameColumn.DataPropertyName = "Effect";
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle12;
             this.DiEffectNameColumn.HeaderText = "FF Effect";
             this.DiEffectNameColumn.MinimumWidth = 75;
             this.DiEffectNameColumn.Name = "DiEffectNameColumn";
@@ -151,8 +151,8 @@
             // 
             this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DiEffectParamsColumn.DataPropertyName = "Parameters";
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle13;
             this.DiEffectParamsColumn.HeaderText = "Parameters";
             this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
             this.DiEffectParamsColumn.ReadOnly = true;
@@ -162,8 +162,8 @@
             // 
             this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle14;
             this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
             this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
             this.DiEffectDynamicParameters.ReadOnly = true;
@@ -250,22 +250,22 @@
             this.DiColumnFr,
             this.DiColumnV,
             this.DiColumnVr});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DiAxisDataGridView.DefaultCellStyle = dataGridViewCellStyle17;
             this.DiAxisDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.DiAxisDataGridView.Location = new System.Drawing.Point(3, 84);
             this.DiAxisDataGridView.Name = "DiAxisDataGridView";
             this.DiAxisDataGridView.ReadOnly = true;
             this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.DiAxisDataGridView.RowHeadersVisible = false;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Control;
+            this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle18;
             this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.DiAxisDataGridView.Size = new System.Drawing.Size(347, 90);
             this.DiAxisDataGridView.TabIndex = 0;
@@ -274,8 +274,8 @@
             // 
             this.DiColumnAxis.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.DiColumnAxis.DataPropertyName = "Axis";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle16;
             this.DiColumnAxis.HeaderText = "Axis";
             this.DiColumnAxis.Name = "DiColumnAxis";
             this.DiColumnAxis.ReadOnly = true;
@@ -547,6 +547,7 @@
             this.DiCapFfStateTextBox.ReadOnly = true;
             this.DiCapFfStateTextBox.Size = new System.Drawing.Size(32, 20);
             this.DiCapFfStateTextBox.TabIndex = 0;
+            this.DiCapFfStateTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // DiCapFfLabel
             // 
@@ -581,7 +582,7 @@
             // DiCapButtonsTextBox
             // 
             this.DiCapButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DiCapButtonsTextBox.Location = new System.Drawing.Point(743, 29);
+            this.DiCapButtonsTextBox.Location = new System.Drawing.Point(743, 81);
             this.DiCapButtonsTextBox.Name = "DiCapButtonsTextBox";
             this.DiCapButtonsTextBox.ReadOnly = true;
             this.DiCapButtonsTextBox.Size = new System.Drawing.Size(32, 20);
@@ -592,7 +593,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(682, 32);
+            this.label3.Location = new System.Drawing.Point(682, 84);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(46, 13);
             this.label3.TabIndex = 0;
@@ -621,7 +622,7 @@
             // ActuatorsTextBox
             // 
             this.ActuatorsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ActuatorsTextBox.Location = new System.Drawing.Point(743, 81);
+            this.ActuatorsTextBox.Location = new System.Drawing.Point(743, 107);
             this.ActuatorsTextBox.Name = "ActuatorsTextBox";
             this.ActuatorsTextBox.ReadOnly = true;
             this.ActuatorsTextBox.Size = new System.Drawing.Size(32, 20);
@@ -632,7 +633,7 @@
             // 
             this.ActuatorsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ActuatorsLabel.AutoSize = true;
-            this.ActuatorsLabel.Location = new System.Drawing.Point(682, 84);
+            this.ActuatorsLabel.Location = new System.Drawing.Point(682, 110);
             this.ActuatorsLabel.Name = "ActuatorsLabel";
             this.ActuatorsLabel.Size = new System.Drawing.Size(55, 13);
             this.ActuatorsLabel.TabIndex = 0;
@@ -694,8 +695,8 @@
             this.DiObjectsDataGridView.Name = "DiObjectsDataGridView";
             this.DiObjectsDataGridView.ReadOnly = true;
             this.DiObjectsDataGridView.RowHeadersVisible = false;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
-            this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle22.BackColor = System.Drawing.SystemColors.Control;
+            this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle22;
             this.DiObjectsDataGridView.Size = new System.Drawing.Size(764, 199);
             this.DiObjectsDataGridView.TabIndex = 1;
             // 
@@ -703,9 +704,9 @@
             // 
             this.ObjectsOffsetColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.ObjectsOffsetColumn.DataPropertyName = "Offset";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle8.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            this.ObjectsOffsetColumn.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle19.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this.ObjectsOffsetColumn.DefaultCellStyle = dataGridViewCellStyle19;
             this.ObjectsOffsetColumn.HeaderText = "Offset";
             this.ObjectsOffsetColumn.Name = "ObjectsOffsetColumn";
             this.ObjectsOffsetColumn.ReadOnly = true;
@@ -717,9 +718,9 @@
             // 
             this.ObjectsUsageColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.ObjectsUsageColumn.DataPropertyName = "Usage";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle9.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            this.ObjectsUsageColumn.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle20.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            this.ObjectsUsageColumn.DefaultCellStyle = dataGridViewCellStyle20;
             this.ObjectsUsageColumn.HeaderText = "Usage";
             this.ObjectsUsageColumn.Name = "ObjectsUsageColumn";
             this.ObjectsUsageColumn.ReadOnly = true;
@@ -731,10 +732,10 @@
             // 
             this.ObjectsInstanceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.ObjectsInstanceColumn.DataPropertyName = "Instance";
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle10.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ObjectsInstanceColumn.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle21.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            dataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ObjectsInstanceColumn.DefaultCellStyle = dataGridViewCellStyle21;
             this.ObjectsInstanceColumn.HeaderText = "Instance";
             this.ObjectsInstanceColumn.Name = "ObjectsInstanceColumn";
             this.ObjectsInstanceColumn.ReadOnly = true;
@@ -780,7 +781,7 @@
             // SlidersTextBox
             // 
             this.SlidersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SlidersTextBox.Location = new System.Drawing.Point(743, 107);
+            this.SlidersTextBox.Location = new System.Drawing.Point(743, 29);
             this.SlidersTextBox.Name = "SlidersTextBox";
             this.SlidersTextBox.ReadOnly = true;
             this.SlidersTextBox.Size = new System.Drawing.Size(32, 20);
@@ -791,7 +792,7 @@
             // 
             this.SlidersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SlidersLabel.AutoSize = true;
-            this.SlidersLabel.Location = new System.Drawing.Point(682, 110);
+            this.SlidersLabel.Location = new System.Drawing.Point(682, 32);
             this.SlidersLabel.Name = "SlidersLabel";
             this.SlidersLabel.Size = new System.Drawing.Size(41, 13);
             this.SlidersLabel.TabIndex = 0;

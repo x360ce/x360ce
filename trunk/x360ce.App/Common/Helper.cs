@@ -438,7 +438,6 @@ namespace x360ce.App
             switch (peREader.FileHeader.Machine)
             {
                 case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
-                    // Check to see if the CLR header contains the 32BITONLY flag, if not then the image is actually AnyCpu.
                     if (peREader.CliHeader.COR_IS_32BIT_REQUIRED()) return ProcessorArchitecture.X86; // 32-bit
                     else return ProcessorArchitecture.MSIL; // AnyCPU
                 case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64: return ProcessorArchitecture.Amd64; // 64-bit

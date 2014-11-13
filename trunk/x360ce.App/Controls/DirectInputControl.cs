@@ -110,7 +110,6 @@ namespace x360ce.App.Controls
                 }
             }
             DiCapFfStateTextBox.Text = forceFeedbackState;
-            DiCapAxesTextBox.Text = device.Capabilities.AxeCount.ToString();
             DiCapButtonsTextBox.Text = device.Capabilities.ButtonCount.ToString();
             DiCapDPadsTextBox.Text = device.Capabilities.PovCount.ToString();
             var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.Offset).ToArray();
@@ -134,6 +133,9 @@ namespace x360ce.App.Controls
             var actuators = objects.Where(x => x.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
             ActuatorsTextBox.Text = actuators.Count().ToString();
             var di = device.Information;
+            var slidersCount = objects.Where(x => x.ObjectType.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
+            DiCapAxesTextBox.Text = (device.Capabilities.AxeCount - slidersCount).ToString();
+            SlidersTextBox.Text = slidersCount.ToString();
             // Update pid and vid always so they wont be overwritten by load settings.
             short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
             short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
