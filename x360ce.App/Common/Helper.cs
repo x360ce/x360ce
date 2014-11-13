@@ -423,29 +423,6 @@ namespace x360ce.App
             return dt;
         }
 
-        public static ProcessorArchitecture GetProcessorArchitecture(string filePath)
-        {
-            FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-            BinaryReader br = new BinaryReader(fs);
-            var peREader = new PEReader();
-            peREader.Read(br);
-            fs.Close();
-            //  32BITREQUIRED  32BITPREFERRED
-            //        0               0         :   no special meaning, MachineType and ILONLY flag determine image requirements
-            //        0               1         :   illegal, reserved for future use
-            //        1               0         :   image is x86-specific
-            //        1               1         :   image is platform neutral and prefers to be loaded 32-bit when possible
-            switch (peREader.FileHeader.Machine)
-            {
-                case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
-                    if (peREader.CliHeader.COR_IS_32BIT_REQUIRED()) return ProcessorArchitecture.X86; // 32-bit
-                    else return ProcessorArchitecture.MSIL; // AnyCPU
-                case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64: return ProcessorArchitecture.Amd64; // 64-bit
-                case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_IA64: return ProcessorArchitecture.IA64; // 64-bit
-                default: return ProcessorArchitecture.None;
-            }
-        }
-
         #endregion
     }
 }
