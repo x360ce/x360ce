@@ -139,6 +139,7 @@ namespace x360ce.App
             AboutTabPage.Controls.Add(ControlAbout);
             // Update settings map.
             UpdateSettingsMap();
+            ReloadXinputSettings();
             ////InitDirectInputTab();
             //// Timer will execute ReloadXInputLibrary();
             ////XInput.ReLoadLibrary(cXinput3File);
