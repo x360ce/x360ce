@@ -393,6 +393,18 @@ namespace x360ce.App
             ResumeEvents();
         }
 
+        public void SaveSettings()
+        {
+            UpdateTimer.Stop();
+            // Save settigns to INI file.
+            SettingManager.Current.SaveSettings();
+            // Owerwrite Temp file.
+            var ini = new System.IO.FileInfo(SettingManager.IniFileName);
+            ini.CopyTo(SettingManager.TmpFileName, true);
+            StatusTimerLabel.Text = "Settings saved";
+            UpdateTimer.Start();
+        }
+
         #endregion
 
         public static object XInputLock = new object();
