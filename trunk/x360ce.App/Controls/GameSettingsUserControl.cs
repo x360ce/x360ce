@@ -187,7 +187,7 @@ namespace x360ce.App.Controls
             //else
             if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
             {
-                e.Value = isCurrent ? SaveButton.Image : Properties.Resources.empty_16x16;
+                e.Value = isCurrent ? MyGamesSaveButton.Image : Properties.Resources.empty_16x16;
             }
             else
             {
@@ -371,7 +371,8 @@ namespace x360ce.App.Controls
             string[] paths = null;
             Invoke((MethodInvoker)delegate()
             {
-                ScanButton.Enabled = false;
+                ScanProgressLabel.Visible = true;
+                MyGamesScanButton.Enabled = false;
                 paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
                 ScanProgressLabel.Text = "Scanning...";
             });
@@ -434,7 +435,8 @@ namespace x360ce.App.Controls
             Invoke((MethodInvoker)delegate()
             {
                 //ScanProgressLabel.Text = "Scan Completed";
-                ScanButton.Enabled = true;
+                MyGamesScanButton.Enabled = true;
+                ScanProgressLabel.Visible = false;
             });
         }
 

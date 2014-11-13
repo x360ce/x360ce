@@ -87,7 +87,7 @@ namespace x360ce.App.Controls
                 drawRecordingImage = true;
                 RecordingTimer.Start();
                 CurrentCbx.ForeColor = SystemColors.GrayText;
-                mainForm.StatusTimerLabel.Text = (CurrentCbx == DPadComboBox)
+                MainForm.Current.StatusTimerLabel.Text = (CurrentCbx == DPadComboBox)
                      ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
                      : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
             }
@@ -124,7 +124,7 @@ namespace x360ce.App.Controls
                         }
                         SettingManager.Current.SetComboBoxValue(CurrentCbx, name);
                         // Save setting and notify if vaue changed.
-                        if (SettingManager.Current.SaveSetting(CurrentCbx)) mainForm.NotifySettingsChange();
+                        if (SettingManager.Current.SaveSetting(CurrentCbx)) MainForm.Current.NotifySettingsChange();
                     }
                     CurrentCbx.ForeColor = SystemColors.WindowText;
                     CurrentCbx = null;
@@ -138,8 +138,6 @@ namespace x360ce.App.Controls
         #region Control ComboBox'es
 
         ComboBox CurrentCbx;
-        MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
-
         DirectInputControl diControl;
 
         void PadControl_Load(object sender, EventArgs e)
@@ -164,8 +162,6 @@ namespace x360ce.App.Controls
 
         void ComboBoxDropDown(ComboBox cbx, int oldLeft)
         {
-            //mainForm.SuspendEvents();
-            //if (cbx.Items.Count > 0) cbx.DroppedDown = false;
             cbx.IntegralHeight = !cbx.IntegralHeight;
             cbx.IntegralHeight = !cbx.IntegralHeight;
             cbx.Left = oldLeft;
@@ -184,7 +180,6 @@ namespace x360ce.App.Controls
             {
                 cbx.SelectedIndex = 0;
             }
-            //mainForm.ResumeEvents();
         }
 
         #endregion
@@ -804,7 +799,7 @@ namespace x360ce.App.Controls
 
         public void UpdateForceFeedBack()
         {
-            if (mainForm.ControllerIndex == -1) return;
+            if (MainForm.Current.ControllerIndex == -1) return;
             // Convert 100% trackbar to MotorSpeed's 0 - 65,535 (100%).
             var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F * ushort.MaxValue);
             var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
@@ -812,7 +807,7 @@ namespace x360ce.App.Controls
             RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
             lock (MainForm.XInputLock)
             {
-                var gPad = mainForm.GamePads[ControllerIndex];
+                var gPad = MainForm.Current.GamePads[ControllerIndex];
                 if (XInput.IsLoaded && gPad.IsConnected)
                 {
                     var vibration = new Vibration();
@@ -839,29 +834,22 @@ namespace x360ce.App.Controls
 
 		void ClearPresetButton_Click(object sender, EventArgs e)
         {
-            mainForm.LoadPreset("Clear", ControllerIndex);
+            MainForm.Current.LoadPreset("Clear", ControllerIndex);
         }
 
         void ResetPresetButton_Click(object sender, EventArgs e)
         {
-            mainForm.ReloadXinputSettings();
+            MainForm.Current.ReloadXinputSettings();
         }
 
         void SavePresetButton_Click(object sender, EventArgs e)
         {
-            mainForm.UpdateTimer.Stop();
-            // Save settigns to INI file.
-            SettingManager.Current.SaveSettings();
-            // Owerwrite Temp file.
-            var ini = new System.IO.FileInfo(SettingManager.IniFileName);
-            ini.CopyTo(SettingManager.TmpFileName, true);
-            mainForm.StatusTimerLabel.Text = "Settings saved";
-            mainForm.UpdateTimer.Start();
+            MainForm.Current.SaveSettings();
         }
 
         void PadTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mainForm.UpdateHelpHeader();
+            MainForm.Current.UpdateHelpHeader();
         }
 
         /// <summary> 

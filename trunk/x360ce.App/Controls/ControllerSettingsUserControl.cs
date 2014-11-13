@@ -24,9 +24,13 @@ namespace x360ce.App.Controls
         }
 
         MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
+        string _myControllersTitle = "";
+        string _globalSettingsTitle = "";
 
         void InternetUserControl_Load(object sender, EventArgs e)
         {
+            _myControllersTitle = MyControllersTabPage.Text;
+            _globalSettingsTitle = SummariesTabPage.Text;
             Helper.EnableDoubleBuffering(MySettingsDataGridView);
             Helper.EnableDoubleBuffering(SummariesDataGridView);
             Helper.EnableDoubleBuffering(PresetsDataGridView);
@@ -41,12 +45,12 @@ namespace x360ce.App.Controls
 
         void _Settings_ListChanged(object sender, ListChangedEventArgs e)
         {
-            SettingsTabPage.Text = _Settings.Count == 0 ? "My Settings" : string.Format("My Settings [{0}]", _Settings.Count);
+            MyControllersTabPage.Text = _Settings.Count == 0 ? _myControllersTitle : string.Format("{0} [{1}]", _myControllersTitle, _Settings.Count);
         }
 
         void _Summaries_ListChanged(object sender, ListChangedEventArgs e)
         {
-            SummariesTabPage.Text = _Summaries.Count == 0 ? "Global Settings" : string.Format("Global Settings [{0}]", _Summaries.Count);
+            SummariesTabPage.Text = _Summaries.Count == 0 ? _globalSettingsTitle : string.Format("{0} [{1}]", _globalSettingsTitle, _Summaries.Count);
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -534,7 +538,7 @@ namespace x360ce.App.Controls
                     RefreshGrid(true);
                     break;
                 case Keys.M:
-                    if (e.Alt) SettingsListTabControl.SelectedTab = SettingsTabPage;
+                    if (e.Alt) SettingsListTabControl.SelectedTab = MyControllersTabPage;
                     break;
                 case Keys.G:
                     if (e.Alt) SettingsListTabControl.SelectedTab = SummariesTabPage;

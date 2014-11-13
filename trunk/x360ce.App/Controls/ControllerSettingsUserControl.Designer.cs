@@ -28,16 +28,16 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle61 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle62 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle63 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle64 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle66 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle67 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle65 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle68 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle69 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle70 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
             this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,7 +52,7 @@
             this.CommentLabel = new System.Windows.Forms.Label();
             this.CommentSelectedTextBox = new System.Windows.Forms.TextBox();
             this.SettingsListTabControl = new System.Windows.Forms.TabControl();
-            this.SettingsTabPage = new System.Windows.Forms.TabPage();
+            this.MyControllersTabPage = new System.Windows.Forms.TabPage();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.MySettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
             this.MySettingsLoadButton = new System.Windows.Forms.ToolStripButton();
@@ -64,27 +64,27 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+            this.GlobalSettingsLoadButton = new System.Windows.Forms.ToolStripButton();
             this.PresetsTabPage = new System.Windows.Forms.TabPage();
             this.PresetsDataGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MySettingsSaveButton = new System.Windows.Forms.Button();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
-            this.GlobalSettingsLoadButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.PresetRefreshButton = new System.Windows.Forms.ToolStripButton();
             this.PresetsLoadButton = new System.Windows.Forms.ToolStripButton();
+            this.MySettingsSaveButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).BeginInit();
             this.SettingsListTabControl.SuspendLayout();
-            this.SettingsTabPage.SuspendLayout();
+            this.MyControllersTabPage.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SummariesTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).BeginInit();
+            this.toolStrip2.SuspendLayout();
             this.PresetsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).BeginInit();
-            this.toolStrip2.SuspendLayout();
             this.toolStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,13 +96,13 @@
             this.MySettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
             this.MySettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.MySettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MySettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle61.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle61.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle61.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle61.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle61.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle61.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MySettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle61;
             this.MySettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.MySettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.MyIconColumn,
@@ -110,28 +110,28 @@
             this.MyControllerColumn,
             this.MyFileColumn,
             this.MyGameColumn});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.MySettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle62.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle62.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle62.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle62.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle62.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle62.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle62.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MySettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle62;
             this.MySettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MySettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.MySettingsDataGridView.Location = new System.Drawing.Point(0, 25);
             this.MySettingsDataGridView.MultiSelect = false;
             this.MySettingsDataGridView.Name = "MySettingsDataGridView";
             this.MySettingsDataGridView.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MySettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle63.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle63.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle63.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle63.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle63.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle63.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle63.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MySettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle63;
             this.MySettingsDataGridView.RowHeadersVisible = false;
             this.MySettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.MySettingsDataGridView.Size = new System.Drawing.Size(590, 256);
@@ -262,7 +262,7 @@
             this.SettingsListTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SettingsListTabControl.Controls.Add(this.SettingsTabPage);
+            this.SettingsListTabControl.Controls.Add(this.MyControllersTabPage);
             this.SettingsListTabControl.Controls.Add(this.SummariesTabPage);
             this.SettingsListTabControl.Controls.Add(this.PresetsTabPage);
             this.SettingsListTabControl.Location = new System.Drawing.Point(3, 69);
@@ -272,16 +272,16 @@
             this.SettingsListTabControl.TabIndex = 18;
             this.SettingsListTabControl.SelectedIndexChanged += new System.EventHandler(this.SettingsListTabControl_SelectedIndexChanged);
             // 
-            // SettingsTabPage
+            // MyControllersTabPage
             // 
-            this.SettingsTabPage.Controls.Add(this.MySettingsDataGridView);
-            this.SettingsTabPage.Controls.Add(this.toolStrip1);
-            this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
-            this.SettingsTabPage.Name = "SettingsTabPage";
-            this.SettingsTabPage.Size = new System.Drawing.Size(590, 281);
-            this.SettingsTabPage.TabIndex = 0;
-            this.SettingsTabPage.Text = "My Settings";
-            this.SettingsTabPage.UseVisualStyleBackColor = true;
+            this.MyControllersTabPage.Controls.Add(this.MySettingsDataGridView);
+            this.MyControllersTabPage.Controls.Add(this.toolStrip1);
+            this.MyControllersTabPage.Location = new System.Drawing.Point(4, 22);
+            this.MyControllersTabPage.Name = "MyControllersTabPage";
+            this.MyControllersTabPage.Size = new System.Drawing.Size(590, 281);
+            this.MyControllersTabPage.TabIndex = 0;
+            this.MyControllersTabPage.Text = "My Controller Settings";
+            this.MyControllersTabPage.UseVisualStyleBackColor = true;
             // 
             // toolStrip1
             // 
@@ -335,7 +335,7 @@
             this.SummariesTabPage.Name = "SummariesTabPage";
             this.SummariesTabPage.Size = new System.Drawing.Size(590, 281);
             this.SummariesTabPage.TabIndex = 1;
-            this.SummariesTabPage.Text = "Global Settings";
+            this.SummariesTabPage.Text = "Most Popular Settings for my Controllers";
             this.SummariesTabPage.UseVisualStyleBackColor = true;
             // 
             // SummariesDataGridView
@@ -346,13 +346,13 @@
             this.SummariesDataGridView.BackgroundColor = System.Drawing.Color.White;
             this.SummariesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.SummariesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.SummariesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle64.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle64.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle64.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle64.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle64.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle64.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.SummariesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle64;
             this.SummariesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.SummariesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.SidColumn,
@@ -360,28 +360,28 @@
             this.dataGridViewTextBoxColumn2,
             this.dataGridViewTextBoxColumn3,
             this.dataGridViewTextBoxColumn4});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.SummariesDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle66.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle66.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle66.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle66.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle66.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle66.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle66.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.SummariesDataGridView.DefaultCellStyle = dataGridViewCellStyle66;
             this.SummariesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SummariesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.SummariesDataGridView.Location = new System.Drawing.Point(0, 25);
             this.SummariesDataGridView.MultiSelect = false;
             this.SummariesDataGridView.Name = "SummariesDataGridView";
             this.SummariesDataGridView.ReadOnly = true;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.SummariesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle67.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle67.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle67.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle67.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle67.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle67.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle67.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.SummariesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle67;
             this.SummariesDataGridView.RowHeadersVisible = false;
             this.SummariesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.SummariesDataGridView.Size = new System.Drawing.Size(590, 256);
@@ -402,8 +402,8 @@
             // dataGridViewTextBoxColumn1
             // 
             this.dataGridViewTextBoxColumn1.DataPropertyName = "Users";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle65.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle65;
             this.dataGridViewTextBoxColumn1.HeaderText = "Users";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             this.dataGridViewTextBoxColumn1.ReadOnly = true;
@@ -434,105 +434,6 @@
             this.dataGridViewTextBoxColumn4.HeaderText = "File Product Title";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             this.dataGridViewTextBoxColumn4.ReadOnly = true;
-            // 
-            // PresetsTabPage
-            // 
-            this.PresetsTabPage.Controls.Add(this.PresetsDataGridView);
-            this.PresetsTabPage.Controls.Add(this.toolStrip3);
-            this.PresetsTabPage.Location = new System.Drawing.Point(4, 22);
-            this.PresetsTabPage.Name = "PresetsTabPage";
-            this.PresetsTabPage.Size = new System.Drawing.Size(590, 281);
-            this.PresetsTabPage.TabIndex = 2;
-            this.PresetsTabPage.Text = "Presets";
-            this.PresetsTabPage.UseVisualStyleBackColor = true;
-            // 
-            // PresetsDataGridView
-            // 
-            this.PresetsDataGridView.AllowUserToAddRows = false;
-            this.PresetsDataGridView.AllowUserToDeleteRows = false;
-            this.PresetsDataGridView.AllowUserToResizeRows = false;
-            this.PresetsDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.PresetsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.PresetsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.PresetsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.PresetsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.PresetsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn5,
-            this.PresetTypeColumn,
-            this.dataGridViewTextBoxColumn7});
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.PresetsDataGridView.DefaultCellStyle = dataGridViewCellStyle9;
-            this.PresetsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PresetsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.PresetsDataGridView.Location = new System.Drawing.Point(0, 25);
-            this.PresetsDataGridView.MultiSelect = false;
-            this.PresetsDataGridView.Name = "PresetsDataGridView";
-            this.PresetsDataGridView.ReadOnly = true;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.PresetsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
-            this.PresetsDataGridView.RowHeadersVisible = false;
-            this.PresetsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.PresetsDataGridView.Size = new System.Drawing.Size(590, 256);
-            this.PresetsDataGridView.TabIndex = 2;
-            this.PresetsDataGridView.SelectionChanged += new System.EventHandler(this.PresetsDataGridView_SelectionChanged);
-            this.PresetsDataGridView.DoubleClick += new System.EventHandler(this.PresetsDataGridView_DoubleClick);
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "PadSettingChecksum";
-            this.dataGridViewTextBoxColumn5.HeaderText = "SID";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            this.dataGridViewTextBoxColumn5.ReadOnly = true;
-            this.dataGridViewTextBoxColumn5.Visible = false;
-            // 
-            // PresetTypeColumn
-            // 
-            this.PresetTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.PresetTypeColumn.DataPropertyName = "Type";
-            this.PresetTypeColumn.HeaderText = "Type";
-            this.PresetTypeColumn.Name = "PresetTypeColumn";
-            this.PresetTypeColumn.ReadOnly = true;
-            this.PresetTypeColumn.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn7
-            // 
-            this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn7.DataPropertyName = "Name";
-            this.dataGridViewTextBoxColumn7.HeaderText = "Controller";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            this.dataGridViewTextBoxColumn7.ReadOnly = true;
-            // 
-            // MySettingsSaveButton
-            // 
-            this.MySettingsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-            this.MySettingsSaveButton.Location = new System.Drawing.Point(526, 15);
-            this.MySettingsSaveButton.Name = "MySettingsSaveButton";
-            this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);
-            this.MySettingsSaveButton.TabIndex = 16;
-            this.MySettingsSaveButton.Text = "&Save";
-            this.MySettingsSaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.MySettingsSaveButton.UseVisualStyleBackColor = true;
-            this.MySettingsSaveButton.Click += new System.EventHandler(this.MySettingsSaveButton_Click);
             // 
             // toolStrip2
             // 
@@ -567,6 +468,92 @@
             this.GlobalSettingsLoadButton.Text = "&Load";
             this.GlobalSettingsLoadButton.Click += new System.EventHandler(this.GlobalSettingsLoadButton_Click);
             // 
+            // PresetsTabPage
+            // 
+            this.PresetsTabPage.Controls.Add(this.PresetsDataGridView);
+            this.PresetsTabPage.Controls.Add(this.toolStrip3);
+            this.PresetsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.PresetsTabPage.Name = "PresetsTabPage";
+            this.PresetsTabPage.Size = new System.Drawing.Size(590, 281);
+            this.PresetsTabPage.TabIndex = 2;
+            this.PresetsTabPage.Text = "Settings for Most Popular Controllers";
+            this.PresetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // PresetsDataGridView
+            // 
+            this.PresetsDataGridView.AllowUserToAddRows = false;
+            this.PresetsDataGridView.AllowUserToDeleteRows = false;
+            this.PresetsDataGridView.AllowUserToResizeRows = false;
+            this.PresetsDataGridView.BackgroundColor = System.Drawing.Color.White;
+            this.PresetsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PresetsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle68.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle68.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle68.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle68.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle68.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle68.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.PresetsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle68;
+            this.PresetsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.PresetsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn5,
+            this.PresetTypeColumn,
+            this.dataGridViewTextBoxColumn7});
+            dataGridViewCellStyle69.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle69.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle69.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle69.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle69.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle69.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle69.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.PresetsDataGridView.DefaultCellStyle = dataGridViewCellStyle69;
+            this.PresetsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PresetsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+            this.PresetsDataGridView.Location = new System.Drawing.Point(0, 25);
+            this.PresetsDataGridView.MultiSelect = false;
+            this.PresetsDataGridView.Name = "PresetsDataGridView";
+            this.PresetsDataGridView.ReadOnly = true;
+            dataGridViewCellStyle70.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle70.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle70.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle70.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle70.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle70.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle70.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.PresetsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle70;
+            this.PresetsDataGridView.RowHeadersVisible = false;
+            this.PresetsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.PresetsDataGridView.Size = new System.Drawing.Size(590, 256);
+            this.PresetsDataGridView.TabIndex = 2;
+            this.PresetsDataGridView.SelectionChanged += new System.EventHandler(this.PresetsDataGridView_SelectionChanged);
+            this.PresetsDataGridView.DoubleClick += new System.EventHandler(this.PresetsDataGridView_DoubleClick);
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "PadSettingChecksum";
+            this.dataGridViewTextBoxColumn5.HeaderText = "SID";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.ReadOnly = true;
+            this.dataGridViewTextBoxColumn5.Visible = false;
+            // 
+            // PresetTypeColumn
+            // 
+            this.PresetTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.PresetTypeColumn.DataPropertyName = "Type";
+            this.PresetTypeColumn.HeaderText = "Type";
+            this.PresetTypeColumn.Name = "PresetTypeColumn";
+            this.PresetTypeColumn.ReadOnly = true;
+            this.PresetTypeColumn.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn7.DataPropertyName = "Name";
+            this.dataGridViewTextBoxColumn7.HeaderText = "Controller";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            this.dataGridViewTextBoxColumn7.ReadOnly = true;
+            // 
             // toolStrip3
             // 
             this.toolStrip3.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
@@ -600,6 +587,19 @@
             this.PresetsLoadButton.Text = "&Load";
             this.PresetsLoadButton.Click += new System.EventHandler(this.PresetsLoadButton_Click);
             // 
+            // MySettingsSaveButton
+            // 
+            this.MySettingsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+            this.MySettingsSaveButton.Location = new System.Drawing.Point(526, 15);
+            this.MySettingsSaveButton.Name = "MySettingsSaveButton";
+            this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);
+            this.MySettingsSaveButton.TabIndex = 16;
+            this.MySettingsSaveButton.Text = "&Save";
+            this.MySettingsSaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.MySettingsSaveButton.UseVisualStyleBackColor = true;
+            this.MySettingsSaveButton.Click += new System.EventHandler(this.MySettingsSaveButton_Click);
+            // 
             // ControllerSettingsUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -619,18 +619,18 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InternetUserControl_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).EndInit();
             this.SettingsListTabControl.ResumeLayout(false);
-            this.SettingsTabPage.ResumeLayout(false);
-            this.SettingsTabPage.PerformLayout();
+            this.MyControllersTabPage.ResumeLayout(false);
+            this.MyControllersTabPage.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.SummariesTabPage.ResumeLayout(false);
             this.SummariesTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).EndInit();
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
             this.PresetsTabPage.ResumeLayout(false);
             this.PresetsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).EndInit();
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
             this.ResumeLayout(false);
@@ -649,7 +649,7 @@
 		System.Windows.Forms.Label CommentLabel;
 		System.Windows.Forms.TextBox CommentSelectedTextBox;
 		System.Windows.Forms.TabControl SettingsListTabControl;
-		System.Windows.Forms.TabPage SettingsTabPage;
+		System.Windows.Forms.TabPage MyControllersTabPage;
 		System.Windows.Forms.TabPage SummariesTabPage;
 		System.Windows.Forms.DataGridView SummariesDataGridView;
 		System.Windows.Forms.DataGridViewImageColumn MyIconColumn;

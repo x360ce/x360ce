@@ -45,21 +45,25 @@
             this.FakeModeLabel = new System.Windows.Forms.Label();
             this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
             this.ProgramScanLocationsTabControl = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.GameScanLocationsTabPage = new System.Windows.Forms.TabPage();
             this.GameScanLocationsListBox = new System.Windows.Forms.ListBox();
-            this.AddLocationButton = new System.Windows.Forms.Button();
-            this.RemoveLocationButton = new System.Windows.Forms.Button();
             this.LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.ConfigurationGroupBox = new System.Windows.Forms.GroupBox();
-            this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
             this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
+            this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
+            this.LocationsToolStrip = new System.Windows.Forms.ToolStrip();
+            this.RefreshLocationsButton = new System.Windows.Forms.ToolStripButton();
+            this.AddLocationButton = new System.Windows.Forms.ToolStripButton();
+            this.RemoveLocationButton = new System.Windows.Forms.ToolStripButton();
+            this.SaveSettingsButton = new System.Windows.Forms.Button();
             this.TestingAndLoggingGroupBox.SuspendLayout();
             this.OperationGroupBox.SuspendLayout();
             this.InternetGroupBox.SuspendLayout();
             this.FakeApiGroupBox.SuspendLayout();
             this.ProgramScanLocationsTabControl.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.GameScanLocationsTabPage.SuspendLayout();
             this.ConfigurationGroupBox.SuspendLayout();
+            this.LocationsToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // TestingAndLoggingGroupBox
@@ -241,64 +245,36 @@
             // 
             this.ProgramScanLocationsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProgramScanLocationsTabControl.Controls.Add(this.tabPage1);
+            this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
             this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
-            this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 121);
+            this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 118);
             this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
             this.ProgramScanLocationsTabControl.SelectedIndex = 0;
-            this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(391, 133);
+            this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(391, 136);
             this.ProgramScanLocationsTabControl.TabIndex = 34;
             // 
-            // tabPage1
+            // GameScanLocationsTabPage
             // 
-            this.tabPage1.Controls.Add(this.GameScanLocationsListBox);
-            this.tabPage1.Location = new System.Drawing.Point(4, 28);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(383, 101);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Game Scan Locations:";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.GameScanLocationsTabPage.Controls.Add(this.GameScanLocationsListBox);
+            this.GameScanLocationsTabPage.Controls.Add(this.LocationsToolStrip);
+            this.GameScanLocationsTabPage.Location = new System.Drawing.Point(4, 28);
+            this.GameScanLocationsTabPage.Name = "GameScanLocationsTabPage";
+            this.GameScanLocationsTabPage.Size = new System.Drawing.Size(383, 104);
+            this.GameScanLocationsTabPage.TabIndex = 0;
+            this.GameScanLocationsTabPage.Text = "Game Scan Locations";
+            this.GameScanLocationsTabPage.UseVisualStyleBackColor = true;
             // 
             // GameScanLocationsListBox
             // 
             this.GameScanLocationsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.GameScanLocationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.GameScanLocationsListBox.FormattingEnabled = true;
-            this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 0);
+            this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
             this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
-            this.GameScanLocationsListBox.Size = new System.Drawing.Size(383, 101);
+            this.GameScanLocationsListBox.Size = new System.Drawing.Size(383, 79);
+            this.GameScanLocationsListBox.Sorted = true;
             this.GameScanLocationsListBox.TabIndex = 0;
             this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
-            // 
-            // AddLocationButton
-            // 
-            this.AddLocationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
-            this.AddLocationButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.AddLocationButton.Location = new System.Drawing.Point(489, 118);
-            this.AddLocationButton.Name = "AddLocationButton";
-            this.AddLocationButton.Size = new System.Drawing.Size(75, 25);
-            this.AddLocationButton.TabIndex = 36;
-            this.AddLocationButton.Text = "&Add...";
-            this.AddLocationButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.AddLocationButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.AddLocationButton.UseVisualStyleBackColor = true;
-            this.AddLocationButton.Click += new System.EventHandler(this.AddLocationButton_Click);
-            // 
-            // RemoveLocationButton
-            // 
-            this.RemoveLocationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RemoveLocationButton.Image = global::x360ce.App.Properties.Resources.remove_16x16;
-            this.RemoveLocationButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.RemoveLocationButton.Location = new System.Drawing.Point(565, 118);
-            this.RemoveLocationButton.Name = "RemoveLocationButton";
-            this.RemoveLocationButton.Size = new System.Drawing.Size(75, 25);
-            this.RemoveLocationButton.TabIndex = 35;
-            this.RemoveLocationButton.Text = "&Remove";
-            this.RemoveLocationButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.RemoveLocationButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.RemoveLocationButton.UseVisualStyleBackColor = true;
-            this.RemoveLocationButton.Click += new System.EventHandler(this.RemoveLocationButton_Click);
             // 
             // ConfigurationGroupBox
             // 
@@ -311,14 +287,6 @@
             this.ConfigurationGroupBox.TabStop = false;
             this.ConfigurationGroupBox.Text = "Configuration";
             // 
-            // ConfigurationVersionTextBox
-            // 
-            this.ConfigurationVersionTextBox.Enabled = false;
-            this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(76, 19);
-            this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
-            this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(75, 20);
-            this.ConfigurationVersionTextBox.TabIndex = 0;
-            // 
             // ConfigurationVersionLabel
             // 
             this.ConfigurationVersionLabel.AutoSize = true;
@@ -328,12 +296,74 @@
             this.ConfigurationVersionLabel.TabIndex = 0;
             this.ConfigurationVersionLabel.Text = "Version:";
             // 
+            // ConfigurationVersionTextBox
+            // 
+            this.ConfigurationVersionTextBox.Enabled = false;
+            this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(76, 19);
+            this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
+            this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(75, 20);
+            this.ConfigurationVersionTextBox.TabIndex = 0;
+            // 
+            // LocationsToolStrip
+            // 
+            this.LocationsToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.LocationsToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshLocationsButton,
+            this.RemoveLocationButton,
+            this.AddLocationButton});
+            this.LocationsToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.LocationsToolStrip.Name = "LocationsToolStrip";
+            this.LocationsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.LocationsToolStrip.Size = new System.Drawing.Size(383, 25);
+            this.LocationsToolStrip.TabIndex = 2;
+            this.LocationsToolStrip.Text = "MySettingsToolStrip";
+            // 
+            // RefreshLocationsButton
+            // 
+            this.RefreshLocationsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.RefreshLocationsButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.RefreshLocationsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RefreshLocationsButton.Name = "RefreshLocationsButton";
+            this.RefreshLocationsButton.Size = new System.Drawing.Size(66, 22);
+            this.RefreshLocationsButton.Text = "Refresh";
+            this.RefreshLocationsButton.Click += new System.EventHandler(this.RefreshLocationsButton_Click);
+            // 
+            // AddLocationButton
+            // 
+            this.AddLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+            this.AddLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.AddLocationButton.Name = "AddLocationButton";
+            this.AddLocationButton.Size = new System.Drawing.Size(58, 22);
+            this.AddLocationButton.Text = "&Add...";
+            this.AddLocationButton.Click += new System.EventHandler(this.AddLocationButton_Click);
+            // 
+            // RemoveLocationButton
+            // 
+            this.RemoveLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.RemoveLocationButton.Image = global::x360ce.App.Properties.Resources.remove_16x16;
+            this.RemoveLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RemoveLocationButton.Name = "RemoveLocationButton";
+            this.RemoveLocationButton.Size = new System.Drawing.Size(70, 22);
+            this.RemoveLocationButton.Text = "Remove";
+            this.RemoveLocationButton.Click += new System.EventHandler(this.RemoveLocationButton_Click);
+            // 
+            // SaveSettingsButton
+            // 
+            this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SaveSettingsButton.Location = new System.Drawing.Point(566, 318);
+            this.SaveSettingsButton.Name = "SaveSettingsButton";
+            this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
+            this.SaveSettingsButton.TabIndex = 68;
+            this.SaveSettingsButton.Text = "&Save";
+            this.SaveSettingsButton.UseVisualStyleBackColor = true;
+            this.SaveSettingsButton.Click += new System.EventHandler(this.SaveSettingsButton_Click);
+            // 
             // OptionsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.AddLocationButton);
-            this.Controls.Add(this.RemoveLocationButton);
+            this.Controls.Add(this.SaveSettingsButton);
             this.Controls.Add(this.TestingAndLoggingGroupBox);
             this.Controls.Add(this.ConfigurationGroupBox);
             this.Controls.Add(this.OperationGroupBox);
@@ -351,17 +381,18 @@
             this.FakeApiGroupBox.ResumeLayout(false);
             this.FakeApiGroupBox.PerformLayout();
             this.ProgramScanLocationsTabControl.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.GameScanLocationsTabPage.ResumeLayout(false);
+            this.GameScanLocationsTabPage.PerformLayout();
             this.ConfigurationGroupBox.ResumeLayout(false);
             this.ConfigurationGroupBox.PerformLayout();
+            this.LocationsToolStrip.ResumeLayout(false);
+            this.LocationsToolStrip.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button AddLocationButton;
-        private System.Windows.Forms.Button RemoveLocationButton;
         private System.Windows.Forms.GroupBox TestingAndLoggingGroupBox;
         private System.Windows.Forms.CheckBox XInputEnableCheckBox;
         private System.Windows.Forms.CheckBox UseInitBeepCheckBox;
@@ -378,12 +409,17 @@
         private System.Windows.Forms.Label FakeModeLabel;
         private System.Windows.Forms.ComboBox FakeModeComboBox;
         private System.Windows.Forms.TabControl ProgramScanLocationsTabControl;
-		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage GameScanLocationsTabPage;
 		private System.Windows.Forms.FolderBrowserDialog LocationFolderBrowserDialog;
         public System.Windows.Forms.ListBox GameScanLocationsListBox;
         public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;
         private System.Windows.Forms.GroupBox ConfigurationGroupBox;
         private System.Windows.Forms.Label ConfigurationVersionLabel;
         private System.Windows.Forms.TextBox ConfigurationVersionTextBox;
+        private System.Windows.Forms.ToolStrip LocationsToolStrip;
+        private System.Windows.Forms.ToolStripButton RefreshLocationsButton;
+        private System.Windows.Forms.ToolStripButton AddLocationButton;
+        private System.Windows.Forms.ToolStripButton RemoveLocationButton;
+        private System.Windows.Forms.Button SaveSettingsButton;
     }
 }
