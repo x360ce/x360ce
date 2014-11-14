@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.Engine", "x360ce.Eng
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMinHook_vs2010", "x360ce\3rdparty\libMinHook\libMinHook_vs2010.vcxproj", "{F142A341-5EE0-442D-A15F-98AE9B48DBAE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ditool_vs2010", "x360ce\ditool\ditool_vs2010.vcxproj", "{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,18 @@ Global
 		{F142A341-5EE0-442D-A15F-98AE9B48DBAE}.Release|x64.Build.0 = Release|x64
 		{F142A341-5EE0-442D-A15F-98AE9B48DBAE}.Release|x64+APP.ActiveCfg = Release|x64
 		{F142A341-5EE0-442D-A15F-98AE9B48DBAE}.Release|x64+APP.Build.0 = Release|x64
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|Win32.Build.0 = Debug|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|Win32+APP.ActiveCfg = Debug|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|x64.ActiveCfg = Debug|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Debug|x64+APP.ActiveCfg = Debug|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Any CPU.ActiveCfg = Release|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32.ActiveCfg = Release|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32.Build.0 = Release|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32+APP.ActiveCfg = Release|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|x64.ActiveCfg = Release|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|x64+APP.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
