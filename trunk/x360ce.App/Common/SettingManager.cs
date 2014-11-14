@@ -499,12 +499,12 @@ namespace x360ce.App
 			var control = SettingsMap[path];
 			string key = path.Split('\\')[1];
 			string v = string.Empty;
-			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
+            if (key == SettingName.HookMode || key.EndsWith(SettingName.DeviceSubType) || key.EndsWith(SettingName.ForceType))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null) { v = "0"; }
 				else if (v1 is KeyValuePair) { v = ((KeyValuePair)v1).Value; }
-				else { v = ((int)v1).ToString(); }
+				else { v = System.Convert.ToInt32(v1).ToString(); }
 			}
 			// If di menu strip attached.
 			else if (control is ComboBox)
