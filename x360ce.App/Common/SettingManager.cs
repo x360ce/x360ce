@@ -53,7 +53,7 @@ namespace x360ce.App
 		/// </summary>
 		public void ReadSettingTo(Control control, string key, string value)
 		{
-			if (key == SettingName.HookMode || control.Name == "GamePadTypeComboBox" || control.Name == "ForceTypeComboBox")
+			if (key == SettingName.HookMode || key.EndsWith(SettingName.DeviceSubType) || key.EndsWith(SettingName.ForceType))
 			{
 				var cbx = (ComboBox)control;
 				for (int i = 0; i < cbx.Items.Count; i++)
@@ -69,7 +69,7 @@ namespace x360ce.App
 					}
 					else
 					{
-						var kv = (int)cbx.Items[i];
+                        var kv = System.Convert.ToInt32(cbx.Items[i]);
 						if (kv.ToString() == value)
 						{
 							cbx.SelectedIndex = i;
@@ -227,7 +227,7 @@ namespace x360ce.App
 			ps.ForceOverall = ini2.GetValue(padSectionName, SettingName.ForceOverall);
 			ps.ForceSwapMotor = ini2.GetValue(padSectionName, SettingName.ForceSwapMotor);
 			ps.ForceType = ini2.GetValue(padSectionName, SettingName.ForceType);
-			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.GamePadType);
+			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.DeviceSubType);
 			ps.LeftMotorPeriod = ini2.GetValue(padSectionName, SettingName.LeftMotorPeriod);
             ps.LeftMotorStrength = ini2.GetValue(padSectionName, SettingName.LeftMotorStrength);
 			ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
@@ -305,7 +305,7 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.ForceOverall, ps.ForceOverall);
 			ini2.SetValue(padSectionName, SettingName.ForceSwapMotor, ps.ForceSwapMotor);
 			ini2.SetValue(padSectionName, SettingName.ForceType, ps.ForceType);
-			ini2.SetValue(padSectionName, SettingName.GamePadType, ps.GamePadType);
+			ini2.SetValue(padSectionName, SettingName.DeviceSubType, ps.GamePadType);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorPeriod, ps.LeftMotorPeriod);
             ini2.SetValue(padSectionName, SettingName.LeftMotorStrength, ps.LeftMotorStrength);
             ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
