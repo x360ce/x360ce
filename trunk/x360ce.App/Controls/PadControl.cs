@@ -43,8 +43,8 @@ namespace x360ce.App.Controls
             this.markC.SetResolution(rH, rV);
             this.markR.SetResolution(rH, rV);
             // Add gamepad typed to ComboBox.
-            var types = (SharpDX.DirectInput.DeviceType[])Enum.GetValues(typeof(SharpDX.DirectInput.DeviceType));
-            foreach (var item in types) GamePadTypeComboBox.Items.Add(item);
+            var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
+            foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
             // Add force feedback typed to ComboBox.
             var fTypes = (ForceFeedBackType[])Enum.GetValues(typeof(ForceFeedBackType));
             foreach (var item in fTypes) ForceTypeComboBox.Items.Add(item);
@@ -408,7 +408,7 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.ProductName, diControl.DeviceProductNameTextBox);
             sm.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
             sm.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
-            sm.Add(section + SettingName.GamePadType, GamePadTypeComboBox);
+            sm.Add(section + SettingName.DeviceSubType, DeviceSubTypeComboBox);
             sm.Add(section + SettingName.PassThrough, PassThroughCheckBox);
             // Mapping
             sm.Add(section + SettingName.MapToPad, diControl.MapToPadComboBox);

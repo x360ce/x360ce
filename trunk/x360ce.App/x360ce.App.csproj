@@ -167,6 +167,7 @@
     <Compile Include="Common\PresetItem.cs" />
     <Compile Include="Common\PropertyComparer.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
+    <Compile Include="Common\Serializer.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingName.cs" />

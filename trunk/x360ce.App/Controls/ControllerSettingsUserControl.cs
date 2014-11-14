@@ -382,7 +382,7 @@ namespace x360ce.App.Controls
         void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
         {
             refreshed = true;
-            if (e.Result == null)
+            if (e.Error != null || e.Result == null)
             {
                 UpdateList(new List<Setting>(), _Settings);
                 UpdateList(new List<Summary>(), _Summaries);

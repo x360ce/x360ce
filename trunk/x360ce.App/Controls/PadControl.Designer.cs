@@ -20,8 +20,8 @@
             this.AdvancedTabPage = new System.Windows.Forms.TabPage();
             this.AdvancedOptionsPanel = new System.Windows.Forms.Panel();
             this.DeviceGroupBox = new System.Windows.Forms.GroupBox();
-            this.GamePadTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.OptionsDeviceTypeLabel = new System.Windows.Forms.Label();
+            this.DeviceSubTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.DeviceSubTypeLabel = new System.Windows.Forms.Label();
             this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
             this.TriggersGroupBox = new System.Windows.Forms.GroupBox();
             this.LeftTriggerDeadZoneLabel = new System.Windows.Forms.Label();
@@ -208,8 +208,8 @@
             // 
             // DeviceGroupBox
             // 
-            this.DeviceGroupBox.Controls.Add(this.GamePadTypeComboBox);
-            this.DeviceGroupBox.Controls.Add(this.OptionsDeviceTypeLabel);
+            this.DeviceGroupBox.Controls.Add(this.DeviceSubTypeComboBox);
+            this.DeviceGroupBox.Controls.Add(this.DeviceSubTypeLabel);
             this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
             this.DeviceGroupBox.Location = new System.Drawing.Point(3, 3);
             this.DeviceGroupBox.Name = "DeviceGroupBox";
@@ -218,25 +218,25 @@
             this.DeviceGroupBox.TabStop = false;
             this.DeviceGroupBox.Text = "Device";
             // 
-            // GamePadTypeComboBox
+            // DeviceSubTypeComboBox
             // 
-            this.GamePadTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.DeviceSubTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GamePadTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.GamePadTypeComboBox.FormattingEnabled = true;
-            this.GamePadTypeComboBox.Location = new System.Drawing.Point(83, 39);
-            this.GamePadTypeComboBox.Name = "GamePadTypeComboBox";
-            this.GamePadTypeComboBox.Size = new System.Drawing.Size(139, 21);
-            this.GamePadTypeComboBox.TabIndex = 1;
+            this.DeviceSubTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.DeviceSubTypeComboBox.FormattingEnabled = true;
+            this.DeviceSubTypeComboBox.Location = new System.Drawing.Point(105, 39);
+            this.DeviceSubTypeComboBox.Name = "DeviceSubTypeComboBox";
+            this.DeviceSubTypeComboBox.Size = new System.Drawing.Size(117, 21);
+            this.DeviceSubTypeComboBox.TabIndex = 1;
             // 
-            // OptionsDeviceTypeLabel
+            // DeviceSubTypeLabel
             // 
-            this.OptionsDeviceTypeLabel.AutoSize = true;
-            this.OptionsDeviceTypeLabel.Location = new System.Drawing.Point(6, 42);
-            this.OptionsDeviceTypeLabel.Name = "OptionsDeviceTypeLabel";
-            this.OptionsDeviceTypeLabel.Size = new System.Drawing.Size(71, 13);
-            this.OptionsDeviceTypeLabel.TabIndex = 0;
-            this.OptionsDeviceTypeLabel.Text = "Device Type:";
+            this.DeviceSubTypeLabel.AutoSize = true;
+            this.DeviceSubTypeLabel.Location = new System.Drawing.Point(6, 42);
+            this.DeviceSubTypeLabel.Name = "DeviceSubTypeLabel";
+            this.DeviceSubTypeLabel.Size = new System.Drawing.Size(93, 13);
+            this.DeviceSubTypeLabel.TabIndex = 0;
+            this.DeviceSubTypeLabel.Text = "Device Sub Type:";
             // 
             // PassThroughCheckBox
             // 
@@ -1780,8 +1780,8 @@
 		System.Windows.Forms.PictureBox TopPictureBox;
 		System.Windows.Forms.Label RightLabel;
 		System.Windows.Forms.Label LeftLabel;
-		System.Windows.Forms.Label OptionsDeviceTypeLabel;
-		System.Windows.Forms.ComboBox GamePadTypeComboBox;
+		System.Windows.Forms.Label DeviceSubTypeLabel;
+		System.Windows.Forms.ComboBox DeviceSubTypeComboBox;
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
 		System.Windows.Forms.CheckBox PassThroughCheckBox;
         System.Windows.Forms.GroupBox AxisToDPadGroupBox;
