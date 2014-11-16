@@ -8,13 +8,11 @@ extern iHook g_iHook;
 static const char * legal_notice = {
     "\nx360ce - XBOX 360 Controller emulator\n"
     "https://code.google.com/p/x360ce/\n\n"
-    "Copyright (C) 2013 Robert Krawczyk\n\n"
+    "Copyright (C) 2010-2014 Robert Krawczyk\n\n"
     "This program is free software you can redistribute it and/or modify it under\n"
     "the terms of the GNU Lesser General Public License as published by the Free\n"
-    "Software Foundation, either version 3 of the License, or any later version.\n"
+    "Software Foundation, either version 3 of the License, or any later version.\n\n"
 };
-
-extern HWND hMsgWnd;
 
 class XInputEnabled
 {
