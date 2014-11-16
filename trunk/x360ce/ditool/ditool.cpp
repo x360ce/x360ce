@@ -24,10 +24,10 @@ inline const std::string GUIDtoStringA(const GUID &g)
     return tmp;
 }
 
-BOOL CALLBACK EnumDevicesCallback( LPCDIDEVICEINSTANCE pInst, VOID* pContext )
+BOOL CALLBACK EnumDevicesCallback(LPCDIDEVICEINSTANCE pInst, VOID* pContext)
 {
-	if(pInst)
-	{
+    if (pInst)
+    {
         std::string guidProduct = GUIDtoStringA(pInst->guidProduct);
         std::string guidInstance = GUIDtoStringA(pInst->guidInstance);
 
@@ -35,8 +35,8 @@ BOOL CALLBACK EnumDevicesCallback( LPCDIDEVICEINSTANCE pInst, VOID* pContext )
         PrintLog("guidProduct : %s\nguidInstance: %s", guidProduct.c_str(), guidInstance.c_str());
         PrintLog("DevType     : 0x%08X 0x%08X", LOBYTE(pInst->dwDevType), HIBYTE(pInst->dwDevType));
         PrintLog("\n");
-	}
-	return DIENUM_CONTINUE;
+    }
+    return DIENUM_CONTINUE;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -44,14 +44,14 @@ int _tmain(int argc, _TCHAR* argv[])
     LogFile("ditool.log");
     LogConsole("ditool");
 
-	setlocale( LC_ALL, "" );
-	hInst = GetModuleHandle(NULL);
-	HRESULT hr = DirectInput8Create( hInst, DIRECTINPUT_VERSION,IID_IDirectInput8, ( VOID** )&g_pDI, NULL );
+    setlocale(LC_ALL, "");
+    hInst = GetModuleHandle(NULL);
+    HRESULT hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&g_pDI, NULL);
 
-	if(SUCCEEDED(hr)) g_pDI->EnumDevices( DI8DEVCLASS_ALL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+    if (SUCCEEDED(hr)) g_pDI->EnumDevices(DI8DEVCLASS_ALL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY);
 
-	_getch();
+    _getch();
 
-	return 0;
+    return 0;
 }
 
