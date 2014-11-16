@@ -52,7 +52,7 @@ template<typename N>
 inline void IH_CreateHookF(LPVOID pTarget, const char* pTargetName, LPVOID pDetour, N* ppOrgiginal)
 {
     MH_STATUS status = MH_CreateHook(pTarget, pDetour, reinterpret_cast<void**>(ppOrgiginal));
-    if (status == MH_OK)
+    if (status == MH_OK || status == MH_ERROR_ALREADY_CREATED)
     {
         PrintLog("Hook for %s successed", pTargetName);
     }
@@ -66,7 +66,7 @@ inline void IH_CreateHookF(LPVOID pTarget, const char* pTargetName, LPVOID pDeto
 inline void IH_EnableHookF(LPVOID pTarget, const char* pTargetName)
 {
     MH_STATUS status = MH_EnableHook(pTarget);
-    if (status == MH_OK)
+    if (status == MH_OK || status == MH_ERROR_ENABLED)
     {
         PrintLog("Hook for %s enabled", pTargetName);
     }
@@ -141,7 +141,7 @@ private:
 
 public:
     iHook()
-        :m_hookmask(0x80000000)
+        :m_hookmask(HOOK_DISABLE)
         , m_fakepidvid(MAKELONG(0x045E, 0x028E))
         , m_timeout(60)
     {
@@ -300,6 +300,16 @@ public:
             HookWT();
 
         MH_EnableHook(MH_ALL_HOOKS);
+    }
+
+    void Reset()
+    {
+        m_devices.clear();
+        CloseHandle(m_timeout_thread);
+
+        m_hookmask = HOOK_DISABLE;
+        m_fakepidvid = MAKELONG(0x045E, 0x028E);
+        m_timeout = 60;
     }
 
     void StartTimeoutThread()

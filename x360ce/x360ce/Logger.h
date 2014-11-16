@@ -33,162 +33,164 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 class Logger
 {
 public:
-	static Logger* GetInstance()
-	{
-		if (!m_instance) m_instance = new Logger;
-		return m_instance;
-	}
+    static Logger* GetInstance()
+    {
+        if (!m_instance) m_instance = new Logger;
+        return m_instance;
+    }
 
-	virtual ~Logger()
-	{
-		if (m_console != nullptr)
-		{
-			FreeConsole();
-			CloseHandle(m_console);
-		}
+    virtual ~Logger()
+    {
+        if (m_console != nullptr)
+        {
+            FreeConsole();
+            CloseHandle(m_console);
+        }
 
-		if (m_file != nullptr)
-		{
-			CloseHandle(m_file);
-		}
-	}
+        if (m_file != nullptr)
+        {
+            CloseHandle(m_file);
+        }
 
-	bool file(const char* filename)
-	{
-		std::string logpath;
-		if (PathIsRelativeA(filename))
-		{
-			char tmp_logpath[MAX_PATH];
-			DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, tmp_logpath, MAX_PATH);
-			if (dwLen > 0 && PathRemoveFileSpecA(tmp_logpath))
-				PathAppendA(tmp_logpath, filename);
-			logpath = tmp_logpath;
-		}
+        delete m_instance;
+    }
 
-		m_file = CreateFileA(logpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		return m_file != INVALID_HANDLE_VALUE;
-	}
+    bool file(const char* filename)
+    {
+        std::string logpath;
+        if (PathIsRelativeA(filename))
+        {
+            char tmp_logpath[MAX_PATH];
+            DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, tmp_logpath, MAX_PATH);
+            if (dwLen > 0 && PathRemoveFileSpecA(tmp_logpath))
+                PathAppendA(tmp_logpath, filename);
+            logpath = tmp_logpath;
+        }
 
-	bool console(const char* title = nullptr, const char* console_notice = nullptr)
-	{
-		if (AllocConsole())
-		{
-			m_console = GetStdHandle(STD_OUTPUT_HANDLE);
-			if (m_console != INVALID_HANDLE_VALUE)
-			{
-				ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-				if (title) SetConsoleTitleA(title);
-				if (console_notice)
-				{
-					DWORD len = strlen(console_notice);
-					DWORD lenout = 0;
-					WriteConsoleA(m_console, console_notice, len, &lenout, NULL);
-				}
-			}
-			return m_console != INVALID_HANDLE_VALUE;
-		}
-		return false;
-	}
+        m_file = CreateFileA(logpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        return m_file != INVALID_HANDLE_VALUE;
+    }
 
-	void print_timestamp(bool file, bool console, const char* format, ...)
-	{
-		if ((file || console) && format)
-		{
-			char buffer[1024];
+    bool console(const char* title = nullptr, const char* console_notice = nullptr)
+    {
+        if (AllocConsole())
+        {
+            m_console = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (m_console != INVALID_HANDLE_VALUE)
+            {
+                ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+                if (title) SetConsoleTitleA(title);
+                if (console_notice)
+                {
+                    DWORD len = strlen(console_notice);
+                    DWORD lenout = 0;
+                    WriteConsoleA(m_console, console_notice, len, &lenout, NULL);
+                }
+            }
+            return m_console != INVALID_HANDLE_VALUE;
+        }
+        return false;
+    }
 
-			va_list arglist;
-			va_start(arglist, format);
-			vsprintf_s(buffer, format, arglist);
-			va_end(arglist);
+    void print_timestamp(bool file, bool console, const char* format, ...)
+    {
+        if ((file || console) && format)
+        {
+            char buffer[1024];
 
-			DWORD len = strlen(buffer);
-			DWORD lenout = 0;
+            va_list arglist;
+            va_start(arglist, format);
+            vsprintf_s(buffer, format, arglist);
+            va_end(arglist);
 
-			if (console) WriteConsoleA(m_console, buffer, len, &lenout, NULL);
-			if (file) WriteFile(m_file, buffer, len, &lenout, NULL);
-		}
-	}
+            DWORD len = strlen(buffer);
+            DWORD lenout = 0;
 
-	void print(const char* format, va_list vaargs)
-	{
-		bool log = m_file != INVALID_HANDLE_VALUE;
-		bool con = m_console != INVALID_HANDLE_VALUE;
+            if (console) WriteConsoleA(m_console, buffer, len, &lenout, NULL);
+            if (file) WriteFile(m_file, buffer, len, &lenout, NULL);
+        }
+    }
 
-		if ((log || con) && format)
-		{
+    void print(const char* format, va_list vaargs)
+    {
+        bool log = m_file != INVALID_HANDLE_VALUE;
+        bool con = m_console != INVALID_HANDLE_VALUE;
+
+        if ((log || con) && format)
+        {
 #if _MSC_VER < 1700
-			lock_guard lock(m_mtx);
+            lock_guard lock(m_mtx);
 #else
-			std::lock_guard<std::mutex> lock(m_mtx);
+            std::lock_guard<std::mutex> lock(m_mtx);
 #endif
 
-			DWORD len = 0;
-			DWORD lenout = 0;
-			static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
-			if (stamp)
-			{
-				len = strlen(stamp);
-				if (con) WriteConsoleA(m_console, stamp, len, &lenout, NULL);
-				if (log) WriteFile(m_file, stamp, len, &lenout, NULL);
-				stamp = nullptr;
-			}
+            DWORD len = 0;
+            DWORD lenout = 0;
+            static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
+            if (stamp)
+            {
+                len = strlen(stamp);
+                if (con) WriteConsoleA(m_console, stamp, len, &lenout, NULL);
+                if (log) WriteFile(m_file, stamp, len, &lenout, NULL);
+                stamp = nullptr;
+            }
 
-			GetLocalTime(&m_systime);
-			print_timestamp(log, con, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
-				m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
+            GetLocalTime(&m_systime);
+            print_timestamp(log, con, "%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
+                m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
 
-			vsnprintf_s(m_print_buffer, 1024, 1024, format, vaargs);
-			strncat_s(m_print_buffer, 1024, "\r\n", _TRUNCATE);
+            vsnprintf_s(m_print_buffer, 1024, 1024, format, vaargs);
+            strncat_s(m_print_buffer, 1024, "\r\n", _TRUNCATE);
 
-			len = strlen(m_print_buffer);
-			lenout = 0;
+            len = strlen(m_print_buffer);
+            lenout = 0;
 
-			if (con) WriteConsoleA(m_console, m_print_buffer, len, &lenout, NULL);
-			if (log) WriteFile(m_file, m_print_buffer, len, &lenout, NULL);
+            if (con) WriteConsoleA(m_console, m_print_buffer, len, &lenout, NULL);
+            if (log) WriteFile(m_file, m_print_buffer, len, &lenout, NULL);
 
-		}
-	}
+        }
+    }
 private:
-	static Logger* m_instance;
-	// block constructors
-	Logger(const Logger& src);
-	Logger& operator=(const Logger& rhs);
+    static Logger* m_instance;
+    // block constructors
+    Logger(const Logger& src);
+    Logger& operator=(const Logger& rhs);
 
-	char m_print_buffer[1024];
+    char m_print_buffer[1024];
 
-	SYSTEMTIME m_systime;
-	HANDLE m_console;
-	HANDLE m_file;
+    SYSTEMTIME m_systime;
+    HANDLE m_console;
+    HANDLE m_file;
 
 #if _MSC_VER < 1700
-	recursive_mutex m_mtx;
+    recursive_mutex m_mtx;
 #else
-	std::mutex m_mtx;
+    std::mutex m_mtx;
 #endif
 
-	Logger()
-	{
-		m_file = nullptr;
-		m_console = nullptr;
-	}
+    Logger()
+    {
+        m_file = nullptr;
+        m_console = nullptr;
+    }
 };
 
 inline void LogFile(const char* logname)
 {
-	Logger::GetInstance()->file(logname);
+    Logger::GetInstance()->file(logname);
 }
 
 inline void LogConsole(const char* title = nullptr, const char* console_notice = nullptr)
 {
-	Logger::GetInstance()->console(title, console_notice);
+    Logger::GetInstance()->console(title, console_notice);
 }
 
 inline void PrintLog(const char* format, ...)
 {
-	va_list vaargs;
-	va_start(vaargs, format);
-	Logger::GetInstance()->print(format, vaargs);
-	va_end(vaargs);
+    va_list vaargs;
+    va_start(vaargs, format);
+    Logger::GetInstance()->print(format, vaargs);
+    va_end(vaargs);
 }
 
 #define PrintFunc() PrintLog(__FUNCTION__)

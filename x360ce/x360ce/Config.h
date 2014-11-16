@@ -1,27 +1,4 @@
-/*  x360ce - XBOX360 Controller Emulator
- *
- *  https://code.google.com/p/x360ce/
- *
- *  Copyright (C) 2002-2010 Racer_S
- *  Copyright (C) 2010-2013 Robert Krawczyk
- *
- *  x360ce is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Foundation,
- *  either version 3 of the License, or any later version.
- *
- *  x360ce is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with x360ce.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
-
-#include "x360ce.h"
-#include "SWIP.h"
+#pragma once
 
 // disable C4351 - new behavior: elements of array 'array' will be default initialized
 #pragma warning( disable:4351 )
@@ -77,8 +54,8 @@ struct Mapping
     bool PovIsButton;
     Mapping()
         :Trigger()
-        ,Axis()
-        ,Button()
+        , Axis()
+        , Button()
     {
         pov[GAMEPAD_DPAD_UP] = 36000;
         pov[GAMEPAD_DPAD_DOWN] = 18000;
@@ -115,7 +92,12 @@ static const uint16_t povIDs[4] =
 };
 
 void InitConfig(char* ininame);
-void ReadConfig();
+void ReadConfig(bool reset = false);
 void ReadPadConfig(DWORD dwUserIndex, const SWIP& ini);
 
-#endif
+extern std::vector<DInputDevice> g_Devices;
+extern std::vector<Mapping> g_Mappings;
+
+extern bool g_bNative;
+extern bool g_bInitBeep;
+extern bool g_bDisable;

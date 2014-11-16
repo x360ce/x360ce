@@ -42,14 +42,14 @@ static iHook *iHookThis = NULL;
 
 typedef void (WINAPI *CoUninitialize_t)();
 
-typedef HRESULT (WINAPI *CoCreateInstance_t)(__in     REFCLSID rclsid,
-        __in_opt LPUNKNOWN pUnkOuter,
-        __in     DWORD dwClsContext,
-        __in     REFIID riid,
-        __deref_out LPVOID FAR* ppv);
+typedef HRESULT(WINAPI *CoCreateInstance_t)(__in     REFCLSID rclsid,
+    __in_opt LPUNKNOWN pUnkOuter,
+    __in     DWORD dwClsContext,
+    __in     REFIID riid,
+    __deref_out LPVOID FAR* ppv);
 
 
-typedef HRESULT ( STDMETHODCALLTYPE *ConnectServer_t )(
+typedef HRESULT(STDMETHODCALLTYPE *ConnectServer_t)(
     IWbemLocator * This,
     /* [in] */ const BSTR strNetworkResource,
     /* [in] */ const BSTR strUser,
@@ -60,21 +60,21 @@ typedef HRESULT ( STDMETHODCALLTYPE *ConnectServer_t )(
     /* [in] */ IWbemContext *pCtx,
     /* [out] */ IWbemServices **ppNamespace);
 
-typedef HRESULT ( STDMETHODCALLTYPE *CreateInstanceEnum_t )(
+typedef HRESULT(STDMETHODCALLTYPE *CreateInstanceEnum_t)(
     IWbemServices * This,
     /* [in] */ __RPC__in const BSTR strFilter,
     /* [in] */ long lFlags,
     /* [in] */ __RPC__in_opt IWbemContext *pCtx,
     /* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum);
 
-typedef HRESULT ( STDMETHODCALLTYPE *Next_t )(
+typedef HRESULT(STDMETHODCALLTYPE *Next_t)(
     IEnumWbemClassObject * This,
     /* [in] */ long lTimeout,
     /* [in] */ ULONG uCount,
     /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
     /* [out] */ __RPC__out ULONG *puReturned);
 
-typedef HRESULT ( STDMETHODCALLTYPE *Get_t )(
+typedef HRESULT(STDMETHODCALLTYPE *Get_t)(
     IWbemClassObject * This,
     /* [std::string][in] */ LPCWSTR wszName,
     /* [in] */ long lFlags,
@@ -107,71 +107,71 @@ HRESULT STDMETHODCALLTYPE HookGet(
     /* [unique][in][out] */ CIMTYPE *pType,
     /* [unique][in][out] */ long *plFlavor)
 {
-    HRESULT hr = oGet(This,wszName,lFlags,pVal,pType,plFlavor);
+    HRESULT hr = oGet(This, wszName, lFlags, pVal, pType, plFlavor);
 
-    if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
+    if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
     PrintLog("*Gets*");
 
-    if(hr != NO_ERROR) return hr;
+    if (hr != NO_ERROR) return hr;
 
     //PrintLog( "wszName %ls pVal->vt %d pType %d", wszName, pVal->vt, &pType);
     //if( pVal->vt == VT_BSTR) PrintLog( L"%s",pVal->bstrVal);
 
-    if( pVal->vt == VT_BSTR && pVal->bstrVal != NULL )
+    if (pVal->vt == VT_BSTR && pVal->bstrVal != NULL)
     {
         //PrintLog( "  Got device ID '%ls'", pVal->bstrVal);
         DWORD dwPid = 0, dwVid = 0, dummy;
 
-        OLECHAR* strVid = wcsstr( pVal->bstrVal, L"VID_" );
-        if(!strVid || swscanf_s( strVid, L"VID_%4X", &dwVid ) < 1 ) {
-		// Fallback VID match for OUYA style device IDs
-		strVid = wcsstr(pVal->bstrVal, L"VID&");
-		if (!strVid || swscanf_s(strVid, L"VID&%4X%4X", &dummy, &dwVid) < 1)
-			return hr;
- 		}
+        OLECHAR* strVid = wcsstr(pVal->bstrVal, L"VID_");
+        if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1) {
+            // Fallback VID match for OUYA style device IDs
+            strVid = wcsstr(pVal->bstrVal, L"VID&");
+            if (!strVid || swscanf_s(strVid, L"VID&%4X%4X", &dummy, &dwVid) < 1)
+                return hr;
+        }
 
-        OLECHAR* strPid = wcsstr( pVal->bstrVal, L"PID_" );
-        if(!strPid || swscanf_s( strPid, L"PID_%4X", &dwPid ) < 1 ) {
-		// Fallback PID match for OUYA style device IDs
-		strPid = wcsstr(pVal->bstrVal, L"PID&");
-		if (!strPid || swscanf_s(strPid, L"PID&%4X", &dwPid) < 1)
-			return hr;
- 		}
+        OLECHAR* strPid = wcsstr(pVal->bstrVal, L"PID_");
+        if (!strPid || swscanf_s(strPid, L"PID_%4X", &dwPid) < 1) {
+            // Fallback PID match for OUYA style device IDs
+            strPid = wcsstr(pVal->bstrVal, L"PID&");
+            if (!strPid || swscanf_s(strPid, L"PID&%4X", &dwPid) < 1)
+                return hr;
+        }
 
-		for(auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
+        for (auto padcfg = iHookThis->begin(); padcfg != iHookThis->end(); ++padcfg)
         {
-            if(padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid,dwPid))
+            if (padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid, dwPid))
             {
-                const wchar_t* strUSB = wcsstr( pVal->bstrVal, L"USB\\" );
-				const wchar_t* strRoot = wcsstr( pVal->bstrVal, L"root\\" );
+                const wchar_t* strUSB = wcsstr(pVal->bstrVal, L"USB\\");
+                const wchar_t* strRoot = wcsstr(pVal->bstrVal, L"root\\");
                 OLECHAR tempstr[MAX_PATH];
 
                 DWORD dwHookVid = iHookThis->GetState(iHook::HOOK_PIDVID) ? LOWORD(iHookThis->GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
                 DWORD dwHookPid = iHookThis->GetState(iHook::HOOK_PIDVID) ? HIWORD(iHookThis->GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
 
-                if(strUSB || strRoot)
+                if (strUSB || strRoot)
                 {
-                    PrintLog("%s","Device string change:");
-                    PrintLog("%ls",pVal->bstrVal);
-                    const wchar_t* p = wcsrchr(pVal->bstrVal,L'\\');
-					if(p) swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
-					else swprintf_s(tempstr,L"USB\\VID_%04X&PID_%04X&IG_%02d",dwHookVid,dwHookPid, padcfg->GetUserIndex() );
-                    SysReAllocString(&pVal->bstrVal,tempstr);
-                    PrintLog("%ls",pVal->bstrVal);
+                    PrintLog("%s", "Device string change:");
+                    PrintLog("%ls", pVal->bstrVal);
+                    const wchar_t* p = wcsrchr(pVal->bstrVal, L'\\');
+                    if (p) swprintf_s(tempstr, L"USB\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
+                    else swprintf_s(tempstr, L"USB\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPid, padcfg->GetUserIndex());
+                    SysReAllocString(&pVal->bstrVal, tempstr);
+                    PrintLog("%ls", pVal->bstrVal);
                     continue;
                 }
 
-                OLECHAR* strHID = wcsstr( pVal->bstrVal, L"HID\\" );
+                OLECHAR* strHID = wcsstr(pVal->bstrVal, L"HID\\");
 
-                if(strHID)
+                if (strHID)
                 {
-                    PrintLog("%s","Device string change:");
-                    PrintLog("%ls",pVal->bstrVal);
-                    OLECHAR* p = wcsrchr(pVal->bstrVal,L'\\');
-                    swprintf_s(tempstr,L"HID\\VID_%04X&PID_%04X&IG_%02d%s",dwHookVid,dwHookPid, padcfg->GetUserIndex(), p );
-                    SysReAllocString(&pVal->bstrVal,tempstr);
-                    PrintLog("%ls",pVal->bstrVal);
+                    PrintLog("%s", "Device string change:");
+                    PrintLog("%ls", pVal->bstrVal);
+                    OLECHAR* p = wcsrchr(pVal->bstrVal, L'\\');
+                    swprintf_s(tempstr, L"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
+                    SysReAllocString(&pVal->bstrVal, tempstr);
+                    PrintLog("%ls", pVal->bstrVal);
                     continue;
                 }
             }
@@ -190,23 +190,23 @@ HRESULT STDMETHODCALLTYPE HookNext(
     /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
     /* [out] */ __RPC__out ULONG *puReturned)
 {
-    HRESULT hr = oNext(This,lTimeout,uCount,apObjects,puReturned);
+    HRESULT hr = oNext(This, lTimeout, uCount, apObjects, puReturned);
 
-    if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
+    if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
-    PrintLog("*Next %u*",uCount);
+    PrintLog("*Next %u*", uCount);
 
-    if(hr != NO_ERROR) return hr;
+    if (hr != NO_ERROR) return hr;
 
     IWbemClassObject* pDevices;
 
-    if(apObjects)
+    if (apObjects)
     {
-        if(*apObjects)
+        if (*apObjects)
         {
             pDevices = *apObjects;
 
-            if(pDevices->lpVtbl->Get)
+            if (pDevices->lpVtbl->Get)
             {
                 hGet = pDevices->lpVtbl->Get;
                 IH_CreateHook(hGet, HookGet, &oGet);
@@ -227,23 +227,23 @@ HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
     /* [in] */ __RPC__in_opt IWbemContext *pCtx,
     /* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
 {
-    HRESULT hr = oCreateInstanceEnum(This,strFilter,lFlags,pCtx,ppEnum);
+    HRESULT hr = oCreateInstanceEnum(This, strFilter, lFlags, pCtx, ppEnum);
 
-    if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
+    if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
     PrintLog("*CreateInstanceEnum*");
 
-    if(hr != NO_ERROR) return hr;
+    if (hr != NO_ERROR) return hr;
 
     IEnumWbemClassObject* pEnumDevices = NULL;
 
-    if(ppEnum)
+    if (ppEnum)
     {
-        if(*ppEnum)
+        if (*ppEnum)
         {
             pEnumDevices = *ppEnum;
 
-            if(pEnumDevices->lpVtbl->Next)
+            if (pEnumDevices->lpVtbl->Next)
             {
                 hNext = pEnumDevices->lpVtbl->Next;
                 IH_CreateHook(hNext, HookNext, &oNext);
@@ -269,23 +269,23 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
     /* [out] */ IWbemServices **ppNamespace)
 
 {
-    HRESULT hr = oConnectServer(This,strNetworkResource,strUser,strPassword,strLocale,lSecurityFlags,strAuthority,pCtx,ppNamespace);
+    HRESULT hr = oConnectServer(This, strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
 
-    if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
+    if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
 
     PrintLog("*ConnectServer*");
 
-    if(hr != NO_ERROR) return hr;
+    if (hr != NO_ERROR) return hr;
 
     IWbemServices* pIWbemServices = NULL;
 
-    if(ppNamespace)
+    if (ppNamespace)
     {
-        if(*ppNamespace)
+        if (*ppNamespace)
         {
             pIWbemServices = *ppNamespace;
 
-            if(pIWbemServices->lpVtbl->CreateInstanceEnum)
+            if (pIWbemServices->lpVtbl->CreateInstanceEnum)
             {
                 hCreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
                 IH_CreateHook(hCreateInstanceEnum, HookCreateInstanceEnum, &oCreateInstanceEnum);
@@ -300,39 +300,39 @@ HRESULT STDMETHODCALLTYPE HookConnectServer(
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
-                                    __in_opt LPUNKNOWN pUnkOuter,
-                                    __in     DWORD dwClsContext,
-                                    __in     REFIID riid,
-                                    __deref_out LPVOID FAR* ppv)
+    __in_opt LPUNKNOWN pUnkOuter,
+    __in     DWORD dwClsContext,
+    __in     REFIID riid,
+    __deref_out LPVOID FAR* ppv)
 {
-    HRESULT hr = oCoCreateInstance(rclsid,pUnkOuter,dwClsContext,riid,ppv);
+    HRESULT hr = oCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
 
     //PrintLog(GUIDtoStringA(riid).c_str());
 
-    if(!iHookThis->GetState(iHook::HOOK_COM)) return hr;
+    if (!iHookThis->GetState(iHook::HOOK_COM)) return hr;
     PrintLog("*CoCreateInstance*");
 
     //PrintLog("%x",hr);
 
     //if(hr == CO_E_NOTINITIALIZED) CoInitialize(NULL);
 
-    if(hr != NO_ERROR) return hr;
+    if (hr != NO_ERROR) return hr;
 
-    if(IsEqualCLSID(rclsid,CLSID_DirectInput8))
+    if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
     {
         PrintLog("COM wants to create DirectInput8 instance");
         //MessageBoxA(NULL,"COM wants to create DirectInput8 instance","x360ce - Error",MB_ICONWARNING);
         //iHookThis->HookDICOM(riid,ppv);
     }
 
-    if(IsEqualIID(riid,IID_IWbemLocator))
+    if (IsEqualIID(riid, IID_IWbemLocator))
     {
         IWbemLocator* pIWbemLocator = NULL;
         pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 
-        if(pIWbemLocator)
+        if (pIWbemLocator)
         {
-            if(pIWbemLocator->lpVtbl->ConnectServer)
+            if (pIWbemLocator->lpVtbl->ConnectServer)
             {
                 hConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
                 IH_CreateHook(hConnectServer, HookConnectServer, &oConnectServer);
@@ -347,7 +347,7 @@ HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WINAPI HookCoUninitialize()
 {
-    if(!iHookThis->GetState(iHook::HOOK_COM)) return oCoUninitialize();
+    if (!iHookThis->GetState(iHook::HOOK_COM)) return oCoUninitialize();
     PrintLog("*CoUninitialize*");
 
     if (oGet) MH_QueueDisableHook(hGet);
@@ -355,7 +355,7 @@ void WINAPI HookCoUninitialize()
     if (oCreateInstanceEnum) MH_QueueDisableHook(hCreateInstanceEnum);
     if (oConnectServer) MH_QueueDisableHook(hConnectServer);
 
-	MH_ApplyQueued();
+    MH_ApplyQueued();
 
     oCoUninitialize();
 }

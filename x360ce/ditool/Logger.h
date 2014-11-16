@@ -51,6 +51,8 @@ public:
 		{
 			CloseHandle(m_file);
 		}
+
+        delete m_instance;
 	}
 
 	bool file(const char* filename)
