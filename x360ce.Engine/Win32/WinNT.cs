@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace x360ce.App
+namespace x360ce.Engine.Win32
 {
 	/// <summary>
 	/// Microsoft SDKs\Windows\v7.0\Include\Winnt.h

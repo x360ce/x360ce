@@ -68,6 +68,11 @@ namespace x360ce.App
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
 		public const string HookMode = "HookMode";
+        [DefaultValue("0x28E"), Description("FakePID. Works in conjunction with HOOKPIDVID.")]
+        public const string FakePID = "FakePID";
+        [DefaultValue("0x45E"), Description("FakeVID. Works in conjunction with HOOKPIDVID.")]
+        public const string FakeVID = "FakeVID";
+
 
 		// [Mappings] section.
 		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]

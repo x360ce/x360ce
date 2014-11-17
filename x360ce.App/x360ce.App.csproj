@@ -265,10 +265,6 @@
     <Compile Include="SharpDX.XInput\UserIndex.cs" />
     <Compile Include="SharpDX.XInput\Vibration.cs" />
     <Compile Include="SharpDX.XInput\XInput.cs" />
-    <Compile Include="Win32\BSF.cs" />
-    <Compile Include="Win32\BSM.cs" />
-    <Compile Include="Win32\PEReader.cs" />
-    <Compile Include="Win32\WM_DEVICECHANGE.cs" />
     <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -343,19 +339,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\SettingsConverter.cs" />
-    <Compile Include="Win32\BIND_OPTS3.cs" />
-    <Compile Include="Win32\CLSCTX.cs" />
-    <Compile Include="Win32\DEV_BROADCAST_VOLUME.cs" />
-    <Compile Include="Win32\NativeMethods.cs" />
-    <Compile Include="Win32\SafeLibraryHandle.cs" />
-    <Compile Include="Win32\SafeTokenHandle.cs" />
-    <Compile Include="Win32\SID_AND_ATTRIBUTES.cs" />
-    <Compile Include="Win32\TOKEN_ELEVATION.cs" />
-    <Compile Include="Win32\TOKEN_ELEVATION_TYPE.cs" />
-    <Compile Include="Win32\TOKEN_INFORMATION_CLASS.cs" />
-    <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
-    <Compile Include="Win32\WinAPI.cs" />
-    <Compile Include="Win32\WinNT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">

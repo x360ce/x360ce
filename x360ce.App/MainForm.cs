@@ -16,6 +16,7 @@ using x360ce.App.Controls;
 using System.Diagnostics;
 using System.Linq;
 using SharpDX.XInput;
+using x360ce.Engine.Win32;
 
 namespace x360ce.App
 {
@@ -145,7 +146,7 @@ namespace x360ce.App
             ////XInput.ReLoadLibrary(cXinput3File);
             ////XInput.ReLoadLibrary(cXinput3File);
             //// start capture events.
-            if (Win32.WinAPI.IsVista && Win32.WinAPI.IsElevated() && Win32.WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+            if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
             ////ReloadXInputLibrary();
         }
 
@@ -183,7 +184,7 @@ namespace x360ce.App
 
         public void CopyElevated(string source, string dest)
         {
-            if (!Win32.WinAPI.IsVista)
+            if (!WinAPI.IsVista)
             {
                 System.IO.File.Copy(source, dest);
                 return;
@@ -838,8 +839,8 @@ namespace x360ce.App
                 if (!CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
             }
             // Set status labels.
-            StatusIsAdminLabel.Text = Win32.WinAPI.IsVista
-                ? string.Format("Elevated: {0}", Win32.WinAPI.IsElevated())
+            StatusIsAdminLabel.Text = WinAPI.IsVista
+                ? string.Format("Elevated: {0}", WinAPI.IsElevated())
                 : "";
             StatusIniLabel.Text = SettingManager.IniFileName;
             return true;
@@ -942,7 +943,7 @@ namespace x360ce.App
         void Elevate()
         {
             // If this is Vista/7 and is not elevated then elevate.
-            if (x360ce.App.Win32.WinAPI.IsVista && !x360ce.App.Win32.WinAPI.IsElevated()) x360ce.App.Win32.WinAPI.RunElevated();
+            if (WinAPI.IsVista && !WinAPI.IsElevated()) WinAPI.RunElevated();
         }
 
         #endregion
@@ -1003,15 +1004,15 @@ namespace x360ce.App
             var uid = Application.ProductName;
             _Mutex = new System.Threading.Mutex(false, uid);
             // Register the windows message
-            _WindowMessage = Win32.NativeMethods.RegisterWindowMessage(uid);
+            _WindowMessage = NativeMethods.RegisterWindowMessage(uid);
             var firsInstance = _Mutex.WaitOne(1, true);
             // If this is not the first instance then...
             if (!firsInstance)
             {
                 // Brodcast a message with parameters to another instance.
-                var recipients = (int)Win32.BSM.BSM_APPLICATIONS;
-                var flags = Win32.BSF.BSF_IGNORECURRENTTASK | Win32.BSF.BSF_POSTMESSAGE;
-                var ret = Win32.NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0);
+                var recipients = (int)BSM.BSM_APPLICATIONS;
+                var flags = BSF.BSF_IGNORECURRENTTASK | BSF.BSF_POSTMESSAGE;
+                var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0);
             }
             return !firsInstance;
         }

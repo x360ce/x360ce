@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct BIND_OPTS3

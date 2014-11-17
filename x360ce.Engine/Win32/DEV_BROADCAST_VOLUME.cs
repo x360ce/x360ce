@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	/// <summary>
 	/// Contains information about a logical volume.

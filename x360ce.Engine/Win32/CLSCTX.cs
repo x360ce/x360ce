@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	[Flags]
 	public enum CLSCTX

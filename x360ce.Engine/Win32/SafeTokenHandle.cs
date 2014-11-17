@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	/// <summary>
 	/// Represents a wrapper class for a token handle.
@@ -23,7 +23,7 @@ namespace x360ce.App.Win32
 
 		protected override bool ReleaseHandle()
 		{
-			return Win32.NativeMethods.CloseHandle(base.handle);
+			return NativeMethods.CloseHandle(base.handle);
 		}
 	}
 

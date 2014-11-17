@@ -35,6 +35,9 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -69,9 +72,9 @@
     <Compile Include="Data\Program.cs" />
     <Compile Include="Data\Vendor.cs" />
     <Compile Include="Data\x360ceModel.Designer.cs">
-      <DependentUpon>x360ceModel.edmx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>x360ceModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
@@ -93,6 +96,23 @@
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32\BIND_OPTS3.cs" />
+    <Compile Include="Win32\BSF.cs" />
+    <Compile Include="Win32\BSM.cs" />
+    <Compile Include="Win32\CLSCTX.cs" />
+    <Compile Include="Win32\DEV_BROADCAST_VOLUME.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
+    <Compile Include="Win32\PEReader.cs" />
+    <Compile Include="Win32\SafeLibraryHandle.cs" />
+    <Compile Include="Win32\SafeTokenHandle.cs" />
+    <Compile Include="Win32\SID_AND_ATTRIBUTES.cs" />
+    <Compile Include="Win32\TOKEN_ELEVATION.cs" />
+    <Compile Include="Win32\TOKEN_ELEVATION_TYPE.cs" />
+    <Compile Include="Win32\TOKEN_INFORMATION_CLASS.cs" />
+    <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
+    <Compile Include="Win32\WinAPI.cs" />
+    <Compile Include="Win32\WinNT.cs" />
+    <Compile Include="Win32\DBT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Data\x360ceModel.edmx">
@@ -109,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

@@ -270,7 +270,8 @@ namespace x360ce.Engine.Data
         /// <param name="comment">Initial value of the Comment property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        public static Game CreateGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated)
+        /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
+        public static Game CreateGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture)
         {
             Game game = new Game();
             game.GameId = gameId;
@@ -285,6 +286,7 @@ namespace x360ce.Engine.Data
             game.Comment = comment;
             game.IsEnabled = isEnabled;
             game.DateCreated = dateCreated;
+            game.ProcessorArchitecture = processorArchitecture;
             return game;
         }
 
@@ -606,6 +608,30 @@ namespace x360ce.Engine.Data
         private Nullable<global::System.DateTime> _DateUpdated;
         partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
         partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ProcessorArchitecture
+        {
+            get
+            {
+                return _ProcessorArchitecture;
+            }
+            set
+            {
+                OnProcessorArchitectureChanging(value);
+                ReportPropertyChanging("ProcessorArchitecture");
+                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProcessorArchitecture");
+                OnProcessorArchitectureChanged();
+            }
+        }
+        private global::System.Int32 _ProcessorArchitecture;
+        partial void OnProcessorArchitectureChanging(global::System.Int32 value);
+        partial void OnProcessorArchitectureChanged();
 
         #endregion
 

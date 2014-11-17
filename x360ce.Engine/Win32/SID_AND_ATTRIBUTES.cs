@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	/// <summary>
 	/// The structure represents a security identifier (SID) and its 

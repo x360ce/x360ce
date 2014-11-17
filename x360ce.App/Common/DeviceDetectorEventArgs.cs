@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using x360ce.App.Win32;
+using x360ce.Engine.Win32;
 
 namespace x360ce.App
 {
@@ -11,15 +11,15 @@ namespace x360ce.App
 	/// </summary>
 	public class DeviceDetectorEventArgs : EventArgs
 	{
-		public DeviceDetectorEventArgs(WM_DEVICECHANGE changeType, DEV_BROADCAST_VOLUME volumeInfo)
+		public DeviceDetectorEventArgs(DBT changeType, DEV_BROADCAST_VOLUME volumeInfo)
 		{
 			Cancel = false;
 			_ChangeType = changeType;
 			_VolumeInfo = volumeInfo;
 		}
 
-		WM_DEVICECHANGE _ChangeType;
-		public WM_DEVICECHANGE ChangeType
+		DBT _ChangeType;
+		public DBT ChangeType
 		{
 			get { return _ChangeType; }
 		}

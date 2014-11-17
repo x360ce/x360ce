@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
-using System.Security;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Security.Principal;
 using System.Security.Permissions;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	public class WinAPI
 	{
@@ -32,9 +29,9 @@ namespace x360ce.App.Win32
 				// METHOD 2
 				bool bRetVal = false;
 				IntPtr hToken = IntPtr.Zero;
-				IntPtr hProcess = Win32.NativeMethods.GetCurrentProcess();
+				IntPtr hProcess = NativeMethods.GetCurrentProcess();
 				if (hProcess == IntPtr.Zero) throw new Exception("Error getting current process handle");
-				bRetVal = Win32.NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
+				bRetVal = NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
 				if (!bRetVal) throw new Win32Exception();
 				try
 				{
@@ -47,7 +44,7 @@ namespace x360ce.App.Win32
 					try
 					{
 						System.Runtime.InteropServices.Marshal.StructureToPtr(te, tePtr, true);
-						bRetVal = Win32.NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevation, tePtr, (UInt32)teSize, out dwReturnLength);
+						bRetVal = NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevation, tePtr, (UInt32)teSize, out dwReturnLength);
 						if (!bRetVal) throw new Win32Exception();
 						if (teSize != dwReturnLength) throw new Exception("Error getting token information");
 						te = (TOKEN_ELEVATION)Marshal.PtrToStructure(tePtr, typeof(TOKEN_ELEVATION));
@@ -60,7 +57,7 @@ namespace x360ce.App.Win32
 				}
 				finally
 				{
-					Win32.NativeMethods.CloseHandle(hToken);
+					NativeMethods.CloseHandle(hToken);
 				}
 		}
 
@@ -72,9 +69,9 @@ namespace x360ce.App.Win32
 		{
 			bool bRetVal = false;
 			IntPtr hToken = IntPtr.Zero;
-			IntPtr hProcess = Win32.NativeMethods.GetCurrentProcess();
+			IntPtr hProcess = NativeMethods.GetCurrentProcess();
 			if (hProcess == IntPtr.Zero) throw new ApplicationException("Error getting current process handle");
-			bRetVal = Win32.NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
+			bRetVal = NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
 			if (!bRetVal) throw new ApplicationException("Error opening process token");
 			try
 			{
@@ -84,7 +81,7 @@ namespace x360ce.App.Win32
 				IntPtr tetPtr = Marshal.AllocHGlobal((int)tetSize);
 				try
 				{
-					bRetVal = Win32.NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevationType, tetPtr, tetSize, out dwReturnLength);
+					bRetVal = NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevationType, tetPtr, tetSize, out dwReturnLength);
 					if ((!bRetVal) | (tetSize != dwReturnLength))
 					{
 						throw new ApplicationException("Error getting token information");
@@ -99,7 +96,7 @@ namespace x360ce.App.Win32
 			}
 			finally
 			{
-				Win32.NativeMethods.CloseHandle(hToken);
+				NativeMethods.CloseHandle(hToken);
 			}
 
 		}
@@ -120,7 +117,7 @@ namespace x360ce.App.Win32
 			if (button == null)return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
-			Win32.NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(1));
+			NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(1));
 		}
 
 		public static void DisableShieldIcon(Button button)
@@ -131,7 +128,7 @@ namespace x360ce.App.Win32
 			if (button == null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
-			Win32.NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(0));
+			NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(0));
 		}
 
 		public static Process CreateDefaultProcess(string fileName)
@@ -272,7 +269,7 @@ namespace x360ce.App.Win32
 			try
 			{
 				// Open the access token of the current process with TOKEN_QUERY.
-				if (!Win32.NativeMethods.OpenProcessToken(Process.GetCurrentProcess().Handle, WinNT.TOKEN_QUERY, out hToken))
+				if (!NativeMethods.OpenProcessToken(Process.GetCurrentProcess().Handle, WinNT.TOKEN_QUERY, out hToken))
 				{
 					throw new Win32Exception();
 				}
@@ -282,7 +279,7 @@ namespace x360ce.App.Win32
 				// to return false with the ERROR_INSUFFICIENT_BUFFER error code 
 				// because we've given it a null buffer. On exit cbTokenIL will tell 
 				// the size of the group information.
-				if (!Win32.NativeMethods.GetTokenInformation(hToken,
+				if (!NativeMethods.GetTokenInformation(hToken,
 					TOKEN_INFORMATION_CLASS.TokenIntegrityLevel, IntPtr.Zero, 0,
 					out cbTokenIL))
 				{
@@ -307,7 +304,7 @@ namespace x360ce.App.Win32
 				// Now we ask for the integrity level information again. This may fail 
 				// if an administrator has added this account to an additional group 
 				// between our first call to GetTokenInformation and this one.
-				if (!Win32.NativeMethods.GetTokenInformation(hToken,
+				if (!NativeMethods.GetTokenInformation(hToken,
 					TOKEN_INFORMATION_CLASS.TokenIntegrityLevel, pTokenIL, cbTokenIL,
 					out cbTokenIL))
 				{
@@ -321,7 +318,7 @@ namespace x360ce.App.Win32
 				// Integrity Level SIDs are in the form of S-1-16-0xXXXX. (e.g. 
 				// S-1-16-0x1000 stands for low integrity level SID). There is one 
 				// and only one subauthority.
-				IntPtr pIL = Win32.NativeMethods.GetSidSubAuthority(tokenIL.Label.Sid, 0);
+				IntPtr pIL = NativeMethods.GetSidSubAuthority(tokenIL.Label.Sid, 0);
 				IL = Marshal.ReadInt32(pIL);
 			}
 			finally

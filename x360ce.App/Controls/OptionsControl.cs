@@ -62,6 +62,8 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.Version, ConfigurationVersionTextBox);
             section = @"InputHook\";
             sm.Add(section + SettingName.HookMode, FakeModeComboBox);
+            sm.Add(section + SettingName.FakePID, HookModeFakePidTextBox);
+            sm.Add(section + SettingName.FakeVID, HookModeFakeVidTextBox);
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

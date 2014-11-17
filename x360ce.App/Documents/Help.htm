@@ -62,13 +62,25 @@ Solution 2: If you can't separate pedals:<br />
 3) Set RIGHT "Trigger" value to "IHSlider 1" (Sliders -> Inverted Half -> IHSlider 1)<br />
 4) Test pedals.<br />
 </p>
-   <p><strong>What are real life steering wheel degrees?</strong></p>
-    <br />
+<p><strong>What are real life steering wheel degrees?</strong></p>
+<br />
 1080° (3.0 x 360°) - Heavy cars, trucks.<br />
   900° (2.5 x 360°) - Average road cars, sports cars.<br />
   720° (2.0 x 360°) - Drift cars. Multiple classes of Rally cars (group N).<br />
   540° (1.5 x 360°) - GT1 and 3 spec race cars, WRC Rally cars.<br />
   360° (1.0 x 360°) - Formula 1 cars.<br />
 <br />
+<p><strong>What HookMasks do?</strong></p>
+<p>
+Many games will work even without any of the below set, but it would be good to know them as well:<br />
+<br />
+<strong>LL</strong> - Many XACT games (that is, the Xbox360/PC cross platform games) require HookLL to run properly. As they do not load the xinput runtime directly, Dinput8 wrapper is required to redirect back to the local X360CE binary instead of loading the default xinput1/9_x binary.<br />
+<strong>COM</strong> - Games that support both Direct and X Input API's may end up displaying both controllers in game, resulting in ghosted input or being able to start a 2 player game using a single control (SF4/SSF4 and DMC for example). HookCOM allows the game to mask the controller's directinput capabilities, which is advised by microsoft themselves on TechNet. HookCOM is the method required in most cases of games not working.<br />
+<strong>DI</strong> - Allows the wrapper to trick some games that detect the controller GUID via DirectInput, The first Assassins Creed is one such title.<br />
+<strong>PIDVID</strong> - Works in conjunction with FakePID= and FakeVID=. Without these, it defaults to the Wired Xbox 360 Controller which are 0x28E and 0x45E respectively.<br />
+<strong>NAME</strong> - Allows x360ce to return a different oemname than that of the controller installed. For instance, in Assassins Creed it changes the name of the xinput device to Xbox 360 Controller. While this is generally not required for functionality, the game mini ninja's is known to check for "Xbox 360 Controller" in the registry and will not work if the name is anything else.<br />
+<strong>SA</strong> - Enables the hooking of SetupAPI. Only the BeatHazard titles are known to require it thus far, so it should almost never be needed.<br />
+<strong>WT</strong> - Enables the hooking of WinVerifyTrust. This is required for games which utilise WVT for Process Integrity checking.  Only Gears of War is known to use it at this point, so it should almost never be needed.<br />
+</p>
 </body>
 </html>
