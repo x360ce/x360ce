@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject
@@ -133,9 +133,11 @@ Global
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Win32.Build.0 = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Win32+APP.ActiveCfg = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Win32+APP.Build.0 = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|x64.Build.0 = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|x64+APP.ActiveCfg = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|x64+APP.Build.0 = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -143,9 +145,11 @@ Global
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Win32.Build.0 = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Win32+APP.ActiveCfg = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|Win32+APP.Build.0 = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|x64.ActiveCfg = Release|Any CPU
+		{F980D78A-9448-4834-A6FE-84797077D309}.Release|x64.Build.0 = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|x64+APP.ActiveCfg = Release|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Release|x64+APP.Build.0 = Release|Any CPU
 		{65021938-D251-46FA-BC3D-85C385D4C06D}.Debug|Any CPU.ActiveCfg = Debug|Win32
