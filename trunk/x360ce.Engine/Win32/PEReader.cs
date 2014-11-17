@@ -32,13 +32,15 @@ namespace x360ce.Engine.Win32
 	{
 
 		public IMAGE_COR20_HEADER CliHeader { get { return cliHeader; } }
+        public bool CliHeaderWasRead { get { return _CliHeaderWasRead; } }
 		public IMAGE_FILE_HEADER FileHeader { get { return headers.FileHeader; } }
 		public IMAGE_OPTIONAL_HEADER OptionalHeader { get { return headers.OptionalHeader; } }
 
-		private MSDOS_HEADER msdos = new MSDOS_HEADER();
-		private IMAGE_NT_HEADERS headers = new IMAGE_NT_HEADERS();
-		private IMAGE_SECTION_HEADER[] sections;
-		private IMAGE_COR20_HEADER cliHeader = new IMAGE_COR20_HEADER();
+        bool _CliHeaderWasRead;
+        MSDOS_HEADER msdos = new MSDOS_HEADER();
+		IMAGE_NT_HEADERS headers = new IMAGE_NT_HEADERS();
+		IMAGE_SECTION_HEADER[] sections;
+		IMAGE_COR20_HEADER cliHeader = new IMAGE_COR20_HEADER();
 
 		public static bool TryRead(string filePath, out PEReader pe)
 		{
@@ -67,8 +69,9 @@ namespace x360ce.Engine.Win32
 			switch (pe.FileHeader.Machine)
 			{
 				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
-					if (pe.CliHeader.COR_IS_32BIT_REQUIRED()) return ProcessorArchitecture.X86; // 32-bit
-					else return ProcessorArchitecture.MSIL; // AnyCPU
+                    if (!pe.CliHeaderWasRead) return ProcessorArchitecture.X86;
+                    else if (pe.CliHeader.COR_IS_32BIT_REQUIRED()) return ProcessorArchitecture.X86; // 32-bit
+                    else return ProcessorArchitecture.MSIL; // AnyCPU
 				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64: return ProcessorArchitecture.Amd64; // 64-bit
 				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_IA64: return ProcessorArchitecture.IA64; // 64-bit
 				default: return ProcessorArchitecture.None;
@@ -97,6 +100,7 @@ namespace x360ce.Engine.Win32
             {
                 br.BaseStream.Seek(RvaToFileOffset(virtualAddress), SeekOrigin.Begin);
                 cliHeader.Read(br);
+                _CliHeaderWasRead = true;
             }
 		}
 
