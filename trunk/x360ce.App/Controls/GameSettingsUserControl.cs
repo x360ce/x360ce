@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 using System.IO;
+using System.Reflection;
 
 namespace x360ce.App.Controls
 {
@@ -20,6 +21,8 @@ namespace x360ce.App.Controls
             MySettingsDataGridView.AutoGenerateColumns = false;
             GlobalSettingsDataGridView.AutoGenerateColumns = false;
             ScanProgressLabel.Text = "";
+            var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
+            foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
             InitDefaultList();
         }
 
@@ -57,6 +60,10 @@ namespace x360ce.App.Controls
                 HookMaskTextBox.Text = item.HookMask.ToString("X8");
                 // Location
                 GameApplicationLocationTextBox.Text = item.FullPath;
+                // Processor architecture.
+                ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), item.ProcessorArchitecture)
+                    ? (ProcessorArchitecture)item.ProcessorArchitecture
+                    : ProcessorArchitecture.None;
                 // Enable events.
                 EnableEvents();
             }
@@ -402,7 +409,7 @@ namespace x360ce.App.Controls
                     }
                     else
                     {
-                       // Get game my game by executable name.
+                        // Get game my game by executable name.
                         var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exe.Name.ToLower());
                         // If file doesn't exist in the game list then continue.
                         if (game == null)

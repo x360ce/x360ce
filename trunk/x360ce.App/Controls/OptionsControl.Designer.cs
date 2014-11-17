@@ -42,19 +42,23 @@
             this.InternetAutoloadCheckBox = new System.Windows.Forms.CheckBox();
             this.InternetCheckBox = new System.Windows.Forms.CheckBox();
             this.FakeApiGroupBox = new System.Windows.Forms.GroupBox();
+            this.HookModeFakePidLabel = new System.Windows.Forms.Label();
+            this.HookModeFakeVidLabel = new System.Windows.Forms.Label();
             this.FakeModeLabel = new System.Windows.Forms.Label();
+            this.HookModeFakePidTextBox = new System.Windows.Forms.TextBox();
+            this.HookModeFakeVidTextBox = new System.Windows.Forms.TextBox();
             this.FakeModeComboBox = new System.Windows.Forms.ComboBox();
             this.ProgramScanLocationsTabControl = new System.Windows.Forms.TabControl();
             this.GameScanLocationsTabPage = new System.Windows.Forms.TabPage();
             this.GameScanLocationsListBox = new System.Windows.Forms.ListBox();
+            this.LocationsToolStrip = new System.Windows.Forms.ToolStrip();
+            this.RefreshLocationsButton = new System.Windows.Forms.ToolStripButton();
+            this.RemoveLocationButton = new System.Windows.Forms.ToolStripButton();
+            this.AddLocationButton = new System.Windows.Forms.ToolStripButton();
             this.LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.ConfigurationGroupBox = new System.Windows.Forms.GroupBox();
             this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
             this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
-            this.LocationsToolStrip = new System.Windows.Forms.ToolStrip();
-            this.RefreshLocationsButton = new System.Windows.Forms.ToolStripButton();
-            this.AddLocationButton = new System.Windows.Forms.ToolStripButton();
-            this.RemoveLocationButton = new System.Windows.Forms.ToolStripButton();
             this.SaveSettingsButton = new System.Windows.Forms.Button();
             this.TestingAndLoggingGroupBox.SuspendLayout();
             this.OperationGroupBox.SuspendLayout();
@@ -62,8 +66,8 @@
             this.FakeApiGroupBox.SuspendLayout();
             this.ProgramScanLocationsTabControl.SuspendLayout();
             this.GameScanLocationsTabPage.SuspendLayout();
-            this.ConfigurationGroupBox.SuspendLayout();
             this.LocationsToolStrip.SuspendLayout();
+            this.ConfigurationGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // TestingAndLoggingGroupBox
@@ -73,7 +77,7 @@
             this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-            this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 118);
+            this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 177);
             this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
             this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(241, 136);
             this.TestingAndLoggingGroupBox.TabIndex = 30;
@@ -137,7 +141,7 @@
             // OperationGroupBox
             // 
             this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
-            this.OperationGroupBox.Location = new System.Drawing.Point(3, 56);
+            this.OperationGroupBox.Location = new System.Drawing.Point(3, 115);
             this.OperationGroupBox.Name = "OperationGroupBox";
             this.OperationGroupBox.Size = new System.Drawing.Size(241, 56);
             this.OperationGroupBox.TabIndex = 31;
@@ -213,14 +217,36 @@
             // 
             // FakeApiGroupBox
             // 
+            this.FakeApiGroupBox.Controls.Add(this.HookModeFakePidLabel);
+            this.FakeApiGroupBox.Controls.Add(this.HookModeFakeVidLabel);
             this.FakeApiGroupBox.Controls.Add(this.FakeModeLabel);
+            this.FakeApiGroupBox.Controls.Add(this.HookModeFakePidTextBox);
+            this.FakeApiGroupBox.Controls.Add(this.HookModeFakeVidTextBox);
             this.FakeApiGroupBox.Controls.Add(this.FakeModeComboBox);
             this.FakeApiGroupBox.Location = new System.Drawing.Point(3, 3);
             this.FakeApiGroupBox.Name = "FakeApiGroupBox";
-            this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 47);
+            this.FakeApiGroupBox.Size = new System.Drawing.Size(241, 109);
             this.FakeApiGroupBox.TabIndex = 33;
             this.FakeApiGroupBox.TabStop = false;
             this.FakeApiGroupBox.Text = "InputHook";
+            // 
+            // HookModeFakePidLabel
+            // 
+            this.HookModeFakePidLabel.AutoSize = true;
+            this.HookModeFakePidLabel.Location = new System.Drawing.Point(6, 75);
+            this.HookModeFakePidLabel.Name = "HookModeFakePidLabel";
+            this.HookModeFakePidLabel.Size = new System.Drawing.Size(55, 13);
+            this.HookModeFakePidLabel.TabIndex = 0;
+            this.HookModeFakePidLabel.Text = "Fake PID:";
+            // 
+            // HookModeFakeVidLabel
+            // 
+            this.HookModeFakeVidLabel.AutoSize = true;
+            this.HookModeFakeVidLabel.Location = new System.Drawing.Point(6, 49);
+            this.HookModeFakeVidLabel.Name = "HookModeFakeVidLabel";
+            this.HookModeFakeVidLabel.Size = new System.Drawing.Size(55, 13);
+            this.HookModeFakeVidLabel.TabIndex = 0;
+            this.HookModeFakeVidLabel.Text = "Fake VID:";
             // 
             // FakeModeLabel
             // 
@@ -231,10 +257,25 @@
             this.FakeModeLabel.TabIndex = 0;
             this.FakeModeLabel.Text = "Hook Mode:";
             // 
+            // HookModeFakePidTextBox
+            // 
+            this.HookModeFakePidTextBox.Location = new System.Drawing.Point(76, 72);
+            this.HookModeFakePidTextBox.Name = "HookModeFakePidTextBox";
+            this.HookModeFakePidTextBox.Size = new System.Drawing.Size(51, 20);
+            this.HookModeFakePidTextBox.TabIndex = 0;
+            this.HookModeFakePidTextBox.Text = "0x28E";
+            // 
+            // HookModeFakeVidTextBox
+            // 
+            this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(76, 46);
+            this.HookModeFakeVidTextBox.Name = "HookModeFakeVidTextBox";
+            this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(51, 20);
+            this.HookModeFakeVidTextBox.TabIndex = 0;
+            this.HookModeFakeVidTextBox.Text = "0x45E";
+            // 
             // FakeModeComboBox
             // 
             this.FakeModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.FakeModeComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.FakeModeComboBox.FormattingEnabled = true;
             this.FakeModeComboBox.Location = new System.Drawing.Point(78, 19);
             this.FakeModeComboBox.Name = "FakeModeComboBox";
@@ -276,34 +317,6 @@
             this.GameScanLocationsListBox.TabIndex = 0;
             this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
             // 
-            // ConfigurationGroupBox
-            // 
-            this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
-            this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
-            this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 260);
-            this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
-            this.ConfigurationGroupBox.Size = new System.Drawing.Size(241, 47);
-            this.ConfigurationGroupBox.TabIndex = 31;
-            this.ConfigurationGroupBox.TabStop = false;
-            this.ConfigurationGroupBox.Text = "Configuration";
-            // 
-            // ConfigurationVersionLabel
-            // 
-            this.ConfigurationVersionLabel.AutoSize = true;
-            this.ConfigurationVersionLabel.Location = new System.Drawing.Point(4, 22);
-            this.ConfigurationVersionLabel.Name = "ConfigurationVersionLabel";
-            this.ConfigurationVersionLabel.Size = new System.Drawing.Size(45, 13);
-            this.ConfigurationVersionLabel.TabIndex = 0;
-            this.ConfigurationVersionLabel.Text = "Version:";
-            // 
-            // ConfigurationVersionTextBox
-            // 
-            this.ConfigurationVersionTextBox.Enabled = false;
-            this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(76, 19);
-            this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
-            this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(75, 20);
-            this.ConfigurationVersionTextBox.TabIndex = 0;
-            // 
             // LocationsToolStrip
             // 
             this.LocationsToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
@@ -328,16 +341,6 @@
             this.RefreshLocationsButton.Text = "Refresh";
             this.RefreshLocationsButton.Click += new System.EventHandler(this.RefreshLocationsButton_Click);
             // 
-            // AddLocationButton
-            // 
-            this.AddLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
-            this.AddLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.AddLocationButton.Name = "AddLocationButton";
-            this.AddLocationButton.Size = new System.Drawing.Size(58, 22);
-            this.AddLocationButton.Text = "&Add...";
-            this.AddLocationButton.Click += new System.EventHandler(this.AddLocationButton_Click);
-            // 
             // RemoveLocationButton
             // 
             this.RemoveLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -348,10 +351,48 @@
             this.RemoveLocationButton.Text = "Remove";
             this.RemoveLocationButton.Click += new System.EventHandler(this.RemoveLocationButton_Click);
             // 
+            // AddLocationButton
+            // 
+            this.AddLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+            this.AddLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.AddLocationButton.Name = "AddLocationButton";
+            this.AddLocationButton.Size = new System.Drawing.Size(58, 22);
+            this.AddLocationButton.Text = "&Add...";
+            this.AddLocationButton.Click += new System.EventHandler(this.AddLocationButton_Click);
+            // 
+            // ConfigurationGroupBox
+            // 
+            this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
+            this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
+            this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 319);
+            this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
+            this.ConfigurationGroupBox.Size = new System.Drawing.Size(241, 47);
+            this.ConfigurationGroupBox.TabIndex = 31;
+            this.ConfigurationGroupBox.TabStop = false;
+            this.ConfigurationGroupBox.Text = "Configuration";
+            // 
+            // ConfigurationVersionLabel
+            // 
+            this.ConfigurationVersionLabel.AutoSize = true;
+            this.ConfigurationVersionLabel.Location = new System.Drawing.Point(4, 22);
+            this.ConfigurationVersionLabel.Name = "ConfigurationVersionLabel";
+            this.ConfigurationVersionLabel.Size = new System.Drawing.Size(45, 13);
+            this.ConfigurationVersionLabel.TabIndex = 0;
+            this.ConfigurationVersionLabel.Text = "Version:";
+            // 
+            // ConfigurationVersionTextBox
+            // 
+            this.ConfigurationVersionTextBox.Enabled = false;
+            this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(76, 19);
+            this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
+            this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(51, 20);
+            this.ConfigurationVersionTextBox.TabIndex = 0;
+            // 
             // SaveSettingsButton
             // 
             this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveSettingsButton.Location = new System.Drawing.Point(566, 318);
+            this.SaveSettingsButton.Location = new System.Drawing.Point(566, 354);
             this.SaveSettingsButton.Name = "SaveSettingsButton";
             this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
             this.SaveSettingsButton.TabIndex = 68;
@@ -371,7 +412,7 @@
             this.Controls.Add(this.FakeApiGroupBox);
             this.Controls.Add(this.ProgramScanLocationsTabControl);
             this.Name = "OptionsControl";
-            this.Size = new System.Drawing.Size(644, 344);
+            this.Size = new System.Drawing.Size(644, 380);
             this.TestingAndLoggingGroupBox.ResumeLayout(false);
             this.TestingAndLoggingGroupBox.PerformLayout();
             this.OperationGroupBox.ResumeLayout(false);
@@ -383,10 +424,10 @@
             this.ProgramScanLocationsTabControl.ResumeLayout(false);
             this.GameScanLocationsTabPage.ResumeLayout(false);
             this.GameScanLocationsTabPage.PerformLayout();
-            this.ConfigurationGroupBox.ResumeLayout(false);
-            this.ConfigurationGroupBox.PerformLayout();
             this.LocationsToolStrip.ResumeLayout(false);
             this.LocationsToolStrip.PerformLayout();
+            this.ConfigurationGroupBox.ResumeLayout(false);
+            this.ConfigurationGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -421,5 +462,9 @@
         private System.Windows.Forms.ToolStripButton AddLocationButton;
         private System.Windows.Forms.ToolStripButton RemoveLocationButton;
         private System.Windows.Forms.Button SaveSettingsButton;
+        private System.Windows.Forms.Label HookModeFakePidLabel;
+        private System.Windows.Forms.Label HookModeFakeVidLabel;
+        private System.Windows.Forms.TextBox HookModeFakePidTextBox;
+        private System.Windows.Forms.TextBox HookModeFakeVidTextBox;
     }
 }

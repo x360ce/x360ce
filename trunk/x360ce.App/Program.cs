@@ -6,7 +6,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using x360ce.App.Properties;
-using x360ce.App.Win32;
 
 namespace x360ce.App
 {

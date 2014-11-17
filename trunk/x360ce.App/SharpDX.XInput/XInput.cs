@@ -8,6 +8,7 @@
     using System.Runtime.InteropServices;
     using System.Security;
     using System.Threading;
+    using x360ce.Engine.Win32;
 
     internal static class XInput
     {
@@ -243,7 +244,7 @@
 
         internal static T GetMethod<T>(string methodName)
         {
-            IntPtr procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, methodName);
+            IntPtr procAddress = NativeMethods.GetProcAddress(libHandle, methodName);
             if (procAddress == IntPtr.Zero)
             {
                 // Don't throw Win32 exception directly or it can terminate app unexcpectedly.
@@ -263,7 +264,7 @@
             {
                 if (IsLoaded)
                 {
-                    x360ce.App.Win32.NativeMethods.FreeLibrary(libHandle);
+                    NativeMethods.FreeLibrary(libHandle);
                     libHandle = IntPtr.Zero;
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -280,13 +281,13 @@
                 error = LastLoadException;
                 IntPtr procAddress;
                 // Check if XInputGetStateEx function is supported.
-                procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
+                procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
                 _IsGetStateExSupported = procAddress != IntPtr.Zero;
                 // Check if XInputGetAudioDeviceIds function is supported.
-                procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds");
+                procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds");
                 _IsGetAudioDeviceIdsSupported = procAddress != IntPtr.Zero;
                 // Check if Reset function is supported.
-                procAddress = x360ce.App.Win32.NativeMethods.GetProcAddress(libHandle, "reset");
+                procAddress = NativeMethods.GetProcAddress(libHandle, "reset");
                 _IsResetSupported = procAddress != IntPtr.Zero;
             }
         }
@@ -295,7 +296,7 @@
         {
             try
             {
-                libHandle = x360ce.App.Win32.NativeMethods.LoadLibrary(_LibraryName);
+                libHandle = NativeMethods.LoadLibrary(_LibraryName);
                 if (libHandle == IntPtr.Zero)
                 {
                     var win32ex = new Win32Exception();
@@ -314,7 +315,7 @@
             lock (loadLock)
             {
                 if (!IsLoaded) return;
-                x360ce.App.Win32.NativeMethods.FreeLibrary(libHandle);
+                NativeMethods.FreeLibrary(libHandle);
                 libHandle = IntPtr.Zero;
             }
         }

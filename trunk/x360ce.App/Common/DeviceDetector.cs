@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 using x360ce.App.Controls;
-using x360ce.App.Win32;
+using x360ce.Engine.Win32;
 
 namespace x360ce.App
 {
@@ -48,9 +47,9 @@ namespace x360ce.App
 			int devType;
 			if (m.Msg == WM_DEVICECHANGE)
 			{
-				var changeType = (WM_DEVICECHANGE)m.WParam.ToInt32();
+				var changeType = (DBT)m.WParam.ToInt32();
 				var volumeInfo = new DEV_BROADCAST_VOLUME();
-				if (changeType == Win32.WM_DEVICECHANGE.DBT_DEVICEARRIVAL || changeType == Win32.WM_DEVICECHANGE.DBT_DEVICEREMOVECOMPLETE)
+                if (changeType == DBT.DBT_DEVICEARRIVAL || changeType == DBT.DBT_DEVICEREMOVECOMPLETE)
 				{
 					devType = Marshal.ReadInt32(m.LParam, 4);
 					if (devType == DBT_DEVTYP_VOLUME)
@@ -63,7 +62,7 @@ namespace x360ce.App
 				switch (changeType)
 				{
 					// Device is about to be removed. Any application can cancel the removal.
-					case Win32.WM_DEVICECHANGE.DBT_DEVICEQUERYREMOVE:
+                    case DBT.DBT_DEVICEQUERYREMOVE:
 						devType = Marshal.ReadInt32(m.LParam, 4);
 						if (devType == DBT_DEVTYP_HANDLE)
 						{

@@ -26,7 +26,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	public class PEReader
 	{
@@ -92,8 +92,12 @@ namespace x360ce.App.Win32
 				sections[i] = new IMAGE_SECTION_HEADER();
 				sections[i].Read(br);
 			}
-			br.BaseStream.Seek(RvaToFileOffset(GetComDescriptorVirtualAddress()), SeekOrigin.Begin);
-			cliHeader.Read(br);
+            var virtualAddress = GetComDescriptorVirtualAddress();
+            if (virtualAddress > 0)
+            {
+                br.BaseStream.Seek(RvaToFileOffset(virtualAddress), SeekOrigin.Begin);
+                cliHeader.Read(br);
+            }
 		}
 
 		public uint GetComDescriptorVirtualAddress()

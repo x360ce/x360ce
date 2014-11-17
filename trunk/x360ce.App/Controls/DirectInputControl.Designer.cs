@@ -348,7 +348,7 @@
             // DevicePidTextBox
             // 
             this.DevicePidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DevicePidTextBox.Location = new System.Drawing.Point(476, 55);
+            this.DevicePidTextBox.Location = new System.Drawing.Point(490, 55);
             this.DevicePidTextBox.Name = "DevicePidTextBox";
             this.DevicePidTextBox.ReadOnly = true;
             this.DevicePidTextBox.Size = new System.Drawing.Size(56, 20);
@@ -357,7 +357,7 @@
             // DeviceVidTextBox
             // 
             this.DeviceVidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceVidTextBox.Location = new System.Drawing.Point(476, 29);
+            this.DeviceVidTextBox.Location = new System.Drawing.Point(490, 29);
             this.DeviceVidTextBox.Name = "DeviceVidTextBox";
             this.DeviceVidTextBox.ReadOnly = true;
             this.DeviceVidTextBox.Size = new System.Drawing.Size(56, 20);
@@ -420,7 +420,7 @@
             // DeviceTypeTextBox
             // 
             this.DeviceTypeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeviceTypeTextBox.Location = new System.Drawing.Point(476, 3);
+            this.DeviceTypeTextBox.Location = new System.Drawing.Point(490, 3);
             this.DeviceTypeTextBox.Name = "DeviceTypeTextBox";
             this.DeviceTypeTextBox.ReadOnly = true;
             this.DeviceTypeTextBox.Size = new System.Drawing.Size(56, 20);
@@ -430,7 +430,7 @@
             // 
             this.DiDevicePidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDevicePidLabel.AutoSize = true;
-            this.DiDevicePidLabel.Location = new System.Drawing.Point(436, 58);
+            this.DiDevicePidLabel.Location = new System.Drawing.Point(450, 58);
             this.DiDevicePidLabel.Name = "DiDevicePidLabel";
             this.DiDevicePidLabel.Size = new System.Drawing.Size(28, 13);
             this.DiDevicePidLabel.TabIndex = 0;
@@ -440,7 +440,7 @@
             // 
             this.DiDeviceVidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDeviceVidLabel.AutoSize = true;
-            this.DiDeviceVidLabel.Location = new System.Drawing.Point(436, 32);
+            this.DiDeviceVidLabel.Location = new System.Drawing.Point(450, 32);
             this.DiDeviceVidLabel.Name = "DiDeviceVidLabel";
             this.DiDeviceVidLabel.Size = new System.Drawing.Size(28, 13);
             this.DiDeviceVidLabel.TabIndex = 0;
@@ -450,7 +450,7 @@
             // 
             this.DiDeviceTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DiDeviceTypeLabel.AutoSize = true;
-            this.DiDeviceTypeLabel.Location = new System.Drawing.Point(436, 6);
+            this.DiDeviceTypeLabel.Location = new System.Drawing.Point(450, 6);
             this.DiDeviceTypeLabel.Name = "DiDeviceTypeLabel";
             this.DiDeviceTypeLabel.Size = new System.Drawing.Size(34, 13);
             this.DiDeviceTypeLabel.TabIndex = 0;
@@ -463,7 +463,7 @@
             this.DeviceInstanceGuidTextBox.Location = new System.Drawing.Point(34, 55);
             this.DeviceInstanceGuidTextBox.Name = "DeviceInstanceGuidTextBox";
             this.DeviceInstanceGuidTextBox.ReadOnly = true;
-            this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(396, 20);
+            this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(410, 20);
             this.DeviceInstanceGuidTextBox.TabIndex = 0;
             // 
             // DeviceProductGuidTextBox
@@ -473,7 +473,7 @@
             this.DeviceProductGuidTextBox.Location = new System.Drawing.Point(34, 29);
             this.DeviceProductGuidTextBox.Name = "DeviceProductGuidTextBox";
             this.DeviceProductGuidTextBox.ReadOnly = true;
-            this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(396, 20);
+            this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(410, 20);
             this.DeviceProductGuidTextBox.TabIndex = 0;
             // 
             // DiProductGuidLabel
@@ -501,7 +501,7 @@
             this.DeviceProductNameTextBox.Location = new System.Drawing.Point(34, 3);
             this.DeviceProductNameTextBox.Name = "DeviceProductNameTextBox";
             this.DeviceProductNameTextBox.ReadOnly = true;
-            this.DeviceProductNameTextBox.Size = new System.Drawing.Size(396, 20);
+            this.DeviceProductNameTextBox.Size = new System.Drawing.Size(410, 20);
             this.DeviceProductNameTextBox.TabIndex = 0;
             // 
             // DiProductNameLabel

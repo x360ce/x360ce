@@ -27,7 +27,8 @@ namespace x360ce.Engine.Data
 			item.HookMask = 0;
 			item.IsEnabled = true;
 			item.XInputMask = 0;
-			return item;
+            item.ProcessorArchitecture = (int)Win32.PEReader.GetProcessorArchitecture(fi.FullName);
+            return item;
 		}
 
 		public void LoadDefault(Program program)

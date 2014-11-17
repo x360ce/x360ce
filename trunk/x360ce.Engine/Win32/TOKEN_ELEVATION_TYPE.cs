@@ -1,4 +1,4 @@
-﻿namespace x360ce.App.Win32
+﻿namespace x360ce.Engine.Win32
 {
 	public enum TOKEN_ELEVATION_TYPE
 	{

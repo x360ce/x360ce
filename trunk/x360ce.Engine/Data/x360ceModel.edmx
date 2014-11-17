@@ -18,6 +18,7 @@
           <Property Name="CompanyName" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
+          <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
@@ -324,6 +325,7 @@
           <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="DateUpdated" Precision="3" />
+          <Property Name="ProcessorArchitecture" Type="Int32" Nullable="false" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -473,6 +475,7 @@
           <EntitySetMapping Name="Games">
             <EntityTypeMapping TypeName="x360ceModel.Game">
               <MappingFragment StoreEntitySet="x360ce_Games">
+                <ScalarProperty Name="ProcessorArchitecture" ColumnName="ProcessorArchitecture" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
@@ -506,6 +509,7 @@
 				<DesignerProperty Name="EnablePluralization" Value="True" />
 				<DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="UseLegacyProvider" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Default" />
 			</DesignerInfoPropertySet>
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->

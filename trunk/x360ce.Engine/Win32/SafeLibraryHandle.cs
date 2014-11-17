@@ -2,7 +2,7 @@
 using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 
-namespace x360ce.App.Win32
+namespace x360ce.Engine.Win32
 {
 	[HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	public sealed class SafeLibraryHandle : SafeHandleZeroOrMinusOneIsInvalid

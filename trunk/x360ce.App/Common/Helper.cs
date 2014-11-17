@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Xml;
 using Microsoft.Win32;
-using x360ce.App.Win32;
 
 namespace x360ce.App
 {
