@@ -282,6 +282,10 @@ HookMask = 0x00000002
 Name = NBA 2k14
 HookMask = 0x00000002
 
+[NBA2K15.exe]
+Name = NBA 2k15
+HookMask = 0x00000002
+
 [NFS13.exe]
 Name = Need For Speed Most Wanted 2012
 HookMask = 0x00000002
@@ -416,6 +420,10 @@ HookMask = 0x00000002
 
 [Vessel.exe]
 Name = Vessel
+HookMask = 0x00000002
+
+[watch_dogs.exe]
+Name = WATCH_DOGS
 HookMask = 0x00000002
 
 [WormsRevolution.exe]
