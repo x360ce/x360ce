@@ -16,13 +16,6 @@
 
 #pragma once
 
-// C++ headers
-
-#if _MSC_VER < 1700
-#include "pstdint.h"
-#else
-#include <stdint.h>
-#endif
 
 #include <string>
 #include <vector>
@@ -40,6 +33,8 @@
 #include <Shlobj.h>
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
+
+#include "Types.h"
 
 // 'identifier' : decorated name length exceeded, name was truncated
 #pragma warning(disable: 4503)
@@ -142,7 +137,7 @@ public:
     }
 
 
-    int32_t get_int(const std::string& section, const std::string& key, const int32_t& def = 0) const
+    s32 get_int(const std::string& section, const std::string& key, const s32& def = 0) const
     {
         // get string, default is not used because conversion are slow!
         const std::string& strval = this->get_string(section, key);
@@ -154,7 +149,7 @@ public:
         return strtol(strval.c_str(), NULL, 0);
     }
 
-    uint32_t get_uint(const std::string& section, const std::string& key, const uint32_t& def = 0) const
+    u32 get_uint(const std::string& section, const std::string& key, const u32& def = 0) const
     {
         // get string, default is not used because conversion are slow!
         const std::string& strval = this->get_string(section, key);
@@ -166,7 +161,7 @@ public:
         return strtoul(strval.c_str(), NULL, 0);
     }
 
-    int64_t get_int64(const std::string& section, const std::string& key, const int64_t& def = 0) const
+    s64 get_int64(const std::string& section, const std::string& key, const s64& def = 0) const
     {
         // get string, default is not used because conversion are slow!
         const std::string& strval = this->get_string(section, key);
@@ -178,7 +173,7 @@ public:
         return _strtoi64(strval.c_str(), NULL, 0);
     }
 
-    uint64_t get_uint64(const std::string& section, const std::string& key, const uint64_t& def = 0) const
+    u64 get_uint64(const std::string& section, const std::string& key, const u64& def = 0) const
     {
         // get string, default is not used because conversion are slow!
         const std::string& strval = this->get_string(section, key);
@@ -218,7 +213,7 @@ public:
         return WritePrivateProfileStringA(section.c_str(), key.c_str(), strval.c_str(), m_inipath.c_str()) != 0;
     }
 
-    bool set_int(const std::string& section, const std::string& key, const int32_t& val)
+    bool set_int(const std::string& section, const std::string& key, const s32& val)
     {
         char cstr[2 * _MAX_INT_DIG];
         sprintf_s(cstr, sizeof(cstr), "%d", val);
@@ -229,7 +224,7 @@ public:
         return WritePrivateProfileStringA(section.c_str(), key.c_str(), strval.c_str(), m_inipath.c_str()) != 0;
     }
 
-    bool set_uint(const std::string& section, const std::string& key, const uint32_t& val)
+    bool set_uint(const std::string& section, const std::string& key, const u32& val)
     {
         char cstr[2 * _MAX_INT_DIG];
         sprintf_s(cstr, sizeof(cstr), "%u", val);
@@ -354,7 +349,8 @@ private:
 
     size_t populate_section(const std::string& section)
     {
-        char *keyvalbuf = new char[SWIP_BUFFERSIZE];
+        std::string data;
+        data.resize(SWIP_BUFFERSIZE);
 
         // read all section data to buffer using WinAPI
 #if _MSC_VER < 1700
@@ -362,10 +358,10 @@ private:
 #else
         std::lock_guard<std::recursive_mutex> lock(m_mutex);
 #endif
-        GetPrivateProfileSectionA(section.c_str(), keyvalbuf, SWIP_BUFFERSIZE, m_inipath.c_str());
+        GetPrivateProfileSectionA(section.c_str(), &data[0], SWIP_BUFFERSIZE, m_inipath.c_str());
 
         // store pointer for data iteration
-        char* pData = keyvalbuf;
+        const char* pData = data.c_str();
 
         size_t count = 0;
 
@@ -396,14 +392,14 @@ private:
             // get next "key=value" string
             pData = pData + strlen(pData) + 1;
         }
-        delete[] keyvalbuf;
         return count;
     }
 
     bool populate_ini()
     {
         // allocate buffers
-        char *sectionbuf = new char[SWIP_BUFFERSIZE];
+        std::string data;
+        data.resize(SWIP_BUFFERSIZE);
 
         // read all section names to buffer using WinAPI
 #if _MSC_VER < 1700
@@ -411,10 +407,10 @@ private:
 #else
         std::lock_guard<std::recursive_mutex> lock(m_mutex);
 #endif
-        GetPrivateProfileSectionNamesA(sectionbuf, SWIP_BUFFERSIZE, m_inipath.c_str());
+        GetPrivateProfileSectionNamesA(&data[0], SWIP_BUFFERSIZE, m_inipath.c_str());
 
         // store pointer for sections iteration
-        char* pSection = sectionbuf;
+        const char* pSection = data.c_str();
 
         // last section name is double null terminated
         while (*pSection != '\0')
@@ -423,7 +419,6 @@ private:
             // get next section name
             pSection = pSection + strlen(pSection) + 1;
         }
-        delete[] sectionbuf;
         return !m_inimap.empty();
     }
 

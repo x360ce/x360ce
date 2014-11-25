@@ -82,7 +82,7 @@ static const char* const axisBNames[] =
     "Right Analog Y- Button"
 };
 
-void ParsePrefix(const std::string& input, MappingType* mapping_type, int8_t* value)
+void ParsePrefix(const std::string& input, MappingType* mapping_type, s8* value)
 {
     if (mapping_type)
     {
@@ -111,9 +111,9 @@ void ParsePrefix(const std::string& input, MappingType* mapping_type, int8_t* va
     if (value)
     {
         if (mapping_type && *mapping_type != DIGITAL)
-            *value = (int8_t)strtol(input.c_str() + 1, NULL, 0);
+            *value = (s8)strtol(input.c_str() + 1, NULL, 0);
         else
-            *value = (int8_t)strtol(input.c_str(), NULL, 0);
+            *value = (s8)strtol(input.c_str(), NULL, 0);
     }
 }
 
@@ -250,8 +250,8 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     //store value as section name
     strcpy_s(section, strBuf.c_str());
 
-    device.dwUserIndex = ini.get_uint(section, "UserIndex", (uint32_t)-1);
-    if (device.dwUserIndex == (uint32_t)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
+    device.dwUserIndex = ini.get_uint(section, "UserIndex", (u32)-1);
+    if (device.dwUserIndex == (u32)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
 
     strBuf = ini.get_string(section, "ProductGUID");
     if (strBuf.empty()) PrintLog("ProductGUID is empty");
@@ -267,7 +267,7 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     if (device.passthrough) return;
 
     // Device type
-    device.gamepadtype = (int8_t)ini.get_uint(section, "ControllerType", 1);
+    device.gamepadtype = (s8)ini.get_uint(section, "ControllerType", 1);
 
     // Axis to DPAD options
     device.axistodpad = ini.get_bool(section, "AxisToDPad");
@@ -277,28 +277,28 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     // FFB options
     device.useforce = ini.get_bool(section, "UseForceFeedback");
     device.swapmotor = ini.get_bool(section, "SwapMotor");
-    device.ff.type = (int8_t)ini.get_uint(section, "FFBType");
-    device.ff.forcepercent = static_cast<float>(ini.get_uint(section, "ForcePercent", 100) * 0.01);
+    device.ff.type = (s8)ini.get_uint(section, "FFBType");
+    device.ff.forcepercent = (float)ini.get_uint(section, "ForcePercent", 100) * 0.01f;
     device.ff.leftPeriod = ini.get_uint(section, "LeftMotorPeriod", 60);
     device.ff.rightPeriod = ini.get_uint(section, "RightMotorPeriod", 20);
 
     /* ==================================== Mapping start ============================================*/
 
     // Guide button
-    mapping.guide = (int8_t)ini.get_int(section, "GuideButton", 0);
+    mapping.guide = (s8)ini.get_int(section, "GuideButton", 0);
 
     // Fire buttons
-    for (int8_t i = 0; i < 10; ++i)
-        mapping.Button[i] = (int8_t)ini.get_int(section, buttonNames[i]) - 1;
+    for (s8 i = 0; i < 10; ++i)
+        mapping.Button[i] = (s8)ini.get_int(section, buttonNames[i]) - 1;
 
     // D-PAD
-    mapping.DpadPOV = (int8_t)ini.get_int(section, "D-pad POV");
+    mapping.DpadPOV = (s8)ini.get_int(section, "D-pad POV");
     if (mapping.DpadPOV == 0)
     {
-        for (int8_t i = 0; i < 4; ++i)
+        for (s8 i = 0; i < 4; ++i)
         {
             // D-PAD directions
-            int16_t val = (int16_t)ini.get_int(section, povNames[i], -1);
+            s16 val = (s16)ini.get_int(section, povNames[i], -1);
             if (val > 0 && val < 128)
             {
                 mapping.pov[i] = val - 1;
@@ -312,29 +312,29 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
         }
     }
 
-    for (int8_t i = 0; i < 4; ++i)
+    for (s8 i = 0; i < 4; ++i)
     {
         // Axes
         std::string axis = ini.get_string(section, axisNames[i]);
         ParsePrefix(axis, &mapping.Axis[i].analogType, &mapping.Axis[i].id);
 
         // DeadZones
-        device.axisdeadzone[i] = (int16_t)ini.get_int(section, axisDZNames[i]);
+        device.axisdeadzone[i] = (s16)ini.get_int(section, axisDZNames[i]);
 
         // Anti DeadZones
-        device.antideadzone[i] = (int16_t)ini.get_int(section, axisADZNames[i]);
+        device.antideadzone[i] = (s16)ini.get_int(section, axisADZNames[i]);
 
         // Linearity
-        device.axislinear[i] = (int16_t)ini.get_int(section, axisLNames[i]);
+        device.axislinear[i] = (s16)ini.get_int(section, axisLNames[i]);
 
         // Axis to button mappings
-        int8_t ret = (int8_t)ini.get_int(section, axisBNames[i * 2]);
+        s8 ret = (s8)ini.get_int(section, axisBNames[i * 2]);
         if (ret > 0)
         {
             mapping.Axis[i].hasDigital = true;
             mapping.Axis[i].positiveButtonID = ret - 1;
         }
-        ret = (int8_t)ini.get_int(section, axisBNames[i * 2 + 1]);
+        ret = (s8)ini.get_int(section, axisBNames[i * 2 + 1]);
         if (ret > 0)
         {
             mapping.Axis[i].hasDigital = true;
@@ -349,10 +349,10 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     ParsePrefix(trigger_left, &mapping.Trigger[0].type, &mapping.Trigger[0].id);
     ParsePrefix(trigger_right, &mapping.Trigger[1].type, &mapping.Trigger[1].id);
 
-    device.triggerdz[0] = (int8_t)ini.get_uint(section, "Left Trigger DZ");
-    device.triggerdz[1] = (int8_t)ini.get_uint(section, "Right Trigger DZ");
+    device.triggerdz[0] = (s8)ini.get_uint(section, "Left Trigger DZ");
+    device.triggerdz[1] = (s8)ini.get_uint(section, "Right Trigger DZ");
 
     // SeDoG mod
-    mapping.Trigger[0].but = (int8_t)ini.get_int(section, "Left Trigger But");
-    mapping.Trigger[1].but = (int8_t)ini.get_int(section, "Right Trigger But");
+    mapping.Trigger[0].but = (s8)ini.get_int(section, "Left Trigger But");
+    mapping.Trigger[1].but = (s8)ini.get_int(section, "Right Trigger But");
 }
