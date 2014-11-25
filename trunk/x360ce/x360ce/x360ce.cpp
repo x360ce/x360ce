@@ -695,7 +695,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
         XINPUT_GAMEPAD_DPAD_RIGHT
     };
 
-    static const uint16_t keyIDs[14] =
+    static const u16 keyIDs[14] =
     {
         VK_PAD_A,
         VK_PAD_B,

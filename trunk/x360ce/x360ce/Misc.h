@@ -92,19 +92,19 @@ inline void StringToGUID(GUID& id, LPCSTR szBuf)
 
     if (strchr(szBuf, '{')) szBuf++;
 
-    uint32_t d1;
-    int32_t d2, d3;
-    int32_t b[8];
+    u32 d1;
+    s32 d2, d3;
+    s32 b[8];
 
     sscanf_s(szBuf, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
         &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]);
 
     id.Data1 = d1;
-    id.Data2 = (uint16_t)d2;
-    id.Data3 = (uint16_t)d3;
+    id.Data2 = (u16)d2;
+    id.Data3 = (u16)d3;
 
     for (int i = 0; i < 8; ++i)
-        id.Data4[i] = (uint8_t)b[i];
+        id.Data4[i] = (u8)b[i];
 
     return;
 }
@@ -115,19 +115,19 @@ inline void StringToGUID(GUID& id, LPCWSTR szBuf)
 
     if (wcschr(szBuf, L'{')) szBuf++;
 
-    uint32_t d1;
-    int32_t d2, d3;
-    int32_t b[8];
+    u32 d1;
+    s32 d2, d3;
+    s32 b[8];
 
     swscanf_s(szBuf, L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
         &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]);
 
     id.Data1 = d1;
-    id.Data2 = (uint16_t)d2;
-    id.Data3 = (uint16_t)d3;
+    id.Data2 = (u16)d2;
+    id.Data3 = (u16)d3;
 
     for (int i = 0; i < 8; ++i)
-        id.Data4[i] = (uint8_t)b[i];
+        id.Data4[i] = (u8)b[i];
 
     return;
 }

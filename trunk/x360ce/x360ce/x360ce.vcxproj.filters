@@ -10,26 +10,26 @@
     <ClCompile Include="InputHook\HookWT.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>x360ce\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
-      <Filter>x360ce\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>x360ce\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>x360ce\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="x360ce.cpp">
-      <Filter>x360ce\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InputHook\HookLL.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
     <ClCompile Include="InputHook\HookSA.cpp">
       <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectInput.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
+    <ClCompile Include="x360ce.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>PCH</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -37,46 +37,46 @@
       <Filter>InputHook</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
-      <Filter>x360ce\Header Files</Filter>
+      <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="DirectInput.h">
-      <Filter>x360ce\Header Files</Filter>
+      <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="globals.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="version.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="x360ce.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pstdint.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mutex.h">
-      <Filter>x360ce\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SWIP.h">
-      <Filter>x360ce\Header Files</Filter>
+      <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
-      <Filter>x360ce\Header Files</Filter>
+      <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="Misc.h">
-      <Filter>x360ce\Header Files</Filter>
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="svnrev_template.h">
-      <Filter>x360ce\Header Files</Filter>
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="x360ce.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="SWIP.h">
+      <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,13 +86,8 @@
     <Filter Include="x360ce">
       <UniqueIdentifier>{fd81a978-ad0a-40cf-b53f-b9849a46ed58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="x360ce\Header Files">
-      <UniqueIdentifier>{201387eb-73b1-4944-99d6-87de3afe8913}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="x360ce\Source Files">
-      <UniqueIdentifier>{bd40fb4f-4687-4d4e-b894-2d6bcc890685}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{6635ae55-0cd5-4772-8973-c789ea27088e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

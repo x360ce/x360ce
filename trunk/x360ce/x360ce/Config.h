@@ -16,8 +16,8 @@ enum PovIDs
 struct AxisMap
 {
     MappingType analogType; // Type of analog mapping (only NONE, AXIS, and SLIDER are used)
-    int8_t id;
-    int8_t positiveButtonID, negativeButtonID; // button IDs corresponding to the positive/negative directions of the axis
+    s8 id;
+    s8 positiveButtonID, negativeButtonID; // button IDs corresponding to the positive/negative directions of the axis
     bool hasDigital; // Indicates if there is digital input mapped to the axis
 
     AxisMap()
@@ -31,8 +31,8 @@ struct AxisMap
 struct TriggerMap
 {
     MappingType type;
-    int8_t id;			// Index for the mapped button/axis/slider
-    int8_t but;
+    s8 id;			// Index for the mapped button/axis/slider
+    s8 but;
     TriggerMap()
     {
         id = 0;
@@ -47,10 +47,10 @@ struct Mapping
     // All other indexer values start from zero.
     TriggerMap Trigger[2];
     AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
-    int32_t pov[4];
-    int8_t Button[10];
-    int8_t guide;
-    int8_t DpadPOV; // Index of POV switch to use for the D-pad
+    s32 pov[4];
+    s8 Button[10];
+    s8 guide;
+    s8 DpadPOV; // Index of POV switch to use for the D-pad
     bool PovIsButton;
     Mapping()
         :Trigger()
@@ -69,7 +69,7 @@ struct Mapping
 };
 
 // Map internal IDs to XInput constants
-static const uint16_t buttonIDs[10] =
+static const u16 buttonIDs[10] =
 {
     XINPUT_GAMEPAD_A,
     XINPUT_GAMEPAD_B,
@@ -83,7 +83,7 @@ static const uint16_t buttonIDs[10] =
     XINPUT_GAMEPAD_RIGHT_THUMB,
 };
 
-static const uint16_t povIDs[4] =
+static const u16 povIDs[4] =
 {
     XINPUT_GAMEPAD_DPAD_UP,
     XINPUT_GAMEPAD_DPAD_DOWN,
