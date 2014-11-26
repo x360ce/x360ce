@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "globals.h"
-#include "version.h"
 #include "SWIP.h"
 #include "Logger.h"
 #include "Misc.h"
@@ -11,15 +10,16 @@
 #include "Config.h"
 #include "x360ce.h"
 
-std::string exename;
 iHook g_iHook;
 
 INITIALIZE_LOGGER;
 
 VOID InstallInputHooks()
 {
-    for (auto & device = g_Devices.begin(); device != g_Devices.end(); ++device)
+    for (auto device = g_Devices.begin(); device != g_Devices.end(); ++device)
+    {
         g_iHook.AddHook(device->dwUserIndex, device->productid, device->instanceid);
+    }
 
     g_iHook.ExecuteHooks();
 }
@@ -32,7 +32,9 @@ void __cdecl ExitInstance()
     g_iHook.Reset();
     if (xinput.dll)
     {
-        PrintLog("Unloading %s", ModuleFullPathA(xinput.dll).c_str());
+        std::string xinput_path;
+        ModuleFullPathA(&xinput_path, xinput.dll);
+        PrintLog("Unloading %s", xinput_path.c_str());
         FreeLibrary(xinput.dll);
         xinput.dll = NULL;
     }
@@ -52,14 +54,9 @@ VOID InitInstance()
 #endif
 
     atexit(ExitInstance);
-
-    DWORD startProcessId = GetCurrentProcessId();
-    exename = ModuleFileNameA();
-
-    ReadConfig();
-
-    PrintLog("x360ce %s [%s - %d]", PRODUCT_VERSION, exename.c_str(), startProcessId);
-    PrintLog("%s", windowsVersionName().c_str());
+  
+    ModuleFileNameA(&exename);
+    ReadConfig();   
 
     InstallInputHooks();
 }

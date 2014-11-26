@@ -25,11 +25,7 @@
 #include <MinHook.h>
 #include "Logger.h"
 
-#if _MSC_VER < 1700
 #include "mutex.h"
-#else
-#include <mutex>
-#endif
 
 static const char* status_names[] = {
     "MH_OK",
@@ -133,11 +129,7 @@ private:
 class iHook
 {
 private:
-#if _MSC_VER < 1700
     recursive_mutex m_mutex;
-#else
-    std::mutex m_mutex;
-#endif
 
 public:
     iHook()
@@ -148,15 +140,12 @@ public:
     }
     virtual ~iHook()
     {
-#if _MSC_VER < 1700
         lock_guard lock(m_mutex);
-#else
-        std::lock_guard<std::mutex> lock(m_mutex);
-#endif
         MH_Uninitialize();
         m_devices.clear();
 
         if (m_timeout_thread) CloseHandle(m_timeout_thread);
+        m_timeout_thread = 0;
     };
 
     static const DWORD HOOK_NONE      = 0x00000000UL;
@@ -274,11 +263,7 @@ public:
             return;
         }
 
-#if _MSC_VER < 1700
         lock_guard lock(m_mutex);
-#else
-        std::lock_guard<std::mutex> lock(m_mutex);
-#endif
 
         PrintLog("InputHook starting with mask 0x%08X", m_hookmask);
 
@@ -305,7 +290,8 @@ public:
     void Reset()
     {
         m_devices.clear();
-        CloseHandle(m_timeout_thread);
+        if (m_timeout_thread) CloseHandle(m_timeout_thread);
+        m_timeout_thread = 0;
 
         m_hookmask = HOOK_DISABLE;
         m_fakepidvid = MAKELONG(0x045E, 0x028E);

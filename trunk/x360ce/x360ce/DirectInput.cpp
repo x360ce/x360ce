@@ -9,11 +9,7 @@
 #include "Config.h"
 #include "x360ce.h"
 
-#if _MSC_VER < 1700
 #include "mutex.h"
-#else
-#include <mutex>
-#endif
 
 DInputManager dinput;
 std::vector<DInputDevice> g_Devices;
@@ -82,13 +78,8 @@ HRESULT InitDirectInput(HWND hDlg, DInputDevice& device)
         ExitProcess(hr);
     }
 
-#if _MSC_VER < 1700
     static recursive_mutex mutex;
     lock_guard lock(mutex);
-#else
-    static std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-#endif
 
     PrintLog("[PAD%d] Creating device", device.dwUserIndex + 1);
 
@@ -106,7 +97,9 @@ HRESULT InitDirectInput(HWND hDlg, DInputDevice& device)
         hr = dinput.Get()->CreateDevice(device.instanceid, &device.device, NULL);
         if (FAILED(hr))
         {
-            PrintLog("InstanceGUID %s is incorrect trying ProductGUID", GUIDtoStringA(device.instanceid).c_str());
+            std::string instanceid;
+            GUIDtoStringA(&instanceid, device.instanceid);
+            PrintLog("InstanceGUID %s is incorrect trying ProductGUID", instanceid.c_str());
             hr = dinput.Get()->CreateDevice(device.productid, &device.device, NULL);
         }
     }
@@ -241,13 +234,8 @@ HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
         return S_OK;
     }
 
-#if _MSC_VER < 1700
     static recursive_mutex mutex;
     lock_guard lock(mutex);
-#else
-    static std::mutex mutex;
-    std::lock_guard<std::mutex> lock(mutex);
-#endif
 
     if (device.ff.type == 1) SetDeviceForcesEjocys(device, force, motor);
     else if (device.ff.type == 2) SetDeviceForcesNew(device, force, motor);

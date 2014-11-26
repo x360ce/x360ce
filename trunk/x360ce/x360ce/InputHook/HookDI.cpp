@@ -115,9 +115,9 @@ BOOL FAR PASCAL HookEnumCallbackA(const DIDEVICEINSTANCEA* pInst, VOID* pContext
                     std::string strTrueguidProduct;
                     std::string strHookguidProduct;
 
-                    strTrueguidProduct = GUIDtoStringA(HookInst.guidProduct);
+                    GUIDtoStringA(&strTrueguidProduct, HookInst.guidProduct);
                     HookInst.guidProduct.Data1 = iHookThis->GetFakePIDVID();
-                    strHookguidProduct = GUIDtoStringA(HookInst.guidProduct);
+                    GUIDtoStringA(&strHookguidProduct, HookInst.guidProduct);
 
                     PrintLog("%s", "GUID change:");
                     PrintLog("%s", strTrueguidProduct.c_str());
@@ -191,9 +191,9 @@ BOOL FAR PASCAL HookEnumCallbackW(const DIDEVICEINSTANCEW* pInst, VOID* pContext
                     std::wstring strTrueguidProduct;
                     std::wstring strHookguidProduct;
 
-                    strTrueguidProduct = GUIDtoStringW(HookInst.guidProduct);
+                    GUIDtoStringW(&strTrueguidProduct, HookInst.guidProduct);
                     HookInst.guidProduct.Data1 = iHookThis->GetFakePIDVID();
-                    strHookguidProduct = GUIDtoStringW(HookInst.guidProduct);
+                    GUIDtoStringW(&strHookguidProduct, HookInst.guidProduct);
 
                     PrintLog("%s", "GUID change:");
                     PrintLog("%ls", strTrueguidProduct.c_str());
@@ -299,9 +299,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA(LPDIRECTINPUTDEVICE8A This, LPDIDEV
                     std::string strTrueguidProduct;
                     std::string strHookguidProduct;
 
-                    strTrueguidProduct = GUIDtoStringA(pdidi->guidProduct);
+                    GUIDtoStringA(&strTrueguidProduct, pdidi->guidProduct);
                     pdidi->guidProduct.Data1 = iHookThis->GetFakePIDVID();
-                    strHookguidProduct = GUIDtoStringA(pdidi->guidProduct);
+                    GUIDtoStringA(&strHookguidProduct, pdidi->guidProduct);
 
                     PrintLog("%s", "GUID change:");
                     PrintLog("%s", strTrueguidProduct.c_str());
@@ -373,9 +373,9 @@ HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW(LPDIRECTINPUTDEVICE8W This, LPDIDEV
                     std::wstring strTrueguidProduct;
                     std::wstring strHookguidProduct;
 
-                    strTrueguidProduct = GUIDtoStringW(pdidi->guidProduct);
+                    GUIDtoStringW(&strTrueguidProduct, pdidi->guidProduct);
                     pdidi->guidProduct.Data1 = iHookThis->GetFakePIDVID();
-                    strHookguidProduct = GUIDtoStringW(pdidi->guidProduct);
+                    GUIDtoStringW(&strHookguidProduct, pdidi->guidProduct);
 
                     PrintLog("%s", "GUID change:");
                     PrintLog("%ls", strTrueguidProduct.c_str());
