@@ -44,11 +44,6 @@
 #define MAP_TYPE std::unordered_map
 #endif
 
-#ifndef CURRENT_MODULE
-extern "C" IMAGE_DOS_HEADER __ImageBase;
-#define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
-#endif
-
 #define SWIP_BUFFERSIZE 32767
 
 class SWIP
@@ -270,7 +265,7 @@ private:
         if (PathIsRelativeA(filename.c_str()))
         {
             // if path is relative get full path to ini file
-            DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, path, MAX_PATH);
+            DWORD dwLen = GetModuleFileNameA(g_CurrentModule, path, MAX_PATH);
             if (dwLen > 0 && PathRemoveFileSpecA(path))
             {
                 PathAppendA(path, filename.c_str());

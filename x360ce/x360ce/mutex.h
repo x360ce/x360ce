@@ -26,8 +26,6 @@
 #include <sys/time.h>
 #endif
 
-//#include "base/basictypes.h"
-
 struct atomic_flag_init {
 	atomic_flag_init() : v(false) {
 	}

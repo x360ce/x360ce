@@ -7,7 +7,11 @@
 
 #include <WinSDKVer.h>
 
+#if _MSC_VER < 1700
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
+#else
+#define _WIN32_WINNT _WIN32_WINNT_VISTA
+#endif
 
 #include <SDKDDKVer.h>
 
