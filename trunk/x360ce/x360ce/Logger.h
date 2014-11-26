@@ -19,12 +19,7 @@
 // warning C4127: conditional expression is constant
 #pragma warning(disable: 4127)
 
-#if 1
-#ifndef CURRENT_MODULE
-extern "C" IMAGE_DOS_HEADER __ImageBase;
-#define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
-#endif
-
+#ifndef DISABLE_LOGGER
 #define INITIALIZE_LOGGER Logger* Logger::m_instance;
 class Logger
 {
@@ -57,7 +52,7 @@ public:
         if (PathIsRelativeA(filename))
         {
             char tmp_logpath[MAX_PATH];
-            DWORD dwLen = GetModuleFileNameA(CURRENT_MODULE, tmp_logpath, MAX_PATH);
+            DWORD dwLen = GetModuleFileNameA(g_CurrentModule, tmp_logpath, MAX_PATH);
             if (dwLen > 0 && PathRemoveFileSpecA(tmp_logpath))
                 PathAppendA(tmp_logpath, filename);
             logpath = tmp_logpath;
@@ -185,9 +180,10 @@ inline void PrintLog(const char* format, ...)
 #define PrintFuncSig() PrintLog(__FUNCSIG__)
 
 #else
-#define LogFile(logname) logname
-#define LogConsole(title) title
-#define PrintLog(format, ...) format
+#define INITIALIZE_LOGGER
+#define LogFile(logname)
+#define LogConsole(title, notice)
+#define PrintLog(format, ...)
 #define PrintFunc()
 #define PrintFuncSig()
 

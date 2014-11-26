@@ -165,8 +165,12 @@ public:
     typedef std::vector<iHookDevice>::const_iterator const_iterator;
 
     iterator begin() { return m_devices.begin(); }
-    const_iterator cbegin() const { return m_devices.cbegin(); }
     iterator end() { return m_devices.end(); }
+
+    const_iterator begin() const { return m_devices.begin(); }
+    const_iterator end() const { return m_devices.end(); }
+
+    const_iterator cbegin() const { return m_devices.cbegin(); }
     const_iterator cend() const { return m_devices.cend(); }
 
     inline void Enable()
@@ -240,7 +244,7 @@ public:
 
     inline HMODULE GetEmulator()
     {
-        return CURRENT_MODULE;
+        return g_CurrentModule;
     }
 
     inline static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)

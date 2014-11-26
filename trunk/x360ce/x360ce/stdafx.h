@@ -25,3 +25,5 @@
 #include <xinput.h>
 
 #include "Types.h"
+
+extern HMODULE g_CurrentModule;

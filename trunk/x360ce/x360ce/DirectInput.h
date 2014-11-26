@@ -159,7 +159,7 @@ public:
 
     HRESULT Init()
     {
-        return DirectInput8Create(CURRENT_MODULE, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_pDI, NULL);;
+        return DirectInput8Create(g_CurrentModule, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_pDI, NULL);;
     }
 };
 

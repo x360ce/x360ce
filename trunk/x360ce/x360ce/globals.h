@@ -1,10 +1,5 @@
 #pragma once
 
-#ifndef CURRENT_MODULE
-extern "C" IMAGE_DOS_HEADER __ImageBase;
-#define CURRENT_MODULE reinterpret_cast<HMODULE>(&__ImageBase)
-#endif
-
 //useful macros
 #define SAFE_DELETE(p)  { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
