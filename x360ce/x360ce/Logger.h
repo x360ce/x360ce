@@ -14,11 +14,7 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-#if _MSC_VER < 1700
 #include "mutex.h"
-#else
-#include <mutex>
-#endif
 
 // warning C4127: conditional expression is constant
 #pragma warning(disable: 4127)
@@ -118,11 +114,7 @@ public:
 
         if ((log || con) && format)
         {
-#if _MSC_VER < 1700
             lock_guard lock(m_mtx);
-#else
-            std::lock_guard<std::mutex> lock(m_mtx);
-#endif
 
             DWORD len = 0;
             DWORD lenout = 0;
@@ -162,11 +154,7 @@ private:
     HANDLE m_console;
     HANDLE m_file;
 
-#if _MSC_VER < 1700
     recursive_mutex m_mtx;
-#else
-    std::mutex m_mtx;
-#endif
 
     Logger()
     {

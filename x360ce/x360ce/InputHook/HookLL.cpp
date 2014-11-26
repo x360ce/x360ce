@@ -95,7 +95,12 @@ HMODULE WINAPI HookLoadLibraryA(LPCSTR lpLibFileName)
     if (SelfCheckA(lpLibFileName))
     {
         PrintLog("*LoadLibraryA*");
-        return oLoadLibraryA(ModuleFullPathA(iHookThis->GetEmulator()).c_str());
+        std::string path;
+
+        if(ModuleFullPathA(&path, iHookThis->GetEmulator()))
+            return oLoadLibraryA(path.c_str());
+        else
+            return oLoadLibraryA(lpLibFileName);
     }
 
     return oLoadLibraryA(lpLibFileName);
@@ -108,7 +113,12 @@ HMODULE WINAPI HookLoadLibraryW(LPCWSTR lpLibFileName)
     if (SelfCheckW(lpLibFileName))
     {
         PrintLog("*LoadLibraryW*");
-        return oLoadLibraryW(ModuleFullPathW(iHookThis->GetEmulator()).c_str());
+        std::wstring path;
+
+        if (ModuleFullPathW(&path, iHookThis->GetEmulator()))
+            return oLoadLibraryW(path.c_str());
+        else
+            return oLoadLibraryW(lpLibFileName);
     }
 
     return oLoadLibraryW(lpLibFileName);
@@ -121,7 +131,13 @@ HMODULE WINAPI HookLoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFl
     if (SelfCheckA(lpLibFileName))
     {
         PrintLog("*LoadLibraryExA*");
-        return oLoadLibraryExA(ModuleFullPathA(iHookThis->GetEmulator()).c_str(), hFile, dwFlags);
+
+        std::string path;
+
+        if (ModuleFullPathA(&path, iHookThis->GetEmulator()))
+            return oLoadLibraryExA(path.c_str(), hFile, dwFlags);
+        else
+            return oLoadLibraryExA(lpLibFileName, hFile, dwFlags);
     }
 
     return oLoadLibraryExA(lpLibFileName, hFile, dwFlags);
@@ -134,7 +150,13 @@ HMODULE WINAPI HookLoadLibraryExW(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwF
     if (SelfCheckW(lpLibFileName))
     {
         PrintLog("*LoadLibraryExW*");
-        return oLoadLibraryExW(ModuleFullPathW(iHookThis->GetEmulator()).c_str(), hFile, dwFlags);
+
+        std::wstring path;
+
+        if (ModuleFullPathW(&path, iHookThis->GetEmulator()))
+            return oLoadLibraryExW(path.c_str(), hFile, dwFlags);
+        else
+            return oLoadLibraryExW(lpLibFileName, hFile, dwFlags);
     }
 
     return oLoadLibraryExW(lpLibFileName, hFile, dwFlags);

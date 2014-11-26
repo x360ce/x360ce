@@ -1,12 +1,7 @@
 #pragma once
 
 #include <dinput.h>
-
-#if _MSC_VER < 1700
 #include "mutex.h"
-#else
-#include <mutex>
-#endif
 
 // disable C4351 - new behavior: elements of array 'array' will be default initialized
 #pragma warning( disable:4351 )

@@ -28,10 +28,14 @@
 #include "Config.h"
 #include "x360ce.h"
 
+#include "version.h"
+#include "WindowsVersion.h"
+
 XInputEnabled XInputIsEnabled;
 HWND hMsgWnd = NULL;
 
 xinput_dll xinput;
+std::string exename;
 
 VOID CreateMsgWnd()
 {
@@ -55,28 +59,36 @@ bool XInputInitialize()
 {
     if (xinput.dll) return true;
 
-    WCHAR buffer[MAX_PATH];
-    GetSystemDirectoryW(buffer, MAX_PATH);
+    std::wstring xinput_path;
+    xinput_path.resize(MAX_PATH);
+    DWORD length = 0;
+    length = GetSystemDirectoryW(&xinput_path[0], MAX_PATH);
+    xinput_path.resize(length);
 
-    std::wstring str(buffer);
-    str.append(L"\\");
-    str.append(ModuleFileNameW(CURRENT_MODULE));
+    std::wstring current_module;
+    ModuleFileNameW(&current_module, CURRENT_MODULE);
+
+    xinput_path.append(L"\\");
+    xinput_path.append(current_module);
 
     bool bHookLL = false;
 
     bHookLL = g_iHook.GetState(iHook::HOOK_LL);
     if (bHookLL) g_iHook.DisableHook(iHook::HOOK_LL);
 
-    PrintLog("Loading %ls", str.c_str());
-    xinput.dll = LoadLibraryW(str.c_str());
+    PrintLog("Loading %ls", xinput_path.c_str());
+    xinput.dll = LoadLibraryW(xinput_path.c_str());
     if (bHookLL) g_iHook.EnableHook(iHook::HOOK_LL);
 
     if (!xinput.dll)
     {
         HRESULT hr = GetLastError();
-        swprintf_s(buffer, L"Cannot load %s error: 0x%x", str.c_str(), hr);
-        PrintLog("%s", buffer);
-        MessageBoxW(NULL, buffer, L"Error", MB_ICONERROR);
+        std::wstring error_msg;
+        error_msg.resize(MAX_PATH);
+
+        swprintf_s(&error_msg[0], MAX_PATH, L"Cannot load %s error: 0x%x", xinput_path.c_str(), hr);
+        PrintLog("%S", error_msg.c_str());
+        MessageBoxW(NULL, error_msg.c_str(), L"Error", MB_ICONERROR);
         ExitProcess(hr);
     }
 
@@ -103,6 +115,14 @@ bool XInputInitialize()
     LoadFunctionOrdinal(xinput, 108, XInputGetCapabilitiesEx);
 
     g_iHook.StartTimeoutThread();
+
+    DWORD startProcessId = GetCurrentProcessId();
+    PrintLog("x360ce %s started for \"%s\", PID: %d", PRODUCT_VERSION, exename.c_str(), startProcessId);
+
+    std::string windows_name;
+    if (GetWindowsVersionName(&windows_name))
+        PrintLog("OS: \"%s\"", windows_name.c_str());
+
     return true;
 }
 

@@ -22,11 +22,7 @@
 #include <algorithm>
 #include <functional>
 
-#if _MSC_VER < 1700
 #include "mutex.h"
-#else
-#include <mutex>
-#endif
 
 // Windows headers
 #include <shlwapi.h>
@@ -331,11 +327,6 @@ private:
 
     bool internal_key_exist(const std::string& section, const std::string& key)
     {
-#if _MSC_VER < 1700
-        lock_guard lock(m_mutex);
-#else
-        std::lock_guard<std::recursive_mutex> lock(m_mutex);
-#endif
         auto secit = m_inimap.find(section);
         if (secit != m_inimap.end())
         {
@@ -353,11 +344,6 @@ private:
         data.resize(SWIP_BUFFERSIZE);
 
         // read all section data to buffer using WinAPI
-#if _MSC_VER < 1700
-        lock_guard lock(m_mutex);
-#else
-        std::lock_guard<std::recursive_mutex> lock(m_mutex);
-#endif
         GetPrivateProfileSectionA(section.c_str(), &data[0], SWIP_BUFFERSIZE, m_inipath.c_str());
 
         // store pointer for data iteration
@@ -402,11 +388,6 @@ private:
         data.resize(SWIP_BUFFERSIZE);
 
         // read all section names to buffer using WinAPI
-#if _MSC_VER < 1700
-        lock_guard lock(m_mutex);
-#else
-        std::lock_guard<std::recursive_mutex> lock(m_mutex);
-#endif
         GetPrivateProfileSectionNamesA(&data[0], SWIP_BUFFERSIZE, m_inipath.c_str());
 
         // store pointer for sections iteration
@@ -461,13 +442,6 @@ private:
 private:
     std::string m_inipath;
     ini_t m_inimap;
-
-#if _MSC_VER < 1700
-    recursive_mutex m_mutex;
-#else
-    std::recursive_mutex m_mutex;
-#endif
-
     bool m_is_open;
 };
 
