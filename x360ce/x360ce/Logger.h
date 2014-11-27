@@ -73,7 +73,7 @@ public:
                 if (title) SetConsoleTitleA(title);
                 if (console_notice)
                 {
-                    DWORD len = strlen(console_notice);
+                    DWORD len = (DWORD)strlen(console_notice);
                     DWORD lenout = 0;
                     WriteConsoleA(m_console, console_notice, len, &lenout, NULL);
                 }
@@ -94,7 +94,7 @@ public:
             vsprintf_s(buffer, format, arglist);
             va_end(arglist);
 
-            DWORD len = strlen(buffer);
+            DWORD len = (DWORD)strlen(buffer);
             DWORD lenout = 0;
 
             if (console) WriteConsoleA(m_console, buffer, len, &lenout, NULL);
@@ -116,7 +116,7 @@ public:
             static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
             if (stamp)
             {
-                len = strlen(stamp);
+                len = (DWORD)strlen(stamp);
                 if (con) WriteConsoleA(m_console, stamp, len, &lenout, NULL);
                 if (log) WriteFile(m_file, stamp, len, &lenout, NULL);
                 stamp = nullptr;
@@ -129,7 +129,7 @@ public:
             vsnprintf_s(m_print_buffer, 1024, 1024, format, vaargs);
             strncat_s(m_print_buffer, 1024, "\r\n", _TRUNCATE);
 
-            len = strlen(m_print_buffer);
+            len = (DWORD)strlen(m_print_buffer);
             lenout = 0;
 
             if (con) WriteConsoleA(m_console, m_print_buffer, len, &lenout, NULL);
