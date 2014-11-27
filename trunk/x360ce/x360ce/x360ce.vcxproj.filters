@@ -60,9 +60,6 @@
     <ClInclude Include="resource.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="svnrev_template.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>x360ce</Filter>
     </ClInclude>
