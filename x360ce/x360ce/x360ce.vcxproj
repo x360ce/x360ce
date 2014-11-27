@@ -122,7 +122,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\preBuild.cmd"</Command>
+      <Command>..\Support\svnrev.exe *.*</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
@@ -207,7 +207,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\preBuild.cmd"</Command>
+      <Command>..\Support\svnrev.exe *.*</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -285,7 +285,6 @@
     <ClInclude Include="mutex.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="svnrev_template.h" />
     <ClInclude Include="SWIP.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Types.h" />
