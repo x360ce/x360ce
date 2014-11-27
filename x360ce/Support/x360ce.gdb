@@ -250,6 +250,10 @@ HookMask = 0x00000002
 Name = Afterfall Insanity: Extended Edition
 HookMask = 0x00000002
 
+[iw6mp64_ship.exe]
+Name = Call of Duty Ghosts: Multiplayer
+HookMask = 0x00000002
+
 [iw6sp64_ship.exe]
 Name = Call of Duty Ghosts
 HookMask = 0x00000002
@@ -406,7 +410,11 @@ HookMask = 0x00000002
 Name = Syndicate
 HookMask=0x00000002
 
-[s1_sp64_ship.exe.exe]
+[s1_mp64_ship.exe]
+Name = Call of Duty Advanced Warfare: Multiplayer
+HookMask = 0x00000002
+
+[s1_sp64_ship.exe]
 Name = Call of Duty Advanced Warfare
 HookMask = 0x00000002
 
