@@ -52,7 +52,7 @@ HookMask = 0x0000001E
 
 [AssassinsCreedIIGame.exe]
 Name = Assasin's Creed II
-HookMask = 0x00000002
+HookMask = 0x0000001E
 
 [Awesomenauts.exe]
 Name = Awesomenauts
@@ -114,6 +114,10 @@ HookMask=0x0000001E
 Name = The Cave
 HookMask = 0x00000002
 
+[conviction_game.exe]
+Name = Tom Clancy's Splinter Cell Conviction
+HookMask=0x0000000E
+
 [DarksidersPC.exe]
 Name = Darksiders
 HookMask = 0x00000002
@@ -152,6 +156,10 @@ HookMask = 0x00000002
 
 [Enslaved.exe]
 Name = Enslaved: Odyssey to the West
+HookMask = 0x00000002
+
+[EvilWithin.exe]
+Name = The Evil Within
 HookMask = 0x00000002
 
 [farcry3.exe]
@@ -240,7 +248,15 @@ HookMask = 0x00000002
 
 [InSanity-Win32-Shipping.exe]
 Name = Afterfall Insanity: Extended Edition
-HookMask = 0x00000002 
+HookMask = 0x00000002
+
+[iw6sp64_ship.exe]
+Name = Call of Duty Ghosts
+HookMask = 0x00000002
+
+[kaneandlynch.exe]
+Name = Kane & Lynch - Dead Men
+HookMask=0x0000001E
 
 [LANoire.exe]
 Name = L.A. Noire
@@ -384,6 +400,14 @@ HookMask = 0x00000002
 
 [SuperMeatBoy.exe]
 Name = Super Meat Boy
+HookMask = 0x00000002
+
+[Syndicate.exe]
+Name = Syndicate
+HookMask=0x00000002
+
+[s1_sp64_ship.exe.exe]
+Name = Call of Duty Advanced Warfare
 HookMask = 0x00000002
 
 [TERA.exe]
