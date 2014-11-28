@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ditool", "x360ce\ditool\dit
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputHook", "x360ce\InputHook\InputHook.vcxproj", "{4CF76641-C60B-4A26-8F44-DAA67B30512A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "x360ce\Common\Common.vcxproj", "{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -69,6 +71,13 @@ Global
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|Win32.Build.0 = Release|Win32
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|x64.ActiveCfg = Release|x64
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|x64.Build.0 = Release|x64
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Debug|Win32.Build.0 = Debug|Win32
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Debug|x64.ActiveCfg = Debug|x64
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|Win32.ActiveCfg = Release|Win32
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|Win32.Build.0 = Release|Win32
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|x64.ActiveCfg = Release|x64
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

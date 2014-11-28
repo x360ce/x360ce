@@ -1,3 +1,12 @@
+#include "Types.h"
+#include "NonCopyable.h"
+
+#include "Logger.h"
+#include "Utils.h"
+#include "Mutex.h"
+#include "StringUtils.h"
+#include "SWIP.h"
+
 #pragma once
 
 //useful macros
@@ -13,15 +22,10 @@
 #define FFB_LEFTMOTOR 0
 #define FFB_RIGHTMOTOR 1
 
-// An inheritable class to disallow the copy constructor and operator= functions
-class NonCopyable
-{
-protected:
-    NonCopyable() {}
-    NonCopyable(const NonCopyable&&) {}
-    void operator=(const NonCopyable&&) {}
-private:
-    NonCopyable(NonCopyable&);
-    NonCopyable& operator=(NonCopyable& other);
-};
+#if _MSC_VER >= 1700
+#define NOINLINE __declspec(noinline)
+#else
+#define NOINLINE
+#endif
+
 

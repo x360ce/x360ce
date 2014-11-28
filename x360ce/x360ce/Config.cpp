@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "globals.h"
+#include "Common.h"
 #include "SWIP.h"
 #include "Logger.h"
 #include "version.h"
-#include "Misc.h"
+#include "Utils.h"
 #include "InputHook.h"
 
 #include "DirectInput.h"
@@ -11,9 +11,10 @@
 #include "Config.h"
 #include "x360ce.h"
 
-bool g_bInitBeep = false;
+bool g_bInitBeep = true;
 bool g_bNative = false;
 bool g_bDisable = false;
+bool g_bContinue = false;
 std::vector<Mapping> g_Mappings;
 
 static const char* const buttonNames[] =
@@ -119,30 +120,37 @@ void ParsePrefix(const std::string& input, MappingType* mapping_type, s8* value)
 
 DWORD ReadGameDatabase()
 {
-    SWIP ini("x360ce.gdb");
-
-    if (ini.is_open())
+    u32 out = 0;
+    SWIP ini;
+    if (ini.Load("x360ce.gdb"))
     {
         PrintLog("Using game database file:");
-        PrintLog("%s", ini.get_inipath().c_str());
+        PrintLog("%s", ini.GetIniPath().c_str());
+
+        ini.Get(exename, "HookMask", &out);
     }
-    return ini.get_uint(exename, "HookMask");
+    return out;
 }
 
 void ReadConfig(bool reset)
 {
-    SWIP ini("x360ce.ini");
+    SWIP ini;
+    ini.Load("x360ce.ini");
 
     if (!reset)
     {
         // Read global options
-        g_bDisable = ini.get_bool("Options", "Disable");
+        ini.Get("Options", "Disable", &g_bDisable);
         if (g_bDisable) return;
 
-        g_bInitBeep = ini.get_bool("Options", "UseInitBeep", 1);
+        ini.Get("Options", "Continue", &g_bContinue);
+        ini.Get("Options", "UseInitBeep", &g_bInitBeep, true);
 
-        bool file = ini.get_bool("Options", "Log");
-        bool con = ini.get_bool("Options", "Console");
+        bool file = false;
+        bool con = false;
+
+        ini.Get("Options", "Log", &file);
+        ini.Get("Options", "Console", &con);
 
         if (con) LogConsole("x360ce", legal_notice);
         if (file)
@@ -153,9 +161,10 @@ void ReadConfig(bool reset)
         }
 
         PrintLog("Using config file:");
-        PrintLog("%s", ini.get_inipath().c_str());
+        PrintLog("%s", ini.GetIniPath().c_str());
 
-        DWORD ver = ini.get_uint("Options", "Version");
+        u32 ver = 0;
+        ini.Get("Options", "Version", &ver);
         if (ver != VERSION_CONFIG)
             PrintLog("WARNING: Configuration file version mismatch detected");
     }
@@ -163,16 +172,17 @@ void ReadConfig(bool reset)
     // Simple Game Database support
     // InputHook
 
-    bool override = ini.get_bool("InputHook", "Override");
-    DWORD hookMask = ReadGameDatabase();
-    if (hookMask && override == false)
+    bool hook_override = false;
+    ini.Get("InputHook", "Override", &hook_override);
+    u32 hookMask = ReadGameDatabase();
+    if (hookMask && hook_override == false)
     {
         g_iHook.SetMask(hookMask);
         g_iHook.Enable();
     }
     else
     {
-        hookMask = ini.get_uint("InputHook", "HookMask");
+        ini.Get("InputHook", "HookMask", &hookMask);
         if (hookMask)
         {
             g_iHook.SetMask(hookMask);
@@ -180,31 +190,33 @@ void ReadConfig(bool reset)
         }
         else
         {
-            bool hookCheck = ini.get_bool("InputHook", "HookLL");
+            bool hookCheck = 0;
+
+            ini.Get("InputHook", "HookLL", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_LL);
 
-            hookCheck = ini.get_bool("InputHook", "HookCOM");
+            ini.Get("InputHook", "HookCOM", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_COM);
 
-            hookCheck = ini.get_bool("InputHook", "HookDI");
+            ini.Get("InputHook", "HookDI", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_DI);
 
-            hookCheck = ini.get_bool("InputHook", "HookPIDVID");
+            ini.Get("InputHook", "HookPIDVID", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_PIDVID);
 
-            hookCheck = ini.get_bool("InputHook", "HookSA");
+            ini.Get("InputHook", "HookSA", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_SA);
 
-            hookCheck = ini.get_bool("InputHook", "HookNAME");
+            ini.Get("InputHook", "HookNAME", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_NAME);
 
-            hookCheck = ini.get_bool("InputHook", "HookSTOP");
+            ini.Get("InputHook", "HookSTOP", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_STOP);
 
-            hookCheck = ini.get_bool("InputHook", "HookWT");
+            ini.Get("InputHook", "HookWT", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_WT);
 
-            hookCheck = ini.get_bool("InputHook", "HookNoTimeout");
+            ini.Get("InputHook", "HookNoTimeout", &hookCheck);
             if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_NOTIMEOUT);
 
             if (g_iHook.GetMask()) g_iHook.Enable();
@@ -212,25 +224,30 @@ void ReadConfig(bool reset)
     }
     if (g_iHook.GetState(InputHook::HOOK_PIDVID))
     {
-        DWORD vid = ini.get_uint("InputHook", "FakeVID", 0x045E);
-        DWORD pid = ini.get_uint("InputHook", "FakePID", 0x028E);
+        u32 vid = 0x045E;
+        u32 pid = 0x028E;
+        ini.Get("InputHook", "FakeVID", &vid, 0x045E);
+        ini.Get("InputHook", "FakePID", &pid, 0x028E);
+
         if (vid != 0x045E || pid != 0x28E) g_iHook.SetFakePIDVID(MAKELONG(vid, pid));
     }
 
-    DWORD timeout = ini.get_uint("InputHook", "Timeout", 60);
+    u32 timeout = 60;
+    ini.Get("InputHook", "Timeout", &timeout, 60);
     g_iHook.SetTimeout(timeout);
 
     // Read pad mappings
     for (DWORD i = 0; i < 4; ++i)
-        ReadPadConfig(i, ini);
+        ReadPadConfig(i, &ini);
 }
 
-void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
+void ReadPadConfig(DWORD dwUserIndex, SWIP *ini)
 {
     char section[MAX_PATH] = "Mappings";
     char key[MAX_PATH];
     sprintf_s(key, "PAD%u", dwUserIndex + 1);
-    std::string strBuf = ini.get_string(section, key);
+    std::string strBuf;
+    ini->Get(section, key, &strBuf);
     if (strBuf.empty()) return;
 
 #if _MSC_VER < 1700
@@ -250,55 +267,63 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     //store value as section name
     strcpy_s(section, strBuf.c_str());
 
-    device.dwUserIndex = ini.get_uint(section, "UserIndex", (u32)-1);
+    device.dwUserIndex = 0;
+    ini->Get(section, "UserIndex", &device.dwUserIndex, (u32)-1);
     if (device.dwUserIndex == (u32)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
 
-    strBuf = ini.get_string(section, "ProductGUID");
+    ini->Get(section, "ProductGUID", &strBuf);
     if (strBuf.empty()) PrintLog("ProductGUID is empty");
     else StringToGUID(&device.productid, strBuf.c_str());
 
-    strBuf = ini.get_string(section, "InstanceGUID");
+    ini->Get(section, "InstanceGUID", &strBuf);
     if (strBuf.empty()) PrintLog("InstanceGUID is empty");
     else StringToGUID(&device.instanceid, strBuf.c_str());
 
-    device.useproduct = ini.get_bool(section, "UseProductGUID");
-    device.passthrough = ini.get_bool(section, "PassThrough", 1);
+    ini->Get(section, "UseProductGUID", &device.useproduct);
+    ini->Get(section, "PassThrough", &device.passthrough, true);
 
     if (device.passthrough) return;
 
     // Device type
-    device.gamepadtype = (s8)ini.get_uint(section, "ControllerType", 1);
+    ini->Get(section, "ControllerType", &device.gamepadtype, 1);
 
     // Axis to DPAD options
-    device.axistodpad = ini.get_bool(section, "AxisToDPad");
-    device.a2ddeadzone = ini.get_int(section, "AxisToDPadDeadZone");
-    device.a2doffset = ini.get_int(section, "AxisToDPadOffset");
+    ini->Get(section, "AxisToDPad", &device.axistodpad);
+    ini->Get(section, "AxisToDPadDeadZone", &device.a2ddeadzone);
+    ini->Get(section, "AxisToDPadOffset", &device.a2doffset);
 
     // FFB options
-    device.useforce = ini.get_bool(section, "UseForceFeedback");
-    device.swapmotor = ini.get_bool(section, "SwapMotor");
-    device.ff.type = (s8)ini.get_uint(section, "FFBType");
-    device.ff.forcepercent = (float)ini.get_uint(section, "ForcePercent", 100) * 0.01f;
-    device.ff.leftPeriod = ini.get_uint(section, "LeftMotorPeriod", 60);
-    device.ff.rightPeriod = ini.get_uint(section, "RightMotorPeriod", 20);
+    ini->Get(section, "UseForceFeedback", &device.useforce);
+    ini->Get(section, "SwapMotor", &device.swapmotor);
+    ini->Get(section, "FFBType", &device.ff.type);
+    ini->Get(section, "ForcePercent", &device.ff.forcepercent, 100);
+    device.ff.forcepercent *= 0.01f;
+
+    ini->Get(section, "LeftMotorPeriod", &device.ff.leftPeriod, 60);
+    ini->Get(section, "RightMotorPeriod", &device.ff.rightPeriod, 20);
 
     /* ==================================== Mapping start ============================================*/
 
     // Guide button
-    mapping.guide = (s8)ini.get_int(section, "GuideButton", 0);
+    ini->Get(section, "GuideButton", &mapping.guide);
 
     // Fire buttons
     for (s8 i = 0; i < 10; ++i)
-        mapping.Button[i] = (s8)ini.get_int(section, buttonNames[i]) - 1;
+    {
+        s8 button = 0;
+        ini->Get(section, buttonNames[i], &button);
+        mapping.Button[i] = button - 1;
+    }
 
     // D-PAD
-    mapping.DpadPOV = (s8)ini.get_int(section, "D-pad POV");
+    ini->Get(section, "D-pad POV", &mapping.DpadPOV);
     if (mapping.DpadPOV == 0)
     {
         for (s8 i = 0; i < 4; ++i)
         {
             // D-PAD directions
-            s16 val = (s16)ini.get_int(section, povNames[i], -1);
+            s16 val = 0;
+            ini->Get(section, povNames[i], &val, - 1);
             if (val > 0 && val < 128)
             {
                 mapping.pov[i] = val - 1;
@@ -315,26 +340,28 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     for (s8 i = 0; i < 4; ++i)
     {
         // Axes
-        std::string axis = ini.get_string(section, axisNames[i]);
+        std::string axis;
+        ini->Get(section, axisNames[i], &axis);
         ParsePrefix(axis, &mapping.Axis[i].analogType, &mapping.Axis[i].id);
 
         // DeadZones
-        device.axisdeadzone[i] = (s16)ini.get_int(section, axisDZNames[i]);
+        ini->Get(section, axisDZNames[i], &device.axisdeadzone[i]);
 
         // Anti DeadZones
-        device.antideadzone[i] = (s16)ini.get_int(section, axisADZNames[i]);
+        ini->Get(section, axisADZNames[i], &device.antideadzone[i]);
 
         // Linearity
-        device.axislinear[i] = (s16)ini.get_int(section, axisLNames[i]);
+        ini->Get(section, axisLNames[i], &device.axislinear[i]);
 
         // Axis to button mappings
-        s8 ret = (s8)ini.get_int(section, axisBNames[i * 2]);
+        s8 ret = 0;
+        ini->Get(section, axisBNames[i * 2], &ret);
         if (ret > 0)
         {
             mapping.Axis[i].hasDigital = true;
             mapping.Axis[i].positiveButtonID = ret - 1;
         }
-        ret = (s8)ini.get_int(section, axisBNames[i * 2 + 1]);
+        ini->Get(section, axisBNames[i * 2 + 1], &ret);
         if (ret > 0)
         {
             mapping.Axis[i].hasDigital = true;
@@ -343,16 +370,19 @@ void ReadPadConfig(DWORD dwUserIndex, const SWIP &ini)
     }
 
     // Triggers
-    std::string trigger_left = ini.get_string(section, "Left Trigger");
-    std::string trigger_right = ini.get_string(section, "Right Trigger");
+    std::string trigger_left;
+    ini->Get(section, "Left Trigger", &trigger_left);
+
+    std::string trigger_right;
+    ini->Get(section, "Right Trigger", &trigger_right);
 
     ParsePrefix(trigger_left, &mapping.Trigger[0].type, &mapping.Trigger[0].id);
     ParsePrefix(trigger_right, &mapping.Trigger[1].type, &mapping.Trigger[1].id);
 
-    device.triggerdz[0] = (s8)ini.get_uint(section, "Left Trigger DZ");
-    device.triggerdz[1] = (s8)ini.get_uint(section, "Right Trigger DZ");
+    ini->Get(section, "Left Trigger DZ", &device.triggerdz[0]);
+    ini->Get(section, "Right Trigger DZ", &device.triggerdz[1]);
 
     // SeDoG mod
-    mapping.Trigger[0].but = (s8)ini.get_int(section, "Left Trigger But");
-    mapping.Trigger[1].but = (s8)ini.get_int(section, "Right Trigger But");
+    ini->Get(section, "Left Trigger But", &mapping.Trigger[0].but);
+    ini->Get(section, "Right Trigger But", &mapping.Trigger[1].but);
 }

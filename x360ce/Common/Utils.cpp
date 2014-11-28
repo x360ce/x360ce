@@ -1,8 +1,69 @@
-#pragma once
+#include "stdafx.h"
 
+#include "Common.h"
+
+#include <string>
 #include <Shlwapi.h>
+#include <Shlobj.h>
+#pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "shell32.lib")
 
-inline bool ModuleFullPathA(std::string* out, HMODULE hModule = NULL)
+NOINLINE BOOL CurrentModule(HMODULE* phModule)
+{
+    BOOL(*pCurrentModule)(HMODULE* phModule) = CurrentModule;
+    return GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)pCurrentModule, phModule);
+}
+
+NOINLINE HMODULE CurrentModule()
+{
+    HMODULE hModule = 0;
+    HMODULE(*pCurrentModule)() = CurrentModule;
+    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)pCurrentModule, &hModule);
+    return hModule;
+}
+
+bool BuildPath(const std::string& filename, std::string* fullpath, bool check_exist)
+{
+    if (!fullpath) return false;
+
+    std::string path;
+    path.resize(MAX_PATH);
+
+    if (PathIsRelativeA(filename.c_str()))
+    {
+        DWORD dwLen = GetModuleFileNameA(CurrentModule(), &path[0], MAX_PATH);
+        if (dwLen > 0 && PathRemoveFileSpecA(&path[0]))
+        {
+            PathAppendA(&path[0], filename.c_str());
+            if (!check_exist)
+            {
+                *fullpath = path;
+                return true;
+            }
+            else if (PathFileExistsA(&path[0]) && PathIsDirectoryA(&path[0]) == FALSE)
+            {
+                *fullpath = path;
+                return true;
+            }
+        }
+    }
+    else
+    {
+        if (!check_exist)
+        {
+            *fullpath = path;
+            return true;
+        }
+        else if (PathFileExistsA(filename.c_str()) && PathIsDirectoryA(filename.c_str()) == FALSE)
+        {
+            *fullpath = filename;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ModuleFullPathA(std::string* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -12,7 +73,7 @@ inline bool ModuleFullPathA(std::string* out, HMODULE hModule = NULL)
     return !out->empty();
 }
 
-inline bool ModuleFullPathW(std::wstring* out, HMODULE hModule = NULL)
+bool ModuleFullPathW(std::wstring* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -22,7 +83,7 @@ inline bool ModuleFullPathW(std::wstring* out, HMODULE hModule = NULL)
     return !out->empty();
 }
 
-inline bool ModulePathA(std::string* out, HMODULE hModule = NULL)
+bool ModulePathA(std::string* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -33,7 +94,7 @@ inline bool ModulePathA(std::string* out, HMODULE hModule = NULL)
     return !out->empty();
 }
 
-inline bool ModulePathW(std::wstring* out, HMODULE hModule = NULL)
+bool ModulePathW(std::wstring* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -44,7 +105,7 @@ inline bool ModulePathW(std::wstring* out, HMODULE hModule = NULL)
     return !out->empty();
 }
 
-inline bool ModuleFileNameA(std::string* out, HMODULE hModule = NULL)
+bool ModuleFileNameA(std::string* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -54,7 +115,7 @@ inline bool ModuleFileNameA(std::string* out, HMODULE hModule = NULL)
     return !out->empty();
 }
 
-inline bool ModuleFileNameW(std::wstring* out, HMODULE hModule = NULL)
+bool ModuleFileNameW(std::wstring* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -64,47 +125,7 @@ inline bool ModuleFileNameW(std::wstring* out, HMODULE hModule = NULL)
     return !out->empty();
 }
 
-inline LONG clamp(LONG val, LONG min, LONG max)
-{
-    if (val < min) return min;
-    if (val > max) return max;
-
-    return val;
-}
-
-/// <summary>Convert short [-32768;32767] to float range [-1.0f;1.0f].</summary>
-inline FLOAT ConvertToFloat(SHORT val)
-{
-    FLOAT maxValue = val >= 0 ? (float)32767 : (FLOAT)32768;
-    return ((float)val) / maxValue;
-}
-
-/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
-inline SHORT ConvertToShort(float val)
-{
-    FLOAT maxValue = val >= 0 ? (FLOAT)32767 : (FLOAT)32768;
-    return (SHORT)(val * maxValue);
-}
-
-inline LONG deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
-{
-    if (val < lowerDZ) return min;
-    if (val > upperDZ) return max;
-
-    return val;
-}
-
-inline static WORD flipShort(WORD s)
-{
-    return (WORD)((s >> 8) | (s << 8));
-}
-
-inline static DWORD flipLong(DWORD l)
-{
-    return (((DWORD)flipShort((WORD)l)) << 16) | flipShort((WORD)(l >> 16));
-}
-
-inline void StringToGUID(GUID* id, const char* szBuf)
+void StringToGUID(GUID* id, const char* szBuf)
 {
     if (!szBuf || !id) return;
 
@@ -127,7 +148,7 @@ inline void StringToGUID(GUID* id, const char* szBuf)
     return;
 }
 
-inline void StringToGUID(GUID* id, const wchar_t* szBuf)
+void StringToGUID(GUID* id, const wchar_t* szBuf)
 {
     if (!szBuf || !id) return;
 
@@ -150,7 +171,7 @@ inline void StringToGUID(GUID* id, const wchar_t* szBuf)
     return;
 }
 
-inline bool GUIDtoStringA(std::string* out, const GUID &g)
+bool GUIDtoStringA(std::string* out, const GUID &g)
 {
     if (!out) return false;
     out->resize(40);
@@ -162,7 +183,7 @@ inline bool GUIDtoStringA(std::string* out, const GUID &g)
     return (*out)[0] != '\0';
 }
 
-inline const bool GUIDtoStringW(std::wstring* out, const GUID &g)
+bool GUIDtoStringW(std::wstring* out, const GUID &g)
 {
     if (!out) return false;
     out->resize(40);

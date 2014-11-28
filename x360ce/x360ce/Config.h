@@ -93,7 +93,7 @@ static const u16 povIDs[4] =
 
 void InitConfig(char* ininame);
 void ReadConfig(bool reset = false);
-void ReadPadConfig(DWORD dwUserIndex, const SWIP& ini);
+void ReadPadConfig(DWORD dwUserIndex, SWIP* ini);
 
 extern std::vector<DInputDevice> g_Devices;
 extern std::vector<Mapping> g_Mappings;
@@ -101,3 +101,4 @@ extern std::vector<Mapping> g_Mappings;
 extern bool g_bNative;
 extern bool g_bInitBeep;
 extern bool g_bDisable;
+extern bool g_bContinue;

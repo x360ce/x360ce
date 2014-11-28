@@ -2,12 +2,12 @@
 #define CINTERFACE
 
 #include <dinput.h>
-#include "globals.h"
+#include "Common.h"
 
 #include "InputHook.h"
 
 #include "Logger.h"
-#include "Misc.h"
+#include "Utils.h"
 
 namespace HookDI
 {

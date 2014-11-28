@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "globals.h"
+#include "Common.h"
 #include "Logger.h"
-#include "Misc.h"
+#include "Utils.h"
 #include "InputHook.h"
 
 #include "DirectInput.h"
@@ -78,8 +78,8 @@ HRESULT InitDirectInput(HWND hDlg, DInputDevice& device)
         ExitProcess(hr);
     }
 
-    static recursive_mutex mutex;
-    lock_guard lock(mutex);
+    static Mutex mutex;
+    LockGuard lock(mutex);
 
     PrintLog("[PAD%d] Creating device", device.dwUserIndex + 1);
 
@@ -107,8 +107,7 @@ HRESULT InitDirectInput(HWND hDlg, DInputDevice& device)
 
     if (FAILED(hr))
     {
-        SWIP ini("x360ce.ini");
-        if (ini.get_bool("Options", "Continue"))
+        if (g_bContinue)
         {
             device.passthrough = true;
             return S_OK;
@@ -234,8 +233,8 @@ HRESULT SetDeviceForces(DInputDevice& device, WORD force, bool motor)
         return S_OK;
     }
 
-    static recursive_mutex mutex;
-    lock_guard lock(mutex);
+    static Mutex mutex;
+    LockGuard lock(mutex);
 
     if (device.ff.type == 1) SetDeviceForcesEjocys(device, force, motor);
     else if (device.ff.type == 2) SetDeviceForcesNew(device, force, motor);

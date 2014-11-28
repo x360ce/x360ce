@@ -42,9 +42,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="SWIP.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
     <ClInclude Include="WindowsVersion.h">
       <Filter>x360ce</Filter>
     </ClInclude>

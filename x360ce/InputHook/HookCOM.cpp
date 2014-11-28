@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "globals.h"
+#include "Common.h"
 #include "Logger.h"
-#include "Misc.h"
+#include "Utils.h"
 
 #define CINTERFACE
 #define _WIN32_DCOM

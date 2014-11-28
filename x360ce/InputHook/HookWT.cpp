@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "globals.h"
+#include "Common.h"
 #include "Logger.h"
 #include <Softpub.h>
 

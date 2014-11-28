@@ -23,7 +23,7 @@
 #include <MinHook.h>
 #include "Logger.h"
 
-#include "mutex.h"
+#include "Mutex.h"
 
 static const char* status_names[] = {
     "MH_OK",
@@ -126,9 +126,6 @@ private:
 
 class InputHook
 {
-private:
-    recursive_mutex m_mutex;
-
 public:
     InputHook()
         :m_hookmask(HOOK_DISABLE)
@@ -138,7 +135,7 @@ public:
     }
     virtual ~InputHook()
     {
-        lock_guard lock(m_mutex);
+        LockGuard lock(m_mutex);
         MH_Uninitialize();
         m_devices.clear();
 
@@ -265,7 +262,7 @@ public:
             return;
         }
 
-        lock_guard lock(m_mutex);
+        LockGuard lock(m_mutex);
 
         PrintLog("InputHook starting with mask 0x%08X", m_hookmask);
 
@@ -321,5 +318,7 @@ private:
     void HookDI();
     void HookWT();
     void HookSA();
+
+    Mutex m_mutex;
 };
 
