@@ -14,8 +14,9 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-#include "mutex.h"
-#include "globals.h"
+#include "Utils.h"
+#include "Mutex.h"
+#include "NonCopyable.h"
 
 // warning C4127: conditional expression is constant
 #pragma warning(disable: 4127)
@@ -53,7 +54,7 @@ public:
         if (PathIsRelativeA(filename))
         {
             char tmp_logpath[MAX_PATH];
-            DWORD dwLen = GetModuleFileNameA(g_CurrentModule, tmp_logpath, MAX_PATH);
+            DWORD dwLen = GetModuleFileNameA(CurrentModule(), tmp_logpath, MAX_PATH);
             if (dwLen > 0 && PathRemoveFileSpecA(tmp_logpath))
                 PathAppendA(tmp_logpath, filename);
             logpath = tmp_logpath;
@@ -110,7 +111,7 @@ public:
 
         if ((log || con) && format)
         {
-            lock_guard lock(m_mtx);
+            LockGuard lock(m_mtx);
 
             DWORD len = 0;
             DWORD lenout = 0;
@@ -146,7 +147,7 @@ private:
     HANDLE m_console;
     HANDLE m_file;
 
-    recursive_mutex m_mtx;
+    Mutex m_mtx;
 
     Logger()
     {

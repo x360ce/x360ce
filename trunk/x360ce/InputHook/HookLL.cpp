@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "globals.h"
-#include "Misc.h"
+#include "Common.h"
+#include "Utils.h"
 #include "Logger.h"
 
 #include "InputHook.h"

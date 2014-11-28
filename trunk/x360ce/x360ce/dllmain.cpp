@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "globals.h"
+#include "Common.h"
 #include "SWIP.h"
 #include "Logger.h"
-#include "Misc.h"
+#include "Utils.h"
 #include "InputHook.h"
 
 #include "DirectInput.h"

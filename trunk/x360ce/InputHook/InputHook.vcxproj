@@ -249,6 +249,9 @@
     <ProjectReference Include="..\3rdparty\libMinHook\libMinHook.vcxproj">
       <Project>{65021938-d251-46fa-bc3d-85c385d4c06d}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{0caee158-51e4-4c81-8cac-f39f744daf2d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HookCOM.cpp" />
