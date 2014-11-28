@@ -3,7 +3,7 @@
 extern std::string exename;
 extern WNDPROC oldWndProc;
 extern HWND hMsgWnd;
-extern iHook g_iHook;
+extern InputHook g_iHook;
 
 static const char * legal_notice = {
     "\nx360ce - XBOX 360 Controller emulator\n"

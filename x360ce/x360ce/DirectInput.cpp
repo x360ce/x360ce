@@ -2,7 +2,7 @@
 #include "globals.h"
 #include "Logger.h"
 #include "Misc.h"
-#include "InputHook\InputHook.h"
+#include "InputHook.h"
 
 #include "DirectInput.h"
 #include "SWIP.h"
@@ -86,11 +86,11 @@ HRESULT InitDirectInput(HWND hDlg, DInputDevice& device)
     bool bHookDI = false;
     bool bHookSA = false;
 
-    bHookDI = g_iHook.GetState(iHook::HOOK_DI);
-    bHookSA = g_iHook.GetState(iHook::HOOK_SA);
+    bHookDI = g_iHook.GetState(InputHook::HOOK_DI);
+    bHookSA = g_iHook.GetState(InputHook::HOOK_SA);
 
-    if (bHookDI) g_iHook.DisableHook(iHook::HOOK_DI);
-    if (bHookSA) g_iHook.DisableHook(iHook::HOOK_SA);
+    if (bHookDI) g_iHook.DisableHook(InputHook::HOOK_DI);
+    if (bHookSA) g_iHook.DisableHook(InputHook::HOOK_SA);
 
     if (!device.useproduct)
     {
@@ -169,8 +169,8 @@ HRESULT InitDirectInput(HWND hDlg, DInputDevice& device)
 
     hr = device.device->Acquire();
 
-    if (bHookSA) g_iHook.EnableHook(iHook::HOOK_SA);
-    if (bHookDI) g_iHook.EnableHook(iHook::HOOK_DI);
+    if (bHookSA) g_iHook.EnableHook(InputHook::HOOK_SA);
+    if (bHookDI) g_iHook.EnableHook(InputHook::HOOK_DI);
 
     return hr;
 }

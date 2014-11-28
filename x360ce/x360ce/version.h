@@ -1,7 +1,9 @@
 #pragma once
 
-#include "globals.h"
 #include "svnrev.h"
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
 
 #define VERSION_MAJOR 3
 #define VERSION_MINOR 4

@@ -21,7 +21,7 @@
 #include "globals.h"
 #include "Logger.h"
 #include "Misc.h"
-#include "InputHook\InputHook.h"
+#include "InputHook.h"
 
 #include "DirectInput.h"
 #include "SWIP.h"
@@ -73,12 +73,12 @@ bool XInputInitialize()
 
     bool bHookLL = false;
 
-    bHookLL = g_iHook.GetState(iHook::HOOK_LL);
-    if (bHookLL) g_iHook.DisableHook(iHook::HOOK_LL);
+    bHookLL = g_iHook.GetState(InputHook::HOOK_LL);
+    if (bHookLL) g_iHook.DisableHook(InputHook::HOOK_LL);
 
     PrintLog("Loading %ls", xinput_path.c_str());
     xinput.dll = LoadLibraryW(xinput_path.c_str());
-    if (bHookLL) g_iHook.EnableHook(iHook::HOOK_LL);
+    if (bHookLL) g_iHook.EnableHook(InputHook::HOOK_LL);
 
     if (!xinput.dll)
     {
