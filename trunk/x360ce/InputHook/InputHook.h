@@ -17,8 +17,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _InputHook_H_
-#define _InputHook_H_
+#pragma once
 
 #include <CGuid.h>
 #include <vector>
@@ -41,13 +40,13 @@ static const char* status_names[] = {
     "MH_ERROR_MEMORY_PROTECT",
 };
 
-#define IH_CreateHook(pTarget, pDetour, ppOrgiginal) IH_CreateHookF(pTarget, #pTarget, pDetour, ppOrgiginal)
+#define IH_CreateHook(pTarget, pDetour, ppOrgiginal) IH_CreateHookF(pTarget, pDetour, ppOrgiginal, #pTarget)
 #define IH_EnableHook(pTarget) IH_EnableHookF(pTarget, #pTarget)
 
 template<typename N>
-inline void IH_CreateHookF(LPVOID pTarget, const char* pTargetName, LPVOID pDetour, N* ppOrgiginal)
+inline void IH_CreateHookF(LPVOID pTarget, LPVOID pDetour, N* ppOriginal, const char* pTargetName)
 {
-    MH_STATUS status = MH_CreateHook(pTarget, pDetour, reinterpret_cast<void**>(ppOrgiginal));
+    MH_STATUS status = MH_CreateHook(pTarget, pDetour, reinterpret_cast<void**>(ppOriginal));
     if (status == MH_OK || status == MH_ERROR_ALREADY_CREATED)
     {
         PrintLog("Hook for %s successed", pTargetName);
@@ -73,16 +72,16 @@ inline void IH_EnableHookF(LPVOID pTarget, const char* pTargetName)
     }
 }
 
-class iHookDevice
+class InputHookDevice
 {
 public:
-    iHookDevice(DWORD userindex, const GUID& productid, const GUID& instanceid)
+    InputHookDevice(DWORD userindex, const GUID& productid, const GUID& instanceid)
         :m_enabled(true)
         , m_productid(productid)
         , m_instanceid(instanceid)
         , m_userindex(userindex)
     {}
-    virtual ~iHookDevice() {};
+    virtual ~InputHookDevice() {};
 
     inline void Enable()
     {
@@ -126,19 +125,19 @@ private:
     DWORD m_userindex;
 };
 
-class iHook
+class InputHook
 {
 private:
     recursive_mutex m_mutex;
 
 public:
-    iHook()
+    InputHook()
         :m_hookmask(HOOK_DISABLE)
         , m_fakepidvid(MAKELONG(0x045E, 0x028E))
         , m_timeout(60)
     {
     }
-    virtual ~iHook()
+    virtual ~InputHook()
     {
         lock_guard lock(m_mutex);
         MH_Uninitialize();
@@ -161,8 +160,8 @@ public:
     static const DWORD HOOK_NOTIMEOUT = 0x40000000UL;
     static const DWORD HOOK_DISABLE   = 0x80000000UL;
 
-    typedef std::vector<iHookDevice>::iterator iterator;
-    typedef std::vector<iHookDevice>::const_iterator const_iterator;
+    typedef std::vector<InputHookDevice>::iterator iterator;
+    typedef std::vector<InputHookDevice>::const_iterator const_iterator;
 
     iterator begin() { return m_devices.begin(); }
     iterator end() { return m_devices.end(); }
@@ -224,7 +223,7 @@ public:
         m_timeout = timeout;
     }
 
-    inline iHookDevice& GetPadConfig(const DWORD& dwUserIndex)
+    inline InputHookDevice& GetPadConfig(const DWORD& dwUserIndex)
     {
         return m_devices.at(dwUserIndex);
     }
@@ -316,7 +315,7 @@ private:
     DWORD m_timeout;
     HANDLE m_timeout_thread;
 
-    std::vector<iHookDevice> m_devices;
+    std::vector<InputHookDevice> m_devices;
 
     void HookLL();
     void HookCOM();
@@ -325,4 +324,3 @@ private:
     void HookSA();
 };
 
-#endif

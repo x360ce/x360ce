@@ -3,14 +3,14 @@
 #include "SWIP.h"
 #include "Logger.h"
 #include "Misc.h"
-#include "InputHook\InputHook.h"
+#include "InputHook.h"
 
 #include "DirectInput.h"
 #include "SWIP.h"
 #include "Config.h"
 #include "x360ce.h"
 
-iHook g_iHook;
+InputHook g_iHook;
 
 INITIALIZE_LOGGER;
 

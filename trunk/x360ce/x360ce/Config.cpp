@@ -4,7 +4,7 @@
 #include "Logger.h"
 #include "version.h"
 #include "Misc.h"
-#include "InputHook\InputHook.h"
+#include "InputHook.h"
 
 #include "DirectInput.h"
 #include "SWIP.h"
@@ -181,36 +181,36 @@ void ReadConfig(bool reset)
         else
         {
             bool hookCheck = ini.get_bool("InputHook", "HookLL");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_LL);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_LL);
 
             hookCheck = ini.get_bool("InputHook", "HookCOM");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_COM);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_COM);
 
             hookCheck = ini.get_bool("InputHook", "HookDI");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_DI);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_DI);
 
             hookCheck = ini.get_bool("InputHook", "HookPIDVID");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_PIDVID);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_PIDVID);
 
             hookCheck = ini.get_bool("InputHook", "HookSA");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_SA);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_SA);
 
             hookCheck = ini.get_bool("InputHook", "HookNAME");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_NAME);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_NAME);
 
             hookCheck = ini.get_bool("InputHook", "HookSTOP");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_STOP);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_STOP);
 
             hookCheck = ini.get_bool("InputHook", "HookWT");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_WT);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_WT);
 
             hookCheck = ini.get_bool("InputHook", "HookNoTimeout");
-            if (hookCheck) g_iHook.EnableHook(iHook::HOOK_NOTIMEOUT);
+            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_NOTIMEOUT);
 
             if (g_iHook.GetMask()) g_iHook.Enable();
         }
     }
-    if (g_iHook.GetState(iHook::HOOK_PIDVID))
+    if (g_iHook.GetState(InputHook::HOOK_PIDVID))
     {
         DWORD vid = ini.get_uint("InputHook", "FakeVID", 0x045E);
         DWORD pid = ini.get_uint("InputHook", "FakePID", 0x028E);

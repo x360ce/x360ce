@@ -15,13 +15,14 @@
 #pragma comment(lib, "shlwapi.lib")
 
 #include "mutex.h"
+#include "globals.h"
 
 // warning C4127: conditional expression is constant
 #pragma warning(disable: 4127)
 
 #ifndef DISABLE_LOGGER
 #define INITIALIZE_LOGGER Logger* Logger::m_instance;
-class Logger
+class Logger : NonCopyable
 {
 public:
     static Logger* GetInstance()
@@ -139,10 +140,6 @@ public:
     }
 private:
     static Logger* m_instance;
-    // block constructors
-    Logger(const Logger& src);
-    Logger& operator=(const Logger& rhs);
-
     char m_print_buffer[1024];
 
     SYSTEMTIME m_systime;
