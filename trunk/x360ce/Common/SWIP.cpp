@@ -29,26 +29,26 @@ bool SWIP::Load(const std::string& filename)
 bool SWIP::Save(const std::string& filename)
 {
     bool out = false;
-    for (Section& section : sections)
+    for (auto& sectit = sections.begin(); sectit != sections.end(); ++sectit)
     {
-        out = section.Save(filename);
+        out = sectit->Save(filename);
     }
     return out;
 }
 
 const SWIP::Section* SWIP::GetSection(const std::string& sectionName) const
 {
-    for (const Section& sect : sections)
-        if (!_stricmp(sect.name.c_str(), sectionName.c_str()))
-            return (&(sect));
+    for (auto& sectit = sections.begin(); sectit != sections.end(); ++sectit)
+        if (!_stricmp(sectit->name.c_str(), sectionName.c_str()))
+            return (&(*sectit));
     return nullptr;
 }
 
 SWIP::Section* SWIP::GetSection(const std::string& sectionName)
 {
-    for (Section& sect : sections)
-        if (!_stricmp(sect.name.c_str(), sectionName.c_str()))
-            return (&(sect));
+    for (auto& sectit = sections.begin(); sectit != sections.end(); ++sectit)
+        if (!_stricmp(sectit->name.c_str(), sectionName.c_str()))
+            return (&(*sectit));
     return nullptr;
 }
 
@@ -170,9 +170,9 @@ void SWIP::Section::Populate(const std::string& filename)
 bool SWIP::Section::Save(const std::string& filename)
 {
     std::stringstream ss;
-    for (const std::string& kvit : order)
+    for (auto& kvit = order.begin(); kvit != order.end(); ++kvit)
     {
-        auto pair = values.find(kvit);
+        auto pair = values.find(*kvit);
         ss << pair->first << "=" << pair->second;
         ss << '\0';
     }
