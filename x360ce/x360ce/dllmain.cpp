@@ -12,10 +12,6 @@
 
 InputHook g_iHook;
 
-INITIALIZE_LOGGER;
-
-HMODULE g_CurrentModule = NULL;
-
 VOID InstallInputHooks()
 {
     for (auto device = g_Devices.begin(); device != g_Devices.end(); ++device)
@@ -42,9 +38,10 @@ void __cdecl ExitInstance()
     }
 
     PrintLog("Terminating x360ce, bye");
+    LogShutdown();
 }
 
-VOID InitInstance(HMODULE hModule)
+VOID InitInstance()
 {
 #if defined(DEBUG) | defined(_DEBUG)
     int CurrentFlags;
@@ -55,7 +52,6 @@ VOID InitInstance(HMODULE hModule)
     _CrtSetDbgFlag(CurrentFlags);
 #endif
 
-    g_CurrentModule = hModule;
     atexit(ExitInstance);
   
     ModuleFileNameA(&exename);
@@ -85,7 +81,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
     {
     case DLL_PROCESS_ATTACH:
         DisableThreadLibraryCalls(hModule);
-        InitInstance(hModule);
+        InitInstance();
         break;
 
     case DLL_PROCESS_DETACH:

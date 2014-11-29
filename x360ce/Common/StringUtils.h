@@ -16,8 +16,15 @@ inline void ArrayFormat(char(&out)[count], const char* format, ...)
 }
 
 bool Convert(const std::string &str, bool *output);
-bool Convert(const std::string &str, u32 *output);
-bool Convert(const std::string &str, u64 *output);
+
+bool Convert(const std::string &str, s8 *const output);
+bool Convert(const std::string &str, u8 *const output);
+bool Convert(const std::string &str, s16 *const output);
+bool Convert(const std::string &str, u16 *const output);
+bool Convert(const std::string &str, s32 *const output);
+bool Convert(const std::string &str, u32 *const output);
+bool Convert(const std::string &str, s64 *const output);
+bool Convert(const std::string &str, u64 *const output);
 
 template <typename T>
 static bool Convert(const std::string &str, T *const output)

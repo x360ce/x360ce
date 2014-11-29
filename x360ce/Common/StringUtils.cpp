@@ -44,6 +44,91 @@ std::string StringFormat(const char* format, ...)
     return temp;
 }
 
+bool Convert(const std::string &str, s8 *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    s32 value = strtol(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<s8>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, u8 *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    u32 value = strtoul(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<u8>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, s16 *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    s32 value = strtol(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<s8>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, u16 *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    u32 value = strtoul(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<u16>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, s32 *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    s32 value = strtol(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<s32>(value);
+    return true;
+}
+
 bool Convert(const std::string &str, u32 *const output)
 {
     char *endptr = nullptr;
@@ -58,6 +143,23 @@ bool Convert(const std::string &str, u32 *const output)
         return false;
 
     *output = static_cast<u32>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, s64 *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    s64 value = strtoll(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<s64>(value);
     return true;
 }
 

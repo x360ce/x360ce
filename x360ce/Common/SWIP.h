@@ -151,22 +151,22 @@ public:
         return CreateSection(sectionName)->Get(key, value, defaultValue);
     }
 
-    bool Get(const std::string& sectionName, const std::string& key, s32* value, s32 defaultValue = 0)
+    bool Get(const std::string& sectionName, const std::string& key, s32* value, s32 defaultValue = 0L)
     {
         return CreateSection(sectionName)->Get(key, value, defaultValue);
     }
 
-    bool Get(const std::string& sectionName, const std::string& key, u32* value, u32 defaultValue = 0)
+    bool Get(const std::string& sectionName, const std::string& key, u32* value, u32 defaultValue = 0UL)
     {
         return CreateSection(sectionName)->Get(key, value, defaultValue);
     }
 
-    bool Get(const std::string& sectionName, const std::string& key, s64* value, s64 defaultValue = 0)
+    bool Get(const std::string& sectionName, const std::string& key, s64* value, s64 defaultValue = 0LL)
     {
         return CreateSection(sectionName)->Get(key, value, defaultValue);
     }
 
-    bool Get(const std::string& sectionName, const std::string& key, u64* value, u64 defaultValue = 0)
+    bool Get(const std::string& sectionName, const std::string& key, u64* value, u64 defaultValue = 0ULL)
     {
         return CreateSection(sectionName)->Get(key, value, defaultValue);
     }

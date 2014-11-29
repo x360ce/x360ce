@@ -323,7 +323,7 @@ void ReadPadConfig(DWORD dwUserIndex, SWIP *ini)
         {
             // D-PAD directions
             s16 val = 0;
-            ini->Get(section, povNames[i], &val, - 1);
+            ini->Get(section, povNames[i], &val, -1);
             if (val > 0 && val < 128)
             {
                 mapping.pov[i] = val - 1;
