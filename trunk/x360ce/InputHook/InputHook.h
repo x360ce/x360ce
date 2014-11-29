@@ -239,7 +239,7 @@ public:
 
     inline HMODULE GetEmulator()
     {
-        return g_CurrentModule;
+        return CurrentModule();
     }
 
     inline static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)

@@ -49,7 +49,7 @@ VOID CreateMsgWnd()
         CW_USEDEFAULT,		// default height
         HWND_MESSAGE,		// message-only window
         NULL,				// no class menu
-        g_CurrentModule,	// handle to application instance
+        CurrentModule(),	// handle to application instance
         NULL);				// no window-creation data
 
     if (!hMsgWnd) PrintLog("CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
@@ -66,7 +66,7 @@ bool XInputInitialize()
     xinput_path.resize(length);
 
     std::wstring current_module;
-    ModuleFileNameW(&current_module, g_CurrentModule);
+    ModuleFileNameW(&current_module, CurrentModule());
 
     xinput_path.append(L"\\");
     xinput_path.append(current_module);
@@ -187,9 +187,9 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     xstate.dwPacketNumber = GetTickCount();
 
     // --- Map buttons ---
-    for (int i = 0; i < 10; ++i)
+    for (s8 i = 0; i < 10; ++i)
     {
-        if (((int)mapping.Button[i] >= 0) && ButtonPressed(mapping.Button[i], device))
+        if ((mapping.Button[i] >= 0) && ButtonPressed(mapping.Button[i], device))
             xstate.Gamepad.wButtons |= buttonIDs[i];
     }
 
@@ -222,7 +222,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     {
         for (int i = 0; i < 4; ++i)
         {
-            if (((int)mapping.pov[i] >= 0) && ButtonPressed(mapping.pov[i], device))
+            if ((mapping.pov[i] >= 0) && ButtonPressed(mapping.pov[i], device))
             {
                 xstate.Gamepad.wButtons |= povIDs[i];
             }

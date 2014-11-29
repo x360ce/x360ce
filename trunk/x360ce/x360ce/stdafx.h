@@ -25,6 +25,4 @@
 #include <xinput.h>
 #include <dinput.h>
 
-#include "Types.h"
-
-extern HMODULE g_CurrentModule;
+#include "Common.h"
