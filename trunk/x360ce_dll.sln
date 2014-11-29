@@ -5,16 +5,6 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
-	ProjectSection(SolutionItems) = preProject
-		x360ce\Support\changelog.txt = x360ce\Support\changelog.txt
-		x360ce\Support\COPYING.txt = x360ce\Support\COPYING.txt
-		x360ce\Support\HowToBuild.txt = x360ce\Support\HowToBuild.txt
-		x360ce\Support\lgpl-3.0.txt = x360ce\Support\lgpl-3.0.txt
-		x360ce\Support\Readme.txt = x360ce\Support\Readme.txt
-		x360ce\Support\x360ce_template.ini = x360ce\Support\x360ce_template.ini
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMinHook", "x360ce\3rdparty\libMinHook\libMinHook.vcxproj", "{65021938-D251-46FA-BC3D-85C385D4C06D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dinput8", "x360ce\dinput8\dinput8.vcxproj", "{FE3BC27D-9B4F-4063-A6A5-04B38F79AD64}"

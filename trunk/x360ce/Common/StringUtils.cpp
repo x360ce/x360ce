@@ -180,6 +180,40 @@ bool Convert(const std::string &str, u64 *const output)
     return true;
 }
 
+bool Convert(const std::string &str, float *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    float value = strtof(str.c_str(), &endptr);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<float>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, double *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    double value = strtod(str.c_str(), &endptr);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<double>(value);
+    return true;
+}
+
 bool Convert(const std::string &str, bool *const output)
 {
     if ("1" == str || !_stricmp("true", str.c_str()))

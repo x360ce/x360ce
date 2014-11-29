@@ -15,8 +15,6 @@ inline void ArrayFormat(char(&out)[count], const char* format, ...)
     va_end(args);
 }
 
-bool Convert(const std::string &str, bool *output);
-
 bool Convert(const std::string &str, s8 *const output);
 bool Convert(const std::string &str, u8 *const output);
 bool Convert(const std::string &str, s16 *const output);
@@ -25,21 +23,9 @@ bool Convert(const std::string &str, s32 *const output);
 bool Convert(const std::string &str, u32 *const output);
 bool Convert(const std::string &str, s64 *const output);
 bool Convert(const std::string &str, u64 *const output);
-
-template <typename T>
-static bool Convert(const std::string &str, T *const output)
-{
-    std::istringstream iss(str);
-
-    T tmp = 0;
-    if (iss >> tmp)
-    {
-        *output = tmp;
-        return true;
-    }
-    else
-        return false;
-}
+bool Convert(const std::string &str, float *const output);
+bool Convert(const std::string &str, double *const output);
+bool Convert(const std::string &str, bool *output);
 
 std::string CP1252ToUTF8(const std::string& str);
 std::string UTF16ToUTF8(const std::wstring& str);

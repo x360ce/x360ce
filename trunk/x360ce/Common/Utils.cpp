@@ -8,17 +8,11 @@
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
 
-NOINLINE BOOL CurrentModule(HMODULE* phModule)
+HMODULE CurrentModule()
 {
-    BOOL(*pCurrentModule)(HMODULE* phModule) = CurrentModule;
-    return GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)pCurrentModule, phModule);
-}
-
-NOINLINE HMODULE CurrentModule()
-{
-    HMODULE hModule = 0;
-    HMODULE(*pCurrentModule)() = CurrentModule;
-    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)pCurrentModule, &hModule);
+    static HMODULE hModule = 0;
+    if (!hModule)
+        GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)&hModule, &hModule);
     return hModule;
 }
 
