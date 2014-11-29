@@ -8,8 +8,7 @@
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
 
-NOINLINE BOOL CurrentModule(HMODULE* phModule);
-NOINLINE HMODULE CurrentModule();
+HMODULE CurrentModule();
 
 bool BuildPath(const std::string& filename, std::string* fullpath, bool check_exist = true);
 bool ModuleFullPathA(std::string* out, HMODULE hModule = NULL);

@@ -7,6 +7,8 @@
 #include "StringUtils.h"
 #include "SWIP.h"
 
+#include "WindowsVersion.h"
+
 #pragma once
 
 //useful macros
@@ -19,13 +21,5 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-#define FFB_LEFTMOTOR 0
-#define FFB_RIGHTMOTOR 1
-
-#if _MSC_VER >= 1700
-#define NOINLINE __declspec(noinline)
-#else
-#define NOINLINE
-#endif
 
 

@@ -16,9 +16,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsVersion.cpp">
-      <Filter>x360ce</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -41,9 +38,6 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>PCH</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsVersion.h">
-      <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

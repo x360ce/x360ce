@@ -1,7 +1,10 @@
 #pragma once
 
 #include <dinput.h>
-#include "mutex.h"
+#include "Mutex.h"
+
+#define FFB_LEFTMOTOR 0
+#define FFB_RIGHTMOTOR 1
 
 // disable C4351 - new behavior: elements of array 'array' will be default initialized
 #pragma warning( disable:4351 )
@@ -12,7 +15,7 @@ class DInputFFB
 public:
 
     DInputFFB()
-        :effect()
+        : effect()
         , eff()
         , pf()
         , cf()
@@ -184,4 +187,3 @@ HRESULT PrepareForceEjocys(DInputDevice& device, bool motor);
 
 HRESULT SetDeviceForcesNew(DInputDevice& device, WORD force, bool motor);
 HRESULT PrepareForceNew(DInputDevice& device, bool motor);
-
