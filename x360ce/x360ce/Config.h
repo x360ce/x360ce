@@ -108,6 +108,7 @@ static const u16 povIDs[4] =
     XINPUT_GAMEPAD_DPAD_RIGHT
 };
 
+void InitLogger();
 void InitConfig(char* ininame);
 void ReadConfig();
 void ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini);

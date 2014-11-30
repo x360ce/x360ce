@@ -25,6 +25,8 @@
 
 #include "Mutex.h"
 
+typedef void (*InputHookInitCallback_t)();
+
 static const char* status_names[] = {
     "MH_OK",
     "MH_ERROR_ALREADY_INITIALIZED",
@@ -82,37 +84,37 @@ public:
     {}
     virtual ~InputHookDevice() {};
 
-    inline void Enable()
+    void Enable()
     {
         m_enabled = true;
     }
 
-    inline void Disable()
+    void Disable()
     {
         m_enabled = false;
     }
 
-    inline bool GetHookState()
+    bool GetHookState()
     {
         return m_enabled;
     }
 
-    inline GUID GetProductGUID()
+    GUID GetProductGUID()
     {
         return m_productid;
     }
 
-    inline GUID GetInstanceGUID()
+    GUID GetInstanceGUID()
     {
         return m_instanceid;
     }
 
-    inline DWORD GetProductPIDVID()
+    DWORD GetProductPIDVID()
     {
         return m_productid.Data1;
     }
 
-    inline DWORD GetUserIndex()
+    DWORD GetUserIndex()
     {
         return m_userindex;
     }
@@ -135,7 +137,6 @@ public:
     }
     virtual ~InputHook()
     {
-        LockGuard lock(m_mutex);
         MH_Uninitialize();
         m_devices.clear();
 
@@ -168,73 +169,182 @@ public:
     const_iterator cbegin() const { return m_devices.cbegin(); }
     const_iterator cend() const { return m_devices.cend(); }
 
-    inline void Enable()
+    void Enable()
     {
         m_hookmask &= ~HOOK_DISABLE;
     }
 
-    inline void Disable()
+    void Disable()
     {
         m_hookmask |= HOOK_DISABLE;
     }
 
-    inline void EnableHook(const DWORD& flag)
+    void EnableHook(const DWORD& flag)
     {
         m_hookmask |= flag;
     }
 
-    inline void DisableHook(const DWORD& flag)
+    void DisableHook(const DWORD& flag)
     {
         m_hookmask &= ~flag;
     }
 
-    inline const bool GetState(const DWORD& flag = HOOK_NONE) const
+    const bool GetState(const DWORD& flag = HOOK_NONE) const
     {
         if (m_hookmask & HOOK_DISABLE || m_hookmask == HOOK_NONE) return false;
         return (m_hookmask & flag) == flag;
     }
 
-    inline DWORD GetMask()
+    DWORD GetMask()
     {
         return m_hookmask;
     }
 
-    inline void SetMask(const DWORD& mask)
+    void SetMask(const DWORD& mask)
     {
         m_hookmask = mask;
     }
 
-    inline void SetFakePIDVID(const DWORD& pidvid)
+    void SetFakePIDVID(const DWORD& pidvid)
     {
         m_fakepidvid = pidvid;
     }
 
-    inline DWORD GetFakePIDVID()
+    DWORD GetFakePIDVID()
     {
         return m_fakepidvid;
     }
 
-    inline void SetTimeout(const DWORD& timeout)
+    void SetTimeout(const DWORD& timeout)
     {
         m_timeout = timeout;
     }
 
-    inline InputHookDevice& GetPadConfig(const DWORD& dwUserIndex)
+    InputHookDevice& GetPadConfig(const DWORD& dwUserIndex)
     {
         return m_devices.at(dwUserIndex);
     }
-    inline void AddHook(DWORD userindex, const GUID& productid, const GUID& instanceid)
+
+    void Init(InputHookInitCallback_t callback)
     {
-        InputHookDevice dev(userindex, productid, instanceid);
-        m_devices.push_back(dev);
+        if (callback) callback();
+
+        SWIP ini;
+        ini.Load("x360ce.ini");
+
+        bool hook_override = false;
+        ini.Get("InputHook", "Override", &hook_override);
+        u32 hookMask = ReadGameDatabase();
+        if (hookMask && hook_override == false)
+        {
+            SetMask(hookMask);
+            Enable();
+        }
+        else
+        {
+            ini.Get("InputHook", "HookMask", &hookMask);
+            if (hookMask)
+            {
+                SetMask(hookMask);
+                Enable();
+            }
+            else
+            {
+                bool hookCheck = 0;
+
+                ini.Get("InputHook", "HookLL", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_LL);
+
+                ini.Get("InputHook", "HookCOM", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_COM);
+
+                ini.Get("InputHook", "HookDI", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_DI);
+
+                ini.Get("InputHook", "HookPIDVID", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_PIDVID);
+
+                ini.Get("InputHook", "HookSA", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_SA);
+
+                ini.Get("InputHook", "HookNAME", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_NAME);
+
+                ini.Get("InputHook", "HookSTOP", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_STOP);
+
+                ini.Get("InputHook", "HookWT", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_WT);
+
+                ini.Get("InputHook", "HookNoTimeout", &hookCheck);
+                if (hookCheck) EnableHook(InputHook::HOOK_NOTIMEOUT);
+
+                if (GetMask()) Enable();
+            }
+        }
+        if (GetState(InputHook::HOOK_PIDVID))
+        {
+            u32 vid = 0x045E;
+            u32 pid = 0x028E;
+            ini.Get("InputHook", "FakeVID", &vid, 0x045E);
+            ini.Get("InputHook", "FakePID", &pid, 0x028E);
+
+            if (vid != 0x045E || pid != 0x28E) SetFakePIDVID(MAKELONG(vid, pid));
+        }
+
+        u32 timeout = 60;
+        ini.Get("InputHook", "Timeout", &timeout, 60);
+        SetTimeout(timeout);
+
+        // Read pad mappings
+        for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
+        {
+            std::string section;
+            std::string key = StringFormat("PAD%u", i + 1);
+            ini.Get("Mappings", key, &section);
+            if (section.empty()) continue;
+
+            //TODO: use INVALIDUSERINDEX
+            u32 index = 0;
+            ini.Get(section, "UserIndex", &index, (u32)-1);
+            if (index == (u32)-1) index = i;
+
+            std::string buffer;
+            GUID productid = GUID_NULL;
+            GUID instanceid = GUID_NULL;
+
+            ini.Get(section, "ProductGUID", &buffer);
+            if (buffer.empty()) PrintLog("ProductGUID is empty");
+            else StringToGUID(&productid, buffer);
+
+            ini.Get(section, "InstanceGUID", &buffer);
+            if (buffer.empty()) PrintLog("InstanceGUID is empty");
+            else StringToGUID(&instanceid, buffer);
+
+            if (!IsEqualGUID(productid, GUID_NULL) && !IsEqualGUID(instanceid, GUID_NULL))
+            {
+                InputHookDevice dev(index, productid, instanceid);
+                m_devices.push_back(dev);
+            }
+        }
+
+        ExecuteHooks();
     }
 
-    inline HMODULE GetEmulator()
+    void Shutdown()
+    {
+        MH_Uninitialize();
+
+        m_devices.clear();
+        if (m_timeout_thread) CloseHandle(m_timeout_thread);
+    }
+
+    HMODULE GetEmulator()
     {
         return CurrentModule();
     }
 
-    inline static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)
+    static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)
     {
         DWORD* pTimeout = reinterpret_cast<DWORD*>(lpParameter);
 
@@ -246,7 +356,44 @@ public:
         return 0;
     }
 
-    inline void ExecuteHooks()
+    void Reset()
+    {
+        Shutdown();
+
+        m_timeout_thread = 0;
+        m_hookmask = HOOK_DISABLE;
+        m_fakepidvid = MAKELONG(0x045E, 0x028E);
+        m_timeout = 60;
+
+        Init(nullptr);
+    }
+
+    void StartTimeoutThread()
+    {
+        if (!m_timeout_thread && m_timeout > 0 && !GetState(HOOK_NOTIMEOUT))
+            m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, NULL, NULL);
+    }
+
+    void HookDICOM(REFIID riidltf, LPVOID *ppv);
+
+private:
+    DWORD ReadGameDatabase()
+    {
+        u32 out = 0;
+        SWIP ini;
+        if (ini.Load("x360ce.gdb"))
+        {
+            PrintLog("Using game database file:");
+            PrintLog(ini.GetIniPath().c_str());
+
+            std::string processName;
+            ModuleFileNameA(&processName);
+            ini.Get(processName, "HookMask", &out);
+        }
+        return out;
+    }
+
+    void ExecuteHooks()
     {
         if (!GetState())
         {
@@ -278,26 +425,6 @@ public:
         MH_EnableHook(MH_ALL_HOOKS);
     }
 
-    void Reset()
-    {
-        m_devices.clear();
-        if (m_timeout_thread) CloseHandle(m_timeout_thread);
-        m_timeout_thread = 0;
-
-        m_hookmask = HOOK_DISABLE;
-        m_fakepidvid = MAKELONG(0x045E, 0x028E);
-        m_timeout = 60;
-    }
-
-    void StartTimeoutThread()
-    {
-        if (!m_timeout_thread && m_timeout > 0 && !GetState(HOOK_NOTIMEOUT))
-            m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, NULL, NULL);
-    }
-
-    void HookDICOM(REFIID riidltf, LPVOID *ppv);
-
-private:
     DWORD m_hookmask;
     DWORD m_fakepidvid;
     DWORD m_timeout;
