@@ -75,7 +75,7 @@ bool GetWindowsVersionName(std::string* out)
 {
     if (!out) return false;
 
-    *out = "Microsoft";
+    *out = "Microsoft ";
 
     BYTE dwType = GetProductType();
     DWORD dwSubType = 0;
@@ -90,13 +90,13 @@ bool GetWindowsVersionName(std::string* out)
 
         if (dwType == VER_NT_WORKSTATION)
         {
-            out->append(" Windows 8.1");
+            out->append("Windows 8.1");
             if (dwSubType == PRODUCT_PROFESSIONAL)
                 out->append(" Pro");
         }
         else if (dwType == VER_NT_SERVER)
         {
-            out->append(" Windows Server 2012 R2");
+            out->append("Windows Server 2012 R2");
         }
     }
     else if (EqualsMajorVersion(6) && EqualsMinorVersion(2))
@@ -105,13 +105,13 @@ bool GetWindowsVersionName(std::string* out)
 
         if (dwType == VER_NT_WORKSTATION)
         {
-            out->append(" Windows 8");
+            out->append("Windows 8");
             if (dwSubType == PRODUCT_PROFESSIONAL)
                 out->append(" Pro");
         }
         else if (dwType == VER_NT_SERVER)
         {
-            out->append(" Windows Server 2012");
+            out->append("Windows Server 2012");
         }
     }
     else // older than Windows 8 use GetVersionExA
@@ -127,7 +127,7 @@ bool GetWindowsVersionName(std::string* out)
 
             if (dwType == VER_NT_WORKSTATION)
                 out->append("Windows 7");
-            else out->append(" Windows Server 2008 R2");
+            else out->append("Windows Server 2008 R2");
 
             switch (dwSubType)
             {
@@ -190,24 +190,24 @@ bool GetWindowsVersionName(std::string* out)
         else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
         {
             if (dwType == VER_NT_WORKSTATION)
-                out->append(" Windows Vista");
-            else out->append(" Windows Server 2008");
+                out->append("Windows Vista");
+            else out->append("Windows Server 2008");
         }
         else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 2)
         {
 
             if (GetSystemMetrics(SM_SERVERR2))
-                out->append(" Windows Server 2003 R2");
+                out->append("Windows Server 2003 R2");
             else if (osvi.wSuiteMask & VER_SUITE_STORAGE_SERVER)
-                out->append(" Windows Storage Server 2003");
+                out->append("Windows Storage Server 2003");
             else if (osvi.wSuiteMask & VER_SUITE_WH_SERVER)
-                out->append(" Windows Home Server");
+                out->append("Windows Home Server");
             else if (osvi.wProductType == VER_NT_WORKSTATION &&
                 si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
             {
-                out->append(" Windows XP Professional x64 Edition");
+                out->append("Windows XP Professional x64 Edition");
             }
-            else out->append(" Windows Server 2003, ");
+            else out->append("Windows Server 2003, ");
             if (osvi.wProductType != VER_NT_WORKSTATION)
             {
                 if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)

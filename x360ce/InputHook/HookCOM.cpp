@@ -98,14 +98,8 @@ namespace HookCOM
 
         if (pVal->vt == VT_BSTR && pVal->bstrVal != NULL)
         {
-            if (wcsstr(pVal->bstrVal, L"IG_") && !s_InputHook->GetState(InputHook::HOOK_PIDVID))
-            {
-                PrintLog("Xinput device skipped");
-                return hr;
-            }
-
             //PrintLog( "  Got device ID '%ls'", pVal->bstrVal);
-            DWORD dwPid = 0, dwVid = 0, dummy;
+            DWORD dwPid = 0, dwVid = 0, dummy = 0;
 
             OLECHAR* strVid = wcsstr(pVal->bstrVal, L"VID_");
             if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1) {

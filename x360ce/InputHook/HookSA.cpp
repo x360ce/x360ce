@@ -39,12 +39,6 @@ namespace HookSA
 
         if (DeviceInstanceId && ret)
         {
-            if (wcsstr(DeviceInstanceId, L"IG_") && !s_InputHook->GetState(InputHook::HOOK_PIDVID))
-            {
-                PrintLog("Xinput device skipped");
-                return ret;
-            }
-
             DWORD dwPid = 0, dwVid = 0;
 
             wchar_t* strVid = wcsstr(DeviceInstanceId, L"VID_");

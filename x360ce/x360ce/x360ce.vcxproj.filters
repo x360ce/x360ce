@@ -4,9 +4,6 @@
     <ClCompile Include="Config.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
-      <Filter>x360ce</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
@@ -16,12 +13,12 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectInput.h">
       <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -38,6 +35,9 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@
 #include "Utils.h"
 #include "InputHook.h"
 
-#include "DirectInput.h"
+#include "Controller.h"
 #include "SWIP.h"
 #include "Config.h"
 #include "x360ce.h"
@@ -15,7 +15,6 @@ bool g_bInitBeep = true;
 bool g_bNative = false;
 bool g_bDisable = false;
 bool g_bContinue = false;
-std::vector<Mapping> g_Mappings;
 
 static const char* const buttonNames[] =
 {
@@ -125,19 +124,20 @@ DWORD ReadGameDatabase()
     if (ini.Load("x360ce.gdb"))
     {
         PrintLog("Using game database file:");
-        PrintLog("%s", ini.GetIniPath().c_str());
+        PrintLog(ini.GetIniPath().c_str());
 
         ini.Get(exename, "HookMask", &out);
     }
     return out;
 }
 
-void ReadConfig(bool reset)
+void ReadConfig()
 {
     SWIP ini;
     ini.Load("x360ce.ini");
 
-    if (!reset)
+    static bool once_flag = false;
+    if (!once_flag)
     {
         // Read global options
         ini.Get("Options", "Disable", &g_bDisable);
@@ -156,17 +156,22 @@ void ReadConfig(bool reset)
         if (file)
         {
             char logfilename[MAX_PATH];
-            sprintf_s(logfilename, "x360ce_%s_%u.log", exename.c_str(), GetTickCount());
+            SYSTEMTIME systime;
+            GetLocalTime(&systime);
+            sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", exename.c_str(), systime.wYear,
+                systime.wMonth, systime.wDay, GetTickCount());
             LogFile(logfilename);
         }
 
         PrintLog("Using config file:");
-        PrintLog("%s", ini.GetIniPath().c_str());
+        PrintLog(ini.GetIniPath().c_str());
 
         u32 ver = 0;
         ini.Get("Options", "Version", &ver);
         if (ver != VERSION_CONFIG)
             PrintLog("WARNING: Configuration file version mismatch detected");
+
+        once_flag = true;
     }
 
     // Simple Game Database support
@@ -237,87 +242,43 @@ void ReadConfig(bool reset)
     g_iHook.SetTimeout(timeout);
 
     // Read pad mappings
-    for (DWORD i = 0; i < 4; ++i)
-        ReadPadConfig(i, &ini);
+    for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
+    {
+        std::string section;
+        std::string key = StringFormat("PAD%u", i + 1);
+        ini.Get("Mappings", key, &section);
+        if (section.empty()) continue;
+
+        u32 index = 0;
+        ini.Get(section, "UserIndex", &index, INVALIDUSERINDEX);
+        if (index == INVALIDUSERINDEX) index = i;
+
+        g_pControllers[index] = new Controller;
+        g_pControllers[index]->dwUserIndex = index;
+
+        ReadPadConfig(g_pControllers[index], section, &ini);
+        ReadPadMapping(g_pControllers[index], section, &ini);
+    }
 }
 
-void ReadPadConfig(DWORD dwUserIndex, SWIP *ini)
+void ReadPadMapping(Controller* pController, const std::string& section, SWIP *ini)
 {
-    char section[MAX_PATH] = "Mappings";
-    char key[MAX_PATH];
-    sprintf_s(key, "PAD%u", dwUserIndex + 1);
-    std::string strBuf;
-    ini->Get(section, key, &strBuf);
-    if (strBuf.empty()) return;
-
-#if _MSC_VER < 1700
-    g_Devices.push_back(DInputDevice());
-    DInputDevice& device = g_Devices.back();
-
-    g_Mappings.push_back(Mapping());
-    Mapping& mapping = g_Mappings.back();
-#else
-    g_Devices.emplace_back();
-    DInputDevice& device = g_Devices.back();
-
-    g_Mappings.emplace_back();
-    Mapping& mapping = g_Mappings.back();
-#endif
-
-    //store value as section name
-    strcpy_s(section, strBuf.c_str());
-
-    device.dwUserIndex = 0;
-    ini->Get(section, "UserIndex", &device.dwUserIndex, (u32)-1);
-    if (device.dwUserIndex == (u32)-1) device.dwUserIndex = dwUserIndex; //fallback to old indexing
-
-    ini->Get(section, "ProductGUID", &strBuf);
-    if (strBuf.empty()) PrintLog("ProductGUID is empty");
-    else StringToGUID(&device.productid, strBuf.c_str());
-
-    ini->Get(section, "InstanceGUID", &strBuf);
-    if (strBuf.empty()) PrintLog("InstanceGUID is empty");
-    else StringToGUID(&device.instanceid, strBuf.c_str());
-
-    ini->Get(section, "UseProductGUID", &device.useproduct);
-    ini->Get(section, "PassThrough", &device.passthrough, true);
-
-    if (device.passthrough) return;
-
-    // Device type
-    ini->Get(section, "ControllerType", &device.gamepadtype, 1);
-
-    // Axis to DPAD options
-    ini->Get(section, "AxisToDPad", &device.axistodpad);
-    ini->Get(section, "AxisToDPadDeadZone", &device.a2ddeadzone);
-    ini->Get(section, "AxisToDPadOffset", &device.a2doffset);
-
-    // FFB options
-    ini->Get(section, "UseForceFeedback", &device.useforce);
-    ini->Get(section, "SwapMotor", &device.swapmotor);
-    ini->Get(section, "FFBType", &device.ff.type);
-    ini->Get(section, "ForcePercent", &device.ff.forcepercent, 100);
-    device.ff.forcepercent *= 0.01f;
-
-    ini->Get(section, "LeftMotorPeriod", &device.ff.leftPeriod, 60);
-    ini->Get(section, "RightMotorPeriod", &device.ff.rightPeriod, 20);
-
-    /* ==================================== Mapping start ============================================*/
+    Mapping* pMapping = &pController->mapping;
 
     // Guide button
-    ini->Get(section, "GuideButton", &mapping.guide);
+    ini->Get(section, "GuideButton", &pMapping->guide);
 
     // Fire buttons
     for (s8 i = 0; i < 10; ++i)
     {
         s8 button = 0;
         ini->Get(section, buttonNames[i], &button);
-        mapping.Button[i] = button - 1;
+        pMapping->Button[i] = button - 1;
     }
 
     // D-PAD
-    ini->Get(section, "D-pad POV", &mapping.DpadPOV);
-    if (mapping.DpadPOV == 0)
+    ini->Get(section, "D-pad POV", &pMapping->DpadPOV);
+    if (pMapping->DpadPOV == 0)
     {
         for (s8 i = 0; i < 4; ++i)
         {
@@ -326,13 +287,13 @@ void ReadPadConfig(DWORD dwUserIndex, SWIP *ini)
             ini->Get(section, povNames[i], &val, -1);
             if (val > 0 && val < 128)
             {
-                mapping.pov[i] = val - 1;
-                mapping.PovIsButton = true;
+                pMapping->pov[i] = val - 1;
+                pMapping->PovIsButton = true;
             }
             else if (val > -1)
             {
-                mapping.pov[i] = val;
-                mapping.PovIsButton = false;
+                pMapping->pov[i] = val;
+                pMapping->PovIsButton = false;
             }
         }
     }
@@ -342,30 +303,35 @@ void ReadPadConfig(DWORD dwUserIndex, SWIP *ini)
         // Axes
         std::string axis;
         ini->Get(section, axisNames[i], &axis);
-        ParsePrefix(axis, &mapping.Axis[i].analogType, &mapping.Axis[i].id);
+        ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
 
         // DeadZones
-        ini->Get(section, axisDZNames[i], &device.axisdeadzone[i]);
+        ini->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
 
         // Anti DeadZones
-        ini->Get(section, axisADZNames[i], &device.antideadzone[i]);
+        ini->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
 
         // Linearity
-        ini->Get(section, axisLNames[i], &device.axislinear[i]);
+        ini->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
+
+        // Axis to DPAD options
+        ini->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
+        ini->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
+        ini->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
 
         // Axis to button mappings
         s8 ret = 0;
         ini->Get(section, axisBNames[i * 2], &ret);
         if (ret > 0)
         {
-            mapping.Axis[i].hasDigital = true;
-            mapping.Axis[i].positiveButtonID = ret - 1;
+            pMapping->Axis[i].hasDigital = true;
+            pMapping->Axis[i].positiveButtonID = ret - 1;
         }
         ini->Get(section, axisBNames[i * 2 + 1], &ret);
         if (ret > 0)
         {
-            mapping.Axis[i].hasDigital = true;
-            mapping.Axis[i].negativeButtonID = ret - 1;
+            pMapping->Axis[i].hasDigital = true;
+            pMapping->Axis[i].negativeButtonID = ret - 1;
         }
     }
 
@@ -376,13 +342,44 @@ void ReadPadConfig(DWORD dwUserIndex, SWIP *ini)
     std::string trigger_right;
     ini->Get(section, "Right Trigger", &trigger_right);
 
-    ParsePrefix(trigger_left, &mapping.Trigger[0].type, &mapping.Trigger[0].id);
-    ParsePrefix(trigger_right, &mapping.Trigger[1].type, &mapping.Trigger[1].id);
+    ParsePrefix(trigger_left, &pMapping->Trigger[0].type, &pMapping->Trigger[0].id);
+    ParsePrefix(trigger_right, &pMapping->Trigger[1].type, &pMapping->Trigger[1].id);
 
-    ini->Get(section, "Left Trigger DZ", &device.triggerdz[0]);
-    ini->Get(section, "Right Trigger DZ", &device.triggerdz[1]);
+    ini->Get(section, "Left Trigger DZ", &pMapping->Trigger[0].triggerdz);
+    ini->Get(section, "Right Trigger DZ", &pMapping->Trigger[0].triggerdz);
 
     // SeDoG mod
-    ini->Get(section, "Left Trigger But", &mapping.Trigger[0].but);
-    ini->Get(section, "Right Trigger But", &mapping.Trigger[1].but);
+    ini->Get(section, "Left Trigger But", &pMapping->Trigger[0].but);
+    ini->Get(section, "Right Trigger But", &pMapping->Trigger[1].but);
+}
+
+void ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini)
+{
+    std::string buffer;
+
+    ini->Get(section, "ProductGUID", &buffer);
+    if (buffer.empty()) PrintLog("ProductGUID is empty");
+    else StringToGUID(&pController->productid, buffer);
+
+    ini->Get(section, "InstanceGUID", &buffer);
+    if (buffer.empty()) PrintLog("InstanceGUID is empty");
+    else StringToGUID(&pController->instanceid, buffer);
+
+    ini->Get(section, "UseProductGUID", &pController->useproduct);
+    ini->Get(section, "PassThrough", &pController->passthrough, true);
+
+    if (pController->passthrough) return;
+
+    // Device type
+    ini->Get(section, "ControllerType", &pController->gamepadtype, 1);
+
+    // FFB options
+    ini->Get(section, "UseForceFeedback", &pController->useforce);
+    ini->Get(section, "SwapMotor", &pController->ffb.swapmotor);
+    ini->Get(section, "FFBType", &pController->ffb.type);
+    ini->Get(section, "ForcePercent", &pController->ffb.forcepercent, 100);
+    pController->ffb.forcepercent *= 0.01f;
+
+    ini->Get(section, "LeftMotorPeriod", &pController->ffb.leftPeriod, 60);
+    ini->Get(section, "RightMotorPeriod", &pController->ffb.rightPeriod, 20);
 }

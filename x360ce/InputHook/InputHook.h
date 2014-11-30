@@ -223,19 +223,11 @@ public:
     {
         return m_devices.at(dwUserIndex);
     }
-
-#if _MSC_VER < 1700
     inline void AddHook(DWORD userindex, const GUID& productid, const GUID& instanceid)
     {
-        iHookDevice hdevice(userindex, productid, instanceid);
-        m_devices.push_back(hdevice);
+        InputHookDevice dev(userindex, productid, instanceid);
+        m_devices.push_back(dev);
     }
-#else
-    inline void AddHook(DWORD userindex, const GUID& productid, const GUID& instanceid)
-    {
-        m_devices.emplace_back(userindex, productid, instanceid);
-    }
-#endif
 
     inline HMODULE GetEmulator()
     {

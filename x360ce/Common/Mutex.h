@@ -1,6 +1,6 @@
 #pragma once
 
-class Mutex
+class Mutex : NonCopyable
 {
 public:
     Mutex()
@@ -35,7 +35,6 @@ public:
 
 private:
     CRITICAL_SECTION cs;
-    Mutex(const Mutex& other);
 };
 
 class LockGuard : NonCopyable
