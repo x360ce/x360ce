@@ -464,7 +464,7 @@ HookMask = 0x00000002
 
 [x360ce.exe]
 Name = x360ce.App
-HookMask = 0x80000000
+HookMask = 0
 
 [XComEW.exe]
 Name = XCOM Enemy Within

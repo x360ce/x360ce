@@ -18,6 +18,8 @@ namespace HookWT
         if (!s_InputHook->GetState(InputHook::HOOK_WT)) return TrueWinVerifyTrust(hwnd, pgActionID, pWVTData);
         PrintLog("*WinVerifyTrust*");
 
+        s_InputHook->StartTimeoutThread();
+
         UNREFERENCED_PARAMETER(hwnd);
         UNREFERENCED_PARAMETER(pgActionID);
         UNREFERENCED_PARAMETER(pWVTData);

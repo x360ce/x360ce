@@ -8,15 +8,15 @@
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
 
-HMODULE CurrentModule();
+HMODULE& CurrentModule();
 
 bool BuildPath(const std::string& filename, std::string* fullpath, bool check_exist = true);
-bool ModuleFullPathA(std::string* out, HMODULE hModule = NULL);
-bool ModuleFullPathW(std::wstring* out, HMODULE hModule = NULL);
-bool ModulePathA(std::string* out, HMODULE hModule = NULL);
-bool ModulePathW(std::wstring* out, HMODULE hModule = NULL);
-bool ModuleFileNameA(std::string* out, HMODULE hModule = NULL);
-bool ModuleFileNameW(std::wstring* out, HMODULE hModule = NULL);
+bool ModuleFullPath(std::string* out, HMODULE hModule = NULL);
+bool ModuleFullPath(std::wstring* out, HMODULE hModule = NULL);
+bool ModulePath(std::string* out, HMODULE hModule = NULL);
+bool ModulePath(std::wstring* out, HMODULE hModule = NULL);
+bool ModuleFileName(std::string* out, HMODULE hModule = NULL);
+bool ModuleFileName(std::wstring* out, HMODULE hModule = NULL);
 
 void StringToGUID(GUID* id, const std::string& szBuf);
 void StringToGUID(GUID* id, const std::wstring& szBuf);

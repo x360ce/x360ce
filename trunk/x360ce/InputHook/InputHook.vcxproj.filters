@@ -36,5 +36,6 @@
     <ClCompile Include="HookWT.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
+    <ClCompile Include="InputHook.cpp" />
   </ItemGroup>
 </Project>

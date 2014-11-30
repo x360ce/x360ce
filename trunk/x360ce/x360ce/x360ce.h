@@ -4,7 +4,9 @@ extern WNDPROC oldWndProc;
 extern HWND hMsgWnd;
 extern InputHook g_iHook;
 
-static const DWORD INVALIDUSERINDEX = (DWORD)-1;
+#ifndef INVALIDUSERINDEX
+#define INVALIDUSERINDEX (u32)-1
+#endif
 
 static const char * legal_notice = {
     "\nx360ce - XBOX 360 Controller emulator\n"

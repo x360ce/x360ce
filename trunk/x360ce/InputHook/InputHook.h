@@ -1,21 +1,3 @@
-/*  InputHook Detour Library for XBOX360 Controller Emulator
- *
- *  https://code.google.com/p/x360ce/
- *
- *  Copyright (C) 2012-2014 Robert Krawczyk
- *
- *  InputHook is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU Lesser General Public License as published by the Free Software Foundation,
- *  either version 3 of the License, or any later version.
- *
- *  InputHook is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with InputHook.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #pragma once
 
 #include <CGuid.h>
@@ -25,9 +7,14 @@
 
 #include "Mutex.h"
 
-typedef void (*InputHookInitCallback_t)();
+#ifndef INVALIDUSERINDEX
+#define INVALIDUSERINDEX (u32)-1
+#endif
 
-static const char* status_names[] = {
+typedef void(*LoggerCallback_t)();
+
+static const char* status_names[] =
+{
     "MH_OK",
     "MH_ERROR_ALREADY_INITIALIZED",
     "MH_ERROR_NOT_INITIALIZED",
@@ -41,11 +28,8 @@ static const char* status_names[] = {
     "MH_ERROR_MEMORY_PROTECT",
 };
 
-#define IH_CreateHook(pTarget, pDetour, ppOrgiginal) IH_CreateHookF(pTarget, pDetour, ppOrgiginal, #pTarget)
-#define IH_EnableHook(pTarget) IH_EnableHookF(pTarget, #pTarget)
-
 template<typename N>
-inline void IH_CreateHookF(LPVOID pTarget, LPVOID pDetour, N* ppOriginal, const char* pTargetName)
+void IH_CreateHookF(LPVOID pTarget, LPVOID pDetour, N* ppOriginal, const char* pTargetName)
 {
     MH_STATUS status = MH_CreateHook(pTarget, pDetour, reinterpret_cast<void**>(ppOriginal));
     if (status == MH_OK || status == MH_ERROR_ALREADY_CREATED)
@@ -73,31 +57,19 @@ inline void IH_EnableHookF(LPVOID pTarget, const char* pTargetName)
     }
 }
 
+#define IH_CreateHook(pTarget, pDetour, ppOrgiginal) IH_CreateHookF(pTarget, pDetour, ppOrgiginal, #pTarget)
+#define IH_EnableHook(pTarget) IH_EnableHookF(pTarget, #pTarget)
+
 class InputHookDevice
 {
 public:
     InputHookDevice(DWORD userindex, const GUID& productid, const GUID& instanceid)
-        :m_enabled(true)
-        , m_productid(productid)
+        : m_productid(productid)
         , m_instanceid(instanceid)
         , m_userindex(userindex)
-    {}
+    {
+    }
     virtual ~InputHookDevice() {};
-
-    void Enable()
-    {
-        m_enabled = true;
-    }
-
-    void Disable()
-    {
-        m_enabled = false;
-    }
-
-    bool GetHookState()
-    {
-        return m_enabled;
-    }
 
     GUID GetProductGUID()
     {
@@ -120,7 +92,6 @@ public:
     }
 
 private:
-    bool  m_enabled;
     GUID  m_productid;
     GUID  m_instanceid;
     DWORD m_userindex;
@@ -130,9 +101,10 @@ class InputHook
 {
 public:
     InputHook()
-        :m_hookmask(HOOK_DISABLE)
+        : m_hookmask(0)
         , m_fakepidvid(MAKELONG(0x045E, 0x028E))
-        , m_timeout(60)
+        , m_timeout(30)
+        , m_timeout_thread(INVALID_HANDLE_VALUE)
     {
     }
     virtual ~InputHook()
@@ -144,18 +116,15 @@ public:
         m_timeout_thread = 0;
     };
 
-    static const DWORD HOOK_NONE      = 0x00000000UL;
-    static const DWORD HOOK_LL        = 0x00000001UL;
-    static const DWORD HOOK_COM       = 0x00000002UL;
-    static const DWORD HOOK_DI        = 0x00000004UL;
-    static const DWORD HOOK_PIDVID    = 0x00000008UL;
-    static const DWORD HOOK_NAME      = 0x00000010UL;
-    static const DWORD HOOK_SA        = 0x00000020UL;
-
-    static const DWORD HOOK_WT        = 0x10000000UL;
-    static const DWORD HOOK_STOP      = 0x20000000UL;
-    static const DWORD HOOK_NOTIMEOUT = 0x40000000UL;
-    static const DWORD HOOK_DISABLE   = 0x80000000UL;
+    static const u32 HOOK_LL =        0x00000001UL;
+    static const u32 HOOK_COM =       0x00000002UL;
+    static const u32 HOOK_DI =        0x00000004UL;
+    static const u32 HOOK_PIDVID =    0x00000008UL;
+    static const u32 HOOK_NAME =      0x00000010UL;
+    static const u32 HOOK_SA =        0x00000020UL;
+    static const u32 HOOK_WT =        0x10000000UL;
+    static const u32 HOOK_STOP =      0x20000000UL;
+    static const u32 HOOK_NOTIMEOUT = 0x40000000UL;
 
     typedef std::vector<InputHookDevice>::iterator iterator;
     typedef std::vector<InputHookDevice>::const_iterator const_iterator;
@@ -169,14 +138,10 @@ public:
     const_iterator cbegin() const { return m_devices.cbegin(); }
     const_iterator cend() const { return m_devices.cend(); }
 
-    void Enable()
+    const bool GetState(const DWORD& flag) const
     {
-        m_hookmask &= ~HOOK_DISABLE;
-    }
-
-    void Disable()
-    {
-        m_hookmask |= HOOK_DISABLE;
+        if (!m_hookmask) return false;
+        return (m_hookmask & flag) == flag;
     }
 
     void EnableHook(const DWORD& flag)
@@ -189,245 +154,37 @@ public:
         m_hookmask &= ~flag;
     }
 
-    const bool GetState(const DWORD& flag = HOOK_NONE) const
-    {
-        if (m_hookmask & HOOK_DISABLE || m_hookmask == HOOK_NONE) return false;
-        return (m_hookmask & flag) == flag;
-    }
-
-    DWORD GetMask()
-    {
-        return m_hookmask;
-    }
-
-    void SetMask(const DWORD& mask)
-    {
-        m_hookmask = mask;
-    }
-
-    void SetFakePIDVID(const DWORD& pidvid)
-    {
-        m_fakepidvid = pidvid;
-    }
-
     DWORD GetFakePIDVID()
     {
         return m_fakepidvid;
     }
 
-    void SetTimeout(const DWORD& timeout)
+    InputHookDevice* GetPadConfig(const DWORD& dwUserIndex)
     {
-        m_timeout = timeout;
+        return &m_devices[dwUserIndex];
     }
 
-    InputHookDevice& GetPadConfig(const DWORD& dwUserIndex)
-    {
-        return m_devices.at(dwUserIndex);
-    }
+    void Init(LoggerCallback_t callback);
 
-    void Init(InputHookInitCallback_t callback)
-    {
-        if (callback) callback();
+    void Shutdown();
 
-        SWIP ini;
-        ini.Load("x360ce.ini");
-
-        bool hook_override = false;
-        ini.Get("InputHook", "Override", &hook_override);
-        u32 hookMask = ReadGameDatabase();
-        if (hookMask && hook_override == false)
-        {
-            SetMask(hookMask);
-            Enable();
-        }
-        else
-        {
-            ini.Get("InputHook", "HookMask", &hookMask);
-            if (hookMask)
-            {
-                SetMask(hookMask);
-                Enable();
-            }
-            else
-            {
-                bool hookCheck = 0;
-
-                ini.Get("InputHook", "HookLL", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_LL);
-
-                ini.Get("InputHook", "HookCOM", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_COM);
-
-                ini.Get("InputHook", "HookDI", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_DI);
-
-                ini.Get("InputHook", "HookPIDVID", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_PIDVID);
-
-                ini.Get("InputHook", "HookSA", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_SA);
-
-                ini.Get("InputHook", "HookNAME", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_NAME);
-
-                ini.Get("InputHook", "HookSTOP", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_STOP);
-
-                ini.Get("InputHook", "HookWT", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_WT);
-
-                ini.Get("InputHook", "HookNoTimeout", &hookCheck);
-                if (hookCheck) EnableHook(InputHook::HOOK_NOTIMEOUT);
-
-                if (GetMask()) Enable();
-            }
-        }
-        if (GetState(InputHook::HOOK_PIDVID))
-        {
-            u32 vid = 0x045E;
-            u32 pid = 0x028E;
-            ini.Get("InputHook", "FakeVID", &vid, 0x045E);
-            ini.Get("InputHook", "FakePID", &pid, 0x028E);
-
-            if (vid != 0x045E || pid != 0x28E) SetFakePIDVID(MAKELONG(vid, pid));
-        }
-
-        u32 timeout = 60;
-        ini.Get("InputHook", "Timeout", &timeout, 60);
-        SetTimeout(timeout);
-
-        // Read pad mappings
-        for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
-        {
-            std::string section;
-            std::string key = StringFormat("PAD%u", i + 1);
-            ini.Get("Mappings", key, &section);
-            if (section.empty()) continue;
-
-            //TODO: use INVALIDUSERINDEX
-            u32 index = 0;
-            ini.Get(section, "UserIndex", &index, (u32)-1);
-            if (index == (u32)-1) index = i;
-
-            std::string buffer;
-            GUID productid = GUID_NULL;
-            GUID instanceid = GUID_NULL;
-
-            ini.Get(section, "ProductGUID", &buffer);
-            if (buffer.empty()) PrintLog("ProductGUID is empty");
-            else StringToGUID(&productid, buffer);
-
-            ini.Get(section, "InstanceGUID", &buffer);
-            if (buffer.empty()) PrintLog("InstanceGUID is empty");
-            else StringToGUID(&instanceid, buffer);
-
-            if (!IsEqualGUID(productid, GUID_NULL) && !IsEqualGUID(instanceid, GUID_NULL))
-            {
-                InputHookDevice dev(index, productid, instanceid);
-                m_devices.push_back(dev);
-            }
-        }
-
-        ExecuteHooks();
-    }
-
-    void Shutdown()
-    {
-        MH_Uninitialize();
-
-        m_devices.clear();
-        if (m_timeout_thread) CloseHandle(m_timeout_thread);
-    }
-
-    HMODULE GetEmulator()
+    HMODULE& GetEmulator()
     {
         return CurrentModule();
     }
 
-    static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter)
-    {
-        DWORD* pTimeout = reinterpret_cast<DWORD*>(lpParameter);
+    void Reset();
 
-        PrintLog("Waiting for hooks...");
-        Sleep(*pTimeout * 1000);
-
-        PrintLog("Hook timeout");
-        MH_Uninitialize();
-        return 0;
-    }
-
-    void Reset()
-    {
-        Shutdown();
-
-        m_timeout_thread = 0;
-        m_hookmask = HOOK_DISABLE;
-        m_fakepidvid = MAKELONG(0x045E, 0x028E);
-        m_timeout = 60;
-
-        Init(nullptr);
-    }
-
-    void StartTimeoutThread()
-    {
-        if (!m_timeout_thread && m_timeout > 0 && !GetState(HOOK_NOTIMEOUT))
-            m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, NULL, NULL);
-    }
-
-    void HookDICOM(REFIID riidltf, LPVOID *ppv);
+    void StartTimeoutThread();
 
 private:
-    DWORD ReadGameDatabase()
-    {
-        u32 out = 0;
-        SWIP ini;
-        if (ini.Load("x360ce.gdb"))
-        {
-            PrintLog("Using game database file:");
-            PrintLog(ini.GetIniPath().c_str());
+    static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter);
+    bool ReadGameDatabase(u32* mask);
+    std::string MaskToName(u32 mask);
 
-            std::string processName;
-            ModuleFileNameA(&processName);
-            ini.Get(processName, "HookMask", &out);
-        }
-        return out;
-    }
-
-    void ExecuteHooks()
-    {
-        if (!GetState())
-        {
-            m_devices.clear();
-            return;
-        }
-
-        LockGuard lock(m_mutex);
-
-        PrintLog("InputHook starting with mask 0x%08X", m_hookmask);
-
-        MH_Initialize();
-
-        if (GetState(HOOK_LL))
-            HookLL();
-
-        if (GetState(HOOK_COM))
-            HookCOM();
-
-        if (GetState(HOOK_DI))
-            HookDI();
-
-        if (GetState(HOOK_SA))
-            HookSA();
-
-        if (GetState(HOOK_WT))
-            HookWT();
-
-        MH_EnableHook(MH_ALL_HOOKS);
-    }
-
-    DWORD m_hookmask;
-    DWORD m_fakepidvid;
-    DWORD m_timeout;
+    u32 m_hookmask;
+    u32 m_fakepidvid;
+    u32 m_timeout;
     HANDLE m_timeout_thread;
 
     std::vector<InputHookDevice> m_devices;

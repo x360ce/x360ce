@@ -35,7 +35,6 @@ void Controller::Init()
 
     gamepadtype = 1;
     passthrough = true;
-    useproduct = false;
 }
 
 void Controller::Reset()
@@ -98,7 +97,6 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
         ExitProcess(hr);
     }
 
-    static Mutex mutex;
     LockGuard lock(mutex);
 
     PrintLog("[PAD%d] Creating device", dwUserIndex + 1);
@@ -109,38 +107,13 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     if (bHookDI) g_iHook.DisableHook(InputHook::HOOK_DI);
     if (bHookSA) g_iHook.DisableHook(InputHook::HOOK_SA);
 
-    if (!useproduct)
-    {
-        hr = dinput.Get()->CreateDevice(instanceid, &device, NULL);
-        if (FAILED(hr))
-        {
-            std::string strInstance;
-            GUIDtoStringA(&strInstance, instanceid);
-            PrintLog("InstanceGUID %s is incorrect trying ProductGUID", strInstance.c_str());
-            hr = dinput.Get()->CreateDevice(productid, &device, NULL);
-        }
-    }
-    else hr = dinput.Get()->CreateDevice(productid, &device, NULL);
-
+    hr = dinput.Get()->CreateDevice(instanceid, &device, NULL);
     if (FAILED(hr))
     {
-        if (g_bContinue)
-        {
-            passthrough = true;
-            return S_OK;
-        }
-        PrintLog("x360ce is misconfigured or device is disconnected");
-        int response = MessageBoxA(NULL, "x360ce is misconfigured or device is disconnected", "x360ce - Error", MB_CANCELTRYCONTINUE | MB_ICONWARNING | MB_SYSTEMMODAL);
-        switch (response)
-        {
-        case IDCANCEL:
-            ExitProcess(1);
-        case IDTRYAGAIN:
-            return InitDirectInput(hWnd);
-        case IDCONTINUE:
-            passthrough = true;
-            return S_OK;
-        }
+        std::string strInstance;
+        GUIDtoStringA(&strInstance, instanceid);
+        PrintLog("InstanceGUID %s is incorrect trying ProductGUID", strInstance.c_str());
+        hr = dinput.Get()->CreateDevice(productid, &device, NULL);
     }
 
     if (!device) return ERROR_DEVICE_NOT_CONNECTED;
@@ -359,8 +332,7 @@ HRESULT ForceFeedback::SetDeviceForces(WORD force, u8 motor)
         return S_OK;
     }
 
-    static Mutex mutex;
-    LockGuard lock(mutex);
+    LockGuard lock(controller->mutex);
 
     if (type == 1) SetDeviceForcesEjocys(force, motor);
     else if (type == 2) SetDeviceForcesNew(force, motor);
