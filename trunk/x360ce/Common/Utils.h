@@ -18,8 +18,8 @@ bool ModulePathW(std::wstring* out, HMODULE hModule = NULL);
 bool ModuleFileNameA(std::string* out, HMODULE hModule = NULL);
 bool ModuleFileNameW(std::wstring* out, HMODULE hModule = NULL);
 
-void StringToGUID(GUID* id, const char* szBuf);
-void StringToGUID(GUID* id, const wchar_t* szBuf);
+void StringToGUID(GUID* id, const std::string& szBuf);
+void StringToGUID(GUID* id, const std::wstring& szBuf);
 
 bool GUIDtoStringA(std::string* out, const GUID &g);
 bool GUIDtoStringW(std::wstring* out, const GUID &g);

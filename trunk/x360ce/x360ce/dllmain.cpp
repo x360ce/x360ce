@@ -5,7 +5,7 @@
 #include "Utils.h"
 #include "InputHook.h"
 
-#include "DirectInput.h"
+#include "Controller.h"
 #include "SWIP.h"
 #include "Config.h"
 #include "x360ce.h"
@@ -14,9 +14,10 @@ InputHook g_iHook;
 
 VOID InstallInputHooks()
 {
-    for (auto device = g_Devices.begin(); device != g_Devices.end(); ++device)
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
     {
-        g_iHook.AddHook(device->dwUserIndex, device->productid, device->instanceid);
+        if (g_pControllers[i])
+            g_iHook.AddHook(g_pControllers[i]->dwUserIndex, g_pControllers[i]->productid, g_pControllers[i]->instanceid);
     }
 
     g_iHook.ExecuteHooks();
@@ -37,6 +38,11 @@ void __cdecl ExitInstance()
         xinput.dll = NULL;
     }
 
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
+    {
+        delete g_pControllers[i];
+    }
+
     PrintLog("Terminating x360ce, bye");
     LogShutdown();
 }
@@ -53,9 +59,9 @@ VOID InitInstance()
 #endif
 
     atexit(ExitInstance);
-  
+
     ModuleFileNameA(&exename);
-    ReadConfig();   
+    ReadConfig();
 
     InstallInputHooks();
 }
@@ -66,10 +72,13 @@ extern "C" VOID WINAPI reset()
 
     g_iHook.Reset();
 
-    g_Devices.clear();
-    g_Mappings.clear();
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
+    {
+        delete g_pControllers[i];
+        g_pControllers[i] = nullptr;
+    }
 
-    ReadConfig(true);
+    ReadConfig();
     InstallInputHooks();
 }
 

@@ -1,7 +1,8 @@
 #pragma once
 
-// disable C4351 - new behavior: elements of array 'array' will be default initialized
-#pragma warning( disable:4351 )
+class Controller;
+
+static const DWORD INVALIDBUTTONINDEX = (DWORD)-1;
 
 enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };
 
@@ -20,12 +21,26 @@ struct AxisMap
     s8 positiveButtonID, negativeButtonID; // button IDs corresponding to the positive/negative directions of the axis
     bool hasDigital; // Indicates if there is digital input mapped to the axis
 
+    s32 a2ddeadzone;
+    s32 a2doffset;
+    s16 axisdeadzone;
+    s16 antideadzone;
+    s16 axislinear;
+
+    bool axistodpad;
+
     AxisMap()
     {
         analogType = NONE;
         id = 0;
         positiveButtonID = negativeButtonID = 0;
         hasDigital = false;
+
+        a2ddeadzone = false;
+        a2doffset = 0;
+        axisdeadzone = 0;
+        antideadzone = 0;
+        axislinear = 0;
     }
 };
 struct TriggerMap
@@ -33,11 +48,13 @@ struct TriggerMap
     MappingType type;
     s8 id;			// Index for the mapped button/axis/slider
     s8 but;
+    u8 triggerdz;
     TriggerMap()
     {
         id = 0;
         but = 0;
         type = NONE;
+        triggerdz = 0;
     }
 };
 
@@ -52,17 +69,17 @@ struct Mapping
     s8 guide;
     s8 DpadPOV; // Index of POV switch to use for the D-pad
     bool PovIsButton;
+
     Mapping()
-        :Trigger()
-        , Axis()
-        , Button()
     {
+        for (u32 i = 0; i < _countof(Button); ++i) Button[i] = -1;
+
         pov[GAMEPAD_DPAD_UP] = 36000;
         pov[GAMEPAD_DPAD_DOWN] = 18000;
         pov[GAMEPAD_DPAD_LEFT] = 27000;
         pov[GAMEPAD_DPAD_RIGHT] = 9000;
 
-        guide = 0;
+        guide = -1;
         DpadPOV = 0;
         PovIsButton = false;
     }
@@ -92,11 +109,9 @@ static const u16 povIDs[4] =
 };
 
 void InitConfig(char* ininame);
-void ReadConfig(bool reset = false);
-void ReadPadConfig(DWORD dwUserIndex, SWIP* ini);
-
-extern std::vector<DInputDevice> g_Devices;
-extern std::vector<Mapping> g_Mappings;
+void ReadConfig();
+void ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini);
+void ReadPadMapping(Controller* pController, const std::string& section, SWIP *ini);
 
 extern bool g_bNative;
 extern bool g_bInitBeep;

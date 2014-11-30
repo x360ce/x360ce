@@ -23,13 +23,7 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Data", "x360ce.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.Web", "x360ce.Web\x360ce.Web.csproj", "{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dinput8", "x360ce\dinput8\dinput8.vcxproj", "{FE3BC27D-9B4F-4063-A6A5-04B38F79AD64}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.Engine", "x360ce.Engine\x360ce.Engine.csproj", "{F980D78A-9448-4834-A6FE-84797077D309}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMinHook", "x360ce\3rdparty\libMinHook\libMinHook.vcxproj", "{65021938-D251-46FA-BC3D-85C385D4C06D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

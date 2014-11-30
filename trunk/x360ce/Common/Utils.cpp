@@ -119,17 +119,18 @@ bool ModuleFileNameW(std::wstring* out, HMODULE hModule)
     return !out->empty();
 }
 
-void StringToGUID(GUID* id, const char* szBuf)
+void StringToGUID(GUID* id, const std::string& szBuf)
 {
-    if (!szBuf || !id) return;
+    if (!id) return;
 
-    if (strchr(szBuf, '{')) szBuf++;
+    const char* p = szBuf.c_str();
+    if (strchr(p, '{')) p++;
 
     u32 d1;
     s32 d2, d3;
     s32 b[8];
 
-    sscanf_s(szBuf, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+    sscanf_s(p, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
         &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]);
 
     id->Data1 = d1;
@@ -142,17 +143,18 @@ void StringToGUID(GUID* id, const char* szBuf)
     return;
 }
 
-void StringToGUID(GUID* id, const wchar_t* szBuf)
+void StringToGUID(GUID* id, const std::wstring& szBuf)
 {
-    if (!szBuf || !id) return;
+    if (!id) return;
 
-    if (wcschr(szBuf, L'{')) szBuf++;
+    const wchar_t* p = szBuf.c_str();
+    if (wcschr(p, L'{')) p++;
 
     u32 d1;
     s32 d2, d3;
     s32 b[8];
 
-    swscanf_s(szBuf, L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+    swscanf_s(p, L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
         &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]);
 
     id->Data1 = d1;

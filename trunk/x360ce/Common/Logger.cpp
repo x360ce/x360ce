@@ -25,10 +25,10 @@ void Logger::Shutdown()
 {
     if (m_console)
         FreeConsole();
-    
+
     if (m_file)
         CloseHandle(m_file);
-    
+
     delete m_instance;
 }
 
@@ -43,22 +43,22 @@ bool Logger::File(const char* filename)
 
 bool Logger::Console(const char* title, const char* console_notice)
 {
-    if (AllocConsole())
+    AllocConsole();
+
+    m_console = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (m_console != INVALID_HANDLE_VALUE)
     {
-        m_console = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (m_console != INVALID_HANDLE_VALUE)
+        ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+        if (title) SetConsoleTitleA(title);
+        if (console_notice)
         {
-            ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-            if (title) SetConsoleTitleA(title);
-            if (console_notice)
-            {
-                size_t len = strlen(console_notice);
-                DWORD lenout = 0;
-                WriteConsoleA(m_console, console_notice, (DWORD)len, &lenout, NULL);
-            }
+            size_t len = strlen(console_notice);
+            DWORD lenout = 0;
+            WriteConsoleA(m_console, console_notice, (DWORD)len, &lenout, NULL);
         }
-        return m_console != INVALID_HANDLE_VALUE;
     }
+    return m_console != INVALID_HANDLE_VALUE;
+
     return false;
 }
 
