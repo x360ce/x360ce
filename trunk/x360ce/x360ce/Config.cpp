@@ -117,18 +117,30 @@ void ParsePrefix(const std::string& input, MappingType* mapping_type, s8* value)
     }
 }
 
-DWORD ReadGameDatabase()
+void InitLogger()
 {
-    u32 out = 0;
     SWIP ini;
-    if (ini.Load("x360ce.gdb"))
-    {
-        PrintLog("Using game database file:");
-        PrintLog(ini.GetIniPath().c_str());
+    ini.Load("x360ce.ini");
 
-        ini.Get(exename, "HookMask", &out);
+    bool file = false;
+    bool con = false;
+
+    ini.Get("Options", "Log", &file);
+    ini.Get("Options", "Console", &con);
+
+    if (con) LogConsole("x360ce", legal_notice);
+    if (file)
+    {
+        char logfilename[MAX_PATH];
+        SYSTEMTIME systime;
+        GetLocalTime(&systime);
+        std::string processName;
+        ModuleFileNameA(&processName);
+
+        sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
+            systime.wMonth, systime.wDay, GetTickCount());
+        LogFile(logfilename);
     }
-    return out;
 }
 
 void ReadConfig()
@@ -146,23 +158,6 @@ void ReadConfig()
         ini.Get("Options", "Continue", &g_bContinue);
         ini.Get("Options", "UseInitBeep", &g_bInitBeep, true);
 
-        bool file = false;
-        bool con = false;
-
-        ini.Get("Options", "Log", &file);
-        ini.Get("Options", "Console", &con);
-
-        if (con) LogConsole("x360ce", legal_notice);
-        if (file)
-        {
-            char logfilename[MAX_PATH];
-            SYSTEMTIME systime;
-            GetLocalTime(&systime);
-            sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", exename.c_str(), systime.wYear,
-                systime.wMonth, systime.wDay, GetTickCount());
-            LogFile(logfilename);
-        }
-
         PrintLog("Using config file:");
         PrintLog(ini.GetIniPath().c_str());
 
@@ -172,74 +167,7 @@ void ReadConfig()
             PrintLog("WARNING: Configuration file version mismatch detected");
 
         once_flag = true;
-    }
-
-    // Simple Game Database support
-    // InputHook
-
-    bool hook_override = false;
-    ini.Get("InputHook", "Override", &hook_override);
-    u32 hookMask = ReadGameDatabase();
-    if (hookMask && hook_override == false)
-    {
-        g_iHook.SetMask(hookMask);
-        g_iHook.Enable();
-    }
-    else
-    {
-        ini.Get("InputHook", "HookMask", &hookMask);
-        if (hookMask)
-        {
-            g_iHook.SetMask(hookMask);
-            g_iHook.Enable();
-        }
-        else
-        {
-            bool hookCheck = 0;
-
-            ini.Get("InputHook", "HookLL", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_LL);
-
-            ini.Get("InputHook", "HookCOM", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_COM);
-
-            ini.Get("InputHook", "HookDI", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_DI);
-
-            ini.Get("InputHook", "HookPIDVID", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_PIDVID);
-
-            ini.Get("InputHook", "HookSA", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_SA);
-
-            ini.Get("InputHook", "HookNAME", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_NAME);
-
-            ini.Get("InputHook", "HookSTOP", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_STOP);
-
-            ini.Get("InputHook", "HookWT", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_WT);
-
-            ini.Get("InputHook", "HookNoTimeout", &hookCheck);
-            if (hookCheck) g_iHook.EnableHook(InputHook::HOOK_NOTIMEOUT);
-
-            if (g_iHook.GetMask()) g_iHook.Enable();
-        }
-    }
-    if (g_iHook.GetState(InputHook::HOOK_PIDVID))
-    {
-        u32 vid = 0x045E;
-        u32 pid = 0x028E;
-        ini.Get("InputHook", "FakeVID", &vid, 0x045E);
-        ini.Get("InputHook", "FakePID", &pid, 0x028E);
-
-        if (vid != 0x045E || pid != 0x28E) g_iHook.SetFakePIDVID(MAKELONG(vid, pid));
-    }
-
-    u32 timeout = 60;
-    ini.Get("InputHook", "Timeout", &timeout, 60);
-    g_iHook.SetTimeout(timeout);
+    }  
 
     // Read pad mappings
     for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
@@ -259,6 +187,37 @@ void ReadConfig()
         ReadPadConfig(g_pControllers[index], section, &ini);
         ReadPadMapping(g_pControllers[index], section, &ini);
     }
+}
+
+void ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini)
+{
+    std::string buffer;
+
+    ini->Get(section, "ProductGUID", &buffer);
+    if (buffer.empty()) PrintLog("ProductGUID is empty");
+    else StringToGUID(&pController->productid, buffer);
+
+    ini->Get(section, "InstanceGUID", &buffer);
+    if (buffer.empty()) PrintLog("InstanceGUID is empty");
+    else StringToGUID(&pController->instanceid, buffer);
+
+    ini->Get(section, "UseProductGUID", &pController->useproduct);
+    ini->Get(section, "PassThrough", &pController->passthrough, true);
+
+    if (pController->passthrough) return;
+
+    // Device type
+    ini->Get(section, "ControllerType", &pController->gamepadtype, 1);
+
+    // FFB options
+    ini->Get(section, "UseForceFeedback", &pController->useforce);
+    ini->Get(section, "SwapMotor", &pController->ffb.swapmotor);
+    ini->Get(section, "FFBType", &pController->ffb.type);
+    ini->Get(section, "ForcePercent", &pController->ffb.forcepercent, 100);
+    pController->ffb.forcepercent *= 0.01f;
+
+    ini->Get(section, "LeftMotorPeriod", &pController->ffb.leftPeriod, 60);
+    ini->Get(section, "RightMotorPeriod", &pController->ffb.rightPeriod, 20);
 }
 
 void ReadPadMapping(Controller* pController, const std::string& section, SWIP *ini)
@@ -353,33 +312,3 @@ void ReadPadMapping(Controller* pController, const std::string& section, SWIP *i
     ini->Get(section, "Right Trigger But", &pMapping->Trigger[1].but);
 }
 
-void ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini)
-{
-    std::string buffer;
-
-    ini->Get(section, "ProductGUID", &buffer);
-    if (buffer.empty()) PrintLog("ProductGUID is empty");
-    else StringToGUID(&pController->productid, buffer);
-
-    ini->Get(section, "InstanceGUID", &buffer);
-    if (buffer.empty()) PrintLog("InstanceGUID is empty");
-    else StringToGUID(&pController->instanceid, buffer);
-
-    ini->Get(section, "UseProductGUID", &pController->useproduct);
-    ini->Get(section, "PassThrough", &pController->passthrough, true);
-
-    if (pController->passthrough) return;
-
-    // Device type
-    ini->Get(section, "ControllerType", &pController->gamepadtype, 1);
-
-    // FFB options
-    ini->Get(section, "UseForceFeedback", &pController->useforce);
-    ini->Get(section, "SwapMotor", &pController->ffb.swapmotor);
-    ini->Get(section, "FFBType", &pController->ffb.type);
-    ini->Get(section, "ForcePercent", &pController->ffb.forcepercent, 100);
-    pController->ffb.forcepercent *= 0.01f;
-
-    ini->Get(section, "LeftMotorPeriod", &pController->ffb.leftPeriod, 60);
-    ini->Get(section, "RightMotorPeriod", &pController->ffb.rightPeriod, 20);
-}

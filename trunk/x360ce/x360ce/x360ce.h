@@ -1,6 +1,5 @@
 #pragma once
 
-extern std::string exename;
 extern WNDPROC oldWndProc;
 extern HWND hMsgWnd;
 extern InputHook g_iHook;

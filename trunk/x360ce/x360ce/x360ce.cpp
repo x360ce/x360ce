@@ -35,7 +35,6 @@ XInputEnabled XInputIsEnabled;
 HWND hMsgWnd = NULL;
 
 xinput_dll xinput;
-std::string exename;
 
 static const u32 PASSTROUGH = (u32)-2;
 
@@ -124,19 +123,22 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** pController, Mapping** pMap
     if (!once_flag)
     {
         DWORD startProcessId = GetCurrentProcessId();
+        std::string processName;
+        ModuleFileNameA(&processName);
 #ifndef _M_X64
-        PrintLog("x360ce (x86) %s started for \"%s\", PID: %d", PRODUCT_VERSION, exename.c_str(), startProcessId);
+        PrintLog("x360ce (x86) %s started for \"%s\", PID: %d", PRODUCT_VERSION, processName.c_str(), startProcessId);
 #else
-        PrintLog("x360ce (x64) %s started for \"%s\", PID: %d", PRODUCT_VERSION, exename.c_str(), startProcessId);
+        PrintLog("x360ce (x64) %s started for \"%s\", PID: %d", PRODUCT_VERSION, processName.c_str(), startProcessId);
 #endif
         std::string windows_name;
         if (GetWindowsVersionName(&windows_name))
             PrintLog("OS: \"%s\"", windows_name.c_str());
 
+        ReadConfig();
+
         g_iHook.StartTimeoutThread();
         once_flag = true;
     }
-
 
     // Not mapped
     if (!g_pControllers[dwUserIndex])
@@ -203,6 +205,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     //Update device state if enabled or we not use enable
     if (XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)
         hr = pController->UpdateState();
+    else return ERROR_SUCCESS;
 
 #ifdef _DEBUG
     PrintLog("UpdateState %u %u", dwUserIndex, hr);

@@ -12,7 +12,7 @@
 #include "mutex.h"
 
 DInputManager dinput;
-Controller* g_pControllers[XUSER_MAX_COUNT];
+Controller* g_pControllers[XUSER_MAX_COUNT] = { nullptr, nullptr, nullptr, nullptr };
 
 Controller::Controller()
 {
@@ -40,7 +40,7 @@ void Controller::Init()
 
 void Controller::Reset()
 {
-    if(device)
+    if (device)
         device->Release();
     Init();
 }
@@ -152,7 +152,7 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
 
     HRESULT setCooperativeLevelResult = device->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND);
     if (FAILED(setCooperativeLevelResult))
-    {   
+    {
         useforce = false;
         PrintLog("Cannot get exclusive device access, disabling ForceFeedback");
 
@@ -465,7 +465,7 @@ BOOL ForceFeedback::IsForceSupported()
         return false;
     }
     bool ffSupported = ((didcaps.dwFlags & DIDC_FORCEFEEDBACK) == DIDC_FORCEFEEDBACK);
-    PrintLog("[DINPUT] [PAD%d] IsForceSupported: %d %s", controller->dwUserIndex + 1, didcaps.dwFlags, ffSupported == true ? "YES" : "NO");
+    PrintLog("[DINPUT] [PAD%d] IsForceSupported: 0x%08X %s", controller->dwUserIndex + 1, didcaps.dwFlags, ffSupported == true ? "YES" : "NO");
     return ffSupported;
 }
 

@@ -12,23 +12,11 @@
 
 InputHook g_iHook;
 
-VOID InstallInputHooks()
-{
-    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
-    {
-        if (g_pControllers[i])
-            g_iHook.AddHook(g_pControllers[i]->dwUserIndex, g_pControllers[i]->productid, g_pControllers[i]->instanceid);
-    }
-
-    g_iHook.ExecuteHooks();
-}
-
 void __cdecl ExitInstance()
 {
     if (hMsgWnd && DestroyWindow(hMsgWnd))
         PrintLog("Message window destroyed");
 
-    g_iHook.Reset();
     if (xinput.dll)
     {
         std::string xinput_path;
@@ -38,13 +26,11 @@ void __cdecl ExitInstance()
         xinput.dll = NULL;
     }
 
-    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
-    {
-        delete g_pControllers[i];
-    }
-
     PrintLog("Terminating x360ce, bye");
     LogShutdown();
+
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
+        delete g_pControllers[i];
 }
 
 VOID InitInstance()
@@ -59,18 +45,15 @@ VOID InitInstance()
 #endif
 
     atexit(ExitInstance);
-
-    ModuleFileNameA(&exename);
-    ReadConfig();
-
-    InstallInputHooks();
+    g_iHook.Init(InitLogger);
 }
 
 extern "C" VOID WINAPI reset()
 {
     PrintLog("Restarting");
 
-    g_iHook.Reset();
+    // Only x360ce.App will call this so InputHook is not required, disable it.
+    g_iHook.Shutdown();
 
     for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
     {
@@ -79,7 +62,6 @@ extern "C" VOID WINAPI reset()
     }
 
     ReadConfig();
-    InstallInputHooks();
 }
 
 extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
