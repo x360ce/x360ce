@@ -93,6 +93,7 @@ public:
 
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 
+    Mutex mutex;
     LPDIRECTINPUTDEVICE8 device;
     DIJOYSTATE2 state;
     Mapping mapping;
@@ -103,7 +104,6 @@ public:
     u32 axiscount;
     u8 gamepadtype;
     bool passthrough;
-    bool useproduct;
     bool useforce;
 };
 

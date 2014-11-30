@@ -35,6 +35,8 @@ namespace HookSA
         if (!s_InputHook->GetState(InputHook::HOOK_SA)) return ret;
         PrintLog("SetupDiGetDeviceInstanceId");
 
+        s_InputHook->StartTimeoutThread();
+
         if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) return ret;
 
         if (DeviceInstanceId && ret)
@@ -51,7 +53,7 @@ namespace HookSA
 
             for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
             {
-                if (padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid, dwPid))
+                if (padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid, dwPid))
                 {
                     const wchar_t* strUSB = wcsstr(DeviceInstanceId, L"USB\\");
                     const wchar_t* strRoot = wcsstr(DeviceInstanceId, L"root\\");

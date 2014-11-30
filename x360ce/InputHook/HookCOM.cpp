@@ -119,7 +119,7 @@ namespace HookCOM
 
             for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
             {
-                if (padcfg->GetHookState() && padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid, dwPid))
+                if (padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid, dwPid))
                 {
                     const wchar_t* strUSB = wcsstr(pVal->bstrVal, L"USB\\");
                     const wchar_t* strRoot = wcsstr(pVal->bstrVal, L"root\\");
@@ -290,6 +290,8 @@ namespace HookCOM
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
         PrintLog("CoCreateInstance");
 
+        s_InputHook->StartTimeoutThread();
+
         //PrintLog("%x",hr);
 
         //if(hr == CO_E_NOTINITIALIZED) CoInitialize(NULL);
@@ -327,6 +329,8 @@ namespace HookCOM
     {
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return TrueCoUninitialize();
         PrintLog("CoUninitialize");
+
+        s_InputHook->StartTimeoutThread();
 
         if (TrueGet) MH_QueueDisableHook(Get);
         if (TrueNext) MH_QueueDisableHook(Next);

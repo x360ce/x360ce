@@ -83,7 +83,7 @@ namespace HookDI
         {
             for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
             {
-                if (padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(), pInst->guidProduct))
+                if (IsEqualGUID(padcfg->GetProductGUID(), pInst->guidProduct))
                 {
                     DIDEVICEINSTANCEA& HookInst = *(const_cast<DIDEVICEINSTANCEA*>(pInst));
                     //DIDEVICEINSTANCEA HookInst;
@@ -159,7 +159,7 @@ namespace HookDI
         {
             for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
             {
-                if (padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(), pInst->guidProduct))
+                if (IsEqualGUID(padcfg->GetProductGUID(), pInst->guidProduct))
                 {
                     DIDEVICEINSTANCEW& HookInst = *(const_cast<DIDEVICEINSTANCEW*>(pInst));
                     //DIDEVICEINSTANCEW HookInst;
@@ -271,7 +271,7 @@ namespace HookDI
 
             for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
             {
-                if (padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(), pdidi->guidProduct))
+                if (IsEqualGUID(padcfg->GetProductGUID(), pdidi->guidProduct))
                 {
                     if (s_InputHook->GetState(InputHook::HOOK_PIDVID))
                     {
@@ -345,7 +345,7 @@ namespace HookDI
 
             for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
             {
-                if (padcfg->GetHookState() && IsEqualGUID(padcfg->GetProductGUID(), pdidi->guidProduct))
+                if (IsEqualGUID(padcfg->GetProductGUID(), pdidi->guidProduct))
                 {
                     if (s_InputHook->GetState(InputHook::HOOK_PIDVID))
                     {
@@ -630,6 +630,8 @@ namespace HookDI
 
         if (!s_InputHook->GetState(InputHook::HOOK_DI)) return hr;
         PrintLog("*DirectInput8Create*");
+
+        s_InputHook->StartTimeoutThread();
 
         if (IsEqualIID(riidltf, IID_IDirectInput8A))
         {

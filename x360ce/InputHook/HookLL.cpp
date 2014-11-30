@@ -72,9 +72,11 @@ namespace HookLL
         if (SelfCheckA(lpLibFileName))
         {
             PrintLog("LoadLibraryA");
+            s_InputHook->StartTimeoutThread();
+
             std::string path;
 
-            if (ModuleFullPathA(&path, s_InputHook->GetEmulator()))
+            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryA(path.c_str());
             else
                 return TrueLoadLibraryA(lpLibFileName);
@@ -90,9 +92,11 @@ namespace HookLL
         if (SelfCheckW(lpLibFileName))
         {
             PrintLog("LoadLibraryW");
+            s_InputHook->StartTimeoutThread();
+
             std::wstring path;
 
-            if (ModuleFullPathW(&path, s_InputHook->GetEmulator()))
+            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryW(path.c_str());
             else
                 return TrueLoadLibraryW(lpLibFileName);
@@ -108,10 +112,11 @@ namespace HookLL
         if (SelfCheckA(lpLibFileName))
         {
             PrintLog("LoadLibraryExA");
+            s_InputHook->StartTimeoutThread();
 
             std::string path;
 
-            if (ModuleFullPathA(&path, s_InputHook->GetEmulator()))
+            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryExA(path.c_str(), hFile, dwFlags);
             else
                 return TrueLoadLibraryExA(lpLibFileName, hFile, dwFlags);
@@ -127,10 +132,11 @@ namespace HookLL
         if (SelfCheckW(lpLibFileName))
         {
             PrintLog("LoadLibraryExW");
+            s_InputHook->StartTimeoutThread();
 
             std::wstring path;
 
-            if (ModuleFullPathW(&path, s_InputHook->GetEmulator()))
+            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryExW(path.c_str(), hFile, dwFlags);
             else
                 return TrueLoadLibraryExW(lpLibFileName, hFile, dwFlags);
@@ -146,6 +152,7 @@ namespace HookLL
         if (SelfCheckA(lpModuleName))
         {
             PrintLog("GetModuleHandleA");
+            s_InputHook->StartTimeoutThread();
             return s_InputHook->GetEmulator();
         }
 
@@ -159,6 +166,7 @@ namespace HookLL
         if (SelfCheckW(lpModuleName))
         {
             PrintLog("GetModuleHandleW");
+            s_InputHook->StartTimeoutThread();
             return s_InputHook->GetEmulator();
         }
 
@@ -172,8 +180,8 @@ namespace HookLL
         if (SelfCheckA(lpModuleName))
         {
             PrintLog("GetModuleHandleExA");
-            static HMODULE hModExA = s_InputHook->GetEmulator();
-            phModule = &hModExA;
+            s_InputHook->StartTimeoutThread();
+            phModule = &s_InputHook->GetEmulator();
             return TRUE;
         }
 
@@ -187,8 +195,8 @@ namespace HookLL
         if (SelfCheckW(lpModuleName))
         {
             PrintLog("GetModuleHandleExW");
-            static HMODULE hModExW = s_InputHook->GetEmulator();
-            phModule = &hModExW;
+            s_InputHook->StartTimeoutThread();
+            phModule = &s_InputHook->GetEmulator();
             return TRUE;
         }
 

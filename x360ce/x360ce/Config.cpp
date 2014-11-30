@@ -12,9 +12,7 @@
 #include "x360ce.h"
 
 bool g_bInitBeep = true;
-bool g_bNative = false;
 bool g_bDisable = false;
-bool g_bContinue = false;
 
 static const char* const buttonNames[] =
 {
@@ -82,6 +80,24 @@ static const char* const axisBNames[] =
     "Right Analog Y- Button"
 };
 
+static const char* const triggerNames[] =
+{
+    "Left Trigger",
+    "Right Trigger"
+};
+
+static const char* const triggerDZNames[] =
+{
+    "Left Trigger DZ",
+    "Right Trigger DZ"
+};
+
+static const char* const triggerBNames[] =
+{
+    "Left Trigger But",
+    "Right Trigger But"
+};
+
 void ParsePrefix(const std::string& input, MappingType* mapping_type, s8* value)
 {
     if (mapping_type)
@@ -135,7 +151,7 @@ void InitLogger()
         SYSTEMTIME systime;
         GetLocalTime(&systime);
         std::string processName;
-        ModuleFileNameA(&processName);
+        ModuleFileName(&processName);
 
         sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
             systime.wMonth, systime.wDay, GetTickCount());
@@ -155,7 +171,6 @@ void ReadConfig()
         ini.Get("Options", "Disable", &g_bDisable);
         if (g_bDisable) return;
 
-        ini.Get("Options", "Continue", &g_bContinue);
         ini.Get("Options", "UseInitBeep", &g_bInitBeep, true);
 
         PrintLog("Using config file:");
@@ -167,7 +182,7 @@ void ReadConfig()
             PrintLog("WARNING: Configuration file version mismatch detected");
 
         once_flag = true;
-    }  
+    }
 
     // Read pad mappings
     for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
@@ -184,66 +199,73 @@ void ReadConfig()
         g_pControllers[index] = new Controller;
         g_pControllers[index]->dwUserIndex = index;
 
-        ReadPadConfig(g_pControllers[index], section, &ini);
-        ReadPadMapping(g_pControllers[index], section, &ini);
+        if (ReadPadConfig(g_pControllers[index], section, &ini))
+            ReadPadMapping(g_pControllers[index], section, &ini);
     }
 }
 
-void ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini)
+bool ReadPadConfig(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
     std::string buffer;
 
-    ini->Get(section, "ProductGUID", &buffer);
-    if (buffer.empty()) PrintLog("ProductGUID is empty");
-    else StringToGUID(&pController->productid, buffer);
+    pSWIP->Get(section, "ProductGUID", &buffer);
+    StringToGUID(&pController->productid, buffer);
 
-    ini->Get(section, "InstanceGUID", &buffer);
-    if (buffer.empty()) PrintLog("InstanceGUID is empty");
-    else StringToGUID(&pController->instanceid, buffer);
+    pSWIP->Get(section, "InstanceGUID", &buffer);
+    StringToGUID(&pController->instanceid, buffer);
 
-    ini->Get(section, "UseProductGUID", &pController->useproduct);
-    ini->Get(section, "PassThrough", &pController->passthrough, true);
+    if (IsEqualGUID(pController->productid, GUID_NULL) ||
+        IsEqualGUID(pController->instanceid, GUID_NULL))
+    {
+        std::string message = StringFormat("[PAD%u] Misconfigured device, check GUIDs", pController->dwUserIndex);
+        PrintLog(message.c_str());
+        MessageBoxA(NULL, message.c_str(), "x360ce", MB_ICONERROR);
+        return false;
+    }
 
-    if (pController->passthrough) return;
+    pSWIP->Get(section, "PassThrough", &pController->passthrough, true);
+    if (pController->passthrough) return false;
 
     // Device type
-    ini->Get(section, "ControllerType", &pController->gamepadtype, 1);
+    pSWIP->Get(section, "ControllerType", &pController->gamepadtype, 1);
 
     // FFB options
-    ini->Get(section, "UseForceFeedback", &pController->useforce);
-    ini->Get(section, "SwapMotor", &pController->ffb.swapmotor);
-    ini->Get(section, "FFBType", &pController->ffb.type);
-    ini->Get(section, "ForcePercent", &pController->ffb.forcepercent, 100);
+    pSWIP->Get(section, "UseForceFeedback", &pController->useforce);
+    pSWIP->Get(section, "SwapMotor", &pController->ffb.swapmotor);
+    pSWIP->Get(section, "FFBType", &pController->ffb.type);
+    pSWIP->Get(section, "ForcePercent", &pController->ffb.forcepercent, 100);
     pController->ffb.forcepercent *= 0.01f;
 
-    ini->Get(section, "LeftMotorPeriod", &pController->ffb.leftPeriod, 60);
-    ini->Get(section, "RightMotorPeriod", &pController->ffb.rightPeriod, 20);
+    pSWIP->Get(section, "LeftMotorPeriod", &pController->ffb.leftPeriod, 60);
+    pSWIP->Get(section, "RightMotorPeriod", &pController->ffb.rightPeriod, 20);
+
+    return true;
 }
 
-void ReadPadMapping(Controller* pController, const std::string& section, SWIP *ini)
+void ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
     Mapping* pMapping = &pController->mapping;
 
     // Guide button
-    ini->Get(section, "GuideButton", &pMapping->guide);
+    pSWIP->Get(section, "GuideButton", &pMapping->guide);
 
     // Fire buttons
-    for (s8 i = 0; i < 10; ++i)
+    for (u32 i = 0; i < 10; ++i)
     {
         s8 button = 0;
-        ini->Get(section, buttonNames[i], &button);
+        pSWIP->Get(section, buttonNames[i], &button);
         pMapping->Button[i] = button - 1;
     }
 
     // D-PAD
-    ini->Get(section, "D-pad POV", &pMapping->DpadPOV);
-    if (pMapping->DpadPOV == 0)
+    pSWIP->Get(section, "D-pad POV", &pMapping->DpadPOV);
+    if (pMapping->DpadPOV >= 0)
     {
-        for (s8 i = 0; i < 4; ++i)
+        for (u32 i = 0; i < _countof(pMapping->pov); ++i)
         {
             // D-PAD directions
             s16 val = 0;
-            ini->Get(section, povNames[i], &val, -1);
+            pSWIP->Get(section, povNames[i], &val, -1);
             if (val > 0 && val < 128)
             {
                 pMapping->pov[i] = val - 1;
@@ -257,36 +279,36 @@ void ReadPadMapping(Controller* pController, const std::string& section, SWIP *i
         }
     }
 
-    for (s8 i = 0; i < 4; ++i)
+    for (u32 i = 0; i < _countof(pMapping->Axis); ++i)
     {
         // Axes
         std::string axis;
-        ini->Get(section, axisNames[i], &axis);
+        pSWIP->Get(section, axisNames[i], &axis);
         ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
 
         // DeadZones
-        ini->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
+        pSWIP->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
 
         // Anti DeadZones
-        ini->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
+        pSWIP->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
 
         // Linearity
-        ini->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
+        pSWIP->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
 
         // Axis to DPAD options
-        ini->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
-        ini->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
-        ini->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
+        pSWIP->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
+        pSWIP->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
+        pSWIP->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
 
         // Axis to button mappings
         s8 ret = 0;
-        ini->Get(section, axisBNames[i * 2], &ret);
+        pSWIP->Get(section, axisBNames[i * 2], &ret);
         if (ret > 0)
         {
             pMapping->Axis[i].hasDigital = true;
             pMapping->Axis[i].positiveButtonID = ret - 1;
         }
-        ini->Get(section, axisBNames[i * 2 + 1], &ret);
+        pSWIP->Get(section, axisBNames[i * 2 + 1], &ret);
         if (ret > 0)
         {
             pMapping->Axis[i].hasDigital = true;
@@ -295,20 +317,16 @@ void ReadPadMapping(Controller* pController, const std::string& section, SWIP *i
     }
 
     // Triggers
-    std::string trigger_left;
-    ini->Get(section, "Left Trigger", &trigger_left);
+    for (u32 i = 0; i < _countof(pMapping->Trigger); ++i)
+    {
+        std::string trigger;
+        pSWIP->Get(section, triggerNames[i], &trigger);  
+        ParsePrefix(trigger, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
 
-    std::string trigger_right;
-    ini->Get(section, "Right Trigger", &trigger_right);
+        pSWIP->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
 
-    ParsePrefix(trigger_left, &pMapping->Trigger[0].type, &pMapping->Trigger[0].id);
-    ParsePrefix(trigger_right, &pMapping->Trigger[1].type, &pMapping->Trigger[1].id);
-
-    ini->Get(section, "Left Trigger DZ", &pMapping->Trigger[0].triggerdz);
-    ini->Get(section, "Right Trigger DZ", &pMapping->Trigger[0].triggerdz);
-
-    // SeDoG mod
-    ini->Get(section, "Left Trigger But", &pMapping->Trigger[0].but);
-    ini->Get(section, "Right Trigger But", &pMapping->Trigger[1].but);
+        // SeDoG mod
+        pSWIP->Get(section, triggerBNames[i], &pMapping->Trigger[i].but);
+    }
 }
 

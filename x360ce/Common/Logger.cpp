@@ -93,7 +93,7 @@ void Logger::Print(const char* format, va_list vaargs)
 
         size_t len = 0;
         DWORD lenout = 0;
-        static char* stamp = "[TIME]\t\t\t[THREAD]\t[LOG]\n";
+        static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
         if (stamp)
         {
             len = strlen(stamp);

@@ -8,7 +8,7 @@
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
 
-HMODULE CurrentModule()
+HMODULE& CurrentModule()
 {
     static HMODULE hModule = 0;
     if (!hModule)
@@ -57,7 +57,7 @@ bool BuildPath(const std::string& filename, std::string* fullpath, bool check_ex
     return false;
 }
 
-bool ModuleFullPathA(std::string* out, HMODULE hModule)
+bool ModuleFullPath(std::string* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -67,7 +67,7 @@ bool ModuleFullPathA(std::string* out, HMODULE hModule)
     return !out->empty();
 }
 
-bool ModuleFullPathW(std::wstring* out, HMODULE hModule)
+bool ModuleFullPath(std::wstring* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -77,7 +77,7 @@ bool ModuleFullPathW(std::wstring* out, HMODULE hModule)
     return !out->empty();
 }
 
-bool ModulePathA(std::string* out, HMODULE hModule)
+bool ModulePath(std::string* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -88,7 +88,7 @@ bool ModulePathA(std::string* out, HMODULE hModule)
     return !out->empty();
 }
 
-bool ModulePathW(std::wstring* out, HMODULE hModule)
+bool ModulePath(std::wstring* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -99,7 +99,7 @@ bool ModulePathW(std::wstring* out, HMODULE hModule)
     return !out->empty();
 }
 
-bool ModuleFileNameA(std::string* out, HMODULE hModule)
+bool ModuleFileName(std::string* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -109,7 +109,7 @@ bool ModuleFileNameA(std::string* out, HMODULE hModule)
     return !out->empty();
 }
 
-bool ModuleFileNameW(std::wstring* out, HMODULE hModule)
+bool ModuleFileName(std::wstring* out, HMODULE hModule)
 {
     if (!out) return false;
 
@@ -121,7 +121,7 @@ bool ModuleFileNameW(std::wstring* out, HMODULE hModule)
 
 void StringToGUID(GUID* id, const std::string& szBuf)
 {
-    if (!id) return;
+    if (!id && szBuf.empty()) return;
 
     const char* p = szBuf.c_str();
     if (strchr(p, '{')) p++;
@@ -130,8 +130,12 @@ void StringToGUID(GUID* id, const std::string& szBuf)
     s32 d2, d3;
     s32 b[8];
 
-    sscanf_s(p, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-        &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]);
+    if (sscanf_s(p, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+        &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]) != 11)
+    {
+        *id = GUID_NULL;
+        return;
+    }
 
     id->Data1 = d1;
     id->Data2 = (u16)d2;
@@ -145,7 +149,7 @@ void StringToGUID(GUID* id, const std::string& szBuf)
 
 void StringToGUID(GUID* id, const std::wstring& szBuf)
 {
-    if (!id) return;
+    if (!id && szBuf.empty()) return;
 
     const wchar_t* p = szBuf.c_str();
     if (wcschr(p, L'{')) p++;
@@ -154,8 +158,12 @@ void StringToGUID(GUID* id, const std::wstring& szBuf)
     s32 d2, d3;
     s32 b[8];
 
-    swscanf_s(p, L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-        &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]);
+    if (swscanf_s(p, L"%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+        &d1, &d2, &d3, &b[0], &b[1], &b[2], &b[3], &b[4], &b[5], &b[6], &b[7]) != 11)
+    {
+        *id = GUID_NULL;
+        return;
+    }
 
     id->Data1 = d1;
     id->Data2 = (u16)d2;

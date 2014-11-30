@@ -67,7 +67,7 @@ bool XInputInitialize()
     xinput_path.resize(length);
 
     std::wstring current_module;
-    ModuleFileNameW(&current_module, CurrentModule());
+    ModuleFileName(&current_module, CurrentModule());
 
     xinput_path.append(L"\\");
     xinput_path.append(current_module);
@@ -122,21 +122,18 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** pController, Mapping** pMap
     static bool once_flag = false;
     if (!once_flag)
     {
-        DWORD startProcessId = GetCurrentProcessId();
         std::string processName;
-        ModuleFileNameA(&processName);
+        ModuleFileName(&processName);
 #ifndef _M_X64
-        PrintLog("x360ce (x86) %s started for \"%s\", PID: %d", PRODUCT_VERSION, processName.c_str(), startProcessId);
+        PrintLog("x360ce (x86) %s started for \"%s\"", PRODUCT_VERSION, processName.c_str());
 #else
-        PrintLog("x360ce (x64) %s started for \"%s\", PID: %d", PRODUCT_VERSION, processName.c_str(), startProcessId);
+        PrintLog("x360ce (x64) %s started for \"%s\"", PRODUCT_VERSION, processName.c_str());
 #endif
         std::string windows_name;
         if (GetWindowsVersionName(&windows_name))
             PrintLog("OS: \"%s\"", windows_name.c_str());
 
         ReadConfig();
-
-        g_iHook.StartTimeoutThread();
         once_flag = true;
     }
 
@@ -620,9 +617,13 @@ extern "C" VOID WINAPI XInputEnable(__in BOOL enable)
     if (hMsgWnd == NULL)
         CreateMsgWnd();
 
-    if (g_bNative)
-        xinput.XInputEnable(enable);
-
+    // If any controller is native XInput then use state too.
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
+    {
+        if (g_pControllers[i] && g_pControllers[i]->passthrough)
+            xinput.XInputEnable(enable);
+    }
+        
     /*
     Trick to support XInputEnable states, because not every game calls it, so:
     - must support games that call it:
