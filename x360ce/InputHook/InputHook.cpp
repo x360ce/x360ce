@@ -173,9 +173,11 @@ void InputHook::Init(LoggerCallback_t init_logger)
 void InputHook::Shutdown()
 {
     MH_Uninitialize();
-
     m_devices.clear();
-    if (m_timeout_thread) CloseHandle(m_timeout_thread);
+    m_hookmask = 0;
+
+    if (m_timeout_thread)
+        CloseHandle(m_timeout_thread);
 }
 
 void InputHook::Reset()
@@ -193,18 +195,18 @@ void InputHook::Reset()
 void InputHook::StartTimeoutThread()
 {
     if (m_timeout_thread == INVALID_HANDLE_VALUE && m_timeout > 0 && !GetState(HOOK_NOTIMEOUT))
-        m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, &m_timeout, NULL, NULL);
+        m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, this, NULL, NULL);
 }
 
 DWORD WINAPI InputHook::ThreadProc(_In_  LPVOID lpParameter)
 {
-    u32* pTimeout = reinterpret_cast<u32*>(lpParameter);
+    InputHook* pInputHook = reinterpret_cast<InputHook*>(lpParameter);
 
-    PrintLog("Waiting %us for hooks...", *pTimeout);
-    Sleep(*pTimeout * 1000);
+    PrintLog("Waiting %us for hooks...", pInputHook->m_timeout);
+    Sleep(pInputHook->m_timeout * 1000);
 
-    MH_Uninitialize();
-    PrintLog("Hook timeouted after %us", *pTimeout);
+    pInputHook->Shutdown();
+    PrintLog("Hook timeouted after %us", pInputHook->m_timeout);
     return 0;
 }
 
