@@ -44,17 +44,17 @@ void Controller::Reset()
     Init();
 }
 
-BOOL CALLBACK Controller::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext)
+BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
 {
-    Controller *gp = (Controller*)pContext;
+    Controller *gp = (Controller*)pvRef;
 
-    if (pdidoi->dwType & DIDFT_AXIS)
+    if (lpddoi->dwType & DIDFT_AXIS)
     {
         DIPROPRANGE diprg;
         diprg.diph.dwSize = sizeof(DIPROPRANGE);
         diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER);
         diprg.diph.dwHow = DIPH_BYID;
-        diprg.diph.dwObj = pdidoi->dwType;
+        diprg.diph.dwObj = lpddoi->dwType;
         diprg.lMin = -32768;
         diprg.lMax = +32767;
 
@@ -111,7 +111,7 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     if (FAILED(hr))
     {
         std::string strInstance;
-        GUIDtoStringA(&strInstance, instanceid);
+        GUIDtoString(&strInstance, instanceid);
         PrintLog("InstanceGUID %s is incorrect trying ProductGUID", strInstance.c_str());
         hr = dinput.Get()->CreateDevice(productid, &device, NULL);
     }
@@ -137,7 +137,7 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj = 0;
     dipdw.diph.dwHow = DIPH_DEVICE;
-    dipdw.dwData = FALSE;
+    dipdw.dwData = DIPROPAUTOCENTER_OFF;
     device->SetProperty(DIPROP_AUTOCENTER, &dipdw.diph);
 
     hr = device->EnumObjects(EnumObjectsCallback, (VOID*)this, DIDFT_AXIS);
@@ -155,7 +155,10 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
         if (ffb.axisffbcount > 0)
             ffb.controller = this;
         else
+        {
+            PrintLog("ForceFeedback unsupported");
             useforce = false;
+        }
     }
 
     hr = device->Acquire();
@@ -257,11 +260,11 @@ ForceFeedback::~ForceFeedback()
     delete rf;
 }
 
-BOOL CALLBACK ForceFeedback::EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext)
+BOOL CALLBACK ForceFeedback::EnumFFAxesCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
 {
-    DWORD* pdwNumForceFeedbackAxis = (DWORD*)pContext;
+    DWORD* pdwNumForceFeedbackAxis = (DWORD*)pvRef;
 
-    if (((pdidoi->dwFlags & DIDOI_FFACTUATOR) != 0))
+    if (((lpddoi->dwFlags & DIDOI_FFACTUATOR) != 0))
         (*pdwNumForceFeedbackAxis)++;
 
     return DIENUM_CONTINUE;
@@ -463,7 +466,7 @@ HRESULT ForceFeedback::PrepareForceEjocys(u8 motor)
 
     // Enumerate effects.
     LPDIRECTINPUTDEVICE8 device = controller->device;
-    device->EnumEffects(&EnumEffectsCallback, this, DIEFT_ALL);
+    device->EnumEffects(EnumEffectsCallback, this, DIEFT_ALL);
     // Create structure that provides parameters for the effect.
     eff[motor] = new DIEFFECT;
     // Fills a block of memory with zeros.
@@ -607,7 +610,7 @@ HRESULT ForceFeedback::PrepareForceNew(u8 motor)
 
     // Enumerate effects
     LPDIRECTINPUTDEVICE8 device = controller->device;
-    HRESULT hr = device->EnumEffects(&EnumEffectsCallback, this, DIEFT_ALL);
+    HRESULT hr = device->EnumEffects(EnumEffectsCallback, this, DIEFT_ALL);
     if (FAILED(hr))
     {
         PrintLog("[PAD%d] EnumEffectsCallback failed");

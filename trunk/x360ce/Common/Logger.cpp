@@ -32,10 +32,10 @@ void Logger::Shutdown()
     delete m_instance;
 }
 
-bool Logger::File(const char* filename)
+bool Logger::File(const char* filename, const char* commondir)
 {
     std::string logpath;
-    BuildPath(filename, &logpath, false);
+    FullPathFromFileName(filename, &logpath, false, commondir);
 
     m_file = CreateFileA(logpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     return m_file != INVALID_HANDLE_VALUE;

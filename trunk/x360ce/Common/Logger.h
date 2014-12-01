@@ -26,7 +26,7 @@ public:
     static Logger& GetInstance();
     void Shutdown();
 
-    bool File(const char* filename);
+    bool File(const char* filename, const char* commondir);
     bool Console(const char* title = nullptr, const char* console_notice = nullptr);
     void PrintTime(const char* format, ...);
     void Print(const char* format, va_list vaargs);
@@ -45,9 +45,9 @@ private:
     Logger() : m_console(0), m_file(0) {}
 };
 
-inline void LogFile(const char* logname)
+inline void LogFile(const char* logname, const char* commondir)
 {
-    Logger::GetInstance().File(logname);
+    Logger::GetInstance().File(logname, commondir);
 }
 
 inline void LogConsole(const char* title = nullptr, const char* console_notice = nullptr)

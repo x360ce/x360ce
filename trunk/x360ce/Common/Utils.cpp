@@ -16,12 +16,26 @@ HMODULE& CurrentModule()
     return hModule;
 }
 
-bool BuildPath(const std::string& filename, std::string* fullpath, bool check_exist)
+bool FullPathFromFileName(const std::string& filename, std::string* fullpath, bool check_exist, const char* commondir)
 {
     if (!fullpath) return false;
 
     std::string path;
     path.resize(MAX_PATH);
+
+    if (commondir)
+    {
+        if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, &path[0]) == S_OK)
+        {
+            PathAppendA(&path[0], commondir);
+            PathAppendA(&path[0], filename.c_str());
+            if (PathFileExistsA(&path[0]) && PathIsDirectoryA(&path[0]) == FALSE)
+            {
+                *fullpath = path;
+                return true;
+            }
+        }
+    }
 
     if (PathIsRelativeA(filename.c_str()))
     {
@@ -175,7 +189,7 @@ void StringToGUID(GUID* id, const std::wstring& szBuf)
     return;
 }
 
-bool GUIDtoStringA(std::string* out, const GUID &g)
+bool GUIDtoString(std::string* out, const GUID &g)
 {
     if (!out) return false;
     out->resize(40);
@@ -187,7 +201,7 @@ bool GUIDtoStringA(std::string* out, const GUID &g)
     return (*out)[0] != '\0';
 }
 
-bool GUIDtoStringW(std::wstring* out, const GUID &g)
+bool GUIDtoString(std::wstring* out, const GUID &g)
 {
     if (!out) return false;
     out->resize(40);

@@ -21,17 +21,17 @@
 
 const std::string& SWIP::NULLSTRING = "";
 
-bool SWIP::Load(const std::string& filename)
+bool SWIP::Load(const std::string& filename, const char* commondir)
 {
-    return BuildPath(filename, &file_path);
+    return FullPathFromFileName(filename, &file_path, true, commondir);
 }
 
-bool SWIP::Save(const std::string& filename)
+bool SWIP::Save(const std::string& filename, const char* commondir)
 {
     bool out = false;
     for (auto& sectit = sections.begin(); sectit != sections.end(); ++sectit)
     {
-        out = sectit->Save(filename);
+        out = sectit->Save(filename, commondir);
     }
     return out;
 }
@@ -167,7 +167,7 @@ void SWIP::Section::Populate(const std::string& filename)
     }
 }
 
-bool SWIP::Section::Save(const std::string& filename)
+bool SWIP::Section::Save(const std::string& filename, const char* commondir)
 {
     std::stringstream ss;
     for (auto& kvit = order.begin(); kvit != order.end(); ++kvit)
@@ -181,7 +181,7 @@ bool SWIP::Section::Save(const std::string& filename)
     const std::string& keyval = ss.str();
 
     std::string outpath;
-    BuildPath(filename, &outpath, false);
+    FullPathFromFileName(filename, &outpath, false, commondir);
 
     HANDLE hFile = CreateFileA(outpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     CloseHandle(hFile);

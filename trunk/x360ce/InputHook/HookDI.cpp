@@ -94,9 +94,9 @@ namespace HookDI
                         std::string strTrueguidProduct;
                         std::string strHookguidProduct;
 
-                        GUIDtoStringA(&strTrueguidProduct, HookInst.guidProduct);
+                        GUIDtoString(&strTrueguidProduct, HookInst.guidProduct);
                         HookInst.guidProduct.Data1 = s_InputHook->GetFakePIDVID();
-                        GUIDtoStringA(&strHookguidProduct, HookInst.guidProduct);
+                        GUIDtoString(&strHookguidProduct, HookInst.guidProduct);
 
                         PrintLog("%s", "GUID change:");
                         PrintLog("%s", strTrueguidProduct.c_str());
@@ -170,9 +170,9 @@ namespace HookDI
                         std::wstring strTrueguidProduct;
                         std::wstring strHookguidProduct;
 
-                        GUIDtoStringW(&strTrueguidProduct, HookInst.guidProduct);
+                        GUIDtoString(&strTrueguidProduct, HookInst.guidProduct);
                         HookInst.guidProduct.Data1 = s_InputHook->GetFakePIDVID();
-                        GUIDtoStringW(&strHookguidProduct, HookInst.guidProduct);
+                        GUIDtoString(&strHookguidProduct, HookInst.guidProduct);
 
                         PrintLog("%s", "GUID change:");
                         PrintLog("%ls", strTrueguidProduct.c_str());
@@ -278,9 +278,9 @@ namespace HookDI
                         std::string strTrueguidProduct;
                         std::string strHookguidProduct;
 
-                        GUIDtoStringA(&strTrueguidProduct, pdidi->guidProduct);
+                        GUIDtoString(&strTrueguidProduct, pdidi->guidProduct);
                         pdidi->guidProduct.Data1 = s_InputHook->GetFakePIDVID();
-                        GUIDtoStringA(&strHookguidProduct, pdidi->guidProduct);
+                        GUIDtoString(&strHookguidProduct, pdidi->guidProduct);
 
                         PrintLog("%s", "GUID change:");
                         PrintLog("%s", strTrueguidProduct.c_str());
@@ -352,9 +352,9 @@ namespace HookDI
                         std::wstring strTrueguidProduct;
                         std::wstring strHookguidProduct;
 
-                        GUIDtoStringW(&strTrueguidProduct, pdidi->guidProduct);
+                        GUIDtoString(&strTrueguidProduct, pdidi->guidProduct);
                         pdidi->guidProduct.Data1 = s_InputHook->GetFakePIDVID();
-                        GUIDtoStringW(&strHookguidProduct, pdidi->guidProduct);
+                        GUIDtoString(&strHookguidProduct, pdidi->guidProduct);
 
                         PrintLog("%s", "GUID change:");
                         PrintLog("%ls", strTrueguidProduct.c_str());

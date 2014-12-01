@@ -109,10 +109,9 @@ static const u16 povIDs[4] =
 };
 
 void InitLogger();
-void InitConfig(char* ininame);
 void ReadConfig();
-bool ReadPadConfig(Controller* pController, const std::string& section, SWIP *ini);
-void ReadPadMapping(Controller* pController, const std::string& section, SWIP *ini);
+bool ReadPadConfig(Controller* pController, const std::string& section, SWIP *pSWIP);
+void ReadPadMapping(Controller* pController, const std::string& section, SWIP *pSWIP);
 
 extern bool g_bInitBeep;
 extern bool g_bDisable;

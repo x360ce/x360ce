@@ -33,7 +33,7 @@ bool InputHook::ReadGameDatabase(u32* mask)
     if (!mask) return false;
 
     SWIP ini;
-    if (ini.Load("x360ce.gdb"))
+    if (ini.Load("x360ce.gdb", "x360ce"))
     {
         PrintLog("Using game database file:");
         PrintLog(ini.GetIniPath().c_str());
@@ -64,7 +64,7 @@ void InputHook::Init(LoggerCallback_t init_logger)
     PrintLog("InputHook starting...");
 
     SWIP ini;
-    ini.Load("x360ce.ini");
+    ini.Load("x360ce.ini", "x360ce");
 
     if (!ReadGameDatabase(&m_hookmask))
     {
