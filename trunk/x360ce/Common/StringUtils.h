@@ -94,35 +94,6 @@ namespace std
         return (string(_Buf));
     }
 
-    inline string to_string(_Longlong _Val)
-    {	// convert long long to string
-        char _Buf[2 * _MAX_INT_DIG];
-
-        _CSTD _TOSTRING(_Buf, _LLFMT "d", _Val);
-        return (string(_Buf));
-    }
-
-    inline string to_string(_ULonglong _Val)
-    {	// convert unsigned long long to string
-        char _Buf[2 * _MAX_INT_DIG];
-
-        _CSTD _TOSTRING(_Buf, _LLFMT "u", _Val);
-        return (string(_Buf));
-    }
-
-    inline string to_string(long double _Val)
-    {	// convert long double to string
-        typedef back_insert_iterator<string> _Iter;
-        typedef num_put<char, _Iter> _Nput;
-        const _Nput& _Nput_fac = use_facet<_Nput>(locale());
-        ostream _Ios((streambuf *)0);
-        string _Str;
-
-        _Ios.setf(ios_base::fixed);
-        _Nput_fac.put(_Iter(_Str), _Ios, ' ', _Val);
-        return (_Str);
-    }
-
     inline string to_string(double _Val)
     {	// convert double to string
         return (to_string((long double)_Val));
@@ -170,35 +141,6 @@ namespace std
 
         _CSTD _TOWSTRING(_Buf, L"%lu", _Val);
         return (wstring(_Buf));
-    }
-
-    inline wstring to_wstring(_Longlong _Val)
-    {	// convert long long to wstring
-        wchar_t _Buf[2 * _MAX_INT_DIG];
-
-        _CSTD _TOWSTRING(_Buf, _WLLFMT L"d", _Val);
-        return (wstring(_Buf));
-    }
-
-    inline wstring to_wstring(_ULonglong _Val)
-    {	// convert unsigned long long to wstring
-        wchar_t _Buf[2 * _MAX_INT_DIG];
-
-        _CSTD _TOWSTRING(_Buf, _WLLFMT L"u", _Val);
-        return (wstring(_Buf));
-    }
-
-    inline wstring to_wstring(long double _Val)
-    {	// convert long double to wstring
-        typedef back_insert_iterator<wstring> _Iter;
-        typedef num_put<wchar_t, _Iter> _Nput;
-        const _Nput& _Nput_fac = use_facet<_Nput>(locale());
-        ostream _Ios((streambuf *)0);
-        wstring _Str;
-
-        _Ios.setf(ios_base::fixed);
-        _Nput_fac.put(_Iter(_Str), _Ios, L' ', _Val);
-        return (_Str);
     }
 
     inline wstring to_wstring(double _Val)
