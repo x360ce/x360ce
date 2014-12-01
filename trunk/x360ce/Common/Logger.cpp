@@ -97,8 +97,8 @@ void Logger::Print(const char* format, va_list vaargs)
         if (stamp)
         {
             len = strlen(stamp);
-            if (to_console) WriteConsoleA(m_console, stamp, len, &lenout, NULL);
-            if (to_file) WriteFile(m_file, stamp, len, &lenout, NULL);
+            if (to_console) WriteConsoleA(m_console, stamp, (DWORD)len, &lenout, NULL);
+            if (to_file) WriteFile(m_file, stamp, (DWORD)len, &lenout, NULL);
             stamp = nullptr;
         }
 
