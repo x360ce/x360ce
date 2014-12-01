@@ -1,25 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="InputHook\HookDI.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHook\HookCOM.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHook\HookWT.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHook\HookLL.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
-    <ClCompile Include="InputHook\HookSA.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
     <ClCompile Include="Config.cpp">
-      <Filter>x360ce</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
@@ -31,36 +13,15 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsVersion.cpp">
+    <ClCompile Include="Controller.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InputHook\InputHook.h">
-      <Filter>InputHook</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="DirectInput.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="globals.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="Misc.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="mutex.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="svnrev_template.h">
       <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
@@ -72,23 +33,14 @@
     <ClInclude Include="x360ce.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="SWIP.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsVersion.h">
+    <ClInclude Include="Controller.h">
       <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="InputHook">
-      <UniqueIdentifier>{fdb33f5a-9e6e-4cd3-ade6-cbc97e23eb1d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="x360ce">
       <UniqueIdentifier>{fd81a978-ad0a-40cf-b53f-b9849a46ed58}</UniqueIdentifier>
     </Filter>
