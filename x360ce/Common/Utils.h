@@ -10,7 +10,7 @@
 
 HMODULE& CurrentModule();
 
-bool BuildPath(const std::string& filename, std::string* fullpath, bool check_exist = true);
+bool FullPathFromFileName(const std::string& filename, std::string* fullpath, bool check_exist, const char* commondir);
 bool ModuleFullPath(std::string* out, HMODULE hModule = NULL);
 bool ModuleFullPath(std::wstring* out, HMODULE hModule = NULL);
 bool ModulePath(std::string* out, HMODULE hModule = NULL);
@@ -21,8 +21,8 @@ bool ModuleFileName(std::wstring* out, HMODULE hModule = NULL);
 void StringToGUID(GUID* id, const std::string& szBuf);
 void StringToGUID(GUID* id, const std::wstring& szBuf);
 
-bool GUIDtoStringA(std::string* out, const GUID &g);
-bool GUIDtoStringW(std::wstring* out, const GUID &g);
+bool GUIDtoString(std::string* out, const GUID &g);
+bool GUIDtoString(std::wstring* out, const GUID &g);
 
 inline LONG clamp(LONG val, LONG min, LONG max)
 {

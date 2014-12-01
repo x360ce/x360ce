@@ -114,14 +114,14 @@ public:
 
         void CleanLine(std::string* str) const;
         void Populate(const std::string& filename);
-        bool Save(const std::string& filename);
+        bool Save(const std::string& filename, const char* commondir);
     };
 
 
     SWIP() { file_path.clear(); }
 
-    bool Load(const std::string& filename);
-    bool Save(const std::string& filename);
+    bool Load(const std::string& filename, const char* commondir);
+    bool Save(const std::string& filename, const char* commondir);
 
     bool Exists(const std::string& sectionName, const std::string& key) const;
     void Sort();

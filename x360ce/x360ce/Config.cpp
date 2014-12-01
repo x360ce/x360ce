@@ -98,45 +98,45 @@ static const char* const triggerBNames[] =
     "Right Trigger But"
 };
 
-void ParsePrefix(const std::string& input, MappingType* mapping_type, s8* value)
+void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue)
 {
-    if (mapping_type)
+    if (pMappingType)
     {
         switch (input[0])
         {
         case 'a': // Axis
-            *mapping_type = AXIS;
+            *pMappingType = AXIS;
             break;
         case 's': // Slider
-            *mapping_type = SLIDER;
+            *pMappingType = SLIDER;
             break;
         case 'x': // Half range axis
-            *mapping_type = HAXIS;
+            *pMappingType = HAXIS;
             break;
         case 'h': // Half range slider
-            *mapping_type = HSLIDER;
+            *pMappingType = HSLIDER;
             break;
         case 'z':
-            *mapping_type = CBUT;
+            *pMappingType = CBUT;
             break;
         default: // Digital
-            *mapping_type = DIGITAL;
+            *pMappingType = DIGITAL;
         }
     }
 
-    if (value)
+    if (pValue && pMappingType)
     {
-        if (mapping_type && *mapping_type != DIGITAL)
-            *value = (s8)strtol(input.c_str() + 1, NULL, 0);
+        if (*pMappingType != DIGITAL)
+            Convert(input.c_str() + 1, pValue);   
         else
-            *value = (s8)strtol(input.c_str(), NULL, 0);
+            Convert(input, pValue);
     }
 }
 
 void InitLogger()
 {
     SWIP ini;
-    ini.Load("x360ce.ini");
+    ini.Load("x360ce.ini", "x360ce");
 
     bool file = false;
     bool con = false;
@@ -155,14 +155,14 @@ void InitLogger()
 
         sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
             systime.wMonth, systime.wDay, GetTickCount());
-        LogFile(logfilename);
+        LogFile(logfilename, "x360ce");
     }
 }
 
 void ReadConfig()
 {
     SWIP ini;
-    ini.Load("x360ce.ini");
+    ini.Load("x360ce.ini", "x360ce");
 
     static bool once_flag = false;
     if (!once_flag)

@@ -117,7 +117,7 @@ bool XInputInitialize()
     return true;
 }
 
-u32 DeviceInitialize(DWORD dwUserIndex, Controller** pController, Mapping** pMapping)
+u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
 {
     static bool once_flag = false;
     if (!once_flag)
@@ -149,14 +149,11 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** pController, Mapping** pMap
     if (!(dwUserIndex < XUSER_MAX_COUNT))
         return ERROR_BAD_ARGUMENTS;
 
-    Controller* _pController = g_pControllers[dwUserIndex];
-    Mapping* _pMapping = &_pController->mapping;
-
-    if (pController) *pController = _pController;
-    if (pMapping) *pMapping = _pMapping;
+    Controller* pController = g_pControllers[dwUserIndex];
+    if (ppController) *ppController = pController;
 
     // passtrough
-    if (_pController->passthrough && XInputInitialize())
+    if (pController->passthrough && XInputInitialize())
         return PASSTROUGH;
 
     HRESULT hr = E_FAIL;
@@ -164,12 +161,12 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** pController, Mapping** pMap
     if (!hMsgWnd)
         CreateMsgWnd();
 
-    if (!_pController->device)
+    if (!pController->device)
     {
         PrintLog("[PAD%d] Starting", dwUserIndex + 1);
         PrintLog("[PAD%d] Initializing as UserIndex %d", dwUserIndex + 1, dwUserIndex);
 
-        hr = _pController->InitDirectInput(hMsgWnd);
+        hr = pController->InitDirectInput(hMsgWnd);
         if (FAILED(hr)) PrintLog("[PAD%d] Fail with 0x%08X", dwUserIndex + 1, hr);
 
         if (SUCCEEDED(hr))
@@ -179,7 +176,7 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** pController, Mapping** pMap
         }
     }
 
-    if (!_pController->device)
+    if (!pController->device)
         return ERROR_DEVICE_NOT_CONNECTED;
     else return ERROR_SUCCESS;
 }
@@ -189,10 +186,9 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     //PrintLog("XInputGetState");
 
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pState)
         return ERROR_BAD_ARGUMENTS;
-    u32 initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    u32 initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetState(dwUserIndex, pState);
     else if (initFlag != 0)
@@ -223,8 +219,10 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     // timestamp packet
     pState->dwPacketNumber = GetTickCount();
 
+    Mapping* pMapping = &pController->mapping;
+
     // --- Map buttons ---
-    for (s8 i = 0; i < 10; ++i)
+    for (u32 i = 0; i < _countof(pMapping->Button); ++i)
     {
         if (pController->ButtonPressed(pMapping->Button[i]))
             pState->Gamepad.wButtons |= buttonIDs[i];
@@ -257,7 +255,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     }
     else if (pMapping->PovIsButton == true)
     {
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < _countof(pMapping->pov); ++i)
         {
             if (pController->ButtonPressed(pMapping->pov[i]))
             {
@@ -267,30 +265,30 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     }
 
     // Created so we can refer to each axis with an ID
-    LONG axis[] =
+    s32 axis[] =
     {
         pController->state.lX,
         pController->state.lY,
         pController->state.lZ,
         pController->state.lRx,
         pController->state.lRy,
-        pController->state.lRz,
-        0
+        pController->state.lRz
     };
-    LONG slider[] =
+
+    s32 slider[] =
     {
         pController->state.rglSlider[0],
         pController->state.rglSlider[1]
     };
 
     // --- Map triggers ---
-    BYTE *targetTrigger[] =
+    u8 *targetTrigger[] =
     {
         &pState->Gamepad.bLeftTrigger,
         &pState->Gamepad.bRightTrigger
     };
 
-    for (size_t i = 0; i < 2; ++i)
+    for (u32 i = 0; i < _countof(pMapping->Trigger); ++i)
     {
         MappingType triggerType = pMapping->Trigger[i].type;
 
@@ -300,7 +298,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
         }
         else
         {
-            LONG *values;
+            s32 *values;
 
             switch (triggerType)
             {
@@ -320,7 +318,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
                 break;
             }
 
-            LONG v = 0;
+            s32 v = 0;
 
             if (pMapping->Trigger[i].id > 0) v = values[pMapping->Trigger[i].id - 1];
             else if (pMapping->Trigger[i].id < 0) v = -values[-pMapping->Trigger[i].id - 1] - 1;
@@ -337,9 +335,9 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
             HSLIDER:	(	0 to 255 from 0 to 32767) using slider
             */
 
-            LONG v2 = 0;
-            LONG offset = 0;
-            LONG scaling = 1;
+            s32 v2 = 0;
+            s32 offset = 0;
+            s32 scaling = 1;
 
             switch (triggerType)
             {
@@ -384,14 +382,14 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
                 {
                     v2 = (offset - v) / scaling;
                     *(targetTrigger[0]) = 255;
-                    *(targetTrigger[1]) = 255 - (BYTE)deadzone(v2, 0, 255, pMapping->Trigger[1].triggerdz, 255);
+                    *(targetTrigger[1]) = 255 - (u8)deadzone(v2, 0, 255, pMapping->Trigger[1].triggerdz, 255);
                 }
 
                 if (!pController->ButtonPressed(pMapping->Trigger[0].but)
                     && pController->ButtonPressed(pMapping->Trigger[1].but))
                 {
                     v2 = (offset + v) / scaling;
-                    *(targetTrigger[0]) = 255 - (BYTE)deadzone(v2, 0, 255, pMapping->Trigger[0].triggerdz, 255);
+                    *(targetTrigger[0]) = 255 - (u8)deadzone(v2, 0, 255, pMapping->Trigger[0].triggerdz, 255);
                     *(targetTrigger[1]) = 255;
                 }
 
@@ -399,14 +397,14 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
                     && !pController->ButtonPressed(pMapping->Trigger[1].but))
                 {
                     v2 = (offset + v) / scaling;
-                    *(targetTrigger[i]) = (BYTE)deadzone(v2, 0, 255, pMapping->Trigger[0].triggerdz, 255);
+                    *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, pMapping->Trigger[0].triggerdz, 255);
                 }
 
             }
             else
             {
                 v2 = (offset + v) / scaling;
-                *(targetTrigger[i]) = (BYTE)deadzone(v2, 0, 255, pMapping->Trigger[0].triggerdz, 255);
+                *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, pMapping->Trigger[0].triggerdz, 255);
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////
@@ -424,11 +422,11 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
         &pState->Gamepad.sThumbRY
     };
 
-    for (u32 i = 0; i < 4; ++i)
+    for (u32 i = 0; i < _countof(pMapping->Axis); ++i)
     {
         if (pMapping->Axis[i].axistodpad == 0)
         {
-            LONG *values = axis;
+            s32 *values = axis;
 
             // Analog input
             if (pMapping->Axis[i].analogType == AXIS) values = axis;
@@ -440,13 +438,13 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
 
                 if (pMapping->Axis[i].id > 0)
                 {
-                    LONG val = (LONG)values[pMapping->Axis[i].id - 1];
-                    *(targetAxis[i]) = (SHORT)clamp(val, -32768, 32767);
+                    s32 val = (s32)values[pMapping->Axis[i].id - 1];
+                    *(targetAxis[i]) = (s16)clamp(val, -32768, 32767);
                 }
                 else if (pMapping->Axis[i].id < 0)
                 {
-                    LONG val = (LONG)(-1 - values[-pMapping->Axis[i].id - 1]);
-                    *(targetAxis[i]) = (SHORT)clamp(val, -32768, 32767);
+                    s32 val = (s32)(-1 - values[-pMapping->Axis[i].id - 1]);
+                    *(targetAxis[i]) = (s16)clamp(val, -32768, 32767);
                 }
             }
 
@@ -487,12 +485,12 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
         // XInput [ 32768    -1 | 0     32767 ]
         //
         //int xInput = dInputValue;
-        int xInput = *(targetAxis[i]);
-        int deadZone = (int)pMapping->Axis[i].axisdeadzone;
-        int antiDeadZone = (int)pMapping->Axis[i].antideadzone;
-        int linear = (int)pMapping->Axis[i].axislinear;
-        int min = -32768;
-        int max = 32767;
+        s32 xInput = *(targetAxis[i]);
+        s32 deadZone = (s32)pMapping->Axis[i].axisdeadzone;
+        s32 antiDeadZone = (s32)pMapping->Axis[i].antideadzone;
+        s32 linear = (s32)pMapping->Axis[i].axislinear;
+        s32 min = -32768;
+        s32 max = 32767;
         // If deadzone value is set then...
         bool invert = xInput < 0;
         // Convert [-32768;-1] -> [32767;0]
@@ -503,7 +501,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
             if (xInput > deadZone)
             {
                 // [deadZone;32767] => [0;32767];
-                xInput = (int)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
+                xInput = (s32)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
             }
             else
             {
@@ -516,7 +514,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
             if (xInput > 0)
             {
                 // [0;32767] => [antiDeadZone;32767];
-                xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
+                xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
             }
         }
         // If linear value is set then...
@@ -533,11 +531,11 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
             xInputF = xInputF + (2.f - v - xInputF - 1.f) * abs(linearF);
             xInput = ConvertToShort(xInputF);
             // [0;32767] => [antiDeadZone;32767];
-            xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
+            xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
         }
         // Convert [32767;0] -> [-32768;-1]
         if (invert) xInput = -1 - xInput;
-        *(targetAxis[i]) = (SHORT)clamp(xInput, min, max);
+        *(targetAxis[i]) = (s16)clamp(xInput, min, max);
         //return (short)xInput;
     }
     return ERROR_SUCCESS;
@@ -550,10 +548,9 @@ extern "C" DWORD WINAPI XInputSetState(__in DWORD dwUserIndex, __in XINPUT_VIBRA
 #endif
 
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pVibration)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputSetState(dwUserIndex, pVibration);
     else if (initFlag != 0)
@@ -586,10 +583,9 @@ extern "C" DWORD WINAPI XInputSetState(__in DWORD dwUserIndex, __in XINPUT_VIBRA
 extern "C" DWORD WINAPI XInputGetCapabilities(__in DWORD dwUserIndex, __in DWORD dwFlags, __out XINPUT_CAPABILITIES* pCapabilities)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pCapabilities || dwFlags != XINPUT_FLAG_GAMEPAD)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetCapabilities(dwUserIndex, dwFlags, pCapabilities);
     else if (initFlag != 0)
@@ -644,10 +640,9 @@ extern "C" VOID WINAPI XInputEnable(__in BOOL enable)
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(__in DWORD dwUserIndex, __out GUID* pDSoundRenderGuid, __out GUID* pDSoundCaptureGuid)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pDSoundRenderGuid || !pDSoundCaptureGuid)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetDSoundAudioDeviceGuids(dwUserIndex, pDSoundRenderGuid, pDSoundCaptureGuid);
     else if (initFlag != 0)
@@ -664,10 +659,9 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(__in DWORD dwUserIndex, 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(__in DWORD  dwUserIndex, __in BYTE devType, __out XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pBatteryInformation)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetBatteryInformation(dwUserIndex, devType, pBatteryInformation);
     else if (initFlag != 0)
@@ -684,10 +678,9 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(__in DWORD  dwUserIndex, __i
 extern "C" DWORD WINAPI XInputGetKeystroke(__in DWORD dwUserIndex, __in DWORD dwReserved, __out XINPUT_KEYSTROKE* pKeystroke)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pKeystroke)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetKeystroke(dwUserIndex, dwReserved, pKeystroke);
     else if (initFlag != 0)
@@ -805,19 +798,18 @@ extern "C" DWORD WINAPI XInputGetKeystroke(__in DWORD dwUserIndex, __in DWORD dw
 extern "C" DWORD WINAPI XInputGetStateEx(__in DWORD dwUserIndex, __out XINPUT_STATE *pState)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
     if (!pState)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetStateEx(dwUserIndex, pState);
     else if (initFlag != 0)
         return initFlag;
 
-    XINPUT_STATE& xState = *pState;
+    Mapping* pMapping = &pController->mapping;
 
     if (pMapping->guide && pController->ButtonPressed(pMapping->guide))
-        xState.Gamepad.wButtons |= 0x400;
+        pState->Gamepad.wButtons |= 0x400;
 
     //PrintLog("XInputGetStateEx %u",xstate.Gamepad.wButtons);
 
@@ -827,8 +819,7 @@ extern "C" DWORD WINAPI XInputGetStateEx(__in DWORD dwUserIndex, __out XINPUT_ST
 extern "C" DWORD WINAPI XInputWaitForGuideButton(__in DWORD dwUserIndex, __in DWORD dwFlag, __inout LPVOID pVoid)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputWaitForGuideButton(dwUserIndex, dwFlag, pVoid);
     else if (initFlag != 0)
@@ -842,8 +833,7 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(__in DWORD dwUserIndex, __in DW
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(__in DWORD dwUserIndex)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputCancelGuideButtonWait(dwUserIndex);
     else if (initFlag != 0)
@@ -857,8 +847,7 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(__in DWORD dwUserIndex)
 extern "C" DWORD WINAPI XInputPowerOffController(__in DWORD dwUserIndex)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputPowerOffController(dwUserIndex);
     else if (initFlag != 0)
@@ -872,8 +861,7 @@ extern "C" DWORD WINAPI XInputPowerOffController(__in DWORD dwUserIndex)
 extern "C" DWORD WINAPI XInputGetAudioDeviceIds(__in DWORD dwUserIndex, __in LPWSTR pRenderDeviceId, __inout UINT* pRenderCount, __in LPWSTR pCaptureDeviceId, __inout UINT* pCaptureCount)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetAudioDeviceIds(dwUserIndex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
     else if (initFlag != 0)
@@ -887,8 +875,7 @@ extern "C" DWORD WINAPI XInputGetAudioDeviceIds(__in DWORD dwUserIndex, __in LPW
 extern "C" DWORD WINAPI XInputGetBaseBusInformation(__in DWORD dwUserIndex, __out struct XINPUT_BUSINFO* pBusinfo)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetBaseBusInformation(dwUserIndex, pBusinfo);
     else if (initFlag != 0)
@@ -904,8 +891,7 @@ extern "C" DWORD WINAPI XInputGetBaseBusInformation(__in DWORD dwUserIndex, __ou
 extern "C" DWORD WINAPI XInputGetCapabilitiesEx(__inout DWORD unk1, __in DWORD dwUserIndex, __in DWORD dwFlags, __out struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
 {
     Controller* pController = nullptr;
-    Mapping* pMapping = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController, &pMapping);
+    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return xinput.XInputGetCapabilitiesEx(unk1, dwUserIndex, dwFlags, pCapabilitiesEx);
     else if (initFlag != 0)
