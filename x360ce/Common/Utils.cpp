@@ -135,7 +135,7 @@ bool ModuleFileName(std::wstring* out, HMODULE hModule)
 
 void StringToGUID(GUID* id, const std::string& szBuf)
 {
-    if (!id && szBuf.empty()) return;
+    if (!id || szBuf.empty()) return;
 
     const char* p = szBuf.c_str();
     if (strchr(p, '{')) p++;
@@ -163,7 +163,7 @@ void StringToGUID(GUID* id, const std::string& szBuf)
 
 void StringToGUID(GUID* id, const std::wstring& szBuf)
 {
-    if (!id && szBuf.empty()) return;
+    if (!id || szBuf.empty()) return;
 
     const wchar_t* p = szBuf.c_str();
     if (wcschr(p, L'{')) p++;

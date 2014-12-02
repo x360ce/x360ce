@@ -193,9 +193,7 @@ void SWIP::Section::CleanLine(std::string* str) const
 {
     if (!str) return;
 
-    size_t pos = std::string::npos;
-
-    pos = str->find('#');
+    size_t pos = str->find('#');
     if (pos != std::string::npos)
         str->resize(pos);
 
