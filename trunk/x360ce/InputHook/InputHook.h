@@ -7,12 +7,6 @@
 
 #include "Mutex.h"
 
-#ifndef INVALIDUSERINDEX
-#define INVALIDUSERINDEX (u32)-1
-#endif
-
-typedef void(*LoggerCallback_t)();
-
 static const char* status_names[] =
 {
     "MH_OK",
@@ -164,7 +158,7 @@ public:
         return &m_devices[dwUserIndex];
     }
 
-    void Init(LoggerCallback_t callback);
+    void Init();
 
     void Shutdown();
 

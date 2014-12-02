@@ -28,9 +28,7 @@ void __cdecl ExitInstance()
 
     PrintLog("Terminating x360ce, bye");
     LogShutdown();
-
-    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
-        delete g_pControllers[i];
+    g_Controllers.clear();
 }
 
 VOID InitInstance()
@@ -45,22 +43,18 @@ VOID InitInstance()
 #endif
 
     atexit(ExitInstance);
-    g_iHook.Init(InitLogger);
+
+    InitLogger();
+    g_iHook.Init();
 }
 
-extern "C" VOID WINAPI reset()
+extern "C" VOID WINAPI Reset()
 {
     PrintLog("Restarting");
 
     // Only x360ce.App will call this so InputHook is not required, disable it.
     g_iHook.Shutdown();
-
-    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
-    {
-        delete g_pControllers[i];
-        g_pControllers[i] = nullptr;
-    }
-
+    g_Controllers.clear();
     ReadConfig();
 }
 
@@ -70,13 +64,13 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVO
 
     switch (ul_reason_for_call)
     {
-    case DLL_PROCESS_ATTACH:
-        DisableThreadLibraryCalls(hModule);
-        InitInstance();
-        break;
+        case DLL_PROCESS_ATTACH:
+            DisableThreadLibraryCalls(hModule);
+            InitInstance();
+            break;
 
-    case DLL_PROCESS_DETACH:
-        break;
+        case DLL_PROCESS_DETACH:
+            break;
     }
 
     return TRUE;

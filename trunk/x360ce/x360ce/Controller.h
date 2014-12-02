@@ -20,24 +20,13 @@ struct ForceFeedbackCaps
 class ForceFeedback
 {
 public:
-    ForceFeedback();
+    ForceFeedback(Controller* pController);
     virtual ~ForceFeedback();
 
-    void Init();
-    void Reset();
+    void SetState(WORD rightMotor, WORD leftMotor);
 
-    HRESULT SetState(WORD force, u8 motor);
-    HRESULT SetDeviceForces(WORD force, u8 motor);
-
-    BOOL IsForceSupported();
-    BOOL EffectIsPlaying();
-
+    bool IsSupported();
     void ClearEffects();
-
-    HRESULT PrepareForce(u8 motor);
-    HRESULT PrepareForceEjocys(u8 motor);
-    HRESULT PrepareForceNew(u8 motor);
-    HRESULT PrepareForceFailsafe(u8 motor);
 
     HRESULT SetDeviceForcesEjocys(WORD force, u8 motor);
     HRESULT SetDeviceForcesNew(WORD force, u8 motor);
@@ -48,63 +37,79 @@ public:
 
     void SetCaps(const ForceFeedbackCaps& caps)
     {
-        Caps = caps;
+        m_Caps = caps;
     }
 
-    Controller* controller;
+    LPDIRECTINPUTEFFECT m_pEffectObject[2];
+    u32 m_LeftPeriod;
+    u32 m_RightPeriod;
+    float m_ForcePercent;
+    u8 m_Type;
+    bool m_SwapMotors;
 
-    LPDIRECTINPUTEFFECT effect[2];
-    DIEFFECT* eff[2];
-    DICONSTANTFORCE* cf;
-    DIPERIODIC* pf;
-    DIRAMPFORCE* rf;
-    s32 xForce;
-    s32 yForce;
-    s32 oldXForce;
-    s32 oldYForce;
-    u32 oldMagnitude;
-    u32 oldPeriod;
-    BOOL is_created[2];
-    BOOL IsMotorInitialized[2];
-    BOOL IsSupported;
-    BOOL IsSupportChecked;
-    ForceFeedbackCaps Caps;
-
-    u32 leftPeriod;
-    u32 rightPeriod;
-    float forcepercent;
-    u8 axisffbcount;
-    u8 type;
-    bool swapmotor;
+private:
+    Controller* m_pController;
+    Mutex m_mutex;
+    s32 m_xForce;
+    s32 m_yForce;
+    u8 m_Axes;
+    ForceFeedbackCaps m_Caps;
 };
 
 class Controller
 {
+    friend class ForceFeedback;
 public:
-    Controller();
+    Controller(DWORD index);
     ~Controller();
 
-    void Init();
-    void Reset();
+    // required because mutex is not copyable
+    Controller(const Controller &other)
+    {
+        m_pDevice = other.m_pDevice;
+        m_state = other.m_state;
+        m_mapping = other.m_mapping;
+        m_pForceFeedback = other.m_pForceFeedback;
+        m_productid = other.m_productid;
+        m_instanceid = other.m_instanceid;
+        m_dwUserIndex = other.m_dwUserIndex;
+        m_axiscount = other.m_axiscount;
+        m_gamepadtype = other.m_gamepadtype;
+        m_passthrough = other.m_passthrough;
+        m_useforce = other.m_useforce;
+    }
 
     HRESULT UpdateState();
     HRESULT InitDirectInput(HWND hWnd);
     BOOL ButtonPressed(DWORD buttonidx);
 
+    bool Initalized() const
+    {
+        return m_pDevice != nullptr;
+    }
+
+    const DIJOYSTATE2& GetState() const
+    {
+        return m_state;
+    }
+
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 
-    Mutex mutex;
-    LPDIRECTINPUTDEVICE8 device;
-    DIJOYSTATE2 state;
-    Mapping mapping;
-    ForceFeedback ffb;
-    GUID productid;
-    GUID instanceid;
-    u32 dwUserIndex;
-    u32 axiscount;
-    u8 gamepadtype;
-    bool passthrough;
-    bool useforce;
+    Mapping m_mapping;
+    ForceFeedback* m_pForceFeedback;
+    GUID m_productid;
+    GUID m_instanceid;
+    u32 m_dwUserIndex;
+    u32 m_axiscount;
+    u8 m_gamepadtype;
+    bool m_passthrough;
+    bool m_useforce;
+
+private:
+    Mutex m_mutex;
+
+    LPDIRECTINPUTDEVICE8 m_pDevice;
+    DIJOYSTATE2 m_state;
 };
 
 class DInputManager
@@ -135,4 +140,4 @@ public:
     }
 };
 
-extern Controller* g_pControllers[XUSER_MAX_COUNT];
+extern std::vector<Controller> g_Controllers;

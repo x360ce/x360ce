@@ -56,11 +56,9 @@ bool InputHook::ReadGameDatabase(u32* mask)
     return false;
 }
 
-void InputHook::Init(LoggerCallback_t init_logger)
+void InputHook::Init()
 {
     LockGuard lock(m_mutex);
-    if (init_logger) init_logger();
-
     PrintLog("InputHook starting...");
 
     SWIP ini;
@@ -123,22 +121,22 @@ void InputHook::Init(LoggerCallback_t init_logger)
     {
         std::string section;
         std::string key = StringFormat("PAD%u", i + 1);
-        ini.Get("Mappings", key, &section);
-        if (section.empty()) continue;
+        if (!ini.Get("Mappings", key, &section))
+            continue;
 
         u32 index = 0;
-        ini.Get(section, "UserIndex", &index, INVALIDUSERINDEX);
-        if (index == INVALIDUSERINDEX) index = i;
+        if (!ini.Get(section, "UserIndex", &index))
+            index = i;
 
         std::string buffer;
         GUID productid = GUID_NULL;
         GUID instanceid = GUID_NULL;
 
-        ini.Get(section, "ProductGUID", &buffer);
-        StringToGUID(&productid, buffer);
+        if (ini.Get(section, "ProductGUID", &buffer))
+            StringToGUID(&productid, buffer);
 
-        ini.Get(section, "InstanceGUID", &buffer);
-        StringToGUID(&instanceid, buffer);
+        if (ini.Get(section, "InstanceGUID", &buffer))
+            StringToGUID(&instanceid, buffer);
 
         if (!IsEqualGUID(productid, GUID_NULL) && !IsEqualGUID(instanceid, GUID_NULL))
         {
@@ -189,7 +187,7 @@ void InputHook::Reset()
     m_fakepidvid = MAKELONG(0x045E, 0x028E);
     m_timeout = 30;
 
-    Init(nullptr);
+    Init();
 }
 
 void InputHook::StartTimeoutThread()
