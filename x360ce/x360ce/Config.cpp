@@ -104,30 +104,30 @@ void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue
     {
         switch (input[0])
         {
-        case 'a': // Axis
-            *pMappingType = AXIS;
-            break;
-        case 's': // Slider
-            *pMappingType = SLIDER;
-            break;
-        case 'x': // Half range axis
-            *pMappingType = HAXIS;
-            break;
-        case 'h': // Half range slider
-            *pMappingType = HSLIDER;
-            break;
-        case 'z':
-            *pMappingType = CBUT;
-            break;
-        default: // Digital
-            *pMappingType = DIGITAL;
+            case 'a': // Axis
+                *pMappingType = AXIS;
+                break;
+            case 's': // Slider
+                *pMappingType = SLIDER;
+                break;
+            case 'x': // Half range axis
+                *pMappingType = HAXIS;
+                break;
+            case 'h': // Half range slider
+                *pMappingType = HSLIDER;
+                break;
+            case 'z':
+                *pMappingType = CBUT;
+                break;
+            default: // Digital
+                *pMappingType = DIGITAL;
         }
     }
 
     if (pValue && pMappingType)
     {
         if (*pMappingType != DIGITAL)
-            Convert(input.c_str() + 1, pValue);   
+            Convert(input.c_str() + 1, pValue);
         else
             Convert(input, pValue);
     }
@@ -138,13 +138,15 @@ void InitLogger()
     SWIP ini;
     ini.Load("x360ce.ini", "x360ce");
 
-    bool file = false;
-    bool con = false;
+    bool con;
+    bool file;
 
-    ini.Get("Options", "Log", &file);
     ini.Get("Options", "Console", &con);
+    ini.Get("Options", "Log", &file);
 
-    if (con) LogConsole("x360ce", legal_notice);
+    if (con)
+        LogConsole("x360ce", legal_notice);
+
     if (file)
     {
         char logfilename[MAX_PATH];
@@ -189,18 +191,17 @@ void ReadConfig()
     {
         std::string section;
         std::string key = StringFormat("PAD%u", i + 1);
-        ini.Get("Mappings", key, &section);
-        if (section.empty()) continue;
+        if (!ini.Get("Mappings", key, &section))
+            continue;
 
         u32 index = 0;
-        ini.Get(section, "UserIndex", &index, INVALIDUSERINDEX);
-        if (index == INVALIDUSERINDEX) index = i;
+        if (!ini.Get(section, "UserIndex", &index))
+            index = i;
 
-        g_pControllers[index] = new Controller;
-        g_pControllers[index]->dwUserIndex = index;
+        g_Controllers.push_back(Controller(index));
 
-        if (ReadPadConfig(g_pControllers[index], section, &ini))
-            ReadPadMapping(g_pControllers[index], section, &ini);
+        if (ReadPadConfig(&g_Controllers.back(), section, &ini))
+            ReadPadMapping(&g_Controllers.back(), section, &ini);
     }
 }
 
@@ -208,51 +209,55 @@ bool ReadPadConfig(Controller* pController, const std::string& section, SWIP* pS
 {
     std::string buffer;
 
-    pSWIP->Get(section, "ProductGUID", &buffer);
-    StringToGUID(&pController->productid, buffer);
+    if (pSWIP->Get(section, "ProductGUID", &buffer))
+        StringToGUID(&pController->m_productid, buffer);
 
-    pSWIP->Get(section, "InstanceGUID", &buffer);
-    StringToGUID(&pController->instanceid, buffer);
+    if (pSWIP->Get(section, "InstanceGUID", &buffer))
+        StringToGUID(&pController->m_instanceid, buffer);
 
-    if (IsEqualGUID(pController->productid, GUID_NULL) ||
-        IsEqualGUID(pController->instanceid, GUID_NULL))
+    if (IsEqualGUID(pController->m_productid, GUID_NULL) || IsEqualGUID(pController->m_instanceid, GUID_NULL))
     {
-        std::string message = StringFormat("[PAD%u] Misconfigured device, check GUIDs", pController->dwUserIndex);
+        std::string message = StringFormat("[PAD%u] Misconfigured device, check GUIDs", pController->m_dwUserIndex);
         PrintLog(message.c_str());
         MessageBoxA(NULL, message.c_str(), "x360ce", MB_ICONERROR);
         return false;
     }
-
-    pSWIP->Get(section, "PassThrough", &pController->passthrough, true);
-    if (pController->passthrough) return false;
+    pSWIP->Get(section, "PassThrough", &pController->m_passthrough);
+    if (pController->m_passthrough)
+        return false;
 
     // Device type
-    pSWIP->Get(section, "ControllerType", &pController->gamepadtype, 1);
+    pSWIP->Get(section, "ControllerType", &pController->m_gamepadtype, 1);
 
     // FFB options
-    pSWIP->Get(section, "UseForceFeedback", &pController->useforce);
-    pSWIP->Get(section, "SwapMotor", &pController->ffb.swapmotor);
-    pSWIP->Get(section, "FFBType", &pController->ffb.type);
-    pSWIP->Get(section, "ForcePercent", &pController->ffb.forcepercent, 100);
-    pController->ffb.forcepercent *= 0.01f;
+    pSWIP->Get(section, "UseForceFeedback", &pController->m_useforce);
+    if (pController->m_useforce)
+    {
+        pController->m_pForceFeedback = new ForceFeedback(pController);
 
-    pSWIP->Get(section, "LeftMotorPeriod", &pController->ffb.leftPeriod, 60);
-    pSWIP->Get(section, "RightMotorPeriod", &pController->ffb.rightPeriod, 20);
+        pSWIP->Get(section, "SwapMotor", &pController->m_pForceFeedback->m_SwapMotors);
+        pSWIP->Get(section, "FFBType", &pController->m_pForceFeedback->m_Type);
+        pSWIP->Get(section, "ForcePercent", &pController->m_pForceFeedback->m_ForcePercent, 100);
+        pController->m_pForceFeedback->m_ForcePercent *= 0.01f;
+
+        pSWIP->Get(section, "LeftMotorPeriod", &pController->m_pForceFeedback->m_LeftPeriod, 60);
+        pSWIP->Get(section, "RightMotorPeriod", &pController->m_pForceFeedback->m_RightPeriod, 20);
+    }
 
     return true;
 }
 
 void ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
-    Mapping* pMapping = &pController->mapping;
+    Mapping* pMapping = &pController->m_mapping;
 
     // Guide button
-    pSWIP->Get(section, "GuideButton", &pMapping->guide);
+    pSWIP->Get(section, "GuideButton", &pMapping->guide, -1);
 
     // Fire buttons
-    for (u32 i = 0; i < 10; ++i)
+    for (u32 i = 0; i < _countof(pMapping->Button); ++i)
     {
-        s8 button = 0;
+        s8 button;
         pSWIP->Get(section, buttonNames[i], &button);
         pMapping->Button[i] = button - 1;
     }
@@ -283,8 +288,8 @@ void ReadPadMapping(Controller* pController, const std::string& section, SWIP* p
     {
         // Axes
         std::string axis;
-        pSWIP->Get(section, axisNames[i], &axis);
-        ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
+        if (pSWIP->Get(section, axisNames[i], &axis))
+            ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
 
         // DeadZones
         pSWIP->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
@@ -301,7 +306,7 @@ void ReadPadMapping(Controller* pController, const std::string& section, SWIP* p
         pSWIP->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
 
         // Axis to button mappings
-        s8 ret = 0;
+        s8 ret;
         pSWIP->Get(section, axisBNames[i * 2], &ret);
         if (ret > 0)
         {
@@ -320,8 +325,8 @@ void ReadPadMapping(Controller* pController, const std::string& section, SWIP* p
     for (u32 i = 0; i < _countof(pMapping->Trigger); ++i)
     {
         std::string trigger;
-        pSWIP->Get(section, triggerNames[i], &trigger);  
-        ParsePrefix(trigger, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
+        if (pSWIP->Get(section, triggerNames[i], &trigger))
+            ParsePrefix(trigger, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
 
         pSWIP->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
 

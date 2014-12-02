@@ -24,4 +24,4 @@ EXPORTS
         XInputGetCapabilitiesEx @108 NONAME
 
         ; reset helper
-		reset @256
+		Reset @256
