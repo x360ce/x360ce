@@ -329,8 +329,6 @@ HRESULT ForceFeedback::SetDeviceForcesFailsafe(WORD force, u8 motor)
 
 HRESULT ForceFeedback::SetDeviceForcesEjocys(WORD force, u8 motor)
 {
-    HRESULT hr = E_FAIL;
-
     DWORD rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };
     LONG rglDirection[2] = { 0, 0 };
 
@@ -382,7 +380,7 @@ HRESULT ForceFeedback::SetDeviceForcesEjocys(WORD force, u8 motor)
         effectType.rglDirection[1] = m_yForce;
     }
 
-    hr = m_pController->m_pDevice->CreateEffect(GUID_Sine, &effectType, &m_pEffectObject[motor], NULL);
+    HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_Sine, &effectType, &m_pEffectObject[motor], NULL);
     if (FAILED(hr))
     {
         PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_dwUserIndex + 1, motor, hr);

@@ -36,7 +36,7 @@ struct AxisMap
         positiveButtonID = negativeButtonID = 0;
         hasDigital = false;
 
-        a2ddeadzone = false;
+        a2ddeadzone = 0;
         a2doffset = 0;
         axisdeadzone = 0;
         antideadzone = 0;

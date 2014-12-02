@@ -79,6 +79,25 @@ public:
         m_useforce = other.m_useforce;
     }
 
+    Controller& operator=(const Controller& other)
+    {
+        if (this != &other)
+        {
+            m_pDevice = other.m_pDevice;
+            m_state = other.m_state;
+            m_mapping = other.m_mapping;
+            m_pForceFeedback = other.m_pForceFeedback;
+            m_productid = other.m_productid;
+            m_instanceid = other.m_instanceid;
+            m_dwUserIndex = other.m_dwUserIndex;
+            m_axiscount = other.m_axiscount;
+            m_gamepadtype = other.m_gamepadtype;
+            m_passthrough = other.m_passthrough;
+            m_useforce = other.m_useforce;
+        }
+        return *this;
+    }
+
     HRESULT UpdateState();
     HRESULT InitDirectInput(HWND hWnd);
     BOOL ButtonPressed(DWORD buttonidx);

@@ -210,6 +210,8 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
 
     if (FAILED(hr)) return ERROR_DEVICE_NOT_CONNECTED;
 
+    const DIJOYSTATE2& state = pController->GetState();
+
     pState->Gamepad.wButtons = 0;
     pState->Gamepad.bLeftTrigger = 0;
     pState->Gamepad.bRightTrigger = 0;
@@ -237,7 +239,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     {
         //INT pov = POVState(pMapping->DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
 
-        int povdeg = pController->GetState().rgdwPOV[pMapping->DpadPOV - 1];
+        int povdeg = state.rgdwPOV[pMapping->DpadPOV - 1];
         if (povdeg >= 0)
         {
             // Up-left, up, up-right, up (at 360 degrees)
@@ -271,18 +273,18 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     // Created so we can refer to each axis with an ID
     s32 axis[] =
     {
-        pController->GetState().lX,
-        pController->GetState().lY,
-        pController->GetState().lZ,
-        pController->GetState().lRx,
-        pController->GetState().lRy,
-        pController->GetState().lRz
+        state.lX,
+        state.lY,
+        state.lZ,
+        state.lRx,
+        state.lRy,
+        state.lRz
     };
 
     s32 slider[] =
     {
-        pController->GetState().rglSlider[0],
-        pController->GetState().rglSlider[1]
+        state.rglSlider[0],
+        state.rglSlider[1]
     };
 
     // --- Map triggers ---
@@ -470,16 +472,16 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
         {
             //PrintLog("x: %d, y: %d, z: %d",Gamepad[dwUserIndex].state.lX,Gamepad[dwUserIndex].state.lY,Gamepad[dwUserIndex].state.lZ);
 
-            if (pController->GetState().lX - pMapping->Axis[i].a2doffset > pMapping->Axis[i].a2ddeadzone)
+            if (state.lX - pMapping->Axis[i].a2doffset > pMapping->Axis[i].a2ddeadzone)
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 
-            if (pController->GetState().lX - pMapping->Axis[i].a2doffset < -pMapping->Axis[i].a2ddeadzone)
+            if (state.lX - pMapping->Axis[i].a2doffset < -pMapping->Axis[i].a2ddeadzone)
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
 
-            if (pController->GetState().lY - pMapping->Axis[i].a2doffset < -pMapping->Axis[i].a2ddeadzone)
+            if (state.lY - pMapping->Axis[i].a2doffset < -pMapping->Axis[i].a2ddeadzone)
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
 
-            if (pController->GetState().lY - pMapping->Axis[i].a2doffset > pMapping->Axis[i].a2ddeadzone)
+            if (state.lY - pMapping->Axis[i].a2doffset > pMapping->Axis[i].a2ddeadzone)
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
         }
 
