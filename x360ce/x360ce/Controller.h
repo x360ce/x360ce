@@ -35,7 +35,6 @@ public:
         m_Type = other.m_Type;
         m_SwapMotors = other.m_SwapMotors;
 
-        m_pController = other.m_pController;
         m_xForce = other.m_xForce;
         m_yForce = other.m_yForce;
         m_Axes = other.m_Axes;
@@ -55,7 +54,6 @@ public:
             m_Type = other.m_Type;
             m_SwapMotors = other.m_SwapMotors;
 
-            m_pController = other.m_pController;
             m_xForce = other.m_xForce;
             m_yForce = other.m_yForce;
             m_Axes = other.m_Axes;
