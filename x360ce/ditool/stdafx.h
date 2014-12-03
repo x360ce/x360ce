@@ -18,15 +18,18 @@
 
 #include "targetver.h"
 
+#if _MSC_VER < 1700
 #define _BIND_TO_CURRENT_CRT_VERSION 1
-
-#define WIN32_LEAN_AND_MEAN
-#define VC_EXTRALEAN
-#define STRICT
 
 #ifdef NDEBUG
 #define _SECURE_SCL 0
 #endif
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#define STRICT
+
+#define LOGGER_DISABLE_TIME
 
 // Windows Header Files:
 #include <tchar.h>

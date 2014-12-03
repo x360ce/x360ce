@@ -77,7 +77,7 @@ HRESULT Controller::UpdateState()
     return hr;
 }
 
-HRESULT Controller::InitDirectInput(HWND hWnd)
+DWORD Controller::InitDirectInput(HWND hWnd)
 {
     DIPROPDWORD dipdw;
     HRESULT hr = E_FAIL;
@@ -91,8 +91,6 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
 
     LockGuard lock(m_mutex);
 
-    PrintLog("[PAD%d] Creating device", m_user + 1);
-
     bool bHookDI = g_iHook.GetState(InputHook::HOOK_DI);
     bool bHookSA = g_iHook.GetState(InputHook::HOOK_SA);
 
@@ -103,16 +101,20 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     if (FAILED(hr))
     {
         std::string strInstance;
-        GUIDtoString(&strInstance, m_instanceid);
-        PrintLog("InstanceGUID %s is incorrect trying ProductGUID", strInstance.c_str());
+        if (GUIDtoString(&strInstance, m_instanceid))
+            PrintLog("[PAD%d] InstanceGUID %s is incorrect trying ProductGUID", m_user + 1, strInstance.c_str());
+
         hr = dinput.Get()->CreateDevice(m_productid, &m_pDevice, NULL);
+        if (FAILED(hr))
+            return ERROR_DEVICE_NOT_CONNECTED;
     }
 
-    if (!m_pDevice) return ERROR_DEVICE_NOT_CONNECTED;
-    else PrintLog("[PAD%d] Device created", m_user + 1);
+    if (!m_pDevice)
+        return ERROR_DEVICE_NOT_CONNECTED;
+    else
+        PrintLog("[PAD%d] Device created", m_user + 1);
 
     hr = m_pDevice->SetDataFormat(&c_dfDIJoystick2);
-
     if (FAILED(hr)) PrintLog("[PAD%d] SetDataFormat failed with code HR = %X", m_user + 1, hr);
 
     HRESULT setCooperativeLevelResult = m_pDevice->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND);
@@ -133,8 +135,10 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     m_pDevice->SetProperty(DIPROP_AUTOCENTER, &dipdw.diph);
 
     hr = m_pDevice->EnumObjects(EnumObjectsCallback, (VOID*)this, DIDFT_AXIS);
-    if (FAILED(hr)) PrintLog("[PAD%d] EnumObjects failed with code HR = %X", m_user + 1, hr);
-    else PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
+    if (FAILED(hr))
+        PrintLog("[PAD%d] EnumObjects failed with code HR = %X", m_user + 1, hr);
+    else
+        PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
     if (m_pForceFeedback && m_useforce)
         m_useforce = m_pForceFeedback->IsSupported();
@@ -147,7 +151,10 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     if (bHookSA) g_iHook.EnableHook(InputHook::HOOK_SA);
     if (bHookDI) g_iHook.EnableHook(InputHook::HOOK_DI);
 
-    return hr;
+    if (SUCCEEDED(hr))
+        return ERROR_SUCCESS;
+
+    return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 bool Controller::ButtonPressed(u32 buttonidx)
@@ -179,7 +186,7 @@ ForceFeedback::~ForceFeedback()
         if (GetModuleHandleA("tmffbdrv.dll")) brokenffd = true;
 
         if (m_pController->m_pDevice && !brokenffd)
-            m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);    
+            m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
     }
 
     if (m_pEffectObject[FFB_LEFTMOTOR])
@@ -271,7 +278,7 @@ void ForceFeedback::SetState(WORD rightMotor, WORD leftMotor)
 
         if (i == FFB_LEFTMOTOR)
             force = rightMotor;
-        else 
+        else
             force = leftMotor;
 
         switch (m_Type)

@@ -1,35 +1,135 @@
 #pragma once
 
-#include "Common.h"
-#include "Logger.h"
+#include <io.h>
+#include <fcntl.h> 
 
-#ifndef DISABLE_LOGGER
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
+#include "NonCopyable.h"
+#include "Utils.h"
+#include "Mutex.h"
+
+#ifndef LOGGER_DISABLE
 class Logger : NonCopyable
 {
 public:
+    static Logger& Logger::GetInstance()
+    {
+        static Logger instance;
+        return instance;
+    };
 
-    static Logger& GetInstance();
-    void Shutdown();
+    bool Logger::File(const char* filename, const char* commondir)
+    {
+        std::string logpath;
+        FullPathFromFileName(filename, &logpath, false, commondir);
 
-    bool File(const char* filename, const char* commondir);
-    bool Console(const char* title = nullptr, const char* console_notice = nullptr);
-    void PrintTime(const char* format, ...);
-    void Print(const char* format, va_list vaargs);
-    void Print(const char* format, ...);
-    void DisableTimePrint() { m_print_time = false; };
+        m_file = CreateFileA(logpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        return m_file != INVALID_HANDLE_VALUE;
+    }
+
+    bool Logger::Console(const char* title, const char* console_notice)
+    {
+        AllocConsole();
+
+        m_console = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (m_console != INVALID_HANDLE_VALUE)
+        {
+            ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+            if (title) SetConsoleTitleA(title);
+            if (console_notice)
+            {
+                size_t len = strlen(console_notice);
+                DWORD lenout = 0;
+                WriteConsoleA(m_console, console_notice, (DWORD)len, &lenout, NULL);
+            }
+        }
+        return m_console != INVALID_HANDLE_VALUE;
+    }
+
+    void Logger::Print(const char* format, ...)
+    {
+        va_list vaargs;
+        va_start(vaargs, format);
+        Print(format, vaargs);
+        va_end(vaargs);
+    }
+
+    void Logger::Print(const char* format, va_list vaargs)
+    {
+        bool to_console = m_console != INVALID_HANDLE_VALUE;
+        bool to_file = m_file != INVALID_HANDLE_VALUE;
+
+        if ((to_console || to_file) && format)
+        {
+            LockGuard lock(m_mutex);
+            size_t len = 0;
+            DWORD lenout = 0;
+
+#ifndef LOGGER_DISABLE_TIME
+
+            static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
+            if (stamp)
+            {
+                len = strlen(stamp);
+                if (to_console) WriteConsoleA(m_console, stamp, (DWORD)len, &lenout, NULL);
+                if (to_file) WriteFile(m_file, stamp, (DWORD)len, &lenout, NULL);
+                stamp = nullptr;
+            }
+
+            GetLocalTime(&m_systime);
+            PrintTime("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
+                m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
+#endif
+            vsnprintf_s(m_buffer, 1024, 1024, format, vaargs);
+            strncat_s(m_buffer, 1024, "\r\n", _TRUNCATE);
+
+            len = strlen(m_buffer);
+            lenout = 0;
+
+            if (to_console) WriteConsoleA(m_console, m_buffer, (DWORD)len, &lenout, NULL);
+            if (to_file) WriteFile(m_file, m_buffer, (DWORD)len, &lenout, NULL);
+        }
+    }
 
 private:
-    static Logger* m_instance;
-    char m_buffer[1024];
+    Logger() : m_console(0), m_file(0) {}
 
+    Logger::~Logger()
+    {
+        if (m_console)
+            FreeConsole();
+
+        if (m_file)
+            CloseHandle(m_file);
+    }
+
+    void Logger::PrintTime(const char* format, ...)
+    {
+        bool to_console = m_console != INVALID_HANDLE_VALUE;
+        bool to_file = m_file != INVALID_HANDLE_VALUE;
+
+        if ((to_console || to_file) && format)
+        {
+            va_list arglist;
+            va_start(arglist, format);
+            vsprintf_s(m_buffer, format, arglist);
+            va_end(arglist);
+
+            size_t len = strlen(m_buffer);
+            DWORD lenout = 0;
+
+            if (to_console) WriteConsoleA(m_console, m_buffer, (DWORD)len, &lenout, NULL);
+            if (to_file) WriteFile(m_file, m_buffer, (DWORD)len, &lenout, NULL);
+        }
+    }
+
+    char m_buffer[1024];
     SYSTEMTIME m_systime;
     HANDLE m_console;
     HANDLE m_file;
-    bool m_print_time;
-
-    Mutex m_mtx;
-
-    Logger() : m_console(0), m_file(0), m_print_time(true) {}
+    Mutex m_mutex;
 };
 
 inline void LogFile(const char* logname, const char* commondir = nullptr)
@@ -50,20 +150,9 @@ inline void PrintLog(const char* format, ...)
     va_end(vaargs);
 }
 
-inline void LogShutdown()
-{
-    Logger::GetInstance().Shutdown();
-}
-
-inline void DisableTimePrint()
-{
-    Logger::GetInstance().DisableTimePrint();
-}
-
 #else
 #define INITIALIZE_LOGGER
 #define LogFile(logname)
 #define LogConsole(title, notice)
 #define PrintLog(format, ...)
-
 #endif

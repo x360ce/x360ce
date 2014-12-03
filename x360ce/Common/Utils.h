@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Common.h"
-
-#include <string>
 #include <Shlwapi.h>
 #include <Shlobj.h>
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
+
+#include "Types.h"
 
 HMODULE& CurrentModule();
 

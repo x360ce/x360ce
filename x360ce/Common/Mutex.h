@@ -1,5 +1,7 @@
 #pragma once
 
+#include "NonCopyable.h"
+
 class Mutex : NonCopyable
 {
 public:
