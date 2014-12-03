@@ -117,7 +117,7 @@ void InputHook::Init()
         ini.Get("InputHook", "Timeout", &m_timeout, 30);
 
     // Initalize InputHook Devices
-    for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
     {
         std::string section;
         std::string key = StringFormat("PAD%u", i + 1);

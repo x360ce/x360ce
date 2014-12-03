@@ -8,10 +8,6 @@
 #include <iomanip>
 #include "Logger.h"
 
-using namespace std;
-
-INITIALIZE_LOGGER;
-
 HINSTANCE hInst = NULL;
 LPDIRECTINPUT8 g_pDI;
 
@@ -43,6 +39,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
     LogFile("ditool.log");
     LogConsole("ditool");
+    DisableTimePrint();
 
     setlocale(LC_ALL, "");
     hInst = GetModuleHandle(NULL);

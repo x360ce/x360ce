@@ -148,7 +148,7 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
     Controller* pController = nullptr;
     for (auto it = g_Controllers.begin(); it != g_Controllers.end(); ++it)
     {
-        if (it->m_dwUserIndex == dwUserIndex)
+        if (it->m_user == dwUserIndex)
             pController = &(*it);
     }
 
@@ -484,7 +484,6 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
             if (state.lY - pMapping->Axis[i].a2doffset > pMapping->Axis[i].a2ddeadzone)
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
         }
-
 
         //        [ 32768 steps | 32768 steps ]
         // DInput [ 0     32767 | 32768 65535 ] 
