@@ -22,11 +22,27 @@ namespace HookCOM
 
     typedef void (WINAPI *CoUninitialize_t)();
 
-    typedef HRESULT(WINAPI *CoCreateInstance_t)(__in     REFCLSID rclsid,
+    typedef HRESULT(WINAPI *CoCreateInstance_t)(
+        __in     REFCLSID rclsid,
         __in_opt LPUNKNOWN pUnkOuter,
         __in     DWORD dwClsContext,
         __in     REFIID riid,
         __deref_out LPVOID FAR* ppv);
+
+    typedef HRESULT(WINAPI *CoCreateInstanceEx_t)(
+        _In_ REFCLSID Clsid,
+        _In_opt_ IUnknown * punkOuter,
+        _In_ DWORD dwClsCtx,
+        _In_opt_ COSERVERINFO * pServerInfo,
+        _In_ DWORD dwCount,
+        _Inout_updates_(dwCount) MULTI_QI * pResults);
+
+    typedef HRESULT(WINAPI * CoGetClassObject_t)(
+        _In_ REFCLSID rclsid,
+        _In_ DWORD dwClsContext,
+        _In_opt_ LPVOID pvReserved,
+        _In_ REFIID riid,
+        _Outptr_ LPVOID FAR * ppv);
 
     typedef HRESULT(STDMETHODCALLTYPE *ConnectServer_t)(
         IWbemLocator * This,
@@ -67,16 +83,14 @@ namespace HookCOM
     static Get_t Get = nullptr;
 
     static CoCreateInstance_t TrueCoCreateInstance = nullptr;
+    static CoCreateInstanceEx_t TrueCoCreateInstanceEx = nullptr;
+    static CoGetClassObject_t TrueCoGetClassObject = nullptr;
     static CoUninitialize_t TrueCoUninitialize = nullptr;
     static ConnectServer_t TrueConnectServer = nullptr;
     static CreateInstanceEnum_t TrueCreateInstanceEnum = nullptr;
     static Next_t TrueNext = nullptr;
     static Get_t TrueGet = nullptr;
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     HRESULT STDMETHODCALLTYPE HookGet(
         IWbemClassObject * This,
         /* [std::string][in] */ LPCWSTR wszName,
@@ -102,7 +116,8 @@ namespace HookCOM
             DWORD dwPid = 0, dwVid = 0, dummy = 0;
 
             OLECHAR* strVid = wcsstr(pVal->bstrVal, L"VID_");
-            if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1) {
+            if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1)
+            {
                 // Fallback VID match for OUYA style device IDs
                 strVid = wcsstr(pVal->bstrVal, L"VID&");
                 if (!strVid || swscanf_s(strVid, L"VID&%4X%4X", &dummy, &dwVid) < 1)
@@ -110,7 +125,8 @@ namespace HookCOM
             }
 
             OLECHAR* strPid = wcsstr(pVal->bstrVal, L"PID_");
-            if (!strPid || swscanf_s(strPid, L"PID_%4X", &dwPid) < 1) {
+            if (!strPid || swscanf_s(strPid, L"PID_%4X", &dwPid) < 1)
+            {
                 // Fallback PID match for OUYA style device IDs
                 strPid = wcsstr(pVal->bstrVal, L"PID&");
                 if (!strPid || swscanf_s(strPid, L"PID&%4X", &dwPid) < 1)
@@ -158,9 +174,7 @@ namespace HookCOM
 
         return hr;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     HRESULT STDMETHODCALLTYPE HookNext(
         IEnumWbemClassObject * This,
         /* [in] */ long lTimeout,
@@ -195,9 +209,7 @@ namespace HookCOM
 
         return hr;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
         IWbemServices * This,
         /* [in] */ __RPC__in const BSTR strFilter,
@@ -232,9 +244,7 @@ namespace HookCOM
 
         return hr;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     HRESULT STDMETHODCALLTYPE HookConnectServer(
         IWbemLocator * This,
         /* [in] */ const BSTR strNetworkResource,
@@ -274,10 +284,47 @@ namespace HookCOM
 
         return hr;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    HRESULT WINAPI HookCoCreateInstance(__in     REFCLSID rclsid,
+    HRESULT WINAPI HookCoCreateInstanceEx(
+        _In_ REFCLSID Clsid,
+        _In_opt_ IUnknown * punkOuter,
+        _In_ DWORD dwClsCtx,
+        _In_opt_ COSERVERINFO * pServerInfo,
+        _In_ DWORD dwCount,
+        _Inout_updates_(dwCount) MULTI_QI * pResults)
+    {
+        HRESULT hr = TrueCoCreateInstanceEx(Clsid, punkOuter, dwClsCtx, pServerInfo, dwCount, pResults);
+
+        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
+        PrintLog("CoCreateInstanceEx");
+
+        s_InputHook->StartTimeoutThread();
+
+        if (!pResults) return hr;
+
+        if (IsEqualCLSID(Clsid, CLSID_DirectInput8))
+            PrintLog("COM wants to create DirectInput8 instance");
+
+        if (pResults->pIID && IsEqualIID(*pResults->pIID, IID_IWbemLocator) && pResults->pItf)
+        {
+            IWbemLocator* pIWbemLocator = NULL;
+            pIWbemLocator = reinterpret_cast<IWbemLocator*>(pResults->pItf);
+
+            if (pIWbemLocator)
+            {
+                if (pIWbemLocator->lpVtbl->ConnectServer)
+                {
+                    ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+                    IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
+                    IH_EnableHook(ConnectServer);
+                }
+            }
+        }
+        return hr;
+    }
+
+    HRESULT WINAPI HookCoCreateInstance(
+        __in     REFCLSID rclsid,
         __in_opt LPUNKNOWN pUnkOuter,
         __in     DWORD dwClsContext,
         __in     REFIID riid,
@@ -285,25 +332,15 @@ namespace HookCOM
     {
         HRESULT hr = TrueCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
 
-        //PrintLog(GUIDtoStringA(riid).c_str());
-
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
         PrintLog("CoCreateInstance");
 
         s_InputHook->StartTimeoutThread();
 
-        //PrintLog("%x",hr);
-
-        //if(hr == CO_E_NOTINITIALIZED) CoInitialize(NULL);
-
         if (hr != NO_ERROR) return hr;
 
         if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
-        {
             PrintLog("COM wants to create DirectInput8 instance");
-            //MessageBoxA(NULL,"COM wants to create DirectInput8 instance","x360ce - Error",MB_ICONWARNING);
-            //s_InputHook->HookDICOM(riid,ppv);
-        }
 
         if (IsEqualIID(riid, IID_IWbemLocator))
         {
@@ -322,9 +359,44 @@ namespace HookCOM
         }
         return hr;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    HRESULT WINAPI HookCoGetClassObject(
+        _In_ REFCLSID rclsid,
+        _In_ DWORD dwClsContext,
+        _In_opt_ LPVOID pvReserved,
+        _In_ REFIID riid,
+        _Outptr_ LPVOID FAR * ppv)
+    {
+        HRESULT hr = TrueCoGetClassObject(rclsid, dwClsContext, pvReserved, riid, ppv);
+
+        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
+        PrintLog("CoGetClassObject");
+
+        s_InputHook->StartTimeoutThread();
+
+        if (hr != NO_ERROR) return hr;
+
+        if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
+            PrintLog("COM wants to create DirectInput8 instance");
+
+        if (IsEqualIID(riid, IID_IWbemLocator))
+        {
+            IWbemLocator* pIWbemLocator = NULL;
+            pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
+
+            if (pIWbemLocator)
+            {
+                if (pIWbemLocator->lpVtbl->ConnectServer)
+                {
+                    ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+                    IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
+                    IH_EnableHook(ConnectServer);
+                }
+            }
+        }
+        return hr;
+    }
+
     void WINAPI HookCoUninitialize()
     {
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return TrueCoUninitialize();
@@ -341,16 +413,16 @@ namespace HookCOM
 
         TrueCoUninitialize();
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void InputHook::HookCOM()
 {
     PrintLog("Hooking COM");
     HookCOM::s_InputHook = this;
 
     IH_CreateHook(CoCreateInstance, HookCOM::HookCoCreateInstance, &HookCOM::TrueCoCreateInstance);
+    IH_CreateHook(CoCreateInstanceEx, HookCOM::HookCoCreateInstanceEx, &HookCOM::TrueCoCreateInstanceEx);
+    IH_CreateHook(CoGetClassObject, HookCOM::HookCoGetClassObject, &HookCOM::TrueCoGetClassObject);
     IH_CreateHook(CoUninitialize, HookCOM::HookCoUninitialize, &HookCOM::TrueCoUninitialize);
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
