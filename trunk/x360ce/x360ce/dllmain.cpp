@@ -27,7 +27,6 @@ void __cdecl ExitInstance()
     }
 
     PrintLog("Terminating x360ce, bye");
-    LogShutdown();
     g_Controllers.clear();
 }
 

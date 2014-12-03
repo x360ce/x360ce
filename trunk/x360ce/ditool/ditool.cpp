@@ -6,26 +6,22 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+
+#include "Utils.h"
 #include "Logger.h"
 
 HINSTANCE hInst = NULL;
 LPDIRECTINPUT8 g_pDI;
 
-inline const std::string GUIDtoStringA(const GUID &g)
-{
-    char tmp[40];
-
-    sprintf_s(tmp, 40, "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
-        g.Data1, g.Data2, g.Data3, g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
-    return tmp;
-}
-
 BOOL CALLBACK EnumDevicesCallback(LPCDIDEVICEINSTANCE pInst, VOID* pContext)
 {
     if (pInst)
     {
-        std::string guidProduct = GUIDtoStringA(pInst->guidProduct);
-        std::string guidInstance = GUIDtoStringA(pInst->guidInstance);
+        std::string guidProduct; 
+        std::string guidInstance; 
+
+        GUIDtoString(&guidProduct, pInst->guidProduct);
+        GUIDtoString(&guidInstance, pInst->guidInstance);
 
         PrintLog("ProductName : %s\nInstanceName: %s", pInst->tszProductName, pInst->tszInstanceName);
         PrintLog("guidProduct : %s\nguidInstance: %s", guidProduct.c_str(), guidInstance.c_str());
@@ -39,7 +35,6 @@ int _tmain(int argc, _TCHAR* argv[])
 {
     LogFile("ditool.log");
     LogConsole("ditool");
-    DisableTimePrint();
 
     setlocale(LC_ALL, "");
     hInst = GetModuleHandle(NULL);

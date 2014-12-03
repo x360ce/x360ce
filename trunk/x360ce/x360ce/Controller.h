@@ -148,7 +148,7 @@ public:
     }
 
     HRESULT UpdateState();
-    HRESULT InitDirectInput(HWND hWnd);
+    DWORD InitDirectInput(HWND hWnd);
     bool ButtonPressed(u32 buttonidx);
 
     bool Initalized() const

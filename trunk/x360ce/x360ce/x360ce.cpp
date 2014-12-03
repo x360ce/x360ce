@@ -160,24 +160,19 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
     if (pController->m_passthrough && XInputInitialize())
         return PASSTROUGH;
 
-    HRESULT hr = E_FAIL;
-
     if (!hMsgWnd)
         CreateMsgWnd();
 
     if (!pController->Initalized())
     {
-        PrintLog("[PAD%d] Starting", dwUserIndex + 1);
-        PrintLog("[PAD%d] Initializing as UserIndex %d", dwUserIndex + 1, dwUserIndex);
-
-        hr = pController->InitDirectInput(hMsgWnd);
-        if (FAILED(hr)) PrintLog("[PAD%d] Fail with 0x%08X", dwUserIndex + 1, hr);
-
-        if (SUCCEEDED(hr))
+        DWORD result = pController->InitDirectInput(hMsgWnd);
+        if (result == ERROR_SUCCESS) 
         {
-            PrintLog("[PAD%d] Done", dwUserIndex + 1);
+            PrintLog("[PAD%d] Initialized for user %d", dwUserIndex + 1, dwUserIndex);
             if (g_bInitBeep) MessageBeep(MB_OK);
         }
+        else
+            return result;
     }
 
     if (!pController->Initalized())
