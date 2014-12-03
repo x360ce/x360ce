@@ -1,22 +1,7 @@
 #pragma once
 
-// C++ headers
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <memory>
-
-#include <io.h>
-#include <fcntl.h> 
-#include <windows.h> 
-
-// Windows headers
-#include <shlwapi.h>
-#pragma comment(lib, "shlwapi.lib")
-
-#include "Utils.h"
-#include "Mutex.h"
-#include "NonCopyable.h"
+#include "Common.h"
+#include "Logger.h"
 
 #ifndef DISABLE_LOGGER
 class Logger : NonCopyable
@@ -31,6 +16,7 @@ public:
     void PrintTime(const char* format, ...);
     void Print(const char* format, va_list vaargs);
     void Print(const char* format, ...);
+    void DisableTimePrint() { m_print_time = false; };
 
 private:
     static Logger* m_instance;
@@ -39,13 +25,14 @@ private:
     SYSTEMTIME m_systime;
     HANDLE m_console;
     HANDLE m_file;
+    bool m_print_time;
 
     Mutex m_mtx;
 
-    Logger() : m_console(0), m_file(0) {}
+    Logger() : m_console(0), m_file(0), m_print_time(true) {}
 };
 
-inline void LogFile(const char* logname, const char* commondir)
+inline void LogFile(const char* logname, const char* commondir = nullptr)
 {
     Logger::GetInstance().File(logname, commondir);
 }
@@ -66,6 +53,11 @@ inline void PrintLog(const char* format, ...)
 inline void LogShutdown()
 {
     Logger::GetInstance().Shutdown();
+}
+
+inline void DisableTimePrint()
+{
+    Logger::GetInstance().DisableTimePrint();
 }
 
 #else

@@ -2,15 +2,25 @@
 
 #ifndef DISABLE_LOGGER
 
+// C++ headers
+#include <cstdio>
+#include <cstdlib>
 #include <string>
+#include <memory>
+
 #include <io.h>
 #include <fcntl.h> 
 #include <windows.h> 
 
+// Windows headers
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
 #include "Utils.h"
 #include "Mutex.h"
 #include "NonCopyable.h"
-
+#include "Types.h"
+#include "Mutex.h"
 #include "Logger.h"
 
 Logger* Logger::m_instance = nullptr;
@@ -90,21 +100,24 @@ void Logger::Print(const char* format, va_list vaargs)
     if ((to_console || to_file) && format)
     {
         LockGuard lock(m_mtx);
-
         size_t len = 0;
         DWORD lenout = 0;
-        static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
-        if (stamp)
-        {
-            len = strlen(stamp);
-            if (to_console) WriteConsoleA(m_console, stamp, (DWORD)len, &lenout, NULL);
-            if (to_file) WriteFile(m_file, stamp, (DWORD)len, &lenout, NULL);
-            stamp = nullptr;
-        }
 
-        GetLocalTime(&m_systime);
-        PrintTime("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
-            m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
+        if (m_print_time)
+        {
+            static char* stamp = "[TIME]\t\t[THREAD]\t[LOG]\n";
+            if (stamp)
+            {
+                len = strlen(stamp);
+                if (to_console) WriteConsoleA(m_console, stamp, (DWORD)len, &lenout, NULL);
+                if (to_file) WriteFile(m_file, stamp, (DWORD)len, &lenout, NULL);
+                stamp = nullptr;
+            }
+
+            GetLocalTime(&m_systime);
+            PrintTime("%02u:%02u:%02u.%03u\t%08u\t", m_systime.wHour, m_systime.wMinute,
+                m_systime.wSecond, m_systime.wMilliseconds, GetCurrentThreadId());
+        }
 
         vsnprintf_s(m_buffer, 1024, 1024, format, vaargs);
         strncat_s(m_buffer, 1024, "\r\n", _TRUNCATE);

@@ -24,7 +24,7 @@ void StringToGUID(GUID* id, const std::wstring& szBuf);
 bool GUIDtoString(std::string* out, const GUID &g);
 bool GUIDtoString(std::wstring* out, const GUID &g);
 
-inline LONG clamp(LONG val, LONG min, LONG max)
+inline const s32& clamp(const s32& val, const s32& min, const s32& max)
 {
     if (val < min) return min;
     if (val > max) return max;
@@ -33,20 +33,20 @@ inline LONG clamp(LONG val, LONG min, LONG max)
 }
 
 /// <summary>Convert short [-32768;32767] to float range [-1.0f;1.0f].</summary>
-inline FLOAT ConvertToFloat(SHORT val)
+inline const float ConvertToFloat(const s16& val)
 {
-    FLOAT maxValue = val >= 0 ? (float)32767 : (FLOAT)32768;
+    float maxValue = val >= 0 ? 32767.0f : 32768.0f;
     return ((float)val) / maxValue;
 }
 
 /// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
-inline SHORT ConvertToShort(float val)
+inline const s16 ConvertToShort(const float& val)
 {
-    FLOAT maxValue = val >= 0 ? (FLOAT)32767 : (FLOAT)32768;
-    return (SHORT)(val * maxValue);
+    float maxValue = val >= 0 ? 32767.0f : 32768.0f;
+    return (s16)(val * maxValue);
 }
 
-inline long deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
+inline const s32& deadzone(const s32& val, const s32& min, const s32& max, const s32& lowerDZ, const s32& upperDZ)
 {
     if (val < lowerDZ) return min;
     if (val > upperDZ) return max;
@@ -54,14 +54,14 @@ inline long deadzone(LONG val, LONG min, LONG max, LONG lowerDZ, LONG upperDZ)
     return val;
 }
 
-inline static WORD flipShort(WORD s)
+inline const u16 flipShort(u16 s)
 {
-    return (WORD)((s >> 8) | (s << 8));
+    return (u16)((s >> 8) | (s << 8));
 }
 
-inline static DWORD flipLong(DWORD l)
+inline const u32 flipLong(u32 l)
 {
-    return (((DWORD)flipShort((WORD)l)) << 16) | flipShort((WORD)(l >> 16));
+    return (((u32)flipShort((u16)l)) << 16) | flipShort((u16)(l >> 16));
 }
 
 

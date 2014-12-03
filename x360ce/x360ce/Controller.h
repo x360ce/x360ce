@@ -99,7 +99,7 @@ class Controller
 {
     friend class ForceFeedback;
 public:
-    Controller(DWORD index);
+    Controller(u32 user);
     ~Controller();
 
     // required because mutex is not copyable
@@ -110,7 +110,7 @@ public:
         m_mapping = other.m_mapping;
         m_productid = other.m_productid;
         m_instanceid = other.m_instanceid;
-        m_dwUserIndex = other.m_dwUserIndex;
+        m_user = other.m_user;
         m_axiscount = other.m_axiscount;
         m_gamepadtype = other.m_gamepadtype;
         m_passthrough = other.m_passthrough;
@@ -132,7 +132,7 @@ public:
             m_mapping = other.m_mapping;
             m_productid = other.m_productid;
             m_instanceid = other.m_instanceid;
-            m_dwUserIndex = other.m_dwUserIndex;
+            m_user = other.m_user;
             m_axiscount = other.m_axiscount;
             m_gamepadtype = other.m_gamepadtype;
             m_passthrough = other.m_passthrough;
@@ -149,7 +149,7 @@ public:
 
     HRESULT UpdateState();
     HRESULT InitDirectInput(HWND hWnd);
-    BOOL ButtonPressed(DWORD buttonidx);
+    bool ButtonPressed(u32 buttonidx);
 
     bool Initalized() const
     {
@@ -167,7 +167,7 @@ public:
     ForceFeedback* m_pForceFeedback;
     GUID m_productid;
     GUID m_instanceid;
-    u32 m_dwUserIndex;
+    u32 m_user;
     u32 m_axiscount;
     u8 m_gamepadtype;
     bool m_passthrough;

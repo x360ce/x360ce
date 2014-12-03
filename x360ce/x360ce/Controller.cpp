@@ -14,7 +14,7 @@
 DInputManager dinput;
 std::vector<Controller> g_Controllers;
 
-Controller::Controller(DWORD index)
+Controller::Controller(u32 user)
 {
     m_pDevice = nullptr;
     m_pForceFeedback = nullptr;
@@ -25,7 +25,7 @@ Controller::Controller(DWORD index)
     m_gamepadtype = 1;
     m_passthrough = false;
 
-    m_dwUserIndex = index;
+    m_user = user;
 }
 
 Controller::~Controller()
@@ -70,7 +70,7 @@ HRESULT Controller::UpdateState()
 
     if (FAILED(hr))
     {
-        PrintLog("[PAD%d] Device Reacquired", m_dwUserIndex + 1);
+        PrintLog("[PAD%d] Device Reacquired", m_user + 1);
         hr = m_pDevice->Acquire();
     }
 
@@ -91,7 +91,7 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
 
     LockGuard lock(m_mutex);
 
-    PrintLog("[PAD%d] Creating device", m_dwUserIndex + 1);
+    PrintLog("[PAD%d] Creating device", m_user + 1);
 
     bool bHookDI = g_iHook.GetState(InputHook::HOOK_DI);
     bool bHookSA = g_iHook.GetState(InputHook::HOOK_SA);
@@ -109,11 +109,11 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     }
 
     if (!m_pDevice) return ERROR_DEVICE_NOT_CONNECTED;
-    else PrintLog("[PAD%d] Device created", m_dwUserIndex + 1);
+    else PrintLog("[PAD%d] Device created", m_user + 1);
 
     hr = m_pDevice->SetDataFormat(&c_dfDIJoystick2);
 
-    if (FAILED(hr)) PrintLog("[PAD%d] SetDataFormat failed with code HR = %X", m_dwUserIndex + 1, hr);
+    if (FAILED(hr)) PrintLog("[PAD%d] SetDataFormat failed with code HR = %X", m_user + 1, hr);
 
     HRESULT setCooperativeLevelResult = m_pDevice->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND);
     if (FAILED(setCooperativeLevelResult))
@@ -122,7 +122,7 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
         PrintLog("Cannot get exclusive device access, disabling ForceFeedback");
 
         setCooperativeLevelResult = m_pDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
-        if (FAILED(setCooperativeLevelResult)) PrintLog("[PAD%d] SetCooperativeLevel failed with code HR = %X", m_dwUserIndex + 1, setCooperativeLevelResult);
+        if (FAILED(setCooperativeLevelResult)) PrintLog("[PAD%d] SetCooperativeLevel failed with code HR = %X", m_user + 1, setCooperativeLevelResult);
     }
 
     dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -133,8 +133,8 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     m_pDevice->SetProperty(DIPROP_AUTOCENTER, &dipdw.diph);
 
     hr = m_pDevice->EnumObjects(EnumObjectsCallback, (VOID*)this, DIDFT_AXIS);
-    if (FAILED(hr)) PrintLog("[PAD%d] EnumObjects failed with code HR = %X", m_dwUserIndex + 1, hr);
-    else PrintLog("[PAD%d] Detected axis count: %d", m_dwUserIndex + 1, m_axiscount);
+    if (FAILED(hr)) PrintLog("[PAD%d] EnumObjects failed with code HR = %X", m_user + 1, hr);
+    else PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
     if (m_pForceFeedback && m_useforce)
         m_useforce = m_pForceFeedback->IsSupported();
@@ -150,7 +150,7 @@ HRESULT Controller::InitDirectInput(HWND hWnd)
     return hr;
 }
 
-BOOL Controller::ButtonPressed(DWORD buttonidx)
+bool Controller::ButtonPressed(u32 buttonidx)
 {
     return (buttonidx != INVALIDBUTTONINDEX) ? (m_state.rgbButtons[buttonidx] & 0x80) != 0 : 0;
 }
@@ -221,16 +221,16 @@ bool ForceFeedback::IsSupported()
     HRESULT hr = m_pController->m_pDevice->GetCapabilities(&DeviceCaps);
     if (hr != DI_OK)
     {
-        PrintLog("[DINPUT] [PAD%d] IsForceSupported: GetCapabilities returned HR = %X", m_pController->m_dwUserIndex + 1, hr);
+        PrintLog("[DINPUT] [PAD%d] IsForceSupported: GetCapabilities returned HR = %X", m_pController->m_user + 1, hr);
         return false;
     }
     bool ffSupported = ((DeviceCaps.dwFlags & DIDC_FORCEFEEDBACK) == DIDC_FORCEFEEDBACK);
-    PrintLog("[DINPUT] [PAD%d] IsForceSupported: 0x%08X %s", m_pController->m_dwUserIndex + 1, DeviceCaps.dwFlags, ffSupported == true ? "YES" : "NO");
+    PrintLog("[DINPUT] [PAD%d] IsForceSupported: 0x%08X %s", m_pController->m_user + 1, DeviceCaps.dwFlags, ffSupported == true ? "YES" : "NO");
 
     if (ffSupported)
     {
         HRESULT hr = m_pController->m_pDevice->EnumObjects(EnumFFAxesCallback, (VOID*)&m_Axes, DIDFT_AXIS);
-        if (FAILED(hr)) PrintLog("[PAD%d] EnumFFAxesCallback failed with code HR = %X", m_pController->m_dwUserIndex + 1, hr);
+        if (FAILED(hr)) PrintLog("[PAD%d] EnumFFAxesCallback failed with code HR = %X", m_pController->m_user + 1, hr);
 
         if (m_Axes > 2)
             m_Axes = 2;
@@ -319,7 +319,7 @@ HRESULT ForceFeedback::SetDeviceForcesFailsafe(WORD force, u8 motor)
         HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_ConstantForce, &effectType, &m_pEffectObject[motor], NULL);
         if (FAILED(hr))
         {
-            PrintLog("[PAD%d] CreateEffect failed with code HR = %X", m_pController->m_dwUserIndex + 1, hr);
+            PrintLog("[PAD%d] CreateEffect failed with code HR = %X", m_pController->m_user + 1, hr);
             return hr;
         }
     }
@@ -383,7 +383,7 @@ HRESULT ForceFeedback::SetDeviceForcesEjocys(WORD force, u8 motor)
     HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_Sine, &effectType, &m_pEffectObject[motor], NULL);
     if (FAILED(hr))
     {
-        PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_dwUserIndex + 1, motor, hr);
+        PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_user + 1, motor, hr);
         return hr;
     }
 
@@ -436,7 +436,7 @@ HRESULT ForceFeedback::SetDeviceForcesNew(WORD force, u8 motor)
     HRESULT hr = m_pController->m_pDevice->CreateEffect(effectGUID, &effectType, &m_pEffectObject[motor], NULL);
     if (FAILED(hr))
     {
-        PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_dwUserIndex + 1, motor, hr);
+        PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_user + 1, motor, hr);
         return hr;
     }
 

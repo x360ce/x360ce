@@ -187,7 +187,7 @@ void ReadConfig()
     }
 
     // Read pad mappings
-    for (DWORD i = 0; i < XUSER_MAX_COUNT; ++i)
+    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
     {
         std::string section;
         std::string key = StringFormat("PAD%u", i + 1);
@@ -198,6 +198,7 @@ void ReadConfig()
         if (!ini.Get(section, "UserIndex", &index))
             index = i;
 
+        // Require Controller copy constructor
         g_Controllers.push_back(Controller(index));
 
         if (ReadPadConfig(&g_Controllers.back(), section, &ini))
@@ -217,7 +218,7 @@ bool ReadPadConfig(Controller* pController, const std::string& section, SWIP* pS
 
     if (IsEqualGUID(pController->m_productid, GUID_NULL) || IsEqualGUID(pController->m_instanceid, GUID_NULL))
     {
-        std::string message = StringFormat("[PAD%u] Misconfigured device, check GUIDs", pController->m_dwUserIndex);
+        std::string message = StringFormat("[PAD%u] Misconfigured device, check GUIDs", pController->m_user);
         PrintLog(message.c_str());
         MessageBoxA(NULL, message.c_str(), "x360ce", MB_ICONERROR);
         return false;
