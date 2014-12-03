@@ -23,6 +23,47 @@ public:
     ForceFeedback(Controller* pController);
     virtual ~ForceFeedback();
 
+    // required because mutex is not copyable
+    ForceFeedback(const ForceFeedback &other)
+    {
+        m_pEffectObject[0] = other.m_pEffectObject[0];
+        m_pEffectObject[1] = other.m_pEffectObject[1];
+
+        m_LeftPeriod = other.m_LeftPeriod;
+        m_RightPeriod = other.m_RightPeriod;
+        m_ForcePercent = other.m_ForcePercent;
+        m_Type = other.m_Type;
+        m_SwapMotors = other.m_SwapMotors;
+
+        m_pController = other.m_pController;
+        m_xForce = other.m_xForce;
+        m_yForce = other.m_yForce;
+        m_Axes = other.m_Axes;
+        m_Caps = other.m_Caps;
+    }
+
+    ForceFeedback& operator=(const ForceFeedback& other)
+    {
+        if (this != &other)
+        {
+            m_pEffectObject[0] = other.m_pEffectObject[0];
+            m_pEffectObject[1] = other.m_pEffectObject[1];
+
+            m_LeftPeriod = other.m_LeftPeriod;
+            m_RightPeriod = other.m_RightPeriod;
+            m_ForcePercent = other.m_ForcePercent;
+            m_Type = other.m_Type;
+            m_SwapMotors = other.m_SwapMotors;
+
+            m_pController = other.m_pController;
+            m_xForce = other.m_xForce;
+            m_yForce = other.m_yForce;
+            m_Axes = other.m_Axes;
+            m_Caps = other.m_Caps;
+        }
+        return *this;
+    }
+
     void SetState(WORD rightMotor, WORD leftMotor);
 
     bool IsSupported();
@@ -69,7 +110,6 @@ public:
         m_pDevice = other.m_pDevice;
         m_state = other.m_state;
         m_mapping = other.m_mapping;
-        m_pForceFeedback = other.m_pForceFeedback;
         m_productid = other.m_productid;
         m_instanceid = other.m_instanceid;
         m_dwUserIndex = other.m_dwUserIndex;
@@ -77,6 +117,12 @@ public:
         m_gamepadtype = other.m_gamepadtype;
         m_passthrough = other.m_passthrough;
         m_useforce = other.m_useforce;
+
+        if (other.m_pForceFeedback)
+        {
+            m_pForceFeedback = new ForceFeedback(this);
+            *m_pForceFeedback = *other.m_pForceFeedback;
+        }
     }
 
     Controller& operator=(const Controller& other)
@@ -86,7 +132,6 @@ public:
             m_pDevice = other.m_pDevice;
             m_state = other.m_state;
             m_mapping = other.m_mapping;
-            m_pForceFeedback = other.m_pForceFeedback;
             m_productid = other.m_productid;
             m_instanceid = other.m_instanceid;
             m_dwUserIndex = other.m_dwUserIndex;
@@ -94,6 +139,12 @@ public:
             m_gamepadtype = other.m_gamepadtype;
             m_passthrough = other.m_passthrough;
             m_useforce = other.m_useforce;
+
+            if (other.m_pForceFeedback)
+            {
+                m_pForceFeedback = new ForceFeedback(this);
+                *m_pForceFeedback = *other.m_pForceFeedback;
+            }
         }
         return *this;
     }
