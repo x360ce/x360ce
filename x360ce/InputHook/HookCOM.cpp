@@ -21,61 +21,14 @@ namespace HookCOM
     static InputHook *s_InputHook = nullptr;
 
     typedef void (WINAPI *CoUninitialize_t)();
-
-    typedef HRESULT(WINAPI *CoCreateInstance_t)(
-        __in     REFCLSID rclsid,
-        __in_opt LPUNKNOWN pUnkOuter,
-        __in     DWORD dwClsContext,
-        __in     REFIID riid,
-        __deref_out LPVOID FAR* ppv);
-
-    typedef HRESULT(WINAPI *CoCreateInstanceEx_t)(
-        _In_ REFCLSID Clsid,
-        _In_opt_ IUnknown * punkOuter,
-        _In_ DWORD dwClsCtx,
-        _In_opt_ COSERVERINFO * pServerInfo,
-        _In_ DWORD dwCount,
-        _Inout_updates_(dwCount) MULTI_QI * pResults);
-
-    typedef HRESULT(WINAPI * CoGetClassObject_t)(
-        _In_ REFCLSID rclsid,
-        _In_ DWORD dwClsContext,
-        _In_opt_ LPVOID pvReserved,
-        _In_ REFIID riid,
-        _Outptr_ LPVOID FAR * ppv);
-
-    typedef HRESULT(STDMETHODCALLTYPE *ConnectServer_t)(
-        IWbemLocator * This,
-        /* [in] */ const BSTR strNetworkResource,
-        /* [in] */ const BSTR strUser,
-        /* [in] */ const BSTR strPassword,
-        /* [in] */ const BSTR strLocale,
-        /* [in] */ long lSecurityFlags,
-        /* [in] */ const BSTR strAuthority,
-        /* [in] */ IWbemContext *pCtx,
-        /* [out] */ IWbemServices **ppNamespace);
-
-    typedef HRESULT(STDMETHODCALLTYPE *CreateInstanceEnum_t)(
-        IWbemServices * This,
-        /* [in] */ __RPC__in const BSTR strFilter,
-        /* [in] */ long lFlags,
-        /* [in] */ __RPC__in_opt IWbemContext *pCtx,
-        /* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum);
-
-    typedef HRESULT(STDMETHODCALLTYPE *Next_t)(
-        IEnumWbemClassObject * This,
-        /* [in] */ long lTimeout,
-        /* [in] */ ULONG uCount,
-        /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
-        /* [out] */ __RPC__out ULONG *puReturned);
-
-    typedef HRESULT(STDMETHODCALLTYPE *Get_t)(
-        IWbemClassObject * This,
-        /* [std::string][in] */ LPCWSTR wszName,
-        /* [in] */ long lFlags,
-        /* [unique][in][out] */ VARIANT *pVal,
-        /* [unique][in][out] */ CIMTYPE *pType,
-        /* [unique][in][out] */ long *plFlavor);
+    typedef HRESULT(WINAPI *CoCreateInstance_t)(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv);
+    typedef HRESULT(WINAPI *CoCreateInstanceEx_t)(REFCLSID Clsid, IUnknown * punkOuter, DWORD dwClsCtx, COSERVERINFO * pServerInfo, DWORD dwCount, MULTI_QI * pResults);
+    typedef HRESULT(WINAPI * CoGetClassObject_t)(REFCLSID rclsid, DWORD dwClsContext, LPVOID pvReserved, REFIID riid, LPVOID FAR * ppv);
+    typedef HRESULT(STDMETHODCALLTYPE *ConnectServer_t)(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
+        const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace);
+    typedef HRESULT(STDMETHODCALLTYPE *CreateInstanceEnum_t)(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum);
+    typedef HRESULT(STDMETHODCALLTYPE *Next_t)(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned);
+    typedef HRESULT(STDMETHODCALLTYPE *Get_t)(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor);
 
     static ConnectServer_t ConnectServer = nullptr;
     static CreateInstanceEnum_t CreateInstanceEnum = nullptr;
@@ -91,13 +44,7 @@ namespace HookCOM
     static Next_t TrueNext = nullptr;
     static Get_t TrueGet = nullptr;
 
-    HRESULT STDMETHODCALLTYPE HookGet(
-        IWbemClassObject * This,
-        /* [std::string][in] */ LPCWSTR wszName,
-        /* [in] */ long lFlags,
-        /* [unique][in][out] */ VARIANT *pVal,
-        /* [unique][in][out] */ CIMTYPE *pType,
-        /* [unique][in][out] */ long *plFlavor)
+    HRESULT STDMETHODCALLTYPE HookGet(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor)
     {
         HRESULT hr = TrueGet(This, wszName, lFlags, pVal, pType, plFlavor);
 
@@ -175,12 +122,7 @@ namespace HookCOM
         return hr;
     }
 
-    HRESULT STDMETHODCALLTYPE HookNext(
-        IEnumWbemClassObject * This,
-        /* [in] */ long lTimeout,
-        /* [in] */ ULONG uCount,
-        /* [length_is][size_is][out] */ __RPC__out_ecount_part(uCount, *puReturned) IWbemClassObject **apObjects,
-        /* [out] */ __RPC__out ULONG *puReturned)
+    HRESULT STDMETHODCALLTYPE HookNext(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned)
     {
         HRESULT hr = TrueNext(This, lTimeout, uCount, apObjects, puReturned);
 
@@ -210,12 +152,7 @@ namespace HookCOM
         return hr;
     }
 
-    HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(
-        IWbemServices * This,
-        /* [in] */ __RPC__in const BSTR strFilter,
-        /* [in] */ long lFlags,
-        /* [in] */ __RPC__in_opt IWbemContext *pCtx,
-        /* [out] */ __RPC__deref_out_opt IEnumWbemClassObject **ppEnum)
+    HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum)
     {
         HRESULT hr = TrueCreateInstanceEnum(This, strFilter, lFlags, pCtx, ppEnum);
 
@@ -245,16 +182,8 @@ namespace HookCOM
         return hr;
     }
 
-    HRESULT STDMETHODCALLTYPE HookConnectServer(
-        IWbemLocator * This,
-        /* [in] */ const BSTR strNetworkResource,
-        /* [in] */ const BSTR strUser,
-        /* [in] */ const BSTR strPassword,
-        /* [in] */ const BSTR strLocale,
-        /* [in] */ long lSecurityFlags,
-        /* [in] */ const BSTR strAuthority,
-        /* [in] */ IWbemContext *pCtx,
-        /* [out] */ IWbemServices **ppNamespace)
+    HRESULT STDMETHODCALLTYPE HookConnectServer(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
+        const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace)
 
     {
         HRESULT hr = TrueConnectServer(This, strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
@@ -285,13 +214,7 @@ namespace HookCOM
         return hr;
     }
 
-    HRESULT WINAPI HookCoCreateInstanceEx(
-        _In_ REFCLSID Clsid,
-        _In_opt_ IUnknown * punkOuter,
-        _In_ DWORD dwClsCtx,
-        _In_opt_ COSERVERINFO * pServerInfo,
-        _In_ DWORD dwCount,
-        _Inout_updates_(dwCount) MULTI_QI * pResults)
+    HRESULT WINAPI HookCoCreateInstanceEx(REFCLSID Clsid, IUnknown * punkOuter, DWORD dwClsCtx, COSERVERINFO * pServerInfo, DWORD dwCount, MULTI_QI * pResults)
     {
         HRESULT hr = TrueCoCreateInstanceEx(Clsid, punkOuter, dwClsCtx, pServerInfo, dwCount, pResults);
 
@@ -323,12 +246,7 @@ namespace HookCOM
         return hr;
     }
 
-    HRESULT WINAPI HookCoCreateInstance(
-        __in     REFCLSID rclsid,
-        __in_opt LPUNKNOWN pUnkOuter,
-        __in     DWORD dwClsContext,
-        __in     REFIID riid,
-        __deref_out LPVOID FAR* ppv)
+    HRESULT WINAPI HookCoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv)
     {
         HRESULT hr = TrueCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
 
@@ -360,12 +278,7 @@ namespace HookCOM
         return hr;
     }
 
-    HRESULT WINAPI HookCoGetClassObject(
-        _In_ REFCLSID rclsid,
-        _In_ DWORD dwClsContext,
-        _In_opt_ LPVOID pvReserved,
-        _In_ REFIID riid,
-        _Outptr_ LPVOID FAR * ppv)
+    HRESULT WINAPI HookCoGetClassObject(REFCLSID rclsid, DWORD dwClsContext, LPVOID pvReserved, REFIID riid, LPVOID FAR * ppv)
     {
         HRESULT hr = TrueCoGetClassObject(rclsid, dwClsContext, pvReserved, riid, ppv);
 

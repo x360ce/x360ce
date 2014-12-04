@@ -85,6 +85,9 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
     pState->dwPacketNumber = GetTickCount();
 
     // --- Map buttons ---
+    if (ButtonPressed(m_mapping.guide))
+        pState->Gamepad.wButtons |= 0x400;
+
     for (u32 i = 0; i < _countof(m_mapping.Button); ++i)
     {
         if (ButtonPressed(m_mapping.Button[i]))

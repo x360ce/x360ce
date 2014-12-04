@@ -12,24 +12,12 @@ namespace HookSA
 {
     static InputHook *s_InputHook = nullptr;
 
-    typedef BOOL(WINAPI* SetupDiGetDeviceInstanceIdW_t)(
-        _In_       HDEVINFO DeviceInfoSet,
-        _In_       PSP_DEVINFO_DATA DeviceInfoData,
-        _Out_opt_  PWSTR DeviceInstanceId,
-        _In_       DWORD DeviceInstanceIdSize,
-        _Out_opt_  PDWORD RequiredSize
-        );
+    typedef BOOL(WINAPI* SetupDiGetDeviceInstanceIdW_t)(HDEVINFO DeviceInfoSet, PSP_DEVINFO_DATA DeviceInfoData, PWSTR DeviceInstanceId, DWORD DeviceInstanceIdSize, PDWORD RequiredSize);
 
     // NOTE: SetupDiGetDeviceInstanceIdW is called inside SetupDiGetDeviceInstanceIdA
     static SetupDiGetDeviceInstanceIdW_t TrueSetupDiGetDeviceInstanceIdW = nullptr;
 
-    BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(
-        _In_       HDEVINFO DeviceInfoSet,
-        _In_       PSP_DEVINFO_DATA DeviceInfoData,
-        _Out_opt_  PWSTR DeviceInstanceId,
-        _In_       DWORD DeviceInstanceIdSize,
-        _Out_opt_  PDWORD RequiredSize
-        )
+    BOOL WINAPI HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_DEVINFO_DATA DeviceInfoData, PWSTR DeviceInstanceId, DWORD DeviceInstanceIdSize, PDWORD RequiredSize)
     {
         BOOL ret = TrueSetupDiGetDeviceInstanceIdW(DeviceInfoSet, DeviceInfoData, DeviceInstanceId, DeviceInstanceIdSize, RequiredSize);
         if (!s_InputHook->GetState(InputHook::HOOK_SA)) return ret;

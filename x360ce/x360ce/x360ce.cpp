@@ -157,7 +157,7 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
     else return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STATE* pState)
+extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog("XInputGetState");
 
@@ -176,7 +176,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
     return pController->GetState(pState);
 }
 
-extern "C" DWORD WINAPI XInputSetState(__in DWORD dwUserIndex, __in XINPUT_VIBRATION* pVibration)
+extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
     Controller* pController = nullptr;
     if (!pVibration)
@@ -197,7 +197,7 @@ extern "C" DWORD WINAPI XInputSetState(__in DWORD dwUserIndex, __in XINPUT_VIBRA
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetCapabilities(__in DWORD dwUserIndex, __in DWORD dwFlags, __out XINPUT_CAPABILITIES* pCapabilities)
+extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
     Controller* pController = nullptr;
     if (!pCapabilities || dwFlags != XINPUT_FLAG_GAMEPAD)
@@ -223,7 +223,7 @@ extern "C" DWORD WINAPI XInputGetCapabilities(__in DWORD dwUserIndex, __in DWORD
     return ERROR_SUCCESS;
 }
 
-extern "C" VOID WINAPI XInputEnable(__in BOOL enable)
+extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
     if (g_bDisable) return;
 
@@ -251,7 +251,7 @@ extern "C" VOID WINAPI XInputEnable(__in BOOL enable)
 
 }
 
-extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(__in DWORD dwUserIndex, __out GUID* pDSoundRenderGuid, __out GUID* pDSoundCaptureGuid)
+extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
     Controller* pController = nullptr;
     if (!pDSoundRenderGuid || !pDSoundCaptureGuid)
@@ -270,7 +270,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(__in DWORD dwUserIndex, 
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetBatteryInformation(__in DWORD  dwUserIndex, __in BYTE devType, __out XINPUT_BATTERY_INFORMATION* pBatteryInformation)
+extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
     Controller* pController = nullptr;
     if (!pBatteryInformation)
@@ -289,7 +289,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(__in DWORD  dwUserIndex, __i
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetKeystroke(__in DWORD dwUserIndex, __in DWORD dwReserved, __out XINPUT_KEYSTROKE* pKeystroke)
+extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
     Controller* pController = nullptr;
     if (!pKeystroke)
@@ -399,7 +399,7 @@ extern "C" DWORD WINAPI XInputGetKeystroke(__in DWORD dwUserIndex, __in DWORD dw
 }
 
 //undocumented
-extern "C" DWORD WINAPI XInputGetStateEx(__in DWORD dwUserIndex, __out XINPUT_STATE *pState)
+extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
     Controller* pController = nullptr;
     if (!pState)
@@ -410,17 +410,12 @@ extern "C" DWORD WINAPI XInputGetStateEx(__in DWORD dwUserIndex, __out XINPUT_ST
     else if (initFlag)
         return initFlag;
 
-    Mapping* pMapping = &pController->m_mapping;
-
-    if (pMapping->guide && pController->ButtonPressed(pMapping->guide))
-        pState->Gamepad.wButtons |= 0x400;
-
     //PrintLog("XInputGetStateEx %u",xstate.Gamepad.wButtons);
 
-    return XInputGetState(dwUserIndex, pState);
+    return pController->GetState(pState);
 }
 
-extern "C" DWORD WINAPI XInputWaitForGuideButton(__in DWORD dwUserIndex, __in DWORD dwFlag, __inout LPVOID pVoid)
+extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
     Controller* pController = nullptr;
     DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
@@ -434,7 +429,7 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(__in DWORD dwUserIndex, __in DW
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputCancelGuideButtonWait(__in DWORD dwUserIndex)
+extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
     Controller* pController = nullptr;
     DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
@@ -448,7 +443,7 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(__in DWORD dwUserIndex)
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputPowerOffController(__in DWORD dwUserIndex)
+extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
     Controller* pController = nullptr;
     DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
@@ -462,7 +457,7 @@ extern "C" DWORD WINAPI XInputPowerOffController(__in DWORD dwUserIndex)
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetAudioDeviceIds(__in DWORD dwUserIndex, __in LPWSTR pRenderDeviceId, __inout UINT* pRenderCount, __in LPWSTR pCaptureDeviceId, __inout UINT* pCaptureCount)
+extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount)
 {
     Controller* pController = nullptr;
     DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
@@ -476,7 +471,7 @@ extern "C" DWORD WINAPI XInputGetAudioDeviceIds(__in DWORD dwUserIndex, __in LPW
     return ERROR_SUCCESS;
 }
 
-extern "C" DWORD WINAPI XInputGetBaseBusInformation(__in DWORD dwUserIndex, __out struct XINPUT_BUSINFO* pBusinfo)
+extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo)
 {
     Controller* pController = nullptr;
     DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
@@ -492,7 +487,7 @@ extern "C" DWORD WINAPI XInputGetBaseBusInformation(__in DWORD dwUserIndex, __ou
 
 // XInput 1.4 uses this in XInputGetCapabilities and calls memcpy(pCapabilities, &CapabilitiesEx, 20u);
 // so XINPUT_CAPABILITIES is first 20 bytes of XINPUT_CAPABILITIESEX
-extern "C" DWORD WINAPI XInputGetCapabilitiesEx(__inout DWORD unk1, __in DWORD dwUserIndex, __in DWORD dwFlags, __out struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
+extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
 {
     Controller* pController = nullptr;
     DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
