@@ -76,7 +76,7 @@ namespace HookLL
 
             std::string path;
 
-            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
+            if (ModulePath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryA(path.c_str());
             else
                 return TrueLoadLibraryA(lpLibFileName);
@@ -96,7 +96,7 @@ namespace HookLL
 
             std::wstring path;
 
-            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
+            if (ModulePath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryW(path.c_str());
             else
                 return TrueLoadLibraryW(lpLibFileName);
@@ -116,7 +116,7 @@ namespace HookLL
 
             std::string path;
 
-            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
+            if (ModulePath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryExA(path.c_str(), hFile, dwFlags);
             else
                 return TrueLoadLibraryExA(lpLibFileName, hFile, dwFlags);
@@ -136,7 +136,7 @@ namespace HookLL
 
             std::wstring path;
 
-            if (ModuleFullPath(&path, s_InputHook->GetEmulator()))
+            if (ModulePath(&path, s_InputHook->GetEmulator()))
                 return TrueLoadLibraryExW(path.c_str(), hFile, dwFlags);
             else
                 return TrueLoadLibraryExW(lpLibFileName, hFile, dwFlags);

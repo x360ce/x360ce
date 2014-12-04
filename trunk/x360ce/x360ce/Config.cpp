@@ -135,8 +135,12 @@ void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue
 
 void InitLogger()
 {
+    std::string inipath;
+
+    CheckCommonDirectory(&inipath, "x360ce.ini", "x360ce");
+
     SWIP ini;
-    ini.Load("x360ce.ini", "x360ce");
+    ini.Load(inipath);
 
     bool con;
     bool file;
@@ -157,14 +161,18 @@ void InitLogger()
 
         sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
             systime.wMonth, systime.wDay, GetTickCount());
-        LogFile(logfilename, "x360ce");
+
+        LogFile(logfilename);
     }
 }
 
 void ReadConfig()
 {
+    std::string inipath;
+    CheckCommonDirectory(&inipath, "x360ce.ini", "x360ce");
+
     SWIP ini;
-    ini.Load("x360ce.ini", "x360ce");
+    ini.Load(inipath);
 
     static bool once_flag = false;
     if (!once_flag)

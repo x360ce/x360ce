@@ -8,93 +8,76 @@
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
 
-HMODULE& CurrentModule()
+bool FileExist(const std::string& path)
 {
-    static HMODULE hModule = 0;
-    if (!hModule)
-        GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)&hModule, &hModule);
-    return hModule;
-}
-
-bool FullPathFromFileName(const std::string& filename, std::string* fullpath, bool check_exist, const char* commondir)
-{
-    if (!fullpath) return false;
-
-    std::string path;
-    path.resize(MAX_PATH);
-
-    if (commondir)
+    HANDLE hFile = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE)
     {
-        if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, &path[0]) == S_OK)
-        {
-            PathAppendA(&path[0], commondir);
-            PathAppendA(&path[0], filename.c_str());
-            if (PathFileExistsA(&path[0]) && PathIsDirectoryA(&path[0]) == FALSE)
-            {
-                *fullpath = path;
-                return true;
-            }
-        }
-    }
-
-    if (PathIsRelativeA(filename.c_str()))
-    {
-        DWORD dwLen = GetModuleFileNameA(CurrentModule(), &path[0], MAX_PATH);
-        if (dwLen > 0 && PathRemoveFileSpecA(&path[0]))
-        {
-            PathAppendA(&path[0], filename.c_str());
-            if (!check_exist)
-            {
-                *fullpath = path;
-                return true;
-            }
-            else if (PathFileExistsA(&path[0]) && PathIsDirectoryA(&path[0]) == FALSE)
-            {
-                *fullpath = path;
-                return true;
-            }
-        }
-    }
-    else
-    {
-        if (!check_exist)
-        {
-            *fullpath = path;
-            return true;
-        }
-        else if (PathFileExistsA(filename.c_str()) && PathIsDirectoryA(filename.c_str()) == FALSE)
-        {
-            *fullpath = filename;
-            return true;
-        }
+        CloseHandle(hFile);
+        return true;
     }
     return false;
 }
 
-bool ModuleFullPath(std::string* out, HMODULE hModule)
+bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, const std::string& dirname)
 {
-    if (!out) return false;
+    char path[MAX_PATH];
+    if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path) == S_OK)
+    {
+        PathAppendA(path, dirname.c_str());
+        PathAppendA(path, filename.c_str());
+        if (FileExist(path))
+        {
+            *fullpath = path;
+            return true;
+        }
+    }
 
+    *fullpath = filename;
+    return false;
+}
+
+bool FullPathFromPath(std::string* out_path, const std::string& in_path)
+{
+    if (PathIsRelativeA(in_path.c_str()))
+    {
+        char path[MAX_PATH];    
+        if (GetModuleFileNameA(CurrentModule(), path, MAX_PATH) && 
+            PathRemoveFileSpecA(path))
+        {
+            PathAppendA(path, in_path.c_str());
+            *out_path = path;
+        }
+    }
+    else
+    {
+        *out_path = in_path;
+    }
+
+    if (FileExist(*out_path))
+        return true;
+    
+    return false;
+}
+
+bool ModulePath(std::string* out, HMODULE hModule)
+{
     char buffer[MAX_PATH];
     GetModuleFileNameA(hModule, buffer, MAX_PATH);
     *out = buffer;
     return !out->empty();
 }
 
-bool ModuleFullPath(std::wstring* out, HMODULE hModule)
+bool ModulePath(std::wstring* out, HMODULE hModule)
 {
-    if (!out) return false;
-
     wchar_t buffer[MAX_PATH];
     GetModuleFileNameW(hModule, buffer, MAX_PATH);
     *out = buffer;
     return !out->empty();
 }
 
-bool ModulePath(std::string* out, HMODULE hModule)
+bool ModuleDirectory(std::string* out, HMODULE hModule)
 {
-    if (!out) return false;
-
     char buffer[MAX_PATH];
     GetModuleFileNameA(hModule, buffer, MAX_PATH);
     PathRemoveFileSpecA(buffer);
@@ -102,10 +85,8 @@ bool ModulePath(std::string* out, HMODULE hModule)
     return !out->empty();
 }
 
-bool ModulePath(std::wstring* out, HMODULE hModule)
+bool ModuleDirectory(std::wstring* out, HMODULE hModule)
 {
-    if (!out) return false;
-
     wchar_t buffer[MAX_PATH];
     GetModuleFileNameW(hModule, buffer, MAX_PATH);
     PathRemoveFileSpecW(buffer);
@@ -115,8 +96,6 @@ bool ModulePath(std::wstring* out, HMODULE hModule)
 
 bool ModuleFileName(std::string* out, HMODULE hModule)
 {
-    if (!out) return false;
-
     char buffer[MAX_PATH];
     GetModuleFileNameA(hModule, buffer, MAX_PATH);
     *out = PathFindFileNameA(buffer);
@@ -125,8 +104,6 @@ bool ModuleFileName(std::string* out, HMODULE hModule)
 
 bool ModuleFileName(std::wstring* out, HMODULE hModule)
 {
-    if (!out) return false;
-
     wchar_t buffer[MAX_PATH];
     GetModuleFileNameW(hModule, buffer, MAX_PATH);
     *out = PathFindFileNameW(buffer);
@@ -135,8 +112,6 @@ bool ModuleFileName(std::wstring* out, HMODULE hModule)
 
 void StringToGUID(GUID* id, const std::string& szBuf)
 {
-    if (!id || szBuf.empty()) return;
-
     const char* p = szBuf.c_str();
     if (strchr(p, '{')) p++;
 
@@ -163,8 +138,6 @@ void StringToGUID(GUID* id, const std::string& szBuf)
 
 void StringToGUID(GUID* id, const std::wstring& szBuf)
 {
-    if (!id || szBuf.empty()) return;
-
     const wchar_t* p = szBuf.c_str();
     if (wcschr(p, L'{')) p++;
 
@@ -191,26 +164,22 @@ void StringToGUID(GUID* id, const std::wstring& szBuf)
 
 bool GUIDtoString(std::string* out, const GUID &g)
 {
-    if (!out) return false;
-    out->resize(40);
-
-    sprintf_s(&(*out)[0], 40, "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+    char id[40];
+    sprintf_s(id, 40, "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
         g.Data1, g.Data2, g.Data3, g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
 
-    out->resize(38);
-    return (*out)[0] != '\0';
+    *out = id;
+    return !out->empty();
 }
 
 bool GUIDtoString(std::wstring* out, const GUID &g)
 {
-    if (!out) return false;
-    out->resize(40);
-
-    swprintf_s(&(*out)[0], 40, L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+    wchar_t id[40];
+    swprintf_s(id, 40, L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
         g.Data1, g.Data2, g.Data3, g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
 
-    out->resize(38);
-    return (*out)[0] != '\0';
+    *out = id;
+    return !out->empty();
 }
 
 

@@ -30,10 +30,11 @@
 
 bool InputHook::ReadGameDatabase(u32* mask)
 {
-    if (!mask) return false;
+    std::string inipath;
+    CheckCommonDirectory(&inipath, "x360ce.gdb", "x360ce");
 
     SWIP ini;
-    if (ini.Load("x360ce.gdb", "x360ce"))
+    if (ini.Load(inipath))
     {
         PrintLog("Using game database file:");
         PrintLog(ini.GetIniPath().c_str());
@@ -61,8 +62,11 @@ void InputHook::Init()
     LockGuard lock(m_mutex);
     PrintLog("InputHook starting...");
 
+    std::string inipath;
+    CheckCommonDirectory(&inipath, "x360ce.ini", "x360ce");
+
     SWIP ini;
-    ini.Load("x360ce.ini", "x360ce");
+    ini.Load(inipath);
 
     if (!ReadGameDatabase(&m_hookmask))
     {

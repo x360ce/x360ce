@@ -26,17 +26,12 @@ public:
     // required because mutex is not copyable
     ForceFeedback(const ForceFeedback &other)
     {
-        m_pEffectObject[0] = other.m_pEffectObject[0];
-        m_pEffectObject[1] = other.m_pEffectObject[1];
-
+        m_effects = other.m_effects;
         m_LeftPeriod = other.m_LeftPeriod;
         m_RightPeriod = other.m_RightPeriod;
         m_ForcePercent = other.m_ForcePercent;
         m_Type = other.m_Type;
         m_SwapMotors = other.m_SwapMotors;
-
-        m_xForce = other.m_xForce;
-        m_yForce = other.m_yForce;
         m_Axes = other.m_Axes;
         m_Caps = other.m_Caps;
     }
@@ -45,31 +40,21 @@ public:
     {
         if (this != &other)
         {
-            m_pEffectObject[0] = other.m_pEffectObject[0];
-            m_pEffectObject[1] = other.m_pEffectObject[1];
-
+            m_effects = other.m_effects;
             m_LeftPeriod = other.m_LeftPeriod;
             m_RightPeriod = other.m_RightPeriod;
             m_ForcePercent = other.m_ForcePercent;
             m_Type = other.m_Type;
             m_SwapMotors = other.m_SwapMotors;
-
-            m_xForce = other.m_xForce;
-            m_yForce = other.m_yForce;
             m_Axes = other.m_Axes;
             m_Caps = other.m_Caps;
         }
         return *this;
     }
 
-    void SetState(WORD rightMotor, WORD leftMotor);
+    bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration);
 
     bool IsSupported();
-    void ClearEffects();
-
-    HRESULT SetDeviceForcesEjocys(WORD force, u8 motor);
-    HRESULT SetDeviceForcesNew(WORD force, u8 motor);
-    HRESULT SetDeviceForcesFailsafe(WORD force, u8 motor);
 
     static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
     static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
@@ -79,7 +64,7 @@ public:
         m_Caps = caps;
     }
 
-    LPDIRECTINPUTEFFECT m_pEffectObject[2];
+    std::vector<LPDIRECTINPUTEFFECT> m_effects;
     u32 m_LeftPeriod;
     u32 m_RightPeriod;
     float m_ForcePercent;
@@ -87,10 +72,13 @@ public:
     bool m_SwapMotors;
 
 private:
+    void StartEffects(DIEFFECT* effectType);
+    bool SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration);
+    bool SetDeviceForcesNew(XINPUT_VIBRATION* pVibration);
+    bool SetDeviceForcesFailsafe(XINPUT_VIBRATION* pVibration);
+
     Controller* m_pController;
     Mutex m_mutex;
-    s32 m_xForce;
-    s32 m_yForce;
     u8 m_Axes;
     ForceFeedbackCaps m_Caps;
 };
@@ -188,7 +176,8 @@ public:
 
     DInputManager() :
         m_pDI(NULL)
-    {}
+    {
+    }
     virtual ~DInputManager()
     {
         if (m_pDI)

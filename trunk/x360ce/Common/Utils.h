@@ -1,19 +1,24 @@
 #pragma once
 
-#include <Shlwapi.h>
-#include <Shlobj.h>
-#pragma comment(lib, "shlwapi.lib")
-#pragma comment(lib, "shell32.lib")
-
 #include "Types.h"
 
-HMODULE& CurrentModule();
+inline HMODULE& CurrentModule()
+{
+    static HMODULE hModule = 0;
+    if (!hModule)
+        GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)&hModule, &hModule);
+    return hModule;
+}
 
-bool FullPathFromFileName(const std::string& filename, std::string* fullpath, bool check_exist, const char* commondir);
-bool ModuleFullPath(std::string* out, HMODULE hModule = NULL);
-bool ModuleFullPath(std::wstring* out, HMODULE hModule = NULL);
+bool FileExist(const std::string& path);
+
+bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, const std::string& dirname);
+bool FullPathFromPath(std::string* fullpath, const std::string& name);
+
 bool ModulePath(std::string* out, HMODULE hModule = NULL);
 bool ModulePath(std::wstring* out, HMODULE hModule = NULL);
+bool ModuleDirectory(std::string* out, HMODULE hModule = NULL);
+bool ModuleDirectory(std::wstring* out, HMODULE hModule = NULL);
 bool ModuleFileName(std::string* out, HMODULE hModule = NULL);
 bool ModuleFileName(std::wstring* out, HMODULE hModule = NULL);
 
