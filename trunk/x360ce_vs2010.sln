@@ -34,7 +34,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMinHook_vs2010", "x360ce
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ditool_vs2010", "x360ce\ditool\ditool_vs2010.vcxproj", "{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputHook", "x360ce\InputHook\InputHook_vs2010.vcxproj", "{4CF76641-C60B-4A26-8F44-DAA67B30512A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputHook_vs2010", "x360ce\InputHook\InputHook_vs2010.vcxproj", "{4CF76641-C60B-4A26-8F44-DAA67B30512A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common_vs2010", "x360ce\Common\Common_vs2010.vcxproj", "{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}"
 EndProject
@@ -175,6 +175,7 @@ Global
 		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32.ActiveCfg = Release|Win32
 		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32.Build.0 = Release|Win32
 		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32+APP.ActiveCfg = Release|Win32
+		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|Win32+APP.Build.0 = Release|Win32
 		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|x64.ActiveCfg = Release|Win32
 		{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}.Release|x64+APP.ActiveCfg = Release|Win32
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Debug|Any CPU.ActiveCfg = Debug|x64
@@ -188,9 +189,11 @@ Global
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|Win32.ActiveCfg = Release|Win32
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|Win32.Build.0 = Release|Win32
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|Win32+APP.ActiveCfg = Release|Win32
+		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|Win32+APP.Build.0 = Release|Win32
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|x64.ActiveCfg = Release|x64
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|x64.Build.0 = Release|x64
 		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|x64+APP.ActiveCfg = Release|x64
+		{4CF76641-C60B-4A26-8F44-DAA67B30512A}.Release|x64+APP.Build.0 = Release|x64
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Debug|Win32.Build.0 = Debug|Win32
@@ -202,11 +205,16 @@ Global
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|Win32.ActiveCfg = Release|Win32
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|Win32.Build.0 = Release|Win32
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|Win32+APP.ActiveCfg = Release|Win32
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|Win32+APP.Build.0 = Release|Win32
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|x64.ActiveCfg = Release|x64
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|x64.Build.0 = Release|x64
 		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|x64+APP.ActiveCfg = Release|x64
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}.Release|x64+APP.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
