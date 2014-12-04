@@ -166,7 +166,7 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
     if (!pController->Initalized())
     {
         DWORD result = pController->InitDirectInput(hMsgWnd);
-        if (result == ERROR_SUCCESS) 
+        if (result == ERROR_SUCCESS)
         {
             PrintLog("[PAD%d] Initialized for user %d", dwUserIndex + 1, dwUserIndex);
             if (g_bInitBeep) MessageBeep(MB_OK);
@@ -199,7 +199,7 @@ extern "C" DWORD WINAPI XInputGetState(__in DWORD dwUserIndex, __out XINPUT_STAT
         hr = pController->UpdateState();
     else return ERROR_SUCCESS;
 
-#ifdef _DEBUG
+#if 0
     PrintLog("UpdateState %u %u", dwUserIndex, hr);
 #endif
 
@@ -555,18 +555,10 @@ extern "C" DWORD WINAPI XInputSetState(__in DWORD dwUserIndex, __in XINPUT_VIBRA
     if (!pController->m_useforce || !pController->m_pForceFeedback)
         return ERROR_SUCCESS;
 
-    WORD wLeftMotorSpeed = 0;
-    WORD wRightMotorSpeed = 0;
+    if (!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
+        return ERROR_SUCCESS;
 
-    if (XInputIsEnabled.bEnabled || !XInputIsEnabled.bUseEnabled)
-    {
-        WORD left = static_cast<WORD>(pVibration->wLeftMotorSpeed * pController->m_pForceFeedback->m_ForcePercent);
-        WORD right = static_cast<WORD>(pVibration->wRightMotorSpeed * pController->m_pForceFeedback->m_ForcePercent);
-        wLeftMotorSpeed = pController->m_pForceFeedback->m_SwapMotors ? right : left;
-        wRightMotorSpeed = pController->m_pForceFeedback->m_SwapMotors ? left : right;
-    }
-
-    pController->m_pForceFeedback->SetState(wLeftMotorSpeed, wRightMotorSpeed);
+    pController->m_pForceFeedback->SetState(pVibration);
     return ERROR_SUCCESS;
 }
 

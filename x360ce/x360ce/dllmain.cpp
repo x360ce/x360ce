@@ -20,7 +20,7 @@ void __cdecl ExitInstance()
     if (xinput.dll)
     {
         std::string xinput_path;
-        ModuleFullPath(&xinput_path, xinput.dll);
+        ModulePath(&xinput_path, xinput.dll);
         PrintLog("Unloading %s", xinput_path.c_str());
         FreeLibrary(xinput.dll);
         xinput.dll = NULL;

@@ -3,9 +3,6 @@
 #include <io.h>
 #include <fcntl.h> 
 
-#include <shlwapi.h>
-#pragma comment(lib, "shlwapi.lib")
-
 #include "NonCopyable.h"
 #include "Utils.h"
 #include "Mutex.h"
@@ -20,10 +17,10 @@ public:
         return instance;
     };
 
-    bool Logger::File(const char* filename, const char* commondir)
+    bool Logger::File(const std::string& filename)
     {
         std::string logpath;
-        FullPathFromFileName(filename, &logpath, false, commondir);
+        FullPathFromPath(&logpath, filename);
 
         m_file = CreateFileA(logpath.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
         return m_file != INVALID_HANDLE_VALUE;
@@ -132,9 +129,9 @@ private:
     Mutex m_mutex;
 };
 
-inline void LogFile(const char* logname, const char* commondir = nullptr)
+inline void LogFile(const std::string& logname)
 {
-    Logger::GetInstance().File(logname, commondir);
+    Logger::GetInstance().File(logname);
 }
 
 inline void LogConsole(const char* title = nullptr, const char* console_notice = nullptr)

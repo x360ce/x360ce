@@ -33,7 +33,10 @@ Controller::~Controller()
     delete m_pForceFeedback;
 
     if (m_pDevice)
+    {
+        m_pDevice->Unacquire();
         m_pDevice->Release();
+    }
 }
 
 BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
@@ -165,9 +168,6 @@ bool Controller::ButtonPressed(u32 buttonidx)
 ForceFeedback::ForceFeedback(Controller* pController) :
 m_pController(pController)
 {
-    for (u32 i = 0; i < _countof(m_pEffectObject); ++i) m_pEffectObject[i] = nullptr;
-    m_xForce = 0;
-    m_yForce = 0;
     m_Axes = 0;
     m_LeftPeriod = 0;
     m_RightPeriod = 0;
@@ -180,20 +180,13 @@ m_pController(pController)
 
 ForceFeedback::~ForceFeedback()
 {
-    if (m_pEffectObject[FFB_LEFTMOTOR] || m_pEffectObject[FFB_RIGHTMOTOR])
+    if (m_pController->m_pDevice)
+        m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
+
+    for (auto it = m_effects.begin(); it != m_effects.end(); ++it)
     {
-        bool brokenffd = false;
-        if (GetModuleHandleA("tmffbdrv.dll")) brokenffd = true;
-
-        if (m_pController->m_pDevice && !brokenffd)
-            m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
+        (*it)->Release();
     }
-
-    if (m_pEffectObject[FFB_LEFTMOTOR])
-        m_pEffectObject[FFB_LEFTMOTOR]->Release();
-
-    if (m_pEffectObject[FFB_RIGHTMOTOR])
-        m_pEffectObject[FFB_RIGHTMOTOR]->Release();
 }
 
 BOOL CALLBACK ForceFeedback::EnumFFAxesCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
@@ -222,17 +215,17 @@ BOOL CALLBACK ForceFeedback::EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRe
 
 bool ForceFeedback::IsSupported()
 {
-    DIDEVCAPS DeviceCaps;
-    DeviceCaps.dwSize = sizeof(DeviceCaps);
+    DIDEVCAPS deviceCaps;
+    deviceCaps.dwSize = sizeof(DIDEVCAPS);
 
-    HRESULT hr = m_pController->m_pDevice->GetCapabilities(&DeviceCaps);
+    HRESULT hr = m_pController->m_pDevice->GetCapabilities(&deviceCaps);
     if (hr != DI_OK)
     {
         PrintLog("[DINPUT] [PAD%d] IsForceSupported: GetCapabilities returned HR = %X", m_pController->m_user + 1, hr);
         return false;
     }
-    bool ffSupported = ((DeviceCaps.dwFlags & DIDC_FORCEFEEDBACK) == DIDC_FORCEFEEDBACK);
-    PrintLog("[DINPUT] [PAD%d] IsForceSupported: 0x%08X %s", m_pController->m_user + 1, DeviceCaps.dwFlags, ffSupported == true ? "YES" : "NO");
+    bool ffSupported = ((deviceCaps.dwFlags & DIDC_FORCEFEEDBACK) == DIDC_FORCEFEEDBACK);
+    PrintLog("[DINPUT] [PAD%d] IsForceSupported: 0x%08X %s", m_pController->m_user + 1, deviceCaps.dwFlags, ffSupported == true ? "YES" : "NO");
 
     if (ffSupported)
     {
@@ -259,49 +252,53 @@ bool ForceFeedback::IsSupported()
     return false;
 }
 
-void ForceFeedback::SetState(WORD rightMotor, WORD leftMotor)
+bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration)
 {
-    LockGuard lock(m_mutex);
-
-    if (!rightMotor && !leftMotor)
-        m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
-    if (!leftMotor && m_pEffectObject[FFB_LEFTMOTOR])
-
-        m_pEffectObject[FFB_LEFTMOTOR]->Stop();
-
-    if (!rightMotor && m_pEffectObject[FFB_RIGHTMOTOR])
-        m_pEffectObject[FFB_RIGHTMOTOR]->Stop();
-
-    for (u8 i = 0; i < _countof(m_pEffectObject); ++i)
+    switch (m_Type)
     {
-        WORD force = 0;
-
-        if (i == FFB_LEFTMOTOR)
-            force = rightMotor;
-        else
-            force = leftMotor;
-
-        switch (m_Type)
-        {
-            case 1:
-                SetDeviceForcesEjocys(force, i);
-                break;
-            case 2:
-                SetDeviceForcesNew(force, i);
-                break;
-            default:
-                SetDeviceForcesFailsafe(force, i);
-        }
+        case 1:
+            return SetDeviceForcesEjocys(pVibration);
+        case 2:
+            return SetDeviceForcesNew(pVibration);
+        default:
+            return SetDeviceForcesFailsafe(pVibration);
     }
 }
 
-HRESULT ForceFeedback::SetDeviceForcesFailsafe(WORD force, u8 motor)
+void ForceFeedback::StartEffects(DIEFFECT* effectType)
+{
+    for (auto it = m_effects.begin(); it != m_effects.end(); ++it)
+    {
+        u32 flags = DIEP_START;
+        if (effectType->cAxes && effectType->rgdwAxes && !effectType->rglDirection) flags |= DIEP_AXES;
+        if (effectType->cAxes && effectType->rglDirection) flags |= DIEP_DIRECTION;
+        if (effectType->dwDuration) flags |= DIEP_DURATION;
+        if (effectType->lpEnvelope) flags |= DIEP_ENVELOPE;
+        if (effectType->dwGain) flags |= DIEP_GAIN;
+        if (effectType->dwSamplePeriod) flags |= DIEP_SAMPLEPERIOD;
+        if (effectType->dwStartDelay) flags |= DIEP_STARTDELAY;
+        if (effectType->dwTriggerButton != DIEB_NOTRIGGER) flags |= DIEP_TRIGGERBUTTON;
+        if (effectType->dwTriggerRepeatInterval) flags |= DIEP_TRIGGERREPEATINTERVAL;
+        if (effectType->lpvTypeSpecificParams) flags |= DIEP_TYPESPECIFICPARAMS;
+
+        (*it)->SetParameters(effectType, flags);
+    }
+}
+
+bool ForceFeedback::SetDeviceForcesFailsafe(XINPUT_VIBRATION* pVibration)
 {
     DWORD    rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };
     LONG rglDirection[2] = { 0, 0 };
 
+    //As we cannot properly emulate 2 separate motor force in DirectInput we should try to combine forces;
+    u32 force = (int)((pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed) * m_ForcePercent);
+    force = MulDiv(force, DI_FFNOMINALMAX, UINT16_MAX * 2);
+    force = clamp(force, 0, DI_FFNOMINALMAX);
+
     DICONSTANTFORCE contantForce;
-    contantForce.lMagnitude = MulDiv(force, DI_FFNOMINALMAX, USHRT_MAX);
+    contantForce.lMagnitude = force;
+
+    // PrintLog("=========== %u", contantForce.lMagnitude);
 
     DIEFFECT effectType;
     ZeroMemory(&effectType, sizeof(DIEFFECT));
@@ -321,20 +318,27 @@ HRESULT ForceFeedback::SetDeviceForcesFailsafe(WORD force, u8 motor)
     effectType.lpvTypeSpecificParams = &contantForce;
     effectType.dwStartDelay = 0;
 
-    if (!m_pEffectObject[motor])
+    // we want only one effect for now
+    if (m_effects.size() < 1)
     {
-        HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_ConstantForce, &effectType, &m_pEffectObject[motor], NULL);
+        LPDIRECTINPUTEFFECT effect;
+        HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_ConstantForce, &effectType, &effect, NULL);
         if (FAILED(hr))
         {
-            PrintLog("[PAD%d] CreateEffect failed with code HR = %X", m_pController->m_user + 1, hr);
-            return hr;
+            PrintLog("[PAD%d] CreateEffect failed with code HR = %X, FFBType = %u", m_pController->m_user + 1, hr, m_Type);
+            return false;
+        }
+        else
+        {
+            m_effects.push_back(effect);
         }
     }
 
-    return m_pEffectObject[motor]->SetParameters(&effectType, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START);
+    StartEffects(&effectType);
+    return true;
 }
 
-HRESULT ForceFeedback::SetDeviceForcesEjocys(WORD force, u8 motor)
+bool ForceFeedback::SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration)
 {
     DWORD rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };
     LONG rglDirection[2] = { 0, 0 };
@@ -360,44 +364,55 @@ HRESULT ForceFeedback::SetDeviceForcesEjocys(WORD force, u8 motor)
     effectType.rglDirection = rglDirection;
     effectType.lpvTypeSpecificParams = &periodicForce;
 
-    INT nForce = MulDiv(force, DI_FFNOMINALMAX, USHRT_MAX);
-
-    if (motor == FFB_LEFTMOTOR)
-    {
-        m_xForce = nForce;
+    // NOTE: This will not work as expected, because both motors can have speeds at once.
+    if (pVibration->wLeftMotorSpeed)
         periodicForce.dwPeriod = m_LeftPeriod * 1000;
-    }
     else
-    {
-        m_yForce = nForce;
         periodicForce.dwPeriod = m_RightPeriod * 1000;
-    }
+
+    //As we cannot properly emulate 2 separate motor force in DirectInput we should try to combine forces;
+    u32 force = (int)((pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed) * m_ForcePercent);
+    force = MulDiv(force, DI_FFNOMINALMAX, UINT16_MAX * 2);
+    force = clamp(force, 0, DI_FFNOMINALMAX);
+
+    // PrintLog("=========== %u", force);
 
     if (m_Axes == 1)
     {
-        periodicForce.dwMagnitude = std::max(m_xForce, m_yForce);
-        periodicForce.dwPeriod = (m_LeftPeriod * 1000 * m_xForce + m_RightPeriod * 1000 * m_yForce) / (m_xForce + m_yForce);
+        periodicForce.dwMagnitude = std::max(pVibration->wLeftMotorSpeed, pVibration->wRightMotorSpeed);
+        periodicForce.dwPeriod = (m_LeftPeriod * 1000 * pVibration->wLeftMotorSpeed + m_RightPeriod * 1000 * pVibration->wRightMotorSpeed) /
+            (pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed);
         effectType.rglDirection[0] = 0;
         effectType.rglDirection[1] = 0;
     }
     else
     {
-        periodicForce.dwMagnitude = MulDiv(force, DI_FFNOMINALMAX, USHRT_MAX);
-        effectType.rglDirection[0] = m_xForce;
-        effectType.rglDirection[1] = m_yForce;
+        periodicForce.dwMagnitude = force;
+        effectType.rglDirection[0] = pVibration->wLeftMotorSpeed;
+        effectType.rglDirection[1] = pVibration->wRightMotorSpeed;
     }
 
-    HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_Sine, &effectType, &m_pEffectObject[motor], NULL);
-    if (FAILED(hr))
+    // we want only one effect for now
+    if (m_effects.size() < 1)
     {
-        PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_user + 1, motor, hr);
-        return hr;
+        LPDIRECTINPUTEFFECT effect;
+        HRESULT hr = m_pController->m_pDevice->CreateEffect(GUID_Sine, &effectType, &effect, NULL);
+        if (FAILED(hr))
+        {
+            PrintLog("[PAD%d] CreateEffect failed with code HR = %X, FFBType = %u", m_pController->m_user + 1, hr, m_Type);
+            return false;
+        }
+        else
+        {
+            m_effects.push_back(effect);
+        }
     }
 
-    return m_pEffectObject[motor]->SetParameters(&effectType, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START);
+    StartEffects(&effectType);
+    return true;
 }
 
-HRESULT ForceFeedback::SetDeviceForcesNew(WORD force, u8 motor)
+bool ForceFeedback::SetDeviceForcesNew(XINPUT_VIBRATION* pVibration)
 {
     DWORD rgdwAxes[2] = { DIJOFS_X, DIJOFS_Y };
     LONG rglDirection[2] = { 0, 0 };
@@ -414,7 +429,7 @@ HRESULT ForceFeedback::SetDeviceForcesNew(WORD force, u8 motor)
     effectType.lpEnvelope = 0;
     effectType.dwStartDelay = 0;
     effectType.cbTypeSpecificParams = sizeof(DIPERIODIC);
-    effectType.dwDuration = INFINITE;
+    effectType.dwDuration = 0;
     effectType.dwSamplePeriod = 0;
     effectType.dwGain = DI_FFNOMINALMAX; // no scaling
     effectType.dwTriggerButton = DIEB_NOTRIGGER;
@@ -423,29 +438,43 @@ HRESULT ForceFeedback::SetDeviceForcesNew(WORD force, u8 motor)
     effectType.rglDirection = rglDirection;
     effectType.lpvTypeSpecificParams = &periodicForce;
 
-    periodicForce.dwMagnitude = MulDiv(force, DI_FFNOMINALMAX, USHRT_MAX);
+    //As we cannot properly emulate 2 separate motor force in DirectInput we should try to combine forces;
+    u32 force = (int)((pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed) * m_ForcePercent);
+    force = MulDiv(force, DI_FFNOMINALMAX, UINT16_MAX * 2);
+    force = clamp(force, 0, DI_FFNOMINALMAX);
+
+    periodicForce.dwMagnitude = force;
 
     GUID effectGUID;
-    if (motor == FFB_LEFTMOTOR)
+    if (pVibration->wLeftMotorSpeed)
     {
         effectGUID = GUID_SawtoothDown;
         effectType.dwDuration = m_LeftPeriod * 1000;
         periodicForce.dwPeriod = m_LeftPeriod * 1000;
     }
-
-    if (motor == FFB_RIGHTMOTOR)
+    else
     {
         effectGUID = GUID_SawtoothUp;
         effectType.dwDuration = m_LeftPeriod * 1000;
         periodicForce.dwPeriod = m_RightPeriod * 1000;
     }
 
-    HRESULT hr = m_pController->m_pDevice->CreateEffect(effectGUID, &effectType, &m_pEffectObject[motor], NULL);
-    if (FAILED(hr))
+    // we want only one effect for now
+    if (m_effects.size() < 1)
     {
-        PrintLog("[DINPUT] [PAD%d] PrepareForce (%d) failed with code HR = %X", m_pController->m_user + 1, motor, hr);
-        return hr;
+        LPDIRECTINPUTEFFECT effect;
+        HRESULT hr = m_pController->m_pDevice->CreateEffect(effectGUID, &effectType, &effect, NULL);
+        if (FAILED(hr))
+        {
+            PrintLog("[PAD%d] CreateEffect failed with code HR = %X, FFBType = %u", m_pController->m_user + 1, hr, m_Type);
+            return false;
+        }
+        else
+        {
+            m_effects.push_back(effect);
+        }
     }
 
-    return m_pEffectObject[motor]->SetParameters(&effectType, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS | DIEP_START);
+    StartEffects(&effectType);
+    return true;
 }
