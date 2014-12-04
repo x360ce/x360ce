@@ -12,6 +12,8 @@
 #include "Controller.h"
 #include "ForceFeedback.h"
 
+#include "ControllerManager.h"
+
 bool g_bInitBeep = true;
 bool g_bDisable = false;
 
@@ -217,10 +219,10 @@ void ReadConfig()
             index = i;
 
         // Require Controller copy constructor
-        g_Controllers.push_back(Controller(index));
+        ControllerManager::Get().GetControllers().push_back(Controller(index));
 
-        if (ReadPadConfig(&g_Controllers.back(), section, &ini))
-            ReadPadMapping(&g_Controllers.back(), section, &ini);
+        if (ReadPadConfig(&ControllerManager::Get().GetControllers().back(), section, &ini))
+            ReadPadMapping(&ControllerManager::Get().GetControllers().back(), section, &ini);
     }
 }
 

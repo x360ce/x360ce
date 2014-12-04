@@ -87,4 +87,3 @@ private:
     DIJOYSTATE2 m_state;
 };
 
-extern std::vector<Controller> g_Controllers;

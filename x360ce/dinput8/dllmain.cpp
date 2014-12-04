@@ -24,7 +24,7 @@ HINSTANCE hXInput = NULL;
 
 #pragma comment(lib,"Shlwapi.lib")
 
-bool IsEmulator(const std::string filename)
+bool IsEmulator(const std::string& filename)
 {
     hXInput = LoadLibraryA(filename.c_str());
     void* pReset = GetProcAddress(hXInput, "Reset");

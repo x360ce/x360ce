@@ -4,16 +4,15 @@
 #include "Logger.h"
 #include "Utils.h"
 
-#include "Controller.h"
 #include "SWIP.h"
 #include "Config.h"
 
+#include "ControllerManager.h"
 #include "InputHookManager.h"
 
 void __cdecl ExitInstance()
 {
-    PrintLog("Terminating x360ce, bye");
-    g_Controllers.clear();
+    PrintLog("Process terminating, bye");
 }
 
 VOID InitInstance()
@@ -30,7 +29,7 @@ VOID InitInstance()
     atexit(ExitInstance);
     InitLogger();
 
-    // GetInputHook will initalize static InputHook object;
+    // GetInputHook will initalize static InputHook object and we want to initialize it ASAP
     InputHookManager::Get().GetInputHook();
 }
 
@@ -40,7 +39,7 @@ extern "C" VOID WINAPI Reset()
 
     // Only x360ce.App will call this so InputHook is not required, disable it.
     InputHookManager::Get().GetInputHook().Shutdown();
-    g_Controllers.clear();
+    ControllerManager::Get().GetControllers().clear();
     ReadConfig();
 }
 
