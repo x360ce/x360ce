@@ -122,7 +122,8 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
@@ -161,7 +162,8 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
@@ -208,7 +210,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -251,7 +254,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
