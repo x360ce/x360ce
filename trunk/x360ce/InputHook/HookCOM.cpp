@@ -226,7 +226,6 @@ namespace HookCOM
         PrintLog("CoCreateInstanceEx");
 
         std::string clsid;
-        std::string iid;
         GUIDtoString(&clsid, Clsid);
         PrintLog("CoCreateInstanceEx %s", clsid.c_str());
 

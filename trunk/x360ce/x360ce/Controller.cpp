@@ -59,9 +59,7 @@ BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, 
 
 DWORD Controller::GetState(XINPUT_STATE* pState)
 {
-    HRESULT hr = E_FAIL;
-    hr = UpdateState();
-
+    HRESULT hr = UpdateState();
 #if 0
     PrintLog("UpdateState %u %u", dwUserIndex, hr);
 #endif
@@ -423,9 +421,6 @@ HRESULT Controller::UpdateState()
 
 DWORD Controller::CreateDevice()
 {
-    DIPROPDWORD dipdw;
-    HRESULT hr = E_FAIL;
-
     LockGuard lock(m_mutex);
 
     bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
@@ -434,7 +429,7 @@ DWORD Controller::CreateDevice()
     if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
     if (bHookSA) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_SA);
 
-    hr = DirectInputManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &m_pDevice, NULL);
+    HRESULT hr = DirectInputManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &m_pDevice, NULL);
     if (FAILED(hr))
     {
         std::string strInstance;
@@ -464,6 +459,7 @@ DWORD Controller::CreateDevice()
         if (FAILED(setCooperativeLevelResult)) PrintLog("[PAD%d] SetCooperativeLevel failed with code HR = %X", m_user + 1, setCooperativeLevelResult);
     }
 
+    DIPROPDWORD dipdw;
     dipdw.diph.dwSize = sizeof(DIPROPDWORD);
     dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj = 0;
