@@ -3,6 +3,7 @@
 #include "Common.h"
 
 #include <string>
+#include <memory>
 #include <Shlwapi.h>
 #include <Shlobj.h>
 #pragma comment(lib, "shlwapi.lib")
@@ -21,14 +22,14 @@ bool FileExist(const std::string& path)
 
 bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, const std::string& dirname)
 {
-    char path[MAX_PATH];
-    if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path) == S_OK)
+    std::unique_ptr<char[]> path(new char[MAX_PATH]);
+    if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path.get()) == S_OK)
     {
-        PathAppendA(path, dirname.c_str());
-        PathAppendA(path, filename.c_str());
-        if (FileExist(path))
+        PathAppendA(path.get(), dirname.c_str());
+        PathAppendA(path.get(), filename.c_str());
+        if (FileExist(path.get()))
         {
-            *fullpath = path;
+            *fullpath = path.get();
             return true;
         }
     }
@@ -37,24 +38,24 @@ bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, co
     return false;
 }
 
-bool FullPathFromPath(std::string* out_path, const std::string& in_path)
+bool FullPathFromPath(std::string* path, const std::string& in_path)
 {
     if (PathIsRelativeA(in_path.c_str()))
     {
-        char path[MAX_PATH];    
-        if (GetModuleFileNameA(CurrentModule(), path, MAX_PATH) && 
-            PathRemoveFileSpecA(path))
+        std::unique_ptr<char[]> buffer(new char[MAX_PATH]);
+        if (GetModuleFileNameA(CurrentModule(), buffer.get(), MAX_PATH) &&
+            PathRemoveFileSpecA(buffer.get()))
         {
-            PathAppendA(path, in_path.c_str());
-            *out_path = path;
+            PathAppendA(buffer.get(), in_path.c_str());
+            *path = buffer.get();
         }
     }
     else
     {
-        *out_path = in_path;
+        *path = in_path;
     }
 
-    if (FileExist(*out_path))
+    if (FileExist(*path))
         return true;
     
     return false;
@@ -62,79 +63,79 @@ bool FullPathFromPath(std::string* out_path, const std::string& in_path)
 
 bool StringPathCombine(std::string* dest, const std::string& path, const std::string& more)
 {
-    char out_path[MAX_PATH];
-    *dest = PathCombineA(out_path, path.c_str(), more.c_str());
+    std::unique_ptr<char[]> buffer(new char[MAX_PATH]);
+    *dest = PathCombineA(buffer.get(), path.c_str(), more.c_str());
     return !dest->empty();
 }
 
 bool StringPathCombine(std::wstring* dest, const std::wstring& path, const std::wstring& more)
 {
-    wchar_t out_path[MAX_PATH];
-    *dest = PathCombineW(out_path, path.c_str(), more.c_str());
+    std::unique_ptr<wchar_t[]> buffer(new wchar_t[MAX_PATH]);
+    *dest = PathCombineW(buffer.get(), path.c_str(), more.c_str());
     return !dest->empty();
 }
 
 bool StringPathAppend(std::string* path, const std::string& more)
 {
-    char out_path[MAX_PATH];
-    *path = PathCombineA(out_path, path->c_str(), more.c_str());
+    std::unique_ptr<char[]> buffer(new char[MAX_PATH]);
+    *path = PathCombineA(buffer.get(), path->c_str(), more.c_str());
     return !path->empty();
 }
 
 bool StringPathAppend(std::wstring* path, const std::wstring& more)
 {
-    wchar_t out_path[MAX_PATH];
-    *path =  PathCombineW(out_path, path->c_str(), more.c_str());
+    std::unique_ptr<wchar_t[]> buffer(new wchar_t[MAX_PATH]);
+    *path = PathCombineW(buffer.get(), path->c_str(), more.c_str());
     return !path->empty();
 }
 
 bool ModulePath(std::string* out, HMODULE hModule)
 {
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(hModule, buffer, MAX_PATH);
-    *out = buffer;
+    std::unique_ptr<char[]> buffer(new char[MAX_PATH]);
+    GetModuleFileNameA(hModule, buffer.get(), MAX_PATH);
+    *out = buffer.get();
     return !out->empty();
 }
 
 bool ModulePath(std::wstring* out, HMODULE hModule)
 {
-    wchar_t buffer[MAX_PATH];
-    GetModuleFileNameW(hModule, buffer, MAX_PATH);
-    *out = buffer;
+    std::unique_ptr<wchar_t[]> buffer(new wchar_t[MAX_PATH]);
+    GetModuleFileNameW(hModule, buffer.get(), MAX_PATH);
+    *out = buffer.get();
     return !out->empty();
 }
 
 bool ModuleDirectory(std::string* out, HMODULE hModule)
 {
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(hModule, buffer, MAX_PATH);
-    PathRemoveFileSpecA(buffer);
-    *out = buffer;
+    std::unique_ptr<char[]> buffer(new char[MAX_PATH]);
+    GetModuleFileNameA(hModule, buffer.get(), MAX_PATH);
+    PathRemoveFileSpecA(buffer.get());
+    *out = buffer.get();
     return !out->empty();
 }
 
 bool ModuleDirectory(std::wstring* out, HMODULE hModule)
 {
-    wchar_t buffer[MAX_PATH];
-    GetModuleFileNameW(hModule, buffer, MAX_PATH);
-    PathRemoveFileSpecW(buffer);
-    *out = buffer;
+    std::unique_ptr<wchar_t[]> buffer(new wchar_t[MAX_PATH]);
+    GetModuleFileNameW(hModule, buffer.get(), MAX_PATH);
+    PathRemoveFileSpecW(buffer.get());
+    *out = buffer.get();
     return !out->empty();
 }
 
 bool ModuleFileName(std::string* out, HMODULE hModule)
 {
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(hModule, buffer, MAX_PATH);
-    *out = PathFindFileNameA(buffer);
+    std::unique_ptr<char[]> buffer(new char[MAX_PATH]);
+    GetModuleFileNameA(hModule, buffer.get(), MAX_PATH);
+    *out = PathFindFileNameA(buffer.get());
     return !out->empty();
 }
 
 bool ModuleFileName(std::wstring* out, HMODULE hModule)
 {
-    wchar_t buffer[MAX_PATH];
-    GetModuleFileNameW(hModule, buffer, MAX_PATH);
-    *out = PathFindFileNameW(buffer);
+    std::unique_ptr<wchar_t[]> buffer(new wchar_t[MAX_PATH]);
+    GetModuleFileNameW(hModule, buffer.get(), MAX_PATH);
+    *out = PathFindFileNameW(buffer.get());
     return !out->empty();
 }
 
@@ -192,21 +193,21 @@ void StringToGUID(GUID* id, const std::wstring& szBuf)
 
 bool GUIDtoString(std::string* out, const GUID &g)
 {
-    char id[40];
-    sprintf_s(id, 40, "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+    std::unique_ptr<char[]> buffer(new char[40]);
+    sprintf_s(buffer.get(), 40, "{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
         g.Data1, g.Data2, g.Data3, g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
 
-    *out = id;
+    *out = buffer.get();
     return !out->empty();
 }
 
 bool GUIDtoString(std::wstring* out, const GUID &g)
 {
-    wchar_t id[40];
-    swprintf_s(id, 40, L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+    std::unique_ptr<wchar_t[]> buffer(new wchar_t[40]);
+    swprintf_s(buffer.get(), 40, L"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
         g.Data1, g.Data2, g.Data3, g.Data4[0], g.Data4[1], g.Data4[2], g.Data4[3], g.Data4[4], g.Data4[5], g.Data4[6], g.Data4[7]);
 
-    *out = id;
+    *out = buffer.get();
     return !out->empty();
 }
 

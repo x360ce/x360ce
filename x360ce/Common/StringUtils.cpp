@@ -14,7 +14,7 @@
 #define strtoull _strtoui64
 #endif
 
-bool ArrayFormatV(char* out, int outsize, const char* format, va_list args)
+bool CharArrayFormatV(char* out, int outsize, const char* format, va_list args)
 {
     int count;
     static _locale_t locale = nullptr;
@@ -33,6 +33,21 @@ bool ArrayFormatV(char* out, int outsize, const char* format, va_list args)
     }
 }
 
+bool CharArrayFormatV(wchar_t* out, int outsize, const wchar_t* format, va_list args)
+{
+    int count = _vsnwprintf_s(out, outsize, outsize, format, args);
+    if (count > 0 && count < outsize)
+    {
+        out[count] = L'\0';
+        return true;
+    }
+    else
+    {
+        out[outsize - 1] = L'\0';
+        return false;
+    }
+}
+
 std::string StringFormat(const char* format, ...)
 {
     va_list args;
@@ -42,10 +57,26 @@ std::string StringFormat(const char* format, ...)
     required = _vscprintf(format, args);
 
     std::unique_ptr<char[]> buf(new char[required + 1]);
-    ArrayFormatV(buf.get(), required + 1, format, args);
+    CharArrayFormatV(buf.get(), required + 1, format, args);
     va_end(args);
 
     std::string temp = buf.get();
+    return temp;
+}
+
+std::wstring StringFormat(const wchar_t* format, ...)
+{
+    va_list args;
+    int required = 0;
+
+    va_start(args, format);
+    required = _vscwprintf(format, args);
+
+    std::unique_ptr<wchar_t[]> buf(new wchar_t[required + 1]);
+    CharArrayFormatV(buf.get(), required + 1, format, args);
+    va_end(args);
+
+    std::wstring temp = buf.get();
     return temp;
 }
 
