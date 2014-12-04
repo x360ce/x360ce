@@ -14,9 +14,6 @@ InputHook g_iHook;
 
 void __cdecl ExitInstance()
 {
-    if (hMsgWnd && DestroyWindow(hMsgWnd))
-        PrintLog("Message window destroyed");
-
     if (xinput.dll)
     {
         std::string xinput_path;

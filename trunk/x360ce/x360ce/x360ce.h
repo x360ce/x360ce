@@ -1,7 +1,6 @@
 #pragma once
 
 extern WNDPROC oldWndProc;
-extern HWND hMsgWnd;
 extern InputHook g_iHook;
 
 static const char * legal_notice = {
