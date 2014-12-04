@@ -63,7 +63,7 @@ public:
         , m_userindex(userindex)
     {
     }
-    virtual ~InputHookDevice() {};
+    virtual ~InputHookDevice() { };
 
     GUID GetProductGUID()
     {
@@ -94,21 +94,13 @@ private:
 class InputHook
 {
 public:
-    InputHook()
-        : m_hookmask(0)
-        , m_fakepidvid(MAKELONG(0x045E, 0x028E))
-        , m_timeout(30)
-        , m_timeout_thread(INVALID_HANDLE_VALUE)
+    InputHook();
+    ~InputHook()
     {
-    }
-    virtual ~InputHook()
-    {
-        MH_Uninitialize();
-        m_devices.clear();
-
-        if (m_timeout_thread) CloseHandle(m_timeout_thread);
-        m_timeout_thread = 0;
+        Shutdown();
     };
+
+    void Shutdown();
 
     static const u32 HOOK_LL =        0x00000001UL;
     static const u32 HOOK_COM =       0x00000002UL;
@@ -157,10 +149,6 @@ public:
     {
         return &m_devices[dwUserIndex];
     }
-
-    void Init();
-
-    void Shutdown();
 
     HMODULE& GetEmulator()
     {

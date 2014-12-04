@@ -2,6 +2,16 @@
 
 #include "Types.h"
 
+template<typename N>
+inline void LoadFunctionF(HMODULE module, const char* funcname, N* ppfunc)
+{
+    if (ppfunc) *ppfunc = reinterpret_cast<N>(GetProcAddress(module, funcname));
+}
+
+#define LoadFunction(handle_struct, func) LoadFunctionF(handle_struct ## .dll, #func, &handle_struct ## .func)
+#define LoadFunctionOrdinal(handle_struct, ordinal, func) LoadFunctionF(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .func)
+#define LoadFunctionOrdinal2(handle_struct, ordinal) LoadFunctionF(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .___XXX___ ## ordinal)
+
 inline HMODULE& CurrentModule()
 {
     static HMODULE hModule = 0;
@@ -14,6 +24,11 @@ bool FileExist(const std::string& path);
 
 bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, const std::string& dirname);
 bool FullPathFromPath(std::string* fullpath, const std::string& name);
+
+bool StringPathCombine(std::string* dest, const std::string& path, const std::string& more);
+bool StringPathCombine(std::wstring* dest, const std::wstring& path, const std::wstring& more);
+bool StringPathAppend(std::string* path, const std::string& more);
+bool StringPathAppend(std::wstring* path, const std::wstring& more);
 
 bool ModulePath(std::string* out, HMODULE hModule = NULL);
 bool ModulePath(std::wstring* out, HMODULE hModule = NULL);

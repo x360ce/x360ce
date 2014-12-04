@@ -1,43 +1,28 @@
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
 #include "targetver.h"
 
+#if _MSC_VER < 1700
 #define _BIND_TO_CURRENT_CRT_VERSION 1
 
-#define WIN32_LEAN_AND_MEAN
-#define VC_EXTRALEAN
-#define STRICT
-
-#ifndef UNICODE
-#define UNICODE
+#ifdef NDEBUG
+#define _SECURE_SCL 0
+#endif
 #endif
 
-// Windows Header Files:
-#include <windows.h>
-#include <tchar.h>
-#include <Shlwapi.h>
-#include <xinput.h>
-#include <dinput.h>
+#ifdef DEBUG
+#include <crtdbg.h>
+#endif
 
-// C
-#include <math.h>
-#include <time.h>
-#include <io.h>
-#include <fcntl.h>
-
-
-// C++
-#include <ios>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
 #include <string>
 #include <vector>
-#include <map>
+#include <algorithm>
 
+#define WIN32_LEAN_AND_MEAN
+#define STRICT
+#define NOMINMAX
+
+#include <windows.h>
+#include <dinput.h>
+
+#include "Common.h"

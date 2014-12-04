@@ -17,13 +17,8 @@
 #ifndef _DINPUT8_H_
 #define _DINPUT8_H_
 
-#include <windows.h>
-
-extern HINSTANCE hThis;
 extern HINSTANCE hXInput;
-extern HINSTANCE hDInput;
 
-extern void LoadXinputDLL();
-extern void LoadDInputDll();
+extern void LoadEmulator();
 
 #endif

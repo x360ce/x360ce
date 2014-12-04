@@ -60,6 +60,34 @@ bool FullPathFromPath(std::string* out_path, const std::string& in_path)
     return false;
 }
 
+bool StringPathCombine(std::string* dest, const std::string& path, const std::string& more)
+{
+    char out_path[MAX_PATH];
+    *dest = PathCombineA(out_path, path.c_str(), more.c_str());
+    return !dest->empty();
+}
+
+bool StringPathCombine(std::wstring* dest, const std::wstring& path, const std::wstring& more)
+{
+    wchar_t out_path[MAX_PATH];
+    *dest = PathCombineW(out_path, path.c_str(), more.c_str());
+    return !dest->empty();
+}
+
+bool StringPathAppend(std::string* path, const std::string& more)
+{
+    char out_path[MAX_PATH];
+    *path = PathCombineA(out_path, path->c_str(), more.c_str());
+    return !path->empty();
+}
+
+bool StringPathAppend(std::wstring* path, const std::wstring& more)
+{
+    wchar_t out_path[MAX_PATH];
+    *path =  PathCombineW(out_path, path->c_str(), more.c_str());
+    return !path->empty();
+}
+
 bool ModulePath(std::string* out, HMODULE hModule)
 {
     char buffer[MAX_PATH];

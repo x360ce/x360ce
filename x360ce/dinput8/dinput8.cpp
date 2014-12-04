@@ -17,70 +17,94 @@
 #include "stdafx.h"
 #include "dinput8.h"
 
-typedef HRESULT (WINAPI* DirectInput8Create_t)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
-typedef HRESULT (WINAPI* DllCanUnloadNow_t)(void);
-typedef HRESULT (WINAPI* DllGetClassObject_t)(_In_ REFCLSID rclsid, _In_ REFIID riid, _Out_ LPVOID FAR* ppv);
-typedef HRESULT (WINAPI* DllRegisterServer_t)(void);
-typedef HRESULT (WINAPI* DllUnregisterServer_t)(void);
+#include "Utils.h"
 
-DirectInput8Create_t hDirectInput8Create = NULL;
-DllCanUnloadNow_t hDllCanUnloadNow = NULL;
-DllGetClassObject_t hDllGetClassObject = NULL;
-DllRegisterServer_t hDllRegisterServer = NULL;
-DllUnregisterServer_t hDllUnregisterServer = NULL;
+struct dinput8_dll
+{
+    HMODULE dll;
+
+    HRESULT(WINAPI* DirectInput8Create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
+    HRESULT(WINAPI* DllCanUnloadNow)(void);
+    HRESULT(WINAPI* DllGetClassObject)(REFCLSID rclsid, REFIID riid, LPVOID FAR* ppv);
+    HRESULT(WINAPI* DllRegisterServer)(void);
+    HRESULT(WINAPI* DllUnregisterServer)(void);
+
+    dinput8_dll() { ZeroMemory(this, sizeof(dinput8_dll)); }
+} dinput8;
+
+void __cdecl DirectInputShutdown()
+{
+    if (dinput8.dll) FreeLibrary(dinput8.dll);
+}
+
+bool DirectInputInitialize()
+{
+    if (dinput8.dll) return true;
+
+    char system_directory[MAX_PATH];
+    DWORD length = 0;
+    length = GetSystemDirectoryA(system_directory, MAX_PATH);
+
+    std::string dinput8_path(system_directory);
+    StringPathAppend(&dinput8_path, "dinput8.dll");
+    dinput8.dll = LoadLibraryA(dinput8_path.c_str());
+
+    if (!dinput8.dll)
+    {
+        HRESULT hr = GetLastError();
+        char error_msg[MAX_PATH];
+        sprintf_s(error_msg, "Cannot load \"%s\" error: 0x%x", dinput8_path.c_str(), hr);
+        MessageBoxA(NULL, error_msg, "Error", MB_ICONERROR);
+        ExitProcess(hr);
+    }
+
+    atexit(DirectInputShutdown);
+
+    LoadFunction(dinput8, DirectInput8Create);
+    LoadFunction(dinput8, DllCanUnloadNow);
+    LoadFunction(dinput8, DllGetClassObject);
+    LoadFunction(dinput8, DllRegisterServer);
+    LoadFunction(dinput8, DllUnregisterServer);
+
+    return true;
+}
 
 extern "C" HRESULT WINAPI DirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
 {
-    if(hXInput == NULL) LoadXinputDLL();
+    DirectInputInitialize();
+    LoadEmulator();
 
-    if(hDirectInput8Create == NULL)
-    {
-        if(hDInput == NULL) LoadDInputDll();
-        hDirectInput8Create = (DirectInput8Create_t) GetProcAddress(hDInput,"DirectInput8Create");
-    }
-    return hDirectInput8Create(hinst,dwVersion,riidltf,ppvOut,punkOuter);
+    return dinput8.DirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 }
 
 extern "C" HRESULT WINAPI DllCanUnloadNow(void)
 {
-    if(hXInput == NULL) LoadXinputDLL();
+    DirectInputInitialize();
+    LoadEmulator();
 
-    if(hDllCanUnloadNow == NULL)
-    {
-        if(hDInput == NULL) LoadDInputDll();
-        hDllCanUnloadNow = (DllCanUnloadNow_t) GetProcAddress(hDInput,"DllCanUnloadNow");
-    }
-    return hDllCanUnloadNow();
+    return dinput8.DllCanUnloadNow();
 }
 
 extern "C" HRESULT WINAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID FAR* ppv)
 {
-    if(hXInput == NULL) LoadXinputDLL();
+    DirectInputInitialize();
+    LoadEmulator();
 
-    if(hDllGetClassObject == NULL)
-    {
-        if(hDInput == NULL) LoadDInputDll();
-        hDllGetClassObject = (DllGetClassObject_t) GetProcAddress(hDInput,"DllGetClassObject");
-    }
-    return hDllGetClassObject(rclsid,riid,ppv);
+    return dinput8.DllGetClassObject(rclsid, riid, ppv);
 }
 
 extern "C" HRESULT WINAPI DllRegisterServer(void)
 {
-    if(hDllRegisterServer == NULL)
-    {
-        if(hDInput == NULL) LoadDInputDll();
-        hDllRegisterServer = (DllRegisterServer_t) GetProcAddress(hDInput,"DllRegisterServer");
-    }
-    return hDllRegisterServer();
+    DirectInputInitialize();
+    LoadEmulator();
+
+    return dinput8.DllRegisterServer();
 }
 
 extern "C" HRESULT WINAPI DllUnregisterServer(void)
 {
-    if(hDllUnregisterServer == NULL)
-    {
-        if(hDInput == NULL) LoadDInputDll();
-        hDllUnregisterServer = (DllUnregisterServer_t) GetProcAddress(hDInput,"DllUnregisterServer");
-    }
-    return hDllUnregisterServer();
+    DirectInputInitialize();
+    LoadEmulator();
+
+    return dinput8.DllUnregisterServer();
 }

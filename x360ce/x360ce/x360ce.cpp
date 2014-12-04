@@ -19,59 +19,105 @@
 
 #include "stdafx.h"
 #include "Common.h"
-#include "Logger.h"
-#include "Utils.h"
-#include "InputHook.h"
-
-#include "Controller.h"
-#include "SWIP.h"
-#include "Config.h"
-#include "x360ce.h"
 
 #include "version.h"
-#include "WindowsVersion.h"
+#include "InputHook.h"
+#include "Config.h"
 
-XInputEnabled XInputIsEnabled;
-xinput_dll xinput;
+#include "InputHookManager.h"
+#include "ForceFeedback.h"
+#include "Controller.h"
+
+struct XInputEnabled
+{
+public:
+    bool bEnabled;
+    bool bUseEnabled;
+    XInputEnabled() :
+        bEnabled(false),
+        bUseEnabled(false)
+    {
+    }
+    virtual ~XInputEnabled() {};
+} XInputIsEnabled;
+
+struct xinput_dll
+{
+    HMODULE dll;
+
+    // XInput 1.3 and older functions
+    DWORD(WINAPI* XInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
+    DWORD(WINAPI* XInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+    DWORD(WINAPI* XInputGetCapabilities)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
+    VOID(WINAPI* XInputEnable)(BOOL enable);
+    DWORD(WINAPI* XInputGetDSoundAudioDeviceGuids)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
+    DWORD(WINAPI* XInputGetBatteryInformation)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
+    DWORD(WINAPI* XInputGetKeystroke)(DWORD dwUserIndex, DWORD dwReserved, PXINPUT_KEYSTROKE pKeystroke);
+
+    // XInput 1.3 undocumented functions
+    DWORD(WINAPI* XInputGetStateEx)(DWORD dwUserIndex, XINPUT_STATE *pState); // 100
+    DWORD(WINAPI* XInputWaitForGuideButton)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid); // 101
+    DWORD(WINAPI* XInputCancelGuideButtonWait)(DWORD dwUserIndex); // 102
+    DWORD(WINAPI* XInputPowerOffController)(DWORD dwUserIndex); // 103
+
+    // XInput 1.4 functions
+    DWORD(WINAPI* XInputGetAudioDeviceIds)(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount);
+
+    // XInput 1.4 undocumented functionss
+    DWORD(WINAPI* XInputGetBaseBusInformation)(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo); // 104
+    DWORD(WINAPI* XInputGetCapabilitiesEx)(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx); // 108
+
+    xinput_dll() { ZeroMemory(this, sizeof(xinput_dll)); }
+} xinput;
 
 static const u32 PASSTROUGH = (u32)-2;
+
+void __cdecl XInputShutdown()
+{
+    if (xinput.dll)
+    {
+        std::string xinput_path;
+        ModulePath(&xinput_path, xinput.dll);
+        PrintLog("Unloading %s", xinput_path.c_str());
+        FreeLibrary(xinput.dll);
+    }
+}
 
 bool XInputInitialize()
 {
     if (xinput.dll) return true;
 
-    std::wstring xinput_path;
-    xinput_path.resize(MAX_PATH);
+    char system_directory[MAX_PATH];
     DWORD length = 0;
-    length = GetSystemDirectoryW(&xinput_path[0], MAX_PATH);
-    xinput_path.resize(length);
+    length = GetSystemDirectoryA(system_directory, MAX_PATH);
 
-    std::wstring current_module;
+    std::string current_module;
     ModuleFileName(&current_module, CurrentModule());
 
-    xinput_path.append(L"\\");
-    xinput_path.append(current_module);
+    std::string xinput_path(system_directory);
+    StringPathAppend(&xinput_path, current_module);
 
     bool bHookLL = false;
 
-    bHookLL = g_iHook.GetState(InputHook::HOOK_LL);
-    if (bHookLL) g_iHook.DisableHook(InputHook::HOOK_LL);
+    bHookLL = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_LL);
+    if (bHookLL) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_LL);
 
-    PrintLog("Loading %ls", xinput_path.c_str());
-    xinput.dll = LoadLibraryW(xinput_path.c_str());
-    if (bHookLL) g_iHook.EnableHook(InputHook::HOOK_LL);
+    PrintLog("Loading \"%s\"", xinput_path.c_str());
+    xinput.dll = LoadLibraryA(xinput_path.c_str());
+    if (bHookLL) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_LL);
 
     if (!xinput.dll)
     {
         HRESULT hr = GetLastError();
-        std::wstring error_msg;
-        error_msg.resize(MAX_PATH);
+        char error_msg[MAX_PATH];
 
-        swprintf_s(&error_msg[0], MAX_PATH, L"Cannot load %s error: 0x%x", xinput_path.c_str(), hr);
-        PrintLog("%S", error_msg.c_str());
-        MessageBoxW(NULL, error_msg.c_str(), L"Error", MB_ICONERROR);
+        sprintf_s(error_msg, "Cannot load \"%s\" error: 0x%x", xinput_path.c_str(), hr);
+        PrintLog(error_msg);
+        MessageBoxA(NULL, error_msg, "Error", MB_ICONERROR);
         ExitProcess(hr);
     }
+
+    atexit(XInputShutdown);
 
     // XInput 1.3 and older functions
     LoadFunction(xinput, XInputGetState);
