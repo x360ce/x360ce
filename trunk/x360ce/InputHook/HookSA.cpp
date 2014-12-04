@@ -23,9 +23,9 @@ namespace HookSA
         if (!s_InputHook->GetState(InputHook::HOOK_SA)) return ret;
         PrintLog("SetupDiGetDeviceInstanceId");
 
-        s_InputHook->StartTimeoutThread();
-
         if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) return ret;
+
+        s_InputHook->StartTimeoutThread();
 
         if (DeviceInstanceId && ret)
         {

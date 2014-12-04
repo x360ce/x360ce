@@ -44,6 +44,22 @@ namespace HookCOM
     static Next_t TrueNext = nullptr;
     static Get_t TrueGet = nullptr;
 
+    void DeviceStringChange(wchar_t* pName, InputHookDevice* pInputHookDevice, const wchar_t* pNamespace)
+    {
+        std::wstring newDeviceName;
+
+        DWORD dwHookVid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? LOWORD(s_InputHook->GetFakePIDVID()) : LOWORD(pInputHookDevice->GetProductPIDVID());
+        DWORD dwHookPid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? HIWORD(s_InputHook->GetFakePIDVID()) : HIWORD(pInputHookDevice->GetProductPIDVID());
+
+        PrintLog("Device string change:");
+        PrintLog("%ls", pName);
+        const wchar_t* p = wcsrchr(pName, L'\\');
+        if (p) newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d%s", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex(), p);
+        else newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex());
+        SysReAllocString(&pName, newDeviceName.c_str());
+        PrintLog("%ls", pName);
+    }
+
     HRESULT STDMETHODCALLTYPE HookGet(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor)
     {
         HRESULT hr = TrueGet(This, wszName, lFlags, pVal, pType, plFlavor);
@@ -80,39 +96,27 @@ namespace HookCOM
                     return hr;
             }
 
-            for (auto padcfg = s_InputHook->begin(); padcfg != s_InputHook->end(); ++padcfg)
+            for (auto deviceit = s_InputHook->begin(); deviceit != s_InputHook->end(); ++deviceit)
             {
-                if (padcfg->GetProductPIDVID() == (DWORD)MAKELONG(dwVid, dwPid))
+                if (deviceit->GetProductPIDVID() == (u32)MAKELONG(dwVid, dwPid))
                 {
                     const wchar_t* strUSB = wcsstr(pVal->bstrVal, L"USB\\");
                     const wchar_t* strRoot = wcsstr(pVal->bstrVal, L"root\\");
-                    OLECHAR tempstr[MAX_PATH];
+                    const wchar_t* strHID = wcsstr(pVal->bstrVal, L"HID\\");
 
-                    DWORD dwHookVid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? LOWORD(s_InputHook->GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
-                    DWORD dwHookPid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? HIWORD(s_InputHook->GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
-
-                    if (strUSB || strRoot)
+                    if (strUSB)
                     {
-                        PrintLog("%s", "Device string change:");
-                        PrintLog("%ls", pVal->bstrVal);
-                        const wchar_t* p = wcsrchr(pVal->bstrVal, L'\\');
-                        if (p) swprintf_s(tempstr, L"USB\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
-                        else swprintf_s(tempstr, L"USB\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPid, padcfg->GetUserIndex());
-                        SysReAllocString(&pVal->bstrVal, tempstr);
-                        PrintLog("%ls", pVal->bstrVal);
+                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"USB");  
                         continue;
                     }
-
-                    OLECHAR* strHID = wcsstr(pVal->bstrVal, L"HID\\");
-
-                    if (strHID)
+                    else if (strRoot)
                     {
-                        PrintLog("%s", "Device string change:");
-                        PrintLog("%ls", pVal->bstrVal);
-                        OLECHAR* p = wcsrchr(pVal->bstrVal, L'\\');
-                        swprintf_s(tempstr, L"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
-                        SysReAllocString(&pVal->bstrVal, tempstr);
-                        PrintLog("%ls", pVal->bstrVal);
+                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"root");
+                        continue;
+                    }
+                    else if(strHID)
+                    {
+                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"HID");
                         continue;
                     }
                 }
@@ -224,11 +228,11 @@ namespace HookCOM
         std::string clsid;
         std::string iid;
         GUIDtoString(&clsid, Clsid);
-        PrintLog("CoCreateInstanceEx %s ", clsid.c_str());
-
-        s_InputHook->StartTimeoutThread();
+        PrintLog("CoCreateInstanceEx %s", clsid.c_str());
 
         if (!pResults) return hr;
+
+        s_InputHook->StartTimeoutThread();
 
         if (IsEqualCLSID(Clsid, CLSID_DirectInput8))
             PrintLog("COM wants to create DirectInput8 instance");
@@ -263,9 +267,9 @@ namespace HookCOM
         GUIDtoString(&iid, riid);
         PrintLog("CoCreateInstance %s => %s", clsid.c_str(), iid.c_str());
 
-        s_InputHook->StartTimeoutThread();
-
         if (hr != NO_ERROR) return hr;
+
+        s_InputHook->StartTimeoutThread();
 
         if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
             PrintLog("COM wants to create DirectInput8 instance");
@@ -300,9 +304,9 @@ namespace HookCOM
         GUIDtoString(&iid, riid);
         PrintLog("CoGetClassObject %s => %s", clsid.c_str(), iid.c_str());
 
-        s_InputHook->StartTimeoutThread();
-
         if (hr != NO_ERROR) return hr;
+
+        s_InputHook->StartTimeoutThread();
 
         if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
             PrintLog("COM wants to create DirectInput8 instance");

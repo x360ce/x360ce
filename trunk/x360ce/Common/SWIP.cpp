@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 
+#include <memory>
+
 #include "Utils.h"
 #include "SWIP.h"
 
@@ -132,14 +134,13 @@ bool SWIP::Section::Delete(const std::string& key)
 
 void SWIP::Section::Populate(const std::string& filename)
 {
-    std::string data;
-    data.resize(32767);
+    std::unique_ptr<char[]> data(new char[32767]);
 
     // read all section data to buffer using WinAPI
-    GetPrivateProfileSectionA(name.c_str(), &data[0], 32767, filename.c_str());
+    GetPrivateProfileSectionA(name.c_str(), data.get(), 32767, filename.c_str());
 
     // store pointer for data iteration
-    const char* pData = data.c_str();
+    const char* pData = data.get();
 
     // last "key=value" string is double null terminated
     while (*pData != '\0')

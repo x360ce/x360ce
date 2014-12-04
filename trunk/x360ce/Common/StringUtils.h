@@ -4,16 +4,10 @@
 #include <sstream>
 
 std::string StringFormat(const char* format, ...);
-bool ArrayFormatV(char* out, int outsize, const char* format, va_list args);
+std::wstring StringFormat(const wchar_t* format, ...);
 
-template<size_t count>
-inline void ArrayFormat(char(&out)[count], const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-    ArrayFormatV(out, count, format, args);
-    va_end(args);
-}
+bool CharArrayFormatV(char* out, int outsize, const char* format, va_list args);
+bool CharArrayFormatV(wchar_t* out, int outsize, const wchar_t* format, va_list args);
 
 bool Convert(const std::string &str, s8 *const output);
 bool Convert(const std::string &str, u8 *const output);

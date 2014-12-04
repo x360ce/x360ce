@@ -75,12 +75,12 @@ public:
         return m_instanceid;
     }
 
-    DWORD GetProductPIDVID()
+    u32 GetProductPIDVID()
     {
         return m_productid.Data1;
     }
 
-    DWORD GetUserIndex()
+    u32 GetUserIndex()
     {
         return m_userindex;
     }
@@ -88,7 +88,7 @@ public:
 private:
     GUID  m_productid;
     GUID  m_instanceid;
-    DWORD m_userindex;
+    u32 m_userindex;
 };
 
 class InputHook
