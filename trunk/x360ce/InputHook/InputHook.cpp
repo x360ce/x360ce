@@ -57,7 +57,11 @@ bool InputHook::ReadGameDatabase(u32* mask)
     return false;
 }
 
-void InputHook::Init()
+InputHook::InputHook() :
+m_hookmask(0),
+m_fakepidvid(MAKELONG(0x045E, 0x028E)),
+m_timeout(30),
+m_timeout_thread(INVALID_HANDLE_VALUE)
 {
     LockGuard lock(m_mutex);
     PrintLog("InputHook starting...");
@@ -174,24 +178,16 @@ void InputHook::Init()
 
 void InputHook::Shutdown()
 {
-    MH_Uninitialize();
-    m_devices.clear();
-    m_hookmask = 0;
+    if (MH_Uninitialize() == MH_OK)
+    {
+        m_devices.clear();
+        m_hookmask = 0;
 
-    if (m_timeout_thread)
-        CloseHandle(m_timeout_thread);
-}
+        if (m_timeout_thread)
+            CloseHandle(m_timeout_thread);
 
-void InputHook::Reset()
-{
-    Shutdown();
-
-    m_timeout_thread = INVALID_HANDLE_VALUE;
-    m_hookmask = 0;
-    m_fakepidvid = MAKELONG(0x045E, 0x028E);
-    m_timeout = 30;
-
-    Init();
+        PrintLog("InputHook shutdown");
+    }
 }
 
 void InputHook::StartTimeoutThread()

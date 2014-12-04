@@ -16,6 +16,9 @@
     <ClCompile Include="Controller.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
+    <ClCompile Include="ForceFeedback.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -30,13 +33,19 @@
     <ClInclude Include="version.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="x360ce.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>PCH</Filter>
     </ClInclude>
     <ClInclude Include="Controller.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="ForceFeedback.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectInputManager.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHookManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>

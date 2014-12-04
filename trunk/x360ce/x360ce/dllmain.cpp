@@ -3,26 +3,15 @@
 #include "SWIP.h"
 #include "Logger.h"
 #include "Utils.h"
-#include "InputHook.h"
 
 #include "Controller.h"
 #include "SWIP.h"
 #include "Config.h"
-#include "x360ce.h"
 
-InputHook g_iHook;
+#include "InputHookManager.h"
 
 void __cdecl ExitInstance()
 {
-    if (xinput.dll)
-    {
-        std::string xinput_path;
-        ModulePath(&xinput_path, xinput.dll);
-        PrintLog("Unloading %s", xinput_path.c_str());
-        FreeLibrary(xinput.dll);
-        xinput.dll = NULL;
-    }
-
     PrintLog("Terminating x360ce, bye");
     g_Controllers.clear();
 }
@@ -39,9 +28,10 @@ VOID InitInstance()
 #endif
 
     atexit(ExitInstance);
-
     InitLogger();
-    g_iHook.Init();
+
+    // GetInputHook will initalize static InputHook object;
+    InputHookManager::Get().GetInputHook();
 }
 
 extern "C" VOID WINAPI Reset()
@@ -49,7 +39,7 @@ extern "C" VOID WINAPI Reset()
     PrintLog("Restarting");
 
     // Only x360ce.App will call this so InputHook is not required, disable it.
-    g_iHook.Shutdown();
+    InputHookManager::Get().GetInputHook().Shutdown();
     g_Controllers.clear();
     ReadConfig();
 }

@@ -18,111 +18,66 @@
 #include "dinput8.h"
 
 #include <string>
+#include <Shlwapi.h>
 
-HINSTANCE hThis = NULL;
 HINSTANCE hXInput = NULL;
-HINSTANCE hDInput = NULL;
 
 #pragma comment(lib,"Shlwapi.lib")
 
-void LoadXinputDLL()
+bool IsEmulator(const std::string filename)
 {
-	LPVOID pReset = NULL;
-    LPTSTR pFile = NULL;
+    hXInput = LoadLibraryA(filename.c_str());
+    void* pReset = GetProcAddress(hXInput, "Reset");
 
-    TCHAR path[MAX_PATH];
-	TCHAR buffer[MAX_PATH];
-    GetModuleFileName(hThis, path, MAX_PATH);
-    PathRemoveFileSpec(path);
-    PathAddBackslash(path);
-
-	pFile = PathCombine(buffer,path,_T("xinput1_4.dll")); 
-    if(pFile)
-    {
-        hXInput = LoadLibrary(pFile);
-        pReset = GetProcAddress(hXInput,"reset");
-        if(!pReset) FreeLibrary(hXInput);
-    }
-
-    pFile = PathCombine(buffer,path,_T("xinput1_3.dll")); 
-    if(pFile)
-    {
-        hXInput = LoadLibrary(pFile);
-        pReset = GetProcAddress(hXInput,"reset");
-        if(!pReset) FreeLibrary(hXInput);
-    }
-
-    pFile = PathCombine(buffer,path,_T("xinput1_2.dll")); 
-    if(pFile)
-    {
-        hXInput = LoadLibrary(pFile);
-        pReset = GetProcAddress(hXInput,"reset");
-        if(!pReset) FreeLibrary(hXInput);
-    }
-
-    pFile = PathCombine(buffer,path,_T("xinput1_1.dll")); 
-    if(pFile)
-    {
-        hXInput = LoadLibrary(pFile);
-        pReset = GetProcAddress(hXInput,"reset");
-        if(!pReset) FreeLibrary(hXInput);
-    }
-
-    pFile = PathCombine(buffer,path,_T("xinput9_1_0.dll")); 
-    if(pFile)
-    {
-        hXInput = LoadLibrary(pFile);
-        pReset = GetProcAddress(hXInput,"reset");
-        if(!pReset) FreeLibrary(hXInput);
-    }
-
-    if(!pReset)
-    {
-        pFile = PathCombine(buffer,path,_T("xinput9_1_0.dll")); 
-        if(pFile) hXInput = LoadLibrary(pFile);
-
-    }
+    if (pReset)
+        return true;
+    else
+        FreeLibrary(hXInput);
+    return false;
 }
 
-void LoadDInputDll()
+void LoadEmulator()
 {
-    LPTSTR pFile = NULL;
-    TCHAR buffer[MAX_PATH];
-    GetSystemDirectory(buffer,MAX_PATH);
-    PathAddBackslash(buffer);
-	pFile = PathCombine(buffer,buffer,_T("dinput8.dll"));
-    if(pFile) hDInput = LoadLibrary(pFile);
+    if (hXInput) return;
 
-    if (hDInput == NULL)
-    {
-        TCHAR error[MAX_PATH];
-        HRESULT hr = GetLastError();
-        _stprintf_s(error,MAX_PATH,_T("Cannot load %s error: 0x%x"), pFile, hr);
-        MessageBox(NULL,error,_T("Error"),MB_ICONERROR);;
-        ExitProcess(hr);
-    }
+    std::string module_directory;
+    ModuleDirectory(&module_directory, CurrentModule());
+
+    std::string module_name;
+    StringPathCombine(&module_name, module_directory, "xinput1_4.dll");
+    if (IsEmulator(module_name)) return;
+
+    StringPathCombine(&module_name, module_directory, "xinput1_3.dll");
+    if (IsEmulator(module_name)) return;
+
+    StringPathCombine(&module_name, module_directory, "xinput1_2.dll");
+    if (IsEmulator(module_name)) return;
+
+    StringPathCombine(&module_name, module_directory, "xinput1_1.dll");
+    if (IsEmulator(module_name)) return;
+
+    StringPathCombine(&module_name, module_directory, "xinput9_1_0.dll");
+    if (IsEmulator(module_name)) return;
 }
 
-void ExitInstance()
+void _cdecl ExitInstance()
 {
-    if(hDInput) FreeLibrary(hDInput);
-    if(hXInput) FreeLibrary(hXInput);
+    if (hXInput) FreeLibrary(hXInput);
 }
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
+BOOL APIENTRY DllMain(HMODULE hModule,
+    DWORD  ul_reason_for_call,
+    LPVOID lpReserved
+    )
 {
     switch (ul_reason_for_call)
     {
-    case DLL_PROCESS_ATTACH:
-		hThis = hModule;
-        DisableThreadLibraryCalls(hModule);
-        break;
-    case DLL_PROCESS_DETACH:
-        ExitInstance();
-        break;
+        case DLL_PROCESS_ATTACH:
+            DisableThreadLibraryCalls(hModule);
+            atexit(ExitInstance);
+            break;
+        case DLL_PROCESS_DETACH:
+            break;
     }
     return TRUE;
 }

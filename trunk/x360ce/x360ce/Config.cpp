@@ -6,13 +6,23 @@
 #include "Utils.h"
 #include "InputHook.h"
 
-#include "Controller.h"
 #include "SWIP.h"
 #include "Config.h"
-#include "x360ce.h"
+
+#include "Controller.h"
+#include "ForceFeedback.h"
 
 bool g_bInitBeep = true;
 bool g_bDisable = false;
+
+static const char * legal_notice = {
+    "\nx360ce - XBOX 360 Controller emulator\n"
+    "https://code.google.com/p/x360ce/\n\n"
+    "Copyright (C) 2010-2014 Robert Krawczyk\n\n"
+    "This program is free software you can redistribute it and/or modify it under\n"
+    "the terms of the GNU Lesser General Public License as published by the Free\n"
+    "Software Foundation, either version 3 of the License, or any later version.\n\n"
+};
 
 static const char* const buttonNames[] =
 {
