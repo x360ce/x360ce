@@ -9,8 +9,6 @@
 #include "ForceFeedback.h"
 #include "Controller.h"
 
-std::vector<Controller> g_Controllers;
-
 Controller::Controller(u32 user)
 {
     m_pDevice = nullptr;

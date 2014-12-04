@@ -4,14 +4,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4CF76641-C60B-4A26-8F44-DAA67B30512A} = {4CF76641-C60B-4A26-8F44-DAA67B30512A}
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D} = {0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMinHook", "x360ce\3rdparty\libMinHook\libMinHook.vcxproj", "{65021938-D251-46FA-BC3D-85C385D4C06D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dinput8", "x360ce\dinput8\dinput8.vcxproj", "{FE3BC27D-9B4F-4063-A6A5-04B38F79AD64}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D} = {0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ditool", "x360ce\ditool\ditool.vcxproj", "{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D} = {0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputHook", "x360ce\InputHook\InputHook.vcxproj", "{4CF76641-C60B-4A26-8F44-DAA67B30512A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{65021938-D251-46FA-BC3D-85C385D4C06D} = {65021938-D251-46FA-BC3D-85C385D4C06D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "x360ce\Common\Common.vcxproj", "{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}"
 EndProject

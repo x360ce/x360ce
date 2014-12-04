@@ -60,7 +60,7 @@ bool InputHook::ReadGameDatabase(u32* mask)
 InputHook::InputHook() :
 m_hookmask(0),
 m_fakepidvid(MAKELONG(0x045E, 0x028E)),
-m_timeout(30),
+m_timeout(0),
 m_timeout_thread(INVALID_HANDLE_VALUE)
 {
     LockGuard lock(m_mutex);
@@ -151,7 +151,6 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
             m_devices.push_back(InputHookDevice(index, productid, instanceid));
         }
     }
-
 
     std::string maskname = MaskToName(m_hookmask);
     PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());

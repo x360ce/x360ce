@@ -24,9 +24,11 @@
 #include "InputHook.h"
 #include "Config.h"
 
-#include "InputHookManager.h"
 #include "ForceFeedback.h"
 #include "Controller.h"
+
+#include "InputHookManager.h"
+#include "ControllerManager.h"
 
 struct XInputEnabled
 {
@@ -172,7 +174,7 @@ u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
         return ERROR_BAD_ARGUMENTS;
 
     Controller* pController = nullptr;
-    for (auto it = g_Controllers.begin(); it != g_Controllers.end(); ++it)
+    for (auto it = ControllerManager::Get().GetControllers().begin(); it != ControllerManager::Get().GetControllers().end(); ++it)
     {
         if (it->m_user == dwUserIndex)
             pController = &(*it);
@@ -274,7 +276,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
     if (g_bDisable) return;
 
     // If any controller is native XInput then use state too.
-    for (auto it = g_Controllers.begin(); it != g_Controllers.end(); ++it)
+    for (auto it = ControllerManager::Get().GetControllers().begin(); it != ControllerManager::Get().GetControllers().end(); ++it)
     {
         if (it->m_passthrough)
             xinput.XInputEnable(enable);

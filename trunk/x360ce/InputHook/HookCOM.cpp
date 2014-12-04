@@ -221,6 +221,11 @@ namespace HookCOM
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
         PrintLog("CoCreateInstanceEx");
 
+        std::string clsid;
+        std::string iid;
+        GUIDtoString(&clsid, Clsid);
+        PrintLog("CoCreateInstanceEx %s ", clsid.c_str());
+
         s_InputHook->StartTimeoutThread();
 
         if (!pResults) return hr;
@@ -251,7 +256,12 @@ namespace HookCOM
         HRESULT hr = TrueCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
 
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-        PrintLog("CoCreateInstance");
+
+        std::string clsid;
+        std::string iid;
+        GUIDtoString(&clsid, rclsid);
+        GUIDtoString(&iid, riid);
+        PrintLog("CoCreateInstance %s => %s", clsid.c_str(), iid.c_str());
 
         s_InputHook->StartTimeoutThread();
 
@@ -283,7 +293,12 @@ namespace HookCOM
         HRESULT hr = TrueCoGetClassObject(rclsid, dwClsContext, pvReserved, riid, ppv);
 
         if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-        PrintLog("CoGetClassObject");
+
+        std::string clsid;
+        std::string iid;
+        GUIDtoString(&clsid, rclsid);
+        GUIDtoString(&iid, riid);
+        PrintLog("CoGetClassObject %s => %s", clsid.c_str(), iid.c_str());
 
         s_InputHook->StartTimeoutThread();
 
