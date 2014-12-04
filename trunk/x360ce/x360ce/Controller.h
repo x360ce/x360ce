@@ -4,9 +4,6 @@
 #include "Config.h"
 #include "Mutex.h"
 
-#define FFB_LEFTMOTOR 0
-#define FFB_RIGHTMOTOR 1
-
 class Controller;
 class ForceFeedback;
 
@@ -19,6 +16,7 @@ struct ForceFeedbackCaps
 
 class ForceFeedback
 {
+    friend class Controller;
 public:
     ForceFeedback(Controller* pController);
     virtual ~ForceFeedback();
@@ -54,8 +52,13 @@ public:
 
     bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration);
 
-    bool IsSupported();
+    u32 m_LeftPeriod;
+    u32 m_RightPeriod;
+    float m_ForcePercent;
+    u8 m_Type;
+    bool m_SwapMotors;
 
+private:
     static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
     static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
@@ -64,20 +67,14 @@ public:
         m_Caps = caps;
     }
 
-    std::vector<LPDIRECTINPUTEFFECT> m_effects;
-    u32 m_LeftPeriod;
-    u32 m_RightPeriod;
-    float m_ForcePercent;
-    u8 m_Type;
-    bool m_SwapMotors;
-
-private:
+    bool IsSupported();
     void StartEffects(DIEFFECT* effectType);
     bool SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration);
     bool SetDeviceForcesNew(XINPUT_VIBRATION* pVibration);
     bool SetDeviceForcesFailsafe(XINPUT_VIBRATION* pVibration);
 
     Controller* m_pController;
+    std::vector<LPDIRECTINPUTEFFECT> m_effects;
     Mutex m_mutex;
     u8 m_Axes;
     ForceFeedbackCaps m_Caps;
@@ -137,14 +134,11 @@ public:
 
     DWORD GetState(XINPUT_STATE* pState);
     DWORD CreateDevice();
-    bool ButtonPressed(u32 buttonidx);
 
     bool Initalized() const
     {
         return m_pDevice != nullptr;
     }
-
-    static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 
     Mapping m_mapping;
     ForceFeedback* m_pForceFeedback;
@@ -157,6 +151,8 @@ public:
     bool m_useforce;
 
 private:
+    static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
+    bool ButtonPressed(u32 buttonidx);
     HRESULT UpdateState();
 
     Mutex m_mutex;

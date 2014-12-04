@@ -13,8 +13,6 @@ namespace HookDI
 {
     static InputHook* s_InputHook;
 
-    
-    
     typedef HRESULT(WINAPI *DirectInput8Create_t)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter);
     typedef HRESULT(STDMETHODCALLTYPE *CreateDeviceA_t) (LPDIRECTINPUT8A This, REFGUID rguid, LPDIRECTINPUTDEVICE8A *lplpDirectInputDeviceA, LPUNKNOWN pUnkOuter);
     typedef HRESULT(STDMETHODCALLTYPE *CreateDeviceW_t) (LPDIRECTINPUT8W This, REFGUID rguid, LPDIRECTINPUTDEVICE8W *lplpDirectInputDeviceW, LPUNKNOWN pUnkOuter);
@@ -27,7 +25,6 @@ namespace HookDI
 
     typedef  HRESULT(STDMETHODCALLTYPE *SetCooperativeLevelA_t)(LPDIRECTINPUTDEVICE8A This, HWND hWnd, DWORD dwFlags);
     typedef  HRESULT(STDMETHODCALLTYPE *SetCooperativeLevelW_t)(LPDIRECTINPUTDEVICE8W This, HWND hWnd, DWORD dwFlags);
-    
     
 
     static CreateDeviceA_t CreateDeviceA = nullptr;
@@ -55,10 +52,6 @@ namespace HookDI
     static LPDIENUMDEVICESCALLBACKA TrueCallbackA = nullptr;
     static LPDIENUMDEVICESCALLBACKW TrueCallbackW = nullptr;
 
-    
-    
-
-    
     BOOL FAR PASCAL HookEnumCallbackA(const DIDEVICEINSTANCEA* pInst, VOID* pContext)
     {
         if (!s_InputHook->GetState(InputHook::HOOK_DI)) return TrueCallbackA(pInst, pContext);
@@ -132,8 +125,6 @@ namespace HookDI
 
         return TrueCallbackA(pInst, pContext);
     }
-    
-
     
     BOOL FAR PASCAL HookEnumCallbackW(const DIDEVICEINSTANCEW* pInst, VOID* pContext)
     {
@@ -209,8 +200,6 @@ namespace HookDI
         return TrueCallbackW(pInst, pContext);
     }
     
-
-    
     HRESULT STDMETHODCALLTYPE HookEnumDevicesA(LPDIRECTINPUT8A This, DWORD dwDevType, LPDIENUMDEVICESCALLBACKA lpCallback, LPVOID pvRef, DWORD dwFlags)
     {
         if (s_InputHook->GetState(InputHook::HOOK_DI))
@@ -226,8 +215,6 @@ namespace HookDI
         return TrueEnumDevicesA(This, dwDevType, lpCallback, pvRef, dwFlags);
     }
     
-
-    
     HRESULT STDMETHODCALLTYPE HookEnumDevicesW(LPDIRECTINPUT8W This, DWORD dwDevType, LPDIENUMDEVICESCALLBACKW lpCallback, LPVOID pvRef, DWORD dwFlags)
     {
         if (s_InputHook->GetState(InputHook::HOOK_DI))
@@ -242,8 +229,6 @@ namespace HookDI
         }
         return TrueEnumDevicesW(This, dwDevType, lpCallback, pvRef, dwFlags);
     }
-    
-
     
     HRESULT STDMETHODCALLTYPE HookGetDeviceInfoA(LPDIRECTINPUTDEVICE8A This, LPDIDEVICEINSTANCEA pdidi)
     {
@@ -317,8 +302,6 @@ namespace HookDI
         return hr;
     }
     
-
-    
     HRESULT STDMETHODCALLTYPE HookGetDeviceInfoW(LPDIRECTINPUTDEVICE8W This, LPDIDEVICEINSTANCEW pdidi)
     {
         HRESULT hr = TrueGetDeviceInfoW(This, pdidi);
@@ -391,8 +374,6 @@ namespace HookDI
         return hr;
     }
     
-
-    
     HRESULT STDMETHODCALLTYPE HookGetPropertyA(LPDIRECTINPUTDEVICE8A This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
     {
         HRESULT hr = TrueGetPropertyA(This, rguidProp, pdiph);
@@ -426,8 +407,6 @@ namespace HookDI
 
         return hr;
     }
-    
-
     
     HRESULT STDMETHODCALLTYPE HookGetPropertyW(LPDIRECTINPUTDEVICE8W This, REFGUID rguidProp, LPDIPROPHEADER pdiph)
     {
@@ -463,7 +442,6 @@ namespace HookDI
         return hr;
     }
     
-
     HRESULT STDMETHODCALLTYPE HookSetCooperativeLevelA(LPDIRECTINPUTDEVICE8A This, HWND hWnd, DWORD dwFlags)
     {
         if (!s_InputHook->GetState(InputHook::HOOK_DI)) return TrueSetCooperativeLevelA(This, hWnd, dwFlags);
@@ -490,7 +468,6 @@ namespace HookDI
         return TrueSetCooperativeLevelW(This, hWnd, dwFlags);
     }
 
-    
     HRESULT STDMETHODCALLTYPE HookCreateDeviceA(LPDIRECTINPUT8A This, REFGUID rguid, LPDIRECTINPUTDEVICE8A * lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
     {
         HRESULT hr = TrueCreateDeviceA(This, rguid, lplpDirectInputDevice, pUnkOuter);
@@ -531,7 +508,6 @@ namespace HookDI
     }
     
 
-    
     HRESULT STDMETHODCALLTYPE HookCreateDeviceW(LPDIRECTINPUT8W This, REFGUID rguid, LPDIRECTINPUTDEVICE8W * lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
     {
         HRESULT hr = TrueCreateDeviceW(This, rguid, lplpDirectInputDevice, pUnkOuter);
@@ -568,7 +544,6 @@ namespace HookDI
 
         return hr;
     }
-    
 
 #if 0
     void InputHook::HookDICOM(REFIID riidltf, LPVOID *ppv)
@@ -622,8 +597,7 @@ namespace HookDI
         }
     }
 #endif
-
-    
+  
     HRESULT WINAPI HookDirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
     {
         HRESULT hr = TrueDirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
@@ -654,8 +628,7 @@ namespace HookDI
                 }
             }
         }
-
-        if (IsEqualIID(riidltf, IID_IDirectInput8W))
+        else if (IsEqualIID(riidltf, IID_IDirectInput8W))
         {
             LPDIRECTINPUT8W pDIW = static_cast<LPDIRECTINPUT8W>(*ppvOut);
 
