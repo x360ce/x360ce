@@ -114,7 +114,8 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
@@ -153,7 +154,8 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
@@ -200,7 +202,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -243,13 +246,15 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)\..\Support\svnrev.exe -v *.*</Command>
+      <Command>genrev.cmd
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="ForceFeedback.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -261,11 +266,14 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="ControllerManager.h" />
+    <ClInclude Include="DirectInputManager.h" />
+    <ClInclude Include="ForceFeedback.h" />
+    <ClInclude Include="InputHookManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="version.h" />
-    <ClInclude Include="x360ce.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="x360ce.def" />
