@@ -72,7 +72,6 @@ private:
 
     Controller* m_pController;
     std::vector<LPDIRECTINPUTEFFECT> m_effects;
-    Mutex m_mutex;
     u8 m_Axes;
     ForceFeedbackCaps m_Caps;
 };

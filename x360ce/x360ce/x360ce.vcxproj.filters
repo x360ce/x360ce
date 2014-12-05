@@ -48,7 +48,12 @@
     <ClInclude Include="InputHookManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="ControllerManager.h" />
+    <ClInclude Include="ControllerManager.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="XInputModuleManager.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="x360ce">

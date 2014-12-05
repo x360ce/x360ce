@@ -46,18 +46,24 @@ namespace HookCOM
 
     void DeviceStringChange(wchar_t* pName, InputHookDevice* pInputHookDevice, const wchar_t* pNamespace)
     {
+        std::wstring oldDeviceName(pName);
         std::wstring newDeviceName;
 
         DWORD dwHookVid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? LOWORD(s_InputHook->GetFakePIDVID()) : LOWORD(pInputHookDevice->GetProductPIDVID());
         DWORD dwHookPid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? HIWORD(s_InputHook->GetFakePIDVID()) : HIWORD(pInputHookDevice->GetProductPIDVID());
 
-        PrintLog("Device string change:");
-        PrintLog("%ls", pName);
         const wchar_t* p = wcsrchr(pName, L'\\');
         if (p) newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d%s", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex(), p);
         else newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex());
-        SysReAllocString(&pName, newDeviceName.c_str());
-        PrintLog("%ls", pName);
+
+        if (SysReAllocString(&pName, newDeviceName.c_str()) == TRUE)
+        {
+            PrintLog("Device string change: %ls => %ls", oldDeviceName.c_str(), pName);
+        }
+        else
+        {
+            PrintLog("Failed to re-alloc string");
+        }
     }
 
     HRESULT STDMETHODCALLTYPE HookGet(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor)
@@ -106,7 +112,7 @@ namespace HookCOM
 
                     if (strUSB)
                     {
-                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"USB");  
+                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"USB");
                         continue;
                     }
                     else if (strRoot)
@@ -114,7 +120,7 @@ namespace HookCOM
                         DeviceStringChange(pVal->bstrVal, &(*deviceit), L"root");
                         continue;
                     }
-                    else if(strHID)
+                    else if (strHID)
                     {
                         DeviceStringChange(pVal->bstrVal, &(*deviceit), L"HID");
                         continue;

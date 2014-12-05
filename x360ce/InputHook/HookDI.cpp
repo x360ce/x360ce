@@ -565,7 +565,7 @@ namespace HookDI
         HRESULT hr = TrueDirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 
         if (!s_InputHook->GetState(InputHook::HOOK_DI)) return hr;
-        PrintLog("*DirectInput8Create*");
+        PrintLog("DirectInput8Create");
 
         if (hr != DI_OK) return hr;
 

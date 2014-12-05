@@ -15,9 +15,11 @@ public:
         return instance;
     }
 
-    static InputHook& GetInputHook()
+    InputHook& GetInputHook()
     {
-        static InputHook inputHook;
-        return inputHook;
+        return m_inputHook;
     }
+
+private:
+    InputHook m_inputHook;
 };

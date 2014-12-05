@@ -20,21 +20,19 @@ bool FileExist(const std::string& path)
     return false;
 }
 
-bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, const std::string& dirname)
+bool CheckCommonDirectory(std::string* outpath, const std::string& dirname)
 {
     std::unique_ptr<char[]> path(new char[MAX_PATH]);
     if (SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, SHGFP_TYPE_CURRENT, path.get()) == S_OK)
     {
         PathAppendA(path.get(), dirname.c_str());
-        PathAppendA(path.get(), filename.c_str());
+        PathAppendA(path.get(), outpath->c_str());
         if (FileExist(path.get()))
         {
-            *fullpath = path.get();
+            *outpath = path.get();
             return true;
         }
     }
-
-    *fullpath = filename;
     return false;
 }
 

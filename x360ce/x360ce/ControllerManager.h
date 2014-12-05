@@ -9,7 +9,7 @@ class ControllerManager : NonCopyable
 {
 public:
     ControllerManager() {}
-    ~ControllerManager() { GetControllers().clear(); };
+    ~ControllerManager() {};
 
     static ControllerManager& Get()
     {

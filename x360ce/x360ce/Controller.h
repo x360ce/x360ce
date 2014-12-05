@@ -32,6 +32,7 @@ public:
             m_pForceFeedback = new ForceFeedback(this);
             *m_pForceFeedback = *other.m_pForceFeedback;
         }
+        else m_pForceFeedback = nullptr;
     }
 
     Controller& operator=(const Controller& other)
@@ -54,6 +55,7 @@ public:
                 m_pForceFeedback = new ForceFeedback(this);
                 *m_pForceFeedback = *other.m_pForceFeedback;
             }
+            else m_pForceFeedback = nullptr;
         }
         return *this;
     }
@@ -80,8 +82,6 @@ private:
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
     bool ButtonPressed(u32 buttonidx);
     HRESULT UpdateState();
-
-    Mutex m_mutex;
 
     LPDIRECTINPUTDEVICE8 m_pDevice;
     DIJOYSTATE2 m_state;

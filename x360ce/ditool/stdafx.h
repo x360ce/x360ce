@@ -39,3 +39,5 @@
 #include <windows.h>
 #include <Objbase.h>
 #include <dinput.h>
+
+#include "Common.h"
