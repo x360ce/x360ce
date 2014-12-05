@@ -421,8 +421,6 @@ HRESULT Controller::UpdateState()
 
 DWORD Controller::CreateDevice()
 {
-    LockGuard lock(m_mutex);
-
     bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
     bool bHookSA = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_SA);
 

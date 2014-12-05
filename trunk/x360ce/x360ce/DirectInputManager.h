@@ -30,18 +30,19 @@ public:
         {
             PrintLog("DirectInput cannot be initialized");
             MessageBox(NULL, "DirectInput cannot be initialized", "x360ce - Error", MB_ICONERROR);
-            ExitProcess(result);
+            exit(result);
         }
     }
 
     ~DirectInputManager()
     {
-        if (m_hWnd && DestroyWindow(m_hWnd))
-            PrintLog("Message window destroyed");
+        if (m_hWnd)
+            DestroyWindow(m_hWnd);
 
         if (m_pDI)
         {
             m_pDI->Release();
+            PrintLog("DirectInput shutdown");
         }
     }
 

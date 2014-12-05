@@ -10,27 +10,17 @@
 #include "ControllerManager.h"
 #include "InputHookManager.h"
 
-void __cdecl ExitInstance()
-{
-    PrintLog("Process terminating, bye");
-}
+#if 1
+#include <vld.h> 
+#endif
 
 VOID InitInstance()
 {
-#if defined(DEBUG) | defined(_DEBUG)
-    int CurrentFlags;
-    CurrentFlags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-    CurrentFlags |= _CRTDBG_DELAY_FREE_MEM_DF;
-    CurrentFlags |= _CRTDBG_LEAK_CHECK_DF;
-    CurrentFlags |= _CRTDBG_CHECK_ALWAYS_DF;
-    _CrtSetDbgFlag(CurrentFlags);
-#endif
 
-    atexit(ExitInstance);
     InitLogger();
 
-    // GetInputHook will initalize static InputHook object and we want to initialize it ASAP
-    InputHookManager::Get().GetInputHook();
+    // Get will initalize static InputHookManager object and we want to initialize it ASAP
+    InputHookManager::Get();
 }
 
 extern "C" VOID WINAPI Reset()
@@ -42,6 +32,7 @@ extern "C" VOID WINAPI Reset()
     ControllerManager::Get().GetControllers().clear();
     ReadConfig();
 }
+
 
 extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {

@@ -473,6 +473,7 @@ MH_STATUS WINAPI MH_Uninitialize(VOID)
 
         // Free the internal function buffer.
         UninitializeBuffer();
+        HeapFree(g_hHeap, 0, g_hooks.pItems);
         HeapDestroy(g_hHeap);
 
         g_hHeap = NULL;

@@ -1,16 +1,7 @@
 #pragma once
 
+#include <string>
 #include "Types.h"
-
-template<typename N>
-inline void LoadFunctionF(HMODULE module, const char* funcname, N* ppfunc)
-{
-    if (ppfunc) *ppfunc = reinterpret_cast<N>(GetProcAddress(module, funcname));
-}
-
-#define LoadFunction(handle_struct, func) LoadFunctionF(handle_struct ## .dll, #func, &handle_struct ## .func)
-#define LoadFunctionOrdinal(handle_struct, ordinal, func) LoadFunctionF(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .func)
-#define LoadFunctionOrdinal2(handle_struct, ordinal) LoadFunctionF(handle_struct ## .dll, (const char*)ordinal, &handle_struct ## .___XXX___ ## ordinal)
 
 inline HMODULE& CurrentModule()
 {
@@ -22,7 +13,7 @@ inline HMODULE& CurrentModule()
 
 bool FileExist(const std::string& path);
 
-bool CheckCommonDirectory(std::string* fullpath, const std::string& filename, const std::string& dirname);
+bool CheckCommonDirectory(std::string* outpath, const std::string& dirname);
 bool FullPathFromPath(std::string* fullpath, const std::string& name);
 
 bool StringPathCombine(std::string* dest, const std::string& path, const std::string& more);

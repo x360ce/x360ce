@@ -22,6 +22,7 @@
 #include <vector>
 #include <MinHook.h>
 #include <XInput.h>
+#include <process.h>
 
 #include "Logger.h"
 #include "Mutex.h"
@@ -30,30 +31,30 @@
 
 bool InputHook::ReadGameDatabase(u32* mask)
 {
-    std::string inipath;
-    CheckCommonDirectory(&inipath, "x360ce.gdb", "x360ce");
-
     SWIP ini;
-    if (ini.Load(inipath))
+    std::string inipath("x360ce.gdb");
+    if (!ini.Load(inipath))
+        CheckCommonDirectory(&inipath, "x360ce");
+    if (!ini.Load(inipath)) return false;
+
+    PrintLog("Using game database file:");
+    PrintLog(ini.GetIniPath().c_str());
+
+    std::string processName;
+    ModuleFileName(&processName);
+    if (ini.Get(processName, "HookMask", mask))
     {
-        PrintLog("Using game database file:");
-        PrintLog(ini.GetIniPath().c_str());
+        ini.Get(processName, "Timeout", &m_timeout, 0);
 
-        std::string processName;
-        ModuleFileName(&processName);
-        if (ini.Get(processName, "HookMask", mask))
-        {
-            ini.Get(processName, "Timeout", &m_timeout, 0);
+        std::string gameName;
+        ini.Get(processName, "Name", &gameName);
 
-            std::string gameName;
-            ini.Get(processName, "Name", &gameName);
+        if (!gameName.empty())
+            PrintLog("InputHook found \"%s\" in database", gameName.c_str());
 
-            if (!gameName.empty())
-                PrintLog("InputHook found \"%s\" in database", gameName.c_str());
-
-            return true;
-        }
+        return true;
     }
+
     return false;
 }
 
@@ -63,16 +64,14 @@ m_fakepidvid(MAKELONG(0x045E, 0x028E)),
 m_timeout(0),
 m_timeout_thread(INVALID_HANDLE_VALUE)
 {
-    LockGuard lock(m_mutex);
     PrintLog("InputHook starting...");
 
-    std::string inipath;
-    CheckCommonDirectory(&inipath, "x360ce.ini", "x360ce");
-
     SWIP ini;
-    ini.Load(inipath);
+    std::string inipath("x360ce.ini");
+    if (!ini.Load(inipath))
+        CheckCommonDirectory(&inipath, "x360ce");
 
-    if (!ReadGameDatabase(&m_hookmask))
+    if (!ReadGameDatabase(&m_hookmask) && ini.Load(inipath))
     {
         ini.Get("InputHook", "HookMask", &m_hookmask);
         if (!m_hookmask)
@@ -101,9 +100,6 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 
             ini.Get("InputHook", "HookWT", &check);
             if (check) m_hookmask |= HOOK_WT;
-
-            ini.Get("InputHook", "HookNoTimeout", &check);
-            if (check) m_hookmask |= HOOK_NOTIMEOUT;
         }
     }
 
@@ -152,8 +148,9 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
         }
     }
 
-    std::string maskname = MaskToName(m_hookmask);
-    PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());
+    std::string maskname;
+    if (MaskToName(&maskname, m_hookmask))
+        PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());
 
     MH_Initialize();
 
@@ -191,11 +188,11 @@ void InputHook::Shutdown()
 
 void InputHook::StartTimeoutThread()
 {
-    if (m_timeout_thread == INVALID_HANDLE_VALUE && m_timeout > 0 && !GetState(HOOK_NOTIMEOUT))
-        m_timeout_thread = CreateThread(NULL, NULL, ThreadProc, this, NULL, NULL);
+    if (m_timeout_thread == INVALID_HANDLE_VALUE && m_timeout > 0)
+        m_timeout_thread = (HANDLE)_beginthreadex(NULL, NULL, ThreadProc, this, NULL, NULL);
 }
 
-DWORD WINAPI InputHook::ThreadProc(_In_  LPVOID lpParameter)
+u32 WINAPI InputHook::ThreadProc(void* lpParameter)
 {
     InputHook* pInputHook = reinterpret_cast<InputHook*>(lpParameter);
 
@@ -203,23 +200,24 @@ DWORD WINAPI InputHook::ThreadProc(_In_  LPVOID lpParameter)
     Sleep(pInputHook->m_timeout * 1000);
 
     pInputHook->Shutdown();
-    PrintLog("Hook timed out after %us", pInputHook->m_timeout);
+    PrintLog("InputHook timed after %us", pInputHook->m_timeout);
+
+    _endthreadex(0);
     return 0;
 }
 
-std::string InputHook::MaskToName(u32 mask)
+bool InputHook::MaskToName(std::string* mask_string, u32 mask)
 {
-    std::string ret;
+    if (mask & HOOK_LL) mask_string->append("HOOK_LL ");
+    if (mask & HOOK_COM) mask_string->append("HOOK_COM ");
+    if (mask & HOOK_DI) mask_string->append("HOOK_DI ");
+    if (mask & HOOK_PIDVID) mask_string->append("HOOK_PIDVID ");
+    if (mask & HOOK_NAME) mask_string->append("HOOK_NAME ");
+    if (mask & HOOK_SA) mask_string->append("HOOK_SA ");
+    if (mask & HOOK_WT) mask_string->append("HOOK_WT ");
+    if (mask & HOOK_STOP) mask_string->append("HOOK_STOP ");
 
-    if (mask & HOOK_LL) ret.append("HOOK_LL ");
-    if (mask & HOOK_COM) ret.append("HOOK_COM ");
-    if (mask & HOOK_DI) ret.append("HOOK_DI ");
-    if (mask & HOOK_SA) ret.append("HOOK_SA ");
-    if (mask & HOOK_WT) ret.append("HOOK_WT ");
-    if (mask & HOOK_PIDVID) ret.append("HOOK_PIDVID ");	
-    if (mask & HOOK_NAME) ret.append("HOOK_NAME ");
-
-    ret.pop_back();
-    return ret;
+    mask_string->pop_back();
+    return !mask_string->empty();
 }
 

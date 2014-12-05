@@ -25,8 +25,9 @@ static const char* status_names[] =
 template<typename N>
 void IH_CreateHookF(LPVOID pTarget, LPVOID pDetour, N* ppOriginal, const char* pTargetName)
 {
+    if (*ppOriginal) return;
     MH_STATUS status = MH_CreateHook(pTarget, pDetour, reinterpret_cast<void**>(ppOriginal));
-    if (status == MH_OK || status == MH_ERROR_ALREADY_CREATED)
+    if (status == MH_OK)
     {
         PrintLog("Hook for %s successed", pTargetName);
     }
@@ -40,7 +41,7 @@ void IH_CreateHookF(LPVOID pTarget, LPVOID pDetour, N* ppOriginal, const char* p
 inline void IH_EnableHookF(LPVOID pTarget, const char* pTargetName)
 {
     MH_STATUS status = MH_EnableHook(pTarget);
-    if (status == MH_OK || status == MH_ERROR_ENABLED)
+    if (status == MH_OK)
     {
         PrintLog("Hook for %s enabled", pTargetName);
     }
@@ -110,7 +111,6 @@ public:
     static const u32 HOOK_SA =        0x00000020UL;
     static const u32 HOOK_WT =        0x10000000UL;
     static const u32 HOOK_STOP =      0x20000000UL;
-    static const u32 HOOK_NOTIMEOUT = 0x40000000UL;
 
     typedef std::vector<InputHookDevice>::iterator iterator;
     typedef std::vector<InputHookDevice>::const_iterator const_iterator;
@@ -160,9 +160,9 @@ public:
     void StartTimeoutThread();
 
 private:
-    static DWORD WINAPI ThreadProc(_In_  LPVOID lpParameter);
+    static u32 __stdcall ThreadProc(void* lpParameter);
     bool ReadGameDatabase(u32* mask);
-    std::string MaskToName(u32 mask);
+    bool MaskToName(std::string* mask_string, u32 mask);
 
     u32 m_hookmask;
     u32 m_fakepidvid;
@@ -176,7 +176,5 @@ private:
     void HookDI();
     void HookWT();
     void HookSA();
-
-    Mutex m_mutex;
 };
 

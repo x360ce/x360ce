@@ -1,3 +1,5 @@
+//#define LOGGER_DISABLE
+
 #include "Types.h"
 #include "NonCopyable.h"
 

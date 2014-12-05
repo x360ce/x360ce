@@ -147,12 +147,11 @@ void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue
 
 void InitLogger()
 {
-    std::string inipath;
-
-    CheckCommonDirectory(&inipath, "x360ce.ini", "x360ce");
-
     SWIP ini;
-    ini.Load(inipath);
+    std::string inipath("x360ce.ini");
+    if (!ini.Load(inipath))
+        CheckCommonDirectory(&inipath, "x360ce");
+    if (!ini.Load(inipath)) return;
 
     bool con;
     bool file;
@@ -165,26 +164,25 @@ void InitLogger()
 
     if (file)
     {
-        char logfilename[MAX_PATH];
         SYSTEMTIME systime;
         GetLocalTime(&systime);
         std::string processName;
         ModuleFileName(&processName);
 
-        sprintf_s(logfilename, "x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
+        std::string logfile = StringFormat("x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
             systime.wMonth, systime.wDay, GetTickCount());
 
-        LogFile(logfilename);
+        LogFile(logfile);
     }
 }
 
 void ReadConfig()
 {
-    std::string inipath;
-    CheckCommonDirectory(&inipath, "x360ce.ini", "x360ce");
-
     SWIP ini;
-    ini.Load(inipath);
+    std::string inipath("x360ce.ini");
+    if (!ini.Load(inipath))
+        CheckCommonDirectory(&inipath, "x360ce");
+    if (!ini.Load(inipath)) return;
 
     static bool once_flag = false;
     if (!once_flag)
