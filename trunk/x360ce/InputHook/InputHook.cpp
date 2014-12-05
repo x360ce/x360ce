@@ -203,7 +203,7 @@ DWORD WINAPI InputHook::ThreadProc(_In_  LPVOID lpParameter)
     Sleep(pInputHook->m_timeout * 1000);
 
     pInputHook->Shutdown();
-    PrintLog("Hook timeouted after %us", pInputHook->m_timeout);
+    PrintLog("Hook timed out after %us", pInputHook->m_timeout);
     return 0;
 }
 
