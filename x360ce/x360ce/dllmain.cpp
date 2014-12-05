@@ -10,15 +10,13 @@
 #include "ControllerManager.h"
 #include "InputHookManager.h"
 
-#if 1
+#if 0
 #include <vld.h> 
 #endif
 
 VOID InitInstance()
 {
-
     InitLogger();
-
     // Get will initalize static InputHookManager object and we want to initialize it ASAP
     InputHookManager::Get();
 }
