@@ -269,7 +269,6 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerManager.h" />
-    <ClInclude Include="DirectInputManager.h" />
     <ClInclude Include="ForceFeedback.h" />
     <ClInclude Include="InputHookManager.h" />
     <ClInclude Include="resource.h" />
