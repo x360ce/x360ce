@@ -8,6 +8,22 @@
       <Filter>InputHook</Filter>
     </ClInclude>
     <ClInclude Include="InputHook.h" />
+    <ClInclude Include="HookCOM.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHookManager.h" />
+    <ClInclude Include="HookDI.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="HookLL.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="HookSA.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="HookWT.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PCH">

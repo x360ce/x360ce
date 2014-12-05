@@ -3,32 +3,28 @@
 #include "Logger.h"
 #include <Softpub.h>
 
+#include "InputHookManager.h"
 #include "InputHook.h"
+#include "HookWT.h"
 
-namespace HookWT
+LONG(WINAPI* HookWT::TrueWinVerifyTrust)(HWND hwnd, GUID *pgActionID, LPVOID pWVTData) = nullptr;
+
+
+LONG WINAPI HookWT::HookWinVerifyTrust(HWND hwnd, GUID *pgActionID, LPVOID pWVTData)
 {
-    static InputHook *s_InputHook = nullptr;
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_WT)) return TrueWinVerifyTrust(hwnd, pgActionID, pWVTData);
+    PrintLog("*WinVerifyTrust*");
 
-    typedef LONG(WINAPI* WinVerifyTrust_t)(HWND hwnd, GUID *pgActionID, LPVOID pWVTData);
+    InputHookManager::Get().GetInputHook().StartTimeoutThread();
 
-    static WinVerifyTrust_t TrueWinVerifyTrust = nullptr;
-
-    LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID, LPVOID pWVTData)
-    {
-        if (!s_InputHook->GetState(InputHook::HOOK_WT)) return TrueWinVerifyTrust(hwnd, pgActionID, pWVTData);
-        PrintLog("*WinVerifyTrust*");
-
-        s_InputHook->StartTimeoutThread();
-
-        UNREFERENCED_PARAMETER(hwnd);
-        UNREFERENCED_PARAMETER(pgActionID);
-        UNREFERENCED_PARAMETER(pWVTData);
-        return 0;
-    }
+    UNREFERENCED_PARAMETER(hwnd);
+    UNREFERENCED_PARAMETER(pgActionID);
+    UNREFERENCED_PARAMETER(pWVTData);
+    return 0;
 }
+
 
 void InputHook::HookWT()
 {
-    HookWT::s_InputHook = this;
     IH_CreateHook(WinVerifyTrust, HookWT::HookWinVerifyTrust, &HookWT::TrueWinVerifyTrust);
 }

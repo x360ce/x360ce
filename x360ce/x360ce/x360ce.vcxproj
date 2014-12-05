@@ -270,7 +270,6 @@
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerManager.h" />
     <ClInclude Include="ForceFeedback.h" />
-    <ClInclude Include="InputHookManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

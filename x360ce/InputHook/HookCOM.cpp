@@ -14,348 +14,338 @@
 
 #include <dinput.h>
 
+#include "InputHookManager.h"
 #include "InputHook.h"
+#include "HookCOM.h"
 
-namespace HookCOM
+void (WINAPI *HookCOM::TrueCoUninitialize)() = nullptr;
+HRESULT(WINAPI *HookCOM::TrueCoCreateInstance)(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv) = nullptr;
+HRESULT(WINAPI *HookCOM::TrueCoCreateInstanceEx)(REFCLSID Clsid, IUnknown * punkOuter, DWORD dwClsCtx, COSERVERINFO * pServerInfo, DWORD dwCount, MULTI_QI * pResults) = nullptr;
+HRESULT(WINAPI * HookCOM::TrueCoGetClassObject)(REFCLSID rclsid, DWORD dwClsContext, LPVOID pvReserved, REFIID riid, LPVOID FAR * ppv) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::TrueConnectServer)(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
+    const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::TrueCreateInstanceEnum)(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::TrueNext)(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::TrueGet)(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor) = nullptr;
+
+HRESULT(STDMETHODCALLTYPE *HookCOM::ConnectServer)(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
+    const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::CreateInstanceEnum)(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::Next)(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned) = nullptr;
+HRESULT(STDMETHODCALLTYPE *HookCOM::Get)(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor) = nullptr;
+
+// WARNING: VARIANT *pVal is required to be passed, do not change to pointer to BSTR!
+void HookCOM::DeviceStringChange(VARIANT *pVal, InputHookDevice* pInputHookDevice, const wchar_t* pNamespace)
 {
-    static InputHook *s_InputHook = nullptr;
+    std::wstring oldDeviceName(pVal->bstrVal);
+    std::wstring newDeviceName;
 
-    typedef void (WINAPI *CoUninitialize_t)();
-    typedef HRESULT(WINAPI *CoCreateInstance_t)(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv);
-    typedef HRESULT(WINAPI *CoCreateInstanceEx_t)(REFCLSID Clsid, IUnknown * punkOuter, DWORD dwClsCtx, COSERVERINFO * pServerInfo, DWORD dwCount, MULTI_QI * pResults);
-    typedef HRESULT(WINAPI * CoGetClassObject_t)(REFCLSID rclsid, DWORD dwClsContext, LPVOID pvReserved, REFIID riid, LPVOID FAR * ppv);
-    typedef HRESULT(STDMETHODCALLTYPE *ConnectServer_t)(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
-        const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace);
-    typedef HRESULT(STDMETHODCALLTYPE *CreateInstanceEnum_t)(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum);
-    typedef HRESULT(STDMETHODCALLTYPE *Next_t)(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned);
-    typedef HRESULT(STDMETHODCALLTYPE *Get_t)(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor);
+    DWORD dwHookVid = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_PIDVID) ? LOWORD(InputHookManager::Get().GetInputHook().GetFakePIDVID()) : LOWORD(pInputHookDevice->GetProductPIDVID());
+    DWORD dwHookPid = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_PIDVID) ? HIWORD(InputHookManager::Get().GetInputHook().GetFakePIDVID()) : HIWORD(pInputHookDevice->GetProductPIDVID());
 
-    static ConnectServer_t ConnectServer = nullptr;
-    static CreateInstanceEnum_t CreateInstanceEnum = nullptr;
-    static Next_t Next = nullptr;
-    static Get_t Get = nullptr;
+    const wchar_t* p = wcsrchr(pVal->bstrVal, L'\\');
+    if (p) newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d%s", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex(), p);
+    else newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex());
 
-    static CoCreateInstance_t TrueCoCreateInstance = nullptr;
-    static CoCreateInstanceEx_t TrueCoCreateInstanceEx = nullptr;
-    static CoGetClassObject_t TrueCoGetClassObject = nullptr;
-    static CoUninitialize_t TrueCoUninitialize = nullptr;
-    static ConnectServer_t TrueConnectServer = nullptr;
-    static CreateInstanceEnum_t TrueCreateInstanceEnum = nullptr;
-    static Next_t TrueNext = nullptr;
-    static Get_t TrueGet = nullptr;
-
-    void DeviceStringChange(wchar_t* pName, InputHookDevice* pInputHookDevice, const wchar_t* pNamespace)
+    if (SysReAllocString(&pVal->bstrVal, newDeviceName.c_str()) == TRUE)
     {
-        std::wstring oldDeviceName(pName);
-        std::wstring newDeviceName;
-
-        DWORD dwHookVid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? LOWORD(s_InputHook->GetFakePIDVID()) : LOWORD(pInputHookDevice->GetProductPIDVID());
-        DWORD dwHookPid = s_InputHook->GetState(InputHook::HOOK_PIDVID) ? HIWORD(s_InputHook->GetFakePIDVID()) : HIWORD(pInputHookDevice->GetProductPIDVID());
-
-        const wchar_t* p = wcsrchr(pName, L'\\');
-        if (p) newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d%s", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex(), p);
-        else newDeviceName = StringFormat(L"%s\\VID_%04X&PID_%04X&IG_%02d", pNamespace, dwHookVid, dwHookPid, pInputHookDevice->GetUserIndex());
-
-        if (SysReAllocString(&pName, newDeviceName.c_str()) == TRUE)
-        {
-            PrintLog("Device string change: %ls => %ls", oldDeviceName.c_str(), pName);
-        }
-        else
-        {
-            PrintLog("Failed to re-alloc string");
-        }
+        PrintLog("Device string change: %ls => %ls", oldDeviceName.c_str(), pVal->bstrVal);
     }
-
-    HRESULT STDMETHODCALLTYPE HookGet(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor)
+    else
     {
-        HRESULT hr = TrueGet(This, wszName, lFlags, pVal, pType, plFlavor);
+        PrintLog("Failed to re-alloc string");
+    }
+}
 
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
+HRESULT STDMETHODCALLTYPE HookCOM::HookGet(IWbemClassObject * This, LPCWSTR wszName, long lFlags, VARIANT *pVal, CIMTYPE *pType, long *plFlavor)
+{
+    HRESULT hr = TrueGet(This, wszName, lFlags, pVal, pType, plFlavor);
 
-        PrintLog("IWbemClassObject::Get");
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
 
-        if (hr != NO_ERROR) return hr;
+    PrintLog("IWbemClassObject::Get");
 
-        //PrintLog( "wszName %ls pVal->vt %d pType %d", wszName, pVal->vt, &pType);
-        //if( pVal->vt == VT_BSTR) PrintLog( L"%s",pVal->bstrVal);
+    if (hr != NO_ERROR) return hr;
 
-        if (pVal->vt == VT_BSTR && pVal->bstrVal != NULL)
+    //PrintLog( "wszName %ls pVal->vt %d pType %d", wszName, pVal->vt, &pType);
+    //if( pVal->vt == VT_BSTR) PrintLog( L"%s",pVal->bstrVal);
+
+    if (pVal->vt == VT_BSTR && pVal->bstrVal != NULL)
+    {
+        //PrintLog( "  Got device ID '%ls'", pVal->bstrVal);
+        DWORD dwPid = 0, dwVid = 0, dummy = 0;
+
+        OLECHAR* strVid = wcsstr(pVal->bstrVal, L"VID_");
+        if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1)
         {
-            //PrintLog( "  Got device ID '%ls'", pVal->bstrVal);
-            DWORD dwPid = 0, dwVid = 0, dummy = 0;
+            // Fallback VID match for OUYA style device IDs
+            strVid = wcsstr(pVal->bstrVal, L"VID&");
+            if (!strVid || swscanf_s(strVid, L"VID&%4X%4X", &dummy, &dwVid) < 1)
+                return hr;
+        }
 
-            OLECHAR* strVid = wcsstr(pVal->bstrVal, L"VID_");
-            if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1)
-            {
-                // Fallback VID match for OUYA style device IDs
-                strVid = wcsstr(pVal->bstrVal, L"VID&");
-                if (!strVid || swscanf_s(strVid, L"VID&%4X%4X", &dummy, &dwVid) < 1)
-                    return hr;
-            }
+        OLECHAR* strPid = wcsstr(pVal->bstrVal, L"PID_");
+        if (!strPid || swscanf_s(strPid, L"PID_%4X", &dwPid) < 1)
+        {
+            // Fallback PID match for OUYA style device IDs
+            strPid = wcsstr(pVal->bstrVal, L"PID&");
+            if (!strPid || swscanf_s(strPid, L"PID&%4X", &dwPid) < 1)
+                return hr;
+        }
 
-            OLECHAR* strPid = wcsstr(pVal->bstrVal, L"PID_");
-            if (!strPid || swscanf_s(strPid, L"PID_%4X", &dwPid) < 1)
+        for (auto deviceit = InputHookManager::Get().GetInputHook().begin(); deviceit != InputHookManager::Get().GetInputHook().end(); ++deviceit)
+        {
+            if (deviceit->GetProductPIDVID() == (u32)MAKELONG(dwVid, dwPid))
             {
-                // Fallback PID match for OUYA style device IDs
-                strPid = wcsstr(pVal->bstrVal, L"PID&");
-                if (!strPid || swscanf_s(strPid, L"PID&%4X", &dwPid) < 1)
-                    return hr;
-            }
+                const wchar_t* strUSB = wcsstr(pVal->bstrVal, L"USB\\");
+                const wchar_t* strRoot = wcsstr(pVal->bstrVal, L"root\\");
+                const wchar_t* strHID = wcsstr(pVal->bstrVal, L"HID\\");
 
-            for (auto deviceit = s_InputHook->begin(); deviceit != s_InputHook->end(); ++deviceit)
-            {
-                if (deviceit->GetProductPIDVID() == (u32)MAKELONG(dwVid, dwPid))
+                if (strUSB)
                 {
-                    const wchar_t* strUSB = wcsstr(pVal->bstrVal, L"USB\\");
-                    const wchar_t* strRoot = wcsstr(pVal->bstrVal, L"root\\");
-                    const wchar_t* strHID = wcsstr(pVal->bstrVal, L"HID\\");
-
-                    if (strUSB)
-                    {
-                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"USB");
-                        continue;
-                    }
-                    else if (strRoot)
-                    {
-                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"root");
-                        continue;
-                    }
-                    else if (strHID)
-                    {
-                        DeviceStringChange(pVal->bstrVal, &(*deviceit), L"HID");
-                        continue;
-                    }
+                    DeviceStringChange(pVal, &(*deviceit), L"USB");
+                    continue;
                 }
-            }
-        }
-
-        return hr;
-    }
-
-    HRESULT STDMETHODCALLTYPE HookNext(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned)
-    {
-        HRESULT hr = TrueNext(This, lTimeout, uCount, apObjects, puReturned);
-
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-
-        PrintLog("IEnumWbemClassObject::Next %u", uCount);
-
-        if (hr != NO_ERROR) return hr;
-
-        IWbemClassObject* pDevices;
-
-        if (apObjects)
-        {
-            if (*apObjects)
-            {
-                pDevices = *apObjects;
-
-                if (pDevices->lpVtbl->Get)
+                else if (strRoot)
                 {
-                    Get = pDevices->lpVtbl->Get;
-                    IH_CreateHook(Get, HookGet, &TrueGet);
-                    IH_EnableHook(Get);
+                    DeviceStringChange(pVal, &(*deviceit), L"root");
+                    continue;
                 }
-            }
-        }
-
-        return hr;
-    }
-
-    HRESULT STDMETHODCALLTYPE HookCreateInstanceEnum(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum)
-    {
-        HRESULT hr = TrueCreateInstanceEnum(This, strFilter, lFlags, pCtx, ppEnum);
-
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-
-        PrintLog("IWbemServices::CreateInstanceEnum");
-
-        if (hr != NO_ERROR) return hr;
-
-        IEnumWbemClassObject* pEnumDevices = NULL;
-
-        if (ppEnum)
-        {
-            if (*ppEnum)
-            {
-                pEnumDevices = *ppEnum;
-
-                if (pEnumDevices->lpVtbl->Next)
+                else if (strHID)
                 {
-                    Next = pEnumDevices->lpVtbl->Next;
-                    IH_CreateHook(Next, HookNext, &TrueNext);
-                    IH_EnableHook(Next);
+                    DeviceStringChange(pVal, &(*deviceit), L"HID");
+                    continue;
                 }
+
             }
         }
-
-        return hr;
     }
 
-    HRESULT STDMETHODCALLTYPE HookConnectServer(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
-        const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace)
+    return hr;
+}
 
+HRESULT STDMETHODCALLTYPE HookCOM::HookNext(IEnumWbemClassObject * This, long lTimeout, ULONG uCount, IWbemClassObject **apObjects, ULONG *puReturned)
+{
+    HRESULT hr = TrueNext(This, lTimeout, uCount, apObjects, puReturned);
+
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
+
+    PrintLog("IEnumWbemClassObject::Next %u", uCount);
+
+    if (hr != NO_ERROR) return hr;
+
+    IWbemClassObject* pDevices;
+
+    if (apObjects)
     {
-        HRESULT hr = TrueConnectServer(This, strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
-
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-
-        PrintLog("IWbemLocator::ConnectServer");
-
-        if (hr != NO_ERROR) return hr;
-
-        IWbemServices* pIWbemServices = NULL;
-
-        if (ppNamespace)
+        if (*apObjects)
         {
-            if (*ppNamespace)
-            {
-                pIWbemServices = *ppNamespace;
+            pDevices = *apObjects;
 
-                if (pIWbemServices->lpVtbl->CreateInstanceEnum)
-                {
-                    CreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
-                    IH_CreateHook(CreateInstanceEnum, HookCreateInstanceEnum, &TrueCreateInstanceEnum);
-                    IH_EnableHook(CreateInstanceEnum);
-                }
+            if (pDevices->lpVtbl->Get)
+            {
+                Get = pDevices->lpVtbl->Get;
+                IH_CreateHook(Get, HookGet, &TrueGet);
+                IH_EnableHook(Get);
             }
         }
-
-        return hr;
     }
 
-    HRESULT WINAPI HookCoCreateInstanceEx(REFCLSID Clsid, IUnknown * punkOuter, DWORD dwClsCtx, COSERVERINFO * pServerInfo, DWORD dwCount, MULTI_QI * pResults)
+    return hr;
+}
+
+HRESULT STDMETHODCALLTYPE HookCOM::HookCreateInstanceEnum(IWbemServices * This, const BSTR strFilter, long lFlags, IWbemContext *pCtx, IEnumWbemClassObject **ppEnum)
+{
+    HRESULT hr = TrueCreateInstanceEnum(This, strFilter, lFlags, pCtx, ppEnum);
+
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
+
+    PrintLog("IWbemServices::CreateInstanceEnum");
+
+    if (hr != NO_ERROR) return hr;
+
+    IEnumWbemClassObject* pEnumDevices = NULL;
+
+    if (ppEnum)
     {
-        HRESULT hr = TrueCoCreateInstanceEx(Clsid, punkOuter, dwClsCtx, pServerInfo, dwCount, pResults);
-
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-        PrintLog("CoCreateInstanceEx");
-
-        std::string clsid;
-        GUIDtoString(&clsid, Clsid);
-        PrintLog("CoCreateInstanceEx %s", clsid.c_str());
-
-        if (!pResults) return hr;
-
-        s_InputHook->StartTimeoutThread();
-
-        if (IsEqualCLSID(Clsid, CLSID_DirectInput8))
-            PrintLog("COM wants to create DirectInput8 instance");
-
-        if (pResults->pIID && IsEqualIID(*pResults->pIID, IID_IWbemLocator) && pResults->pItf)
+        if (*ppEnum)
         {
-            IWbemLocator* pIWbemLocator = NULL;
-            pIWbemLocator = reinterpret_cast<IWbemLocator*>(pResults->pItf);
+            pEnumDevices = *ppEnum;
 
-            if (pIWbemLocator)
+            if (pEnumDevices->lpVtbl->Next)
             {
-                if (pIWbemLocator->lpVtbl->ConnectServer)
-                {
-                    ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
-                    IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
-                    IH_EnableHook(ConnectServer);
-                }
+                Next = pEnumDevices->lpVtbl->Next;
+                IH_CreateHook(Next, HookNext, &TrueNext);
+                IH_EnableHook(Next);
             }
         }
-        return hr;
     }
 
-    HRESULT WINAPI HookCoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv)
+    return hr;
+}
+
+HRESULT STDMETHODCALLTYPE HookCOM::HookConnectServer(IWbemLocator * This, const BSTR strNetworkResource, const BSTR strUser, const BSTR strPassword,
+    const BSTR strLocale, long lSecurityFlags, const BSTR strAuthority, IWbemContext *pCtx, IWbemServices **ppNamespace)
+
+{
+    HRESULT hr = TrueConnectServer(This, strNetworkResource, strUser, strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace);
+
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
+
+    PrintLog("IWbemLocator::ConnectServer");
+
+    if (hr != NO_ERROR) return hr;
+
+    IWbemServices* pIWbemServices = NULL;
+
+    if (ppNamespace)
     {
-        HRESULT hr = TrueCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
-
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-
-        std::string clsid;
-        std::string iid;
-        GUIDtoString(&clsid, rclsid);
-        GUIDtoString(&iid, riid);
-        PrintLog("CoCreateInstance %s => %s", clsid.c_str(), iid.c_str());
-
-        if (hr != NO_ERROR) return hr;
-
-        s_InputHook->StartTimeoutThread();
-
-        if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
-            PrintLog("COM wants to create DirectInput8 instance");
-
-        if (IsEqualIID(riid, IID_IWbemLocator))
+        if (*ppNamespace)
         {
-            IWbemLocator* pIWbemLocator = NULL;
-            pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
+            pIWbemServices = *ppNamespace;
 
-            if (pIWbemLocator)
+            if (pIWbemServices->lpVtbl->CreateInstanceEnum)
             {
-                if (pIWbemLocator->lpVtbl->ConnectServer)
-                {
-                    ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
-                    IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
-                    IH_EnableHook(ConnectServer);
-                }
+                CreateInstanceEnum = pIWbemServices->lpVtbl->CreateInstanceEnum;
+                IH_CreateHook(CreateInstanceEnum, HookCreateInstanceEnum, &TrueCreateInstanceEnum);
+                IH_EnableHook(CreateInstanceEnum);
             }
         }
-        return hr;
     }
 
-    HRESULT WINAPI HookCoGetClassObject(REFCLSID rclsid, DWORD dwClsContext, LPVOID pvReserved, REFIID riid, LPVOID FAR * ppv)
+    return hr;
+}
+
+HRESULT WINAPI HookCOM::HookCoCreateInstanceEx(REFCLSID Clsid, IUnknown * punkOuter, DWORD dwClsCtx, COSERVERINFO * pServerInfo, DWORD dwCount, MULTI_QI * pResults)
+{
+    HRESULT hr = TrueCoCreateInstanceEx(Clsid, punkOuter, dwClsCtx, pServerInfo, dwCount, pResults);
+
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
+    PrintLog("CoCreateInstanceEx");
+
+    std::string clsid;
+    GUIDtoString(&clsid, Clsid);
+    PrintLog("CoCreateInstanceEx %s", clsid.c_str());
+
+    if (!pResults) return hr;
+
+    InputHookManager::Get().GetInputHook().StartTimeoutThread();
+
+    if (IsEqualCLSID(Clsid, CLSID_DirectInput8))
+        PrintLog("COM wants to create DirectInput8 instance");
+
+    if (pResults->pIID && IsEqualIID(*pResults->pIID, IID_IWbemLocator) && pResults->pItf)
     {
-        HRESULT hr = TrueCoGetClassObject(rclsid, dwClsContext, pvReserved, riid, ppv);
+        IWbemLocator* pIWbemLocator = NULL;
+        pIWbemLocator = reinterpret_cast<IWbemLocator*>(pResults->pItf);
 
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return hr;
-
-        std::string clsid;
-        std::string iid;
-        GUIDtoString(&clsid, rclsid);
-        GUIDtoString(&iid, riid);
-        PrintLog("CoGetClassObject %s => %s", clsid.c_str(), iid.c_str());
-
-        if (hr != NO_ERROR) return hr;
-
-        s_InputHook->StartTimeoutThread();
-
-        if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
-            PrintLog("COM wants to create DirectInput8 instance");
-
-        if (IsEqualIID(riid, IID_IWbemLocator))
+        if (pIWbemLocator)
         {
-            IWbemLocator* pIWbemLocator = NULL;
-            pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
-
-            if (pIWbemLocator)
+            if (pIWbemLocator->lpVtbl->ConnectServer)
             {
-                if (pIWbemLocator->lpVtbl->ConnectServer)
-                {
-                    ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
-                    IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
-                    IH_EnableHook(ConnectServer);
-                }
+                ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+                IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
+                IH_EnableHook(ConnectServer);
             }
         }
-        return hr;
     }
+    return hr;
+}
 
-    void WINAPI HookCoUninitialize()
+HRESULT WINAPI HookCOM::HookCoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID FAR* ppv)
+{
+    HRESULT hr = TrueCoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
+
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
+
+    std::string clsid;
+    std::string iid;
+    GUIDtoString(&clsid, rclsid);
+    GUIDtoString(&iid, riid);
+    PrintLog("CoCreateInstance %s => %s", clsid.c_str(), iid.c_str());
+
+    if (hr != NO_ERROR) return hr;
+
+    InputHookManager::Get().GetInputHook().StartTimeoutThread();
+
+    if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
+        PrintLog("COM wants to create DirectInput8 instance");
+
+    if (IsEqualIID(riid, IID_IWbemLocator))
     {
-        if (!s_InputHook->GetState(InputHook::HOOK_COM)) return TrueCoUninitialize();
-        PrintLog("CoUninitialize");
+        IWbemLocator* pIWbemLocator = NULL;
+        pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
 
-        s_InputHook->StartTimeoutThread();
-
-        if (TrueGet) MH_QueueDisableHook(Get);
-        if (TrueNext) MH_QueueDisableHook(Next);
-        if (TrueCreateInstanceEnum) MH_QueueDisableHook(CreateInstanceEnum);
-        if (TrueConnectServer) MH_QueueDisableHook(ConnectServer);
-
-        MH_ApplyQueued();
-
-        TrueCoUninitialize();
+        if (pIWbemLocator)
+        {
+            if (pIWbemLocator->lpVtbl->ConnectServer)
+            {
+                ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+                IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
+                IH_EnableHook(ConnectServer);
+            }
+        }
     }
+    return hr;
+}
+
+HRESULT WINAPI HookCOM::HookCoGetClassObject(REFCLSID rclsid, DWORD dwClsContext, LPVOID pvReserved, REFIID riid, LPVOID FAR * ppv)
+{
+    HRESULT hr = TrueCoGetClassObject(rclsid, dwClsContext, pvReserved, riid, ppv);
+
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return hr;
+
+    std::string clsid;
+    std::string iid;
+    GUIDtoString(&clsid, rclsid);
+    GUIDtoString(&iid, riid);
+    PrintLog("CoGetClassObject %s => %s", clsid.c_str(), iid.c_str());
+
+    if (hr != NO_ERROR) return hr;
+
+    InputHookManager::Get().GetInputHook().StartTimeoutThread();
+
+    if (IsEqualCLSID(rclsid, CLSID_DirectInput8))
+        PrintLog("COM wants to create DirectInput8 instance");
+
+    if (IsEqualIID(riid, IID_IWbemLocator))
+    {
+        IWbemLocator* pIWbemLocator = NULL;
+        pIWbemLocator = static_cast<IWbemLocator*>(*ppv);
+
+        if (pIWbemLocator)
+        {
+            if (pIWbemLocator->lpVtbl->ConnectServer)
+            {
+                ConnectServer = pIWbemLocator->lpVtbl->ConnectServer;
+                IH_CreateHook(ConnectServer, HookConnectServer, &TrueConnectServer);
+                IH_EnableHook(ConnectServer);
+            }
+        }
+    }
+    return hr;
+}
+
+void WINAPI HookCOM::HookCoUninitialize()
+{
+    if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return TrueCoUninitialize();
+    PrintLog("CoUninitialize");
+
+    InputHookManager::Get().GetInputHook().StartTimeoutThread();
+
+    if (TrueGet) MH_QueueDisableHook(Get);
+    if (TrueNext) MH_QueueDisableHook(Next);
+    if (TrueCreateInstanceEnum) MH_QueueDisableHook(CreateInstanceEnum);
+    if (TrueConnectServer) MH_QueueDisableHook(ConnectServer);
+
+    MH_ApplyQueued();
+
+    TrueCoUninitialize();
 }
 
 void InputHook::HookCOM()
 {
     PrintLog("Hooking COM");
-    HookCOM::s_InputHook = this;
 
     IH_CreateHook(CoCreateInstance, HookCOM::HookCoCreateInstance, &HookCOM::TrueCoCreateInstance);
     IH_CreateHook(CoCreateInstanceEx, HookCOM::HookCoCreateInstanceEx, &HookCOM::TrueCoCreateInstanceEx);

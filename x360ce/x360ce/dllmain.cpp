@@ -10,7 +10,7 @@
 #include "ControllerManager.h"
 #include "InputHookManager.h"
 
-#if 0
+#ifdef _DEBUG
 #include <vld.h> 
 #endif
 

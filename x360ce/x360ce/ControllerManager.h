@@ -6,34 +6,42 @@
 #include "NonCopyable.h"
 #include "Controller.h"
 
+#include "InputHookManager.h"
+
 class ControllerManager : NonCopyable
 {
 public:
-    ControllerManager() : m_pDI(nullptr), m_hWnd(NULL)
+    ControllerManager()
     {
-        if (!m_hWnd) m_hWnd = CreateWindow(
-            "Message",	// name of window class
-            "x360ce",			// title-bar std::string
-            WS_TILED,			// normal window
-            CW_USEDEFAULT,		// default horizontal position
-            CW_USEDEFAULT,		// default vertical position
-            CW_USEDEFAULT,		// default width
-            CW_USEDEFAULT,		// default height
-            HWND_MESSAGE,		// message-only window
-            NULL,				// no class menu
-            CurrentModule(),	// handle to application instance
-            NULL);				// no window-creation data
+        bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
+        if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
+        HRESULT ret = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&m_pDirectInput, NULL);       
+        if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
 
-        if (!m_hWnd)
-            PrintLog("CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+        if (m_pDirectInput)
+        {
+            m_hWnd = CreateWindowExA(0L,
+                "Message",	// name of window class
+                "x360ce",			// title-bar std::string
+                WS_TILED,			// normal window
+                CW_USEDEFAULT,		// default horizontal position
+                CW_USEDEFAULT,		// default vertical position
+                CW_USEDEFAULT,		// default width
+                CW_USEDEFAULT,		// default height
+                HWND_MESSAGE,		// message-only window
+                NULL,				// no class menu
+                CurrentModule(),	// handle to application instance
+                NULL);				// no window-creation data
 
-        HRESULT result = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&m_pDI, NULL);;
+            if (!m_hWnd)
+                PrintLog("CreateWindow failed with code 0x%x", HRESULT_FROM_WIN32(GetLastError()));
+        }
 
-        if (FAILED(result))
+        if (FAILED(ret) || !m_pDirectInput)
         {
             PrintLog("DirectInput cannot be initialized");
             MessageBox(NULL, "DirectInput cannot be initialized", "x360ce - Error", MB_ICONERROR);
-            exit(result);
+            exit(ret);
         }
     }
 
@@ -44,9 +52,9 @@ public:
         if (m_hWnd)
             DestroyWindow(m_hWnd);
 
-        if (m_pDI)
+        if (m_pDirectInput)
         {
-            m_pDI->Release();
+            m_pDirectInput->Release();
             PrintLog("DirectInput shutdown");
         }
     }
@@ -59,7 +67,7 @@ public:
 
     LPDIRECTINPUT8& GetDirectInput()
     {
-        return m_pDI;
+        return m_pDirectInput;
     }
 
     HWND& GetWindow()
@@ -74,7 +82,6 @@ public:
 
 private:
     HWND m_hWnd;
-    LPDIRECTINPUT8 m_pDI;
-
+    LPDIRECTINPUT8 m_pDirectInput;
     std::vector<Controller> m_controllers;
 };
