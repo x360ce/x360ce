@@ -216,6 +216,8 @@ std::string InputHook::MaskToName(u32 mask)
     if (mask & HOOK_DI) ret.append("HOOK_DI ");
     if (mask & HOOK_SA) ret.append("HOOK_SA ");
     if (mask & HOOK_WT) ret.append("HOOK_WT ");
+    if (mask & HOOK_PIDVID) ret.append("HOOK_PIDVID ");	
+    if (mask & HOOK_NAME) ret.append("HOOK_NAME ");
 
     ret.pop_back();
     return ret;
