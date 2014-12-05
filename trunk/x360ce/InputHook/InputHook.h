@@ -7,6 +7,9 @@
 
 #include "Mutex.h"
 
+#include "HookCOM.h"
+#include "HookDI.h"
+
 static const char* status_names[] =
 {
     "MH_OK",

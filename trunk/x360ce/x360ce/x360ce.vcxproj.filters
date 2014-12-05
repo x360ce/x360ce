@@ -42,9 +42,6 @@
     <ClInclude Include="ForceFeedback.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="InputHookManager.h">
-      <Filter>x360ce</Filter>
-    </ClInclude>
     <ClInclude Include="ControllerManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>

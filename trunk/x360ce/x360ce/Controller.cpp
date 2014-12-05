@@ -439,6 +439,9 @@ DWORD Controller::CreateDevice()
             return ERROR_DEVICE_NOT_CONNECTED;
     }
 
+    if (bHookSA) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_SA);
+    if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
+
     if (!m_pDevice)
         return ERROR_DEVICE_NOT_CONNECTED;
     else
@@ -478,9 +481,6 @@ DWORD Controller::CreateDevice()
         delete m_pForceFeedback;
 
     hr = m_pDevice->Acquire();
-
-    if (bHookSA) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_SA);
-    if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
 
     if (SUCCEEDED(hr))
         return ERROR_SUCCESS;
