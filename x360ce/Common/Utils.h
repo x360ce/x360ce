@@ -3,6 +3,9 @@
 #include <string>
 #include "Types.h"
 
+#define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max))
+#define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max))
+
 inline HMODULE& CurrentModule()
 {
     static HMODULE hModule = 0;
