@@ -20,7 +20,6 @@
 #include "stdafx.h"
 #include "Common.h"
 
-#include "version.h"
 #include "InputHook.h"
 #include "Config.h"
 
@@ -29,81 +28,6 @@
 
 #include "XInputModuleManager.h"
 
-struct XInputEnabled
-{
-public:
-    bool bEnabled;
-    bool bUseEnabled;
-    XInputEnabled() :
-        bEnabled(false),
-        bUseEnabled(false)
-    {
-    }
-    ~XInputEnabled() {};
-} XInputIsEnabled;
-
-static const u32 PASSTROUGH = (u32)-2;
-
-u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
-{
-    static bool once_flag = false;
-    if (!once_flag)
-    {
-        std::string processName;
-        ModuleFileName(&processName);
-#ifndef _M_X64
-        PrintLog("x360ce (x86) %s started for \"%s\"", PRODUCT_VERSION, processName.c_str());
-#else
-        PrintLog("x360ce (x64) %s started for \"%s\"", PRODUCT_VERSION, processName.c_str());
-#endif
-        std::string windows_name;
-        if (GetWindowsVersionName(&windows_name))
-            PrintLog("OS: \"%s\"", windows_name.c_str());
-
-        ReadConfig();
-        once_flag = true;
-    }
-
-    // Global disable
-    if (g_bDisable)
-        return ERROR_DEVICE_NOT_CONNECTED;
-
-    // Invalid dwUserIndex
-    if (!(dwUserIndex < XUSER_MAX_COUNT))
-        return ERROR_BAD_ARGUMENTS;
-
-    Controller* pController = nullptr;
-    for (auto it = ControllerManager::Get().GetControllers().begin(); it != ControllerManager::Get().GetControllers().end(); ++it)
-    {
-        if (it->m_user == dwUserIndex)
-            pController = &(*it);
-    }
-
-    if (!pController)
-        return ERROR_DEVICE_NOT_CONNECTED;
-    if (ppController) *ppController = pController;
-
-    // passtrough
-    if (pController->m_passthrough)
-        return PASSTROUGH;
-
-    if (!pController->Initalized())
-    {
-        DWORD result = pController->CreateDevice();
-        if (result == ERROR_SUCCESS)
-        {
-            PrintLog("[PAD%d] Initialized for user %d", dwUserIndex + 1, dwUserIndex);
-            if (g_bInitBeep) MessageBeep(MB_OK);
-        }
-        else
-            return result;
-    }
-
-    if (!pController->Initalized())
-        return ERROR_DEVICE_NOT_CONNECTED;
-    else return ERROR_SUCCESS;
-}
-
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog("XInputGetState");
@@ -111,15 +35,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
     Controller* pController = nullptr;
     if (!pState)
         return ERROR_BAD_ARGUMENTS;
-    u32 initFlag = DeviceInitialize(dwUserIndex, &pController);
+    u32 initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetState(dwUserIndex, pState);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
-    if (!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
-        return ERROR_SUCCESS;
-  
     return pController->GetState(pState);
 }
 
@@ -128,16 +49,13 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
     Controller* pController = nullptr;
     if (!pVibration)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputSetState(dwUserIndex, pVibration);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     if (!pController->m_useforce || !pController->m_pForceFeedback)
-        return ERROR_SUCCESS;
-
-    if (!XInputIsEnabled.bEnabled && XInputIsEnabled.bUseEnabled)
         return ERROR_SUCCESS;
 
     pController->m_pForceFeedback->SetState(pVibration);
@@ -149,10 +67,10 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
     Controller* pController = nullptr;
     if (!pCapabilities || dwFlags != XINPUT_FLAG_GAMEPAD)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetCapabilities(dwUserIndex, dwFlags, pCapabilities);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     pCapabilities->Type = 0;
@@ -181,21 +99,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
             XInputModuleManager::Get().XInputEnable(enable);
     }
 
-    /*
-    Trick to support XInputEnable states, because not every game calls it, so:
-    - must support games that call it:
-    if bEnabled is FALSE and bUseEnabled is TRUE = device is disabled -> return S_OK, ie. connected but state not updating
-    if bEnabled is TRUE and bUseEnabled is TRUE = device is enabled -> continue, ie. connected and updating state
-    - must support games that not call it:
-    if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states
-    */
-
-    XInputIsEnabled.bEnabled = (enable != 0);
-    XInputIsEnabled.bUseEnabled = true;
-
-    if (enable) PrintLog("XInput Enabled");
-    else PrintLog("XInput Disabled");
-
+    ControllerManager::Get().XInputEnable(enable);
 }
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
@@ -203,10 +107,10 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
     Controller* pController = nullptr;
     if (!pDSoundRenderGuid || !pDSoundCaptureGuid)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetDSoundAudioDeviceGuids(dwUserIndex, pDSoundRenderGuid, pDSoundCaptureGuid);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
@@ -222,10 +126,10 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD dwUserIndex, BYTE devT
     Controller* pController = nullptr;
     if (!pBatteryInformation)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetBatteryInformation(dwUserIndex, devType, pBatteryInformation);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     // Report a wired controller
@@ -241,10 +145,10 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
     Controller* pController = nullptr;
     if (!pKeystroke)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetKeystroke(dwUserIndex, dwReserved, pKeystroke);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     XINPUT_STATE xstate;
@@ -351,10 +255,10 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
     Controller* pController = nullptr;
     if (!pState)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetStateEx(dwUserIndex, pState);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     //PrintLog("XInputGetStateEx %u",xstate.Gamepad.wButtons);
@@ -365,10 +269,10 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
     Controller* pController = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputWaitForGuideButton(dwUserIndex, dwFlag, pVoid);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
@@ -379,10 +283,10 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
     Controller* pController = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputCancelGuideButtonWait(dwUserIndex);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
@@ -393,10 +297,10 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
     Controller* pController = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputPowerOffController(dwUserIndex);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
@@ -407,10 +311,10 @@ extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount)
 {
     Controller* pController = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetAudioDeviceIds(dwUserIndex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
@@ -421,10 +325,10 @@ extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRende
 extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo)
 {
     Controller* pController = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetBaseBusInformation(dwUserIndex, pBusinfo);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
@@ -437,10 +341,10 @@ extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XI
 extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD unk1 /*seems that only 1 is valid*/, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
 {
     Controller* pController = nullptr;
-    DWORD initFlag = DeviceInitialize(dwUserIndex, &pController);
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
     if (initFlag == PASSTROUGH)
         return XInputModuleManager::Get().XInputGetCapabilitiesEx(unk1, dwUserIndex, dwFlags, pCapabilitiesEx);
-    else if (initFlag)
+    else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
     PrintLog("Call to unimplemented function "__FUNCTION__);
