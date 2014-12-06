@@ -1,5 +1,7 @@
 #pragma once
 
+#include "version.h"
+
 #include <vector>
 #include <dinput.h>
 
@@ -8,11 +10,26 @@
 
 #include "InputHookManager.h"
 
+static const u32 PASSTROUGH = (u32)-2;
+
 class ControllerManager : NonCopyable
 {
 public:
     ControllerManager()
     {
+        std::string processName;
+        ModuleFileName(&processName);
+#ifndef _M_X64
+        PrintLog("x360ce (x86) %s started for \"%s\"", PRODUCT_VERSION, processName.c_str());
+#else
+        PrintLog("x360ce (x64) %s started for \"%s\"", PRODUCT_VERSION, processName.c_str());
+#endif
+        std::string windows_name;
+        if (GetWindowsVersionName(&windows_name))
+            PrintLog("OS: \"%s\"", windows_name.c_str());
+
+        ReadConfig();
+
         bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
         if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
         HRESULT ret = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&m_pDirectInput, NULL);       
@@ -59,6 +76,48 @@ public:
         }
     }
 
+    u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
+    {
+        // Global disable
+        if (g_bDisable)
+            return ERROR_DEVICE_NOT_CONNECTED;
+
+        // Invalid dwUserIndex
+        if (!(dwUserIndex < XUSER_MAX_COUNT))
+            return ERROR_BAD_ARGUMENTS;
+
+        Controller* pController = nullptr;
+        for (auto it = m_controllers.begin(); it != m_controllers.end(); ++it)
+        {
+            if (it->m_user == dwUserIndex)
+                pController = &(*it);
+        }
+
+        if (!pController)
+            return ERROR_DEVICE_NOT_CONNECTED;
+        if (ppController) *ppController = pController;
+
+        // passtrough
+        if (pController->m_passthrough)
+            return PASSTROUGH;
+
+        if (!pController->Initalized())
+        {
+            DWORD result = pController->CreateDevice();
+            if (result == ERROR_SUCCESS)
+            {
+                PrintLog("[PAD%d] Initialized for user %d", dwUserIndex + 1, dwUserIndex);
+                if (g_bInitBeep) MessageBeep(MB_OK);
+            }
+            else
+                return result;
+        }
+
+        if (!pController->Initalized())
+            return ERROR_DEVICE_NOT_CONNECTED;
+        else return ERROR_SUCCESS;
+    }
+
     static ControllerManager& Get()
     {
         static ControllerManager instance;
@@ -80,8 +139,37 @@ public:
         return m_controllers;
     }
 
+    bool XInputEnabled()
+    {
+        if (!enabled && useEnabled)
+            return false;
+        else
+            return true;
+    }
+
+    void XInputEnable(BOOL enable)
+    {
+        /*
+        Trick to support XInputEnable states, because not every game calls it, so:
+        - must support games that call it:
+        if bEnabled is FALSE and bUseEnabled is TRUE = device is disabled -> return S_OK, ie. connected but state not updating
+        if bEnabled is TRUE and bUseEnabled is TRUE = device is enabled -> continue, ie. connected and updating state
+        - must support games that not call it:
+        if bUseEnabled is FALSE ie. XInputEnable was not called -> do not care about XInputEnable states
+        */
+
+        enabled = (enable != 0);
+        useEnabled = true;
+
+        if (enabled) PrintLog("XInput Enabled");
+        else PrintLog("XInput Disabled");
+    }
+
 private:
     HWND m_hWnd;
     LPDIRECTINPUT8 m_pDirectInput;
     std::vector<Controller> m_controllers;
+
+    bool enabled;
+    bool useEnabled;
 };

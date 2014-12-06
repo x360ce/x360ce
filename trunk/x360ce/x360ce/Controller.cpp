@@ -76,6 +76,13 @@ BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, 
 
 DWORD Controller::GetState(XINPUT_STATE* pState)
 {
+    if (!ControllerManager::Get().XInputEnabled())
+    {
+        // Clear state
+        if (pState) ZeroMemory(pState, sizeof(XINPUT_STATE));
+        return ERROR_SUCCESS;
+    }
+
     HRESULT hr = UpdateState();
 #if 0
     PrintLog("UpdateState %u %u", dwUserIndex, hr);
