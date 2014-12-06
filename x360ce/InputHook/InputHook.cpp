@@ -29,7 +29,7 @@
 
 #include "InputHook.h"
 
-bool InputHook::ReadGameDatabase(u32* mask)
+bool InputHook::ReadGameDatabase()
 {
     SWIP ini;
     std::string inipath("x360ce.gdb");
@@ -42,9 +42,9 @@ bool InputHook::ReadGameDatabase(u32* mask)
 
     std::string processName;
     ModuleFileName(&processName);
-    if (ini.Get(processName, "HookMask", mask))
+    if (ini.Get(processName, "HookMask", &m_hookmask))
     {
-        ini.Get(processName, "Timeout", &m_timeout, 0);
+        ini.Get(processName, "Timeout", &m_timeout, 30);
 
         std::string gameName;
         ini.Get(processName, "Name", &gameName);
@@ -58,53 +58,50 @@ bool InputHook::ReadGameDatabase(u32* mask)
     return false;
 }
 
-InputHook::InputHook() :
-m_hookmask(0),
-m_fakepidvid(MAKELONG(0x045E, 0x028E)),
-m_timeout(0),
-m_timeout_thread(INVALID_HANDLE_VALUE)
+bool InputHook::ReadIni()
 {
-    PrintLog("InputHook starting...");
-
     SWIP ini;
     std::string inipath("x360ce.ini");
     if (!ini.Load(inipath))
         CheckCommonDirectory(&inipath, "x360ce");
+    if (!ini.Load(inipath)) return false;
 
-    if (!ReadGameDatabase(&m_hookmask) && ini.Load(inipath))
+    ini.Get("InputHook", "HookMask", &m_hookmask);
+    if (!m_hookmask)
     {
-        ini.Get("InputHook", "HookMask", &m_hookmask);
-        if (!m_hookmask)
-        {
-            bool check = false;
-            ini.Get("InputHook", "HookLL", &check);
-            if (check) m_hookmask |= HOOK_LL;
+        bool check = false;
+        ini.Get("InputHook", "HookLL", &check);
+        if (check) m_hookmask |= HOOK_LL;
 
-            ini.Get("InputHook", "HookCOM", &check);
-            if (check) m_hookmask |= HOOK_COM;
+        ini.Get("InputHook", "HookCOM", &check);
+        if (check) m_hookmask |= HOOK_COM;
 
-            ini.Get("InputHook", "HookDI", &check);
-            if (check) m_hookmask |= HOOK_DI;
+        ini.Get("InputHook", "HookDI", &check);
+        if (check) m_hookmask |= HOOK_DI;
 
-            ini.Get("InputHook", "HookPIDVID", &check);
-            if (check) m_hookmask |= HOOK_PIDVID;
+        ini.Get("InputHook", "HookPIDVID", &check);
+        if (check) m_hookmask |= HOOK_PIDVID;
 
-            ini.Get("InputHook", "HookSA", &check);
-            if (check) m_hookmask |= HOOK_SA;
+        ini.Get("InputHook", "HookSA", &check);
+        if (check) m_hookmask |= HOOK_SA;
 
-            ini.Get("InputHook", "HookNAME", &check);
-            if (check) m_hookmask |= HOOK_NAME;
+        ini.Get("InputHook", "HookNAME", &check);
+        if (check) m_hookmask |= HOOK_NAME;
 
-            ini.Get("InputHook", "HookSTOP", &check);
-            if (check) m_hookmask |= HOOK_STOP;
+        ini.Get("InputHook", "HookSTOP", &check);
+        if (check) m_hookmask |= HOOK_STOP;
 
-            ini.Get("InputHook", "HookWT", &check);
-            if (check) m_hookmask |= HOOK_WT;
-        }
+        ini.Get("InputHook", "HookWT", &check);
+        if (check) m_hookmask |= HOOK_WT;
     }
 
     if (!m_hookmask)
-        return;
+    {
+        m_timeout = 0;
+        return false;
+    }
+
+    ini.Get("InputHook", "Timeout", &m_timeout, 30);
 
     if (GetState(HOOK_PIDVID))
     {
@@ -116,9 +113,6 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
         if (vid != 0x045E || pid != 0x28E)
             m_fakepidvid = MAKELONG(vid, pid);
     }
-
-    if (!m_timeout)
-        ini.Get("InputHook", "Timeout", &m_timeout, 30);
 
     // Initalize InputHook Devices
     for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
@@ -147,36 +141,55 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
             m_devices.push_back(InputHookDevice(index, productid, instanceid));
         }
     }
+}
 
-    std::string maskname;
-    if (MaskToName(&maskname, m_hookmask))
-        PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());
+InputHook::InputHook() :
+m_hookmask(0),
+m_fakepidvid(MAKELONG(0x045E, 0x028E)),
+m_timeout(0),
+m_timeout_thread(INVALID_HANDLE_VALUE)
+{
+    PrintLog("InputHook starting...");
 
-    MH_Initialize();
+    if (!ReadGameDatabase())
+        ReadIni();
 
-    if (GetState(HOOK_LL))
-        HookLL();
+    if (!m_hookmask) 
+        m_devices.clear(); 
 
-    if (GetState(HOOK_COM))
-        HookCOM();
+    if (!m_devices.empty())
+    {
+        std::string maskname;
+        if (MaskToName(&maskname, m_hookmask))
+            PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());
 
-    if (GetState(HOOK_DI))
-        HookDI();
+        MH_Initialize();
 
-    if (GetState(HOOK_SA))
-        HookSA();
+        if (GetState(HOOK_LL))
+            HookLL();
 
-    if (GetState(HOOK_WT))
-        HookWT();
+        if (GetState(HOOK_COM))
+            HookCOM();
 
-    MH_EnableHook(MH_ALL_HOOKS);
+        if (GetState(HOOK_DI))
+            HookDI();
+
+        if (GetState(HOOK_SA))
+            HookSA();
+
+        if (GetState(HOOK_WT))
+            HookWT();
+
+        MH_EnableHook(MH_ALL_HOOKS);
+    }
 }
 
 void InputHook::Shutdown()
 {
+    m_devices.clear();
+
     if (MH_Uninitialize() == MH_OK)
     {
-        m_devices.clear();
         m_hookmask = 0;
 
         if (m_timeout_thread)
