@@ -90,8 +90,8 @@ public:
             to_print.push_back('\n');
 
             DWORD lenout = 0;
-            if (to_console) WriteConsoleA(m_console, to_print.c_str(), to_print.size(), &lenout, NULL);
-            if (to_file) WriteFile(m_file, to_print.c_str(), to_print.size(), &lenout, NULL);
+            if (to_console) WriteConsoleA(m_console, to_print.c_str(), (DWORD)to_print.size(), &lenout, NULL);
+            if (to_file) WriteFile(m_file, to_print.c_str(), (DWORD)to_print.size(), &lenout, NULL);
         }
     }
 

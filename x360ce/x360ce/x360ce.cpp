@@ -90,8 +90,6 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-    if (g_bDisable) return;
-
     // If any controller is native XInput then use state too.
     for (auto it = ControllerManager::Get().GetControllers().begin(); it != ControllerManager::Get().GetControllers().end(); ++it)
     {
