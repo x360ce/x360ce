@@ -47,7 +47,7 @@ public:
         return *this;
     }
 
-    bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration);
+    bool SetState(XINPUT_VIBRATION* pVibration);
 
     u32 m_LeftPeriod;
     u32 m_RightPeriod;
@@ -65,6 +65,7 @@ private:
     }
 
     bool IsSupported();
+
     void StartEffects(DIEFFECT* effectType);
     bool SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration);
     bool SetDeviceForcesNew(XINPUT_VIBRATION* pVibration);
