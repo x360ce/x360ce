@@ -10,10 +10,7 @@
 #endif
 #endif
 
-#ifdef DEBUG
-#include <crtdbg.h>
-#endif
-
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include <algorithm>
