@@ -261,7 +261,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HookCOM.h" />
+    <ClInclude Include="HookDI.h" />
+    <ClInclude Include="HookLL.h" />
+    <ClInclude Include="HookSA.h" />
+    <ClInclude Include="HookWT.h" />
     <ClInclude Include="InputHook.h" />
+    <ClInclude Include="InputHookManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
