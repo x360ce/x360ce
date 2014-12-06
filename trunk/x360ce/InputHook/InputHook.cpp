@@ -44,7 +44,7 @@ bool InputHook::ReadGameDatabase()
     ModuleFileName(&processName);
     if (ini.Get(processName, "HookMask", &m_hookmask))
     {
-        ini.Get(processName, "Timeout", &m_timeout, 30);
+        ini.Get(processName, "Timeout", &m_timeout);
 
         std::string gameName;
         ini.Get(processName, "Name", &gameName);
@@ -64,8 +64,6 @@ m_fakepidvid(MAKELONG(0x045E, 0x028E)),
 m_timeout(0),
 m_timeout_thread(INVALID_HANDLE_VALUE)
 {
-    PrintLog("InputHook starting...");
-
     SWIP ini;
     std::string inipath("x360ce.ini");
     if (!ini.Load(inipath))
@@ -103,8 +101,6 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
             if (check) m_hookmask |= HOOK_WT;
         }
 
-        ini.Get("InputHook", "Timeout", &m_timeout, 30);
-
         if (GetState(HOOK_PIDVID))
         {
             u32 vid;
@@ -119,6 +115,8 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 
     if (m_hookmask)
     {
+        PrintLog("InputHook starting...");
+
         // Initalize InputHook Devices
         for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
         {
@@ -150,6 +148,9 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 
     if (!m_devices.empty())
     {
+        if (!m_timeout)
+            ini.Get("InputHook", "Timeout", &m_timeout, 30);
+
         std::string maskname;
         if (MaskToName(&maskname, m_hookmask))
             PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());
