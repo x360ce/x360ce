@@ -289,7 +289,7 @@
                 procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds", out procException);
                 _IsGetAudioDeviceIdsSupported = procAddress != IntPtr.Zero;
                 // Check if Reset function is supported.
-                procAddress = NativeMethods.GetProcAddress(libHandle, "reset", out procException);
+                procAddress = NativeMethods.GetProcAddress(libHandle, "Reset", out procException);
                 _IsResetSupported = procAddress != IntPtr.Zero;
             }
         }
