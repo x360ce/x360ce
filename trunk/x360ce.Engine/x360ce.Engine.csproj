@@ -24,6 +24,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -55,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
     <Compile Include="Common\EnabledState.cs" />
+    <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
     <Compile Include="Common\KeyValue.cs" />
     <Compile Include="Common\KeyValueList.cs" />

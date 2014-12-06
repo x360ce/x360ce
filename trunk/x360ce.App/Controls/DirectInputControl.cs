@@ -27,15 +27,16 @@ namespace x360ce.App.Controls
         {
             System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
             DiAxisTable = new DataTable();
+            // http://msdn.microsoft.com/en-us/library/windows/desktop/bb151904%28v=vs.85%29.aspx
             DiAxisTable.Columns.Add("Axis", typeof(string));
             DiAxisTable.Columns.Add("M", typeof(int));
-            DiAxisTable.Columns.Add("R", typeof(int));
-            DiAxisTable.Columns.Add("A", typeof(int));
-            DiAxisTable.Columns.Add("AR", typeof(int));
-            DiAxisTable.Columns.Add("F", typeof(int));
-            DiAxisTable.Columns.Add("FR", typeof(int));
-            DiAxisTable.Columns.Add("V", typeof(int));
-            DiAxisTable.Columns.Add("VR", typeof(int));
+            DiAxisTable.Columns.Add("R", typeof(int)); // Rotation
+            DiAxisTable.Columns.Add("A", typeof(int)); // Acceleration
+            DiAxisTable.Columns.Add("AR", typeof(int)); // AngularAcceleration
+            DiAxisTable.Columns.Add("F", typeof(int)); // Force
+            DiAxisTable.Columns.Add("FR", typeof(int)); // Torque
+            DiAxisTable.Columns.Add("V", typeof(int)); // Velocity
+            DiAxisTable.Columns.Add("VR", typeof(int)); // AngularVelocity
             DiAxisTable.Rows.Add(DiAxisTable.NewRow());
             DiAxisTable.Rows.Add(DiAxisTable.NewRow());
             DiAxisTable.Rows.Add(DiAxisTable.NewRow());
@@ -159,7 +160,7 @@ namespace x360ce.App.Controls
         IList<EffectInfo> effects;
         string forceFeedbackState;
 
-        public int[] Axis = new int[0xf];
+        public int[] Axis = new int[6];
 
         List<string> ShowDirectInputState(Joystick device)
         {
@@ -253,7 +254,7 @@ namespace x360ce.App.Controls
             ProcessSlider(actions, state.ForceSliders, DiFSliderTextBox, ref sNum);
             ProcessSlider(actions, state.VelocitySliders, DiVSliderTextBox, ref sNum);
 
-            // Poin of view buttons
+            // Point of view buttons
             int[] dPad = state.PointOfViewControllers;
             DiDPadTextBox.Text = "";
             if (dPad != null)
@@ -294,7 +295,9 @@ namespace x360ce.App.Controls
 
         void addAction(List<string> actions, int v, string type, int index)
         {
-            string d = (DetectDirection(v));
+            string d = DetectDirection(v);
+
+            
             if (d == null) return;
             actions.Add(string.Format("{0}{1} {2:0}", d, type, index));
         }
@@ -302,9 +305,13 @@ namespace x360ce.App.Controls
         public string DetectDirection(int v)
         {
             // Threshold mark at which action on axis/slider is detected.
-            // Value gets inbetween of specified range then action is recorded.
+            // If value gets inbetween of specified range then action is recorded.
+            // [       ""           "IH"              "H"           "I"      ]
             // [--[p1]----[p2]--[n1]----[n2]--|--[p3]----[p4]--[n3]----[n4]--]
+            // [--    --->          <---             --->          <---      ]
+            // Point width.
             int p1 = 2000;
+            // Calculate space between points (~13384).
             int space = (ushort.MaxValue - (p1 * 6)) / 4;
             int p2 = p1 + space;
             int n1 = p2 + p1;

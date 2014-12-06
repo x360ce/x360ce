@@ -3,6 +3,10 @@
     @CompatibleSchemaVersion   nvarchar(128)
 AS
 BEGIN
+
+	DECLARE @LoweredFeature varchar(128)
+	SET @LoweredFeature = LOWER(@Feature)
+
     DELETE FROM dbo.aspnet_SchemaVersions
-        WHERE   Feature = LOWER(@Feature) AND @CompatibleSchemaVersion = CompatibleSchemaVersion
+    WHERE   Feature = @LoweredFeature AND @CompatibleSchemaVersion = CompatibleSchemaVersion
 END

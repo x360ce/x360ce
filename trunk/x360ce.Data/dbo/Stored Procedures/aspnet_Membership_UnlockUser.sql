@@ -3,13 +3,20 @@
     @UserName                                nvarchar(256)
 AS
 BEGIN
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
     DECLARE @UserId uniqueidentifier
     SELECT  @UserId = NULL
     SELECT  @UserId = u.UserId
     FROM    dbo.aspnet_Users u, dbo.aspnet_Applications a, dbo.aspnet_Membership m
-    WHERE   LoweredUserName = LOWER(@UserName) AND
+    WHERE   LoweredUserName = @LoweredUserName AND
             u.ApplicationId = a.ApplicationId  AND
-            LOWER(@ApplicationName) = a.LoweredApplicationName AND
+            @LoweredApplicationName = a.LoweredApplicationName AND
             u.UserId = m.UserId
 
     IF ( @UserId IS NULL )

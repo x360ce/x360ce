@@ -11,7 +11,7 @@ GOTO:EOF
 ::-------------------------------------------------------------
 :: SIGNTOOL.EXE Note:
 :: Use the Windows 7 Platform SDK web installer that lets you
-:: download just the components you need—so just choose the
+:: download just the components you need - so just choose the
 :: ".NET developer \ Tools" and deselect everything else.
 set sgt=%ProgramFiles%\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
 if not exist "%sgt%" set sgt=%ProgramFiles(x86)%\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe

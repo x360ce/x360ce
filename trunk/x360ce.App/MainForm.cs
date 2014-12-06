@@ -1000,11 +1000,12 @@ namespace x360ce.App
         /// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
         public bool BroadcastMessage(int wParam)
         {
+            Exception error;
             // Check for previous instance of this app.
             var uid = Application.ProductName;
             _Mutex = new System.Threading.Mutex(false, uid);
             // Register the windows message
-            _WindowMessage = NativeMethods.RegisterWindowMessage(uid);
+            _WindowMessage = NativeMethods.RegisterWindowMessage(uid, out error);
             var firsInstance = _Mutex.WaitOne(1, true);
             // If this is not the first instance then...
             if (!firsInstance)
@@ -1012,7 +1013,7 @@ namespace x360ce.App
                 // Brodcast a message with parameters to another instance.
                 var recipients = (int)BSM.BSM_APPLICATIONS;
                 var flags = BSF.BSF_IGNORECURRENTTASK | BSF.BSF_POSTMESSAGE;
-                var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0);
+                var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out error);
             }
             return !firsInstance;
         }

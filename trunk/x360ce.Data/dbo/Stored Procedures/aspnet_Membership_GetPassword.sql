@@ -7,6 +7,13 @@
     @PasswordAnswer                 nvarchar(128) = NULL
 AS
 BEGIN
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
     DECLARE @UserId                                 uniqueidentifier
     DECLARE @PasswordFormat                         int
     DECLARE @Password                               nvarchar(128)
@@ -43,10 +50,10 @@ BEGIN
             @FailedPasswordAnswerAttemptCount = m.FailedPasswordAnswerAttemptCount,
             @FailedPasswordAnswerAttemptWindowStart = m.FailedPasswordAnswerAttemptWindowStart
     FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m WITH ( UPDLOCK )
-    WHERE   LOWER(@ApplicationName) = a.LoweredApplicationName AND
+    WHERE   @LoweredApplicationName = a.LoweredApplicationName AND
             u.ApplicationId = a.ApplicationId    AND
             u.UserId = m.UserId AND
-            LOWER(@UserName) = u.LoweredUserName
+            @LoweredUserName = u.LoweredUserName
 
     IF ( @@rowcount = 0 )
     BEGIN

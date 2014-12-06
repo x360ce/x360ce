@@ -6,17 +6,17 @@ using System.Text;
 using System.Collections.Generic;
 using x360ce.Engine.Win32;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
 	/// <summary>
 	/// Functions are provided only for compatibility with 16-bit versions of Windows. Applications should store initialization information in the registry.
 	/// </summary>
 	public class Ini
-	{
+    {
 
-		#region Kernel32 Functions
+        #region Kernel32 Functions
 
-		string[] _getPrivateProfileString(string section, string key, string defaultValue, int bufferLength)
+        string[] _getPrivateProfileString(string section, string key, string defaultValue, int bufferLength)
 		{
 			char[] returnString = new char[bufferLength];
 			int size = NativeMethods.GetPrivateProfileString(section, key, defaultValue, returnString, returnString.Length, this.File.FullName);

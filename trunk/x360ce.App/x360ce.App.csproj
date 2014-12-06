@@ -163,7 +163,6 @@
     <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\Helper.cs" />
-    <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
     <Compile Include="Common\PresetItem.cs" />
     <Compile Include="Common\PropertyComparer.cs" />
@@ -474,6 +473,7 @@
     <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
       <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
       <Name>x360ce.Engine</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
