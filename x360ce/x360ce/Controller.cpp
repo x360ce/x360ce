@@ -9,6 +9,11 @@
 #include "ForceFeedback.h"
 #include "Controller.h"
 
+const char * ffdblacklist[] =
+{
+    "tmffbdrv.dll"
+};
+
 Controller::Controller(u32 user)
 {
     m_pDevice = nullptr;
@@ -27,11 +32,23 @@ Controller::~Controller()
 {
     delete m_pForceFeedback;
 
+    if (IsBrokenFFD()) return;
+
     if (m_pDevice)
     {
-        m_pDevice->Unacquire();
         m_pDevice->Release();
     }
+}
+
+bool Controller::IsBrokenFFD()
+{
+    bool isbroken = false;
+
+    for (s32 i = 0; i < _countof(ffdblacklist); ++i)
+    {
+        isbroken = GetModuleHandleA(ffdblacklist[i]) != NULL;
+    }
+    return isbroken;
 }
 
 BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
@@ -286,26 +303,72 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
     {
         if (m_mapping.Axis[i].axistodpad == 0)
         {
-            s32 *values = axis;
+            u32 index = std::abs(m_mapping.Axis[i].id) - 1;
+            s32 value = axis[index];
 
             // Analog input
-            if (m_mapping.Axis[i].analogType == AXIS) values = axis;
-
-            if (m_mapping.Axis[i].analogType == SLIDER) values = slider;
+            if (m_mapping.Axis[i].analogType == AXIS) value = axis[index];
+            if (m_mapping.Axis[i].analogType == SLIDER) value = slider[index];
 
             if (m_mapping.Axis[i].analogType != NONE)
             {
-
-                if (m_mapping.Axis[i].id > 0)
+                //        [ 32768 steps | 32768 steps ]
+                // DInput [ 0     32767 | 32768 65535 ] 
+                // XInput [ 32768    -1 | 0     32767 ]
+                //
+                //int xInput = dInputValue;
+                s32 xInput = value;
+                s32 deadZone = (s32)m_mapping.Axis[i].axisdeadzone;
+                s32 antiDeadZone = (s32)m_mapping.Axis[i].antideadzone;
+                s32 linear = (s32)m_mapping.Axis[i].axislinear;
+                s32 min = -32768;
+                s32 max = 32767;
+                // If deadzone value is set then...
+                bool invert = xInput < 0;
+                // Convert [-32768;-1] -> [32767;0]
+                if (invert) xInput = -1 - xInput;
+                //if  invert 
+                if (deadZone > 0)
                 {
-                    s32 val = (s32)values[m_mapping.Axis[i].id - 1];
-                    *(targetAxis[i]) = (s16)clamp(val, -32768, 32767);
+                    if (xInput > deadZone)
+                    {
+                        // [deadZone;32767] => [0;32767];
+                        xInput = (s32)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
+                    }
+                    else
+                    {
+                        xInput = 0;
+                    }
                 }
-                else if (m_mapping.Axis[i].id < 0)
+                // If anti-deadzone value is set then...
+                if (antiDeadZone > 0)
                 {
-                    s32 val = (s32)(-1 - values[-m_mapping.Axis[i].id - 1]);
-                    *(targetAxis[i]) = (s16)clamp(val, -32768, 32767);
+                    if (xInput > 0)
+                    {
+                        // [0;32767] => [antiDeadZone;32767];
+                        xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
+                    }
                 }
+                // If linear value is set then...
+                if (linear != 0 && xInput > 0)
+                {
+                    // [antiDeadZone;32767] => [0;32767];
+                    float xInputF = (float)(xInput - antiDeadZone) / (float)(max - antiDeadZone) * (float)max;
+                    float linearF = (float)linear / 100.f;
+                    xInputF = ConvertToFloat((short)xInputF);
+                    float x = -xInputF;
+                    if (linearF < 0.f) x = 1.f + x;
+                    float v = ((float)sqrt(1.f - x * x));
+                    if (linearF < 0.f) v = 1.f - v;
+                    xInputF = xInputF + (2.f - v - xInputF - 1.f) * abs(linearF);
+                    xInput = ConvertToShort(xInputF);
+                    // [0;32767] => [antiDeadZone;32767];
+                    xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
+                }
+                // Convert [32767;0] -> [-32768;-1]
+                if (invert) xInput = -1 - xInput;
+                *(targetAxis[i]) = (s16)clamp(xInput, min, max);
+                //return (short)xInput;
             }
 
             // Digital input, positive direction
@@ -338,64 +401,6 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
             if (m_state.lY - m_mapping.Axis[i].a2doffset > m_mapping.Axis[i].a2ddeadzone)
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
         }
-
-        //        [ 32768 steps | 32768 steps ]
-        // DInput [ 0     32767 | 32768 65535 ] 
-        // XInput [ 32768    -1 | 0     32767 ]
-        //
-        //int xInput = dInputValue;
-        s32 xInput = *(targetAxis[i]);
-        s32 deadZone = (s32)m_mapping.Axis[i].axisdeadzone;
-        s32 antiDeadZone = (s32)m_mapping.Axis[i].antideadzone;
-        s32 linear = (s32)m_mapping.Axis[i].axislinear;
-        s32 min = -32768;
-        s32 max = 32767;
-        // If deadzone value is set then...
-        bool invert = xInput < 0;
-        // Convert [-32768;-1] -> [32767;0]
-        if (invert) xInput = -1 - xInput;
-        //if  invert 
-        if (deadZone > 0)
-        {
-            if (xInput > deadZone)
-            {
-                // [deadZone;32767] => [0;32767];
-                xInput = (s32)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
-            }
-            else
-            {
-                xInput = 0;
-            }
-        }
-        // If anti-deadzone value is set then...
-        if (antiDeadZone > 0)
-        {
-            if (xInput > 0)
-            {
-                // [0;32767] => [antiDeadZone;32767];
-                xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
-            }
-        }
-        // If linear value is set then...
-        if (linear != 0 && xInput > 0)
-        {
-            // [antiDeadZone;32767] => [0;32767];
-            float xInputF = (float)(xInput - antiDeadZone) / (float)(max - antiDeadZone) * (float)max;
-            float linearF = (float)linear / 100.f;
-            xInputF = ConvertToFloat((short)xInputF);
-            float x = -xInputF;
-            if (linearF < 0.f) x = 1.f + x;
-            float v = ((float)sqrt(1.f - x * x));
-            if (linearF < 0.f) v = 1.f - v;
-            xInputF = xInputF + (2.f - v - xInputF - 1.f) * abs(linearF);
-            xInput = ConvertToShort(xInputF);
-            // [0;32767] => [antiDeadZone;32767];
-            xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
-        }
-        // Convert [32767;0] -> [-32768;-1]
-        if (invert) xInput = -1 - xInput;
-        *(targetAxis[i]) = (s16)clamp(xInput, min, max);
-        //return (short)xInput;
     }
 
     return ERROR_SUCCESS;
@@ -465,7 +470,7 @@ DWORD Controller::CreateDevice()
     dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dipdw.diph.dwObj = 0;
     dipdw.diph.dwHow = DIPH_DEVICE;
-    dipdw.dwData = DIPROPAUTOCENTER_OFF;
+    dipdw.dwData = DIPROPAUTOCENTER_ON;
     m_pDevice->SetProperty(DIPROP_AUTOCENTER, &dipdw.diph);
 
     hr = m_pDevice->EnumObjects(EnumObjectsCallback, (VOID*)this, DIDFT_AXIS);
@@ -478,7 +483,10 @@ DWORD Controller::CreateDevice()
         m_useforce = m_pForceFeedback->IsSupported();
 
     if (!m_useforce)
+    {
         delete m_pForceFeedback;
+        m_pForceFeedback = nullptr;
+    }
 
     hr = m_pDevice->Acquire();
 

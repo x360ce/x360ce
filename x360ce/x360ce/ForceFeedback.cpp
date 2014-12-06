@@ -21,6 +21,8 @@ m_pController(pController)
 
 ForceFeedback::~ForceFeedback()
 {
+    if (m_pController->IsBrokenFFD()) return;
+
     if (m_pController->m_pDevice)
         m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
 

@@ -80,6 +80,9 @@ public:
 
 private:
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
+
+    bool IsBrokenFFD();
+
     bool ButtonPressed(u32 buttonidx);
     HRESULT UpdateState();
 
