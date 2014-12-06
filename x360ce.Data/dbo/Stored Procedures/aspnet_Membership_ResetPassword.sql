@@ -10,6 +10,16 @@
     @PasswordAnswer              nvarchar(128) = NULL
 AS
 BEGIN
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
+	DECLARE @LoweredPasswordAnswer varchar(128)
+	SET @LoweredPasswordAnswer = LOWER(ISNULL(@PasswordAnswer, ''))
+
     DECLARE @IsLockedOut                            bit
     DECLARE @LastLockoutDate                        datetime
     DECLARE @FailedPasswordAttemptCount             int
@@ -36,9 +46,9 @@ BEGIN
 
     SELECT  @UserId = u.UserId
     FROM    dbo.aspnet_Users u, dbo.aspnet_Applications a, dbo.aspnet_Membership m
-    WHERE   LoweredUserName = LOWER(@UserName) AND
+    WHERE   LoweredUserName = @LoweredUserName AND
             u.ApplicationId = a.ApplicationId  AND
-            LOWER(@ApplicationName) = a.LoweredApplicationName AND
+            @LoweredApplicationName = a.LoweredApplicationName AND
             u.UserId = m.UserId
 
     IF ( @UserId IS NULL )
@@ -63,12 +73,12 @@ BEGIN
     END
 
     UPDATE dbo.aspnet_Membership
-    SET    Password = @NewPassword,
+    SET    [Password] = @NewPassword,
            LastPasswordChangedDate = @CurrentTimeUtc,
            PasswordFormat = @PasswordFormat,
            PasswordSalt = @PasswordSalt
     WHERE  @UserId = UserId AND
-           ( ( @PasswordAnswer IS NULL ) OR ( LOWER( PasswordAnswer ) = LOWER( @PasswordAnswer ) ) )
+           ( ( @LoweredPasswordAnswer = '' ) OR ( LOWER(ISNULL(PasswordAnswer, '')) = @LoweredPasswordAnswer ) )
 
     IF ( @@ROWCOUNT = 0 )
         BEGIN
@@ -102,7 +112,7 @@ BEGIN
             END
         END
 
-    IF( NOT ( @PasswordAnswer IS NULL ) )
+    IF( NOT ( @LoweredPasswordAnswer = '' ) )
     BEGIN
         UPDATE dbo.aspnet_Membership
         SET IsLockedOut = @IsLockedOut, LastLockoutDate = @LastLockoutDate,

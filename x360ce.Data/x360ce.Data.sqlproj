@@ -96,7 +96,7 @@
     </TargetDatabase>
     <TreatTSqlWarningsAsErrors>False</TreatTSqlWarningsAsErrors>
     <SuppressTSqlWarnings />
-    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
+    <RunSqlCodeAnalysis>False</RunSqlCodeAnalysis>
   </PropertyGroup>
   <!--Import the settings-->
   <Import Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" Condition="'$(SQLDBExtensionsRefPath)' != ''" />
@@ -223,7 +223,10 @@
     <Build Include="dbo\Stored Procedures\aspnet_Setup_RemoveAllRoleMembers.sql" />
     <Build Include="dbo\Stored Procedures\aspnet_Setup_RestorePermissions.sql" />
     <Build Include="dbo\Stored Procedures\aspnet_UnRegisterSchemaVersion.sql" />
-    <Build Include="dbo\Stored Procedures\aspnet_Users_CreateUser.sql" />
+    <Build Include="dbo\Stored Procedures\aspnet_Users_CreateUser.sql">
+      <SuppressTSqlWarnings>
+      </SuppressTSqlWarnings>
+    </Build>
     <Build Include="dbo\Stored Procedures\aspnet_Users_DeleteUser.sql" />
     <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_AddUsersToRoles.sql" />
     <Build Include="dbo\Stored Procedures\aspnet_UsersInRoles_FindUsersInRole.sql" />
@@ -251,6 +254,7 @@
     <None Include="Schema Comparisons\ProjectToDatabase.Test.scmp" />
     <None Include="Schema Comparisons\DatabaseToProject.Live.scmp" />
     <None Include="Schema Comparisons\ProjectToDatabase.Live.scmp" />
+    <None Include="StaticCodeAnalysis.SuppressMessages.xml" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Scripts\Pre-Deployment\Script.PreDeployment.sql" />

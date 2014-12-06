@@ -93,13 +93,24 @@ namespace x360ce.App.Controls
             }
         }
 
+        List<string> recordingSnapshot;
+
         public bool StopRecording(List<string> actions = null)
         {
             lock (recordingLock)
             {
 
                 // If recording is not in progress then return false.
-                if (!Recording) return false;
+                if (!Recording)
+                {
+                    recordingSnapshot = null;
+                    return false;
+                }
+                else if (recordingSnapshot == null)
+                {
+                    // Make snapshot  out of first state during recordining.
+                    recordingSnapshot = actions;
+                }
                 // Must stop recording if null passed or at least one action was recorded.
                 var stop = (actions == null || actions.Count > 0);
                 // If recording must stop then...
@@ -637,7 +648,7 @@ namespace x360ce.App.Controls
             // Add Axes.
             mi = new ToolStripMenuItem("Axes");
             DiMenuStrip.Items.Add(mi);
-            var axisCount = device.Capabilities.AxeCount * 2;
+            var axisCount = diControl.Axis.Length;
             CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", axisCount);
             CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", axisCount);
             CreateItems(mi, "Half", "HAxis {0}", "x{0}", axisCount);
@@ -645,10 +656,11 @@ namespace x360ce.App.Controls
             // Add Sliders.            
             mi = new ToolStripMenuItem("Sliders");
             DiMenuStrip.Items.Add(mi);
-            CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", 8);
-            CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", 8);
-            CreateItems(mi, "Half", "HSlider {0}", "h{0}", 8);
-            CreateItems(mi, "Slider {0}", "s{0}", 8);
+            var slidersCount = 8;
+            CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", slidersCount);
+            CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", slidersCount);
+            CreateItems(mi, "Half", "HSlider {0}", "h{0}", slidersCount);
+            CreateItems(mi, "Slider {0}", "s{0}", slidersCount);
             // Add D-Pads.
             mi = new ToolStripMenuItem("DPads");
             DiMenuStrip.Items.Add(mi);

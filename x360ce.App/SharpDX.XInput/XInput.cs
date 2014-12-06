@@ -244,12 +244,12 @@
 
         internal static T GetMethod<T>(string methodName)
         {
-            IntPtr procAddress = NativeMethods.GetProcAddress(libHandle, methodName);
-            if (procAddress == IntPtr.Zero)
+            Exception error;
+            IntPtr procAddress = NativeMethods.GetProcAddress(libHandle, methodName, out error);
+            if (error != null)
             {
-                // Don't throw Win32 exception directly or it can terminate app unexcpectedly.
-                var ex = new Win32Exception();
-                throw new Exception(ex.ToString());
+                // Don't throw Win32Exception directly or it can terminate app unexcpectedly.
+                throw error;
             }
             return (T)(object)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(T));
         }
@@ -264,7 +264,8 @@
             {
                 if (IsLoaded)
                 {
-                    NativeMethods.FreeLibrary(libHandle);
+                    Exception freeError;
+                    NativeMethods.FreeLibrary(libHandle, out freeError);
                     libHandle = IntPtr.Zero;
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -280,14 +281,15 @@
                 resetEvent.WaitOne(5000);
                 error = LastLoadException;
                 IntPtr procAddress;
+                Exception procException;
                 // Check if XInputGetStateEx function is supported.
-                procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx");
+                procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx", out procException);
                 _IsGetStateExSupported = procAddress != IntPtr.Zero;
                 // Check if XInputGetAudioDeviceIds function is supported.
-                procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds");
+                procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds", out procException);
                 _IsGetAudioDeviceIdsSupported = procAddress != IntPtr.Zero;
                 // Check if Reset function is supported.
-                procAddress = NativeMethods.GetProcAddress(libHandle, "reset");
+                procAddress = NativeMethods.GetProcAddress(libHandle, "reset", out procException);
                 _IsResetSupported = procAddress != IntPtr.Zero;
             }
         }
@@ -296,7 +298,7 @@
         {
             try
             {
-                libHandle = NativeMethods.LoadLibrary(_LibraryName);
+                libHandle = NativeMethods.LoadLibrary(_LibraryName, out LastLoadException);
                 if (libHandle == IntPtr.Zero)
                 {
                     var win32ex = new Win32Exception();
@@ -315,7 +317,8 @@
             lock (loadLock)
             {
                 if (!IsLoaded) return;
-                NativeMethods.FreeLibrary(libHandle);
+                Exception error;
+                NativeMethods.FreeLibrary(libHandle, out error);
                 libHandle = IntPtr.Zero;
             }
         }

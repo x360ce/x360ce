@@ -1,9 +1,14 @@
 @ECHO OFF
 SET file=%~1
+SET dst32=..\..\x360ce.App\Resources\xinput1_3_32.dll
+SET dst64=..\..\x360ce.App\Resources\xinput1_3_64.dll
 IF "%file%" == "" (
-	CALL:SIG "..\..\x360ce.App\Resources\xinput1_3_32.dll"
-	CALL:SIG "..\..\x360ce.App\Resources\xinput1_3_64.dll"
+	IF NOT EXIST "%dst32%" COPY "..\..\x360ce\x360ce\bin\Release\xinput1_3.dll" "%dst32%"
+	CALL:SIG "%dst32%"
+	IF NOT EXIST "%dst64%" COPY "..\..\x360ce\x360ce\bin64\Release\xinput1_3.dll" "%dst64%"
+	CALL:SIG "%dst64%"
 )
+:: If file name was supplied then sign file.
 IF NOT "%file%" == "" CALL:SIG "%file%"
 pause
 

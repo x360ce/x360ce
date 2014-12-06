@@ -5,6 +5,13 @@
     @UpdateLastActivity   bit = 0
 AS
 BEGIN
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
     DECLARE @UserId uniqueidentifier
 
     IF (@UpdateLastActivity = 1)
@@ -13,9 +20,9 @@ BEGIN
                 m.CreateDate, m.LastLoginDate, @CurrentTimeUtc, m.LastPasswordChangedDate,
                 u.UserId, m.IsLockedOut,m.LastLockoutDate
         FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
-        WHERE    LOWER(@ApplicationName) = a.LoweredApplicationName AND
+        WHERE    @LoweredApplicationName = a.LoweredApplicationName AND
                 u.ApplicationId = a.ApplicationId    AND
-                LOWER(@UserName) = u.LoweredUserName AND u.UserId = m.UserId
+                @LoweredUserName = u.LoweredUserName AND u.UserId = m.UserId
 
         IF (@@ROWCOUNT = 0) -- Username not found
             RETURN -1
@@ -30,9 +37,9 @@ BEGIN
                 m.CreateDate, m.LastLoginDate, u.LastActivityDate, m.LastPasswordChangedDate,
                 u.UserId, m.IsLockedOut,m.LastLockoutDate
         FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
-        WHERE    LOWER(@ApplicationName) = a.LoweredApplicationName AND
+        WHERE    @LoweredApplicationName = a.LoweredApplicationName AND
                 u.ApplicationId = a.ApplicationId    AND
-                LOWER(@UserName) = u.LoweredUserName AND u.UserId = m.UserId
+                @LoweredUserName = u.LoweredUserName AND u.UserId = m.UserId
 
         IF (@@ROWCOUNT = 0) -- Username not found
             RETURN -1

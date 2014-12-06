@@ -5,9 +5,13 @@
 	@CurrentTimeUtc   datetime
 AS
 BEGIN
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
 	DECLARE @AppId uniqueidentifier
 	SELECT  @AppId = NULL
-	SELECT  @AppId = ApplicationId FROM aspnet_Applications WHERE LOWER(@ApplicationName) = LoweredApplicationName
+	SELECT  @AppId = ApplicationId FROM aspnet_Applications WHERE @LoweredApplicationName = LoweredApplicationName
 	IF (@AppId IS NULL)
 		RETURN(2)
 	DECLARE @TranStarted   bit

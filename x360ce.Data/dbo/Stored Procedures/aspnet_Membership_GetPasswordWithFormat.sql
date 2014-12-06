@@ -5,6 +5,13 @@
     @CurrentTimeUtc                 datetime
 AS
 BEGIN
+
+	DECLARE @LoweredUserName  nvarchar(256)
+	SET @LoweredUserName = LOWER(@UserName)
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
     DECLARE @IsLockedOut                        bit
     DECLARE @UserId                             uniqueidentifier
     DECLARE @Password                           nvarchar(128)
@@ -23,10 +30,10 @@ BEGIN
 		    @FailedPasswordAnswerAttemptCount=FailedPasswordAnswerAttemptCount, @IsApproved=IsApproved,
             @LastActivityDate = LastActivityDate, @LastLoginDate = LastLoginDate
     FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
-    WHERE   LOWER(@ApplicationName) = a.LoweredApplicationName AND
+    WHERE   @LoweredApplicationName = a.LoweredApplicationName AND
             u.ApplicationId = a.ApplicationId    AND
             u.UserId = m.UserId AND
-            LOWER(@UserName) = u.LoweredUserName
+            @LoweredUserName = u.LoweredUserName
 
     IF (@UserId IS NULL)
         RETURN 1

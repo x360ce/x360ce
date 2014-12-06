@@ -6,6 +6,7 @@ using SharpDX.DirectInput;
 using x360ce.App.Controls;
 using System.Linq;
 using x360ce.Engine.Data;
+using x360ce.Engine;
 
 namespace x360ce.App
 {

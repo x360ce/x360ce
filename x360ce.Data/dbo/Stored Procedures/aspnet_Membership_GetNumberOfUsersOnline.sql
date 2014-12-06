@@ -4,6 +4,10 @@
     @CurrentTimeUtc             datetime
 AS
 BEGIN
+
+	DECLARE @LoweredApplicationName  nvarchar(256)
+	SET @LoweredApplicationName = LOWER(@ApplicationName)
+
     DECLARE @DateActive datetime
     SELECT  @DateActive = DATEADD(minute,  -(@MinutesSinceLastInActive), @CurrentTimeUtc)
 
@@ -14,7 +18,7 @@ BEGIN
             dbo.aspnet_Membership m(NOLOCK)
     WHERE   u.ApplicationId = a.ApplicationId                  AND
             LastActivityDate > @DateActive                     AND
-            a.LoweredApplicationName = LOWER(@ApplicationName) AND
+            a.LoweredApplicationName = @LoweredApplicationName AND
             u.UserId = m.UserId
     RETURN(@NumOnline)
 END
