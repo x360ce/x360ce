@@ -331,8 +331,6 @@ void WINAPI HookCOM::HookCoUninitialize()
     if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_COM)) return TrueCoUninitialize();
     PrintLog("CoUninitialize");
 
-    InputHookManager::Get().GetInputHook().StartTimeoutThread();
-
     if (TrueGet) MH_QueueDisableHook(Get);
     if (TrueNext) MH_QueueDisableHook(Next);
     if (TrueCreateInstanceEnum) MH_QueueDisableHook(CreateInstanceEnum);
