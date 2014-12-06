@@ -26,6 +26,7 @@ public:
         m_gamepadtype = other.m_gamepadtype;
         m_passthrough = other.m_passthrough;
         m_useforce = other.m_useforce;
+        m_failcount = other.m_failcount;
 
         if (other.m_pForceFeedback)
         {
@@ -49,6 +50,7 @@ public:
             m_gamepadtype = other.m_gamepadtype;
             m_passthrough = other.m_passthrough;
             m_useforce = other.m_useforce;
+            m_failcount = other.m_failcount;
 
             if (other.m_pForceFeedback)
             {
@@ -68,7 +70,7 @@ public:
         return m_pDevice != nullptr;
     }
 
-    Mapping m_mapping;
+    Config::Mapping m_mapping;
     ForceFeedback* m_pForceFeedback;
     GUID m_productid;
     GUID m_instanceid;
@@ -77,6 +79,8 @@ public:
     u8 m_gamepadtype;
     bool m_passthrough;
     bool m_useforce;
+
+    u32 m_failcount;
 
 private:
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);

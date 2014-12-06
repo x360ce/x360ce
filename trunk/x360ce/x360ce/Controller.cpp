@@ -2,8 +2,8 @@
 
 #include "Common.h"
 #include "InputHook.h"
-#include "Config.h"
 
+#include "Config.h"
 #include "InputHookManager.h"
 #include "ControllerManager.h"
 #include "ForceFeedback.h"
@@ -26,6 +26,8 @@ Controller::Controller(u32 user)
     m_passthrough = false;
 
     m_user = user;
+
+    m_failcount = 0;
 }
 
 Controller::~Controller()
@@ -109,7 +111,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
     for (u32 i = 0; i < _countof(m_mapping.Button); ++i)
     {
         if (ButtonPressed(m_mapping.Button[i]))
-            pState->Gamepad.wButtons |= buttonIDs[i];
+            pState->Gamepad.wButtons |= Config::buttonIDs[i];
     }
 
     // --- Map POV to the D-pad ---
@@ -121,19 +123,19 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
         if (povdeg >= 0)
         {
             // Up-left, up, up-right, up (at 360 degrees)
-            if (IN_RANGE2(povdeg, m_mapping.pov[GAMEPAD_DPAD_LEFT] + 1, m_mapping.pov[GAMEPAD_DPAD_UP]) || IN_RANGE2(povdeg, 0, m_mapping.pov[GAMEPAD_DPAD_RIGHT] - 1))
+            if (IN_RANGE2(povdeg, m_mapping.pov[Config::DPAD_LEFT] + 1, m_mapping.pov[Config::DPAD_UP]) || IN_RANGE2(povdeg, 0, m_mapping.pov[Config::DPAD_RIGHT] - 1))
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
 
             // Up-right, right, down-right
-            if (IN_RANGE(povdeg, 0, m_mapping.pov[GAMEPAD_DPAD_DOWN]))
+            if (IN_RANGE(povdeg, 0, m_mapping.pov[Config::DPAD_DOWN]))
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
 
             // Down-right, down, down-left
-            if (IN_RANGE(povdeg, m_mapping.pov[GAMEPAD_DPAD_RIGHT], m_mapping.pov[GAMEPAD_DPAD_LEFT]))
+            if (IN_RANGE(povdeg, m_mapping.pov[Config::DPAD_RIGHT], m_mapping.pov[Config::DPAD_LEFT]))
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
 
             // Down-left, left, up-left
-            if (IN_RANGE(povdeg, m_mapping.pov[GAMEPAD_DPAD_DOWN], m_mapping.pov[GAMEPAD_DPAD_UP]))
+            if (IN_RANGE(povdeg, m_mapping.pov[Config::DPAD_DOWN], m_mapping.pov[Config::DPAD_UP]))
                 pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
         }
     }
@@ -143,7 +145,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
         {
             if (ButtonPressed(m_mapping.pov[i]))
             {
-                pState->Gamepad.wButtons |= povIDs[i];
+                pState->Gamepad.wButtons |= Config::povIDs[i];
             }
         }
     }
@@ -174,9 +176,9 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
     for (u32 i = 0; i < _countof(m_mapping.Trigger); ++i)
     {
-        MappingType triggerType = m_mapping.Trigger[i].type;
+        Config::MappingType triggerType = m_mapping.Trigger[i].type;
 
-        if (triggerType == DIGITAL)
+        if (triggerType == Config::DIGITAL)
         {
             if (ButtonPressed(m_mapping.Trigger[i].id - 1))*(targetTrigger[i]) = 255;
         }
@@ -186,14 +188,14 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
             switch (triggerType)
             {
-                case AXIS:
-                case HAXIS:
-                case CBUT:
+                case Config::AXIS:
+                case Config::HAXIS:
+                case Config::CBUT:
                     values = axis;
                     break;
 
-                case SLIDER:
-                case HSLIDER:
+                case Config::SLIDER:
+                case Config::HSLIDER:
                     values = slider;
                     break;
 
@@ -226,16 +228,16 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
             switch (triggerType)
             {
                 // Full range
-                case AXIS:
-                case SLIDER:
+                case Config::AXIS:
+                case Config::SLIDER:
                     scaling = 255;
                     offset = 32767;
                     break;
 
                     // Half range
-                case HAXIS:
-                case HSLIDER:
-                case CBUT: // add /////////////////////////////////////////////////////////
+                case Config::HAXIS:
+                case Config::HSLIDER:
+                case Config::CBUT: // add /////////////////////////////////////////////////////////
                     scaling = 127;
                     offset = 0;
                     break;
@@ -251,7 +253,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
             //*(targetTrigger[i]) = (BYTE) deadzone(v2, 0, 255, pController->triggerdz, 255);
 
             /////////////////////////////////////////////////////////////////////////////////////////
-            if (triggerType == CBUT)
+            if (triggerType == Config::CBUT)
             {
 
                 if (ButtonPressed(m_mapping.Trigger[0].but)
@@ -314,10 +316,10 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
             s32 value = axis[index];
 
             // Analog input
-            if (m_mapping.Axis[i].analogType == AXIS) value = axis[index];
-            if (m_mapping.Axis[i].analogType == SLIDER) value = slider[index];
+            if (m_mapping.Axis[i].analogType == Config::AXIS) value = axis[index];
+            if (m_mapping.Axis[i].analogType == Config::SLIDER) value = slider[index];
 
-            if (m_mapping.Axis[i].analogType != NONE)
+            if (m_mapping.Axis[i].analogType != Config::NONE)
             {
                 //        [ 32768 steps | 32768 steps ]
                 // DInput [ 0     32767 | 32768 65535 ] 
@@ -505,5 +507,5 @@ DWORD Controller::CreateDevice()
 
 bool Controller::ButtonPressed(u32 buttonidx)
 {
-    return (buttonidx != INVALIDBUTTONINDEX) ? (m_state.rgbButtons[buttonidx] & 0x80) != 0 : 0;
+    return (buttonidx != Config::INVALIDBUTTONINDEX) ? (m_state.rgbButtons[buttonidx] & 0x80) != 0 : 0;
 }

@@ -14,19 +14,31 @@
 
 #include "ControllerManager.h"
 
-bool g_bInitBeep = true;
-bool g_bDisable = false;
 
-static const char * legal_notice = {
-    "\nx360ce - XBOX 360 Controller emulator\n"
-    "https://code.google.com/p/x360ce/\n\n"
-    "Copyright (C) 2010-2014 Robert Krawczyk\n\n"
-    "This program is free software you can redistribute it and/or modify it under\n"
-    "the terms of the GNU Lesser General Public License as published by the Free\n"
-    "Software Foundation, either version 3 of the License, or any later version.\n\n"
+
+const u16 Config::buttonIDs[10] =
+{
+    XINPUT_GAMEPAD_A,
+    XINPUT_GAMEPAD_B,
+    XINPUT_GAMEPAD_X,
+    XINPUT_GAMEPAD_Y,
+    XINPUT_GAMEPAD_LEFT_SHOULDER,
+    XINPUT_GAMEPAD_RIGHT_SHOULDER,
+    XINPUT_GAMEPAD_BACK,
+    XINPUT_GAMEPAD_START,
+    XINPUT_GAMEPAD_LEFT_THUMB,
+    XINPUT_GAMEPAD_RIGHT_THUMB,
 };
 
-static const char* const buttonNames[] =
+const u16 Config::povIDs[4] =
+{
+    XINPUT_GAMEPAD_DPAD_UP,
+    XINPUT_GAMEPAD_DPAD_DOWN,
+    XINPUT_GAMEPAD_DPAD_LEFT,
+    XINPUT_GAMEPAD_DPAD_RIGHT
+};
+
+ const char* const Config::buttonNames[] =
 {
     "A",
     "B",
@@ -40,7 +52,7 @@ static const char* const buttonNames[] =
     "Right Thumb",
 };
 
-static const char* const povNames[] =
+ const char* const Config::povNames[] =
 {
     "D-pad Up",
     "D-pad Down",
@@ -48,7 +60,7 @@ static const char* const povNames[] =
     "D-pad Right"
 };
 
-static const char* const axisNames[] =
+ const char* const Config::axisNames[] =
 {
     "Left Analog X",
     "Left Analog Y",
@@ -56,7 +68,7 @@ static const char* const axisNames[] =
     "Right Analog Y"
 };
 
-static const char* const axisDZNames[] =
+ const char* const Config::axisDZNames[] =
 {
     "Left Analog X DeadZone",
     "Left Analog Y DeadZone",
@@ -64,7 +76,7 @@ static const char* const axisDZNames[] =
     "Right Analog Y DeadZone",
 };
 
-static const char* const axisADZNames[] =
+ const char* const Config::axisADZNames[] =
 {
     "Left Analog X AntiDeadZone",
     "Left Analog Y AntiDeadZone",
@@ -72,7 +84,7 @@ static const char* const axisADZNames[] =
     "Right Analog Y AntiDeadZone",
 };
 
-static const char* const axisLNames[] =
+ const char* const Config::axisLNames[] =
 {
     "Left Analog X Linear",
     "Left Analog Y Linear",
@@ -80,7 +92,7 @@ static const char* const axisLNames[] =
     "Right Analog Y Linear"
 };
 
-static const char* const axisBNames[] =
+ const char* const Config::axisBNames[] =
 {
     "Left Analog X+ Button",
     "Left Analog X- Button",
@@ -92,25 +104,25 @@ static const char* const axisBNames[] =
     "Right Analog Y- Button"
 };
 
-static const char* const triggerNames[] =
+ const char* const Config::triggerNames[] =
 {
     "Left Trigger",
     "Right Trigger"
 };
 
-static const char* const triggerDZNames[] =
+ const char* const Config::triggerDZNames[] =
 {
     "Left Trigger DZ",
     "Right Trigger DZ"
 };
 
-static const char* const triggerBNames[] =
+ const char* const Config::triggerBNames[] =
 {
     "Left Trigger But",
     "Right Trigger But"
 };
 
-void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue)
+ void Config::ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue)
 {
     if (pMappingType)
     {
@@ -145,38 +157,7 @@ void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue
     }
 }
 
-void InitLogger()
-{
-    SWIP ini;
-    std::string inipath("x360ce.ini");
-    if (!ini.Load(inipath))
-        CheckCommonDirectory(&inipath, "x360ce");
-    if (!ini.Load(inipath)) return;
-
-    bool con;
-    bool file;
-
-    ini.Get("Options", "Console", &con);
-    ini.Get("Options", "Log", &file);
-
-    if (con)
-        LogConsole("x360ce", legal_notice);
-
-    if (file)
-    {
-        SYSTEMTIME systime;
-        GetLocalTime(&systime);
-        std::string processName;
-        ModuleFileName(&processName);
-
-        std::string logfile = StringFormat("x360ce_%s_%02u-%02u-%02u_%08u.log", processName.c_str(), systime.wYear,
-            systime.wMonth, systime.wDay, GetTickCount());
-
-        LogFile(logfile);
-    }
-}
-
-void ReadConfig()
+void Config::ReadConfig()
 {
     SWIP ini;
     std::string inipath("x360ce.ini");
@@ -188,10 +169,10 @@ void ReadConfig()
     if (!once_flag)
     {
         // Read global options
-        ini.Get("Options", "Disable", &g_bDisable);
-        if (g_bDisable) return;
+        ini.Get("Options", "Disable", &m_globalDisable);
+        if (m_globalDisable) return;
 
-        ini.Get("Options", "UseInitBeep", &g_bInitBeep, true);
+        ini.Get("Options", "UseInitBeep", &m_initBeep, true);
 
         PrintLog("Using config file:");
         PrintLog(ini.GetIniPath().c_str());
@@ -224,7 +205,7 @@ void ReadConfig()
     }
 }
 
-bool ReadPadConfig(Controller* pController, const std::string& section, SWIP* pSWIP)
+bool Config::ReadPadConfig(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
     std::string buffer;
 
@@ -266,7 +247,7 @@ bool ReadPadConfig(Controller* pController, const std::string& section, SWIP* pS
     return true;
 }
 
-void ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP)
+void Config::ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
     Mapping* pMapping = &pController->m_mapping;
 

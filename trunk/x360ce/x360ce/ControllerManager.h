@@ -28,11 +28,11 @@ public:
         if (GetWindowsVersionName(&windows_name))
             PrintLog("OS: \"%s\"", windows_name.c_str());
 
-        ReadConfig();
+        m_config.ReadConfig();
 
         bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
         if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
-        HRESULT ret = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&m_pDirectInput, NULL);       
+        HRESULT ret = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&m_pDirectInput, NULL);
         if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
 
         if (m_pDirectInput)
@@ -79,7 +79,7 @@ public:
     u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
     {
         // Global disable
-        if (g_bDisable)
+        if (m_config.m_globalDisable)
             return ERROR_DEVICE_NOT_CONNECTED;
 
         // Invalid dwUserIndex
@@ -101,16 +101,22 @@ public:
         if (pController->m_passthrough)
             return PASSTROUGH;
 
+        if (pController->m_failcount > 20) 
+            return ERROR_DEVICE_NOT_CONNECTED;
+
         if (!pController->Initalized())
         {
             DWORD result = pController->CreateDevice();
             if (result == ERROR_SUCCESS)
             {
                 PrintLog("[PAD%d] Initialized for user %d", dwUserIndex + 1, dwUserIndex);
-                if (g_bInitBeep) MessageBeep(MB_OK);
+                if (m_config.m_initBeep) MessageBeep(MB_OK);
             }
             else
+            {
+                ++pController->m_failcount;
                 return result;
+            }
         }
 
         if (!pController->Initalized())
@@ -137,6 +143,11 @@ public:
     std::vector<Controller>& GetControllers()
     {
         return m_controllers;
+    }
+
+    Config& GetConfig()
+    {
+        return m_config;
     }
 
     bool XInputEnabled()
@@ -167,6 +178,7 @@ public:
 
 private:
     HWND m_hWnd;
+    Config m_config;
     LPDIRECTINPUT8 m_pDirectInput;
     std::vector<Controller> m_controllers;
 
