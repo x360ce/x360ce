@@ -58,91 +58,6 @@ bool InputHook::ReadGameDatabase()
     return false;
 }
 
-bool InputHook::ReadIni()
-{
-    SWIP ini;
-    std::string inipath("x360ce.ini");
-    if (!ini.Load(inipath))
-        CheckCommonDirectory(&inipath, "x360ce");
-    if (!ini.Load(inipath)) return false;
-
-    ini.Get("InputHook", "HookMask", &m_hookmask);
-    if (!m_hookmask)
-    {
-        bool check = false;
-        ini.Get("InputHook", "HookLL", &check);
-        if (check) m_hookmask |= HOOK_LL;
-
-        ini.Get("InputHook", "HookCOM", &check);
-        if (check) m_hookmask |= HOOK_COM;
-
-        ini.Get("InputHook", "HookDI", &check);
-        if (check) m_hookmask |= HOOK_DI;
-
-        ini.Get("InputHook", "HookPIDVID", &check);
-        if (check) m_hookmask |= HOOK_PIDVID;
-
-        ini.Get("InputHook", "HookSA", &check);
-        if (check) m_hookmask |= HOOK_SA;
-
-        ini.Get("InputHook", "HookNAME", &check);
-        if (check) m_hookmask |= HOOK_NAME;
-
-        ini.Get("InputHook", "HookSTOP", &check);
-        if (check) m_hookmask |= HOOK_STOP;
-
-        ini.Get("InputHook", "HookWT", &check);
-        if (check) m_hookmask |= HOOK_WT;
-    }
-
-    if (!m_hookmask)
-    {
-        m_timeout = 0;
-        return false;
-    }
-
-    ini.Get("InputHook", "Timeout", &m_timeout, 30);
-
-    if (GetState(HOOK_PIDVID))
-    {
-        u32 vid;
-        u32 pid;
-        ini.Get("InputHook", "FakeVID", &vid, 0x045E);
-        ini.Get("InputHook", "FakePID", &pid, 0x028E);
-
-        if (vid != 0x045E || pid != 0x28E)
-            m_fakepidvid = MAKELONG(vid, pid);
-    }
-
-    // Initalize InputHook Devices
-    for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
-    {
-        std::string section;
-        std::string key = StringFormat("PAD%u", i + 1);
-        if (!ini.Get("Mappings", key, &section))
-            continue;
-
-        u32 index = 0;
-        if (!ini.Get(section, "UserIndex", &index))
-            index = i;
-
-        std::string buffer;
-        GUID productid = GUID_NULL;
-        GUID instanceid = GUID_NULL;
-
-        if (ini.Get(section, "ProductGUID", &buffer))
-            StringToGUID(&productid, buffer);
-
-        if (ini.Get(section, "InstanceGUID", &buffer))
-            StringToGUID(&instanceid, buffer);
-
-        if (!IsEqualGUID(productid, GUID_NULL) && !IsEqualGUID(instanceid, GUID_NULL))
-        {
-            m_devices.push_back(InputHookDevice(index, productid, instanceid));
-        }
-    }
-}
-
 InputHook::InputHook() :
 m_hookmask(0),
 m_fakepidvid(MAKELONG(0x045E, 0x028E)),
@@ -151,11 +66,87 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 {
     PrintLog("InputHook starting...");
 
-    if (!ReadGameDatabase())
-        ReadIni();
+    SWIP ini;
+    std::string inipath("x360ce.ini");
+    if (!ini.Load(inipath))
+        CheckCommonDirectory(&inipath, "x360ce");
+    if (!ini.Load(inipath)) return;
 
-    if (!m_hookmask) 
-        m_devices.clear(); 
+    if (!ReadGameDatabase())
+    {
+        ini.Get("InputHook", "HookMask", &m_hookmask);
+        if (!m_hookmask)
+        {
+            bool check = false;
+            ini.Get("InputHook", "HookLL", &check);
+            if (check) m_hookmask |= HOOK_LL;
+
+            ini.Get("InputHook", "HookCOM", &check);
+            if (check) m_hookmask |= HOOK_COM;
+
+            ini.Get("InputHook", "HookDI", &check);
+            if (check) m_hookmask |= HOOK_DI;
+
+            ini.Get("InputHook", "HookPIDVID", &check);
+            if (check) m_hookmask |= HOOK_PIDVID;
+
+            ini.Get("InputHook", "HookSA", &check);
+            if (check) m_hookmask |= HOOK_SA;
+
+            ini.Get("InputHook", "HookNAME", &check);
+            if (check) m_hookmask |= HOOK_NAME;
+
+            ini.Get("InputHook", "HookSTOP", &check);
+            if (check) m_hookmask |= HOOK_STOP;
+
+            ini.Get("InputHook", "HookWT", &check);
+            if (check) m_hookmask |= HOOK_WT;
+        }
+
+        ini.Get("InputHook", "Timeout", &m_timeout, 30);
+
+        if (GetState(HOOK_PIDVID))
+        {
+            u32 vid;
+            u32 pid;
+            ini.Get("InputHook", "FakeVID", &vid, 0x045E);
+            ini.Get("InputHook", "FakePID", &pid, 0x028E);
+
+            if (vid != 0x045E || pid != 0x28E)
+                m_fakepidvid = MAKELONG(vid, pid);
+        }
+    }
+
+    if (m_hookmask)
+    {
+        // Initalize InputHook Devices
+        for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
+        {
+            std::string section;
+            std::string key = StringFormat("PAD%u", i + 1);
+            if (!ini.Get("Mappings", key, &section))
+                continue;
+
+            u32 index = 0;
+            if (!ini.Get(section, "UserIndex", &index))
+                index = i;
+
+            std::string buffer;
+            GUID productid = GUID_NULL;
+            GUID instanceid = GUID_NULL;
+
+            if (ini.Get(section, "ProductGUID", &buffer))
+                StringToGUID(&productid, buffer);
+
+            if (ini.Get(section, "InstanceGUID", &buffer))
+                StringToGUID(&instanceid, buffer);
+
+            if (!IsEqualGUID(productid, GUID_NULL) && !IsEqualGUID(instanceid, GUID_NULL))
+            {
+                m_devices.push_back(InputHookDevice(index, productid, instanceid));
+            }
+        }
+    }
 
     if (!m_devices.empty())
     {

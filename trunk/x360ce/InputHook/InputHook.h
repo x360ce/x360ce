@@ -165,7 +165,6 @@ public:
 private:
     static u32 __stdcall ThreadProc(void* lpParameter);
     bool ReadGameDatabase();
-    bool ReadIni();
     bool MaskToName(std::string* mask_string, u32 mask);
 
     u32 m_hookmask;
