@@ -332,11 +332,18 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
                 s32 linear = (s32)m_mapping.Axis[i].axislinear;
                 s32 min = -32768;
                 s32 max = 32767;
-                // If deadzone value is set then...
-                bool invert = xInput < 0;
-                // Convert [-32768;-1] -> [32767;0]
+
+                bool invert = m_mapping.Axis[i].id < 0;
+
+                // If axis should be inverted, convert [-32768;32767] -> [32767;-32768]
                 if (invert) xInput = -1 - xInput;
-                //if  invert 
+
+                // The following sections expect xInput values in range [0;32767]
+                // So, convert to positive: [-32768;-1] -> [32767;0]
+                bool negative = xInput < 0;
+                if (negative) xInput = -1 - xInput;
+
+                // If deadzone value is set then...
                 if (deadZone > 0)
                 {
                     if (xInput > deadZone)
@@ -374,8 +381,10 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
                     // [0;32767] => [antiDeadZone;32767];
                     xInput = (s32)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
                 }
-                // Convert [32767;0] -> [-32768;-1]
-                if (invert) xInput = -1 - xInput;
+
+                // If originally negative, convert back: [32767;0] -> [-32768;-1]
+                if (negative) xInput = -1 - xInput;
+
                 *(targetAxis[i]) = (s16)clamp(xInput, min, max);
                 //return (short)xInput;
             }
