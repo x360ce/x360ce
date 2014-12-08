@@ -6,6 +6,11 @@
 #define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max))
 #define IN_RANGE2(val, min, max) ((val) >= (min) && (val) <= (max))
 
+HMODULE LoadLibrarySystem(const std::string& library_name, std::string* out_path);
+HMODULE LoadLibrarySystem(const std::wstring& library_name, std::wstring* out_path);
+HMODULE LoadLibraryCurrent(const std::string& library_name, std::string* out_path);
+HMODULE LoadLibraryCurrent(const std::wstring& library_name, std::wstring* out_path);
+
 inline HMODULE& CurrentModule()
 {
     static HMODULE hModule = 0;

@@ -339,13 +339,9 @@ HRESULT STDMETHODCALLTYPE HookDI::HookGetPropertyA(LPDIRECTINPUTDEVICE8A This, R
     {
         LPDIPROPSTRING pdips = reinterpret_cast<LPDIPROPSTRING>(pdiph);
 
-        wchar_t TrueName[MAX_PATH];
-        wcscpy_s(TrueName, pdips->wsz);
-
-        swprintf_s(pdips->wsz, L"%s", L"XBOX 360 For Windows (Controller)");
-        PrintLog("Product Name change:");
-        PrintLog("\"%ls\"", TrueName);
-        PrintLog("\"%ls\"", pdips->wsz);
+        std::wstring trueName(pdips->wsz);
+        wcscpy_s(pdips->wsz, L"XBOX 360 For Windows (Controller)");
+        PrintLog("Product Name: %s => %s", trueName.c_str(), pdips->wsz);
     }
 
     return hr;
@@ -377,13 +373,9 @@ HRESULT STDMETHODCALLTYPE HookDI::HookGetPropertyW(LPDIRECTINPUTDEVICE8W This, R
     {
         LPDIPROPSTRING pdips = reinterpret_cast<LPDIPROPSTRING>(pdiph);
 
-        wchar_t TrueName[MAX_PATH];
-        wcscpy_s(TrueName, pdips->wsz);
-
-        swprintf_s(pdips->wsz, L"%s", L"XBOX 360 For Windows (Controller)");
-        PrintLog("Product Name change:");
-        PrintLog("\"%ls\"", TrueName);
-        PrintLog("\"%ls\"", pdips->wsz);
+        std::wstring trueName(pdips->wsz);
+        wcscpy_s(pdips->wsz, L"XBOX 360 For Windows (Controller)");
+        PrintLog("Product Name: %s => %s", trueName.c_str(), pdips->wsz);
     }
 
     return hr;
