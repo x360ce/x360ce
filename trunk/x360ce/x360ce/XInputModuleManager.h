@@ -37,36 +37,32 @@ public:
 
     XInputModuleManager()
     {
-        char system_directory[MAX_PATH];
-        DWORD length = 0;
-        length = GetSystemDirectoryA(system_directory, MAX_PATH);
-
         std::string current_module;
         ModuleFileName(&current_module, CurrentModule());
-
-        std::string xinput_path(system_directory);
-        StringPathAppend(&xinput_path, current_module);
 
         bool bHookLL = false;
 
         bHookLL = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_LL);
         if (bHookLL) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_LL);
 
-        PrintLog("Loading \"%s\"", xinput_path.c_str());
-        m_module = LoadLibraryA(xinput_path.c_str());
+        std::string loaded_module_path;
+        m_module = LoadLibrarySystem(current_module, &loaded_module_path);
 
         if (!m_module)
         {
             HRESULT hr = GetLastError();
-            char error_msg[MAX_PATH];
-
-            sprintf_s(error_msg, "Cannot load \"%s\" error: 0x%x", xinput_path.c_str(), hr);
-            PrintLog(error_msg);
-            MessageBoxA(NULL, error_msg, "Error", MB_ICONERROR);
+            std::unique_ptr<char[]> error_msg(new char[MAX_PATH]);
+            sprintf_s(error_msg.get(), MAX_PATH, "Cannot load \"%s\" error: 0x%x", loaded_module_path.c_str(), hr);
+            PrintLog(error_msg.get());
+            MessageBoxA(NULL, error_msg.get(), "Error", MB_ICONERROR);
             exit(hr);
         }
-        if (bHookLL) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_LL);
+        else
+        {
+            PrintLog("Loaded \"%s\"", loaded_module_path.c_str());
+        }
 
+        if (bHookLL) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_LL);
 
         // XInput 1.3 and older functions
         GetProcAddress("XInputGetState", &XInputGetState);

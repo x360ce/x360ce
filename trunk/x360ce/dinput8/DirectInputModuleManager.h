@@ -18,21 +18,21 @@ public:
 
     DirectInputModuleManager()
     {
-        char system_directory[MAX_PATH];
-        DWORD length = 0;
-        length = GetSystemDirectoryA(system_directory, MAX_PATH);
-
-        std::string dinput8_path(system_directory);
-        StringPathAppend(&dinput8_path, "dinput8.dll");
-        m_module = LoadLibraryA(dinput8_path.c_str());
+        std::string loaded_module_path;
+        m_module = LoadLibrarySystem("dinput8.dll", &loaded_module_path);
 
         if (!m_module)
         {
             HRESULT hr = GetLastError();
-            char error_msg[MAX_PATH];
-            sprintf_s(error_msg, "Cannot load \"%s\" error: 0x%x", dinput8_path.c_str(), hr);
-            MessageBoxA(NULL, error_msg, "Error", MB_ICONERROR);
+            std::unique_ptr<char[]> error_msg(new char[MAX_PATH]);
+            sprintf_s(error_msg.get(), MAX_PATH, "Cannot load \"%s\" error: 0x%x", loaded_module_path.c_str(), hr);
+            PrintLog(error_msg.get());
+            MessageBoxA(NULL, error_msg.get(), "Error", MB_ICONERROR);
             exit(hr);
+        }
+        else
+        {
+            PrintLog("Loaded \"%s\"", loaded_module_path.c_str());
         }
 
         GetProcAddress("DirectInput8Create", &DirectInput8Create);

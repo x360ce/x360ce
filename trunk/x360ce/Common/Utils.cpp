@@ -9,6 +9,58 @@
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "shell32.lib")
 
+HMODULE LoadLibrarySystem(const std::string& library_name, std::string* out_path)
+{
+    std::unique_ptr<char[]> system_directory(new char[MAX_PATH]);
+    GetSystemDirectoryA(system_directory.get(), MAX_PATH);
+
+    std::string lib_path(system_directory.get());
+    StringPathAppend(&lib_path, library_name);
+
+    if (out_path)
+        *out_path = lib_path;
+
+    return LoadLibraryA(lib_path.c_str());
+}
+
+HMODULE LoadLibrarySystem(const std::wstring& library_name, std::wstring* out_path)
+{
+    std::unique_ptr<wchar_t[]> system_directory(new wchar_t[MAX_PATH]);
+    GetSystemDirectoryW(system_directory.get(), MAX_PATH);
+
+    std::wstring lib_path(system_directory.get());
+    StringPathAppend(&lib_path, library_name);
+
+    if (out_path)
+        *out_path = lib_path;
+
+    return LoadLibraryW(lib_path.c_str());
+}
+
+HMODULE LoadLibraryCurrent(const std::string& library_name, std::string* out_path)
+{
+    std::string lib_path;
+    ModuleDirectory(&lib_path);
+    StringPathAppend(&lib_path, library_name);
+
+    if (out_path)
+        *out_path = lib_path;
+
+    return LoadLibraryA(lib_path.c_str());
+}
+
+HMODULE LoadLibraryCurrent(const std::wstring& library_name, std::wstring* out_path)
+{
+    std::wstring lib_path;
+    ModuleDirectory(&lib_path);
+    StringPathAppend(&lib_path, library_name);
+
+    if (out_path)
+        *out_path = lib_path;
+
+    return LoadLibraryW(lib_path.c_str());
+}
+
 bool FileExist(const std::string& path)
 {
     HANDLE hFile = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -55,7 +107,7 @@ bool FullPathFromPath(std::string* path, const std::string& in_path)
 
     if (FileExist(*path))
         return true;
-    
+
     return false;
 }
 

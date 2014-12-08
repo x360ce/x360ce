@@ -41,31 +41,30 @@ BOOL WINAPI HookSA::HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_
             {
                 const wchar_t* strUSB = wcsstr(DeviceInstanceId, L"USB\\");
                 const wchar_t* strRoot = wcsstr(DeviceInstanceId, L"root\\");
-                OLECHAR tempstr[MAX_PATH];
 
                 DWORD dwHookVid = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_PIDVID) ? LOWORD(InputHookManager::Get().GetInputHook().GetFakePIDVID()) : LOWORD(padcfg->GetProductPIDVID());
                 DWORD dwHookPid = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_PIDVID) ? HIWORD(InputHookManager::Get().GetInputHook().GetFakePIDVID()) : HIWORD(padcfg->GetProductPIDVID());
 
+                std::wstring tmpString;
                 if (strUSB || strRoot)
                 {
                     const wchar_t* p = wcsrchr(DeviceInstanceId, L'\\');
-                    if (p) swprintf_s(tempstr, L"USB\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
-                    else swprintf_s(tempstr, L"USB\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPid, padcfg->GetUserIndex());
+                    if (p) tmpString = StringFormat(L"USB\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
+                    else tmpString = StringFormat(L"USB\\VID_%04X&PID_%04X&IG_%02d", dwHookVid, dwHookPid, padcfg->GetUserIndex());
 
-                    if (DeviceInstanceIdSize < wcslen(tempstr))
+                    if (DeviceInstanceIdSize < tmpString.size())
                     {
                         SetLastError(ERROR_INSUFFICIENT_BUFFER);
-                        if (RequiredSize) *RequiredSize = (DWORD)wcslen(tempstr) + 1;
+                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
                         //return FALSE; //NOTE: return FALSE here breaks Beat Hazard
                         continue;
                     }
-
-                    if (DeviceInstanceIdSize > wcslen(tempstr))
+                    else if (DeviceInstanceIdSize > tmpString.size())
                     {
                         PrintLog("Device string change:", DeviceInstanceId);
                         PrintLog("%ls", DeviceInstanceId);
-                        wcscpy_s(DeviceInstanceId, DeviceInstanceIdSize, tempstr);
-                        if (RequiredSize) *RequiredSize = (DWORD)wcslen(tempstr) + 1;
+                        wcscpy_s(DeviceInstanceId, DeviceInstanceIdSize, tmpString.c_str());
+                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
                         PrintLog("%ls", DeviceInstanceId);
                         continue;
                     }
@@ -76,22 +75,21 @@ BOOL WINAPI HookSA::HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_
                 if (strHID)
                 {
                     wchar_t* p = wcsrchr(DeviceInstanceId, L'\\');
-                    swprintf_s(tempstr, L"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
+                    tmpString = StringFormat(L"HID\\VID_%04X&PID_%04X&IG_%02d%s", dwHookVid, dwHookPid, padcfg->GetUserIndex(), p);
 
-                    if (DeviceInstanceIdSize < wcslen(tempstr))
+                    if (DeviceInstanceIdSize < tmpString.size())
                     {
                         SetLastError(ERROR_INSUFFICIENT_BUFFER);
-                        if (RequiredSize) *RequiredSize = (DWORD)wcslen(tempstr) + 1;
+                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
                         //return FALSE; //NOTE: return FALSE here breaks Beat Hazard
                         continue;
                     }
-
-                    if (DeviceInstanceIdSize > wcslen(tempstr))
+                    else if (DeviceInstanceIdSize > tmpString.size())
                     {
                         PrintLog("Device string change:", DeviceInstanceId);
                         PrintLog("%ls", DeviceInstanceId);
-                        wcscpy_s(DeviceInstanceId, DeviceInstanceIdSize, tempstr);
-                        if (RequiredSize) *RequiredSize = (DWORD)wcslen(tempstr) + 1;
+                        wcscpy_s(DeviceInstanceId, DeviceInstanceIdSize, tmpString.c_str());
+                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
                         PrintLog("%ls", DeviceInstanceId);
                         continue;
                     }
