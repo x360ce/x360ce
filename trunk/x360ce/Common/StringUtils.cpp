@@ -127,7 +127,7 @@ bool Convert(const std::string &str, s16 *const output)
     if (errno == ERANGE)
         return false;
 
-    *output = static_cast<s8>(value);
+    *output = static_cast<s16>(value);
     return true;
 }
 
