@@ -152,39 +152,6 @@ bool GetWindowsVersionName(std::string* out)
             case PRODUCT_STARTER:
                 out->append(" Starter Edition");
                 break;
-            case PRODUCT_CLUSTER_SERVER:
-                out->append(" Cluster Server Edition");
-                break;
-            case PRODUCT_DATACENTER_SERVER:
-                out->append(" Datacenter Edition");
-                break;
-            case PRODUCT_DATACENTER_SERVER_CORE:
-                out->append(" Datacenter Edition (core installation)");
-                break;
-            case PRODUCT_ENTERPRISE_SERVER:
-                out->append(" Enterprise Edition");
-                break;
-            case PRODUCT_ENTERPRISE_SERVER_CORE:
-                out->append(" Enterprise Edition (core installation)");
-                break;
-            case PRODUCT_ENTERPRISE_SERVER_IA64:
-                out->append(" Enterprise Edition for Itanium-based Systems");
-                break;
-            case PRODUCT_SMALLBUSINESS_SERVER:
-                out->append(" Small Business Server");
-                break;
-            case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
-                out->append(" Small Business Server Premium Edition");
-                break;
-            case PRODUCT_STANDARD_SERVER:
-                out->append(" Standard Edition");
-                break;
-            case PRODUCT_STANDARD_SERVER_CORE:
-                out->append(" Standard Edition (core installation)");
-                break;
-            case PRODUCT_WEB_SERVER:
-                out->append(" Web Server Edition");
-                break;
             }
         }
         else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
@@ -207,30 +174,7 @@ bool GetWindowsVersionName(std::string* out)
             {
                 out->append("Windows XP Professional x64 Edition");
             }
-            else out->append("Windows Server 2003, ");
-            if (osvi.wProductType != VER_NT_WORKSTATION)
-            {
-                if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-                {
-                    if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
-                        out->append(" Datacenter x64 Edition");
-                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
-                        out->append(" Enterprise x64 Edition");
-                    else out->append(" Standard x64 Edition");
-                }
-                else
-                {
-                    if (osvi.wSuiteMask & VER_SUITE_COMPUTE_SERVER)
-                        out->append(" Compute Cluster Edition");
-                    else if (osvi.wSuiteMask & VER_SUITE_DATACENTER)
-                        out->append(" Datacenter Edition");
-                    else if (osvi.wSuiteMask & VER_SUITE_ENTERPRISE)
-                        out->append(" Enterprise Edition");
-                    else if (osvi.wSuiteMask & VER_SUITE_BLADE)
-                        out->append(" Web Edition");
-                    else out->append(" Standard Edition");
-                }
-            }
+            else out->append("Windows Server 2003 ");
         }
         else if (osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1)
         {
