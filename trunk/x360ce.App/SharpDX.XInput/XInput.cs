@@ -124,7 +124,7 @@
         internal static ErrorCode Reset()
         {
             if (!IsResetSupported) return ErrorCode.NotSupported;
-            try { return GetMethod<ResetDelegate>("reset")(); }
+            try { return GetMethod<ResetDelegate>("Reset")(); }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
