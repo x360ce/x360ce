@@ -55,7 +55,7 @@ BOOL WINAPI HookSA::HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_
                     if (DeviceInstanceIdSize < tmpString.size())
                     {
                         SetLastError(ERROR_INSUFFICIENT_BUFFER);
-                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
+                        if (RequiredSize) *RequiredSize = (DWORD)tmpString.size() + 1;
                         //return FALSE; //NOTE: return FALSE here breaks Beat Hazard
                         continue;
                     }
@@ -64,7 +64,7 @@ BOOL WINAPI HookSA::HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_
                         PrintLog("Device string change:", DeviceInstanceId);
                         PrintLog("%ls", DeviceInstanceId);
                         wcscpy_s(DeviceInstanceId, DeviceInstanceIdSize, tmpString.c_str());
-                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
+                        if (RequiredSize) *RequiredSize = (DWORD)tmpString.size() + 1;
                         PrintLog("%ls", DeviceInstanceId);
                         continue;
                     }
@@ -80,7 +80,7 @@ BOOL WINAPI HookSA::HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_
                     if (DeviceInstanceIdSize < tmpString.size())
                     {
                         SetLastError(ERROR_INSUFFICIENT_BUFFER);
-                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
+                        if (RequiredSize) *RequiredSize = (DWORD)tmpString.size() + 1;
                         //return FALSE; //NOTE: return FALSE here breaks Beat Hazard
                         continue;
                     }
@@ -89,7 +89,7 @@ BOOL WINAPI HookSA::HookSetupDiGetDeviceInstanceIdW(HDEVINFO DeviceInfoSet, PSP_
                         PrintLog("Device string change:", DeviceInstanceId);
                         PrintLog("%ls", DeviceInstanceId);
                         wcscpy_s(DeviceInstanceId, DeviceInstanceIdSize, tmpString.c_str());
-                        if (RequiredSize) *RequiredSize = tmpString.size() + 1;
+                        if (RequiredSize) *RequiredSize = (DWORD)tmpString.size() + 1;
                         PrintLog("%ls", DeviceInstanceId);
                         continue;
                     }
