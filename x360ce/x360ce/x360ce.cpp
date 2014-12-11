@@ -196,6 +196,8 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
         VK_PAD_DPAD_RIGHT
     };
 
+
+    ZeroMemory(pKeystroke, sizeof(XINPUT_KEYSTROKE));
     for (int i = 0; i < 14; i++)
     {
         if (xstate.Gamepad.wButtons & allButtonIDs[i])
