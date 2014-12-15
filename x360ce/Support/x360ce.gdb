@@ -126,6 +126,10 @@ HookMask = 0x00000002
 Name = Darksiders 2
 HookMask = 0x00000002
 
+[DARKSOULS.exe]
+Name = Dark Souls
+HookMask = 0x00000002
+
 [DarkSoulsII.exe]
 Name = Dark Souls II
 HookMask = 0x00000002
