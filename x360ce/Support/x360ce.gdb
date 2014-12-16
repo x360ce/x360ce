@@ -18,6 +18,10 @@ HookMask = 0x00000002
 Name = Assassin's Creed Revelations Multiplayer
 HookMask = 0x00000002
 
+[ACU.exe]
+Name = Assassin's Creed Unity
+HookMask = 0x0000001C
+
 [AC3SP.exe]
 Name = Assassin's Creed 3
 HookMask = 0x00000002
