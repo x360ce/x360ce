@@ -242,12 +242,16 @@ HookMask=0x0000000E
 Name = Tom Clancy's H.A.W.X 2
 HookMask=0x0000000E
 
+[HKShip.exe]
+Name = Sleeping Dogs
+HookMask = 0x00000002
+
 [HotlineGL.exe]
 Name = Hotline Miami
 HookMask = 0x00000002
 
-[HKShip.exe]
-Name = Sleeping Dogs
+[HowToSurvive.exe]
+Name = How to survive
 HookMask = 0x00000002
 
 [IAmAlive_game.exe]
