@@ -42,10 +42,10 @@
     <ClInclude Include="ForceFeedback.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="ControllerManager.h">
+    <ClInclude Include="XInputModuleManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="XInputModuleManager.h">
+    <ClInclude Include="ControllerManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>
