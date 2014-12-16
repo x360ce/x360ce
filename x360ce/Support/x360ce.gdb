@@ -158,6 +158,10 @@ HookMask = 0x00000002
 Name = DmC - Devil May Cry
 HookMask = 0x00000002
 
+[DragonAgeInquisition.exe] 
+Name = Dragon Age: Inquisition 
+HookMask = 0x00000002
+
 [DunDefGame.exe]
 Name = Dungeon Defenders
 HookMask = 0x00000002
