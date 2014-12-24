@@ -98,9 +98,9 @@ bool SWIP::DeleteKey(const std::string& sectionName, const std::string& key)
     return section->Delete(key);
 }
 
-bool SWIP::GetKeys(const std::string& sectionName, std::vector<std::string>* keys) const
+bool SWIP::GetKeys(const std::string& sectionName, std::vector<std::string>* keys)
 {
-    const Section* section = GetSection(sectionName);
+    const Section* section = CreateSection(sectionName);
     if (!section)
     {
         return false;
