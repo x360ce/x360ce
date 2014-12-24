@@ -156,9 +156,8 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
     static WORD repeat[14];
     static WORD flags[14];
 
+    ZeroMemory(pKeystroke, sizeof(XINPUT_KEYSTROKE));
     pKeystroke->UserIndex = (BYTE)dwUserIndex;
-    pKeystroke->Unicode = NULL;
-    pKeystroke->HidCode = NULL;
 
     static const WORD allButtonIDs[14] =
     {
@@ -197,7 +196,6 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
     };
 
 
-    ZeroMemory(pKeystroke, sizeof(XINPUT_KEYSTROKE));
     for (int i = 0; i < 14; i++)
     {
         if (xstate.Gamepad.wButtons & allButtonIDs[i])
