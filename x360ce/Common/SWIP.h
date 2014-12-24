@@ -188,7 +188,7 @@ public:
 
     bool Get(const std::string& sectionName, const std::string& key, std::vector<std::string>* values);
 
-    bool GetKeys(const std::string& sectionName, std::vector<std::string>* keys) const;
+    bool GetKeys(const std::string& sectionName, std::vector<std::string>* keys);
 
     bool DeleteKey(const std::string& sectionName, const std::string& key);
     bool DeleteSection(const std::string& sectionName);
