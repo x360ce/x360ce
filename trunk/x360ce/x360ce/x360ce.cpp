@@ -55,10 +55,10 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
 
-    if (!pController->m_useforce || !pController->m_pForceFeedback)
+    if (!pController->m_useforce)
         return ERROR_SUCCESS;
 
-    pController->m_pForceFeedback->SetState(pVibration);
+    pController->m_ForceFeedback.SetState(pVibration);
     return ERROR_SUCCESS;
 }
 

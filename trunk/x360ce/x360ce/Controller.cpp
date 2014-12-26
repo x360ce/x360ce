@@ -9,15 +9,10 @@
 #include "ForceFeedback.h"
 #include "Controller.h"
 
-const char * ffdblacklist[] =
-{
-    "tmffbdrv.dll"
-};
-
-Controller::Controller(u32 user)
+Controller::Controller(u32 user) :
+m_ForceFeedback(this)
 {
     m_pDevice = nullptr;
-    m_pForceFeedback = nullptr;
     m_productid = GUID_NULL;
     m_instanceid = GUID_NULL;
     m_axiscount = 0;
@@ -32,25 +27,15 @@ Controller::Controller(u32 user)
 
 Controller::~Controller()
 {
-    delete m_pForceFeedback;
-
-    if (IsBrokenFFD()) return;
-
+    //FIXME: Why m_pDevice is always nullptr ?????
     if (m_pDevice)
     {
+        if (m_useforce)
+            m_ForceFeedback.Shutdown();
+
         m_pDevice->Release();
+        m_pDevice = nullptr;
     }
-}
-
-bool Controller::IsBrokenFFD()
-{
-    bool isbroken = false;
-
-    for (s32 i = 0; i < _countof(ffdblacklist); ++i)
-    {
-        isbroken = GetModuleHandleA(ffdblacklist[i]) != NULL;
-    }
-    return isbroken;
 }
 
 BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
@@ -78,13 +63,6 @@ BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, 
 
 DWORD Controller::GetState(XINPUT_STATE* pState)
 {
-    if (!ControllerManager::Get().XInputEnabled())
-    {
-        // Clear state
-        if (pState) ZeroMemory(pState, sizeof(XINPUT_STATE));
-        return ERROR_SUCCESS;
-    }
-
     HRESULT hr = UpdateState();
 #if 0
     PrintLog("UpdateState %u %u", dwUserIndex, hr);
@@ -497,14 +475,7 @@ DWORD Controller::CreateDevice()
     else
         PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
-    if (m_pForceFeedback && m_useforce)
-        m_useforce = m_pForceFeedback->IsSupported();
-
-    if (!m_useforce)
-    {
-        delete m_pForceFeedback;
-        m_pForceFeedback = nullptr;
-    }
+    if (m_useforce) m_useforce = m_ForceFeedback.IsSupported();
 
     hr = m_pDevice->Acquire();
 

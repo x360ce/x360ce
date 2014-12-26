@@ -14,8 +14,6 @@
 
 #include "ControllerManager.h"
 
-
-
 const u16 Config::buttonIDs[10] =
 {
     XINPUT_GAMEPAD_A,
@@ -233,15 +231,13 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
     pSWIP->Get(section, "UseForceFeedback", &pController->m_useforce);
     if (pController->m_useforce)
     {
-        pController->m_pForceFeedback = new ForceFeedback(pController);
+        pSWIP->Get(section, "SwapMotor", &pController->m_ForceFeedback.m_SwapMotors);
+        pSWIP->Get(section, "FFBType", &pController->m_ForceFeedback.m_Type);
+        pSWIP->Get(section, "ForcePercent", &pController->m_ForceFeedback.m_ForcePercent, 100);
+        pController->m_ForceFeedback.m_ForcePercent *= 0.01f;
 
-        pSWIP->Get(section, "SwapMotor", &pController->m_pForceFeedback->m_SwapMotors);
-        pSWIP->Get(section, "FFBType", &pController->m_pForceFeedback->m_Type);
-        pSWIP->Get(section, "ForcePercent", &pController->m_pForceFeedback->m_ForcePercent, 100);
-        pController->m_pForceFeedback->m_ForcePercent *= 0.01f;
-
-        pSWIP->Get(section, "LeftMotorPeriod", &pController->m_pForceFeedback->m_LeftPeriod, 60);
-        pSWIP->Get(section, "RightMotorPeriod", &pController->m_pForceFeedback->m_RightPeriod, 20);
+        pSWIP->Get(section, "LeftMotorPeriod", &pController->m_ForceFeedback.m_LeftPeriod, 60);
+        pSWIP->Get(section, "RightMotorPeriod", &pController->m_ForceFeedback.m_RightPeriod, 20);
     }
 
     return true;
