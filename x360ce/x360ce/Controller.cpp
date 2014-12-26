@@ -27,7 +27,6 @@ m_ForceFeedback(this)
 
 Controller::~Controller()
 {
-    //FIXME: Why m_pDevice is always nullptr ?????
     if (m_pDevice)
     {
         if (m_useforce)
