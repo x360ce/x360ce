@@ -23,8 +23,10 @@ m_pController(pController)
 
 ForceFeedback::~ForceFeedback()
 {
-    if (m_pController->IsBrokenFFD()) return;
+}
 
+void ForceFeedback::Shutdown()
+{
     if (m_pController->m_pDevice)
         m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
 
@@ -99,13 +101,6 @@ bool ForceFeedback::IsSupported()
 
 bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration)
 {
-    if (!ControllerManager::Get().XInputEnabled())
-    {
-        // Clear state
-        if (pVibration) ZeroMemory(pVibration, sizeof(XINPUT_VIBRATION));
-        return ERROR_SUCCESS;
-    }
-
     switch (m_Type)
     {
         case 1:

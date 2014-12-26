@@ -18,34 +18,7 @@ public:
     ForceFeedback(Controller* pController);
     virtual ~ForceFeedback();
 
-    // required because mutex is not copyable
-    ForceFeedback(const ForceFeedback &other)
-    {
-        m_effects = other.m_effects;
-        m_LeftPeriod = other.m_LeftPeriod;
-        m_RightPeriod = other.m_RightPeriod;
-        m_ForcePercent = other.m_ForcePercent;
-        m_Type = other.m_Type;
-        m_SwapMotors = other.m_SwapMotors;
-        m_Axes = other.m_Axes;
-        m_Caps = other.m_Caps;
-    }
-
-    ForceFeedback& operator=(const ForceFeedback& other)
-    {
-        if (this != &other)
-        {
-            m_effects = other.m_effects;
-            m_LeftPeriod = other.m_LeftPeriod;
-            m_RightPeriod = other.m_RightPeriod;
-            m_ForcePercent = other.m_ForcePercent;
-            m_Type = other.m_Type;
-            m_SwapMotors = other.m_SwapMotors;
-            m_Axes = other.m_Axes;
-            m_Caps = other.m_Caps;
-        }
-        return *this;
-    }
+    void Shutdown();
 
     bool SetState(XINPUT_VIBRATION* pVibration);
 
