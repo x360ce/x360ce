@@ -197,9 +197,10 @@ void Config::ReadConfig()
 
         // Require Controller copy constructor
         ControllerManager::Get().GetControllers().push_back(Controller(index));
+        Controller* pController = &ControllerManager::Get().GetControllers().back();
 
-        if (ReadPadConfig(&ControllerManager::Get().GetControllers().back(), section, &ini))
-            ReadPadMapping(&ControllerManager::Get().GetControllers().back(), section, &ini);
+        if (ReadPadConfig(pController, section, &ini))
+            ReadPadMapping(pController, section, &ini);
     }
 }
 
