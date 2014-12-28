@@ -148,6 +148,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Mutex.h" />
     <ClInclude Include="stdafx.h" />
@@ -166,6 +167,7 @@
     </ClCompile>
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="SWIP.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowsVersion.cpp" />
   </ItemGroup>
