@@ -8,6 +8,6 @@
 #include "Mutex.h"
 #include "StringUtils.h"
 #include "SWIP.h"
-
+#include "Timer.h"
 #include "WindowsVersion.h"
 
