@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
+using System.Linq;
 
 namespace x360ce.App.Controls
 {
@@ -84,6 +85,7 @@ namespace x360ce.App.Controls
                 // If recording is not in progress then return.
                 if (Recording) return;
                 Recording = true;
+                recordingSnapshot = null;
                 drawRecordingImage = true;
                 RecordingTimer.Start();
                 CurrentCbx.ForeColor = SystemColors.GrayText;
@@ -93,54 +95,75 @@ namespace x360ce.App.Controls
             }
         }
 
-        List<string> recordingSnapshot;
+        /// <summary>Initial Direct Input activity state</summary>
+        DirectInputState recordingSnapshot;
 
-        public bool StopRecording(List<string> actions = null)
+        /// <summary>
+        /// Called whhen recording is in progress.
+        /// </summary>
+        /// <param name="state">Current direct input activity.</param>
+        /// <returns>True if recording stopped, otherwise false.</returns>
+        public bool StopRecording(DirectInputState state = null)
         {
             lock (recordingLock)
             {
-
                 // If recording is not in progress then return false.
                 if (!Recording)
                 {
                     recordingSnapshot = null;
                     return false;
                 }
+                // If recording snapshot was not created yet then...
                 else if (recordingSnapshot == null)
                 {
-                    // Make snapshot  out of first state during recordining.
-                    recordingSnapshot = actions;
+                    // Make snapshot out of the first state during recordining.
+                    recordingSnapshot = state;
+                    return false;
                 }
-                // Must stop recording if null passed or at least one action was recorded.
-                var stop = (actions == null || actions.Count > 0);
+                // Get actions by comparing intial snapshot with current state.
+                var actions = recordingSnapshot.CompareTo(state);
+                string action = null;
+                // Must stop recording if null passed.
+                var stop = actions == null;
+                // if at least one action was recorded then...
+                if (!stop && actions.Length > 0){
+                    // If this is DPad ComboBox then...
+                    if (CurrentCbx == DPadComboBox){
+                        // Get first action suitable for DPad
+                        var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
+                        if (dPadAction != null){
+                            action = dPadRx.Match(dPadAction).Groups[0].Value;
+                            stop = true;
+                        }
+                    }
+                    else 
+                    {
+                        // Get first recorded action.
+                        action = actions[0];
+                        stop = true;
+                    }
+                }
                 // If recording must stop then...
                 if (stop)
                 {
                     Recording = false;
                     RecordingTimer.Stop();
-                    // If stop was initiaded before action was recorded then...
-                    if (actions == null)
+                    // If stop was initiaded before action was recorded then...                    
+                    if (string.IsNullOrEmpty(action))
                     {
                         CurrentCbx.Items.Clear();
                     }
-                    // If action was recorded then...
                     else
                     {
-                        // Get first recorded action.
-                        var name = actions[0];
-                        // If this is DPad ComboBox and recorded action is DPad then...
-                        if (CurrentCbx == DPadComboBox && dPadRx.IsMatch(name))
-                        {
-                            name = dPadRx.Match(name).Groups[0].Value;
-                        }
-                        SettingManager.Current.SetComboBoxValue(CurrentCbx, name);
+                        // If suitable action was recorded then...
+                        SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
                         // Save setting and notify if vaue changed.
                         if (SettingManager.Current.SaveSetting(CurrentCbx)) MainForm.Current.NotifySettingsChange();
                     }
                     CurrentCbx.ForeColor = SystemColors.WindowText;
                     CurrentCbx = null;
                 }
-                return true;
+                return stop;
             }
         }
 
@@ -501,13 +524,18 @@ namespace x360ce.App.Controls
         Guid instanceGuid;
 
         /// <summary>
-        /// This function will be called when DirectInput activity is detected.
+        /// This function will be called from UpdateTimer on main form.
         /// </summary>
         /// <param name="device">Device responsible for activity.</param>
         public void UpdateFromDirectInput(Joystick device)
         {
-            List<string> actions = diControl.UpdateFrom(device);
-            StopRecording(actions);
+            // Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
+            JoystickState state;
+            //List<string> actions = 
+            diControl.UpdateFrom(device, out state);
+            DirectInputState diState = null;
+            if (state != null) diState = new DirectInputState(state);
+            StopRecording(diState);
             var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
             var enable = device != null;
             if (!enable && contains)

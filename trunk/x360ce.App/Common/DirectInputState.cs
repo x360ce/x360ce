@@ -6,14 +6,14 @@ using System.Text;
 
 namespace x360ce.App
 {
-	public class DirectInputActivity
+	public class DirectInputState
 	{
 		int[] Axis = new int[0];
 		int[] Sliders = new int[0];
 		int[] Pows = new int[0];
 		bool[] Buttons = new bool[0];
 
-		public DirectInputActivity(JoystickState state)
+		public DirectInputState(JoystickState state)
 		{
 
 			// Fill axis.
@@ -60,7 +60,7 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="state"></param>
 		/// <returns></returns>
-		public string[] CompareTo(DirectInputActivity state)
+		public string[] CompareTo(DirectInputState state)
 		{
 			var list = new List<string>();
 			list.AddRange(CompareAxisAndSliders(Axis, state.Axis, "Axis"));
@@ -72,7 +72,7 @@ namespace x360ce.App
 				{
 					if (Buttons[i] != state.Buttons[i])
 					{
-						list.Add(string.Format("Button{0}", i + 1));
+						list.Add(string.Format("Button {0}", i + 1));
 					}
 				}
 			};
@@ -83,9 +83,14 @@ namespace x360ce.App
 				{
 					if (Pows[i] != state.Pows[i])
 					{
-						list.Add(string.Format("DPad{0} {1}", i + 1, ""));
-					}
-				}
+						//list.Add(string.Format("DPad {0}", i + 1));
+                        var v = state.Pows[0];
+                        if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Left) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
+                    }
+                }
 			};
 			return list.ToArray();
 		}
@@ -111,7 +116,7 @@ namespace x360ce.App
 						// Add half prefix.
 						prefix += "H";
 					}
-					list.Add(string.Format("{0}{1}{2}", prefix, name, i + 1));
+					list.Add(string.Format("{0}{1} {2}", prefix, name, i + 1));
 				}
 			}
 			return list.ToArray();
