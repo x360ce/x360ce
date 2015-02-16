@@ -26,28 +26,40 @@ namespace x360ce.App.Controls
             InitDefaultList();
         }
 
+        object CurrentGameLock = new object();
+
         x360ce.Engine.Data.Game _CurrentGame;
         public x360ce.Engine.Data.Game CurrentGame
         {
             get { return _CurrentGame; }
             set
             {
-                DisableEvents();
                 _CurrentGame = value;
                 var en = (value != null);
                 HookMaskGroupBox.Enabled = en;
                 InstalledFilesGroupBox.Enabled = en;
                 var item = value ?? new x360ce.Engine.Data.Game();
-                // Update XInput mask.
                 var inputMask = (XInputMask)item.XInputMask;
+                var hookMask = (HookMask)item.HookMask;
+                SetMask(en, hookMask, inputMask, item.FullPath, item.ProcessorArchitecture);
+            }
+        }
+
+        void SetMask(bool en, HookMask hookMask, XInputMask inputMask, string path, int proc)
+        {
+            lock (CurrentGameLock)
+            {
+                DisableEvents();
+                HookMaskGroupBox.Enabled = en;
+                InstalledFilesGroupBox.Enabled = en;
+                // Update XInput mask.
                 Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
                 Xinput12CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput12);
                 Xinput13CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput13);
                 Xinput14CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput14);
                 Xinput91CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput91);
-                XInputMaskTextBox.Text = item.XInputMask.ToString("X8");
+                XInputMaskTextBox.Text = ((int)inputMask).ToString("X8");
                 // Update hook mask.
-                var hookMask = (HookMask)item.HookMask;
                 HookCOMCheckBox.Checked = hookMask.HasFlag(HookMask.COM);
                 HookDICheckBox.Checked = hookMask.HasFlag(HookMask.DI);
                 HookDISABLECheckBox.Checked = hookMask.HasFlag(HookMask.DISABLE);
@@ -57,13 +69,14 @@ namespace x360ce.App.Controls
                 HookSACheckBox.Checked = hookMask.HasFlag(HookMask.SA);
                 HookSTOPCheckBox.Checked = hookMask.HasFlag(HookMask.STOP);
                 HookWTCheckBox.Checked = hookMask.HasFlag(HookMask.WT);
-                HookMaskTextBox.Text = item.HookMask.ToString("X8");
+                HookMaskTextBox.Text = ((int)hookMask).ToString("X8");
                 // Location
-                GameApplicationLocationTextBox.Text = item.FullPath;
+                GameApplicationLocationTextBox.Text = path;
                 // Processor architecture.
-                ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), item.ProcessorArchitecture)
-                    ? (ProcessorArchitecture)item.ProcessorArchitecture
+                ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
+                    ? (ProcessorArchitecture)proc
                     : ProcessorArchitecture.None;
+
                 // Enable events.
                 EnableEvents();
             }
@@ -201,16 +214,6 @@ namespace x360ce.App.Controls
                 //var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
                 //e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
             }
-        }
-
-        void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            // List can't be empty, so return.
-            // Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-            if (MySettingsDataGridView.SelectedRows.Count == 0) return;
-            var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-            var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
-            CurrentGame = item;
         }
 
         void InitDefaultList()
@@ -499,10 +502,47 @@ namespace x360ce.App.Controls
             }
         }
 
-		private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
-		{
-			GetPrograms();
-		}
+        private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
+        {
+            GetPrograms();
+        }
+
+        private void GlobalSettingsDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            SetGlobalSelection();
+        }
+
+        void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            SetGamesSelection();
+        }
+
+        private void GamesTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (GamesTabControl.SelectedTab == GlobalSettingsTabPage) SetGlobalSelection();
+            else if (GamesTabControl.SelectedTab == GamesTabPage) SetGamesSelection();
+            else CurrentGame = null;
+        }
+
+        void SetGamesSelection()
+        {
+            // List can't be empty, so return.
+            // Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+            if (MySettingsDataGridView.SelectedRows.Count == 0) return;
+            var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+            var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+            CurrentGame = item;
+        }
+
+        void SetGlobalSelection()
+        {
+            // List can't be empty, so return.
+            // Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+            if (GlobalSettingsDataGridView.SelectedRows.Count == 0) return;
+            var row = GlobalSettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+            var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
+            SetMask(true, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
+        }
 
     }
 }
