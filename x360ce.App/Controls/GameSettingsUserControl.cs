@@ -286,7 +286,6 @@ namespace x360ce.App.Controls
 
         private void RefreshButton_Click(object sender, EventArgs e)
         {
-            GetPrograms();
             //ws.GetProgram()
             //ws.LoadSettingCompleted += ws_LoadSettingCompleted;
             //ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
@@ -499,6 +498,11 @@ namespace x360ce.App.Controls
                 }
             }
         }
+
+		private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
+		{
+			GetPrograms();
+		}
 
     }
 }
