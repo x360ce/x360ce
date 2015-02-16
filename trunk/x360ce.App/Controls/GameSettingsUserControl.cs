@@ -255,6 +255,7 @@ namespace x360ce.App.Controls
 
         void SetCheckXinput(object sender, string name)
         {
+            if (CurrentGame == null) return;
             var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
             var fullPath = System.IO.Path.Combine(path, name);
             var box = (CheckBox)sender;
