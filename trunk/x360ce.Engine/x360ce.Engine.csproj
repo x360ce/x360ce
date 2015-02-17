@@ -112,6 +112,7 @@
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
+    <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
