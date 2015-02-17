@@ -70,8 +70,6 @@ namespace x360ce.App.Controls
                 HookSTOPCheckBox.Checked = hookMask.HasFlag(HookMask.STOP);
                 HookWTCheckBox.Checked = hookMask.HasFlag(HookMask.WT);
                 HookMaskTextBox.Text = ((int)hookMask).ToString("X8");
-                // Location
-                GameApplicationLocationTextBox.Text = path;
                 // Processor architecture.
                 ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
                     ? (ProcessorArchitecture)proc
@@ -184,15 +182,17 @@ namespace x360ce.App.Controls
             }
             else
             {
-                SettingsFile.Current.Games.Clear();
+				var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GlobalSettingsDataGridView, "FileName");
+				SettingsFile.Current.Programs.Clear();
                 var result = (List<x360ce.Engine.Data.Program>)e.Result;
                 foreach (var item in result) SettingsFile.Current.Programs.Add(item);
                 var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
-                MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
-            }
+				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
+				JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GlobalSettingsDataGridView, "FileName", selection);
+			}
         }
 
-        void ProgramsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             var grid = (DataGridView)sender;
             var item = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
@@ -304,39 +304,6 @@ namespace x360ce.App.Controls
         private void ExportButton_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void BrowseButton_Click(object sender, EventArgs e)
-        {
-            var path = "";
-            GameApplicationOpenFileDialog.DefaultExt = ".exe";
-            if (!string.IsNullOrEmpty(GameApplicationLocationTextBox.Text))
-            {
-                var fi = new System.IO.FileInfo(GameApplicationLocationTextBox.Text);
-                if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
-                GameApplicationOpenFileDialog.FileName = fi.Name;
-            }
-            GameApplicationOpenFileDialog.Filter = Helper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
-            GameApplicationOpenFileDialog.FilterIndex = 1;
-            GameApplicationOpenFileDialog.RestoreDirectory = true;
-            if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-            GameApplicationOpenFileDialog.InitialDirectory = path;
-            GameApplicationOpenFileDialog.Title = "Browse for Executable";
-            var result = GameApplicationOpenFileDialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                // Don't allow to add windows folder.
-                var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-                if (GameApplicationOpenFileDialog.FileName.StartsWith(winFolder))
-                {
-                    MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    GameApplicationLocationTextBox.Text = GameApplicationOpenFileDialog.FileName;
-                    ProcessExecutable(GameApplicationOpenFileDialog.FileName);
-                }
-            }
         }
 
         private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -542,8 +509,49 @@ namespace x360ce.App.Controls
             if (GlobalSettingsDataGridView.SelectedRows.Count == 0) return;
             var row = GlobalSettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
             var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
-            SetMask(true, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
+            SetMask(false, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
         }
+
+		private void MyGamesAddButton_Click(object sender, EventArgs e)
+		{
+			var fullPath = "";
+			var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			if (row != null)
+			{
+				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+				fullPath = item.FullPath;
+			}
+
+			var path = "";
+			GameApplicationOpenFileDialog.DefaultExt = ".exe";
+			if (!string.IsNullOrEmpty(fullPath))
+			{
+				var fi = new System.IO.FileInfo(fullPath);
+				if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
+				GameApplicationOpenFileDialog.FileName = fi.Name;
+			}
+			GameApplicationOpenFileDialog.Filter = Helper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+			GameApplicationOpenFileDialog.FilterIndex = 1;
+			GameApplicationOpenFileDialog.RestoreDirectory = true;
+			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+			GameApplicationOpenFileDialog.InitialDirectory = path;
+			GameApplicationOpenFileDialog.Title = "Browse for Executable";
+			var result = GameApplicationOpenFileDialog.ShowDialog();
+			if (result == System.Windows.Forms.DialogResult.OK)
+			{
+				// Don't allow to add windows folder.
+				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (GameApplicationOpenFileDialog.FileName.StartsWith(winFolder))
+				{
+					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					// = GameApplicationOpenFileDialog.FileName;
+					ProcessExecutable(GameApplicationOpenFileDialog.FileName);
+				}
+			}
+		}
 
     }
 }
