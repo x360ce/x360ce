@@ -9,508 +9,369 @@ using System.Windows.Forms;
 using x360ce.Engine;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace x360ce.App.Controls
 {
-    public partial class GameSettingsUserControl : UserControl
-    {
-        public GameSettingsUserControl()
-        {
-            InitializeComponent();
-            if (DesignMode) return;
-            MySettingsDataGridView.AutoGenerateColumns = false;
-            GlobalSettingsDataGridView.AutoGenerateColumns = false;
-            ScanProgressLabel.Text = "";
-            var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
-            foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
-            InitDefaultList();
-        }
+	public partial class GameSettingsUserControl : UserControl
+	{
+		public GameSettingsUserControl()
+		{
+			InitializeComponent();
+			if (DesignMode) return;
+			MySettingsDataGridView.AutoGenerateColumns = false;
+			GlobalSettingsDataGridView.AutoGenerateColumns = false;
+			ScanProgressLabel.Text = "";
+			InitDefaultList();
+		}
 
-        object CurrentGameLock = new object();
+		void GetPrograms()
+		{
+			MainForm.Current.LoadingCircle = true;
+			var ws = new WebServiceClient();
+			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			EnabledState enabled = EnabledState.None;
+			if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = EnabledState.Enabled;
+			if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled = EnabledState.Disabled;
+			int minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
+			ws.GetProgramsCompleted += ws_GetProgramsCompleted;
+			ws.GetProgramsAsync(enabled, minInstances);
+		}
 
-        x360ce.Engine.Data.Game _CurrentGame;
-        public x360ce.Engine.Data.Game CurrentGame
-        {
-            get { return _CurrentGame; }
-            set
-            {
-                _CurrentGame = value;
-                var en = (value != null);
-                HookMaskGroupBox.Enabled = en;
-                InstalledFilesGroupBox.Enabled = en;
-                var item = value ?? new x360ce.Engine.Data.Game();
-                var inputMask = (XInputMask)item.XInputMask;
-                var hookMask = (HookMask)item.HookMask;
-                SetMask(en, hookMask, inputMask, item.FullPath, item.ProcessorArchitecture);
-            }
-        }
-
-        void SetMask(bool en, HookMask hookMask, XInputMask inputMask, string path, int proc)
-        {
-            lock (CurrentGameLock)
-            {
-                DisableEvents();
-                HookMaskGroupBox.Enabled = en;
-                InstalledFilesGroupBox.Enabled = en;
-                // Update XInput mask.
-                Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
-                Xinput12CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput12);
-                Xinput13CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput13);
-                Xinput14CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput14);
-                Xinput91CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput91);
-                XInputMaskTextBox.Text = ((int)inputMask).ToString("X8");
-                // Update hook mask.
-                HookCOMCheckBox.Checked = hookMask.HasFlag(HookMask.COM);
-                HookDICheckBox.Checked = hookMask.HasFlag(HookMask.DI);
-                HookDISABLECheckBox.Checked = hookMask.HasFlag(HookMask.DISABLE);
-                HookLLCheckBox.Checked = hookMask.HasFlag(HookMask.LL);
-                HookNameCheckBox.Checked = hookMask.HasFlag(HookMask.NAME);
-                HookPIDVIDCheckBox.Checked = hookMask.HasFlag(HookMask.PIDVID);
-                HookSACheckBox.Checked = hookMask.HasFlag(HookMask.SA);
-                HookSTOPCheckBox.Checked = hookMask.HasFlag(HookMask.STOP);
-                HookWTCheckBox.Checked = hookMask.HasFlag(HookMask.WT);
-                HookMaskTextBox.Text = ((int)hookMask).ToString("X8");
-                // Processor architecture.
-                ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
-                    ? (ProcessorArchitecture)proc
-                    : ProcessorArchitecture.None;
-
-                // Enable events.
-                EnableEvents();
-            }
-        }
-
-        //XInputMask GetmaskFromFolder(string path)
-        //{
-        //	return;
-        //}
-
-
-        void EnableEvents()
-        {
-            Xinput11CheckBox.CheckedChanged += CheckBox_Changed;
-            Xinput12CheckBox.CheckedChanged += CheckBox_Changed;
-            Xinput13CheckBox.CheckedChanged += CheckBox_Changed;
-            Xinput14CheckBox.CheckedChanged += CheckBox_Changed;
-            Xinput91CheckBox.CheckedChanged += CheckBox_Changed;
-            HookCOMCheckBox.CheckedChanged += CheckBox_Changed;
-            HookDICheckBox.CheckedChanged += CheckBox_Changed;
-            HookDISABLECheckBox.CheckedChanged += CheckBox_Changed;
-            HookLLCheckBox.CheckedChanged += CheckBox_Changed;
-            HookNameCheckBox.CheckedChanged += CheckBox_Changed;
-            HookPIDVIDCheckBox.CheckedChanged += CheckBox_Changed;
-            HookSACheckBox.CheckedChanged += CheckBox_Changed;
-            HookSTOPCheckBox.CheckedChanged += CheckBox_Changed;
-            HookWTCheckBox.CheckedChanged += CheckBox_Changed;
-        }
-
-        void DisableEvents()
-        {
-            Xinput11CheckBox.CheckedChanged -= CheckBox_Changed;
-            Xinput12CheckBox.CheckedChanged -= CheckBox_Changed;
-            Xinput13CheckBox.CheckedChanged -= CheckBox_Changed;
-            Xinput14CheckBox.CheckedChanged -= CheckBox_Changed;
-            Xinput91CheckBox.CheckedChanged -= CheckBox_Changed;
-            HookCOMCheckBox.CheckedChanged -= CheckBox_Changed;
-            HookDICheckBox.CheckedChanged -= CheckBox_Changed;
-            HookDISABLECheckBox.CheckedChanged -= CheckBox_Changed;
-            HookLLCheckBox.CheckedChanged -= CheckBox_Changed;
-            HookNameCheckBox.CheckedChanged -= CheckBox_Changed;
-            HookPIDVIDCheckBox.CheckedChanged -= CheckBox_Changed;
-            HookSACheckBox.CheckedChanged -= CheckBox_Changed;
-            HookSTOPCheckBox.CheckedChanged -= CheckBox_Changed;
-            HookWTCheckBox.CheckedChanged -= CheckBox_Changed;
-        }
-
-        void CheckBox_Changed(object sender, EventArgs e)
-        {
-            if (CurrentGame == null) return;
-            var xm = XInputMask.None;
-            if (Xinput11CheckBox.Checked) xm |= XInputMask.Xinput11;
-            if (Xinput12CheckBox.Checked) xm |= XInputMask.Xinput12;
-            if (Xinput13CheckBox.Checked) xm |= XInputMask.Xinput13;
-            if (Xinput14CheckBox.Checked) xm |= XInputMask.Xinput14;
-            if (Xinput91CheckBox.Checked) xm |= XInputMask.Xinput91;
-            if (CurrentGame.XInputMask != (int)xm)
-            {
-                CurrentGame.XInputMask = (int)xm;
-                XInputMaskTextBox.Text = CurrentGame.XInputMask.ToString("X8");
-            }
-            var hm = HookMask.NONE;
-            if (HookCOMCheckBox.Checked) hm |= HookMask.COM;
-            if (HookDICheckBox.Checked) hm |= HookMask.DI;
-            if (HookDISABLECheckBox.Checked) hm |= HookMask.DISABLE;
-            if (HookLLCheckBox.Checked) hm |= HookMask.LL;
-            if (HookNameCheckBox.Checked) hm |= HookMask.NAME;
-            if (HookPIDVIDCheckBox.Checked) hm |= HookMask.PIDVID;
-            if (HookSACheckBox.Checked) hm |= HookMask.SA;
-            if (HookSTOPCheckBox.Checked) hm |= HookMask.STOP;
-            if (HookWTCheckBox.Checked) hm |= HookMask.WT;
-            if (CurrentGame.HookMask != (int)xm)
-            {
-                CurrentGame.HookMask = (int)hm;
-                HookMaskTextBox.Text = CurrentGame.HookMask.ToString("X8");
-            }
-            SettingsFile.Current.Save();
-        }
-
-        void GetPrograms()
-        {
-            MainForm.Current.LoadingCircle = true;
-            var ws = new WebServiceClient();
-            ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-            EnabledState enabled = EnabledState.None;
-            if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = EnabledState.Enabled;
-            if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled = EnabledState.Disabled;
-            int minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
-            ws.GetProgramsCompleted += ws_GetProgramsCompleted;
-            ws.GetProgramsAsync(enabled, minInstances);
-        }
-
-        void ws_GetProgramsCompleted(object sender, ResultEventArgs e)
-        {
-            MainForm.Current.LoadingCircle = false;
-            if (e.Error != null)
-            {
-                var error = e.Error.Message;
-                if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-                MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
-            }
-            else if (e.Result == null)
-            {
-                MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
-            }
-            else
-            {
+		void ws_GetProgramsCompleted(object sender, ResultEventArgs e)
+		{
+			MainForm.Current.LoadingCircle = false;
+			if (e.Error != null)
+			{
+				var error = e.Error.Message;
+				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
+				MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
+			}
+			else if (e.Result == null)
+			{
+				MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
+			}
+			else
+			{
 				var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GlobalSettingsDataGridView, "FileName");
 				SettingsFile.Current.Programs.Clear();
-                var result = (List<x360ce.Engine.Data.Program>)e.Result;
-                foreach (var item in result) SettingsFile.Current.Programs.Add(item);
-                var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
+				var result = (List<x360ce.Engine.Data.Program>)e.Result;
+				foreach (var item in result) SettingsFile.Current.Programs.Add(item);
+				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
 				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 				JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GlobalSettingsDataGridView, "FileName", selection);
 			}
-        }
+		}
 
-        void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            var grid = (DataGridView)sender;
-            var item = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
-            var isCurrent = CurrentGame != null && item.GameId == CurrentGame.GameId;
-            e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
-                ? System.Drawing.Color.Gray
-                : grid.DefaultCellStyle.ForeColor;
-            //if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
-            //{
-            //	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
-            //}
-            //else
-            if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
-            {
-                e.Value = isCurrent ? MyGamesSaveButton.Image : Properties.Resources.empty_16x16;
-            }
-            else
-            {
-                //var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
-                //e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
-            }
-        }
+		void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var item = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
+			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
+			e.CellStyle.ForeColor = item.IsEnabled
+					? grid.DefaultCellStyle.ForeColor
+					: System.Drawing.SystemColors.ControlDark;
+			e.CellStyle.SelectionBackColor = item.IsEnabled
+			 ? grid.DefaultCellStyle.SelectionBackColor
+			 : System.Drawing.SystemColors.ControlDark;
+			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
+			//	? System.Drawing.Color.Gray
+			//	: grid.DefaultCellStyle.ForeColor;
+			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
+			//{
+			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
+			//}
+			//else
+			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			{
+				e.Value = isCurrent ? SaveButton.Image : Properties.Resources.empty_16x16;
+			}
+			else
+			{
+				//var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
+				//e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
+			}
+		}
 
-        void InitDefaultList()
-        {
-            SettingsFile.Current.Load();
-            MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
-        }
+		void InitDefaultList()
+		{
+			SettingsFile.Current.Load();
+			MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
+		}
 
-        void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
-        {
-        }
+		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
+		{
+		}
 
-        //void UpdateCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, Guid? checksum)
-        //{
-        //	var v = e.Value.ToString().Substring(0, 8).ToUpper();
-        //	var s = checksum.HasValue ? checksum.Value.ToString().Substring(0, 8).ToUpper() : null;
-        //	var match = v == s;
-        //	e.Value = e.Value.ToString().Substring(0, 8).ToUpper();
-        //	e.CellStyle.BackColor = match ? System.Drawing.Color.FromArgb(255, 222, 225, 231) : e.CellStyle.BackColor = grid.DefaultCellStyle.BackColor;
-        //}
+		//void UpdateCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, Guid? checksum)
+		//{
+		//	var v = e.Value.ToString().Substring(0, 8).ToUpper();
+		//	var s = checksum.HasValue ? checksum.Value.ToString().Substring(0, 8).ToUpper() : null;
+		//	var match = v == s;
+		//	e.Value = e.Value.ToString().Substring(0, 8).ToUpper();
+		//	e.CellStyle.BackColor = match ? System.Drawing.Color.FromArgb(255, 222, 225, 231) : e.CellStyle.BackColor = grid.DefaultCellStyle.BackColor;
+		//}
 
 
-        //	InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.IniFileName);
-        //InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
-        //InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.IniFileName);
-        //InstallFilesXinput910CheckBox.SuspendLayout();
-        //InstallFilesXinput11CheckBox.SuspendLayout();
-        //InstallFilesXinput12CheckBox.SuspendLayout();
-        //InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
-        //InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
-        //InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
-        //InstallFilesXinput910CheckBox.ResumeLayout(false);
-        //InstallFilesXinput11CheckBox.ResumeLayout(false);
-        //InstallFilesXinput12CheckBox.ResumeLayout(false);
-        ////InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
-        ////InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
-        ////InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
-        //InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
+		//	InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.IniFileName);
+		//InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
+		//InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.IniFileName);
+		//InstallFilesXinput910CheckBox.SuspendLayout();
+		//InstallFilesXinput11CheckBox.SuspendLayout();
+		//InstallFilesXinput12CheckBox.SuspendLayout();
+		//InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
+		//InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
+		//InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
+		//InstallFilesXinput910CheckBox.ResumeLayout(false);
+		//InstallFilesXinput11CheckBox.ResumeLayout(false);
+		//InstallFilesXinput12CheckBox.ResumeLayout(false);
+		////InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
+		////InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
+		////InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
+		//InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
 
-        void SetCheckXinput(object sender, string name)
-        {
-            if (CurrentGame == null) return;
-            var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
-            var fullPath = System.IO.Path.Combine(path, name);
-            var box = (CheckBox)sender;
-            var exists = Helper.CreateDllFile(box.Checked, fullPath);
-            if (exists != box.Checked) box.Checked = exists;
-        }
 
-        private void Xinput91CheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetCheckXinput(sender, Helper.dllFile0);
-        }
 
-        private void Xinput11CheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetCheckXinput(sender, Helper.dllFile1);
-        }
+		private void RefreshButton_Click(object sender, EventArgs e)
+		{
+			//ws.GetProgram()
+			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
+			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
 
-        private void Xinput12CheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetCheckXinput(sender, Helper.dllFile2);
-        }
+		}
 
-        private void Xinput13CheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetCheckXinput(sender, Helper.dllFile3);
-        }
+		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+		{
+			//var x = e;
+		}
 
-        private void Xinput14CheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            SetCheckXinput(sender, Helper.dllFile4);
-        }
+		private void ExportButton_Click(object sender, EventArgs e)
+		{
 
-        private void RefreshButton_Click(object sender, EventArgs e)
-        {
-            //ws.GetProgram()
-            //ws.LoadSettingCompleted += ws_LoadSettingCompleted;
-            //ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
+		}
 
-        }
+		private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
+		{
 
-        void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
-        {
-            //var x = e;
-        }
+		}
 
-        private void ExportButton_Click(object sender, EventArgs e)
-        {
+		void ProcessExecutable(string filePath)
+		{
+			var fi = new System.IO.FileInfo(filePath);
+			if (!fi.Exists) return;
+			// Check if item already exists.
+			var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
+			if (game == null)
+			{
+				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+				// Load default settings.
+				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
+				game.LoadDefault(program);
+				SettingsFile.Current.Games.Add(game);
+			}
+			else
+			{
+				game.FullPath = fi.FullName;
+			}
+			SettingsFile.Current.Save();
+		}
 
-        }
+		/// <summary>
+		/// Scan for games
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ScanButton_Click(object sender, EventArgs e)
+		{
+			var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanFunction);
+			if (!success) ScanProgressLabel.Text = "Scan failed!";
+		}
 
-        private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
-        {
+		void ScanFunction(object state)
+		{
+			string[] paths = null;
+			Invoke((MethodInvoker)delegate()
+			{
+				ScanProgressLabel.Visible = true;
+				ScanButton.Enabled = false;
+				paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+				ScanProgressLabel.Text = "Scanning...";
+			});
+			var skipped = 0;
+			var added = 0;
+			var updated = 0;
+			for (int i = 0; i < paths.Length; i++)
+			{
+				var path = (string)paths[i];
+				// Don't allow to scan windows folder.
+				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (path.StartsWith(winFolder)) continue;
+				var di = new System.IO.DirectoryInfo(path);
+				// Skip folders if don't exists.
+				if (!di.Exists) continue;
+				var exes = new List<FileInfo>();
+				SearchDirectory(di, exes, "*.exe");
+				for (int f = 0; f < exes.Count; f++)
+				{
 
-        }
+					var exe = exes[f];
+					var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == exe.Name);
+					// If file doesn't exist in the game list then continue.
+					if (program == null)
+					{
+						skipped++;
+					}
+					else
+					{
+						// Get game my game by executable name.
+						var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exe.Name.ToLower());
+						// If file doesn't exist in the game list then continue.
+						if (game == null)
+						{
+							Invoke((MethodInvoker)delegate()
+							{
+								game = x360ce.Engine.Data.Game.FromDisk(exe.FullName);
+								game.LoadDefault(program);
+								SettingsFile.Current.Games.Add(game);
+								added++;
+							});
+						}
+						else
+						{
+							game.FullPath = exe.FullName;
+							if (string.IsNullOrEmpty(game.FileProductName) && !string.IsNullOrEmpty(program.FileProductName))
+							{
+								game.FileProductName = program.FileProductName;
+							}
+							updated++;
+						}
+					}
+					Invoke((MethodInvoker)delegate()
+						{
+							ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
+						});
+				}
+				SettingsFile.Current.Save();
+			}
+			Invoke((MethodInvoker)delegate()
+			{
+				//ScanProgressLabel.Text = "Scan Completed";
+				ScanButton.Enabled = true;
+				ScanProgressLabel.Visible = false;
+			});
+		}
 
-        void ProcessExecutable(string filePath)
-        {
-            var fi = new System.IO.FileInfo(filePath);
-            if (!fi.Exists) return;
-            // Check if item already exists.
-            var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
-            if (game == null)
-            {
-                game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
-                // Load default settings.
-                var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
-                game.LoadDefault(program);
-                SettingsFile.Current.Games.Add(game);
-            }
-            else
-            {
-                game.FullPath = fi.FullName;
-            }
-            SettingsFile.Current.Save();
-        }
+		private void SearchDirectory(DirectoryInfo di, List<FileInfo> fileList, string searchPattern)
+		{
+			try
+			{
+				foreach (DirectoryInfo subDi in di.GetDirectories())
+				{
+					SearchDirectory(subDi, fileList, searchPattern);
+				}
+			}
+			catch { }
+			try
+			{
+				foreach (FileInfo fi in di.GetFiles(searchPattern))
+				{
+					fileList.Add(fi);
+				}
+			}
+			catch { }
+		}
 
-        /// <summary>
-        /// Scan for games
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ScanButton_Click(object sender, EventArgs e)
-        {
-            var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanFunction);
-            if (!success) ScanProgressLabel.Text = "Scan failed!";
-        }
+		private void GamesControl_Load(object sender, EventArgs e)
+		{
+			Helper.EnableDoubleBuffering(MySettingsDataGridView);
+			Helper.EnableDoubleBuffering(GlobalSettingsDataGridView);
+			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
+			LoadProgramsFromLocalFile();
+		}
 
-        void ScanFunction(object state)
-        {
-            string[] paths = null;
-            Invoke((MethodInvoker)delegate()
-            {
-                ScanProgressLabel.Visible = true;
-                MyGamesScanButton.Enabled = false;
-                paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
-                ScanProgressLabel.Text = "Scanning...";
-            });
-            var skipped = 0;
-            var added = 0;
-            var updated = 0;
-            for (int i = 0; i < paths.Length; i++)
-            {
-                var path = (string)paths[i];
-                // Don't allow to scan windows folder.
-                var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-                if (path.StartsWith(winFolder)) continue;
-                var di = new System.IO.DirectoryInfo(path);
-                // Skip folders if don't exists.
-                if (!di.Exists) continue;
-                var exes = new List<FileInfo>();
-                SearchDirectory(di, exes, "*.exe");
-                for (int f = 0; f < exes.Count; f++)
-                {
+		void LoadProgramsFromLocalFile()
+		{
+			var ini = new Ini(SettingManager.GdbFileName);
+			var sections = ini.GetSections();
+			foreach (var section in sections)
+			{
+				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
+				if (program == null)
+				{
+					program = new Engine.Data.Program();
+					program.FileName = section;
+					program.HookMask = 0x00000002;
+					program.XInputMask = 0x00000004;
+					SettingsFile.Current.Programs.Add(program);
+				}
+				program.FileProductName = ini.GetValue(section, "Name", section);
+				int hookMask;
+				var hookMaskValue = ini.GetValue(section, "HookMask", "0x00000002");
+				if (int.TryParse(hookMaskValue, out hookMask))
+				{
+					program.HookMask = hookMask;
+				}
+			}
+		}
 
-                    var exe = exes[f];
-                    var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == exe.Name);
-                    // If file doesn't exist in the game list then continue.
-                    if (program == null)
-                    {
-                        skipped++;
-                    }
-                    else
-                    {
-                        // Get game my game by executable name.
-                        var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exe.Name.ToLower());
-                        // If file doesn't exist in the game list then continue.
-                        if (game == null)
-                        {
-                            Invoke((MethodInvoker)delegate()
-                            {
-                                game = x360ce.Engine.Data.Game.FromDisk(exe.FullName);
-                                game.LoadDefault(program);
-                                SettingsFile.Current.Games.Add(game);
-                                added++;
-                            });
-                        }
-                        else
-                        {
-                            game.FullPath = exe.FullName;
-                            if (string.IsNullOrEmpty(game.FileProductName) && !string.IsNullOrEmpty(program.FileProductName))
-                            {
-                                game.FileProductName = program.FileProductName;
-                            }
-                            updated++;
-                        }
-                    }
-                    Invoke((MethodInvoker)delegate()
-                        {
-                            ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
-                        });
-                }
-                SettingsFile.Current.Save();
-            }
-            Invoke((MethodInvoker)delegate()
-            {
-                //ScanProgressLabel.Text = "Scan Completed";
-                MyGamesScanButton.Enabled = true;
-                ScanProgressLabel.Visible = false;
-            });
-        }
+		private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
+		{
+			GetPrograms();
+		}
 
-        private void SearchDirectory(DirectoryInfo di, List<FileInfo> fileList, string searchPattern)
-        {
-            try
-            {
-                foreach (DirectoryInfo subDi in di.GetDirectories())
-                {
-                    SearchDirectory(subDi, fileList, searchPattern);
-                }
-            }
-            catch { }
-            try
-            {
-                foreach (FileInfo fi in di.GetFiles(searchPattern))
-                {
-                    fileList.Add(fi);
-                }
-            }
-            catch { }
-        }
+		private void GlobalSettingsDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			SetGlobalSelection();
+		}
 
-        private void GamesControl_Load(object sender, EventArgs e)
-        {
-            Helper.EnableDoubleBuffering(MySettingsDataGridView);
-            Helper.EnableDoubleBuffering(GlobalSettingsDataGridView);
-            GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
-            LoadProgramsFromLocalFile();
-        }
+		void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			SetGamesSelection();
+		}
 
-        void LoadProgramsFromLocalFile()
-        {
-            var ini = new Ini(SettingManager.GdbFileName);
-            var sections = ini.GetSections();
-            foreach (var section in sections)
-            {
-                var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
-                if (program == null)
-                {
-                    program = new Engine.Data.Program();
-                    program.FileName = section;
-                    program.HookMask = 0x00000002;
-                    program.XInputMask = 0x00000004;
-                    SettingsFile.Current.Programs.Add(program);
-                }
-                program.FileProductName = ini.GetValue(section, "Name", section);
-                int hookMask;
-                var hookMaskValue = ini.GetValue(section, "HookMask", "0x00000002");
-                if (int.TryParse(hookMaskValue, out hookMask))
-                {
-                    program.HookMask = hookMask;
-                }
-            }
-        }
+		private void GamesTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (GamesTabControl.SelectedTab == GlobalSettingsTabPage) SetGlobalSelection();
+			else if (GamesTabControl.SelectedTab == GamesTabPage) SetGamesSelection();
+		}
 
-        private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
-        {
-            GetPrograms();
-        }
+		void SetGamesSelection()
+		{
+			// List can't be empty, so return.
+			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+			var selected = MySettingsDataGridView.SelectedRows.Count > 0;
+			UpdateButton.Enabled = selected;
+			StartButton.Enabled = selected;
+			SaveButton.Enabled = selected;
+			DeleteButton.Enabled = selected;
+			if (selected)
+			{
+				var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+				GameDetailsControl.CurrentGame = item;
+				if (item.IsEnabled)
+				{
+				}
+				else
+				{
+				}
+			}
+			else
+			{
+				GameDetailsControl.CurrentGame = null;
+				UpdateButton.Visible = false;
+			}
+		}
 
-        private void GlobalSettingsDataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            SetGlobalSelection();
-        }
-
-        void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            SetGamesSelection();
-        }
-
-        private void GamesTabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (GamesTabControl.SelectedTab == GlobalSettingsTabPage) SetGlobalSelection();
-            else if (GamesTabControl.SelectedTab == GamesTabPage) SetGamesSelection();
-            else CurrentGame = null;
-        }
-
-        void SetGamesSelection()
-        {
-            // List can't be empty, so return.
-            // Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-            if (MySettingsDataGridView.SelectedRows.Count == 0) return;
-            var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-            var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
-            CurrentGame = item;
-        }
-
-        void SetGlobalSelection()
-        {
-            // List can't be empty, so return.
-            // Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-            if (GlobalSettingsDataGridView.SelectedRows.Count == 0) return;
-            var row = GlobalSettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-            var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
-            SetMask(false, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
-        }
+		void SetGlobalSelection()
+		{
+			// List can't be empty, so return.
+			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+			if (GlobalSettingsDataGridView.SelectedRows.Count == 0) return;
+			var row = GlobalSettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
+			GameDefaultDetailsControl.SetMask(false, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
+		}
 
 		private void MyGamesAddButton_Click(object sender, EventArgs e)
 		{
@@ -553,5 +414,52 @@ namespace x360ce.App.Controls
 			}
 		}
 
-    }
+		private void StartButton_Click(object sender, EventArgs e)
+		{
+			var game = GameDetailsControl.CurrentGame;
+			OpenPath(game.FullPath);
+		}
+
+		void OpenPath(string path, string arguments = null)
+		{
+			try
+			{
+				var fi = new System.IO.FileInfo(path);
+				//if (!fi.Exists) return;
+				// Brings up the "Windows cannot open this file" dialog if association not found.
+				var psi = new ProcessStartInfo(path);
+				psi.UseShellExecute = true;
+				psi.WorkingDirectory = fi.Directory.FullName;
+				psi.ErrorDialog = true;
+				if (arguments != null) psi.Arguments = arguments;
+				Process.Start(psi);
+			}
+			catch (Exception) { }
+		}
+
+		private void EnableButton_Click(object sender, EventArgs e)
+		{
+			var item = GameDetailsControl.CurrentGame;
+			if (item != null) item.IsEnabled = true;
+		}
+
+		private void DisableButton_Click(object sender, EventArgs e)
+		{
+			var item = GameDetailsControl.CurrentGame;
+			if (item != null) item.IsEnabled = false;
+		}
+
+		private void MySettingsDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex < 0) return;
+			var grid = (DataGridView)sender;
+			if (e.ColumnIndex == grid.Columns[EnabledColumn.Name].Index)
+			{
+				var item = (x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem;
+				item.IsEnabled = !item.IsEnabled;
+				grid.Invalidate();
+			}
+		}
+
+	}
 }
