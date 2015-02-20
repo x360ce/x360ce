@@ -37,13 +37,9 @@
 			this.GamesTabControl = new System.Windows.Forms.TabControl();
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
 			this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
-			this.ScanProgressLabel = new System.Windows.Forms.Label();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.MyGamesRefreshButton = new System.Windows.Forms.ToolStripButton();
-			this.MyGamesScanButton = new System.Windows.Forms.ToolStripButton();
-			this.MyGamesSaveButton = new System.Windows.Forms.ToolStripButton();
-			this.MyGamesDeleteButton = new System.Windows.Forms.ToolStripButton();
-			this.MyGamesAddButton = new System.Windows.Forms.ToolStripButton();
+			this.ScanProgressLabel = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
 			this.GlobalSettingsDataGridView = new System.Windows.Forms.DataGridView();
 			this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
@@ -51,32 +47,23 @@
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.panel2 = new System.Windows.Forms.Panel();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.HookMaskGroupBox = new System.Windows.Forms.GroupBox();
-			this.HookMaskTextBox = new System.Windows.Forms.TextBox();
-			this.HookDISABLECheckBox = new System.Windows.Forms.CheckBox();
-			this.HookNameCheckBox = new System.Windows.Forms.CheckBox();
-			this.HookSTOPCheckBox = new System.Windows.Forms.CheckBox();
-			this.HookPIDVIDCheckBox = new System.Windows.Forms.CheckBox();
-			this.HookDICheckBox = new System.Windows.Forms.CheckBox();
-			this.HookWTCheckBox = new System.Windows.Forms.CheckBox();
-			this.HookSACheckBox = new System.Windows.Forms.CheckBox();
-			this.HookCOMCheckBox = new System.Windows.Forms.CheckBox();
-			this.HookLLCheckBox = new System.Windows.Forms.CheckBox();
-			this.InstalledFilesGroupBox = new System.Windows.Forms.GroupBox();
-			this.ProcessorArchitectureComboBox = new System.Windows.Forms.ComboBox();
-			this.ProcessorArchitectureLabel = new System.Windows.Forms.Label();
-			this.XInputMaskTextBox = new System.Windows.Forms.TextBox();
-			this.Xinput14CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput13CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput12CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput11CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput91CheckBox = new System.Windows.Forms.CheckBox();
 			this.GameApplicationOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.DeleteButton = new System.Windows.Forms.ToolStripButton();
+			this.SaveButton = new System.Windows.Forms.ToolStripButton();
+			this.AddButton = new System.Windows.Forms.ToolStripButton();
+			this.ScanButton = new System.Windows.Forms.ToolStripButton();
+			this.StartButton = new System.Windows.Forms.ToolStripButton();
+			this.UpdateButton = new System.Windows.Forms.ToolStripButton();
+			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.GameDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
+			this.GameDefaultDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
+			this.EnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -91,8 +78,6 @@
 			this.toolStrip2.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
-			this.HookMaskGroupBox.SuspendLayout();
-			this.InstalledFilesGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// GamesTabControl
@@ -107,18 +92,20 @@
 			this.GamesTabControl.Location = new System.Drawing.Point(3, 3);
 			this.GamesTabControl.Name = "GamesTabControl";
 			this.GamesTabControl.SelectedIndex = 0;
-			this.GamesTabControl.Size = new System.Drawing.Size(543, 476);
+			this.GamesTabControl.Size = new System.Drawing.Size(695, 476);
 			this.GamesTabControl.TabIndex = 19;
 			this.GamesTabControl.SelectedIndexChanged += new System.EventHandler(this.GamesTabControl_SelectedIndexChanged);
 			// 
 			// GamesTabPage
 			// 
 			this.GamesTabPage.Controls.Add(this.MySettingsDataGridView);
-			this.GamesTabPage.Controls.Add(this.ScanProgressLabel);
 			this.GamesTabPage.Controls.Add(this.toolStrip1);
+			this.GamesTabPage.Controls.Add(this.ScanProgressLabel);
+			this.GamesTabPage.Controls.Add(this.panel1);
+			this.GamesTabPage.Controls.Add(this.GameDetailsControl);
 			this.GamesTabPage.Location = new System.Drawing.Point(4, 22);
 			this.GamesTabPage.Name = "GamesTabPage";
-			this.GamesTabPage.Size = new System.Drawing.Size(535, 450);
+			this.GamesTabPage.Size = new System.Drawing.Size(687, 450);
 			this.GamesTabPage.TabIndex = 0;
 			this.GamesTabPage.Text = "My Game Settings";
 			this.GamesTabPage.UseVisualStyleBackColor = true;
@@ -140,6 +127,7 @@
 			this.MySettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.MySettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.MySettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.EnabledColumn,
             this.MyIconColumn,
             this.GameIdColumn,
             this.FileNameColumn,
@@ -169,11 +157,30 @@
 			this.MySettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.MySettingsDataGridView.RowHeadersVisible = false;
 			this.MySettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.MySettingsDataGridView.Size = new System.Drawing.Size(535, 385);
+			this.MySettingsDataGridView.Size = new System.Drawing.Size(544, 385);
 			this.MySettingsDataGridView.TabIndex = 0;
 			this.MySettingsDataGridView.DataSourceChanged += new System.EventHandler(this.ProgramsDataGridView_DataSourceChanged);
+			this.MySettingsDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MySettingsDataGridView_CellClick);
 			this.MySettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MySettingsDataGridView_CellFormatting);
 			this.MySettingsDataGridView.SelectionChanged += new System.EventHandler(this.ProgramsDataGridView_SelectionChanged);
+			// 
+			// toolStrip1
+			// 
+			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshButton,
+            this.DeleteButton,
+            this.SaveButton,
+            this.AddButton,
+            this.ScanButton,
+            this.UpdateButton,
+            this.StartButton});
+			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.toolStrip1.Size = new System.Drawing.Size(544, 25);
+			this.toolStrip1.TabIndex = 2;
+			this.toolStrip1.Text = "MySettingsToolStrip";
 			// 
 			// ScanProgressLabel
 			// 
@@ -182,83 +189,29 @@
 			this.ScanProgressLabel.Location = new System.Drawing.Point(0, 410);
 			this.ScanProgressLabel.Name = "ScanProgressLabel";
 			this.ScanProgressLabel.Padding = new System.Windows.Forms.Padding(3);
-			this.ScanProgressLabel.Size = new System.Drawing.Size(535, 40);
+			this.ScanProgressLabel.Size = new System.Drawing.Size(544, 40);
 			this.ScanProgressLabel.TabIndex = 0;
 			this.ScanProgressLabel.Text = "[ScanProgressLabel]";
 			this.ScanProgressLabel.Visible = false;
 			// 
-			// toolStrip1
+			// panel1
 			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MyGamesRefreshButton,
-            this.MyGamesScanButton,
-            this.MyGamesSaveButton,
-            this.MyGamesDeleteButton,
-            this.MyGamesAddButton});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip1.Size = new System.Drawing.Size(535, 25);
-			this.toolStrip1.TabIndex = 2;
-			this.toolStrip1.Text = "MySettingsToolStrip";
-			// 
-			// MyGamesRefreshButton
-			// 
-			this.MyGamesRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MyGamesRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.MyGamesRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MyGamesRefreshButton.Name = "MyGamesRefreshButton";
-			this.MyGamesRefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.MyGamesRefreshButton.Text = "&Refresh";
-			this.MyGamesRefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-			// 
-			// MyGamesScanButton
-			// 
-			this.MyGamesScanButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MyGamesScanButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
-			this.MyGamesScanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MyGamesScanButton.Name = "MyGamesScanButton";
-			this.MyGamesScanButton.Size = new System.Drawing.Size(52, 22);
-			this.MyGamesScanButton.Text = "&Scan";
-			this.MyGamesScanButton.Click += new System.EventHandler(this.ScanButton_Click);
-			// 
-			// MyGamesSaveButton
-			// 
-			this.MyGamesSaveButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MyGamesSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-			this.MyGamesSaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MyGamesSaveButton.Name = "MyGamesSaveButton";
-			this.MyGamesSaveButton.Size = new System.Drawing.Size(51, 22);
-			this.MyGamesSaveButton.Text = "&Save";
-			// 
-			// MyGamesDeleteButton
-			// 
-			this.MyGamesDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MyGamesDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.MyGamesDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MyGamesDeleteButton.Name = "MyGamesDeleteButton";
-			this.MyGamesDeleteButton.Size = new System.Drawing.Size(60, 22);
-			this.MyGamesDeleteButton.Text = "&Delete";
-			// 
-			// MyGamesAddButton
-			// 
-			this.MyGamesAddButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MyGamesAddButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
-			this.MyGamesAddButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.MyGamesAddButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MyGamesAddButton.Name = "MyGamesAddButton";
-			this.MyGamesAddButton.Size = new System.Drawing.Size(58, 22);
-			this.MyGamesAddButton.Text = "Add...";
-			this.MyGamesAddButton.Click += new System.EventHandler(this.MyGamesAddButton_Click);
+			this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+			this.panel1.Location = new System.Drawing.Point(544, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(1, 450);
+			this.panel1.TabIndex = 4;
 			// 
 			// GlobalSettingsTabPage
 			// 
 			this.GlobalSettingsTabPage.Controls.Add(this.GlobalSettingsDataGridView);
 			this.GlobalSettingsTabPage.Controls.Add(this.toolStrip2);
+			this.GlobalSettingsTabPage.Controls.Add(this.panel2);
+			this.GlobalSettingsTabPage.Controls.Add(this.GameDefaultDetailsControl);
 			this.GlobalSettingsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.GlobalSettingsTabPage.Name = "GlobalSettingsTabPage";
-			this.GlobalSettingsTabPage.Size = new System.Drawing.Size(535, 450);
+			this.GlobalSettingsTabPage.Size = new System.Drawing.Size(687, 450);
 			this.GlobalSettingsTabPage.TabIndex = 1;
 			this.GlobalSettingsTabPage.Text = "Default Settings for Most Popular Games";
 			this.GlobalSettingsTabPage.UseVisualStyleBackColor = true;
@@ -308,7 +261,7 @@
 			this.GlobalSettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
 			this.GlobalSettingsDataGridView.RowHeadersVisible = false;
 			this.GlobalSettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.GlobalSettingsDataGridView.Size = new System.Drawing.Size(535, 425);
+			this.GlobalSettingsDataGridView.Size = new System.Drawing.Size(544, 425);
 			this.GlobalSettingsDataGridView.TabIndex = 1;
 			this.GlobalSettingsDataGridView.SelectionChanged += new System.EventHandler(this.GlobalSettingsDataGridView_SelectionChanged);
 			// 
@@ -322,6 +275,7 @@
 			this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.dataGridViewImageColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.dataGridViewImageColumn1.Visible = false;
+			this.dataGridViewImageColumn1.Width = 24;
 			// 
 			// dataGridViewTextBoxColumn1
 			// 
@@ -357,19 +311,18 @@
 			this.toolStrip2.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip2.Name = "toolStrip2";
 			this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip2.Size = new System.Drawing.Size(535, 25);
+			this.toolStrip2.Size = new System.Drawing.Size(544, 25);
 			this.toolStrip2.TabIndex = 3;
 			this.toolStrip2.Text = "MySettingsToolStrip";
 			// 
-			// GlobalSettingsRefreshButton
+			// panel2
 			// 
-			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
-			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.GlobalSettingsRefreshButton.Text = "&Refresh";
-			this.GlobalSettingsRefreshButton.Click += new System.EventHandler(this.GlobalSettingsRefreshButton_Click);
+			this.panel2.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
+			this.panel2.Location = new System.Drawing.Point(544, 0);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(1, 450);
+			this.panel2.TabIndex = 5;
 			// 
 			// SettingsTabPage
 			// 
@@ -380,7 +333,7 @@
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.SettingsTabPage.Name = "SettingsTabPage";
 			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.SettingsTabPage.Size = new System.Drawing.Size(535, 361);
+			this.SettingsTabPage.Size = new System.Drawing.Size(687, 450);
 			this.SettingsTabPage.TabIndex = 2;
 			this.SettingsTabPage.Text = "Options";
 			// 
@@ -420,226 +373,114 @@
             0,
             0});
 			// 
-			// HookMaskGroupBox
-			// 
-			this.HookMaskGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HookMaskGroupBox.Controls.Add(this.HookMaskTextBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookDISABLECheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookNameCheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookSTOPCheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookPIDVIDCheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookDICheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookWTCheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookSACheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookCOMCheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookLLCheckBox);
-			this.HookMaskGroupBox.Location = new System.Drawing.Point(552, 3);
-			this.HookMaskGroupBox.Name = "HookMaskGroupBox";
-			this.HookMaskGroupBox.Size = new System.Drawing.Size(146, 253);
-			this.HookMaskGroupBox.TabIndex = 20;
-			this.HookMaskGroupBox.TabStop = false;
-			this.HookMaskGroupBox.Text = "Hook Mask";
-			// 
-			// HookMaskTextBox
-			// 
-			this.HookMaskTextBox.Location = new System.Drawing.Point(6, 226);
-			this.HookMaskTextBox.Name = "HookMaskTextBox";
-			this.HookMaskTextBox.ReadOnly = true;
-			this.HookMaskTextBox.Size = new System.Drawing.Size(71, 20);
-			this.HookMaskTextBox.TabIndex = 1;
-			this.HookMaskTextBox.Text = "0x00000000";
-			// 
-			// HookDISABLECheckBox
-			// 
-			this.HookDISABLECheckBox.AutoSize = true;
-			this.HookDISABLECheckBox.Location = new System.Drawing.Point(6, 203);
-			this.HookDISABLECheckBox.Name = "HookDISABLECheckBox";
-			this.HookDISABLECheckBox.Size = new System.Drawing.Size(71, 17);
-			this.HookDISABLECheckBox.TabIndex = 0;
-			this.HookDISABLECheckBox.Text = "DISABLE";
-			this.HookDISABLECheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookNameCheckBox
-			// 
-			this.HookNameCheckBox.AutoSize = true;
-			this.HookNameCheckBox.Location = new System.Drawing.Point(6, 111);
-			this.HookNameCheckBox.Name = "HookNameCheckBox";
-			this.HookNameCheckBox.Size = new System.Drawing.Size(57, 17);
-			this.HookNameCheckBox.TabIndex = 0;
-			this.HookNameCheckBox.Text = "NAME";
-			this.HookNameCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookSTOPCheckBox
-			// 
-			this.HookSTOPCheckBox.AutoSize = true;
-			this.HookSTOPCheckBox.Location = new System.Drawing.Point(6, 180);
-			this.HookSTOPCheckBox.Name = "HookSTOPCheckBox";
-			this.HookSTOPCheckBox.Size = new System.Drawing.Size(55, 17);
-			this.HookSTOPCheckBox.TabIndex = 0;
-			this.HookSTOPCheckBox.Text = "STOP";
-			this.HookSTOPCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookPIDVIDCheckBox
-			// 
-			this.HookPIDVIDCheckBox.AutoSize = true;
-			this.HookPIDVIDCheckBox.Location = new System.Drawing.Point(6, 88);
-			this.HookPIDVIDCheckBox.Name = "HookPIDVIDCheckBox";
-			this.HookPIDVIDCheckBox.Size = new System.Drawing.Size(62, 17);
-			this.HookPIDVIDCheckBox.TabIndex = 0;
-			this.HookPIDVIDCheckBox.Text = "PIDVID";
-			this.HookPIDVIDCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookDICheckBox
-			// 
-			this.HookDICheckBox.AutoSize = true;
-			this.HookDICheckBox.Location = new System.Drawing.Point(6, 65);
-			this.HookDICheckBox.Name = "HookDICheckBox";
-			this.HookDICheckBox.Size = new System.Drawing.Size(37, 17);
-			this.HookDICheckBox.TabIndex = 0;
-			this.HookDICheckBox.Text = "DI";
-			this.HookDICheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookWTCheckBox
-			// 
-			this.HookWTCheckBox.AutoSize = true;
-			this.HookWTCheckBox.Location = new System.Drawing.Point(6, 157);
-			this.HookWTCheckBox.Name = "HookWTCheckBox";
-			this.HookWTCheckBox.Size = new System.Drawing.Size(122, 17);
-			this.HookWTCheckBox.TabIndex = 0;
-			this.HookWTCheckBox.Text = "WT (WinVerifyTrust)";
-			this.HookWTCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookSACheckBox
-			// 
-			this.HookSACheckBox.AutoSize = true;
-			this.HookSACheckBox.Location = new System.Drawing.Point(6, 134);
-			this.HookSACheckBox.Name = "HookSACheckBox";
-			this.HookSACheckBox.Size = new System.Drawing.Size(94, 17);
-			this.HookSACheckBox.TabIndex = 0;
-			this.HookSACheckBox.Text = "SA (SetupAPI)";
-			this.HookSACheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookCOMCheckBox
-			// 
-			this.HookCOMCheckBox.AutoSize = true;
-			this.HookCOMCheckBox.Location = new System.Drawing.Point(6, 42);
-			this.HookCOMCheckBox.Name = "HookCOMCheckBox";
-			this.HookCOMCheckBox.Size = new System.Drawing.Size(50, 17);
-			this.HookCOMCheckBox.TabIndex = 0;
-			this.HookCOMCheckBox.Text = "COM";
-			this.HookCOMCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// HookLLCheckBox
-			// 
-			this.HookLLCheckBox.AutoSize = true;
-			this.HookLLCheckBox.Location = new System.Drawing.Point(6, 19);
-			this.HookLLCheckBox.Name = "HookLLCheckBox";
-			this.HookLLCheckBox.Size = new System.Drawing.Size(105, 17);
-			this.HookLLCheckBox.TabIndex = 0;
-			this.HookLLCheckBox.Tag = "";
-			this.HookLLCheckBox.Text = "LL (Load Library)";
-			this.HookLLCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// InstalledFilesGroupBox
-			// 
-			this.InstalledFilesGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.InstalledFilesGroupBox.Controls.Add(this.ProcessorArchitectureComboBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.ProcessorArchitectureLabel);
-			this.InstalledFilesGroupBox.Controls.Add(this.XInputMaskTextBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.Xinput14CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.Xinput13CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.Xinput12CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.Xinput11CheckBox);
-			this.InstalledFilesGroupBox.Controls.Add(this.Xinput91CheckBox);
-			this.InstalledFilesGroupBox.Location = new System.Drawing.Point(552, 262);
-			this.InstalledFilesGroupBox.Name = "InstalledFilesGroupBox";
-			this.InstalledFilesGroupBox.Size = new System.Drawing.Size(146, 217);
-			this.InstalledFilesGroupBox.TabIndex = 21;
-			this.InstalledFilesGroupBox.TabStop = false;
-			this.InstalledFilesGroupBox.Text = "Installed XInput Files";
-			// 
-			// ProcessorArchitectureComboBox
-			// 
-			this.ProcessorArchitectureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ProcessorArchitectureComboBox.Enabled = false;
-			this.ProcessorArchitectureComboBox.FormattingEnabled = true;
-			this.ProcessorArchitectureComboBox.Location = new System.Drawing.Point(9, 173);
-			this.ProcessorArchitectureComboBox.Name = "ProcessorArchitectureComboBox";
-			this.ProcessorArchitectureComboBox.Size = new System.Drawing.Size(68, 21);
-			this.ProcessorArchitectureComboBox.TabIndex = 30;
-			// 
-			// ProcessorArchitectureLabel
-			// 
-			this.ProcessorArchitectureLabel.AutoSize = true;
-			this.ProcessorArchitectureLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(6, 157);
-			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
-			this.ProcessorArchitectureLabel.Size = new System.Drawing.Size(117, 13);
-			this.ProcessorArchitectureLabel.TabIndex = 29;
-			this.ProcessorArchitectureLabel.Text = "Processor Architecture:";
-			// 
-			// XInputMaskTextBox
-			// 
-			this.XInputMaskTextBox.Location = new System.Drawing.Point(6, 134);
-			this.XInputMaskTextBox.Name = "XInputMaskTextBox";
-			this.XInputMaskTextBox.ReadOnly = true;
-			this.XInputMaskTextBox.Size = new System.Drawing.Size(71, 20);
-			this.XInputMaskTextBox.TabIndex = 1;
-			this.XInputMaskTextBox.Text = "0x00000000";
-			// 
-			// Xinput14CheckBox
-			// 
-			this.Xinput14CheckBox.AutoSize = true;
-			this.Xinput14CheckBox.Location = new System.Drawing.Point(6, 111);
-			this.Xinput14CheckBox.Name = "Xinput14CheckBox";
-			this.Xinput14CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput14CheckBox.TabIndex = 0;
-			this.Xinput14CheckBox.Text = "xinput1_4.dll";
-			this.Xinput14CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// Xinput13CheckBox
-			// 
-			this.Xinput13CheckBox.AutoSize = true;
-			this.Xinput13CheckBox.Location = new System.Drawing.Point(6, 88);
-			this.Xinput13CheckBox.Name = "Xinput13CheckBox";
-			this.Xinput13CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput13CheckBox.TabIndex = 0;
-			this.Xinput13CheckBox.Text = "xinput1_3.dll";
-			this.Xinput13CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// Xinput12CheckBox
-			// 
-			this.Xinput12CheckBox.AutoSize = true;
-			this.Xinput12CheckBox.Location = new System.Drawing.Point(6, 65);
-			this.Xinput12CheckBox.Name = "Xinput12CheckBox";
-			this.Xinput12CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput12CheckBox.TabIndex = 0;
-			this.Xinput12CheckBox.Text = "xinput1_2.dll";
-			this.Xinput12CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// Xinput11CheckBox
-			// 
-			this.Xinput11CheckBox.AutoSize = true;
-			this.Xinput11CheckBox.Location = new System.Drawing.Point(6, 42);
-			this.Xinput11CheckBox.Name = "Xinput11CheckBox";
-			this.Xinput11CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput11CheckBox.TabIndex = 0;
-			this.Xinput11CheckBox.Text = "xinput1_1.dll";
-			this.Xinput11CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// Xinput91CheckBox
-			// 
-			this.Xinput91CheckBox.AutoSize = true;
-			this.Xinput91CheckBox.Location = new System.Drawing.Point(6, 19);
-			this.Xinput91CheckBox.Name = "Xinput91CheckBox";
-			this.Xinput91CheckBox.Size = new System.Drawing.Size(97, 17);
-			this.Xinput91CheckBox.TabIndex = 0;
-			this.Xinput91CheckBox.Text = "xinput9_1_0.dll";
-			this.Xinput91CheckBox.UseVisualStyleBackColor = true;
-			// 
 			// GameApplicationOpenFileDialog
 			// 
 			this.GameApplicationOpenFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.ProgramOpenFileDialog_FileOk);
+			// 
+			// RefreshButton
+			// 
+			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.RefreshButton.Name = "RefreshButton";
+			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.RefreshButton.Text = "&Refresh";
+			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+			// 
+			// DeleteButton
+			// 
+			this.DeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.DeleteButton.Name = "DeleteButton";
+			this.DeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.DeleteButton.Text = "&Delete";
+			// 
+			// SaveButton
+			// 
+			this.SaveButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.SaveButton.Name = "SaveButton";
+			this.SaveButton.Size = new System.Drawing.Size(51, 22);
+			this.SaveButton.Text = "&Save";
+			// 
+			// AddButton
+			// 
+			this.AddButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.AddButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.AddButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AddButton.Name = "AddButton";
+			this.AddButton.Size = new System.Drawing.Size(58, 22);
+			this.AddButton.Text = "Add...";
+			this.AddButton.Click += new System.EventHandler(this.MyGamesAddButton_Click);
+			// 
+			// ScanButton
+			// 
+			this.ScanButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.ScanButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
+			this.ScanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ScanButton.Name = "ScanButton";
+			this.ScanButton.Size = new System.Drawing.Size(52, 22);
+			this.ScanButton.Text = "&Scan";
+			this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
+			// 
+			// StartButton
+			// 
+			this.StartButton.Image = global::x360ce.App.Properties.Resources.launch_16x16;
+			this.StartButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.StartButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.StartButton.Name = "StartButton";
+			this.StartButton.Size = new System.Drawing.Size(51, 22);
+			this.StartButton.Text = "Start";
+			this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
+			// 
+			// UpdateButton
+			// 
+			this.UpdateButton.Image = global::x360ce.App.Properties.Resources.update_16x16;
+			this.UpdateButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.UpdateButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.UpdateButton.Name = "UpdateButton";
+			this.UpdateButton.Size = new System.Drawing.Size(65, 22);
+			this.UpdateButton.Text = "Update";
+			// 
+			// GlobalSettingsRefreshButton
+			// 
+			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
+			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.GlobalSettingsRefreshButton.Text = "&Refresh";
+			this.GlobalSettingsRefreshButton.Click += new System.EventHandler(this.GlobalSettingsRefreshButton_Click);
+			// 
+			// GameDetailsControl
+			// 
+			this.GameDetailsControl.BackColor = System.Drawing.SystemColors.Control;
+			this.GameDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
+			this.GameDetailsControl.Location = new System.Drawing.Point(545, 0);
+			this.GameDetailsControl.Name = "GameDetailsControl";
+			this.GameDetailsControl.Size = new System.Drawing.Size(142, 450);
+			this.GameDetailsControl.TabIndex = 3;
+			// 
+			// GameDefaultDetailsControl
+			// 
+			this.GameDefaultDetailsControl.BackColor = System.Drawing.SystemColors.Control;
+			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
+			this.GameDefaultDetailsControl.Enabled = false;
+			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(545, 0);
+			this.GameDefaultDetailsControl.Name = "GameDefaultDetailsControl";
+			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(142, 450);
+			this.GameDefaultDetailsControl.TabIndex = 4;
+			// 
+			// EnabledColumn
+			// 
+			this.EnabledColumn.DataPropertyName = "IsEnabled";
+			this.EnabledColumn.HeaderText = "";
+			this.EnabledColumn.Name = "EnabledColumn";
+			this.EnabledColumn.ReadOnly = true;
+			this.EnabledColumn.Width = 24;
 			// 
 			// MyIconColumn
 			// 
@@ -692,8 +533,6 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.InstalledFilesGroupBox);
-			this.Controls.Add(this.HookMaskGroupBox);
 			this.Controls.Add(this.GamesTabControl);
 			this.Name = "GameSettingsUserControl";
 			this.Size = new System.Drawing.Size(701, 482);
@@ -712,10 +551,6 @@
 			this.SettingsTabPage.ResumeLayout(false);
 			this.SettingsTabPage.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
-			this.HookMaskGroupBox.ResumeLayout(false);
-			this.HookMaskGroupBox.PerformLayout();
-			this.InstalledFilesGroupBox.ResumeLayout(false);
-			this.InstalledFilesGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -725,24 +560,6 @@
 		System.Windows.Forms.TabControl GamesTabControl;
 		System.Windows.Forms.TabPage GamesTabPage;
 		System.Windows.Forms.DataGridView MySettingsDataGridView;
-		System.Windows.Forms.GroupBox HookMaskGroupBox;
-		System.Windows.Forms.CheckBox HookDISABLECheckBox;
-		System.Windows.Forms.CheckBox HookNameCheckBox;
-		System.Windows.Forms.CheckBox HookSTOPCheckBox;
-		System.Windows.Forms.CheckBox HookPIDVIDCheckBox;
-		System.Windows.Forms.CheckBox HookDICheckBox;
-		System.Windows.Forms.CheckBox HookWTCheckBox;
-		System.Windows.Forms.CheckBox HookSACheckBox;
-		System.Windows.Forms.CheckBox HookCOMCheckBox;
-		System.Windows.Forms.CheckBox HookLLCheckBox;
-		System.Windows.Forms.TextBox HookMaskTextBox;
-		System.Windows.Forms.GroupBox InstalledFilesGroupBox;
-		System.Windows.Forms.TextBox XInputMaskTextBox;
-		System.Windows.Forms.CheckBox Xinput14CheckBox;
-		System.Windows.Forms.CheckBox Xinput13CheckBox;
-		System.Windows.Forms.CheckBox Xinput12CheckBox;
-		System.Windows.Forms.CheckBox Xinput11CheckBox;
-		System.Windows.Forms.CheckBox Xinput91CheckBox;
 		private System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
         private System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
@@ -751,20 +568,25 @@
         private System.Windows.Forms.TabPage GlobalSettingsTabPage;
         private System.Windows.Forms.DataGridView GlobalSettingsDataGridView;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton MyGamesRefreshButton;
-        private System.Windows.Forms.ToolStripButton MyGamesDeleteButton;
-        private System.Windows.Forms.ToolStripButton MyGamesSaveButton;
-        private System.Windows.Forms.ToolStripButton MyGamesScanButton;
+        private System.Windows.Forms.ToolStripButton RefreshButton;
+        private System.Windows.Forms.ToolStripButton DeleteButton;
+        private System.Windows.Forms.ToolStripButton SaveButton;
+        private System.Windows.Forms.ToolStripButton ScanButton;
         private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
-        private System.Windows.Forms.Label ProcessorArchitectureLabel;
-        private System.Windows.Forms.ComboBox ProcessorArchitectureComboBox;
+		private System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
         private System.Windows.Forms.TabPage SettingsTabPage;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-		private System.Windows.Forms.ToolStripButton MyGamesAddButton;
+		private System.Windows.Forms.ToolStripButton AddButton;
+		private System.Windows.Forms.Panel panel1;
+		private GameSettingDetailsUserControl GameDetailsControl;
+		private System.Windows.Forms.Panel panel2;
+		private GameSettingDetailsUserControl GameDefaultDetailsControl;
+		private System.Windows.Forms.ToolStripButton UpdateButton;
+		private System.Windows.Forms.ToolStripButton StartButton;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn EnabledColumn;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
