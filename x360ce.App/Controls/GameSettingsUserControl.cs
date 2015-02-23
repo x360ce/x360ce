@@ -97,6 +97,7 @@ namespace x360ce.App.Controls
 		{
 			SettingsFile.Current.Load();
 			MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
+			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
 		}
 
 		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)

@@ -184,6 +184,9 @@
     <Compile Include="Controls\AboutControl.Designer.cs">
       <DependentUpon>AboutControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BaseUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\DirectInputControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -444,6 +447,10 @@
     <None Include="Images\folder_view_16x16.png" />
     <None Include="Images\enable_16x16.png" />
     <None Include="Images\launch_16x16.png" />
+    <None Include="Images\checkbox_16x16.png" />
+    <None Include="Images\checkbox_disabled_16x16.png" />
+    <None Include="Images\checkbox_unchecked_16x16.png" />
+    <None Include="Images\checkbox_unchecked_disabled_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
