@@ -10,13 +10,14 @@ using System.Reflection;
 
 namespace x360ce.App.Controls
 {
-	public partial class GameSettingDetailsUserControl : UserControl
+	public partial class GameSettingDetailsUserControl : BaseUserControl
 	{
 		public GameSettingDetailsUserControl()
 		{
 			InitializeComponent();
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
+			//ApplyStyleToCheckBoxes();
 		}
 
 		object CurrentGameLock = new object();
