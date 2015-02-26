@@ -135,6 +135,8 @@ namespace x360ce.App.Controls
 
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
+			var games = SettingsFile.Current.Games;
+			foreach (var game in games) game.Refresh();
 			//ws.GetProgram()
 			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);

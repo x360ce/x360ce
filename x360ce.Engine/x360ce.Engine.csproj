@@ -87,7 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
-    <Compile Include="Common\EnabledState.cs" />
+    <Compile Include="Common\Enum\EnabledState.cs" />
+    <Compile Include="Common\Enum\GameRefreshStatus.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
     <Compile Include="Common\KeyValue.cs" />
@@ -107,6 +108,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>x360ceModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\ClassTools\EnumTools.cs" />
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />

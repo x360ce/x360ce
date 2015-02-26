@@ -802,7 +802,8 @@ namespace x360ce.App
                 var file = Helper.GetDefaultDll();
                 if (file == null)
                 {
-                    if (!CreateFile(Helper.GetXInputResoureceName(), Helper.dllFile3)) return false;
+					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.Xinput13);
+					if (!CreateFile(Helper.GetXInputResoureceName(), xFile)) return false;
                 }
                 else
                 {

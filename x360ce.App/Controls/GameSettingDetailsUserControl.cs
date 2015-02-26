@@ -139,9 +139,10 @@ namespace x360ce.App.Controls
 			SettingsFile.Current.Save();
 		}
 
-		void SetCheckXinput(object sender, string name)
+		void SetCheckXinput(object sender, XInputMask mask)
 		{
 			if (CurrentGame == null) return;
+			var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
 			var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
 			var fullPath = System.IO.Path.Combine(path, name);
 			var box = (CheckBox)sender;
@@ -151,27 +152,27 @@ namespace x360ce.App.Controls
 
 		private void Xinput91CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SetCheckXinput(sender, Helper.dllFile0);
+			SetCheckXinput(sender, XInputMask.Xinput91);
 		}
 
 		private void Xinput11CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SetCheckXinput(sender, Helper.dllFile1);
+			SetCheckXinput(sender, XInputMask.Xinput11);
 		}
 
 		private void Xinput12CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SetCheckXinput(sender, Helper.dllFile2);
+			SetCheckXinput(sender, XInputMask.Xinput12);
 		}
 
 		private void Xinput13CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SetCheckXinput(sender, Helper.dllFile3);
+			SetCheckXinput(sender, XInputMask.Xinput13);
 		}
 
 		private void Xinput14CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SetCheckXinput(sender, Helper.dllFile4);
+			SetCheckXinput(sender, XInputMask.Xinput14);
 		}
 	}
 }
