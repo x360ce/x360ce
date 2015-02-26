@@ -19,19 +19,13 @@ namespace x360ce.App
     {
         #region Manipulate XInput DLL
 
-        // Will be set to default values.
-        public const string dllFile0 = "xinput9_1_0.dll";
-        public const string dllFile1 = "xinput1_1.dll";
-        public const string dllFile2 = "xinput1_2.dll";
-        public const string dllFile3 = "xinput1_3.dll";
-        public const string dllFile4 = "xinput1_4.dll";
-
         public const string dllFile3ce32 = "Resources.xinput1_3_32.dll";
         public const string dllFile3ce64 = "Resources.xinput1_3_64.dll";
 
         public static FileInfo[] GetDllInfos()
         {
-            var files = new string[] { dllFile0, dllFile1, dllFile2, dllFile3, dllFile4 };
+			var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x=>x != XInputMask.None);
+			var files = values.Select(x=>JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).ToArray();
             var infos = files.Select(x => new System.IO.FileInfo(x)).ToArray();
             return infos;
         }
@@ -79,7 +73,8 @@ namespace x360ce.App
                 var present = GetDefaultDll();
                 if (present == null)
                 {
-                    MainForm.Current.CreateFile(GetXInputResoureceName(), Helper.dllFile3);
+					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.Xinput13);
+					MainForm.Current.CreateFile(GetXInputResoureceName(), xFile);
                 }
                 else if (!System.IO.File.Exists(file))
                 {

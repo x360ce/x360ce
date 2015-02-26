@@ -31,6 +31,23 @@ namespace x360ce.Engine.Data
             return item;
 		}
 
+		// Check game settings against folder.
+		public GameRefreshStatus Refresh()
+		{
+			var fi = new FileInfo(FullPath);
+			// Check if game file exists.
+			if (!fi.Exists) return GameRefreshStatus.FileNotExist;
+			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
+			return GameRefreshStatus.OK;
+		}
+
+		GameRefreshStatus _RefreshStatus;
+		public GameRefreshStatus RefreshStatus
+		{
+			get { return _RefreshStatus; }
+			set { _RefreshStatus = value; }
+		}
+
 		public void LoadDefault(Program program)
 		{
 			if (program == null) return;
