@@ -73,7 +73,7 @@ namespace x360ce.App
                 var present = GetDefaultDll();
                 if (present == null)
                 {
-					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.Xinput13);
+					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
 					MainForm.Current.CreateFile(GetXInputResoureceName(), xFile);
                 }
                 else if (!System.IO.File.Exists(file))

@@ -802,7 +802,7 @@ namespace x360ce.App
                 var file = Helper.GetDefaultDll();
                 if (file == null)
                 {
-					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.Xinput13);
+					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
 					if (!CreateFile(Helper.GetXInputResoureceName(), xFile)) return false;
                 }
                 else

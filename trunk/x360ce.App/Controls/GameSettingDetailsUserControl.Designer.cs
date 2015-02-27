@@ -28,13 +28,12 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.ProcessorArchitectureLabel = new System.Windows.Forms.Label();
 			this.XInputMaskTextBox = new System.Windows.Forms.TextBox();
-			this.Xinput14CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput13CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput12CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput11CheckBox = new System.Windows.Forms.CheckBox();
-			this.Xinput91CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput14_x86CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput13_x86CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput12_x86CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput11_x86CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput91_x86CheckBox = new System.Windows.Forms.CheckBox();
 			this.HookMaskTextBox = new System.Windows.Forms.TextBox();
 			this.HookDISABLECheckBox = new System.Windows.Forms.CheckBox();
 			this.HookNameCheckBox = new System.Windows.Forms.CheckBox();
@@ -47,18 +46,14 @@
 			this.HookLLCheckBox = new System.Windows.Forms.CheckBox();
 			this.HookMaskLabel = new System.Windows.Forms.Label();
 			this.XinputFilesLabel = new System.Windows.Forms.Label();
+			this.ProcessorArchitectureLabel = new System.Windows.Forms.Label();
 			this.ProcessorArchitectureComboBox = new System.Windows.Forms.ComboBox();
+			this.XInput91_x64CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput11_x64CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput12_x64CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput13_x64CheckBox = new System.Windows.Forms.CheckBox();
+			this.XInput14_x64CheckBox = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
-			// 
-			// ProcessorArchitectureLabel
-			// 
-			this.ProcessorArchitectureLabel.AutoSize = true;
-			this.ProcessorArchitectureLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(3, 374);
-			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
-			this.ProcessorArchitectureLabel.Size = new System.Drawing.Size(117, 13);
-			this.ProcessorArchitectureLabel.TabIndex = 29;
-			this.ProcessorArchitectureLabel.Text = "Processor Architecture:";
 			// 
 			// XInputMaskTextBox
 			// 
@@ -70,60 +65,60 @@
 			this.XInputMaskTextBox.Text = "00000000";
 			this.XInputMaskTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
-			// Xinput14CheckBox
+			// XInput14_x86CheckBox
 			// 
-			this.Xinput14CheckBox.AutoSize = true;
-			this.Xinput14CheckBox.Location = new System.Drawing.Point(16, 354);
-			this.Xinput14CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
-			this.Xinput14CheckBox.Name = "Xinput14CheckBox";
-			this.Xinput14CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput14CheckBox.TabIndex = 0;
-			this.Xinput14CheckBox.Text = "xinput1_4.dll";
-			this.Xinput14CheckBox.UseVisualStyleBackColor = true;
+			this.XInput14_x86CheckBox.AutoSize = true;
+			this.XInput14_x86CheckBox.Location = new System.Drawing.Point(16, 353);
+			this.XInput14_x86CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.XInput14_x86CheckBox.Name = "XInput14_x86CheckBox";
+			this.XInput14_x86CheckBox.Size = new System.Drawing.Size(52, 17);
+			this.XInput14_x86CheckBox.TabIndex = 0;
+			this.XInput14_x86CheckBox.Text = "32-bit";
+			this.XInput14_x86CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// Xinput13CheckBox
+			// XInput13_x86CheckBox
 			// 
-			this.Xinput13CheckBox.AutoSize = true;
-			this.Xinput13CheckBox.Location = new System.Drawing.Point(16, 331);
-			this.Xinput13CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
-			this.Xinput13CheckBox.Name = "Xinput13CheckBox";
-			this.Xinput13CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput13CheckBox.TabIndex = 0;
-			this.Xinput13CheckBox.Text = "xinput1_3.dll";
-			this.Xinput13CheckBox.UseVisualStyleBackColor = true;
+			this.XInput13_x86CheckBox.AutoSize = true;
+			this.XInput13_x86CheckBox.Location = new System.Drawing.Point(16, 330);
+			this.XInput13_x86CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.XInput13_x86CheckBox.Name = "XInput13_x86CheckBox";
+			this.XInput13_x86CheckBox.Size = new System.Drawing.Size(52, 17);
+			this.XInput13_x86CheckBox.TabIndex = 0;
+			this.XInput13_x86CheckBox.Text = "32-bit";
+			this.XInput13_x86CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// Xinput12CheckBox
+			// XInput12_x86CheckBox
 			// 
-			this.Xinput12CheckBox.AutoSize = true;
-			this.Xinput12CheckBox.Location = new System.Drawing.Point(16, 308);
-			this.Xinput12CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
-			this.Xinput12CheckBox.Name = "Xinput12CheckBox";
-			this.Xinput12CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput12CheckBox.TabIndex = 0;
-			this.Xinput12CheckBox.Text = "xinput1_2.dll";
-			this.Xinput12CheckBox.UseVisualStyleBackColor = true;
+			this.XInput12_x86CheckBox.AutoSize = true;
+			this.XInput12_x86CheckBox.Location = new System.Drawing.Point(16, 307);
+			this.XInput12_x86CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.XInput12_x86CheckBox.Name = "XInput12_x86CheckBox";
+			this.XInput12_x86CheckBox.Size = new System.Drawing.Size(52, 17);
+			this.XInput12_x86CheckBox.TabIndex = 0;
+			this.XInput12_x86CheckBox.Text = "32-bit";
+			this.XInput12_x86CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// Xinput11CheckBox
+			// XInput11_x86CheckBox
 			// 
-			this.Xinput11CheckBox.AutoSize = true;
-			this.Xinput11CheckBox.Location = new System.Drawing.Point(16, 285);
-			this.Xinput11CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
-			this.Xinput11CheckBox.Name = "Xinput11CheckBox";
-			this.Xinput11CheckBox.Size = new System.Drawing.Size(85, 17);
-			this.Xinput11CheckBox.TabIndex = 0;
-			this.Xinput11CheckBox.Text = "xinput1_1.dll";
-			this.Xinput11CheckBox.UseVisualStyleBackColor = true;
+			this.XInput11_x86CheckBox.AutoSize = true;
+			this.XInput11_x86CheckBox.Location = new System.Drawing.Point(16, 284);
+			this.XInput11_x86CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.XInput11_x86CheckBox.Name = "XInput11_x86CheckBox";
+			this.XInput11_x86CheckBox.Size = new System.Drawing.Size(52, 17);
+			this.XInput11_x86CheckBox.TabIndex = 0;
+			this.XInput11_x86CheckBox.Text = "32-bit";
+			this.XInput11_x86CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// Xinput91CheckBox
+			// XInput91_x86CheckBox
 			// 
-			this.Xinput91CheckBox.AutoSize = true;
-			this.Xinput91CheckBox.Location = new System.Drawing.Point(16, 262);
-			this.Xinput91CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
-			this.Xinput91CheckBox.Name = "Xinput91CheckBox";
-			this.Xinput91CheckBox.Size = new System.Drawing.Size(97, 17);
-			this.Xinput91CheckBox.TabIndex = 0;
-			this.Xinput91CheckBox.Text = "xinput9_1_0.dll";
-			this.Xinput91CheckBox.UseVisualStyleBackColor = true;
+			this.XInput91_x86CheckBox.AutoSize = true;
+			this.XInput91_x86CheckBox.Location = new System.Drawing.Point(16, 262);
+			this.XInput91_x86CheckBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.XInput91_x86CheckBox.Name = "XInput91_x86CheckBox";
+			this.XInput91_x86CheckBox.Size = new System.Drawing.Size(52, 17);
+			this.XInput91_x86CheckBox.TabIndex = 0;
+			this.XInput91_x86CheckBox.Text = "32-bit";
+			this.XInput91_x86CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// HookMaskTextBox
 			// 
@@ -253,6 +248,16 @@
 			this.XinputFilesLabel.TabIndex = 24;
 			this.XinputFilesLabel.Text = "XInput Files:";
 			// 
+			// ProcessorArchitectureLabel
+			// 
+			this.ProcessorArchitectureLabel.AutoSize = true;
+			this.ProcessorArchitectureLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(3, 374);
+			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
+			this.ProcessorArchitectureLabel.Size = new System.Drawing.Size(117, 13);
+			this.ProcessorArchitectureLabel.TabIndex = 29;
+			this.ProcessorArchitectureLabel.Text = "Processor Architecture:";
+			// 
 			// ProcessorArchitectureComboBox
 			// 
 			this.ProcessorArchitectureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -264,23 +269,78 @@
 			this.ProcessorArchitectureComboBox.Size = new System.Drawing.Size(68, 21);
 			this.ProcessorArchitectureComboBox.TabIndex = 30;
 			// 
+			// XInput91_x64CheckBox
+			// 
+			this.XInput91_x64CheckBox.AutoSize = true;
+			this.XInput91_x64CheckBox.Location = new System.Drawing.Point(74, 262);
+			this.XInput91_x64CheckBox.Name = "XInput91_x64CheckBox";
+			this.XInput91_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput91_x64CheckBox.TabIndex = 0;
+			this.XInput91_x64CheckBox.Text = "64-bit v9.1";
+			this.XInput91_x64CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// XInput11_x64CheckBox
+			// 
+			this.XInput11_x64CheckBox.AutoSize = true;
+			this.XInput11_x64CheckBox.Location = new System.Drawing.Point(74, 285);
+			this.XInput11_x64CheckBox.Name = "XInput11_x64CheckBox";
+			this.XInput11_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput11_x64CheckBox.TabIndex = 0;
+			this.XInput11_x64CheckBox.Text = "64-bit v1.1";
+			this.XInput11_x64CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// XInput12_x64CheckBox
+			// 
+			this.XInput12_x64CheckBox.AutoSize = true;
+			this.XInput12_x64CheckBox.Location = new System.Drawing.Point(74, 308);
+			this.XInput12_x64CheckBox.Name = "XInput12_x64CheckBox";
+			this.XInput12_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput12_x64CheckBox.TabIndex = 0;
+			this.XInput12_x64CheckBox.Text = "64-bit v1.2";
+			this.XInput12_x64CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// XInput13_x64CheckBox
+			// 
+			this.XInput13_x64CheckBox.AutoSize = true;
+			this.XInput13_x64CheckBox.Location = new System.Drawing.Point(74, 331);
+			this.XInput13_x64CheckBox.Name = "XInput13_x64CheckBox";
+			this.XInput13_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput13_x64CheckBox.TabIndex = 0;
+			this.XInput13_x64CheckBox.Text = "64-bit v1.3";
+			this.XInput13_x64CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// XInput14_x64CheckBox
+			// 
+			this.XInput14_x64CheckBox.AutoSize = true;
+			this.XInput14_x64CheckBox.Location = new System.Drawing.Point(74, 354);
+			this.XInput14_x64CheckBox.Name = "XInput14_x64CheckBox";
+			this.XInput14_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput14_x64CheckBox.TabIndex = 0;
+			this.XInput14_x64CheckBox.Text = "64-bit v1.4";
+			this.XInput14_x64CheckBox.UseVisualStyleBackColor = true;
+			// 
 			// GameSettingDetailsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.XInput91_x64CheckBox);
 			this.Controls.Add(this.ProcessorArchitectureComboBox);
 			this.Controls.Add(this.HookDICheckBox);
 			this.Controls.Add(this.ProcessorArchitectureLabel);
 			this.Controls.Add(this.HookMaskTextBox);
-			this.Controls.Add(this.Xinput14CheckBox);
+			this.Controls.Add(this.XInput14_x86CheckBox);
 			this.Controls.Add(this.XInputMaskTextBox);
-			this.Controls.Add(this.Xinput13CheckBox);
+			this.Controls.Add(this.XInput13_x86CheckBox);
 			this.Controls.Add(this.XinputFilesLabel);
-			this.Controls.Add(this.Xinput12CheckBox);
+			this.Controls.Add(this.XInput12_x86CheckBox);
 			this.Controls.Add(this.HookMaskLabel);
-			this.Controls.Add(this.Xinput11CheckBox);
+			this.Controls.Add(this.XInput11_x86CheckBox);
 			this.Controls.Add(this.HookDISABLECheckBox);
-			this.Controls.Add(this.Xinput91CheckBox);
+			this.Controls.Add(this.XInput14_x64CheckBox);
+			this.Controls.Add(this.XInput13_x64CheckBox);
+			this.Controls.Add(this.XInput12_x64CheckBox);
+			this.Controls.Add(this.XInput11_x64CheckBox);
+			this.Controls.Add(this.XInput91_x86CheckBox);
 			this.Controls.Add(this.HookNameCheckBox);
 			this.Controls.Add(this.HookSTOPCheckBox);
 			this.Controls.Add(this.HookLLCheckBox);
@@ -289,7 +349,7 @@
 			this.Controls.Add(this.HookSACheckBox);
 			this.Controls.Add(this.HookWTCheckBox);
 			this.Name = "GameSettingDetailsUserControl";
-			this.Size = new System.Drawing.Size(142, 420);
+			this.Size = new System.Drawing.Size(158, 420);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -297,13 +357,12 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label ProcessorArchitectureLabel;
 		private System.Windows.Forms.TextBox XInputMaskTextBox;
-		private System.Windows.Forms.CheckBox Xinput14CheckBox;
-		private System.Windows.Forms.CheckBox Xinput13CheckBox;
-		private System.Windows.Forms.CheckBox Xinput12CheckBox;
-		private System.Windows.Forms.CheckBox Xinput11CheckBox;
-		private System.Windows.Forms.CheckBox Xinput91CheckBox;
+		private System.Windows.Forms.CheckBox XInput14_x86CheckBox;
+		private System.Windows.Forms.CheckBox XInput13_x86CheckBox;
+		private System.Windows.Forms.CheckBox XInput12_x86CheckBox;
+		private System.Windows.Forms.CheckBox XInput11_x86CheckBox;
+		private System.Windows.Forms.CheckBox XInput91_x86CheckBox;
 		private System.Windows.Forms.TextBox HookMaskTextBox;
 		private System.Windows.Forms.CheckBox HookDISABLECheckBox;
 		private System.Windows.Forms.CheckBox HookNameCheckBox;
@@ -316,6 +375,12 @@
 		private System.Windows.Forms.CheckBox HookLLCheckBox;
 		private System.Windows.Forms.Label HookMaskLabel;
 		private System.Windows.Forms.Label XinputFilesLabel;
+		private System.Windows.Forms.Label ProcessorArchitectureLabel;
 		private System.Windows.Forms.ComboBox ProcessorArchitectureComboBox;
+		private System.Windows.Forms.CheckBox XInput91_x64CheckBox;
+		private System.Windows.Forms.CheckBox XInput11_x64CheckBox;
+		private System.Windows.Forms.CheckBox XInput12_x64CheckBox;
+		private System.Windows.Forms.CheckBox XInput13_x64CheckBox;
+		private System.Windows.Forms.CheckBox XInput14_x64CheckBox;
 	}
 }

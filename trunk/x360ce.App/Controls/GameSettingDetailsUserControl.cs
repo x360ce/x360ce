@@ -17,10 +17,19 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
-			//ApplyStyleToCheckBoxes();
+			XInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("XInput")).ToArray();
+			HookCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Hook")).ToArray();
+			lock (CurrentGameLock)
+			{
+				EnableEvents();
+			}
 		}
 
 		object CurrentGameLock = new object();
+		bool EnabledEvents = false;
+
+		CheckBox[] XInputCheckBoxes;
+		CheckBox[] HookCheckBoxes;
 
 		x360ce.Engine.Data.Game _CurrentGame;
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
@@ -42,137 +51,84 @@ namespace x360ce.App.Controls
 		{
 			lock (CurrentGameLock)
 			{
-				DisableEvents();
-				// Update XInput mask.
-				Xinput11CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput11);
-				Xinput12CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput12);
-				Xinput13CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput13);
-				Xinput14CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput14);
-				Xinput91CheckBox.Checked = inputMask.HasFlag(XInputMask.Xinput91);
+				if (EnabledEvents) DisableEvents();
+				// Check/Uncheck XInput checkboxes.
+				var xs = (XInputMask[])Enum.GetValues(typeof(XInputMask));
 				XInputMaskTextBox.Text = ((int)inputMask).ToString("X8");
-				// Update hook mask.
-				HookCOMCheckBox.Checked = hookMask.HasFlag(HookMask.COM);
-				HookDICheckBox.Checked = hookMask.HasFlag(HookMask.DI);
-				HookDISABLECheckBox.Checked = hookMask.HasFlag(HookMask.DISABLE);
-				HookLLCheckBox.Checked = hookMask.HasFlag(HookMask.LL);
-				HookNameCheckBox.Checked = hookMask.HasFlag(HookMask.NAME);
-				HookPIDVIDCheckBox.Checked = hookMask.HasFlag(HookMask.PIDVID);
-				HookSACheckBox.Checked = hookMask.HasFlag(HookMask.SA);
-				HookSTOPCheckBox.Checked = hookMask.HasFlag(HookMask.STOP);
-				HookWTCheckBox.Checked = hookMask.HasFlag(HookMask.WT);
-				HookMaskTextBox.Text = ((int)hookMask).ToString("X8");
+				foreach (var value in xs)
+				{
+					// Get checkbox linked to enum value.
+					var cb = XInputCheckBoxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
+					if (cb != null) cb.Checked = inputMask.HasFlag(value);
+				}
+				// Check/Uncheck Hook checkboxes.
+				var hs = (HookMask[])Enum.GetValues(typeof(HookMask));
+				HookMaskTextBox.Text = ((int)inputMask).ToString("X8");
+				foreach (var value in hs)
+				{
+					// Get checkbox linked to enum value.
+					var cb = HookCheckBoxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
+					if (cb != null) cb.Checked = hookMask.HasFlag(value);
+				}
 				// Processor architecture.
 				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
 					? (ProcessorArchitecture)proc
 					: ProcessorArchitecture.None;
-
 				// Enable events.
 				EnableEvents();
 			}
 		}
 
+		public T GetMask<T>(CheckBox[] boxes)
+		{
+			uint mask = 0;
+			// Check/Uncheck checkboxes.
+			var xs = (T[])Enum.GetValues(typeof(T));
+			foreach (var value in xs)
+			{
+				// Get checkbox linked to enum value.
+				var cb = boxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
+				if (cb != null && cb.Checked) mask |= (uint)(object)value;
+			}
+			return (T)(object)mask;
+		}
+
 		void EnableEvents()
 		{
-			Xinput11CheckBox.CheckedChanged += CheckBox_Changed;
-			Xinput12CheckBox.CheckedChanged += CheckBox_Changed;
-			Xinput13CheckBox.CheckedChanged += CheckBox_Changed;
-			Xinput14CheckBox.CheckedChanged += CheckBox_Changed;
-			Xinput91CheckBox.CheckedChanged += CheckBox_Changed;
-			HookCOMCheckBox.CheckedChanged += CheckBox_Changed;
-			HookDICheckBox.CheckedChanged += CheckBox_Changed;
-			HookDISABLECheckBox.CheckedChanged += CheckBox_Changed;
-			HookLLCheckBox.CheckedChanged += CheckBox_Changed;
-			HookNameCheckBox.CheckedChanged += CheckBox_Changed;
-			HookPIDVIDCheckBox.CheckedChanged += CheckBox_Changed;
-			HookSACheckBox.CheckedChanged += CheckBox_Changed;
-			HookSTOPCheckBox.CheckedChanged += CheckBox_Changed;
-			HookWTCheckBox.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in HookCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
+			EnabledEvents = true;
 		}
 
 		void DisableEvents()
 		{
-			Xinput11CheckBox.CheckedChanged -= CheckBox_Changed;
-			Xinput12CheckBox.CheckedChanged -= CheckBox_Changed;
-			Xinput13CheckBox.CheckedChanged -= CheckBox_Changed;
-			Xinput14CheckBox.CheckedChanged -= CheckBox_Changed;
-			Xinput91CheckBox.CheckedChanged -= CheckBox_Changed;
-			HookCOMCheckBox.CheckedChanged -= CheckBox_Changed;
-			HookDICheckBox.CheckedChanged -= CheckBox_Changed;
-			HookDISABLECheckBox.CheckedChanged -= CheckBox_Changed;
-			HookLLCheckBox.CheckedChanged -= CheckBox_Changed;
-			HookNameCheckBox.CheckedChanged -= CheckBox_Changed;
-			HookPIDVIDCheckBox.CheckedChanged -= CheckBox_Changed;
-			HookSACheckBox.CheckedChanged -= CheckBox_Changed;
-			HookSTOPCheckBox.CheckedChanged -= CheckBox_Changed;
-			HookWTCheckBox.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in HookCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
+			EnabledEvents = false;
 		}
 
 		void CheckBox_Changed(object sender, EventArgs e)
 		{
 			if (CurrentGame == null) return;
-			var xm = XInputMask.None;
-			if (Xinput11CheckBox.Checked) xm |= XInputMask.Xinput11;
-			if (Xinput12CheckBox.Checked) xm |= XInputMask.Xinput12;
-			if (Xinput13CheckBox.Checked) xm |= XInputMask.Xinput13;
-			if (Xinput14CheckBox.Checked) xm |= XInputMask.Xinput14;
-			if (Xinput91CheckBox.Checked) xm |= XInputMask.Xinput91;
-			if (CurrentGame.XInputMask != (int)xm)
-			{
-				CurrentGame.XInputMask = (int)xm;
-				XInputMaskTextBox.Text = CurrentGame.XInputMask.ToString("X8");
-			}
-			var hm = HookMask.NONE;
-			if (HookCOMCheckBox.Checked) hm |= HookMask.COM;
-			if (HookDICheckBox.Checked) hm |= HookMask.DI;
-			if (HookDISABLECheckBox.Checked) hm |= HookMask.DISABLE;
-			if (HookLLCheckBox.Checked) hm |= HookMask.LL;
-			if (HookNameCheckBox.Checked) hm |= HookMask.NAME;
-			if (HookPIDVIDCheckBox.Checked) hm |= HookMask.PIDVID;
-			if (HookSACheckBox.Checked) hm |= HookMask.SA;
-			if (HookSTOPCheckBox.Checked) hm |= HookMask.STOP;
-			if (HookWTCheckBox.Checked) hm |= HookMask.WT;
-			if (CurrentGame.HookMask != (int)xm)
-			{
-				CurrentGame.HookMask = (int)hm;
-				HookMaskTextBox.Text = CurrentGame.HookMask.ToString("X8");
-			}
+			var xm = (int)GetMask<XInputMask>(XInputCheckBoxes);
+			CurrentGame.XInputMask = xm;
+			XInputMaskTextBox.Text = xm.ToString("X8");
+			var hm = (int)GetMask<HookMask>(HookCheckBoxes);
+			CurrentGame.HookMask = hm;
+			HookMaskTextBox.Text = hm.ToString("X8");
 			SettingsFile.Current.Save();
 		}
 
 		void SetCheckXinput(object sender, XInputMask mask)
 		{
-			if (CurrentGame == null) return;
-			var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
-			var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
-			var fullPath = System.IO.Path.Combine(path, name);
-			var box = (CheckBox)sender;
-			var exists = Helper.CreateDllFile(box.Checked, fullPath);
-			if (exists != box.Checked) box.Checked = exists;
+			//if (CurrentGame == null) return;
+			//var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
+			//var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
+			//var fullPath = System.IO.Path.Combine(path, name);
+			//var box = (CheckBox)sender;
+			//var exists = Helper.CreateDllFile(box.Checked, fullPath);
+			//if (exists != box.Checked) box.Checked = exists;
 		}
 
-		private void Xinput91CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SetCheckXinput(sender, XInputMask.Xinput91);
-		}
-
-		private void Xinput11CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SetCheckXinput(sender, XInputMask.Xinput11);
-		}
-
-		private void Xinput12CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SetCheckXinput(sender, XInputMask.Xinput12);
-		}
-
-		private void Xinput13CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SetCheckXinput(sender, XInputMask.Xinput13);
-		}
-
-		private void Xinput14CheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SetCheckXinput(sender, XInputMask.Xinput14);
-		}
 	}
 }
