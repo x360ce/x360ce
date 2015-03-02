@@ -7,11 +7,11 @@ using System.Linq;
 using System.Drawing;
 using SharpDX.DirectInput;
 using System.Text.RegularExpressions;
-//using x360ce.App.x360ce.Engine.Data;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Xml;
 using Microsoft.Win32;
+using x360ce.Engine;
 
 namespace x360ce.App
 {

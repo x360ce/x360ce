@@ -1,7 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-namespace x360ce.App
+
+namespace x360ce.Engine
 {
+	/// <summary>
+	/// Important: Names of Enums are linked to checkbox names on x360ce App.
+	/// </summary>
 	[Flags]
 	public enum XInputMask: uint
 	{

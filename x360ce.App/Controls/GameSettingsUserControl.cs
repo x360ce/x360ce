@@ -136,7 +136,11 @@ namespace x360ce.App.Controls
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
 			var games = SettingsFile.Current.Games;
-			foreach (var game in games) game.Refresh();
+			foreach (var game in games)
+			{
+				game.Refresh();
+			}
+			MySettingsDataGridView.Invalidate();
 			//ws.GetProgram()
 			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
@@ -462,6 +466,15 @@ namespace x360ce.App.Controls
 				item.IsEnabled = !item.IsEnabled;
 				grid.Invalidate();
 			}
+		}
+
+		private void FolderButton_Click(object sender, EventArgs e)
+		{
+			var game = GameDetailsControl.CurrentGame;
+			if (!File.Exists(game.FullPath)) return;
+			string argument = @"/select, " + game.FullPath;
+			System.Diagnostics.Process.Start("explorer.exe", argument);
+			// OpenPath(game.FullPath);
 		}
 
 	}

@@ -1,9 +1,12 @@
 ﻿using System;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
+	/// <summary>
+	/// Important: Names of Enums are linked to checkbox names on x360ce App.
+	/// </summary>
 	[Flags]
-	public enum HookMask: uint
+	public enum HookMask : uint
 	{
 		NONE = 0x00000000,
 		/// <summary>Load Library</summary>
