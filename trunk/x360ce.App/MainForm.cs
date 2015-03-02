@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using SharpDX.XInput;
 using x360ce.Engine.Win32;
+using x360ce.Engine;
 
 namespace x360ce.App
 {

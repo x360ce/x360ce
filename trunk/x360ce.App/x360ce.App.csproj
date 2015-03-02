@@ -159,7 +159,6 @@
     </Compile>
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Extensions.cs" />
-    <Compile Include="Common\HookMask.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
@@ -177,7 +176,6 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="Common\Vendor.cs" />
-    <Compile Include="Common\XInputMask.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -451,6 +449,7 @@
     <None Include="Images\checkbox_disabled_16x16.png" />
     <None Include="Images\checkbox_unchecked_16x16.png" />
     <None Include="Images\checkbox_unchecked_disabled_16x16.png" />
+    <None Include="Images\folder_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />

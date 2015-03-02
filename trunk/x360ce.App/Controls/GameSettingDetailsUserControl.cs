@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -16,9 +17,9 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
-			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
 			XInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("XInput")).ToArray();
 			HookCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Hook")).ToArray();
+			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
 			lock (CurrentGameLock)
 			{
 				EnableEvents();
@@ -32,6 +33,7 @@ namespace x360ce.App.Controls
 		CheckBox[] HookCheckBoxes;
 
 		x360ce.Engine.Data.Game _CurrentGame;
+	
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public x360ce.Engine.Data.Game CurrentGame
 		{
@@ -52,24 +54,8 @@ namespace x360ce.App.Controls
 			lock (CurrentGameLock)
 			{
 				if (EnabledEvents) DisableEvents();
-				// Check/Uncheck XInput checkboxes.
-				var xs = (XInputMask[])Enum.GetValues(typeof(XInputMask));
-				XInputMaskTextBox.Text = ((int)inputMask).ToString("X8");
-				foreach (var value in xs)
-				{
-					// Get checkbox linked to enum value.
-					var cb = XInputCheckBoxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
-					if (cb != null) cb.Checked = inputMask.HasFlag(value);
-				}
-				// Check/Uncheck Hook checkboxes.
-				var hs = (HookMask[])Enum.GetValues(typeof(HookMask));
-				HookMaskTextBox.Text = ((int)inputMask).ToString("X8");
-				foreach (var value in hs)
-				{
-					// Get checkbox linked to enum value.
-					var cb = HookCheckBoxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
-					if (cb != null) cb.Checked = hookMask.HasFlag(value);
-				}
+				SetMask<XInputMask>(XInputCheckBoxes, inputMask);
+				SetMask<HookMask>(HookCheckBoxes, hookMask);
 				// Processor architecture.
 				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
 					? (ProcessorArchitecture)proc
@@ -79,7 +65,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public T GetMask<T>(CheckBox[] boxes)
+		T GetMask<T>(CheckBox[] boxes)
 		{
 			uint mask = 0;
 			// Check/Uncheck checkboxes.
@@ -91,6 +77,18 @@ namespace x360ce.App.Controls
 				if (cb != null && cb.Checked) mask |= (uint)(object)value;
 			}
 			return (T)(object)mask;
+		}
+
+		void SetMask<T>(CheckBox[] boxes, T mask)
+		{
+			// Check/Uncheck checkboxes.
+			var xs = (T[])Enum.GetValues(typeof(T));
+			foreach (var value in xs)
+			{
+				// Get checkbox linked to enum value.
+				var cb = boxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
+				if (cb != null) cb.Checked = (((uint)(object)mask & (uint)(object)value) != 0);
+			}
 		}
 
 		void EnableEvents()
@@ -119,7 +117,7 @@ namespace x360ce.App.Controls
 			SettingsFile.Current.Save();
 		}
 
-		void SetCheckXinput(object sender, XInputMask mask)
+		void SetCheckXinput(XInputMask mask)
 		{
 			//if (CurrentGame == null) return;
 			//var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
@@ -129,6 +127,10 @@ namespace x360ce.App.Controls
 			//var exists = Helper.CreateDllFile(box.Checked, fullPath);
 			//if (exists != box.Checked) box.Checked = exists;
 		}
+
+
+
+
 
 	}
 }
