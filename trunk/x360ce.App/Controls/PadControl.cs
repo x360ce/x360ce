@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Linq;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -32,10 +33,10 @@ namespace x360ce.App.Controls
             // Initialize images.
             this.TopPictureBox.Image = topDisabledImage;
             this.FrontPictureBox.Image = frontDisabledImage;
-            this.markB = new Bitmap(Helper.GetResource("Images.MarkButton.png"));
-            this.markA = new Bitmap(Helper.GetResource("Images.MarkAxis.png"));
-            this.markC = new Bitmap(Helper.GetResource("Images.MarkController.png"));
-            this.markR = new Bitmap(Helper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+			this.markB = new Bitmap(EngineHelper.GetResource("Images.MarkButton.png"));
+			this.markA = new Bitmap(EngineHelper.GetResource("Images.MarkAxis.png"));
+			this.markC = new Bitmap(EngineHelper.GetResource("Images.MarkController.png"));
+			this.markR = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
             float rH = topDisabledImage.HorizontalResolution;
             float rV = topDisabledImage.VerticalResolution;
             // Make sure resolution is same everywhere so images won't be resized.
@@ -228,13 +229,13 @@ namespace x360ce.App.Controls
         Bitmap _topImage;
         Bitmap topImage
         {
-            get { return _topImage = _topImage ?? new Bitmap(Helper.GetResource("Images.xboxControllerTop.png")); }
+			get { return _topImage = _topImage ?? new Bitmap(EngineHelper.GetResource("Images.xboxControllerTop.png")); }
         }
 
         Bitmap _frontImage;
         Bitmap frontImage
         {
-            get { return _frontImage = _frontImage ?? new Bitmap(Helper.GetResource("Images.xboxControllerFront.png")); }
+			get { return _frontImage = _frontImage ?? new Bitmap(EngineHelper.GetResource("Images.xboxControllerFront.png")); }
         }
 
         Bitmap _topDisabledImage;
@@ -245,8 +246,8 @@ namespace x360ce.App.Controls
                 if (_topDisabledImage == null)
                 {
                     _topDisabledImage = (Bitmap)topImage.Clone();
-                    Helper.GrayScale(_topDisabledImage);
-                    Helper.Transparent(_topDisabledImage, 50);
+					AppHelper.GrayScale(_topDisabledImage);
+					AppHelper.Transparent(_topDisabledImage, 50);
                 }
                 return _topDisabledImage;
             }
@@ -260,8 +261,8 @@ namespace x360ce.App.Controls
                 if (_frontDisabledImage == null)
                 {
                     _frontDisabledImage = (Bitmap)frontImage.Clone();
-                    Helper.GrayScale(_frontDisabledImage);
-                    Helper.Transparent(_frontDisabledImage, 50);
+                    AppHelper.GrayScale(_frontDisabledImage);
+                    AppHelper.Transparent(_frontDisabledImage, 50);
                 }
                 return _frontDisabledImage;
             }
@@ -559,7 +560,7 @@ namespace x360ce.App.Controls
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);
             }
             // If this is different device.
-            if (!Helper.IsSameDevice(device, instanceGuid))
+            if (!AppHelper.IsSameDevice(device, instanceGuid))
             {
                 Guid iGuid = Guid.Empty;
                 if (enable)
@@ -666,7 +667,7 @@ namespace x360ce.App.Controls
             if (device == null) return;
             // Add [Record] button.
             mi = new ToolStripMenuItem(cRecord);
-            mi.Image = new Bitmap(Helper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+            mi.Image = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
             mi.Click += new EventHandler(DiMenuStrip_Click);
             DiMenuStrip.Items.Add(mi);
             // Add Buttons.

@@ -31,59 +31,6 @@ namespace x360ce.Engine.Data
 			return item;
 		}
 
-		// Check game settings against folder.
-		public void Refresh()
-		{
-			var fi = new FileInfo(FullPath);
-			// Check if game file exists.
-			if (!fi.Exists)
-			{
-				RefreshStatus = GameRefreshStatus.FileNotExist;
-				return;
-			}
-			else
-			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
-				var values = (XInputMask[])Enum.GetValues(typeof(XInputMask));
-				foreach (var value in values)
-				{
-					// If value is enabled then...
-					if (((uint)XInputMask & (uint)value) != 0)
-					{
-						// Get name of xInput file.
-						var dllName = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
-						var dllFullPath = System.IO.Path.Combine(fi.Directory.FullName, dllName);
-						var dllFileInfo = new System.IO.FileInfo(dllFullPath);
-						if (!dllFileInfo.Exists)
-						{
-							RefreshStatus = GameRefreshStatus.XInputFileNotExist;
-							return;
-						}
-						var arch = Win32.PEReader.GetProcessorArchitecture(dllFullPath);
-						// If  64-bit then...
-						if (value.ToString().Contains("x64"))
-						{
-							if (arch == System.Reflection.ProcessorArchitecture.X86)
-							{
-								RefreshStatus = GameRefreshStatus.XInputFileWrongPlatform;
-								return;
-							}
-						}
-						// If 32-bit then...
-						else if (value.ToString().Contains("x86"))
-						{
-							if (arch == System.Reflection.ProcessorArchitecture.Amd64)
-							{
-								RefreshStatus = GameRefreshStatus.XInputFileWrongPlatform;
-								return;
-							}
-						}
-					}
-				}
-			}
-			RefreshStatus = GameRefreshStatus.OK;
-		}
-
 		GameRefreshStatus _RefreshStatus;
 		public GameRefreshStatus RefreshStatus
 		{

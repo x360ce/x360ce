@@ -78,7 +78,7 @@ namespace x360ce.App
             CleanStatusTimer.SynchronizingObject = this;
             CleanStatusTimer.Interval = 3000;
             CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
-            Text = Helper.GetProductFullName();
+            Text = EngineHelper.GetProductFullName();
             // Start Timers.
             UpdateTimer.Start();
         }
@@ -268,7 +268,7 @@ namespace x360ce.App
             var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
             var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
             string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
-            var resource = Helper.GetResource("Presets." + resourceName);
+			var resource = EngineHelper.GetResource("Presets." + resourceName);
             // If internal preset was found.
             if (resource != null)
             {
@@ -449,8 +449,8 @@ namespace x360ce.App
                 if (tmp.Length != ini.Length) { changed = true; }
                 else
                 {
-                    var tmpChecksum = Helper.GetFileChecksum(tmp.FullName);
-                    var iniChecksum = Helper.GetFileChecksum(ini.FullName);
+					var tmpChecksum = EngineHelper.GetFileChecksum(tmp.FullName);
+					var iniChecksum = EngineHelper.GetFileChecksum(ini.FullName);
                     changed = !tmpChecksum.Equals(iniChecksum);
                 }
                 if (changed)
@@ -655,29 +655,15 @@ namespace x360ce.App
             UpdateTimer.Start();
         }
 
-
-        Version GetDllVersion(string fileName, out bool byMicrosoft)
-        {
-            var dllInfo = new System.IO.FileInfo(fileName);
-            byMicrosoft = false;
-            if (dllInfo.Exists)
-            {
-                var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-                byMicrosoft = !string.IsNullOrEmpty(vi.CompanyName) && vi.CompanyName.Contains("Microsoft");
-                return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-            }
-            return new Version(0, 0, 0, 0);
-        }
-
         public void ReloadLibrary()
         {
             Program.ReloadCount++;
             settingsChanged = false;
-            var dllInfo = Helper.GetDefaultDll();
+			var dllInfo = EngineHelper.GetDefaultDll();
             if (dllInfo != null && dllInfo.Exists)
             {
                 bool byMicrosoft;
-                var dllVersion = GetDllVersion(dllInfo.FullName, out byMicrosoft);
+				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
                 StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
                 // If fast reload od settings is supported then...
                 lock (XInputLock)
@@ -728,7 +714,7 @@ namespace x360ce.App
             {
                 // Move this here so interface will load one second faster.
                 HelpInit = true;
-                var stream = Helper.GetResource("Documents.Help.htm");
+				var stream = EngineHelper.GetResource("Documents.Help.htm");
                 var sr = new StreamReader(stream);
                 NameValueCollection list = new NameValueCollection();
                 list.Add("font-name-default", "'Microsoft Sans Serif'");
@@ -799,20 +785,21 @@ namespace x360ce.App
                     if (!CreateFile(this.GetType().Namespace + ".Presets." + SettingManager.IniFileName, SettingManager.IniFileName)) return false;
                 }
                 // If xinput file doesn't exists.
-                var embeddedDllVersion = Helper.GetEmbeddedDllVersion();
-                var file = Helper.GetDefaultDll();
+				var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
+                var embeddedDllVersion = EngineHelper.GetEmbeddedDllVersion(architecture);
+				var file = EngineHelper.GetDefaultDll();
                 if (file == null)
                 {
 					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-					if (!CreateFile(Helper.GetXInputResoureceName(), xFile)) return false;
+					if (!CreateFile(EngineHelper.GetXInputResoureceName(), xFile)) return false;
                 }
                 else
                 {
                     bool byMicrosoft;
-                    var dllVersion = GetDllVersion(file.Name, out byMicrosoft);
+					var dllVersion = EngineHelper.GetDllVersion(file.Name, out byMicrosoft);
                     if (dllVersion < embeddedDllVersion)
                     {
-                        CreateFile(Helper.GetXInputResoureceName(), file.Name, dllVersion, embeddedDllVersion);
+                        CreateFile(EngineHelper.GetXInputResoureceName(), file.Name, dllVersion, embeddedDllVersion);
                         return true;
                     }
                 }

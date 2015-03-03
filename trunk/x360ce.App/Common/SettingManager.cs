@@ -460,7 +460,7 @@ namespace x360ce.App
 			string pad = string.Format("PAD{0}", padIndex + 1);
 			string guidString = SettingManager.Current.SettingsMap[pad + "\\" + SettingName.InstanceGuid].Text;
 			// If instanceGuid value is not a GUID then exit.
-			if (!Helper.IsGuid(guidString)) return null;
+			if (!EngineHelper.IsGuid(guidString)) return null;
 			Guid ig = new Guid(guidString);
 			// If InstanceGuid value is empty then exit.
 			if (ig.Equals(Guid.Empty)) return null;

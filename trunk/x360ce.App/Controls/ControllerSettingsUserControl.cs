@@ -31,9 +31,9 @@ namespace x360ce.App.Controls
         {
             _myControllersTitle = MyControllersTabPage.Text;
             _globalSettingsTitle = SummariesTabPage.Text;
-            Helper.EnableDoubleBuffering(MySettingsDataGridView);
-            Helper.EnableDoubleBuffering(SummariesDataGridView);
-            Helper.EnableDoubleBuffering(PresetsDataGridView);
+			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
+			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
+			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
             MySettingsDataGridView.AutoGenerateColumns = false;
             SummariesDataGridView.AutoGenerateColumns = false;
             _Summaries.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
