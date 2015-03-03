@@ -138,7 +138,7 @@ namespace x360ce.App.Controls
 			var games = SettingsFile.Current.Games;
 			foreach (var game in games)
 			{
-				game.Refresh();
+				game.RefreshStatus = GetGameStatus(game);
 			}
 			MySettingsDataGridView.Invalidate();
 			//ws.GetProgram()
@@ -146,6 +146,61 @@ namespace x360ce.App.Controls
 			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
 
 		}
+
+		// Check game settings against folder.
+		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game)
+		{
+			var fi = new FileInfo(game.FullPath);
+			// Check if game file exists.
+			if (!fi.Exists)
+			{
+				return GameRefreshStatus.FileNotExist;
+			}
+			else
+			{
+				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
+				var values = (XInputMask[])Enum.GetValues(typeof(XInputMask));
+				foreach (var value in values)
+				{
+					// If value is enabled then...
+					if (((uint)game.XInputMask & (uint)value) != 0)
+					{
+						// Get name of xInput file.
+						var dllName = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+						var dllFullPath = System.IO.Path.Combine(fi.Directory.FullName, dllName);
+						var dllFileInfo = new System.IO.FileInfo(dllFullPath);
+						if (!dllFileInfo.Exists)
+						{
+							return GameRefreshStatus.XInputFileNotExist;
+						}
+						var arch = Engine.Win32.PEReader.GetProcessorArchitecture(dllFullPath);
+						// If 64-bit selected but file is 32-bit then...
+						if (value.ToString().Contains("x64") && arch == System.Reflection.ProcessorArchitecture.X86)
+						{
+							return GameRefreshStatus.XInputFileWrongPlatform;
+						}
+						// If 32-bit selected but file is 64-bit then...
+						if (value.ToString().Contains("x86") && arch == System.Reflection.ProcessorArchitecture.Amd64)
+						{
+							return GameRefreshStatus.XInputFileWrongPlatform;
+						}
+						bool byMicrosoft;
+						var dllVersion = EngineHelper.GetDllVersion(dllFullPath, out byMicrosoft);
+						var embededVersion = EngineHelper.GetEmbeddedDllVersion(arch);
+						if (dllVersion < embededVersion)
+						{
+							return GameRefreshStatus.XInputFileOlderVersion;
+						}
+						else if (dllVersion > embededVersion)
+						{
+							return GameRefreshStatus.XInputFileNewerVersion;
+						}
+					}
+				}
+			}
+			return GameRefreshStatus.OK;
+		}
+
 
 		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
@@ -290,8 +345,8 @@ namespace x360ce.App.Controls
 
 		private void GamesControl_Load(object sender, EventArgs e)
 		{
-			Helper.EnableDoubleBuffering(MySettingsDataGridView);
-			Helper.EnableDoubleBuffering(GlobalSettingsDataGridView);
+			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
+			EngineHelper.EnableDoubleBuffering(GlobalSettingsDataGridView);
 			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
 			LoadProgramsFromLocalFile();
 		}
@@ -398,7 +453,7 @@ namespace x360ce.App.Controls
 				if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
 				GameApplicationOpenFileDialog.FileName = fi.Name;
 			}
-			GameApplicationOpenFileDialog.Filter = Helper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+			GameApplicationOpenFileDialog.Filter = EngineHelper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
 			GameApplicationOpenFileDialog.FilterIndex = 1;
 			GameApplicationOpenFileDialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));

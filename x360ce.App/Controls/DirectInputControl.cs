@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Linq;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -323,7 +324,7 @@ namespace x360ce.App.Controls
 
         public void UpdateFrom(Joystick device, out JoystickState state)
         {
-            if (!Helper.IsSameDevice(device, deviceInstanceGuid))
+			if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
             {
                 ShowDeviceInfo(device);
                 deviceInstanceGuid = Guid.Empty;
@@ -351,8 +352,8 @@ namespace x360ce.App.Controls
 
         private void DirectInputControl_Load(object sender, EventArgs e)
         {
-            Helper.EnableDoubleBuffering(DiAxisDataGridView);
-            Helper.EnableDoubleBuffering(DiEffectsDataGridView);
+			EngineHelper.EnableDoubleBuffering(DiAxisDataGridView);
+			EngineHelper.EnableDoubleBuffering(DiEffectsDataGridView);
         }
 
     }

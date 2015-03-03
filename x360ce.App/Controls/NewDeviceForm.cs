@@ -24,7 +24,7 @@ namespace x360ce.App.Controls
 
         void NewDeviceForm_Load(object sender, EventArgs e)
         {
-            Helper.EnableDoubleBuffering(MySettingsDataGridView);
+			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
             configs = new SortableBindingList<Summary>();
             MySettingsDataGridView.AutoGenerateColumns = false;
             MySettingsDataGridView.DataSource = configs;
@@ -52,7 +52,7 @@ namespace x360ce.App.Controls
 
         void BrowseButton_Click(object sender, EventArgs e)
         {
-            SettingsFolderBrowserDialog.Description = string.Format("Browse for {0} (*.ini)", Helper.GetFileDescription(".ini"));
+            SettingsFolderBrowserDialog.Description = string.Format("Browse for {0} (*.ini)", EngineHelper.GetFileDescription(".ini"));
             SettingsFolderBrowserDialog.SelectedPath = FolderPathTextBox.Text;
             var result = SettingsFolderBrowserDialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)

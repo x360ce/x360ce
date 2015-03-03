@@ -91,6 +91,7 @@
     <Compile Include="Common\Enum\GameRefreshStatus.cs" />
     <Compile Include="Common\Enum\HookMask.cs" />
     <Compile Include="Common\Enum\XInputMask.cs" />
+    <Compile Include="Common\EngineHelper.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
     <Compile Include="Common\KeyValue.cs" />
