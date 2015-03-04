@@ -31,13 +31,6 @@ namespace x360ce.Engine.Data
 			return item;
 		}
 
-		GameRefreshStatus _RefreshStatus;
-		public GameRefreshStatus RefreshStatus
-		{
-			get { return _RefreshStatus; }
-			set { _RefreshStatus = value; }
-		}
-
 		public void LoadDefault(Program program)
 		{
 			if (program == null) return;
