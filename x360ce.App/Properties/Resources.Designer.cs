@@ -193,6 +193,16 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap fix_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("fix_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap folder_16x16 {
             get {
                 object obj = ResourceManager.GetObject("folder_16x16", resourceCulture);
@@ -286,6 +296,16 @@ namespace x360ce.App.Properties {
         public static System.Drawing.Bitmap remove_16x16 {
             get {
                 object obj = ResourceManager.GetObject("remove_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap reset_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("reset_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -96,8 +96,8 @@ namespace x360ce.App.Controls
 		void InitDefaultList()
 		{
 			SettingsFile.Current.Load();
-			MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
 			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
+			MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
 		}
 
 		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
@@ -131,76 +131,9 @@ namespace x360ce.App.Controls
 		////InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
 		//InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
 
-
-
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
-			var games = SettingsFile.Current.Games;
-			foreach (var game in games)
-			{
-				game.RefreshStatus = GetGameStatus(game);
-			}
-			MySettingsDataGridView.Invalidate();
-			//ws.GetProgram()
-			//ws.LoadSettingCompleted += ws_LoadSettingCompleted;
-			//ws.LoadSettingAsync(new Guid[] { new Guid("45dec622-d819-2fdc-50a1-34bdf63647fb") }, null);
-
 		}
-
-		// Check game settings against folder.
-		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game)
-		{
-			var fi = new FileInfo(game.FullPath);
-			// Check if game file exists.
-			if (!fi.Exists)
-			{
-				return GameRefreshStatus.FileNotExist;
-			}
-			else
-			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
-				var values = (XInputMask[])Enum.GetValues(typeof(XInputMask));
-				foreach (var value in values)
-				{
-					// If value is enabled then...
-					if (((uint)game.XInputMask & (uint)value) != 0)
-					{
-						// Get name of xInput file.
-						var dllName = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
-						var dllFullPath = System.IO.Path.Combine(fi.Directory.FullName, dllName);
-						var dllFileInfo = new System.IO.FileInfo(dllFullPath);
-						if (!dllFileInfo.Exists)
-						{
-							return GameRefreshStatus.XInputFileNotExist;
-						}
-						var arch = Engine.Win32.PEReader.GetProcessorArchitecture(dllFullPath);
-						// If 64-bit selected but file is 32-bit then...
-						if (value.ToString().Contains("x64") && arch == System.Reflection.ProcessorArchitecture.X86)
-						{
-							return GameRefreshStatus.XInputFileWrongPlatform;
-						}
-						// If 32-bit selected but file is 64-bit then...
-						if (value.ToString().Contains("x86") && arch == System.Reflection.ProcessorArchitecture.Amd64)
-						{
-							return GameRefreshStatus.XInputFileWrongPlatform;
-						}
-						bool byMicrosoft;
-						var dllVersion = EngineHelper.GetDllVersion(dllFullPath, out byMicrosoft);
-						var embededVersion = EngineHelper.GetEmbeddedDllVersion(arch);
-						if (dllVersion < embededVersion)
-						{
-							return GameRefreshStatus.XInputFileOlderVersion;
-						}
-						else if (dllVersion > embededVersion)
-						{
-							return GameRefreshStatus.XInputFileNewerVersion;
-						}
-					}
-				}
-			}
-			return GameRefreshStatus.OK;
-		}
-
 
 		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
@@ -245,8 +178,14 @@ namespace x360ce.App.Controls
 		/// <param name="e"></param>
 		private void ScanButton_Click(object sender, EventArgs e)
 		{
-			var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanFunction);
-			if (!success) ScanProgressLabel.Text = "Scan failed!";
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm("Scan for games on your computer?", "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			if (result == DialogResult.OK)
+			{
+				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanFunction);
+				if (!success) ScanProgressLabel.Text = "Scan failed!";
+			}
 		}
 
 		void ScanFunction(object state)
@@ -402,7 +341,6 @@ namespace x360ce.App.Controls
 			// List can't be empty, so return.
 			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
 			var selected = MySettingsDataGridView.SelectedRows.Count > 0;
-			UpdateButton.Enabled = selected;
 			StartButton.Enabled = selected;
 			SaveButton.Enabled = selected;
 			DeleteButton.Enabled = selected;
@@ -421,7 +359,6 @@ namespace x360ce.App.Controls
 			else
 			{
 				GameDetailsControl.CurrentGame = null;
-				UpdateButton.Visible = false;
 			}
 		}
 
@@ -532,5 +469,26 @@ namespace x360ce.App.Controls
 			// OpenPath(game.FullPath);
 		}
 
+		private void SaveButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void DeleteButton_Click(object sender, EventArgs e)
+		{
+			var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var message = string.Format("Are you sure you want to delete these settings?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
+				item.FileName,
+				item.FileProductName);
+			var result = form.ShowForm(message, "Delete Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+			if (result == DialogResult.Yes)
+			{
+			}
+		}
+
+	
 	}
 }

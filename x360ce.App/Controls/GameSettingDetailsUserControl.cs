@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using x360ce.Engine;
+using System.IO;
 
 namespace x360ce.App.Controls
 {
@@ -28,12 +29,14 @@ namespace x360ce.App.Controls
 
 		object CurrentGameLock = new object();
 		bool EnabledEvents = false;
+		bool ApplySettingsToFolderInstantly = false;
 
 		CheckBox[] XInputCheckBoxes;
 		CheckBox[] HookCheckBoxes;
 
 		x360ce.Engine.Data.Game _CurrentGame;
-	
+		x360ce.Engine.Data.Program _DefaultSettings;
+
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public x360ce.Engine.Data.Game CurrentGame
 		{
@@ -41,12 +44,88 @@ namespace x360ce.App.Controls
 			set
 			{
 				_CurrentGame = value;
-				var en = (value != null);
-				var item = value ?? new x360ce.Engine.Data.Game();
-				var inputMask = (XInputMask)item.XInputMask;
-				var hookMask = (HookMask)item.HookMask;
-				SetMask(en, hookMask, inputMask, item.FullPath, item.ProcessorArchitecture);
+				UpdateInterface();
 			}
+		}
+
+		void UpdateInterface()
+		{
+			var en = (CurrentGame != null);
+			var item = CurrentGame ?? new x360ce.Engine.Data.Game();
+			var inputMask = (XInputMask)item.XInputMask;
+			var hookMask = (HookMask)item.HookMask;
+			SetMask(en, hookMask, inputMask, item.FullPath, item.ProcessorArchitecture);
+			if (en)
+			{
+				var status = GetGameStatus(CurrentGame);
+				ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
+				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.None);
+				_DefaultSettings = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
+				ResetToDefaultButton.Enabled = _DefaultSettings != null;
+				if (ApplySettingsToFolderInstantly)
+				{
+
+				}
+			}
+
+		}
+
+		// Check game settings against folder.
+		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game)
+		{
+			var fi = new FileInfo(game.FullPath);
+			if (!game.IsEnabled)
+			{
+				return GameRefreshStatus.None;
+			}
+			// Check if game file exists.
+			if (!fi.Exists)
+			{
+				return GameRefreshStatus.FileNotExist;
+			}
+			else
+			{
+				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
+				var values = (XInputMask[])Enum.GetValues(typeof(XInputMask));
+				foreach (var value in values)
+				{
+					// If value is enabled then...
+					if (((uint)game.XInputMask & (uint)value) != 0)
+					{
+						// Get name of xInput file.
+						var dllName = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+						var dllFullPath = System.IO.Path.Combine(fi.Directory.FullName, dllName);
+						var dllFileInfo = new System.IO.FileInfo(dllFullPath);
+						if (!dllFileInfo.Exists)
+						{
+							return GameRefreshStatus.XInputFileNotExist;
+						}
+						var arch = Engine.Win32.PEReader.GetProcessorArchitecture(dllFullPath);
+						// If 64-bit selected but file is 32-bit then...
+						if (value.ToString().Contains("x64") && arch == System.Reflection.ProcessorArchitecture.X86)
+						{
+							return GameRefreshStatus.XInputFileWrongPlatform;
+						}
+						// If 32-bit selected but file is 64-bit then...
+						if (value.ToString().Contains("x86") && arch == System.Reflection.ProcessorArchitecture.Amd64)
+						{
+							return GameRefreshStatus.XInputFileWrongPlatform;
+						}
+						bool byMicrosoft;
+						var dllVersion = EngineHelper.GetDllVersion(dllFullPath, out byMicrosoft);
+						var embededVersion = EngineHelper.GetEmbeddedDllVersion(arch);
+						if (dllVersion < embededVersion)
+						{
+							return GameRefreshStatus.XInputFileOlderVersion;
+						}
+						else if (dllVersion > embededVersion)
+						{
+							return GameRefreshStatus.XInputFileNewerVersion;
+						}
+					}
+				}
+			}
+			return GameRefreshStatus.OK;
 		}
 
 		public void SetMask(bool en, HookMask hookMask, XInputMask inputMask, string path, int proc)
@@ -60,6 +139,8 @@ namespace x360ce.App.Controls
 				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
 					? (ProcessorArchitecture)proc
 					: ProcessorArchitecture.None;
+				SynchronizeSettingsButton.Visible = en;
+				ResetToDefaultButton.Visible = en;
 				// Enable events.
 				EnableEvents();
 			}
@@ -128,9 +209,28 @@ namespace x360ce.App.Controls
 			//if (exists != box.Checked) box.Checked = exists;
 		}
 
+		private void SynchronizeSettingsButton_Click(object sender, EventArgs e)
+		{
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm("Synchronize current settings to game folder?", "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			if (result == DialogResult.OK)
+			{
+			}
+		}
 
-
-
+		private void ResetToDefaultButton_Click(object sender, EventArgs e)
+		{
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm("Reset current settings to default?", "Reset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			if (result == DialogResult.OK)
+			{
+				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
+				_CurrentGame.HookMask = _DefaultSettings.HookMask;
+				UpdateInterface();
+			}
+		}
 
 	}
 }
