@@ -16,7 +16,7 @@ public:
     Controller(const Controller &other):
         m_ForceFeedback(this)
     {
-        m_pDevice = other.m_pDevice;
+        m_pDevice.reset(other.m_pDevice.get());
         m_state = other.m_state;
         m_mapping = other.m_mapping;
         m_productid = other.m_productid;
@@ -55,7 +55,7 @@ private:
     bool ButtonPressed(u32 buttonidx);
     HRESULT UpdateState();
 
-    LPDIRECTINPUTDEVICE8 m_pDevice;
+    std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;
     DIJOYSTATE2 m_state;
 };
 

@@ -10,8 +10,6 @@
 
 #include "InputHookManager.h"
 
-static const u32 PASSTROUGH = (u32)-2;
-
 class ControllerManager : NonCopyable
 {
 public:
@@ -69,14 +67,10 @@ public:
         if (m_hWnd)
             DestroyWindow(m_hWnd);
 
-        if (m_pDirectInput)
-        {
-            m_pDirectInput->Release();
-            PrintLog("DirectInput shutdown");
-        }
+        PrintLog("ControllerManager shutdown");
     }
 
-    u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
+    DWORD DeviceInitialize(DWORD dwUserIndex, Controller** ppController, bool *pPassthrough)
     {
         // Global disable
         if (m_config.m_globalDisable)
@@ -99,9 +93,12 @@ public:
 
         // passtrough
         if (pController->m_passthrough)
-            return PASSTROUGH;
+        {
+            *pPassthrough = true;
+            return ERROR_SUCCESS;
+        }
 
-        if (pController->m_failcount > 20) 
+        if (pController->m_failcount > 20)
             return ERROR_DEVICE_NOT_CONNECTED;
 
         if (!pController->Initalized())
@@ -130,7 +127,7 @@ public:
         return instance;
     }
 
-    LPDIRECTINPUT8& GetDirectInput()
+    std::unique_ptr<IDirectInput8A, COMDeleter>& GetDirectInput()
     {
         return m_pDirectInput;
     }
@@ -179,7 +176,7 @@ public:
 private:
     HWND m_hWnd;
     Config m_config;
-    LPDIRECTINPUT8 m_pDirectInput;
+    std::unique_ptr<IDirectInput8A, COMDeleter> m_pDirectInput;
     std::vector<Controller> m_controllers;
 
     bool enabled;

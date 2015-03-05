@@ -266,6 +266,40 @@ bool Convert(const std::string &str, bool *const output)
     return true;
 }
 
+bool Convert(const std::string &str, long *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    long value = strtol(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<long>(value);
+    return true;
+}
+
+bool Convert(const std::string &str, unsigned long *const output)
+{
+    char *endptr = nullptr;
+    errno = 0;
+
+    unsigned long value = strtoul(str.c_str(), &endptr, 0);
+
+    if (!endptr || *endptr)
+        return false;
+
+    if (errno == ERANGE)
+        return false;
+
+    *output = static_cast<unsigned long>(value);
+    return true;
+}
+
 std::string UTF16ToUTF8(const std::wstring& input)
 {
     auto const size = WideCharToMultiByte(CP_UTF8, 0, input.data(), (int)input.size(), nullptr, 0, nullptr, nullptr);

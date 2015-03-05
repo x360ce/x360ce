@@ -12,7 +12,7 @@
 Controller::Controller(u32 user) :
 m_ForceFeedback(this)
 {
-    m_pDevice = nullptr;
+    m_pDevice.reset();
     m_productid = GUID_NULL;
     m_instanceid = GUID_NULL;
     m_axiscount = 0;
@@ -31,9 +31,7 @@ Controller::~Controller()
     {
         if (m_useforce)
             m_ForceFeedback.Shutdown();
-
-        m_pDevice->Release();
-        m_pDevice = nullptr;
+        m_pDevice.reset();
     }
 }
 
@@ -434,17 +432,19 @@ DWORD Controller::CreateDevice()
     if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
     if (bHookSA) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_SA);
 
-    HRESULT hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &m_pDevice, NULL);
+    IDirectInputDevice8A* device;
+    HRESULT hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &device, NULL);
     if (FAILED(hr))
     {
         std::string strInstance;
         if (GUIDtoString(&strInstance, m_instanceid))
             PrintLog("[PAD%d] InstanceGUID %s is incorrect trying ProductGUID", m_user + 1, strInstance.c_str());
 
-        hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_productid, &m_pDevice, NULL);
+        hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_productid, &device, NULL);
         if (FAILED(hr))
             return ERROR_DEVICE_NOT_CONNECTED;
     }
+    m_pDevice.reset(device);
 
     if (bHookSA) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_SA);
     if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
