@@ -453,6 +453,7 @@
     <None Include="Images\cloud_computing_refresh_16x16.png" />
     <None Include="Images\fix_16x16.png" />
     <None Include="Images\reset_16x16.png" />
+    <None Include="Images\checkbox_undefined_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
