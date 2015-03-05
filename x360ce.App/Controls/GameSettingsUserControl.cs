@@ -66,7 +66,8 @@ namespace x360ce.App.Controls
 		void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var item = ((x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem);
+			var row = grid.Rows[e.RowIndex];
+			var item = ((x360ce.Engine.Data.Game)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
 			e.CellStyle.ForeColor = item.IsEnabled
 					? grid.DefaultCellStyle.ForeColor
@@ -97,7 +98,28 @@ namespace x360ce.App.Controls
 		{
 			SettingsFile.Current.Load();
 			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
-			MySettingsDataGridView.DataSource = SettingsFile.Current.Games;
+			RebindGames();
+		}
+
+		void RebindGames()
+		{
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(MySettingsDataGridView, "FileName");
+			SortableBindingList<x360ce.Engine.Data.Game> data;
+			if (ShowToolStripDropDownButton.Text.Contains("Enabled"))
+			{
+				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => x.IsEnabled));
+			}
+			else if (ShowToolStripDropDownButton.Text.Contains("Disabled"))
+			{
+				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => !x.IsEnabled));
+			}
+			else
+			{
+				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games);
+			}
+			MySettingsDataGridView.DataSource = null;
+			MySettingsDataGridView.DataSource = data;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(MySettingsDataGridView, "FileName", selection);
 		}
 
 		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
@@ -349,12 +371,6 @@ namespace x360ce.App.Controls
 				var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
 				GameDetailsControl.CurrentGame = item;
-				if (item.IsEnabled)
-				{
-				}
-				else
-				{
-				}
 			}
 			else
 			{
@@ -454,9 +470,12 @@ namespace x360ce.App.Controls
 			var grid = (DataGridView)sender;
 			if (e.ColumnIndex == grid.Columns[EnabledColumn.Name].Index)
 			{
-				var item = (x360ce.Engine.Data.Game)grid.Rows[e.RowIndex].DataBoundItem;
-				item.IsEnabled = !item.IsEnabled;
-				grid.Invalidate();
+				var row = grid.Rows[e.RowIndex];
+				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+				// Workaround for first cell click.
+				var game = SettingsFile.Current.Games.First(x => x.FileName == item.FileName);
+				game.IsEnabled = !game.IsEnabled;
+				RebindGames();
 			}
 		}
 
@@ -476,7 +495,8 @@ namespace x360ce.App.Controls
 
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
-			var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var grid = MySettingsDataGridView;
+			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -486,9 +506,18 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(message, "Delete Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 			if (result == DialogResult.Yes)
 			{
+				SettingsFile.Current.Games.Remove(item);
+				RebindGames();
 			}
 		}
 
-	
+		private void ShowToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var item = (ToolStripMenuItem)sender;
+			ShowToolStripDropDownButton.Image = item.Image;
+			ShowToolStripDropDownButton.Text = item.Text;
+			RebindGames();
+		}
+
 	}
 }
