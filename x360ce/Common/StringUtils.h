@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.h"
+
 #include <string>
 #include <sstream>
 
@@ -20,6 +22,9 @@ bool Convert(const std::string &str, u64 *const output);
 bool Convert(const std::string &str, float *const output);
 bool Convert(const std::string &str, double *const output);
 bool Convert(const std::string &str, bool *output);
+
+bool Convert(const std::string &str, long *const output);
+bool Convert(const std::string &str, unsigned long *const output);
 
 std::string CP1252ToUTF8(const std::string& str);
 std::string UTF16ToUTF8(const std::wstring& str);

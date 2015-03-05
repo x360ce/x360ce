@@ -1,6 +1,6 @@
 ﻿/*
  *  MinHook - The Minimalistic API Hooking Library for x64/x86
- *  Copyright (C) 2009-2014 Tsuda Kageyu.
+ *  Copyright (C) 2009-2015 Tsuda Kageyu.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <intrin.h>
+#include <xmmintrin.h>
 
 #include "MinHook.h"
 #include "buffer.h"
@@ -168,6 +169,12 @@ static DWORD_PTR FindOldIP(PHOOK_ENTRY pHook, DWORD_PTR ip)
         if (ip == ((DWORD_PTR)pHook->pTrampoline + pHook->newIPs[i]))
             return (DWORD_PTR)pHook->pTarget + pHook->oldIPs[i];
     }
+
+#ifdef _M_X64
+    // Check relay function.
+    if (ip == (DWORD_PTR)pHook->pDetour)
+        return (DWORD_PTR)pHook->pTarget;
+#endif
 
     return 0;
 }
@@ -377,6 +384,9 @@ static MH_STATUS EnableHookLL(UINT pos, BOOL enable)
 
     VirtualProtect(pPatchTarget, patchSize, oldProtect, &oldProtect);
 
+    // Just-in-case measure.
+    FlushInstructionCache(GetCurrentProcess(), pPatchTarget, patchSize);
+
     pHook->isEnabled   = enable;
     pHook->queueEnable = enable;
 
@@ -418,17 +428,29 @@ static MH_STATUS EnableAllHooksLL(BOOL enable)
 //-------------------------------------------------------------------------
 static VOID EnterSpinLock(VOID)
 {
+    SIZE_T spinCount = 0;
+
     // Wait until the flag is FALSE.
     while (_InterlockedCompareExchange(&g_isLocked, TRUE, FALSE) != FALSE)
     {
+        _ReadWriteBarrier();
+
         // Prevent the loop from being too busy.
-        Sleep(1);
+        if (spinCount < 16)
+            _mm_pause();
+        else if (spinCount < 32)
+            Sleep(0);
+        else
+            Sleep(1);
+
+        spinCount++;
     }
 }
 
 //-------------------------------------------------------------------------
 static VOID LeaveSpinLock(VOID)
 {
+    _ReadWriteBarrier();
     _InterlockedExchange(&g_isLocked, FALSE);
 }
 
@@ -472,6 +494,8 @@ MH_STATUS WINAPI MH_Uninitialize(VOID)
             return status;
 
         // Free the internal function buffer.
+        // HeapFree is actually not required, but some tools detect a false
+        // memory leak without HeapFree.
         UninitializeBuffer();
         HeapFree(g_hHeap, 0, g_hooks.pItems);
         HeapDestroy(g_hHeap);
@@ -750,4 +774,22 @@ MH_STATUS WINAPI MH_ApplyQueued(VOID)
     {
         LeaveSpinLock();
     }
+}
+
+//-------------------------------------------------------------------------
+MH_STATUS WINAPI MH_CreateHookApi(
+    LPCWSTR pszModule, LPCSTR pszProcName, LPVOID pDetour, LPVOID *ppOriginal)
+{
+    HMODULE hModule;
+    LPVOID  pTarget;
+
+    hModule = GetModuleHandleW(pszModule);
+    if (hModule == NULL)
+        return MH_ERROR_MODULE_NOT_FOUND;
+
+    pTarget = GetProcAddress(hModule, pszProcName);
+    if (pTarget == NULL)
+        return MH_ERROR_FUNCTION_NOT_FOUND;
+
+    return MH_CreateHook(pTarget, pDetour, ppOriginal);
 }

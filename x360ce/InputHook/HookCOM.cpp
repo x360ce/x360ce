@@ -75,6 +75,11 @@ HRESULT STDMETHODCALLTYPE HookCOM::HookGet(IWbemClassObject * This, LPCWSTR wszN
         //PrintLog( "  Got device ID '%ls'", pVal->bstrVal);
         DWORD dwPid = 0, dwVid = 0, dummy = 0;
 
+        // We do not need to spoof if IG_ present and PIDVID change is disabled
+        if (!InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_PIDVID) &&
+            wcsstr(pVal->bstrVal, L"IG_"))
+            return hr;
+
         OLECHAR* strVid = wcsstr(pVal->bstrVal, L"VID_");
         if (!strVid || swscanf_s(strVid, L"VID_%4X", &dwVid) < 1)
         {

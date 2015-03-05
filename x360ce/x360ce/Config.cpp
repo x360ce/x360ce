@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Common.h"
-#include "SWIP.h"
+#include "IniFile.h"
 #include "Logger.h"
 #include "version.h"
 #include "Utils.h"
 #include "InputHook.h"
 
-#include "SWIP.h"
+#include "IniFile.h"
 #include "Config.h"
 
 #include "Controller.h"
@@ -157,7 +157,7 @@ const u16 Config::povIDs[4] =
 
 void Config::ReadConfig()
 {
-    SWIP ini;
+    IniFile ini;
     std::string inipath("x360ce.ini");
     if (!ini.Load(inipath))
         CheckCommonDirectory(&inipath, "x360ce");
@@ -204,14 +204,14 @@ void Config::ReadConfig()
     }
 }
 
-bool Config::ReadPadConfig(Controller* pController, const std::string& section, SWIP* pSWIP)
+bool Config::ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile)
 {
     std::string buffer;
 
-    if (pSWIP->Get(section, "ProductGUID", &buffer))
+    if (pIniFile->Get(section, "ProductGUID", &buffer))
         StringToGUID(&pController->m_productid, buffer);
 
-    if (pSWIP->Get(section, "InstanceGUID", &buffer))
+    if (pIniFile->Get(section, "InstanceGUID", &buffer))
         StringToGUID(&pController->m_instanceid, buffer);
 
     if (IsEqualGUID(pController->m_productid, GUID_NULL) || IsEqualGUID(pController->m_instanceid, GUID_NULL))
@@ -221,53 +221,53 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
         MessageBoxA(NULL, message.c_str(), "x360ce", MB_ICONERROR);
         return false;
     }
-    pSWIP->Get(section, "PassThrough", &pController->m_passthrough);
+    pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
     if (pController->m_passthrough)
         return false;
 
     // Device type
-    pSWIP->Get(section, "ControllerType", &pController->m_gamepadtype, 1);
+    pIniFile->Get<u8>(section, "ControllerType", &pController->m_gamepadtype, 1);
 
     // FFB options
-    pSWIP->Get(section, "UseForceFeedback", &pController->m_useforce);
+    pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
     if (pController->m_useforce)
     {
-        pSWIP->Get(section, "SwapMotor", &pController->m_ForceFeedback.m_SwapMotors);
-        pSWIP->Get(section, "FFBType", &pController->m_ForceFeedback.m_Type);
-        pSWIP->Get(section, "ForcePercent", &pController->m_ForceFeedback.m_ForcePercent, 100);
+        pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback.m_SwapMotors);
+        pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback.m_Type);
+        pIniFile->Get<float>(section, "ForcePercent", &pController->m_ForceFeedback.m_ForcePercent, 100);
         pController->m_ForceFeedback.m_ForcePercent *= 0.01f;
 
-        pSWIP->Get(section, "LeftMotorPeriod", &pController->m_ForceFeedback.m_LeftPeriod, 60);
-        pSWIP->Get(section, "RightMotorPeriod", &pController->m_ForceFeedback.m_RightPeriod, 20);
+        pIniFile->Get<u32>(section, "LeftMotorPeriod", &pController->m_ForceFeedback.m_LeftPeriod, 60);
+        pIniFile->Get<u32>(section, "RightMotorPeriod", &pController->m_ForceFeedback.m_RightPeriod, 20);
     }
 
     return true;
 }
 
-void Config::ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP)
+void Config::ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile)
 {
     Mapping* pMapping = &pController->m_mapping;
 
     // Guide button
-    pSWIP->Get(section, "GuideButton", &pMapping->guide, -1);
+    pIniFile->Get<s8>(section, "GuideButton", &pMapping->guide, -1);
 
     // Fire buttons
     for (u32 i = 0; i < _countof(pMapping->Button); ++i)
     {
         s8 button;
-        pSWIP->Get(section, buttonNames[i], &button);
+        pIniFile->Get(section, buttonNames[i], &button);
         pMapping->Button[i] = button - 1;
     }
 
     // D-PAD
-    pSWIP->Get(section, "D-pad POV", &pMapping->DpadPOV);
+    pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV);
     if (pMapping->DpadPOV >= 0)
     {
         for (u32 i = 0; i < _countof(pMapping->pov); ++i)
         {
             // D-PAD directions
             s16 val = 0;
-            pSWIP->Get(section, povNames[i], &val, -1);
+            pIniFile->Get<s16>(section, povNames[i], &val, -1);
             if (val > 0 && val < 128)
             {
                 pMapping->pov[i] = val - 1;
@@ -285,32 +285,32 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
     {
         // Axes
         std::string axis;
-        if (pSWIP->Get(section, axisNames[i], &axis))
+        if (pIniFile->Get(section, axisNames[i], &axis))
             ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
 
         // DeadZones
-        pSWIP->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
+        pIniFile->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
 
         // Anti DeadZones
-        pSWIP->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
+        pIniFile->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
 
         // Linearity
-        pSWIP->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
+        pIniFile->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
 
         // Axis to DPAD options
-        pSWIP->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
-        pSWIP->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
-        pSWIP->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
+        pIniFile->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
+        pIniFile->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
+        pIniFile->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
 
         // Axis to button mappings
         s8 ret;
-        pSWIP->Get(section, axisBNames[i * 2], &ret);
+        pIniFile->Get(section, axisBNames[i * 2], &ret);
         if (ret > 0)
         {
             pMapping->Axis[i].hasDigital = true;
             pMapping->Axis[i].positiveButtonID = ret - 1;
         }
-        pSWIP->Get(section, axisBNames[i * 2 + 1], &ret);
+        pIniFile->Get(section, axisBNames[i * 2 + 1], &ret);
         if (ret > 0)
         {
             pMapping->Axis[i].hasDigital = true;
@@ -322,13 +322,13 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
     for (u32 i = 0; i < _countof(pMapping->Trigger); ++i)
     {
         std::string trigger;
-        if (pSWIP->Get(section, triggerNames[i], &trigger))
+        if (pIniFile->Get(section, triggerNames[i], &trigger))
             ParsePrefix(trigger, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
 
-        pSWIP->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
+        pIniFile->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
 
         // SeDoG mod
-        pSWIP->Get(section, triggerBNames[i], &pMapping->Trigger[i].but);
+        pIniFile->Get(section, triggerBNames[i], &pMapping->Trigger[i].but);
     }
 }
 

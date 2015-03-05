@@ -32,11 +32,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     //PrintLog("XInputGetState");
 
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pState)
         return ERROR_BAD_ARGUMENTS;
-    u32 initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    u32 initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetState(dwUserIndex, pState);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -46,11 +47,12 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pVibration)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputSetState(dwUserIndex, pVibration);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -64,11 +66,12 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pCapabilities || dwFlags != XINPUT_FLAG_GAMEPAD)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetCapabilities(dwUserIndex, dwFlags, pCapabilities);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -102,11 +105,12 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pDSoundRenderGuid || !pDSoundCaptureGuid)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetDSoundAudioDeviceGuids(dwUserIndex, pDSoundRenderGuid, pDSoundCaptureGuid);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -121,11 +125,12 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pBatteryInformation)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetBatteryInformation(dwUserIndex, devType, pBatteryInformation);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -140,11 +145,12 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD dwUserIndex, BYTE devT
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pKeystroke)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetKeystroke(dwUserIndex, dwReserved, pKeystroke);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -250,11 +256,12 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 //undocumented
 extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
-    Controller* pController = nullptr;
+    Controller* pController;
+    bool bPassthrough;
     if (!pState)
         return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetStateEx(dwUserIndex, pState);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -266,9 +273,10 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 
 extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
-    Controller* pController = nullptr;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    Controller* pController;
+    bool bPassthrough;
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputWaitForGuideButton(dwUserIndex, dwFlag, pVoid);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -280,9 +288,10 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
 
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
-    Controller* pController = nullptr;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    Controller* pController;
+    bool bPassthrough;
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputCancelGuideButtonWait(dwUserIndex);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -294,9 +303,10 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 
 extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
-    Controller* pController = nullptr;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    Controller* pController;
+    bool bPassthrough;
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputPowerOffController(dwUserIndex);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -308,9 +318,10 @@ extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 
 extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount)
 {
-    Controller* pController = nullptr;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    Controller* pController;
+    bool bPassthrough;
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetAudioDeviceIds(dwUserIndex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -322,9 +333,10 @@ extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRende
 
 extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo)
 {
-    Controller* pController = nullptr;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    Controller* pController;
+    bool bPassthrough;
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetBaseBusInformation(dwUserIndex, pBusinfo);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;
@@ -338,9 +350,10 @@ extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XI
 // so XINPUT_CAPABILITIES is first 20 bytes of XINPUT_CAPABILITIESEX
 extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD unk1 /*seems that only 1 is valid*/, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
 {
-    Controller* pController = nullptr;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
-    if (initFlag == PASSTROUGH)
+    Controller* pController;
+    bool bPassthrough;
+    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController, &bPassthrough);
+    if (bPassthrough)
         return XInputModuleManager::Get().XInputGetCapabilitiesEx(unk1, dwUserIndex, dwFlags, pCapabilitiesEx);
     else if (initFlag != ERROR_SUCCESS)
         return initFlag;

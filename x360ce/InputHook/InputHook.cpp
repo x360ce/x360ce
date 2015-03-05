@@ -31,7 +31,7 @@
 
 bool InputHook::ReadGameDatabase()
 {
-    SWIP ini;
+    IniFile ini;
     std::string inipath("x360ce.gdb");
     if (!ini.Load(inipath))
         CheckCommonDirectory(&inipath, "x360ce");
@@ -64,7 +64,7 @@ m_fakepidvid(MAKELONG(0x045E, 0x028E)),
 m_timeout(0),
 m_timeout_thread(INVALID_HANDLE_VALUE)
 {
-    SWIP ini;
+    IniFile ini;
     std::string inipath("x360ce.ini");
     if (!ini.Load(inipath))
         CheckCommonDirectory(&inipath, "x360ce");
@@ -105,8 +105,8 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
         {
             u32 vid;
             u32 pid;
-            ini.Get("InputHook", "FakeVID", &vid, 0x045E);
-            ini.Get("InputHook", "FakePID", &pid, 0x028E);
+            ini.Get<u32>("InputHook", "FakeVID", &vid, 0x045E);
+            ini.Get<u32>("InputHook", "FakePID", &pid, 0x028E);
 
             if (vid != 0x045E || pid != 0x28E)
                 m_fakepidvid = MAKELONG(vid, pid);
@@ -149,7 +149,7 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
     if (!m_devices.empty())
     {
         if (!m_timeout)
-            ini.Get("InputHook", "Timeout", &m_timeout, 30);
+            ini.Get<u32>("InputHook", "Timeout", &m_timeout, 30);
 
         std::string maskname;
         if (MaskToName(&maskname, m_hookmask))

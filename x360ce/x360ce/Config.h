@@ -109,8 +109,8 @@ public:
     void ReadConfig();
 
 private:
-    bool ReadPadConfig(Controller* pController, const std::string& section, SWIP* pSWIP);
-    void ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP);
+    bool ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile);
+    void ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile);
 
     void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue);
 
