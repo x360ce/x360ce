@@ -59,7 +59,7 @@ bool InputHook::ReadGameDatabase()
 }
 
 InputHook::InputHook() :
-m_hookmask(0),
+m_hookmask(HOOK_COM),
 m_fakepidvid(MAKELONG(0x045E, 0x028E)),
 m_timeout(0),
 m_timeout_thread(INVALID_HANDLE_VALUE)
@@ -71,9 +71,8 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
     if (!ini.Load(inipath)) return;
 
     if (!ReadGameDatabase())
-    {
-        ini.Get("InputHook", "HookMask", &m_hookmask);
-        if (!m_hookmask)
+    {       
+        if (!ini.Get("InputHook", "HookMask", &m_hookmask, HOOK_COM))
         {
             bool check = false;
             ini.Get("InputHook", "HookLL", &check);
@@ -149,7 +148,7 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
     if (!m_devices.empty())
     {
         if (!m_timeout)
-            ini.Get<u32>("InputHook", "Timeout", &m_timeout, 30);
+            ini.Get<u32>("InputHook", "Timeout", &m_timeout, 45);
 
         std::string maskname;
         if (MaskToName(&maskname, m_hookmask))
