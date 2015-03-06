@@ -17,20 +17,34 @@ namespace x360ce.Engine
 	{
 		#region Manipulate XInput DLL
 
-		public static FileInfo[] GetDllInfos()
-		{
-			var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x => x != XInputMask.None);
-			var files = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).ToArray();
-			var infos = files.Select(x => new System.IO.FileInfo(x)).ToArray();
-			return infos;
-		}
-
+		/// <summary>
+		/// Get information about XInput located on the disk.
+		/// </summary>
+		/// <returns></returns>
 		public static FileInfo GetDefaultDll()
 		{
-			var files = GetDllInfos();
-			// Make sure new version is on top.
-			Array.Reverse(files);
-			return files.FirstOrDefault(x => x.Exists);
+			// Get XInput values.
+			var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x => x != XInputMask.None);
+			// Get unique file names.
+			var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
+			// Get information about XInput files located on the disk.
+			var infos = fileNames.Select(x => new System.IO.FileInfo(x)).Where(x=>x.Exists).ToArray();
+			FileInfo defaultDll = null;
+			Version defaultVer = null;
+			foreach (var info in infos)
+			{
+				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(info.FullName);
+				var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+				// if first time in the loop of file with newer version was found then...
+				if (defaultDll == null || ver > defaultVer)
+				{
+					// Pick file.
+					defaultDll = info;
+					defaultVer = ver;
+				}
+			}
+			// Return newest file.
+			return defaultDll;
 		}
 
 		public static Guid GetFileChecksum(string fileName)

@@ -71,7 +71,7 @@ namespace x360ce.App.Controls
 		}
 
 		// Check game settings against folder.
-		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game)
+		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game, bool fix = false)
 		{
 			var fi = new FileInfo(game.FullPath);
 			if (!game.IsEnabled)
@@ -85,42 +85,90 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
-				var values = (XInputMask[])Enum.GetValues(typeof(XInputMask));
-				foreach (var value in values)
+				var gameVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
+				var xiValues = ((XInputMask[])Enum.GetValues(typeof(XInputMask))).Where(x => x != XInputMask.None).ToArray();
+				// Create dictionary from XInput type and XInput file name.
+				var dic = new Dictionary<XInputMask, string>();
+				foreach (var value in xiValues)
 				{
-					// If value is enabled then...
-					if (((uint)game.XInputMask & (uint)value) != 0)
+					dic.Add(value, JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value));
+				}
+				var xiFileNames = dic.Values.Distinct();
+				// Loop through all files.
+				foreach (var xiFileName in xiFileNames)
+				{
+					var x64Value = dic.First(x=>x.Value == xiFileName && x.ToString().Contains("x64")).Key;
+					var x86Value = dic.First(x=>x.Value == xiFileName && x.ToString().Contains("x86")).Key;
+					var xiFullPath = System.IO.Path.Combine(fi.Directory.FullName, xiFileName);
+					var xiFileInfo = new System.IO.FileInfo(xiFullPath);
+					var xiArchitecture = ProcessorArchitecture.None;
+					var x64Enabled = ((uint)game.XInputMask & (uint)x64Value) != 0; ;
+					var x86Enabled = ((uint)game.XInputMask & (uint)x86Value) != 0; ;
+					if (x86Enabled && x64Enabled) xiArchitecture = ProcessorArchitecture.MSIL;
+					else if (x86Enabled) xiArchitecture = ProcessorArchitecture.X86;
+					else if (x64Enabled) xiArchitecture = ProcessorArchitecture.Amd64;
+					// If both checkboxes are disabled then...
+					if (xiArchitecture == ProcessorArchitecture.None)
 					{
-						// Get name of xInput file.
-						var dllName = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
-						var dllFullPath = System.IO.Path.Combine(fi.Directory.FullName, dllName);
-						var dllFileInfo = new System.IO.FileInfo(dllFullPath);
-						if (!dllFileInfo.Exists)
+						// If XInput file exists then...
+						if (xiFileInfo.Exists)
 						{
-							return GameRefreshStatus.XInputFileNotExist;
+							if (fix)
+							{
+								// Delete unnecessary XInput file.
+								xiFileInfo.Delete();
+								continue;
+							}
+							else
+							{
+								return GameRefreshStatus.XInputFileUnnecessary;
+							}
 						}
-						var arch = Engine.Win32.PEReader.GetProcessorArchitecture(dllFullPath);
-						// If 64-bit selected but file is 32-bit then...
-						if (value.ToString().Contains("x64") && arch == System.Reflection.ProcessorArchitecture.X86)
+					}
+					else
+					{
+						// If XInput file doesn't exists then...
+						if (!xiFileInfo.Exists)
 						{
-							return GameRefreshStatus.XInputFileWrongPlatform;
+							// Create XInput file.
+							if (fix)
+							{
+								AppHelper.WriteFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
+								continue;
+							}
+							else return GameRefreshStatus.XInputFileNotExist;
 						}
-						// If 32-bit selected but file is 64-bit then...
-						if (value.ToString().Contains("x86") && arch == System.Reflection.ProcessorArchitecture.Amd64)
+						// Get current arcitecture.
+						var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(xiFullPath);
+						// If processor architectures doesn't match then...
+						if (xiArchitecture != xiCurrentArchitecture)
 						{
-							return GameRefreshStatus.XInputFileWrongPlatform;
+							// Create XInput file.
+							if (fix)
+							{
+								MainForm.Current.CreateFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
+								continue;
+							}
+							else return GameRefreshStatus.XInputFileWrongPlatform;
 						}
 						bool byMicrosoft;
-						var dllVersion = EngineHelper.GetDllVersion(dllFullPath, out byMicrosoft);
-						var embededVersion = EngineHelper.GetEmbeddedDllVersion(arch);
+						var dllVersion = EngineHelper.GetDllVersion(xiFullPath, out byMicrosoft);
+						var embededVersion = EngineHelper.GetEmbeddedDllVersion(xiCurrentArchitecture);
+						// If file on disk is older then...
 						if (dllVersion < embededVersion)
 						{
+							// Overwrite XInput file.
+							if (fix)
+							{
+								MainForm.Current.CreateFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
+								continue;
+							}
 							return GameRefreshStatus.XInputFileOlderVersion;
 						}
 						else if (dllVersion > embededVersion)
 						{
-							return GameRefreshStatus.XInputFileNewerVersion;
+							// Allow new version.
+							// return GameRefreshStatus.XInputFileNewerVersion;
 						}
 					}
 				}
@@ -201,11 +249,11 @@ namespace x360ce.App.Controls
 		void SetCheckXinput(XInputMask mask)
 		{
 			//if (CurrentGame == null) return;
-			//var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
-			//var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
-			//var fullPath = System.IO.Path.Combine(path, name);
-			//var box = (CheckBox)sender;
-			//var exists = Helper.CreateDllFile(box.Checked, fullPath);
+			var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
+			var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
+			var fullPath = System.IO.Path.Combine(path, name);
+			///var box = (CheckBox)sender;
+			//var exists = AppHelper.CreateDllFile(, fullPath);
 			//if (exists != box.Checked) box.Checked = exists;
 		}
 
@@ -216,6 +264,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm("Synchronize current settings to game folder?", "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
+				GetGameStatus(CurrentGame, true);
 			}
 		}
 

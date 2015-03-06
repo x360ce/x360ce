@@ -2,16 +2,66 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using x360ce.Engine;
+using x360ce.Engine.Win32;
 
 namespace x360ce.App
 {
 	public class AppHelper
 	{
 		#region DLL Functions
+
+		static void Elevate()
+		{
+			// If this is Vista/7 and is not elevated then elevate.
+			if (WinAPI.IsVista && !WinAPI.IsElevated()) WinAPI.RunElevated();
+		}
+
+		public static bool WriteFile(string resourceName, string destinationFileName)
+		{
+			var assembly = Assembly.GetExecutingAssembly();
+			var sr = assembly.GetManifestResourceStream(resourceName);
+			FileStream sw = null;
+			try
+			{
+				sw = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write);
+			}
+			catch (Exception)
+			{
+				Elevate();
+				return false;
+			}
+			var buffer = new byte[1024];
+			while (true)
+			{
+				var count = sr.Read(buffer, 0, buffer.Length);
+				if (count == 0) break;
+				sw.Write(buffer, 0, count);
+			}
+			sr.Close();
+			sw.Close();
+			return true;
+		}
+
+		public static bool CopyFile(string sourceFileName, string destFileName)
+		{
+			try
+			{
+				File.Copy(sourceFileName, destFileName, true);
+			}
+			catch (Exception)
+			{
+				Elevate();
+				return false;
+			}
+			return true;
+		}
+
+
 
 		/// <summary></summary>
 		/// <returns>True if file exists.</returns>
