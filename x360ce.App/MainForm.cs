@@ -820,12 +820,12 @@ namespace x360ce.App
             if (iniTmp.Exists)
             {
                 // It means that application crashed. Restore ini from temp.
-                if (!CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
+                if (!AppHelper.CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
             }
             else
             {
                 // Create temp file to store original settings.
-                if (!CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
+                if (!AppHelper.CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
             }
             // Set status labels.
             StatusIsAdminLabel.Text = WinAPI.IsVista
@@ -868,21 +868,7 @@ namespace x360ce.App
             //return rMd5.Equals(dMd5);
         }
 
-        bool CopyFile(string sourceFileName, string destFileName)
-        {
-            try
-            {
-                File.Copy(sourceFileName, destFileName, true);
-            }
-            catch (Exception)
-            {
-                Elevate();
-                return false;
-            }
-            return true;
-        }
-
-        public bool CreateFile(string resourceName, string destinationFileName, Version dllVersion = null, Version newVersion = null)
+	       public bool CreateFile(string resourceName, string destinationFileName, Version dllVersion = null, Version newVersion = null)
         {
             if (destinationFileName == null) destinationFileName = resourceName;
             DialogResult answer;
@@ -904,35 +890,9 @@ namespace x360ce.App
             }
             if (answer == DialogResult.Yes)
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var sr = assembly.GetManifestResourceStream(resourceName);
-                FileStream sw = null;
-                try
-                {
-                    sw = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write);
-                }
-                catch (Exception)
-                {
-                    Elevate();
-                    return false;
-                }
-                var buffer = new byte[1024];
-                while (true)
-                {
-                    var count = sr.Read(buffer, 0, buffer.Length);
-                    if (count == 0) break;
-                    sw.Write(buffer, 0, count);
-                }
-                sr.Close();
-                sw.Close();
+				return AppHelper.WriteFile(resourceName, destinationFileName);
             }
             return true;
-        }
-
-        void Elevate()
-        {
-            // If this is Vista/7 and is not elevated then elevate.
-            if (WinAPI.IsVista && !WinAPI.IsElevated()) WinAPI.RunElevated();
         }
 
         #endregion
