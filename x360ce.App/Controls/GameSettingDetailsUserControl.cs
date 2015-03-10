@@ -57,7 +57,7 @@ namespace x360ce.App.Controls
 			SetMask(en, hookMask, inputMask, item.FullPath, item.ProcessorArchitecture);
 			if (en)
 			{
-				var status = GetGameStatus(CurrentGame);
+				var status = GetGameStatus(CurrentGame, false);
 				ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
 				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.None);
 				_DefaultSettings = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
@@ -67,7 +67,6 @@ namespace x360ce.App.Controls
 
 				}
 			}
-
 		}
 
 		// Check game settings against folder.
@@ -97,8 +96,8 @@ namespace x360ce.App.Controls
 				// Loop through all files.
 				foreach (var xiFileName in xiFileNames)
 				{
-					var x64Value = dic.First(x=>x.Value == xiFileName && x.ToString().Contains("x64")).Key;
-					var x86Value = dic.First(x=>x.Value == xiFileName && x.ToString().Contains("x86")).Key;
+					var x64Value = dic.First(x => x.Value == xiFileName && x.ToString().Contains("x64")).Key;
+					var x86Value = dic.First(x => x.Value == xiFileName && x.ToString().Contains("x86")).Key;
 					var xiFullPath = System.IO.Path.Combine(fi.Directory.FullName, xiFileName);
 					var xiFileInfo = new System.IO.FileInfo(xiFullPath);
 					var xiArchitecture = ProcessorArchitecture.None;
@@ -107,8 +106,8 @@ namespace x360ce.App.Controls
 					if (x86Enabled && x64Enabled) xiArchitecture = ProcessorArchitecture.MSIL;
 					else if (x86Enabled) xiArchitecture = ProcessorArchitecture.X86;
 					else if (x64Enabled) xiArchitecture = ProcessorArchitecture.Amd64;
-					// If both checkboxes are disabled then...
-					if (xiArchitecture == ProcessorArchitecture.None)
+					// If x360ce emulator for this game is disabled or both checkboxes are disabled or then...
+					if (xiArchitecture == ProcessorArchitecture.None) // !game.IsEnabled || 
 					{
 						// If XInput file exists then...
 						if (xiFileInfo.Exists)
@@ -146,7 +145,7 @@ namespace x360ce.App.Controls
 							// Create XInput file.
 							if (fix)
 							{
-								MainForm.Current.CreateFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
+								AppHelper.WriteFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
 								continue;
 							}
 							else return GameRefreshStatus.XInputFileWrongPlatform;
@@ -160,7 +159,7 @@ namespace x360ce.App.Controls
 							// Overwrite XInput file.
 							if (fix)
 							{
-								MainForm.Current.CreateFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
+								AppHelper.WriteFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
 								continue;
 							}
 							return GameRefreshStatus.XInputFileOlderVersion;
@@ -234,16 +233,51 @@ namespace x360ce.App.Controls
 			EnabledEvents = false;
 		}
 
+		/// <summary>
+		/// Checkbox events could fire at the same time.
+		/// Use lock to make sure that only one file is processed during synchronization.
+		/// </summary>
+		object CheckBoxLock = new object();
+
 		void CheckBox_Changed(object sender, EventArgs e)
 		{
 			if (CurrentGame == null) return;
-			var xm = (int)GetMask<XInputMask>(XInputCheckBoxes);
-			CurrentGame.XInputMask = xm;
-			XInputMaskTextBox.Text = xm.ToString("X8");
-			var hm = (int)GetMask<HookMask>(HookCheckBoxes);
-			CurrentGame.HookMask = hm;
-			HookMaskTextBox.Text = hm.ToString("X8");
-			SettingsFile.Current.Save();
+			lock (CheckBoxLock)
+			{
+				var cbx = (CheckBox)sender;
+				var is64bit = cbx.Name.Contains("x64");
+				bool applySettings = true;
+				// If checked and it is 64-bit checkbox then...
+				if (cbx.Checked && is64bit)
+				{
+					// Make sure that 32-bit is unchecked
+					var cbx32 = XInputCheckBoxes.First(x => x.Name == cbx.Name.Replace("x64", "x86"));
+					if (cbx32.Checked)
+					{
+						cbx32.Checked = false;
+						applySettings = false;
+					}
+				}
+				// If checked and it is 32-bit checkbox then...
+				else if (cbx.Checked && !is64bit)
+				{
+					// Make sure that 64-bit is unchecked
+					var cbx64 = XInputCheckBoxes.First(x => x.Name == cbx.Name.Replace("x86", "x64"));
+					if (cbx64.Checked)
+					{
+						cbx64.Checked = false;
+						applySettings = false;
+					}
+				}
+				var xm = (int)GetMask<XInputMask>(XInputCheckBoxes);
+				CurrentGame.XInputMask = xm;
+				XInputMaskTextBox.Text = xm.ToString("X8");
+				var hm = (int)GetMask<HookMask>(HookCheckBoxes);
+				CurrentGame.HookMask = hm;
+				HookMaskTextBox.Text = hm.ToString("X8");
+				SettingsFile.Current.Save();
+				if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
+			}
 		}
 
 		void SetCheckXinput(XInputMask mask)
@@ -262,10 +296,14 @@ namespace x360ce.App.Controls
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm("Synchronize current settings to game folder?", "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-			if (result == DialogResult.OK)
-			{
-				GetGameStatus(CurrentGame, true);
-			}
+			if (result == DialogResult.OK) ApplySettings();
+		}
+
+		void ApplySettings()
+		{
+			var status = GetGameStatus(CurrentGame, true);
+			ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
+			SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.None);
 		}
 
 		private void ResetToDefaultButton_Click(object sender, EventArgs e)

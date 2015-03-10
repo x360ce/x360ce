@@ -30,9 +30,21 @@ namespace x360ce.App
         public SettingsFile()
         {
             _Games = new BindingList<x360ce.Engine.Data.Game>();
+			_Games.AddingNew += _Games_AddingNew;
+			_Games.ListChanged += _Games_ListChanged;
             _Programs = new BindingList<x360ce.Engine.Data.Program>();
             _Pads = new BindingList<x360ce.Engine.Data.PadSetting>();
         }
+
+		void _Games_ListChanged(object sender, ListChangedEventArgs e)
+		{
+		
+		}
+
+		void _Games_AddingNew(object sender, AddingNewEventArgs e)
+		{
+			
+		}
 
         static SettingsFile _current;
         public static SettingsFile Current
