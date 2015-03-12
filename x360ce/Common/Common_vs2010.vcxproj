@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="COMDeleter.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="NonCopyable.h" />
@@ -149,7 +150,7 @@
     <ClInclude Include="Mutex.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringUtils.h" />
-    <ClInclude Include="SWIP.h" />
+    <ClInclude Include="IniFile.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="WindowsVersion.h" />
@@ -162,7 +163,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StringUtils.cpp" />
-    <ClCompile Include="SWIP.cpp" />
+    <ClCompile Include="IniFile.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowsVersion.cpp" />
