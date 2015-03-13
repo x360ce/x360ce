@@ -59,7 +59,7 @@ namespace x360ce.App.Controls
 			{
 				var status = GetGameStatus(CurrentGame, false);
 				ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
-				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.None);
+				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK);
 				_DefaultSettings = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
 				ResetToDefaultButton.Enabled = _DefaultSettings != null;
 				if (ApplySettingsToFolderInstantly)
@@ -73,14 +73,15 @@ namespace x360ce.App.Controls
 		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game, bool fix = false)
 		{
 			var fi = new FileInfo(game.FullPath);
-			if (!game.IsEnabled)
-			{
-				return GameRefreshStatus.None;
-			}
 			// Check if game file exists.
 			if (!fi.Exists)
 			{
-				return GameRefreshStatus.FileNotExist;
+				return GameRefreshStatus.ExeNotExist;
+			}
+			// Check if game is not enabled.
+			else if (!game.IsEnabled)
+			{
+				return GameRefreshStatus.OK;
 			}
 			else
 			{
@@ -120,7 +121,7 @@ namespace x360ce.App.Controls
 							}
 							else
 							{
-								return GameRefreshStatus.XInputFileUnnecessary;
+								return GameRefreshStatus.XInputFilesUnnecessary;
 							}
 						}
 					}
@@ -135,7 +136,7 @@ namespace x360ce.App.Controls
 								AppHelper.WriteFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
 								continue;
 							}
-							else return GameRefreshStatus.XInputFileNotExist;
+							else return GameRefreshStatus.XInputFilesNotExist;
 						}
 						// Get current arcitecture.
 						var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(xiFullPath);
@@ -148,7 +149,7 @@ namespace x360ce.App.Controls
 								AppHelper.WriteFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
 								continue;
 							}
-							else return GameRefreshStatus.XInputFileWrongPlatform;
+							else return GameRefreshStatus.XInputFilesWrongPlatform;
 						}
 						bool byMicrosoft;
 						var dllVersion = EngineHelper.GetDllVersion(xiFullPath, out byMicrosoft);
@@ -162,7 +163,7 @@ namespace x360ce.App.Controls
 								AppHelper.WriteFile(EngineHelper.GetXInputResoureceName(xiArchitecture), xiFileInfo.FullName);
 								continue;
 							}
-							return GameRefreshStatus.XInputFileOlderVersion;
+							return GameRefreshStatus.XInputFilesOlderVersion;
 						}
 						else if (dllVersion > embededVersion)
 						{
@@ -295,7 +296,20 @@ namespace x360ce.App.Controls
 		{
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Synchronize current settings to game folder?", "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			var status = GetGameStatus(CurrentGame, false);
+			var values = Enum.GetValues(typeof(GameRefreshStatus));
+			List<string> errors = new List<string>();
+			foreach (GameRefreshStatus value in values)
+			{
+				if (status.HasFlag(value))
+				{
+					var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+					errors.Add(description);
+				}
+			}
+			var message = "Synchronize current settings to game folder?";
+			message += "\r\n\r\n\tIssues:\r\n\r\n\t - " + string.Join("\r\n\t - ", errors);
+			var result = form.ShowForm(message, "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK) ApplySettings();
 		}
 
@@ -303,7 +317,7 @@ namespace x360ce.App.Controls
 		{
 			var status = GetGameStatus(CurrentGame, true);
 			ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
-			SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.None);
+			SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.OK);
 		}
 
 		private void ResetToDefaultButton_Click(object sender, EventArgs e)
