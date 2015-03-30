@@ -309,6 +309,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameSettingsUserControl.resx">
       <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -415,6 +416,7 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\x360ce.Games.xml" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\xinput_x86.dll" />
     <EmbeddedResource Include="Resources\xinput_x64.dll" />
@@ -454,6 +456,8 @@
     <None Include="Images\fix_16x16.png" />
     <None Include="Images\reset_16x16.png" />
     <None Include="Images\checkbox_undefined_16x16.png" />
+    <None Include="Images\data_into_16x16.png" />
+    <None Include="Images\data_out_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />

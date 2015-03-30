@@ -7,6 +7,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Linq;
+using x360ce.Engine;
 
 namespace x360ce.App
 {
@@ -79,13 +80,26 @@ namespace x360ce.App
                     data = Serializer.DeserializeFromXmlFile<SettingsFile>(FileName);
                 }
                 if (data == null) return;
-                //Programs.Clear();
-                //if (data.Programs != null) for (int i = 0; i < data.Programs.Count; i++) Programs.Add(data.Programs[i]);
+                Programs.Clear();
+                if (data.Programs != null) for (int i = 0; i < data.Programs.Count; i++) Programs.Add(data.Programs[i]);
                 Games.Clear();
                 if (data.Games != null) for (int i = 0; i < data.Games.Count; i++) Games.Add(data.Games[i]);
                 Pads.Clear();
                 if (data.Pads != null) for (int i = 0; i < data.Pads.Count; i++) Pads.Add(data.Pads[i]);
-            }
+			}
+			else
+			{
+				var resource = EngineHelper.GetResource("x360ce.Games.xml");
+				// If internal preset was found.
+				if (resource != null)
+				{
+					var sr = new StreamReader(resource);
+					var xml = sr.ReadToEnd();
+					var programs = Serializer.DeserializeFromXmlString<List<x360ce.Engine.Data.Program>>(xml);
+					Programs.Clear();
+					for (int i = 0; i < programs.Count; i++) Programs.Add(programs[i]);
+				}
+			}
             // Check if current app doesn't exist in the list then...
             var currentFile = new System.IO.FileInfo(Application.ExecutablePath);
             var currentGame = Games.FirstOrDefault(x => x.FileName == currentFile.Name);
