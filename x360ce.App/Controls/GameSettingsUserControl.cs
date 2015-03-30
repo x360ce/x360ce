@@ -23,6 +23,13 @@ namespace x360ce.App.Controls
 			GlobalSettingsDataGridView.AutoGenerateColumns = false;
 			ScanProgressLabel.Text = "";
 			InitDefaultList();
+			SettingsFile.Current.Programs.ListChanged += Programs_ListChanged;
+		}
+
+		void Programs_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var enabled = SettingsFile.Current.Programs.Count > 0;
+			if (ExportButton.Enabled != enabled) ExportButton.Enabled = enabled;
 		}
 
 		void GetPrograms()
@@ -53,14 +60,19 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GlobalSettingsDataGridView, "FileName");
-				SettingsFile.Current.Programs.Clear();
 				var result = (List<x360ce.Engine.Data.Program>)e.Result;
-				foreach (var item in result) SettingsFile.Current.Programs.Add(item);
-				var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, result.Count());
-				MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
-				JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GlobalSettingsDataGridView, "FileName", selection);
+				Bind(result);
 			}
+		}
+
+		void Bind(List<x360ce.Engine.Data.Program> programs)
+		{
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GlobalSettingsDataGridView, "FileName");
+			SettingsFile.Current.Programs.Clear();
+			foreach (var item in programs) SettingsFile.Current.Programs.Add(item);
+			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
+			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GlobalSettingsDataGridView, "FileName", selection);
 		}
 
 		void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -160,11 +172,6 @@ namespace x360ce.App.Controls
 		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
 		{
 			//var x = e;
-		}
-
-		private void ExportButton_Click(object sender, EventArgs e)
-		{
-
 		}
 
 		private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -304,12 +311,13 @@ namespace x360ce.App.Controls
 			catch { }
 		}
 
-		private void GamesControl_Load(object sender, EventArgs e)
+		private void GameSettingsUserControl_Load(object sender, EventArgs e)
 		{
 			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
 			EngineHelper.EnableDoubleBuffering(GlobalSettingsDataGridView);
 			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
 			LoadProgramsFromLocalFile();
+			ProgramImageColumn.Visible = false;
 		}
 
 		void LoadProgramsFromLocalFile()
@@ -517,6 +525,42 @@ namespace x360ce.App.Controls
 			ShowToolStripDropDownButton.Image = item.Image;
 			ShowToolStripDropDownButton.Text = item.Text;
 			RebindGames();
+		}
+
+		private void ImportButton_Click(object sender, EventArgs e)
+		{
+			var dialog = ImportOpenFileDialog;
+			dialog.DefaultExt = "*.xml";
+			dialog.Filter = EngineHelper.GetFileDescription(".xml") + " (*.xml)|*.xml|All files (*.*)|*.*";
+			dialog.FilterIndex = 1;
+			dialog.RestoreDirectory = true;
+			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games.xml";
+			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = System.Environment.CurrentDirectory;
+			dialog.Title = "Import Games Settings File";
+			var result = dialog.ShowDialog();
+			if (result == System.Windows.Forms.DialogResult.OK)
+			{
+				var programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
+				Bind(programs);
+			}
+		}
+
+		private void ExportButton_Click(object sender, EventArgs e)
+		{
+			var dialog = ExportSaveFileDialog;
+			dialog.DefaultExt = "*.xml";
+			dialog.Filter = EngineHelper.GetFileDescription(".xml") + " (*.xml)|*.xml|All files (*.*)|*.*";
+			dialog.FilterIndex = 1;
+			dialog.RestoreDirectory = true;
+			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games.xml";
+			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = System.Environment.CurrentDirectory;
+			dialog.Title = "Export Games Settings File";
+			var result = dialog.ShowDialog();
+			if (result == System.Windows.Forms.DialogResult.OK)
+			{
+				var programs = SettingsFile.Current.Programs.ToList();
+				Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8);
+			}
 		}
 
 	}
