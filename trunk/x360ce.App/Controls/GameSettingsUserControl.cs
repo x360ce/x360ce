@@ -69,7 +69,11 @@ namespace x360ce.App.Controls
 		{
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GlobalSettingsDataGridView, "FileName");
 			SettingsFile.Current.Programs.Clear();
-			foreach (var item in programs) SettingsFile.Current.Programs.Add(item);
+			foreach (var item in programs)
+			{
+				item.FileProductName = EngineHelper.FixName(item.FileProductName, item.FileName);
+				SettingsFile.Current.Programs.Add(item);
+			}
 			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
 			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GlobalSettingsDataGridView, "FileName", selection);
@@ -531,7 +535,7 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ImportOpenFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = EngineHelper.GetFileDescription(".xml") + " (*.xml)|*.xml|All files (*.*)|*.*";
+			dialog.Filter = "Game Settings (*.xml;*.xml.gz)|*.xml;*.gz|All files (*.*)|*.*";
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games.xml";
@@ -540,7 +544,18 @@ namespace x360ce.App.Controls
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
-				var programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
+				List<x360ce.Engine.Data.Program> programs;
+				if (dialog.FileName.EndsWith(".gz"))
+				{
+					var compressedBytes = System.IO.File.ReadAllBytes(dialog.FileName);
+					var bytes = EngineHelper.Decompress(compressedBytes);
+					var xml = System.Text.Encoding.UTF8.GetString(bytes);
+					programs = Serializer.DeserializeFromXmlString<List<x360ce.Engine.Data.Program>>(xml, System.Text.Encoding.UTF8);
+				}
+				else
+				{
+					programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
+				}
 				Bind(programs);
 			}
 		}
@@ -549,17 +564,32 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = EngineHelper.GetFileDescription(".xml") + " (*.xml)|*.xml|All files (*.*)|*.*";
+			dialog.Filter = "Game Settings (*.xml)|*.xml|Compressed Game Settings (*.xml.gz)|*.xml.gz|All files (*.*)|*.*";
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
-			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games.xml";
+			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games";
 			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = System.Environment.CurrentDirectory;
 			dialog.Title = "Export Games Settings File";
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
 				var programs = SettingsFile.Current.Programs.ToList();
-				Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8);
+				foreach (var item in programs)
+				{
+					item.EntityKey = null;
+					item.FileProductName = EngineHelper.FixName(item.FileProductName, item.FileName);
+				}
+				if (dialog.FileName.EndsWith(".gz"))
+				{
+					var s = Serializer.SerializeToXmlString(programs, System.Text.Encoding.UTF8);
+					var bytes = System.Text.Encoding.UTF8.GetBytes(s);
+					var compressedBytes = EngineHelper.Compress(bytes);
+					System.IO.File.WriteAllBytes(dialog.FileName, compressedBytes);
+				}
+				else
+				{
+					Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8);
+				}
 			}
 		}
 

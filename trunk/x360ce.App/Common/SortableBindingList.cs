@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace x360ce.App
 {
@@ -10,11 +11,13 @@ namespace x360ce.App
 	/// http://betimvwframework.codeplex.com/
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
+	[Serializable]
 	public class SortableBindingList<T> : BindingList<T>
 	{
 		readonly Dictionary<Type, PropertyComparer<T>> comparers;
 		bool isSorted;
 		ListSortDirection listSortDirection;
+		[NonSerialized]
 		PropertyDescriptor propertyDescriptor;
 
 		public SortableBindingList()
