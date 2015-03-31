@@ -156,7 +156,7 @@ namespace x360ce.App.Controls
             {
                 var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(item.FullName);
                 _files.Add(vi);
-                var productName = (item.Name + ": " + vi.ProductName).Trim(new char[] { ':', ' ' });
+                var productName = (item.Name + ": " + EngineHelper.FixName(vi.ProductName, item.Name)).Trim(new char[] { ':', ' ' });
                 options.Add(new KeyValuePair(productName, item.Length.ToString()));
             }
             GameComboBox.DataSource = options;
@@ -248,7 +248,7 @@ namespace x360ce.App.Controls
                     var fi = _files[GameComboBox.SelectedIndex - 1];
                     var fileName = fi.FileName;
                     s.FileName = System.IO.Path.GetFileName(fileName);
-                    s.FileProductName = fi.ProductName ?? fileName;
+                    s.FileProductName = EngineHelper.FixName(fi.ProductName, fileName);
                 }
                 else
                 {
@@ -332,7 +332,7 @@ namespace x360ce.App.Controls
             {
                 p = new SearchParameter();
                 p.FileName = System.IO.Path.GetFileName(_files[i].FileName);
-                p.FileProductName = _files[i].ProductName;
+				p.FileProductName = EngineHelper.FixName(_files[i].ProductName, p.FileName);
                 sp.Add(p);
             }
         }
@@ -574,7 +574,7 @@ namespace x360ce.App.Controls
             {
                 var fi = _files[GameComboBox.SelectedIndex - 1];
                 s.FileName = System.IO.Path.GetFileName(fi.FileName);
-                s.FileProductName = fi.ProductName ?? s.FileName;
+                s.FileProductName = EngineHelper.FixName(fi.ProductName, s.FileName);
             }
             else
             {

@@ -18,7 +18,7 @@ namespace x360ce.Engine.Data
 			item.DateCreated = DateTime.Now;
 			item.DateUpdated = item.DateCreated;
 			item.FileName = fi.Name;
-			item.FileProductName = vi.ProductName;
+			item.FileProductName = EngineHelper.FixName(vi.ProductName, item.FileName);
 			item.HookMask = 0;
 			item.InstanceCount = 0;
 			item.IsEnabled = true;

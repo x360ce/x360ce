@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using Microsoft.Win32;
 using x360ce.Engine;
+using System.IO.Compression;
 
 namespace x360ce.Engine
 {
@@ -28,7 +29,7 @@ namespace x360ce.Engine
 			// Get unique file names.
 			var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
 			// Get information about XInput files located on the disk.
-			var infos = fileNames.Select(x => new System.IO.FileInfo(x)).Where(x=>x.Exists).ToArray();
+			var infos = fileNames.Select(x => new System.IO.FileInfo(x)).Where(x => x.Exists).ToArray();
 			FileInfo defaultDll = null;
 			Version defaultVer = null;
 			foreach (var info in infos)
@@ -230,6 +231,17 @@ namespace x360ce.Engine
 			return val.ToString();
 		}
 
+		/// <summary>
+		/// Remove multiple spaces and trim
+		/// </summary>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		public static string FixName(string s, string defaultName)
+		{
+			s = (s ?? "").Replace("[ \t\n\r\u00A0]+", " ").Trim();
+			return string.IsNullOrEmpty(s) ? defaultName : s;
+		}
+
 		#endregion
 
 		#region Application Info
@@ -292,6 +304,49 @@ namespace x360ce.Engine
 			dt = dt.ToLocalTime();
 			return dt;
 		}
+
+		#endregion
+
+		#region Compression
+
+		public static byte[] EmptyGzip = { 80, 75, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+		public static byte[] Compress(byte[] bytes)
+		{
+			int numRead;
+			var srcStream = new MemoryStream(bytes);
+			var dstStream = new MemoryStream();
+			srcStream.Position = 0;
+			var stream = new GZipStream(dstStream, CompressionMode.Compress);
+			byte[] buffer = new byte[0x1000];
+			while (true)
+			{
+				numRead = srcStream.Read(buffer, 0, buffer.Length);
+				if (numRead == 0) break;
+				stream.Write(buffer, 0, numRead);
+			}
+			stream.Close();
+			return dstStream.ToArray();
+		}
+
+		public static byte[] Decompress(byte[] bytes)
+		{
+			int numRead;
+			var srcStream = new MemoryStream(bytes);
+			var dstStream = new MemoryStream();
+			srcStream.Position = 0;
+			var stream = new GZipStream(srcStream, CompressionMode.Decompress);
+			var buffer = new byte[0x1000];
+			while (true)
+			{
+				numRead = stream.Read(buffer, 0, buffer.Length);
+				if (numRead == 0) break;
+				dstStream.Write(buffer, 0, numRead);
+			}
+			dstStream.Close();
+			return dstStream.ToArray();
+		}
+
 
 		#endregion
 	}
