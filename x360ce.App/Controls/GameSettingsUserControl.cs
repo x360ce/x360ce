@@ -292,6 +292,7 @@ namespace x360ce.App.Controls
 				//ScanProgressLabel.Text = "Scan Completed";
 				ScanButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
+				RebindGames();
 			});
 		}
 
@@ -508,17 +509,30 @@ namespace x360ce.App.Controls
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
 			var grid = MySettingsDataGridView;
-			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var itemsToDelete = SettingsFile.Current.Games.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var message = string.Format("Are you sure you want to delete these settings?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
-				item.FileName,
-				item.FileProductName);
-			var result = form.ShowForm(message, "Delete Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-			if (result == DialogResult.Yes)
+			string message;
+			if (itemsToDelete.Length == 1)
 			{
-				SettingsFile.Current.Games.Remove(item);
+				var item = itemsToDelete[0];
+				message = string.Format("Are you sure you want to delete settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
+					item.FileName,
+					item.FileProductName);
+			}
+			else
+			{
+				message = string.Format("Delete {0} setting(s)?", itemsToDelete.Length);
+			}
+			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+			if (result == DialogResult.OK)
+			{
+				foreach (var item in itemsToDelete)
+				{
+					SettingsFile.Current.Games.Remove(item);
+				}
+				SettingsFile.Current.Save();
 				RebindGames();
 			}
 		}
@@ -590,6 +604,36 @@ namespace x360ce.App.Controls
 				{
 					Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8);
 				}
+			}
+		}
+
+		private void DeleteGamesButton_Click(object sender, EventArgs e)
+		{
+			var grid = GlobalSettingsDataGridView;
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var itemsToDelete = SettingsFile.Current.Programs.Where(x => selection.Contains(x.FileName)).ToArray();
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			string message;
+			if (itemsToDelete.Length == 1)
+			{
+				var item = itemsToDelete[0];
+				message = string.Format("Are you sure you want to delete default settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
+					item.FileName,
+					item.FileProductName);
+			}
+			else
+			{
+				message = string.Format("Delete {0} default setting(s)?", itemsToDelete.Length);
+			}
+			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+			if (result == DialogResult.OK)
+			{
+				foreach (var item in itemsToDelete)
+				{
+					SettingsFile.Current.Programs.Remove(item);
+				}
+				SettingsFile.Current.Save();
 			}
 		}
 
