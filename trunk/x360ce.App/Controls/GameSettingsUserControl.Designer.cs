@@ -67,6 +67,7 @@
 			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ImportButton = new System.Windows.Forms.ToolStripButton();
 			this.ExportButton = new System.Windows.Forms.ToolStripButton();
+			this.DeleteGameButton = new System.Windows.Forms.ToolStripButton();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.GameDefaultDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
@@ -151,7 +152,6 @@
 			this.MySettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MySettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.MySettingsDataGridView.Location = new System.Drawing.Point(0, 25);
-			this.MySettingsDataGridView.MultiSelect = false;
 			this.MySettingsDataGridView.Name = "MySettingsDataGridView";
 			this.MySettingsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -414,7 +414,6 @@
 			this.GlobalSettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GlobalSettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.GlobalSettingsDataGridView.Location = new System.Drawing.Point(0, 25);
-			this.GlobalSettingsDataGridView.MultiSelect = false;
 			this.GlobalSettingsDataGridView.Name = "GlobalSettingsDataGridView";
 			this.GlobalSettingsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -474,7 +473,8 @@
 			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.GlobalSettingsRefreshButton,
             this.ImportButton,
-            this.ExportButton});
+            this.ExportButton,
+            this.DeleteGameButton});
 			this.toolStrip2.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip2.Name = "toolStrip2";
 			this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -509,6 +509,15 @@
 			this.ExportButton.Size = new System.Drawing.Size(69, 22);
 			this.ExportButton.Text = "&Export...";
 			this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
+			// 
+			// DeleteGameButton
+			// 
+			this.DeleteGameButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.DeleteGameButton.Name = "DeleteGameButton";
+			this.DeleteGameButton.Size = new System.Drawing.Size(60, 22);
+			this.DeleteGameButton.Text = "&Delete";
+			this.DeleteGameButton.Click += new System.EventHandler(this.DeleteGamesButton_Click);
 			// 
 			// panel2
 			// 
@@ -652,5 +661,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramFileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramProductNameColumn;
+		private System.Windows.Forms.ToolStripButton DeleteGameButton;
 	}
 }
