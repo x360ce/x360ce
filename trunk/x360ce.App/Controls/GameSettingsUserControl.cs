@@ -19,190 +19,21 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (DesignMode) return;
-			MySettingsDataGridView.AutoGenerateColumns = false;
-			GlobalSettingsDataGridView.AutoGenerateColumns = false;
+			GamesDataGridView.AutoGenerateColumns = false;
+			ProgramsDataGridView.AutoGenerateColumns = false;
 			ScanProgressLabel.Text = "";
 			InitDefaultList();
 			SettingsFile.Current.Programs.ListChanged += Programs_ListChanged;
 		}
 
-		void Programs_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var enabled = SettingsFile.Current.Programs.Count > 0;
-			if (ExportButton.Enabled != enabled) ExportButton.Enabled = enabled;
-		}
-
-		void GetPrograms()
-		{
-			MainForm.Current.LoadingCircle = true;
-			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-			EnabledState enabled = EnabledState.None;
-			if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = EnabledState.Enabled;
-			if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled = EnabledState.Disabled;
-			int minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
-			ws.GetProgramsCompleted += ws_GetProgramsCompleted;
-			ws.GetProgramsAsync(enabled, minInstances);
-		}
-
-		void ws_GetProgramsCompleted(object sender, ResultEventArgs e)
-		{
-			MainForm.Current.LoadingCircle = false;
-			if (e.Error != null)
-			{
-				var error = e.Error.Message;
-				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-				MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
-			}
-			else if (e.Result == null)
-			{
-				MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
-			}
-			else
-			{
-				var result = (List<x360ce.Engine.Data.Program>)e.Result;
-				Bind(result);
-			}
-		}
-
-		void Bind(List<x360ce.Engine.Data.Program> programs)
-		{
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GlobalSettingsDataGridView, "FileName");
-			SettingsFile.Current.Programs.Clear();
-			foreach (var item in programs)
-			{
-				item.FileProductName = EngineHelper.FixName(item.FileProductName, item.FileName);
-				SettingsFile.Current.Programs.Add(item);
-			}
-			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
-			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GlobalSettingsDataGridView, "FileName", selection);
-		}
-
-		void MySettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			var grid = (DataGridView)sender;
-			var row = grid.Rows[e.RowIndex];
-			var item = ((x360ce.Engine.Data.Game)row.DataBoundItem);
-			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
-			e.CellStyle.ForeColor = item.IsEnabled
-					? grid.DefaultCellStyle.ForeColor
-					: System.Drawing.SystemColors.ControlDark;
-			e.CellStyle.SelectionBackColor = item.IsEnabled
-			 ? grid.DefaultCellStyle.SelectionBackColor
-			 : System.Drawing.SystemColors.ControlDark;
-			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
-			//	? System.Drawing.Color.Gray
-			//	: grid.DefaultCellStyle.ForeColor;
-			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
-			//{
-			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
-			//}
-			//else
-			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
-			{
-				e.Value = isCurrent ? SaveButton.Image : Properties.Resources.empty_16x16;
-			}
-			else
-			{
-				//var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
-				//e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
-			}
-		}
-
 		void InitDefaultList()
 		{
 			SettingsFile.Current.Load();
-			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
+			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
 			RebindGames();
 		}
 
-		void RebindGames()
-		{
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(MySettingsDataGridView, "FileName");
-			SortableBindingList<x360ce.Engine.Data.Game> data;
-			if (ShowToolStripDropDownButton.Text.Contains("Enabled"))
-			{
-				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => x.IsEnabled));
-			}
-			else if (ShowToolStripDropDownButton.Text.Contains("Disabled"))
-			{
-				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => !x.IsEnabled));
-			}
-			else
-			{
-				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games);
-			}
-			MySettingsDataGridView.DataSource = null;
-			MySettingsDataGridView.DataSource = data;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(MySettingsDataGridView, "FileName", selection);
-		}
-
-		void ProgramsDataGridView_DataSourceChanged(object sender, EventArgs e)
-		{
-		}
-
-		//void UpdateCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, Guid? checksum)
-		//{
-		//	var v = e.Value.ToString().Substring(0, 8).ToUpper();
-		//	var s = checksum.HasValue ? checksum.Value.ToString().Substring(0, 8).ToUpper() : null;
-		//	var match = v == s;
-		//	e.Value = e.Value.ToString().Substring(0, 8).ToUpper();
-		//	e.CellStyle.BackColor = match ? System.Drawing.Color.FromArgb(255, 222, 225, 231) : e.CellStyle.BackColor = grid.DefaultCellStyle.BackColor;
-		//}
-
-
-		//	InstallFilesX360ceCheckBox.Checked = System.IO.File.Exists(SettingManager.IniFileName);
-		//InstallFilesXinput13CheckBox.Checked = System.IO.File.Exists(dllFile3);
-		//InstallFilesX360ceCheckBox.Enabled = IsFileSame(SettingManager.IniFileName);
-		//InstallFilesXinput910CheckBox.SuspendLayout();
-		//InstallFilesXinput11CheckBox.SuspendLayout();
-		//InstallFilesXinput12CheckBox.SuspendLayout();
-		//InstallFilesXinput910CheckBox.Checked = System.IO.File.Exists(dllFile0);
-		//InstallFilesXinput11CheckBox.Checked = System.IO.File.Exists(dllFile1);
-		//InstallFilesXinput12CheckBox.Checked = System.IO.File.Exists(dllFile2);
-		//InstallFilesXinput910CheckBox.ResumeLayout(false);
-		//InstallFilesXinput11CheckBox.ResumeLayout(false);
-		//InstallFilesXinput12CheckBox.ResumeLayout(false);
-		////InstallFilesXinput910CheckBox.Enabled = IsFileSame(dllFile0);
-		////InstallFilesXinput11CheckBox.Enabled = IsFileSame(dllFile1);
-		////InstallFilesXinput12CheckBox.Enabled = IsFileSame(dllFile2);
-		//InstallFilesXinput13CheckBox.Enabled = IsFileSame(dllFile3);
-
-		private void RefreshButton_Click(object sender, EventArgs e)
-		{
-		}
-
-		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
-		{
-			//var x = e;
-		}
-
-		private void ProgramOpenFileDialog_FileOk(object sender, CancelEventArgs e)
-		{
-
-		}
-
-		void ProcessExecutable(string filePath)
-		{
-			var fi = new System.IO.FileInfo(filePath);
-			if (!fi.Exists) return;
-			// Check if item already exists.
-			var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
-			if (game == null)
-			{
-				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
-				// Load default settings.
-				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
-				game.LoadDefault(program);
-				SettingsFile.Current.Games.Add(game);
-			}
-			else
-			{
-				game.FullPath = fi.FullName;
-			}
-			SettingsFile.Current.Save();
-		}
+		#region Scan Games
 
 		/// <summary>
 		/// Scan for games
@@ -216,18 +47,18 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm("Scan for games on your computer?", "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
-				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanFunction);
+				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames);
 				if (!success) ScanProgressLabel.Text = "Scan failed!";
 			}
 		}
 
-		void ScanFunction(object state)
+		void ScanGames(object state)
 		{
 			string[] paths = null;
 			Invoke((MethodInvoker)delegate()
 			{
 				ScanProgressLabel.Visible = true;
-				ScanButton.Enabled = false;
+				ScanGamesButton.Enabled = false;
 				paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
 				ScanProgressLabel.Text = "Scanning...";
 			});
@@ -244,7 +75,7 @@ namespace x360ce.App.Controls
 				// Skip folders if don't exists.
 				if (!di.Exists) continue;
 				var exes = new List<FileInfo>();
-				SearchDirectory(di, exes, "*.exe");
+				ScanGameDirectory(di, exes, "*.exe");
 				for (int f = 0; f < exes.Count; f++)
 				{
 
@@ -257,7 +88,7 @@ namespace x360ce.App.Controls
 					}
 					else
 					{
-						// Get game my game by executable name.
+						// Get game by executable name.
 						var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exe.Name.ToLower());
 						// If file doesn't exist in the game list then continue.
 						if (game == null)
@@ -289,20 +120,19 @@ namespace x360ce.App.Controls
 			}
 			Invoke((MethodInvoker)delegate()
 			{
-				//ScanProgressLabel.Text = "Scan Completed";
-				ScanButton.Enabled = true;
+				ScanGamesButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
 				RebindGames();
 			});
 		}
 
-		private void SearchDirectory(DirectoryInfo di, List<FileInfo> fileList, string searchPattern)
+		private void ScanGameDirectory(DirectoryInfo di, List<FileInfo> fileList, string searchPattern)
 		{
 			try
 			{
 				foreach (DirectoryInfo subDi in di.GetDirectories())
 				{
-					SearchDirectory(subDi, fileList, searchPattern);
+					ScanGameDirectory(subDi, fileList, searchPattern);
 				}
 			}
 			catch { }
@@ -318,56 +148,25 @@ namespace x360ce.App.Controls
 
 		private void GameSettingsUserControl_Load(object sender, EventArgs e)
 		{
-			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
-			EngineHelper.EnableDoubleBuffering(GlobalSettingsDataGridView);
-			GlobalSettingsDataGridView.DataSource = SettingsFile.Current.Programs;
-			LoadProgramsFromLocalFile();
+			EngineHelper.EnableDoubleBuffering(GamesDataGridView);
+			EngineHelper.EnableDoubleBuffering(ProgramsDataGridView);
+			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
+			LoadProgramsFromLocalGdbFile();
 			ProgramImageColumn.Visible = false;
 		}
 
-		void LoadProgramsFromLocalFile()
-		{
-			var ini = new Ini(SettingManager.GdbFileName);
-			var sections = ini.GetSections();
-			foreach (var section in sections)
-			{
-				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
-				if (program == null)
-				{
-					program = new Engine.Data.Program();
-					program.FileName = section;
-					program.HookMask = 0x00000002;
-					program.XInputMask = 0x00000004;
-					SettingsFile.Current.Programs.Add(program);
-				}
-				program.FileProductName = ini.GetValue(section, "Name", section);
-				int hookMask;
-				var hookMaskValue = ini.GetValue(section, "HookMask", "0x00000002");
-				if (int.TryParse(hookMaskValue, out hookMask))
-				{
-					program.HookMask = hookMask;
-				}
-			}
-		}
+		#endregion
 
-		private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
-		{
-			GetPrograms();
-		}
+		#region Games (My Game Settings)
 
-		private void GlobalSettingsDataGridView_SelectionChanged(object sender, EventArgs e)
-		{
-			SetGlobalSelection();
-		}
-
-		void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
+		void GamesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			SetGamesSelection();
 		}
 
 		private void GamesTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (GamesTabControl.SelectedTab == GlobalSettingsTabPage) SetGlobalSelection();
+			if (GamesTabControl.SelectedTab == GlobalSettingsTabPage) SetProgramsSelection();
 			else if (GamesTabControl.SelectedTab == GamesTabPage) SetGamesSelection();
 		}
 
@@ -375,13 +174,13 @@ namespace x360ce.App.Controls
 		{
 			// List can't be empty, so return.
 			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-			var selected = MySettingsDataGridView.SelectedRows.Count > 0;
-			StartButton.Enabled = selected;
-			SaveButton.Enabled = selected;
-			DeleteButton.Enabled = selected;
+			var selected = GamesDataGridView.SelectedRows.Count > 0;
+			StartGameButton.Enabled = selected;
+			SaveGamesButton.Enabled = selected;
+			DeleteGamesButton.Enabled = selected;
 			if (selected)
 			{
-				var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+				var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
 				GameDetailsControl.CurrentGame = item;
 			}
@@ -391,20 +190,15 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void SetGlobalSelection()
+		private void AddGameButton_Click(object sender, EventArgs e)
 		{
-			// List can't be empty, so return.
-			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
-			if (GlobalSettingsDataGridView.SelectedRows.Count == 0) return;
-			var row = GlobalSettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
-			GameDefaultDetailsControl.SetMask(false, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
+			AddNewGame();
 		}
 
-		private void MyGamesAddButton_Click(object sender, EventArgs e)
+		void AddNewGame()
 		{
 			var fullPath = "";
-			var row = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			if (row != null)
 			{
 				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
@@ -412,72 +206,64 @@ namespace x360ce.App.Controls
 			}
 
 			var path = "";
-			GameApplicationOpenFileDialog.DefaultExt = ".exe";
+			AddGameOpenFileDialog.DefaultExt = ".exe";
 			if (!string.IsNullOrEmpty(fullPath))
 			{
 				var fi = new System.IO.FileInfo(fullPath);
 				if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
-				GameApplicationOpenFileDialog.FileName = fi.Name;
+				AddGameOpenFileDialog.FileName = fi.Name;
 			}
-			GameApplicationOpenFileDialog.Filter = EngineHelper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
-			GameApplicationOpenFileDialog.FilterIndex = 1;
-			GameApplicationOpenFileDialog.RestoreDirectory = true;
+			AddGameOpenFileDialog.Filter = EngineHelper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
+			AddGameOpenFileDialog.FilterIndex = 1;
+			AddGameOpenFileDialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-			GameApplicationOpenFileDialog.InitialDirectory = path;
-			GameApplicationOpenFileDialog.Title = "Browse for Executable";
-			var result = GameApplicationOpenFileDialog.ShowDialog();
+			AddGameOpenFileDialog.InitialDirectory = path;
+			AddGameOpenFileDialog.Title = "Browse for Executable";
+			var result = AddGameOpenFileDialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
 				// Don't allow to add windows folder.
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (GameApplicationOpenFileDialog.FileName.StartsWith(winFolder))
+				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder))
 				{
 					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 				else
 				{
 					// = GameApplicationOpenFileDialog.FileName;
-					ProcessExecutable(GameApplicationOpenFileDialog.FileName);
+					ProcessExecutable(AddGameOpenFileDialog.FileName);
 				}
 			}
 		}
 
-		private void StartButton_Click(object sender, EventArgs e)
+		void ProcessExecutable(string filePath)
+		{
+			var fi = new System.IO.FileInfo(filePath);
+			if (!fi.Exists) return;
+			// Check if item already exists.
+			var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
+			if (game == null)
+			{
+				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+				// Load default settings.
+				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
+				game.LoadDefault(program);
+				SettingsFile.Current.Games.Add(game);
+			}
+			else
+			{
+				game.FullPath = fi.FullName;
+			}
+			SettingsFile.Current.Save();
+		}
+
+		private void StartGameButton_Click(object sender, EventArgs e)
 		{
 			var game = GameDetailsControl.CurrentGame;
-			OpenPath(game.FullPath);
+			EngineHelper.StartExecutable(game.FullPath);
 		}
 
-		void OpenPath(string path, string arguments = null)
-		{
-			try
-			{
-				var fi = new System.IO.FileInfo(path);
-				//if (!fi.Exists) return;
-				// Brings up the "Windows cannot open this file" dialog if association not found.
-				var psi = new ProcessStartInfo(path);
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = fi.Directory.FullName;
-				psi.ErrorDialog = true;
-				if (arguments != null) psi.Arguments = arguments;
-				Process.Start(psi);
-			}
-			catch (Exception) { }
-		}
-
-		private void EnableButton_Click(object sender, EventArgs e)
-		{
-			var item = GameDetailsControl.CurrentGame;
-			if (item != null) item.IsEnabled = true;
-		}
-
-		private void DisableButton_Click(object sender, EventArgs e)
-		{
-			var item = GameDetailsControl.CurrentGame;
-			if (item != null) item.IsEnabled = false;
-		}
-
-		private void MySettingsDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.RowIndex < 0) return;
 			var grid = (DataGridView)sender;
@@ -492,23 +278,27 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void FolderButton_Click(object sender, EventArgs e)
+		private void OpenGameFolderButton_Click(object sender, EventArgs e)
 		{
 			var game = GameDetailsControl.CurrentGame;
 			if (!File.Exists(game.FullPath)) return;
 			string argument = @"/select, " + game.FullPath;
 			System.Diagnostics.Process.Start("explorer.exe", argument);
-			// OpenPath(game.FullPath);
 		}
 
-		private void SaveButton_Click(object sender, EventArgs e)
+		private void SaveGamesButton_Click(object sender, EventArgs e)
 		{
 
 		}
 
-		private void DeleteButton_Click(object sender, EventArgs e)
+		private void DeleteGamesButton_Click(object sender, EventArgs e)
 		{
-			var grid = MySettingsDataGridView;
+			DeleteSelectedGames();
+		}
+
+		void DeleteSelectedGames()
+		{
+			var grid = GamesDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
 			var itemsToDelete = SettingsFile.Current.Games.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
@@ -537,15 +327,123 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void ShowToolStripMenuItem_Click(object sender, EventArgs e)
+		private void ShowGamesMenuItem_Click(object sender, EventArgs e)
 		{
 			var item = (ToolStripMenuItem)sender;
-			ShowToolStripDropDownButton.Image = item.Image;
-			ShowToolStripDropDownButton.Text = item.Text;
+			ShowGamesDropDownButton.Image = item.Image;
+			ShowGamesDropDownButton.Text = item.Text;
 			RebindGames();
 		}
 
-		private void ImportButton_Click(object sender, EventArgs e)
+
+		void GamesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var row = grid.Rows[e.RowIndex];
+			var item = ((x360ce.Engine.Data.Game)row.DataBoundItem);
+			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
+			e.CellStyle.ForeColor = item.IsEnabled
+					? grid.DefaultCellStyle.ForeColor
+					: System.Drawing.SystemColors.ControlDark;
+			e.CellStyle.SelectionBackColor = item.IsEnabled
+			 ? grid.DefaultCellStyle.SelectionBackColor
+			 : System.Drawing.SystemColors.ControlDark;
+			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
+			//	? System.Drawing.Color.Gray
+			//	: grid.DefaultCellStyle.ForeColor;
+			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
+			//{
+			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
+			//}
+			//else
+			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			{
+				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
+			}
+			else
+			{
+				//var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
+				//e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
+			}
+		}
+
+		void RebindGames()
+		{
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GamesDataGridView, "FileName");
+			SortableBindingList<x360ce.Engine.Data.Game> data;
+			if (ShowGamesDropDownButton.Text.Contains("Enabled"))
+			{
+				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => x.IsEnabled));
+			}
+			else if (ShowGamesDropDownButton.Text.Contains("Disabled"))
+			{
+				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => !x.IsEnabled));
+			}
+			else
+			{
+				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games);
+			}
+			GamesDataGridView.DataSource = null;
+			GamesDataGridView.DataSource = data;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GamesDataGridView, "FileName", selection);
+		}
+
+		private void GamesDataGridView_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Delete) DeleteSelectedGames();
+			else if (e.KeyCode == Keys.Insert) AddNewGame();
+		}
+
+		#endregion
+
+		#region Programs (Game Defaults)
+
+		void LoadProgramsFromLocalGdbFile()
+		{
+			var ini = new Ini(SettingManager.GdbFileName);
+			var sections = ini.GetSections();
+			foreach (var section in sections)
+			{
+				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
+				if (program == null)
+				{
+					program = new Engine.Data.Program();
+					program.FileName = section;
+					program.HookMask = 0x00000002;
+					program.XInputMask = 0x00000004;
+					SettingsFile.Current.Programs.Add(program);
+				}
+				program.FileProductName = ini.GetValue(section, "Name", section);
+				int hookMask;
+				var hookMaskValue = ini.GetValue(section, "HookMask", "0x00000002");
+				if (int.TryParse(hookMaskValue, out hookMask))
+				{
+					program.HookMask = hookMask;
+				}
+			}
+		}
+
+		void SetProgramsSelection()
+		{
+			// List can't be empty, so return.
+			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+			if (ProgramsDataGridView.SelectedRows.Count == 0) return;
+			var row = ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
+			GameDefaultDetailsControl.SetMask(false, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
+		}
+
+		private void RefreshProgramsButton_Click(object sender, EventArgs e)
+		{
+			GetPrograms();
+		}
+
+		private void ProgramsDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			SetProgramsSelection();
+		}
+
+		private void ImportProgramsButton_Click(object sender, EventArgs e)
 		{
 			var dialog = ImportOpenFileDialog;
 			dialog.DefaultExt = "*.xml";
@@ -570,11 +468,11 @@ namespace x360ce.App.Controls
 				{
 					programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
 				}
-				Bind(programs);
+				ImportAndBindPrograms(programs);
 			}
 		}
 
-		private void ExportButton_Click(object sender, EventArgs e)
+		private void ExportProgramsButton_Click(object sender, EventArgs e)
 		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.xml";
@@ -607,9 +505,14 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void DeleteGamesButton_Click(object sender, EventArgs e)
+		private void DeleteProgramsButton_Click(object sender, EventArgs e)
 		{
-			var grid = GlobalSettingsDataGridView;
+			DeleteSelectedPrograms();
+		}
+
+		void DeleteSelectedPrograms()
+		{
+			var grid = ProgramsDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
 			var itemsToDelete = SettingsFile.Current.Programs.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
@@ -636,6 +539,80 @@ namespace x360ce.App.Controls
 				SettingsFile.Current.Save();
 			}
 		}
+
+		void ImportAndBindPrograms(List<x360ce.Engine.Data.Program> programs)
+		{
+			var grid = ProgramsDataGridView;
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var newItems = programs.ToArray();
+			ProgramsDataGridView.DataSource = null;
+			foreach (var newItem in newItems)
+			{
+				// Try to find existing item inside programs.
+				var existingItems = SettingsFile.Current.Programs.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
+				// Remove existing items.
+				for (int i = 0; i < existingItems.Length; i++)
+				{
+					SettingsFile.Current.Programs.Remove(existingItems[i]);
+				}
+				// Fix product name.
+				var fixedProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
+				newItem.FileProductName = fixedProductName;
+				// Add new one.
+				SettingsFile.Current.Programs.Add(newItem);
+			}
+			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
+			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
+			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
+			SettingsFile.Current.Save();
+		}
+
+		void Programs_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var enabled = SettingsFile.Current.Programs.Count > 0;
+			if (ExportProgramsButton.Enabled != enabled) ExportProgramsButton.Enabled = enabled;
+		}
+
+		void GetPrograms()
+		{
+			MainForm.Current.LoadingCircle = true;
+			var ws = new WebServiceClient();
+			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			EnabledState enabled = EnabledState.None;
+			if (IncludeEnabledCheckBox.CheckState == CheckState.Checked) enabled = EnabledState.Enabled;
+			if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled = EnabledState.Disabled;
+			int minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
+			ws.GetProgramsCompleted += ProgramsWebServiceClient_GetProgramsCompleted;
+			ws.GetProgramsAsync(enabled, minInstances);
+		}
+
+		void ProgramsWebServiceClient_GetProgramsCompleted(object sender, ResultEventArgs e)
+		{
+			MainForm.Current.LoadingCircle = false;
+			if (e.Error != null)
+			{
+				var error = e.Error.Message;
+				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
+				MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
+			}
+			else if (e.Result == null)
+			{
+				MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
+			}
+			else
+			{
+				var result = (List<x360ce.Engine.Data.Program>)e.Result;
+				ImportAndBindPrograms(result);
+			}
+		}
+
+		private void ProgramsDataGridView_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Delete) DeleteSelectedPrograms();
+		}
+
+		#endregion
 
 	}
 }
