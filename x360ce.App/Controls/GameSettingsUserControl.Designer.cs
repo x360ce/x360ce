@@ -36,54 +36,54 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.GamesTabControl = new System.Windows.Forms.TabControl();
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
-			this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.GamesDataGridView = new System.Windows.Forms.DataGridView();
 			this.EnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.FilePathColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.ScanButton = new System.Windows.Forms.ToolStripButton();
-			this.AddButton = new System.Windows.Forms.ToolStripButton();
-			this.DeleteButton = new System.Windows.Forms.ToolStripButton();
-			this.SaveButton = new System.Windows.Forms.ToolStripButton();
-			this.StartButton = new System.Windows.Forms.ToolStripButton();
-			this.FolderButton = new System.Windows.Forms.ToolStripButton();
-			this.ShowToolStripDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
-			this.ShowAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.ShowEnabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.ShowDisabledToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
+			this.ScanGamesButton = new System.Windows.Forms.ToolStripButton();
+			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
+			this.DeleteGamesButton = new System.Windows.Forms.ToolStripButton();
+			this.SaveGamesButton = new System.Windows.Forms.ToolStripButton();
+			this.StartGameButton = new System.Windows.Forms.ToolStripButton();
+			this.OpenGameButton = new System.Windows.Forms.ToolStripButton();
+			this.ShowGamesDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
+			this.ShowAllGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.ShowEnabledGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.ShowDisabledGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ScanProgressLabel = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.GameDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
 			this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
-			this.GlobalSettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.ProgramsDataGridView = new System.Windows.Forms.DataGridView();
 			this.ProgramImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.ProgramIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProgramFileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProgramProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
-			this.ImportButton = new System.Windows.Forms.ToolStripButton();
-			this.ExportButton = new System.Windows.Forms.ToolStripButton();
-			this.DeleteGameButton = new System.Windows.Forms.ToolStripButton();
+			this.ProgramsToolStrip = new System.Windows.Forms.ToolStrip();
+			this.RefreshProgramsButton = new System.Windows.Forms.ToolStripButton();
+			this.ImportProgramsButton = new System.Windows.Forms.ToolStripButton();
+			this.ExportProgramsButton = new System.Windows.Forms.ToolStripButton();
+			this.DeleteProgramsButton = new System.Windows.Forms.ToolStripButton();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.GameDefaultDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.GameApplicationOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.GamesTabControl.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).BeginInit();
-			this.toolStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
+			this.GamesToolStrip.SuspendLayout();
 			this.GlobalSettingsTabPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).BeginInit();
-			this.toolStrip2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).BeginInit();
+			this.ProgramsToolStrip.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
 			this.SuspendLayout();
@@ -106,8 +106,8 @@
 			// 
 			// GamesTabPage
 			// 
-			this.GamesTabPage.Controls.Add(this.MySettingsDataGridView);
-			this.GamesTabPage.Controls.Add(this.toolStrip1);
+			this.GamesTabPage.Controls.Add(this.GamesDataGridView);
+			this.GamesTabPage.Controls.Add(this.GamesToolStrip);
 			this.GamesTabPage.Controls.Add(this.ScanProgressLabel);
 			this.GamesTabPage.Controls.Add(this.panel1);
 			this.GamesTabPage.Controls.Add(this.GameDetailsControl);
@@ -118,23 +118,23 @@
 			this.GamesTabPage.Text = "My Game Settings";
 			this.GamesTabPage.UseVisualStyleBackColor = true;
 			// 
-			// MySettingsDataGridView
+			// GamesDataGridView
 			// 
-			this.MySettingsDataGridView.AllowUserToAddRows = false;
-			this.MySettingsDataGridView.AllowUserToDeleteRows = false;
-			this.MySettingsDataGridView.AllowUserToResizeRows = false;
-			this.MySettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.MySettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.MySettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.GamesDataGridView.AllowUserToAddRows = false;
+			this.GamesDataGridView.AllowUserToDeleteRows = false;
+			this.GamesDataGridView.AllowUserToResizeRows = false;
+			this.GamesDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.GamesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.GamesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MySettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-			this.MySettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.MySettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.GamesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.GamesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.EnabledColumn,
             this.MyIconColumn,
             this.GameIdColumn,
@@ -148,12 +148,12 @@
 			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MySettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
-			this.MySettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MySettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.MySettingsDataGridView.Location = new System.Drawing.Point(0, 25);
-			this.MySettingsDataGridView.Name = "MySettingsDataGridView";
-			this.MySettingsDataGridView.ReadOnly = true;
+			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.GamesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+			this.GamesDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.GamesDataGridView.Name = "GamesDataGridView";
+			this.GamesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -161,15 +161,15 @@
 			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MySettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-			this.MySettingsDataGridView.RowHeadersVisible = false;
-			this.MySettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.MySettingsDataGridView.Size = new System.Drawing.Size(532, 385);
-			this.MySettingsDataGridView.TabIndex = 0;
-			this.MySettingsDataGridView.DataSourceChanged += new System.EventHandler(this.ProgramsDataGridView_DataSourceChanged);
-			this.MySettingsDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MySettingsDataGridView_CellClick);
-			this.MySettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MySettingsDataGridView_CellFormatting);
-			this.MySettingsDataGridView.SelectionChanged += new System.EventHandler(this.ProgramsDataGridView_SelectionChanged);
+			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.GamesDataGridView.RowHeadersVisible = false;
+			this.GamesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.GamesDataGridView.Size = new System.Drawing.Size(532, 385);
+			this.GamesDataGridView.TabIndex = 0;
+			this.GamesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GamesDataGridView_CellClick);
+			this.GamesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GamesDataGridView_CellFormatting);
+			this.GamesDataGridView.SelectionChanged += new System.EventHandler(this.GamesDataGridView_SelectionChanged);
+			this.GamesDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GamesDataGridView_KeyDown);
 			// 
 			// EnabledColumn
 			// 
@@ -225,118 +225,118 @@
 			this.FilePathColumn.ReadOnly = true;
 			this.FilePathColumn.Width = 73;
 			// 
-			// toolStrip1
+			// GamesToolStrip
 			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ScanButton,
-            this.AddButton,
-            this.DeleteButton,
-            this.SaveButton,
-            this.StartButton,
-            this.FolderButton,
-            this.ShowToolStripDropDownButton});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip1.Size = new System.Drawing.Size(532, 25);
-			this.toolStrip1.TabIndex = 2;
-			this.toolStrip1.Text = "MySettingsToolStrip";
+			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ScanGamesButton,
+            this.AddGameButton,
+            this.DeleteGamesButton,
+            this.SaveGamesButton,
+            this.StartGameButton,
+            this.OpenGameButton,
+            this.ShowGamesDropDownButton});
+			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.GamesToolStrip.Name = "GamesToolStrip";
+			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.GamesToolStrip.Size = new System.Drawing.Size(532, 25);
+			this.GamesToolStrip.TabIndex = 2;
+			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			// 
-			// ScanButton
+			// ScanGamesButton
 			// 
-			this.ScanButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
-			this.ScanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ScanButton.Name = "ScanButton";
-			this.ScanButton.Size = new System.Drawing.Size(52, 22);
-			this.ScanButton.Text = "&Scan";
-			this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
+			this.ScanGamesButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
+			this.ScanGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ScanGamesButton.Name = "ScanGamesButton";
+			this.ScanGamesButton.Size = new System.Drawing.Size(52, 22);
+			this.ScanGamesButton.Text = "&Scan";
+			this.ScanGamesButton.Click += new System.EventHandler(this.ScanButton_Click);
 			// 
-			// AddButton
+			// AddGameButton
 			// 
-			this.AddButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
-			this.AddButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.AddButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.AddButton.Name = "AddButton";
-			this.AddButton.Size = new System.Drawing.Size(58, 22);
-			this.AddButton.Text = "Add...";
-			this.AddButton.Click += new System.EventHandler(this.MyGamesAddButton_Click);
+			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AddGameButton.Name = "AddGameButton";
+			this.AddGameButton.Size = new System.Drawing.Size(58, 22);
+			this.AddGameButton.Text = "Add...";
+			this.AddGameButton.Click += new System.EventHandler(this.AddGameButton_Click);
 			// 
-			// DeleteButton
+			// DeleteGamesButton
 			// 
-			this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.DeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.DeleteButton.Name = "DeleteButton";
-			this.DeleteButton.Size = new System.Drawing.Size(60, 22);
-			this.DeleteButton.Text = "&Delete";
-			this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
+			this.DeleteGamesButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.DeleteGamesButton.Name = "DeleteGamesButton";
+			this.DeleteGamesButton.Size = new System.Drawing.Size(60, 22);
+			this.DeleteGamesButton.Text = "&Delete";
+			this.DeleteGamesButton.Click += new System.EventHandler(this.DeleteGamesButton_Click);
 			// 
-			// SaveButton
+			// SaveGamesButton
 			// 
-			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-			this.SaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.SaveButton.Name = "SaveButton";
-			this.SaveButton.Size = new System.Drawing.Size(51, 22);
-			this.SaveButton.Text = "&Save";
-			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+			this.SaveGamesButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.SaveGamesButton.Name = "SaveGamesButton";
+			this.SaveGamesButton.Size = new System.Drawing.Size(51, 22);
+			this.SaveGamesButton.Text = "&Save";
+			this.SaveGamesButton.Click += new System.EventHandler(this.SaveGamesButton_Click);
 			// 
-			// StartButton
+			// StartGameButton
 			// 
-			this.StartButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.StartButton.Image = global::x360ce.App.Properties.Resources.launch_16x16;
-			this.StartButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.StartButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.StartButton.Name = "StartButton";
-			this.StartButton.Size = new System.Drawing.Size(51, 22);
-			this.StartButton.Text = "Start";
-			this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
+			this.StartGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.StartGameButton.Image = global::x360ce.App.Properties.Resources.launch_16x16;
+			this.StartGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.StartGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.StartGameButton.Name = "StartGameButton";
+			this.StartGameButton.Size = new System.Drawing.Size(51, 22);
+			this.StartGameButton.Text = "Start";
+			this.StartGameButton.Click += new System.EventHandler(this.StartGameButton_Click);
 			// 
-			// FolderButton
+			// OpenGameButton
 			// 
-			this.FolderButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.FolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
-			this.FolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.FolderButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.FolderButton.Name = "FolderButton";
-			this.FolderButton.Size = new System.Drawing.Size(69, 22);
-			this.FolderButton.Text = "Folder...";
-			this.FolderButton.Click += new System.EventHandler(this.FolderButton_Click);
+			this.OpenGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.OpenGameButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+			this.OpenGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.OpenGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.OpenGameButton.Name = "OpenGameButton";
+			this.OpenGameButton.Size = new System.Drawing.Size(65, 22);
+			this.OpenGameButton.Text = "Open...";
+			this.OpenGameButton.Click += new System.EventHandler(this.OpenGameFolderButton_Click);
 			// 
-			// ShowToolStripDropDownButton
+			// ShowGamesDropDownButton
 			// 
-			this.ShowToolStripDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowAllToolStripMenuItem,
-            this.ShowEnabledToolStripMenuItem,
-            this.ShowDisabledToolStripMenuItem});
-			this.ShowToolStripDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
-			this.ShowToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ShowToolStripDropDownButton.Name = "ShowToolStripDropDownButton";
-			this.ShowToolStripDropDownButton.Size = new System.Drawing.Size(85, 22);
-			this.ShowToolStripDropDownButton.Text = "Show: All";
+			this.ShowGamesDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowAllGamesMenuItem,
+            this.ShowEnabledGamesMenuItem,
+            this.ShowDisabledGamesMenuItem});
+			this.ShowGamesDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
+			this.ShowGamesDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ShowGamesDropDownButton.Name = "ShowGamesDropDownButton";
+			this.ShowGamesDropDownButton.Size = new System.Drawing.Size(85, 22);
+			this.ShowGamesDropDownButton.Text = "Show: All";
 			// 
-			// ShowAllToolStripMenuItem
+			// ShowAllGamesMenuItem
 			// 
-			this.ShowAllToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
-			this.ShowAllToolStripMenuItem.Name = "ShowAllToolStripMenuItem";
-			this.ShowAllToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-			this.ShowAllToolStripMenuItem.Text = "Show: All";
-			this.ShowAllToolStripMenuItem.Click += new System.EventHandler(this.ShowToolStripMenuItem_Click);
+			this.ShowAllGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
+			this.ShowAllGamesMenuItem.Name = "ShowAllGamesMenuItem";
+			this.ShowAllGamesMenuItem.Size = new System.Drawing.Size(154, 22);
+			this.ShowAllGamesMenuItem.Text = "Show: All";
+			this.ShowAllGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
-			// ShowEnabledToolStripMenuItem
+			// ShowEnabledGamesMenuItem
 			// 
-			this.ShowEnabledToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_16x16;
-			this.ShowEnabledToolStripMenuItem.Name = "ShowEnabledToolStripMenuItem";
-			this.ShowEnabledToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-			this.ShowEnabledToolStripMenuItem.Text = "Show: Enabled";
-			this.ShowEnabledToolStripMenuItem.Click += new System.EventHandler(this.ShowToolStripMenuItem_Click);
+			this.ShowEnabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_16x16;
+			this.ShowEnabledGamesMenuItem.Name = "ShowEnabledGamesMenuItem";
+			this.ShowEnabledGamesMenuItem.Size = new System.Drawing.Size(154, 22);
+			this.ShowEnabledGamesMenuItem.Text = "Show: Enabled";
+			this.ShowEnabledGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
-			// ShowDisabledToolStripMenuItem
+			// ShowDisabledGamesMenuItem
 			// 
-			this.ShowDisabledToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
-			this.ShowDisabledToolStripMenuItem.Name = "ShowDisabledToolStripMenuItem";
-			this.ShowDisabledToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-			this.ShowDisabledToolStripMenuItem.Text = "Show: Disabled";
-			this.ShowDisabledToolStripMenuItem.Click += new System.EventHandler(this.ShowToolStripMenuItem_Click);
+			this.ShowDisabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.ShowDisabledGamesMenuItem.Name = "ShowDisabledGamesMenuItem";
+			this.ShowDisabledGamesMenuItem.Size = new System.Drawing.Size(154, 22);
+			this.ShowDisabledGamesMenuItem.Text = "Show: Disabled";
+			this.ShowDisabledGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
 			// ScanProgressLabel
 			// 
@@ -370,8 +370,8 @@
 			// 
 			// GlobalSettingsTabPage
 			// 
-			this.GlobalSettingsTabPage.Controls.Add(this.GlobalSettingsDataGridView);
-			this.GlobalSettingsTabPage.Controls.Add(this.toolStrip2);
+			this.GlobalSettingsTabPage.Controls.Add(this.ProgramsDataGridView);
+			this.GlobalSettingsTabPage.Controls.Add(this.ProgramsToolStrip);
 			this.GlobalSettingsTabPage.Controls.Add(this.panel2);
 			this.GlobalSettingsTabPage.Controls.Add(this.GameDefaultDetailsControl);
 			this.GlobalSettingsTabPage.Location = new System.Drawing.Point(4, 22);
@@ -381,24 +381,24 @@
 			this.GlobalSettingsTabPage.Text = "Default Settings for Most Popular Games";
 			this.GlobalSettingsTabPage.UseVisualStyleBackColor = true;
 			// 
-			// GlobalSettingsDataGridView
+			// ProgramsDataGridView
 			// 
-			this.GlobalSettingsDataGridView.AllowUserToAddRows = false;
-			this.GlobalSettingsDataGridView.AllowUserToDeleteRows = false;
-			this.GlobalSettingsDataGridView.AllowUserToOrderColumns = true;
-			this.GlobalSettingsDataGridView.AllowUserToResizeRows = false;
-			this.GlobalSettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.GlobalSettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.GlobalSettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.ProgramsDataGridView.AllowUserToAddRows = false;
+			this.ProgramsDataGridView.AllowUserToDeleteRows = false;
+			this.ProgramsDataGridView.AllowUserToOrderColumns = true;
+			this.ProgramsDataGridView.AllowUserToResizeRows = false;
+			this.ProgramsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.ProgramsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.ProgramsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GlobalSettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-			this.GlobalSettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.GlobalSettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.ProgramsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			this.ProgramsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.ProgramsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ProgramImageColumn,
             this.ProgramIdColumn,
             this.ProgramFileNameColumn,
@@ -410,12 +410,12 @@
 			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.GlobalSettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
-			this.GlobalSettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.GlobalSettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.GlobalSettingsDataGridView.Location = new System.Drawing.Point(0, 25);
-			this.GlobalSettingsDataGridView.Name = "GlobalSettingsDataGridView";
-			this.GlobalSettingsDataGridView.ReadOnly = true;
+			this.ProgramsDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+			this.ProgramsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+			this.ProgramsDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.ProgramsDataGridView.Name = "ProgramsDataGridView";
+			this.ProgramsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -423,12 +423,13 @@
 			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GlobalSettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-			this.GlobalSettingsDataGridView.RowHeadersVisible = false;
-			this.GlobalSettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.GlobalSettingsDataGridView.Size = new System.Drawing.Size(532, 425);
-			this.GlobalSettingsDataGridView.TabIndex = 1;
-			this.GlobalSettingsDataGridView.SelectionChanged += new System.EventHandler(this.GlobalSettingsDataGridView_SelectionChanged);
+			this.ProgramsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+			this.ProgramsDataGridView.RowHeadersVisible = false;
+			this.ProgramsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.ProgramsDataGridView.Size = new System.Drawing.Size(532, 425);
+			this.ProgramsDataGridView.TabIndex = 1;
+			this.ProgramsDataGridView.SelectionChanged += new System.EventHandler(this.ProgramsDataGridView_SelectionChanged);
+			this.ProgramsDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProgramsDataGridView_KeyDown);
 			// 
 			// ProgramImageColumn
 			// 
@@ -467,57 +468,57 @@
 			this.ProgramProductNameColumn.Name = "ProgramProductNameColumn";
 			this.ProgramProductNameColumn.ReadOnly = true;
 			// 
-			// toolStrip2
+			// ProgramsToolStrip
 			// 
-			this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.GlobalSettingsRefreshButton,
-            this.ImportButton,
-            this.ExportButton,
-            this.DeleteGameButton});
-			this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip2.Name = "toolStrip2";
-			this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip2.Size = new System.Drawing.Size(532, 25);
-			this.toolStrip2.TabIndex = 3;
-			this.toolStrip2.Text = "MySettingsToolStrip";
+			this.ProgramsToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.ProgramsToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshProgramsButton,
+            this.ImportProgramsButton,
+            this.ExportProgramsButton,
+            this.DeleteProgramsButton});
+			this.ProgramsToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
+			this.ProgramsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.ProgramsToolStrip.Size = new System.Drawing.Size(532, 25);
+			this.ProgramsToolStrip.TabIndex = 3;
+			this.ProgramsToolStrip.Text = "MySettingsToolStrip";
 			// 
-			// GlobalSettingsRefreshButton
+			// RefreshProgramsButton
 			// 
-			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
-			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.GlobalSettingsRefreshButton.Text = "&Refresh";
-			this.GlobalSettingsRefreshButton.Click += new System.EventHandler(this.GlobalSettingsRefreshButton_Click);
+			this.RefreshProgramsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RefreshProgramsButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.RefreshProgramsButton.Name = "RefreshProgramsButton";
+			this.RefreshProgramsButton.Size = new System.Drawing.Size(66, 22);
+			this.RefreshProgramsButton.Text = "&Refresh";
+			this.RefreshProgramsButton.Click += new System.EventHandler(this.RefreshProgramsButton_Click);
 			// 
-			// ImportButton
+			// ImportProgramsButton
 			// 
-			this.ImportButton.Image = global::x360ce.App.Properties.Resources.data_into_16x16;
-			this.ImportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ImportButton.Name = "ImportButton";
-			this.ImportButton.Size = new System.Drawing.Size(72, 22);
-			this.ImportButton.Text = "&Import...";
-			this.ImportButton.Click += new System.EventHandler(this.ImportButton_Click);
+			this.ImportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_into_16x16;
+			this.ImportProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ImportProgramsButton.Name = "ImportProgramsButton";
+			this.ImportProgramsButton.Size = new System.Drawing.Size(72, 22);
+			this.ImportProgramsButton.Text = "&Import...";
+			this.ImportProgramsButton.Click += new System.EventHandler(this.ImportProgramsButton_Click);
 			// 
-			// ExportButton
+			// ExportProgramsButton
 			// 
-			this.ExportButton.Image = global::x360ce.App.Properties.Resources.data_out_16x16;
-			this.ExportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ExportButton.Name = "ExportButton";
-			this.ExportButton.Size = new System.Drawing.Size(69, 22);
-			this.ExportButton.Text = "&Export...";
-			this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
+			this.ExportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_out_16x16;
+			this.ExportProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ExportProgramsButton.Name = "ExportProgramsButton";
+			this.ExportProgramsButton.Size = new System.Drawing.Size(69, 22);
+			this.ExportProgramsButton.Text = "&Export...";
+			this.ExportProgramsButton.Click += new System.EventHandler(this.ExportProgramsButton_Click);
 			// 
-			// DeleteGameButton
+			// DeleteProgramsButton
 			// 
-			this.DeleteGameButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.DeleteGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.DeleteGameButton.Name = "DeleteGameButton";
-			this.DeleteGameButton.Size = new System.Drawing.Size(60, 22);
-			this.DeleteGameButton.Text = "&Delete";
-			this.DeleteGameButton.Click += new System.EventHandler(this.DeleteGamesButton_Click);
+			this.DeleteProgramsButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.DeleteProgramsButton.Name = "DeleteProgramsButton";
+			this.DeleteProgramsButton.Size = new System.Drawing.Size(60, 22);
+			this.DeleteProgramsButton.Text = "&Delete";
+			this.DeleteProgramsButton.Click += new System.EventHandler(this.DeleteProgramsButton_Click);
 			// 
 			// panel2
 			// 
@@ -587,10 +588,6 @@
             0,
             0});
 			// 
-			// GameApplicationOpenFileDialog
-			// 
-			this.GameApplicationOpenFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.ProgramOpenFileDialog_FileOk);
-			// 
 			// GameSettingsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -602,14 +599,14 @@
 			this.GamesTabControl.ResumeLayout(false);
 			this.GamesTabPage.ResumeLayout(false);
 			this.GamesTabPage.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).EndInit();
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).EndInit();
+			this.GamesToolStrip.ResumeLayout(false);
+			this.GamesToolStrip.PerformLayout();
 			this.GlobalSettingsTabPage.ResumeLayout(false);
 			this.GlobalSettingsTabPage.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.GlobalSettingsDataGridView)).EndInit();
-			this.toolStrip2.ResumeLayout(false);
-			this.toolStrip2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).EndInit();
+			this.ProgramsToolStrip.ResumeLayout(false);
+			this.ProgramsToolStrip.PerformLayout();
 			this.SettingsTabPage.ResumeLayout(false);
 			this.SettingsTabPage.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
@@ -621,46 +618,46 @@
 
 		System.Windows.Forms.TabControl GamesTabControl;
 		System.Windows.Forms.TabPage GamesTabPage;
-		System.Windows.Forms.DataGridView MySettingsDataGridView;
+		System.Windows.Forms.DataGridView GamesDataGridView;
 		private System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
         private System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
-		private System.Windows.Forms.OpenFileDialog GameApplicationOpenFileDialog;
+		private System.Windows.Forms.OpenFileDialog AddGameOpenFileDialog;
 		private System.Windows.Forms.Label ScanProgressLabel;
         private System.Windows.Forms.TabPage GlobalSettingsTabPage;
-        private System.Windows.Forms.DataGridView GlobalSettingsDataGridView;
-		private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton DeleteButton;
-        private System.Windows.Forms.ToolStripButton SaveButton;
-        private System.Windows.Forms.ToolStripButton ScanButton;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-		private System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
+        private System.Windows.Forms.DataGridView ProgramsDataGridView;
+		private System.Windows.Forms.ToolStrip GamesToolStrip;
+        private System.Windows.Forms.ToolStripButton DeleteGamesButton;
+        private System.Windows.Forms.ToolStripButton SaveGamesButton;
+        private System.Windows.Forms.ToolStripButton ScanGamesButton;
+        private System.Windows.Forms.ToolStrip ProgramsToolStrip;
+		private System.Windows.Forms.ToolStripButton RefreshProgramsButton;
 		private System.Windows.Forms.TabPage SettingsTabPage;
-		private System.Windows.Forms.ToolStripButton AddButton;
+		private System.Windows.Forms.ToolStripButton AddGameButton;
 		private System.Windows.Forms.Panel panel1;
 		private GameSettingDetailsUserControl GameDetailsControl;
 		private System.Windows.Forms.Panel panel2;
 		private GameSettingDetailsUserControl GameDefaultDetailsControl;
-		private System.Windows.Forms.ToolStripButton StartButton;
-		private System.Windows.Forms.ToolStripButton FolderButton;
+		private System.Windows.Forms.ToolStripButton StartGameButton;
+		private System.Windows.Forms.ToolStripButton OpenGameButton;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn EnabledColumn;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FilePathColumn;
-		private System.Windows.Forms.ToolStripDropDownButton ShowToolStripDropDownButton;
-		private System.Windows.Forms.ToolStripMenuItem ShowAllToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ShowEnabledToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ShowDisabledToolStripMenuItem;
-		private System.Windows.Forms.ToolStripButton ImportButton;
-		private System.Windows.Forms.ToolStripButton ExportButton;
+		private System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;
+		private System.Windows.Forms.ToolStripMenuItem ShowAllGamesMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem ShowEnabledGamesMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem ShowDisabledGamesMenuItem;
+		private System.Windows.Forms.ToolStripButton ImportProgramsButton;
+		private System.Windows.Forms.ToolStripButton ExportProgramsButton;
 		private System.Windows.Forms.OpenFileDialog ImportOpenFileDialog;
 		private System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
 		private System.Windows.Forms.DataGridViewImageColumn ProgramImageColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramFileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramProductNameColumn;
-		private System.Windows.Forms.ToolStripButton DeleteGameButton;
+		private System.Windows.Forms.ToolStripButton DeleteProgramsButton;
 	}
 }

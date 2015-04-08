@@ -11,6 +11,7 @@ using System.Xml;
 using Microsoft.Win32;
 using x360ce.Engine;
 using System.IO.Compression;
+using System.Diagnostics;
 
 namespace x360ce.Engine
 {
@@ -164,6 +165,23 @@ namespace x360ce.Engine
 			{
 				MessageBox.Show(other.Message);
 			}
+		}
+
+		public static void StartExecutable(string path, string arguments = null)
+		{
+			try
+			{
+				var fi = new System.IO.FileInfo(path);
+				//if (!fi.Exists) return;
+				// Brings up the "Windows cannot open this file" dialog if association not found.
+				var psi = new ProcessStartInfo(path);
+				psi.UseShellExecute = true;
+				psi.WorkingDirectory = fi.Directory.FullName;
+				psi.ErrorDialog = true;
+				if (arguments != null) psi.Arguments = arguments;
+				Process.Start(psi);
+			}
+			catch (Exception) { }
 		}
 
 		/// <summary>Enable double buffering to make redraw faster.</summary>
