@@ -39,6 +39,11 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.MySettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyControllerColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ControllerComboBox = new System.Windows.Forms.ComboBox();
 			this.ControllerLabel = new System.Windows.Forms.Label();
 			this.GameComboBox = new System.Windows.Forms.ComboBox();
@@ -49,9 +54,6 @@
 			this.SettingsListTabControl = new System.Windows.Forms.TabControl();
 			this.MyControllersTabPage = new System.Windows.Forms.TabPage();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.MySettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
-			this.MySettingsLoadButton = new System.Windows.Forms.ToolStripButton();
-			this.MySettingsDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.SummariesTabPage = new System.Windows.Forms.TabPage();
 			this.SummariesDataGridView = new System.Windows.Forms.DataGridView();
 			this.SidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -60,22 +62,20 @@
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
-			this.GlobalSettingsLoadButton = new System.Windows.Forms.ToolStripButton();
 			this.PresetsTabPage = new System.Windows.Forms.TabPage();
 			this.PresetsDataGridView = new System.Windows.Forms.DataGridView();
 			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+			this.MySettingsSaveButton = new System.Windows.Forms.Button();
+			this.MySettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.MySettingsLoadButton = new System.Windows.Forms.ToolStripButton();
+			this.MySettingsDeleteButton = new System.Windows.Forms.ToolStripButton();
+			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.GlobalSettingsLoadButton = new System.Windows.Forms.ToolStripButton();
 			this.PresetRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.PresetsLoadButton = new System.Windows.Forms.ToolStripButton();
-			this.MySettingsSaveButton = new System.Windows.Forms.Button();
-			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyControllerColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.MySettingsDataGridView)).BeginInit();
 			this.SettingsListTabControl.SuspendLayout();
 			this.MyControllersTabPage.SuspendLayout();
@@ -139,6 +139,51 @@
 			this.MySettingsDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SettingsDataGridView_CellContentDoubleClick);
 			this.MySettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
 			this.MySettingsDataGridView.SelectionChanged += new System.EventHandler(this.SettingsDataGridView_SelectionChanged);
+			// 
+			// MyIconColumn
+			// 
+			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyIconColumn.HeaderText = "";
+			this.MyIconColumn.MinimumWidth = 24;
+			this.MyIconColumn.Name = "MyIconColumn";
+			this.MyIconColumn.ReadOnly = true;
+			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.MyIconColumn.Width = 24;
+			// 
+			// MySidColumn
+			// 
+			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MySidColumn.DataPropertyName = "PadSettingChecksum";
+			this.MySidColumn.HeaderText = "SID";
+			this.MySidColumn.Name = "MySidColumn";
+			this.MySidColumn.ReadOnly = true;
+			this.MySidColumn.Width = 50;
+			// 
+			// MyControllerColumn
+			// 
+			this.MyControllerColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyControllerColumn.DataPropertyName = "ProductName";
+			this.MyControllerColumn.HeaderText = "Controller";
+			this.MyControllerColumn.Name = "MyControllerColumn";
+			this.MyControllerColumn.ReadOnly = true;
+			this.MyControllerColumn.Width = 76;
+			// 
+			// MyFileColumn
+			// 
+			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyFileColumn.DataPropertyName = "FileName";
+			this.MyFileColumn.HeaderText = "File Name";
+			this.MyFileColumn.Name = "MyFileColumn";
+			this.MyFileColumn.ReadOnly = true;
+			this.MyFileColumn.Width = 73;
+			// 
+			// MyGameColumn
+			// 
+			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.MyGameColumn.DataPropertyName = "FileProductName";
+			this.MyGameColumn.HeaderText = "File Product Title";
+			this.MyGameColumn.Name = "MyGameColumn";
+			this.MyGameColumn.ReadOnly = true;
 			// 
 			// ControllerComboBox
 			// 
@@ -251,36 +296,6 @@
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "MySettingsToolStrip";
 			// 
-			// MySettingsRefreshButton
-			// 
-			this.MySettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.MySettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MySettingsRefreshButton.Name = "MySettingsRefreshButton";
-			this.MySettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.MySettingsRefreshButton.Text = "&Refresh";
-			this.MySettingsRefreshButton.Click += new System.EventHandler(this.MySettingsRefreshButton_Click);
-			// 
-			// MySettingsLoadButton
-			// 
-			this.MySettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
-			this.MySettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MySettingsLoadButton.Name = "MySettingsLoadButton";
-			this.MySettingsLoadButton.Size = new System.Drawing.Size(53, 22);
-			this.MySettingsLoadButton.Text = "&Load";
-			this.MySettingsLoadButton.Click += new System.EventHandler(this.MySettingsLoadButton_Click);
-			// 
-			// MySettingsDeleteButton
-			// 
-			this.MySettingsDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.MySettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MySettingsDeleteButton.Name = "MySettingsDeleteButton";
-			this.MySettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
-			this.MySettingsDeleteButton.Text = "&Delete";
-			this.MySettingsDeleteButton.Click += new System.EventHandler(this.MySettingsDeleteButton_Click);
-			// 
 			// SummariesTabPage
 			// 
 			this.SummariesTabPage.Controls.Add(this.SummariesDataGridView);
@@ -289,7 +304,7 @@
 			this.SummariesTabPage.Name = "SummariesTabPage";
 			this.SummariesTabPage.Size = new System.Drawing.Size(590, 281);
 			this.SummariesTabPage.TabIndex = 1;
-			this.SummariesTabPage.Text = "Most Popular Settings for my Controllers";
+			this.SummariesTabPage.Text = "Most Popular Settings for My Controllers";
 			this.SummariesTabPage.UseVisualStyleBackColor = true;
 			// 
 			// SummariesDataGridView
@@ -379,7 +394,7 @@
 			this.dataGridViewTextBoxColumn3.HeaderText = "File Name";
 			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
 			this.dataGridViewTextBoxColumn3.ReadOnly = true;
-			this.dataGridViewTextBoxColumn3.Width = 79;
+			this.dataGridViewTextBoxColumn3.Width = 73;
 			// 
 			// dataGridViewTextBoxColumn4
 			// 
@@ -402,26 +417,6 @@
 			this.toolStrip2.TabIndex = 2;
 			this.toolStrip2.Text = "MySettingsToolStrip";
 			// 
-			// GlobalSettingsRefreshButton
-			// 
-			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
-			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.GlobalSettingsRefreshButton.Text = "&Refresh";
-			this.GlobalSettingsRefreshButton.Click += new System.EventHandler(this.GlobalSettingsRefreshButton_Click);
-			// 
-			// GlobalSettingsLoadButton
-			// 
-			this.GlobalSettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
-			this.GlobalSettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.GlobalSettingsLoadButton.Name = "GlobalSettingsLoadButton";
-			this.GlobalSettingsLoadButton.Size = new System.Drawing.Size(53, 22);
-			this.GlobalSettingsLoadButton.Text = "&Load";
-			this.GlobalSettingsLoadButton.Click += new System.EventHandler(this.GlobalSettingsLoadButton_Click);
-			// 
 			// PresetsTabPage
 			// 
 			this.PresetsTabPage.Controls.Add(this.PresetsDataGridView);
@@ -430,7 +425,7 @@
 			this.PresetsTabPage.Name = "PresetsTabPage";
 			this.PresetsTabPage.Size = new System.Drawing.Size(590, 281);
 			this.PresetsTabPage.TabIndex = 2;
-			this.PresetsTabPage.Text = "Settings for Most Popular Controllers";
+			this.PresetsTabPage.Text = "Default Settings for Most Popular Controllers";
 			this.PresetsTabPage.UseVisualStyleBackColor = true;
 			// 
 			// PresetsDataGridView
@@ -490,6 +485,7 @@
 			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
 			this.dataGridViewTextBoxColumn5.ReadOnly = true;
 			this.dataGridViewTextBoxColumn5.Visible = false;
+			this.dataGridViewTextBoxColumn5.Width = 31;
 			// 
 			// PresetTypeColumn
 			// 
@@ -499,6 +495,7 @@
 			this.PresetTypeColumn.Name = "PresetTypeColumn";
 			this.PresetTypeColumn.ReadOnly = true;
 			this.PresetTypeColumn.Visible = false;
+			this.PresetTypeColumn.Width = 37;
 			// 
 			// dataGridViewTextBoxColumn7
 			// 
@@ -521,6 +518,69 @@
 			this.toolStrip3.TabIndex = 3;
 			this.toolStrip3.Text = "MySettingsToolStrip";
 			// 
+			// MySettingsSaveButton
+			// 
+			this.MySettingsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.MySettingsSaveButton.Location = new System.Drawing.Point(526, 15);
+			this.MySettingsSaveButton.Name = "MySettingsSaveButton";
+			this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);
+			this.MySettingsSaveButton.TabIndex = 16;
+			this.MySettingsSaveButton.Text = "&Save";
+			this.MySettingsSaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.MySettingsSaveButton.UseVisualStyleBackColor = true;
+			this.MySettingsSaveButton.Click += new System.EventHandler(this.MySettingsSaveButton_Click);
+			// 
+			// MySettingsRefreshButton
+			// 
+			this.MySettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.MySettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.MySettingsRefreshButton.Name = "MySettingsRefreshButton";
+			this.MySettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.MySettingsRefreshButton.Text = "&Refresh";
+			this.MySettingsRefreshButton.Click += new System.EventHandler(this.MySettingsRefreshButton_Click);
+			// 
+			// MySettingsLoadButton
+			// 
+			this.MySettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.MySettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.MySettingsLoadButton.Name = "MySettingsLoadButton";
+			this.MySettingsLoadButton.Size = new System.Drawing.Size(53, 22);
+			this.MySettingsLoadButton.Text = "&Load";
+			this.MySettingsLoadButton.Click += new System.EventHandler(this.MySettingsLoadButton_Click);
+			// 
+			// MySettingsDeleteButton
+			// 
+			this.MySettingsDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.MySettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.MySettingsDeleteButton.Name = "MySettingsDeleteButton";
+			this.MySettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.MySettingsDeleteButton.Text = "&Delete";
+			this.MySettingsDeleteButton.Click += new System.EventHandler(this.MySettingsDeleteButton_Click);
+			// 
+			// GlobalSettingsRefreshButton
+			// 
+			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
+			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.GlobalSettingsRefreshButton.Text = "&Refresh";
+			this.GlobalSettingsRefreshButton.Click += new System.EventHandler(this.GlobalSettingsRefreshButton_Click);
+			// 
+			// GlobalSettingsLoadButton
+			// 
+			this.GlobalSettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.GlobalSettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.GlobalSettingsLoadButton.Name = "GlobalSettingsLoadButton";
+			this.GlobalSettingsLoadButton.Size = new System.Drawing.Size(53, 22);
+			this.GlobalSettingsLoadButton.Text = "&Load";
+			this.GlobalSettingsLoadButton.Click += new System.EventHandler(this.GlobalSettingsLoadButton_Click);
+			// 
 			// PresetRefreshButton
 			// 
 			this.PresetRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -540,64 +600,6 @@
 			this.PresetsLoadButton.Size = new System.Drawing.Size(53, 22);
 			this.PresetsLoadButton.Text = "&Load";
 			this.PresetsLoadButton.Click += new System.EventHandler(this.PresetsLoadButton_Click);
-			// 
-			// MySettingsSaveButton
-			// 
-			this.MySettingsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-			this.MySettingsSaveButton.Location = new System.Drawing.Point(526, 15);
-			this.MySettingsSaveButton.Name = "MySettingsSaveButton";
-			this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);
-			this.MySettingsSaveButton.TabIndex = 16;
-			this.MySettingsSaveButton.Text = "&Save";
-			this.MySettingsSaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.MySettingsSaveButton.UseVisualStyleBackColor = true;
-			this.MySettingsSaveButton.Click += new System.EventHandler(this.MySettingsSaveButton_Click);
-			// 
-			// MyIconColumn
-			// 
-			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyIconColumn.HeaderText = "";
-			this.MyIconColumn.MinimumWidth = 24;
-			this.MyIconColumn.Name = "MyIconColumn";
-			this.MyIconColumn.ReadOnly = true;
-			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.MyIconColumn.Width = 24;
-			// 
-			// MySidColumn
-			// 
-			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MySidColumn.DataPropertyName = "PadSettingChecksum";
-			this.MySidColumn.HeaderText = "SID";
-			this.MySidColumn.Name = "MySidColumn";
-			this.MySidColumn.ReadOnly = true;
-			this.MySidColumn.Width = 50;
-			// 
-			// MyControllerColumn
-			// 
-			this.MyControllerColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyControllerColumn.DataPropertyName = "ProductName";
-			this.MyControllerColumn.HeaderText = "Controller";
-			this.MyControllerColumn.Name = "MyControllerColumn";
-			this.MyControllerColumn.ReadOnly = true;
-			this.MyControllerColumn.Width = 76;
-			// 
-			// MyFileColumn
-			// 
-			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyFileColumn.DataPropertyName = "FileName";
-			this.MyFileColumn.HeaderText = "File Name";
-			this.MyFileColumn.Name = "MyFileColumn";
-			this.MyFileColumn.ReadOnly = true;
-			this.MyFileColumn.Width = 79;
-			// 
-			// MyGameColumn
-			// 
-			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.MyGameColumn.DataPropertyName = "FileProductName";
-			this.MyGameColumn.HeaderText = "File Product Title";
-			this.MyGameColumn.Name = "MyGameColumn";
-			this.MyGameColumn.ReadOnly = true;
 			// 
 			// ControllerSettingsUserControl
 			// 
