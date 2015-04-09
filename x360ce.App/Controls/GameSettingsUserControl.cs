@@ -451,7 +451,7 @@ namespace x360ce.App.Controls
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games.xml";
-			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = System.Environment.CurrentDirectory;
+			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = GameDatabaseManager.Current.InitialFile.Directory.FullName;
 			dialog.Title = "Import Games Settings File";
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
@@ -480,7 +480,7 @@ namespace x360ce.App.Controls
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games";
-			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = System.Environment.CurrentDirectory;
+			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = GameDatabaseManager.Current.InitialFile.Directory.FullName;
 			dialog.Title = "Export Games Settings File";
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
