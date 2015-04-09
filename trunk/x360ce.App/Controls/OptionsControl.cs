@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -152,6 +153,13 @@ namespace x360ce.App.Controls
         {
             MainForm.Current.SaveSettings();
         }
+
+		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
+		{
+			GameDatabaseManager.Current.CheckSettingsFolder();
+			string argument = @"/select, " + GameDatabaseManager.Current.InitialFile.FullName;
+			System.Diagnostics.Process.Start("explorer.exe", argument);
+		}
 
     }
 }
