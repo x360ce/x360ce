@@ -11,6 +11,9 @@ namespace x360ce.Engine
 	/// <summary>
 	/// Functions are provided only for compatibility with 16-bit versions of Windows. Applications should store initialization information in the registry.
 	/// </summary>
+	/// <remarks>
+	/// INI files support only UTF16-little endian format.
+	/// </remarks>
 	public class Ini
     {
 
@@ -144,39 +147,6 @@ namespace x360ce.Engine
 		{
 			NativeMethods.WritePrivateProfileString(section, null, null, this.File.FullName);
 		}
-
-		///// <summary>
-		///// Get all sections (tagged with brackets).
-		///// </summary>
-		///// <remarks>
-		///// The API GetPriveProfileString fills an internal buffer separated by \0.
-		///// In order to get a generic list we have to split that buffer with the token \0.
-		///// </remarks>
-		///// <returns>List of values.</returns>
-		//public List<string> GetSections()
-		//{
-		//	var sb = new StringBuilder(ushort.MaxValue);
-		//	Win32.NativeMethods.GetPrivateProfileString(null, null, null, sb, ushort.MaxValue, this.File.FullName);
-		//	List<string> result = new List<string>(sb.ToString().Split((char)0));
-		//	// The last 2 values can be removed, because they are always empty.
-		//	result.RemoveRange(result.Count - 2, 2);
-		//	return result;
-		//}
-
-		///// <summary>
-		///// Get all keys by section.
-		///// </summary>
-		///// <param name="section">The name of the section.</param>
-		///// <returns>List of values.</returns>
-		//private static List<string> GetKeys(string section)
-		//{
-		//	var sb = new StringBuilder(short.MaxValue);
-		//	Win32.NativeMethods.GetPrivateProfileString(section, null, null, sb, short.MaxValue, this.File.FullName);
-		//	List<string> result = new List<string>(sb.ToString().Split((char)0));
-		//	// The last 2 values can be removed, because they are always empty.
-		//	result.RemoveRange(result.Count - 2, 2);
-		//	return result;
-		//}
 
 		#endregion
 	}
