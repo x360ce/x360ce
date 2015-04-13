@@ -367,5 +367,57 @@ namespace x360ce.Engine
 
 
 		#endregion
+
+		#region MD5
+
+		static System.Security.Cryptography.MD5 HashProvider;
+		static object HashProviderLock = new object();
+
+		/// <summary>
+		/// Computes the MD5 hash value for the specified text. Use UTF-8 encoding to get bytes.
+		/// </summary>
+		/// <param name="text">The input to compute the hash code for.</param>
+		/// <returns>The computed hash code as GUID.</returns>
+		public static Guid ComputeMd5Hash(string text)
+		{
+			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
+			return ComputeMd5Hash(bytes);
+		}
+
+		/// <summary>
+		/// Computes the MD5 hash value for the specified text.
+		/// </summary>
+		/// <param name="text">The input to compute the hash code for.</param>
+		/// <param name="encoding">Encoding to get bytes.</param>
+		/// <returns>The computed hash code as GUID.</returns>
+		public static Guid ComputeMd5Hash(string text, Encoding encoding)
+		{
+			byte[] bytes = encoding.GetBytes(text);
+			return ComputeMd5Hash(bytes);
+		}
+
+		/// <summary>
+		/// Computes the MD5 hash value for the specified byte array.
+		/// </summary>
+		/// <param name="bytes">The input to compute the hash code for.</param>
+		/// <returns>The computed hash code as GUID.</returns>
+		/// <remarks>
+		/// One instance of the MD5 Crypto Service Provider
+		/// can't operate properly with multiple simultaneous threads.
+		/// Use lock to solve this problem.
+		/// </remarks>
+		public static Guid ComputeMd5Hash(byte[] bytes)
+		{
+			byte[] hash;
+			lock (HashProviderLock)
+			{
+				HashProvider = HashProvider ?? new System.Security.Cryptography.MD5CryptoServiceProvider();
+				hash = HashProvider.ComputeHash(bytes);
+			}
+			return new Guid(hash);
+		}
+
+		#endregion
+
 	}
 }

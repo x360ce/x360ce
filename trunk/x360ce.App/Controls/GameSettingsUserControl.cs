@@ -181,7 +181,8 @@ namespace x360ce.App.Controls
 			if (selected)
 			{
 				var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+				var fileName = ((x360ce.Engine.Data.Game)row.DataBoundItem).FileName;
+				var item = SettingsFile.Current.Games.First(x => x.FileName == fileName);
 				GameDetailsControl.CurrentGame = item;
 			}
 			else
@@ -288,7 +289,9 @@ namespace x360ce.App.Controls
 
 		private void SaveGamesButton_Click(object sender, EventArgs e)
 		{
-
+			var programs = SettingsFile.Current.Programs;
+			var games = SettingsFile.Current.Games;
+			GameDatabaseManager.Current.SetPrograms(programs, games);
 		}
 
 		private void DeleteGamesButton_Click(object sender, EventArgs e)

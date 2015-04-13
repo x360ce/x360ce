@@ -247,9 +247,10 @@ namespace x360ce.App.Controls
 			{
 				var cbx = (CheckBox)sender;
 				var is64bit = cbx.Name.Contains("x64");
+				var is32bit = cbx.Name.Contains("x32");
 				bool applySettings = true;
-				// If checked and it is 64-bit checkbox then...
-				if (cbx.Checked && is64bit)
+				// If 64-bit checkbox an checked then...
+				if (is64bit && cbx.Checked)
 				{
 					// Make sure that 32-bit is unchecked
 					var cbx32 = XInputCheckBoxes.First(x => x.Name == cbx.Name.Replace("x64", "x86"));
@@ -259,8 +260,8 @@ namespace x360ce.App.Controls
 						applySettings = false;
 					}
 				}
-				// If checked and it is 32-bit checkbox then...
-				else if (cbx.Checked && !is64bit)
+				// If 32-bit checkbox an checked then...
+				if (is32bit && cbx.Checked)
 				{
 					// Make sure that 64-bit is unchecked
 					var cbx64 = XInputCheckBoxes.First(x => x.Name == cbx.Name.Replace("x86", "x64"));
