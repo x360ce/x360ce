@@ -55,6 +55,11 @@ namespace x360ce.App
                 attempts -= 1;
                 try
                 {
+                    var fileInfo = new FileInfo(path);
+                    if (!fileInfo.Directory.Exists)
+                    {
+                        fileInfo.Directory.Create();
+                    }
                     // WriteAllBytes will lock file for writing and reading.
                     System.IO.File.WriteAllBytes(path, bytes);
                     return;

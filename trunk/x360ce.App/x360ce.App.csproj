@@ -167,7 +167,6 @@
     <Compile Include="Common\PresetItem.cs" />
     <Compile Include="Common\PropertyComparer.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
-    <Compile Include="Common\Serializer.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingName.cs" />
@@ -417,6 +416,7 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\xinput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\xinput_x86.dll" />
     <EmbeddedResource Include="Resources\xinput_x64.dll" />

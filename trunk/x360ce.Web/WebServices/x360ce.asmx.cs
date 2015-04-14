@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
+using x360ce.App;
 
 namespace x360ce.Web.WebServices
 {
@@ -21,6 +22,7 @@ namespace x360ce.Web.WebServices
     [System.Web.Script.Services.ScriptService]
     public class x360ce : System.Web.Services.WebService, IWebService
     {
+
 
         /// <summary>
         /// Save controller settings.
@@ -259,16 +261,46 @@ namespace x360ce.Web.WebServices
         }
 
         [WebMethod(EnableSession = true, Description = "Get list of games.")]
+        public List<Program> GetProgramsDefault()
+        {
+            return GetPrograms(EnabledState.Enabled, 2);
+        }
+
+        List<Program> GetOverridePrograms()
+        {
+            List<Program> programs = new List<Program>();
+            var key = "OverridePrograms";
+            var settings = System.Web.Configuration.WebConfigurationManager.AppSettings;
+            if (settings.AllKeys.Contains(key))
+            {
+                var path = settings[key];
+                var fileName = Server.MapPath(path);
+                if (System.IO.File.Exists(fileName))
+                {
+                    var xml = System.IO.File.ReadAllText(fileName);
+                    programs = Serializer.DeserializeFromXmlString<List<Program>>(xml, System.Text.Encoding.UTF8);
+                }
+            }
+            return programs;
+        }
+
+
+
+        [WebMethod(EnableSession = true, Description = "Get list of games.")]
         public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
         {
-            var db = new x360ceModelContainer();
-            IQueryable<Program> list = db.Programs;
-            if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
-            else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
-            if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
-            var programs = list.ToList();
-            db.Dispose();
-            db = null;
+            var programs = GetOverridePrograms();
+            if (programs == null)
+            {
+                var db = new x360ceModelContainer();
+                IQueryable<Program> list = db.Programs;
+                if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
+                else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
+                if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
+                programs = list.ToList();
+                db.Dispose();
+                db = null;
+            }
             return programs;
         }
 
