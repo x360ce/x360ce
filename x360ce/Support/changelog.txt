@@ -1,0 +1,66 @@
+XBOX 360 Controller emulator
+
+Google Code Project page: http://code.google.com/p/x360ce
+
+History:
+
+01/11/2014 - version 3.4.0.956
+New implementation of DeadZone, Anti-DeadZone and Sensitivity feature.
+
+13/12/2010 - version 3.3.1.368
+Rename FakeAPI to InputHook - rename ini section "FakeAPI" to "InputHook", and key "FakeMode" to "HookMode".
+Use EasyHook insted of MS Deutors
+Add x64 build.
+Return ERROR_EMPTY insted of ERROR_SUCCESS in XInputGetKeystroke - fixes Shank.
+Log to console window ("Console" key in "Options" section)
+Fixed memory leak when Log is enabled.
+Many other small fixes.
+
+16/08/2010 - version 3.2.0.246
+CrazyCat added FakeWMI CoUninitialize (fixes HAWX 1.02!)
+
+15/08/2010 - version 3.2.0.241
+Separete ANSI and UNICODE FakeDI functions.
+XInputGetCapabilities will (hopefully) now return proper data, and should be little faster.
+WriteLog optimization (but for gaming set it alyways to 0, it's just little faster...).
+LeftMotorPeriod & RightMotorPeriod to manipulate FFB Period values (in milisecounds).
+
+11/08/2010 - version 3.2.0.184
+Marged FakeWMI & FakeDI to FakeMode:
+	0 - Disabled
+	1 - Normal mode,game will detect gamepad as xinput compatibilie device.
+	2 - Compatbility mode, game will detect gamepad as XBOX 360 Controller for Windows.
+
+10/08/2010 - version 3.2.0.171
+crazycat fix main FakeDI problems by temporary disabling it for enumeration inside x360ce dll so FakeDI=2 will not break x360ce enumeration ! (BIG thanks for that, the idea was so simple ...).
+So I disabled magic checks in FakeEnumCallback that are ussles now (because above change) and add check for FakeDI inside FakeGetProperty.
+FakeWMI_NOPIDVID was removed, insted FakeWMI will check for FakeDI setting because only usefull settings are:
+	FakeWMI=1, FakeDI=0 -> FakeWMI will add only IG_ string
+	FakeWMI=1, FakeDI>0 -> FakeWMI will add IG_ string and change VID/PID to Fake ones
+	With this method is easier to configure x360ce (do not add any new options).
+	Most games will work now with: FakeWMI=1, FakeDI=0. Some (mostly Ubisoft games) will need FakeWMI=1, and FakeDI>0 (game depended, but 2 should be safe for now).
+Pre 3.1.4.0 history deleted from this file.
+
+08/08/2010 - version 3.2.0.164
+ejocys writhed new FFB implemetation ! This fix many FFB problems !
+crazycat fixed XInputGetCapatibilities.
+I added some FakeAPI chages: FakeDI=3 - blocker, as old dinput8.dll blocker, 
+	it will block all devices accept mouse and keyboard.
+New FakeAPI option FakeWMI_NOPIDVID, to add only IG_ string in WMI, Prototype and POPFS 
+	now playble with FFB on settings: FakeWMI=1, FakeWMI_NOPIDVID=1, FakeDI=0.
+
+22/04/2010 - version 3.2.0.91
+Change build enviroment to Visual Studio 2010.
+Build with Detours library from MPC-HC (should be better, but force compiling with static runtime).
+Added Unicode/ANSI detection to FakeDI Callback.
+Proper handling XInputGetCapabilities.
+Some changes in ini options.
+Many minor changes, and some code cleanup.
+Automatic version system based on SVN revision (major.minor.patch.svn_revision).
+
+11/18/2009 - version 3.1.4.0 (by Virus; http://virusdev.ovh.org/files)
+Added FakeAPI calls - dinput8 dlls are now deprecated
+Removed patching features
+Experimental native mode (support for native xinput devices) 
+Fix very old accuarcy bug for axis, now have correct values, from -32768 to +32767
+Removed Linears (someone used this ?)

@@ -1,0 +1,187 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F980D78A-9448-4834-A6FE-84797077D309}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>x360ce.Engine</RootNamespace>
+    <AssemblyName>x360ce.Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\Debug_x64\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\Release_x64\</OutputPath>
+    <Optimize>true</Optimize>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE</DefineConstants>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\Debug_x86\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\Release_x86\</OutputPath>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\BoardInfo.cs" />
+    <Compile Include="Common\Enum\EnabledState.cs" />
+    <Compile Include="Common\Enum\GameRefreshStatus.cs" />
+    <Compile Include="Common\Enum\HookMask.cs" />
+    <Compile Include="Common\Enum\XInputMask.cs" />
+    <Compile Include="Common\EngineHelper.cs" />
+    <Compile Include="Common\GameDatabaseManager.cs" />
+    <Compile Include="Common\Ini.cs" />
+    <Compile Include="Common\IWebService.cs" />
+    <Compile Include="Common\KeyValue.cs" />
+    <Compile Include="Common\KeyValueList.cs" />
+    <Compile Include="Common\SearchParameter.cs" />
+    <Compile Include="Common\SearchResult.cs" />
+    <Compile Include="Common\Serializer.cs" />
+    <Compile Include="Common\SettingsData.cs" />
+    <Compile Include="Common\WebServiceClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Data\Game.cs" />
+    <Compile Include="Data\PadSetting.cs" />
+    <Compile Include="Data\Program.cs" />
+    <Compile Include="Data\Vendor.cs" />
+    <Compile Include="Data\x360ceModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>x360ceModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\ClassTools\EnumTools.cs" />
+    <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
+    <Compile Include="JocysCom\Common\GuidEnum.cs" />
+    <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
+    <Compile Include="JocysCom\Common\ItemType.cs" />
+    <Compile Include="JocysCom\Common\LinkItem.cs" />
+    <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
+    <Compile Include="JocysCom\Security\BuildInRoles.cs" />
+    <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
+    <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="JocysCom\Security\Data\Role.cs" />
+    <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
+    <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
+      <DependentUpon>SecurityModel.edmx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="JocysCom\Security\RoleQueryName.cs" />
+    <Compile Include="JocysCom\Security\UserQueryName.cs" />
+    <Compile Include="JocysCom\Threading\QueueTimer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32\BIND_OPTS3.cs" />
+    <Compile Include="Win32\BSF.cs" />
+    <Compile Include="Win32\BSM.cs" />
+    <Compile Include="Win32\CLSCTX.cs" />
+    <Compile Include="Win32\DEV_BROADCAST_VOLUME.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
+    <Compile Include="Win32\PEReader.cs" />
+    <Compile Include="Win32\SafeLibraryHandle.cs" />
+    <Compile Include="Win32\SafeTokenHandle.cs" />
+    <Compile Include="Win32\SID_AND_ATTRIBUTES.cs" />
+    <Compile Include="Win32\TOKEN_ELEVATION.cs" />
+    <Compile Include="Win32\TOKEN_ELEVATION_TYPE.cs" />
+    <Compile Include="Win32\TOKEN_INFORMATION_CLASS.cs" />
+    <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
+    <Compile Include="Win32\WinAPI.cs" />
+    <Compile Include="Win32\WinNT.cs" />
+    <Compile Include="Win32\DBT.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="Data\x360ceModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="JocysCom\Security\Data\SecurityModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SecurityModel.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>JocysCom.WebSites.Engine.Security.Data</CustomToolNamespace>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

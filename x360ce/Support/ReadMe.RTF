@@ -1,0 +1,108 @@
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fnil\fcharset0 Courier New;}{\f1\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\lang3081\f0\fs22 "Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, ...), function as "Xbox 360 Controller". For example, lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using Logitech Wheel.\par
+\par
+\b System Requirements\par
+\par
+\pard{\pntext\f0 1.\tab}{\*\pn\pnlvlbody\pnf0\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li720\b0     Only Windows XP SP3 and newer systems are supported.\par
+{\pntext\f0 2.\tab}    .NET 3.5 (Also installs 2.0 and 3.5) (Included in Windows 7)\par
+{\pntext\f0 3.\tab}    .NET 4.0 (link to 4.5, also installs 4.0) (Included with Windows 8)\par
+{\pntext\f0 4.\tab}        .NET 4.5 is not supported on Windows XP SP3, download .NET 4.0 from here.\par
+{\pntext\f0 5.\tab}    DirectX End-User Runtimes (June 2010) (Required regardless of OS)\par
+{\pntext\f0 6.\tab}    Depending on the DLL, either or both of the following\par
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li1800 Visual C++ Redistributable for Visual Studio 2010 SP1 (Most titles use the x86 runtime whether your OS is 64bit or not) or\par
+{\pntext\f1\'B7\tab}Visual C++ Redistributable for Visual Studio 2012 Update 3 (Most titles use the x86 runtime whether your OS is 64bit or not)\par
+\pard\par
+Notes:\par
+\par
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720     Windows 7 includes .net 3.5 and its updates to .net 2.0 and 3.0\par
+{\pntext\f1\'B7\tab}    For Windows XP and Vista, users can obtain it from the above link, and Windows 8 users can enable it in Programs and Features - Turn Windows Features on and off.\par
+{\pntext\f1\'B7\tab}    .Net MUST be installed prior to the DirectX webupdate as it checks that .Net 2.0/3.0/3.5 is installed and skips the Managed DirectX framework if it is not.\par
+{\pntext\f1\'B7\tab}    The full DirectX Redistributable will always install the file, however its best to have .net 3.5 installed anyhow as quite a few Xinput titles utilise .net for internal dependencies.\par
+\pard\par
+\b Introduction\par
+\b0\par
+"Xbox 360 Controller Emulator" files:\par
+xinput1_3.dll (Library) - Wrapper library that translates the XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.\par
+x360ce.exe - (Application) - Allows edit and test Library settings.\par
+x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).\par
+x360ce.gdb - (Game Database) Includes required hookmasks for various games)\par
+Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases - So only use if instructed to!)\par
+\par
+\ul\b Details\par
+\ulnone\b0\par
+\b Installation\par
+\b0\par
+Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name.\par
+\par
+Known names:\par
+\par
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720     xinput1_4.dll (Windows 8 only, for metro apps - not supported because it requires signing)\par
+{\pntext\f1\'B7\tab}    xinput1_3.dll\par
+{\pntext\f1\'B7\tab}    xinput1_2.dll\par
+{\pntext\f1\'B7\tab}    xinput1_1.dll\par
+{\pntext\f1\'B7\tab}    xinput9_1_0.dll\par
+\pard\par
+Game Database (GDB) and Configuration (Ini) files can be copied to %Allusersprofile%\\X360CE on NT6 (Vista/7/8) or %Allusersprofile%\\Application Data\\X360CE on NT5.1 (XP), Or left in the same directory as the game executable (.EXE)\par
+\par
+Note:\par
+Games based on source engine in most cases have the dll placed inside the /Bin/ subfolder, as it it is loaded by inputsystem.dll instead of the game executable.\par
+\par
+\par
+\b Uninstallation\par
+\par
+\b0 Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.\par
+\par
+\par
+\b Troubleshooting\par
+\par
+Wheel doesn't work in the game, but it works inside x360ce Application.\par
+\b0 Some games will only operate when the controller is considered to be the gamepad, even if it is the steering wheel. Try to:\par
+\par
+\pard{\pntext\f0 1.\tab}{\*\pn\pnlvlbody\pnf0\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li720     Run x360ce.exe\par
+{\pntext\f0 2.\tab}    Select tab with your Wheel Controller.\par
+{\pntext\f0 3.\tab}    Open [Advanced] tab page.\par
+{\pntext\f0 4.\tab}    Set "Device Type" drop down list value to: GamePad\par
+{\pntext\f0 5.\tab}    Click [Save] button.\par
+{\pntext\f0 6.\tab}    Close x360ce Application, run game.\par
+\pard\par
+\b How to reduce wheel dead zone (GTA, Mafia II, ...)?\par
+\b0\par
+\pard{\pntext\f0 1.\tab}{\*\pn\pnlvlbody\pnf0\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li720     Run x360ce.exe\par
+{\pntext\f0 2.\tab}    Select tab with your Wheel Controller.\par
+{\pntext\f0 3.\tab}    Open [Advanced] tab page.\par
+{\pntext\f0 4.\tab}    Select "Enabled (XInput, 80%)" from "AntiDeadZone" drop down in order to reduce dead zone by 80%.\par
+{\pntext\f0 5.\tab}    Click [Save] button.\par
+{\pntext\f0 6.\tab}    Close x360ce Application, run game.\par
+\pard\par
+    Note: Some games have control issues when the dead zone is reduced by 100%. \par
+\par
+\b Do I need to run x360ce Application during the game?\par
+\b0 No, You do not need. Close x360ce during the game, because the game does not need it, and the application uses computer resources. The application is just a GUI for editing the x360ce.ini and test controller.\par
+\par
+\b Warning - Configuration file version does not match x360ce version.\par
+\b0 This occurs because the current version of the application is not completely compatible with the DLL just yet.\par
+You can resolve this by adding Version=1 under the [Options] section in x360ce.ini\par
+\par
+\b Controller tab won't turn green / Red light on Controller 1,2 etc.\par
+\b0 This can occur for a number of reasons.\par
+\par
+\pard{\pntext\f0 1.\tab}{\*\pn\pnlvlbody\pnf0\pnindent0\pnstart1\pndec{\pntxta.}}
+\fi-360\li720     The configuration utility DOES NOT work with the 64bit version of x360ce, it will only work with the 32bit version. This is the case regardless of whether your windows is 32bit or 64bit.\par
+{\pntext\f0 2.\tab}    The DInput state of the control might be incorrect due to previous application crashing and not unloading the control or some other reason. Opening up Joy.cpl (Set Up Usb Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.\par
+{\pntext\f0 3.\tab}    The controller profile loaded may match the name of the control but not actually be for the controller you own - in this case you might see button numbers or axes mapped that do not appear in the joy.cpl test page.\par
+{\pntext\f0 4.\tab}    The controller profile might have PassThrough set. A growing number of profiles have been uploaded that do this, i have no idea why as it disables x360ce and just bloats the list of available profiles.\par
+{\pntext\f0 5.\tab}    There just might not be a profile for your control at all - The light should turn green once atleast the 2 sticks, triggers and Dpad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.\par
+\pard\li360\par
+\b Help and Support\par
+\b0 For General Support, visit {\field{\*\fldinst{HYPERLINK "http://forums.ngemu.com/forumdisplay.php?f=140"}}{\fldrslt{\ul\cf1 http://forums.ngemu.com/forumdisplay.php?f=140}}}\f0\fs22  and read the Topics on \par
+\par
+Game Compatibility List\par
+Report game compatibility here.\par
+\par
+For Bugs including Crashes, or Games not hooking after reading the topics noted above, visit {\field{\*\fldinst{HYPERLINK "https://code.google.com/p/x360ce/issues/"}}{\fldrslt{\ul\cf1 https://code.google.com/p/x360ce/issues/}}}\f0\fs22\par
+}
+ 

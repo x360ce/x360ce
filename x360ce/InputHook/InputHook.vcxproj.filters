@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHook.h" />
+    <ClInclude Include="HookCOM.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHookManager.h" />
+    <ClInclude Include="HookDI.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="HookLL.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="HookSA.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+    <ClInclude Include="HookWT.h">
+      <Filter>InputHook</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{742a9d57-039f-47c0-b9e0-b49a58f3d70a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InputHook">
+      <UniqueIdentifier>{6d46d0a1-b5fc-4465-9537-d18ee1a52b1f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="HookCOM.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="HookDI.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="HookLL.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="HookSA.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="HookWT.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHook.cpp" />
+  </ItemGroup>
+</Project>
