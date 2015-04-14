@@ -56,7 +56,6 @@
 			this.ShowDisabledGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ScanProgressLabel = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.GameDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
 			this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
 			this.ProgramsDataGridView = new System.Windows.Forms.DataGridView();
 			this.ProgramImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -69,7 +68,6 @@
 			this.ExportProgramsButton = new System.Windows.Forms.ToolStripButton();
 			this.DeleteProgramsButton = new System.Windows.Forms.ToolStripButton();
 			this.panel2 = new System.Windows.Forms.Panel();
-			this.GameDefaultDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
@@ -77,6 +75,8 @@
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.GameDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
+			this.GameDefaultDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
 			this.GamesTabControl.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
@@ -168,6 +168,7 @@
 			this.GamesDataGridView.TabIndex = 0;
 			this.GamesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GamesDataGridView_CellClick);
 			this.GamesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GamesDataGridView_CellFormatting);
+			this.GamesDataGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.GamesDataGridView_RowsAdded);
 			this.GamesDataGridView.SelectionChanged += new System.EventHandler(this.GamesDataGridView_SelectionChanged);
 			this.GamesDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GamesDataGridView_KeyDown);
 			// 
@@ -359,15 +360,6 @@
 			this.panel1.Size = new System.Drawing.Size(1, 450);
 			this.panel1.TabIndex = 4;
 			// 
-			// GameDetailsControl
-			// 
-			this.GameDetailsControl.BackColor = System.Drawing.SystemColors.Control;
-			this.GameDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
-			this.GameDetailsControl.Location = new System.Drawing.Point(533, 0);
-			this.GameDetailsControl.Name = "GameDetailsControl";
-			this.GameDetailsControl.Size = new System.Drawing.Size(154, 450);
-			this.GameDetailsControl.TabIndex = 3;
-			// 
 			// GlobalSettingsTabPage
 			// 
 			this.GlobalSettingsTabPage.Controls.Add(this.ProgramsDataGridView);
@@ -441,6 +433,7 @@
 			this.ProgramImageColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.ProgramImageColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.ProgramImageColumn.Visible = false;
+			this.ProgramImageColumn.Width = 24;
 			// 
 			// ProgramIdColumn
 			// 
@@ -491,6 +484,7 @@
 			this.RefreshProgramsButton.Name = "RefreshProgramsButton";
 			this.RefreshProgramsButton.Size = new System.Drawing.Size(66, 22);
 			this.RefreshProgramsButton.Text = "&Refresh";
+			this.RefreshProgramsButton.Visible = false;
 			this.RefreshProgramsButton.Click += new System.EventHandler(this.RefreshProgramsButton_Click);
 			// 
 			// ImportProgramsButton
@@ -528,16 +522,6 @@
 			this.panel2.Name = "panel2";
 			this.panel2.Size = new System.Drawing.Size(1, 450);
 			this.panel2.TabIndex = 5;
-			// 
-			// GameDefaultDetailsControl
-			// 
-			this.GameDefaultDetailsControl.BackColor = System.Drawing.SystemColors.Control;
-			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
-			this.GameDefaultDetailsControl.Enabled = false;
-			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(533, 0);
-			this.GameDefaultDetailsControl.Name = "GameDefaultDetailsControl";
-			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(154, 450);
-			this.GameDefaultDetailsControl.TabIndex = 4;
 			// 
 			// SettingsTabPage
 			// 
@@ -587,6 +571,25 @@
             0,
             0,
             0});
+			// 
+			// GameDetailsControl
+			// 
+			this.GameDetailsControl.BackColor = System.Drawing.SystemColors.Control;
+			this.GameDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
+			this.GameDetailsControl.Location = new System.Drawing.Point(533, 0);
+			this.GameDetailsControl.Name = "GameDetailsControl";
+			this.GameDetailsControl.Size = new System.Drawing.Size(154, 450);
+			this.GameDetailsControl.TabIndex = 3;
+			// 
+			// GameDefaultDetailsControl
+			// 
+			this.GameDefaultDetailsControl.BackColor = System.Drawing.SystemColors.Control;
+			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
+			this.GameDefaultDetailsControl.Enabled = false;
+			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(533, 0);
+			this.GameDefaultDetailsControl.Name = "GameDefaultDetailsControl";
+			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(154, 450);
+			this.GameDefaultDetailsControl.TabIndex = 4;
 			// 
 			// GameSettingsUserControl
 			// 

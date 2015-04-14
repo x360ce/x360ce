@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -53,7 +54,12 @@ namespace x360ce.Engine
 
 		public List<Program> GetPrograms()
 		{
-			var ini = new Ini(InitialFile.FullName);
+			return GetPrograms(InitialFile.FullName);
+		}
+
+		public static List<Program> GetPrograms(string iniFileName)
+		{
+			var ini = new Ini(iniFileName);
 			var sections = ini.GetSections();
 			var programs = new List<Program>();
 			foreach (var section in sections)
@@ -63,7 +69,15 @@ namespace x360ce.Engine
 				program.FileProductName = ini.GetValue(section, "Name") ?? "";
 				var hmString = ini.GetValue(section, "HookMask");
 				int hookMask;
-				if (int.TryParse(hmString, out hookMask)) program.HookMask = hookMask;
+				// If hook mask is hexadecimal then....
+				bool success = hmString.StartsWith("0x")
+					? int.TryParse(hmString.Substring(2), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture.NumberFormat, out hookMask)
+					: int.TryParse(hmString, out hookMask);
+				if (success)
+				{
+					program.HookMask = hookMask;
+					programs.Add(program);
+				}
 			}
 			return programs;
 		}
@@ -88,7 +102,7 @@ namespace x360ce.Engine
 				if (program != null)
 				{
 					section = program.FileName;
-					productName  = program.FileProductName;
+					productName = program.FileProductName;
 					hookMask = string.Format("0x{0:X8}", program.HookMask);
 				}
 				var game = games.FirstOrDefault(x => x.FileName.ToLower() == name);
