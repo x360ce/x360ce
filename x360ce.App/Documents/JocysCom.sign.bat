@@ -1,7 +1,7 @@
 @ECHO OFF
 ::"$(ProjectDir)Documents\JocysCom.sign.bat" "$(TargetPath)"
 SET file=%~1
-IF "%file%" == "" SET file=..\bin\Debug\x86\x360ce.exe
+IF "%file%" == "" SET file=..\bin\Debug_x86\x360ce.exe
 CALL:SIG "%file%"
 pause
 
