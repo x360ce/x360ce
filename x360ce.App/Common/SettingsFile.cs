@@ -116,7 +116,7 @@ namespace x360ce.App
 			}
 			else
 			{
-				var resource = EngineHelper.GetResource("x360ce.Games.xml.gz");
+				var resource = EngineHelper.GetResource("x360ce_Games.xml.gz");
 				// If internal preset was found.
 				if (resource != null)
 				{

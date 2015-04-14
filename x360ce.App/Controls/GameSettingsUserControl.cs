@@ -18,12 +18,24 @@ namespace x360ce.App.Controls
 		public GameSettingsUserControl()
 		{
 			InitializeComponent();
-			if (DesignMode) return;
+			if (IsDesignMode) return;
 			GamesDataGridView.AutoGenerateColumns = false;
 			ProgramsDataGridView.AutoGenerateColumns = false;
 			ScanProgressLabel.Text = "";
 			InitDefaultList();
 			SettingsFile.Current.Programs.ListChanged += Programs_ListChanged;
+		}
+
+		bool IsDesignMode
+		{
+			get
+			{
+				if (DesignMode) return true;
+				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+				var pa = this.ParentForm;
+				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
+				return false;
+			}
 		}
 
 		void InitDefaultList()
@@ -231,8 +243,9 @@ namespace x360ce.App.Controls
 				}
 				else
 				{
-					// = GameApplicationOpenFileDialog.FileName;
 					ProcessExecutable(AddGameOpenFileDialog.FileName);
+					GamesDataGridView.ClearSelection();
+					RebindGames(System.IO.Path.GetFileName(AddGameOpenFileDialog.FileName));
 				}
 			}
 		}
@@ -250,6 +263,7 @@ namespace x360ce.App.Controls
 				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
 				game.LoadDefault(program);
 				SettingsFile.Current.Games.Add(game);
+
 			}
 			else
 			{
@@ -370,9 +384,11 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void RebindGames()
+		void RebindGames(string selectFile = null)
 		{
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GamesDataGridView, "FileName");
+			var selection = string.IsNullOrEmpty(selectFile)
+				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GamesDataGridView, "FileName")
+				: new List<string>() { selectFile };
 			SortableBindingList<x360ce.Engine.Data.Game> data;
 			if (ShowGamesDropDownButton.Text.Contains("Enabled"))
 			{
@@ -450,10 +466,10 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ImportOpenFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = "Game Settings (*.xml;*.xml.gz)|*.xml;*.gz|All files (*.*)|*.*";
+			dialog.Filter = "Game Settings (*.xml;*.xml.gz;*.ini;*.gdb)|*.xml;*.xml.gz;*.ini;*.gdb|All files (*.*)|*.*";
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
-			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games.xml";
+			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce_Games";
 			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = GameDatabaseManager.Current.InitialFile.Directory.FullName;
 			dialog.Title = "Import Games Settings File";
 			var result = dialog.ShowDialog();
@@ -467,6 +483,10 @@ namespace x360ce.App.Controls
 					var xml = System.Text.Encoding.UTF8.GetString(bytes);
 					programs = Serializer.DeserializeFromXmlString<List<x360ce.Engine.Data.Program>>(xml, System.Text.Encoding.UTF8);
 				}
+				else if (dialog.FileName.EndsWith(".ini") || dialog.FileName.EndsWith(".gdb"))
+				{
+					programs = GameDatabaseManager.GetPrograms(dialog.FileName);
+				}
 				else
 				{
 					programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
@@ -479,10 +499,10 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = "Game Settings (*.xml)|*.xml|Compressed Game Settings (*.xml.gz)|*.xml.gz|All files (*.*)|*.*";
+			dialog.Filter = "Game Settings (*.xml)|*.xml|Compressed Game Settings (*.xml.gz)|*.gz|All files (*.*)|*.*";
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
-			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce.Games";
+			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce_Games";
 			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = GameDatabaseManager.Current.InitialFile.Directory.FullName;
 			dialog.Title = "Export Games Settings File";
 			var result = dialog.ShowDialog();
@@ -561,6 +581,12 @@ namespace x360ce.App.Controls
 				// Fix product name.
 				var fixedProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
 				newItem.FileProductName = fixedProductName;
+				// If new item is missing XInputMask setting then...
+				if (newItem.XInputMask == (int)XInputMask.None)
+				{
+					// Assign default.
+					newItem.XInputMask = (int)XInputMask.XInput13_x86;
+				}
 				// Add new one.
 				SettingsFile.Current.Programs.Add(newItem);
 			}
@@ -616,6 +642,10 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
+
+		private void GamesDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+		{
+		}
 
 	}
 }
