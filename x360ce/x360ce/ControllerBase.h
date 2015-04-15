@@ -16,7 +16,7 @@ public:
 	virtual DWORD GetState(XINPUT_STATE* pState) = 0;
 	virtual DWORD CreateDevice() = 0;
 
-	virtual bool Initalized() const = 0;
+	virtual bool Initalized() = 0;
 
 	Config::Mapping m_mapping;
 	u32 m_user;

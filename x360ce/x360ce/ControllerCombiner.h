@@ -14,10 +14,12 @@ public:
 	ControllerCombiner(u32 user);
 	~ControllerCombiner();
 
+	std::vector<std::shared_ptr<Controller>>& GetControllers();
 	virtual DWORD GetState(XINPUT_STATE* pState);
 	virtual DWORD CreateDevice();
-	virtual bool Initalized() const;
+	virtual bool Initalized();
 
 private:
+	std::vector<std::shared_ptr<Controller>> m_controllers;
 	ForceFeedbackCombiner m_ForceFeedbackInst;
 };

@@ -38,7 +38,7 @@ Controller::~Controller()
     }
 }
 
-bool Controller::Initalized() const
+bool Controller::Initalized()
 {
 	return m_pDevice != nullptr;
 }
