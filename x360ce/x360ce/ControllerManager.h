@@ -75,6 +75,7 @@ public:
 	DWORD DeviceInitialize(DWORD dwUserIndex, ControllerBase** ppController, bool *pPassthrough)
     {
 		// Passthrough should default to false in case any of the returns below fail
+		// FIXLOG: This changes the behavior and seems to break 360 controller force feedback
 		*pPassthrough = false;
 
         // Global disable

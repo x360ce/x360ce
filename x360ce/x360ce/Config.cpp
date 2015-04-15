@@ -177,9 +177,6 @@ void Config::ReadConfig()
 
         ini.Get("Options", "UseInitBeep", &m_initBeep, true);
 
-		// Is combining disabled at a global level
-		ini.Get("Options", "CombineDisabled", &combineDisabled);
-        
 		PrintLog("Using config file:");
         PrintLog(ini.GetIniPath().c_str());
 
@@ -190,6 +187,9 @@ void Config::ReadConfig()
 
         once_flag = true;
     }
+
+	// Is combining disabled at a global level?
+	ini.Get("Options", "CombineDisabled", &combineDisabled);
 
     // Read pad mappings
     for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)

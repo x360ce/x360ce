@@ -489,14 +489,17 @@ DWORD Controller::CreateDevice()
     else
         PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
-    if (m_useforce) m_useforce = m_ForceFeedback->IsSupported();
+	if (m_useforce) m_useforce = m_ForceFeedback->IsSupported();
 
     hr = m_pDevice->Acquire();
-
-    if (SUCCEEDED(hr))
-        return ERROR_SUCCESS;
-
-    return ERROR_DEVICE_NOT_CONNECTED;
+	if (SUCCEEDED(hr))
+	{
+		return ERROR_SUCCESS;
+	}
+	else
+	{
+		return ERROR_DEVICE_NOT_CONNECTED;
+	}
 }
 
 bool Controller::ButtonPressed(u32 buttonidx)

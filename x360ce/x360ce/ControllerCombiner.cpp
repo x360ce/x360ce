@@ -153,6 +153,15 @@ DWORD ControllerCombiner::CreateDevice()
 				PrintLog("WARNING: Unable to initialize child device for ControllerCombiner");
 				return result;
 			}
+
+			// Enable force feedback?
+			if (!m_useforce)
+			{
+				if ((*it)->m_useforce)
+				{
+					m_useforce = true;
+				}
+			}
 		}
 
 		// If this is the first child, make the combined gamepad type match the child type

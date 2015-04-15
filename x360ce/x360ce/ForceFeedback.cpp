@@ -29,8 +29,10 @@ ForceFeedback::~ForceFeedback()
 
 void ForceFeedback::Shutdown()
 {
-    if (m_pController->m_pDevice)
-        m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
+	if ((m_pController->m_pDevice) && (m_pController->m_useforce))
+	{
+		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
+	}
 
     for (auto it = m_effects.begin(); it != m_effects.end(); ++it)
     {
