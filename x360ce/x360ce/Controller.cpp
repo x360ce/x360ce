@@ -7,6 +7,7 @@
 #include "InputHookManager.h"
 #include "ControllerManager.h"
 #include "ForceFeedback.h"
+#include "ControllerBase.h"
 #include "Controller.h"
 
 Controller::Controller(u32 user) :

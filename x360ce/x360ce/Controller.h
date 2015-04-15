@@ -4,9 +4,10 @@
 #include "Config.h"
 #include "Mutex.h"
 
+#include "ControllerBase.h"
 #include "ForceFeedback.h"
 
-class Controller
+class Controller : public ControllerBase
 {
     friend class ForceFeedback;
 public:
@@ -37,17 +38,7 @@ public:
         return m_pDevice != nullptr;
     }
 
-    Config::Mapping m_mapping;
     ForceFeedback m_ForceFeedback;
-    GUID m_productid;
-    GUID m_instanceid;
-    u32 m_user;
-    u32 m_axiscount;
-    u8 m_gamepadtype;
-    bool m_passthrough;
-    bool m_useforce;
-
-    u32 m_failcount;
 
 private:
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);

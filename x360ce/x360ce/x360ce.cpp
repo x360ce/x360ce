@@ -24,6 +24,7 @@
 #include "Config.h"
 
 #include "ForceFeedback.h"
+#include "ControllerBase.h"
 #include "Controller.h"
 
 #include "XInputModuleManager.h"

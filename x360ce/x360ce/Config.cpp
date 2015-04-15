@@ -9,6 +9,7 @@
 #include "IniFile.h"
 #include "Config.h"
 
+#include "ControllerBase.h"
 #include "Controller.h"
 #include "ForceFeedback.h"
 

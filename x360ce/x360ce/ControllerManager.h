@@ -6,6 +6,7 @@
 #include <dinput.h>
 
 #include "NonCopyable.h"
+#include "ControllerBase.h"
 #include "Controller.h"
 
 #include "InputHookManager.h"

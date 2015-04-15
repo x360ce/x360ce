@@ -48,6 +48,7 @@
     <ClInclude Include="ControllerManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>
+    <ClInclude Include="ControllerBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="x360ce">
