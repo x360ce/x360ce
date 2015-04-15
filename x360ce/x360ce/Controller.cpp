@@ -38,6 +38,11 @@ Controller::~Controller()
     }
 }
 
+bool Controller::Initalized() const
+{
+	return m_pDevice != nullptr;
+}
+
 BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
 {
     Controller *gp = (Controller*)pvRef;

@@ -11,6 +11,7 @@
 
 #include "ControllerBase.h"
 #include "Controller.h"
+#include "ControllerCombiner.h"
 #include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 

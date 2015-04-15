@@ -8,6 +8,7 @@
 #include "NonCopyable.h"
 #include "ControllerBase.h"
 #include "Controller.h"
+#include "ControllerCombiner.h"
 
 #include "InputHookManager.h"
 

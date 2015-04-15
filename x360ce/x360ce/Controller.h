@@ -34,10 +34,7 @@ public:
     virtual DWORD GetState(XINPUT_STATE* pState);
     virtual DWORD CreateDevice();
 
-    bool Initalized() const
-    {
-        return m_pDevice != nullptr;
-    }
+	virtual bool Initalized() const;
 
 	GUID m_productid;
 	GUID m_instanceid;

@@ -27,6 +27,7 @@
 #include "ForceFeedback.h"
 #include "ControllerBase.h"
 #include "Controller.h"
+#include "ControllerCombiner.h"
 
 #include "XInputModuleManager.h"
 
