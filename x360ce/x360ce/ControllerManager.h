@@ -73,6 +73,9 @@ public:
 
 	DWORD DeviceInitialize(DWORD dwUserIndex, ControllerBase** ppController, bool *pPassthrough)
     {
+		// Passthrough should default to false in case any of the returns below fail
+		*pPassthrough = false;
+
         // Global disable
         if (m_config.m_globalDisable)
             return ERROR_DEVICE_NOT_CONNECTED;
@@ -84,8 +87,12 @@ public:
         ControllerBase* pController = nullptr;
         for (auto it = m_controllers.begin(); it != m_controllers.end(); ++it)
         {
-            if ((*it)->m_user == dwUserIndex)
-                pController = (*it).get();
+			// Return the first controller that matches
+			if ((*it)->m_user == dwUserIndex)
+			{
+				pController = (*it).get();
+				break;
+			}
         }
 
         if (!pController)
