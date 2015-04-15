@@ -11,6 +11,7 @@
 
 #include "ControllerBase.h"
 #include "Controller.h"
+#include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 
 #include "ControllerManager.h"
@@ -196,12 +197,18 @@ void Config::ReadConfig()
         if (!ini.Get(section, "UserIndex", &index))
             index = i;
 
-        // Require Controller copy constructor
-        ControllerManager::Get().GetControllers().push_back(Controller(index));
-        Controller* pController = &ControllerManager::Get().GetControllers().back();
+        // Create controller as a unique pointer
+		std::shared_ptr<Controller> controller(new Controller(index));
+		std::shared_ptr<ControllerBase> controllerBase = controller;
+		ControllerManager::Get().GetControllers().push_back(controllerBase);
 
-        if (ReadPadConfig(pController, section, &ini))
-            ReadPadMapping(pController, section, &ini);
+		// Only read config if actual device
+		Controller* pController = controller.get();
+		if (pController)
+		{
+			if (ReadPadConfig(pController, section, &ini))
+				ReadPadMapping(pController, section, &ini);
+		}
     }
 }
 
@@ -233,13 +240,13 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
     pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
     if (pController->m_useforce)
     {
-        pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback.m_SwapMotors);
-        pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback.m_Type);
-        pIniFile->Get<float>(section, "ForcePercent", &pController->m_ForceFeedback.m_ForcePercent, 100);
-        pController->m_ForceFeedback.m_ForcePercent *= 0.01f;
+        pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback->m_SwapMotors);
+        pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback->m_Type);
+        pIniFile->Get<float>(section, "ForcePercent", &pController->m_ForceFeedback->m_ForcePercent, 100);
+        pController->m_ForceFeedback->m_ForcePercent *= 0.01f;
 
-        pIniFile->Get<u32>(section, "LeftMotorPeriod", &pController->m_ForceFeedback.m_LeftPeriod, 60);
-        pIniFile->Get<u32>(section, "RightMotorPeriod", &pController->m_ForceFeedback.m_RightPeriod, 20);
+        pIniFile->Get<u32>(section, "LeftMotorPeriod", &pController->m_ForceFeedback->m_LeftPeriod, 60);
+        pIniFile->Get<u32>(section, "RightMotorPeriod", &pController->m_ForceFeedback->m_RightPeriod, 20);
     }
 
     return true;

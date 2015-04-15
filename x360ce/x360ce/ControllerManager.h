@@ -71,7 +71,7 @@ public:
         PrintLog("ControllerManager shutdown");
     }
 
-    DWORD DeviceInitialize(DWORD dwUserIndex, Controller** ppController, bool *pPassthrough)
+	DWORD DeviceInitialize(DWORD dwUserIndex, ControllerBase** ppController, bool *pPassthrough)
     {
         // Global disable
         if (m_config.m_globalDisable)
@@ -81,11 +81,11 @@ public:
         if (!(dwUserIndex < XUSER_MAX_COUNT))
             return ERROR_BAD_ARGUMENTS;
 
-        Controller* pController = nullptr;
+        ControllerBase* pController = nullptr;
         for (auto it = m_controllers.begin(); it != m_controllers.end(); ++it)
         {
-            if (it->m_user == dwUserIndex)
-                pController = &(*it);
+            if ((*it)->m_user == dwUserIndex)
+                pController = (*it).get();
         }
 
         if (!pController)
@@ -138,7 +138,7 @@ public:
         return m_hWnd;
     }
 
-    std::vector<Controller>& GetControllers()
+    std::vector<std::shared_ptr<ControllerBase>>& GetControllers()
     {
         return m_controllers;
     }
@@ -178,7 +178,7 @@ private:
     HWND m_hWnd;
     Config m_config;
     std::unique_ptr<IDirectInput8A, COMDeleter> m_pDirectInput;
-    std::vector<Controller> m_controllers;
+	std::vector<std::shared_ptr<ControllerBase>> m_controllers;
 
     bool enabled;
     bool useEnabled;

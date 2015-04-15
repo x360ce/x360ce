@@ -5,6 +5,7 @@
 #include "Mutex.h"
 
 #include "ControllerBase.h"
+#include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 
 class Controller : public ControllerBase
@@ -15,7 +16,7 @@ public:
     ~Controller();
 
     Controller(const Controller &other):
-        m_ForceFeedback(this)
+        m_ForceFeedbackInst(this)
     {
         m_pDevice.reset(other.m_pDevice.get());
         m_state = other.m_state;
@@ -30,15 +31,16 @@ public:
         m_failcount = other.m_failcount;
     }
 
-    DWORD GetState(XINPUT_STATE* pState);
-    DWORD CreateDevice();
+    virtual DWORD GetState(XINPUT_STATE* pState);
+    virtual DWORD CreateDevice();
 
     bool Initalized() const
     {
         return m_pDevice != nullptr;
     }
 
-    ForceFeedback m_ForceFeedback;
+	GUID m_productid;
+	GUID m_instanceid;
 
 private:
     static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
@@ -48,5 +50,7 @@ private:
 
     std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;
     DIJOYSTATE2 m_state;
+	ForceFeedback m_ForceFeedbackInst;
+
 };
 

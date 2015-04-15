@@ -3,30 +3,21 @@
 #include <dinput.h>
 #include "Config.h"
 #include "Mutex.h"
+#include "ForceFeedbackBase.h"
 
-struct ForceFeedbackCaps
-{
-    bool ConstantForce;
-    bool PeriodicForce;
-    bool RampForce;
-};
-
-class ForceFeedback
+class ForceFeedback : public ForceFeedbackBase
 {
     friend class Controller;
 public:
     ForceFeedback(Controller* pController);
-    virtual ~ForceFeedback();
+    ~ForceFeedback();
 
-    void Shutdown();
+	virtual bool IsSupported();
 
-    bool SetState(XINPUT_VIBRATION* pVibration);
+	virtual bool SetState(XINPUT_VIBRATION* pVibration);
 
-    u32 m_LeftPeriod;
-    u32 m_RightPeriod;
-    float m_ForcePercent;
-    u8 m_Type;
-    bool m_SwapMotors;
+	virtual void Shutdown();
+
 
 private:
     static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
@@ -36,8 +27,6 @@ private:
     {
         m_Caps = caps;
     }
-
-    bool IsSupported();
 
     void StartEffects(DIEFFECT* effectType);
     bool SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration);

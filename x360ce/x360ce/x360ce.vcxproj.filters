@@ -49,6 +49,7 @@
       <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="ControllerBase.h" />
+    <ClInclude Include="ForceFeedbackBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="x360ce">

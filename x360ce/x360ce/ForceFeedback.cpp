@@ -7,6 +7,7 @@
 #include "ControllerManager.h"
 #include "ControllerBase.h"
 #include "Controller.h"
+#include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 
 ForceFeedback::ForceFeedback(Controller* pController) :
