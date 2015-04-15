@@ -22,4 +22,6 @@ public:
 private:
 	std::vector<std::shared_ptr<Controller>> m_controllers;
 	ForceFeedbackCombiner m_ForceFeedbackInst;
+
+	SHORT CombineAxis(SHORT min, SHORT max) const;
 };

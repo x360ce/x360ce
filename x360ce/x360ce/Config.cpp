@@ -167,6 +167,8 @@ void Config::ReadConfig()
     if (!ini.Load(inipath)) return;
 
     static bool once_flag = false;
+	bool combineDisabled = false;
+
     if (!once_flag)
     {
         // Read global options
@@ -175,7 +177,10 @@ void Config::ReadConfig()
 
         ini.Get("Options", "UseInitBeep", &m_initBeep, true);
 
-        PrintLog("Using config file:");
+		// Is combining disabled at a global level
+		ini.Get("Options", "CombineDisabled", &combineDisabled);
+        
+		PrintLog("Using config file:");
         PrintLog(ini.GetIniPath().c_str());
 
         u32 ver = 0;
@@ -194,23 +199,82 @@ void Config::ReadConfig()
         if (!ini.Get("Mappings", key, &section))
             continue;
 
-        u32 index = 0;
-        if (!ini.Get(section, "UserIndex", &index))
-            index = i;
+		// Determine index
+		u32 index = 0;
+		if (!ini.Get(section, "UserIndex", &index))
+			index = i;
 
-        // Create controller as a unique pointer
+		// Check for a combined controller
+		u32 combinedIndex = 0;
+		bool combined = false;
+		if (!combineDisabled)
+		{
+			// Is this a combined controller?
+			ini.Get(section, "Combined", &combined, false);
+
+			// Get the combined index
+			ini.Get(section, "CombinedIndex", &combinedIndex);
+		}
+
+        // Create controller instance
 		std::shared_ptr<Controller> controller(new Controller(index));
-		std::shared_ptr<ControllerBase> controllerBase = controller;
-		ControllerManager::Get().GetControllers().push_back(controllerBase);
 
-		// Only read config if actual device
+		// Read in configuration
 		Controller* pController = controller.get();
 		if (pController)
 		{
 			if (ReadPadConfig(pController, section, &ini))
 				ReadPadMapping(pController, section, &ini);
 		}
-    }
+
+		// If this is a combined device we need to add the combiner instead
+		if (combined)
+		{
+			// Update controller
+			controller->m_combined = true;
+			controller->m_combinedIndex = combinedIndex;
+
+			// Get Controllers
+			// auto controllers = ControllerManager::Get().GetControllers();
+
+			// Attempt to find an existing combiner for the index
+			// auto found = std::find_if(controllers.begin(), controllers.end(), 
+			auto found = std::find_if(ControllerManager::Get().GetControllers().begin(), ControllerManager::Get().GetControllers().end(),
+				[combinedIndex](std::shared_ptr<ControllerBase> c)
+				{
+					return (c->m_combined) && (c->m_combinedIndex == combinedIndex);
+				});
+			
+			// If not found, create it
+			if (found == ControllerManager::Get().GetControllers().end())
+			{
+				// Create combiner
+				std::shared_ptr<ControllerCombiner> combiner(new ControllerCombiner(combinedIndex));
+				
+				// Set the index
+				combiner->m_combinedIndex = combinedIndex;
+
+				// Add the controller to the combiner
+				combiner->GetControllers().push_back(controller);
+
+				// Add the combiner to the controllers collection
+				ControllerManager::Get().GetControllers().push_back(combiner);
+			}
+			else
+			{
+				// Found should represent an existing combiner at this point
+				auto combiner = std::dynamic_pointer_cast<ControllerCombiner>(*found);
+				
+				// Add the controller to the combiner
+				combiner->GetControllers().push_back(controller);
+			}
+		}
+		else
+		{ 
+			// Not a combined device. Just add like normal.
+			ControllerManager::Get().GetControllers().push_back(controller);
+		}
+	}
 }
 
 bool Config::ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile)

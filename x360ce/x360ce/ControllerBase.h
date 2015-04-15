@@ -25,6 +25,9 @@ public:
 	bool m_passthrough;
 	bool m_useforce;
 
+	bool m_combined = false;
+	u32 m_combinedIndex = 0;
+
 	ForceFeedbackBase* m_ForceFeedback;
 
 	u32 m_failcount;

@@ -20,6 +20,8 @@ m_ForceFeedbackInst(this)
 	m_gamepadtype = 1;
 	m_passthrough = false;
 
+	m_combined = true;
+
 	m_user = user;
 
 	m_failcount = 0;
@@ -56,11 +58,12 @@ std::vector<std::shared_ptr<Controller>>& ControllerCombiner::GetControllers()
 
 DWORD ControllerCombiner::GetState(XINPUT_STATE* pState)
 {
-	// If not enabled, clear and bail
+	// Start with clear state
+	if (pState) ZeroMemory(pState, sizeof(XINPUT_STATE));
+	
+	// If not enabled, nothing to do
 	if (!ControllerManager::Get().XInputEnabled())
 	{
-		// Clear state
-		if (pState) ZeroMemory(pState, sizeof(XINPUT_STATE));
 		return ERROR_SUCCESS;
 	}
 
@@ -95,7 +98,7 @@ DWORD ControllerCombiner::GetState(XINPUT_STATE* pState)
 
 		// Triggers use whichever is pressed most
 		pState->Gamepad.bLeftTrigger = std::max(pState->Gamepad.bLeftTrigger, childState.Gamepad.bLeftTrigger);
-		pState->Gamepad.bRightTrigger = std::max(pState->Gamepad.bLeftTrigger, childState.Gamepad.bRightTrigger);
+		pState->Gamepad.bRightTrigger = std::max(pState->Gamepad.bRightTrigger, childState.Gamepad.bRightTrigger);
 
 		// Axis are computed based on highest and lowest
 		minLX = std::min(minLX, childState.Gamepad.sThumbLX);
@@ -109,13 +112,32 @@ DWORD ControllerCombiner::GetState(XINPUT_STATE* pState)
 	}
 
 	// Final calc of axis
-	pState->Gamepad.sThumbLX = maxLX - minLX;
-	pState->Gamepad.sThumbLY = maxLY - minLY;
-	pState->Gamepad.sThumbRX = maxRX - minRX;
-	pState->Gamepad.sThumbRY = maxRY - minRY;
+	pState->Gamepad.sThumbLX = CombineAxis(minLX, maxLX);
+	pState->Gamepad.sThumbLY = CombineAxis(minLY, maxLY);
+	pState->Gamepad.sThumbRX = CombineAxis(minRX, maxRX);
+	pState->Gamepad.sThumbRY = CombineAxis(minRY, maxRY);
 
 	// Done evaluating
 	return ERROR_SUCCESS;
+}
+
+SHORT ControllerCombiner::CombineAxis(SHORT min, SHORT max) const
+{
+	// If max isn't a positive number, just go with the smaller number
+	if (max < 0)
+	{
+		return min;
+	}
+	// If min isn't a negative number, just go with the larger number
+	else if (min >= 0)
+	{
+		return max;
+	}
+	// Max is positive and min is negative, add the two together
+	else
+	{
+		return max + min; // effectively subracting min from max
+	}
 }
 
 DWORD ControllerCombiner::CreateDevice()

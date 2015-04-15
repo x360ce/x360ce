@@ -10,9 +10,9 @@
 #include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 
-ForceFeedback::ForceFeedback(Controller* pController) :
-m_pController(pController)
+ForceFeedback::ForceFeedback(Controller* pController)
 {
+	m_pController = pController;
     m_Axes = 0;
     m_LeftPeriod = 0;
     m_RightPeriod = 0;
