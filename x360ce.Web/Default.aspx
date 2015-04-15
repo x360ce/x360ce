@@ -99,24 +99,18 @@
 
                                     <table style="border-collapse: separate; border-spacing: 4px;">
                                         <tr>
-                                            <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/">Code.Google.Com Home</a></td>
+                                            <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/">Code.Google.Com</a></td>
                                             <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list">Downloads</a></td>
                                             <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/w/list">Wiki</a></td>
                                             <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/issues/list">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/source/checkout">Source</a></td>
-                                            <td style="vertical-align: bottom;"><a style="display: inline-block; width: 350px;" class="CodeGoogle" href="http://x360ce.googlecode.com/files/x360ce.App-2.1.2.191.zip">Download x360ce 2.1.2.191 with 32bit library 3.4.0.584</a></td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td style="vertical-align: bottom;"><a target="_blank" style="display: inline-block; width: 350px;" class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">If you encounter problems, try to download older versions...</a></td>
-                                        </tr>
+                                            <td style="display: none; vertical-align: bottom;"><a class="CodeGoogle" href="http://drive.google.com/uc?export=download&id=0BwBTwaPviKIYZnFWOXo5N0NmSkE">Download x360ce 3.0.1 Beta 1 (2015-04-14)</a></td>
+                                            <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://jocys.com/files/software/x360ce.App.3.0.1.Beta.1.zip">Download x360ce 3.0.1 Beta 1 (2015-04-14)</a></td>
+                                            <td style="vertical-align: bottom;"><a target="_blank" class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Older versions...</a></td>
+</tr>
                                     </table>
 
-                                    <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller”. For example, it allows you to play games like “Grand Theft Auto”, “Mafia” or “Saints Row” with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
+                                    <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller” and... for example, to play games, like “Grand Theft Auto”, “Mafia” or “Saints Row”, with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
 
                                 </td>
                             </tr>
@@ -129,7 +123,7 @@
                                     <table style="width: 400px; margin-left: 0;">
                                         <tr>
                                             <td style="padding-bottom: 4px;">
-                                                <img src="/Images/x360ce_General_400px.png" style="width: 400px; height: 338px;" /></td>
+                                                <img src="/Images/x360ce_General_400px.png" style="width: 400px; height: 367px;" /></td>
                                         </tr>
                                         <tr>
                                             <td style="width: 400px; background-color: #ae1919; padding-bottom: 20px; border-radius: 14px;" class="Games">
@@ -145,14 +139,35 @@
                                         <img src="/Images/x360ce_Logo.png" />
                                     </p>
 
-                                    <p style="text-align: center;">
+<table style="background-color: #ffffff; margin-left: auto; margin: auto; border-radius: 20px 20px 20px 20px;">
+		<tr>
+			<td>
+			<table style="margin: auto; border-spacing: 5px; border-collapse: separate; width: 100%;">
+					<tr>
+						<td style="text-align: center;"><a href="http://www.thrustmaster.com/en_US/products/t500rs" target="_blank" title="ThrustMaster T500RS Wheel and TH8RS Gearbox"><img src="http://www.jocys.com/files/hardware/ThrustMaster_T500RS_TH8RS_160H.png" style="width: 132px; height: 100px; border-radius: 16px;" /></a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" title="Logitech G27 Racing Wheel"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_Wheel_160H.png" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" target="_blank" title="Logitech Driving Force GT"><img src="http://www.jocys.com/files/hardware/Logitech_Driving_Force_GT_160H.png" style="width: 97px; height: 100px; border-radius: 16px;" /></a></td>
+					</tr>
+					<tr style="display: none;">
+						<td style="text-align: center;"><a href="http://www.thrustmaster.com/en_US/products/t500rs" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">ThrustMaster T500RS</a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G27</a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT</a></td>
+					</tr>
+			</table>
+			</td>
+		</tr>
+</table>
 
 
 
-                                        <a title="ThrustMaster T500RS Wheel and TH8RS Gearbox" target="_blank" href="http://www.thrustmaster.com/en_US/products/t500rs"><img src="http://www.jocys.com/files/hardware/ThrustMaster_T500RS_TH8RS_160H.png" style="width: 126px; height: 95px; border-radius: 14px;" /></a><a title="Logitech G27 Racing Wheel" href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" style="margin-left: 14px;"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_Wheel_160H.png" style="width: 121px; height: 95px; border-radius: 14px;" /></a><a title="Logitech Driving Force GT" target="_blank" href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="margin-left: 14px;"><img src="http://www.jocys.com/files/hardware/Logitech_Driving_Force_GT_160H.png" style="width: 92px; height: 95px; border-radius: 14px;" /></a>
-                                    </p>
 
-                                    <p style="text-align: center; margin-top: 0px; color: #84e68c;">TOP CONTROLLERS</p>
+
+
+
+
+
+
+                                    <p style="text-align: center; margin-top: 20px; color: #84e68c;">TOP CONTROLLERS</p>
                                     <uc1:ControllersControl runat="server" ID="ControllersControl" />
                                 </td>
                             </tr>
