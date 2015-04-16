@@ -166,6 +166,10 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
     for (u32 i = 0; i < _countof(m_mapping.Trigger); ++i)
     {
+		// Skip invalid mappings
+		if (m_mapping.Trigger[i].id == 0)
+			continue;
+
         Config::MappingType triggerType = m_mapping.Trigger[i].type;
 
         if (triggerType == Config::DIGITAL)
@@ -196,8 +200,14 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
             s32 v = 0;
 
-            if (m_mapping.Trigger[i].id > 0) v = values[m_mapping.Trigger[i].id - 1];
-            else if (m_mapping.Trigger[i].id < 0) v = -values[-m_mapping.Trigger[i].id - 1] - 1;
+			if (m_mapping.Trigger[i].id > 0)
+			{
+				v = values[m_mapping.Trigger[i].id - 1];
+			}
+			else if (m_mapping.Trigger[i].id < 0)
+			{
+				v = -values[-m_mapping.Trigger[i].id - 1] - 1;
+			}
 
             /* FIXME: axis negative max should be -32768
             --- v is the full range (-32768 .. +32767) that should be projected to 0...255
@@ -273,14 +283,14 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
                     && !ButtonPressed(m_mapping.Trigger[1].but))
                 {
                     v2 = (offset + v) / scaling;
-                    *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[0].triggerdz, 255);
+                    *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[i].triggerdz, 255);
                 }
 
             }
             else
             {
                 v2 = (offset + v) / scaling;
-                *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[0].triggerdz, 255);
+                *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[i].triggerdz, 255);
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////
@@ -300,7 +310,11 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
     for (u32 i = 0; i < _countof(m_mapping.Axis); ++i)
     {
-        if (m_mapping.Axis[i].axistodpad == 0)
+		// Skip invalid mappings
+		if (m_mapping.Axis[i].id == 0)
+			continue;
+		
+		if (m_mapping.Axis[i].axistodpad == 0)
         {
             u32 index = std::abs(m_mapping.Axis[i].id) - 1;
             s32 value = axis[index];

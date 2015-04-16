@@ -113,8 +113,8 @@ const u16 Config::povIDs[4] =
 
  const char* const Config::triggerDZNames[] =
 {
-    "Left Trigger DZ",
-    "Right Trigger DZ"
+    "Left Trigger DeadZone",
+    "Right Trigger DeadZone"
 };
 
  const char* const Config::triggerBNames[] =
@@ -385,8 +385,15 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
     {
         // Axes
         std::string axis;
-        if (pIniFile->Get(section, axisNames[i], &axis))
-            ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
+		if (pIniFile->Get(section, axisNames[i], &axis))
+		{
+			ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
+		}
+		else
+		{
+			std::string message = StringFormat("Mapping could not be determined for %s axis %s", section.c_str(), axisNames[i]);
+			PrintLog(message.c_str());
+		}
 
         // DeadZones
         pIniFile->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
