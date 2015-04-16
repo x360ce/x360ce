@@ -51,7 +51,7 @@ bool ControllerCombiner::Initalized()
 	return true;
 }
 
-std::vector<std::shared_ptr<Controller>>& ControllerCombiner::GetControllers()
+std::vector<std::shared_ptr<ControllerBase>>& ControllerCombiner::GetControllers()
 {
 	return m_controllers;
 }

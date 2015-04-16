@@ -14,13 +14,13 @@ public:
 	ControllerCombiner(u32 user);
 	~ControllerCombiner();
 
-	std::vector<std::shared_ptr<Controller>>& GetControllers();
+	std::vector<std::shared_ptr<ControllerBase>>& GetControllers();
 	virtual DWORD GetState(XINPUT_STATE* pState);
 	virtual DWORD CreateDevice();
 	virtual bool Initalized();
 
 private:
-	std::vector<std::shared_ptr<Controller>> m_controllers;
+	std::vector<std::shared_ptr<ControllerBase>> m_controllers;
 	ForceFeedbackCombiner m_ForceFeedbackInst;
 
 	SHORT CombineAxis(SHORT min, SHORT max) const;
