@@ -10,6 +10,8 @@
 #include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 
+#include "XInputModuleManager.h"
+
 ForceFeedback::ForceFeedback(Controller* pController)
 {
 	m_pController = pController;
@@ -29,9 +31,11 @@ ForceFeedback::~ForceFeedback()
 
 void ForceFeedback::Shutdown()
 {
-	if ((m_pController->m_pDevice) && (m_pController->m_useforce))
+	if ((m_pController->m_useforce) && (!m_pController->m_forcespassthrough) && (m_pController->m_pDevice))
 	{
-		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET);
+		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_SETACTUATORSOFF);
+		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_STOPALL); // DISFFC_RESET or DISFFC_STOPALL
+		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET); // DISFFC_RESET or DISFFC_STOPALL
 	}
 
     for (auto it = m_effects.begin(); it != m_effects.end(); ++it)
@@ -66,6 +70,9 @@ BOOL CALLBACK ForceFeedback::EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRe
 
 bool ForceFeedback::IsSupported()
 {
+	if (m_pController->m_forcespassthrough)
+		return true;
+
     DIDEVCAPS deviceCaps;
     deviceCaps.dwSize = sizeof(DIDEVCAPS);
 
@@ -112,15 +119,23 @@ bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration)
         return ERROR_SUCCESS;
     }
 
-    switch (m_Type)
-    {
-        case 1:
-            return SetDeviceForcesEjocys(pVibration);
-        case 2:
-            return SetDeviceForcesNew(pVibration);
-        default:
-            return SetDeviceForcesFailsafe(pVibration);
-    }
+	// Force pass through mode?
+	if (m_pController->m_forcespassthrough)
+	{
+		return XInputModuleManager::Get().XInputSetState(m_pController->m_user, pVibration);
+	}
+	else
+	{
+		switch (m_Type)
+		{
+		case 1:
+			return SetDeviceForcesEjocys(pVibration);
+		case 2:
+			return SetDeviceForcesNew(pVibration);
+		default:
+			return SetDeviceForcesFailsafe(pVibration);
+		}
+	}
 }
 
 void ForceFeedback::StartEffects(DIEFFECT* effectType)

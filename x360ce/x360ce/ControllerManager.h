@@ -64,20 +64,18 @@ public:
 
     ~ControllerManager()
     {
+		// Remove controllers
         m_controllers.clear();
 
+		// Destroy window
         if (m_hWnd)
             DestroyWindow(m_hWnd);
 
         PrintLog("ControllerManager shutdown");
     }
 
-	DWORD DeviceInitialize(DWORD dwUserIndex, ControllerBase** ppController, bool *pPassthrough)
+	DWORD DeviceInitialize(DWORD dwUserIndex, ControllerBase** ppController)
     {
-		// Passthrough should default to false in case any of the returns below fail
-		// FIXLOG: This changes the behavior and seems to break 360 controller force feedback
-		*pPassthrough = false;
-
         // Global disable
         if (m_config.m_globalDisable)
             return ERROR_DEVICE_NOT_CONNECTED;
@@ -104,7 +102,6 @@ public:
         // passtrough
         if (pController->m_passthrough)
         {
-            *pPassthrough = true;
             return ERROR_SUCCESS;
         }
 

@@ -294,9 +294,13 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
         MessageBoxA(NULL, message.c_str(), "x360ce", MB_ICONERROR);
         return false;
     }
-    pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
+    
+	pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
     if (pController->m_passthrough)
         return false;
+
+	// Force passthrough
+	pIniFile->Get(section, "ForcesPassThrough", &pController->m_forcespassthrough);
 
     // Device type
     pIniFile->Get<u8>(section, "ControllerType", &pController->m_gamepadtype, 1);
