@@ -119,10 +119,11 @@ bool ForceFeedback::SetState(XINPUT_VIBRATION* pVibration)
         return ERROR_SUCCESS;
     }
 
-	// Force pass through mode?
+	// Forces pass through mode?
 	if (m_pController->m_forcespassthrough)
 	{
-		return XInputModuleManager::Get().XInputSetState(m_pController->m_user, pVibration);
+		DWORD result = XInputModuleManager::Get().XInputSetState(m_pController->m_passthroughindex, pVibration);
+		return !FAILED(result);
 	}
 	else
 	{

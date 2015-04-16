@@ -23,6 +23,7 @@ public:
 	u32 m_axiscount;
 	u8 m_gamepadtype;
 	bool m_passthrough;
+	u32 m_passthroughindex;
 	bool m_forcespassthrough;
 	bool m_useforce;
 

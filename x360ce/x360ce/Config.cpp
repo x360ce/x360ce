@@ -295,12 +295,35 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
         return false;
     }
     
+	// Full pass through
 	pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
     if (pController->m_passthrough)
         return false;
 
-	// Force passthrough
+	// Forces-only pass through
 	pIniFile->Get(section, "ForcesPassThrough", &pController->m_forcespassthrough);
+
+	/******************************************************************************
+	 * We load controllers by their InstanceGUID or ProductGUID. We also allow 
+	 * users to specify which player they want the controller to represent by 
+	 * specifying a UserIndex. But what if more than one of the controllers being 
+	 * loaded are actual XInput device? For example what if there are two 360
+	 * controllers connected to the system? We could get into a situation where
+	 * physical controller 2 has been mapped to player 1 and vice versa.
+	 *
+	 * This is not normally a problem but it becomes a problem when we want to 
+	 * support pass-through on more than one controller. Whenever it's time to 
+	 * read values from the physical device or time to send vibration data to the 
+	 * physical device, we need to know which one.
+	 *
+	 * It would be best to detect if the device is also an XInput device and set 
+	 * this automaticaly instead of requiring it to be in the config. But that 
+	 * is byond my knowledge of XInput at this time so hopefully someone else 
+	 * can add it. - JBIENZ 2015-04-16
+	 ******************************************************************************/
+	// Pass through index
+	// TODO: Auto Detect during initialization
+	pIniFile->Get<u32>(section, "PassThroughIndex", &pController->m_passthroughindex, 0);
 
     // Device type
     pIniFile->Get<u8>(section, "ControllerType", &pController->m_gamepadtype, 1);
