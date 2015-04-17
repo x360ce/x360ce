@@ -516,7 +516,10 @@
 if $(PlatformName) == x86 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x86 -s -so -z $(TargetPath)
 if $(PlatformName) == x64 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
 if $(PlatformName) == AnyCPU $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -s -so -z $(TargetPath)
-)</PostBuildEvent>
+)
+
+if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
+if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"
