@@ -65,7 +65,7 @@ namespace x360ce.App
         [DefaultValue("1"), Description("Configuration file version.")]
         public const string Version = "Version";
         [DefaultValue("0"), Description("0 - Controlles may be combined; 1 - controller combining is disabled.")]
-        public const string CombineDisabled = "CombineDisabled";
+        static public string CombineDisabled { get { return "CombineDisabled"; } }
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
@@ -79,11 +79,11 @@ namespace x360ce.App
 		// [Mappings] section.
 		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
 		public const string PAD1 = "PAD1";
-		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
+		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD2.")]
 		public const string PAD2 = "PAD2";
-		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
+		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD3.")]
 		public const string PAD3 = "PAD3";
-		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
+		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD4.")]
 		public const string PAD4 = "PAD4";
 
 		// [PAD] section.

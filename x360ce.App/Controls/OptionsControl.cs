@@ -66,6 +66,8 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.HookMode, FakeModeComboBox);
             sm.Add(section + SettingName.FakePID, HookModeFakePidTextBox);
             sm.Add(section + SettingName.FakeVID, HookModeFakeVidTextBox);
+
+            SettingManager.Current.AddMap(section, () => SettingName.CombineDisabled, UseInitBeepCheckBox);
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

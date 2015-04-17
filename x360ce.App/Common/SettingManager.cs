@@ -7,6 +7,9 @@ using x360ce.App.Controls;
 using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace x360ce.App
 {
@@ -48,6 +51,25 @@ namespace x360ce.App
 			ReadSettings(IniFileName);
 		}
 
+        static private T GetCustomAttribute<T>(PropertyInfo prop)
+        {
+            if (prop == null)
+            {
+                return default(T);
+            }
+
+            return (T)prop.GetCustomAttributes(typeof(T), false).FirstOrDefault();
+        }
+
+        public void AddMap<T>(string sectonName, Expression<Func<T>> setting, Control control)
+        {
+            var me = (MemberExpression)setting.Body;
+            var prop = (PropertyInfo)me.Member;
+            var settingName = (string)prop.GetValue(null, null);
+            var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
+            var desc = (descAttr != null ? descAttr.Description : string.Empty);
+            MainForm.Current.ToolTip.SetToolTip(control, desc);
+        }
 
 		/// <summary>
 		/// Read setting from INI file into windows form control.
