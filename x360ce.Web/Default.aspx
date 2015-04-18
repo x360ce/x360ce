@@ -105,7 +105,7 @@
                                             <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/issues/list">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a class="CodeGoogle" href="http://code.google.com/p/x360ce/source/checkout">Source</a></td>
                                             <td style="display: none; vertical-align: bottom;"><a class="CodeGoogle" href="http://drive.google.com/uc?export=download&id=0BwBTwaPviKIYZnFWOXo5N0NmSkE">Download x360ce 3.0.1 Beta 1 (2015-04-14)</a></td>
-                                            <td style="vertical-align: bottom;"><a class="CodeGoogle" href="Files/x360ce.zip">Download x360ce 3.0.1.2 Beta 1 (2015-04-18)</a></td>
+                                            <td style="vertical-align: bottom;"><a class="CodeGoogle" href="Files/x360ce.zip">Download x360ce 3.0.1.3 Beta 1 (2015-04-19)</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="CodeGoogle" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Older versions...</a></td>
 </tr>
                                     </table>
