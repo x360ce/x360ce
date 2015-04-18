@@ -239,12 +239,11 @@ namespace x360ce.App.Controls
                     }
                 }
             }
-            //// Sliders
-            //var sNum = 1;
-            //ProcessSlider(actions, state.Sliders, DiUvSliderTextBox, ref sNum);
-            //ProcessSlider(actions, state.AccelerationSliders, DiASliderTextBox, ref sNum);
-            //ProcessSlider(actions, state.ForceSliders, DiFSliderTextBox, ref sNum);
-            //ProcessSlider(actions, state.VelocitySliders, DiVSliderTextBox, ref sNum);
+            // Sliders
+            ProcessSlider(state.Sliders, DiUvSliderTextBox);
+            ProcessSlider(state.AccelerationSliders, DiASliderTextBox);
+            ProcessSlider(state.ForceSliders, DiFSliderTextBox);
+            ProcessSlider(state.VelocitySliders, DiVSliderTextBox);
 
             // Point of view buttons
             int[] dPad = state.PointOfViewControllers;
@@ -268,7 +267,7 @@ namespace x360ce.App.Controls
             //return actions;
         }
 
-        void ProcessSlider(List<string> actions, int[] sliders, TextBox control, ref int num)
+        void ProcessSlider(int[] sliders, TextBox control)
         {
             var s = "";
             if (sliders != null)
@@ -279,7 +278,6 @@ namespace x360ce.App.Controls
                     v = sliders[i];
                     if (s.Length > 0) s += " ";
                     s += v.ToString("00000");
-                    addAction(actions, v, "Slider", num++);
                 }
             }
             SetValue(control, s);
