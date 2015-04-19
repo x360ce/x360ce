@@ -1,6 +1,7 @@
-﻿v3.0.1.7 (2015-04-19)
+﻿v3.0.1.8 (2015-04-19)
 - Fix: Force feedback PeriodicSine crash fix.
 - Fix: Issue with Axis on 64-bit platform.
+- Fix: Issue with negative axis not working.
 - Update: Updated to xinput1_3.dll v3.4.1.1173.
 
 v3.0.1.2 (2015-04-18)
