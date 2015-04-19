@@ -97,6 +97,7 @@ public:
             *pPassthrough = true;
             return ERROR_SUCCESS;
         }
+		*pPassthrough = false;
 
         if (pController->m_failcount > 20)
             return ERROR_DEVICE_NOT_CONNECTED;
