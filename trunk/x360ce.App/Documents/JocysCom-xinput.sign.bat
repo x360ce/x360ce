@@ -4,7 +4,7 @@ SET dst32=..\..\x360ce.App\Resources\xinput_x86.dll
 SET dst64=..\..\x360ce.App\Resources\xinput_x64.dll
 SET dstMS=..\..\x360ce.App\Resources\xinput.dll
 IF "%file%" == "" (
-	IF NOT EXIST "%dstMS%" COPY "..\..\x360ce\x360ce\bin\Release\xinput1_3.dll" "%dst32%"
+	IF NOT EXIST "%dstMS%" COPY "..\..\x360ce\x360ce\bin\Release\xinput1_3.dll" "%dstMS%"
 	CALL:SIG "%dstMS%"
 	IF NOT EXIST "%dst32%" COPY "..\..\x360ce\x360ce\bin\Release\xinput1_3.dll" "%dst32%"
 	CALL:SIG "%dst32%"
