@@ -294,7 +294,10 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
     {
         if (m_mapping.Axis[i].axistodpad == 0)
         {
-            u32 index = std::abs(m_mapping.Axis[i].id) - 1;
+			s8 id = m_mapping.Axis[i].id;
+			// If axis is not mapped then...
+			if (id == 0)  continue;
+			u32 index = std::abs(id) - 1;
             s32 value = axis[index];
 
             // Analog input
