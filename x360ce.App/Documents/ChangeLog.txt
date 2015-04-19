@@ -1,5 +1,9 @@
-﻿v3.0.1.2 (2015-04-18)
-- Fix: Fixed issue with recording and reporting of Sliders.
+﻿v3.0.1.6 (2015-04-19)
+- Fix: Issue with Axis on 64-bit platform.
+- Update: Updated to xinput1_3.dll v3.4.1.1173.
+
+v3.0.1.2 (2015-04-18)
+- Fix: Issue with recording and reporting of Sliders.
 
 v3.0.1.0 (2015-04-14)
 - Update: A lot of changes, fixes and new bugs.
