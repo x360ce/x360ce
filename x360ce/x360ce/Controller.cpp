@@ -297,7 +297,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			s8 id = m_mapping.Axis[i].id;
 			s32 value = 0;
 			// If axis is mapped then...
-			if (id > 0)
+			if (id != 0)
 			{
 				u32 index = std::abs(id) - 1;
 				value = axis[index];
