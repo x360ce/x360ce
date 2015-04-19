@@ -272,7 +272,7 @@ namespace x360ce.Engine
 		public static string GetProductFullName()
 		{
 			Version v = new Version(Application.ProductVersion);
-			var s = string.Format("{0} {1} {2}", Application.CompanyName, Application.ProductName, v.ToString(3));
+			var s = string.Format("{0} {1} {2}", Application.CompanyName, Application.ProductName, v.ToString(4));
 			// Version = major.minor.build.revision
 			switch (v.Build)
 			{
