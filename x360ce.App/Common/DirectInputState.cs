@@ -44,12 +44,13 @@ namespace x360ce.App
 				state.AngularVelocityZ,
 			};
 			// Fill Sliders.
-			List<int> Sliders = new List<int>();
-			Sliders.AddRange(state.Sliders);
-			Sliders.AddRange(state.AccelerationSliders);
-			Sliders.AddRange(state.ForceSliders);
-			Sliders.AddRange(state.VelocitySliders);
-			// Fill Pows.
+			List<int> sl = new List<int>();
+			sl.AddRange(state.Sliders);
+			sl.AddRange(state.AccelerationSliders);
+			sl.AddRange(state.ForceSliders);
+			sl.AddRange(state.VelocitySliders);
+            Sliders = sl.ToArray();
+            // Fill Pows.
 			Pows = state.PointOfViewControllers.ToArray();
 			// Fill buttons.
 			Buttons = state.Buttons.ToArray();

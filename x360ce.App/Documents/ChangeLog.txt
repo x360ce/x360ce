@@ -1,4 +1,13 @@
-﻿v3.0.1.0 (2015-04-14)
+﻿v3.0.1.8 (2015-04-19)
+- Fix: Force feedback PeriodicSine crash fix.
+- Fix: Issue with Axis on 64-bit platform.
+- Fix: Issue with negative axis not working.
+- Update: Updated to xinput1_3.dll v3.4.1.1173.
+
+v3.0.1.2 (2015-04-18)
+- Fix: Issue with recording and reporting of Sliders.
+
+v3.0.1.0 (2015-04-14)
 - Update: A lot of changes, fixes and new bugs.
 
 v2.1.3.203 (2014-11-01)
