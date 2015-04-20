@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Linq;
-using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -157,20 +156,29 @@ namespace x360ce.App.Controls
         }
 
         JoystickState oldState;
-       // List<string> actions = new List<string>();
+        List<string> actions = new List<string>();
         IList<EffectInfo> effects;
         string forceFeedbackState;
 
         public int[] Axis = new int[6];
 
-        /// <summary>
-        /// Update DirectInput control from DirectInput device.
-        /// </summary>
-        /// <param name="device">DirectInput device.</param>
-        /// <returns>List of buttons/DPad pressed, axis/sliders turned.</returns>
-        void ShowDirectInputState(JoystickState state)
+        List<string> ShowDirectInputState(Joystick device)
         {
-            if (state == null || state.Equals(oldState)) return;
+            JoystickState state = null;
+            if (device != null)
+            {
+                try
+                {
+                    device.Acquire();
+                    state = device.GetCurrentState();
+                }
+                catch (Exception ex)
+                {
+                    var error = ex;
+                }
+            }
+
+            if (state == null || state.Equals(oldState)) return actions;
 
             // Fill axis.
             Axis[0] = state.X;
@@ -181,7 +189,7 @@ namespace x360ce.App.Controls
             Axis[5] = state.RotationZ;
 
             oldState = state;
-            //actions.Clear();
+            actions.Clear();
             // X-axis.
             DiAxisTable.Rows[0][1] = state.X;
             DiAxisTable.Rows[0][2] = state.RotationX;
@@ -221,7 +229,7 @@ namespace x360ce.App.Controls
                     if (System.DBNull.Value == rows[r][c]) continue;
                     v = (int)rows[r][c];
                     axisNum = (c - 1) * rows.Count + r + 1;
-                    //addAction(actions, v, "Axis", axisNum);
+                    addAction(actions, v, "Axis", axisNum);
                 }
             }
 
@@ -233,17 +241,18 @@ namespace x360ce.App.Controls
                 {
                     if (buttons[i])
                     {
-                        //actions.Add(string.Format("Button {0}", i + 1));
+                        actions.Add(string.Format("Button {0}", i + 1));
                         if (DiButtonsTextBox.Text.Length > 0) DiButtonsTextBox.Text += " ";
                         DiButtonsTextBox.Text += (i + 1).ToString("00");
                     }
                 }
             }
             // Sliders
-            ProcessSlider(state.Sliders, DiUvSliderTextBox);
-            ProcessSlider(state.AccelerationSliders, DiASliderTextBox);
-            ProcessSlider(state.ForceSliders, DiFSliderTextBox);
-            ProcessSlider(state.VelocitySliders, DiVSliderTextBox);
+            var sNum = 1;
+            ProcessSlider(actions, state.Sliders, DiUvSliderTextBox, ref sNum);
+            ProcessSlider(actions, state.AccelerationSliders, DiASliderTextBox, ref sNum);
+            ProcessSlider(actions, state.ForceSliders, DiFSliderTextBox, ref sNum);
+            ProcessSlider(actions, state.VelocitySliders, DiVSliderTextBox, ref sNum);
 
             // Point of view buttons
             int[] dPad = state.PointOfViewControllers;
@@ -257,17 +266,17 @@ namespace x360ce.App.Controls
                     if (v != -1)
                     {
                         DiDPadTextBox.Text += "[" + i + "," + v.ToString() + "]";
-                        //if ((DPadEnum)v == DPadEnum.Up) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
-                        //if ((DPadEnum)v == DPadEnum.Right) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
-                        //if ((DPadEnum)v == DPadEnum.Down) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
-                        //if ((DPadEnum)v == DPadEnum.Left) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Up) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Right) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Down) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Left) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
                     }
                 }
             }
-            //return actions;
+            return actions;
         }
 
-        void ProcessSlider(int[] sliders, TextBox control)
+        void ProcessSlider(List<string> actions, int[] sliders, TextBox control, ref int num)
         {
             var s = "";
             if (sliders != null)
@@ -278,6 +287,7 @@ namespace x360ce.App.Controls
                     v = sliders[i];
                     if (s.Length > 0) s += " ";
                     s += v.ToString("00000");
+                    addAction(actions, v, "Slider", num++);
                 }
             }
             SetValue(control, s);
@@ -320,9 +330,9 @@ namespace x360ce.App.Controls
         Guid deviceInstanceGuid;
         bool isWheel = false;
 
-        public void UpdateFrom(Joystick device, out JoystickState state)
+        public List<string> UpdateFrom(Joystick device)
         {
-			if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
+            if (!Helper.IsSameDevice(device, deviceInstanceGuid))
             {
                 ShowDeviceInfo(device);
                 deviceInstanceGuid = Guid.Empty;
@@ -332,26 +342,13 @@ namespace x360ce.App.Controls
                     isWheel = device.Information.Type == SharpDX.DirectInput.DeviceType.Driving;
                 }
             }
-            state = null;
-            if (device != null)
-            {
-                try
-                {
-                    device.Acquire();
-                    state = device.GetCurrentState();
-                }
-                catch (Exception ex)
-                {
-                    var error = ex;
-                }
-            }
-            ShowDirectInputState(state);
+            return ShowDirectInputState(device);
         }
 
         private void DirectInputControl_Load(object sender, EventArgs e)
         {
-			EngineHelper.EnableDoubleBuffering(DiAxisDataGridView);
-			EngineHelper.EnableDoubleBuffering(DiEffectsDataGridView);
+            Helper.EnableDoubleBuffering(DiAxisDataGridView);
+            Helper.EnableDoubleBuffering(DiEffectsDataGridView);
         }
 
     }

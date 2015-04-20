@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include "Windows.h"
 #include "Types.h"
 
 #define IN_RANGE(val, min, max) ((val) > (min) && (val) < (max))

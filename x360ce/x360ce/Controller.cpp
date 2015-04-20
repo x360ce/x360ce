@@ -6,16 +6,13 @@
 #include "Config.h"
 #include "InputHookManager.h"
 #include "ControllerManager.h"
-#include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
-#include "ControllerBase.h"
 #include "Controller.h"
 
 Controller::Controller(u32 user) :
-m_ForceFeedbackInst(this)
+m_ForceFeedback(this)
 {
-	m_ForceFeedback = &m_ForceFeedbackInst;
-    m_pDevice.reset();
+    m_pDevice = nullptr;
     m_productid = GUID_NULL;
     m_instanceid = GUID_NULL;
     m_axiscount = 0;
@@ -33,14 +30,11 @@ Controller::~Controller()
     if (m_pDevice)
     {
         if (m_useforce)
-            m_ForceFeedback->Shutdown();
-        m_pDevice.reset();
-    }
-}
+            m_ForceFeedback.Shutdown();
 
-bool Controller::Initalized()
-{
-	return m_pDevice != nullptr;
+        m_pDevice->Release();
+        m_pDevice = nullptr;
+    }
 }
 
 BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
@@ -166,10 +160,6 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
     for (u32 i = 0; i < _countof(m_mapping.Trigger); ++i)
     {
-		// Skip invalid mappings
-		if (m_mapping.Trigger[i].id == 0)
-			continue;
-
         Config::MappingType triggerType = m_mapping.Trigger[i].type;
 
         if (triggerType == Config::DIGITAL)
@@ -200,14 +190,8 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
             s32 v = 0;
 
-			if (m_mapping.Trigger[i].id > 0)
-			{
-				v = values[m_mapping.Trigger[i].id - 1];
-			}
-			else if (m_mapping.Trigger[i].id < 0)
-			{
-				v = -values[-m_mapping.Trigger[i].id - 1] - 1;
-			}
+            if (m_mapping.Trigger[i].id > 0) v = values[m_mapping.Trigger[i].id - 1];
+            else if (m_mapping.Trigger[i].id < 0) v = -values[-m_mapping.Trigger[i].id - 1] - 1;
 
             /* FIXME: axis negative max should be -32768
             --- v is the full range (-32768 .. +32767) that should be projected to 0...255
@@ -283,14 +267,14 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
                     && !ButtonPressed(m_mapping.Trigger[1].but))
                 {
                     v2 = (offset + v) / scaling;
-                    *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[i].triggerdz, 255);
+                    *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[0].triggerdz, 255);
                 }
 
             }
             else
             {
                 v2 = (offset + v) / scaling;
-                *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[i].triggerdz, 255);
+                *(targetTrigger[i]) = (u8)deadzone(v2, 0, 255, m_mapping.Trigger[0].triggerdz, 255);
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////
@@ -310,11 +294,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
     for (u32 i = 0; i < _countof(m_mapping.Axis); ++i)
     {
-		// Skip invalid mappings
-		if (m_mapping.Axis[i].id == 0)
-			continue;
-		
-		if (m_mapping.Axis[i].axistodpad == 0)
+        if (m_mapping.Axis[i].axistodpad == 0)
         {
             u32 index = std::abs(m_mapping.Axis[i].id) - 1;
             s32 value = axis[index];
@@ -454,19 +434,17 @@ DWORD Controller::CreateDevice()
     if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
     if (bHookSA) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_SA);
 
-    IDirectInputDevice8A* device;
-    HRESULT hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &device, NULL);
+    HRESULT hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &m_pDevice, NULL);
     if (FAILED(hr))
     {
         std::string strInstance;
         if (GUIDtoString(&strInstance, m_instanceid))
             PrintLog("[PAD%d] InstanceGUID %s is incorrect trying ProductGUID", m_user + 1, strInstance.c_str());
 
-        hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_productid, &device, NULL);
+        hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_productid, &m_pDevice, NULL);
         if (FAILED(hr))
             return ERROR_DEVICE_NOT_CONNECTED;
     }
-    m_pDevice.reset(device);
 
     if (bHookSA) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_SA);
     if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
@@ -503,17 +481,14 @@ DWORD Controller::CreateDevice()
     else
         PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
-	if (m_useforce) m_useforce = m_ForceFeedback->IsSupported();
+    if (m_useforce) m_useforce = m_ForceFeedback.IsSupported();
 
     hr = m_pDevice->Acquire();
-	if (SUCCEEDED(hr))
-	{
-		return ERROR_SUCCESS;
-	}
-	else
-	{
-		return ERROR_DEVICE_NOT_CONNECTED;
-	}
+
+    if (SUCCEEDED(hr))
+        return ERROR_SUCCESS;
+
+    return ERROR_DEVICE_NOT_CONNECTED;
 }
 
 bool Controller::ButtonPressed(u32 buttonidx)

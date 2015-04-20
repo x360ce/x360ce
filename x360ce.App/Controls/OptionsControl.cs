@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -61,13 +60,10 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
             sm.Add(section + SettingName.ProgramScanLocations, GameScanLocationsListBox);
             sm.Add(section + SettingName.Version, ConfigurationVersionTextBox);
-            sm.Add(section + SettingName.CombineDisabled, CombineDisabledCheckBox);
             section = @"InputHook\";
             sm.Add(section + SettingName.HookMode, FakeModeComboBox);
             sm.Add(section + SettingName.FakePID, HookModeFakePidTextBox);
             sm.Add(section + SettingName.FakeVID, HookModeFakeVidTextBox);
-
-            SettingManager.Current.AddMap(section, () => SettingName.CombineDisabled, UseInitBeepCheckBox);
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -155,19 +151,6 @@ namespace x360ce.App.Controls
         private void SaveSettingsButton_Click(object sender, EventArgs e)
         {
             MainForm.Current.SaveSettings();
-        }
-
-		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
-		{
-			GameDatabaseManager.Current.CheckSettingsFolder();
-			string argument = @"/select, " + GameDatabaseManager.Current.InitialFile.FullName;
-			System.Diagnostics.Process.Start("explorer.exe", argument);
-		}
-
-        private void CombineDisabledCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            // Save setting and notify if vaue changed.
-            if (SettingManager.Current.SaveSetting(CombineDisabledCheckBox)) MainForm.Current.NotifySettingsChange();
         }
 
     }

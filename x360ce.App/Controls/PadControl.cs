@@ -8,8 +8,6 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using System.Linq;
-using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -33,10 +31,10 @@ namespace x360ce.App.Controls
             // Initialize images.
             this.TopPictureBox.Image = topDisabledImage;
             this.FrontPictureBox.Image = frontDisabledImage;
-			this.markB = new Bitmap(EngineHelper.GetResource("Images.MarkButton.png"));
-			this.markA = new Bitmap(EngineHelper.GetResource("Images.MarkAxis.png"));
-			this.markC = new Bitmap(EngineHelper.GetResource("Images.MarkController.png"));
-			this.markR = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+            this.markB = new Bitmap(Helper.GetResource("Images.MarkButton.png"));
+            this.markA = new Bitmap(Helper.GetResource("Images.MarkAxis.png"));
+            this.markC = new Bitmap(Helper.GetResource("Images.MarkController.png"));
+            this.markR = new Bitmap(Helper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
             float rH = topDisabledImage.HorizontalResolution;
             float rV = topDisabledImage.VerticalResolution;
             // Make sure resolution is same everywhere so images won't be resized.
@@ -86,7 +84,6 @@ namespace x360ce.App.Controls
                 // If recording is not in progress then return.
                 if (Recording) return;
                 Recording = true;
-                recordingSnapshot = null;
                 drawRecordingImage = true;
                 RecordingTimer.Start();
                 CurrentCbx.ForeColor = SystemColors.GrayText;
@@ -96,75 +93,54 @@ namespace x360ce.App.Controls
             }
         }
 
-        /// <summary>Initial Direct Input activity state</summary>
-        DirectInputState recordingSnapshot;
+        List<string> recordingSnapshot;
 
-        /// <summary>
-        /// Called whhen recording is in progress.
-        /// </summary>
-        /// <param name="state">Current direct input activity.</param>
-        /// <returns>True if recording stopped, otherwise false.</returns>
-        public bool StopRecording(DirectInputState state = null)
+        public bool StopRecording(List<string> actions = null)
         {
             lock (recordingLock)
             {
+
                 // If recording is not in progress then return false.
                 if (!Recording)
                 {
                     recordingSnapshot = null;
                     return false;
                 }
-                // If recording snapshot was not created yet then...
                 else if (recordingSnapshot == null)
                 {
-                    // Make snapshot out of the first state during recordining.
-                    recordingSnapshot = state;
-                    return false;
+                    // Make snapshot  out of first state during recordining.
+                    recordingSnapshot = actions;
                 }
-                // Get actions by comparing intial snapshot with current state.
-                var actions = recordingSnapshot.CompareTo(state);
-                string action = null;
-                // Must stop recording if null passed.
-                var stop = actions == null;
-                // if at least one action was recorded then...
-                if (!stop && actions.Length > 0){
-                    // If this is DPad ComboBox then...
-                    if (CurrentCbx == DPadComboBox){
-                        // Get first action suitable for DPad
-                        var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
-                        if (dPadAction != null){
-                            action = dPadRx.Match(dPadAction).Groups[0].Value;
-                            stop = true;
-                        }
-                    }
-                    else 
-                    {
-                        // Get first recorded action.
-                        action = actions[0];
-                        stop = true;
-                    }
-                }
+                // Must stop recording if null passed or at least one action was recorded.
+                var stop = (actions == null || actions.Count > 0);
                 // If recording must stop then...
                 if (stop)
                 {
                     Recording = false;
                     RecordingTimer.Stop();
-                    // If stop was initiaded before action was recorded then...                    
-                    if (string.IsNullOrEmpty(action))
+                    // If stop was initiaded before action was recorded then...
+                    if (actions == null)
                     {
                         CurrentCbx.Items.Clear();
                     }
+                    // If action was recorded then...
                     else
                     {
-                        // If suitable action was recorded then...
-                        SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
+                        // Get first recorded action.
+                        var name = actions[0];
+                        // If this is DPad ComboBox and recorded action is DPad then...
+                        if (CurrentCbx == DPadComboBox && dPadRx.IsMatch(name))
+                        {
+                            name = dPadRx.Match(name).Groups[0].Value;
+                        }
+                        SettingManager.Current.SetComboBoxValue(CurrentCbx, name);
                         // Save setting and notify if vaue changed.
                         if (SettingManager.Current.SaveSetting(CurrentCbx)) MainForm.Current.NotifySettingsChange();
                     }
                     CurrentCbx.ForeColor = SystemColors.WindowText;
                     CurrentCbx = null;
                 }
-                return stop;
+                return true;
             }
         }
 
@@ -229,13 +205,13 @@ namespace x360ce.App.Controls
         Bitmap _topImage;
         Bitmap topImage
         {
-			get { return _topImage = _topImage ?? new Bitmap(EngineHelper.GetResource("Images.xboxControllerTop.png")); }
+            get { return _topImage = _topImage ?? new Bitmap(Helper.GetResource("Images.xboxControllerTop.png")); }
         }
 
         Bitmap _frontImage;
         Bitmap frontImage
         {
-			get { return _frontImage = _frontImage ?? new Bitmap(EngineHelper.GetResource("Images.xboxControllerFront.png")); }
+            get { return _frontImage = _frontImage ?? new Bitmap(Helper.GetResource("Images.xboxControllerFront.png")); }
         }
 
         Bitmap _topDisabledImage;
@@ -246,8 +222,8 @@ namespace x360ce.App.Controls
                 if (_topDisabledImage == null)
                 {
                     _topDisabledImage = (Bitmap)topImage.Clone();
-					AppHelper.GrayScale(_topDisabledImage);
-					AppHelper.Transparent(_topDisabledImage, 50);
+                    Helper.GrayScale(_topDisabledImage);
+                    Helper.Transparent(_topDisabledImage, 50);
                 }
                 return _topDisabledImage;
             }
@@ -261,8 +237,8 @@ namespace x360ce.App.Controls
                 if (_frontDisabledImage == null)
                 {
                     _frontDisabledImage = (Bitmap)frontImage.Clone();
-                    AppHelper.GrayScale(_frontDisabledImage);
-                    AppHelper.Transparent(_frontDisabledImage, 50);
+                    Helper.GrayScale(_frontDisabledImage);
+                    Helper.Transparent(_frontDisabledImage, 50);
                 }
                 return _frontDisabledImage;
             }
@@ -525,18 +501,13 @@ namespace x360ce.App.Controls
         Guid instanceGuid;
 
         /// <summary>
-        /// This function will be called from UpdateTimer on main form.
+        /// This function will be called when DirectInput activity is detected.
         /// </summary>
         /// <param name="device">Device responsible for activity.</param>
         public void UpdateFromDirectInput(Joystick device)
         {
-            // Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
-            JoystickState state;
-            //List<string> actions = 
-            diControl.UpdateFrom(device, out state);
-            DirectInputState diState = null;
-            if (state != null) diState = new DirectInputState(state);
-            StopRecording(diState);
+            List<string> actions = diControl.UpdateFrom(device);
+            StopRecording(actions);
             var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
             var enable = device != null;
             if (!enable && contains)
@@ -560,7 +531,7 @@ namespace x360ce.App.Controls
                 UpdateControl(DirectInputTabPage, device.Information.InstanceName);
             }
             // If this is different device.
-            if (!AppHelper.IsSameDevice(device, instanceGuid))
+            if (!Helper.IsSameDevice(device, instanceGuid))
             {
                 Guid iGuid = Guid.Empty;
                 if (enable)
@@ -667,7 +638,7 @@ namespace x360ce.App.Controls
             if (device == null) return;
             // Add [Record] button.
             mi = new ToolStripMenuItem(cRecord);
-            mi.Image = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+            mi.Image = new Bitmap(Helper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
             mi.Click += new EventHandler(DiMenuStrip_Click);
             DiMenuStrip.Items.Add(mi);
             // Add Buttons.

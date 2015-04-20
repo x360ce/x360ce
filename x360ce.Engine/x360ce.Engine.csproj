@@ -87,19 +87,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
-    <Compile Include="Common\Enum\EnabledState.cs" />
-    <Compile Include="Common\Enum\GameRefreshStatus.cs" />
-    <Compile Include="Common\Enum\HookMask.cs" />
-    <Compile Include="Common\Enum\XInputMask.cs" />
-    <Compile Include="Common\EngineHelper.cs" />
-    <Compile Include="Common\GameDatabaseManager.cs" />
+    <Compile Include="Common\EnabledState.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
     <Compile Include="Common\KeyValue.cs" />
     <Compile Include="Common\KeyValueList.cs" />
     <Compile Include="Common\SearchParameter.cs" />
     <Compile Include="Common\SearchResult.cs" />
-    <Compile Include="Common\Serializer.cs" />
     <Compile Include="Common\SettingsData.cs" />
     <Compile Include="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
@@ -113,13 +107,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>x360ceModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="JocysCom\ClassTools\EnumTools.cs" />
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
-    <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />

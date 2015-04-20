@@ -6,11 +6,11 @@
 #include <dinput.h>
 
 #include "NonCopyable.h"
-#include "ControllerBase.h"
 #include "Controller.h"
-#include "ControllerCombiner.h"
 
 #include "InputHookManager.h"
+
+static const u32 PASSTROUGH = (u32)-2;
 
 class ControllerManager : NonCopyable
 {
@@ -64,17 +64,19 @@ public:
 
     ~ControllerManager()
     {
-		// Remove controllers
         m_controllers.clear();
 
-		// Destroy window
         if (m_hWnd)
             DestroyWindow(m_hWnd);
 
-        PrintLog("ControllerManager shutdown");
+        if (m_pDirectInput)
+        {
+            m_pDirectInput->Release();
+            PrintLog("DirectInput shutdown");
+        }
     }
 
-	DWORD DeviceInitialize(DWORD dwUserIndex, ControllerBase** ppController)
+    u32 DeviceInitialize(DWORD dwUserIndex, Controller** ppController)
     {
         // Global disable
         if (m_config.m_globalDisable)
@@ -84,15 +86,11 @@ public:
         if (!(dwUserIndex < XUSER_MAX_COUNT))
             return ERROR_BAD_ARGUMENTS;
 
-        ControllerBase* pController = nullptr;
+        Controller* pController = nullptr;
         for (auto it = m_controllers.begin(); it != m_controllers.end(); ++it)
         {
-			// Return the first controller that matches
-			if ((*it)->m_user == dwUserIndex)
-			{
-				pController = (*it).get();
-				break;
-			}
+            if (it->m_user == dwUserIndex)
+                pController = &(*it);
         }
 
         if (!pController)
@@ -101,11 +99,9 @@ public:
 
         // passtrough
         if (pController->m_passthrough)
-        {
-            return ERROR_SUCCESS;
-        }
+            return PASSTROUGH;
 
-        if (pController->m_failcount > 20)
+        if (pController->m_failcount > 20) 
             return ERROR_DEVICE_NOT_CONNECTED;
 
         if (!pController->Initalized())
@@ -134,7 +130,7 @@ public:
         return instance;
     }
 
-    std::unique_ptr<IDirectInput8A, COMDeleter>& GetDirectInput()
+    LPDIRECTINPUT8& GetDirectInput()
     {
         return m_pDirectInput;
     }
@@ -144,7 +140,7 @@ public:
         return m_hWnd;
     }
 
-    std::vector<std::shared_ptr<ControllerBase>>& GetControllers()
+    std::vector<Controller>& GetControllers()
     {
         return m_controllers;
     }
@@ -183,8 +179,8 @@ public:
 private:
     HWND m_hWnd;
     Config m_config;
-    std::unique_ptr<IDirectInput8A, COMDeleter> m_pDirectInput;
-	std::vector<std::shared_ptr<ControllerBase>> m_controllers;
+    LPDIRECTINPUT8 m_pDirectInput;
+    std::vector<Controller> m_controllers;
 
     bool enabled;
     bool useEnabled;

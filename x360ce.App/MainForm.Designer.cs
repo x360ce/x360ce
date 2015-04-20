@@ -50,7 +50,6 @@ namespace x360ce.App
             this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
             this.programsControl1 = new x360ce.App.Controls.GameSettingsUserControl();
             this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
-			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.MainTabControl.SuspendLayout();
             this.OptionsTabPage.SuspendLayout();
             this.GameSettingsTabPage.SuspendLayout();
@@ -341,6 +340,7 @@ namespace x360ce.App
             // 
             // programsControl1
             // 
+            this.programsControl1.CurrentGame = ((x360ce.Engine.Data.Game)(resources.GetObject("programsControl1.CurrentGame")));
             this.programsControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.programsControl1.Location = new System.Drawing.Point(3, 3);
             this.programsControl1.Name = "programsControl1";
@@ -418,7 +418,6 @@ namespace x360ce.App
 		TabPage GameSettingsTabPage;
         Controls.GameSettingsUserControl programsControl1;
         public Controls.OptionsControl OptionsPanel;
-        public ToolTip ToolTip;
 
 	}
 }

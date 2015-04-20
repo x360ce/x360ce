@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -232,7 +231,7 @@ namespace x360ce.App.Controls
 
 		void MainLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			EngineHelper.OpenUrl(MainLinkLabel.Text);
+			Helper.OpenUrl(MainLinkLabel.Text);
 		}
 
 	}

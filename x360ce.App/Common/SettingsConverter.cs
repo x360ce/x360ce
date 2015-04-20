@@ -79,8 +79,8 @@ namespace x360ce.App
 				string t = m.Groups["type"].Value;
 				string n = m.Groups["neg"].Value;
 				_Index = int.Parse(m.Groups["num"].Value);
-                if (key.Contains("Analog") && !key.Contains("Button") && t == "") t = SettingName.SType.Axis;
- 				if (key.Contains("D-pad POV")) t = SettingName.SType.DPad;
+				if (key.Contains("Analog") && !key.Contains("Button")) t = SettingName.SType.Axis;
+				if (key.Contains("D-pad POV")) t = SettingName.SType.DPad;
 				if (t == SettingName.SType.Axis && Index == 7) _Index = 0;
 				switch (t)
 				{

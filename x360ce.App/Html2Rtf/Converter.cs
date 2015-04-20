@@ -7,7 +7,6 @@ using System.Xml;
 using System.Windows.Forms;
 using System.IO;
 using System.Collections.Specialized;
-using x360ce.Engine;
 
 namespace x360ce.App.Html2Rtf
 {
@@ -46,7 +45,7 @@ namespace x360ce.App.Html2Rtf
 		{
 			// Load data.
 			var xml = new System.Xml.XmlDocument();
-			xml.Load(EngineHelper.GetResource("Help.htm"));
+			xml.Load(Helper.GetResource("Help.htm"));
 			xml.DocumentElement.SetAttribute("xmlns", "http://www.w3.org/1999/xhtml");
 			xml.DocumentElement.SetAttribute("xmlns:xhtml2rtf", "http://www.lutecia.info/download/xmlns/xhtml2rtf");
 			//xml.DocumentElement.SetAttribute("SelectionLanguage", "XPath");
@@ -54,7 +53,7 @@ namespace x360ce.App.Html2Rtf
 			xml.Load(new StringReader(xml.OuterXml));
 			// Load style sheet.
 			var xslDoc = new System.Xml.XmlDocument();
-			xslDoc.Load(EngineHelper.GetResource("xhtml2rtf.xsl"));
+			xslDoc.Load(Helper.GetResource("xhtml2rtf.xsl"));
 			//xslDoc.DocumentElement.SetAttribute("SelectionLanguage", "XPath");
 			//xslDoc.DocumentElement.SetAttribute("SelectionNamespaces", "xmlns:xhtml='http://www.w3.org/1999/xhtml' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'");
 			//xslDoc.Load(new StringReader(xslDoc.OuterXml));

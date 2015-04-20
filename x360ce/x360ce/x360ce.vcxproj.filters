@@ -19,8 +19,6 @@
     <ClCompile Include="ForceFeedback.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
-    <ClCompile Include="ControllerCombiner.cpp" />
-    <ClCompile Include="ForceFeedbackCombiner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -50,10 +48,6 @@
     <ClInclude Include="ControllerManager.h">
       <Filter>x360ce</Filter>
     </ClInclude>
-    <ClInclude Include="ControllerBase.h" />
-    <ClInclude Include="ForceFeedbackBase.h" />
-    <ClInclude Include="ControllerCombiner.h" />
-    <ClInclude Include="ForceFeedbackCombiner.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="x360ce">

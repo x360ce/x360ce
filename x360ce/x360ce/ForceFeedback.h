@@ -3,38 +3,72 @@
 #include <dinput.h>
 #include "Config.h"
 #include "Mutex.h"
-#include "ForceFeedbackBase.h"
+#include "Timer.h"
 
-class ForceFeedback : public ForceFeedbackBase
+class ForceFeedback
 {
     friend class Controller;
+
+    struct Caps
+    {
+        Caps()
+        {
+            ConstantForce = false;
+            PeriodicForce = false;
+        }
+
+        bool ConstantForce;
+        bool PeriodicForce;
+    };
+
+    struct Motor
+    {
+        Motor() {
+            type = 0;
+            period = 0;
+            strength = 1.0f;
+            actuator = -1;
+
+            effect = nullptr;
+            currentForce = 0;
+            periodBufferMax = -1;
+            periodBufferLast = -1;
+        }
+
+        u8 type;
+        u32 period;
+        float strength;
+        int actuator;
+
+        Timer timer;
+        LPDIRECTINPUTEFFECT effect;
+        LONG currentForce;
+        LONG periodBufferMax;
+        LONG periodBufferLast;
+    };
+
 public:
     ForceFeedback(Controller* pController);
     ~ForceFeedback();
 
-	virtual bool IsSupported();
+    void Shutdown();
+    DWORD SetState(XINPUT_VIBRATION* pVibration);
 
-	virtual bool SetState(XINPUT_VIBRATION* pVibration);
-
-	virtual void Shutdown();
-
+    float m_ForcePercent;
+    Motor m_LeftMotor;
+    Motor m_RightMotor;
+    u32 m_UpdateInterval;
 
 private:
-    static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
-    static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
+    static BOOL CALLBACK EnumActuatorsCallback(LPCDIDEVICEOBJECTINSTANCE pdidoi, LPVOID pvRef);
+    static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO pdiei, LPVOID pvRef);
+    static void CALLBACK ProcessRequests(PVOID lpParameter, BOOLEAN TimerOrWaitFired);
 
-    void SetCaps(const ForceFeedbackCaps& caps)
-    {
-        m_Caps = caps;
-    }
-
-    void StartEffects(DIEFFECT* effectType);
-    bool SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration);
-    bool SetDeviceForcesNew(XINPUT_VIBRATION* pVibration);
-    bool SetDeviceForcesFailsafe(XINPUT_VIBRATION* pVibration);
+    bool IsSupported();
+    bool SetEffects(Motor& motor, LONG speed);
 
     Controller* m_pController;
-    std::vector<LPDIRECTINPUTEFFECT> m_effects;
-    u8 m_Axes;
-    ForceFeedbackCaps m_Caps;
+    Caps m_Caps;
+    std::vector<DWORD> m_Actuators;
+    HANDLE m_hTimer;
 };

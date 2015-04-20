@@ -114,10 +114,6 @@ HookMask = 0x00000002
 Name = Burnout Paradise - The Ultimate Box
 HookMask=0x0000001E
 
-[castle.exe]
-Name = Castle Crashers
-HookMask = 0x00000002
-
 [Cave.exe]
 Name = The Cave
 HookMask = 0x00000002
@@ -144,10 +140,6 @@ HookMask = 0x00000002
 
 [DATA.exe]
 Name = Dark Souls
-HookMask = 0x00000002
-
-[DBXV.exe]
-Name = Dragon Ball Xenoverse
 HookMask = 0x00000002
 
 [DeadIslandGame.exe]
@@ -305,10 +297,6 @@ HookMask = 0x00000002
 [Magicka.exe]
 Name = Magicka
 HookMask = 0x00000002
-
-[MgsGroundZeroes.exe]
-Name = Metal Gear Solid V: Ground Zeroes
-HookMask=0x0000000E
 
 [MirrorsEdge.exe]
 Name = Mirrors Edge

@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Common.h"
+#include "SWIP.h"
 #include "Logger.h"
 #include "Utils.h"
 
+#include "SWIP.h"
 #include "Config.h"
 
 #include "ControllerManager.h"
@@ -23,7 +25,7 @@ static const char * legal_notice = {
 
 VOID InitInstance()
 {
-    IniFile ini;
+    SWIP ini;
     std::string inipath("x360ce.ini");
     if (!ini.Load(inipath))
         CheckCommonDirectory(&inipath, "x360ce");

@@ -141,8 +141,6 @@ inline void PrintLog(const char* format, ...)
     va_end(args);
 }
 
-#define PrintFunc PrintLog(__FUNCTION__);
-
 #else
 #define LogFile(logname) (logname)
 #define LogConsole(title, notice) (title)

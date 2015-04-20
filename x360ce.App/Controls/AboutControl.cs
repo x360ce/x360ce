@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
-using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -42,7 +41,7 @@ namespace x360ce.App.Controls
 
 		void AboutControl_Load(object sender, EventArgs e)
 		{
-			var stream = EngineHelper.GetResource("ChangeLog.txt");
+			var stream = Helper.GetResource("ChangeLog.txt");
 			var sr = new StreamReader(stream);
 			ChangeLogTextBox.Text = sr.ReadToEnd();
 			AboutProductLabel.Text = string.Format(AboutProductLabel.Text, Application.ProductVersion);

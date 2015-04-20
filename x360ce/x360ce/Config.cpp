@@ -1,18 +1,15 @@
 #include "stdafx.h"
 #include "Common.h"
-#include "IniFile.h"
+#include "SWIP.h"
 #include "Logger.h"
 #include "version.h"
 #include "Utils.h"
 #include "InputHook.h"
 
-#include "IniFile.h"
+#include "SWIP.h"
 #include "Config.h"
 
-#include "ControllerBase.h"
 #include "Controller.h"
-#include "ControllerCombiner.h"
-#include "ForceFeedbackBase.h"
 #include "ForceFeedback.h"
 
 #include "ControllerManager.h"
@@ -113,8 +110,8 @@ const u16 Config::povIDs[4] =
 
  const char* const Config::triggerDZNames[] =
 {
-    "Left Trigger DeadZone",
-    "Right Trigger DeadZone"
+    "Left Trigger DZ",
+    "Right Trigger DZ"
 };
 
  const char* const Config::triggerBNames[] =
@@ -160,15 +157,13 @@ const u16 Config::povIDs[4] =
 
 void Config::ReadConfig()
 {
-    IniFile ini;
+    SWIP ini;
     std::string inipath("x360ce.ini");
     if (!ini.Load(inipath))
         CheckCommonDirectory(&inipath, "x360ce");
     if (!ini.Load(inipath)) return;
 
     static bool once_flag = false;
-	bool combineDisabled = false;
-
     if (!once_flag)
     {
         // Read global options
@@ -177,7 +172,7 @@ void Config::ReadConfig()
 
         ini.Get("Options", "UseInitBeep", &m_initBeep, true);
 
-		PrintLog("Using config file:");
+        PrintLog("Using config file:");
         PrintLog(ini.GetIniPath().c_str());
 
         u32 ver = 0;
@@ -188,9 +183,6 @@ void Config::ReadConfig()
         once_flag = true;
     }
 
-	// Is combining disabled at a global level?
-	ini.Get("Options", "CombineDisabled", &combineDisabled);
-
     // Read pad mappings
     for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
     {
@@ -199,92 +191,27 @@ void Config::ReadConfig()
         if (!ini.Get("Mappings", key, &section))
             continue;
 
-		// Determine index
-		u32 index = 0;
-		if (!ini.Get(section, "UserIndex", &index))
-			index = i;
+        u32 index = 0;
+        if (!ini.Get(section, "UserIndex", &index))
+            index = i;
 
-		// Check for a combined controller
-		u32 combinedIndex = 0;
-		bool combined = false;
-		if (!combineDisabled)
-		{
-			// Is this a combined controller?
-			ini.Get(section, "Combined", &combined, false);
+        // Require Controller copy constructor
+        ControllerManager::Get().GetControllers().push_back(Controller(index));
+        Controller* pController = &ControllerManager::Get().GetControllers().back();
 
-			// Get the combined index
-			ini.Get(section, "CombinedIndex", &combinedIndex);
-		}
-
-        // Create controller instance
-		std::shared_ptr<Controller> controller(new Controller(index));
-
-		// Read in configuration
-		Controller* pController = controller.get();
-		if (pController)
-		{
-			if (ReadPadConfig(pController, section, &ini))
-				ReadPadMapping(pController, section, &ini);
-		}
-
-		// If this is a combined device we need to add the combiner instead
-		if (combined)
-		{
-			// Update controller
-			controller->m_combined = true;
-			controller->m_combinedIndex = combinedIndex;
-
-			// Get Controllers
-			// auto controllers = ControllerManager::Get().GetControllers();
-
-			// Attempt to find an existing combiner for the index
-			// auto found = std::find_if(controllers.begin(), controllers.end(), 
-			auto found = std::find_if(ControllerManager::Get().GetControllers().begin(), ControllerManager::Get().GetControllers().end(),
-				[combinedIndex](std::shared_ptr<ControllerBase> c)
-				{
-					return (c->m_combined) && (c->m_combinedIndex == combinedIndex);
-				});
-			
-			// If not found, create it
-			if (found == ControllerManager::Get().GetControllers().end())
-			{
-				// Create combiner
-				std::shared_ptr<ControllerCombiner> combiner(new ControllerCombiner(combinedIndex));
-				
-				// Set the index
-				combiner->m_combinedIndex = combinedIndex;
-
-				// Add the controller to the combiner
-				combiner->GetControllers().push_back(controller);
-
-				// Add the combiner to the controllers collection
-				ControllerManager::Get().GetControllers().push_back(combiner);
-			}
-			else
-			{
-				// Found should represent an existing combiner at this point
-				auto combiner = std::dynamic_pointer_cast<ControllerCombiner>(*found);
-				
-				// Add the controller to the combiner
-				combiner->GetControllers().push_back(controller);
-			}
-		}
-		else
-		{ 
-			// Not a combined device. Just add like normal.
-			ControllerManager::Get().GetControllers().push_back(controller);
-		}
-	}
+        if (ReadPadConfig(pController, section, &ini))
+            ReadPadMapping(pController, section, &ini);
+    }
 }
 
-bool Config::ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile)
+bool Config::ReadPadConfig(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
     std::string buffer;
 
-    if (pIniFile->Get(section, "ProductGUID", &buffer))
+    if (pSWIP->Get(section, "ProductGUID", &buffer))
         StringToGUID(&pController->m_productid, buffer);
 
-    if (pIniFile->Get(section, "InstanceGUID", &buffer))
+    if (pSWIP->Get(section, "InstanceGUID", &buffer))
         StringToGUID(&pController->m_instanceid, buffer);
 
     if (IsEqualGUID(pController->m_productid, GUID_NULL) || IsEqualGUID(pController->m_instanceid, GUID_NULL))
@@ -294,80 +221,62 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
         MessageBoxA(NULL, message.c_str(), "x360ce", MB_ICONERROR);
         return false;
     }
-    
-	// Full pass through
-	pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
+    pSWIP->Get(section, "PassThrough", &pController->m_passthrough);
     if (pController->m_passthrough)
         return false;
 
-	// Forces-only pass through
-	pIniFile->Get(section, "ForcesPassThrough", &pController->m_forcespassthrough);
-
-	/******************************************************************************
-	 * We load controllers by their InstanceGUID or ProductGUID. We also allow 
-	 * users to specify which player they want the controller to represent by 
-	 * specifying a UserIndex. But what if more than one of the controllers being 
-	 * loaded are actual XInput device? For example what if there are two 360
-	 * controllers connected to the system? We could get into a situation where
-	 * physical controller 2 has been mapped to player 1 and vice versa.
-	 *
-	 * This is not normally a problem but it becomes a problem when we want to 
-	 * support pass-through on more than one controller. Whenever it's time to 
-	 * read values from the physical device or time to send vibration data to the 
-	 * physical device, we need to know which one.
-	 *
-	 * It would be best to detect if the device is also an XInput device and set 
-	 * this automaticaly instead of requiring it to be in the config. But that 
-	 * is byond my knowledge of XInput at this time so hopefully someone else 
-	 * can add it. - JBIENZ 2015-04-16
-	 ******************************************************************************/
-	// Pass through index
-	// TODO: Auto Detect during initialization
-	pIniFile->Get<u32>(section, "PassThroughIndex", &pController->m_passthroughindex, 0);
-
     // Device type
-    pIniFile->Get<u8>(section, "ControllerType", &pController->m_gamepadtype, 1);
+    pSWIP->Get(section, "ControllerType", &pController->m_gamepadtype, 1);
 
     // FFB options
-    pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
+    pSWIP->Get(section, "UseForceFeedback", &pController->m_useforce);
     if (pController->m_useforce)
     {
-        pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback->m_SwapMotors);
-        pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback->m_Type);
-        pIniFile->Get<float>(section, "ForcePercent", &pController->m_ForceFeedback->m_ForcePercent, 100);
-        pController->m_ForceFeedback->m_ForcePercent *= 0.01f;
+        pSWIP->Get(section, "ForcePercent", &pController->m_ForceFeedback.m_ForcePercent, 100);
+        pController->m_ForceFeedback.m_ForcePercent *= 0.01f;
 
-        pIniFile->Get<u32>(section, "LeftMotorPeriod", &pController->m_ForceFeedback->m_LeftPeriod, 60);
-        pIniFile->Get<u32>(section, "RightMotorPeriod", &pController->m_ForceFeedback->m_RightPeriod, 20);
+        pSWIP->Get(section, "LeftMotorType", &pController->m_ForceFeedback.m_LeftMotor.type, 0);
+        pSWIP->Get(section, "LeftMotorPeriod", &pController->m_ForceFeedback.m_LeftMotor.period, 100);
+        pSWIP->Get(section, "LeftMotorActuator", &pController->m_ForceFeedback.m_LeftMotor.actuator, 0);
+        pSWIP->Get(section, "LeftMotorStrength", &pController->m_ForceFeedback.m_LeftMotor.strength, 100);
+        pController->m_ForceFeedback.m_LeftMotor.strength *= 0.01f;
+
+        pSWIP->Get(section, "RightMotorType", &pController->m_ForceFeedback.m_RightMotor.type, 0);
+        pSWIP->Get(section, "RightMotorPeriod", &pController->m_ForceFeedback.m_RightMotor.period, 100);
+        pSWIP->Get(section, "RightMotorActuator", &pController->m_ForceFeedback.m_RightMotor.actuator, 1);
+        pSWIP->Get(section, "RightMotorStrength", &pController->m_ForceFeedback.m_RightMotor.strength, 100);
+        pController->m_ForceFeedback.m_RightMotor.strength *= 0.01f;
+
+        pSWIP->Get(section, "FFUpdateInterval", &pController->m_ForceFeedback.m_UpdateInterval, 20);
     }
 
     return true;
 }
 
-void Config::ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile)
+void Config::ReadPadMapping(Controller* pController, const std::string& section, SWIP* pSWIP)
 {
     Mapping* pMapping = &pController->m_mapping;
 
     // Guide button
-    pIniFile->Get<s8>(section, "GuideButton", &pMapping->guide, -1);
+    pSWIP->Get(section, "GuideButton", &pMapping->guide, -1);
 
     // Fire buttons
     for (u32 i = 0; i < _countof(pMapping->Button); ++i)
     {
         s8 button;
-        pIniFile->Get(section, buttonNames[i], &button);
+        pSWIP->Get(section, buttonNames[i], &button);
         pMapping->Button[i] = button - 1;
     }
 
     // D-PAD
-    pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV);
+    pSWIP->Get(section, "D-pad POV", &pMapping->DpadPOV);
     if (pMapping->DpadPOV >= 0)
     {
         for (u32 i = 0; i < _countof(pMapping->pov); ++i)
         {
             // D-PAD directions
             s16 val = 0;
-            pIniFile->Get<s16>(section, povNames[i], &val, -1);
+            pSWIP->Get(section, povNames[i], &val, -1);
             if (val > 0 && val < 128)
             {
                 pMapping->pov[i] = val - 1;
@@ -385,39 +294,32 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
     {
         // Axes
         std::string axis;
-		if (pIniFile->Get(section, axisNames[i], &axis))
-		{
-			ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
-		}
-		else
-		{
-			std::string message = StringFormat("Mapping could not be determined for %s axis %s", section.c_str(), axisNames[i]);
-			PrintLog(message.c_str());
-		}
+        if (pSWIP->Get(section, axisNames[i], &axis))
+            ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
 
         // DeadZones
-        pIniFile->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
+        pSWIP->Get(section, axisDZNames[i], &pMapping->Axis[i].axisdeadzone);
 
         // Anti DeadZones
-        pIniFile->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
+        pSWIP->Get(section, axisADZNames[i], &pMapping->Axis[i].antideadzone);
 
         // Linearity
-        pIniFile->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
+        pSWIP->Get(section, axisLNames[i], &pMapping->Axis[i].axislinear);
 
         // Axis to DPAD options
-        pIniFile->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
-        pIniFile->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
-        pIniFile->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
+        pSWIP->Get(section, "AxisToDPad", &pMapping->Axis[i].axistodpad);
+        pSWIP->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
+        pSWIP->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
 
         // Axis to button mappings
         s8 ret;
-        pIniFile->Get(section, axisBNames[i * 2], &ret);
+        pSWIP->Get(section, axisBNames[i * 2], &ret);
         if (ret > 0)
         {
             pMapping->Axis[i].hasDigital = true;
             pMapping->Axis[i].positiveButtonID = ret - 1;
         }
-        pIniFile->Get(section, axisBNames[i * 2 + 1], &ret);
+        pSWIP->Get(section, axisBNames[i * 2 + 1], &ret);
         if (ret > 0)
         {
             pMapping->Axis[i].hasDigital = true;
@@ -429,13 +331,13 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
     for (u32 i = 0; i < _countof(pMapping->Trigger); ++i)
     {
         std::string trigger;
-        if (pIniFile->Get(section, triggerNames[i], &trigger))
+        if (pSWIP->Get(section, triggerNames[i], &trigger))
             ParsePrefix(trigger, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
 
-        pIniFile->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
+        pSWIP->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
 
         // SeDoG mod
-        pIniFile->Get(section, triggerBNames[i], &pMapping->Trigger[i].but);
+        pSWIP->Get(section, triggerBNames[i], &pMapping->Trigger[i].but);
     }
 }
 

@@ -17,7 +17,6 @@ using System.Diagnostics;
 using System.Linq;
 using SharpDX.XInput;
 using x360ce.Engine.Win32;
-using x360ce.Engine;
 
 namespace x360ce.App
 {
@@ -78,7 +77,7 @@ namespace x360ce.App
             CleanStatusTimer.SynchronizingObject = this;
             CleanStatusTimer.Interval = 3000;
             CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
-            Text = EngineHelper.GetProductFullName();
+            Text = Helper.GetProductFullName();
             // Start Timers.
             UpdateTimer.Start();
         }
@@ -268,7 +267,7 @@ namespace x360ce.App
             var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
             var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
             string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
-			var resource = EngineHelper.GetResource("Presets." + resourceName);
+            var resource = Helper.GetResource("Presets." + resourceName);
             // If internal preset was found.
             if (resource != null)
             {
@@ -449,8 +448,8 @@ namespace x360ce.App
                 if (tmp.Length != ini.Length) { changed = true; }
                 else
                 {
-					var tmpChecksum = EngineHelper.GetFileChecksum(tmp.FullName);
-					var iniChecksum = EngineHelper.GetFileChecksum(ini.FullName);
+                    var tmpChecksum = Helper.GetFileChecksum(tmp.FullName);
+                    var iniChecksum = Helper.GetFileChecksum(ini.FullName);
                     changed = !tmpChecksum.Equals(iniChecksum);
                 }
                 if (changed)
@@ -655,15 +654,29 @@ namespace x360ce.App
             UpdateTimer.Start();
         }
 
+
+        Version GetDllVersion(string fileName, out bool byMicrosoft)
+        {
+            var dllInfo = new System.IO.FileInfo(fileName);
+            byMicrosoft = false;
+            if (dllInfo.Exists)
+            {
+                var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
+                byMicrosoft = !string.IsNullOrEmpty(vi.CompanyName) && vi.CompanyName.Contains("Microsoft");
+                return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+            }
+            return new Version(0, 0, 0, 0);
+        }
+
         public void ReloadLibrary()
         {
             Program.ReloadCount++;
             settingsChanged = false;
-			var dllInfo = EngineHelper.GetDefaultDll();
+            var dllInfo = Helper.GetDefaultDll();
             if (dllInfo != null && dllInfo.Exists)
             {
                 bool byMicrosoft;
-				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
+                var dllVersion = GetDllVersion(dllInfo.FullName, out byMicrosoft);
                 StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
                 // If fast reload od settings is supported then...
                 lock (XInputLock)
@@ -714,7 +727,7 @@ namespace x360ce.App
             {
                 // Move this here so interface will load one second faster.
                 HelpInit = true;
-				var stream = EngineHelper.GetResource("Documents.Help.htm");
+                var stream = Helper.GetResource("Documents.Help.htm");
                 var sr = new StreamReader(stream);
                 NameValueCollection list = new NameValueCollection();
                 list.Add("font-name-default", "'Microsoft Sans Serif'");
@@ -785,21 +798,19 @@ namespace x360ce.App
                     if (!CreateFile(this.GetType().Namespace + ".Presets." + SettingManager.IniFileName, SettingManager.IniFileName)) return false;
                 }
                 // If xinput file doesn't exists.
-				var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
-                var embeddedDllVersion = EngineHelper.GetEmbeddedDllVersion(architecture);
-				var file = EngineHelper.GetDefaultDll();
+                var embeddedDllVersion = Helper.GetEmbeddedDllVersion();
+                var file = Helper.GetDefaultDll();
                 if (file == null)
                 {
-					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-					if (!CreateFile(EngineHelper.GetXInputResoureceName(), xFile)) return false;
+                    if (!CreateFile(Helper.GetXInputResoureceName(), Helper.dllFile3)) return false;
                 }
                 else
                 {
                     bool byMicrosoft;
-					var dllVersion = EngineHelper.GetDllVersion(file.Name, out byMicrosoft);
+                    var dllVersion = GetDllVersion(file.Name, out byMicrosoft);
                     if (dllVersion < embeddedDllVersion)
                     {
-                        CreateFile(EngineHelper.GetXInputResoureceName(), file.Name, dllVersion, embeddedDllVersion);
+                        CreateFile(Helper.GetXInputResoureceName(), file.Name, dllVersion, embeddedDllVersion);
                         return true;
                     }
                 }
@@ -820,12 +831,12 @@ namespace x360ce.App
             if (iniTmp.Exists)
             {
                 // It means that application crashed. Restore ini from temp.
-                if (!AppHelper.CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
+                if (!CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
             }
             else
             {
                 // Create temp file to store original settings.
-                if (!AppHelper.CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
+                if (!CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
             }
             // Set status labels.
             StatusIsAdminLabel.Text = WinAPI.IsVista
@@ -868,7 +879,21 @@ namespace x360ce.App
             //return rMd5.Equals(dMd5);
         }
 
-	       public bool CreateFile(string resourceName, string destinationFileName, Version dllVersion = null, Version newVersion = null)
+        bool CopyFile(string sourceFileName, string destFileName)
+        {
+            try
+            {
+                File.Copy(sourceFileName, destFileName, true);
+            }
+            catch (Exception)
+            {
+                Elevate();
+                return false;
+            }
+            return true;
+        }
+
+        public bool CreateFile(string resourceName, string destinationFileName, Version dllVersion = null, Version newVersion = null)
         {
             if (destinationFileName == null) destinationFileName = resourceName;
             DialogResult answer;
@@ -890,9 +915,35 @@ namespace x360ce.App
             }
             if (answer == DialogResult.Yes)
             {
-				return AppHelper.WriteFile(resourceName, destinationFileName);
+                var assembly = Assembly.GetExecutingAssembly();
+                var sr = assembly.GetManifestResourceStream(resourceName);
+                FileStream sw = null;
+                try
+                {
+                    sw = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write);
+                }
+                catch (Exception)
+                {
+                    Elevate();
+                    return false;
+                }
+                var buffer = new byte[1024];
+                while (true)
+                {
+                    var count = sr.Read(buffer, 0, buffer.Length);
+                    if (count == 0) break;
+                    sw.Write(buffer, 0, count);
+                }
+                sr.Close();
+                sw.Close();
             }
             return true;
+        }
+
+        void Elevate()
+        {
+            // If this is Vista/7 and is not elevated then elevate.
+            if (WinAPI.IsVista && !WinAPI.IsElevated()) WinAPI.RunElevated();
         }
 
         #endregion
@@ -998,8 +1049,7 @@ namespace x360ce.App
         #endregion
 
         /// <summary>
-        /// Clean up any 
-		/// being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)

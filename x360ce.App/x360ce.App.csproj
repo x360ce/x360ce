@@ -45,7 +45,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug_x86\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -54,7 +54,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release_x86\</OutputPath>
@@ -63,7 +63,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release_x86\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -79,7 +79,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug_x64\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Debug\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -96,7 +96,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release_x64\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisLogFile>bin\Release\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
@@ -116,7 +116,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
-    <CodeAnalysisLogFile>bin\Release\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -149,7 +148,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\DeviceDetector.cs" />
     <Compile Include="Common\DeviceDetectorEventArgs.cs" />
     <Compile Include="Common\DeviceDetectorForm.cs">
@@ -158,15 +156,18 @@
     <Compile Include="Common\DeviceDetectorForm.Designer.cs">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Common\DirectInputState.cs" />
+    <Compile Include="Common\DirectInputActivity.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\HookMask.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
+    <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
     <Compile Include="Common\PresetItem.cs" />
     <Compile Include="Common\PropertyComparer.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
+    <Compile Include="Common\Serializer.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingName.cs" />
@@ -175,26 +176,18 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="Common\Vendor.cs" />
+    <Compile Include="Common\XInputMask.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\AboutControl.Designer.cs">
       <DependentUpon>AboutControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\BaseUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\DirectInputControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DirectInputControl.Designer.cs">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GameSettingDetailsUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\GameSettingDetailsUserControl.Designer.cs">
-      <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ThumbUserControl.cs">
       <SubType>UserControl</SubType>
@@ -284,9 +277,6 @@
       <DependentUpon>DirectInputControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\GameSettingDetailsUserControl.resx">
-      <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ThumbUserControl.resx">
       <DependentUpon>ThumbUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -308,7 +298,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameSettingsUserControl.resx">
       <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -350,7 +339,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\SettingsConverter.cs" />
-    <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -416,10 +404,9 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
-    <EmbeddedResource Include="Resources\xinput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
-    <EmbeddedResource Include="Resources\xinput_x86.dll" />
-    <EmbeddedResource Include="Resources\xinput_x64.dll" />
+    <EmbeddedResource Include="Resources\xinput1_3_32.dll" />
+    <EmbeddedResource Include="Resources\xinput1_3_64.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <Content Include="Images\app_48x48.png" />
@@ -445,21 +432,7 @@
     <None Include="Images\check_disabled_16x16.png" />
     <None Include="Images\remove_16x16.png" />
     <None Include="Images\folder_view_16x16.png" />
-    <None Include="Images\enable_16x16.png" />
-    <None Include="Images\launch_16x16.png" />
-    <None Include="Images\checkbox_16x16.png" />
-    <None Include="Images\checkbox_disabled_16x16.png" />
-    <None Include="Images\checkbox_unchecked_16x16.png" />
-    <None Include="Images\checkbox_unchecked_disabled_16x16.png" />
-    <None Include="Images\folder_16x16.png" />
-    <None Include="Images\cloud_computing_refresh_16x16.png" />
-    <None Include="Images\fix_16x16.png" />
-    <None Include="Images\reset_16x16.png" />
-    <None Include="Images\checkbox_undefined_16x16.png" />
-    <None Include="Images\data_into_16x16.png" />
-    <None Include="Images\data_out_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
-    <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
@@ -516,10 +489,7 @@
 if $(PlatformName) == x86 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x86 -s -so -z $(TargetPath)
 if $(PlatformName) == x64 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
 if $(PlatformName) == AnyCPU $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -s -so -z $(TargetPath)
-)
-
-if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
-if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
+)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"

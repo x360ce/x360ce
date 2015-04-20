@@ -64,8 +64,6 @@ namespace x360ce.App
         public const string ProgramScanLocations = "ProgramScanLocations";
         [DefaultValue("1"), Description("Configuration file version.")]
         public const string Version = "Version";
-        [DefaultValue("0"), Description("0 - Controlles may be combined; 1 - controller combining is disabled.")]
-        static public string CombineDisabled { get { return "CombineDisabled"; } }
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]
@@ -79,11 +77,11 @@ namespace x360ce.App
 		// [Mappings] section.
 		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
 		public const string PAD1 = "PAD1";
-		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD2.")]
+		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
 		public const string PAD2 = "PAD2";
-		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD3.")]
+		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
 		public const string PAD3 = "PAD3";
-		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD4.")]
+		[DefaultValue(""), Description("Configuration name of the section which is mapped to PAD1.")]
 		public const string PAD4 = "PAD4";
 
 		// [PAD] section.
@@ -204,11 +202,11 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.")]
 		public const string LeftTrigger = "Left Trigger";
 		[DefaultValue("0"), Description("[0-255] add deadzone to left trigger.")]
-        public const string LeftTriggerDeadZone = "Left Trigger DeadZone";
+		public const string LeftTriggerDeadZone = "LeftTriggerDeadzone";
 		[DefaultValue("0"), Description("Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.")]
 		public const string RightTrigger = "Right Trigger";
 		[DefaultValue("0"), Description("[0-255] add deadzone to right trigger.")]
-        public const string RightTriggerDeadZone = "Right Trigger DeadZone";
+		public const string RightTriggerDeadZone = "RightTriggerDeadZone";
 
 		// Force feedback.
 		[DefaultValue("0"), Description("[0,1] Use force feedback. Disabled = 0, Enabled = 1.")]
