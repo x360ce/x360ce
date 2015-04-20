@@ -1,5 +1,13 @@
 "Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, ...), function as "Xbox 360 Controller". For example, lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using Logitech Wheel.
 
+# Download
+
+Digitally Signed Application 3.0.1.8 Beta 1 (2015-04-19) and Libraries 3.4.1.1181 (2015-04-19)
+
+[32-bit Download](http://www.x360ce.com/Files/x360ce.zip) - for 32-bit games
+
+[64-bit Download](http://www.x360ce.com/Files/x360ce_x64.zip) - for 64-bit games 
+
 # Guides
 
 [x360ce Libraries Tutorial](http://ngemu.com/threads/x360ce-libraries-tutorial-by-resolutespider5.155310/)
