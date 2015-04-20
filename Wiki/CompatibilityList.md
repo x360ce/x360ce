@@ -1,6 +1,6 @@
 Notice: Games listed here do not necessarily reflect the games included in the GDB included in the lib download.
 
-To update the gdb, [save this page over the top of your gdb](https://x360ce.googlecode.com/svn/trunk/x360ce/Support/x360ce.gdb)
+To update the gdb, [save this page over the top of your gdb](https://github.com/x360ce/x360ce/blob/master/x360ce/Support/x360ce.gdb)
 
 # HookMode
 
@@ -75,7 +75,7 @@ Items in these lists are in need of testing with the new hookmask system
   1. Marvel - Ultimate Alliance
 
 # HookMasks
-This is the new system utilised by [r574](https://code.google.com/p/x360ce/source/detail?r=574)+
+This is the new system utilised by r574+
 
 ## Hookmask Not Required
   1. Alone in the dark (2008) (uses xinput1\_1.dll)

@@ -61,7 +61,7 @@ Game Database (GDB) and Configuration (Ini) files can be copied to %Allusersprof
 
 Note:
   * Games based on source engine in most cases have the dll placed inside the /Bin/ subfolder, as it it is loaded by inputsystem.dll instead of the game executable.
-  * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options](options.md) in the x360ce.ini to quieten a incorrect version warning
+  * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options] in the x360ce.ini to quieten a incorrect version warning
 
 ## Uninstallation
 
@@ -75,18 +75,18 @@ Some games will only operate when the controller is considered to be the gamepad
 
   1. Run x360ce.exe
   1. Select tab with your Wheel Controller.
-  1. Open [[Advanced](Advanced.md)] tab page.
+  1. Open [Advanced] tab page.
   1. Set "Device Type" drop down list value to: GamePad
-  1. Click [[Save](Save.md)] button.
+  1. Click [Save] button.
   1. Close x360ce Application, run game.
 
 **How to reduce wheel dead zone (GTA, Mafia II, ...)?**
 
   1. Run x360ce.exe
   1. Select tab with your Wheel Controller.
-  1. Open [[Advanced](Advanced.md)] tab page.
+  1. Open [Advanced] tab page.
   1. Select "Enabled (XInput, 80%)" from "AntiDeadZone" drop down in order to reduce dead zone by 80%.
-  1. Click [[Save](Save.md)] button.
+  1. Click [Save] button.
   1. Close x360ce Application, run game.
 
 > Note: Some games have control issues when the dead zone is reduced by 100%.
@@ -98,7 +98,7 @@ No, You do not need. Close x360ce during the game, because the game does not nee
 **Warning - Configuration file version does not match x360ce version.**
 
 This occurs because the current version of the application is not completely compatible with the DLL just yet.
-You can resolve this by adding Version=1 under the [Options](Options.md) section in x360ce.ini
+You can resolve this by adding Version=1 under the [Options] section in x360ce.ini
 
 **Controller tab won't turn green / Red light on Controller 1,2 etc.**
 

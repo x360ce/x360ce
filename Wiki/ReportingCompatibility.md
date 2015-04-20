@@ -1,6 +1,6 @@
 For games NOT listed in the Game [Compatibility List](CompatibilityList.md)
 
-As of [r574](https://code.google.com/p/x360ce/source/detail?r=574), compatibility is very different, this guide will detail how to report which hookmasks work for which games, how to use the hookmasks and I will compile update the Compatibility page over time.
+As of r574, compatibility is very different, this guide will detail how to report which hookmasks work for which games, how to use the hookmasks and I will compile update the Compatibility page over time.
 
 **HookMode is removed entirely as of [r574](https://code.google.com/p/x360ce/source/detail?r=574)!.**
 
@@ -31,7 +31,7 @@ There are also some other values that are really only useful to the developers s
 
 **X360CE.INI**
 
-In the INI, they are entered under the [InputHook](InputHook.md) section as
+In the INI, they are entered under the InputHook section as
 
   * HookLL=(0/1)
   * HookCOM=(0/1)
