@@ -25,7 +25,8 @@
 		public static Guid GetDiskDriveIdGuid()
 		{
 			if (_DiskDriveIdGuid.HasValue) return _DiskDriveIdGuid.Value;
-			var serialBytes = System.Text.Encoding.ASCII.GetBytes(GetDiskDriveID());
+            var diskId = GetDiskDriveID();
+            var serialBytes = System.Text.Encoding.ASCII.GetBytes(diskId);
 			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
 			byte[] retVal = md5.ComputeHash(serialBytes);
 			_DiskDriveIdGuid = new Guid(retVal);

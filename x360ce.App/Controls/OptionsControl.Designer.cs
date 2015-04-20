@@ -460,7 +460,6 @@
             this.CombineDisabledCheckBox.TabIndex = 1;
             this.CombineDisabledCheckBox.Text = "Disable Combining";
             this.CombineDisabledCheckBox.UseVisualStyleBackColor = true;
-            this.CombineDisabledCheckBox.CheckedChanged += new System.EventHandler(this.CombineDisabledCheckBox_CheckedChanged);
             // 
             // OptionsControl
             // 

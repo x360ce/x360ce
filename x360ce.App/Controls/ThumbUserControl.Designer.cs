@@ -110,7 +110,7 @@
             this.MainGroupBox.Location = new System.Drawing.Point(0, 0);
             this.MainGroupBox.Margin = new System.Windows.Forms.Padding(0);
             this.MainGroupBox.Name = "MainGroupBox";
-            this.MainGroupBox.Size = new System.Drawing.Size(743, 193);
+            this.MainGroupBox.Size = new System.Drawing.Size(578, 193);
             this.MainGroupBox.TabIndex = 12;
             this.MainGroupBox.TabStop = false;
             this.MainGroupBox.Text = "Thumb";
@@ -128,7 +128,7 @@
             // 
             // DeadZoneNumericUpDown
             // 
-            this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 52);
+            this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 103);
             this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -157,7 +157,7 @@
             // 
             // AntiDeadZoneNumericUpDown
             // 
-            this.AntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 103);
+            this.AntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 52);
             this.AntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -172,7 +172,7 @@
             // AntiDeadZoneLabel
             // 
             this.AntiDeadZoneLabel.AutoSize = true;
-            this.AntiDeadZoneLabel.Location = new System.Drawing.Point(159, 87);
+            this.AntiDeadZoneLabel.Location = new System.Drawing.Point(159, 36);
             this.AntiDeadZoneLabel.Name = "AntiDeadZoneLabel";
             this.AntiDeadZoneLabel.Size = new System.Drawing.Size(85, 13);
             this.AntiDeadZoneLabel.TabIndex = 16;
@@ -181,7 +181,7 @@
             // DeadZoneLabel
             // 
             this.DeadZoneLabel.AutoSize = true;
-            this.DeadZoneLabel.Location = new System.Drawing.Point(159, 36);
+            this.DeadZoneLabel.Location = new System.Drawing.Point(159, 87);
             this.DeadZoneLabel.Name = "DeadZoneLabel";
             this.DeadZoneLabel.Size = new System.Drawing.Size(64, 13);
             this.DeadZoneLabel.TabIndex = 13;
@@ -190,7 +190,7 @@
             // AntiDeadZoneTrackBar
             // 
             this.AntiDeadZoneTrackBar.AutoSize = false;
-            this.AntiDeadZoneTrackBar.Location = new System.Drawing.Point(162, 103);
+            this.AntiDeadZoneTrackBar.Location = new System.Drawing.Point(162, 52);
             this.AntiDeadZoneTrackBar.Maximum = 100;
             this.AntiDeadZoneTrackBar.Name = "AntiDeadZoneTrackBar";
             this.AntiDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -201,7 +201,7 @@
             // DeadZoneTrackBar
             // 
             this.DeadZoneTrackBar.AutoSize = false;
-            this.DeadZoneTrackBar.Location = new System.Drawing.Point(162, 52);
+            this.DeadZoneTrackBar.Location = new System.Drawing.Point(162, 103);
             this.DeadZoneTrackBar.Maximum = 100;
             this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
             this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -211,7 +211,7 @@
             // 
             // AntiDeadZoneTextBox
             // 
-            this.AntiDeadZoneTextBox.Location = new System.Drawing.Point(395, 103);
+            this.AntiDeadZoneTextBox.Location = new System.Drawing.Point(395, 52);
             this.AntiDeadZoneTextBox.Name = "AntiDeadZoneTextBox";
             this.AntiDeadZoneTextBox.ReadOnly = true;
             this.AntiDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -222,7 +222,7 @@
             // 
             // DeadZoneTextBox
             // 
-            this.DeadZoneTextBox.Location = new System.Drawing.Point(395, 52);
+            this.DeadZoneTextBox.Location = new System.Drawing.Point(395, 103);
             this.DeadZoneTextBox.Name = "DeadZoneTextBox";
             this.DeadZoneTextBox.ReadOnly = true;
             this.DeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -316,35 +316,35 @@
             // P_0_100_0_MenuItem
             // 
             this.P_0_100_0_MenuItem.Name = "P_0_100_0_MenuItem";
-            this.P_0_100_0_MenuItem.Size = new System.Drawing.Size(327, 22);
+            this.P_0_100_0_MenuItem.Size = new System.Drawing.Size(321, 22);
             this.P_0_100_0_MenuItem.Text = "100% Controller Anti-DeadZone";
             this.P_0_100_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
             // 
             // P_0_80_0_MenuItem
             // 
             this.P_0_80_0_MenuItem.Name = "P_0_80_0_MenuItem";
-            this.P_0_80_0_MenuItem.Size = new System.Drawing.Size(327, 22);
+            this.P_0_80_0_MenuItem.Size = new System.Drawing.Size(321, 22);
             this.P_0_80_0_MenuItem.Text = "80% Controller Anti-DeadZone";
             this.P_0_80_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
             // 
             // P_0_60_0_MenuItem
             // 
             this.P_0_60_0_MenuItem.Name = "P_0_60_0_MenuItem";
-            this.P_0_60_0_MenuItem.Size = new System.Drawing.Size(327, 22);
+            this.P_0_60_0_MenuItem.Size = new System.Drawing.Size(321, 22);
             this.P_0_60_0_MenuItem.Text = "60% Controller Anti-DeadZone";
             this.P_0_60_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
             // 
             // P_0_40_0_MenuItem
             // 
             this.P_0_40_0_MenuItem.Name = "P_0_40_0_MenuItem";
-            this.P_0_40_0_MenuItem.Size = new System.Drawing.Size(327, 22);
+            this.P_0_40_0_MenuItem.Size = new System.Drawing.Size(321, 22);
             this.P_0_40_0_MenuItem.Text = "40% Controller Anti-DeadZone";
             this.P_0_40_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
             // 
             // P_0_20_0_MenuItem
             // 
             this.P_0_20_0_MenuItem.Name = "P_0_20_0_MenuItem";
-            this.P_0_20_0_MenuItem.Size = new System.Drawing.Size(327, 22);
+            this.P_0_20_0_MenuItem.Size = new System.Drawing.Size(321, 22);
             this.P_0_20_0_MenuItem.Text = "20% Controller Anti-DeadZone";
             this.P_0_20_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
             // 
@@ -354,7 +354,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.MainGroupBox);
             this.Name = "ThumbUserControl";
-            this.Size = new System.Drawing.Size(743, 193);
+            this.Size = new System.Drawing.Size(578, 193);
             this.Load += new System.EventHandler(this.LinearUserControl_Load);
             this.EnabledChanged += new System.EventHandler(this.ThumbUserControl_EnabledChanged);
             ((System.ComponentModel.ISupportInitialize)(this.SensitivityTrackBar)).EndInit();

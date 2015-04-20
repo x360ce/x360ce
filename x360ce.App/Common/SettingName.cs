@@ -65,7 +65,7 @@ namespace x360ce.App
         [DefaultValue("1"), Description("Configuration file version.")]
         public const string Version = "Version";
         [DefaultValue("0"), Description("0 - Controlles may be combined; 1 - controller combining is disabled.")]
-        static public string CombineDisabled { get { return "CombineDisabled"; } }
+        static public string CombineDisabled = "CombineDisabled";
 
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching, 1 only USB, 2 USB and HID, 0 disable.")]

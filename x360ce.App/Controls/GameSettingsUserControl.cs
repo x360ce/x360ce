@@ -24,6 +24,7 @@ namespace x360ce.App.Controls
             ScanProgressLabel.Text = "";
             InitDefaultList();
             SettingsFile.Current.Programs.ListChanged += Programs_ListChanged;
+            HashedDiskIdTextBox.Text = BoardInfo.GetDiskDriveIdGuid().ToString();
         }
 
         bool IsDesignMode
@@ -92,7 +93,8 @@ namespace x360ce.App.Controls
                 {
 
                     var exe = exes[f];
-                    var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == exe.Name);
+                    var exeName = exe.Name.ToLower();
+                    var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
                     // If file doesn't exist in the game list then continue.
                     if (program == null)
                     {
@@ -101,7 +103,7 @@ namespace x360ce.App.Controls
                     else
                     {
                         // Get game by executable name.
-                        var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exe.Name.ToLower());
+                        var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
                         // If file doesn't exist in the game list then continue.
                         if (game == null)
                         {
@@ -193,8 +195,8 @@ namespace x360ce.App.Controls
             if (selected)
             {
                 var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-                var fileName = ((x360ce.Engine.Data.Game)row.DataBoundItem).FileName;
-                var item = SettingsFile.Current.Games.First(x => x.FileName == fileName);
+                var fileName = ((x360ce.Engine.Data.Game)row.DataBoundItem).FileName.ToLower();
+                var item = SettingsFile.Current.Games.First(x => x.FileName.ToLower() == fileName);
                 GameDetailsControl.CurrentGame = item;
             }
             else
@@ -255,12 +257,12 @@ namespace x360ce.App.Controls
             var fi = new System.IO.FileInfo(filePath);
             if (!fi.Exists) return;
             // Check if item already exists.
-            var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName == fi.Name);
+            var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
             if (game == null)
             {
                 game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
                 // Load default settings.
-                var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == game.FileName);
+                var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
                 game.LoadDefault(program);
                 SettingsFile.Current.Games.Add(game);
 
@@ -287,7 +289,7 @@ namespace x360ce.App.Controls
                 var row = grid.Rows[e.RowIndex];
                 var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
                 // Workaround for first cell click.
-                var game = SettingsFile.Current.Games.First(x => x.FileName == item.FileName);
+                var game = SettingsFile.Current.Games.First(x => x.FileName.ToLower() == item.FileName.ToLower());
                 game.IsEnabled = !game.IsEnabled;
                 RebindGames();
             }

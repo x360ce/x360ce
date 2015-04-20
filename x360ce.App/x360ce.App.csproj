@@ -55,6 +55,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release_x86\</OutputPath>
@@ -71,6 +72,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -88,6 +90,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release_x64\</OutputPath>
@@ -104,6 +107,7 @@
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -112,6 +116,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -124,6 +129,7 @@
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -180,9 +186,6 @@
     </Compile>
     <Compile Include="Controls\AboutControl.Designer.cs">
       <DependentUpon>AboutControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\BaseUserControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\DirectInputControl.cs">
       <SubType>UserControl</SubType>
@@ -283,9 +286,6 @@
     <EmbeddedResource Include="Controls\DirectInputControl.resx">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\GameSettingDetailsUserControl.resx">
-      <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ThumbUserControl.resx">
       <DependentUpon>ThumbUserControl.cs</DependentUpon>
@@ -513,17 +513,15 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
-if $(PlatformName) == x86 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x86 -s -so -z $(TargetPath)
-if $(PlatformName) == x64 $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
+if $(PlatformName) == x86 $(SolutionDir)x360ce.App\Resources\NetZ\netz.exe -pl x86 -s -so -z $(TargetPath)
+if $(PlatformName) == x64 $(SolutionDir)x360ce.App\Resources\NetZ\netz.exe -pl x64 -s -so -z $(TargetPath)
 if $(PlatformName) == AnyCPU $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -s -so -z $(TargetPath)
 )
-
-if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
-if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
+::if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
+::if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"
-copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"
-IF NOT EXIST "$(ProjectDir)$(OutDir)x360ce.ini" copy "$(ProjectDir)presets\x360ce.ini" "$(ProjectDir)$(OutDir)x360ce.ini"</PreBuildEvent>
+copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"</PreBuildEvent>
   </PropertyGroup>
 </Project>

@@ -66,8 +66,7 @@ namespace x360ce.App.Controls
             sm.Add(section + SettingName.HookMode, FakeModeComboBox);
             sm.Add(section + SettingName.FakePID, HookModeFakePidTextBox);
             sm.Add(section + SettingName.FakeVID, HookModeFakeVidTextBox);
-
-            SettingManager.Current.AddMap(section, () => SettingName.CombineDisabled, UseInitBeepCheckBox);
+            sm.Add(section + SettingName.CombineDisabled, UseInitBeepCheckBox);
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -163,12 +162,6 @@ namespace x360ce.App.Controls
 			string argument = @"/select, " + GameDatabaseManager.Current.InitialFile.FullName;
 			System.Diagnostics.Process.Start("explorer.exe", argument);
 		}
-
-        private void CombineDisabledCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            // Save setting and notify if vaue changed.
-            if (SettingManager.Current.SaveSetting(CombineDisabledCheckBox)) MainForm.Current.NotifySettingsChange();
-        }
 
     }
 }
