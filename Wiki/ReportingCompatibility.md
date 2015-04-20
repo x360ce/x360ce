@@ -2,7 +2,7 @@ For games NOT listed in the Game [Compatibility List](CompatibilityList.md)
 
 As of r574, compatibility is very different, this guide will detail how to report which hookmasks work for which games, how to use the hookmasks and I will compile update the Compatibility page over time.
 
-**HookMode is removed entirely as of [r574](https://code.google.com/p/x360ce/source/detail?r=574)!.**
+**HookMode is removed entirely as of r574!.**
 
 Games that use Xinput only usually do not require a hooking mask, but others do, particularly those that use unusual methods for detecting Xbox360 pads or support both Xinput and DirectInput pads(these are usually requiring HookCOM).
 
