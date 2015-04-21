@@ -48,7 +48,7 @@ HookMask = 0x00000002
 
 [AssassinsCreed_Dx10.exe]
 Name = Assasin's Creed DX10
-HookMask = 0x000001E
+HookMask = 0x0000001E
 
 [AssassinsCreed_Dx9.exe]
 Name = Assasin's Creed DX9
@@ -322,6 +322,10 @@ HookMask = 0x00000002
 Name = Mortal Kombat Komplete Edition
 HookMask = 0x00000002
 
+[MK10.exe]
+Name = Mortal Kombat X
+HookMask = 0x00000002 
+
 [NBA2K13.exe]
 Name = NBA 2k13
 HookMask = 0x00000002
@@ -353,6 +357,10 @@ HookMask = 0x00000002
 [OLGame.exe]
 Name = Outlast
 HookMask = 0x00000002
+
+[R6Vegas2_Game.exe]
+Name = Tom Clancy's Rainbow Six Vegas 2
+HookMask = 0x0000000e
 
 [Rayman Legends.exe]
 Name = Rayman Legends
@@ -491,7 +499,11 @@ Name = Worms Revolution
 HookMask = 0x00000002
 
 [x360ce.exe]
-Name = x360ce.App
+Name = TocaEdit X360 Controller Emulator
+HookMask = 0
+
+[x360ce_x64.exe]
+Name = TocaEdit X360 Controller Emulator
 HookMask = 0
 
 [XComEW.exe]
