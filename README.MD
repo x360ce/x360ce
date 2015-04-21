@@ -38,7 +38,6 @@ Notes:
   * For Windows XP and Vista, users can obtain it from the above link, and Windows 8 users can enable it in [Programs and Features - Turn Windows Features on and off.](http://msdn.microsoft.com/en-us/library/hh506443.aspx)
   * **.NET MUST be installed prior to the DirectX webupdate as it checks that .NET 2.0/3.0/3.5 is installed and skips the Managed DirectX framework if it is not.**
   * The full DirectX Redistributable will always install the file, however its best to have .NET 3.5 installed anyhow as quite a few Xinput titles utilize .NET for internal dependencies.
-  * **Please also look here for more in depth guides: https://code.google.com/p/x360ce/wiki/Manuals***
 
 # Introduction
 
