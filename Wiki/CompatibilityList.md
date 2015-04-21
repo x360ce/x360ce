@@ -177,6 +177,7 @@ This is the new system utilised by r574+
   1. Mirror's Edge
   1. Mortal Kombat Arcade Kollection
   1. Mortal Kombat Komplete Edition
+  1. Mortal Kombat X (uses xinput9\_1\_0.dll) (64bit only)
   1. Need For Speed Most Wanted 2012
   1. NBA 2k13
   1. NBA 2k14
@@ -230,7 +231,7 @@ This is the new system utilised by r574+
   1. Baconing, The (HookLL + HookCOM)
   1. Burnout Paradise - The Ultimate Box (HookCOM + HookDI + HookVIDPID + HookName)
   1. FIFA 14 (HookCOM + HookDI + HookVIDPID + HookName)
-  1. Final Fantasy XIV: A Realm Reborn(HookCOM + HookDI + HookVIDPID)
+  1. Final Fantasy XIV: A Realm Reborn (HookCOM + HookDI + HookVIDPID)
   1. I Am Alive (HookCOM + HookDI + HookVIDPID) (uses xinput9\_1\_0.dll)
   1. Kane & Lynch - Dead Men (HookCOM + HookDI + HookVIDPID + HookName)
   1. Metal Gear Solid V: Ground Zeroes (HookCOM + Hook\_DI + HookVIDPID) (64bit only)
@@ -239,8 +240,9 @@ This is the new system utilised by r574+
   1. Teenage Mutant Ninja Turtles: Out of Shadows (HookCOM + HookDI + HookVIDPID)
   1. Tom Clancy's H.A.W.X (HookCOM + HookDI + HookVIDPID)
   1. Tom Clancy's H.A.W.X 2 (HookCOM + HookDI + HookVIDPID)
-  1. Tom Clancy's Splinter Cell Blacklist(HookCOM + HookDI + HookVIDPID)
-  1. Tom Clancy's Splinter Cell Conviction(HookCOM + HookDI + HookVIDPID)
+  1. Tom Clancy's Rainbow Six Vegas 2 (HookCOM + HookDI + HookVIDPID)
+  1. Tom Clancy's Splinter Cell Blacklist (HookCOM + HookDI + HookVIDPID)
+  1. Tom Clancy's Splinter Cell Conviction (HookCOM + HookDI + HookVIDPID)
 
 ### Notes:
   1. All games utilise the x86 version of the xinput1\_3.dll unless otherwise specified.
