@@ -61,12 +61,12 @@ namespace x360ce.App
 			var desc = (descAttr != null ? descAttr.Description : string.Empty);
 
 			// Set the tooltip
-			MainForm.Current.ToolTip.SetToolTip(control, desc);
+			// MainForm.Current.ToolTip.SetToolTip(control, desc);
 
 			// Alternative (a little bit less obstructive) way to display help inside yellow header.
 			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
-			//control.MouseHover += control_MouseEnter;
-			//control.MouseLeave += control_MouseLeave;
+			control.MouseHover += control_MouseEnter;
+			control.MouseLeave += control_MouseLeave;
 			Descriptions.Add(control, desc);
 
 			// Add to the map
