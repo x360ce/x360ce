@@ -99,7 +99,6 @@
             this.CombineEnabledCheckBox.TabIndex = 1;
             this.CombineEnabledCheckBox.Text = "Enable Combining";
             this.CombineEnabledCheckBox.UseVisualStyleBackColor = true;
-            this.CombineEnabledCheckBox.CheckedChanged += new System.EventHandler(this.CombineEnabledCheckBox_CheckedChanged);
             // 
             // XInputEnableCheckBox
             // 

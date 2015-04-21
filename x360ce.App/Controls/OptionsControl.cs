@@ -11,149 +11,149 @@ using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
-    public partial class OptionsControl : UserControl
-    {
-        public OptionsControl()
-        {
-            InitializeComponent();
-            if (DesignMode) return;
-        }
+	public partial class OptionsControl : UserControl
+	{
+		public OptionsControl()
+		{
+			InitializeComponent();
+			if (DesignMode) return;
+		}
 
-        public void InitOptions()
-        {
-            DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
-            // Fill FakeWmi ComboBox.
-            var fakeModeOptions = new List<KeyValuePair>();
-            var fakeModeTypes = (HookMode[])Enum.GetValues(typeof(HookMode));
-            foreach (var item in fakeModeTypes) fakeModeOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-            FakeModeComboBox.DataSource = fakeModeOptions;
-            FakeModeComboBox.DisplayMember = "Key";
-            FakeModeComboBox.ValueMember = "Value";
-        }
+		public void InitOptions()
+		{
+			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
+			// Fill FakeWmi ComboBox.
+			var fakeModeOptions = new List<KeyValuePair>();
+			var fakeModeTypes = (HookMode[])Enum.GetValues(typeof(HookMode));
+			foreach (var item in fakeModeTypes) fakeModeOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
+			FakeModeComboBox.DataSource = fakeModeOptions;
+			FakeModeComboBox.DisplayMember = "Key";
+			FakeModeComboBox.ValueMember = "Value";
+		}
 
-        void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            var cbx = (CheckBox)sender;
-            if (!cbx.Checked) Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-            else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-        }
+		void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			var cbx = (CheckBox)sender;
+			if (!cbx.Checked) Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
+			else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
+		}
 
-        void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            MainForm.Current.XInputEnable(XInputEnableCheckBox.Checked);
-        }
+		void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			MainForm.Current.XInputEnable(XInputEnableCheckBox.Checked);
+		}
 
-        /// <summary>
-        /// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
-        /// </summary>
-        public void InitSettingsManager()
-        {
-            // INI setting keys with controls.
-            string section = @"Options\";
-            SettingManager.AddMap(section, () => SettingName.UseInitBeep, UseInitBeepCheckBox);
-            SettingManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
-            SettingManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
-            SettingManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
-            SettingManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
-            SettingManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
-            SettingManager.AddMap(section, () => SettingName.InternetAutoload, InternetAutoloadCheckBox);
-            SettingManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-            SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
-            SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
-            SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
-            
-            section = @"InputHook\";
-            SettingManager.AddMap(section, () => SettingName.HookMode, FakeModeComboBox);
-            SettingManager.AddMap(section, () => SettingName.FakePID, HookModeFakePidTextBox);
-            SettingManager.AddMap(section, () => SettingName.FakeVID, HookModeFakeVidTextBox);
-        }
+		/// <summary>
+		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// </summary>
+		public void InitSettingsManager()
+		{
+			// INI setting keys with controls.
+			string section = @"Options\";
+			SettingManager.AddMap(section, () => SettingName.UseInitBeep, UseInitBeepCheckBox);
+			SettingManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
+			SettingManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
+			SettingManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
+			SettingManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
+			SettingManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
+			SettingManager.AddMap(section, () => SettingName.InternetAutoload, InternetAutoloadCheckBox);
+			SettingManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
+			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
+			SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
 
-        void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
-        }
+			section = @"InputHook\";
+			SettingManager.AddMap(section, () => SettingName.HookMode, FakeModeComboBox);
+			SettingManager.AddMap(section, () => SettingName.FakePID, HookModeFakePidTextBox);
+			SettingManager.AddMap(section, () => SettingName.FakeVID, HookModeFakeVidTextBox);
+		}
 
-        private void AddLocationButton_Click(object sender, EventArgs e)
-        {
-            var path = LocationFolderBrowserDialog.SelectedPath;
-            if (string.IsNullOrEmpty(path)) path = GameScanLocationsListBox.Text;
-            if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-            LocationFolderBrowserDialog.SelectedPath = path;
-            LocationFolderBrowserDialog.Description = "Browse for Scan Location";
-            var result = LocationFolderBrowserDialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                // Don't allow to add windows folder.
-                var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-                if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder))
-                {
-                    MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    if (!Contains(LocationFolderBrowserDialog.SelectedPath))
-                    {
-                        GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
-                        // Change selected index for change event to fire.
-                        GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
-                    }
-                }
-            }
-        }
+		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
+		}
 
-        private void RemoveLocationButton_Click(object sender, EventArgs e)
-        {
-            if (GameScanLocationsListBox.SelectedIndex == -1) return;
-            var currentIndex = GameScanLocationsListBox.SelectedIndex;
-            GameScanLocationsListBox.Items.RemoveAt(currentIndex);
-            // Change selectd index for change event to fire.
-            GameScanLocationsListBox.SelectedIndex = Math.Min(currentIndex, GameScanLocationsListBox.Items.Count - 1);
-        }
+		private void AddLocationButton_Click(object sender, EventArgs e)
+		{
+			var path = LocationFolderBrowserDialog.SelectedPath;
+			if (string.IsNullOrEmpty(path)) path = GameScanLocationsListBox.Text;
+			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+			LocationFolderBrowserDialog.SelectedPath = path;
+			LocationFolderBrowserDialog.Description = "Browse for Scan Location";
+			var result = LocationFolderBrowserDialog.ShowDialog();
+			if (result == System.Windows.Forms.DialogResult.OK)
+			{
+				// Don't allow to add windows folder.
+				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder))
+				{
+					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					if (!Contains(LocationFolderBrowserDialog.SelectedPath))
+					{
+						GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
+						// Change selected index for change event to fire.
+						GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
+					}
+				}
+			}
+		}
 
-        private void ProgramScanLocationsListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            RemoveLocationButton.Enabled = GameScanLocationsListBox.SelectedIndex > -1;
-        }
+		private void RemoveLocationButton_Click(object sender, EventArgs e)
+		{
+			if (GameScanLocationsListBox.SelectedIndex == -1) return;
+			var currentIndex = GameScanLocationsListBox.SelectedIndex;
+			GameScanLocationsListBox.Items.RemoveAt(currentIndex);
+			// Change selectd index for change event to fire.
+			GameScanLocationsListBox.SelectedIndex = Math.Min(currentIndex, GameScanLocationsListBox.Items.Count - 1);
+		}
 
-        bool Contains(string path)
-        {
-            var paths = GameScanLocationsListBox.Items.Cast<string>().ToArray();
-            for (int i = 0; i < paths.Length; i++)
-            {
-                if (paths[i].ToLower() == path.ToLower()) return true;
-            }
-            return false;
-        }
+		private void ProgramScanLocationsListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			RemoveLocationButton.Enabled = GameScanLocationsListBox.SelectedIndex > -1;
+		}
 
-        private void RefreshLocationsButton_Click(object sender, EventArgs e)
-        {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
-            path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
-            DriveInfo[] allDrives = DriveInfo.GetDrives();
-            foreach (DriveInfo d in allDrives)
-            {
-                if (d.IsReady == true && d.DriveType == DriveType.Fixed)
-                {
-                    try
-                    {
-                        var programDirs = d.RootDirectory.GetDirectories("Program Files*");
-                        for (int i = 0; i < programDirs.Count(); i++)
-                        {
-                            path = programDirs[i].FullName;
-                            if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
-                        }
-                    }
-                    catch (Exception) { }
-                }
-            }
-        }
+		bool Contains(string path)
+		{
+			var paths = GameScanLocationsListBox.Items.Cast<string>().ToArray();
+			for (int i = 0; i < paths.Length; i++)
+			{
+				if (paths[i].ToLower() == path.ToLower()) return true;
+			}
+			return false;
+		}
 
-        private void SaveSettingsButton_Click(object sender, EventArgs e)
-        {
-            MainForm.Current.SaveSettings();
-        }
+		private void RefreshLocationsButton_Click(object sender, EventArgs e)
+		{
+			var path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
+			path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
+			DriveInfo[] allDrives = DriveInfo.GetDrives();
+			foreach (DriveInfo d in allDrives)
+			{
+				if (d.IsReady == true && d.DriveType == DriveType.Fixed)
+				{
+					try
+					{
+						var programDirs = d.RootDirectory.GetDirectories("Program Files*");
+						for (int i = 0; i < programDirs.Count(); i++)
+						{
+							path = programDirs[i].FullName;
+							if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
+						}
+					}
+					catch (Exception) { }
+				}
+			}
+		}
+
+		private void SaveSettingsButton_Click(object sender, EventArgs e)
+		{
+			MainForm.Current.SaveSettings();
+		}
 
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
 		{
@@ -161,13 +161,5 @@ namespace x360ce.App.Controls
 			string argument = @"/select, " + GameDatabaseManager.Current.InitialFile.FullName;
 			System.Diagnostics.Process.Start("explorer.exe", argument);
 		}
-
-        private void CombineEnabledCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            // Save setting and notify if vaue changed. 
-            if (SettingManager.Current.SaveSetting(CombineEnabledCheckBox)) MainForm.Current.NotifySettingsChange(); 
-
-        }
-
-    }
+	}
 }
