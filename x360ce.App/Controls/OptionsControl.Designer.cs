@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
+            this.CombineEnabledCheckBox = new System.Windows.Forms.CheckBox();
             this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
             this.UseInitBeepCheckBox = new System.Windows.Forms.CheckBox();
             this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
@@ -61,7 +62,6 @@
             this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
             this.SaveSettingsButton = new System.Windows.Forms.Button();
             this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
-            this.CombineDisabledCheckBox = new System.Windows.Forms.CheckBox();
             this.TestingAndLoggingGroupBox.SuspendLayout();
             this.OperationGroupBox.SuspendLayout();
             this.InternetGroupBox.SuspendLayout();
@@ -74,20 +74,32 @@
             // 
             // TestingAndLoggingGroupBox
             // 
-            this.TestingAndLoggingGroupBox.Controls.Add(this.CombineDisabledCheckBox);
+            this.TestingAndLoggingGroupBox.Controls.Add(this.CombineEnabledCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
             this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
             this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(4, 218);
-            this.TestingAndLoggingGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TestingAndLoggingGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-            this.TestingAndLoggingGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TestingAndLoggingGroupBox.Padding = new System.Windows.Forms.Padding(4);
             this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(321, 167);
             this.TestingAndLoggingGroupBox.TabIndex = 30;
             this.TestingAndLoggingGroupBox.TabStop = false;
             this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
+            // 
+            // CombineEnabledCheckBox
+            // 
+            this.CombineEnabledCheckBox.AutoSize = true;
+            this.CombineEnabledCheckBox.Location = new System.Drawing.Point(166, 26);
+            this.CombineEnabledCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.CombineEnabledCheckBox.Name = "CombineEnabledCheckBox";
+            this.CombineEnabledCheckBox.Size = new System.Drawing.Size(144, 21);
+            this.CombineEnabledCheckBox.TabIndex = 1;
+            this.CombineEnabledCheckBox.Text = "Enable Combining";
+            this.CombineEnabledCheckBox.UseVisualStyleBackColor = true;
+            this.CombineEnabledCheckBox.CheckedChanged += new System.EventHandler(this.CombineEnabledCheckBox_CheckedChanged);
             // 
             // XInputEnableCheckBox
             // 
@@ -95,7 +107,7 @@
             this.XInputEnableCheckBox.Checked = true;
             this.XInputEnableCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.XInputEnableCheckBox.Location = new System.Drawing.Point(9, 26);
-            this.XInputEnableCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.XInputEnableCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.XInputEnableCheckBox.Name = "XInputEnableCheckBox";
             this.XInputEnableCheckBox.Size = new System.Drawing.Size(118, 21);
             this.XInputEnableCheckBox.TabIndex = 0;
@@ -106,7 +118,7 @@
             // 
             this.UseInitBeepCheckBox.AutoSize = true;
             this.UseInitBeepCheckBox.Location = new System.Drawing.Point(8, 54);
-            this.UseInitBeepCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.UseInitBeepCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
             this.UseInitBeepCheckBox.Size = new System.Drawing.Size(114, 21);
             this.UseInitBeepCheckBox.TabIndex = 0;
@@ -117,7 +129,7 @@
             // 
             this.ConsoleCheckBox.AutoSize = true;
             this.ConsoleCheckBox.Location = new System.Drawing.Point(8, 111);
-            this.ConsoleCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ConsoleCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.ConsoleCheckBox.Name = "ConsoleCheckBox";
             this.ConsoleCheckBox.Size = new System.Drawing.Size(129, 21);
             this.ConsoleCheckBox.TabIndex = 0;
@@ -130,7 +142,7 @@
             this.DebugModeCheckBox.Checked = true;
             this.DebugModeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.DebugModeCheckBox.Location = new System.Drawing.Point(8, 139);
-            this.DebugModeCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.DebugModeCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.DebugModeCheckBox.Name = "DebugModeCheckBox";
             this.DebugModeCheckBox.Size = new System.Drawing.Size(111, 21);
             this.DebugModeCheckBox.TabIndex = 0;
@@ -141,7 +153,7 @@
             // 
             this.EnableLoggingCheckBox.AutoSize = true;
             this.EnableLoggingCheckBox.Location = new System.Drawing.Point(8, 82);
-            this.EnableLoggingCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.EnableLoggingCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
             this.EnableLoggingCheckBox.Size = new System.Drawing.Size(129, 21);
             this.EnableLoggingCheckBox.TabIndex = 0;
@@ -152,9 +164,9 @@
             // 
             this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
             this.OperationGroupBox.Location = new System.Drawing.Point(4, 142);
-            this.OperationGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OperationGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.OperationGroupBox.Name = "OperationGroupBox";
-            this.OperationGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OperationGroupBox.Padding = new System.Windows.Forms.Padding(4);
             this.OperationGroupBox.Size = new System.Drawing.Size(321, 69);
             this.OperationGroupBox.TabIndex = 31;
             this.OperationGroupBox.TabStop = false;
@@ -164,7 +176,7 @@
             // 
             this.AllowOnlyOneCopyCheckBox.AutoSize = true;
             this.AllowOnlyOneCopyCheckBox.Location = new System.Drawing.Point(8, 36);
-            this.AllowOnlyOneCopyCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AllowOnlyOneCopyCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.AllowOnlyOneCopyCheckBox.Name = "AllowOnlyOneCopyCheckBox";
             this.AllowOnlyOneCopyCheckBox.Size = new System.Drawing.Size(301, 21);
             this.AllowOnlyOneCopyCheckBox.TabIndex = 1;
@@ -180,9 +192,9 @@
             this.InternetGroupBox.Controls.Add(this.InternetAutoloadCheckBox);
             this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
             this.InternetGroupBox.Location = new System.Drawing.Point(333, 4);
-            this.InternetGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InternetGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetGroupBox.Name = "InternetGroupBox";
-            this.InternetGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InternetGroupBox.Padding = new System.Windows.Forms.Padding(4);
             this.InternetGroupBox.Size = new System.Drawing.Size(520, 134);
             this.InternetGroupBox.TabIndex = 32;
             this.InternetGroupBox.TabStop = false;
@@ -197,7 +209,7 @@
             "http://www.x360ce.com/webservices/x360ce.asmx",
             "http://localhost:20360/webservices/x360ce.asmx"});
             this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(8, 98);
-            this.InternetDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InternetDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
             this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(503, 24);
             this.InternetDatabaseUrlComboBox.TabIndex = 14;
@@ -216,7 +228,7 @@
             // 
             this.InternetAutoloadCheckBox.AutoSize = true;
             this.InternetAutoloadCheckBox.Location = new System.Drawing.Point(8, 54);
-            this.InternetAutoloadCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InternetAutoloadCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetAutoloadCheckBox.Name = "InternetAutoloadCheckBox";
             this.InternetAutoloadCheckBox.Size = new System.Drawing.Size(279, 21);
             this.InternetAutoloadCheckBox.TabIndex = 1;
@@ -227,7 +239,7 @@
             // 
             this.InternetCheckBox.AutoSize = true;
             this.InternetCheckBox.Location = new System.Drawing.Point(8, 26);
-            this.InternetCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.InternetCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetCheckBox.Name = "InternetCheckBox";
             this.InternetCheckBox.Size = new System.Drawing.Size(306, 21);
             this.InternetCheckBox.TabIndex = 1;
@@ -243,9 +255,9 @@
             this.FakeApiGroupBox.Controls.Add(this.HookModeFakeVidTextBox);
             this.FakeApiGroupBox.Controls.Add(this.FakeModeComboBox);
             this.FakeApiGroupBox.Location = new System.Drawing.Point(4, 4);
-            this.FakeApiGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FakeApiGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.FakeApiGroupBox.Name = "FakeApiGroupBox";
-            this.FakeApiGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FakeApiGroupBox.Padding = new System.Windows.Forms.Padding(4);
             this.FakeApiGroupBox.Size = new System.Drawing.Size(321, 134);
             this.FakeApiGroupBox.TabIndex = 33;
             this.FakeApiGroupBox.TabStop = false;
@@ -284,7 +296,7 @@
             // HookModeFakePidTextBox
             // 
             this.HookModeFakePidTextBox.Location = new System.Drawing.Point(101, 89);
-            this.HookModeFakePidTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.HookModeFakePidTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.HookModeFakePidTextBox.Name = "HookModeFakePidTextBox";
             this.HookModeFakePidTextBox.Size = new System.Drawing.Size(67, 22);
             this.HookModeFakePidTextBox.TabIndex = 0;
@@ -293,7 +305,7 @@
             // HookModeFakeVidTextBox
             // 
             this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(101, 57);
-            this.HookModeFakeVidTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.HookModeFakeVidTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.HookModeFakeVidTextBox.Name = "HookModeFakeVidTextBox";
             this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(67, 22);
             this.HookModeFakeVidTextBox.TabIndex = 0;
@@ -304,7 +316,7 @@
             this.FakeModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.FakeModeComboBox.FormattingEnabled = true;
             this.FakeModeComboBox.Location = new System.Drawing.Point(104, 23);
-            this.FakeModeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FakeModeComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.FakeModeComboBox.Name = "FakeModeComboBox";
             this.FakeModeComboBox.Size = new System.Drawing.Size(208, 24);
             this.FakeModeComboBox.TabIndex = 0;
@@ -316,7 +328,7 @@
             this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
             this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
             this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(333, 145);
-            this.ProgramScanLocationsTabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ProgramScanLocationsTabControl.Margin = new System.Windows.Forms.Padding(4);
             this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
             this.ProgramScanLocationsTabControl.SelectedIndex = 0;
             this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(521, 167);
@@ -327,7 +339,7 @@
             this.GameScanLocationsTabPage.Controls.Add(this.GameScanLocationsListBox);
             this.GameScanLocationsTabPage.Controls.Add(this.LocationsToolStrip);
             this.GameScanLocationsTabPage.Location = new System.Drawing.Point(4, 28);
-            this.GameScanLocationsTabPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.GameScanLocationsTabPage.Margin = new System.Windows.Forms.Padding(4);
             this.GameScanLocationsTabPage.Name = "GameScanLocationsTabPage";
             this.GameScanLocationsTabPage.Size = new System.Drawing.Size(513, 135);
             this.GameScanLocationsTabPage.TabIndex = 0;
@@ -341,7 +353,7 @@
             this.GameScanLocationsListBox.FormattingEnabled = true;
             this.GameScanLocationsListBox.ItemHeight = 16;
             this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 27);
-            this.GameScanLocationsListBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.GameScanLocationsListBox.Margin = new System.Windows.Forms.Padding(4);
             this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
             this.GameScanLocationsListBox.Size = new System.Drawing.Size(513, 108);
             this.GameScanLocationsListBox.Sorted = true;
@@ -397,9 +409,9 @@
             this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
             this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
             this.ConfigurationGroupBox.Location = new System.Drawing.Point(4, 393);
-            this.ConfigurationGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ConfigurationGroupBox.Margin = new System.Windows.Forms.Padding(4);
             this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
-            this.ConfigurationGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ConfigurationGroupBox.Padding = new System.Windows.Forms.Padding(4);
             this.ConfigurationGroupBox.Size = new System.Drawing.Size(321, 58);
             this.ConfigurationGroupBox.TabIndex = 31;
             this.ConfigurationGroupBox.TabStop = false;
@@ -419,7 +431,7 @@
             // 
             this.ConfigurationVersionTextBox.Enabled = false;
             this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(101, 23);
-            this.ConfigurationVersionTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ConfigurationVersionTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
             this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(67, 22);
             this.ConfigurationVersionTextBox.TabIndex = 0;
@@ -428,7 +440,7 @@
             // 
             this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.SaveSettingsButton.Location = new System.Drawing.Point(755, 436);
-            this.SaveSettingsButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SaveSettingsButton.Margin = new System.Windows.Forms.Padding(4);
             this.SaveSettingsButton.Name = "SaveSettingsButton";
             this.SaveSettingsButton.Size = new System.Drawing.Size(100, 28);
             this.SaveSettingsButton.TabIndex = 68;
@@ -442,24 +454,13 @@
             this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
             this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.OpenSettingsFolderButton.Location = new System.Drawing.Point(529, 436);
-            this.OpenSettingsFolderButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.OpenSettingsFolderButton.Margin = new System.Windows.Forms.Padding(4);
             this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
             this.OpenSettingsFolderButton.Size = new System.Drawing.Size(217, 28);
             this.OpenSettingsFolderButton.TabIndex = 69;
             this.OpenSettingsFolderButton.Text = "Open Settings Folder...";
             this.OpenSettingsFolderButton.UseVisualStyleBackColor = true;
             this.OpenSettingsFolderButton.Click += new System.EventHandler(this.OpenSettingsFolderButton_Click);
-            // 
-            // CombineDisabledCheckBox
-            // 
-            this.CombineDisabledCheckBox.AutoSize = true;
-            this.CombineDisabledCheckBox.Location = new System.Drawing.Point(166, 26);
-            this.CombineDisabledCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.CombineDisabledCheckBox.Name = "CombineDisabledCheckBox";
-            this.CombineDisabledCheckBox.Size = new System.Drawing.Size(147, 21);
-            this.CombineDisabledCheckBox.TabIndex = 1;
-            this.CombineDisabledCheckBox.Text = "Disable Combining";
-            this.CombineDisabledCheckBox.UseVisualStyleBackColor = true;
             // 
             // OptionsControl
             // 
@@ -473,7 +474,7 @@
             this.Controls.Add(this.InternetGroupBox);
             this.Controls.Add(this.FakeApiGroupBox);
             this.Controls.Add(this.ProgramScanLocationsTabControl);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "OptionsControl";
             this.Size = new System.Drawing.Size(859, 468);
             this.TestingAndLoggingGroupBox.ResumeLayout(false);
@@ -530,6 +531,6 @@
         private System.Windows.Forms.TextBox HookModeFakePidTextBox;
         private System.Windows.Forms.TextBox HookModeFakeVidTextBox;
 		private System.Windows.Forms.Button OpenSettingsFolderButton;
-        private System.Windows.Forms.CheckBox CombineDisabledCheckBox;
+        private System.Windows.Forms.CheckBox CombineEnabledCheckBox;
     }
 }

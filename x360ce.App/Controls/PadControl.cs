@@ -440,75 +440,75 @@ namespace x360ce.App.Controls
             Dictionary<string, Control> sm = new Dictionary<string, Control>();
             string section = string.Format(@"PAD{0}\", ControllerIndex + 1);
             // FakeAPI
-            sm.Add(section + SettingName.ProductName, diControl.DeviceProductNameTextBox);
-            sm.Add(section + SettingName.ProductGuid, diControl.DeviceProductGuidTextBox);
-            sm.Add(section + SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox);
-            sm.Add(section + SettingName.DeviceSubType, DeviceSubTypeComboBox);
-            sm.Add(section + SettingName.PassThrough, PassThroughCheckBox);
+            SettingManager.AddMap(section, () => SettingName.ProductName, diControl.DeviceProductNameTextBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ProductGuid, diControl.DeviceProductGuidTextBox, sm);
+            SettingManager.AddMap(section, () => SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox, sm);
+            SettingManager.AddMap(section, () => SettingName.DeviceSubType, DeviceSubTypeComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.PassThrough, PassThroughCheckBox, sm);
             // Mapping
-            sm.Add(section + SettingName.MapToPad, diControl.MapToPadComboBox);
+            SettingManager.AddMap(section, () => SettingName.MapToPad, diControl.MapToPadComboBox, sm);
             // Triggers
-            sm.Add(section + SettingName.RightTrigger, RightTriggerComboBox);
-            sm.Add(section + SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
-            sm.Add(section + SettingName.LeftTrigger, LeftTriggerComboBox);
-            sm.Add(section + SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+            SettingManager.AddMap(section, () => SettingName.RightTrigger, RightTriggerComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftTrigger, LeftTriggerComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar, sm);
             // D-Pad
-            sm.Add(section + SettingName.DPad, DPadComboBox);
-            sm.Add(section + SettingName.DPadUp, DPadUpComboBox);
-            sm.Add(section + SettingName.DPadDown, DPadDownComboBox);
-            sm.Add(section + SettingName.DPadLeft, DPadLeftComboBox);
-            sm.Add(section + SettingName.DPadRight, DPadRightComboBox);
+            SettingManager.AddMap(section, () => SettingName.DPad, DPadComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.DPadUp, DPadUpComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.DPadDown, DPadDownComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.DPadLeft, DPadLeftComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.DPadRight, DPadRightComboBox, sm);
             // Axis To D-Pad
-            sm.Add(section + SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
-            sm.Add(section + SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
-            sm.Add(section + SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
+            SettingManager.AddMap(section, () => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox, sm);
+            SettingManager.AddMap(section, () => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar, sm);
             // Buttons
-            sm.Add(section + SettingName.ButtonGuide, ButtonGuideComboBox);
-            //sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox);
-            sm.Add(section + SettingName.ButtonBack, ButtonBackComboBox);
-            sm.Add(section + SettingName.ButtonStart, ButtonStartComboBox);
-            sm.Add(section + SettingName.ButtonA, ButtonAComboBox);
-            sm.Add(section + SettingName.ButtonB, ButtonBComboBox);
-            sm.Add(section + SettingName.ButtonX, ButtonXComboBox);
-            sm.Add(section + SettingName.ButtonY, ButtonYComboBox);
+            SettingManager.AddMap(section, () => SettingName.ButtonGuide, ButtonGuideComboBox, sm);
+            //sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ButtonBack, ButtonBackComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ButtonStart, ButtonStartComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ButtonA, ButtonAComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ButtonB, ButtonBComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ButtonX, ButtonXComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ButtonY, ButtonYComboBox, sm);
             // Shoulders.
-            sm.Add(section + SettingName.LeftShoulder, LeftShoulderComboBox);
-            sm.Add(section + SettingName.RightShoulder, RightShoulderComboBox);
+            SettingManager.AddMap(section, () => SettingName.LeftShoulder, LeftShoulderComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightShoulder, RightShoulderComboBox, sm);
             // Left Thumb
-            sm.Add(section + SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
-            sm.Add(section + SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
-            sm.Add(section + SettingName.LeftThumbRight, LeftThumbRightComboBox);
-            sm.Add(section + SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
-            sm.Add(section + SettingName.LeftThumbUp, LeftThumbUpComboBox);
-            sm.Add(section + SettingName.LeftThumbDown, LeftThumbDownComboBox);
-            sm.Add(section + SettingName.LeftThumbButton, LeftThumbButtonComboBox);
-			sm.Add(section + SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
-			sm.Add(section + SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
-			sm.Add(section + SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
-			sm.Add(section + SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
-            sm.Add(section + SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbRight, LeftThumbRightComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbLeft, LeftThumbLeftComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbUp, LeftThumbUpComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbDown, LeftThumbDownComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbButton, LeftThumbButtonComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown, sm);
             // Right Thumb
-            sm.Add(section + SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
-            sm.Add(section + SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
-            sm.Add(section + SettingName.RightThumbRight, RightThumbRightComboBox);
-            sm.Add(section + SettingName.RightThumbLeft, RightThumbLeftComboBox);
-            sm.Add(section + SettingName.RightThumbUp, RightThumbUpComboBox);
-            sm.Add(section + SettingName.RightThumbDown, RightThumbDownComboBox);
-            sm.Add(section + SettingName.RightThumbButton, RightThumbButtonComboBox);
-            sm.Add(section + SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
-			sm.Add(section + SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
-			sm.Add(section + SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
-			sm.Add(section + SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
-            sm.Add(section + SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown);
-            sm.Add(section + SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown);
+            SettingManager.AddMap(section, () => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbRight, RightThumbRightComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbLeft, RightThumbLeftComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbUp, RightThumbUpComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbDown, RightThumbDownComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbButton, RightThumbButtonComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown, sm);
+            SettingManager.AddMap(section, () => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown, sm);
             // Force Feedback
-            sm.Add(section + SettingName.ForceEnable, ForceEnableCheckBox);
-            sm.Add(section + SettingName.ForceType, ForceTypeComboBox);
-            sm.Add(section + SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
-            sm.Add(section + SettingName.ForceOverall, ForceOverallTrackBar);
-            sm.Add(section + SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
-            sm.Add(section + SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
+            SettingManager.AddMap(section, () => SettingName.ForceEnable, ForceEnableCheckBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ForceType, ForceTypeComboBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox, sm);
+            SettingManager.AddMap(section, () => SettingName.ForceOverall, ForceOverallTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar, sm);
             return sm;
         }
 

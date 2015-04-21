@@ -167,7 +167,7 @@ void Config::ReadConfig()
     if (!ini.Load(inipath)) return;
 
     static bool once_flag = false;
-	bool combineDisabled = false;
+	bool combineEnabled = false;
 
     if (!once_flag)
     {
@@ -188,8 +188,8 @@ void Config::ReadConfig()
         once_flag = true;
     }
 
-	// Is combining disabled at a global level?
-	ini.Get("Options", "CombineDisabled", &combineDisabled);
+	// Is combining enabled at a global level?
+	ini.Get("Options", "CombineEnabled", &combineEnabled);
 
     // Read pad mappings
     for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
@@ -207,7 +207,7 @@ void Config::ReadConfig()
 		// Check for a combined controller
 		u32 combinedIndex = 0;
 		bool combined = false;
-		if (!combineDisabled)
+		if (combineEnabled)
 		{
 			// Is this a combined controller?
 			ini.Get(section, "Combined", &combined, false);

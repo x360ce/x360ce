@@ -49,24 +49,23 @@ namespace x360ce.App.Controls
         public void InitSettingsManager()
         {
             // INI setting keys with controls.
-            var sm = SettingManager.Current.SettingsMap;
             string section = @"Options\";
-            sm.Add(section + SettingName.UseInitBeep, UseInitBeepCheckBox);
-            sm.Add(section + SettingName.DebugMode, DebugModeCheckBox);
-            sm.Add(section + SettingName.Log, EnableLoggingCheckBox);
-            sm.Add(section + SettingName.Console, ConsoleCheckBox);
-            sm.Add(section + SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
-            sm.Add(section + SettingName.InternetFeatures, InternetCheckBox);
-            sm.Add(section + SettingName.InternetAutoload, InternetAutoloadCheckBox);
-            sm.Add(section + SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-            sm.Add(section + SettingName.ProgramScanLocations, GameScanLocationsListBox);
-            sm.Add(section + SettingName.Version, ConfigurationVersionTextBox);
-            sm.Add(section + SettingName.CombineDisabled, CombineDisabledCheckBox);
+            SettingManager.AddMap(section, () => SettingName.UseInitBeep, UseInitBeepCheckBox);
+            SettingManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
+            SettingManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
+            SettingManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
+            SettingManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
+            SettingManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
+            SettingManager.AddMap(section, () => SettingName.InternetAutoload, InternetAutoloadCheckBox);
+            SettingManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+            SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
+            SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
+            SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
+            
             section = @"InputHook\";
-            sm.Add(section + SettingName.HookMode, FakeModeComboBox);
-            sm.Add(section + SettingName.FakePID, HookModeFakePidTextBox);
-            sm.Add(section + SettingName.FakeVID, HookModeFakeVidTextBox);
-            sm.Add(section + SettingName.CombineDisabled, UseInitBeepCheckBox);
+            SettingManager.AddMap(section, () => SettingName.HookMode, FakeModeComboBox);
+            SettingManager.AddMap(section, () => SettingName.FakePID, HookModeFakePidTextBox);
+            SettingManager.AddMap(section, () => SettingName.FakeVID, HookModeFakeVidTextBox);
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -162,6 +161,13 @@ namespace x360ce.App.Controls
 			string argument = @"/select, " + GameDatabaseManager.Current.InitialFile.FullName;
 			System.Diagnostics.Process.Start("explorer.exe", argument);
 		}
+
+        private void CombineEnabledCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            // Save setting and notify if vaue changed. 
+            if (SettingManager.Current.SaveSetting(CombineEnabledCheckBox)) MainForm.Current.NotifySettingsChange(); 
+
+        }
 
     }
 }
