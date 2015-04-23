@@ -289,7 +289,7 @@
             this.PresetMenuStrip.Location = new System.Drawing.Point(395, 16);
             this.PresetMenuStrip.Name = "PresetMenuStrip";
             this.PresetMenuStrip.Padding = new System.Windows.Forms.Padding(0);
-            this.PresetMenuStrip.Size = new System.Drawing.Size(101, 20);
+            this.PresetMenuStrip.Size = new System.Drawing.Size(160, 20);
             this.PresetMenuStrip.TabIndex = 22;
             this.PresetMenuStrip.Text = "ApplyPresetsMenuStrip";
             // 
@@ -303,8 +303,8 @@
             this.P_0_40_0_MenuItem,
             this.P_0_20_0_MenuItem});
             this.ApplyPresetMenuItem.Name = "ApplyPresetMenuItem";
-            this.ApplyPresetMenuItem.Size = new System.Drawing.Size(85, 20);
-            this.ApplyPresetMenuItem.Text = "Apply Preset";
+            this.ApplyPresetMenuItem.Size = new System.Drawing.Size(156, 20);
+            this.ApplyPresetMenuItem.Text = "Click Here to Apply Preset";
             // 
             // P_5_100_0_MenuItem
             // 
