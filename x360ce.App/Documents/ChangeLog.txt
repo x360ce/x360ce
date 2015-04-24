@@ -1,5 +1,6 @@
-﻿v3.0.2.14 (2015-04-23)
+﻿v3.0.2.15 (2015-04-24)
 - Fix: Crash when generating Unique Disk ID hash.
+- Fix: Crash when x360ce.xml settings file is corrupted.
 - New: More help will be displayed in yellow toolbar.
 - New: Support for new settings added.
 - Update: "Apply Preset" renamed "Click Here to Apply Preset" to make button function more recognizable.
