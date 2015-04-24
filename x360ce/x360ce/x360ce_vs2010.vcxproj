@@ -249,10 +249,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ControllerCombiner.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ForceFeedback.cpp" />
+    <ClCompile Include="ForceFeedbackCombiner.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -262,10 +264,14 @@
     <ClCompile Include="x360ce.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ControllerCombiner.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerManager.h" />
     <ClInclude Include="ForceFeedback.h" />
+    <ClInclude Include="ControllerBase.h" />
+    <ClInclude Include="ForceFeedbackBase.h" />
+    <ClInclude Include="ForceFeedbackCombiner.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
