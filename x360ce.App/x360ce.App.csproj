@@ -332,7 +332,6 @@
     <EmbeddedResource Include="Presets\x360ce.Logitech_WingMan_Formula_Force_GP_USB.ini" />
     <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
     <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
-    <None Include="Documents\HowToBuild.rtf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
