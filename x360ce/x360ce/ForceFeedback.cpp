@@ -245,7 +245,8 @@ bool ForceFeedback::SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration)
         periodicForce.dwPeriod = m_RightPeriod * 1000;
 
     //As we cannot properly emulate 2 separate motor force in DirectInput we should try to combine forces;
-    u32 force = (int)((pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed) * m_ForcePercent);
+	u32 combinedForce = pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed;
+	u32 force = (int)(combinedForce * m_ForcePercent);
     force = MulDiv(force, DI_FFNOMINALMAX, UINT16_MAX * 2);
     force = clamp(force, 0, DI_FFNOMINALMAX);
 
@@ -254,8 +255,11 @@ bool ForceFeedback::SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration)
     if (m_Axes == 1)
     {
         periodicForce.dwMagnitude = std::max(pVibration->wLeftMotorSpeed, pVibration->wRightMotorSpeed);
-        periodicForce.dwPeriod = (m_LeftPeriod * 1000 * pVibration->wLeftMotorSpeed + m_RightPeriod * 1000 * pVibration->wRightMotorSpeed) /
-            (pVibration->wLeftMotorSpeed + pVibration->wRightMotorSpeed);
+		if (combinedForce > 0){
+			periodicForce.dwPeriod = combinedForce > 0
+				? 1000 * (m_LeftPeriod * pVibration->wLeftMotorSpeed + m_RightPeriod * pVibration->wRightMotorSpeed) / combinedForce
+				: 0;
+		}
         effectType.rglDirection[0] = 0;
         effectType.rglDirection[1] = 0;
     }

@@ -1,10 +1,11 @@
-﻿v3.0.2.15 (2015-04-24)
+﻿v3.0.2.16 (2015-04-26)
 - Fix: Crash when generating Unique Disk ID hash.
 - Fix: Crash when x360ce.xml settings file is corrupted.
+- Fix: Crash when PeriodicSine force feedback is enabled.
 - New: More help will be displayed in yellow toolbar.
 - New: Support for new settings added.
 - Update: "Apply Preset" renamed "Click Here to Apply Preset" to make button function more recognizable.
-- Update: Updated to xinput1_3.dll v3.4.1.1181.
+- Update: Updated to xinput1_3.dll v3.4.1.1229.
 - Update: Default settings games database updated.
 
 v3.0.1.8 (2015-04-19)

@@ -44,7 +44,11 @@
         [HandleProcessCorruptedStateExceptions]
         public static unsafe void XInputEnable(bool enable)
         {
-            try { GetMethod<XInputEnableDelegate>("XInputEnable")(enable); }
+            try
+            {
+                var method = GetMethod<XInputEnableDelegate>("XInputEnable");
+                method(enable);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -53,7 +57,11 @@
         public static unsafe ErrorCode XInputGetBatteryInformation(int userIndex, BatteryDeviceType devType, out BatteryInformation batteryInformation)
         {
             batteryInformation = new BatteryInformation();
-            try { return GetMethod<XInputGetBatteryInformationDelegate>("XInputGetBatteryInformation")(userIndex, (int)devType, out batteryInformation); }
+            try
+            {
+                var method = GetMethod<XInputGetBatteryInformationDelegate>("XInputGetBatteryInformation");
+                return method(userIndex, (int)devType, out batteryInformation);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -61,7 +69,11 @@
         public static unsafe ErrorCode XInputGetAudioDeviceIds(int dwUserIndex, IntPtr renderDeviceIdRef, IntPtr renderCountRef, IntPtr captureDeviceIdRef, IntPtr captureCountRef)
         {
             if (!IsGetAudioDeviceIdsSupported) return ErrorCode.NotSupported;
-            try { return GetMethod<XInputGetAudioDeviceIdsDelegate>("XInputGetAudioDeviceIds")(dwUserIndex, renderDeviceIdRef, renderCountRef, captureDeviceIdRef, captureCountRef); }
+            try
+            {
+                var method = GetMethod<XInputGetAudioDeviceIdsDelegate>("XInputGetAudioDeviceIds");
+                return method(dwUserIndex, renderDeviceIdRef, renderCountRef, captureDeviceIdRef, captureCountRef);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -70,7 +82,11 @@
         public static unsafe ErrorCode XInputGetCapabilities(int dwUserIndex, DeviceQueryType dwFlags, out Capabilities pCapabilities)
         {
             pCapabilities = new Capabilities();
-            try { return GetMethod<XInputGetCapabilitiesDelegate>("XInputGetCapabilities")(dwUserIndex, (int)dwFlags, out pCapabilities); }
+            try
+            {
+                var method = GetMethod<XInputGetCapabilitiesDelegate>("XInputGetCapabilities");
+                return method(dwUserIndex, (int)dwFlags, out pCapabilities);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -80,7 +96,11 @@
         {
             dSoundRenderGuid = new Guid();
             dSoundCaptureGuid = new Guid();
-            try { return GetMethod<XInputGetDSoundAudioDeviceGuidsDelegate>("XInputGetDSoundAudioDeviceGuids")(dwUserIndex, out dSoundRenderGuid, out dSoundCaptureGuid); }
+            try
+            {
+                var method = GetMethod<XInputGetDSoundAudioDeviceGuidsDelegate>("XInputGetDSoundAudioDeviceGuids");
+                return method(dwUserIndex, out dSoundRenderGuid, out dSoundCaptureGuid);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -89,7 +109,11 @@
         public static unsafe ErrorCode XInputGetKeystroke(int dwUserIndex, int dwReserved, out Keystroke pKeystroke)
         {
             pKeystroke = new Keystroke();
-            try { return GetMethod<XInputGetKeystrokeDelegate>("XInputGetKeystroke")(dwUserIndex, dwReserved, out pKeystroke); }
+            try
+            {
+                var method = GetMethod<XInputGetKeystrokeDelegate>("XInputGetKeystroke");
+                return method(dwUserIndex, dwReserved, out pKeystroke);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -100,7 +124,11 @@
             var functionName = "XInputGetState";
             //if (IsGetStateExSupported) functionName = "XInputGetStateEx";
             pState = new State();
-            try { return GetMethod<XInputGetStateDelegate>(functionName)(dwUserIndex, out pState); }
+            try
+            {
+                var method = GetMethod<XInputGetStateDelegate>(functionName);
+                return method(dwUserIndex, out pState);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }
@@ -108,7 +136,11 @@
         [HandleProcessCorruptedStateExceptions]
         public static unsafe ErrorCode XInputSetState(int dwUserIndex, Vibration pVibration)
         {
-            try { return GetMethod<XInputSetStateDelegate>("XInputSetState")(dwUserIndex, ref pVibration); }
+            try
+            {
+                var method = GetMethod<XInputSetStateDelegate>("XInputSetState");
+                return method(dwUserIndex, ref pVibration);
+            }
             catch (AccessViolationException ex) { throw new Exception(ex.Message); }
             catch (Exception) { throw; }
         }

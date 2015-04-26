@@ -523,6 +523,16 @@ if $(PlatformName) == AnyCPU $(SolutionDir)\x360ce.App\Resources\NetZ\netz.exe -
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"
-copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"</PreBuildEvent>
+copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"
+if $(ConfigurationName) == Debug (
+if $(PlatformName) == x86 (
+copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\*.dll" "$(TargetDir)"
+copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\*.pdb" "$(TargetDir)"
+)
+if $(PlatformName) == x64 (
+copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\*.dll" "$(TargetDir)"
+copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\*.pdb" "$(TargetDir)"
+)
+)</PreBuildEvent>
   </PropertyGroup>
 </Project>
