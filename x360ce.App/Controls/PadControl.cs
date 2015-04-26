@@ -913,12 +913,26 @@ namespace x360ce.App.Controls
 
         void ClearPresetButton_Click(object sender, EventArgs e)
         {
-            MainForm.Current.LoadPreset("Clear", ControllerIndex);
+            var text = string.Format("Do you really want to clear all Controller {0} settings?", ControllerIndex + 1);
+            var form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                MainForm.Current.LoadPreset("Clear", ControllerIndex);
+            }
         }
 
         void ResetPresetButton_Click(object sender, EventArgs e)
         {
-            MainForm.Current.ReloadXinputSettings();
+            var text = string.Format("Do you really want to reset all Controller {0} settings?", ControllerIndex + 1);
+            var form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var result = form.ShowForm(text, "Reset Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                MainForm.Current.ReloadXinputSettings();
+            }
         }
 
         void SavePresetButton_Click(object sender, EventArgs e)

@@ -1,5 +1,6 @@
-﻿v3.0.2.18 (2015-04-26)
+﻿v3.0.2.19 (2015-04-26)
 - Fix: Left/Right force feedback motor stregth trackbars fixed.
+- New: Confirmation dialog for clear and reset controller settings.
 
 v3.0.2.17 (2015-04-26)
 - Fix: Crash when generating Unique Disk ID hash.
