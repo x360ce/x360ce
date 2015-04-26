@@ -1,4 +1,7 @@
-﻿v3.0.2.17 (2015-04-26)
+﻿v3.0.2.18 (2015-04-26)
+- Fix: Left/Right force feedback motor stregth trackbars fixed.
+
+v3.0.2.17 (2015-04-26)
 - Fix: Crash when generating Unique Disk ID hash.
 - Fix: Crash when x360ce.xml settings file is corrupted.
 - Fix: Crash when PeriodicSine force feedback is enabled.
