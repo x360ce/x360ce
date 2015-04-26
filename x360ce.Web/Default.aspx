@@ -103,14 +103,14 @@
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/wiki">Wiki</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Downloads</a></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.0.2.17 (2015-04-26) 32-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.0.2.19 (2015-04-26) 32-bit</a></td>
 					                    </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.2.17 (2015-04-26) 64-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.2.19 (2015-04-26) 64-bit</a></td>
 					                    </tr>
                                     </table>
 
