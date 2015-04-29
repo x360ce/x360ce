@@ -25,8 +25,15 @@ public:
 
 	u32 m_LeftPeriod;
 	u32 m_RightPeriod;
-	float m_ForcePercent;
+	u32 m_LeftStrength;
+	u32 m_RightStrength;
+	u32 m_OveralStrength;
 	u8 m_Type;
+	// Create X effect.
+	LPDIRECTINPUTEFFECT effectX;
+	// Create Y effect.
+	LPDIRECTINPUTEFFECT effectY;
+
 	bool m_SwapMotors;
 
 };

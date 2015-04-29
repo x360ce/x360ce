@@ -1,4 +1,8 @@
-﻿v3.0.2.19 (2015-04-26)
+﻿v3.0.2.21 (2015-04-28)
+- Fix: Force feedback controls fixed.
+- Update: Updated to xinput1_3.dll v3.4.1.1239.
+
+v3.0.2.19 (2015-04-26)
 - Fix: Left/Right force feedback motor stregth trackbars fixed.
 - New: Confirmation dialog for clear and reset controller settings.
 

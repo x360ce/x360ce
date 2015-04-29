@@ -28,10 +28,8 @@ private:
         m_Caps = caps;
     }
 
-    void StartEffects(DIEFFECT* effectType);
-    bool SetDeviceForcesEjocys(XINPUT_VIBRATION* pVibration);
-    bool SetDeviceForcesNew(XINPUT_VIBRATION* pVibration);
-    bool SetDeviceForcesFailsafe(XINPUT_VIBRATION* pVibration);
+	void StartEffects(DIEFFECT* diEffect, LPDIRECTINPUTEFFECT* effect, BOOL restartEffect);
+    bool SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType);
 
     Controller* m_pController;
     std::vector<LPDIRECTINPUTEFFECT> m_effects;
