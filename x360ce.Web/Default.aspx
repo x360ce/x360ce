@@ -103,18 +103,19 @@
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/wiki">Wiki</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Downloads</a></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.0.2.19 (2015-04-26) 32-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.0.2.21 (2015-04-30) 32-bit</a></td>
 					                    </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.2.19 (2015-04-26) 64-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.2.21 (2015-04-30) 64-bit</a></td>
 					                    </tr>
                                     </table>
 
-<p style="margin-top: 0; text-align: left; font-size: 9pt; margin-left: 35px;"><i>Last change: updated to work with “Grand Theft Auto V” 64-bit.</i></p>
+<p style="margin-top: 0; text-align: left; font-size: 9pt; margin-left: 35px;"><i>• 32-bit version is for 32-bit games and 64-bit version is for 64-bit games.<br />
+• Latest version works with “Grand Theft Auto V”.</i></p>
 
                                     <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller” and... for example, to play games, like “Grand Theft Auto”, “Mafia” or “Saints Row”, with Logitech Steering Wheel. Application allows edit and test “Xbox 360 Controller Emulator Library” settings.</p>
 
