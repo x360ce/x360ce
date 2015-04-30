@@ -1,6 +1,7 @@
-﻿v3.0.2.24 (2015-04-30)
+﻿v3.0.2.25 (2015-04-30)
+- Fix: Left/Right motor periods switched to match with XBox Controller.
 - New: Force effect direction support added.
-- Update: Updated to xinput1_3.dll v3.4.1.1244.
+- Update: Updated to xinput1_3.dll v3.4.1.1245.
 
 v3.0.2.21 (2015-04-28)
 - Fix: Force feedback controls fixed.

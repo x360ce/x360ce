@@ -159,6 +159,8 @@
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ClearPresetButton = new System.Windows.Forms.Button();
             this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
+            this.LeftMotorGroupBox = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.AdvancedTabPage.SuspendLayout();
             this.AdvancedOptionsPanel.SuspendLayout();
             this.CombineGroupBox.SuspendLayout();
@@ -186,6 +188,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
+            this.LeftMotorGroupBox.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // DirectInputTabPage
@@ -433,7 +437,7 @@
             this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
             this.AxisToDPadGroupBox.Location = new System.Drawing.Point(237, 3);
             this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-            this.AxisToDPadGroupBox.Size = new System.Drawing.Size(476, 125);
+            this.AxisToDPadGroupBox.Size = new System.Drawing.Size(374, 125);
             this.AxisToDPadGroupBox.TabIndex = 14;
             this.AxisToDPadGroupBox.TabStop = false;
             this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -1441,6 +1445,8 @@
             // ForceFeedbackTabPage
             // 
             this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
+            this.ForceFeedbackTabPage.Controls.Add(this.LeftMotorGroupBox);
+            this.ForceFeedbackTabPage.Controls.Add(this.groupBox1);
             this.ForceFeedbackTabPage.Controls.Add(this.ForceFeedbackGroupBox);
             this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
             this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
@@ -1451,38 +1457,17 @@
             // 
             // ForceFeedbackGroupBox
             // 
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorDirectionComboBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorDirectionComboBox);
+            this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceTypeComboBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceEnableCheckBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorPeriodTrackBar);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorTestTrackBar);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorPeriodLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.TestLeftMotorLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorPeriodTextBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorTestTextBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorPeriodTrackBar);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorPeriodTextBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorTestTrackBar);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorPeriodLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorTestTextBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.TestRightMotorLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorStrengthTextBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorStrengthTextBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTextBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceSwapMotorCheckBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorDirectionLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorStrengthLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorDirectionLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorStrengthLabel);
             this.ForceFeedbackGroupBox.Controls.Add(this.OveralEffectsStengthLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorStrengthTrackBar);
-            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorStrengthTrackBar);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
-            this.ForceFeedbackGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(3, 3);
+            this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(6, 6);
             this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
-            this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(614, 405);
+            this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(608, 73);
             this.ForceFeedbackGroupBox.TabIndex = 0;
             this.ForceFeedbackGroupBox.TabStop = false;
             this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -1491,7 +1476,7 @@
             // 
             this.RightMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RightMotorDirectionComboBox.FormattingEnabled = true;
-            this.RightMotorDirectionComboBox.Location = new System.Drawing.Point(484, 68);
+            this.RightMotorDirectionComboBox.Location = new System.Drawing.Point(167, 19);
             this.RightMotorDirectionComboBox.Name = "RightMotorDirectionComboBox";
             this.RightMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
             this.RightMotorDirectionComboBox.TabIndex = 3;
@@ -1500,7 +1485,7 @@
             // 
             this.LeftMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.LeftMotorDirectionComboBox.FormattingEnabled = true;
-            this.LeftMotorDirectionComboBox.Location = new System.Drawing.Point(167, 68);
+            this.LeftMotorDirectionComboBox.Location = new System.Drawing.Point(164, 19);
             this.LeftMotorDirectionComboBox.Name = "LeftMotorDirectionComboBox";
             this.LeftMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
             this.LeftMotorDirectionComboBox.TabIndex = 3;
@@ -1527,7 +1512,7 @@
             // RightMotorPeriodTrackBar
             // 
             this.RightMotorPeriodTrackBar.AutoSize = false;
-            this.RightMotorPeriodTrackBar.Location = new System.Drawing.Point(329, 166);
+            this.RightMotorPeriodTrackBar.Location = new System.Drawing.Point(12, 117);
             this.RightMotorPeriodTrackBar.Maximum = 100;
             this.RightMotorPeriodTrackBar.Name = "RightMotorPeriodTrackBar";
             this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1538,7 +1523,7 @@
             // RightMotorTestTrackBar
             // 
             this.RightMotorTestTrackBar.AutoSize = false;
-            this.RightMotorTestTrackBar.Location = new System.Drawing.Point(329, 217);
+            this.RightMotorTestTrackBar.Location = new System.Drawing.Point(12, 168);
             this.RightMotorTestTrackBar.Maximum = 100;
             this.RightMotorTestTrackBar.Name = "RightMotorTestTrackBar";
             this.RightMotorTestTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1550,24 +1535,24 @@
             // LeftMotorPeriodLabel
             // 
             this.LeftMotorPeriodLabel.AutoSize = true;
-            this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(9, 150);
+            this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(6, 101);
             this.LeftMotorPeriodLabel.Name = "LeftMotorPeriodLabel";
-            this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(110, 13);
+            this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(59, 13);
             this.LeftMotorPeriodLabel.TabIndex = 0;
-            this.LeftMotorPeriodLabel.Text = "Left Motor Period (ms)";
+            this.LeftMotorPeriodLabel.Text = "Period (ms)";
             // 
             // TestLeftMotorLabel
             // 
             this.TestLeftMotorLabel.AutoSize = true;
-            this.TestLeftMotorLabel.Location = new System.Drawing.Point(9, 201);
+            this.TestLeftMotorLabel.Location = new System.Drawing.Point(6, 152);
             this.TestLeftMotorLabel.Name = "TestLeftMotorLabel";
-            this.TestLeftMotorLabel.Size = new System.Drawing.Size(79, 13);
+            this.TestLeftMotorLabel.Size = new System.Drawing.Size(28, 13);
             this.TestLeftMotorLabel.TabIndex = 0;
-            this.TestLeftMotorLabel.Text = "Test Left Motor";
+            this.TestLeftMotorLabel.Text = "Test";
             // 
             // RightMotorPeriodTextBox
             // 
-            this.RightMotorPeriodTextBox.Location = new System.Drawing.Point(562, 166);
+            this.RightMotorPeriodTextBox.Location = new System.Drawing.Point(245, 117);
             this.RightMotorPeriodTextBox.Name = "RightMotorPeriodTextBox";
             this.RightMotorPeriodTextBox.ReadOnly = true;
             this.RightMotorPeriodTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1578,7 +1563,7 @@
             // 
             // RightMotorTestTextBox
             // 
-            this.RightMotorTestTextBox.Location = new System.Drawing.Point(562, 217);
+            this.RightMotorTestTextBox.Location = new System.Drawing.Point(245, 168);
             this.RightMotorTestTextBox.Name = "RightMotorTestTextBox";
             this.RightMotorTestTextBox.ReadOnly = true;
             this.RightMotorTestTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1590,7 +1575,7 @@
             // LeftMotorPeriodTrackBar
             // 
             this.LeftMotorPeriodTrackBar.AutoSize = false;
-            this.LeftMotorPeriodTrackBar.Location = new System.Drawing.Point(9, 166);
+            this.LeftMotorPeriodTrackBar.Location = new System.Drawing.Point(6, 117);
             this.LeftMotorPeriodTrackBar.Maximum = 100;
             this.LeftMotorPeriodTrackBar.Name = "LeftMotorPeriodTrackBar";
             this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1600,7 +1585,7 @@
             // 
             // LeftMotorPeriodTextBox
             // 
-            this.LeftMotorPeriodTextBox.Location = new System.Drawing.Point(242, 166);
+            this.LeftMotorPeriodTextBox.Location = new System.Drawing.Point(239, 117);
             this.LeftMotorPeriodTextBox.Name = "LeftMotorPeriodTextBox";
             this.LeftMotorPeriodTextBox.ReadOnly = true;
             this.LeftMotorPeriodTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1612,7 +1597,7 @@
             // LeftMotorTestTrackBar
             // 
             this.LeftMotorTestTrackBar.AutoSize = false;
-            this.LeftMotorTestTrackBar.Location = new System.Drawing.Point(9, 217);
+            this.LeftMotorTestTrackBar.Location = new System.Drawing.Point(6, 168);
             this.LeftMotorTestTrackBar.Maximum = 100;
             this.LeftMotorTestTrackBar.Name = "LeftMotorTestTrackBar";
             this.LeftMotorTestTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1624,15 +1609,15 @@
             // RightMotorPeriodLabel
             // 
             this.RightMotorPeriodLabel.AutoSize = true;
-            this.RightMotorPeriodLabel.Location = new System.Drawing.Point(326, 150);
+            this.RightMotorPeriodLabel.Location = new System.Drawing.Point(9, 101);
             this.RightMotorPeriodLabel.Name = "RightMotorPeriodLabel";
-            this.RightMotorPeriodLabel.Size = new System.Drawing.Size(117, 13);
+            this.RightMotorPeriodLabel.Size = new System.Drawing.Size(59, 13);
             this.RightMotorPeriodLabel.TabIndex = 0;
-            this.RightMotorPeriodLabel.Text = "Right Motor Period (ms)";
+            this.RightMotorPeriodLabel.Text = "Period (ms)";
             // 
             // LeftMotorTestTextBox
             // 
-            this.LeftMotorTestTextBox.Location = new System.Drawing.Point(242, 217);
+            this.LeftMotorTestTextBox.Location = new System.Drawing.Point(239, 168);
             this.LeftMotorTestTextBox.Name = "LeftMotorTestTextBox";
             this.LeftMotorTestTextBox.ReadOnly = true;
             this.LeftMotorTestTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1644,15 +1629,15 @@
             // TestRightMotorLabel
             // 
             this.TestRightMotorLabel.AutoSize = true;
-            this.TestRightMotorLabel.Location = new System.Drawing.Point(326, 201);
+            this.TestRightMotorLabel.Location = new System.Drawing.Point(9, 152);
             this.TestRightMotorLabel.Name = "TestRightMotorLabel";
-            this.TestRightMotorLabel.Size = new System.Drawing.Size(86, 13);
+            this.TestRightMotorLabel.Size = new System.Drawing.Size(28, 13);
             this.TestRightMotorLabel.TabIndex = 0;
-            this.TestRightMotorLabel.Text = "Test Right Motor";
+            this.TestRightMotorLabel.Text = "Test";
             // 
             // RightMotorStrengthTextBox
             // 
-            this.RightMotorStrengthTextBox.Location = new System.Drawing.Point(562, 119);
+            this.RightMotorStrengthTextBox.Location = new System.Drawing.Point(245, 70);
             this.RightMotorStrengthTextBox.Name = "RightMotorStrengthTextBox";
             this.RightMotorStrengthTextBox.ReadOnly = true;
             this.RightMotorStrengthTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1663,7 +1648,7 @@
             // 
             // LeftMotorStrengthTextBox
             // 
-            this.LeftMotorStrengthTextBox.Location = new System.Drawing.Point(245, 119);
+            this.LeftMotorStrengthTextBox.Location = new System.Drawing.Point(242, 70);
             this.LeftMotorStrengthTextBox.Name = "LeftMotorStrengthTextBox";
             this.LeftMotorStrengthTextBox.ReadOnly = true;
             this.LeftMotorStrengthTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1674,7 +1659,7 @@
             // 
             // ForceOverallTextBox
             // 
-            this.ForceOverallTextBox.Location = new System.Drawing.Point(562, 34);
+            this.ForceOverallTextBox.Location = new System.Drawing.Point(545, 35);
             this.ForceOverallTextBox.Name = "ForceOverallTextBox";
             this.ForceOverallTextBox.ReadOnly = true;
             this.ForceOverallTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1696,43 +1681,43 @@
             // RightMotorDirectionLabel
             // 
             this.RightMotorDirectionLabel.AutoSize = true;
-            this.RightMotorDirectionLabel.Location = new System.Drawing.Point(326, 71);
+            this.RightMotorDirectionLabel.Location = new System.Drawing.Point(9, 22);
             this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
-            this.RightMotorDirectionLabel.Size = new System.Drawing.Size(110, 13);
+            this.RightMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
             this.RightMotorDirectionLabel.TabIndex = 0;
-            this.RightMotorDirectionLabel.Text = "Right Motor Direction:";
+            this.RightMotorDirectionLabel.Text = "Direction:";
             // 
             // RightMotorStrengthLabel
             // 
             this.RightMotorStrengthLabel.AutoSize = true;
-            this.RightMotorStrengthLabel.Location = new System.Drawing.Point(326, 104);
+            this.RightMotorStrengthLabel.Location = new System.Drawing.Point(9, 55);
             this.RightMotorStrengthLabel.Name = "RightMotorStrengthLabel";
-            this.RightMotorStrengthLabel.Size = new System.Drawing.Size(105, 13);
+            this.RightMotorStrengthLabel.Size = new System.Drawing.Size(47, 13);
             this.RightMotorStrengthLabel.TabIndex = 0;
-            this.RightMotorStrengthLabel.Text = "Right Motor Strength";
+            this.RightMotorStrengthLabel.Text = "Strength";
             // 
             // LeftMotorDirectionLabel
             // 
             this.LeftMotorDirectionLabel.AutoSize = true;
-            this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(9, 71);
+            this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(6, 22);
             this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
-            this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(103, 13);
+            this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
             this.LeftMotorDirectionLabel.TabIndex = 0;
-            this.LeftMotorDirectionLabel.Text = "Left Motor Direction:";
+            this.LeftMotorDirectionLabel.Text = "Direction:";
             // 
             // LeftMotorStrengthLabel
             // 
             this.LeftMotorStrengthLabel.AutoSize = true;
-            this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(9, 104);
+            this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(6, 55);
             this.LeftMotorStrengthLabel.Name = "LeftMotorStrengthLabel";
-            this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(98, 13);
+            this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(47, 13);
             this.LeftMotorStrengthLabel.TabIndex = 0;
-            this.LeftMotorStrengthLabel.Text = "Left Motor Strength";
+            this.LeftMotorStrengthLabel.Text = "Strength";
             // 
             // OveralEffectsStengthLabel
             // 
             this.OveralEffectsStengthLabel.AutoSize = true;
-            this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(326, 19);
+            this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(309, 20);
             this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
             this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(114, 13);
             this.OveralEffectsStengthLabel.TabIndex = 0;
@@ -1742,7 +1727,7 @@
             // 
             this.RightMotorStrengthTrackBar.AutoSize = false;
             this.RightMotorStrengthTrackBar.LargeChange = 10;
-            this.RightMotorStrengthTrackBar.Location = new System.Drawing.Point(329, 119);
+            this.RightMotorStrengthTrackBar.Location = new System.Drawing.Point(12, 70);
             this.RightMotorStrengthTrackBar.Maximum = 100;
             this.RightMotorStrengthTrackBar.Name = "RightMotorStrengthTrackBar";
             this.RightMotorStrengthTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -1755,7 +1740,7 @@
             // 
             this.LeftMotorStrengthTrackBar.AutoSize = false;
             this.LeftMotorStrengthTrackBar.LargeChange = 10;
-            this.LeftMotorStrengthTrackBar.Location = new System.Drawing.Point(12, 119);
+            this.LeftMotorStrengthTrackBar.Location = new System.Drawing.Point(9, 70);
             this.LeftMotorStrengthTrackBar.Maximum = 100;
             this.LeftMotorStrengthTrackBar.Name = "LeftMotorStrengthTrackBar";
             this.LeftMotorStrengthTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -1768,7 +1753,7 @@
             // 
             this.ForceOverallTrackBar.AutoSize = false;
             this.ForceOverallTrackBar.LargeChange = 10;
-            this.ForceOverallTrackBar.Location = new System.Drawing.Point(329, 34);
+            this.ForceOverallTrackBar.Location = new System.Drawing.Point(312, 35);
             this.ForceOverallTrackBar.Maximum = 100;
             this.ForceOverallTrackBar.Name = "ForceOverallTrackBar";
             this.ForceOverallTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -1797,6 +1782,46 @@
             // RecordingTimer
             // 
             this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
+            // 
+            // LeftMotorGroupBox
+            // 
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorDirectionLabel);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorStrengthTrackBar);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorDirectionComboBox);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorStrengthLabel);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorStrengthTextBox);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorTestTextBox);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorTestTrackBar);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTextBox);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodLabel);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTrackBar);
+            this.LeftMotorGroupBox.Controls.Add(this.TestLeftMotorLabel);
+            this.LeftMotorGroupBox.Location = new System.Drawing.Point(6, 85);
+            this.LeftMotorGroupBox.Name = "LeftMotorGroupBox";
+            this.LeftMotorGroupBox.Size = new System.Drawing.Size(294, 211);
+            this.LeftMotorGroupBox.TabIndex = 9;
+            this.LeftMotorGroupBox.TabStop = false;
+            this.LeftMotorGroupBox.Text = "Left Motor (Big)";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.RightMotorDirectionLabel);
+            this.groupBox1.Controls.Add(this.RightMotorStrengthTrackBar);
+            this.groupBox1.Controls.Add(this.RightMotorDirectionComboBox);
+            this.groupBox1.Controls.Add(this.RightMotorStrengthLabel);
+            this.groupBox1.Controls.Add(this.RightMotorStrengthTextBox);
+            this.groupBox1.Controls.Add(this.TestRightMotorLabel);
+            this.groupBox1.Controls.Add(this.RightMotorPeriodTrackBar);
+            this.groupBox1.Controls.Add(this.RightMotorPeriodLabel);
+            this.groupBox1.Controls.Add(this.RightMotorTestTrackBar);
+            this.groupBox1.Controls.Add(this.RightMotorTestTextBox);
+            this.groupBox1.Controls.Add(this.RightMotorPeriodTextBox);
+            this.groupBox1.Location = new System.Drawing.Point(306, 85);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(294, 211);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Right Motor (Small)";
             // 
             // PadControl
             // 
@@ -1842,6 +1867,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
+            this.LeftMotorGroupBox.ResumeLayout(false);
+            this.LeftMotorGroupBox.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -1991,5 +2020,7 @@
         private System.Windows.Forms.ComboBox LeftMotorDirectionComboBox;
         private System.Windows.Forms.Label RightMotorDirectionLabel;
         private System.Windows.Forms.Label LeftMotorDirectionLabel;
+        private System.Windows.Forms.GroupBox LeftMotorGroupBox;
+        private System.Windows.Forms.GroupBox groupBox1;
 	}
 }

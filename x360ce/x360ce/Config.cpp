@@ -334,8 +334,8 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
     {
         pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback->m_SwapMotors);
         pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback->m_Type);
-        pIniFile->Get<u32>(section, "LeftMotorPeriod", &pController->m_ForceFeedback->m_LeftPeriod, 60);
-        pIniFile->Get<u32>(section, "RightMotorPeriod", &pController->m_ForceFeedback->m_RightPeriod, 120);
+        pIniFile->Get<u32>(section, "LeftMotorPeriod", &pController->m_ForceFeedback->m_LeftPeriod, 120);
+        pIniFile->Get<u32>(section, "RightMotorPeriod", &pController->m_ForceFeedback->m_RightPeriod, 60);
 		pIniFile->Get<LONG>(section, "LeftMotorDirection", &pController->m_ForceFeedback->m_LeftDirection, 0);
 		pIniFile->Get<LONG>(section, "RightMotorDirection", &pController->m_ForceFeedback->m_RightDirection, 0);
 		// Force feedback strength settings.
