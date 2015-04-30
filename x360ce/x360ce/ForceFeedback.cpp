@@ -284,11 +284,10 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 
 	PrintLog("Type %d Axes %d OMag %d LMag %d RMag %d LPeriod %d RPeriod", forceType, m_Axes, m_OveralStrength, rightMagnitudeAdjusted, leftMagnitudeAdjusted, leftPeriod, rightPeriod);
 
-	BOOL restarEffect = false;
 	// If no effects exists then...
 	if (m_effects.size() == 0)
 	{
-		restarEffect = true;
+		m_LeftRestartEffect = true;
 		// Left motor.
 		HRESULT hrX = m_pController->m_pDevice->CreateEffect(GUID_Force, &diEffectX, &effectX, NULL);
 		if (FAILED(hrX))
@@ -303,6 +302,7 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 		}
 		if (m_Axes > 1)
 		{
+			m_RightRestartEffect = true;
 			// Right motor.
 			HRESULT hrY = m_pController->m_pDevice->CreateEffect(GUID_Force, &diEffectY, &effectY, NULL);
 			if (FAILED(hrY))
@@ -317,8 +317,19 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 			}
 		}
 	}
-	StartEffects(&diEffectX, &effectX, restarEffect);
-	if (m_Axes > 1) StartEffects(&diEffectY, &effectY, restarEffect);
+	StartEffects(&diEffectX, &effectX, m_LeftRestartEffect);
+	if (m_Axes > 1){
+		StartEffects(&diEffectY, &effectY, m_RightRestartEffect);
+		// Restart left motorr effect next time if it was stopped.
+		m_LeftRestartEffect = (leftSpeed == 0);
+		// Restart right motor effect next time if it was stopped.
+		m_RightRestartEffect = (rightSpeed == 0);
+	}
+	else
+	{
+		// Restart combined effect if it was stopped.
+		m_LeftRestartEffect = (leftMagnitudeAdjusted == 0);
+	}
 
 	return true;
 }

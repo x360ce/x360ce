@@ -20,8 +20,6 @@ namespace x360ce.Engine
 			InitialFile = new FileInfo(path);
 		}
 
-
-
 		public void CheckSettingsFolder()
 		{
 			if (!InitialFile.Directory.Exists)

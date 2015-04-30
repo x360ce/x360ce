@@ -29,10 +29,12 @@ public:
 	u32 m_LeftPeriod;
 	u32 m_LeftStrength;
 	LONG m_LeftDirection;
+	BOOL m_LeftRestartEffect = true;
 	// Right Motor.
 	u32 m_RightPeriod;
 	u32 m_RightStrength;
 	LONG m_RightDirection;
+	BOOL m_RightRestartEffect = true;
 	// Create X effect.
 	LPDIRECTINPUTEFFECT effectX;
 	// Create Y effect.
