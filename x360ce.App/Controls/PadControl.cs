@@ -48,8 +48,12 @@ namespace x360ce.App.Controls
             var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
             foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
             // Add force feedback typed to ComboBox.
-            var fTypes = (ForceFeedBackType[])Enum.GetValues(typeof(ForceFeedBackType));
-            foreach (var item in fTypes) ForceTypeComboBox.Items.Add(item);
+            var effectsTypes = (ForceEffectType[])Enum.GetValues(typeof(ForceEffectType));
+            foreach (var item in effectsTypes) ForceTypeComboBox.Items.Add(item);
+
+            var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
+            foreach (var item in effectDirections) LeftMotorDirectionComboBox.Items.Add(item);
+            foreach (var item in effectDirections) RightMotorDirectionComboBox.Items.Add(item);
 
             // Add player index to combo boxes
             var playerOptions = new List<KeyValuePair>();
@@ -527,10 +531,12 @@ namespace x360ce.App.Controls
             SettingManager.AddMap(section, () => SettingName.ForceType, ForceTypeComboBox, sm);
             SettingManager.AddMap(section, () => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox, sm);
             SettingManager.AddMap(section, () => SettingName.ForceOverall, ForceOverallTrackBar, sm);
-            SettingManager.AddMap(section, () => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar, sm);
-            SettingManager.AddMap(section, () => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox, sm);
             SettingManager.AddMap(section, () => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.RightMotorDirection, RightMotorDirectionComboBox, sm);
             SettingManager.AddMap(section, () => SettingName.RightMotorStrength, RightMotorStrengthTrackBar, sm);
+            SettingManager.AddMap(section, () => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar, sm);
             return sm;
         }
 

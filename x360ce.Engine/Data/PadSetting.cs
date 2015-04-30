@@ -69,6 +69,8 @@ namespace x360ce.Engine.Data
             AddValue(ref list, "RightThumbLinearY", RightThumbLinearY, null, "", "0");
             AddValue(ref list, "LeftMotorStrength", LeftMotorStrength, null, "", "100");
             AddValue(ref list, "RightMotorStrength", RightMotorStrength, null, "", "100");
+            AddValue(ref list, "LeftMotorDirection", LeftMotorDirection, null, "", "0");
+            AddValue(ref list, "RightMotorDirection", RightMotorDirection, null, "", "0");
             var s = string.Join("\r\n", list.ToArray());
             var bytes = System.Text.Encoding.ASCII.GetBytes(s);
             var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();

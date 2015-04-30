@@ -23,12 +23,16 @@ public:
 
 	virtual void Shutdown() = 0;
 
-	u32 m_LeftPeriod;
-	u32 m_RightPeriod;
-	u32 m_LeftStrength;
-	u32 m_RightStrength;
 	u32 m_OveralStrength;
 	u8 m_Type;
+	// Left Motor.
+	u32 m_LeftPeriod;
+	u32 m_LeftStrength;
+	LONG m_LeftDirection;
+	// Right Motor.
+	u32 m_RightPeriod;
+	u32 m_RightStrength;
+	LONG m_RightDirection;
 	// Create X effect.
 	LPDIRECTINPUTEFFECT effectX;
 	// Create Y effect.

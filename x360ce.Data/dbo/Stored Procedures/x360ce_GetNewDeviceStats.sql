@@ -30,7 +30,7 @@ FROM (
 	ORDER BY [Year], [Month] 
 
 SELECT 
- t1.[Date], t1.NewDevices, 
+ t1.*, 
 (	SELECT SUM(NewDevices)
 	FROM #StatsTemp t2
 	WHERE (t2.[Date] <= t1.[Date])

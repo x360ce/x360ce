@@ -16,15 +16,19 @@ ForceFeedback::ForceFeedback(Controller* pController)
 {
 	m_pController = pController;
 	m_Axes = 0;
-	m_LeftPeriod = 60;
-	m_LeftStrength = DI_FFNOMINALMAX;
-	m_RightPeriod = 120;
-	m_RightStrength = DI_FFNOMINALMAX;
-	m_OveralStrength = DI_FFNOMINALMAX;
 	m_Type = 0;
 	m_Caps.ConstantForce = false;
 	m_Caps.PeriodicForce = false;
 	m_Caps.RampForce = false;
+	m_OveralStrength = DI_FFNOMINALMAX;
+	// Left Motor.
+	m_LeftPeriod = 60;
+	m_LeftStrength = DI_FFNOMINALMAX;
+	m_LeftDirection = 0;
+	// Right Motor.
+	m_RightPeriod = 120;
+	m_RightStrength = DI_FFNOMINALMAX;
+	m_RightDirection = 0;
 };
 
 ForceFeedback::~ForceFeedback()
@@ -184,8 +188,13 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 	DICONSTANTFORCE constantForceY;
 	ZeroMemory(&constantForceY, sizeof(DICONSTANTFORCE));
 
-	LONG     lZeroX = 0;
-	LONG     lZeroY = 1;
+	// Right-handed Cartesian direction:
+	// x: -1 = left,     1 = right,   0 - no direction
+	// y: -1 = backward, 1 = forward, 0 - no direction
+	// z: -1 = down,     1 = up,      0 - no direction
+
+	LONG     lZeroX = m_LeftDirection;
+	LONG     lZeroY = m_RightDirection;
 	DWORD    dwAxisX = DIJOFS_X;
 	DWORD    dwAxisY = DIJOFS_Y;
 

@@ -314,12 +314,17 @@ namespace x360ce.App
 		[DefaultValue("100"), Description("Left motor strength. Range is 0 to 100. Default is 100.")]
 		static public string LeftMotorStrength { get { return "LeftMotorStrength"; } }
 
+        [DefaultValue("0"), Description("Left motor effect direction. -1, 0, 1.")]
+        static public string LeftMotorDirection { get { return "LeftMotorDirection"; } }
+
 		[DefaultValue("120"), Description("Right motor period. Range is 0 to 500. Default is 120.")]
 		static public string RightMotorPeriod { get { return "RightMotorPeriod"; } }
 
 		[DefaultValue("100"), Description("Right motor strength. Range is 0 to 100. Default is 100.")]
 		static public string RightMotorStrength { get { return "RightMotorStrength"; } }
 
+        [DefaultValue("0"), Description("Right motor effect direction. -1, 0, 1.")]
+        static public string RightMotorDirection { get { return "RightMotorDirection"; } }
 
 		public static int GetPadIndex(string path)
 		{

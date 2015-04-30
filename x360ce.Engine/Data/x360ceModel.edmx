@@ -52,6 +52,7 @@
           <Property Name="GamePadType" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftShoulder" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
@@ -71,6 +72,7 @@
           <Property Name="PassThrough" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightShoulder" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
@@ -240,6 +242,8 @@
           <Property Name="RightThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="LeftMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="RightMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="LeftMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="RightMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="Setting">
 					<Key>
@@ -338,7 +342,9 @@
 					<EntitySetMapping Name="PadSettings">
 						<EntityTypeMapping TypeName="x360ceModel.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
-								<ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
+								<ScalarProperty Name="RightMotorDirection" ColumnName="RightMotorDirection" />
+                <ScalarProperty Name="LeftMotorDirection" ColumnName="LeftMotorDirection" />
+                <ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
                 <ScalarProperty Name="LeftMotorStrength" ColumnName="LeftMotorStrength" />
                 <ScalarProperty Name="RightThumbLinearY" ColumnName="RightThumbLinearY" />
                 <ScalarProperty Name="RightThumbLinearX" ColumnName="RightThumbLinearX" />
@@ -514,13 +520,13 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="56" >
+			<Diagram Name="x360ceModel" ZoomLevel="82" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.875" PointY="0.5" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.5" />
+        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="5.875" PointY="3.5" />
         <EntityTypeShape EntityType="x360ceModel.Game" Width="1.5" PointX="7.875" PointY="2.625" />
 			</Diagram>
 		</edmx:Diagrams>

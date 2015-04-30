@@ -119,8 +119,12 @@
             this.PadTabControl = new System.Windows.Forms.TabControl();
             this.LeftThumbTabPage = new System.Windows.Forms.TabPage();
             this.LeftThumbPanel = new System.Windows.Forms.Panel();
+            this.LeftThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
+            this.LeftThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
             this.RightThumbTabPage = new System.Windows.Forms.TabPage();
             this.RightThumbPanel = new System.Windows.Forms.Panel();
+            this.RightThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
+            this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
             this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
             this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
             this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
@@ -151,10 +155,10 @@
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ClearPresetButton = new System.Windows.Forms.Button();
             this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
-            this.LeftThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
-            this.LeftThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
-            this.RightThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
-            this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
+            this.LeftMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
+            this.LeftMotorDirectionLabel = new System.Windows.Forms.Label();
+            this.RightMotorDirectionLabel = new System.Windows.Forms.Label();
+            this.RightMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
             this.AdvancedTabPage.SuspendLayout();
             this.AdvancedOptionsPanel.SuspendLayout();
             this.CombineGroupBox.SuspendLayout();
@@ -188,7 +192,7 @@
             // 
             this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
             this.DirectInputTabPage.Name = "DirectInputTabPage";
-            this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.DirectInputTabPage.Size = new System.Drawing.Size(620, 411);
             this.DirectInputTabPage.TabIndex = 0;
             this.DirectInputTabPage.Text = "Direct Input";
@@ -198,7 +202,7 @@
             this.AdvancedTabPage.Controls.Add(this.AdvancedOptionsPanel);
             this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
             this.AdvancedTabPage.Name = "AdvancedTabPage";
-            this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.AdvancedTabPage.Size = new System.Drawing.Size(620, 411);
             this.AdvancedTabPage.TabIndex = 0;
             this.AdvancedTabPage.Text = "Advanced";
@@ -221,9 +225,9 @@
             this.CombineGroupBox.Controls.Add(this.CombinedIndexLabel);
             this.CombineGroupBox.Controls.Add(this.CombinedCheckBox);
             this.CombineGroupBox.Location = new System.Drawing.Point(3, 208);
-            this.CombineGroupBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CombineGroupBox.Margin = new System.Windows.Forms.Padding(2);
             this.CombineGroupBox.Name = "CombineGroupBox";
-            this.CombineGroupBox.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CombineGroupBox.Padding = new System.Windows.Forms.Padding(2);
             this.CombineGroupBox.Size = new System.Drawing.Size(228, 80);
             this.CombineGroupBox.TabIndex = 6;
             this.CombineGroupBox.TabStop = false;
@@ -579,7 +583,7 @@
             this.GeneralTabPage.Controls.Add(this.TopPictureBox);
             this.GeneralTabPage.Location = new System.Drawing.Point(4, 22);
             this.GeneralTabPage.Name = "GeneralTabPage";
-            this.GeneralTabPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.GeneralTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.GeneralTabPage.Size = new System.Drawing.Size(620, 411);
             this.GeneralTabPage.TabIndex = 0;
             this.GeneralTabPage.Text = "General";
@@ -1351,7 +1355,7 @@
             this.LeftThumbTabPage.Controls.Add(this.LeftThumbPanel);
             this.LeftThumbTabPage.Location = new System.Drawing.Point(4, 22);
             this.LeftThumbTabPage.Name = "LeftThumbTabPage";
-            this.LeftThumbTabPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.LeftThumbTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.LeftThumbTabPage.Size = new System.Drawing.Size(620, 411);
             this.LeftThumbTabPage.TabIndex = 1;
             this.LeftThumbTabPage.Text = "Left Thumb";
@@ -1366,13 +1370,36 @@
             this.LeftThumbPanel.Size = new System.Drawing.Size(614, 405);
             this.LeftThumbPanel.TabIndex = 1;
             // 
+            // LeftThumbXUserControl
+            // 
+            this.LeftThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
+            this.LeftThumbXUserControl.Location = new System.Drawing.Point(3, 3);
+            this.LeftThumbXUserControl.Margin = new System.Windows.Forms.Padding(4);
+            this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
+            this.LeftThumbXUserControl.Size = new System.Drawing.Size(608, 193);
+            this.LeftThumbXUserControl.TabIndex = 0;
+            // 
+            // LeftThumbYUserControl
+            // 
+            this.LeftThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
+            this.LeftThumbYUserControl.Location = new System.Drawing.Point(3, 202);
+            this.LeftThumbYUserControl.Margin = new System.Windows.Forms.Padding(4);
+            this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
+            this.LeftThumbYUserControl.Size = new System.Drawing.Size(608, 193);
+            this.LeftThumbYUserControl.TabIndex = 0;
+            this.LeftThumbYUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.LeftY;
+            // 
             // RightThumbTabPage
             // 
             this.RightThumbTabPage.BackColor = System.Drawing.SystemColors.Control;
             this.RightThumbTabPage.Controls.Add(this.RightThumbPanel);
             this.RightThumbTabPage.Location = new System.Drawing.Point(4, 22);
             this.RightThumbTabPage.Name = "RightThumbTabPage";
-            this.RightThumbTabPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.RightThumbTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.RightThumbTabPage.Size = new System.Drawing.Size(620, 411);
             this.RightThumbTabPage.TabIndex = 2;
             this.RightThumbTabPage.Text = "Right Thumb";
@@ -1387,19 +1414,45 @@
             this.RightThumbPanel.Size = new System.Drawing.Size(614, 405);
             this.RightThumbPanel.TabIndex = 1;
             // 
+            // RightThumbXUserControl
+            // 
+            this.RightThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
+            this.RightThumbXUserControl.Location = new System.Drawing.Point(3, 3);
+            this.RightThumbXUserControl.Margin = new System.Windows.Forms.Padding(4);
+            this.RightThumbXUserControl.Name = "RightThumbXUserControl";
+            this.RightThumbXUserControl.Size = new System.Drawing.Size(608, 193);
+            this.RightThumbXUserControl.TabIndex = 0;
+            this.RightThumbXUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.RightX;
+            // 
+            // RightThumbYUserControl
+            // 
+            this.RightThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
+            this.RightThumbYUserControl.Location = new System.Drawing.Point(3, 202);
+            this.RightThumbYUserControl.Margin = new System.Windows.Forms.Padding(4);
+            this.RightThumbYUserControl.Name = "RightThumbYUserControl";
+            this.RightThumbYUserControl.Size = new System.Drawing.Size(608, 193);
+            this.RightThumbYUserControl.TabIndex = 0;
+            this.RightThumbYUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.RightY;
+            // 
             // ForceFeedbackTabPage
             // 
             this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
             this.ForceFeedbackTabPage.Controls.Add(this.ForceFeedbackGroupBox);
             this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
             this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
-            this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
             this.ForceFeedbackTabPage.Size = new System.Drawing.Size(620, 411);
             this.ForceFeedbackTabPage.TabIndex = 0;
             this.ForceFeedbackTabPage.Text = "Force Feedback";
             // 
             // ForceFeedbackGroupBox
             // 
+            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorDirectionComboBox);
+            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorDirectionComboBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceTypeComboBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceEnableCheckBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorPeriodTrackBar);
@@ -1418,7 +1471,9 @@
             this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorStrengthTextBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTextBox);
             this.ForceFeedbackGroupBox.Controls.Add(this.ForceSwapMotorCheckBox);
+            this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorDirectionLabel);
             this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorStrengthLabel);
+            this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorDirectionLabel);
             this.ForceFeedbackGroupBox.Controls.Add(this.LeftMotorStrengthLabel);
             this.ForceFeedbackGroupBox.Controls.Add(this.OveralEffectsStengthLabel);
             this.ForceFeedbackGroupBox.Controls.Add(this.RightMotorStrengthTrackBar);
@@ -1454,7 +1509,7 @@
             // RightMotorPeriodTrackBar
             // 
             this.RightMotorPeriodTrackBar.AutoSize = false;
-            this.RightMotorPeriodTrackBar.Location = new System.Drawing.Point(326, 141);
+            this.RightMotorPeriodTrackBar.Location = new System.Drawing.Point(329, 166);
             this.RightMotorPeriodTrackBar.Maximum = 100;
             this.RightMotorPeriodTrackBar.Name = "RightMotorPeriodTrackBar";
             this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1465,7 +1520,7 @@
             // RightMotorTestTrackBar
             // 
             this.RightMotorTestTrackBar.AutoSize = false;
-            this.RightMotorTestTrackBar.Location = new System.Drawing.Point(326, 192);
+            this.RightMotorTestTrackBar.Location = new System.Drawing.Point(329, 217);
             this.RightMotorTestTrackBar.Maximum = 100;
             this.RightMotorTestTrackBar.Name = "RightMotorTestTrackBar";
             this.RightMotorTestTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1477,7 +1532,7 @@
             // LeftMotorPeriodLabel
             // 
             this.LeftMotorPeriodLabel.AutoSize = true;
-            this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(6, 125);
+            this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(9, 150);
             this.LeftMotorPeriodLabel.Name = "LeftMotorPeriodLabel";
             this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(110, 13);
             this.LeftMotorPeriodLabel.TabIndex = 0;
@@ -1486,7 +1541,7 @@
             // TestLeftMotorLabel
             // 
             this.TestLeftMotorLabel.AutoSize = true;
-            this.TestLeftMotorLabel.Location = new System.Drawing.Point(6, 176);
+            this.TestLeftMotorLabel.Location = new System.Drawing.Point(9, 201);
             this.TestLeftMotorLabel.Name = "TestLeftMotorLabel";
             this.TestLeftMotorLabel.Size = new System.Drawing.Size(79, 13);
             this.TestLeftMotorLabel.TabIndex = 0;
@@ -1494,7 +1549,7 @@
             // 
             // RightMotorPeriodTextBox
             // 
-            this.RightMotorPeriodTextBox.Location = new System.Drawing.Point(559, 141);
+            this.RightMotorPeriodTextBox.Location = new System.Drawing.Point(562, 166);
             this.RightMotorPeriodTextBox.Name = "RightMotorPeriodTextBox";
             this.RightMotorPeriodTextBox.ReadOnly = true;
             this.RightMotorPeriodTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1505,7 +1560,7 @@
             // 
             // RightMotorTestTextBox
             // 
-            this.RightMotorTestTextBox.Location = new System.Drawing.Point(559, 192);
+            this.RightMotorTestTextBox.Location = new System.Drawing.Point(562, 217);
             this.RightMotorTestTextBox.Name = "RightMotorTestTextBox";
             this.RightMotorTestTextBox.ReadOnly = true;
             this.RightMotorTestTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1517,7 +1572,7 @@
             // LeftMotorPeriodTrackBar
             // 
             this.LeftMotorPeriodTrackBar.AutoSize = false;
-            this.LeftMotorPeriodTrackBar.Location = new System.Drawing.Point(6, 141);
+            this.LeftMotorPeriodTrackBar.Location = new System.Drawing.Point(9, 166);
             this.LeftMotorPeriodTrackBar.Maximum = 100;
             this.LeftMotorPeriodTrackBar.Name = "LeftMotorPeriodTrackBar";
             this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1527,7 +1582,7 @@
             // 
             // LeftMotorPeriodTextBox
             // 
-            this.LeftMotorPeriodTextBox.Location = new System.Drawing.Point(239, 141);
+            this.LeftMotorPeriodTextBox.Location = new System.Drawing.Point(242, 166);
             this.LeftMotorPeriodTextBox.Name = "LeftMotorPeriodTextBox";
             this.LeftMotorPeriodTextBox.ReadOnly = true;
             this.LeftMotorPeriodTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1539,7 +1594,7 @@
             // LeftMotorTestTrackBar
             // 
             this.LeftMotorTestTrackBar.AutoSize = false;
-            this.LeftMotorTestTrackBar.Location = new System.Drawing.Point(6, 192);
+            this.LeftMotorTestTrackBar.Location = new System.Drawing.Point(9, 217);
             this.LeftMotorTestTrackBar.Maximum = 100;
             this.LeftMotorTestTrackBar.Name = "LeftMotorTestTrackBar";
             this.LeftMotorTestTrackBar.Size = new System.Drawing.Size(227, 32);
@@ -1551,7 +1606,7 @@
             // RightMotorPeriodLabel
             // 
             this.RightMotorPeriodLabel.AutoSize = true;
-            this.RightMotorPeriodLabel.Location = new System.Drawing.Point(323, 125);
+            this.RightMotorPeriodLabel.Location = new System.Drawing.Point(326, 150);
             this.RightMotorPeriodLabel.Name = "RightMotorPeriodLabel";
             this.RightMotorPeriodLabel.Size = new System.Drawing.Size(117, 13);
             this.RightMotorPeriodLabel.TabIndex = 0;
@@ -1559,7 +1614,7 @@
             // 
             // LeftMotorTestTextBox
             // 
-            this.LeftMotorTestTextBox.Location = new System.Drawing.Point(239, 192);
+            this.LeftMotorTestTextBox.Location = new System.Drawing.Point(242, 217);
             this.LeftMotorTestTextBox.Name = "LeftMotorTestTextBox";
             this.LeftMotorTestTextBox.ReadOnly = true;
             this.LeftMotorTestTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1571,7 +1626,7 @@
             // TestRightMotorLabel
             // 
             this.TestRightMotorLabel.AutoSize = true;
-            this.TestRightMotorLabel.Location = new System.Drawing.Point(323, 176);
+            this.TestRightMotorLabel.Location = new System.Drawing.Point(326, 201);
             this.TestRightMotorLabel.Name = "TestRightMotorLabel";
             this.TestRightMotorLabel.Size = new System.Drawing.Size(86, 13);
             this.TestRightMotorLabel.TabIndex = 0;
@@ -1579,7 +1634,7 @@
             // 
             // RightMotorStrengthTextBox
             // 
-            this.RightMotorStrengthTextBox.Location = new System.Drawing.Point(559, 94);
+            this.RightMotorStrengthTextBox.Location = new System.Drawing.Point(562, 119);
             this.RightMotorStrengthTextBox.Name = "RightMotorStrengthTextBox";
             this.RightMotorStrengthTextBox.ReadOnly = true;
             this.RightMotorStrengthTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1590,7 +1645,7 @@
             // 
             // LeftMotorStrengthTextBox
             // 
-            this.LeftMotorStrengthTextBox.Location = new System.Drawing.Point(242, 94);
+            this.LeftMotorStrengthTextBox.Location = new System.Drawing.Point(245, 119);
             this.LeftMotorStrengthTextBox.Name = "LeftMotorStrengthTextBox";
             this.LeftMotorStrengthTextBox.ReadOnly = true;
             this.LeftMotorStrengthTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1623,7 +1678,7 @@
             // RightMotorStrengthLabel
             // 
             this.RightMotorStrengthLabel.AutoSize = true;
-            this.RightMotorStrengthLabel.Location = new System.Drawing.Point(323, 79);
+            this.RightMotorStrengthLabel.Location = new System.Drawing.Point(326, 104);
             this.RightMotorStrengthLabel.Name = "RightMotorStrengthLabel";
             this.RightMotorStrengthLabel.Size = new System.Drawing.Size(105, 13);
             this.RightMotorStrengthLabel.TabIndex = 0;
@@ -1632,7 +1687,7 @@
             // LeftMotorStrengthLabel
             // 
             this.LeftMotorStrengthLabel.AutoSize = true;
-            this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(6, 79);
+            this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(9, 104);
             this.LeftMotorStrengthLabel.Name = "LeftMotorStrengthLabel";
             this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(98, 13);
             this.LeftMotorStrengthLabel.TabIndex = 0;
@@ -1651,7 +1706,7 @@
             // 
             this.RightMotorStrengthTrackBar.AutoSize = false;
             this.RightMotorStrengthTrackBar.LargeChange = 10;
-            this.RightMotorStrengthTrackBar.Location = new System.Drawing.Point(326, 94);
+            this.RightMotorStrengthTrackBar.Location = new System.Drawing.Point(329, 119);
             this.RightMotorStrengthTrackBar.Maximum = 100;
             this.RightMotorStrengthTrackBar.Name = "RightMotorStrengthTrackBar";
             this.RightMotorStrengthTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -1664,7 +1719,7 @@
             // 
             this.LeftMotorStrengthTrackBar.AutoSize = false;
             this.LeftMotorStrengthTrackBar.LargeChange = 10;
-            this.LeftMotorStrengthTrackBar.Location = new System.Drawing.Point(9, 94);
+            this.LeftMotorStrengthTrackBar.Location = new System.Drawing.Point(12, 119);
             this.LeftMotorStrengthTrackBar.Maximum = 100;
             this.LeftMotorStrengthTrackBar.Name = "LeftMotorStrengthTrackBar";
             this.LeftMotorStrengthTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -1707,52 +1762,41 @@
             // 
             this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
             // 
-            // LeftThumbXUserControl
+            // LeftMotorDirectionComboBox
             // 
-            this.LeftThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
-            this.LeftThumbXUserControl.Location = new System.Drawing.Point(3, 3);
-            this.LeftThumbXUserControl.Margin = new System.Windows.Forms.Padding(4);
-            this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
-            this.LeftThumbXUserControl.Size = new System.Drawing.Size(608, 193);
-            this.LeftThumbXUserControl.TabIndex = 0;
+            this.LeftMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.LeftMotorDirectionComboBox.FormattingEnabled = true;
+            this.LeftMotorDirectionComboBox.Location = new System.Drawing.Point(161, 68);
+            this.LeftMotorDirectionComboBox.Name = "LeftMotorDirectionComboBox";
+            this.LeftMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
+            this.LeftMotorDirectionComboBox.TabIndex = 3;
             // 
-            // LeftThumbYUserControl
+            // LeftMotorDirectionLabel
             // 
-            this.LeftThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
-            this.LeftThumbYUserControl.Location = new System.Drawing.Point(3, 202);
-            this.LeftThumbYUserControl.Margin = new System.Windows.Forms.Padding(4);
-            this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
-            this.LeftThumbYUserControl.Size = new System.Drawing.Size(608, 193);
-            this.LeftThumbYUserControl.TabIndex = 0;
-            this.LeftThumbYUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.LeftY;
+            this.LeftMotorDirectionLabel.AutoSize = true;
+            this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(9, 71);
+            this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
+            this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(103, 13);
+            this.LeftMotorDirectionLabel.TabIndex = 0;
+            this.LeftMotorDirectionLabel.Text = "Left Motor Direction:";
             // 
-            // RightThumbXUserControl
+            // RightMotorDirectionLabel
             // 
-            this.RightThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
-            this.RightThumbXUserControl.Location = new System.Drawing.Point(3, 3);
-            this.RightThumbXUserControl.Margin = new System.Windows.Forms.Padding(4);
-            this.RightThumbXUserControl.Name = "RightThumbXUserControl";
-            this.RightThumbXUserControl.Size = new System.Drawing.Size(608, 193);
-            this.RightThumbXUserControl.TabIndex = 0;
-            this.RightThumbXUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.RightX;
+            this.RightMotorDirectionLabel.AutoSize = true;
+            this.RightMotorDirectionLabel.Location = new System.Drawing.Point(323, 71);
+            this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
+            this.RightMotorDirectionLabel.Size = new System.Drawing.Size(110, 13);
+            this.RightMotorDirectionLabel.TabIndex = 0;
+            this.RightMotorDirectionLabel.Text = "Right Motor Direction:";
             // 
-            // RightThumbYUserControl
+            // RightMotorDirectionComboBox
             // 
-            this.RightThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
-            this.RightThumbYUserControl.Location = new System.Drawing.Point(3, 202);
-            this.RightThumbYUserControl.Margin = new System.Windows.Forms.Padding(4);
-            this.RightThumbYUserControl.Name = "RightThumbYUserControl";
-            this.RightThumbYUserControl.Size = new System.Drawing.Size(608, 193);
-            this.RightThumbYUserControl.TabIndex = 0;
-            this.RightThumbYUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.RightY;
+            this.RightMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RightMotorDirectionComboBox.FormattingEnabled = true;
+            this.RightMotorDirectionComboBox.Location = new System.Drawing.Point(484, 68);
+            this.RightMotorDirectionComboBox.Name = "RightMotorDirectionComboBox";
+            this.RightMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
+            this.RightMotorDirectionComboBox.TabIndex = 3;
             // 
             // PadControl
             // 
@@ -1943,5 +1987,9 @@
         private System.Windows.Forms.ComboBox CombinedIndexComboBox;
         private System.Windows.Forms.Label CombinedIndexLabel;
         private System.Windows.Forms.CheckBox CombinedCheckBox;
+        private System.Windows.Forms.ComboBox RightMotorDirectionComboBox;
+        private System.Windows.Forms.ComboBox LeftMotorDirectionComboBox;
+        private System.Windows.Forms.Label RightMotorDirectionLabel;
+        private System.Windows.Forms.Label LeftMotorDirectionLabel;
 	}
 }
