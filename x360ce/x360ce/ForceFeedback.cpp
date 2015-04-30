@@ -282,7 +282,7 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 		}
 	}
 
-	PrintLog("Type %d Axes %d OMag %d LMag %d RMag %d LPeriod %d RPeriod", forceType, m_Axes, m_OveralStrength, rightMagnitudeAdjusted, leftMagnitudeAdjusted, leftPeriod, rightPeriod);
+	PrintLog("Type %d Axes %d OMag %d LSpeed %d RSpeed %d LMag %d RMag %d LPeriod %d RPeriod", forceType, m_Axes, m_OveralStrength, leftSpeed, rightSpeed, leftMagnitudeAdjusted, rightMagnitudeAdjusted, leftPeriod, rightPeriod);
 
 	// If no effects exists then...
 	if (m_effects.size() == 0)

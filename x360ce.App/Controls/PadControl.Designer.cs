@@ -127,6 +127,8 @@
             this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
             this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
             this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
+            this.RightMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
+            this.LeftMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
             this.ForceTypeComboBox = new System.Windows.Forms.ComboBox();
             this.ForceEnableCheckBox = new System.Windows.Forms.CheckBox();
             this.RightMotorPeriodTrackBar = new System.Windows.Forms.TrackBar();
@@ -145,7 +147,9 @@
             this.LeftMotorStrengthTextBox = new System.Windows.Forms.TextBox();
             this.ForceOverallTextBox = new System.Windows.Forms.TextBox();
             this.ForceSwapMotorCheckBox = new System.Windows.Forms.CheckBox();
+            this.RightMotorDirectionLabel = new System.Windows.Forms.Label();
             this.RightMotorStrengthLabel = new System.Windows.Forms.Label();
+            this.LeftMotorDirectionLabel = new System.Windows.Forms.Label();
             this.LeftMotorStrengthLabel = new System.Windows.Forms.Label();
             this.OveralEffectsStengthLabel = new System.Windows.Forms.Label();
             this.RightMotorStrengthTrackBar = new System.Windows.Forms.TrackBar();
@@ -155,10 +159,6 @@
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ClearPresetButton = new System.Windows.Forms.Button();
             this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
-            this.LeftMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
-            this.LeftMotorDirectionLabel = new System.Windows.Forms.Label();
-            this.RightMotorDirectionLabel = new System.Windows.Forms.Label();
-            this.RightMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
             this.AdvancedTabPage.SuspendLayout();
             this.AdvancedOptionsPanel.SuspendLayout();
             this.CombineGroupBox.SuspendLayout();
@@ -1487,11 +1487,29 @@
             this.ForceFeedbackGroupBox.TabStop = false;
             this.ForceFeedbackGroupBox.Text = "Force Feedback";
             // 
+            // RightMotorDirectionComboBox
+            // 
+            this.RightMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RightMotorDirectionComboBox.FormattingEnabled = true;
+            this.RightMotorDirectionComboBox.Location = new System.Drawing.Point(484, 68);
+            this.RightMotorDirectionComboBox.Name = "RightMotorDirectionComboBox";
+            this.RightMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
+            this.RightMotorDirectionComboBox.TabIndex = 3;
+            // 
+            // LeftMotorDirectionComboBox
+            // 
+            this.LeftMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.LeftMotorDirectionComboBox.FormattingEnabled = true;
+            this.LeftMotorDirectionComboBox.Location = new System.Drawing.Point(167, 68);
+            this.LeftMotorDirectionComboBox.Name = "LeftMotorDirectionComboBox";
+            this.LeftMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
+            this.LeftMotorDirectionComboBox.TabIndex = 3;
+            // 
             // ForceTypeComboBox
             // 
             this.ForceTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ForceTypeComboBox.FormattingEnabled = true;
-            this.ForceTypeComboBox.Location = new System.Drawing.Point(161, 17);
+            this.ForceTypeComboBox.Location = new System.Drawing.Point(167, 17);
             this.ForceTypeComboBox.Name = "ForceTypeComboBox";
             this.ForceTypeComboBox.Size = new System.Drawing.Size(121, 21);
             this.ForceTypeComboBox.TabIndex = 3;
@@ -1675,6 +1693,15 @@
             this.ForceSwapMotorCheckBox.Text = "Swap Motor";
             this.ForceSwapMotorCheckBox.UseVisualStyleBackColor = true;
             // 
+            // RightMotorDirectionLabel
+            // 
+            this.RightMotorDirectionLabel.AutoSize = true;
+            this.RightMotorDirectionLabel.Location = new System.Drawing.Point(326, 71);
+            this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
+            this.RightMotorDirectionLabel.Size = new System.Drawing.Size(110, 13);
+            this.RightMotorDirectionLabel.TabIndex = 0;
+            this.RightMotorDirectionLabel.Text = "Right Motor Direction:";
+            // 
             // RightMotorStrengthLabel
             // 
             this.RightMotorStrengthLabel.AutoSize = true;
@@ -1683,6 +1710,15 @@
             this.RightMotorStrengthLabel.Size = new System.Drawing.Size(105, 13);
             this.RightMotorStrengthLabel.TabIndex = 0;
             this.RightMotorStrengthLabel.Text = "Right Motor Strength";
+            // 
+            // LeftMotorDirectionLabel
+            // 
+            this.LeftMotorDirectionLabel.AutoSize = true;
+            this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(9, 71);
+            this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
+            this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(103, 13);
+            this.LeftMotorDirectionLabel.TabIndex = 0;
+            this.LeftMotorDirectionLabel.Text = "Left Motor Direction:";
             // 
             // LeftMotorStrengthLabel
             // 
@@ -1761,42 +1797,6 @@
             // RecordingTimer
             // 
             this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
-            // 
-            // LeftMotorDirectionComboBox
-            // 
-            this.LeftMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.LeftMotorDirectionComboBox.FormattingEnabled = true;
-            this.LeftMotorDirectionComboBox.Location = new System.Drawing.Point(161, 68);
-            this.LeftMotorDirectionComboBox.Name = "LeftMotorDirectionComboBox";
-            this.LeftMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
-            this.LeftMotorDirectionComboBox.TabIndex = 3;
-            // 
-            // LeftMotorDirectionLabel
-            // 
-            this.LeftMotorDirectionLabel.AutoSize = true;
-            this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(9, 71);
-            this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
-            this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(103, 13);
-            this.LeftMotorDirectionLabel.TabIndex = 0;
-            this.LeftMotorDirectionLabel.Text = "Left Motor Direction:";
-            // 
-            // RightMotorDirectionLabel
-            // 
-            this.RightMotorDirectionLabel.AutoSize = true;
-            this.RightMotorDirectionLabel.Location = new System.Drawing.Point(323, 71);
-            this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
-            this.RightMotorDirectionLabel.Size = new System.Drawing.Size(110, 13);
-            this.RightMotorDirectionLabel.TabIndex = 0;
-            this.RightMotorDirectionLabel.Text = "Right Motor Direction:";
-            // 
-            // RightMotorDirectionComboBox
-            // 
-            this.RightMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.RightMotorDirectionComboBox.FormattingEnabled = true;
-            this.RightMotorDirectionComboBox.Location = new System.Drawing.Point(484, 68);
-            this.RightMotorDirectionComboBox.Name = "RightMotorDirectionComboBox";
-            this.RightMotorDirectionComboBox.Size = new System.Drawing.Size(121, 21);
-            this.RightMotorDirectionComboBox.TabIndex = 3;
             // 
             // PadControl
             // 

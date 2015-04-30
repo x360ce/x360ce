@@ -33,36 +33,43 @@
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-    //PrintLog("XInputGetState");
+	//PrintLog("XInputGetState");
 
-    ControllerBase* pController;
-    if (!pState)
-        return ERROR_BAD_ARGUMENTS;
-    u32 initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	if (!pState)
+		return ERROR_BAD_ARGUMENTS;
+	u32 initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetState(pController->m_passthroughindex, pState);
 
-    return pController->GetState(pState);
+	return pController->GetState(pState);
 }
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-    ControllerBase* pController;
-    if (!pVibration)
-        return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	if (!pVibration)
+		return ERROR_BAD_ARGUMENTS;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
-	else if (pController->m_passthrough)
+	if (pController->m_ForceFeedback->m_SwapMotors)
+	{
+		WORD speed = pVibration->wLeftMotorSpeed;
+		pVibration->wLeftMotorSpeed = pVibration->wRightMotorSpeed;
+		pVibration->wRightMotorSpeed = speed;
+	}
+	if (pController->m_passthrough)
+	{
 		return XInputModuleManager::Get().XInputSetState(pController->m_passthroughindex, pVibration);
+	}
+	if (!pController->m_useforce)
+		return ERROR_SUCCESS;
 
-    if (!pController->m_useforce)
-        return ERROR_SUCCESS;
-
-    pController->m_ForceFeedback->SetState(pVibration);
-    return ERROR_SUCCESS;
+	pController->m_ForceFeedback->SetState(pVibration);
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
@@ -118,267 +125,267 @@ extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, 
 	}
 
 	// Done
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-    // If any controller is native XInput then use state too.
-    for (auto it = ControllerManager::Get().GetControllers().begin(); it != ControllerManager::Get().GetControllers().end(); ++it)
-    {
-        if ((*it)->m_passthrough)
-            XInputModuleManager::Get().XInputEnable(enable);
-    }
+	// If any controller is native XInput then use state too.
+	for (auto it = ControllerManager::Get().GetControllers().begin(); it != ControllerManager::Get().GetControllers().end(); ++it)
+	{
+		if ((*it)->m_passthrough)
+			XInputModuleManager::Get().XInputEnable(enable);
+	}
 
-    ControllerManager::Get().XInputEnable(enable);
+	ControllerManager::Get().XInputEnable(enable);
 }
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-    ControllerBase* pController;
-    if (!pDSoundRenderGuid || !pDSoundCaptureGuid)
-        return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	if (!pDSoundRenderGuid || !pDSoundCaptureGuid)
+		return ERROR_BAD_ARGUMENTS;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetDSoundAudioDeviceGuids(pController->m_passthroughindex, pDSoundRenderGuid, pDSoundCaptureGuid);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    *pDSoundRenderGuid = GUID_NULL;
-    *pDSoundCaptureGuid = GUID_NULL;
+	*pDSoundRenderGuid = GUID_NULL;
+	*pDSoundCaptureGuid = GUID_NULL;
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-    ControllerBase* pController;
-    if (!pBatteryInformation)
-        return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	if (!pBatteryInformation)
+		return ERROR_BAD_ARGUMENTS;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetBatteryInformation(pController->m_passthroughindex, devType, pBatteryInformation);
 
-    // Report a wired controller
-    XINPUT_BATTERY_INFORMATION &xBatInfo = *pBatteryInformation;
-    xBatInfo.BatteryLevel = BATTERY_LEVEL_FULL;
-    xBatInfo.BatteryType = BATTERY_TYPE_WIRED;
+	// Report a wired controller
+	XINPUT_BATTERY_INFORMATION &xBatInfo = *pBatteryInformation;
+	xBatInfo.BatteryLevel = BATTERY_LEVEL_FULL;
+	xBatInfo.BatteryType = BATTERY_TYPE_WIRED;
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
-    ControllerBase* pController;
-    if (!pKeystroke)
-        return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	if (!pKeystroke)
+		return ERROR_BAD_ARGUMENTS;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetKeystroke(pController->m_passthroughindex, dwReserved, pKeystroke);
 
-    XINPUT_STATE xstate;
-    ZeroMemory(&xstate, sizeof(XINPUT_STATE));
-    XInputGetState(dwUserIndex, &xstate);
+	XINPUT_STATE xstate;
+	ZeroMemory(&xstate, sizeof(XINPUT_STATE));
+	XInputGetState(dwUserIndex, &xstate);
 
-    static WORD repeat[14];
-    static WORD flags[14];
+	static WORD repeat[14];
+	static WORD flags[14];
 
-    ZeroMemory(pKeystroke, sizeof(XINPUT_KEYSTROKE));
-    pKeystroke->UserIndex = (BYTE)dwUserIndex;
+	ZeroMemory(pKeystroke, sizeof(XINPUT_KEYSTROKE));
+	pKeystroke->UserIndex = (BYTE)dwUserIndex;
 
-    static const WORD allButtonIDs[14] =
-    {
-        XINPUT_GAMEPAD_A,
-        XINPUT_GAMEPAD_B,
-        XINPUT_GAMEPAD_X,
-        XINPUT_GAMEPAD_Y,
-        XINPUT_GAMEPAD_LEFT_SHOULDER,
-        XINPUT_GAMEPAD_RIGHT_SHOULDER,
-        XINPUT_GAMEPAD_BACK,
-        XINPUT_GAMEPAD_START,
-        XINPUT_GAMEPAD_LEFT_THUMB,
-        XINPUT_GAMEPAD_RIGHT_THUMB,
-        XINPUT_GAMEPAD_DPAD_UP,
-        XINPUT_GAMEPAD_DPAD_DOWN,
-        XINPUT_GAMEPAD_DPAD_LEFT,
-        XINPUT_GAMEPAD_DPAD_RIGHT
-    };
+	static const WORD allButtonIDs[14] =
+	{
+		XINPUT_GAMEPAD_A,
+		XINPUT_GAMEPAD_B,
+		XINPUT_GAMEPAD_X,
+		XINPUT_GAMEPAD_Y,
+		XINPUT_GAMEPAD_LEFT_SHOULDER,
+		XINPUT_GAMEPAD_RIGHT_SHOULDER,
+		XINPUT_GAMEPAD_BACK,
+		XINPUT_GAMEPAD_START,
+		XINPUT_GAMEPAD_LEFT_THUMB,
+		XINPUT_GAMEPAD_RIGHT_THUMB,
+		XINPUT_GAMEPAD_DPAD_UP,
+		XINPUT_GAMEPAD_DPAD_DOWN,
+		XINPUT_GAMEPAD_DPAD_LEFT,
+		XINPUT_GAMEPAD_DPAD_RIGHT
+	};
 
-    static const u16 keyIDs[14] =
-    {
-        VK_PAD_A,
-        VK_PAD_B,
-        VK_PAD_X,
-        VK_PAD_Y,
-        VK_PAD_LSHOULDER,
-        VK_PAD_RSHOULDER,
-        VK_PAD_BACK,
-        VK_PAD_START,
-        VK_PAD_LTHUMB_PRESS,
-        VK_PAD_RTHUMB_PRESS,
-        VK_PAD_DPAD_UP,
-        VK_PAD_DPAD_DOWN,
-        VK_PAD_DPAD_LEFT,
-        VK_PAD_DPAD_RIGHT
-    };
+	static const u16 keyIDs[14] =
+	{
+		VK_PAD_A,
+		VK_PAD_B,
+		VK_PAD_X,
+		VK_PAD_Y,
+		VK_PAD_LSHOULDER,
+		VK_PAD_RSHOULDER,
+		VK_PAD_BACK,
+		VK_PAD_START,
+		VK_PAD_LTHUMB_PRESS,
+		VK_PAD_RTHUMB_PRESS,
+		VK_PAD_DPAD_UP,
+		VK_PAD_DPAD_DOWN,
+		VK_PAD_DPAD_LEFT,
+		VK_PAD_DPAD_RIGHT
+	};
 
 
-    for (int i = 0; i < 14; i++)
-    {
-        if (xstate.Gamepad.wButtons & allButtonIDs[i])
-        {
-            if (flags[i] == NULL)
-            {
-                pKeystroke->VirtualKey = keyIDs[i];
-                pKeystroke->Flags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
-                break;
-            }
-            if ((flags[i] & XINPUT_KEYSTROKE_KEYDOWN))
-            {
-                if (repeat[i] <= 0)
-                {
-                    repeat[i] = 5;
-                    pKeystroke->VirtualKey = keyIDs[i];
-                    pKeystroke->Flags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
-                    break;
-                }
-                else
-                {
-                    repeat[i]--;
-                    continue;
-                }
-            }
-        }
-        if (!(xstate.Gamepad.wButtons & allButtonIDs[i]))
-        {
-            if (flags[i] & XINPUT_KEYSTROKE_KEYDOWN)
-            {
-                repeat[i] = 5 * 4;
-                pKeystroke->VirtualKey = keyIDs[i];
-                pKeystroke->Flags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
-                break;
-            }
-            if (flags[i] & XINPUT_KEYSTROKE_KEYUP)
-            {
-                pKeystroke->Flags = flags[i] = NULL;
-                break;
-            }
-        }
-    }
+	for (int i = 0; i < 14; i++)
+	{
+		if (xstate.Gamepad.wButtons & allButtonIDs[i])
+		{
+			if (flags[i] == NULL)
+			{
+				pKeystroke->VirtualKey = keyIDs[i];
+				pKeystroke->Flags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN;
+				break;
+			}
+			if ((flags[i] & XINPUT_KEYSTROKE_KEYDOWN))
+			{
+				if (repeat[i] <= 0)
+				{
+					repeat[i] = 5;
+					pKeystroke->VirtualKey = keyIDs[i];
+					pKeystroke->Flags = flags[i] = XINPUT_KEYSTROKE_KEYDOWN | XINPUT_KEYSTROKE_REPEAT;
+					break;
+				}
+				else
+				{
+					repeat[i]--;
+					continue;
+				}
+			}
+		}
+		if (!(xstate.Gamepad.wButtons & allButtonIDs[i]))
+		{
+			if (flags[i] & XINPUT_KEYSTROKE_KEYDOWN)
+			{
+				repeat[i] = 5 * 4;
+				pKeystroke->VirtualKey = keyIDs[i];
+				pKeystroke->Flags = flags[i] = XINPUT_KEYSTROKE_KEYUP;
+				break;
+			}
+			if (flags[i] & XINPUT_KEYSTROKE_KEYUP)
+			{
+				pKeystroke->Flags = flags[i] = NULL;
+				break;
+			}
+		}
+	}
 
-    //PrintLog("ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
+	//PrintLog("ret: %u, flags: %u, hid: %u, unicode: %c, user: %u, vk: 0x%X",ret,pKeystroke->Flags,pKeystroke->HidCode,pKeystroke->Unicode,pKeystroke->UserIndex,pKeystroke->VirtualKey);
 
-    if (pKeystroke->VirtualKey)
-        return ERROR_SUCCESS;
-    else
-        return ERROR_EMPTY;
+	if (pKeystroke->VirtualKey)
+		return ERROR_SUCCESS;
+	else
+		return ERROR_EMPTY;
 }
 
 //undocumented
 extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
-    ControllerBase* pController;
-    if (!pState)
-        return ERROR_BAD_ARGUMENTS;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	if (!pState)
+		return ERROR_BAD_ARGUMENTS;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetStateEx(pController->m_passthroughindex, pState);
 
-    //PrintLog("XInputGetStateEx %u",xstate.Gamepad.wButtons);
+	//PrintLog("XInputGetStateEx %u",xstate.Gamepad.wButtons);
 
-    return pController->GetState(pState);
+	return pController->GetState(pState);
 }
 
 extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
-    ControllerBase* pController;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputWaitForGuideButton(pController->m_passthroughindex, dwFlag, pVoid);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
-    ControllerBase* pController;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputCancelGuideButtonWait(pController->m_passthroughindex);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
-    ControllerBase* pController;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputPowerOffController(pController->m_passthroughindex);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount)
 {
-    ControllerBase* pController;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetAudioDeviceIds(pController->m_passthroughindex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo)
 {
-    ControllerBase* pController;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough)
 		return XInputModuleManager::Get().XInputGetBaseBusInformation(pController->m_passthroughindex, pBusinfo);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
 
 // XInput 1.4 uses this in XInputGetCapabilities and calls memcpy(pCapabilities, &CapabilitiesEx, 20u);
 // so XINPUT_CAPABILITIES is first 20 bytes of XINPUT_CAPABILITIESEX
 extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD unk1 /*seems that only 1 is valid*/, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx)
 {
-    ControllerBase* pController;
-    DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
+	ControllerBase* pController;
+	DWORD initFlag = ControllerManager::Get().DeviceInitialize(dwUserIndex, &pController);
 	if (initFlag != ERROR_SUCCESS)
 		return initFlag;
 	else if (pController->m_passthrough || pController->m_forcespassthrough)
 		return XInputModuleManager::Get().XInputGetCapabilitiesEx(unk1, pController->m_passthroughindex, dwFlags, pCapabilitiesEx);
 
-    PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function "__FUNCTION__);
 
-    return ERROR_SUCCESS;
+	return ERROR_SUCCESS;
 }
