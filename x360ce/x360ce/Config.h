@@ -50,6 +50,22 @@ public:
             axislinear = 0;
         }
     };
+
+	struct ButtonMap
+	{
+		MappingType type;
+		s8 id;			// Index for the mapped button/axis/slider
+		s8 but;
+		u8 buttondz;
+		ButtonMap()
+		{
+			id = 0;
+			but = 0;
+			type = NONE;
+			buttondz = 0;
+		}
+	};
+
     struct TriggerMap
     {
         MappingType type;
@@ -72,15 +88,13 @@ public:
         TriggerMap Trigger[2];
         AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
         s32 pov[4];
-        s8 Button[10];
+		ButtonMap Button[10];
         s8 guide;
         s8 DpadPOV; // Index of POV switch to use for the D-pad
         bool PovIsButton;
 
         Mapping()
         {
-            for (u32 i = 0; i < _countof(Button); ++i) Button[i] = -1;
-
             pov[DPAD_UP] = 36000;
             pov[DPAD_DOWN] = 18000;
             pov[DPAD_LEFT] = 27000;
@@ -96,7 +110,8 @@ public:
     static const u16 povIDs[4];
 
     static const char* const buttonNames[];
-    static const char* const povNames[];
+	static const char* const buttonDZNames[];
+	static const char* const povNames[];
     static const char* const axisNames[];
     static const char* const axisDZNames[];
     static const char* const axisADZNames[];

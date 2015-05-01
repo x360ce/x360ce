@@ -53,6 +53,20 @@ const u16 Config::povIDs[4] =
     "Right Thumb",
 };
 
+ const char* const Config::buttonDZNames[] =
+ {
+	 "A DeadZone",
+	 "B DeadZone",
+	 "X DeadZone",
+	 "Y DeadZone",
+	 "Left Shoulder DeadZone",
+	 "Right Shoulder DeadZone",
+	 "Back DeadZone",
+	 "Start DeadZone",
+	 "Left Thumb DeadZone",
+	 "Right Thumb DeadZone",
+ };
+
  const char* const Config::povNames[] =
 {
     "D-pad Up",
@@ -361,10 +375,21 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
     // Fire buttons
     for (u32 i = 0; i < _countof(pMapping->Button); ++i)
     {
-        s8 button;
-        pIniFile->Get(section, buttonNames[i], &button);
-        pMapping->Button[i] = button - 1;
-    }
+		// Buttons
+		std::string button;
+		if (pIniFile->Get(section, buttonNames[i], &button))
+		{
+			ParsePrefix(button, &pMapping->Button[i].type, &pMapping->Button[i].id);
+		}
+		else
+		{
+			std::string message = StringFormat("Mapping could not be determined for %s button %s", section.c_str(), buttonNames[i]);
+			PrintLog(message.c_str());
+		}
+
+		// DeadZones
+		pIniFile->Get(section, buttonDZNames[i], &pMapping->Button[i].buttondz);
+	}
 
     // D-PAD
     pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV);

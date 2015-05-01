@@ -94,15 +94,6 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	// timestamp packet
 	pState->dwPacketNumber = GetTickCount();
 
-	// --- Map buttons ---
-	if (ButtonPressed(m_mapping.guide))
-		pState->Gamepad.wButtons |= 0x400;
-
-	for (u32 i = 0; i < _countof(m_mapping.Button); ++i)
-	{
-		if (ButtonPressed(m_mapping.Button[i]))
-			pState->Gamepad.wButtons |= Config::buttonIDs[i];
-	}
 
 	// --- Map POV to the D-pad ---
 	if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == false)
@@ -156,6 +147,99 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 		m_state.rglSlider[0],
 		m_state.rglSlider[1]
 	};
+
+
+
+
+
+
+
+
+
+	// --- Map buttons ---
+	if (ButtonPressed(m_mapping.guide))
+		pState->Gamepad.wButtons |= 0x400;
+
+	for (u32 i = 0; i < _countof(m_mapping.Button); ++i)
+	{
+		// Skip invalid mappings
+		if (m_mapping.Button[i].id == 0)
+			continue;
+
+		Config::MappingType buttonType = m_mapping.Button[i].type;
+
+		if (buttonType == Config::DIGITAL)
+		{
+			if (ButtonPressed(m_mapping.Button[i].id -1))
+				pState->Gamepad.wButtons |= Config::buttonIDs[i];
+		}
+		else
+		{
+			s32 *values;
+
+			switch (buttonType)
+			{
+			case Config::AXIS:
+			case Config::HAXIS:
+			case Config::CBUT:
+				values = axis;
+				break;
+
+			case Config::SLIDER:
+			case Config::HSLIDER:
+				values = slider;
+				break;
+
+			default:
+				values = axis;
+				break;
+			}
+
+			s32 v = 0;
+
+			if (m_mapping.Button[i].id > 0)
+			{
+				v = values[m_mapping.Button[i].id - 1];
+			}
+			else if (m_mapping.Button[i].id < 0)
+			{
+				v = -values[-m_mapping.Button[i].id - 1] - 1;
+			}
+
+			s32 v2 = 0;
+			s32 offset = 0;
+			s32 scaling = 1;
+
+			switch (buttonType)
+			{
+				// Full range
+			case Config::AXIS:
+			case Config::SLIDER:
+				scaling = 255;
+				offset = 32767;
+				break;
+
+				// Half range
+			case Config::HAXIS:
+			case Config::HSLIDER:
+			case Config::CBUT:
+				scaling = 127;
+				offset = 0;
+				break;
+
+			default:
+				scaling = 1;
+				offset = 0;
+				break;
+			}
+
+			v2 = (offset + v) / scaling;
+			if (deadzone(v2, 0, 1, m_mapping.Button[i].buttondz, 1) > 0)
+			{
+				pState->Gamepad.wButtons |= Config::buttonIDs[i];
+			}
+		}
+	}
 
 	// --- Map triggers ---
 	u8 *targetTrigger[] =
