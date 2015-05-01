@@ -204,7 +204,7 @@ u32 WINAPI InputHook::ThreadProc(void* lpParameter)
     Sleep(pInputHook->m_timeout * 1000);
 
     pInputHook->Shutdown();
-    PrintLog("InputHook timed after %us", pInputHook->m_timeout);
+    PrintLog("InputHook timed out after %us", pInputHook->m_timeout);
 
     _endthreadex(0);
     return 0;
