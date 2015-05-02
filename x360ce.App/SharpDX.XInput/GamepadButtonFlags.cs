@@ -1,10 +1,12 @@
 ﻿namespace SharpDX.XInput
 {
     using System;
+    using System.ComponentModel;
 
     [Flags]
     public enum GamepadButtonFlags : short
     {
+        [Description("")]
         A = 0x1000,
         B = 0x2000,
         Back = 0x20,

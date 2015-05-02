@@ -986,5 +986,10 @@ namespace x360ce.App.Controls
         {
             UpdatePassThroughRelatedControls();
         }
+
+        private void GeneralTabPage_SizeChanged(object sender, EventArgs e)
+        {
+            GeneralCenterPanel.Left = (this.Width - GeneralCenterPanel.Width) / 2;
+        }
     }
 }
