@@ -26,59 +26,59 @@ HINSTANCE hXInput = NULL;
 
 bool IsEmulator(const std::string& filename)
 {
-    hXInput = LoadLibraryA(filename.c_str());
-    void* pReset = GetProcAddress(hXInput, "Reset");
+	hXInput = LoadLibraryA(filename.c_str());
+	void* pReset = GetProcAddress(hXInput, "Reset");
 
-    if (pReset)
-        return true;
-    else
-        FreeLibrary(hXInput);
-    return false;
+	if (pReset)
+		return true;
+	else
+		FreeLibrary(hXInput);
+	return false;
 }
 
 void LoadEmulator()
 {
-    if (hXInput) return;
+	if (hXInput) return;
 
-    std::string module_directory;
-    ModuleDirectory(&module_directory, CurrentModule());
+	std::string module_directory;
+	ModuleDirectory(&module_directory, CurrentModule());
 
-    std::string module_name;
-    StringPathCombine(&module_name, module_directory, "xinput1_4.dll");
-    if (IsEmulator(module_name)) return;
+	std::string module_name;
+	StringPathCombine(&module_name, module_directory, "xinput1_4.dll");
+	if (IsEmulator(module_name)) return;
 
-    StringPathCombine(&module_name, module_directory, "xinput1_3.dll");
-    if (IsEmulator(module_name)) return;
+	StringPathCombine(&module_name, module_directory, "xinput1_3.dll");
+	if (IsEmulator(module_name)) return;
 
-    StringPathCombine(&module_name, module_directory, "xinput1_2.dll");
-    if (IsEmulator(module_name)) return;
+	StringPathCombine(&module_name, module_directory, "xinput1_2.dll");
+	if (IsEmulator(module_name)) return;
 
-    StringPathCombine(&module_name, module_directory, "xinput1_1.dll");
-    if (IsEmulator(module_name)) return;
+	StringPathCombine(&module_name, module_directory, "xinput1_1.dll");
+	if (IsEmulator(module_name)) return;
 
-    StringPathCombine(&module_name, module_directory, "xinput9_1_0.dll");
-    if (IsEmulator(module_name)) return;
+	StringPathCombine(&module_name, module_directory, "xinput9_1_0.dll");
+	if (IsEmulator(module_name)) return;
 }
 
 void _cdecl ExitInstance()
 {
-    if (hXInput) FreeLibrary(hXInput);
+	if (hXInput) FreeLibrary(hXInput);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
-    DWORD  ul_reason_for_call,
-    LPVOID lpReserved
-    )
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+	)
 {
-    switch (ul_reason_for_call)
-    {
-        case DLL_PROCESS_ATTACH:
-            DisableThreadLibraryCalls(hModule);
-            atexit(ExitInstance);
-            break;
-        case DLL_PROCESS_DETACH:
-            break;
-    }
-    return TRUE;
+	switch (ul_reason_for_call)
+	{
+		case DLL_PROCESS_ATTACH:
+			DisableThreadLibraryCalls(hModule);
+			atexit(ExitInstance);
+			break;
+		case DLL_PROCESS_DETACH:
+			break;
+	}
+	return TRUE;
 }
 

@@ -6,20 +6,20 @@
 class InputHookManager : NonCopyable
 {
 public:
-    InputHookManager() {}
-    ~InputHookManager() {};
+	InputHookManager() {}
+	~InputHookManager() {};
 
-    static InputHookManager& Get()
-    {
-        static InputHookManager instance;
-        return instance;
-    }
+	static InputHookManager& Get()
+	{
+		static InputHookManager instance;
+		return instance;
+	}
 
-    InputHook& GetInputHook()
-    {
-        return m_inputHook;
-    }
+	InputHook& GetInputHook()
+	{
+		return m_inputHook;
+	}
 
 private:
-    InputHook m_inputHook;
+	InputHook m_inputHook;
 };

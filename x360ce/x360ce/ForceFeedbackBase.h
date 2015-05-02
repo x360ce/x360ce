@@ -14,8 +14,8 @@ struct ForceFeedbackCaps
 class ForceFeedbackBase
 {
 public:
-	ForceFeedbackBase(){}
-	virtual ~ForceFeedbackBase(){}
+	ForceFeedbackBase() {}
+	virtual ~ForceFeedbackBase() {}
 
 	virtual bool IsSupported() = 0;
 

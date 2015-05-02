@@ -9,8 +9,8 @@ class ForceFeedbackCombiner : public ForceFeedbackBase
 {
 	friend class ControllerCombiner;
 public:
-    ForceFeedbackCombiner(ControllerCombiner* pController);
-    ~ForceFeedbackCombiner();
+	ForceFeedbackCombiner(ControllerCombiner* pController);
+	~ForceFeedbackCombiner();
 
 	virtual bool IsSupported();
 

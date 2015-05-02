@@ -13,7 +13,7 @@
 
 #include "XInputModuleManager.h"
 
-ControllerCombiner::ControllerCombiner(u32 user) : ControllerBase(user), 
+ControllerCombiner::ControllerCombiner(u32 user) : ControllerBase(user),
 m_ForceFeedbackInst(this)
 {
 	m_ForceFeedback = &m_ForceFeedbackInst;
@@ -184,7 +184,7 @@ DWORD ControllerCombiner::GetState(XINPUT_STATE* pState)
 	{
 		if (pState) ZeroMemory(pState, sizeof(XINPUT_STATE));
 	}
-	
+
 	// If not enabled, nothing to do
 	if (!ControllerManager::Get().XInputEnabled())
 	{

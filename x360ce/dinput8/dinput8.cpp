@@ -22,35 +22,35 @@
 
 extern "C" HRESULT WINAPI DirectInput8Create(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID *ppvOut, LPUNKNOWN punkOuter)
 {
-    LoadEmulator();
+	LoadEmulator();
 
-    return DirectInputModuleManager::Get().DirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
+	return DirectInputModuleManager::Get().DirectInput8Create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 }
 
 extern "C" HRESULT WINAPI DllCanUnloadNow(void)
 {
-    LoadEmulator();
+	LoadEmulator();
 
-    return DirectInputModuleManager::Get().DllCanUnloadNow();
+	return DirectInputModuleManager::Get().DllCanUnloadNow();
 }
 
 extern "C" HRESULT WINAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID FAR* ppv)
 {
-    LoadEmulator();
+	LoadEmulator();
 
-    return DirectInputModuleManager::Get().DllGetClassObject(rclsid, riid, ppv);
+	return DirectInputModuleManager::Get().DllGetClassObject(rclsid, riid, ppv);
 }
 
 extern "C" HRESULT WINAPI DllRegisterServer(void)
 {
-    LoadEmulator();
+	LoadEmulator();
 
-    return DirectInputModuleManager::Get().DllRegisterServer();
+	return DirectInputModuleManager::Get().DllRegisterServer();
 }
 
 extern "C" HRESULT WINAPI DllUnregisterServer(void)
 {
-    LoadEmulator();
+	LoadEmulator();
 
-    return DirectInputModuleManager::Get().DllUnregisterServer();
+	return DirectInputModuleManager::Get().DllUnregisterServer();
 }

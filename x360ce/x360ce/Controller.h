@@ -10,13 +10,13 @@
 
 class Controller : public ControllerBase
 {
-    friend class ForceFeedback;
+	friend class ForceFeedback;
 public:
-    Controller(u32 user);
-    ~Controller();
+	Controller(u32 user);
+	~Controller();
 
-    virtual DWORD GetState(XINPUT_STATE* pState);
-    virtual DWORD CreateDevice();
+	virtual DWORD GetState(XINPUT_STATE* pState);
+	virtual DWORD CreateDevice();
 
 	virtual bool Initalized();
 
@@ -24,13 +24,13 @@ public:
 	GUID m_instanceid;
 
 private:
-    static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
+	static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 
-    bool ButtonPressed(u32 buttonidx);
-    HRESULT UpdateState();
+	bool ButtonPressed(u32 buttonidx);
+	HRESULT UpdateState();
 
-    std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;
-    DIJOYSTATE2 m_state;
+	std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;
+	DIJOYSTATE2 m_state;
 	ForceFeedback m_ForceFeedbackInst;
 
 };

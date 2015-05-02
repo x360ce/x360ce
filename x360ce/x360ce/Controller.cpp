@@ -14,7 +14,7 @@
 #include "XInputModuleManager.h"
 
 
-Controller::Controller(u32 user) : ControllerBase(user), 
+Controller::Controller(u32 user) : ControllerBase(user),
 m_ForceFeedbackInst(this)
 {
 	m_ForceFeedback = &m_ForceFeedbackInst;
@@ -169,7 +169,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 		if (buttonType == Config::DIGITAL)
 		{
-			if (ButtonPressed(m_mapping.Button[i].id -1))
+			if (ButtonPressed(m_mapping.Button[i].id - 1))
 				pState->Gamepad.wButtons |= Config::buttonIDs[i];
 		}
 		else
@@ -178,20 +178,20 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 			switch (buttonType)
 			{
-			case Config::AXIS:
-			case Config::HAXIS:
-			case Config::CBUT:
-				values = axis;
-				break;
+				case Config::AXIS:
+				case Config::HAXIS:
+				case Config::CBUT:
+					values = axis;
+					break;
 
-			case Config::SLIDER:
-			case Config::HSLIDER:
-				values = slider;
-				break;
+				case Config::SLIDER:
+				case Config::HSLIDER:
+					values = slider;
+					break;
 
-			default:
-				values = axis;
-				break;
+				default:
+					values = axis;
+					break;
 			}
 
 			s32 v = 0;
@@ -212,24 +212,24 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			switch (buttonType)
 			{
 				// Full range
-			case Config::AXIS:
-			case Config::SLIDER:
-				scaling = 255;
-				offset = 32767;
-				break;
+				case Config::AXIS:
+				case Config::SLIDER:
+					scaling = 255;
+					offset = 32767;
+					break;
 
-				// Half range
-			case Config::HAXIS:
-			case Config::HSLIDER:
-			case Config::CBUT:
-				scaling = 127;
-				offset = 0;
-				break;
+					// Half range
+				case Config::HAXIS:
+				case Config::HSLIDER:
+				case Config::CBUT:
+					scaling = 127;
+					offset = 0;
+					break;
 
-			default:
-				scaling = 1;
-				offset = 0;
-				break;
+				default:
+					scaling = 1;
+					offset = 0;
+					break;
 			}
 
 			v2 = (offset + v) / scaling;
@@ -265,20 +265,20 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 			switch (triggerType)
 			{
-			case Config::AXIS:
-			case Config::HAXIS:
-			case Config::CBUT:
-				values = axis;
-				break;
+				case Config::AXIS:
+				case Config::HAXIS:
+				case Config::CBUT:
+					values = axis;
+					break;
 
-			case Config::SLIDER:
-			case Config::HSLIDER:
-				values = slider;
-				break;
+				case Config::SLIDER:
+				case Config::HSLIDER:
+					values = slider;
+					break;
 
-			default:
-				values = axis;
-				break;
+				default:
+					values = axis;
+					break;
 			}
 
 			s32 v = 0;
@@ -311,24 +311,24 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			switch (triggerType)
 			{
 				// Full range
-			case Config::AXIS:
-			case Config::SLIDER:
-				scaling = 255;
-				offset = 32767;
-				break;
+				case Config::AXIS:
+				case Config::SLIDER:
+					scaling = 255;
+					offset = 32767;
+					break;
 
-				// Half range
-			case Config::HAXIS:
-			case Config::HSLIDER:
-			case Config::CBUT: // add /////////////////////////////////////////////////////////
-				scaling = 127;
-				offset = 0;
-				break;
+					// Half range
+				case Config::HAXIS:
+				case Config::HSLIDER:
+				case Config::CBUT: // add /////////////////////////////////////////////////////////
+					scaling = 127;
+					offset = 0;
+					break;
 
-			default:
-				scaling = 1;
-				offset = 0;
-				break;
+				default:
+					scaling = 1;
+					offset = 0;
+					break;
 			}
 
 			//v2 = (v + offset) / scaling;

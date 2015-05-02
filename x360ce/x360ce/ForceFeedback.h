@@ -7,10 +7,10 @@
 
 class ForceFeedback : public ForceFeedbackBase
 {
-    friend class Controller;
+	friend class Controller;
 public:
-    ForceFeedback(Controller* pController);
-    ~ForceFeedback();
+	ForceFeedback(Controller* pController);
+	~ForceFeedback();
 
 	virtual bool IsSupported();
 
@@ -20,19 +20,19 @@ public:
 
 
 private:
-    static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
-    static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
+	static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
+	static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
-    void SetCaps(const ForceFeedbackCaps& caps)
-    {
-        m_Caps = caps;
-    }
+	void SetCaps(const ForceFeedbackCaps& caps)
+	{
+		m_Caps = caps;
+	}
 
 	void StartEffects(DIEFFECT* diEffect, LPDIRECTINPUTEFFECT* effect, BOOL restartEffect);
-    bool SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType);
+	bool SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType);
 
-    Controller* m_pController;
-    std::vector<LPDIRECTINPUTEFFECT> m_effects;
-    u8 m_Axes;
-    ForceFeedbackCaps m_Caps;
+	Controller* m_pController;
+	std::vector<LPDIRECTINPUTEFFECT> m_effects;
+	u8 m_Axes;
+	ForceFeedbackCaps m_Caps;
 };

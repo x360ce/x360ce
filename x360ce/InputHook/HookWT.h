@@ -7,8 +7,8 @@
 
 class HookWT
 {
-    friend class InputHook;
+	friend class InputHook;
 private:
-    static LONG(WINAPI* TrueWinVerifyTrust)(HWND hwnd, GUID *pgActionID, LPVOID pWVTData);
-    static LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID, LPVOID pWVTData);
+	static LONG(WINAPI* TrueWinVerifyTrust)(HWND hwnd, GUID *pgActionID, LPVOID pWVTData);
+	static LONG WINAPI HookWinVerifyTrust(HWND hwnd, GUID *pgActionID, LPVOID pWVTData);
 };

@@ -25,7 +25,7 @@ void ForceFeedbackCombiner::Shutdown()
 
 bool ForceFeedbackCombiner::IsSupported()
 {
-    // Make sure at least one child device supports feedback
+	// Make sure at least one child device supports feedback
 	for (auto it = m_Controller->GetControllers().begin(); it != m_Controller->GetControllers().end(); ++it)
 	{
 		// If child supports it, combined supports it
@@ -41,12 +41,12 @@ bool ForceFeedbackCombiner::IsSupported()
 
 bool ForceFeedbackCombiner::SetState(XINPUT_VIBRATION* pVibration)
 {
-    if (!ControllerManager::Get().XInputEnabled())
-    {
-        // Clear state
-        if (pVibration) ZeroMemory(pVibration, sizeof(XINPUT_VIBRATION));
-        return ERROR_SUCCESS;
-    }
+	if (!ControllerManager::Get().XInputEnabled())
+	{
+		// Clear state
+		if (pVibration) ZeroMemory(pVibration, sizeof(XINPUT_VIBRATION));
+		return ERROR_SUCCESS;
+	}
 
 	// Update all child devices
 	for (auto it = m_Controller->GetControllers().begin(); it != m_Controller->GetControllers().end(); ++it)

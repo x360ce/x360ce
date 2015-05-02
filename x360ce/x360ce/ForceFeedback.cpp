@@ -318,7 +318,8 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 		}
 	}
 	StartEffects(&diEffectX, &effectX, m_LeftRestartEffect);
-	if (m_Axes > 1){
+	if (m_Axes > 1)
+	{
 		StartEffects(&diEffectY, &effectY, m_RightRestartEffect);
 		// Restart left motorr effect next time if it was stopped.
 		m_LeftRestartEffect = (leftSpeed == 0);

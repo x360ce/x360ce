@@ -33,22 +33,22 @@ std::wstring UTF8ToUTF16(const std::string& str);
 #ifdef _UNICODE
 inline std::string TStrToUTF8(const std::wstring& str)
 {
-    return UTF16ToUTF8(str);
+	return UTF16ToUTF8(str);
 }
 
 inline std::wstring UTF8ToTStr(const std::string& str)
 {
-    return UTF8ToUTF16(str);
+	return UTF8ToUTF16(str);
 }
 #else
 inline std::string TStrToUTF8(const std::string& str)
 {
-    return str;
+	return str;
 }
 
 inline std::string UTF8ToTStr(const std::string& str)
 {
-    return str;
+	return str;
 }
 #endif
 
@@ -61,95 +61,95 @@ namespace std
 #define _TOSTRING(buf, fmt, val)	\
 	sprintf_s(buf, sizeof (buf), fmt, val)
 
-    inline string to_string(int _Val)
-    {	// convert int to string
-        char _Buf[2 * _MAX_INT_DIG];
+	inline string to_string(int _Val)
+	{	// convert int to string
+		char _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOSTRING(_Buf, "%d", _Val);
-        return (string(_Buf));
-    }
+		_CSTD _TOSTRING(_Buf, "%d", _Val);
+		return (string(_Buf));
+	}
 
-    inline string to_string(unsigned int _Val)
-    {	// convert unsigned int to string
-        char _Buf[2 * _MAX_INT_DIG];
+	inline string to_string(unsigned int _Val)
+	{	// convert unsigned int to string
+		char _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOSTRING(_Buf, "%u", _Val);
-        return (string(_Buf));
-    }
+		_CSTD _TOSTRING(_Buf, "%u", _Val);
+		return (string(_Buf));
+	}
 
-    inline string to_string(long _Val)
-    {	// convert long to string
-        char _Buf[2 * _MAX_INT_DIG];
+	inline string to_string(long _Val)
+	{	// convert long to string
+		char _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOSTRING(_Buf, "%ld", _Val);
-        return (string(_Buf));
-    }
+		_CSTD _TOSTRING(_Buf, "%ld", _Val);
+		return (string(_Buf));
+	}
 
-    inline string to_string(unsigned long _Val)
-    {	// convert unsigned long to string
-        char _Buf[2 * _MAX_INT_DIG];
+	inline string to_string(unsigned long _Val)
+	{	// convert unsigned long to string
+		char _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOSTRING(_Buf, "%lu", _Val);
-        return (string(_Buf));
-    }
+		_CSTD _TOSTRING(_Buf, "%lu", _Val);
+		return (string(_Buf));
+	}
 
-    inline string to_string(double _Val)
-    {	// convert double to string
-        return (to_string((long double)_Val));
-    }
+	inline string to_string(double _Val)
+	{	// convert double to string
+		return (to_string((long double)_Val));
+	}
 
-    inline string to_string(float _Val)
-    {	// convert float to string
-        return (to_string((long double)_Val));
-    }
+	inline string to_string(float _Val)
+	{	// convert float to string
+		return (to_string((long double)_Val));
+	}
 
-    // to_wstring WIDE CONVERSIONS
+	// to_wstring WIDE CONVERSIONS
 
 #define _WLLFMT	L"%I64"
 
 #define _TOWSTRING(buf, fmt, val)	\
 	swprintf_s(buf, sizeof (buf) / sizeof (wchar_t), fmt, val)
 
-    inline wstring to_wstring(int _Val)
-    {	// convert int to wstring
-        wchar_t _Buf[2 * _MAX_INT_DIG];
+	inline wstring to_wstring(int _Val)
+	{	// convert int to wstring
+		wchar_t _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOWSTRING(_Buf, L"%d", _Val);
-        return (wstring(_Buf));
-    }
+		_CSTD _TOWSTRING(_Buf, L"%d", _Val);
+		return (wstring(_Buf));
+	}
 
-    inline wstring to_wstring(unsigned int _Val)
-    {	// convert unsigned int to wstring
-        wchar_t _Buf[2 * _MAX_INT_DIG];
+	inline wstring to_wstring(unsigned int _Val)
+	{	// convert unsigned int to wstring
+		wchar_t _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOWSTRING(_Buf, L"%u", _Val);
-        return (wstring(_Buf));
-    }
+		_CSTD _TOWSTRING(_Buf, L"%u", _Val);
+		return (wstring(_Buf));
+	}
 
-    inline wstring to_wstring(long _Val)
-    {	// convert long to wstring
-        wchar_t _Buf[2 * _MAX_INT_DIG];
+	inline wstring to_wstring(long _Val)
+	{	// convert long to wstring
+		wchar_t _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOWSTRING(_Buf, L"%ld", _Val);
-        return (wstring(_Buf));
-    }
+		_CSTD _TOWSTRING(_Buf, L"%ld", _Val);
+		return (wstring(_Buf));
+	}
 
-    inline wstring to_wstring(unsigned long _Val)
-    {	// convert unsigned long to wstring
-        wchar_t _Buf[2 * _MAX_INT_DIG];
+	inline wstring to_wstring(unsigned long _Val)
+	{	// convert unsigned long to wstring
+		wchar_t _Buf[2 * _MAX_INT_DIG];
 
-        _CSTD _TOWSTRING(_Buf, L"%lu", _Val);
-        return (wstring(_Buf));
-    }
+		_CSTD _TOWSTRING(_Buf, L"%lu", _Val);
+		return (wstring(_Buf));
+	}
 
-    inline wstring to_wstring(double _Val)
-    {	// convert double to wstring
-        return (to_wstring((long double)_Val));
-    }
+	inline wstring to_wstring(double _Val)
+	{	// convert double to wstring
+		return (to_wstring((long double)_Val));
+	}
 
-    inline wstring to_wstring(float _Val)
-    {	// convert float to wstring
-        return (to_wstring((long double)_Val));
-    }
+	inline wstring to_wstring(float _Val)
+	{	// convert float to wstring
+		return (to_wstring((long double)_Val));
+	}
 }
 #endif

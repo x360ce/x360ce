@@ -10,7 +10,7 @@ insert_final_newline = true
 
 # 4 space indentation
 [*.{c,h,def}]
-indent_style = space
+indent_style = tab
 indent_size = 4
 
 # Trim trailing whitespaces

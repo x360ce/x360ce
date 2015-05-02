@@ -4,52 +4,52 @@ class Controller;
 
 class Config
 {
-    friend class ControllerManager;
+	friend class ControllerManager;
 public:
-    Config() {}
-    ~Config() {}
+	Config() {}
+	~Config() {}
 
-    static const DWORD INVALIDBUTTONINDEX = (DWORD)-1;
+	static const DWORD INVALIDBUTTONINDEX = (DWORD)-1;
 
-    enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };
+	enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };
 
-    enum PovIDs
-    {
-        DPAD_UP,
-        DPAD_DOWN,
-        DPAD_LEFT,
-        DPAD_RIGHT
-    };
+	enum PovIDs
+	{
+		DPAD_UP,
+		DPAD_DOWN,
+		DPAD_LEFT,
+		DPAD_RIGHT
+	};
 
-    struct AxisMap
-    {
-        MappingType analogType; // Type of analog mapping (only NONE, AXIS, and SLIDER are used)
-        s8 id;
-        s8 positiveButtonID, negativeButtonID; // button IDs corresponding to the positive/negative directions of the axis
-        bool hasDigital; // Indicates if there is digital input mapped to the axis
+	struct AxisMap
+	{
+		MappingType analogType; // Type of analog mapping (only NONE, AXIS, and SLIDER are used)
+		s8 id;
+		s8 positiveButtonID, negativeButtonID; // button IDs corresponding to the positive/negative directions of the axis
+		bool hasDigital; // Indicates if there is digital input mapped to the axis
 
-        s32 a2ddeadzone;
-        s32 a2doffset;
-        s16 axisdeadzone;
-        s16 antideadzone;
-        s16 axislinear;
+		s32 a2ddeadzone;
+		s32 a2doffset;
+		s16 axisdeadzone;
+		s16 antideadzone;
+		s16 axislinear;
 
-        bool axistodpad;
+		bool axistodpad;
 
-        AxisMap()
-        {
-            analogType = NONE;
-            id = 0;
-            positiveButtonID = negativeButtonID = 0;
-            hasDigital = false;
+		AxisMap()
+		{
+			analogType = NONE;
+			id = 0;
+			positiveButtonID = negativeButtonID = 0;
+			hasDigital = false;
 
-            a2ddeadzone = 0;
-            a2doffset = 0;
-            axisdeadzone = 0;
-            antideadzone = 0;
-            axislinear = 0;
-        }
-    };
+			a2ddeadzone = 0;
+			a2doffset = 0;
+			axisdeadzone = 0;
+			antideadzone = 0;
+			axislinear = 0;
+		}
+	};
 
 	struct ButtonMap
 	{
@@ -66,71 +66,71 @@ public:
 		}
 	};
 
-    struct TriggerMap
-    {
-        MappingType type;
-        s8 id;			// Index for the mapped button/axis/slider
-        s8 but;
-        u8 triggerdz;
-        TriggerMap()
-        {
-            id = 0;
-            but = 0;
-            type = NONE;
-            triggerdz = 0;
-        }
-    };
+	struct TriggerMap
+	{
+		MappingType type;
+		s8 id;			// Index for the mapped button/axis/slider
+		s8 but;
+		u8 triggerdz;
+		TriggerMap()
+		{
+			id = 0;
+			but = 0;
+			type = NONE;
+			triggerdz = 0;
+		}
+	};
 
-    struct Mapping
-    {
-        // Axis indexes are positive or negative numbers, zero is invalid.
-        // All other indexer values start from zero.
-        TriggerMap Trigger[2];
-        AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
-        s32 pov[4];
+	struct Mapping
+	{
+		// Axis indexes are positive or negative numbers, zero is invalid.
+		// All other indexer values start from zero.
+		TriggerMap Trigger[2];
+		AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
+		s32 pov[4];
 		ButtonMap Button[10];
-        s8 guide;
-        s8 DpadPOV; // Index of POV switch to use for the D-pad
-        bool PovIsButton;
+		s8 guide;
+		s8 DpadPOV; // Index of POV switch to use for the D-pad
+		bool PovIsButton;
 
-        Mapping()
-        {
-            pov[DPAD_UP] = 36000;
-            pov[DPAD_DOWN] = 18000;
-            pov[DPAD_LEFT] = 27000;
-            pov[DPAD_RIGHT] = 9000;
+		Mapping()
+		{
+			pov[DPAD_UP] = 36000;
+			pov[DPAD_DOWN] = 18000;
+			pov[DPAD_LEFT] = 27000;
+			pov[DPAD_RIGHT] = 9000;
 
-            guide = -1;
-            DpadPOV = 0;
-            PovIsButton = false;
-        }
-    };
+			guide = -1;
+			DpadPOV = 0;
+			PovIsButton = false;
+		}
+	};
 
-    static const u16 buttonIDs[10];
-    static const u16 povIDs[4];
+	static const u16 buttonIDs[10];
+	static const u16 povIDs[4];
 
-    static const char* const buttonNames[];
+	static const char* const buttonNames[];
 	static const char* const buttonDZNames[];
 	static const char* const povNames[];
-    static const char* const axisNames[];
-    static const char* const axisDZNames[];
-    static const char* const axisADZNames[];
-    static const char* const axisLNames[];
-    static const char* const axisBNames[];
-    static const char* const triggerNames[];
-    static const char* const triggerDZNames[];
-    static const char* const triggerBNames[];
+	static const char* const axisNames[];
+	static const char* const axisDZNames[];
+	static const char* const axisADZNames[];
+	static const char* const axisLNames[];
+	static const char* const axisBNames[];
+	static const char* const triggerNames[];
+	static const char* const triggerDZNames[];
+	static const char* const triggerBNames[];
 
-    void ReadConfig();
+	void ReadConfig();
 
 private:
-    bool ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile);
-    void ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile);
+	bool ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile);
+	void ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile);
 
-    void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue);
+	void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue);
 
-    bool m_initBeep;
-    bool m_globalDisable;
+	bool m_initBeep;
+	bool m_globalDisable;
 };
 
 
