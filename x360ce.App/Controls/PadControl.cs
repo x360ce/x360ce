@@ -558,14 +558,11 @@ namespace x360ce.App.Controls
             bool fullPassThrough = PassThroughCheckBox.Checked;
             bool forcesPassThrough = ForcesPassThroughCheckBox.Checked;
 
-            // If full passthrough mode is turned on, chaning forces passthrough has no effect.
+            // If full passthrough mode is turned on, changing forces passthrough has no effect.
             ForcesPassThroughCheckBox.Enabled = !fullPassThrough;
 
             // Pass Through index is enabled if either pass through mode is enabled
             PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
-
-            // Combining is enabled unless full pass through is enabled
-            CombineGroupBox.Enabled = !fullPassThrough;
         }
 
         /// <summary>

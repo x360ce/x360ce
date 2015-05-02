@@ -25,6 +25,9 @@
     <ClCompile Include="ForceFeedbackCombiner.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
+    <ClCompile Include="ControllerBase.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">

@@ -11,21 +11,16 @@
 #include "ControllerBase.h"
 #include "Controller.h"
 
-Controller::Controller(u32 user) :
+#include "XInputModuleManager.h"
+
+
+Controller::Controller(u32 user) : ControllerBase(user), 
 m_ForceFeedbackInst(this)
 {
 	m_ForceFeedback = &m_ForceFeedbackInst;
 	m_pDevice.reset();
 	m_productid = GUID_NULL;
 	m_instanceid = GUID_NULL;
-	m_axiscount = 0;
-
-	m_gamepadtype = 1;
-	m_passthrough = false;
-
-	m_user = user;
-
-	m_failcount = 0;
 }
 
 Controller::~Controller()
@@ -68,6 +63,10 @@ BOOL CALLBACK Controller::EnumObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, 
 
 DWORD Controller::GetState(XINPUT_STATE* pState)
 {
+	// Passthrough?
+	if (m_passthrough)
+		return XInputModuleManager::Get().XInputGetState(m_passthroughindex, pState);
+
 	if (!ControllerManager::Get().XInputEnabled())
 	{
 		// Clear state
