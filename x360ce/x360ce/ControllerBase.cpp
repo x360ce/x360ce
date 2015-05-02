@@ -259,9 +259,7 @@ DWORD ControllerBase::SetState(XINPUT_VIBRATION* pVibration)
 {
 	if (m_ForceFeedback->m_SwapMotors)
 	{
-		WORD speed = pVibration->wLeftMotorSpeed;
-		pVibration->wLeftMotorSpeed = pVibration->wRightMotorSpeed;
-		pVibration->wRightMotorSpeed = speed;
+		std::swap(pVibration->wLeftMotorSpeed, pVibration->wRightMotorSpeed);
 	}
 	if (m_passthrough)
 	{
