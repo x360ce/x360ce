@@ -65,16 +65,28 @@ namespace x360ce.App.Controls
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
 			CombinedIndexComboBox.DisplayMember = "Key";
 			CombinedIndexComboBox.ValueMember = "Value";
-
+			var comboBoxes = new List<ComboBox>();
+			GetAllControls(GeneralTabPage, ref comboBoxes);
 			// Attach context strip with button names to every ComboBox on general tab.
-			foreach (var control in GeneralTabPage.Controls)
+			foreach (var cb in comboBoxes)
 			{
-				if (control is ComboBox)
-				{
-					((ComboBox)control).ContextMenuStrip = DiMenuStrip;
-				}
+					((ComboBox)cb).ContextMenuStrip = DiMenuStrip;
 			}
 		}
+
+		public void GetAllControls<T>(Control c, ref List<T> l) where T: Control
+		{
+			T[] boxes = c.Controls.OfType<T>().ToArray();
+			Control[] bases = c.Controls.Cast<Control>().ToArray();
+			l.AddRange(boxes);
+			Control[] c2 = c.Controls.Cast<Control>().Except(boxes).ToArray();
+			for (int i = 0; i <= c2.Length - 1; i++)
+			{
+				GetAllControls(c2[i], ref l);
+			}
+		}
+
+
 
 		#region Recording
 
@@ -227,7 +239,11 @@ namespace x360ce.App.Controls
 			else
 			{
 				if (cbx == DPadComboBox) EnableDPadMenu(true);
-				cbx.ContextMenuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
+				var menuStrip = cbx.ContextMenuStrip;
+				if (menuStrip != null)
+				{
+					menuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
+				}
 				CurrentCbx = cbx;
 			}
 			if (cbx.Items.Count > 0)

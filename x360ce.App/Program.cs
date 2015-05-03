@@ -18,8 +18,8 @@ namespace x360ce.App
         [STAThread]
         static void Main(string[] args)
         {
-            try
-            {
+           // try
+           // {
                 // IMPORTANT: Make sure this method don't have any static references to x360ce.Engine librarry or
                 // program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
                 AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
@@ -47,23 +47,23 @@ namespace x360ce.App
                     return;
                 }
                 if (!IsOneCopyRunningAlready()) Application.Run(MainForm.Current);
-            }
-            catch (Exception ex)
-            {
-                var message = "";
-                AddExceptionMessage(ex, ref message);
-                if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
-                var box = new Controls.MessageBoxForm();
-                if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
-                {
-                    message += "===============================================================\r\n";
-                    message += "You can click the link below to download Microsoft DirectX.";
-                    box.MainLinkLabel.Text = "http://www.microsoft.com/en-us/download/details.aspx?id=35";
-                    box.MainLinkLabel.Visible = true;
-                }
-                var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel) Application.Exit();
-            }
+           // }
+			//catch (Exception ex)
+			//{
+			//	var message = "";
+			//	AddExceptionMessage(ex, ref message);
+			//	if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+			//	var box = new Controls.MessageBoxForm();
+			//	if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
+			//	{
+			//		message += "===============================================================\r\n";
+			//		message += "You can click the link below to download Microsoft DirectX.";
+			//		box.MainLinkLabel.Text = "http://www.microsoft.com/en-us/download/details.aspx?id=35";
+			//		box.MainLinkLabel.Visible = true;
+			//	}
+			//	var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+			//	if (result == DialogResult.Cancel) Application.Exit();
+			//}
         }
 
         public static bool IsOneCopyRunningAlready()
