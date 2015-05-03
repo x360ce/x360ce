@@ -237,8 +237,50 @@ namespace x360ce.App
 		[DefaultValue("RIGHT"), Description("D-Pad right button.")]
 		static public string DPadRight { get { return "D-pad Right"; } }
 
+		#region Axis To Button / D-Pad
 
-		// Axis To D-Pad
+		[DefaultValue("256"), Description("Axis to A Button Dead Zone.")]
+		static public string AxisToButtonADeadZone { get { return "AxisToButtonADeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to B Button Dead Zone.")]
+		static public string AxisToButtonBDeadZone { get { return "AxisToButtonBDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to X Button Dead Zone.")]
+		static public string AxisToButtonXDeadZone { get { return "AxisToButtonXDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Y Button Dead Zone.")]
+		static public string AxisToButtonYDeadZone { get { return "AxisToButtonYDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Start Button Dead Zone.")]
+		static public string AxisToButtonStartDeadZone { get { return "AxisToButtonStartDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Back Button Dead Zone.")]
+		static public string AxisToButtonBackDeadZone { get { return "AxisToButtonBackDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Left Bumper Dead Zone.")]
+		static public string AxisToLeftShoulderDeadZone { get { return "AxisToLeftShoulderDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Left Stick Button Dead Zone.")]
+		static public string AxisToLeftThumbButtonDeadZone { get { return "AxisToLeftThumbButtonDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Right Bumper Dead Zone.")]
+		static public string AxisToRightShoulderDeadZone { get { return "AxisToRightShoulderDeadZone"; } }
+
+		[DefaultValue("256"), Description("Axis to Right Stick Button Dead Zone.")]
+		static public string AxisToRightThumbButtonDeadZone { get { return "AxisToRightThumbButtonDeadZone"; } }
+
+		//[DefaultValue("256"), Description("Axis to D-Pad Down Dead Zone.")]
+		//static public string AxisToDPadDownDeadZone { get { return "AxisToDPadDownDeadZone"; } }
+
+		//[DefaultValue("256), Description("Axis to D-Pad Left Dead Zone.")]
+		//static public string AxisToDPadLeftDeadZone { get { return "AxisToDPadLeftDeadZone"; } }
+
+		//[DefaultValue("256"), Description("Axis to D-Pad Right Dead Zone.")]
+		//static public string AxisToDPadRightDeadZone { get { return "AxisToDPadRightDeadZone"; } }
+
+		//[DefaultValue("256"), Description("Axis to D-Pad Up Dead Zone.")]
+		//static public string AxisToDPadUpDeadZone { get { return "AxisToDPadUpDeadZone"; } }
+
 		[DefaultValue("0"), Description("Axis to control DPad. Disabled = 0, Enabled = 1.")]
 		static public string AxisToDPadEnabled { get { return "AxisToDPad"; } }
 
@@ -248,6 +290,7 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("Axis to D-Pad offset.")]
 		static public string AxisToDPadOffset { get { return "AxisToDPadOffset"; } }
 
+		#endregion
 
 		// Button names.
 		[DefaultValue("0"), Description("Big button.")]
@@ -314,8 +357,8 @@ namespace x360ce.App
 		[DefaultValue("100"), Description("Left motor strength. Range is 0 to 100. Default is 100.")]
 		static public string LeftMotorStrength { get { return "LeftMotorStrength"; } }
 
-        [DefaultValue("0"), Description("Left motor effect direction. -1, 0, 1.")]
-        static public string LeftMotorDirection { get { return "LeftMotorDirection"; } }
+		[DefaultValue("0"), Description("Left motor effect direction. -1, 0, 1.")]
+		static public string LeftMotorDirection { get { return "LeftMotorDirection"; } }
 
 		[DefaultValue("120"), Description("Right motor period. Range is 0 to 500. Default is 120.")]
 		static public string RightMotorPeriod { get { return "RightMotorPeriod"; } }
@@ -323,8 +366,8 @@ namespace x360ce.App
 		[DefaultValue("100"), Description("Right motor strength. Range is 0 to 100. Default is 100.")]
 		static public string RightMotorStrength { get { return "RightMotorStrength"; } }
 
-        [DefaultValue("0"), Description("Right motor effect direction. -1, 0, 1.")]
-        static public string RightMotorDirection { get { return "RightMotorDirection"; } }
+		[DefaultValue("0"), Description("Right motor effect direction. -1, 0, 1.")]
+		static public string RightMotorDirection { get { return "RightMotorDirection"; } }
 
 		public static int GetPadIndex(string path)
 		{

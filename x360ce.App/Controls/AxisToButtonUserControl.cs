@@ -16,9 +16,17 @@ namespace x360ce.App.Controls
         public AxisToButtonUserControl()
         {
             InitializeComponent();
+			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox);
+			controlsLink.ValueChanged += controlsLink_ValueChanged;
         }
 
-        GamepadButtonFlags _GamepadButton;
+		void controlsLink_ValueChanged(object sender, EventArgs e)
+		{
+		}
+
+		DeadZoneControlsLink controlsLink;
+		
+		GamepadButtonFlags _GamepadButton;
 
         [DefaultValue(GamepadButtonFlags.None)] // Category("Appearance")
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
@@ -59,6 +67,20 @@ namespace x360ce.App.Controls
                 default: ButtonImagePictureBox.Image = null; break;
             }
         }
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				controlsLink.Dispose();
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
     }
 }
