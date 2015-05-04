@@ -88,7 +88,7 @@ public:
 		TriggerMap Trigger[2];
 		AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
 		s32 pov[4];
-		ButtonMap Button[10];
+		ButtonMap Button[14];
 		s8 guide;
 		s8 DpadPOV; // Index of POV switch to use for the D-pad
 		bool PovIsButton;
@@ -106,7 +106,7 @@ public:
 		}
 	};
 
-	static const u16 buttonIDs[10];
+	static const u16 buttonIDs[14];
 	static const u16 povIDs[4];
 
 	static const char* const buttonNames[];

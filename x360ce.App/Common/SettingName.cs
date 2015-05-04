@@ -269,17 +269,17 @@ namespace x360ce.App
 		[DefaultValue("8192"), Description("Axis to Right Stick Button Dead Zone.")]
 		static public string AxisToRightThumbButtonDeadZone { get { return "Right Thumb DeadZone"; } }
 
-		//[DefaultValue("8192"), Description("Axis to D-Pad Down Dead Zone.")]
-		//static public string AxisToDPadDownDeadZone { get { return "AxisToDPadDownDeadZone"; } }
+		[DefaultValue("8192"), Description("Axis to D-Pad Down Dead Zone.")]
+		static public string AxisToDPadDownDeadZone { get { return "AxisToDPadDownDeadZone"; } }
 
-		//[DefaultValue("8192), Description("Axis to D-Pad Left Dead Zone.")]
-		//static public string AxisToDPadLeftDeadZone { get { return "AxisToDPadLeftDeadZone"; } }
+		[DefaultValue("8192"), Description("Axis to D-Pad Left Dead Zone.")]
+		static public string AxisToDPadLeftDeadZone { get { return "AxisToDPadLeftDeadZone"; } }
 
-		//[DefaultValue("8192"), Description("Axis to D-Pad Right Dead Zone.")]
-		//static public string AxisToDPadRightDeadZone { get { return "AxisToDPadRightDeadZone"; } }
+		[DefaultValue("8192"), Description("Axis to D-Pad Right Dead Zone.")]
+		static public string AxisToDPadRightDeadZone { get { return "AxisToDPadRightDeadZone"; } }
 
-		//[DefaultValue("8192"), Description("Axis to D-Pad Up Dead Zone.")]
-		//static public string AxisToDPadUpDeadZone { get { return "AxisToDPadUpDeadZone"; } }
+		[DefaultValue("8192"), Description("Axis to D-Pad Up Dead Zone.")]
+		static public string AxisToDPadUpDeadZone { get { return "AxisToDPadUpDeadZone"; } }
 
 		[DefaultValue("0"), Description("Axis to control DPad. Disabled = 0, Enabled = 1.")]
 		static public string AxisToDPadEnabled { get { return "AxisToDPad"; } }

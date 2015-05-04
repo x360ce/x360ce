@@ -98,7 +98,6 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == false)
 	{
 		//INT pov = POVState(m_mapping.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
-
 		int povdeg = m_state.rgdwPOV[m_mapping.DpadPOV - 1];
 		if (povdeg >= 0)
 		{
@@ -119,7 +118,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 				pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 		}
 	}
-	else if (m_mapping.PovIsButton == true)
+	else if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == true)
 	{
 		for (int i = 0; i < _countof(m_mapping.pov); ++i)
 		{
@@ -242,7 +241,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			}
 			if (isRange)
 			{
-				//PrintLog("Axis/Slider: %d, invert = %d, half = %d, deadZone %d diValue %d", v, invert, isHalf, deadZone, diValue);
+				PrintLog("Axis/Slider: %d, invert = %d, half = %d, deadZone %d diValue %d", v, invert, isHalf, deadZone, diValue);
 				if (diValue > deadZone)
 				{
 					pState->Gamepad.wButtons |= Config::buttonIDs[i];
