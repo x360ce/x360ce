@@ -60,7 +60,7 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	// Validate
-	if (!pCapabilities || dwFlags != XINPUT_FLAG_GAMEPAD)
+	if (!pCapabilities || dwFlags != 0 && dwFlags != XINPUT_FLAG_GAMEPAD)
 	{
 		return ERROR_BAD_ARGUMENTS;
 	}
