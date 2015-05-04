@@ -266,9 +266,9 @@ DWORD ControllerBase::SetState(XINPUT_VIBRATION* pVibration)
 		return XInputModuleManager::Get().XInputSetState(m_passthroughindex, pVibration);
 	}
 	if (m_useforce)
-		return ERROR_SUCCESS;
-
-	m_ForceFeedback->SetState(pVibration);
+	{
+		m_ForceFeedback->SetState(pVibration);
+	}
 	return ERROR_SUCCESS;
 }
 
