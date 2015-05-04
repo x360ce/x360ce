@@ -57,7 +57,6 @@
 			this.MappedAxisTextBox.Size = new System.Drawing.Size(75, 20);
 			this.MappedAxisTextBox.TabIndex = 6;
 			this.MappedAxisTextBox.TabStop = false;
-			this.MappedAxisTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// DeadZoneNumericUpDown
 			// 
@@ -94,6 +93,7 @@
 			this.ArrowPictureBox.Size = new System.Drawing.Size(16, 16);
 			this.ArrowPictureBox.TabIndex = 0;
 			this.ArrowPictureBox.TabStop = false;
+			this.ArrowPictureBox.EnabledChanged += new System.EventHandler(this.ArrowPictureBox_EnabledChanged);
 			// 
 			// ButtonImagePictureBox
 			// 
@@ -105,6 +105,8 @@
 			this.ButtonImagePictureBox.Size = new System.Drawing.Size(28, 28);
 			this.ButtonImagePictureBox.TabIndex = 0;
 			this.ButtonImagePictureBox.TabStop = false;
+			this.ButtonImagePictureBox.EnabledChanged += new System.EventHandler(this.ButtonImagePictureBox_EnabledChanged);
+			this.ButtonImagePictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.ButtonImagePictureBox_Paint);
 			// 
 			// AxisToButtonUserControl
 			// 

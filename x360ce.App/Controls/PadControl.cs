@@ -26,6 +26,21 @@ namespace x360ce.App.Controls
 			DirectInputTabPage.Controls.Add(diControl);
 			PadTabControl.TabPages.Remove(DirectInputTabPage);
 			this.ResumeLayout();
+			// Axis to Button DeadZones
+			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
+			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
+			AxisToButtonXDeadZonePanel.MonitorComboBox = ButtonXComboBox;
+			AxisToButtonYDeadZonePanel.MonitorComboBox = ButtonYComboBox;
+			AxisToButtonStartDeadZonePanel.MonitorComboBox = ButtonStartComboBox;
+			AxisToButtonBackDeadZonePanel.MonitorComboBox = ButtonBackComboBox;
+			AxisToLeftShoulderDeadZonePanel.MonitorComboBox = LeftShoulderComboBox;
+			AxisToLeftThumbButtonDeadZonePanel.MonitorComboBox = LeftThumbButtonComboBox;
+			AxisToRightShoulderDeadZonePanel.MonitorComboBox = RightShoulderComboBox;
+			AxisToRightThumbButtonDeadZonePanel.MonitorComboBox = RightThumbButtonComboBox;
+			//AxisToDPadDownDeadZonePanel.MonitorComboBox = DPadDownComboBox;
+			//AxisToDPadLeftButtonDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
+			//AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
+			//AxisToDPadUpButtonDeadZonePanel.MonitorComboBox = DPadUpComboBox;
 		}
 
 		public void InitPadControl()
@@ -70,11 +85,11 @@ namespace x360ce.App.Controls
 			// Attach context strip with button names to every ComboBox on general tab.
 			foreach (var cb in comboBoxes)
 			{
-					((ComboBox)cb).ContextMenuStrip = DiMenuStrip;
+				((ComboBox)cb).ContextMenuStrip = DiMenuStrip;
 			}
 		}
 
-		public void GetAllControls<T>(Control c, ref List<T> l) where T: Control
+		public void GetAllControls<T>(Control c, ref List<T> l) where T : Control
 		{
 			T[] boxes = c.Controls.OfType<T>().ToArray();
 			Control[] bases = c.Controls.Cast<Control>().ToArray();
@@ -280,9 +295,7 @@ namespace x360ce.App.Controls
 			{
 				if (_topDisabledImage == null)
 				{
-					_topDisabledImage = (Bitmap)topImage.Clone();
-					AppHelper.GrayScale(_topDisabledImage);
-					AppHelper.Transparent(_topDisabledImage, 50);
+					_topDisabledImage = AppHelper.GetDisabledImage(topImage);
 				}
 				return _topDisabledImage;
 			}
@@ -295,9 +308,7 @@ namespace x360ce.App.Controls
 			{
 				if (_frontDisabledImage == null)
 				{
-					_frontDisabledImage = (Bitmap)frontImage.Clone();
-					AppHelper.GrayScale(_frontDisabledImage);
-					AppHelper.Transparent(_frontDisabledImage, 50);
+					_frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
 				}
 				return _frontDisabledImage;
 			}
@@ -401,10 +412,10 @@ namespace x360ce.App.Controls
 				setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
 				if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
 				// Draw button state green led image.
-				DrawState(GamepadButtonFlags.Y, buttonY, ButtonYLabel, e);
-				DrawState(GamepadButtonFlags.X, buttonX, ButtonXLabel, e);
-				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
 				DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
+				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
+				DrawState(GamepadButtonFlags.X, buttonX, ButtonXLabel, e);
+				DrawState(GamepadButtonFlags.Y, buttonY, ButtonYLabel, e);
 				//DrawState(GamepadButtonFlags.Guide, buttonGuide, ButtonGuideLabel, e);
 				DrawState(GamepadButtonFlags.Start, buttonStart, StartButtonLabel, e);
 				DrawState(GamepadButtonFlags.Back, buttonBack, BackButtonLabel, e);
@@ -704,9 +715,15 @@ namespace x360ce.App.Controls
 			if (success) RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
 			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
 			if (success) RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
-
+			// Update controller images.
 			this.TopPictureBox.Refresh();
 			this.FrontPictureBox.Refresh();
+			// Update Axis to Button Images.
+			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
+			foreach (var atbPanel in AxisToButtonControls)
+			{
+				atbPanel.Refresh(gamePadState, markB);
+			}
 		}
 
 		// Check left thumbStick

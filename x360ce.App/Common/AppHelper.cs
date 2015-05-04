@@ -97,52 +97,14 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Colors
 
-		/// <summary>
-		/// Make bitmap gray scale
-		/// </summary>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static void GrayScale(Bitmap b)
-		{
-			int w = b.Width;
-			int h = b.Height;
-			for (int y = 0; y < h; y++)
-			{
-				for (int x = 0; x < w; x++)
-				{
-					Color p = b.GetPixel(x, y);
-					byte c = (byte)(.299 * p.R + .587 * p.G + .114 * p.B);
-					b.SetPixel(x, y, Color.FromArgb(p.A, c, c, c));
-				}
-			}
+		public static Bitmap GetDisabledImage(Bitmap image){
+			var effects = new JocysCom.ClassLibrary.Drawing.Effects();
+			var newImage = (Bitmap)image.Clone();
+					effects.GrayScale(newImage);
+					effects.Transparent(newImage, 50);
+			return newImage;
 		}
-
-		/// <summary>
-		/// Make bitmap gray scale
-		/// </summary>
-		/// <param name="b"></param>
-		/// <param name="alpha">256 max</param>
-		/// <returns></returns>
-		public static void Transparent(Bitmap b, int alpha)
-		{
-			int w = b.Width;
-			int h = b.Height;
-			for (int y = 0; y < h; y++)
-			{
-				for (int x = 0; x < w; x++)
-				{
-					Color p = b.GetPixel(x, y);
-					int a = (int)((float)p.A * (float)alpha / byte.MaxValue);
-					if (a >= byte.MaxValue) a = byte.MaxValue;
-					if (a <= byte.MinValue) a = byte.MinValue;
-					b.SetPixel(x, y, Color.FromArgb(a, p.R, p.G, p.B));
-				}
-			}
-		}
-
-		#endregion
 
 		// Use special function or comparison fails.
 		public static bool IsSameDevice(Device device, Guid instanceGuid)

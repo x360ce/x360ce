@@ -1449,102 +1449,82 @@
 			// 
 			// AxisToButtonADeadZonePanel
 			// 
-			this.AxisToButtonADeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToButtonADeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.A;
 			this.AxisToButtonADeadZonePanel.Location = new System.Drawing.Point(6, 19);
 			this.AxisToButtonADeadZonePanel.Name = "AxisToButtonADeadZonePanel";
-			this.AxisToButtonADeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToButtonADeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToButtonADeadZonePanel.TabIndex = 0;
 			// 
 			// AxisToRightThumbButtonDeadZonePanel
 			// 
-			this.AxisToRightThumbButtonDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToRightThumbButtonDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.RightThumb;
 			this.AxisToRightThumbButtonDeadZonePanel.Location = new System.Drawing.Point(6, 325);
 			this.AxisToRightThumbButtonDeadZonePanel.Name = "AxisToRightThumbButtonDeadZonePanel";
-			this.AxisToRightThumbButtonDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToRightThumbButtonDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToRightThumbButtonDeadZonePanel.TabIndex = 2;
 			// 
 			// AxisToButtonYDeadZonePanel
 			// 
-			this.AxisToButtonYDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToButtonYDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Y;
 			this.AxisToButtonYDeadZonePanel.Location = new System.Drawing.Point(6, 121);
 			this.AxisToButtonYDeadZonePanel.Name = "AxisToButtonYDeadZonePanel";
-			this.AxisToButtonYDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToButtonYDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToButtonYDeadZonePanel.TabIndex = 0;
 			// 
 			// AxisToLeftThumbButtonDeadZonePanel
 			// 
-			this.AxisToLeftThumbButtonDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToLeftThumbButtonDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.LeftThumb;
 			this.AxisToLeftThumbButtonDeadZonePanel.Location = new System.Drawing.Point(6, 291);
 			this.AxisToLeftThumbButtonDeadZonePanel.Name = "AxisToLeftThumbButtonDeadZonePanel";
-			this.AxisToLeftThumbButtonDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToLeftThumbButtonDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToLeftThumbButtonDeadZonePanel.TabIndex = 2;
 			// 
 			// AxisToButtonXDeadZonePanel
 			// 
-			this.AxisToButtonXDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToButtonXDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.X;
 			this.AxisToButtonXDeadZonePanel.Location = new System.Drawing.Point(6, 87);
 			this.AxisToButtonXDeadZonePanel.Name = "AxisToButtonXDeadZonePanel";
-			this.AxisToButtonXDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToButtonXDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToButtonXDeadZonePanel.TabIndex = 0;
 			// 
 			// AxisToRightShoulderDeadZonePanel
 			// 
-			this.AxisToRightShoulderDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToRightShoulderDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.RightShoulder;
 			this.AxisToRightShoulderDeadZonePanel.Location = new System.Drawing.Point(6, 257);
 			this.AxisToRightShoulderDeadZonePanel.Name = "AxisToRightShoulderDeadZonePanel";
-			this.AxisToRightShoulderDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToRightShoulderDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToRightShoulderDeadZonePanel.TabIndex = 1;
 			// 
 			// AxisToButtonStartDeadZonePanel
 			// 
-			this.AxisToButtonStartDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToButtonStartDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Start;
 			this.AxisToButtonStartDeadZonePanel.Location = new System.Drawing.Point(6, 155);
 			this.AxisToButtonStartDeadZonePanel.Name = "AxisToButtonStartDeadZonePanel";
-			this.AxisToButtonStartDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToButtonStartDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToButtonStartDeadZonePanel.TabIndex = 0;
 			// 
 			// AxisToLeftShoulderDeadZonePanel
 			// 
-			this.AxisToLeftShoulderDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToLeftShoulderDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.LeftShoulder;
 			this.AxisToLeftShoulderDeadZonePanel.Location = new System.Drawing.Point(6, 223);
 			this.AxisToLeftShoulderDeadZonePanel.Name = "AxisToLeftShoulderDeadZonePanel";
-			this.AxisToLeftShoulderDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToLeftShoulderDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToLeftShoulderDeadZonePanel.TabIndex = 0;
 			// 
 			// AxisToButtonBackDeadZonePanel
 			// 
-			this.AxisToButtonBackDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToButtonBackDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Back;
 			this.AxisToButtonBackDeadZonePanel.Location = new System.Drawing.Point(6, 189);
 			this.AxisToButtonBackDeadZonePanel.Name = "AxisToButtonBackDeadZonePanel";
-			this.AxisToButtonBackDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToButtonBackDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToButtonBackDeadZonePanel.TabIndex = 0;
 			// 
 			// AxisToButtonBDeadZonePanel
 			// 
-			this.AxisToButtonBDeadZonePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxisToButtonBDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.B;
 			this.AxisToButtonBDeadZonePanel.Location = new System.Drawing.Point(6, 53);
 			this.AxisToButtonBDeadZonePanel.Name = "AxisToButtonBDeadZonePanel";
-			this.AxisToButtonBDeadZonePanel.Size = new System.Drawing.Size(669, 28);
+			this.AxisToButtonBDeadZonePanel.Size = new System.Drawing.Size(562, 28);
 			this.AxisToButtonBDeadZonePanel.TabIndex = 0;
 			// 
 			// LeftThumbTabPage
