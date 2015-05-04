@@ -123,6 +123,15 @@ namespace x360ce.App.Controls
 				{
 					c.Enabled = en;
 				}
+				// If enabled and value is 0.
+				if (en && DeadZoneNumericUpDown.Value == 0)
+				{
+					DeadZoneNumericUpDown.Value = 8192;
+				}
+				else if (!en && DeadZoneNumericUpDown.Value > 0)
+				{
+					DeadZoneNumericUpDown.Value = 0;
+				}
 			}
 		}
 

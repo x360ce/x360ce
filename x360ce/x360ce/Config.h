@@ -56,7 +56,7 @@ public:
 		MappingType type;
 		s8 id;			// Index for the mapped button/axis/slider
 		s8 but;
-		u8 buttondz;
+		u16 buttondz;
 		ButtonMap()
 		{
 			id = 0;
