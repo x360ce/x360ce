@@ -2,14 +2,6 @@
 
 #include "targetver.h"
 
-#if _MSC_VER < 1700
-#define _BIND_TO_CURRENT_CRT_VERSION 1
-
-#ifdef NDEBUG
-#define _SECURE_SCL 0
-#endif
-#endif
-
 #include <cstdlib>
 #include <string>
 #include <vector>

@@ -9,11 +9,6 @@
 #include "Types.h"
 #include "StringUtils.h"
 
-#if _MSC_VER < 1700
-#define strtoll _strtoi64
-#define strtoull _strtoui64
-#endif
-
 bool CharArrayFormatV(char* out, int outsize, const char* format, va_list args)
 {
 	int count;
@@ -221,11 +216,7 @@ bool Convert(const std::string &str, float *const output)
 	char *endptr = nullptr;
 	errno = 0;
 
-#if _MSC_VER < 1700
-	double value = strtod(str.c_str(), &endptr);
-#else
 	float value = strtof(str.c_str(), &endptr);
-#endif
 
 	if (!endptr || *endptr)
 		return false;

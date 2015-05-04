@@ -13,3 +13,16 @@
 /*.suo
 /x360ce.Data/*.dbmdl
 /x360ce.Data/*.user
+x360ce/x360ce/bin/
+x360ce/x360ce/bin64/
+x360ce/x360ce/obj/
+x360ce/x360ce/obj64/
+x360ce/InputHook/obj/
+x360ce/InputHook/obj64/
+x360ce/Common/obj/
+x360ce/Common/obj64/
+x360ce/3rdparty/libMinHook/obj/
+x360ce/3rdparty/libMinHook/obj64/
+x360ce/ditool/obj/
+x360ce/dinput8/obj/
+x360ce/dinput8/bin/
