@@ -242,7 +242,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			}
 			if (isRange)
 			{
-				PrintLog("Axis/Slider: %d, invert = %d, half = %d, deadZone %d xInput %d", v, invert, isHalf, deadZone, diValue);
+				//PrintLog("Axis/Slider: %d, invert = %d, half = %d, deadZone %d diValue %d", v, invert, isHalf, deadZone, diValue);
 				if (diValue > deadZone)
 				{
 					pState->Gamepad.wButtons |= Config::buttonIDs[i];
