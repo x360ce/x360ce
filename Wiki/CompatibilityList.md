@@ -207,7 +207,9 @@ This is the new system utilised by r574+
   1. The Last Remnant
   1. Tiny Brains
   1. Trine (If using Type 2 rumble, increase motor duration to 500)
+  1. Trine Enchanged Edition (If using Type 2 rumble, increase motor duration to 500)
   1. Trine 2 (If using Type 2 rumble, increase motor duration to 500)
+  1. Trine 3 (If using Type 2 rumble, increase motor duration to 500)
   1. Vessel
   1. Watch Dogs
   1. Worms Revolution

@@ -478,8 +478,20 @@ HookMask = 0x0000000E
 Name = Trine
 HookMask = 0x00000002
 
+[trine1_32bit.exe]
+Name = Trine Enchanted Edition
+HookMask = 0x00000002
+
 [trine2_32bit.exe]
 Name = Trine 2
+HookMask = 0x00000002
+
+[trine3_32bit.exe]
+Name = Trine 3
+HookMask = 0x00000002
+
+[trine3_64bit.exe]
+Name = Trine 3
 HookMask = 0x00000002
 
 [UDK.exe]
