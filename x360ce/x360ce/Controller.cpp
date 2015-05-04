@@ -233,16 +233,11 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			s32 diValue;
 			if (isHalf)
 			{
-				//  Fix negative value.
-				diValue = (v == 0 && invert) ? v = -1 : v;
-				diValue = v - min;
-				if (invert) diValue = max - diValue;
-				else diValue = diValue + min;
+				diValue = (invert) ? -1 - v : v;
 			}
 			else
 			{
-				diValue = v - min;
-				if (invert) diValue = 65535 - diValue;
+				diValue = (invert) ? max - v : v - min;
 				deadZone = deadZone * 2;
 			}
 			if (isRange)
