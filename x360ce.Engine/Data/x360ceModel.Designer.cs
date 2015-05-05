@@ -712,7 +712,21 @@ namespace x360ce.Engine.Data
         /// <param name="rightMotorStrength">Initial value of the RightMotorStrength property.</param>
         /// <param name="leftMotorDirection">Initial value of the LeftMotorDirection property.</param>
         /// <param name="rightMotorDirection">Initial value of the RightMotorDirection property.</param>
-        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY, global::System.String leftMotorStrength, global::System.String rightMotorStrength, global::System.String leftMotorDirection, global::System.String rightMotorDirection)
+        /// <param name="buttonADeadZone">Initial value of the ButtonADeadZone property.</param>
+        /// <param name="buttonBDeadZone">Initial value of the ButtonBDeadZone property.</param>
+        /// <param name="buttonBackDeadZone">Initial value of the ButtonBackDeadZone property.</param>
+        /// <param name="buttonStartDeadZone">Initial value of the ButtonStartDeadZone property.</param>
+        /// <param name="buttonXDeadZone">Initial value of the ButtonXDeadZone property.</param>
+        /// <param name="buttonYDeadZone">Initial value of the ButtonYDeadZone property.</param>
+        /// <param name="leftThumbButtonDeadZone">Initial value of the LeftThumbButtonDeadZone property.</param>
+        /// <param name="rightThumbButtonDeadZone">Initial value of the RightThumbButtonDeadZone property.</param>
+        /// <param name="leftShoulderDeadZone">Initial value of the LeftShoulderDeadZone property.</param>
+        /// <param name="rightShoulderDeadZone">Initial value of the RightShoulderDeadZone property.</param>
+        /// <param name="dPadDownDeadZone">Initial value of the DPadDownDeadZone property.</param>
+        /// <param name="dPadLeftDeadZone">Initial value of the DPadLeftDeadZone property.</param>
+        /// <param name="dPadRightDeadZone">Initial value of the DPadRightDeadZone property.</param>
+        /// <param name="dPadUpDeadZone">Initial value of the DPadUpDeadZone property.</param>
+        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBig, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY, global::System.String leftMotorStrength, global::System.String rightMotorStrength, global::System.String leftMotorDirection, global::System.String rightMotorDirection, global::System.String buttonADeadZone, global::System.String buttonBDeadZone, global::System.String buttonBackDeadZone, global::System.String buttonStartDeadZone, global::System.String buttonXDeadZone, global::System.String buttonYDeadZone, global::System.String leftThumbButtonDeadZone, global::System.String rightThumbButtonDeadZone, global::System.String leftShoulderDeadZone, global::System.String rightShoulderDeadZone, global::System.String dPadDownDeadZone, global::System.String dPadLeftDeadZone, global::System.String dPadRightDeadZone, global::System.String dPadUpDeadZone)
         {
             PadSetting padSetting = new PadSetting();
             padSetting.PadSettingChecksum = padSettingChecksum;
@@ -776,6 +790,20 @@ namespace x360ce.Engine.Data
             padSetting.RightMotorStrength = rightMotorStrength;
             padSetting.LeftMotorDirection = leftMotorDirection;
             padSetting.RightMotorDirection = rightMotorDirection;
+            padSetting.ButtonADeadZone = buttonADeadZone;
+            padSetting.ButtonBDeadZone = buttonBDeadZone;
+            padSetting.ButtonBackDeadZone = buttonBackDeadZone;
+            padSetting.ButtonStartDeadZone = buttonStartDeadZone;
+            padSetting.ButtonXDeadZone = buttonXDeadZone;
+            padSetting.ButtonYDeadZone = buttonYDeadZone;
+            padSetting.LeftThumbButtonDeadZone = leftThumbButtonDeadZone;
+            padSetting.RightThumbButtonDeadZone = rightThumbButtonDeadZone;
+            padSetting.LeftShoulderDeadZone = leftShoulderDeadZone;
+            padSetting.RightShoulderDeadZone = rightShoulderDeadZone;
+            padSetting.DPadDownDeadZone = dPadDownDeadZone;
+            padSetting.DPadLeftDeadZone = dPadLeftDeadZone;
+            padSetting.DPadRightDeadZone = dPadRightDeadZone;
+            padSetting.DPadUpDeadZone = dPadUpDeadZone;
             return padSetting;
         }
 
@@ -2249,6 +2277,342 @@ namespace x360ce.Engine.Data
         private global::System.String _RightMotorDirection;
         partial void OnRightMotorDirectionChanging(global::System.String value);
         partial void OnRightMotorDirectionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonADeadZone
+        {
+            get
+            {
+                return _ButtonADeadZone;
+            }
+            set
+            {
+                OnButtonADeadZoneChanging(value);
+                ReportPropertyChanging("ButtonADeadZone");
+                _ButtonADeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonADeadZone");
+                OnButtonADeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonADeadZone;
+        partial void OnButtonADeadZoneChanging(global::System.String value);
+        partial void OnButtonADeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonBDeadZone
+        {
+            get
+            {
+                return _ButtonBDeadZone;
+            }
+            set
+            {
+                OnButtonBDeadZoneChanging(value);
+                ReportPropertyChanging("ButtonBDeadZone");
+                _ButtonBDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonBDeadZone");
+                OnButtonBDeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonBDeadZone;
+        partial void OnButtonBDeadZoneChanging(global::System.String value);
+        partial void OnButtonBDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonBackDeadZone
+        {
+            get
+            {
+                return _ButtonBackDeadZone;
+            }
+            set
+            {
+                OnButtonBackDeadZoneChanging(value);
+                ReportPropertyChanging("ButtonBackDeadZone");
+                _ButtonBackDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonBackDeadZone");
+                OnButtonBackDeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonBackDeadZone;
+        partial void OnButtonBackDeadZoneChanging(global::System.String value);
+        partial void OnButtonBackDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonStartDeadZone
+        {
+            get
+            {
+                return _ButtonStartDeadZone;
+            }
+            set
+            {
+                OnButtonStartDeadZoneChanging(value);
+                ReportPropertyChanging("ButtonStartDeadZone");
+                _ButtonStartDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonStartDeadZone");
+                OnButtonStartDeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonStartDeadZone;
+        partial void OnButtonStartDeadZoneChanging(global::System.String value);
+        partial void OnButtonStartDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonXDeadZone
+        {
+            get
+            {
+                return _ButtonXDeadZone;
+            }
+            set
+            {
+                OnButtonXDeadZoneChanging(value);
+                ReportPropertyChanging("ButtonXDeadZone");
+                _ButtonXDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonXDeadZone");
+                OnButtonXDeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonXDeadZone;
+        partial void OnButtonXDeadZoneChanging(global::System.String value);
+        partial void OnButtonXDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonYDeadZone
+        {
+            get
+            {
+                return _ButtonYDeadZone;
+            }
+            set
+            {
+                OnButtonYDeadZoneChanging(value);
+                ReportPropertyChanging("ButtonYDeadZone");
+                _ButtonYDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonYDeadZone");
+                OnButtonYDeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonYDeadZone;
+        partial void OnButtonYDeadZoneChanging(global::System.String value);
+        partial void OnButtonYDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbButtonDeadZone
+        {
+            get
+            {
+                return _LeftThumbButtonDeadZone;
+            }
+            set
+            {
+                OnLeftThumbButtonDeadZoneChanging(value);
+                ReportPropertyChanging("LeftThumbButtonDeadZone");
+                _LeftThumbButtonDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbButtonDeadZone");
+                OnLeftThumbButtonDeadZoneChanged();
+            }
+        }
+        private global::System.String _LeftThumbButtonDeadZone;
+        partial void OnLeftThumbButtonDeadZoneChanging(global::System.String value);
+        partial void OnLeftThumbButtonDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbButtonDeadZone
+        {
+            get
+            {
+                return _RightThumbButtonDeadZone;
+            }
+            set
+            {
+                OnRightThumbButtonDeadZoneChanging(value);
+                ReportPropertyChanging("RightThumbButtonDeadZone");
+                _RightThumbButtonDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbButtonDeadZone");
+                OnRightThumbButtonDeadZoneChanged();
+            }
+        }
+        private global::System.String _RightThumbButtonDeadZone;
+        partial void OnRightThumbButtonDeadZoneChanging(global::System.String value);
+        partial void OnRightThumbButtonDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftShoulderDeadZone
+        {
+            get
+            {
+                return _LeftShoulderDeadZone;
+            }
+            set
+            {
+                OnLeftShoulderDeadZoneChanging(value);
+                ReportPropertyChanging("LeftShoulderDeadZone");
+                _LeftShoulderDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftShoulderDeadZone");
+                OnLeftShoulderDeadZoneChanged();
+            }
+        }
+        private global::System.String _LeftShoulderDeadZone;
+        partial void OnLeftShoulderDeadZoneChanging(global::System.String value);
+        partial void OnLeftShoulderDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightShoulderDeadZone
+        {
+            get
+            {
+                return _RightShoulderDeadZone;
+            }
+            set
+            {
+                OnRightShoulderDeadZoneChanging(value);
+                ReportPropertyChanging("RightShoulderDeadZone");
+                _RightShoulderDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightShoulderDeadZone");
+                OnRightShoulderDeadZoneChanged();
+            }
+        }
+        private global::System.String _RightShoulderDeadZone;
+        partial void OnRightShoulderDeadZoneChanging(global::System.String value);
+        partial void OnRightShoulderDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadDownDeadZone
+        {
+            get
+            {
+                return _DPadDownDeadZone;
+            }
+            set
+            {
+                OnDPadDownDeadZoneChanging(value);
+                ReportPropertyChanging("DPadDownDeadZone");
+                _DPadDownDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadDownDeadZone");
+                OnDPadDownDeadZoneChanged();
+            }
+        }
+        private global::System.String _DPadDownDeadZone;
+        partial void OnDPadDownDeadZoneChanging(global::System.String value);
+        partial void OnDPadDownDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadLeftDeadZone
+        {
+            get
+            {
+                return _DPadLeftDeadZone;
+            }
+            set
+            {
+                OnDPadLeftDeadZoneChanging(value);
+                ReportPropertyChanging("DPadLeftDeadZone");
+                _DPadLeftDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadLeftDeadZone");
+                OnDPadLeftDeadZoneChanged();
+            }
+        }
+        private global::System.String _DPadLeftDeadZone;
+        partial void OnDPadLeftDeadZoneChanging(global::System.String value);
+        partial void OnDPadLeftDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadRightDeadZone
+        {
+            get
+            {
+                return _DPadRightDeadZone;
+            }
+            set
+            {
+                OnDPadRightDeadZoneChanging(value);
+                ReportPropertyChanging("DPadRightDeadZone");
+                _DPadRightDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadRightDeadZone");
+                OnDPadRightDeadZoneChanged();
+            }
+        }
+        private global::System.String _DPadRightDeadZone;
+        partial void OnDPadRightDeadZoneChanging(global::System.String value);
+        partial void OnDPadRightDeadZoneChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadUpDeadZone
+        {
+            get
+            {
+                return _DPadUpDeadZone;
+            }
+            set
+            {
+                OnDPadUpDeadZoneChanging(value);
+                ReportPropertyChanging("DPadUpDeadZone");
+                _DPadUpDeadZone = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadUpDeadZone");
+                OnDPadUpDeadZoneChanged();
+            }
+        }
+        private global::System.String _DPadUpDeadZone;
+        partial void OnDPadUpDeadZoneChanging(global::System.String value);
+        partial void OnDPadUpDeadZoneChanged();
 
         #endregion
 
