@@ -18,8 +18,24 @@ public:
 
 	DirectInputModuleManager()
 	{
+		IniFile ini;
+		std::string inipath("x360ce.ini");
+		if (!ini.Load(inipath))
+		{
+			CheckCommonDirectory(&inipath, "x360ce");
+		}
 		std::string loaded_module_path;
-		m_module = LoadLibrarySystem("dinput8.dll", &loaded_module_path);
+		std::string chainload_filename;
+
+		if (ini.Get("DINPUT8", "ChainLoadFileName", &chainload_filename))
+		{
+			FullPathFromPath(&loaded_module_path, chainload_filename);
+			m_module = LoadLibraryA(loaded_module_path.c_str());
+		}
+		else
+		{
+			m_module = LoadLibrarySystem("dinput8.dll", &loaded_module_path);
+		}
 
 		if (!m_module)
 		{
