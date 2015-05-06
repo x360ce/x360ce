@@ -37,10 +37,10 @@ namespace x360ce.App.Controls
 			AxisToLeftThumbButtonDeadZonePanel.MonitorComboBox = LeftThumbButtonComboBox;
 			AxisToRightShoulderDeadZonePanel.MonitorComboBox = RightShoulderComboBox;
 			AxisToRightThumbButtonDeadZonePanel.MonitorComboBox = RightThumbButtonComboBox;
-			//AxisToDPadDownDeadZonePanel.MonitorComboBox = DPadDownComboBox;
-			//AxisToDPadLeftButtonDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
-			//AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
-			//AxisToDPadUpButtonDeadZonePanel.MonitorComboBox = DPadUpComboBox;
+			AxisToDPadDownDeadZonePanel.MonitorComboBox = DPadDownComboBox;
+			AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
+			AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
+			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
 		}
 
 		public void InitPadControl()
@@ -520,11 +520,12 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.AxisToLeftThumbButtonDeadZone, AxisToLeftThumbButtonDeadZonePanel.DeadZoneNumericUpDown, sm);
 			SettingManager.AddMap(section, () => SettingName.AxisToRightShoulderDeadZone, AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown, sm);
 			SettingManager.AddMap(section, () => SettingName.AxisToRightThumbButtonDeadZone, AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown, sm);
-			// Axis To D-Pad
-			//SettingManager.AddMap(section, () => SettingName.AxisToDPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown,sm);
-			//SettingManager.AddMap(section, () => SettingName.AxisToDPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown,sm);
-			//SettingManager.AddMap(section, () => SettingName.AxisToDPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown,sm);
-			//SettingManager.AddMap(section, () => SettingName.AxisToDPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown,sm);
+			// Axis To D-Pad (separate directions).
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown,sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown,sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown,sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown,sm);
+			// Axis To D-Pad.
 			SettingManager.AddMap(section, () => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar, sm);
 			SettingManager.AddMap(section, () => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar, sm);

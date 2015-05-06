@@ -123,6 +123,15 @@ namespace x360ce.App.Controls
 				{
 					c.Enabled = en;
 				}
+				// If enabled and value is 0.
+				if (en && DeadZoneNumericUpDown.Value == 0)
+				{
+					DeadZoneNumericUpDown.Value = 8192;
+				}
+				else if (!en && DeadZoneNumericUpDown.Value > 0)
+				{
+					DeadZoneNumericUpDown.Value = 0;
+				}
 			}
 		}
 
@@ -162,14 +171,17 @@ namespace x360ce.App.Controls
 
 		private void ButtonImagePictureBox_Paint(object sender, PaintEventArgs e)
 		{
-			var mW = -_markB.Width / 2;
-			var mH = -_markB.Height / 2;
-			var x = ButtonImagePictureBox.Width / 2;
-			var y = ButtonImagePictureBox.Height / 2;
-			var on = _gamepadState.Gamepad.Buttons.HasFlag(_GamepadButton);
-			if (on) e.Graphics.DrawImage(_markB, x + mW, y + mH);
-			Color c = on ? Color.Green : SystemColors.ControlText;
-			if (ButtonNameLabel.ForeColor != c) ButtonNameLabel.ForeColor = c;
+			if (_markB != null)
+			{
+				var mW = -_markB.Width / 2;
+				var mH = -_markB.Height / 2;
+				var x = ButtonImagePictureBox.Width / 2;
+				var y = ButtonImagePictureBox.Height / 2;
+				var on = _gamepadState.Gamepad.Buttons.HasFlag(_GamepadButton);
+				if (on) e.Graphics.DrawImage(_markB, x + mW, y + mH);
+				Color c = on ? Color.Green : SystemColors.ControlText;
+				if (ButtonNameLabel.ForeColor != c) ButtonNameLabel.ForeColor = c;
+			}
 		}
 
 	}

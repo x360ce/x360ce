@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[x360ce_WebsiteLogs] (
+    [Id]                BIGINT        IDENTITY (1, 1) NOT NULL,
+    [LogDateTime]       DATETIME      CONSTRAINT [DF_x360ce_WebsiteLogs_LogDateTime] DEFAULT (getdate()) NOT NULL,
+    [ClientIpAddress]   BIGINT        CONSTRAINT [DF_x360ce_WebsiteLogs_ClientIpAddress] DEFAULT ((0)) NOT NULL,
+    [UserName]          VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_UserName] DEFAULT ('') NOT NULL,
+    [ServiceName]       VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_ServiceName] DEFAULT ('') NOT NULL,
+    [ServerName]        VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_ServerName] DEFAULT ('') NOT NULL,
+    [ServerIpAddress]   BIGINT        CONSTRAINT [DF_x360ce_WebsiteLogs_ServerIpAddress] DEFAULT ((0)) NOT NULL,
+    [ServerPort]        INT           CONSTRAINT [DF_x360ce_WebsiteLogs_ServerPort] DEFAULT ((0)) NOT NULL,
+    [Method]            VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_Method] DEFAULT ('') NOT NULL,
+    [UriStem]           VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_UriStem] DEFAULT ('') NOT NULL,
+    [UriQuery]          VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_UriQuery] DEFAULT ('') NOT NULL,
+    [ProtocolStatus]    INT           CONSTRAINT [DF_x360ce_WebsiteLogs_ProtocolStatus] DEFAULT ((0)) NOT NULL,
+    [ProtocolSubstatus] VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_ProtocolSubstatus] DEFAULT ((0)) NOT NULL,
+    [Win32Status]       INT           CONSTRAINT [DF_x360ce_WebsiteLogs_Win32Status] DEFAULT ((0)) NOT NULL,
+    [BytesSent]         INT           CONSTRAINT [DF_x360ce_WebsiteLogs_BytesSent] DEFAULT ((0)) NOT NULL,
+    [BytesReceived]     INT           CONSTRAINT [DF_x360ce_WebsiteLogs_BytesReceived] DEFAULT ((0)) NOT NULL,
+    [TimeTaken]         INT           CONSTRAINT [DF_x360ce_WebsiteLogs_TimeTaken] DEFAULT ((0)) NOT NULL,
+    [ProtocolVersion]   VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_ProtocolVersion] DEFAULT ((0)) NOT NULL,
+    [Host]              VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_Host] DEFAULT ((0)) NOT NULL,
+    [UserAgent]         VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_UserAgent] DEFAULT ((0)) NOT NULL,
+    [Cookie]            VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_Cookie] DEFAULT ('') NOT NULL,
+    [Referrer]          VARCHAR (255) CONSTRAINT [DF_x360ce_WebsiteLogs_Referrer] DEFAULT ('') NOT NULL,
+    [Other]             VARCHAR (MAX) CONSTRAINT [DF_x360ce_WebsiteLogs_Other] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_x360ce_WebsiteLogs] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

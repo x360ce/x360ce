@@ -98,7 +98,6 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == false)
 	{
 		//INT pov = POVState(m_mapping.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
-
 		int povdeg = m_state.rgdwPOV[m_mapping.DpadPOV - 1];
 		if (povdeg >= 0)
 		{
@@ -119,7 +118,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 				pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 		}
 	}
-	else if (m_mapping.PovIsButton == true)
+	else if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == true)
 	{
 		for (int i = 0; i < _countof(m_mapping.pov); ++i)
 		{
@@ -176,66 +175,77 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 		{
 			s32 *values;
 
+			bool isRange = false;
+			bool isHalf = false;
+
 			switch (buttonType)
 			{
-				case Config::AXIS:
-				case Config::HAXIS:
-				case Config::CBUT:
-					values = axis;
-					break;
-
-				case Config::SLIDER:
-				case Config::HSLIDER:
-					values = slider;
-					break;
-
-				default:
-					values = axis;
-					break;
+			case Config::AXIS:
+			case Config::HAXIS:
+			case Config::CBUT:
+				values = axis;
+				break;
+			case Config::SLIDER:
+			case Config::HSLIDER:
+				values = slider;
+				break;
+			default:
+				values = axis;
+				break;
 			}
-
-			s32 v = 0;
-
-			if (m_mapping.Button[i].id > 0)
-			{
-				v = values[m_mapping.Button[i].id - 1];
-			}
-			else if (m_mapping.Button[i].id < 0)
-			{
-				v = -values[-m_mapping.Button[i].id - 1] - 1;
-			}
-
-			s32 v2 = 0;
-			s32 offset = 0;
-			s32 scaling = 1;
 
 			switch (buttonType)
 			{
 				// Full range
-				case Config::AXIS:
-				case Config::SLIDER:
-					scaling = 255;
-					offset = 32767;
-					break;
-
-					// Half range
-				case Config::HAXIS:
-				case Config::HSLIDER:
-				case Config::CBUT:
-					scaling = 127;
-					offset = 0;
-					break;
-
-				default:
-					scaling = 1;
-					offset = 0;
-					break;
+			case Config::AXIS:
+			case Config::SLIDER:
+				isRange = true;
+				break;
+				// Half range
+			case Config::HAXIS:
+			case Config::HSLIDER:
+			case Config::CBUT:
+				isRange = true;
+				isHalf = true;
+				break;
+			default:
+				break;
 			}
 
-			v2 = (offset + v) / scaling;
-			if (deadzone(v2, 0, 1, m_mapping.Button[i].buttondz, 1) > 0)
+
+			s32 v = 0;
+			s8 id = m_mapping.Button[i].id;
+			u32 index = std::abs(id) - 1;
+			if (id != 0)
 			{
-				pState->Gamepad.wButtons |= Config::buttonIDs[i];
+				v = values[index];
+			}
+
+			//        [  32768 steps | 32768 steps ]
+			// DInput [      0 32767 | 32768 65535 ] 
+			// XInput [ -32768    -1 |     0 32767 ]
+			//
+			u16 deadZone = (u16)m_mapping.Button[i].buttondz;
+			bool invert = id < 0;
+			s32 min = -32768;
+			s32 max = 32767;
+			s32 diValue;
+			if (isHalf)
+			{
+				diValue = (invert) ? -1 - v : v;
+			}
+			else
+			{
+				diValue = (invert) ? max - v : v - min;
+				deadZone = deadZone * 2;
+			}
+			if (isRange)
+			{
+				PrintLog("Axis/Slider: %d, invert = %d, half = %d, deadZone %d diValue %d", v, invert, isHalf, deadZone, diValue);
+				if (diValue > deadZone)
+				{
+					pState->Gamepad.wButtons |= Config::buttonIDs[i];
+				}
 			}
 		}
 	}
@@ -265,20 +275,20 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 			switch (triggerType)
 			{
-				case Config::AXIS:
-				case Config::HAXIS:
-				case Config::CBUT:
-					values = axis;
-					break;
+			case Config::AXIS:
+			case Config::HAXIS:
+			case Config::CBUT:
+				values = axis;
+				break;
 
-				case Config::SLIDER:
-				case Config::HSLIDER:
-					values = slider;
-					break;
+			case Config::SLIDER:
+			case Config::HSLIDER:
+				values = slider;
+				break;
 
-				default:
-					values = axis;
-					break;
+			default:
+				values = axis;
+				break;
 			}
 
 			s32 v = 0;
@@ -311,24 +321,24 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			switch (triggerType)
 			{
 				// Full range
-				case Config::AXIS:
-				case Config::SLIDER:
-					scaling = 255;
-					offset = 32767;
-					break;
+			case Config::AXIS:
+			case Config::SLIDER:
+				scaling = 255;
+				offset = 32767;
+				break;
 
-					// Half range
-				case Config::HAXIS:
-				case Config::HSLIDER:
-				case Config::CBUT: // add /////////////////////////////////////////////////////////
-					scaling = 127;
-					offset = 0;
-					break;
+				// Half range
+			case Config::HAXIS:
+			case Config::HSLIDER:
+			case Config::CBUT: // add /////////////////////////////////////////////////////////
+				scaling = 127;
+				offset = 0;
+				break;
 
-				default:
-					scaling = 1;
-					offset = 0;
-					break;
+			default:
+				scaling = 1;
+				offset = 0;
+				break;
 			}
 
 			//v2 = (v + offset) / scaling;
@@ -408,9 +418,9 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 				if (m_mapping.Axis[i].analogType != Config::NONE)
 				{
-					//        [ 32768 steps | 32768 steps ]
-					// DInput [ 0     32767 | 32768 65535 ] 
-					// XInput [ 32768    -1 | 0     32767 ]
+					//        [  32768 steps | 32768 steps ]
+					// DInput [      0 32767 | 32768 65535 ] 
+					// XInput [ -32768    -1 |     0 32767 ]
 					//
 					//int xInput = dInputValue;
 					s32 xInput = value;
@@ -477,14 +487,14 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 				}
 			}
 
-			// Map axis to Button: Digital input, positive direction
+			// Map DInput Button To Xinput Axis: Digital input, positive direction
 			if (m_mapping.Axis[i].hasDigital && m_mapping.Axis[i].positiveButtonID >= 0)
 			{
 				if (ButtonPressed(m_mapping.Axis[i].positiveButtonID))
 					*(targetAxis[i]) = 32767;
 			}
 
-			// Map axis to Button: Digital input, negative direction
+			// Map DInput Button to XInput Axis: Digital input, negative direction
 			if (m_mapping.Axis[i].hasDigital && m_mapping.Axis[i].negativeButtonID >= 0)
 			{
 				if (ButtonPressed(m_mapping.Axis[i].negativeButtonID))

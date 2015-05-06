@@ -17,7 +17,7 @@
 
 #include "ControllerManager.h"
 
-const u16 Config::buttonIDs[10] =
+const u16 Config::buttonIDs[14] =
 {
 	XINPUT_GAMEPAD_A,
 	XINPUT_GAMEPAD_B,
@@ -29,6 +29,10 @@ const u16 Config::buttonIDs[10] =
 	XINPUT_GAMEPAD_START,
 	XINPUT_GAMEPAD_LEFT_THUMB,
 	XINPUT_GAMEPAD_RIGHT_THUMB,
+	XINPUT_GAMEPAD_DPAD_UP,
+	XINPUT_GAMEPAD_DPAD_DOWN,
+	XINPUT_GAMEPAD_DPAD_LEFT,
+	XINPUT_GAMEPAD_DPAD_RIGHT
 };
 
 const u16 Config::povIDs[4] =
@@ -51,6 +55,11 @@ const char* const Config::buttonNames[] =
 	"Start",
 	"Left Thumb",
 	"Right Thumb",
+	// D-Pad buttons.
+	"D-pad Up",
+	"D-pad Down",
+	"D-pad Left",
+	"D-pad Right",
 };
 
 const char* const Config::buttonDZNames[] =
@@ -65,6 +74,11 @@ const char* const Config::buttonDZNames[] =
 	"Start DeadZone",
 	"Left Thumb DeadZone",
 	"Right Thumb DeadZone",
+	// D-Pad buttons.
+	"AxisToDPadUpDeadZone",
+	"AxisToDPadDownDeadZone",
+	"AxisToDPadLeftDeadZone",
+	"AxisToDPadRightDeadZone",
 };
 
 const char* const Config::povNames[] =
@@ -72,7 +86,7 @@ const char* const Config::povNames[] =
 	"D-pad Up",
 	"D-pad Down",
 	"D-pad Left",
-	"D-pad Right"
+	"D-pad Right",
 };
 
 const char* const Config::axisNames[] =
@@ -80,7 +94,7 @@ const char* const Config::axisNames[] =
 	"Left Analog X",
 	"Left Analog Y",
 	"Right Analog X",
-	"Right Analog Y"
+	"Right Analog Y",
 };
 
 const char* const Config::axisDZNames[] =
@@ -104,7 +118,7 @@ const char* const Config::axisLNames[] =
 	"Left Analog X Linear",
 	"Left Analog Y Linear",
 	"Right Analog X Linear",
-	"Right Analog Y Linear"
+	"Right Analog Y Linear",
 };
 
 const char* const Config::axisBNames[] =
@@ -116,25 +130,25 @@ const char* const Config::axisBNames[] =
 	"Right Analog X+ Button",
 	"Right Analog X- Button",
 	"Right Analog Y+ Button",
-	"Right Analog Y- Button"
+	"Right Analog Y- Button",
 };
 
 const char* const Config::triggerNames[] =
 {
 	"Left Trigger",
-	"Right Trigger"
+	"Right Trigger",
 };
 
 const char* const Config::triggerDZNames[] =
 {
 	"Left Trigger DeadZone",
-	"Right Trigger DeadZone"
+	"Right Trigger DeadZone",
 };
 
 const char* const Config::triggerBNames[] =
 {
 	"Left Trigger But",
-	"Right Trigger But"
+	"Right Trigger But",
 };
 
 void Config::ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue)
@@ -386,32 +400,33 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 			std::string message = StringFormat("Mapping could not be determined for %s button %s", section.c_str(), buttonNames[i]);
 			PrintLog(message.c_str());
 		}
-
 		// DeadZones
 		pIniFile->Get(section, buttonDZNames[i], &pMapping->Button[i].buttondz);
+
+
 	}
 
-	// D-PAD
+	//// D-PAD
 	pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV);
-	if (pMapping->DpadPOV >= 0)
-	{
-		for (u32 i = 0; i < _countof(pMapping->pov); ++i)
-		{
-			// D-PAD directions
-			s16 val = 0;
-			pIniFile->Get<s16>(section, povNames[i], &val, -1);
-			if (val > 0 && val < 128)
-			{
-				pMapping->pov[i] = val - 1;
-				pMapping->PovIsButton = true;
-			}
-			else if (val > -1)
-			{
-				pMapping->pov[i] = val;
-				pMapping->PovIsButton = false;
-			}
-		}
-	}
+	//if (pMapping->DpadPOV >= 0)
+	//{
+	//	for (u32 i = 0; i < _countof(pMapping->pov); ++i)
+	//	{
+	//		// D-PAD directions
+	//		s16 val = 0;
+	//		pIniFile->Get<s16>(section, povNames[i], &val, -1);
+	//		if (val > 0 && val < 128)
+	//		{
+	//			pMapping->pov[i] = val - 1;
+	//			pMapping->PovIsButton = true;
+	//		}
+	//		else if (val > -1)
+	//		{
+	//			pMapping->pov[i] = val;
+	//			pMapping->PovIsButton = false;
+	//		}
+	//	}
+	//}
 
 	for (u32 i = 0; i < _countof(pMapping->Axis); ++i)
 	{

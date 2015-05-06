@@ -60,6 +60,20 @@
     [RightThumbUp]            VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightThumbUp] DEFAULT ('') NOT NULL,
     [RightTrigger]            VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightTrigger] DEFAULT ('') NOT NULL,
     [RightTriggerDeadZone]    VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightTriggerDeadZone] DEFAULT ('') NOT NULL,
+	[ButtonADeadZone]         VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonADeadZone] DEFAULT ('') NOT NULL,
+    [ButtonBDeadZone]         VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonBDeadZone] DEFAULT ('') NOT NULL,
+    [ButtonBackDeadZone]      VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonBackDeadZone] DEFAULT ('') NOT NULL,
+    [ButtonStartDeadZone]     VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonStartDeadZone] DEFAULT ('') NOT NULL,
+    [ButtonXDeadZone]         VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonXDeadZone] DEFAULT ('') NOT NULL,
+    [ButtonYDeadZone]         VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonYDeadZone] DEFAULT ('') NOT NULL,
+	[LeftThumbButtonDeadZone] VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftThumbButtonDeadZone] DEFAULT ('') NOT NULL,
+    [RightThumbButtonDeadZone] VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightThumbButtonDeadZone] DEFAULT ('') NOT NULL,
+    [LeftShoulderDeadZone]    VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftShoulderDeadZone] DEFAULT ('') NOT NULL,
+    [RightShoulderDeadZone]   VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_RightShoulderDeadZone] DEFAULT ('') NOT NULL,
+    [DPadDownDeadZone]        VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_DPadDownDeadZone] DEFAULT ('') NOT NULL,
+    [DPadLeftDeadZone]        VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_DPadLeftDeadZone] DEFAULT ('') NOT NULL,
+    [DPadRightDeadZone]       VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_DPadRightDeadZone] DEFAULT ('') NOT NULL,
+    [DPadUpDeadZone]          VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_DPadUpDeadZone] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_x360ce_PadSettings] PRIMARY KEY CLUSTERED ([PadSettingChecksum] ASC)
 );
 

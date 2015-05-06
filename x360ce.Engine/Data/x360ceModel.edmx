@@ -89,6 +89,20 @@
           <Property Name="RightThumbUp" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightTrigger" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightTriggerDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ButtonADeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ButtonBDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ButtonBackDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ButtonStartDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ButtonXDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ButtonYDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftThumbButtonDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightThumbButtonDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftShoulderDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightShoulderDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="DPadDownDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="DPadLeftDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="DPadRightDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="DPadUpDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Products">
           <Key>
@@ -244,6 +258,20 @@
           <Property Name="RightMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="LeftMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="RightMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="ButtonADeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="ButtonBDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="ButtonBackDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="ButtonStartDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="ButtonXDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="ButtonYDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="LeftThumbButtonDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="RightThumbButtonDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="LeftShoulderDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="RightShoulderDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="DPadDownDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="DPadLeftDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="DPadRightDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="DPadUpDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="Setting">
 					<Key>
@@ -342,7 +370,21 @@
 					<EntitySetMapping Name="PadSettings">
 						<EntityTypeMapping TypeName="x360ceModel.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
-								<ScalarProperty Name="RightMotorDirection" ColumnName="RightMotorDirection" />
+								<ScalarProperty Name="DPadUpDeadZone" ColumnName="DPadUpDeadZone" />
+                <ScalarProperty Name="DPadRightDeadZone" ColumnName="DPadRightDeadZone" />
+                <ScalarProperty Name="DPadLeftDeadZone" ColumnName="DPadLeftDeadZone" />
+                <ScalarProperty Name="DPadDownDeadZone" ColumnName="DPadDownDeadZone" />
+                <ScalarProperty Name="RightShoulderDeadZone" ColumnName="RightShoulderDeadZone" />
+                <ScalarProperty Name="LeftShoulderDeadZone" ColumnName="LeftShoulderDeadZone" />
+                <ScalarProperty Name="RightThumbButtonDeadZone" ColumnName="RightThumbButtonDeadZone" />
+                <ScalarProperty Name="LeftThumbButtonDeadZone" ColumnName="LeftThumbButtonDeadZone" />
+                <ScalarProperty Name="ButtonYDeadZone" ColumnName="ButtonYDeadZone" />
+                <ScalarProperty Name="ButtonXDeadZone" ColumnName="ButtonXDeadZone" />
+                <ScalarProperty Name="ButtonStartDeadZone" ColumnName="ButtonStartDeadZone" />
+                <ScalarProperty Name="ButtonBackDeadZone" ColumnName="ButtonBackDeadZone" />
+                <ScalarProperty Name="ButtonBDeadZone" ColumnName="ButtonBDeadZone" />
+                <ScalarProperty Name="ButtonADeadZone" ColumnName="ButtonADeadZone" />
+                <ScalarProperty Name="RightMotorDirection" ColumnName="RightMotorDirection" />
                 <ScalarProperty Name="LeftMotorDirection" ColumnName="LeftMotorDirection" />
                 <ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
                 <ScalarProperty Name="LeftMotorStrength" ColumnName="LeftMotorStrength" />
@@ -520,7 +562,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="82" >
+			<Diagram Name="x360ceModel" ZoomLevel="63" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

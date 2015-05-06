@@ -161,12 +161,12 @@ namespace x360ce.App
 		public void ReadSettingTo(Control control, string key, string value)
 		{
 			if (key == SettingName.HookMode ||
-                key.EndsWith(SettingName.DeviceSubType) ||
-                key.EndsWith(SettingName.ForceType) ||
-                key.EndsWith(SettingName.LeftMotorDirection) ||
-                key.EndsWith(SettingName.RightMotorDirection) ||
-                key.EndsWith(SettingName.PassThroughIndex) ||
-                key.EndsWith(SettingName.CombinedIndex))
+				key.EndsWith(SettingName.DeviceSubType) ||
+				key.EndsWith(SettingName.ForceType) ||
+				key.EndsWith(SettingName.LeftMotorDirection) ||
+				key.EndsWith(SettingName.RightMotorDirection) ||
+				key.EndsWith(SettingName.PassThroughIndex) ||
+				key.EndsWith(SettingName.CombinedIndex))
 			{
 				var cbx = (ComboBox)control;
 				for (int i = 0; i < cbx.Items.Count; i++)
@@ -343,8 +343,8 @@ namespace x360ce.App
 			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.DeviceSubType);
 			ps.LeftMotorPeriod = ini2.GetValue(padSectionName, SettingName.LeftMotorPeriod);
 			ps.LeftMotorStrength = ini2.GetValue(padSectionName, SettingName.LeftMotorStrength);
-            ps.LeftMotorDirection = ini2.GetValue(padSectionName, SettingName.LeftMotorDirection);
-            ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
+			ps.LeftMotorDirection = ini2.GetValue(padSectionName, SettingName.LeftMotorDirection);
+			ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
 			ps.LeftThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX);
 			ps.LeftThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY);
 			ps.LeftThumbLinearX = ini2.GetValue(padSectionName, SettingName.LeftThumbLinearX);
@@ -363,8 +363,8 @@ namespace x360ce.App
 			ps.PassThrough = ini2.GetValue(padSectionName, SettingName.PassThrough);
 			ps.RightMotorPeriod = ini2.GetValue(padSectionName, SettingName.RightMotorPeriod);
 			ps.RightMotorStrength = ini2.GetValue(padSectionName, SettingName.RightMotorStrength);
-            ps.RightMotorDirection = ini2.GetValue(padSectionName, SettingName.RightMotorDirection);
-            ps.RightShoulder = ini2.GetValue(padSectionName, SettingName.RightShoulder);
+			ps.RightMotorDirection = ini2.GetValue(padSectionName, SettingName.RightMotorDirection);
+			ps.RightShoulder = ini2.GetValue(padSectionName, SettingName.RightShoulder);
 			ps.RightThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX);
 			ps.RightThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY);
 			ps.RightThumbAxisX = ini2.GetValue(padSectionName, SettingName.RightThumbAxisX);
@@ -380,6 +380,21 @@ namespace x360ce.App
 			ps.RightThumbUp = ini2.GetValue(padSectionName, SettingName.RightThumbUp);
 			ps.RightTrigger = ini2.GetValue(padSectionName, SettingName.RightTrigger);
 			ps.RightTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.RightTriggerDeadZone);
+			// Axis to button deadzones.
+			ps.ButtonADeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonADeadZone);
+			ps.ButtonBDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonBDeadZone);
+			ps.ButtonBackDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonBackDeadZone);
+			ps.ButtonStartDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonStartDeadZone);
+			ps.ButtonXDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonXDeadZone);
+			ps.ButtonYDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonYDeadZone);
+			ps.LeftThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToLeftThumbButtonDeadZone);
+			ps.RightThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToRightThumbButtonDeadZone);
+			ps.LeftShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToLeftShoulderDeadZone);
+			ps.RightShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToRightShoulderDeadZone);
+			ps.DPadDownDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadDownDeadZone);
+			ps.DPadLeftDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadLeftDeadZone);
+			ps.DPadRightDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadRightDeadZone);
+			ps.DPadUpDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadUpDeadZone);
 			return ps;
 		}
 
@@ -423,7 +438,7 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.DeviceSubType, ps.GamePadType);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorPeriod, ps.LeftMotorPeriod);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorStrength, ps.LeftMotorStrength);
-            ini2.SetValue(padSectionName, SettingName.LeftMotorDirection, ps.LeftMotorDirection);
+			ini2.SetValue(padSectionName, SettingName.LeftMotorDirection, ps.LeftMotorDirection);
 			ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX, ps.LeftThumbAntiDeadZoneX);
 			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY, ps.LeftThumbAntiDeadZoneY);
@@ -443,8 +458,8 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.PassThrough, ps.PassThrough);
 			ini2.SetValue(padSectionName, SettingName.RightMotorPeriod, ps.RightMotorPeriod);
 			ini2.SetValue(padSectionName, SettingName.RightMotorStrength, ps.RightMotorStrength);
-            ini2.SetValue(padSectionName, SettingName.RightMotorDirection, ps.RightMotorDirection);
-            ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
+			ini2.SetValue(padSectionName, SettingName.RightMotorDirection, ps.RightMotorDirection);
+			ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX, ps.RightThumbAntiDeadZoneX);
 			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY, ps.RightThumbAntiDeadZoneY);
 			ini2.SetValue(padSectionName, SettingName.RightThumbLinearX, ps.RightThumbLinearX);
@@ -460,6 +475,21 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.RightThumbUp, ps.RightThumbUp);
 			ini2.SetValue(padSectionName, SettingName.RightTrigger, ps.RightTrigger);
 			ini2.SetValue(padSectionName, SettingName.RightTriggerDeadZone, ps.RightTriggerDeadZone);
+			// Axis to button deadzones.
+			ini2.SetValue(padSectionName, SettingName.AxisToButtonADeadZone, ps.ButtonADeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToButtonBDeadZone, ps.ButtonBDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToButtonBackDeadZone, ps.ButtonBackDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToButtonStartDeadZone, ps.ButtonStartDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToButtonXDeadZone, ps.ButtonXDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToButtonYDeadZone, ps.ButtonYDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToLeftThumbButtonDeadZone, ps.LeftThumbButtonDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToRightThumbButtonDeadZone, ps.RightThumbButtonDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToLeftShoulderDeadZone, ps.LeftShoulderDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToRightShoulderDeadZone, ps.RightShoulderDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadDownDeadZone, ps.DPadDownDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadLeftDeadZone, ps.DPadLeftDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadRightDeadZone, ps.DPadRightDeadZone);
+			ini2.SetValue(padSectionName, SettingName.AxisToDPadUpDeadZone, ps.DPadUpDeadZone);
 		}
 
 		/// <summary>
@@ -617,12 +647,12 @@ namespace x360ce.App
 			string key = path.Split('\\')[1];
 			string v = string.Empty;
 			if (key == SettingName.HookMode ||
-                key.EndsWith(SettingName.DeviceSubType) ||
-                key.EndsWith(SettingName.ForceType) ||
-                key.EndsWith(SettingName.LeftMotorDirection) ||
-                key.EndsWith(SettingName.RightMotorDirection) || 
-                key.EndsWith(SettingName.PassThroughIndex) ||
-                key.EndsWith(SettingName.CombinedIndex))
+				key.EndsWith(SettingName.DeviceSubType) ||
+				key.EndsWith(SettingName.ForceType) ||
+				key.EndsWith(SettingName.LeftMotorDirection) ||
+				key.EndsWith(SettingName.RightMotorDirection) ||
+				key.EndsWith(SettingName.PassThroughIndex) ||
+				key.EndsWith(SettingName.CombinedIndex))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null) { v = "0"; }
