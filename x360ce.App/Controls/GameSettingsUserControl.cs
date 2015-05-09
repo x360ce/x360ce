@@ -24,8 +24,9 @@ namespace x360ce.App.Controls
             ScanProgressLabel.Text = "";
             InitDefaultList();
             SettingsFile.Current.Programs.ListChanged += Programs_ListChanged;
-            HashedDiskIdTextBox.Text = BoardInfo.GetDiskDriveIdGuid().ToString();
-        }
+			DiskIdTextBox.Text = BoardInfo.GetDiskId();
+			HashedDiskIdTextBox.Text = BoardInfo.GetHashedDiskId().ToString();
+		}
 
         bool IsDesignMode
         {

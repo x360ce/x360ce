@@ -20,7 +20,7 @@ namespace x360ce.Engine.Data
 			item.FileName = fi.Name ?? "";
 			item.FileProductName = EngineHelper.FixName(vi.ProductName, item.FileName);
 			item.CompanyName = vi.CompanyName ?? "";
-			item.DiskDriveId = BoardInfo.GetDiskDriveIdGuid();
+			item.DiskDriveId = BoardInfo.GetHashedDiskId();
 			item.FileVersion = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart).ToString();
 			item.FullPath = fi.FullName ?? "";
 			item.GameId = Guid.NewGuid();
