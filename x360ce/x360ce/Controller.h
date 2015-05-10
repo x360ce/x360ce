@@ -31,6 +31,9 @@ private:
 
 	std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;
 	DIJOYSTATE2 m_state;
+	bool m_stateChanged;
+	bool m_emptyStateIsSet;
+	DIJOYSTATE2 m_emptyState;
 	ForceFeedback m_ForceFeedbackInst;
 
 };

@@ -74,7 +74,9 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 		return ERROR_SUCCESS;
 	}
 
+	// If state haven't changed yet then...
 	HRESULT hr = UpdateState();
+
 #if 0
 	PrintLog("UpdateState %u %u", dwUserIndex, hr);
 #endif
@@ -92,6 +94,29 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 	// timestamp packet
 	pState->dwPacketNumber = GetTickCount();
+
+	if (m_stateChanged != true)
+	{
+		// If first state is not aquired yet.
+		if (m_emptyStateIsSet != true)
+		{
+			m_emptyState = m_state;
+			m_emptyStateIsSet = true;
+		}
+		// Compare two states.
+		int compareResult = memcmp(&m_emptyState, &m_state, sizeof(struct DIJOYSTATE2));
+		// If nothing changed then...
+		if (compareResult == 0)
+		{
+			// Return.
+			return ERROR_SUCCESS;
+		}
+		else
+		{
+			// Allow to use values.
+			m_stateChanged = true;
+		}
+	}
 
 	bool dPadButtons[16];
 	for (int i = 0; i < _countof(dPadButtons); ++i) dPadButtons[i] = false;
