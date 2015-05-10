@@ -1,4 +1,10 @@
-﻿v3.0.2.25 (2015-04-30)
+﻿v3.0.3.31 (2015-05-10)
+- Fix: Crash when generating anonymous disk Id.
+- New: Map Axis to Button feature added.
+- New: Map D-Pad button to Button, Axis and Trigger feature added.
+- Update: Updated to xinput1_3.dll v3.4.1.1285.
+
+v3.0.2.25 (2015-04-30)
 - Fix: Left/Right motor periods switched to match with XBox Controller.
 - New: Force effect direction support added.
 - Update: Updated to xinput1_3.dll v3.4.1.1245.
@@ -149,7 +155,7 @@ v2.0.2.91 (2010-09-02)
 - New: Preset for "Logitech WingMan Formula Force GP USB" (from Martin Kopecký).
 
 v2.0.2.90 (2010-09-01)
-- Fixed: Fixed "Record" feature when pedals are reported as single slider. 
+- Fixed: Fixed "Record" feature when pedals are reported as single slider.
 
 v2.0.2.89 (2010-08-29)
 - Update: AntiDeadzone presets added.

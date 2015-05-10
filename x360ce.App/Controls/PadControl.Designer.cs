@@ -465,7 +465,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(237, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(501, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(447, 125);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -1450,7 +1450,7 @@
 			this.AxisToButtonGroupBox.Controls.Add(this.AxisToButtonBDeadZonePanel);
 			this.AxisToButtonGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToButtonGroupBox.Name = "AxisToButtonGroupBox";
-			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(681, 456);
+			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(681, 430);
 			this.AxisToButtonGroupBox.TabIndex = 3;
 			this.AxisToButtonGroupBox.TabStop = false;
 			this.AxisToButtonGroupBox.Text = "Axis To Button DeadZones:";
