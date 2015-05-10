@@ -110,7 +110,7 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce v3.0.3.31 (2015-05-10) 64-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.3.31 (2015-05-10) 64-bit</a></td>
 					                    </tr>
                                     </table>
 
