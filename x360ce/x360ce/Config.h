@@ -11,7 +11,7 @@ public:
 
 	static const DWORD INVALIDBUTTONINDEX = (DWORD)-1;
 
-	enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT };
+	enum MappingType { NONE, DIGITAL, AXIS, SLIDER, HAXIS, HSLIDER, CBUT, DPADBUTTON };
 
 	enum PovIDs
 	{
@@ -26,7 +26,7 @@ public:
 		MappingType analogType; // Type of analog mapping (only NONE, AXIS, and SLIDER are used)
 		s8 id;
 		s8 positiveButtonID, negativeButtonID; // button IDs corresponding to the positive/negative directions of the axis
-		bool hasDigital; // Indicates if there is digital input mapped to the axis
+		MappingType positiveType, negativeType; // Indicates if there is digital input mapped to the axis
 
 		s32 a2ddeadzone;
 		s32 a2doffset;
@@ -40,9 +40,10 @@ public:
 		{
 			analogType = NONE;
 			id = 0;
-			positiveButtonID = negativeButtonID = 0;
-			hasDigital = false;
-
+			positiveButtonID = 0;
+			positiveType = NONE;
+			negativeButtonID = 0;
+			negativeType = NONE;
 			a2ddeadzone = 0;
 			a2doffset = 0;
 			axisdeadzone = 0;

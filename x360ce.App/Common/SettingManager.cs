@@ -201,7 +201,7 @@ namespace x360ce.App
 				}
 				else
 				{
-					var text = new SettingsConverter(value, key).ToFrmSetting();
+					var text = new SettingsConverter(value, key).ToTextValue();
 					SetComboBoxValue(cbx, text);
 				}
 			}
@@ -669,7 +669,7 @@ namespace x360ce.App
 				}
 				else
 				{
-					v = new SettingsConverter(control.Text, key).ToIniSetting();
+					v = new SettingsConverter(control.Text, key).ToIniValue();
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
 				}
@@ -722,18 +722,19 @@ namespace x360ce.App
 			{
 				v = v.Replace(SettingName.SType.Axis, "");
 			}
-			if (SettingName.IsDPad(key)) v = v.Replace(SettingName.SType.DPad, "");
-			if (v == "v1") v = "UP";
-			if (v == "v2") v = "RIGHT";
-			if (v == "v3") v = "DOWN";
-			if (v == "v4") v = "LEFT";
-			if (v == "")
-			{
-				if (key == SettingName.DPadUp) v = "UP";
-				if (key == SettingName.DPadDown) v = "DOWN";
-				if (key == SettingName.DPadLeft) v = "LEFT";
-				if (key == SettingName.DPadRight) v = "RIGHT";
-			}
+			// If this is DPad setting then remove prefix.
+			if (key == SettingName.DPad) v = v.Replace(SettingName.SType.DPad, "");
+			//if (v == "v1") v = "UP";
+			//if (v == "v2") v = "RIGHT";
+			//if (v == "v3") v = "DOWN";
+			//if (v == "v4") v = "LEFT";
+			//if (v == "")
+			//{
+			//	if (key == SettingName.DPadUp) v = "UP";
+			//	if (key == SettingName.DPadDown) v = "DOWN";
+			//	if (key == SettingName.DPadLeft) v = "LEFT";
+			//	if (key == SettingName.DPadRight) v = "RIGHT";
+			//}
 			// add comment.
 			//var l = SettingName.MaxNameLength - key.Length + 24;
 			//v = string.Format("{0, -" + l + "} # {1} Default: '{2}'.", v, SettingName.GetDescription(key), SettingName.GetDefaultValue(key));

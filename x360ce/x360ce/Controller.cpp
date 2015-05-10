@@ -93,41 +93,52 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	// timestamp packet
 	pState->dwPacketNumber = GetTickCount();
 
+	bool dPadButtons[16];
+	for (int i = 0; i < _countof(dPadButtons); ++i) dPadButtons[i] = false;
+	// Get D-Pad degrees.
+	s32 dUp = m_mapping.pov[Config::DPAD_UP];
+	s32 dRight = m_mapping.pov[Config::DPAD_RIGHT];
+	s32 dDown = m_mapping.pov[Config::DPAD_DOWN];
+	s32 dLeft = m_mapping.pov[Config::DPAD_LEFT];
+	// Loop trough D-Pad button states.
+	for (int d = 0; d < _countof(m_state.rgdwPOV); ++d)
+	{
+		// No more than 4 D-Pads.
+		if (d >= 4) break;
+		int povdeg = m_state.rgdwPOV[d];
+		if (povdeg >= 0)
+		{
+			// XINPUT_GAMEPAD_DPAD_UP
+			dPadButtons[d * 4 + 0] = IN_RANGE2(povdeg, dLeft + 1, dUp) || IN_RANGE2(povdeg, 0, dRight - 1);
+			// XINPUT_GAMEPAD_DPAD_RIGHT
+			dPadButtons[d * 4 + 1] = IN_RANGE(povdeg, 0, dDown);
+			// XINPUT_GAMEPAD_DPAD_DOWN
+			dPadButtons[d * 4 + 2] = IN_RANGE(povdeg, dRight, dLeft);
+			// XINPUT_GAMEPAD_DPAD_LEFT
+			dPadButtons[d * 4 + 3] = IN_RANGE(povdeg, dDown, dUp);
+		}
+	}
 
 	// --- Map POV to the D-pad ---
 	if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == false)
 	{
 		//INT pov = POVState(m_mapping.DpadPOV,dwUserIndex,Gamepad[dwUserIndex].povrotation);
-		int povdeg = m_state.rgdwPOV[m_mapping.DpadPOV - 1];
-		if (povdeg >= 0)
-		{
-			// Up-left, up, up-right, up (at 360 degrees)
-			if (IN_RANGE2(povdeg, m_mapping.pov[Config::DPAD_LEFT] + 1, m_mapping.pov[Config::DPAD_UP]) || IN_RANGE2(povdeg, 0, m_mapping.pov[Config::DPAD_RIGHT] - 1))
-				pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
-
-			// Up-right, right, down-right
-			if (IN_RANGE(povdeg, 0, m_mapping.pov[Config::DPAD_DOWN]))
-				pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
-
-			// Down-right, down, down-left
-			if (IN_RANGE(povdeg, m_mapping.pov[Config::DPAD_RIGHT], m_mapping.pov[Config::DPAD_LEFT]))
-				pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
-
-			// Down-left, left, up-left
-			if (IN_RANGE(povdeg, m_mapping.pov[Config::DPAD_DOWN], m_mapping.pov[Config::DPAD_UP]))
-				pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
-		}
+		s8 dPadIndex = m_mapping.DpadPOV - 1;
+		if (dPadButtons[dPadIndex * 4 + 0]) pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_UP;
+		if (dPadButtons[dPadIndex * 4 + 1]) pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_RIGHT;
+		if (dPadButtons[dPadIndex * 4 + 2]) pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_DOWN;
+		if (dPadButtons[dPadIndex * 4 + 3]) pState->Gamepad.wButtons |= XINPUT_GAMEPAD_DPAD_LEFT;
 	}
-	else if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == true)
-	{
-		for (int i = 0; i < _countof(m_mapping.pov); ++i)
-		{
-			if (ButtonPressed(m_mapping.pov[i]))
-			{
-				pState->Gamepad.wButtons |= Config::povIDs[i];
-			}
-		}
-	}
+	//else if (m_mapping.DpadPOV > 0 && m_mapping.PovIsButton == true)
+	//{
+	//	for (int i = 0; i < _countof(m_mapping.pov); ++i)
+	//	{
+	//		if (ButtonPressed(m_mapping.pov[i]))
+	//		{
+	//			pState->Gamepad.wButtons |= Config::povIDs[i];
+	//		}
+	//	}
+	//}
 
 	// Created so we can refer to each axis with an ID
 	s32 axis[] =
@@ -147,28 +158,30 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	};
 
 
-
-
-
-
-
-
-
 	// --- Map buttons ---
 	if (ButtonPressed(m_mapping.guide))
 		pState->Gamepad.wButtons |= 0x400;
 
 	for (u32 i = 0; i < _countof(m_mapping.Button); ++i)
 	{
+		s8 mapId = m_mapping.Button[i].id;
 		// Skip invalid mappings
-		if (m_mapping.Button[i].id == 0)
+		if (mapId == 0)
 			continue;
+
+		u32 mapIndex = std::abs(mapId) - 1;
 
 		Config::MappingType buttonType = m_mapping.Button[i].type;
 
 		if (buttonType == Config::DIGITAL)
 		{
-			if (ButtonPressed(m_mapping.Button[i].id - 1))
+			if (ButtonPressed(mapId - 1))
+				pState->Gamepad.wButtons |= Config::buttonIDs[i];
+		}
+		// D-Pad button to normal button.
+		else if (buttonType == Config::DPADBUTTON)
+		{
+			if (mapIndex < _countof(dPadButtons) && dPadButtons[mapIndex])
 				pState->Gamepad.wButtons |= Config::buttonIDs[i];
 		}
 		else
@@ -259,15 +272,24 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 	for (u32 i = 0; i < _countof(m_mapping.Trigger); ++i)
 	{
+		s8 triggerMapId = m_mapping.Trigger[i].id;
 		// Skip invalid mappings
-		if (m_mapping.Trigger[i].id == 0)
+		if (triggerMapId == 0)
 			continue;
+
+		s8 triggerMapIndex = (s8)std::abs(triggerMapId) - 1;
 
 		Config::MappingType triggerType = m_mapping.Trigger[i].type;
 
 		if (triggerType == Config::DIGITAL)
 		{
-			if (ButtonPressed(m_mapping.Trigger[i].id - 1))*(targetTrigger[i]) = 255;
+			if (ButtonPressed(triggerMapIndex))
+				*(targetTrigger[i]) = 255;
+		}
+		else if (triggerType == Config::DPADBUTTON)
+		{
+			if (triggerMapIndex < _countof(dPadButtons) && dPadButtons[triggerMapIndex])
+				*(targetTrigger[i]) = 255;
 		}
 		else
 		{
@@ -406,16 +428,16 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 		if (m_mapping.Axis[i].axistodpad == 0)
 		{
+			s8 axisMapId = m_mapping.Axis[i].id;
 			// Skip invalid mappings
-			if (m_mapping.Axis[i].id != 0)
+			if (axisMapId != 0)
 			{
-				u32 index = std::abs(m_mapping.Axis[i].id) - 1;
+				u32 index = std::abs(axisMapId) - 1;
 				s32 value = axis[index];
 
 				// Analog input
 				if (m_mapping.Axis[i].analogType == Config::AXIS) value = axis[index];
 				if (m_mapping.Axis[i].analogType == Config::SLIDER) value = slider[index];
-
 				if (m_mapping.Axis[i].analogType != Config::NONE)
 				{
 					//        [  32768 steps | 32768 steps ]
@@ -430,7 +452,7 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 					s32 min = -32768;
 					s32 max = 32767;
 
-					bool invert = m_mapping.Axis[i].id < 0;
+					bool invert = axisMapId < 0;
 
 					// If axis should be inverted, convert [-32768;32767] -> [32767;-32768]
 					if (invert) xInput = -1 - xInput;
@@ -485,21 +507,27 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 					*(targetAxis[i]) = (s16)clamp(xInput, min, max);
 					//return (short)xInput;
 				}
+
 			}
 
-			// Map DInput Button To Xinput Axis: Digital input, positive direction
-			if (m_mapping.Axis[i].hasDigital && m_mapping.Axis[i].positiveButtonID >= 0)
-			{
-				if (ButtonPressed(m_mapping.Axis[i].positiveButtonID))
-					*(targetAxis[i]) = 32767;
-			}
 
-			// Map DInput Button to XInput Axis: Digital input, negative direction
-			if (m_mapping.Axis[i].hasDigital && m_mapping.Axis[i].negativeButtonID >= 0)
-			{
-				if (ButtonPressed(m_mapping.Axis[i].negativeButtonID))
-					*(targetAxis[i]) = -32768;
-			}
+			Config::MappingType posType = m_mapping.Axis[i].positiveType;
+			Config::MappingType negType = m_mapping.Axis[i].negativeType;
+			s8 posMapId = m_mapping.Axis[i].positiveButtonID - 1;
+			s8 negMapId = m_mapping.Axis[i].negativeButtonID - 1;
+			// Map button to positive axis direction.
+			if (posType == Config::DIGITAL && posMapId >= 0 && ButtonPressed(posMapId))
+				*(targetAxis[i]) = 32767;
+			// Map button to negative axis direction.
+			if (negType == Config::DIGITAL && negMapId >= 0 && ButtonPressed(negMapId))
+				*(targetAxis[i]) = -32768;
+			// Map D-Pad button to positive axis direction.
+			if (posType == Config::DPADBUTTON && posMapId >= 0 && posMapId < _countof(dPadButtons) && dPadButtons[posMapId])
+				*(targetAxis[i]) = 32767;
+			// Map D-Pad button to negative axis direction.
+			if (negType == Config::DPADBUTTON && negMapId >= 0 && negMapId < _countof(dPadButtons) && dPadButtons[negMapId])
+				*(targetAxis[i]) = -32768;
+
 		}
 		else
 		{

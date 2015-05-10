@@ -172,6 +172,9 @@ void Config::ParsePrefix(const std::string& input, MappingType* pMappingType, s8
 			case 'z':
 				*pMappingType = CBUT;
 				break;
+			case 'd':
+				*pMappingType = DPADBUTTON;
+				break;
 			default: // Digital
 				*pMappingType = DIGITAL;
 		}
@@ -456,19 +459,17 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 		pIniFile->Get(section, "AxisToDPadDeadZone", &pMapping->Axis[i].a2ddeadzone);
 		pIniFile->Get(section, "AxisToDPadOffset", &pMapping->Axis[i].a2doffset);
 
+	
 		// Axis to button mappings
-		s8 ret;
-		pIniFile->Get(section, axisBNames[i * 2], &ret);
-		if (ret > 0)
+		std::string posMap;
+		if (pIniFile->Get(section, axisBNames[i * 2], &posMap))
 		{
-			pMapping->Axis[i].hasDigital = true;
-			pMapping->Axis[i].positiveButtonID = ret - 1;
+			ParsePrefix(posMap, &pMapping->Axis[i].positiveType, &pMapping->Axis[i].positiveButtonID);
 		}
-		pIniFile->Get(section, axisBNames[i * 2 + 1], &ret);
-		if (ret > 0)
+
+		if (pIniFile->Get(section, axisBNames[i * 2 + 1], &posMap))
 		{
-			pMapping->Axis[i].hasDigital = true;
-			pMapping->Axis[i].negativeButtonID = ret - 1;
+			ParsePrefix(posMap, &pMapping->Axis[i].negativeType, &pMapping->Axis[i].negativeButtonID);
 		}
 	}
 

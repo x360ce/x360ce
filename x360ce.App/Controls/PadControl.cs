@@ -521,10 +521,10 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.AxisToRightShoulderDeadZone, AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown, sm);
 			SettingManager.AddMap(section, () => SettingName.AxisToRightThumbButtonDeadZone, AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown, sm);
 			// Axis To D-Pad (separate directions).
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown,sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown,sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown,sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown,sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown, sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown, sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown, sm);
+			SettingManager.AddMap(section, () => SettingName.AxisToDPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown, sm);
 			// Axis To D-Pad.
 			SettingManager.AddMap(section, () => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar, sm);
@@ -709,13 +709,17 @@ namespace x360ce.App.Controls
 			int index;
 			SettingType type;
 			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
-			if (success) LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
+			if (success)
+				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
 			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
-			if (success) LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
+			if (success)
+				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
 			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
-			if (success) RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
+			if (success)
+				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
 			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
-			if (success) RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+			if (success)
+				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
 			// Update controller images.
 			this.TopPictureBox.Refresh();
 			this.FrontPictureBox.Refresh();
@@ -783,15 +787,17 @@ namespace x360ce.App.Controls
 			// Add D-Pads.
 			mi = new ToolStripMenuItem("DPads");
 			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "DPad {0}", "p{0}", device.Capabilities.PovCount);
 			// Add D-Pad Top, Right, Bottom, Left button.
-			for (int i = 0; i < mi.DropDownItems.Count; i++)
+			var dPadNames = Enum.GetNames(typeof(DPadEnum));
+			for (int p = 0; p < device.Capabilities.PovCount; p++)
 			{
-				var item = (ToolStripMenuItem)mi.DropDownItems[i];
-				foreach (string p in Enum.GetNames(typeof(DPadEnum)))
+				var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.DPad);
+				mi.DropDownItems.Add(dPadItem);
+				for (int d = 0; d < dPadNames.Length; d++)
 				{
-					var item2 = CreateItem("{0} {2}", "{1}{2}", item.Text, item.Tag, p);
-					item.DropDownItems.Add(item2);
+					var dPadButtonIndex = p * 4 + d + 1;
+					var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.DPadButton, dPadButtonIndex);
+					dPadItem.DropDownItems.Add(dPadButtonItem);
 				}
 			}
 		}
