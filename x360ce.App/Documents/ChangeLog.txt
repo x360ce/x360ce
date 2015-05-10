@@ -1,8 +1,8 @@
-﻿v3.0.3.31 (2015-05-10)
+﻿v3.0.3.32 (2015-05-11)
 - Fix: Crash when generating anonymous disk Id.
 - New: Map Axis to Button feature added.
 - New: Map D-Pad button to Button, Axis and Trigger feature added.
-- Update: Updated to xinput1_3.dll v3.4.1.1285.
+- Update: Updated to xinput1_3.dll v3.4.1.1288.
 
 v3.0.2.25 (2015-04-30)
 - Fix: Left/Right motor periods switched to match with XBox Controller.
