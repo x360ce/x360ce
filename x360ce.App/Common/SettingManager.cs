@@ -557,6 +557,7 @@ namespace x360ce.App
 					// Text value is not empty.
 					&& !string.IsNullOrEmpty(text))
 				{
+					((ComboBox)control).SelectedIndex = -1;
 					((ComboBox)control).Items.Clear();
 					//SaveSettings(control);
 				}
