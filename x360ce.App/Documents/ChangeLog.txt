@@ -1,4 +1,8 @@
-﻿v3.0.3.32 (2015-05-11)
+﻿v3.0.3.34 (2015-05-11)
+- Fix: Issue with combo box clearing (Box is empty but INI file is still mapped to old setting).
+- New: [Game Controllers...] button added to PAD panel.
+
+v3.0.3.32 (2015-05-11)
 - Fix: Crash when generating anonymous disk Id.
 - New: Map Axis to Button feature added.
 - New: Map D-Pad button to Button, Axis and Trigger feature added.
