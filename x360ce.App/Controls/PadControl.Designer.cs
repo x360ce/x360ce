@@ -182,6 +182,7 @@
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.ClearPresetButton = new System.Windows.Forms.Button();
 			this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
+			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
 			this.CombineGroupBox.SuspendLayout();
@@ -465,7 +466,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(237, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(447, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(501, 125);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -2061,12 +2062,24 @@
 			// 
 			this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
 			// 
+			// GameControllersButton
+			// 
+			this.GameControllersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.GameControllersButton.Location = new System.Drawing.Point(3, 542);
+			this.GameControllersButton.Name = "GameControllersButton";
+			this.GameControllersButton.Size = new System.Drawing.Size(106, 23);
+			this.GameControllersButton.TabIndex = 66;
+			this.GameControllersButton.Text = "&Game Controllers...";
+			this.GameControllersButton.UseVisualStyleBackColor = true;
+			this.GameControllersButton.Click += new System.EventHandler(this.GameControllersButton_Click);
+			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.SavePresetButton);
 			this.Controls.Add(this.PadTabControl);
+			this.Controls.Add(this.GameControllersButton);
 			this.Controls.Add(this.ClearPresetButton);
 			this.Controls.Add(this.ResetPresetButton);
 			this.Name = "PadControl";
@@ -2290,5 +2303,6 @@
 		private AxisToButtonUserControl AxisToDPadLeftDeadZonePanel;
 		private AxisToButtonUserControl AxisToDPadDownDeadZonePanel;
 		private AxisToButtonUserControl AxisToDPadUpDeadZonePanel;
+		private System.Windows.Forms.Button GameControllersButton;
 	}
 }

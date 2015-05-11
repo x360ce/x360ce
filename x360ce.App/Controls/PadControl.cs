@@ -10,6 +10,7 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
+using System.Diagnostics;
 
 namespace x360ce.App.Controls
 {
@@ -1045,6 +1046,30 @@ namespace x360ce.App.Controls
 		private void GeneralTabPage_SizeChanged(object sender, EventArgs e)
 		{
 			GeneralCenterPanel.Left = (this.Width - GeneralCenterPanel.Width) / 2;
+		}
+
+		private void GameControllersButton_Click(object sender, EventArgs e)
+		{
+			var path = System.Environment.GetFolderPath(Environment.SpecialFolder.System);
+			path += "\\joy.cpl";
+			OpenPath(path, "");
+		}
+
+		void OpenPath(string path, string arguments = null)
+		{
+			try
+			{
+				var fi = new System.IO.FileInfo(path);
+				//if (!fi.Exists) return;
+				// Brings up the "Windows cannot open this file" dialog if association not found.
+				var psi = new ProcessStartInfo(path);
+				psi.UseShellExecute = true;
+				psi.WorkingDirectory = fi.Directory.FullName;
+				psi.ErrorDialog = true;
+				if (arguments != null) psi.Arguments = arguments;
+				Process.Start(psi);
+			}
+			catch (Exception) { }
 		}
 	}
 }
