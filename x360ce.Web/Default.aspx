@@ -9,7 +9,9 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <meta charset="utf-8" />
-    <title></title>
+    <title>Xbox 360 Controller Emulator</title>
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+
     <style type="text/css">
         body {
             margin: 0;
