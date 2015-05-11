@@ -121,27 +121,23 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	bool dPadButtons[16];
 	for (int i = 0; i < _countof(dPadButtons); ++i) dPadButtons[i] = false;
 	// Get D-Pad degrees.
-	s32 dUp = m_mapping.pov[Config::DPAD_UP];
-	s32 dRight = m_mapping.pov[Config::DPAD_RIGHT];
-	s32 dDown = m_mapping.pov[Config::DPAD_DOWN];
-	s32 dLeft = m_mapping.pov[Config::DPAD_LEFT];
+	u32 dUp = m_mapping.pov[Config::DPAD_UP];
+	u32 dRight = m_mapping.pov[Config::DPAD_RIGHT];
+	u32 dDown = m_mapping.pov[Config::DPAD_DOWN];
+	u32 dLeft = m_mapping.pov[Config::DPAD_LEFT];
 	// Loop trough D-Pad button states.
 	for (int d = 0; d < _countof(m_state.rgdwPOV); ++d)
 	{
-		// No more than 4 D-Pads.
-		if (d >= 4) break;
-		int povdeg = m_state.rgdwPOV[d];
-		if (povdeg >= 0)
-		{
-			// XINPUT_GAMEPAD_DPAD_UP
-			dPadButtons[d * 4 + 0] = IN_RANGE2(povdeg, dLeft + 1, dUp) || IN_RANGE2(povdeg, 0, dRight - 1);
-			// XINPUT_GAMEPAD_DPAD_RIGHT
-			dPadButtons[d * 4 + 1] = IN_RANGE(povdeg, 0, dDown);
-			// XINPUT_GAMEPAD_DPAD_DOWN
-			dPadButtons[d * 4 + 2] = IN_RANGE(povdeg, dRight, dLeft);
-			// XINPUT_GAMEPAD_DPAD_LEFT
-			dPadButtons[d * 4 + 3] = IN_RANGE(povdeg, dDown, dUp);
-		}
+		u32 povdeg = m_state.rgdwPOV[d];
+
+		// XINPUT_GAMEPAD_DPAD_UP
+		dPadButtons[d * 4 + 0] = IN_RANGE2(povdeg, dLeft + 1, dUp) || IN_RANGE2(povdeg, 0, dRight - 1);
+		// XINPUT_GAMEPAD_DPAD_RIGHT
+		dPadButtons[d * 4 + 1] = IN_RANGE(povdeg, 0, dDown);
+		// XINPUT_GAMEPAD_DPAD_DOWN
+		dPadButtons[d * 4 + 2] = IN_RANGE(povdeg, dRight, dLeft);
+		// XINPUT_GAMEPAD_DPAD_LEFT
+		dPadButtons[d * 4 + 3] = IN_RANGE(povdeg, dDown, dUp);
 	}
 
 	// --- Map POV to the D-pad ---
@@ -218,36 +214,36 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 			switch (buttonType)
 			{
-			case Config::AXIS:
-			case Config::HAXIS:
-			case Config::CBUT:
-				values = axis;
-				break;
-			case Config::SLIDER:
-			case Config::HSLIDER:
-				values = slider;
-				break;
-			default:
-				values = axis;
-				break;
+				case Config::AXIS:
+				case Config::HAXIS:
+				case Config::CBUT:
+					values = axis;
+					break;
+				case Config::SLIDER:
+				case Config::HSLIDER:
+					values = slider;
+					break;
+				default:
+					values = axis;
+					break;
 			}
 
 			switch (buttonType)
 			{
 				// Full range
-			case Config::AXIS:
-			case Config::SLIDER:
-				isRange = true;
-				break;
-				// Half range
-			case Config::HAXIS:
-			case Config::HSLIDER:
-			case Config::CBUT:
-				isRange = true;
-				isHalf = true;
-				break;
-			default:
-				break;
+				case Config::AXIS:
+				case Config::SLIDER:
+					isRange = true;
+					break;
+					// Half range
+				case Config::HAXIS:
+				case Config::HSLIDER:
+				case Config::CBUT:
+					isRange = true;
+					isHalf = true;
+					break;
+				default:
+					break;
 			}
 
 
@@ -322,20 +318,20 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 			switch (triggerType)
 			{
-			case Config::AXIS:
-			case Config::HAXIS:
-			case Config::CBUT:
-				values = axis;
-				break;
+				case Config::AXIS:
+				case Config::HAXIS:
+				case Config::CBUT:
+					values = axis;
+					break;
 
-			case Config::SLIDER:
-			case Config::HSLIDER:
-				values = slider;
-				break;
+				case Config::SLIDER:
+				case Config::HSLIDER:
+					values = slider;
+					break;
 
-			default:
-				values = axis;
-				break;
+				default:
+					values = axis;
+					break;
 			}
 
 			s32 v = 0;
@@ -368,24 +364,24 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 			switch (triggerType)
 			{
 				// Full range
-			case Config::AXIS:
-			case Config::SLIDER:
-				scaling = 255;
-				offset = 32767;
-				break;
+				case Config::AXIS:
+				case Config::SLIDER:
+					scaling = 255;
+					offset = 32767;
+					break;
 
-				// Half range
-			case Config::HAXIS:
-			case Config::HSLIDER:
-			case Config::CBUT: // add /////////////////////////////////////////////////////////
-				scaling = 127;
-				offset = 0;
-				break;
+					// Half range
+				case Config::HAXIS:
+				case Config::HSLIDER:
+				case Config::CBUT: // add /////////////////////////////////////////////////////////
+					scaling = 127;
+					offset = 0;
+					break;
 
-			default:
-				scaling = 1;
-				offset = 0;
-				break;
+				default:
+					scaling = 1;
+					offset = 0;
+					break;
 			}
 
 			//v2 = (v + offset) / scaling;
