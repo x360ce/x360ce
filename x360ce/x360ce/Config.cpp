@@ -410,26 +410,25 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 	}
 
 	//// D-PAD
-	pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV);
-	//if (pMapping->DpadPOV >= 0)
-	//{
-	//	for (u32 i = 0; i < _countof(pMapping->pov); ++i)
-	//	{
-	//		// D-PAD directions
-	//		s16 val = 0;
-	//		pIniFile->Get<s16>(section, povNames[i], &val, -1);
-	//		if (val > 0 && val < 128)
-	//		{
-	//			pMapping->pov[i] = val - 1;
-	//			pMapping->PovIsButton = true;
-	//		}
-	//		else if (val > -1)
-	//		{
-	//			pMapping->pov[i] = val;
-	//			pMapping->PovIsButton = false;
-	//		}
-	//	}
-	//}
+	if (pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV))
+	{
+		for (u32 i = 0; i < _countof(pMapping->pov); ++i)
+		{
+			// D-PAD directions
+			s16 val = 0;
+			pIniFile->Get<s16>(section, povNames[i], &val, -1);
+			if (val > 0 && val < 128)
+			{
+				pMapping->pov[i] = val - 1;
+				pMapping->PovIsButton = true;
+			}
+			else if (val > -1)
+			{
+				pMapping->pov[i] = val;
+				pMapping->PovIsButton = false;
+			}
+		}
+	}
 
 	for (u32 i = 0; i < _countof(pMapping->Axis); ++i)
 	{
@@ -441,8 +440,7 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 		}
 		else
 		{
-			std::string message = StringFormat("Mapping could not be determined for %s axis %s", section.c_str(), axisNames[i]);
-			PrintLog(message.c_str());
+			PrintLog("Mapping could not be determined for %s axis %s", section.c_str(), axisNames[i]);
 		}
 
 		// DeadZones

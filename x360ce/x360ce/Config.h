@@ -88,7 +88,7 @@ public:
 		// All other indexer values start from zero.
 		TriggerMap Trigger[2];
 		AxisMap Axis[4];  // Index of axes to use. Negative index used if it needs to be inverted
-		s32 pov[4];
+		u32 pov[4];
 		ButtonMap Button[14];
 		s8 guide;
 		s8 DpadPOV; // Index of POV switch to use for the D-pad
