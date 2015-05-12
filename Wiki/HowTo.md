@@ -1,8 +1,19 @@
 #How to Build
 
 Install:
-1. Visual Leak Detector for Visual C++
+
+1. Visual Studio Community 2013 or 
+   Visual Studio Professional 2013
+
+   https://www.visualstudio.com/downloads/download-visual-studio-vs
+
+2. Visual Leak Detector for Visual C++
+
    https://vld.codeplex.com
+
+3. Windows SDK for Windows 8.1
+
+   https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx
 
 # How to include games database
 
