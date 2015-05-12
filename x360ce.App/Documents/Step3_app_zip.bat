@@ -1,7 +1,7 @@
 @echo off
-SET wra="%ProgramFiles%\WinRAR\rar.exe"
-if NOT EXIST %wra% SET wra="%ProgramFiles(x86)%\WinRAR\rar.exe"
-if NOT EXIST %wra% SET wra="%ProgramW6432%\WinRAR\rar.exe"
+SET wra="%ProgramFiles%\WinRAR\winrar.exe"
+if NOT EXIST %wra% SET wra="%ProgramFiles(x86)%\WinRAR\winrar.exe"
+if NOT EXIST %wra% SET wra="%ProgramW6432%\WinRAR\winrar.exe"
 SET zip=%wra% a -ep
 :: ---------------------------------------------------------------------------
 echo --- Delete files
