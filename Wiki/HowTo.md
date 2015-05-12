@@ -14,6 +14,16 @@ Install:
 3. Windows SDK for Windows 8.1
 
    https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx
+   
+4. SQL Server 2014 Data Tools (required by x360ce.Data project)
+
+   http://msdn.microsoft.com/data/tools.aspx
+
+5. URL Rewrite 2.0 (required by x360ce.Web project)
+
+   http://www.microsoft.com/web/downloads/platform.aspx
+   
+   Download and launch: Microsoft Web Platform Installer. Install Server\URL Rewrite 2.0 Module:
 
 # How to include games database
 
