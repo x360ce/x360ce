@@ -120,11 +120,6 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 	bool dPadButtons[16];
 	for (int i = 0; i < _countof(dPadButtons); ++i) dPadButtons[i] = false;
-	// Get D-Pad degrees.
-	s32 dUp = m_mapping.pov[Config::DPAD_UP];
-	s32 dRight = m_mapping.pov[Config::DPAD_RIGHT];
-	s32 dDown = m_mapping.pov[Config::DPAD_DOWN];
-	s32 dLeft = m_mapping.pov[Config::DPAD_LEFT];
 	// Loop trough D-Pad button states.
 	for (int d = 0; d < _countof(m_state.rgdwPOV); ++d)
 	{
@@ -133,14 +128,18 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 		int povdeg = m_state.rgdwPOV[d];
 		if (povdeg >= 0)
 		{
+			// Split PoV degrees into 8 groups by
+			// converting PoV degree from 0 to 36000 to number from 0 to 7.
+			// This will allow to have more flexible degree values mapped to buttons.
+			s8 y = ((2250 + povdeg) / 4500) % 8;
 			// XINPUT_GAMEPAD_DPAD_UP
-			dPadButtons[d * 4 + 0] = IN_RANGE2(povdeg, dLeft + 1, dUp) || IN_RANGE2(povdeg, 0, dRight - 1);
+			dPadButtons[d * 4 + 0] = (y >= 0 && y <= 1) || y == 7;
 			// XINPUT_GAMEPAD_DPAD_RIGHT
-			dPadButtons[d * 4 + 1] = IN_RANGE(povdeg, 0, dDown);
+			dPadButtons[d * 4 + 1] = (y >= 1 && y <= 3);
 			// XINPUT_GAMEPAD_DPAD_DOWN
-			dPadButtons[d * 4 + 2] = IN_RANGE(povdeg, dRight, dLeft);
+			dPadButtons[d * 4 + 2] = (y >= 3 && y <= 5);
 			// XINPUT_GAMEPAD_DPAD_LEFT
-			dPadButtons[d * 4 + 3] = IN_RANGE(povdeg, dDown, dUp);
+			dPadButtons[d * 4 + 3] = (y >= 5 && y <= 7);
 		}
 	}
 
