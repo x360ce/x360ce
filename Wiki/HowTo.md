@@ -2,7 +2,7 @@
 
 Install:
 
-1. Visual Studio Community 2013 or 
+1. Microsoft Visual Studio Community 2013 or 
    Visual Studio Professional 2013
 
    https://www.visualstudio.com/downloads/download-visual-studio-vs
@@ -11,15 +11,30 @@ Install:
 
    https://vld.codeplex.com
 
-3. Windows SDK for Windows 8.1
+3. Microsoft Windows SDK for Windows 8.1
 
    https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx
    
-4. SQL Server 2014 Data Tools (required by x360ce.Data project)
+4. Microsoft SQL Server 2014 Data Tools (required by x360ce.Data project)
 
    http://msdn.microsoft.com/data/tools.aspx
 
-5. URL Rewrite 2.0 (required by x360ce.Web project)
+5. Microsoft Internet Information Services (required by x360ce.Web project)
+
+   Control Panel > Programs and Features > Turn Windows features on
+
+   a. Check:
+
+   - [x] Internet Information Services
+
+   b. Make sure that these options are also checked:
+
+	- [x] NET.Extensibility 4.5
+	- [x] ASP.NET 4.5
+	- [x] ISAPI Extensions
+	- [x] ISAPI Filters
+ 
+5. Microsoft URL Rewrite 2.0 (required by x360ce.Web project)
 
    http://www.microsoft.com/web/downloads/platform.aspx
    
