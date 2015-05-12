@@ -168,13 +168,13 @@ namespace JocysCom.ClassLibrary.Threading
 					status += string.Format(" // DelayTime = {0}, ", delayTime);
 				}
 			}
-			status += string.Format("DoActionCount = {0}, queue[{1}], isRunning = {2}", DoActionCount, queue.Count, isRunning);
+			status += string.Format(" DoActionCount = {0}, queue[{1}], isRunning = {2}", DoActionCount, queue.Count, isRunning);
 			if (ExceptionCount > 0)
 			{
 				status += string.Format(", ExceptionCount = {0}", ExceptionCount);
 				if (LastExceptionDate.Ticks > 0)
 				{
-					status += string.Format("LastException = {0}", LastException);
+					status += string.Format(" LastException = {0}", LastException);
 					// 
 					if (DateTime.Now.Subtract(LastExceptionDate).TotalSeconds > 10) LastExceptionDate = new DateTime();
 				}
@@ -182,6 +182,9 @@ namespace JocysCom.ClassLibrary.Threading
 			return status;
 		}
 
+		/// <summary>
+		/// This function will be called inside 'queueLock' lock.
+		/// </summary>
 		void _AddToQueue(object item)
 		{
 			queue.Add(item);
@@ -199,32 +202,23 @@ namespace JocysCom.ClassLibrary.Threading
 					// Start new thread.
 					// The thread pool job is to share and recycle threads.
 					// It allows to avoid losing a few millisecond every time we need to create a new thread.
-					System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(ThreadActionWithState));
+					System.Threading.ThreadPool.QueueUserWorkItem(ThreadAction, null);
 				}
 				else
 				{
-					if (so.InvokeRequired)
+					try
 					{
-						try
-						{
-							so.BeginInvoke((ThreadActionDelegate)ThreadAction, new object[0]);
-						}
-						catch (Exception)
-						{
-							queue.Remove(item);
-							throw;
-						}
+						// Use asynchronous call to avoid 'queueLock' deadlock.
+						so.BeginInvoke((System.Threading.WaitCallback)ThreadAction, new object[] { null });
 					}
-					else
+					catch (Exception)
 					{
-						ThreadAction();
+						queue.Remove(item);
+						throw;
 					}
-
 				}
 			}
 		}
-
-		public delegate void ThreadActionDelegate();
 
 		void DelayTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
@@ -237,12 +231,7 @@ namespace JocysCom.ClassLibrary.Threading
 			}
 		}
 
-		void ThreadActionWithState(object state)
-		{
-			ThreadAction();
-		}
-
-		void ThreadAction()
+		void ThreadAction(object state)
 		{
 			object item = null;
 			while (true)

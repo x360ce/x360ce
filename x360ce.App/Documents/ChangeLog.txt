@@ -1,4 +1,8 @@
-﻿v3.0.3.34 (2015-05-11)
+﻿v3.0.3.36 (2015-05-12)
+- Fix: Thread lock on ThumbUserControl.
+- Update: Updated to xinput1_3.dll v3.4.1.1299.
+
+v3.0.3.34 (2015-05-11)
 - Fix: Issue with combo box clearing (Box is empty but INI file is still mapped to old setting).
 - New: [Game Controllers...] button added to PAD panel.
 
