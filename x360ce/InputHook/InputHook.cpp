@@ -29,92 +29,77 @@
 
 #include "InputHook.h"
 
-bool InputHook::ReadGameDatabase()
+bool InputHook::LoadConfig(IniFile* ini, const std::string& filename, const std::string& section)
 {
-	IniFile ini;
-	std::string inipath("x360ce.gdb");
-	if (!ini.Load(inipath))
+	std::string inipath(filename);
+	if (!ini->Load(inipath))
 		CheckCommonDirectory(&inipath, "x360ce");
-	if (!ini.Load(inipath)) return false;
+	if (!ini->Load(inipath)) return false;
 
-	PrintLog("Using game database file:");
-	PrintLog(ini.GetIniPath().c_str());
+	PrintLog("Using InputHook config file:");
+	PrintLog(ini->GetIniPath().c_str());
 
-	std::string processName;
-	ModuleFileName(&processName);
-	if (ini.Get(processName, "HookMask", &m_hookmask))
+	if (!ini->Get(section, "HookMask", &m_hookmask))
 	{
-		ini.Get(processName, "Timeout", &m_timeout);
+		bool check = false;
+		ini->Get(section, "HookLL", &check);
+		if (check) m_hookmask |= HOOK_LL;
 
-		std::string gameName;
-		ini.Get(processName, "Name", &gameName);
+		ini->Get(section, "HookCOM", &check);
+		if (check) m_hookmask |= HOOK_COM;
 
-		if (!gameName.empty())
-			PrintLog("InputHook found \"%s\" in database", gameName.c_str());
+		ini->Get(section, "HookDI", &check);
+		if (check) m_hookmask |= HOOK_DI;
 
-		return true;
+		ini->Get(section, "HookPIDVID", &check);
+		if (check) m_hookmask |= HOOK_PIDVID;
+
+		ini->Get(section, "HookSA", &check);
+		if (check) m_hookmask |= HOOK_SA;
+
+		ini->Get(section, "HookNAME", &check);
+		if (check) m_hookmask |= HOOK_NAME;
+
+		ini->Get(section, "HookSTOP", &check);
+		if (check) m_hookmask |= HOOK_STOP;
+
+		ini->Get(section, "HookWT", &check);
+		if (check) m_hookmask |= HOOK_WT;
 	}
 
-	return false;
+	if (GetState(HOOK_PIDVID))
+	{
+		u32 vid;
+		u32 pid;
+		ini->Get<u32>(section, "FakeVID", &vid, 0x045E);
+		ini->Get<u32>(section, "FakePID", &pid, 0x028E);
+
+		if (vid != 0x045E || pid != 0x28E)
+			m_fakepidvid = MAKELONG(vid, pid);
+	}
+
+	ini->Get<u32>(section, "Timeout", &m_timeout);
+
+	if (section != "InputHook")
+		PrintLog("InputHook found \"%s\" in database", section.c_str());
+
+	return !!m_hookmask;
 }
 
 InputHook::InputHook() :
-m_hookmask(HOOK_COM),
 m_fakepidvid(MAKELONG(0x045E, 0x028E)),
-m_timeout(0),
 m_timeout_thread(INVALID_HANDLE_VALUE)
 {
 	IniFile ini;
-	std::string inipath("x360ce.ini");
-	if (!ini.Load(inipath))
-		CheckCommonDirectory(&inipath, "x360ce");
-	if (!ini.Load(inipath)) return;
 
-	bool read_from_database = ReadGameDatabase();
+	std::string processName;
+	ModuleFileName(&processName);
 
-	if (!read_from_database)
-	{
-		if (!ini.Get("InputHook", "HookMask", &m_hookmask, HOOK_COM))
-		{
-			bool check = false;
-			ini.Get("InputHook", "HookLL", &check);
-			if (check) m_hookmask |= HOOK_LL;
+	bool config_loaded = LoadConfig(&ini, "x360ce.gdb", processName);
+	if (!config_loaded)
+		config_loaded = LoadConfig(&ini, "x360ce.ini", "InputHook");
 
-			ini.Get("InputHook", "HookCOM", &check);
-			if (check) m_hookmask |= HOOK_COM;
-
-			ini.Get("InputHook", "HookDI", &check);
-			if (check) m_hookmask |= HOOK_DI;
-
-			ini.Get("InputHook", "HookPIDVID", &check);
-			if (check) m_hookmask |= HOOK_PIDVID;
-
-			ini.Get("InputHook", "HookSA", &check);
-			if (check) m_hookmask |= HOOK_SA;
-
-			ini.Get("InputHook", "HookNAME", &check);
-			if (check) m_hookmask |= HOOK_NAME;
-
-			ini.Get("InputHook", "HookSTOP", &check);
-			if (check) m_hookmask |= HOOK_STOP;
-
-			ini.Get("InputHook", "HookWT", &check);
-			if (check) m_hookmask |= HOOK_WT;
-		}
-
-		if (GetState(HOOK_PIDVID))
-		{
-			u32 vid;
-			u32 pid;
-			ini.Get<u32>("InputHook", "FakeVID", &vid, 0x045E);
-			ini.Get<u32>("InputHook", "FakePID", &pid, 0x028E);
-
-			if (vid != 0x045E || pid != 0x28E)
-				m_fakepidvid = MAKELONG(vid, pid);
-		}
-	}
-
-	if (m_hookmask)
+	if (config_loaded)
 	{
 		PrintLog("InputHook starting...");
 
@@ -149,9 +134,6 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 
 	if (!m_devices.empty())
 	{
-		if (!read_from_database)
-			ini.Get<u32>("InputHook", "Timeout", &m_timeout, 45);
-
 		std::string maskname;
 		if (MaskToName(&maskname, m_hookmask))
 			PrintLog("HookMask 0x%08X: %s", m_hookmask, maskname.c_str());

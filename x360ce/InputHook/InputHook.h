@@ -128,7 +128,7 @@ public:
 
 private:
 	static u32 __stdcall ThreadProc(void* lpParameter);
-	bool ReadGameDatabase();
+	bool LoadConfig(IniFile* ini, const std::string& filename, const std::string& section);
 	bool MaskToName(std::string* mask_string, u32 mask);
 
 	u32 m_hookmask;
