@@ -70,7 +70,9 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 		CheckCommonDirectory(&inipath, "x360ce");
 	if (!ini.Load(inipath)) return;
 
-	if (!ReadGameDatabase())
+	bool read_from_database = ReadGameDatabase();
+
+	if (!read_from_database)
 	{
 		if (!ini.Get("InputHook", "HookMask", &m_hookmask, HOOK_COM))
 		{
@@ -147,7 +149,7 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 
 	if (!m_devices.empty())
 	{
-		if (!m_timeout)
+		if (!read_from_database)
 			ini.Get<u32>("InputHook", "Timeout", &m_timeout, 45);
 
 		std::string maskname;
