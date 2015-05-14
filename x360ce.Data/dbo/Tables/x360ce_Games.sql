@@ -6,15 +6,25 @@
     [FileVersion]           NVARCHAR (32)    NOT NULL,
     [FullPath]              NVARCHAR (256)   CONSTRAINT [DF_x360ce_Games_FullPath] DEFAULT ('') NOT NULL,
     [CompanyName]           NVARCHAR (128)   CONSTRAINT [DF_x360ce_Games_CompanyName] DEFAULT ('') NOT NULL,
+    [ProcessorArchitecture] INT              CONSTRAINT [DF_x360ce_Games_ProcessorArchitecture] DEFAULT ((0)) NOT NULL,
     [HookMask]              INT              CONSTRAINT [DF_x360ce_Games_HookMask] DEFAULT ((0)) NOT NULL,
     [XInputMask]            INT              CONSTRAINT [DF_x360ce_Games_XInputFileName] DEFAULT ((4)) NOT NULL,
-    [ProcessorArchitecture] INT              CONSTRAINT [DF_x360ce_Games_ProcessorArchitecture] DEFAULT ((0)) NOT NULL,
+    [DInputMask]            INT              CONSTRAINT [DF_x360ce_Games_DInputMask] DEFAULT ((0)) NOT NULL,
+    [DInputFile]            NVARCHAR (256)   CONSTRAINT [DF_x360ce_Games_DInputFile] DEFAULT ('') NOT NULL,
+    [FakeVID]               INT              NOT NULL,
+    [FakePID]               INT              CONSTRAINT [DF_x360ce_Games_FakePID] DEFAULT ((0)) NOT NULL,
+    [Timeout]               INT              CONSTRAINT [DF_x360ce_Games_Timeout] DEFAULT ((-1)) NOT NULL,
+    [SettingChecksum]       AS               ([dbo].[x360ce_GetGameSettingChecksum]([GameId])),
     [Comment]               NVARCHAR (1024)  CONSTRAINT [DF_x360ce_Games_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]             BIT              CONSTRAINT [DF_x360ce_Games_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]           DATETIME         CONSTRAINT [DF_x360ce_Games_DateCreated] DEFAULT (getdate()) NOT NULL,
     [DateUpdated]           DATETIME         NULL,
     CONSTRAINT [PK_x360ce_Games] PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
+
+
+
+
 
 
 
