@@ -492,7 +492,7 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox, sm);
 			SettingManager.AddMap(section, () => SettingName.DeviceSubType, DeviceSubTypeComboBox, sm);
 			SettingManager.AddMap(section, () => SettingName.PassThrough, PassThroughCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ForcesPassThrough, ForcesPassThroughCheckBox, sm);
+			SettingManager.AddMap(section, () => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.PassThroughIndex, PassThroughIndexComboBox, sm);
 			// Mapping
 			SettingManager.AddMap(section, () => SettingName.MapToPad, diControl.MapToPadComboBox, sm);
@@ -600,10 +600,10 @@ namespace x360ce.App.Controls
 		{
 			// Is Pass Through enabled?
 			bool fullPassThrough = PassThroughCheckBox.Checked;
-			bool forcesPassThrough = ForcesPassThroughCheckBox.Checked;
+			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
 
 			// If full passthrough mode is turned on, changing forces passthrough has no effect.
-			ForcesPassThroughCheckBox.Enabled = !fullPassThrough;
+			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
 
 			// Pass Through index is enabled if either pass through mode is enabled
 			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);

@@ -26,7 +26,7 @@
 			this.DeviceGroupBox = new System.Windows.Forms.GroupBox();
 			this.PassThroughIndexComboBox = new System.Windows.Forms.ComboBox();
 			this.PassThroughIndexLabel = new System.Windows.Forms.Label();
-			this.ForcesPassThroughCheckBox = new System.Windows.Forms.CheckBox();
+			this.ForceFeedbackPassThroughCheckBox = new System.Windows.Forms.CheckBox();
 			this.DeviceSubTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceSubTypeLabel = new System.Windows.Forms.Label();
 			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
@@ -300,7 +300,7 @@
 			// 
 			this.DeviceGroupBox.Controls.Add(this.PassThroughIndexComboBox);
 			this.DeviceGroupBox.Controls.Add(this.PassThroughIndexLabel);
-			this.DeviceGroupBox.Controls.Add(this.ForcesPassThroughCheckBox);
+			this.DeviceGroupBox.Controls.Add(this.ForceFeedbackPassThroughCheckBox);
 			this.DeviceGroupBox.Controls.Add(this.DeviceSubTypeComboBox);
 			this.DeviceGroupBox.Controls.Add(this.DeviceSubTypeLabel);
 			this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
@@ -332,16 +332,16 @@
 			this.PassThroughIndexLabel.TabIndex = 4;
 			this.PassThroughIndexLabel.Text = "Pass Through ID:";
 			// 
-			// ForcesPassThroughCheckBox
+			// ForceFeedbackPassThroughCheckBox
 			// 
-			this.ForcesPassThroughCheckBox.AutoSize = true;
-			this.ForcesPassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
-			this.ForcesPassThroughCheckBox.Name = "ForcesPassThroughCheckBox";
-			this.ForcesPassThroughCheckBox.Size = new System.Drawing.Size(127, 17);
-			this.ForcesPassThroughCheckBox.TabIndex = 3;
-			this.ForcesPassThroughCheckBox.Text = "Forces Pass Through";
-			this.ForcesPassThroughCheckBox.UseVisualStyleBackColor = true;
-			this.ForcesPassThroughCheckBox.CheckedChanged += new System.EventHandler(this.ForcesPassThroughCheckBox_CheckedChanged);
+			this.ForceFeedbackPassThroughCheckBox.AutoSize = true;
+			this.ForceFeedbackPassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
+			this.ForceFeedbackPassThroughCheckBox.Name = "ForceFeedbackPassThroughCheckBox";
+			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(173, 17);
+			this.ForceFeedbackPassThroughCheckBox.TabIndex = 3;
+			this.ForceFeedbackPassThroughCheckBox.Text = "Force Feedback Pass Through";
+			this.ForceFeedbackPassThroughCheckBox.UseVisualStyleBackColor = true;
+			this.ForceFeedbackPassThroughCheckBox.CheckedChanged += new System.EventHandler(this.ForcesPassThroughCheckBox_CheckedChanged);
 			// 
 			// DeviceSubTypeComboBox
 			// 
@@ -2269,7 +2269,7 @@
         private System.Windows.Forms.Label LeftMotorStrengthLabel;
         private System.Windows.Forms.TrackBar RightMotorStrengthTrackBar;
         private System.Windows.Forms.TrackBar LeftMotorStrengthTrackBar;
-        private System.Windows.Forms.CheckBox ForcesPassThroughCheckBox;
+        private System.Windows.Forms.CheckBox ForceFeedbackPassThroughCheckBox;
         private System.Windows.Forms.ComboBox PassThroughIndexComboBox;
         private System.Windows.Forms.Label PassThroughIndexLabel;
         private System.Windows.Forms.GroupBox CombineGroupBox;
