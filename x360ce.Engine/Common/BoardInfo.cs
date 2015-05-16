@@ -198,13 +198,15 @@
 
 		static string GetString(byte[] bytes, int index, bool reverse = false)
 		{
-			if (index == 0 || bytes == null || index >= bytes.Length) return "";
+			if (bytes == null || bytes.Length == 0 || index <= 0 || index >= bytes.Length) return "";
 			int i;
 			for (i = index; i < bytes.Length; i++)
 			{
+				// Break on first zero byte terminator.
 				if (bytes[i] == 0) break;
 			}
 			if (index == i) return "";
+			// Create array to store value.
 			var valueBytes = new byte[i - index];
 			Array.Copy(bytes, index, valueBytes, 0, valueBytes.Length);
 			if (reverse) Array.Reverse(valueBytes);
