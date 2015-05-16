@@ -1,4 +1,7 @@
-﻿v3.0.3.36 (2015-05-12)
+﻿v3.0.6.39 (2015-05-16)
+- Fix: Crash when reading disk id.
+
+v3.0.3.36 (2015-05-12)
 - Fix: Thread lock on ThumbUserControl.
 - Update: Updated to xinput1_3.dll v3.4.1.1299.
 
