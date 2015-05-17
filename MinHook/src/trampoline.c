@@ -30,11 +30,11 @@
 #include <intrin.h>
 
 #ifdef _M_X64
-    #include "hde/hde64.h"
+    #include "./hde/hde64.h"
     typedef hde64s HDE;
     #define HDE_DISASM(code, hs) hde64_disasm(code, hs)
 #else
-    #include "hde/hde32.h"
+    #include "./hde/hde32.h"
     typedef hde32s HDE;
     #define HDE_DISASM(code, hs) hde32_disasm(code, hs)
 #endif
@@ -230,7 +230,7 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
             {
                 UINT8 cond = ((hs.opcode != 0x0F ? hs.opcode : hs.opcode2) & 0x0F);
 #ifdef _M_X64
-                // Invert the condition.
+                // Invert the condition in x64 mode to simplify the conditional jump logic.
                 jcc.opcode  = 0x71 ^ cond;
                 jcc.address = dest;
 #else
@@ -253,9 +253,11 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
         if (pOldInst < jmpDest && copySize != hs.len)
             return FALSE;
 
+        // Trampoline function is too large.
         if ((newPos + copySize) > TRAMPOLINE_MAX_SIZE)
             return FALSE;
 
+        // Trampoline function has too many instructions.
         if (ct->nIP >= ARRAYSIZE(ct->oldIPs))
             return FALSE;
 
