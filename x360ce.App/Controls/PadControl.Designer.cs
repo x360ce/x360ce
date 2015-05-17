@@ -1454,7 +1454,7 @@
 			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(681, 430);
 			this.AxisToButtonGroupBox.TabIndex = 3;
 			this.AxisToButtonGroupBox.TabStop = false;
-			this.AxisToButtonGroupBox.Text = "Axis To Button DeadZones:";
+			this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):";
 			// 
 			// AxisToButtonADeadZonePanel
 			// 
