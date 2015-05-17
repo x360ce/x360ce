@@ -182,7 +182,7 @@
       </DebugInformationFormat>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\Common;$(ProjectDir)..\InputHook;$(ProjectDir)\..\3rdparty\libMinHook\include;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\Common;$(ProjectDir)..\InputHook;$(ProjectDir)\..\MinHook\include;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SDLCheck>true</SDLCheck>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
@@ -224,7 +224,7 @@
       </DebugInformationFormat>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\Common;$(ProjectDir)..\InputHook;$(ProjectDir)\..\3rdparty\libMinHook\include;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\Common;$(ProjectDir)..\InputHook;$(ProjectDir)\..\MinHook\include;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SDLCheck>true</SDLCheck>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
