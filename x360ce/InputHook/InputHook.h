@@ -5,54 +5,18 @@
 #include <MinHook.h>
 #include "Logger.h"
 
-#include "Mutex.h"
-
-#include "HookCOM.h"
-#include "HookDI.h"
-
-static const char* status_names[] =
-{
-	"MH_OK",
-	"MH_ERROR_ALREADY_INITIALIZED",
-	"MH_ERROR_NOT_INITIALIZED",
-	"MH_ERROR_ALREADY_CREATED",
-	"MH_ERROR_NOT_CREATED",
-	"MH_ERROR_ENABLED",
-	"MH_ERROR_DISABLED",
-	"MH_ERROR_NOT_EXECUTABLE",
-	"MH_ERROR_UNSUPPORTED_FUNCTION",
-	"MH_ERROR_MEMORY_ALLOC",
-	"MH_ERROR_MEMORY_PROTECT",
-};
-
 template<typename N>
 void IH_CreateHookF(LPVOID pTarget, LPVOID pDetour, N* ppOriginal, const char* pTargetName)
 {
 	if (*ppOriginal) return;
 	MH_STATUS status = MH_CreateHook(pTarget, pDetour, reinterpret_cast<void**>(ppOriginal));
-	if (status == MH_OK)
-	{
-		PrintLog("Hook for %s successed", pTargetName);
-	}
-	else
-	{
-		if (status == MH_UNKNOWN) PrintLog("Hook for %s failed with MH_UNKNOWN", pTargetName);
-		else PrintLog("Hook for %s failed with %s", pTargetName, status_names[status]);
-	}
+	PrintLog("CreateHook %s status %s", pTargetName, MH_StatusToString(status));
 }
 
 inline void IH_EnableHookF(LPVOID pTarget, const char* pTargetName)
 {
 	MH_STATUS status = MH_EnableHook(pTarget);
-	if (status == MH_OK)
-	{
-		PrintLog("Hook for %s enabled", pTargetName);
-	}
-	else
-	{
-		if (status == MH_UNKNOWN) PrintLog("Hook for %s failed with MH_UNKNOWN", pTargetName);
-		else PrintLog("Hook for %s failed with %s", pTargetName, status_names[status]);
-	}
+	PrintLog("EnableHook %s status %s", pTargetName, MH_StatusToString(status));
 }
 
 #define IH_CreateHook(pTarget, pDetour, ppOrgiginal) IH_CreateHookF(pTarget, pDetour, ppOrgiginal, #pTarget)
