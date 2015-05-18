@@ -19,6 +19,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
             if (IsDesignMode) return;
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
+			DInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("DInput")).ToArray();
 			XInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("XInput")).ToArray();
 			HookCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Hook")).ToArray();
 			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
@@ -83,6 +84,7 @@ namespace x360ce.App.Controls
 		bool ApplySettingsToFolderInstantly = false;
 
 		CheckBox[] XInputCheckBoxes;
+		CheckBox[] DInputCheckBoxes;
 		CheckBox[] HookCheckBoxes;
 
 		x360ce.Engine.Data.Game _CurrentGame;
@@ -103,9 +105,10 @@ namespace x360ce.App.Controls
 		{
 			var en = (CurrentGame != null);
 			var item = CurrentGame ?? new x360ce.Engine.Data.Game();
-			var inputMask = (XInputMask)item.XInputMask;
+			var dInputMask = (DInputMask)item.DInputMask;
+			var xInputMask = (XInputMask)item.XInputMask;
 			var hookMask = (HookMask)item.HookMask;
-			SetMask(en, hookMask, inputMask, item.FullPath, item.ProcessorArchitecture);
+			SetMask(en, hookMask, dInputMask, xInputMask, item.FullPath, item.ProcessorArchitecture);
 			if (en)
 			{
 				var status = GetGameStatus(CurrentGame, false);
@@ -227,12 +230,13 @@ namespace x360ce.App.Controls
 			return GameRefreshStatus.OK;
 		}
 
-		public void SetMask(bool en, HookMask hookMask, XInputMask inputMask, string path, int proc)
+		public void SetMask(bool en, HookMask hookMask, DInputMask dInputMask, XInputMask xInputMask, string path, int proc)
 		{
 			lock (CurrentGameLock)
 			{
 				if (EnabledEvents) DisableEvents();
-				SetMask<XInputMask>(XInputCheckBoxes, inputMask);
+				SetMask<DInputMask>(DInputCheckBoxes, dInputMask);
+				SetMask<XInputMask>(XInputCheckBoxes, xInputMask);
 				SetMask<HookMask>(HookCheckBoxes, hookMask);
 				// Processor architecture.
 				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
@@ -273,6 +277,7 @@ namespace x360ce.App.Controls
 
 		void EnableEvents()
 		{
+			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			EnabledEvents = true;
@@ -280,6 +285,7 @@ namespace x360ce.App.Controls
 
 		void DisableEvents()
 		{
+			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			EnabledEvents = false;
@@ -298,33 +304,45 @@ namespace x360ce.App.Controls
 			{
 				var cbx = (CheckBox)sender;
 				var is64bit = cbx.Name.Contains("x64");
-				var is32bit = cbx.Name.Contains("x32");
+				var is32bit = cbx.Name.Contains("x86");
 				bool applySettings = true;
-				// If 64-bit checkbox an checked then...
-				if (is64bit && cbx.Checked)
+				CheckBox[] cbxList = null;
+				if (XInputCheckBoxes.Contains(cbx)) cbxList = XInputCheckBoxes;
+				if (DInputCheckBoxes.Contains(cbx)) cbxList = DInputCheckBoxes;
+				if (cbxList != null)
 				{
-					// Make sure that 32-bit is unchecked
-					var cbx32 = XInputCheckBoxes.First(x => x.Name == cbx.Name.Replace("x64", "x86"));
-					if (cbx32.Checked)
+					// If 64-bit checkbox an checked then...
+					if (is64bit && cbx.Checked)
 					{
-						cbx32.Checked = false;
-						applySettings = false;
+						// Make sure that 32-bit is unchecked
+						var cbx32 = cbxList.First(x => x.Name == cbx.Name.Replace("x64", "x86"));
+						if (cbx32.Checked)
+						{
+							cbx32.Checked = false;
+							applySettings = false;
+						}
+					}
+					// If 32-bit checkbox an checked then...
+					if (is32bit && cbx.Checked)
+					{
+						// Make sure that 64-bit is unchecked
+						var cbx64 = cbxList.First(x => x.Name == cbx.Name.Replace("x86", "x64"));
+						if (cbx64.Checked)
+						{
+							cbx64.Checked = false;
+							applySettings = false;
+						}
 					}
 				}
-				// If 32-bit checkbox an checked then...
-				if (is32bit && cbx.Checked)
-				{
-					// Make sure that 64-bit is unchecked
-					var cbx64 = XInputCheckBoxes.First(x => x.Name == cbx.Name.Replace("x86", "x64"));
-					if (cbx64.Checked)
-					{
-						cbx64.Checked = false;
-						applySettings = false;
-					}
-				}
+				// Set DInput mask.
+				var dm = (int)GetMask<DInputMask>(DInputCheckBoxes);
+				CurrentGame.DInputMask = dm;
+				DInputMaskTextBox.Text = dm.ToString("X8");
+				// Set XInput mask.
 				var xm = (int)GetMask<XInputMask>(XInputCheckBoxes);
 				CurrentGame.XInputMask = xm;
 				XInputMaskTextBox.Text = xm.ToString("X8");
+				// Set hook mask.
 				var hm = (int)GetMask<HookMask>(HookCheckBoxes);
 				CurrentGame.HookMask = hm;
 				HookMaskTextBox.Text = hm.ToString("X8");

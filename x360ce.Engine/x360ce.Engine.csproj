@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
+    <Compile Include="Common\Enum\DInputMask.cs" />
     <Compile Include="Common\Enum\EffectDirection.cs" />
     <Compile Include="Common\Enum\EnabledState.cs" />
     <Compile Include="Common\Enum\EffectType.cs" />

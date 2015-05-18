@@ -80,7 +80,7 @@ namespace x360ce.App
 			this.MainTabControl.Location = new System.Drawing.Point(6, 70);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(674, 531);
+			this.MainTabControl.Size = new System.Drawing.Size(674, 541);
 			this.MainTabControl.TabIndex = 1;
 			// 
 			// Pad1TabPage
@@ -88,7 +88,7 @@ namespace x360ce.App
 			this.Pad1TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
-			this.Pad1TabPage.Size = new System.Drawing.Size(666, 494);
+			this.Pad1TabPage.Size = new System.Drawing.Size(666, 514);
 			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "Controller 1";
 			// 
@@ -97,7 +97,7 @@ namespace x360ce.App
 			this.Pad2TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
-			this.Pad2TabPage.Size = new System.Drawing.Size(666, 494);
+			this.Pad2TabPage.Size = new System.Drawing.Size(666, 504);
 			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "Controller 2";
 			// 
@@ -106,7 +106,7 @@ namespace x360ce.App
 			this.Pad3TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
-			this.Pad3TabPage.Size = new System.Drawing.Size(666, 494);
+			this.Pad3TabPage.Size = new System.Drawing.Size(666, 504);
 			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "Controller 3";
 			// 
@@ -115,7 +115,7 @@ namespace x360ce.App
 			this.Pad4TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
-			this.Pad4TabPage.Size = new System.Drawing.Size(666, 494);
+			this.Pad4TabPage.Size = new System.Drawing.Size(666, 504);
 			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "Controller 4";
 			// 
@@ -125,7 +125,7 @@ namespace x360ce.App
 			this.OptionsTabPage.Controls.Add(this.OptionsPanel);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
-			this.OptionsTabPage.Size = new System.Drawing.Size(666, 494);
+			this.OptionsTabPage.Size = new System.Drawing.Size(666, 504);
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
@@ -134,7 +134,7 @@ namespace x360ce.App
 			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
 			this.OptionsPanel.Name = "OptionsPanel";
-			this.OptionsPanel.Size = new System.Drawing.Size(666, 494);
+			this.OptionsPanel.Size = new System.Drawing.Size(666, 504);
 			this.OptionsPanel.TabIndex = 30;
 			// 
 			// GameSettingsTabPage
@@ -162,7 +162,7 @@ namespace x360ce.App
 			this.ControllerSettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.ControllerSettingsTabPage.Name = "ControllerSettingsTabPage";
 			this.ControllerSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 494);
+			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 504);
 			this.ControllerSettingsTabPage.TabIndex = 1;
 			this.ControllerSettingsTabPage.Text = "Controller Settings";
 			// 
@@ -171,7 +171,7 @@ namespace x360ce.App
 			this.SettingsDatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsDatabasePanel.Location = new System.Drawing.Point(3, 3);
 			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
-			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 488);
+			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 498);
 			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
 			// HelpTabPage
@@ -179,7 +179,7 @@ namespace x360ce.App
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
 			this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
 			this.HelpTabPage.Name = "HelpTabPage";
-			this.HelpTabPage.Size = new System.Drawing.Size(666, 494);
+			this.HelpTabPage.Size = new System.Drawing.Size(666, 504);
 			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
@@ -192,7 +192,7 @@ namespace x360ce.App
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(666, 494);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(666, 504);
 			this.HelpRichTextBox.TabIndex = 0;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -201,7 +201,7 @@ namespace x360ce.App
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
-			this.AboutTabPage.Size = new System.Drawing.Size(666, 494);
+			this.AboutTabPage.Size = new System.Drawing.Size(666, 504);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
@@ -225,7 +225,7 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-			this.MainStatusStrip.Location = new System.Drawing.Point(0, 607);
+			this.MainStatusStrip.Location = new System.Drawing.Point(0, 618);
 			this.MainStatusStrip.Name = "MainStatusStrip";
 			this.MainStatusStrip.Size = new System.Drawing.Size(684, 24);
 			this.MainStatusStrip.SizingGrip = false;
@@ -359,13 +359,13 @@ namespace x360ce.App
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(684, 631);
+			this.ClientSize = new System.Drawing.Size(684, 642);
 			this.Controls.Add(this.TopPanel);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Controls.Add(this.MainTabControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(700, 670);
+			this.MinimumSize = new System.Drawing.Size(700, 680);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

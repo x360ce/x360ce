@@ -298,6 +298,9 @@
       <DependentUpon>DirectInputControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\GameSettingDetailsUserControl.resx">
+      <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ThumbUserControl.resx">
       <DependentUpon>ThumbUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -426,6 +429,9 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\dinput.dll" />
+    <EmbeddedResource Include="Resources\dinput_x64.dll" />
+    <EmbeddedResource Include="Resources\dinput_x86.dll" />
     <EmbeddedResource Include="Resources\xinput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\xinput_x86.dll" />

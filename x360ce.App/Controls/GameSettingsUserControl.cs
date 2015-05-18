@@ -457,7 +457,7 @@ namespace x360ce.App.Controls
             if (ProgramsDataGridView.SelectedRows.Count == 0) return;
             var row = ProgramsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
             var item = (x360ce.Engine.Data.Program)row.DataBoundItem;
-            GameDefaultDetailsControl.SetMask(false, (HookMask)item.HookMask, (XInputMask)item.XInputMask, item.FileName, 0);
+            GameDefaultDetailsControl.SetMask(false, (HookMask)item.HookMask, (DInputMask)0, (XInputMask)item.XInputMask, item.FileName, 0);
         }
 
         private void RefreshProgramsButton_Click(object sender, EventArgs e)

@@ -9,11 +9,17 @@ namespace x360ce.Engine.Data
 	public partial class Game
 	{
 
+		public Game()
+		{
+			Timeout = -1;
+		}
+
 		public static Game FromDisk(string fileName)
 		{
 			var item = new Game();
 			var fi = new FileInfo(fileName);
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
+			item.Timeout = -1;
 			item.Comment = vi.Comments ?? "";
 			item.DateCreated = DateTime.Now;
 			item.DateUpdated = item.DateCreated;

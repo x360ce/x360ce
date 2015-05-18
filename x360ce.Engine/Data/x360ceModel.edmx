@@ -16,9 +16,15 @@
           <Property Name="FileVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
           <Property Name="FullPath" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="CompanyName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
-          <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
+          <Property Name="DInputMask" Type="int" Nullable="false" />
+          <Property Name="DInputFile" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="FakeVID" Type="int" Nullable="false" />
+          <Property Name="FakePID" Type="int" Nullable="false" />
+          <Property Name="Timeout" Type="int" Nullable="false" />
+          <Property Name="SettingChecksum" Type="uniqueidentifier" StoreGeneratedPattern="Computed" />
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
@@ -358,6 +364,12 @@
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="DateUpdated" Precision="3" />
           <Property Name="ProcessorArchitecture" Type="Int32" Nullable="false" />
+          <Property Name="DInputMask" Type="Int32" Nullable="false" />
+          <Property Name="DInputFile" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="FakeVID" Type="Int32" Nullable="false" />
+          <Property Name="FakePID" Type="Int32" Nullable="false" />
+          <Property Name="Timeout" Type="Int32" Nullable="false" />
+          <Property Name="SettingChecksum" Type="Guid" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -523,6 +535,12 @@
           <EntitySetMapping Name="Games">
             <EntityTypeMapping TypeName="x360ceModel.Game">
               <MappingFragment StoreEntitySet="x360ce_Games">
+                <ScalarProperty Name="SettingChecksum" ColumnName="SettingChecksum" />
+                <ScalarProperty Name="Timeout" ColumnName="Timeout" />
+                <ScalarProperty Name="FakePID" ColumnName="FakePID" />
+                <ScalarProperty Name="FakeVID" ColumnName="FakeVID" />
+                <ScalarProperty Name="DInputFile" ColumnName="DInputFile" />
+                <ScalarProperty Name="DInputMask" ColumnName="DInputMask" />
                 <ScalarProperty Name="ProcessorArchitecture" ColumnName="ProcessorArchitecture" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -562,14 +580,14 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="63" >
+			<Diagram Name="x360ceModel" ZoomLevel="86" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.875" PointY="0.5" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="5.875" PointY="3.5" />
-        <EntityTypeShape EntityType="x360ceModel.Game" Width="1.5" PointX="7.875" PointY="2.625" />
+        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.75" />
+        <EntityTypeShape EntityType="x360ceModel.Game" Width="1.5" PointX="7.875" PointY="2.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>
