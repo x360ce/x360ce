@@ -15,12 +15,15 @@
     [FakePID]               INT              CONSTRAINT [DF_x360ce_Games_FakePID] DEFAULT ((0)) NOT NULL,
     [Timeout]               INT              CONSTRAINT [DF_x360ce_Games_Timeout] DEFAULT ((-1)) NOT NULL,
     [SettingChecksum]       AS               ([dbo].[x360ce_GetGameSettingChecksum]([GameId])),
+    [Weight]                INT              CONSTRAINT [DF_x360ce_Games_Weight] DEFAULT ((0)) NOT NULL,
     [Comment]               NVARCHAR (1024)  CONSTRAINT [DF_x360ce_Games_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]             BIT              CONSTRAINT [DF_x360ce_Games_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]           DATETIME         CONSTRAINT [DF_x360ce_Games_DateCreated] DEFAULT (getdate()) NOT NULL,
     [DateUpdated]           DATETIME         NULL,
     CONSTRAINT [PK_x360ce_Games] PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
+
+
 
 
 

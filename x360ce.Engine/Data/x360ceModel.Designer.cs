@@ -276,7 +276,8 @@ namespace x360ce.Engine.Data
         /// <param name="fakeVID">Initial value of the FakeVID property.</param>
         /// <param name="fakePID">Initial value of the FakePID property.</param>
         /// <param name="timeout">Initial value of the Timeout property.</param>
-        public static Game CreateGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout)
+        /// <param name="weight">Initial value of the Weight property.</param>
+        public static Game CreateGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight)
         {
             Game game = new Game();
             game.GameId = gameId;
@@ -297,6 +298,7 @@ namespace x360ce.Engine.Data
             game.FakeVID = fakeVID;
             game.FakePID = fakePID;
             game.Timeout = timeout;
+            game.Weight = weight;
             return game;
         }
 
@@ -786,6 +788,30 @@ namespace x360ce.Engine.Data
         private Nullable<global::System.Guid> _SettingChecksum;
         partial void OnSettingChecksumChanging(Nullable<global::System.Guid> value);
         partial void OnSettingChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Weight
+        {
+            get
+            {
+                return _Weight;
+            }
+            set
+            {
+                OnWeightChanging(value);
+                ReportPropertyChanging("Weight");
+                _Weight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Weight");
+                OnWeightChanged();
+            }
+        }
+        private global::System.Int32 _Weight;
+        partial void OnWeightChanging(global::System.Int32 value);
+        partial void OnWeightChanged();
 
         #endregion
 
@@ -2956,7 +2982,16 @@ namespace x360ce.Engine.Data
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="comment">Initial value of the Comment property.</param>
-        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 instanceCount, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.String comment)
+        /// <param name="fileVersion">Initial value of the FileVersion property.</param>
+        /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
+        /// <param name="dInputMask">Initial value of the DInputMask property.</param>
+        /// <param name="dInputFile">Initial value of the DInputFile property.</param>
+        /// <param name="fakeVID">Initial value of the FakeVID property.</param>
+        /// <param name="fakePID">Initial value of the FakePID property.</param>
+        /// <param name="timeout">Initial value of the Timeout property.</param>
+        /// <param name="settingChecksum">Initial value of the SettingChecksum property.</param>
+        /// <param name="weight">Initial value of the Weight property.</param>
+        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 instanceCount, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.String comment, global::System.String fileVersion, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Guid settingChecksum, global::System.Int32 weight)
         {
             Program program = new Program();
             program.ProgramId = programId;
@@ -2968,6 +3003,15 @@ namespace x360ce.Engine.Data
             program.IsEnabled = isEnabled;
             program.DateCreated = dateCreated;
             program.Comment = comment;
+            program.FileVersion = fileVersion;
+            program.ProcessorArchitecture = processorArchitecture;
+            program.DInputMask = dInputMask;
+            program.DInputFile = dInputFile;
+            program.FakeVID = fakeVID;
+            program.FakePID = fakePID;
+            program.Timeout = timeout;
+            program.SettingChecksum = settingChecksum;
+            program.Weight = weight;
             return program;
         }
 
@@ -3217,6 +3261,222 @@ namespace x360ce.Engine.Data
         private global::System.String _Comment;
         partial void OnCommentChanging(global::System.String value);
         partial void OnCommentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileVersion
+        {
+            get
+            {
+                return _FileVersion;
+            }
+            set
+            {
+                OnFileVersionChanging(value);
+                ReportPropertyChanging("FileVersion");
+                _FileVersion = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileVersion");
+                OnFileVersionChanged();
+            }
+        }
+        private global::System.String _FileVersion;
+        partial void OnFileVersionChanging(global::System.String value);
+        partial void OnFileVersionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ProcessorArchitecture
+        {
+            get
+            {
+                return _ProcessorArchitecture;
+            }
+            set
+            {
+                OnProcessorArchitectureChanging(value);
+                ReportPropertyChanging("ProcessorArchitecture");
+                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProcessorArchitecture");
+                OnProcessorArchitectureChanged();
+            }
+        }
+        private global::System.Int32 _ProcessorArchitecture;
+        partial void OnProcessorArchitectureChanging(global::System.Int32 value);
+        partial void OnProcessorArchitectureChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DInputMask
+        {
+            get
+            {
+                return _DInputMask;
+            }
+            set
+            {
+                OnDInputMaskChanging(value);
+                ReportPropertyChanging("DInputMask");
+                _DInputMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DInputMask");
+                OnDInputMaskChanged();
+            }
+        }
+        private global::System.Int32 _DInputMask;
+        partial void OnDInputMaskChanging(global::System.Int32 value);
+        partial void OnDInputMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DInputFile
+        {
+            get
+            {
+                return _DInputFile;
+            }
+            set
+            {
+                OnDInputFileChanging(value);
+                ReportPropertyChanging("DInputFile");
+                _DInputFile = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DInputFile");
+                OnDInputFileChanged();
+            }
+        }
+        private global::System.String _DInputFile;
+        partial void OnDInputFileChanging(global::System.String value);
+        partial void OnDInputFileChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 FakeVID
+        {
+            get
+            {
+                return _FakeVID;
+            }
+            set
+            {
+                OnFakeVIDChanging(value);
+                ReportPropertyChanging("FakeVID");
+                _FakeVID = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("FakeVID");
+                OnFakeVIDChanged();
+            }
+        }
+        private global::System.Int32 _FakeVID;
+        partial void OnFakeVIDChanging(global::System.Int32 value);
+        partial void OnFakeVIDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 FakePID
+        {
+            get
+            {
+                return _FakePID;
+            }
+            set
+            {
+                OnFakePIDChanging(value);
+                ReportPropertyChanging("FakePID");
+                _FakePID = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("FakePID");
+                OnFakePIDChanged();
+            }
+        }
+        private global::System.Int32 _FakePID;
+        partial void OnFakePIDChanging(global::System.Int32 value);
+        partial void OnFakePIDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Timeout
+        {
+            get
+            {
+                return _Timeout;
+            }
+            set
+            {
+                OnTimeoutChanging(value);
+                ReportPropertyChanging("Timeout");
+                _Timeout = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Timeout");
+                OnTimeoutChanged();
+            }
+        }
+        private global::System.Int32 _Timeout;
+        partial void OnTimeoutChanging(global::System.Int32 value);
+        partial void OnTimeoutChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid SettingChecksum
+        {
+            get
+            {
+                return _SettingChecksum;
+            }
+            set
+            {
+                OnSettingChecksumChanging(value);
+                ReportPropertyChanging("SettingChecksum");
+                _SettingChecksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SettingChecksum");
+                OnSettingChecksumChanged();
+            }
+        }
+        private global::System.Guid _SettingChecksum;
+        partial void OnSettingChecksumChanging(global::System.Guid value);
+        partial void OnSettingChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Weight
+        {
+            get
+            {
+                return _Weight;
+            }
+            set
+            {
+                OnWeightChanging(value);
+                ReportPropertyChanging("Weight");
+                _Weight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Weight");
+                OnWeightChanged();
+            }
+        }
+        private global::System.Int32 _Weight;
+        partial void OnWeightChanging(global::System.Int32 value);
+        partial void OnWeightChanged();
 
         #endregion
 

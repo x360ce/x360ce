@@ -25,14 +25,21 @@ namespace x360ce.Engine.Data
 			item.DateUpdated = item.DateCreated;
 			item.FileName = fi.Name ?? "";
 			item.FileProductName = EngineHelper.FixName(vi.ProductName, item.FileName);
+			item.FileVersion = vi.FileVersion;
 			item.CompanyName = vi.CompanyName ?? "";
 			item.DiskDriveId = BoardInfo.GetHashedDiskId();
 			item.FileVersion = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart).ToString();
 			item.FullPath = fi.FullName ?? "";
 			item.GameId = Guid.NewGuid();
 			item.HookMask = 0;
-			item.IsEnabled = true;
 			item.XInputMask = 0;
+			item.DInputMask = 0;
+			item.DInputFile = "";
+			item.FakeVID = 0;
+			item.FakePID = 0;
+			item.Timeout = -1;
+			item.Weight = 1;
+			item.IsEnabled = true;
 			item.ProcessorArchitecture = (int)Win32.PEReader.GetProcessorArchitecture(fi.FullName);
 			return item;
 		}
