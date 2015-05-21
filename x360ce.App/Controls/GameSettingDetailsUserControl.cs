@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 		public GameSettingDetailsUserControl()
 		{
 			InitializeComponent();
-            if (IsDesignMode) return;
+			if (IsDesignMode) return;
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			DInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("DInput")).ToArray();
 			XInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("XInput")).ToArray();
@@ -29,55 +29,17 @@ namespace x360ce.App.Controls
 			}
 		}
 
-        internal bool IsDesignMode
-        {
-            get
-            {
-                if (DesignMode) return true;
-                if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
-                var pa = this.ParentForm;
-                if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
-                return false;
-            }
-        }
-
-        //public void ApplyStyleToCheckBoxes()
-        //{
-        //    List<CheckBox> checkBoxes = new List<CheckBox>();
-        //    GetCheckBoxes(this, ref checkBoxes);
-        //    foreach (CheckBox c in checkBoxes)
-        //    {
-        //        c.ImageAlign = ContentAlignment.MiddleLeft;
-        //        c.Paint += CheckBox_Paint;
-        //    }
-        //}
-
-        //void CheckBox_Paint(object sender, PaintEventArgs e)
-        //{
-        //    var box = (CheckBox)sender;
-        //    if (box.Appearance != Appearance.Normal) return;
-        //    var image = box.CheckState == CheckState.Checked
-        //        ? box.Enabled ? Properties.Resources.checkbox_16x16 : Properties.Resources.checkbox_disabled_16x16
-        //        : box.Enabled ? Properties.Resources.checkbox_unchecked_16x16 : Properties.Resources.checkbox_unchecked_disabled_16x16;
-        //    //var hw = image.Width / 2;
-        //    var top = ((box.Height - image.Height) / 2); // - 5
-        //    // box.Padding = new Padding(box.Padding.Left, box.Padding.Top, box.Padding.Right, box.Padding.Bottom);
-        //    var pen = new SolidBrush(box.BackColor);
-        //    e.Graphics.FillRectangle(pen, 0, 0, image.Width, box.Height); // - 8
-        //    e.Graphics.DrawImage(image, 0, top);
-        //}
-
-        //public void GetCheckBoxes(Control c, ref List<CheckBox> l)
-        //{
-        //    CheckBox[] boxes = c.Controls.OfType<CheckBox>().ToArray();
-        //    Control[] bases = c.Controls.Cast<Control>().Where(x => x.GetType().BaseType.Equals(typeof(BaseUserControl))).ToArray();
-        //    l.AddRange(boxes);
-        //    Control[] c2 = c.Controls.Cast<Control>().Except(boxes).Except(bases).ToArray();
-        //    for (int i = 0; i <= c2.Length - 1; i++)
-        //    {
-        //        GetCheckBoxes(c2[i], ref l);
-        //    }
-        //}
+		internal bool IsDesignMode
+		{
+			get
+			{
+				if (DesignMode) return true;
+				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+				var pa = this.ParentForm;
+				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
+				return false;
+			}
+		}
 
 		object CurrentGameLock = new object();
 		bool EnabledEvents = false;
@@ -109,6 +71,11 @@ namespace x360ce.App.Controls
 			var xInputMask = (XInputMask)item.XInputMask;
 			var hookMask = (HookMask)item.HookMask;
 			SetMask(en, hookMask, dInputMask, xInputMask, item.FullPath, item.ProcessorArchitecture);
+			HookModeFakeVidNumericUpDown_ValueChanged2(null, null);
+			HookModeFakeVidNumericUpDown.Value = item.FakeVID;
+			HookModeFakePidNumericUpDown.Value = item.FakePID;
+			HookModeFakePidNumericUpDown_ValueChanged2(null, null);
+			TimeoutNumericUpDown.Value = item.Timeout;
 			if (en)
 			{
 				var status = GetGameStatus(CurrentGame, false);
@@ -280,6 +247,9 @@ namespace x360ce.App.Controls
 			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
+			HookModeFakeVidNumericUpDown.ValueChanged += HookModeFakeVidNumericUpDown_ValueChanged;
+			HookModeFakePidNumericUpDown.ValueChanged += HookModeFakePidNumericUpDown_ValueChanged;
+			TimeoutNumericUpDown.ValueChanged += this.TimeoutNumericUpDown_ValueChanged;
 			EnabledEvents = true;
 		}
 
@@ -288,6 +258,9 @@ namespace x360ce.App.Controls
 			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
+			HookModeFakeVidNumericUpDown.ValueChanged -= HookModeFakeVidNumericUpDown_ValueChanged;
+			HookModeFakePidNumericUpDown.ValueChanged -= HookModeFakePidNumericUpDown_ValueChanged;
+			TimeoutNumericUpDown.ValueChanged -= this.TimeoutNumericUpDown_ValueChanged;
 			EnabledEvents = false;
 		}
 
@@ -397,11 +370,58 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm("Reset current settings to default?", "Reset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
+				// Reset to default all properties which affects checksum.
 				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
 				_CurrentGame.HookMask = _DefaultSettings.HookMask;
+				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
+				_CurrentGame.DInputFile = _DefaultSettings.DInputFile;
+				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;
+				_CurrentGame.FakePID = _DefaultSettings.FakePID;
+				_CurrentGame.Timeout = _DefaultSettings.Timeout;
 				UpdateInterface();
 			}
 		}
+
+		private void DInputFileTextBox_TextChanged(object sender, EventArgs e)
+		{
+			var item = CurrentGame;
+			if (item == null) return;
+			item.DInputFile = DInputFileTextBox.Text;
+		}
+
+		private void HookModeFakeVidNumericUpDown_ValueChanged(object sender, EventArgs e)
+		{
+			var item = CurrentGame;
+			if (item == null) return;
+			item.FakeVID = (int)HookModeFakeVidNumericUpDown.Value;
+		}
+
+		private void HookModeFakeVidNumericUpDown_ValueChanged2(object sender, EventArgs e)
+		{
+			HookModeFakeVidTextBox.Text = "0x" + ((int)HookModeFakeVidNumericUpDown.Value).ToString("X4");
+		}
+
+		private void HookModeFakePidNumericUpDown_ValueChanged(object sender, EventArgs e)
+		{
+			var item = CurrentGame;
+			if (item == null) return;
+			item.FakePID = (int)HookModeFakePidNumericUpDown.Value;
+		}
+
+		private void HookModeFakePidNumericUpDown_ValueChanged2(object sender, EventArgs e)
+		{
+			HookModeFakePidTextBox.Text = "0x" + ((int)HookModeFakePidNumericUpDown.Value).ToString("X4");
+		}
+
+		private void TimeoutNumericUpDown_ValueChanged(object sender, EventArgs e)
+		{
+			var item = CurrentGame;
+			if (item == null) return;
+			item.Timeout = (int)TimeoutNumericUpDown.Value;
+		}
+
+
+
 
 	}
 }

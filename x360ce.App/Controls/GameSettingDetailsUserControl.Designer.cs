@@ -67,7 +67,11 @@
 			this.TimeoutLabel = new System.Windows.Forms.Label();
 			this.DInputFileTextBox = new System.Windows.Forms.TextBox();
 			this.DInputFileLabel = new System.Windows.Forms.Label();
+			this.HookModeFakePidNumericUpDown = new System.Windows.Forms.NumericUpDown();
+			this.HookModeFakeVidNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// XInputMaskTextBox
@@ -417,17 +421,19 @@
 			// 
 			// HookModeFakePidTextBox
 			// 
-			this.HookModeFakePidTextBox.Location = new System.Drawing.Point(85, 342);
+			this.HookModeFakePidTextBox.Location = new System.Drawing.Point(159, 342);
 			this.HookModeFakePidTextBox.Name = "HookModeFakePidTextBox";
-			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(68, 20);
+			this.HookModeFakePidTextBox.ReadOnly = true;
+			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(51, 20);
 			this.HookModeFakePidTextBox.TabIndex = 34;
 			this.HookModeFakePidTextBox.Text = "0x28E";
 			// 
 			// HookModeFakeVidTextBox
 			// 
-			this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(85, 316);
+			this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(159, 316);
 			this.HookModeFakeVidTextBox.Name = "HookModeFakeVidTextBox";
-			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(68, 20);
+			this.HookModeFakeVidTextBox.ReadOnly = true;
+			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(51, 20);
 			this.HookModeFakeVidTextBox.TabIndex = 35;
 			this.HookModeFakeVidTextBox.Text = "0x45E";
 			// 
@@ -483,6 +489,7 @@
 			this.DInputFileTextBox.Size = new System.Drawing.Size(125, 20);
 			this.DInputFileTextBox.TabIndex = 34;
 			this.DInputFileTextBox.Text = "dinput8m.dll";
+			this.DInputFileTextBox.TextChanged += new System.EventHandler(this.DInputFileTextBox_TextChanged);
 			// 
 			// DInputFileLabel
 			// 
@@ -493,10 +500,40 @@
 			this.DInputFileLabel.TabIndex = 32;
 			this.DInputFileLabel.Text = "DInput File:";
 			// 
+			// HookModeFakePidNumericUpDown
+			// 
+			this.HookModeFakePidNumericUpDown.Location = new System.Drawing.Point(85, 342);
+			this.HookModeFakePidNumericUpDown.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+			this.HookModeFakePidNumericUpDown.Name = "HookModeFakePidNumericUpDown";
+			this.HookModeFakePidNumericUpDown.Size = new System.Drawing.Size(68, 20);
+			this.HookModeFakePidNumericUpDown.TabIndex = 36;
+			this.HookModeFakePidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.HookModeFakePidNumericUpDown.ValueChanged += new System.EventHandler(this.HookModeFakePidNumericUpDown_ValueChanged2);
+			// 
+			// HookModeFakeVidNumericUpDown
+			// 
+			this.HookModeFakeVidNumericUpDown.Location = new System.Drawing.Point(85, 316);
+			this.HookModeFakeVidNumericUpDown.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+			this.HookModeFakeVidNumericUpDown.Name = "HookModeFakeVidNumericUpDown";
+			this.HookModeFakeVidNumericUpDown.Size = new System.Drawing.Size(68, 20);
+			this.HookModeFakeVidNumericUpDown.TabIndex = 36;
+			this.HookModeFakeVidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.HookModeFakeVidNumericUpDown.ValueChanged += new System.EventHandler(this.HookModeFakeVidNumericUpDown_ValueChanged2);
+			// 
 			// GameSettingDetailsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.HookModeFakeVidNumericUpDown);
+			this.Controls.Add(this.HookModeFakePidNumericUpDown);
 			this.Controls.Add(this.TimeoutNumericUpDown);
 			this.Controls.Add(this.HookLLCheckBox);
 			this.Controls.Add(this.HookSACheckBox);
@@ -539,6 +576,8 @@
 			this.Name = "GameSettingDetailsUserControl";
 			this.Size = new System.Drawing.Size(215, 476);
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -585,5 +624,7 @@
 		private System.Windows.Forms.Label TimeoutLabel;
 		private System.Windows.Forms.TextBox DInputFileTextBox;
 		private System.Windows.Forms.Label DInputFileLabel;
+		private System.Windows.Forms.NumericUpDown HookModeFakePidNumericUpDown;
+		private System.Windows.Forms.NumericUpDown HookModeFakeVidNumericUpDown;
 	}
 }
