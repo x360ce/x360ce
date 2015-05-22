@@ -1,4 +1,8 @@
-﻿v3.0.6.39 (2015-05-16)
+﻿v3.0.6.42 (2015-05-22)
+- Fix: Temporary freeze when retrieving game settings.	
+- Fix: Temporary freeze when retrieving controller settings.	
+
+v3.0.6.39 (2015-05-16)
 - Fix: Crash when reading disk id.
 
 v3.0.3.36 (2015-05-12)

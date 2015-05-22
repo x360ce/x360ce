@@ -60,6 +60,8 @@ namespace x360ce.App.Controls
 			{
 				_CurrentGame = value;
 				UpdateInterface();
+				UpdateFakeVidPidControls();
+				UpdateDinputControls();
 			}
 		}
 
@@ -420,8 +422,73 @@ namespace x360ce.App.Controls
 			item.Timeout = (int)TimeoutNumericUpDown.Value;
 		}
 
+		private void HookPIDVIDCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateFakeVidPidControls();
+		}
 
+		int msVid = 0x45E;
+		int msPid = 0x28E;
+		string dinputFile = "asiloader.dll";
 
+		void UpdateFakeVidPidControls()
+		{
+			var en = HookPIDVIDCheckBox.Checked;
+			HookModeFakeVidNumericUpDown.Enabled = en;
+			HookModeFakePidNumericUpDown.Enabled = en;
+			if (en)
+			{
+				if (HookModeFakeVidNumericUpDown.Value == 0)
+				{
+					HookModeFakeVidNumericUpDown.Value = msVid;
+				}
+				if (HookModeFakePidNumericUpDown.Value == 0)
+				{
+					HookModeFakePidNumericUpDown.Value = msPid;
+				}
+			}
+			else
+			{
+				if (HookModeFakeVidNumericUpDown.Value == msVid)
+				{
+					HookModeFakeVidNumericUpDown.Value = 0;
+				}
+				if (HookModeFakePidNumericUpDown.Value == msPid)
+				{
+					HookModeFakePidNumericUpDown.Value = 0;
+				}
+			}
+		}
+
+		private void DInput8_x86CheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateDinputControls();
+		}
+
+		private void DInput8_x64CheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateDinputControls();
+		}
+
+		void UpdateDinputControls()
+		{
+			var en = DInput8_x86CheckBox.Checked || DInput8_x64CheckBox.Checked;
+			DInputFileTextBox.Enabled = en;
+			if (en)
+			{
+				if (DInputFileTextBox.Text == "")
+				{
+					DInputFileTextBox.Text = dinputFile;
+				}
+			}
+			else
+			{
+				if (DInputFileTextBox.Text == dinputFile)
+				{
+					DInputFileTextBox.Text = "";
+				}
+			}
+		}
 
 	}
 }

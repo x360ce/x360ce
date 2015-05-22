@@ -192,6 +192,7 @@
 			this.HookPIDVIDCheckBox.TabIndex = 0;
 			this.HookPIDVIDCheckBox.Text = "PIDVID";
 			this.HookPIDVIDCheckBox.UseVisualStyleBackColor = true;
+			this.HookPIDVIDCheckBox.CheckedChanged += new System.EventHandler(this.HookPIDVIDCheckBox_CheckedChanged);
 			// 
 			// HookDICheckBox
 			// 
@@ -342,6 +343,7 @@
 			this.DInput8_x86CheckBox.TabIndex = 0;
 			this.DInput8_x86CheckBox.Text = "32-bit";
 			this.DInput8_x86CheckBox.UseVisualStyleBackColor = true;
+			this.DInput8_x86CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x86CheckBox_CheckedChanged);
 			// 
 			// DInputFilesLabel
 			// 
@@ -372,6 +374,7 @@
 			this.DInput8_x64CheckBox.TabIndex = 0;
 			this.DInput8_x64CheckBox.Text = "64-bit";
 			this.DInput8_x64CheckBox.UseVisualStyleBackColor = true;
+			this.DInput8_x64CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x64CheckBox_CheckedChanged);
 			// 
 			// ResetToDefaultButton
 			// 
@@ -426,7 +429,6 @@
 			this.HookModeFakePidTextBox.ReadOnly = true;
 			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(51, 20);
 			this.HookModeFakePidTextBox.TabIndex = 34;
-			this.HookModeFakePidTextBox.Text = "0x28E";
 			// 
 			// HookModeFakeVidTextBox
 			// 
@@ -435,7 +437,6 @@
 			this.HookModeFakeVidTextBox.ReadOnly = true;
 			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(51, 20);
 			this.HookModeFakeVidTextBox.TabIndex = 35;
-			this.HookModeFakeVidTextBox.Text = "0x45E";
 			// 
 			// ProcessorArchitectureComboBox
 			// 
@@ -488,7 +489,6 @@
 			this.DInputFileTextBox.Name = "DInputFileTextBox";
 			this.DInputFileTextBox.Size = new System.Drawing.Size(125, 20);
 			this.DInputFileTextBox.TabIndex = 34;
-			this.DInputFileTextBox.Text = "dinput8m.dll";
 			this.DInputFileTextBox.TextChanged += new System.EventHandler(this.DInputFileTextBox_TextChanged);
 			// 
 			// DInputFileLabel
