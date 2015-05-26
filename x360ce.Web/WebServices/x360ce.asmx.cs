@@ -367,6 +367,80 @@ namespace x360ce.Web.WebServices
 			return sr;
 		}
 
+		#region Games
+
+		[WebMethod(EnableSession = true, Description = "Save Games")]
+		public string UpdateGames(Game[] games)
+		{
+			var db = new x360ceModelContainer();
+			var created = 0;
+			var updated = 0;
+			for (int i = 0; i < games.Length; i++)
+			{
+				var game = games[i];
+				var diskDriveId = game.DiskDriveId;
+				var fileName = game.FileName;
+				var item = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				if (item == null)
+				{
+					created++;
+					item = new Game();
+					item.GameId = Guid.NewGuid();
+					db.Games.AddObject(item);
+					item.DateCreated = DateTime.Now;
+				}
+				else
+				{
+					updated++;
+					item.DateUpdated = DateTime.Now;
+				}
+				item.Comment = game.Comment;
+				item.CompanyName = game.CompanyName;
+				item.DInputFile = game.DInputFile;
+				item.DInputMask = game.DInputMask;
+				item.FakePID = game.FakePID;
+				item.FakeVID = game.FakeVID;
+				item.FileName = game.FileName;
+				item.FileProductName = game.FileProductName;
+				item.FileVersion = game.FileVersion;
+				item.FullPath = game.FullPath;
+				item.HookMask = game.HookMask;
+				item.IsEnabled = game.IsEnabled;
+				item.Timeout = game.Timeout;
+				item.Weight = 1;
+				item.XInputMask = game.XInputMask;
+			}
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0} game(s) created, {1} game(s) updated.", created, updated);
+		}
+
+		[WebMethod(EnableSession = true, Description = "Delete Games")]
+		public string DeleteGames(Game[] games)
+		{
+			var db = new x360ceModelContainer();
+			var deleted = 0;
+			for (int i = 0; i < games.Length; i++)
+			{
+				var game = games[i];
+				var diskDriveId = game.DiskDriveId;
+				var fileName = game.FileName;
+				var currentGame = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				if (currentGame == null) continue;
+				db.Games.DeleteObject(currentGame);
+				deleted++;
+			}
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0} game(s) deleted.", deleted);
+		}
+
+		#endregion
+
+		#region Programs
+
 		[WebMethod(EnableSession = true, Description = "Search games.")]
 		public Program GetProgram(string fileName, string fileProductName)
 		{
@@ -413,6 +487,10 @@ namespace x360ce.Web.WebServices
 				return "User was not authenticated.";
 			}
 		}
+
+		#endregion
+
+		#region Security
 
 		[WebMethod(EnableSession = true, Description = "Sign out.")]
 		public KeyValueList SignOut()
@@ -482,6 +560,7 @@ namespace x360ce.Web.WebServices
 			return results;
 		}
 
+		#endregion
 	}
 
 }
