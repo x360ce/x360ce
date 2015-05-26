@@ -54,11 +54,6 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
-
-			section = @"InputHook\";
-			SettingManager.AddMap(section, () => SettingName.HookMode, FakeModeComboBox);
-			SettingManager.AddMap(section, () => SettingName.FakePID, HookModeFakePidTextBox);
-			SettingManager.AddMap(section, () => SettingName.FakeVID, HookModeFakeVidTextBox);
 		}
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
