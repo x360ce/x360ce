@@ -102,17 +102,6 @@ namespace x360ce.Engine
 				string dinputFile = null;
 				string timeout = null;
 				var program = programs.FirstOrDefault(x => x.FileName.ToLower() == name);
-				if (program != null)
-				{
-					section = program.FileName;
-					productName = program.FileProductName;
-					hookMask = string.Format("0x{0:X8}", program.HookMask);
-					if (program.DInputMask > 0) dinputMask = string.Format("0x{0:X8}", program.DInputMask);
-					if (!string.IsNullOrEmpty(program.DInputFile)) dinputFile = program.DInputFile;
-					if (program.FakeVID > 0) fakeVid = string.Format("0x{0:X4}", program.FakeVID);
-					if (program.FakePID > 0) fakePid = string.Format("0x{0:X4}", program.FakePID);
-					if (program.Timeout >= 0) timeout = program.Timeout.ToString();
-				}
 				var game = games.FirstOrDefault(x => x.FileName.ToLower() == name);
 				if (game != null)
 				{
@@ -125,13 +114,25 @@ namespace x360ce.Engine
 					if (game.FakePID > 0) fakePid = string.Format("0x{0:X4}", game.FakePID);
 					if (game.Timeout >= 0) timeout = game.Timeout.ToString();
 				}
+				// Use default settings as an alternative.
+				else if (program != null)
+				{
+					section = program.FileName;
+					productName = program.FileProductName;
+					hookMask = string.Format("0x{0:X8}", program.HookMask);
+					if (program.DInputMask > 0) dinputMask = string.Format("0x{0:X8}", program.DInputMask);
+					if (!string.IsNullOrEmpty(program.DInputFile)) dinputFile = program.DInputFile;
+					if (program.FakeVID > 0) fakeVid = string.Format("0x{0:X4}", program.FakeVID);
+					if (program.FakePID > 0) fakePid = string.Format("0x{0:X4}", program.FakePID);
+					if (program.Timeout >= 0) timeout = program.Timeout.ToString();
+				}
 				ini.SetValue(section, "Name", productName);
 				ini.SetValue(section, "HookMask", hookMask);
 				ini.SetValue(section, "DinputMask", dinputMask);
 				ini.SetValue(section, "DinputFile", dinputFile);
 				ini.SetValue(section, "FakeVID", fakeVid);
 				ini.SetValue(section, "FakePID", fakePid);
-				ini.SetValue(section, "Timeout", fakePid);
+				ini.SetValue(section, "Timeout", timeout);
 			}
 			Refresh();
 			var md5name = System.IO.Path.GetFileNameWithoutExtension(InitialFile.Name);

@@ -509,7 +509,6 @@
     <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
     <Content Include="Images\xboxControllerDPad.png" />
     <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <None Include="Documents\JocysCom.sign.bat" />
     <None Include="Documents\x360ce.App.source.bat" />
     <None Include="Images\xboxControllerLeftTrigger.png" />
     <Content Include="Images\xboxControllerRightThumbstick.png" />

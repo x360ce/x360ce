@@ -314,6 +314,7 @@ namespace x360ce.App.Controls
 			var programs = SettingsFile.Current.Programs;
 			var games = SettingsFile.Current.Games;
 			GameDatabaseManager.Current.SetPrograms(programs, games);
+			SettingsFile.Current.Save();
 		}
 
 		private void DeleteGamesButton_Click(object sender, EventArgs e)
