@@ -22,6 +22,6 @@ namespace x360ce.Engine
 		string SetProgram(Program p);
 		KeyValueList SignOut();
 		KeyValueList SignIn(string username, string password);
-
+		string SetGames(CloudAction action, List<Game> games);
 	}
 }
