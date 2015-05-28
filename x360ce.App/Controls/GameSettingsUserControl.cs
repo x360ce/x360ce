@@ -350,6 +350,7 @@ namespace x360ce.App.Controls
 				}
 				SettingsFile.Current.Save();
 				RebindGames();
+				CloudStoragePanel.Add(itemsToDelete, CloudAction.Delete);
 			}
 		}
 
@@ -360,7 +361,6 @@ namespace x360ce.App.Controls
 			ShowGamesDropDownButton.Text = item.Text;
 			RebindGames();
 		}
-
 
 		void GamesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{

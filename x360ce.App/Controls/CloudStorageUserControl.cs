@@ -26,6 +26,14 @@ namespace x360ce.App.Controls
 		JocysCom.ClassLibrary.Threading.QueueTimer queueTimer;
 		SortableBindingList<CloudItem> data;
 
+		public void Add(Game[] games, CloudAction action)
+		{
+			for (int i = 0; i < games.Length; i++)
+			{
+				Add(games[i], action);
+			}
+		}
+
 		public void Add(Game game, CloudAction action)
 		{
 			var item = new CloudItem
@@ -53,44 +61,19 @@ namespace x360ce.App.Controls
 					var gamesToUpdate = data.Where(x => x.Action == CloudAction.Update).Select(x => (Game)x.Item).ToList();
 					result = ws.SetGames(CloudAction.Update, gamesToDelete);
 				}
+				if (!string.IsNullOrEmpty(result))
+				{
+					MainForm.Current.UpdateHelpHeader(result, MessageBoxIcon.Error);
+				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				var error = ex.Message;
+				if (ex.InnerException != null) error += "\r\n" + ex.InnerException.Message;
+				MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
 			}
+
 		}
-
-		//void GetPrograms()
-		//{
-		//	ws.SetGamesCompleted += ws_SetGamesCompleted;
-		//	System.Threading.ThreadPool.QueueUserWorkItem(delegate(object state)
-		//	{
-		//		ws.SetGamesCompleted(enabled, minInstances);
-		//	});
-		//}
-
-		//void ws_SetGamesCompleted(object sender, ResultEventArgs e)
-		//{
-		//	// Make sure method is executed on the same thread as this control.
-		//	BeginInvoke((MethodInvoker)delegate()
-		//	{
-		//		MainForm.Current.LoadingCircle = false;
-		//		if (e.Error != null)
-		//		{
-		//			var error = e.Error.Message;
-		//			if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-		//			MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
-		//		}
-		//		else if (e.Result == null)
-		//		{
-		//			MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
-		//		}
-		//		else
-		//		{
-		//			var result = (List<x360ce.Engine.Data.Program>)e.Result;
-		//			ImportAndBindPrograms(result);
-		//		}
-		//	});
-		//}
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -107,7 +90,7 @@ namespace x360ce.App.Controls
 				queueTimer.Dispose();
 				queueTimer = null;
 			}
-	
+
 			base.Dispose(disposing);
 		}
 
