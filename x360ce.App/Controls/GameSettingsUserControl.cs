@@ -306,15 +306,7 @@ namespace x360ce.App.Controls
 
 		private void SaveGamesButton_Click(object sender, EventArgs e)
 		{
-			SaveAllSettings();
-		}
-
-		void SaveAllSettings()
-		{
-			var programs = SettingsFile.Current.Programs;
-			var games = SettingsFile.Current.Games;
-			GameDatabaseManager.Current.SetPrograms(programs, games);
-			SettingsFile.Current.Save();
+			SettingsFile.Current.Save(true);
 		}
 
 		private void DeleteGamesButton_Click(object sender, EventArgs e)
@@ -603,8 +595,7 @@ namespace x360ce.App.Controls
 			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
-			SettingsFile.Current.Save();
-			SaveAllSettings();
+			SettingsFile.Current.Save(true);
 		}
 
 		void Programs_ListChanged(object sender, ListChangedEventArgs e)

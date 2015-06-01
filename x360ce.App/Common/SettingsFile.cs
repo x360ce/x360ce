@@ -89,8 +89,9 @@ namespace x360ce.App
 
 		object saveReadFileLock = new object();
 
-		public void Save()
+		public void Save(bool updateGameDatabase = false)
 		{
+			GameDatabaseManager.Current.SetPrograms(Programs, Games);
 			lock (saveReadFileLock)
 			{
 				Serializer.SerializeToXmlFile(this, InitialFile.FullName, System.Text.Encoding.UTF8);
@@ -215,6 +216,10 @@ namespace x360ce.App
 			else
 			{
 				currentGame.FullPath = currentFile.FullName;
+			}
+			if (!settingsLoaded)
+			{
+				Save(true);
 			}
 		}
 

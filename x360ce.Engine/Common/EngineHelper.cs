@@ -82,9 +82,9 @@ namespace x360ce.Engine
 				architecture = assembly.GetName().ProcessorArchitecture;
 			}
 			// There must be an easier way to check embedded non managed DLL version.
-            var paString = "";
-            if (architecture == ProcessorArchitecture.Amd64) paString = "_x64";
-            if (architecture == ProcessorArchitecture.X86) paString = "_x86";
+			var paString = "";
+			if (architecture == ProcessorArchitecture.Amd64) paString = "_x64";
+			if (architecture == ProcessorArchitecture.X86) paString = "_x86";
 			var name = string.Format("xinput{0}.dll", paString);
 			var names = assembly.GetManifestResourceNames();
 			var resourceName = names.FirstOrDefault(x => x.EndsWith(name));
@@ -102,41 +102,41 @@ namespace x360ce.Engine
 		}
 
 		public static Dictionary<ProcessorArchitecture, Version> _embededVersions;
-        static object EmbededVersionsLock = new object();
+		static object EmbededVersionsLock = new object();
 
 		public static Version GetEmbeddedDllVersion(ProcessorArchitecture architecture)
 		{
-            lock (EmbededVersionsLock)
-            {
-                if (_embededVersions == null)
-                {
-                    _embededVersions = new Dictionary<ProcessorArchitecture, Version>();
-                    ProcessorArchitecture[] archs = { ProcessorArchitecture.X86, ProcessorArchitecture.Amd64, ProcessorArchitecture.MSIL };
-                    foreach (var a in archs)
-                    {
-                        string tempPath = Path.GetTempPath();
-                        FileStream sw = null;
-                        var tempFile = Path.Combine(Path.GetTempPath(), "xinput_" + a.ToString() + ".tmp.dll");
-                        sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
-                        var buffer = new byte[1024];
-                        var assembly = Assembly.GetEntryAssembly();
-                        var resourceName = GetXInputResoureceName(architecture);
-                        var sr = assembly.GetManifestResourceStream(resourceName);
-                        while (true)
-                        {
-                            var count = sr.Read(buffer, 0, buffer.Length);
-                            if (count == 0) break;
-                            sw.Write(buffer, 0, count);
-                        }
-                        sr.Close();
-                        sw.Close();
-                        var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tempFile);
-                        var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-                        System.IO.File.Delete(tempFile);
-                        _embededVersions.Add(a, v);
-                    }
-                }
-            }
+			lock (EmbededVersionsLock)
+			{
+				if (_embededVersions == null)
+				{
+					_embededVersions = new Dictionary<ProcessorArchitecture, Version>();
+					ProcessorArchitecture[] archs = { ProcessorArchitecture.X86, ProcessorArchitecture.Amd64, ProcessorArchitecture.MSIL };
+					foreach (var a in archs)
+					{
+						string tempPath = Path.GetTempPath();
+						FileStream sw = null;
+						var tempFile = Path.Combine(Path.GetTempPath(), "xinput_" + a.ToString() + ".tmp.dll");
+						sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
+						var buffer = new byte[1024];
+						var assembly = Assembly.GetEntryAssembly();
+						var resourceName = GetXInputResoureceName(architecture);
+						var sr = assembly.GetManifestResourceStream(resourceName);
+						while (true)
+						{
+							var count = sr.Read(buffer, 0, buffer.Length);
+							if (count == 0) break;
+							sw.Write(buffer, 0, count);
+						}
+						sr.Close();
+						sw.Close();
+						var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tempFile);
+						var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+						System.IO.File.Delete(tempFile);
+						_embededVersions.Add(a, v);
+					}
+				}
+			}
 			return _embededVersions[architecture];
 		}
 
@@ -298,8 +298,24 @@ namespace x360ce.Engine
 				default: // Default is MSIL: Any CPU, show nothing/
 					break;
 			}
-
 			return s;
+		}
+
+		public static string GetProcessorArchitectureDescription(ProcessorArchitecture architecture)
+		{
+			switch (architecture)
+			{
+				case ProcessorArchitecture.Amd64:
+				case ProcessorArchitecture.IA64:
+					return "64-bit";
+				case ProcessorArchitecture.MSIL:
+					return "Any CPU";
+				case ProcessorArchitecture.X86:
+					return "32-bit";
+				default:
+					return "Unknown";
+
+			}
 		}
 
 		public static DateTime GetBuildDateTime(string filePath)
