@@ -89,7 +89,7 @@ namespace x360ce.App.Controls
 				// Skip folders if don't exists.
 				if (!di.Exists) continue;
 				var exes = new List<FileInfo>();
-				ScanGameDirectory(di, exes, "*.exe");
+				AppHelper.GetFiles(di, ref exes, "*.exe", true);
 				for (int f = 0; f < exes.Count; f++)
 				{
 
@@ -139,26 +139,6 @@ namespace x360ce.App.Controls
 				ScanProgressLabel.Visible = false;
 				RebindGames();
 			});
-		}
-
-		private void ScanGameDirectory(DirectoryInfo di, List<FileInfo> fileList, string searchPattern)
-		{
-			try
-			{
-				foreach (DirectoryInfo subDi in di.GetDirectories())
-				{
-					ScanGameDirectory(subDi, fileList, searchPattern);
-				}
-			}
-			catch { }
-			try
-			{
-				foreach (FileInfo fi in di.GetFiles(searchPattern))
-				{
-					fileList.Add(fi);
-				}
-			}
-			catch { }
 		}
 
 		private void GameSettingsUserControl_Load(object sender, EventArgs e)

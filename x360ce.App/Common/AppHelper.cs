@@ -98,11 +98,12 @@ namespace x360ce.App
 		#endregion
 
 
-		public static Bitmap GetDisabledImage(Bitmap image){
+		public static Bitmap GetDisabledImage(Bitmap image)
+		{
 			var effects = new JocysCom.ClassLibrary.Drawing.Effects();
 			var newImage = (Bitmap)image.Clone();
-					effects.GrayScale(newImage);
-					effects.Transparent(newImage, 50);
+			effects.GrayScale(newImage);
+			effects.Transparent(newImage, 50);
 			return newImage;
 		}
 
@@ -110,6 +111,26 @@ namespace x360ce.App
 		public static bool IsSameDevice(Device device, Guid instanceGuid)
 		{
 			return instanceGuid.Equals(device == null ? Guid.Empty : device.Information.InstanceGuid);
+		}
+
+		public static void GetFiles(DirectoryInfo di, ref List<FileInfo> fileList, string searchPattern, bool allDirectories)
+		{
+			try
+			{
+				if (allDirectories)
+				{
+					foreach (DirectoryInfo subDi in di.GetDirectories())
+					{
+						GetFiles(subDi, ref fileList, searchPattern, allDirectories);
+					}
+				}
+			}
+			catch { }
+			try
+			{
+				fileList.AddRange(di.GetFiles(searchPattern));
+			}
+			catch { }
 		}
 
 	}
