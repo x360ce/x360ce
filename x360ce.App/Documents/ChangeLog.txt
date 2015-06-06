@@ -1,10 +1,12 @@
-﻿v3.0.6.47 (2015-06-02)
-- Fix: Temporary freeze when retrieving game settings.	
-- Fix: Temporary freeze when retrieving controller settings.	
+﻿v3.0.6.49 (2015-06-06)
+- Fix: Temporary freeze when retrieving game settings.
+- Fix: Temporary freeze when retrieving controller settings.
 - Fix: Crash on invalid permission.
 - Update: Auto-create x360ce.gdb if not exists.
 - Update: Check XInput DLL architecture and offer upgrade if doesn't match with application.
 - Update: DinputMask, DinputFile, FakeVID, FakePID and Timeout settings relocated to x360ce.gdb.
+- Update: Added SettingVersion attribute to x360ce.xml file.
+- Update: Updated to xinput1_3.dll v3.4.1.1324.
 
 v3.0.6.39 (2015-05-16)
 - Fix: Crash when reading disk id.
