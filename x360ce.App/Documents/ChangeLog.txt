@@ -1,4 +1,7 @@
-﻿v3.0.6.49 (2015-06-06)
+﻿v3.0.6.50 (2015-06-07)
+- Fix: Crash when c:\ProgramData\X360CE is doesn't exists.
+
+v3.0.6.49 (2015-06-06)
 - Fix: Temporary freeze when retrieving game settings.
 - Fix: Temporary freeze when retrieving controller settings.
 - Fix: Crash on invalid permission.

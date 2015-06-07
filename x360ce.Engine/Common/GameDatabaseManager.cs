@@ -83,6 +83,8 @@ namespace x360ce.Engine
 		public void SetPrograms(IEnumerable<Program> programs, IEnumerable<Game> games)
 		{
 			// Clean file. INI files support only UTF16-little endian format.
+			var file = new System.IO.FileInfo(InitialFile.FullName);
+			if (!file.Directory.Exists) file.Directory.Create();
 			System.IO.File.WriteAllText(InitialFile.FullName, "", Encoding.Unicode);
 			var ini = new Ini(InitialFile.FullName);
 			// Get unique section names.
