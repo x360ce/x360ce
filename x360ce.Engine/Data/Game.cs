@@ -25,7 +25,7 @@ namespace x360ce.Engine.Data
 			item.DateUpdated = item.DateCreated;
 			item.FileName = fi.Name ?? "";
 			item.FileProductName = EngineHelper.FixName(vi.ProductName, item.FileName);
-			item.FileVersion = vi.FileVersion;
+			item.FileVersion = vi.FileVersion ?? "";
 			item.CompanyName = vi.CompanyName ?? "";
 			item.DiskDriveId = BoardInfo.GetHashedDiskId();
 			item.FileVersion = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart).ToString();

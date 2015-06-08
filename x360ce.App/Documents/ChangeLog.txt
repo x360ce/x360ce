@@ -1,4 +1,9 @@
-﻿v3.0.6.50 (2015-06-07)
+﻿v3.0.6.53 (2015-06-08)
+- Fix: Ability to add same file due to case sensitivity.
+- Fix: Unecessary XML load.
+- Fix: Crash when unable to read file version.
+
+v3.0.6.50 (2015-06-07)
 - Fix: Crash when c:\ProgramData\X360CE is doesn't exists.
 
 v3.0.6.49 (2015-06-06)

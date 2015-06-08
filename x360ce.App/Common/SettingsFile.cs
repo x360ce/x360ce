@@ -118,10 +118,11 @@ namespace x360ce.App
 		public void Load()
 		{
 			bool settingsLoaded = false;
-			// If configuration file not exists then...
 			var settingsFi = new System.IO.FileInfo(InitialFile.FullName);
+			// If configuration file exists then...
 			if (settingsFi.Exists)
 			{
+				// Try to read file until success.
 				while (true)
 				{
 					SettingsFile data;
@@ -224,12 +225,12 @@ namespace x360ce.App
 			}
 			// Check if current app doesn't exist in the list then...
 			var currentFile = new System.IO.FileInfo(Application.ExecutablePath);
-			var currentGame = Games.FirstOrDefault(x => x.FileName == currentFile.Name);
+			var currentGame = Games.FirstOrDefault(x => x.FileName.ToLower() == currentFile.Name.ToLower());
 			if (currentGame == null)
 			{
 				// Add x360ce.exe
 				var item = x360ce.Engine.Data.Game.FromDisk(currentFile.Name);
-				var program = Programs.FirstOrDefault(x => x.FileName == currentFile.Name);
+				var program = Programs.FirstOrDefault(x => x.FileName.ToLower() == currentFile.Name.ToLower());
 				item.LoadDefault(program);
 				SettingsFile.Current.Games.Add(item);
 			}

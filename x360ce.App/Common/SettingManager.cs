@@ -307,7 +307,7 @@ namespace x360ce.App
 			loadCount++;
 			if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(ini2.File.Name, loadCount));
 			// Read XML too.
-			SettingsFile.Current.Load();
+			//SettingsFile.Current.Load();
 		}
 
 		/// <summary>
