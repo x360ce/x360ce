@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.IO;
+using System.Text;
+using System.Reflection;
 
 namespace x360ce.Engine.Data
 {
@@ -19,6 +21,14 @@ namespace x360ce.Engine.Data
 			var item = new Game();
 			var fi = new FileInfo(fileName);
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
+			var architecture = Win32.PEReader.GetProcessorArchitecture(fi.FullName);
+			var mask = GetMask(fi.FullName, architecture);
+			if (mask == Engine.XInputMask.None)
+			{
+				mask = (architecture == System.Reflection.ProcessorArchitecture.Amd64)
+				? mask = Engine.XInputMask.XInput13_x64
+				: mask = Engine.XInputMask.XInput13_x86;
+			}
 			item.Timeout = -1;
 			item.Comment = vi.Comments ?? "";
 			item.DateCreated = DateTime.Now;
@@ -32,7 +42,7 @@ namespace x360ce.Engine.Data
 			item.FullPath = fi.FullName ?? "";
 			item.GameId = Guid.NewGuid();
 			item.HookMask = 0;
-			item.XInputMask = 0;
+			item.XInputMask = (int)mask;
 			item.DInputMask = 0;
 			item.DInputFile = "";
 			item.FakeVID = 0;
@@ -40,9 +50,60 @@ namespace x360ce.Engine.Data
 			item.Timeout = -1;
 			item.Weight = 1;
 			item.IsEnabled = true;
-			item.ProcessorArchitecture = (int)Win32.PEReader.GetProcessorArchitecture(fi.FullName);
+			item.ProcessorArchitecture = (int)architecture;
 			return item;
 		}
+
+		/// <summary>
+		/// Look inside file for "XInput..." strings and return XInput mask.
+		/// </summary>
+		/// <param name="fullName"></param>
+		/// <param name="architecture"></param>
+		/// <returns></returns>
+		public static XInputMask GetMask(string fullName, ProcessorArchitecture architecture)
+		{
+			XInputMask[] xiValues;
+			if (architecture == System.Reflection.ProcessorArchitecture.Amd64)
+			{
+				xiValues = Enum.GetValues(typeof(XInputMask))
+					.Cast<XInputMask>()
+					.Where(x => x.ToString().Contains("x64"))
+					.ToArray();
+			}
+			else
+			{
+				xiValues = Enum.GetValues(typeof(XInputMask))
+					.Cast<XInputMask>()
+					.Where(x => x.ToString().Contains("x86"))
+					.ToArray();
+			}
+			XInputMask mask = Engine.XInputMask.None;
+			var dic = new Dictionary<XInputMask, string>();
+			foreach (var value in xiValues)
+			{
+				dic.Add(value, JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value));
+			}
+			byte[] fileBytes = File.ReadAllBytes(fullName);
+			foreach (var key in dic.Keys)
+			{
+				var stringLBytes = Encoding.UTF8.GetBytes(dic[key].ToLower());
+				var stringUBytes = Encoding.UTF8.GetBytes(dic[key].ToUpper());
+				int j;
+				for (var i = 0; i <= (fileBytes.Length - stringLBytes.Length); i++)
+				{
+					if (fileBytes[i] == stringLBytes[0] || fileBytes[i] == stringUBytes[0])
+					{
+						for (j = 1; j < stringLBytes.Length && (fileBytes[i + j] == stringLBytes[j] || fileBytes[i + j] == stringUBytes[j]); j++) ;
+						if (j == stringLBytes.Length)
+						{
+							return key;
+						}
+					}
+				}
+			}
+			return mask;
+		}
+
 
 		public void LoadDefault(Program program)
 		{

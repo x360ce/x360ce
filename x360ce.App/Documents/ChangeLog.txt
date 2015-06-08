@@ -1,8 +1,9 @@
-﻿v3.0.6.54 (2015-06-08)
+﻿v3.0.7.55 (2015-06-08)
 - Fix: Ability to add same file due to case sensitivity.
 - Fix: Unecessary XML load.
 - Fix: Crash when unable to read file version.
 - Fix: Crash when reseting game settings to default.
+- New: Look inside game file for "XInput..." strings and return appropriate XInput mask.
 
 v3.0.6.50 (2015-06-07)
 - Fix: Crash when c:\ProgramData\X360CE is doesn't exists.
