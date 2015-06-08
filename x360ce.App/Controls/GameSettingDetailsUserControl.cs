@@ -376,7 +376,7 @@ namespace x360ce.App.Controls
 				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
 				_CurrentGame.HookMask = _DefaultSettings.HookMask;
 				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
-				_CurrentGame.DInputFile = _DefaultSettings.DInputFile;
+				_CurrentGame.DInputFile = _DefaultSettings.DInputFile ?? "";
 				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;
 				_CurrentGame.FakePID = _DefaultSettings.FakePID;
 				_CurrentGame.Timeout = _DefaultSettings.Timeout;
