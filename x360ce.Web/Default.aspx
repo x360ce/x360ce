@@ -105,14 +105,14 @@
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/wiki">Wiki</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Downloads</a></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.0.7.55 (2015-06-08) 32-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.0.6.55 (2015-06-08) 32-bit</a></td>
 					                    </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.7.55 (2015-06-08) 64-bit</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.0.6.55 (2015-06-08) 64-bit</a></td>
 					                    </tr>
                                     </table>
 
@@ -153,14 +153,14 @@
 			<td>
 			<table style="margin: auto; border-spacing: 5px; border-collapse: separate; width: 100%;">
 					<tr>
-						<td style="text-align: center;"><a href="http://www.thrustmaster.com/en_US/products/t500rs" target="_blank" title="ThrustMaster T500RS Wheel and TH8RS Gearbox"><img src="http://www.jocys.com/files/hardware/ThrustMaster_T500RS_TH8RS_160H.png" style="width: 132px; height: 100px; border-radius: 16px;" /></a></td>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" title="Logitech G27 Racing Wheel"><img src="http://www.jocys.com/files/hardware/Logitech_G27_Racing_Wheel_160H.png" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" target="_blank" title="Logitech Driving Force GT"><img src="http://www.jocys.com/files/hardware/Logitech_Driving_Force_GT_160H.png" style="width: 97px; height: 100px; border-radius: 16px;" /></a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" target="_blank" title="Logitech G29 Driving Force Wheel and Shifter"><img src="http://www.jocys.com/files/hardware/Logitech_G29_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" title="Logitech G27 Racing Wheel"><img src="http://www.jocys.com/files/hardware/Logitech_G27_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
+						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" target="_blank" title="Logitech Driving Force GT"><img src="http://www.jocys.com/files/hardware/Logitech_GT_small.jpg" style="width: 97px; height: 100px; border-radius: 16px;" /></a></td>
 					</tr>
-					<tr style="display: none;">
-						<td style="text-align: center;"><a href="http://www.thrustmaster.com/en_US/products/t500rs" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">ThrustMaster T500RS</a></td>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G27</a></td>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT</a></td>
+					<tr>
+						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 16px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G29 • €460</a></td>
+						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G27 • €200</a></td>
+						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 16px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT • €120</a></td>
 					</tr>
 			</table>
 			</td>
