@@ -12,15 +12,6 @@
 #include <vld.h> 
 #endif
 
-static const char * legal_notice = {
-	"\nx360ce - XBOX 360 Controller emulator\n"
-	"https://code.google.com/p/x360ce/\n\n"
-	"Copyright (C) 2010-2014 Robert Krawczyk\n\n"
-	"This program is free software you can redistribute it and/or modify it under\n"
-	"the terms of the GNU Lesser General Public License as published by the Free\n"
-	"Software Foundation, either version 3 of the License, or any later version.\n\n"
-};
-
 VOID InitInstance()
 {
 	IniFile ini;
@@ -29,16 +20,16 @@ VOID InitInstance()
 		CheckCommonDirectory(&inipath, "x360ce");
 	if (!ini.Load(inipath)) return;
 
-	bool con;
-	bool file;
+	bool filelog;
+	bool systemlog;
 
-	ini.Get("Options", "Console", &con);
-	ini.Get("Options", "Log", &file);
+	ini.Get("Options", "FileLog", &filelog);
+	ini.Get("Options", "SystemLog", &systemlog);
 
-	if (con)
-		LogConsole("x360ce", legal_notice);
+	if (systemlog)
+		LogSystem();
 
-	if (file)
+	if (filelog)
 	{
 		SYSTEMTIME systime;
 		GetLocalTime(&systime);

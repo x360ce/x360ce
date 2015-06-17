@@ -33,8 +33,7 @@ BOOL CALLBACK EnumDevicesCallback(LPCDIDEVICEINSTANCE pInst, VOID* pContext)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	LogFile("ditool.log");
-	LogConsole("ditool");
+	LogFile("ditool.txt");
 
 	setlocale(LC_ALL, "");
 	hInst = GetModuleHandle(NULL);
