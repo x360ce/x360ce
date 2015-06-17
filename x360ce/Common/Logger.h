@@ -14,13 +14,10 @@
 class Logger : NonCopyable
 {
 public:
-	Logger() : m_console(INVALID_HANDLE_VALUE), m_file(INVALID_HANDLE_VALUE) {}
+	Logger() : m_file(INVALID_HANDLE_VALUE) {}
 
 	Logger::~Logger()
 	{
-		if (m_console)
-			FreeConsole();
-
 		if (m_file)
 			CloseHandle(m_file);
 	}
@@ -40,23 +37,9 @@ public:
 		return m_file != INVALID_HANDLE_VALUE;
 	}
 
-	bool Console(const char* title, const char* console_notice)
+	bool System()
 	{
-		AllocConsole();
-
-		m_console = GetStdHandle(STD_OUTPUT_HANDLE);
-		if (m_console != INVALID_HANDLE_VALUE)
-		{
-			ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-			if (title) SetConsoleTitleA(title);
-			if (console_notice)
-			{
-				size_t len = strlen(console_notice);
-				DWORD lenout = 0;
-				WriteConsoleA(m_console, console_notice, (DWORD)len, &lenout, NULL);
-			}
-		}
-		return m_console != INVALID_HANDLE_VALUE;
+		return (m_system = true);
 	}
 
 	void Print(const char* format, ...)
@@ -69,10 +52,10 @@ public:
 
 	void Print(const char* format, va_list args)
 	{
-		bool to_console = m_console != INVALID_HANDLE_VALUE;
 		bool to_file = m_file != INVALID_HANDLE_VALUE;
+		bool to_system = m_system;
 
-		if ((to_console || to_file) && format)
+		if ((to_file || to_system) && format)
 		{
 			int outsize = _vscprintf(format, args) + 1;
 			std::unique_ptr<char[]> buffer(new char[outsize]);
@@ -90,7 +73,7 @@ public:
 			to_print.push_back('\n');
 
 			DWORD lenout = 0;
-			if (to_console) WriteConsoleA(m_console, to_print.c_str(), (DWORD)to_print.size(), &lenout, NULL);
+			if (to_system) OutputDebugStringA(to_print.c_str());
 			if (to_file) WriteFile(m_file, to_print.c_str(), (DWORD)to_print.size(), &lenout, NULL);
 		}
 	}
@@ -104,10 +87,8 @@ private:
 			static char stamp[] = "[TIME]\t\t[THREAD]\t[LOG]\n";
 			DWORD lenout = 0;
 
-			bool to_console = m_console != INVALID_HANDLE_VALUE;
 			bool to_file = m_file != INVALID_HANDLE_VALUE;
 
-			if (to_console) WriteConsoleA(m_console, stamp, _countof(stamp) - 1, &lenout, NULL);
 			if (to_file) WriteFile(m_file, stamp, _countof(stamp) - 1, &lenout, NULL);
 			write_stamp = false;
 		}
@@ -119,7 +100,8 @@ private:
 	}
 
 	SYSTEMTIME m_systime;
-	HANDLE m_console;
+
+	bool m_system;
 	HANDLE m_file;
 };
 
@@ -128,9 +110,9 @@ inline void LogFile(const std::string& logname)
 	Logger::Get().File(logname);
 }
 
-inline void LogConsole(const char* title = nullptr, const char* console_notice = nullptr)
+inline void LogSystem()
 {
-	Logger::Get().Console(title, console_notice);
+	Logger::Get().System();
 }
 
 inline void PrintLog(const char* format, ...)
@@ -145,6 +127,6 @@ inline void PrintLog(const char* format, ...)
 
 #else
 #define LogFile(logname) (logname)
-#define LogConsole(title, notice) (title)
+#define LogSystem();
 #define PrintLog(format, ...) (format)
 #endif
