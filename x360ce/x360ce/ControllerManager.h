@@ -30,10 +30,9 @@ public:
 
 		m_config.ReadConfig();
 
-		bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
-		if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
+		InputHookManager::Get().GetInputHook().SetState(InputHook::HOOK_DI, false);
 		HRESULT ret = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&m_pDirectInput, NULL);
-		if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
+		InputHookManager::Get().GetInputHook().SetLastState();
 
 		if (m_pDirectInput)
 		{

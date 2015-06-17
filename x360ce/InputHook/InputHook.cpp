@@ -78,28 +78,28 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 		{
 			bool check = false;
 			ini.Get("InputHook", "HookLL", &check);
-			if (check) m_hookmask |= HOOK_LL;
+			SetState(HOOK_LL, check);
 
 			ini.Get("InputHook", "HookCOM", &check);
-			if (check) m_hookmask |= HOOK_COM;
+			SetState(HOOK_COM, check);
 
 			ini.Get("InputHook", "HookDI", &check);
-			if (check) m_hookmask |= HOOK_DI;
+			SetState(HOOK_DI, check);
 
 			ini.Get("InputHook", "HookPIDVID", &check);
-			if (check) m_hookmask |= HOOK_PIDVID;
+			SetState(HOOK_PIDVID, check);
 
-			ini.Get("InputHook", "HookSA", &check);
-			if (check) m_hookmask |= HOOK_SA;
+			ini.Get("InputHook", "HookHID", &check);
+			SetState(HOOK_HID, check);
 
 			ini.Get("InputHook", "HookNAME", &check);
-			if (check) m_hookmask |= HOOK_NAME;
+			SetState(HOOK_NAME, check);
 
 			ini.Get("InputHook", "HookSTOP", &check);
-			if (check) m_hookmask |= HOOK_STOP;
+			SetState(HOOK_STOP, check);
 
 			ini.Get("InputHook", "HookWT", &check);
-			if (check) m_hookmask |= HOOK_WT;
+			SetState(HOOK_WT, check);
 		}
 
 		if (GetState(HOOK_PIDVID))
@@ -167,8 +167,8 @@ m_timeout_thread(INVALID_HANDLE_VALUE)
 		if (GetState(HOOK_DI))
 			HookDI();
 
-		if (GetState(HOOK_SA))
-			HookSA();
+		if (GetState(HOOK_HID))
+			HookHID();
 
 		if (GetState(HOOK_WT))
 			HookWT();
@@ -219,7 +219,7 @@ bool InputHook::MaskToName(std::string* mask_string, u32 mask)
 	if (mask & HOOK_DI) mask_string->append("HOOK_DI ");
 	if (mask & HOOK_PIDVID) mask_string->append("HOOK_PIDVID ");
 	if (mask & HOOK_NAME) mask_string->append("HOOK_NAME ");
-	if (mask & HOOK_SA) mask_string->append("HOOK_SA ");
+	if (mask & HOOK_HID) mask_string->append("HOOK_HID ");
 	if (mask & HOOK_WT) mask_string->append("HOOK_WT ");
 	if (mask & HOOK_STOP) mask_string->append("HOOK_STOP ");
 

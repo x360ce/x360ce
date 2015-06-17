@@ -267,7 +267,7 @@ HRESULT WINAPI HookCOM::HookCoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOute
 	std::string iid;
 	GUIDtoString(&clsid, rclsid);
 	GUIDtoString(&iid, riid);
-	PrintLog("CoCreateInstance %s => %s", clsid.c_str(), iid.c_str());
+	PrintLog("CoCreateInstance %s %s", clsid.c_str(), iid.c_str());
 
 	if (hr != NO_ERROR) return hr;
 
@@ -304,7 +304,7 @@ HRESULT WINAPI HookCOM::HookCoGetClassObject(REFCLSID rclsid, DWORD dwClsContext
 	std::string iid;
 	GUIDtoString(&clsid, rclsid);
 	GUIDtoString(&iid, riid);
-	PrintLog("CoGetClassObject %s => %s", clsid.c_str(), iid.c_str());
+	PrintLog("CoGetClassObject %s %s", clsid.c_str(), iid.c_str());
 
 	if (hr != NO_ERROR) return hr;
 
@@ -353,6 +353,6 @@ void InputHook::HookCOM()
 	IH_CreateHook(CoCreateInstance, HookCOM::HookCoCreateInstance, &HookCOM::TrueCoCreateInstance);
 	IH_CreateHook(CoCreateInstanceEx, HookCOM::HookCoCreateInstanceEx, &HookCOM::TrueCoCreateInstanceEx);
 	IH_CreateHook(CoGetClassObject, HookCOM::HookCoGetClassObject, &HookCOM::TrueCoGetClassObject);
-	IH_CreateHook(CoUninitialize, HookCOM::HookCoUninitialize, &HookCOM::TrueCoUninitialize);
+	//IH_CreateHook(CoUninitialize, HookCOM::HookCoUninitialize, &HookCOM::TrueCoUninitialize);
 }
 
