@@ -6,6 +6,11 @@ public:
 	template <typename T>
 	void operator()(T* ptr)
 	{
-		ptr->Release();
+		if (ptr)
+		{
+			PrintLog("Releasing COM Object %p", ptr);
+			ptr->Release();
+			ptr = nullptr;
+		}
 	}
 };

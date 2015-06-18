@@ -30,6 +30,9 @@ public:
 
 		m_config.ReadConfig();
 
+		HMODULE hDinput8;
+		GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN, (LPCSTR) &DirectInput8Create, &hDinput8);
+
 		bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
 		if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
 		HRESULT ret = DirectInput8Create(CurrentModule(), DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&m_pDirectInput, NULL);

@@ -23,16 +23,11 @@ private:
 	static BOOL CALLBACK EnumFFAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 	static BOOL CALLBACK EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRef);
 
-	void SetCaps(const ForceFeedbackCaps& caps)
-	{
-		m_Caps = caps;
-	}
-
 	void StartEffects(DIEFFECT* diEffect, LPDIRECTINPUTEFFECT* effect, BOOL restartEffect);
 	bool SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType);
 
 	Controller* m_pController;
-	std::vector<LPDIRECTINPUTEFFECT> m_effects;
+	std::vector<std::unique_ptr<IDirectInputEffect, COMDeleter>> m_effects;
 	u8 m_Axes;
 	ForceFeedbackCaps m_Caps;
 };
