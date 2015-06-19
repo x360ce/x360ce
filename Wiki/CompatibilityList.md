@@ -17,7 +17,7 @@ Items in these lists are in need of testing with the new hookmask system
   1. Crysis
   1. Crysis Warhead
   1. Dead Space
-  1. Deus Ex Human Revolution (uses xinput9\_1\_0.dll)
+  1. Deus Ex Human Revolution (uses xinput9_1_0.dll)
   1. Devil May Cry 4
   1. F1 2010
   1. Fable 3
@@ -49,9 +49,9 @@ Items in these lists are in need of testing with the new hookmask system
   1. Sonic & SEGA All-Stars Racing
   1. Spider-Man - Web of Shadows
   1. Star Wars: The Force Unleashed
-  1. Tomb Raider - Anniversary (uses xinput9\_1\_0.dll)
-  1. Tomb Raider - Legend (uses xinput9\_1\_0.dll)
-  1. Tomb Raider - Underworld (uses xinput9\_1\_0.dll)
+  1. Tomb Raider - Anniversary (uses xinput9_1_0.dll)
+  1. Tomb Raider - Legend (uses xinput9_1_0.dll)
+  1. Tomb Raider - Underworld (uses xinput9_1_0.dll)
   1. Transformers - War for Cybertron
   1. Two Worlds II
   1. Velvet Assassin
@@ -78,11 +78,11 @@ Items in these lists are in need of testing with the new hookmask system
 This is the new system utilised by r574+
 
 ## Hookmask Not Required
-  1. Alone in the dark (2008) (uses xinput1\_1.dll)
+  1. Alone in the dark (2008) (uses xinput1_1.dll)
   1. Awesomenauts
   1. Bastion
   1. Borderlands 2
-  1. Blades of Time (uses xinput9\_1\_0.dll)
+  1. Blades of Time (uses xinput9_1_0.dll)
   1. Call of Juarez: Gunslinger
   1. Capsized (If using Type 2 rumble, increase motor duration to 500)
   1. Castlevania: Lords of Shadow – Ultimate Edition
@@ -92,24 +92,24 @@ This is the new system utilised by r574+
   1. Far Cry 2
   1. Fez
   1. Final Exam
-  1. Godmode (uses xinput9\_1\_0.dll)
+  1. Godmode (uses xinput9_1_0.dll)
   1. Grand Theft Auto IV (If using Type 2 rumble, increase motor duration to 500)
-  1. Guacamelee! Gold Edition (uses xinput9\_1\_0.dll)
+  1. Guacamelee! Gold Edition (uses xinput9_1_0.dll)
   1. Hell Yeah!
-  1. Hitman: Absolution (uses xinput9\_1\_0.dll)
+  1. Hitman: Absolution (uses xinput9_1_0.dll)
   1. Just Cause 2
-  1. Lara Croft and the Guardian of Light(uses xinput9\_1\_0.dll)
+  1. Lara Croft and the Guardian of Light(uses xinput9_1_0.dll)
   1. Limbo
   1. Monaco
-  1. Pro Evolution Soccer 2010 (uses xinput1\_1.dll)
+  1. Pro Evolution Soccer 2010 (uses xinput1_1.dll)
   1. Pro Evolution Soccer 2014
-  1. Rusty Hearts (uses xinput9\_1\_0.dll and xinput1\_3.dll)
-  1. Sacred Citadel (uses xinput9\_1\_0.dll)
+  1. Rusty Hearts (uses xinput9_1_0.dll and xinput1_3.dll)
+  1. Sacred Citadel (uses xinput9_1_0.dll)
   1. Sine-Mora
-  1. Sudeki (Steam) (uses xinput1\_2.dll)
+  1. Sudeki (Steam) (uses xinput1_2.dll)
   1. They Bleed Pixels
   1. Titanfall (32bit and 64bit executables, defaults to 64bit on 64bit OS)
-  1. Tomb Raider(2013) (uses xinput9\_1\_0.dll)
+  1. Tomb Raider(2013) (uses xinput9_1_0.dll)
   1. WarFrame (32bit and 64bit executables, defaults to 64bit on 64bit OS)
 
 ## Hookmask Required
@@ -123,14 +123,14 @@ This is the new system utilised by r574+
   1. Afterfall Insanity: Extended Edition
   1. Alice: Madness Returns
   1. Antichamber
-  1. Assassin's Creed: Brotherhood (uses xinput9\_1\_0.dll for multiplayer)
-  1. Assassin's Creed: Revelations (uses xinput9\_1\_0.dll for multiplayer)
-  1. Assassin's Creed: III (uses xinput9\_1\_0.dll for multiplayer)
-  1. Assassin's Creed: IV Black Flag (uses xinput9\_1\_0.dll for multiplayer)
+  1. Assassin's Creed: Brotherhood (uses xinput9_1_0.dll for multiplayer)
+  1. Assassin's Creed: Revelations (uses xinput9_1_0.dll for multiplayer)
+  1. Assassin's Creed: III (uses xinput9_1_0.dll for multiplayer)
+  1. Assassin's Creed: IV Black Flag (uses xinput9_1_0.dll for multiplayer)
   1. Awesomenauts
-  1. Battlefield 3 (uses xinput9\_1\_0.dll)
+  1. Battlefield 3 (uses xinput9_1_0.dll)
   1. Batman Arkham Asylum
-  1. Batman Arkham City (uses xinput9\_1\_0.dll)
+  1. Batman Arkham City (uses xinput9_1_0.dll)
   1. Batman Arkham Origins
   1. BioHazard 6 (needs dinput8.dll)
   1. BioShock Infinite
@@ -152,7 +152,7 @@ This is the new system utilised by r574+
   1. DeathSpank
   1. DeathSpank - Thongs of Virtue
   1. DmC - Devil May Cry
-  1. Dragon Age: Inquisition (uses xinput9\_1\_0.dll) (64bit only)
+  1. Dragon Age: Inquisition (uses xinput9_1_0.dll) (64bit only)
   1. Dragon Ball Xenoverse
   1. Dungeon Defenders
   1. Enslaved: Odyssey to the West
@@ -162,7 +162,7 @@ This is the new system utilised by r574+
   1. FIFA 11
   1. FIFA 12
   1. FIFA 13
-  1. FIFA 15 (uses xinput9\_1\_0.dll) (32bit and 64bit executables, always uses 64bit on 64bit OS)
+  1. FIFA 15 (uses xinput9_1_0.dll) (32bit and 64bit executables, always uses 64bit on 64bit OS)
   1. FlatOut Ultimate Carnage
   1. Grid
   1. Grid 2
@@ -177,7 +177,7 @@ This is the new system utilised by r574+
   1. Mirror's Edge
   1. Mortal Kombat Arcade Kollection
   1. Mortal Kombat Komplete Edition
-  1. Mortal Kombat X (uses xinput9\_1\_0.dll) (64bit only)
+  1. Mortal Kombat X (uses xinput9_1_0.dll) (64bit only)
   1. Need For Speed Most Wanted 2012
   1. NBA 2k13
   1. NBA 2k14
@@ -193,14 +193,14 @@ This is the new system utilised by r574+
   1. Saints Row: The Third
   1. Shank
   1. Shank 2
-  1. Skullgirls (uses xinput9\_1\_0.dll)
+  1. Skullgirls (uses xinput9_1_0.dll)
   1. Sleeping Dogs
-  1. Sleeping Dogs: Definitive Edition (uses xinput9\_1\_0.dll) (64bit only)
+  1. Sleeping Dogs: Definitive Edition (uses xinput9_1_0.dll) (64bit only)
   1. Sonic & All-Stars Racing Transformed
   1. Sonic Generations
   1. Street Fighter IV
-  1. Super Meat Boy (uses xinput9\_1\_0.dll)
-  1. Super Street Fighter IV: Arcade Edition (uses xinput9\_1\_0.dll and xinput1\_3.dll)
+  1. Super Meat Boy (uses xinput9_1_0.dll)
+  1. Super Street Fighter IV: Arcade Edition (uses xinput9_1_0.dll and xinput1_3.dll)
   1. Street Fighter x Tekken
   1. Syndicate
   1. TERA
@@ -233,11 +233,11 @@ This is the new system utilised by r574+
   1. Baconing, The (HookLL + HookCOM)
   1. Burnout Paradise - The Ultimate Box (HookCOM + HookDI + HookVIDPID + HookName)
   1. FIFA 14 (HookCOM + HookDI + HookVIDPID + HookName)
-  1. Final Fantasy XIV: A Realm Reborn (HookCOM + HookDI + HookVIDPID)
-  1. I Am Alive (HookCOM + HookDI + HookVIDPID) (uses xinput9\_1\_0.dll)
+  1. Final Fantasy XIV: A Realm Reborn (HookCOM + HookDI + HookVIDPID) (DirectX 11 client is 64bit only)
+  1. I Am Alive (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll)
   1. Kane & Lynch - Dead Men (HookCOM + HookDI + HookVIDPID + HookName)
   1. Metal Gear Solid V: Ground Zeroes (HookCOM + Hook\_DI + HookVIDPID) (64bit only)
-  1. Need for Speed: Rivals (HookCOM + HookDI + HookVIDPID) (uses xinput9\_1\_0.dll) (32bit and 64bit executables, always uses 64bit on 64bit OS)
+  1. Need for Speed: Rivals (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll) (32bit and 64bit executables, always uses 64bit on 64bit OS)
   1. Slam Bolt Scrappers (HookCOM + HookDI + HookVIDPID)
   1. Teenage Mutant Ninja Turtles: Out of Shadows (HookCOM + HookDI + HookVIDPID)
   1. Tom Clancy's H.A.W.X (HookCOM + HookDI + HookVIDPID)
@@ -247,7 +247,7 @@ This is the new system utilised by r574+
   1. Tom Clancy's Splinter Cell Conviction (HookCOM + HookDI + HookVIDPID)
 
 ### Notes:
-  1. All games utilise the x86 version of the xinput1\_3.dll unless otherwise specified.
+  1. All games utilise the x86 version of the xinput1_3.dll unless otherwise specified.
   1. Games do not need the dinput8.dll unless specified.
   1. Most SEGA games do not display XBOX360 Controller buttons.
   1. Blade Kitten does not display XBOX360 Controller buttons.
