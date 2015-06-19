@@ -194,6 +194,10 @@ HookMask = 0x00000002
 Name = Final Fantasy XIV: A Realm Reborn
 HookMask = 0x0000000E
 
+[ffxiv_dx11]
+Name = Final Fantasy XIV: A Realm Reborn DX11
+HookMask = 0x0000000E
+
 [FIFA.exe]
 Name = FIFA 11 and 12
 HookMask = 0x00000002
