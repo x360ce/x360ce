@@ -194,7 +194,7 @@ HookMask = 0x00000002
 Name = Final Fantasy XIV: A Realm Reborn
 HookMask = 0x0000000E
 
-[ffxiv_dx11]
+[ffxiv_dx11.exe]
 Name = Final Fantasy XIV: A Realm Reborn DX11
 HookMask = 0x0000000E
 
