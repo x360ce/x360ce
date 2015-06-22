@@ -28,9 +28,7 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
   1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included with Windows 8)
     * .NET 4.5 is not supported on Windows XP SP3, download .NET 4.0 from [here](http://www.microsoft.com/en-us/download/details.aspx?id=17851).
   1. [DirectX End-User Runtimes (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
-  1. Depending on the library, either one or both of the following redistributable:
-    * [Visual C++ Redistributable for Visual Studio 2010 SP1](http://www.microsoft.com/en-us/download/details.aspx?id=26999)
-    * [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784)
+  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784)
 
 Notes:
   * Most games executables are 32bit and require x86 x360ce and also x86 redistributable.
