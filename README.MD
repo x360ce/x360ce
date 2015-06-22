@@ -30,18 +30,16 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
 
 # System Requirements
 
-  1. Windows XP SP3 and newer.
-    * Windows XP SP3 is only supported in VS2010 library.
+  1. Windows Vista or newer.
   1. [.NET 3.5 (also installs 2.0 and 3.0)](http://www.microsoft.com/en-us/download/details.aspx?id=21) (included in Windows 7)
   1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included with Windows 8)
-    * .NET 4.5 is not supported on Windows XP SP3, download .NET 4.0 from [here](http://www.microsoft.com/en-us/download/details.aspx?id=17851).
   1. [DirectX End-User Runtimes (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
   1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784)
 
 Notes:
   * Most games executables are 32bit and require x86 x360ce and also x86 redistributable.
   * Windows 7 includes .NET 3.5 (which include 3.0 and 2.0).
-  * For Windows XP and Vista, users can obtain it from the above link, and Windows 8 users can enable it in [Programs and Features - Turn Windows Features on and off.](http://msdn.microsoft.com/en-us/library/hh506443.aspx)
+  * For Vista, users can obtain it from the above link, and Windows 8 users can enable it in [Programs and Features - Turn Windows Features on and off.](http://msdn.microsoft.com/en-us/library/hh506443.aspx)
   * **.NET MUST be installed prior to the DirectX webupdate as it checks that .NET 2.0/3.0/3.5 is installed and skips the Managed DirectX framework if it is not.**
   * The full DirectX Redistributable will always install the file, however its best to have .NET 3.5 installed anyhow as quite a few Xinput titles utilize .NET for internal dependencies.
 
