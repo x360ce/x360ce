@@ -8,6 +8,14 @@ Digitally Signed Application v3.0.7.55 (2015-06-08) and Libraries 3.4.1.1324 (20
 
 [64-bit Download](http://www.x360ce.com/Files/x360ce_x64.zip) - for 64-bit games 
 
+# Reporting Issues
+
+Report only crashes or other bugs, note that issue tracker is not helpdesk! 
+
+**DO NOT ASK FOR HELP IN INSTALLATION OR CONFIGURATION!!!**
+
+**If your have questions about instalaltion and configuration please go to our [forum @NGemu] (http://ngemu.com/forums/x360ce.140)**
+
 # Guides
 
 [x360ce Libraries Tutorial](http://ngemu.com/threads/x360ce-libraries-tutorial-by-resolutespider5.155310/)
