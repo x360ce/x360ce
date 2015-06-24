@@ -63,6 +63,18 @@
             display: inline-block;
         }
 
+        .GitHubBlack {
+            display: block;
+            border-radius: 0 0 0 0;
+            background-color: #000000;
+            padding-left: 3px;
+            padding-right: 3px;
+            padding-top: 1px;
+            padding-bottom: 2px;
+            color: #ffffff;
+            font-size: 6pt;
+        }
+
         .Controllers td, p {
             color: #84e68c;
         }
@@ -78,6 +90,14 @@
 
 </head>
 <body>
+
+<table style="position: absolute; z-index: 1; margin-left:0; margin-right:auto;">
+<tr>
+<td>
+<a href="http://www.jocys.com/Software" target="_blank" class="GitHubBlack">World of Warcraft Text to Speech Addon and Monitor</a>
+</td>
+</tr>
+</table>
 
     <div style="position: relative;">
 
