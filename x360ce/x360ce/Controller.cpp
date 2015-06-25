@@ -571,6 +571,9 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 		}
 	}
 
+	// prevent sleep
+	SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+
 	return ERROR_SUCCESS;
 }
 
