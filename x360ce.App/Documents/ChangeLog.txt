@@ -1,4 +1,7 @@
-﻿v3.0.7.57 (2015-06-25)
+﻿v3.1.7.58 (2015-07-07)
+- Update: "GNU Lesser General Public License v3.0" license added to application.
+
+v3.0.7.57 (2015-06-25)
 - Update: Updated to xinput1_3.dll v3.4.1.1346.
 - Update: Updated x360ce_Games.xml.gz
 

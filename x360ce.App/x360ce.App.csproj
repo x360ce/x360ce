@@ -449,6 +449,7 @@
     <EmbeddedResource Include="Resources\xinput_x64.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
+    <EmbeddedResource Include="Documents\License.txt" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <None Include="Resources\SharpDX\SharpDX.DirectInput.xml">

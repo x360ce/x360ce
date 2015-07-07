@@ -46,7 +46,11 @@ namespace x360ce.App.Controls
 			var sr = new StreamReader(stream);
 			ChangeLogTextBox.Text = sr.ReadToEnd();
 			AboutProductLabel.Text = string.Format(AboutProductLabel.Text, Application.ProductVersion);
+			stream = EngineHelper.GetResource("License.txt");
+			sr = new StreamReader(stream);
+			LicenseTextBox.Text = sr.ReadToEnd();
+			LicenseTabPage.Text = string.Format("{0} {1} License", Application.ProductName, new Version(Application.ProductVersion).ToString(2));
 		}
-	
+
 	}
 }
