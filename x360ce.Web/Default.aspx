@@ -172,16 +172,28 @@
 		<tr>
 			<td>
 			<table style="margin: auto; border-spacing: 5px; border-collapse: separate; width: 100%;">
-					<tr>
+<tr>
 						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" target="_blank" title="Logitech G29 Driving Force Wheel and Shifter"><img src="http://www.jocys.com/files/hardware/Logitech_G29_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
 						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" title="Logitech G27 Racing Wheel"><img src="http://www.jocys.com/files/hardware/Logitech_G27_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
 						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" target="_blank" title="Logitech Driving Force GT"><img src="http://www.jocys.com/files/hardware/Logitech_GT_small.jpg" style="width: 97px; height: 100px; border-radius: 16px;" /></a></td>
 					</tr>
 					<tr>
-						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 16px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G29 • €460</a></td>
+						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G29 • €460</a></td>
 						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G27 • €200</a></td>
-						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 16px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT • €120</a></td>
+						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT • €120</a></td>
 					</tr>
+
+<tr><td colspan="3" style="text-align: center; font-size: 7.2pt; color: #bfbfbf;">Affiliate “Amazon” links (this website may be compensated for sales of products we link to)</td></tr>
+
+
+					<tr>
+						<td style="text-align: center; font-size: 8pt;"><a target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 90px; height: 20px; border-radius: 0 0 0 6px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+						<td style="text-align: center; font-size: 8pt;"><a target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 90px; height: 20px; border-radius: 0 0 0 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+						<td style="text-align: center; font-size: 8pt;"><a target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 90px; height: 20px; border-radius: 0 0 6px 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+					</tr>
+
+
+
 			</table>
 			</td>
 		</tr>
