@@ -197,7 +197,8 @@
 		</tr>
 </table>
 
-<p style="text-align: center; font-size: 7.2pt; margin: 0; color: #84e68c;">This website may be compensated for sales of products on “Amazon” we link to.</p>
+<p id="AdvertisingDisclosureShort" style="text-align: center; font-size: 7.2pt; margin: 0; margin-top: 2px; color: #84e68c; cursor: pointer;" onclick="this.style.display='none'; document.getElementById('AdvertisingDisclosure').style.display='block'";>The owner of this website is a participant in the Amazon EU Associates Programme...</p>
+<p onclick="this.style.display='none'; document.getElementById('AdvertisingDisclosureShort').style.display='block'" id="AdvertisingDisclosure" style="cursor: pointer; text-align: justify; padding-left: 32px; padding-right: 32px; font-size: 7.2pt; margin: 0; margin-top: 2px; color: #84e68c; display: none;">The owner of this website is a participant in the Amazon EU Associates Programme, an affiliate advertising programme designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.co.uk / Amazon.de / Amazon.es / Amazon.it / Amazon.fr</p>
 
 
 
