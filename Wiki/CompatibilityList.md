@@ -79,12 +79,14 @@ This is the new system utilised by r574+
 
 ## Hookmask Not Required
   1. Alone in the dark (2008) (uses xinput1_1.dll)
+  1. Audiosurf
   1. Awesomenauts
   1. Bastion
   1. Borderlands 2
   1. Blades of Time (uses xinput9_1_0.dll)
   1. Call of Juarez: Gunslinger
   1. Capsized (If using Type 2 rumble, increase motor duration to 500)
+  1. Carmageddon Reincarnation
   1. Castlevania: Lords of Shadow – Ultimate Edition
   1. DuckTales Remastered
   1. Dust: An Elysian Tail
@@ -94,6 +96,7 @@ This is the new system utilised by r574+
   1. Final Exam
   1. Godmode (uses xinput9_1_0.dll)
   1. Grand Theft Auto IV (If using Type 2 rumble, increase motor duration to 500)
+  1. Grand Theft Auto V (64bit only)
   1. Guacamelee! Gold Edition (uses xinput9_1_0.dll)
   1. Hell Yeah!
   1. Hitman: Absolution (uses xinput9_1_0.dll)
@@ -101,16 +104,23 @@ This is the new system utilised by r574+
   1. Lara Croft and the Guardian of Light(uses xinput9_1_0.dll)
   1. Limbo
   1. Monaco
+  1. Penny Arcade's On the Rain-Slick Precipice of Darkness 3
+  1. Penny Arcade's On the Rain-Slick Precipice of Darkness 4
   1. Pro Evolution Soccer 2010 (uses xinput1_1.dll)
   1. Pro Evolution Soccer 2014
+  1. Ring Runner
+  1. Rogue Legacy
   1. Rusty Hearts (uses xinput9_1_0.dll and xinput1_3.dll)
   1. Sacred Citadel (uses xinput9_1_0.dll)
   1. Sine-Mora
+  1. Sonic the Hedgehog 4 EP 1
   1. Sudeki (Steam) (uses xinput1_2.dll)
   1. They Bleed Pixels
   1. Titanfall (32bit and 64bit executables, defaults to 64bit on 64bit OS)
   1. Tomb Raider(2013) (uses xinput9_1_0.dll)
   1. WarFrame (32bit and 64bit executables, defaults to 64bit on 64bit OS)
+  1. Unmechanical
+  2. 
 
 ## Hookmask Required
 
