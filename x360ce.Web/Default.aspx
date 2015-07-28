@@ -48,9 +48,12 @@
             color: #ffffff;
         }
 
-
             a:hover {
                 background-color: #6ebcfb;
+            }
+
+            a:hover.ImageLink {
+                background-color: #ffffff;
             }
 
         .GitHub {
@@ -184,13 +187,15 @@
 					</tr>
 
 				<tr>
-						<td style="text-align: center; font-size: 8pt;"><a target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 90px; height: 20px; border-radius: 0 0 0 6px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-						<td style="text-align: center; font-size: 8pt;"><a target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 90px; height: 20px; border-radius: 0 0 0 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-						<td style="text-align: center; font-size: 8pt;"><a target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 90px; height: 20px; border-radius: 0 0 6px 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-					</tr>
-
-
-
+					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 6px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px; border-radius: 0 0 6px 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+				</tr>
+				<tr>
+					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 6px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 0;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px; border-radius: 0 0 6px 0;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+				</tr>
 			</table>
 
 		</td>
