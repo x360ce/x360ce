@@ -81,17 +81,17 @@
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Downloads</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.1.7.58 (2015-07-07) • for 32-bit games</a></td>
-					                    </tr>
+                                        </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.1.7.58 (2015-07-07) • for 64-bit games</a></td>
-					                    </tr>
+                                        </tr>
                                     </table>
 
-<p style="margin-top: 0; text-align: left; font-size: 9pt; margin-left: 35px;"><i>• Latest version works with “Grand Theft Auto V” (64-bit only).</i></p>
+                                    <p style="margin-top: 0; text-align: left; font-size: 9pt; margin-left: 35px;"><i>• Latest version works with “Grand Theft Auto V” (64-bit only).</i></p>
 
                                     <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller” and to play games, like “Grand Theft Auto”, “Mafia” or “Saints Row”, with Logitech Steering Wheel. Also, application allows you to edit and test “Xbox 360 Controller Emulator Library” settings.</p>
 
@@ -122,42 +122,45 @@
                                         <img src="/Images/x360ce_Logo.png" />
                                     </p>
 
-<table style="background-color: #ffffff; margin-left: auto; margin: auto; border-radius: 20px 20px 20px 20px;">
-		<tr>
-			<td>
-			<table style="margin: auto; border-spacing: 5px; border-collapse: separate; width: 100%;">
-<tr>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" target="_blank" title="Logitech G29 Driving Force Wheel and Shifter"><img src="http://www.jocys.com/files/hardware/Logitech_G29_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" title="Logitech G27 Racing Wheel"><img src="http://www.jocys.com/files/hardware/Logitech_G27_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
-						<td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" target="_blank" title="Logitech Driving Force GT"><img src="http://www.jocys.com/files/hardware/Logitech_GT_small.jpg" style="width: 97px; height: 100px; border-radius: 16px;" /></a></td>
-					</tr>
-					<tr>
-						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G29</a></td>
-						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G27</a></td>
-						<td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT</a></td>
-					</tr>
-                	<tr>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.com/s/?field-keywords=Logitech+G29"><img src="/Images/Amazon.com.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 6px;" /></a></td>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.com/s/?field-keywords=Logitech+G27"><img src="/Images/Amazon.com.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 0;" /></a></td>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.com/s/?field-keywords=Logitech+GT"><img src="/Images/Amazon.com.jpg" style="width: 70px; height: 15px; border-radius: 0 0 6px 0;" /></a></td>
-				</tr>
-				<tr>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 6px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px; border-radius: 0 0 6px 0;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-				</tr>
-				<tr>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 6px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px; border-radius: 0 0 0 0;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-					<td style="text-align: center; font-size: 8pt;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px; border-radius: 0 0 6px 0;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-				</tr>
-			</table>
-		</td>
-		</tr>
-</table>
+                                    <table style="background-color: #ffffff; margin-left: auto; margin: auto; border-radius: 20px 20px 20px 20px;">
+                                        <tr>
+                                            <td>
+                                                <table style="margin: auto; border-spacing: 5px; border-collapse: separate; width: 100%;">
+                                                    <tr>
+                                                        <td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" target="_blank" title="Logitech G29 Driving Force Wheel and Shifter">
+                                                            <img src="http://www.jocys.com/files/hardware/Logitech_G29_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
+                                                        <td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" target="_blank" title="Logitech G27 Racing Wheel">
+                                                            <img src="http://www.jocys.com/files/hardware/Logitech_G27_small.jpg" style="width: 127px; height: 100px; border-radius: 16px;" /></a></td>
+                                                        <td style="text-align: center;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" target="_blank" title="Logitech Driving Force GT">
+                                                            <img src="http://www.jocys.com/files/hardware/Logitech_GT_small.jpg" style="width: 97px; height: 100px; border-radius: 16px;" /></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/gaming-controllers" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G29</a></td>
+                                                        <td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/g27-racing-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech G27</a></td>
+                                                        <td style="text-align: center; font-size: 8pt;"><a href="http://gaming.logitech.com/en-gb/product/driving-force-gt-gaming-wheel" style="width: 100%; background-color: #bfbfbf; color: #ffffff; border-radius: 4px 4px 4px 4px; padding-top: 0; padding-bottom: 0px; display: table;">Logitech GT</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.com/s/?field-keywords=Logitech+G29"><img src="/Images/Amazon.com.jpg" style="width: 70px; height: 15px;" /></a></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.com/s/?field-keywords=Logitech+G27"><img src="/Images/Amazon.com.jpg" style="width: 70px; height: 15px;" /></a></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.com/s/?field-keywords=Logitech+GT"><img src="/Images/Amazon.com.jpg" style="width: 70px; height: 15px;" /></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border: none !important; margin: 0px !important;" /></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border: none !important; margin: 0px !important;" /></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border: none !important; margin: 0px !important;" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G29&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border: none !important; margin: 0px !important;" /></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G27&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border: none !important; margin: 0px !important;" /></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20GT&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border: none !important; margin: 0px !important;" /></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
 
- <p id="AdvertisingDisclosureShort" style="text-align: center; font-size: 7.2pt; margin: 0; margin-top: 2px; color: #84e68c; cursor: pointer;" onclick="this.style.display='none'; document.getElementById('AdvertisingDisclosure').style.display='block'";>The owner of this website is a participant in the Amazon EU Associates Programme...</p>
- <p onclick="this.style.display='none'; document.getElementById('AdvertisingDisclosureShort').style.display='block'" id="AdvertisingDisclosure" style="cursor: pointer; text-align: justify; padding-left: 32px; padding-right: 32px; font-size: 7.2pt; margin: 0; margin-top: 2px; color: #84e68c; display: none;">The owner of this website is a participant in the Amazon EU Associates Programme, an affiliate advertising programme designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.co.uk / Amazon.de / Amazon.es / Amazon.it / Amazon.fr</p>
+                                    <p id="AdvertisingDisclosureShort" style="text-align: center; font-size: 7.2pt; margin: 0; margin-top: 2px; color: #84e68c; cursor: pointer;" onclick="this.style.display='none'; document.getElementById('AdvertisingDisclosure').style.display='block'";>The owner of this website is a participant in the Amazon EU Associates Programme...</p>
+                                    <p onclick="this.style.display='none'; document.getElementById('AdvertisingDisclosureShort').style.display='block'" id="AdvertisingDisclosure" style="cursor: pointer; text-align: justify; padding-left: 32px; padding-right: 32px; font-size: 7.2pt; margin: 0; margin-top: 2px; color: #84e68c; display: none;">The owner of this website is a participant in the Amazon EU Associates Programme, an affiliate advertising programme designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.co.uk / Amazon.de / Amazon.es / Amazon.it / Amazon.fr</p>
 
                                     <p style="text-align: center; margin-top: 20px; color: #84e68c;">TOP CONTROLLERS</p>
                                     <uc1:ControllersControl runat="server" ID="ControllersControl" />
