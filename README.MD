@@ -47,20 +47,17 @@ Notes:
 
 "Xbox 360 Controller Emulator" files:
 
-xinput1\_3.dll (Library) - Wrapper library that translates the XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.
-
-x360ce.exe - (Application) - Allows edit and test Library settings.
-x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).
-x360ce.gdb - (Game Database) Includes required hookmasks for various games)
-Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases)
+xinput1\_3.dll (Library) - Wrapper library that translates the XInput calls to DirectInput calls, for support old, no XInput compatible GamePads.<br />
+x360ce.exe - (Application) - Allows edit and test Library settings.<br />
+x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
+x360ce.gdb - (Game Database) Includes required hookmasks for various games).<br />
+Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).
 
 # Details
 
 ## Installation
 
-Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name.
-
-Known names:
+Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name. Known names:
 
   * xinput1\_4.dll (Windows 8 / metro apps only)
   * xinput1\_3.dll
@@ -90,21 +87,22 @@ Some games will only operate when the controller is considered to be the gamepad
   1. Set "Device Type" drop down list value to: GamePad
   1. Click [Save] button.
   1. Close x360ce Application, run game.
+ 
+Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4) in x360ce.ini file. You must edit x360ce.ini file with Notepad each time, after closing x360ce.exe application:
 
-**How to reduce wheel dead zone (GTA, Mafia II, ...)?**
+```
+[Mappings]
+PAD1=IG_{main controller number}
+PAD2=IG_{other controller number}
+PAD3=IG_{other controller number}
+PAD4=
+```
 
-  1. Run x360ce.exe
-  1. Select tab with your Wheel Controller.
-  1. Open [Advanced] tab page.
-  1. Select "Enabled (XInput, 80%)" from "AntiDeadZone" drop down in order to reduce dead zone by 80%.
-  1. Click [Save] button.
-  1. Close x360ce Application, run game.
-
-> Note: Some games have control issues when the dead zone is reduced by 100%.
+**Some games have control issues, when Dead Zone is reduced to 0%.**
 
 **Do I need to run x360ce Application during the game?**
 
-No, You do not need. Close x360ce during the game, because the game does not need it, and the application uses computer resources. The application is just a GUI for editing the x360ce.ini and test controller.
+x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller. 
 
 **Warning - Configuration file version does not match x360ce version.**
 
