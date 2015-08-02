@@ -185,6 +185,7 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\SortableBindingList.cs" />
     <Compile Include="Common\Vendor.cs" />
+    <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -291,6 +292,12 @@
     <Compile Include="SharpDX.XInput\UserIndex.cs" />
     <Compile Include="SharpDX.XInput\Vibration.cs" />
     <Compile Include="SharpDX.XInput\XInput.cs" />
+    <Compile Include="Controls\WarningsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\WarningsForm.Designer.cs">
+      <DependentUpon>WarningsForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -345,6 +352,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Controls\WarningsForm.resx">
+      <DependentUpon>WarningsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>

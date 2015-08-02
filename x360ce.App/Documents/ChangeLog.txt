@@ -1,4 +1,8 @@
-﻿v3.1.7.58 (2015-07-07)
+﻿v3.1.7.65 (2015-08-02)
+- Fix: Incorrect XInput DLL load message.
+- New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc).
+
+v3.1.7.58 (2015-07-07)
 - Update: "GNU Lesser General Public License v3.0" license added to application.
 
 v3.0.7.57 (2015-06-25)
@@ -7,7 +11,7 @@ v3.0.7.57 (2015-06-25)
 
 v3.0.7.55 (2015-06-08)
 - Fix: Ability to add same file due to case sensitivity.
-- Fix: Unecessary XML load.
+- Fix: Unnecessary XML load.
 - Fix: Crash when unable to read file version.
 - Fix: Crash when reseting game settings to default.
 - New: Look inside game file for "XInput..." strings and return appropriate XInput mask.
@@ -52,7 +56,7 @@ v3.0.2.21 (2015-04-28)
 - Update: Updated to xinput1_3.dll v3.4.1.1239.
 
 v3.0.2.19 (2015-04-26)
-- Fix: Left/Right force feedback motor stregth trackbars fixed.
+- Fix: Left/Right force feedback motor strength track-bars fixed.
 - New: Confirmation dialog for clear and reset controller settings.
 
 v3.0.2.17 (2015-04-26)
@@ -60,7 +64,7 @@ v3.0.2.17 (2015-04-26)
 - Fix: Crash when x360ce.xml settings file is corrupted.
 - Fix: Crash when PeriodicSine force feedback is enabled.
 - Fix: Map button to axis not working.
-- New: More help will be displayed in yellow toolbar.
+- New: More help will be displayed in yellow tool-bar.
 - New: Support for new settings added.
 - Update: "Apply Preset" renamed "Click Here to Apply Preset" to make button function more recognizable.
 - Update: Updated to xinput1_3.dll v3.4.1.1229.
@@ -84,8 +88,8 @@ v2.1.3.203 (2014-11-01)
 
 v2.1.3.203 (2014-10-20)
 - Fix: Force feedback test fixed.
-- Fix: Ant-deadzone dropdown default value selection fix.
-- Fix: x360ce.Engine.XmlSerializers.dll library is properly embeded as a resource.
+- Fix: Anti-dead-zone drop-down default value selection fix.
+- Fix: x360ce.Engine.XmlSerializers.dll library is properly embedded as a resource.
 - Fix: x360ce.Engine post build command line fixed.
 - Update: Experimental keyboard feature removed.
 
@@ -132,13 +136,13 @@ v2.0.2.158 (2011-12-16)
 - Update: DLL and EXE signed with updated digital certificate.
 
 v2.0.2.156 (2011-10-08)
-- Fix: Other bug related to loading settings from internet.
+- Fix: Other bug related to loading settings from Internet.
 
 v2.0.2.154 (2011-10-08)
 - Fix: Application will become visible before checking for missing files.
 - Fix: XInput library will be re-loaded after loading settings for new device.
 - Fix: Internet Database buttons now will disable/enable itself properly.
-- Fix: Loading settings from internet.
+- Fix: Loading settings from Internet.
 - New: Confirmation box on setting deletion from Internet Settings Database.
 - Update: Updated device insertion and removal method which reduced CPU usage.
 - Update: Other parts of code were optimized to use less CPU resources.
@@ -186,7 +190,7 @@ v2.0.2.94 (2010-11-22)
 - Update: Digital Signature updated.
 
 v2.0.2.93 (2010-11-20)
-- Update: Swiched to "Microsoft Windows SDK 7.1".
+- Update: Switched to "Microsoft Windows SDK 7.1".
 - New: Force feedback type option (FFBType) support added.
 
 v2.0.2.91 (2010-09-02)
@@ -211,7 +215,7 @@ v2.0.2.85 (2010-08-28)
 v2.0.2.84 (2010-08-28)
 - Fix: Permission check issues on Windows XP.
 - Update: Updated to xinput1_3.dll v3.2.0.290.
-- New: Thumb deadzone setting support added.
+- New: Thumb dead-zone setting support added.
 
 v2.0.2.80 (2010-08-28)
 - Update: Updated to xinput1_3.dll v3.2.0.273.
@@ -219,7 +223,7 @@ v2.0.2.80 (2010-08-28)
 - Updated: Help section updated.
 
 v2.0.2.77 (2010-08-17)
-Fix: Disable force feedback effect before closing app.
+Fix: Disable force feedback effect before closing application.
 
 v2.0.2.76 (2010-08-11)
 - Update: Updated to xinput1_3.dll v3.2.0.188.
@@ -252,7 +256,7 @@ v2.0.2.61 (2010-05-25)
 
 v2.0.2.52 (2010-04-24)
 - Update: Assembly file Updated.
-- Fix: Xna Framework Resources file fixed.
+- Fix: XNA Framework Resources file fixed.
 - Fix: Don't reload DLL if value haven't changed in INI.
 - Fix: Now timer will stop during settings update.
 - Fix: Don't query devices if none connected.
@@ -272,7 +276,7 @@ v2.0.2.43 (2010-04-22)
 
 v2.0.2.41 (2010-04-21)
 - Update: Reverted back to xinput1_3.dll v3.1.4.1.
-- Update: Xna Framework Input Code updated to 3.1 version.
+- Update: XNA Framework Input Code updated to 3.1 version.
 
 v2.0.2.35 (2010-04-17)
 - Fix: FakeDI option converted to ComboBox
@@ -283,7 +287,7 @@ v2.0.2.34 (2010-04-17)
 v2.0.2.33 (2010-04-17)
 - New: "Axis To D-Pad" settings group box added.
 - New: "FakeWinTrust" check box added.
-- New: Thrustmaster Dual Analog/Power gamepads presets (from crazycat)
+- New: Thrustmaster Dual Analog/Power game pads presets (from crazycat)
 - Fix: Settings save fixed.
 - Update: Options combined into groups.
 - Update: Internal preset file will be removed from disk after load.
@@ -293,7 +297,7 @@ v2.0.2.24 (2010-04-16)
 
 v2.0.2.23 (2010-04-16)
 - Update: [FakeAPI]\FakeAPI option removed.
-- Update: [FakeAPI]\FakeWMI option updated to checbox on interface.
+- Update: [FakeAPI]\FakeWMI option updated to CheckBox on interface.
 
 v2.0.2.21 (2010-04-15)
 - Update: Project updated to Visual Studio 2010.
@@ -331,12 +335,12 @@ v2.0.2.9 (2010-03-21)
 
 v2.0.2.8 (2010-03-19)
 - Fixed recording.
-- Fixed autosaving.
+- Fixed auto-saving.
 - Fixed Thumb Left/Right/Up/Down settings map.
 
 v2.0.2.3 (2010-03-17)
-- Supports old ini file xbox360cemu.ini if found and new x360ce.ini doesn't exists.
-- Supports hotplugging USB devices.
+- Supports old INI file xbox360cemu.ini if found and new x360ce.ini doesn't exists.
+- Supports hot-plugging USB devices.
 - Interface updated.
 - Can load custom presets from disk.
 

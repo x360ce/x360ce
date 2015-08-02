@@ -133,7 +133,7 @@ namespace x360ce.App
 
 		Dictionary<string, Control> _settingsMap;
 		/// <summary>
-		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
 		public Dictionary<string, Control> SettingsMap
 		{

@@ -30,12 +30,12 @@ namespace x360ce.Engine
 			// Get unique file names.
 			var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
 			// Get information about XInput files located on the disk.
-			var infos = fileNames.Select(x => new System.IO.FileInfo(x)).Where(x => x.Exists).ToArray();
+			var infos = fileNames.Select(x => new FileInfo(x)).Where(x => x.Exists).ToArray();
 			FileInfo defaultDll = null;
 			Version defaultVer = null;
 			foreach (var info in infos)
 			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(info.FullName);
+				var vi = FileVersionInfo.GetVersionInfo(info.FullName);
 				var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 				// if first time in the loop of file with newer version was found then...
 				if (defaultDll == null || ver > defaultVer)
@@ -130,9 +130,9 @@ namespace x360ce.Engine
 						}
 						sr.Close();
 						sw.Close();
-						var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tempFile);
+						var vi = FileVersionInfo.GetVersionInfo(tempFile);
 						var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-						System.IO.File.Delete(tempFile);
+						File.Delete(tempFile);
 						_embededVersions.Add(a, v);
 					}
 				}
@@ -142,11 +142,11 @@ namespace x360ce.Engine
 
 		public static Version GetDllVersion(string fileName, out bool byMicrosoft)
 		{
-			var dllInfo = new System.IO.FileInfo(fileName);
+			var dllInfo = new FileInfo(fileName);
 			byMicrosoft = false;
 			if (dllInfo.Exists)
 			{
-				var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllInfo.FullName);
+				var vi = FileVersionInfo.GetVersionInfo(dllInfo.FullName);
 				byMicrosoft = !string.IsNullOrEmpty(vi.CompanyName) && vi.CompanyName.Contains("Microsoft");
 				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 			}
@@ -176,7 +176,7 @@ namespace x360ce.Engine
 		{
 			try
 			{
-				var fi = new System.IO.FileInfo(path);
+				var fi = new FileInfo(path);
 				//if (!fi.Exists) return;
 				// Brings up the "Windows cannot open this file" dialog if association not found.
 				var psi = new ProcessStartInfo(path);

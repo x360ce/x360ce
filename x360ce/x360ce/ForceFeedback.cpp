@@ -93,8 +93,8 @@ bool ForceFeedback::IsSupported()
 
 	if (ffSupported)
 	{
-		HRESULT hr = m_pController->m_pDevice->EnumObjects(EnumFFAxesCallback, (VOID*)&m_Axes, DIDFT_AXIS);
-		if (FAILED(hr)) PrintLog("[PAD%d] EnumFFAxesCallback failed with code HR = %X", m_pController->m_user + 1, hr);
+		HRESULT hr2 = m_pController->m_pDevice->EnumObjects(EnumFFAxesCallback, (VOID*)&m_Axes, DIDFT_AXIS);
+		if (FAILED(hr2)) PrintLog("[PAD%d] EnumFFAxesCallback failed with code HR = %X", m_pController->m_user + 1, hr2);
 
 		if (m_Axes > 2)
 			m_Axes = 2;

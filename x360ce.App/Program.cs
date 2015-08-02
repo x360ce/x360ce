@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -20,7 +19,9 @@ namespace x360ce.App
 		{
 			try
 			{
-				// IMPORTANT: Make sure this method don't have any static references to x360ce.Engine librarry or
+				//var fi = new FileInfo(Application.ExecutablePath);
+				//Directory.SetCurrentDirectory(fi.Directory.FullName);
+				// IMPORTANT: Make sure this method don't have any static references to x360ce.Engine library or
 				// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
 				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 				if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
@@ -46,7 +47,10 @@ namespace x360ce.App
 					MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
 					return;
 				}
-				if (!IsOneCopyRunningAlready()) Application.Run(MainForm.Current);
+				if (!IsOneCopyRunningAlready())
+				{
+					Application.Run(MainForm.Current);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -123,7 +127,7 @@ namespace x360ce.App
 
 		static void OpenSettingsFolder(string path)
 		{
-			var di = new System.IO.DirectoryInfo(path);
+			var di = new DirectoryInfo(path);
 			//if (!di.Exists) return;
 			//if (di.GetFiles().Length == 0) return;
 			var psi = new ProcessStartInfo(di.Parent.Parent.FullName);
@@ -152,7 +156,7 @@ namespace x360ce.App
 				var result = MessageBox.Show(text, title, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 				if (result == DialogResult.Yes)
 				{
-					System.IO.File.Delete(filename);
+					File.Delete(filename);
 					Settings.Default.Reload();
 				}
 				else
@@ -167,10 +171,8 @@ namespace x360ce.App
 		}
 
 
-		static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
+		static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
 		{
-			// x360ce.App.Resources.SharpDX.SharpDX.dll
-			// x360ce.App.Resources.SharpDX.SharpDX.DirectInput.dll
 			string dllName = e.Name.Contains(",") ? e.Name.Substring(0, e.Name.IndexOf(',')) : e.Name.Replace(".dll", "");
 			string path = null;
 			switch (dllName)
@@ -196,7 +198,7 @@ namespace x360ce.App
 			if (sr == null) return null;
 			byte[] bytes = new byte[sr.Length];
 			sr.Read(bytes, 0, bytes.Length);
-			return System.Reflection.Assembly.Load(bytes);
+			return Assembly.Load(bytes);
 		}
 
 	}

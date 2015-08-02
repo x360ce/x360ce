@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-using System.Collections.Specialized;
-using System.Security.Principal;
-using SharpDX.DirectInput;
-using System.Security.AccessControl;
-using x360ce.App.Controls;
-using System.Diagnostics;
-using System.Linq;
+﻿using SharpDX.DirectInput;
 using SharpDX.XInput;
-using x360ce.Engine.Win32;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.AccessControl;
+using System.Windows.Forms;
+using x360ce.App.Controls;
 using x360ce.Engine;
+using x360ce.Engine.Win32;
 
 namespace x360ce.App
 {
@@ -63,6 +56,7 @@ namespace x360ce.App
 			{
 				GamePads[i] = new Controller((UserIndex)i);
 			}
+			WarningsForm.CheckAndOpen();
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;
@@ -95,7 +89,6 @@ namespace x360ce.App
 			BusyLoadingCircle.Left = HeaderPictureBox.Left;
 			defaultBody = HelpBodyLabel.Text;
 			//if (DesignMode) return;
-			// init default
 			OptionsPanel.InitOptions();
 			// Set status.
 			StatusSaveLabel.Visible = false;
@@ -115,7 +108,7 @@ namespace x360ce.App
 			// Hide status values.
 			StatusDllLabel.Text = "";
 			MainStatusStrip.Visible = false;
-			// Check if ini and dll is on disk.
+			// Check if INI and DLL is on disk.
 			if (!CheckFiles(true)) return;
 			CheckEncoding(SettingManager.TmpFileName);
 			CheckEncoding(SettingManager.IniFileName);
@@ -131,7 +124,7 @@ namespace x360ce.App
 				ControlPages[i].Controls.Add(ControlPads[i]);
 				ControlPads[i].InitPadControl();
 			}
-			// Init presets. Execute only after name of cIniFile is set.
+			// Initialize presets. Execute only after name of cIniFile is set.
 			SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
 			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
@@ -157,7 +150,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
 		void UpdateSettingsMap()
 		{
@@ -195,7 +188,7 @@ namespace x360ce.App
 			var fi = new FileInfo(dest);
 			var fileSecurity = fi.GetAccessControl();
 			// Allow Users to Write.
-			//SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+			//SecurityIdentifier SID = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
 			//fileSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.Write, AccessControlType.Allow));
 			//fi.SetAccessControl(fileSecurity);
 			var rules = security.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
@@ -637,15 +630,15 @@ namespace x360ce.App
 						}
 					}
 					currentPadControl.UpdateFromXInput(currentPad, xiOn);
-					// Update LED of gamepad state.
+					// Update LED of GamePad state.
 					string image = diOn
-						// di ON, xi ON 
+						// DInput ON, XInput ON 
 						? xiOn ? "green"
-						// di ON, xi OFF
+						// DInput ON, XInput OFF
 						: "red"
-						// di OFF, xi ON
+						// DInput OFF, XInput ON
 						: xiOn ? "yellow"
-						// di OFF, xi OFF
+						// DInput OFF, XInput OFF
 						: "grey";
 					string bullet = string.Format("bullet_square_glass_{0}.png", image);
 					if (ControlPages[i].ImageKey != bullet) ControlPages[i].ImageKey = bullet;
@@ -665,7 +658,7 @@ namespace x360ce.App
 				bool byMicrosoft;
 				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
 				StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
-				// If fast reload od settings is supported then...
+				// If fast reload of settings is supported then...
 				lock (XInputLock)
 				{
 					if (XInput.IsResetSupported)
@@ -677,10 +670,11 @@ namespace x360ce.App
 					XInput.ReLoadLibrary(dllInfo.Name, out error);
 					if (!XInput.IsLoaded)
 					{
-						var msg = string.Format("Failed to load '{0}': {1}", dllInfo.Name, error == null ? "Unknown error" : error.Message);
+						var caption = string.Format("Failed to load '{0}'", dllInfo.Name);
+						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
 						var form = new MessageBoxForm();
 						form.StartPosition = FormStartPosition.CenterParent;
-						form.ShowForm(msg, msg, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						form.ShowForm(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 					else
 					{
@@ -779,16 +773,16 @@ namespace x360ce.App
 		{
 			if (createIfNotExist)
 			{
-				// If ini file doesn't exists.
+				// If INI file doesn't exists.
 				if (!System.IO.File.Exists(SettingManager.IniFileName))
 				{
 					if (!CreateFile(this.GetType().Namespace + ".Presets." + SettingManager.IniFileName, SettingManager.IniFileName)) return false;
 				}
-				// If xinput file doesn't exists.
+				// If XInput file doesn't exists.
 				var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
 				var embeddedDllVersion = EngineHelper.GetEmbeddedDllVersion(architecture);
 				var file = EngineHelper.GetDefaultDll();
-				// If XInput dll was not found then...
+				// If XInput DLL was not found then...
 				if (file == null)
 				{
 					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
@@ -814,7 +808,7 @@ namespace x360ce.App
 
 				}
 			}
-			// Can't run witout ini.
+			// Can't run without INI.
 			if (!File.Exists(SettingManager.IniFileName))
 			{
 				var form = new MessageBoxForm();
@@ -829,7 +823,7 @@ namespace x360ce.App
 			FileInfo iniTmp = new FileInfo(SettingManager.TmpFileName);
 			if (iniTmp.Exists)
 			{
-				// It means that application crashed. Restore ini from temp.
+				// It means that application crashed. Restore INI from temp.
 				if (!AppHelper.CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
 			}
 			else

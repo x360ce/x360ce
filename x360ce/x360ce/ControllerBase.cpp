@@ -30,7 +30,7 @@ DWORD ControllerBase::CancelGuideButtonWait()
 	if (m_passthrough)
 		return XInputModuleManager::Get().XInputCancelGuideButtonWait(m_passthroughindex);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	return ERROR_SUCCESS;
 }
@@ -40,7 +40,7 @@ DWORD ControllerBase::GetAudioDeviceIds(LPWSTR pRenderDeviceId, UINT* pRenderCou
 	if (m_passthrough)
 		return XInputModuleManager::Get().XInputGetAudioDeviceIds(m_passthroughindex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	return ERROR_SUCCESS;
 }
@@ -63,7 +63,7 @@ DWORD ControllerBase::GetBaseBusInformation(struct XINPUT_BUSINFO* pBusinfo)
 	if (m_passthrough)
 		return XInputModuleManager::Get().XInputGetBaseBusInformation(m_passthroughindex, pBusinfo);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	return ERROR_SUCCESS;
 }
@@ -113,7 +113,7 @@ DWORD ControllerBase::GetCapabilitiesEx(DWORD unk1 /*seems that only 1 is valid*
 	if (m_passthrough || m_forcespassthrough)
 		return XInputModuleManager::Get().XInputGetCapabilitiesEx(unk1, m_passthroughindex, dwFlags, pCapabilitiesEx);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	return ERROR_SUCCESS;
 }
@@ -123,7 +123,7 @@ DWORD ControllerBase::GetDSoundAudioDeviceGuids(GUID* pDSoundRenderGuid, GUID* p
 	if (m_passthrough)
 		return XInputModuleManager::Get().XInputGetDSoundAudioDeviceGuids(m_passthroughindex, pDSoundRenderGuid, pDSoundCaptureGuid);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	*pDSoundRenderGuid = GUID_NULL;
 	*pDSoundCaptureGuid = GUID_NULL;
@@ -250,7 +250,7 @@ DWORD ControllerBase::PowerOffController()
 	if (m_passthrough)
 		return XInputModuleManager::Get().XInputPowerOffController(m_passthroughindex);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	return ERROR_SUCCESS;
 }
@@ -277,7 +277,7 @@ DWORD ControllerBase::WaitForGuideButton(DWORD dwFlag, LPVOID pVoid)
 	if (m_passthrough)
 		return XInputModuleManager::Get().XInputWaitForGuideButton(m_passthroughindex, dwFlag, pVoid);
 
-	PrintLog("Call to unimplemented function "__FUNCTION__);
+	PrintLog("Call to unimplemented function " __FUNCTION__);
 
 	return ERROR_SUCCESS;
 }

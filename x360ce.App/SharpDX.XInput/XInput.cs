@@ -330,11 +330,11 @@
         {
             try
             {
-                libHandle = NativeMethods.LoadLibrary(_LibraryName, out LastLoadException);
+				Exception loadException;
+                libHandle = NativeMethods.LoadLibrary(_LibraryName, out loadException);
                 if (libHandle == IntPtr.Zero)
                 {
-                    var win32ex = new Win32Exception();
-                    LastLoadException = new Exception(win32ex.Message);
+                    LastLoadException = loadException;
                 }
             }
             catch (Exception ex)
