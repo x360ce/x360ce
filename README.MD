@@ -57,9 +57,7 @@ Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility
 
 ## Installation
 
-Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name.
-
-Known names:
+Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name. Known names:
 
   * xinput1\_4.dll (Windows 8 / metro apps only)
   * xinput1\_3.dll
@@ -92,11 +90,13 @@ Some games will only operate when the controller is considered to be the gamepad
  
 Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4) in x360ce.ini file. You must edit x360ce.ini file with Notepad each time, after closing x360ce.exe application:
 
+```
 [Mappings]
 PAD1=IG_{main controller number}
 PAD2=IG_{other controller number}
 PAD3=IG_{other controller number}
 PAD4=
+```
 
 **Some games have control issues, when Dead Zone is reduced to 0%.**
 
