@@ -47,7 +47,7 @@ Notes:
 
 "Xbox 360 Controller Emulator" files:
 
-xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls, to support old, no XInput compatible GamePads.<br />
+xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls - supports old, no XInput compatible GamePads.<br />
 x360ce.exe - (Application) - Allows edit and test Library settings.<br />
 x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
 x360ce.gdb - (Game Database) Includes required hookmasks for various games).<br />
