@@ -68,7 +68,7 @@
                 <tr>
                     <td style="padding: 4px;">
 
-                        <table style="width: 804px;">
+                        <table style="width: 840px;">
                             <tr>
                                 <td colspan="2" style="background-color: #2674ec; padding: 10px; text-align: center; border-radius: 14px;">
 
@@ -79,10 +79,12 @@
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce">Source (GitHub.com)</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md">Supported Games</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
+                                            <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://ngemu.com/forums/x360ce.140">Forum</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Downloads</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.1.7.58 (2015-07-07) • for 32-bit games</a></td>
                                         </tr>
                                         <tr>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -99,7 +101,7 @@
                             </tr>
                         </table>
 
-                        <table style="width: 804px; margin-top: 4px;">
+                        <table style="width: 840px; margin-top: 4px;">
                             <tr>
                                 <td style="width: 404px;">
 
@@ -117,7 +119,7 @@
                                     </table>
 
                                 </td>
-                                <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 400px;" class="Controllers">
+                                <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 436px;" class="Controllers">
                                     <p style="text-align: center; margin-top: 20px; color: #84e68c;">
                                         <img src="/Images/x360ce_Logo.png" />
                                     </p>
@@ -177,15 +179,11 @@
                         <table style="width: 804px; margin-top: 4px;">
                             <tr>
                                 <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; border-radius: 14px; width: 804px;">
-                                    <span class="title">Compatibility</span><br />
-                                    <br />
-                                    <a target="_blank" class="Blue" href="https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md">List of games</a> that work with x360ce.<br />
-                                    <br />
                                     <span class="title">System Requirements</span><br />
                                     <br />
                                     • Windows Vista or newer.<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=21">.NET 3.5 (also installs 2.0 and 3.0)</a> (included in Windows 7)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included with Windows 8)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included in Windows 8)<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=35">DirectX End-User Runtimes (June 2010)</a> (Required regardless of OS)<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributables)<br />
                                     <br />
@@ -233,7 +231,10 @@
                                     <br />
                                     Some games have control issues, when Dead Zone is reduced to 0%.<br />
                                     <br />
-                                    x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller. 
+                                    x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller.<br />
+                                    <br />
+                                    If your have questions about installation or configuration, please go to <a target="_blank" class="Blue" href="http://ngemu.com/forums/x360ce.140">NGemu x360ce forum</a></br />
+                                    <br />
                                 </td>
                             </tr>
                         </table>
