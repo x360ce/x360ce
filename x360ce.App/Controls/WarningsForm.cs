@@ -67,6 +67,8 @@ namespace x360ce.App
 		BindingList<WarningItem> Warnings = new BindingList<WarningItem>();
 		object checkTimerLock = new object();
 		System.Timers.Timer checkTimer;
+		bool IgnoreAll;
+
 
 		void CheckAll()
 		{
@@ -128,7 +130,7 @@ namespace x360ce.App
 			UpdateWarning(result);
 			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
 			{
-				if (Warnings.Count > 0 && !Visible && !DontShowCheckBox.Checked)
+				if (Warnings.Count > 0 && !Visible && !IgnoreAll)
 				{
 
 					StartPosition = FormStartPosition.CenterScreen;
@@ -246,6 +248,12 @@ namespace x360ce.App
 				var item = (WarningItem)row.DataBoundItem;
 				if (item.FixAction != null) item.FixAction();
 			}
+		}
+
+		private void IgnoreButton_Click(object sender, EventArgs e)
+		{
+			IgnoreAll = true;
+			DialogResult = DialogResult.Cancel;
 		}
 	}
 

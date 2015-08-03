@@ -1,6 +1,7 @@
-﻿v3.1.7.65 (2015-08-02)
+﻿v3.2.7.67 (2015-08-03)
 - Fix: Incorrect XInput DLL load message.
 - New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc).
+- New: Map Direct Input controller to specific XInput position.
 
 v3.1.7.58 (2015-07-07)
 - Update: "GNU Lesser General Public License v3.0" license added to application.

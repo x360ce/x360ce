@@ -90,7 +90,6 @@
 			this.ActuatorsTextBox = new System.Windows.Forms.TextBox();
 			this.ActuatorsLabel = new System.Windows.Forms.Label();
 			this.DeviceDetailsTabControl = new System.Windows.Forms.TabControl();
-			this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
 			this.DiObjectsTabPage = new System.Windows.Forms.TabPage();
 			this.DiObjectsDataGridView = new System.Windows.Forms.DataGridView();
 			this.ObjectsOffsetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -100,14 +99,15 @@
 			this.ObjectsAspectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsGuidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
 			this.SlidersTextBox = new System.Windows.Forms.TextBox();
 			this.SlidersLabel = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
 			this.DeviceDetailsTabControl.SuspendLayout();
-			this.DiEffectsDataTabPage.SuspendLayout();
 			this.DiObjectsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).BeginInit();
+			this.DiEffectsDataTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DiEffectsDataGridView
@@ -517,11 +517,11 @@
 			// 
 			this.MapToControllerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.MapToControllerLabel.AutoSize = true;
-			this.MapToControllerLabel.Location = new System.Drawing.Point(552, 109);
+			this.MapToControllerLabel.Location = new System.Drawing.Point(552, 110);
 			this.MapToControllerLabel.Name = "MapToControllerLabel";
-			this.MapToControllerLabel.Size = new System.Drawing.Size(41, 13);
+			this.MapToControllerLabel.Size = new System.Drawing.Size(47, 13);
 			this.MapToControllerLabel.TabIndex = 0;
-			this.MapToControllerLabel.Text = "Priority:";
+			this.MapToControllerLabel.Text = "Map To:";
 			// 
 			// MapToPadComboBox
 			// 
@@ -534,7 +534,7 @@
             "2",
             "3",
             "4"});
-			this.MapToPadComboBox.Location = new System.Drawing.Point(606, 106);
+			this.MapToPadComboBox.Location = new System.Drawing.Point(606, 107);
 			this.MapToPadComboBox.Name = "MapToPadComboBox";
 			this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
 			this.MapToPadComboBox.TabIndex = 1;
@@ -652,16 +652,6 @@
 			this.DeviceDetailsTabControl.Size = new System.Drawing.Size(772, 225);
 			this.DeviceDetailsTabControl.TabIndex = 2;
 			// 
-			// DiEffectsDataTabPage
-			// 
-			this.DiEffectsDataTabPage.Controls.Add(this.DiEffectsDataGridView);
-			this.DiEffectsDataTabPage.Location = new System.Drawing.Point(4, 22);
-			this.DiEffectsDataTabPage.Name = "DiEffectsDataTabPage";
-			this.DiEffectsDataTabPage.Size = new System.Drawing.Size(764, 199);
-			this.DiEffectsDataTabPage.TabIndex = 1;
-			this.DiEffectsDataTabPage.Text = "Force Feedback Effects";
-			this.DiEffectsDataTabPage.UseVisualStyleBackColor = true;
-			// 
 			// DiObjectsTabPage
 			// 
 			this.DiObjectsTabPage.Controls.Add(this.DiObjectsDataGridView);
@@ -778,6 +768,16 @@
 			this.ObjectsFlagsColumn.ReadOnly = true;
 			this.ObjectsFlagsColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
+			// DiEffectsDataTabPage
+			// 
+			this.DiEffectsDataTabPage.Controls.Add(this.DiEffectsDataGridView);
+			this.DiEffectsDataTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DiEffectsDataTabPage.Name = "DiEffectsDataTabPage";
+			this.DiEffectsDataTabPage.Size = new System.Drawing.Size(764, 199);
+			this.DiEffectsDataTabPage.TabIndex = 1;
+			this.DiEffectsDataTabPage.Text = "Force Feedback Effects";
+			this.DiEffectsDataTabPage.UseVisualStyleBackColor = true;
+			// 
 			// SlidersTextBox
 			// 
 			this.SlidersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -848,9 +848,9 @@
 			((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
 			this.DeviceDetailsTabControl.ResumeLayout(false);
-			this.DiEffectsDataTabPage.ResumeLayout(false);
 			this.DiObjectsTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).EndInit();
+			this.DiEffectsDataTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

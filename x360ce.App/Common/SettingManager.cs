@@ -475,7 +475,7 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.RightThumbUp, ps.RightThumbUp);
 			ini2.SetValue(padSectionName, SettingName.RightTrigger, ps.RightTrigger);
 			ini2.SetValue(padSectionName, SettingName.RightTriggerDeadZone, ps.RightTriggerDeadZone);
-			// Axis to button deadzones.
+			// Axis to button dead-zones.
 			ini2.SetValue(padSectionName, SettingName.AxisToButtonADeadZone, ps.ButtonADeadZone);
 			ini2.SetValue(padSectionName, SettingName.AxisToButtonBDeadZone, ps.ButtonBDeadZone);
 			ini2.SetValue(padSectionName, SettingName.AxisToButtonBackDeadZone, ps.ButtonBackDeadZone);
@@ -823,16 +823,17 @@ namespace x360ce.App
 			{
 				var pad = string.Format("PAD{0}", i + 1);
 				var section = "";
+				var di = diInstances[i];
 				// If direct Input instance is connected.
-				if (i < diInstances.Count)
+				if (di != null)
 				{
-					var ig = diInstances[i].InstanceGuid;
+					var ig = di.InstanceGuid;
 					section = GetInstanceSection(ig);
 					// If INI file contain settings for this device then...
 					string sectionName = null;
 					if (ContainsInstanceSection(ig, IniFileName, out sectionName))
 					{
-						var samePosition = i < oldCount && diInstancesOld[i].InstanceGuid.Equals(diInstances[i].InstanceGuid);
+						var samePosition = i < oldCount && diInstancesOld[i].InstanceGuid.Equals(ig);
 						// Load settings.
 						if (!samePosition)
 						{
@@ -848,7 +849,7 @@ namespace x360ce.App
 						ClearPadSettings(i);
 						MainForm.Current.ResumeEvents();
 						var f = new NewDeviceForm();
-						f.LoadData(diInstances[i], i);
+						f.LoadData(di, i);
 						f.StartPosition = FormStartPosition.CenterParent;
 						var result = f.ShowDialog(MainForm.Current);
 						f.Dispose();

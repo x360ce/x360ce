@@ -273,7 +273,7 @@ namespace x360ce.App
 			// preset will be stored in inside [PAD1] section;
 			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", index);
 			ResumeEvents();
-			// Save setting and notify if vaue changed.
+			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSettings()) NotifySettingsChange();
 			// remove file if it was from resource.
 			if (resource != null) System.IO.File.Delete(resourceName);
@@ -341,22 +341,22 @@ namespace x360ce.App
 
 		void Control_TextChanged(object sender, EventArgs e)
 		{
-			// Save setting and notify if vaue changed.
+			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
 		Dictionary<string, int> ListBoxCounts = new Dictionary<string, int>();
 
-		/// <summary>Monitor changes remo/add inside listboxes.</summary>
+		/// <summary>Monitor changes remove/add inside ListBoxes.</summary>
 		void Control_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			lock (ListBoxCounts)
 			{
 				var lb = (ListBox)sender;
-				// If list contains count of listbox items.			
+				// If list contains count of ListBoxes items.			
 				if (ListBoxCounts.ContainsKey(lb.Name))
 				{
-					// If listbox haven't changed then return;
+					// If ListBoxe haven't changed then return;
 					if (ListBoxCounts[lb.Name] == lb.Items.Count) return;
 					ListBoxCounts[lb.Name] = lb.Items.Count;
 				}
@@ -365,19 +365,19 @@ namespace x360ce.App
 					ListBoxCounts.Add(lb.Name, lb.Items.Count);
 				}
 			}
-			// Save setting and notify if vaue changed.
+			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
 		void Control_ValueChanged(object sender, EventArgs e)
 		{
-			// Save setting and notify if vaue changed.
+			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
 		void Control_CheckedChanged(object sender, EventArgs e)
 		{
-			// Save setting and notify if vaue changed.
+			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSetting((Control)sender)) NotifySettingsChange();
 		}
 
@@ -391,9 +391,9 @@ namespace x360ce.App
 		public void SaveSettings()
 		{
 			UpdateTimer.Stop();
-			// Save settigns to INI file.
+			// Save settings to INI file.
 			SettingManager.Current.SaveSettings();
-			// Owerwrite Temp file.
+			// Overwrite Temp file.
 			var ini = new System.IO.FileInfo(SettingManager.IniFileName);
 			ini.CopyTo(SettingManager.TmpFileName, true);
 			StatusTimerLabel.Text = "Settings saved";
@@ -456,11 +456,11 @@ namespace x360ce.App
 					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
 					if (result == System.Windows.Forms.DialogResult.Yes)
 					{
-						// Do nothing since ini contains latest updates.
+						// Do nothing since INI contains latest updates.
 					}
 					else if (result == System.Windows.Forms.DialogResult.No)
 					{
-						// Rename temp to ini.
+						// Rename temp to INI.
 						tmp.CopyTo(SettingManager.IniFileName, true);
 					}
 					else if (result == System.Windows.Forms.DialogResult.Cancel)
@@ -505,8 +505,48 @@ namespace x360ce.App
 
 		public DirectInput Manager = new DirectInput();
 
+		IList<DeviceInstance> GetDevices()
+		{
+			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToArray();
+			var orderedDevices = new DeviceInstance[4];
+			// Assign devices to their positions.
+			for (int d = 0; d < devices.Length; d++)
+			{
+				var ig = devices[d].InstanceGuid;
+				var section = SettingManager.Current.GetInstanceSection(ig);
+				var ini2 = new Ini(SettingManager.IniFileName);
+				string v = ini2.GetValue(section, SettingName.MapToPad);
+				int mapToPad = 0;
+				if (int.TryParse(v, out mapToPad) && mapToPad > 0 && mapToPad <= 4)
+				{
+					// If position is not occupied then...
+					if (orderedDevices[mapToPad - 1] == null)
+					{
+						orderedDevices[mapToPad - 1] = devices[d];
+					}
+				}
+			}
+			// Get list of unassigned devices.
+			var unassignedDevices = devices.Except(orderedDevices).ToArray();
+			for (int i = 0; i < unassignedDevices.Length; i++)
+			{
+				// Assign to first empty slot.
+				for (int d = 0; d < orderedDevices.Length; d++)
+				{
+					// If position is not occupied then...
+					if (orderedDevices[d] == null)
+					{
+						orderedDevices[d] = unassignedDevices[i];
+						break;
+					}
+				}
+			}
+			return orderedDevices.ToList();
+		}
+
+
 		/// <summary>
-		/// Access this only insite Timer_Click!
+		/// Access this only inside Timer_Click!
 		/// </summary>
 		bool RefreshCurrentInstances()
 		{
@@ -517,7 +557,7 @@ namespace x360ce.App
 			//var types = DeviceType.Driving | DeviceType.Flight | DeviceType.Gamepad | DeviceType.Joystick | DeviceType.FirstPerson;
 			if (forceRecountDevices)
 			{
-				devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices);
+				devices = GetDevices();
 				deviceCount = devices.Count;
 				forceRecountDevices = false;
 			}
@@ -525,24 +565,34 @@ namespace x360ce.App
 			if (deviceCount != _diCount)
 			{
 				_diCount = deviceCount;
-				if (devices == null) devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices);
+				if (devices == null) devices = GetDevices();
 				var instances = devices;
 				// Dispose from previous list of devices.
 				for (int i = 0; i < diDevices.Count; i++)
 				{
-					// Dispose current device.
-					diDevices[i].Unacquire();
-					diDevices[i].Dispose();
+					if (diDevices[i] != null)
+					{
+						// Dispose current device.
+						diDevices[i].Unacquire();
+						diDevices[i].Dispose();
+					}
 				}
 				diDevices.Clear();
 				// Create new list of devices.
 				for (int i = 0; i < instances.Count; i++)
 				{
-					var ig = instances[i].InstanceGuid;
-					var device = new Joystick(Manager, ig);
-					//device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-					//device.Acquire();
-					diDevices.Add(device);
+					if (instances[i] == null)
+					{
+						diDevices.Add(null);
+					}
+					else
+					{
+						var ig = instances[i].InstanceGuid;
+						var device = new Joystick(Manager, ig);
+						//device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+						//device.Acquire();
+						diDevices.Add(device);
+					}
 				}
 				SettingsDatabasePanel.BindDevices(instances);
 				SettingsDatabasePanel.BindFiles();

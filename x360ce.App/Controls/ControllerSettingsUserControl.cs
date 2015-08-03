@@ -114,7 +114,10 @@ namespace x360ce.App.Controls
 			var options = new List<KeyValuePair>();
 			for (int i = 0; i < list.Count; i++)
 			{
-				options.Add(new KeyValuePair((i + 1) + ". " + list[i].ProductName, list[i].InstanceGuid.ToString()));
+				if (list[i] != null)
+				{
+					options.Add(new KeyValuePair((i + 1) + ". " + list[i].ProductName, list[i].InstanceGuid.ToString()));
+				}
 			}
 			ControllerComboBox.DataSource = options;
 			ControllerComboBox.DisplayMember = "Key";
@@ -166,8 +169,8 @@ namespace x360ce.App.Controls
 			if (selection == null)
 			{
 				// Select best option automatically.
-				var rxUppercase = new System.Text.RegularExpressions.Regex("[A-Z]");
-				var rxLowercase = new System.Text.RegularExpressions.Regex("[A-Z]");
+				var rxUppercase = new Regex("[A-Z]");
+				var rxLowercase = new Regex("[A-Z]");
 				for (int i = 0; i < options.Count; i++)
 				{
 					var s = options[i].Key;
@@ -242,7 +245,10 @@ namespace x360ce.App.Controls
 			var s = new Setting();
 			if (ControllerComboBox.SelectedIndex > -1)
 			{
-				s.InstanceGuid = _devices[ControllerComboBox.SelectedIndex].InstanceGuid;
+				if (_devices[ControllerComboBox.SelectedIndex] != null)
+				{
+					s.InstanceGuid = _devices[ControllerComboBox.SelectedIndex].InstanceGuid;
+				}
 				if (GameComboBox.SelectedIndex > 0)
 				{
 					var fi = _files[GameComboBox.SelectedIndex - 1];
