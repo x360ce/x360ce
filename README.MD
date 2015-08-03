@@ -43,9 +43,7 @@ Notes:
   * **.NET MUST be installed prior to the DirectX webupdate as it checks that .NET 2.0/3.0/3.5 is installed and skips the Managed DirectX framework if it is not.**
   * The full DirectX Redistributable will always install the file, however its best to have .NET 3.5 installed anyhow as quite a few Xinput titles utilize .NET for internal dependencies.
 
-# Introduction
-
-"Xbox 360 Controller Emulator" files:
+# Files
 
 xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls - supports old, no XInput compatible GamePads.<br />
 x360ce.exe - (Application) - Allows edit and test Library settings.<br />
