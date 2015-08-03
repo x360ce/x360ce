@@ -51,9 +51,7 @@ x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider ma
 x360ce.gdb - (Game Database) Includes required hookmasks for various games).<br />
 Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).
 
-# Details
-
-## Installation
+# Installation
 
 Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name. Known names:
 
@@ -69,7 +67,7 @@ Note:
   * Games based on source engine in most cases have the dll placed inside the /Bin/ subfolder, as it it is loaded by inputsystem.dll instead of the game executable.
   * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options] in the x360ce.ini to quieten a incorrect version warning
 
-## Uninstallation
+# Uninstallation
 
 Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.
 
