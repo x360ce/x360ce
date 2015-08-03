@@ -68,7 +68,7 @@
                 <tr>
                     <td style="padding: 4px;">
 
-                        <table style="width: 840px;">
+                        <table style="width: 800px;">
                             <tr>
                                 <td colspan="2" style="background-color: #2674ec; padding: 10px; text-align: center; border-radius: 14px;">
 
@@ -80,11 +80,9 @@
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md">Supported Games</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://ngemu.com/forums/x360ce.140">Forum</a></td>
-                                            <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://code.google.com/p/x360ce/downloads/list?can=1&q=+%09XBOX+360+Controller+Emulator&colspec=Filename+Summary+Uploaded+ReleaseDate+Size+DownloadCount">Downloads</a></td>
                                             <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.1.7.58 (2015-07-07) • for 32-bit games</a></td>
                                         </tr>
                                         <tr>
-                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -101,7 +99,7 @@
                             </tr>
                         </table>
 
-                        <table style="width: 840px; margin-top: 4px;">
+                        <table style="width: 800px; margin-top: 4px;">
                             <tr>
                                 <td style="width: 404px;">
 
@@ -119,7 +117,7 @@
                                     </table>
 
                                 </td>
-                                <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 436px;" class="Controllers">
+                                <td style="background-color: #34963c; padding-bottom: 20px; border-radius: 14px; width: 396px;" class="Controllers">
                                     <p style="text-align: center; margin-top: 20px; color: #84e68c;">
                                         <img src="/Images/x360ce_Logo.png" />
                                     </p>
