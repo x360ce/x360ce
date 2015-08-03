@@ -14,7 +14,7 @@ Report only crashes or other bugs, note that issue tracker is not helpdesk!
 
 **DO NOT ASK FOR HELP IN INSTALLATION OR CONFIGURATION!!!**
 
-**If your have questions about instalaltion and configuration please go to our [forum @NGemu] (http://ngemu.com/forums/x360ce.140)**
+**If your have questions about installation or configuration, please go to our [forum @NGemu] (http://ngemu.com/forums/x360ce.140)**
 
 # Guides [OUTDATED!]
 
