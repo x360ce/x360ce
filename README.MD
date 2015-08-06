@@ -27,7 +27,6 @@ Report only crashes or other bugs, note that issue tracker is not helpdesk!
 # Compatibility
 Games that work with x360ce can be found on the [Compatibility List](Wiki/CompatibilityList.md). If you would like to add to that list or provide updated information place see [Reporting Compatibility](Wiki/ReportingCompatibility.md).
 
-
 # System Requirements
 
   1. Windows Vista or newer.
@@ -75,7 +74,7 @@ Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.
 
 **Wheel doesn't work in the game, but it works inside x360ce Application.**
 
-Some games will only operate when the controller is considered to be the gamepad, even if it is the steering wheel. Try to:
+Some controllers in game will operate only, if set as "GamePad". Try to:
 
   1. Run x360ce.exe
   1. Select tab with your Wheel Controller.
