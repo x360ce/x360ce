@@ -72,9 +72,11 @@ Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.
 
 # Troubleshooting
 
+Some games have control issues, when Dead Zone is reduced to 0%.
+
 **Wheel doesn't work in the game, but it works inside x360ce Application.**
 
-Some controllers in game will operate only, if set as "GamePad". Try to:
+Some controllers will operate in game only, if set as "GamePad". Try to:
 
   1. Run x360ce.exe
   1. Select tab with your Wheel Controller.
@@ -92,9 +94,6 @@ PAD2=IG_{other controller number}
 PAD3=IG_{other controller number}
 PAD4=
 ```
-
-**Some games have control issues, when Dead Zone is reduced to 0%.**
-
 **Do I need to run x360ce Application during the game?**
 
 x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller. 
