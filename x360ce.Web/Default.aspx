@@ -209,7 +209,9 @@
                                     <br />
                                     <span class="title">Troubleshooting</span><br />
                                     <br />
-                                    Some games will operate only, when controller is considered as GamePad, even if it is Steering Wheel. Try to:<br />
+                                    Some games have control issues, when Dead Zone is reduced to 0%.<br />
+                                    <br />
+                                    Some controllers will operate in game only, if set as "GamePad". Try to:<br />
                                     <br />
                                     1. Run x360ce.exe<br />
                                     2. Select tab with your Wheel Controller.<br />
@@ -226,8 +228,6 @@
                                         PAD3=IG_{other controller number}<br />
                                         PAD4=<br />
                                     </span>
-                                    <br />
-                                    Some games have control issues, when Dead Zone is reduced to 0%.<br />
                                     <br />
                                     x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller.<br />
                                     <br />
