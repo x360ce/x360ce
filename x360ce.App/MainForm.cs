@@ -56,7 +56,6 @@ namespace x360ce.App
 			{
 				GamePads[i] = new Controller((UserIndex)i);
 			}
-			WarningsForm.CheckAndOpen();
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;
@@ -109,6 +108,7 @@ namespace x360ce.App
 			StatusDllLabel.Text = "";
 			MainStatusStrip.Visible = false;
 			// Check if INI and DLL is on disk.
+			WarningsForm.CheckAndOpen();
 			if (!CheckFiles(true)) return;
 			CheckEncoding(SettingManager.TmpFileName);
 			CheckEncoding(SettingManager.IniFileName);
@@ -623,7 +623,10 @@ namespace x360ce.App
 		{
 			if (Program.IsClosing) return;
 			Program.TimerCount++;
-			if (!formLoaded) LoadForm();
+			if (!formLoaded)
+			{
+				LoadForm();
+			}
 			bool instancesChanged = RefreshCurrentInstances();
 			// Load direct input data.
 			for (int i = 0; i < 4; i++)

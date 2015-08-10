@@ -266,6 +266,11 @@
       <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
+    <Compile Include="Issues\ArchitectureIssue.cs" />
+    <Compile Include="Issues\IniFileIssue.cs" />
+    <Compile Include="Issues\IssueSeverity.cs" />
+    <Compile Include="Issues\LeakDetectorIssue.cs" />
+    <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\DPadEnum.cs">
@@ -298,6 +303,7 @@
     <Compile Include="Controls\WarningsForm.Designer.cs">
       <DependentUpon>WarningsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Issues\DirectXIssue.cs" />
     <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
       <SubType>Designer</SubType>
