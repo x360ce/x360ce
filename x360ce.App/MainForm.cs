@@ -76,74 +76,6 @@ namespace x360ce.App
 			UpdateTimer.Start();
 		}
 
-		bool formLoaded = false;
-
-		void LoadForm()
-		{
-			formLoaded = true;
-			detector = new DeviceDetector(false);
-			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
-			BusyLoadingCircle.Visible = false;
-			BusyLoadingCircle.Top = HeaderPictureBox.Top;
-			BusyLoadingCircle.Left = HeaderPictureBox.Left;
-			defaultBody = HelpBodyLabel.Text;
-			//if (DesignMode) return;
-			OptionsPanel.InitOptions();
-			// Set status.
-			StatusSaveLabel.Visible = false;
-			StatusEventsLabel.Visible = false;
-			// Load Tab pages.
-			ControlPages = new TabPage[4];
-			ControlPages[0] = Pad1TabPage;
-			ControlPages[1] = Pad2TabPage;
-			ControlPages[2] = Pad3TabPage;
-			ControlPages[3] = Pad4TabPage;
-			//BuletImageList.Images.Add("bullet_square_glass_blue.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_blue.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_green.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_green.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
-			foreach (var item in ControlPages) item.ImageKey = "bullet_square_glass_grey.png";
-			// Hide status values.
-			StatusDllLabel.Text = "";
-			MainStatusStrip.Visible = false;
-			// Check if INI and DLL is on disk.
-			WarningsForm.CheckAndOpen();
-			if (!CheckFiles(true)) return;
-			CheckEncoding(SettingManager.TmpFileName);
-			CheckEncoding(SettingManager.IniFileName);
-			// Show status values.
-			MainStatusStrip.Visible = true;
-			// Load PAD controls.
-			ControlPads = new Controls.PadControl[4];
-			for (int i = 0; i < ControlPads.Length; i++)
-			{
-				ControlPads[i] = new Controls.PadControl(i);
-				ControlPads[i].Name = string.Format("ControlPad{0}", i + 1);
-				ControlPads[i].Dock = DockStyle.Fill;
-				ControlPages[i].Controls.Add(ControlPads[i]);
-				ControlPads[i].InitPadControl();
-			}
-			// Initialize presets. Execute only after name of cIniFile is set.
-			SettingsDatabasePanel.InitPresets();
-			// Allow events after PAD control are loaded.
-			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
-			// Load about control.
-			ControlAbout = new Controls.AboutControl();
-			ControlAbout.Dock = DockStyle.Fill;
-			AboutTabPage.Controls.Add(ControlAbout);
-			// Update settings map.
-			UpdateSettingsMap();
-			ReloadXinputSettings();
-			////InitDirectInputTab();
-			//// Timer will execute ReloadXInputLibrary();
-			////XInput.ReLoadLibrary(cXinput3File);
-			////XInput.ReLoadLibrary(cXinput3File);
-			//// start capture events.
-			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
-			////ReloadXInputLibrary();
-		}
-
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			forceRecountDevices = true;
@@ -619,14 +551,107 @@ namespace x360ce.App
 
 		bool[] cleanPadStatus = new bool[4];
 
+		object formLoadLock = new object();
+		public bool update1Enabled = true;
+		public bool? update2Enabled;
+		public bool update3Enabled = false;
+
 		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (Program.IsClosing) return;
 			Program.TimerCount++;
-			if (!formLoaded)
+			lock (formLoadLock)
 			{
-				LoadForm();
+				if (update1Enabled)
+				{
+					update1Enabled = false;
+					UpdateForm1();
+					// Update 2 part will be enabled after all issues are checked.
+				}
+				if (update2Enabled.HasValue && update2Enabled.Value)
+				{
+					update2Enabled = false;
+					UpdateForm2();
+					update3Enabled = true;
+                }
+				if (update3Enabled)
+				{
+					UpdateForm3();
+				}
 			}
+			UpdateTimer.Start();
+		}
+
+		void UpdateForm1()
+		{
+			detector = new DeviceDetector(false);
+			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
+			BusyLoadingCircle.Visible = false;
+			BusyLoadingCircle.Top = HeaderPictureBox.Top;
+			BusyLoadingCircle.Left = HeaderPictureBox.Left;
+			defaultBody = HelpBodyLabel.Text;
+			//if (DesignMode) return;
+			OptionsPanel.InitOptions();
+			// Set status.
+			StatusSaveLabel.Visible = false;
+			StatusEventsLabel.Visible = false;
+			// Load Tab pages.
+			ControlPages = new TabPage[4];
+			ControlPages[0] = Pad1TabPage;
+			ControlPages[1] = Pad2TabPage;
+			ControlPages[2] = Pad3TabPage;
+			ControlPages[3] = Pad4TabPage;
+			//BuletImageList.Images.Add("bullet_square_glass_blue.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_blue.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_green.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_green.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
+			//BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
+			foreach (var item in ControlPages) item.ImageKey = "bullet_square_glass_grey.png";
+			// Hide status values.
+			StatusDllLabel.Text = "";
+			MainStatusStrip.Visible = false;
+			// Check if INI and DLL is on disk.
+			WarningsForm.CheckAndOpen();
+		}
+
+		void UpdateForm2()
+		{
+			// Set status labels.
+			StatusIsAdminLabel.Text = WinAPI.IsVista
+				? string.Format("Elevated: {0}", WinAPI.IsElevated())
+				: "";
+			StatusIniLabel.Text = SettingManager.IniFileName;
+			CheckEncoding(SettingManager.TmpFileName);
+			CheckEncoding(SettingManager.IniFileName);
+			// Show status values.
+			MainStatusStrip.Visible = true;
+			// Load PAD controls.
+			ControlPads = new Controls.PadControl[4];
+			for (int i = 0; i < ControlPads.Length; i++)
+			{
+				ControlPads[i] = new Controls.PadControl(i);
+				ControlPads[i].Name = string.Format("ControlPad{0}", i + 1);
+				ControlPads[i].Dock = DockStyle.Fill;
+				ControlPages[i].Controls.Add(ControlPads[i]);
+				ControlPads[i].InitPadControl();
+			}
+			// Initialize pre-sets. Execute only after name of cIniFile is set.
+			SettingsDatabasePanel.InitPresets();
+			// Allow events after PAD control are loaded.
+			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
+			// Load about control.
+			ControlAbout = new Controls.AboutControl();
+			ControlAbout.Dock = DockStyle.Fill;
+			AboutTabPage.Controls.Add(ControlAbout);
+			// Update settings map.
+			UpdateSettingsMap();
+			ReloadXinputSettings();
+			//// start capture events.
+			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+		}
+
+		void UpdateForm3()
+		{
 			bool instancesChanged = RefreshCurrentInstances();
 			// Load direct input data.
 			for (int i = 0; i < 4; i++)
@@ -698,7 +723,6 @@ namespace x360ce.App
 				}
 				UpdateStatus("");
 			}
-			UpdateTimer.Start();
 		}
 
 		public void ReloadLibrary()
@@ -821,76 +845,6 @@ namespace x360ce.App
 		#endregion
 
 		#region Check Files
-
-		bool CheckFiles(bool createIfNotExist)
-		{
-			if (createIfNotExist)
-			{
-				// If INI file doesn't exists.
-				if (!System.IO.File.Exists(SettingManager.IniFileName))
-				{
-					if (!CreateFile(this.GetType().Namespace + ".Presets." + SettingManager.IniFileName, SettingManager.IniFileName)) return false;
-				}
-				// If XInput file doesn't exists.
-				var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
-				var embeddedDllVersion = EngineHelper.GetEmbeddedDllVersion(architecture);
-				var file = EngineHelper.GetDefaultDll();
-				// If XInput DLL was not found then...
-				if (file == null)
-				{
-					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-					if (!CreateFile(EngineHelper.GetXInputResoureceName(), xFile)) return false;
-				}
-				else
-				{
-					bool byMicrosoft;
-					var dllVersion = EngineHelper.GetDllVersion(file.Name, out byMicrosoft);
-					// If file on the disk is older then...
-					if (dllVersion < embeddedDllVersion)
-					{
-						// Offer upgrade.
-						CreateFile(EngineHelper.GetXInputResoureceName(), file.Name, dllVersion, embeddedDllVersion);
-					}
-					var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(file.Name);
-					if (architecture != xiCurrentArchitecture)
-					{
-						// Offer upgrade.
-						CreateFile(EngineHelper.GetXInputResoureceName(), file.Name, xiCurrentArchitecture, architecture);
-						return true;
-					}
-
-				}
-			}
-			// Can't run without INI.
-			if (!File.Exists(SettingManager.IniFileName))
-			{
-				var form = new MessageBoxForm();
-				form.StartPosition = FormStartPosition.CenterParent;
-				form.ShowForm(
-				string.Format("Configuration file '{0}' is required for application to run!", SettingManager.IniFileName),
-				"Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				this.Close();
-				return false;
-			}
-			// If temp file exist then.
-			FileInfo iniTmp = new FileInfo(SettingManager.TmpFileName);
-			if (iniTmp.Exists)
-			{
-				// It means that application crashed. Restore INI from temp.
-				if (!AppHelper.CopyFile(iniTmp.FullName, SettingManager.IniFileName)) return false;
-			}
-			else
-			{
-				// Create temp file to store original settings.
-				if (!AppHelper.CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName)) return false;
-			}
-			// Set status labels.
-			StatusIsAdminLabel.Text = WinAPI.IsVista
-				? string.Format("Elevated: {0}", WinAPI.IsElevated())
-				: "";
-			StatusIniLabel.Text = SettingManager.IniFileName;
-			return true;
-		}
 
 		void CheckEncoding(string path)
 		{

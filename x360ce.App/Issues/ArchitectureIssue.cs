@@ -58,7 +58,6 @@ namespace x360ce.App.Issues
 
 		ProcessorArchitecture _architecture;
 
-
 		public override void Fix()
 		{
 			if (_architecture == ProcessorArchitecture.X86)

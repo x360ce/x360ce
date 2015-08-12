@@ -84,24 +84,44 @@ namespace x360ce.App
 					IssueList.Add(new MdkIssue());
 					IssueList.Add(new ArchitectureIssue());
 					IssueList.Add(new IniFileIssue());
-                }
+					IssueList.Add(new DllFileIssue());
+				}
 			}
 			foreach (var issue in IssueList)
 			{
 				issue.Check();
 				UpdateWarning(issue);
-            }
+			}
 			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
 			{
 				if (Warnings.Count > 0 && !Visible && !IgnoreAll)
 				{
 
-					StartPosition = FormStartPosition.CenterScreen;
-					ShowDialog(MainForm.Current);
+					StartPosition = FormStartPosition.CenterParent;
+					var result = ShowDialog(MainForm.Current);
+					// If critical issues remaining then...
+					if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
+					{
+						// Close application.
+						MainForm.Current.Close();
+					}
+					else
+					{
+						var update2 = MainForm.Current.update2Enabled;
+						if (!update2.HasValue)
+						{
+							MainForm.Current.update2Enabled = true;
+						}
+					}
 				}
 				else if (Warnings.Count == 0 && Visible)
 				{
 					DialogResult = DialogResult.OK;
+					var update2 = MainForm.Current.update2Enabled;
+                    if (!update2.HasValue)
+					{
+						MainForm.Current.update2Enabled = true;
+					}
 				}
 			});
 		}
@@ -155,6 +175,39 @@ namespace x360ce.App
 		{
 			IgnoreAll = true;
 			DialogResult = DialogResult.Cancel;
+		}
+
+		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			if (e.RowIndex == -1) return;
+			var grid = (DataGridView)sender;
+			var row = grid.Rows[e.RowIndex];
+			var column = grid.Columns[SeverityColumn.Name];
+			var item = (WarningItem)row.DataBoundItem;
+			if (e.ColumnIndex == grid.Columns[SeverityColumn.Name].Index)
+			{
+				switch (item.Severity)
+				{
+					case IssueSeverity.None:
+						e.Value = null;
+						break;
+					case IssueSeverity.Low:
+						e.Value = Properties.Resources.MessageBoxIcon_Information_32x32;
+						break;
+					case IssueSeverity.Important:
+						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
+                        break;
+					case IssueSeverity.Moderate:
+						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
+						break;
+					case IssueSeverity.Critical:
+						e.Value = Properties.Resources.MessageBoxIcon_Error_32x32;
+						break;
+					default:
+						break;
+				}
+
+			}
 		}
 	}
 

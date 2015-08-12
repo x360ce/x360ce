@@ -62,41 +62,40 @@ namespace x360ce.App
 		}
 
 
-
-		/// <summary></summary>
-		/// <returns>True if file exists.</returns>
-		public static bool CreateDllFile(bool create, string file)
-		{
-			if (create)
-			{
-				// If file don't exist exists then...
-				var present = EngineHelper.GetDefaultDll();
-				if (present == null)
-				{
-					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-					MainForm.Current.CreateFile(EngineHelper.GetXInputResoureceName(), xFile);
-				}
-				else if (!System.IO.File.Exists(file))
-				{
-					present.CopyTo(file, true);
-				}
-			}
-			else
-			{
-				if (System.IO.File.Exists(file))
-				{
-					try
-					{
-						System.IO.File.Delete(file);
-					}
-					catch (Exception) { }
-				}
-			}
-			return System.IO.File.Exists(file);
-		}
+		///// <summary></summary>
+		///// <returns>True if file exists.</returns>
+		//public static bool CreateDllFile(bool create, string file)
+		//{
+		//	if (create)
+		//	{
+		//		// If file don't exist exists then...
+		//		var present = EngineHelper.GetDefaultDll();
+		//		if (present == null)
+		//		{
+		//			var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
+		//			var resourceName = EngineHelper.GetXInputResoureceName();
+		//                  AppHelper.WriteFile(resourceName, xFile);
+		//		}
+		//		else if (!File.Exists(file))
+		//		{
+		//			present.CopyTo(file, true);
+		//		}
+		//	}
+		//	else
+		//	{
+		//		if (File.Exists(file))
+		//		{
+		//			try
+		//			{
+		//				File.Delete(file);
+		//			}
+		//			catch (Exception) { }
+		//		}
+		//	}
+		//	return File.Exists(file);
+		//}
 
 		#endregion
-
 
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{

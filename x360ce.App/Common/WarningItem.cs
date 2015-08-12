@@ -45,6 +45,8 @@ namespace x360ce.App
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		internal object checkLock = new object();
+
 		private void NotifyPropertyChanged(string propertyName = "")
 		{
 			var ev = PropertyChanged;
