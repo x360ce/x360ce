@@ -814,11 +814,11 @@ namespace x360ce.App
 		/// Check settings.
 		/// </summary>
 		/// <returns>True if settings changed.</returns>
-		public bool CheckSettings(List<DeviceInstance> diInstances, List<DeviceInstance> diInstancesOld)
+		public bool CheckSettings(DeviceInstance[] diInstances, DeviceInstance[] diInstancesOld)
 		{
 			var updated = false;
 			var ini2 = new Ini(IniFileName);
-			var oldCount = diInstancesOld.Count;
+			var oldCount = diInstancesOld.Length;
 			for (int i = 0; i < 4; i++)
 			{
 				var pad = string.Format("PAD{0}", i + 1);
@@ -833,7 +833,8 @@ namespace x360ce.App
 					string sectionName = null;
 					if (ContainsInstanceSection(ig, IniFileName, out sectionName))
 					{
-						var samePosition = i < oldCount && diInstancesOld[i].InstanceGuid.Equals(ig);
+						var diOld = diInstancesOld[i];
+                        var samePosition = diOld != null && diOld.InstanceGuid.Equals(ig);
 						// Load settings.
 						if (!samePosition)
 						{

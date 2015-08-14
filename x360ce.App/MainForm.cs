@@ -40,8 +40,8 @@ namespace x360ce.App
 			}
 		}
 
-		public Controls.AboutControl ControlAbout;
-		public Controls.PadControl[] ControlPads;
+		public AboutControl ControlAbout;
+		public PadControl[] ControlPads;
 		public TabPage[] ControlPages;
 
 		public System.Timers.Timer UpdateTimer;
@@ -112,10 +112,10 @@ namespace x360ce.App
 		{
 			if (!WinAPI.IsVista)
 			{
-				System.IO.File.Copy(source, dest);
+				File.Copy(source, dest);
 				return;
 			}
-			var di = new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(dest));
+			var di = new DirectoryInfo(System.IO.Path.GetDirectoryName(dest));
 			var security = di.GetAccessControl();
 			var fi = new FileInfo(dest);
 			var fileSecurity = fi.GetAccessControl();
@@ -165,7 +165,7 @@ namespace x360ce.App
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
-				if (e.KeyCode == System.Windows.Forms.Keys.Escape)
+				if (e.KeyCode == Keys.Escape)
 				{
 					var recordingWasStopped = ControlPads[i].StopRecording();
 					if (recordingWasStopped)
@@ -190,8 +190,8 @@ namespace x360ce.App
 		{
 			// exit if "Presets:" or "Embedded:".
 			if (name.Contains(":")) return;
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
-			var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
+			var prefix = Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
+			var ext = Path.GetExtension(SettingManager.IniFileName);
 			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
 			var resource = EngineHelper.GetResource("Presets." + resourceName);
 			// If internal preset was found.
@@ -199,16 +199,16 @@ namespace x360ce.App
 			{
 				// Export file.
 				var sr = new StreamReader(resource);
-				System.IO.File.WriteAllText(resourceName, sr.ReadToEnd());
+				File.WriteAllText(resourceName, sr.ReadToEnd());
 			}
 			SuspendEvents();
-			// preset will be stored in inside [PAD1] section;
+			// Preset will be stored in inside [PAD1] section;
 			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", index);
 			ResumeEvents();
 			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSettings()) NotifySettingsChange();
 			// remove file if it was from resource.
-			if (resource != null) System.IO.File.Delete(resourceName);
+			if (resource != null) File.Delete(resourceName);
 			//CleanStatusTimer.Start();
 		}
 
@@ -326,7 +326,7 @@ namespace x360ce.App
 			// Save settings to INI file.
 			SettingManager.Current.SaveSettings();
 			// Overwrite Temp file.
-			var ini = new System.IO.FileInfo(SettingManager.IniFileName);
+			var ini = new FileInfo(SettingManager.IniFileName);
 			ini.CopyTo(SettingManager.TmpFileName, true);
 			StatusTimerLabel.Text = "Settings saved";
 			UpdateTimer.Start();
@@ -386,16 +386,16 @@ namespace x360ce.App
 					"Do you want to save changes you made to configuration?",
 					"Save Changes?",
 					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-					if (result == System.Windows.Forms.DialogResult.Yes)
+					if (result == DialogResult.Yes)
 					{
 						// Do nothing since INI contains latest updates.
 					}
-					else if (result == System.Windows.Forms.DialogResult.No)
+					else if (result == DialogResult.No)
 					{
 						// Rename temp to INI.
 						tmp.CopyTo(SettingManager.IniFileName, true);
 					}
-					else if (result == System.Windows.Forms.DialogResult.Cancel)
+					else if (result == DialogResult.Cancel)
 					{
 						e.Cancel = true;
 						return;
@@ -408,27 +408,10 @@ namespace x360ce.App
 
 		#region Timer
 
+		DeviceInstance[] diInstancesOld = new DeviceInstance[4];
+		DeviceInstance[] diInstances = new DeviceInstance[4];
 
-		List<DeviceInstance> _diInstancesOld;
-		List<DeviceInstance> diInstancesOld
-		{
-			get { return _diInstancesOld = _diInstancesOld ?? new List<DeviceInstance>(); }
-			set { _diInstancesOld = value; }
-		}
-
-		List<DeviceInstance> _diInstances;
-		List<DeviceInstance> diInstances
-		{
-			get { return _diInstances = _diInstances ?? new List<DeviceInstance>(); }
-			set { _diInstances = value; }
-		}
-
-		List<Joystick> _diDevices;
-		List<Joystick> diDevices
-		{
-			get { return _diDevices = _diDevices ?? new List<Joystick>(); }
-			set { _diDevices = value; }
-		}
+		Joystick[] diDevices = new Joystick[4];
 
 		int _diCount = -1;
 
@@ -437,7 +420,10 @@ namespace x360ce.App
 
 		public DirectInput Manager = new DirectInput();
 
-		IList<DeviceInstance> GetDevices()
+		/// <summary>
+		/// Get array[4] of direct input devices.
+		/// </summary>
+		DeviceInstance[] GetDevices()
 		{
 			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToArray();
 			var orderedDevices = new DeviceInstance[4];
@@ -473,7 +459,7 @@ namespace x360ce.App
 					}
 				}
 			}
-			return orderedDevices.ToList();
+			return orderedDevices;
 		}
 
 
@@ -485,12 +471,12 @@ namespace x360ce.App
 			// If you encounter "LoaderLock was detected" Exception when debugging then:
 			// Make sure that you have reference to Microsoft.Directx.dll. 
 			bool instancesChanged = false;
-			IList<DeviceInstance> devices = null;
+			DeviceInstance[] devices = null;
 			//var types = DeviceType.Driving | DeviceType.Flight | DeviceType.Gamepad | DeviceType.Joystick | DeviceType.FirstPerson;
 			if (forceRecountDevices)
 			{
 				devices = GetDevices();
-				deviceCount = devices.Count;
+				deviceCount = devices.Count(x => x != null);
 				forceRecountDevices = false;
 			}
 			//Populate All devices
@@ -500,7 +486,7 @@ namespace x360ce.App
 				if (devices == null) devices = GetDevices();
 				var instances = devices;
 				// Dispose from previous list of devices.
-				for (int i = 0; i < diDevices.Count; i++)
+				for (int i = 0; i < 4; i++)
 				{
 					if (diDevices[i] != null)
 					{
@@ -509,30 +495,22 @@ namespace x360ce.App
 						diDevices[i].Dispose();
 					}
 				}
-				diDevices.Clear();
 				// Create new list of devices.
-				for (int i = 0; i < instances.Count; i++)
+				for (int i = 0; i < 4; i++)
 				{
-					if (instances[i] == null)
-					{
-						diDevices.Add(null);
-					}
-					else
-					{
-						var ig = instances[i].InstanceGuid;
-						var device = new Joystick(Manager, ig);
-						//device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-						//device.Acquire();
-						diDevices.Add(device);
-					}
+					diDevices[i] = instances[i] == null
+						? null
+						: new Joystick(Manager, instances[i].InstanceGuid);
 				}
 				SettingsDatabasePanel.BindDevices(instances);
 				SettingsDatabasePanel.BindFiles();
-				// Assign new list of instances.
-				diInstancesOld.Clear();
-				diInstancesOld.AddRange(diInstances.ToArray());
-				diInstances.Clear();
-				diInstances.AddRange(instances.ToArray());
+				for (int i = 0; i < 4; i++)
+				{
+					// Backup old instance.
+					diInstancesOld[i] = diInstances[i];
+					// Assign new instance.
+					diInstances[i] = instances[i];
+				}
 				instancesChanged = true;
 			}
 			// Return true if instances changed.
@@ -573,7 +551,7 @@ namespace x360ce.App
 					update2Enabled = false;
 					UpdateForm2();
 					update3Enabled = true;
-                }
+				}
 				if (update3Enabled)
 				{
 					UpdateForm3();
@@ -626,7 +604,7 @@ namespace x360ce.App
 			// Show status values.
 			MainStatusStrip.Visible = true;
 			// Load PAD controls.
-			ControlPads = new Controls.PadControl[4];
+			ControlPads = new PadControl[4];
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				ControlPads[i] = new Controls.PadControl(i);
@@ -640,7 +618,7 @@ namespace x360ce.App
 			// Allow events after PAD control are loaded.
 			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// Load about control.
-			ControlAbout = new Controls.AboutControl();
+			ControlAbout = new AboutControl();
 			ControlAbout.Dock = DockStyle.Fill;
 			AboutTabPage.Controls.Add(ControlAbout);
 			// Update settings map.
@@ -657,7 +635,7 @@ namespace x360ce.App
 			for (int i = 0; i < 4; i++)
 			{
 				var currentPadControl = ControlPads[i];
-				var currentDevice = i < diDevices.Count ? diDevices[i] : null;
+				var currentDevice = diDevices[i];
 				// If current device is empty then..
 				if (currentDevice == null)
 				{
@@ -692,7 +670,7 @@ namespace x360ce.App
 				for (int i = 0; i < 4; i++)
 				{
 					// DInput instance is ON.
-					var diOn = i < diInstances.Count;
+					var diOn = diInstances[i] != null;
 					// XInput instance is ON.
 					//XInput.Controllers[i].PollState();
 					var xiOn = false;
@@ -848,13 +826,13 @@ namespace x360ce.App
 
 		void CheckEncoding(string path)
 		{
-			if (!System.IO.File.Exists(path)) return;
+			if (!File.Exists(path)) return;
 			var sr = new StreamReader(path, true);
 			var content = sr.ReadToEnd();
 			sr.Close();
 			if (sr.CurrentEncoding != System.Text.Encoding.Unicode)
 			{
-				System.IO.File.WriteAllText(path, content, System.Text.Encoding.Unicode);
+				File.WriteAllText(path, content, System.Text.Encoding.Unicode);
 			}
 		}
 
@@ -887,7 +865,7 @@ namespace x360ce.App
 			form.StartPosition = FormStartPosition.CenterParent;
 			var oldDesc = EngineHelper.GetProcessorArchitectureDescription(oldArchitecture);
 			var newDesc = EngineHelper.GetProcessorArchitectureDescription(newArchitecture);
-			var fileName = new System.IO.FileInfo(destinationFileName).Name;
+			var fileName = new FileInfo(destinationFileName).Name;
 			answer = form.ShowForm(
 				string.Format("You are running {2} application but {0} on the disk was built for {1} architecture.\r\n\r\nDo you want to replace {0} file with {2} version?", fileName, oldDesc, newDesc),
 				"Processor architecture mismatch.",
@@ -905,7 +883,7 @@ namespace x360ce.App
 			DialogResult answer;
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var fileName = new System.IO.FileInfo(destinationFileName).FullName;
+			var fileName = new FileInfo(destinationFileName).FullName;
 			if (newVersion == null)
 			{
 				answer = form.ShowForm(
@@ -991,7 +969,7 @@ namespace x360ce.App
 			// If this is not the first instance then...
 			if (!firsInstance)
 			{
-				// Brodcast a message with parameters to another instance.
+				// Broadcast a message with parameters to another instance.
 				var recipients = (int)BSM.BSM_APPLICATIONS;
 				var flags = BSF.BSF_IGNORECURRENTTASK | BSF.BSF_POSTMESSAGE;
 				var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out error);
@@ -1000,12 +978,12 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// NOTE you must be careful with this method. This is handeling all the
-		/// windows messages that are coming to the form...
+		/// NOTE: you must be careful with this method, because this method is responsible for all the
+		/// windows messages that are coming to the form.
 		/// </summary>
 		/// <param name="m"></param>
 		/// <remarks>This overrides the windows messaging processing</remarks>
-		protected override void DefWndProc(ref System.Windows.Forms.Message m)
+		protected override void DefWndProc(ref Message m)
 		{
 			// If message value was found then...
 			if (m.Msg == _WindowMessage)

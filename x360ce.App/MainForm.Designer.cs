@@ -28,7 +28,7 @@ namespace x360ce.App
 			this.OptionsTabPage = new System.Windows.Forms.TabPage();
 			this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
 			this.GameSettingsTabPage = new System.Windows.Forms.TabPage();
-			this.programsControl1 = new x360ce.App.Controls.GameSettingsUserControl();
+			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
 			this.ControllerSettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
@@ -97,7 +97,7 @@ namespace x360ce.App
 			this.Pad2TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
-			this.Pad2TabPage.Size = new System.Drawing.Size(666, 504);
+			this.Pad2TabPage.Size = new System.Drawing.Size(666, 514);
 			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "Controller 2";
 			// 
@@ -106,7 +106,7 @@ namespace x360ce.App
 			this.Pad3TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
-			this.Pad3TabPage.Size = new System.Drawing.Size(666, 504);
+			this.Pad3TabPage.Size = new System.Drawing.Size(666, 514);
 			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "Controller 3";
 			// 
@@ -115,7 +115,7 @@ namespace x360ce.App
 			this.Pad4TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
-			this.Pad4TabPage.Size = new System.Drawing.Size(666, 504);
+			this.Pad4TabPage.Size = new System.Drawing.Size(666, 514);
 			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "Controller 4";
 			// 
@@ -125,7 +125,7 @@ namespace x360ce.App
 			this.OptionsTabPage.Controls.Add(this.OptionsPanel);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
-			this.OptionsTabPage.Size = new System.Drawing.Size(666, 504);
+			this.OptionsTabPage.Size = new System.Drawing.Size(666, 514);
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
@@ -134,27 +134,27 @@ namespace x360ce.App
 			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
 			this.OptionsPanel.Name = "OptionsPanel";
-			this.OptionsPanel.Size = new System.Drawing.Size(666, 504);
+			this.OptionsPanel.Size = new System.Drawing.Size(666, 514);
 			this.OptionsPanel.TabIndex = 30;
 			// 
 			// GameSettingsTabPage
 			// 
 			this.GameSettingsTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.GameSettingsTabPage.Controls.Add(this.programsControl1);
+			this.GameSettingsTabPage.Controls.Add(this.GameSettingsPanel);
 			this.GameSettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.GameSettingsTabPage.Name = "GameSettingsTabPage";
 			this.GameSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.GameSettingsTabPage.Size = new System.Drawing.Size(666, 504);
+			this.GameSettingsTabPage.Size = new System.Drawing.Size(666, 514);
 			this.GameSettingsTabPage.TabIndex = 2;
 			this.GameSettingsTabPage.Text = "Game Settings";
 			// 
-			// programsControl1
+			// GameSettingsPanel
 			// 
-			this.programsControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.programsControl1.Location = new System.Drawing.Point(3, 3);
-			this.programsControl1.Name = "programsControl1";
-			this.programsControl1.Size = new System.Drawing.Size(660, 498);
-			this.programsControl1.TabIndex = 1;
+			this.GameSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.GameSettingsPanel.Location = new System.Drawing.Point(3, 3);
+			this.GameSettingsPanel.Name = "GameSettingsPanel";
+			this.GameSettingsPanel.Size = new System.Drawing.Size(660, 508);
+			this.GameSettingsPanel.TabIndex = 1;
 			// 
 			// ControllerSettingsTabPage
 			// 
@@ -162,7 +162,7 @@ namespace x360ce.App
 			this.ControllerSettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.ControllerSettingsTabPage.Name = "ControllerSettingsTabPage";
 			this.ControllerSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 504);
+			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 514);
 			this.ControllerSettingsTabPage.TabIndex = 1;
 			this.ControllerSettingsTabPage.Text = "Controller Settings";
 			// 
@@ -171,7 +171,7 @@ namespace x360ce.App
 			this.SettingsDatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsDatabasePanel.Location = new System.Drawing.Point(3, 3);
 			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
-			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 498);
+			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 508);
 			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
 			// HelpTabPage
@@ -179,7 +179,7 @@ namespace x360ce.App
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
 			this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
 			this.HelpTabPage.Name = "HelpTabPage";
-			this.HelpTabPage.Size = new System.Drawing.Size(666, 504);
+			this.HelpTabPage.Size = new System.Drawing.Size(666, 514);
 			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
@@ -192,7 +192,7 @@ namespace x360ce.App
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(666, 504);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(666, 514);
 			this.HelpRichTextBox.TabIndex = 0;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -201,7 +201,7 @@ namespace x360ce.App
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
-			this.AboutTabPage.Size = new System.Drawing.Size(666, 504);
+			this.AboutTabPage.Size = new System.Drawing.Size(666, 514);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
@@ -416,9 +416,8 @@ namespace x360ce.App
         public Controls.ControllerSettingsUserControl SettingsDatabasePanel;
         public TabControl MainTabControl;
 		TabPage GameSettingsTabPage;
-        Controls.GameSettingsUserControl programsControl1;
         public Controls.OptionsControl OptionsPanel;
         public ToolTip ToolTip;
-
+		public Controls.GameSettingsUserControl GameSettingsPanel;
 	}
 }

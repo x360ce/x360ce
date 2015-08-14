@@ -115,6 +115,28 @@ namespace x360ce.App
 			}
 		}
 
+		public void ProcessExecutable(string filePath)
+		{
+			var fi = new FileInfo(filePath);
+			if (!fi.Exists) return;
+			// Check if item already exists.
+			var game = Games.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
+			if (game == null)
+			{
+				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+				// Load default settings.
+				var program = Programs.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
+				game.LoadDefault(program);
+				Games.Add(game);
+
+			}
+			else
+			{
+				game.FullPath = fi.FullName;
+			}
+			Save();
+		}
+
 		public void Load()
 		{
 			bool settingsLoaded = false;

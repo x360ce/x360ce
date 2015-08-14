@@ -79,10 +79,10 @@
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
+			this.CloudStoragePanel = new x360ce.App.Controls.CloudStorageUserControl();
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-			this.CloudStoragePanel = new x360ce.App.Controls.CloudStorageUserControl();
 			this.GamesTabControl.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
@@ -687,7 +687,6 @@
 
 		System.Windows.Forms.TabControl GamesTabControl;
 		System.Windows.Forms.TabPage GamesTabPage;
-		System.Windows.Forms.DataGridView GamesDataGridView;
 		private System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
         private System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
@@ -734,5 +733,6 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TabPage CloudTabPage;
 		private CloudStorageUserControl CloudStoragePanel;
+		public System.Windows.Forms.DataGridView GamesDataGridView;
 	}
 }

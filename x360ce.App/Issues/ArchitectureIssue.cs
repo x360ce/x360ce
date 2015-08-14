@@ -18,11 +18,26 @@ namespace x360ce.App.Issues
 			Description = "";
 		}
 
+		// Check file only once.
+		bool CheckFile = true;
+
 		public override void Check()
 		{
 			var architectures = new Dictionary<string, ProcessorArchitecture>();
 			var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
-			var exes = System.IO.Directory.GetFiles(".", "*.exe", System.IO.SearchOption.TopDirectoryOnly);
+			var exes = Directory.GetFiles(".", "*.exe", SearchOption.TopDirectoryOnly);
+			// Exclude x360ce files.
+			exes = exes.Where(x => !x.ToLower().Contains("x360ce")).ToArray();
+			// If single executable was found then...
+			if (exes.Length == 1 && CheckFile)
+			{
+				CheckFile = false;
+				// Update current settings file.
+				MainForm.Current.Invoke((Action)delegate ()
+				{
+					MainForm.Current.GameSettingsPanel.ProcessExecutable(exes[0]);
+				});
+			}
 			foreach (var exe in exes)
 			{
 				var pa = Engine.Win32.PEReader.GetProcessorArchitecture(exe);
@@ -30,10 +45,10 @@ namespace x360ce.App.Issues
 			}
 			var fi = new FileInfo(Application.ExecutablePath);
 			// Select all architectures of executables.
-			var archs = architectures.Where(x => !x.Key.ToLower().Contains("x360ce")).Select(x => x.Value).ToArray();
+			var archs = architectures.Select(x => x.Value).ToArray();
 			var x86Count = archs.Count(x => x == ProcessorArchitecture.X86);
 			var x64Count = archs.Count(x => x == ProcessorArchitecture.Amd64);
-			// If executables are 32-bit, but this program is 64-bit then warn user.
+			// If executables are 32-bit, but this program is 64-bit then...
 			if (x86Count > 0 && x64Count == 0 && architecture == ProcessorArchitecture.Amd64)
 			{
 				Description = "This folder contains 32-bit game. You should use 32-bit X360CE Application:\r\n" +
@@ -43,7 +58,7 @@ namespace x360ce.App.Issues
 				Severity = IssueSeverity.Moderate;
 				return;
 			}
-			// If executables are 64-bit, but this program is 32-bit then warn user.
+			// If executables are 64-bit, but this program is 32-bit then...
 			if (x64Count > 0 && x86Count == 0 && architecture == ProcessorArchitecture.X86)
 			{
 				Description = "This folder contains 64-bit game. You should use 64-bit X360CE Application:\r\n" +
