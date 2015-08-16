@@ -39,14 +39,10 @@ void ForceFeedback::Shutdown()
 {
 	if ((m_pController->m_useforce) && (!m_pController->m_forcespassthrough) && (m_pController->m_pDevice))
 	{
-		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_SETACTUATORSOFF);
-		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_STOPALL); // DISFFC_RESET or DISFFC_STOPALL
-		m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET); // DISFFC_RESET or DISFFC_STOPALL
-	}
-
-	for (auto it = m_effects.begin(); it != m_effects.end(); ++it)
-	{
-		(*it)->Release();
+		/* CRASH CRASH CRASH */
+		//m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_SETACTUATORSOFF);
+		//m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_STOPALL); // DISFFC_RESET or DISFFC_STOPALL
+		//m_pController->m_pDevice->SendForceFeedbackCommand(DISFFC_RESET); // DISFFC_RESET or DISFFC_STOPALL
 	}
 }
 
@@ -69,7 +65,7 @@ BOOL CALLBACK ForceFeedback::EnumEffectsCallback(LPCDIEFFECTINFO di, LPVOID pvRe
 	caps.PeriodicForce = DIEFT_GETTYPE(di->dwEffType) == DIEFT_PERIODIC;
 	caps.RampForce = DIEFT_GETTYPE(di->dwEffType) == DIEFT_RAMPFORCE;
 
-	ffb->SetCaps(caps);
+	ffb->m_Caps = caps;
 	PrintLog("ForceFeedback effect '%s'. IsConstant = %d, IsPeriodic = %d", di->tszName, caps.ConstantForce, caps.PeriodicForce);
 	return DIENUM_CONTINUE;
 }
@@ -298,7 +294,7 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 		else
 		{
 			PrintLog("[PAD%d] CreateEffect succeded effectIndex %d", m_pController->m_user + 1, 1);
-			m_effects.push_back(effectX);
+			m_effects.emplace_back(effectX);
 		}
 		if (m_Axes > 1)
 		{
@@ -313,7 +309,7 @@ bool ForceFeedback::SetDeviceForces(XINPUT_VIBRATION* pVibration, u8 forceType)
 			else
 			{
 				PrintLog("[PAD%d] CreateEffect succeded effectIndex %d", m_pController->m_user + 1, 1);
-				m_effects.push_back(effectY);
+				m_effects.emplace_back(effectY);
 			}
 		}
 	}

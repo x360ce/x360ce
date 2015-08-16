@@ -8,7 +8,7 @@
 #include "ControllerManager.h"
 #include "InputHookManager.h"
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(VLD)
 #include <vld.h> 
 #endif
 
