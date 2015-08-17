@@ -60,7 +60,7 @@ namespace x360ce.App.Controls
 			this.markA.SetResolution(rH, rV);
 			this.markC.SetResolution(rH, rV);
 			this.markR.SetResolution(rH, rV);
-			// Add gamepad typed to ComboBox.
+			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
 			// Add force feedback typed to ComboBox.
@@ -144,7 +144,7 @@ namespace x360ce.App.Controls
 		DirectInputState recordingSnapshot;
 
 		/// <summary>
-		/// Called whhen recording is in progress.
+		/// Called when recording is in progress.
 		/// </summary>
 		/// <param name="state">Current direct input activity.</param>
 		/// <returns>True if recording stopped, otherwise false.</returns>
@@ -161,11 +161,11 @@ namespace x360ce.App.Controls
 				// If recording snapshot was not created yet then...
 				else if (recordingSnapshot == null)
 				{
-					// Make snapshot out of the first state during recordining.
+					// Make snapshot out of the first state during recording.
 					recordingSnapshot = state;
 					return false;
 				}
-				// Get actions by comparing intial snapshot with current state.
+				// Get actions by comparing initial snapshot with current state.
 				var actions = recordingSnapshot.CompareTo(state);
 				string action = null;
 				// Must stop recording if null passed.
@@ -196,7 +196,7 @@ namespace x360ce.App.Controls
 				{
 					Recording = false;
 					RecordingTimer.Stop();
-					// If stop was initiaded before action was recorded then...                    
+					// If stop was initiated before action was recorded then...                    
 					if (string.IsNullOrEmpty(action))
 					{
 						CurrentCbx.Items.Clear();
@@ -205,7 +205,7 @@ namespace x360ce.App.Controls
 					{
 						// If suitable action was recorded then...
 						SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
-						// Save setting and notify if vaue changed.
+						// Save setting and notify if value changed.
 						if (SettingManager.Current.SaveSetting(CurrentCbx)) MainForm.Current.NotifySettingsChange();
 					}
 					CurrentCbx.ForeColor = SystemColors.WindowText;
@@ -234,7 +234,7 @@ namespace x360ce.App.Controls
 		{
 			var cbx = (ComboBox)sender;
 			var oldLeft = cbx.Left;
-			// Move default dropdown away from the screen.
+			// Move default DropDown away from the screen.
 			cbx.Left = -10000;
 			var del = new ComboBoxDropDownDelegate(ComboBoxDropDown);
 			BeginInvoke(del, new object[] { cbx, oldLeft });
@@ -480,7 +480,7 @@ namespace x360ce.App.Controls
 		public int ControllerIndex;
 
 		/// <summary>
-		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
 		Dictionary<string, Control> GetSettingsMap()
 		{
@@ -602,12 +602,14 @@ namespace x360ce.App.Controls
 			bool fullPassThrough = PassThroughCheckBox.Checked;
 			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
 
-			// If full passthrough mode is turned on, changing forces passthrough has no effect.
+			// If full pass-through mode is turned on, changing forces pass-through has no effect.
 			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
 
 			// Pass Through index is enabled if either pass through mode is enabled
 			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
 		}
+
+		Joystick _device;
 
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
@@ -623,7 +625,9 @@ namespace x360ce.App.Controls
 			if (state != null) diState = new DirectInputState(state);
 			StopRecording(diState);
 			var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
+			_device = device;
 			var enable = device != null;
+			AutoPresetButton.Enabled = enable;
 			if (!enable && contains)
 			{
 				PadTabControl.TabPages.Remove(DirectInputTabPage);
@@ -669,7 +673,7 @@ namespace x360ce.App.Controls
 			var nowConnected = IsConnected;
 			gamePadStateIsConnected = IsConnected;
 			gamePadState = state;
-			// If form was disabled and no data is comming then just return.
+			// If form was disabled and no data is coming then just return.
 			if (!wasConnected && !nowConnected) return;
 			// If device connection changed then...
 			if (wasConnected != nowConnected)
@@ -739,7 +743,7 @@ namespace x360ce.App.Controls
 			return (Byte)Math.Round((double)v * (double)Byte.MaxValue);
 		}
 
-		// Use this to reduce flicekring.
+		// Use this to reduce flickering.
 		public void UpdateControl(Control control, string text)
 		{
 			if (control.Text != text) control.Text = text;
@@ -749,7 +753,7 @@ namespace x360ce.App.Controls
 		string cEmpty = "<empty>";
 
 
-		// Function is recreted as soon as new DirectInput Device is available.
+		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(Device device)
 		{
 			DiMenuStrip.Items.Clear();
@@ -840,7 +844,7 @@ namespace x360ce.App.Controls
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			Regex rx = new Regex("^(DPad [0-9]+)$");
-			// If this this DPad parent menu.
+			// If this DPad parent menu.
 			if (rx.IsMatch(item.Text))
 			{
 				if (CurrentCbx == DPadComboBox)
@@ -938,7 +942,7 @@ namespace x360ce.App.Controls
 		public void UpdateForceFeedBack()
 		{
 			if (MainForm.Current.ControllerIndex == -1) return;
-			// Convert 100% trackbar to MotorSpeed's 0 - 65,535 (100%).
+			// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
 			var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F * ushort.MaxValue);
 			var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
@@ -993,6 +997,35 @@ namespace x360ce.App.Controls
 				MainForm.Current.ReloadXinputSettings();
 			}
 		}
+
+		private void AutoPresetButton_Click(object sender, EventArgs e)
+		{
+			var d = _device;
+			if (d == null) return;
+			var text = string.Format("Do you want to fill all Controller {0} settings automatically?", ControllerIndex + 1);
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (result == DialogResult.Yes)
+			{
+				var og = typeof(SharpDX.DirectInput.ObjectGuid);
+				var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
+				List<Guid> guids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
+				List<string> names = guidFileds.Select(x => x.Name).ToList();
+				var objects = _device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.Offset).ToArray();
+				foreach (var o in objects)
+				{
+					// var name = guids.Contains(o.ObjectType) ? names[guids.IndexOf(o.ObjectType)] : o.ObjectType.ToString();
+					//			o.Offset,
+					//			o.ObjectId.InstanceNumber,
+					//			o.Usage,
+					//			o.Name,
+					//			o.Aspect,
+					//			o.ObjectId.Flags,
+				}
+			}
+		}
+
 
 		void SavePresetButton_Click(object sender, EventArgs e)
 		{
@@ -1071,5 +1104,6 @@ namespace x360ce.App.Controls
 			}
 			catch (Exception) { }
 		}
+
 	}
 }

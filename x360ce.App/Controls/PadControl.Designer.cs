@@ -183,6 +183,7 @@
 			this.ClearPresetButton = new System.Windows.Forms.Button();
 			this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
 			this.GameControllersButton = new System.Windows.Forms.Button();
+			this.AutoPresetButton = new System.Windows.Forms.Button();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
 			this.CombineGroupBox.SuspendLayout();
@@ -2073,6 +2074,17 @@
 			this.GameControllersButton.UseVisualStyleBackColor = true;
 			this.GameControllersButton.Click += new System.EventHandler(this.GameControllersButton_Click);
 			// 
+			// AutoPresetButton
+			// 
+			this.AutoPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.AutoPresetButton.Location = new System.Drawing.Point(388, 542);
+			this.AutoPresetButton.Name = "AutoPresetButton";
+			this.AutoPresetButton.Size = new System.Drawing.Size(75, 23);
+			this.AutoPresetButton.TabIndex = 66;
+			this.AutoPresetButton.Text = "&Auto";
+			this.AutoPresetButton.UseVisualStyleBackColor = true;
+			this.AutoPresetButton.Click += new System.EventHandler(this.AutoPresetButton_Click);
+			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2080,6 +2092,7 @@
 			this.Controls.Add(this.SavePresetButton);
 			this.Controls.Add(this.PadTabControl);
 			this.Controls.Add(this.GameControllersButton);
+			this.Controls.Add(this.AutoPresetButton);
 			this.Controls.Add(this.ClearPresetButton);
 			this.Controls.Add(this.ResetPresetButton);
 			this.Name = "PadControl";
@@ -2304,5 +2317,6 @@
 		private AxisToButtonUserControl AxisToDPadDownDeadZonePanel;
 		private AxisToButtonUserControl AxisToDPadUpDeadZonePanel;
 		private System.Windows.Forms.Button GameControllersButton;
+		private System.Windows.Forms.Button AutoPresetButton;
 	}
 }

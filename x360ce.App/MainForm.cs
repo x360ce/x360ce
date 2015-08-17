@@ -425,10 +425,18 @@ namespace x360ce.App
 		/// </summary>
 		DeviceInstance[] GetDevices()
 		{
-			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToArray();
+			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+			// Move gaming wheels to the top index position by default.
+			// Games like GTA need wheel to be first device to work properly.
+			var wheels = devices.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Driving || x.Subtype == (int)DeviceSubType.Wheel).ToArray();
+			foreach (var wheel in wheels)
+			{
+				devices.Remove(wheel);
+				devices.Insert(0, wheel);
+			}
 			var orderedDevices = new DeviceInstance[4];
 			// Assign devices to their positions.
-			for (int d = 0; d < devices.Length; d++)
+			for (int d = 0; d < devices.Count; d++)
 			{
 				var ig = devices[d].InstanceGuid;
 				var section = SettingManager.Current.GetInstanceSection(ig);

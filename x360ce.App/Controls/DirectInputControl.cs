@@ -138,7 +138,7 @@ namespace x360ce.App.Controls
             var slidersCount = objects.Where(x => x.ObjectType.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
             DiCapAxesTextBox.Text = (device.Capabilities.AxeCount - slidersCount).ToString();
             SlidersTextBox.Text = slidersCount.ToString();
-            // Update pid and vid always so they wont be overwritten by load settings.
+            // Update PID and VID always so they wont be overwritten by load settings.
             short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
             short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
             SetValue(DeviceVidTextBox, "0x{0}", vid.ToString("X4"));
@@ -295,7 +295,7 @@ namespace x360ce.App.Controls
         public string DetectDirection(int v)
         {
             // Threshold mark at which action on axis/slider is detected.
-            // If value gets inbetween of specified range then action is recorded.
+            // If value gets in-between of specified range then action is recorded.
             // [       ""           "IH"              "H"           "I"      ]
             // [--[p1]----[p2]--[n1]----[n2]--|--[p3]----[p4]--[n3]----[n4]--]
             // [--    --->          <---             --->          <---      ]
