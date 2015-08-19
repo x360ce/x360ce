@@ -28,7 +28,7 @@ namespace x360ce.App
 
 		#region Public Methods
 		/// <summary>
-		/// Adds an entry in the control-setting map and also generates a tooltip for the setting.
+		/// Adds an entry in the control-setting map and also generates a tool-tip for the setting.
 		/// </summary>
 		/// <param name="sectionName">
 		/// The name of the section.
@@ -60,7 +60,7 @@ namespace x360ce.App
 			var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
 			var desc = (descAttr != null ? descAttr.Description : string.Empty);
 
-			// Set the tooltip
+			// Set the tool-tip
 			// MainForm.Current.ToolTip.SetToolTip(control, desc);
 
 			// Alternative (a little bit less obstructive) way to display help inside yellow header.
@@ -90,7 +90,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Adds an entry in the global control-setting map and also generates a tooltip for the setting.
+		/// Adds an entry in the global control-setting map and also generates a tool-tip for the setting.
 		/// </summary>
 		/// <param name="sectionName">
 		/// The name of the section.
@@ -207,7 +207,7 @@ namespace x360ce.App
 			}
 			else if (control is TextBox)
 			{
-				// if setting is readonly.
+				// if setting is read-only.
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
@@ -284,7 +284,7 @@ namespace x360ce.App
 		/// Read settings from INI file into windows form controls.
 		/// </summary>
 		/// <param name="file">INI file containing settings.</param>
-		/// <param name="iniSection">Read setings from specified section only. Null - read from all sections.</param>
+		/// <param name="iniSection">Read settings from specified section only. Null - read from all sections.</param>
 		public void ReadSettings(string file)
 		{
 			var ini2 = new Ini(file);
@@ -380,7 +380,7 @@ namespace x360ce.App
 			ps.RightThumbUp = ini2.GetValue(padSectionName, SettingName.RightThumbUp);
 			ps.RightTrigger = ini2.GetValue(padSectionName, SettingName.RightTrigger);
 			ps.RightTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.RightTriggerDeadZone);
-			// Axis to button deadzones.
+			// Axis to button dead-zones.
 			ps.ButtonADeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonADeadZone);
 			ps.ButtonBDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonBDeadZone);
 			ps.ButtonBackDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonBackDeadZone);
@@ -546,7 +546,7 @@ namespace x360ce.App
 			foreach (Control control in SettingsMap.Values)
 			{
 				if (
-					// Control is combobox.
+					// Control is ComboBox.
 					control is ComboBox
 					// controls belong to same parent.
 					&& cbx.Parent == control.Parent
@@ -594,7 +594,7 @@ namespace x360ce.App
 			{
 				if (SettingsMap[path] == control)
 				{
-					var r = SaveSetting(ini, path);
+					var r = SaveSetting(ini, path, true);
 					if (r) saved = r;
 					break;
 				}
@@ -602,16 +602,23 @@ namespace x360ce.App
 			return saved;
 		}
 
-		static string GetInstanceSection(int padIndex)
+
+		static Guid GetInstanceGuid(int padIndex)
 		{
 			string pad = string.Format("PAD{0}", padIndex + 1);
 			string guidString = SettingManager.Current.SettingsMap[pad + "\\" + SettingName.InstanceGuid].Text;
 			// If instanceGuid value is not a GUID then exit.
-			if (!EngineHelper.IsGuid(guidString)) return null;
+			if (!EngineHelper.IsGuid(guidString)) return Guid.Empty;
 			Guid ig = new Guid(guidString);
+			return ig;
+		}
+
+		static string GetInstanceSection(int padIndex)
+		{
+			var ig = GetInstanceGuid(padIndex);
 			// If InstanceGuid value is empty then exit.
 			if (ig.Equals(Guid.Empty)) return null;
-			// Save settings to unique Instace section.
+			// Save settings to unique Instance section.
 			return SettingManager.Current.GetInstanceSection(ig);
 		}
 
@@ -642,10 +649,12 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="path">path of parameter (related to actual control)</param>
 		/// <param name="dstIniSection">if not null then section will be different inside INI file than specified in path</param>
-		public bool SaveSetting(Ini ini, string path)
+		public bool SaveSetting(Ini ini, string path, bool single = false)
 		{
 			var control = SettingsMap[path];
+			var section = path.Split('\\')[0];
 			string key = path.Split('\\')[1];
+			var padIndex = SettingName.GetPadIndex(path);
 			string v = string.Empty;
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.DeviceSubType) ||
@@ -674,10 +683,17 @@ namespace x360ce.App
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
 				}
+				// If mapping setting changed then...
+				if (single && key.EndsWith(SettingName.MapToPad))
+				{
+					// Remember device which needs to be restored.
+					MainForm.Current.AutoSelectControllerInstance = GetInstanceGuid(padIndex);
+					MainForm.Current.ControllerIndex = padIndex;
+                }
 			}
 			else if (control is TextBox)
 			{
-				// if setting is readonly.
+				// if setting is read-only.
 				if (key == SettingName.InstanceGuid || key == SettingName.ProductGuid)
 				{
 					v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
@@ -739,8 +755,6 @@ namespace x360ce.App
 			// add comment.
 			//var l = SettingName.MaxNameLength - key.Length + 24;
 			//v = string.Format("{0, -" + l + "} # {1} Default: '{2}'.", v, SettingName.GetDescription(key), SettingName.GetDefaultValue(key));
-			var section = path.Split('\\')[0];
-			var padIndex = SettingName.GetPadIndex(path);
 			// If this is PAD section then
 			if (padIndex > -1)
 			{

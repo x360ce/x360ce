@@ -38,6 +38,16 @@ namespace x360ce.App
 				if (MainTabControl.SelectedTab == Pad4TabPage) newIndex = 3;
 				return newIndex;
 			}
+			set
+			{
+				switch (value)
+				{
+					case 0: MainTabControl.SelectedTab = Pad1TabPage; break;
+					case 1: MainTabControl.SelectedTab = Pad2TabPage; break;
+					case 2: MainTabControl.SelectedTab = Pad3TabPage; break;
+					case 3: MainTabControl.SelectedTab = Pad4TabPage; break;
+				}
+			}
 		}
 
 		public AboutControl ControlAbout;
@@ -229,8 +239,18 @@ namespace x360ce.App
 					if (control is ListBox) ((ListBox)control).SelectedIndexChanged -= new EventHandler(Control_SelectedIndexChanged);
 					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
 					if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
-					if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
-					if (control is ComboBox) control.TextChanged -= new System.EventHandler(this.Control_TextChanged);
+					if (control is ComboBox)
+					{
+						var cbx = (ComboBox)control;
+						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
+						{
+							cbx.SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
+						}
+						else
+						{
+							control.TextChanged -= new EventHandler(this.Control_TextChanged);
+						}
+					}
 					// || control is TextBox
 				}
 				suspended++;
@@ -250,8 +270,18 @@ namespace x360ce.App
 					if (control is ListBox) ((ListBox)control).SelectedIndexChanged += new EventHandler(Control_SelectedIndexChanged);
 					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
 					if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
-					if (control is ComboBox) ((ComboBox)control).SelectedIndexChanged += new EventHandler(this.Control_TextChanged);
-					if (control is ComboBox) control.TextChanged += new System.EventHandler(this.Control_TextChanged);
+					if (control is ComboBox)
+					{
+						var cbx = (ComboBox)control;
+						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
+						{
+							cbx.SelectedIndexChanged += new EventHandler(this.Control_TextChanged);
+						}
+						else
+						{
+							control.TextChanged += new EventHandler(this.Control_TextChanged);
+						}
+					}
 					//  || control is TextBox
 				}
 				resumed++;
@@ -413,10 +443,12 @@ namespace x360ce.App
 
 		Joystick[] diDevices = new Joystick[4];
 
-		int _diCount = -1;
 
 		bool forceRecountDevices = true;
-		int deviceCount = 0;
+
+		string deviceInstancesOld = "";
+		string deviceInstancesNew = "";
+		public Guid AutoSelectControllerInstance = Guid.Empty;
 
 		public DirectInput Manager = new DirectInput();
 
@@ -474,23 +506,24 @@ namespace x360ce.App
 		/// <summary>
 		/// Access this only inside Timer_Click!
 		/// </summary>
-		bool RefreshCurrentInstances()
+		bool RefreshCurrentInstances(bool forceReload = false)
 		{
 			// If you encounter "LoaderLock was detected" Exception when debugging then:
 			// Make sure that you have reference to Microsoft.Directx.dll. 
 			bool instancesChanged = false;
 			DeviceInstance[] devices = null;
 			//var types = DeviceType.Driving | DeviceType.Flight | DeviceType.Gamepad | DeviceType.Joystick | DeviceType.FirstPerson;
-			if (forceRecountDevices)
+			if (forceRecountDevices || forceReload)
 			{
 				devices = GetDevices();
-				deviceCount = devices.Count(x => x != null);
+				// Sore device instances and their order here.
+				deviceInstancesNew = string.Join(",", devices.Select(x => x == null ? "" : x.InstanceGuid.ToString()));
 				forceRecountDevices = false;
 			}
 			//Populate All devices
-			if (deviceCount != _diCount)
+			if (deviceInstancesNew != deviceInstancesOld)
 			{
-				_diCount = deviceCount;
+				deviceInstancesOld = deviceInstancesNew;
 				if (devices == null) devices = GetDevices();
 				var instances = devices;
 				// Dispose from previous list of devices.
@@ -638,7 +671,7 @@ namespace x360ce.App
 
 		void UpdateForm3()
 		{
-			bool instancesChanged = RefreshCurrentInstances();
+			bool instancesChanged = RefreshCurrentInstances(settingsChanged);
 			// Load direct input data.
 			for (int i = 0; i < 4; i++)
 			{
@@ -730,6 +763,7 @@ namespace x360ce.App
 					}
 					// Slow: Reload whole x360ce.dll.
 					Exception error;
+					//forceRecountDevices = true;
 					XInput.ReLoadLibrary(dllInfo.Name, out error);
 					if (!XInput.IsLoaded)
 					{

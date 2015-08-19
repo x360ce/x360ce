@@ -354,6 +354,6 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(DiEffectsDataGridView);
         }
 
-    }
+	}
 
 }

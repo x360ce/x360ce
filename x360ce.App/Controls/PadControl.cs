@@ -625,6 +625,7 @@ namespace x360ce.App.Controls
 			if (state != null) diState = new DirectInputState(state);
 			StopRecording(diState);
 			var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
+			var focusTab = false;
 			_device = device;
 			var enable = device != null;
 			AutoPresetButton.Enabled = enable;
@@ -635,6 +636,12 @@ namespace x360ce.App.Controls
 			if (enable && !contains)
 			{
 				PadTabControl.TabPages.Add(DirectInputTabPage);
+				var controllerInstance = MainForm.Current.AutoSelectControllerInstance;
+				if (controllerInstance != Guid.Empty && controllerInstance == device.Information.InstanceGuid)
+				{
+					MainForm.Current.AutoSelectControllerInstance = Guid.Empty;
+					focusTab = true;
+				}
 			}
 			ForceFeedbackGroupBox.Enabled = enable;
 			TriggersGroupBox.Enabled = enable;
@@ -659,6 +666,13 @@ namespace x360ce.App.Controls
 				}
 				instanceGuid = !enable ? Guid.Empty : iGuid;
 				ResetDiMenuStrip(device);
+			}
+			if (focusTab)
+			{
+				PadTabControl.SelectedTab = DirectInputTabPage;
+				Application.DoEvents();
+				var padTabPage = (TabPage)this.Parent;
+				((TabControl)padTabPage.Parent).SelectedTab = padTabPage;
 			}
 		}
 

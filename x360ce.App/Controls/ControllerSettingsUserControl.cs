@@ -94,6 +94,7 @@ namespace x360ce.App.Controls
 				bool isFound = false;
 				foreach (var oldDevice in _devices)
 				{
+					if (oldDevice == null) continue;
 					if (newDevice.InstanceGuid.Equals(oldDevice.InstanceGuid))
 					{
 						isFound = true;
