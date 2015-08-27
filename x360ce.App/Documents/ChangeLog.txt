@@ -1,5 +1,6 @@
-﻿v3.2.8.75 (2015-08-27)
+﻿v3.2.8.76 (2015-08-27)
 - Fix: Crashes on invalid permissions.
+- Update: Changed project link to GitHub on About page.
 
 v3.2.8.74 (2015-08-27)
 - Fix: x360ce.vshost.exe was appearing in the list on Controller Settings form.

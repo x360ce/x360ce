@@ -177,19 +177,19 @@
 			this.GoogleProjectLabel.AutoSize = true;
 			this.GoogleProjectLabel.Location = new System.Drawing.Point(351, 66);
 			this.GoogleProjectLabel.Name = "GoogleProjectLabel";
-			this.GoogleProjectLabel.Size = new System.Drawing.Size(80, 13);
+			this.GoogleProjectLabel.Size = new System.Drawing.Size(79, 13);
 			this.GoogleProjectLabel.TabIndex = 0;
-			this.GoogleProjectLabel.Text = "Google Project:";
+			this.GoogleProjectLabel.Text = "GitHub Project:";
 			// 
 			// GoogleProjectLinkLabel
 			// 
 			this.GoogleProjectLinkLabel.AutoSize = true;
 			this.GoogleProjectLinkLabel.Location = new System.Drawing.Point(437, 66);
 			this.GoogleProjectLinkLabel.Name = "GoogleProjectLinkLabel";
-			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(171, 13);
+			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(175, 13);
 			this.GoogleProjectLinkLabel.TabIndex = 0;
 			this.GoogleProjectLinkLabel.TabStop = true;
-			this.GoogleProjectLinkLabel.Text = "http://code.google.com/p/x360ce";
+			this.GoogleProjectLinkLabel.Text = "https://github.com/x360ce/x360ce";
 			this.GoogleProjectLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
 			// 
 			// AboutTabControl
