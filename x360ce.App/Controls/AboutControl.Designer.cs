@@ -41,8 +41,8 @@
 			this.AboutVirusLabel = new System.Windows.Forms.Label();
 			this.AboutProductLabel = new System.Windows.Forms.Label();
 			this.ProductPictureBox = new System.Windows.Forms.PictureBox();
-			this.GoogleProjectLabel = new System.Windows.Forms.Label();
-			this.GoogleProjectLinkLabel = new System.Windows.Forms.LinkLabel();
+			this.GithubProjectLabel = new System.Windows.Forms.Label();
+			this.GithubProjectLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.AboutTabControl = new System.Windows.Forms.TabControl();
 			this.ChangesTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTabPage = new System.Windows.Forms.TabPage();
@@ -172,25 +172,25 @@
 			this.ProductPictureBox.TabIndex = 0;
 			this.ProductPictureBox.TabStop = false;
 			// 
-			// GoogleProjectLabel
+			// GithubProjectLabel
 			// 
-			this.GoogleProjectLabel.AutoSize = true;
-			this.GoogleProjectLabel.Location = new System.Drawing.Point(351, 66);
-			this.GoogleProjectLabel.Name = "GoogleProjectLabel";
-			this.GoogleProjectLabel.Size = new System.Drawing.Size(80, 13);
-			this.GoogleProjectLabel.TabIndex = 0;
-			this.GoogleProjectLabel.Text = "Google Project:";
+			this.GithubProjectLabel.AutoSize = true;
+			this.GithubProjectLabel.Location = new System.Drawing.Point(351, 66);
+			this.GithubProjectLabel.Name = "GithubProjectLabel";
+			this.GithubProjectLabel.Size = new System.Drawing.Size(77, 13);
+			this.GithubProjectLabel.TabIndex = 0;
+			this.GithubProjectLabel.Text = "Github Project:";
 			// 
-			// GoogleProjectLinkLabel
+			// GithubProjectLinkLabel
 			// 
-			this.GoogleProjectLinkLabel.AutoSize = true;
-			this.GoogleProjectLinkLabel.Location = new System.Drawing.Point(437, 66);
-			this.GoogleProjectLinkLabel.Name = "GoogleProjectLinkLabel";
-			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(171, 13);
-			this.GoogleProjectLinkLabel.TabIndex = 0;
-			this.GoogleProjectLinkLabel.TabStop = true;
-			this.GoogleProjectLinkLabel.Text = "http://code.google.com/p/x360ce";
-			this.GoogleProjectLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+			this.GithubProjectLinkLabel.AutoSize = true;
+			this.GithubProjectLinkLabel.Location = new System.Drawing.Point(437, 66);
+			this.GithubProjectLinkLabel.Name = "GithubProjectLinkLabel";
+			this.GithubProjectLinkLabel.Size = new System.Drawing.Size(171, 13);
+			this.GithubProjectLinkLabel.TabIndex = 0;
+			this.GithubProjectLinkLabel.TabStop = true;
+			this.GithubProjectLinkLabel.Text = "https://github.com/x360ce/x360ce";
+			this.GithubProjectLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
 			// 
 			// AboutTabControl
 			// 
@@ -246,10 +246,10 @@
 			this.Controls.Add(this.AboutWikiLabel);
 			this.Controls.Add(this.AboutTocaEditLinkLabel);
 			this.Controls.Add(this.AboutTocaLabel);
-			this.Controls.Add(this.GoogleProjectLinkLabel);
+			this.Controls.Add(this.GithubProjectLinkLabel);
 			this.Controls.Add(this.AboutJocysLinkLabel);
 			this.Controls.Add(this.AboutVirusLinkLabel);
-			this.Controls.Add(this.GoogleProjectLabel);
+			this.Controls.Add(this.GithubProjectLabel);
 			this.Controls.Add(this.AboutJocysLabel);
 			this.Controls.Add(this.AboutVirusLabel);
 			this.Controls.Add(this.AboutProductLabel);
@@ -282,8 +282,8 @@
 		System.Windows.Forms.Label AboutVirusLabel;
 		System.Windows.Forms.Label AboutProductLabel;
 		System.Windows.Forms.PictureBox ProductPictureBox;
-		System.Windows.Forms.Label GoogleProjectLabel;
-		System.Windows.Forms.LinkLabel GoogleProjectLinkLabel;
+		System.Windows.Forms.Label GithubProjectLabel;
+		System.Windows.Forms.LinkLabel GithubProjectLinkLabel;
 		private System.Windows.Forms.TabControl AboutTabControl;
 		private System.Windows.Forms.TabPage ChangesTabPage;
 		private System.Windows.Forms.TabPage LicenseTabPage;
