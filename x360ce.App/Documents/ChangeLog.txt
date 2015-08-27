@@ -1,7 +1,8 @@
-﻿v3.2.7.72 (2015-08-17)
+﻿v3.2.8.73 (2015-08-27)
 - Fix: x360ce.vshost.exe was appearing in the list on Controller Settings form.
 - Fix: PAD control indicator icons show wrong status colours.
 - New: Game executable will be added to game settings automatically if only one in the folder.
+- New: Option to exclude Direct Input Supplemental devices (steckdev).
 - Update: Issue resolver classes updated.
 - Update: Move gaming wheels to the top index position by default.
 

@@ -37,7 +37,7 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
 		public void InitSettingsManager()
 		{
@@ -54,6 +54,7 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
+			SettingManager.AddMap(section, () => SettingName.ExcludeSupplementals, ExcludeSupplementalsCheckBox);
 		}
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

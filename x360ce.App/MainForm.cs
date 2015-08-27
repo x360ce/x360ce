@@ -458,6 +458,16 @@ namespace x360ce.App
 		DeviceInstance[] GetDevices()
 		{
 			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+			if (SettingManager.Current.ExcludeSuplementals)
+			{
+				// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
+				// such as pedals used with a wheel.The following subtypes are defined.
+				var supplementals = devices.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Supplemental).ToArray();
+				foreach (var supplemental in supplementals)
+				{
+					devices.Remove(supplemental);
+				}
+			}
 			// Move gaming wheels to the top index position by default.
 			// Games like GTA need wheel to be first device to work properly.
 			var wheels = devices.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Driving || x.Subtype == (int)DeviceSubType.Wheel).ToArray();

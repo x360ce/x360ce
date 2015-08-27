@@ -130,6 +130,7 @@ namespace x360ce.App
 		public event EventHandler<SettingEventArgs> ConfigLoaded;
 
 		public bool IsDebugMode { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.DebugMode]).Checked; } }
+		public bool ExcludeSuplementals { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.ExcludeSupplementals]).Checked; } }
 
 		Dictionary<string, Control> _settingsMap;
 		/// <summary>
