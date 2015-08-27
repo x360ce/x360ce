@@ -218,7 +218,7 @@
                                     5. Click [Save] button.<br />
                                     6. Close x360ce Application, run game.<br />
                                     <br />
-                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible wen controller is connected.<br />
+                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible when controller is connected.<br />
                                     <br />
                                     Some games have control issues, when Dead Zone is reduced to 0%.<br />
                                     <br />

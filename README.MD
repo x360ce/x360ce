@@ -85,7 +85,7 @@ Some controllers will operate in game only, if set as "GamePad". Try to:
   1. Click [Save] button.
   1. Close x360ce Application, run game.
  
-Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible wen controller is connected.
+Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible when controller is connected.
 
 **Do I need to run x360ce Application during the game?**
 
@@ -101,10 +101,10 @@ You can resolve this by adding Version=1 under the [Options] section in x360ce.i
 This can occur for a number of reasons.
 
   1. The configuration utility DOES NOT work with the 64bit library, it will only work with the 32bit version, This is the case regardless of whether your windows is 32bit or 64bit.
-  1. The DInput state of the control might be incorrect due to previous application crashing and not unloading the control or some other reason. Opening up Joy.cpl (Set Up Usb Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.
+  1. The DInput state of the control might be incorrect due to previous application crashing and not unloading the control or some other reason. Opening up Joy.cpl (Set Up USB Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.
   1. The controller profile loaded may match the name of the control but not actually be for the controller you own - in this case you might see button numbers or axes mapped that do not appear in the joy.cpl test page.
   1. The controller profile might have PassThrough set. A growing number of profiles have been uploaded that do this, i have no idea why as it disables x360ce and just bloats the list of available profiles.
-  1. There just might not be a profile for your control at all - The light should turn green once atleast the 2 sticks, triggers and Dpad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
+  1. There just might not be a profile for your control at all - The light should turn green once at least the 2 sticks, triggers and DPad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
 
 # Screenshots
 
