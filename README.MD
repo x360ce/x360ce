@@ -85,15 +85,8 @@ Some controllers will operate in game only, if set as "GamePad". Try to:
   1. Click [Save] button.
   1. Close x360ce Application, run game.
  
-Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4) in x360ce.ini file. You must edit x360ce.ini file with Notepad each time, after closing x360ce.exe application:
+Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible wen controller is connected.
 
-```
-[Mappings]
-PAD1=IG_{main controller number}
-PAD2=IG_{other controller number}
-PAD3=IG_{other controller number}
-PAD4=
-```
 **Do I need to run x360ce Application during the game?**
 
 x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller. 

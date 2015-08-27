@@ -195,7 +195,7 @@
                                     <br />
                                     <span class="title">Installation</span><br />
                                     <br />
-                                    Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name. Known names:<br />
+                                    Run this program from the same directory as the game executable. XInput library files exist with several different names and some games require a change in its name. Known names:<br />
                                     <br />
                                     • xinput1_4.dll<br />
                                     • xinput1_3.dll<br />
@@ -205,7 +205,7 @@
                                     <br />
                                     <span class="title">Uninstallation</span><br />
                                     <br />
-                                    Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.<br />
+                                    Delete x360ce.exe, x360ce.ini and all XInput DLL from game executable directory.<br />
                                     <br />
                                     <span class="title">Troubleshooting</span><br />
                                     <br />
@@ -218,14 +218,7 @@
                                     5. Click [Save] button.<br />
                                     6. Close x360ce Application, run game.<br />
                                     <br />
-                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4) in x360ce.ini file. You must edit x360ce.ini file with Notepad each time, after closing x360ce.exe application:<br />
-                                    <br />
-                                    <span style="font-family: 'Courier New'">[Mappings]<br />
-                                        PAD1=IG_{main controller number}<br />
-                                        PAD2=IG_{other controller number}<br />
-                                        PAD3=IG_{other controller number}<br />
-                                        PAD4=<br />
-                                    </span>
+                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible wen controller is connected.<br />
                                     <br />
                                     Some games have control issues, when Dead Zone is reduced to 0%.<br />
                                     <br />
