@@ -25,7 +25,7 @@ namespace x360ce.App.Issues
 		{
 			var architectures = new Dictionary<string, ProcessorArchitecture>();
 			var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
-			var exes = Directory.GetFiles(".", "*.exe", SearchOption.TopDirectoryOnly);
+			var exes = AppHelper.GetFiles(".", "*.exe");
 			// Exclude x360ce files.
 			exes = exes.Where(x => !x.ToLower().Contains("x360ce")).ToArray();
 			// If single executable was found then...

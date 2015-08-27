@@ -105,6 +105,14 @@ namespace x360ce.App
 			return instanceGuid.Equals(device == null ? Guid.Empty : device.Information.InstanceGuid);
 		}
 
+		public static string[] GetFiles(string path, string searchPattern, bool allDirectories = false)
+		{
+			var dir = new DirectoryInfo(path);
+			var fis = new List<FileInfo>();
+			AppHelper.GetFiles(dir, ref fis, searchPattern, false);
+			return fis.Select(x => x.FullName).ToArray();
+		}
+
 		public static void GetFiles(DirectoryInfo di, ref List<FileInfo> fileList, string searchPattern, bool allDirectories)
 		{
 			try

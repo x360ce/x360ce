@@ -17,7 +17,7 @@ namespace x360ce.App.Issues
 		public override void Check()
 		{
 			// Get list of debug files.
-			var pdbs = System.IO.Directory.GetFiles(".", "*.pdb", System.IO.SearchOption.TopDirectoryOnly);
+			var pdbs = AppHelper.GetFiles(".", "*.pdb");
 			if (pdbs.Length == 0)
 			{
 				Severity = IssueSeverity.None;

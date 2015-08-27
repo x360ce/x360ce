@@ -145,7 +145,7 @@ namespace x360ce.App.Controls
 			KeyValuePair selection = null;
 			if (GameComboBox.SelectedIndex > -1) selection = (KeyValuePair)GameComboBox.SelectedItem;
 			_files = new List<System.Diagnostics.FileVersionInfo>();
-			var names = Directory.GetFiles(".", "*.exe");
+			var names = AppHelper.GetFiles(".", "*.exe");
 			var list = new List<FileInfo>();
 			foreach (var name in names)
 			{
