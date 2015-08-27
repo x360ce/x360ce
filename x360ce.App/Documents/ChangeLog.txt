@@ -1,10 +1,13 @@
-﻿v3.2.8.73 (2015-08-27)
+﻿v3.2.8.74 (2015-08-27)
 - Fix: x360ce.vshost.exe was appearing in the list on Controller Settings form.
 - Fix: PAD control indicator icons show wrong status colours.
 - New: Game executable will be added to game settings automatically if only one in the folder.
 - New: Option to exclude Direct Input Supplemental devices (steckdev).
+- New: Option fill XInput settings automatically from DirectInput device.
 - Update: Issue resolver classes updated.
 - Update: Move gaming wheels to the top index position by default.
+- Update: Updated x360ce_Games.xml.gz
+- Update: Updated to xinput1_3.dll v3.4.1.1357.
 
 v3.2.7.67 (2015-08-03)
 - Fix: Incorrect XInput DLL load message.

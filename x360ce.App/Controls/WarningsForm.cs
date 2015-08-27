@@ -20,7 +20,7 @@ namespace x360ce.App
 		{
 			InitializeComponent();
 			checkTimer = new System.Timers.Timer();
-			checkTimer.Interval = 5000;
+			checkTimer.Interval = 1000;
 			checkTimer.AutoReset = false;
 			checkTimer.SynchronizingObject = this;
 			checkTimer.Elapsed += CheckTimer_Elapsed;
@@ -48,7 +48,6 @@ namespace x360ce.App
 
 		public static void CheckAndOpen()
 		{
-			Current.CheckAll();
 			Current.checkTimer.Start();
 		}
 
@@ -61,6 +60,7 @@ namespace x360ce.App
 				CheckAll();
 
 			}
+			if (checkTimer.Interval != 5000) checkTimer.Interval = 5000;
 			checkTimer.Start();
 		}
 
@@ -94,6 +94,7 @@ namespace x360ce.App
 			}
 			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
 			{
+				var update2 = MainForm.Current.update2Enabled;
 				if (Warnings.Count > 0 && !Visible && !IgnoreAll)
 				{
 
@@ -107,7 +108,6 @@ namespace x360ce.App
 					}
 					else
 					{
-						var update2 = MainForm.Current.update2Enabled;
 						if (!update2.HasValue)
 						{
 							MainForm.Current.update2Enabled = true;
@@ -117,11 +117,14 @@ namespace x360ce.App
 				else if (Warnings.Count == 0 && Visible)
 				{
 					DialogResult = DialogResult.OK;
-					var update2 = MainForm.Current.update2Enabled;
                     if (!update2.HasValue)
 					{
 						MainForm.Current.update2Enabled = true;
 					}
+				}
+				else if (!update2.HasValue)
+				{
+					MainForm.Current.update2Enabled = true;
 				}
 			});
 		}

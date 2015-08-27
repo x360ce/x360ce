@@ -62,38 +62,31 @@ namespace x360ce.App
 		}
 
 
-		///// <summary></summary>
-		///// <returns>True if file exists.</returns>
-		//public static bool CreateDllFile(bool create, string file)
-		//{
-		//	if (create)
-		//	{
-		//		// If file don't exist exists then...
-		//		var present = EngineHelper.GetDefaultDll();
-		//		if (present == null)
-		//		{
-		//			var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-		//			var resourceName = EngineHelper.GetXInputResoureceName();
-		//                  AppHelper.WriteFile(resourceName, xFile);
-		//		}
-		//		else if (!File.Exists(file))
-		//		{
-		//			present.CopyTo(file, true);
-		//		}
-		//	}
-		//	else
-		//	{
-		//		if (File.Exists(file))
-		//		{
-		//			try
-		//			{
-		//				File.Delete(file);
-		//			}
-		//			catch (Exception) { }
-		//		}
-		//	}
-		//	return File.Exists(file);
-		//}
+		public static DeviceObjectItem[] GetDeviceObjects(Joystick device)
+		{
+			var og = typeof(SharpDX.DirectInput.ObjectGuid);
+			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
+			List<Guid> guids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
+			List<string> names = guidFileds.Select(x => x.Name).ToList();
+			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.Offset).ToArray();
+			var items = new List<DeviceObjectItem>();
+			foreach (var o in objects)
+			{
+				var item = new DeviceObjectItem()
+				{
+					Name = o.Name,
+					Offset = o.Offset,
+					Instance = o.ObjectId.InstanceNumber,
+					Usage = o.Usage,
+					Aspect = o.Aspect,
+					Flags = o.ObjectId.Flags,
+					GuidValue = o.ObjectType,
+					GuidName = guids.Contains(o.ObjectType) ? names[guids.IndexOf(o.ObjectType)] : o.ObjectType.ToString(),
+				};
+				items.Add(item);
+			}
+			return items.ToArray();
+		}
 
 		#endregion
 

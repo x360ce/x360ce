@@ -168,6 +168,7 @@
     <Compile Include="Common\DeviceDetectorForm.Designer.cs">
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\HookMode.cs" />
