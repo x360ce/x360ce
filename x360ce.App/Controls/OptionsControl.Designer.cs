@@ -55,6 +55,8 @@
 			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
 			this.SaveSettingsButton = new System.Windows.Forms.Button();
 			this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
+			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
+			this.ExcludeSupplementalsCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -62,6 +64,7 @@
 			this.GameScanLocationsTabPage.SuspendLayout();
 			this.LocationsToolStrip.SuspendLayout();
 			this.ConfigurationGroupBox.SuspendLayout();
+			this.DirectInputDevicesGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -351,6 +354,26 @@
 			this.OpenSettingsFolderButton.UseVisualStyleBackColor = true;
 			this.OpenSettingsFolderButton.Click += new System.EventHandler(this.OpenSettingsFolderButton_Click);
 			// 
+			// DirectInputDevicesGroupBox
+			// 
+			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalsCheckBox);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 207);
+			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
+			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(241, 47);
+			this.DirectInputDevicesGroupBox.TabIndex = 31;
+			this.DirectInputDevicesGroupBox.TabStop = false;
+			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
+			// 
+			// ExcludeSupplementalsCheckBox
+			// 
+			this.ExcludeSupplementalsCheckBox.AutoSize = true;
+			this.ExcludeSupplementalsCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.ExcludeSupplementalsCheckBox.Name = "ExcludeSupplementalsCheckBox";
+			this.ExcludeSupplementalsCheckBox.Size = new System.Drawing.Size(173, 17);
+			this.ExcludeSupplementalsCheckBox.TabIndex = 0;
+			this.ExcludeSupplementalsCheckBox.Text = "Exclude Supplemental Devices";
+			this.ExcludeSupplementalsCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// OptionsControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -358,6 +381,7 @@
 			this.Controls.Add(this.OpenSettingsFolderButton);
 			this.Controls.Add(this.SaveSettingsButton);
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
+			this.Controls.Add(this.DirectInputDevicesGroupBox);
 			this.Controls.Add(this.ConfigurationGroupBox);
 			this.Controls.Add(this.OperationGroupBox);
 			this.Controls.Add(this.InternetGroupBox);
@@ -377,6 +401,8 @@
 			this.LocationsToolStrip.PerformLayout();
 			this.ConfigurationGroupBox.ResumeLayout(false);
 			this.ConfigurationGroupBox.PerformLayout();
+			this.DirectInputDevicesGroupBox.ResumeLayout(false);
+			this.DirectInputDevicesGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -410,5 +436,7 @@
 		private System.Windows.Forms.Button SaveSettingsButton;
 		private System.Windows.Forms.Button OpenSettingsFolderButton;
         private System.Windows.Forms.CheckBox CombineEnabledCheckBox;
-    }
+		private System.Windows.Forms.GroupBox DirectInputDevicesGroupBox;
+		private System.Windows.Forms.CheckBox ExcludeSupplementalsCheckBox;
+	}
 }

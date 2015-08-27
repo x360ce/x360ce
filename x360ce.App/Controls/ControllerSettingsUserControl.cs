@@ -59,7 +59,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		IList<DeviceInstance> _devices;
+		DeviceInstance[] _devices = new DeviceInstance[4];
 
 		/// <summary>
 		/// Update DataGridView is such way that it won't loose selection.
@@ -82,37 +82,36 @@ namespace x360ce.App.Controls
 			UpdateActionButtons();
 		}
 
-		public void BindDevices(IList<DeviceInstance> list)
+		public void BindDevices(DeviceInstance[] list)
 		{
 
 			// Check if new device is available
 			KeyValuePair selection = null;
-			if (_devices != null && _devices.Count < list.Count)
+			for (int i = 0; i < 4; i++)
 			{
-				for (int i = 0; i < list.Count; i++)
+				var newDevice = list[i];
+				if (newDevice == null) continue;
+				bool isFound = false;
+				foreach (var oldDevice in _devices)
 				{
-					var newDevice = list[i];
-					bool isFound = false;
-					foreach (var oldDevice in _devices)
+					if (oldDevice == null) continue;
+					if (newDevice.InstanceGuid.Equals(oldDevice.InstanceGuid))
 					{
-						if (newDevice.InstanceGuid.Equals(oldDevice.InstanceGuid))
-						{
-							isFound = true;
-							break;
-						}
-					}
-					if (!isFound)
-					{
-						selection = new KeyValuePair((i + 1) + ". " + newDevice.ProductName, newDevice.InstanceGuid.ToString());
+						isFound = true;
 						break;
 					}
-
 				}
+				if (!isFound)
+				{
+					selection = new KeyValuePair((i + 1) + ". " + newDevice.ProductName, newDevice.InstanceGuid.ToString());
+					break;
+				}
+
 			}
 			_devices = list;
 			// Fill FakeWmi ComboBox.
 			var options = new List<KeyValuePair>();
-			for (int i = 0; i < list.Count; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				if (list[i] != null)
 				{
@@ -146,11 +145,11 @@ namespace x360ce.App.Controls
 			KeyValuePair selection = null;
 			if (GameComboBox.SelectedIndex > -1) selection = (KeyValuePair)GameComboBox.SelectedItem;
 			_files = new List<System.Diagnostics.FileVersionInfo>();
-			var names = Directory.GetFiles(".", "*.exe");
+			var names = AppHelper.GetFiles(".", "*.exe");
 			var list = new List<FileInfo>();
 			foreach (var name in names)
 			{
-				if (name.EndsWith("\\x360ce.exe")) continue;
+				if (name.Contains("x360ce")) continue;
 				list.Add(new FileInfo(name));
 			}
 			var options = new List<KeyValuePair>();
@@ -314,7 +313,7 @@ namespace x360ce.App.Controls
 			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate(object state)
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
 			{
 				ws.SearchSettingsAsync(sp.ToArray(), showResult);
 			});
@@ -325,11 +324,13 @@ namespace x360ce.App.Controls
 		{
 			SearchParameter p;
 			// Add controllers.
-			for (int i = 0; i < _devices.Count; i++)
+			for (int i = 0; i < 4; i++)
 			{
-				p = new SearchParameter();
-				p.ProductGuid = _devices[i].ProductGuid;
-				p.InstanceGuid = _devices[i].InstanceGuid;
+				var device = _devices[i];
+				if (device == null) continue;
+                p = new SearchParameter();
+				p.ProductGuid = device.ProductGuid;
+				p.InstanceGuid = device.InstanceGuid;
 				sp.Add(p);
 			}
 		}
@@ -392,7 +393,7 @@ namespace x360ce.App.Controls
 		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
-			BeginInvoke((MethodInvoker)delegate()
+			BeginInvoke((MethodInvoker)delegate ()
 			{
 				refreshed = true;
 				if (e.Error != null || e.Result == null)

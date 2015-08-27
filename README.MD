@@ -2,7 +2,7 @@
 
 # Download
 
-Digitally Signed Application v3.1.7.58 (2015-07-07) and Libraries 3.4.1.1346 (2015-06-25)
+Digitally Signed Application v3.2.8.74 (2015-08-27) and Libraries 3.4.1.1357 (2015-08-27)
 
 [32-bit Download](http://www.x360ce.com/Files/x360ce.zip) - for 32-bit games
 
@@ -31,7 +31,7 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
 
   1. Windows Vista or newer.
   1. [.NET 3.5 (also installs 2.0 and 3.0)](http://www.microsoft.com/en-us/download/details.aspx?id=21) (included in Windows 7)
-  1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included in Windows 8)
+  1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included in Windows 8, 8.1 and 10)
   1. [DirectX End-User Runtimes (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
   1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributables)
 

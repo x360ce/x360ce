@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.App.Issues;
 
 namespace x360ce.App
 {
@@ -19,7 +20,7 @@ namespace x360ce.App
 		{
 			InitializeComponent();
 			checkTimer = new System.Timers.Timer();
-			checkTimer.Interval = 5000;
+			checkTimer.Interval = 1000;
 			checkTimer.AutoReset = false;
 			checkTimer.SynchronizingObject = this;
 			checkTimer.Elapsed += CheckTimer_Elapsed;
@@ -45,10 +46,8 @@ namespace x360ce.App
 			}
 		}
 
-
 		public static void CheckAndOpen()
 		{
-			Current.CheckAll();
 			Current.checkTimer.Start();
 		}
 
@@ -61,6 +60,7 @@ namespace x360ce.App
 				CheckAll();
 
 			}
+			if (checkTimer.Interval != 5000) checkTimer.Interval = 5000;
 			checkTimer.Start();
 		}
 
@@ -69,76 +69,62 @@ namespace x360ce.App
 		System.Timers.Timer checkTimer;
 		bool IgnoreAll;
 
+		List<WarningItem> IssueList;
+		object IssueListLock = new object();
 
 		void CheckAll()
 		{
-			var result = new WarningItem("Check");
-			try
+			lock (IssueListLock)
 			{
-				var result2 = IsDirectXInstalled();
-				UpdateWarning(result2);
-
-				var architectures = new Dictionary<string, ProcessorArchitecture>();
-				var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
-				var exes = System.IO.Directory.GetFiles(".", "*.exe", System.IO.SearchOption.TopDirectoryOnly);
-				foreach (var exe in exes)
+				if (IssueList == null)
 				{
-					var pa = Engine.Win32.PEReader.GetProcessorArchitecture(exe);
-					architectures.Add(exe, pa);
-				}
-				var fi = new FileInfo(Application.ExecutablePath);
-				// Select all architectures of executables.
-				var archs = architectures.Where(x => !x.Key.ToLower().Contains("x360ce")).Select(x => x.Value).ToArray();
-				var x86Count = archs.Count(x => x == ProcessorArchitecture.X86);
-				var x64Count = archs.Count(x => x == ProcessorArchitecture.Amd64);
-				// If executables are 32-bit, but this program is 64-bit then warn user.
-				var result86 = new WarningItem("32-bit Game");
-				if (x86Count > 0 && x64Count == 0 && architecture == ProcessorArchitecture.Amd64)
-				{
-					result86.Description = "This folder contains 32-bit game. You should use 32-bit X360CE Application:\r\n" +
-					"http://www.x360ce.com/Files/x360ce.zip";
-					result86.FixAction = delegate () { EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce.zip"); };
-					result86.FixName = "Download";
-				}
-				UpdateWarning(result86);
-				var result64 = new WarningItem("64-bit Game");
-				// If executables are 64-bit, but this program is 32-bit then warn user.
-				if (x64Count > 0 && x86Count == 0 && architecture == ProcessorArchitecture.X86)
-				{
-					result64.Description = "This folder contains 64-bit game. You should use 64-bit X360CE Application:\r\n" +
-					"http://www.x360ce.com/Files/x360ce_x64.zip";
-					result64.FixAction = delegate () { EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip"); };
-					result64.FixName = "Download";
-				}
-				UpdateWarning(result64);
-				// Get list of debug files.
-				var pdbs = System.IO.Directory.GetFiles(".", "*.pdb", System.IO.SearchOption.TopDirectoryOnly);
-				// If debug files were found then...
-				if (pdbs.Length > 0)
-				{
-					var result3 = IsMdkInstalled();
-					UpdateWarning(result3);
-					var result4 = IsLeakDetectorInstalled();
-					UpdateWarning(result4);
+					IssueList = new List<WarningItem>();
+					IssueList.Add(new DirectXIssue());
+					IssueList.Add(new LeakDetectorIssue());
+					IssueList.Add(new MdkIssue());
+					IssueList.Add(new ArchitectureIssue());
+					IssueList.Add(new IniFileIssue());
+					IssueList.Add(new DllFileIssue());
 				}
 			}
-			catch (Exception ex)
+			foreach (var issue in IssueList)
 			{
-				result.Description = ex.Message;
-				result.FixName = "";
+				issue.Check();
+				UpdateWarning(issue);
 			}
-			UpdateWarning(result);
 			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
 			{
+				var update2 = MainForm.Current.update2Enabled;
 				if (Warnings.Count > 0 && !Visible && !IgnoreAll)
 				{
 
-					StartPosition = FormStartPosition.CenterScreen;
-					ShowDialog(MainForm.Current);
+					StartPosition = FormStartPosition.CenterParent;
+					var result = ShowDialog(MainForm.Current);
+					// If critical issues remaining then...
+					if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
+					{
+						// Close application.
+						MainForm.Current.Close();
+					}
+					else
+					{
+						if (!update2.HasValue)
+						{
+							MainForm.Current.update2Enabled = true;
+						}
+					}
 				}
 				else if (Warnings.Count == 0 && Visible)
 				{
 					DialogResult = DialogResult.OK;
+                    if (!update2.HasValue)
+					{
+						MainForm.Current.update2Enabled = true;
+					}
+				}
+				else if (!update2.HasValue)
+				{
+					MainForm.Current.update2Enabled = true;
 				}
 			});
 		}
@@ -146,72 +132,10 @@ namespace x360ce.App
 		void UpdateWarning(WarningItem result)
 		{
 			var item = Warnings.FirstOrDefault(x => x.Name == result.Name);
-			if (result.Description == null && item != null) Warnings.Remove(item);
-			else if (result.Description != null && item == null) Warnings.Add(result);
+			if (result.Severity == IssueSeverity.None && item != null) Warnings.Remove(item);
+			else if (result.Severity != IssueSeverity.None && item == null) Warnings.Add(result);
 		}
 
-		WarningItem IsDirectXInstalled()
-		{
-			var result = new WarningItem("DirectX");
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DirectX"))
-			{
-				string versionString = key.GetValue("Version") as string;
-				Version version;
-				if (Version.TryParse(versionString, out version))
-				{
-					if (version.Minor == 9) return result;
-				}
-			}
-			result.Description = "Microsoft DirectX 9 not found You can click the link below to download Microsoft DirectX:\r\n" +
-				"http://www.microsoft.com/en-us/download/details.aspx?id=35";
-			result.FixAction = delegate () { EngineHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=35"); };
-			result.FixName = "Download";
-			return result;
-		}
-
-		WarningItem IsMdkInstalled()
-		{
-			var result = new WarningItem("Microsoft SDK");
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows"))
-			{
-				string versionString = key.GetValue("CurrentVersion") as string;
-				Version version;
-				if (Version.TryParse(versionString, out version))
-				{
-					if (version.Major >= 7) return result;
-				}
-			}
-			result.Description = "You are using debug version of XInput Library. Microsoft SDK not found You can click the link below to download Microsoft SDK:\r\n" +
-				"https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx";
-			result.FixAction = delegate () { EngineHelper.OpenUrl("https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx"); };
-			result.FixName = "Download";
-			return result;
-		}
-
-
-		WarningItem IsLeakDetectorInstalled()
-		{
-			var result = new WarningItem("Leak Detector");
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
-			{
-				foreach (string subkey_name in key.GetSubKeyNames())
-				{
-					using (RegistryKey subkey = key.OpenSubKey(subkey_name))
-					{
-						var displayName = (string)subkey.GetValue("DisplayName", "");
-						if (displayName.StartsWith("Visual Leak Detector"))
-						{
-							return result;
-						}
-					}
-				}
-			}
-			result.Description = "You are using debug version of XInput Library. Visual Leak Detector not found You can click the link below to download Visual Leak Detector:\r\n" +
-				"https://vld.codeplex.com";
-			result.FixAction = delegate () { EngineHelper.OpenUrl("https://vld.codeplex.com"); };
-			result.FixName = "Download";
-            return result;
-		}
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -246,7 +170,7 @@ namespace x360ce.App
 			{
 				var row = grid.Rows[e.RowIndex];
 				var item = (WarningItem)row.DataBoundItem;
-				if (item.FixAction != null) item.FixAction();
+				item.Fix();
 			}
 		}
 
@@ -254,6 +178,39 @@ namespace x360ce.App
 		{
 			IgnoreAll = true;
 			DialogResult = DialogResult.Cancel;
+		}
+
+		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			if (e.RowIndex == -1) return;
+			var grid = (DataGridView)sender;
+			var row = grid.Rows[e.RowIndex];
+			var column = grid.Columns[SeverityColumn.Name];
+			var item = (WarningItem)row.DataBoundItem;
+			if (e.ColumnIndex == grid.Columns[SeverityColumn.Name].Index)
+			{
+				switch (item.Severity)
+				{
+					case IssueSeverity.None:
+						e.Value = null;
+						break;
+					case IssueSeverity.Low:
+						e.Value = Properties.Resources.MessageBoxIcon_Information_32x32;
+						break;
+					case IssueSeverity.Important:
+						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
+                        break;
+					case IssueSeverity.Moderate:
+						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
+						break;
+					case IssueSeverity.Critical:
+						e.Value = Properties.Resources.MessageBoxIcon_Error_32x32;
+						break;
+					default:
+						break;
+				}
+
+			}
 		}
 	}
 

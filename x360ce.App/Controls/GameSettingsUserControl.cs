@@ -227,32 +227,15 @@ namespace x360ce.App.Controls
 				else
 				{
 					ProcessExecutable(AddGameOpenFileDialog.FileName);
-					GamesDataGridView.ClearSelection();
-					RebindGames(System.IO.Path.GetFileName(AddGameOpenFileDialog.FileName));
-				}
+                }
 			}
 		}
 
-		void ProcessExecutable(string filePath)
+		public void ProcessExecutable(string fileName)
 		{
-			var fi = new System.IO.FileInfo(filePath);
-			if (!fi.Exists) return;
-			// Check if item already exists.
-			var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
-			if (game == null)
-			{
-				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
-				// Load default settings.
-				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
-				game.LoadDefault(program);
-				SettingsFile.Current.Games.Add(game);
-
-			}
-			else
-			{
-				game.FullPath = fi.FullName;
-			}
-			SettingsFile.Current.Save();
+			SettingsFile.Current.ProcessExecutable(fileName);
+			GamesDataGridView.ClearSelection();
+			RebindGames(Path.GetFileName(fileName));
 		}
 
 		private void StartGameButton_Click(object sender, EventArgs e)
@@ -342,10 +325,10 @@ namespace x360ce.App.Controls
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
 			e.CellStyle.ForeColor = item.IsEnabled
 					? grid.DefaultCellStyle.ForeColor
-					: System.Drawing.SystemColors.ControlDark;
+					: SystemColors.ControlDark;
 			e.CellStyle.SelectionBackColor = item.IsEnabled
 			 ? grid.DefaultCellStyle.SelectionBackColor
-			 : System.Drawing.SystemColors.ControlDark;
+			 : SystemColors.ControlDark;
 			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
 			//	? System.Drawing.Color.Gray
 			//	: grid.DefaultCellStyle.ForeColor;

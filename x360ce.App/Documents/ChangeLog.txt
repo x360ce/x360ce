@@ -1,6 +1,25 @@
-﻿v3.2.7.67 (2015-08-03)
+﻿v3.2.8.75 (2015-08-27)
+- Fix: Crashes on invalid permissions.
+
+v3.2.8.74 (2015-08-27)
+- Fix: x360ce.vshost.exe was appearing in the list on Controller Settings form.
+- Fix: PAD control indicator icons show wrong status colours.
+- New: Game executable will be added to game settings automatically if only one in the folder.
+- New: Option to exclude Direct Input Supplemental devices (steckdev).
+- New: Option fill XInput settings automatically from DirectInput device.
+- Update: Issue resolver classes updated.
+- Update: Move gaming wheels to the top index position by default.
+- Update: Updated x360ce_Games.xml.gz
+- Update: Updated to xinput1_3.dll v3.4.1.1357.
+
+v3.2.7.67 (2015-08-03)
 - Fix: Incorrect XInput DLL load message.
-- New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc).
+- New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc.).
+- New: Map Direct Input controller to specific XInput position.
+
+v3.2.7.67 (2015-08-03)
+- Fix: Incorrect XInput DLL load message.
+- New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc.).
 - New: Map Direct Input controller to specific XInput position.
 
 v3.1.7.58 (2015-07-07)
@@ -14,7 +33,7 @@ v3.0.7.55 (2015-06-08)
 - Fix: Ability to add same file due to case sensitivity.
 - Fix: Unnecessary XML load.
 - Fix: Crash when unable to read file version.
-- Fix: Crash when reseting game settings to default.
+- Fix: Crash when game settings reset to default.
 - New: Look inside game file for "XInput..." strings and return appropriate XInput mask.
 
 v3.0.6.50 (2015-06-07)

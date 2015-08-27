@@ -62,41 +62,33 @@ namespace x360ce.App
 		}
 
 
-
-		/// <summary></summary>
-		/// <returns>True if file exists.</returns>
-		public static bool CreateDllFile(bool create, string file)
+		public static DeviceObjectItem[] GetDeviceObjects(Joystick device)
 		{
-			if (create)
+			var og = typeof(SharpDX.DirectInput.ObjectGuid);
+			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
+			List<Guid> guids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
+			List<string> names = guidFileds.Select(x => x.Name).ToList();
+			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.Offset).ToArray();
+			var items = new List<DeviceObjectItem>();
+			foreach (var o in objects)
 			{
-				// If file don't exist exists then...
-				var present = EngineHelper.GetDefaultDll();
-				if (present == null)
+				var item = new DeviceObjectItem()
 				{
-					var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-					MainForm.Current.CreateFile(EngineHelper.GetXInputResoureceName(), xFile);
-				}
-				else if (!System.IO.File.Exists(file))
-				{
-					present.CopyTo(file, true);
-				}
+					Name = o.Name,
+					Offset = o.Offset,
+					Instance = o.ObjectId.InstanceNumber,
+					Usage = o.Usage,
+					Aspect = o.Aspect,
+					Flags = o.ObjectId.Flags,
+					GuidValue = o.ObjectType,
+					GuidName = guids.Contains(o.ObjectType) ? names[guids.IndexOf(o.ObjectType)] : o.ObjectType.ToString(),
+				};
+				items.Add(item);
 			}
-			else
-			{
-				if (System.IO.File.Exists(file))
-				{
-					try
-					{
-						System.IO.File.Delete(file);
-					}
-					catch (Exception) { }
-				}
-			}
-			return System.IO.File.Exists(file);
+			return items.ToArray();
 		}
 
 		#endregion
-
 
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
@@ -111,6 +103,14 @@ namespace x360ce.App
 		public static bool IsSameDevice(Device device, Guid instanceGuid)
 		{
 			return instanceGuid.Equals(device == null ? Guid.Empty : device.Information.InstanceGuid);
+		}
+
+		public static string[] GetFiles(string path, string searchPattern, bool allDirectories = false)
+		{
+			var dir = new DirectoryInfo(path);
+			var fis = new List<FileInfo>();
+			AppHelper.GetFiles(dir, ref fis, searchPattern, false);
+			return fis.Select(x => x.FullName).ToArray();
 		}
 
 		public static void GetFiles(DirectoryInfo di, ref List<FileInfo> fileList, string searchPattern, bool allDirectories)

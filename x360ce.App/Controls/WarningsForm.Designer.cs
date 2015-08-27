@@ -23,12 +23,12 @@
 			this.WarningsTabControl = new System.Windows.Forms.TabControl();
 			this.WarningsTabPage = new System.Windows.Forms.TabPage();
 			this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
-			this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+			this.Closebutton = new System.Windows.Forms.Button();
+			this.IgnoreButton = new System.Windows.Forms.Button();
+			this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.FixColumn = new System.Windows.Forms.DataGridViewButtonColumn();
-			this.Closebutton = new System.Windows.Forms.Button();
-			this.IgnoreButton = new System.Windows.Forms.Button();
 			this.WarningsTabControl.SuspendLayout();
 			this.WarningsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).BeginInit();
@@ -77,7 +77,7 @@
 			this.WarningsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.WarningsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.WarningsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewImageColumn1,
+            this.SeverityColumn,
             this.NameColumn,
             this.DescriptionColumn,
             this.FixColumn});
@@ -107,18 +107,43 @@
 			this.WarningsDataGridView.Size = new System.Drawing.Size(586, 296);
 			this.WarningsDataGridView.TabIndex = 8;
 			this.WarningsDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WarningsDataGridView_CellContentClick);
+			this.WarningsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.WarningsDataGridView_CellFormatting);
 			// 
-			// dataGridViewImageColumn1
+			// Closebutton
 			// 
-			this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.dataGridViewImageColumn1.HeaderText = "";
-			this.dataGridViewImageColumn1.Image = global::x360ce.App.Properties.Resources.MessageBoxIcon_Warning_32x32;
-			this.dataGridViewImageColumn1.MinimumWidth = 32;
-			this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-			this.dataGridViewImageColumn1.ReadOnly = true;
-			this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridViewImageColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.dataGridViewImageColumn1.Width = 32;
+			this.Closebutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.Closebutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.Closebutton.Location = new System.Drawing.Point(537, 346);
+			this.Closebutton.Name = "Closebutton";
+			this.Closebutton.Size = new System.Drawing.Size(75, 23);
+			this.Closebutton.TabIndex = 21;
+			this.Closebutton.Text = "Cancel";
+			this.Closebutton.UseVisualStyleBackColor = true;
+			this.Closebutton.Click += new System.EventHandler(this.Closebutton_Click);
+			// 
+			// IgnoreButton
+			// 
+			this.IgnoreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.IgnoreButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.IgnoreButton.Location = new System.Drawing.Point(456, 346);
+			this.IgnoreButton.Name = "IgnoreButton";
+			this.IgnoreButton.Size = new System.Drawing.Size(75, 23);
+			this.IgnoreButton.TabIndex = 21;
+			this.IgnoreButton.Text = "Ignore All";
+			this.IgnoreButton.UseVisualStyleBackColor = true;
+			this.IgnoreButton.Click += new System.EventHandler(this.IgnoreButton_Click);
+			// 
+			// SeverityColumn
+			// 
+			this.SeverityColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SeverityColumn.DataPropertyName = "Severity";
+			this.SeverityColumn.HeaderText = "";
+			this.SeverityColumn.MinimumWidth = 32;
+			this.SeverityColumn.Name = "SeverityColumn";
+			this.SeverityColumn.ReadOnly = true;
+			this.SeverityColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.SeverityColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.SeverityColumn.Width = 32;
 			// 
 			// NameColumn
 			// 
@@ -147,30 +172,6 @@
 			this.FixColumn.ReadOnly = true;
 			this.FixColumn.Text = "Fix";
 			// 
-			// Closebutton
-			// 
-			this.Closebutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.Closebutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.Closebutton.Location = new System.Drawing.Point(537, 346);
-			this.Closebutton.Name = "Closebutton";
-			this.Closebutton.Size = new System.Drawing.Size(75, 23);
-			this.Closebutton.TabIndex = 21;
-			this.Closebutton.Text = "Cancel";
-			this.Closebutton.UseVisualStyleBackColor = true;
-			this.Closebutton.Click += new System.EventHandler(this.Closebutton_Click);
-			// 
-			// IgnoreButton
-			// 
-			this.IgnoreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.IgnoreButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.IgnoreButton.Location = new System.Drawing.Point(456, 346);
-			this.IgnoreButton.Name = "IgnoreButton";
-			this.IgnoreButton.Size = new System.Drawing.Size(75, 23);
-			this.IgnoreButton.TabIndex = 21;
-			this.IgnoreButton.Text = "Ignore All";
-			this.IgnoreButton.UseVisualStyleBackColor = true;
-			this.IgnoreButton.Click += new System.EventHandler(this.IgnoreButton_Click);
-			// 
 			// WarningsForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -196,10 +197,10 @@
 		private System.Windows.Forms.TabPage WarningsTabPage;
 		private System.Windows.Forms.DataGridView WarningsDataGridView;
 		private System.Windows.Forms.Button Closebutton;
-		private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
+		private System.Windows.Forms.Button IgnoreButton;
+		private System.Windows.Forms.DataGridViewImageColumn SeverityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
 		private System.Windows.Forms.DataGridViewButtonColumn FixColumn;
-		private System.Windows.Forms.Button IgnoreButton;
 	}
 }

@@ -60,7 +60,7 @@ namespace x360ce.App.Controls
 			this.markA.SetResolution(rH, rV);
 			this.markC.SetResolution(rH, rV);
 			this.markR.SetResolution(rH, rV);
-			// Add gamepad typed to ComboBox.
+			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
 			// Add force feedback typed to ComboBox.
@@ -144,7 +144,7 @@ namespace x360ce.App.Controls
 		DirectInputState recordingSnapshot;
 
 		/// <summary>
-		/// Called whhen recording is in progress.
+		/// Called when recording is in progress.
 		/// </summary>
 		/// <param name="state">Current direct input activity.</param>
 		/// <returns>True if recording stopped, otherwise false.</returns>
@@ -161,11 +161,11 @@ namespace x360ce.App.Controls
 				// If recording snapshot was not created yet then...
 				else if (recordingSnapshot == null)
 				{
-					// Make snapshot out of the first state during recordining.
+					// Make snapshot out of the first state during recording.
 					recordingSnapshot = state;
 					return false;
 				}
-				// Get actions by comparing intial snapshot with current state.
+				// Get actions by comparing initial snapshot with current state.
 				var actions = recordingSnapshot.CompareTo(state);
 				string action = null;
 				// Must stop recording if null passed.
@@ -196,7 +196,7 @@ namespace x360ce.App.Controls
 				{
 					Recording = false;
 					RecordingTimer.Stop();
-					// If stop was initiaded before action was recorded then...                    
+					// If stop was initiated before action was recorded then...                    
 					if (string.IsNullOrEmpty(action))
 					{
 						CurrentCbx.Items.Clear();
@@ -205,7 +205,7 @@ namespace x360ce.App.Controls
 					{
 						// If suitable action was recorded then...
 						SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
-						// Save setting and notify if vaue changed.
+						// Save setting and notify if value changed.
 						if (SettingManager.Current.SaveSetting(CurrentCbx)) MainForm.Current.NotifySettingsChange();
 					}
 					CurrentCbx.ForeColor = SystemColors.WindowText;
@@ -234,7 +234,7 @@ namespace x360ce.App.Controls
 		{
 			var cbx = (ComboBox)sender;
 			var oldLeft = cbx.Left;
-			// Move default dropdown away from the screen.
+			// Move default DropDown away from the screen.
 			cbx.Left = -10000;
 			var del = new ComboBoxDropDownDelegate(ComboBoxDropDown);
 			BeginInvoke(del, new object[] { cbx, oldLeft });
@@ -480,7 +480,7 @@ namespace x360ce.App.Controls
 		public int ControllerIndex;
 
 		/// <summary>
-		/// Link control with INI key. Value/Text of controll will be automatically tracked and INI file updated.
+		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
 		Dictionary<string, Control> GetSettingsMap()
 		{
@@ -602,12 +602,14 @@ namespace x360ce.App.Controls
 			bool fullPassThrough = PassThroughCheckBox.Checked;
 			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
 
-			// If full passthrough mode is turned on, changing forces passthrough has no effect.
+			// If full pass-through mode is turned on, changing forces pass-through has no effect.
 			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
 
 			// Pass Through index is enabled if either pass through mode is enabled
 			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
 		}
+
+		Joystick _device;
 
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
@@ -623,7 +625,10 @@ namespace x360ce.App.Controls
 			if (state != null) diState = new DirectInputState(state);
 			StopRecording(diState);
 			var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
+			var focusTab = false;
+			_device = device;
 			var enable = device != null;
+			AutoPresetButton.Enabled = enable;
 			if (!enable && contains)
 			{
 				PadTabControl.TabPages.Remove(DirectInputTabPage);
@@ -631,6 +636,12 @@ namespace x360ce.App.Controls
 			if (enable && !contains)
 			{
 				PadTabControl.TabPages.Add(DirectInputTabPage);
+				var controllerInstance = MainForm.Current.AutoSelectControllerInstance;
+				if (controllerInstance != Guid.Empty && controllerInstance == device.Information.InstanceGuid)
+				{
+					MainForm.Current.AutoSelectControllerInstance = Guid.Empty;
+					focusTab = true;
+				}
 			}
 			ForceFeedbackGroupBox.Enabled = enable;
 			TriggersGroupBox.Enabled = enable;
@@ -656,6 +667,13 @@ namespace x360ce.App.Controls
 				instanceGuid = !enable ? Guid.Empty : iGuid;
 				ResetDiMenuStrip(device);
 			}
+			if (focusTab)
+			{
+				PadTabControl.SelectedTab = DirectInputTabPage;
+				Application.DoEvents();
+				var padTabPage = (TabPage)this.Parent;
+				((TabControl)padTabPage.Parent).SelectedTab = padTabPage;
+			}
 		}
 
 		State oldState;
@@ -669,7 +687,7 @@ namespace x360ce.App.Controls
 			var nowConnected = IsConnected;
 			gamePadStateIsConnected = IsConnected;
 			gamePadState = state;
-			// If form was disabled and no data is comming then just return.
+			// If form was disabled and no data is coming then just return.
 			if (!wasConnected && !nowConnected) return;
 			// If device connection changed then...
 			if (wasConnected != nowConnected)
@@ -739,7 +757,7 @@ namespace x360ce.App.Controls
 			return (Byte)Math.Round((double)v * (double)Byte.MaxValue);
 		}
 
-		// Use this to reduce flicekring.
+		// Use this to reduce flickering.
 		public void UpdateControl(Control control, string text)
 		{
 			if (control.Text != text) control.Text = text;
@@ -749,7 +767,7 @@ namespace x360ce.App.Controls
 		string cEmpty = "<empty>";
 
 
-		// Function is recreted as soon as new DirectInput Device is available.
+		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(Device device)
 		{
 			DiMenuStrip.Items.Clear();
@@ -840,7 +858,7 @@ namespace x360ce.App.Controls
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			Regex rx = new Regex("^(DPad [0-9]+)$");
-			// If this this DPad parent menu.
+			// If this DPad parent menu.
 			if (rx.IsMatch(item.Text))
 			{
 				if (CurrentCbx == DPadComboBox)
@@ -938,7 +956,7 @@ namespace x360ce.App.Controls
 		public void UpdateForceFeedBack()
 		{
 			if (MainForm.Current.ControllerIndex == -1) return;
-			// Convert 100% trackbar to MotorSpeed's 0 - 65,535 (100%).
+			// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
 			var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F * ushort.MaxValue);
 			var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
@@ -992,6 +1010,126 @@ namespace x360ce.App.Controls
 			{
 				MainForm.Current.ReloadXinputSettings();
 			}
+		}
+
+		private void AutoPresetButton_Click(object sender, EventArgs e)
+		{
+			var d = _device;
+			if (d == null) return;
+			var text = string.Format("Do you want to fill all Controller {0} settings automatically?", ControllerIndex + 1);
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (result == DialogResult.Yes)
+			{
+				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				var objects = AppHelper.GetDeviceObjects(d);
+				DeviceObjectItem o = null;
+				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
+				// If Right thumb triggers are missing then...
+				if (o == null)
+				{
+					// Logitech RumblePad 2 USB
+					AutoPreset(objects, SettingName.ButtonA, 1);
+					AutoPreset(objects, SettingName.ButtonB, 2);
+					AutoPreset(objects, SettingName.ButtonX, 0);
+					AutoPreset(objects, SettingName.ButtonY, 3);
+					AutoPreset(objects, SettingName.LeftShoulder, 4);
+					AutoPreset(objects, SettingName.RightShoulder, 5);
+					AutoPreset(objects, SettingName.ButtonBack, 8);
+					AutoPreset(objects, SettingName.ButtonStart, 9);
+					AutoPreset(objects, SettingName.LeftThumbButton, 10);
+					AutoPreset(objects, SettingName.RightThumbButton, 11);
+					// Triggers.
+					AutoPreset(objects, SettingName.LeftTrigger, 6);
+					AutoPreset(objects, SettingName.RightTrigger, 7);
+					// Right Thumb.
+					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.ZAxis);
+					if (o != null) AutoPresetRead(SettingName.RightThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
+					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RzAxis);
+					if (o != null) AutoPresetRead(SettingName.RightThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
+				}
+				else
+				{
+					// ----------------------------------------------------------------------------------------------
+					// Controller (Xbox One For Windows)
+					// ----------------------------------------------------------------------------------------------
+					// Offset   Usage  Instance  Guid           Name                            Flags                
+					// ------  ------  --------  -------------  ------------------------------  ---------------------
+					//      0      49         1  YAxis          Y Axis                          AbsoluteAxis         
+					//      0       5         0  Unknown        Collection 0 - Game Pad         Collection, NoData   
+					//      0       0         1  Unknown        Collection 1                    Collection, NoData   
+					//      0       0         2  Unknown        Collection 2                    Collection, NoData   
+					//      0       0         3  Unknown        Collection 3                    Collection, NoData   
+					//      0     128         4  Unknown        Collection 4 - System Controls  Collection, NoData   
+					//      4      48         0  XAxis          X Axis                          AbsoluteAxis         
+					//      8      52         4  RyAxis         Y Rotation                      AbsoluteAxis         
+					//     12      51         3  RxAxis         X Rotation                      AbsoluteAxis         
+					//     16      50         2  ZAxis          Z Axis                          AbsoluteAxis         
+					//     20      53         5  RzAxis         Z Rotation                      AbsoluteAxis         
+					//     24      57         0  PovController  Hat Switch                      PointOfViewController
+					//     32     151        19  Unknown        DC Enable Actuators             NoData, Output       
+					//     36       1        20  Unknown        Physical Interface Device       NoData, Output       
+					//     40     112        21  Unknown        Magnitude                       NoData, Output       
+					//     44      80        22  Unknown        Duration                        NoData, Output       
+					//     48     167        23  Unknown        Start Delay                     NoData, Output       
+					//     52     124        24  Unknown        Loop Count                      NoData, Output       
+					//     56       1         0  Button         Button 0                        PushButton           
+					//     57       2         1  Button         Button 1                        PushButton           
+					//     58       3         2  Button         Button 2                        PushButton           
+					//     59       4         3  Button         Button 3                        PushButton           
+					//     60       5         4  Button         Button 4                        PushButton           
+					//     61       6         5  Button         Button 5                        PushButton           
+					//     62       7         6  Button         Button 6                        PushButton           
+					//     63       8         7  Button         Button 7                        PushButton           
+					//     64       9         8  Button         Button 8                        PushButton           
+					//     65      10         9  Button         Button 9                        PushButton           
+					//     66     133        10  Button         System Main Menu                PushButton           
+					AutoPreset(objects, SettingName.ButtonA, 0);
+					AutoPreset(objects, SettingName.ButtonB, 1);
+					AutoPreset(objects, SettingName.ButtonX, 2);
+					AutoPreset(objects, SettingName.ButtonY, 3);
+					AutoPreset(objects, SettingName.LeftShoulder, 4);
+					AutoPreset(objects, SettingName.RightShoulder, 5);
+					AutoPreset(objects, SettingName.ButtonBack, 6);
+					AutoPreset(objects, SettingName.ButtonStart, 7);
+					AutoPreset(objects, SettingName.LeftThumbButton, 8);
+					AutoPreset(objects, SettingName.RightThumbButton, 9);
+					// Triggers.
+					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.ZAxis);
+					if (o != null) AutoPresetRead(SettingName.LeftTrigger, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
+					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RzAxis);
+					if (o != null) AutoPresetRead(SettingName.RightTrigger, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
+					// Right Thumb.
+					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
+					if (o != null) AutoPresetRead(SettingName.RightThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
+					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RyAxis);
+					if (o != null) AutoPresetRead(SettingName.RightThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
+				}
+				// Left Thumb.
+				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.XAxis);
+				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
+				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.YAxis);
+				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
+				// D-Pad
+				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.PovController);
+				if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.DPad, o.Instance + 1));
+			}
+		}
+
+		void AutoPreset(DeviceObjectItem[] objects, string settingName, int index)
+		{
+			var o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.Button && x.Instance == index);
+			if (o != null) AutoPresetRead(settingName, string.Format("{0}{1}", SettingName.SType.Button, o.Instance + 1));
+		}
+
+		void AutoPresetRead(string key, string value)
+		{
+			var pad = string.Format("PAD{0}", ControllerIndex + 1);
+			var path = string.Format("{0}\\{1}", pad, key);
+			var control = SettingsMap[path];
+			//control.Text = value;
+			SettingManager.Current.ReadSettingTo(control, key, value);
 		}
 
 		void SavePresetButton_Click(object sender, EventArgs e)
@@ -1071,5 +1209,6 @@ namespace x360ce.App.Controls
 			}
 			catch (Exception) { }
 		}
+
 	}
 }
