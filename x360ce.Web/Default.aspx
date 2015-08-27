@@ -181,9 +181,9 @@
                                     <br />
                                     • Windows Vista or newer.<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=21">.NET 3.5 (also installs 2.0 and 3.0)</a> (included in Windows 7)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included in Windows 8)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=35">DirectX End-User Runtimes (June 2010)</a> (Required regardless of OS)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributables)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included in Windows 8 and 10)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=35">DirectX End-User Runtime (June 2010)</a> (Required regardless of OS)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributable)<br />
                                     <br />
                                     <span class="title">Files</span><br />
                                     <br />
