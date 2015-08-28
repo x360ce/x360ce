@@ -2,7 +2,7 @@
 
 # Download
 
-Digitally Signed Application v3.2.8.74 (2015-08-27) and Libraries 3.4.1.1357 (2015-08-27)
+Digitally Signed Application v3.2.8.76 (2015-08-28) and Libraries 3.4.1.1357 (2015-08-27)
 
 [32-bit Download](http://www.x360ce.com/Files/x360ce.zip) - for 32-bit games
 

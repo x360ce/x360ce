@@ -1,4 +1,4 @@
-﻿v3.2.8.76 (2015-08-27)
+﻿v3.2.8.76 (2015-08-28)
 - Fix: Crashes on invalid permissions.
 - Update: Changed project link to GitHub on About page.
 
