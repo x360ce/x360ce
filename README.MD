@@ -2,7 +2,7 @@
 
 # Download
 
-Digitally Signed Application v3.2.8.74 (2015-08-27) and Libraries 3.4.1.1357 (2015-08-27)
+Digitally Signed Application v3.2.8.76 (2015-08-28) and Libraries 3.4.1.1357 (2015-08-27)
 
 [32-bit Download](http://www.x360ce.com/Files/x360ce.zip) - for 32-bit games
 
@@ -31,9 +31,9 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
 
   1. Windows Vista or newer.
   1. [.NET 3.5 (also installs 2.0 and 3.0)](http://www.microsoft.com/en-us/download/details.aspx?id=21) (included in Windows 7)
-  1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included in Windows 8, 8.1 and 10)
-  1. [DirectX End-User Runtimes (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
-  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributables)
+  1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included in Windows 8 and 10)
+  1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
+  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributable)
 
 Notes:
   * Most games executables are 32bit and require x86 x360ce and also x86 redistributable.
@@ -85,15 +85,8 @@ Some controllers will operate in game only, if set as "GamePad". Try to:
   1. Click [Save] button.
   1. Close x360ce Application, run game.
  
-Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4) in x360ce.ini file. You must edit x360ce.ini file with Notepad each time, after closing x360ce.exe application:
+Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible when controller is connected.
 
-```
-[Mappings]
-PAD1=IG_{main controller number}
-PAD2=IG_{other controller number}
-PAD3=IG_{other controller number}
-PAD4=
-```
 **Do I need to run x360ce Application during the game?**
 
 x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller. 
@@ -108,10 +101,10 @@ You can resolve this by adding Version=1 under the [Options] section in x360ce.i
 This can occur for a number of reasons.
 
   1. The configuration utility DOES NOT work with the 64bit library, it will only work with the 32bit version, This is the case regardless of whether your windows is 32bit or 64bit.
-  1. The DInput state of the control might be incorrect due to previous application crashing and not unloading the control or some other reason. Opening up Joy.cpl (Set Up Usb Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.
+  1. The DInput state of the control might be incorrect due to previous application crashing and not unloading the control or some other reason. Opening up Joy.cpl (Set Up USB Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.
   1. The controller profile loaded may match the name of the control but not actually be for the controller you own - in this case you might see button numbers or axes mapped that do not appear in the joy.cpl test page.
   1. The controller profile might have PassThrough set. A growing number of profiles have been uploaded that do this, i have no idea why as it disables x360ce and just bloats the list of available profiles.
-  1. There just might not be a profile for your control at all - The light should turn green once atleast the 2 sticks, triggers and Dpad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
+  1. There just might not be a profile for your control at all - The light should turn green once at least the 2 sticks, triggers and DPad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
 
 # Screenshots
 

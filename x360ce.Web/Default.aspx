@@ -80,14 +80,14 @@
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md">Supported Games</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://ngemu.com/forums/x360ce.140">Forum</a></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.2.8.74 (2015-08-27) • for 32-bit games</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.2.8.76 (2015-08-28) • for 32-bit games</a></td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.2.8.74 (2015-08-27) • for 64-bit games</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.2.8.76 (2015-08-28) • for 64-bit games</a></td>
                                         </tr>
                                     </table>
 
@@ -181,9 +181,9 @@
                                     <br />
                                     • Windows Vista or newer.<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=21">.NET 3.5 (also installs 2.0 and 3.0)</a> (included in Windows 7)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included in Windows 8)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=35">DirectX End-User Runtimes (June 2010)</a> (Required regardless of OS)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributables)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included in Windows 8 and 10)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=35">DirectX End-User Runtime (June 2010)</a> (Required regardless of OS)<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributable)<br />
                                     <br />
                                     <span class="title">Files</span><br />
                                     <br />
@@ -195,7 +195,7 @@
                                     <br />
                                     <span class="title">Installation</span><br />
                                     <br />
-                                    Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name. Known names:<br />
+                                    Run this program from the same directory as the game executable. XInput library files exist with several different names and some games require a change in its name. Known names:<br />
                                     <br />
                                     • xinput1_4.dll<br />
                                     • xinput1_3.dll<br />
@@ -205,7 +205,7 @@
                                     <br />
                                     <span class="title">Uninstallation</span><br />
                                     <br />
-                                    Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.<br />
+                                    Delete x360ce.exe, x360ce.ini and all XInput DLL from game executable directory.<br />
                                     <br />
                                     <span class="title">Troubleshooting</span><br />
                                     <br />
@@ -220,14 +220,7 @@
                                     5. Click [Save] button.<br />
                                     6. Close x360ce Application, run game.<br />
                                     <br />
-                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4) in x360ce.ini file. You must edit x360ce.ini file with Notepad each time, after closing x360ce.exe application:<br />
-                                    <br />
-                                    <span style="font-family: 'Courier New'">[Mappings]<br />
-                                        PAD1=IG_{main controller number}<br />
-                                        PAD2=IG_{other controller number}<br />
-                                        PAD3=IG_{other controller number}<br />
-                                        PAD4=<br />
-                                    </span>
+                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible when controller is connected.<br />
                                     <br />
                                     x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller.<br />
                                     <br />
