@@ -34,6 +34,7 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
   1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included in Windows 8 and 10)
   1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
   1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributable)
+  1. [Visual C++ Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145) (For x64 systems install both x86 and x64 redistributable) 
 
 Notes:
   * Most games executables are 32bit and require x86 x360ce and also x86 redistributable.
