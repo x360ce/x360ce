@@ -79,6 +79,7 @@ namespace x360ce.App
 				if (IssueList == null)
 				{
 					IssueList = new List<WarningItem>();
+					IssueList.Add(new ExeFileIssue());
 					IssueList.Add(new DirectXIssue());
 					IssueList.Add(new LeakDetectorIssue());
 					IssueList.Add(new MdkIssue());
@@ -87,9 +88,12 @@ namespace x360ce.App
 					IssueList.Add(new DllFileIssue());
 				}
 			}
+			bool clearRest = false;
 			foreach (var issue in IssueList)
 			{
-				issue.Check();
+				if (clearRest) issue.Severity = IssueSeverity.None;
+				else issue.Check();
+				if (issue.Severity == IssueSeverity.Critical) clearRest = true;
 				UpdateWarning(issue);
 			}
 			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()

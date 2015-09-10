@@ -20,45 +20,45 @@ namespace x360ce.Engine.Win32
 		/// <returns>Bool indicating whether the current process is elevated</returns>
 		public static bool IsElevated()
 		{
-				//if (!IsVista) throw new ApplicationException("Function requires Vista or higher");
-				// METHOD 1
-				//AppDomain myDomain = Thread.GetDomain();
-				//myDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
-				//WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
-				//return (myPrincipal.IsInRole(WindowsBuiltInRole.Administrator));
-				// METHOD 2
-				bool bRetVal = false;
-				IntPtr hToken = IntPtr.Zero;
-				IntPtr hProcess = NativeMethods.GetCurrentProcess();
-				if (hProcess == IntPtr.Zero) throw new Exception("Error getting current process handle");
-				bRetVal = NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
-				if (!bRetVal) throw new Win32Exception();
+			//if (!IsVista) throw new ApplicationException("Function requires Vista or higher");
+			// METHOD 1
+			//AppDomain myDomain = Thread.GetDomain();
+			//myDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
+			//WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
+			//return (myPrincipal.IsInRole(WindowsBuiltInRole.Administrator));
+			// METHOD 2
+			bool bRetVal = false;
+			IntPtr hToken = IntPtr.Zero;
+			IntPtr hProcess = NativeMethods.GetCurrentProcess();
+			if (hProcess == IntPtr.Zero) throw new Exception("Error getting current process handle");
+			bRetVal = NativeMethods.OpenProcessToken(hProcess, WinNT.TOKEN_QUERY, out hToken);
+			if (!bRetVal) throw new Win32Exception();
+			try
+			{
+				TOKEN_ELEVATION te;
+				te.TokenIsElevated = 0;
+
+				UInt32 dwReturnLength = 0;
+				Int32 teSize = System.Runtime.InteropServices.Marshal.SizeOf(te);
+				IntPtr tePtr = Marshal.AllocHGlobal(teSize);
 				try
 				{
-					TOKEN_ELEVATION te;
-					te.TokenIsElevated = 0;
-
-					UInt32 dwReturnLength = 0;
-					Int32 teSize = System.Runtime.InteropServices.Marshal.SizeOf(te);
-					IntPtr tePtr = Marshal.AllocHGlobal(teSize);
-					try
-					{
-						System.Runtime.InteropServices.Marshal.StructureToPtr(te, tePtr, true);
-						bRetVal = NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevation, tePtr, (UInt32)teSize, out dwReturnLength);
-						if (!bRetVal) throw new Win32Exception();
-						if (teSize != dwReturnLength) throw new Exception("Error getting token information");
-						te = (TOKEN_ELEVATION)Marshal.PtrToStructure(tePtr, typeof(TOKEN_ELEVATION));
-					}
-					finally
-					{
-						Marshal.FreeHGlobal(tePtr);
-					}
-					return (te.TokenIsElevated != 0);
+					System.Runtime.InteropServices.Marshal.StructureToPtr(te, tePtr, true);
+					bRetVal = NativeMethods.GetTokenInformation(hToken, TOKEN_INFORMATION_CLASS.TokenElevation, tePtr, (UInt32)teSize, out dwReturnLength);
+					if (!bRetVal) throw new Win32Exception();
+					if (teSize != dwReturnLength) throw new Exception("Error getting token information");
+					te = (TOKEN_ELEVATION)Marshal.PtrToStructure(tePtr, typeof(TOKEN_ELEVATION));
 				}
 				finally
 				{
-					NativeMethods.CloseHandle(hToken);
+					Marshal.FreeHGlobal(tePtr);
 				}
+				return (te.TokenIsElevated != 0);
+			}
+			finally
+			{
+				NativeMethods.CloseHandle(hToken);
+			}
 		}
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace x360ce.Engine.Win32
 			uint BCM_FIRST = 0x1600; // Normal button
 			uint BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
 			// Input validation
-			if (button == null)return;
+			if (button == null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
 			NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(1));
@@ -146,6 +146,15 @@ namespace x360ce.Engine.Win32
 			return process;
 		}
 
+		// Restart current app in elevated mode.
+		public static void RunElevated()
+		{
+			if (IsElevated()) throw new ApplicationException("Elevated already");
+			RunElevatedAsync(Application.ExecutablePath, null);
+			//Close this instance because we have an elevated instance
+			Application.Exit();
+		}
+
 		/// <summary>
 		/// Start program in elevated mode.
 		/// </summary>
@@ -159,12 +168,16 @@ namespace x360ce.Engine.Win32
 			{
 				try
 				{
+					var fi = new System.IO.FileInfo(fileName);
+					process.StartInfo = new ProcessStartInfo();
+					process.StartInfo.FileName = fileName;
+                    process.StartInfo.WorkingDirectory = fi.Directory.FullName;
 					process.Start();
 				}
 				catch (Win32Exception)
 				{
 					// The user refused to allow privileges elevation
-					// or other error happend. Do nothing and return...
+					// or other error happened. Do nothing and return...
 					return exitCode;
 				}
 				process.WaitForExit();
@@ -182,18 +195,22 @@ namespace x360ce.Engine.Win32
 				if (exitedEventHandler != null) process.Exited += exitedEventHandler;
 				try
 				{
+					var fi = new System.IO.FileInfo(fileName);
+					process.StartInfo = new ProcessStartInfo();
+					process.StartInfo.FileName = fileName;
+					process.StartInfo.WorkingDirectory = fi.Directory.FullName;
 					process.Start();
 				}
 				catch (Win32Exception)
 				{
 					// The user refused to allow privileges elevation
-					// or other error happend. Do nothing and return...
+					// or other error happened. Do nothing and return...
 				}
 			}
 		}
 
 		[return: MarshalAs(UnmanagedType.Interface)]
-		public static  object RunElevatedComObject(Guid Clsid, Guid InterfaceID)
+		public static object RunElevatedComObject(Guid Clsid, Guid InterfaceID)
 		{
 			string CLSID = Clsid.ToString("B"); // B formatting directive: returns {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx} 
 			string monikerName = "Elevation:Administrator!new:" + CLSID;
@@ -203,15 +220,6 @@ namespace x360ce.Engine.Win32
 			bo.dwClassContext = (int)CLSCTX.CLSCTX_ALL;
 			object retVal = NativeMethods.CoGetObject(monikerName, ref bo, InterfaceID);
 			return (retVal);
-		}
-
-		// Restart curent app in elevated mode.
-		public static void RunElevated()
-		{
-			if (IsElevated()) throw new ApplicationException("Elevated already");
-			RunElevatedAsync(Application.ExecutablePath, null);
-			//Close this instance because we have an elevated instance
-			Application.Exit();
 		}
 
 		public static bool IsInAdministratorRole
@@ -317,13 +325,13 @@ namespace x360ce.Engine.Win32
 
 				// Integrity Level SIDs are in the form of S-1-16-0xXXXX. (e.g. 
 				// S-1-16-0x1000 stands for low integrity level SID). There is one 
-				// and only one subauthority.
+				// and only one sub authority.
 				IntPtr pIL = NativeMethods.GetSidSubAuthority(tokenIL.Label.Sid, 0);
 				IL = Marshal.ReadInt32(pIL);
 			}
 			finally
 			{
-				// Centralized cleanup for all allocated resources. 
+				// Centralized clean-up for all allocated resources. 
 				if (hToken != null)
 				{
 					hToken.Close();
