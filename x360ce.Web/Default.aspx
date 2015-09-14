@@ -17,7 +17,7 @@
 
         table { margin: auto; border: 0; padding: 0; border-collapse: collapse; border-spacing: 0; }
 
-        td { color: #ffffff; font-family: Calibri, 'Trebuchet MS', Arial; font-size: 14px; border: 0; vertical-align: top; padding: 0; }
+        td { font-family: Calibri, 'Trebuchet MS', Arial; font-size: 14px; border: 0; vertical-align: top; padding: 0; }
 
         .title { font-size: 18px; }
 
@@ -40,7 +40,7 @@
 
         .Games td, p { color: #ff7373; }
 
-        .Description td, p { color: #80ceff; }
+        .Description td, p { color: #111111; }
     </style>
 
 </head>
@@ -72,7 +72,7 @@
                             <tr>
                                 <td colspan="2" style="background-color: #2674ec; padding: 10px; text-align: center; border-radius: 14px;">
 
-                                    <p style="font-size: 18pt; vertical-align: middle; color: #80ceff; margin-top: 0; margin-bottom: 12px;">TocaEdit Xbox 360 Controller Emulator</p>
+                                    <p style="font-size: 18pt; vertical-align: middle; margin-top: 0; margin-bottom: 12px; color: #80ceff;">TocaEdit Xbox 360 Controller Emulator</p>
 
                                     <table style="border-collapse: separate; border-spacing: 4px;">
                                         <tr>
@@ -91,7 +91,7 @@
                                         </tr>
                                     </table>
 
-                                    <p style="margin-top: 0; text-align: left; font-size: 9pt; margin-left: 35px;"><i>• Latest version works with “Grand Theft Auto V” (64-bit only).</i></p>
+                                    <p style="margin-top: 0; text-align: left; font-size: 9pt; margin-left: 35px; color: #80ceff;"><i>• Latest version works with “Grand Theft Auto V” (64-bit only).</i></p>
 
                                     <p style="text-align: justify; color: #80ceff;">“Xbox 360 Controller Emulator” allows your controller (GamePad, Joystick, Wheel, ...) to function like “Xbox 360 Controller” and to play games, like “Grand Theft Auto”, “Mafia” or “Saints Row”, with Logitech Steering Wheel. Also, application allows you to edit and test “Xbox 360 Controller Emulator Library” settings.</p>
 
@@ -176,56 +176,76 @@
                         </table>
                         <table style="width: 804px; margin-top: 4px;">
                             <tr>
-                                <td colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; border-radius: 14px; width: 804px;">
-                                    <span class="title">System Requirements</span><br />
-                                    <br />
-                                    • Windows Vista or newer.<br />
+                                <td class="Description" colspan="2" style="background-color: #ffbf00; padding: 10px; color: #111111; text-align: justify; border-radius: 14px; width: 804px;">
+
+                                    <p><span class="title">System Requirements</span></p>
+
+                                    <p style="margin-left: 20px;">• Windows Vista or newer.<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=21">.NET 3.5 (also installs 2.0 and 3.0)</a> (included in Windows 7)<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=30653">.NET 4.0 (link to 4.5, also installs 4.0)</a> (included in Windows 8 and 10)<br />
                                     • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=35">DirectX End-User Runtime (June 2010)</a> (Required regardless of OS)<br />
-                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributable)<br />
-                                    <br />
-                                    <span class="title">Files</span><br />
-                                    <br />
-                                    • xinput1_3.dll (Library) - Translates XInput calls to DirectInput calls - supports old, no XInput compatible GamePads.<br />
+                                    • <a target="_blank" class="Blue" href="http://www.microsoft.com/en-us/download/details.aspx?id=40784">Visual C++ Redistributable for Visual Studio 2013</a> (For x64 systems install both x86 and x64 redistributable)</p>
+                                    <p><span class="title">Files</span></p>
+
+                                    <p style="margin-left: 20px;">• xinput1_3.dll (Library) - Translates XInput calls to DirectInput calls - supports old, no XInput compatible GamePads.<br />
                                     • x360ce.exe - (Application) - Allows edit and test Library settings.<br />
                                     • x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
                                     • x360ce.gdb - (Game Database) Includes required hookmasks for various games).<br />
-                                    • Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).<br />
-                                    <br />
-                                    <span class="title">Installation</span><br />
-                                    <br />
-                                    Run this program from the same directory as the game executable. XInput library files exist with several different names and some games require a change in its name. Known names:<br />
-                                    <br />
-                                    • xinput1_4.dll<br />
+                                    • Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).</p>
+
+                                    <p><span class="title">Installation</span></p>
+
+                                    <p>Run this program from the same directory as the game executable. XInput library files exist with several different names and some games require a change in its name. Known names:</p>
+
+                                    <p style="margin-left: 20px;">• xinput1_4.dll<br />
                                     • xinput1_3.dll<br />
                                     • xinput1_2.dll<br />
                                     • xinput1_1.dll<br />
-                                    • xinput9_1_0.dll<br />
-                                    <br />
-                                    <span class="title">Uninstallation</span><br />
-                                    <br />
-                                    Delete x360ce.exe, x360ce.ini and all XInput DLL from game executable directory.<br />
-                                    <br />
-                                    <span class="title">Troubleshooting</span><br />
-                                    <br />
-                                    Some games have control issues, when Dead Zone is reduced to 0%.<br />
-                                    <br />
-                                    Some controllers will operate in game only, if set as "GamePad". Try to:<br />
-                                    <br />
-                                    1. Run x360ce.exe<br />
-                                    2. Select tab with your Wheel Controller.<br />
+                                    • xinput9_1_0.dll</p>
+                                    
+                                    <p><span class="title">Uninstallation</span></p>
+
+                                    <p>Delete x360ce.exe, x360ce.ini and all XInput DLL from game executable directory.</p>
+
+                                    <p><span class="title">Troubleshooting</span></p>
+                                    
+                                    <p>Some games have control issues, when Dead Zone is reduced to 0%.</p>
+
+                                    <p>You may need to increase Anti-Dead Zone value, if there is gap between moment, when you start to push axis related button and reaction in game.</p>
+
+                                    <p>Some controllers will operate in game only, if set as "GamePad". Try to:</p>
+
+                                    <p style="margin-left: 20px;">1. Run x360ce.exe<br />
+                                    2. Select [Controller #] tab page with your controller.<br />
                                     3. Open [Advanced] tab page.<br />
                                     4. Set "Device Type" drop down list value to: GamePad<br />
                                     5. Click [Save] button.<br />
-                                    6. Close x360ce Application, run game.<br />
-                                    <br />
-                                    Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible when controller is connected.<br />
-                                    <br />
-                                    x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller.<br />
-                                    <br />
-                                    If your have questions about installation or configuration, please go to <a target="_blank" class="Blue" href="http://ngemu.com/forums/x360ce.140">NGemu x360ce forum</a></br />
-                                    <br />
+                                    6. Close x360ce Application, run game.</p>
+
+                                    <p>Only one controller, mapped to PAD1, may work correctly in some games. Try to:</p>
+                                    
+                                    <p style="margin-left: 20px;">1. Run x360ce.exe<br />
+                                    2. Select [Controller #] tab page with your controller.<br />
+                                    3. Open [Direct Input Device] tab page (visible when controller is connected).<br />
+                                    4. Set "Map To" drop down list value to: 1.<br />
+                                    5. Set "Map To" drop down list values <i>(repeat steps 2. to 4.)</i> for other controllers, if you have them, to: 2, 3 or 4.<br />
+                                    6. Click [Save] button.<br />
+                                    7. Close x360ce Application, run game.</p>
+
+                                    <p>To use more than one controller in game, you may need to combine them. Try to:</p>
+                                    
+                                    <p style="margin-left: 20px;">1. Run x360ce.exe<br />
+                                    2. Select [Controller #] tab page with your additional controller.<br />
+                                    3. Open [Advanced] tab page.<br />
+                                    4. Set "Combine Into" drop down list value to: One.<br />
+                                    5. Select [Options] tab page.<br />
+                                    6. Check "Enable Combining" check-box. <i>(Note: Uncheck "Enable Combining" check-box, when you want to configure controller.)</i><br />
+                                    7. Click [Save] button.<br />
+                                    8. Close x360ce Application, run game.</p>
+
+                                   <p>x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller.</p>
+
+                                   <p>If your have questions about installation or configuration, please go to <a target="_blank" class="Blue" href="http://ngemu.com/forums/x360ce.140">NGemu x360ce forum</a></p>
                                 </td>
                             </tr>
                         </table>
