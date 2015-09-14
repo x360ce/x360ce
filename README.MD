@@ -75,18 +75,39 @@ Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.
 
 Some games have control issues, when Dead Zone is reduced to 0%.
 
+You may need to increase Anti-Dead Zone value, if there is gap between moment, when you start to push axis related button and reaction in game.
+
 **Wheel doesn't work in the game, but it works inside x360ce Application.**
 
 Some controllers will operate in game only, if set as "GamePad". Try to:
 
   1. Run x360ce.exe
-  1. Select tab with your Wheel Controller.
-  1. Open [Advanced] tab page.
-  1. Set "Device Type" drop down list value to: GamePad
-  1. Click [Save] button.
-  1. Close x360ce Application, run game.
+  2. Select [Controller #] tab page with your controller.
+  3. Open [Advanced] tab page.
+  4. Set "Device Type" drop down list value to: GamePad.
+  5. Click [Save] button.
+  6. Close x360ce Application, run game.
  
-Only one controller may work correctly in some games. If you have more than one controller, connected to your PC, you must set it as PAD1 (other controllers must be set as PAD2, PAD3 or PAD4). You can map Direct Input Device to PAD1 by setting "Map To:" Drop Down list value to "1" on Direct Input Device page which is visible when controller is connected.
+Only one controller, mapped to PAD1, may work correctly in some games. Try to:
+
+  1. Run x360ce.exe<br />
+  2. Select [Controller #] tab page with your controller.
+  3. Open [Direct Input Device] tab page (visible when controller is connected).
+  4. Set "Map To" drop down list value to: 1.
+  5. Set "Map To" drop down list values <i>(repeat steps 2. to 4.)</i> for other controllers, if you have them, to: 2, 3 or 4.
+  6. Click [Save] button.
+  7. Close x360ce Application, run game.
+ 
+To use more than one controller in game, you may need to combine them. Try to:
+
+  1. Run x360ce.exe
+  2. Select [Controller #] tab page with your additional controller.
+  3. Open [Advanced] tab page.
+  4. Set "Combine Into" drop down list value to: One.
+  5. Select [Options] tab page.
+  6. Check "Enable Combining" check-box. <i>(Note: Uncheck "Enable Combining" check-box, when you want to configure controller.)</i>
+  7. Click [Save] button.
+  8. Close x360ce Application, run game.
 
 **Do I need to run x360ce Application during the game?**
 
