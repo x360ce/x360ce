@@ -1,4 +1,7 @@
-﻿v3.2.8.76 (2015-08-28)
+﻿v3.2.8.77 (2015-09-10)
+- Fix: Offer fix when used tries to start application from Windows folder.
+
+v3.2.8.76 (2015-08-28)
 - Fix: Crashes on invalid permissions.
 - Update: Changed project link to GitHub on About page.
 
