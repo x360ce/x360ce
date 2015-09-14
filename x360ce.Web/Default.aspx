@@ -218,7 +218,7 @@
                                     <p style="margin-left: 20px;">1. Run x360ce.exe<br />
                                     2. Select [Controller #] tab page with your controller.<br />
                                     3. Open [Advanced] tab page.<br />
-                                    4. Set "Device Type" drop down list value to: GamePad<br />
+                                    4. Set "Device Type" drop down list value to: GamePad.<br />
                                     5. Click [Save] button.<br />
                                     6. Close x360ce Application, run game.</p>
 
