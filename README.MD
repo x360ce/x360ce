@@ -43,13 +43,13 @@ Notes:
   * The full DirectX Redistributable will always install the file, however it's best to have .NET 3.5 installed anyhow as quite a few XInput titles utilize .NET for internal dependencies.
 
 # Files
-```
-xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls - supports old, non-XInput compatible GamePads.
-x360ce.exe - (Application) - Allows for editing and testing of Library settings.
-x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).
-x360ce.gdb - (Game Database) Includes required hookmasks for various games).
-Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).
-```
+
+xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls - supports old, non-XInput compatible GamePads.<br />
+x360ce.exe - (Application) - Allows for editing and testing of Library settings.<br />
+x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
+x360ce.gdb - (Game Database) Includes required hookmasks for various games).<br />
+Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).<br />
+
 # Installation
 
 Run this program from the same directory as the game executable. XInput library files exist with several different names and some games require a change in its name. Known names:
