@@ -45,6 +45,8 @@ namespace x360ce.App.Issues
 				}
 				else if (iniFile.Exists)
 				{
+					AppHelper.RemoveExplicitAccessRulesAndAllowToModify(SettingManager.IniFileName);
+					
 					// Create temp file to store original settings.
 					if (AppHelper.CopyFile(SettingManager.IniFileName, SettingManager.TmpFileName))
 					{

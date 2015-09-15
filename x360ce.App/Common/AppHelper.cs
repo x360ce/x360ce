@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Text;
 using x360ce.Engine;
 using x360ce.Engine.Win32;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace x360ce.App
 {
@@ -131,6 +133,60 @@ namespace x360ce.App
 				fileList.AddRange(di.GetFiles(searchPattern));
 			}
 			catch { }
+		}
+
+		/// <summary>
+		/// Remove explicit file rules and leave inherited rules only.
+		/// Allow built-in users to write and modify file.
+		/// </summary>
+		public static void RemoveExplicitAccessRulesAndAllowToModify(string fileName)
+		{
+			var fileInfo = new FileInfo(fileName);
+			var fileSecurity = fileInfo.GetAccessControl();
+			fileSecurity.SetAccessRuleProtection(false, false);
+			var identity = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+			// Get explicit file rules of FileSystemAccessRule type.
+			var rules = fileSecurity.GetAccessRules(true, true, typeof(NTAccount)).OfType<FileSystemAccessRule>();
+			var referenceValue = ((NTAccount)identity.Translate(typeof(NTAccount))).Value;
+			// Remove explicit permission.
+			var allowsWrite = false;
+			var allowsModify = false;
+			var rulesChanged = false;
+			foreach (var rule in rules)
+			{
+				if (rule.AccessControlType == AccessControlType.Allow && rule.IdentityReference.Value == referenceValue)
+				{
+					if (rule.FileSystemRights == FileSystemRights.Write)
+					{
+						allowsWrite = true;
+						continue;
+					}
+					if (rule.FileSystemRights == FileSystemRights.Modify)
+					{
+						allowsModify = true;
+						continue;
+					}
+				}
+				if (!rule.IsInherited)
+				{
+					fileSecurity.RemoveAccessRule(rule);
+					rulesChanged = true;
+                }
+			}
+			if (!allowsWrite)
+			{
+				fileSecurity.AddAccessRule(new FileSystemAccessRule(identity, FileSystemRights.Write, AccessControlType.Allow));
+				rulesChanged = true;
+            }
+			if (!allowsModify)
+			{
+				fileSecurity.AddAccessRule(new FileSystemAccessRule(identity, FileSystemRights.Modify, AccessControlType.Allow));
+				rulesChanged = true;
+            }
+			if (rulesChanged)
+			{
+				fileInfo.SetAccessControl(fileSecurity);
+			}
 		}
 
 	}
