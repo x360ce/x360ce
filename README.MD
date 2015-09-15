@@ -1,4 +1,4 @@
-"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, ...), function as "Xbox 360 Controller". For example, lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using Logitech Wheel.
+"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
 
 # Download
 
@@ -10,11 +10,11 @@ Digitally Signed Application v3.2.8.76 (2015-08-28) and Libraries 3.4.1.1357 (20
 
 # Reporting Issues
 
-Report only crashes or other bugs, note that issue tracker is not helpdesk! 
+Report only crashes or other bugs, note that the Issue tracker is not a helpdesk! 
 
 **DO NOT ASK FOR HELP IN INSTALLATION OR CONFIGURATION!!!**
 
-**If your have questions about installation or configuration, please go to our [forum @NGemu] (http://ngemu.com/forums/x360ce.140)**
+**If you have questions about installation or configuration, please go to our [forum @NGemu](http://ngemu.com/forums/x360ce.140)**
 
 # Guides [OUTDATED!]
 
@@ -33,27 +33,26 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
   1. [.NET 3.5 (also installs 2.0 and 3.0)](http://www.microsoft.com/en-us/download/details.aspx?id=21) (included in Windows 7)
   1. [.NET 4.0 (link to 4.5, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=30653) (included in Windows 8 and 10)
   1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=35) (Required regardless of OS)
-  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributable)
+  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributables)
   1. If you upgraded to Windows 10, you must Uninstall and Reinstall the Visual C++ Redistributable
 
 Notes:
-  * Most games executables are 32bit and require x86 x360ce and also x86 redistributable.
-  * Windows 7 includes .NET 3.5 (which include 3.0 and 2.0).
-  * For Vista, users can obtain it from the above link, and Windows 8 users can enable it in [Programs and Features - Turn Windows Features on and off.](http://msdn.microsoft.com/en-us/library/hh506443.aspx)
+  * Most game's executables are 32-bit and require x86 x360ce and also the x86 redistributable.
+  * Vista users can obtain .NET 3.5 from the above link, and Windows 8 users can enable it in [Programs and Features - Turn Windows Features on and off.](http://msdn.microsoft.com/en-us/library/hh506443.aspx)
   * **.NET MUST be installed prior to the DirectX webupdate as it checks that .NET 2.0/3.0/3.5 is installed and skips the Managed DirectX framework if it is not.**
-  * The full DirectX Redistributable will always install the file, however its best to have .NET 3.5 installed anyhow as quite a few Xinput titles utilize .NET for internal dependencies.
+  * The full DirectX Redistributable will always install the file, however it's best to have .NET 3.5 installed anyhow as quite a few XInput titles utilize .NET for internal dependencies.
 
 # Files
 
-xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls - supports old, no XInput compatible GamePads.<br />
-x360ce.exe - (Application) - Allows edit and test Library settings.<br />
+xinput1\_3.dll (Wrapper Library) - Translates XInput calls to DirectInput calls - supports old, non-XInput compatible GamePads.<br />
+x360ce.exe - (Application) - Allows for editing and testing of Library settings.<br />
 x360ce.ini - (Configuration) - Contain Library settings (button, axis, slider maps).<br />
 x360ce.gdb - (Game Database) Includes required hookmasks for various games).<br />
-Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).
+Dinput8.dll - (DirectInput 8 spoof/wrapping file to improve x360ce compatibility in rare cases).<br />
 
 # Installation
 
-Run this program from the same directory as the game executable. Xinput library files exist with several different names and some games require a change in its name. Known names:
+Run this program from the same directory as the game executable. XInput library files exist with several different names and some games require a change in its name. Known names:
 
   * xinput1\_4.dll (Windows 8 / metro apps only)
   * xinput1\_3.dll
@@ -61,72 +60,75 @@ Run this program from the same directory as the game executable. Xinput library 
   * xinput1\_1.dll
   * xinput9\_1\_0.dll
 
-Game Database (GDB) and Configuration (Ini) files can be copied to %Allusersprofile%\X360CE on NT6 (Vista/7/8) or %Allusersprofile%\Application Data\X360CE on NT5.1 (XP), Or left in the same directory as the game executable (.EXE)
+Game Database (GDB) and Configuration (Ini) files can be copied to %Allusersprofile%\X360CE on NT6 (Vista/7/8) or %Allusersprofile%\Application Data\X360CE on NT5.1 (XP), or be left in the same directory as the game's executable (.EXE)
 
 Note:
-  * Games based on source engine in most cases have the dll placed inside the /Bin/ subfolder, as it it is loaded by inputsystem.dll instead of the game executable.
-  * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options] in the x360ce.ini to quieten a incorrect version warning
+  * In most cases games based on the Source engine have the DLL placed inside the /Bin/ subfolder, as it it is loaded by inputsystem.dll instead of the game executable.
+  * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options] in the x360ce.ini to quieten a warning about incorrect version.
 
 # Uninstallation
 
-Delete x360ce.exe, x360ce.ini and all xinput dll from game executable directory.
+Delete x360ce.exe, x360ce.ini and all XInput DLLs from the game's executable directory.
 
 # Troubleshooting
 
-Some games have control issues, when Dead Zone is reduced to 0%.
+Some games have control issues when Dead Zone is reduced to 0%.
 
-You may need to increase Anti-Dead Zone value, if there is gap between moment, when you start to push axis related button and reaction in game.
+You may need to increase the Anti-Dead Zone value if there is gap between the moment when you start to push the axis-related button and the reaction in game.
 
 **Wheel doesn't work in the game, but it works inside x360ce Application.**
 
-Some controllers will operate in game only, if set as "GamePad". Try to:
+Some controllers will only operate in game if they are set as "GamePad". Try to:
 
   1. Run x360ce.exe
-  2. Select [Controller #] tab page with your controller.
+  2. Select the [Controller #] tab page corresponding to your controller.
   3. Open [Advanced] tab page.
   4. Set "Device Type" drop down list value to: GamePad.
   5. Click [Save] button.
-  6. Close x360ce Application, run game.
+  6. Close x360ce.exe.
+  7. Run the game.
  
 Only one controller, mapped to PAD1, may work correctly in some games. Try to:
 
-  1. Run x360ce.exe<br />
-  2. Select [Controller #] tab page with your controller.
-  3. Open [Direct Input Device] tab page (visible when controller is connected).
+  1. Run x360ce.exe
+  2. Select the [Controller #] tab page corresponding to your controller.
+  3. Open the [Direct Input Device] tab page (visible when the controller is connected).
   4. Set "Map To" drop down list value to: 1.
-  5. Set "Map To" drop down list values <i>(repeat steps 2. to 4.)</i> for other controllers, if you have them, to: 2, 3 or 4.
+  5. Set "Map To" drop down list values *(repeat steps 2. to 4.)* for other controllers, if you have them, to: 2, 3 or 4.
   6. Click [Save] button.
-  7. Close x360ce Application, run game.
+  7. Close x360ce.exe.
+  8. Run the game.
  
 To use more than one controller in game, you may need to combine them. Try to:
 
   1. Run x360ce.exe
-  2. Select [Controller #] tab page with your additional controller.
-  3. Open [Advanced] tab page.
+  2. Select the [Controller #] tab page corresponding to your additional controller.
+  3. Open the [Advanced] tab page.
   4. Set "Combine Into" drop down list value to: One.
   5. Select [Options] tab page.
-  6. Check "Enable Combining" check-box. <i>(Note: Uncheck "Enable Combining" check-box, when you want to configure controller.)</i>
+  6. Check "Enable Combining" check-box. *(Note: Uncheck "Enable Combining" check-box when you want to configure the controller.)*
   7. Click [Save] button.
-  8. Close x360ce Application, run game.
+  8. Close x360ce.exe.
+  9. Run the game.
 
 **Do I need to run x360ce Application during the game?**
 
-x360ce.exe application can be closed during the game - game doesn't need it and it uses computer resources. It is just a GUI for editing x360ce.ini and test controller. 
+The x360ce.exe application can be closed before launching the game; the game doesn't need it and it uses your computer's resources. The x360ce.exe application is just a GUI for editing x360ce.ini and testing your controller. 
 
 **Warning - Configuration file version does not match x360ce version.**
 
 This occurs because the current version of the application is not completely compatible with the DLL just yet.
 You can resolve this by adding Version=1 under the [Options] section in x360ce.ini
 
-**Controller tab won't turn green / Red light on Controller 1,2 etc.**
+**Controller tab won't turn green / Red light on Controller 1, 2 etc.**
 
-This can occur for a number of reasons.
+This can occur for a number of reasons:
 
-  1. The configuration utility DOES NOT work with the 64bit library, it will only work with the 32bit version, This is the case regardless of whether your windows is 32bit or 64bit.
-  1. The DInput state of the control might be incorrect due to previous application crashing and not unloading the control or some other reason. Opening up Joy.cpl (Set Up USB Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.
-  1. The controller profile loaded may match the name of the control but not actually be for the controller you own - in this case you might see button numbers or axes mapped that do not appear in the joy.cpl test page.
-  1. The controller profile might have PassThrough set. A growing number of profiles have been uploaded that do this, i have no idea why as it disables x360ce and just bloats the list of available profiles.
-  1. There just might not be a profile for your control at all - The light should turn green once at least the 2 sticks, triggers and DPad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
+  1. The configuration utility DOES NOT work with the 64-bit library, it will only work with the 32-bit version, This is the case regardless of whether your Windows is 32-bit or 64-bit.
+  2. The DInput state of the controller might be incorrect due to an application crashing previously and not unloading the controller or some other reason. Opening up Joy.cpl (Set Up USB Game Controllers) and clicking the Advanced button, and then Okaying out of the window that appears can fix it.
+  3. The controller profile loaded may match the name of the controller but not actually be for the controller you own - in this case you might see button numbers or axes mapped that do not appear in the Joy.cpl test page.
+  4. The controller profile might have PassThrough set. A growing number of profiles have been uploaded that do this, I have no idea why as it disables x360ce and just bloats the list of available profiles.
+  5. There just might not be a profile for your control at all - The light should turn green at least once the 2 sticks, triggers and D-pad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
 
 # Screenshots
 
