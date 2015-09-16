@@ -78,85 +78,44 @@ Items in these lists are in need of testing with the new hookmask system
 This is the new system utilised by r574+
 
 ## Hookmask Not Required
-  1. Alone in the dark (2008) (uses xinput1_1.dll)
-  1. Audiosurf
-  1. Awesomenauts
-  1. Bastion
-  1. Borderlands 2
-  1. Blades of Time (uses xinput9_1_0.dll)
-  1. Call of Juarez: Gunslinger
-  1. Capsized (If using Type 2 rumble, increase motor duration to 500)
-  1. Carmageddon Reincarnation
-  1. Castlevania: Lords of Shadow – Ultimate Edition
-  1. DuckTales Remastered
-  1. Dust: An Elysian Tail
-  1. Elder Scrolls V, The - Skyrim
-  1. Far Cry 2
-  1. Fez
-  1. Final Exam
-  1. Godmode (uses xinput9_1_0.dll)
-  1. Grand Theft Auto IV (If using Type 2 rumble, increase motor duration to 500)
-  1. Grand Theft Auto V (64bit only)
-  1. Guacamelee! Gold Edition (uses xinput9_1_0.dll)
-  1. Hell Yeah!
-  1. Hitman: Absolution (uses xinput9_1_0.dll)
-  1. Just Cause 2
-  1. Lara Croft and the Guardian of Light(uses xinput9_1_0.dll)
-  1. Limbo
-  1. Monaco
-  1. Penny Arcade's On the Rain-Slick Precipice of Darkness 3
-  1. Penny Arcade's On the Rain-Slick Precipice of Darkness 4
-  1. Pro Evolution Soccer 2010 (uses xinput1_1.dll)
-  1. Pro Evolution Soccer 2014
-  1. Ring Runner
-  1. Rogue Legacy
-  1. Rusty Hearts (uses xinput9_1_0.dll and xinput1_3.dll)
-  1. Sacred Citadel (uses xinput9_1_0.dll)
-  1. Sine-Mora
-  1. Sonic the Hedgehog 4 EP 1
-  1. Sudeki (Steam) (uses xinput1_2.dll)
-  1. They Bleed Pixels
-  1. Titanfall (32bit and 64bit executables, defaults to 64bit on 64bit OS)
-  1. Tomb Raider(2013) (uses xinput9_1_0.dll)
-  1. WarFrame (32bit and 64bit executables, defaults to 64bit on 64bit OS)
-  1. Unmechanical
-  2. 
-
-## Hookmask Required
-
-### HookLL
-
-
-### HookCOM
-
   1. Ace Combat Assault Horizon
   1. Afterfall Insanity: Extended Edition
   1. Alice: Madness Returns
+  1. Alone in the dark (2008) (uses xinput1_1.dll)
   1. Antichamber
   1. Assassin's Creed: Brotherhood (uses xinput9_1_0.dll for multiplayer)
-  1. Assassin's Creed: Revelations (uses xinput9_1_0.dll for multiplayer)
   1. Assassin's Creed: III (uses xinput9_1_0.dll for multiplayer)
   1. Assassin's Creed: IV Black Flag (uses xinput9_1_0.dll for multiplayer)
+  1. Assassin's Creed: Revelations (uses xinput9_1_0.dll for multiplayer)
+  1. Audiosurf
   1. Awesomenauts
-  1. Battlefield 3 (uses xinput9_1_0.dll)
+  1. Awesomenauts
+  1. Bastion
   1. Batman Arkham Asylum
   1. Batman Arkham City (uses xinput9_1_0.dll)
   1. Batman Arkham Origins
+  1. Battlefield 3 (uses xinput9_1_0.dll)
   1. BioHazard 6 (needs dinput8.dll)
   1. BioShock Infinite
   1. Blade Kitten
+  1. Blades of Time (uses xinput9_1_0.dll)
+  1. Borderlands 2
   1. Brothers: A Tale of Two Sons
   1. Brutal Legend
   1. Bulletstorm
   1. Call of Duty Advanced Warfare (64bit only)
   1. Call of Duty Ghosts (64bit only)
+  1. Call of Juarez: Gunslinger
+  1. Capsized (If using Type 2 rumble, increase motor duration to 500)
+  1. Carmageddon Reincarnation
   1. Castle Crashers
+  1. Castlevania: Lords of Shadow – Ultimate Edition
   1. Cave, The
-  1. Darksiders
-  1. Darksiders 2
-  1. Dark Souls: Prepare to Die Edition (may need dinput8.dll with DSFIX)
   1. Dark Souls II
   1. Dark Souls II: SCHOLAR OF THE FIRST SIN (64bit only)
+  1. Dark Souls: Prepare to Die Edition (may need dinput8.dll with DSFIX)
+  1. Darksiders
+  1. Darksiders 2
   1. Dead Island
   1. Deadlight
   1. DeathSpank
@@ -164,68 +123,106 @@ This is the new system utilised by r574+
   1. DmC - Devil May Cry
   1. Dragon Age: Inquisition (uses xinput9_1_0.dll) (64bit only)
   1. Dragon Ball Xenoverse
+  1. DuckTales Remastered
   1. Dungeon Defenders
+  1. Dust: An Elysian Tail
+  1. Elder Scrolls V, The - Skyrim
   1. Enslaved: Odyssey to the West
   1. Evil Within, The (64bit only)
+  1. Far Cry 2
   1. Farcry 3 (If using Type 2 rumble, increase motor duration to 500)
+  1. Fez
   1. FIFA 10
   1. FIFA 11
   1. FIFA 12
   1. FIFA 13
   1. FIFA 15 (uses xinput9_1_0.dll) (32bit and 64bit executables, always uses 64bit on 64bit OS)
+  1. Final Exam
   1. FlatOut Ultimate Carnage
+  1. Godmode (uses xinput9_1_0.dll)
+  1. Grand Theft Auto IV (If using Type 2 rumble, increase motor duration to 500)
+  1. Grand Theft Auto V (64bit only)
   1. Grid
   1. Grid 2
+  1. Guacamelee! Gold Edition (uses xinput9_1_0.dll)
+  1. Hell Yeah!
+  1. Hitman: Absolution (uses xinput9_1_0.dll)
   1. Hotline Miami
   1. How to Survive
   1. Injustice: Gods Among Us Ultimate Edition
+  1. Just Cause 2
   1. L.A. Noire
+  1. Lara Croft and the Guardian of Light(uses xinput9_1_0.dll)
   1. LEGO Indiana Jones: The Original Adventures
   1. LEGO Pirates of the Caribbean: The Video Game
+  1. Limbo
+  1. Mad Max(2015) (uses xinput9_1_0.dll) (64bit only)
   1. Magicka
   1. Mark of the Ninja
   1. Mirror's Edge
+  1. Monaco
   1. Mortal Kombat Arcade Kollection
   1. Mortal Kombat Komplete Edition
   1. Mortal Kombat X (uses xinput9_1_0.dll) (64bit only)
-  1. Need For Speed Most Wanted 2012
   1. NBA 2k13
   1. NBA 2k14
   1. NBA 2k15
+  1. Need For Speed Most Wanted 2012
   1. Outlast (32bit and 64bit executables, defaults to 64bit on 64bit OS)
+  1. Penny Arcade's On the Rain-Slick Precipice of Darkness 3
+  1. Penny Arcade's On the Rain-Slick Precipice of Darkness 4
+  1. Pro Evolution Soccer 2010 (uses xinput1_1.dll)
+  1. Pro Evolution Soccer 2014
   1. Rayman Legends
   1. Rayman Origins
   1. Remember Me
   1. Resident Evil 6 (needs dinput8.dll)
+  1. Ring Runner
   1. Rise of the Triad (2013)
+  1. Rogue Legacy
+  1. Rusty Hearts (uses xinput9_1_0.dll and xinput1_3.dll)
+  1. Sacred Citadel (uses xinput9_1_0.dll)
   1. Saints Row 2
   1. Saints Row IV
   1. Saints Row: The Third
   1. Shank
   1. Shank 2
+  1. Sine-Mora
   1. Skullgirls (uses xinput9_1_0.dll)
   1. Sleeping Dogs
   1. Sleeping Dogs: Definitive Edition (uses xinput9_1_0.dll) (64bit only)
   1. Sonic & All-Stars Racing Transformed
   1. Sonic Generations
+  1. Sonic the Hedgehog 4 EP 1
   1. Street Fighter IV
+  1. Street Fighter x Tekken
+  1. Sudeki (Steam) (uses xinput1_2.dll)
   1. Super Meat Boy (uses xinput9_1_0.dll)
   1. Super Street Fighter IV: Arcade Edition (uses xinput9_1_0.dll and xinput1_3.dll)
-  1. Street Fighter x Tekken
   1. Syndicate
   1. TERA
   1. The Last Remnant
+  1. They Bleed Pixels
   1. Tiny Brains
+  1. Titanfall (32bit and 64bit executables, defaults to 64bit on 64bit OS)
+  1. Tomb Raider(2013) (uses xinput9_1_0.dll)
   1. Trine (If using Type 2 rumble, increase motor duration to 500)
-  1. Trine Enchanged Edition (If using Type 2 rumble, increase motor duration to 500)
   1. Trine 2 (If using Type 2 rumble, increase motor duration to 500)
   1. Trine 3 (If using Type 2 rumble, increase motor duration to 500)
+  1. Trine Enchanged Edition (If using Type 2 rumble, increase motor duration to 500)
+  1. Unmechanical
   1. Vessel
+  1. WarFrame (32bit and 64bit executables, defaults to 64bit on 64bit OS)
   1. Watch Dogs
   1. Worms Revolution
-  1. XCOM Enemy Within
   1. XCOM Enemy Unknown
+  1. XCOM Enemy Within
   1. Yaiba - Ninja Gaiden Z
+  
+  
+## Hookmask Required
+
+### HookLL
 
 ### HookSA
 
