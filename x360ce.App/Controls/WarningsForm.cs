@@ -58,7 +58,6 @@ namespace x360ce.App
 				// If timer is disposed then return;
 				if (checkTimer == null) return;
 				CheckAll();
-
 			}
 			if (checkTimer.Interval != 5000) checkTimer.Interval = 5000;
 			checkTimer.Start();
@@ -86,6 +85,10 @@ namespace x360ce.App
 					IssueList.Add(new ArchitectureIssue());
 					IssueList.Add(new IniFileIssue());
 					IssueList.Add(new DllFileIssue());
+					foreach (var item in IssueList)
+					{
+						item.FixApplied += Item_FixApplied;
+					}
 				}
 			}
 			bool clearRest = false;
@@ -99,38 +102,52 @@ namespace x360ce.App
 			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
 			{
 				var update2 = MainForm.Current.update2Enabled;
-				if (Warnings.Count > 0 && !Visible && !IgnoreAll)
+				if (Warnings.Count > 0)
 				{
-
-					StartPosition = FormStartPosition.CenterParent;
-					var result = ShowDialog(MainForm.Current);
-					// If critical issues remaining then...
-					if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
+					// If not visible and must not ignored then...
+					if (!Visible && !IgnoreAll)
 					{
-						// Close application.
-						MainForm.Current.Close();
-					}
-					else
-					{
-						if (!update2.HasValue)
+						StartPosition = FormStartPosition.CenterParent;
+						var result = ShowDialog(MainForm.Current);
+						// If ignore button was used then...
+						if (IgnoreAll)
 						{
-							MainForm.Current.update2Enabled = true;
+							// If critical issues remaining then...
+							if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
+							{
+								// Close application.
+								MainForm.Current.Close();
+							}
+							// Update 2 haven't ran yet then..
+							else if (!update2.HasValue)
+							{
+								MainForm.Current.update2Enabled = true;
+							}
 						}
 					}
 				}
-				else if (Warnings.Count == 0 && Visible)
+				else
 				{
-					DialogResult = DialogResult.OK;
-                    if (!update2.HasValue)
+					if (Visible) DialogResult = DialogResult.OK;
+					if (!update2.HasValue)
 					{
 						MainForm.Current.update2Enabled = true;
 					}
 				}
-				else if (!update2.HasValue)
-				{
-					MainForm.Current.update2Enabled = true;
-				}
 			});
+		}
+
+		private void Item_FixApplied(object sender, EventArgs e)
+		{
+			// Reset check timer.
+			lock (checkTimerLock)
+			{
+				// If timer is disposed then return;
+				if (checkTimer == null) return;
+				checkTimer.Stop();
+				checkTimer.Interval = 500;
+				checkTimer.Start();
+			}
 		}
 
 		void UpdateWarning(WarningItem result)
@@ -203,7 +220,7 @@ namespace x360ce.App
 						break;
 					case IssueSeverity.Important:
 						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
-                        break;
+						break;
 					case IssueSeverity.Moderate:
 						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
 						break;

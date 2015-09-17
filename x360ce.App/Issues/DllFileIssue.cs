@@ -73,6 +73,7 @@ namespace x360ce.App.Issues
 					: file.Name;
 				AppHelper.WriteFile(resourceName, fileName);
 			}
+			RaiseFixApplied();
 		}
 
 	}

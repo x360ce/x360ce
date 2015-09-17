@@ -42,6 +42,7 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			EngineHelper.OpenUrl("https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx");
+			RaiseFixApplied();
 		}
 
 	}

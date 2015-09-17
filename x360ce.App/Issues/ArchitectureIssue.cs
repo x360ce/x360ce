@@ -83,6 +83,7 @@ namespace x360ce.App.Issues
 			{
 				EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip");
 			}
+			RaiseFixApplied();
 		}
 
 	}

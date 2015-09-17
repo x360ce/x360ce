@@ -35,6 +35,7 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			EngineHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=35");
+			RaiseFixApplied();
 		}
 
 	}

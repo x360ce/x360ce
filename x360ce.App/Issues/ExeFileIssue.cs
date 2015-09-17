@@ -29,6 +29,7 @@ namespace x360ce.App.Issues
 				Severity = IssueSeverity.Critical;
 				return;
 			}
+			FixType = 0;
 			Severity = IssueSeverity.None;
 		}
 
@@ -56,6 +57,7 @@ namespace x360ce.App.Issues
 				//Close this instance because we have an elevated instance
 				Application.Exit();
 			}
+			RaiseFixApplied();
 		}
 
 	}

@@ -9,6 +9,17 @@ namespace x360ce.App
 	public class WarningItem : INotifyPropertyChanged
 	{
 
+		public event EventHandler<EventArgs> FixApplied;
+
+		internal void RaiseFixApplied()
+		{
+			var ev = FixApplied;
+			if (ev != null)
+			{
+				ev(this, new EventArgs());
+            }
+		}
+
 		public string Name
 		{
 			get { return _Name; }

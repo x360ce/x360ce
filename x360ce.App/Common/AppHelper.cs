@@ -139,7 +139,7 @@ namespace x360ce.App
 		/// Remove explicit file rules and leave inherited rules only.
 		/// Allow built-in users to write and modify file.
 		/// </summary>
-		public static void RemoveExplicitAccessRulesAndAllowToModify(string fileName)
+		public static bool CheckExplicitAccessRulesAndAllowToModify(string fileName, bool applyFix)
 		{
 			var fileInfo = new FileInfo(fileName);
 			var fileSecurity = fileInfo.GetAccessControl();
@@ -156,37 +156,43 @@ namespace x360ce.App
 			{
 				if (rule.AccessControlType == AccessControlType.Allow && rule.IdentityReference.Value == referenceValue)
 				{
-					if (rule.FileSystemRights == FileSystemRights.Write)
+					if (rule.FileSystemRights.HasFlag(FileSystemRights.Write))
 					{
 						allowsWrite = true;
 						continue;
 					}
-					if (rule.FileSystemRights == FileSystemRights.Modify)
+					if (rule.FileSystemRights.HasFlag(FileSystemRights.Modify))
 					{
 						allowsModify = true;
 						continue;
 					}
 				}
+				// If rule is not inherited from parent directory then...
 				if (!rule.IsInherited)
 				{
+					// Remove rules.
 					fileSecurity.RemoveAccessRule(rule);
 					rulesChanged = true;
-                }
+				}
 			}
-			if (!allowsWrite)
+			if (applyFix)
 			{
-				fileSecurity.AddAccessRule(new FileSystemAccessRule(identity, FileSystemRights.Write, AccessControlType.Allow));
-				rulesChanged = true;
-            }
-			if (!allowsModify)
-			{
-				fileSecurity.AddAccessRule(new FileSystemAccessRule(identity, FileSystemRights.Modify, AccessControlType.Allow));
-				rulesChanged = true;
-            }
-			if (rulesChanged)
-			{
-				fileInfo.SetAccessControl(fileSecurity);
+				if (!allowsWrite)
+				{
+					fileSecurity.AddAccessRule(new FileSystemAccessRule(identity, FileSystemRights.Write, AccessControlType.Allow));
+					rulesChanged = true;
+				}
+				if (!allowsModify)
+				{
+					fileSecurity.AddAccessRule(new FileSystemAccessRule(identity, FileSystemRights.Modify, AccessControlType.Allow));
+					rulesChanged = true;
+				}
+				if (rulesChanged)
+				{
+					fileInfo.SetAccessControl(fileSecurity);
+				}
 			}
+			return rulesChanged;
 		}
 
 	}

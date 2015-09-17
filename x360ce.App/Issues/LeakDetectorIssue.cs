@@ -44,6 +44,7 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			EngineHelper.OpenUrl("https://vld.codeplex.com");
+			RaiseFixApplied();
 		}
 
 	}
