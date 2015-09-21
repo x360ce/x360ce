@@ -491,7 +491,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		string GetGoogleUrl()
+		string GetGoogleSearchUrl()
 		{
 			var c = CurrentGame;
 			if (c == null) return "";
@@ -506,7 +506,7 @@ namespace x360ce.App.Controls
 		{
 			var c = CurrentGame;
 			if (c == null) return "";
-			var url = "http://ngemu.com/search/5815705/?&o=date&c[node]=140q=";
+			var url = "http://ngemu.com/search/5815705?q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
 			url += System.Web.HttpUtility.UrlEncode(keyName);
@@ -518,7 +518,7 @@ namespace x360ce.App.Controls
 			if (c == null) return "";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false);
-			var url = "http://ngemu.com/threads/";
+			var url = "http://ngemu.com/threads";
 			url += System.Web.HttpUtility.UrlEncode(keyName) + "/";
 			return url;
 		}
@@ -526,14 +526,14 @@ namespace x360ce.App.Controls
 		void UpdateHelpButtons()
 		{
 			HelpButton.Enabled = CurrentGame != null;
-			GoogleSearchButton.Text = GetGoogleUrl();
+			GoogleSearchButton.Text = GetGoogleSearchUrl();
 			NGEmuSearchButton.Text = GetNGemuSearchUrl();
 			NGEmuThreadButton.Text = GetNGemuThreadUrl();
 		}
 
 		private void GoogleSearchButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetGoogleUrl());
+			EngineHelper.OpenUrl(GetGoogleSearchUrl());
 		}
 
 		private void NGEmuSearchLinkButton_Click(object sender, EventArgs e)
