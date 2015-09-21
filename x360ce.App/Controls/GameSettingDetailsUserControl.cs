@@ -518,7 +518,7 @@ namespace x360ce.App.Controls
 			if (c == null) return "";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false);
-			var url = "http://ngemu.com/threads";
+			var url = "http://ngemu.com/threads/";
 			url += System.Web.HttpUtility.UrlEncode(keyName) + "/";
 			return url;
 		}
