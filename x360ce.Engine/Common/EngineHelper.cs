@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using x360ce.Engine;
 using System.IO.Compression;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace x360ce.Engine
 {
@@ -436,6 +437,55 @@ namespace x360ce.Engine
 				hash = HashProvider.ComputeHash(bytes);
 			}
 			return new Guid(hash);
+		}
+
+		#endregion
+
+		#region Get Key Name
+
+		/// <summary>
+		/// Remove diacritic marks (accent marks) from characters.
+		/// éèàçùö =>eeacuo
+		/// http://blogs.msdn.com/michkap/archive/2007/05/14/2629747.aspx
+		/// </summary>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		public static string RemoveDiacriticMarks(string s)
+		{
+			string stFormD = s.Normalize(NormalizationForm.FormD);
+			StringBuilder sb = new StringBuilder();
+			for (int ich = 0; ich < stFormD.Length; ich++)
+			{
+				UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(stFormD[ich]);
+				if (uc != UnicodeCategory.NonSpacingMark)
+				{
+					sb.Append(stFormD[ich]);
+				}
+			}
+			return (sb.ToString().Normalize(NormalizationForm.FormC));
+		}
+
+		static readonly Regex RxAllowedInKey = new Regex("[^A-Z0-9 ]+", RegexOptions.IgnoreCase);
+		static readonly Regex RxMultiSpace = new Regex("[ \u00A0]+");
+		static TextInfo Culture = new CultureInfo("en-US", false).TextInfo;
+		static char[] BasicChars = new char[] { '-', ' ', ',', '\u00A0' };
+
+		public static string GetKey(string input, bool capitalize, string separator = "_")
+		{
+			// Filter accents: Hélan => Helan
+			string s = RemoveDiacriticMarks(input);
+			// Convert to upper-case and keep only allowed chars.
+			s = RxAllowedInKey.Replace(s, " ");
+			// Replace multiple spaces.
+			s = RxMultiSpace.Replace(s, " ").Trim();
+			// Trim basic chars.
+			s = s.Trim(BasicChars);
+			if (capitalize)
+			{
+				s = Culture.ToTitleCase(s.ToLower());
+			}
+			s = s.Replace(" ", separator);
+			return s;
 		}
 
 		#endregion

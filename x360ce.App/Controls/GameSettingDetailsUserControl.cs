@@ -62,7 +62,8 @@ namespace x360ce.App.Controls
 				UpdateInterface();
 				UpdateFakeVidPidControls();
 				UpdateDinputControls();
-			}
+				UpdateHelpButtons();
+            }
 		}
 
 		void UpdateInterface()
@@ -130,7 +131,7 @@ namespace x360ce.App.Controls
 					if (x86Enabled && x64Enabled) xiArchitecture = ProcessorArchitecture.MSIL;
 					else if (x86Enabled) xiArchitecture = ProcessorArchitecture.X86;
 					else if (x64Enabled) xiArchitecture = ProcessorArchitecture.Amd64;
-					// If x360ce emulator for this game is disabled or both checkboxes are disabled or then...
+					// If x360ce emulator for this game is disabled or both CheckBoxes are disabled or then...
 					if (xiArchitecture == ProcessorArchitecture.None) // !game.IsEnabled || 
 					{
 						// If XInput file exists then...
@@ -161,7 +162,7 @@ namespace x360ce.App.Controls
 							}
 							else return GameRefreshStatus.XInputFilesNotExist;
 						}
-						// Get current arcitecture.
+						// Get current architecture.
 						var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(xiFullPath);
 						// If processor architectures doesn't match then...
 						if (xiArchitecture != xiCurrentArchitecture)
@@ -221,11 +222,11 @@ namespace x360ce.App.Controls
 		T GetMask<T>(CheckBox[] boxes)
 		{
 			uint mask = 0;
-			// Check/Uncheck checkboxes.
+			// Check/Uncheck CheckBox.
 			var xs = (T[])Enum.GetValues(typeof(T));
 			foreach (var value in xs)
 			{
-				// Get checkbox linked to enum value.
+				// Get CheckBox linked to enum value.
 				var cb = boxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
 				if (cb != null && cb.Checked) mask |= (uint)(object)value;
 			}
@@ -234,11 +235,11 @@ namespace x360ce.App.Controls
 
 		void SetMask<T>(CheckBox[] boxes, T mask)
 		{
-			// Check/Uncheck checkboxes.
+			// Check/Uncheck CheckBox.
 			var xs = (T[])Enum.GetValues(typeof(T));
 			foreach (var value in xs)
 			{
-				// Get checkbox linked to enum value.
+				// Get CheckBox linked to enum value.
 				var cb = boxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
 				if (cb != null) cb.Checked = (((uint)(object)mask & (uint)(object)value) != 0);
 			}
@@ -267,7 +268,7 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Checkbox events could fire at the same time.
+		/// CheckBox events could fire at the same time.
 		/// Use lock to make sure that only one file is processed during synchronization.
 		/// </summary>
 		object CheckBoxLock = new object();
@@ -286,7 +287,7 @@ namespace x360ce.App.Controls
 				if (DInputCheckBoxes.Contains(cbx)) cbxList = DInputCheckBoxes;
 				if (cbxList != null)
 				{
-					// If 64-bit checkbox an checked then...
+					// If 64-bit CheckBox an checked then...
 					if (is64bit && cbx.Checked)
 					{
 						// Make sure that 32-bit is unchecked
@@ -297,7 +298,7 @@ namespace x360ce.App.Controls
 							applySettings = false;
 						}
 					}
-					// If 32-bit checkbox an checked then...
+					// If 32-bit CheckBox an checked then...
 					if (is32bit && cbx.Checked)
 					{
 						// Make sure that 64-bit is unchecked
@@ -490,5 +491,59 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		string GetGoogleUrl()
+		{
+			var c = CurrentGame;
+			if (c == null) return "";
+			var url = "https://www.google.co.uk/?#q=";
+			var q = "x360ce " + c.FileProductName;
+			var keyName = EngineHelper.GetKey(q, false, " ");
+			url += System.Web.HttpUtility.UrlEncode(keyName);
+			return url;
+		}
+
+		string GetNGemuSearchUrl()
+		{
+			var c = CurrentGame;
+			if (c == null) return "";
+			var url = "http://ngemu.com/search/5815705/?&o=date&c[node]=140q=";
+			var q = "x360ce " + c.FileProductName;
+			var keyName = EngineHelper.GetKey(q, false, " ");
+			url += System.Web.HttpUtility.UrlEncode(keyName);
+			return url;
+		}
+		string GetNGemuThreadUrl()
+		{
+			var c = CurrentGame;
+			if (c == null) return "";
+			var q = "x360ce " + c.FileProductName;
+			var keyName = EngineHelper.GetKey(q, false);
+			var url = "http://ngemu.com/threads/";
+			url += System.Web.HttpUtility.UrlEncode(keyName) + "/";
+			return url;
+		}
+
+		void UpdateHelpButtons()
+		{
+			HelpButton.Enabled = CurrentGame != null;
+			GoogleSearchButton.Text = GetGoogleUrl();
+			NGEmuSearchButton.Text = GetNGemuSearchUrl();
+			NGEmuThreadButton.Text = GetNGemuThreadUrl();
+		}
+
+		private void GoogleSearchButton_Click(object sender, EventArgs e)
+		{
+			EngineHelper.OpenUrl(GetGoogleUrl());
+		}
+
+		private void NGEmuSearchLinkButton_Click(object sender, EventArgs e)
+		{
+			EngineHelper.OpenUrl(GetNGemuSearchUrl());
+		}
+
+		private void NGEmuThreadLinkButton_Click(object sender, EventArgs e)
+		{
+			EngineHelper.OpenUrl(GetNGemuThreadUrl()); 
+		}
 	}
 }
