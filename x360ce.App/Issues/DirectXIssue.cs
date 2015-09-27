@@ -11,7 +11,7 @@ namespace x360ce.App.Issues
 			Name = "DirectX";
 			FixName = "Download";
 			Description = "Microsoft DirectX 9 not found You can click the link below to download Microsoft DirectX:\r\n" +
-				"http://www.microsoft.com/en-us/download/details.aspx?id=35";
+				"http://www.microsoft.com/en-us/download/details.aspx?id=8109";
 		}
 
 		public override void Check()
@@ -34,7 +34,7 @@ namespace x360ce.App.Issues
 
 		public override void Fix()
 		{
-			EngineHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=35");
+			EngineHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=8109");
 			RaiseFixApplied();
 		}
 
