@@ -1,5 +1,9 @@
-﻿v3.2.8.77 (2015-09-10)
+﻿v3.2.9.81 (2015-10-04)
+- Fix: Crash when linking settings to controls.
+- Fix: 64-bit crash.
 - Fix: Offer fix when used tries to start application from Windows folder.
+- New: Links to game help.
+- Update: Issue solvers updated. Fixed broken links.
 
 v3.2.8.76 (2015-08-28)
 - Fix: Crashes on invalid permissions.

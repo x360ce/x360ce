@@ -471,10 +471,22 @@ namespace x360ce.App.Controls
 
 		#region Settings Map
 
+		object settingsMapLock = new object();
+
 		Dictionary<string, Control> _SettingsMap;
 		public Dictionary<string, Control> SettingsMap
 		{
-			get { return _SettingsMap = _SettingsMap ?? GetSettingsMap(); }
+			get
+			{
+				lock (settingsMapLock)
+				{
+					if (_SettingsMap == null)
+					{
+						_SettingsMap = GetSettingsMap();
+					}
+					return _SettingsMap;
+				}
+			}
 		}
 
 		public int ControllerIndex;

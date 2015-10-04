@@ -2,7 +2,7 @@
 
 # Download
 
-Digitally Signed Application v3.2.8.76 (2015-08-28) and Libraries 3.4.1.1357 (2015-08-27)
+Digitally Signed Application v3.2.9.81 (2015-10-04) and Libraries 3.4.1.1357 (2015-08-27)
 
 [32-bit Download](http://www.x360ce.com/Files/x360ce.zip) - for 32-bit games
 
@@ -10,7 +10,7 @@ Digitally Signed Application v3.2.8.76 (2015-08-28) and Libraries 3.4.1.1357 (20
 
 # Reporting Issues
 
-Report only crashes or other bugs, note that the Issue tracker is not a helpdesk! 
+Report only crashes or other bugs, note that the Issue tracker is not a help desk! 
 
 **DO NOT ASK FOR HELP IN INSTALLATION OR CONFIGURATION!!!**
 
@@ -20,7 +20,7 @@ Report only crashes or other bugs, note that the Issue tracker is not a helpdesk
 
 [x360ce Libraries Tutorial](http://ngemu.com/threads/x360ce-libraries-tutorial-by-resolutespider5.155310/)
 
-[x360ce App Tutorial](http://ngemu.com/threads/tutorial-by-resolutespider5.155011/)
+[x360ce Application Tutorial](http://ngemu.com/threads/tutorial-by-resolutespider5.155011/)
 
 [Various x360ce Guides](http://ngemu.com/threads/various-x360ce-guides-by-resolutespider5.156807/)
 
@@ -60,10 +60,10 @@ Run this program from the same directory as the game executable. XInput library 
   * xinput1\_1.dll
   * xinput9\_1\_0.dll
 
-Game Database (GDB) and Configuration (INI) files can be copied to %Allusersprofile%\X360CE on NT6 (Vista/7/8) or %Allusersprofile%\Application Data\X360CE on NT5.1 (XP), or be left in the same directory as the game's executable (.EXE)
+Game Database (GDB) and Configuration (INI) files can be copied to %ALLUSERSPROFILE%\X360CE on NT6 (Vista/7/8) or %ALLUSERSPROFILE%\Application Data\X360CE on NT5.1 (XP), or be left in the same directory as the game's executable (.EXE)
 
 Note:
-  * In most cases games based on the Source engine have the DLL placed inside the /Bin/ subfolder, as it it is loaded by inputsystem.dll instead of the game executable.
+  * In most cases games based on the Source engine have the DLL placed inside the /Bin/ sub folder, as it is loaded by inputsystem.dll instead of the game executable.
   * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options] in the x360ce.ini to quieten a warning about incorrect version.
 
 # Uninstallation

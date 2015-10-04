@@ -50,7 +50,7 @@ namespace x360ce.App.Issues
 					var rulesMustBeFixed = AppHelper.CheckExplicitAccessRulesAndAllowToModify(SettingManager.IniFileName, false);
 					if (rulesMustBeFixed)
 					{
-						Description = string.Format("Can't write or modify '{0}' file.", SettingManager.IniFileName, tmpFile.Name);
+						Description = string.Format("Can't write or modify '{0}' file.", SettingManager.IniFileName);
 						Severity = IssueSeverity.Critical;
 						FixType = 1;
 					}
