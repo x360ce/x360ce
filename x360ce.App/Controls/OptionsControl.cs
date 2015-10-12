@@ -54,7 +54,8 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
-			SettingManager.AddMap(section, () => SettingName.ExcludeSupplementals, ExcludeSupplementalsCheckBox);
+			SettingManager.AddMap(section, () => SettingName.ExcludeSupplementalDevices, ExcludeSupplementalDevicesCheckBox);
+			SettingManager.AddMap(section, () => SettingName.ExcludeVirtualDevices, ExcludeVirtualDevicesCheckBox);
 		}
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

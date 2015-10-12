@@ -155,6 +155,10 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="vJoyInterfaceWrap">
+      <HintPath>Resources\vJoy\vJoyInterfaceWrap.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AppHelper.cs" />
@@ -217,6 +221,9 @@
     </Compile>
     <Compile Include="Controls\GameSettingDetailsUserControl.Designer.cs">
       <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadControl.VirtualDevice.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ThumbUserControl.cs">
       <SubType>UserControl</SubType>
@@ -395,6 +402,8 @@
     </Compile>
     <Compile Include="Common\SettingsConverter.cs" />
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
+    <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterface.lib" />
+    <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterface.lib" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -460,6 +469,10 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterface.dll" />
+    <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterfaceWrap.dll" />
+    <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterface.dll" />
+    <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterfaceWrap.dll" />
     <EmbeddedResource Include="Resources\dinput.dll" />
     <EmbeddedResource Include="Resources\dinput_x64.dll" />
     <EmbeddedResource Include="Resources\dinput_x86.dll" />

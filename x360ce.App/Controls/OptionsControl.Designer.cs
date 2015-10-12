@@ -56,7 +56,8 @@
 			this.SaveSettingsButton = new System.Windows.Forms.Button();
 			this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
-			this.ExcludeSupplementalsCheckBox = new System.Windows.Forms.CheckBox();
+			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
+			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -356,23 +357,34 @@
 			// 
 			// DirectInputDevicesGroupBox
 			// 
-			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalsCheckBox);
+			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
+			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 207);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
-			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(241, 47);
+			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(241, 69);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
 			this.DirectInputDevicesGroupBox.TabStop = false;
 			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
 			// 
-			// ExcludeSupplementalsCheckBox
+			// ExcludeSupplementalDevicesCheckBox
 			// 
-			this.ExcludeSupplementalsCheckBox.AutoSize = true;
-			this.ExcludeSupplementalsCheckBox.Location = new System.Drawing.Point(6, 19);
-			this.ExcludeSupplementalsCheckBox.Name = "ExcludeSupplementalsCheckBox";
-			this.ExcludeSupplementalsCheckBox.Size = new System.Drawing.Size(173, 17);
-			this.ExcludeSupplementalsCheckBox.TabIndex = 0;
-			this.ExcludeSupplementalsCheckBox.Text = "Exclude Supplemental Devices";
-			this.ExcludeSupplementalsCheckBox.UseVisualStyleBackColor = true;
+			this.ExcludeSupplementalDevicesCheckBox.AutoSize = true;
+			this.ExcludeSupplementalDevicesCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.ExcludeSupplementalDevicesCheckBox.Name = "ExcludeSupplementalDevicesCheckBox";
+			this.ExcludeSupplementalDevicesCheckBox.Size = new System.Drawing.Size(173, 17);
+			this.ExcludeSupplementalDevicesCheckBox.TabIndex = 0;
+			this.ExcludeSupplementalDevicesCheckBox.Text = "Exclude Supplemental Devices";
+			this.ExcludeSupplementalDevicesCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// ExcludeVirtualDevicesCheckBox
+			// 
+			this.ExcludeVirtualDevicesCheckBox.AutoSize = true;
+			this.ExcludeVirtualDevicesCheckBox.Location = new System.Drawing.Point(6, 42);
+			this.ExcludeVirtualDevicesCheckBox.Name = "ExcludeVirtualDevicesCheckBox";
+			this.ExcludeVirtualDevicesCheckBox.Size = new System.Drawing.Size(138, 17);
+			this.ExcludeVirtualDevicesCheckBox.TabIndex = 0;
+			this.ExcludeVirtualDevicesCheckBox.Text = "Exclude Virtual Devices";
+			this.ExcludeVirtualDevicesCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsControl
 			// 
@@ -437,6 +449,7 @@
 		private System.Windows.Forms.Button OpenSettingsFolderButton;
         private System.Windows.Forms.CheckBox CombineEnabledCheckBox;
 		private System.Windows.Forms.GroupBox DirectInputDevicesGroupBox;
-		private System.Windows.Forms.CheckBox ExcludeSupplementalsCheckBox;
+		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
+		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
 	}
 }

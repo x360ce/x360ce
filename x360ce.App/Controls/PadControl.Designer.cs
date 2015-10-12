@@ -184,6 +184,7 @@
 			this.LeftThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
 			this.RightThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
 			this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
+			this.FeedVirtualDeviceCeckBox = new System.Windows.Forms.CheckBox();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
 			this.CombineGroupBox.SuspendLayout();
@@ -560,6 +561,7 @@
 			// 
 			// GeneralLeftPanel
 			// 
+			this.GeneralLeftPanel.Controls.Add(this.FeedVirtualDeviceCeckBox);
 			this.GeneralLeftPanel.Controls.Add(this.LeftTriggerTextBox);
 			this.GeneralLeftPanel.Controls.Add(this.LeftThumbAxisYComboBox);
 			this.GeneralLeftPanel.Controls.Add(this.LeftThumbButtonLabel);
@@ -2085,6 +2087,18 @@
 			this.RightThumbYUserControl.TabIndex = 0;
 			this.RightThumbYUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.RightY;
 			// 
+			// FeedVirtualDeviceCeckBox
+			// 
+			this.FeedVirtualDeviceCeckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.FeedVirtualDeviceCeckBox.AutoSize = true;
+			this.FeedVirtualDeviceCeckBox.Location = new System.Drawing.Point(3, 483);
+			this.FeedVirtualDeviceCeckBox.Name = "FeedVirtualDeviceCeckBox";
+			this.FeedVirtualDeviceCeckBox.Size = new System.Drawing.Size(119, 17);
+			this.FeedVirtualDeviceCeckBox.TabIndex = 28;
+			this.FeedVirtualDeviceCeckBox.Text = "Feed Virtual Device";
+			this.FeedVirtualDeviceCeckBox.UseVisualStyleBackColor = true;
+			this.FeedVirtualDeviceCeckBox.CheckedChanged += new System.EventHandler(this.FeedVirtualDeviceCeckBox_CheckedChanged);
+			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2318,5 +2332,6 @@
 		private AxisToButtonUserControl AxisToDPadUpDeadZonePanel;
 		private System.Windows.Forms.Button GameControllersButton;
 		private System.Windows.Forms.Button AutoPresetButton;
+		private System.Windows.Forms.CheckBox FeedVirtualDeviceCeckBox;
 	}
 }

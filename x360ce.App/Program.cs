@@ -177,6 +177,10 @@ namespace x360ce.App
 			string path = null;
 			switch (dllName)
 			{
+				case "vJoyInterface":
+				case "vJoyInterfaceWrap":
+					path = GetResourceName("vJoy", dllName+".dll");
+					break;
 				case "x360ce.Engine":
 					path = "Resources.x360ce.Engine.dll";
 					break;
@@ -195,11 +199,27 @@ namespace x360ce.App
 			if (path == null) return null;
 			var assembly = Assembly.GetExecutingAssembly();
 			var sr = assembly.GetManifestResourceStream(typeof(MainForm).Namespace + "." + path);
-			if (sr == null) return null;
+			if (sr == null)
+			{
+				return null;
+			}
 			byte[] bytes = new byte[sr.Length];
 			sr.Read(bytes, 0, bytes.Length);
-			return Assembly.Load(bytes);
+			var asm = Assembly.Load(bytes);
+			return asm;
 		}
+
+		public static string GetResourceName(string folder, string name)
+		{
+			var assembly = Assembly.GetEntryAssembly();
+			var architecture = assembly.GetName().ProcessorArchitecture;
+			// There must be an easier way to check embedded non managed DLL version.
+			var paString = "";
+			if (architecture == ProcessorArchitecture.Amd64) paString = "_x64";
+			if (architecture == ProcessorArchitecture.X86) paString = "_x86";
+			return string.Format("Resources.{0}{1}.{2}", folder, paString, name);
+		}
+
 
 	}
 }

@@ -1222,5 +1222,32 @@ namespace x360ce.App.Controls
 			catch (Exception) { }
 		}
 
+
+		private void FeedVirtualDeviceCeckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			FeedingEnabled = FeedVirtualDeviceCeckBox.Checked;
+			if (FeedVirtualDeviceCeckBox.Checked)
+			{
+				var resourceName = Program.GetResourceName("vJoy", "vJoyInterface");
+				if (!System.IO.File.Exists("vJoyInterface.dll"))
+				{
+					AppHelper.WriteFile(typeof(MainForm).Namespace + "." + resourceName + ".dll", "vJoyInterface.dll");
+				}
+				System.Threading.ThreadPool.QueueUserWorkItem(FeedWaitCallback, (uint)1);
+			}
+		}
+
+		bool FeedingEnabled;
+
+		void FeedWaitCallback(object state)
+		{
+			string message;
+			var success = FeedDinputDevice((uint)state, out message);
+			if (!string.IsNullOrEmpty(message) && !success)
+			{
+				MessageBox.Show(message);
+			}
+		}
+
 	}
 }

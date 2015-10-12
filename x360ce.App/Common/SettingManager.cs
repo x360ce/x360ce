@@ -130,7 +130,8 @@ namespace x360ce.App
 		public event EventHandler<SettingEventArgs> ConfigLoaded;
 
 		public bool IsDebugMode { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.DebugMode]).Checked; } }
-		public bool ExcludeSuplementals { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.ExcludeSupplementals]).Checked; } }
+		public bool ExcludeSuplementalDevices { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.ExcludeSupplementalDevices]).Checked; } }
+		public bool ExcludeVirtualDevices { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.ExcludeVirtualDevices]).Checked; } }
 
 		Dictionary<string, Control> _settingsMap;
 		/// <summary>
@@ -690,7 +691,7 @@ namespace x360ce.App
 					// Remember device which needs to be restored.
 					MainForm.Current.AutoSelectControllerInstance = GetInstanceGuid(padIndex);
 					MainForm.Current.ControllerIndex = padIndex;
-                }
+				}
 			}
 			else if (control is TextBox)
 			{
@@ -849,7 +850,7 @@ namespace x360ce.App
 					if (ContainsInstanceSection(ig, IniFileName, out sectionName))
 					{
 						var diOld = diInstancesOld[i];
-                        var samePosition = diOld != null && diOld.InstanceGuid.Equals(ig);
+						var samePosition = diOld != null && diOld.InstanceGuid.Equals(ig);
 						// Load settings.
 						if (!samePosition)
 						{

@@ -458,7 +458,7 @@ namespace x360ce.App
 		DeviceInstance[] GetDevices()
 		{
 			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
-			if (SettingManager.Current.ExcludeSuplementals)
+			if (SettingManager.Current.ExcludeSuplementalDevices)
 			{
 				// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
 				// such as pedals used with a wheel.The following subtypes are defined.
@@ -466,6 +466,15 @@ namespace x360ce.App
 				foreach (var supplemental in supplementals)
 				{
 					devices.Remove(supplemental);
+				}
+			}
+			if (SettingManager.Current.ExcludeVirtualDevices)
+			{
+				// Exclude virtual devices so application could feed them.
+				var virtualDevices = devices.Where(x => x.InstanceName.Contains("vJoy")).ToArray();
+				foreach (var virtualDevice in virtualDevices)
+				{
+					devices.Remove(virtualDevice);
 				}
 			}
 			// Move gaming wheels to the top index position by default.
