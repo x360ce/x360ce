@@ -76,17 +76,6 @@
 			this.LeftThumbAxisXComboBox = new System.Windows.Forms.ComboBox();
 			this.LeftTriggerComboBox = new System.Windows.Forms.ComboBox();
 			this.LeftThumbAxisXLabel = new System.Windows.Forms.Label();
-			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
-			this.TopPictureBox = new System.Windows.Forms.PictureBox();
-			this.DPadUpLabel = new System.Windows.Forms.Label();
-			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadDownLabel = new System.Windows.Forms.Label();
-			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadRightLabel = new System.Windows.Forms.Label();
-			this.DPadLeftComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadLeftLabel = new System.Windows.Forms.Label();
-			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
-			this.FrontPictureBox = new System.Windows.Forms.PictureBox();
 			this.GeneralRightPanel = new System.Windows.Forms.Panel();
 			this.RightTriggerTextBox = new System.Windows.Forms.TextBox();
 			this.RightThumbButtonComboBox = new System.Windows.Forms.ComboBox();
@@ -117,6 +106,22 @@
 			this.AdvancedRightLabel = new System.Windows.Forms.Label();
 			this.RightThumbTextBox = new System.Windows.Forms.TextBox();
 			this.AdvancedLeftLabel = new System.Windows.Forms.Label();
+			this.VirtualDeviceSeparatorPanel = new System.Windows.Forms.Panel();
+			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
+			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
+			this.PollingRateLabel = new System.Windows.Forms.Label();
+			this.EnableVirtualDeviceCeckBox = new System.Windows.Forms.CheckBox();
+			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
+			this.TopPictureBox = new System.Windows.Forms.PictureBox();
+			this.DPadUpLabel = new System.Windows.Forms.Label();
+			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadDownLabel = new System.Windows.Forms.Label();
+			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadRightLabel = new System.Windows.Forms.Label();
+			this.DPadLeftComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadLeftLabel = new System.Windows.Forms.Label();
+			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
+			this.FrontPictureBox = new System.Windows.Forms.PictureBox();
 			this.SavePresetButton = new System.Windows.Forms.Button();
 			this.ResetPresetButton = new System.Windows.Forms.Button();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
@@ -166,6 +171,7 @@
 			this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
+			this.DeadZoneNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.AxisToButtonADeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
 			this.AxisToDPadRightDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
 			this.AxisToRightThumbButtonDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
@@ -184,7 +190,6 @@
 			this.LeftThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
 			this.RightThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
 			this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.FeedVirtualDeviceCeckBox = new System.Windows.Forms.CheckBox();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
 			this.CombineGroupBox.SuspendLayout();
@@ -197,10 +202,11 @@
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).BeginInit();
 			this.GeneralTabPage.SuspendLayout();
 			this.GeneralLeftPanel.SuspendLayout();
+			this.GeneralRightPanel.SuspendLayout();
+			this.VirtualDevicePanel.SuspendLayout();
 			this.GeneralCenterPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).BeginInit();
-			this.GeneralRightPanel.SuspendLayout();
 			this.PadTabControl.SuspendLayout();
 			this.AxisToButtonTabPage.SuspendLayout();
 			this.AxisToButtonPanel.SuspendLayout();
@@ -221,6 +227,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.DeadZoneNumericUpDown)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// DirectInputTabPage
@@ -549,8 +556,10 @@
 			// GeneralTabPage
 			// 
 			this.GeneralTabPage.Controls.Add(this.GeneralLeftPanel);
-			this.GeneralTabPage.Controls.Add(this.GeneralCenterPanel);
 			this.GeneralTabPage.Controls.Add(this.GeneralRightPanel);
+			this.GeneralTabPage.Controls.Add(this.VirtualDeviceSeparatorPanel);
+			this.GeneralTabPage.Controls.Add(this.VirtualDevicePanel);
+			this.GeneralTabPage.Controls.Add(this.GeneralCenterPanel);
 			this.GeneralTabPage.Location = new System.Drawing.Point(4, 22);
 			this.GeneralTabPage.Name = "GeneralTabPage";
 			this.GeneralTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -561,7 +570,6 @@
 			// 
 			// GeneralLeftPanel
 			// 
-			this.GeneralLeftPanel.Controls.Add(this.FeedVirtualDeviceCeckBox);
 			this.GeneralLeftPanel.Controls.Add(this.LeftTriggerTextBox);
 			this.GeneralLeftPanel.Controls.Add(this.LeftThumbAxisYComboBox);
 			this.GeneralLeftPanel.Controls.Add(this.LeftThumbButtonLabel);
@@ -594,7 +602,7 @@
 			this.GeneralLeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.GeneralLeftPanel.Location = new System.Drawing.Point(3, 3);
 			this.GeneralLeftPanel.Name = "GeneralLeftPanel";
-			this.GeneralLeftPanel.Size = new System.Drawing.Size(190, 503);
+			this.GeneralLeftPanel.Size = new System.Drawing.Size(190, 474);
 			this.GeneralLeftPanel.TabIndex = 46;
 			// 
 			// LeftTriggerTextBox
@@ -893,122 +901,6 @@
 			this.LeftThumbAxisXLabel.TabIndex = 0;
 			this.LeftThumbAxisXLabel.Text = "Stick Axis X";
 			// 
-			// GeneralCenterPanel
-			// 
-			this.GeneralCenterPanel.Controls.Add(this.TopPictureBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadUpLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadUpComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadDownLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadDownComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadRightLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadLeftComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadLeftLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadRightComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.FrontPictureBox);
-			this.GeneralCenterPanel.Location = new System.Drawing.Point(197, 12);
-			this.GeneralCenterPanel.Name = "GeneralCenterPanel";
-			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 442);
-			this.GeneralCenterPanel.TabIndex = 46;
-			// 
-			// TopPictureBox
-			// 
-			this.TopPictureBox.Location = new System.Drawing.Point(3, 3);
-			this.TopPictureBox.Name = "TopPictureBox";
-			this.TopPictureBox.Size = new System.Drawing.Size(256, 105);
-			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.TopPictureBox.TabIndex = 0;
-			this.TopPictureBox.TabStop = false;
-			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
-			// 
-			// DPadUpLabel
-			// 
-			this.DPadUpLabel.AutoSize = true;
-			this.DPadUpLabel.Location = new System.Drawing.Point(151, 301);
-			this.DPadUpLabel.Name = "DPadUpLabel";
-			this.DPadUpLabel.Size = new System.Drawing.Size(54, 13);
-			this.DPadUpLabel.TabIndex = 0;
-			this.DPadUpLabel.Text = "D-Pad Up";
-			// 
-			// DPadUpComboBox
-			// 
-			this.DPadUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadUpComboBox.FormattingEnabled = true;
-			this.DPadUpComboBox.Location = new System.Drawing.Point(49, 298);
-			this.DPadUpComboBox.Name = "DPadUpComboBox";
-			this.DPadUpComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadUpComboBox.TabIndex = 41;
-			this.DPadUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
-			// 
-			// DPadDownLabel
-			// 
-			this.DPadDownLabel.AutoSize = true;
-			this.DPadDownLabel.Location = new System.Drawing.Point(151, 382);
-			this.DPadDownLabel.Name = "DPadDownLabel";
-			this.DPadDownLabel.Size = new System.Drawing.Size(68, 13);
-			this.DPadDownLabel.TabIndex = 0;
-			this.DPadDownLabel.Text = "D-Pad Down";
-			// 
-			// DPadDownComboBox
-			// 
-			this.DPadDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadDownComboBox.FormattingEnabled = true;
-			this.DPadDownComboBox.Location = new System.Drawing.Point(49, 379);
-			this.DPadDownComboBox.Name = "DPadDownComboBox";
-			this.DPadDownComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadDownComboBox.TabIndex = 44;
-			this.DPadDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
-			// 
-			// DPadRightLabel
-			// 
-			this.DPadRightLabel.AutoSize = true;
-			this.DPadRightLabel.Location = new System.Drawing.Point(151, 355);
-			this.DPadRightLabel.Name = "DPadRightLabel";
-			this.DPadRightLabel.Size = new System.Drawing.Size(65, 13);
-			this.DPadRightLabel.TabIndex = 0;
-			this.DPadRightLabel.Text = "D-Pad Right";
-			// 
-			// DPadLeftComboBox
-			// 
-			this.DPadLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadLeftComboBox.FormattingEnabled = true;
-			this.DPadLeftComboBox.Location = new System.Drawing.Point(49, 325);
-			this.DPadLeftComboBox.Name = "DPadLeftComboBox";
-			this.DPadLeftComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadLeftComboBox.TabIndex = 42;
-			this.DPadLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
-			// 
-			// DPadLeftLabel
-			// 
-			this.DPadLeftLabel.AutoSize = true;
-			this.DPadLeftLabel.Location = new System.Drawing.Point(151, 328);
-			this.DPadLeftLabel.Name = "DPadLeftLabel";
-			this.DPadLeftLabel.Size = new System.Drawing.Size(58, 13);
-			this.DPadLeftLabel.TabIndex = 0;
-			this.DPadLeftLabel.Text = "D-Pad Left";
-			// 
-			// DPadRightComboBox
-			// 
-			this.DPadRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadRightComboBox.FormattingEnabled = true;
-			this.DPadRightComboBox.Location = new System.Drawing.Point(49, 352);
-			this.DPadRightComboBox.Name = "DPadRightComboBox";
-			this.DPadRightComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadRightComboBox.TabIndex = 43;
-			this.DPadRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
-			// 
-			// FrontPictureBox
-			// 
-			this.FrontPictureBox.Location = new System.Drawing.Point(3, 114);
-			this.FrontPictureBox.Name = "FrontPictureBox";
-			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
-			this.FrontPictureBox.TabIndex = 0;
-			this.FrontPictureBox.TabStop = false;
-			this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
-			// 
 			// GeneralRightPanel
 			// 
 			this.GeneralRightPanel.Controls.Add(this.RightTriggerTextBox);
@@ -1043,7 +935,7 @@
 			this.GeneralRightPanel.Dock = System.Windows.Forms.DockStyle.Right;
 			this.GeneralRightPanel.Location = new System.Drawing.Point(500, 3);
 			this.GeneralRightPanel.Name = "GeneralRightPanel";
-			this.GeneralRightPanel.Size = new System.Drawing.Size(190, 503);
+			this.GeneralRightPanel.Size = new System.Drawing.Size(190, 474);
 			this.GeneralRightPanel.TabIndex = 46;
 			// 
 			// RightTriggerTextBox
@@ -1370,6 +1262,172 @@
 			this.AdvancedLeftLabel.TabIndex = 0;
 			this.AdvancedLeftLabel.Text = "Stick Left";
 			this.AdvancedLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			// 
+			// VirtualDeviceSeparatorPanel
+			// 
+			this.VirtualDeviceSeparatorPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.VirtualDeviceSeparatorPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.VirtualDeviceSeparatorPanel.Location = new System.Drawing.Point(3, 477);
+			this.VirtualDeviceSeparatorPanel.Name = "VirtualDeviceSeparatorPanel";
+			this.VirtualDeviceSeparatorPanel.Size = new System.Drawing.Size(687, 1);
+			this.VirtualDeviceSeparatorPanel.TabIndex = 48;
+			// 
+			// VirtualDevicePanel
+			// 
+			this.VirtualDevicePanel.Controls.Add(this.DeadZoneNumericUpDown);
+			this.VirtualDevicePanel.Controls.Add(this.PollingRateComboBox);
+			this.VirtualDevicePanel.Controls.Add(this.PollingRateLabel);
+			this.VirtualDevicePanel.Controls.Add(this.EnableVirtualDeviceCeckBox);
+			this.VirtualDevicePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.VirtualDevicePanel.Location = new System.Drawing.Point(3, 478);
+			this.VirtualDevicePanel.Name = "VirtualDevicePanel";
+			this.VirtualDevicePanel.Size = new System.Drawing.Size(687, 28);
+			this.VirtualDevicePanel.TabIndex = 47;
+			// 
+			// PollingRateComboBox
+			// 
+			this.PollingRateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.PollingRateComboBox.FormattingEnabled = true;
+			this.PollingRateComboBox.Location = new System.Drawing.Point(271, 4);
+			this.PollingRateComboBox.Name = "PollingRateComboBox";
+			this.PollingRateComboBox.Size = new System.Drawing.Size(79, 21);
+			this.PollingRateComboBox.TabIndex = 30;
+			// 
+			// PollingRateLabel
+			// 
+			this.PollingRateLabel.AutoSize = true;
+			this.PollingRateLabel.Location = new System.Drawing.Point(198, 7);
+			this.PollingRateLabel.Name = "PollingRateLabel";
+			this.PollingRateLabel.Size = new System.Drawing.Size(67, 13);
+			this.PollingRateLabel.TabIndex = 29;
+			this.PollingRateLabel.Text = "Polling Rate:";
+			// 
+			// EnableVirtualDeviceCeckBox
+			// 
+			this.EnableVirtualDeviceCeckBox.AutoSize = true;
+			this.EnableVirtualDeviceCeckBox.Location = new System.Drawing.Point(3, 6);
+			this.EnableVirtualDeviceCeckBox.Name = "EnableVirtualDeviceCeckBox";
+			this.EnableVirtualDeviceCeckBox.Size = new System.Drawing.Size(131, 17);
+			this.EnableVirtualDeviceCeckBox.TabIndex = 28;
+			this.EnableVirtualDeviceCeckBox.Text = "Enable Virtual Device:";
+			this.EnableVirtualDeviceCeckBox.UseVisualStyleBackColor = true;
+			this.EnableVirtualDeviceCeckBox.CheckedChanged += new System.EventHandler(this.FeedVirtualDeviceCeckBox_CheckedChanged);
+			// 
+			// GeneralCenterPanel
+			// 
+			this.GeneralCenterPanel.Controls.Add(this.TopPictureBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadUpLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadUpComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadDownLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadDownComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadRightLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadLeftComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadLeftLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadRightComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.FrontPictureBox);
+			this.GeneralCenterPanel.Location = new System.Drawing.Point(197, 12);
+			this.GeneralCenterPanel.Name = "GeneralCenterPanel";
+			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 442);
+			this.GeneralCenterPanel.TabIndex = 46;
+			// 
+			// TopPictureBox
+			// 
+			this.TopPictureBox.Location = new System.Drawing.Point(3, 3);
+			this.TopPictureBox.Name = "TopPictureBox";
+			this.TopPictureBox.Size = new System.Drawing.Size(256, 105);
+			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.TopPictureBox.TabIndex = 0;
+			this.TopPictureBox.TabStop = false;
+			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
+			// 
+			// DPadUpLabel
+			// 
+			this.DPadUpLabel.AutoSize = true;
+			this.DPadUpLabel.Location = new System.Drawing.Point(151, 301);
+			this.DPadUpLabel.Name = "DPadUpLabel";
+			this.DPadUpLabel.Size = new System.Drawing.Size(54, 13);
+			this.DPadUpLabel.TabIndex = 0;
+			this.DPadUpLabel.Text = "D-Pad Up";
+			// 
+			// DPadUpComboBox
+			// 
+			this.DPadUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadUpComboBox.FormattingEnabled = true;
+			this.DPadUpComboBox.Location = new System.Drawing.Point(49, 298);
+			this.DPadUpComboBox.Name = "DPadUpComboBox";
+			this.DPadUpComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadUpComboBox.TabIndex = 41;
+			this.DPadUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+			// 
+			// DPadDownLabel
+			// 
+			this.DPadDownLabel.AutoSize = true;
+			this.DPadDownLabel.Location = new System.Drawing.Point(151, 382);
+			this.DPadDownLabel.Name = "DPadDownLabel";
+			this.DPadDownLabel.Size = new System.Drawing.Size(68, 13);
+			this.DPadDownLabel.TabIndex = 0;
+			this.DPadDownLabel.Text = "D-Pad Down";
+			// 
+			// DPadDownComboBox
+			// 
+			this.DPadDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadDownComboBox.FormattingEnabled = true;
+			this.DPadDownComboBox.Location = new System.Drawing.Point(49, 379);
+			this.DPadDownComboBox.Name = "DPadDownComboBox";
+			this.DPadDownComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadDownComboBox.TabIndex = 44;
+			this.DPadDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+			// 
+			// DPadRightLabel
+			// 
+			this.DPadRightLabel.AutoSize = true;
+			this.DPadRightLabel.Location = new System.Drawing.Point(151, 355);
+			this.DPadRightLabel.Name = "DPadRightLabel";
+			this.DPadRightLabel.Size = new System.Drawing.Size(65, 13);
+			this.DPadRightLabel.TabIndex = 0;
+			this.DPadRightLabel.Text = "D-Pad Right";
+			// 
+			// DPadLeftComboBox
+			// 
+			this.DPadLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadLeftComboBox.FormattingEnabled = true;
+			this.DPadLeftComboBox.Location = new System.Drawing.Point(49, 325);
+			this.DPadLeftComboBox.Name = "DPadLeftComboBox";
+			this.DPadLeftComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadLeftComboBox.TabIndex = 42;
+			this.DPadLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+			// 
+			// DPadLeftLabel
+			// 
+			this.DPadLeftLabel.AutoSize = true;
+			this.DPadLeftLabel.Location = new System.Drawing.Point(151, 328);
+			this.DPadLeftLabel.Name = "DPadLeftLabel";
+			this.DPadLeftLabel.Size = new System.Drawing.Size(58, 13);
+			this.DPadLeftLabel.TabIndex = 0;
+			this.DPadLeftLabel.Text = "D-Pad Left";
+			// 
+			// DPadRightComboBox
+			// 
+			this.DPadRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadRightComboBox.FormattingEnabled = true;
+			this.DPadRightComboBox.Location = new System.Drawing.Point(49, 352);
+			this.DPadRightComboBox.Name = "DPadRightComboBox";
+			this.DPadRightComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadRightComboBox.TabIndex = 43;
+			this.DPadRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
+			// 
+			// FrontPictureBox
+			// 
+			this.FrontPictureBox.Location = new System.Drawing.Point(3, 114);
+			this.FrontPictureBox.Name = "FrontPictureBox";
+			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
+			this.FrontPictureBox.TabIndex = 0;
+			this.FrontPictureBox.TabStop = false;
+			this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
 			// 
 			// SavePresetButton
 			// 
@@ -1914,6 +1972,29 @@
 			this.AutoPresetButton.UseVisualStyleBackColor = true;
 			this.AutoPresetButton.Click += new System.EventHandler(this.AutoPresetButton_Click);
 			// 
+			// DeadZoneNumericUpDown
+			// 
+			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(140, 5);
+			this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+			this.DeadZoneNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.DeadZoneNumericUpDown.Name = "DeadZoneNumericUpDown";
+			this.DeadZoneNumericUpDown.Size = new System.Drawing.Size(52, 20);
+			this.DeadZoneNumericUpDown.TabIndex = 31;
+			this.DeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.DeadZoneNumericUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
 			// AxisToButtonADeadZonePanel
 			// 
 			this.AxisToButtonADeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.A;
@@ -2087,18 +2168,6 @@
 			this.RightThumbYUserControl.TabIndex = 0;
 			this.RightThumbYUserControl.ThumbIndex = SharpDX.XInput.ThumbIndex.RightY;
 			// 
-			// FeedVirtualDeviceCeckBox
-			// 
-			this.FeedVirtualDeviceCeckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.FeedVirtualDeviceCeckBox.AutoSize = true;
-			this.FeedVirtualDeviceCeckBox.Location = new System.Drawing.Point(3, 483);
-			this.FeedVirtualDeviceCeckBox.Name = "FeedVirtualDeviceCeckBox";
-			this.FeedVirtualDeviceCeckBox.Size = new System.Drawing.Size(119, 17);
-			this.FeedVirtualDeviceCeckBox.TabIndex = 28;
-			this.FeedVirtualDeviceCeckBox.Text = "Feed Virtual Device";
-			this.FeedVirtualDeviceCeckBox.UseVisualStyleBackColor = true;
-			this.FeedVirtualDeviceCeckBox.CheckedChanged += new System.EventHandler(this.FeedVirtualDeviceCeckBox_CheckedChanged);
-			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2129,12 +2198,14 @@
 			this.GeneralTabPage.ResumeLayout(false);
 			this.GeneralLeftPanel.ResumeLayout(false);
 			this.GeneralLeftPanel.PerformLayout();
+			this.GeneralRightPanel.ResumeLayout(false);
+			this.GeneralRightPanel.PerformLayout();
+			this.VirtualDevicePanel.ResumeLayout(false);
+			this.VirtualDevicePanel.PerformLayout();
 			this.GeneralCenterPanel.ResumeLayout(false);
 			this.GeneralCenterPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).EndInit();
-			this.GeneralRightPanel.ResumeLayout(false);
-			this.GeneralRightPanel.PerformLayout();
 			this.PadTabControl.ResumeLayout(false);
 			this.AxisToButtonTabPage.ResumeLayout(false);
 			this.AxisToButtonPanel.ResumeLayout(false);
@@ -2158,6 +2229,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.DeadZoneNumericUpDown)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -2332,6 +2404,11 @@
 		private AxisToButtonUserControl AxisToDPadUpDeadZonePanel;
 		private System.Windows.Forms.Button GameControllersButton;
 		private System.Windows.Forms.Button AutoPresetButton;
-		private System.Windows.Forms.CheckBox FeedVirtualDeviceCeckBox;
+		private System.Windows.Forms.CheckBox EnableVirtualDeviceCeckBox;
+		private System.Windows.Forms.Panel VirtualDevicePanel;
+		private System.Windows.Forms.ComboBox PollingRateComboBox;
+		private System.Windows.Forms.Label PollingRateLabel;
+		private System.Windows.Forms.Panel VirtualDeviceSeparatorPanel;
+		public System.Windows.Forms.NumericUpDown DeadZoneNumericUpDown;
 	}
 }

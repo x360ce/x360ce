@@ -20,6 +20,18 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			ControllerIndex = controllerIndex;
+			object[] rates = {
+				1000/8, //  125
+				1000/7, //  142
+				1000/6, //  166
+				1000/5, //  200
+				1000/4, //  250
+				1000/3, //  333
+				1000/2, //  500
+				1000/1, // 1000
+			};
+			PollingRateComboBox.Items.AddRange(rates);
+			PollingRateComboBox.SelectedIndex = 0;
 			// Add direct input user control.
 			this.SuspendLayout();
 			diControl = new DirectInputControl();
@@ -1225,8 +1237,8 @@ namespace x360ce.App.Controls
 
 		private void FeedVirtualDeviceCeckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			FeedingEnabled = FeedVirtualDeviceCeckBox.Checked;
-			if (FeedVirtualDeviceCeckBox.Checked)
+			FeedingEnabled = EnableVirtualDeviceCeckBox.Checked;
+			if (EnableVirtualDeviceCeckBox.Checked)
 			{
 				var resourceName = Program.GetResourceName("vJoy", "vJoyInterface");
 				if (!System.IO.File.Exists("vJoyInterface.dll"))
