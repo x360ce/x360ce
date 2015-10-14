@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Win32;
+using x360ce.App.Properties;
 
 namespace x360ce.App
 {
@@ -57,6 +58,7 @@ namespace x360ce.App
 		public System.Timers.Timer UpdateTimer;
 		public System.Timers.Timer SettingsTimer;
 		public System.Timers.Timer CleanStatusTimer;
+		public int DefaultPoolingInterval = 50;
 
 		public Controller[] GamePads = new Controller[4];
 
@@ -69,7 +71,7 @@ namespace x360ce.App
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;
-			UpdateTimer.Interval = 50;
+			UpdateTimer.Interval = DefaultPoolingInterval;
 			UpdateTimer.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
 			SettingsTimer = new System.Timers.Timer();
 			SettingsTimer.AutoReset = false;
@@ -82,6 +84,7 @@ namespace x360ce.App
 			CleanStatusTimer.Interval = 3000;
 			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
 			Text = EngineHelper.GetProductFullName();
+			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
 		}
@@ -434,6 +437,7 @@ namespace x360ce.App
 				// delete temp.
 				tmp.Delete();
 			}
+			Settings.Default.Save();
 		}
 
 		#region Timer
@@ -1085,6 +1089,121 @@ namespace x360ce.App
 			base.Dispose(disposing);
 		}
 
+		private void OpenApplicationToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			RestoreFromTray();
+		}
 
+		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+
+		#region Restore and Minimize
+
+		FormWindowState? oldWindowState;
+		object lastStateLock = new object();
+
+		/// <summary>Will be used to prevent form flickering when restoring from tray.</summary>
+		bool ignoreMinimizeToTray;
+
+		private void MainForm_Resize(object sender, EventArgs e)
+		{
+			// Track window state changes.
+			lock (lastStateLock)
+			{
+				var newWindowState = WindowState;
+				if (!oldWindowState.HasValue || oldWindowState.Value != newWindowState)
+				{
+					oldWindowState = newWindowState;
+					UpdateStatusBar(newWindowState);
+				}
+			}
+		}
+
+		void UpdateStatusBar(FormWindowState state)
+		{
+			if (state == FormWindowState.Minimized)
+			{
+				if (!ignoreMinimizeToTray)
+				{
+					if (ShowInTaskbar == Settings.Default.MinimizeToTray)
+					{
+						ShowInTaskbar = !Settings.Default.MinimizeToTray;
+					}
+				}
+			}
+			else
+			{
+				ignoreMinimizeToTray = false;
+				if (ShowInTaskbar == false)
+				{
+					ShowInTaskbar = true;
+				}
+			}
+		}
+
+		public bool MinimizeToTrayChanging;
+		public void SetMinimizeToTray(bool value)
+		{
+			if (MinimizeToTrayChanging) return;
+			MinimizeToTrayChanging = true;
+			if (OptionsPanel.MinimizeToTrayCheckBox.Checked != value)
+			{
+				OptionsPanel.MinimizeToTrayCheckBox.Checked = value;
+			}
+			if (Settings.Default.MinimizeToTray != value)
+			{
+				Settings.Default.MinimizeToTray = value;
+			}
+			UpdateStatusBar(WindowState);
+			MinimizeToTrayChanging = false;
+		}
+
+		/// <summary>
+		/// Method to Minimize the window and Hide the window item in the TaskBar. 
+		/// </summary>
+		public void MinimizeToTray(bool showBalloonTip)
+		{
+			// Show only first time.
+			if (showBalloonTip)
+			{
+				TrayNotifyIcon.BalloonTipText = "Password Generator...";
+				// Show balloon tip for 2 seconds.
+				TrayNotifyIcon.ShowBalloonTip(2);
+			}
+			// hold - program.
+			// NOTE: also it would be possible to track which direction mouse will move in or move out on TrayIcon.
+			// For example: open program if mouse moves in from left and moves out from top.
+			TrayNotifyIcon.Text = "Click: double - program, left - generate, right - menu.";
+			if (WindowState != FormWindowState.Minimized) WindowState = FormWindowState.Minimized;
+		}
+
+		/// <summary>
+		/// Restores the window.
+		/// </summary>
+		public void RestoreFromTray()
+		{
+			ignoreMinimizeToTray = true;
+			// Show in task bar before restoring windows state in order to prevent flickering.
+			ShowInTaskbar = true;
+			if (WindowState != FormWindowState.Normal)
+			{
+				WindowState = FormWindowState.Normal;
+			}
+			BringToFront();
+		}
+
+		void MinimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SetMinimizeToTray(!Settings.Default.MinimizeToTray);
+		}
+
+		#endregion
+
+		private void TrayNotifyIcon_DoubleClick(object sender, EventArgs e)
+		{
+			RestoreFromTray();
+		}
 	}
 }

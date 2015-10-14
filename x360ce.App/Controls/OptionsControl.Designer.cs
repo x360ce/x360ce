@@ -56,8 +56,9 @@
 			this.SaveSettingsButton = new System.Windows.Forms.Button();
 			this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
-			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
+			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
+			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -76,7 +77,7 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 65);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 86);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
 			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(241, 136);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
@@ -149,10 +150,11 @@
 			// 
 			// OperationGroupBox
 			// 
+			this.OperationGroupBox.Controls.Add(this.MinimizeToTrayCheckBox);
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(241, 56);
+			this.OperationGroupBox.Size = new System.Drawing.Size(241, 77);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -359,12 +361,22 @@
 			// 
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 207);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 228);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(241, 69);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
 			this.DirectInputDevicesGroupBox.TabStop = false;
 			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
+			// 
+			// ExcludeVirtualDevicesCheckBox
+			// 
+			this.ExcludeVirtualDevicesCheckBox.AutoSize = true;
+			this.ExcludeVirtualDevicesCheckBox.Location = new System.Drawing.Point(6, 42);
+			this.ExcludeVirtualDevicesCheckBox.Name = "ExcludeVirtualDevicesCheckBox";
+			this.ExcludeVirtualDevicesCheckBox.Size = new System.Drawing.Size(138, 17);
+			this.ExcludeVirtualDevicesCheckBox.TabIndex = 0;
+			this.ExcludeVirtualDevicesCheckBox.Text = "Exclude Virtual Devices";
+			this.ExcludeVirtualDevicesCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// ExcludeSupplementalDevicesCheckBox
 			// 
@@ -376,15 +388,16 @@
 			this.ExcludeSupplementalDevicesCheckBox.Text = "Exclude Supplemental Devices";
 			this.ExcludeSupplementalDevicesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// ExcludeVirtualDevicesCheckBox
+			// MinimizeToTrayCheckBox
 			// 
-			this.ExcludeVirtualDevicesCheckBox.AutoSize = true;
-			this.ExcludeVirtualDevicesCheckBox.Location = new System.Drawing.Point(6, 42);
-			this.ExcludeVirtualDevicesCheckBox.Name = "ExcludeVirtualDevicesCheckBox";
-			this.ExcludeVirtualDevicesCheckBox.Size = new System.Drawing.Size(138, 17);
-			this.ExcludeVirtualDevicesCheckBox.TabIndex = 0;
-			this.ExcludeVirtualDevicesCheckBox.Text = "Exclude Virtual Devices";
-			this.ExcludeVirtualDevicesCheckBox.UseVisualStyleBackColor = true;
+			this.MinimizeToTrayCheckBox.AutoSize = true;
+			this.MinimizeToTrayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.MinimizeToTrayCheckBox.Location = new System.Drawing.Point(6, 52);
+			this.MinimizeToTrayCheckBox.Name = "MinimizeToTrayCheckBox";
+			this.MinimizeToTrayCheckBox.Size = new System.Drawing.Size(108, 18);
+			this.MinimizeToTrayCheckBox.TabIndex = 93;
+			this.MinimizeToTrayCheckBox.Text = "Minimize to Tray";
+			this.MinimizeToTrayCheckBox.CheckedChanged += new System.EventHandler(this.MinimizeToTrayCheckBox_CheckedChanged);
 			// 
 			// OptionsControl
 			// 
@@ -451,5 +464,6 @@
 		private System.Windows.Forms.GroupBox DirectInputDevicesGroupBox;
 		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
 		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
+		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
 	}
 }

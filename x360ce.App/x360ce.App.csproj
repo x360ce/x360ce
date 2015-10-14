@@ -483,6 +483,7 @@
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
+    <None Include="Images\app_16x16.png" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <None Include="Resources\SharpDX\SharpDX.DirectInput.xml">
@@ -537,6 +538,7 @@
     <None Include="Images\Button_Y.png" />
     <None Include="Images\arrow_right_gray_16x16.png" />
     <None Include="Images\online_help_16x16.png" />
+    <None Include="Images\exit_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />

@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using x360ce.Engine;
+using x360ce.App.Properties;
 
 namespace x360ce.App.Controls
 {
@@ -150,6 +151,11 @@ namespace x360ce.App.Controls
 			GameDatabaseManager.Current.CheckSettingsFolder();
 			string argument = @"/select, " + GameDatabaseManager.Current.InitialFile.FullName;
 			System.Diagnostics.Process.Start("explorer.exe", argument);
+		}
+
+		private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			MainForm.Current.SetMinimizeToTray(!Settings.Default.MinimizeToTray);
 		}
 	}
 }
