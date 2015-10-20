@@ -17,19 +17,21 @@ namespace x360ce.Engine
 		public GameDatabaseManager()
 		{
 			var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE\\x360ce.gdb";
-			InitialFile = new FileInfo(path);
+			GdbFile = new FileInfo(path);
+			path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE\\x360ce.md5";
+			Md5File = new FileInfo(path);
 		}
 
 		public void CheckSettingsFolder()
 		{
-			if (!InitialFile.Directory.Exists)
+			if (!GdbFile.Directory.Exists)
 			{
-				try { InitialFile.Directory.Create(); }
+				try { GdbFile.Directory.Create(); }
 				catch (Exception) { return; }
 			}
-			if (!InitialFile.Exists)
+			if (!GdbFile.Exists)
 			{
-				try { System.IO.File.WriteAllText(InitialFile.FullName, ""); }
+				try { System.IO.File.WriteAllText(GdbFile.FullName, ""); }
 				catch (Exception) { }
 			}
 		}
@@ -48,11 +50,12 @@ namespace x360ce.Engine
 			}
 		}
 
-		public FileInfo InitialFile;
+		public FileInfo GdbFile;
+		public FileInfo Md5File;
 
 		public List<Program> GetPrograms()
 		{
-			return GetPrograms(InitialFile.FullName);
+			return GetPrograms(GdbFile.FullName);
 		}
 
 		public static List<Program> GetPrograms(string iniFileName)
@@ -83,10 +86,10 @@ namespace x360ce.Engine
 		public void SetPrograms(IEnumerable<Program> programs, IEnumerable<Game> games)
 		{
 			// Clean file. INI files support only UTF16-little endian format.
-			var file = new System.IO.FileInfo(InitialFile.FullName);
+			var file = new System.IO.FileInfo(GdbFile.FullName);
 			if (!file.Directory.Exists) file.Directory.Create();
-			System.IO.File.WriteAllText(InitialFile.FullName, "", Encoding.Unicode);
-			var ini = new Ini(InitialFile.FullName);
+			System.IO.File.WriteAllText(GdbFile.FullName, "", Encoding.Unicode);
+			var ini = new Ini(GdbFile.FullName);
 			// Get unique section names.
 			var names = programs.Select(x => x.FileName.ToLower()).ToList();
 			var gameNames = games.Select(x => x.FileName.ToLower()).ToList();
@@ -137,11 +140,9 @@ namespace x360ce.Engine
 				ini.SetValue(section, "Timeout", timeout);
 			}
 			Refresh();
-			var md5name = System.IO.Path.GetFileNameWithoutExtension(InitialFile.Name);
-			var md5file = System.IO.Path.Combine(InitialFile.Directory.FullName, md5name + ".md5");
 			var hash = string.Join("", Checksum.ToByteArray().Select(x => x.ToString("X2")));
-			var md5line = string.Format("{0} *{1}", hash, InitialFile.Name);
-			System.IO.File.WriteAllText(md5file, md5line);
+			var md5line = string.Format("{0} *{1}", hash, GdbFile.Name);
+			System.IO.File.WriteAllText(Md5File.FullName, md5line);
 		}
 
 		Guid? _Checksum;
@@ -159,7 +160,7 @@ namespace x360ce.Engine
 		public void Refresh()
 		{
 			// Read checksum.
-			var bytes = System.IO.File.ReadAllBytes(InitialFile.FullName);
+			var bytes = System.IO.File.ReadAllBytes(GdbFile.FullName);
 			_Checksum = EngineHelper.ComputeMd5Hash(bytes);
 		}
 

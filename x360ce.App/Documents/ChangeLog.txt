@@ -1,4 +1,7 @@
-﻿v3.2.9.81 (2015-10-04)
+﻿v3.2.10.82 (2015-10-20)
+- New: GDB file issue (windows permissions) solver added.
+
+v3.2.9.81 (2015-10-04)
 - Fix: Crash when linking settings to controls.
 - Fix: 64-bit crash.
 - Fix: Offer fix when used tries to start application from Windows folder.

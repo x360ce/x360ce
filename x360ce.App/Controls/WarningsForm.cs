@@ -83,6 +83,7 @@ namespace x360ce.App
 					IssueList.Add(new LeakDetectorIssue());
 					IssueList.Add(new MdkIssue());
 					IssueList.Add(new ArchitectureIssue());
+					IssueList.Add(new GdbFileIssue());
 					IssueList.Add(new IniFileIssue());
 					IssueList.Add(new DllFileIssue());
 					foreach (var item in IssueList)

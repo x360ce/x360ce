@@ -278,6 +278,7 @@
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\DllFileIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
+    <Compile Include="Issues\GdbFileClass.cs" />
     <Compile Include="Issues\IssueSeverity.cs" />
     <Compile Include="Issues\LeakDetectorIssue.cs" />
     <Compile Include="Issues\MdkIssue.cs" />

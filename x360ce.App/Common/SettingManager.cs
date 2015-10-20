@@ -19,7 +19,6 @@ namespace x360ce.App
 		#region Constants
 		public const string IniFileName = "x360ce.ini";
 		public const string TmpFileName = "x360ce.tmp";
-		public const string GdbFileName = "x360ce.gdb";
 		#endregion // Constants
 
 		#region Member Variables

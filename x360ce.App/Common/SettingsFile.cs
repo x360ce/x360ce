@@ -81,21 +81,21 @@ namespace x360ce.App
 		}
 
 		[NonSerialized]
-		FileInfo _InitialFile;
+		FileInfo _XmlFile;
 		object InitialFileLock = new object();
 		[XmlIgnore]
-		public FileInfo InitialFile
+		public FileInfo XmlFile
 		{
 			get
 			{
 				lock (InitialFileLock)
 				{
-					if (_InitialFile == null)
+					if (_XmlFile == null)
 					{
 						var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE\\x360ce.xml";
-						_InitialFile = new FileInfo(path);
+						_XmlFile = new FileInfo(path);
 					}
-					return _InitialFile;
+					return _XmlFile;
 				}
 			}
 		}
@@ -111,7 +111,7 @@ namespace x360ce.App
 			lock (saveReadFileLock)
 			{
 				SettingsVersion = _CurrentSettingsVersion;
-				Serializer.SerializeToXmlFile(this, InitialFile.FullName, System.Text.Encoding.UTF8);
+				Serializer.SerializeToXmlFile(this, XmlFile.FullName, System.Text.Encoding.UTF8);
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace x360ce.App
 		public void Load()
 		{
 			bool settingsLoaded = false;
-			var settingsFi = new System.IO.FileInfo(InitialFile.FullName);
+			var settingsFi = new System.IO.FileInfo(XmlFile.FullName);
 			// If configuration file exists then...
 			if (settingsFi.Exists)
 			{
@@ -153,7 +153,7 @@ namespace x360ce.App
 					{
 						try
 						{
-							data = Serializer.DeserializeFromXmlFile<SettingsFile>(InitialFile.FullName);
+							data = Serializer.DeserializeFromXmlFile<SettingsFile>(XmlFile.FullName);
 							if (data != null && data.IsValidVersion())
 							{
 								Programs.Clear();
@@ -191,25 +191,25 @@ namespace x360ce.App
 						catch (Exception)
 						{
 							var form = new MessageBoxForm();
-							var backupFile = InitialFile.FullName + ".bak";
+							var backupFile = XmlFile.FullName + ".bak";
 							form.StartPosition = FormStartPosition.CenterParent;
 							var result = form.ShowForm(
 								"User settings file has become corrupted.\r\n" +
 								"Program must reset your user settings in order to continue.\r\n\r\n" +
 								"   Click [Yes] to reset your user settings and continue.\r\n" +
 								"   Click [No] if you wish to attempt manual repair.\r\n\r\n" +
-								"Settings File: " + InitialFile.FullName,
+								"Settings File: " + XmlFile.FullName,
 								"Corrupt user settings of " + Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 							if (result == DialogResult.Yes)
 							{
 								if (System.IO.File.Exists(backupFile))
 								{
-									System.IO.File.Copy(backupFile, InitialFile.FullName, true);
+									System.IO.File.Copy(backupFile, XmlFile.FullName, true);
 									settingsFi.Refresh();
 								}
 								else
 								{
-									System.IO.File.Delete(InitialFile.FullName);
+									System.IO.File.Delete(XmlFile.FullName);
 									break;
 								}
 							}
