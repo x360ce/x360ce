@@ -1245,6 +1245,9 @@ namespace x360ce.App.Controls
 				{
 					AppHelper.WriteFile(typeof(MainForm).Namespace + "." + resourceName + ".dll", "vJoyInterface.dll");
 				}
+
+
+
 				System.Threading.ThreadPool.QueueUserWorkItem(FeedWaitCallback, (uint)1);
 			}
 		}

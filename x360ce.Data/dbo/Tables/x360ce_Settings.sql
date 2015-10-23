@@ -5,6 +5,7 @@
     [ProductGuid]        UNIQUEIDENTIFIER NOT NULL,
     [ProductName]        NVARCHAR (256)   NOT NULL,
     [DeviceType]         INT              NOT NULL,
+    [MapTo]              INT              CONSTRAINT [DF_x360ce_Settings_MapTo] DEFAULT ((0)) NOT NULL,
     [FileName]           NVARCHAR (128)   NOT NULL,
     [FileProductName]    NVARCHAR (256)   NOT NULL,
     [Comment]            NVARCHAR (1024)  NOT NULL,
@@ -15,6 +16,8 @@
     [PadSettingChecksum] UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [PK_x360ce_Settings] PRIMARY KEY CLUSTERED ([SettingId] ASC)
 );
+
+
 
 
 GO

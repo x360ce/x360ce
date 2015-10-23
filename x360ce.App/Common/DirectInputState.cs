@@ -50,7 +50,7 @@ namespace x360ce.App
 			sl.AddRange(state.ForceSliders);
 			sl.AddRange(state.VelocitySliders);
             Sliders = sl.ToArray();
-            // Fill Pows.
+            // Fill POVs.
 			Pows = state.PointOfViewControllers.ToArray();
 			// Fill buttons.
 			Buttons = state.Buttons.ToArray();
@@ -77,7 +77,7 @@ namespace x360ce.App
 					}
 				}
 			};
-			// Compare Pows.
+			// Compare POVs.
 			if (Pows.Length == state.Pows.Length)
 			{
 				for (int i = 0; i < Pows.Length; i++)
@@ -126,7 +126,7 @@ namespace x360ce.App
 		//public string DetectDirection(int v)
 		//{
 		//	// Threshold mark at which action on axis/slider is detected.
-		//	// Value gets inbetween of specified range then action is recorded.
+		//	// Value gets in-between of specified range then action is recorded.
 		//	// [--[p1]----[p2]--[n1]----[n2]--|--[p3]----[p4]--[n3]----[n4]--]
 		//	int p1 = 2000;
 		//	int space = (ushort.MaxValue - (p1 * 6)) / 4;

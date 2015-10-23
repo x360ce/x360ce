@@ -42,19 +42,21 @@ namespace x360ce.App
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.TopPanel = new System.Windows.Forms.Panel();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
+			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
+			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
 			this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
-			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
 			this.OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.label1 = new System.Windows.Forms.Label();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
 			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
 			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
+			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GameSettingsTabPage.SuspendLayout();
@@ -62,15 +64,14 @@ namespace x360ce.App
 			this.HelpTabPage.SuspendLayout();
 			this.MainStatusStrip.SuspendLayout();
 			this.TopPanel.SuspendLayout();
-			this.TrayContextMenuStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
+			this.TrayContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
 			// 
-			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.MainTabControl.Controls.Add(this.Pad1TabPage);
 			this.MainTabControl.Controls.Add(this.Pad2TabPage);
@@ -82,7 +83,7 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
 			this.MainTabControl.ImageList = this.BuletImageList;
-			this.MainTabControl.Location = new System.Drawing.Point(6, 70);
+			this.MainTabControl.Location = new System.Drawing.Point(6, 97);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.Size = new System.Drawing.Size(674, 541);
@@ -206,7 +207,7 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-			this.MainStatusStrip.Location = new System.Drawing.Point(0, 618);
+			this.MainStatusStrip.Location = new System.Drawing.Point(0, 645);
 			this.MainStatusStrip.Name = "MainStatusStrip";
 			this.MainStatusStrip.Size = new System.Drawing.Size(684, 24);
 			this.MainStatusStrip.SizingGrip = false;
@@ -285,6 +286,15 @@ namespace x360ce.App
 			this.HelpBodyLabel.TabIndex = 7;
 			this.HelpBodyLabel.Text = resources.GetString("HelpBodyLabel.Text");
 			// 
+			// HelpPictureBox
+			// 
+			this.HelpPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HelpPictureBox.Image")));
+			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
+			this.HelpPictureBox.Name = "HelpPictureBox";
+			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
+			this.HelpPictureBox.TabIndex = 8;
+			this.HelpPictureBox.TabStop = false;
+			// 
 			// HelpSubjectLabel
 			// 
 			this.HelpSubjectLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -296,6 +306,16 @@ namespace x360ce.App
 			this.HelpSubjectLabel.Size = new System.Drawing.Size(618, 20);
 			this.HelpSubjectLabel.TabIndex = 5;
 			this.HelpSubjectLabel.Text = "Controller 1 - General";
+			// 
+			// HeaderPictureBox
+			// 
+			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.HeaderPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HeaderPictureBox.Image")));
+			this.HeaderPictureBox.Location = new System.Drawing.Point(630, 9);
+			this.HeaderPictureBox.Name = "HeaderPictureBox";
+			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
+			this.HeaderPictureBox.TabIndex = 6;
+			this.HeaderPictureBox.TabStop = false;
 			// 
 			// LoadinngCircleTimeout
 			// 
@@ -316,33 +336,6 @@ namespace x360ce.App
 			this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
 			this.TrayContextMenuStrip.Size = new System.Drawing.Size(170, 48);
 			// 
-			// ExitToolStripMenuItem
-			// 
-			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_16x16;
-			this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-			this.ExitToolStripMenuItem.Text = "Exit";
-			this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
-			// 
-			// HelpPictureBox
-			// 
-			this.HelpPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HelpPictureBox.Image")));
-			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
-			this.HelpPictureBox.Name = "HelpPictureBox";
-			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
-			this.HelpPictureBox.TabIndex = 8;
-			this.HelpPictureBox.TabStop = false;
-			// 
-			// HeaderPictureBox
-			// 
-			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HeaderPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HeaderPictureBox.Image")));
-			this.HeaderPictureBox.Location = new System.Drawing.Point(630, 9);
-			this.HeaderPictureBox.Name = "HeaderPictureBox";
-			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
-			this.HeaderPictureBox.TabIndex = 6;
-			this.HeaderPictureBox.TabStop = false;
-			// 
 			// OpenApplicationToolStripMenuItem
 			// 
 			this.OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -351,6 +344,23 @@ namespace x360ce.App
 			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
 			this.OpenApplicationToolStripMenuItem.Text = "Open Application";
 			this.OpenApplicationToolStripMenuItem.Click += new System.EventHandler(this.OpenApplicationToolStripMenuItem_Click);
+			// 
+			// ExitToolStripMenuItem
+			// 
+			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_16x16;
+			this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
+			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+			this.ExitToolStripMenuItem.Text = "Exit";
+			this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(3, 73);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(140, 13);
+			this.label1.TabIndex = 5;
+			this.label1.Text = "Select a game to customize:";
 			// 
 			// BusyLoadingCircle
 			// 
@@ -392,11 +402,25 @@ namespace x360ce.App
 			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 508);
 			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
+			// GameToCustomizeComboBox
+			// 
+			this.GameToCustomizeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.GameToCustomizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.GameToCustomizeComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.GameToCustomizeComboBox.FormattingEnabled = true;
+			this.GameToCustomizeComboBox.Location = new System.Drawing.Point(149, 70);
+			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
+			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(529, 21);
+			this.GameToCustomizeComboBox.TabIndex = 7;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(684, 642);
+			this.ClientSize = new System.Drawing.Size(684, 669);
+			this.Controls.Add(this.GameToCustomizeComboBox);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.TopPanel);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Controls.Add(this.MainTabControl);
@@ -417,9 +441,9 @@ namespace x360ce.App
 			this.MainStatusStrip.ResumeLayout(false);
 			this.MainStatusStrip.PerformLayout();
 			this.TopPanel.ResumeLayout(false);
-			this.TrayContextMenuStrip.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
+			this.TrayContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -462,5 +486,7 @@ namespace x360ce.App
 		private ContextMenuStrip TrayContextMenuStrip;
 		private ToolStripMenuItem OpenApplicationToolStripMenuItem;
 		private ToolStripMenuItem ExitToolStripMenuItem;
+		private Label label1;
+		private ComboBox GameToCustomizeComboBox;
 	}
 }

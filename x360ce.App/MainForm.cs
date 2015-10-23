@@ -12,6 +12,7 @@ using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Win32;
 using x360ce.App.Properties;
+using System.ComponentModel;
 
 namespace x360ce.App
 {
@@ -64,10 +65,13 @@ namespace x360ce.App
 
 		void MainForm_Load(object sender, EventArgs e)
 		{
+			if (IsDesignMode) return;
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
 			}
+			GameToCustomizeComboBox.DataSource = SettingsFile.Current.Games;
+			GameToCustomizeComboBox.DisplayMember = "DisplayName";
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;
@@ -87,6 +91,18 @@ namespace x360ce.App
 			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
+		}
+
+		internal bool IsDesignMode
+		{
+			get
+			{
+				if (DesignMode) return true;
+				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+				var pa = this.ParentForm;
+				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
+				return false;
+			}
 		}
 
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)

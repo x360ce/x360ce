@@ -5,6 +5,7 @@ using System.Web;
 using System.IO;
 using System.Text;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
@@ -14,6 +15,12 @@ namespace x360ce.Engine.Data
 		public Game()
 		{
 			Timeout = -1;
+		}
+
+		[XmlIgnore]
+		public string DisplayName
+		{
+			get { return string.Join(" - ", new string[] { FileName, FileProductName });  }
 		}
 
 		public static Game FromDisk(string fileName)

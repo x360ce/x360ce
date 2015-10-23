@@ -155,6 +155,7 @@
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="DeviceType" Type="int" Nullable="false" />
+          <Property Name="MapTo" Type="int" Nullable="false" />
           <Property Name="FileName" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="FileProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
@@ -307,6 +308,7 @@
 					<Property Type="Boolean" Name="IsEnabled" Nullable="false" />
 					<Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
 					<Property Type="DateTime" Name="DateSelected" Nullable="false" Precision="3" />
+          <Property Name="MapTo" Type="Int32" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Summary">
 					<Key>
@@ -483,7 +485,8 @@
 					<EntitySetMapping Name="Settings">
 						<EntityTypeMapping TypeName="x360ceModel.Setting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
-								<ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
+								<ScalarProperty Name="MapTo" ColumnName="MapTo" />
+                <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
 								<ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
 								<ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
 								<ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
@@ -610,7 +613,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="57" >
+			<Diagram Name="x360ceModel" ZoomLevel="41" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

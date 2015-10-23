@@ -21,6 +21,12 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			_Settings = new SortableBindingList<Setting>();
 			_Summaries = new SortableBindingList<Summary>();
+			MapToAutoMenuItem.Tag = MapTo.Auto;
+			MapToController1MenuItem.Tag = MapTo.Controller1;
+			MapToController2MenuItem.Tag = MapTo.Controller2;
+			MapToController3MenuItem.Tag = MapTo.Controller3;
+			MapToController4MenuItem.Tag = MapTo.Controller4;
+			MapToDisabledMenuItem.Tag = MapTo.Disabled;
 		}
 
 		MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
@@ -29,7 +35,7 @@ namespace x360ce.App.Controls
 
 		void InternetUserControl_Load(object sender, EventArgs e)
 		{
-			_myControllersTitle = MyControllersTabPage.Text;
+			_myControllersTitle = MyDeviceSettingsTabPage.Text;
 			_globalSettingsTitle = SummariesTabPage.Text;
 			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
 			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
@@ -45,7 +51,7 @@ namespace x360ce.App.Controls
 
 		void _Settings_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			MyControllersTabPage.Text = _Settings.Count == 0 ? _myControllersTitle : string.Format("{0} [{1}]", _myControllersTitle, _Settings.Count);
+			MyDeviceSettingsTabPage.Text = _Settings.Count == 0 ? _myControllersTitle : string.Format("{0} [{1}]", _myControllersTitle, _Settings.Count);
 		}
 
 		void _Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -212,14 +218,18 @@ namespace x360ce.App.Controls
 
 		void UpdateActionButtons()
 		{
+			var settingsSelected = MySettingsDataGridView.SelectedRows.Count;
 			var controllerSelected = ControllerComboBox.Items.Count > 0;
-			MySettingsLoadButton.Enabled = controllerSelected && MySettingsDataGridView.SelectedRows.Count > 0;
+			MySettingsLoadButton.Enabled = controllerSelected && settingsSelected > 0;
 			GlobalSettingsLoadButton.Enabled = controllerSelected && SummariesDataGridView.SelectedRows.Count > 0;
 			PresetsLoadButton.Enabled = controllerSelected && PresetsDataGridView.SelectedRows.Count > 0;
 			CurrentSetting = GetCurrentSetting();
 			MySettingsSaveButton.Enabled = controllerSelected && refreshed;
-			MySettingsSaveButton.Image = ContainsSetting(CurrentSetting) ? Properties.Resources.save_16x16 : Properties.Resources.save_add_16x16;
-			MySettingsDeleteButton.Enabled = MySettingsDataGridView.SelectedRows.Count == 1;
+			MySettingsSaveButton.Image = ContainsSetting(CurrentSetting)
+				? Properties.Resources.save_16x16
+				: Properties.Resources.save_add_16x16;
+			MySettingsDeleteButton.Enabled = settingsSelected == 1;
+			MapToDropDownButton.Enabled = settingsSelected > 0;
 			MySettingsDataGridView.Refresh();
 		}
 
@@ -380,7 +390,7 @@ namespace x360ce.App.Controls
 				MainForm.Current.ResumeEvents();
 				var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
 				mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, name), MessageBoxIcon.Information);
-				// Save setting and notify if vaue changed.
+				// Save setting and notify if value changed.
 				SettingManager.Current.SaveSettings();
 				MainForm.Current.NotifySettingsChange();
 				mainForm.UpdateTimer.Start();
@@ -447,6 +457,10 @@ namespace x360ce.App.Controls
 			{
 				UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
 			}
+			else if (e.ColumnIndex == grid.Columns[MapToColumn.Name].Index)
+			{
+				e.Value = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription((MapTo)setting.MapTo);
+			}
 			else if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
 				e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_16x16;
@@ -461,8 +475,9 @@ namespace x360ce.App.Controls
 		void SettingsDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			SettingSelection = grid.SelectedRows.Count == 0 ? null : (Setting)grid.SelectedRows[0].DataBoundItem;
-			CommentSelectedTextBox.Text = grid.SelectedRows.Count == 0 ? "" : SettingSelection.Comment;
+			var rows = grid.SelectedRows;
+            SettingSelection = rows.Count == 0 ? null : (Setting)rows[0].DataBoundItem;
+			CommentSelectedTextBox.Text = rows.Count == 0 ? "" : SettingSelection.Comment;
 			UpdateActionButtons();
 			grid.Refresh();
 		}
@@ -553,7 +568,7 @@ namespace x360ce.App.Controls
 					RefreshGrid(true);
 					break;
 				case Keys.M:
-					if (e.Alt) SettingsListTabControl.SelectedTab = MyControllersTabPage;
+					if (e.Alt) SettingsListTabControl.SelectedTab = MyDeviceSettingsTabPage;
 					break;
 				case Keys.G:
 					if (e.Alt) SettingsListTabControl.SelectedTab = SummariesTabPage;
@@ -721,5 +736,14 @@ namespace x360ce.App.Controls
 			RefreshGrid(true);
 		}
 
+		private void MapToMenuItem_Click(object sender, EventArgs e)
+		{
+			var v = (MapTo)((ToolStripMenuItem)sender).Tag;
+			var items = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x=>(Setting)x.DataBoundItem).ToArray();
+			foreach (var item in items)
+			{
+				item.MapTo = (int)v;
+			}
+		}
 	}
 }

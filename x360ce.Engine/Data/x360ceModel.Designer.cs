@@ -3510,7 +3510,8 @@ namespace x360ce.Engine.Data
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
         /// <param name="padSettingChecksum">Initial value of the PadSettingChecksum property.</param>
         /// <param name="dateSelected">Initial value of the DateSelected property.</param>
-        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected)
+        /// <param name="mapTo">Initial value of the MapTo property.</param>
+        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo)
         {
             Setting setting = new Setting();
             setting.SettingId = settingId;
@@ -3527,6 +3528,7 @@ namespace x360ce.Engine.Data
             setting.IsEnabled = isEnabled;
             setting.PadSettingChecksum = padSettingChecksum;
             setting.DateSelected = dateSelected;
+            setting.MapTo = mapTo;
             return setting;
         }
 
@@ -3872,6 +3874,30 @@ namespace x360ce.Engine.Data
         private global::System.DateTime _DateSelected;
         partial void OnDateSelectedChanging(global::System.DateTime value);
         partial void OnDateSelectedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MapTo
+        {
+            get
+            {
+                return _MapTo;
+            }
+            set
+            {
+                OnMapToChanging(value);
+                ReportPropertyChanging("MapTo");
+                _MapTo = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("MapTo");
+                OnMapToChanged();
+            }
+        }
+        private global::System.Int32 _MapTo;
+        partial void OnMapToChanging(global::System.Int32 value);
+        partial void OnMapToChanged();
 
         #endregion
 

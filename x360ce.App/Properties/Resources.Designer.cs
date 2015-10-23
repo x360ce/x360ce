@@ -463,6 +463,16 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap map_to_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("map_to_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap MessageBoxIcon_Error_32x32 {
             get {
                 object obj = ResourceManager.GetObject("MessageBoxIcon_Error_32x32", resourceCulture);
