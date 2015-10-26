@@ -66,6 +66,7 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
+			SettingManager.Settings.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
@@ -454,6 +455,7 @@ namespace x360ce.App
 				tmp.Delete();
 			}
 			Settings.Default.Save();
+			SettingManager.Settings.Save();
 		}
 
 		#region Timer
@@ -464,7 +466,7 @@ namespace x360ce.App
 		Joystick[] diDevices = new Joystick[4];
 
 
-		bool forceRecountDevices = true;
+		public bool forceRecountDevices = true;
 
 		string deviceInstancesOld = "";
 		string deviceInstancesNew = "";
@@ -510,6 +512,8 @@ namespace x360ce.App
 			for (int d = 0; d < devices.Count; d++)
 			{
 				var ig = devices[d].InstanceGuid;
+				
+
 				var section = SettingManager.Current.GetInstanceSection(ig);
 				var ini2 = new Ini(SettingManager.IniFileName);
 				string v = ini2.GetValue(section, SettingName.MapToPad);

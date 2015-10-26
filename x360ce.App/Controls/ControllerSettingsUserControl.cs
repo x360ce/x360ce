@@ -19,7 +19,6 @@ namespace x360ce.App.Controls
 		public ControllerSettingsUserControl()
 		{
 			InitializeComponent();
-			_Settings = new SortableBindingList<Setting>();
 			_Summaries = new SortableBindingList<Summary>();
 			MapToAutoMenuItem.Tag = MapTo.Auto;
 			MapToController1MenuItem.Tag = MapTo.Controller1;
@@ -37,21 +36,27 @@ namespace x360ce.App.Controls
 		{
 			_myControllersTitle = MyDeviceSettingsTabPage.Text;
 			_globalSettingsTitle = SummariesTabPage.Text;
-			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
+			EngineHelper.EnableDoubleBuffering(MyDevicesDataGridView);
 			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
-			MySettingsDataGridView.AutoGenerateColumns = false;
+			MyDevicesDataGridView.AutoGenerateColumns = false;
 			SummariesDataGridView.AutoGenerateColumns = false;
 			_Summaries.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
-			_Settings.ListChanged += new ListChangedEventHandler(_Settings_ListChanged);
-			MySettingsDataGridView.DataSource = _Settings;
+			SettingManager.Settings.Items.ListChanged += new ListChangedEventHandler(_Settings_ListChanged);
+			MyDevicesDataGridView.DataSource = SettingManager.Settings.Items;
 			SummariesDataGridView.DataSource = _Summaries;
 			InternetCheckBox_CheckedChanged(null, null);
 		}
 
 		void _Settings_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			MyDeviceSettingsTabPage.Text = _Settings.Count == 0 ? _myControllersTitle : string.Format("{0} [{1}]", _myControllersTitle, _Settings.Count);
+			MyDeviceSettingsTabPage.Text = SettingManager.Settings.Items.Count == 0 ? _myControllersTitle : string.Format("{0} [{1}]", _myControllersTitle, SettingManager.Settings.Items.Count);
+			// If map to changed then re-detect devices.
+			var pd = e.PropertyDescriptor;
+            if (pd != null && pd.Name == "MapTo")
+			{
+				mainForm.forceRecountDevices = true;
+			}
 		}
 
 		void _Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -218,7 +223,7 @@ namespace x360ce.App.Controls
 
 		void UpdateActionButtons()
 		{
-			var settingsSelected = MySettingsDataGridView.SelectedRows.Count;
+			var settingsSelected = MyDevicesDataGridView.SelectedRows.Count;
 			var controllerSelected = ControllerComboBox.Items.Count > 0;
 			MySettingsLoadButton.Enabled = controllerSelected && settingsSelected > 0;
 			GlobalSettingsLoadButton.Enabled = controllerSelected && SummariesDataGridView.SelectedRows.Count > 0;
@@ -230,15 +235,15 @@ namespace x360ce.App.Controls
 				: Properties.Resources.save_add_16x16;
 			MySettingsDeleteButton.Enabled = settingsSelected == 1;
 			MapToDropDownButton.Enabled = settingsSelected > 0;
-			MySettingsDataGridView.Refresh();
+			MyDevicesDataGridView.Refresh();
 		}
 
 		bool ContainsSetting(Setting setting)
 		{
 
-			for (int i = 0; i < _Settings.Count; i++)
+			for (int i = 0; i < SettingManager.Settings.Items.Count; i++)
 			{
-				var s = _Settings[i];
+				var s = SettingManager.Settings.Items[i];
 				if (setting.InstanceGuid == s.InstanceGuid && setting.FileName == s.FileName && setting.FileProductName == s.FileProductName)
 				{
 					return true;
@@ -397,7 +402,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		BindingList<Setting> _Settings;
 		BindingList<Summary> _Summaries;
 
 		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
@@ -408,7 +412,7 @@ namespace x360ce.App.Controls
 				refreshed = true;
 				if (e.Error != null || e.Result == null)
 				{
-					UpdateList(new List<Setting>(), _Settings);
+					UpdateList(new List<Setting>(), SettingManager.Settings.Items);
 					UpdateList(new List<Summary>(), _Summaries);
 					if ((bool)e.UserState)
 					{
@@ -420,7 +424,7 @@ namespace x360ce.App.Controls
 					var result = (SearchResult)e.Result;
 					// Reorder summaries.
 					result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-					UpdateList(result.Settings, _Settings);
+					UpdateList(result.Settings, SettingManager.Settings.Items);
 					UpdateList(result.Summaries, _Summaries);
 					if ((bool)e.UserState)
 					{
@@ -627,7 +631,7 @@ namespace x360ce.App.Controls
 			if (result == DialogResult.Yes)
 			{
 				mainForm.LoadingCircle = true;
-				var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
+				var setting = (Setting)MyDevicesDataGridView.SelectedRows[0].DataBoundItem;
 				var ws = new WebServiceClient();
 				ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
 				ws.DeleteSettingCompleted += ws_DeleteSettingCompleted;
@@ -640,9 +644,9 @@ namespace x360ce.App.Controls
 			mainForm.UpdateTimer.Stop();
 			if (ControllerComboBox.SelectedItem == null) return;
 			var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
-			if (MySettingsDataGridView.SelectedRows.Count == 0) return;
+			if (MyDevicesDataGridView.SelectedRows.Count == 0) return;
 			var title = "Load My Setting?";
-			var setting = (Setting)MySettingsDataGridView.SelectedRows[0].DataBoundItem;
+			var setting = (Setting)MyDevicesDataGridView.SelectedRows[0].DataBoundItem;
 			var message = "Do you want to load My Setting:";
 			message += "\r\n\r\n    " + setting.ProductName;
 			if (!string.IsNullOrEmpty(setting.FileName)) message += " | " + setting.FileName;
@@ -739,7 +743,7 @@ namespace x360ce.App.Controls
 		private void MapToMenuItem_Click(object sender, EventArgs e)
 		{
 			var v = (MapTo)((ToolStripMenuItem)sender).Tag;
-			var items = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x=>(Setting)x.DataBoundItem).ToArray();
+			var items = MyDevicesDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x=>(Setting)x.DataBoundItem).ToArray();
 			foreach (var item in items)
 			{
 				item.MapTo = (int)v;

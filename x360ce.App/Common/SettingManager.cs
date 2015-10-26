@@ -15,6 +15,9 @@ namespace x360ce.App
 {
 	public class SettingManager
 	{
+
+		public static SettingsData<Setting> Settings = new SettingsData<Setting>();
+
 		#region Static Version
 		#region Constants
 		public const string IniFileName = "x360ce.ini";
