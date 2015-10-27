@@ -241,7 +241,7 @@ namespace x360ce.App.Controls
 		private void StartGameButton_Click(object sender, EventArgs e)
 		{
 			var game = GameDetailsControl.CurrentGame;
-			EngineHelper.StartExecutable(game.FullPath);
+			EngineHelper.OpenPath(game.FullPath);
 		}
 
 		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -263,8 +263,7 @@ namespace x360ce.App.Controls
 		{
 			var game = GameDetailsControl.CurrentGame;
 			if (!File.Exists(game.FullPath)) return;
-			string argument = @"/select, " + game.FullPath;
-			System.Diagnostics.Process.Start("explorer.exe", argument);
+			EngineHelper.BrowsePath(game.FullPath);
 		}
 
 		private void SaveGamesButton_Click(object sender, EventArgs e)

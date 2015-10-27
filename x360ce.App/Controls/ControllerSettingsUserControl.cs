@@ -19,7 +19,6 @@ namespace x360ce.App.Controls
 		public ControllerSettingsUserControl()
 		{
 			InitializeComponent();
-			_Summaries = new SortableBindingList<Summary>();
 			MapToAutoMenuItem.Tag = MapTo.Auto;
 			MapToController1MenuItem.Tag = MapTo.Controller1;
 			MapToController2MenuItem.Tag = MapTo.Controller2;
@@ -41,28 +40,38 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			MyDevicesDataGridView.AutoGenerateColumns = false;
 			SummariesDataGridView.AutoGenerateColumns = false;
-			_Summaries.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
+			SettingManager.Summaries.Items.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
 			SettingManager.Settings.Items.ListChanged += new ListChangedEventHandler(_Settings_ListChanged);
 			MyDevicesDataGridView.DataSource = SettingManager.Settings.Items;
-			SummariesDataGridView.DataSource = _Summaries;
+			UpdateSettingsTitle();
+			SummariesDataGridView.DataSource = SettingManager.Summaries.Items;
+			UpdateSummariesTitle();
 			InternetCheckBox_CheckedChanged(null, null);
+		}
+
+		void UpdateSettingsTitle()
+		{
+			MyDeviceSettingsTabPage.Text = SettingManager.Settings.Items.Count == 0
+				? _myControllersTitle
+				: string.Format("{0} [{1}]", _myControllersTitle, SettingManager.Settings.Items.Count);
 		}
 
 		void _Settings_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			MyDeviceSettingsTabPage.Text = SettingManager.Settings.Items.Count == 0 ? _myControllersTitle : string.Format("{0} [{1}]", _myControllersTitle, SettingManager.Settings.Items.Count);
-			// If map to changed then re-detect devices.
-			var pd = e.PropertyDescriptor;
-            if (pd != null && pd.Name == "MapTo")
-			{
-				mainForm.forceRecountDevices = true;
-			}
+			UpdateSettingsTitle();
+		}
+
+		void UpdateSummariesTitle()
+		{
+			SummariesTabPage.Text = SettingManager.Summaries.Items.Count == 0
+				? _globalSettingsTitle
+				: string.Format("{0} [{1}]", _globalSettingsTitle, SettingManager.Summaries.Items.Count);
 		}
 
 		void _Summaries_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			SummariesTabPage.Text = _Summaries.Count == 0 ? _globalSettingsTitle : string.Format("{0} [{1}]", _globalSettingsTitle, _Summaries.Count);
-		}
+			UpdateSummariesTitle();
+        }
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
@@ -402,8 +411,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		BindingList<Summary> _Summaries;
-
 		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
@@ -413,7 +420,7 @@ namespace x360ce.App.Controls
 				if (e.Error != null || e.Result == null)
 				{
 					UpdateList(new List<Setting>(), SettingManager.Settings.Items);
-					UpdateList(new List<Summary>(), _Summaries);
+					UpdateList(new List<Summary>(), SettingManager.Summaries.Items);
 					if ((bool)e.UserState)
 					{
 						mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: No data received.", DateTime.Now), MessageBoxIcon.Information);
@@ -425,7 +432,7 @@ namespace x360ce.App.Controls
 					// Reorder summaries.
 					result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
 					UpdateList(result.Settings, SettingManager.Settings.Items);
-					UpdateList(result.Summaries, _Summaries);
+					UpdateList(result.Summaries, SettingManager.Summaries.Items);
 					if ((bool)e.UserState)
 					{
 						mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1} Your Settings and {2} General Settings received.", DateTime.Now, result.Settings.Length, result.Summaries.Length), MessageBoxIcon.Information);

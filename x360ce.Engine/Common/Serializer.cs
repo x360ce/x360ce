@@ -13,7 +13,7 @@ namespace x360ce.App
         #region Helper Functions
 
         /// <summary>
-        /// Read file content in multiple attmempts.
+        /// Read file content in multiple attempts.
         /// </summary>
         /// <param name="path">The file to open for reading.</param>
         /// <param name="attempts">Number of attempts to read from the file. Default 2 times.</param>
@@ -26,7 +26,7 @@ namespace x360ce.App
                 attempts -= 1;
                 try
                 {
-                    // ReadAllBytes will lock file for writing, but leave open for other apps to read.
+                    // ReadAllBytes will lock file for writing, but leave open for other applications to read.
                     return System.IO.File.ReadAllBytes(path);
                 }
                 catch (Exception)
@@ -42,7 +42,7 @@ namespace x360ce.App
         }
 
         /// <summary>
-        /// Write file content in multiple attmempts.
+        /// Write file content in multiple attempts.
         /// </summary>
         /// <param name="path">The file to open for writing.</param>
         /// <param name="bytes">The bytes to write to the file.</param>
@@ -119,7 +119,7 @@ namespace x360ce.App
         /// Serialize object to XML document.
         /// </summary>
         /// <param name="o">The object to serialize.</param>
-        /// <returns>Xml document</returns>
+        /// <returns>XML document</returns>
         public static XmlDocument SerializeToXml(object o)
         {
             if (o == null) return null;
@@ -218,9 +218,9 @@ namespace x360ce.App
         /// <summary>
         /// Deserialize System.Collections.Generic.List to XML document.
         /// </summary>
-        /// <param name="doc">Xml document representing object.</param>
+        /// <param name="doc">XML document representing object.</param>
         /// <param name="type">Type of object.</param>
-        /// <returns>Xml document</returns>
+        /// <returns>XML document</returns>
         public static object DeserializeFromXml(XmlDocument doc, Type type)
         {
             if (doc == null) return null;
@@ -238,7 +238,7 @@ namespace x360ce.App
         /// <summary>
         /// Deserialize object from XML string.
         /// </summary>
-        /// <param name="xml">Xml string representing object.</param>
+        /// <param name="xml">XML string representing object.</param>
         /// <param name="type">Type of object.</param>
         /// <returns>Object.</returns>
         public static object DeserializeFromXmlString(string xml, Type type)
@@ -249,7 +249,7 @@ namespace x360ce.App
         /// <summary>
         /// Deserialize object from XML string.
         /// </summary>
-        /// <param name="xml">Xml string representing object.</param>
+        /// <param name="xml">XML string representing object.</param>
         /// <param name="type">Type of object.</param>
         /// <returns>Object.</returns>
         public static object DeserializeFromXmlString(string xml, Type type, Encoding encoding)
@@ -302,8 +302,8 @@ namespace x360ce.App
         /// <summary>
         /// Deserialize object from XML Document.
         /// </summary>
-        /// <param name="doc">Xml document representing object.</param>
-        /// <returns>Xml document</returns>
+        /// <param name="doc">XML document representing object.</param>
+        /// <returns>XML document</returns>
         public static T DeserializeFromXml<T>(XmlDocument doc)
         {
             return (T)DeserializeFromXml(doc, typeof(T));
@@ -322,7 +322,7 @@ namespace x360ce.App
         /// <summary>
         /// Deserialize object from XML string.
         /// </summary>
-        /// <param name="xml">Xml string representing object.</param>
+        /// <param name="xml">XML string representing object.</param>
         /// <param name="type">Type of object.</param>
         /// <returns>Object.</returns>
         public static T DeserializeFromXmlString<T>(string xml)
@@ -333,7 +333,7 @@ namespace x360ce.App
         /// <summary>
         /// Deserialize object from XML string.
         /// </summary>
-        /// <param name="xml">Xml string representing object.</param>
+        /// <param name="xml">XML string representing object.</param>
         /// <param name="type">Type of object.</param>
         /// <returns>Object.</returns>
         public static T DeserializeFromXmlString<T>(string xml, Encoding encoding)

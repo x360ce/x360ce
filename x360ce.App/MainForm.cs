@@ -67,6 +67,9 @@ namespace x360ce.App
 		{
 			if (IsDesignMode) return;
 			SettingManager.Settings.Load();
+			SettingManager.Summaries.Load();
+			SettingManager.Summaries.Items.ListChanged += Summaries_ListChanged;
+
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
@@ -92,6 +95,16 @@ namespace x360ce.App
 			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
+		}
+
+		private void Summaries_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			// If map to changed then re-detect devices.
+			var pd = e.PropertyDescriptor;
+			if (pd != null && pd.Name == "MapTo")
+			{
+				forceRecountDevices = true;
+			}
 		}
 
 		internal bool IsDesignMode
@@ -389,7 +402,7 @@ namespace x360ce.App
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			UpdateTimer.Stop();
+			if (UpdateTimer != null) UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
 			try
 			{
@@ -456,6 +469,7 @@ namespace x360ce.App
 			}
 			Settings.Default.Save();
 			SettingManager.Settings.Save();
+			SettingManager.Summaries.Save();
 		}
 
 		#region Timer
@@ -512,7 +526,7 @@ namespace x360ce.App
 			for (int d = 0; d < devices.Count; d++)
 			{
 				var ig = devices[d].InstanceGuid;
-				
+
 
 				var section = SettingManager.Current.GetInstanceSection(ig);
 				var ini2 = new Ini(SettingManager.IniFileName);

@@ -31,7 +31,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Get list of primary keys of items selected in the grid.
 		/// </summary>
 		/// <typeparam name="T">Type of Primary key.</typeparam>
-		/// <param name="grid">Grid for geting selection</param>
+		/// <param name="grid">Grid for getting selection</param>
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
 		{

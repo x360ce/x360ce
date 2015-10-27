@@ -170,12 +170,63 @@ namespace x360ce.Engine
 			}
 		}
 
-		public static void StartExecutable(string path, string arguments = null)
+		public static void BrowsePath(string path)
+		{
+			var exists = File.Exists(path);
+			string fixedPath = path;
+			if (!exists)
+			{
+				// Try to get parent folder.
+				var dirInfo = new DirectoryInfo(path);
+				var newInfo = dirInfo;
+				// If root folder exist then continue...
+				if (dirInfo.Root.Exists)
+				{
+					// Go to parent if folder doesn't exist.
+					while (!exists)
+					{
+						if (newInfo.Exists)
+						{
+							fixedPath = newInfo.FullName;
+							exists = true;
+						}
+						else
+						{
+							newInfo = newInfo.Parent;
+						}
+					}
+				}
+			}
+			if (exists)
+			{
+				var attributes = File.GetAttributes(fixedPath);
+				var isDirectory = attributes.HasFlag(FileAttributes.Directory);
+				if (isDirectory)
+				{
+					OpenPath(fixedPath);
+				}
+				else
+				{
+					string argument = @"/select, " + fixedPath;
+					Process.Start("explorer.exe", argument);
+				}
+			}
+			else
+			{
+				MessageBox.Show("Path not found!", "Path not found!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+
+		}
+
+		/// <summary>
+		/// Open file with associated program.
+		/// </summary>
+		/// <param name="path">file to open.</param>
+		public static void OpenPath(string path, string arguments = null)
 		{
 			try
 			{
 				var fi = new FileInfo(path);
-				//if (!fi.Exists) return;
 				// Brings up the "Windows cannot open this file" dialog if association not found.
 				var psi = new ProcessStartInfo(path);
 				psi.UseShellExecute = true;

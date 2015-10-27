@@ -19,8 +19,25 @@ namespace x360ce.App
 
 		public SettingsData()
 		{
-			Items = new SortableBindingList<T>();
+			SetCollectionName(null);
 		}
+
+		public SettingsData(string collectionName)
+		{
+			SetCollectionName(collectionName);
+		}
+
+		void SetCollectionName(string name = null)
+		{
+			Items = new SortableBindingList<T>();
+			_CollectionName = string.IsNullOrEmpty(name)
+				? typeof(T).Name
+				: name;
+			_FileName = string.Format("x360ce.{0}.xml", _CollectionName);
+		}
+
+		string _CollectionName;
+		string _FileName;
 
 		public SortableBindingList<T> Items;
 
@@ -50,8 +67,7 @@ namespace x360ce.App
 					if (_XmlFile == null)
 					{
 						var folder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE";
-						var file = string.Format("x360ce.{0}.xml", typeof(T).Name);
-						var path = folder + "\\" + file;
+						var path = folder + "\\" + _FileName;
 						_XmlFile = new FileInfo(path);
 					}
 					return _XmlFile;
@@ -105,13 +121,13 @@ namespace x360ce.App
 							var form = new MessageBoxForm();
 							var backupFile = XmlFile.FullName + ".bak";
 							form.StartPosition = FormStartPosition.CenterParent;
-							var result = form.ShowForm(
-								"User " + typeof(T).Name + " file has become corrupted.\r\n" +
-								"Program must reset your user " + typeof(T).Name + " in order to continue.\r\n\r\n" +
-								"   Click [Yes] to reset your user " + typeof(T).Name + " and continue.\r\n" +
+							var text = string.Format("{0} file has become corrupted.\r\n" +
+								"Program must reset {0} file in order to continue.\r\n\r\n" +
+								"   Click [Yes] to reset and continue.\r\n" +
 								"   Click [No] if you wish to attempt manual repair.\r\n\r\n" +
-								typeof(T).Name + " File: " + XmlFile.FullName,
-								"Corrupt user " + typeof(T).Name + " of " + Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+								" File: {1}", _CollectionName, XmlFile.FullName);
+							var caption = string.Format("Corrupt {0} of {1}", _CollectionName, Application.ProductName);
+							var result = form.ShowForm(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 							if (result == DialogResult.Yes)
 							{
 								if (File.Exists(backupFile))
@@ -139,7 +155,7 @@ namespace x360ce.App
 			if (!settingsLoaded)
 			{
 				// Get internal resources.
-				var resource = EngineHelper.GetResource("x360ce_" + typeof(T).Name + ".xml.gz");
+				var resource = EngineHelper.GetResource(_FileName + ".gz");
 				// If internal preset was found.
 				if (resource != null)
 				{

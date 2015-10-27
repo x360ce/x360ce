@@ -16,7 +16,8 @@ namespace x360ce.App
 	public class SettingManager
 	{
 
-		public static SettingsData<Setting> Settings = new SettingsData<Setting>();
+		public static SettingsData<Setting> Settings = new SettingsData<Setting>("Settings");
+		public static SettingsData<Summary> Summaries = new SettingsData<Summary>("Summaries");
 
 		#region Static Version
 		#region Constants

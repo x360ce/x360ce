@@ -149,8 +149,7 @@ namespace x360ce.App.Controls
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
 		{
 			GameDatabaseManager.Current.CheckSettingsFolder();
-			string argument = @"/select, " + GameDatabaseManager.Current.GdbFile.FullName;
-			System.Diagnostics.Process.Start("explorer.exe", argument);
+			EngineHelper.BrowsePath(GameDatabaseManager.Current.GdbFile.FullName);
 		}
 
 		private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
