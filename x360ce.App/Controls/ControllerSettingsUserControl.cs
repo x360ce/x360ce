@@ -40,37 +40,43 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			MyDevicesDataGridView.AutoGenerateColumns = false;
 			SummariesDataGridView.AutoGenerateColumns = false;
-			SettingManager.Summaries.Items.ListChanged += new ListChangedEventHandler(_Summaries_ListChanged);
-			SettingManager.Settings.Items.ListChanged += new ListChangedEventHandler(_Settings_ListChanged);
-			MyDevicesDataGridView.DataSource = SettingManager.Settings.Items;
-			UpdateSettingsTitle();
-			SummariesDataGridView.DataSource = SettingManager.Summaries.Items;
-			UpdateSummariesTitle();
+			InitData();
 			InternetCheckBox_CheckedChanged(null, null);
 		}
 
-		void UpdateSettingsTitle()
+		void InitData() {
+			// Configure Settings.
+			SettingManager.Settings.Items.ListChanged += new ListChangedEventHandler(Settings_ListChanged);
+			MyDevicesDataGridView.DataSource = SettingManager.Settings.Items;
+			UpdateControlsFromSettings();
+			// Configure Summaries.
+			SettingManager.Summaries.Items.ListChanged += new ListChangedEventHandler(Summaries_ListChanged);
+			SummariesDataGridView.DataSource = SettingManager.Summaries.Items;
+			UpdateControlsFromSummaries();
+		}
+
+		void UpdateControlsFromSettings()
 		{
 			MyDeviceSettingsTabPage.Text = SettingManager.Settings.Items.Count == 0
 				? _myControllersTitle
 				: string.Format("{0} [{1}]", _myControllersTitle, SettingManager.Settings.Items.Count);
 		}
 
-		void _Settings_ListChanged(object sender, ListChangedEventArgs e)
+		void Settings_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			UpdateSettingsTitle();
+			UpdateControlsFromSettings();
 		}
 
-		void UpdateSummariesTitle()
+		void UpdateControlsFromSummaries()
 		{
 			SummariesTabPage.Text = SettingManager.Summaries.Items.Count == 0
 				? _globalSettingsTitle
 				: string.Format("{0} [{1}]", _globalSettingsTitle, SettingManager.Summaries.Items.Count);
 		}
 
-		void _Summaries_ListChanged(object sender, ListChangedEventArgs e)
+		void Summaries_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			UpdateSummariesTitle();
+			UpdateControlsFromSummaries();
         }
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

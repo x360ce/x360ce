@@ -28,7 +28,7 @@ namespace x360ce.Web.WebServices
 		/// Save controller settings.
 		/// </summary>
 		/// <param name="s">Setting object which contains information about DirectInput device and file/game name it is used for.</param>
-		/// <param name="ps">PAD settings which contains maping between DirectInput device and virtual XBox controller.</param>
+		/// <param name="ps">PAD settings which contains mapping between DirectInput device and virtual XBox controller.</param>
 		/// <returns>Status of operation. Empty if success.</returns>
 		[WebMethod(EnableSession = true, Description = "Save controller settings.")]
 		public string SaveSetting(Setting s, PadSetting ps)
@@ -124,7 +124,7 @@ namespace x360ce.Web.WebServices
 			p1.RightThumbUp = ps.RightThumbUp;
 			p1.RightTrigger = ps.RightTrigger;
 			p1.RightTriggerDeadZone = ps.RightTriggerDeadZone;
-			// Axis to button deadzones.
+			// Axis to button dead-zones.
 			p1.ButtonADeadZone = ps.ButtonADeadZone ?? "";
 			p1.ButtonBDeadZone = ps.ButtonBDeadZone ?? "";
 			p1.ButtonBackDeadZone = ps.ButtonBackDeadZone ?? "";
@@ -198,7 +198,7 @@ namespace x360ce.Web.WebServices
 					}
 				}
 				var lambda = Expression.Lambda<Func<Summary, bool>>(body, param);
-				// Select only TOP 10 configurations per per controller and file.
+				// Select only TOP 10 configurations per controller and file.
 				var summaries = db.Summaries.Where(lambda).ToArray();
 				var topSummaries = new List<Summary>();
 				var productGuids = db.Summaries.Where(lambda).Select(x => x.ProductGuid).Distinct();
@@ -337,7 +337,7 @@ namespace x360ce.Web.WebServices
 			var query2 =
 				// Select most popular devices.
 				from row in query
-				// Join all sumaries for these devices.
+				// Join all summaries for these devices.
 				join sum in db.Summaries on row.ProductGuid equals sum.ProductGuid
 				// Group in order to identify most popular PAD setting for the device.
 				group sum by new { sum.ProductGuid, sum.PadSettingChecksum } into g
@@ -352,7 +352,7 @@ namespace x360ce.Web.WebServices
 				PadSettingChecksum = x.PadSettingChecksum,
 			}).ToArray();
 			var settingChecksums = padSettingGuids.Select(x => x.PadSettingChecksum).ToArray();
-			//// Join all pad setings related to summaries.
+			//// Join all pad settings related to summaries.
 			//join pad in db.PadSettings on sum.PadSettingChecksum equals pad.PadSettingChecksum
 			//select new
 			//{

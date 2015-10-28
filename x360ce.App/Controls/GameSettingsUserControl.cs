@@ -22,8 +22,7 @@ namespace x360ce.App.Controls
 			GamesDataGridView.AutoGenerateColumns = false;
 			ProgramsDataGridView.AutoGenerateColumns = false;
 			ScanProgressLabel.Text = "";
-			InitDefaultList();
-			SettingsFile.Current.Programs.ListChanged += Programs_ListChanged;
+			InitData();
 			DiskIdTextBox.Text = BoardInfo.GetDiskId();
 			HashedDiskIdTextBox.Text = BoardInfo.GetHashedDiskId().ToString();
 		}
@@ -40,11 +39,17 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void InitDefaultList()
+		void InitData()
 		{
-			SettingsFile.Current.Load();
-			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
-			RebindGames();
+			// Configure Programs.
+			SettingManager.Programs.Items.ListChanged += new ListChangedEventHandler(Programs_ListChanged);
+			ProgramsDataGridView.DataSource = SettingManager.Programs.Items;
+			UpdateControlsFromPrograms();
+			// Configure Games.
+			SettingManager.Games.Items.ListChanged += new ListChangedEventHandler(Games_ListChanged);
+			GamesDataGridView.DataSource = SettingManager.Games.Items;
+			UpdateControlsFromGames();
+			ShowHideAndSelectGridRows();
 		}
 
 		#region Scan Games
@@ -95,7 +100,7 @@ namespace x360ce.App.Controls
 
 					var exe = exes[f];
 					var exeName = exe.Name.ToLower();
-					var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+					var program = SettingManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == exeName);
 					// If file doesn't exist in the game list then continue.
 					if (program == null)
 					{
@@ -104,7 +109,7 @@ namespace x360ce.App.Controls
 					else
 					{
 						// Get game by executable name.
-						var game = SettingsFile.Current.Games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+						var game = SettingManager.Games.Items.FirstOrDefault(x => x.FileName.ToLower() == exeName);
 						// If file doesn't exist in the game list then continue.
 						if (game == null)
 						{
@@ -112,7 +117,7 @@ namespace x360ce.App.Controls
 							{
 								game = x360ce.Engine.Data.Game.FromDisk(exe.FullName);
 								game.LoadDefault(program);
-								SettingsFile.Current.Games.Add(game);
+								SettingManager.Games.Items.Add(game);
 								added++;
 							});
 						}
@@ -131,13 +136,13 @@ namespace x360ce.App.Controls
 							ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
 						});
 				}
-				SettingsFile.Current.Save();
+				SettingManager.Save();
 			}
 			Invoke((MethodInvoker)delegate()
 			{
 				ScanGamesButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
-				RebindGames();
+				ShowHideAndSelectGridRows();
 			});
 		}
 
@@ -145,9 +150,29 @@ namespace x360ce.App.Controls
 		{
 			EngineHelper.EnableDoubleBuffering(GamesDataGridView);
 			EngineHelper.EnableDoubleBuffering(ProgramsDataGridView);
-			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
 			LoadProgramsFromLocalGdbFile();
 			ProgramImageColumn.Visible = false;
+		}
+
+		void Programs_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			UpdateControlsFromPrograms();
+		}
+
+		void UpdateControlsFromPrograms()
+		{
+			var enabled = SettingManager.Programs.Items.Count > 0;
+			if (ExportProgramsButton.Enabled != enabled) ExportProgramsButton.Enabled = enabled;
+		}
+
+		void Games_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			UpdateControlsFromGames();
+		}
+
+		void UpdateControlsFromGames()
+		{
+			
 		}
 
 		#endregion
@@ -177,7 +202,7 @@ namespace x360ce.App.Controls
 			{
 				var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 				var fileName = ((x360ce.Engine.Data.Game)row.DataBoundItem).FileName.ToLower();
-				var item = SettingsFile.Current.Games.First(x => x.FileName.ToLower() == fileName);
+				var item = SettingManager.Games.Items.First(x => x.FileName.ToLower() == fileName);
 				GameDetailsControl.CurrentGame = item;
 			}
 			else
@@ -233,9 +258,9 @@ namespace x360ce.App.Controls
 
 		public void ProcessExecutable(string fileName)
 		{
-			SettingsFile.Current.ProcessExecutable(fileName);
+			SettingManager.ProcessExecutable(fileName);
 			GamesDataGridView.ClearSelection();
-			RebindGames(Path.GetFileName(fileName));
+			ShowHideAndSelectGridRows(Path.GetFileName(fileName));
 		}
 
 		private void StartGameButton_Click(object sender, EventArgs e)
@@ -253,9 +278,9 @@ namespace x360ce.App.Controls
 				var row = grid.Rows[e.RowIndex];
 				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
 				// Workaround for first cell click.
-				var game = SettingsFile.Current.Games.First(x => x.FileName.ToLower() == item.FileName.ToLower());
+				var game = SettingManager.Games.Items.First(x => x.FileName.ToLower() == item.FileName.ToLower());
 				game.IsEnabled = !game.IsEnabled;
-				RebindGames();
+				ShowHideAndSelectGridRows();
 			}
 		}
 
@@ -268,7 +293,7 @@ namespace x360ce.App.Controls
 
 		private void SaveGamesButton_Click(object sender, EventArgs e)
 		{
-			SettingsFile.Current.Save(true);
+			SettingManager.Save(true);
 		}
 
 		private void DeleteGamesButton_Click(object sender, EventArgs e)
@@ -280,7 +305,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = GamesDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
-			var itemsToDelete = SettingsFile.Current.Games.Where(x => selection.Contains(x.FileName)).ToArray();
+			var itemsToDelete = SettingManager.Games.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			string message;
@@ -300,10 +325,10 @@ namespace x360ce.App.Controls
 			{
 				foreach (var item in itemsToDelete)
 				{
-					SettingsFile.Current.Games.Remove(item);
+					SettingManager.Games.Items.Remove(item);
 				}
-				SettingsFile.Current.Save();
-				RebindGames();
+				SettingManager.Save();
+				ShowHideAndSelectGridRows();
 				CloudStoragePanel.Add(itemsToDelete, CloudAction.Delete);
 			}
 		}
@@ -313,7 +338,7 @@ namespace x360ce.App.Controls
 			var item = (ToolStripMenuItem)sender;
 			ShowGamesDropDownButton.Image = item.Image;
 			ShowGamesDropDownButton.Text = item.Text;
-			RebindGames();
+			ShowHideAndSelectGridRows();
 		}
 
 		void GamesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -347,27 +372,38 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void RebindGames(string selectFile = null)
+		void ShowHideAndSelectGridRows(string selectFile = null)
 		{
-			var selection = string.IsNullOrEmpty(selectFile)
-				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(GamesDataGridView, "FileName")
+			var grid = GamesDataGridView;
+            var selection = string.IsNullOrEmpty(selectFile)
+				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName")
 				: new List<string>() { selectFile };
-			SortableBindingList<x360ce.Engine.Data.Game> data;
-			if (ShowGamesDropDownButton.Text.Contains("Enabled"))
+			grid.CurrentCell = null;
+			// Suspend Layout and CurrencyManager to avoid exceptions.
+			grid.SuspendLayout();
+			var cm = (CurrencyManager)BindingContext[grid.DataSource];
+			cm.SuspendBinding();
+			var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
+			// Reverse order to hide/show bottom records first..
+			Array.Reverse(rows);
+			var showEnabled = ShowGamesDropDownButton.Text.Contains("Enabled");
+			var showDisabled = ShowGamesDropDownButton.Text.Contains("Disabled");
+			for (int i = 0; i < rows.Length; i++)
 			{
-				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => x.IsEnabled));
+				var item = (x360ce.Engine.Data.Game)rows[i].DataBoundItem;
+				var show = true;
+				if (showEnabled) show = (item.IsEnabled == true);
+				if (showDisabled) show = (item.IsEnabled == false);
+				if (rows[i].Visible  != show)
+				{
+					rows[i].Visible = show;
+                }
 			}
-			else if (ShowGamesDropDownButton.Text.Contains("Disabled"))
-			{
-				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games.Where(x => !x.IsEnabled));
-			}
-			else
-			{
-				data = new SortableBindingList<Engine.Data.Game>(SettingsFile.Current.Games);
-			}
-			GamesDataGridView.DataSource = null;
-			GamesDataGridView.DataSource = data;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(GamesDataGridView, "FileName", selection);
+			// Resume CurrencyManager and Layout.
+			cm.ResumeBinding();
+			grid.ResumeLayout();
+			// Restore selection.
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
 		}
 
 		private void GamesDataGridView_KeyDown(object sender, KeyEventArgs e)
@@ -387,14 +423,14 @@ namespace x360ce.App.Controls
 			var sections = ini.GetSections();
 			foreach (var section in sections)
 			{
-				var program = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
+				var program = SettingManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
 				if (program == null)
 				{
 					program = new Engine.Data.Program();
 					program.FileName = section;
 					program.HookMask = 0x00000002;
 					program.XInputMask = 0x00000004;
-					SettingsFile.Current.Programs.Add(program);
+					SettingManager.Programs.Items.Add(program);
 				}
 				program.FileProductName = ini.GetValue(section, "Name", section);
 				int hookMask;
@@ -472,7 +508,7 @@ namespace x360ce.App.Controls
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
-				var programs = SettingsFile.Current.Programs.ToList();
+				var programs = SettingManager.Programs.Items.ToList();
 				foreach (var item in programs)
 				{
 					item.EntityKey = null;
@@ -501,7 +537,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = ProgramsDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
-			var itemsToDelete = SettingsFile.Current.Programs.Where(x => selection.Contains(x.FileName)).ToArray();
+			var itemsToDelete = SettingManager.Programs.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			string message;
@@ -521,9 +557,9 @@ namespace x360ce.App.Controls
 			{
 				foreach (var item in itemsToDelete)
 				{
-					SettingsFile.Current.Programs.Remove(item);
+					SettingManager.Programs.Items.Remove(item);
 				}
-				SettingsFile.Current.Save();
+				SettingManager.Save();
 			}
 		}
 
@@ -536,11 +572,11 @@ namespace x360ce.App.Controls
 			foreach (var newItem in newItems)
 			{
 				// Try to find existing item inside programs.
-				var existingItems = SettingsFile.Current.Programs.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
+				var existingItems = SettingManager.Programs.Items.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
 				// Remove existing items.
 				for (int i = 0; i < existingItems.Length; i++)
 				{
-					SettingsFile.Current.Programs.Remove(existingItems[i]);
+					SettingManager.Programs.Items.Remove(existingItems[i]);
 				}
 				// Fix product name.
 				var fixedProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
@@ -552,19 +588,13 @@ namespace x360ce.App.Controls
 					newItem.XInputMask = (int)XInputMask.XInput13_x86;
 				}
 				// Add new one.
-				SettingsFile.Current.Programs.Add(newItem);
+				SettingManager.Programs.Items.Add(newItem);
 			}
 			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
 			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
-			ProgramsDataGridView.DataSource = SettingsFile.Current.Programs;
+			ProgramsDataGridView.DataSource = SettingManager.Programs.Items;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
-			SettingsFile.Current.Save(true);
-		}
-
-		void Programs_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var enabled = SettingsFile.Current.Programs.Count > 0;
-			if (ExportProgramsButton.Enabled != enabled) ExportProgramsButton.Enabled = enabled;
+			SettingManager.Save(true);
 		}
 
 		void GetPrograms()

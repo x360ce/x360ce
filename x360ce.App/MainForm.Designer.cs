@@ -26,8 +26,11 @@ namespace x360ce.App
 			this.Pad3TabPage = new System.Windows.Forms.TabPage();
 			this.Pad4TabPage = new System.Windows.Forms.TabPage();
 			this.OptionsTabPage = new System.Windows.Forms.TabPage();
+			this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
 			this.GameSettingsTabPage = new System.Windows.Forms.TabPage();
+			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
 			this.ControllerSettingsTabPage = new System.Windows.Forms.TabPage();
+			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -41,6 +44,7 @@ namespace x360ce.App
 			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.TopPanel = new System.Windows.Forms.Panel();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
 			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
@@ -52,10 +56,6 @@ namespace x360ce.App
 			this.OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.label1 = new System.Windows.Forms.Label();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
-			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
-			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
@@ -71,7 +71,8 @@ namespace x360ce.App
 			// 
 			// MainTabControl
 			// 
-			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.MainTabControl.Controls.Add(this.Pad1TabPage);
 			this.MainTabControl.Controls.Add(this.Pad2TabPage);
@@ -135,6 +136,14 @@ namespace x360ce.App
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
+			// OptionsPanel
+			// 
+			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
+			this.OptionsPanel.Name = "OptionsPanel";
+			this.OptionsPanel.Size = new System.Drawing.Size(666, 514);
+			this.OptionsPanel.TabIndex = 30;
+			// 
 			// GameSettingsTabPage
 			// 
 			this.GameSettingsTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -146,6 +155,14 @@ namespace x360ce.App
 			this.GameSettingsTabPage.TabIndex = 2;
 			this.GameSettingsTabPage.Text = "Game Settings";
 			// 
+			// GameSettingsPanel
+			// 
+			this.GameSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.GameSettingsPanel.Location = new System.Drawing.Point(3, 3);
+			this.GameSettingsPanel.Name = "GameSettingsPanel";
+			this.GameSettingsPanel.Size = new System.Drawing.Size(660, 508);
+			this.GameSettingsPanel.TabIndex = 1;
+			// 
 			// ControllerSettingsTabPage
 			// 
 			this.ControllerSettingsTabPage.Controls.Add(this.SettingsDatabasePanel);
@@ -155,6 +172,14 @@ namespace x360ce.App
 			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 514);
 			this.ControllerSettingsTabPage.TabIndex = 1;
 			this.ControllerSettingsTabPage.Text = "Controller Settings";
+			// 
+			// SettingsDatabasePanel
+			// 
+			this.SettingsDatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsDatabasePanel.Location = new System.Drawing.Point(3, 3);
+			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
+			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 508);
+			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
 			// HelpTabPage
 			// 
@@ -275,6 +300,22 @@ namespace x360ce.App
 			this.TopPanel.Size = new System.Drawing.Size(684, 64);
 			this.TopPanel.TabIndex = 3;
 			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(630, 9);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 9;
+			// 
 			// HelpBodyLabel
 			// 
 			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -361,46 +402,6 @@ namespace x360ce.App
 			this.label1.Size = new System.Drawing.Size(140, 13);
 			this.label1.TabIndex = 5;
 			this.label1.Text = "Select a game to customize:";
-			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(630, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
-			// 
-			// OptionsPanel
-			// 
-			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
-			this.OptionsPanel.Name = "OptionsPanel";
-			this.OptionsPanel.Size = new System.Drawing.Size(666, 514);
-			this.OptionsPanel.TabIndex = 30;
-			// 
-			// GameSettingsPanel
-			// 
-			this.GameSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.GameSettingsPanel.Location = new System.Drawing.Point(3, 3);
-			this.GameSettingsPanel.Name = "GameSettingsPanel";
-			this.GameSettingsPanel.Size = new System.Drawing.Size(660, 508);
-			this.GameSettingsPanel.TabIndex = 1;
-			// 
-			// SettingsDatabasePanel
-			// 
-			this.SettingsDatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SettingsDatabasePanel.Location = new System.Drawing.Point(3, 3);
-			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
-			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 508);
-			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
 			// GameToCustomizeComboBox
 			// 

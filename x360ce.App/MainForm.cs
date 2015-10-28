@@ -69,12 +69,20 @@ namespace x360ce.App
 			SettingManager.Settings.Load();
 			SettingManager.Summaries.Load();
 			SettingManager.Summaries.Items.ListChanged += Summaries_ListChanged;
+			// Make sure that data will be filtered before loading.
+			// Note: Make sure to load Programs before Games.
+			SettingManager.Programs.FilterList = Programs_FilterList;
+			SettingManager.Programs.Load();
+			// Make sure that data will be filtered before loading.
+			SettingManager.Games.FilterList = Games_FilterList;
+			SettingManager.Games.Load();
+
 
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
 			}
-			GameToCustomizeComboBox.DataSource = SettingsFile.Current.Games;
+			GameToCustomizeComboBox.DataSource = SettingManager.Games.Items;
 			GameToCustomizeComboBox.DisplayMember = "DisplayName";
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
@@ -95,6 +103,42 @@ namespace x360ce.App
 			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
+		}
+
+		IList<Engine.Data.Program> Programs_FilterList(IList<Engine.Data.Program> items)
+		{
+			// Make sure default settings have unique by file name.
+			var distinctItems = items
+				.GroupBy(p => p.FileName.ToLower())
+				.Select(g => g.First())
+				.ToList();
+			return distinctItems;
+		}
+
+		IList<Engine.Data.Game> Games_FilterList(IList<Engine.Data.Game> items)
+		{
+			// Make sure default settings have unique by file name.
+			var distinctItems = items
+				.GroupBy(p => p.FileName.ToLower())
+				.Select(g => g.First())
+				.ToList();
+
+			// Check if current app doesn't exist in the list then...
+			var appFile = new FileInfo(Application.ExecutablePath);
+			var appItem = distinctItems.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
+			if (appItem == null)
+			{
+				// Add x360ce.exe
+				var item = x360ce.Engine.Data.Game.FromDisk(appFile.Name);
+				var program = SettingManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
+				item.LoadDefault(program);
+				distinctItems.Add(item);
+			}
+			else
+			{
+				appItem.FullPath = appFile.FullName;
+			}
+			return distinctItems;
 		}
 
 		private void Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -470,6 +514,8 @@ namespace x360ce.App
 			Settings.Default.Save();
 			SettingManager.Settings.Save();
 			SettingManager.Summaries.Save();
+			SettingManager.Programs.Save();
+			SettingManager.Games.Save();
 		}
 
 		#region Timer

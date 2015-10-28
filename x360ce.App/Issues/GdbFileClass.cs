@@ -25,7 +25,7 @@ namespace x360ce.App.Issues
 				if (!enableCheck) return;
 				var gdb = GameDatabaseManager.Current.GdbFile;
 				var md5 = GameDatabaseManager.Current.Md5File;
-				var xml = SettingsFile.Current.XmlFile;
+				//var xml = SettingsFile.Current.XmlFile;
 				FixType = 0;
 				// If file exist then.
 				if (gdb.Exists)
@@ -48,16 +48,16 @@ namespace x360ce.App.Issues
 						FixType = 2;
 					}
 				}
-				if (FixType == 0 && xml.Exists)
-				{
-					var rulesMustBeFixed = AppHelper.CheckExplicitAccessRulesAndAllowToModify(xml.FullName, false);
-					if (rulesMustBeFixed)
-					{
-						Description = string.Format("Can't write or modify '{0}' file.", xml.FullName);
-						Severity = IssueSeverity.Critical;
-						FixType = 3;
-					}
-				}
+				//if (FixType == 0 && xml.Exists)
+				//{
+				//	var rulesMustBeFixed = AppHelper.CheckExplicitAccessRulesAndAllowToModify(xml.FullName, false);
+				//	if (rulesMustBeFixed)
+				//	{
+				//		Description = string.Format("Can't write or modify '{0}' file.", xml.FullName);
+				//		Severity = IssueSeverity.Critical;
+				//		FixType = 3;
+				//	}
+				//}
 				if (FixType == 0)
 				{
 					Severity = IssueSeverity.None;
@@ -82,11 +82,11 @@ namespace x360ce.App.Issues
 					var file = GameDatabaseManager.Current.Md5File;
 					AppHelper.CheckExplicitAccessRulesAndAllowToModify(file.FullName, true);
 				}
-				else if (FixType == 3)
-				{
-					var file = SettingsFile.Current.XmlFile;
-					AppHelper.CheckExplicitAccessRulesAndAllowToModify(file.FullName, true);
-				}
+				//else if (FixType == 3)
+				//{
+				//	var file = SettingsFile.Current.XmlFile;
+				//	AppHelper.CheckExplicitAccessRulesAndAllowToModify(file.FullName, true);
+				//}
 			}
 			RaiseFixApplied();
 		}

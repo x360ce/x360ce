@@ -91,6 +91,11 @@ namespace x360ce.App
 			}
 		}
 
+		public delegate IList<T> FilterListDelegate(IList<T> items);
+
+		[NonSerialized, XmlIgnore]
+		public FilterListDelegate FilterList;
+
 		public void Load()
 		{
 			bool settingsLoaded = false;
@@ -111,7 +116,17 @@ namespace x360ce.App
 							if (data != null && data.IsValidVersion())
 							{
 								Items.Clear();
-								if (data != null) for (int i = 0; i < data.Items.Count; i++) Items.Add(data.Items[i]);
+								if (data != null)
+								{
+									var m = FilterList;
+									var items = (m == null)
+										? data.Items
+										: m(data.Items);
+									if (items != null)
+									{
+										for (int i = 0; i < items.Count; i++) Items.Add(items[i]);
+									}
+								}
 								settingsLoaded = true;
 							}
 							break;

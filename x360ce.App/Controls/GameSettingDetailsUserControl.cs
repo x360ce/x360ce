@@ -84,7 +84,7 @@ namespace x360ce.App.Controls
 				var status = GetGameStatus(CurrentGame, false);
 				ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
 				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK);
-				_DefaultSettings = SettingsFile.Current.Programs.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
+				_DefaultSettings = SettingManager.Programs.Items.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
 				ResetToDefaultButton.Enabled = _DefaultSettings != null;
 				if (ApplySettingsToFolderInstantly)
 				{
@@ -322,7 +322,7 @@ namespace x360ce.App.Controls
 				var hm = (int)GetMask<HookMask>(HookCheckBoxes);
 				CurrentGame.HookMask = hm;
 				HookMaskTextBox.Text = hm.ToString("X8");
-				SettingsFile.Current.Save();
+				SettingManager.Save();
 				if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
 			}
 		}

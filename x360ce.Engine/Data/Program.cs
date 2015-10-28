@@ -8,7 +8,6 @@ namespace x360ce.Engine.Data
 {
 	public partial class Program
 	{
-
 		public static Program FromDisk(string fileName)
 		{
 			var item = new Program();

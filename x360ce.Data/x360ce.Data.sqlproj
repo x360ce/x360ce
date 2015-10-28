@@ -293,6 +293,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Stored Procedures\x360ce_GetPresets.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />

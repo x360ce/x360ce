@@ -10,14 +10,78 @@ using x360ce.Engine;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
+using System.IO;
 
 namespace x360ce.App
 {
 	public class SettingManager
 	{
 
-		public static SettingsData<Setting> Settings = new SettingsData<Setting>("Settings");
-		public static SettingsData<Summary> Summaries = new SettingsData<Summary>("Summaries");
+		// Products - DInput Devices
+		// Programs - Games of all Users.
+		// Settings - Links Product, Game and PadSettings
+		// Summaries - Summary of Settings of all Users.
+		//
+		//            [Vendor]    
+		//             ↓
+		//            [Product]   (export) → [Summaries]
+		//                   ↓     ↑
+		//  [PadSetting] ←  [Setting] → [Games] → (export) → [Programs]
+		//
+
+		/// <summary>User Settings.</summary>
+		public static SettingsData<Engine.Data.Setting> Settings = new SettingsData<Engine.Data.Setting>("Settings");
+
+		/// <summary>Summary of most popular Settings.</summary>
+		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries");
+		
+		/// <summary>User Games.</summary>
+		public static SettingsData<Engine.Data.Game> Games = new SettingsData<Engine.Data.Game>("Games");
+
+		/// <summary>Most popular Programs and Games.</summary>
+		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs");
+
+		///// <summary>Presets</summary>
+		//public static SettingsData<Engine.Data.Summary> Presets = new SettingsData<Engine.Data.Summary>("Presets");
+
+		///// <summary>Preset PadSettings</summary>
+		//public static SettingsData<Engine.Data.PadSetting> PresetPadSettings = new SettingsData<Engine.Data.PadSetting>("Presets.PadSettings");
+
+		static object saveReadFileLock = new object();
+
+		public static void Save(bool updateGameDatabase = false)
+		{
+			if (updateGameDatabase)
+			{
+				GameDatabaseManager.Current.SetPrograms(Programs.Items, Games.Items);
+			}
+			lock (saveReadFileLock)
+			{
+				Programs.Save();
+				Games.Save();
+			}
+		}
+
+		public static void ProcessExecutable(string filePath)
+		{
+			var fi = new FileInfo(filePath);
+			if (!fi.Exists) return;
+			// Check if item already exists.
+			var game = Games.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
+			if (game == null)
+			{
+				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+				// Load default settings.
+				var program = Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
+				game.LoadDefault(program);
+				Games.Items.Add(game);
+			}
+			else
+			{
+				game.FullPath = fi.FullName;
+			}
+			Save();
+		}
 
 		#region Static Version
 		#region Constants
@@ -777,7 +841,7 @@ namespace x360ce.App
 				if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(IniFileName, saveCount));
 			}
 			// Flush XML too.
-			SettingsFile.Current.Save();
+			Save();
 			return saved;
 		}
 
