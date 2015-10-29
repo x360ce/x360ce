@@ -294,6 +294,15 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Stored Procedures\x360ce_GetPresets.sql" />
+    <Build Include="dbo\Functions\x360ce_FixProductName.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\x360ce_GetUserInstances.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\User Defined Types\x360ce_SearchParameterTableType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />

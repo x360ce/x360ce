@@ -9,6 +9,9 @@ using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using x360ce.App;
+using System.Data.SqlClient;
+using System.Data;
+using Microsoft.SqlServer.Server;
 
 namespace x360ce.Web.WebServices
 {
@@ -156,17 +159,8 @@ namespace x360ce.Web.WebServices
 			var sr = new SearchResult();
 			var db = new x360ceModelContainer();
 			// Get all device instances of the user.
-			var instances = args.Where(x => x.InstanceGuid != Guid.Empty).Select(x => x.InstanceGuid).Distinct().ToArray();
-			if (instances.Length == 0)
-			{
-				sr.Settings = new Setting[0];
-			}
-			else
-			{
-				// Get all settings attached to user's device instances.
-				sr.Settings = db.Settings.Where(x => instances.Contains(x.InstanceGuid))
-					.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ToArray();
-			}
+			var p = SearchParameterCollection.GetSqlParameter(args);
+			sr.Settings = db.ExecuteStoreQuery<Setting>("exec x360ce_GetUserInstances @args", p).ToArray();
 			// Get list of products (unique identifiers).
 			var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
 			var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToList();
@@ -337,7 +331,7 @@ namespace x360ce.Web.WebServices
 			var query2 =
 				// Select most popular devices.
 				from row in query
-				// Join all summaries for these devices.
+					// Join all summaries for these devices.
 				join sum in db.Summaries on row.ProductGuid equals sum.ProductGuid
 				// Group in order to identify most popular PAD setting for the device.
 				group sum by new { sum.ProductGuid, sum.PadSettingChecksum } into g
@@ -545,7 +539,7 @@ namespace x360ce.Web.WebServices
 					// Encrypt the cookie using the machine key for secure transport.
 					var hash = FormsAuthentication.Encrypt(ticket);
 					var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hash); // Hashed ticket
-					// Set the cookie's expiration time to the tickets expiration time
+																							// Set the cookie's expiration time to the tickets expiration time
 					if (ticket.IsPersistent) cookie.Expires = ticket.Expiration;
 					HttpContext.Current.Response.Cookies.Add(cookie);
 					// Create Identity.

@@ -35,8 +35,8 @@ BEGIN
 
 	-- Fill @products table with all products used in settings table.
 	INSERT INTO @products(ProductGuid, ProductName)
-	 	SELECT ProductGuid, ProductName FROM (
-		SELECT ProductGuid, ProductName, row_number() OVER (
+ 	SELECT ProductGuid, ProductName FROM (
+		SELECT ProductGuid, dbo.x360ce_FixProductName(ProductName, NULL) AS ProductName, row_number() OVER (
 				-- List of unique columns.
 				PARTITION BY  ProductGuid
 				-- Order in such way so original columns will end on the list.
@@ -57,6 +57,13 @@ BEGIN
 			t1.ProductGuid = s.ProductGuid
 		WHERE s.ProductName is null) t2
 	GROUP BY ProductGuid, ProductName
+
+	-- Update Product records with better product name value.
+	UPDATE p SET
+		p.ProductName = dbo.x360ce_FixProductName(i.ProductName, p.ProductName)
+	FROM [x360ce_Products] p
+	INNER JOIN @inserted i ON i.ProductGuid = p.ProductGuid
+	WHERE p.ProductName <> dbo.x360ce_FixProductName(i.ProductName, p.ProductName)
 
 	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
 
