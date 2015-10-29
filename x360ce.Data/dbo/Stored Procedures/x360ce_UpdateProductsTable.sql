@@ -31,39 +31,59 @@ BEGIN
 	END
 
 	-- Declare table to store product guids and names
-	DECLARE @products AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256))
+	DECLARE @mostPopularNames AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256))
 
-	-- Fill @products table with all products used in settings table.
-	INSERT INTO @products(ProductGuid, ProductName)
- 	SELECT ProductGuid, ProductName FROM (
-		SELECT ProductGuid, dbo.x360ce_FixProductName(ProductName, NULL) AS ProductName, row_number() OVER (
-				-- List of unique columns.
-				PARTITION BY  ProductGuid
-				-- Order in such way so original columns will end on the list.
-				ORDER BY ProductGuid, ProductName
-		) AS RowNumber
-		FROM @inserted
-	) t1
-	-- Take only first available product description.
-	WHERE t1.RowNumber = 1
+	INSERT INTO @mostPopularNames
+	SELECT
+		t3.ProductGuid,
+		t3.ProductName
+	FROM (
+		SELECT
+			t2.ProductGuid,
+			t2.ProductName,
+			t2.Users,
+			ROW_NUMBER() OVER (PARTITION BY t2.ProductGuid ORDER BY t2.ProductGuid, t2.Users DESC) AS RowNumber
+		FROM (
+			SELECT
+				t1.ProductGuid,
+				t1.ProductName,
+				SUM(Users) AS Users
+			FROM (
+				SELECT
+					s.ProductGuid,
+					dbo.x360ce_FixProductName(ProductName, NULL) AS ProductName,
+					SUM(s.Users) AS Users
+				FROM x360ce_Summaries s
+					-- Limit select to updated records only.
+				INNER JOIN (
+					SELECT ProductGuid FROM @inserted UNION
+					SELECT ProductGuid FROM @deleted
+				) p ON
+				s.ProductGuid = p.ProductGuid
+				GROUP BY s.ProductGuid, s.ProductName
+			) t1
+			GROUP BY t1.ProductGuid, t1.ProductName
+		) t2
+	) t3
+	WHERE t3.RowNumber = 1
 
 	-- Insert missing records.
 	INSERT INTO [dbo].[x360ce_Products] (ProductGuid, ProductName)
 	SELECT t2.ProductGuid, t2.ProductName
 	FROM (
-		SELECT t1.ProductGuid, t1.ProductName
-		FROM @products t1
-		LEFT JOIN  [dbo].[x360ce_Products] s ON
-			t1.ProductGuid = s.ProductGuid
-		WHERE s.ProductName is null) t2
-	GROUP BY ProductGuid, ProductName
+		SELECT pu.ProductGuid, pu.ProductName
+		FROM @mostPopularNames pu
+		LEFT JOIN  [dbo].[x360ce_Products] p ON	pu.ProductGuid = p.ProductGuid
+		WHERE p.ProductGuid IS NULL
+	) t2
+	GROUP BY t2.ProductGuid, t2.ProductName
 
 	-- Update Product records with better product name value.
 	UPDATE p SET
-		p.ProductName = dbo.x360ce_FixProductName(i.ProductName, p.ProductName)
+		p.ProductName = pu.ProductName
 	FROM [x360ce_Products] p
-	INNER JOIN @inserted i ON i.ProductGuid = p.ProductGuid
-	WHERE p.ProductName <> dbo.x360ce_FixProductName(i.ProductName, p.ProductName)
+	INNER JOIN @mostPopularNames pu ON pu.ProductGuid = p.ProductGuid
+	WHERE p.ProductName <> pu.ProductName
 
 	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
 
@@ -86,5 +106,5 @@ BEGIN
 	) t3 ON xp.ProductGuid = t3.ProductGuid
 
 	PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
-
+	
 END
