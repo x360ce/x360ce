@@ -9,6 +9,7 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.IO;
 
 namespace x360ce.App.Controls
 {
@@ -52,12 +53,13 @@ namespace x360ce.App.Controls
 			DiEffectsDataGridView.DataSource = DiEffectsTable;
 		}
 
-		void ShowDeviceInfo(Joystick device)
+		void ShowDeviceInfo(Joystick device, DeviceInfo dInfo)
 		{
 			if (device == null)
 			{
 				// clean everything here.
 				SetValue(DeviceProductNameTextBox, "");
+				SetValue(DeviceVendorNameTextBox, "");
 				SetValue(DeviceProductGuidTextBox, "");
 				SetValue(DeviceInstanceGuidTextBox, "");
 				DiCapFfStateTextBox.Text = string.Empty;
@@ -119,6 +121,7 @@ namespace x360ce.App.Controls
 			SetValue(DeviceVidTextBox, "0x{0}", vid.ToString("X4"));
 			SetValue(DevicePidTextBox, "0x{0}", pid.ToString("X4"));
 			SetValue(DeviceProductNameTextBox, di.ProductName);
+			SetValue(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.Manufacturer);
 			SetValue(DeviceProductGuidTextBox, di.ProductGuid.ToString());
 			SetValue(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
 			SetValue(DeviceTypeTextBox, di.Type.ToString());
@@ -295,11 +298,11 @@ namespace x360ce.App.Controls
 		Guid deviceInstanceGuid;
 		bool isWheel = false;
 
-		public void UpdateFrom(Joystick device, out JoystickState state)
+		public void UpdateFrom(Joystick device, DeviceInfo dInfo, out JoystickState state)
 		{
 			if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
 			{
-				ShowDeviceInfo(device);
+				ShowDeviceInfo(device, dInfo);
 				deviceInstanceGuid = Guid.Empty;
 				if (device != null)
 				{

@@ -132,6 +132,15 @@
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Grayscale.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Transparent.cs" />
+    <Compile Include="JocysCom\IO\DeviceDetector.cs" />
+    <Compile Include="JocysCom\IO\DeviceDetectorEventArgs.cs" />
+    <Compile Include="JocysCom\IO\DeviceDetectorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JocysCom\IO\DeviceDetectorForm.Designer.cs">
+      <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\IO\DeviceInfo.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
@@ -146,12 +155,30 @@
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
+    <Compile Include="JocysCom\Win32\CR.cs" />
+    <Compile Include="JocysCom\Win32\DBCH_DEVICETYPE.cs" />
+    <Compile Include="JocysCom\Win32\DBT.cs" />
+    <Compile Include="JocysCom\Win32\DeviceNodeStatus.cs" />
+    <Compile Include="JocysCom\Win32\DEV_BROADCAST_DEVICEINTERFACE.cs" />
+    <Compile Include="JocysCom\Win32\DEV_BROADCAST_HANDLE.cs" />
+    <Compile Include="JocysCom\Win32\DEV_BROADCAST_HDR.cs" />
+    <Compile Include="JocysCom\Win32\DEV_BROADCAST_OEM.cs" />
+    <Compile Include="JocysCom\Win32\DEV_BROADCAST_PORT.cs" />
+    <Compile Include="JocysCom\Win32\DEV_BROADCAST_VOLUME.cs" />
+    <Compile Include="JocysCom\Win32\DIGCF.cs" />
+    <Compile Include="JocysCom\Win32\REG.cs" />
+    <Compile Include="JocysCom\Win32\SPDRP.cs" />
+    <Compile Include="JocysCom\Win32\SP_CLASSINSTALL_HEADER.cs" />
+    <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DATA.cs" />
+    <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DETAIL_DATA.cs" />
+    <Compile Include="JocysCom\Win32\SP_DEVINFO_DATA.cs" />
+    <Compile Include="JocysCom\Win32\SP_PROPCHANGE_PARAMS.cs" />
+    <Compile Include="JocysCom\Win32\SP_REMOVEDEVICE_PARAMS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Win32\BIND_OPTS3.cs" />
     <Compile Include="Win32\BSF.cs" />
     <Compile Include="Win32\BSM.cs" />
     <Compile Include="Win32\CLSCTX.cs" />
-    <Compile Include="Win32\DEV_BROADCAST_VOLUME.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Win32\PEReader.cs" />
     <Compile Include="Win32\SafeLibraryHandle.cs" />
@@ -163,7 +190,6 @@
     <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="Win32\WinAPI.cs" />
     <Compile Include="Win32\WinNT.cs" />
-    <Compile Include="Win32\DBT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Data\x360ceModel.edmx">

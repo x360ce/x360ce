@@ -13,6 +13,7 @@ using x360ce.Engine;
 using x360ce.Engine.Win32;
 using x360ce.App.Properties;
 using System.ComponentModel;
+using JocysCom.ClassLibrary.IO;
 
 namespace x360ce.App
 {
@@ -524,7 +525,7 @@ namespace x360ce.App
 		DeviceInstance[] diInstances = new DeviceInstance[4];
 
 		Joystick[] diDevices = new Joystick[4];
-
+		DeviceInfo[] diInfos = new DeviceInfo[4];
 
 		public bool forceRecountDevices = true;
 
@@ -572,8 +573,6 @@ namespace x360ce.App
 			for (int d = 0; d < devices.Count; d++)
 			{
 				var ig = devices[d].InstanceGuid;
-
-
 				var section = SettingManager.Current.GetInstanceSection(ig);
 				var ini2 = new Ini(SettingManager.IniFileName);
 				string v = ini2.GetValue(section, SettingName.MapToPad);
@@ -642,9 +641,23 @@ namespace x360ce.App
 				// Create new list of devices.
 				for (int i = 0; i < 4; i++)
 				{
-					diDevices[i] = instances[i] == null
-						? null
-						: new Joystick(Manager, instances[i].InstanceGuid);
+					var inst = instances[i];
+					if (inst == null)
+					{
+						diDevices[i] = null;
+						diInfos[i] = null;
+					}
+					else
+					{
+
+						var j = new Joystick(Manager, inst.InstanceGuid);
+						diDevices[i] = j;
+						var classGuid = j.Properties.ClassGuid;
+						var interfacePath = j.Properties.InterfacePath;
+						// Must find better way to find Device than by Vendor ID and Product ID.
+						var devs = DeviceDetector.GetDevices(classGuid, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, null, j.Properties.VendorId, j.Properties.ProductId, 0);
+						diInfos[i] = devs.FirstOrDefault();
+					}
 				}
 				SettingsDatabasePanel.BindDevices(instances);
 				SettingsDatabasePanel.BindFiles();
@@ -780,6 +793,7 @@ namespace x360ce.App
 			{
 				var currentPadControl = ControlPads[i];
 				var currentDevice = diDevices[i];
+				var currentDeviceInfo = diInfos[i];
 				// If current device is empty then..
 				if (currentDevice == null)
 				{
@@ -797,7 +811,7 @@ namespace x360ce.App
 				{
 					cleanPadStatus[i] = false;
 				}
-				currentPadControl.UpdateFromDirectInput(currentDevice);
+				currentPadControl.UpdateFromDirectInput(currentDevice, currentDeviceInfo);
 			}
 			// If settings changed or directInput instances changed then...
 			if (settingsChanged || instancesChanged)

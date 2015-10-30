@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace x360ce.App
+namespace JocysCom.ClassLibrary.IO
 {
 	/// <summary>
 	/// Hidden Form which will receive Windows messages about device insertion and removal.

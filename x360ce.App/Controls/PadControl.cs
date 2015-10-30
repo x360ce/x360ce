@@ -11,6 +11,7 @@ using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
 using System.Diagnostics;
+using JocysCom.ClassLibrary.IO;
 
 namespace x360ce.App.Controls
 {
@@ -639,12 +640,12 @@ namespace x360ce.App.Controls
 		/// This function will be called from UpdateTimer on main form.
 		/// </summary>
 		/// <param name="device">Device responsible for activity.</param>
-		public void UpdateFromDirectInput(Joystick device)
+		public void UpdateFromDirectInput(Joystick device, DeviceInfo dInfo)
 		{
 			// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
 			JoystickState state;
 			//List<string> actions = 
-			diControl.UpdateFrom(device, out state);
+			diControl.UpdateFrom(device, dInfo, out state);
 			DirectInputState diState = null;
 			if (state != null) diState = new DirectInputState(state);
 			StopRecording(diState);

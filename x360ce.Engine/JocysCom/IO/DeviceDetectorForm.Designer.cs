@@ -1,4 +1,4 @@
-﻿namespace x360ce.App
+﻿namespace JocysCom.ClassLibrary.IO
 {
 	partial class DeviceDetectorForm
 	{

@@ -31,41 +31,59 @@ BEGIN
 	END
 
 	-- Declare table to store product guids and names
+	DECLARE @products AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256), NameUsers int, RowNumber int)
+
+	INSERT INTO @products
+	SELECT
+		t2.ProductGuid,
+		t2.ProductName,
+		t2.NameUsers,
+		-- Most popular ProductGuid/ProductName record will have highest number of users and RowNumber = 1.
+		ROW_NUMBER() OVER (PARTITION BY t2.ProductGuid ORDER BY t2.ProductGuid, t2.NameUsers DESC) AS RowNumber
+	FROM (
+		-- Select again to recount records with fixed products names.
+		SELECT
+			t1.ProductGuid,
+			t1.ProductName,
+			SUM(NameUsers) AS NameUsers
+		FROM (
+			-- Select ProductGuid and ProductName combination
+			SELECT
+				s.ProductGuid,
+				-- Fix product name.
+				dbo.x360ce_FixProductName(ProductName) AS ProductName,
+				-- Count users who use ProductGuid/ProductName combination.
+				COUNT(*) AS NameUsers
+			FROM x360ce_Settings s
+			-- Limit select to updated records only.
+			INNER JOIN (
+				SELECT ProductGuid FROM @inserted UNION
+				SELECT ProductGuid FROM @deleted
+			) p ON
+			s.ProductGuid = p.ProductGuid
+			-- Group records by ProductGuid, ProductName
+			GROUP BY s.ProductGuid, s.ProductName
+		) t1
+		GROUP BY t1.ProductGuid, t1.ProductName
+	) t2
+
+	-- Declare table to store product guids and names
 	DECLARE @mostPopularNames AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256))
 
 	INSERT INTO @mostPopularNames
 	SELECT
 		t3.ProductGuid,
 		t3.ProductName
-	FROM (
-		SELECT
-			t2.ProductGuid,
-			t2.ProductName,
-			t2.Users,
-			ROW_NUMBER() OVER (PARTITION BY t2.ProductGuid ORDER BY t2.ProductGuid, t2.Users DESC) AS RowNumber
-		FROM (
-			SELECT
-				t1.ProductGuid,
-				t1.ProductName,
-				SUM(Users) AS Users
-			FROM (
-				SELECT
-					s.ProductGuid,
-					dbo.x360ce_FixProductName(ProductName, NULL) AS ProductName,
-					SUM(s.Users) AS Users
-				FROM x360ce_Summaries s
-					-- Limit select to updated records only.
-				INNER JOIN (
-					SELECT ProductGuid FROM @inserted UNION
-					SELECT ProductGuid FROM @deleted
-				) p ON
-				s.ProductGuid = p.ProductGuid
-				GROUP BY s.ProductGuid, s.ProductName
-			) t1
-			GROUP BY t1.ProductGuid, t1.ProductName
-		) t2
-	) t3
+	FROM @products t3
+	-- Use only most popular name.
 	WHERE t3.RowNumber = 1
+
+	-- Update empty names with some value.
+	UPDATE pn
+		SET pn.ProductName = p.ProductName
+	FROM @mostPopularNames pn
+	INNER JOIN @products p ON pn.ProductGuid = p.ProductGuid
+	WHERE pn.ProductName = '' AND p.ProductName <> ''
 
 	-- Insert missing records.
 	INSERT INTO [dbo].[x360ce_Products] (ProductGuid, ProductName)
@@ -93,6 +111,7 @@ BEGIN
 	FROM [x360ce_Products] xp
 	INNER JOIN (
 		SELECT t1.ProductGuid, COUNT(*) AS InstanceCount FROM (
+			-- Select Unique ProductGuid and InstanceGuid combination.
 			SELECT DISTINCT s.ProductGuid, s.InstanceGuid
 			FROM dbo.x360ce_Settings s WITH(NOLOCK)
 			-- Limit select to updated records only.

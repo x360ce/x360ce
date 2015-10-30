@@ -165,14 +165,6 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
-    <Compile Include="Common\DeviceDetector.cs" />
-    <Compile Include="Common\DeviceDetectorEventArgs.cs" />
-    <Compile Include="Common\DeviceDetectorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Common\DeviceDetectorForm.Designer.cs">
-      <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Extensions.cs" />
@@ -315,10 +307,6 @@
       <DependentUpon>WarningsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Issues\DirectXIssue.cs" />
-    <EmbeddedResource Include="Common\DeviceDetectorForm.resx">
-      <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>
