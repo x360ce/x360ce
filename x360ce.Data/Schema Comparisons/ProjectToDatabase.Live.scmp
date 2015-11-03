@@ -9,7 +9,7 @@
   </SourceModelProvider>
   <TargetModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=S001;Initial Catalog=x360ce;User ID=x360ceAdmin;Pooling=False</ConnectionString>
+      <ConnectionString>Data Source=S001;Initial Catalog=x360ce;User ID=x360ceAdmin;Pooling=False;MultipleActiveResultSets=False</ConnectionString>
     </ConnectionBasedModelProvider>
   </TargetModelProvider>
   <SchemaCompareSettingsService>

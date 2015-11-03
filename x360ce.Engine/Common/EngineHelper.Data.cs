@@ -20,7 +20,6 @@ namespace x360ce.Engine
 			return table;
 		}
 
-
 		public static DataTable GetTopGames()
 		{
 			var cmd = new SqlCommand("x360ce_GetTopGames");

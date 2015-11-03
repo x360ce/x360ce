@@ -28,8 +28,8 @@ GOTO:EOF
 ::-------------------------------------------------------------
 :: List   symbolic links: dir /A:L
 :: Remote symbolic links: rmdir Skype
-SET upr=c:\Projects\Jocys.com\Class Library
-IF EXIST "D:\Projects\Jocys.com\Class Library" SET SET upr=D:\Projects\Jocys.com\Class Library
+SET upr=D:\Projects\Jocys.com\Class Library
+IF EXIST "D:\Projects\Jocys.com\Class Library" SET upr=D:\Projects\Jocys.com\Class Library
 CALL:MKJ ClassTools
 CALL:MKJ Common
 CALL:MKJ Controls
