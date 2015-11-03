@@ -19,7 +19,7 @@ BEGIN
 		FROM dbo.x360ce_Programs p
 		GROUP BY p.FileProductName
 	) t1
-	WHERE FileProductName NOT IN ('x360ce.exe', 'X360 Controller Emulator', '')
+	WHERE FileProductName NOT IN ('x360ce.exe', 'X360 Controller Emulator', 'Launcher.exe', '')
 	ORDER BY t1.InstanceCount DESC
 
 END
