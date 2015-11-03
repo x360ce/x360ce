@@ -51,23 +51,27 @@ namespace JocysCom.ClassLibrary.ClassTools
 		/// <param name="box"></param>
 		/// <param name="format">{0} - name, {1} - integer value, {2} - description attribute.</param>
 		/// <param name="addEmpty"></param>
-		public static void BindEnum<T>(System.Windows.Forms.ComboBox box, string format, bool addEmpty, bool sort, object selected, T[] exclude)
+		public static void BindEnum<T>(System.Windows.Forms.ComboBox box, string format, bool addEmpty, bool? sort, object selected, T[] exclude)
 		{
 			var list = new List<DictionaryEntry>();
 			if (string.IsNullOrEmpty(format)) format = "{0}";
-			//System.Data.DataTable table = new System.Data.DataTable();
-			//table.Columns.Add("Display", typeof(string));
-			//table.Columns.Add("Value", typeof(T));
 			string display;
-			if (addEmpty) list.Add(new DictionaryEntry("", null));
 			foreach (Enum value in Enum.GetValues(typeof(T)))
 			{
 				if (exclude != null && exclude.Contains((T)(object)value)) continue;
 				display = string.Format(format, value.ToString(), (int)(object)value, GetDescription(value));
 				list.Add(new DictionaryEntry(display, value));
 			}
-			if (sort) box.Sorted = sort;
-			// table.DefaultView.Sort = table.Columns["Display"].ColumnName + " asc";
+			if (sort.HasValue && sort.Value)
+			{
+				list = list.OrderBy(x => x.Key).ToList();
+			}
+			if (addEmpty && !list.Any(x => (string)x.Key == ""))
+			{
+				list.Insert(0, new DictionaryEntry("", null));
+			}
+			// Make sure sorted is disabled, because it is not allowed when using DataSource.
+			if (box.Sorted) box.Sorted = false;
 			box.DataSource = list;
 			box.DisplayMember = "Key";
 			box.ValueMember = "Value";

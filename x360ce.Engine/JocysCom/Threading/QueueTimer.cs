@@ -62,14 +62,14 @@ namespace JocysCom.ClassLibrary.Threading
 		public Timer SleepTimer;
 
 		/// <summary>
-		/// Controls how long applicaiton must wait between actions.
+		/// Controls how long application must wait between actions.
 		/// </summary>
 		public Timer DelayTimer;
 
 
 		public QueueTimer()
 		{
-			// Default delay interval = 500 miliseconds.
+			// Default delay interval = 500 milliseconds.
 			// Default sleep interval = 5 seconds.
 			InitTimers(500, 5000);
 		}
@@ -78,7 +78,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// Initialize new QueryTimer object.
 		/// </summary>
 		/// <param name="delayInterval">Delay time between each run. If this value is set then some items won't be added to the queue, in order to avoid clogging.</param>
-		/// <param name="sleepInterval">If set then action will autorun automatically after specified ammount of milliseconds.</param>
+		/// <param name="sleepInterval">If set then action will auto-run automatically after specified amount of milliseconds.</param>
 		public QueueTimer(int delayInterval, int sleepInterval)
 		{
 			InitTimers(delayInterval, sleepInterval);
@@ -187,34 +187,47 @@ namespace JocysCom.ClassLibrary.Threading
 		/// </summary>
 		void _AddToQueue(object item)
 		{
-			queue.Add(item);
-			LastAddTime.Reset();
-			LastAddTime.Start();
-			// If thread is not running then...
-			if (!isRunning)
+			lock (disposeLock)
 			{
 				if (IsDisposing) return;
-				isRunning = true;
-				// Put into another variable for thread safety.
-				ISynchronizeInvoke so = SynchronizingObject;
-				if (so == null)
+				queue.Add(item);
+				LastAddTime.Reset();
+				LastAddTime.Start();
+				// If thread is not running then...
+				if (!isRunning)
 				{
-					// Start new thread.
-					// The thread pool job is to share and recycle threads.
-					// It allows to avoid losing a few millisecond every time we need to create a new thread.
-					System.Threading.ThreadPool.QueueUserWorkItem(ThreadAction, null);
-				}
-				else
-				{
-					try
+					isRunning = true;
+					// Put into another variable for thread safety.
+					ISynchronizeInvoke so = SynchronizingObject;
+					if (so == null)
 					{
-						// Use asynchronous call to avoid 'queueLock' deadlock.
-						so.BeginInvoke((System.Threading.WaitCallback)ThreadAction, new object[] { null });
+						// Start new thread.
+						// The thread pool job is to share and recycle threads.
+						// It allows to avoid losing a few millisecond every time we need to create a new thread.
+						System.Threading.ThreadPool.QueueUserWorkItem(ThreadAction, null);
 					}
-					catch (Exception)
+					else
 					{
-						queue.Remove(item);
-						throw;
+						var c = so as System.Windows.Forms.Control;
+						// If this is control but handle is missing then...
+						if (c != null && !c.IsHandleCreated)
+						{
+							// BeginInvoke will fail.
+							queue.Remove(item);
+						}
+						else
+						{
+							try
+							{
+								// Use asynchronous call to avoid 'queueLock' deadlock.
+								so.BeginInvoke((System.Threading.WaitCallback)ThreadAction, new object[] { null });
+							}
+							catch (Exception)
+							{
+								queue.Remove(item);
+								throw;
+							}
+						}
 					}
 				}
 			}
@@ -285,19 +298,17 @@ namespace JocysCom.ClassLibrary.Threading
 			GC.SuppressFinalize(this);
 		}
 
-		//// NOTE: Leave out the finalizer altogether if this class doesn't 
-		//// own unmanaged resources itself, but leave the other methods
-		//// exactly as they are. 
-		//~ModemDialer()
-		//{
-		//    // Finalizer calls Dispose(false)
-		//    Dispose(false);
-		//}
+
+		object disposeLock = new object();
+
 
 		// The bulk of the clean-up code is implemented in Dispose(bool)
 		protected virtual void Dispose(bool disposing)
 		{
-			IsDisposing = true;
+			lock (disposeLock)
+			{
+				IsDisposing = true;
+			}
 			if (disposing)
 			{
 				// Dispose timers first
@@ -315,6 +326,10 @@ namespace JocysCom.ClassLibrary.Threading
 					{
 						DelayTimer.Dispose();
 						DelayTimer = null;
+					}
+					if (queue != null)
+					{
+						queue.Clear();
 					}
 				}
 			}

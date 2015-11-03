@@ -22,9 +22,8 @@ namespace x360ce.Web.Controls
         {
             if (!IsPostBack)
             {
-                var db = new x360ceModelContainer();
-                var rows = db.Products.OrderByDescending(x => x.InstanceCount).Take(20).ToArray();
-                ControllersListView.DataSource = rows;
+				var table = Engine.EngineHelper.GetTopControllers();
+                ControllersListView.DataSource = table;
                 ControllersListView.DataBind();
             }
         }
@@ -45,7 +44,7 @@ namespace x360ce.Web.Controls
             if (s.Length > maxLength)
             {
                 s = s.Substring(0, maxLength - 3);
-                // Find last separatorand crop there...
+                // Find last separator and crop there...
                 int ls = s.LastIndexOf(' ');
                 if (ls > 0) s = s.Substring(0, ls);
                 s += "...";

@@ -1,9 +1,11 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Win32;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects.DataClasses;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -31,7 +33,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Get list of primary keys of items selected in the grid.
 		/// </summary>
 		/// <typeparam name="T">Type of Primary key.</typeparam>
-		/// <param name="grid">Grid for getting selection</param>
+		/// <param name="grid">Grid for geting selection</param>
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
 		{
@@ -105,6 +107,96 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			return (T)val;
 		}
+
+		#region "UserControl is Visible"
+
+		public static bool IsControlVisibleOnForm(Control control)
+		{
+			if (control == null) return false;
+			if (!control.IsHandleCreated) return false;
+			if (control.Parent == null) return false;
+			var pointsToCheck = GetPoints(control);
+			foreach (var p in pointsToCheck)
+			{
+				var child = control.Parent.GetChildAtPoint(p);
+				if (child == null) continue;
+				if (control == child || control.Contains(child)) return true;
+			}
+			return false;
+		}
+
+		public static POINT[] GetPoints(Control control)
+		{
+			var pos = control.PointToScreen(System.Drawing.Point.Empty);
+			var pointsToCheck =
+				new POINT[]
+					{
+						pos,
+						new POINT(pos.X + control.Width - 1, pos.Y),
+						new POINT(pos.X, pos.Y + control.Height - 1),
+						new POINT(pos.X + control.Width - 1, pos.Y + control.Height - 1),
+						new POINT(pos.X + control.Width/2, pos.Y + control.Height/2)
+					};
+			return pointsToCheck;
+		}
+
+		public static bool IsControlVisibleToUser(Control control)
+		{
+			if (!control.IsHandleCreated) return false;
+			var pointsToCheck = GetPoints(control);
+			foreach (var p in pointsToCheck)
+			{
+				var hwnd = JocysCom.ClassLibrary.Win32.NativeMethods.WindowFromPoint(p);
+				var other = Control.FromChildHandle(hwnd);
+				if (other == null) continue;
+				if (GetAll(control, null, true).Contains(other)) return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Get all child controls.
+		/// </summary>
+		public static IEnumerable<Control> GetAll(Control control, Type type = null, bool includeTop = false)
+		{
+			// Get all child controls.
+			var controls = control.Controls.Cast<Control>();
+			return controls
+				// Get children controls and flatten resulting sequences into one sequence.
+				.SelectMany(x => GetAll(x))
+				// Merge controls with their children.
+				.Concat(controls)
+				// Include top control if required.
+				.Concat(includeTop ? new[] { control } : new Control[0])
+				// Filter controls by type.
+				.Where(x => type == null || (type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : x.GetType() == type));
+		}
+
+		/// <summary>
+		/// Get all child controls.
+		/// </summary>
+		public static T[] GetAll<T>(Control control, bool includeTop = false)
+		{
+			if (control == null) return new T[0];
+			var type = typeof(T);
+			// Get all child controls.
+			var controls = control.Controls.Cast<Control>();
+			// Get children of controls and flatten resulting sequences into one sequence.
+			var result = controls.SelectMany(x => GetAll(x)).ToArray();
+			// Merge controls with their children.
+			result = result.Concat(controls).ToArray();
+			// Include top control if required.
+			if (includeTop) result = result.Concat(new[] { control }).ToArray();
+			// Filter controls by type.
+			result = type.IsInterface
+				? result.Where(x => x.GetType().GetInterfaces().Contains(type)).ToArray()
+				: result.Where(x => x.GetType() == type).ToArray();
+			// Cast to required type.
+			var result2 = result.Select(x => (T)(object)x).ToArray();
+			return result2;
+		}
+
+		#endregion
 
 	}
 }

@@ -22,9 +22,8 @@ namespace x360ce.Web.Controls
         {
                if (!IsPostBack)
             {
-                var db = new x360ceModelContainer();
-                var rows = db.Programs.OrderByDescending(x=>x.InstanceCount).Where(x=> x.FileProductName.Length > 0).Take(20).ToArray();
-                GamesListView.DataSource = rows;
+				var table = Engine.EngineHelper.GetTopGames();
+				GamesListView.DataSource = table;
                 GamesListView.DataBind();
             }
         }

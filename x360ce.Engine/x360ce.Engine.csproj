@@ -70,6 +70,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
@@ -89,6 +90,7 @@
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
     <Compile Include="Common\CloudAction.cs" />
+    <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
     <Compile Include="Common\Enum\EffectDirection.cs" />
     <Compile Include="Common\Enum\EnabledState.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
+    <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Grayscale.cs" />
@@ -155,6 +158,10 @@
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
+    <Compile Include="JocysCom\Win32\ABE.cs" />
+    <Compile Include="JocysCom\Win32\ABM.cs" />
+    <Compile Include="JocysCom\Win32\ABS.cs" />
+    <Compile Include="JocysCom\Win32\APPBARDATA.cs" />
     <Compile Include="JocysCom\Win32\CR.cs" />
     <Compile Include="JocysCom\Win32\DBCH_DEVICETYPE.cs" />
     <Compile Include="JocysCom\Win32\DBT.cs" />
@@ -166,7 +173,12 @@
     <Compile Include="JocysCom\Win32\DEV_BROADCAST_PORT.cs" />
     <Compile Include="JocysCom\Win32\DEV_BROADCAST_VOLUME.cs" />
     <Compile Include="JocysCom\Win32\DIGCF.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.cs" />
+    <Compile Include="JocysCom\Win32\POINT.cs" />
+    <Compile Include="JocysCom\Win32\RECT.cs" />
     <Compile Include="JocysCom\Win32\REG.cs" />
+    <Compile Include="JocysCom\Win32\SafeLibraryHandle.cs" />
+    <Compile Include="JocysCom\Win32\SID_AND_ATTRIBUTES.cs" />
     <Compile Include="JocysCom\Win32\SPDRP.cs" />
     <Compile Include="JocysCom\Win32\SP_CLASSINSTALL_HEADER.cs" />
     <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DATA.cs" />
@@ -174,6 +186,14 @@
     <Compile Include="JocysCom\Win32\SP_DEVINFO_DATA.cs" />
     <Compile Include="JocysCom\Win32\SP_PROPCHANGE_PARAMS.cs" />
     <Compile Include="JocysCom\Win32\SP_REMOVEDEVICE_PARAMS.cs" />
+    <Compile Include="JocysCom\Win32\SW.cs" />
+    <Compile Include="JocysCom\Win32\SYSTEMTIME.cs" />
+    <Compile Include="JocysCom\Win32\TOKEN_ELEVATION.cs" />
+    <Compile Include="JocysCom\Win32\TOKEN_ELEVATION_TYPE.cs" />
+    <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
+    <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
+    <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
+    <Compile Include="JocysCom\Win32\WINNT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Win32\BIND_OPTS3.cs" />
     <Compile Include="Win32\BSF.cs" />

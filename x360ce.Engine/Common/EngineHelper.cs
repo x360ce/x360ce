@@ -13,7 +13,7 @@ using Microsoft.Win32;
 
 namespace x360ce.Engine
 {
-	public class EngineHelper
+	public partial class EngineHelper
 	{
 		#region Manipulate XInput DLL
 
