@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[x360ce_Settings] (
     [SettingId]          UNIQUEIDENTIFIER NOT NULL,
+    [VendorName]         NVARCHAR (256)   CONSTRAINT [DF_x360ce_Settings_VendorName] DEFAULT ('') NOT NULL,
     [InstanceGuid]       UNIQUEIDENTIFIER NOT NULL,
     [InstanceName]       NVARCHAR (256)   NOT NULL,
     [ProductGuid]        UNIQUEIDENTIFIER NOT NULL,
@@ -16,6 +17,8 @@
     [PadSettingChecksum] UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [PK_x360ce_Settings] PRIMARY KEY CLUSTERED ([SettingId] ASC)
 );
+
+
 
 
 

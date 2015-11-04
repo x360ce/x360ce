@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-using System.Data.Objects;
 using System.Linq.Expressions;
 using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using x360ce.App;
-using System.Data.SqlClient;
 using System.Data;
-using Microsoft.SqlServer.Server;
+using System.Data.Common;
+using System.Data.SqlClient;
+using JocysCom.ClassLibrary.Data;
 
 namespace x360ce.Web.WebServices
 {
@@ -156,11 +156,26 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true, Description = "Search controller settings.")]
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
+
 			var sr = new SearchResult();
 			var db = new x360ceModelContainer();
 			// Get all device instances of the user.
 			var p = SearchParameterCollection.GetSqlParameter(args);
-			sr.Settings = db.ExecuteStoreQuery<Setting>("exec x360ce_GetUserInstances @args", p).ToArray();
+			var hasInstances = args.Any(x => x.InstanceGuid != Guid.Empty);
+			var hasProducts = args.Any(x => x.ProductGuid != Guid.Empty);
+			if (hasInstances)
+			{
+				// Get user instances.
+				sr.Settings = db.ExecuteStoreQuery<Setting>("exec x360ce_GetUserInstances @args", p).ToArray();
+			}
+			else
+			{
+				// Get presets.
+				var item = args.FirstOrDefault();
+				var ds = EngineHelper.GetPresets(item.ProductGuid, item.FileName);
+				sr.Presets = SqlHelper.ConvertToList<Preset>(ds.Tables[0]).ToArray();
+				sr.PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray();
+			}
 			// Get list of products (unique identifiers).
 			var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
 			var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToList();
@@ -313,52 +328,6 @@ namespace x360ce.Web.WebServices
 				db = null;
 			}
 			return programs;
-		}
-
-		[WebMethod(EnableSession = true, Description = "Get most popular presets.")]
-		public SearchResult GetPresets()
-		{
-			var sr = new SearchResult();
-			var db = new x360ceModelContainer();
-			IQueryable<Program> list = db.Programs;
-			// Not used.          
-			sr.Settings = new Setting[0];
-			// Contains TOP 20 most popular DirectInput devices.
-			var query = db.Products.OrderByDescending(x => x.InstanceCount).Take(20);
-			var products = query.ToArray();
-			var productGuids = products.Select(x => x.ProductGuid).ToArray();
-			// Select TOP products
-			var query2 =
-				// Select most popular devices.
-				from row in query
-					// Join all summaries for these devices.
-				join sum in db.Summaries on row.ProductGuid equals sum.ProductGuid
-				// Group in order to identify most popular PAD setting for the device.
-				group sum by new { sum.ProductGuid, sum.PadSettingChecksum } into g
-				select g.OrderByDescending(x => x.Users).First();
-
-			var padSettingGuids = query2.ToList();
-			// Fill summaries.
-			sr.Summaries = padSettingGuids.Select(x => new Summary()
-			{
-				ProductGuid = x.ProductGuid,
-				ProductName = x.ProductName,
-				PadSettingChecksum = x.PadSettingChecksum,
-			}).ToArray();
-			var settingChecksums = padSettingGuids.Select(x => x.PadSettingChecksum).ToArray();
-			//// Join all pad settings related to summaries.
-			//join pad in db.PadSettings on sum.PadSettingChecksum equals pad.PadSettingChecksum
-			//select new
-			//{
-			//    Summary = sum,
-			//    PadSetting = pad,
-			//};
-			// Contains most popular PAD Setting for device.
-			sr.PadSettings = new PadSetting[0];
-			// Code here.
-			db.Dispose();
-			db = null;
-			return sr;
 		}
 
 		#region Games

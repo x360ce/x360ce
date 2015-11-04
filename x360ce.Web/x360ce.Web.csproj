@@ -24,6 +24,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -125,13 +126,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
-      <Project>{F980D78A-9448-4834-A6FE-84797077D309}</Project>
-      <Name>x360ce.Engine</Name>
-    </ProjectReference>
+    <Folder Include="Files\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Files\" />
+    <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
+      <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
+      <Name>x360ce.Engine</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

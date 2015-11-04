@@ -30,7 +30,7 @@ namespace JocysCom.ClassLibrary.Win32
 		SPDRP_DRIVER = 0x9,
 		/// <summary>ConfigFlags (R/W)</summary>
 		SPDRP_CONFIGFLAGS = 0xA,
-		/// <summary>Mfg (R/W)</summary>
+		/// <summary>Manufacturer (R/W)</summary>
 		SPDRP_MFG = 0xB,
 		/// <summary>FriendlyName (R/W)</summary>
 		SPDRP_FRIENDLYNAME = 0xC,

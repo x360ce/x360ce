@@ -5,6 +5,7 @@ BEGIN
 
 	-- SELECT [dbo].[x360ce_FixProductName]('Controller (Gamepad F310)')
 	-- SELECT [dbo].[x360ce_FixProductName]('"Gamepad F310"')
+	-- SELECT [dbo].[x360ce_FixProductName]('Xbox 360 Wireless Receiver for Windows')
 
 	SET @ProductName = ISNULL(@ProductName, '')
 	SET @ProductName = LTRIM(RTRIM(@ProductName))
@@ -14,7 +15,7 @@ BEGIN
 	SET @ProductName = REPLACE(@ProductName,'  ',' ')
 	IF LEN(@ProductName) > 14 AND LEFT(@ProductName, 12) = 'Controller (' AND RIGHT(@ProductName, 1) = ')'
 	BEGIN
-		SET @ProductName = SUBSTRING(@ProductName, 13, LEN(@ProductName) - 14)
+		SET @ProductName = SUBSTRING(@ProductName, 13, LEN(@ProductName) - 13)
 	END
 	SET @ProductName = REPLACE(@ProductName,'(Controller)','')
 	SET @ProductName = LTRIM(RTRIM(@ProductName))

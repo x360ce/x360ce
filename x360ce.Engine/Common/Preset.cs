@@ -6,13 +6,43 @@ using System.Text;
 
 namespace x360ce.Engine
 {
-	public class PadDefaultPreset: INotifyPropertyChanged
+	public class Preset : INotifyPropertyChanged
 	{
-		public string ProductName;
 
-		public Guid PadSettingChecksum;
+		string _VendorName;
+		public string VendorName
+		{
+			get { return _VendorName; }
+			set { _VendorName = value; NotifyPropertyChanged("VendorName"); }
+		}
 
-		public int Users;
+		string _ProductName;
+		public string ProductName
+		{
+			get { return _ProductName; }
+			set { _ProductName = value; NotifyPropertyChanged("ProductName"); }
+		}
+
+		Guid _ProductGuid;
+		public Guid ProductGuid
+		{
+			get { return _ProductGuid; }
+			set { _ProductGuid = value; NotifyPropertyChanged("ProductGuid"); }
+		}
+
+		Guid _PadSettingChecksum;
+		public Guid PadSettingChecksum
+		{
+			get { return _PadSettingChecksum; }
+			set { _PadSettingChecksum = value; NotifyPropertyChanged("PadSettingChecksum"); }
+		}
+
+		int _Users;
+		public int Users
+		{
+			get { return _Users; }
+			set { _Users = value; NotifyPropertyChanged("Users"); }
+		}
 
 		#region INotifyPropertyChanged
 

@@ -16,7 +16,7 @@ namespace x360ce.Engine
 			var cmd = new SqlCommand("x360ce_GetTopControllers");
 			cmd.CommandType = CommandType.StoredProcedure;
 			var cn = SqlHelper.Current.GetConnectionString("x360ceModelContainer");
-            var table = SqlHelper.Current.ExecuteDataTable(cn, cmd);
+			var table = SqlHelper.Current.ExecuteDataTable(cn, cmd);
 			return table;
 		}
 
@@ -28,6 +28,20 @@ namespace x360ce.Engine
 			var table = SqlHelper.Current.ExecuteDataTable(cn, cmd);
 			return table;
 		}
+
+		public static DataSet GetPresets(Guid? productGuid = null, string fileName = null, int maxRecords = 50, int maxPerProductFile = 2)
+		{
+			var cmd = new SqlCommand("x360ce_GetPresets");
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Parameters.AddWithValue("@ProductGuid", productGuid);
+			cmd.Parameters.AddWithValue("@FileName", fileName);
+			cmd.Parameters.AddWithValue("@MaxRecords", maxRecords);
+			cmd.Parameters.AddWithValue("@MaxPerProductFile", maxPerProductFile);
+			var cn = SqlHelper.Current.GetConnectionString("x360ceModelContainer");
+			var ds = SqlHelper.Current.ExecuteDataSet(cn, cmd);
+			return ds;
+		}
+
 
 	}
 }

@@ -11,5 +11,6 @@ namespace x360ce.Engine
 		public Setting[] Settings { get; set; }
 		public Summary[] Summaries { get; set; }
 		public PadSetting[] PadSettings { get; set; }
+		public Preset[] Presets { get; set; }
 	}
 }
