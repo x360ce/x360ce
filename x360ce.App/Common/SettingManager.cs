@@ -41,11 +41,11 @@ namespace x360ce.App
 		/// <summary>Most popular Programs and Games.</summary>
 		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs");
 
-		///// <summary>Presets</summary>
-		//public static SettingsData<Engine.Data.Summary> Presets = new SettingsData<Engine.Data.Summary>("Presets");
+		/// <summary>Presets</summary>
+		public static SettingsData<Preset> Presets = new SettingsData<Preset>("Presets");
 
-		///// <summary>Preset PadSettings</summary>
-		//public static SettingsData<Engine.Data.PadSetting> PresetPadSettings = new SettingsData<Engine.Data.PadSetting>("Presets.PadSettings");
+		/// <summary>Preset PadSettings</summary>
+		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings");
 
 		static object saveReadFileLock = new object();
 

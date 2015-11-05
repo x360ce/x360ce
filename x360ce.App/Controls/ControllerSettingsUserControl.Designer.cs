@@ -77,13 +77,14 @@
 			this.GlobalSettingsLoadButton = new System.Windows.Forms.ToolStripButton();
 			this.PresetsTabPage = new System.Windows.Forms.TabPage();
 			this.PresetsDataGridView = new System.Windows.Forms.DataGridView();
-			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip3 = new System.Windows.Forms.ToolStrip();
 			this.PresetRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.PresetsLoadButton = new System.Windows.Forms.ToolStripButton();
 			this.MySettingsSaveButton = new System.Windows.Forms.Button();
+			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PresetVendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.MyDevicesDataGridView)).BeginInit();
 			this.SettingsListTabControl.SuspendLayout();
 			this.MyDeviceSettingsTabPage.SuspendLayout();
@@ -580,6 +581,7 @@
 			this.PresetsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn5,
             this.PresetTypeColumn,
+            this.PresetVendorNameColumn,
             this.dataGridViewTextBoxColumn7});
 			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
@@ -609,32 +611,6 @@
 			this.PresetsDataGridView.TabIndex = 2;
 			this.PresetsDataGridView.SelectionChanged += new System.EventHandler(this.PresetsDataGridView_SelectionChanged);
 			this.PresetsDataGridView.DoubleClick += new System.EventHandler(this.PresetsDataGridView_DoubleClick);
-			// 
-			// dataGridViewTextBoxColumn5
-			// 
-			this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.dataGridViewTextBoxColumn5.DataPropertyName = "PadSettingChecksum";
-			this.dataGridViewTextBoxColumn5.HeaderText = "SID";
-			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-			this.dataGridViewTextBoxColumn5.ReadOnly = true;
-			this.dataGridViewTextBoxColumn5.Visible = false;
-			// 
-			// PresetTypeColumn
-			// 
-			this.PresetTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.PresetTypeColumn.DataPropertyName = "Type";
-			this.PresetTypeColumn.HeaderText = "Type";
-			this.PresetTypeColumn.Name = "PresetTypeColumn";
-			this.PresetTypeColumn.ReadOnly = true;
-			this.PresetTypeColumn.Visible = false;
-			// 
-			// dataGridViewTextBoxColumn7
-			// 
-			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.dataGridViewTextBoxColumn7.DataPropertyName = "Name";
-			this.dataGridViewTextBoxColumn7.HeaderText = "Controller";
-			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-			this.dataGridViewTextBoxColumn7.ReadOnly = true;
 			// 
 			// toolStrip3
 			// 
@@ -681,6 +657,43 @@
 			this.MySettingsSaveButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.MySettingsSaveButton.UseVisualStyleBackColor = true;
 			this.MySettingsSaveButton.Click += new System.EventHandler(this.MySettingsSaveButton_Click);
+			// 
+			// dataGridViewTextBoxColumn5
+			// 
+			this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewTextBoxColumn5.DataPropertyName = "PadSettingChecksum";
+			this.dataGridViewTextBoxColumn5.HeaderText = "SID";
+			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+			this.dataGridViewTextBoxColumn5.ReadOnly = true;
+			this.dataGridViewTextBoxColumn5.Visible = false;
+			this.dataGridViewTextBoxColumn5.Width = 31;
+			// 
+			// PresetTypeColumn
+			// 
+			this.PresetTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.PresetTypeColumn.DataPropertyName = "Type";
+			this.PresetTypeColumn.HeaderText = "Type";
+			this.PresetTypeColumn.Name = "PresetTypeColumn";
+			this.PresetTypeColumn.ReadOnly = true;
+			this.PresetTypeColumn.Visible = false;
+			this.PresetTypeColumn.Width = 37;
+			// 
+			// PresetVendorNameColumn
+			// 
+			this.PresetVendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.PresetVendorNameColumn.DataPropertyName = "VendorName";
+			this.PresetVendorNameColumn.HeaderText = "Vendor Name";
+			this.PresetVendorNameColumn.Name = "PresetVendorNameColumn";
+			this.PresetVendorNameColumn.ReadOnly = true;
+			this.PresetVendorNameColumn.Width = 97;
+			// 
+			// dataGridViewTextBoxColumn7
+			// 
+			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn7.DataPropertyName = "ProductName";
+			this.dataGridViewTextBoxColumn7.HeaderText = "Product Name";
+			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+			this.dataGridViewTextBoxColumn7.ReadOnly = true;
 			// 
 			// ControllerSettingsUserControl
 			// 
@@ -741,9 +754,6 @@
 		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.TabPage PresetsTabPage;
         private System.Windows.Forms.DataGridView PresetsDataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn PresetTypeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton MySettingsDeleteButton;
         private System.Windows.Forms.Button MySettingsSaveButton;
@@ -768,5 +778,9 @@
 		private System.Windows.Forms.ToolStripMenuItem MapToController2MenuItem;
 		private System.Windows.Forms.ToolStripMenuItem MapToController3MenuItem;
 		private System.Windows.Forms.ToolStripMenuItem MapToController4MenuItem;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PresetTypeColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PresetVendorNameColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
 	}
 }

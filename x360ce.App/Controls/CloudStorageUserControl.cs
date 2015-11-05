@@ -55,7 +55,7 @@ namespace x360ce.App.Controls
 			try
 			{
 				var result = ws.SetGames(CloudAction.Delete, gamesToDelete);
-				// If update was successfull then.
+				// If update was successful then.
 				if (string.IsNullOrEmpty(result))
 				{
 					var gamesToUpdate = data.Where(x => x.Action == CloudAction.Update).Select(x => (Game)x.Item).ToList();

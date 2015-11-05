@@ -77,8 +77,8 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			SettingManager.Games.FilterList = Games_FilterList;
 			SettingManager.Games.Load();
-
-
+			SettingManager.Presets.Load();
+			SettingManager.PadSettings.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
@@ -517,6 +517,8 @@ namespace x360ce.App
 			SettingManager.Summaries.Save();
 			SettingManager.Programs.Save();
 			SettingManager.Games.Save();
+			SettingManager.Presets.Save();
+			SettingManager.PadSettings.Save();
 		}
 
 		#region Timer
@@ -771,7 +773,7 @@ namespace x360ce.App
 				ControlPads[i].InitPadControl();
 			}
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
-			SettingsDatabasePanel.InitPresets();
+			//SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
 			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// Load about control.

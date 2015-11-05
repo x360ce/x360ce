@@ -162,66 +162,76 @@ namespace x360ce.Web.WebServices
 			// Get all device instances of the user.
 			var p = SearchParameterCollection.GetSqlParameter(args);
 			var hasInstances = args.Any(x => x.InstanceGuid != Guid.Empty);
+			var hasFiles = args.Any(x => !string.IsNullOrEmpty(x.FileName));
 			var hasProducts = args.Any(x => x.ProductGuid != Guid.Empty);
 			if (hasInstances)
 			{
 				// Get user instances.
 				sr.Settings = db.ExecuteStoreQuery<Setting>("exec x360ce_GetUserInstances @args", p).ToArray();
+				// Get list of products (unique identifiers).
+				var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
+				var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToList();
+				if (products.Length == 0)
+				{
+					sr.Summaries = new Summary[0];
+				}
+				else
+				{
+					files.Add(new SearchParameter() { FileName = "", FileProductName = "" });
+					Expression body = null;
+					var param = Expression.Parameter(typeof(Summary), "x");
+					var pgParam = Expression.PropertyOrField(param, "ProductGuid");
+					var fnParam = Expression.PropertyOrField(param, "FileName");
+					var fpParam = Expression.PropertyOrField(param, "FileProductName");
+					for (int i = 0; i < products.Length; i++)
+					{
+						var productGuid = products[i];
+						for (int f = 0; f < files.Count; f++)
+						{
+							var fileName = files[f].FileName;
+							var fileProductName = files[f].FileProductName;
+							var exp1 = Expression.AndAlso(
+									Expression.Equal(pgParam, Expression.Constant(productGuid)),
+									Expression.Equal(fnParam, Expression.Constant(fileName))
+							   );
+							exp1 = Expression.AndAlso(exp1, Expression.Equal(fpParam, Expression.Constant(fileProductName)));
+							body = body == null ? exp1 : Expression.OrElse(body, exp1).Reduce();
+						}
+					}
+					var lambda = Expression.Lambda<Func<Summary, bool>>(body, param);
+					// Select only TOP 10 configurations per controller and file.
+					var summaries = db.Summaries.Where(lambda).ToArray();
+					var topSummaries = new List<Summary>();
+					var productGuids = db.Summaries.Where(lambda).Select(x => x.ProductGuid).Distinct();
+					foreach (var pg in productGuids)
+					{
+						var controllerSummaries = summaries.Where(x => x.ProductGuid == pg);
+						var fileNames = controllerSummaries.Select(x => x.FileName).Distinct();
+						foreach (var fileName in fileNames)
+						{
+							// Top 10 configurations per file
+							topSummaries.AddRange(controllerSummaries.Where(x => x.FileName == fileName).OrderByDescending(x => x.Users).Take(10));
+						}
+					}
+					sr.Summaries = topSummaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
+				}
 			}
-			else
+			else if (args!= null && args.Length > 0)
 			{
 				// Get presets.
 				var item = args.FirstOrDefault();
-				var ds = EngineHelper.GetPresets(item.ProductGuid, item.FileName);
+				var ds = EngineHelper.GetPresets(new SearchParameter[0]);
 				sr.Presets = SqlHelper.ConvertToList<Preset>(ds.Tables[0]).ToArray();
 				sr.PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray();
-			}
-			// Get list of products (unique identifiers).
-			var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
-			var files = args.Where(x => !string.IsNullOrEmpty(x.FileName) || !string.IsNullOrEmpty(x.FileProductName)).ToList();
-			if (products.Length == 0)
-			{
 				sr.Summaries = new Summary[0];
+				sr.Settings = new Setting[0];
 			}
 			else
 			{
-				files.Add(new SearchParameter() { FileName = "", FileProductName = "" });
-				Expression body = null;
-				var param = Expression.Parameter(typeof(Summary), "x");
-				var pgParam = Expression.PropertyOrField(param, "ProductGuid");
-				var fnParam = Expression.PropertyOrField(param, "FileName");
-				var fpParam = Expression.PropertyOrField(param, "FileProductName");
-				for (int i = 0; i < products.Length; i++)
-				{
-					var productGuid = products[i];
-					for (int f = 0; f < files.Count; f++)
-					{
-						var fileName = files[f].FileName;
-						var fileProductName = files[f].FileProductName;
-						var exp1 = Expression.AndAlso(
-								Expression.Equal(pgParam, Expression.Constant(productGuid)),
-								Expression.Equal(fnParam, Expression.Constant(fileName))
-						   );
-						exp1 = Expression.AndAlso(exp1, Expression.Equal(fpParam, Expression.Constant(fileProductName)));
-						body = body == null ? exp1 : Expression.OrElse(body, exp1).Reduce();
-					}
-				}
-				var lambda = Expression.Lambda<Func<Summary, bool>>(body, param);
-				// Select only TOP 10 configurations per controller and file.
-				var summaries = db.Summaries.Where(lambda).ToArray();
-				var topSummaries = new List<Summary>();
-				var productGuids = db.Summaries.Where(lambda).Select(x => x.ProductGuid).Distinct();
-				foreach (var pg in productGuids)
-				{
-					var controllerSummaries = summaries.Where(x => x.ProductGuid == pg);
-					var fileNames = controllerSummaries.Select(x => x.FileName).Distinct();
-					foreach (var fileName in fileNames)
-					{
-						// Top 10 configurations per file
-						topSummaries.AddRange(controllerSummaries.Where(x => x.FileName == fileName).OrderByDescending(x => x.Users).Take(10));
-					}
-				}
-				sr.Summaries = topSummaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
+				sr.Presets = new Preset[0];
+				sr.PadSettings = new PadSetting[0];
+				sr.Summaries = new Summary[0];
+				sr.Settings = new Setting[0];
 			}
 			db.Dispose();
 			db = null;

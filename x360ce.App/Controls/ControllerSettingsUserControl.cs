@@ -29,17 +29,20 @@ namespace x360ce.App.Controls
 
 		MainForm mainForm { get { return (MainForm)Parent.Parent.Parent; } }
 		string _myControllersTitle = "";
-		string _globalSettingsTitle = "";
+		string _globalSummariesTitle = "";
+		string _globalPresetsTitle = "";
 
 		void InternetUserControl_Load(object sender, EventArgs e)
 		{
 			_myControllersTitle = MyDeviceSettingsTabPage.Text;
-			_globalSettingsTitle = SummariesTabPage.Text;
+			_globalSummariesTitle = SummariesTabPage.Text;
+			_globalPresetsTitle = PresetsTabPage.Text;
 			EngineHelper.EnableDoubleBuffering(MyDevicesDataGridView);
 			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			MyDevicesDataGridView.AutoGenerateColumns = false;
 			SummariesDataGridView.AutoGenerateColumns = false;
+			PresetsDataGridView.AutoGenerateColumns = false;
 			InitData();
 			InternetCheckBox_CheckedChanged(null, null);
 		}
@@ -53,6 +56,10 @@ namespace x360ce.App.Controls
 			SettingManager.Summaries.Items.ListChanged += new ListChangedEventHandler(Summaries_ListChanged);
 			SummariesDataGridView.DataSource = SettingManager.Summaries.Items;
 			UpdateControlsFromSummaries();
+			// Configure Presets.
+			SettingManager.Presets.Items.ListChanged += new ListChangedEventHandler(Presets_ListChanged);
+			PresetsDataGridView.DataSource = SettingManager.Presets.Items;
+			UpdateControlsFromPresets();
 		}
 
 		void UpdateControlsFromSettings()
@@ -70,14 +77,27 @@ namespace x360ce.App.Controls
 		void UpdateControlsFromSummaries()
 		{
 			SummariesTabPage.Text = SettingManager.Summaries.Items.Count == 0
-				? _globalSettingsTitle
-				: string.Format("{0} [{1}]", _globalSettingsTitle, SettingManager.Summaries.Items.Count);
+				? _globalSummariesTitle
+				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingManager.Summaries.Items.Count);
 		}
 
 		void Summaries_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			UpdateControlsFromSummaries();
         }
+
+		void UpdateControlsFromPresets()
+		{
+			PresetsTabPage.Text = SettingManager.Presets.Items.Count == 0
+				? _globalSummariesTitle
+				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingManager.Presets.Items.Count);
+		}
+
+		void Presets_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			UpdateControlsFromPresets();
+		}
+
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
@@ -92,6 +112,7 @@ namespace x360ce.App.Controls
 		/// </summary>
 		void UpdateList<T>(IList<T> source, IList<T> destination)
 		{
+			if (source == null) source = new List<T>();
 			var sCount = source.Count;
 			var dCount = destination.Count;
 			var length = Math.Min(sCount, dCount);
@@ -347,7 +368,6 @@ namespace x360ce.App.Controls
 			{
 				ws.SearchSettingsAsync(sp.ToArray(), showResult);
 			});
-
 		}
 
 		public void FillSearchParameterWithDevices(List<SearchParameter> sp)
@@ -419,6 +439,8 @@ namespace x360ce.App.Controls
 
 		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
+			var ws = (WebServiceClient)sender;
+			ws.SearchSettingsCompleted -= ws_SearchSettingsCompleted;
 			// Make sure method is executed on the same thread as this control.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
@@ -525,52 +547,52 @@ namespace x360ce.App.Controls
 
 		#region Presets Grid
 
-		BindingList<PresetItem> PresetsList = new BindingList<PresetItem>();
+		//BindingList<PresetItem> PresetsList = new BindingList<PresetItem>();
 
-		public void InitPresets()
-		{
-			PresetsDataGridView.DataSource = null;
-			PresetsList.Clear();
-			var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
-			var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
-			string name;
-			// Presets: Embedded.
-			var embeddedPresets = new List<string>();
-			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-			string[] files = assembly.GetManifestResourceNames();
-			var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
-			Regex rx = new Regex(pattern);
-			for (int i = 0; i < files.Length; i++)
-			{
-				if (rx.IsMatch(files[i]))
-				{
-					name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
-					embeddedPresets.Add(name);
-				}
-			}
-			// Presets: Custom.
-			var dir = new System.IO.DirectoryInfo(".");
-			var fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
-			List<string> customPresets = new List<string>();
-			for (int i = 0; i < fis.Length; i++)
-			{
-				name = fis[i].Name.Substring(prefix.Length + 1);
-				name = name.Substring(0, name.Length - ext.Length);
-				name = name.Replace("_", " ");
-				if (!embeddedPresets.Contains(name)) customPresets.Add(name);
-			}
-			string[] cNames = customPresets.ToArray();
-			Array.Sort(cNames);
-			foreach (var item in cNames) PresetsList.Add(new PresetItem("Custom", item));
-			PresetTypeColumn.Visible = cNames.Count() > 0;
-			string[] eNames = embeddedPresets.ToArray();
-			Array.Sort(eNames);
-			foreach (var item in eNames)
-			{
-				if (item != "Clear") PresetsList.Add(new PresetItem("Embedded", item));
-			}
-			PresetsDataGridView.DataSource = PresetsList;
-		}
+		//public void InitPresets()
+		//{
+		//	PresetsDataGridView.DataSource = null;
+		//	PresetsList.Clear();
+		//	var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
+		//	var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
+		//	string name;
+		//	// Presets: Embedded.
+		//	var embeddedPresets = new List<string>();
+		//	var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+		//	string[] files = assembly.GetManifestResourceNames();
+		//	var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
+		//	Regex rx = new Regex(pattern);
+		//	for (int i = 0; i < files.Length; i++)
+		//	{
+		//		if (rx.IsMatch(files[i]))
+		//		{
+		//			name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
+		//			embeddedPresets.Add(name);
+		//		}
+		//	}
+		//	// Presets: Custom.
+		//	var dir = new System.IO.DirectoryInfo(".");
+		//	var fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
+		//	List<string> customPresets = new List<string>();
+		//	for (int i = 0; i < fis.Length; i++)
+		//	{
+		//		name = fis[i].Name.Substring(prefix.Length + 1);
+		//		name = name.Substring(0, name.Length - ext.Length);
+		//		name = name.Replace("_", " ");
+		//		if (!embeddedPresets.Contains(name)) customPresets.Add(name);
+		//	}
+		//	string[] cNames = customPresets.ToArray();
+		//	Array.Sort(cNames);
+		//	foreach (var item in cNames) PresetsList.Add(new PresetItem("Custom", item));
+		//	PresetTypeColumn.Visible = cNames.Count() > 0;
+		//	string[] eNames = embeddedPresets.ToArray();
+		//	Array.Sort(eNames);
+		//	foreach (var item in eNames)
+		//	{
+		//		if (item != "Clear") PresetsList.Add(new PresetItem("Embedded", item));
+		//	}
+		//	PresetsDataGridView.DataSource = PresetsList;
+		//}
 
 		#endregion
 
@@ -727,14 +749,14 @@ namespace x360ce.App.Controls
 			var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
 			if (PresetsDataGridView.SelectedRows.Count == 0) return;
 			var title = "Load Preset Setting?";
-			var preset = (PresetItem)PresetsDataGridView.SelectedRows[0].DataBoundItem;
+			var preset = (Preset)PresetsDataGridView.SelectedRows[0].DataBoundItem;
 			var message = "Do you want to load Preset Setting:";
-			message += "\r\n\r\n    " + preset.Name;
+			message += "\r\n\r\n    " + preset.ProductName;
 			message += "\r\n\r\nfor \"" + name + "\" controller?";
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-			if (result == DialogResult.Yes) LoadPreset(preset.Name);
+			if (result == DialogResult.Yes) LoadPreset(preset.ProductName);
 			else mainForm.UpdateTimer.Start();
 		}
 
@@ -748,10 +770,60 @@ namespace x360ce.App.Controls
 			LoadPreset();
 		}
 
+		#region Presets.
+
 		private void PresetRefreshButton_Click(object sender, EventArgs e)
 		{
-			RefreshGrid(true);
+			RefreshPresetsGrid(true);
 		}
+
+		public void RefreshPresetsGrid(bool showResult)
+		{
+			mainForm.LoadingCircle = true;
+			var sp = new List<SearchParameter>();
+			sp.Add(new SearchParameter());
+			var ws = new WebServiceClient();
+			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.SearchSettingsCompleted += wsPresets_SearchSettingsCompleted;
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
+			{
+				ws.SearchSettingsAsync(sp.ToArray(), showResult);
+			});
+		}
+
+		void wsPresets_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		{
+			var ws = (WebServiceClient)sender;
+			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;
+			// Make sure method is executed on the same thread as this control.
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				refreshed = true;
+				if (e.Error != null || e.Result == null)
+				{
+					var showResult = (bool)e.UserState;
+                    if (showResult)
+					{
+						mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: No Presets received.", DateTime.Now), MessageBoxIcon.Information);
+					}
+				}
+				else
+				{
+					var result = (SearchResult)e.Result;
+					UpdateList(result.Presets, SettingManager.Presets.Items);
+					UpdateList(result.PadSettings, SettingManager.PadSettings.Items);
+					if ((bool)e.UserState)
+					{
+						var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
+						var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
+						mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1} Presets and {2} PAD Settings received.", DateTime.Now, presetsCount, padSettingsCount), MessageBoxIcon.Information);
+					}
+				}
+				mainForm.LoadingCircle = false;
+			});
+		}
+
+		#endregion
 
 		private void MapToMenuItem_Click(object sender, EventArgs e)
 		{
