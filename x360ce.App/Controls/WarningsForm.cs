@@ -19,36 +19,14 @@ namespace x360ce.App
 		public WarningsForm()
 		{
 			InitializeComponent();
-			checkTimer = new System.Timers.Timer();
-			checkTimer.Interval = 1000;
-			checkTimer.AutoReset = false;
-			checkTimer.SynchronizingObject = this;
-			checkTimer.Elapsed += CheckTimer_Elapsed;
+			CheckTimer = new System.Timers.Timer();
+			CheckTimer.Interval = 1000;
+			CheckTimer.AutoReset = false;
+			CheckTimer.SynchronizingObject = this;
+			CheckTimer.Elapsed += CheckTimer_Elapsed;
 			WarningsDataGridView.AutoGenerateColumns = false;
 			WarningsDataGridView.DataSource = Warnings;
 			Text = EngineHelper.GetProductFullName() + " - Warnings";
-		}
-
-		static object currentLock = new object();
-		static WarningsForm _Current;
-		public static WarningsForm Current
-		{
-			get
-			{
-				lock (currentLock)
-				{
-					if (_Current == null)
-					{
-						_Current = new WarningsForm();
-					}
-					return _Current;
-				}
-			}
-		}
-
-		public static void CheckAndOpen()
-		{
-			Current.checkTimer.Start();
 		}
 
 		private void CheckTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -56,16 +34,16 @@ namespace x360ce.App
 			lock (checkTimerLock)
 			{
 				// If timer is disposed then return;
-				if (checkTimer == null) return;
+				if (CheckTimer == null) return;
 				CheckAll();
 			}
-			if (checkTimer.Interval != 5000) checkTimer.Interval = 5000;
-			checkTimer.Start();
+			if (CheckTimer.Interval != 5000) CheckTimer.Interval = 5000;
+			CheckTimer.Start();
 		}
 
 		BindingList<WarningItem> Warnings = new BindingList<WarningItem>();
 		object checkTimerLock = new object();
-		System.Timers.Timer checkTimer;
+		public System.Timers.Timer CheckTimer;
 		bool IgnoreAll;
 
 		List<WarningItem> IssueList;
@@ -100,42 +78,44 @@ namespace x360ce.App
 				if (issue.Severity == IssueSeverity.Critical) clearRest = true;
 				UpdateWarning(issue);
 			}
-			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
+			MainForm.Current.BeginInvoke((MethodInvoker)CheckAllAsync);
+		}
+
+		void CheckAllAsync()
+		{
+			var update2 = MainForm.Current.update2Enabled;
+			if (Warnings.Count > 0)
 			{
-				var update2 = MainForm.Current.update2Enabled;
-				if (Warnings.Count > 0)
+				// If not visible and must not ignored then...
+				if (!Visible && !IgnoreAll)
 				{
-					// If not visible and must not ignored then...
-					if (!Visible && !IgnoreAll)
+					StartPosition = FormStartPosition.CenterParent;
+					var result = ShowDialog(MainForm.Current);
+					// If ignore button was used then...
+					if (IgnoreAll)
 					{
-						StartPosition = FormStartPosition.CenterParent;
-						var result = ShowDialog(MainForm.Current);
-						// If ignore button was used then...
-						if (IgnoreAll)
+						// If critical issues remaining then...
+						if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
 						{
-							// If critical issues remaining then...
-							if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
-							{
-								// Close application.
-								MainForm.Current.Close();
-							}
-							// Update 2 haven't ran yet then..
-							else if (!update2.HasValue)
-							{
-								MainForm.Current.update2Enabled = true;
-							}
+							// Close application.
+							MainForm.Current.Close();
+						}
+						// Update 2 haven't ran yet then..
+						else if (!update2.HasValue)
+						{
+							MainForm.Current.update2Enabled = true;
 						}
 					}
 				}
-				else
+			}
+			else
+			{
+				if (Visible) DialogResult = DialogResult.OK;
+				if (!update2.HasValue)
 				{
-					if (Visible) DialogResult = DialogResult.OK;
-					if (!update2.HasValue)
-					{
-						MainForm.Current.update2Enabled = true;
-					}
+					MainForm.Current.update2Enabled = true;
 				}
-			});
+			}
 		}
 
 		private void Item_FixApplied(object sender, EventArgs e)
@@ -144,10 +124,10 @@ namespace x360ce.App
 			lock (checkTimerLock)
 			{
 				// If timer is disposed then return;
-				if (checkTimer == null) return;
-				checkTimer.Stop();
-				checkTimer.Interval = 500;
-				checkTimer.Start();
+				if (CheckTimer == null) return;
+				CheckTimer.Stop();
+				CheckTimer.Interval = 500;
+				CheckTimer.Start();
 			}
 		}
 
@@ -169,10 +149,10 @@ namespace x360ce.App
 			{
 				lock (checkTimerLock)
 				{
-					if (checkTimer != null)
+					if (CheckTimer != null)
 					{
-						checkTimer.Dispose();
-						checkTimer = null;
+						CheckTimer.Dispose();
+						CheckTimer = null;
 					}
 				}
 				if (components != null) components.Dispose();

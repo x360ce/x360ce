@@ -166,6 +166,7 @@
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
+    <Compile Include="Common\DiDevice.cs" />
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\HookMode.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Common\RuntimePolicyHelper.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
+    <Compile Include="Common\SettingManager.INI.cs" />
     <Compile Include="Common\SettingName.cs" />
     <Compile Include="Common\SettingsData.cs" />
     <Compile Include="Common\SettingType.cs" />
@@ -194,11 +196,23 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\BaseForm.Designer.cs">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CloudStorageUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\CloudStorageUserControl.Designer.cs">
       <DependentUpon>CloudStorageUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ControllerSettingsUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ControllerSettingsUserControl.Designer.cs">
+      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DirectInputControl.cs">
       <SubType>UserControl</SubType>
@@ -211,6 +225,18 @@
     </Compile>
     <Compile Include="Controls\GameSettingDetailsUserControl.Designer.cs">
       <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LoadPresetsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\LoadPresetsForm.Designer.cs">
+      <DependentUpon>LoadPresetsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MapDeviceToControllerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\MapDeviceToControllerForm.Designer.cs">
+      <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadControl.VirtualDevice.cs">
       <SubType>UserControl</SubType>
@@ -239,12 +265,6 @@
     </Compile>
     <Compile Include="Controls\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ControllerSettingsUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ControllerSettingsUserControl.Designer.cs">
-      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsControl.cs">
       <SubType>UserControl</SubType>
@@ -278,6 +298,7 @@
     <Compile Include="Common\DPadEnum.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
     <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
     <Compile Include="SharpDX.XInput\BatteryLevel.cs" />
@@ -313,8 +334,14 @@
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\BaseForm.resx">
+      <DependentUpon>BaseForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\CloudStorageUserControl.resx">
       <DependentUpon>CloudStorageUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ControllerSettingsUserControl.resx">
+      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DirectInputControl.resx">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
@@ -322,6 +349,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameSettingDetailsUserControl.resx">
       <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LoadPresetsForm.resx">
+      <DependentUpon>LoadPresetsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MapDeviceToControllerForm.resx">
+      <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ThumbUserControl.resx">
       <DependentUpon>ThumbUserControl.cs</DependentUpon>
@@ -332,9 +365,6 @@
     <EmbeddedResource Include="Controls\NewDeviceForm.resx">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ControllerSettingsUserControl.resx">
-      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OptionsControl.resx">
       <DependentUpon>OptionsControl.cs</DependentUpon>

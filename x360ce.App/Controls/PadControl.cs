@@ -12,15 +12,16 @@ using System.Linq;
 using x360ce.Engine;
 using System.Diagnostics;
 using JocysCom.ClassLibrary.IO;
+using System.Linq.Expressions;
 
 namespace x360ce.App.Controls
 {
 	public partial class PadControl : UserControl
 	{
-		public PadControl(int controllerIndex)
+		public PadControl(MapTo controllerIndex)
 		{
 			InitializeComponent();
-			ControllerIndex = controllerIndex;
+			MappedTo = controllerIndex;
 			object[] rates = {
 				1000/8, //  125
 				1000/7, //  142
@@ -33,13 +34,6 @@ namespace x360ce.App.Controls
 			};
 			PollingRateComboBox.Items.AddRange(rates);
 			PollingRateComboBox.SelectedIndex = 0;
-			// Add direct input user control.
-			this.SuspendLayout();
-			diControl = new DirectInputControl();
-			diControl.Dock = DockStyle.Fill;
-			DirectInputTabPage.Controls.Add(diControl);
-			PadTabControl.TabPages.Remove(DirectInputTabPage);
-			this.ResumeLayout();
 			// Axis to Button DeadZones
 			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
 			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
@@ -59,6 +53,9 @@ namespace x360ce.App.Controls
 
 		public void InitPadControl()
 		{
+			DevicesToMapDataGridView.AutoGenerateColumns = false;
+			DevicesToMapDataGridView.DataSource = SettingManager.Settings.Items;
+			SettingManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 			// Initialize images.
 			this.TopPictureBox.Image = topDisabledImage;
 			this.FrontPictureBox.Image = frontDisabledImage;
@@ -100,6 +97,60 @@ namespace x360ce.App.Controls
 			foreach (var cb in comboBoxes)
 			{
 				((ComboBox)cb).ContextMenuStrip = DiMenuStrip;
+			}
+		}
+
+		private void DevicesToMapDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+		{
+			ShowHideAndSelectGridRows(null);
+		}
+
+		private void Settings_Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			ShowHideAndSelectGridRows(null);
+		}
+
+		object DevicesToMapDataGridViewLock = new object();
+
+		void ShowHideAndSelectGridRows(Guid? instanceGuid = null)
+		{
+			lock (DevicesToMapDataGridViewLock)
+			{
+				var grid = DevicesToMapDataGridView;
+				var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
+				// Reverse order to hide/show bottom records first..
+				Array.Reverse(rows);
+				var newValues = new Dictionary<DataGridViewRow, bool>();
+				for (int i = 0; i < rows.Length; i++)
+				{
+					var item = (Engine.Data.Setting)rows[i].DataBoundItem;
+					var show = (item.MapTo == (int)MappedTo);
+					if (rows[i].Visible != show)
+					{
+						newValues.Add(rows[i], show);
+					}
+				}
+				// If columns will be hidden or shown then...
+				if (newValues.Count > 0)
+				{
+					var selection = instanceGuid.HasValue
+						? new List<Guid>() { instanceGuid.Value }
+						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
+					grid.CurrentCell = null;
+					// Suspend Layout and CurrencyManager to avoid exceptions.
+					grid.SuspendLayout();
+					var cm = (CurrencyManager)BindingContext[grid.DataSource];
+					cm.SuspendBinding();
+					foreach (var row in newValues.Keys)
+					{
+						row.Visible = newValues[row];
+					}
+					// Resume CurrencyManager and Layout.
+					cm.ResumeBinding();
+					grid.ResumeLayout();
+					// Restore selection.
+					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
+				}
 			}
 		}
 
@@ -219,7 +270,7 @@ namespace x360ce.App.Controls
 						// If suitable action was recorded then...
 						SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
 						// Save setting and notify if value changed.
-						if (SettingManager.Current.SaveSetting(CurrentCbx)) MainForm.Current.NotifySettingsChange();
+						if (SettingManager.Current.WriteSettingToIni(CurrentCbx)) MainForm.Current.NotifySettingsChange();
 					}
 					CurrentCbx.ForeColor = SystemColors.WindowText;
 					CurrentCbx = null;
@@ -233,7 +284,6 @@ namespace x360ce.App.Controls
 		#region Control ComboBox'es
 
 		ComboBox CurrentCbx;
-		DirectInputControl diControl;
 
 		void PadControl_Load(object sender, EventArgs e)
 		{
@@ -408,7 +458,8 @@ namespace x360ce.App.Controls
 			// Display controller index light.
 			int mW = -this.markC.Width / 2;
 			int mH = -this.markC.Height / 2;
-			e.Graphics.DrawImage(this.markC, pads[ControllerIndex].X + mW, pads[ControllerIndex].Y + mH);
+			var index = (int)MappedTo - 1;
+            e.Graphics.DrawImage(this.markC, pads[index].X + mW, pads[index].Y + mH);
 
 			float padSize = 22F / (float)(ushort.MaxValue);
 
@@ -484,129 +535,115 @@ namespace x360ce.App.Controls
 
 		#region Settings Map
 
-		object settingsMapLock = new object();
 
-		Dictionary<string, Control> _SettingsMap;
-		public Dictionary<string, Control> SettingsMap
-		{
-			get
-			{
-				lock (settingsMapLock)
-				{
-					if (_SettingsMap == null)
-					{
-						_SettingsMap = GetSettingsMap();
-					}
-					return _SettingsMap;
-				}
-			}
-		}
-
-		public int ControllerIndex;
+		public MapTo MappedTo;
 
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
-		Dictionary<string, Control> GetSettingsMap()
+		public void UpdateSettingsMap<T>()
 		{
-			Dictionary<string, Control> sm = new Dictionary<string, Control>();
-			string section = string.Format(@"PAD{0}\", ControllerIndex + 1);
 			// FakeAPI
-			SettingManager.AddMap(section, () => SettingName.ProductName, diControl.DeviceProductNameTextBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ProductGuid, diControl.DeviceProductGuidTextBox, sm);
-			SettingManager.AddMap(section, () => SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox, sm);
-			SettingManager.AddMap(section, () => SettingName.DeviceSubType, DeviceSubTypeComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.PassThrough, PassThroughCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.PassThroughIndex, PassThroughIndexComboBox, sm);
+			AddMap(() => SettingName.ProductName, directInputControl1.DeviceProductNameTextBox);
+			AddMap(() => SettingName.ProductGuid, directInputControl1.DeviceProductGuidTextBox);
+			AddMap(() => SettingName.InstanceGuid, directInputControl1.DeviceInstanceGuidTextBox);
+			AddMap(() => SettingName.DeviceSubType, DeviceSubTypeComboBox);
+			AddMap(() => SettingName.PassThrough, PassThroughCheckBox);
+			AddMap(() => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox);
+			AddMap(() => SettingName.PassThroughIndex, PassThroughIndexComboBox);
 			// Mapping
-			SettingManager.AddMap(section, () => SettingName.MapToPad, diControl.MapToPadComboBox, sm);
+			AddMap(() => SettingName.MapToPad, directInputControl1.MapToPadComboBox);
 			// Triggers
-			SettingManager.AddMap(section, () => SettingName.RightTrigger, RightTriggerComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftTrigger, LeftTriggerComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar, sm);
+			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox);
+			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
+			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox);
+			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
 			// Combining
-			SettingManager.AddMap(section, () => SettingName.Combined, CombinedCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.CombinedIndex, CombinedIndexComboBox, sm);
+			AddMap(() => SettingName.Combined, CombinedCheckBox);
+			AddMap(() => SettingName.CombinedIndex, CombinedIndexComboBox);
 			// D-Pad
-			SettingManager.AddMap(section, () => SettingName.DPad, DPadComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.DPadUp, DPadUpComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.DPadDown, DPadDownComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.DPadLeft, DPadLeftComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.DPadRight, DPadRightComboBox, sm);
+			AddMap(() => SettingName.DPad, DPadComboBox);
+			AddMap(() => SettingName.DPadUp, DPadUpComboBox);
+			AddMap(() => SettingName.DPadDown, DPadDownComboBox);
+			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox);
+			AddMap(() => SettingName.DPadRight, DPadRightComboBox);
 			// Axis To Button
-			SettingManager.AddMap(section, () => SettingName.AxisToButtonADeadZone, AxisToButtonADeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToButtonBDeadZone, AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToButtonXDeadZone, AxisToButtonXDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToButtonYDeadZone, AxisToButtonYDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToButtonStartDeadZone, AxisToButtonStartDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToButtonBackDeadZone, AxisToButtonBackDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToLeftShoulderDeadZone, AxisToLeftShoulderDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToLeftThumbButtonDeadZone, AxisToLeftThumbButtonDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToRightShoulderDeadZone, AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToRightThumbButtonDeadZone, AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown, sm);
+			AddMap(() => SettingName.AxisToButtonADeadZone, AxisToButtonADeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToButtonBDeadZone, AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToButtonXDeadZone, AxisToButtonXDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToButtonYDeadZone, AxisToButtonYDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToButtonStartDeadZone, AxisToButtonStartDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToButtonBackDeadZone, AxisToButtonBackDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToLeftShoulderDeadZone, AxisToLeftShoulderDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToLeftThumbButtonDeadZone, AxisToLeftThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToRightShoulderDeadZone, AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToRightThumbButtonDeadZone, AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
 			// Axis To D-Pad (separate directions).
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown, sm);
+			AddMap(() => SettingName.AxisToDPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToDPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToDPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.AxisToDPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown);
 			// Axis To D-Pad.
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar, sm);
+			AddMap(() => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
+			AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
+			AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
-			SettingManager.AddMap(section, () => SettingName.ButtonGuide, ButtonGuideComboBox, sm);
-			//sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ButtonBack, ButtonBackComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ButtonStart, ButtonStartComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ButtonA, ButtonAComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ButtonB, ButtonBComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ButtonX, ButtonXComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ButtonY, ButtonYComboBox, sm);
+			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox);
+			//sm.Add(section + SettingName.ButtonBig, ButtonBigComboBox);
+			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox);
+			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox);
+			AddMap(() => SettingName.ButtonA, ButtonAComboBox);
+			AddMap(() => SettingName.ButtonB, ButtonBComboBox);
+			AddMap(() => SettingName.ButtonX, ButtonXComboBox);
+			AddMap(() => SettingName.ButtonY, ButtonYComboBox);
 			// Shoulders.
-			SettingManager.AddMap(section, () => SettingName.LeftShoulder, LeftShoulderComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightShoulder, RightShoulderComboBox, sm);
+			AddMap(() => SettingName.LeftShoulder, LeftShoulderComboBox);
+			AddMap(() => SettingName.RightShoulder, RightShoulderComboBox);
 			// Left Thumb
-			SettingManager.AddMap(section, () => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbRight, LeftThumbRightComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbLeft, LeftThumbLeftComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbUp, LeftThumbUpComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbDown, LeftThumbDownComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbButton, LeftThumbButtonComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown, sm);
+			AddMap(() => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
+			AddMap(() => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
+			AddMap(() => SettingName.LeftThumbRight, LeftThumbRightComboBox);
+			AddMap(() => SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
+			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox);
+			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox);
+			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox);
+			AddMap(() => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
+			AddMap(() => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
+			AddMap(() => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
+			AddMap(() => SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
+			AddMap(() => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
+			AddMap(() => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
 			// Right Thumb
-			SettingManager.AddMap(section, () => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbRight, RightThumbRightComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbLeft, RightThumbLeftComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbUp, RightThumbUpComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbDown, RightThumbDownComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbButton, RightThumbButtonComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown, sm);
-			SettingManager.AddMap(section, () => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown, sm);
+			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
+			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
+			AddMap(() => SettingName.RightThumbRight, RightThumbRightComboBox);
+			AddMap(() => SettingName.RightThumbLeft, RightThumbLeftComboBox);
+			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox);
+			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox);
+			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox);
+			AddMap(() => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
+			AddMap(() => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
+			AddMap(() => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
+			AddMap(() => SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
+			AddMap(() => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown);
+			AddMap(() => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown);
 			// Force Feedback
-			SettingManager.AddMap(section, () => SettingName.ForceEnable, ForceEnableCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ForceType, ForceTypeComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox, sm);
-			SettingManager.AddMap(section, () => SettingName.ForceOverall, ForceOverallTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.RightMotorDirection, RightMotorDirectionComboBox, sm);
-			SettingManager.AddMap(section, () => SettingName.RightMotorStrength, RightMotorStrengthTrackBar, sm);
-			SettingManager.AddMap(section, () => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar, sm);
-			return sm;
+			AddMap(() => SettingName.ForceEnable, ForceEnableCheckBox);
+			AddMap(() => SettingName.ForceType, ForceTypeComboBox);
+			AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
+			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
+			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
+			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
+			AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
+			AddMap(() => SettingName.RightMotorDirection, RightMotorDirectionComboBox);
+			AddMap(() => SettingName.RightMotorStrength, RightMotorStrengthTrackBar);
+			AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
+		}
+
+		void AddMap<T>(Expression<Func<T>> setting, Control control)
+		{
+			var section = string.Format(@"PAD{0}\", (int)MappedTo);
+			SettingManager.AddMap(section, setting, control, MappedTo);
 		}
 
 		#endregion
@@ -636,37 +673,43 @@ namespace x360ce.App.Controls
 
 		Joystick _device;
 
+		public void UpdateFromDirectInput()
+		{
+			var grid = DevicesToMapDataGridView;
+			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			Engine.Data.Setting setting = null;
+			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
+			DiDevice device = null;
+			if (setting != null) device = SettingManager.GetDevice(setting.InstanceGuid);
+			if (device == null)
+			{
+				UpdateFromDirectInput(null, null);
+			}
+			else
+			{
+				UpdateFromDirectInput(device.State, device.Info);
+			}
+		}
+
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
 		/// </summary>
 		/// <param name="device">Device responsible for activity.</param>
-		public void UpdateFromDirectInput(Joystick device, DeviceInfo dInfo)
+		void UpdateFromDirectInput(Joystick device, DeviceInfo dInfo)
 		{
 			// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
 			JoystickState state;
 			//List<string> actions = 
-			diControl.UpdateFrom(device, dInfo, out state);
+			directInputControl1.UpdateFrom(device, dInfo, out state);
 			DirectInputState diState = null;
 			if (state != null) diState = new DirectInputState(state);
 			StopRecording(diState);
-			var contains = PadTabControl.TabPages.Contains(DirectInputTabPage);
-			var focusTab = false;
 			_device = device;
 			var enable = device != null;
 			AutoPresetButton.Enabled = enable;
-			if (!enable && contains)
+			if (directInputControl1.Enabled != enable)
 			{
-				PadTabControl.TabPages.Remove(DirectInputTabPage);
-			}
-			if (enable && !contains)
-			{
-				PadTabControl.TabPages.Add(DirectInputTabPage);
-				var controllerInstance = MainForm.Current.AutoSelectControllerInstance;
-				if (controllerInstance != Guid.Empty && controllerInstance == device.Information.InstanceGuid)
-				{
-					MainForm.Current.AutoSelectControllerInstance = Guid.Empty;
-					focusTab = true;
-				}
+				directInputControl1.Enabled = enable;
 			}
 			ForceFeedbackGroupBox.Enabled = enable;
 			TriggersGroupBox.Enabled = enable;
@@ -691,13 +734,6 @@ namespace x360ce.App.Controls
 				}
 				instanceGuid = !enable ? Guid.Empty : iGuid;
 				ResetDiMenuStrip(device);
-			}
-			if (focusTab)
-			{
-				PadTabControl.SelectedTab = DirectInputTabPage;
-				Application.DoEvents();
-				var padTabPage = (TabPage)this.Parent;
-				((TabControl)padTabPage.Parent).SelectedTab = padTabPage;
 			}
 		}
 
@@ -748,7 +784,7 @@ namespace x360ce.App.Controls
 			UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", _leftX, _leftY));
 			UpdateControl(RightThumbTextBox, string.Format("{0};{1}", _rightX, _rightY));
 
-			var axis = diControl.Axis;
+			var axis = directInputControl1.Axis;
 			bool success;
 			int index;
 			SettingType type;
@@ -815,7 +851,7 @@ namespace x360ce.App.Controls
 			// Add Axes.
 			mi = new ToolStripMenuItem("Axes");
 			DiMenuStrip.Items.Add(mi);
-			var axisCount = diControl.Axis.Length;
+			var axisCount = directInputControl1.Axis.Length;
 			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", axisCount);
 			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", axisCount);
 			CreateItems(mi, "Half", "HAxis {0}", "x{0}", axisCount);
@@ -941,7 +977,6 @@ namespace x360ce.App.Controls
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
-
 		void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
@@ -954,8 +989,6 @@ namespace x360ce.App.Controls
 			TrackBar control = (TrackBar)sender;
 			RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
-
-
 
 		void MotorTrackBar_ValueChanged(object sender, EventArgs e)
 		{
@@ -988,13 +1021,13 @@ namespace x360ce.App.Controls
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
 			lock (MainForm.XInputLock)
 			{
-				var gPad = MainForm.Current.GamePads[ControllerIndex];
-				if (XInput.IsLoaded && gPad.IsConnected)
+				var gamePad = MainForm.Current.XiControllers[(int)MappedTo - 1];
+				if (XInput.IsLoaded && gamePad.IsConnected)
 				{
 					var vibration = new Vibration();
 					vibration.LeftMotorSpeed = leftMotor;
 					vibration.RightMotorSpeed = rightMotor;
-					gPad.SetVibration(vibration);
+					gamePad.SetVibration(vibration);
 				}
 			}
 			//UnsafeNativeMethods.Enable(false);
@@ -1015,25 +1048,27 @@ namespace x360ce.App.Controls
 
 		void ClearPresetButton_Click(object sender, EventArgs e)
 		{
-			var text = string.Format("Do you really want to clear all Controller {0} settings?", ControllerIndex + 1);
+			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
+			var text = string.Format("Do you really want to clear all {0} settings?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				SettingManager.Current.ClearPadSettings(MappedTo);
 			}
 		}
 
 		void ResetPresetButton_Click(object sender, EventArgs e)
 		{
-			var text = string.Format("Do you really want to reset all Controller {0} settings?", ControllerIndex + 1);
+			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
+			var text = string.Format("Do you really want to reset all {0} settings?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(text, "Reset Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.ReloadXinputSettings();
+				//MainForm.Current.ReloadXinputSettings();
 			}
 		}
 
@@ -1041,13 +1076,14 @@ namespace x360ce.App.Controls
 		{
 			var d = _device;
 			if (d == null) return;
-			var text = string.Format("Do you want to fill all Controller {0} settings automatically?", ControllerIndex + 1);
+			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
+            var text = string.Format("Do you want to fill all {0} settings automatically?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				SettingManager.Current.ClearPadSettings(MappedTo);
 				var objects = AppHelper.GetDeviceObjects(d);
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
@@ -1150,21 +1186,19 @@ namespace x360ce.App.Controls
 
 		void AutoPresetRead(string key, string value)
 		{
-			var pad = string.Format("PAD{0}", ControllerIndex + 1);
+			var pad = string.Format("PAD{0}", (int)MappedTo);
 			var path = string.Format("{0}\\{1}", pad, key);
-			var control = SettingsMap[path];
+			var control = SettingManager.Current.SettingsMap
+				.Where(x => x.MapTo == MappedTo)
+				.First(x => x.IniPath == path).Control;
 			//control.Text = value;
-			SettingManager.Current.ReadSettingTo(control, key, value);
+			SettingManager.Current.LoadSetting(control, key, value);
 		}
 
 		void SavePresetButton_Click(object sender, EventArgs e)
 		{
-			MainForm.Current.SaveSettings();
-		}
-
-		void PadTabControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			MainForm.Current.UpdateHelpHeader();
+			SettingManager.Current.WriteAllSettingsToInit();
+			//MainForm.Current.SaveSettings();
 		}
 
 		/// <summary> 
@@ -1265,5 +1299,85 @@ namespace x360ce.App.Controls
 			}
 		}
 
+
+		LoadPresetsForm presetForm;
+
+		private void LoadPresetButton_Click(object sender, EventArgs e)
+		{
+			if (presetForm == null)
+			{
+				presetForm = new LoadPresetsForm();
+			}
+			presetForm.StartPosition = FormStartPosition.CenterParent;
+			var result = presetForm.ShowDialog();
+		}
+
+
+		#region Device To Map
+
+		private void DevicesToMapDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var setting = ((Engine.Data.Setting)grid.Rows[e.RowIndex].DataBoundItem);
+			var device = SettingManager.GetDevice(setting.InstanceGuid);
+			var isConnected = (device != null);
+			AppHelper.ApplyRowStyle(grid, e, isConnected);
+			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
+			{
+				// Hide device Instance GUID from public eyes. Show part of checksum.
+				e.Value = EngineHelper.GetID(setting.InstanceGuid);
+			}
+		}
+
+		private void AddMapButton_Click(object sender, EventArgs e)
+		{
+			var device = MainForm.Current.ShowDeviceForm();
+			if (device != null)
+			{
+				var game = MainForm.Current.GetCurrentGame();
+				if (game != null)
+				{
+					var setting = SettingManager.GetSetting(device.InstanceGuid, game.FileName);
+					if (setting == null)
+					{
+						var newSetting = AppHelper.GetNewSetting(device, game, MappedTo);
+						SettingManager.Settings.Items.Add(newSetting);
+					}
+					else
+					{
+						setting.MapTo = (int)MappedTo;
+					}
+				}
+			}
+		}
+
+		private void RemoveMapButton_Click(object sender, EventArgs e)
+		{
+			var grid = DevicesToMapDataGridView;
+			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (Engine.Data.Setting)x.DataBoundItem).ToArray();
+			foreach (var item in items)
+			{
+				item.MapTo = (int)MapTo.Disabled;
+			}
+		}
+
+		private void DevicesToMapDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			var grid = DevicesToMapDataGridView;
+			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			Engine.Data.Setting setting = null;
+			if (row != null)
+			{
+				setting = row.DataBoundItem as Engine.Data.Setting;
+			}
+			Engine.Data.PadSetting padSetting = null;
+			if (setting != null)
+			{
+				padSetting = SettingManager.GetPadSetting(setting.PadSettingChecksum);
+			}
+			SettingManager.Current.LoadPadSettings(MappedTo, padSetting);
+		}
+
+		#endregion
 	}
 }

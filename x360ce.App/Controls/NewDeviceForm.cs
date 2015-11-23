@@ -116,7 +116,7 @@ namespace x360ce.App.Controls
 						var section = s.FileProductName;
 						MainForm.Current.SuspendEvents();
 						// preset will be stored in inside [PAD1] section;
-						SettingManager.Current.ReadPadSettings(iniFile, section, _padIndex);
+						//SettingManager.Current.LoadPadSettings(iniFile, section, _padIndex);
 						MainForm.Current.ResumeEvents();
 						this.DialogResult = System.Windows.Forms.DialogResult.OK;
 					}
@@ -144,17 +144,25 @@ namespace x360ce.App.Controls
 			var result = (SearchResult)e.Result;
 			if (result.PadSettings.Length == 0)
 			{
-				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Setting was not found.", DateTime.Now), MessageBoxIcon.Information);
+				MainForm.Current.SetHeaderBody(
+					MessageBoxIcon.Information,
+                    "{0: yyyy-MM-dd HH:mm:ss}: Setting was not found.",
+					DateTime.Now
+				);
 			}
 			else
 			{
 				var padSectionName = SettingManager.Current.GetInstanceSection(_di.InstanceGuid);
 				SettingManager.Current.SetPadSetting(padSectionName, _di);
-				SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
+				//SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
-				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
+				//SettingManager.Current.LoadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
 				MainForm.Current.ResumeEvents();
-				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, (_padIndex + 1) + "." + _di.ProductName), MessageBoxIcon.Information);
+				MainForm.Current.SetHeaderBody(
+					MessageBoxIcon.Information,
+                    "{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.",
+					DateTime.Now, (_padIndex + 1) + "." + _di.ProductName
+				);
 			}
 			this.DialogResult = System.Windows.Forms.DialogResult.OK;
 		}

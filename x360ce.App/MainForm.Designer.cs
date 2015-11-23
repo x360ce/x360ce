@@ -43,13 +43,10 @@ namespace x360ce.App
 			this.StatusIsAdminLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusIniLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.TopPanel = new System.Windows.Forms.Panel();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
 			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
 			this.HelpSubjectLabel = new System.Windows.Forms.Label();
 			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
-			this.LoadinngCircleTimeout = new System.Windows.Forms.Timer(this.components);
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -57,13 +54,13 @@ namespace x360ce.App
 			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
+			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GameSettingsTabPage.SuspendLayout();
 			this.ControllerSettingsTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
 			this.MainStatusStrip.SuspendLayout();
-			this.TopPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
@@ -87,7 +84,7 @@ namespace x360ce.App
 			this.MainTabControl.Location = new System.Drawing.Point(6, 97);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(674, 541);
+			this.MainTabControl.Size = new System.Drawing.Size(674, 624);
 			this.MainTabControl.TabIndex = 1;
 			// 
 			// Pad1TabPage
@@ -95,7 +92,7 @@ namespace x360ce.App
 			this.Pad1TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
-			this.Pad1TabPage.Size = new System.Drawing.Size(666, 514);
+			this.Pad1TabPage.Size = new System.Drawing.Size(666, 597);
 			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "Controller 1";
 			// 
@@ -104,7 +101,7 @@ namespace x360ce.App
 			this.Pad2TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
-			this.Pad2TabPage.Size = new System.Drawing.Size(666, 514);
+			this.Pad2TabPage.Size = new System.Drawing.Size(666, 587);
 			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "Controller 2";
 			// 
@@ -113,7 +110,7 @@ namespace x360ce.App
 			this.Pad3TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
-			this.Pad3TabPage.Size = new System.Drawing.Size(666, 514);
+			this.Pad3TabPage.Size = new System.Drawing.Size(666, 587);
 			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "Controller 3";
 			// 
@@ -122,7 +119,7 @@ namespace x360ce.App
 			this.Pad4TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
-			this.Pad4TabPage.Size = new System.Drawing.Size(666, 514);
+			this.Pad4TabPage.Size = new System.Drawing.Size(666, 587);
 			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "Controller 4";
 			// 
@@ -132,7 +129,7 @@ namespace x360ce.App
 			this.OptionsTabPage.Controls.Add(this.OptionsPanel);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
-			this.OptionsTabPage.Size = new System.Drawing.Size(666, 514);
+			this.OptionsTabPage.Size = new System.Drawing.Size(666, 587);
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
@@ -141,7 +138,7 @@ namespace x360ce.App
 			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
 			this.OptionsPanel.Name = "OptionsPanel";
-			this.OptionsPanel.Size = new System.Drawing.Size(666, 514);
+			this.OptionsPanel.Size = new System.Drawing.Size(666, 587);
 			this.OptionsPanel.TabIndex = 30;
 			// 
 			// GameSettingsTabPage
@@ -151,7 +148,7 @@ namespace x360ce.App
 			this.GameSettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.GameSettingsTabPage.Name = "GameSettingsTabPage";
 			this.GameSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.GameSettingsTabPage.Size = new System.Drawing.Size(666, 514);
+			this.GameSettingsTabPage.Size = new System.Drawing.Size(666, 587);
 			this.GameSettingsTabPage.TabIndex = 2;
 			this.GameSettingsTabPage.Text = "Game Settings";
 			// 
@@ -160,7 +157,7 @@ namespace x360ce.App
 			this.GameSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameSettingsPanel.Location = new System.Drawing.Point(3, 3);
 			this.GameSettingsPanel.Name = "GameSettingsPanel";
-			this.GameSettingsPanel.Size = new System.Drawing.Size(660, 508);
+			this.GameSettingsPanel.Size = new System.Drawing.Size(660, 581);
 			this.GameSettingsPanel.TabIndex = 1;
 			// 
 			// ControllerSettingsTabPage
@@ -169,7 +166,7 @@ namespace x360ce.App
 			this.ControllerSettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.ControllerSettingsTabPage.Name = "ControllerSettingsTabPage";
 			this.ControllerSettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 514);
+			this.ControllerSettingsTabPage.Size = new System.Drawing.Size(666, 587);
 			this.ControllerSettingsTabPage.TabIndex = 1;
 			this.ControllerSettingsTabPage.Text = "Controller Settings";
 			// 
@@ -178,7 +175,7 @@ namespace x360ce.App
 			this.SettingsDatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsDatabasePanel.Location = new System.Drawing.Point(3, 3);
 			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
-			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 508);
+			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 581);
 			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
 			// HelpTabPage
@@ -186,7 +183,7 @@ namespace x360ce.App
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
 			this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
 			this.HelpTabPage.Name = "HelpTabPage";
-			this.HelpTabPage.Size = new System.Drawing.Size(666, 514);
+			this.HelpTabPage.Size = new System.Drawing.Size(666, 587);
 			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
@@ -199,7 +196,7 @@ namespace x360ce.App
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(666, 514);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(666, 587);
 			this.HelpRichTextBox.TabIndex = 0;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -208,7 +205,7 @@ namespace x360ce.App
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
-			this.AboutTabPage.Size = new System.Drawing.Size(666, 514);
+			this.AboutTabPage.Size = new System.Drawing.Size(666, 587);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
@@ -232,7 +229,7 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-			this.MainStatusStrip.Location = new System.Drawing.Point(0, 645);
+			this.MainStatusStrip.Location = new System.Drawing.Point(0, 728);
 			this.MainStatusStrip.Name = "MainStatusStrip";
 			this.MainStatusStrip.Size = new System.Drawing.Size(684, 24);
 			this.MainStatusStrip.SizingGrip = false;
@@ -286,36 +283,6 @@ namespace x360ce.App
 			this.StatusDllLabel.Size = new System.Drawing.Size(85, 19);
 			this.StatusDllLabel.Text = "StatusDllLabel";
 			// 
-			// TopPanel
-			// 
-			this.TopPanel.BackColor = System.Drawing.SystemColors.Info;
-			this.TopPanel.Controls.Add(this.BusyLoadingCircle);
-			this.TopPanel.Controls.Add(this.HelpBodyLabel);
-			this.TopPanel.Controls.Add(this.HelpPictureBox);
-			this.TopPanel.Controls.Add(this.HelpSubjectLabel);
-			this.TopPanel.Controls.Add(this.HeaderPictureBox);
-			this.TopPanel.Dock = System.Windows.Forms.DockStyle.Top;
-			this.TopPanel.Location = new System.Drawing.Point(0, 0);
-			this.TopPanel.Name = "TopPanel";
-			this.TopPanel.Size = new System.Drawing.Size(684, 64);
-			this.TopPanel.TabIndex = 3;
-			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(630, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
-			// 
 			// HelpBodyLabel
 			// 
 			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -357,10 +324,6 @@ namespace x360ce.App
 			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
 			this.HeaderPictureBox.TabIndex = 6;
 			this.HeaderPictureBox.TabStop = false;
-			// 
-			// LoadinngCircleTimeout
-			// 
-			this.LoadinngCircleTimeout.Tick += new System.EventHandler(this.LoadinngCircleTimeout_Tick);
 			// 
 			// TrayNotifyIcon
 			// 
@@ -415,25 +378,44 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(529, 21);
 			this.GameToCustomizeComboBox.TabIndex = 7;
 			// 
+			// BusyLoadingCircle
+			// 
+			this.BusyLoadingCircle.Active = false;
+			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
+			this.BusyLoadingCircle.InnerCircleRadius = 8;
+			this.BusyLoadingCircle.Location = new System.Drawing.Point(630, 9);
+			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
+			this.BusyLoadingCircle.NumberSpoke = 24;
+			this.BusyLoadingCircle.OuterCircleRadius = 9;
+			this.BusyLoadingCircle.RotationSpeed = 30;
+			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
+			this.BusyLoadingCircle.SpokeThickness = 4;
+			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
+			this.BusyLoadingCircle.TabIndex = 9;
+			// 
 			// MainForm
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(684, 669);
+			this.ClientSize = new System.Drawing.Size(684, 752);
 			this.Controls.Add(this.GameToCustomizeComboBox);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.TopPanel);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Controls.Add(this.MainTabControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(700, 680);
+			this.MinimumSize = new System.Drawing.Size(700, 790);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
+			this.Controls.SetChildIndex(this.MainTabControl, 0);
+			this.Controls.SetChildIndex(this.MainStatusStrip, 0);
+			this.Controls.SetChildIndex(this.label1, 0);
+			this.Controls.SetChildIndex(this.GameToCustomizeComboBox, 0);
 			this.MainTabControl.ResumeLayout(false);
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GameSettingsTabPage.ResumeLayout(false);
@@ -441,7 +423,6 @@ namespace x360ce.App
 			this.HelpTabPage.ResumeLayout(false);
 			this.MainStatusStrip.ResumeLayout(false);
 			this.MainStatusStrip.PerformLayout();
-			this.TopPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.TrayContextMenuStrip.ResumeLayout(false);
@@ -470,13 +451,6 @@ namespace x360ce.App
 		ToolStripStatusLabel StatusIniLabel;
         ToolStripStatusLabel StatusDllLabel;
         TabPage ControllerSettingsTabPage;
-		Panel TopPanel;
-		internal Label HelpBodyLabel;
-		internal PictureBox HelpPictureBox;
-		internal Label HelpSubjectLabel;
-		internal PictureBox HeaderPictureBox;
-		MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-        Timer LoadinngCircleTimeout;
         public Controls.ControllerSettingsUserControl SettingsDatabasePanel;
         public TabControl MainTabControl;
 		TabPage GameSettingsTabPage;
@@ -489,5 +463,10 @@ namespace x360ce.App
 		private ToolStripMenuItem ExitToolStripMenuItem;
 		private Label label1;
 		private ComboBox GameToCustomizeComboBox;
+		internal Label HelpBodyLabel;
+		internal PictureBox HelpPictureBox;
+		internal Label HelpSubjectLabel;
+		internal PictureBox HeaderPictureBox;
+		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 	}
 }

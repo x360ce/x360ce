@@ -63,14 +63,14 @@ namespace x360ce.App.Controls
 				}
 				if (!string.IsNullOrEmpty(result))
 				{
-					MainForm.Current.UpdateHelpHeader(result, MessageBoxIcon.Error);
+					MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, result);
 				}
 			}
 			catch (Exception ex)
 			{
 				var error = ex.Message;
 				if (ex.InnerException != null) error += "\r\n" + ex.InnerException.Message;
-				MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
+				MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, error);
 			}
 
 		}

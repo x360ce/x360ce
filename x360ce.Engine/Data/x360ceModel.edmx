@@ -150,6 +150,7 @@
             <PropertyRef Name="SettingId" />
           </Key>
           <Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="VendorName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
@@ -309,6 +310,7 @@
 					<Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
 					<Property Type="DateTime" Name="DateSelected" Nullable="false" Precision="3" />
           <Property Name="MapTo" Type="Int32" Nullable="false" />
+          <Property Name="VendorName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
 				</EntityType>
 				<EntityType Name="Summary">
 					<Key>
@@ -485,7 +487,8 @@
 					<EntitySetMapping Name="Settings">
 						<EntityTypeMapping TypeName="x360ceModel.Setting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
-								<ScalarProperty Name="MapTo" ColumnName="MapTo" />
+								<ScalarProperty Name="VendorName" ColumnName="VendorName" />
+                <ScalarProperty Name="MapTo" ColumnName="MapTo" />
                 <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
 								<ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
 								<ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
@@ -613,7 +616,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="41" >
+			<Diagram Name="x360ceModel" ZoomLevel="78" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

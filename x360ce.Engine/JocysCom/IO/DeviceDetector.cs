@@ -289,11 +289,11 @@ namespace JocysCom.ClassLibrary.IO
 			var m = VidPidRx.Match(value.ToUpper());
 			if (m.Success)
 			{
-				vid = Convert.ToUInt32(m.Groups["vid"].Value, 16);
-				pid = Convert.ToUInt32(m.Groups["pid"].Value, 16);
+				vid = System.Convert.ToUInt32(m.Groups["vid"].Value, 16);
+				pid = System.Convert.ToUInt32(m.Groups["pid"].Value, 16);
 				if (!string.IsNullOrEmpty(m.Groups["rev"].Value))
 				{
-					rev = Convert.ToUInt32(m.Groups["rev"].Value, 16);
+					rev = System.Convert.ToUInt32(m.Groups["rev"].Value, 16);
 				}
 			}
 			return value;

@@ -48,7 +48,17 @@ namespace x360ce.App.Controls
 			// Configure Games.
 			SettingManager.Games.Items.ListChanged += new ListChangedEventHandler(Games_ListChanged);
 			GamesDataGridView.DataSource = SettingManager.Games.Items;
+			SettingManager.Games.Items.ListChanged += Games_Items_ListChanged;
 			UpdateControlsFromGames();
+		}
+
+		private void GamesDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+		{
+			ShowHideAndSelectGridRows();
+		}
+
+		private void Games_Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
 			ShowHideAndSelectGridRows();
 		}
 
@@ -142,7 +152,6 @@ namespace x360ce.App.Controls
 			{
 				ScanGamesButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
-				ShowHideAndSelectGridRows();
 			});
 		}
 
@@ -280,7 +289,6 @@ namespace x360ce.App.Controls
 				// Workaround for first cell click.
 				var game = SettingManager.Games.Items.First(x => x.FileName.ToLower() == item.FileName.ToLower());
 				game.IsEnabled = !game.IsEnabled;
-				ShowHideAndSelectGridRows();
 			}
 		}
 
@@ -328,7 +336,6 @@ namespace x360ce.App.Controls
 					SettingManager.Games.Items.Remove(item);
 				}
 				SettingManager.Save();
-				ShowHideAndSelectGridRows();
 				CloudStoragePanel.Add(itemsToDelete, CloudAction.Delete);
 			}
 		}
@@ -338,7 +345,6 @@ namespace x360ce.App.Controls
 			var item = (ToolStripMenuItem)sender;
 			ShowGamesDropDownButton.Image = item.Image;
 			ShowGamesDropDownButton.Text = item.Text;
-			ShowHideAndSelectGridRows();
 		}
 
 		void GamesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -347,12 +353,7 @@ namespace x360ce.App.Controls
 			var row = grid.Rows[e.RowIndex];
 			var item = ((x360ce.Engine.Data.Game)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
-			e.CellStyle.ForeColor = item.IsEnabled
-					? grid.DefaultCellStyle.ForeColor
-					: SystemColors.ControlDark;
-			e.CellStyle.SelectionBackColor = item.IsEnabled
-			 ? grid.DefaultCellStyle.SelectionBackColor
-			 : SystemColors.ControlDark;
+			AppHelper.ApplyRowStyle(grid, e, item.IsEnabled);
 			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
 			//	? System.Drawing.Color.Gray
 			//	: grid.DefaultCellStyle.ForeColor;
@@ -590,8 +591,11 @@ namespace x360ce.App.Controls
 				// Add new one.
 				SettingManager.Programs.Items.Add(newItem);
 			}
-			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
-			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
+			MainForm.Current.SetHeaderBody(
+				MessageBoxIcon.Information,
+				"{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.",
+				DateTime.Now, programs.Count()
+			);
 			ProgramsDataGridView.DataSource = SettingManager.Programs.Items;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
 			SettingManager.Save(true);
@@ -623,11 +627,11 @@ namespace x360ce.App.Controls
 				{
 					var error = e.Error.Message;
 					if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-					MainForm.Current.UpdateHelpHeader(error, MessageBoxIcon.Error);
+					MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, error);
 				}
 				else if (e.Result == null)
 				{
-					MainForm.Current.UpdateHelpHeader("No results were returned by the web service!", MessageBoxIcon.Error);
+					MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, "No results were returned by the web service!");
 				}
 				else
 				{

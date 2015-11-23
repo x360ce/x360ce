@@ -10,6 +10,7 @@ using x360ce.Engine;
 using x360ce.Engine.Win32;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Windows.Forms;
 
 namespace x360ce.App
 {
@@ -195,5 +196,53 @@ namespace x360ce.App
 			return rulesChanged;
 		}
 
+		/// <summary>
+		/// Update DataGridView is such way that it won't loose selection.
+		/// </summary>
+		public static void UpdateList<T>(IList<T> source, IList<T> destination)
+		{
+			if (source == null) source = new List<T>();
+			var sCount = source.Count;
+			var dCount = destination.Count;
+			var length = Math.Min(sCount, dCount);
+			for (int i = 0; i < length; i++) destination[i] = source[i];
+			// Add extra rows.
+			if (sCount > dCount)
+			{
+				for (int i = dCount; i < sCount; i++) destination.Add(source[i]);
+			}
+			else if (dCount > sCount)
+			{
+				for (int i = dCount - 1; i >= sCount; i--) destination.RemoveAt(i);
+			}
+		}
+
+		public static Engine.Data.Setting GetNewSetting(DiDevice device, Engine.Data.Game game, MapTo mapTo)
+		{
+			// Create new setting for game/device.
+			var newSetting = new Engine.Data.Setting();
+			newSetting.InstanceGuid = device.InstanceGuid;
+			newSetting.InstanceName = device.Instance.InstanceName;
+			newSetting.IsEnabled = true;
+			newSetting.ProductGuid = device.Instance.ProductGuid;
+			newSetting.ProductName = device.Instance.ProductName;
+			newSetting.VendorName = device.Info.Manufacturer;
+			newSetting.FileName = game.FileName;
+			newSetting.FileProductName = game.FileProductName;
+			newSetting.DateCreated = DateTime.Now;
+			newSetting.DeviceType = (int)device.Instance.Type;
+			newSetting.MapTo = (int)mapTo;
+			return newSetting;
+		}
+
+		public static void ApplyRowStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, bool enabled)
+		{
+			e.CellStyle.ForeColor = enabled
+				? grid.DefaultCellStyle.ForeColor
+				: SystemColors.ControlDark;
+			e.CellStyle.SelectionBackColor = enabled
+			 ? grid.DefaultCellStyle.SelectionBackColor
+			 : SystemColors.ControlDark;
+		}
 	}
 }

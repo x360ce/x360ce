@@ -489,6 +489,12 @@ namespace x360ce.Engine
 
 		#endregion
 
+		public static string GetID(Guid guid)
+		{
+			Guid hash = Guid.Empty.Equals(guid) ? guid : ComputeMd5Hash(guid.ToByteArray());
+			return hash.ToString().Substring(0, 8).ToUpper();
+		}
+
 		#region Get Key Name
 
 		/// <summary>

@@ -37,7 +37,6 @@ namespace x360ce.App
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
 		static public string DefaultVersion { get { return "2"; } }
-		static public string Mappings { get { return "Mappings"; } }
 
 		// [Options] section.
 		[DefaultValue("1"), Description("Beep when initialized. 0 = OFF, 1 = ON.")]

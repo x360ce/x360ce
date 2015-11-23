@@ -38,12 +38,13 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
-		public void InitSettingsManager()
+		public void UpdateSettingsManager()
 		{
+			/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
+
 			// INI setting keys with controls.
-			string section = @"Options\";
+			string section = SettingManager.OptionsSection;
 			SettingManager.AddMap(section, () => SettingName.UseInitBeep, UseInitBeepCheckBox);
 			SettingManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
 			SettingManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
@@ -97,7 +98,7 @@ namespace x360ce.App.Controls
 			if (GameScanLocationsListBox.SelectedIndex == -1) return;
 			var currentIndex = GameScanLocationsListBox.SelectedIndex;
 			GameScanLocationsListBox.Items.RemoveAt(currentIndex);
-			// Change selectd index for change event to fire.
+			// Change selected index for change event to fire.
 			GameScanLocationsListBox.SelectedIndex = Math.Min(currentIndex, GameScanLocationsListBox.Items.Count - 1);
 		}
 
@@ -143,7 +144,7 @@ namespace x360ce.App.Controls
 
 		private void SaveSettingsButton_Click(object sender, EventArgs e)
 		{
-			MainForm.Current.SaveSettings();
+			//MainForm.Current.SaveSettings();
 		}
 
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)

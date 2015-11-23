@@ -6,8 +6,8 @@ namespace x360ce.Engine
 	{
 		[Description("Disabled")]
 		Disabled = -1,
-		[Description("Auto")]
-		Auto = 0,
+		[Description("None")]
+		None = 0,
 		[Description("Controller 1")]
 		Controller1 = 1,
 		[Description("Controller 2")]

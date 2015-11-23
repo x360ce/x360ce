@@ -34,5 +34,29 @@ namespace x360ce.App.Properties {
                 this["MinimizeToTray"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExcludeSupplementalDevices {
+            get {
+                return ((bool)(this["ExcludeSupplementalDevices"]));
+            }
+            set {
+                this["ExcludeSupplementalDevices"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExcludeVirualDevices {
+            get {
+                return ((bool)(this["ExcludeVirualDevices"]));
+            }
+            set {
+                this["ExcludeVirualDevices"] = value;
+            }
+        }
     }
 }
