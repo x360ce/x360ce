@@ -7,7 +7,7 @@ namespace x360ce.App
 	public class DiDevice
 	{
 		/// <summary>DInput Device State.</summary>
-		public Joystick State;
+		public Joystick Device;
 		/// <summary>DInput Device Info.</summary>
 		public DeviceInfo Info;
 		/// <summary>DInput Device Instance.</summary>

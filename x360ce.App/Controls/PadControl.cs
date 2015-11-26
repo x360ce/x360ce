@@ -270,7 +270,7 @@ namespace x360ce.App.Controls
 						// If suitable action was recorded then...
 						SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
 						// Save setting and notify if value changed.
-						if (SettingManager.Current.WriteSettingToIni(CurrentCbx)) MainForm.Current.NotifySettingsChange();
+						MainForm.Current.NotifySettingsChange(CurrentCbx);
 					}
 					CurrentCbx.ForeColor = SystemColors.WindowText;
 					CurrentCbx = null;
@@ -459,7 +459,7 @@ namespace x360ce.App.Controls
 			int mW = -this.markC.Width / 2;
 			int mH = -this.markC.Height / 2;
 			var index = (int)MappedTo - 1;
-            e.Graphics.DrawImage(this.markC, pads[index].X + mW, pads[index].Y + mH);
+			e.Graphics.DrawImage(this.markC, pads[index].X + mW, pads[index].Y + mH);
 
 			float padSize = 22F / (float)(ushort.MaxValue);
 
@@ -671,9 +671,7 @@ namespace x360ce.App.Controls
 			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
 		}
 
-		Joystick _device;
-
-		public void UpdateFromDirectInput()
+		DiDevice GetCurrentDevice()
 		{
 			var grid = DevicesToMapDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
@@ -681,31 +679,29 @@ namespace x360ce.App.Controls
 			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
 			DiDevice device = null;
 			if (setting != null) device = SettingManager.GetDevice(setting.InstanceGuid);
-			if (device == null)
-			{
-				UpdateFromDirectInput(null, null);
-			}
-			else
-			{
-				UpdateFromDirectInput(device.State, device.Info);
-			}
+			return device;
 		}
 
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
 		/// </summary>
-		/// <param name="device">Device responsible for activity.</param>
-		void UpdateFromDirectInput(Joystick device, DeviceInfo dInfo)
+		public void UpdateFromDirectInput()
 		{
+			var diDevice = GetCurrentDevice();
+			Joystick device = null;
+			DeviceInfo dInfo = null;
+			if (diDevice != null)
+			{
+				device = diDevice.Device;
+				dInfo = diDevice.Info;
+			}
 			// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
 			JoystickState state;
-			//List<string> actions = 
-			directInputControl1.UpdateFrom(device, dInfo, out state);
+			directInputControl1.UpdateFrom(diDevice, out state);
 			DirectInputState diState = null;
 			if (state != null) diState = new DirectInputState(state);
 			StopRecording(diState);
-			_device = device;
-			var enable = device != null;
+			var enable = diDevice != null;
 			AutoPresetButton.Enabled = enable;
 			if (directInputControl1.Enabled != enable)
 			{
@@ -721,7 +717,7 @@ namespace x360ce.App.Controls
 			RightThumbYUserControl.Enabled = enable;
 			if (enable)
 			{
-				UpdateControl(DirectInputTabPage, device.Information.InstanceName);
+				UpdateControl(DirectInputTabPage, diDevice.Instance.InstanceName);
 			}
 			// If this is different device.
 			if (!AppHelper.IsSameDevice(device, instanceGuid))
@@ -729,7 +725,7 @@ namespace x360ce.App.Controls
 				Guid iGuid = Guid.Empty;
 				if (enable)
 				{
-					try { iGuid = device.Information.InstanceGuid; }
+					try { iGuid = diDevice.InstanceGuid; }
 					catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
 				}
 				instanceGuid = !enable ? Guid.Empty : iGuid;
@@ -1074,17 +1070,17 @@ namespace x360ce.App.Controls
 
 		private void AutoPresetButton_Click(object sender, EventArgs e)
 		{
-			var d = _device;
+			var d = GetCurrentDevice();
 			if (d == null) return;
 			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
-            var text = string.Format("Do you want to fill all {0} settings automatically?", description);
+			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
 				SettingManager.Current.ClearPadSettings(MappedTo);
-				var objects = AppHelper.GetDeviceObjects(d);
+				var objects = AppHelper.GetDeviceObjects(d.Device);
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
 				// If Right thumb triggers are missing then...
@@ -1365,14 +1361,10 @@ namespace x360ce.App.Controls
 		{
 			var grid = DevicesToMapDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			Engine.Data.Setting setting = null;
+			Engine.Data.PadSetting padSetting = null;
 			if (row != null)
 			{
-				setting = row.DataBoundItem as Engine.Data.Setting;
-			}
-			Engine.Data.PadSetting padSetting = null;
-			if (setting != null)
-			{
+				var setting = (Engine.Data.Setting)row.DataBoundItem;
 				padSetting = SettingManager.GetPadSetting(setting.PadSettingChecksum);
 			}
 			SettingManager.Current.LoadPadSettings(MappedTo, padSetting);

@@ -298,21 +298,23 @@ namespace x360ce.App.Controls
 		Guid deviceInstanceGuid;
 		bool isWheel = false;
 
-		public void UpdateFrom(Joystick device, DeviceInfo dInfo, out JoystickState state)
+		public void UpdateFrom(DiDevice diDevice, out JoystickState state)
 		{
-			if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
-			{
-				ShowDeviceInfo(device, dInfo);
-				deviceInstanceGuid = Guid.Empty;
-				if (device != null)
-				{
-					deviceInstanceGuid = device.Information.InstanceGuid;
-					isWheel = device.Information.Type == SharpDX.DirectInput.DeviceType.Driving;
-				}
-			}
 			state = null;
-			if (device != null)
+			if (diDevice != null)
 			{
+				var device = diDevice.Device;
+				var info = diDevice.Info;
+				if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
+				{
+					ShowDeviceInfo(device, info);
+					deviceInstanceGuid = Guid.Empty;
+					if (device != null)
+					{
+						deviceInstanceGuid = device.Information.InstanceGuid;
+						isWheel = device.Information.Type == SharpDX.DirectInput.DeviceType.Driving;
+					}
+				}
 				try
 				{
 					device.Acquire();

@@ -69,8 +69,13 @@ namespace x360ce.App
 		public PadControl[] ControlPads;
 		public TabPage[] ControlPages;
 
-		public System.Timers.Timer UpdateTimer;
+		/// <summary>
+		/// Settings timer will be used to delay applying settings, which will heavy load application, as long as user is changing them.
+		/// </summary>
 		public System.Timers.Timer SettingsTimer;
+
+		public System.Timers.Timer UpdateTimer;
+
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
 
@@ -200,7 +205,7 @@ namespace x360ce.App
 					var di = new DiDevice();
 					di.Instance = device;
 					var state = new Joystick(Manager, device.InstanceGuid);
-					di.State = state;
+					di.Device = state;
 					var classGuid = state.Properties.ClassGuid;
 					// Must find better way to find Device than by Vendor ID and Product ID.
 					var info = DeviceDetector.GetDevices(
@@ -219,7 +224,7 @@ namespace x360ce.App
 					var device = updatedDevices[i];
 					var currentDevice = SettingManager.DiDevices.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
 					var state = new Joystick(Manager, device.InstanceGuid);
-					currentDevice.State = state;
+					currentDevice.Device = state;
 				}
 			}
 			var game = GetCurrentGame();
@@ -396,12 +401,13 @@ namespace x360ce.App
 		int resumed = 0;
 		int suspended = 0;
 		object eventsLock = new object();
-		object eventsEnabled = false;
+		bool eventsEnabled = false;
 
 		public void SuspendEvents()
 		{
 			lock (eventsLock)
 			{
+				if (!eventsEnabled) return;
 				StatusEventsLabel.Text = "OFF...";
 				// Don't allow controls to fire events.
 				var controls = SettingManager.Current.SettingsMap.Select(x => x.Control).ToArray();
@@ -423,17 +429,18 @@ namespace x360ce.App
 							control.TextChanged -= new EventHandler(this.Control_TextChanged);
 						}
 					}
-					// || control is TextBox
 				}
 				suspended++;
 				StatusEventsLabel.Text = string.Format("OFF {0} {1}", suspended, resumed);
-			}
+				eventsEnabled = false;
+            }
 		}
 
 		public void ResumeEvents()
 		{
 			lock (eventsLock)
 			{
+				if (eventsEnabled) return;
 				StatusEventsLabel.Text = "ON...";
 				// Allow controls to fire events.
 				var controls = SettingManager.Current.SettingsMap.Select(x => x.Control);
@@ -455,30 +462,14 @@ namespace x360ce.App
 							control.TextChanged += new EventHandler(this.Control_TextChanged);
 						}
 					}
-					//  || control is TextBox
 				}
 				resumed++;
 				StatusEventsLabel.Text = string.Format("ON {0} {1}", suspended, resumed);
+				eventsEnabled = true;
 			}
 		}
 
-		/// <summary>
-		/// Delay settings trough timer so interface will be more responsive on TrackBars.
-		/// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
-		/// </summary>
-		public void NotifySettingsChange()
-		{
-			UpdateTimer.Stop();
-			SettingsTimer.Stop();
-			// Timer will be started inside Settings timer.
-			SettingsTimer.Start();
-		}
-
-		void Control_TextChanged(object sender, EventArgs e)
-		{
-			// Save setting and notify if value changed.
-			if (SettingManager.Current.WriteSettingToIni((Control)sender)) NotifySettingsChange();
-		}
+		#region Control Changed Events
 
 		Dictionary<string, int> ListBoxCounts = new Dictionary<string, int>();
 
@@ -501,20 +492,58 @@ namespace x360ce.App
 				}
 			}
 			// Save setting and notify if value changed.
-			if (SettingManager.Current.WriteSettingToIni((Control)sender)) NotifySettingsChange();
+			NotifySettingsChange((Control)sender);
+		}
+
+		void Control_TextChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if value changed.
+			NotifySettingsChange((Control)sender);
 		}
 
 		void Control_ValueChanged(object sender, EventArgs e)
 		{
 			// Save setting and notify if value changed.
-			if (SettingManager.Current.WriteSettingToIni((Control)sender)) NotifySettingsChange();
+			NotifySettingsChange((Control)sender);
 		}
 
 		void Control_CheckedChanged(object sender, EventArgs e)
 		{
 			// Save setting and notify if value changed.
-			if (SettingManager.Current.WriteSettingToIni((Control)sender)) NotifySettingsChange();
+			NotifySettingsChange((Control)sender);
 		}
+
+		/// <summary>
+		/// Delay settings trough timer so interface will be more responsive on TrackBars.
+		/// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
+		/// </summary>
+		public void NotifySettingsChange(Control changedControl)
+		{
+			var game = GetCurrentGame();
+			var iniContent = SettingManager.Current.GetIniContent(game);
+			if (IniTextBox.Text != iniContent)
+			{
+				IniTextBox.Text = iniContent;
+			}
+			// If settings changed then...
+			if (SettingManager.Current.WriteSettingToIni(changedControl))
+			{
+				// Stop updating forms and controls.
+				// Update Timer will be started inside Settings timer.
+				UpdateTimer.Stop();
+				SettingsTimer.Stop();
+				SettingsTimer.Start();
+			}
+		}
+
+		void SettingsTimer_Elapsed(object sender, EventArgs e)
+		{
+			if (Program.IsClosing) return;
+			//settingsChanged = true;
+			UpdateTimer.Start();
+		}
+
+		#endregion
 
 		//public void ReloadXinputSettings()
 		//{
@@ -558,7 +587,6 @@ namespace x360ce.App
 								gamePad.SetVibration(new Vibration());
 							}
 						}
-
 					}
 					//BeginInvoke((MethodInvoker)delegate()
 					//{
@@ -763,13 +791,6 @@ namespace x360ce.App
 		//	return instancesChanged;
 		//}
 
-		void SettingsTimer_Elapsed(object sender, EventArgs e)
-		{
-			if (Program.IsClosing) return;
-			//settingsChanged = true;
-			UpdateTimer.Start();
-		}
-
 		//bool settingsChanged = false;
 		State emptyState = new State();
 
@@ -917,6 +938,7 @@ namespace x360ce.App
 			for (int i = 0; i < 4; i++)
 			{
 				var padControl = ControlPads[i];
+				padControl.UpdateFromDirectInput();
 				var game = MainForm.Current.GetCurrentGame();
 				var currentFile = (game == null) ? null : game.FileName;
 				var devices = SettingManager.GetDevices(currentFile, (MapTo)(i + 1));

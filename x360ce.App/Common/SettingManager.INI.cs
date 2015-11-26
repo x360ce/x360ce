@@ -150,11 +150,76 @@ namespace x360ce.App
 			return result;
 		}
 
+		/// Write game settings to INI file.
+		/// </summary>
+		/// <param name="game"></param>
+		public string GetIniContent(Game game)
+		{
+			var sb = new StringBuilder();
+			var optionsContent = GetIniContent(OptionsSection);
+			var mappingsContent = GetIniContent(MappingsSection);
+			sb.Append(optionsContent);
+			sb.AppendLine();
+			sb.Append(mappingsContent);
+			sb.AppendLine();
+			return sb.ToString();
+		}
+
 		/// <summary>
 		/// Write game settings to INI file.
 		/// </summary>
 		/// <param name="game"></param>
-		public void WriteIniFile(Game game)
+		public string GetIniContent(string sectionName)
+		{
+			var items = SettingsMap.Where(x => x.IniSection == sectionName).ToArray();
+			var sb = new StringBuilder();
+			sb.AppendFormat("[{0}]", sectionName).AppendLine();
+			for (int i = 0; i < items.Length; i++)
+			{
+				var item = items[i];
+				var value = GetSettingValue(item.Control);
+				sb.AppendFormat("{0}={1}", item.IniKey, value);
+			}
+			return sb.ToString();
+		}
+
+		///// <summary>
+		///// Write game settings to INI file.
+		///// </summary>
+		///// <param name="game"></param>
+		//public string GetIniContent(Game game)
+		//{
+		//	// Get game directory.
+		//	var dir = new FileInfo(game.FullPath).Directory;
+		//	// Get INI file.
+		//	var iniFile = dir.GetFiles(IniFileName).FirstOrDefault();
+		//	var ini = new Ini(iniFile.FullName);
+		//	var optionKeys = new[] { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
+		//	for (int i = 0; i < optionKeys.Length; i++)
+		//	{
+		//		var optionKey = optionKeys[i];
+		//		var mapTo = (MapTo)(i + 1);
+		//		// Write PADx.
+		//		var mapItem = SettingsMap.FirstOrDefault(x => x.IniSection == OptionsSection && x.IniKey == optionKey);
+		//		WriteSettingsToIni(mapItem);
+		//		var settings = SettingManager.Settings.Items.Where(x => x.MapTo == (int)mapTo).ToArray();
+		//		for (int s = 0; s < settings.Length; s++)
+		//		{
+		//			var setting = settings[i];
+		//			var padSetting = SettingManager.GetPadSetting(setting.PadSettingChecksum);
+		//			var padSectionName = string.Format("IG_{0:N}", setting.InstanceGuid);
+		//			WritePadSettingsToIni(padSectionName, setting, padSetting);
+		//		}
+		//	}
+		//	return null;
+		//}
+
+
+		/// <summary>
+		/// Write game settings to INI file.
+		/// </summary>
+		/// <param name="game"></param>
+		public string GetIniContent2(Game game)
 		{
 			// Get game directory.
 			var dir = new FileInfo(game.FullPath).Directory;
@@ -178,6 +243,7 @@ namespace x360ce.App
 					WritePadSettingsToIni(padSectionName, setting, padSetting);
 				}
 			}
+			return null;
 		}
 
 		/// <summary>
