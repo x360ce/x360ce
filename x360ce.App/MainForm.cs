@@ -398,74 +398,70 @@ namespace x360ce.App
 
 		#region Setting Events
 
-		int resumed = 0;
-		int suspended = 0;
 		object eventsLock = new object();
-		bool eventsEnabled = false;
+		int eventsSuspendCount;
 
 		public void SuspendEvents()
 		{
 			lock (eventsLock)
 			{
-				if (!eventsEnabled) return;
-				StatusEventsLabel.Text = "OFF...";
+				eventsSuspendCount++;
+				StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
+				// If events already suspended then return.
+				if (eventsSuspendCount > 1) return;
 				// Don't allow controls to fire events.
 				var controls = SettingManager.Current.SettingsMap.Select(x => x.Control).ToArray();
-                foreach (var control in controls)
+				foreach (var control in controls)
 				{
-					if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
-					if (control is ListBox) ((ListBox)control).SelectedIndexChanged -= new EventHandler(Control_SelectedIndexChanged);
 					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
+					if (control is ListBox) ((ListBox)control).SelectedIndexChanged -= new EventHandler(Control_SelectedIndexChanged);
+					if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
 					if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
 					if (control is ComboBox)
 					{
 						var cbx = (ComboBox)control;
 						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
 						{
-							cbx.SelectedIndexChanged -= new EventHandler(this.Control_TextChanged);
+							cbx.SelectedIndexChanged -= new EventHandler(Control_TextChanged);
 						}
 						else
 						{
-							control.TextChanged -= new EventHandler(this.Control_TextChanged);
+							cbx.TextChanged -= new EventHandler(Control_TextChanged);
 						}
 					}
 				}
-				suspended++;
-				StatusEventsLabel.Text = string.Format("OFF {0} {1}", suspended, resumed);
-				eventsEnabled = false;
-            }
+			}
 		}
 
 		public void ResumeEvents()
 		{
 			lock (eventsLock)
 			{
-				if (eventsEnabled) return;
-				StatusEventsLabel.Text = "ON...";
+				eventsSuspendCount--;
+				StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
+				// If events already resumed then return.
+				if (eventsSuspendCount < 1) return;
 				// Allow controls to fire events.
 				var controls = SettingManager.Current.SettingsMap.Select(x => x.Control);
-                foreach (var control in controls)
+				foreach (var control in controls)
 				{
-					if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
-					if (control is ListBox) ((ListBox)control).SelectedIndexChanged += new EventHandler(Control_SelectedIndexChanged);
 					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
+					if (control is ListBox) ((ListBox)control).SelectedIndexChanged += new EventHandler(Control_SelectedIndexChanged);
+					if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
 					if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
 					if (control is ComboBox)
 					{
 						var cbx = (ComboBox)control;
 						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
 						{
-							cbx.SelectedIndexChanged += new EventHandler(this.Control_TextChanged);
+							cbx.SelectedIndexChanged += new EventHandler(Control_TextChanged);
 						}
 						else
 						{
-							control.TextChanged += new EventHandler(this.Control_TextChanged);
+							cbx.TextChanged += new EventHandler(Control_TextChanged);
 						}
 					}
 				}
-				resumed++;
-				StatusEventsLabel.Text = string.Format("ON {0} {1}", suspended, resumed);
-				eventsEnabled = true;
 			}
 		}
 
@@ -870,7 +866,7 @@ namespace x360ce.App
 			ControlPads = new PadControl[4];
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
-				ControlPads[i] = new Controls.PadControl((MapTo)i+1);
+				ControlPads[i] = new Controls.PadControl((MapTo)i + 1);
 				ControlPads[i].Name = string.Format("ControlPad{0}", i + 1);
 				ControlPads[i].Dock = DockStyle.Fill;
 				ControlPages[i].Controls.Add(ControlPads[i]);
@@ -921,7 +917,6 @@ namespace x360ce.App
 				//	{
 				//		cleanPadStatus[i] = false;
 				//	}
-
 			}
 			//// If settings changed or directInput instances changed then...
 			//if (settingsChanged || instancesChanged)
@@ -1439,6 +1434,11 @@ namespace x360ce.App
 		private void TrayNotifyIcon_DoubleClick(object sender, EventArgs e)
 		{
 			RestoreFromTray();
+		}
+
+		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

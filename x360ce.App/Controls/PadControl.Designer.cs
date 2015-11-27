@@ -16,11 +16,11 @@
 		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
-			this.directInputControl1 = new x360ce.App.Controls.DirectInputControl();
+			this.DirectInputPanel = new x360ce.App.Controls.DirectInputControl();
 			this.AdvancedTabPage = new System.Windows.Forms.TabPage();
 			this.AdvancedOptionsPanel = new System.Windows.Forms.Panel();
 			this.CombineGroupBox = new System.Windows.Forms.GroupBox();
@@ -251,7 +251,7 @@
 			// 
 			// DirectInputTabPage
 			// 
-			this.DirectInputTabPage.Controls.Add(this.directInputControl1);
+			this.DirectInputTabPage.Controls.Add(this.DirectInputPanel);
 			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
 			this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -259,13 +259,13 @@
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
-			// directInputControl1
+			// DirectInputPanel
 			// 
-			this.directInputControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.directInputControl1.Location = new System.Drawing.Point(3, 3);
-			this.directInputControl1.Name = "directInputControl1";
-			this.directInputControl1.Size = new System.Drawing.Size(687, 432);
-			this.directInputControl1.TabIndex = 0;
+			this.DirectInputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DirectInputPanel.Location = new System.Drawing.Point(3, 3);
+			this.DirectInputPanel.Name = "DirectInputPanel";
+			this.DirectInputPanel.Size = new System.Drawing.Size(687, 432);
+			this.DirectInputPanel.TabIndex = 0;
 			// 
 			// AdvancedTabPage
 			// 
@@ -2195,40 +2195,40 @@
 			this.DevicesToMapDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.DevicesToMapDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.DevicesToMapDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DevicesToMapDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DevicesToMapDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.DevicesToMapDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.DevicesToMapDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.InstanceIdColumn,
             this.VendorNameColumn,
             this.ProductNameColumn});
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.DevicesToMapDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.DevicesToMapDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.DevicesToMapDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesToMapDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DevicesToMapDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.DevicesToMapDataGridView.MultiSelect = false;
 			this.DevicesToMapDataGridView.Name = "DevicesToMapDataGridView";
 			this.DevicesToMapDataGridView.ReadOnly = true;
-			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DevicesToMapDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DevicesToMapDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.DevicesToMapDataGridView.RowHeadersVisible = false;
 			this.DevicesToMapDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.DevicesToMapDataGridView.Size = new System.Drawing.Size(619, 52);
@@ -2608,7 +2608,7 @@
 		private System.Windows.Forms.ToolStripButton RemoveMapButton;
 		private System.Windows.Forms.ToolStripButton AddMapButton;
 		private System.Windows.Forms.Panel DevicesToMapSeparatorPanel;
-		private DirectInputControl directInputControl1;
+		private DirectInputControl DirectInputPanel;
 		private System.Windows.Forms.Button LoadPresetButton;
 		private System.Windows.Forms.DataGridViewTextBoxColumn InstanceIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;

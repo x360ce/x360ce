@@ -31,6 +31,8 @@ namespace x360ce.App
 			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
 			this.ControllerSettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
+			this.IniTabPage = new System.Windows.Forms.TabPage();
+			this.IniTextBox = new System.Windows.Forms.TextBox();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -55,18 +57,16 @@ namespace x360ce.App
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.IniTabPage = new System.Windows.Forms.TabPage();
-			this.IniTextBox = new System.Windows.Forms.TextBox();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GameSettingsTabPage.SuspendLayout();
 			this.ControllerSettingsTabPage.SuspendLayout();
+			this.IniTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
 			this.MainStatusStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
-			this.IniTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
@@ -181,6 +181,28 @@ namespace x360ce.App
 			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
 			this.SettingsDatabasePanel.Size = new System.Drawing.Size(660, 591);
 			this.SettingsDatabasePanel.TabIndex = 0;
+			// 
+			// IniTabPage
+			// 
+			this.IniTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.IniTabPage.Controls.Add(this.IniTextBox);
+			this.IniTabPage.Location = new System.Drawing.Point(4, 23);
+			this.IniTabPage.Name = "IniTabPage";
+			this.IniTabPage.Size = new System.Drawing.Size(666, 597);
+			this.IniTabPage.TabIndex = 3;
+			this.IniTabPage.Text = "INI";
+			// 
+			// IniTextBox
+			// 
+			this.IniTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.IniTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.IniTextBox.Location = new System.Drawing.Point(0, 0);
+			this.IniTextBox.Multiline = true;
+			this.IniTextBox.Name = "IniTextBox";
+			this.IniTextBox.ReadOnly = true;
+			this.IniTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.IniTextBox.Size = new System.Drawing.Size(666, 597);
+			this.IniTextBox.TabIndex = 1;
 			// 
 			// HelpTabPage
 			// 
@@ -381,6 +403,7 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
 			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(529, 21);
 			this.GameToCustomizeComboBox.TabIndex = 7;
+			this.GameToCustomizeComboBox.SelectedIndexChanged += new System.EventHandler(this.GameToCustomizeComboBox_SelectedIndexChanged);
 			// 
 			// BusyLoadingCircle
 			// 
@@ -397,28 +420,6 @@ namespace x360ce.App
 			this.BusyLoadingCircle.SpokeThickness = 4;
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
-			// 
-			// IniTabPage
-			// 
-			this.IniTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.IniTabPage.Controls.Add(this.IniTextBox);
-			this.IniTabPage.Location = new System.Drawing.Point(4, 23);
-			this.IniTabPage.Name = "IniTabPage";
-			this.IniTabPage.Size = new System.Drawing.Size(666, 597);
-			this.IniTabPage.TabIndex = 3;
-			this.IniTabPage.Text = "INI";
-			// 
-			// IniTextBox
-			// 
-			this.IniTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.IniTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.IniTextBox.Location = new System.Drawing.Point(0, 0);
-			this.IniTextBox.Multiline = true;
-			this.IniTextBox.Name = "IniTextBox";
-			this.IniTextBox.ReadOnly = true;
-			this.IniTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.IniTextBox.Size = new System.Drawing.Size(666, 597);
-			this.IniTextBox.TabIndex = 1;
 			// 
 			// MainForm
 			// 
@@ -446,14 +447,14 @@ namespace x360ce.App
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GameSettingsTabPage.ResumeLayout(false);
 			this.ControllerSettingsTabPage.ResumeLayout(false);
+			this.IniTabPage.ResumeLayout(false);
+			this.IniTabPage.PerformLayout();
 			this.HelpTabPage.ResumeLayout(false);
 			this.MainStatusStrip.ResumeLayout(false);
 			this.MainStatusStrip.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.TrayContextMenuStrip.ResumeLayout(false);
-			this.IniTabPage.ResumeLayout(false);
-			this.IniTabPage.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

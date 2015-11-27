@@ -403,8 +403,8 @@ namespace x360ce.App.Controls
 				}
 				else
 				{
-					UpdateControl(LeftTriggerTextBox, tl.ToString());
-					UpdateControl(RightTriggerTextBox, tr.ToString());
+					AppHelper.SetText(LeftTriggerTextBox, tl.ToString());
+					AppHelper.SetText(RightTriggerTextBox, tr.ToString());
 					on = tl > 0;
 					setLabelColor(on, LeftTriggerLabel);
 					if (on) e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
@@ -544,15 +544,15 @@ namespace x360ce.App.Controls
 		public void UpdateSettingsMap<T>()
 		{
 			// FakeAPI
-			AddMap(() => SettingName.ProductName, directInputControl1.DeviceProductNameTextBox);
-			AddMap(() => SettingName.ProductGuid, directInputControl1.DeviceProductGuidTextBox);
-			AddMap(() => SettingName.InstanceGuid, directInputControl1.DeviceInstanceGuidTextBox);
+			AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
+			AddMap(() => SettingName.ProductGuid, DirectInputPanel.DeviceProductGuidTextBox);
+			AddMap(() => SettingName.InstanceGuid, DirectInputPanel.DeviceInstanceGuidTextBox);
 			AddMap(() => SettingName.DeviceSubType, DeviceSubTypeComboBox);
 			AddMap(() => SettingName.PassThrough, PassThroughCheckBox);
 			AddMap(() => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox);
 			AddMap(() => SettingName.PassThroughIndex, PassThroughIndexComboBox);
 			// Mapping
-			AddMap(() => SettingName.MapToPad, directInputControl1.MapToPadComboBox);
+			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 			// Triggers
 			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox);
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
@@ -656,7 +656,7 @@ namespace x360ce.App.Controls
 		State gamePadState;
 		bool gamePadStateIsConnected;
 		//XINPUT_GAMEPAD GamePad;
-		Guid instanceGuid;
+		Guid _InstanceGuid;
 
 		private void UpdatePassThroughRelatedControls()
 		{
@@ -682,54 +682,49 @@ namespace x360ce.App.Controls
 			return device;
 		}
 
+		object updateFromDirectInputLock = new object();
+
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
 		/// </summary>
 		public void UpdateFromDirectInput()
 		{
-			var diDevice = GetCurrentDevice();
-			Joystick device = null;
-			DeviceInfo dInfo = null;
-			if (diDevice != null)
+			lock (updateFromDirectInputLock)
 			{
-				device = diDevice.Device;
-				dInfo = diDevice.Info;
-			}
-			// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
-			JoystickState state;
-			directInputControl1.UpdateFrom(diDevice, out state);
-			DirectInputState diState = null;
-			if (state != null) diState = new DirectInputState(state);
-			StopRecording(diState);
-			var enable = diDevice != null;
-			AutoPresetButton.Enabled = enable;
-			if (directInputControl1.Enabled != enable)
-			{
-				directInputControl1.Enabled = enable;
-			}
-			ForceFeedbackGroupBox.Enabled = enable;
-			TriggersGroupBox.Enabled = enable;
-			AxisToDPadGroupBox.Enabled = enable;
-			DeviceGroupBox.Enabled = enable;
-			LeftThumbXUserControl.Enabled = enable;
-			LeftThumbYUserControl.Enabled = enable;
-			RightThumbXUserControl.Enabled = enable;
-			RightThumbYUserControl.Enabled = enable;
-			if (enable)
-			{
-				UpdateControl(DirectInputTabPage, diDevice.Instance.InstanceName);
-			}
-			// If this is different device.
-			if (!AppHelper.IsSameDevice(device, instanceGuid))
-			{
-				Guid iGuid = Guid.Empty;
+
+				var diDevice = GetCurrentDevice();
+				Guid instanceGuid = Guid.Empty;
+				var enable = diDevice != null;
 				if (enable)
 				{
-					try { iGuid = diDevice.InstanceGuid; }
-					catch (Exception) { if (SettingManager.Current.IsDebugMode) throw; }
+					instanceGuid = diDevice.InstanceGuid;
 				}
-				instanceGuid = !enable ? Guid.Empty : iGuid;
-				ResetDiMenuStrip(device);
+				AppHelper.SetEnabled(LoadPresetButton, enable);
+				AppHelper.SetEnabled(AutoPresetButton, enable);
+				AppHelper.SetEnabled(ClearPresetButton, enable);
+				AppHelper.SetEnabled(ResetPresetButton, enable);
+				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
+				for (int p = 0; p < pages.Length; p++)
+				{
+					// Get first control to disable which must be Panel.
+					var controls = pages[p].Controls.Cast<Control>().ToArray();
+					for (int c = 0; c < controls.Length; c++)
+					{
+						AppHelper.SetEnabled(controls[c], enable);
+					}
+				}
+				// If device instance changed then...
+				if (!Equals(instanceGuid, _InstanceGuid))
+				{
+					_InstanceGuid = instanceGuid;
+					ResetDiMenuStrip(enable ? diDevice.Device : null);
+				}
+				JoystickState state;
+				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
+				DirectInputPanel.UpdateFrom(diDevice, out state);
+				DirectInputState diState = null;
+				if (state != null) diState = new DirectInputState(state);
+				StopRecording(diState);
 			}
 		}
 
@@ -752,14 +747,14 @@ namespace x360ce.App.Controls
 				if (nowConnected)
 				{
 					// Enable form.
-					this.FrontPictureBox.Image = frontImage;
-					this.TopPictureBox.Image = topImage;
+					FrontPictureBox.Image = frontImage;
+					TopPictureBox.Image = topImage;
 				}
 				else
 				{
 					// Disable form.
-					this.FrontPictureBox.Image = frontDisabledImage;
-					this.TopPictureBox.Image = topDisabledImage;
+					FrontPictureBox.Image = frontDisabledImage;
+					TopPictureBox.Image = topDisabledImage;
 
 				}
 			}
@@ -777,10 +772,10 @@ namespace x360ce.App.Controls
 				_rightX = 0;
 				_rightY = 0;
 			}
-			UpdateControl(LeftThumbTextBox, string.Format("{0};{1}", _leftX, _leftY));
-			UpdateControl(RightThumbTextBox, string.Format("{0};{1}", _rightX, _rightY));
+			AppHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
+			AppHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
 
-			var axis = directInputControl1.Axis;
+			var axis = DirectInputPanel.Axis;
 			bool success;
 			int index;
 			SettingType type;
@@ -814,12 +809,6 @@ namespace x360ce.App.Controls
 			return (Byte)Math.Round((double)v * (double)Byte.MaxValue);
 		}
 
-		// Use this to reduce flickering.
-		public void UpdateControl(Control control, string text)
-		{
-			if (control.Text != text) control.Text = text;
-		}
-
 		string cRecord = "[Record]";
 		string cEmpty = "<empty>";
 
@@ -847,7 +836,7 @@ namespace x360ce.App.Controls
 			// Add Axes.
 			mi = new ToolStripMenuItem("Axes");
 			DiMenuStrip.Items.Add(mi);
-			var axisCount = directInputControl1.Axis.Length;
+			var axisCount = DirectInputPanel.Axis.Length;
 			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", axisCount);
 			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", axisCount);
 			CreateItems(mi, "Half", "HAxis {0}", "x{0}", axisCount);
