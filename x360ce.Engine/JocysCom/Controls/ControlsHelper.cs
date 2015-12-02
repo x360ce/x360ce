@@ -115,7 +115,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (control == null) return false;
 			if (!control.IsHandleCreated) return false;
 			if (control.Parent == null) return false;
-			var pointsToCheck = GetPoints(control);
+			var pointsToCheck = GetPoints(control, true);
 			foreach (var p in pointsToCheck)
 			{
 				var child = control.Parent.GetChildAtPoint(p);
@@ -125,16 +125,24 @@ namespace JocysCom.ClassLibrary.Controls
 			return false;
 		}
 
-		public static POINT[] GetPoints(Control control)
+		public static POINT[] GetPoints(Control control, bool relative = false)
 		{
-			var pos = control.PointToScreen(System.Drawing.Point.Empty);
+			var pos = relative
+				? System.Drawing.Point.Empty
+				// Get control position on the screen
+				: control.PointToScreen(System.Drawing.Point.Empty);
 			var pointsToCheck =
 				new POINT[]
 					{
+						// Top-Left.
 						pos,
+						// Top-Right.
 						new POINT(pos.X + control.Width - 1, pos.Y),
+						// Bottom-Left.
 						new POINT(pos.X, pos.Y + control.Height - 1),
+						// Bottom-Right.
 						new POINT(pos.X + control.Width - 1, pos.Y + control.Height - 1),
+						// Middle-Centre.
 						new POINT(pos.X + control.Width/2, pos.Y + control.Height/2)
 					};
 			return pointsToCheck;
