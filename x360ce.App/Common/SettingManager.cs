@@ -450,7 +450,7 @@ namespace x360ce.App
 				var cbx = (ComboBox)control;
 				if (control.ContextMenuStrip == null)
 				{
-					control.Text = value;
+                    control.Text = value;
 				}
 				else
 				{

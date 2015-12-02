@@ -254,16 +254,39 @@ namespace x360ce.App
 			if (control.Enabled != enabled) control.Enabled = enabled;
 		}
 
-		/// <summary>
-		/// Change value if it is different only.
-		///  This helps not to trigger control events when doing frequent events.
-		/// </summary>
-		public static void SetText(Control control, string format, params object[] args)
+
+        /// <summary>
+        /// Change value if it is different only.
+        /// This helps not to trigger control events when doing frequent events.
+        /// </summary>
+        public static void SetText(Control control, string format, params object[] args)
+        {
+            var text = (args == null)
+                ? format
+                : string.Format(format, args);
+            if (control.Text != text) control.Text = text;
+        }
+
+        /// <summary>
+        /// Change value if it is different only.
+        /// This helps not to trigger control events when doing frequent events.
+        /// </summary>
+        public static void SetText(ToolStripItem control, string format, params object[] args)
 		{
 			var text = (args == null)
 				? format
 				: string.Format(format, args);
 			if (control.Text != text) control.Text = text;
 		}
-	}
+
+        /// <summary>
+        /// Change value if it is different only.
+        /// This helps not to trigger control events when doing frequent events.
+        /// </summary>
+        public static void SetChecked(CheckBox control, bool check)
+        {
+            if (control.Checked != check) control.Checked = check;
+        }
+
+    }
 }

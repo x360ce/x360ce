@@ -671,6 +671,10 @@ namespace x360ce.App.Controls
 			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
 		}
 
+        /// <summary>
+        /// Get selected device. If device is not connected then return null.
+        /// </summary>
+        /// <returns></returns>
 		DiDevice GetCurrentDevice()
 		{
 			var grid = DevicesToMapDataGridView;
@@ -687,11 +691,10 @@ namespace x360ce.App.Controls
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
 		/// </summary>
-		public void UpdateFromDirectInput()
+		public void UpdateFromDInput()
 		{
 			lock (updateFromDirectInputLock)
 			{
-
 				var diDevice = GetCurrentDevice();
 				Guid instanceGuid = Guid.Empty;
 				var enable = diDevice != null;
