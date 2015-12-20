@@ -197,6 +197,7 @@ This is the new system utilised by r574+
   1. Sonic Generations
   1. Sonic the Hedgehog 4 EP 1
   1. Spelunky
+  1. Starwhal
   1. Street Fighter IV
   1. Street Fighter x Tekken
   1. Sudeki (Steam) (uses xinput1_2.dll)
