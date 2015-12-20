@@ -95,6 +95,7 @@ This is the new system utilised by r574+
   1. Batman Arkham City (uses xinput9_1_0.dll)
   1. Batman Arkham Origins
   1. Battlefield 3 (uses xinput9_1_0.dll)
+  1. Before the Echo
   1. BioHazard 6 (needs dinput8.dll)
   1. BioShock Infinite
   1. Blade Kitten
