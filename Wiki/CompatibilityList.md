@@ -169,6 +169,7 @@ This is the new system utilised by r574+
   1. NBA 2k14
   1. NBA 2k15
   1. Need For Speed Most Wanted 2012
+  1. Nuclear Throne
   1. Outlast (32bit and 64bit executables, defaults to 64bit on 64bit OS)
   1. Penny Arcade's On the Rain-Slick Precipice of Darkness 3
   1. Penny Arcade's On the Rain-Slick Precipice of Darkness 4
