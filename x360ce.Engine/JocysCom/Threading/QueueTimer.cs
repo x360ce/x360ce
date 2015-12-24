@@ -208,9 +208,9 @@ namespace JocysCom.ClassLibrary.Threading
 					}
 					else
 					{
-						var c = so as System.Windows.Forms.Control;
-						// If this is control but handle is missing then...
-						if (c != null && !c.IsHandleCreated)
+						var process = Process.GetCurrentProcess();
+						// If handle is missing then...
+						if (process != null && process.Handle == IntPtr.Zero)
 						{
 							// BeginInvoke will fail.
 							queue.Remove(item);
