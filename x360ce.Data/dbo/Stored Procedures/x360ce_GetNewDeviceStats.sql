@@ -36,5 +36,6 @@ SELECT
 	WHERE (t2.[Date] <= t1.[Date])
 ) AS NewDevicesSum
 FROM #StatsTemp t1
+ORDER BY t1.[Date]
 
 END
