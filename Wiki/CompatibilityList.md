@@ -127,6 +127,8 @@ This is the new system utilised by r574+
   1. Dungeon Defenders
   1. Dust: An Elysian Tail
   1. Elder Scrolls V, The - Skyrim
+  1. Elite: Dangerous (uses xinput9_1_0.dll) (32bit and 64bit executables)
+  1. Elite: Dangerous Combat Training
   1. Enslaved: Odyssey to the West
   1. Evil Within, The (64bit only)
   1. Far Cry 2

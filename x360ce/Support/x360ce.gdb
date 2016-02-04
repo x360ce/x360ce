@@ -62,6 +62,10 @@ HookMask = 0x0000001E
 Name = Awesomenauts
 HookMask = 0x00000002
 
+[Bastion.exe]
+Name = Bastion
+HookMask = 0x00000002
+
 [BatmanAC.exe]
 Name = Batman: Arkham City
 HookMask = 0x00000002
@@ -113,6 +117,10 @@ HookMask = 0x00000002
 [BurnoutParadise.exe]
 Name = Burnout Paradise - The Ultimate Box
 HookMask=0x0000001E
+
+[Carmageddon_Reincarnation.exe]
+Name = Carmageddon Reincarnation
+HookMask = 0x0000000E
 
 [castle.exe]
 Name = Castle Crashers
@@ -170,8 +178,24 @@ HookMask = 0x00000002
 Name = Dragon Age: Inquisition 
 HookMask = 0x00000002
 
+[DuckTales.exe]
+Name = DuckTales Remastered
+HookMask = 0x00000002
+
 [DunDefGame.exe]
 Name = Dungeon Defenders
+HookMask = 0x00000002
+
+[DustAET.exe]
+Name = Dust: An Elysian Tail
+HookMask = 0x00000002
+
+[EliteDangerous32.exe]
+Name = Elite: Dangerous / Combat Training
+HookMask = 0x00000002
+
+[EliteDangerous64.exe]
+Name = Elite: Dangerous x64
 HookMask = 0x00000002
 
 [Enslaved.exe]
@@ -238,6 +262,18 @@ HookMask = 0x00000002
 Name = Grid 2
 HookMask = 0x00000002
 
+[GodMode.exe]
+Name = GodMode
+HookMask = 0x00000002
+
+[GTAIV.exe]
+Name = Grand Theft Auto IV
+HookMask = 0x00000002
+
+[GTA5.exe]
+Name = Grand Theft Auto V
+HookMask = 0x00000002
+
 [HAWX.exe]
 Name = Tom Clancy's H.A.W.X
 HookMask=0x0000000E
@@ -286,6 +322,10 @@ HookMask = 0x00000002
 Name = Call of Duty Ghosts
 HookMask = 0x00000002
 
+[JustCause2.exe]
+Name = Just Cause 2
+HookMask = 0x00000002
+
 [kaneandlynch.exe]
 Name = Kane & Lynch - Dead Men
 HookMask=0x0000001E
@@ -300,6 +340,10 @@ HookMask = 0x00000002
 
 [LEGOIndy.exe]
 Name = LEGO Indiana Jones: The Original Adventures
+HookMask = 0x00000002
+
+[Limbo.exe]
+Name = Limbo
 HookMask = 0x00000002
 
 [LOTDGame.exe]
@@ -362,6 +406,18 @@ HookMask = 0x00000002
 Name = Outlast
 HookMask = 0x00000002
 
+[QuestViewer.exe]
+Name = Audiosurf
+HookMask = 0x00000002
+
+[Rainslick3.exe]
+Name = Penny Arcade's On the Rain-Slick Precipice of Darkness 3
+HookMask = 0x00000002
+
+[Rainslick4.exe]
+Name = Penny Arcade's On the Rain-Slick Precipice of Darkness 4
+HookMask = 0x00000002
+
 [R6Vegas2_Game.exe]
 Name = Tom Clancy's Rainbow Six Vegas 2
 HookMask = 0x0000000e
@@ -380,6 +436,14 @@ HookMask = 0x00000002
 
 [RE6.exe]
 Name = Resident Evil 6
+HookMask = 0x00000002
+
+[RingRunner.exe]
+Name = Ring Runner
+HookMask = 0x00000002
+
+[RogueLegacy.exe]
+Name = Rogue Legacy
 HookMask = 0x00000002
 
 [ROTT.exe]
@@ -422,8 +486,20 @@ HookMask = 0x00000002
 Name = BulletStorm
 HookMask = 0x00000002
 
+[SineMora.exe]
+Name = Sine-Mora
+HookMask = 0x00000002
+
 [SkullGirls.exe]
 Name = Skullgirls
+HookMask = 0x00000002
+
+[Sonic_vis.exe]
+Name = Sonic the Hedgehog 4 EP 1
+HookMask = 0x00000002
+
+[Sonic_xp.exe]
+Name = Sonic the Hedgehog 4 EP 1
 HookMask = 0x00000002
 
 [SR2_pc.exe]
@@ -440,6 +516,10 @@ HookMask = 0x00000002
 
 [StreetFighterIV.exe]
 Name = Street Fighter IV
+HookMask = 0x00000002
+
+[Sudeki.exe]
+Name = Sudeki
 HookMask = 0x00000002
 
 [SuperMeatBoy.exe]
@@ -478,6 +558,10 @@ HookMask = 0x00000002
 Name = Teenage Mutant Ninja Turtles: Out of Shadows
 HookMask = 0x0000000E
 
+[TombRaider.exe]
+Name = Tomb Raider(2013)
+HookMask = 0x00000002
+
 [trine.exe]
 Name = Trine
 HookMask = 0x00000002
@@ -498,8 +582,16 @@ HookMask = 0x00000002
 Name = Trine 3
 HookMask = 0x00000002
 
+[TESV.exe]
+Name = The Elder Scrolls V: Skyrim
+HookMask = 0x00000002
+
 [UDK.exe]
 Name = Antichamber
+HookMask = 0x00000002
+
+[UDKGame.exe]
+Name = Unmechanical
 HookMask = 0x00000002
 
 [Vessel.exe]
