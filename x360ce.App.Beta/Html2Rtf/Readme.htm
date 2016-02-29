@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml2rtf="http://www.lutecia.info/download/xmlns/xhtml2rtf">
+  <head>
+    <title>XHTML2RTF v1.1 - Convert HTML to Word format (RTF)</title>
+    <meta name="keywords" content="HTML,XML,XHTML,RTF,PRINT,HEADER,FOOTER,MARGIN,PRINT HTML,WORD,WORD VIEWER,RICH TEXT FORMAT,XSL,RICH,TEXT,FORMAT" />
+  </head>
+  <body>
+    <h3 align="center"><font color="#AOAO99"> XHTML2RTF v1.1 </font>
+    </h3>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <p>Author: <a href="mailto:emmanuel@kartmann.org">Emmanuel KARTMANN</a>.</p>
+    <p>Last Update: December 14th, 2005</p>
+    
+    <p>Many thanks to <a href="http://www.codeproject.com/script/profile/whos_who.asp?id=611441" target="_blank">2can</a> 
+    for his table support added to my original source code.</p>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="OVERVIEW">
+      <h3>OVERVIEW</h3>
+    </a>
+    <p>
+      This article describes a conversion tool which <strong>takes an HTML document as input and generates a Microsoft Word document</strong>
+      for printing.</p>
+
+    <p>It all started when I had to work on a new Information System with hundreds of computers. We decided to 
+    go for a 100% Web-based application. Everything was fine until we had to print official documents from the application...</p>
+    
+    <p>Although there are standardization efforts in progress (both at the W3C with <a href="#REFERENCES">XHTML-PRINT</a> 
+    and IEEE with the <a href="#REFERENCES">Print Working Group</a>), and besides some good tools to print HTML 
+    (<a href="#REFERENCES">HTML Print from Bersoft</a>, <a href="#REFERENCES">ScriptX from MeadCo</a>), none of these 
+    seemed to address my needs. I wanted to <em>keep my Web-based application</em>, and <em>reuse generated HTML</em> to 
+    feed a printer...</p>
+    
+    <p>Have you tried to <strong>print HTML documents?</strong> Have you tried to <strong>format your HTML documents for printing</strong>, with specific <strong>fonts, sizes, headers, footers, and margins</strong>?</p>
+    
+    <p>If you have, then you know that HTML is not appropriate for printing - but you can find other formats and use new tools to <strong>convert HTML documents into 
+    Microsoft Word format</strong>, a format suitable for printing... And this is what this article is about.</p>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <h3>CONTENTS</h3>
+    <ul>
+      <li>
+        <a href="#FEATURES">FEATURES</a>
+      </li>
+      <li>
+        <a href="#INTRODUCTION">INTRODUCTION</a>
+      </li>
+      <li>
+        <a href="#USAGE">USAGE</a>
+      </li>
+      <li>
+        <a href="#SAMPLES">SAMPLES (documents and code)</a>
+      </li>
+      <li>
+        <a href="#IMPLEMENTATION">IMPLEMENTATION</a>
+      </li>
+      <li>
+        <a href="#TO_DO_LIST">TO DO LIST</a>
+      </li>
+      <li>
+        <a href="#REFERENCES">REFERENCES</a>
+      </li>
+    </ul>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="FEATURES">
+      <h3>FEATURES</h3>
+    </a>The XHTML2RTF conversion tool:
+    <ul>
+      <li>
+        Converts <a href="#XHTML">XHTML</a> documents into <a href="#RTF">RTF</a> documents
+      </li>
+      <li>
+        Generated RTF can be previewed and printed by Microsoft Word (commercialware) and <a href="#WORD_VIEWER">Word Viewer</a> (freeware)
+      </li>
+      <li>
+        Uses an <a href="#XSL">XSL</a> stylesheet and <a href="#MSXMLSDK">Microsoft XML SDK 3.0</a>
+      </li>
+      <li>
+        Runs on Windows XP and Windows 2000 Server (and probably others)
+      </li>
+      <li>
+        Can be plugged into <a href="#WEB_ASP">Web-based (ASP)</a> or <a href="#BATCH_WSH">Batch (WSH)</a> applications
+      </li>
+      <li>
+        Is highly extensible and customizable - new tags can be supported easily, and direct RTF commands can be sent
+        to the output (with no rendering in the HTML flow) with the <a href="#RAW"><code>&lt;xhtml2rtf:raw&gt;</code> tag</a>.
+      </li>
+      <li>
+        Support RTF-specific fields like page numbering and total number of pages via <a href="#RTF_FIELDS"><code>&lt;xhtml2rtf:page_number&gt;</code> and <code>&lt;xhtml2rtf:total_number_of_pages&gt;</code></a> tags.
+      </li>
+    </ul>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="INTRODUCTION">
+      <h3>INTRODUCTION</h3>
+    </a>
+    <p>
+    The XHTML2RTF conversion tool uses XSL stylesheet to convert an XHTML document into an RTF document, suitable for 
+    previewing and printing with Word (or <a href="#WORD_VIEWER">Word Viewer</a>).
+    </p>
+
+      <a name="XHTML">
+        <h4>XHTML = HTML + XML</h4>
+      </a>
+      <p>The Extensible HyperText Markup Language (XHTML) is a family of current and 
+        future document types and modules that reproduce, subset, and extend HTML, <strong>reformulated in XML</strong>. 
+        XHTML Family document types are <strong>all XML-based</strong>, and ultimately are designed 
+        to work in conjunction with XML-based user agents. <strong>XHTML is the 
+        successor of HTML</strong>, and a <a href="http://www.w3.org/MarkUp/#recommendations">series of specifications</a> 
+        has been developed for XHTML.</p>
+
+      <p>
+        <font face="Courier New">=></font>&#160;The XHTML2RTF conversion tool reads XHTML documents as input. <br/>
+        As a consequence, you have to <a href="#HTML2XHTML">adapt your application</a> in order to use this tool.
+      </p>
+
+      <a name="XSL">
+        <h4>XSL</h4>
+      </a>
+      <p>XSL stands for <b>eXtensible Stylesheet Language</b>. It is a family of recommendations for defining 
+      <strong>XML document transformation and presentation</strong>. It consists of three parts:</p>
+      <ol>
+        <li>a programming language for <strong>transforming XML documents</strong>: XSL Transformations 
+        (<a href="#XSLT">XSLT</a>) 
+        </li>
+        <li>an expression language used by XSLT to <strong>access or refer to</strong> parts of an XML document: XML Path Language (<a href="#XPATH">XPath</a>). This language provides pattern 
+matching (<font color="#990000"><tt>xsl:template match</tt></font>), conditional 
+statements (<font color="#990000"><tt>xsl:when test</tt></font>), loops (<font 
+color="#990000"><tt>for-each</tt></font>), etc... </li>
+        <li>an XML vocabulary for specifying formatting semantics: similar to W3C cascading style sheets (CSS), this vocabulary provides enhanced presentation features.</li>
+      </ol>
+      
+      <p>For more about XSL, please refer to <a href="#REFERENCES">XSL references pages</a>.</p>
+      
+      <p>
+        <font face="Courier New">=></font>&#160;The XHTML2RTF conversion tool uses XSL to transform XHTML documents (XML documents) into RTF documents.<br/>
+        This is the core of the tool - anything else is just a glue to build your application. Everything is in the XSL stylesheet.
+      </p>
+
+      <a name="MSXMLSDK">
+        <h4>Microsoft XML SDK 3.0</h4>
+      </a>
+      <p>Microsoft provides an XML SDK for processing XML and XSL documents. It's often installed with the operating system,
+      but you can download and install the latest SDK. See <a href="#REFERENCES">References section</a> for more on MSXML SDK.</p>
+
+      <p>
+        <font face="Courier New">=></font>&#160;The XHTML2RTF conversion tool uses XML SDK objects and methods to process XHTML and transform it into RTF.<br/>
+        XML SDK API is available to <a href="#WEB_ASP">Web application</a> as well as <a href="#BATCH_WSH">batch applications</a> and so is the XHTML2RTF conversion tool.
+      </p>
+
+      <a name="RTF">
+        <h4>Microsoft Rich Text Format (RTF)</h4>
+      </a>
+      <p>Microsoft created a exchange format for Word documents: Rich Text Format (RTF). Unlike the native Word format, 
+      it is <a href="#REFERENCES_RTF">documented</a>; moreover, RTF has been here for some time (so you can view RTF 
+      document with good old Word 97). There is also a free RTF viewer (<a href="#WORD_VIEWER">Word 97/2000 Viewer</a>), and 
+      even Wordpad (installed with most Windows releases) can open, view and edit RTF documents.</p>
+
+      <a name="XHTML2RTF">
+        <h4>XHTML2RTF</h4>
+      </a>
+      <p>The XHTML to RTF converter consists in an XSL stylesheet for parsing XHTML tags and generating their RTF equivalents.</p>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="USAGE">
+      <h3>USAGE</h3>
+    </a>
+
+    <a name="HTML2XHTML"><h4>From HTML to XHTML</h4></a>
+    
+    <p>You have to <i>adapt your application to generate XHTML documents</i> if you want to use the XHTML2RTF convertion tool:</p>
+  
+    <ul>
+      <li>Include an XML declaration at the beginning of the document:<br/>
+        <code><b>&lt;?xml version="1.0" encoding="iso-8859-1" ?&gt;</b></code><br/>
+        <p/>
+      </li>
+      <li>Include XHTML namepace declaration (the default) and XHTML2RTF namespace declaration in tag <code>&lt;html&gt;</code>
+<pre><b>
+&lt;html 
+      xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:xhtml2rtf="http://www.lutecia.info/download/xmlns/xhtml2rtf"&gt;
+...
+&lt;/html&gt;
+</b></pre>
+      </li>
+      <li>Use lower case for both tag names and attribute names<br/>
+        <code><b>&lt;P&gt;&lt;/P&gt;</b></code> becomes <code><b>&lt;<font color="red">p</font>&gt;&lt;/<font color="red">p</font>&gt;</b></code><br/>
+        <code><b>&lt;A HREF="..."&gt;...&lt;/a&gt;</b></code> becomes <code><b>&lt;<font color="red">a href</font>="..."&gt;...&lt;/<font color="red">a</font>&gt;</b></code><br/>
+        etc...
+        <p/>
+      </li>
+      <li>Add termination for all tags (XHTML is more strict than HTML):<br/>
+        <code><b>&lt;link rel="stylesheet" href="..."&gt;</b></code> becomes <code><b>&lt;link rel="stylesheet" href="..." <font color="red">/</font>&gt;</b></code><br/>
+        <code><b>&lt;hr&gt;</b></code> becomes <code><b>&lt;hr <font color="red">/</font>&gt;</b></code><br/>
+        <code><b>&lt;br&gt;</b></code> becomes <code><b>&lt;br <font color="red">/</font>&gt;</b></code><br/>
+        <p/>
+      </li>
+      <li>Quote all attribute values:<br/>
+        <code><b>&lt;table class=noprint&gt;</b></code> becomes <code><b>&lt;table class=<font color="red">"</font>noprint<font color="red">"</font>&gt;</b></code><br/>
+        <code><b>&lt;a href=mypage.asp&gt;</b></code> becomes <code><b>&lt;a href=<font color="red">"</font>mypage.asp<font color="red">"</font>&gt;</b></code><br/>
+        <p/>
+      </li>
+      <li>Use <a href="http://www.w3.org/TR/html4/sgml/entities.html" target="_blank">encoded characters</a> for non-ASCII and/or special characters:<br/>
+        <code><b>&amp;</b></code> becomes <code><b><font color="red">&amp;amp;</font></b></code><br/>
+        <code><b>é</b></code> becomes <code><b><font color="red">&amp;#233;</font></b></code><br/>
+        <code><b>è</b></code> becomes <code><b><font color="red">&amp;#232;</font></b></code><br/>
+        etc...
+        <p/>
+      </li>
+      <li>Replace HTML character entities by their code (XML knows very few 
+         <a href="http://www.w3.org/TR/html4/charset.html#h-5.3.2" target="_blank">character entity references</a> - 
+         use character codes instead):<br/>
+        <code><b>&amp;nbsp;</b></code> becomes <code><b><font color="red">&amp;#160;</font></b></code><br/>
+        <code><b>&amp;egrave;</b></code> becomes <code><b><font color="red">&amp;#232;</font></b></code><br/>
+        <code><b>&amp;eacute;</b></code> becomes <code><b><font color="red">&amp;#233;</font></b></code><br/>
+        <code><b>&amp;ecirc;</b></code> becomes <code><b><font color="red">&amp;#234;</font></b></code><br/>
+        etc...
+        <p/>
+      </li>
+      <li>Do not use direct style for tags (use class and an external CSS stylesheet instead)<br/>
+      <code><b>&lt;div style='background:#c0c0c0; font-size: 125%; padding:1.0pt 10.0pt 1.0pt 10.0pt;'&gt;</b></code><br/>
+      becomes<br/>
+      <code><b>&lt;div class="mydivstyle"&gt;</b></code><br/>
+      Thus, you will be able to customize the RTF output for your class (it's much too hard to parse an HTML style declaration within an XSL stylesheet).
+      <p/>
+      </li>
+    </ul>
+
+    <a name="SPACES"><h4>Spaces in HTML and RTF</h4></a>
+  
+    <p>In HTML, spaces are not significant - most browsers ignore them when they render the document. On the other hand, 
+    Microsoft Word (and RTF) render spaces as visible characters. Be carefull when building your HTML document: do not 
+    generate spaces or they will be shown in your Word document.</p>
+ 
+    <a name="HEADER_AND_FOOTER"><h4>Header and Footer in HTML and RTF</h4></a>
+    
+    <p>
+      The default header in the RTF document contains the HTML <code>&lt;title&gt;</code> 
+      (from the <code>&lt;head&gt;</code> section). You can change the header by setting the parameters 
+      <code>header-font-size-default</code>, <code>header-distance-from-edge</code>, and 
+      <code>header-indentation-left</code> (see <a href="#PARAMETERS">parameters</a> below).<br/>
+      You can also create your own header by using class "rtf_header" and "rtf_header_first" in your HTML document:
+      <ul>
+        <li><code>rtf_header_first</code> defines a complete HTML content for the header on first page of the document</li>
+        <li><code>rtf_header</code> defines a complete HTML content for the header on all other pages of the document</li>
+      </ul>
+    </p>
+
+    <p>
+      The default footer in the RTF document contains the page number and document date (current date and time; i.e. 
+      print date and time). You can change the footer by setting the parameters <code>footer-font-size-default</code>, 
+      <code>footer-distance-from-edge</code> and <code>use-default-footer</code>
+      (see <a href="#PARAMETERS">parameters</a> below).
+    </p>
+
+    <a name="PAGE_BREAK"><h4>Page Break</h4></a>
+    
+    <p>
+      To force a page break in your RTF document, you can use the CSS style "page-break-before" or "page-break-after"
+      with value "always":</p>
+      <pre>
+        This is on page 1
+        &lt;p style="page-break-before:always"/&gt;
+        This is on page 2
+      </pre>
+      
+    <p>Note that other values for these CSS styles (left, right, auto...) are not supported (only "always" is supported).</p>
+
+    <a name="PARAMETERS"><h4>XSL Stylesheet Parameters</h4></a>
+  
+    <p>The XSL stylesheet xhtml2rtf.xsl provides a set of parameters so that you can change the stylesheet default behavior:</p>
+ 
+    <ul>
+      <li><code>page-start-number</code>: Page start number (default: 1)</li>
+      <li><code>page-setup-paper-width</code>: Paper width in TWIPS (default: 11907 TWIPS = 21 cm, i.e. A4 format)</li>
+      <li><code>page-setup-paper-height</code>: Paper height in TWIPS (default: 16840 TWIPS = 29.7 cm, i.e. A4 format)</li>
+      <li><code>page-setup-margin-top</code>: Top margin in TWIPS (default: 1440 TWIPS = 1 inch = 2.54 cm)</li>
+      <li><code>page-setup-margin-bottom</code>: Bottom margin in TWIPS (default: 1440 TWIPS = 1 inch = 2.54 cm)</li>
+      <li><code>page-setup-margin-left</code>: Left margin in TWIPS (default: 1134 TWIPS = 2 cm)</li>
+      <li><code>page-setup-margin-right</code>: Right margin in TWIPS (default: 1134 TWIPS = 2 cm)</li>
+      <li><code>font-size-default</code>: Default font size in TWIPS (default: 20 TWIPS = 10 pt.)</li>
+      <li><code>font-name-default</code>: Default font name (default: 'Times New Roman')</li>
+      <li><code>font-name-fixed</code>: Default font name for fixed-width text, like PRE or CODE (default: 'Courier New')</li>
+      <li><code>font-name-barcode</code>: Barcode font name (default: '3 of 9 Barcode')</li>
+      <li><code>header-font-size-default</code>: Header default font size in TWIPS (default: 14 TWIPS = 7 pt.)</li>
+      <li><code>header-distance-from-edge</code>: Default distance between top of page and top of header, in TWIPS (default: 720 TWIPS = 1.27 cm)</li>
+      <li><code>header-indentation-left</code>: Header left indentation in TWIPS (default: 0)</li>
+      <li><code>footer-font-size-default</code>: Footer default font size in TWIPS (default: 14 TWIPS = 7 pt.)</li>
+      <li><code>footer-distance-from-edge</code>: Default distance between bottom of page and bottom of footer, in TWIPS (default: 720 TWIPS = 1.27 cm)</li>
+      <li><code>use-default-footer</code>: Boolean flag: 1 to use default footer (page number and date) or 0 no footer (default: 1)</li>
+      <li><code>document-protected</code>: Boolean flag: 1 protected (cannot be modified) or 0 unprotected (default: 1)</li>
+      <li><code>normalize-space</code>: Boolean flag: 1 spaces are normalized and trimmed, or 0 no normalization no trim (default: 0)</li>
+      <li><code>my-normalize-space</code>: Boolean flag: 1 spaces are normalized (NOT TRIMMED), or 0 no normalization (default: 1)</li>
+    </ul>
+ 
+    <a name="BATCH_WSH"><h4>Batch mode (WSH)</h4></a>
+    
+    <p>
+      I wrote a BATCH program (XHTML2RTF.BAT) which relies on Windows Script Host (WSH) to call the XML DOM SDK and 
+      transforms an HTML file into its RTF equivalent (output is done in stdout).
+    </p>
+    <p>
+      To use this component from batch: call program XHTML2RTF.BAT with the HTML file name as parameter. The RTF file is 
+      generated in stdout, so you should redirect the output with the <code>&gt;</code> operator. Then you can open 
+      the generated file with Microsoft Word (or Wordpad):
+    </p>
+
+    <pre>
+      C:\&gt; <b>XHTML2RTF.BAT Readme.htm &gt; Readme.rtf</b>
+      C:\&gt; <b>START WINWORD Readme.rtf</b>
+    </pre>
+
+    <p>
+      To pass parameters to the XHTML2RTF program, use the -p flag followed by a parameter name and value. 
+    </p>
+    
+    <p><u>Example:</u></p>
+
+    <pre>
+      C:\&gt; <b>XHTML2RTF.BAT -p page-start-number=5 -p document-protected=0 -p font-name-default='Arial' Readme.htm &gt; Readme.rtf</b>
+      C:\&gt; <b>START WINWORD Readme.rtf</b>
+    </pre>
+
+    <a name="WEB_ASP"><h4>Web-Based (ASP)</h4></a>
+    
+    <p>I wrote a simple ASP library to call the component from an ASP page, producing RTF document from live, dynamic 
+    content (results from a SQL database request, for example).</p>
+    
+    <p>To use this component from a Web page, you have to include the XHTML2RTF.inc file in your page, and call 
+    function <code>XHTMLString2RTF()</code>, passing the XHTML document (as a string):</p>
+    
+    <pre>
+  &lt;!--#include file="XHTML2RTF.inc"--&gt;
+
+  var strXHTML = " \
+  &lt;html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:xhtml2rtf=\"http://www.lutecia.info/download/xmlns/xhtml2rtf\"&gt; \
+    &lt;head&gt; \
+      &lt;title&gt;Hello, World! from string&lt;/title&gt; \
+    &lt;/head&gt; \
+    &lt;body&gt; \
+      &lt;h1&gt;Hello, World!&lt;/h1&gt; \
+    &lt;/body&gt; \
+  &lt;/html&gt; \
+  ";
+
+  XHTMLString2RTF(strXHTML);
+    </pre>
+
+    <p><u>Note:</u> The real production system uses SQL requests, generates XML output, transforms it into XHTML via 
+    a first XSL stylesheet, and then transforms it into an RTF document. The example above is just that - an example 
+    for demonstration purposes. Please do not generate HTML via strings on your production system ;-)</p>
+
+    <a name="RAW"><h4>Raw RTF output</h4></a>
+    <p>The XHTML2RTF conversion tool provides a direct RTF output with no rendering in XHTML. The tool processes a special 
+    tag (<code>&lt;xhtml2rtf:raw&gt;</code>) to send RTF directly. For example, this code will send a TAB character in the RTF output:</p>
+
+      <p><code>&lt;xhtml2rtf:raw class="rtf"&gt;\tab &lt;/xhtml2rtf:raw&gt;</code></p>
+    
+    <p>This code will <em>not be rendered in your Web browser</em>, since the class "rtf" is defined in the css 
+    stylesheet as "display:none".</p>
+    
+    <p>There are many uses for this raw output - in particular, you can work around most of the current limitations 
+    in the conversion tool (as listed in <a href="#TO_DO_LIST">TODO section</a>). For example, you can send the RTF code for 
+    an image, even if the conversion tool doesn't handle images yet:</p>
+
+      <code>&lt;xhtml2rtf:raw class="rtf"&gt;{\*\shppict{\pict\picw3043\pich3043\picwgoal1725\pichgoal1725\pngblip
+89504e470d0a1a0a0000000d49484452000000730000007308020000002421aab1000000017352474200aece1ce90000000467414d410000b18f0bfc61050000
+...
+}}&lt;/xhtml2rtf:raw&gt;</code>
+
+    <p>To find out what RTF code is appropriate for this image, I just used Word to edit a document with a picture, 
+    and then saved it in RTF format. I opened the resulting file as text, and copied/pasted the RTF code into 
+    the XHTML output, within <code>&lt;xhtml2rtf:raw&gt;</code> tags.</p>
+
+    <a name="RTF_FIELDS"><h4>RTF-specific fields</h4></a>
+
+    <p>Some RTF-specific fields are available in the conversion tool:</p>
+    
+    <h5>Page Number</h5>
+    
+    <p>You can display the current page number in your RTF document via <code>&lt;xhtml2rtf:page_number&gt;</code>:</p>
+<pre>
+PAGE &lt;xhtml2rtf:page_number/&gt;
+</pre>
+
+    <h5>Total Number of Pages</h5>
+    
+    <p>You can display total number of pages in your RTF document via <code>&lt;xhtml2rtf:total_number_of_pages&gt;</code></p>
+<pre>
+PAGE &lt;xhtml2rtf:page_number/&gt; / &lt;xhtml2rtf:total_number_of_pages/&gt;
+</pre>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="SAMPLES">
+      <h3>SAMPLES</h3>
+    </a>
+    
+    <ol>
+      <li>Hello, World! (<a href="HelloWorld.html" target="_blank">HTML</a>) (<a href="HelloWorld.rtf">RTF</a>) (<a href="HelloWorld1.asp">ASP, from file</a>) (<a href="HelloWorld2.asp">ASP, from string</a>)</li>
+      <li>Custom Header, 2 Pages (<a href="CustomHeader.html">HTML</a>) (<a href="CustomHeader.rtf">RTF</a>)</li>
+      <li>No Footer (<a href="NoFooter.html">HTML</a>) (<a href="NoFooter.rtf">RTF</a>)</li>
+      <li>Table (<a href="SimpleTable.html">HTML</a>) (<a href="SimpleTable.rtf">RTF</a>)</li>
+      <li>The Readme file you're reading in <a href="Readme.rtf">RTF</a></li>
+    </ol>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="IMPLEMENTATION">
+      <h3>IMPLEMENTATION</h3>
+    </a>
+
+    <ul>
+      <li>
+        The XHTML to RTF converter consists in an XSL stylesheet for parsing XHTML tags and generating their RTF equivalents.
+      </li>
+    </ul>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="TO_DO_LIST">
+      <h3>TO DO LIST</h3>
+    </a>
+    <ul>
+      <li>Full support for XHTML tags <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;ol&gt;</code> (not fully supported)</li>
+      <li>Full support for XHTML tags <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;td&gt;</code> (not fully supported)</li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/objects.html" target="_blank">Objects (<code>&lt;object&gt;</code>), Images (<code>&lt;img&gt;</code>), and Applets (<code>&lt;applet&gt;</code>)</a> (not supported yet)</li>
+      <li>Support XHTML attribute <code>&lt;title&gt;</code> with RTF annotations (bugs in current version)</li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/text.html#h-9.3.3" target="_blank">hyphen and soft hyphen characters</a></li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/text.html#h-9.4" target="_blank">INS and DEL elements</a></li>
+      <li>Support XHTML Lists (<code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code>)- <a href="http://www.w3.org/TR/html4/struct/lists.html" target="_blank">Unordered, Ordered, and Definition Lists</a></li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/lists.html#h-10.4" target="_blank">DIR and MENU elements</a> (deprecated)</li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/tables.html#h-11.2.2" target="_blank">Table Captions: The CAPTION element</a></li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/tables.html#h-11.2.3" target="_blank">Row groups: the THEAD, TFOOT, and TBODY elements</a></li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/struct/tables.html#h-11.2.4" target="_blank">Column groups: the COLGROUP and COL elements</a></li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/present/styles.html#h-14.2.3" target="_blank">The STYLE element</a></li>
+      <li>Support XHTML <a href="http://www.w3.org/TR/html4/present/graphics.html#h-15.2.2" target="_blank">font color attribute</a> (even if deprecated)</li>
+
+      <br/>
+      <li>Support another popular format for printing: Adobe's <a href="http://partners.adobe.com/asn/tech/pdf/specifications.jsp" target="_blank">PDF format</a> (though one)</li>
+    </ul>
+ 
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <h3>Download</h3>
+    <p>
+      <a href="XHTML2RTF_src.zip">Download Article and Source Code</a> (~60 KB).
+    </p>
+
+    <!-- =================================================================================================== -->
+    <p>
+    <hr/>
+    </p>
+
+    <a name="REFERENCES">
+    <h3>REFERENCES</h3>
+    </a>
+    <ul>
+      <li>Extensible Markup Language (XML) 1.0 (Second Edition)<br/>
+        <a href="http://www.w3.org/TR/2000/REC-xml-20001006" target="_blank">http://www.w3.org/TR/2000/REC-xml-20001006</a>
+      </li>
+      <li>XHTML<br/>
+        <a href="http://www.w3.org/TR/xhtml1" target="_blank">http://www.w3.org/TR/xhtml1</a>
+      </li>
+      <li>XSL<br/>
+        <a href="http://www.w3.org/Style/XSL/" target="_blank">http://www.w3.org/Style/XSL/</a>
+      </li>
+      <li>XSL Transformations (XSLT) Version 1.0, W3C Recommendation 16 November 1999<br/>
+        <a name="XSLT" href="http://www.w3.org/TR/xslt" target="_blank">http://www.w3.org/TR/xslt</a>
+      </li>
+      <li>XML Path Language (XPath) Version 1.0, W3C Recommendation 16 November 1999<br/>
+        <a name="XPATH" href="http://www.w3.org/TR/xpath" target="_blank">http://www.w3.org/TR/xpath</a>
+      </li>
+      <li>Microsoft XML SDK 3.0 (MSXML 3.0 SDK)<br/>
+        <a href="http://msdn.microsoft.com/library/en-us/xmlsdk30/htm/xmmscxmloverview.asp" target="_blank">http://msdn.microsoft.com/library/en-us/xmlsdk30/htm/xmmscxmloverview.asp</a>
+      </li>
+      <li>Microsoft Word 97/2000 Viewer<br/>
+        <a href="http://office.microsoft.com/downloads/2000/wd97vwr32.aspx" name="WORD_VIEWER" target="_blank">http://office.microsoft.com/downloads/2000/wd97vwr32.aspx</a>
+      </li>
+      <li>Rich Text Format (RTF) Specification, version 1.6<br/>
+        <a name="REFERENCES_RTF" href="http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec.asp" target="_blank">http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec.asp</a>
+      </li>
+      <li>Appendix B: Index of RTF Control Words<br/>
+        <a href="http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec_62.asp" target="_blank">http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec_62.asp</a>
+      </li>
+      <li>How to Write an RTF Reader<br/>
+        <a href="http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec_45.asp" target="_blank">http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec_45.asp</a>
+      </li>
+      <li>A Sample RTF Reader Implementation<br/>
+        <a href="http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec_46.asp" target="_blank">http://msdn.microsoft.com/library/en-us/dnrtfspec/html/rtfspec_46.asp</a>
+      </li>
+      <li>XHTML-PRINT<br/>
+        <a href="http://www.xhtml-print.org" target="_blank">http://www.xhtml-print.org</a><br/>
+        <a href="http://www.w3.org/TR/xhtml-print" target="_blank">http://www.w3.org/TR/xhtml-print</a>
+      </li>
+      <li>The Printer Working Group<br/>
+        <a href="http://www.pwg.org/" target="_blank">http://www.pwg.org/</a>
+      </li>
+      <li>Bersoft HTML Print<br/>
+        <a href="http://www.bersoft.com/htmlprint/" target="_blank">http://www.bersoft.com/htmlprint/</a>
+      </li>
+      <li>MeadCo ScriptX<br/>
+        <a href="http://www.meadroid.com/sx_intro.asp" target="_blank">http://www.meadroid.com/sx_intro.asp</a>
+      </li>
+    </ul>
+  </body>
+</html>
