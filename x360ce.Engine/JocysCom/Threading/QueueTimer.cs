@@ -185,6 +185,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <summary>
 		/// This function will be called inside 'queueLock' lock.
 		/// </summary>
+		/// <remarks>http://blogs.msdn.com/b/jaredpar/archive/2008/01/07/isynchronizeinvoke-now.aspx</remarks>
 		void _AddToQueue(object item)
 		{
 			lock (disposeLock)
@@ -220,7 +221,8 @@ namespace JocysCom.ClassLibrary.Threading
 							try
 							{
 								// Use asynchronous call to avoid 'queueLock' deadlock.
-								so.BeginInvoke((System.Threading.WaitCallback)ThreadAction, new object[] { null });
+								var action = (System.Threading.WaitCallback)ThreadAction;
+								var ar = so.BeginInvoke(action, new object[] { null });
 							}
 							catch (Exception)
 							{

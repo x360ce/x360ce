@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -174,7 +175,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// </summary>
 		IntPtr _RecipientHandle;
 
-		public delegate void DeviceDetectorEventHandler(Object sender, DeviceDetectorEventArgs e);
+		public delegate void DeviceDetectorEventHandler(object sender, DeviceDetectorEventArgs e);
 
 		/// <summary>
 		/// Events signalized to the client app.
@@ -238,7 +239,7 @@ namespace JocysCom.ClassLibrary.IO
 					}
 				}
 				var e = new DeviceDetectorEventArgs(changeType, deviceType, deviceInfo);
-				if (DeviceChanged != null) DeviceChanged(this, e);
+				RaiseDeviceChanged(this, e);
 				switch (changeType)
 				{
 					// Device is about to be removed. Any application can cancel the removal.
@@ -253,6 +254,46 @@ namespace JocysCom.ClassLibrary.IO
 
 			}
 		}
+
+		#region Raise Events Asynchronously
+
+		public interface IDelegate<V>
+		{
+			IAsyncResult BeginInvoke(object sender, V e, AsyncCallback callback, object @object);
+		}
+
+		void RaiseDeviceChanged(object sender, DeviceDetectorEventArgs e)
+		{
+			var ev = DeviceChanged;
+			if (ev != null)
+			{
+				var eventListeners = ev.GetInvocationList();
+				for (int i = 0; i < eventListeners.Count(); i++)
+				{
+					var methodToInvoke = (DeviceDetectorEventHandler)eventListeners[i];
+					methodToInvoke.BeginInvoke(sender, e, EndAsyncEvent, null);
+				}
+			}
+		}
+	
+		private void EndAsyncEvent(IAsyncResult iar)
+		{
+			var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
+			var invokedMethod = (DeviceDetectorEventHandler)ar.AsyncDelegate;
+			try
+			{
+				// Important note: Whenever you call BeginInvoke you must call the corresponding EndInvoke,
+				// otherwise if the invoked method threw an exception or returned a value then
+				// the ThreadPool thread will never be released back to the pool, resulting in a thread-leak!
+				invokedMethod.EndInvoke(iar);
+			}
+			catch
+			{
+				// Handle any exceptions that were thrown by the invoked method
+			}
+		}
+
+		#endregion
 
 		public static string GetDeviceId(uint deviceInstance)
 		{

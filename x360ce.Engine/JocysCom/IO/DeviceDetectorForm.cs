@@ -27,7 +27,10 @@ namespace JocysCom.ClassLibrary.IO
 
 		void _Detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
-			InfoLabel.Text = e.ChangeType.ToString();
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				InfoLabel.Text = e.ChangeType.ToString();
+			});
 		}
 
 		DeviceDetector _Detector = null;
