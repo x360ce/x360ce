@@ -71,7 +71,7 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, "RightMotorStrength", RightMotorStrength, null, "", "100");
 			AddValue(ref list, "LeftMotorDirection", LeftMotorDirection, null, "", "0");
 			AddValue(ref list, "RightMotorDirection", RightMotorDirection, null, "", "0");
-			// Axis to Button deadzones.
+			// Axis to Button dead-zones.
 			AddValue(ref list, "ButtonADeadZone", ButtonADeadZone, null, "", "0");
 			AddValue(ref list, "ButtonBDeadZone", ButtonBDeadZone, null, "", "0");
 			AddValue(ref list, "ButtonBackDeadZone", ButtonBackDeadZone, null, "", "0");

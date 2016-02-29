@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 		public ControllerSettingsUserControl()
 		{
 			InitializeComponent();
-			MapToAutoMenuItem.Tag = MapTo.Auto;
+			MapToAutoMenuItem.Tag = MapTo.None;
 			MapToController1MenuItem.Tag = MapTo.Controller1;
 			MapToController2MenuItem.Tag = MapTo.Controller2;
 			MapToController3MenuItem.Tag = MapTo.Controller3;
