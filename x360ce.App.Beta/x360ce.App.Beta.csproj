@@ -161,6 +161,69 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryDeviceType.cs">
+      <Link>SharpDX.XInput\BatteryDeviceType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryInformation.cs">
+      <Link>SharpDX.XInput\BatteryInformation.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryLevel.cs">
+      <Link>SharpDX.XInput\BatteryLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryType.cs">
+      <Link>SharpDX.XInput\BatteryType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\Capabilities.cs">
+      <Link>SharpDX.XInput\Capabilities.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\CapabilityFlags.cs">
+      <Link>SharpDX.XInput\CapabilityFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\Controller.cs">
+      <Link>SharpDX.XInput\Controller.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\DeviceQueryType.cs">
+      <Link>SharpDX.XInput\DeviceQueryType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\DeviceSubType.cs">
+      <Link>SharpDX.XInput\DeviceSubType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\DeviceType.cs">
+      <Link>SharpDX.XInput\DeviceType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\Gamepad.cs">
+      <Link>SharpDX.XInput\Gamepad.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\GamepadButtonFlags.cs">
+      <Link>SharpDX.XInput\GamepadButtonFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\GamepadKeyCode.cs">
+      <Link>SharpDX.XInput\GamepadKeyCode.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\Keystroke.cs">
+      <Link>SharpDX.XInput\Keystroke.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\KeyStrokeFlags.cs">
+      <Link>SharpDX.XInput\KeyStrokeFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\ResultCode.cs">
+      <Link>SharpDX.XInput\ResultCode.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\State.cs">
+      <Link>SharpDX.XInput\State.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\ThumbIndex.cs">
+      <Link>SharpDX.XInput\ThumbIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\UserIndex.cs">
+      <Link>SharpDX.XInput\UserIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\Vibration.cs">
+      <Link>SharpDX.XInput\Vibration.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.App\SharpDX.XInput\XInput.cs">
+      <Link>SharpDX.XInput\XInput.cs</Link>
+    </Compile>
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
@@ -299,27 +362,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\SettingsMapItem.cs" />
-    <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
-    <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
-    <Compile Include="SharpDX.XInput\BatteryLevel.cs" />
-    <Compile Include="SharpDX.XInput\BatteryType.cs" />
-    <Compile Include="SharpDX.XInput\Capabilities.cs" />
-    <Compile Include="SharpDX.XInput\CapabilityFlags.cs" />
-    <Compile Include="SharpDX.XInput\Controller.cs" />
-    <Compile Include="SharpDX.XInput\DeviceQueryType.cs" />
-    <Compile Include="SharpDX.XInput\DeviceSubType.cs" />
-    <Compile Include="SharpDX.XInput\DeviceType.cs" />
-    <Compile Include="SharpDX.XInput\Gamepad.cs" />
-    <Compile Include="SharpDX.XInput\GamepadButtonFlags.cs" />
-    <Compile Include="SharpDX.XInput\GamepadKeyCode.cs" />
-    <Compile Include="SharpDX.XInput\Keystroke.cs" />
-    <Compile Include="SharpDX.XInput\KeyStrokeFlags.cs" />
-    <Compile Include="SharpDX.XInput\ResultCode.cs" />
-    <Compile Include="SharpDX.XInput\State.cs" />
-    <Compile Include="SharpDX.XInput\ThumbIndex.cs" />
-    <Compile Include="SharpDX.XInput\UserIndex.cs" />
-    <Compile Include="SharpDX.XInput\Vibration.cs" />
-    <Compile Include="SharpDX.XInput\XInput.cs" />
     <Compile Include="Controls\WarningsForm.cs">
       <SubType>Form</SubType>
     </Compile>
