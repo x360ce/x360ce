@@ -1,0 +1,46 @@
+.SWUI_Security_Header 
+{
+	padding: 4px; background-image: url(../../../Common/JsClasses/Images/Interface/Office2003/FadeLightBlue-1x23.gif);
+	font-family: Tahoma; font-size: 8pt; font-weight: bold; color: #335ea8;
+}
+
+.SWUI_Security_Header th
+{
+	padding: 4px; font-family: Tahoma; font-size: 8pt; font-weight: bold; color: #335ea8;
+}
+
+.SWUI_Security_ButtonCell 
+{
+	text-align: right;
+	padding: 4px;
+}
+
+.SWUI_Security_UserEditTable tbody tr td
+{
+	white-space: nowrap;
+	font: Menu;
+}
+
+.SWUI_Security_ItemsListRow 
+{
+	
+}
+
+.SWUI_Security_ItemsListRow td {
+	padding: 0 6px 0 4px;
+}
+
+.SWUI_Security_ItemsListRow td span
+{
+	display:none;
+}
+
+
+
+.SWUI_Security_ItemsListRow td input
+{
+	background-color: buttonface;
+	border: solid 1px ButtonShadow;
+	color: ButtonShadow;
+	
+}

@@ -129,6 +129,7 @@
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
+    <Compile Include="JocysCom\Common\TimeUnitType.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
@@ -155,6 +156,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="JocysCom\Security\Encryption.cs" />
+    <Compile Include="JocysCom\Security\Helper.cs" />
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
@@ -193,7 +196,7 @@
     <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
-    <Compile Include="JocysCom\Win32\WINNT.cs" />
+    <Compile Include="JocysCom\Win32\WinNT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Win32\BIND_OPTS3.cs" />
     <Compile Include="Win32\BSF.cs" />

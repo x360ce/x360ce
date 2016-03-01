@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using JocysCom.WebSites.Engine;
+
+namespace x360ce.Web.Security
+{
+	public partial class Login : System.Web.UI.Page
+	{
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			if (!IsPostBack)
+			{
+				if (SecurityContext.Current.IsAuthenticated && Request["Logout"] == "True")
+				{
+					LogoutLinkButton_Click(null, null);
+				}
+			}
+			LoginBanner.DataBind();
+			AnonymousPlaceHolder.DataBind();
+			LoggedInPlaceHolder.DataBind();
+			RegisterPanel.DataBind();
+		}
+
+		void UserEditControl1_Created(object sender, UserEditEventArgs e)
+		{
+			// Make sure user have access to Social part of website.
+			System.Web.Security.Roles.AddUserToRole(e.User.UserName, "SocialUsers");
+		}
+
+		protected void LogoutLinkButton_Click(object sender, EventArgs e)
+		{
+			// Abandon ASPX Session.
+			System.Web.Security.FormsAuthentication.SignOut();
+			Session.Abandon();
+			RedirectToUrl();
+		}
+
+		
+		public void RedirectToUrl()
+		{
+			if (string.IsNullOrEmpty(Request["ReturnUrl"]))
+			{
+				Response.Redirect("Login.aspx");
+			}
+			else
+			{
+				Response.Redirect(Request["ReturnUrl"]);
+			}
+		}
+	
+	}
+}

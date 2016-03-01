@@ -1,0 +1,21 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="x360ce.Web.Security.Site" %>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head id="Head1" runat="server">
+	<title runat="server" id="Title1"></title>
+	<link id="Link1" rel="stylesheet" type="text/css" runat="server" href="Styles/Default.css" />
+	<link id="Link2" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.css" />
+	<link id="Link3" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.IE.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<asp:ContentPlaceHolder ID="HeaderPlaceHolder" runat="server" />
+</head>
+<body>
+	<form id="form2" runat="server">
+		<asp:ScriptManager ID="ScriptManager1" runat="server" />
+		<asp:ContentPlaceHolder ID="PageMenuPlaceHolder" runat="server" />
+		<asp:ContentPlaceHolder ID="PageContentPlaceHolder" runat="server" />
+	</form>
+</body>
+</html>
+
