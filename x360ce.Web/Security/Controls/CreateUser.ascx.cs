@@ -45,6 +45,11 @@ namespace x360ce.Web.Security.Controls
 		#region Server Validate
 
 
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			HeadPanel.Visible = ShowHead;
+		}
+
 		protected void AllCustomValidator_ServerValidate(object source, ServerValidateEventArgs args)
 		{
 			User.ValidationField[] result = ValidationResults;

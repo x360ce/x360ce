@@ -24,7 +24,7 @@ namespace JocysCom.ClassLibrary.Win32
 	/// not possible to include a zero-length string in the sequence. An empty
 	/// sequence would be defined as follows: \0.
 	/// </remarks>
-	public enum REG : int
+	public enum REG : uint
 	{
 		/// <summary>No defined value type.</summary>
 		REG_NONE = 0,

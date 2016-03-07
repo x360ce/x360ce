@@ -12,7 +12,7 @@ namespace x360ce.Web.Security.Controls
 	{
 
 		[EditorBrowsable, Category("Behavior"), DefaultValue(false)]
-		public bool AutoFocus
+		protected bool AutoFocus
 		{
 			get { return (bool)(ViewState["AutoFocus"] ?? false); }
 			set { ViewState["AutoFocus"] = value; }
@@ -22,6 +22,7 @@ namespace x360ce.Web.Security.Controls
 		{
 			LoginPanel.DataBind();
 			Login1.FindControl("LoginErrorPanel").Visible = false;
+			ScriptPlaceHolder.Visible = AutoFocus && !IsPostBack;
 		}
 
 		/// <summary>

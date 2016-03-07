@@ -23,6 +23,9 @@ namespace x360ce.Web.Security
 			AnonymousPlaceHolder.DataBind();
 			LoggedInPlaceHolder.DataBind();
 			RegisterPanel.DataBind();
+			AnonymousPlaceHolder.Visible = !SecurityContext.Current.IsAuthenticated;
+			RegisterPanel.Visible = SecurityContext.Current.AllowUsersToRegister || HttpContext.Current.Request.IsLocal;
+			LoggedInPlaceHolder.Visible = SecurityContext.Current.IsAuthenticated;
 		}
 
 		void UserEditControl1_Created(object sender, UserEditEventArgs e)
@@ -39,7 +42,7 @@ namespace x360ce.Web.Security
 			RedirectToUrl();
 		}
 
-		
+
 		public void RedirectToUrl()
 		{
 			if (string.IsNullOrEmpty(Request["ReturnUrl"]))
@@ -51,6 +54,6 @@ namespace x360ce.Web.Security
 				Response.Redirect(Request["ReturnUrl"]);
 			}
 		}
-	
+
 	}
 }

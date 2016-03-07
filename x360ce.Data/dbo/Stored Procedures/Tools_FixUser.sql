@@ -23,7 +23,7 @@ BEGIN
 END
 ELSE
 BEGIN
-	-- Create propery to store unique SID of the user.
+	-- Create property to store unique SID of the user.
 	DECLARE @user_sid varbinary(85)
 	-- Get user SID.
 	SELECT  @user_sid = dp.sid
@@ -47,11 +47,11 @@ END
 IF @apply = 1
 BEGIN
 	---- Disable login.
-	ALTER LOGIN [x360ceAdmin] DISABLE
+	EXEC('ALTER LOGIN [' + @username + '] DISABLE')
 	---- Map SQL 'Server Login' to 'Database User'
 	EXEC sp_change_users_login 'AUTO_FIX', @username
 	---- Enable login.
-	ALTER LOGIN [x360ceAdmin] ENABLE
+	EXEC ('ALTER LOGIN [' + @username + '] ENABLE')
 END
 
 ---- Fix database Owner
@@ -67,7 +67,7 @@ ELSE PRINT @command
 
 IF @apply = 1 
 BEGIN
-	-- Check missmached SID's between Database Users and Server Logins
+	-- Check mismatched SID's between Database Users and Server Logins
 	SELECT
 		dp.name AS DatabaseUser,
 		sp.name AS ServerLogin,

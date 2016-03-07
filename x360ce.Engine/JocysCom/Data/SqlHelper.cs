@@ -135,9 +135,10 @@ namespace JocysCom.ClassLibrary.Data
 			return connectionString;
 		}
 
-		public int ExecuteNonQuery(string connectionString, string sql, string comment = null)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null)
 		{
-			var cmd = new SqlCommand(sql);
+			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = CommandType.Text;
 			return ExecuteNonQuery(connectionString, cmd, -1, comment);
 		}
@@ -161,7 +162,7 @@ namespace JocysCom.ClassLibrary.Data
 			SetContext(conn, comment);
 			int rowsAffected = cmd.ExecuteNonQuery();
 			cmd.Dispose();
-			conn.Close();
+			// Dispose calls Close() internally.
 			conn.Dispose();
 			return rowsAffected;
 		}
@@ -175,7 +176,7 @@ namespace JocysCom.ClassLibrary.Data
 			// Returns first column of the first row.
 			object returnValue = cmd.ExecuteScalar();
 			cmd.Dispose();
-			conn.Close();
+			// Dispose calls Close() internally.
 			conn.Dispose();
 			return returnValue;
 		}
@@ -206,24 +207,32 @@ namespace JocysCom.ClassLibrary.Data
 			rowsAffected = adapter.Fill(ds);
 			adapter.Dispose();
 			cmd.Dispose();
-			conn.Close();
+			// Dispose calls Close() internally.
 			conn.Dispose();
 			return ds;
 		}
 
-		public DataSet ExecuteDataset(string connectionString, CommandType commandType, string commandText, string comment = null, params SqlParameter[] commandParameters)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		public DataSet ExecuteDataset(string connectionString, CommandType commandType, string cmdText, string comment = null, params SqlParameter[] commandParameters)
 		{
-			var cmd = new SqlCommand(commandText);
+			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = commandType;
-			cmd.Parameters.AddRange(commandParameters);
+			if (commandParameters != null && commandParameters.Length > 0)
+			{
+				cmd.Parameters.AddRange(commandParameters);
+			}
 			return ExecuteDataSet(connectionString, cmd, comment);
 		}
 
-		public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, string comment = null, params SqlParameter[] commandParameters)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		public int ExecuteNonQuery(string connectionString, CommandType commandType, string cmdText, string comment = null, params SqlParameter[] commandParameters)
 		{
-			var cmd = new SqlCommand(commandText);
+			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = commandType;
-			cmd.Parameters.AddRange(commandParameters);
+			if (commandParameters != null && commandParameters.Length > 0)
+			{
+				cmd.Parameters.AddRange(commandParameters);
+			}
 			return ExecuteNonQuery(connectionString, cmd, comment);
 		}
 
@@ -237,7 +246,7 @@ namespace JocysCom.ClassLibrary.Data
 			int rowsAffected = adapter.Fill(dataSet, dataSet.Tables[0].TableName);
 			adapter.Dispose();
 			cmd.Dispose();
-			conn.Close();
+			// Dispose calls Close() internally.
 			conn.Dispose();
 			return rowsAffected;
 		}

@@ -4,17 +4,17 @@
 	<asp:TextBox runat="server" ID="RedirectUrlTextBox" Width="400px" /><br />
 	<asp:TextBox runat="server" ID="ReturnUrlTextBox" Width="400px" />
 </asp:Panel>
-<div class="Login_Title" id="HeadPanel" runat="server" visible="<%#ShowHead %>">
+<div class="Login_Title" id="HeadPanel" runat="server">
 	Sign Up</div>
 <div class="Login_Body">
 		<div id="no_js_box" style="display: none;">
 			<h2>
-				Javascript is disabled on your browser.</h2>
+				JavaScript is disabled on your browser.</h2>
 			<p>
-				Please enable JavaScript on your browser or upgrade to a Javascript-capable browser
+				Please enable JavaScript on your browser or upgrade to a JavaScript-capable browser
 				to register for Site.</p>
 		</div>
-		<table class="BA_FormTable" border="0" cellpadding="0" cellspacing="4">
+		<table class="BA_FormTable" border="0">
 			<tr runat="server" id="FirstNameRow">
 				<td class="BA_FormTable_Label">
 					<label>
@@ -57,7 +57,7 @@
 			<tr runat="server" id="UsernameRow">
 				<td class="BA_FormTable_Label">
 					<label>
-						Username:</label>
+						User Name:</label>
 				</td>
 				<td class="BA_FormTable_Value">
 					<asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>
@@ -86,7 +86,7 @@
 						Birthday:</label>
 				</td>
 				<td class="BA_FormTable_Value">
-					<table border="0" cellpadding="0" cellspacing="0">
+					<table border="0">
 						<tr>
 							<td style="padding-right: 8px;">
 								<asp:DropDownList ID="YearDropDownList" runat="server">
@@ -129,7 +129,7 @@
 				<td class="BA_FormTable_Label">
 				</td>
 				<td class="BA_FormTable_Value">
-					<table border="0" cellpadding="0" cellspacing="0" style="padding-top: 2px;">
+					<table border="0" style="padding-top: 2px;">
 						<tr>
 							<td style="height: 16px;">
 								<asp:CheckBox ID="TermsCheckBox" Text="" runat="server" onclick="Profile.RequestServerValidation(this, null)" />
@@ -152,9 +152,9 @@
 				<td class="BA_FormTable_Label">
 				</td>
 				<td class="BA_FormTable_Value">
-					<table border="0" cellpadding="0" cellspacing="0">
+					<table border="0">
 						<tr>
-							<td style="height: 16px;" valign="top">
+							<td style="height: 16px;">
 								<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="BA_FormTable_CheckBox" onclick="Profile.RequestServerValidation(this, null)" />
 							</td>
 							<td style="padding-left: 4px;">
@@ -174,7 +174,7 @@
 			<tr runat="server" id="SignUpRow">
 				<td>
 				</td>
-				<td align="right">
+				<td>
 					<asp:Button runat="server" ID="ClientLinkButton" CssClass="SWUI_Prg Login_Button"
 						Text="Sign Up" OnClientClick="return false;" />
 					<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
@@ -199,7 +199,7 @@
 		ControlToValidate="EmailTextBox" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
 		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
 		Display="Dynamic" />
-	<asp:CustomValidator ID="UsernameTextBoxCustomValidator" runat="server" Text="Username Validator"
+	<asp:CustomValidator ID="UsernameTextBoxCustomValidator" runat="server" Text="User Name Validator"
 		ControlToValidate="UsernameTextBox" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
 		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
 		Display="Dynamic" />
@@ -247,7 +247,7 @@
 		/// </summary>
 		var path = System.GetScriptsPath();
 		var url = path + "/Examples/System.Security.Password.Frameset.htm?Field=" + passwordTextBox.id;
-		// Please note thatn MSIE 7 forces the presence of the Address Bar by default
+		// Please note that MSIE 7 forces the presence of the Address Bar by default
 		// A missing address bar creates a chance for a fraudster to forge an address of their own.
 		// To help thwart that, IE7 will show the address bar on all internet windows to help users see where they are.
 		// coming from Microsoft Internet Explorer Blog, Better Website Identification
@@ -402,7 +402,7 @@
 				break;
 			}
 		}
-		// Assing value if this function is called from validator.
+		// Assign value if this function is called from validator.
 		if (e) {
 			e.IsValid = validator.IsValid;
 			Profile.Controls.AllCustomValidator.innerHTML = "All Validator:<br />" + validator.id + " " + validator.IsValid + "<br />" + (new Date);
@@ -429,7 +429,7 @@
 				: "BA_FormTable_Result0" + (Profile.Changed[name] ? "Changed" : "");
 		}
 		Profile.Controls.ErrorPanel.style.display = "";
-		// Because we are using webservices
+		// Because we are using web services
 		// we need to update validators from result now.
 		for (var i = 0; i < result.length; i++) {
 			var name = result[i].Name;
