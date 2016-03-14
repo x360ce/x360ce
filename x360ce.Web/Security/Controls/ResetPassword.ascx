@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ResetPassword.ascx.cs"
-	Inherits="x360ce.Web.Security.Controls.ResetPassword" %>
+	Inherits="JocysCom.Web.Security.Controls.ResetPassword" %>
 <div class="Login_Title">
 	Reset Your Password</div>
 <div class="Login_Body">

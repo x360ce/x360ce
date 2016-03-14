@@ -9,7 +9,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 //using System.DirectoryServices;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	/// <summary>
 	/// Summary description for Authentication

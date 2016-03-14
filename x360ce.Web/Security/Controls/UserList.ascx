@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" Inherits=" x360ce.Web.Security.Controls.UserList"
+<%@ Control Language="C#" AutoEventWireup="true" Inherits=" JocysCom.Web.Security.Controls.UserList"
 	Codebehind="UserList.ascx.cs" %>
 <asp:Panel runat="server" ID="MainPanel">
 <table border="0" cellpadding="0" cellspacing="0" runat="server" id="RolesTable"

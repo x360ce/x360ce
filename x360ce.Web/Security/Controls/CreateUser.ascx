@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CreateUser.ascx.cs"
-	Inherits="x360ce.Web.Security.Controls.CreateUser" %>
+	Inherits="JocysCom.Web.Security.Controls.CreateUser" %>
 <asp:Panel runat="server" ID="ParametersPanel" Visible="false">
 	<asp:TextBox runat="server" ID="RedirectUrlTextBox" Width="400px" /><br />
 	<asp:TextBox runat="server" ID="ReturnUrlTextBox" Width="400px" />

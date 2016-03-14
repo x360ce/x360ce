@@ -9,7 +9,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Linq;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public class RoleEditEventArgs : System.EventArgs
 	{

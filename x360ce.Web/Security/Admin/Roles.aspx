@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="x360ce.Web.Security.Admin.Roles"
+﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="JocysCom.Web.Security.Admin.Roles"
 	CodeBehind="Roles.aspx.cs" %>
 
 <%@ Register Src="../Controls/UserList.ascx" TagName="UserList" TagPrefix="uc3" %>

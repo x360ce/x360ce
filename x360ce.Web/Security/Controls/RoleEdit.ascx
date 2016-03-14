@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" Inherits=" x360ce.Web.Security.Controls.RoleEdit"
+<%@ Control Language="C#" AutoEventWireup="true" Inherits=" JocysCom.Web.Security.Controls.RoleEdit"
 	Codebehind="RoleEdit.ascx.cs" %>
 <table cellpadding="0" border="0" cellspacing="0">
 	<tr>

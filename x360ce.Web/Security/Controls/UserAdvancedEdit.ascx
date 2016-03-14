@@ -1,5 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="UserAdvancedEdit.ascx.cs"
-	Inherits="x360ce.Web.Security.Controls.UserAdvancedEdit" %>
+	Inherits="JocysCom.Web.Security.Controls.UserAdvancedEdit" %>
 <asp:PlaceHolder runat="server" ID="MainPlaceHolder" Visible="false">
 <asp:Panel runat="server" ID="UserPanel" Style="padding: 4px;
 				background: url(../../Images/Interface/Office2003/FadeLightBlue-1x23.gif);">

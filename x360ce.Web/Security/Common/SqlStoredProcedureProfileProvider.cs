@@ -14,7 +14,7 @@ using System.Configuration;
 using System.Web.Hosting;
 using System.Security;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
     /* TODO:
      * 

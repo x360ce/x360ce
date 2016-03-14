@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web.Security;
 using JocysCom.ClassLibrary;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public partial class LoginReset : System.Web.UI.Page
 	{

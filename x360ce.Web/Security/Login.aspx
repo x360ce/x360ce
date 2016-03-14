@@ -1,13 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="Site.Master" AutoEventWireup="true"
-	CodeBehind="Login.aspx.cs" Inherits="x360ce.Web.Security.Login" %>
+	CodeBehind="Login.aspx.cs" Inherits="JocysCom.Web.Security.Login" %>
 
 <%@ Register Src="Controls/LoginUser.ascx" TagName="LoginUser" TagPrefix="uc" %>
 <%@ Register Src="Controls/ResetPassword.ascx" TagName="ResetPassword" TagPrefix="uc" %>
 <%@ Register Src="Controls/CreateUser.ascx" TagName="CreateUser" TagPrefix="uc" %>
 
 <asp:Content ID="Header1" ContentPlaceHolderID="HeaderPlaceHolder" runat="server">
-	<link type="text/css" rel="stylesheet" href="Common/JsClasses/System.Web.UI.Interface.css" />
-	<link type="text/css" rel="stylesheet" href="Social/Styles/Facebook.css" />
 </asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="PageContentPlaceHolder" runat="server">

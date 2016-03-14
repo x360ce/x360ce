@@ -11,7 +11,7 @@ using System.Web.UI.HtmlControls;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace x360ce.Web.Security.Controls
+namespace JocysCom.Web.Security.Controls
 {
 	public partial class UserList : System.Web.UI.UserControl
 	{

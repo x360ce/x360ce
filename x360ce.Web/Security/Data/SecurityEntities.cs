@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace x360ce.Web.Security.Data
+namespace JocysCom.Web.Security.Data
 {
 	public partial class SecurityEntities
 	{

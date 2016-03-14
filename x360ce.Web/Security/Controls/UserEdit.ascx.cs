@@ -15,7 +15,7 @@ using System.Configuration.Provider;
 using System.Web.Configuration;
 using System.ComponentModel;
 
-namespace x360ce.Web.Security.Controls
+namespace JocysCom.Web.Security.Controls
 {
 	public partial class UserEdit : System.Web.UI.UserControl
 	{

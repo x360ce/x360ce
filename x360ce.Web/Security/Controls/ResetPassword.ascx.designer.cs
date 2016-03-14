@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace x360ce.Web.Security.Controls {
+namespace JocysCom.Web.Security.Controls {
     
     
     public partial class ResetPassword {

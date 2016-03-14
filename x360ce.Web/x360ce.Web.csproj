@@ -69,6 +69,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Common\JsClasses\System.Web.UI.Interface.debug.css" />
     <Content Include="Controls\ControllersChartControl.ascx" />
     <Content Include="Controls\ControllersControl.ascx" />
     <Content Include="Controls\GamesControl.ascx" />
@@ -117,6 +118,7 @@
     <Content Include="Security\Admin\Roles.aspx" />
     <Content Include="Security\Scripts\Security.js" />
     <Content Include="Security\Scripts\Security.PrincipalsSearch.js" />
+    <Content Include="Security\ServerInfo.asmx" />
     <Content Include="Security\Styles\Default.css" />
     <Content Include="Security\Styles\Security.css" />
     <Content Include="Security\Styles\Security.IE.css" />
@@ -266,6 +268,10 @@
     </Compile>
     <Compile Include="Security\Admin\Roles.aspx.designer.cs">
       <DependentUpon>Roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\ServerInfo.asmx.cs">
+      <DependentUpon>ServerInfo.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Security\Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

@@ -1,5 +1,5 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LoginUser.ascx.cs" Inherits="x360ce.Web.Security.Controls.LoginUser" %>
-<div runat="server" id="LoginPanel" visible='<%# x360ce.Web.Security.SecurityContext.Current.AllowUsersToLogin %>'>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LoginUser.ascx.cs" Inherits="JocysCom.Web.Security.Controls.LoginUser" %>
+<div runat="server" id="LoginPanel" visible='<%# JocysCom.Web.Security.SecurityContext.Current.AllowUsersToLogin %>'>
 	<div class="Login_Title">
 		Login
 	</div>

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
     public partial class Site : System.Web.UI.MasterPage
     {

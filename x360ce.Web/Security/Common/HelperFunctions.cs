@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public class HelperFunctions
 	{

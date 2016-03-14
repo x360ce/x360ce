@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace x360ce.Web.Security.Controls
+namespace JocysCom.Web.Security.Controls
 {
 	public partial class ResetPassword : System.Web.UI.UserControl
 	{

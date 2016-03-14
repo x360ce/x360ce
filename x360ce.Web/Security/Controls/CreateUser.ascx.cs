@@ -10,7 +10,7 @@ using System.Web.Security;
 using User = JocysCom.WebSites.Engine.Security.Data.User;
 using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
 
-namespace x360ce.Web.Security.Controls
+namespace JocysCom.Web.Security.Controls
 {
 	public sealed class ProfileCreateEventArgs : EventArgs
 	{

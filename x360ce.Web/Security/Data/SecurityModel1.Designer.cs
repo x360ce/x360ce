@@ -19,15 +19,15 @@ using System.Xml.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__Appli__477199F1", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(x360ce.Web.Security.Data.Application), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(x360ce.Web.Security.Data.Membership), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(x360ce.Web.Security.Data.Application), "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(x360ce.Web.Security.Data.Role), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Us__Appli__373B3228", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(x360ce.Web.Security.Data.Application), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(x360ce.Web.Security.Data.User), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(x360ce.Web.Security.Data.User), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(x360ce.Web.Security.Data.Membership), true)]
-[assembly: EdmRelationshipAttribute("SecurityModel", "aspnet_UsersInRoles", "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(x360ce.Web.Security.Data.Role), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(x360ce.Web.Security.Data.User))]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__Appli__477199F1", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.Web.Security.Data.Application), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.Web.Security.Data.Membership), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Ro__Appli__5C6CB6D7", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.Web.Security.Data.Application), "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.Web.Security.Data.Role), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Us__Appli__373B3228", "aspnet_Applications", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.Web.Security.Data.Application), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.Web.Security.Data.User), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "FK__aspnet_Me__UserI__4865BE2A", "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(JocysCom.Web.Security.Data.User), "aspnet_Membership", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(JocysCom.Web.Security.Data.Membership), true)]
+[assembly: EdmRelationshipAttribute("SecurityModel", "aspnet_UsersInRoles", "aspnet_Roles", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.Web.Security.Data.Role), "aspnet_Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(JocysCom.Web.Security.Data.User))]
 
 #endregion
 
-namespace x360ce.Web.Security.Data
+namespace JocysCom.Web.Security.Data
 {
     #region Contexts
     

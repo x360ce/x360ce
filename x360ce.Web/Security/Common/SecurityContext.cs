@@ -11,7 +11,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
 using System.Collections.Generic;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 
 	/// <summary>

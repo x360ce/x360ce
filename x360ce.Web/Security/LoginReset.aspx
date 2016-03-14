@@ -1,9 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="Site.Master" AutoEventWireup="true"
-	CodeBehind="LoginReset.aspx.cs" Inherits="x360ce.Web.Security.LoginReset" %>
+	CodeBehind="LoginReset.aspx.cs" Inherits="JocysCom.Web.Security.LoginReset" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeaderPlaceHolder" runat="server">
-	<link type="text/css" rel="stylesheet" href="Common/JsClasses/System.Web.UI.Interface.css" />
-	<link type="text/css" rel="stylesheet" href="Social/Styles/Facebook.css" />
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="PageContentPlaceHolder" runat="server">
 	<table class="MainTable">

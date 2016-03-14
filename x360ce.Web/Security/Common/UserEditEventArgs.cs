@@ -3,7 +3,7 @@ using System.Data;
 using System.Configuration;
 using System.Web;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public class UserEditEventArgs : System.EventArgs
 	{

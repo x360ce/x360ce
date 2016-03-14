@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public enum UserQueryName
 	{

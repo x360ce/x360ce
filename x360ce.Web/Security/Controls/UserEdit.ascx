@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserEdit.ascx.cs" Inherits="x360ce.Web.Security.Controls.UserEdit" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserEdit.ascx.cs" Inherits="JocysCom.Web.Security.Controls.UserEdit" %>
 <table cellpadding="0" border="0" cellspacing="0">
 	<tr>
 		<td align="left">

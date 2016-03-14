@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using JocysCom.WebSites.Engine;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public partial class Login : System.Web.UI.Page
 	{

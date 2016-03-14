@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" Inherits=" x360ce.Web.Security.Controls.RoleList"
+<%@ Control Language="C#" AutoEventWireup="true" Inherits=" JocysCom.Web.Security.Controls.RoleList"
 	CodeBehind="RoleList.ascx.cs" %>
 <%@ Register Src="RoleEdit.ascx" TagName="RoleEdit" TagPrefix="uc1" %>
 <asp:Panel runat="server" ID="MainPanel">

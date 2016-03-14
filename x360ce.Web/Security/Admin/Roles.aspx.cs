@@ -10,7 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Security;
 
-namespace x360ce.Web.Security.Admin
+namespace JocysCom.Web.Security.Admin
 {
 	public partial class Roles : System.Web.UI.Page
 	{

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using JocysCom.WebSites.Engine;
 using JocysCom.ClassLibrary;
 
-namespace x360ce.Web.Security.Data
+namespace JocysCom.Web.Security.Data
 {
 	public partial class User
 	{

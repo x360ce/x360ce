@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.Specialized;
 using JocysCom.WebSites.Engine;
 
-namespace x360ce.Web.Security.Data
+namespace JocysCom.Web.Security.Data
 {
 	public partial class Role
 	{

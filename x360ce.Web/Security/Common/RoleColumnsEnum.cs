@@ -1,7 +1,7 @@
 using System;
 
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	public enum RoleColumnsEnum
 	{

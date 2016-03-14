@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace x360ce.Web.Security {
+namespace JocysCom.Web.Security {
     
     
     public partial class Site {
@@ -31,22 +31,49 @@ namespace x360ce.Web.Security {
         protected global::System.Web.UI.HtmlControls.HtmlTitle Title1;
         
         /// <summary>
-        /// Link1 control.
+        /// LinkD1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlLink Link1;
+        protected global::System.Web.UI.HtmlControls.HtmlLink LinkD1;
         
         /// <summary>
-        /// Link2 control.
+        /// LinkD2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlLink Link2;
+        protected global::System.Web.UI.HtmlControls.HtmlLink LinkD2;
+        
+        /// <summary>
+        /// LinkS1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlLink LinkS1;
+        
+        /// <summary>
+        /// LinkS2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlLink LinkS2;
+        
+        /// <summary>
+        /// LinkS3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlLink LinkS3;
         
         /// <summary>
         /// HeaderPlaceHolder control.

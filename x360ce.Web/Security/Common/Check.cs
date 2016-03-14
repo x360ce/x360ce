@@ -10,7 +10,7 @@ using System.Web.UI.HtmlControls;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace x360ce.Web.Security
+namespace JocysCom.Web.Security
 {
 	/// <summary>
 	/// Summary description for Members

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace x360ce.Web.Security {
+namespace JocysCom.Web.Security {
     
     
     public partial class Login {
@@ -37,7 +37,7 @@ namespace x360ce.Web.Security {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::x360ce.Web.Security.Controls.LoginUser LoginUser1;
+        protected global::JocysCom.Web.Security.Controls.LoginUser LoginUser1;
         
         /// <summary>
         /// ResetPassword1 control.
@@ -46,7 +46,7 @@ namespace x360ce.Web.Security {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::x360ce.Web.Security.Controls.ResetPassword ResetPassword1;
+        protected global::JocysCom.Web.Security.Controls.ResetPassword ResetPassword1;
         
         /// <summary>
         /// RegisterPanel control.
@@ -64,7 +64,7 @@ namespace x360ce.Web.Security {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::x360ce.Web.Security.Controls.CreateUser CreateUser1;
+        protected global::JocysCom.Web.Security.Controls.CreateUser CreateUser1;
         
         /// <summary>
         /// LoggedInPlaceHolder control.

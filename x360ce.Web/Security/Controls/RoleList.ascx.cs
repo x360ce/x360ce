@@ -16,7 +16,7 @@ using System.Data.Objects;
 using System.Data.Objects.DataClasses;
 using System.Data.EntityClient;
 
-namespace x360ce.Web.Security.Controls
+namespace JocysCom.Web.Security.Controls
 {
 	[ParseChildren(false), ControlValueProperty("DirectoryPath"), DefaultProperty("DirectoryPath")]
 	public partial class RoleList : UserControl

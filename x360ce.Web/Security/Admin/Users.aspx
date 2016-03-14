@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="x360ce.Web.Security.Admin.Users"
+﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="JocysCom.Web.Security.Admin.Users"
 	Codebehind="Users.aspx.cs" %>
 
 <%@ Register Src="../Controls/UserAdvancedEdit.ascx" TagName="UserAdvancedEdit" TagPrefix="uc5" %>

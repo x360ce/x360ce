@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace x360ce.Web.Security {
+namespace JocysCom.Web.Security {
     
     
     public partial class LoginReset {

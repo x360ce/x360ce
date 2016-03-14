@@ -1,12 +1,15 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="x360ce.Web.Security.Site" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="JocysCom.Web.Security.Site" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head id="Head1" runat="server">
 	<title runat="server" id="Title1"></title>
-	<link id="Link1" rel="stylesheet" type="text/css" runat="server" href="Styles/Default.css" />
-	<link id="Link2" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.css" />
-	<link id="Link3" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.IE.css" />
+	<link id="LinkD1" rel="stylesheet" type="text/css" runat="server" href="Common/JsClasses/System.Web.UI.Interface.debug.css" />
+	<link id="LinkD2" rel="stylesheet" type="text/css" runat="server" href="Social/Styles/Facebook.css" />
+	<link id="LinkS1" rel="stylesheet" type="text/css" runat="server" href="Styles/Default.css" />
+	<link id="LinkS2" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.css" />
+	<link id="LinkS3" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.IE.css" />
+
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<asp:ContentPlaceHolder ID="HeaderPlaceHolder" runat="server" />
 </head>

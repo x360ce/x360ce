@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace x360ce.Web.Security.Admin {
+namespace JocysCom.Web.Security.Admin {
     
     
     public partial class Roles {
@@ -28,7 +28,7 @@ namespace x360ce.Web.Security.Admin {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::x360ce.Web.Security.Controls.RoleList RoleList1;
+        protected global::JocysCom.Web.Security.Controls.RoleList RoleList1;
         
         /// <summary>
         /// RoleEdit1 control.
@@ -37,7 +37,7 @@ namespace x360ce.Web.Security.Admin {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::x360ce.Web.Security.Controls.RoleEdit RoleEdit1;
+        protected global::JocysCom.Web.Security.Controls.RoleEdit RoleEdit1;
         
         /// <summary>
         /// UserList1 control.
@@ -46,7 +46,7 @@ namespace x360ce.Web.Security.Admin {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::x360ce.Web.Security.Controls.UserList UserList1;
+        protected global::JocysCom.Web.Security.Controls.UserList UserList1;
         
         /// <summary>
         /// SelectRoleTextBox control.
