@@ -65,6 +65,7 @@ Game Database (GDB) and Configuration (INI) files can be copied to %ALLUSERSPROF
 Note:
   * In most cases games based on the Source engine have the DLL placed inside the /Bin/ sub folder, as it is loaded by inputsystem.dll instead of the game executable.
   * The DLL is not currently fully supported by the App, recent versions incorporate HookMasks and fully remove HookModes, and requires placing Version=1 under [options] in the x360ce.ini to quieten a warning about incorrect version.
+  * You can use [XInputScanner](https://github.com/mrexodia/XInputScanner) to find how to name your XInput library file.
 
 # Uninstallation
 
