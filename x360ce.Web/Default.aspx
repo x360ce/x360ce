@@ -80,14 +80,14 @@
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md">Supported Games</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://ngemu.com/forums/x360ce.140">Forum</a></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce v3.2.9.81 (2015-10-04) • for 32-bit games</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.2.9.81 (2015-10-04) • for 32-bit games</a></td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce v3.2.9.81 (2015-10-04) • for 64-bit games</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.2.9.81 (2015-10-04) • for 64-bit games</a></td>
                                         </tr>
                                     </table>
 
