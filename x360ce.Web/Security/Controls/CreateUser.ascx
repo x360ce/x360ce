@@ -4,9 +4,9 @@
 	<asp:TextBox runat="server" ID="RedirectUrlTextBox" Width="400px" /><br />
 	<asp:TextBox runat="server" ID="ReturnUrlTextBox" Width="400px" />
 </asp:Panel>
-<div class="Login_Title" id="HeadPanel" runat="server">
+<div class="SWUI_Panel_Title" id="HeadPanel" runat="server">
 	Sign Up</div>
-<div class="Login_Body">
+<div class="SWUI_Panel_Body">
 		<div id="no_js_box" style="display: none;">
 			<h2>
 				JavaScript is disabled on your browser.</h2>
@@ -14,78 +14,78 @@
 				Please enable JavaScript on your browser or upgrade to a JavaScript-capable browser
 				to register for Site.</p>
 		</div>
-		<table class="BA_FormTable" border="0">
+		<table class="SWUI_Table" border="0">
 			<tr runat="server" id="FirstNameRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						First Name:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<asp:TextBox ID="FirstNameTextBox" runat="server" />
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="FirstNameStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="FirstNameStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="LastNameRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						Last Name:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<asp:TextBox ID="LastNameTextBox" runat="server" />
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="LastNameStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="LastNameStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="EmailRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						Your Email:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<asp:TextBox ID="EmailTextBox" runat="server" />
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="EmailStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="EmailStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="UsernameRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						User Name:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="UsernameStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="UsernameStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="PasswordRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						Password:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password" />
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="PasswordStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="PasswordStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="BirthdayRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						Birthday:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<table border="0">
 						<tr>
 							<td style="padding-right: 8px;">
@@ -103,32 +103,32 @@
 						</tr>
 					</table>
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="BirthdayStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="BirthdayStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="GenderRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 					<label>
 						I am:</label>
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<asp:DropDownList ID="GenderDropDownList" runat="server" ValidationGroup="MemberRegistration">
 						<asp:ListItem Text="Select Gender:" Value="" Selected="True" />
 						<asp:ListItem Text="Female" Value="F" />
 						<asp:ListItem Text="Male" Value="M" />
 					</asp:DropDownList>
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="GenderStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="GenderStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="TermsRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<table border="0" style="padding-top: 2px;">
 						<tr>
 							<td style="height: 16px;">
@@ -143,19 +143,19 @@
 						</tr>
 					</table>
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="TermsStatus" class="BA_FormTable_Result0">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="TermsStatus" class="SWUI_Table_Result0">
 					</div>
 				</td>
 			</tr>
 			<tr runat="server" id="NewsRow">
-				<td class="BA_FormTable_Label">
+				<td class="SWUI_Table_Label">
 				</td>
-				<td class="BA_FormTable_Value">
+				<td class="SWUI_Table_Value">
 					<table border="0">
 						<tr>
 							<td style="height: 16px;">
-								<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="BA_FormTable_CheckBox" onclick="Profile.RequestServerValidation(this, null)" />
+								<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" onclick="Profile.RequestServerValidation(this, null)" />
 							</td>
 							<td style="padding-left: 4px;">
 								<label for="<%= NewsCheckBox.ClientID %>">
@@ -166,8 +166,8 @@
 						</tr>
 					</table>
 				</td>
-				<td class="BA_FormTable_Check">
-					<div runat="server" id="NewsStatus" class="BA_FormTable_Result0" style="display: none;">
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="NewsStatus" class="SWUI_Table_Result0" style="display: none;">
 					</div>
 				</td>
 			</tr>
@@ -175,7 +175,7 @@
 				<td>
 				</td>
 				<td>
-					<asp:Button runat="server" ID="ClientLinkButton" CssClass="SWUI_Prg Login_Button"
+					<asp:Button runat="server" ID="ClientLinkButton" CssClass="SWUI_Table_Button SWUI_Btn"
 						Text="Sign Up" OnClientClick="return false;" />
 					<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
 						ValidationGroup="AllMemberRegistration" Style="display: none;">Sign Up (server)</asp:LinkButton>
@@ -184,7 +184,7 @@
 				</td>
 			</tr>
 		</table>
-	<asp:Panel runat="server" ID="ErrorPanel" CssClass="BA_FormTable_ErrorPanel" Style="display: none;">
+	<asp:Panel runat="server" ID="ErrorPanel" CssClass="SWUI_Table_ErrorPanel" Style="display: none;">
 	</asp:Panel>
 	<asp:Label runat="server" ID="ErrorPanelLabel" />
 	<asp:CustomValidator ID="FirstNameTextBoxCustomValidator" runat="server" ControlToValidate="FirstNameTextBox"
@@ -425,8 +425,8 @@
 			var control = Profile.Controls[name];
 			var status = Profile.Status[name];
 			status.className = result[i].Message.length == 0
-				? "BA_FormTable_Result1"
-				: "BA_FormTable_Result0" + (Profile.Changed[name] ? "Changed" : "");
+				? "SWUI_Table_Result1"
+				: "SWUI_Table_Result0" + (Profile.Changed[name] ? "Changed" : "");
 		}
 		Profile.Controls.ErrorPanel.style.display = "";
 		// Because we are using web services
@@ -465,7 +465,7 @@
 			if (all.IsValid) {
 				// Prevent multi clicks.
 				Sys.UI.DomEvent.removeHandler(Profile.Controls.ClientLinkButton, 'click', Profile.SignUp_OnClientClick);
-				Profile.Controls.ClientLinkButton.className = "BA_FormTable_Button_Disabled";
+				Profile.Controls.ClientLinkButton.className = "SWUI_Table_Button_Disabled";
 				// Create click() function if not exists.
 				var b = Profile.Controls.SignUpLinkButton;
 				if (b && typeof (b.click) == 'undefined') {

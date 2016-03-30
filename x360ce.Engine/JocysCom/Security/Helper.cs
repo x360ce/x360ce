@@ -33,6 +33,19 @@ namespace JocysCom.ClassLibrary.Security
 		/// Generate password reset/token key which is unique to user. Reset key won't change until user logs in or change password.
 		/// </summary>
 		/// <param name="username">Username.</param>
+		/// <param name="password_hash">Password hash.</param>
+		/// <param name="unit">Time unit type.</param>
+		/// <returns></returns>
+		public static string GetSecurityToken(object userId, Guid password_hash, TimeUnitType unit)
+		{
+			var password = password_hash.ToString("D").ToLower();
+			return GetSecurityToken(userId, password, unit);
+		}
+
+		/// <summary>
+		/// Generate password reset/token key which is unique to user. Reset key won't change until user logs in or change password.
+		/// </summary>
+		/// <param name="username">Username.</param>
 		/// <param name="password">Password or secure key/hash.</param>
 		/// <param name="unit">Time unit type.</param>
 		/// <returns></returns>
@@ -54,6 +67,21 @@ namespace JocysCom.ClassLibrary.Security
 			string user = userId is Guid ? ((Guid)userId).ToString("N").ToUpper() : userId.ToString();
 			string passString = string.Format("{0}_{1}_{2}", user, unitValue, password);
 			return Encryption.Current.ComputeHash(passString).ToString("N").Substring(0, securityHashSize).ToUpper() + user;
+		}
+
+		/// <summary>
+		/// Check if token key is valid.
+		/// </summary>
+		/// <param name="token">Token to check.</param>
+		/// <param name="userId">User id (Integer or GUID).</param>
+		/// <param name="password_hash">Password hash.</param>
+		/// <param name="unit">Time unit type.</param>
+		/// <param name="count">How many units in past mus be checked.</param>
+		/// <returns>True if token is valid, False if not valid.</returns>
+		public static bool CheckSecurityToken(string token, object userId, Guid password_hash, TimeUnitType unit, int count)
+		{
+			var password = password_hash.ToString("D").ToLower();
+			return CheckSecurityToken(token, userId, password, unit, count);
 		}
 
 		/// <summary>

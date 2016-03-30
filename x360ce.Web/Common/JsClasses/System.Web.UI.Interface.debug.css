@@ -2,13 +2,14 @@
 Custom CheckBox
 -----------------------------------------------------------------------------*/
 /* <input type="checkbox" id="cb1"/><label for="cb1">Check this!</label>
-	fuglychecks.png - one image includes all states of checkboxes.
-	Wich image from PNG to show is set by background-position;
+	fuglychecks.png - one image includes all states of CheckBoxes.
+	With image from PNG to show is set by background-position;
  */
 
 .SWUI_NoScroll { border-width: 0; padding: 0; margin: 0; background-color: buttonface; overflow: hidden; font: menu; }
 .SWUI_Scroll { border-width: 0; padding: 0; margin: 0; background-color: buttonface; font-family: MS Sans Serif; font-size: 8pt; }
 .SWUI_Blue { background-color: #3A6EA5; }
+
 .SWUI_PrgLink a:link { font-size: 8pt; color: #000080; font-family: tahoma; text-decoration: none; }
 .SWUI_PrgLink a:visited { font-size: 8pt; color: #004080; font-family: tahoma; text-decoration: none; }
 .SWUI_PrgLink a:active { font-size: 8pt; color: #ff0000; font-family: tahoma; text-decoration: none; }
@@ -20,12 +21,12 @@ Custom CheckBox
 .SWUI_PrgLink:hover { font-size: 8pt; color: #000080; font-family: tahoma; text-decoration: underline; }
 
 button.SWUI_Prg { padding: 0 4px 0 0; }
-    button.SWUI_Prg img { margin: 0 0 0 4px; padding: 0 0 0 0; border-width: 0; height: 16px; width: 16px; float: left; outline: none; }
-    button.SWUI_Prg div { cursor: default; font: menu; padding: 2px 0 0 0; margin: 0 0 0 0; overflow: hidden; text-align: center; }
+button.SWUI_Prg img { margin: 0 0 0 4px; padding: 0 0 0 0; border-width: 0; height: 16px; width: 16px; float: left; outline: none; }
+button.SWUI_Prg div { cursor: default; font: menu; padding: 2px 0 0 0; margin: 0 0 0 0; overflow: hidden; text-align: center; }
 
 label.PrgCheckBox { padding-left: 20px; height: 16px; }
 input[type="checkbox"].PrgCheckBox { visibility: hidden; width: 0; height: 0; padding: 0; margin: 0; }
-    input[type="checkbox"].PrgCheckBox + label.PrgCheckBox { background: url("fuglychecks.png") 0 0 no-repeat; }
+input[type="checkbox"].PrgCheckBox + label.PrgCheckBox { background: url("fuglychecks.png") 0 0 no-repeat; }
 input[type="checkbox"]:focus.PrgCheckBox + label.PrgCheckBox { background-position: 0 -16px; }
 input[type="checkbox"]:checked.PrgCheckBox + label.PrgCheckBox { background-position: 0 -32px; }
 input[type="checkbox"]:checked:focus.PrgCheckBox + label.PrgCheckBox { background-position: 0 -48px; }
@@ -90,38 +91,60 @@ td.SWUI_TreeView_SelectedNode {  }
 a.SWUI_TreeView_SelectedNode { background-color: #3a6ea5; color: #ffffff; }
 .SWUI_TreeView a[tabindex="-1"] img { margin: 2px 0 0 0; }
 
+
+/*=============================================================================
+Table
+-----------------------------------------------------------------------------*/
+
+.SWUI_Table { width: 100%; }
+.SWUI_Table tr td {}
+.SWUI_Table_Label { white-space: nowrap; text-align:left; padding-top: 2px; padding-left: 8px;  }
+.SWUI_Table_Value { text-align: left; padding-right: 2px;}
+.SWUI_Table_Value input[type="text"] {  width: 100%; }
+.SWUI_Table_Value input[type="password"] { width: 100%; }
+.SWUI_Table_Value input[type="checkbox"] { width: 13px; height: 13px; margin: 0; padding: 0;}
+.SWUI_Table_CheckBox { width: 13px; margin: 0; padding: 0;}
+.SWUI_Table_Check { }
+.SWUI_Table_Result1 { background: url(../Images/Icons/checkbox_16x16.png) no-repeat; width: 16px; height: 16px; }
+.SWUI_Table_Result0 { width: 16px; height: 16px; }
+.SWUI_Table_Result0Changed { background: url(../Images/Icons/checkbox_unchecked_16x16.png) no-repeat; width: 16px; height: 16px; }
+.SWUI_Table_ErrorPanel { border: solid 1px #dd3c10; background: #ffebe8; padding: 4px; display:block; }
+.SWUI_Table_SuccessPanel { border: solid 1px #10dd50; background: #e8ffee; padding: 4px; display:block; }
+.SWUI_Table_Button { float: right; background-color: #f0f0f0; width: 56px; border: solid 1px #bdc7d8; display: block; text-align: center; padding: 2px 0 2px 0; cursor: default; text-decoration: none !important; color: Black !important; }
+.SWUI_Table_Button_Disabled { width: 56px; border: solid 1px #f0f0f0;  display: block; text-align: center; padding: 2px 0 2px 0; cursor: default; text-decoration: none !important; color: Black !important; }
+.SWUI_Table_ErrorPanel ul { padding: 0; margin: 0; }
+.SWUI_Table_ErrorPanel ul li { padding: 0; margin: 0; color: Black; list-style-type: none; }
+
 /*=============================================================================
 GridViewTable
 -----------------------------------------------------------------------------*/
 
-
 .SWUI_GridViewTableAddBorders { border: solid 1px #5D7B9D; }
-    .SWUI_GridViewTableAddBorders tr td { border-bottom: solid 1px #b8d9ff; border-right: solid 1px #b8d9ff; border-top: solid 1px #5D7B9D; }
+.SWUI_GridViewTableAddBorders tr td { border-bottom: solid 1px #b8d9ff; border-right: solid 1px #b8d9ff; border-top: solid 1px #5D7B9D; }
 .SWUI_GridViewTable { border: hidden; border-collapse: collapse; border-width: 0; empty-cells: show; }
-    .SWUI_GridViewTable tbody tr { background-color: #F7F6F3; }
-        .SWUI_GridViewTable tbody tr th { font-family: Verdana; font-size: 8pt; font-weight: bold; color: #ffffff; background-color: #5D7B9D; border: hidden; border-width: 0; padding: 2px 4px 2px 4px; }
-            .SWUI_GridViewTable tbody tr th a:link { color: #ffffff; text-decoration: none; }
-            .SWUI_GridViewTable tbody tr th a:visited { }
-            .SWUI_GridViewTable tbody tr th a:active { }
-            .SWUI_GridViewTable tbody tr th a:hover { text-decoration: underline; }
-        .SWUI_GridViewTable tbody tr td { font-family: Verdana; font-size: 8pt; color: #000040; border: hidden; border-width: 0; padding: 2px 4px 2px 4px; }
-            .SWUI_GridViewTable tbody tr td a:link { color: #0000E0; text-decoration: none; }
-            .SWUI_GridViewTable tbody tr td a:visited { }
-            .SWUI_GridViewTable tbody tr td a:active { }
-            .SWUI_GridViewTable tbody tr td a:hover { text-decoration: underline; }
-            .SWUI_GridViewTable tbody tr td span input[type="checkbox"] { width: 13px; height: 13px; padding: 0px; margin: 0px; }
-            .SWUI_GridViewTable tbody tr td input[type="checkbox"] { width: 13px; height: 13px; padding: 0px; margin: 0px; }
+.SWUI_GridViewTable tbody tr { background-color: #F7F6F3; }
+.SWUI_GridViewTable tbody tr th { font-family: Verdana; font-size: 8pt; font-weight: bold; color: #ffffff; background-color: #5D7B9D; border: hidden; border-width: 0; padding: 2px 4px 2px 4px; }
+.SWUI_GridViewTable tbody tr th a:link { color: #ffffff; text-decoration: none; }
+.SWUI_GridViewTable tbody tr th a:visited { }
+.SWUI_GridViewTable tbody tr th a:active { }
+.SWUI_GridViewTable tbody tr th a:hover { text-decoration: underline; }
+.SWUI_GridViewTable tbody tr td { font-family: Verdana; font-size: 8pt; color: #000040; border: hidden; border-width: 0; padding: 2px 4px 2px 4px; }
+.SWUI_GridViewTable tbody tr td a:link { color: #0000E0; text-decoration: none; }
+.SWUI_GridViewTable tbody tr td a:visited { }
+.SWUI_GridViewTable tbody tr td a:active { }
+.SWUI_GridViewTable tbody tr td a:hover { text-decoration: underline; }
+.SWUI_GridViewTable tbody tr td span input[type="checkbox"] { width: 13px; height: 13px; padding: 0px; margin: 0px; }
+.SWUI_GridViewTable tbody tr td input[type="checkbox"] { width: 13px; height: 13px; padding: 0px; margin: 0px; }
 .SWUI_GridViewTableAltRow td { background-color: #e0e0e0 !Important; }
 .SWUI_GridViewTableAltRow { }
 .SWUI_GridViewTablePager { background-color: #5D7B9D !Important; }
-    .SWUI_GridViewTablePager td { background-color: #5D7B9D !Important; color: #ffffff !Important; }
+.SWUI_GridViewTablePager td { background-color: #5D7B9D !Important; color: #ffffff !Important; }
 .SWUI_GridViewTablePager { background-color: #5D7B9D !Important; }
-    .SWUI_GridViewTablePager td { padding: 0 !Important; background-color: #5D7B9D !Important; color: #ffffff !Important; }
-        .SWUI_GridViewTablePager td table tr td { padding: 2px 2px 2px 2px !Important; }
-
+.SWUI_GridViewTablePager td { padding: 0 !Important; background-color: #5D7B9D !Important; color: #ffffff !Important; }
+.SWUI_GridViewTablePager td table tr td { padding: 2px 2px 2px 2px !Important; }
 
 .SWUI_GridViewTableCommands { background-color: #5D7B9D !Important; padding: 4px; }
-    .SWUI_GridViewTableCommands td { color: #ffffff; }
+.SWUI_GridViewTableCommands td { color: #ffffff; }
 .SWUI_GridViewTable tbody tr td input[type="text"] { font-family: Verdana; font-size: 8pt; width: 100%; }
 .SWUI_GridViewTable tbody tr td textarea { font-family: Verdana; font-size: 8pt; width: 100%; }
 .SWUI_GridViewTable tbody tr td select { font-family: Verdana; font-size: 8pt; }
@@ -132,24 +155,24 @@ GridViewTable
 
 .SWUI_Console { border: solid 1px #668eaf; width: 100%; height: 100%; }
 .SWUI_Console_Table { width: 100%; height: 100%; border: hidden; border-collapse: collapse; border-width: 0; empty-cells: show; }
-    .SWUI_Console_Table tbody tr td { border: hidden; border-width: 0; padding: 0 0 0 0; }
+.SWUI_Console_Table tbody tr td { border: hidden; border-width: 0; padding: 0 0 0 0; }
 .SWUI_Console_Table_TBody_Row1 td { background-color: #ffffff; }
 .SWUI_Console_Table_TBody_Row2 td { background-color: #ffffff; }
 .SWUI_Console_Frame { border: hidden; width: 100%; height: 100%; }
 .SWUI_Console_CommandLine { /*padding:  1px 1px 0 1px;*/ background-color: #ffffff; border-top: solid 1px #cccc99; }
-    .SWUI_Console_CommandLine input { border-width: 0; border: hidden; font-family: Verdana; font-size: 8pt; width: 100%; }
+.SWUI_Console_CommandLine input { border-width: 0; border: hidden; font-family: Verdana; font-size: 8pt; width: 100%; }
 .SWUI_Console_LogBody { border-width: 0; background-color: InfoBackground; margin: 0; padding: 0; }
 .SWUI_Console_LogDiv { font-family: Verdana; font-size: 8pt; white-space: nowrap; }
 .SWUI_Console_Matrix { border: solid 1px #00ff00; width: 100%; height: 100%; }
 .SWUI_Console_Matrix_Table { width: 100%; height: 100%; }
 .SWUI_Console_Matrix_Table { width: 100%; height: 100%; border: hidden; border-collapse: collapse; border-width: 0; empty-cells: show; }
-    .SWUI_Console_Matrix_Table tbody tr td { border: hidden; border-width: 0; padding: 0 0 0 0; }
+.SWUI_Console_Matrix_Table tbody tr td { border: hidden; border-width: 0; padding: 0 0 0 0; }
 .SWUI_Console_Matrix_Table_TBody_Row1 td { background-color: #000000; height: 100%; }
 .SWUI_Console_Matrix_Table_TBody_Row2 td { background-color: #000000; }
 .SWUI_Console_Matrix_Frame { border: hidden; width: 100%; height: 100%; }
 .SWUI_Console_Matrix_CommandLine { padding: 1px 1px 0 1px; background-color: #000000; border-top: solid 1px #004000; }
-    .SWUI_Console_Matrix_CommandLine div { padding: 0 0 2px 0; font-family: Verdana; font-size: 8pt; }
-    .SWUI_Console_Matrix_CommandLine input { border-width: 0; border: hidden; font-family: Verdana; font-size: 8pt; width: 100%; background-color: #000000; color: #00ff00; }
+.SWUI_Console_Matrix_CommandLine div { padding: 0 0 2px 0; font-family: Verdana; font-size: 8pt; }
+.SWUI_Console_Matrix_CommandLine input { border-width: 0; border: hidden; font-family: Verdana; font-size: 8pt; width: 100%; background-color: #000000; color: #00ff00; }
 .SWUI_Console_Matrix_LogBody { border-width: 0; background-color: #000000; margin: 0; padding: 0; }
 .SWUI_Console_Matrix_LogDiv { font-family: Verdana; font-size: 8pt; /* white-space: nowrap; */ background-color: #000000; color: #00ff00; }
 
@@ -161,6 +184,13 @@ Help Studio
 .SWUI_Help_Header { background-color: #ccccff; padding: 4px 8px 4px 8px; color: #003399; }
 .SWUI_Help_Header_Text { font-weight: bold; font-size: small; }
 .SWUI_Help_Header_Title { }
+
+/*=============================================================================
+Panel, Window, Form, MessageBox
+-----------------------------------------------------------------------------*/
+
+.SWUI_Panel_Title		{ font-weight: bold; background-color: #d0d0d0; color: #333333; text-align: center; padding-top: 4px; padding-bottom: 4px; }
+.SWUI_Panel_Body		{ padding: 8px 8px 8px 8px; background-color: #f0f0f0;}
 
 /*=============================================================================
 Help Header
@@ -209,9 +239,9 @@ Bar
 -----------------------------------------------------------------------------*/
 
 .SWUI_Bar_Node { margin-bottom: 1px; margin-right: 2px; float: left; /* border-bottom: solid 1px red; */ }
-    .SWUI_Bar_Node table tbody tr td { white-space: nowrap; /*border: solid 1px black;*/ }
+.SWUI_Bar_Node table tbody tr td { white-space: nowrap; /*border: solid 1px black;*/ }
 
-    .SWUI_Bar_Node table { /*border: solid 1px black;*/ }
+.SWUI_Bar_Node table { /*border: solid 1px black;*/ }
 
 .SWUI_Bar_ButtonCell { white-space: nowrap; background-image: url(Images/Interface/Office2007/Bar_MC-1x65.png); }
 

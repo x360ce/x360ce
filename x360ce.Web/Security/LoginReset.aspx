@@ -29,10 +29,10 @@
 						</div>
 					</asp:Panel>
 					<div runat="server" id="ChangePasswordPanel" visible="false">
-						<div class="Login_Title">
+						<div class="SWUI_Panel_Title">
 							Change Your Password
 						</div>
-						<div class="Login_Body">
+						<div class="SWUI_Panel_Body">
 							<table border="0">
 								<tr>
 									<td>

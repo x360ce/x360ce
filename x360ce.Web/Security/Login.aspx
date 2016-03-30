@@ -12,7 +12,7 @@
 	<table class="MainTable" style="margin: auto;">
 		<tr>
 			<td>
-				<img alt="" runat="server" id="LoginBanner" src='/Files/Website/Website_Management_System.gif' style="width: 240px; height: 48px; margin-bottom: 8px;" class="Login_Banner" />
+				<img alt="" runat="server" id="LoginBanner" src="Images/Website_Management_System.gif" style="width: 240px; height: 48px; margin-bottom: 8px;" class="Login_Banner" />
 				<div class="MainDiv">
 					<asp:Panel runat="server" ID="AnonymousPlaceHolder">
 						<uc:LoginUser ID="LoginUser1" runat="server" AutoFocus="true" />

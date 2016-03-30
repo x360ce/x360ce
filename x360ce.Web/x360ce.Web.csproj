@@ -113,6 +113,7 @@
     <Content Include="Security\Images\Icons\User-Preferences-48x48.png" />
     <Content Include="Security\Images\Icons\User-Remove-16x16.png" />
     <Content Include="Security\Images\Icons\User-Update-16x16.png" />
+    <Content Include="Security\Images\Website_Management_System.gif" />
     <Content Include="Security\Login.aspx" />
     <Content Include="Security\LoginReset.aspx" />
     <Content Include="Security\Admin\Roles.aspx" />

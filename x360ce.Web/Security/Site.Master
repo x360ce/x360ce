@@ -4,8 +4,7 @@
 
 <head id="Head1" runat="server">
 	<title runat="server" id="Title1"></title>
-	<link id="LinkD1" rel="stylesheet" type="text/css" runat="server" href="Common/JsClasses/System.Web.UI.Interface.debug.css" />
-	<link id="LinkD2" rel="stylesheet" type="text/css" runat="server" href="Social/Styles/Facebook.css" />
+	<link id="LinkD1" rel="stylesheet" type="text/css" runat="server" href="~/Common/JsClasses/System.Web.UI.Interface.debug.css" />
 	<link id="LinkS1" rel="stylesheet" type="text/css" runat="server" href="Styles/Default.css" />
 	<link id="LinkS2" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.css" />
 	<link id="LinkS3" rel="stylesheet" type="text/css" runat="server" href="Styles/Security.IE.css" />
@@ -13,7 +12,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<asp:ContentPlaceHolder ID="HeaderPlaceHolder" runat="server" />
 </head>
-<body>
+<body class="SWUI_Blue">
 	<form id="form2" runat="server">
 		<asp:ScriptManager ID="ScriptManager1" runat="server" />
 		<asp:ContentPlaceHolder ID="PageMenuPlaceHolder" runat="server" />

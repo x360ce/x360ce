@@ -40,15 +40,6 @@ namespace JocysCom.Web.Security {
         protected global::System.Web.UI.HtmlControls.HtmlLink LinkD1;
         
         /// <summary>
-        /// LinkD2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlLink LinkD2;
-        
-        /// <summary>
         /// LinkS1 control.
         /// </summary>
         /// <remarks>
