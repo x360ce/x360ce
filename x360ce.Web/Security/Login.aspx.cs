@@ -24,7 +24,6 @@ namespace JocysCom.Web.Security
 			LoggedInPlaceHolder.DataBind();
 			RegisterPanel.DataBind();
 			AnonymousPlaceHolder.Visible = !SecurityContext.Current.IsAuthenticated;
-			RegisterPanel.Visible = SecurityContext.Current.AllowUsersToRegister || HttpContext.Current.Request.IsLocal;
 			LoggedInPlaceHolder.Visible = SecurityContext.Current.IsAuthenticated;
 		}
 

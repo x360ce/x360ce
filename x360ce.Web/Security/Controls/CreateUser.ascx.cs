@@ -25,20 +25,21 @@ namespace JocysCom.Web.Security.Controls
 		{
 			get
 			{
-				return _validationResults = _validationResults ??
-											User.ValidateMemberRegistration(
-												FirstNameTextBox.Text,
-												LastNameTextBox.Text,
-												EmailTextBox.Text,
-												UsernameTextBox.Text,
-												(PasswordTextBoxCustomValidator.Enabled) ? PasswordTextBox.Text : "automatic",
-												string.Format("{0}-{1}-{2}",
-															  YearDropDownList.SelectedValue,
-															  MonthDropDownList.SelectedValue,
-															  DayDropDownList.SelectedValue),
-												GenderDropDownList.SelectedValue,
-												TermsCheckBox.Checked,
-												NewsCheckBox.Checked);
+				return _validationResults =
+					_validationResults ??
+					User.ValidateMemberRegistration(
+						FirstNameTextBox.Text,
+						LastNameTextBox.Text,
+						EmailTextBox.Text,
+						UserName.Text,
+						(PasswordTextBoxCustomValidator.Enabled) ? PasswordTextBox.Text : "automatic",
+						string.Format("{0}-{1}-{2}",
+										YearDropDownList.SelectedValue,
+										MonthDropDownList.SelectedValue,
+										DayDropDownList.SelectedValue),
+						GenderDropDownList.SelectedValue,
+						TermsCheckBox.Checked,
+						NewsCheckBox.Checked);
 			}
 		}
 
@@ -47,6 +48,8 @@ namespace JocysCom.Web.Security.Controls
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
+			var en = SecurityContext.Current.AllowUsersToRegister; // || HttpContext.Current.Request.IsLocal;
+			HelperFunctions.EnableControl(this, en, en ? null : "Sign Up Disabled");
 			HeadPanel.Visible = ShowHead;
 		}
 
@@ -321,8 +324,8 @@ namespace JocysCom.Web.Security.Controls
 		[Category("User"), EditorBrowsable, DefaultValue("")]
 		public string UserUsername
 		{
-			get { return UsernameTextBox.Text; }
-			set { UsernameTextBox.Text = value; }
+			get { return UserName.Text; }
+			set { UserName.Text = value; }
 		}
 
 

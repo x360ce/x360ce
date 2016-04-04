@@ -20,8 +20,10 @@ namespace JocysCom.Web.Security.Controls
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
+			// Bind data to make sure that layout controls are created.
 			LoginPanel.DataBind();
-			Login1.FindControl("LoginErrorPanel").Visible = false;
+			var en = SecurityContext.Current.AllowUsersToLogin;
+			HelperFunctions.EnableControl(Login1, en, en ? null : "Login Disabled");
 			ScriptPlaceHolder.Visible = AutoFocus && !IsPostBack;
 		}
 

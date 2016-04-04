@@ -7,6 +7,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace JocysCom.Web.Security
 {
@@ -67,7 +69,43 @@ namespace JocysCom.Web.Security
 			AddUserToRole("Guest", "Guests");
 		}
 
+		public static List<T> FindAllControls<T>(Control c)
+		{
+			var list = new List<T>();
+			_FindAllControls(c, ref list);
+			return list;
+		}
 
+		static void _FindAllControls<T>(Control c, ref List<T> l)
+		{
+			T[] controls = c.Controls.OfType<T>().ToArray();
+			l.AddRange(controls);
+			Control[] c2 = c.Controls.Cast<Control>().Except(controls.Cast<Control>()).ToArray();
+			for (int i = 0; i <= c2.Length - 1; i++)
+			{
+				_FindAllControls(c2[i], ref l);
+			}
+		}
+
+		public static void EnableControl(Control control, bool enabled, string errorMessage)
+		{
+			var textBoxes = FindAllControls<TextBox>(control);
+			foreach (var c in textBoxes) c.Enabled = enabled;
+			var checkBoxes = FindAllControls<CheckBox>(control);
+			foreach (var c in checkBoxes) c.Enabled = enabled;
+			var buttons = FindAllControls<Button>(control);
+			foreach (var c in buttons) c.Enabled = enabled;
+			var errorPanel = control.FindControl("ErrorPanel") as HtmlGenericControl;
+			var errorLabel = control.FindControl("ErrorLabel") as Label;
+			if (errorPanel != null)
+			{
+				errorPanel.Style.Add("display", string.IsNullOrEmpty(errorMessage) ? "none" : "block");
+			}
+			if (errorLabel != null)
+			{
+				errorLabel.Text = errorMessage ?? "";
+			}
+		}
 
 	}
 }

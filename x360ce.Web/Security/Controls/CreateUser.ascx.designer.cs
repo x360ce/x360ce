@@ -139,13 +139,13 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.HtmlControls.HtmlTableRow UsernameRow;
         
         /// <summary>
-        /// UsernameTextBox control.
+        /// UserName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox UsernameTextBox;
+        protected global::System.Web.UI.WebControls.TextBox UserName;
         
         /// <summary>
         /// UsernameStatus control.
@@ -355,13 +355,13 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.WebControls.Panel ErrorPanel;
         
         /// <summary>
-        /// ErrorPanelLabel control.
+        /// ErrorLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ErrorPanelLabel;
+        protected global::System.Web.UI.WebControls.Label ErrorLabel;
         
         /// <summary>
         /// FirstNameTextBoxCustomValidator control.
@@ -391,13 +391,13 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.WebControls.CustomValidator EmailTextBoxCustomValidator;
         
         /// <summary>
-        /// UsernameTextBoxCustomValidator control.
+        /// UserNameCustomValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator UsernameTextBoxCustomValidator;
+        protected global::System.Web.UI.WebControls.CustomValidator UserNameCustomValidator;
         
         /// <summary>
         /// PasswordTextBoxCustomValidator control.

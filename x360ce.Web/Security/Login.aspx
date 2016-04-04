@@ -19,13 +19,13 @@
 						<uc:ResetPassword ID="ResetPassword1" runat="server" />
 						<div runat="server" id="RegisterPanel">
 							<uc:CreateUser ID="CreateUser1" runat="server" ShowBirthday="False" ShowGender="False"
-								ShowTerms="false" ShowPromotions="false" ShowUsername="false" ShowNews="false" />
+								ShowTerms="false" ShowPromotions="false" ShowUsername="True" ShowNews="false" />
 						</div>
 					</asp:Panel>
 					<asp:Panel runat="server" ID="LoggedInPlaceHolder">
 						<div>
-							<div class="Login_Title">Login</div>
-							<div class="Login_Body">
+							<div class="SWUI_Login_Title">Login</div>
+							<div class="SWUI_Login_Body">
 								<asp:LoginStatus ID="LoginStatus1" runat="server" />
 								Logged in as
                                 <asp:LoginName ID="LoginName1" runat="Server" />

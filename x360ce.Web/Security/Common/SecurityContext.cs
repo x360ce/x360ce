@@ -32,12 +32,14 @@ namespace JocysCom.Web.Security
 		public List<string> PowerUsers;
 		public bool AllowUsersToRegister;
 		public bool AllowUsersToLogin;
+		public bool AllowUsersToResetPassword;
 
 		void LoadAppSettings()
 		{
 			LoginRememberMinutes = ParseInt("LoginRememberMinutes", 24*60);
 			Administrators = ParseList("Administrators", new List<string>());
 			PowerUsers = ParseList("PowerUsers", new List<string>());
+			AllowUsersToResetPassword = ParseBool("AllowUsersToResetPassword", false);
 			AllowUsersToRegister = ParseBool("AllowUsersToRegister", false);
 			AllowUsersToLogin = ParseBool("AllowUsersToLogin", false);
 		}

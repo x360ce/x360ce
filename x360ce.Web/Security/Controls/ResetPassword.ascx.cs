@@ -11,7 +11,8 @@ namespace JocysCom.Web.Security.Controls
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-
+			var en = SecurityContext.Current.AllowUsersToResetPassword;
+			HelperFunctions.EnableControl(this, en, en ? null : "Reset Password Disabled");
 		}
 
 		protected void ResetButton_Click(object sender, EventArgs e)

@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LoginUser.ascx.cs" Inherits="JocysCom.Web.Security.Controls.LoginUser" %>
-<div runat="server" id="LoginPanel" visible='<%# JocysCom.Web.Security.SecurityContext.Current.AllowUsersToLogin %>'>
+<div runat="server" id="LoginPanel">
 	<div class="SWUI_Panel_Title">
 		Login
 	</div>
@@ -38,13 +38,13 @@
 								Remember:
 							</td>
 							<td>
-								<table border="0" style="width: 100%;">
+								<table border="0" style="width: 100%;" cellpaddin="0" cellspacing ="0">
 									<tr>
 										<td style="padding-top: 3px;" class="SWUI_Table_Value">
-											<input type="checkbox" id="RememberMe" runat="server" class="checkbox"/>
+											<asp:CheckBox ID="RememberMeCheckBox" runat="server" CssClass="checkbox"/>
 										</td>
 										<td>
-											<asp:Button ID="LoginButton" runat="server" CommandName="Login" CssClass="SWUI_Prg Login_Button"
+											<asp:Button ID="LoginButton" runat="server" CommandName="Login" CssClass="SWUI_Table_Button SWUI_Btn"
 												Text="Log In" ValidationGroup="ctl03$Login1" />
 										</td>
 									</tr>
@@ -55,8 +55,8 @@
 						</tr>
 					</table>
 				</center>
-				<div class="SWUI_Table_ErrorPanel" runat="server" id="LoginErrorPanel" visible="false">
-					<asp:Literal ID="FailureText" runat="server" EnableViewState="False"></asp:Literal>
+				<div class="SWUI_Table_ErrorPanel" runat="server" id="ErrorPanel">
+					<asp:Label runat="server" ID="ErrorLabel" />
 				</div>
 				<asp:ValidationSummary runat="server" ID="ValidationSummary1" ValidationGroup="ctl03$Login1"
 					CssClass="SWUI_Table_ErrorPanel" />

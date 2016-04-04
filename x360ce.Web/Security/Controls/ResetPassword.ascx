@@ -1,12 +1,13 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ResetPassword.ascx.cs"
 	Inherits="JocysCom.Web.Security.Controls.ResetPassword" %>
 <div class="SWUI_Panel_Title">
-	Reset Your Password</div>
+	Reset Password
+</div>
 <div class="SWUI_Panel_Body">
 	<asp:PasswordRecovery ID="PasswordRecovery1" runat="server" Width="100%">
 		<UserNameTemplate>
 			<center>
-				<table class="SWUI_Table" border="0" cellpadding="0" cellspacing="4">
+				<table class="SWUI_Table" border="0">
 					<tr>
 						<td class="SWUI_Table_Label">
 							<asp:Label ID="UserNameLabel" runat="server" AssociatedControlID="UserName">Your Email:</asp:Label>
@@ -37,7 +38,10 @@
 			</asp:RequiredFieldValidator>
 		</UserNameTemplate>
 	</asp:PasswordRecovery>
-	<asp:Panel runat="server" ID="ResetPasswordSuccessPanel" Visible="false" class="SWUI_Table_SuccessPanel">
+	<asp:Panel runat="server" ID="ErrorPanel" CssClass="SWUI_Table_ErrorPanel">
+		<asp:Label runat="server" ID="ErrorLabel" />
+	</asp:Panel>
+	<asp:Panel runat="server" ID="ResetPasswordSuccessPanel" Visible="false" CssClass="SWUI_Table_SuccessPanel">
 		Password reset instructions were sent to your e-mail address. If the email doesn't
 		show up in your inbox, check your SPAM folder.
 	</asp:Panel>

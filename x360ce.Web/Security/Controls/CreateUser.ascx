@@ -5,188 +5,185 @@
 	<asp:TextBox runat="server" ID="ReturnUrlTextBox" Width="400px" />
 </asp:Panel>
 <div class="SWUI_Panel_Title" id="HeadPanel" runat="server">
-	Sign Up</div>
+	Sign Up
+</div>
 <div class="SWUI_Panel_Body">
-		<div id="no_js_box" style="display: none;">
-			<h2>
-				JavaScript is disabled on your browser.</h2>
-			<p>
-				Please enable JavaScript on your browser or upgrade to a JavaScript-capable browser
-				to register for Site.</p>
-		</div>
-		<table class="SWUI_Table" border="0">
-			<tr runat="server" id="FirstNameRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						First Name:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<asp:TextBox ID="FirstNameTextBox" runat="server" />
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="FirstNameStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="LastNameRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						Last Name:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<asp:TextBox ID="LastNameTextBox" runat="server" />
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="LastNameStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="EmailRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						Your Email:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<asp:TextBox ID="EmailTextBox" runat="server" />
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="EmailStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="UsernameRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						User Name:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<asp:TextBox ID="UsernameTextBox" runat="server"></asp:TextBox>
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="UsernameStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="PasswordRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						Password:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password" />
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="PasswordStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="BirthdayRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						Birthday:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<table border="0">
-						<tr>
-							<td style="padding-right: 8px;">
-								<asp:DropDownList ID="YearDropDownList" runat="server">
-								</asp:DropDownList>
-							</td>
-							<td style="padding-right: 8px;">
-								<asp:DropDownList ID="MonthDropDownList" runat="server">
-								</asp:DropDownList>
-							</td>
-							<td>
-								<asp:DropDownList ID="DayDropDownList" runat="server">
-								</asp:DropDownList>
-							</td>
-						</tr>
-					</table>
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="BirthdayStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="GenderRow">
-				<td class="SWUI_Table_Label">
-					<label>
-						I am:</label>
-				</td>
-				<td class="SWUI_Table_Value">
-					<asp:DropDownList ID="GenderDropDownList" runat="server" ValidationGroup="MemberRegistration">
-						<asp:ListItem Text="Select Gender:" Value="" Selected="True" />
-						<asp:ListItem Text="Female" Value="F" />
-						<asp:ListItem Text="Male" Value="M" />
-					</asp:DropDownList>
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="GenderStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="TermsRow">
-				<td class="SWUI_Table_Label">
-				</td>
-				<td class="SWUI_Table_Value">
-					<table border="0" style="padding-top: 2px;">
-						<tr>
-							<td style="height: 16px;">
-								<asp:CheckBox ID="TermsCheckBox" Text="" runat="server" onclick="Profile.RequestServerValidation(this, null)" />
-							</td>
-							<td style="padding-left: 4px;">
-								<label for="<%= TermsCheckBox.ClientID %>">
-									I agree to the
-								</label>
-								<a id="TermsLink" runat="server" href="{0}" target="_blank">terms of use</a>
-							</td>
-						</tr>
-					</table>
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="TermsStatus" class="SWUI_Table_Result0">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="NewsRow">
-				<td class="SWUI_Table_Label">
-				</td>
-				<td class="SWUI_Table_Value">
-					<table border="0">
-						<tr>
-							<td style="height: 16px;">
-								<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" onclick="Profile.RequestServerValidation(this, null)" />
-							</td>
-							<td style="padding-left: 4px;">
-								<label for="<%= NewsCheckBox.ClientID %>">
-									Would you like to receive news<br />
-									of our friends' promotions?<span style="display: none;">I would you like to receive
+	<div id="no_js_box" style="display: none;">
+		<h2>JavaScript is disabled on your browser.</h2>
+		<p>
+			Please enable JavaScript on your browser or upgrade to a JavaScript-capable browser
+				to register for Site.
+		</p>
+	</div>
+	<table class="SWUI_Table" border="0">
+		<tr runat="server" id="FirstNameRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					First Name:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<asp:TextBox ID="FirstNameTextBox" runat="server" />
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="FirstNameStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="LastNameRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					Last Name:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<asp:TextBox ID="LastNameTextBox" runat="server" />
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="LastNameStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="EmailRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					Your Email:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<asp:TextBox ID="EmailTextBox" runat="server" />
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="EmailStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="UsernameRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					User Name:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<asp:TextBox ID="UserName" runat="server"></asp:TextBox>
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="UsernameStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="PasswordRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					Password:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password" />
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="PasswordStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="BirthdayRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					Birthday:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<table border="0">
+					<tr>
+						<td style="padding-right: 8px;">
+							<asp:DropDownList ID="YearDropDownList" runat="server">
+							</asp:DropDownList>
+						</td>
+						<td style="padding-right: 8px;">
+							<asp:DropDownList ID="MonthDropDownList" runat="server">
+							</asp:DropDownList>
+						</td>
+						<td>
+							<asp:DropDownList ID="DayDropDownList" runat="server">
+							</asp:DropDownList>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="BirthdayStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="GenderRow">
+			<td class="SWUI_Table_Label">
+				<label>
+					I am:</label>
+			</td>
+			<td class="SWUI_Table_Value">
+				<asp:DropDownList ID="GenderDropDownList" runat="server" ValidationGroup="MemberRegistration">
+					<asp:ListItem Text="Select Gender:" Value="" Selected="True" />
+					<asp:ListItem Text="Female" Value="F" />
+					<asp:ListItem Text="Male" Value="M" />
+				</asp:DropDownList>
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="GenderStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="TermsRow">
+			<td class="SWUI_Table_Label"></td>
+			<td class="SWUI_Table_Value">
+				<table border="0" style="padding-top: 2px;">
+					<tr>
+						<td style="height: 16px;">
+							<asp:CheckBox ID="TermsCheckBox" Text="" runat="server" onclick="Profile.RequestServerValidation(this, null)" />
+						</td>
+						<td style="padding-left: 4px;">
+							<label for="<%= TermsCheckBox.ClientID %>">
+								I agree to the
+							</label>
+							<a id="TermsLink" runat="server" href="{0}" target="_blank">terms of use</a>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="TermsStatus" class="SWUI_Table_Result0">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="NewsRow">
+			<td class="SWUI_Table_Label"></td>
+			<td class="SWUI_Table_Value">
+				<table border="0">
+					<tr>
+						<td style="height: 16px;">
+							<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" onclick="Profile.RequestServerValidation(this, null)" />
+						</td>
+						<td style="padding-left: 4px;">
+							<label for="<%= NewsCheckBox.ClientID %>">
+								Would you like to receive news<br />
+								of our friends' promotions?<span style="display: none;">I would you like to receive
 										BookArmy friends News</span></label>
-							</td>
-						</tr>
-					</table>
-				</td>
-				<td class="SWUI_Table_Check">
-					<div runat="server" id="NewsStatus" class="SWUI_Table_Result0" style="display: none;">
-					</div>
-				</td>
-			</tr>
-			<tr runat="server" id="SignUpRow">
-				<td>
-				</td>
-				<td>
-					<asp:Button runat="server" ID="ClientLinkButton" CssClass="SWUI_Table_Button SWUI_Btn"
-						Text="Sign Up" OnClientClick="return false;" />
-					<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
-						ValidationGroup="AllMemberRegistration" Style="display: none;">Sign Up (server)</asp:LinkButton>
-				</td>
-				<td>
-				</td>
-			</tr>
-		</table>
-	<asp:Panel runat="server" ID="ErrorPanel" CssClass="SWUI_Table_ErrorPanel" Style="display: none;">
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td class="SWUI_Table_Check">
+				<div runat="server" id="NewsStatus" class="SWUI_Table_Result0" style="display: none;">
+				</div>
+			</td>
+		</tr>
+		<tr runat="server" id="SignUpRow">
+			<td></td>
+			<td>
+				<asp:Button runat="server" ID="ClientLinkButton" CssClass="SWUI_Table_Button SWUI_Btn"
+					Text="Sign Up" OnClientClick="return false;" />
+				<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
+					ValidationGroup="AllMemberRegistration" Style="display: none;">Sign Up (server)</asp:LinkButton>
+			</td>
+			<td></td>
+		</tr>
+	</table>
+	<asp:Panel runat="server" ID="ErrorPanel" CssClass="SWUI_Table_ErrorPanel">
+		<asp:Label runat="server" ID="ErrorLabel" />
 	</asp:Panel>
-	<asp:Label runat="server" ID="ErrorPanelLabel" />
 	<asp:CustomValidator ID="FirstNameTextBoxCustomValidator" runat="server" ControlToValidate="FirstNameTextBox"
 		Text="FirsName Validator" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
 		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
@@ -199,8 +196,8 @@
 		ControlToValidate="EmailTextBox" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
 		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
 		Display="Dynamic" />
-	<asp:CustomValidator ID="UsernameTextBoxCustomValidator" runat="server" Text="User Name Validator"
-		ControlToValidate="UsernameTextBox" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
+	<asp:CustomValidator ID="UserNameCustomValidator" runat="server" Text="User Name Validator"
+		ControlToValidate="UserName" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
 		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
 		Display="Dynamic" />
 	<asp:CustomValidator ID="PasswordTextBoxCustomValidator" runat="server" Text="Password Validator"
@@ -259,12 +256,12 @@
 
 	var Profile = {};
 
-	Profile.Window_Load = function() {
+	Profile.Window_Load = function () {
 		for (var property in Profile.Controls) {
 			var control = Profile.Controls[property];
 			if (control.id.indexOf("TextBox") == -1) continue;
 			Sys.UI.DomEvent.addHandler(control, 'blur',
-				function() { Profile.RequestServerValidation(control, null); }
+				function () { Profile.RequestServerValidation(control, null); }
 			);
 		}
 		Sys.UI.DomEvent.addHandler(Profile.Controls.ClientLinkButton, 'click', Profile.SignUp_OnClientClick);
@@ -272,7 +269,7 @@
 
 	Profile.SignUpClicked = false;
 
-	Profile.SignUp_OnClientClick = function() {
+	Profile.SignUp_OnClientClick = function () {
 		for (var property in Profile.Changed) {
 			Profile.Changed[property] = true;
 		}
@@ -284,7 +281,7 @@
 	Profile.Controls.FirstName = document.getElementById("<%=FirstNameTextBox.ClientID%>");
 	Profile.Controls.LastName = document.getElementById("<%=LastNameTextBox.ClientID%>");
 	Profile.Controls.Email = document.getElementById("<%=EmailTextBox.ClientID%>");
-	Profile.Controls.Username = document.getElementById("<%=UsernameTextBox.ClientID%>");
+	Profile.Controls.Username = document.getElementById("<%=UserName.ClientID%>");
 	Profile.Controls.Password = document.getElementById("<%=PasswordTextBox.ClientID%>");
 	Profile.Controls.BirthdayYear = document.getElementById("<%=YearDropDownList.ClientID%>");
 	Profile.Controls.BirthdayMonth = document.getElementById("<%=MonthDropDownList.ClientID%>");
@@ -303,7 +300,7 @@
 	Profile.Validators.FirstName = document.getElementById("<%=FirstNameTextBoxCustomValidator.ClientID%>");
 	Profile.Validators.LastName = document.getElementById("<%=LastNameTextBoxCustomValidator.ClientID%>");
 	Profile.Validators.Email = document.getElementById("<%=EmailTextBoxCustomValidator.ClientID%>");
-	Profile.Validators.Username = document.getElementById("<%=UsernameTextBoxCustomValidator.ClientID%>");
+	Profile.Validators.Username = document.getElementById("<%=UserNameCustomValidator.ClientID%>");
 	Profile.Validators.Password = document.getElementById("<%=PasswordTextBoxCustomValidator.ClientID%>");
 	Profile.Validators.BirthdayYear = document.getElementById("<%=BirthdayYearDropDownListCustomValidator.ClientID%>");
 	Profile.Validators.BirthdayMonth = document.getElementById("<%=BirthdayMonthDropDownListCustomValidator.ClientID%>");
@@ -346,7 +343,7 @@
 	Profile.Changed.Terms = false;
 	Profile.Changed.News = false;
 
-	Profile.RequestServerValidation = function(sender, e) {
+	Profile.RequestServerValidation = function (sender, e) {
 		// Mark property as changed.
 		if (sender != null) {
 			for (var property in Profile.Changed) {
@@ -377,7 +374,7 @@
 		)
 	}
 
-	PropertiesToString = function(object) {
+	PropertiesToString = function (object) {
 		/// <summary>
 		/// 
 		/// </summary>
@@ -392,7 +389,7 @@
 		return results;
 	}
 
-	Profile.AllCustomValidator_ClientValidate = function(sender, e) {
+	Profile.AllCustomValidator_ClientValidate = function (sender, e) {
 		// Check validators.
 		var validator;
 		for (var property in Profile.Validators) {
@@ -413,7 +410,7 @@
 
 	Profile.Calls = 0;
 
-	Profile.RequestServerValidation_Success = function(result) {
+	Profile.RequestServerValidation_Success = function (result) {
 		var s = "";
 		Profile.Calls++;
 		for (var i = 0; i < result.length; i++) {
@@ -469,7 +466,7 @@
 				// Create click() function if not exists.
 				var b = Profile.Controls.SignUpLinkButton;
 				if (b && typeof (b.click) == 'undefined') {
-					b.click = function() {
+					b.click = function () {
 						var result = true;
 						if (b.onclick) result = b.onclick();
 						if (typeof (result) == 'undefined' || result) {
@@ -483,10 +480,10 @@
 		}
 	}
 
-	Profile.RequestServerValidation_Failed = function(result) {
+	Profile.RequestServerValidation_Failed = function (result) {
 	}
 
 	Sys.UI.DomEvent.addHandler(window, 'load', Profile.Window_Load);
-	
+
 </script>
 
