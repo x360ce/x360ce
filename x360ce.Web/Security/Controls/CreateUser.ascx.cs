@@ -48,7 +48,7 @@ namespace JocysCom.Web.Security.Controls
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			var en = SecurityContext.Current.AllowUsersToRegister; // || HttpContext.Current.Request.IsLocal;
+			var en = SecurityContext.Current.AllowUsersToSignUp; // || HttpContext.Current.Request.IsLocal;
 			HelperFunctions.EnableControl(this, en, en ? null : "Sign Up Disabled");
 			HeadPanel.Visible = ShowHead;
 		}

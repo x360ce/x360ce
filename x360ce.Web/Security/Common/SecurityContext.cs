@@ -27,21 +27,23 @@ namespace JocysCom.Web.Security
 
 		#region App Settings
 
+		public string prefix = "Security_";
+
 		public int LoginRememberMinutes;
 		public List<string> Administrators;
 		public List<string> PowerUsers;
-		public bool AllowUsersToRegister;
+		public bool AllowUsersToSignUp;
 		public bool AllowUsersToLogin;
 		public bool AllowUsersToResetPassword;
 
 		void LoadAppSettings()
 		{
-			LoginRememberMinutes = ParseInt("LoginRememberMinutes", 24*60);
-			Administrators = ParseList("Administrators", new List<string>());
-			PowerUsers = ParseList("PowerUsers", new List<string>());
-			AllowUsersToResetPassword = ParseBool("AllowUsersToResetPassword", false);
-			AllowUsersToRegister = ParseBool("AllowUsersToRegister", false);
-			AllowUsersToLogin = ParseBool("AllowUsersToLogin", false);
+			LoginRememberMinutes = ParseInt(prefix+"LoginRememberMinutes", 24*60);
+			Administrators = ParseList(prefix + "Administrators", new List<string>());
+			PowerUsers = ParseList(prefix + "PowerUsers", new List<string>());
+			AllowUsersToResetPassword = ParseBool(prefix + "AllowUsersToResetPassword", false);
+			AllowUsersToSignUp = ParseBool(prefix + "AllowUsersToSignUp", false);
+			AllowUsersToLogin = ParseBool(prefix + "AllowUsersToLogin", false);
 		}
 
 		public static bool ParseBool(string name, bool defaultValue)
