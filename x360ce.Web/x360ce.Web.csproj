@@ -69,6 +69,11 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Common\JsClasses\System.debug.js" />
+    <Content Include="Common\JsClasses\System.Security.Password.debug.js" />
+    <Content Include="Common\JsClasses\System.Web.debug.js" />
+    <Content Include="Common\JsClasses\System.Web.UI.debug.js" />
+    <Content Include="Common\JsClasses\System.Web.UI.HtmlControls.debug.js" />
     <Content Include="Common\JsClasses\System.Web.UI.Interface.debug.css" />
     <Content Include="Controls\ControllersChartControl.ascx" />
     <Content Include="Controls\ControllersControl.ascx" />

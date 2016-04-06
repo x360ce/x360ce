@@ -16,10 +16,11 @@ namespace JocysCom.Web.Security
 	{
 		public static void UpdateRole(string roleName, string description)
 		{
-            Security.Check.UpdateRole(roleName, description);	
-        }
+			Security.Check.UpdateRole(roleName, description);
+		}
 
-		private static void CreateUser(string userName, string comment){
+		private static void CreateUser(string userName, string comment)
+		{
 			if (Membership.FindUsersByName(userName).Count == 0)
 			{
 				MembershipUser user = Membership.CreateUser(userName, "password");
@@ -28,7 +29,8 @@ namespace JocysCom.Web.Security
 			}
 		}
 
-		private static void AddUserToRole(string userName, string roleName){
+		private static void AddUserToRole(string userName, string roleName)
+		{
 			if (userName.Length > 0 && roleName.Length > 0)
 			{
 				if (!System.Web.Security.Roles.IsUserInRole(userName, roleName))
@@ -69,6 +71,13 @@ namespace JocysCom.Web.Security
 			AddUserToRole("Guest", "Guests");
 		}
 
+		public static T FindControl<T>(Control c, string id)
+		{
+			var list = new List<Control>();
+			_FindAllControls(c, ref list);
+			return (T)(object)list.FirstOrDefault(x => x.ID == id);
+		}
+
 		public static List<T> FindAllControls<T>(Control c)
 		{
 			var list = new List<T>();
@@ -78,12 +87,12 @@ namespace JocysCom.Web.Security
 
 		static void _FindAllControls<T>(Control c, ref List<T> l)
 		{
-			T[] controls = c.Controls.OfType<T>().ToArray();
-			l.AddRange(controls);
-			Control[] c2 = c.Controls.Cast<Control>().Except(controls.Cast<Control>()).ToArray();
-			for (int i = 0; i <= c2.Length - 1; i++)
+			var ts = c.Controls.OfType<T>();
+			l.AddRange(ts);
+			var children = c.Controls.Cast<Control>().ToArray();
+			for (int i = 0; i <= children.Length - 1; i++)
 			{
-				_FindAllControls(c2[i], ref l);
+				_FindAllControls(children[i], ref l);
 			}
 		}
 
@@ -95,8 +104,8 @@ namespace JocysCom.Web.Security
 			foreach (var c in checkBoxes) c.Enabled = enabled;
 			var buttons = FindAllControls<Button>(control);
 			foreach (var c in buttons) c.Enabled = enabled;
-			var errorPanel = control.FindControl("ErrorPanel") as HtmlGenericControl;
-			var errorLabel = control.FindControl("ErrorLabel") as Label;
+			var errorPanel = FindControl<Panel>(control, "ErrorPanel");
+			var errorLabel = FindControl<Label>(control, "ErrorLabel");
 			if (errorPanel != null)
 			{
 				errorPanel.Style.Add("display", string.IsNullOrEmpty(errorMessage) ? "none" : "block");

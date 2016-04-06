@@ -55,9 +55,9 @@
 						</tr>
 					</table>
 				</center>
-				<div class="SWUI_Table_ErrorPanel" runat="server" id="ErrorPanel">
+				<asp:Panel CssClass="SWUI_Table_ErrorPanel" runat="server" ID="ErrorPanel">
 					<asp:Label runat="server" ID="ErrorLabel" />
-				</div>
+				</asp:Panel>
 				<asp:ValidationSummary runat="server" ID="ValidationSummary1" ValidationGroup="ctl03$Login1"
 					CssClass="SWUI_Table_ErrorPanel" />
 				<div style="display: none;">
