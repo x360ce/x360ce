@@ -111,7 +111,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
         [Serializable]
         public struct ValidationField
         {
-            public string Name;
+            public UserFieldName Name;
             public object Value;
             public string Message;
         }
@@ -137,8 +137,8 @@ namespace JocysCom.WebSites.Engine.Security.Data
             //    v = "user name or password are not valid";
 
             List<ValidationField> results = new List<ValidationField>();
-            results.Add(new ValidationField() { Name = "UserName", Value = username, Message = u });
-            results.Add(new ValidationField() { Name = "Password", Value = password, Message = p });
+            results.Add(new ValidationField() { Name = UserFieldName.UserName, Value = username, Message = u });
+            results.Add(new ValidationField() { Name = UserFieldName.Password, Value = password, Message = p });
             //results.Add(new ValidationField() { Name = "Validation", Value = string.Empty, Message = v });
             return results.ToArray();
         }
@@ -267,15 +267,15 @@ namespace JocysCom.WebSites.Engine.Security.Data
                 t = "You must accept <b>Terms of use</b>.";
             }
             List<ValidationField> results = new List<ValidationField>();
-            results.Add(new ValidationField() { Name = "FirstName", Value = firstName, Message = f });
-            results.Add(new ValidationField() { Name = "LastName", Value = lastName, Message = l });
-            results.Add(new ValidationField() { Name = "Email", Value = email, Message = e });
-            results.Add(new ValidationField() { Name = "Username", Value = username, Message = u });
-            results.Add(new ValidationField() { Name = "Password", Value = password, Message = p });
-            results.Add(new ValidationField() { Name = "Birthday", Value = birthday, Message = b });
-            results.Add(new ValidationField() { Name = "Gender", Value = gender, Message = g });
-            results.Add(new ValidationField() { Name = "Terms", Value = terms, Message = t });
-            results.Add(new ValidationField() { Name = "News", Value = news, Message = n });
+            results.Add(new ValidationField() { Name = UserFieldName.FirstName, Value = firstName, Message = f });
+            results.Add(new ValidationField() { Name = UserFieldName.LastName, Value = lastName, Message = l });
+            results.Add(new ValidationField() { Name = UserFieldName.Email, Value = email, Message = e });
+            results.Add(new ValidationField() { Name = UserFieldName.UserName, Value = username, Message = u });
+            results.Add(new ValidationField() { Name = UserFieldName.Password, Value = password, Message = p });
+            results.Add(new ValidationField() { Name = UserFieldName.Birthday, Value = birthday, Message = b });
+            results.Add(new ValidationField() { Name = UserFieldName.Gender, Value = gender, Message = g });
+            results.Add(new ValidationField() { Name = UserFieldName.Terms, Value = terms, Message = t });
+            results.Add(new ValidationField() { Name = UserFieldName.News, Value = news, Message = n });
             return results.ToArray();
         }
 

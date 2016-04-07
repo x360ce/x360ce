@@ -19,53 +19,44 @@ namespace JocysCom.Web.Security.Controls
 
 	public partial class CreateUser : UserControl
 	{
-		private User.ValidationField[] _validationResults;
-
-		public User.ValidationField[] ValidationResults
-		{
-			get
-			{
-				return _validationResults =
-					_validationResults ??
-					User.ValidateMemberRegistration(
-						FirstNameTextBox.Text,
-						LastNameTextBox.Text,
-						EmailTextBox.Text,
-						UserName.Text,
-						(PasswordTextBoxCustomValidator.Enabled) ? PasswordTextBox.Text : "automatic",
-						string.Format("{0}-{1}-{2}",
-										YearDropDownList.SelectedValue,
-										MonthDropDownList.SelectedValue,
-										DayDropDownList.SelectedValue),
-						GenderDropDownList.SelectedValue,
-						TermsCheckBox.Checked,
-						NewsCheckBox.Checked);
-			}
-		}
 
 		#region Server Validate
 
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			var en = SecurityContext.Current.AllowUsersToSignUp; // || HttpContext.Current.Request.IsLocal;
-			HelperFunctions.EnableControl(this, en, en ? null : "Sign Up Disabled");
-			HeadPanel.Visible = ShowHead;
+			if (!Page.IsPostBack)
+			{
+				var en = SecurityContext.Current.AllowUsersToSignUp;
+				HelperFunctions.EnableControl(this, en, en ? null : "Sign Up Disabled");
+				HeadPanel.Visible = ShowHead;
+			}
 		}
 
 		protected void AllCustomValidator_ServerValidate(object source, ServerValidateEventArgs args)
 		{
-			User.ValidationField[] result = ValidationResults;
-			args.IsValid = true;
-			foreach (User.ValidationField item in result)
-			{
-				if (!string.IsNullOrEmpty(item.Message))
-				{
-					//ErrorPanelLabel.Text = item.Message; 
-					args.IsValid = false;
-					break;
-				}
-			}
+			var result =
+				User.ValidateMemberRegistration(
+					FirstNameTextBox.Text,
+					LastNameTextBox.Text,
+					EmailTextBox.Text,
+					UserName.Text,
+					PasswordTextBox.Text,
+					string.Format("{0}-{1}-{2}",
+					YearDropDownList.SelectedValue,
+					MonthDropDownList.SelectedValue,
+					DayDropDownList.SelectedValue),
+					GenderDropDownList.SelectedValue,
+					TermsCheckBox.Checked,
+					NewsCheckBox.Checked
+				);
+
+			var errors = result.Where(x => !string.IsNullOrEmpty(x.Message)).Select(x=>x.Message);
+			var valid = errors.Count() == 0;
+			args.IsValid = valid;
+			HelperFunctions.FindControl<Label>(this, "ErrorLabel").Text = valid
+				? "" : string.Join("<br />\r\n", errors);
+			HelperFunctions.FindControl<Panel>(this, "ErrorPanel").Style.Add("display", valid ? "none" : "block");
 		}
 
 		#endregion
@@ -112,7 +103,7 @@ namespace JocysCom.Web.Security.Controls
 		private User RegisterMember()
 		{
 			/* --- Create a new user --------- */
-			Page.Validate("MemberRegistration");
+			//Page.Validate("MemberRegistration");
 			if (!Page.IsValid) return null;
 			// Create ASP.NET User
 			UserPassword = string.IsNullOrEmpty(UserPassword)
@@ -229,11 +220,7 @@ namespace JocysCom.Web.Security.Controls
 		public bool ShowPassword
 		{
 			get { return string.IsNullOrEmpty(PasswordRow.Style["display"]); }
-			set
-			{
-				PasswordRow.Style["display"] = value ? "" : "none";
-				PasswordTextBoxCustomValidator.Enabled = value;
-			}
+			set { PasswordRow.Style["display"] = value ? "" : "none"; }
 		}
 
 		[Category("Layout"), EditorBrowsable, DefaultValue(true)]

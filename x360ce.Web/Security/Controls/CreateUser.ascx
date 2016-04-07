@@ -132,7 +132,7 @@
 				<table border="0" style="padding-top: 2px;">
 					<tr>
 						<td style="height: 16px;">
-							<asp:CheckBox ID="TermsCheckBox" Text="" runat="server" onclick="Profile.RequestServerValidation(this, null)" />
+							<asp:CheckBox ID="TermsCheckBox" Text="" runat="server" />
 						</td>
 						<td style="padding-left: 4px;">
 							<label for="<%= TermsCheckBox.ClientID %>">
@@ -154,7 +154,7 @@
 				<table border="0">
 					<tr>
 						<td style="height: 16px;">
-							<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" onclick="Profile.RequestServerValidation(this, null)" />
+							<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" />
 						</td>
 						<td style="padding-left: 4px;">
 							<label for="<%= NewsCheckBox.ClientID %>">
@@ -173,10 +173,8 @@
 		<tr runat="server" id="SignUpRow">
 			<td></td>
 			<td>
-				<asp:Button runat="server" ID="ClientLinkButton" CssClass="SWUI_Table_Button SWUI_Btn"
-					Text="Sign Up" OnClientClick="return false;" />
 				<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
-					ValidationGroup="AllMemberRegistration" Style="display: none;">Sign Up (server)</asp:LinkButton>
+					ValidationGroup="AllMemberRegistration" Text="Sign Up" CssClass="SWUI_Table_Button SWUI_Btn" />
 			</td>
 			<td></td>
 		</tr>
@@ -184,52 +182,11 @@
 	<asp:Panel runat="server" ID="ErrorPanel" CssClass="SWUI_Table_ErrorPanel">
 		<asp:Label runat="server" ID="ErrorLabel" />
 	</asp:Panel>
-	<asp:CustomValidator ID="FirstNameTextBoxCustomValidator" runat="server" ControlToValidate="FirstNameTextBox"
-		Text="FirsName Validator" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="LastNameTextBoxCustomValidator" runat="server" ControlToValidate="LastNameTextBox"
-		Text="LastName Validator" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="EmailTextBoxCustomValidator" runat="server" Text="Email Validator"
-		ControlToValidate="EmailTextBox" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="UserNameCustomValidator" runat="server" Text="User Name Validator"
-		ControlToValidate="UserName" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="PasswordTextBoxCustomValidator" runat="server" Text="Password Validator"
-		ControlToValidate="PasswordTextBox" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="BirthdayYearDropDownListCustomValidator" runat="server"
-		Text="Birthday Year Validator" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		ControlToValidate="YearDropDownList" EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="BirthdayMonthDropDownListCustomValidator" runat="server"
-		Text="Birthday Month Validator" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		ControlToValidate="MonthDropDownList" EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="BirthdayDayDropDownListCustomValidator" runat="server" Text="Birthday Day Validator"
-		ValidateEmptyText="true" ValidationGroup="MemberRegistration" ControlToValidate="DayDropDownList"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="GenderDropDownListCustomValidator" runat="server" ControlToValidate="GenderDropDownList"
-		Text="Gender Validator" ValidateEmptyText="true" ValidationGroup="MemberRegistration"
-		EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="TermsCheckBoxCustomValidator" runat="server" Text="Terms Validator"
-		ValidationGroup="MemberRegistration" EnableClientScript="true" ClientValidationFunction="Profile.RequestServerValidation"
-		Display="Dynamic" />
-	<asp:CustomValidator ID="NewsCheckBoxCustomValidator" runat="server" Text="News Validator"
-		ValidationGroup="MemberRegistration" EnableClientScript="true" Display="Dynamic" />
 	<span style="display: none;">
 		<asp:TextBox runat="server" ID="AllTextBox" Text="" /></span>
 	<asp:CustomValidator ID="AllCustomValidator" runat="server" ControlToValidate="AllTextBox"
 		EnableClientScript="True" Text="All Validator" ValidationGroup="AllMemberRegistration"
-		ClientValidationFunction="Profile.AllCustomValidator_ClientValidate" ErrorMessage="CustomValidator"
+		 ErrorMessage="CustomValidator"
 		OnServerValidate="AllCustomValidator_ServerValidate" ValidateEmptyText="True"
 		Display="Dynamic" />
 </div>

@@ -328,15 +328,6 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.HtmlControls.HtmlTableRow SignUpRow;
         
         /// <summary>
-        /// ClientLinkButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ClientLinkButton;
-        
-        /// <summary>
         /// SignUpLinkButton control.
         /// </summary>
         /// <remarks>
@@ -362,105 +353,6 @@ namespace JocysCom.Web.Security.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label ErrorLabel;
-        
-        /// <summary>
-        /// FirstNameTextBoxCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator FirstNameTextBoxCustomValidator;
-        
-        /// <summary>
-        /// LastNameTextBoxCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator LastNameTextBoxCustomValidator;
-        
-        /// <summary>
-        /// EmailTextBoxCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator EmailTextBoxCustomValidator;
-        
-        /// <summary>
-        /// UserNameCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator UserNameCustomValidator;
-        
-        /// <summary>
-        /// PasswordTextBoxCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator PasswordTextBoxCustomValidator;
-        
-        /// <summary>
-        /// BirthdayYearDropDownListCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator BirthdayYearDropDownListCustomValidator;
-        
-        /// <summary>
-        /// BirthdayMonthDropDownListCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator BirthdayMonthDropDownListCustomValidator;
-        
-        /// <summary>
-        /// BirthdayDayDropDownListCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator BirthdayDayDropDownListCustomValidator;
-        
-        /// <summary>
-        /// GenderDropDownListCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator GenderDropDownListCustomValidator;
-        
-        /// <summary>
-        /// TermsCheckBoxCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator TermsCheckBoxCustomValidator;
-        
-        /// <summary>
-        /// NewsCheckBoxCustomValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator NewsCheckBoxCustomValidator;
         
         /// <summary>
         /// AllTextBox control.
