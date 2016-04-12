@@ -9,6 +9,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Linq;
 using System.Collections.Generic;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security
 {
@@ -38,8 +39,8 @@ namespace JocysCom.Web.Security
 
 		public static void UpdateRole(string roleName, string description)
 		{
-			var db = new Data.SecurityEntities();
-            Data.Role role = (from item in db.Roles
+			var db = new SecurityEntities();
+            Role role = (from item in db.Roles
                               where item.Application.ApplicationName == System.Web.Security.Roles.ApplicationName
                               && item.RoleName == roleName
                               select item).FirstOrDefault();
@@ -76,7 +77,7 @@ namespace JocysCom.Web.Security
         public static void CheckToImportMissingUsers(string username)
         {
             // If user does not exists then...
-            MembershipUserCollection users = Membership.FindUsersByName(username);
+            MembershipUserCollection users = System.Web.Security.Membership.FindUsersByName(username);
             bool userWasFound = (users.Count > 0);
             // If user was not found then...
             if (!userWasFound)
@@ -114,7 +115,7 @@ namespace JocysCom.Web.Security
 				Check.UpdateUserRoles(userName);
 			}
 			// If this user does not exist then...
-			MembershipUser user = Membership.GetUser(userName, false);
+			MembershipUser user = System.Web.Security.Membership.GetUser(userName, false);
 			if (user != null)
 			{
 				// Update user password.

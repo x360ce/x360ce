@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -93,7 +94,7 @@ namespace JocysCom.Web.Security.Controls
 			PrepareForm();
 			ProviderNameTextBox.Text = System.Web.Security.Roles.Provider.Name;
 			// Find application guid.
-			ApplicationIdTextBox.Text = Data.SecurityEntities.ApplicationId.ToString();
+			ApplicationIdTextBox.Text = SecurityEntities.ApplicationId.ToString();
 			// Generate new guid for role.
 			RoleIdTextBox.Text = Guid.NewGuid().ToString();
 			// Empty fields.
@@ -111,8 +112,8 @@ namespace JocysCom.Web.Security.Controls
 		public void CreateRole()
 		{
 			CreatedRoleTextBox.Text = "";
-			var db = new Data.SecurityEntities();
-			var role = new Data.Role()
+			var db = new SecurityEntities();
+			var role = new Role()
 			{
 				ApplicationId = new Guid(ApplicationIdTextBox.Text),
 				Description = DescriptionTextBox.Text,
@@ -169,7 +170,7 @@ namespace JocysCom.Web.Security.Controls
         {
 			PrepareToUpdate();
 			// Load rest
-			var role = Data.Role.GetRole(roleId);
+			var role = Role.GetRole(roleId);
 			// If role was found then...
 			if (role != null)
 			{
@@ -188,8 +189,8 @@ namespace JocysCom.Web.Security.Controls
 
         public void UpdateRole()
         {
-			var db = new Data.SecurityEntities();
-			var role = Data.Role.GetRole(CreatedRoleTextBox.Text, db);
+			var db = new SecurityEntities();
+			var role = Role.GetRole(CreatedRoleTextBox.Text, db);
 			role.ApplicationId = new Guid(ApplicationIdTextBox.Text);
 			role.Description = DescriptionTextBox.Text;
 			role.LoweredRoleName = RoleNameTextBox.Text.ToLower();

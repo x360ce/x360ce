@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Linq;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security
 {
@@ -15,22 +16,22 @@ namespace JocysCom.Web.Security
 	{
 		#region Properties
 
-        public Data.Role Role
+        public Role Role
 		{ get { return m_role; } set { m_role = value; } }
-        private Data.Role m_role;
+        private Role m_role;
 
 		#endregion
 
 		public RoleEditEventArgs(string roleName)
 		{
-            var db = new Data.SecurityEntities();
+            var db = new SecurityEntities();
             this.m_role = (from item in db.Roles
                               where item.Application.ApplicationName == System.Web.Security.Roles.ApplicationName
                               && item.RoleName == roleName
                               select item).FirstOrDefault();
          		}
 
-        public RoleEditEventArgs(Data.Role role)
+        public RoleEditEventArgs(Role role)
 		{
 			this.m_role = role;
 		}

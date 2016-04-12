@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.WebSites.Engine.Security.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -27,7 +28,7 @@ namespace JocysCom.Web.Security.Controls
 			else
 			{
 				ResetPasswordUserNotFoundLabel.Visible = false;
-				Data.User.SendPasswordResetKey(Data.User.GetUser(PasswordRecovery1.UserName));
+				User.SendPasswordResetKey(User.GetUser(PasswordRecovery1.UserName));
 				ResetPasswordSuccessPanel.Visible = true;
 			}
 		}

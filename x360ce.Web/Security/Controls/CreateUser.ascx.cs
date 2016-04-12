@@ -130,7 +130,7 @@ namespace JocysCom.Web.Security.Controls
 					int.Parse(DayDropDownList.SelectedValue));
 				user.FirstName = UserFirstName;
 				user.LastName = UserLastName;
-				user.Gender = UserGender;
+				user.Gender = (string)GenderDropDownList.SelectedValue;
 				SecurityClassesDataContext.Current.SaveChanges();
 				// Add role to the user.
 				System.Web.Security.Roles.AddUserToRole(user.UserName, "SocialUsers");
@@ -374,27 +374,6 @@ namespace JocysCom.Web.Security.Controls
 				{
 				}
 			}
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue("")]
-		public string UserGender
-		{
-			get { return GenderDropDownList.SelectedValue; }
-			set { GenderDropDownList.SelectedValue = value; }
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue(false)]
-		public bool UserTerms
-		{
-			get { return TermsCheckBox.Checked; }
-			set { TermsCheckBox.Checked = value; }
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue(false)]
-		public bool UserNews
-		{
-			get { return NewsCheckBox.Checked; }
-			set { NewsCheckBox.Checked = value; }
 		}
 
 		#endregion

@@ -4,45 +4,13 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="SecurityModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityContainer Name="SecurityModelStoreContainer">
-          <EntitySet Name="aspnet_Applications" EntityType="SecurityModel.Store.aspnet_Applications" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="aspnet_Membership" EntityType="SecurityModel.Store.aspnet_Membership" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="aspnet_Roles" EntityType="SecurityModel.Store.aspnet_Roles" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="aspnet_SchemaVersions" EntityType="SecurityModel.Store.aspnet_SchemaVersions" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="aspnet_Users" EntityType="SecurityModel.Store.aspnet_Users" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="aspnet_UsersInRoles" EntityType="SecurityModel.Store.aspnet_UsersInRoles" store:Type="Tables" Schema="dbo" />
-          <AssociationSet Name="FK__aspnet_Membership__ApplicationId" Association="SecurityModel.Store.FK__aspnet_Membership__ApplicationId">
-            <End Role="aspnet_Applications" EntitySet="aspnet_Applications" />
-            <End Role="aspnet_Membership" EntitySet="aspnet_Membership" />
-          </AssociationSet>
-          <AssociationSet Name="FK__aspnet_Membership__UserId" Association="SecurityModel.Store.FK__aspnet_Membership__UserId">
-            <End Role="aspnet_Users" EntitySet="aspnet_Users" />
-            <End Role="aspnet_Membership" EntitySet="aspnet_Membership" />
-          </AssociationSet>
-          <AssociationSet Name="FK__aspnet_Roles__ApplicationId" Association="SecurityModel.Store.FK__aspnet_Roles__ApplicationId">
-            <End Role="aspnet_Applications" EntitySet="aspnet_Applications" />
-            <End Role="aspnet_Roles" EntitySet="aspnet_Roles" />
-          </AssociationSet>
-          <AssociationSet Name="FK__aspnet_Users__ApplicationId" Association="SecurityModel.Store.FK__aspnet_Users__ApplicationId">
-            <End Role="aspnet_Applications" EntitySet="aspnet_Applications" />
-            <End Role="aspnet_Users" EntitySet="aspnet_Users" />
-          </AssociationSet>
-          <AssociationSet Name="FK__aspnet_UsersInRoles__RoleId" Association="SecurityModel.Store.FK__aspnet_UsersInRoles__RoleId">
-            <End Role="aspnet_Roles" EntitySet="aspnet_Roles" />
-            <End Role="aspnet_UsersInRoles" EntitySet="aspnet_UsersInRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK__aspnet_UsersInRoles__UserId" Association="SecurityModel.Store.FK__aspnet_UsersInRoles__UserId">
-            <End Role="aspnet_Users" EntitySet="aspnet_Users" />
-            <End Role="aspnet_UsersInRoles" EntitySet="aspnet_UsersInRoles" />
-          </AssociationSet>
-        </EntityContainer>
+    <Schema Namespace="SecurityModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityType Name="aspnet_Applications">
           <Key>
             <PropertyRef Name="ApplicationId" />
           </Key>
-          <Property Name="ApplicationName" Type="nvarchar" Nullable="false" MaxLength="256" />
-          <Property Name="LoweredApplicationName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="ApplicationName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="LoweredApplicationName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ApplicationId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="256" />
         </EntityType>
@@ -52,9 +20,9 @@
           </Key>
           <Property Name="ApplicationId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="Password" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="PasswordFormat" Type="int" Nullable="false" />
-          <Property Name="PasswordSalt" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="PasswordSalt" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="MobilePIN" Type="nvarchar" MaxLength="16" />
           <Property Name="Email" Type="nvarchar" MaxLength="256" />
           <Property Name="LoweredEmail" Type="nvarchar" MaxLength="256" />
@@ -78,8 +46,8 @@
           </Key>
           <Property Name="ApplicationId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="RoleId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="RoleName" Type="nvarchar" Nullable="false" MaxLength="256" />
-          <Property Name="LoweredRoleName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="RoleName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="LoweredRoleName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="aspnet_SchemaVersions">
@@ -87,8 +55,8 @@
             <PropertyRef Name="Feature" />
             <PropertyRef Name="CompatibleSchemaVersion" />
           </Key>
-          <Property Name="Feature" Type="nvarchar" Nullable="false" MaxLength="128" />
-          <Property Name="CompatibleSchemaVersion" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="Feature" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="CompatibleSchemaVersion" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="IsCurrentVersion" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="aspnet_Users">
@@ -97,15 +65,15 @@
           </Key>
           <Property Name="ApplicationId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="UserName" Type="nvarchar" Nullable="false" MaxLength="256" />
-          <Property Name="LoweredUserName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="LoweredUserName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="MobileAlias" Type="nvarchar" MaxLength="16" />
           <Property Name="IsAnonymous" Type="bit" Nullable="false" />
           <Property Name="LastActivityDate" Type="datetime" Nullable="false" />
-          <Property Name="FirstName" Type="nvarchar" Nullable="false" MaxLength="256" />
-          <Property Name="LastName" Type="nvarchar" Nullable="false" MaxLength="256" />
-          <Property Name="Gender" Type="char" Nullable="false" MaxLength="1" />
-          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="1024" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Gender" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="DateBirth" Type="datetime" />
         </EntityType>
         <EntityType Name="aspnet_UsersInRoles">
@@ -117,8 +85,8 @@
           <Property Name="RoleId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <Association Name="FK__aspnet_Membership__ApplicationId">
-          <End Role="aspnet_Applications" Type="SecurityModel.Store.aspnet_Applications" Multiplicity="1" />
-          <End Role="aspnet_Membership" Type="SecurityModel.Store.aspnet_Membership" Multiplicity="*" />
+          <End Role="aspnet_Applications" Type="Self.aspnet_Applications" Multiplicity="1" />
+          <End Role="aspnet_Membership" Type="Self.aspnet_Membership" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="aspnet_Applications">
               <PropertyRef Name="ApplicationId" />
@@ -129,8 +97,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__aspnet_Membership__UserId">
-          <End Role="aspnet_Users" Type="SecurityModel.Store.aspnet_Users" Multiplicity="1" />
-          <End Role="aspnet_Membership" Type="SecurityModel.Store.aspnet_Membership" Multiplicity="0..1" />
+          <End Role="aspnet_Users" Type="Self.aspnet_Users" Multiplicity="1" />
+          <End Role="aspnet_Membership" Type="Self.aspnet_Membership" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="aspnet_Users">
               <PropertyRef Name="UserId" />
@@ -141,8 +109,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__aspnet_Roles__ApplicationId">
-          <End Role="aspnet_Applications" Type="SecurityModel.Store.aspnet_Applications" Multiplicity="1" />
-          <End Role="aspnet_Roles" Type="SecurityModel.Store.aspnet_Roles" Multiplicity="*" />
+          <End Role="aspnet_Applications" Type="Self.aspnet_Applications" Multiplicity="1" />
+          <End Role="aspnet_Roles" Type="Self.aspnet_Roles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="aspnet_Applications">
               <PropertyRef Name="ApplicationId" />
@@ -153,8 +121,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__aspnet_Users__ApplicationId">
-          <End Role="aspnet_Applications" Type="SecurityModel.Store.aspnet_Applications" Multiplicity="1" />
-          <End Role="aspnet_Users" Type="SecurityModel.Store.aspnet_Users" Multiplicity="*" />
+          <End Role="aspnet_Applications" Type="Self.aspnet_Applications" Multiplicity="1" />
+          <End Role="aspnet_Users" Type="Self.aspnet_Users" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="aspnet_Applications">
               <PropertyRef Name="ApplicationId" />
@@ -165,8 +133,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__aspnet_UsersInRoles__RoleId">
-          <End Role="aspnet_Roles" Type="SecurityModel.Store.aspnet_Roles" Multiplicity="1" />
-          <End Role="aspnet_UsersInRoles" Type="SecurityModel.Store.aspnet_UsersInRoles" Multiplicity="*" />
+          <End Role="aspnet_Roles" Type="Self.aspnet_Roles" Multiplicity="1" />
+          <End Role="aspnet_UsersInRoles" Type="Self.aspnet_UsersInRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="aspnet_Roles">
               <PropertyRef Name="RoleId" />
@@ -177,8 +145,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__aspnet_UsersInRoles__UserId">
-          <End Role="aspnet_Users" Type="SecurityModel.Store.aspnet_Users" Multiplicity="1" />
-          <End Role="aspnet_UsersInRoles" Type="SecurityModel.Store.aspnet_UsersInRoles" Multiplicity="*" />
+          <End Role="aspnet_Users" Type="Self.aspnet_Users" Multiplicity="1" />
+          <End Role="aspnet_UsersInRoles" Type="Self.aspnet_UsersInRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="aspnet_Users">
               <PropertyRef Name="UserId" />
@@ -188,6 +156,38 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityContainer Name="SecurityModelStoreContainer">
+          <EntitySet Name="aspnet_Applications" EntityType="Self.aspnet_Applications" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="aspnet_Membership" EntityType="Self.aspnet_Membership" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="aspnet_Roles" EntityType="Self.aspnet_Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="aspnet_SchemaVersions" EntityType="Self.aspnet_SchemaVersions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="aspnet_Users" EntityType="Self.aspnet_Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="aspnet_UsersInRoles" EntityType="Self.aspnet_UsersInRoles" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__aspnet_Membership__ApplicationId" Association="Self.FK__aspnet_Membership__ApplicationId">
+            <End Role="aspnet_Applications" EntitySet="aspnet_Applications" />
+            <End Role="aspnet_Membership" EntitySet="aspnet_Membership" />
+          </AssociationSet>
+          <AssociationSet Name="FK__aspnet_Membership__UserId" Association="Self.FK__aspnet_Membership__UserId">
+            <End Role="aspnet_Users" EntitySet="aspnet_Users" />
+            <End Role="aspnet_Membership" EntitySet="aspnet_Membership" />
+          </AssociationSet>
+          <AssociationSet Name="FK__aspnet_Roles__ApplicationId" Association="Self.FK__aspnet_Roles__ApplicationId">
+            <End Role="aspnet_Applications" EntitySet="aspnet_Applications" />
+            <End Role="aspnet_Roles" EntitySet="aspnet_Roles" />
+          </AssociationSet>
+          <AssociationSet Name="FK__aspnet_Users__ApplicationId" Association="Self.FK__aspnet_Users__ApplicationId">
+            <End Role="aspnet_Applications" EntitySet="aspnet_Applications" />
+            <End Role="aspnet_Users" EntitySet="aspnet_Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK__aspnet_UsersInRoles__RoleId" Association="Self.FK__aspnet_UsersInRoles__RoleId">
+            <End Role="aspnet_Roles" EntitySet="aspnet_Roles" />
+            <End Role="aspnet_UsersInRoles" EntitySet="aspnet_UsersInRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK__aspnet_UsersInRoles__UserId" Association="Self.FK__aspnet_UsersInRoles__UserId">
+            <End Role="aspnet_Users" EntitySet="aspnet_Users" />
+            <End Role="aspnet_UsersInRoles" EntitySet="aspnet_UsersInRoles" />
+          </AssociationSet>
+        </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -457,6 +457,7 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="UseLegacyProvider" Value="True" />
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->

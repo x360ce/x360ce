@@ -10,6 +10,8 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using JocysCom.WebSites.Engine.Security;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security
 {
@@ -35,6 +37,8 @@ namespace JocysCom.Web.Security
 		public bool AllowUsersToSignUp;
 		public bool AllowUsersToLogin;
 		public bool AllowUsersToResetPassword;
+		public UserFieldName RequiredFields;
+		public UserFieldName OptionalFields;
 
 		void LoadAppSettings()
 		{
@@ -44,6 +48,15 @@ namespace JocysCom.Web.Security
 			AllowUsersToResetPassword = ParseBool(prefix + "AllowUsersToResetPassword", false);
 			AllowUsersToSignUp = ParseBool(prefix + "AllowUsersToSignUp", false);
 			AllowUsersToLogin = ParseBool(prefix + "AllowUsersToLogin", false);
+			RequiredFields = ParseEnum<UserFieldName>(prefix + "RequiredFields", 0);
+			OptionalFields = ParseEnum<UserFieldName>(prefix + "OptionalFields", 0);
+		}
+
+
+		public T ParseEnum<T>(string name, T defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[name];
+			return (v == null) ? defaultValue : (T)Enum.Parse(typeof(T), v);
 		}
 
 		public static bool ParseBool(string name, bool defaultValue)
@@ -189,14 +202,14 @@ namespace JocysCom.Web.Security
 
 		//#region Member
 
-		private Data.User m_member;
-		public Data.User Member
+		private User m_member;
+		public User Member
 		{
 			get
 			{
 				if (m_member == null && IsAuthenticated)
 				{
-					var db = new Data.SecurityEntities();
+					var db = new SecurityEntities();
 					m_member = db.Users.Where(x => x.UserName == HttpContext.Current.User.Identity.Name).FirstOrDefault();
 					db.Dispose();
 					db = null;

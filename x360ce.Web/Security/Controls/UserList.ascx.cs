@@ -3,13 +3,13 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Collections.Generic;
 using System.Linq;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -287,19 +287,19 @@ namespace JocysCom.Web.Security.Controls
 			var gridView = (GridView)sender;
 			if (e.CommandName == "DeleteItem")
 			{
-				Membership.DeleteUser(e.CommandArgument.ToString());
+				System.Web.Security.Membership.DeleteUser(e.CommandArgument.ToString());
 				UsersGridView.DataBind();
 			}
 			if (e.CommandName == "SelectItem")
 			{
-				// If event was atatched then...
+				// If event was attached then...
 				RiseUserSelected(e);
 			}
 		}
 
-		public Data.User[] users
+		public User[] users
 		{
-			get { return (Data.User[])ViewState["_users"]; }
+			get { return (User[])ViewState["_users"]; }
 			set { ViewState["_users"] = value; }
 		}
 
@@ -309,8 +309,8 @@ namespace JocysCom.Web.Security.Controls
 
 		protected void UsersEntityDataSource_Selected(object sender, EntityDataSourceSelectedEventArgs e)
 		{
-			var userIds = e.Results.Cast<Data.Membership>().Select(x => x.UserId).ToArray();
-			var db = new Data.SecurityEntities();
+			var userIds = e.Results.Cast<Membership>().Select(x => x.UserId).ToArray();
+			var db = new SecurityEntities();
 			users = (from row in db.Users where userIds.Contains(row.UserId) select row).ToArray();
 			db.Dispose();
 			db = null;

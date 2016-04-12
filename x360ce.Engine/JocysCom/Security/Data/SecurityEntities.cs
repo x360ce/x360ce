@@ -20,17 +20,19 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			}
 		}
 
-		private Guid _ApplicationId;
-		public Guid ApplicationId
+		private static Guid _ApplicationId;
+		public static Guid ApplicationId
 		{
 			get
 			{
 				if (_ApplicationId.Equals(Guid.Empty))
 				{
-					_ApplicationId = (from t
-									  in Current.Applications
-									  where t.ApplicationName == System.Web.Security.Roles.ApplicationName
-									  select t.ApplicationId).SingleOrDefault<Guid>();
+					var db = new SecurityEntities();
+					_ApplicationId = db.Applications
+						.Where(x => x.ApplicationName == System.Web.Security.Roles.ApplicationName)
+						.Select(x => x.ApplicationId).FirstOrDefault();
+					db.Dispose();
+					db = null;
 				}
 				return _ApplicationId;
 			}

@@ -178,14 +178,6 @@
     <Compile Include="Security\Common\Check.cs" />
     <Compile Include="Security\Common\ConnectionStrings.cs" />
     <Compile Include="Security\Common\SecurityContext.cs" />
-    <Compile Include="Security\Data\Role.cs" />
-    <Compile Include="Security\Data\SecurityEntities.cs" />
-    <Compile Include="Security\Data\SecurityModel1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SecurityModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Security\Data\User.cs" />
     <Compile Include="Security\Common\RoleQueryName.cs" />
     <Compile Include="Security\Common\SessionList.cs" />
     <Compile Include="Security\Common\SqlStoredProcedureProfileProvider.cs" />
@@ -308,13 +300,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Security\Site.Master" />
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="Security\Data\SecurityModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SecurityModel1.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>x360ce.Web.Security.Data</CustomToolNamespace>
-    </EntityDeploy>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

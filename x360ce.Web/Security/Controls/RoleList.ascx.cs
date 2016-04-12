@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
 using System.Data.EntityClient;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -173,16 +174,16 @@ namespace JocysCom.Web.Security.Controls
 		{
 			System.Collections.Generic.List<string> list;
 			list = GetItemKeys(true);
-			var user = Data.User.GetUser(new Guid(SearchUserId.Text));
+			var user = User.GetUser(new Guid(SearchUserId.Text));
 			int length = list.Count;
 			for (int i = 0; i < length; i++)
 			{
 				string roleName = list[i];
 				if (user.UserName.Length > 0 && roleName.Length > 0)
 				{
-					if (!System.Web.Security.Roles.IsUserInRole(user.UserName, roleName))
+					if (!Roles.IsUserInRole(user.UserName, roleName))
 					{
-						System.Web.Security.Roles.AddUserToRole(user.UserName, roleName);
+						Roles.AddUserToRole(user.UserName, roleName);
 					}
 				}
 			}
@@ -246,7 +247,7 @@ namespace JocysCom.Web.Security.Controls
 			if (!string.IsNullOrEmpty(SearchUserId.Text))
 			{
 				var userId = new Guid(SearchUserId.Text);
-				var db = new Data.SecurityEntities();
+				var db = new SecurityEntities();
 				if (SearchFilterLabel.Text == "InRole")
 				{
 					e.Query = db.Users.Where(x => x.UserId == userId).SelectMany(x => x.Roles).OrderBy(x => x.RoleName);

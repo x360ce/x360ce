@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using x360ce.Engine;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security
 {
@@ -87,7 +88,7 @@ namespace JocysCom.Web.Security
 		/// <param name="field">Validation parameters.</param>
 		/// <returns>validation results</returns>
 		[WebMethod(EnableSession = true, Description = "Test new user registration info if it valid for registration.")]
-		public Data.User.ValidationField[] ValidateUserRegistration(
+		public WebSites.Engine.Security.ValidationField[] ValidateUserRegistration(
 			string firstName,
 			string lastName,
 			string email,
@@ -99,7 +100,7 @@ namespace JocysCom.Web.Security
 			bool news
 		)
 		{
-			return Data.User.ValidateMemberRegistration(
+			return JocysCom.WebSites.Engine.Security.Data.User.ValidateMemberRegistration(
 				firstName,
 				lastName,
 				email,

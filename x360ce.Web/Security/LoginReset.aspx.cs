@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Text.RegularExpressions;
-using System.Web.Security;
 using JocysCom.ClassLibrary;
 
 namespace JocysCom.Web.Security
@@ -18,7 +17,7 @@ namespace JocysCom.Web.Security
 			string key = Request["Key"];
 			if (!string.IsNullOrEmpty(username))
 			{
-				Data.User.SendPasswordResetKey(Data.User.GetUser(username));
+				JocysCom.WebSites.Engine.Security.Data.User.SendPasswordResetKey(JocysCom.WebSites.Engine.Security.Data.User.GetUser(username));
 				//ResetPasswordPanel.Visible = true;
 			}
 			else if (!string.IsNullOrEmpty(key))
@@ -31,7 +30,7 @@ namespace JocysCom.Web.Security
 					return;
 				}
 				Guid userId = JocysCom.ClassLibrary.Security.Helper.GetUserId<Guid>(key);
-				var user = Data.User.GetUser(userId);
+				var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(userId);
 				if (user == null)
 				{
 					ErrorLabel.Text = "Error 2: Password reset key is not valid!";
@@ -54,12 +53,12 @@ namespace JocysCom.Web.Security
 		protected void ChangePasswordPushButton_Click(object sender, EventArgs e)
 		{
 			Guid userId = JocysCom.ClassLibrary.Security.Helper.GetUserId<Guid>(ResetKeyLabel.Text);
-			var user = Data.User.GetUser(userId);
-			System.Web.Security.MembershipUser muser = Membership.GetUser(user.UserName);
+			var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(userId);
+			var muser = System.Web.Security.Membership.GetUser(user.UserName);
 			// Reset password: Start
 			string tempPassword = muser.ResetPassword();
 			muser.ChangePassword(tempPassword, NewPassword.Text);
-			Membership.UpdateUser(muser);
+			System.Web.Security.Membership.UpdateUser(muser);
 			// Reset password: End
 			SuccessPanel.Visible = true;
 			ChangePasswordPanel.Visible = false;
