@@ -39,7 +39,7 @@ namespace JocysCom.WebSites.Engine
 		ForumThread,
 		ForumPost,
         Email,
-		// ASP.NET Mebership provider.
+		// ASP.NET Membership provider.
 		User,
 		Role,
 		// Social.

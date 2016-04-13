@@ -130,13 +130,13 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl EmailStatus;
         
         /// <summary>
-        /// UsernameRow control.
+        /// UserNameRow control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow UsernameRow;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow UserNameRow;
         
         /// <summary>
         /// UserName control.
@@ -148,13 +148,13 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.WebControls.TextBox UserName;
         
         /// <summary>
-        /// UsernameStatus control.
+        /// UserNameStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl UsernameStatus;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl UserNameStatus;
         
         /// <summary>
         /// PasswordRow control.

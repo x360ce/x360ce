@@ -9,6 +9,7 @@ using JocysCom.WebSites.Engine;
 using System.Web.Security;
 using User = JocysCom.WebSites.Engine.Security.Data.User;
 using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
+using JocysCom.WebSites.Engine.Security;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -27,6 +28,16 @@ namespace JocysCom.Web.Security.Controls
 		{
 			if (!Page.IsPostBack)
 			{
+				var fields = SecurityContext.Current.RequiredFields | SecurityContext.Current.OptionalFields;
+				FirstNameRow.Style["display"] = fields.HasFlag(UserFieldName.FirstName) ? "" : "none";
+				LastNameRow.Style["display"] = fields.HasFlag(UserFieldName.LastName) ? "" : "none";
+				EmailRow.Style["display"] = fields.HasFlag(UserFieldName.Email) ? "" : "none";
+				UserNameRow.Style["display"] = fields.HasFlag(UserFieldName.UserName) ? "" : "none";
+				PasswordRow.Style["display"] = fields.HasFlag(UserFieldName.Password) ? "" : "none";
+				BirthdayRow.Style["display"] = fields.HasFlag(UserFieldName.Birthday) ? "" : "none";
+				GenderRow.Style["display"] = fields.HasFlag(UserFieldName.Gender) ? "" : "none";
+				TermsRow.Style["display"] = fields.HasFlag(UserFieldName.Terms) ? "" : "none";
+				NewsRow.Style["display"] = fields.HasFlag(UserFieldName.News) ? "" : "none";
 				var en = SecurityContext.Current.AllowUsersToSignUp;
 				HelperFunctions.EnableControl(this, en, en ? null : "Sign Up Disabled");
 				HeadPanel.Visible = ShowHead;
@@ -48,10 +59,11 @@ namespace JocysCom.Web.Security.Controls
 					DayDropDownList.SelectedValue),
 					GenderDropDownList.SelectedValue,
 					TermsCheckBox.Checked,
-					NewsCheckBox.Checked
+					NewsCheckBox.Checked,
+					SecurityContext.Current.RequiredFields
 				);
 
-			var errors = result.Where(x => !string.IsNullOrEmpty(x.Message)).Select(x=>x.Message);
+			var errors = result.Where(x => !string.IsNullOrEmpty(x.Message)).Select(x => x.Message);
 			var valid = errors.Count() == 0;
 			args.IsValid = valid;
 			HelperFunctions.FindControl<Label>(this, "ErrorLabel").Text = valid
@@ -106,11 +118,12 @@ namespace JocysCom.Web.Security.Controls
 			//Page.Validate("MemberRegistration");
 			if (!Page.IsValid) return null;
 			// Create ASP.NET User
-			UserPassword = string.IsNullOrEmpty(UserPassword)
+			var password = PasswordTextBox.Text;
+			PasswordTextBox.Text = string.IsNullOrEmpty(password)
 								? NewPassword()
-								: UserPassword;
+								: password;
 			MembershipCreateStatus status;
-			MembershipUser member = SecurityClassesDataContext.Current.CreateUser(UserUsername, UserPassword, UserEmail,
+			MembershipUser member = SecurityClassesDataContext.Current.CreateUser(UserName.Text, password, EmailTextBox.Text,
 					"Password Question", "Password Answer", true, out status);
 			// If creation failed then exit.
 			if (status != MembershipCreateStatus.Success) return null;
@@ -128,8 +141,8 @@ namespace JocysCom.Web.Security.Controls
 					int.Parse(YearDropDownList.SelectedValue),
 					int.Parse(MonthDropDownList.SelectedValue),
 					int.Parse(DayDropDownList.SelectedValue));
-				user.FirstName = UserFirstName;
-				user.LastName = UserLastName;
+				user.FirstName = FirstNameTextBox.Text;
+				user.LastName = LastNameTextBox.Text;
 				user.Gender = (string)GenderDropDownList.SelectedValue;
 				SecurityClassesDataContext.Current.SaveChanges();
 				// Add role to the user.
@@ -189,69 +202,6 @@ namespace JocysCom.Web.Security.Controls
 		#region Layout
 
 		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowFirstName
-		{
-			get { return string.IsNullOrEmpty(FirstNameRow.Style["display"]); }
-			set { FirstNameRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowLastName
-		{
-			get { return string.IsNullOrEmpty(LastNameRow.Style["display"]); }
-			set { LastNameRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowEmail
-		{
-			get { return string.IsNullOrEmpty(EmailRow.Style["display"]); }
-			set { EmailRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowUsername
-		{
-			get { return string.IsNullOrEmpty(UsernameRow.Style["display"]); }
-			set { UsernameRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowPassword
-		{
-			get { return string.IsNullOrEmpty(PasswordRow.Style["display"]); }
-			set { PasswordRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowBirthday
-		{
-			get { return string.IsNullOrEmpty(BirthdayRow.Style["display"]); }
-			set { BirthdayRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowGender
-		{
-			get { return string.IsNullOrEmpty(GenderRow.Style["display"]); }
-			set { GenderRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowTerms
-		{
-			get { return string.IsNullOrEmpty(TermsRow.Style["display"]); }
-			set { TermsRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
-		public bool ShowNews
-		{
-			get { return string.IsNullOrEmpty(NewsRow.Style["display"]); }
-			set { NewsRow.Style["display"] = value ? "" : "none"; }
-		}
-
-		[Category("Layout"), EditorBrowsable, DefaultValue(true)]
 		public bool ShowSignUp
 		{
 			get { return string.IsNullOrEmpty(SignUpRow.Style["display"]); }
@@ -295,42 +245,6 @@ namespace JocysCom.Web.Security.Controls
 		#region User
 
 		[Category("User"), EditorBrowsable, DefaultValue("")]
-		public string UserFirstName
-		{
-			get { return FirstNameTextBox.Text; }
-			set { FirstNameTextBox.Text = value; }
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue("")]
-		public string UserLastName
-		{
-			get { return LastNameTextBox.Text; }
-			set { LastNameTextBox.Text = value; }
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue("")]
-		public string UserUsername
-		{
-			get { return UserName.Text; }
-			set { UserName.Text = value; }
-		}
-
-
-		[Category("User"), EditorBrowsable, DefaultValue("")]
-		public string UserEmail
-		{
-			get { return EmailTextBox.Text; }
-			set { EmailTextBox.Text = value; }
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue("")]
-		public string UserPassword
-		{
-			get { return PasswordTextBox.Text; }
-			set { PasswordTextBox.Text = value; }
-		}
-
-		[Category("User"), EditorBrowsable, DefaultValue("")]
 		public DateTime UserBirthday
 		{
 			get
@@ -346,33 +260,15 @@ namespace JocysCom.Web.Security.Controls
 			}
 			set
 			{
-				if (value < DateTime.Now.AddYears(-120))
-					return;
-
-				if (value > DateTime.Now)
-					return;
-
+				if (value < DateTime.Now.AddYears(-120)) return;
+				if (value > DateTime.Now) return;
 				try
 				{
 					YearDropDownList.SelectedValue = value.Year.ToString();
-				}
-				catch
-				{
-				}
-				try
-				{
 					MonthDropDownList.SelectedValue = value.Month.ToString();
-				}
-				catch
-				{
-				}
-				try
-				{
 					DayDropDownList.SelectedValue = value.Day.ToString();
 				}
-				catch
-				{
-				}
+				catch { }
 			}
 		}
 
