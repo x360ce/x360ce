@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="JocysCom.ClassLibrary.Resources.Data.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityType Name="Resources_Settings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CultureCode" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Category" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Section" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="KeyType" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="KeyName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="KeyValue" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Replacement" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Options" Type="xml" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="IsExpression" Type="bit" Nullable="false" />
+          <Property Name="IsSerialized" Type="bit" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="JocysComClassLibraryResourcesDataStoreContainer">
+          <EntitySet Name="Resources_Settings" EntityType="Self.Resources_Settings" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="JocysCom.ClassLibrary.Resources.Data" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="CultureCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Category" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Section" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="KeyType" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="KeyName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="KeyValue" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Replacement" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Options" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsExpression" Type="Boolean" Nullable="false" />
+          <Property Name="IsSerialized" Type="Boolean" Nullable="false" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityContainer Name="ResourcesModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Settings" EntityType="JocysCom.ClassLibrary.Resources.Data.Setting" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="JocysComClassLibraryResourcesDataStoreContainer" CdmEntityContainer="ResourcesModelContainer">
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="JocysCom.ClassLibrary.Resources.Data.Setting">
+              <MappingFragment StoreEntitySet="Resources_Settings">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CultureCode" ColumnName="CultureCode" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Section" ColumnName="Section" />
+                <ScalarProperty Name="KeyType" ColumnName="KeyType" />
+                <ScalarProperty Name="KeyName" ColumnName="KeyName" />
+                <ScalarProperty Name="KeyValue" ColumnName="KeyValue" />
+                <ScalarProperty Name="Replacement" ColumnName="Replacement" />
+                <ScalarProperty Name="Options" ColumnName="Options" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsExpression" ColumnName="IsExpression" />
+                <ScalarProperty Name="IsSerialized" ColumnName="IsSerialized" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

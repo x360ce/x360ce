@@ -39,6 +39,7 @@ CALL:MKJ Security
 CALL:MKJ Threading
 CALL:MKJ Win32
 CALL:MKJ Data
+CALL:MKJ Resources
 pause
 GOTO:EOF
 
