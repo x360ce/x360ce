@@ -105,9 +105,10 @@ Table
 .SWUI_Table_Value input[type="checkbox"] { width: 13px; height: 13px; margin: 0; padding: 0;}
 .SWUI_Table_CheckBox { width: 13px; margin: 0; padding: 0;}
 .SWUI_Table_Check { }
-.SWUI_Table_Result1 { background: url(../Images/Icons/checkbox_16x16.png) no-repeat; width: 16px; height: 16px; }
+.SWUI_Table_ResultRequired { background: url(Images/Icons/PinRed_16x16.png) no-repeat; width: 16px; height: 16px; }
+.SWUI_Table_Result1 { background: url(Images/Icons/Checkbox_16x16.png) no-repeat; width: 16px; height: 16px; }
 .SWUI_Table_Result0 { width: 16px; height: 16px; }
-.SWUI_Table_Result0Changed { background: url(../Images/Icons/checkbox_unchecked_16x16.png) no-repeat; width: 16px; height: 16px; }
+.SWUI_Table_Result0Changed { background: url(Images/Icons/PinRed_16x16.png) no-repeat; width: 16px; height: 16px; }
 .SWUI_Table_ErrorPanel { border: solid 1px #dd3c10; background: #ffebe8; padding: 4px; display:block; }
 .SWUI_Table_SuccessPanel { border: solid 1px #10dd50; background: #e8ffee; padding: 4px; display:block; }
 .SWUI_Table_Button { float: right; background-color: #f0f0f0; width: 56px; border: solid 1px #bdc7d8; display: block; text-align: center; padding: 2px 0 2px 0; cursor: default; text-decoration: none !important; color: Black !important; }

@@ -10,6 +10,7 @@ using System.Web.Security;
 using User = JocysCom.WebSites.Engine.Security.Data.User;
 using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
 using JocysCom.WebSites.Engine.Security;
+using System.Web.UI.HtmlControls;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -41,6 +42,20 @@ namespace JocysCom.Web.Security.Controls
 				var en = SecurityContext.Current.AllowUsersToSignUp;
 				HelperFunctions.EnableControl(this, en, en ? null : "Sign Up Disabled");
 				HeadPanel.Visible = ShowHead;
+				var values = (UserFieldName[])Enum.GetValues(typeof(UserFieldName));
+				foreach (var item in values)
+				{
+					if (!SecurityContext.Current.RequiredFields.HasFlag(item))
+					{
+						continue;
+					}
+					var id = string.Format("{0}Status", item);
+					var div = HelperFunctions.FindControl<HtmlGenericControl>(this, id);
+					if (div != null)
+					{
+						div.Attributes["class"] = "SWUI_Table_Result0Changed";
+					}
+				}
 			}
 		}
 
@@ -68,7 +83,31 @@ namespace JocysCom.Web.Security.Controls
 			args.IsValid = valid;
 			HelperFunctions.FindControl<Label>(this, "ErrorLabel").Text = valid
 				? "" : string.Join("<br />\r\n", errors);
-			HelperFunctions.FindControl<Panel>(this, "ErrorPanel").Style.Add("display", valid ? "none" : "block");
+			HelperFunctions.FindControl<Panel>(this, "ErrorPanel").Style["display"] = valid ? "none" : "block";
+			var values = (UserFieldName[])Enum.GetValues(typeof(UserFieldName));
+			foreach (var item in values)
+			{
+				var id = string.Format("{0}Status", item);
+				var div = HelperFunctions.FindControl<HtmlGenericControl>(this, id);
+				if (div != null)
+				{
+					if (result.Any(x => x.Name == item))
+					{
+						div.Attributes["class"] = "SWUI_Table_Result0Changed";
+					}
+					else
+					{
+						if (SecurityContext.Current.RequiredFields.HasFlag(item))
+						{
+							div.Attributes["class"] = "SWUI_Table_Result1";
+						}
+						else
+						{
+							div.Attributes["class"] = "";
+						}
+					}
+				}
+			}
 		}
 
 		#endregion
