@@ -176,28 +176,41 @@ namespace JocysCom.Web.Security.Controls
 			if (user == null) return;
 			try
 			{
-				user.DateBirth = new DateTime(
-					int.Parse(YearDropDownList.SelectedValue),
-					int.Parse(MonthDropDownList.SelectedValue),
-					int.Parse(DayDropDownList.SelectedValue));
+				var fields = SecurityContext.Current.RequiredFields | SecurityContext.Current.OptionalFields;
+				if (fields.HasFlag(UserFieldName.Birthday))
+				{
+					user.DateBirth = new DateTime(
+						int.Parse(YearDropDownList.SelectedValue),
+						int.Parse(MonthDropDownList.SelectedValue),
+						int.Parse(DayDropDownList.SelectedValue));
+				}
+
 				user.FirstName = FirstNameTextBox.Text;
 				user.LastName = LastNameTextBox.Text;
 				user.Gender = (string)GenderDropDownList.SelectedValue;
 				SecurityClassesDataContext.Current.SaveChanges();
-				// Add role to the user.
-				System.Web.Security.Roles.AddUserToRole(user.UserName, "SocialUsers");
+				var role = SecurityContext.Current.DefaultRole;
+				if (!string.IsNullOrEmpty(role))
+				{
+					// Add role to the user.
+					System.Web.Security.Roles.AddUserToRole(user.UserName, role);
+				}
 				// LogIn user to website.
 				FormsAuthentication.SetAuthCookie(user.UserName, false);
 				if (CreatedUser != null)
+				{
 					CreatedUser(sender, new ProfileCreateEventArgs { User = user });
+				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				//if something goes wrong invalidate registration
 				SecurityClassesDataContext.Current.DeleteUser(user.UserName, true);
 				System.Web.Security.FormsAuthentication.SignOut();
 				Session.Abandon();
-				throw;
+				HelperFunctions.FindControl<Label>(this, "ErrorLabel").Text = ex.Message;
+				HelperFunctions.FindControl<Panel>(this, "ErrorPanel").Style["display"] = "block";
+				return;
 			}
 			// Need to be outside the try catch or the redirect will sire an error
 			if (!string.IsNullOrEmpty(RedirectUrl))

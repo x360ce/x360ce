@@ -28,7 +28,8 @@ namespace JocysCom.Web.Security.Controls
 			else
 			{
 				ResetPasswordUserNotFoundLabel.Visible = false;
-				User.SendPasswordResetKey(User.GetUser(PasswordRecovery1.UserName));
+				var user2 = User.GetUser(PasswordRecovery1.UserName);
+				User.SendPasswordResetKey(user2);
 				ResetPasswordSuccessPanel.Visible = true;
 			}
 		}

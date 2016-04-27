@@ -46,7 +46,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 		public static User GetUser(string username)
 		{
 			var db = SecurityEntities.Current;
-			return db.Users.Single(x => x.UserName == username);
+			return db.Users.FirstOrDefault(x => x.UserName == username);
 		}
 
 		public static User GetUserByEmail(string email)
@@ -134,7 +134,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 							{
 								results.Add(new ValidationField(item, value, "<b>" + description + "</b> must be between 3-20 characters<br />and contain only letters or numbers."));
 							}
-							else if (User.GetUser(value) != null)
+							else if (GetUser(value) != null)
 							{
 								results.Add(new ValidationField(item, value, "" + description + " is already taken."));
 							}
@@ -145,7 +145,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 							{
 								results.Add(new ValidationField(item, value, "" + description + " is not valid."));
 							}
-							else if (User.GetUserByEmail(email) != null)
+							else if (GetUserByEmail(email) != null)
 							{
 								results.Add(new ValidationField(item, value, "" + description + " is already taken."));
 							}

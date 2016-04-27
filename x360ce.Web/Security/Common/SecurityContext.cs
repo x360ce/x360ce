@@ -39,6 +39,7 @@ namespace JocysCom.Web.Security
 		public bool AllowUsersToResetPassword;
 		public UserFieldName RequiredFields;
 		public UserFieldName OptionalFields;
+		public string DefaultRole;
 
 		void LoadAppSettings()
 		{
@@ -50,8 +51,8 @@ namespace JocysCom.Web.Security
 			AllowUsersToLogin = ParseBool(prefix + "AllowUsersToLogin", false);
 			RequiredFields = ParseEnum<UserFieldName>(prefix + "RequiredFields", 0);
 			OptionalFields = ParseEnum<UserFieldName>(prefix + "OptionalFields", 0);
+			DefaultRole = ParseString(prefix + "DefaultRole", null);
 		}
-
 
 		public T ParseEnum<T>(string name, T defaultValue)
 		{
