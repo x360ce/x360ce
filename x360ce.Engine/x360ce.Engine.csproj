@@ -169,6 +169,7 @@
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="JocysCom\Security\Data\Membership.cs" />
     <Compile Include="JocysCom\Security\Data\Role.cs" />
     <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
     <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
@@ -183,6 +184,7 @@
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserFieldName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
+    <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />

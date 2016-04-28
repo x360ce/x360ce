@@ -218,21 +218,5 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			return results.ToArray();
 		}
 
-
-		public static void SendPasswordResetKey(User user)
-		{
-
-		}
-
-		public static void SendPasswordResetKey(string username, string password, TimeUnitType unit)
-		{
-			//Uri u = System.Web.HttpContext.Current.Request.Url;
-			//string resetUrl = GetUrl(username, password, unit);
-			//string template = Helper.GetTranslation(TranslationKey.PasswordResetTemplate);
-			//string body = template.Replace("{Username}", user.FullName).Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl);
-			//string subject = string.Format("Reset your {0} password", u.Host);
-			//Engine.Mail.Current.Send(user.Membership.Email, user.FullName, subject, body, JocysCom.ClassLibrary.Mail.MailTextType.Plain);
-		}
-
 	}
 }

@@ -17,7 +17,7 @@ namespace JocysCom.Web.Security
 			string key = Request["Key"];
 			if (!string.IsNullOrEmpty(username))
 			{
-				JocysCom.WebSites.Engine.Security.Data.User.SendPasswordResetKey(JocysCom.WebSites.Engine.Security.Data.User.GetUser(username));
+				//WebSites.Engine.Security.Data.Membership.SendPasswordResetKey(JocysCom.WebSites.Engine.Security.Data.User.GetUser(username));
 				//ResetPasswordPanel.Visible = true;
 			}
 			else if (!string.IsNullOrEmpty(key))

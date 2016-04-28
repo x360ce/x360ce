@@ -45,6 +45,31 @@
 		Password reset instructions were sent to your e-mail address. If the email doesn't
 		show up in your inbox, check your SPAM folder.
 	</asp:Panel>
+	<pre runat="server" id="PasswordResetSubject" visible="false">Reset your {Host} password"</pre>
+	<pre runat="server" id="PasswordResetBody" visible="false">
+Hello, {UserName}:
+
+We received your request to reset your password. To confirm your request and reset your password, please follow the instructions below. Confirming your request helps prevent unauthorized access to your account.
+
+If you didn't request that your password be reset, please ignore this email.
+
+CONFIRM REQUEST AND RESET PASSWORD
+
+1. Copy the following web address:
+
+{ResetKey}
+
+IMPORTANT: Because fraudulent ("phishing") e-mail often uses misleading links, we recommend that you do not click links in e-mail, but instead copy and paste them into your browsers, as described above.
+
+2. Open your web browser, paste the link in the address bar, and then press ENTER.
+
+3. Follow the instructions on the web page that opens.
+
+Thank you,
+IT Helpdesk
+
+NOTE: Please do not reply to this message, which was sent from an unmonitored e-mail address. Mail sent to this address cannot be answered.
+</pre>
 	<asp:Label CssClass="SWUI_Table_ErrorPanel" runat="server" ID="ResetPasswordUserNotFoundLabel"
 		Visible="false" />
 </div>
