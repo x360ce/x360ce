@@ -42,8 +42,8 @@
 		<asp:Label runat="server" ID="ErrorLabel" />
 	</asp:Panel>
 	<asp:Panel runat="server" ID="ResetPasswordSuccessPanel" Visible="false" CssClass="SWUI_Table_SuccessPanel">
-		Password reset instructions were sent to your e-mail address. If the email doesn't
-		show up in your inbox, check your SPAM folder.
+		Password reset instructions were sent to your e-mail address.<br />
+		If the email doesn't show up in your inbox, check your SPAM folder.
 	</asp:Panel>
 	<pre runat="server" id="PasswordResetSubject" visible="false">Reset your {Host} password"</pre>
 	<pre runat="server" id="PasswordResetBody" visible="false">
