@@ -159,6 +159,11 @@
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
+    <Compile Include="JocysCom\Mail\MailFromUser.cs" />
+    <Compile Include="JocysCom\Mail\MailTextType.cs" />
+    <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
+    <Compile Include="JocysCom\Mail\UserToken.cs" />
+    <Compile Include="JocysCom\Mail\WebMail.cs" />
     <Compile Include="JocysCom\Resources\DataPriority.cs" />
     <Compile Include="JocysCom\Resources\Data\ResourcesModel.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -167,6 +172,7 @@
     </Compile>
     <Compile Include="JocysCom\Resources\Data\Setting.cs" />
     <Compile Include="JocysCom\Resources\ResourceSection.cs" />
+    <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
