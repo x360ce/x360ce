@@ -141,9 +141,12 @@
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
+    <Compile Include="JocysCom\Common\Helper.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
     <Compile Include="JocysCom\Common\TimeUnitType.cs" />
+    <Compile Include="JocysCom\Common\TraceFormat.cs" />
+    <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />

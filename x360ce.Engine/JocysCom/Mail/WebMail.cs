@@ -296,7 +296,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public string Send(MailAddress from, MailAddress[] toUsers, string subject, string body)
 		{
 			if (HttpContext.Current != null)
-				HttpContext.Current.Trace.Write("WebMail.Engine", "Begin WebMail.Send");
+				HttpContext.Current.Trace.Write("XeniZen.Engine", "Begin WebMail.Send");
 
 			string errorMessage = string.Empty;
 			MailMessage message = GetMessage(subject, body);
@@ -317,7 +317,7 @@ namespace JocysCom.ClassLibrary.Mail
 				throw;
 			}
 			if (HttpContext.Current != null)
-				HttpContext.Current.Trace.Write("WebMail.Engine", "End WebMail.Send");
+				HttpContext.Current.Trace.Write("XeniZen.Engine", "End WebMail.Send");
 
 			return errorMessage;
 		}
