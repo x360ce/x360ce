@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -129,7 +130,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			System.Data.SqlClient.SqlConnectionStringBuilder cb = null;
 			cb = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
-			connectionString += string.Format("<tr><td class=\"Name\"  valign=\"top\">{0}:</td><td class=\"Value\" valign=\"top\">{1}.{2}</td></tr>", name, cb.DataSource, cb.InitialCatalog);
+			s += string.Format("<tr><td class=\"Name\"  valign=\"top\">{0}:</td><td class=\"Value\" valign=\"top\">{1}.{2}</td></tr>", name, cb.DataSource, cb.InitialCatalog);
 		}
 
 		private static Regex nonDigitsRx = new Regex("[^0-9]");
@@ -167,12 +168,10 @@ namespace JocysCom.ClassLibrary.Runtime
 		#region Exceptions
 
 		public delegate void WriteLogDelegate(string message, EventLogEntryType type);
-		public static WriteLogDelegate WriteLogCustom;
 		public delegate void CustomInfoDelegate(ref string message);
-		public static CustomInfoDelegate CustomUserInfo;
-		public static CustomInfoDelegate CustomPageInfo = WebPageInfo;
+		public static WriteLogDelegate WriteLogCustom;
 
-		public static void WriteException(Exception ex, int maxFiles = 10, string logsFolder = "Logs", bool writeAsHtml = false)
+		public static void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml, CustomInfoDelegate customUserInfo, CustomInfoDelegate customPageInfo)
 		{
 			var prefix = "FCE_" + ex.GetType().Name;
 			var ext = writeAsHtml ? "htm" : "txt";
@@ -193,11 +192,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			//var fileTime = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
 			var fileTime = DateTime.Now;
 			var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}.{3}", di.FullName, prefix, fileTime, ext);
-			var content = writeAsHtml ? ExceptionInfo(ex, "") : ex.ToString();
+			var content = writeAsHtml ? ExceptionInfo(ex, "", customUserInfo, customPageInfo) : ex.ToString();
 			System.IO.File.AppendAllText(fileName, content);
 		}
 
-		public static string ExceptionInfo(Exception ex, string body)
+		public static string ExceptionInfo(Exception ex, string body, CustomInfoDelegate customUserInfo, CustomInfoDelegate customPageInfo)
 		{
 			//------------------------------------------------------
 			// Body
@@ -229,8 +228,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				AddRow(ref s, "Executable", asm.Location);
 				AddRow(ref s, "Build Date", Configuration.AssemblyInfo.GetBuildDateTime(asm.Location).ToString("yyyy-MM-dd HH:mm:ss"));
 			}
-			if (CustomUserInfo != null) CustomUserInfo(ref s);
-			if (CustomPageInfo != null) CustomPageInfo(ref s);
+			if (customUserInfo != null) customUserInfo(ref s);
+			if (customPageInfo != null) customPageInfo(ref s);
 			AddRow(ref s);
 			s += "</table>";
 			s += "<table border=\"0\" cellspacing=\"2\">";
@@ -343,7 +342,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Web Page Info
 
-		public static void WebPageInfo(ref string s)
+		public static void DefaultPageInfo(ref string s)
 		{
 			var req = System.Web.HttpContext.Current.Request;
 			AddRow(ref s, "Request");
@@ -380,115 +379,88 @@ namespace JocysCom.ClassLibrary.Runtime
 					AddRow(ref s, key, value);
 				}
 			}
-			// vv form controls
+			// Form controls.
 			var pg = (Page)System.Web.HttpContext.Current.Handler;
-			ControlCollection controls = null;
+			Control[] controls = null;
 			//Need to find page on this
 			if (pg != null)
 			{
-				// find the form
+			// find the form
 				foreach (Control ctrl in pg.Controls)
 				{
 					if (object.ReferenceEquals(ctrl.GetType(), typeof(HtmlForm)))
 					{
-						controls = ((HtmlForm)ctrl).Controls;
+						controls = Controls.ControlsHelper.GetAll<Control>((HtmlForm)ctrl);
 					}
 					else if (object.ReferenceEquals(ctrl.GetType().BaseType.BaseType, typeof(MasterPage)))
 					{
-						controls = ((MasterPage)ctrl).Controls;
+						controls = Controls.ControlsHelper.GetAll<Control>((MasterPage)ctrl);
 					}
 				}
-				if (controls.Count > 0)
-					AddRow(ref s, "Page.Controls");
-				foreach (Control ctrl in controls)
+				if (controls != null)
 				{
-					bool show = true;
-					string sValue = "";
-					switch (ctrl.GetType().ToString())
+					if (controls.Length > 0)
 					{
-						case "System.Web.UI.LiteralControl":
-							show = false;
-							// ignore literals
-							break;
-						case "System.Web.UI.WebControls.TextBox":
-							sValue = ((TextBox)ctrl).Text;
-							break;
-						case "System.Web.UI.WebControls.Button":
-							sValue = ((Button)ctrl).Text;
-							break;
-						case "System.Web.UI.WebControls.ListBox":
-							// all the items
-							foreach (ListItem lItem in ((ListBox)ctrl).Items)
-							{
-								if (lItem.Selected)
-									sValue += "<b>";
-								sValue += "|" + lItem.Text;
-								if (lItem.Selected)
-									sValue += "</b>";
-							}
-
-							break;
-						case "System.Web.UI.WebControls.CheckBox":
-							sValue = Convert.ToString(((CheckBox)ctrl).Checked);
-							break;
-						case "System.Web.UI.WebControls.HyperLink":
-							sValue = ((HyperLink)ctrl).Text + "|" + ((HyperLink)ctrl).NavigateUrl;
-							break;
-						case "System.Web.UI.WebControls.LinkButton":
-							sValue = ((LinkButton)ctrl).Text;
-							break;
-						case "System.Web.UI.WebControls.DropDownList":
-							sValue = ((DropDownList)ctrl).SelectedValue;
-							break;
-						case "System.Web.UI.WebControls.Label":
-							sValue = ((Label)ctrl).Text;
-							break;
-						case "System.Web.UI.WebControls.Literal":
-							sValue = ((Literal)ctrl).Text;
-							break;
-						case "System.Web.UI.WebControls.RadioButton":
-							sValue = Convert.ToString(((RadioButton)ctrl).Enabled);
-							break;
-						case "System.Web.UI.WebControls.CheckBoxList":
-							//sValue = DirectCast(ctrl, CheckBoxList).SelectedValue			'selectedItem
-							// all the items
-							foreach (ListItem lItem in ((CheckBoxList)ctrl).Items)
-							{
-								if (lItem.Selected)
-									sValue += "<b>";
-								sValue += "|" + lItem.Text + "{" + lItem.Value + "}";
-								if (lItem.Selected)
-									sValue += "</b>";
-							}
-
-							break;
-						case "System.Web.UI.WebControls.RadioButtonList":
-							//sValue = "<b>" & DirectCast(ctrl, RadioButtonList).SelectedValue & "</b>"
-							// all the items
-							foreach (ListItem lItem in ((RadioButtonList)ctrl).Items)
-							{
-								if (lItem.Selected)
-									sValue += "<b>";
-								sValue += "|" + lItem.Text + "{" + lItem.Value + "}";
-								if (lItem.Selected)
-									sValue += "</b>";
-							}
-
-							break;
+						AddRow(ref s, "Page.Controls");
 					}
-					if (show)
+					foreach (Control ctrl in controls)
 					{
-						AddRow(ref s, ctrl.ID, sValue);
+						bool show = false;
+						var type = ctrl.GetType();
+						var interfaces = type.GetInterfaces();
+						var values = new StringBuilder();
+						if (interfaces.Contains(typeof(IPostBackDataHandler)))
+						{
+							if (interfaces.Contains(typeof(ITextControl)))
+							{
+								values.AppendFormat("Text={0}\r\n", ((ITextControl)ctrl).Text);
+								show = true;
+							}
+							if (interfaces.Contains(typeof(ICheckBoxControl)))
+							{
+								values.AppendFormat("Checked={0}\r\n", ((ICheckBoxControl)ctrl).Checked);
+								show = true;
+							}
+							if (typeof(ListControl).IsAssignableFrom(type))
+							{
+								var items = ((ListControl)ctrl).Items;
+								foreach (ListItem item in items)
+								{
+									if (item != null)
+									{
+										var selected = item.Selected ? ", Selected = true" : "";
+										values.AppendFormat("Value={0}, Text={1}, {2}\r\n", item.Value, item.Text, selected);
+									}
+								}
+								show = true;
+							}
+						}
+						if (typeof(HyperLink).IsAssignableFrom(type))
+						{
+							values.AppendFormat("NavigateUrl={0}\r\n", ((HyperLink)ctrl).NavigateUrl);
+							show = true;
+						}
+						if (show)
+						{
+							AddRow(ref s, ctrl.ID, values.ToString());
+						}
 					}
 				}
 			}
 			if (req.Cookies.Keys.Count > 0)
-				AddRow(ref s, "Cookies");
-			foreach (string cookieKey in req.Cookies.Keys)
 			{
-				var cookie = req.Cookies[cookieKey];
-				AddRow(ref s, cookie.Name, cookie.Value);
+				AddRow(ref s, "Cookies");
+				foreach (string cookieKey in req.Cookies.Keys)
+				{
+					var cookie = req.Cookies[cookieKey];
+					AddRow(ref s, cookie.Name, cookie.Value);
+				}
 			}
+		}
+
+		public static void DefaultUserInfo(ref string s)
+		{
+			
 		}
 
 		#endregion

@@ -34,6 +34,7 @@ CALL:MKJ ClassTools
 CALL:MKJ Common
 CALL:MKJ Controls
 CALL:MKJ Collections
+CALL:MKJ Configuration
 CALL:MKJ Drawing
 CALL:MKJ IO
 CALL:MKJ Mail

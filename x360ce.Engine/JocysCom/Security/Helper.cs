@@ -78,7 +78,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <param name="unit">Time unit type.</param>
 		/// <param name="count">How many units in past mus be checked.</param>
 		/// <returns>True if token is valid, False if not valid.</returns>
-		public static bool CheckSecurityToken(string token, object userId, Guid password_hash, TimeUnitType unit, int count)
+		public static bool CheckSecurityToken(string token, object userId, Guid password_hash, TimeUnitType unit = TimeUnitType.None, int count = 0)
 		{
 			var password = password_hash.ToString("D").ToLower();
 			return CheckSecurityToken(token, userId, password, unit, count);
@@ -93,7 +93,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <param name="unit">Time unit type.</param>
 		/// <param name="count">How many units in past mus be checked.</param>
 		/// <returns>True if token is valid, False if not valid.</returns>
-		public static bool CheckSecurityToken(string token, object userId, string password, TimeUnitType unit, int count)
+		public static bool CheckSecurityToken(string token, object userId, string password, TimeUnitType unit = TimeUnitType.None, int count = 0)
 		{
 			// Time which passed.
 			double u = GetTimeUnitValue(unit);
