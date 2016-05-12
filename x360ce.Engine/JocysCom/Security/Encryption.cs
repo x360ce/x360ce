@@ -155,7 +155,7 @@ namespace JocysCom.ClassLibrary.Security
 				return _MacProvider;
 			}
 		}
-
+	
 		/// <summary>
 		/// Computes the HMAC MD5 hash value for the specified text.
 		/// </summary>
