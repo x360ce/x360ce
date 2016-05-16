@@ -45,6 +45,9 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			subject = subject.Replace("{Host}", u.Host);
 			body = JocysCom.ClassLibrary.Text.Helper.Replace(body, user, false);
 			body = body.Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl);
+			
+			
+			
 			// utilities.Current.SendMail(user.email_to, "", "", subject, body, Nothing)
 			//JocysCom.ClassLibrary.Mail.WebMail.
 			//Engine.Mail.Current.Send(user.Membership.Email, user.FullName, subject, body, JocysCom.ClassLibrary.Mail.MailTextType.Plain);

@@ -48,9 +48,7 @@ namespace JocysCom.ClassLibrary.Mail
 					string path = HttpContext.Current.Request.ApplicationPath;
 					config = WebConfigurationManager.OpenWebConfiguration(path);
 				}
-// ReSharper disable PossibleNullReferenceException
 				MailSettingsSectionGroup settings = NetSectionGroup.GetSectionGroup(config).MailSettings;
-// ReSharper restore PossibleNullReferenceException
 				return settings.Smtp;
 			}
 		}
@@ -119,8 +117,8 @@ namespace JocysCom.ClassLibrary.Mail
 		public virtual MailMessage GetMessage(string subject, string body)
 		{
 			return IsHtml(body)
-			       	? GetMessage(subject, body, MailTextType.Html)
-			       	: GetMessage(subject, body, MailTextType.Plain);
+					   ? GetMessage(subject, body, MailTextType.Html)
+					   : GetMessage(subject, body, MailTextType.Plain);
 		}
 
 		/// <summary>
@@ -132,7 +130,7 @@ namespace JocysCom.ClassLibrary.Mail
 		/// <returns>System.Net.Mail.MailMessage</returns>
 		public MailMessage GetMessage(string subject, string body, MailTextType bodyType)
 		{
-			var message = new MailMessage {SubjectEncoding = Encoding.UTF8, Subject = subject, BodyEncoding = Encoding.UTF8};
+			var message = new MailMessage { SubjectEncoding = Encoding.UTF8, Subject = subject, BodyEncoding = Encoding.UTF8 };
 			// Framework selects a TransferEncoding of Base64 if you set the BodyEncoding property to UTF8, Unicode or UTF32. 
 			// So we must add alternate view for some old crappy browsers which doesn't support Base64 TransferEncoding.
 			string plainBody = string.Empty;
@@ -143,7 +141,7 @@ namespace JocysCom.ClassLibrary.Mail
 					// Add HTML view.
 					htmlView = AlternateView.CreateAlternateViewFromString(body, Encoding.UTF8, MediaTypeNames.Text.Html);
 					htmlView.TransferEncoding = TransferEncoding.SevenBit; // Very important
-					// Mark message as HTML.
+																		   // Mark message as HTML.
 					message.IsBodyHtml = true;
 					// Create alternative plain body.
 					plainBody = ConvertHtmlToPlain(body);
@@ -161,7 +159,7 @@ namespace JocysCom.ClassLibrary.Mail
 			// Add Plain View.
 			AlternateView plainView = AlternateView.CreateAlternateViewFromString(plainBody, Encoding.UTF8, MediaTypeNames.Text.Plain);
 			plainView.TransferEncoding = TransferEncoding.SevenBit; // Very important
-			// Add views.
+																	// Add views.
 			message.AlternateViews.Add(plainView);
 			// "text/html" part must be last in order for gmail to display it.
 			if (htmlView != null) message.AlternateViews.Add(htmlView);
@@ -171,11 +169,11 @@ namespace JocysCom.ClassLibrary.Mail
 		public SmtpClientEx GetSmtpCient()
 		{
 			var smtpClient = new SmtpClientEx
-			                 	{
-			                 		Host = SmtpSettings.Network.Host,
-			                 		Port = SmtpSettings.Network.Port,
-			                 		EnableSsl = false
-			                 	};
+			{
+				Host = SmtpSettings.Network.Host,
+				Port = SmtpSettings.Network.Port,
+				EnableSsl = false
+			};
 			// Set timeout to 5 minutes
 			string smtpTimeout = ConfigurationManager.AppSettings["MailSettingsSmtpTimeout"];
 			if (!string.IsNullOrEmpty(smtpTimeout))
@@ -184,10 +182,10 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 			smtpClient.UseDefaultCredentials = false;
 			var credential = new NetworkCredential
-			                 	{
-			                 		UserName = SmtpSettings.Network.UserName,
-			                 		Password = SmtpSettings.Network.Password
-			                 	};
+			{
+				UserName = SmtpSettings.Network.UserName,
+				Password = SmtpSettings.Network.Password
+			};
 			smtpClient.Credentials = credential;
 			// Set the method that is called back when the send operation ends.
 			smtpClient.SendCompleted += SendCompletedCallback;
@@ -211,7 +209,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
 		{
 			// Get the unique identifier for this asynchronous operation.
-			var token = (UserToken) e.UserState;
+			var token = (UserToken)e.UserState;
 			if (e.Cancelled)
 			{
 				//Console.WriteLine("[{0}] Send canceled.", token);
@@ -241,7 +239,7 @@ namespace JocysCom.ClassLibrary.Mail
 			MailMessage message = GetMessage(subject, body, bodyType);
 			message.From = new MailAddress(SmtpSettings.From);
 			message.To.Add(new MailAddress(toAddress, toName));
-			var token = new UserToken {Message = message};
+			var token = new UserToken { Message = message };
 			//smtp.SendAsync(message, new UserToken());
 			//smtp.Send(message);
 			//MailClient.SendAsync(message, token);
@@ -263,7 +261,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public string Send(Guid from, Guid toUser, string subject, string body)
 		{
-			return Send(from, new[] {toUser}, subject, body);
+			return Send(from, new[] { toUser }, subject, body);
 		}
 
 		public string Send(MailFromUser fromUser, Guid[] toUsers, string subject, string body)
@@ -285,12 +283,12 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public string Send(MailFromUser fromUser, Guid toUser, string subject, string body)
 		{
-			return Send(fromUser, new[] {toUser}, subject, body);
+			return Send(fromUser, new[] { toUser }, subject, body);
 		}
 
 		public string Send(MailAddress from, MailAddress toUser, string subject, string body)
 		{
-			return Send(from, new[] {toUser}, subject, body);
+			return Send(from, new[] { toUser }, subject, body);
 		}
 
 		public string Send(MailAddress from, MailAddress[] toUsers, string subject, string body)

@@ -12,6 +12,7 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Net;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -26,11 +27,38 @@ namespace JocysCom.ClassLibrary.Runtime
 			return (v == null) ? defaultValue : bool.Parse(v);
 		}
 
+		public static TimeSpan ParseSpan(string name, TimeSpan defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[name];
+			return (v == null) ? defaultValue : TimeSpan.Parse(v);
+		}
+
+		public static T ParseEnum<T>(string name, T defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[name];
+			return (v == null) ? defaultValue : (T)Enum.Parse(typeof(T), v);
+		}
+
 		public static string ParseString(string name, string defaultValue)
 		{
 			var v = ConfigurationManager.AppSettings[name];
 			return (v == null) ? defaultValue : v;
 		}
+
+		public static int ParseInt(string name, int defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[name];
+			return (v == null) ? defaultValue : int.Parse(v);
+		}
+
+		public static IPAddress ParseIPAddress(string name, IPAddress defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[name];
+			return (v == null) ? defaultValue : IPAddress.Parse(v);
+		}
+
+		public static string RunMode { get { return ParseString("RunMode", "TEST"); } }
+		public static bool IsLive { get { return string.Compare(RunMode, "LIVE", true) == 0; } }
 
 		#endregion
 
@@ -171,6 +199,59 @@ namespace JocysCom.ClassLibrary.Runtime
 		public delegate void CustomInfoDelegate(ref string message);
 		public static WriteLogDelegate WriteLogCustom;
 
+		//public static string ExceptionInfo(Exception ex, string body)
+		//{
+		//	return ExceptionInfo(ex, body, DefaultPageInfo, DefaultPageInfo);
+		//}
+
+		//public static void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml)
+		//{
+		//	WriteException(ex, maxFiles, logsFolder, writeAsHtml, DefaultPageInfo, DefaultPageInfo);
+		//}
+
+		public static void ApplyRunModeSuffix(ref string s)
+		{
+			if (!IsLive)
+			{
+				string rm = "(" + RunMode + ")";
+				if (s == null) s = rm;
+				s = s.TrimEnd();
+				if (!s.Contains(rm)) s += " " + rm;
+			}
+		}
+
+		public static string GetSubjectPrefix(Exception ex)
+		{
+			Assembly asm = Assembly.GetEntryAssembly();
+			string a = "Unknown Entry Assembly";
+			if (asm == null)
+			{
+				if (ex != null)
+				{
+					StackFrame[] frames = new StackTrace(ex).GetFrames();
+					if (frames != null && frames.Length > 0)
+					{
+						asm = frames[0].GetMethod().DeclaringType.Assembly;
+					}
+				}
+				else
+				{
+				}
+			}
+			if (asm == null)
+			{
+				asm = Assembly.GetCallingAssembly();
+			}
+			if (asm != null)
+			{
+				a = asm.GetName().Name.Replace("Dac.Volante.", "");
+			}
+			string s = string.Format("{0} Error", a);
+			ApplyRunModeSuffix(ref s);
+			s += ": ";
+			return s;
+		}
+
 		public static void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml, CustomInfoDelegate customUserInfo, CustomInfoDelegate customPageInfo)
 		{
 			var prefix = "FCE_" + ex.GetType().Name;
@@ -207,7 +288,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			AddStyle(ref s);
 			//------------------------------------------------------
 			s += "<table border=\"0\" cellspacing=\"2\">";
-			var rm = ParseString("RunMode", "");
+			var rm = RunMode;
 			if (!string.IsNullOrEmpty(rm))
 			{
 				rm = " (" + rm + ")";
@@ -219,7 +300,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (asm != null)
 			{
 				var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(asm);
-				AddRow(ref s, "Name", ai.Company + " " + ai.Product + " " + ai.Version.ToString(4) + rm);
+				var name = ai.Company + " " + ai.Product + " " + ai.Version.ToString(4);
+				ApplyRunModeSuffix(ref name);
+				AddRow(ref s, "Name", name);
 			}
 			AddRow(ref s, "Machine", System.Environment.MachineName);
 			AddRow(ref s, "Username", System.Environment.UserName);
@@ -344,123 +427,162 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void DefaultPageInfo(ref string s)
 		{
-			var req = System.Web.HttpContext.Current.Request;
-			AddRow(ref s, "Request");
-			AddRow(ref s, "Request.Url", req.Url.ToString());
-			if (req.Form.Keys.Count > 0)
-				AddRow(ref s, "Request.Form.Keys");
-			foreach (string key in req.Form.Keys)
+			var context = System.Web.HttpContext.Current;
+			if (context != null)
 			{
-				if (key == "__VIEWSTATE")
+				// Form controls.
+				var pg = (Page)System.Web.HttpContext.Current.Handler;
+				Control[] controls = null;
+				//Need to find page on this
+				if (pg != null)
 				{
-					AddRow(ref s, key, req.Form[key]);
-				}
-				else
-				{
-					string value = req.Form[key];
-					if (key.EndsWith("Pan") && !string.IsNullOrEmpty(value))
+					AddRow(ref s, "Page");
+					// find the form
+					foreach (Control ctrl in pg.Controls)
 					{
-						value = GetMasked(value);
-					}
-					AddRow(ref s, key, value);
-				}
-			}
-			if (req.QueryString.HasKeys())
-			{
-				if (req.QueryString.Count > 0)
-					AddRow(ref s, "Request.QueryString");
-				foreach (string key in req.QueryString)
-				{
-					string value = req.QueryString[key];
-					if (key.EndsWith("Pan") && !string.IsNullOrEmpty(value))
-					{
-						value = GetMasked(value);
-					}
-					AddRow(ref s, key, value);
-				}
-			}
-			// Form controls.
-			var pg = (Page)System.Web.HttpContext.Current.Handler;
-			Control[] controls = null;
-			//Need to find page on this
-			if (pg != null)
-			{
-			// find the form
-				foreach (Control ctrl in pg.Controls)
-				{
-					if (object.ReferenceEquals(ctrl.GetType(), typeof(HtmlForm)))
-					{
-						controls = Controls.ControlsHelper.GetAll<Control>((HtmlForm)ctrl);
-					}
-					else if (object.ReferenceEquals(ctrl.GetType().BaseType.BaseType, typeof(MasterPage)))
-					{
-						controls = Controls.ControlsHelper.GetAll<Control>((MasterPage)ctrl);
-					}
-				}
-				if (controls != null)
-				{
-					if (controls.Length > 0)
-					{
-						AddRow(ref s, "Page.Controls");
-					}
-					foreach (Control ctrl in controls)
-					{
-						bool show = false;
-						var type = ctrl.GetType();
-						var interfaces = type.GetInterfaces();
-						var values = new StringBuilder();
-						if (interfaces.Contains(typeof(IPostBackDataHandler)))
+						if (object.ReferenceEquals(ctrl.GetType(), typeof(HtmlForm)))
 						{
-							if (interfaces.Contains(typeof(ITextControl)))
+							controls = Controls.ControlsHelper.GetAll<Control>((HtmlForm)ctrl);
+						}
+						else if (object.ReferenceEquals(ctrl.GetType().BaseType.BaseType, typeof(MasterPage)))
+						{
+							controls = Controls.ControlsHelper.GetAll<Control>((MasterPage)ctrl);
+						}
+					}
+					if (controls != null)
+					{
+						if (controls.Length > 0)
+						{
+							AddRow(ref s, "Page.Controls");
+						}
+						foreach (Control ctrl in controls)
+						{
+							bool show = false;
+							var type = ctrl.GetType();
+							var interfaces = type.GetInterfaces();
+							var values = new StringBuilder();
+							if (interfaces.Contains(typeof(IPostBackDataHandler)))
 							{
-								values.AppendFormat("Text={0}\r\n", ((ITextControl)ctrl).Text);
-								show = true;
-							}
-							if (interfaces.Contains(typeof(ICheckBoxControl)))
-							{
-								values.AppendFormat("Checked={0}\r\n", ((ICheckBoxControl)ctrl).Checked);
-								show = true;
-							}
-							if (typeof(ListControl).IsAssignableFrom(type))
-							{
-								var items = ((ListControl)ctrl).Items;
-								foreach (ListItem item in items)
+								if (interfaces.Contains(typeof(ITextControl)))
 								{
-									if (item != null)
-									{
-										var selected = item.Selected ? ", Selected = true" : "";
-										values.AppendFormat("Value={0}, Text={1}, {2}\r\n", item.Value, item.Text, selected);
-									}
+									values.AppendFormat("Text={0}\r\n", ((ITextControl)ctrl).Text);
+									show = true;
 								}
+								if (interfaces.Contains(typeof(ICheckBoxControl)))
+								{
+									values.AppendFormat("Checked={0}\r\n", ((ICheckBoxControl)ctrl).Checked);
+									show = true;
+								}
+								if (typeof(ListControl).IsAssignableFrom(type))
+								{
+									var items = ((ListControl)ctrl).Items;
+									foreach (ListItem item in items)
+									{
+										if (item != null)
+										{
+											var selected = item.Selected ? ", Selected = true" : "";
+											values.AppendFormat("Value={0}, Text={1}, {2}\r\n", item.Value, item.Text, selected);
+										}
+									}
+									show = true;
+								}
+							}
+							if (typeof(HyperLink).IsAssignableFrom(type))
+							{
+								values.AppendFormat("NavigateUrl={0}\r\n", ((HyperLink)ctrl).NavigateUrl);
 								show = true;
 							}
-						}
-						if (typeof(HyperLink).IsAssignableFrom(type))
-						{
-							values.AppendFormat("NavigateUrl={0}\r\n", ((HyperLink)ctrl).NavigateUrl);
-							show = true;
-						}
-						if (show)
-						{
-							AddRow(ref s, ctrl.ID, values.ToString());
+							if (show)
+							{
+								AddRow(ref s, ctrl.ID, values.ToString());
+							}
 						}
 					}
 				}
-			}
-			if (req.Cookies.Keys.Count > 0)
-			{
-				AddRow(ref s, "Cookies");
-				foreach (string cookieKey in req.Cookies.Keys)
+				var request = context.Request;
+				if (request != null)
 				{
-					var cookie = req.Cookies[cookieKey];
-					AddRow(ref s, cookie.Name, cookie.Value);
+					AddRow(ref s, "Request");
+					AddRow(ref s, "User IP", request.UserHostName);
+					AddRow(ref s, "Request.Url", request.Url.ToString());
+					if (request.Form.Keys.Count > 0)
+					{
+						AddRow(ref s, "Request.Form.Keys");
+					}
+					foreach (string key in request.Form.Keys)
+					{
+						if (key == "__VIEWSTATE")
+						{
+							AddRow(ref s, key, request.Form[key]);
+						}
+						else
+						{
+							string value = request.Form[key];
+							if (key.EndsWith("Pan") && !string.IsNullOrEmpty(value))
+							{
+								value = GetMasked(value);
+							}
+							AddRow(ref s, key, value);
+						}
+					}
+					if (request.QueryString.HasKeys())
+					{
+						if (request.QueryString.Count > 0)
+							AddRow(ref s, "Request.QueryString");
+						foreach (string key in request.QueryString)
+						{
+							string value = request.QueryString[key];
+							if (key.EndsWith("Pan") && !string.IsNullOrEmpty(value))
+							{
+								value = GetMasked(value);
+							}
+							AddRow(ref s, key, value);
+						}
+					}
 				}
+				var cookies = request.Cookies;
+				if (cookies.Keys.Count > 0)
+				{
+					AddRow(ref s, "Cookies");
+					foreach (string cookieKey in cookies.Keys)
+					{
+						var cookie = cookies[cookieKey];
+						AddRow(ref s, cookie.Name, cookie.Value);
+					}
+				}
+
 			}
 		}
 
 		public static void DefaultUserInfo(ref string s)
 		{
-			
+			// get user info and return it as formatted html string
+			AddRow(ref s, "Session");
+			//var fa = System.Web.Security.FormsAuthentication.IsEnabled;
+			//var user = System.Web.Security.Membership.GetUser();
+			//var roles = System.Web.Security.Roles.GetRolesForUser();
+			var now = DateTime.Now;
+			var startTime = Process.GetCurrentProcess().StartTime;
+			AddRow(ref s, "Current Time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+			AddRow(ref s, "Running Since", startTime.ToString("yyyy-MM-dd HH:mm:ss"));
+			AddRow(ref s, "Running For", (now - startTime).ToString());
+			var connections = ConfigurationManager.ConnectionStrings;
+			foreach (ConnectionStringSettings item in connections)
+			{
+				string connectionString;
+				if (string.Compare(item.ProviderName, "System.Data.EntityClient", true) == 0)
+				{
+					// Use entity connection.
+					var e = new System.Data.EntityClient.EntityConnection(item.ConnectionString);
+					connectionString = e.StoreConnection.ConnectionString;
+				}
+				else
+				{
+					// Use classic connection.
+					connectionString = item.ConnectionString;
+				}
+				AddConnection(ref s, item.Name, connectionString);
+			}
 		}
 
 		#endregion
