@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.IO;
 using JocysCom.ClassLibrary.Runtime;
+using System.Diagnostics;
 
 namespace JocysCom.ClassLibrary.Mail
 {
@@ -22,20 +23,54 @@ namespace JocysCom.ClassLibrary.Mail
 	public class SmtpClientEx : SmtpClient
 	{
 
-		private static readonly FieldInfo _localHostName = GetLocalHostNameField();
+		private static SmtpClientEx _Current;
+		private static object currentLock = new object();
+		public static SmtpClientEx Current
+		{
+			get
+			{
+				lock (currentLock)
+				{
+					return _Current = _Current ?? new SmtpClientEx();
+				}
+			}
+		}
 
-		public SmtpClientEx(string host, int port) : base(host, port) { Initialize(); }
+		#region FQDN Fix
 
-		public SmtpClientEx(string host) : base(host) { Initialize(); }
+		private static readonly FieldInfo localHostName = GetLocalHostNameField();
 
-		public SmtpClientEx() { Initialize(); }
+		/// <summary>
+		/// Returns the price "localHostName" field.
+		/// </summary>
+		/// <returns>
+		/// The <see cref="FieldInfo"/> for the private
+		/// "localHostName" field.
+		/// </returns>
+		private static FieldInfo GetLocalHostNameField()
+		{
+			BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			return typeof(SmtpClient).GetField("localHostName", flags);
+		}
 
+
+		/// <summary>
+		/// Gets or sets the local host name used in SMTP transactions.
+		/// </summary>
+		/// <value>
+		/// The local host name used in SMTP transactions.
+		/// This should be the FQDN of the local machine.
+		/// </value>
+		/// <exception cref="ArgumentNullException">
+		/// The property is set to a value which is
+		/// <see langword="null"/> or <see cref="String.Empty"/>.
+		/// </exception>
 		public string LocalHostName
 		{
 			get
 			{
-				if (null == _localHostName) return null;
-				return (string)_localHostName.GetValue(this);
+				if (null == localHostName) return null;
+				return (string)localHostName.GetValue(this);
 			}
 			set
 			{
@@ -43,21 +78,50 @@ namespace JocysCom.ClassLibrary.Mail
 				{
 					throw new ArgumentNullException("value");
 				}
-				if (null != _localHostName)
+				if (null != localHostName)
 				{
-					_localHostName.SetValue(this, value);
+					localHostName.SetValue(this, value);
 				}
 			}
 		}
 
-		private static FieldInfo GetLocalHostNameField()
-		{
-			BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-			return typeof(SmtpClient).GetField("localHostName", flags);
-		}
+		#endregion
+
+		public SmtpClientEx(string host, int port) : base(host, port) { Initialize(); }
+
+		public SmtpClientEx(string host) : base(host) { Initialize(); }
+
+		public SmtpClientEx() { Initialize(); }
+
+
+		public string SmtpUsername;
+		public string SmtpPassword;
+		public string SmtpDomain;
+		public string SmtpServer;
+		public bool SmtpEnableSsl;
+		public string SmtpFrom;
+		public string SmtpSendCopyTo;
+		public string ErrorRecipients;
+		public bool ErrorNotifications;
+		public SmtpDeliveryMethod ErrorDeliveryMethod;
+		public string ErrorPickupDirectory;
+
 
 		private void Initialize()
 		{
+			// Load configuration
+			SmtpUsername = LogHelper.ParseString("SmtpUsername", "");
+			SmtpPassword = LogHelper.ParseString("SmtpPassword", "");
+			SmtpDomain = LogHelper.ParseString("SmtpDomain", "");
+			SmtpServer = LogHelper.ParseString("SmtpServer", "");
+			SmtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
+			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
+			SmtpSendCopyTo = LogHelper.ParseString("SmtpSendCopyTo", "");
+			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
+			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", true);
+			ErrorDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
+			ErrorPickupDirectory = LogHelper.ParseString("ErrorPickupDirectory", "Logs\\Errors");
+			// FQDN Fix
 			IPGlobalProperties ip = IPGlobalProperties.GetIPGlobalProperties();
 			if (!string.IsNullOrEmpty(ip.HostName) && !string.IsNullOrEmpty(ip.DomainName))
 			{
@@ -90,38 +154,32 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
-		public static void SendMessage(MailMessage message)
+		public void SendMessage(MailMessage message)
 		{
-			var smtpServer = LogHelper.ParseString("SmtpServer", "");
-			var smtpUsername = LogHelper.ParseString("SmtpUsername", "");
-			var smtpPassword = LogHelper.ParseString("SmtpPassword", "");
-			var smtpDomain = LogHelper.ParseString("SmtpDomain", "");
-			var smtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
-			var smtpFrom = LogHelper.ParseString("SmtpFrom", "");
-			var errorRecipients = LogHelper.ParseString("ErrorRecipients", "");
-			var errorNotifications = LogHelper.ParseBool("ErrorNotifications", false);
-			var errorDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
-			var errorPickupDirectory = LogHelper.ParseString("ErrorPickupDirectory", "Logs\\Errors");
-			if (errorDeliveryMethod == SmtpDeliveryMethod.Network)
+			if (!string.IsNullOrEmpty(SmtpSendCopyTo))
+			{
+				AddSmtpSendCopyToRecipients(message, SmtpSendCopyTo);
+			}
+			if (ErrorDeliveryMethod == SmtpDeliveryMethod.Network)
 			{
 
 				// Send message to SMTP server.
-				var client = new SmtpClient(smtpServer);
-				if (smtpEnableSsl)
+				var client = new SmtpClient(SmtpServer);
+				if (SmtpEnableSsl)
 				{
 					client.Port = 465;
 					client.EnableSsl = true;
 				}
-				if (!string.IsNullOrEmpty(smtpUsername))
+				if (!string.IsNullOrEmpty(SmtpUsername))
 				{
-					client.Credentials = new System.Net.NetworkCredential(smtpUsername, smtpPassword, smtpDomain);
+					client.Credentials = new System.Net.NetworkCredential(SmtpUsername, SmtpPassword, SmtpDomain);
 				}
 				client.Send(message);
 			}
 			else
 			{
 				// Save message to folder.
-				var di = new DirectoryInfo(errorPickupDirectory);
+				var di = new DirectoryInfo(ErrorPickupDirectory);
 				if (!di.Exists) di.Create();
 				var fileTime = DateTime.Now;
 				var fileName = string.Format("{0:yyyyMMdd_HHmmss_ffffff}.eml", fileTime);
@@ -149,7 +207,7 @@ namespace JocysCom.ClassLibrary.Mail
 		/// Make sure that email copy was sent to listed recipients.
 		/// </summary>
 		/// <param name="message"></param>
-		public static void AddRequiredRecipients(MailMessage message, string recipients)
+		public void AddSmtpSendCopyToRecipients(MailMessage message, string recipients)
 		{
 			var addresses = ParseEmailAddress(recipients);
 			var hosts = addresses.Select(x => x.Host.ToLower()).Distinct().ToArray();
@@ -164,6 +222,66 @@ namespace JocysCom.ClassLibrary.Mail
 			{
 				message.CC.Add(item);
 			}
+		}
+
+		/// <summary>
+		/// Send exception details.
+		/// </summary>
+		/// <param name="ex">Exception to generate email from.</param>
+		/// <param name="subject">Use custom subject instead of generated from exception</param>
+		public MailMessage SendErrorEmail(Exception ex, string subject = null, string body = null)
+		{
+			var message = new MailMessage();
+			message.From = new MailAddress(SmtpFrom);
+			//------------------------------------------------------
+			// Recipients
+			//------------------------------------------------------
+			string[] recipients = null;
+			recipients = ErrorRecipients.Replace(",", ";").Split(Convert.ToChar(";"));
+			foreach (string addr in recipients)
+			{
+				message.To.Add(new MailAddress(addr));
+			}
+			//------------------------------------------------------
+			// Subject
+			//------------------------------------------------------
+			if (ex.Data != null)
+			{
+				var key = ex.Data.Keys.Cast<object>().FirstOrDefault(x => object.ReferenceEquals(x, "StackTrace"));
+				if (key != null && ex.Data[key] is StackTrace)
+				{
+					ex.Data.Remove(key);
+				}
+			}
+			// If subject was not specified and exception found then...
+			if (string.IsNullOrEmpty(subject) && ex != null)
+			{
+				subject = LogHelper.GetSubjectPrefix(ex) + ex.Message;
+			}
+			if (string.IsNullOrEmpty(subject))
+			{
+				subject = "null";
+			}
+			subject = JocysCom.ClassLibrary.Text.Filters.RxBreaks.Replace(subject, "");
+			subject = JocysCom.ClassLibrary.Text.Filters.RxMultiSpace.Replace(subject, " ");
+			message.Body = body;
+			try
+			{
+				// Cut subject because some mail servers refuse to deliver messages when subject is too large.
+				var maxLength = 255;
+				message.Subject = (subject.Length > maxLength)
+					? subject.Substring(0, maxLength - 3) + "..."
+					: subject;
+			}
+			catch (Exception)
+			{
+				message.Subject = "Bad subject";
+				message.Body += "<div>Subject:" + subject + "</div>\r\n";
+			}
+			message.IsBodyHtml = true;
+			//------------------------------------------------------
+			SendMessage(message);
+			return message;
 		}
 
 	}

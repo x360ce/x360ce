@@ -18,7 +18,7 @@ namespace JocysCom.ClassLibrary.Runtime
 {
 	public partial class LogHelper
 	{
-
+		
 		#region Parse
 
 		public static bool ParseBool(string name, bool defaultValue)
@@ -196,7 +196,6 @@ namespace JocysCom.ClassLibrary.Runtime
 		#region Exceptions
 
 		public delegate void WriteLogDelegate(string message, EventLogEntryType type);
-		public delegate void CustomInfoDelegate(ref string message);
 		public static WriteLogDelegate WriteLogCustom;
 
 		//public static string ExceptionInfo(Exception ex, string body)
@@ -252,7 +251,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return s;
 		}
 
-		public static void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml, CustomInfoDelegate customUserInfo, CustomInfoDelegate customPageInfo)
+		public void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml)
 		{
 			var prefix = "FCE_" + ex.GetType().Name;
 			var ext = writeAsHtml ? "htm" : "txt";
@@ -273,11 +272,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			//var fileTime = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
 			var fileTime = DateTime.Now;
 			var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}.{3}", di.FullName, prefix, fileTime, ext);
-			var content = writeAsHtml ? ExceptionInfo(ex, "", customUserInfo, customPageInfo) : ex.ToString();
+			var content = writeAsHtml ? ExceptionInfo(ex, "") : ex.ToString();
 			System.IO.File.AppendAllText(fileName, content);
 		}
 
-		public static string ExceptionInfo(Exception ex, string body, CustomInfoDelegate customUserInfo, CustomInfoDelegate customPageInfo)
+		public string ExceptionInfo(Exception ex, string body)
 		{
 			//------------------------------------------------------
 			// Body
@@ -311,8 +310,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				AddRow(ref s, "Executable", asm.Location);
 				AddRow(ref s, "Build Date", Configuration.AssemblyInfo.GetBuildDateTime(asm.Location).ToString("yyyy-MM-dd HH:mm:ss"));
 			}
-			if (customUserInfo != null) customUserInfo(ref s);
-			if (customPageInfo != null) customPageInfo(ref s);
+			UserInfo(ref s);
+			PageInfo(ref s);
 			AddRow(ref s);
 			s += "</table>";
 			s += "<table border=\"0\" cellspacing=\"2\">";
@@ -425,7 +424,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Web Page Info
 
-		public static void DefaultPageInfo(ref string s)
+		public virtual void PageInfo(ref string s)
 		{
 			var context = System.Web.HttpContext.Current;
 			if (context != null)
@@ -554,7 +553,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		public static void DefaultUserInfo(ref string s)
+		public virtual void UserInfo(ref string s)
 		{
 			// get user info and return it as formatted html string
 			AddRow(ref s, "Session");
