@@ -40,6 +40,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,6 +60,34 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ControllerAxis.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ControllerButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DeviceTabControlGeneralTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DeviceTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DeviceButtonsMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MainTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -65,6 +95,26 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\AppData.cs" />
+    <Compile Include="Controls\ControllerAxis.xaml.cs">
+      <DependentUpon>ControllerAxis.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ControllerButton.xaml.cs">
+      <DependentUpon>ControllerButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ControllerButtonItem.cs" />
+    <Compile Include="Controls\DeviceTabControlGeneralTab.xaml.cs">
+      <DependentUpon>DeviceTabControlGeneralTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DeviceTabControl.xaml.cs">
+      <DependentUpon>DeviceTabControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DeviceButtonsMenu.xaml.cs">
+      <DependentUpon>DeviceButtonsMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MainTreeView.xaml.cs">
+      <DependentUpon>MainTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -105,7 +155,70 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
+    <Resource Include="Images\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\x360ce.App.Beta\Images\bullet_square_glass_green.png">
+      <Link>Images\bullet_square_glass_green.png</Link>
+    </Resource>
+    <Resource Include="..\x360ce.App.Beta\Images\bullet_square_glass_grey.png">
+      <Link>Images\bullet_square_glass_grey.png</Link>
+    </Resource>
+    <Resource Include="..\x360ce.App.Beta\Images\bullet_square_glass_red.png">
+      <Link>Images\bullet_square_glass_red.png</Link>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\gear_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\folder_16x16.png" />
+    <Resource Include="Images\folder_closed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\delete_256x256.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\delete_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Plus_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Minus_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Controller_16x16.png" />
+    <Resource Include="Images\Plus_Circle_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\add.png" />
+    <Resource Include="Images\navigate_plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Code_Edit_16x16.png" />
+    <Resource Include="Images\window.png" />
+    <Resource Include="Images\Window_Edit_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\xboxControllerFront.png" />
+    <Resource Include="Images\xboxControllerTop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Bullet_Ball_Glass_Red_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Triangle_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\USB_Plug_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Triangle_Black.png" />
+    <Resource Include="Images\Triangle_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Axis_Black.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

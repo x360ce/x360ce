@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:x360ce.App.Dictionary">
+
+    <SolidColorBrush x:Key="ColorGray" Color="#10000000" />
+    <SolidColorBrush x:Key="ColorBorder" Color="#40000000" />
+    <SolidColorBrush x:Key="ColorBlue" Color="#ff26a0da" />
+    <SolidColorBrush x:Key="ColorTransparent" Color="#00000000" />
+    <SolidColorBrush x:Key="ColorMouseEnter" Color="#01000000" />
+
+    <Style TargetType="Button">
+        <Setter Property="BorderBrush" Value="{StaticResource ColorBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{StaticResource ColorGray}"/>
+    </Style>
+
+</ResourceDictionary>

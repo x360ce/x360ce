@@ -1,0 +1,353 @@
+﻿<UserControl x:Class="x360ce.App.Controls.MainTreeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:x360ce.App.Controls"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!--TreeView Style Settings-->
+        <Style TargetType="TreeView" x:Key="MainTreeView">
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Style.Resources>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Orientation" Value="Horizontal"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="4,0,4,0"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
+
+    <!--TreeView Control-->
+    <TreeView Style="{StaticResource MainTreeView}" Margin="6" Width="300">
+        <TreeView.Resources>
+            <!--TreeView Application Style Settings-->
+            <Style TargetType="Border" x:Key="ApplicationBorder">
+                <EventSetter Event="MouseEnter" Handler="TreeViewItem_MouseEnter" />
+                <EventSetter Event="MouseLeave" Handler="TreeViewItem_MouseLeave" />
+                <Setter Property="Tag" Value="Application"/>
+                <Setter Property="Background" Value="#22000088"/>
+                <Setter Property="Padding" Value="4,2,2,2"/>
+                <Setter Property="Margin" Value="1"/>
+                <Style.Resources>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="/Images/Window_Edit_16x16.png"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
+            <!--TreeView Game Style Settings-->
+            <Style TargetType="Border" x:Key="GameBorder">
+                <EventSetter Event="MouseEnter" Handler="TreeViewItem_MouseEnter" />
+                <EventSetter Event="MouseLeave" Handler="TreeViewItem_MouseLeave" />
+                <Setter Property="Tag" Value="Game"/>
+                <Setter Property="Background" Value="#22008800"/>
+                <Setter Property="Padding" Value="3,2,2,2"/>
+                <Setter Property="Margin" Value="1"/>
+                <Style.Resources>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="/Images/Code_Edit_16x16.png"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
+            <!--TreeView Controller Style Settings-->
+                    <Style TargetType="Border" x:Key="ControllerBorder">
+                        <EventSetter Event="MouseEnter" Handler="TreeViewItem_MouseEnter" />
+                        <EventSetter Event="MouseLeave" Handler="TreeViewItem_MouseLeave" />
+                        <Setter Property="Tag" Value="Controller"/>
+                        <Setter Property="Background" Value="#222f4f4e"/>
+                        <Setter Property="Padding" Value="4,2,2,2"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Style.Resources>
+                            <Style TargetType="Image">
+                                <Setter Property="Source" Value="/Images/Controller_16x16.png"/>
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+            <!--TreeView Controller Style Settings-->
+            <Style TargetType="Border" x:Key="DeviceBorder">
+                <EventSetter Event="MouseEnter" Handler="TreeViewItem_MouseEnter" />
+                <EventSetter Event="MouseLeave" Handler="TreeViewItem_MouseLeave" />
+                <Setter Property="Tag" Value="Device"/>
+                <Setter Property="Padding" Value="4,2,2,2"/>
+                <Setter Property="Margin" Value="1"/>
+                <Style.Resources>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="/Images/USB_Plug_16x16.png"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
+        </TreeView.Resources>
+
+        <TreeViewItem IsExpanded="True">
+            <TreeViewItem.Header>
+                <Border Style="{StaticResource ApplicationBorder}">
+                    <StackPanel>
+                        <Image />
+                        <TextBlock Text="X360 Controller Emulator Application"/>
+                    </StackPanel>
+                </Border>
+            </TreeViewItem.Header>
+
+            <TreeViewItem IsExpanded="True">
+                <TreeViewItem.Header>
+                    <Border Style="{StaticResource GameBorder}">
+                        <StackPanel>
+                            <Image />
+                            <TextBlock Text="Grand Theft Auto V" />
+                        </StackPanel>
+                    </Border>
+                </TreeViewItem.Header>
+
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 1" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="Logitech G920 Racing Wheel" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel Opacity="0.3">
+                                    <Image Opacity="0.6" />
+                                    <TextBlock Text="ThrustMaster T1600M" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 2" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="Logitech G920 Racing Wheel" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="ThrustMaster T1600M" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True" Opacity="0.3">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 3" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="Logitech G920 Racing Wheel" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="ThrustMaster T1600M" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 4" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+            </TreeViewItem>
+
+            <TreeViewItem IsExpanded="True">
+                <TreeViewItem.Header>
+                    <Border Style="{StaticResource GameBorder}">
+                        <StackPanel>
+                            <Image />
+                            <TextBlock Text="The Elder Scrolls V: Skyrim" />
+                        </StackPanel>
+                    </Border>
+                </TreeViewItem.Header>
+
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 1" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="Logitech G920 Racing Wheel" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="ThrustMaster T1600M" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 2" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 3" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 4" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem IsExpanded="True">
+                <TreeViewItem.Header>
+                    <Border Style="{StaticResource GameBorder}">
+                        <StackPanel>
+                            <Image />
+                            <TextBlock Text="Don't Starve Together" />
+                        </StackPanel>
+                    </Border>
+                </TreeViewItem.Header>
+
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 1" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="Logitech G920 Racing Wheel" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <Border Style="{StaticResource DeviceBorder}">
+                                <StackPanel>
+                                    <Image />
+                                    <TextBlock Text="ThrustMaster T1600M" />
+                                </StackPanel>
+                            </Border>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 2" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 3" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+                <TreeViewItem IsExpanded="True">
+                    <TreeViewItem.Header>
+                        <Border Style="{StaticResource ControllerBorder}">
+                            <StackPanel>
+                                <Image />
+                                <TextBlock Text="Controller 4" />
+                            </StackPanel>
+                        </Border>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+            </TreeViewItem>
+        </TreeViewItem>
+    </TreeView>
+
+</UserControl>

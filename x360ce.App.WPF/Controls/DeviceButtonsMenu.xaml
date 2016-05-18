@@ -1,0 +1,149 @@
+﻿<UserControl x:Class="x360ce.App.Controls.DeviceButtonsMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:x360ce.App.Controls"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!--ItemsPanelTemplate resource-->
+        <ItemsPanelTemplate x:Key="SubMenuItemPanelTemplate">
+            <StackPanel Margin="0"/>
+        </ItemsPanelTemplate>
+
+        <!-- MenuItem style ... Hide icon area -->
+        <Style TargetType="{x:Type MenuItem}">
+            <Setter Property="ItemsPanel" Value="{StaticResource SubMenuItemPanelTemplate}"/>
+            <Style.Resources>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
+
+    <!--Menu Control-->
+    <StackPanel>
+        <Menu HorizontalAlignment="Right" Margin="0,0,0,4">
+            <MenuItem Padding="0">
+                <MenuItem.Header>
+                    <Border Name="MouseEnterColor">
+                        <StackPanel Orientation="Horizontal" Background="{StaticResource ColorGray}">
+                        <DockPanel>
+                            <TextBlock Width="80" Name="MenuControlDock" Padding="4,3,0,0" Background="White" DockPanel.Dock="Left"  />
+                            <TextBlock Width="70" Name="MenuControlTitle" Padding="4,3,0,0" Text="Name"/>
+                            <Image Source="/Images/Triangle_16x16.png" Stretch="None" Margin="4,3,4,4" />
+                        </DockPanel>
+                    </StackPanel>
+                    </Border>
+                </MenuItem.Header>
+                <MenuItem Header="&lt;empty&gt;" Foreground="#aaaaaa" Width="160" Click="MenuItem_Click" />
+                <MenuItem Header="Record..." Click="MenuItem_Click">
+                    <MenuItem.Icon>
+                        <Image Margin="6,0,-6,0" Source="/Images/Bullet_Ball_Glass_Red_16x16.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem Header="Buttons">
+                    <MenuItem Header="Button 1" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 2" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 3" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 4" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 5" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 6" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 7" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 8" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 9" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 10" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 11" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 12" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 13" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 14" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 15" Click="MenuItem_Click"/>
+                    <MenuItem Header="Button 16" Click="MenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="Axes">
+                    <MenuItem Header="Inverted">
+                        <MenuItem Header="IAxis 1" Click="MenuItem_Click"/>
+                        <MenuItem Header="IAxis 2" Click="MenuItem_Click"/>
+                        <MenuItem Header="IAxis 3" Click="MenuItem_Click"/>
+                        <MenuItem Header="IAxis 4" Click="MenuItem_Click"/>
+                        <MenuItem Header="IAxis 5" Click="MenuItem_Click"/>
+                        <MenuItem Header="IAxis 6" Click="MenuItem_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Inverted Half">
+                        <MenuItem Header="IHAxis 1" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHAxis 2" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHAxis 3" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHAxis 4" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHAxis 5" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHAxis 6" Click="MenuItem_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Half">
+                        <MenuItem Header="HAxis 1" Click="MenuItem_Click"/>
+                        <MenuItem Header="HAxis 2" Click="MenuItem_Click"/>
+                        <MenuItem Header="HAxis 3" Click="MenuItem_Click"/>
+                        <MenuItem Header="HAxis 4" Click="MenuItem_Click"/>
+                        <MenuItem Header="HAxis 5" Click="MenuItem_Click"/>
+                        <MenuItem Header="HAxis 6" Click="MenuItem_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Axis 1" Click="MenuItem_Click"/>
+                    <MenuItem Header="Axis 2" Click="MenuItem_Click"/>
+                    <MenuItem Header="Axis 3" Click="MenuItem_Click"/>
+                    <MenuItem Header="Axis 4" Click="MenuItem_Click"/>
+                    <MenuItem Header="Axis 5" Click="MenuItem_Click"/>
+                    <MenuItem Header="Axis 6" Click="MenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="Sliders">
+                    <MenuItem Header="Inverted">
+                        <MenuItem Header="ISlider 1" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 2" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 3" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 4" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 5" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 6" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 7" Click="MenuItem_Click"/>
+                        <MenuItem Header="ISlider 8" Click="MenuItem_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Inverted Half">
+                        <MenuItem Header="IHSlider 1" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 2" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 3" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 4" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 5" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 6" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 7" Click="MenuItem_Click"/>
+                        <MenuItem Header="IHSlider 8" Click="MenuItem_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Half">
+                        <MenuItem Header="HSlider 1" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 2" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 3" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 4" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 5" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 6" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 7" Click="MenuItem_Click"/>
+                        <MenuItem Header="HSlider 8" Click="MenuItem_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="Slider 1" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 2" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 3" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 4" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 5" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 6" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 7" Click="MenuItem_Click"/>
+                    <MenuItem Header="Slider 8" Click="MenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="D-Pad">
+                    <MenuItem Header="D-Pad 1">
+                        <MenuItem Header="D-Pad Up" Click="MenuItem_Click"/>
+                        <MenuItem Header="D-Pad Left" Click="MenuItem_Click"/>
+                        <MenuItem Header="D-Pad Right" Click="MenuItem_Click"/>
+                        <MenuItem Header="D-Pad Down" Click="MenuItem_Click"/>
+                    </MenuItem>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+    </StackPanel>
+</UserControl>
