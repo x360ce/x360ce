@@ -5,12 +5,11 @@ using System.Text;
 
 namespace JocysCom.ClassLibrary
 {
-	public enum TimeUnitType
+	public enum TraceFormat
 	{
-		None = 0,
-		Seconds = 1,
-		Minutes = 2,
-		Hours = 3,
-		Days = 4,
+		Normal = 0,
+		TrailingNewLine = 1,
+		NoResourceLookup = 2,
+		Html = 3,
 	}
 }

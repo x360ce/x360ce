@@ -137,12 +137,16 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\ClassTools\EnumTools.cs" />
+    <Compile Include="JocysCom\Collections\KeyValue.cs" />
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
+    <Compile Include="JocysCom\Common\Helper.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
     <Compile Include="JocysCom\Common\TimeUnitType.cs" />
+    <Compile Include="JocysCom\Common\TraceFormat.cs" />
+    <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
@@ -158,9 +162,24 @@
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
+    <Compile Include="JocysCom\Mail\MailFromUser.cs" />
+    <Compile Include="JocysCom\Mail\MailTextType.cs" />
+    <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
+    <Compile Include="JocysCom\Mail\UserToken.cs" />
+    <Compile Include="JocysCom\Mail\WebMail.cs" />
+    <Compile Include="JocysCom\Resources\DataPriority.cs" />
+    <Compile Include="JocysCom\Resources\Data\ResourcesModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ResourcesModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Resources\Data\Setting.cs" />
+    <Compile Include="JocysCom\Resources\ResourceSection.cs" />
+    <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="JocysCom\Security\Data\Membership.cs" />
     <Compile Include="JocysCom\Security\Data\Role.cs" />
     <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
     <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
@@ -175,6 +194,7 @@
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserFieldName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
+    <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />
@@ -243,6 +263,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
+    <EntityDeploy Include="JocysCom\Resources\Data\ResourcesModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ResourcesModel.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>JocysCom.ClassLibrary.Resources.Data</CustomToolNamespace>
+    </EntityDeploy>
+    <None Include="JocysCom\Resources\Data\ResourcesModel.edmx.diagram">
+      <DependentUpon>ResourcesModel.edmx</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

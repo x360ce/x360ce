@@ -49,6 +49,24 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.WebControls.Panel ResetPasswordSuccessPanel;
         
         /// <summary>
+        /// PasswordResetSubject control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl PasswordResetSubject;
+        
+        /// <summary>
+        /// PasswordResetBody control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl PasswordResetBody;
+        
+        /// <summary>
         /// ResetPasswordUserNotFoundLabel control.
         /// </summary>
         /// <remarks>

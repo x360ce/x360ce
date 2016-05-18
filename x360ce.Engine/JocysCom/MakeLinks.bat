@@ -33,12 +33,19 @@ IF EXIST "D:\Projects\Jocys.com\Class Library" SET upr=D:\Projects\Jocys.com\Cla
 CALL:MKJ ClassTools
 CALL:MKJ Common
 CALL:MKJ Controls
+CALL:MKJ Collections
+CALL:MKJ Configuration
 CALL:MKJ Drawing
 CALL:MKJ IO
+CALL:MKJ Mail
 CALL:MKJ Security
 CALL:MKJ Threading
 CALL:MKJ Win32
 CALL:MKJ Data
+CALL:MKJ Resources
+CALL:MKJ Runtime
+CALL:MKJ Text
+
 pause
 GOTO:EOF
 

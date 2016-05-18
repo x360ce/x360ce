@@ -17,7 +17,7 @@ namespace JocysCom.Web.Security
 			string key = Request["Key"];
 			if (!string.IsNullOrEmpty(username))
 			{
-				JocysCom.WebSites.Engine.Security.Data.User.SendPasswordResetKey(JocysCom.WebSites.Engine.Security.Data.User.GetUser(username));
+				//WebSites.Engine.Security.Data.Membership.SendPasswordResetKey(JocysCom.WebSites.Engine.Security.Data.User.GetUser(username));
 				//ResetPasswordPanel.Visible = true;
 			}
 			else if (!string.IsNullOrEmpty(key))
@@ -29,7 +29,7 @@ namespace JocysCom.Web.Security
 					ErrorLabel.Visible = true;
 					return;
 				}
-				Guid userId = JocysCom.ClassLibrary.Security.Helper.GetUserId<Guid>(key);
+				Guid userId = JocysCom.ClassLibrary.Security.Helper.GetId<Guid>(key);
 				var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(userId);
 				if (user == null)
 				{
@@ -52,7 +52,7 @@ namespace JocysCom.Web.Security
 		
 		protected void ChangePasswordPushButton_Click(object sender, EventArgs e)
 		{
-			Guid userId = JocysCom.ClassLibrary.Security.Helper.GetUserId<Guid>(ResetKeyLabel.Text);
+			Guid userId = JocysCom.ClassLibrary.Security.Helper.GetId<Guid>(ResetKeyLabel.Text);
 			var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(userId);
 			var muser = System.Web.Security.Membership.GetUser(user.UserName);
 			// Reset password: Start

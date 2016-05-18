@@ -46,61 +46,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 		public static User GetUser(string username)
 		{
 			var db = SecurityEntities.Current;
-			return db.Users.Single(x => x.UserName == username);
-		}
-
-		/// <summary>
-		/// All shared queries must go here.
-		/// </summary>
-		/// <param name="queryName"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public static IQueryable<User> GetQuery(string queryName, OrderedDictionary parameters)
-		{
-			// Get parameters.
-			string[] qa = queryName.Split('/');
-			string p0 = qa[0];
-			string p1 = (qa.Length > 1) ? qa[1] : string.Empty;
-			string p2 = (qa.Length > 2) ? qa[2] : string.Empty;
-			// Set predefined query.
-			IQueryable<User> query = null;
-			Guid userId = parameters.Contains("UserId") ? (Guid)parameters["UserId"] : Guid.Empty;
-			var db = SecurityEntities.Current;
-			UserQueryName qne = GuidEnum.TryParse<UserQueryName>(p0, UserQueryName.None, true);
-			switch (qne)
-			{
-				case UserQueryName.All:
-					query = from row in db.Users select row;
-					break;
-				default:
-					throw new NotImplementedException(string.Format("{0} QueryName not supported", queryName));
-					//break;
-			}
-			// Add search condition.
-			if (parameters != null)
-			{
-				// Apply search filter.
-				string searchValue;
-				searchValue = parameters.Contains("SearchName") ? (string)parameters["SearchName"] : string.Empty;
-				if (!string.IsNullOrEmpty(searchValue))
-				{
-					searchValue = searchValue.Trim();
-					Guid uid;
-					if (Guid.TryParse(searchValue, out uid))
-					{
-						query = query.Where(x => x.UserId == uid);
-					}
-					else
-					{
-						// we cant use FullText index inside linq so just extend command timout in order for 
-						// search not to fail.
-						if (db.CommandTimeout < 120) db.CommandTimeout = 120;
-						query = query.Where(x =>
-							x.UserName == searchValue);
-					}
-				}
-			}
-			return query;
+			return db.Users.FirstOrDefault(x => x.UserName == username);
 		}
 
 		public static User GetUserByEmail(string email)
@@ -110,30 +56,14 @@ namespace JocysCom.WebSites.Engine.Security.Data
 		}
 
 		public static ValidationField[] ValidateUser(
-		string username,
+		string usernameOrEmail,
 		string password)
 		{
-			string u = string.Empty; // username
-			string p = string.Empty; // password
-			string v = string.Empty; //Validation
-
-			// Required fields.
-			if (string.IsNullOrEmpty(username)) u = "<b>Username</b> is required.";
-			if (string.IsNullOrEmpty(password)) p = "<b>Password</b> is required.";
-			// Username.
-			if (string.IsNullOrEmpty(u) && Regex.Match(username, "[a-zA-Z0-9_]{3,20}").Value != username)
-			{
-				u = "<b>Username</b> must be between 3-20 characters<br />and contain only letters or numbers.";
-			}
-
-			//if(!System.Web.Security.Membership.ValidateUser(username, password))
-			//    v = "user name or password are not valid";
-
-			List<ValidationField> results = new List<ValidationField>();
-			results.Add(new ValidationField() { Name = UserFieldName.UserName, Value = username, Message = u });
-			results.Add(new ValidationField() { Name = UserFieldName.Password, Value = password, Message = p });
-			//results.Add(new ValidationField() { Name = "Validation", Value = string.Empty, Message = v });
-			return results.ToArray();
+			var requiredFileds = (EmailRegex.Match(usernameOrEmail).Success)
+				? UserFieldName.Email | UserFieldName.Password
+				: UserFieldName.UserName | UserFieldName.Password;
+			return ValidateMemberRegistration(
+			usernameOrEmail, password, null, null, null, null, null, null, null, requiredFileds);
 		}
 
 		public static List<string> DisallowedNames = new List<string>();
@@ -204,7 +134,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 							{
 								results.Add(new ValidationField(item, value, "<b>" + description + "</b> must be between 3-20 characters<br />and contain only letters or numbers."));
 							}
-							else if (User.GetUser(value) != null)
+							else if (GetUser(value) != null)
 							{
 								results.Add(new ValidationField(item, value, "" + description + " is already taken."));
 							}
@@ -215,7 +145,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 							{
 								results.Add(new ValidationField(item, value, "" + description + " is not valid."));
 							}
-							else if (User.GetUserByEmail(email) != null)
+							else if (GetUserByEmail(email) != null)
 							{
 								results.Add(new ValidationField(item, value, "" + description + " is already taken."));
 							}
@@ -286,22 +216,6 @@ namespace JocysCom.WebSites.Engine.Security.Data
 				}
 			}
 			return results.ToArray();
-		}
-
-
-		public static void SendPasswordResetKey(User user)
-		{
-
-		}
-
-		public static void SendPasswordResetKey(string username, string password, TimeUnitType unit)
-		{
-			//Uri u = System.Web.HttpContext.Current.Request.Url;
-			//string resetUrl = GetUrl(username, password, unit);
-			//string template = Helper.GetTranslation(TranslationKey.PasswordResetTemplate);
-			//string body = template.Replace("{Username}", user.FullName).Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl);
-			//string subject = string.Format("Reset your {0} password", u.Host);
-			//Engine.Mail.Current.Send(user.Membership.Email, user.FullName, subject, body, JocysCom.ClassLibrary.Mail.MailTextType.Plain);
 		}
 
 	}

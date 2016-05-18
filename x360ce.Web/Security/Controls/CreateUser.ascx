@@ -55,7 +55,7 @@
 				</div>
 			</td>
 		</tr>
-		<tr runat="server" id="UsernameRow">
+		<tr runat="server" id="UserNameRow">
 			<td class="SWUI_Table_Label">
 				<label>
 					User Name:</label>
@@ -64,7 +64,7 @@
 				<asp:TextBox ID="UserName" runat="server"></asp:TextBox>
 			</td>
 			<td class="SWUI_Table_Check">
-				<div runat="server" id="UsernameStatus" class="SWUI_Table_Result0">
+				<div runat="server" id="UserNameStatus" class="SWUI_Table_Result0">
 				</div>
 			</td>
 		</tr>

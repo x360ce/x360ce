@@ -14,9 +14,14 @@ namespace JocysCom.Web.Security
 		{
 			if (!IsPostBack)
 			{
-				if (SecurityContext.Current.IsAuthenticated && Request["Logout"] == "True")
+				if (SecurityContext.Current.IsAuthenticated)
 				{
-					LogoutLinkButton_Click(null, null);
+					bool logout;
+					bool.TryParse(Request["Logout"], out logout);
+					if (logout)
+					{
+						LogoutLinkButton_Click(null, null);
+					}
 				}
 			}
 			LoginBanner.DataBind();
@@ -29,8 +34,12 @@ namespace JocysCom.Web.Security
 
 		void UserEditControl1_Created(object sender, UserEditEventArgs e)
 		{
-			// Make sure user have access to Social part of website.
-			System.Web.Security.Roles.AddUserToRole(e.User.UserName, "SocialUsers");
+			var role = SecurityContext.Current.DefaultRole;
+			if (!string.IsNullOrEmpty(role))
+			{
+				// Make sure user have access to Social part of website.
+				System.Web.Security.Roles.AddUserToRole(e.User.UserName, role);
+			}
 		}
 
 		protected void LogoutLinkButton_Click(object sender, EventArgs e)
