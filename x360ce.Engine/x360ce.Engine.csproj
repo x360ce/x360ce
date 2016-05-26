@@ -175,6 +175,7 @@
     </Compile>
     <Compile Include="JocysCom\Resources\Data\Setting.cs" />
     <Compile Include="JocysCom\Resources\ResourceSection.cs" />
+    <Compile Include="JocysCom\Runtime\EmailResult.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />

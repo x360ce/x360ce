@@ -8,6 +8,7 @@ using System.Reflection;
 using System.IO;
 using JocysCom.ClassLibrary.Runtime;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary.Mail
 {
@@ -224,6 +225,9 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
+		static readonly Regex RxBreaks = new Regex("[\r\n]", RegexOptions.Multiline);
+		static readonly Regex RxMultiSpace = new Regex("[ \u00A0]+");
+
 		/// <summary>
 		/// Send exception details.
 		/// </summary>
@@ -237,7 +241,7 @@ namespace JocysCom.ClassLibrary.Mail
 			// Recipients
 			//------------------------------------------------------
 			string[] recipients = null;
-			recipients = ErrorRecipients.Replace(",", ";").Split(Convert.ToChar(";"));
+			recipients = ErrorRecipients.Replace(",", ";").Split(';');
 			foreach (string addr in recipients)
 			{
 				message.To.Add(new MailAddress(addr));
@@ -262,8 +266,8 @@ namespace JocysCom.ClassLibrary.Mail
 			{
 				subject = "null";
 			}
-			subject = JocysCom.ClassLibrary.Text.Filters.RxBreaks.Replace(subject, "");
-			subject = JocysCom.ClassLibrary.Text.Filters.RxMultiSpace.Replace(subject, " ");
+			subject = RxBreaks.Replace(subject, " ");
+			subject = RxMultiSpace.Replace(subject, " ");
 			message.Body = body;
 			try
 			{

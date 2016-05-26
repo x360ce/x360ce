@@ -13,12 +13,42 @@ using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Mail;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
 	public partial class LogHelper
 	{
-		
+		public JocysCom.ClassLibrary.Mail.SmtpClientEx Smtp;
+
+		public LogHelper()
+		{
+			Smtp = JocysCom.ClassLibrary.Mail.SmtpClientEx.Current;
+		}
+
+		#region Process Exceptions
+
+		/// <summary>
+		/// Windows forms can attach function which will be used when exception is thrown.
+		/// For example it can open window to the user with exception details.
+		/// </summary>
+		public ProcessExceptionDelegate ProcessExceptionExtra;
+		public delegate void ProcessExceptionDelegate(Exception ex);
+
+		public static bool IsDebug
+		{
+			get
+			{
+				bool debug = false;
+#if DEBUG
+				debug = true;
+#endif
+				return debug;
+			}
+		}
+
+		#endregion
+
 		#region Parse
 
 		public static bool ParseBool(string name, bool defaultValue)
@@ -585,6 +615,255 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		#endregion
+
+		#region Preview
+
+		public System.Net.Mail.MailMessage GetMailPreview(MailMessage message)
+		{
+			MailMessage mail = new MailMessage();
+			mail.IsBodyHtml = true;
+			ApplyRecipients(mail, message.From, Smtp.ErrorRecipients);
+			var subject = message.Subject;
+			ApplyRunModeSuffix(ref subject);
+			mail.Subject = subject;
+			string testBody = "";
+			testBody += "In LIVE mode this email would be sent:<br />\r\n";
+			foreach (var item in message.To)
+			{
+				testBody += "To:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+			}
+			foreach (var item in message.CC)
+			{
+				testBody += "Cc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+			}
+			foreach (var item in message.Bcc)
+			{
+				testBody += "Bcc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+			}
+
+			testBody += "<hr />\r\n";
+			var attachments = message.Attachments;
+			if (attachments != null && attachments.Count() > 0)
+			{
+				testBody += "These files would be attached:<br />\r\n";
+				if (attachments != null && attachments.Count() > 0)
+				{
+					for (int ctr = 0; ctr <= attachments.Count() - 1; ctr++)
+					{
+						string fileName = attachments[ctr].Name;
+						if (fileName.Length > 3 && fileName.ToLower().Substring(fileName.Length - 4) == ".ics")
+						{
+							mail.Attachments.Add(attachments[ctr]);
+						}
+						testBody += "&nbsp;&nbsp;&nbsp;&nbsp;" + System.Web.HttpUtility.HtmlEncode(fileName);
+						testBody += "<br />\r\n";
+					}
+				}
+			}
+			if (message.IsBodyHtml)
+			{
+				testBody += message.Body;
+			}
+			else
+			{
+				testBody += "<pre>";
+				testBody += System.Web.HttpUtility.HtmlEncode(message.Body);
+				testBody += "</pre>";
+			}
+			mail.Body = testBody;
+			return mail;
+		}
+
+		public static void ApplyRecipients(MailMessage mail, string addFrom, string addTo, string addCc = null, string addBcc = null)
+		{
+			ApplyRecipients(mail, new MailAddress(addFrom), addTo, addCc, addBcc);
+		}
+
+		public static void ApplyRecipients(MailMessage mail, MailAddress addFrom, string addTo, string addCc = null, string addBcc = null)
+		{
+			mail.From = addFrom;
+			string[] list = null;
+			list = addTo.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+			if (!string.IsNullOrEmpty(addTo))
+			{
+				foreach (string item in list)
+				{
+					if (string.IsNullOrEmpty(item.Trim())) continue;
+					mail.To.Add(new MailAddress(item.Trim()));
+				}
+			}
+			if (!string.IsNullOrEmpty(addCc))
+			{
+				list = addCc.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string item in list)
+				{
+					if (string.IsNullOrEmpty(item.Trim())) continue;
+					mail.CC.Add(new MailAddress(item.Trim()));
+				}
+			}
+			if (!string.IsNullOrEmpty(addBcc))
+			{
+				list = addBcc.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string item in list)
+				{
+					if (string.IsNullOrEmpty(item.Trim())) continue;
+					mail.Bcc.Add(new MailAddress(item.Trim()));
+				}
+			}
+		}
+
+		void ApplyAttachments(MailMessage message, params Attachment[] files)
+		{
+
+			if (files == null) return;
+			for (int i = 0; i < files.Count(); i++)
+			{
+				//    string file = files[i].Name;
+				//    if (string.IsNullOrEmpty(file)) continue;
+				//    if (System.IO.File.Exists(file))
+				//    {
+				//        // Specify as "application/octet-stream" so attachment will never will be embedded in body of email.
+				//        System.Net.Mail.Attachment att = new System.Net.Mail.Attachment(file, "application/octet-stream");
+				message.Attachments.Add(files[i]);
+				//}
+			}
+		}
+
+		public static EmailResult EmailValid(string email)
+		{
+			// evaluate email address for formal validity
+			email = email.Trim();
+			if (string.IsNullOrEmpty(email)) return EmailResult.Empty;
+			System.Text.RegularExpressions.Regex objRegX = new System.Text.RegularExpressions.Regex("^[\\w-\\.\\'+&]+@([\\w-]+\\.)+[\\w-]{2,6}$", System.Text.RegularExpressions.RegexOptions.None);
+			string[] emails = null;
+			emails = email.Split(Convert.ToChar(";"));
+			// take care of list of addresses separated by semicolon
+			foreach (string s in emails)
+			{
+				var sEmail = s.Trim();
+				if (string.IsNullOrEmpty(sEmail))
+				{
+					//The email address cannot end with a semicolon"
+					return EmailResult.Semicolon;
+				}
+				if (!objRegX.IsMatch(sEmail))
+				{
+					//"Not a valid email address."
+					return EmailResult.Invalid;
+				}
+			}
+
+			// If we got here, email is OK.
+			return EmailResult.OK;
+		}
+
+		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
+		{
+			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, new Attachment[0]);
+		}
+
+		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml, bool preview, bool rethrow, string[] attachments)
+		{
+			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, GetAttachments(attachments));
+		}
+
+		/// <summary>
+		/// Mail will be sent to error recipient if not LIVE.
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="cc"></param>
+		/// <param name="bcc"></param>
+		/// <param name="subject"></param>
+		/// <param name="body"></param>
+		/// <param name="isBodyHtml"></param>
+		/// <param name="preview">Force preview on LIVE system.</param>
+		/// <param name="rethrow">Throw exception if sending fails. Must be set to false when sending exceptions.</param>
+		/// <param name="attachments"></param>
+		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml, bool preview, bool rethrow, Attachment[] attachments)
+		{
+			// Re-throw - throw the error again to catch by a caller
+			try
+			{
+				var mail = new MailMessage();
+				ApplyRecipients(mail, @from, @to, cc, bcc);
+				ApplyAttachments(mail, attachments);
+				mail.IsBodyHtml = isBodyHtml;
+				mail.Subject = subject;
+				mail.Body = body;
+				if (!IsLive || preview)
+				{
+					mail = GetMailPreview(mail);
+				}
+				Smtp.SendMessage(mail);
+			}
+			catch (Exception ex)
+			{
+				if (!string.IsNullOrEmpty(@to) && !ex.Data.Contains("Mail.To")) ex.Data.Add("Mail.To", @to);
+				if (!string.IsNullOrEmpty(cc) && !ex.Data.Contains("Mail.Cc")) ex.Data.Add("Mail.Cc", cc);
+				if (!string.IsNullOrEmpty(bcc) && !ex.Data.Contains("Mail.Bcc")) ex.Data.Add("Mail.Bcc", bcc);
+				if (!string.IsNullOrEmpty(subject) && !ex.Data.Contains("Mail.Subject")) ex.Data.Add("Mail.Subject", subject);
+				// Will be processed by the caller.
+				if (rethrow)
+				{
+					throw;
+				}
+				else
+				{
+					ProcessException(ex);
+				}
+			}
+		}
+
+		public static Attachment[] GetAttachments(string[] files)
+		{
+			if (files == null) return null;
+			var attachments = new List<Attachment>();
+			for (int i = 0; i < files.Count(); i++)
+			{
+				string file = files[i];
+				if (string.IsNullOrEmpty(file)) continue;
+				if (System.IO.File.Exists(file))
+				{
+					// Specify as "application/octet-stream" so attachment will never will be embedded in body of email.
+					var att = new System.Net.Mail.Attachment(file, "application/octet-stream");
+					attachments.Add(att);
+				}
+			}
+			return attachments.ToArray();
+		}
+
+		/// <summary>
+		/// Mail will be sent to error recipient if not LIVE.
+		/// </summary>
+		/// <param name="message"></param>
+		public void SendEmailWithCopyToErrorRecipients(MailMessage message)
+		{
+			var mail = IsLive ? message : GetMailPreview(message);
+			Smtp.SendMessage(mail);
+		}
+
+		/// <summary>
+		/// Send email to developers and show the exception box
+		/// </summary>
+		public string ProcessException(Exception ex, string subject = null, bool processExtraAction = true)
+		{
+			var body = ExceptionInfo(ex, "");
+			if (Smtp.ErrorNotifications)
+			{
+				Smtp.SendErrorEmail(ex, subject, body);
+			}
+			// Execute extra exception actions.
+			var extra = ProcessExceptionExtra;
+			if (processExtraAction && extra != null)
+			{
+				extra(ex);
+			}
+			return body;
+		}
+
+		#endregion
+
 
 	}
 }

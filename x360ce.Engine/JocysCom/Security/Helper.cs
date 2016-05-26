@@ -18,7 +18,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		/// <param name="unit">Time unit type.</param>
 		/// <returns>Time unit value.</returns>
-		static double GetTimeUnitValue(TimeUnitType unit)
+		public static double GetTimeUnitValue(TimeUnitType unit)
 		{
 			switch (unit)
 			{
