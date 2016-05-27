@@ -15,24 +15,24 @@ namespace JocysCom.ClassLibrary.Text
 
 		static object providerLock = new object();
 
-		static Regex tagRx = new Regex("{(?<class>[0-9A-Z]+)[.](?<property>[0-9A-Z]+)(:(?<format>[^{}]+))?}", RegexOptions.IgnoreCase);
+		static Regex tagRx = new Regex("{((?<prefix>[0-9A-Z]+)[.])?(?<property>[0-9A-Z]+)(:(?<format>[^{}]+))?}", RegexOptions.IgnoreCase);
 
 		/// <summary>
-		/// Replace {type.property} to its value.
+		/// Replace {type.property}/{customPrefix.property} to its value.
 		/// </summary>
-		public static string Replace<T>(string s, T o, bool usePrefix = true)
+		public static string Replace<T>(string s, T o, bool usePrefix = true, string customPrefix = null)
 		{
 			if (string.IsNullOrEmpty(s)) return s;
 			if (o == null) return s;
 			var t = typeof(T);
 			var properties = t.GetProperties();
-			var prefix = t.Name;
+			var prefix = string.IsNullOrEmpty(customPrefix) ? t.Name : customPrefix;
 			var matches = tagRx.Matches(s);
 			foreach (var p in properties)
 			{
 				foreach (Match m in matches)
 				{
-					if (string.Compare(prefix, m.Groups["class"].Value, true) != 0) continue;
+					if (usePrefix && string.Compare(prefix, m.Groups["prefix"].Value, true) != 0) continue;
 					if (string.Compare(p.Name, m.Groups["property"].Value, true) != 0) continue;
 					var format = m.Groups["format"].Value;
 					var value = p.GetValue(o, null);

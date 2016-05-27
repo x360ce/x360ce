@@ -224,7 +224,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <summary>
 		/// Convert object to byte array.
 		/// </summary>
-		static byte[] ObjectToBytes<T>(T value)
+		public static byte[] ObjectToBytes<T>(T value)
 		{
 			if (value == null) return new byte[0];
 			var o = (object)value;
@@ -250,7 +250,8 @@ namespace JocysCom.ClassLibrary.Security
 				case TypeCode.UInt32: writer.Write((UInt32)o); break;
 				case TypeCode.UInt64: writer.Write((UInt64)o); break;
 				default:
-					if (type == typeof(Guid)) writer.Write(((Guid)o).ToByteArray());
+					if (type == typeof(byte[])) writer.Write((byte[])o);
+					else if (type == typeof(Guid)) writer.Write(((Guid)o).ToByteArray());
 					break;
 			}
 			byte[] result = stream.ToArray();
@@ -261,7 +262,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// Convert byte array to object.
 		/// </summary>
 		/// <remarks>byte[0] is empty/default value.</remarks>
-		static T BytesToObject<T>(byte[] bytes)
+		public static T BytesToObject<T>(byte[] bytes)
 		{
 			if (bytes == null) return default(T);
 			Type type = typeof(T);
@@ -293,7 +294,8 @@ namespace JocysCom.ClassLibrary.Security
 				case TypeCode.UInt32: o = reader.ReadUInt32(); break;
 				case TypeCode.UInt64: o = reader.ReadUInt64(); break;
 				default:
-					if (type == typeof(Guid)) o = (new Guid(bytes));
+					if (type == typeof(byte[])) o = bytes.ToArray();
+					else if (type == typeof(Guid)) o = (new Guid(bytes));
 					break;
 			}
 			return (T)o;

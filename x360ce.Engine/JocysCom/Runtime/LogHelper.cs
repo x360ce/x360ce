@@ -736,7 +736,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (string.IsNullOrEmpty(email)) return EmailResult.Empty;
 			System.Text.RegularExpressions.Regex objRegX = new System.Text.RegularExpressions.Regex("^[\\w-\\.\\'+&]+@([\\w-]+\\.)+[\\w-]{2,6}$", System.Text.RegularExpressions.RegexOptions.None);
 			string[] emails = null;
-			emails = email.Split(Convert.ToChar(";"));
+			emails = email.Split(';');
 			// take care of list of addresses separated by semicolon
 			foreach (string s in emails)
 			{
