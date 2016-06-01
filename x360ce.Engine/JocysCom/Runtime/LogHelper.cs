@@ -355,6 +355,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (ex == null) return;
 			StackFrame frame = JocysCom.ClassLibrary.Helper.GetFormStackFrame(ex);
+			AddRow(ref s, "Exception");
 			AddRow(ref s, "Exception Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 			if (frame != null && frame.GetMethod() != null && frame.GetMethod().DeclaringType != null)
 			{
@@ -848,8 +849,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public string ProcessException(Exception ex, string subject = null, bool processExtraAction = true)
 		{
+			var allowSend = Smtp.AllowToSendException(ex);
 			var body = ExceptionInfo(ex, "");
-			if (Smtp.ErrorNotifications)
+			if (allowSend && Smtp.ErrorNotifications)
 			{
 				Smtp.SendErrorEmail(ex, subject, body);
 			}
