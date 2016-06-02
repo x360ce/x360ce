@@ -26,6 +26,20 @@ namespace JocysCom.ClassLibrary.Runtime
 			Smtp = JocysCom.ClassLibrary.Mail.SmtpClientEx.Current;
 		}
 
+
+		private static LogHelper _Current;
+		private static object currentLock = new object();
+		public static LogHelper Current
+		{
+			get
+			{
+				lock (currentLock)
+				{
+					return _Current = _Current ?? new LogHelper();
+				}
+			}
+		}
+
 		#region Process Exceptions
 
 		/// <summary>
@@ -756,6 +770,11 @@ namespace JocysCom.ClassLibrary.Runtime
 
 			// If we got here, email is OK.
 			return EmailResult.OK;
+		}
+
+		public void SendMail(string @to, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
+		{
+			SendMailFrom(Smtp.SmtpFrom, @to, null, null, subject, body, isBodyHtml, preview, rethrow, new Attachment[0]);
 		}
 
 		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
