@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using System;
+using x360ce.Engine;
 
 namespace x360ce.App
 {
@@ -14,6 +15,14 @@ namespace x360ce.App
 		public DeviceInstance Instance;
 		/// <summary>Previous DInput Device Instance.</summary>
 		public DeviceInstance InstanceOld;
+
+		public string InstanceID
+		{
+			get
+			{
+				return EngineHelper.GetID(InstanceGuid);
+			}
+		}
 
 		public string VendorName
 		{
