@@ -16,7 +16,7 @@ namespace x360ce.App
 		/// <summary>Previous DInput Device Instance.</summary>
 		public DeviceInstance InstanceOld;
 
-		public string InstanceID
+		public string InstanceId
 		{
 			get
 			{
@@ -28,8 +28,8 @@ namespace x360ce.App
 		{
 			get
 			{
-				var info = Info;
-				return info == null ? "" : info.Manufacturer;
+				var o = Info;
+				return o == null ? "" : o.Manufacturer;
 			}
 		}
 
@@ -37,8 +37,8 @@ namespace x360ce.App
 		{
 			get
 			{
-				var instance = Instance;
-				return instance == null ? "" : instance.ProductName;
+				var o = Instance;
+				return o == null ? "" : o.ProductName;
 			}
 		}
 
@@ -46,10 +46,20 @@ namespace x360ce.App
 		{
 			get
 			{
-				var instance = Instance;
-				return instance == null ? Guid.Empty : instance.ProductGuid;
+				var o = Instance;
+				return o == null ? Guid.Empty : o.InstanceGuid;
 			}
 		}
+
+		public string DeviceId
+		{
+			get
+			{
+				var o = Info;
+				return o == null ? "" : o.DeviceId;
+			}
+		}
+
 
 	}
 }

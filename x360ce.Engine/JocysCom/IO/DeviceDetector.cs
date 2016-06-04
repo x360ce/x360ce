@@ -76,8 +76,14 @@ namespace JocysCom.ClassLibrary.IO
 		[DllImport("setupapi.dll", SetLastError = true)]
 		public static extern bool SetupDiDestroyDeviceInfoList(IntPtr hDeviceInfoSet);
 
-		[DllImport("setupapi.dll", SetLastError = true)]
-		public static extern bool SetupDiEnumDeviceInterfaces(IntPtr deviceInfoSet, SP_DEVICE_INTERFACE_DATA deviceInfoData, [MarshalAs(UnmanagedType.LPStruct)]Guid interfaceClassGuid, int memberIndex, ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData);
+		[DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		public static extern Boolean SetupDiEnumDeviceInterfaces(
+		   IntPtr hDevInfo,
+		   ref SP_DEVICE_INTERFACE_DATA devInfo,
+		   ref Guid interfaceClassGuid,
+		   uint memberIndex,
+		   ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData
+		);
 
 		[DllImport("setupapi.dll", SetLastError = true)]
 		internal static extern bool SetupDiGetDeviceInstanceId(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInfoData, IntPtr DeviceInstanceId, int DeviceInstanceIdSize, ref int RequiredSize);
@@ -95,7 +101,14 @@ namespace JocysCom.ClassLibrary.IO
 		public static extern bool SetupDiEnumDeviceInfo(IntPtr deviceInfoSet, int memberIndex, ref SP_DEVICE_INTERFACE_DATA deviceInfoData);
 
 		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-		public static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr deviceInfoSet, ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData, IntPtr deviceInterfaceDetailData, int deviceInterfaceDetailDataSize, ref int requiredSize, ref SP_DEVICE_INTERFACE_DATA deviceInfoData);
+		public static extern bool SetupDiGetDeviceInterfaceDetail(
+			IntPtr hDevInfo,
+			ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData,
+			IntPtr deviceInterfaceDetailData,
+			uint deviceInterfaceDetailDataSize,
+			ref uint requiredSize,
+			 IntPtr deviceInfoData
+		);
 
 		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool SetupDiGetClassDescription(ref Guid ClassGuid, StringBuilder classDescription, Int32 ClassDescriptionSize, ref UInt32 RequiredSize);
@@ -275,7 +288,7 @@ namespace JocysCom.ClassLibrary.IO
 				}
 			}
 		}
-	
+
 		private void EndAsyncEvent(IAsyncResult iar)
 		{
 			var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
@@ -355,16 +368,18 @@ namespace JocysCom.ClassLibrary.IO
 			var o = "";
 			if (outsize > 0)
 			{
-				switch (proptype)
+				var type = (REG)proptype;
+				switch (type)
 				{
-					case (uint)REG.REG_SZ:
+					case REG.REG_SZ:
 						o = Encoding.Unicode.GetString(buffer, 0, (int)outsize - 2);
 						break;
-					case (uint)REG.REG_MULTI_SZ:
+					case REG.REG_MULTI_SZ:
 						o = Encoding.Unicode.GetString(buffer, 0, (int)outsize - 2);
 						o = o.Trim('\0').Replace("\0", "\r\n");
 						break;
 					default:
+						o = string.Format("{0} 0x{1}", type, string.Join("", buffer.Take((int)outsize).Select(x => x.ToString("X2"))));
 						break;
 				}
 			}
@@ -442,7 +457,7 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					var currentDeviceId = GetDeviceId(deviceInfoData.Flags);
 					if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId) continue;
-					var device = GetDeviceInfo(deviceInfoSet, deviceInfoData, deviceId);
+					var device = GetDeviceInfo(deviceInfoSet, deviceInfoData, currentDeviceId);
 					if (vid > 0 && device.VendorId != vid) continue;
 					if (pid > 0 && device.ProductId != pid) continue;
 					if (rev > 0 && device.Revision != rev) continue;
@@ -465,7 +480,7 @@ namespace JocysCom.ClassLibrary.IO
 			uint pid;
 			uint rev;
 			var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out vid, out pid, out rev);
-			//if (deviceName.Contains("vJoy Device"))
+			//if (deviceId.Contains("2FBF"))
 			//{
 			//	var sb = new StringBuilder();
 			//	var props = (SPDRP[])Enum.GetValues(typeof(SPDRP));
@@ -489,7 +504,6 @@ namespace JocysCom.ClassLibrary.IO
 			var device = new DeviceInfo(deviceId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
 			return device;
 		}
-
 
 		public static DeviceInfo GetParentDevice(Guid classGuid, DIGCF flags, string deviceId)
 		{

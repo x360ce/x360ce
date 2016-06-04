@@ -14,9 +14,10 @@
 						<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
 					</DataGrid.HorizontalGridLinesBrush>
 					<DataGrid.Columns>
-						<DataGridTextColumn Binding="{Binding InstanceID}" Header="Instance ID"/>
+						<DataGridTextColumn Binding="{Binding InstanceId}" Header="Instance ID"/>
 						<DataGridTextColumn Binding="{Binding VendorName}"  Header="Vendor Name"/>
 						<DataGridTextColumn Binding="{Binding ProductName}" Header="Product Name"/>
+						<DataGridTextColumn Binding="{Binding DeviceId}" Header="Device ID"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</Grid>

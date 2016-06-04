@@ -211,6 +211,8 @@ namespace x360ce.App
 					var state = new Joystick(Manager, device.InstanceGuid);
 					di.Device = state;
 					var classGuid = state.Properties.ClassGuid;
+					var path = state.Properties.InterfacePath.Replace("#", "\\").ToUpper();
+
 					// Must find better way to find Device than by Vendor ID and Product ID.
 					var info = DeviceDetector.GetDevices(
 						classGuid,
@@ -220,7 +222,8 @@ namespace x360ce.App
 						state.Properties.ProductId,
 						0
 					);
-					di.Info = info.FirstOrDefault();
+					di.Info = info.FirstOrDefault(x => path.Contains(x.DeviceId));
+					if (di.Info == null) di.Info = info.FirstOrDefault();
 					SettingManager.DiDevices.Add(di);
 				}
 				for (int i = 0; i < updatedDevices.Length; i++)
