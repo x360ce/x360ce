@@ -121,6 +121,8 @@ namespace x360ce.App
 			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
+			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
+
 		}
 
 		IList<Engine.Data.Program> Programs_FilterList(IList<Engine.Data.Program> items)

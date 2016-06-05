@@ -162,6 +162,7 @@
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
+    <Compile Include="JocysCom\IO\HidHelper.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="JocysCom\Win32\SID_AND_ATTRIBUTES.cs" />
     <Compile Include="JocysCom\Win32\SPDRP.cs" />
     <Compile Include="JocysCom\Win32\SP_CLASSINSTALL_HEADER.cs" />
+    <Compile Include="JocysCom\Win32\SP_DEVINFO_DATA.cs" />
     <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DATA.cs" />
     <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DETAIL_DATA.cs" />
     <Compile Include="JocysCom\Win32\SP_PROPCHANGE_PARAMS.cs" />

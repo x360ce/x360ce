@@ -3,12 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Win32
 {
-
-	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	public struct SP_DEVICE_INTERFACE_DETAIL_DATA
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+	public class SP_DEVICE_INTERFACE_DETAIL_DATA
 	{
 		public UInt32 cbSize;
-		public short DevicePath;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 2048)] // const int BUFFER_SIZE = 2048;
+		public string DevicePath;
 		public void Initialize()
 		{
 			this.cbSize = (UInt32)Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
