@@ -162,6 +162,12 @@
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
+    <Compile Include="JocysCom\IO\HardwareControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JocysCom\IO\HardwareControl.Designer.cs">
+      <DependentUpon>HardwareControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\IO\HidHelper.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
@@ -278,6 +284,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
+      <DependentUpon>HardwareControl.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

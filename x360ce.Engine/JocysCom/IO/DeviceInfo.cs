@@ -4,9 +4,10 @@ namespace JocysCom.ClassLibrary.IO
 	public class DeviceInfo
 	{
 
-		public DeviceInfo(string deviceId, string manufacturer, string description, Guid classGuid, string classDescription, Win32.DeviceNodeStatus status, uint vid, uint pid, uint rev)
+		public DeviceInfo(string deviceId, string parentDeviceId, string manufacturer, string description, Guid classGuid, string classDescription, Win32.DeviceNodeStatus status, uint vid, uint pid, uint rev)
 		{
 			_DeviceId = deviceId ?? "";
+			_ParentDeviceId = parentDeviceId ?? "";
 			_Description = description ?? "";
 			_Manufacturer = manufacturer ?? "";
             _ClassGuid = classGuid;
@@ -34,6 +35,9 @@ namespace JocysCom.ClassLibrary.IO
 
 		private string _DeviceId;
 		public string DeviceId { get { return _DeviceId; } }
+
+		private string _ParentDeviceId;
+		public string ParentDeviceId { get { return _ParentDeviceId; } }
 
 		private Guid _ClassGuid;
 		public Guid ClassGuid { get { return _ClassGuid; } }

@@ -475,6 +475,10 @@ namespace JocysCom.ClassLibrary.IO
 					if (pid > 0 && device.ProductId != pid) continue;
 					if (rev > 0 && device.Revision != rev) continue;
 
+					//var parentDeviceInfoData = GetDeviceInfo(deviceInfoSet, parentDeviceId).Value;
+					//var parentDevice = GetDeviceInfo(deviceInfoSet, parentDeviceInfoData, parentDeviceId);
+
+
 					//if (currentDeviceId.Contains("2FBF"))
 					//{
 
@@ -482,14 +486,6 @@ namespace JocysCom.ClassLibrary.IO
 					//	Guid hidGuid;
 					//	HidD_GetHidGuid(out hidGuid);
 
-					//	// Get device information.
-					//	uint parentDeviceInstance = 0;
-					//	var CRResult = CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
-					//	if (CRResult == CR.CR_NO_SUCH_DEVNODE) break;
-					//	if (CRResult != CR.CR_SUCCESS) break;
-					//	var parentDeviceId = GetDeviceId(parentDeviceInstance);
-					//	var parentDeviceInfoData = GetDeviceInfo(deviceInfoSet, parentDeviceId).Value;
-					//	var parentDevice = GetDeviceInfo(deviceInfoSet, parentDeviceInfoData, parentDeviceId);
 
 
 					//	// Get device information.
@@ -581,7 +577,15 @@ namespace JocysCom.ClassLibrary.IO
 			//		}
 			//	}
 			//}
-			var device = new DeviceInfo(deviceId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
+			// Get device information.
+			uint parentDeviceInstance = 0;
+			string parentDeviceId = null;
+			var CRResult = CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
+			if (CRResult == CR.CR_SUCCESS)
+			{
+				parentDeviceId = GetDeviceId(parentDeviceInstance);
+			}
+			var device = new DeviceInfo(deviceId, parentDeviceId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
 			return device;
 		}
 
