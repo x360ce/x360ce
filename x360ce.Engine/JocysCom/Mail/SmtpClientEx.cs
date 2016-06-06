@@ -282,16 +282,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public MailMessage SendErrorEmail(Exception ex, string subject = null, string body = null)
 		{
 			var message = new MailMessage();
-			message.From = new MailAddress(SmtpFrom);
-			//------------------------------------------------------
-			// Recipients
-			//------------------------------------------------------
-			string[] recipients = null;
-			recipients = ErrorRecipients.Replace(",", ";").Split(';');
-			foreach (string addr in recipients)
-			{
-				message.To.Add(new MailAddress(addr));
-			}
+			SmtpClientEx.ApplyRecipients(message, SmtpFrom, ErrorRecipients);
 			//------------------------------------------------------
 			// Subject
 			//------------------------------------------------------
@@ -332,6 +323,89 @@ namespace JocysCom.ClassLibrary.Mail
 			//------------------------------------------------------
 			SendMessage(message);
 			return message;
+		}
+
+		public static void ApplyRecipients(MailMessage mail, string addFrom, string addTo, string addCc = null, string addBcc = null)
+		{
+			ApplyRecipients(mail, new MailAddress(addFrom), addTo, addCc, addBcc);
+		}
+
+		public static void ApplyRecipients(MailAddressCollection collection, string emails)
+		{
+			string[] list = null;
+			list = emails.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+			if (!string.IsNullOrEmpty(emails))
+			{
+				foreach (string item in list)
+				{
+					if (string.IsNullOrEmpty(item.Trim())) continue;
+					collection.Add(new MailAddress(item.Trim()));
+				}
+			}
+		}
+
+		public static void ApplyRecipients(MailMessage mail, MailAddress addFrom, string addTo, string addCc = null, string addBcc = null)
+		{
+			mail.From = addFrom;
+			ApplyRecipients(mail.To, addTo);
+			ApplyRecipients(mail.CC, addCc);
+			ApplyRecipients(mail.Bcc, addBcc);
+		}
+
+		public static void ApplyAttachments(MailMessage message, params Attachment[] files)
+		{
+
+			if (files == null) return;
+			for (int i = 0; i < files.Count(); i++)
+			{
+				//    string file = files[i].Name;
+				//    if (string.IsNullOrEmpty(file)) continue;
+				//    if (System.IO.File.Exists(file))
+				//    {
+				//        // Specify as "application/octet-stream" so attachment will never will be embedded in body of email.
+				//        System.Net.Mail.Attachment att = new System.Net.Mail.Attachment(file, "application/octet-stream");
+				message.Attachments.Add(files[i]);
+				//}
+			}
+		}
+
+		public static EmailResult EmailValid(string email)
+		{
+			// evaluate email address for formal validity
+			email = email.Trim();
+			if (string.IsNullOrEmpty(email)) return EmailResult.Empty;
+			Regex objRegX = new Regex("^[\\w-\\.\\'+&]+@([\\w-]+\\.)+[\\w-]{2,6}$", RegexOptions.None);
+			string[] emails = null;
+			emails = email.Split(';');
+			// take care of list of addresses separated by semicolon
+			foreach (string s in emails)
+			{
+				var sEmail = s.Trim();
+				if (string.IsNullOrEmpty(sEmail))
+				{
+					//The email address cannot end with a semicolon"
+					return EmailResult.Semicolon;
+				}
+				if (!objRegX.IsMatch(sEmail))
+				{
+					//"Not a valid email address."
+					return EmailResult.Invalid;
+				}
+			}
+			// If we got here, email is OK.
+			return EmailResult.OK;
+		}
+
+		public static bool EmailIsValid(string email, bool mandatory, out string message)
+		{
+			var result = EmailValid(email);
+			message = Attributes.GetDescription(result);
+			switch (result)
+			{
+				case EmailResult.OK: return true;
+				case EmailResult.Empty: return !mandatory;
+				default: return false;
+			}
 		}
 
 	}

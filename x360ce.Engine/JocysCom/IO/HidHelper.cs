@@ -55,5 +55,5 @@ namespace JocysCom.ClassLibrary.IO
 		[DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		internal static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData, int DeviceInterfaceDetailDataSize, ref int RequiredSize, IntPtr DeviceInfoData);
 
-|	}
+	}
 }

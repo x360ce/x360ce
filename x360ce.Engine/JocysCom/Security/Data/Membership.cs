@@ -45,7 +45,8 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			subject = subject.Replace("{Host}", u.Host);
 			body = JocysCom.ClassLibrary.Text.Helper.Replace(body, user, false);
 			body = body.Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl);
-			JocysCom.ClassLibrary.Runtime.LogHelper.Current.SendMail(m.Email, subject, body, true);
+			var helper = JocysCom.ClassLibrary.Runtime.LogHelper.Current;
+			helper.SendMailFrom(helper.Smtp.SmtpFrom, m.Email, "", "", subject, body, true);
 		}
 
 		#endregion

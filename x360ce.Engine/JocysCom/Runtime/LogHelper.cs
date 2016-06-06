@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
+using JocysCom.ClassLibrary.Mail;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -262,6 +263,63 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (!s.Contains(rm)) s += " " + rm;
 			}
 		}
+
+		public System.Net.Mail.MailMessage GetMailPreview(MailMessage message)
+		{
+			MailMessage mail = new MailMessage();
+			mail.IsBodyHtml = true;
+			SmtpClientEx.ApplyRecipients(mail, message.From, Smtp.ErrorRecipients);
+			var subject = message.Subject;
+			ApplyRunModeSuffix(ref subject);
+			mail.Subject = subject;
+			string testBody = "";
+			testBody += "In LIVE mode this email would be sent:<br />\r\n";
+			foreach (var item in message.To)
+			{
+				testBody += "To:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+			}
+			foreach (var item in message.CC)
+			{
+				testBody += "Cc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+			}
+			foreach (var item in message.Bcc)
+			{
+				testBody += "Bcc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+			}
+
+			testBody += "<hr />\r\n";
+			var attachments = message.Attachments;
+			if (attachments != null && attachments.Count() > 0)
+			{
+				testBody += "These files would be attached:<br />\r\n";
+				if (attachments != null && attachments.Count() > 0)
+				{
+					for (int ctr = 0; ctr <= attachments.Count() - 1; ctr++)
+					{
+						string fileName = attachments[ctr].Name;
+						if (fileName.Length > 3 && fileName.ToLower().Substring(fileName.Length - 4) == ".ics")
+						{
+							mail.Attachments.Add(attachments[ctr]);
+						}
+						testBody += "&nbsp;&nbsp;&nbsp;&nbsp;" + System.Web.HttpUtility.HtmlEncode(fileName);
+						testBody += "<br />\r\n";
+					}
+				}
+			}
+			if (message.IsBodyHtml)
+			{
+				testBody += message.Body;
+			}
+			else
+			{
+				testBody += "<pre>";
+				testBody += System.Web.HttpUtility.HtmlEncode(message.Body);
+				testBody += "</pre>";
+			}
+			mail.Body = testBody;
+			return mail;
+		}
+
 
 		public static string GetSubjectPrefix(Exception ex)
 		{
@@ -631,158 +689,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		#region Preview
+		#region Send Mail
 
-		public System.Net.Mail.MailMessage GetMailPreview(MailMessage message)
+		public void SendErrorMail(string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
 		{
-			MailMessage mail = new MailMessage();
-			mail.IsBodyHtml = true;
-			ApplyRecipients(mail, message.From, Smtp.ErrorRecipients);
-			var subject = message.Subject;
-			ApplyRunModeSuffix(ref subject);
-			mail.Subject = subject;
-			string testBody = "";
-			testBody += "In LIVE mode this email would be sent:<br />\r\n";
-			foreach (var item in message.To)
-			{
-				testBody += "To:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
-			}
-			foreach (var item in message.CC)
-			{
-				testBody += "Cc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
-			}
-			foreach (var item in message.Bcc)
-			{
-				testBody += "Bcc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
-			}
-
-			testBody += "<hr />\r\n";
-			var attachments = message.Attachments;
-			if (attachments != null && attachments.Count() > 0)
-			{
-				testBody += "These files would be attached:<br />\r\n";
-				if (attachments != null && attachments.Count() > 0)
-				{
-					for (int ctr = 0; ctr <= attachments.Count() - 1; ctr++)
-					{
-						string fileName = attachments[ctr].Name;
-						if (fileName.Length > 3 && fileName.ToLower().Substring(fileName.Length - 4) == ".ics")
-						{
-							mail.Attachments.Add(attachments[ctr]);
-						}
-						testBody += "&nbsp;&nbsp;&nbsp;&nbsp;" + System.Web.HttpUtility.HtmlEncode(fileName);
-						testBody += "<br />\r\n";
-					}
-				}
-			}
-			if (message.IsBodyHtml)
-			{
-				testBody += message.Body;
-			}
-			else
-			{
-				testBody += "<pre>";
-				testBody += System.Web.HttpUtility.HtmlEncode(message.Body);
-				testBody += "</pre>";
-			}
-			mail.Body = testBody;
-			return mail;
+			SendMailFrom(Smtp.SmtpFrom, Smtp.ErrorRecipients, null, null, subject, body, isBodyHtml, preview, rethrow, new Attachment[0]);
 		}
 
-		public static void ApplyRecipients(MailMessage mail, string addFrom, string addTo, string addCc = null, string addBcc = null)
-		{
-			ApplyRecipients(mail, new MailAddress(addFrom), addTo, addCc, addBcc);
-		}
-
-		public static void ApplyRecipients(MailMessage mail, MailAddress addFrom, string addTo, string addCc = null, string addBcc = null)
-		{
-			mail.From = addFrom;
-			string[] list = null;
-			list = addTo.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
-			if (!string.IsNullOrEmpty(addTo))
-			{
-				foreach (string item in list)
-				{
-					if (string.IsNullOrEmpty(item.Trim())) continue;
-					mail.To.Add(new MailAddress(item.Trim()));
-				}
-			}
-			if (!string.IsNullOrEmpty(addCc))
-			{
-				list = addCc.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (string item in list)
-				{
-					if (string.IsNullOrEmpty(item.Trim())) continue;
-					mail.CC.Add(new MailAddress(item.Trim()));
-				}
-			}
-			if (!string.IsNullOrEmpty(addBcc))
-			{
-				list = addBcc.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
-				foreach (string item in list)
-				{
-					if (string.IsNullOrEmpty(item.Trim())) continue;
-					mail.Bcc.Add(new MailAddress(item.Trim()));
-				}
-			}
-		}
-
-		void ApplyAttachments(MailMessage message, params Attachment[] files)
-		{
-
-			if (files == null) return;
-			for (int i = 0; i < files.Count(); i++)
-			{
-				//    string file = files[i].Name;
-				//    if (string.IsNullOrEmpty(file)) continue;
-				//    if (System.IO.File.Exists(file))
-				//    {
-				//        // Specify as "application/octet-stream" so attachment will never will be embedded in body of email.
-				//        System.Net.Mail.Attachment att = new System.Net.Mail.Attachment(file, "application/octet-stream");
-				message.Attachments.Add(files[i]);
-				//}
-			}
-		}
-
-		public static EmailResult EmailValid(string email)
-		{
-			// evaluate email address for formal validity
-			email = email.Trim();
-			if (string.IsNullOrEmpty(email)) return EmailResult.Empty;
-			System.Text.RegularExpressions.Regex objRegX = new System.Text.RegularExpressions.Regex("^[\\w-\\.\\'+&]+@([\\w-]+\\.)+[\\w-]{2,6}$", System.Text.RegularExpressions.RegexOptions.None);
-			string[] emails = null;
-			emails = email.Split(';');
-			// take care of list of addresses separated by semicolon
-			foreach (string s in emails)
-			{
-				var sEmail = s.Trim();
-				if (string.IsNullOrEmpty(sEmail))
-				{
-					//The email address cannot end with a semicolon"
-					return EmailResult.Semicolon;
-				}
-				if (!objRegX.IsMatch(sEmail))
-				{
-					//"Not a valid email address."
-					return EmailResult.Invalid;
-				}
-			}
-
-			// If we got here, email is OK.
-			return EmailResult.OK;
-		}
-
-		public void SendMail(string @to, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
-		{
-			SendMailFrom(Smtp.SmtpFrom, @to, null, null, subject, body, isBodyHtml, preview, rethrow, new Attachment[0]);
-		}
-
-		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
-		{
-			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, new Attachment[0]);
-		}
-
-		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml, bool preview, bool rethrow, string[] attachments)
+		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false, string[] attachments = null)
 		{
 			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, GetAttachments(attachments));
 		}
@@ -806,8 +720,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			try
 			{
 				var mail = new MailMessage();
-				ApplyRecipients(mail, @from, @to, cc, bcc);
-				ApplyAttachments(mail, attachments);
+				SmtpClientEx.ApplyRecipients(mail, @from, @to, cc, bcc);
+				SmtpClientEx.ApplyAttachments(mail, attachments);
 				mail.IsBodyHtml = isBodyHtml;
 				mail.Subject = subject;
 				mail.Body = body;
