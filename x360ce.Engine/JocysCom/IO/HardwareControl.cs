@@ -1,0 +1,297 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using JocysCom.ClassLibrary.IO;
+using System.Linq;
+using JocysCom.ClassLibrary.Threading;
+
+namespace JocysCom.ClassLibrary.IO
+{
+	public partial class HardwareControl : UserControl
+	{
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public HardwareControl()
+		{
+			InitializeComponent();
+		}
+
+		DeviceDetector detector;
+
+		/// <summary>
+		/// In the form load we take an initial hardware inventory,
+		/// then hook the notifications so we can respond if any
+		/// device is added or removed.
+		/// </summary>
+		private void HardwareControl_Load(object sender, EventArgs e)
+		{
+			if (IsDesignMode) return;
+			UpdateButtons();
+			RefreshHardwareList();
+			detector = new DeviceDetector(false);
+			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
+		}
+
+		public bool IsDesignMode
+		{
+			get { return DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime; }
+		}
+
+		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
+		{
+			if (e.ChangeType == Win32.DBT.DBT_DEVNODES_CHANGED)
+			{
+				RefreshHardwareList();
+			}
+		}
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				// Whenever the form closes we need to unregister the
+				// hardware notifier.  Failure to do so could cause
+				// the system not to release some resources.  Calling
+				// this method if you are not currently hooking the
+				// hardware events has no ill effects so better to be
+				// safe than sorry.
+				if (detector != null)
+				{
+					detector.Dispose();
+					detector = null;
+				}
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// We are using this button to demonstrate enabling a
+		/// hardware device.  There are several things worth
+		/// noting.  First, just to be safe we are disabling
+		/// hardware notifications until we are done.  The UI
+		/// thread in .NET won't let the WndProc method run
+		/// to my knowledge while you are in here but if you 
+		/// were invoking these methods on different callers it
+		/// would be worthwhile to disable the notifications
+		/// during.  The call to SetDeviceState is designed 
+		/// to allow you to pass in multiple devices in an
+		/// array to disable, even though we are currently just
+		/// doing the selected one.  Also the search is a
+		/// sub-string search so be careful not to use something
+		/// so generic that it will affect more devices than
+		/// the one(s) you intended.  See the notes for the
+		/// SetDeviceState method in the library for some
+		/// important info.
+		/// </summary>
+		private void EnableButton_Click(object sender, EventArgs e)
+		{
+			EnableCurrentDevice(true);
+		}
+
+		/// <summary>
+		/// We are using this button to disable a device.
+		/// See remarks above.
+		/// </summary>
+		private void DisableButton_Click(object sender, EventArgs e)
+		{
+			EnableCurrentDevice(false);
+		}
+
+		void EnableCurrentDevice(bool enable)
+		{
+			var row = DeviceDataGridView.SelectedRows.Cast<DataGridViewRow>().First();
+			if (row != null)
+			{
+				var device = (DeviceInfo)row.DataBoundItem;
+				DeviceDetector.SetDeviceState(device.DeviceId, enable);
+			}
+		}
+
+		void UpdateButtons()
+		{
+			var selected = DeviceDataGridView.SelectedRows.Count > 0;
+			EnableButton.Enabled = selected;
+			DisableButton.Enabled = selected;
+			var canRemove = false;
+			if (selected)
+			{
+				var row = DeviceDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+				if (row != null)
+				{
+					var device = (DeviceInfo)row.DataBoundItem;
+					canRemove = device.IsRemovable;
+				}
+			}
+			RemoveButton.Enabled = canRemove;
+		}
+
+		private void DeviceDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			UpdateButtons();
+		}
+
+		private void RemoveButton_Click(object sender, EventArgs e)
+		{
+			var row = DeviceDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			if (row != null)
+			{
+				var device = (DeviceInfo)row.DataBoundItem;
+				if (device.IsRemovable)
+				{
+					DeviceDetector.RemoveDevice(device.DeviceId);
+				}
+			}
+		}
+
+		private void DeviceDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var item = (DeviceInfo)DeviceDataGridView.Rows[e.RowIndex].DataBoundItem;
+			if (item != null && item.IsRemovable && !item.IsPresent)
+			{
+				e.CellStyle.ForeColor = System.Drawing.SystemColors.GrayText;
+			}
+		}
+
+		private void ScanButton_Click(object sender, EventArgs e)
+		{
+			DeviceDetector.ScanForHardwareChanges();
+		}
+
+		private void FilterTextBox_TextChanged(object sender, EventArgs e)
+		{
+			RefreshFilterTimer();
+		}
+
+		#region Refresh Timer
+
+		object RefreshTimerLock = new object();
+		System.Timers.Timer RefreshTimer;
+
+		void RefreshHardwareList()
+		{
+			lock (RefreshTimerLock)
+			{
+				if (RefreshTimer == null)
+				{
+					RefreshTimer = new System.Timers.Timer();
+					RefreshTimer.SynchronizingObject = this;
+					RefreshTimer.AutoReset = false;
+					RefreshTimer.Interval = 520;
+					RefreshTimer.Elapsed += new System.Timers.ElapsedEventHandler(_RefreshTimer_Elapsed);
+				}
+			}
+			RefreshTimer.Stop();
+			RefreshTimer.Start();
+		}
+
+		DeviceInfo[] devices = new DeviceInfo[0];
+
+		void _RefreshTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			UpdateGrid(true);
+		}
+
+		object updateGridLock = new object();
+
+		void UpdateGrid(bool updateDevices)
+		{
+			lock (updateGridLock)
+			{
+				if (updateDevices)
+				{
+					devices = DeviceDetector.GetDevices();
+				}
+				var filter = FilterTextBox.Text.Trim();
+				var view = devices;
+				if (EnableFilterCheckBox.Checked && !string.IsNullOrEmpty(filter))
+				{
+					view = devices.Where(x =>
+						comp(x.ClassDescription, filter) ||
+						comp(x.Description, filter) ||
+						comp(x.Manufacturer, filter)).ToArray();
+				}
+				DeviceDataGridView.DataSource = view;
+				DeviceTabPage.Text = string.Format("{0} Devices on {1:yyyy-MM-dd HH:mm:ss}", view.Length, DateTime.Now);
+				var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
+				// Suppress repainting the TreeView until all the objects have been created.
+				treeView1.BeginUpdate();
+
+				foreach (DeviceInfo di in dis)
+				{
+					var tn = new TreeNode(System.Environment.MachineName);
+					tn.Tag = di;
+					treeView1.Nodes.Add(tn);
+					AddChildren(tn);
+				}
+
+				treeView1.EndUpdate();
+				treeView1.ExpandAll();
+			}
+		}
+
+		void AddChildren(TreeNode parentNode)
+		{
+			var parentDi = (DeviceInfo)parentNode.Tag;
+			var parentDeviceId = parentDi.DeviceId;
+			var dis = devices.Where(x => x.ParentDeviceId == parentDeviceId && x.IsPresent).OrderBy(x=>x.Description).ToArray();
+			foreach (DeviceInfo di in dis)
+			{
+				var tn = new TreeNode(di.Description);
+				tn.Tag = di;
+				parentNode.Nodes.Add(tn);
+				AddChildren(tn);
+			}
+		}
+
+		bool comp(string source, string value)
+		{
+			return source.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) >= 0;
+		}
+
+		#endregion
+
+		#region Filter Timer
+
+		System.Timers.Timer FilterTimer;
+		object FilterTimerLock = new object();
+
+		void RefreshFilterTimer()
+		{
+			lock (FilterTimerLock)
+			{
+				if (FilterTimer == null)
+				{
+					FilterTimer = new System.Timers.Timer();
+					FilterTimer.AutoReset = false;
+					FilterTimer.Interval = 520;
+					FilterTimer.SynchronizingObject = this;
+					FilterTimer.Elapsed += FilterTimer_Elapsed;
+				}
+			}
+			FilterTimer.Stop();
+			FilterTimer.Start();
+		}
+
+		private void FilterTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			UpdateGrid(false);
+		}
+
+		#endregion endregion
+
+		private void EnableFilderCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateGrid(false);
+		}
+	}
+}
