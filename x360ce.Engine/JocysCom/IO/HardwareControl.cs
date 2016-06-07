@@ -210,6 +210,7 @@ namespace JocysCom.ClassLibrary.IO
 				if (updateDevices)
 				{
 					devices = DeviceDetector.GetDevices();
+					var interfaces = DeviceDetector.GetHidInterfaces();
 				}
 				var filter = FilterTextBox.Text.Trim();
 				var view = devices;
@@ -218,24 +219,39 @@ namespace JocysCom.ClassLibrary.IO
 					view = devices.Where(x =>
 						comp(x.ClassDescription, filter) ||
 						comp(x.Description, filter) ||
-						comp(x.Manufacturer, filter)).ToArray();
+						comp(x.Manufacturer, filter) ||
+						comp(x.DeviceId, filter))
+						.ToArray();
 				}
 				DeviceDataGridView.DataSource = view;
 				DeviceTabPage.Text = string.Format("{0} Devices on {1:yyyy-MM-dd HH:mm:ss}", view.Length, DateTime.Now);
 				var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
-				// Suppress repainting the TreeView until all the objects have been created.
-				treeView1.BeginUpdate();
+				var classes = devices.Select(x => x.ClassGuid).Distinct();
 
+				// Suppress repainting the TreeView until all the objects have been created.
+				DevicesTreeView.Nodes.Clear();
+				TreeImageList.Images.Clear();
+				foreach (var cl in classes)
+				{
+					var icon = DeviceDetector.GetClassIcon(cl);
+					if (icon != null)
+					{
+						Image img = new Icon(icon, 16, 16).ToBitmap();
+						TreeImageList.Images.Add(cl.ToString(), img);
+					}
+				}
+				DevicesTreeView.BeginUpdate();
 				foreach (DeviceInfo di in dis)
 				{
 					var tn = new TreeNode(System.Environment.MachineName);
 					tn.Tag = di;
-					treeView1.Nodes.Add(tn);
+					tn.ImageKey = di.ClassGuid.ToString();
+					tn.SelectedImageKey = di.ClassGuid.ToString();
+					DevicesTreeView.Nodes.Add(tn);
 					AddChildren(tn);
 				}
-
-				treeView1.EndUpdate();
-				treeView1.ExpandAll();
+				DevicesTreeView.EndUpdate();
+				DevicesTreeView.ExpandAll();
 			}
 		}
 
@@ -243,11 +259,13 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			var parentDi = (DeviceInfo)parentNode.Tag;
 			var parentDeviceId = parentDi.DeviceId;
-			var dis = devices.Where(x => x.ParentDeviceId == parentDeviceId && x.IsPresent).OrderBy(x=>x.Description).ToArray();
+			var dis = devices.Where(x => x.ParentDeviceId == parentDeviceId && x.IsPresent).OrderBy(x => x.Description).ToArray();
 			foreach (DeviceInfo di in dis)
 			{
 				var tn = new TreeNode(di.Description);
 				tn.Tag = di;
+				tn.ImageKey = di.ClassGuid.ToString();
+				tn.SelectedImageKey = di.ClassGuid.ToString();
 				parentNode.Nodes.Add(tn);
 				AddChildren(tn);
 			}
@@ -292,6 +310,12 @@ namespace JocysCom.ClassLibrary.IO
 		private void EnableFilderCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateGrid(false);
+		}
+
+		private void DevicesTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			var di = (DeviceInfo)e.Node.Tag;
+			DeviceIdTextBox.Text = di.DeviceId;
 		}
 	}
 }

@@ -15,6 +15,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -23,11 +24,6 @@
 			this.DeviceTabControl = new System.Windows.Forms.TabControl();
 			this.DeviceTabPage = new System.Windows.Forms.TabPage();
 			this.DeviceDataGridView = new System.Windows.Forms.DataGridView();
-			this.ErrorLabel = new System.Windows.Forms.Label();
-			this.RemoveButton = new System.Windows.Forms.Button();
-			this.ScanButton = new System.Windows.Forms.Button();
-			this.FilterTextBox = new System.Windows.Forms.TextBox();
-			this.EnableFilterCheckBox = new System.Windows.Forms.CheckBox();
 			this.VendorIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProductIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.RevisionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -41,18 +37,33 @@
 			this.RemovableColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.treeView1 = new System.Windows.Forms.TreeView();
+			this.DevicesTreeView = new System.Windows.Forms.TreeView();
+			this.ErrorLabel = new System.Windows.Forms.Label();
+			this.RemoveButton = new System.Windows.Forms.Button();
+			this.ScanButton = new System.Windows.Forms.Button();
+			this.FilterTextBox = new System.Windows.Forms.TextBox();
+			this.EnableFilterCheckBox = new System.Windows.Forms.CheckBox();
+			this.TreeImageList = new System.Windows.Forms.ImageList(this.components);
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.label1 = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.DeviceIdTextBox = new System.Windows.Forms.TextBox();
+			this.DeviceIdLabel = new System.Windows.Forms.Label();
 			this.DeviceTabControl.SuspendLayout();
 			this.DeviceTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DeviceDataGridView)).BeginInit();
 			this.tabPage1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+			this.splitContainer1.Panel1.SuspendLayout();
+			this.splitContainer1.Panel2.SuspendLayout();
+			this.splitContainer1.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DisableButton
 			// 
 			this.DisableButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.DisableButton.Location = new System.Drawing.Point(662, 292);
+			this.DisableButton.Location = new System.Drawing.Point(662, 378);
 			this.DisableButton.Name = "DisableButton";
 			this.DisableButton.Size = new System.Drawing.Size(75, 23);
 			this.DisableButton.TabIndex = 7;
@@ -63,7 +74,7 @@
 			// EnableButton
 			// 
 			this.EnableButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.EnableButton.Location = new System.Drawing.Point(0, 292);
+			this.EnableButton.Location = new System.Drawing.Point(0, 378);
 			this.EnableButton.Name = "EnableButton";
 			this.EnableButton.Size = new System.Drawing.Size(75, 23);
 			this.EnableButton.TabIndex = 6;
@@ -81,7 +92,7 @@
 			this.DeviceTabControl.Location = new System.Drawing.Point(3, 29);
 			this.DeviceTabControl.Name = "DeviceTabControl";
 			this.DeviceTabControl.SelectedIndex = 0;
-			this.DeviceTabControl.Size = new System.Drawing.Size(734, 257);
+			this.DeviceTabControl.Size = new System.Drawing.Size(734, 343);
 			this.DeviceTabControl.TabIndex = 9;
 			// 
 			// DeviceTabPage
@@ -128,60 +139,6 @@
 			this.DeviceDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DeviceDataGridView_CellFormatting);
 			this.DeviceDataGridView.SelectionChanged += new System.EventHandler(this.DeviceDataGridView_SelectionChanged);
 			// 
-			// ErrorLabel
-			// 
-			this.ErrorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.ErrorLabel.AutoSize = true;
-			this.ErrorLabel.Location = new System.Drawing.Point(81, 297);
-			this.ErrorLabel.Name = "ErrorLabel";
-			this.ErrorLabel.Size = new System.Drawing.Size(55, 13);
-			this.ErrorLabel.TabIndex = 10;
-			this.ErrorLabel.Text = "ErrorLabel";
-			this.ErrorLabel.Visible = false;
-			// 
-			// RemoveButton
-			// 
-			this.RemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.RemoveButton.Location = new System.Drawing.Point(581, 292);
-			this.RemoveButton.Name = "RemoveButton";
-			this.RemoveButton.Size = new System.Drawing.Size(75, 23);
-			this.RemoveButton.TabIndex = 11;
-			this.RemoveButton.Text = "Remove";
-			this.RemoveButton.UseVisualStyleBackColor = true;
-			this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
-			// 
-			// ScanButton
-			// 
-			this.ScanButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ScanButton.Location = new System.Drawing.Point(500, 292);
-			this.ScanButton.Name = "ScanButton";
-			this.ScanButton.Size = new System.Drawing.Size(75, 23);
-			this.ScanButton.TabIndex = 11;
-			this.ScanButton.Text = "Scan";
-			this.ScanButton.UseVisualStyleBackColor = true;
-			this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
-			// 
-			// FilterTextBox
-			// 
-			this.FilterTextBox.Location = new System.Drawing.Point(96, 3);
-			this.FilterTextBox.Name = "FilterTextBox";
-			this.FilterTextBox.Size = new System.Drawing.Size(222, 20);
-			this.FilterTextBox.TabIndex = 13;
-			this.FilterTextBox.TextChanged += new System.EventHandler(this.FilterTextBox_TextChanged);
-			// 
-			// EnableFilterCheckBox
-			// 
-			this.EnableFilterCheckBox.AutoSize = true;
-			this.EnableFilterCheckBox.Checked = true;
-			this.EnableFilterCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.EnableFilterCheckBox.Location = new System.Drawing.Point(3, 5);
-			this.EnableFilterCheckBox.Name = "EnableFilterCheckBox";
-			this.EnableFilterCheckBox.Size = new System.Drawing.Size(87, 17);
-			this.EnableFilterCheckBox.TabIndex = 14;
-			this.EnableFilterCheckBox.Text = "Enable Filter:";
-			this.EnableFilterCheckBox.UseVisualStyleBackColor = true;
-			this.EnableFilterCheckBox.CheckedChanged += new System.EventHandler(this.EnableFilderCheckBox_CheckedChanged);
-			// 
 			// VendorIdColumn
 			// 
 			this.VendorIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -219,7 +176,6 @@
 			this.ClassGuidColumn.HeaderText = "Class GUID";
 			this.ClassGuidColumn.Name = "ClassGuidColumn";
 			this.ClassGuidColumn.Visible = false;
-			this.ClassGuidColumn.Width = 87;
 			// 
 			// ClassDescriptionColumn
 			// 
@@ -227,7 +183,7 @@
 			this.ClassDescriptionColumn.DataPropertyName = "ClassDescription";
 			this.ClassDescriptionColumn.HeaderText = "Class Description";
 			this.ClassDescriptionColumn.Name = "ClassDescriptionColumn";
-			this.ClassDescriptionColumn.Width = 113;
+			this.ClassDescriptionColumn.Width = 104;
 			// 
 			// DeviceDescriptionColumn
 			// 
@@ -252,7 +208,6 @@
 			this.IsHiddenColumn.HeaderText = "Hidden";
 			this.IsHiddenColumn.Name = "IsHiddenColumn";
 			this.IsHiddenColumn.Visible = false;
-			this.IsHiddenColumn.Width = 66;
 			// 
 			// PresentColumn
 			// 
@@ -261,7 +216,6 @@
 			this.PresentColumn.HeaderText = "Present";
 			this.PresentColumn.Name = "PresentColumn";
 			this.PresentColumn.Visible = false;
-			this.PresentColumn.Width = 68;
 			// 
 			// StatusColumn
 			// 
@@ -285,27 +239,110 @@
 			this.DeviceIdColumn.DataPropertyName = "DeviceId";
 			this.DeviceIdColumn.HeaderText = "Device ID";
 			this.DeviceIdColumn.Name = "DeviceIdColumn";
-			this.DeviceIdColumn.Width = 80;
+			this.DeviceIdColumn.Width = 74;
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.splitContainer1);
 			this.tabPage1.Controls.Add(this.label1);
-			this.tabPage1.Controls.Add(this.treeView1);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(726, 231);
+			this.tabPage1.Size = new System.Drawing.Size(726, 317);
 			this.tabPage1.TabIndex = 2;
 			this.tabPage1.Text = "Tree";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
-			// treeView1
+			// DevicesTreeView
 			// 
-			this.treeView1.Dock = System.Windows.Forms.DockStyle.Left;
-			this.treeView1.Location = new System.Drawing.Point(3, 3);
-			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(401, 225);
-			this.treeView1.TabIndex = 0;
+			this.DevicesTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.DevicesTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DevicesTreeView.ImageIndex = 0;
+			this.DevicesTreeView.ImageList = this.TreeImageList;
+			this.DevicesTreeView.Location = new System.Drawing.Point(0, 0);
+			this.DevicesTreeView.Name = "DevicesTreeView";
+			this.DevicesTreeView.SelectedImageIndex = 0;
+			this.DevicesTreeView.Size = new System.Drawing.Size(386, 311);
+			this.DevicesTreeView.TabIndex = 0;
+			this.DevicesTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.DevicesTreeView_AfterSelect);
+			// 
+			// ErrorLabel
+			// 
+			this.ErrorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.ErrorLabel.AutoSize = true;
+			this.ErrorLabel.Location = new System.Drawing.Point(81, 383);
+			this.ErrorLabel.Name = "ErrorLabel";
+			this.ErrorLabel.Size = new System.Drawing.Size(55, 13);
+			this.ErrorLabel.TabIndex = 10;
+			this.ErrorLabel.Text = "ErrorLabel";
+			this.ErrorLabel.Visible = false;
+			// 
+			// RemoveButton
+			// 
+			this.RemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.RemoveButton.Location = new System.Drawing.Point(581, 378);
+			this.RemoveButton.Name = "RemoveButton";
+			this.RemoveButton.Size = new System.Drawing.Size(75, 23);
+			this.RemoveButton.TabIndex = 11;
+			this.RemoveButton.Text = "Remove";
+			this.RemoveButton.UseVisualStyleBackColor = true;
+			this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
+			// 
+			// ScanButton
+			// 
+			this.ScanButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.ScanButton.Location = new System.Drawing.Point(500, 378);
+			this.ScanButton.Name = "ScanButton";
+			this.ScanButton.Size = new System.Drawing.Size(75, 23);
+			this.ScanButton.TabIndex = 11;
+			this.ScanButton.Text = "Scan";
+			this.ScanButton.UseVisualStyleBackColor = true;
+			this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
+			// 
+			// FilterTextBox
+			// 
+			this.FilterTextBox.Location = new System.Drawing.Point(96, 3);
+			this.FilterTextBox.Name = "FilterTextBox";
+			this.FilterTextBox.Size = new System.Drawing.Size(222, 20);
+			this.FilterTextBox.TabIndex = 13;
+			this.FilterTextBox.TextChanged += new System.EventHandler(this.FilterTextBox_TextChanged);
+			// 
+			// EnableFilterCheckBox
+			// 
+			this.EnableFilterCheckBox.AutoSize = true;
+			this.EnableFilterCheckBox.Checked = true;
+			this.EnableFilterCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.EnableFilterCheckBox.Location = new System.Drawing.Point(3, 5);
+			this.EnableFilterCheckBox.Name = "EnableFilterCheckBox";
+			this.EnableFilterCheckBox.Size = new System.Drawing.Size(87, 17);
+			this.EnableFilterCheckBox.TabIndex = 14;
+			this.EnableFilterCheckBox.Text = "Enable Filter:";
+			this.EnableFilterCheckBox.UseVisualStyleBackColor = true;
+			this.EnableFilterCheckBox.CheckedChanged += new System.EventHandler(this.EnableFilderCheckBox_CheckedChanged);
+			// 
+			// TreeImageList
+			// 
+			this.TreeImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			this.TreeImageList.ImageSize = new System.Drawing.Size(16, 16);
+			this.TreeImageList.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// splitContainer1
+			// 
+			this.splitContainer1.BackColor = System.Drawing.SystemColors.Control;
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+			this.splitContainer1.Name = "splitContainer1";
+			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add(this.DevicesTreeView);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.Controls.Add(this.panel1);
+			this.splitContainer1.Size = new System.Drawing.Size(720, 311);
+			this.splitContainer1.SplitterDistance = 386;
+			this.splitContainer1.TabIndex = 2;
 			// 
 			// label1
 			// 
@@ -315,6 +352,33 @@
 			this.label1.Size = new System.Drawing.Size(35, 13);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "label1";
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.DeviceIdLabel);
+			this.panel1.Controls.Add(this.DeviceIdTextBox);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(330, 311);
+			this.panel1.TabIndex = 0;
+			// 
+			// DeviceIdTextBox
+			// 
+			this.DeviceIdTextBox.Location = new System.Drawing.Point(3, 226);
+			this.DeviceIdTextBox.Multiline = true;
+			this.DeviceIdTextBox.Name = "DeviceIdTextBox";
+			this.DeviceIdTextBox.Size = new System.Drawing.Size(324, 82);
+			this.DeviceIdTextBox.TabIndex = 0;
+			// 
+			// DeviceIdLabel
+			// 
+			this.DeviceIdLabel.AutoSize = true;
+			this.DeviceIdLabel.Location = new System.Drawing.Point(4, 207);
+			this.DeviceIdLabel.Name = "DeviceIdLabel";
+			this.DeviceIdLabel.Size = new System.Drawing.Size(58, 13);
+			this.DeviceIdLabel.TabIndex = 1;
+			this.DeviceIdLabel.Text = "Device ID:";
 			// 
 			// HardwareControl
 			// 
@@ -329,13 +393,19 @@
 			this.Controls.Add(this.DisableButton);
 			this.Controls.Add(this.EnableButton);
 			this.Name = "HardwareControl";
-			this.Size = new System.Drawing.Size(740, 318);
+			this.Size = new System.Drawing.Size(740, 404);
 			this.Load += new System.EventHandler(this.HardwareControl_Load);
 			this.DeviceTabControl.ResumeLayout(false);
 			this.DeviceTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DeviceDataGridView)).EndInit();
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
+			this.splitContainer1.Panel1.ResumeLayout(false);
+			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+			this.splitContainer1.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -366,7 +436,12 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn RemovableColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
 		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TreeView treeView1;
+		private System.Windows.Forms.TreeView DevicesTreeView;
+		private System.Windows.Forms.ImageList TreeImageList;
+		private System.Windows.Forms.SplitContainer splitContainer1;
+		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label DeviceIdLabel;
+		private System.Windows.Forms.TextBox DeviceIdTextBox;
 	}
 }

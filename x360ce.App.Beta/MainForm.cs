@@ -122,7 +122,7 @@ namespace x360ce.App
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
-
+			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
 		}
 
 		IList<Engine.Data.Program> Programs_FilterList(IList<Engine.Data.Program> items)

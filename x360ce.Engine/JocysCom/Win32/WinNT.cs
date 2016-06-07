@@ -10,6 +10,7 @@ namespace JocysCom.ClassLibrary.Win32
 	public partial class WinNT
 	{
 		public const int ERROR_INSUFFICIENT_BUFFER = 122;
+		public const uint Overlapped = 0x40000000;
 
 		////////////////////////////////////////////////////////////////////////
 		//                                                                    //
@@ -37,12 +38,23 @@ namespace JocysCom.ClassLibrary.Win32
 		// MaximumAllowed access type
 		public const uint MAXIMUM_ALLOWED = 0x02000000;
 
-		//  These are the generic rights.
+		//  Generic access rights.
 		public const uint GENERIC_READ = 0x80000000;
 		public const uint GENERIC_WRITE = 0x40000000;
 		public const uint GENERIC_EXECUTE = 0x20000000;
 		public const uint GENERIC_ALL = 0x10000000;
 
+		//  Share modes.
+		public const uint FILE_SHARE_READ = 0x00000001;
+		public const uint FILE_SHARE_WRITE = 0x00000002;
+		public const uint FILE_SHARE_DELETE = 0x00000004;
+
+		//  Dispositions.
+		public const uint CREATE_NEW = 1;
+		public const uint CREATE_ALWAYS = 2;
+		public const uint OPEN_EXISTING = 3;
+		public const uint OPEN_ALWAYS = 4;
+		public const uint TRUNCATE_EXISTING = 5;
 
 		////////////////////////////////////////////////////////////////////
 		//                                                                //

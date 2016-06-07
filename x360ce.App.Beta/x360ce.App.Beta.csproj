@@ -274,10 +274,10 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\BaseForm.cs">
+    <Compile Include="Forms\BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\BaseForm.Designer.cs">
+    <Compile Include="Forms\BaseForm.Designer.cs">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\CloudStorageUserControl.cs">
@@ -304,16 +304,16 @@
     <Compile Include="Controls\GameSettingDetailsUserControl.Designer.cs">
       <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LoadPresetsForm.cs">
+    <Compile Include="Forms\LoadPresetsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\LoadPresetsForm.Designer.cs">
+    <Compile Include="Forms\LoadPresetsForm.Designer.cs">
       <DependentUpon>LoadPresetsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MapDeviceToControllerForm.cs">
+    <Compile Include="Forms\MapDeviceToControllerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\MapDeviceToControllerForm.Designer.cs">
+    <Compile Include="Forms\MapDeviceToControllerForm.Designer.cs">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadControl.VirtualDevice.cs">
@@ -332,16 +332,16 @@
       <DependentUpon>LoadingCircle.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoadingCircleToolStripMenuItem.cs" />
-    <Compile Include="Controls\MessageBoxForm.cs">
+    <Compile Include="Forms\MessageBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\MessageBoxForm.Designer.cs">
+    <Compile Include="Forms\MessageBoxForm.Designer.cs">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\NewDeviceForm.cs">
+    <Compile Include="Forms\NewDeviceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\NewDeviceForm.Designer.cs">
+    <Compile Include="Forms\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsControl.cs">
@@ -377,10 +377,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\SettingsMapItem.cs" />
-    <Compile Include="Controls\WarningsForm.cs">
+    <Compile Include="Forms\WarningsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\WarningsForm.Designer.cs">
+    <Compile Include="Forms\WarningsForm.Designer.cs">
       <DependentUpon>WarningsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Issues\DirectXIssue.cs" />
@@ -391,7 +391,7 @@
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\BaseForm.resx">
+    <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CloudStorageUserControl.resx">
@@ -407,19 +407,19 @@
     <EmbeddedResource Include="Controls\GameSettingDetailsUserControl.resx">
       <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LoadPresetsForm.resx">
+    <EmbeddedResource Include="Forms\LoadPresetsForm.resx">
       <DependentUpon>LoadPresetsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MapDeviceToControllerForm.resx">
+    <EmbeddedResource Include="Forms\MapDeviceToControllerForm.resx">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ThumbUserControl.resx">
       <DependentUpon>ThumbUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MessageBoxForm.resx">
+    <EmbeddedResource Include="Forms\MessageBoxForm.resx">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\NewDeviceForm.resx">
+    <EmbeddedResource Include="Forms\NewDeviceForm.resx">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -435,15 +435,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="Controls\WarningsForm.resx">
+    <EmbeddedResource Include="Forms\WarningsForm.resx">
       <DependentUpon>WarningsForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
@@ -463,6 +458,11 @@
     </None>
     <EmbeddedResource Include="Images\xboxControllerFront.png" />
     <EmbeddedResource Include="Images\xboxControllerTop.png" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -535,14 +535,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Information.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Information.ico" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question.ico" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
+    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterface.dll" />
     <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterfaceWrap.dll" />
     <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterface.dll" />

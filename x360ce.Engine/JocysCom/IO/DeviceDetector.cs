@@ -61,6 +61,9 @@ namespace JocysCom.ClassLibrary.IO
 		[DllImport("setupapi.dll")]
 		public static extern CR CM_Get_Parent(out UInt32 pdnDevInst, UInt32 dnDevInst, int ulFlags);
 
+		[DllImport("setupapi.dll")]
+		static extern int SetupDiLoadClassIcon(ref Guid classGuid, out IntPtr hIcon, out int index);
+
 		/// <summary>
 		/// http://msdn.microsoft.com/en-gb/library/windows/hardware/ff538517%28v=vs.85%29.aspx
 		/// </summary>
@@ -407,6 +410,143 @@ namespace JocysCom.ClassLibrary.IO
 			var result = SetupDiOpenDeviceInfo(deviceInfoSet, deviceInstanceId, IntPtr.Zero, 0, ref da);
 			if (!result) return null;
 			return da;
+		}
+
+		public static System.Drawing.Icon GetClassIcon(Guid classGuid)
+		{
+			IntPtr hIcon;
+			int ix;
+			System.Drawing.Icon icon = null;
+			if (SetupDiLoadClassIcon(ref classGuid, out hIcon, out ix) != 0)
+			{
+				icon = System.Drawing.Icon.FromHandle(hIcon);
+			}
+			return icon;
+		}
+
+		public static DeviceInfo[] GetHidInterfaces()
+		{
+			var list = new List<DeviceInfo>();
+			Guid hidGuid = Guid.Empty;
+			HidD_GetHidGuid(ref hidGuid);
+			int requiredSize3 = 0;
+			//List<string> devicePathNames3 = new List<string>();
+			var interfaceData = new SP_DEVICE_INTERFACE_DATA();
+			interfaceData.Initialize();
+			var deviceInfoSet = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE);
+			for (int i2 = 0; SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
+			{
+				bool success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, IntPtr.Zero);
+				IntPtr ptrDetails = Marshal.AllocHGlobal(requiredSize3);
+				Marshal.WriteInt32(ptrDetails, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
+				success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, IntPtr.Zero);
+				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
+				var deviceId = interfaceDetail.DevicePath;
+				Marshal.FreeHGlobal(ptrDetails);
+				var accessRights = WinNT.GENERIC_READ | WinNT.GENERIC_WRITE;
+				var shareModes = WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE;
+				// Open the device as a file so that we can query it with HID and read/write to it.
+				var devHandle = CreateFile(
+					interfaceDetail.DevicePath,
+					accessRights,
+					shareModes,
+					IntPtr.Zero,
+					WinNT.OPEN_EXISTING,
+					WinNT.Overlapped,
+					IntPtr.Zero
+				);
+				if (devHandle.IsInvalid) continue;
+				var ha = new HIDD_ATTRIBUTES();
+				ha.Size = Marshal.SizeOf(ha);
+				var success2 = HidD_GetAttributes(devHandle, ref ha);
+				if (success2)
+				{
+					//DiscoveredDevice discoveredDevice;
+					IntPtr preparsedDataPtr = new IntPtr();
+					HIDP_CAPS caps = new HIDP_CAPS();
+					// We have to read out the 'preparsed data'.
+					HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
+					// feed that to GetCaps.
+					HidP_GetCaps(preparsedDataPtr, ref caps);
+					// Free the 'preparsed data'.
+					HidD_FreePreparsedData(ref preparsedDataPtr);
+					// If Usage is 1, we found the right instance of the device (there's three of them).
+					if (caps.Usage == 1)
+					{
+						// This could fail if the device was recently attached.
+						var serBuilder = new StringBuilder(253);
+						var vidBuilder = new StringBuilder(253);
+						var pidBuilder = new StringBuilder(253);
+						var serialNumber = HidD_GetSerialNumberString(devHandle, serBuilder, (uint)serBuilder.Capacity)
+							? serBuilder.ToString() : "";
+						var vendor = HidD_GetManufacturerString(devHandle, vidBuilder, (uint)vidBuilder.Capacity)
+							? vidBuilder.ToString() : "";
+						var product = HidD_GetProductString(devHandle, pidBuilder, (uint)pidBuilder.Capacity)
+							? pidBuilder.ToString() : "";
+					}
+
+				}
+				SetupDiDestroyDeviceInfoList(deviceInfoSet);
+				deviceInfoSet = IntPtr.Zero;
+				//var deviceInfoData = GetDeviceInfo(deviceId);
+				//if (deviceInfoData.HasValue)
+				//{
+				//	// Get device information.
+				//	uint parentDeviceInstance = 0;
+				//	string parentDeviceId = null;
+				//	var CRResult = CM_Get_Parent(out parentDeviceInstance, deviceInfoData.Value.DevInst, 0);
+				//	if (CRResult == CR.CR_SUCCESS)
+				//	{
+				//		parentDeviceId = GetDeviceId(parentDeviceInstance);
+				//	}
+				//	var device = GetDeviceInfo(deviceInfoSet, deviceInfoData.Value, deviceId);
+				//	list.Add(device);
+				//}
+
+				//var deviceName = GetDeviceDescription(deviceInfoSet, deviceInfoData);
+				//var deviceManufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
+				//var deviceClassGuid = deviceInfoData.ClassGuid;
+				//var classDescription = GetClassDescription(deviceClassGuid);
+				//Win32.DeviceNodeStatus status;
+				//GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
+				//uint vid;
+				//uint pid;
+				//uint rev;
+				//var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out vid, out pid, out rev);
+				////if (deviceId.Contains("2FBF"))
+				////{
+				////	var sb = new StringBuilder();
+				////	var props = (SPDRP[])Enum.GetValues(typeof(SPDRP));
+				////	foreach (var item in props)
+				////	{
+				////		if (new[] { SPDRP.SPDRP_UNUSED0, SPDRP.SPDRP_UNUSED1, SPDRP.SPDRP_UNUSED2 }.Contains(item))
+				////		{
+				////			continue;
+				////		}
+				////		try
+				////		{
+				////			var value = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, item);
+				////			sb.AppendFormat("{0}={1}\r\n", item, value);
+				////		}
+				////		catch (Exception ex)
+				////		{
+				////			sb.AppendFormat("{0}={1}\r\n", item, ex.ToString());
+				////		}
+				////	}
+				////}
+				////var device = new DeviceInfo(deviceId, parentDeviceId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
+				////return device;
+
+
+				//var pathX = structure3.DevicePath.Replace("#", "\\").ToUpper();
+				//if (pathX.Contains(currentDeviceId))
+				//{
+
+
+				//}
+
+			}
+			return list.ToArray();
 		}
 
 		public static DeviceInfo[] GetDevices()

@@ -148,6 +148,12 @@
     <Compile Include="JocysCom\Common\TraceFormat.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
+    <Compile Include="JocysCom\Controls\InfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Controls\InfoForm.Designer.cs">
+      <DependentUpon>InfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
@@ -174,6 +180,16 @@
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
     <Compile Include="JocysCom\Mail\UserToken.cs" />
     <Compile Include="JocysCom\Mail\WebMail.cs" />
+    <Compile Include="JocysCom\Processes\BaseHook.cs" />
+    <Compile Include="JocysCom\Processes\CURSORINFO.cs" />
+    <Compile Include="JocysCom\Processes\HookType.cs" />
+    <Compile Include="JocysCom\Processes\MouseHook.cs" />
+    <Compile Include="JocysCom\Processes\MouseHookEventArgs.cs" />
+    <Compile Include="JocysCom\Processes\MouseKey.cs" />
+    <Compile Include="JocysCom\Processes\MouseTouchEventArgs.cs" />
+    <Compile Include="JocysCom\Processes\MSLLHOOKSTRUCT.cs" />
+    <Compile Include="JocysCom\Processes\TestUnion.cs" />
+    <Compile Include="JocysCom\Processes\TOUCHINPUT.cs" />
     <Compile Include="JocysCom\Resources\DataPriority.cs" />
     <Compile Include="JocysCom\Resources\Data\ResourcesModel.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -222,6 +238,7 @@
     <Compile Include="JocysCom\Win32\DIGCF.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cs" />
     <Compile Include="JocysCom\Win32\POINT.cs" />
+    <Compile Include="JocysCom\Win32\PSP_CLASSIMAGE_DATA.cs" />
     <Compile Include="JocysCom\Win32\RECT.cs" />
     <Compile Include="JocysCom\Win32\REG.cs" />
     <Compile Include="JocysCom\Win32\SafeLibraryHandle.cs" />
@@ -286,6 +303,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="JocysCom\Controls\InfoForm.resx">
+      <DependentUpon>InfoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </EmbeddedResource>

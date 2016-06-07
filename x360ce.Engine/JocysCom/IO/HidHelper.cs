@@ -22,26 +22,69 @@ namespace JocysCom.ClassLibrary.IO
 		internal ushort VersionNumber;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct HIDP_CAPS
+	{
+		public short Usage;
+		public short UsagePage;
+		public short InputReportByteLength;
+		public short OutputReportByteLength;
+		public short FeatureReportByteLength;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
+		public short[] Reserved;
+		public short NumberLinkCollectionNodes;
+		public short NumberInputButtonCaps;
+		public short NumberInputValueCaps;
+		public short NumberInputDataIndices;
+		public short NumberOutputButtonCaps;
+		public short NumberOutputValueCaps;
+		public short NumberOutputDataIndices;
+		public short NumberFeatureButtonCaps;
+		public short NumberFeatureValueCaps;
+		public short NumberFeatureDataIndices;
+
+	}
+
 	public partial class DeviceDetector
 	{
 
 		[DllImport("hid.dll", SetLastError = true)]
-		internal static extern void HidD_GetHidGuid(out Guid HidGuid);
+		public static extern void HidD_GetHidGuid(ref Guid hidGuid);
 
 		[DllImport("hid.dll", SetLastError = true)]
-		internal static extern bool HidD_GetAttributes(SafeFileHandle HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
+		public static extern Boolean HidD_GetAttributes(SafeFileHandle HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
+
+		[DllImport("hid.dll", SetLastError = true)]
+		public static extern Boolean HidD_GetSerialNumberString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer, uint BufferLength);
 
 		[DllImport("hid.dll", CharSet = CharSet.Unicode)]
-		internal static extern bool HidD_GetProductString(SafeFileHandle hidDeviceObject, ref byte[] lpReportBuffer, int ReportBufferLength);
+		internal static extern bool HidD_GetProductString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer, uint BufferLength);
 
 		[DllImport("hid.dll", CharSet = CharSet.Unicode)]
-		internal static extern bool HidD_GetManufacturerString(SafeFileHandle hidDeviceObject, ref byte[] lpReportBuffer, int ReportBufferLength);
+		internal static extern bool HidD_GetManufacturerString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer, uint BufferLength);
 
-		[DllImport("hid.dll", CharSet = CharSet.Unicode)]
-		internal static extern bool HidD_GetSerialNumberString(SafeFileHandle hidDeviceObject, ref byte[] lpReportBuffer, int reportBufferLength);
+		[DllImport("hid.dll", SetLastError = true)]
+		public static extern bool HidD_GetPreparsedData(SafeFileHandle HidDeviceObject, ref IntPtr PreparsedData);
 
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		internal static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, int hTemplateFile);
+		[DllImport("hid.dll", SetLastError = true)]
+		public static extern bool HidD_FreePreparsedData(ref IntPtr PreparsedData);
+
+		[DllImport("hid.dll", SetLastError = true)]
+		public static extern int HidP_GetCaps(IntPtr preparsedData, ref HIDP_CAPS capabilities);
+
+		[DllImport("hid.dll", SetLastError = true)]
+		public static extern bool HidD_FlushQueue(SafeFileHandle HidDeviceObject);
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern SafeFileHandle CreateFile(
+			string lpFileName,
+			uint dwDesiredAccess,
+			uint dwShareMode,
+			IntPtr lpSecurityAttributes,
+			uint dwCreationDisposition,
+			uint dwFlagsAndAttributes,
+			IntPtr hTemplateFile
+		);
 
 		[DllImport("setupapi.dll", SetLastError = true)]
 		internal static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData, ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
