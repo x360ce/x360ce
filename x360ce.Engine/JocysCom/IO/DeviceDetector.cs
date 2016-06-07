@@ -430,18 +430,24 @@ namespace JocysCom.ClassLibrary.IO
 			Guid hidGuid = Guid.Empty;
 			HidD_GetHidGuid(ref hidGuid);
 			int requiredSize3 = 0;
-			//List<string> devicePathNames3 = new List<string>();
+			List<DeviceInfo> dis = new List<DeviceInfo>();
+			List<string> devicePathNames3 = new List<string>();
 			var interfaceData = new SP_DEVICE_INTERFACE_DATA();
+			List<string> serials = new List<string>();
 			interfaceData.Initialize();
-			var deviceInfoSet = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE);
+			var deviceInfoSet = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_DEVICEINTERFACE);
 			for (int i2 = 0; SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
 			{
+				var deviceInfoData = new SP_DEVINFO_DATA();
+				deviceInfoData.Initialize();
 				bool success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, IntPtr.Zero);
 				IntPtr ptrDetails = Marshal.AllocHGlobal(requiredSize3);
 				Marshal.WriteInt32(ptrDetails, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
-				success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, IntPtr.Zero);
+				success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
 				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
-				var deviceId = interfaceDetail.DevicePath;
+				var devicePath = interfaceDetail.DevicePath;
+				var deviceId = GetDeviceId(deviceInfoData.DevInst);
+				devicePathNames3.Add(devicePath);
 				Marshal.FreeHGlobal(ptrDetails);
 				var accessRights = WinNT.GENERIC_READ | WinNT.GENERIC_WRITE;
 				var shareModes = WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE;
@@ -459,93 +465,50 @@ namespace JocysCom.ClassLibrary.IO
 				var ha = new HIDD_ATTRIBUTES();
 				ha.Size = Marshal.SizeOf(ha);
 				var success2 = HidD_GetAttributes(devHandle, ref ha);
+				string serial = "";
+				string vendor = "";
+				string product = "";
+				string phdesc = "";
 				if (success2)
 				{
-					//DiscoveredDevice discoveredDevice;
 					IntPtr preparsedDataPtr = new IntPtr();
 					HIDP_CAPS caps = new HIDP_CAPS();
-					// We have to read out the 'preparsed data'.
+					// Read out the 'preparsed data'.
 					HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
 					// feed that to GetCaps.
 					HidP_GetCaps(preparsedDataPtr, ref caps);
 					// Free the 'preparsed data'.
 					HidD_FreePreparsedData(ref preparsedDataPtr);
-					// If Usage is 1, we found the right instance of the device (there's three of them).
-					if (caps.Usage == 1)
-					{
-						// This could fail if the device was recently attached.
-						var serBuilder = new StringBuilder(253);
-						var vidBuilder = new StringBuilder(253);
-						var pidBuilder = new StringBuilder(253);
-						var serialNumber = HidD_GetSerialNumberString(devHandle, serBuilder, (uint)serBuilder.Capacity)
-							? serBuilder.ToString() : "";
-						var vendor = HidD_GetManufacturerString(devHandle, vidBuilder, (uint)vidBuilder.Capacity)
-							? vidBuilder.ToString() : "";
-						var product = HidD_GetProductString(devHandle, pidBuilder, (uint)pidBuilder.Capacity)
-							? pidBuilder.ToString() : "";
-					}
+					// This could fail if the device was recently attached.
+					var serBuilder = new StringBuilder(253);
+					var vidBuilder = new StringBuilder(253);
+					var pidBuilder = new StringBuilder(253);
+					var phdBuilder = new StringBuilder(253);
 
+					serial = HidD_GetSerialNumberString(devHandle, serBuilder, (uint)serBuilder.Capacity)
+						? serBuilder.ToString() : "";
+					vendor = HidD_GetManufacturerString(devHandle, vidBuilder, (uint)vidBuilder.Capacity)
+						? vidBuilder.ToString() : "";
+					product = HidD_GetProductString(devHandle, pidBuilder, (uint)pidBuilder.Capacity)
+						? pidBuilder.ToString() : "";
+					phdesc = HidD_GetPhysicalDescriptor(devHandle, phdBuilder, (uint)phdBuilder.Capacity)
+						? phdBuilder.ToString() : "";
 				}
-				SetupDiDestroyDeviceInfoList(deviceInfoSet);
-				deviceInfoSet = IntPtr.Zero;
-				//var deviceInfoData = GetDeviceInfo(deviceId);
-				//if (deviceInfoData.HasValue)
-				//{
-				//	// Get device information.
-				//	uint parentDeviceInstance = 0;
-				//	string parentDeviceId = null;
-				//	var CRResult = CM_Get_Parent(out parentDeviceInstance, deviceInfoData.Value.DevInst, 0);
-				//	if (CRResult == CR.CR_SUCCESS)
-				//	{
-				//		parentDeviceId = GetDeviceId(parentDeviceInstance);
-				//	}
-				//	var device = GetDeviceInfo(deviceInfoSet, deviceInfoData.Value, deviceId);
-				//	list.Add(device);
-				//}
+				uint parentDeviceInstance = 0;
+				string parentDeviceId = null;
+				var CRResult = CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
+				if (CRResult == CR.CR_SUCCESS)
+				{
+					parentDeviceId = GetDeviceId(parentDeviceInstance);
+				}
 
-				//var deviceName = GetDeviceDescription(deviceInfoSet, deviceInfoData);
-				//var deviceManufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
-				//var deviceClassGuid = deviceInfoData.ClassGuid;
-				//var classDescription = GetClassDescription(deviceClassGuid);
-				//Win32.DeviceNodeStatus status;
-				//GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
-				//uint vid;
-				//uint pid;
-				//uint rev;
-				//var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out vid, out pid, out rev);
-				////if (deviceId.Contains("2FBF"))
-				////{
-				////	var sb = new StringBuilder();
-				////	var props = (SPDRP[])Enum.GetValues(typeof(SPDRP));
-				////	foreach (var item in props)
-				////	{
-				////		if (new[] { SPDRP.SPDRP_UNUSED0, SPDRP.SPDRP_UNUSED1, SPDRP.SPDRP_UNUSED2 }.Contains(item))
-				////		{
-				////			continue;
-				////		}
-				////		try
-				////		{
-				////			var value = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, item);
-				////			sb.AppendFormat("{0}={1}\r\n", item, value);
-				////		}
-				////		catch (Exception ex)
-				////		{
-				////			sb.AppendFormat("{0}={1}\r\n", item, ex.ToString());
-				////		}
-				////	}
-				////}
-				////var device = new DeviceInfo(deviceId, parentDeviceId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
-				////return device;
-
-
-				//var pathX = structure3.DevicePath.Replace("#", "\\").ToUpper();
-				//if (pathX.Contains(currentDeviceId))
-				//{
-
-
-				//}
-
+				var di = new DeviceInfo(deviceId, parentDeviceId, devicePath, vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
+				dis.Add(di);
+				serials.Add(phdesc);
+				devHandle.Close();
 			}
+			SetupDiDestroyDeviceInfoList(deviceInfoSet);
+			deviceInfoSet = IntPtr.Zero;
 			return list.ToArray();
 		}
 
@@ -614,70 +577,51 @@ namespace JocysCom.ClassLibrary.IO
 					if (vid > 0 && device.VendorId != vid) continue;
 					if (pid > 0 && device.ProductId != pid) continue;
 					if (rev > 0 && device.Revision != rev) continue;
-
-					//var parentDeviceInfoData = GetDeviceInfo(deviceInfoSet, parentDeviceId).Value;
-					//var parentDevice = GetDeviceInfo(deviceInfoSet, parentDeviceInfoData, parentDeviceId);
-
-
-					//if (currentDeviceId.Contains("2FBF"))
-					//{
-
-					//	//var deviceInfoSet3 = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, deviceInfoSet, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE);
-					//	Guid hidGuid;
-					//	HidD_GetHidGuid(out hidGuid);
-
-
-
-					//	// Get device information.
-					//	uint parentDeviceInstance2 = 0;
-					//	CRResult = CM_Get_Parent(out parentDeviceInstance2, parentDeviceInfoData.DevInst, 0);
-					//	if (CRResult == CR.CR_NO_SUCH_DEVNODE) break;
-					//	if (CRResult != CR.CR_SUCCESS) break;
-					//	var parentDeviceId2 = GetDeviceId(parentDeviceInstance2);
-					//	var parentDeviceInfoData2 = GetDeviceInfo(deviceInfoSet, parentDeviceId2).Value;
-					//	var parentDevice2 = GetDeviceInfo(deviceInfoSet, parentDeviceInfoData2, parentDeviceId2);
-
-
-					//	int requiredSize3 = 0;
-					//	List<string> devicePathNames3 = new List<string>();
-					//	var interfaceData3 = new SP_DEVICE_INTERFACE_DATA();
-					//	interfaceData3.Initialize();
-					//	var deviceInfoSet3 = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE);
-					//	for (int i2 = 0; SetupDiEnumDeviceInterfaces(deviceInfoSet3, IntPtr.Zero, ref hidGuid, i2, ref interfaceData3); i2++)
-					//	{
-					//		bool success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet3, ref interfaceData3, IntPtr.Zero, 0, ref requiredSize3, IntPtr.Zero);
-					//		IntPtr ptrDetails = Marshal.AllocHGlobal(requiredSize3);
-					//		Marshal.WriteInt32(ptrDetails, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
-					//		success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet3, ref interfaceData3, ptrDetails, requiredSize3, ref requiredSize3, IntPtr.Zero);
-					//		var structure3 = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
-					//		devicePathNames3.Add(structure3.DevicePath);
-					//		Marshal.FreeHGlobal(ptrDetails);
-					//		var pathX = structure3.DevicePath.Replace("#", "\\").ToUpper();
-					//		if (pathX.Contains(currentDeviceId))
-					//		{
-
-					//			var hidDeviceObject = CreateFile(structure3.DevicePath, 0, 3, IntPtr.Zero, 3, 0, 0);
-					//			if (!hidDeviceObject.IsInvalid)
-					//			{
-					//				var ha = new HIDD_ATTRIBUTES();
-					//				ha.Size = Marshal.SizeOf(ha);
-					//				if (HidD_GetAttributes(hidDeviceObject, ref ha))
-					//				{
-					//					var reportBuffer = new byte[126 * 2];
-					//					HidD_GetSerialNumberString(hidDeviceObject, ref reportBuffer, reportBuffer.Length);
-					//					var s = System.Text.Encoding.Unicode.GetString(reportBuffer);
-					//					HidD_GetManufacturerString(hidDeviceObject, ref reportBuffer, reportBuffer.Length);
-					//					s = System.Text.Encoding.Unicode.GetString(reportBuffer);
-					//					HidD_GetProductString(hidDeviceObject, ref reportBuffer, reportBuffer.Length);
-					//					s = System.Text.Encoding.Unicode.GetString(reportBuffer);
-					//				}
-					//			}
-					//			hidDeviceObject.Close();
-					//		}
-
-					//	}
-					//}
 					list.Add(device);
+
+					//if (currentDeviceId == @"USB\VID_0C45&PID_4320\7&170F0877&0&3")
+					//{
+					//	// Creates our variables and creates a pointer to the DeviceInfoData structure
+					//	var deviceInfoDataPtr = Marshal.AllocHGlobal(Marshal.SizeOf(deviceInfoData));
+					//	Marshal.StructureToPtr(deviceInfoData, deviceInfoDataPtr, false);
+
+
+
+					//	Guid hidGuid = Guid.Empty;
+					//	HidD_GetHidGuid(ref hidGuid);
+					//	int requiredSize3 = 0;
+					//	var interfaceData = new SP_DEVICE_INTERFACE_DATA();
+					//	List<string> devicePathNames3 = new List<string>();
+					//	List<string> serials = new List<string>();
+					//	interfaceData.Initialize();
+					//	var deviceInfoSet2 = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE);
+
+
+
+					//	//for (int i2 = 0; SetupDiEnumDeviceInterfaces(deviceInfoSet2, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
+					//	//{
+					//	//	var defInfro2 = new SP_DEVINFO_DATA();
+					//	//	defInfro2.Initialize();
+
+					//	//	bool success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet2, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, IntPtr.Zero);
+					//	//	IntPtr ptrDetails = Marshal.AllocHGlobal(requiredSize3);
+					//	//	Marshal.WriteInt32(ptrDetails, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
+					//	//	success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet2, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref defInfro2);
+					//	//	var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
+					//	//	var devicePath = interfaceDetail.DevicePath;
+					//	//	devicePathNames3.Add(devicePath);
+					//	//	var interfaceDeviceId = GetDeviceId(defInfro2.DevInst);
+
+					//	//	//if (deviceInfoData.DevInst == defInfro2.DevInst)
+					//	//	//{
+
+					//	//	//}
+
+					//	//}
+
+					//}
+
+
 				}
 				SetupDiDestroyDeviceInfoList(deviceInfoSet);
 				return list.OrderBy(x => x.ClassDescription).ThenBy(x => x.Description).ToArray();
@@ -725,7 +669,7 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				parentDeviceId = GetDeviceId(parentDeviceInstance);
 			}
-			var device = new DeviceInfo(deviceId, parentDeviceId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
+			var device = new DeviceInfo(deviceId, parentDeviceId, "", deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
 			return device;
 		}
 

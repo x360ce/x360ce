@@ -238,7 +238,6 @@
     <Compile Include="JocysCom\Win32\DIGCF.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cs" />
     <Compile Include="JocysCom\Win32\POINT.cs" />
-    <Compile Include="JocysCom\Win32\PSP_CLASSIMAGE_DATA.cs" />
     <Compile Include="JocysCom\Win32\RECT.cs" />
     <Compile Include="JocysCom\Win32\REG.cs" />
     <Compile Include="JocysCom\Win32\SafeLibraryHandle.cs" />

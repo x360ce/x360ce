@@ -52,16 +52,19 @@ namespace JocysCom.ClassLibrary.IO
 		public static extern void HidD_GetHidGuid(ref Guid hidGuid);
 
 		[DllImport("hid.dll", SetLastError = true)]
-		public static extern Boolean HidD_GetAttributes(SafeFileHandle HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
+		public static extern bool HidD_GetAttributes(SafeFileHandle HidDeviceObject, ref HIDD_ATTRIBUTES Attributes);
 
-		[DllImport("hid.dll", SetLastError = true)]
-		public static extern Boolean HidD_GetSerialNumberString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer, uint BufferLength);
+		[DllImport("hid.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern bool HidD_GetSerialNumberString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 2)] StringBuilder Buffer, uint BufferLength);
 
-		[DllImport("hid.dll", CharSet = CharSet.Unicode)]
-		internal static extern bool HidD_GetProductString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer, uint BufferLength);
+		[DllImport("hid.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		internal static extern bool HidD_GetProductString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 2)] StringBuilder Buffer, uint BufferLength);
 
-		[DllImport("hid.dll", CharSet = CharSet.Unicode)]
-		internal static extern bool HidD_GetManufacturerString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder Buffer, uint BufferLength);
+		[DllImport("hid.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		internal static extern bool HidD_GetPhysicalDescriptor(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 2)] StringBuilder Buffer, uint BufferLength);
+
+		[DllImport("hid.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		internal static extern bool HidD_GetManufacturerString(SafeFileHandle HidDeviceObject, [MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 2)] StringBuilder Buffer, uint BufferLength);
 
 		[DllImport("hid.dll", SetLastError = true)]
 		public static extern bool HidD_GetPreparsedData(SafeFileHandle HidDeviceObject, ref IntPtr PreparsedData);
@@ -89,14 +92,11 @@ namespace JocysCom.ClassLibrary.IO
 		[DllImport("setupapi.dll", SetLastError = true)]
 		internal static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData, ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
-		[DllImport("setupapi.dll", SetLastError = true)]
-		internal static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
-
 		[DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		internal static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, ref SP_DEVICE_INTERFACE_DETAIL_DATA DeviceInterfaceDetailData, int DeviceInterfaceDetailDataSize, ref int RequiredSize, IntPtr DeviceInfoData);
+		internal static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData, int DeviceInterfaceDetailDataSize, ref int RequiredSize, ref SP_DEVINFO_DATA DeviceInfoData);
 
 		[DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		internal static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData, int DeviceInterfaceDetailDataSize, ref int RequiredSize, IntPtr DeviceInfoData);
 
-	}
+			}
 }
