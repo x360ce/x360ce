@@ -399,7 +399,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public static bool IsValidEmail(string email, bool mandatory, out string message)
 		{
 			var result = EmailValid(email);
-			message = Runtime.Attributes.GetDescription(result);
+			message = ClassTools.EnumTools.GetDescription(result);
 			switch (result)
 			{
 				case EmailResult.OK: return true;

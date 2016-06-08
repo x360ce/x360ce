@@ -174,7 +174,6 @@
     <Compile Include="JocysCom\IO\HardwareControl.Designer.cs">
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="JocysCom\IO\HidHelper.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
@@ -236,7 +235,13 @@
     <Compile Include="JocysCom\Win32\DEV_BROADCAST_PORT.cs" />
     <Compile Include="JocysCom\Win32\DEV_BROADCAST_VOLUME.cs" />
     <Compile Include="JocysCom\Win32\DIGCF.cs" />
+    <Compile Include="JocysCom\Win32\HIDD_ATTRIBUTES.cs" />
+    <Compile Include="JocysCom\Win32\HIDP_CAPS.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.cfgmgr32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.hid.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.kernel32.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.setupapi.cs" />
     <Compile Include="JocysCom\Win32\POINT.cs" />
     <Compile Include="JocysCom\Win32\RECT.cs" />
     <Compile Include="JocysCom\Win32\REG.cs" />
