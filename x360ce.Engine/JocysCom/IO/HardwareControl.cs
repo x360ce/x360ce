@@ -194,7 +194,8 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshTimer.Start();
 		}
 
-		DeviceInfo[] devices = new DeviceInfo[0];
+		List<DeviceInfo> devices = new List<DeviceInfo>();
+		List<DeviceInfo> interfaces = new List<DeviceInfo>();
 
 		void _RefreshTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -209,8 +210,9 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				if (updateDevices)
 				{
-					devices = DeviceDetector.GetDevices();
-					var interfaces = DeviceDetector.GetHidInterfaces();
+					devices = DeviceDetector.GetDevices().ToList();
+					interfaces = DeviceDetector.GetHidInterfaces().ToList();
+					devices.AddRange(interfaces);
 				}
 				var filter = FilterTextBox.Text.Trim();
 				var view = devices;
@@ -221,10 +223,10 @@ namespace JocysCom.ClassLibrary.IO
 						comp(x.Description, filter) ||
 						comp(x.Manufacturer, filter) ||
 						comp(x.DeviceId, filter))
-						.ToArray();
+						.ToList();
 				}
 				DeviceDataGridView.DataSource = view;
-				DeviceTabPage.Text = string.Format("{0} Devices on {1:yyyy-MM-dd HH:mm:ss}", view.Length, DateTime.Now);
+				DeviceTabPage.Text = string.Format("{0} Devices on {1:yyyy-MM-dd HH:mm:ss}", view.Count, DateTime.Now);
 				var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
 				var classes = devices.Select(x => x.ClassGuid).Distinct();
 
@@ -315,7 +317,16 @@ namespace JocysCom.ClassLibrary.IO
 		private void DevicesTreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			var di = (DeviceInfo)e.Node.Tag;
+			ClassDescriptionTextBox.Text = di.ClassDescription;
+			ClassGuidTextBox.Text = di.ClassGuid.ToString();
+			VendorIdTextBox.Text = "0x" + di.VendorId.ToString("X4");
+			RevisionTextBox.Text = "0x" + di.Revision.ToString("X4");
+			ProductIdTextBox.Text = "0x" + di.ProductId.ToString("X4");
+			DescriptionTextBox.Text = di.Description;
+			ManufacturerTextBox.Text = di.Manufacturer;
+			DevicePathTextBox.Text = di.DevicePath;
 			DeviceIdTextBox.Text = di.DeviceId;
+			DeviceStatusTextBox.Text = di.Status.ToString();
 		}
 	}
 }

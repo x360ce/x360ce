@@ -335,14 +335,12 @@ namespace JocysCom.ClassLibrary.Mail
 		public static void ApplyRecipients(MailAddressCollection collection, string emails)
 		{
 			string[] list = null;
+			if (string.IsNullOrEmpty(emails)) return;
 			list = emails.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
-			if (!string.IsNullOrEmpty(emails))
+			foreach (string item in list)
 			{
-				foreach (string item in list)
-				{
-					if (string.IsNullOrEmpty(item.Trim())) continue;
-					collection.Add(new MailAddress(item.Trim()));
-				}
+				if (string.IsNullOrEmpty(item.Trim())) continue;
+				collection.Add(new MailAddress(item.Trim()));
 			}
 		}
 

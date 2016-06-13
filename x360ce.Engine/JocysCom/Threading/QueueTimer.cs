@@ -222,6 +222,7 @@ namespace JocysCom.ClassLibrary.Threading
 							{
 								// Use asynchronous call to avoid 'queueLock' deadlock.
 								var action = (System.Threading.WaitCallback)ThreadAction;
+								// If handle exception then, maybe you forgot to dispose QueueTimer before 'so'.
 								var ar = so.BeginInvoke(action, new object[] { null });
 							}
 							catch (Exception)

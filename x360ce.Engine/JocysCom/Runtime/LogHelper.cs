@@ -321,7 +321,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 
-		public static string GetSubjectPrefix(Exception ex)
+		public static string GetSubjectPrefix(Exception ex, string suffix = "Error")
 		{
 			Assembly asm = Assembly.GetEntryAssembly();
 			string a = "Unknown Entry Assembly";
@@ -335,9 +335,6 @@ namespace JocysCom.ClassLibrary.Runtime
 						asm = frames[0].GetMethod().DeclaringType.Assembly;
 					}
 				}
-				else
-				{
-				}
 			}
 			if (asm == null)
 			{
@@ -345,9 +342,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			if (asm != null)
 			{
-				a = asm.GetName().Name.Replace("Dac.Volante.", "");
+				var last2Nodes = asm.GetName().Name.Split('.').Reverse().Take(2).Reverse();
+				a = string.Join(".", last2Nodes);
 			}
-			string s = string.Format("{0} Error", a);
+			string s = string.Format("{0} {1}", a, suffix);
 			ApplyRunModeSuffix(ref s);
 			s += ": ";
 			return s;
@@ -691,9 +689,10 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Send Mail
 
-		public void SendErrorMail(string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false)
+		public void SendWarningMail(string subject, string body, bool isBodyHtml = false)
 		{
-			SendMailFrom(Smtp.SmtpFrom, Smtp.ErrorRecipients, null, null, subject, body, isBodyHtml, preview, rethrow, new Attachment[0]);
+			//var subject2 = LogHelper.GetSubjectPrefix(new Exception(subject), "Warning");
+			Smtp.SendErrorEmail(null, subject, body);
 		}
 
 		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false, string[] attachments = null)

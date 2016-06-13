@@ -279,7 +279,6 @@ namespace JocysCom.ClassLibrary.IO
 			Guid hidGuid = Guid.Empty;
 			NativeMethods.HidD_GetHidGuid(ref hidGuid);
 			int requiredSize3 = 0;
-			List<DeviceInfo> dis = new List<DeviceInfo>();
 			List<string> devicePathNames3 = new List<string>();
 			var interfaceData = new SP_DEVICE_INTERFACE_DATA();
 			List<string> serials = new List<string>();
@@ -329,19 +328,18 @@ namespace JocysCom.ClassLibrary.IO
 					// Free the 'preparsed data'.
 					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
 					// This could fail if the device was recently attached.
-					var serBuilder = new StringBuilder(253);
-					var vidBuilder = new StringBuilder(253);
-					var pidBuilder = new StringBuilder(253);
-					var phdBuilder = new StringBuilder(253);
-
-					serial = NativeMethods.HidD_GetSerialNumberString(devHandle, serBuilder, (uint)serBuilder.Capacity)
-						? serBuilder.ToString() : "";
-					vendor = NativeMethods.HidD_GetManufacturerString(devHandle, vidBuilder, (uint)vidBuilder.Capacity)
-						? vidBuilder.ToString() : "";
-					product = NativeMethods.HidD_GetProductString(devHandle, pidBuilder, (uint)pidBuilder.Capacity)
-						? pidBuilder.ToString() : "";
-					phdesc = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, phdBuilder, (uint)phdBuilder.Capacity)
-						? phdBuilder.ToString() : "";
+					uint capacity = 126;
+					IntPtr buffer = Marshal.AllocHGlobal((int)capacity);
+					serial = NativeMethods.HidD_GetSerialNumberString(devHandle, buffer, capacity)
+						? Marshal.PtrToStringAuto(buffer) : "";
+					vendor = NativeMethods.HidD_GetManufacturerString(devHandle, buffer, capacity)
+						? Marshal.PtrToStringAuto(buffer) : "";
+					product = NativeMethods.HidD_GetProductString(devHandle, buffer, capacity)
+						? Marshal.PtrToStringAuto(buffer) : "";
+					phdesc = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, buffer, capacity)
+						? Marshal.PtrToStringAuto(buffer) : "";
+					// Free resources.
+					Marshal.FreeHGlobal(buffer);
 				}
 				uint parentDeviceInstance = 0;
 				string parentDeviceId = null;
@@ -352,7 +350,7 @@ namespace JocysCom.ClassLibrary.IO
 				}
 
 				var di = new DeviceInfo(deviceId, parentDeviceId, devicePath, vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
-				dis.Add(di);
+				list.Add(di);
 				serials.Add(phdesc);
 				devHandle.Close();
 			}
