@@ -273,7 +273,7 @@ namespace JocysCom.ClassLibrary.IO
 			return icon;
 		}
 
-		public static DeviceInfo[] GetHidInterfaces()
+		public static DeviceInfo[] GetInterfaces()
 		{
 			var list = new List<DeviceInfo>();
 			Guid hidGuid = Guid.Empty;
@@ -425,50 +425,6 @@ namespace JocysCom.ClassLibrary.IO
 					if (pid > 0 && device.ProductId != pid) continue;
 					if (rev > 0 && device.Revision != rev) continue;
 					list.Add(device);
-
-					//if (currentDeviceId == @"USB\VID_0C45&PID_4320\7&170F0877&0&3")
-					//{
-					//	// Creates our variables and creates a pointer to the DeviceInfoData structure
-					//	var deviceInfoDataPtr = Marshal.AllocHGlobal(Marshal.SizeOf(deviceInfoData));
-					//	Marshal.StructureToPtr(deviceInfoData, deviceInfoDataPtr, false);
-
-
-
-					//	Guid hidGuid = Guid.Empty;
-					//	HidD_GetHidGuid(ref hidGuid);
-					//	int requiredSize3 = 0;
-					//	var interfaceData = new SP_DEVICE_INTERFACE_DATA();
-					//	List<string> devicePathNames3 = new List<string>();
-					//	List<string> serials = new List<string>();
-					//	interfaceData.Initialize();
-					//	var deviceInfoSet2 = SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE);
-
-
-
-					//	//for (int i2 = 0; SetupDiEnumDeviceInterfaces(deviceInfoSet2, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
-					//	//{
-					//	//	var defInfro2 = new SP_DEVINFO_DATA();
-					//	//	defInfro2.Initialize();
-
-					//	//	bool success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet2, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, IntPtr.Zero);
-					//	//	IntPtr ptrDetails = Marshal.AllocHGlobal(requiredSize3);
-					//	//	Marshal.WriteInt32(ptrDetails, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
-					//	//	success = SetupDiGetDeviceInterfaceDetail(deviceInfoSet2, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref defInfro2);
-					//	//	var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
-					//	//	var devicePath = interfaceDetail.DevicePath;
-					//	//	devicePathNames3.Add(devicePath);
-					//	//	var interfaceDeviceId = GetDeviceId(defInfro2.DevInst);
-
-					//	//	//if (deviceInfoData.DevInst == defInfro2.DevInst)
-					//	//	//{
-
-					//	//	//}
-
-					//	//}
-
-					//}
-
-
 				}
 				NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
 				return list.OrderBy(x => x.ClassDescription).ThenBy(x => x.Description).ToArray();

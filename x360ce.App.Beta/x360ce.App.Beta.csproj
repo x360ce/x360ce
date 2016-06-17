@@ -245,7 +245,6 @@
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\HookMode.cs" />
-    <Compile Include="Common\FilterList.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
     <Compile Include="Common\PropertyComparer.cs" />

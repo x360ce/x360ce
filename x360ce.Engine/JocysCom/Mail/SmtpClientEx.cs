@@ -284,22 +284,26 @@ namespace JocysCom.ClassLibrary.Mail
 		public MailMessage SendErrorEmail(Exception ex, string subject = null, string body = null)
 		{
 			var message = new MailMessage();
-			SmtpClientEx.ApplyRecipients(message, SmtpFrom, ErrorRecipients);
+			ApplyRecipients(message, SmtpFrom, ErrorRecipients);
 			//------------------------------------------------------
 			// Subject
 			//------------------------------------------------------
-			if (ex.Data != null)
+			// If exception found then...
+			if (ex != null)
 			{
-				var key = ex.Data.Keys.Cast<object>().FirstOrDefault(x => object.ReferenceEquals(x, "StackTrace"));
-				if (key != null && ex.Data[key] is StackTrace)
+				if (ex.Data != null)
 				{
-					ex.Data.Remove(key);
+					var key = ex.Data.Keys.Cast<object>().FirstOrDefault(x => object.ReferenceEquals(x, "StackTrace"));
+					if (key != null && ex.Data[key] is StackTrace)
+					{
+						ex.Data.Remove(key);
+					}
 				}
-			}
-			// If subject was not specified and exception found then...
-			if (string.IsNullOrEmpty(subject) && ex != null)
-			{
-				subject = LogHelper.GetSubjectPrefix(ex) + ex.Message;
+				// If subject was not specified
+				if (string.IsNullOrEmpty(subject))
+				{
+					subject = LogHelper.GetSubjectPrefix(ex) + ex.Message;
+				}
 			}
 			if (string.IsNullOrEmpty(subject))
 			{
@@ -339,8 +343,16 @@ namespace JocysCom.ClassLibrary.Mail
 			list = emails.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string item in list)
 			{
+				// If address is empty then continue.
 				if (string.IsNullOrEmpty(item.Trim())) continue;
-				collection.Add(new MailAddress(item.Trim()));
+				var a = new MailAddress(item.Trim());
+				// If address is on the list already then continue.
+				var exists = collection.Any(x =>
+					string.Compare(x.Address, a.Address, true) == 0 &&
+					string.Compare(x.DisplayName, a.DisplayName, true) == 0
+				);
+				if (exists) continue;
+				collection.Add(a);
 			}
 		}
 

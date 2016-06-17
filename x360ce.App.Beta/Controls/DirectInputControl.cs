@@ -118,11 +118,12 @@ namespace x360ce.App.Controls
             // Update PID and VID always so they wont be overwritten by load settings.
             short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
             short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
-            AppHelper.SetText(DeviceVidTextBox, "0x{0}", vid.ToString("X4"));
-            AppHelper.SetText(DevicePidTextBox, "0x{0}", pid.ToString("X4"));
-            AppHelper.SetText(DeviceProductNameTextBox, di.ProductName);
+			AppHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
+            AppHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
+			AppHelper.SetText(DeviceProductNameTextBox, di.ProductName);
             AppHelper.SetText(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.Manufacturer);
-            AppHelper.SetText(DeviceProductGuidTextBox, di.ProductGuid.ToString());
+			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", dInfo == null ? 0 : dInfo.Revision);
+			AppHelper.SetText(DeviceProductGuidTextBox, di.ProductGuid.ToString());
             AppHelper.SetText(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
             AppHelper.SetText(DeviceTypeTextBox, di.Type.ToString());
         }
@@ -297,7 +298,7 @@ namespace x360ce.App.Controls
             if (diDevice != null)
             {
                 var device = diDevice.Device;
-                var info = diDevice.Info;
+                var info = diDevice.HidInfo;
                 if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
                 {
                     ShowDeviceInfo(device, info);

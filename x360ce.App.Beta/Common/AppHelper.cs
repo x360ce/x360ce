@@ -226,7 +226,7 @@ namespace x360ce.App
 			newSetting.IsEnabled = true;
 			newSetting.ProductGuid = device.Instance.ProductGuid;
 			newSetting.ProductName = device.Instance.ProductName;
-			newSetting.VendorName = device.Info.Manufacturer;
+			newSetting.VendorName = device.HidInfo.Manufacturer;
 			newSetting.FileName = game.FileName;
 			newSetting.FileProductName = game.FileProductName;
 			newSetting.DateCreated = DateTime.Now;

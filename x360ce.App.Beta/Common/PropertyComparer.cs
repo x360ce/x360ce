@@ -13,41 +13,66 @@ namespace x360ce.App
 	/// </summary>
 	public class PropertyComparer<T> : IComparer<T>
 	{
-		readonly IComparer comparer;
-		PropertyDescriptor propertyDescriptor;
-		int reverse;
+		ListSortDescriptionCollection _SortCollection = null;
+		PropertyDescriptor _PropDesc = null;
+		ListSortDirection _Direction = ListSortDirection.Ascending;
 
-		public PropertyComparer(PropertyDescriptor property, ListSortDirection direction)
+		public PropertyComparer(PropertyDescriptor propDesc, ListSortDirection direction)
 		{
-			this.propertyDescriptor = property;
-			Type comparerForPropertyType = typeof(Comparer<>).MakeGenericType(property.PropertyType);
-			this.comparer = (IComparer)comparerForPropertyType.InvokeMember("Default", BindingFlags.Static | BindingFlags.GetProperty | BindingFlags.Public, null, null, null);
-			this.SetListSortDirection(direction);
+			_PropDesc = propDesc;
+			_Direction = direction;
 		}
 
-		#region IComparer<T> Members
-
-		public int Compare(T x, T y)
+		public PropertyComparer(ListSortDescriptionCollection sortCollection)
 		{
-			return this.reverse * this.comparer.Compare(this.propertyDescriptor.GetValue(x), this.propertyDescriptor.GetValue(y));
+			_SortCollection = sortCollection;
 		}
 
-		#endregion
-
-		void SetPropertyDescriptor(PropertyDescriptor descriptor)
+		int IComparer<T>.Compare(T x, T y)
 		{
-			this.propertyDescriptor = descriptor;
+			if (_PropDesc != null)
+			{
+				object xValue = _PropDesc.GetValue(x);
+				object yValue = _PropDesc.GetValue(y);
+				return CompareValues(xValue, yValue, _Direction);
+			}
+			else if (_SortCollection != null && _SortCollection.Count > 0)
+			{
+				return RecursiveCompareInternal(x, y, 0);
+			}
+			else return 0;
 		}
 
-		void SetListSortDirection(ListSortDirection direction)
+		int CompareValues(object xValue, object yValue, ListSortDirection direction)
 		{
-			this.reverse = direction == ListSortDirection.Ascending ? 1 : -1;
+			int retValue = 0;
+			if (xValue is IComparable)
+			{
+				retValue = ((IComparable)xValue).CompareTo(yValue);
+			}
+			else if (yValue is IComparable)
+			{
+				retValue = ((IComparable)yValue).CompareTo(xValue);
+			}
+			// not comparable, compare String representations
+			else if (!xValue.Equals(yValue))
+			{
+				retValue = xValue.ToString().CompareTo(yValue.ToString());
+			}
+			return (direction == ListSortDirection.Ascending ? 1 : -1)  * retValue;
 		}
 
-		public void SetPropertyAndDirection(PropertyDescriptor descriptor, ListSortDirection direction)
+		int RecursiveCompareInternal(T x, T y, int index)
 		{
-			this.SetPropertyDescriptor(descriptor);
-			this.SetListSortDirection(direction);
+			if (index >= _SortCollection.Count) return 0;
+			ListSortDescription listSortDesc = _SortCollection[index];
+			object xValue = listSortDesc.PropertyDescriptor.GetValue(x);
+			object yValue = listSortDesc.PropertyDescriptor.GetValue(y);
+			int retValue = CompareValues(xValue, yValue, listSortDesc.SortDirection);
+			return (retValue == 0)
+				? RecursiveCompareInternal(x, y, ++index)
+				: retValue;
 		}
 	}
 }
+

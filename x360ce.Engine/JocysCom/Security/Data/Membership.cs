@@ -10,6 +10,8 @@ namespace JocysCom.WebSites.Engine.Security.Data
 
 		#region Generate / Check Tokens
 
+		public const string PasswordResetKey = "Key";
+
 		public string GetRedirectToken()
 		{
 
@@ -40,7 +42,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			var userId = user.UserId;
 			var m = db.Memberships.FirstOrDefault(x => x.UserId == userId);
 			var resetKey = m.GetPasswordResetToken();
-			var resetUrl = JocysCom.ClassLibrary.Security.Helper.GetUrl(resetKey);
+			var resetUrl = JocysCom.ClassLibrary.Security.Helper.GetUrl(PasswordResetKey, resetKey);
 			var u = System.Web.HttpContext.Current.Request.Url;
 			subject = subject.Replace("{Host}", u.Host);
 			body = JocysCom.ClassLibrary.Text.Helper.Replace(body, user, false);

@@ -141,16 +141,21 @@ namespace JocysCom.ClassLibrary.Security
 		#endregion
 
 		/// <summary>
-		/// Get URL to page.
+		/// Get URL to page. If runs on website then host will be replaced with current request.
 		/// </summary>
 		/// <param name="token">Token.</param>
 		/// <param name="page">Page name. Like "/Login.aspx" or "/LoginReset.aspx"</param>
-		/// <returns>Url.</returns>
-		public static string GetUrl(string token, string absolutePath = null, string keyName = "Key")
+		/// <returns>URL string.</returns>
+		public static string GetUrl(string keyName, string token, Uri url = null)
 		{
-			Uri u = System.Web.HttpContext.Current.Request.Url;
+			var context = System.Web.HttpContext.Current;
+			var u = (url == null || context != null)
+				? System.Web.HttpContext.Current.Request.Url
+				: url;
+			var absolutePath = (url != null)
+				? url.AbsolutePath
+				: u.AbsolutePath;
 			var port = u.IsDefaultPort ? "" : ":" + u.Port.ToString();
-			if (absolutePath == null) absolutePath = u.AbsolutePath;
 			return string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, absolutePath, keyName, token);
 		}
 

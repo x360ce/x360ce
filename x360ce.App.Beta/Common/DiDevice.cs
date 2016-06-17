@@ -10,7 +10,9 @@ namespace x360ce.App
 		/// <summary>DInput Device State.</summary>
 		public Joystick Device;
 		/// <summary>DInput Device Info.</summary>
-		public DeviceInfo Info;
+		public DeviceInfo HidInfo;
+		/// <summary>DInput Device Info.</summary>
+		public DeviceInfo DevInfo;
 		/// <summary>DInput Device Instance.</summary>
 		public DeviceInstance Instance;
 		/// <summary>Previous DInput Device Instance.</summary>
@@ -28,7 +30,7 @@ namespace x360ce.App
 		{
 			get
 			{
-				var o = Info;
+				var o = HidInfo;
 				return o == null ? "" : o.Manufacturer;
 			}
 		}
@@ -55,7 +57,7 @@ namespace x360ce.App
 		{
 			get
 			{
-				var o = Info;
+				var o = HidInfo;
 				return o == null ? "" : o.DeviceId;
 			}
 		}

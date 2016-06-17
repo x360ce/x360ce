@@ -213,19 +213,14 @@ namespace x360ce.App
 					var state = new Joystick(Manager, device.InstanceGuid);
 					di.Device = state;
 					var classGuid = state.Properties.ClassGuid;
-					var path = state.Properties.InterfacePath.Replace("#", "\\").ToUpper();
-
 					// Must find better way to find Device than by Vendor ID and Product ID.
-					var info = DeviceDetector.GetDevices(
-						classGuid,
-						JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES,
-						null,
-						state.Properties.VendorId,
-						state.Properties.ProductId,
-						0
-					);
-					di.Info = info.FirstOrDefault(x => path.Contains(x.DeviceId));
-					if (di.Info == null) di.Info = info.FirstOrDefault();
+					var infoDev = DeviceDetector.GetDevices();
+					var infoInt = DeviceDetector.GetInterfaces();
+					// Get interface info.
+					di.HidInfo = infoInt.FirstOrDefault(x => x.DevicePath == state.Properties.InterfacePath);
+					// Get device info.
+					di.DevInfo = infoDev.FirstOrDefault(x => x.DeviceId == di.HidInfo.DeviceId);
+					//if (di.Info == null) di.Info = info.FirstOrDefault();
 					SettingManager.DiDevices.Add(di);
 				}
 				for (int i = 0; i < updatedDevices.Length; i++)
@@ -313,10 +308,10 @@ namespace x360ce.App
 			SettingManager.Current.ConfigSaved += Current_ConfigSaved;
 			SettingManager.Current.ConfigLoaded += Current_ConfigLoaded;
 			OptionsPanel.UpdateSettingsManager();
-			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD1, ControlPads[0].DevicesToMapDataGridView);
-			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD2, ControlPads[1].DevicesToMapDataGridView);
-			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD3, ControlPads[2].DevicesToMapDataGridView);
-			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD4, ControlPads[3].DevicesToMapDataGridView);
+			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD1, ControlPads[0].MappedDevicesDataGridView);
+			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD2, ControlPads[1].MappedDevicesDataGridView);
+			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD3, ControlPads[2].MappedDevicesDataGridView);
+			SettingManager.AddMap(SettingManager.MappingsSection, () => SettingName.PAD4, ControlPads[3].MappedDevicesDataGridView);
 		}
 
 		void Current_ConfigSaved(object sender, SettingEventArgs e)

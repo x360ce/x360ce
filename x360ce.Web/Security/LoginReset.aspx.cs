@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary;
+using JocysCom.WebSites.Engine.Security.Data;
 
 namespace JocysCom.Web.Security
 {
@@ -14,7 +15,7 @@ namespace JocysCom.Web.Security
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			string username = Request["User"];
-			string key = Request["Key"];
+			string key = Request[Membership.PasswordResetKey];
 			if (!string.IsNullOrEmpty(username))
 			{
 				//WebSites.Engine.Security.Data.Membership.SendPasswordResetKey(JocysCom.WebSites.Engine.Security.Data.User.GetUser(username));

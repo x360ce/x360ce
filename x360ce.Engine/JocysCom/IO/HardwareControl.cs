@@ -211,7 +211,7 @@ namespace JocysCom.ClassLibrary.IO
 				if (updateDevices)
 				{
 					devices = DeviceDetector.GetDevices().ToList();
-					interfaces = DeviceDetector.GetHidInterfaces().ToList();
+					interfaces = DeviceDetector.GetInterfaces().ToList();
 					devices.AddRange(interfaces);
 				}
 				var filter = FilterTextBox.Text.Trim();

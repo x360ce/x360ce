@@ -53,8 +53,14 @@ namespace x360ce.App.Controls
 
 		public void InitPadControl()
 		{
-			DevicesToMapDataGridView.AutoGenerateColumns = false;
-			DevicesToMapDataGridView.DataSource = SettingManager.Settings.Items;
+			var dv = new System.Data.DataView();
+
+			var grid = MappedDevicesDataGridView;
+			grid.AutoGenerateColumns = false;
+			var bs = new BindingSource();
+			bs.DataSource = SettingManager.Settings.Items;
+			//bs.Filter = string.Format("MapTo = {0}", (int)MappedTo);
+			grid.DataSource = bs;
 			SettingManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 			// Initialize images.
 			this.TopPictureBox.Image = topDisabledImage;
@@ -116,41 +122,43 @@ namespace x360ce.App.Controls
 		{
 			lock (DevicesToMapDataGridViewLock)
 			{
-				var grid = DevicesToMapDataGridView;
-				var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
-				// Reverse order to hide/show bottom records first..
-				Array.Reverse(rows);
-				var newValues = new Dictionary<DataGridViewRow, bool>();
-				for (int i = 0; i < rows.Length; i++)
-				{
-					var item = (Engine.Data.Setting)rows[i].DataBoundItem;
-					var show = (item.MapTo == (int)MappedTo);
-					if (rows[i].Visible != show)
-					{
-						newValues.Add(rows[i], show);
-					}
-				}
-				// If columns will be hidden or shown then...
-				if (newValues.Count > 0)
-				{
-					var selection = instanceGuid.HasValue
-						? new List<Guid>() { instanceGuid.Value }
-						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
-					grid.CurrentCell = null;
-					// Suspend Layout and CurrencyManager to avoid exceptions.
-					grid.SuspendLayout();
-					var cm = (CurrencyManager)BindingContext[grid.DataSource];
-					cm.SuspendBinding();
-					foreach (var row in newValues.Keys)
-					{
-						row.Visible = newValues[row];
-					}
-					// Resume CurrencyManager and Layout.
-					cm.ResumeBinding();
-					grid.ResumeLayout();
-					// Restore selection.
-					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
-				}
+				var grid = MappedDevicesDataGridView;
+				//	var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
+				//	// Reverse order to hide/show bottom records first..
+				//	Array.Reverse(rows);
+				//	var newValues = new Dictionary<DataGridViewRow, bool>();
+				//	for (int i = 0; i < rows.Length; i++)
+				//	{
+				//		var item = (Engine.Data.Setting)rows[i].DataBoundItem;
+				//		var show = (item.MapTo == (int)MappedTo);
+				//		if (rows[i].Visible != show)
+				//		{
+				//			newValues.Add(rows[i], show);
+				//		}
+				//	}
+				//	// If columns will be hidden or shown then...
+				//	if (newValues.Count > 0)
+				//	{
+				//		var selection = instanceGuid.HasValue
+				//			? new List<Guid>() { instanceGuid.Value }
+				//			: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
+				//		grid.CurrentCell = null;
+				//		// Suspend Layout and CurrencyManager to avoid exceptions.
+				//		grid.SuspendLayout();
+				//		var cm = (CurrencyManager)BindingContext[grid.DataSource];
+				//		cm.SuspendBinding();
+				//		foreach (var row in newValues.Keys)
+				//		{
+				//			row.Visible = newValues[row];
+				//		}
+				//		// Resume CurrencyManager and Layout.
+				//		cm.ResumeBinding();
+				//		grid.ResumeLayout();
+				//		// Restore selection.
+				//		JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
+				//	}
+				//	var visibleCount = rows.Count(x => x.Visible);
+				//	MappedDevicesTabPage.Text = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
 			}
 		}
 
@@ -671,13 +679,13 @@ namespace x360ce.App.Controls
 			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
 		}
 
-        /// <summary>
-        /// Get selected device. If device is not connected then return null.
-        /// </summary>
-        /// <returns></returns>
+		/// <summary>
+		/// Get selected device. If device is not connected then return null.
+		/// </summary>
+		/// <returns></returns>
 		DiDevice GetCurrentDevice()
 		{
-			var grid = DevicesToMapDataGridView;
+			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			Engine.Data.Setting setting = null;
 			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
@@ -1306,7 +1314,8 @@ namespace x360ce.App.Controls
 		private void DevicesToMapDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var setting = ((Engine.Data.Setting)grid.Rows[e.RowIndex].DataBoundItem);
+			var viewRow = grid.Rows[e.RowIndex];
+			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
 			var device = SettingManager.GetDevice(setting.InstanceGuid);
 			var isConnected = (device != null);
 			AppHelper.ApplyRowStyle(grid, e, isConnected);
@@ -1315,6 +1324,14 @@ namespace x360ce.App.Controls
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(setting.InstanceGuid);
 			}
+			//else if (e.ColumnIndex == grid.Columns[MapToColumn.Name].Index)
+			//{
+			//	var visible = (setting.MapTo == (int)MappedTo);
+			//	if (viewRow.Visible != visible)
+			//	{
+			//		viewRow.Visible = visible;
+			//	}
+			//}
 		}
 
 		private void AddMapButton_Click(object sender, EventArgs e)
@@ -1341,7 +1358,7 @@ namespace x360ce.App.Controls
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
-			var grid = DevicesToMapDataGridView;
+			var grid = MappedDevicesDataGridView;
 			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (Engine.Data.Setting)x.DataBoundItem).ToArray();
 			foreach (var item in items)
 			{
@@ -1351,7 +1368,7 @@ namespace x360ce.App.Controls
 
 		private void DevicesToMapDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
-			var grid = DevicesToMapDataGridView;
+			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			Engine.Data.PadSetting padSetting = null;
 			if (row != null)
