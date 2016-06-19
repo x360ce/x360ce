@@ -221,7 +221,7 @@ namespace x360ce.App
 		{
 			// Create new setting for game/device.
 			var newSetting = new Engine.Data.Setting();
-			newSetting.InstanceGuid = device.InstanceGuid;
+			newSetting.InstanceGuid = device.Instance.InstanceGuid;
 			newSetting.InstanceName = device.Instance.InstanceName;
 			newSetting.IsEnabled = true;
 			newSetting.ProductGuid = device.Instance.ProductGuid;

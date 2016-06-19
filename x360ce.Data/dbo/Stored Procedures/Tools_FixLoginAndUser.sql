@@ -1,10 +1,18 @@
-﻿CREATE PROCEDURE [dbo].[Tools_FixUser]
+﻿
+CREATE PROCEDURE [dbo].[Tools_FixLoginAndUser]
     @username sysname,
     @password sysname,
 	@apply bit = 0
 AS
 
--- EXEC [dbo].[Tools_FixUser] 'x360ceAdmin', 'localdev', 1
+/*
+
+DECLARE @defaultUsername sysname = db_name()+'Admin'
+DECLARE @defaultPassword sysname = 'localdev'
+
+EXEC [dbo].[Tools_FixLoginAndUser] @defaultUsername, @defaultPassword, 1
+
+*/
 
 ---------------------------------------------------------------
 -- Fix SQL Login.
@@ -23,7 +31,7 @@ BEGIN
 END
 ELSE
 BEGIN
-	-- Create property to store unique SID of the user.
+	-- Create propery to store unique SID of the user.
 	DECLARE @user_sid varbinary(85)
 	-- Get user SID.
 	SELECT  @user_sid = dp.sid
@@ -47,11 +55,11 @@ END
 IF @apply = 1
 BEGIN
 	---- Disable login.
-	EXEC('ALTER LOGIN [' + @username + '] DISABLE')
+	EXEC('ALTER LOGIN ['+@username+'] DISABLE')
 	---- Map SQL 'Server Login' to 'Database User'
 	EXEC sp_change_users_login 'AUTO_FIX', @username
 	---- Enable login.
-	EXEC ('ALTER LOGIN [' + @username + '] ENABLE')
+	EXEC ('ALTER LOGIN ['+@username+'] ENABLE')
 END
 
 ---- Fix database Owner
@@ -67,7 +75,7 @@ ELSE PRINT @command
 
 IF @apply = 1 
 BEGIN
-	-- Check mismatched SID's between Database Users and Server Logins
+	-- Check missmached SID's between Database Users and Server Logins
 	SELECT
 		dp.name AS DatabaseUser,
 		sp.name AS ServerLogin,
