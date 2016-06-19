@@ -3511,8 +3511,7 @@ namespace x360ce.Engine.Data
         /// <param name="padSettingChecksum">Initial value of the PadSettingChecksum property.</param>
         /// <param name="dateSelected">Initial value of the DateSelected property.</param>
         /// <param name="mapTo">Initial value of the MapTo property.</param>
-        /// <param name="vendorName">Initial value of the VendorName property.</param>
-        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo, global::System.String vendorName)
+        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo)
         {
             Setting setting = new Setting();
             setting.SettingId = settingId;
@@ -3530,7 +3529,6 @@ namespace x360ce.Engine.Data
             setting.PadSettingChecksum = padSettingChecksum;
             setting.DateSelected = dateSelected;
             setting.MapTo = mapTo;
-            setting.VendorName = vendorName;
             return setting;
         }
 
@@ -3900,30 +3898,6 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _MapTo;
         partial void OnMapToChanging(global::System.Int32 value);
         partial void OnMapToChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String VendorName
-        {
-            get
-            {
-                return _VendorName;
-            }
-            set
-            {
-                OnVendorNameChanging(value);
-                ReportPropertyChanging("VendorName");
-                _VendorName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("VendorName");
-                OnVendorNameChanged();
-            }
-        }
-        private global::System.String _VendorName;
-        partial void OnVendorNameChanging(global::System.String value);
-        partial void OnVendorNameChanged();
 
         #endregion
 

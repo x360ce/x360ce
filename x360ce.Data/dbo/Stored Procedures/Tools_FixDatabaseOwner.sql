@@ -39,12 +39,7 @@ BEGIN
 	SET @login = @currentLogin
 
 	---- Fix database Owner
-	SELECT @command = 
-		'ALTER AUTHORIZATION ON DATABASE::'+@database+' TO ['+@login+']' 
-	FROM master..sysdatabases sd
-	JOIN master..syslogins sl ON sd.[sid] = sl.[sid]
-	WHERE sd.Name = @database
-
+	SELECT @command = 'ALTER AUTHORIZATION ON DATABASE::'+@database+' TO ['+@login+']' 
 	PRINT @Command
 	EXEC(@Command)
 

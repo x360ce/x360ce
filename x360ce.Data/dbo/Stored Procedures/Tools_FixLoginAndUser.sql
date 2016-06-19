@@ -31,7 +31,7 @@ BEGIN
 END
 ELSE
 BEGIN
-	-- Create propery to store unique SID of the user.
+	-- Create property to store unique SID of the user.
 	DECLARE @user_sid varbinary(85)
 	-- Get user SID.
 	SELECT  @user_sid = dp.sid
@@ -75,7 +75,7 @@ ELSE PRINT @command
 
 IF @apply = 1 
 BEGIN
-	-- Check missmached SID's between Database Users and Server Logins
+	-- Check mismatched SID's between Database Users and Server Logins
 	SELECT
 		dp.name AS DatabaseUser,
 		sp.name AS ServerLogin,

@@ -223,14 +223,13 @@ namespace x360ce.App
 			var newSetting = new Engine.Data.Setting();
 			newSetting.InstanceGuid = device.Instance.InstanceGuid;
 			newSetting.InstanceName = device.Instance.InstanceName;
-			newSetting.IsEnabled = true;
 			newSetting.ProductGuid = device.Instance.ProductGuid;
 			newSetting.ProductName = device.Instance.ProductName;
-			newSetting.VendorName = device.HidInfo.Manufacturer;
+			newSetting.DeviceType = (int)device.Instance.Type;
 			newSetting.FileName = game.FileName;
 			newSetting.FileProductName = game.FileProductName;
 			newSetting.DateCreated = DateTime.Now;
-			newSetting.DeviceType = (int)device.Instance.Type;
+			newSetting.IsEnabled = true;
 			newSetting.MapTo = (int)mapTo;
 			return newSetting;
 		}
