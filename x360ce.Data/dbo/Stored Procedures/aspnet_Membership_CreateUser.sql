@@ -116,7 +116,7 @@ BEGIN
     BEGIN
         IF (EXISTS (SELECT *
                     FROM  dbo.aspnet_Membership m WITH ( UPDLOCK, HOLDLOCK )
-                    WHERE ApplicationId = @ApplicationId AND LoweredEmail = @LoweredEmail))
+                    WHERE ApplicationId = @ApplicationId AND ISNULL(LoweredEmail,'') = @LoweredEmail))
         BEGIN
             SET @ErrorCode = 7
             GOTO Cleanup

@@ -31,7 +31,7 @@ BEGIN
 	END
 
 	-- Declare table to store product guids and names
-	DECLARE @products AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256), NameUsers int, RowNumber int)
+	DECLARE @products AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256) NOT NULL, NameUsers int, RowNumber int NOT NULL)
 
 	INSERT INTO @products
 	SELECT
@@ -39,7 +39,7 @@ BEGIN
 		t2.ProductName,
 		t2.NameUsers,
 		-- Most popular ProductGuid/ProductName record will have highest number of users and RowNumber = 1.
-		ROW_NUMBER() OVER (PARTITION BY t2.ProductGuid ORDER BY t2.ProductGuid, t2.NameUsers DESC) AS RowNumber
+		CAST(ROW_NUMBER() OVER (PARTITION BY t2.ProductGuid ORDER BY t2.ProductGuid, t2.NameUsers DESC) AS INT) AS RowNumber
 	FROM (
 		-- Select again to recount records with fixed products names.
 		SELECT
@@ -68,7 +68,7 @@ BEGIN
 	) t2
 
 	-- Declare table to store product guids and names
-	DECLARE @mostPopularNames AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256))
+	DECLARE @mostPopularNames AS TABLE(ProductGuid uniqueidentifier, ProductName nvarchar(256) NOT NULL)
 
 	INSERT INTO @mostPopularNames
 	SELECT

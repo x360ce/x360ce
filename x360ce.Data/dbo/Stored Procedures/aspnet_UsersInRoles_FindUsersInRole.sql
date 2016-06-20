@@ -30,8 +30,9 @@ BEGIN
          RETURN(1)
 
     SELECT u.UserName
-    FROM   dbo.aspnet_Users u, dbo.aspnet_UsersInRoles ur
-    WHERE  u.UserId = ur.UserId AND @RoleId = ur.RoleId AND u.ApplicationId = @ApplicationId AND LoweredUserName LIKE @LoweredUserNameToMatch
+    FROM   dbo.aspnet_Users u
+	INNER JOIN dbo.aspnet_UsersInRoles ur ON u.UserId = ur.UserId
+    WHERE  @RoleId = ur.RoleId AND u.ApplicationId = @ApplicationId AND LoweredUserName LIKE @LoweredUserNameToMatch
     ORDER BY u.UserName
     RETURN(0)
 END

@@ -12,8 +12,8 @@ BEGIN
 	BEGIN 
 	CREATE TABLE #aspnet_Permissions  
 	(  
-		Owner     sysname,  
-		Object    sysname,  
+		[Owner]     sysname,  
+		[Object]    sysname,  
 		Grantee   sysname,  
 		Grantor   sysname,  
 		ProtectType char(10),  
@@ -24,7 +24,7 @@ BEGIN
     
     
     DECLARE c1 cursor FORWARD_ONLY FOR
-        SELECT Object, ProtectType, [Action], Grantee FROM #aspnet_Permissions where Object = @name
+        SELECT [Object], ProtectType, [Action], Grantee FROM #aspnet_Permissions where ISNULL([Object], '') = @name
 
     OPEN c1
 

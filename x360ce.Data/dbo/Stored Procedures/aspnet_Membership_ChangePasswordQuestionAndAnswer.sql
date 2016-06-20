@@ -15,11 +15,11 @@ BEGIN
 	DECLARE @UserId uniqueidentifier
 	SELECT  @UserId = NULL
 	SELECT  @UserId = u.UserId
-	FROM    dbo.aspnet_Membership m, dbo.aspnet_Users u, dbo.aspnet_Applications a
+	FROM    dbo.aspnet_Users u 
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
+	INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
 	WHERE   LoweredUserName = @LoweredUserName AND
-			u.ApplicationId = a.ApplicationId  AND
-			@LoweredApplicationName = a.LoweredApplicationName AND
-			u.UserId = m.UserId
+			@LoweredApplicationName = a.LoweredApplicationName
 	IF (@UserId IS NULL)
 	BEGIN
 		RETURN(1)

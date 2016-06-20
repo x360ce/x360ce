@@ -45,11 +45,11 @@ BEGIN
     	SET @TranStarted = 0
 
     SELECT  @UserId = u.UserId
-    FROM    dbo.aspnet_Users u, dbo.aspnet_Applications a, dbo.aspnet_Membership m
+    FROM    dbo.aspnet_Users u
+	INNER JOIN dbo.aspnet_Applications a ON a.ApplicationId = u.ApplicationId
+	INNER JOIN dbo.aspnet_Membership m ON m.UserId = u.UserId
     WHERE   LoweredUserName = @LoweredUserName AND
-            u.ApplicationId = a.ApplicationId  AND
-            @LoweredApplicationName = a.LoweredApplicationName AND
-            u.UserId = m.UserId
+            @LoweredApplicationName = a.LoweredApplicationName
 
     IF ( @UserId IS NULL )
     BEGIN

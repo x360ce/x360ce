@@ -19,10 +19,11 @@ BEGIN
         SELECT TOP 1 m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
                 m.CreateDate, m.LastLoginDate, @CurrentTimeUtc, m.LastPasswordChangedDate,
                 u.UserId, m.IsLockedOut,m.LastLockoutDate
-        FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
+        FROM    dbo.aspnet_Users u
+		INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+		INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
         WHERE    @LoweredApplicationName = a.LoweredApplicationName AND
-                u.ApplicationId = a.ApplicationId    AND
-                @LoweredUserName = u.LoweredUserName AND u.UserId = m.UserId
+                @LoweredUserName = u.LoweredUserName
 
         IF (@@ROWCOUNT = 0) -- Username not found
             RETURN -1
@@ -36,10 +37,11 @@ BEGIN
         SELECT TOP 1 m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
                 m.CreateDate, m.LastLoginDate, u.LastActivityDate, m.LastPasswordChangedDate,
                 u.UserId, m.IsLockedOut,m.LastLockoutDate
-        FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
+        FROM    dbo.aspnet_Users u
+		INNER JOIN dbo.aspnet_Applications a ON u.ApplicationId = a.ApplicationId
+		INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
         WHERE    @LoweredApplicationName = a.LoweredApplicationName AND
-                u.ApplicationId = a.ApplicationId    AND
-                @LoweredUserName = u.LoweredUserName AND u.UserId = m.UserId
+                @LoweredUserName = u.LoweredUserName
 
         IF (@@ROWCOUNT = 0) -- Username not found
             RETURN -1

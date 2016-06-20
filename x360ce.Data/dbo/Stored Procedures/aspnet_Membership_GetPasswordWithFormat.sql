@@ -29,10 +29,10 @@ BEGIN
             @PasswordSalt=PasswordSalt, @FailedPasswordAttemptCount=FailedPasswordAttemptCount,
 		    @FailedPasswordAnswerAttemptCount=FailedPasswordAnswerAttemptCount, @IsApproved=IsApproved,
             @LastActivityDate = LastActivityDate, @LastLoginDate = LastLoginDate
-    FROM    dbo.aspnet_Applications a, dbo.aspnet_Users u, dbo.aspnet_Membership m
+    FROM    dbo.aspnet_Applications a
+	INNER JOIN dbo.aspnet_Users u ON u.ApplicationId = a.ApplicationId
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
     WHERE   @LoweredApplicationName = a.LoweredApplicationName AND
-            u.ApplicationId = a.ApplicationId    AND
-            u.UserId = m.UserId AND
             @LoweredUserName = u.LoweredUserName
 
     IF (@UserId IS NULL)

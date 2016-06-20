@@ -3,4 +3,25 @@
   <SuppressedFile FilePath="dbo\Stored Procedures\aspnet_Users_CreateUser.sql">
     <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0013" />
   </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\x360ce_GetPresets.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0001" />
+  </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\Tools_FixLoginAndUser.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0014" />
+  </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\x360ce_GetNewDeviceStats.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0001" />
+  </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\x360ce_GetTopControllers.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0001" />
+  </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\Tools_FixDatabaseOwner.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0014" />
+  </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\x360ce_GetTopGames.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0001" />
+  </SuppressedFile>
+  <SuppressedFile FilePath="dbo\Stored Procedures\x360ce_GetUserInstances.sql">
+    <SuppressedRule Category="Microsoft.Rules.Data" RuleId="SR0001" />
+  </SuppressedFile>
 </StaticCodeAnalysis>

@@ -47,14 +47,19 @@ BEGIN
 
 	INSERT INTO @tbRoles
 	  SELECT RoleId
-	  FROM   dbo.aspnet_Roles ar, @tbNames t
-	  WHERE  LOWER(t.Name) = ar.LoweredRoleName AND ar.ApplicationId = @AppId
+	  FROM   dbo.aspnet_Roles ar
+	  INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredRoleName
+	  WHERE  ar.ApplicationId = @AppId
 
 	IF (@@ROWCOUNT <> @Num)
 	BEGIN
 		SELECT TOP 1 Name
 		FROM   @tbNames
-		WHERE  LOWER(Name) NOT IN (SELECT ar.LoweredRoleName FROM dbo.aspnet_Roles ar,  @tbRoles r WHERE r.RoleId = ar.RoleId)
+		WHERE  LOWER(Name) NOT IN (
+			SELECT ar.LoweredRoleName
+			FROM dbo.aspnet_Roles ar
+			INNER JOIN @tbRoles r ON r.RoleId = ar.RoleId
+		)
 		IF( @TranStarted = 1 )
 			ROLLBACK TRANSACTION
 		RETURN(2)
@@ -78,13 +83,18 @@ BEGIN
 
 	INSERT INTO @tbUsers
 	  SELECT UserId
-	  FROM   dbo.aspnet_Users ar, @tbNames t
-	  WHERE  LOWER(t.Name) = ar.LoweredUserName AND ar.ApplicationId = @AppId
+	  FROM   dbo.aspnet_Users ar
+	  INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredUserName
+	  WHERE  ar.ApplicationId = @AppId
 
 	IF (@@ROWCOUNT <> @Num)
 	BEGIN
 		DELETE FROM @tbNames
-		WHERE LOWER(Name) IN (SELECT LoweredUserName FROM dbo.aspnet_Users au,  @tbUsers u WHERE au.UserId = u.UserId)
+		WHERE LOWER(Name) IN (
+			SELECT LoweredUserName
+			FROM dbo.aspnet_Users au
+			INNER JOIN @tbUsers u ON au.UserId = u.UserId
+		)
 
 		INSERT dbo.aspnet_Users (ApplicationId, UserId, UserName, LoweredUserName, IsAnonymous, LastActivityDate)
 		  SELECT @AppId, NEWID(), Name, LOWER(Name), 0, @CurrentTimeUtc
@@ -92,16 +102,23 @@ BEGIN
 
 		INSERT INTO @tbUsers
 		  SELECT  UserId
-		  FROM	dbo.aspnet_Users au, @tbNames t
-		  WHERE   LOWER(t.Name) = au.LoweredUserName AND au.ApplicationId = @AppId
+		  FROM	dbo.aspnet_Users au
+		  INNER JOIN @tbNames t ON LOWER(t.Name) = au.LoweredUserName
+		  WHERE   au.ApplicationId = @AppId
 	END
 
-	IF (EXISTS (SELECT * FROM dbo.aspnet_UsersInRoles ur, @tbUsers tu, @tbRoles tr WHERE tu.UserId = ur.UserId AND tr.RoleId = ur.RoleId))
+	IF (EXISTS (
+		SELECT * 
+		FROM dbo.aspnet_UsersInRoles ur
+		INNER JOIN @tbUsers tu ON tu.UserId = ur.UserId
+		INNER JOIN @tbRoles tr ON tr.RoleId = ur.RoleId))
 	BEGIN
 		SELECT TOP 1 UserName, RoleName
-		FROM		 dbo.aspnet_UsersInRoles ur, @tbUsers tu, @tbRoles tr, aspnet_Users u, aspnet_Roles r
-		WHERE		u.UserId = tu.UserId AND r.RoleId = tr.RoleId AND tu.UserId = ur.UserId AND tr.RoleId = ur.RoleId
-
+		FROM		 dbo.aspnet_UsersInRoles ur
+		INNER JOIN @tbUsers tu ON tu.UserId = ur.UserId
+		INNER JOIN @tbRoles tr ON tr.RoleId = ur.RoleId
+		INNER JOIN aspnet_Users u ON u.UserId = tu.UserId
+		INNER JOIN aspnet_Roles r ON r.RoleId = tr.RoleId
 		IF( @TranStarted = 1 )
 			ROLLBACK TRANSACTION
 		RETURN(3)
@@ -109,7 +126,8 @@ BEGIN
 
 	INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
 	SELECT UserId, RoleId
-	FROM @tbUsers, @tbRoles
+	FROM @tbUsers
+	CROSS JOIN @tbRoles
 
 	IF( @TranStarted = 1 )
 		COMMIT TRANSACTION

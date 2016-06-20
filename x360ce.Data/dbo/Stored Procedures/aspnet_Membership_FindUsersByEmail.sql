@@ -36,14 +36,16 @@ BEGIN
     IF( @EmailToMatch IS NULL )
         INSERT INTO #PageIndexForUsers (UserId)
             SELECT u.UserId
-            FROM   dbo.aspnet_Users u, dbo.aspnet_Membership m
-            WHERE  u.ApplicationId = @ApplicationId AND m.UserId = u.UserId AND m.Email IS NULL
+            FROM   dbo.aspnet_Users u
+			INNER JOIN dbo.aspnet_Membership m ON m.UserId = u.UserId
+            WHERE  u.ApplicationId = @ApplicationId AND m.Email IS NULL
             ORDER BY m.LoweredEmail
     ELSE
         INSERT INTO #PageIndexForUsers (UserId)
             SELECT u.UserId
-            FROM   dbo.aspnet_Users u, dbo.aspnet_Membership m
-            WHERE  u.ApplicationId = @ApplicationId AND m.UserId = u.UserId AND m.LoweredEmail LIKE @LoweredEmailToMatch
+            FROM   dbo.aspnet_Users u
+			INNER JOIN dbo.aspnet_Membership m ON m.UserId = u.UserId
+            WHERE  u.ApplicationId = @ApplicationId AND ISNULL(m.LoweredEmail, '') LIKE @LoweredEmailToMatch
             ORDER BY m.LoweredEmail
 
     SELECT  u.UserName, m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
@@ -53,9 +55,10 @@ BEGIN
             m.LastPasswordChangedDate,
             u.UserId, m.IsLockedOut,
             m.LastLockoutDate
-    FROM   dbo.aspnet_Membership m, dbo.aspnet_Users u, #PageIndexForUsers p
-    WHERE  u.UserId = p.UserId AND u.UserId = m.UserId AND
-           p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
+    FROM   dbo.aspnet_Users u
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId 
+	INNER JOIN #PageIndexForUsers p ON u.UserId = p.UserId
+    WHERE p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
     ORDER BY m.LoweredEmail
 
     SELECT  @TotalRecords = COUNT(*)

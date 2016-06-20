@@ -98,7 +98,7 @@
     </TargetDatabase>
     <TreatTSqlWarningsAsErrors>False</TreatTSqlWarningsAsErrors>
     <SuppressTSqlWarnings />
-    <RunSqlCodeAnalysis>False</RunSqlCodeAnalysis>
+    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
   </PropertyGroup>

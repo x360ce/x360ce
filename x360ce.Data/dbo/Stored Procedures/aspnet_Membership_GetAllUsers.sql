@@ -32,8 +32,9 @@ BEGIN
     -- Insert into our temp table
     INSERT INTO #PageIndexForUsers (UserId)
     SELECT u.UserId
-    FROM   dbo.aspnet_Membership m, dbo.aspnet_Users u
-    WHERE  u.ApplicationId = @ApplicationId AND u.UserId = m.UserId
+    FROM   dbo.aspnet_Users u
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
+    WHERE  u.ApplicationId = @ApplicationId
     ORDER BY u.UserName
 
     SELECT @TotalRecords = @@ROWCOUNT
@@ -45,9 +46,10 @@ BEGIN
             m.LastPasswordChangedDate,
             u.UserId, m.IsLockedOut,
             m.LastLockoutDate
-    FROM   dbo.aspnet_Membership m, dbo.aspnet_Users u, #PageIndexForUsers p
-    WHERE  u.UserId = p.UserId AND u.UserId = m.UserId AND
-           p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
+    FROM dbo.aspnet_Users u
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
+	INNER JOIN #PageIndexForUsers p ON u.UserId = p.UserId
+    WHERE p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
     ORDER BY u.UserName
     RETURN @TotalRecords
 END

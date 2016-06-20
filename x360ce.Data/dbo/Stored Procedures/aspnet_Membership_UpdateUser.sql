@@ -38,7 +38,7 @@ BEGIN
     BEGIN
         IF (EXISTS (SELECT *
                     FROM  dbo.aspnet_Membership WITH (UPDLOCK, HOLDLOCK)
-                    WHERE ApplicationId = @ApplicationId  AND @UserId <> UserId AND LoweredEmail = @LoweredEmail))
+                    WHERE ApplicationId = @ApplicationId  AND @UserId <> UserId AND ISNULL(LoweredEmail,'') = @LoweredEmail))
         BEGIN
             RETURN(7)
         END

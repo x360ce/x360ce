@@ -24,8 +24,7 @@ WHERE s.InstanceGuid IN (
 	SELECT DISTINCT a.InstanceGuid
 	FROM @args a
 	WHERE
-		a.InstanceGuid IS NOT NULL
-		AND a.InstanceGuid <> '00000000-0000-0000-0000-000000000000'
+		ISNULL(a.InstanceGuid, '00000000-0000-0000-0000-000000000000') <> '00000000-0000-0000-0000-000000000000'
 	)
 ORDER BY s.ProductName, s.[FileName], s.FileProductName
 

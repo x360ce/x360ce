@@ -35,8 +35,9 @@ BEGIN
     -- Insert into our temp table
     INSERT INTO #PageIndexForUsers (UserId)
         SELECT u.UserId
-        FROM   dbo.aspnet_Users u, dbo.aspnet_Membership m
-        WHERE  u.ApplicationId = @ApplicationId AND m.UserId = u.UserId AND u.LoweredUserName LIKE @LoweredUserNameToMatch
+        FROM   dbo.aspnet_Users u
+		INNER JOIN dbo.aspnet_Membership m ON m.UserId = u.UserId
+        WHERE  u.ApplicationId = @ApplicationId AND u.LoweredUserName LIKE @LoweredUserNameToMatch
         ORDER BY u.UserName
 
 
@@ -47,9 +48,10 @@ BEGIN
             m.LastPasswordChangedDate,
             u.UserId, m.IsLockedOut,
             m.LastLockoutDate
-    FROM   dbo.aspnet_Membership m, dbo.aspnet_Users u, #PageIndexForUsers p
-    WHERE  u.UserId = p.UserId AND u.UserId = m.UserId AND
-           p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
+    FROM   dbo.aspnet_Users u
+	INNER JOIN dbo.aspnet_Membership m ON u.UserId = m.UserId
+	INNER JOIN #PageIndexForUsers p ON u.UserId = p.UserId
+    WHERE  p.IndexId >= @PageLowerBound AND p.IndexId <= @PageUpperBound
     ORDER BY u.UserName
 
     SELECT  @TotalRecords = COUNT(*)

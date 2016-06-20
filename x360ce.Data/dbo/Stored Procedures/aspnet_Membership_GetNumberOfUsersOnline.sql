@@ -13,12 +13,12 @@ BEGIN
 
     DECLARE @NumOnline int
     SELECT  @NumOnline = COUNT(*)
-    FROM    dbo.aspnet_Users u(NOLOCK),
-            dbo.aspnet_Applications a(NOLOCK),
-            dbo.aspnet_Membership m(NOLOCK)
-    WHERE   u.ApplicationId = a.ApplicationId                  AND
-            LastActivityDate > @DateActive                     AND
-            a.LoweredApplicationName = @LoweredApplicationName AND
-            u.UserId = m.UserId
+    FROM    dbo.aspnet_Users u WITH(NOLOCK)
+    INNER JOIN dbo.aspnet_Applications a WITH(NOLOCK) ON u.ApplicationId = a.ApplicationId
+	INNER JOIN dbo.aspnet_Membership m WITH(NOLOCK) ON u.UserId = m.UserId
+    WHERE
+        LastActivityDate > @DateActive                     AND
+        a.LoweredApplicationName = @LoweredApplicationName
+            
     RETURN(@NumOnline)
 END

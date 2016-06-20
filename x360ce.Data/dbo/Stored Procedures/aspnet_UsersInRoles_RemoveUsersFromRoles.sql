@@ -34,7 +34,6 @@ BEGIN
 	DECLARE @CountU	  int
 	DECLARE @CountR	  int
 
-
 	SET @Num = 0
 	SET @Pos = 1
 	WHILE(@Pos <= LEN(@RoleNames))
@@ -50,17 +49,21 @@ BEGIN
 	END
 
 	INSERT INTO @tbRoles
-	  SELECT RoleId
-	  FROM   dbo.aspnet_Roles ar
-		INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredRoleName
-	  WHERE  ar.ApplicationId = @AppId
+	SELECT RoleId
+	FROM   dbo.aspnet_Roles ar
+	INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredRoleName
+	WHERE  ar.ApplicationId = @AppId
+
 	SELECT @CountR = @@ROWCOUNT
 
 	IF (@CountR <> @Num)
 	BEGIN
 		SELECT TOP 1 N'', Name
 		FROM   @tbNames
-		WHERE  LOWER(Name) NOT IN (SELECT ar.LoweredRoleName FROM dbo.aspnet_Roles ar,  @tbRoles r WHERE r.RoleId = ar.RoleId)
+		WHERE  LOWER(Name) NOT IN (
+			SELECT ar.LoweredRoleName
+			FROM dbo.aspnet_Roles ar
+			INNER JOIN @tbRoles r ON r.RoleId = ar.RoleId)
 		IF( @TranStarted = 1 )
 			ROLLBACK TRANSACTION
 		RETURN(2)
@@ -85,18 +88,20 @@ BEGIN
 	END
 
 	INSERT INTO @tbUsers
-	  SELECT UserId
-	  FROM   dbo.aspnet_Users ar
-		INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredUserName
-	  WHERE  ar.ApplicationId = @AppId
+	SELECT UserId
+	FROM   dbo.aspnet_Users ar
+	INNER JOIN @tbNames t ON LOWER(t.Name) = ar.LoweredUserName
+	WHERE  ar.ApplicationId = @AppId
 
 	SELECT @CountU = @@ROWCOUNT
 	IF (@CountU <> @Num)
 	BEGIN
 		SELECT TOP 1 Name, N''
 		FROM   @tbNames
-		WHERE  LOWER(Name) NOT IN (SELECT au.LoweredUserName FROM dbo.aspnet_Users au,  @tbUsers u WHERE u.UserId = au.UserId)
-
+		WHERE  LOWER(Name) NOT IN (
+			SELECT au.LoweredUserName
+			FROM dbo.aspnet_Users au
+			INNER JOIN @tbUsers u ON u.UserId = au.UserId)
 		IF( @TranStarted = 1 )
 			ROLLBACK TRANSACTION
 		RETURN(1)
@@ -104,21 +109,21 @@ BEGIN
 
 	SELECT  @CountAll = COUNT(*)
 	FROM	dbo.aspnet_UsersInRoles ur
-		INNER JOIN @tbUsers u ON ur.UserId = u.UserId
-		INNER JOIN @tbRoles r ON ur.RoleId = r.RoleId
+	INNER JOIN @tbUsers u ON ur.UserId = u.UserId
+	INNER JOIN @tbRoles r ON ur.RoleId = r.RoleId
 
 	IF (@CountAll <> @CountU * @CountR)
 	BEGIN
-		SELECT TOP 1 UserName, RoleName
-		FROM		 @tbUsers tu,
-					@tbRoles tr,
-					dbo.aspnet_Users u,
-					dbo.aspnet_Roles r
-		WHERE		 u.UserId = tu.UserId AND r.RoleId = tr.RoleId AND
-					 tu.UserId NOT IN (SELECT ur.UserId FROM dbo.aspnet_UsersInRoles ur WHERE ur.RoleId = tr.RoleId) AND
-					 tr.RoleId NOT IN (SELECT ur.RoleId FROM dbo.aspnet_UsersInRoles ur WHERE ur.UserId = tu.UserId)
+		SELECT TOP 1 u.UserName, r.RoleName
+		FROM	@tbUsers tu
+		CROSS JOIN @tbRoles tr
+		INNER JOIN dbo.aspnet_Users u ON u.UserId = tu.UserId
+		INNER JOIN dbo.aspnet_Roles r ON r.RoleId = tr.RoleId
+		LEFT JOIN aspnet_UsersInRoles ur ON ur.RoleId = tu.UserId AND ur.RoleId = tr.RoleId
+		WHERE ur.RoleId IS NULL
 		IF( @TranStarted = 1 )
 			ROLLBACK TRANSACTION
+		--Provider_this_user_already_not_in_role
 		RETURN(3)
 	END
 
