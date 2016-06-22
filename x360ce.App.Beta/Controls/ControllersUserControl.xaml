@@ -5,11 +5,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:x360ce.App"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded">
+             d:DesignHeight="300" d:DesignWidth="600" Loaded="UserControl_Loaded">
+
+
+	<UserControl.Resources>
+		<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+			<Setter Property="Padding" Value="2 4 2 4"  />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type DataGridCell}">
+						<Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+							<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Resources>
+
 	<TabControl x:Name="tabControl" Margin="10">
 		<TabItem Header="Available Direct Input Devices">
 			<Grid>
-				<DataGrid x:Name="ControllersDataGrid" BorderThickness="0" CanUserAddRows="False" AutoGenerateColumns="False" GridLinesVisibility="Horizontal"  >
+				<DataGrid x:Name="ControllersDataGrid" BorderThickness="0" CanUserAddRows="False" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HeadersVisibility="Column">
 					<DataGrid.HorizontalGridLinesBrush>
 						<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
 					</DataGrid.HorizontalGridLinesBrush>
@@ -17,7 +34,7 @@
 						<DataGridTextColumn Binding="{Binding InstanceId}" Header="Instance ID"/>
 						<DataGridTextColumn Binding="{Binding VendorName}"  Header="Vendor Name"/>
 						<DataGridTextColumn Binding="{Binding ProductName}" Header="Product Name"/>
-						<DataGridTextColumn Binding="{Binding DeviceId}" Header="Device ID"/>
+						<DataGridTextColumn Binding="{Binding DeviceId}" Header="Device ID" Width="*"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</Grid>

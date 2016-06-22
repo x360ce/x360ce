@@ -57,10 +57,9 @@ namespace x360ce.App.Controls
 
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
-			var bs = new BindingSource();
-			bs.DataSource = SettingManager.Settings.Items;
 			//bs.Filter = string.Format("MapTo = {0}", (int)MappedTo);
-			grid.DataSource = bs;
+			grid.DataSource = mappedItems;
+			Settings_Items_ListChanged(null, null);
 			SettingManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 			// Initialize images.
 			this.TopPictureBox.Image = topDisabledImage;
@@ -106,11 +105,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void DevicesToMapDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-		{
-			ShowHideAndSelectGridRows(null);
-		}
-
 		private void Settings_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			ShowHideAndSelectGridRows(null);
@@ -118,47 +112,48 @@ namespace x360ce.App.Controls
 
 		object DevicesToMapDataGridViewLock = new object();
 
+		SortableBindingList<Engine.Data.Setting> mappedItems = new SortableBindingList<Engine.Data.Setting>();
+
 		void ShowHideAndSelectGridRows(Guid? instanceGuid = null)
 		{
 			lock (DevicesToMapDataGridViewLock)
 			{
 				var grid = MappedDevicesDataGridView;
-				//	var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
-				//	// Reverse order to hide/show bottom records first..
-				//	Array.Reverse(rows);
-				//	var newValues = new Dictionary<DataGridViewRow, bool>();
-				//	for (int i = 0; i < rows.Length; i++)
-				//	{
-				//		var item = (Engine.Data.Setting)rows[i].DataBoundItem;
-				//		var show = (item.MapTo == (int)MappedTo);
-				//		if (rows[i].Visible != show)
-				//		{
-				//			newValues.Add(rows[i], show);
-				//		}
-				//	}
-				//	// If columns will be hidden or shown then...
-				//	if (newValues.Count > 0)
-				//	{
-				//		var selection = instanceGuid.HasValue
-				//			? new List<Guid>() { instanceGuid.Value }
-				//			: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
-				//		grid.CurrentCell = null;
-				//		// Suspend Layout and CurrencyManager to avoid exceptions.
-				//		grid.SuspendLayout();
-				//		var cm = (CurrencyManager)BindingContext[grid.DataSource];
-				//		cm.SuspendBinding();
-				//		foreach (var row in newValues.Keys)
-				//		{
-				//			row.Visible = newValues[row];
-				//		}
-				//		// Resume CurrencyManager and Layout.
-				//		cm.ResumeBinding();
-				//		grid.ResumeLayout();
-				//		// Restore selection.
-				//		JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
-				//	}
-				//	var visibleCount = rows.Count(x => x.Visible);
-				//	MappedDevicesTabPage.Text = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
+				// Get rows which must be displayed on the list.
+				var itemsToShow = SettingManager.Settings.Items.Where(x => x.MapTo == (int)MappedTo).ToList();
+
+				var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
+				var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
+
+				// If columns will be hidden or shown then...
+				if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0)
+				{
+					var selection = instanceGuid.HasValue
+						? new List<Guid>() { instanceGuid.Value }
+						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
+					grid.CurrentCell = null;
+					// Suspend Layout and CurrencyManager to avoid exceptions.
+					grid.SuspendLayout();
+					var cm = (CurrencyManager)BindingContext[grid.DataSource];
+					cm.SuspendBinding();
+					// Do removal.
+					foreach (var item in itemsToRemove)
+					{
+						mappedItems.Remove(item);
+					}
+					// Do adding.
+					foreach (var item in itemsToInsert)
+					{
+						mappedItems.Add(item);
+					}
+					// Resume CurrencyManager and Layout.
+					cm.ResumeBinding();
+					grid.ResumeLayout();
+					// Restore selection.
+					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
+				}
+				var visibleCount = mappedItems.Count();
+				MappedDevicesTabPage.Text = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
 			}
 		}
 
@@ -1324,14 +1319,11 @@ namespace x360ce.App.Controls
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(setting.InstanceGuid);
 			}
-			//else if (e.ColumnIndex == grid.Columns[MapToColumn.Name].Index)
-			//{
-			//	var visible = (setting.MapTo == (int)MappedTo);
-			//	if (viewRow.Visible != visible)
-			//	{
-			//		viewRow.Visible = visible;
-			//	}
-			//}
+
+			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
+			{
+				e.Value = device.VendorName;
+			}
 		}
 
 		private void AddMapButton_Click(object sender, EventArgs e)

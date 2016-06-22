@@ -2055,7 +2055,6 @@
 			this.MappedDevicesDataGridView.Size = new System.Drawing.Size(619, 52);
 			this.MappedDevicesDataGridView.TabIndex = 68;
 			this.MappedDevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DevicesToMapDataGridView_CellFormatting);
-			this.MappedDevicesDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.DevicesToMapDataGridView_DataBindingComplete);
 			this.MappedDevicesDataGridView.SelectionChanged += new System.EventHandler(this.DevicesToMapDataGridView_SelectionChanged);
 			// 
 			// MappedDevicesTabControl
