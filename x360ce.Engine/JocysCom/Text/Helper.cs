@@ -249,7 +249,7 @@ namespace JocysCom.ClassLibrary.Text
 			return BytesToStringBlock(bytes, addIndex, addHex, addText);
 		}
 
-		public static string BytesToStringBlock(byte[] bytes, bool addIndex, bool addHex, bool addText, int offset = 0, int size = -1, int? maxDisplayLines = null)
+		public static string BytesToStringBlock(byte[] bytes, bool addIndex, bool addHex, bool addText, int offset = 0, int size = -1)
 		{
 			var builder = new StringBuilder();
 			var hx = new StringBuilder();
@@ -281,10 +281,7 @@ namespace JocysCom.ClassLibrary.Text
 					if (addText)
 					{
 						builder.Append(ch.ToString());
-						if (!maxDisplayLines.HasValue || lines.Count < maxDisplayLines.Value)
-						{
-							lines.Add(builder.ToString());
-						}
+						lines.Add(builder.ToString());
 						builder.Clear();
 					}
 					hx.Clear();
@@ -292,11 +289,21 @@ namespace JocysCom.ClassLibrary.Text
 					lineIndex++;
 				}
 			}
-			if (lineIndex > lines.Count)
-			{
-				lines[lines.Count - 1] = string.Format("... {0} more lines.", lineIndex - lines.Count + 1);
-			}
 			return string.Join(Environment.NewLine, lines);
+		}
+
+		public static string CropLines(string s, int maxLines = 8)
+		{
+			if (string.IsNullOrEmpty(s)) return s;
+			var lines = s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+			if (lines.Length <= maxLines) return s;
+			var sb = new StringBuilder();
+			for (int i = 0; i < maxLines - 1; i++)
+			{
+				sb.AppendLine(lines[i]);
+			}
+			sb.AppendFormat("... {0} more lines.", lines.Length - maxLines + 1);
+			return sb.ToString();
 		}
 
 		static KeyValue[] SplitAndKeep(string s, string[] separators)
