@@ -10,9 +10,9 @@ Digitally Signed Application v3.2.9.81 (2015-10-04) and Libraries 3.4.1.1357 (20
 
 DInput.dll Plugin (required for some games):
 
-	[64-bit Download - dinput_x64.dll](https://github.com/x360ce/x360ce/raw/master/x360ce.App/Resources/dinput_x64.dll) - for 64-bit games 
+[64-bit Download - dinput_x64.dll](https://github.com/x360ce/x360ce/raw/master/x360ce.App/Resources/dinput_x64.dll) - for 64-bit games 
 
-	[32-bit Download - dinput_x64.dll](https://github.com/x360ce/x360ce/raw/master/x360ce.App/Resources/dinput_x86.dll) - for 32-bit games 
+[32-bit Download - dinput_x64.dll](https://github.com/x360ce/x360ce/raw/master/x360ce.App/Resources/dinput_x86.dll) - for 32-bit games 
 
 # Reporting Issues
 
