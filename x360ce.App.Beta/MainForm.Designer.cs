@@ -32,7 +32,8 @@ namespace x360ce.App
 			this.ControllersTabPage = new System.Windows.Forms.TabPage();
 			this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
 			this.controllersUserControl1 = new x360ce.App.ControllersUserControl();
-			this.DevicesTabPage = new System.Windows.Forms.TabPage();
+			this.HardwareTabPage = new System.Windows.Forms.TabPage();
+			this.HardwarePanel = new JocysCom.ClassLibrary.IO.HardwareControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
 			this.IniTabPage = new System.Windows.Forms.TabPage();
@@ -61,12 +62,11 @@ namespace x360ce.App
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.hardwareControl1 = new JocysCom.ClassLibrary.IO.HardwareControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
 			this.ControllersTabPage.SuspendLayout();
-			this.DevicesTabPage.SuspendLayout();
+			this.HardwareTabPage.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			this.IniTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
@@ -88,7 +88,7 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.OptionsTabPage);
 			this.MainTabControl.Controls.Add(this.GamesTabPage);
 			this.MainTabControl.Controls.Add(this.ControllersTabPage);
-			this.MainTabControl.Controls.Add(this.DevicesTabPage);
+			this.MainTabControl.Controls.Add(this.HardwareTabPage);
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Controls.Add(this.IniTabPage);
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
@@ -193,15 +193,23 @@ namespace x360ce.App
 			this.elementHost1.Text = "elementHost1";
 			this.elementHost1.Child = this.controllersUserControl1;
 			// 
-			// DevicesTabPage
+			// HardwareTabPage
 			// 
-			this.DevicesTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.DevicesTabPage.Controls.Add(this.hardwareControl1);
-			this.DevicesTabPage.Location = new System.Drawing.Point(4, 23);
-			this.DevicesTabPage.Name = "DevicesTabPage";
-			this.DevicesTabPage.Size = new System.Drawing.Size(768, 597);
-			this.DevicesTabPage.TabIndex = 5;
-			this.DevicesTabPage.Text = "Devices";
+			this.HardwareTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.HardwareTabPage.Controls.Add(this.HardwarePanel);
+			this.HardwareTabPage.Location = new System.Drawing.Point(4, 23);
+			this.HardwareTabPage.Name = "HardwareTabPage";
+			this.HardwareTabPage.Size = new System.Drawing.Size(768, 597);
+			this.HardwareTabPage.TabIndex = 5;
+			this.HardwareTabPage.Text = "Hardware";
+			// 
+			// HardwarePanel
+			// 
+			this.HardwarePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HardwarePanel.Location = new System.Drawing.Point(0, 0);
+			this.HardwarePanel.Name = "HardwarePanel";
+			this.HardwarePanel.Size = new System.Drawing.Size(768, 597);
+			this.HardwarePanel.TabIndex = 1;
 			// 
 			// SettingsTabPage
 			// 
@@ -460,14 +468,6 @@ namespace x360ce.App
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
 			// 
-			// hardwareControl1
-			// 
-			this.hardwareControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.hardwareControl1.Location = new System.Drawing.Point(0, 0);
-			this.hardwareControl1.Name = "hardwareControl1";
-			this.hardwareControl1.Size = new System.Drawing.Size(768, 597);
-			this.hardwareControl1.TabIndex = 1;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -494,7 +494,7 @@ namespace x360ce.App
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GamesTabPage.ResumeLayout(false);
 			this.ControllersTabPage.ResumeLayout(false);
-			this.DevicesTabPage.ResumeLayout(false);
+			this.HardwareTabPage.ResumeLayout(false);
 			this.SettingsTabPage.ResumeLayout(false);
 			this.IniTabPage.ResumeLayout(false);
 			this.IniTabPage.PerformLayout();
@@ -551,7 +551,7 @@ namespace x360ce.App
 		private TabPage ControllersTabPage;
 		private System.Windows.Forms.Integration.ElementHost elementHost1;
 		private ControllersUserControl controllersUserControl1;
-		private TabPage DevicesTabPage;
-		private JocysCom.ClassLibrary.IO.HardwareControl hardwareControl1;
+		private TabPage HardwareTabPage;
+		private JocysCom.ClassLibrary.IO.HardwareControl HardwarePanel;
 	}
 }

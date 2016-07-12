@@ -21,12 +21,39 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+		<!--<Style x:Key="MyToolbarStyle" TargetType="{x:Type CheckBox}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type CheckBox}">
+						<StackPanel Orientation="Horizontal">
+							<Image x:Name="imageCheckBox" 
+                           Width="16" 
+                           Height="16" 
+                           Source="/x360ce;component/Images/checkbox_unchecked_16x16.png"/>
+							<ContentPresenter VerticalAlignment="Center"/>
+						</StackPanel>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="False">
+								<Setter TargetName="imageCheckBox" 
+                                Property="Source" 
+                                Value="/x360ce;component/Images/checkbox_unchecked_16x16.png"/>
+							</Trigger>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter TargetName="imageCheckBox" 
+                                Property="Source"
+                                Value="/x360ce;component/Images/checkbox_16x16.png"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>-->
 	</UserControl.Resources>
 
 	<TabControl x:Name="tabControl" Margin="10">
-		<TabItem Header="Available Direct Input Devices">
+		<TabItem Header="Direct Input Devices">
 			<Grid>
-				<DataGrid x:Name="ControllersDataGrid" BorderThickness="0" CanUserAddRows="False" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+				<DataGrid x:Name="ControllersDataGrid" BorderThickness="0" CanUserAddRows="False" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" HeadersVisibility="Column" Margin="0,27,0,0">
 					<DataGrid.HorizontalGridLinesBrush>
 						<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}"/>
 					</DataGrid.HorizontalGridLinesBrush>
@@ -37,6 +64,11 @@
 						<DataGridTextColumn Binding="{Binding DeviceId}" Header="Device ID" Width="*"/>
 					</DataGrid.Columns>
 				</DataGrid>
+				<ToolBar x:Name="toolBar" Margin="0" VerticalAlignment="Top">
+					<!--<CheckBox  x:Name="checkBox" VerticalAlignment="Top" Style="{StaticResource MyToolbarStyle}">
+						<TextBlock FlowDirection="LeftToRight" Text="Show Unavailable Devices" />
+					</CheckBox>-->
+				</ToolBar>
 			</Grid>
 		</TabItem>
 	</TabControl>

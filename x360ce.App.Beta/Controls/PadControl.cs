@@ -1322,7 +1322,9 @@ namespace x360ce.App.Controls
 
 			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
 			{
-				e.Value = device.VendorName;
+				e.Value = device == null
+					? ""
+					: device.VendorName;
 			}
 		}
 
