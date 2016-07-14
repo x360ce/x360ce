@@ -16,11 +16,4 @@
 #include <windows.h>
 #include <xinput.h>
 
-#define CINTERFACE
-#define _WIN32_DCOM
-#include <wbemidl.h>
-#include <ole2.h>
-#include <oleauto.h>
-#include <dinput.h>
-
 #include "Common.h"

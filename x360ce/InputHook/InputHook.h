@@ -75,7 +75,7 @@ public:
 	static const u32 HOOK_DI		= 0x00000004UL;
 	static const u32 HOOK_PIDVID	= 0x00000008UL;
 	static const u32 HOOK_NAME		= 0x00000010UL;
-	static const u32 HOOK_SA		= 0x00000020UL;
+	static const u32 HOOK_HID		= 0x00000020UL;
 	static const u32 HOOK_WT		= 0x10000000UL;
 	static const u32 HOOK_STOP		= 0x20000000UL;
 
@@ -97,14 +97,17 @@ public:
 		return (m_hookmask & flag) == flag;
 	}
 
-	void EnableHook(const DWORD& flag)
+	void SetState(const DWORD& flag, bool state)
 	{
-		m_hookmask |= flag;
+		m_laststate = m_hookmask;
+
+		if (state) m_hookmask |= flag;
+		else m_hookmask &= ~flag;
 	}
 
-	void DisableHook(const DWORD& flag)
+	void SetLastState()
 	{
-		m_hookmask &= ~flag;
+		std::swap(m_hookmask, m_laststate);
 	}
 
 	DWORD GetFakePIDVID()
@@ -132,6 +135,7 @@ private:
 	bool MaskToName(std::string* mask_string, u32 mask);
 
 	u32 m_hookmask;
+	u32 m_laststate;
 	u32 m_fakepidvid;
 	u32 m_timeout;
 	HANDLE m_timeout_thread;
@@ -142,6 +146,6 @@ private:
 	void HookCOM();
 	void HookDI();
 	void HookWT();
-	void HookSA();
+	void HookHID();
 };
 

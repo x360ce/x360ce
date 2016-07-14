@@ -18,10 +18,10 @@
     <ClInclude Include="HookLL.h">
       <Filter>InputHook</Filter>
     </ClInclude>
-    <ClInclude Include="HookSA.h">
+    <ClInclude Include="HookWT.h">
       <Filter>InputHook</Filter>
     </ClInclude>
-    <ClInclude Include="HookWT.h">
+    <ClInclude Include="HookHID.h">
       <Filter>InputHook</Filter>
     </ClInclude>
   </ItemGroup>
@@ -46,12 +46,12 @@
     <ClCompile Include="HookLL.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
-    <ClCompile Include="HookSA.cpp">
-      <Filter>InputHook</Filter>
-    </ClCompile>
     <ClCompile Include="HookWT.cpp">
       <Filter>InputHook</Filter>
     </ClCompile>
     <ClCompile Include="InputHook.cpp" />
+    <ClCompile Include="HookHID.cpp">
+      <Filter>InputHook</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

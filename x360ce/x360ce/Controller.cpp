@@ -77,8 +77,8 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 	// If state haven't changed yet then...
 	HRESULT hr = UpdateState();
 
-#if 0
-	PrintLog("UpdateState %u %u", dwUserIndex, hr);
+#if 1
+	PrintLog("UpdateState %u %u", m_user, hr);
 #endif
 
 	if (FAILED(hr)) return
@@ -597,12 +597,7 @@ HRESULT Controller::UpdateState()
 
 DWORD Controller::CreateDevice()
 {
-	bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
-	bool bHookSA = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_SA);
-
-	if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);
-	if (bHookSA) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_SA);
-
+	InputHookManager::Get().GetInputHook().SetState(InputHook::HOOK_DI | InputHook::HOOK_HID, false);
 	IDirectInputDevice8A* device;
 	HRESULT hr = ControllerManager::Get().GetDirectInput()->CreateDevice(m_instanceid, &device, NULL);
 	if (FAILED(hr))
@@ -616,9 +611,7 @@ DWORD Controller::CreateDevice()
 			return ERROR_DEVICE_NOT_CONNECTED;
 	}
 	m_pDevice.reset(device);
-
-	if (bHookSA) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_SA);
-	if (bHookDI) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_DI);
+	InputHookManager::Get().GetInputHook().SetLastState();
 
 	if (!m_pDevice)
 		return ERROR_DEVICE_NOT_CONNECTED;

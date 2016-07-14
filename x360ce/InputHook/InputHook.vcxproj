@@ -216,7 +216,6 @@
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\Common;$(ProjectDir)\..\..\MinHook\include;$(DXSDK_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <SDLCheck>true</SDLCheck>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dxguid.lib;dinput8.lib;psapi.lib;wintrust.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -254,7 +253,7 @@
     <ClCompile Include="HookCOM.cpp" />
     <ClCompile Include="HookDI.cpp" />
     <ClCompile Include="HookLL.cpp" />
-    <ClCompile Include="HookSA.cpp" />
+    <ClCompile Include="HookHID.cpp" />
     <ClCompile Include="HookWT.cpp" />
     <ClCompile Include="InputHook.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -268,7 +267,7 @@
     <ClInclude Include="HookCOM.h" />
     <ClInclude Include="HookDI.h" />
     <ClInclude Include="HookLL.h" />
-    <ClInclude Include="HookSA.h" />
+    <ClInclude Include="HookHID.h" />
     <ClInclude Include="HookWT.h" />
     <ClInclude Include="InputHook.h" />
     <ClInclude Include="InputHookManager.h" />
