@@ -65,26 +65,26 @@ public:
 		if (bHookLL) InputHookManager::Get().GetInputHook().EnableHook(InputHook::HOOK_LL);
 
 		// XInput 1.3 and older functions
-		GetProcAddress("XInputGetState", &XInputGetState);
-		GetProcAddress("XInputSetState", &XInputSetState);
-		GetProcAddress("XInputGetCapabilities", &XInputGetCapabilities);
-		GetProcAddress("XInputEnable", &XInputEnable);
-		GetProcAddress("XInputGetDSoundAudioDeviceGuids", &XInputGetDSoundAudioDeviceGuids);
-		GetProcAddress("XInputGetBatteryInformation", &XInputGetBatteryInformation);
-		GetProcAddress("XInputGetKeystroke", &XInputGetKeystroke);
+		StoreProcAddress("XInputGetState", &XInputGetState);
+		StoreProcAddress("XInputSetState", &XInputSetState);
+		StoreProcAddress("XInputGetCapabilities", &XInputGetCapabilities);
+		StoreProcAddress("XInputEnable", &XInputEnable);
+		StoreProcAddress("XInputGetDSoundAudioDeviceGuids", &XInputGetDSoundAudioDeviceGuids);
+		StoreProcAddress("XInputGetBatteryInformation", &XInputGetBatteryInformation);
+		StoreProcAddress("XInputGetKeystroke", &XInputGetKeystroke);
 
 		// XInput 1.3 undocumented functions
-		GetProcAddress((const char*)100, &XInputGetStateEx);
-		GetProcAddress((const char*)101, &XInputWaitForGuideButton);
-		GetProcAddress((const char*)102, &XInputCancelGuideButtonWait);
-		GetProcAddress((const char*)103, &XInputPowerOffController);
+		StoreProcAddress((const char*)100, &XInputGetStateEx);
+		StoreProcAddress((const char*)101, &XInputWaitForGuideButton);
+		StoreProcAddress((const char*)102, &XInputCancelGuideButtonWait);
+		StoreProcAddress((const char*)103, &XInputPowerOffController);
 
 		// XInput 1.4 functions
-		GetProcAddress("XInputGetAudioDeviceIds", &XInputGetAudioDeviceIds);
+		StoreProcAddress("XInputGetAudioDeviceIds", &XInputGetAudioDeviceIds);
 
 		// XInput 1.4 undocumented functionss
-		GetProcAddress((const char*)104, &XInputGetBaseBusInformation);
-		GetProcAddress((const char*)108, &XInputGetCapabilitiesEx);
+		StoreProcAddress((const char*)104, &XInputGetBaseBusInformation);
+		StoreProcAddress((const char*)108, &XInputGetCapabilitiesEx);
 	}
 
 	~XInputModuleManager()
@@ -106,7 +106,7 @@ public:
 
 private:
 	template<typename T>
-	inline void GetProcAddress(const char* funcname, T* ppfunc)
+	inline void StoreProcAddress(const char* funcname, T* ppfunc)
 	{
 		*ppfunc = reinterpret_cast<T>(::GetProcAddress(m_module, funcname));
 	}

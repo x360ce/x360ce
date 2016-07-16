@@ -14,7 +14,7 @@
 class Logger : NonCopyable
 {
 public:
-	Logger() : m_file(INVALID_HANDLE_VALUE) {}
+	Logger() : m_systime(), m_system(), m_file(INVALID_HANDLE_VALUE) {}
 
 	Logger::~Logger()
 	{

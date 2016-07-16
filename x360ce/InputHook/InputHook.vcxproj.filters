@@ -24,6 +24,27 @@
     <ClInclude Include="HookWT.h">
       <Filter>InputHook</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\buffer.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\trampoline.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\HDE\hde32.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\HDE\hde64.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\HDE\pstdint.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\HDE\table32.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MinHook\src\HDE\table64.h">
+      <Filter>MinHook</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PCH">
@@ -31,6 +52,9 @@
     </Filter>
     <Filter Include="InputHook">
       <UniqueIdentifier>{6d46d0a1-b5fc-4465-9537-d18ee1a52b1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MinHook">
+      <UniqueIdentifier>{6ae67f32-cd53-4625-ad90-a97e05217a1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,5 +77,20 @@
       <Filter>InputHook</Filter>
     </ClCompile>
     <ClCompile Include="InputHook.cpp" />
+    <ClCompile Include="..\..\MinHook\src\buffer.c">
+      <Filter>MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MinHook\src\hook.c">
+      <Filter>MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MinHook\src\trampoline.c">
+      <Filter>MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MinHook\src\HDE\hde32.c">
+      <Filter>MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MinHook\src\HDE\hde64.c">
+      <Filter>MinHook</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
