@@ -329,7 +329,10 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 	// Full pass through
 	pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
 	if (pController->m_passthrough)
+	{
+		pIniFile->Get<u32>(section, "PassThroughIndex", &pController->m_passthroughindex, 0);
 		return false;
+	}
 
 	// Forces-only pass through
 	pIniFile->Get(section, "ForcesPassThrough", &pController->m_forcespassthrough);
