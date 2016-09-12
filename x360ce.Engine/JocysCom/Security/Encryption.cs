@@ -35,11 +35,11 @@ namespace JocysCom.ClassLibrary.Security
 		string _prefix;
 
 		/// <summary>Gets HMAC hash key name inside config file.</summary>
-		public string HmacHashKey { get { return _prefix + "HmacHashKey"; } }
+		public string HmacHashKeyName { get { return _prefix + "HmacHashKey"; } }
 		/// <summary>RSA public key name inside config file.</summary>
-		public string RsaPublicKey { get { return _prefix + "RsaPublicKey"; } }
+		public string RsaPublicKeyName { get { return _prefix + "RsaPublicKey"; } }
 		/// <summary>RSA private key name inside config file.</summary>
-		public string RsaPrivateKey { get { return _prefix + "RsaPrivateKey"; } }
+		public string RsaPrivateKeyName { get { return _prefix + "RsaPrivateKey"; } }
 
 		string _HmacHashKeyValue;
 		public string HmacHashKeyValue
@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _HmacHashKeyValue = _HmacHashKeyValue
-					?? System.Configuration.ConfigurationManager.AppSettings[HmacHashKey];
+					?? System.Configuration.ConfigurationManager.AppSettings[HmacHashKeyName];
 			}
 			set { _HmacHashKeyValue = value; }
 		}
@@ -58,7 +58,7 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _RsaPublicKeyValue = _RsaPublicKeyValue
-					?? System.Configuration.ConfigurationManager.AppSettings[RsaPublicKey];
+					?? System.Configuration.ConfigurationManager.AppSettings[RsaPublicKeyName];
 			}
 			set { _RsaPublicKeyValue = value; }
 		}
@@ -69,7 +69,7 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _RsaPrivateKeyValue = _RsaPrivateKeyValue
-					?? System.Configuration.ConfigurationManager.AppSettings[RsaPrivateKey];
+					?? System.Configuration.ConfigurationManager.AppSettings[RsaPrivateKeyName];
 			}
 			set { _RsaPrivateKeyValue = value; }
 		}
@@ -147,7 +147,7 @@ namespace JocysCom.ClassLibrary.Security
 				{
 					// Create MD5HMAC hash provider.
 					if (string.IsNullOrEmpty(HmacHashKeyValue))
-						throw new InvalidOperationException("Application key '" + HmacHashKey + "' is not set!");
+						throw new InvalidOperationException("Application key '" + HmacHashKeyName + "' is not set!");
 					byte[] hashKeyBytes = System.Text.Encoding.UTF8.GetBytes(HmacHashKeyValue);
 					_MacProvider = new System.Security.Cryptography.HMACMD5();
 					_MacProvider.Key = hashKeyBytes;
@@ -574,8 +574,8 @@ namespace JocysCom.ClassLibrary.Security
 			Keys keys = RsaNewKeys(keySize);
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			string pattern = "<add key=\"{0}\" value=\"{1}\"/>\r\n";
-			sb.Append(String.Format(pattern, RsaPublicKey, keys.Public));
-			sb.Append(String.Format(pattern, RsaPrivateKey, keys.Private));
+			sb.Append(String.Format(pattern, RsaPublicKeyName, keys.Public));
+			sb.Append(String.Format(pattern, RsaPrivateKeyName, keys.Private));
 			return sb.ToString();
 		}
 
@@ -592,15 +592,15 @@ namespace JocysCom.ClassLibrary.Security
 			// Get the configuration file.
 			config = System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
 			// Modify settings.
-			if (config.AppSettings.Settings[HmacHashKey] == null)
-				config.AppSettings.Settings.Add(HmacHashKey, string.Empty);
-			if (config.AppSettings.Settings[RsaPublicKey] == null)
-				config.AppSettings.Settings.Add(RsaPublicKey, string.Empty);
-			if (config.AppSettings.Settings[RsaPrivateKey] == null)
-				config.AppSettings.Settings.Add(RsaPrivateKey, string.Empty);
-			config.AppSettings.Settings[HmacHashKey].Value = _prefix + "Hmac";
-			config.AppSettings.Settings[RsaPublicKey].Value = keys.Public;
-			config.AppSettings.Settings[RsaPrivateKey].Value = keys.Private;
+			if (config.AppSettings.Settings[HmacHashKeyName] == null)
+				config.AppSettings.Settings.Add(HmacHashKeyName, string.Empty);
+			if (config.AppSettings.Settings[RsaPublicKeyName] == null)
+				config.AppSettings.Settings.Add(RsaPublicKeyName, string.Empty);
+			if (config.AppSettings.Settings[RsaPrivateKeyName] == null)
+				config.AppSettings.Settings.Add(RsaPrivateKeyName, string.Empty);
+			config.AppSettings.Settings[HmacHashKeyName].Value = _prefix + "Hmac";
+			config.AppSettings.Settings[RsaPublicKeyName].Value = keys.Public;
+			config.AppSettings.Settings[RsaPrivateKeyName].Value = keys.Private;
 			// Save the configuration file.
 			config.Save(System.Configuration.ConfigurationSaveMode.Modified);
 			// Reset values.

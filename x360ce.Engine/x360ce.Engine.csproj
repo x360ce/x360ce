@@ -212,9 +212,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="JocysCom\Security\TokenHelper.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />
     <Compile Include="JocysCom\Security\Encryption.cs" />
-    <Compile Include="JocysCom\Security\Helper.cs" />
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserFieldName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />

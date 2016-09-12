@@ -266,15 +266,21 @@ namespace JocysCom.ClassLibrary.Threading
 				}
 				// Do synchronous action.
 				DoActionCount++;
-				try
+				var da = DoAction;
+				if (da != null)
 				{
-					DoAction(item);
-				}
-				catch (Exception ex)
-				{
-					LastException = ex.ToString();
-					LastExceptionDate = DateTime.Now;
-					ExceptionCount++;
+					try
+					{
+
+						da(item);
+					}
+					catch (Exception ex)
+					{
+						LastException = ex.ToString();
+						LastExceptionDate = DateTime.Now;
+						ExceptionCount++;
+					}
+
 				}
 			}
 		}

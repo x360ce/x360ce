@@ -407,7 +407,7 @@ namespace JocysCom.ClassLibrary.IO
 				//
 				// Create a device information set composed of all devices associated with a specified device setup class or device interface class.
 				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, flags); //  | DIGCF.DIGCF_PRESENT
-				if (deviceInfoSet.ToInt32() == ERROR_INVALID_HANDLE_VALUE)
+				if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
 				{
 					throw new Exception("Invalid Handle");
 				}

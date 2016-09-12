@@ -604,6 +604,19 @@ namespace JocysCom.ClassLibrary.Runtime
 				{
 					AddRow(ref s, "Request");
 					AddRow(ref s, "User IP", request.UserHostName);
+					IPAddress address;
+					if (IPAddress.TryParse(request.UserHostName, out address))
+					{
+						try
+						{
+							IPHostEntry entry = Dns.GetHostEntry(address);
+							AddRow(ref s, "User Host", entry.HostName);
+						}
+						catch (Exception ex)
+						{
+							AddRow(ref s, "User Host", ex.Message);
+						}
+					}
 					AddRow(ref s, "Request.Url", request.Url.ToString());
 					if (request.Form.Keys.Count > 0)
 					{

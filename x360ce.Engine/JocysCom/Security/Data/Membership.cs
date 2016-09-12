@@ -15,23 +15,23 @@ namespace JocysCom.WebSites.Engine.Security.Data
 		public string GetRedirectToken()
 		{
 
-			return JocysCom.ClassLibrary.Security.Helper.GetSecurityToken(UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Minutes);
+			return JocysCom.ClassLibrary.Security.TokenHelper.GetSecurityToken(UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Minutes);
 		}
 
 		public string GetPasswordResetToken()
 		{
-			return JocysCom.ClassLibrary.Security.Helper.GetSecurityToken(UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Hours);
+			return JocysCom.ClassLibrary.Security.TokenHelper.GetSecurityToken(UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Hours);
 		}
 
 		public bool CheckRedirectToken(string key)
 		{
-			var isValid = JocysCom.ClassLibrary.Security.Helper.CheckSecurityToken(key, UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Minutes, 10);
+			var isValid = JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Minutes, 10);
 			return isValid;
 		}
 
 		public bool CheckPasswordResetToken(string key)
 		{
-			var isValid = JocysCom.ClassLibrary.Security.Helper.CheckSecurityToken(key, UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Hours, 24);
+			var isValid = JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Hours, 24);
 			return isValid;
 		}
 
@@ -42,7 +42,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			var userId = user.UserId;
 			var m = db.Memberships.FirstOrDefault(x => x.UserId == userId);
 			var resetKey = m.GetPasswordResetToken();
-			var resetUrl = JocysCom.ClassLibrary.Security.Helper.GetUrl(PasswordResetKey, resetKey);
+			var resetUrl = JocysCom.ClassLibrary.Security.TokenHelper.GetUrl(PasswordResetKey, resetKey);
 			var u = System.Web.HttpContext.Current.Request.Url;
 			subject = subject.Replace("{Host}", u.Host);
 			body = JocysCom.ClassLibrary.Text.Helper.Replace(body, user, false);
