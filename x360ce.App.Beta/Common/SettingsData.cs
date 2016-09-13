@@ -10,6 +10,7 @@ using x360ce.Engine;
 using x360ce.App.Controls;
 using System.Diagnostics;
 using System.Data.Objects.DataClasses;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App
 {
@@ -87,7 +88,7 @@ namespace x360ce.App
 					var o = Items[i] as EntityObject;
 					if (o != null) o.EntityKey = null;
 				}
-				Serializer.SerializeToXmlFile(this, XmlFile.FullName, Encoding.UTF8);
+				Serializer.SerializeToXmlFile(this, XmlFile.FullName, Encoding.UTF8, true);
 			}
 		}
 

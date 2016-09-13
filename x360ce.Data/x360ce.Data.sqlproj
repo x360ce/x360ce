@@ -319,11 +319,11 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\x360ce_Controllers.sql">
+    <Build Include="dbo\Tables\x360ce_UserInstances.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\x360ce_ControllerInstances.sql">
+    <Build Include="dbo\Tables\x360ce_UserControllers.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>

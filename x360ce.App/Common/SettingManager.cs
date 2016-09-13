@@ -34,7 +34,7 @@ namespace x360ce.App
 
 		/// <summary>Summary of most popular Settings.</summary>
 		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries");
-		
+
 		/// <summary>User Games.</summary>
 		public static SettingsData<Engine.Data.Game> Games = new SettingsData<Engine.Data.Game>("Games");
 
@@ -652,21 +652,21 @@ namespace x360ce.App
 			return saved;
 		}
 
-        public List<Control> DisabledControls = new List<Control>();
+		public List<Control> DisabledControls = new List<Control>();
 
 		/// <summary>
 		/// Save control value to INI file.
 		/// </summary>
 		public bool SaveSetting(Control control)
 		{
-            if (DisabledControls.Contains(control)) return false;
-            var ini = new Ini(IniFileName);
+			if (DisabledControls.Contains(control)) return false;
+			var ini = new Ini(IniFileName);
 			var saved = false;
 			foreach (string path in SettingsMap.Keys)
 			{
 				if (SettingsMap[path] == control)
 				{
-                    var r = SaveSetting(ini, path, true);
+					var r = SaveSetting(ini, path, true);
 					if (r) saved = r;
 					break;
 				}

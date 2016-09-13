@@ -12,6 +12,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using JocysCom.ClassLibrary.Data;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.Web.WebServices
 {

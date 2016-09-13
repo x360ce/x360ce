@@ -681,7 +681,9 @@ if $(PlatformName) == AnyCPU $(SolutionDir)\$(ProjectName)\Resources\NetZ\netz.e
 ::if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"
+    <PreBuildEvent>echo copy x360ce.Engine.dll to $(ProjectDir)Resources
+copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"
+echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
 copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"
 if $(ConfigurationName) == Debug (
 if $(PlatformName) == x86 (

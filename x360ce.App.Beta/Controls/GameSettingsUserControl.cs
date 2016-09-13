@@ -10,6 +10,7 @@ using x360ce.Engine;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
@@ -517,14 +518,14 @@ namespace x360ce.App.Controls
 				}
 				if (dialog.FileName.EndsWith(".gz"))
 				{
-					var s = Serializer.SerializeToXmlString(programs, System.Text.Encoding.UTF8);
+					var s = Serializer.SerializeToXmlString(programs, System.Text.Encoding.UTF8, true);
 					var bytes = System.Text.Encoding.UTF8.GetBytes(s);
 					var compressedBytes = EngineHelper.Compress(bytes);
 					System.IO.File.WriteAllBytes(dialog.FileName, compressedBytes);
 				}
 				else
 				{
-					Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8);
+					Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8, true);
 				}
 			}
 		}

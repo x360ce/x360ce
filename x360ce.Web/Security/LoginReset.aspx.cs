@@ -30,7 +30,7 @@ namespace JocysCom.Web.Security
 					ErrorLabel.Visible = true;
 					return;
 				}
-				Guid userId = JocysCom.ClassLibrary.Security.Helper.GetId<Guid>(key);
+				Guid userId = JocysCom.ClassLibrary.Security.TokenHelper.GetData<Guid>(key);
 				var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(userId);
 				if (user == null)
 				{
@@ -39,7 +39,7 @@ namespace JocysCom.Web.Security
 					return;
 				}
 				// Key will expire after 5 minutes.
-				if (!JocysCom.ClassLibrary.Security.Helper.CheckSecurityToken(key, user.UserId, user.Membership.Password, TimeUnitType.Minutes, 5))
+				if (!JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, user.UserId, user.Membership.Password, TimeUnitType.Minutes, 5))
 				{
 					ErrorLabel.Text = "Error 3: Password reset key expired!";
 					ErrorLabel.Visible = true;
@@ -53,7 +53,7 @@ namespace JocysCom.Web.Security
 		
 		protected void ChangePasswordPushButton_Click(object sender, EventArgs e)
 		{
-			Guid userId = JocysCom.ClassLibrary.Security.Helper.GetId<Guid>(ResetKeyLabel.Text);
+			Guid userId = JocysCom.ClassLibrary.Security.TokenHelper.GetData<Guid>(ResetKeyLabel.Text);
 			var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(userId);
 			var muser = System.Web.Security.Membership.GetUser(user.UserName);
 			// Reset password: Start

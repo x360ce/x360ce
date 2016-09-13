@@ -49,6 +49,12 @@ namespace x360ce.App
 
 		public static BindingList<DiDevice> DiDevices = new BindingList<DiDevice>();
 
+		/// <summary>User Controllers</summary>
+		public static SettingsData<Engine.Data.UserController> UserControllers = new SettingsData<Engine.Data.UserController>("UserControllers");
+
+		/// <summary>User Controller Instances</summary>
+		public static SettingsData<Engine.Data.UserInstance> UserInstances = new SettingsData<Engine.Data.UserInstance>("UserInstances");
+
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
 		{
 			return Settings.Items.FirstOrDefault(x =>

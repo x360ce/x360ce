@@ -96,6 +96,8 @@ namespace x360ce.App
 			SettingManager.Games.Load();
 			SettingManager.Presets.Load();
 			SettingManager.PadSettings.Load();
+			SettingManager.UserControllers.Load();
+			SettingManager.UserInstances.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				XiControllers[i] = new Controller((UserIndex)i);
@@ -642,6 +644,8 @@ namespace x360ce.App
 			SettingManager.Games.Save();
 			SettingManager.Presets.Save();
 			SettingManager.PadSettings.Save();
+			SettingManager.UserControllers.Save();
+			SettingManager.UserInstances.Save();
 		}
 
 		#region Timer
