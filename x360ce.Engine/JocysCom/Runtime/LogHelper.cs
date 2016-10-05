@@ -710,7 +710,15 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false, string[] attachments = null)
 		{
-			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, GetAttachments(attachments));
+			var att = GetAttachments(attachments);
+			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, att);
+			if (att != null)
+			{
+				foreach (var item in att)
+				{
+					item.Dispose();
+				}
+			}
 		}
 
 		/// <summary>

@@ -29,6 +29,21 @@ namespace JocysCom.ClassLibrary.Controls
 			control.Invalidate();
 		}
 
+		public static void RebindGrid<T>(DataGridView grid, object data, string primaryKeyPropertyName = null, bool selectFirst = true, List<T> selection = null)
+		{
+			int rowIndex = 0;
+			if (grid.Rows.Count > 0) rowIndex = grid.FirstDisplayedCell.RowIndex;
+			var sel = (selection == null)
+				? GetSelection<T>(grid, primaryKeyPropertyName)
+				: selection;
+			grid.DataSource = data;
+			if (rowIndex != 0 && rowIndex < grid.Rows.Count)
+			{
+				grid.FirstDisplayedScrollingRowIndex = rowIndex;
+			}
+			RestoreSelection(grid, primaryKeyPropertyName, sel, selectFirst);
+		}
+
 		/// <summary>
 		/// Get list of primary keys of items selected in the grid.
 		/// </summary>
@@ -98,7 +113,10 @@ namespace JocysCom.ClassLibrary.Controls
 			if (item is DataRowView)
 			{
 				var row = ((DataRowView)item).Row;
-				val = (T)row[dataPropertyName];
+				if (!row.IsNull(dataPropertyName))
+				{
+					val = (T)row[dataPropertyName];
+				}
 			}
 			else
 			{
