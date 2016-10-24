@@ -531,7 +531,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (context != null)
 			{
 				// Form controls.
-				var pg = (Page)System.Web.HttpContext.Current.Handler;
+				var pg = System.Web.HttpContext.Current.Handler as Page;
 				Control[] controls = null;
 				//Need to find page on this
 				if (pg != null)

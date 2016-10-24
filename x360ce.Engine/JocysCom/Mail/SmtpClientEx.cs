@@ -142,12 +142,24 @@ namespace JocysCom.ClassLibrary.Mail
 				list.Add(n);
 				if (ErrorLimitMax == 1 || count > 0)
 				{
-					ex.Data.Add("ErrorType", errorType);
-					ex.Data.Add("ErrorCount", count);
-					ex.Data.Add("Config.ErrorLimitMax", ErrorLimitMax);
-					ex.Data.Add("Config.ErrorLimitAge", ErrorLimitAge);
+					Upsert(ex, "ErrorType", errorType);
+					Upsert(ex, "ErrorCount", count);
+					Upsert(ex, "Config.ErrorLimitMax", ErrorLimitMax);
+					Upsert(ex, "Config.ErrorLimitAge", ErrorLimitAge);
 				}
 				return true;
+			}
+		}
+
+		public void Upsert(Exception ex, object key, object value)
+		{
+			if (ex.Data.Contains(key))
+			{
+				ex.Data[key] = value;
+			}
+			else
+			{
+				ex.Data.Add(key, value);
 			}
 		}
 
