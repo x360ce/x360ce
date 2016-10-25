@@ -13,7 +13,7 @@ GOTO:EOF
 :: ".NET developer \ Tools" and deselect everything else.
 set sgt=%ProgramFiles%\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
 if not exist "%sgt%" set sgt=%ProgramFiles(x86)%\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
-set pfx=D:\_Backup\Configuration\SSL\Standard\Jocys.com.CodeSign.pfx
+set pfx=D:\_Backup\Configuration\SSL\CodeSign_Standard\2016\Evaldas_Jocys.CodeSign.pfx
 set d=XBOX 360 Controller Emulator
 set du=http://www.jocys.com/projects/x360ce
 set vsg=http://timestamp.verisign.com/scripts/timestamp.dll
