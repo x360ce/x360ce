@@ -16,6 +16,10 @@ DInput.dll Plugin (required for some games):
 
 # Reporting Issues
 
+**!!! Denuvo protected games are not supported !!!**
+
+List of denuvo protected games is [here](https://en.wikipedia.org/wiki/Denuvo#List_of_Denuvo_games)
+
 Report only crashes or other bugs, note that the Issue tracker is not a help desk! 
 
 **DO NOT ASK FOR HELP IN INSTALLATION OR CONFIGURATION!!!**
