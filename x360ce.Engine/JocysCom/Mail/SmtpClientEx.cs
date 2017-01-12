@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Globalization;
 
-
 namespace JocysCom.ClassLibrary.Mail
 {
 
@@ -101,12 +100,13 @@ namespace JocysCom.ClassLibrary.Mail
 		public string SmtpPassword;
 		public string SmtpDomain;
 		public string SmtpServer;
+		public string SmtpPickupFolder;
 		public bool SmtpEnableSsl;
 		public string SmtpFrom;
 		public string SmtpSendCopyTo;
 		public string ErrorRecipients;
 		public bool ErrorNotifications;
-		public SmtpDeliveryMethod ErrorDeliveryMethod;
+		public SmtpDeliveryMethod SmtpDeliveryMethod;
 		/// <summary>Maximum exceptions per specified time.</summary>
 		public int ErrorLimitMax;
 		/// <summary>Time for exceptions</summary>
@@ -163,8 +163,6 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
-		public string ErrorPickupDirectory;
-
 		private void Initialize()
 		{
 			// Load configuration
@@ -172,13 +170,13 @@ namespace JocysCom.ClassLibrary.Mail
 			SmtpPassword = LogHelper.ParseString("SmtpPassword", "");
 			SmtpDomain = LogHelper.ParseString("SmtpDomain", "");
 			SmtpServer = LogHelper.ParseString("SmtpServer", "");
+			SmtpPickupFolder = LogHelper.ParseString("SmtpPickupFolder", "");  
 			SmtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
 			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
 			SmtpSendCopyTo = LogHelper.ParseString("SmtpSendCopyTo", "");
 			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
 			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", true);
-			ErrorDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
-			ErrorPickupDirectory = LogHelper.ParseString("ErrorPickupDirectory", "Logs\\Errors");
+			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
 			// Maximum 10 errors of same type per 5 minutes (2880 per day).
 			ErrorLimitMax = LogHelper.ParseInt("ErrorLimitMax", 5);
 			ErrorLimitAge = LogHelper.ParseSpan("ErrorLimitAge", new TimeSpan(0, 5, 0));
@@ -207,7 +205,15 @@ namespace JocysCom.ClassLibrary.Mail
 				// Get reflection info for Send() method on MailMessage
 				var _sendMethod = typeof(MailMessage).GetMethod("Send", flags);
 				// Call method passing in MailWriter
-				_sendMethod.Invoke(message, flags, null, new object[] { _mailWriter, true }, null);
+
+				if (_sendMethod.GetParameters().Length == 2)
+				{
+					_sendMethod.Invoke(message, flags, null, new object[] { _mailWriter, true }, null);
+				}
+				else
+				{
+					_sendMethod.Invoke(message, flags, null, new object[] { _mailWriter, true, true }, null);
+				}
 				// Finally get reflection info for Close() method on our MailWriter
 				var _closeMethod = _mailWriter.GetType().GetMethod("Close", flags);
 				// Call close method
@@ -221,7 +227,7 @@ namespace JocysCom.ClassLibrary.Mail
 			{
 				AddSmtpSendCopyToRecipients(message, SmtpSendCopyTo);
 			}
-			if (ErrorDeliveryMethod == SmtpDeliveryMethod.Network)
+			if (SmtpDeliveryMethod == SmtpDeliveryMethod.Network)
 			{
 
 				// Send message to SMTP server.
@@ -240,7 +246,7 @@ namespace JocysCom.ClassLibrary.Mail
 			else
 			{
 				// Save message to folder.
-				var di = new DirectoryInfo(ErrorPickupDirectory);
+				var di = new DirectoryInfo(SmtpPickupFolder);
 				if (!di.Exists) di.Create();
 				var fileTime = DateTime.Now;
 				var fileName = string.Format("{0:yyyyMMdd_HHmmss_ffffff}.eml", fileTime);

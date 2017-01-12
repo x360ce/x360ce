@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Linq;
-using System.ComponentModel;
+using System.Drawing;
 
 namespace JocysCom.ClassLibrary.Processes
 {
 	public class MouseHook : BaseHook
 	{
 
-		public override void Start()
+		/// <summary>
+		/// Start Monitoring.
+		/// </summary>
+		/// <param name="global">False - monitor current application only. True - monitor all.</param>
+		public override void Start(bool global = false)
 		{
-			InstallHook(HookType.WH_MOUSE);
+			InstallHook(HookType.WH_MOUSE, global);
 		}
 
 		//=====================================================================
@@ -24,6 +27,8 @@ namespace JocysCom.ClassLibrary.Processes
 		public event MouseEventHandler OnMouseActivity;
 		public event MouseEventHandler OnMouseWheel;
 		public event EventHandler<MouseHookEventArgs> OnMouseHook;
+		public event EventHandler<MouseHookEventArgs> OnMouseUnknown;
+		public event EventHandler<MouseHookEventArgs> OnCursorChanged;
 
 		// Touch event handlers
 		public event EventHandler<MouseTouchEventArgs> OnTouchDown;
@@ -32,7 +37,9 @@ namespace JocysCom.ClassLibrary.Processes
 
 		public event UnhandledExceptionEventHandler OnError;
 
-		// wParam Values.
+		// https://www.autoitscript.com/autoit3/docs/appendix/WinMsgCodes.htm
+		private const int WM_SETCURSOR = 0x0020;
+
 		private const int WM_MOUSEMOVE = 0x200;
 
 		private const int WM_LBUTTONDOWN = 0x201;
@@ -104,10 +111,11 @@ namespace JocysCom.ClassLibrary.Processes
 		int prevX = -1;
 		int prevY = -1;
 
-		protected override IntPtr HookProcess(int nCode, IntPtr wParam, IntPtr lParam)
+		protected override IntPtr Hook1Procedure(int nCode, IntPtr wParam, IntPtr lParam)
 		{
 			if (EnableEvents)
 			{
+
 				// If OK and someone listens to our events
 				if (nCode >= 0)
 				{
@@ -123,11 +131,12 @@ namespace JocysCom.ClassLibrary.Processes
 					// Marshall the data from callback.
 					var mStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 					var delta = 0;
-					var tu = new TestUnion { Number = mStruct.mouseData };
+					var tu = new TestUnion(mStruct.mouseData);
 					MouseKey mk = 0;
 					int lastX = 0;
 					int lastY = 0;
 					bool handled;
+					var unknownAction = false;
 					switch (param)
 					{
 						case WM_MOUSEMOVE:
@@ -192,8 +201,12 @@ namespace JocysCom.ClassLibrary.Processes
 								if (OnError != null) OnError(this, new UnhandledExceptionEventArgs(ex, false));
 							}
 							break;
+						default:
+							unknownAction = true;
+
+							break;
 					}
-					var ea = new MouseHookEventArgs(mStruct, info, mk, param, lastX, lastY);
+					var ea = new MouseHookEventArgs(mStruct, info, mk, param, lastX, lastY, null);
 					if (OnMouseHook != null) OnMouseHook(this, ea);
 					int clickCount = 0;
 					if (button != MouseButtons.None) clickCount = (param == WM_LBUTTONDBLCLK || param == WM_RBUTTONDBLCLK) ? 2 : 1;
@@ -204,9 +217,53 @@ namespace JocysCom.ClassLibrary.Processes
 					else if (OnMouseMove != null && (param == WM_MOUSEMOVE)) OnMouseMove(this, e);
 					else if (OnMouseWheel != null) OnMouseWheel(this, e);
 					else if (OnMouseActivity != null) OnMouseActivity(this, e);
+					if (unknownAction)
+					{
+						var ev = OnMouseUnknown;
+						if (ev != null)
+						{
+							ev(this, ea);
+						}
+					}
 				}
 			}
-			return CallNextHookEx(hHook, nCode, wParam, lParam);
+			return NativeMethods.CallNextHookEx(hook1handleRef, nCode, wParam, lParam);
+		}
+
+		const int OBJID_CURSOR = -9;
+		const int CHILDID_SELF = 0;
+
+		protected override void Hook2Procedure(
+			IntPtr hWinEventHook,
+			uint eventType,
+			IntPtr hwnd,
+			int idObject,
+			int idChild,
+			uint dwEventThread,
+			uint dwmsEventTime
+		)
+		{
+			if (hwnd == IntPtr.Zero && idObject == OBJID_CURSOR && idChild == CHILDID_SELF)
+			{
+				if (eventType == EVENT_OBJECT_NAMECHANGE || eventType == EVENT_OBJECT_SHOW)
+				{
+					Console.WriteLine("Hook2Procedure hwnd = {0:x8}, eventType = {1:x8}, idChild = {2:x8}", hwnd.ToInt32(), eventType, idChild);
+					var ev = OnCursorChanged;
+					if (ev != null)
+					{
+						var ci = default(CURSORINFO);
+						ci.Size = Marshal.SizeOf(ci);
+						var success = GetCursorInfo(out ci);
+						Bitmap image = null;
+						if (success)
+						{
+							image = MouseHelper.GetCurrentCursorImage();
+						}
+						var e = new MouseHookEventArgs(null, ci, 0, 0, 0, 0, image);
+						ev(this, e);
+					}
+				}
+			}
 		}
 
 		/// <summary>

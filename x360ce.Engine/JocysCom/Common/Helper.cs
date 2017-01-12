@@ -191,13 +191,6 @@ namespace JocysCom.ClassLibrary
 				: GuidRegex.IsMatch(s);
 		}
 
-		public static bool IsEmail(string s)
-		{
-			if (string.IsNullOrEmpty(s)) return false;
-			var match = JocysCom.ClassLibrary.Mail.WebMail.EmailRegex.Match(s);
-			return match.Success && match.Value.Length == s.Length;
-		}
-
 		#endregion
 
 		#region Exception
@@ -331,8 +324,6 @@ namespace JocysCom.ClassLibrary
 			bool isHtml = (tf == TraceFormat.Html);
 			string newLine = (isHtml) ? "<br />" + Environment.NewLine : Environment.NewLine;
 			bool flag = true;
-			string format;
-
 			bool flag2 = true;
 			var builder = new StringBuilder(0xff);
 			if (isHtml) builder.Append("<span style=\"font-family: Courier New; font-size: 10pt;\">");
@@ -454,25 +445,33 @@ namespace JocysCom.ClassLibrary
 						}
 						if (fileName != null)
 						{
+							var lineNumber = frame.GetFileLineNumber();
+							var columnNumber = frame.GetFileColumnNumber();
+							string format;
 							if (isHtml)
 							{
 								builder.Append("<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-								var l = System.Web.HttpUtility.UrlEncode(fileName.Replace("\\", "/")).Replace("+", "%20");
+								var fnHtml = System.Web.HttpUtility.HtmlEncode(fileName);
+								var fnColor = isForm ? "#800000" : "#000000";
+								var fnSpan = string.Format("<span style=\"color: {0};\">{1}</span>", fnColor, fnHtml);
+								// Add file as link.
 								var addLink = false;
-								if (addLink) builder.AppendFormat("<a href=\"file:///{0}\" style=\"text-decoration: none; color: #000000;\">", l);
-								else builder.AppendFormat("<span style=\"color: #000000;\">");
-								if (isForm) builder.AppendFormat("<span style=\"color: #800000;\">{0}</span>", System.Web.HttpUtility.HtmlEncode(fileName));
-								else builder.Append(fileName);
-								if (addLink) builder.Append("</a>");
-								else builder.Append("</span>");
-								builder.Append("<span style=\"color: #808080;\">,</span> ");
-								builder.Append(frame.GetFileLineNumber());
-								builder.AppendFormat("<span style=\"color: #808080;\">:{0}</span>", frame.GetFileColumnNumber());
+								if (addLink)
+								{
+									var fnLink = System.Web.HttpUtility.UrlEncode(fileName.Replace("\\", "/")).Replace("+", "%20");
+									builder.AppendFormat("<a href=\"file:///{0}\" style=\"text-decoration: none; color: #000000;\">{1}</a>", fnLink, fnSpan);
+								}
+								else
+								{
+									builder.AppendFormat(fnSpan);
+								}
+								builder.AppendFormat("<span style=\"color: #808080;\">,</span> {0}", lineNumber);
+								builder.AppendFormat("<span style=\"color: #808080;\">:{0}</span>", columnNumber);
 							}
 							else
 							{
 								format = " in {0}, {1}:{2}";
-								builder.AppendFormat(CultureInfo.InvariantCulture, format, fileName, frame.GetFileLineNumber(), frame.GetFileColumnNumber());
+								builder.AppendFormat(format, fileName, lineNumber, columnNumber);
 							}
 						}
 					}

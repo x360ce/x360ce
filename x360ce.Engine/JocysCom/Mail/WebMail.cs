@@ -114,6 +114,14 @@ namespace JocysCom.ClassLibrary.Mail
 			return _htmlTag.IsMatch(s);
 		}
 
+
+		public static bool IsEmail(string s)
+		{
+			if (string.IsNullOrEmpty(s)) return false;
+			var match = EmailRegex.Match(s);
+			return match.Success && match.Value.Length == s.Length;
+		}
+
 		public virtual MailMessage GetMessage(string subject, string body)
 		{
 			return IsHtml(body)

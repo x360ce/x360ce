@@ -181,6 +181,7 @@
     <Compile Include="JocysCom\Processes\BaseHook.cs" />
     <Compile Include="JocysCom\Processes\CURSORINFO.cs" />
     <Compile Include="JocysCom\Processes\HookType.cs" />
+    <Compile Include="JocysCom\Processes\MouseHelper.cs" />
     <Compile Include="JocysCom\Processes\MouseHook.cs" />
     <Compile Include="JocysCom\Processes\MouseHookEventArgs.cs" />
     <Compile Include="JocysCom\Processes\MouseKey.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="JocysCom\Runtime\Attributes.cs" />
     <Compile Include="JocysCom\Runtime\EmailResult.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.cs" />
+    <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
@@ -237,11 +239,13 @@
     <Compile Include="JocysCom\Win32\DIGCF.cs" />
     <Compile Include="JocysCom\Win32\HIDD_ATTRIBUTES.cs" />
     <Compile Include="JocysCom\Win32\HIDP_CAPS.cs" />
+    <Compile Include="JocysCom\Win32\ICONINFO.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cfgmgr32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.hid.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.kernel32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.setupapi.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.user32.cs" />
     <Compile Include="JocysCom\Win32\POINT.cs" />
     <Compile Include="JocysCom\Win32\RECT.cs" />
     <Compile Include="JocysCom\Win32\REG.cs" />

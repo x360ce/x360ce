@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		#region Helper Functions
 
 		/// <summary>
-		/// Read file content in multiple attmempts.
+		/// Read file content in multiple attempts.
 		/// </summary>
 		/// <param name="path">The file to open for reading.</param>
 		/// <param name="attempts">Number of attempts to read from the file. Default 2 times.</param>
@@ -45,7 +45,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Write file content in multiple attmempts.
+		/// Write file content in multiple attempts.
 		/// </summary>
 		/// <param name="path">The file to open for writing.</param>
 		/// <param name="bytes">The bytes to write to the file.</param>
@@ -333,7 +333,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			ms.Seek(0, SeekOrigin.Begin);
 			string xml = tr.ReadToEnd();
 			xw.Close();
-			ms.Close();
+			// CA2202: Do not dispose objects multiple times
+			//ms.Close();
 			xw = null;
 			ms = null;
 			return xml;
@@ -380,7 +381,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			catch (Exception)
 			{
 				xw.Close();
-				ms.Close();
+				// CA2202: Do not dispose objects multiple times
+				//ms.Close();
 				xw = null;
 				ms = null;
 				throw;
@@ -388,7 +390,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			xw.Flush();
 			byte[] bytes = ms.ToArray();
 			xw.Close();
-			ms.Close();
+			// CA2202: Do not dispose objects multiple times
+			//ms.Close();
 			xw = null;
 			ms = null;
 			// Write serialized data into file.
@@ -437,7 +440,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			catch (Exception)
 			{
 				xw.Close();
-				ms.Close();
+				// CA2202: Do not dispose objects multiple times
+				//ms.Close();
 				xw = null;
 				ms = null;
 				throw;
@@ -445,7 +449,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			xw.Flush();
 			byte[] bytes = ms.ToArray();
 			xw.Close();
-			ms.Close();
+			// CA2202: Do not dispose objects multiple times
+			//ms.Close();
 			xw = null;
 			ms = null;
 			// Write serialized data into file.

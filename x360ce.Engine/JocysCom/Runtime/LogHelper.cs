@@ -11,23 +11,13 @@ using System.Web.UI.WebControls;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Mail;
-using JocysCom.ClassLibrary.Mail;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
 	public partial class LogHelper
 	{
-		public JocysCom.ClassLibrary.Mail.SmtpClientEx Smtp;
-
-		public LogHelper()
-		{
-			Smtp = JocysCom.ClassLibrary.Mail.SmtpClientEx.Current;
-		}
-
-
+	
 		private static LogHelper _Current;
 		private static object currentLock = new object();
 		public static LogHelper Current
@@ -264,93 +254,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		public System.Net.Mail.MailMessage GetMailPreview(MailMessage message)
-		{
-			MailMessage mail = new MailMessage();
-			mail.IsBodyHtml = true;
-			SmtpClientEx.ApplyRecipients(mail, message.From, Smtp.ErrorRecipients);
-			var subject = message.Subject;
-			ApplyRunModeSuffix(ref subject);
-			mail.Subject = subject;
-			string testBody = "";
-			testBody += "In LIVE mode this email would be sent:<br />\r\n";
-			foreach (var item in message.To)
-			{
-				testBody += "To:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
-			}
-			foreach (var item in message.CC)
-			{
-				testBody += "Cc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
-			}
-			foreach (var item in message.Bcc)
-			{
-				testBody += "Bcc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
-			}
-
-			testBody += "<hr />\r\n";
-			var attachments = message.Attachments;
-			if (attachments != null && attachments.Count() > 0)
-			{
-				testBody += "These files would be attached:<br />\r\n";
-				if (attachments != null && attachments.Count() > 0)
-				{
-					for (int ctr = 0; ctr <= attachments.Count() - 1; ctr++)
-					{
-						string fileName = attachments[ctr].Name;
-						if (fileName.Length > 3 && fileName.ToLower().Substring(fileName.Length - 4) == ".ics")
-						{
-							mail.Attachments.Add(attachments[ctr]);
-						}
-						testBody += "&nbsp;&nbsp;&nbsp;&nbsp;" + System.Web.HttpUtility.HtmlEncode(fileName);
-						testBody += "<br />\r\n";
-					}
-				}
-			}
-			if (message.IsBodyHtml)
-			{
-				testBody += message.Body;
-			}
-			else
-			{
-				testBody += "<pre>";
-				testBody += System.Web.HttpUtility.HtmlEncode(message.Body);
-				testBody += "</pre>";
-			}
-			mail.Body = testBody;
-			return mail;
-		}
-
-
-		public static string GetSubjectPrefix(Exception ex, string suffix = "Error")
-		{
-			Assembly asm = Assembly.GetEntryAssembly();
-			string a = "Unknown Entry Assembly";
-			if (asm == null)
-			{
-				if (ex != null)
-				{
-					StackFrame[] frames = new StackTrace(ex).GetFrames();
-					if (frames != null && frames.Length > 0)
-					{
-						asm = frames[0].GetMethod().DeclaringType.Assembly;
-					}
-				}
-			}
-			if (asm == null)
-			{
-				asm = Assembly.GetCallingAssembly();
-			}
-			if (asm != null)
-			{
-				var last2Nodes = asm.GetName().Name.Split('.').Reverse().Take(2).Reverse();
-				a = string.Join(".", last2Nodes);
-			}
-			string s = string.Format("{0} {1}", a, suffix);
-			ApplyRunModeSuffix(ref s);
-			s += ": ";
-			return s;
-		}
-
 		public void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml)
 		{
 			var prefix = "FCE_" + ex.GetType().Name;
@@ -407,8 +310,28 @@ namespace JocysCom.ClassLibrary.Runtime
 			AddRow(ref s, "Username", System.Environment.UserName);
 			if (asm != null)
 			{
+				var bd = Configuration.AssemblyInfo.GetBuildDateTime(asm.Location);
 				AddRow(ref s, "Executable", asm.Location);
-				AddRow(ref s, "Build Date", Configuration.AssemblyInfo.GetBuildDateTime(asm.Location).ToString("yyyy-MM-dd HH:mm:ss"));
+				AddRow(ref s, "Build Date", bd.ToString("yyyy-MM-dd HH:mm:ss"));
+				//AddRow(ref s, "SVN LastCheckIn", "svn log -q \"%file%\" -r {"+ bd.ToString("yyyy-MM-ddTHH:mm:ss") + "}:{1970-01-01} -l 1");
+				//AddRow(ref s, "SVN GetCodeFile", "svn cat -r %rev% \"%file%\" > \"%TEMP%\\code.cs\" && \"%TEMP%\\code.cs\"");
+				/* Look for source code in SVN.
+
+				:: Set build date.
+				set date=2016-10-24T14:12:53
+				:: Set file name to investigate.
+				set file=C:\Projects\Volante\Dispatch\Engine\Messages\ClientStateMessage.cs
+				:: Show last check-in before build (biggest chance of version we are looking for).
+				svn log -q "%file%" -r {%date%}:{1970-01-01} -l 1
+				:: Show first check-in after build.
+				svn log -q "%file%" -r {%date%}:{9999-01-01} -l 1
+				
+				:: Save file revision to disk.
+				svn cat -r r18594 "%file%" > "%TEMP%\svn.cs"
+				:: Open file with Visual Studio.
+				"%TEMP%\svn.cs"
+
+				*/
 			}
 			UserInfo(ref s);
 			PageInfo(ref s);
@@ -699,126 +622,6 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		#endregion
-
-		#region Send Mail
-
-		public void SendWarningMail(string subject, string body, bool isBodyHtml = false)
-		{
-			//var subject2 = LogHelper.GetSubjectPrefix(new Exception(subject), "Warning");
-			Smtp.SendErrorEmail(null, subject, body);
-		}
-
-		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false, string[] attachments = null)
-		{
-			var att = GetAttachments(attachments);
-			SendMailFrom(@from, @to, cc, bcc, subject, body, isBodyHtml, preview, rethrow, att);
-			if (att != null)
-			{
-				foreach (var item in att)
-				{
-					item.Dispose();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Mail will be sent to error recipient if not LIVE.
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="to"></param>
-		/// <param name="cc"></param>
-		/// <param name="bcc"></param>
-		/// <param name="subject"></param>
-		/// <param name="body"></param>
-		/// <param name="isBodyHtml"></param>
-		/// <param name="preview">Force preview on LIVE system.</param>
-		/// <param name="rethrow">Throw exception if sending fails. Must be set to false when sending exceptions.</param>
-		/// <param name="attachments"></param>
-		public void SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml, bool preview, bool rethrow, Attachment[] attachments)
-		{
-			// Re-throw - throw the error again to catch by a caller
-			try
-			{
-				var mail = new MailMessage();
-				SmtpClientEx.ApplyRecipients(mail, @from, @to, cc, bcc);
-				SmtpClientEx.ApplyAttachments(mail, attachments);
-				mail.IsBodyHtml = isBodyHtml;
-				mail.Subject = subject;
-				mail.Body = body;
-				if (!IsLive || preview)
-				{
-					mail = GetMailPreview(mail);
-				}
-				Smtp.SendMessage(mail);
-			}
-			catch (Exception ex)
-			{
-				if (!string.IsNullOrEmpty(@to) && !ex.Data.Contains("Mail.To")) ex.Data.Add("Mail.To", @to);
-				if (!string.IsNullOrEmpty(cc) && !ex.Data.Contains("Mail.Cc")) ex.Data.Add("Mail.Cc", cc);
-				if (!string.IsNullOrEmpty(bcc) && !ex.Data.Contains("Mail.Bcc")) ex.Data.Add("Mail.Bcc", bcc);
-				if (!string.IsNullOrEmpty(subject) && !ex.Data.Contains("Mail.Subject")) ex.Data.Add("Mail.Subject", subject);
-				// Will be processed by the caller.
-				if (rethrow)
-				{
-					throw;
-				}
-				else
-				{
-					ProcessException(ex);
-				}
-			}
-		}
-
-		public static Attachment[] GetAttachments(string[] files)
-		{
-			if (files == null) return null;
-			var attachments = new List<Attachment>();
-			for (int i = 0; i < files.Count(); i++)
-			{
-				string file = files[i];
-				if (string.IsNullOrEmpty(file)) continue;
-				if (System.IO.File.Exists(file))
-				{
-					// Specify as "application/octet-stream" so attachment will never will be embedded in body of email.
-					var att = new System.Net.Mail.Attachment(file, "application/octet-stream");
-					attachments.Add(att);
-				}
-			}
-			return attachments.ToArray();
-		}
-
-		/// <summary>
-		/// Mail will be sent to error recipient if not LIVE.
-		/// </summary>
-		/// <param name="message"></param>
-		public void SendEmailWithCopyToErrorRecipients(MailMessage message)
-		{
-			var mail = IsLive ? message : GetMailPreview(message);
-			Smtp.SendMessage(mail);
-		}
-
-		/// <summary>
-		/// Send email to developers and show the exception box
-		/// </summary>
-		public string ProcessException(Exception ex, string subject = null, bool processExtraAction = true)
-		{
-			var allowSend = Smtp.AllowToSendException(ex);
-			var body = ExceptionInfo(ex, "");
-			if (allowSend && Smtp.ErrorNotifications)
-			{
-				Smtp.SendErrorEmail(ex, subject, body);
-			}
-			// Execute extra exception actions.
-			var extra = ProcessExceptionExtra;
-			if (processExtraAction && extra != null)
-			{
-				extra(ex);
-			}
-			return body;
-		}
-
-		#endregion
-
 
 	}
 }

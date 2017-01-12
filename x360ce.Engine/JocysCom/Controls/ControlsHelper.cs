@@ -1,11 +1,11 @@
-﻿using JocysCom.ClassLibrary.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects.DataClasses;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Linq;
+using System.Drawing;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -143,25 +143,25 @@ namespace JocysCom.ClassLibrary.Controls
 			return false;
 		}
 
-		public static POINT[] GetPoints(Control control, bool relative = false)
+		public static Point[] GetPoints(Control control, bool relative = false)
 		{
 			var pos = relative
 				? System.Drawing.Point.Empty
 				// Get control position on the screen
 				: control.PointToScreen(System.Drawing.Point.Empty);
 			var pointsToCheck =
-				new POINT[]
+				new Point[]
 					{
 						// Top-Left.
 						pos,
 						// Top-Right.
-						new POINT(pos.X + control.Width - 1, pos.Y),
+						new Point(pos.X + control.Width - 1, pos.Y),
 						// Bottom-Left.
-						new POINT(pos.X, pos.Y + control.Height - 1),
+						new Point(pos.X, pos.Y + control.Height - 1),
 						// Bottom-Right.
-						new POINT(pos.X + control.Width - 1, pos.Y + control.Height - 1),
+						new Point(pos.X + control.Width - 1, pos.Y + control.Height - 1),
 						// Middle-Centre.
-						new POINT(pos.X + control.Width/2, pos.Y + control.Height/2)
+						new Point(pos.X + control.Width/2, pos.Y + control.Height/2)
 					};
 			return pointsToCheck;
 		}

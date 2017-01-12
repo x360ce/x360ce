@@ -66,6 +66,40 @@ namespace JocysCom.ClassLibrary.Text
 		}
 
 		/// <summary>
+		/// Reports the zero-based index of the first occurrence of the specified value
+		/// in input. The search starts at a specified byte position.
+		/// </summary>
+		/// <param name="input">input bytes.</param>
+		/// <param name="value">The bytes to seek.</param>
+		/// <param name="startIndex">The search starting position.</param>
+		/// <returns>
+		/// The zero-based index position of value if that byte value is found, or -1 if it is not.
+		/// </returns>
+		public static int IndexOf(byte[] input, byte[] value, int startIndex = 0)
+		{
+			for (int i = startIndex; i < input.Length; i++)
+			{
+				// If remaining searchable data is smaller than value then...
+				if (value.Length > (input.Length - i))
+				{
+					return -1;
+				}
+				for (int v = 0; v < value.Length; v++)
+				{
+					if (input[i + v] != value[v])
+					{
+						break;
+					}
+					else if (v + 1 == value.Length)
+					{
+						return i;
+					}
+				}
+			}
+			return -1;
+		}
+
+		/// <summary>
 		/// Convert timespan to string.
 		/// </summary>
 		/// <param name="ts">TimeSpan value to convert.</param>
@@ -243,48 +277,13 @@ namespace JocysCom.ClassLibrary.Text
 			return sb.ToString();
 		}
 
-        /// <summary>
-        /// Reports the zero-based index of the first occurrence of the specified value
-        /// in input. The search starts at a specified byte position.
-        /// </summary>
-        /// <param name="input">input bytes.</param>
-        /// <param name="value">The bytes to seek.</param>
-        /// <param name="startIndex">The search starting position.</param>
-        /// <returns>
-        /// The zero-based index position of value if that byte value is found, or -1 if it is not.
-        /// </returns>
-        public static int IndexOf(byte[] input, byte[] value, int startIndex = 0)
-        {
-            if (value.Length > (input.Length - startIndex))
-            {
-                return -1;
-            }
-            for (int i = startIndex; i < input.Length - value.Length; i++)
-            {
-                bool found = true;
-                for (int j = 0; j < value.Length; j++)
-                {
-                    if (input[i + j] != value[j])
-                    {
-                        found = false;
-                        break;
-                    }
-                }
-                if (found)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }		
-		
 		public static string BytesToStringBlock(string s, bool addIndex, bool addHex, bool addText)
 		{
 			var bytes = Encoding.ASCII.GetBytes(s);
 			return BytesToStringBlock(bytes, addIndex, addHex, addText);
 		}
 
-		public static string BytesToStringBlock(byte[] bytes, bool addIndex, bool addHex, bool addText, int offset = 0, int size = -1)
+		public static string BytesToStringBlock(byte[] bytes, bool addIndex, bool addHex, bool addText, int offset = 0, int size = -1, int? maxDisplayLines = null)
 		{
 			var builder = new StringBuilder();
 			var hx = new StringBuilder();
@@ -316,13 +315,20 @@ namespace JocysCom.ClassLibrary.Text
 					if (addText)
 					{
 						builder.Append(ch.ToString());
-						lines.Add(builder.ToString());
+						if (!maxDisplayLines.HasValue || lines.Count < maxDisplayLines.Value)
+						{
+							lines.Add(builder.ToString());
+						}
 						builder.Clear();
 					}
 					hx.Clear();
 					ch.Clear();
 					lineIndex++;
 				}
+			}
+			if (lineIndex > lines.Count)
+			{
+				lines[lines.Count - 1] = string.Format("... {0} more lines.", lineIndex - lines.Count + 1);
 			}
 			return string.Join(Environment.NewLine, lines);
 		}

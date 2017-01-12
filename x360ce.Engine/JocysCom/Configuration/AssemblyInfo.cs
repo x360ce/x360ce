@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -66,7 +67,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public string GetTitle(bool showBuild = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true)
+		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true)
 		{
 			var s = string.Format("{0} {1} {2}", Company, Product, Version.ToString(3));
 			if (showBuild)
@@ -83,9 +84,23 @@ namespace JocysCom.ClassLibrary.Configuration
 					default: break;// General Availability (GA) - Gold
 				}
 			}
-			if (showBuildDate)
+			var runMode = ConfigurationManager.AppSettings["RunMode"];
+			var haveRunMode = !string.IsNullOrEmpty(runMode);
+			// If runmode is not specified then assume live.
+			var nonLive = haveRunMode && string.Compare(runMode, "LIVE", true) != 0;
+			if (showBuildDate || (showRunMode && nonLive))
 			{
-				s += string.Format(" (Build: {0:yyyy-MM-dd})", BuildDateTime);
+				s += " (";
+				if (showRunMode && nonLive)
+				{
+					s += string.Format("{0}", runMode);
+					if (showBuildDate) s += " ";
+				}
+				if (showBuildDate)
+				{
+					s += string.Format("Build: {0:yyyy-MM-dd}", BuildDateTime);
+				}
+				s += ")";
 			}
 			if (showArchitecture)
 			{
