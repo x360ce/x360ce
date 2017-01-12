@@ -30,8 +30,6 @@ namespace x360ce.App
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
 			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
 			this.ControllersTabPage = new System.Windows.Forms.TabPage();
-			this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-			this.controllersUserControl1 = new x360ce.App.ControllersUserControl();
 			this.HardwareTabPage = new System.Windows.Forms.TabPage();
 			this.HardwarePanel = new JocysCom.ClassLibrary.IO.HardwareControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
@@ -62,6 +60,7 @@ namespace x360ce.App
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.ControllersPanel = new x360ce.App.Controls.ControllersUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -176,22 +175,12 @@ namespace x360ce.App
 			// ControllersTabPage
 			// 
 			this.ControllersTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.ControllersTabPage.Controls.Add(this.elementHost1);
+			this.ControllersTabPage.Controls.Add(this.ControllersPanel);
 			this.ControllersTabPage.Location = new System.Drawing.Point(4, 23);
 			this.ControllersTabPage.Name = "ControllersTabPage";
 			this.ControllersTabPage.Size = new System.Drawing.Size(768, 597);
 			this.ControllersTabPage.TabIndex = 4;
 			this.ControllersTabPage.Text = "Controllers";
-			// 
-			// elementHost1
-			// 
-			this.elementHost1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.elementHost1.Location = new System.Drawing.Point(0, 0);
-			this.elementHost1.Name = "elementHost1";
-			this.elementHost1.Size = new System.Drawing.Size(768, 597);
-			this.elementHost1.TabIndex = 0;
-			this.elementHost1.Text = "elementHost1";
-			this.elementHost1.Child = this.controllersUserControl1;
 			// 
 			// HardwareTabPage
 			// 
@@ -468,6 +457,14 @@ namespace x360ce.App
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
 			// 
+			// ControllersPanel
+			// 
+			this.ControllersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ControllersPanel.Location = new System.Drawing.Point(0, 0);
+			this.ControllersPanel.Name = "ControllersPanel";
+			this.ControllersPanel.Size = new System.Drawing.Size(768, 597);
+			this.ControllersPanel.TabIndex = 0;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -549,9 +546,8 @@ namespace x360ce.App
 		private TabPage IniTabPage;
 		private TextBox IniTextBox;
 		private TabPage ControllersTabPage;
-		private System.Windows.Forms.Integration.ElementHost elementHost1;
-		private ControllersUserControl controllersUserControl1;
 		private TabPage HardwareTabPage;
 		private JocysCom.ClassLibrary.IO.HardwareControl HardwarePanel;
+		private Controls.ControllersUserControl ControllersPanel;
 	}
 }
