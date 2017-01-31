@@ -406,6 +406,10 @@ HookMask = 0x00000002
 Name = Outlast
 HookMask = 0x00000002
 
+[Pang.exe]
+Name = Pang Adventures
+HookMask = 0x00000002
+
 [QuestViewer.exe]
 Name = Audiosurf
 HookMask = 0x00000002
