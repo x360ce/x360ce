@@ -446,6 +446,10 @@ HookMask = 0x00000002
 Name = Ring Runner
 HookMask = 0x00000002
 
+[RocketLeague.exe]
+Name = Rocket League
+HookMask = 0x0000002E
+
 [RogueLegacy.exe]
 Name = Rogue Legacy
 HookMask = 0x00000002
