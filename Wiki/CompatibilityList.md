@@ -43,6 +43,7 @@ Items in these lists are in need of testing with the new hookmask system
   1. Puzzle Quest 2
   1. Resident Evil 5
   1. Resident Evil: Operation Raccoon City
+  1. Rise of the Tomb Rider 
   1. Saboteur, The
   1. Serious Sam HD - The Second Encounter
   1. Silent Hill Homecoming
