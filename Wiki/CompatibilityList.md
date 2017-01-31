@@ -95,6 +95,7 @@ This is the new system utilised by r574+
   1. Batman Arkham City (uses xinput9_1_0.dll)
   1. Batman Arkham Origins
   1. Battlefield 3 (uses xinput9_1_0.dll)
+  1. Before the Echo
   1. BioHazard 6 (needs dinput8.dll)
   1. BioShock Infinite
   1. Blade Kitten
@@ -171,6 +172,7 @@ This is the new system utilised by r574+
   1. NBA 2k14
   1. NBA 2k15
   1. Need For Speed Most Wanted 2012
+  1. Nuclear Throne
   1. Outlast (32bit and 64bit executables, defaults to 64bit on 64bit OS)
   1. Penny Arcade's On the Rain-Slick Precipice of Darkness 3
   1. Penny Arcade's On the Rain-Slick Precipice of Darkness 4
@@ -197,6 +199,8 @@ This is the new system utilised by r574+
   1. Sonic & All-Stars Racing Transformed
   1. Sonic Generations
   1. Sonic the Hedgehog 4 EP 1
+  1. Spelunky
+  1. Starwhal
   1. Street Fighter IV
   1. Street Fighter x Tekken
   1. Sudeki (Steam) (uses xinput1_2.dll)
@@ -209,6 +213,7 @@ This is the new system utilised by r574+
   1. Tiny Brains
   1. Titanfall (32bit and 64bit executables, defaults to 64bit on 64bit OS)
   1. Tomb Raider(2013) (uses xinput9_1_0.dll)
+  1. TowerFall Ascension
   1. Trine (If using Type 2 rumble, increase motor duration to 500)
   1. Trine 2 (If using Type 2 rumble, increase motor duration to 500)
   1. Trine 3 (If using Type 2 rumble, increase motor duration to 500)
