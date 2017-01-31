@@ -153,6 +153,7 @@ This is the new system utilised by r574+
   1. How to Survive
   1. Injustice: Gods Among Us Ultimate Edition
   1. Just Cause 2
+  1. Just Cause 3 (uses xinput9_1_0.dll)
   1. L.A. Noire
   1. Lara Croft and the Guardian of Light(uses xinput9_1_0.dll)
   1. LEGO Indiana Jones: The Original Adventures
