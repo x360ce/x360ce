@@ -203,8 +203,7 @@ namespace x360ce.App
 				// Remove disconnected devices.
 				for (int i = 0; i < removedDevices.Length; i++)
 				{
-
-					SettingManager.DiDevices.Remove(removedDevices[i]);
+					removedDevices[i].IsOnline = false;
 				}
 				// Add connected devices.
 				for (int i = 0; i < addedDevices.Length; i++)
@@ -222,6 +221,7 @@ namespace x360ce.App
 					di.HidInfo = infoInt.FirstOrDefault(x => x.DevicePath == state.Properties.InterfacePath);
 					// Get device info.
 					di.DevInfo = infoDev.FirstOrDefault(x => x.DeviceId == di.HidInfo.DeviceId);
+					di.IsOnline = true;
 					//if (di.Info == null) di.Info = info.FirstOrDefault();
 					SettingManager.DiDevices.Add(di);
 				}

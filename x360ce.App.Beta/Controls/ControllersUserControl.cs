@@ -21,5 +21,17 @@ namespace x360ce.App.Controls
 			ControllersDataGridView.AutoGenerateColumns = false;
 			ControllersDataGridView.DataSource = SettingManager.DiDevices;
 		}
+
+		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var item = ((DiDevice)grid.Rows[e.RowIndex].DataBoundItem);
+			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			{
+				e.Value = item.IsOnline
+					? Properties.Resources.bullet_square_glass_green
+					: Properties.Resources.bullet_square_glass_grey;
+			}
+		}
 	}
 }

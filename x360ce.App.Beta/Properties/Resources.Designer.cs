@@ -113,6 +113,56 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap bullet_square_glass_blue {
+            get {
+                object obj = ResourceManager.GetObject("bullet_square_glass_blue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap bullet_square_glass_green {
+            get {
+                object obj = ResourceManager.GetObject("bullet_square_glass_green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap bullet_square_glass_grey {
+            get {
+                object obj = ResourceManager.GetObject("bullet_square_glass_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap bullet_square_glass_red {
+            get {
+                object obj = ResourceManager.GetObject("bullet_square_glass_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap bullet_square_glass_yellow {
+            get {
+                object obj = ResourceManager.GetObject("bullet_square_glass_yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Button_A {
             get {
                 object obj = ResourceManager.GetObject("Button_A", resourceCulture);
