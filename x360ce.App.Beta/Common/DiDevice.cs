@@ -3,23 +3,37 @@ using SharpDX.DirectInput;
 using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Xml.Serialization;
 using x360ce.Engine;
 
 namespace x360ce.App
 {
 	public class DiDevice : INotifyPropertyChanged
 	{
-		/// <summary>DInput Device State.</summary>
-		public Joystick Device;
-		/// <summary>DInput Device Info.</summary>
-		public DeviceInfo HidInfo;
-		/// <summary>DInput Device Info.</summary>
-		public DeviceInfo DevInfo;
 		/// <summary>DInput Device Instance.</summary>
-		public DeviceInstance Instance;
-		/// <summary>Previous DInput Device Instance.</summary>
-		public DeviceInstance InstanceOld;
+		public DeviceInstance Instance { get; set; }
 
+		/// <summary>DInput Device Capabilities.</summary>
+		public Capabilities Capabilities { get; set; }
+
+		/// <summary>DInput Device Info.</summary>
+		public DeviceInfo HidInfo { get; set; }
+
+		/// <summary>DInput Device Info.</summary>
+		public DeviceInfo DevInfo { get; set; }
+
+		// =================
+
+		[XmlIgnore]
+		/// <summary>Previous DInput Device Instance.</summary>
+		public DeviceInstance InstanceOld { get; set; }
+
+		/// <summary>DInput Device State.</summary>
+		[XmlIgnore]
+		public Joystick Device;
+
+
+		[XmlIgnore]
 		public bool IsOnline
 		{
 			get { return _IsOnline; }
@@ -27,6 +41,7 @@ namespace x360ce.App
 		}
 		bool _IsOnline;
 
+		[XmlIgnore]
 		public string InstanceId
 		{
 			get
@@ -35,6 +50,7 @@ namespace x360ce.App
 			}
 		}
 
+		[XmlIgnore]
 		public string VendorName
 		{
 			get
@@ -44,6 +60,7 @@ namespace x360ce.App
 			}
 		}
 
+		[XmlIgnore]
 		public string ProductName
 		{
 			get
@@ -53,6 +70,7 @@ namespace x360ce.App
 			}
 		}
 
+		[XmlIgnore]
 		public Guid InstanceGuid
 		{
 			get
@@ -62,6 +80,7 @@ namespace x360ce.App
 			}
 		}
 
+		[XmlIgnore]
 		public string DeviceId
 		{
 			get

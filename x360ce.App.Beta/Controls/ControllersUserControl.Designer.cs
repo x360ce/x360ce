@@ -34,13 +34,14 @@
 			this.ControllersTabControl = new System.Windows.Forms.TabControl();
 			this.DirectInputDevicesTabPage = new System.Windows.Forms.TabPage();
 			this.ControllersDataGridView = new System.Windows.Forms.DataGridView();
+			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
+			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
+			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
-			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllersTabControl.SuspendLayout();
 			this.DirectInputDevicesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ControllersDataGridView)).BeginInit();
@@ -118,9 +119,42 @@
 			this.ControllersDataGridView.TabIndex = 0;
 			this.ControllersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
 			// 
+			// ControllersToolStrip
+			// 
+			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshButton,
+            this.ControllerDeleteButton});
+			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.ControllersToolStrip.Name = "ControllersToolStrip";
+			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.ControllersToolStrip.Size = new System.Drawing.Size(703, 25);
+			this.ControllersToolStrip.TabIndex = 1;
+			this.ControllersToolStrip.Text = "MySettingsToolStrip";
+			// 
+			// ControllerDeleteButton
+			// 
+			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
+			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.ControllerDeleteButton.Text = "&Delete";
+			// 
+			// RefreshButton
+			// 
+			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.RefreshButton.Name = "RefreshButton";
+			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.RefreshButton.Text = "&Refresh";
+			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+			// 
 			// MyIconColumn
 			// 
 			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyIconColumn.DataPropertyName = "IsOnline";
 			this.MyIconColumn.HeaderText = "";
 			this.MyIconColumn.MinimumWidth = 24;
 			this.MyIconColumn.Name = "MyIconColumn";
@@ -162,27 +196,6 @@
 			this.MyGameColumn.Name = "MyGameColumn";
 			this.MyGameColumn.ReadOnly = true;
 			// 
-			// ControllersToolStrip
-			// 
-			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ControllerDeleteButton});
-			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
-			this.ControllersToolStrip.Name = "ControllersToolStrip";
-			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.ControllersToolStrip.Size = new System.Drawing.Size(703, 25);
-			this.ControllersToolStrip.TabIndex = 1;
-			this.ControllersToolStrip.Text = "MySettingsToolStrip";
-			// 
-			// ControllerDeleteButton
-			// 
-			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
-			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
-			this.ControllerDeleteButton.Text = "&Delete";
-			// 
 			// ControllersUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -209,6 +222,7 @@
 		private System.Windows.Forms.DataGridView ControllersDataGridView;
 		private System.Windows.Forms.ToolStrip ControllersToolStrip;
 		private System.Windows.Forms.ToolStripButton ControllerDeleteButton;
+		private System.Windows.Forms.ToolStripButton RefreshButton;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;

@@ -39,7 +39,7 @@ namespace x360ce.App.Controls
 		{
 			AvailableDInputDevicesDataGridView.AutoGenerateColumns = false;
 			// Show available devices.
-			AvailableDInputDevicesDataGridView.DataSource = SettingManager.DiDevices;
+			AvailableDInputDevicesDataGridView.DataSource = SettingManager.UserDevices;
 		}
 
 		private void AvailableDInputDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

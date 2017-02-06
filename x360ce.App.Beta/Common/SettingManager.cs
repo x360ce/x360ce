@@ -47,7 +47,7 @@ namespace x360ce.App
 		/// <summary>Preset PadSettings</summary>
 		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings");
 
-		public static BindingList<DiDevice> DiDevices = new BindingList<DiDevice>();
+		public static SettingsData<DiDevice> UserDevices = new SettingsData<DiDevice>("UserDevices");
 
 		/// <summary>User Controllers</summary>
 		public static SettingsData<Engine.Data.UserController> UserControllers = new SettingsData<Engine.Data.UserController>("UserControllers");
@@ -72,7 +72,7 @@ namespace x360ce.App
 
 		public static DiDevice GetDevice(Guid instanceGuid)
 		{
-			return DiDevices.FirstOrDefault(x =>
+			return UserDevices.Items.FirstOrDefault(x =>
 				x.InstanceGuid.Equals(instanceGuid));
 		}
 
@@ -89,7 +89,7 @@ namespace x360ce.App
 			var instances = settings
 				.Where(x => x.MapTo == (int)mapTo)
 				.Select(x => x.InstanceGuid).ToArray();
-			var devices = DiDevices
+			var devices = UserDevices.Items
 				.Where(x => instances.Contains(x.InstanceGuid))
 				.ToList();
 			// Return available devices.

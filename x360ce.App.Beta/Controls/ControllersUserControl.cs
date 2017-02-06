@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 		private void ControllersUserControl_Load(object sender, EventArgs e)
 		{
 			ControllersDataGridView.AutoGenerateColumns = false;
-			ControllersDataGridView.DataSource = SettingManager.DiDevices;
+			ControllersDataGridView.DataSource = SettingManager.UserDevices.Items;
 		}
 
 		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -32,6 +32,11 @@ namespace x360ce.App.Controls
 					? Properties.Resources.bullet_square_glass_green
 					: Properties.Resources.bullet_square_glass_grey;
 			}
+		}
+
+		private void RefreshButton_Click(object sender, EventArgs e)
+		{
+			ControllersDataGridView.Invalidate();
 		}
 	}
 }

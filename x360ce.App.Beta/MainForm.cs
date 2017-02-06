@@ -96,6 +96,7 @@ namespace x360ce.App
 			SettingManager.Games.Load();
 			SettingManager.Presets.Load();
 			SettingManager.PadSettings.Load();
+			SettingManager.UserDevices.Load();
 			SettingManager.UserControllers.Load();
 			SettingManager.UserInstances.Load();
 			for (int i = 0; i < 4; i++)
@@ -194,10 +195,13 @@ namespace x360ce.App
 		{
 			lock (UpdateDevicesLock)
 			{
+				// List of connected devices.
 				var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+				// List of connected devices.
 				var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToArray();
-				var currentInstanceGuids = SettingManager.DiDevices.Select(x => x.InstanceGuid).ToArray();
-				var removedDevices = SettingManager.DiDevices.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
+				// List of current devices.
+				var currentInstanceGuids = SettingManager.UserDevices.Items.Select(x => x.InstanceGuid).ToArray();
+				var removedDevices = SettingManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
 				var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 				var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 				// Remove disconnected devices.
@@ -213,6 +217,7 @@ namespace x360ce.App
 					di.Instance = device;
 					var state = new Joystick(Manager, device.InstanceGuid);
 					di.Device = state;
+					di.Capabilities = state.Capabilities;
 					var classGuid = state.Properties.ClassGuid;
 					// Must find better way to find Device than by Vendor ID and Product ID.
 					var infoDev = DeviceDetector.GetDevices();
@@ -223,14 +228,17 @@ namespace x360ce.App
 					di.DevInfo = infoDev.FirstOrDefault(x => x.DeviceId == di.HidInfo.DeviceId);
 					di.IsOnline = true;
 					//if (di.Info == null) di.Info = info.FirstOrDefault();
-					SettingManager.DiDevices.Add(di);
+					SettingManager.UserDevices.Items.Add(di);
 				}
 				for (int i = 0; i < updatedDevices.Length; i++)
 				{
 					var device = updatedDevices[i];
-					var currentDevice = SettingManager.DiDevices.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
+					var di = SettingManager.UserDevices.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
+					// If device is set as offline then make it online.
+					if (!di.IsOnline) di.IsOnline = true;
 					var state = new Joystick(Manager, device.InstanceGuid);
-					currentDevice.Device = state;
+					di.Device = state;
+					//di.Capabilities = state.Capabilities;
 				}
 			}
 			var game = GetCurrentGame();
@@ -243,7 +251,7 @@ namespace x360ce.App
 
 		void AutoConfigure(Engine.Data.Game game)
 		{
-			var list = SettingManager.DiDevices.ToList();
+			var list = SettingManager.UserDevices.Items.ToList();
 			// Filter devices.
 			if (Settings.Default.ExcludeSupplementalDevices)
 			{
@@ -643,6 +651,7 @@ namespace x360ce.App
 			SettingManager.Programs.Save();
 			SettingManager.Games.Save();
 			SettingManager.Presets.Save();
+			SettingManager.UserDevices.Save();
 			SettingManager.PadSettings.Save();
 			SettingManager.UserControllers.Save();
 			SettingManager.UserInstances.Save();
