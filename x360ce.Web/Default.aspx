@@ -80,14 +80,14 @@
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md">Supported Games</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="https://github.com/x360ce/x360ce/issues">Issues</a></td>
                                             <td style="vertical-align: bottom;"><a target="_blank" class="GitHub" href="http://ngemu.com/forums/x360ce.140">Forum</a></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce.zip">Download x360ce 3.2.9.81 (2015-10-04) • for 32-bit games</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce.zip?raw=true">Download x360ce 3.2.9.81 (2015-10-04) • for 32-bit games</a></td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td style="vertical-align: bottom;"><a class="GitHub" href="Files/x360ce_x64.zip">Download x360ce 3.2.9.81 (2015-10-04) • for 64-bit games</a></td>
+                                            <td style="vertical-align: bottom;"><a class="GitHub" href="https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce_x64.zip?raw=true">Download x360ce 3.2.9.81 (2015-10-04) • for 64-bit games</a></td>
                                         </tr>
                                     </table>
 
@@ -109,7 +109,7 @@
                                                 <img src="/Images/x360ce_General_400px.png" style="width: 400px; height: 367px;" /></td>
                                         </tr>
                                         <tr>
-                                            <td style="width: 400px; background-color: #ae1919; padding-bottom: 20px; border-radius: 14px;" class="Games">
+                                            <td style="width: 400px; background-color: #ae1919; padding-bottom: 60px; border-radius: 14px;" class="Games">
                                                 <p style="text-align: center; margin-top: 20px; color: #ff7373;">TOP GAMES</p>
                                                 <uc1:GamesControl runat="server" ID="GamesControl" />
                                             </td>
@@ -145,8 +145,8 @@
                                                         <td style="text-align: center;"><a class="ImageLink" target="_blank" rel="nofollow" href="http://www.amazon.co.uk/gp/search?ie=UTF8&camp=1634&creative=6738&index=aps&keywords=ThrustMaster%20T500%20RS%20Racing%20Wheel&linkCode=ur2&tag=x360cecom-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-uk.amazon-adsystem.com/e/ir?t=x360cecom-21&l=ur2&o=2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" rel="nofollow" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G920%20Driving%20Force%20Wheel&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
-                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" rel="nofollow" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=ThrustMaster%20T500%20RS%20Racing%20Wheel&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.co.uk.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" rel="nofollow" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=Logitech%20G920%20Driving%20Force%20Wheel&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
+                                                        <td style="text-align: center;"><a class="ImageLink" target="_blank" rel="nofollow" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=aps&keywords=ThrustMaster%20T500%20RS%20Racing%20Wheel&linkCode=ur2&tag=x360cecom0c-21"><img src="/Images/Amazon.de.jpg" style="width: 70px; height: 15px;" /></a><img src="http://ir-de.amazon-adsystem.com/e/ir?t=x360cecom0c-21&l=ur2&o=3" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></td>
                                                     </tr>
                                                 </table>
                                             </td>
