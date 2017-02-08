@@ -198,9 +198,7 @@
     <Compile Include="JocysCom\Resources\Data\Setting.cs" />
     <Compile Include="JocysCom\Resources\ResourceSection.cs" />
     <Compile Include="JocysCom\Runtime\Attributes.cs" />
-    <Compile Include="JocysCom\Runtime\ChangeState.cs" />
     <Compile Include="JocysCom\Runtime\EmailResult.cs" />
-    <Compile Include="JocysCom\Runtime\Helper.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />

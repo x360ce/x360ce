@@ -214,18 +214,19 @@ namespace x360ce.App
 				{
 					var device = addedDevices[i];
 					var di = new DiDevice();
-					di.Instance = device;
+					di.LoadInstance(device);
 					var state = new Joystick(Manager, device.InstanceGuid);
 					di.Device = state;
-					JocysCom.ClassLibrary.Runtime.Helper.CopyProperties(state.Capabilities, di);
+					di.LoadCapabilities(state.Capabilities);
 					var classGuid = state.Properties.ClassGuid;
 					// Must find better way to find Device than by Vendor ID and Product ID.
 					var infoDev = DeviceDetector.GetDevices();
 					var infoInt = DeviceDetector.GetInterfaces();
 					// Get interface info.
-					di.HidInfo = infoInt.FirstOrDefault(x => x.DevicePath == state.Properties.InterfacePath);
+					var hid = infoInt.FirstOrDefault(x => x.DevicePath == state.Properties.InterfacePath);
+					di.LoadHidDeviceInfo(hid);
 					// Get device info.
-					di.DevInfo = infoDev.FirstOrDefault(x => x.DeviceId == di.HidInfo.DeviceId);
+					var dev = infoDev.FirstOrDefault(x => x.DeviceId == di.HidDeviceId);
 					di.IsOnline = true;
 					//if (di.Info == null) di.Info = info.FirstOrDefault();
 					SettingManager.UserDevices.Items.Add(di);
@@ -257,7 +258,7 @@ namespace x360ce.App
 			{
 				// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
 				// such as pedals used with a wheel.The following subtypes are defined.
-				var supplementals = list.Where(x => x.Instance.Type == SharpDX.DirectInput.DeviceType.Supplemental).ToArray();
+				var supplementals = list.Where(x => x.CapType == (int)SharpDX.DirectInput.DeviceType.Supplemental).ToArray();
 				foreach (var supplemental in supplementals)
 				{
 					list.Remove(supplemental);
@@ -266,7 +267,7 @@ namespace x360ce.App
 			if (Settings.Default.ExcludeSupplementalDevices)
 			{
 				// Exclude virtual devices so application could feed them.
-				var virtualDevices = list.Where(x => x.Instance.InstanceName.Contains("vJoy")).ToArray();
+				var virtualDevices = list.Where(x => x.InstanceName.Contains("vJoy")).ToArray();
 				foreach (var virtualDevice in virtualDevices)
 				{
 					list.Remove(virtualDevice);
@@ -275,8 +276,8 @@ namespace x360ce.App
 			// Move gaming wheels to the top index position by default.
 			// Games like GTA need wheel to be first device to work properly.
 			var wheels = list.Where(x =>
-				x.Instance.Type == SharpDX.DirectInput.DeviceType.Driving ||
-				x.Instance.Subtype == (int)DeviceSubType.Wheel
+				x.CapType == (int)SharpDX.DirectInput.DeviceType.Driving ||
+				x.CapSubtype == (int)DeviceSubType.Wheel
 			).ToArray();
 			foreach (var wheel in wheels)
 			{

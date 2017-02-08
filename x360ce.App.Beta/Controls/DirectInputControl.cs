@@ -53,7 +53,7 @@ namespace x360ce.App.Controls
             DiEffectsDataGridView.DataSource = DiEffectsTable;
         }
 
-        void ShowDeviceInfo(Joystick device, DeviceInfo dInfo)
+        void ShowDeviceInfo(Joystick device, DiDevice dInfo)
         {
             if (device == null)
             {
@@ -121,8 +121,8 @@ namespace x360ce.App.Controls
 			AppHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
             AppHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
 			AppHelper.SetText(DeviceProductNameTextBox, di.ProductName);
-            AppHelper.SetText(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.Manufacturer);
-			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", dInfo == null ? 0 : dInfo.Revision);
+            AppHelper.SetText(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.HidManufacturer);
+			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", dInfo == null ? 0 : dInfo.HidRevision);
 			AppHelper.SetText(DeviceProductGuidTextBox, di.ProductGuid.ToString());
             AppHelper.SetText(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
             AppHelper.SetText(DeviceTypeTextBox, di.Type.ToString());
@@ -298,10 +298,9 @@ namespace x360ce.App.Controls
             if (diDevice != null)
             {
                 var device = diDevice.Device;
-                var info = diDevice.HidInfo;
                 if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
                 {
-                    ShowDeviceInfo(device, info);
+                    ShowDeviceInfo(device, diDevice);
                     deviceInstanceGuid = Guid.Empty;
                     if (device != null)
                     {

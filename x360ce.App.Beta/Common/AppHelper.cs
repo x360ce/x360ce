@@ -221,11 +221,11 @@ namespace x360ce.App
 		{
 			// Create new setting for game/device.
 			var newSetting = new Engine.Data.Setting();
-			newSetting.InstanceGuid = device.Instance.InstanceGuid;
-			newSetting.InstanceName = device.Instance.InstanceName;
-			newSetting.ProductGuid = device.Instance.ProductGuid;
-			newSetting.ProductName = device.Instance.ProductName;
-			newSetting.DeviceType = (int)device.Instance.Type;
+			newSetting.InstanceGuid = device.InstanceGuid;
+			newSetting.InstanceName = device.InstanceName;
+			newSetting.ProductGuid = device.ProductGuid;
+			newSetting.ProductName = device.ProductName;
+			newSetting.DeviceType = (int)device.CapType;
 			newSetting.FileName = game.FileName;
 			newSetting.FileProductName = game.FileProductName;
 			newSetting.DateCreated = DateTime.Now;

@@ -1324,7 +1324,7 @@ namespace x360ce.App.Controls
 			{
 				e.Value = device == null
 					? ""
-					: device.VendorName;
+					: device.HidManufacturer;
 			}
 		}
 

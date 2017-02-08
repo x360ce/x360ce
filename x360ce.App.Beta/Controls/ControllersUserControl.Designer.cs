@@ -34,14 +34,14 @@
 			this.ControllersTabControl = new System.Windows.Forms.TabControl();
 			this.DirectInputDevicesTabPage = new System.Windows.Forms.TabPage();
 			this.ControllersDataGridView = new System.Windows.Forms.DataGridView();
+			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
+			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
-			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
-			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllersTabControl.SuspendLayout();
 			this.DirectInputDevicesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ControllersDataGridView)).BeginInit();
@@ -119,51 +119,6 @@
 			this.ControllersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
 			this.ControllersDataGridView.SelectionChanged += new System.EventHandler(this.ControllersDataGridView_SelectionChanged);
 			// 
-			// MyIconColumn
-			// 
-			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyIconColumn.DataPropertyName = "IsOnline";
-			this.MyIconColumn.HeaderText = "";
-			this.MyIconColumn.MinimumWidth = 24;
-			this.MyIconColumn.Name = "MyIconColumn";
-			this.MyIconColumn.ReadOnly = true;
-			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.MyIconColumn.Width = 24;
-			// 
-			// MySidColumn
-			// 
-			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MySidColumn.DataPropertyName = "InstanceId";
-			this.MySidColumn.HeaderText = "Instance ID";
-			this.MySidColumn.Name = "MySidColumn";
-			this.MySidColumn.ReadOnly = true;
-			this.MySidColumn.Width = 87;
-			// 
-			// MyDeviceColumn
-			// 
-			this.MyDeviceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyDeviceColumn.DataPropertyName = "VendorName";
-			this.MyDeviceColumn.HeaderText = "Vendor Name";
-			this.MyDeviceColumn.Name = "MyDeviceColumn";
-			this.MyDeviceColumn.ReadOnly = true;
-			this.MyDeviceColumn.Width = 97;
-			// 
-			// MyFileColumn
-			// 
-			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyFileColumn.DataPropertyName = "ProductName";
-			this.MyFileColumn.HeaderText = "Product Name";
-			this.MyFileColumn.Name = "MyFileColumn";
-			this.MyFileColumn.ReadOnly = true;
-			// 
-			// MyGameColumn
-			// 
-			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.MyGameColumn.DataPropertyName = "DeviceId";
-			this.MyGameColumn.HeaderText = "Device ID";
-			this.MyGameColumn.Name = "MyGameColumn";
-			this.MyGameColumn.ReadOnly = true;
-			// 
 			// ControllersToolStrip
 			// 
 			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
@@ -196,6 +151,51 @@
 			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
 			this.ControllerDeleteButton.Text = "&Delete";
 			this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
+			// 
+			// MyIconColumn
+			// 
+			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyIconColumn.DataPropertyName = "IsOnline";
+			this.MyIconColumn.HeaderText = "";
+			this.MyIconColumn.MinimumWidth = 24;
+			this.MyIconColumn.Name = "MyIconColumn";
+			this.MyIconColumn.ReadOnly = true;
+			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.MyIconColumn.Width = 24;
+			// 
+			// MySidColumn
+			// 
+			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MySidColumn.DataPropertyName = "InstanceId";
+			this.MySidColumn.HeaderText = "Instance ID";
+			this.MySidColumn.Name = "MySidColumn";
+			this.MySidColumn.ReadOnly = true;
+			this.MySidColumn.Width = 87;
+			// 
+			// MyDeviceColumn
+			// 
+			this.MyDeviceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyDeviceColumn.DataPropertyName = "HidManufacturer";
+			this.MyDeviceColumn.HeaderText = "Vendor Name";
+			this.MyDeviceColumn.Name = "MyDeviceColumn";
+			this.MyDeviceColumn.ReadOnly = true;
+			this.MyDeviceColumn.Width = 97;
+			// 
+			// MyFileColumn
+			// 
+			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyFileColumn.DataPropertyName = "ProductName";
+			this.MyFileColumn.HeaderText = "Product Name";
+			this.MyFileColumn.Name = "MyFileColumn";
+			this.MyFileColumn.ReadOnly = true;
+			// 
+			// MyGameColumn
+			// 
+			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.MyGameColumn.DataPropertyName = "HidDeviceId";
+			this.MyGameColumn.HeaderText = "Device ID";
+			this.MyGameColumn.Name = "MyGameColumn";
+			this.MyGameColumn.ReadOnly = true;
 			// 
 			// ControllersUserControl
 			// 
