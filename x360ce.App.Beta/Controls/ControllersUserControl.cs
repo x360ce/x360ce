@@ -18,6 +18,7 @@ namespace x360ce.App.Controls
 
 		private void ControllersUserControl_Load(object sender, EventArgs e)
 		{
+			UpdateButtons();
 			ControllersDataGridView.AutoGenerateColumns = false;
 			ControllersDataGridView.DataSource = SettingManager.UserDevices.Items;
 		}
@@ -34,9 +35,37 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		public List<DiDevice> GetSelected()
+		{
+			var grid = ControllersDataGridView;
+			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (DiDevice)x.DataBoundItem).ToList();
+			return items;
+		}
+
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
 			ControllersDataGridView.Invalidate();
 		}
+
+		private void ControllerDeleteButton_Click(object sender, EventArgs e)
+		{
+			var items = GetSelected();
+			foreach (var item in items)
+			{
+				SettingManager.UserDevices.Items.Remove(item);
+			}
+		}
+
+		private void ControllersDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			UpdateButtons();
+		}
+
+		void UpdateButtons()
+		{
+			var grid = ControllersDataGridView;
+			ControllerDeleteButton.Enabled = grid.SelectedRows.Count > 0;
+		}
+
 	}
 }

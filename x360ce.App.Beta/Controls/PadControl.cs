@@ -1330,16 +1330,16 @@ namespace x360ce.App.Controls
 
 		private void AddMapButton_Click(object sender, EventArgs e)
 		{
-			var device = MainForm.Current.ShowDeviceForm();
-			if (device != null)
+			var items = MainForm.Current.ShowDeviceForm();
+			foreach (var item in items)
 			{
 				var game = MainForm.Current.GetCurrentGame();
 				if (game != null)
 				{
-					var setting = SettingManager.GetSetting(device.InstanceGuid, game.FileName);
+					var setting = SettingManager.GetSetting(item.InstanceGuid, game.FileName);
 					if (setting == null)
 					{
-						var newSetting = AppHelper.GetNewSetting(device, game, MappedTo);
+						var newSetting = AppHelper.GetNewSetting(item, game, MappedTo);
 						SettingManager.Settings.Items.Add(newSetting);
 					}
 					else

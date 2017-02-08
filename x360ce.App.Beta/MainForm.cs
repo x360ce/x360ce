@@ -217,7 +217,7 @@ namespace x360ce.App
 					di.Instance = device;
 					var state = new Joystick(Manager, device.InstanceGuid);
 					di.Device = state;
-					di.Capabilities = state.Capabilities;
+					JocysCom.ClassLibrary.Runtime.Helper.CopyProperties(state.Capabilities, di);
 					var classGuid = state.Properties.ClassGuid;
 					// Must find better way to find Device than by Vendor ID and Product ID.
 					var infoDev = DeviceDetector.GetDevices();
@@ -1258,20 +1258,15 @@ namespace x360ce.App
 			}
 		}
 
-		public DiDevice ShowDeviceForm()
+		public List<DiDevice> ShowDeviceForm()
 		{
-			DiDevice selectedItem = null;
 			lock (DeviceFormLock)
 			{
 				if (_DeviceForm == null) return null;
 				_DeviceForm.StartPosition = FormStartPosition.CenterParent;
 				var result = _DeviceForm.ShowDialog();
-				if (result == DialogResult.OK)
-				{
-					selectedItem = _DeviceForm.SelectedDevice;
-				}
+				return _DeviceForm.SelectedDevices;
 			}
-			return selectedItem;
 		}
 
 		#endregion
