@@ -293,16 +293,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return doc;
 		}
 
-		/// <summary>
-		/// Serialize object to XML string.
-		/// </summary>
-		/// <param name="o">The object to serialize.</param>
-		/// <param name="encoding">The encoding to use (default is UTF8).</param>
-		/// <param name="namespaces">Contains the XML namespaces and prefixes that the XmlSerializer  uses to generate qualified names in an XML-document instance.</param>
-		/// <returns>XML string.</returns>
-		public static string SerializeToXmlString(object o, Encoding encoding = null, bool omitXmlDeclaration = false)
+		static T SeriallizeToXml<T>(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null)
 		{
-			if (o == null) return null;
+			if (o == null) return default(T);
 			// Create serialization settings.
 			encoding = encoding ?? Encoding.UTF8;
 			XmlWriterSettings settings = new XmlWriterSettings();
@@ -311,71 +304,34 @@ namespace JocysCom.ClassLibrary.Runtime
 			settings.Indent = true;
 			// Serialize.
 			XmlSerializer serializer = GetXmlSerializer(o.GetType());
-			MemoryStream ms = new MemoryStream();
-			XmlWriter xw = XmlWriter.Create(ms, settings);
-			lock (serializer)
-			{
-				if (omitXmlDeclaration)
-				{
-					//Create our own namespaces for the output
-					XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-					//Add an empty namespace and empty value
-					ns.Add("", "");
-					serializer.Serialize(xw, o, ns);
-				}
-				else
-				{
-					serializer.Serialize(xw, o);
-				}
-			}
-			xw.Flush();
-			StreamReader tr = new StreamReader(ms);
-			ms.Seek(0, SeekOrigin.Begin);
-			string xml = tr.ReadToEnd();
-			xw.Close();
-			// CA2202: Do not dispose objects multiple times
-			//ms.Close();
-			xw = null;
-			ms = null;
-			return xml;
-		}
-
-		/// <summary>
-		/// Serialize object to XML file.
-		/// </summary>
-		/// <param name="o">The object to serialize.</param>
-		/// <param name="path">The file name to write to.</param>
-		/// <param name="encoding">The encoding to use (default is UTF8).</param>
-		public static void SerializeToXmlFile(object o, string path, Encoding encoding = null, bool omitXmlDeclaration = false, int attempts = 2, int waitTime = 500)
-		{
-			if (o == null)
-			{
-				WriteFile(path, new byte[0], attempts, waitTime);
-				return;
-			}
-			encoding = encoding ?? Encoding.UTF8;
-			// Create serialization settings.
-			XmlWriterSettings settings = new XmlWriterSettings();
-			settings.OmitXmlDeclaration = omitXmlDeclaration;
-			settings.Encoding = encoding;
-			settings.Indent = true;
 			// Serialize in memory first, so file will be locked for shorter times.
 			MemoryStream ms = new MemoryStream();
 			XmlWriter xw = XmlWriter.Create(ms, settings);
-			XmlSerializer serializer = GetXmlSerializer(o.GetType());
 			try
 			{
-				if (omitXmlDeclaration)
+				lock (serializer)
 				{
-					//Create our own namespaces for the output
-					XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-					//Add an empty namespace and empty value
-					ns.Add("", "");
-					serializer.Serialize(xw, o, ns);
-				}
-				else
-				{
-					serializer.Serialize(xw, o);
+					if (!string.IsNullOrEmpty(comment))
+					{
+						xw.WriteStartDocument();
+						xw.WriteComment(comment);
+					}
+					if (omitXmlDeclaration)
+					{
+						//Create our own namespaces for the output
+						XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+						//Add an empty namespace and empty value
+						ns.Add("", "");
+						serializer.Serialize(xw, o, ns);
+					}
+					else
+					{
+						serializer.Serialize(xw, o);
+					}
+					if (!string.IsNullOrEmpty(comment))
+					{
+						xw.WriteEndDocument();
+					}
 				}
 			}
 			catch (Exception)
@@ -388,12 +344,48 @@ namespace JocysCom.ClassLibrary.Runtime
 				throw;
 			}
 			xw.Flush();
-			byte[] bytes = ms.ToArray();
+			object result = null;
+			if (typeof(T) == typeof(string))
+			{
+				StreamReader tr = new StreamReader(ms);
+				ms.Seek(0, SeekOrigin.Begin);
+				result = tr.ReadToEnd();
+			}
+			else
+			{
+				result = ms.ToArray();
+			}
 			xw.Close();
 			// CA2202: Do not dispose objects multiple times
 			//ms.Close();
 			xw = null;
 			ms = null;
+			return (T)result;
+		}
+
+		/// <summary>
+		/// Serialize object to XML string.
+		/// </summary>
+		/// <param name="o">The object to serialize.</param>
+		/// <param name="encoding">The encoding to use (default is UTF8).</param>
+		/// <param name="namespaces">Contains the XML namespaces and prefixes that the XmlSerializer  uses to generate qualified names in an XML-document instance.</param>
+		/// <returns>XML string.</returns>
+		public static string SerializeToXmlString(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null)
+		{
+			return SeriallizeToXml<string>(o, encoding, omitXmlDeclaration, comment);
+		}
+
+		/// <summary>
+		/// Serialize object to XML file.
+		/// </summary>
+		/// <param name="o">The object to serialize.</param>
+		/// <param name="path">The file name to write to.</param>
+		/// <param name="encoding">The encoding to use (default is UTF8).</param>
+		public static void SerializeToXmlFile(object o, string path, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, int attempts = 2, int waitTime = 500)
+		{
+			var bytes = (o == null)
+				? new byte[0]
+				: SeriallizeToXml<byte[]>(o, encoding, omitXmlDeclaration, comment);
 			// Write serialized data into file.
 			WriteFile(path, bytes, attempts, waitTime);
 		}
