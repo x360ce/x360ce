@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.ComponentModel;
 
 namespace x360ce.App.Controls
 {

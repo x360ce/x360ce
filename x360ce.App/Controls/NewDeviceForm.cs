@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.ComponentModel;
 
 namespace x360ce.App.Controls
 {

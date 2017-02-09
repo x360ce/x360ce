@@ -11,6 +11,7 @@ using x360ce.App.Controls;
 using System.Diagnostics;
 using System.Data.Objects.DataClasses;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.ComponentModel;
 
 namespace x360ce.App
 {

@@ -4,7 +4,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace x360ce.App
+namespace JocysCom.ClassLibrary.ComponentModel
 {
 	/// <summary>
 	/// Be.Timvw.Framework.ComponentModel
@@ -15,7 +15,21 @@ namespace x360ce.App
 	public class SortableBindingList<T> : BindingList<T>, IBindingListView, IRaiseItemChangedEvents
 	{
 		public SortableBindingList() : base() { }
-		public SortableBindingList(List<T> list) : base(list) { }
+		public SortableBindingList(IList<T> list)
+			: base(list) { }
+
+		public SortableBindingList(IEnumerable<T> enumeration)
+			: base(new List<T>(enumeration)) { }
+
+		public static SortableBindingList<T> From(IEnumerable<T> list)
+		{
+			return new SortableBindingList<T>(list);
+		}
+
+		public void AddRange(IEnumerable<T> list)
+		{
+			foreach (T item in list) { Add(item); }
+		}
 
 		protected override bool SupportsSearchingCore { get { return true; } }
 		protected override bool SupportsSortingCore { get { return true; } }

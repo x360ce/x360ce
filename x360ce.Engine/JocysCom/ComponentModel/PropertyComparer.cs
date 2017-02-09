@@ -5,7 +5,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace x360ce.App
+namespace JocysCom.ClassLibrary.ComponentModel
 {
 	/// <summary>
 	/// Be.Timvw.Framework.ComponentModel
