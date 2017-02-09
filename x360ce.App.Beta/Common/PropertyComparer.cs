@@ -30,6 +30,11 @@ namespace x360ce.App
 
 		int IComparer<T>.Compare(T x, T y)
 		{
+			return Compare(x, y);
+		}
+
+		protected int Compare(T x, T y)
+		{
 			if (_PropDesc != null)
 			{
 				object xValue = _PropDesc.GetValue(x);
@@ -59,7 +64,7 @@ namespace x360ce.App
 			{
 				retValue = xValue.ToString().CompareTo(yValue.ToString());
 			}
-			return (direction == ListSortDirection.Ascending ? 1 : -1)  * retValue;
+			return (direction == ListSortDirection.Ascending ? 1 : -1) * retValue;
 		}
 
 		int RecursiveCompareInternal(T x, T y, int index)

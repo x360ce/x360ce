@@ -30,30 +30,31 @@ namespace x360ce.App
 		//
 
 		/// <summary>User Settings.</summary>
-		public static SettingsData<Engine.Data.Setting> Settings = new SettingsData<Engine.Data.Setting>("Settings");
+		public static SettingsData<Engine.Data.Setting> Settings = new SettingsData<Engine.Data.Setting>("Settings", "User Settings.");
 
 		/// <summary>Summary of most popular Settings.</summary>
-		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries");
+		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries", "Summary of most popular Settings.");
 
 		/// <summary>User Games.</summary>
-		public static SettingsData<Engine.Data.Game> Games = new SettingsData<Engine.Data.Game>("Games");
+		public static SettingsData<Engine.Data.Game> Games = new SettingsData<Engine.Data.Game>("Games", "User Games.");
 
 		/// <summary>Most popular Programs and Games.</summary>
-		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs");
+		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs", "Most popular Programs and Games.");
 
-		/// <summary>Presets</summary>
-		public static SettingsData<Preset> Presets = new SettingsData<Preset>("Presets");
+		/// <summary>Presets.</summary>
+		public static SettingsData<Preset> Presets = new SettingsData<Preset>("Presets", "Presets.");
 
-		/// <summary>Preset PadSettings</summary>
-		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings");
+		/// <summary>Preset PadSettings.</summary>
+		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings", "Preset PadSettings.");
 
-		public static SettingsData<DiDevice> UserDevices = new SettingsData<DiDevice>("UserDevices");
+		/// <summary>User Devices.</summary>
+		public static SettingsData<DiDevice> UserDevices = new SettingsData<DiDevice>("UserDevices", "User Devices.");
 
-		/// <summary>User Controllers</summary>
-		public static SettingsData<Engine.Data.UserController> UserControllers = new SettingsData<Engine.Data.UserController>("UserControllers");
+		/// <summary>User Controllers.</summary>
+		public static SettingsData<Engine.Data.UserController> UserControllers = new SettingsData<Engine.Data.UserController>("UserControllers", "User Controllers.");
 
-		/// <summary>User Controller Instances</summary>
-		public static SettingsData<Engine.Data.UserInstance> UserInstances = new SettingsData<Engine.Data.UserInstance>("UserInstances");
+		/// <summary>User Controller Instances.</summary>
+		public static SettingsData<Engine.Data.UserInstance> UserInstances = new SettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances.");
 
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
 		{
@@ -412,7 +413,11 @@ namespace x360ce.App
 				LoadSetting(item.Control, key, v);
 			}
 			loadCount++;
-			if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(padSetting.GetType().Name, loadCount));
+			var ev = ConfigLoaded;
+			if (ev != null)
+			{
+				ev(this, new SettingEventArgs(padSetting.GetType().Name, loadCount));
+			}
 		}
 
 		/// <summary>
@@ -457,7 +462,7 @@ namespace x360ce.App
 				var cbx = (ComboBox)control;
 				if (control.ContextMenuStrip == null)
 				{
-                    control.Text = value;
+					control.Text = value;
 				}
 				else
 				{
@@ -627,9 +632,9 @@ namespace x360ce.App
 			else if (control is DataGridView)
 			{
 				var grid = (DataGridView)control;
-				var data = grid.Rows.Cast<DataGridViewRow>().Where(x=>x.Visible).Select(x=>x.DataBoundItem as Setting).Where(x=>x != null).ToArray();
+				var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as Setting).Where(x => x != null).ToArray();
 				var instances = data.Select(x => string.Format("IG_{0:N}", x.InstanceGuid).ToUpper()).ToArray();
-                v = string.Join(",", instances);
+				v = string.Join(",", instances);
 			}
 			if (SettingName.IsThumbAxis(key))
 			{

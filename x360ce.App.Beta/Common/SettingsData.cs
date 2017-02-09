@@ -23,8 +23,9 @@ namespace x360ce.App
 			SetCollectionName(null);
 		}
 
-		public SettingsData(string collectionName)
+		public SettingsData(string collectionName, string comments = null)
 		{
+			_Comments = comments;
 			SetCollectionName(collectionName);
 		}
 
@@ -39,6 +40,7 @@ namespace x360ce.App
 
 		string _CollectionName;
 		string _FileName;
+		string _Comments;
 
 		public SortableBindingList<T> Items;
 
@@ -88,7 +90,7 @@ namespace x360ce.App
 					var o = Items[i] as EntityObject;
 					if (o != null) o.EntityKey = null;
 				}
-				Serializer.SerializeToXmlFile(this, XmlFile.FullName, Encoding.UTF8, true);
+				Serializer.SerializeToXmlFile(this, XmlFile.FullName, Encoding.UTF8, true, _Comments);
 			}
 		}
 

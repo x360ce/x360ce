@@ -23,16 +23,29 @@ namespace x360ce.App
 		protected override ListSortDirection SortDirectionCore { get { return _SortDirection; } }
 		protected override PropertyDescriptor SortPropertyCore { get { return _SortProperty; } }
 
-		ListSortDescriptionCollection IBindingListView.SortDescriptions { get { return _SortDescriptions; } }
-		bool IBindingListView.SupportsAdvancedSorting { get { return true; } }
-		bool IBindingListView.SupportsFiltering { get { return true; } }
-		bool IRaiseItemChangedEvents.RaisesItemChangedEvents { get { return true; } }
+		ListSortDescriptionCollection IBindingListView.SortDescriptions { get { return SortDescriptions; } }
+		protected ListSortDescriptionCollection SortDescriptions { get { return _SortDescriptions; } }
+
+		bool IBindingListView.SupportsAdvancedSorting { get { return SupportsAdvancedSorting; } }
+		protected bool SupportsAdvancedSorting { get { return true; } }
+
+		bool IBindingListView.SupportsFiltering { get { return SupportsFiltering; } }
+		protected bool SupportsFiltering { get { return true; } }
+
+		bool IRaiseItemChangedEvents.RaisesItemChangedEvents { get { return RaisesItemChangedEvents; } }
+		protected bool RaisesItemChangedEvents { get { return true; } }
+
 		bool _Sorted = false;
 		bool _Filtered = false;
 		string _FilterString = null;
 		ListSortDirection _SortDirection = ListSortDirection.Ascending;
+
+		[NonSerializedAttribute]
 		PropertyDescriptor _SortProperty = null;
+
+		[NonSerializedAttribute]
 		ListSortDescriptionCollection _SortDescriptions = new ListSortDescriptionCollection();
+
 		List<T> _OriginalCollection = new List<T>();
 		bool IBindingList.AllowNew { get { return CheckReadOnly(); } }
 		bool IBindingList.AllowRemove { get { return CheckReadOnly(); } }
@@ -61,6 +74,11 @@ namespace x360ce.App
 		}
 
 		void IBindingListView.ApplySort(ListSortDescriptionCollection sorts)
+		{
+			ApplySort(sorts);
+		}
+
+		protected void ApplySort(ListSortDescriptionCollection sorts)
 		{
 			_SortProperty = null;
 			_SortDescriptions = sorts;
@@ -95,7 +113,9 @@ namespace x360ce.App
 			_Sorted = false;
 		}
 
-		string IBindingListView.Filter
+		string IBindingListView.Filter { get { return Filter; } set { Filter = value; } }
+
+		protected string Filter
 		{
 			get { return _FilterString; }
 			set
@@ -106,7 +126,8 @@ namespace x360ce.App
 			}
 		}
 
-		void IBindingListView.RemoveFilter()
+		void IBindingListView.RemoveFilter() { RemoveFilter(); }
+		protected void RemoveFilter()
 		{
 			if (!_Filtered) return;
 			_FilterString = null;
