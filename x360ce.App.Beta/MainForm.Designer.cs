@@ -30,6 +30,7 @@ namespace x360ce.App
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
 			this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
 			this.ControllersTabPage = new System.Windows.Forms.TabPage();
+			this.ControllersPanel = new x360ce.App.Controls.ControllersUserControl();
 			this.HardwareTabPage = new System.Windows.Forms.TabPage();
 			this.HardwarePanel = new JocysCom.ClassLibrary.IO.HardwareControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
@@ -60,7 +61,6 @@ namespace x360ce.App
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.ControllersPanel = new x360ce.App.Controls.ControllersUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -181,6 +181,15 @@ namespace x360ce.App
 			this.ControllersTabPage.Size = new System.Drawing.Size(768, 597);
 			this.ControllersTabPage.TabIndex = 4;
 			this.ControllersTabPage.Text = "Controllers";
+			// 
+			// ControllersPanel
+			// 
+			this.ControllersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ControllersPanel.Location = new System.Drawing.Point(0, 0);
+			this.ControllersPanel.Name = "ControllersPanel";
+			this.ControllersPanel.Padding = new System.Windows.Forms.Padding(3);
+			this.ControllersPanel.Size = new System.Drawing.Size(768, 597);
+			this.ControllersPanel.TabIndex = 0;
 			// 
 			// HardwareTabPage
 			// 
@@ -337,6 +346,7 @@ namespace x360ce.App
 			this.StatusIniLabel.Name = "StatusIniLabel";
 			this.StatusIniLabel.Size = new System.Drawing.Size(84, 19);
 			this.StatusIniLabel.Text = "StatusIniLabel";
+			this.StatusIniLabel.DoubleClick += new System.EventHandler(this.StatusIniLabel_DoubleClick);
 			// 
 			// StatusDllLabel
 			// 
@@ -437,7 +447,7 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.FormattingEnabled = true;
 			this.GameToCustomizeComboBox.Location = new System.Drawing.Point(149, 70);
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
-			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(631, 21);
+			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(625, 21);
 			this.GameToCustomizeComboBox.TabIndex = 7;
 			this.GameToCustomizeComboBox.SelectedIndexChanged += new System.EventHandler(this.GameToCustomizeComboBox_SelectedIndexChanged);
 			// 
@@ -456,14 +466,6 @@ namespace x360ce.App
 			this.BusyLoadingCircle.SpokeThickness = 4;
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
-			// 
-			// ControllersPanel
-			// 
-			this.ControllersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ControllersPanel.Location = new System.Drawing.Point(0, 0);
-			this.ControllersPanel.Name = "ControllersPanel";
-			this.ControllersPanel.Size = new System.Drawing.Size(768, 597);
-			this.ControllersPanel.TabIndex = 0;
 			// 
 			// MainForm
 			// 

@@ -113,7 +113,8 @@ namespace x360ce.App.Controls
             AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
             var di = device.Information;
             var slidersCount = objects.Where(x => x.GuidValue.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
-            AppHelper.SetText(DiCapAxesTextBox, (device.Capabilities.AxeCount - slidersCount).ToString());
+			// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
+			AppHelper.SetText(DiCapAxesTextBox, (device.Capabilities.AxeCount - slidersCount).ToString());
             AppHelper.SetText(SlidersTextBox, slidersCount.ToString());
             // Update PID and VID always so they wont be overwritten by load settings.
             short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);

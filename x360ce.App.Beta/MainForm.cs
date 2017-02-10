@@ -35,7 +35,6 @@ namespace x360ce.App
 			if (item != null)
 			{
 				game = (Engine.Data.Game)item;
-
 			}
 			return game;
 		}
@@ -1426,5 +1425,15 @@ namespace x360ce.App
 		{
 
 		}
+
+		private void StatusIniLabel_DoubleClick(object sender, EventArgs e)
+		{
+			var game = (Engine.Data.Game)GameToCustomizeComboBox.SelectedItem;
+			// Get game directory.
+			var dir = new FileInfo(game.FullPath).Directory;
+			var fullPath = Path.Combine(dir.FullName, SettingManager.IniFileName);
+			EngineHelper.BrowsePath(fullPath);
+		}
+
 	}
 }

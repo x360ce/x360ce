@@ -724,7 +724,7 @@ namespace x360ce.App.Controls
 				if (!Equals(instanceGuid, _InstanceGuid))
 				{
 					_InstanceGuid = instanceGuid;
-					ResetDiMenuStrip(enable ? diDevice.Device : null);
+					ResetDiMenuStrip(enable ? diDevice : null);
 				}
 				JoystickState state;
 				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
@@ -821,7 +821,7 @@ namespace x360ce.App.Controls
 
 
 		// Function is recreated as soon as new DirectInput Device is available.
-		public void ResetDiMenuStrip(Device device)
+		public void ResetDiMenuStrip(DiDevice device)
 		{
 			DiMenuStrip.Items.Clear();
 			ToolStripMenuItem mi;
@@ -839,15 +839,14 @@ namespace x360ce.App.Controls
 			// Add Buttons.
 			mi = new ToolStripMenuItem("Buttons");
 			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "Button {0}", "b{0}", device.Capabilities.ButtonCount);
+			CreateItems(mi, "Button {0}", "b{0}", device.CapButtonCount);
 			// Add Axes.
 			mi = new ToolStripMenuItem("Axes");
 			DiMenuStrip.Items.Add(mi);
-			var axisCount = DirectInputPanel.Axis.Length;
-			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", axisCount);
-			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", axisCount);
-			CreateItems(mi, "Half", "HAxis {0}", "x{0}", axisCount);
-			CreateItems(mi, "Axis {0}", "a{0}", axisCount);
+			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", device.CapAxeCount);
+			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", device.CapAxeCount);
+			CreateItems(mi, "Half", "HAxis {0}", "x{0}", device.CapAxeCount);
+			CreateItems(mi, "Axis {0}", "a{0}", device.CapAxeCount);
 			// Add Sliders.            
 			mi = new ToolStripMenuItem("Sliders");
 			DiMenuStrip.Items.Add(mi);
@@ -861,7 +860,7 @@ namespace x360ce.App.Controls
 			DiMenuStrip.Items.Add(mi);
 			// Add D-Pad Top, Right, Bottom, Left button.
 			var dPadNames = Enum.GetNames(typeof(DPadEnum));
-			for (int p = 0; p < device.Capabilities.PovCount; p++)
+			for (int p = 0; p < device.CapPovCount; p++)
 			{
 				var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.DPad);
 				mi.DropDownItems.Add(dPadItem);
