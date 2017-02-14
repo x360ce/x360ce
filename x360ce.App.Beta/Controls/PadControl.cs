@@ -14,6 +14,7 @@ using System.Diagnostics;
 using JocysCom.ClassLibrary.IO;
 using System.Linq.Expressions;
 using JocysCom.ClassLibrary.ComponentModel;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -679,13 +680,13 @@ namespace x360ce.App.Controls
 		/// Get selected device. If device is not connected then return null.
 		/// </summary>
 		/// <returns></returns>
-		DiDevice GetCurrentDevice()
+		UserController GetCurrentDevice()
 		{
 			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			Engine.Data.Setting setting = null;
 			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
-			DiDevice device = null;
+			UserController device = null;
 			if (setting != null) device = SettingManager.GetDevice(setting.InstanceGuid);
 			return device;
 		}
@@ -821,7 +822,7 @@ namespace x360ce.App.Controls
 
 
 		// Function is recreated as soon as new DirectInput Device is available.
-		public void ResetDiMenuStrip(DiDevice device)
+		public void ResetDiMenuStrip(UserController device)
 		{
 			DiMenuStrip.Items.Clear();
 			ToolStripMenuItem mi;

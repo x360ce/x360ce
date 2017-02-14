@@ -186,14 +186,48 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ApplicationId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="VendorName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="DeviceId" Type="varchar" MaxLength="512" Nullable="false" />
-          <Property Name="FriendlyName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ForceFeedbackDriverGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Usage" Type="int" Nullable="false" />
+          <Property Name="UsagePage" Type="int" Nullable="false" />
+          <Property Name="CapAxeCount" Type="int" Nullable="false" />
+          <Property Name="CapButtonCount" Type="int" Nullable="false" />
+          <Property Name="CapDriverVersion" Type="int" Nullable="false" />
+          <Property Name="CapFirmwareRevision" Type="int" Nullable="false" />
+          <Property Name="CapFlags" Type="int" Nullable="false" />
+          <Property Name="CapForceFeedbackMinimumTimeResolution" Type="int" Nullable="false" />
+          <Property Name="CapForceFeedbackSamplePeriod" Type="int" Nullable="false" />
+          <Property Name="CapHardwareRevision" Type="int" Nullable="false" />
+          <Property Name="CapPovCount" Type="int" Nullable="false" />
+          <Property Name="CapIsHumanInterfaceDevice" Type="bit" Nullable="false" />
+          <Property Name="CapSubtype" Type="int" Nullable="false" />
+          <Property Name="CapType" Type="int" Nullable="false" />
+          <Property Name="HidManufacturer" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="HidVendorId" Type="int" Nullable="false" />
+          <Property Name="HidProductId" Type="int" Nullable="false" />
+          <Property Name="HidRevision" Type="int" Nullable="false" />
+          <Property Name="HidDescription" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="HidDeviceId" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="HidDevicePath" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="HidParentDeviceId" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="HidClassGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="HidClassDescription" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="DevManufacturer" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="DevVendorId" Type="int" Nullable="false" />
+          <Property Name="DevProductId" Type="int" Nullable="false" />
+          <Property Name="DevRevision" Type="int" Nullable="false" />
+          <Property Name="DevDescription" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="DevDeviceId" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="DevDevicePath" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="DevParentDeviceId" Type="nvarchar" MaxLength="512" Nullable="false" />
+          <Property Name="DevClassGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DevClassDescription" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
-          <Property Name="IsOnline" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_UserInstances">
           <Key>
@@ -235,8 +269,8 @@
           <EntitySet Name="Products" EntityType="x360ceModel.Product" />
           <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
           <EntitySet Name="Games" EntityType="x360ceModel.Game" />
-          <EntitySet Name="UserControllers" EntityType="x360ceModel.UserController" />
           <EntitySet Name="UserInstances" EntityType="x360ceModel.UserInstance" />
+          <EntitySet Name="UserControllers" EntityType="x360ceModel.UserController" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -421,22 +455,6 @@
           <Property Name="SettingChecksum" Type="Guid" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="Weight" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityType Name="UserController">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ApplicationId" Type="Guid" Nullable="false" />
-          <Property Name="UserId" Type="Guid" Nullable="false" />
-          <Property Name="VendorName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="DeviceId" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="false" />
-          <Property Name="FriendlyName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="IsOnline" Type="Boolean" Nullable="false" />
-        </EntityType>
         <EntityType Name="UserInstance">
           <Key>
             <PropertyRef Name="Id" />
@@ -444,6 +462,56 @@
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="ControllerId" Type="Guid" Nullable="false" />
           <Property Name="InstanceGuid" Type="Guid" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserController">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ApplicationId" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="InstanceGuid" Type="Guid" Nullable="false" />
+          <Property Name="InstanceName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ProductGuid" Type="Guid" Nullable="false" />
+          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ForceFeedbackDriverGuid" Type="Guid" Nullable="false" />
+          <Property Name="Usage" Type="Int32" Nullable="false" />
+          <Property Name="UsagePage" Type="Int32" Nullable="false" />
+          <Property Name="CapAxeCount" Type="Int32" Nullable="false" />
+          <Property Name="CapButtonCount" Type="Int32" Nullable="false" />
+          <Property Name="CapDriverVersion" Type="Int32" Nullable="false" />
+          <Property Name="CapFirmwareRevision" Type="Int32" Nullable="false" />
+          <Property Name="CapFlags" Type="Int32" Nullable="false" />
+          <Property Name="CapForceFeedbackMinimumTimeResolution" Type="Int32" Nullable="false" />
+          <Property Name="CapForceFeedbackSamplePeriod" Type="Int32" Nullable="false" />
+          <Property Name="CapHardwareRevision" Type="Int32" Nullable="false" />
+          <Property Name="CapPovCount" Type="Int32" Nullable="false" />
+          <Property Name="CapIsHumanInterfaceDevice" Type="Boolean" Nullable="false" />
+          <Property Name="CapSubtype" Type="Int32" Nullable="false" />
+          <Property Name="CapType" Type="Int32" Nullable="false" />
+          <Property Name="HidManufacturer" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="HidVendorId" Type="Int32" Nullable="false" />
+          <Property Name="HidProductId" Type="Int32" Nullable="false" />
+          <Property Name="HidRevision" Type="Int32" Nullable="false" />
+          <Property Name="HidDescription" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="HidDeviceId" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="HidDevicePath" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="HidParentDeviceId" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="HidClassGuid" Type="Guid" Nullable="false" />
+          <Property Name="HidClassDescription" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DevManufacturer" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DevVendorId" Type="Int32" Nullable="false" />
+          <Property Name="DevProductId" Type="Int32" Nullable="false" />
+          <Property Name="DevRevision" Type="Int32" Nullable="false" />
+          <Property Name="DevDescription" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="DevDeviceId" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="DevDevicePath" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="DevParentDeviceId" Type="String" Nullable="false" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="DevClassGuid" Type="Guid" Nullable="false" />
+          <Property Name="DevClassDescription" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -643,28 +711,62 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserControllers">
-            <EntityTypeMapping TypeName="x360ceModel.UserController">
-              <MappingFragment StoreEntitySet="x360ce_UserControllers">
-                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
-                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
-                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="FriendlyName" ColumnName="FriendlyName" />
-                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="UserInstances">
             <EntityTypeMapping TypeName="x360ceModel.UserInstance">
               <MappingFragment StoreEntitySet="x360ce_UserInstances">
                 <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
                 <ScalarProperty Name="ControllerId" ColumnName="ControllerId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserControllers">
+            <EntityTypeMapping TypeName="x360ceModel.UserController">
+              <MappingFragment StoreEntitySet="x360ce_UserControllers">
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DevClassDescription" ColumnName="DevClassDescription" />
+                <ScalarProperty Name="DevClassGuid" ColumnName="DevClassGuid" />
+                <ScalarProperty Name="DevParentDeviceId" ColumnName="DevParentDeviceId" />
+                <ScalarProperty Name="DevDevicePath" ColumnName="DevDevicePath" />
+                <ScalarProperty Name="DevDeviceId" ColumnName="DevDeviceId" />
+                <ScalarProperty Name="DevDescription" ColumnName="DevDescription" />
+                <ScalarProperty Name="DevRevision" ColumnName="DevRevision" />
+                <ScalarProperty Name="DevProductId" ColumnName="DevProductId" />
+                <ScalarProperty Name="DevVendorId" ColumnName="DevVendorId" />
+                <ScalarProperty Name="DevManufacturer" ColumnName="DevManufacturer" />
+                <ScalarProperty Name="HidClassDescription" ColumnName="HidClassDescription" />
+                <ScalarProperty Name="HidClassGuid" ColumnName="HidClassGuid" />
+                <ScalarProperty Name="HidParentDeviceId" ColumnName="HidParentDeviceId" />
+                <ScalarProperty Name="HidDevicePath" ColumnName="HidDevicePath" />
+                <ScalarProperty Name="HidDeviceId" ColumnName="HidDeviceId" />
+                <ScalarProperty Name="HidDescription" ColumnName="HidDescription" />
+                <ScalarProperty Name="HidRevision" ColumnName="HidRevision" />
+                <ScalarProperty Name="HidProductId" ColumnName="HidProductId" />
+                <ScalarProperty Name="HidVendorId" ColumnName="HidVendorId" />
+                <ScalarProperty Name="HidManufacturer" ColumnName="HidManufacturer" />
+                <ScalarProperty Name="CapType" ColumnName="CapType" />
+                <ScalarProperty Name="CapSubtype" ColumnName="CapSubtype" />
+                <ScalarProperty Name="CapIsHumanInterfaceDevice" ColumnName="CapIsHumanInterfaceDevice" />
+                <ScalarProperty Name="CapPovCount" ColumnName="CapPovCount" />
+                <ScalarProperty Name="CapHardwareRevision" ColumnName="CapHardwareRevision" />
+                <ScalarProperty Name="CapForceFeedbackSamplePeriod" ColumnName="CapForceFeedbackSamplePeriod" />
+                <ScalarProperty Name="CapForceFeedbackMinimumTimeResolution" ColumnName="CapForceFeedbackMinimumTimeResolution" />
+                <ScalarProperty Name="CapFlags" ColumnName="CapFlags" />
+                <ScalarProperty Name="CapFirmwareRevision" ColumnName="CapFirmwareRevision" />
+                <ScalarProperty Name="CapDriverVersion" ColumnName="CapDriverVersion" />
+                <ScalarProperty Name="CapButtonCount" ColumnName="CapButtonCount" />
+                <ScalarProperty Name="CapAxeCount" ColumnName="CapAxeCount" />
+                <ScalarProperty Name="UsagePage" ColumnName="UsagePage" />
+                <ScalarProperty Name="Usage" ColumnName="Usage" />
+                <ScalarProperty Name="ForceFeedbackDriverGuid" ColumnName="ForceFeedbackDriverGuid" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+                <ScalarProperty Name="InstanceName" ColumnName="InstanceName" />
+                <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -691,7 +793,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="67" >
+			<Diagram Name="x360ceModel" ZoomLevel="102" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
@@ -699,8 +801,8 @@
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.75" />
         <EntityTypeShape EntityType="x360ceModel.Game" Width="1.5" PointX="7.875" PointY="2.5" />
-        <EntityTypeShape EntityType="x360ceModel.UserController" Width="1.5" PointX="4.375" PointY="8.75" />
         <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="6.375" PointY="8.75" />
+        <EntityTypeShape EntityType="x360ceModel.UserController" Width="1.5" PointX="8.375" PointY="8.75" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

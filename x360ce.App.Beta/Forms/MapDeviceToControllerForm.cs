@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -20,7 +21,7 @@ namespace x360ce.App.Controls
 			SetHeaderBody(MessageBoxIcon.Information, "");
 		}
 
-		public List<DiDevice> SelectedDevices;
+		public List<UserController> SelectedDevices;
 
 		private void OkButton_Click(object sender, EventArgs e)
 		{

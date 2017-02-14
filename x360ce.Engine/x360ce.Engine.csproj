@@ -80,6 +80,13 @@
     </CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DirectInput">
+      <HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -128,6 +135,7 @@
     <Compile Include="Data\Game.cs" />
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Program.cs" />
+    <Compile Include="Data\UserController.cs" />
     <Compile Include="Data\Vendor.cs" />
     <Compile Include="Data\x360ceModel.Designer.cs">
       <AutoGen>True</AutoGen>

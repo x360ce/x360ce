@@ -17,10 +17,11 @@ namespace x360ce.App
 	public partial class SettingManager
 	{
 
-		// Products - DInput Devices
-		// Programs - Games of all Users.
-		// Settings - Links Product, Game and PadSettings
+		// Products  - DInput Devices.
+		// Programs  - Games of all Users.
+		// Settings  - Links Product, Game and PadSettings.
 		// Summaries - Summary of Settings of all Users.
+		// UserControllers - Detail information about user Controllers.
 		//
 		//            [Vendor]    
 		//             ↓
@@ -47,9 +48,6 @@ namespace x360ce.App
 		/// <summary>Preset PadSettings.</summary>
 		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings", "Preset PadSettings.");
 
-		/// <summary>User Devices.</summary>
-		public static SettingsData<DiDevice> UserDevices = new SettingsData<DiDevice>("UserDevices", "User Devices.");
-
 		/// <summary>User Controllers.</summary>
 		public static SettingsData<Engine.Data.UserController> UserControllers = new SettingsData<Engine.Data.UserController>("UserControllers", "User Controllers.");
 
@@ -71,9 +69,9 @@ namespace x360ce.App
 			).ToList();
 		}
 
-		public static DiDevice GetDevice(Guid instanceGuid)
+		public static UserController GetDevice(Guid instanceGuid)
 		{
-			return UserDevices.Items.FirstOrDefault(x =>
+			return UserControllers.Items.FirstOrDefault(x =>
 				x.InstanceGuid.Equals(instanceGuid));
 		}
 
@@ -83,14 +81,14 @@ namespace x360ce.App
 				x.PadSettingChecksum.Equals(padSettingChecksum));
 		}
 
-		public static List<DiDevice> GetDevices(string fileName, MapTo mapTo)
+		public static List<UserController> GetDevices(string fileName, MapTo mapTo)
 		{
 			var settings = GetSettings(fileName);
 			// Get all mapped to specific index.
 			var instances = settings
 				.Where(x => x.MapTo == (int)mapTo)
 				.Select(x => x.InstanceGuid).ToArray();
-			var devices = UserDevices.Items
+			var devices = UserControllers.Items
 				.Where(x => instances.Contains(x.InstanceGuid))
 				.ToList();
 			// Return available devices.

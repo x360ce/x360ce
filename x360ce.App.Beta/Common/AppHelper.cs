@@ -11,6 +11,7 @@ using x360ce.Engine.Win32;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
+using x360ce.Engine.Data;
 
 namespace x360ce.App
 {
@@ -217,7 +218,7 @@ namespace x360ce.App
 			}
 		}
 
-		public static Engine.Data.Setting GetNewSetting(DiDevice device, Engine.Data.Game game, MapTo mapTo)
+		public static Engine.Data.Setting GetNewSetting(UserController device, Engine.Data.Game game, MapTo mapTo)
 		{
 			// Create new setting for game/device.
 			var newSetting = new Engine.Data.Setting();

@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -20,13 +21,13 @@ namespace x360ce.App.Controls
 		{
 			UpdateButtons();
 			ControllersDataGridView.AutoGenerateColumns = false;
-			ControllersDataGridView.DataSource = SettingManager.UserDevices.Items;
+			ControllersDataGridView.DataSource = SettingManager.UserControllers.Items;
 		}
 
 		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var item = ((DiDevice)grid.Rows[e.RowIndex].DataBoundItem);
+			var item = ((UserController)grid.Rows[e.RowIndex].DataBoundItem);
 			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
 				e.Value = item.IsOnline
@@ -35,10 +36,10 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public List<DiDevice> GetSelected()
+		public List<UserController> GetSelected()
 		{
 			var grid = ControllersDataGridView;
-			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (DiDevice)x.DataBoundItem).ToList();
+			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserController)x.DataBoundItem).ToList();
 			return items;
 		}
 
@@ -52,7 +53,7 @@ namespace x360ce.App.Controls
 			var items = GetSelected();
 			foreach (var item in items)
 			{
-				SettingManager.UserDevices.Items.Remove(item);
+				SettingManager.UserControllers.Items.Remove(item);
 			}
 		}
 

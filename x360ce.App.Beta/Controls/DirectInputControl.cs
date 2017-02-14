@@ -10,6 +10,7 @@ using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.IO;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -53,7 +54,7 @@ namespace x360ce.App.Controls
             DiEffectsDataGridView.DataSource = DiEffectsTable;
         }
 
-        void ShowDeviceInfo(Joystick device, DiDevice dInfo)
+        void ShowDeviceInfo(Joystick device, UserController dInfo)
         {
             if (device == null)
             {
@@ -293,7 +294,7 @@ namespace x360ce.App.Controls
         Guid deviceInstanceGuid;
         bool isWheel = false;
 
-        public void UpdateFrom(DiDevice diDevice, out JoystickState state)
+        public void UpdateFrom(UserController diDevice, out JoystickState state)
         {
             state = null;
             if (diDevice != null)

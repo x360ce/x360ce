@@ -180,22 +180,6 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<UserController> UserControllers
-        {
-            get
-            {
-                if ((_UserControllers == null))
-                {
-                    _UserControllers = base.CreateObjectSet<UserController>("UserControllers");
-                }
-                return _UserControllers;
-            }
-        }
-        private ObjectSet<UserController> _UserControllers;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<UserInstance> UserInstances
         {
             get
@@ -208,6 +192,22 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<UserInstance> _UserInstances;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserController> UserControllers
+        {
+            get
+            {
+                if ((_UserControllers == null))
+                {
+                    _UserControllers = base.CreateObjectSet<UserController>("UserControllers");
+                }
+                return _UserControllers;
+            }
+        }
+        private ObjectSet<UserController> _UserControllers;
 
         #endregion
 
@@ -270,19 +270,19 @@ namespace x360ce.Engine.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the UserControllers EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToUserControllers(UserController userController)
-        {
-            base.AddObject("UserControllers", userController);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the UserInstances EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToUserInstances(UserInstance userInstance)
         {
             base.AddObject("UserInstances", userInstance);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserControllers EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserControllers(UserController userController)
+        {
+            base.AddObject("UserControllers", userController);
         }
 
         #endregion
@@ -4233,28 +4233,96 @@ namespace x360ce.Engine.Data
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="applicationId">Initial value of the ApplicationId property.</param>
         /// <param name="userId">Initial value of the UserId property.</param>
-        /// <param name="vendorName">Initial value of the VendorName property.</param>
+        /// <param name="instanceGuid">Initial value of the InstanceGuid property.</param>
+        /// <param name="instanceName">Initial value of the InstanceName property.</param>
+        /// <param name="productGuid">Initial value of the ProductGuid property.</param>
         /// <param name="productName">Initial value of the ProductName property.</param>
-        /// <param name="deviceId">Initial value of the DeviceId property.</param>
-        /// <param name="friendlyName">Initial value of the FriendlyName property.</param>
+        /// <param name="forceFeedbackDriverGuid">Initial value of the ForceFeedbackDriverGuid property.</param>
+        /// <param name="usage">Initial value of the Usage property.</param>
+        /// <param name="usagePage">Initial value of the UsagePage property.</param>
+        /// <param name="capAxeCount">Initial value of the CapAxeCount property.</param>
+        /// <param name="capButtonCount">Initial value of the CapButtonCount property.</param>
+        /// <param name="capDriverVersion">Initial value of the CapDriverVersion property.</param>
+        /// <param name="capFirmwareRevision">Initial value of the CapFirmwareRevision property.</param>
+        /// <param name="capFlags">Initial value of the CapFlags property.</param>
+        /// <param name="capForceFeedbackMinimumTimeResolution">Initial value of the CapForceFeedbackMinimumTimeResolution property.</param>
+        /// <param name="capForceFeedbackSamplePeriod">Initial value of the CapForceFeedbackSamplePeriod property.</param>
+        /// <param name="capHardwareRevision">Initial value of the CapHardwareRevision property.</param>
+        /// <param name="capPovCount">Initial value of the CapPovCount property.</param>
+        /// <param name="capIsHumanInterfaceDevice">Initial value of the CapIsHumanInterfaceDevice property.</param>
+        /// <param name="capSubtype">Initial value of the CapSubtype property.</param>
+        /// <param name="capType">Initial value of the CapType property.</param>
+        /// <param name="hidManufacturer">Initial value of the HidManufacturer property.</param>
+        /// <param name="hidVendorId">Initial value of the HidVendorId property.</param>
+        /// <param name="hidProductId">Initial value of the HidProductId property.</param>
+        /// <param name="hidRevision">Initial value of the HidRevision property.</param>
+        /// <param name="hidDescription">Initial value of the HidDescription property.</param>
+        /// <param name="hidDeviceId">Initial value of the HidDeviceId property.</param>
+        /// <param name="hidDevicePath">Initial value of the HidDevicePath property.</param>
+        /// <param name="hidParentDeviceId">Initial value of the HidParentDeviceId property.</param>
+        /// <param name="hidClassGuid">Initial value of the HidClassGuid property.</param>
+        /// <param name="hidClassDescription">Initial value of the HidClassDescription property.</param>
+        /// <param name="devManufacturer">Initial value of the DevManufacturer property.</param>
+        /// <param name="devVendorId">Initial value of the DevVendorId property.</param>
+        /// <param name="devProductId">Initial value of the DevProductId property.</param>
+        /// <param name="devRevision">Initial value of the DevRevision property.</param>
+        /// <param name="devDescription">Initial value of the DevDescription property.</param>
+        /// <param name="devDeviceId">Initial value of the DevDeviceId property.</param>
+        /// <param name="devDevicePath">Initial value of the DevDevicePath property.</param>
+        /// <param name="devParentDeviceId">Initial value of the DevParentDeviceId property.</param>
+        /// <param name="devClassGuid">Initial value of the DevClassGuid property.</param>
+        /// <param name="devClassDescription">Initial value of the DevClassDescription property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        /// <param name="isOnline">Initial value of the IsOnline property.</param>
-        public static UserController CreateUserController(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.String vendorName, global::System.String productName, global::System.String deviceId, global::System.String friendlyName, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Boolean isOnline)
+        public static UserController CreateUserController(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Guid forceFeedbackDriverGuid, global::System.Int32 usage, global::System.Int32 usagePage, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
         {
             UserController userController = new UserController();
             userController.Id = id;
             userController.ApplicationId = applicationId;
             userController.UserId = userId;
-            userController.VendorName = vendorName;
+            userController.InstanceGuid = instanceGuid;
+            userController.InstanceName = instanceName;
+            userController.ProductGuid = productGuid;
             userController.ProductName = productName;
-            userController.DeviceId = deviceId;
-            userController.FriendlyName = friendlyName;
+            userController.ForceFeedbackDriverGuid = forceFeedbackDriverGuid;
+            userController.Usage = usage;
+            userController.UsagePage = usagePage;
+            userController.CapAxeCount = capAxeCount;
+            userController.CapButtonCount = capButtonCount;
+            userController.CapDriverVersion = capDriverVersion;
+            userController.CapFirmwareRevision = capFirmwareRevision;
+            userController.CapFlags = capFlags;
+            userController.CapForceFeedbackMinimumTimeResolution = capForceFeedbackMinimumTimeResolution;
+            userController.CapForceFeedbackSamplePeriod = capForceFeedbackSamplePeriod;
+            userController.CapHardwareRevision = capHardwareRevision;
+            userController.CapPovCount = capPovCount;
+            userController.CapIsHumanInterfaceDevice = capIsHumanInterfaceDevice;
+            userController.CapSubtype = capSubtype;
+            userController.CapType = capType;
+            userController.HidManufacturer = hidManufacturer;
+            userController.HidVendorId = hidVendorId;
+            userController.HidProductId = hidProductId;
+            userController.HidRevision = hidRevision;
+            userController.HidDescription = hidDescription;
+            userController.HidDeviceId = hidDeviceId;
+            userController.HidDevicePath = hidDevicePath;
+            userController.HidParentDeviceId = hidParentDeviceId;
+            userController.HidClassGuid = hidClassGuid;
+            userController.HidClassDescription = hidClassDescription;
+            userController.DevManufacturer = devManufacturer;
+            userController.DevVendorId = devVendorId;
+            userController.DevProductId = devProductId;
+            userController.DevRevision = devRevision;
+            userController.DevDescription = devDescription;
+            userController.DevDeviceId = devDeviceId;
+            userController.DevDevicePath = devDevicePath;
+            userController.DevParentDeviceId = devParentDeviceId;
+            userController.DevClassGuid = devClassGuid;
+            userController.DevClassDescription = devClassDescription;
             userController.DateCreated = dateCreated;
             userController.DateUpdated = dateUpdated;
             userController.IsEnabled = isEnabled;
-            userController.IsOnline = isOnline;
             return userController;
         }
 
@@ -4342,24 +4410,72 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.String VendorName
+        public global::System.Guid InstanceGuid
         {
             get
             {
-                return _VendorName;
+                return _InstanceGuid;
             }
             set
             {
-                OnVendorNameChanging(value);
-                ReportPropertyChanging("VendorName");
-                _VendorName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("VendorName");
-                OnVendorNameChanged();
+                OnInstanceGuidChanging(value);
+                ReportPropertyChanging("InstanceGuid");
+                _InstanceGuid = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("InstanceGuid");
+                OnInstanceGuidChanged();
             }
         }
-        private global::System.String _VendorName;
-        partial void OnVendorNameChanging(global::System.String value);
-        partial void OnVendorNameChanged();
+        private global::System.Guid _InstanceGuid;
+        partial void OnInstanceGuidChanging(global::System.Guid value);
+        partial void OnInstanceGuidChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String InstanceName
+        {
+            get
+            {
+                return _InstanceName;
+            }
+            set
+            {
+                OnInstanceNameChanging(value);
+                ReportPropertyChanging("InstanceName");
+                _InstanceName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("InstanceName");
+                OnInstanceNameChanged();
+            }
+        }
+        private global::System.String _InstanceName;
+        partial void OnInstanceNameChanging(global::System.String value);
+        partial void OnInstanceNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProductGuid
+        {
+            get
+            {
+                return _ProductGuid;
+            }
+            set
+            {
+                OnProductGuidChanging(value);
+                ReportPropertyChanging("ProductGuid");
+                _ProductGuid = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProductGuid");
+                OnProductGuidChanged();
+            }
+        }
+        private global::System.Guid _ProductGuid;
+        partial void OnProductGuidChanging(global::System.Guid value);
+        partial void OnProductGuidChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4390,48 +4506,840 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.String DeviceId
+        public global::System.Guid ForceFeedbackDriverGuid
         {
             get
             {
-                return _DeviceId;
+                return _ForceFeedbackDriverGuid;
             }
             set
             {
-                OnDeviceIdChanging(value);
-                ReportPropertyChanging("DeviceId");
-                _DeviceId = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("DeviceId");
-                OnDeviceIdChanged();
+                OnForceFeedbackDriverGuidChanging(value);
+                ReportPropertyChanging("ForceFeedbackDriverGuid");
+                _ForceFeedbackDriverGuid = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ForceFeedbackDriverGuid");
+                OnForceFeedbackDriverGuidChanged();
             }
         }
-        private global::System.String _DeviceId;
-        partial void OnDeviceIdChanging(global::System.String value);
-        partial void OnDeviceIdChanged();
+        private global::System.Guid _ForceFeedbackDriverGuid;
+        partial void OnForceFeedbackDriverGuidChanging(global::System.Guid value);
+        partial void OnForceFeedbackDriverGuidChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.String FriendlyName
+        public global::System.Int32 Usage
         {
             get
             {
-                return _FriendlyName;
+                return _Usage;
             }
             set
             {
-                OnFriendlyNameChanging(value);
-                ReportPropertyChanging("FriendlyName");
-                _FriendlyName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("FriendlyName");
-                OnFriendlyNameChanged();
+                OnUsageChanging(value);
+                ReportPropertyChanging("Usage");
+                _Usage = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Usage");
+                OnUsageChanged();
             }
         }
-        private global::System.String _FriendlyName;
-        partial void OnFriendlyNameChanging(global::System.String value);
-        partial void OnFriendlyNameChanged();
+        private global::System.Int32 _Usage;
+        partial void OnUsageChanging(global::System.Int32 value);
+        partial void OnUsageChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 UsagePage
+        {
+            get
+            {
+                return _UsagePage;
+            }
+            set
+            {
+                OnUsagePageChanging(value);
+                ReportPropertyChanging("UsagePage");
+                _UsagePage = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UsagePage");
+                OnUsagePageChanged();
+            }
+        }
+        private global::System.Int32 _UsagePage;
+        partial void OnUsagePageChanging(global::System.Int32 value);
+        partial void OnUsagePageChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapAxeCount
+        {
+            get
+            {
+                return _CapAxeCount;
+            }
+            set
+            {
+                OnCapAxeCountChanging(value);
+                ReportPropertyChanging("CapAxeCount");
+                _CapAxeCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapAxeCount");
+                OnCapAxeCountChanged();
+            }
+        }
+        private global::System.Int32 _CapAxeCount;
+        partial void OnCapAxeCountChanging(global::System.Int32 value);
+        partial void OnCapAxeCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapButtonCount
+        {
+            get
+            {
+                return _CapButtonCount;
+            }
+            set
+            {
+                OnCapButtonCountChanging(value);
+                ReportPropertyChanging("CapButtonCount");
+                _CapButtonCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapButtonCount");
+                OnCapButtonCountChanged();
+            }
+        }
+        private global::System.Int32 _CapButtonCount;
+        partial void OnCapButtonCountChanging(global::System.Int32 value);
+        partial void OnCapButtonCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapDriverVersion
+        {
+            get
+            {
+                return _CapDriverVersion;
+            }
+            set
+            {
+                OnCapDriverVersionChanging(value);
+                ReportPropertyChanging("CapDriverVersion");
+                _CapDriverVersion = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapDriverVersion");
+                OnCapDriverVersionChanged();
+            }
+        }
+        private global::System.Int32 _CapDriverVersion;
+        partial void OnCapDriverVersionChanging(global::System.Int32 value);
+        partial void OnCapDriverVersionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapFirmwareRevision
+        {
+            get
+            {
+                return _CapFirmwareRevision;
+            }
+            set
+            {
+                OnCapFirmwareRevisionChanging(value);
+                ReportPropertyChanging("CapFirmwareRevision");
+                _CapFirmwareRevision = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapFirmwareRevision");
+                OnCapFirmwareRevisionChanged();
+            }
+        }
+        private global::System.Int32 _CapFirmwareRevision;
+        partial void OnCapFirmwareRevisionChanging(global::System.Int32 value);
+        partial void OnCapFirmwareRevisionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapFlags
+        {
+            get
+            {
+                return _CapFlags;
+            }
+            set
+            {
+                OnCapFlagsChanging(value);
+                ReportPropertyChanging("CapFlags");
+                _CapFlags = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapFlags");
+                OnCapFlagsChanged();
+            }
+        }
+        private global::System.Int32 _CapFlags;
+        partial void OnCapFlagsChanging(global::System.Int32 value);
+        partial void OnCapFlagsChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapForceFeedbackMinimumTimeResolution
+        {
+            get
+            {
+                return _CapForceFeedbackMinimumTimeResolution;
+            }
+            set
+            {
+                OnCapForceFeedbackMinimumTimeResolutionChanging(value);
+                ReportPropertyChanging("CapForceFeedbackMinimumTimeResolution");
+                _CapForceFeedbackMinimumTimeResolution = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapForceFeedbackMinimumTimeResolution");
+                OnCapForceFeedbackMinimumTimeResolutionChanged();
+            }
+        }
+        private global::System.Int32 _CapForceFeedbackMinimumTimeResolution;
+        partial void OnCapForceFeedbackMinimumTimeResolutionChanging(global::System.Int32 value);
+        partial void OnCapForceFeedbackMinimumTimeResolutionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapForceFeedbackSamplePeriod
+        {
+            get
+            {
+                return _CapForceFeedbackSamplePeriod;
+            }
+            set
+            {
+                OnCapForceFeedbackSamplePeriodChanging(value);
+                ReportPropertyChanging("CapForceFeedbackSamplePeriod");
+                _CapForceFeedbackSamplePeriod = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapForceFeedbackSamplePeriod");
+                OnCapForceFeedbackSamplePeriodChanged();
+            }
+        }
+        private global::System.Int32 _CapForceFeedbackSamplePeriod;
+        partial void OnCapForceFeedbackSamplePeriodChanging(global::System.Int32 value);
+        partial void OnCapForceFeedbackSamplePeriodChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapHardwareRevision
+        {
+            get
+            {
+                return _CapHardwareRevision;
+            }
+            set
+            {
+                OnCapHardwareRevisionChanging(value);
+                ReportPropertyChanging("CapHardwareRevision");
+                _CapHardwareRevision = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapHardwareRevision");
+                OnCapHardwareRevisionChanged();
+            }
+        }
+        private global::System.Int32 _CapHardwareRevision;
+        partial void OnCapHardwareRevisionChanging(global::System.Int32 value);
+        partial void OnCapHardwareRevisionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapPovCount
+        {
+            get
+            {
+                return _CapPovCount;
+            }
+            set
+            {
+                OnCapPovCountChanging(value);
+                ReportPropertyChanging("CapPovCount");
+                _CapPovCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapPovCount");
+                OnCapPovCountChanged();
+            }
+        }
+        private global::System.Int32 _CapPovCount;
+        partial void OnCapPovCountChanging(global::System.Int32 value);
+        partial void OnCapPovCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean CapIsHumanInterfaceDevice
+        {
+            get
+            {
+                return _CapIsHumanInterfaceDevice;
+            }
+            set
+            {
+                OnCapIsHumanInterfaceDeviceChanging(value);
+                ReportPropertyChanging("CapIsHumanInterfaceDevice");
+                _CapIsHumanInterfaceDevice = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapIsHumanInterfaceDevice");
+                OnCapIsHumanInterfaceDeviceChanged();
+            }
+        }
+        private global::System.Boolean _CapIsHumanInterfaceDevice;
+        partial void OnCapIsHumanInterfaceDeviceChanging(global::System.Boolean value);
+        partial void OnCapIsHumanInterfaceDeviceChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapSubtype
+        {
+            get
+            {
+                return _CapSubtype;
+            }
+            set
+            {
+                OnCapSubtypeChanging(value);
+                ReportPropertyChanging("CapSubtype");
+                _CapSubtype = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapSubtype");
+                OnCapSubtypeChanged();
+            }
+        }
+        private global::System.Int32 _CapSubtype;
+        partial void OnCapSubtypeChanging(global::System.Int32 value);
+        partial void OnCapSubtypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 CapType
+        {
+            get
+            {
+                return _CapType;
+            }
+            set
+            {
+                OnCapTypeChanging(value);
+                ReportPropertyChanging("CapType");
+                _CapType = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("CapType");
+                OnCapTypeChanged();
+            }
+        }
+        private global::System.Int32 _CapType;
+        partial void OnCapTypeChanging(global::System.Int32 value);
+        partial void OnCapTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String HidManufacturer
+        {
+            get
+            {
+                return _HidManufacturer;
+            }
+            set
+            {
+                OnHidManufacturerChanging(value);
+                ReportPropertyChanging("HidManufacturer");
+                _HidManufacturer = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("HidManufacturer");
+                OnHidManufacturerChanged();
+            }
+        }
+        private global::System.String _HidManufacturer;
+        partial void OnHidManufacturerChanging(global::System.String value);
+        partial void OnHidManufacturerChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 HidVendorId
+        {
+            get
+            {
+                return _HidVendorId;
+            }
+            set
+            {
+                OnHidVendorIdChanging(value);
+                ReportPropertyChanging("HidVendorId");
+                _HidVendorId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HidVendorId");
+                OnHidVendorIdChanged();
+            }
+        }
+        private global::System.Int32 _HidVendorId;
+        partial void OnHidVendorIdChanging(global::System.Int32 value);
+        partial void OnHidVendorIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 HidProductId
+        {
+            get
+            {
+                return _HidProductId;
+            }
+            set
+            {
+                OnHidProductIdChanging(value);
+                ReportPropertyChanging("HidProductId");
+                _HidProductId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HidProductId");
+                OnHidProductIdChanged();
+            }
+        }
+        private global::System.Int32 _HidProductId;
+        partial void OnHidProductIdChanging(global::System.Int32 value);
+        partial void OnHidProductIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 HidRevision
+        {
+            get
+            {
+                return _HidRevision;
+            }
+            set
+            {
+                OnHidRevisionChanging(value);
+                ReportPropertyChanging("HidRevision");
+                _HidRevision = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HidRevision");
+                OnHidRevisionChanged();
+            }
+        }
+        private global::System.Int32 _HidRevision;
+        partial void OnHidRevisionChanging(global::System.Int32 value);
+        partial void OnHidRevisionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String HidDescription
+        {
+            get
+            {
+                return _HidDescription;
+            }
+            set
+            {
+                OnHidDescriptionChanging(value);
+                ReportPropertyChanging("HidDescription");
+                _HidDescription = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("HidDescription");
+                OnHidDescriptionChanged();
+            }
+        }
+        private global::System.String _HidDescription;
+        partial void OnHidDescriptionChanging(global::System.String value);
+        partial void OnHidDescriptionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String HidDeviceId
+        {
+            get
+            {
+                return _HidDeviceId;
+            }
+            set
+            {
+                OnHidDeviceIdChanging(value);
+                ReportPropertyChanging("HidDeviceId");
+                _HidDeviceId = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("HidDeviceId");
+                OnHidDeviceIdChanged();
+            }
+        }
+        private global::System.String _HidDeviceId;
+        partial void OnHidDeviceIdChanging(global::System.String value);
+        partial void OnHidDeviceIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String HidDevicePath
+        {
+            get
+            {
+                return _HidDevicePath;
+            }
+            set
+            {
+                OnHidDevicePathChanging(value);
+                ReportPropertyChanging("HidDevicePath");
+                _HidDevicePath = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("HidDevicePath");
+                OnHidDevicePathChanged();
+            }
+        }
+        private global::System.String _HidDevicePath;
+        partial void OnHidDevicePathChanging(global::System.String value);
+        partial void OnHidDevicePathChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String HidParentDeviceId
+        {
+            get
+            {
+                return _HidParentDeviceId;
+            }
+            set
+            {
+                OnHidParentDeviceIdChanging(value);
+                ReportPropertyChanging("HidParentDeviceId");
+                _HidParentDeviceId = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("HidParentDeviceId");
+                OnHidParentDeviceIdChanged();
+            }
+        }
+        private global::System.String _HidParentDeviceId;
+        partial void OnHidParentDeviceIdChanging(global::System.String value);
+        partial void OnHidParentDeviceIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid HidClassGuid
+        {
+            get
+            {
+                return _HidClassGuid;
+            }
+            set
+            {
+                OnHidClassGuidChanging(value);
+                ReportPropertyChanging("HidClassGuid");
+                _HidClassGuid = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HidClassGuid");
+                OnHidClassGuidChanged();
+            }
+        }
+        private global::System.Guid _HidClassGuid;
+        partial void OnHidClassGuidChanging(global::System.Guid value);
+        partial void OnHidClassGuidChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String HidClassDescription
+        {
+            get
+            {
+                return _HidClassDescription;
+            }
+            set
+            {
+                OnHidClassDescriptionChanging(value);
+                ReportPropertyChanging("HidClassDescription");
+                _HidClassDescription = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("HidClassDescription");
+                OnHidClassDescriptionChanged();
+            }
+        }
+        private global::System.String _HidClassDescription;
+        partial void OnHidClassDescriptionChanging(global::System.String value);
+        partial void OnHidClassDescriptionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DevManufacturer
+        {
+            get
+            {
+                return _DevManufacturer;
+            }
+            set
+            {
+                OnDevManufacturerChanging(value);
+                ReportPropertyChanging("DevManufacturer");
+                _DevManufacturer = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DevManufacturer");
+                OnDevManufacturerChanged();
+            }
+        }
+        private global::System.String _DevManufacturer;
+        partial void OnDevManufacturerChanging(global::System.String value);
+        partial void OnDevManufacturerChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DevVendorId
+        {
+            get
+            {
+                return _DevVendorId;
+            }
+            set
+            {
+                OnDevVendorIdChanging(value);
+                ReportPropertyChanging("DevVendorId");
+                _DevVendorId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DevVendorId");
+                OnDevVendorIdChanged();
+            }
+        }
+        private global::System.Int32 _DevVendorId;
+        partial void OnDevVendorIdChanging(global::System.Int32 value);
+        partial void OnDevVendorIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DevProductId
+        {
+            get
+            {
+                return _DevProductId;
+            }
+            set
+            {
+                OnDevProductIdChanging(value);
+                ReportPropertyChanging("DevProductId");
+                _DevProductId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DevProductId");
+                OnDevProductIdChanged();
+            }
+        }
+        private global::System.Int32 _DevProductId;
+        partial void OnDevProductIdChanging(global::System.Int32 value);
+        partial void OnDevProductIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DevRevision
+        {
+            get
+            {
+                return _DevRevision;
+            }
+            set
+            {
+                OnDevRevisionChanging(value);
+                ReportPropertyChanging("DevRevision");
+                _DevRevision = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DevRevision");
+                OnDevRevisionChanged();
+            }
+        }
+        private global::System.Int32 _DevRevision;
+        partial void OnDevRevisionChanging(global::System.Int32 value);
+        partial void OnDevRevisionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DevDescription
+        {
+            get
+            {
+                return _DevDescription;
+            }
+            set
+            {
+                OnDevDescriptionChanging(value);
+                ReportPropertyChanging("DevDescription");
+                _DevDescription = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DevDescription");
+                OnDevDescriptionChanged();
+            }
+        }
+        private global::System.String _DevDescription;
+        partial void OnDevDescriptionChanging(global::System.String value);
+        partial void OnDevDescriptionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DevDeviceId
+        {
+            get
+            {
+                return _DevDeviceId;
+            }
+            set
+            {
+                OnDevDeviceIdChanging(value);
+                ReportPropertyChanging("DevDeviceId");
+                _DevDeviceId = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DevDeviceId");
+                OnDevDeviceIdChanged();
+            }
+        }
+        private global::System.String _DevDeviceId;
+        partial void OnDevDeviceIdChanging(global::System.String value);
+        partial void OnDevDeviceIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DevDevicePath
+        {
+            get
+            {
+                return _DevDevicePath;
+            }
+            set
+            {
+                OnDevDevicePathChanging(value);
+                ReportPropertyChanging("DevDevicePath");
+                _DevDevicePath = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DevDevicePath");
+                OnDevDevicePathChanged();
+            }
+        }
+        private global::System.String _DevDevicePath;
+        partial void OnDevDevicePathChanging(global::System.String value);
+        partial void OnDevDevicePathChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DevParentDeviceId
+        {
+            get
+            {
+                return _DevParentDeviceId;
+            }
+            set
+            {
+                OnDevParentDeviceIdChanging(value);
+                ReportPropertyChanging("DevParentDeviceId");
+                _DevParentDeviceId = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DevParentDeviceId");
+                OnDevParentDeviceIdChanged();
+            }
+        }
+        private global::System.String _DevParentDeviceId;
+        partial void OnDevParentDeviceIdChanging(global::System.String value);
+        partial void OnDevParentDeviceIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid DevClassGuid
+        {
+            get
+            {
+                return _DevClassGuid;
+            }
+            set
+            {
+                OnDevClassGuidChanging(value);
+                ReportPropertyChanging("DevClassGuid");
+                _DevClassGuid = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DevClassGuid");
+                OnDevClassGuidChanged();
+            }
+        }
+        private global::System.Guid _DevClassGuid;
+        partial void OnDevClassGuidChanging(global::System.Guid value);
+        partial void OnDevClassGuidChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DevClassDescription
+        {
+            get
+            {
+                return _DevClassDescription;
+            }
+            set
+            {
+                OnDevClassDescriptionChanging(value);
+                ReportPropertyChanging("DevClassDescription");
+                _DevClassDescription = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DevClassDescription");
+                OnDevClassDescriptionChanged();
+            }
+        }
+        private global::System.String _DevClassDescription;
+        partial void OnDevClassDescriptionChanging(global::System.String value);
+        partial void OnDevClassDescriptionChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4504,30 +5412,6 @@ namespace x360ce.Engine.Data
         private global::System.Boolean _IsEnabled;
         partial void OnIsEnabledChanging(global::System.Boolean value);
         partial void OnIsEnabledChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean IsOnline
-        {
-            get
-            {
-                return _IsOnline;
-            }
-            set
-            {
-                OnIsOnlineChanging(value);
-                ReportPropertyChanging("IsOnline");
-                _IsOnline = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("IsOnline");
-                OnIsOnlineChanged();
-            }
-        }
-        private global::System.Boolean _IsOnline;
-        partial void OnIsOnlineChanging(global::System.Boolean value);
-        partial void OnIsOnlineChanged();
 
         #endregion
 
