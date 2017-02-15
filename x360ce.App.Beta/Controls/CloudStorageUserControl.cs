@@ -27,15 +27,15 @@ namespace x360ce.App.Controls
 		JocysCom.ClassLibrary.Threading.QueueTimer queueTimer;
 		SortableBindingList<CloudItem> data;
 
-		public void Add(CloudAction action, params Game[] games)
+		public void Add<T>(CloudAction action, params T[] items)
 		{
-			for (int i = 0; i < games.Length; i++)
+			for (int i = 0; i < items.Length; i++)
 			{
 				var item = new CloudItem
 				{
 					Action = action,
 					Date = DateTime.Now,
-					Item = games[i],
+					Item = items[i],
 					State = CloudState.None,
 				};
 				data.Add(item);
