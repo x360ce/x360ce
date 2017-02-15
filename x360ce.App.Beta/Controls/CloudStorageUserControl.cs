@@ -42,25 +42,45 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void DoAction(object state)
+		bool GamesAction<T>(CloudAction action)
 		{
-			MainForm.Current.LoadingCircle = true;
 			var ws = new WebServiceClient();
 			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-			var gamesToDelete = data.Where(x => x.Action == CloudAction.Delete).Select(x => (Game)x.Item).ToList();
-			try
+			var items = data
+				.Where(x => x.Action == action)
+				.Select(x => x.Item)
+				.OfType<T>()
+				.ToList();
+			var success = true;
+			// If there is data to submit.
+			if (items.Count > 0)
 			{
-				var result = ws.SetGames(CloudAction.Delete, gamesToDelete);
-				// If update was successful then.
-				if (string.IsNullOrEmpty(result))
+				string result = null;
+				if (typeof(T) == typeof(Game))
 				{
-					var gamesToUpdate = data.Where(x => x.Action == CloudAction.Update).Select(x => (Game)x.Item).ToList();
-					result = ws.SetGames(CloudAction.Update, gamesToDelete);
+					result = ws.SetGames(action, items.Cast<Game>().ToList());
 				}
-				if (!string.IsNullOrEmpty(result))
+				success = string.IsNullOrEmpty(result);
+				if (!success)
 				{
 					MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, result);
 				}
+			}
+			ws.Dispose();
+			return success;
+		}
+
+
+		void DoAction(object state)
+		{
+			MainForm.Current.LoadingCircle = true;
+			try
+			{
+				// If update failed then exit.
+				if (!GamesAction<Game>(CloudAction.Delete))
+					return;
+				else if (!GamesAction<Game>(CloudAction.Update))
+					return;
 			}
 			catch (Exception ex)
 			{
@@ -68,7 +88,6 @@ namespace x360ce.App.Controls
 				if (ex.InnerException != null) error += "\r\n" + ex.InnerException.Message;
 				MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, error);
 			}
-
 		}
 
 		/// <summary> 
