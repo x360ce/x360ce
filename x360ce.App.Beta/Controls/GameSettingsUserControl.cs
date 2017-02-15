@@ -337,7 +337,7 @@ namespace x360ce.App.Controls
 					SettingManager.Games.Items.Remove(item);
 				}
 				SettingManager.Save();
-				CloudStoragePanel.Add(itemsToDelete, CloudAction.Delete);
+				CloudStoragePanel.Add(CloudAction.Delete, itemsToDelete);
 			}
 		}
 

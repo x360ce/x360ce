@@ -168,6 +168,7 @@
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Grayscale.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Transparent.cs" />
+    <Compile Include="JocysCom\Extensions\IQueryable.cs" />
     <Compile Include="JocysCom\IO\DeviceDetector.cs" />
     <Compile Include="JocysCom\IO\DeviceDetectorEventArgs.cs" />
     <Compile Include="JocysCom\IO\DeviceDetectorForm.cs">
@@ -327,6 +328,9 @@
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="JocysCom\Extensions\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
