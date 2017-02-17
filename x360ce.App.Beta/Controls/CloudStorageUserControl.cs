@@ -19,9 +19,20 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			data = new SortableBindingList<CloudItem>();
+			data.ListChanged += Data_ListChanged;
 			TasksDataGridView.DataSource = data;
 			queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer(500, 1000);
 			queueTimer.DoAction = DoAction;
+		}
+
+		private void Data_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
+			{
+				var f = MainForm.Current;
+				if (f == null) return;
+				AppHelper.SetText(f.CloudMessagesLabel, "M: {0}", data.Count);
+			}
 		}
 
 		JocysCom.ClassLibrary.Threading.QueueTimer queueTimer;

@@ -61,6 +61,7 @@ namespace x360ce.App
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.CloudMessagesLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -295,6 +296,7 @@ namespace x360ce.App
 			this.MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusTimerLabel,
             this.toolStripStatusLabel2,
+            this.CloudMessagesLabel,
             this.StatusEventsLabel,
             this.StatusSaveLabel,
             this.StatusIsAdminLabel,
@@ -316,7 +318,7 @@ namespace x360ce.App
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(189, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(40, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// StatusEventsLabel
@@ -467,6 +469,12 @@ namespace x360ce.App
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
 			// 
+			// CloudMessagesLabel
+			// 
+			this.CloudMessagesLabel.Name = "CloudMessagesLabel";
+			this.CloudMessagesLabel.Size = new System.Drawing.Size(30, 19);
+			this.CloudMessagesLabel.Text = "M: 0";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -551,5 +559,6 @@ namespace x360ce.App
 		private TabPage HardwareTabPage;
 		private JocysCom.ClassLibrary.IO.HardwareControl HardwarePanel;
 		private Controls.ControllersUserControl ControllersPanel;
+		public ToolStripStatusLabel CloudMessagesLabel;
 	}
 }
