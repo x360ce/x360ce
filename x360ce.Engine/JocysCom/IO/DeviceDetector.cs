@@ -273,7 +273,7 @@ namespace JocysCom.ClassLibrary.IO
 			return icon;
 		}
 
-		public static DeviceInfo[] GetInterfaces()
+		public static DeviceInfo[] GetInterfaces(string[] devicePaths = null)
 		{
 			var list = new List<DeviceInfo>();
 			Guid hidGuid = Guid.Empty;
@@ -294,6 +294,10 @@ namespace JocysCom.ClassLibrary.IO
 				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
 				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
 				var devicePath = interfaceDetail.DevicePath;
+				if (devicePaths != null && !devicePaths.Contains(devicePath))
+				{
+					continue;
+				}
 				var deviceId = GetDeviceId(deviceInfoData.DevInst);
 				devicePathNames3.Add(devicePath);
 				Marshal.FreeHGlobal(ptrDetails);

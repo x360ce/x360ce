@@ -51,7 +51,8 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
 			SettingManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
 			SettingManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
-			SettingManager.AddMap(section, () => SettingName.InternetAutoload, InternetAutoloadCheckBox);
+			SettingManager.AddMap(section, () => SettingName.InternetAutoLoad, InternetAutoLoadCheckBox);
+			SettingManager.AddMap(section, () => SettingName.InternetAutoSave, InternetAutoSaveCheckBox);
 			SettingManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
@@ -62,7 +63,7 @@ namespace x360ce.App.Controls
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			InternetAutoloadCheckBox.Enabled = InternetCheckBox.Checked;
+			InternetAutoLoadCheckBox.Enabled = InternetCheckBox.Checked;
 		}
 
 		private void AddLocationButton_Click(object sender, EventArgs e)

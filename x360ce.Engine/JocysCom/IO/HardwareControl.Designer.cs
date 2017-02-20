@@ -16,9 +16,9 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DisableButton = new System.Windows.Forms.Button();
 			this.EnableButton = new System.Windows.Forms.Button();
 			this.DeviceTabControl = new System.Windows.Forms.TabControl();
@@ -66,6 +66,8 @@
 			this.ScanButton = new System.Windows.Forms.Button();
 			this.FilterTextBox = new System.Windows.Forms.TextBox();
 			this.EnableFilterCheckBox = new System.Windows.Forms.CheckBox();
+			this.RefreshButton = new System.Windows.Forms.Button();
+			this.RefreshOnChnageCheckBox = new System.Windows.Forms.CheckBox();
 			this.DeviceTabControl.SuspendLayout();
 			this.DeviceTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DeviceDataGridView)).BeginInit();
@@ -118,7 +120,7 @@
 			this.DeviceTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DeviceTabPage.Margin = new System.Windows.Forms.Padding(0);
 			this.DeviceTabPage.Name = "DeviceTabPage";
-			this.DeviceTabPage.Size = new System.Drawing.Size(726, 438);
+			this.DeviceTabPage.Size = new System.Drawing.Size(749, 438);
 			this.DeviceTabPage.TabIndex = 1;
 			this.DeviceTabPage.Text = "XX Devices Attached";
 			this.DeviceTabPage.UseVisualStyleBackColor = true;
@@ -151,7 +153,7 @@
 			this.DeviceDataGridView.Name = "DeviceDataGridView";
 			this.DeviceDataGridView.RowHeadersVisible = false;
 			this.DeviceDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.DeviceDataGridView.Size = new System.Drawing.Size(726, 438);
+			this.DeviceDataGridView.Size = new System.Drawing.Size(749, 438);
 			this.DeviceDataGridView.TabIndex = 6;
 			this.DeviceDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DeviceDataGridView_CellFormatting);
 			this.DeviceDataGridView.SelectionChanged += new System.EventHandler(this.DeviceDataGridView_SelectionChanged);
@@ -160,8 +162,8 @@
 			// 
 			this.VendorIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.VendorIdColumn.DataPropertyName = "VendorId";
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.VendorIdColumn.DefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.VendorIdColumn.DefaultCellStyle = dataGridViewCellStyle1;
 			this.VendorIdColumn.HeaderText = "VID";
 			this.VendorIdColumn.Name = "VendorIdColumn";
 			this.VendorIdColumn.Width = 50;
@@ -170,8 +172,8 @@
 			// 
 			this.ProductIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.ProductIdColumn.DataPropertyName = "ProductId";
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.ProductIdColumn.DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.ProductIdColumn.DefaultCellStyle = dataGridViewCellStyle2;
 			this.ProductIdColumn.HeaderText = "PID";
 			this.ProductIdColumn.Name = "ProductIdColumn";
 			this.ProductIdColumn.Width = 50;
@@ -180,8 +182,8 @@
 			// 
 			this.RevisionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.RevisionColumn.DataPropertyName = "Revision";
-			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.RevisionColumn.DefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.RevisionColumn.DefaultCellStyle = dataGridViewCellStyle3;
 			this.RevisionColumn.HeaderText = "REV";
 			this.RevisionColumn.Name = "RevisionColumn";
 			this.RevisionColumn.Width = 54;
@@ -561,10 +563,36 @@
 			this.EnableFilterCheckBox.UseVisualStyleBackColor = true;
 			this.EnableFilterCheckBox.CheckedChanged += new System.EventHandler(this.EnableFilderCheckBox_CheckedChanged);
 			// 
+			// RefreshButton
+			// 
+			this.RefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.RefreshButton.Location = new System.Drawing.Point(685, 3);
+			this.RefreshButton.Name = "RefreshButton";
+			this.RefreshButton.Size = new System.Drawing.Size(75, 23);
+			this.RefreshButton.TabIndex = 15;
+			this.RefreshButton.Text = "Refresh";
+			this.RefreshButton.UseVisualStyleBackColor = true;
+			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+			// 
+			// RefreshOnChnageCheckBox
+			// 
+			this.RefreshOnChnageCheckBox.AutoSize = true;
+			this.RefreshOnChnageCheckBox.Checked = true;
+			this.RefreshOnChnageCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.RefreshOnChnageCheckBox.Location = new System.Drawing.Point(324, 5);
+			this.RefreshOnChnageCheckBox.Name = "RefreshOnChnageCheckBox";
+			this.RefreshOnChnageCheckBox.Size = new System.Drawing.Size(121, 17);
+			this.RefreshOnChnageCheckBox.TabIndex = 14;
+			this.RefreshOnChnageCheckBox.Text = "Refresh on Change:";
+			this.RefreshOnChnageCheckBox.UseVisualStyleBackColor = true;
+			this.RefreshOnChnageCheckBox.CheckedChanged += new System.EventHandler(this.RefreshOnChnageCheckBox_CheckedChanged);
+			// 
 			// HardwareControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.RefreshButton);
+			this.Controls.Add(this.RefreshOnChnageCheckBox);
 			this.Controls.Add(this.EnableFilterCheckBox);
 			this.Controls.Add(this.FilterTextBox);
 			this.Controls.Add(this.ScanButton);
@@ -640,5 +668,7 @@
 		private System.Windows.Forms.Label RevisionLabel;
 		private System.Windows.Forms.Label DeviceStatusLabel;
 		private System.Windows.Forms.TextBox DeviceStatusTextBox;
+		private System.Windows.Forms.Button RefreshButton;
+		private System.Windows.Forms.CheckBox RefreshOnChnageCheckBox;
 	}
 }

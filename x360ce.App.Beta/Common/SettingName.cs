@@ -57,8 +57,11 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("Enable the use of Internet features like the settings database. 0 = OFF, 1 = ON.")]
 		static public string InternetFeatures { get { return "InternetFeatures"; } }
 
-		[DefaultValue("1"), Description("Auto load settings when the Internet Settings tab is selected. 0 = OFF, 1 = ON.")]
-		static public string InternetAutoload { get { return "InternetAutoload"; } }
+		[DefaultValue("1"), Description("Auto load settings from Online Database. 0 = OFF, 1 = ON.")]
+		static public string InternetAutoLoad { get { return "InternetAutoLoad"; } }
+
+		[DefaultValue("1"), Description("Auto save settings to Online Database. 0 = OFF, 1 = ON.")]
+		static public string InternetAutoSave { get { return "InternetAutoSave"; } }
 
 		[DefaultValue("1"), Description("Allow only one instance of the application to run at a time. 0 = Allow multiple instances, 1 = Allow only one instance.")]
 		static public string AllowOnlyOneCopy { get { return "AllowOnlyOneCopy"; } }

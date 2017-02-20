@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine.Data;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -55,6 +56,7 @@ namespace x360ce.App.Controls
 			{
 				SettingManager.UserControllers.Items.Remove(item);
 			}
+			MainForm.Current.CloudPanel.Add(CloudAction.Delete, items);
 		}
 
 		private void ControllersDataGridView_SelectionChanged(object sender, EventArgs e)

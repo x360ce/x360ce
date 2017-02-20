@@ -32,9 +32,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			if (IsDesignMode) return;
 			UpdateButtons();
-			RefreshHardwareList();
 			detector = new DeviceDetector(false);
-			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
 		}
 
 		public bool IsDesignMode
@@ -327,6 +325,20 @@ namespace JocysCom.ClassLibrary.IO
 			DevicePathTextBox.Text = di.DevicePath;
 			DeviceIdTextBox.Text = di.DeviceId;
 			DeviceStatusTextBox.Text = di.Status.ToString();
+		}
+
+		private void RefreshButton_Click(object sender, EventArgs e)
+		{
+			RefreshHardwareList();
+		}
+
+		private void RefreshOnChnageCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			detector.DeviceChanged -= detector_DeviceChanged;
+			if (RefreshOnChnageCheckBox.Checked)
+			{
+				detector.DeviceChanged += detector_DeviceChanged;
+			}
 		}
 	}
 }

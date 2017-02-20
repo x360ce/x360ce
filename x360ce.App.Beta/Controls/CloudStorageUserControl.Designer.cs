@@ -124,6 +124,7 @@
 			// ActionColumn
 			// 
 			this.ActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.ActionColumn.DataPropertyName = "Action";
 			this.ActionColumn.HeaderText = "Action";
 			this.ActionColumn.Name = "ActionColumn";
 			this.ActionColumn.ReadOnly = true;
@@ -132,6 +133,7 @@
 			// DateColumn
 			// 
 			this.DateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.DateColumn.DataPropertyName = "Date";
 			this.DateColumn.HeaderText = "Date";
 			this.DateColumn.Name = "DateColumn";
 			this.DateColumn.ReadOnly = true;
@@ -140,6 +142,7 @@
 			// StateColumn
 			// 
 			this.StateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.StateColumn.DataPropertyName = "State";
 			this.StateColumn.HeaderText = "State";
 			this.StateColumn.Name = "StateColumn";
 			this.StateColumn.ReadOnly = true;
@@ -148,6 +151,7 @@
 			// DescriptionColumn
 			// 
 			this.DescriptionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.DescriptionColumn.DataPropertyName = "Description";
 			this.DescriptionColumn.HeaderText = "Description";
 			this.DescriptionColumn.Name = "DescriptionColumn";
 			this.DescriptionColumn.ReadOnly = true;

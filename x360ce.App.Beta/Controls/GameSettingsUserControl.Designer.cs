@@ -78,8 +78,6 @@
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.CloudTabPage = new System.Windows.Forms.TabPage();
-			this.CloudStoragePanel = new x360ce.App.Controls.CloudStorageUserControl();
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -92,7 +90,6 @@
 			this.ProgramsToolStrip.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
-			this.CloudTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// GamesTabControl
@@ -103,7 +100,6 @@
 			this.GamesTabControl.Controls.Add(this.GamesTabPage);
 			this.GamesTabControl.Controls.Add(this.GlobalSettingsTabPage);
 			this.GamesTabControl.Controls.Add(this.SettingsTabPage);
-			this.GamesTabControl.Controls.Add(this.CloudTabPage);
 			this.GamesTabControl.ItemSize = new System.Drawing.Size(116, 18);
 			this.GamesTabControl.Location = new System.Drawing.Point(3, 3);
 			this.GamesTabControl.Name = "GamesTabControl";
@@ -638,25 +634,6 @@
             0,
             0});
 			// 
-			// CloudTabPage
-			// 
-			this.CloudTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.CloudTabPage.Controls.Add(this.CloudStoragePanel);
-			this.CloudTabPage.Location = new System.Drawing.Point(4, 22);
-			this.CloudTabPage.Name = "CloudTabPage";
-			this.CloudTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.CloudTabPage.Size = new System.Drawing.Size(687, 450);
-			this.CloudTabPage.TabIndex = 3;
-			this.CloudTabPage.Text = "Cloud";
-			// 
-			// CloudStoragePanel
-			// 
-			this.CloudStoragePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.CloudStoragePanel.Location = new System.Drawing.Point(3, 3);
-			this.CloudStoragePanel.Name = "CloudStoragePanel";
-			this.CloudStoragePanel.Size = new System.Drawing.Size(681, 444);
-			this.CloudStoragePanel.TabIndex = 0;
-			// 
 			// GameSettingsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -679,7 +656,6 @@
 			this.SettingsTabPage.ResumeLayout(false);
 			this.SettingsTabPage.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
-			this.CloudTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -732,8 +708,6 @@
 		private System.Windows.Forms.TextBox DiskIdTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TabPage CloudTabPage;
-		private CloudStorageUserControl CloudStoragePanel;
 		public System.Windows.Forms.DataGridView GamesDataGridView;
 	}
 }

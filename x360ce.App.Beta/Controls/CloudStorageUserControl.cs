@@ -40,17 +40,25 @@ namespace x360ce.App.Controls
 
 		public void Add<T>(CloudAction action, params T[] items)
 		{
-			for (int i = 0; i < items.Length; i++)
+			BeginInvoke((MethodInvoker)delegate ()
 			{
-				var item = new CloudItem
+				var allow = MainForm.Current.OptionsPanel.InternetAutoSaveCheckBox.Checked;
+				if (!allow)
 				{
-					Action = action,
-					Date = DateTime.Now,
-					Item = items[i],
-					State = CloudState.None,
-				};
-				data.Add(item);
-			}
+					return;
+				}
+				for (int i = 0; i < items.Length; i++)
+				{
+					var item = new CloudItem
+					{
+						Action = action,
+						Date = DateTime.Now,
+						Item = items[i],
+						State = CloudState.None,
+					};
+					data.Add(item);
+				}
+			});
 		}
 
 		bool GamesAction<T>(CloudAction action)

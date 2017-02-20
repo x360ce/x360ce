@@ -177,16 +177,13 @@ namespace x360ce.App
 		void InitDevices()
 		{
 			detector = new DeviceDetector(false);
-			UpdateDevices();
 			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
+			update4Enabled = true;
 		}
 
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
-			 {
-				 UpdateDevices();
-			 }));
+			update4Enabled = true;
 		}
 
 		object UpdateDevicesLock = new object();
@@ -207,7 +204,21 @@ namespace x360ce.App
 				// Remove disconnected devices.
 				for (int i = 0; i < removedDevices.Length; i++)
 				{
-					removedDevices[i].IsOnline = false;
+					Invoke((MethodInvoker)delegate ()
+					{
+						removedDevices[i].IsOnline = false;
+					});
+				}
+				// Must find better way to find Device than by Vendor ID and Product ID.
+				DeviceInfo[] infoDev = null;
+				DeviceInfo[] infoInt = null;
+				Joystick[] states = null;
+				if (addedDevices.Length > 0)
+				{
+					infoDev = DeviceDetector.GetDevices();
+					states = addedDevices.Select(x => new Joystick(Manager, x.InstanceGuid)).ToArray();
+					var interfacePaths = states.Select(x => x.Properties.InterfacePath).ToArray();
+					infoInt = DeviceDetector.GetInterfaces(interfacePaths);
 				}
 				// Add connected devices.
 				for (int i = 0; i < addedDevices.Length; i++)
@@ -215,39 +226,47 @@ namespace x360ce.App
 					var device = addedDevices[i];
 					var di = new UserController();
 					di.LoadInstance(device);
-					var state = new Joystick(Manager, device.InstanceGuid);
+					var state = states.FirstOrDefault(x => x.Information.InstanceGuid == device.InstanceGuid);
 					di.Device = state;
 					di.LoadCapabilities(state.Capabilities);
-					var classGuid = state.Properties.ClassGuid;
-					// Must find better way to find Device than by Vendor ID and Product ID.
-					var infoDev = DeviceDetector.GetDevices();
-					var infoInt = DeviceDetector.GetInterfaces();
 					// Get interface info.
 					var hid = infoInt.FirstOrDefault(x => x.DevicePath == state.Properties.InterfacePath);
 					di.LoadHidDeviceInfo(hid);
 					// Get device info.
 					var dev = infoDev.FirstOrDefault(x => x.DeviceId == di.HidDeviceId);
+					di.LoadDevDeviceInfo(dev);
 					di.IsOnline = true;
 					//if (di.Info == null) di.Info = info.FirstOrDefault();
-					SettingManager.UserControllers.Items.Add(di);
+					Invoke((MethodInvoker)delegate ()
+					{
+						SettingManager.UserControllers.Items.Add(di);
+					});
 				}
+				CloudPanel.Add(CloudAction.Insert, addedDevices);
 				for (int i = 0; i < updatedDevices.Length; i++)
 				{
 					var device = updatedDevices[i];
 					var di = SettingManager.UserControllers.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
-					// If device is set as offline then make it online.
-					if (!di.IsOnline) di.IsOnline = true;
-					var state = new Joystick(Manager, device.InstanceGuid);
-					di.Device = state;
-					//di.Capabilities = state.Capabilities;
+					Invoke((MethodInvoker)delegate ()
+					{
+						// If device is set as offline then make it online.
+						if (!di.IsOnline) di.IsOnline = true;
+						var state = new Joystick(Manager, device.InstanceGuid);
+						di.Device = state;
+						//di.Capabilities = state.Capabilities;
+					});
 				}
+				update4Finished = true;
 			}
-			var game = GetCurrentGame();
-			if (game != null)
+			Invoke((MethodInvoker)delegate ()
 			{
-				// Auto-configure new devices.
-				AutoConfigure(game);
-			}
+				var game = GetCurrentGame();
+				if (game != null)
+				{
+					// Auto-configure new devices.
+					AutoConfigure(game);
+				}
+			});
 		}
 
 		void AutoConfigure(Engine.Data.Game game)
@@ -816,6 +835,8 @@ namespace x360ce.App
 		public bool update1Enabled = true;
 		public bool? update2Enabled;
 		public bool update3Enabled = false;
+		public bool update4Enabled = false;
+		public bool update4Finished = true;
 
 		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -838,6 +859,15 @@ namespace x360ce.App
 				if (update3Enabled)
 				{
 					UpdateForm3();
+				}
+				if (update4Enabled && update4Finished)
+				{
+					update4Enabled = false;
+					update4Finished = false;
+					var ts = new System.Threading.ThreadStart(UpdateDevices);
+					var t = new System.Threading.Thread(ts);
+					t.IsBackground = true;
+					t.Start();
 				}
 			}
 			UpdateTimer.Start();
@@ -1036,7 +1066,7 @@ namespace x360ce.App
 			}
 			else if (MainTabControl.SelectedTab == SettingsTabPage)
 			{
-				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoloadCheckBox.Checked)
+				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoLoadCheckBox.Checked)
 				{
 					SettingsDatabasePanel.RefreshGrid(true);
 				}

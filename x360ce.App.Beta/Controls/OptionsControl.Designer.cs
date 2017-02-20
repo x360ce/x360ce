@@ -36,11 +36,12 @@
 			this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
 			this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
 			this.OperationGroupBox = new System.Windows.Forms.GroupBox();
+			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowOnlyOneCopyCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetGroupBox = new System.Windows.Forms.GroupBox();
 			this.InternetDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.InternetAutoloadCheckBox = new System.Windows.Forms.CheckBox();
+			this.InternetAutoLoadCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetCheckBox = new System.Windows.Forms.CheckBox();
 			this.ProgramScanLocationsTabControl = new System.Windows.Forms.TabControl();
 			this.GameScanLocationsTabPage = new System.Windows.Forms.TabPage();
@@ -58,7 +59,7 @@
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
-			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
+			this.InternetAutoSaveCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -159,6 +160,17 @@
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
 			// 
+			// MinimizeToTrayCheckBox
+			// 
+			this.MinimizeToTrayCheckBox.AutoSize = true;
+			this.MinimizeToTrayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.MinimizeToTrayCheckBox.Location = new System.Drawing.Point(6, 52);
+			this.MinimizeToTrayCheckBox.Name = "MinimizeToTrayCheckBox";
+			this.MinimizeToTrayCheckBox.Size = new System.Drawing.Size(108, 18);
+			this.MinimizeToTrayCheckBox.TabIndex = 93;
+			this.MinimizeToTrayCheckBox.Text = "Minimize to Tray";
+			this.MinimizeToTrayCheckBox.CheckedChanged += new System.EventHandler(this.MinimizeToTrayCheckBox_CheckedChanged);
+			// 
 			// AllowOnlyOneCopyCheckBox
 			// 
 			this.AllowOnlyOneCopyCheckBox.AutoSize = true;
@@ -173,13 +185,14 @@
 			// 
 			this.InternetGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.InternetGroupBox.Controls.Add(this.InternetAutoSaveCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetDatabaseUrlComboBox);
 			this.InternetGroupBox.Controls.Add(this.label1);
-			this.InternetGroupBox.Controls.Add(this.InternetAutoloadCheckBox);
+			this.InternetGroupBox.Controls.Add(this.InternetAutoLoadCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(390, 109);
+			this.InternetGroupBox.Size = new System.Drawing.Size(390, 144);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -192,7 +205,7 @@
 			this.InternetDatabaseUrlComboBox.Items.AddRange(new object[] {
             "http://www.x360ce.com/webservices/x360ce.asmx",
             "http://localhost:20360/webservices/x360ce.asmx"});
-			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 80);
+			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 103);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
 			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(378, 21);
 			this.InternetDatabaseUrlComboBox.TabIndex = 14;
@@ -200,30 +213,30 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(6, 64);
+			this.label1.Location = new System.Drawing.Point(6, 87);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(97, 13);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Web Service URL:";
 			// 
-			// InternetAutoloadCheckBox
+			// InternetAutoLoadCheckBox
 			// 
-			this.InternetAutoloadCheckBox.AutoSize = true;
-			this.InternetAutoloadCheckBox.Location = new System.Drawing.Point(6, 44);
-			this.InternetAutoloadCheckBox.Name = "InternetAutoloadCheckBox";
-			this.InternetAutoloadCheckBox.Size = new System.Drawing.Size(215, 17);
-			this.InternetAutoloadCheckBox.TabIndex = 1;
-			this.InternetAutoloadCheckBox.Text = "Auto Load Settings When Tab Selected";
-			this.InternetAutoloadCheckBox.UseVisualStyleBackColor = true;
+			this.InternetAutoLoadCheckBox.AutoSize = true;
+			this.InternetAutoLoadCheckBox.Location = new System.Drawing.Point(6, 44);
+			this.InternetAutoLoadCheckBox.Name = "InternetAutoLoadCheckBox";
+			this.InternetAutoLoadCheckBox.Size = new System.Drawing.Size(144, 17);
+			this.InternetAutoLoadCheckBox.TabIndex = 1;
+			this.InternetAutoLoadCheckBox.Text = "Load Settings from Cloud";
+			this.InternetAutoLoadCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// InternetCheckBox
 			// 
 			this.InternetCheckBox.AutoSize = true;
 			this.InternetCheckBox.Location = new System.Drawing.Point(6, 21);
 			this.InternetCheckBox.Name = "InternetCheckBox";
-			this.InternetCheckBox.Size = new System.Drawing.Size(232, 17);
+			this.InternetCheckBox.Size = new System.Drawing.Size(142, 17);
 			this.InternetCheckBox.TabIndex = 1;
-			this.InternetCheckBox.Text = "Enable Internet Settings Database Features";
+			this.InternetCheckBox.Text = "Enable Internet Features";
 			this.InternetCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// ProgramScanLocationsTabControl
@@ -232,7 +245,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
 			this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
-			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 118);
+			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 153);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
 			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(391, 136);
@@ -388,16 +401,15 @@
 			this.ExcludeSupplementalDevicesCheckBox.Text = "Exclude Supplemental Devices";
 			this.ExcludeSupplementalDevicesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// MinimizeToTrayCheckBox
+			// InternetAutoSaveCheckBox
 			// 
-			this.MinimizeToTrayCheckBox.AutoSize = true;
-			this.MinimizeToTrayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.MinimizeToTrayCheckBox.Location = new System.Drawing.Point(6, 52);
-			this.MinimizeToTrayCheckBox.Name = "MinimizeToTrayCheckBox";
-			this.MinimizeToTrayCheckBox.Size = new System.Drawing.Size(108, 18);
-			this.MinimizeToTrayCheckBox.TabIndex = 93;
-			this.MinimizeToTrayCheckBox.Text = "Minimize to Tray";
-			this.MinimizeToTrayCheckBox.CheckedChanged += new System.EventHandler(this.MinimizeToTrayCheckBox_CheckedChanged);
+			this.InternetAutoSaveCheckBox.AutoSize = true;
+			this.InternetAutoSaveCheckBox.Location = new System.Drawing.Point(6, 67);
+			this.InternetAutoSaveCheckBox.Name = "InternetAutoSaveCheckBox";
+			this.InternetAutoSaveCheckBox.Size = new System.Drawing.Size(134, 17);
+			this.InternetAutoSaveCheckBox.TabIndex = 15;
+			this.InternetAutoSaveCheckBox.Text = "Save Settings to Cloud";
+			this.InternetAutoSaveCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsControl
 			// 
@@ -444,7 +456,7 @@
         public System.Windows.Forms.CheckBox AllowOnlyOneCopyCheckBox;
         private System.Windows.Forms.GroupBox InternetGroupBox;
         private System.Windows.Forms.Label label1;
-        public System.Windows.Forms.CheckBox InternetAutoloadCheckBox;
+        public System.Windows.Forms.CheckBox InternetAutoLoadCheckBox;
 		public System.Windows.Forms.CheckBox InternetCheckBox;
         private System.Windows.Forms.TabControl ProgramScanLocationsTabControl;
 		private System.Windows.Forms.TabPage GameScanLocationsTabPage;
@@ -465,5 +477,6 @@
 		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
 		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
 		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
+		public System.Windows.Forms.CheckBox InternetAutoSaveCheckBox;
 	}
 }
