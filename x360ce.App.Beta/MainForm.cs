@@ -1289,7 +1289,7 @@ namespace x360ce.App
 			}
 		}
 
-		public List<UserController> ShowDeviceForm()
+		public UserController[] ShowDeviceForm()
 		{
 			lock (DeviceFormLock)
 			{

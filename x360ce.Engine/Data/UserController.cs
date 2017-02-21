@@ -10,9 +10,17 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserController
+	public partial class UserController : IDisplayName
 	{
 
+		[XmlIgnore]
+		public string DisplayName
+		{
+			get
+			{
+				return string.Format("{0} - {1}", InstanceId, InstanceName);
+			}
+		}
 
 		public void LoadInstance(DeviceInstance ins)
 		{

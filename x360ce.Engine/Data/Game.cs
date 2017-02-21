@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class Game
+	public partial class Game: IDisplayName
 	{
 
 		public Game()

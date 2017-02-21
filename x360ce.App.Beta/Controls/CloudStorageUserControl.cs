@@ -20,6 +20,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			data = new SortableBindingList<CloudItem>();
 			data.ListChanged += Data_ListChanged;
+			TasksDataGridView.AutoGenerateColumns = false;
 			TasksDataGridView.DataSource = data;
 			queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer(500, 1000);
 			queueTimer.DoAction = DoAction;
@@ -38,7 +39,7 @@ namespace x360ce.App.Controls
 		JocysCom.ClassLibrary.Threading.QueueTimer queueTimer;
 		SortableBindingList<CloudItem> data;
 
-		public void Add<T>(CloudAction action, params T[] items)
+		public void Add<T>(CloudAction action, T[] items)
 		{
 			BeginInvoke((MethodInvoker)delegate ()
 			{
@@ -49,7 +50,7 @@ namespace x360ce.App.Controls
 				}
 				for (int i = 0; i < items.Length; i++)
 				{
-					var item = new CloudItem
+					var item = new CloudItem()
 					{
 						Action = action,
 						Date = DateTime.Now,

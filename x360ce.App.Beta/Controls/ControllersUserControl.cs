@@ -37,10 +37,10 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public List<UserController> GetSelected()
+		public UserController[] GetSelected()
 		{
 			var grid = ControllersDataGridView;
-			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserController)x.DataBoundItem).ToList();
+			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserController)x.DataBoundItem).ToArray();
 			return items;
 		}
 
