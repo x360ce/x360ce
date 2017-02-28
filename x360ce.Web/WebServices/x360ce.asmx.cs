@@ -27,6 +27,7 @@ namespace x360ce.Web.WebServices
 	public class x360ce : System.Web.Services.WebService, IWebService
 	{
 
+		#region Settings
 
 		/// <summary>
 		/// Save controller settings.
@@ -217,7 +218,7 @@ namespace x360ce.Web.WebServices
 					sr.Summaries = topSummaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenBy(x => x.Users).ToArray();
 				}
 			}
-			else if (args!= null && args.Length > 0)
+			else if (args != null && args.Length > 0)
 			{
 				// Get presets.
 				var item = args.FirstOrDefault();
@@ -268,6 +269,21 @@ namespace x360ce.Web.WebServices
 			return sr;
 		}
 
+		[WebMethod(EnableSession = true, Description = "Get default list of games.")]
+		public SettingsData GetSettingsData()
+		{
+			var data = new SettingsData();
+			var db = new x360ceModelContainer();
+			data.Programs = db.Programs.Where(x => x.IsEnabled && x.InstanceCount > 1).ToList();
+			db.Dispose();
+			db = null;
+			return data;
+		}
+
+		#endregion
+
+		#region Vendors
+
 		[WebMethod(EnableSession = true, Description = "Get vendors of controllers.")]
 		public List<Vendor> GetVendors()
 		{
@@ -286,60 +302,7 @@ namespace x360ce.Web.WebServices
 			return vendors;
 		}
 
-		[WebMethod(EnableSession = true, Description = "Get default list of games.")]
-		public SettingsData GetSettingsData()
-		{
-			var data = new SettingsData();
-			var db = new x360ceModelContainer();
-			data.Programs = db.Programs.Where(x => x.IsEnabled && x.InstanceCount > 1).ToList();
-			db.Dispose();
-			db = null;
-			return data;
-		}
-
-		[WebMethod(EnableSession = true, Description = "Get list of games.")]
-		public List<Program> GetProgramsDefault()
-		{
-			return GetPrograms(EnabledState.Enabled, 2);
-		}
-
-		List<Program> GetOverridePrograms()
-		{
-			List<Program> programs = new List<Program>();
-			var key = "OverridePrograms";
-			var settings = System.Web.Configuration.WebConfigurationManager.AppSettings;
-			if (settings.AllKeys.Contains(key))
-			{
-				var path = settings[key];
-				var fileName = Server.MapPath(path);
-				if (System.IO.File.Exists(fileName))
-				{
-					var xml = System.IO.File.ReadAllText(fileName);
-					programs = Serializer.DeserializeFromXmlString<List<Program>>(xml, System.Text.Encoding.UTF8);
-				}
-			}
-			return programs;
-		}
-
-
-
-		[WebMethod(EnableSession = true, Description = "Get list of games.")]
-		public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
-		{
-			var programs = GetOverridePrograms();
-			if (programs == null)
-			{
-				var db = new x360ceModelContainer();
-				IQueryable<Program> list = db.Programs;
-				if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
-				else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
-				if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
-				programs = list.ToList();
-				db.Dispose();
-				db = null;
-			}
-			return programs;
-		}
+		#endregion
 
 		#region Games
 
@@ -464,6 +427,49 @@ namespace x360ce.Web.WebServices
 			}
 		}
 
+		[WebMethod(EnableSession = true, Description = "Get list of games.")]
+		public List<Program> GetProgramsDefault()
+		{
+			return GetPrograms(EnabledState.Enabled, 2);
+		}
+
+		List<Program> GetOverridePrograms()
+		{
+			List<Program> programs = new List<Program>();
+			var key = "OverridePrograms";
+			var settings = System.Web.Configuration.WebConfigurationManager.AppSettings;
+			if (settings.AllKeys.Contains(key))
+			{
+				var path = settings[key];
+				var fileName = Server.MapPath(path);
+				if (System.IO.File.Exists(fileName))
+				{
+					var xml = System.IO.File.ReadAllText(fileName);
+					programs = Serializer.DeserializeFromXmlString<List<Program>>(xml, System.Text.Encoding.UTF8);
+				}
+			}
+			return programs;
+		}
+
+		[WebMethod(EnableSession = true, Description = "Get list of games.")]
+		public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
+		{
+			var programs = GetOverridePrograms();
+			if (programs == null)
+			{
+				var db = new x360ceModelContainer();
+				IQueryable<Program> list = db.Programs;
+				if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
+				else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
+				if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
+				programs = list.ToList();
+				db.Dispose();
+				db = null;
+			}
+			return programs;
+		}
+
+
 		#endregion
 
 		#region Security
@@ -537,6 +543,67 @@ namespace x360ce.Web.WebServices
 		}
 
 		#endregion
+
+		#region UserControllers
+
+		[WebMethod(EnableSession = true, Description = "Maintain User Controllers")]
+		public SearchResult SetUserControllers(CloudAction action, List<UserController> items)
+		{
+			var result = new SearchResult();
+			if (action == CloudAction.Delete)
+			{
+				var db = new x360ceModelContainer();
+				var deleted = 0;
+				for (int i = 0; i < items.Count; i++)
+				{
+					var item = items[i];
+					var instanceGuid = item.InstanceGuid;
+					var currentItem = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+					if (currentItem == null) continue;
+					db.UserControllers.DeleteObject(currentItem);
+					deleted++;
+				}
+				db.SaveChanges();
+				db.Dispose();
+				db = null;
+				result.ErrorMessage = string.Format("{0} record(s) deleted.", deleted);
+				return result;
+			}
+			else
+			{
+				var db = new x360ceModelContainer();
+				var created = 0;
+				var updated = 0;
+				for (int i = 0; i < items.Count; i++)
+				{
+					var item = items[i];
+					var instanceGuid = item.InstanceGuid;
+					var uc = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+					if (uc == null)
+					{
+						created++;
+						db.UserControllers.AddObject(item);
+						uc.Id = Guid.NewGuid();
+						uc.DateCreated = DateTime.Now;
+					}
+					else
+					{
+						updated++;
+						Helper.CopyProperties(item, uc);
+						uc.DateUpdated = DateTime.Now;
+					}
+				}
+				db.SaveChanges();
+				db.Dispose();
+				db = null;
+				result.ErrorMessage = string.Format("{0} record(s) created, {1} record(s) updated.", created, updated);
+				return result;
+			}
+
+		}
+
+		#endregion
+
 	}
 
 }

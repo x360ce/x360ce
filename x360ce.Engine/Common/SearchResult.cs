@@ -8,6 +8,9 @@ namespace x360ce.Engine
 {
 	public class SearchResult
 	{
+		public int ErrorCode { get; set; }
+		public string ErrorMessage { get; set; }
+
 		public Setting[] Settings { get; set; }
 		public Summary[] Summaries { get; set; }
 		public PadSetting[] PadSettings { get; set; }
