@@ -306,74 +306,12 @@ namespace x360ce.Web.WebServices
 
 		#region Games
 
-		[WebMethod(EnableSession = true, Description = "Save Games")]
+		[WebMethod(EnableSession = true, Description = "Save Games (Obsolete)")]
 		public string SetGames(CloudAction action, List<Game> games)
 		{
-			if (action == CloudAction.Delete)
-			{
-				var db = new x360ceModelContainer();
-				var deleted = 0;
-				for (int i = 0; i < games.Count; i++)
-				{
-					var game = games[i];
-					var diskDriveId = game.DiskDriveId;
-					var fileName = game.FileName;
-					var currentGame = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
-					if (currentGame == null) continue;
-					db.Games.DeleteObject(currentGame);
-					deleted++;
-				}
-				db.SaveChanges();
-				db.Dispose();
-				db = null;
-				return string.Format("{0} game(s) deleted.", deleted);
-			}
-			else
-			{
-				var db = new x360ceModelContainer();
-				var created = 0;
-				var updated = 0;
-				for (int i = 0; i < games.Count; i++)
-				{
-					var game = games[i];
-					var diskDriveId = game.DiskDriveId;
-					var fileName = game.FileName;
-					var item = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
-					if (item == null)
-					{
-						created++;
-						item = new Game();
-						item.GameId = Guid.NewGuid();
-						db.Games.AddObject(item);
-						item.DateCreated = DateTime.Now;
-					}
-					else
-					{
-						updated++;
-						item.DateUpdated = DateTime.Now;
-					}
-					item.Comment = game.Comment;
-					item.CompanyName = game.CompanyName;
-					item.DInputFile = game.DInputFile;
-					item.DInputMask = game.DInputMask;
-					item.FakePID = game.FakePID;
-					item.FakeVID = game.FakeVID;
-					item.FileName = game.FileName;
-					item.FileProductName = game.FileProductName;
-					item.FileVersion = game.FileVersion;
-					item.FullPath = game.FullPath;
-					item.HookMask = game.HookMask;
-					item.IsEnabled = game.IsEnabled;
-					item.Timeout = game.Timeout;
-					item.Weight = 1;
-					item.XInputMask = game.XInputMask;
-				}
-				db.SaveChanges();
-				db.Dispose();
-				db = null;
-				return string.Format("{0} game(s) created, {1} game(s) updated.", created, updated);
-			}
-
+			return (action == CloudAction.Delete)
+				? Delete(games)
+				: Upsert(games);
 		}
 
 		#endregion
@@ -544,62 +482,154 @@ namespace x360ce.Web.WebServices
 
 		#endregion
 
-		#region UserControllers
-
-		[WebMethod(EnableSession = true, Description = "Maintain User Controllers")]
-		public SearchResult SetUserControllers(CloudAction action, List<UserController> items)
+		[WebMethod(EnableSession = true, Description = "Update User Data")]
+		public CloudResults Execute(CloudCommand command)
 		{
-			var result = new SearchResult();
-			if (action == CloudAction.Delete)
+			var results = new CloudResults();
+			var messages = new List<string>();
+			try
 			{
-				var db = new x360ceModelContainer();
-				var deleted = 0;
-				for (int i = 0; i < items.Count; i++)
+				if (command.Action == CloudAction.Delete)
 				{
-					var item = items[i];
-					var instanceGuid = item.InstanceGuid;
-					var currentItem = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
-					if (currentItem == null) continue;
-					db.UserControllers.DeleteObject(currentItem);
-					deleted++;
+					messages.Add(Delete(command.UserControllers));
+					messages.Add(Delete(command.Games));
 				}
-				db.SaveChanges();
-				db.Dispose();
-				db = null;
-				result.ErrorMessage = string.Format("{0} record(s) deleted.", deleted);
-				return result;
-			}
-			else
-			{
-				var db = new x360ceModelContainer();
-				var created = 0;
-				var updated = 0;
-				for (int i = 0; i < items.Count; i++)
+				else
 				{
-					var item = items[i];
-					var instanceGuid = item.InstanceGuid;
-					var uc = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
-					if (uc == null)
-					{
-						created++;
-						db.UserControllers.AddObject(item);
-						uc.Id = Guid.NewGuid();
-						uc.DateCreated = DateTime.Now;
-					}
-					else
-					{
-						updated++;
-						Helper.CopyProperties(item, uc);
-						uc.DateUpdated = DateTime.Now;
-					}
+					messages.Add(Upsert(command.UserControllers));
+					messages.Add(Upsert(command.Games));
 				}
-				db.SaveChanges();
-				db.Dispose();
-				db = null;
-				result.ErrorMessage = string.Format("{0} record(s) created, {1} record(s) updated.", created, updated);
-				return result;
-			}
+				results.ErrorMessage = string.Join("\r\n", messages.Where(x => !string.IsNullOrEmpty(x)));
 
+			}
+			catch (Exception ex)
+			{
+				results.ErrorCode = 1;
+				results.ErrorMessage = ex.Message;
+			}
+			return results;
+		}
+
+		#region Maintain: UserControllers
+
+		string Delete(List<UserController> items)
+		{
+			var db = new x360ceModelContainer();
+			var deleted = 0;
+			for (int i = 0; i < items.Count; i++)
+			{
+				var item = items[i];
+				var instanceGuid = item.InstanceGuid;
+				var currentItem = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+				if (currentItem == null) continue;
+				db.UserControllers.DeleteObject(currentItem);
+				deleted++;
+			}
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0} record(s) deleted.", deleted);
+		}
+
+		string Upsert(List<UserController> items)
+		{
+			var db = new x360ceModelContainer();
+			var created = 0;
+			var updated = 0;
+			for (int i = 0; i < items.Count; i++)
+			{
+				var item = items[i];
+				var instanceGuid = item.InstanceGuid;
+				var uc = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+				if (uc == null)
+				{
+					created++;
+					db.UserControllers.AddObject(item);
+					uc.Id = Guid.NewGuid();
+					uc.DateCreated = DateTime.Now;
+				}
+				else
+				{
+					updated++;
+					Helper.CopyProperties(item, uc);
+					uc.DateUpdated = DateTime.Now;
+				}
+			}
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0} record(s) created, {1} record(s) updated.", created, updated);
+		}
+
+		#endregion
+
+		#region Maintain: Games
+
+		string Delete(List<Game> items)
+		{
+
+			var db = new x360ceModelContainer();
+			var deleted = 0;
+			for (int i = 0; i < items.Count; i++)
+			{
+				var game = items[i];
+				var diskDriveId = game.DiskDriveId;
+				var fileName = game.FileName;
+				var currentGame = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				if (currentGame == null) continue;
+				db.Games.DeleteObject(currentGame);
+				deleted++;
+			}
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0} game(s) deleted.", deleted);
+		}
+
+		string Upsert(List<Game> items)
+		{
+			var db = new x360ceModelContainer();
+			var created = 0;
+			var updated = 0;
+			for (int i = 0; i < items.Count; i++)
+			{
+				var item = items[i];
+				var diskDriveId = item.DiskDriveId;
+				var fileName = item.FileName;
+				var game = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				if (game == null)
+				{
+					created++;
+					game = new Game();
+					game.GameId = Guid.NewGuid();
+					db.Games.AddObject(game);
+					game.DateCreated = DateTime.Now;
+				}
+				else
+				{
+					updated++;
+					game.DateUpdated = DateTime.Now;
+				}
+				game.Comment = item.Comment;
+				game.CompanyName = item.CompanyName;
+				game.DInputFile = item.DInputFile;
+				game.DInputMask = item.DInputMask;
+				game.FakePID = item.FakePID;
+				game.FakeVID = item.FakeVID;
+				game.FileName = item.FileName;
+				game.FileProductName = item.FileProductName;
+				game.FileVersion = item.FileVersion;
+				game.FullPath = item.FullPath;
+				game.HookMask = item.HookMask;
+				game.IsEnabled = item.IsEnabled;
+				game.Timeout = item.Timeout;
+				game.Weight = 1;
+				game.XInputMask = item.XInputMask;
+			}
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0} game(s) created, {1} game(s) updated.", created, updated);
 		}
 
 		#endregion

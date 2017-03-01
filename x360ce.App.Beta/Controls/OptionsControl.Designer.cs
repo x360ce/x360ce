@@ -39,6 +39,7 @@
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowOnlyOneCopyCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetGroupBox = new System.Windows.Forms.GroupBox();
+			this.InternetAutoSaveCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.InternetAutoLoadCheckBox = new System.Windows.Forms.CheckBox();
@@ -59,7 +60,7 @@
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
-			this.InternetAutoSaveCheckBox = new System.Windows.Forms.CheckBox();
+			this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -192,10 +193,20 @@
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(390, 144);
+			this.InternetGroupBox.Size = new System.Drawing.Size(505, 144);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
+			// 
+			// InternetAutoSaveCheckBox
+			// 
+			this.InternetAutoSaveCheckBox.AutoSize = true;
+			this.InternetAutoSaveCheckBox.Location = new System.Drawing.Point(6, 67);
+			this.InternetAutoSaveCheckBox.Name = "InternetAutoSaveCheckBox";
+			this.InternetAutoSaveCheckBox.Size = new System.Drawing.Size(134, 17);
+			this.InternetAutoSaveCheckBox.TabIndex = 15;
+			this.InternetAutoSaveCheckBox.Text = "Save Settings to Cloud";
+			this.InternetAutoSaveCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// InternetDatabaseUrlComboBox
 			// 
@@ -207,7 +218,7 @@
             "http://localhost:20360/webservices/x360ce.asmx"});
 			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 103);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
-			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(378, 21);
+			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(493, 21);
 			this.InternetDatabaseUrlComboBox.TabIndex = 14;
 			// 
 			// label1
@@ -248,7 +259,7 @@
 			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 153);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
-			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(391, 136);
+			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(506, 136);
 			this.ProgramScanLocationsTabControl.TabIndex = 34;
 			// 
 			// GameScanLocationsTabPage
@@ -257,7 +268,7 @@
 			this.GameScanLocationsTabPage.Controls.Add(this.LocationsToolStrip);
 			this.GameScanLocationsTabPage.Location = new System.Drawing.Point(4, 28);
 			this.GameScanLocationsTabPage.Name = "GameScanLocationsTabPage";
-			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(383, 104);
+			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(498, 104);
 			this.GameScanLocationsTabPage.TabIndex = 0;
 			this.GameScanLocationsTabPage.Text = "Game Scan Locations";
 			this.GameScanLocationsTabPage.UseVisualStyleBackColor = true;
@@ -269,7 +280,7 @@
 			this.GameScanLocationsListBox.FormattingEnabled = true;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
-			this.GameScanLocationsListBox.Size = new System.Drawing.Size(383, 79);
+			this.GameScanLocationsListBox.Size = new System.Drawing.Size(498, 79);
 			this.GameScanLocationsListBox.Sorted = true;
 			this.GameScanLocationsListBox.TabIndex = 0;
 			this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
@@ -284,7 +295,7 @@
 			this.LocationsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.LocationsToolStrip.Name = "LocationsToolStrip";
 			this.LocationsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.LocationsToolStrip.Size = new System.Drawing.Size(383, 25);
+			this.LocationsToolStrip.Size = new System.Drawing.Size(498, 25);
 			this.LocationsToolStrip.TabIndex = 2;
 			this.LocationsToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -349,7 +360,7 @@
 			// SaveSettingsButton
 			// 
 			this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SaveSettingsButton.Location = new System.Drawing.Point(566, 354);
+			this.SaveSettingsButton.Location = new System.Drawing.Point(681, 440);
 			this.SaveSettingsButton.Name = "SaveSettingsButton";
 			this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
 			this.SaveSettingsButton.TabIndex = 68;
@@ -362,7 +373,7 @@
 			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(397, 354);
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(512, 440);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
 			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(163, 23);
 			this.OpenSettingsFolderButton.TabIndex = 69;
@@ -401,15 +412,14 @@
 			this.ExcludeSupplementalDevicesCheckBox.Text = "Exclude Supplemental Devices";
 			this.ExcludeSupplementalDevicesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// InternetAutoSaveCheckBox
+			// OnlineAccountGroupBox
 			// 
-			this.InternetAutoSaveCheckBox.AutoSize = true;
-			this.InternetAutoSaveCheckBox.Location = new System.Drawing.Point(6, 67);
-			this.InternetAutoSaveCheckBox.Name = "InternetAutoSaveCheckBox";
-			this.InternetAutoSaveCheckBox.Size = new System.Drawing.Size(134, 17);
-			this.InternetAutoSaveCheckBox.TabIndex = 15;
-			this.InternetAutoSaveCheckBox.Text = "Save Settings to Cloud";
-			this.InternetAutoSaveCheckBox.UseVisualStyleBackColor = true;
+			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(250, 295);
+			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
+			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(506, 77);
+			this.OnlineAccountGroupBox.TabIndex = 31;
+			this.OnlineAccountGroupBox.TabStop = false;
+			this.OnlineAccountGroupBox.Text = "Online Account";
 			// 
 			// OptionsControl
 			// 
@@ -420,11 +430,12 @@
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.Controls.Add(this.DirectInputDevicesGroupBox);
 			this.Controls.Add(this.ConfigurationGroupBox);
+			this.Controls.Add(this.OnlineAccountGroupBox);
 			this.Controls.Add(this.OperationGroupBox);
 			this.Controls.Add(this.InternetGroupBox);
 			this.Controls.Add(this.ProgramScanLocationsTabControl);
 			this.Name = "OptionsControl";
-			this.Size = new System.Drawing.Size(644, 380);
+			this.Size = new System.Drawing.Size(759, 466);
 			this.TestingAndLoggingGroupBox.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
@@ -478,5 +489,6 @@
 		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
 		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
 		public System.Windows.Forms.CheckBox InternetAutoSaveCheckBox;
+		private System.Windows.Forms.GroupBox OnlineAccountGroupBox;
 	}
 }

@@ -62,45 +62,51 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		bool GamesAction<T>(CloudAction action)
-		{
-			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-			var items = data
-				.Where(x => x.Action == action)
-				.Select(x => x.Item)
-				.OfType<T>()
-				.ToList();
-			var success = true;
-			// If there is data to submit.
-			if (items.Count > 0)
-			{
-				string result = null;
-				if (typeof(T) == typeof(Game))
-				{
-					result = ws.SetGames(action, items.Cast<Game>().ToList());
-				}
-				success = string.IsNullOrEmpty(result);
-				if (!success)
-				{
-					MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, result);
-				}
-			}
-			ws.Dispose();
-			return success;
-		}
-
-
 		void DoAction(object state)
 		{
 			MainForm.Current.LoadingCircle = true;
 			try
 			{
-				// If update failed then exit.
-				if (!GamesAction<Game>(CloudAction.Delete))
-					return;
-				else if (!GamesAction<Game>(CloudAction.Update))
-					return;
+				Execute<Game>(CloudAction.Delete);
+				Execute<Game>(CloudAction.Update);
+				Execute<UserController>(CloudAction.Delete);
+				Execute<UserController>(CloudAction.Update);
+			}
+			catch (Exception ex)
+			{
+				var error = ex.Message;
+				if (ex.InnerException != null) error += "\r\n" + ex.InnerException.Message;
+				MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, error);
+			}
+		}
+
+		/// <summary>
+		///  Submit changed data to the cloud.
+		/// </summary>
+		void Execute<T>(CloudAction action)
+		{
+			MainForm.Current.LoadingCircle = true;
+			var ws = new WebServiceClient();
+			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			CloudResults result = null;
+			try
+			{
+				var items = data.Where(x => x.Action == action).Select(x => x.Item).OfType<T>().ToList();
+				if (items.Count > 0)
+				{
+					var command = new CloudCommand();
+					command.Action = action;
+					if (typeof(T) == typeof(Game))
+					{
+						command.Games = items as List<Game>;
+					}
+					else if (typeof(T) == typeof(UserController))
+					{
+						command.UserControllers = items as List<UserController>;
+					}
+					result = ws.Execute(command);
+					MainForm.Current.SetHeaderBody(result.ErrorCode == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Error, result.ErrorMessage);
+				}
 			}
 			catch (Exception ex)
 			{

@@ -1,19 +1,16 @@
-﻿namespace x360ce.Engine
+﻿using System;
+using System.Web.Services;
+using System.Web.Services.Protocols;
+using System.ComponentModel;
+using System.Web.Services.Description;
+using x360ce.Engine.Data;
+using System.Collections.Generic;
+
+namespace x360ce.Engine
 {
-	using System;
-	using System.Web.Services;
-	using System.Diagnostics;
-	using System.Web.Services.Protocols;
-	using System.Xml.Serialization;
-	using System.ComponentModel;
-	using System.Threading;
-	using System.Web.Services.Description;
-	using System.Windows.Forms;
-	using x360ce.Engine.Data;
-	using System.Collections.Generic;
 
 	/// <remarks/>
-	[WebServiceBindingAttribute(Name = "x360ceSoap", Namespace = ns)]
+	[WebServiceBinding(Name = "x360ceSoap", Namespace = ns)]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(StructuralObject))]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityKeyMember[]))]
 	public partial class WebServiceClient : SoapHttpClientProtocol, IWebService
@@ -120,7 +117,7 @@
 			InvokeAsync("SignIn", SignInCompleted, userState, new object[] { username, password });
 		}
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/SignIn",
+		[SoapDocumentMethod(ns + "SignIn",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public KeyValueList SignIn(string username, string password)
@@ -135,7 +132,7 @@
 
 		public event EventHandler<ResultEventArgs> SearchSettingsCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/SearchSettings",
+		[SoapDocumentMethod(ns + "SearchSettings",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult SearchSettings(SearchParameter[] args)
@@ -155,7 +152,7 @@
 
 		public event EventHandler<ResultEventArgs> SaveSettingCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/SaveSetting",
+		[SoapDocumentMethod(ns + "SaveSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string SaveSetting(Setting s, PadSetting ps)
@@ -175,7 +172,7 @@
 
 		public event EventHandler<ResultEventArgs> DeleteSettingCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/DeleteSetting",
+		[SoapDocumentMethod(ns + "DeleteSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string DeleteSetting(Setting s)
@@ -195,7 +192,7 @@
 
 		public event EventHandler<ResultEventArgs> LoadSettingCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/LoadSetting",
+		[SoapDocumentMethod(ns + "LoadSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult LoadSetting(System.Guid[] checksum)
@@ -215,7 +212,7 @@
 
 		public event EventHandler<ResultEventArgs> GetProgramsCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/GetPrograms",
+		[SoapDocumentMethod(ns + "GetPrograms",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
@@ -235,7 +232,7 @@
 
 		public event EventHandler<ResultEventArgs> GetProgramCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/GetProgram",
+		[SoapDocumentMethod(ns + "GetProgram",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public Program GetProgram(string fileName, string fileProductName)
@@ -255,7 +252,7 @@
 
 		public event EventHandler<ResultEventArgs> GetVendorsCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/GetVendors",
+		[SoapDocumentMethod(ns + "GetVendors",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public List<Vendor> GetVendors()
@@ -275,7 +272,7 @@
 
 		public event EventHandler<ResultEventArgs> GetSettingsDataCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/GetSettingsData",
+		[SoapDocumentMethod(ns + "GetSettingsData",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SettingsData GetSettingsData()
@@ -295,7 +292,7 @@
 
 		public event EventHandler<ResultEventArgs> SetProgramCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/SetProgram",
+		[SoapDocumentMethod(ns + "SetProgram",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string SetProgram(Program p)
@@ -315,7 +312,7 @@
 
 		public event EventHandler<ResultEventArgs> SetGamesCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/SetGames",
+		[SoapDocumentMethod(ns + "SetGames",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string SetGames(CloudAction action, List<Game> games)
@@ -335,7 +332,7 @@
 
 		public event EventHandler<ResultEventArgs> SignOutCompleted;
 
-		[SoapDocumentMethodAttribute("http://x360ce.com/SignOut",
+		[SoapDocumentMethod(ns + "SignOut",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public KeyValueList SignOut()
@@ -350,12 +347,33 @@
 		}
 
 		#endregion
+
+		#region Method: Execute
+
+		public event EventHandler<ResultEventArgs> ExecuteCompleted;
+
+		[SoapDocumentMethod(ns + "Execute",
+			RequestNamespace = ns, ResponseNamespace = ns,
+			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+		public CloudResults Execute(CloudCommand command)
+		{
+			object[] results = Invoke("Execute", new object[] { command });
+			return (CloudResults)results[0];
+		}
+
+		public void ExecuteAsync(CloudCommand command, object userState = null)
+		{
+			InvokeAsync("Execute", ExecuteCompleted, userState, new object[] { command });
+		}
+
+		#endregion
 	}
 
 	public partial class ResultEventArgs : AsyncCompletedEventArgs
 	{
 		internal ResultEventArgs(object[] results, Exception exception, bool cancelled, object userState) :
-			base(exception, cancelled, userState) { _results = results; }
+			base(exception, cancelled, userState)
+		{ _results = results; }
 
 		object[] _results;
 		public object Result
