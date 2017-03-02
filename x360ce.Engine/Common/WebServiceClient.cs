@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Web.Services.Description;
 using x360ce.Engine.Data;
 using System.Collections.Generic;
+using System.Net;
 
 namespace x360ce.Engine
 {
@@ -17,6 +18,43 @@ namespace x360ce.Engine
 	{
 
 		#region Main Methods
+
+		/// <summary>
+		/// Create the network credentials and assign
+		/// them to the service credentials
+		/// </summary>
+		/// <param name="username"></param>
+		/// <param name="password"></param>
+		public void SetCredentials(string username, string password)
+		{
+			var nc = new NetworkCredential(username, password);
+			var uri = new Uri(Url);
+			var credentials = nc.GetCredential(uri, "Basic");
+			Credentials = credentials;
+			// Be sure to set PreAuthenticate to true or else authentication will not be sent.
+			PreAuthenticate = true;
+		}
+
+		protected override WebRequest GetWebRequest(Uri uri)
+		{
+			var request = (HttpWebRequest)base.GetWebRequest(uri);
+			if (PreAuthenticate)
+			{
+				var credentials = Credentials.GetCredential(uri, "Basic");
+				if (credentials != null)
+				{
+					var bytes = System.Text.Encoding.UTF8.GetBytes(
+					credentials.UserName + ":" +
+					credentials.Password);
+					request.Headers["Authorization"] = "Basic " + Convert.ToBase64String(bytes);
+				}
+				else
+				{
+					throw new ApplicationException("No network credentials");
+				}
+			}
+			return request;
+		}
 
 		const string ns = "http://x360ce.com/";
 		bool useDefaultCredentialsSetExplicitly;

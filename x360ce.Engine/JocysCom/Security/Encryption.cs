@@ -155,7 +155,7 @@ namespace JocysCom.ClassLibrary.Security
 				return _MacProvider;
 			}
 		}
-	
+
 		/// <summary>
 		/// Computes the HMAC MD5 hash value for the specified text.
 		/// </summary>
@@ -590,7 +590,9 @@ namespace JocysCom.ClassLibrary.Security
 			// This is needed for Entity Framework connections.
 			System.Configuration.Configuration config;
 			// Get the configuration file.
-			config = System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
+			config = System.Web.HttpContext.Current == null || System.Web.HttpContext.Current.Request.PhysicalPath.Equals(string.Empty)
+				? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
+				: System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
 			// Modify settings.
 			if (config.AppSettings.Settings[HmacHashKeyName] == null)
 				config.AppSettings.Settings.Add(HmacHashKeyName, string.Empty);

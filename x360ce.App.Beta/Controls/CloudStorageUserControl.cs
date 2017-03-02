@@ -23,7 +23,9 @@ namespace x360ce.App.Controls
 			TasksDataGridView.AutoGenerateColumns = false;
 			TasksDataGridView.DataSource = data;
 			queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer(500, 1000);
+			queueTimer.SynchronizingObject = this;
 			queueTimer.DoAction = DoAction;
+			queueTimer.DoActionNow();
 		}
 
 		private void Data_ListChanged(object sender, ListChangedEventArgs e)
@@ -68,9 +70,9 @@ namespace x360ce.App.Controls
 			try
 			{
 				Execute<Game>(CloudAction.Delete);
-				Execute<Game>(CloudAction.Update);
+				Execute<Game>(CloudAction.Insert);
 				Execute<UserController>(CloudAction.Delete);
-				Execute<UserController>(CloudAction.Update);
+				Execute<UserController>(CloudAction.Insert);
 			}
 			catch (Exception ex)
 			{
@@ -103,6 +105,14 @@ namespace x360ce.App.Controls
 					else if (typeof(T) == typeof(UserController))
 					{
 						command.UserControllers = items as List<UserController>;
+					}
+					// Add secure credentials.
+					var rsa = new JocysCom.ClassLibrary.Security.Encryption("Cloud");
+					if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
+					{
+						var username = rsa.RsaEncrypt("username");
+						var password = rsa.RsaEncrypt("password");
+						ws.SetCredentials(username, password);
 					}
 					result = ws.Execute(command);
 					MainForm.Current.SetHeaderBody(result.ErrorCode == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Error, result.ErrorMessage);

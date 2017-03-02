@@ -480,9 +480,21 @@ namespace x360ce.Web.WebServices
 			return results;
 		}
 
+		[WebMethod(EnableSession = true, Description = "Get public RSA Key")]
+		public string GetPublicRsaKey()
+		{
+			var rsa = new JocysCom.ClassLibrary.Security.Encryption("Cloud");
+			if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
+			{
+				rsa.RsaNewKeysSave(2048);
+			}
+			return rsa.RsaPublicKeyValue;
+		}
+
 		#endregion
 
 		[WebMethod(EnableSession = true, Description = "Update User Data")]
+		[System.Web.Services.Protocols.SoapHeader("Authentication")]
 		public CloudResults Execute(CloudCommand command)
 		{
 			var results = new CloudResults();
