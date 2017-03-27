@@ -8,7 +8,7 @@
     <Setting Name="ExcludeSupplementalDevices" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ExcludeVirualDevices" Type="System.Boolean" Scope="User">
+    <Setting Name="ExcludeVirtualDevices" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

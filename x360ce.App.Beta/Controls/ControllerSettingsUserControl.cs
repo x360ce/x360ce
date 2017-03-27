@@ -40,20 +40,20 @@ namespace x360ce.App.Controls
 		void InitData()
 		{
 			// Configure Settings.
-			SettingManager.Settings.Items.ListChanged += new ListChangedEventHandler(Settings_ListChanged);
-			MySettingsDataGridView.DataSource = SettingManager.Settings.Items;
+			SettingsManager.Settings.Items.ListChanged += new ListChangedEventHandler(Settings_ListChanged);
+			MySettingsDataGridView.DataSource = SettingsManager.Settings.Items;
 			UpdateControlsFromSettings();
 			// Configure Summaries.
-			SettingManager.Summaries.Items.ListChanged += new ListChangedEventHandler(Summaries_ListChanged);
-			SummariesDataGridView.DataSource = SettingManager.Summaries.Items;
+			SettingsManager.Summaries.Items.ListChanged += new ListChangedEventHandler(Summaries_ListChanged);
+			SummariesDataGridView.DataSource = SettingsManager.Summaries.Items;
 			UpdateControlsFromSummaries();
 		}
 
 		void UpdateControlsFromSettings()
 		{
-			MySettingsTabPage.Text = SettingManager.Settings.Items.Count == 0
+			MySettingsTabPage.Text = SettingsManager.Settings.Items.Count == 0
 				? _myControllersTitle
-				: string.Format("{0} [{1}]", _myControllersTitle, SettingManager.Settings.Items.Count);
+				: string.Format("{0} [{1}]", _myControllersTitle, SettingsManager.Settings.Items.Count);
 		}
 
 		void Settings_ListChanged(object sender, ListChangedEventArgs e)
@@ -63,9 +63,9 @@ namespace x360ce.App.Controls
 
 		void UpdateControlsFromSummaries()
 		{
-			SummariesTabPage.Text = SettingManager.Summaries.Items.Count == 0
+			SummariesTabPage.Text = SettingsManager.Summaries.Items.Count == 0
 				? _globalSummariesTitle
-				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingManager.Summaries.Items.Count);
+				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingsManager.Summaries.Items.Count);
 		}
 
 		void Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -228,9 +228,9 @@ namespace x360ce.App.Controls
 		bool ContainsSetting(Setting setting)
 		{
 
-			for (int i = 0; i < SettingManager.Settings.Items.Count; i++)
+			for (int i = 0; i < SettingsManager.Settings.Items.Count; i++)
 			{
-				var s = SettingManager.Settings.Items[i];
+				var s = SettingsManager.Settings.Items[i];
 				if (setting.InstanceGuid == s.InstanceGuid && setting.FileName == s.FileName && setting.FileProductName == s.FileProductName)
 				{
 					return true;
@@ -373,8 +373,8 @@ namespace x360ce.App.Controls
 				//refreshed = true;
 				if (e.Error != null || e.Result == null)
 				{
-					AppHelper.UpdateList(new List<Setting>(), SettingManager.Settings.Items);
-					AppHelper.UpdateList(new List<Summary>(), SettingManager.Summaries.Items);
+					AppHelper.UpdateList(new List<Setting>(), SettingsManager.Settings.Items);
+					AppHelper.UpdateList(new List<Summary>(), SettingsManager.Summaries.Items);
 					//UpdateActionButtons();
 					if ((bool)e.UserState)
 					{
@@ -390,8 +390,8 @@ namespace x360ce.App.Controls
 					var result = (SearchResult)e.Result;
 					// Reorder summaries.
 					result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-					AppHelper.UpdateList(result.Settings, SettingManager.Settings.Items);
-					AppHelper.UpdateList(result.Summaries, SettingManager.Summaries.Items);
+					AppHelper.UpdateList(result.Settings, SettingsManager.Settings.Items);
+					AppHelper.UpdateList(result.Summaries, SettingsManager.Summaries.Items);
 					//	UpdateActionButtons();
 					if ((bool)e.UserState)
 					{
@@ -599,7 +599,7 @@ namespace x360ce.App.Controls
 			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (Engine.Data.Setting)x.DataBoundItem).ToArray();
 			foreach (var item in items)
 			{
-				SettingManager.Settings.Items.Remove(item);
+				SettingsManager.Settings.Items.Remove(item);
 			}
 			//	var form = new MessageBoxForm();
 			//	form.StartPosition = FormStartPosition.CenterParent;

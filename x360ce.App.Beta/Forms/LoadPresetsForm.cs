@@ -27,16 +27,16 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			PresetsDataGridView.AutoGenerateColumns = false;
 			// Configure Presets.
-			SettingManager.Presets.Items.ListChanged += new ListChangedEventHandler(Presets_ListChanged);
-			PresetsDataGridView.DataSource = SettingManager.Presets.Items;
+			SettingsManager.Presets.Items.ListChanged += new ListChangedEventHandler(Presets_ListChanged);
+			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
 			UpdateControlsFromPresets();
 		}
 
 		void UpdateControlsFromPresets()
 		{
-			PresetsTabPage.Text = SettingManager.Presets.Items.Count == 0
+			PresetsTabPage.Text = SettingsManager.Presets.Items.Count == 0
 				? _defaultPresetsTitle
-				: string.Format("{0} [{1}]", _defaultPresetsTitle, SettingManager.Presets.Items.Count);
+				: string.Format("{0} [{1}]", _defaultPresetsTitle, SettingsManager.Presets.Items.Count);
 		}
 
 		void Presets_ListChanged(object sender, ListChangedEventArgs e)
@@ -55,7 +55,7 @@ namespace x360ce.App.Controls
 			var sp = new List<SearchParameter>();
 			sp.Add(new SearchParameter());
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 			ws.SearchSettingsCompleted += wsPresets_SearchSettingsCompleted;
 			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
 			{
@@ -85,8 +85,8 @@ namespace x360ce.App.Controls
 				else
 				{
 					var result = (SearchResult)e.Result;
-					AppHelper.UpdateList(result.Presets, SettingManager.Presets.Items);
-					AppHelper.UpdateList(result.PadSettings, SettingManager.PadSettings.Items);
+					AppHelper.UpdateList(result.Presets, SettingsManager.Presets.Items);
+					AppHelper.UpdateList(result.PadSettings, SettingsManager.PadSettings.Items);
 					if ((bool)e.UserState)
 					{
 						var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;

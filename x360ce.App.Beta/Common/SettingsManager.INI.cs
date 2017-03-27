@@ -10,7 +10,7 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App
 {
-	public partial class SettingManager
+	public partial class SettingsManager
 	{
 		/// <summary>
 		/// Write PAD settings to INI file.
@@ -234,11 +234,11 @@ namespace x360ce.App
 				// Write PADx.
 				var mapItem = SettingsMap.FirstOrDefault(x => x.IniSection == OptionsSection && x.IniKey == optionKey);
 				WriteSettingsToIni(mapItem);
-				var settings = SettingManager.Settings.Items.Where(x => x.MapTo == (int)mapTo).ToArray();
+				var settings = SettingsManager.Settings.Items.Where(x => x.MapTo == (int)mapTo).ToArray();
 				for (int s = 0; s < settings.Length; s++)
 				{
 					var setting = settings[i];
-					var padSetting = SettingManager.GetPadSetting(setting.PadSettingChecksum);
+					var padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 					var padSectionName = string.Format("IG_{0:N}", setting.InstanceGuid);
 					WritePadSettingsToIni(padSectionName, setting, padSetting);
 				}

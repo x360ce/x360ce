@@ -22,7 +22,7 @@ namespace x360ce.App.Controls
 		{
 			UpdateButtons();
 			ControllersDataGridView.AutoGenerateColumns = false;
-			ControllersDataGridView.DataSource = SettingManager.UserControllers.Items;
+			ControllersDataGridView.DataSource = SettingsManager.UserControllers.Items;
 		}
 
 		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -54,7 +54,7 @@ namespace x360ce.App.Controls
 			var items = GetSelected();
 			foreach (var item in items)
 			{
-				SettingManager.UserControllers.Items.Remove(item);
+				SettingsManager.UserControllers.Items.Remove(item);
 			}
 			MainForm.Current.CloudPanel.Add(CloudAction.Delete, items);
 		}

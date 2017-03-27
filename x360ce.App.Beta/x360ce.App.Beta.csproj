@@ -240,10 +240,11 @@
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
+    <Compile Include="Common\Options.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
-    <Compile Include="Common\SettingManager.cs" />
-    <Compile Include="Common\SettingManager.INI.cs" />
+    <Compile Include="Common\SettingsManager.cs" />
+    <Compile Include="Common\SettingsManager.INI.cs" />
     <Compile Include="Common\SettingName.cs" />
     <Compile Include="Common\XSettingsData.cs" />
     <Compile Include="Common\SettingType.cs" />

@@ -89,7 +89,7 @@ namespace x360ce.App.Controls
 		{
 			MainForm.Current.LoadingCircle = true;
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 			CloudResults result = null;
 			try
 			{

@@ -135,7 +135,7 @@ namespace x360ce.App.Controls
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 			ws.LoadSettingCompleted += ws_LoadSettingCompleted;
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
@@ -153,8 +153,8 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				var padSectionName = SettingManager.Current.GetInstanceSection(_di.InstanceGuid);
-				SettingManager.Current.SetPadSetting(padSectionName, _di);
+				var padSectionName = SettingsManager.Current.GetInstanceSection(_di.InstanceGuid);
+				SettingsManager.Current.SetPadSetting(padSectionName, _di);
 				//SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
 				MainForm.Current.SuspendEvents();
 				//SettingManager.Current.LoadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
@@ -203,7 +203,7 @@ namespace x360ce.App.Controls
 			{
 				string sectionName = null;
 				// If INI File contains settings for instance then...
-				if (SettingManager.Current.ContainsInstanceSection(_di.InstanceGuid, files[i].FullName, out sectionName))
+				if (SettingsManager.Current.ContainsInstanceSection(_di.InstanceGuid, files[i].FullName, out sectionName))
 				{
 					var s = new Summary();
 					s.DateUpdated = files[i].LastWriteTime;
@@ -211,7 +211,7 @@ namespace x360ce.App.Controls
 					s.FileProductName = sectionName;
 					configs.Add(s);
 				}
-				if (SettingManager.Current.ContainsInstanceSectionOld(_di.InstanceGuid, files[i].FullName, out sectionName))
+				if (SettingsManager.Current.ContainsInstanceSectionOld(_di.InstanceGuid, files[i].FullName, out sectionName))
 				{
 					var s = new Summary();
 					s.DateUpdated = files[i].LastWriteTime;
@@ -237,7 +237,7 @@ namespace x360ce.App.Controls
 		void LoadSettingsFromInternet()
 		{
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
 			_sp = new List<SearchParameter>();
 			_sp.Add(new SearchParameter() { InstanceGuid = _di.InstanceGuid, ProductGuid = _di.ProductGuid });

@@ -62,7 +62,7 @@ namespace x360ce.App.Controls
 			//bs.Filter = string.Format("MapTo = {0}", (int)MappedTo);
 			grid.DataSource = mappedItems;
 			Settings_Items_ListChanged(null, null);
-			SettingManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
+			SettingsManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 			// Initialize images.
 			this.TopPictureBox.Image = topDisabledImage;
 			this.FrontPictureBox.Image = frontDisabledImage;
@@ -122,7 +122,7 @@ namespace x360ce.App.Controls
 			{
 				var grid = MappedDevicesDataGridView;
 				// Get rows which must be displayed on the list.
-				var itemsToShow = SettingManager.Settings.Items.Where(x => x.MapTo == (int)MappedTo).ToList();
+				var itemsToShow = SettingsManager.Settings.Items.Where(x => x.MapTo == (int)MappedTo).ToList();
 
 				var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
 				var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
@@ -273,7 +273,7 @@ namespace x360ce.App.Controls
 					else
 					{
 						// If suitable action was recorded then...
-						SettingManager.Current.SetComboBoxValue(CurrentCbx, action);
+						SettingsManager.Current.SetComboBoxValue(CurrentCbx, action);
 						// Save setting and notify if value changed.
 						MainForm.Current.NotifySettingsChange(CurrentCbx);
 					}
@@ -648,7 +648,7 @@ namespace x360ce.App.Controls
 		void AddMap<T>(Expression<Func<T>> setting, Control control)
 		{
 			var section = string.Format(@"PAD{0}\", (int)MappedTo);
-			SettingManager.AddMap(section, setting, control, MappedTo);
+			SettingsManager.AddMap(section, setting, control, MappedTo);
 		}
 
 		#endregion
@@ -687,7 +687,7 @@ namespace x360ce.App.Controls
 			Engine.Data.Setting setting = null;
 			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
 			UserController device = null;
-			if (setting != null) device = SettingManager.GetDevice(setting.InstanceGuid);
+			if (setting != null) device = SettingsManager.GetDevice(setting.InstanceGuid);
 			return device;
 		}
 
@@ -916,7 +916,7 @@ namespace x360ce.App.Controls
 			{
 				if (CurrentCbx == DPadComboBox)
 				{
-					SettingManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
+					SettingsManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
 					CurrentCbx = null;
 					DiMenuStrip.Close();
 				}
@@ -929,12 +929,12 @@ namespace x360ce.App.Controls
 				}
 				else if (item.Text == cEmpty)
 				{
-					SettingManager.Current.SetComboBoxValue(CurrentCbx, string.Empty);
+					SettingsManager.Current.SetComboBoxValue(CurrentCbx, string.Empty);
 					CurrentCbx = null;
 				}
 				else
 				{
-					SettingManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
+					SettingsManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
 					CurrentCbx = null;
 				}
 			}
@@ -1047,7 +1047,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				SettingManager.Current.ClearPadSettings(MappedTo);
+				SettingsManager.Current.ClearPadSettings(MappedTo);
 			}
 		}
 
@@ -1075,7 +1075,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				SettingManager.Current.ClearPadSettings(MappedTo);
+				SettingsManager.Current.ClearPadSettings(MappedTo);
 				var objects = AppHelper.GetDeviceObjects(d.Device);
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
@@ -1180,16 +1180,16 @@ namespace x360ce.App.Controls
 		{
 			var pad = string.Format("PAD{0}", (int)MappedTo);
 			var path = string.Format("{0}\\{1}", pad, key);
-			var control = SettingManager.Current.SettingsMap
+			var control = SettingsManager.Current.SettingsMap
 				.Where(x => x.MapTo == MappedTo)
 				.First(x => x.IniPath == path).Control;
 			//control.Text = value;
-			SettingManager.Current.LoadSetting(control, key, value);
+			SettingsManager.Current.LoadSetting(control, key, value);
 		}
 
 		void SavePresetButton_Click(object sender, EventArgs e)
 		{
-			SettingManager.Current.WriteAllSettingsToInit();
+			SettingsManager.Current.WriteAllSettingsToInit();
 			//MainForm.Current.SaveSettings();
 		}
 
@@ -1312,7 +1312,7 @@ namespace x360ce.App.Controls
 			var grid = (DataGridView)sender;
 			var viewRow = grid.Rows[e.RowIndex];
 			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
-			var device = SettingManager.GetDevice(setting.InstanceGuid);
+			var device = SettingsManager.GetDevice(setting.InstanceGuid);
 			var isConnected = (device != null);
 			AppHelper.ApplyRowStyle(grid, e, isConnected);
 			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
@@ -1337,11 +1337,11 @@ namespace x360ce.App.Controls
 				var game = MainForm.Current.GetCurrentGame();
 				if (game != null)
 				{
-					var setting = SettingManager.GetSetting(item.InstanceGuid, game.FileName);
+					var setting = SettingsManager.GetSetting(item.InstanceGuid, game.FileName);
 					if (setting == null)
 					{
 						var newSetting = AppHelper.GetNewSetting(item, game, MappedTo);
-						SettingManager.Settings.Items.Add(newSetting);
+						SettingsManager.Settings.Items.Add(newSetting);
 					}
 					else
 					{
@@ -1369,9 +1369,9 @@ namespace x360ce.App.Controls
 			if (row != null)
 			{
 				var setting = (Engine.Data.Setting)row.DataBoundItem;
-				padSetting = SettingManager.GetPadSetting(setting.PadSettingChecksum);
+				padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 			}
-			SettingManager.Current.LoadPadSettings(MappedTo, padSetting);
+			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
 		}
 
 		#endregion
