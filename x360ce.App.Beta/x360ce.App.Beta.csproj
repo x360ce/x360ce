@@ -245,7 +245,7 @@
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingManager.INI.cs" />
     <Compile Include="Common\SettingName.cs" />
-    <Compile Include="Common\SettingsData.cs" />
+    <Compile Include="Common\XSettingsData.cs" />
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />

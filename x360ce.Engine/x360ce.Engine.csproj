@@ -160,6 +160,9 @@
     <Compile Include="JocysCom\ComponentModel\PropertyComparer.cs" />
     <Compile Include="JocysCom\ComponentModel\SortableBindingList.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsData.cs" />
+    <Compile Include="JocysCom\Configuration\SettingsData.cs" />
+    <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Controls\InfoForm.cs">
       <SubType>Form</SubType>

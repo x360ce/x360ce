@@ -31,28 +31,28 @@ namespace x360ce.App
 		//
 
 		/// <summary>User Settings.</summary>
-		public static SettingsData<Engine.Data.Setting> Settings = new SettingsData<Engine.Data.Setting>("Settings", "User Settings.");
+		public static XSettingsData<Engine.Data.Setting> Settings = new XSettingsData<Engine.Data.Setting>("Settings", "User Settings.");
 
 		/// <summary>Summary of most popular Settings.</summary>
-		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries", "Summary of most popular Settings.");
+		public static XSettingsData<Engine.Data.Summary> Summaries = new XSettingsData<Engine.Data.Summary>("Summaries", "Summary of most popular Settings.");
 
 		/// <summary>User Games.</summary>
-		public static SettingsData<Engine.Data.Game> Games = new SettingsData<Engine.Data.Game>("Games", "User Games.");
+		public static XSettingsData<Engine.Data.Game> Games = new XSettingsData<Engine.Data.Game>("Games", "User Games.");
 
 		/// <summary>Most popular Programs and Games.</summary>
-		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs", "Most popular Programs and Games.");
+		public static XSettingsData<Engine.Data.Program> Programs = new XSettingsData<Engine.Data.Program>("Programs", "Most popular Programs and Games.");
 
 		/// <summary>Presets.</summary>
-		public static SettingsData<Preset> Presets = new SettingsData<Preset>("Presets", "Presets.");
+		public static XSettingsData<Preset> Presets = new XSettingsData<Preset>("Presets", "Presets.");
 
 		/// <summary>Preset PadSettings.</summary>
-		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings", "Preset PadSettings.");
+		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings", "Preset PadSettings.");
 
 		/// <summary>User Controllers.</summary>
-		public static SettingsData<Engine.Data.UserController> UserControllers = new SettingsData<Engine.Data.UserController>("UserControllers", "User Controllers.");
+		public static XSettingsData<Engine.Data.UserController> UserControllers = new XSettingsData<Engine.Data.UserController>("UserControllers", "User Controllers.");
 
 		/// <summary>User Controller Instances.</summary>
-		public static SettingsData<Engine.Data.UserInstance> UserInstances = new SettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances.");
+		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances.");
 
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
 		{
