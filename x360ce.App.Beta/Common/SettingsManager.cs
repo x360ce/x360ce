@@ -42,6 +42,7 @@ namespace x360ce.App
                     if (_OptionsData == null)
                     {
                         _OptionsData = new XSettingsData<Options>("Options", "x360ce Options");
+                        _OptionsData.Load();
                         if (_OptionsData.Items.Count == 0)
                         {
                             _OptionsData.Items.Add(new Options());
@@ -510,27 +511,6 @@ namespace x360ce.App
                 if (key == SettingName.Version) value = SettingName.DefaultVersion;
                 control.Text = value;
             }
-            else if (control is ListBox)
-            {
-                var lbx = (ListBox)control;
-                lbx.Items.Clear();
-                if (string.IsNullOrEmpty(value))
-                {
-                    var folders = new List<string>();
-                    if (Environment.Is64BitOperatingSystem)
-                    {
-                        var pf = Environment.GetEnvironmentVariable("ProgramW6432");
-                        if (System.IO.Directory.Exists(pf)) folders.Add(pf);
-                    }
-                    var pf86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-                    if (System.IO.Directory.Exists(pf86)) folders.Add(pf86);
-                    lbx.Items.AddRange(folders.ToArray());
-                }
-                else
-                {
-                    lbx.Items.AddRange(value.Split(','));
-                }
-            }
             else if (control is NumericUpDown)
             {
                 var nud = (NumericUpDown)control;
@@ -627,11 +607,6 @@ namespace x360ce.App
                     v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
                 }
                 else v = control.Text;
-            }
-            else if (control is ListBox)
-            {
-                var lbx = (ListBox)control;
-                v = string.Join(",", lbx.Items.Cast<string>().ToArray());
             }
             else if (control is NumericUpDown)
             {

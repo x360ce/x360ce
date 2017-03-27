@@ -9,15 +9,17 @@ namespace x360ce.App
     {
         public Options()
         {
+            AllowOnlyOneCopy = true;
+            InternetFeatures = true;
+            InternetAutoLoad = true;
+            InternetAutoSave = true;
+            InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
             InternetDatabaseUrls = new List<string>()
             {
                 "http://www.x360ce.com/webservices/x360ce.asmx",
                 "http://localhost:20360/webservices/x360ce.asmx"
             };
-            GameScanLocations = new List<string>()
-            {
-            };
-            InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+            GameScanLocations = new List<string>() { };
         }
         public bool AllowOnlyOneCopy { get; set; }
         public bool InternetFeatures { get; set; }
