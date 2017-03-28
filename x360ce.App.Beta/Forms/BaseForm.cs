@@ -9,93 +9,114 @@ using System.Windows.Forms;
 
 namespace x360ce.App.Controls
 {
-	public partial class BaseForm : Form
-	{
-		public BaseForm()
-		{
-			InitializeComponent();
-			if (IsDesignMode) return;
-			defaultBody = HelpBodyLabel.Text;
-			InitLoadingCircle();
-		}
+    public partial class BaseForm : Form
+    {
+        public BaseForm()
+        {
+            InitializeComponent();
+            if (IsDesignMode) return;
+            defaultBody = HelpBodyLabel.Text;
+            InitLoadingCircle();
+        }
 
-		internal bool IsDesignMode
-		{
-			get
-			{
-				if (DesignMode) return true;
-				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
-				var pa = this.ParentForm;
-				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
-				return false;
-			}
-		}
+        internal bool IsDesignMode
+        {
+            get
+            {
+                if (DesignMode) return true;
+                if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
+                var pa = this.ParentForm;
+                if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
+                return false;
+            }
+        }
 
-		#region WebService loading circle
+        #region WebService loading circle
 
-		void InitLoadingCircle()
-		{
-			BusyLoadingCircle.Visible = false;
-			BusyLoadingCircle.Top = HeaderPictureBox.Top;
-			BusyLoadingCircle.Left = HeaderPictureBox.Left;
-			LoadinngCircleTimeout = new Timer();
-			LoadinngCircleTimeout.Tick += new EventHandler(LoadinngCircleTimeout_Tick);
-		}
+        void InitLoadingCircle()
+        {
+            BusyLoadingCircle.Visible = false;
+            BusyLoadingCircle.Top = HeaderPictureBox.Top;
+            BusyLoadingCircle.Left = HeaderPictureBox.Left;
+            LoadinngCircleTimeout = new Timer();
+            LoadinngCircleTimeout.Tick += new EventHandler(LoadinngCircleTimeout_Tick);
+        }
 
-		Timer LoadinngCircleTimeout = new Timer();
+        Timer LoadinngCircleTimeout = new Timer();
 
-		public bool LoadingCircle
-		{
-			get { return BusyLoadingCircle.Active; }
-			set
-			{
-				if (value)
-				{
-					BusyLoadingCircle.Color = Color.SteelBlue;
-					BusyLoadingCircle.InnerCircleRadius = 12;
-					BusyLoadingCircle.NumberSpoke = 100;
-					BusyLoadingCircle.OuterCircleRadius = 18;
-					BusyLoadingCircle.RotationSpeed = 10;
-					BusyLoadingCircle.SpokeThickness = 3;
-					BusyLoadingCircle.Active = value;
-					BusyLoadingCircle.Visible = value;
-				}
-				else
-				{
-					LoadinngCircleTimeout.Enabled = true;
-				}
-			}
-		}
+        object TasksLock = new object();
+        BindingList<string> Tasks = new BindingList<string>();
 
-		void LoadinngCircleTimeout_Tick(object sender, EventArgs e)
-		{
-			LoadinngCircleTimeout.Enabled = false;
-			BusyLoadingCircle.Active = false;
-			BusyLoadingCircle.Visible = false;
-		}
+        public void AddTask(string name)
+        {
+            lock (TasksLock)
+            {
+                Tasks.Add(name);
+                UpdateIcon();
+            }
+        }
 
-		#endregion
+        public void RemoveTask(string name)
+        {
+            lock (TasksLock)
+            {
+                if (Tasks.Contains(name))
+                {
+                    Tasks.Remove(name);
+                }
+                UpdateIcon();
+            }
+        }
 
-		#region Help Header
+        void UpdateIcon()
+        {
+            var value = Tasks.Count > 0;
+            if (value && !BusyLoadingCircle.Active)
+            {
+                BusyLoadingCircle.Color = Color.SteelBlue;
+                BusyLoadingCircle.InnerCircleRadius = 12;
+                BusyLoadingCircle.NumberSpoke = 100;
+                BusyLoadingCircle.OuterCircleRadius = 18;
+                BusyLoadingCircle.RotationSpeed = 10;
+                BusyLoadingCircle.SpokeThickness = 3;
+                BusyLoadingCircle.Active = value;
+                BusyLoadingCircle.Visible = value;
+            }
+            else if (!value && BusyLoadingCircle.Active)
+            {
+                LoadinngCircleTimeout.Enabled = true;
+            }
+        }
 
-		string defaultBody;
+        void LoadinngCircleTimeout_Tick(object sender, EventArgs e)
+        {
+            LoadinngCircleTimeout.Enabled = false;
+            BusyLoadingCircle.Active = false;
+            BusyLoadingCircle.Visible = false;
+        }
 
-		public void SetHeaderSubject(string subject)
-		{
-			HelpSubjectLabel.Text = subject;
-		}
+        #endregion
 
-		public void SetHeaderBody(MessageBoxIcon icon, string body,  params object[] args)
-		{
-			if (body == null) body = defaultBody;
-			else if (args != null) string.Format(body, args);
-			HelpBodyLabel.Text = body;
-			// Update body colours.
-			if (icon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = Color.DarkRed;
-			else if (icon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = Color.DarkGreen;
-			else HelpBodyLabel.ForeColor = SystemColors.ControlText;
-		}
+        #region Help Header
 
-		#endregion
-	}
+        string defaultBody;
+
+        public void SetHeaderSubject(string subject)
+        {
+            HelpSubjectLabel.Text = subject;
+        }
+
+        public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)
+        {
+            if (body == null) body = defaultBody;
+            else if (args != null) string.Format(body, args);
+            HelpBodyLabel.Text = body;
+            // Update body colours.
+            if (icon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = Color.DarkRed;
+            else if (icon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = Color.DarkGreen;
+            else HelpBodyLabel.ForeColor = SystemColors.ControlText;
+        }
+
+        #endregion
+    }
 }

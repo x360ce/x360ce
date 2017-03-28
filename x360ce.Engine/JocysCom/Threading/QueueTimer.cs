@@ -25,7 +25,15 @@ namespace JocysCom.ClassLibrary.Threading
 		long ExceptionCount;
 		Stopwatch LastAddTime = new Stopwatch();
 		long DoActionCount;
+
+        /// <summary>
+        /// If SynchronizingObject is set then make sure that handle is created.
+        /// var handle = control.Handle; // Creates handle if missing.
+        /// var isCreated = control.IsHandleCreated;
+        /// You can use 'HandleCreated' event.
+        /// </summary>
 		public Action<object> DoAction;
+        
 		public ISynchronizeInvoke SynchronizingObject { get; set; }
 
 		bool _isRunning;
