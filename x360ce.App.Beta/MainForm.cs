@@ -221,6 +221,7 @@ namespace x360ce.App
                     infoInt = DeviceDetector.GetInterfaces(interfacePaths);
                 }
                 // Add connected devices.
+                var addedControllers = new List<UserController>();
                 for (int i = 0; i < addedDevices.Length; i++)
                 {
                     var device = addedDevices[i];
@@ -237,12 +238,16 @@ namespace x360ce.App
                     di.LoadDevDeviceInfo(dev);
                     di.IsOnline = true;
                     //if (di.Info == null) di.Info = info.FirstOrDefault();
+                    addedControllers.Add(di);
                     Invoke((MethodInvoker)delegate ()
                     {
                         SettingsManager.UserControllers.Items.Add(di);
                     });
                 }
-                CloudPanel.Add(CloudAction.Insert, addedDevices);
+                if (addedControllers.Count > 0)
+                {
+                    CloudPanel.Add(CloudAction.Insert, addedControllers.ToArray());
+                }
                 for (int i = 0; i < updatedDevices.Length; i++)
                 {
                     var device = updatedDevices[i];

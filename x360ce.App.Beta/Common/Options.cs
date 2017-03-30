@@ -13,13 +13,23 @@ namespace x360ce.App
             InternetFeatures = true;
             InternetAutoLoad = true;
             InternetAutoSave = true;
-            InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
-            InternetDatabaseUrls = new List<string>()
+        }
+        /// <summary>
+        /// Avoid deserialization duplicates by using separate method.
+        /// </summary>
+        public void InitDefaults()
+        {
+            if (string.IsNullOrEmpty(InternetDatabaseUrl))
+                InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+            if (InternetDatabaseUrls == null)
+                InternetDatabaseUrls = new List<string>();
+            if (InternetDatabaseUrls.Count == 0)
             {
-                "http://www.x360ce.com/webservices/x360ce.asmx",
-                "http://localhost:20360/webservices/x360ce.asmx"
-            };
-            GameScanLocations = new List<string>() { };
+                InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
+                InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
+            }
+            if (GameScanLocations == null)
+                GameScanLocations = new List<string>() { };
         }
         public bool AllowOnlyOneCopy { get; set; }
         public bool InternetFeatures { get; set; }

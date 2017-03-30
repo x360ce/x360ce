@@ -612,6 +612,8 @@
     <None Include="Images\online_help_16x16.png" />
     <None Include="Images\exit_16x16.png" />
     <None Include="Images\map_to_16x16.png" />
+    <None Include="Images\cloud_computing_upload_16x16.png" />
+    <None Include="Images\cloud_computing_download_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />

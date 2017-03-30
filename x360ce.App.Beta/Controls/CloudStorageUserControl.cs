@@ -117,7 +117,8 @@ namespace x360ce.App.Controls
             CloudResults result = null;
             try
             {
-                var items = data.Where(x => x.Action == action).Select(x => x.Item).OfType<T>().ToList();
+                var citems = data.Where(x => x.Action == action);
+                var items = citems.Select(x => x.Item).OfType<T>().ToList();
                 if (items.Count > 0)
                 {
                     var command = new CloudCommand();
@@ -139,11 +140,21 @@ namespace x360ce.App.Controls
                         ws.SetCredentials(username, password);
                     }
                     result = ws.Execute(command);
-                    if (result.ErrorCode > 0) return new Exception(result.ErrorMessage);
+                    if (result.ErrorCode > 0)
+                    {
+                        queueTimer.SleepTimer.Interval = 5 * 60 * 1000;
+                        return new Exception(result.ErrorMessage);
+                    }
+                    foreach (var item in citems)
+                    {
+                        data.Remove(item);
+                    }
                 }
             }
             catch (Exception ex)
             {
+                // Sleep for 5 minutes;
+                queueTimer.SleepTimer.Interval = 5 * 60 * 1000;
                 return ex;
             }
             return null;
@@ -168,6 +179,24 @@ namespace x360ce.App.Controls
             base.Dispose(disposing);
         }
 
+        private void UploadToCloudButton_Click(object sender, EventArgs e)
+        {
+            data.Clear();
+            queueTimer.SleepTimer.Interval = 1000;
+            var allControllers = SettingsManager.UserControllers.Items.ToArray();
+            Add(CloudAction.Insert, allControllers);
+            var allGames = SettingsManager.Games.Items.ToArray();
+            Add(CloudAction.Insert, allGames);
+        }
 
+        private void DownloadFromCloudButton_Click(object sender, EventArgs e)
+        {
+            //var allGames = Execute<Game>(CloudAction.Select);
+            //var allControllers = SettingsManager.UserControllers.Items.ToArray();
+            //Add(CloudAction.Insert, allControllers);
+            //var allGames = SettingsManager.Games.Items.ToArray();
+            //Add(CloudAction.Insert, allGames);
+
+        }
     }
 }

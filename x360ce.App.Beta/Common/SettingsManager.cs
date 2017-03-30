@@ -45,8 +45,10 @@ namespace x360ce.App
                         _OptionsData.Load();
                         if (_OptionsData.Items.Count == 0)
                         {
-                            _OptionsData.Items.Add(new Options());
+                            var o = new Options();
+                            _OptionsData.Items.Add(o);
                         }
+                        _OptionsData.Items[0].InitDefaults();
                     }
                     return _OptionsData;
                 }

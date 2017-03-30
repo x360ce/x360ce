@@ -121,14 +121,14 @@
   <data name="Button_Y" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_Y.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="save_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\save_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="checkbox_unchecked_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\checkbox_unchecked_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="add_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\add_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="delete_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\delete_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="checkbox_undefined_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\checkbox_undefined_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Button_RightThumb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_RightThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -139,65 +139,104 @@
   <data name="xboxControllerDPad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerDPad.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Button_X" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_X.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_right_gray_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\arrow_right_gray_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="load_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\load_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_LeftShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="save_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\save_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_RightShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="map_to_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\map_to_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xboxControllerRightThumbstick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\xboxControllerRightThumbstick.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="check_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\check_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="launch_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\launch_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="update_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\update_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="check_disabled_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\check_disabled_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="folder_view_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\folder_view_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="checkbox_unchecked_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\checkbox_unchecked_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="save_add_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\save_add_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="checkbox_unchecked_disabled_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\checkbox_unchecked_disabled_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="remove_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\remove_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="xboxControllerLeftTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\xboxControllerLeftTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MessageBoxIcon_Warning_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Forms\MessageBoxFormImages\messageboxicon_warning_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="fix_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\fix_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="online_help_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\online_help_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="checkbox_disabled_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\checkbox_disabled_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Button_DPadDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_DPadDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="data_out_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\data_out_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Button_Start" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_Start.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="xboxControllerRightTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerRightTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_DPadUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_DPadUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Button_LeftTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_LeftTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="app_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\app_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_RightTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="online_help_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\online_help_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fix_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\fix_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_square_glass_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\bullet_square_glass_yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="folder_view_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\folder_view_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="save_add_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\save_add_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="xboxControllerLeftTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\xboxControllerLeftTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="app_128x128" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\app_128x128.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="enable_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\enable_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="bullet_square_glass_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\bullet_square_glass_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="empty_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\empty_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="checkbox_undefined_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\checkbox_undefined_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="data_out_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\data_out_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_right_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\arrow_right_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="checkbox_disabled_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\checkbox_disabled_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="update_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\update_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Button_Back" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_Back.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -205,23 +244,59 @@
   <data name="MessageBoxIcon_Information_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Forms\MessageBoxFormImages\messageboxicon_information_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_Start" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_Start.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="check_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\check_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="MessageBoxIcon_Question_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Forms\MessageBoxFormImages\messageboxicon_question_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow_right_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\arrow_right_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="xboxControllerLeftThumbstick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\xboxControllerLeftThumbstick.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerRightThumbstick" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\xboxControllerRightThumbstick.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="check_disabled_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\check_disabled_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_LeftTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_LeftTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Button_LeftThumb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_LeftThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MessageBoxIcon_Error_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Forms\MessageBoxFormImages\messageboxicon_error_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="remove_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\remove_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_square_glass_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\bullet_square_glass_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cloud_computing_refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\cloud_computing_refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="checkbox_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\checkbox_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_square_glass_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\bullet_square_glass_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="empty_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\empty_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MessageBoxIcon_Warning_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Forms\MessageBoxFormImages\messageboxicon_warning_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_DPadUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="enable_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\enable_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bullet_square_glass_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\bullet_square_glass_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\Button_DPadRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="data_into_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\data_into_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="reset_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\reset_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="folder_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\folder_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -229,79 +304,10 @@
   <data name="exit_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\exit_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerLeftThumbstick" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\xboxControllerLeftThumbstick.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cloud_computing_upload_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\cloud_computing_upload_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_X" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_X.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_LeftThumb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_LeftThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="checkbox_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\checkbox_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_RightTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_RightTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="arrow_right_gray_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\arrow_right_gray_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="reset_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\reset_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_RightShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_RightShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cloud_computing_refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\cloud_computing_refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="data_into_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\data_into_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_LeftShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_LeftShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="add_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\add_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="app_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\app_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="load_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\load_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MessageBoxIcon_Error_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Forms\MessageBoxFormImages\messageboxicon_error_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Button_DPadRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\Button_DPadRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="map_to_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\map_to_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bullet_square_glass_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\bullet_square_glass_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bullet_square_glass_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\bullet_square_glass_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bullet_square_glass_grey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\bullet_square_glass_grey.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bullet_square_glass_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\bullet_square_glass_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bullet_square_glass_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Images\bullet_square_glass_yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cloud_computing_download_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\cloud_computing_download_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
