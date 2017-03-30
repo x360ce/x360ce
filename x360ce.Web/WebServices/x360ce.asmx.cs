@@ -494,7 +494,7 @@ namespace x360ce.Web.WebServices
 		#endregion
 
 		[WebMethod(EnableSession = true, Description = "Update User Data")]
-		[System.Web.Services.Protocols.SoapHeader("Authentication")]
+		//[System.Web.Services.Protocols.SoapHeader("Authentication")]
 		public CloudResults Execute(CloudCommand command)
 		{
 			var results = new CloudResults();
