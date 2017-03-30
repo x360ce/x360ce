@@ -51,7 +51,6 @@ namespace x360ce.App.Controls
 
 		public void RefreshPresetsGrid(bool showResult)
 		{
-			LoadingCircle = true;
 			var sp = new List<SearchParameter>();
 			sp.Add(new SearchParameter());
 			var ws = new WebServiceClient();
@@ -65,12 +64,13 @@ namespace x360ce.App.Controls
 
 		void wsPresets_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
-			var ws = (WebServiceClient)sender;
+            var ws = (WebServiceClient)sender;
 			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;
 			// Make sure method is executed on the same thread as this control.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
-				if (e.Error != null || e.Result == null)
+                AddTask(TaskName.SearchPresets);
+                if (e.Error != null || e.Result == null)
 				{
 					var showResult = (bool)e.UserState;
 					if (showResult)
@@ -98,8 +98,8 @@ namespace x360ce.App.Controls
 						);
 					}
 				}
-				LoadingCircle = false;
-			});
+                RemoveTask(TaskName.SearchPresets);
+            });
 		}
 
 		#endregion

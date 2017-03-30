@@ -73,7 +73,7 @@ namespace x360ce.App.Controls
             {
                 Invoke(new Action(() =>
                 {
-                    MainForm.Current.AddTask("Cloud...");
+                    MainForm.Current.AddTask(TaskName.SaveToCloud);
                 }));
             }
             Exception error;
@@ -93,7 +93,7 @@ namespace x360ce.App.Controls
             }
             Invoke(new Action(() =>
             {
-                MainForm.Current.RemoveTask("Cloud...");
+                MainForm.Current.RemoveTask(TaskName.SaveToCloud);
                 if (error == null)
                 {
                     MainForm.Current.SetHeaderBody(MessageBoxIcon.Information);

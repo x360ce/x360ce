@@ -370,15 +370,16 @@ namespace x360ce.App.Controls
 			// Make sure method is executed on the same thread as this control.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
-				//refreshed = true;
-				if (e.Error != null || e.Result == null)
+                MainForm.Current.AddTask(TaskName.SearchSettings);
+                //refreshed = true;
+                if (e.Error != null || e.Result == null)
 				{
 					AppHelper.UpdateList(new List<Setting>(), SettingsManager.Settings.Items);
 					AppHelper.UpdateList(new List<Summary>(), SettingsManager.Summaries.Items);
 					//UpdateActionButtons();
 					if ((bool)e.UserState)
 					{
-						mainForm.SetHeaderBody(
+                        MainForm.Current.SetHeaderBody(
 							MessageBoxIcon.Information,
 							"{0: yyyy-MM-dd HH:mm:ss}: No data received.",
 							DateTime.Now
@@ -395,15 +396,15 @@ namespace x360ce.App.Controls
 					//	UpdateActionButtons();
 					if ((bool)e.UserState)
 					{
-						mainForm.SetHeaderBody(
+                        MainForm.Current.SetHeaderBody(
 							MessageBoxIcon.Information,
 							"{0: yyyy-MM-dd HH:mm:ss}: {1} Your Settings and {2} General Settings received.",
 							DateTime.Now, result.Settings.Length, result.Summaries.Length
 						);
 					}
 				}
-				mainForm.LoadingCircle = false;
-			});
+                MainForm.Current.RemoveTask(TaskName.SearchSettings);
+            });
 		}
 
 		#endregion

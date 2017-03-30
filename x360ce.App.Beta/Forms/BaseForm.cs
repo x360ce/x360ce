@@ -45,9 +45,9 @@ namespace x360ce.App.Controls
         Timer LoadinngCircleTimeout = new Timer();
 
         object TasksLock = new object();
-        BindingList<string> Tasks = new BindingList<string>();
+        BindingList<TaskName> Tasks = new BindingList<TaskName>();
 
-        public void AddTask(string name)
+        public void AddTask(TaskName name)
         {
             lock (TasksLock)
             {
@@ -56,7 +56,7 @@ namespace x360ce.App.Controls
             }
         }
 
-        public void RemoveTask(string name)
+        public void RemoveTask(TaskName name)
         {
             lock (TasksLock)
             {
