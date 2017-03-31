@@ -251,11 +251,11 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
-    <Compile Include="Controls\ControllersUserControl.cs">
+    <Compile Include="Controls\DevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ControllersUserControl.Designer.cs">
-      <DependentUpon>ControllersUserControl.cs</DependentUpon>
+    <Compile Include="Controls\DevicesUserControl.Designer.cs">
+      <DependentUpon>DevicesUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
@@ -386,8 +386,8 @@
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ControllersUserControl.resx">
-      <DependentUpon>ControllersUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\DevicesUserControl.resx">
+      <DependentUpon>DevicesUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>

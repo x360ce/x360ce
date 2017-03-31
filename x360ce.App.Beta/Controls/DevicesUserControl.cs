@@ -11,9 +11,9 @@ using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
-	public partial class ControllersUserControl : UserControl
+	public partial class DevicesUserControl : UserControl
 	{
-		public ControllersUserControl()
+		public DevicesUserControl()
 		{
 			InitializeComponent();
 		}
