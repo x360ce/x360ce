@@ -346,26 +346,6 @@ namespace x360ce.Engine
 
 		#endregion
 
-		#region Method: UpdateGames
-
-		public event EventHandler<ResultEventArgs> SetGamesCompleted;
-
-		[SoapDocumentMethod(ns + "SetGames",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public string SetGames(CloudAction action, List<Game> games)
-		{
-			object[] results = Invoke("SetGames", new object[] { action, games });
-			return (string)results[0];
-		}
-
-		public void SetGamesAsync(CloudAction action, List<Game> games, object userState = null)
-		{
-			InvokeAsync("SetGames", SetGamesCompleted, userState, new object[] { action, games });
-		}
-
-		#endregion
-
 		#region Method: SignOut
 
 		public event EventHandler<ResultEventArgs> SignOutCompleted;

@@ -103,7 +103,7 @@ namespace x360ce.App
 		/// Read INI file by game.
 		/// </summary>
 		/// <param name="game"></param>
-		public SearchResult ReadIniFile(Game game)
+		public SearchResult ReadIniFile(UserGame game)
 		{
 			var result = new SearchResult();
 			var settings = new List<Setting>();
@@ -153,7 +153,7 @@ namespace x360ce.App
 		/// Write game settings to INI file.
 		/// </summary>
 		/// <param name="game"></param>
-		public string GetIniContent(Game game)
+		public string GetIniContent(UserGame game)
 		{
 			var sb = new StringBuilder();
 			var optionsContent = GetIniContent(OptionsSection);
@@ -219,7 +219,7 @@ namespace x360ce.App
 		/// Write game settings to INI file.
 		/// </summary>
 		/// <param name="game"></param>
-		public string GetIniContent2(Game game)
+		public string GetIniContent2(UserGame game)
 		{
 			// Get game directory.
 			var dir = new FileInfo(game.FullPath).Directory;

@@ -49,11 +49,11 @@ namespace x360ce.App.Controls
 		CheckBox[] DInputCheckBoxes;
 		CheckBox[] HookCheckBoxes;
 
-		x360ce.Engine.Data.Game _CurrentGame;
+		x360ce.Engine.Data.UserGame _CurrentGame;
 		x360ce.Engine.Data.Program _DefaultSettings;
 
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
-		public x360ce.Engine.Data.Game CurrentGame
+		public x360ce.Engine.Data.UserGame CurrentGame
 		{
 			get { return _CurrentGame; }
 			set
@@ -69,7 +69,7 @@ namespace x360ce.App.Controls
 		void UpdateInterface()
 		{
 			var en = (CurrentGame != null);
-			var item = CurrentGame ?? new x360ce.Engine.Data.Game();
+			var item = CurrentGame ?? new x360ce.Engine.Data.UserGame();
 			var dInputMask = (DInputMask)item.DInputMask;
 			var xInputMask = (XInputMask)item.XInputMask;
 			var hookMask = (HookMask)item.HookMask;
@@ -94,7 +94,7 @@ namespace x360ce.App.Controls
 		}
 
 		// Check game settings against folder.
-		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.Game game, bool fix = false)
+		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.UserGame game, bool fix = false)
 		{
 			var fi = new FileInfo(game.FullPath);
 			// Check if game file exists.

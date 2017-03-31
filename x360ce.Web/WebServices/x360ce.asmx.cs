@@ -304,18 +304,6 @@ namespace x360ce.Web.WebServices
 
 		#endregion
 
-		#region Games
-
-		[WebMethod(EnableSession = true, Description = "Save Games (Obsolete)")]
-		public string SetGames(CloudAction action, List<Game> games)
-		{
-			return (action == CloudAction.Delete)
-				? Delete(games)
-				: Upsert(games);
-		}
-
-		#endregion
-
 		#region Programs
 
 		[WebMethod(EnableSession = true, Description = "Search games.")]
@@ -504,12 +492,12 @@ namespace x360ce.Web.WebServices
 				if (command.Action == CloudAction.Delete)
 				{
 					messages.Add(Delete(command.UserControllers));
-					messages.Add(Delete(command.Games));
+					messages.Add(Delete(command.UserGames));
 				}
 				else
 				{
 					messages.Add(Upsert(command.UserControllers));
-					messages.Add(Upsert(command.Games));
+					messages.Add(Upsert(command.UserGames));
 				}
 				results.ErrorMessage = string.Join("\r\n", messages.Where(x => !string.IsNullOrEmpty(x)));
 
@@ -522,7 +510,7 @@ namespace x360ce.Web.WebServices
 			return results;
 		}
 
-		#region Maintain: UserControllers
+		#region Maintain: User Controllers
 
 		string Delete(List<UserController> items)
 		{
@@ -575,9 +563,9 @@ namespace x360ce.Web.WebServices
 
 		#endregion
 
-		#region Maintain: Games
+		#region Maintain: User Games
 
-		string Delete(List<Game> items)
+		string Delete(List<UserGame> items)
 		{
 
 			var db = new x360ceModelContainer();
@@ -587,9 +575,9 @@ namespace x360ce.Web.WebServices
 				var game = items[i];
 				var diskDriveId = game.DiskDriveId;
 				var fileName = game.FileName;
-				var currentGame = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				var currentGame = db.UserGames.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
 				if (currentGame == null) continue;
-				db.Games.DeleteObject(currentGame);
+				db.UserGames.DeleteObject(currentGame);
 				deleted++;
 			}
 			db.SaveChanges();
@@ -598,7 +586,7 @@ namespace x360ce.Web.WebServices
 			return string.Format("{0} game(s) deleted.", deleted);
 		}
 
-		string Upsert(List<Game> items)
+		string Upsert(List<UserGame> items)
 		{
 			var db = new x360ceModelContainer();
 			var created = 0;
@@ -608,13 +596,13 @@ namespace x360ce.Web.WebServices
 				var item = items[i];
 				var diskDriveId = item.DiskDriveId;
 				var fileName = item.FileName;
-				var game = db.Games.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				var game = db.UserGames.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
 				if (game == null)
 				{
 					created++;
-					game = new Game();
+					game = new UserGame();
 					game.GameId = Guid.NewGuid();
-					db.Games.AddObject(game);
+					db.UserGames.AddObject(game);
 					game.DateCreated = DateTime.Now;
 				}
 				else

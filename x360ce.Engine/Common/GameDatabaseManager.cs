@@ -83,7 +83,7 @@ namespace x360ce.Engine
 			return programs;
 		}
 
-		public void SetPrograms(IEnumerable<Program> programs, IEnumerable<Game> games)
+		public void SetPrograms(IEnumerable<Program> programs, IEnumerable<UserGame> games)
 		{
 			// Clean file. INI files support only UTF16-little endian format.
 			var file = new System.IO.FileInfo(GdbFile.FullName);

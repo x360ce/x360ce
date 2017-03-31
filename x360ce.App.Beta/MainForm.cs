@@ -29,13 +29,13 @@ namespace x360ce.App
 
         public static MainForm Current { get; set; }
 
-        public Engine.Data.Game GetCurrentGame()
+        public Engine.Data.UserGame GetCurrentGame()
         {
-            Engine.Data.Game game = null;
+            Engine.Data.UserGame game = null;
             var item = GameToCustomizeComboBox.SelectedItem;
             if (item != null)
             {
-                game = (Engine.Data.Game)item;
+                game = (Engine.Data.UserGame)item;
             }
             return game;
         }
@@ -92,8 +92,8 @@ namespace x360ce.App
             SettingsManager.Programs.FilterList = Programs_FilterList;
             SettingsManager.Programs.Load();
             // Make sure that data will be filtered before loading.
-            SettingsManager.Games.FilterList = Games_FilterList;
-            SettingsManager.Games.Load();
+            SettingsManager.UserGames.FilterList = Games_FilterList;
+            SettingsManager.UserGames.Load();
             SettingsManager.Presets.Load();
             SettingsManager.PadSettings.Load();
             SettingsManager.UserControllers.Load();
@@ -103,7 +103,7 @@ namespace x360ce.App
             {
                 XiControllers[i] = new Controller((UserIndex)i);
             }
-            GameToCustomizeComboBox.DataSource = SettingsManager.Games.Items;
+            GameToCustomizeComboBox.DataSource = SettingsManager.UserGames.Items;
             GameToCustomizeComboBox.DisplayMember = "DisplayName";
             UpdateTimer = new System.Timers.Timer();
             UpdateTimer.AutoReset = false;
@@ -138,7 +138,7 @@ namespace x360ce.App
             return distinctItems;
         }
 
-        IList<Engine.Data.Game> Games_FilterList(IList<Engine.Data.Game> items)
+        IList<Engine.Data.UserGame> Games_FilterList(IList<Engine.Data.UserGame> items)
         {
             // Make sure default settings have unique by file name.
             var distinctItems = items
@@ -152,7 +152,7 @@ namespace x360ce.App
             if (appItem == null)
             {
                 // Add x360ce.exe
-                var item = x360ce.Engine.Data.Game.FromDisk(appFile.Name);
+                var item = x360ce.Engine.Data.UserGame.FromDisk(appFile.Name);
                 var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
                 item.LoadDefault(program);
                 distinctItems.Add(item);
@@ -274,7 +274,7 @@ namespace x360ce.App
             });
         }
 
-        void AutoConfigure(Engine.Data.Game game)
+        void AutoConfigure(Engine.Data.UserGame game)
         {
             var list = SettingsManager.UserControllers.Items.ToList();
             // Filter devices.
@@ -675,7 +675,7 @@ namespace x360ce.App
             SettingsManager.Settings.Save();
             SettingsManager.Summaries.Save();
             SettingsManager.Programs.Save();
-            SettingsManager.Games.Save();
+            SettingsManager.UserGames.Save();
             SettingsManager.Presets.Save();
             SettingsManager.UserControllers.Save();
             SettingsManager.PadSettings.Save();
@@ -1465,7 +1465,7 @@ namespace x360ce.App
 
         private void StatusIniLabel_DoubleClick(object sender, EventArgs e)
         {
-            var game = (Engine.Data.Game)GameToCustomizeComboBox.SelectedItem;
+            var game = (Engine.Data.UserGame)GameToCustomizeComboBox.SelectedItem;
             // Get game directory.
             var dir = new FileInfo(game.FullPath).Directory;
             var fullPath = Path.Combine(dir.FullName, SettingsManager.IniFileName);

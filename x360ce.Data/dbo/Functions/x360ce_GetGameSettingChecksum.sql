@@ -19,7 +19,7 @@ BEGIN
 			(CASE WHEN x.Timeout > 0 THEN 'Timeout=' + CAST(x.[Timeout] as varchar(16)) + @rn ELSE '' END)
 		)
     FROM
-        x360ce_Games x
+        x360ce_UserGames x
     WHERE
         GameId = @GameId
     RETURN @checksum

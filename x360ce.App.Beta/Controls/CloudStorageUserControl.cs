@@ -79,9 +79,9 @@ namespace x360ce.App.Controls
             Exception error;
             try
             {
-                error = Execute<Game>(CloudAction.Delete);
+                error = Execute<UserGame>(CloudAction.Delete);
                 if (error == null)
-                    error = Execute<Game>(CloudAction.Insert);
+                    error = Execute<UserGame>(CloudAction.Insert);
                 if (error == null)
                     error = Execute<UserController>(CloudAction.Delete);
                 if (error == null)
@@ -123,9 +123,9 @@ namespace x360ce.App.Controls
                 {
                     var command = new CloudCommand();
                     command.Action = action;
-                    if (typeof(T) == typeof(Game))
+                    if (typeof(T) == typeof(UserGame))
                     {
-                        command.Games = items as List<Game>;
+                        command.UserGames = items as List<UserGame>;
                     }
                     else if (typeof(T) == typeof(UserController))
                     {
@@ -185,7 +185,7 @@ namespace x360ce.App.Controls
             queueTimer.SleepTimer.Interval = 1000;
             var allControllers = SettingsManager.UserControllers.Items.ToArray();
             Add(CloudAction.Insert, allControllers);
-            var allGames = SettingsManager.Games.Items.ToArray();
+            var allGames = SettingsManager.UserGames.Items.ToArray();
             Add(CloudAction.Insert, allGames);
         }
 

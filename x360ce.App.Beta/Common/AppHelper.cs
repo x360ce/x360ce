@@ -218,7 +218,7 @@ namespace x360ce.App
 			}
 		}
 
-		public static Engine.Data.Setting GetNewSetting(UserController device, Engine.Data.Game game, MapTo mapTo)
+		public static Engine.Data.Setting GetNewSetting(UserController device, Engine.Data.UserGame game, MapTo mapTo)
 		{
 			// Create new setting for game/device.
 			var newSetting = new Engine.Data.Setting();

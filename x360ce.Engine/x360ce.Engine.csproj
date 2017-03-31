@@ -136,7 +136,7 @@
     <Compile Include="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Data\Game.cs" />
+    <Compile Include="Data\UserGame.cs" />
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Program.cs" />
     <Compile Include="Data\UserController.cs" />

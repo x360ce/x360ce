@@ -116,7 +116,7 @@ namespace x360ce.App
 			return distinctItems;
 		}
 
-		IList<Engine.Data.Game> Games_FilterList(IList<Engine.Data.Game> items)
+		IList<Engine.Data.UserGame> Games_FilterList(IList<Engine.Data.UserGame> items)
 		{
 			// Make sure default settings have unique by file name.
 			var distinctItems = items
@@ -130,7 +130,7 @@ namespace x360ce.App
 			if (appItem == null)
 			{
 				// Add x360ce.exe
-				var item = x360ce.Engine.Data.Game.FromDisk(appFile.Name);
+				var item = x360ce.Engine.Data.UserGame.FromDisk(appFile.Name);
 				var program = SettingManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
 				item.LoadDefault(program);
 				distinctItems.Add(item);

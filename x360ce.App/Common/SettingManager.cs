@@ -36,7 +36,7 @@ namespace x360ce.App
 		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries");
 
 		/// <summary>User Games.</summary>
-		public static SettingsData<Engine.Data.Game> Games = new SettingsData<Engine.Data.Game>("Games");
+		public static SettingsData<Engine.Data.UserGame> Games = new SettingsData<Engine.Data.UserGame>("UserGames");
 
 		/// <summary>Most popular Programs and Games.</summary>
 		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs");
@@ -70,7 +70,7 @@ namespace x360ce.App
 			var game = Games.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
 			if (game == null)
 			{
-				game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+				game = x360ce.Engine.Data.UserGame.FromDisk(fi.FullName);
 				// Load default settings.
 				var program = Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
 				game.LoadDefault(program);

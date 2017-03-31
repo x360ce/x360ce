@@ -47,9 +47,9 @@ namespace x360ce.App.Controls
             ProgramsDataGridView.DataSource = SettingsManager.Programs.Items;
             UpdateControlsFromPrograms();
             // Configure Games.
-            SettingsManager.Games.Items.ListChanged += new ListChangedEventHandler(Games_ListChanged);
-            GamesDataGridView.DataSource = SettingsManager.Games.Items;
-            SettingsManager.Games.Items.ListChanged += Games_Items_ListChanged;
+            SettingsManager.UserGames.Items.ListChanged += new ListChangedEventHandler(Games_ListChanged);
+            GamesDataGridView.DataSource = SettingsManager.UserGames.Items;
+            SettingsManager.UserGames.Items.ListChanged += Games_Items_ListChanged;
             UpdateControlsFromGames();
         }
 
@@ -120,15 +120,15 @@ namespace x360ce.App.Controls
                     else
                     {
                         // Get game by executable name.
-                        var game = SettingsManager.Games.Items.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+                        var game = SettingsManager.UserGames.Items.FirstOrDefault(x => x.FileName.ToLower() == exeName);
                         // If file doesn't exist in the game list then continue.
                         if (game == null)
                         {
                             Invoke((MethodInvoker)delegate ()
                             {
-                                game = x360ce.Engine.Data.Game.FromDisk(exe.FullName);
+                                game = x360ce.Engine.Data.UserGame.FromDisk(exe.FullName);
                                 game.LoadDefault(program);
-                                SettingsManager.Games.Items.Add(game);
+                                SettingsManager.UserGames.Items.Add(game);
                                 added++;
                             });
                         }
@@ -211,8 +211,8 @@ namespace x360ce.App.Controls
             if (selected)
             {
                 var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-                var fileName = ((x360ce.Engine.Data.Game)row.DataBoundItem).FileName.ToLower();
-                var item = SettingsManager.Games.Items.First(x => x.FileName.ToLower() == fileName);
+                var fileName = ((x360ce.Engine.Data.UserGame)row.DataBoundItem).FileName.ToLower();
+                var item = SettingsManager.UserGames.Items.First(x => x.FileName.ToLower() == fileName);
                 GameDetailsControl.CurrentGame = item;
             }
             else
@@ -232,7 +232,7 @@ namespace x360ce.App.Controls
             var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
             if (row != null)
             {
-                var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+                var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
                 fullPath = item.FullPath;
             }
 
@@ -286,9 +286,9 @@ namespace x360ce.App.Controls
             if (e.ColumnIndex == grid.Columns[EnabledColumn.Name].Index)
             {
                 var row = grid.Rows[e.RowIndex];
-                var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+                var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
                 // Workaround for first cell click.
-                var game = SettingsManager.Games.Items.First(x => x.FileName.ToLower() == item.FileName.ToLower());
+                var game = SettingsManager.UserGames.Items.First(x => x.FileName.ToLower() == item.FileName.ToLower());
                 game.IsEnabled = !game.IsEnabled;
             }
         }
@@ -314,7 +314,7 @@ namespace x360ce.App.Controls
         {
             var grid = GamesDataGridView;
             var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
-            var itemsToDelete = SettingsManager.Games.Items.Where(x => selection.Contains(x.FileName)).ToArray();
+            var itemsToDelete = SettingsManager.UserGames.Items.Where(x => selection.Contains(x.FileName)).ToArray();
             MessageBoxForm form = new MessageBoxForm();
             form.StartPosition = FormStartPosition.CenterParent;
             string message;
@@ -334,7 +334,7 @@ namespace x360ce.App.Controls
             {
                 foreach (var item in itemsToDelete)
                 {
-                    SettingsManager.Games.Items.Remove(item);
+                    SettingsManager.UserGames.Items.Remove(item);
                 }
                 SettingsManager.Save();
                 MainForm.Current.CloudPanel.Add(CloudAction.Delete, itemsToDelete);
@@ -352,7 +352,7 @@ namespace x360ce.App.Controls
         {
             var grid = (DataGridView)sender;
             var row = grid.Rows[e.RowIndex];
-            var item = ((x360ce.Engine.Data.Game)row.DataBoundItem);
+            var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
             var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
             AppHelper.ApplyRowStyle(grid, e, item.IsEnabled);
             //e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
@@ -392,7 +392,7 @@ namespace x360ce.App.Controls
             var showDisabled = ShowGamesDropDownButton.Text.Contains("Disabled");
             for (int i = 0; i < rows.Length; i++)
             {
-                var item = (x360ce.Engine.Data.Game)rows[i].DataBoundItem;
+                var item = (x360ce.Engine.Data.UserGame)rows[i].DataBoundItem;
                 var show = true;
                 if (showEnabled) show = (item.IsEnabled == true);
                 if (showDisabled) show = (item.IsEnabled == false);

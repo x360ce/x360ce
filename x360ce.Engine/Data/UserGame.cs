@@ -9,10 +9,10 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class Game: IDisplayName
+	public partial class UserGame: IDisplayName
 	{
 
-		public Game()
+		public UserGame()
 		{
 			Timeout = -1;
 		}
@@ -23,9 +23,9 @@ namespace x360ce.Engine.Data
 			get { return string.Join(" - ", new string[] { FileName, FileProductName });  }
 		}
 
-		public static Game FromDisk(string fileName)
+		public static UserGame FromDisk(string fileName)
 		{
-			var item = new Game();
+			var item = new UserGame();
 			var fi = new FileInfo(fileName);
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
 			var architecture = Win32.PEReader.GetProcessorArchitecture(fi.FullName);

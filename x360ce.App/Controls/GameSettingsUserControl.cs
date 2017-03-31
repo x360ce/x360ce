@@ -116,7 +116,7 @@ namespace x360ce.App.Controls
 						{
 							Invoke((MethodInvoker)delegate()
 							{
-								game = x360ce.Engine.Data.Game.FromDisk(exe.FullName);
+								game = x360ce.Engine.Data.UserGame.FromDisk(exe.FullName);
 								game.LoadDefault(program);
 								SettingManager.Games.Items.Add(game);
 								added++;
@@ -202,7 +202,7 @@ namespace x360ce.App.Controls
 			if (selected)
 			{
 				var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-				var fileName = ((x360ce.Engine.Data.Game)row.DataBoundItem).FileName.ToLower();
+				var fileName = ((x360ce.Engine.Data.UserGame)row.DataBoundItem).FileName.ToLower();
 				var item = SettingManager.Games.Items.First(x => x.FileName.ToLower() == fileName);
 				GameDetailsControl.CurrentGame = item;
 			}
@@ -223,7 +223,7 @@ namespace x360ce.App.Controls
 			var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			if (row != null)
 			{
-				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+				var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
 				fullPath = item.FullPath;
 			}
 
@@ -277,7 +277,7 @@ namespace x360ce.App.Controls
 			if (e.ColumnIndex == grid.Columns[EnabledColumn.Name].Index)
 			{
 				var row = grid.Rows[e.RowIndex];
-				var item = (x360ce.Engine.Data.Game)row.DataBoundItem;
+				var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
 				// Workaround for first cell click.
 				var game = SettingManager.Games.Items.First(x => x.FileName.ToLower() == item.FileName.ToLower());
 				game.IsEnabled = !game.IsEnabled;
@@ -330,7 +330,6 @@ namespace x360ce.App.Controls
 				}
 				SettingManager.Save();
 				ShowHideAndSelectGridRows();
-				CloudStoragePanel.Add(itemsToDelete, CloudAction.Delete);
 			}
 		}
 
@@ -346,7 +345,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
-			var item = ((x360ce.Engine.Data.Game)row.DataBoundItem);
+			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
 			e.CellStyle.ForeColor = item.IsEnabled
 					? grid.DefaultCellStyle.ForeColor
@@ -391,7 +390,7 @@ namespace x360ce.App.Controls
 			var showDisabled = ShowGamesDropDownButton.Text.Contains("Disabled");
 			for (int i = 0; i < rows.Length; i++)
 			{
-				var item = (x360ce.Engine.Data.Game)rows[i].DataBoundItem;
+				var item = (x360ce.Engine.Data.UserGame)rows[i].DataBoundItem;
 				var show = true;
 				if (showEnabled) show = (item.IsEnabled == true);
 				if (showDisabled) show = (item.IsEnabled == false);

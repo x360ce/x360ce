@@ -197,12 +197,6 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CloudStorageUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\CloudStorageUserControl.Designer.cs">
-      <DependentUpon>CloudStorageUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\DirectInputControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -315,9 +309,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CloudStorageUserControl.resx">
-      <DependentUpon>CloudStorageUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DirectInputControl.resx">
       <DependentUpon>DirectInputControl.cs</DependentUpon>

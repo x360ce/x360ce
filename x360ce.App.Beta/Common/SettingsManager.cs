@@ -65,7 +65,7 @@ namespace x360ce.App
         public static XSettingsData<Engine.Data.Summary> Summaries = new XSettingsData<Engine.Data.Summary>("Summaries", "Summary of most popular Settings.");
 
         /// <summary>User Games.</summary>
-        public static XSettingsData<Engine.Data.Game> Games = new XSettingsData<Engine.Data.Game>("Games", "User Games.");
+        public static XSettingsData<Engine.Data.UserGame> UserGames = new XSettingsData<Engine.Data.UserGame>("UserGames", "User Games.");
 
         /// <summary>Most popular Programs and Games.</summary>
         public static XSettingsData<Engine.Data.Program> Programs = new XSettingsData<Engine.Data.Program>("Programs", "Most popular Programs and Games.");
@@ -129,12 +129,12 @@ namespace x360ce.App
         {
             if (updateGameDatabase)
             {
-                GameDatabaseManager.Current.SetPrograms(Programs.Items, Games.Items);
+                GameDatabaseManager.Current.SetPrograms(Programs.Items, UserGames.Items);
             }
             lock (saveReadFileLock)
             {
                 Programs.Save();
-                Games.Save();
+                UserGames.Save();
             }
         }
 
@@ -143,14 +143,14 @@ namespace x360ce.App
             var fi = new FileInfo(filePath);
             if (!fi.Exists) return;
             // Check if item already exists.
-            var game = Games.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
+            var game = UserGames.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
             if (game == null)
             {
-                game = x360ce.Engine.Data.Game.FromDisk(fi.FullName);
+                game = x360ce.Engine.Data.UserGame.FromDisk(fi.FullName);
                 // Load default settings.
                 var program = Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
                 game.LoadDefault(program);
-                Games.Items.Add(game);
+                UserGames.Items.Add(game);
             }
             else
             {

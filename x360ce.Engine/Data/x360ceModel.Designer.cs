@@ -164,18 +164,18 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<Game> Games
+        public ObjectSet<UserGame> UserGames
         {
             get
             {
-                if ((_Games == null))
+                if ((_UserGames == null))
                 {
-                    _Games = base.CreateObjectSet<Game>("Games");
+                    _UserGames = base.CreateObjectSet<UserGame>("UserGames");
                 }
-                return _Games;
+                return _UserGames;
             }
         }
-        private ObjectSet<Game> _Games;
+        private ObjectSet<UserGame> _UserGames;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -262,11 +262,11 @@ namespace x360ce.Engine.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the Games EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// Deprecated Method for adding a new object to the UserGames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
-        public void AddToGames(Game game)
+        public void AddToUserGames(UserGame userGame)
         {
-            base.AddObject("Games", game);
+            base.AddObject("UserGames", userGame);
         }
     
         /// <summary>
@@ -292,579 +292,6 @@ namespace x360ce.Engine.Data
     #endregion
 
     #region Entities
-    
-    /// <summary>
-    /// No Metadata Documentation available.
-    /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="Game")]
-    [Serializable()]
-    [DataContractAttribute(IsReference=true)]
-    public partial class Game : EntityObject
-    {
-        #region Factory Method
-    
-        /// <summary>
-        /// Create a new Game object.
-        /// </summary>
-        /// <param name="gameId">Initial value of the GameId property.</param>
-        /// <param name="diskDriveId">Initial value of the DiskDriveId property.</param>
-        /// <param name="fileName">Initial value of the FileName property.</param>
-        /// <param name="fileProductName">Initial value of the FileProductName property.</param>
-        /// <param name="fileVersion">Initial value of the FileVersion property.</param>
-        /// <param name="fullPath">Initial value of the FullPath property.</param>
-        /// <param name="companyName">Initial value of the CompanyName property.</param>
-        /// <param name="hookMask">Initial value of the HookMask property.</param>
-        /// <param name="xInputMask">Initial value of the XInputMask property.</param>
-        /// <param name="comment">Initial value of the Comment property.</param>
-        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
-        /// <param name="dInputMask">Initial value of the DInputMask property.</param>
-        /// <param name="dInputFile">Initial value of the DInputFile property.</param>
-        /// <param name="fakeVID">Initial value of the FakeVID property.</param>
-        /// <param name="fakePID">Initial value of the FakePID property.</param>
-        /// <param name="timeout">Initial value of the Timeout property.</param>
-        /// <param name="weight">Initial value of the Weight property.</param>
-        public static Game CreateGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight)
-        {
-            Game game = new Game();
-            game.GameId = gameId;
-            game.DiskDriveId = diskDriveId;
-            game.FileName = fileName;
-            game.FileProductName = fileProductName;
-            game.FileVersion = fileVersion;
-            game.FullPath = fullPath;
-            game.CompanyName = companyName;
-            game.HookMask = hookMask;
-            game.XInputMask = xInputMask;
-            game.Comment = comment;
-            game.IsEnabled = isEnabled;
-            game.DateCreated = dateCreated;
-            game.ProcessorArchitecture = processorArchitecture;
-            game.DInputMask = dInputMask;
-            game.DInputFile = dInputFile;
-            game.FakeVID = fakeVID;
-            game.FakePID = fakePID;
-            game.Timeout = timeout;
-            game.Weight = weight;
-            return game;
-        }
-
-        #endregion
-
-        #region Primitive Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Guid GameId
-        {
-            get
-            {
-                return _GameId;
-            }
-            set
-            {
-                if (_GameId != value)
-                {
-                    OnGameIdChanging(value);
-                    ReportPropertyChanging("GameId");
-                    _GameId = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("GameId");
-                    OnGameIdChanged();
-                }
-            }
-        }
-        private global::System.Guid _GameId;
-        partial void OnGameIdChanging(global::System.Guid value);
-        partial void OnGameIdChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Guid DiskDriveId
-        {
-            get
-            {
-                return _DiskDriveId;
-            }
-            set
-            {
-                OnDiskDriveIdChanging(value);
-                ReportPropertyChanging("DiskDriveId");
-                _DiskDriveId = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DiskDriveId");
-                OnDiskDriveIdChanged();
-            }
-        }
-        private global::System.Guid _DiskDriveId;
-        partial void OnDiskDriveIdChanging(global::System.Guid value);
-        partial void OnDiskDriveIdChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String FileName
-        {
-            get
-            {
-                return _FileName;
-            }
-            set
-            {
-                OnFileNameChanging(value);
-                ReportPropertyChanging("FileName");
-                _FileName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("FileName");
-                OnFileNameChanged();
-            }
-        }
-        private global::System.String _FileName;
-        partial void OnFileNameChanging(global::System.String value);
-        partial void OnFileNameChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String FileProductName
-        {
-            get
-            {
-                return _FileProductName;
-            }
-            set
-            {
-                OnFileProductNameChanging(value);
-                ReportPropertyChanging("FileProductName");
-                _FileProductName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("FileProductName");
-                OnFileProductNameChanged();
-            }
-        }
-        private global::System.String _FileProductName;
-        partial void OnFileProductNameChanging(global::System.String value);
-        partial void OnFileProductNameChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String FileVersion
-        {
-            get
-            {
-                return _FileVersion;
-            }
-            set
-            {
-                OnFileVersionChanging(value);
-                ReportPropertyChanging("FileVersion");
-                _FileVersion = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("FileVersion");
-                OnFileVersionChanged();
-            }
-        }
-        private global::System.String _FileVersion;
-        partial void OnFileVersionChanging(global::System.String value);
-        partial void OnFileVersionChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String FullPath
-        {
-            get
-            {
-                return _FullPath;
-            }
-            set
-            {
-                OnFullPathChanging(value);
-                ReportPropertyChanging("FullPath");
-                _FullPath = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("FullPath");
-                OnFullPathChanged();
-            }
-        }
-        private global::System.String _FullPath;
-        partial void OnFullPathChanging(global::System.String value);
-        partial void OnFullPathChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String CompanyName
-        {
-            get
-            {
-                return _CompanyName;
-            }
-            set
-            {
-                OnCompanyNameChanging(value);
-                ReportPropertyChanging("CompanyName");
-                _CompanyName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("CompanyName");
-                OnCompanyNameChanged();
-            }
-        }
-        private global::System.String _CompanyName;
-        partial void OnCompanyNameChanging(global::System.String value);
-        partial void OnCompanyNameChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 HookMask
-        {
-            get
-            {
-                return _HookMask;
-            }
-            set
-            {
-                OnHookMaskChanging(value);
-                ReportPropertyChanging("HookMask");
-                _HookMask = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("HookMask");
-                OnHookMaskChanged();
-            }
-        }
-        private global::System.Int32 _HookMask;
-        partial void OnHookMaskChanging(global::System.Int32 value);
-        partial void OnHookMaskChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 XInputMask
-        {
-            get
-            {
-                return _XInputMask;
-            }
-            set
-            {
-                OnXInputMaskChanging(value);
-                ReportPropertyChanging("XInputMask");
-                _XInputMask = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("XInputMask");
-                OnXInputMaskChanged();
-            }
-        }
-        private global::System.Int32 _XInputMask;
-        partial void OnXInputMaskChanging(global::System.Int32 value);
-        partial void OnXInputMaskChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Comment
-        {
-            get
-            {
-                return _Comment;
-            }
-            set
-            {
-                OnCommentChanging(value);
-                ReportPropertyChanging("Comment");
-                _Comment = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Comment");
-                OnCommentChanged();
-            }
-        }
-        private global::System.String _Comment;
-        partial void OnCommentChanging(global::System.String value);
-        partial void OnCommentChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean IsEnabled
-        {
-            get
-            {
-                return _IsEnabled;
-            }
-            set
-            {
-                OnIsEnabledChanging(value);
-                ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("IsEnabled");
-                OnIsEnabledChanged();
-            }
-        }
-        private global::System.Boolean _IsEnabled;
-        partial void OnIsEnabledChanging(global::System.Boolean value);
-        partial void OnIsEnabledChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.DateTime DateCreated
-        {
-            get
-            {
-                return _DateCreated;
-            }
-            set
-            {
-                OnDateCreatedChanging(value);
-                ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateCreated");
-                OnDateCreatedChanged();
-            }
-        }
-        private global::System.DateTime _DateCreated;
-        partial void OnDateCreatedChanging(global::System.DateTime value);
-        partial void OnDateCreatedChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DateUpdated
-        {
-            get
-            {
-                return _DateUpdated;
-            }
-            set
-            {
-                OnDateUpdatedChanging(value);
-                ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateUpdated");
-                OnDateUpdatedChanged();
-            }
-        }
-        private Nullable<global::System.DateTime> _DateUpdated;
-        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
-        partial void OnDateUpdatedChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 ProcessorArchitecture
-        {
-            get
-            {
-                return _ProcessorArchitecture;
-            }
-            set
-            {
-                OnProcessorArchitectureChanging(value);
-                ReportPropertyChanging("ProcessorArchitecture");
-                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ProcessorArchitecture");
-                OnProcessorArchitectureChanged();
-            }
-        }
-        private global::System.Int32 _ProcessorArchitecture;
-        partial void OnProcessorArchitectureChanging(global::System.Int32 value);
-        partial void OnProcessorArchitectureChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 DInputMask
-        {
-            get
-            {
-                return _DInputMask;
-            }
-            set
-            {
-                OnDInputMaskChanging(value);
-                ReportPropertyChanging("DInputMask");
-                _DInputMask = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DInputMask");
-                OnDInputMaskChanged();
-            }
-        }
-        private global::System.Int32 _DInputMask;
-        partial void OnDInputMaskChanging(global::System.Int32 value);
-        partial void OnDInputMaskChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String DInputFile
-        {
-            get
-            {
-                return _DInputFile;
-            }
-            set
-            {
-                OnDInputFileChanging(value);
-                ReportPropertyChanging("DInputFile");
-                _DInputFile = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("DInputFile");
-                OnDInputFileChanged();
-            }
-        }
-        private global::System.String _DInputFile;
-        partial void OnDInputFileChanging(global::System.String value);
-        partial void OnDInputFileChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 FakeVID
-        {
-            get
-            {
-                return _FakeVID;
-            }
-            set
-            {
-                OnFakeVIDChanging(value);
-                ReportPropertyChanging("FakeVID");
-                _FakeVID = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("FakeVID");
-                OnFakeVIDChanged();
-            }
-        }
-        private global::System.Int32 _FakeVID;
-        partial void OnFakeVIDChanging(global::System.Int32 value);
-        partial void OnFakeVIDChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 FakePID
-        {
-            get
-            {
-                return _FakePID;
-            }
-            set
-            {
-                OnFakePIDChanging(value);
-                ReportPropertyChanging("FakePID");
-                _FakePID = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("FakePID");
-                OnFakePIDChanged();
-            }
-        }
-        private global::System.Int32 _FakePID;
-        partial void OnFakePIDChanging(global::System.Int32 value);
-        partial void OnFakePIDChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 Timeout
-        {
-            get
-            {
-                return _Timeout;
-            }
-            set
-            {
-                OnTimeoutChanging(value);
-                ReportPropertyChanging("Timeout");
-                _Timeout = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("Timeout");
-                OnTimeoutChanged();
-            }
-        }
-        private global::System.Int32 _Timeout;
-        partial void OnTimeoutChanging(global::System.Int32 value);
-        partial void OnTimeoutChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.Guid> SettingChecksum
-        {
-            get
-            {
-                return _SettingChecksum;
-            }
-            set
-            {
-                OnSettingChecksumChanging(value);
-                ReportPropertyChanging("SettingChecksum");
-                _SettingChecksum = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("SettingChecksum");
-                OnSettingChecksumChanged();
-            }
-        }
-        private Nullable<global::System.Guid> _SettingChecksum;
-        partial void OnSettingChecksumChanging(Nullable<global::System.Guid> value);
-        partial void OnSettingChecksumChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 Weight
-        {
-            get
-            {
-                return _Weight;
-            }
-            set
-            {
-                OnWeightChanging(value);
-                ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("Weight");
-                OnWeightChanged();
-            }
-        }
-        private global::System.Int32 _Weight;
-        partial void OnWeightChanging(global::System.Int32 value);
-        partial void OnWeightChanged();
-
-        #endregion
-
-    
-    }
     
     /// <summary>
     /// No Metadata Documentation available.
@@ -5412,6 +4839,579 @@ namespace x360ce.Engine.Data
         private global::System.Boolean _IsEnabled;
         partial void OnIsEnabledChanging(global::System.Boolean value);
         partial void OnIsEnabledChanged();
+
+        #endregion
+
+    
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserGame")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UserGame : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UserGame object.
+        /// </summary>
+        /// <param name="gameId">Initial value of the GameId property.</param>
+        /// <param name="diskDriveId">Initial value of the DiskDriveId property.</param>
+        /// <param name="fileName">Initial value of the FileName property.</param>
+        /// <param name="fileProductName">Initial value of the FileProductName property.</param>
+        /// <param name="fileVersion">Initial value of the FileVersion property.</param>
+        /// <param name="fullPath">Initial value of the FullPath property.</param>
+        /// <param name="companyName">Initial value of the CompanyName property.</param>
+        /// <param name="hookMask">Initial value of the HookMask property.</param>
+        /// <param name="xInputMask">Initial value of the XInputMask property.</param>
+        /// <param name="comment">Initial value of the Comment property.</param>
+        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
+        /// <param name="dInputMask">Initial value of the DInputMask property.</param>
+        /// <param name="dInputFile">Initial value of the DInputFile property.</param>
+        /// <param name="fakeVID">Initial value of the FakeVID property.</param>
+        /// <param name="fakePID">Initial value of the FakePID property.</param>
+        /// <param name="timeout">Initial value of the Timeout property.</param>
+        /// <param name="weight">Initial value of the Weight property.</param>
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight)
+        {
+            UserGame userGame = new UserGame();
+            userGame.GameId = gameId;
+            userGame.DiskDriveId = diskDriveId;
+            userGame.FileName = fileName;
+            userGame.FileProductName = fileProductName;
+            userGame.FileVersion = fileVersion;
+            userGame.FullPath = fullPath;
+            userGame.CompanyName = companyName;
+            userGame.HookMask = hookMask;
+            userGame.XInputMask = xInputMask;
+            userGame.Comment = comment;
+            userGame.IsEnabled = isEnabled;
+            userGame.DateCreated = dateCreated;
+            userGame.ProcessorArchitecture = processorArchitecture;
+            userGame.DInputMask = dInputMask;
+            userGame.DInputFile = dInputFile;
+            userGame.FakeVID = fakeVID;
+            userGame.FakePID = fakePID;
+            userGame.Timeout = timeout;
+            userGame.Weight = weight;
+            return userGame;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid GameId
+        {
+            get
+            {
+                return _GameId;
+            }
+            set
+            {
+                if (_GameId != value)
+                {
+                    OnGameIdChanging(value);
+                    ReportPropertyChanging("GameId");
+                    _GameId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("GameId");
+                    OnGameIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _GameId;
+        partial void OnGameIdChanging(global::System.Guid value);
+        partial void OnGameIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid DiskDriveId
+        {
+            get
+            {
+                return _DiskDriveId;
+            }
+            set
+            {
+                OnDiskDriveIdChanging(value);
+                ReportPropertyChanging("DiskDriveId");
+                _DiskDriveId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DiskDriveId");
+                OnDiskDriveIdChanged();
+            }
+        }
+        private global::System.Guid _DiskDriveId;
+        partial void OnDiskDriveIdChanging(global::System.Guid value);
+        partial void OnDiskDriveIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileName
+        {
+            get
+            {
+                return _FileName;
+            }
+            set
+            {
+                OnFileNameChanging(value);
+                ReportPropertyChanging("FileName");
+                _FileName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileName");
+                OnFileNameChanged();
+            }
+        }
+        private global::System.String _FileName;
+        partial void OnFileNameChanging(global::System.String value);
+        partial void OnFileNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileProductName
+        {
+            get
+            {
+                return _FileProductName;
+            }
+            set
+            {
+                OnFileProductNameChanging(value);
+                ReportPropertyChanging("FileProductName");
+                _FileProductName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileProductName");
+                OnFileProductNameChanged();
+            }
+        }
+        private global::System.String _FileProductName;
+        partial void OnFileProductNameChanging(global::System.String value);
+        partial void OnFileProductNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileVersion
+        {
+            get
+            {
+                return _FileVersion;
+            }
+            set
+            {
+                OnFileVersionChanging(value);
+                ReportPropertyChanging("FileVersion");
+                _FileVersion = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FileVersion");
+                OnFileVersionChanged();
+            }
+        }
+        private global::System.String _FileVersion;
+        partial void OnFileVersionChanging(global::System.String value);
+        partial void OnFileVersionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FullPath
+        {
+            get
+            {
+                return _FullPath;
+            }
+            set
+            {
+                OnFullPathChanging(value);
+                ReportPropertyChanging("FullPath");
+                _FullPath = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("FullPath");
+                OnFullPathChanged();
+            }
+        }
+        private global::System.String _FullPath;
+        partial void OnFullPathChanging(global::System.String value);
+        partial void OnFullPathChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String CompanyName
+        {
+            get
+            {
+                return _CompanyName;
+            }
+            set
+            {
+                OnCompanyNameChanging(value);
+                ReportPropertyChanging("CompanyName");
+                _CompanyName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("CompanyName");
+                OnCompanyNameChanged();
+            }
+        }
+        private global::System.String _CompanyName;
+        partial void OnCompanyNameChanging(global::System.String value);
+        partial void OnCompanyNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 HookMask
+        {
+            get
+            {
+                return _HookMask;
+            }
+            set
+            {
+                OnHookMaskChanging(value);
+                ReportPropertyChanging("HookMask");
+                _HookMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HookMask");
+                OnHookMaskChanged();
+            }
+        }
+        private global::System.Int32 _HookMask;
+        partial void OnHookMaskChanging(global::System.Int32 value);
+        partial void OnHookMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 XInputMask
+        {
+            get
+            {
+                return _XInputMask;
+            }
+            set
+            {
+                OnXInputMaskChanging(value);
+                ReportPropertyChanging("XInputMask");
+                _XInputMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("XInputMask");
+                OnXInputMaskChanged();
+            }
+        }
+        private global::System.Int32 _XInputMask;
+        partial void OnXInputMaskChanging(global::System.Int32 value);
+        partial void OnXInputMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+            set
+            {
+                OnCommentChanging(value);
+                ReportPropertyChanging("Comment");
+                _Comment = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Comment");
+                OnCommentChanged();
+            }
+        }
+        private global::System.String _Comment;
+        partial void OnCommentChanging(global::System.String value);
+        partial void OnCommentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsEnabled
+        {
+            get
+            {
+                return _IsEnabled;
+            }
+            set
+            {
+                OnIsEnabledChanging(value);
+                ReportPropertyChanging("IsEnabled");
+                _IsEnabled = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsEnabled");
+                OnIsEnabledChanged();
+            }
+        }
+        private global::System.Boolean _IsEnabled;
+        partial void OnIsEnabledChanging(global::System.Boolean value);
+        partial void OnIsEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _DateUpdated;
+        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
+        partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ProcessorArchitecture
+        {
+            get
+            {
+                return _ProcessorArchitecture;
+            }
+            set
+            {
+                OnProcessorArchitectureChanging(value);
+                ReportPropertyChanging("ProcessorArchitecture");
+                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProcessorArchitecture");
+                OnProcessorArchitectureChanged();
+            }
+        }
+        private global::System.Int32 _ProcessorArchitecture;
+        partial void OnProcessorArchitectureChanging(global::System.Int32 value);
+        partial void OnProcessorArchitectureChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DInputMask
+        {
+            get
+            {
+                return _DInputMask;
+            }
+            set
+            {
+                OnDInputMaskChanging(value);
+                ReportPropertyChanging("DInputMask");
+                _DInputMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DInputMask");
+                OnDInputMaskChanged();
+            }
+        }
+        private global::System.Int32 _DInputMask;
+        partial void OnDInputMaskChanging(global::System.Int32 value);
+        partial void OnDInputMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DInputFile
+        {
+            get
+            {
+                return _DInputFile;
+            }
+            set
+            {
+                OnDInputFileChanging(value);
+                ReportPropertyChanging("DInputFile");
+                _DInputFile = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DInputFile");
+                OnDInputFileChanged();
+            }
+        }
+        private global::System.String _DInputFile;
+        partial void OnDInputFileChanging(global::System.String value);
+        partial void OnDInputFileChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 FakeVID
+        {
+            get
+            {
+                return _FakeVID;
+            }
+            set
+            {
+                OnFakeVIDChanging(value);
+                ReportPropertyChanging("FakeVID");
+                _FakeVID = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("FakeVID");
+                OnFakeVIDChanged();
+            }
+        }
+        private global::System.Int32 _FakeVID;
+        partial void OnFakeVIDChanging(global::System.Int32 value);
+        partial void OnFakeVIDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 FakePID
+        {
+            get
+            {
+                return _FakePID;
+            }
+            set
+            {
+                OnFakePIDChanging(value);
+                ReportPropertyChanging("FakePID");
+                _FakePID = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("FakePID");
+                OnFakePIDChanged();
+            }
+        }
+        private global::System.Int32 _FakePID;
+        partial void OnFakePIDChanging(global::System.Int32 value);
+        partial void OnFakePIDChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Timeout
+        {
+            get
+            {
+                return _Timeout;
+            }
+            set
+            {
+                OnTimeoutChanging(value);
+                ReportPropertyChanging("Timeout");
+                _Timeout = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Timeout");
+                OnTimeoutChanged();
+            }
+        }
+        private global::System.Int32 _Timeout;
+        partial void OnTimeoutChanging(global::System.Int32 value);
+        partial void OnTimeoutChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Guid> SettingChecksum
+        {
+            get
+            {
+                return _SettingChecksum;
+            }
+            set
+            {
+                OnSettingChecksumChanging(value);
+                ReportPropertyChanging("SettingChecksum");
+                _SettingChecksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SettingChecksum");
+                OnSettingChecksumChanged();
+            }
+        }
+        private Nullable<global::System.Guid> _SettingChecksum;
+        partial void OnSettingChecksumChanging(Nullable<global::System.Guid> value);
+        partial void OnSettingChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Weight
+        {
+            get
+            {
+                return _Weight;
+            }
+            set
+            {
+                OnWeightChanging(value);
+                ReportPropertyChanging("Weight");
+                _Weight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Weight");
+                OnWeightChanged();
+            }
+        }
+        private global::System.Int32 _Weight;
+        partial void OnWeightChanging(global::System.Int32 value);
+        partial void OnWeightChanged();
 
         #endregion
 
