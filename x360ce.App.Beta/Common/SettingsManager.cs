@@ -76,8 +76,8 @@ namespace x360ce.App
         /// <summary>Preset PadSettings.</summary>
         public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings", "Preset PadSettings.");
 
-        /// <summary>User Controllers.</summary>
-        public static XSettingsData<Engine.Data.UserController> UserControllers = new XSettingsData<Engine.Data.UserController>("UserControllers", "User Controllers.");
+        /// <summary>User Devices (Direct Input).</summary>
+        public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices", "User Devices (Direct Input).");
 
         /// <summary>User Controller Instances.</summary>
         public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances.");
@@ -97,9 +97,9 @@ namespace x360ce.App
             ).ToList();
         }
 
-        public static UserController GetDevice(Guid instanceGuid)
+        public static UserDevice GetDevice(Guid instanceGuid)
         {
-            return UserControllers.Items.FirstOrDefault(x =>
+            return UserDevices.Items.FirstOrDefault(x =>
                 x.InstanceGuid.Equals(instanceGuid));
         }
 
@@ -109,14 +109,14 @@ namespace x360ce.App
                 x.PadSettingChecksum.Equals(padSettingChecksum));
         }
 
-        public static List<UserController> GetDevices(string fileName, MapTo mapTo)
+        public static List<UserDevice> GetDevices(string fileName, MapTo mapTo)
         {
             var settings = GetSettings(fileName);
             // Get all mapped to specific index.
             var instances = settings
                 .Where(x => x.MapTo == (int)mapTo)
                 .Select(x => x.InstanceGuid).ToArray();
-            var devices = UserControllers.Items
+            var devices = UserDevices.Items
                 .Where(x => instances.Contains(x.InstanceGuid))
                 .ToList();
             // Return available devices.

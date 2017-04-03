@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class DirectInputControl
+	partial class DirectInputUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.

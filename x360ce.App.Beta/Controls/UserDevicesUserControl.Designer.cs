@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class DevicesUserControl
+	partial class UserDevicesUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.

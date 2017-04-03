@@ -14,7 +14,7 @@
     [FakeVID]               INT              CONSTRAINT [DF_x360ce_UserGames_FakeVID] DEFAULT ((0)) NOT NULL,
     [FakePID]               INT              CONSTRAINT [DF_x360ce_UserGames_FakePID] DEFAULT ((0)) NOT NULL,
     [Timeout]               INT              CONSTRAINT [DF_x360ce_UserGames_Timeout] DEFAULT ((-1)) NOT NULL,
-    [SettingChecksum]       AS               ([dbo].[x360ce_GetGameSettingChecksum]([GameId])),
+    [SettingChecksum]       AS               ([dbo].[x360ce_GetUserGameSettingChecksum]([GameId])),
     [Weight]                INT              CONSTRAINT [DF_x360ce_UserGames_Weight] DEFAULT ((0)) NOT NULL,
     [Comment]               NVARCHAR (1024)  CONSTRAINT [DF_x360ce_UserGames_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]             BIT              CONSTRAINT [DF_x360ce_UserGames_IsEnabled] DEFAULT ((1)) NOT NULL,

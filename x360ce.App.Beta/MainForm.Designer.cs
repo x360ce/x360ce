@@ -26,17 +26,17 @@ namespace x360ce.App
             this.Pad3TabPage = new System.Windows.Forms.TabPage();
             this.Pad4TabPage = new System.Windows.Forms.TabPage();
             this.OptionsTabPage = new System.Windows.Forms.TabPage();
-            this.OptionsPanel = new x360ce.App.Controls.OptionsControl();
+            this.OptionsPanel = new x360ce.App.Controls.OptionsUserControl();
             this.GamesTabPage = new System.Windows.Forms.TabPage();
-            this.GameSettingsPanel = new x360ce.App.Controls.GameSettingsUserControl();
+            this.GameSettingsPanel = new x360ce.App.Controls.GamesUserControl();
             this.DevicesTabPage = new System.Windows.Forms.TabPage();
-            this.ControllersPanel = new x360ce.App.Controls.DevicesUserControl();
+            this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
             this.SettingsTabPage = new System.Windows.Forms.TabPage();
             this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
             this.IniTabPage = new System.Windows.Forms.TabPage();
             this.IniTextBox = new System.Windows.Forms.TextBox();
             this.CloudTabPage = new System.Windows.Forms.TabPage();
-            this.CloudPanel = new x360ce.App.Controls.CloudStorageUserControl();
+            this.CloudPanel = new x360ce.App.Controls.CloudUserControl();
             this.HelpTabPage = new System.Windows.Forms.TabPage();
             this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
             this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -539,9 +539,9 @@ namespace x360ce.App
         public Controls.ControllerSettingsUserControl SettingsDatabasePanel;
         public TabControl MainTabControl;
 		TabPage GamesTabPage;
-        public Controls.OptionsControl OptionsPanel;
+        public Controls.OptionsUserControl OptionsPanel;
         public ToolTip ToolTip;
-		public Controls.GameSettingsUserControl GameSettingsPanel;
+		public Controls.GamesUserControl GameSettingsPanel;
 		private NotifyIcon TrayNotifyIcon;
 		private ContextMenuStrip TrayContextMenuStrip;
 		private ToolStripMenuItem OpenApplicationToolStripMenuItem;
@@ -556,9 +556,9 @@ namespace x360ce.App
 		private TabPage IniTabPage;
 		private TextBox IniTextBox;
 		private TabPage DevicesTabPage;
-		private Controls.DevicesUserControl ControllersPanel;
+		private Controls.UserDevicesUserControl ControllersPanel;
 		public ToolStripStatusLabel CloudMessagesLabel;
 		private TabPage CloudTabPage;
-		public Controls.CloudStorageUserControl CloudPanel;
+		public Controls.CloudUserControl CloudPanel;
 	}
 }

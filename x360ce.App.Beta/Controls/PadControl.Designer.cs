@@ -200,7 +200,7 @@
 			this.LeftThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
 			this.RightThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
 			this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.DirectInputPanel = new x360ce.App.Controls.DirectInputControl();
+			this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
 			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -2616,7 +2616,7 @@
 		private System.Windows.Forms.ToolStripButton RemoveMapButton;
 		private System.Windows.Forms.ToolStripButton AddMapButton;
 		private System.Windows.Forms.Panel DevicesToMapSeparatorPanel;
-		private DirectInputControl DirectInputPanel;
+		private DirectInputUserControl DirectInputPanel;
 		private System.Windows.Forms.Button LoadPresetButton;
 		public System.Windows.Forms.DataGridView MappedDevicesDataGridView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn InstanceIdColumn;

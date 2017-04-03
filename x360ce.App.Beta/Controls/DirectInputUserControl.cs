@@ -14,9 +14,9 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-    public partial class DirectInputControl : UserControl
+    public partial class DirectInputUserControl : UserControl
     {
-        public DirectInputControl()
+        public DirectInputUserControl()
         {
             InitializeComponent();
             InitDirectInputTab();
@@ -54,7 +54,7 @@ namespace x360ce.App.Controls
             DiEffectsDataGridView.DataSource = DiEffectsTable;
         }
 
-        void ShowDeviceInfo(Joystick device, UserController dInfo)
+        void ShowDeviceInfo(Joystick device, UserDevice dInfo)
         {
             if (device == null)
             {
@@ -294,7 +294,7 @@ namespace x360ce.App.Controls
         Guid deviceInstanceGuid;
         bool isWheel = false;
 
-        public void UpdateFrom(UserController diDevice, out JoystickState state)
+        public void UpdateFrom(UserDevice diDevice, out JoystickState state)
         {
             state = null;
             if (diDevice != null)

@@ -11,7 +11,7 @@ namespace x360ce.Engine
 
 		public CloudAction Action { get; set; }
 
-		public List<UserController> UserControllers { get; set; }
+		public List<UserDevice> UserControllers { get; set; }
 		public List<UserGame> UserGames { get; set; }
 
 	}

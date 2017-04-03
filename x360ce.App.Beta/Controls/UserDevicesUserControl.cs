@@ -11,9 +11,9 @@ using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
-	public partial class DevicesUserControl : UserControl
+	public partial class UserDevicesUserControl : UserControl
 	{
-		public DevicesUserControl()
+		public UserDevicesUserControl()
 		{
 			InitializeComponent();
 		}
@@ -22,13 +22,13 @@ namespace x360ce.App.Controls
 		{
 			UpdateButtons();
 			ControllersDataGridView.AutoGenerateColumns = false;
-			ControllersDataGridView.DataSource = SettingsManager.UserControllers.Items;
+			ControllersDataGridView.DataSource = SettingsManager.UserDevices.Items;
 		}
 
 		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var item = ((UserController)grid.Rows[e.RowIndex].DataBoundItem);
+			var item = ((UserDevice)grid.Rows[e.RowIndex].DataBoundItem);
 			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
 				e.Value = item.IsOnline
@@ -37,10 +37,10 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public UserController[] GetSelected()
+		public UserDevice[] GetSelected()
 		{
 			var grid = ControllersDataGridView;
-			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserController)x.DataBoundItem).ToArray();
+			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserDevice)x.DataBoundItem).ToArray();
 			return items;
 		}
 
@@ -54,7 +54,7 @@ namespace x360ce.App.Controls
 			var items = GetSelected();
 			foreach (var item in items)
 			{
-				SettingsManager.UserControllers.Items.Remove(item);
+				SettingsManager.UserDevices.Items.Remove(item);
 			}
 			MainForm.Current.CloudPanel.Add(CloudAction.Delete, items);
 		}

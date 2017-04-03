@@ -512,7 +512,7 @@ namespace x360ce.Web.WebServices
 
 		#region Maintain: User Controllers
 
-		string Delete(List<UserController> items)
+		string Delete(List<UserDevice> items)
 		{
 			var db = new x360ceModelContainer();
 			var deleted = 0;
@@ -520,9 +520,9 @@ namespace x360ce.Web.WebServices
 			{
 				var item = items[i];
 				var instanceGuid = item.InstanceGuid;
-				var currentItem = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+				var currentItem = db.UserDevices.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
 				if (currentItem == null) continue;
-				db.UserControllers.DeleteObject(currentItem);
+				db.UserDevices.DeleteObject(currentItem);
 				deleted++;
 			}
 			db.SaveChanges();
@@ -531,7 +531,7 @@ namespace x360ce.Web.WebServices
 			return string.Format("{0} record(s) deleted.", deleted);
 		}
 
-		string Upsert(List<UserController> items)
+		string Upsert(List<UserDevice> items)
 		{
 			var db = new x360ceModelContainer();
 			var created = 0;
@@ -540,11 +540,11 @@ namespace x360ce.Web.WebServices
 			{
 				var item = items[i];
 				var instanceGuid = item.InstanceGuid;
-				var uc = db.UserControllers.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+				var uc = db.UserDevices.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
 				if (uc == null)
 				{
 					created++;
-					db.UserControllers.AddObject(item);
+					db.UserDevices.AddObject(item);
 					uc.Id = Guid.NewGuid();
 					uc.DateCreated = DateTime.Now;
 				}

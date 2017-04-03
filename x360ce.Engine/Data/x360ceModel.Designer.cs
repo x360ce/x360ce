@@ -196,18 +196,18 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<UserController> UserControllers
+        public ObjectSet<UserDevice> UserDevices
         {
             get
             {
-                if ((_UserControllers == null))
+                if ((_UserDevices == null))
                 {
-                    _UserControllers = base.CreateObjectSet<UserController>("UserControllers");
+                    _UserDevices = base.CreateObjectSet<UserDevice>("UserDevices");
                 }
-                return _UserControllers;
+                return _UserDevices;
             }
         }
-        private ObjectSet<UserController> _UserControllers;
+        private ObjectSet<UserDevice> _UserDevices;
 
         #endregion
 
@@ -278,11 +278,11 @@ namespace x360ce.Engine.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the UserControllers EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// Deprecated Method for adding a new object to the UserDevices EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
-        public void AddToUserControllers(UserController userController)
+        public void AddToUserDevices(UserDevice userDevice)
         {
-            base.AddObject("UserControllers", userController);
+            base.AddObject("UserDevices", userDevice);
         }
 
         #endregion
@@ -3647,15 +3647,15 @@ namespace x360ce.Engine.Data
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserController")]
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserDevice")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class UserController : EntityObject
+    public partial class UserDevice : EntityObject
     {
         #region Factory Method
     
         /// <summary>
-        /// Create a new UserController object.
+        /// Create a new UserDevice object.
         /// </summary>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="applicationId">Initial value of the ApplicationId property.</param>
@@ -3702,55 +3702,55 @@ namespace x360ce.Engine.Data
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        public static UserController CreateUserController(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Guid forceFeedbackDriverGuid, global::System.Int32 usage, global::System.Int32 usagePage, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Guid forceFeedbackDriverGuid, global::System.Int32 usage, global::System.Int32 usagePage, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
         {
-            UserController userController = new UserController();
-            userController.Id = id;
-            userController.ApplicationId = applicationId;
-            userController.UserId = userId;
-            userController.InstanceGuid = instanceGuid;
-            userController.InstanceName = instanceName;
-            userController.ProductGuid = productGuid;
-            userController.ProductName = productName;
-            userController.ForceFeedbackDriverGuid = forceFeedbackDriverGuid;
-            userController.Usage = usage;
-            userController.UsagePage = usagePage;
-            userController.CapAxeCount = capAxeCount;
-            userController.CapButtonCount = capButtonCount;
-            userController.CapDriverVersion = capDriverVersion;
-            userController.CapFirmwareRevision = capFirmwareRevision;
-            userController.CapFlags = capFlags;
-            userController.CapForceFeedbackMinimumTimeResolution = capForceFeedbackMinimumTimeResolution;
-            userController.CapForceFeedbackSamplePeriod = capForceFeedbackSamplePeriod;
-            userController.CapHardwareRevision = capHardwareRevision;
-            userController.CapPovCount = capPovCount;
-            userController.CapIsHumanInterfaceDevice = capIsHumanInterfaceDevice;
-            userController.CapSubtype = capSubtype;
-            userController.CapType = capType;
-            userController.HidManufacturer = hidManufacturer;
-            userController.HidVendorId = hidVendorId;
-            userController.HidProductId = hidProductId;
-            userController.HidRevision = hidRevision;
-            userController.HidDescription = hidDescription;
-            userController.HidDeviceId = hidDeviceId;
-            userController.HidDevicePath = hidDevicePath;
-            userController.HidParentDeviceId = hidParentDeviceId;
-            userController.HidClassGuid = hidClassGuid;
-            userController.HidClassDescription = hidClassDescription;
-            userController.DevManufacturer = devManufacturer;
-            userController.DevVendorId = devVendorId;
-            userController.DevProductId = devProductId;
-            userController.DevRevision = devRevision;
-            userController.DevDescription = devDescription;
-            userController.DevDeviceId = devDeviceId;
-            userController.DevDevicePath = devDevicePath;
-            userController.DevParentDeviceId = devParentDeviceId;
-            userController.DevClassGuid = devClassGuid;
-            userController.DevClassDescription = devClassDescription;
-            userController.DateCreated = dateCreated;
-            userController.DateUpdated = dateUpdated;
-            userController.IsEnabled = isEnabled;
-            return userController;
+            UserDevice userDevice = new UserDevice();
+            userDevice.Id = id;
+            userDevice.ApplicationId = applicationId;
+            userDevice.UserId = userId;
+            userDevice.InstanceGuid = instanceGuid;
+            userDevice.InstanceName = instanceName;
+            userDevice.ProductGuid = productGuid;
+            userDevice.ProductName = productName;
+            userDevice.ForceFeedbackDriverGuid = forceFeedbackDriverGuid;
+            userDevice.Usage = usage;
+            userDevice.UsagePage = usagePage;
+            userDevice.CapAxeCount = capAxeCount;
+            userDevice.CapButtonCount = capButtonCount;
+            userDevice.CapDriverVersion = capDriverVersion;
+            userDevice.CapFirmwareRevision = capFirmwareRevision;
+            userDevice.CapFlags = capFlags;
+            userDevice.CapForceFeedbackMinimumTimeResolution = capForceFeedbackMinimumTimeResolution;
+            userDevice.CapForceFeedbackSamplePeriod = capForceFeedbackSamplePeriod;
+            userDevice.CapHardwareRevision = capHardwareRevision;
+            userDevice.CapPovCount = capPovCount;
+            userDevice.CapIsHumanInterfaceDevice = capIsHumanInterfaceDevice;
+            userDevice.CapSubtype = capSubtype;
+            userDevice.CapType = capType;
+            userDevice.HidManufacturer = hidManufacturer;
+            userDevice.HidVendorId = hidVendorId;
+            userDevice.HidProductId = hidProductId;
+            userDevice.HidRevision = hidRevision;
+            userDevice.HidDescription = hidDescription;
+            userDevice.HidDeviceId = hidDeviceId;
+            userDevice.HidDevicePath = hidDevicePath;
+            userDevice.HidParentDeviceId = hidParentDeviceId;
+            userDevice.HidClassGuid = hidClassGuid;
+            userDevice.HidClassDescription = hidClassDescription;
+            userDevice.DevManufacturer = devManufacturer;
+            userDevice.DevVendorId = devVendorId;
+            userDevice.DevProductId = devProductId;
+            userDevice.DevRevision = devRevision;
+            userDevice.DevDescription = devDescription;
+            userDevice.DevDeviceId = devDeviceId;
+            userDevice.DevDevicePath = devDevicePath;
+            userDevice.DevParentDeviceId = devParentDeviceId;
+            userDevice.DevClassGuid = devClassGuid;
+            userDevice.DevClassDescription = devClassDescription;
+            userDevice.DateCreated = dateCreated;
+            userDevice.DateUpdated = dateUpdated;
+            userDevice.IsEnabled = isEnabled;
+            return userDevice;
         }
 
         #endregion

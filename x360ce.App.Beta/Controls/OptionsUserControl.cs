@@ -12,9 +12,9 @@ using x360ce.App.Properties;
 
 namespace x360ce.App.Controls
 {
-    public partial class OptionsControl : UserControl
+    public partial class OptionsUserControl : UserControl
     {
-        public OptionsControl()
+        public OptionsUserControl()
         {
             InitializeComponent();
 
@@ -159,6 +159,8 @@ namespace x360ce.App.Controls
             InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
             InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
             GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
+            DiskIdTextBox.Text = o.DiskId;
+            HashedDiskIdTextBox.Text = o.HashedDiskId.ToString();
         }
 
         private void SaveSettingsButton_Click(object sender, EventArgs e)

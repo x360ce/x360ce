@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserController : IDisplayName
+	public partial class UserDevice : IDisplayName
 	{
 
 		[XmlIgnore]
@@ -108,7 +108,7 @@ namespace x360ce.Engine.Data
 		/// <summary>
 		/// Use: ReportPropertyChanged(x => x.PropertyName);
 		/// </summary>
-		void ReportPropertyChanged(Expression<Func<UserController, object>> selector)
+		void ReportPropertyChanged(Expression<Func<UserDevice, object>> selector)
 		{
 			var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
 			var name = body.Member.Name;

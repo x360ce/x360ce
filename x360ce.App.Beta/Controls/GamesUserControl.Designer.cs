@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class GameSettingsUserControl
+	partial class GamesUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -56,7 +56,7 @@
             this.ShowDisabledGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ScanProgressLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.GameDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
+            this.GameDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
             this.GlobalSettingsTabPage = new System.Windows.Forms.TabPage();
             this.ProgramsDataGridView = new System.Windows.Forms.DataGridView();
             this.ProgramImageColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -69,12 +69,8 @@
             this.ExportProgramsButton = new System.Windows.Forms.ToolStripButton();
             this.DeleteProgramsButton = new System.Windows.Forms.ToolStripButton();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.GameDefaultDetailsControl = new x360ce.App.Controls.GameSettingDetailsUserControl();
+            this.GameDefaultDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
             this.SettingsTabPage = new System.Windows.Forms.TabPage();
-            this.DiskIdTextBox = new System.Windows.Forms.TextBox();
-            this.HashedDiskIdTextBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
             this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
             this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -548,10 +544,6 @@
             // SettingsTabPage
             // 
             this.SettingsTabPage.BackColor = System.Drawing.SystemColors.Control;
-            this.SettingsTabPage.Controls.Add(this.DiskIdTextBox);
-            this.SettingsTabPage.Controls.Add(this.HashedDiskIdTextBox);
-            this.SettingsTabPage.Controls.Add(this.label2);
-            this.SettingsTabPage.Controls.Add(this.label1);
             this.SettingsTabPage.Controls.Add(this.IncludeEnabledCheckBox);
             this.SettingsTabPage.Controls.Add(this.MinimumInstanceCountLabel);
             this.SettingsTabPage.Controls.Add(this.MinimumInstanceCountNumericUpDown);
@@ -561,42 +553,6 @@
             this.SettingsTabPage.Size = new System.Drawing.Size(687, 450);
             this.SettingsTabPage.TabIndex = 2;
             this.SettingsTabPage.Text = "Options";
-            // 
-            // DiskIdTextBox
-            // 
-            this.DiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.DiskIdTextBox.Location = new System.Drawing.Point(9, 67);
-            this.DiskIdTextBox.Name = "DiskIdTextBox";
-            this.DiskIdTextBox.Size = new System.Drawing.Size(294, 20);
-            this.DiskIdTextBox.TabIndex = 30;
-            // 
-            // HashedDiskIdTextBox
-            // 
-            this.HashedDiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.HashedDiskIdTextBox.Location = new System.Drawing.Point(9, 106);
-            this.HashedDiskIdTextBox.Name = "HashedDiskIdTextBox";
-            this.HashedDiskIdTextBox.Size = new System.Drawing.Size(294, 20);
-            this.HashedDiskIdTextBox.TabIndex = 30;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.SystemColors.Control;
-            this.label2.Location = new System.Drawing.Point(6, 90);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(297, 13);
-            this.label2.TabIndex = 29;
-            this.label2.Text = "Anonymous ID used when storing game configurations online:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(6, 51);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(45, 13);
-            this.label1.TabIndex = 29;
-            this.label1.Text = "Disk ID:";
             // 
             // IncludeEnabledCheckBox
             // 
@@ -634,12 +590,12 @@
             0,
             0});
             // 
-            // GameSettingsUserControl
+            // GamesUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.GamesTabControl);
-            this.Name = "GameSettingsUserControl";
+            this.Name = "GamesUserControl";
             this.Size = new System.Drawing.Size(701, 482);
             this.Load += new System.EventHandler(this.GameSettingsUserControl_Load);
             this.GamesTabControl.ResumeLayout(false);
@@ -680,9 +636,9 @@
 		private System.Windows.Forms.TabPage SettingsTabPage;
 		private System.Windows.Forms.ToolStripButton AddGameButton;
 		private System.Windows.Forms.Panel panel1;
-		private GameSettingDetailsUserControl GameDetailsControl;
+		private GameDetailsUserControl GameDetailsControl;
 		private System.Windows.Forms.Panel panel2;
-		private GameSettingDetailsUserControl GameDefaultDetailsControl;
+		private GameDetailsUserControl GameDefaultDetailsControl;
 		private System.Windows.Forms.ToolStripButton StartGameButton;
 		private System.Windows.Forms.ToolStripButton OpenGameButton;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn EnabledColumn;
@@ -704,10 +660,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramFileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProgramProductNameColumn;
 		private System.Windows.Forms.ToolStripButton DeleteProgramsButton;
-		private System.Windows.Forms.TextBox HashedDiskIdTextBox;
-		private System.Windows.Forms.TextBox DiskIdTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label1;
 		public System.Windows.Forms.DataGridView GamesDataGridView;
 	}
 }

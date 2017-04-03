@@ -17,7 +17,7 @@
 		{
 			this.OkButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
-			this.ControllersPanel = new x360ce.App.Controls.DevicesUserControl();
+			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
 			this.SuspendLayout();
 			// 
 			// OkButton
@@ -75,6 +75,6 @@
 		#endregion
 		private System.Windows.Forms.Button OkButton;
 		private System.Windows.Forms.Button CloseButton;
-		private DevicesUserControl ControllersPanel;
+		private UserDevicesUserControl ControllersPanel;
 	}
 }

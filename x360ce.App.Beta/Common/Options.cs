@@ -30,6 +30,14 @@ namespace x360ce.App
             }
             if (GameScanLocations == null)
                 GameScanLocations = new List<string>() { };
+            if (string.IsNullOrEmpty(DiskId))
+            {
+                DiskId = Engine.BoardInfo.GetDiskId();
+            }
+            if (HashedDiskId == Guid.Empty)
+            {
+                HashedDiskId = Engine.BoardInfo.GetHashedDiskId();
+            }
         }
         public bool AllowOnlyOneCopy { get; set; }
         public bool InternetFeatures { get; set; }
@@ -38,6 +46,13 @@ namespace x360ce.App
         public string InternetDatabaseUrl { get; set; }
         public List<string> InternetDatabaseUrls { get; set; }
         public List<string> GameScanLocations { get; set; }
+        public string DiskId { get; set; }
+        public Guid HashedDiskId { get; set; }
+
+        public string LoginEnabled { get; set; }
+
+        public string Username { get; set; }
+        public string Password { get; set; }
 
     }
 }

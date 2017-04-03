@@ -12,10 +12,10 @@ using JocysCom.ClassLibrary.ComponentModel;
 
 namespace x360ce.App.Controls
 {
-    public partial class CloudStorageUserControl : UserControl
+    public partial class CloudUserControl : UserControl
     {
 
-        public CloudStorageUserControl()
+        public CloudUserControl()
         {
             InitializeComponent();
             data = new SortableBindingList<CloudItem>();
@@ -43,7 +43,7 @@ namespace x360ce.App.Controls
         JocysCom.ClassLibrary.Threading.QueueTimer queueTimer;
         SortableBindingList<CloudItem> data;
 
-        public void Add<T>(CloudAction action, T[] items)
+        public void Add<T>(CloudAction action, T[] items = null)
         {
             BeginInvoke((MethodInvoker)delegate ()
             {
@@ -83,9 +83,9 @@ namespace x360ce.App.Controls
                 if (error == null)
                     error = Execute<UserGame>(CloudAction.Insert);
                 if (error == null)
-                    error = Execute<UserController>(CloudAction.Delete);
+                    error = Execute<UserDevice>(CloudAction.Delete);
                 if (error == null)
-                    error = Execute<UserController>(CloudAction.Insert);
+                    error = Execute<UserDevice>(CloudAction.Insert);
             }
             catch (Exception ex)
             {
@@ -127,9 +127,9 @@ namespace x360ce.App.Controls
                     {
                         command.UserGames = items as List<UserGame>;
                     }
-                    else if (typeof(T) == typeof(UserController))
+                    else if (typeof(T) == typeof(UserDevice))
                     {
-                        command.UserControllers = items as List<UserController>;
+                        command.UserControllers = items as List<UserDevice>;
                     }
                     // Add secure credentials.
                     var rsa = new JocysCom.ClassLibrary.Security.Encryption("Cloud");
@@ -183,7 +183,7 @@ namespace x360ce.App.Controls
         {
             data.Clear();
             queueTimer.SleepTimer.Interval = 1000;
-            var allControllers = SettingsManager.UserControllers.Items.ToArray();
+            var allControllers = SettingsManager.UserDevices.Items.ToArray();
             Add(CloudAction.Insert, allControllers);
             var allGames = SettingsManager.UserGames.Items.ToArray();
             Add(CloudAction.Insert, allGames);
@@ -191,12 +191,8 @@ namespace x360ce.App.Controls
 
         private void DownloadFromCloudButton_Click(object sender, EventArgs e)
         {
-            //var allGames = Execute<Game>(CloudAction.Select);
-            //var allControllers = SettingsManager.UserControllers.Items.ToArray();
-            //Add(CloudAction.Insert, allControllers);
-            //var allGames = SettingsManager.Games.Items.ToArray();
-            //Add(CloudAction.Insert, allGames);
-
+            var device = new UserDevice();
+            Add(CloudAction.Select, new UserDevice[] { device });
         }
     }
 }

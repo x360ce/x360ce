@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class CloudStorageUserControl
+	partial class CloudUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.

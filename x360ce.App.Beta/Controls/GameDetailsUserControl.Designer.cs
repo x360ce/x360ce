@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class GameSettingDetailsUserControl
+	partial class GameDetailsUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.

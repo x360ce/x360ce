@@ -251,11 +251,11 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
-    <Compile Include="Controls\DevicesUserControl.cs">
+    <Compile Include="Controls\UserDevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DevicesUserControl.Designer.cs">
-      <DependentUpon>DevicesUserControl.cs</DependentUpon>
+    <Compile Include="Controls\UserDevicesUserControl.Designer.cs">
+      <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
@@ -275,11 +275,11 @@
     <Compile Include="Forms\BaseForm.Designer.cs">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CloudStorageUserControl.cs">
+    <Compile Include="Controls\CloudUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\CloudStorageUserControl.Designer.cs">
-      <DependentUpon>CloudStorageUserControl.cs</DependentUpon>
+    <Compile Include="Controls\CloudUserControl.Designer.cs">
+      <DependentUpon>CloudUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControllerSettingsUserControl.cs">
       <SubType>UserControl</SubType>
@@ -287,17 +287,17 @@
     <Compile Include="Controls\ControllerSettingsUserControl.Designer.cs">
       <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DirectInputControl.cs">
+    <Compile Include="Controls\DirectInputUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DirectInputControl.Designer.cs">
-      <DependentUpon>DirectInputControl.cs</DependentUpon>
+    <Compile Include="Controls\DirectInputUserControl.Designer.cs">
+      <DependentUpon>DirectInputUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameSettingDetailsUserControl.cs">
+    <Compile Include="Controls\GameDetailsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\GameSettingDetailsUserControl.Designer.cs">
-      <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
+    <Compile Include="Controls\GameDetailsUserControl.Designer.cs">
+      <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\LoadPresetsForm.cs">
       <SubType>Form</SubType>
@@ -339,11 +339,11 @@
     <Compile Include="Forms\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\OptionsControl.cs">
+    <Compile Include="Controls\OptionsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\OptionsControl.Designer.cs">
-      <DependentUpon>OptionsControl.cs</DependentUpon>
+    <Compile Include="Controls\OptionsUserControl.Designer.cs">
+      <DependentUpon>OptionsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadControl.cs">
       <SubType>UserControl</SubType>
@@ -351,11 +351,11 @@
     <Compile Include="Controls\PadControl.Designer.cs">
       <DependentUpon>PadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameSettingsUserControl.cs">
+    <Compile Include="Controls\GamesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\GameSettingsUserControl.Designer.cs">
-      <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
+    <Compile Include="Controls\GamesUserControl.Designer.cs">
+      <DependentUpon>GamesUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
@@ -386,24 +386,24 @@
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DevicesUserControl.resx">
-      <DependentUpon>DevicesUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\UserDevicesUserControl.resx">
+      <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CloudStorageUserControl.resx">
-      <DependentUpon>CloudStorageUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\CloudUserControl.resx">
+      <DependentUpon>CloudUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ControllerSettingsUserControl.resx">
       <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DirectInputControl.resx">
-      <DependentUpon>DirectInputControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\DirectInputUserControl.resx">
+      <DependentUpon>DirectInputUserControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\GameSettingDetailsUserControl.resx">
-      <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\GameDetailsUserControl.resx">
+      <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoadPresetsForm.resx">
       <DependentUpon>LoadPresetsForm.cs</DependentUpon>
@@ -421,14 +421,14 @@
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\OptionsControl.resx">
-      <DependentUpon>OptionsControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\OptionsUserControl.resx">
+      <DependentUpon>OptionsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\GameSettingsUserControl.resx">
-      <DependentUpon>GameSettingsUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\GamesUserControl.resx">
+      <DependentUpon>GamesUserControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -14,9 +14,9 @@ using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
-    public partial class GameSettingsUserControl : UserControl
+    public partial class GamesUserControl : UserControl
     {
-        public GameSettingsUserControl()
+        public GamesUserControl()
         {
             InitializeComponent();
             if (IsDesignMode) return;
@@ -24,8 +24,6 @@ namespace x360ce.App.Controls
             ProgramsDataGridView.AutoGenerateColumns = false;
             ScanProgressLabel.Text = "";
             InitData();
-            DiskIdTextBox.Text = BoardInfo.GetDiskId();
-            HashedDiskIdTextBox.Text = BoardInfo.GetHashedDiskId().ToString();
         }
 
         bool IsDesignMode

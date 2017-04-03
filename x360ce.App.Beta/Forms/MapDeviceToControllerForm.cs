@@ -21,7 +21,7 @@ namespace x360ce.App.Controls
 			SetHeaderBody(MessageBoxIcon.Information, "");
 		}
 
-		public UserController[] SelectedDevices;
+		public UserDevice[] SelectedDevices;
 
 		private void OkButton_Click(object sender, EventArgs e)
 		{

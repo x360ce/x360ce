@@ -5,7 +5,7 @@
 		<!-- SSDL content -->
 		<edmx:StorageModels>
 		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityType Name="x360ce_Games">
+        <EntityType Name="x360ce_UserGames">
           <Key>
             <PropertyRef Name="GameId" />
           </Key>
@@ -179,7 +179,7 @@
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityType Name="x360ce_UserControllers">
+        <EntityType Name="x360ce_UserDevices">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -247,13 +247,13 @@
           <Property Name="WebSite" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityContainer Name="x360ceModelStoreContainer">
-          <EntitySet Name="x360ce_Games" EntityType="Self.x360ce_Games" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Settings" EntityType="Self.x360ce_Settings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Summaries" EntityType="Self.x360ce_Summaries" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserControllers" EntityType="Self.x360ce_UserControllers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -270,7 +270,7 @@
           <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
           <EntitySet Name="UserGames" EntityType="x360ceModel.UserGame" />
           <EntitySet Name="UserInstances" EntityType="x360ceModel.UserInstance" />
-          <EntitySet Name="UserControllers" EntityType="x360ceModel.UserController" />
+          <EntitySet Name="UserDevices" EntityType="x360ceModel.UserDevice" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -463,7 +463,7 @@
           <Property Name="ControllerId" Type="Guid" Nullable="false" />
           <Property Name="InstanceGuid" Type="Guid" Nullable="false" />
         </EntityType>
-        <EntityType Name="UserController">
+        <EntityType Name="UserDevice">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -686,7 +686,7 @@
           </EntitySetMapping>
           <EntitySetMapping Name="UserGames">
             <EntityTypeMapping TypeName="x360ceModel.UserGame">
-              <MappingFragment StoreEntitySet="x360ce_Games">
+              <MappingFragment StoreEntitySet="x360ce_UserGames">
                 <ScalarProperty Name="Weight" ColumnName="Weight" />
                 <ScalarProperty Name="SettingChecksum" ColumnName="SettingChecksum" />
                 <ScalarProperty Name="Timeout" ColumnName="Timeout" />
@@ -720,9 +720,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserControllers">
-            <EntityTypeMapping TypeName="x360ceModel.UserController">
-              <MappingFragment StoreEntitySet="x360ce_UserControllers">
+          <EntitySetMapping Name="UserDevices">
+            <EntityTypeMapping TypeName="x360ceModel.UserDevice">
+              <MappingFragment StoreEntitySet="x360ce_UserDevices">
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -793,7 +793,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="101" >
+			<Diagram Name="x360ceModel" ZoomLevel="48" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
@@ -802,7 +802,7 @@
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.75" />
         <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.875" PointY="2.5" />
         <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="6.375" PointY="8.75" />
-        <EntityTypeShape EntityType="x360ceModel.UserController" Width="1.5" PointX="8.375" PointY="8.75" />
+        <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="9.75" PointY="3.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

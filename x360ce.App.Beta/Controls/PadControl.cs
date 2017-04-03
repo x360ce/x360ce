@@ -680,13 +680,13 @@ namespace x360ce.App.Controls
 		/// Get selected device. If device is not connected then return null.
 		/// </summary>
 		/// <returns></returns>
-		UserController GetCurrentDevice()
+		UserDevice GetCurrentDevice()
 		{
 			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			Engine.Data.Setting setting = null;
 			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
-			UserController device = null;
+			UserDevice device = null;
 			if (setting != null) device = SettingsManager.GetDevice(setting.InstanceGuid);
 			return device;
 		}
@@ -822,7 +822,7 @@ namespace x360ce.App.Controls
 
 
 		// Function is recreated as soon as new DirectInput Device is available.
-		public void ResetDiMenuStrip(UserController device)
+		public void ResetDiMenuStrip(UserDevice device)
 		{
 			DiMenuStrip.Items.Clear();
 			ToolStripMenuItem mi;

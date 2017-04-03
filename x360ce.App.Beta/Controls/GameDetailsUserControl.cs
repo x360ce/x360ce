@@ -12,9 +12,9 @@ using System.IO;
 
 namespace x360ce.App.Controls
 {
-	public partial class GameSettingDetailsUserControl : UserControl
+	public partial class GameDetailsUserControl : UserControl
 	{
-		public GameSettingDetailsUserControl()
+		public GameDetailsUserControl()
 		{
 			InitializeComponent();
 			if (IsDesignMode) return;

@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION dbo.x360ce_GetGameSettingChecksum(@GameId uniqueidentifier) RETURNS uniqueidentifier
+﻿CREATE FUNCTION dbo.x360ce_GetUserGameSettingChecksum(@GameId uniqueidentifier) RETURNS uniqueidentifier
 BEGIN
 
 	--ALTER TABLE x360ce_Games ADD COLUMN [SettingChecksum] AS (dbo.x360ce_GetGameSettingChecksum([GameId]))

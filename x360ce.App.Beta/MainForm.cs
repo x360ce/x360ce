@@ -96,8 +96,8 @@ namespace x360ce.App
             SettingsManager.UserGames.Load();
             SettingsManager.Presets.Load();
             SettingsManager.PadSettings.Load();
-            SettingsManager.UserControllers.Load();
-            SettingsManager.UserControllers.Load();
+            SettingsManager.UserDevices.Load();
+            SettingsManager.UserDevices.Load();
             SettingsManager.UserInstances.Load();
             for (int i = 0; i < 4; i++)
             {
@@ -197,8 +197,8 @@ namespace x360ce.App
                 // List of connected devices.
                 var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToArray();
                 // List of current devices.
-                var currentInstanceGuids = SettingsManager.UserControllers.Items.Select(x => x.InstanceGuid).ToArray();
-                var removedDevices = SettingsManager.UserControllers.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
+                var currentInstanceGuids = SettingsManager.UserDevices.Items.Select(x => x.InstanceGuid).ToArray();
+                var removedDevices = SettingsManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
                 var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
                 var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
                 // Remove disconnected devices.
@@ -221,11 +221,11 @@ namespace x360ce.App
                     infoInt = DeviceDetector.GetInterfaces(interfacePaths);
                 }
                 // Add connected devices.
-                var addedControllers = new List<UserController>();
+                var addedControllers = new List<UserDevice>();
                 for (int i = 0; i < addedDevices.Length; i++)
                 {
                     var device = addedDevices[i];
-                    var di = new UserController();
+                    var di = new UserDevice();
                     di.LoadInstance(device);
                     var state = states.FirstOrDefault(x => x.Information.InstanceGuid == device.InstanceGuid);
                     di.Device = state;
@@ -241,7 +241,7 @@ namespace x360ce.App
                     addedControllers.Add(di);
                     Invoke((MethodInvoker)delegate ()
                     {
-                        SettingsManager.UserControllers.Items.Add(di);
+                        SettingsManager.UserDevices.Items.Add(di);
                     });
                 }
                 if (addedControllers.Count > 0)
@@ -251,7 +251,7 @@ namespace x360ce.App
                 for (int i = 0; i < updatedDevices.Length; i++)
                 {
                     var device = updatedDevices[i];
-                    var di = SettingsManager.UserControllers.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
+                    var di = SettingsManager.UserDevices.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
                     Invoke((MethodInvoker)delegate ()
                     {
                         // If device is set as offline then make it online.
@@ -276,7 +276,7 @@ namespace x360ce.App
 
         void AutoConfigure(Engine.Data.UserGame game)
         {
-            var list = SettingsManager.UserControllers.Items.ToList();
+            var list = SettingsManager.UserDevices.Items.ToList();
             // Filter devices.
             if (Settings.Default.ExcludeSupplementalDevices)
             {
@@ -677,9 +677,9 @@ namespace x360ce.App
             SettingsManager.Programs.Save();
             SettingsManager.UserGames.Save();
             SettingsManager.Presets.Save();
-            SettingsManager.UserControllers.Save();
+            SettingsManager.UserDevices.Save();
             SettingsManager.PadSettings.Save();
-            SettingsManager.UserControllers.Save();
+            SettingsManager.UserDevices.Save();
             SettingsManager.UserInstances.Save();
         }
 
@@ -1295,7 +1295,7 @@ namespace x360ce.App
             }
         }
 
-        public UserController[] ShowDeviceForm()
+        public UserDevice[] ShowDeviceForm()
         {
             lock (DeviceFormLock)
             {
