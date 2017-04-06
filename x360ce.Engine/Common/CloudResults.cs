@@ -5,10 +5,12 @@ using System.Text;
 
 namespace x360ce.Engine
 {
-	public class CloudResults
-	{
-		public int ErrorCode { get; set; }
-		public string ErrorMessage { get; set; }
+    public class CloudResults
+    {
+        public int ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
 
-	}
+        public KeyValueList Values { get; set; }
+
+    }
 }

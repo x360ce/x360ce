@@ -401,17 +401,19 @@ namespace x360ce.Web.WebServices
 		#region Security
 
 		[WebMethod(EnableSession = true, Description = "Sign out.")]
-		public KeyValueList SignOut()
+		public CloudResults SignOut()
 		{
 			FormsAuthentication.SignOut();
-			var results = new KeyValueList();
-			results.Add("Status", true);
-			results.Add("Message", "Good bye!");
-			return results;
+			var values = new KeyValueList();
+			values.Add("Status", true);
+			values.Add("Message", "Good bye!");
+            var results = new CloudResults();
+            results.Values = values;
+            return results;
 		}
 
 		[WebMethod(EnableSession = true, Description = "Sign in.")]
-		public KeyValueList SignIn(string username, string password)
+		public CloudResults SignIn(string username, string password)
 		{
 			string errorMessage = string.Empty;
 			if (password.Length == 0) errorMessage = "Please enter password";
@@ -422,11 +424,11 @@ namespace x360ce.Web.WebServices
 				bool success = Membership.ValidateUser(username, password);
 				if (!success) errorMessage = "Validation failed. User name '" + username + "' was not found.";
 			}
-			var results = new KeyValueList();
+			var values = new KeyValueList();
 			if (errorMessage.Length > 0)
 			{
-				results.Add("Status", false);
-				results.Add("Message", errorMessage);
+				values.Add("Status", false);
+				values.Add("Message", errorMessage);
 			}
 			else
 			{
@@ -434,8 +436,8 @@ namespace x360ce.Web.WebServices
 				var user = Membership.GetUser(username, true);
 				if (user == null)
 				{
-					results.Add("Status", false);
-					results.Add("Message", "'" + username + "' was not found.");
+					values.Add("Status", false);
+					values.Add("Message", "'" + username + "' was not found.");
 				}
 				else
 				{
@@ -461,12 +463,14 @@ namespace x360ce.Web.WebServices
 					System.Threading.Thread.CurrentPrincipal = principal;
 					// Create User.
 					HttpContext.Current.User = new System.Security.Principal.GenericPrincipal(identity, roles);
-					results.Add("Status", true);
-					results.Add("Message", "Welcome!");
+					values.Add("Status", true);
+					values.Add("Message", "Welcome!");
 				}
 			}
-			return results;
-		}
+            var results = new CloudResults();
+            results.Values = values;
+            return results;
+        }
 
 		[WebMethod(EnableSession = true, Description = "Get public RSA Key")]
 		public string GetPublicRsaKey()

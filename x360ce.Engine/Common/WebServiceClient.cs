@@ -158,10 +158,10 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "SignIn",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public KeyValueList SignIn(string username, string password)
+		public CloudResults SignIn(string username, string password)
 		{
 			object[] results = Invoke("SignIn", new object[] { username, password });
-			return (KeyValueList)results[0];
+			return (CloudResults)results[0];
 		}
 
 		#endregion
@@ -353,10 +353,10 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "SignOut",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public KeyValueList SignOut()
+		public CloudResults SignOut()
 		{
 			object[] results = Invoke("SignOut", new object[] { });
-			return (KeyValueList)results[0];
+			return (CloudResults)results[0];
 		}
 
 		public void SignOutsAsync(object userState = null)

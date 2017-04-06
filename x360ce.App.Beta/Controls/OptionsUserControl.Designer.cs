@@ -65,6 +65,13 @@
             this.HashedDiskIdTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.UsernameTextBox = new System.Windows.Forms.TextBox();
+            this.PasswordTextBox = new System.Windows.Forms.TextBox();
+            this.UsernameLabel = new System.Windows.Forms.Label();
+            this.PasswordLabel = new System.Windows.Forms.Label();
+            this.LoginButton = new System.Windows.Forms.Button();
+            this.AnonymousNoteLabel = new System.Windows.Forms.Label();
+            this.CreateButton = new System.Windows.Forms.Button();
             this.TestingAndLoggingGroupBox.SuspendLayout();
             this.OperationGroupBox.SuspendLayout();
             this.InternetGroupBox.SuspendLayout();
@@ -365,7 +372,7 @@
             // SaveSettingsButton
             // 
             this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.SaveSettingsButton.Location = new System.Drawing.Point(681, 440);
+            this.SaveSettingsButton.Location = new System.Drawing.Point(681, 519);
             this.SaveSettingsButton.Name = "SaveSettingsButton";
             this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
             this.SaveSettingsButton.TabIndex = 68;
@@ -378,7 +385,7 @@
             this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
             this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.OpenSettingsFolderButton.Location = new System.Drawing.Point(512, 440);
+            this.OpenSettingsFolderButton.Location = new System.Drawing.Point(512, 519);
             this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
             this.OpenSettingsFolderButton.Size = new System.Drawing.Size(163, 23);
             this.OpenSettingsFolderButton.TabIndex = 69;
@@ -419,13 +426,22 @@
             // 
             // OnlineAccountGroupBox
             // 
+            this.OnlineAccountGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.OnlineAccountGroupBox.Controls.Add(this.AnonymousNoteLabel);
+            this.OnlineAccountGroupBox.Controls.Add(this.PasswordTextBox);
+            this.OnlineAccountGroupBox.Controls.Add(this.CreateButton);
+            this.OnlineAccountGroupBox.Controls.Add(this.LoginButton);
+            this.OnlineAccountGroupBox.Controls.Add(this.UsernameTextBox);
             this.OnlineAccountGroupBox.Controls.Add(this.DiskIdTextBox);
             this.OnlineAccountGroupBox.Controls.Add(this.HashedDiskIdTextBox);
+            this.OnlineAccountGroupBox.Controls.Add(this.PasswordLabel);
+            this.OnlineAccountGroupBox.Controls.Add(this.UsernameLabel);
             this.OnlineAccountGroupBox.Controls.Add(this.label2);
             this.OnlineAccountGroupBox.Controls.Add(this.label3);
             this.OnlineAccountGroupBox.Location = new System.Drawing.Point(250, 295);
             this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-            this.OnlineAccountGroupBox.Size = new System.Drawing.Size(506, 123);
+            this.OnlineAccountGroupBox.Size = new System.Drawing.Size(506, 140);
             this.OnlineAccountGroupBox.TabIndex = 31;
             this.OnlineAccountGroupBox.TabStop = false;
             this.OnlineAccountGroupBox.Text = "Online Account";
@@ -435,38 +451,101 @@
             this.DiskIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.DiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.DiskIdTextBox.Location = new System.Drawing.Point(6, 32);
+            this.DiskIdTextBox.Location = new System.Drawing.Point(107, 19);
             this.DiskIdTextBox.Name = "DiskIdTextBox";
-            this.DiskIdTextBox.Size = new System.Drawing.Size(494, 20);
+            this.DiskIdTextBox.Size = new System.Drawing.Size(393, 20);
             this.DiskIdTextBox.TabIndex = 33;
             // 
             // HashedDiskIdTextBox
             // 
             this.HashedDiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.HashedDiskIdTextBox.Location = new System.Drawing.Point(6, 71);
+            this.HashedDiskIdTextBox.Location = new System.Drawing.Point(107, 45);
             this.HashedDiskIdTextBox.Name = "HashedDiskIdTextBox";
-            this.HashedDiskIdTextBox.Size = new System.Drawing.Size(294, 20);
+            this.HashedDiskIdTextBox.Size = new System.Drawing.Size(233, 20);
             this.HashedDiskIdTextBox.TabIndex = 34;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.SystemColors.Control;
-            this.label2.Location = new System.Drawing.Point(6, 55);
+            this.label2.Location = new System.Drawing.Point(6, 48);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(297, 13);
+            this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 31;
-            this.label2.Text = "Anonymous ID used when storing game configurations online:";
+            this.label2.Text = "Anonymous ID:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.SystemColors.Control;
-            this.label3.Location = new System.Drawing.Point(6, 16);
+            this.label3.Location = new System.Drawing.Point(6, 22);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(45, 13);
             this.label3.TabIndex = 32;
             this.label3.Text = "Disk ID:";
+            // 
+            // UsernameTextBox
+            // 
+            this.UsernameTextBox.Location = new System.Drawing.Point(107, 84);
+            this.UsernameTextBox.Name = "UsernameTextBox";
+            this.UsernameTextBox.Size = new System.Drawing.Size(152, 20);
+            this.UsernameTextBox.TabIndex = 35;
+            // 
+            // PasswordTextBox
+            // 
+            this.PasswordTextBox.Location = new System.Drawing.Point(107, 110);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.Size = new System.Drawing.Size(152, 20);
+            this.PasswordTextBox.TabIndex = 35;
+            // 
+            // UsernameLabel
+            // 
+            this.UsernameLabel.AutoSize = true;
+            this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.UsernameLabel.Location = new System.Drawing.Point(6, 87);
+            this.UsernameLabel.Name = "UsernameLabel";
+            this.UsernameLabel.Size = new System.Drawing.Size(95, 13);
+            this.UsernameLabel.TabIndex = 31;
+            this.UsernameLabel.Text = "Username (E-mail):";
+            // 
+            // PasswordLabel
+            // 
+            this.PasswordLabel.AutoSize = true;
+            this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.PasswordLabel.Location = new System.Drawing.Point(6, 113);
+            this.PasswordLabel.Name = "PasswordLabel";
+            this.PasswordLabel.Size = new System.Drawing.Size(56, 13);
+            this.PasswordLabel.TabIndex = 31;
+            this.PasswordLabel.Text = "Password:";
+            // 
+            // LoginButton
+            // 
+            this.LoginButton.Location = new System.Drawing.Point(265, 108);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(75, 23);
+            this.LoginButton.TabIndex = 68;
+            this.LoginButton.Text = "Log In";
+            this.LoginButton.UseVisualStyleBackColor = true;
+            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
+            // 
+            // AnonymousNoteLabel
+            // 
+            this.AnonymousNoteLabel.AutoSize = true;
+            this.AnonymousNoteLabel.Location = new System.Drawing.Point(104, 68);
+            this.AnonymousNoteLabel.Name = "AnonymousNoteLabel";
+            this.AnonymousNoteLabel.Size = new System.Drawing.Size(375, 13);
+            this.AnonymousNoteLabel.TabIndex = 0;
+            this.AnonymousNoteLabel.Text = "Note: Anonymous ID used when storing game configurations online by default.";
+            // 
+            // CreateButton
+            // 
+            this.CreateButton.Location = new System.Drawing.Point(346, 108);
+            this.CreateButton.Name = "CreateButton";
+            this.CreateButton.Size = new System.Drawing.Size(75, 23);
+            this.CreateButton.TabIndex = 68;
+            this.CreateButton.Text = "Create...";
+            this.CreateButton.UseVisualStyleBackColor = true;
+            this.CreateButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // OptionsUserControl
             // 
@@ -482,7 +561,7 @@
             this.Controls.Add(this.InternetGroupBox);
             this.Controls.Add(this.ProgramScanLocationsTabControl);
             this.Name = "OptionsUserControl";
-            this.Size = new System.Drawing.Size(759, 466);
+            this.Size = new System.Drawing.Size(759, 545);
             this.TestingAndLoggingGroupBox.ResumeLayout(false);
             this.TestingAndLoggingGroupBox.PerformLayout();
             this.OperationGroupBox.ResumeLayout(false);
@@ -543,5 +622,12 @@
         private System.Windows.Forms.TextBox HashedDiskIdTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox PasswordTextBox;
+        private System.Windows.Forms.Button LoginButton;
+        private System.Windows.Forms.TextBox UsernameTextBox;
+        private System.Windows.Forms.Label PasswordLabel;
+        private System.Windows.Forms.Label UsernameLabel;
+        private System.Windows.Forms.Label AnonymousNoteLabel;
+        private System.Windows.Forms.Button CreateButton;
     }
 }

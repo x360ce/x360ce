@@ -160,6 +160,7 @@ namespace x360ce.App.Controls
             InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
             GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
             DiskIdTextBox.Text = o.DiskId;
+            UsernameTextBox.Text = o.Username;
             HashedDiskIdTextBox.Text = o.HashedDiskId.ToString();
         }
 
@@ -174,6 +175,7 @@ namespace x360ce.App.Controls
             o.InternetDatabaseUrls = (List<string>)InternetDatabaseUrlComboBox.DataSource;
             o.InternetDatabaseUrl = (string)InternetDatabaseUrlComboBox.SelectedItem;
             o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
+            o.Username = UsernameTextBox.Text;
             SettingsManager.OptionsData.Save();
         }
 
@@ -186,6 +188,11 @@ namespace x360ce.App.Controls
         private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             MainForm.Current.SetMinimizeToTray(!Settings.Default.MinimizeToTray);
+        }
+
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
