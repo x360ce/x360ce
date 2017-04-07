@@ -7,5 +7,6 @@
 		Update = 2,
 		Select = 3,
 		Delete = 4,
+        GetPublicRsaKey = 5,
 	}
 }

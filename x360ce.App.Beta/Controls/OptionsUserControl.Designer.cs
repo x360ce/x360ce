@@ -61,17 +61,17 @@
             this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
             this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
             this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
+            this.AnonymousNoteLabel = new System.Windows.Forms.Label();
+            this.PasswordTextBox = new System.Windows.Forms.TextBox();
+            this.CreateButton = new System.Windows.Forms.Button();
+            this.LoginButton = new System.Windows.Forms.Button();
+            this.UsernameTextBox = new System.Windows.Forms.TextBox();
             this.DiskIdTextBox = new System.Windows.Forms.TextBox();
             this.HashedDiskIdTextBox = new System.Windows.Forms.TextBox();
+            this.PasswordLabel = new System.Windows.Forms.Label();
+            this.UsernameLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.UsernameTextBox = new System.Windows.Forms.TextBox();
-            this.PasswordTextBox = new System.Windows.Forms.TextBox();
-            this.UsernameLabel = new System.Windows.Forms.Label();
-            this.PasswordLabel = new System.Windows.Forms.Label();
-            this.LoginButton = new System.Windows.Forms.Button();
-            this.AnonymousNoteLabel = new System.Windows.Forms.Label();
-            this.CreateButton = new System.Windows.Forms.Button();
             this.TestingAndLoggingGroupBox.SuspendLayout();
             this.OperationGroupBox.SuspendLayout();
             this.InternetGroupBox.SuspendLayout();
@@ -446,6 +446,49 @@
             this.OnlineAccountGroupBox.TabStop = false;
             this.OnlineAccountGroupBox.Text = "Online Account";
             // 
+            // AnonymousNoteLabel
+            // 
+            this.AnonymousNoteLabel.AutoSize = true;
+            this.AnonymousNoteLabel.Location = new System.Drawing.Point(104, 68);
+            this.AnonymousNoteLabel.Name = "AnonymousNoteLabel";
+            this.AnonymousNoteLabel.Size = new System.Drawing.Size(375, 13);
+            this.AnonymousNoteLabel.TabIndex = 0;
+            this.AnonymousNoteLabel.Text = "Note: Anonymous ID used when storing game configurations online by default.";
+            // 
+            // PasswordTextBox
+            // 
+            this.PasswordTextBox.Location = new System.Drawing.Point(107, 110);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.Size = new System.Drawing.Size(152, 20);
+            this.PasswordTextBox.TabIndex = 35;
+            // 
+            // CreateButton
+            // 
+            this.CreateButton.Location = new System.Drawing.Point(346, 108);
+            this.CreateButton.Name = "CreateButton";
+            this.CreateButton.Size = new System.Drawing.Size(75, 23);
+            this.CreateButton.TabIndex = 68;
+            this.CreateButton.Text = "Create...";
+            this.CreateButton.UseVisualStyleBackColor = true;
+            this.CreateButton.Click += new System.EventHandler(this.LoginButton_Click);
+            // 
+            // LoginButton
+            // 
+            this.LoginButton.Location = new System.Drawing.Point(265, 108);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(75, 23);
+            this.LoginButton.TabIndex = 68;
+            this.LoginButton.Text = "Log In";
+            this.LoginButton.UseVisualStyleBackColor = true;
+            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
+            // 
+            // UsernameTextBox
+            // 
+            this.UsernameTextBox.Location = new System.Drawing.Point(107, 84);
+            this.UsernameTextBox.Name = "UsernameTextBox";
+            this.UsernameTextBox.Size = new System.Drawing.Size(152, 20);
+            this.UsernameTextBox.TabIndex = 35;
+            // 
             // DiskIdTextBox
             // 
             this.DiskIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -463,6 +506,26 @@
             this.HashedDiskIdTextBox.Name = "HashedDiskIdTextBox";
             this.HashedDiskIdTextBox.Size = new System.Drawing.Size(233, 20);
             this.HashedDiskIdTextBox.TabIndex = 34;
+            // 
+            // PasswordLabel
+            // 
+            this.PasswordLabel.AutoSize = true;
+            this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.PasswordLabel.Location = new System.Drawing.Point(6, 113);
+            this.PasswordLabel.Name = "PasswordLabel";
+            this.PasswordLabel.Size = new System.Drawing.Size(56, 13);
+            this.PasswordLabel.TabIndex = 31;
+            this.PasswordLabel.Text = "Password:";
+            // 
+            // UsernameLabel
+            // 
+            this.UsernameLabel.AutoSize = true;
+            this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.UsernameLabel.Location = new System.Drawing.Point(6, 87);
+            this.UsernameLabel.Name = "UsernameLabel";
+            this.UsernameLabel.Size = new System.Drawing.Size(95, 13);
+            this.UsernameLabel.TabIndex = 31;
+            this.UsernameLabel.Text = "Username (E-mail):";
             // 
             // label2
             // 
@@ -483,69 +546,6 @@
             this.label3.Size = new System.Drawing.Size(45, 13);
             this.label3.TabIndex = 32;
             this.label3.Text = "Disk ID:";
-            // 
-            // UsernameTextBox
-            // 
-            this.UsernameTextBox.Location = new System.Drawing.Point(107, 84);
-            this.UsernameTextBox.Name = "UsernameTextBox";
-            this.UsernameTextBox.Size = new System.Drawing.Size(152, 20);
-            this.UsernameTextBox.TabIndex = 35;
-            // 
-            // PasswordTextBox
-            // 
-            this.PasswordTextBox.Location = new System.Drawing.Point(107, 110);
-            this.PasswordTextBox.Name = "PasswordTextBox";
-            this.PasswordTextBox.Size = new System.Drawing.Size(152, 20);
-            this.PasswordTextBox.TabIndex = 35;
-            // 
-            // UsernameLabel
-            // 
-            this.UsernameLabel.AutoSize = true;
-            this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.UsernameLabel.Location = new System.Drawing.Point(6, 87);
-            this.UsernameLabel.Name = "UsernameLabel";
-            this.UsernameLabel.Size = new System.Drawing.Size(95, 13);
-            this.UsernameLabel.TabIndex = 31;
-            this.UsernameLabel.Text = "Username (E-mail):";
-            // 
-            // PasswordLabel
-            // 
-            this.PasswordLabel.AutoSize = true;
-            this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.PasswordLabel.Location = new System.Drawing.Point(6, 113);
-            this.PasswordLabel.Name = "PasswordLabel";
-            this.PasswordLabel.Size = new System.Drawing.Size(56, 13);
-            this.PasswordLabel.TabIndex = 31;
-            this.PasswordLabel.Text = "Password:";
-            // 
-            // LoginButton
-            // 
-            this.LoginButton.Location = new System.Drawing.Point(265, 108);
-            this.LoginButton.Name = "LoginButton";
-            this.LoginButton.Size = new System.Drawing.Size(75, 23);
-            this.LoginButton.TabIndex = 68;
-            this.LoginButton.Text = "Log In";
-            this.LoginButton.UseVisualStyleBackColor = true;
-            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
-            // 
-            // AnonymousNoteLabel
-            // 
-            this.AnonymousNoteLabel.AutoSize = true;
-            this.AnonymousNoteLabel.Location = new System.Drawing.Point(104, 68);
-            this.AnonymousNoteLabel.Name = "AnonymousNoteLabel";
-            this.AnonymousNoteLabel.Size = new System.Drawing.Size(375, 13);
-            this.AnonymousNoteLabel.TabIndex = 0;
-            this.AnonymousNoteLabel.Text = "Note: Anonymous ID used when storing game configurations online by default.";
-            // 
-            // CreateButton
-            // 
-            this.CreateButton.Location = new System.Drawing.Point(346, 108);
-            this.CreateButton.Name = "CreateButton";
-            this.CreateButton.Size = new System.Drawing.Size(75, 23);
-            this.CreateButton.TabIndex = 68;
-            this.CreateButton.Text = "Create...";
-            this.CreateButton.UseVisualStyleBackColor = true;
-            this.CreateButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // OptionsUserControl
             // 

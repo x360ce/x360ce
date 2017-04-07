@@ -192,7 +192,39 @@ namespace x360ce.App.Controls
 
         private void LoginButton_Click(object sender, EventArgs e)
         {
+            // Secure login over insecure webservices.
+            if (LoginButton.Text == "Log In")
+            {
 
+                var o = SettingsManager.Options;
+                // If RSA keys are missing then...
+                if (string.IsNullOrEmpty(o.UserRsaPublicKey))
+                {
+                    // Create new RSA keys which will be used to send encrypted credentials.
+                    var rsa = new JocysCom.ClassLibrary.Security.Encryption("User");
+                    var keys = rsa.RsaNewKeys(2048);
+                    o.UserRsaPublicKey = keys.Public;
+                    o.UserRsaPrivateKey = keys.Private;
+                }
+                var ws = new WebServiceClient();
+                ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+                // Step 1: Get Server's Public RSA key for encruption.
+                var cmd = new CloudCommand();
+                cmd.Values = new KeyValueList();
+                cmd.Values.Add(CloudKey.UserRsaPublicKey, o.UserRsaPublicKey);
+                cmd.Action = CloudAction.GetPublicRsaKey;
+                var results = ws.Execute(cmd);
+                if (results.ErrorCode == 0)
+                {
+                    o.CloudRsaPublicKey = (string)results.Values.Get(CloudKey.CloudRsaPublicKey);
+                }
+                SettingsManager.OptionsData.Save();
+            }
+            else
+            {
+
+            }
         }
+
     }
 }
