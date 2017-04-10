@@ -201,24 +201,49 @@ namespace x360ce.App.Controls
                 if (string.IsNullOrEmpty(o.UserRsaPublicKey))
                 {
                     // Create new RSA keys which will be used to send encrypted credentials.
-                    var rsa = new JocysCom.ClassLibrary.Security.Encryption("User");
+                    var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User);
                     var keys = rsa.RsaNewKeys(2048);
                     o.UserRsaPublicKey = keys.Public;
                     o.UserRsaPrivateKey = keys.Private;
                 }
                 var ws = new WebServiceClient();
                 ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-                // Step 1: Get Server's Public RSA key for encruption.
+                // Step 1: Get Server's Public RSA key for encryption.
                 var cmd = new CloudCommand();
                 cmd.Values = new KeyValueList();
                 cmd.Values.Add(CloudKey.UserRsaPublicKey, o.UserRsaPublicKey);
                 cmd.Action = CloudAction.GetPublicRsaKey;
+                // Retrieve public RSA key.
                 var results = ws.Execute(cmd);
                 if (results.ErrorCode == 0)
                 {
-                    o.CloudRsaPublicKey = (string)results.Values.Get(CloudKey.CloudRsaPublicKey);
+                    o.CloudRsaPublicKey = results.Values.GetValue<string>(CloudKey.CloudRsaPublicKey);
                 }
                 SettingsManager.OptionsData.Save();
+                // Prepare to encrypt data.
+                var cloudRsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
+                cloudRsa.RsaPublicKeyValue = o.CloudRsaPublicKey;
+                // Generate random password...
+                var randomPassword = Guid.NewGuid().ToString("N");
+                // Encrypt and add random password with RSA...
+                var randomPasswordEncrypted = cloudRsa.RsaEncrypt(randomPassword);
+                cmd.Values.Add(CloudKey.RandomPassword, randomPasswordEncrypted);
+                // Encrypt and add username with AES-256...
+                var username = UsernameTextBox.Text;
+                var usernameEncrypted = JocysCom.ClassLibrary.Security.Rijndael.EncryptString(randomPassword, username);
+                cmd.Values.Add(CloudKey.Username, usernameEncrypted);
+                // Encrypt and add password with AES-256...
+                var password = PasswordTextBox.Text;
+                var passwordEncrypted = JocysCom.ClassLibrary.Security.Rijndael.EncryptString(randomPassword, password);
+                cmd.Values.Add(CloudKey.Password, passwordEncrypted);
+                // Use new action.
+                cmd.Action = CloudAction.LogIn;
+                // Execute command.
+                results = ws.Execute(cmd);
+                if (results.ErrorCode == 0)
+                {
+                    //o.CloudRsaPublicKey = (string)results.Values.Get(CloudKey.CloudRsaPublicKey);
+                }
             }
             else
             {

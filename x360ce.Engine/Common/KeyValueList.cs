@@ -15,16 +15,33 @@ namespace x360ce.Engine
             this.Add(new KeyValue(key, value));
         }
 
-        public object Get(object key)
+        public T GetValue<T>(string key, T defaultValue = default(T))
         {
+            object v = null;
+            var found = false;
             foreach (var item in this)
             {
                 if (Equals(item.Key, key))
                 {
-                    return item.Value;
+                    v = item.Value;
+                    found = true;
+                    break;
                 }
             }
-            return null;
+            // If value not found then...
+            if (!found)
+            {
+                // Return default value.
+                return defaultValue;
+            }
+            if (v == null) return (T)(object)null;
+            // // If value is string but non string is wanded then...
+            if ((v is string) && typeof(T) != typeof(string))
+            {
+                // Deserialize.
+                v = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<T>((string)v);
+            }
+            return (T)v;
         }
 
     }

@@ -474,6 +474,31 @@ namespace x360ce.Web.WebServices
 
         #endregion
 
+        public JocysCom.WebSites.Engine.Security.Data.User GetUser(CloudCommand command)
+        {
+            var values = command.Values;
+            if (values == null) return null;
+            var randomPasswordEncrypted = values.GetValue<string>(CloudKey.RandomPassword);
+            if (string.IsNullOrEmpty(randomPasswordEncrypted)) return null;
+            // Decrypt random password supplied by the user.
+            var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
+            var randomPassword = rsa.RsaDecrypt(randomPasswordEncrypted);
+            // Decrypt username.
+            var usernameEncrypted = values.GetValue<string>(CloudKey.Username);
+            var username = JocysCom.ClassLibrary.Security.Rijndael.DecryptString(randomPassword, usernameEncrypted);
+            // Decrypt Password.
+            var passwordEncrypted = values.GetValue<string>(CloudKey.Password);
+            var password = JocysCom.ClassLibrary.Security.Rijndael.DecryptString(randomPassword, passwordEncrypted);
+            // If user password is not valid then return
+            if (!Membership.ValidateUser(username, password))
+            {
+                return null;
+            }
+            var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(username);
+            return user;
+        }
+
+
         [WebMethod(EnableSession = true, Description = "Update User Data")]
         //[System.Web.Services.Protocols.SoapHeader("Authentication")]
         public CloudResults Execute(CloudCommand command)
@@ -482,10 +507,11 @@ namespace x360ce.Web.WebServices
             var messages = new List<string>();
             try
             {
+                JocysCom.WebSites.Engine.Security.Data.User user;
                 switch (command.Action)
                 {
                     case CloudAction.GetPublicRsaKey:
-                        var rsa = new JocysCom.ClassLibrary.Security.Encryption("Cloud");
+                        var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
                         if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
                         {
                             rsa.RsaNewKeysSave(2048);
@@ -496,13 +522,31 @@ namespace x360ce.Web.WebServices
                         //var userRsaPublicKey = command.Values.Get("UserRsaPublicKey");
                         break;
                     case CloudAction.Delete:
-                        messages.Add(Delete(command.UserControllers));
-                        messages.Add(Delete(command.UserGames));
+                        // Action requires valid user.
+                        user = GetUser(command);
+                        if (user == null)
+                        {
+                            messages.Add("Not authorised");
+                        }
+                        else
+                        {
+                            messages.Add(Delete(command.UserControllers));
+                            messages.Add(Delete(command.UserGames));
+                        }
                         break;
                     case CloudAction.Insert:
                     case CloudAction.Update:
-                        messages.Add(Upsert(command.UserControllers));
-                        messages.Add(Upsert(command.UserGames));
+                        // Action requires valid user.
+                        user = GetUser(command);
+                        if (user == null)
+                        {
+                            messages.Add("Not authorised");
+                        }
+                        else
+                        {
+                            messages.Add(Upsert(command.UserControllers));
+                            messages.Add(Upsert(command.UserGames));
+                        }
                         break;
                     default:
                         break;

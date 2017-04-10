@@ -8,5 +8,6 @@
 		Select = 3,
 		Delete = 4,
         GetPublicRsaKey = 5,
+        LogIn = 6,
 	}
 }
