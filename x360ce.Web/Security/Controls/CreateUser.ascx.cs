@@ -192,6 +192,11 @@ namespace JocysCom.Web.Security.Controls
 				var role = SecurityContext.Current.DefaultRole;
 				if (!string.IsNullOrEmpty(role))
 				{
+					if (!Roles.RoleExists(role))
+					{
+						Roles.CreateRole(role);
+						JocysCom.WebSites.Engine.Security.Check.UpdateRole(role, "Default Role.");
+					}
 					// Add role to the user.
 					System.Web.Security.Roles.AddUserToRole(user.UserName, role);
 				}

@@ -9,5 +9,6 @@
 		Delete = 4,
         GetPublicRsaKey = 5,
         LogIn = 6,
-	}
+        CreateAccount = 7,
+    }
 }

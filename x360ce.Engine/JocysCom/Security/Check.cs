@@ -29,6 +29,7 @@ namespace JocysCom.WebSites.Engine.Security
 		{
 			CreateDefaultSchema();
 			CreateDefaultApplication();
+			CreateDefaultRoles();
 		}
 
 		public static void UpdateRole(string roleName, string description)
