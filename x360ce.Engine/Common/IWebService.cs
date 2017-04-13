@@ -20,9 +20,7 @@ namespace x360ce.Engine
         List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount);
 		Program GetProgram(string fileName, string fileProductName);
 		string SetProgram(Program p);
-        CloudResults SignOut();
-        CloudResults SignIn(string username, string password);
-		CloudResults Execute(CloudCommand command);
+		CloudMessage Execute(CloudMessage command);
 
     }
 }

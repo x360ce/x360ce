@@ -158,10 +158,10 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "SignIn",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public CloudResults SignIn(string username, string password)
+		public CloudMessage SignIn(string username, string password)
 		{
 			object[] results = Invoke("SignIn", new object[] { username, password });
-			return (CloudResults)results[0];
+			return (CloudMessage)results[0];
 		}
 
 		#endregion
@@ -353,10 +353,10 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "SignOut",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public CloudResults SignOut()
+		public CloudMessage SignOut()
 		{
 			object[] results = Invoke("SignOut", new object[] { });
-			return (CloudResults)results[0];
+			return (CloudMessage)results[0];
 		}
 
 		public void SignOutsAsync(object userState = null)
@@ -373,13 +373,13 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "Execute",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public CloudResults Execute(CloudCommand command)
+		public CloudMessage Execute(CloudMessage command)
 		{
 			object[] results = Invoke("Execute", new object[] { command });
-			return (CloudResults)results[0];
+			return (CloudMessage)results[0];
 		}
 
-		public void ExecuteAsync(CloudCommand command, object userState = null)
+		public void ExecuteAsync(CloudMessage command, object userState = null)
 		{
 			InvokeAsync("Execute", ExecuteCompleted, userState, new object[] { command });
 		}

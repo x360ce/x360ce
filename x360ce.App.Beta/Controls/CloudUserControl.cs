@@ -114,14 +114,14 @@ namespace x360ce.App.Controls
         {
             var ws = new WebServiceClient();
             ws.Url = SettingsManager.Options.InternetDatabaseUrl;
-            CloudResults result = null;
+            CloudMessage result = null;
             try
             {
                 var citems = data.Where(x => x.Action == action);
                 var items = citems.Select(x => x.Item).OfType<T>().ToList();
                 if (items.Count > 0)
                 {
-                    var command = new CloudCommand();
+                    var command = new CloudMessage();
                     command.Action = action;
                     if (typeof(T) == typeof(UserGame))
                     {

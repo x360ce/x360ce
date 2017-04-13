@@ -110,8 +110,8 @@
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
     <Compile Include="Common\CloudAction.cs" />
-    <Compile Include="Common\CloudCommand.cs" />
-    <Compile Include="Common\CloudResults.cs" />
+    <Compile Include="Common\CloudMessage.cs" />
+    <Compile Include="Common\CloudHelper.Security.cs" />
     <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\CloudKey.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
