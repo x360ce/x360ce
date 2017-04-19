@@ -470,7 +470,7 @@
 			this.CreateButton.TabIndex = 45;
 			this.CreateButton.Text = "Create...";
 			this.CreateButton.UseVisualStyleBackColor = true;
-			this.CreateButton.Click += new System.EventHandler(this.LoginButton_Click);
+			this.CreateButton.Click += new System.EventHandler(this.CreateButton_Click);
 			// 
 			// LoginButton
 			// 

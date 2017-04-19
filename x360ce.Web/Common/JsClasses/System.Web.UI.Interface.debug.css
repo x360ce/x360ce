@@ -96,7 +96,7 @@ a.SWUI_TreeView_SelectedNode { background-color: #3a6ea5; color: #ffffff; }
 Table
 -----------------------------------------------------------------------------*/
 
-.SWUI_Table { width: 100%; }
+.SWUI_Table {  }
 .SWUI_Table tr td {}
 .SWUI_Table_Label { white-space: nowrap; text-align:left; padding-top: 2px; padding-left: 8px;  }
 .SWUI_Table_Value { text-align: left; padding-right: 2px;}
@@ -190,8 +190,8 @@ Help Studio
 Panel, Window, Form, MessageBox
 -----------------------------------------------------------------------------*/
 
-.SWUI_Panel_Title		{ font-weight: bold; background-color: #d0d0d0; color: #333333; text-align: center; padding-top: 4px; padding-bottom: 4px; }
-.SWUI_Panel_Body		{ padding: 8px 8px 8px 8px; background-color: #f0f0f0;}
+.SWUI_Panel_Title { padding: 4px 8px 4px 8px; font-weight: bold; background-color: #d0d0d0; color: #333333; text-align: center; }
+.SWUI_Panel_Body { padding: 8px 8px 8px 8px; background-color: #f0f0f0; }
 
 /*=============================================================================
 Help Header

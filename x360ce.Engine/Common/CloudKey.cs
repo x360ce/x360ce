@@ -9,7 +9,8 @@ namespace x360ce.Engine
     {
 		public const string RsaPublicKey = "RsaPblicKey";
 		public const string RandomPassword = "RandomPassword";
-        public const string Username = "Username";
+		public const string HashedDiskId = "HashedDiskId";
+		public const string Username = "Username";
         public const string Password = "Password";
         public const string Cloud = "Cloud";
         public const string User = "User";

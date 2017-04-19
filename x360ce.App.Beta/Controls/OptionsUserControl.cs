@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using x360ce.Engine;
 using x360ce.App.Properties;
+using x360ce.App.Forms;
 
 namespace x360ce.App.Controls
 {
@@ -216,7 +217,6 @@ namespace x360ce.App.Controls
 				{
 					// Step 1: Get Server's Public RSA key for encryption.
 					var msg = CloudHelper.NewMessage(CloudAction.GetPublicRsaKey);
-
 					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
 					// Retrieve public RSA key.
 					results = ws.Execute(msg);
@@ -231,6 +231,7 @@ namespace x360ce.App.Controls
 					SettingsManager.OptionsData.Save();
 				}
 				var cmd2 = CloudHelper.NewMessage(CloudAction.LogIn, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
+				cmd2.Values.Add(CloudKey.HashedDiskId, o.HashedDiskId);
 				results = ws.Execute(cmd2);
 			}
 			else
@@ -239,5 +240,18 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		private void CreateButton_Click(object sender, EventArgs e)
+		{
+			var o = SettingsManager.Options;
+			var url = o.InternetDatabaseUrl;
+			var pql = new Uri(url).PathAndQuery.Length;
+			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx";
+			var form = new WebBrowserForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			form.NavigateUrl = navigateUrl;
+			form.ShowDialog();
+			form.Dispose();
+			form = null;
+		}
 	}
 }

@@ -43,7 +43,7 @@ namespace x360ce.App
         public bool InternetFeatures { get; set; }
         public bool InternetAutoLoad { get; set; }
         public bool InternetAutoSave { get; set; }
-        public string InternetDatabaseUrl { get; set; }
+		public string InternetDatabaseUrl { get; set; }
         public List<string> InternetDatabaseUrls { get; set; }
         public List<string> GameScanLocations { get; set; }
         public string DiskId { get; set; }
