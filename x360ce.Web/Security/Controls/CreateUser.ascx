@@ -15,170 +15,172 @@
 				to register for Site.
 		</p>
 	</div>
-	<table class="SWUI_Table" border="0">
-		<tr runat="server" id="FirstNameRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					First Name:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<asp:TextBox ID="FirstNameTextBox" runat="server" />
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="FirstNameStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="LastNameRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					Last Name:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<asp:TextBox ID="LastNameTextBox" runat="server" />
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="LastNameStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="EmailRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					Your Email:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<asp:TextBox ID="EmailTextBox" runat="server" />
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="EmailStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="UserNameRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					User Name:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<asp:TextBox ID="UserName" runat="server"></asp:TextBox>
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="UserNameStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="PasswordRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					Password:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password" />
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="PasswordStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="BirthdayRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					Birthday:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<table border="0">
-					<tr>
-						<td style="padding-right: 8px;">
-							<asp:DropDownList ID="YearDropDownList" runat="server">
-							</asp:DropDownList>
-						</td>
-						<td style="padding-right: 8px;">
-							<asp:DropDownList ID="MonthDropDownList" runat="server">
-							</asp:DropDownList>
-						</td>
-						<td>
-							<asp:DropDownList ID="DayDropDownList" runat="server">
-							</asp:DropDownList>
-						</td>
-					</tr>
-				</table>
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="BirthdayStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="GenderRow">
-			<td class="SWUI_Table_Label">
-				<label>
-					I am:</label>
-			</td>
-			<td class="SWUI_Table_Value">
-				<asp:DropDownList ID="GenderDropDownList" runat="server" ValidationGroup="MemberRegistration">
-					<asp:ListItem Text="Select Gender:" Value="" Selected="True" />
-					<asp:ListItem Text="Female" Value="F" />
-					<asp:ListItem Text="Male" Value="M" />
-				</asp:DropDownList>
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="GenderStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="TermsRow">
-			<td class="SWUI_Table_Label"></td>
-			<td class="SWUI_Table_Value">
-				<table border="0" style="padding-top: 2px;">
-					<tr>
-						<td style="height: 16px;">
-							<asp:CheckBox ID="TermsCheckBox" Text="" runat="server" />
-						</td>
-						<td style="padding-left: 4px;">
-							<label for="<%= TermsCheckBox.ClientID %>">
-								I agree to the
-							</label>
-							<a id="TermsLink" runat="server" href="{0}" target="_blank">terms of use</a>
-						</td>
-					</tr>
-				</table>
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="TermsStatus" class="SWUI_Table_Result0">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="NewsRow">
-			<td class="SWUI_Table_Label"></td>
-			<td class="SWUI_Table_Value">
-				<table border="0">
-					<tr>
-						<td style="height: 16px;">
-							<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" />
-						</td>
-						<td style="padding-left: 4px;">
-							<label for="<%= NewsCheckBox.ClientID %>">
-								Would you like to receive news<br />
-								of our friends' promotions?<span style="display: none;">I would you like to receive
+	<div style="width: 100%;">
+		<table class="SWUI_Table" border="0" style="width: 100%;">
+			<tr runat="server" id="FirstNameRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						First Name:</label>
+				</td>
+				<td class="SWUI_Table_Value SWUI_100w">
+					<asp:TextBox ID="FirstNameTextBox" runat="server" CssClass="SWUI_100w" />
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="FirstNameStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="LastNameRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						Last Name:</label>
+				</td>
+				<td class="SWUI_Table_Value">
+					<asp:TextBox ID="LastNameTextBox" runat="server" CssClass="SWUI_100w" />
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="LastNameStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="EmailRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						Your Email:</label>
+				</td>
+				<td class="SWUI_Table_Value">
+					<asp:TextBox ID="EmailTextBox" runat="server" CssClass="SWUI_100w" />
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="EmailStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="UserNameRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						User Name:</label>
+				</td>
+				<td class="SWUI_Table_Value">
+					<asp:TextBox ID="UserName" runat="server" CssClass="SWUI_100w"></asp:TextBox>
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="UserNameStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="PasswordRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						Password:</label>
+				</td>
+				<td class="SWUI_Table_Value">
+					<asp:TextBox ID="PasswordTextBox" runat="server" TextMode="Password" CssClass="SWUI_100w" />
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="PasswordStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="BirthdayRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						Birthday:</label>
+				</td>
+				<td class="SWUI_Table_Value">
+					<table border="0">
+						<tr>
+							<td style="padding-right: 8px;">
+								<asp:DropDownList ID="YearDropDownList" runat="server">
+								</asp:DropDownList>
+							</td>
+							<td style="padding-right: 8px;">
+								<asp:DropDownList ID="MonthDropDownList" runat="server">
+								</asp:DropDownList>
+							</td>
+							<td>
+								<asp:DropDownList ID="DayDropDownList" runat="server">
+								</asp:DropDownList>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="BirthdayStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="GenderRow">
+				<td class="SWUI_Table_Label">
+					<label>
+						I am:</label>
+				</td>
+				<td class="SWUI_Table_Value">
+					<asp:DropDownList ID="GenderDropDownList" runat="server" ValidationGroup="MemberRegistration">
+						<asp:ListItem Text="Select Gender:" Value="" Selected="True" />
+						<asp:ListItem Text="Female" Value="F" />
+						<asp:ListItem Text="Male" Value="M" />
+					</asp:DropDownList>
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="GenderStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="TermsRow">
+				<td class="SWUI_Table_Label"></td>
+				<td class="SWUI_Table_Value" style="padding:0;">
+					<table border="0" style="padding: 0">
+						<tr>
+							<td class="SWUI_CheckBox">
+								<asp:CheckBox ID="TermsCheckBox" runat="server" />
+							</td>
+							<td style="padding-left: 4px;">
+								<label for="<%= TermsCheckBox.ClientID %>">
+									I agree to the
+								</label>
+								<a id="TermsLink" runat="server" href="{0}" target="_blank">terms of use</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="TermsStatus" class="SWUI_Table_Result0">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="NewsRow">
+				<td class="SWUI_Table_Label"></td>
+				<td class="SWUI_Table_Value">
+					<table border="0">
+						<tr>
+							<td style="height: 16px;">
+								<asp:CheckBox ID="NewsCheckBox" runat="server" CssClass="SWUI_Table_CheckBox" />
+							</td>
+							<td style="padding-left: 4px;">
+								<label for="<%= NewsCheckBox.ClientID %>">
+									Would you like to receive news<br />
+									of our friends' promotions?<span style="display: none;">I would you like to receive
 										BookArmy friends News</span></label>
-						</td>
-					</tr>
-				</table>
-			</td>
-			<td class="SWUI_Table_Check">
-				<div runat="server" id="NewsStatus" class="SWUI_Table_Result0" style="display: none;">
-				</div>
-			</td>
-		</tr>
-		<tr runat="server" id="SignUpRow">
-			<td></td>
-			<td>
-				<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
-					ValidationGroup="AllMemberRegistration" Text="Sign Up" CssClass="SWUI_Table_Button SWUI_Btn" />
-			</td>
-			<td></td>
-		</tr>
-	</table>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td class="SWUI_Table_Check">
+					<div runat="server" id="NewsStatus" class="SWUI_Table_Result0" style="display: none;">
+					</div>
+				</td>
+			</tr>
+			<tr runat="server" id="SignUpRow">
+				<td></td>
+				<td>
+					<asp:LinkButton runat="server" ID="SignUpLinkButton" OnClick="SignUpLinkButton_Click"
+						ValidationGroup="AllMemberRegistration" Text="Sign Up" CssClass="SWUI_Table_Button SWUI_Btn" />
+				</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
 	<asp:Panel runat="server" ID="ErrorPanel" CssClass="SWUI_Table_ErrorPanel">
 		<asp:Label runat="server" ID="ErrorLabel" />
 	</asp:Panel>
@@ -186,7 +188,7 @@
 		<asp:TextBox runat="server" ID="AllTextBox" Text="" /></span>
 	<asp:CustomValidator ID="AllCustomValidator" runat="server" ControlToValidate="AllTextBox"
 		EnableClientScript="True" Text="All Validator" ValidationGroup="AllMemberRegistration"
-		 ErrorMessage="CustomValidator"
+		ErrorMessage="CustomValidator"
 		OnServerValidate="AllCustomValidator_ServerValidate" ValidateEmptyText="True"
 		Display="Dynamic" />
 </div>
