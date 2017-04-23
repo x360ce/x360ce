@@ -74,6 +74,7 @@ Items in these lists are in need of testing with the new hookmask system
   1. Front Mission Evolved
   1. Spider-Man(TM) - Shattered Dimensions
   1. Marvel - Ultimate Alliance
+  1. Hollow Knight
 
 # HookMasks
 This is the new system utilised by r574+
