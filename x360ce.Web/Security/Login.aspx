@@ -11,7 +11,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="PageContentPlaceHolder" runat="server">
 	<table class="MainTable" style="margin: auto;">
 		<tr>
-			<td>
+			<td style="background-color: #3b5998; text-align: center;">
 				<img alt="" runat="server" id="LoginBanner" src="Images/Website_Management_System.gif" style="width: 240px; height: 48px; margin-bottom: 8px;" class="Login_Banner" />
 				<div class="MainDiv">
 					<asp:Panel runat="server" ID="AnonymousPlaceHolder">

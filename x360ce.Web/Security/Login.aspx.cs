@@ -24,6 +24,18 @@ namespace JocysCom.Web.Security
 					}
 				}
 			}
+			if (Request["ShowCreate"] == "0")
+			{
+				CreateUser1.Visible = false;
+			}
+			if (Request["ShowReset"] == "0")
+			{
+				ResetPassword1.Visible = false;
+			}
+			if (Request["ShowLogIn"] == "0")
+			{
+				LoginUser1.Visible = false;
+			}
 			LoginBanner.DataBind();
 			AnonymousPlaceHolder.DataBind();
 			LoggedInPlaceHolder.DataBind();

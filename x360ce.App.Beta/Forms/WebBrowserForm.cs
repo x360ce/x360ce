@@ -34,6 +34,18 @@ namespace x360ce.App.Forms
 		{
 			MainWebBrowser.ScrollBarsEnabled = false;
 			MainWebBrowser.Navigate(NavigateUrl);
+			MainWebBrowser.DocumentCompleted += MainWebBrowser_DocumentCompleted;
+		}
+
+		private void MainWebBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			var w = MainWebBrowser.Width;
+			var h = MainWebBrowser.Height;
+			var size = MainWebBrowser.Document.Window.Size;
+			var wd = size.Width - w;
+			var hd = size.Height - h;
+			var newSize = new Size(Size.Width + wd, Size.Height + hd);
+			Size = newSize;
 		}
 
 		private void CloseButton_Click(object sender, EventArgs e)

@@ -245,8 +245,10 @@ namespace x360ce.App.Controls
 			var o = SettingsManager.Options;
 			var url = o.InternetDatabaseUrl;
 			var pql = new Uri(url).PathAndQuery.Length;
-			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx";
+			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowReset=0";
 			var form = new WebBrowserForm();
+			form.Size = new Size(342, 412);
+			form.Text = "Create Login";
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
 			form.ShowDialog();
