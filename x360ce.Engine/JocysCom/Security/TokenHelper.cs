@@ -189,8 +189,25 @@ namespace JocysCom.ClassLibrary.Security
 			var absolutePath = (url != null)
 				? url.AbsolutePath
 				: u.AbsolutePath;
-			var port = u.IsDefaultPort ? "" : ":" + u.Port.ToString();
+			var port = u.IsDefaultPort ? "" : ":" + u.Port;
 			return string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, absolutePath, keyName, token);
+		}
+
+		/// <summary>
+		/// Get URL to web application root.
+		/// </summary>
+		public static string GetApplicationUrl()
+		{
+			var url = string.Empty;
+			var context = System.Web.HttpContext.Current;
+			if (context != null)
+			{
+				var u = context.Request.Url;
+				var port = u.IsDefaultPort ? "" : ":" + u.Port;
+				var appPath = context.Request.ApplicationPath;
+				url = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, appPath);
+			}
+			return url.TrimEnd('/');
 		}
 
 		/// <summary>

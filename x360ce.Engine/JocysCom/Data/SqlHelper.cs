@@ -6,16 +6,18 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Data
 {
-	public class SqlHelper
+	public partial class SqlHelper
 	{
-
-		#region "Basic Data"
 
 		static object _currentLock = new object();
 		static SqlHelper _Current;
+
+		// Current is a static method. A static method can't be virtual, since it's not related to an instance of the class.
+		// use the 'new' keyword to override.
 		public static SqlHelper Current
 		{
 			get
@@ -28,11 +30,13 @@ namespace JocysCom.ClassLibrary.Data
 			}
 		}
 
+		#region Session Parameters / SetContext
+
 		int? _SessionId;
 		int? _UserId;
 		object SessionParametersLock = new object();
 
-		public void GetSessionParameter(out int? sessionId, out int? userId)
+		public virtual void GetSessionParameter(out int? sessionId, out int? userId)
 		{
 			lock (SessionParametersLock)
 			{
@@ -51,7 +55,7 @@ namespace JocysCom.ClassLibrary.Data
 			}
 		}
 
-		public void SetSessionParameters(int? sessionId, int? userId)
+		public virtual void SetSessionParameters(int? sessionId, int? userId)
 		{
 			lock (SessionParametersLock)
 			{
@@ -68,13 +72,6 @@ namespace JocysCom.ClassLibrary.Data
 					hc.Session["_UserId"] = userId;
 				}
 			}
-		}
-
-		public void AddValue(byte[] data, int id, int destinationIndex)
-		{
-			var bytes = BitConverter.GetBytes(id);
-			Array.Reverse(bytes);
-			Array.Copy(bytes, 0, data, destinationIndex, bytes.Length);
 		}
 
 		public void SetContext(IDbConnection connection, string comment = null)
@@ -102,6 +99,17 @@ namespace JocysCom.ClassLibrary.Data
 			var p = new SqlParameter("@ContextUserID", data);
 			command.Parameters.Add(p);
 			command.ExecuteNonQuery();
+		}
+
+		#endregion
+
+		#region Helper Methods
+
+		public void AddValue(byte[] data, int id, int destinationIndex)
+		{
+			var bytes = BitConverter.GetBytes(id);
+			Array.Reverse(bytes);
+			Array.Copy(bytes, 0, data, destinationIndex, bytes.Length);
 		}
 
 		public string GetConnectionString(string name)
@@ -135,93 +143,44 @@ namespace JocysCom.ClassLibrary.Data
 			return connectionString;
 		}
 
+		public void SetReadUncommited(IDbConnection connection)
+		{
+			// Use the existing open connection to set the context info
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;";
+			cmd.CommandType = CommandType.Text;
+			cmd.ExecuteNonQuery();
+		}
+
+		#endregion
+
+		#region Execute Methods
+
+		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
+		{
+			var cb = new SqlConnectionStringBuilder(connectionString);
+			if (timeout.HasValue)
+			{
+				cmd.CommandTimeout = timeout.Value;
+				cb.ConnectTimeout = timeout.Value;
+			}
+			var conn = new SqlConnection(cb.ConnectionString);
+			cmd.Connection = conn;
+			conn.Open();
+			SetContext(conn, comment);
+			int rv = cmd.ExecuteNonQuery();
+			cmd.Dispose();
+			// Dispose calls conn.Close() internally.
+			conn.Dispose();
+			return rv;
+		}
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-		public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null)
+		public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null, int? timeout = null)
 		{
 			var cmd = new SqlCommand(cmdText);
 			cmd.CommandType = CommandType.Text;
-			return ExecuteNonQuery(connectionString, cmd, -1, comment);
-		}
-
-		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null)
-		{
-			return ExecuteNonQuery(connectionString, cmd, -1, comment);
-		}
-
-		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, int timeout, string comment = null)
-		{
-			SqlConnectionStringBuilder cb = new SqlConnectionStringBuilder(connectionString);
-			if (timeout > -1)
-			{
-				cmd.CommandTimeout = timeout;
-				cb.ConnectTimeout = timeout;
-			}
-			SqlConnection conn = new SqlConnection(cb.ConnectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetContext(conn, comment);
-			int rowsAffected = cmd.ExecuteNonQuery();
-			cmd.Dispose();
-			// Dispose calls Close() internally.
-			conn.Dispose();
-			return rowsAffected;
-		}
-
-		public object ExecuteScalar(string connectionString, SqlCommand cmd, string comment = null)
-		{
-			SqlConnection conn = new SqlConnection(connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetContext(conn, comment);
-			// Returns first column of the first row.
-			object returnValue = cmd.ExecuteScalar();
-			cmd.Dispose();
-			// Dispose calls Close() internally.
-			conn.Dispose();
-			return returnValue;
-		}
-
-		public IDataReader ExecuteReader(string connectionString, SqlCommand cmd, string comment = null)
-		{
-			SqlConnection conn = new SqlConnection(connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetContext(conn, comment);
-			return cmd.ExecuteReader();
-		}
-
-		public DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, string comment = null)
-		{
-			int rowsAffected = 0;
-			return ExecuteDataSet(connectionString, cmd, ref rowsAffected, comment);
-		}
-
-		public DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, ref int rowsAffected, string comment = null)
-		{
-			SqlConnection conn = new SqlConnection(connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetContext(conn, comment);
-			SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-			DataSet ds = new DataSet();
-			rowsAffected = adapter.Fill(ds);
-			adapter.Dispose();
-			cmd.Dispose();
-			// Dispose calls Close() internally.
-			conn.Dispose();
-			return ds;
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-		public DataSet ExecuteDataset(string connectionString, CommandType commandType, string cmdText, string comment = null, params SqlParameter[] commandParameters)
-		{
-			var cmd = new SqlCommand(cmdText);
-			cmd.CommandType = commandType;
-			if (commandParameters != null && commandParameters.Length > 0)
-			{
-				cmd.Parameters.AddRange(commandParameters);
-			}
-			return ExecuteDataSet(connectionString, cmd, comment);
+			return ExecuteNonQuery(connectionString, cmd, comment, timeout);
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
@@ -236,49 +195,97 @@ namespace JocysCom.ClassLibrary.Data
 			return ExecuteNonQuery(connectionString, cmd, comment);
 		}
 
-		public int ExecuteFill<T>(string connectionString, SqlCommand cmd, T dataSet, string comment = null) where T : DataSet
+		public object ExecuteScalar(string connectionString, SqlCommand cmd, string comment = null)
 		{
-			SqlConnection conn = new SqlConnection(connectionString);
+			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
 			SetContext(conn, comment);
-			SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-			int rowsAffected = adapter.Fill(dataSet, dataSet.Tables[0].TableName);
-			adapter.Dispose();
+			// Returns first column of the first row.
+			var returnValue = cmd.ExecuteScalar();
 			cmd.Dispose();
-			// Dispose calls Close() internally.
+			// Dispose calls conn.Close() internally.
 			conn.Dispose();
-			return rowsAffected;
+			return returnValue;
 		}
 
-		public DataTable ExecuteDataTable(string connectionString, SqlCommand cmd, ref int rowsAffected, string comment = null)
+		public IDataReader ExecuteReader(string connectionString, SqlCommand cmd, string comment = null)
 		{
-			DataSet ds = ExecuteDataSet(connectionString, cmd, ref rowsAffected, comment);
-			if (ds.Tables.Count == 0) return null;
-			return ds.Tables[0];
+			var conn = new SqlConnection(connectionString);
+			cmd.Connection = conn;
+			conn.Open();
+			SetContext(conn, comment);
+			return cmd.ExecuteReader();
+		}
+
+		public T ExecuteDataSet<T>(string connectionString, SqlCommand cmd, string comment = null) where T : DataSet
+		{
+			var conn = new SqlConnection(connectionString);
+			cmd.Connection = conn;
+			conn.Open();
+			SetContext(conn, comment);
+			var adapter = new SqlDataAdapter(cmd);
+			var ds = Activator.CreateInstance<T>();
+			int rowsAffected = ds.GetType() == typeof(DataSet)
+				? adapter.Fill(ds)
+				: adapter.Fill(ds, ds.Tables[0].TableName);
+			adapter.Dispose();
+			cmd.Dispose();
+			// Dispose calls conn.Close() internally.
+			conn.Dispose();
+			return (T)ds;
+		}
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		public DataSet ExecuteDataset(string connectionString, CommandType commandType, string cmdText, string comment = null, params SqlParameter[] commandParameters)
+		{
+			var cmd = new SqlCommand(cmdText);
+			cmd.CommandType = commandType;
+			if (commandParameters != null && commandParameters.Length > 0)
+			{
+				cmd.Parameters.AddRange(commandParameters);
+			}
+			return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
+		}
+
+		public DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, string comment = null)
+		{
+			return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
 		}
 
 		public DataTable ExecuteDataTable(string connectionString, SqlCommand cmd, string comment = null)
 		{
-			int rowsAffected = 0;
-			return ExecuteDataTable(connectionString, cmd, ref rowsAffected, comment);
+			var ds = ExecuteDataSet(connectionString, cmd, comment);
+			if (ds != null && ds.Tables.Count > 0) return ds.Tables[0];
+			return null;
 		}
 
 		public DataRow ExecuteDataRow(string connectionString, SqlCommand cmd, string comment = null)
 		{
-			int rowsAffected = 0;
-			return ExecuteDataRow(connectionString, cmd, ref rowsAffected, comment);
-		}
-
-		public DataRow ExecuteDataRow(string connectionString, SqlCommand cmd, ref int rowsAffected, string comment = null)
-		{
-			DataTable table = ExecuteDataTable(connectionString, cmd, ref rowsAffected, comment);
-			if (table != null && table.Rows.Count > 0)
-			{
-				return table.Rows[0];
-			}
+			var table = ExecuteDataTable(connectionString, cmd, comment);
+			if (table != null && table.Rows.Count > 0) return table.Rows[0];
 			return null;
 		}
+
+		#endregion
+
+		#region Error
+
+		public static void SetErrorParameters(SqlParameterCollection p)
+		{
+			var ec = p.Add("@error_code", SqlDbType.Int).Direction = ParameterDirection.InputOutput;
+			var em = p.Add("@error_message", SqlDbType.NVarChar, 255).Direction = ParameterDirection.InputOutput;
+		}
+
+		public static void GetErrorParameters(SqlParameterCollection p, out int error_code, out string error_message)
+		{
+			error_code = (int)p["@error_code"].Value;
+			error_message = (string)p["@error_message"].Value;
+		}
+
+		#endregion
+
+		#region Convert Table To/From List
 
 		/// <summary>
 		/// Convert DataTable to List of objects. Can be used to convert DataTable to list of framework entities. 

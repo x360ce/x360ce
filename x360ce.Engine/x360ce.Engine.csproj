@@ -165,6 +165,7 @@
     <Compile Include="JocysCom\Configuration\SettingsData.cs" />
     <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
+    <Compile Include="JocysCom\Controls\ControlsHelper.Web.cs" />
     <Compile Include="JocysCom\Controls\InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>

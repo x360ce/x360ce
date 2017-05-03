@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using System.Resources;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using System.Globalization;
 using System.Security;
-using System.Management;
 
 namespace JocysCom.ClassLibrary
 {
-	public class Helper : IDisposable
+	public partial class Helper : IDisposable
 	{
 		#region Control Resources
 
@@ -480,93 +475,6 @@ namespace JocysCom.ClassLibrary
 			if (isHtml || tf == TraceFormat.TrailingNewLine) builder.Append(newLine);
 			if (isHtml) builder.Append("</span>");
 			return builder.ToString();
-		}
-
-		#endregion
-
-		#region Shares
-
-		static object sharedFolderLock = new object();
-		static List<SharedFolder> sharedFolderCache;
-
-		public static string ConvertShareToLocalPath(string path, bool cache = true)
-		{
-			var machine = Environment.MachineName.ToLower();
-			// If path is remote.
-			if (path.ToLower().StartsWith(@"\\" + machine))
-			{
-				// This is UNC path which point to local machine.
-				List<SharedFolder> list;
-				lock (sharedFolderLock)
-				{
-					if (!cache || sharedFolderCache == null) sharedFolderCache = GetSharedFolders();
-					list = sharedFolderCache;
-				}
-				foreach (var item in list)
-				{
-					var share = @"\\" + machine + @"\" + item.ShareName;
-					// If share was found then...
-					if (path.ToLower().StartsWith(share.ToLower()))
-					{
-						path = item.Path + path.Substring(share.Length);
-						path = path.Replace("/", "\\");
-						break;
-					}
-				}
-			}
-			return path;
-		}
-
-		public class SharedFolder
-		{
-			public string ShareName { get; set; }
-			public string Caption { get; set; }
-			public string Path { get; set; }
-			public string Domain { get; set; }
-			public string User { get; set; }
-			public uint AccessMask { get; set; }
-			public uint AceType { get; set; }
-		}
-
-		static List<SharedFolder> GetSharedFolders()
-		{
-			var list = new List<SharedFolder>();
-			var scope = new ManagementScope(@"\\.\root\cimv2");
-			scope.Connect();
-			var query = new ObjectQuery("SELECT * FROM Win32_LogicalShareSecuritySetting");
-			var searcher = new ManagementObjectSearcher(scope, query);
-			var results = searcher.Get();
-			foreach (ManagementObject securitySetting in results)
-			{
-				{
-					var shareName = (string)securitySetting["Name"];
-					var caption = (string)securitySetting["Caption"];
-					var localPath = string.Empty;
-					var win32Share = new ManagementObjectSearcher("SELECT Path FROM Win32_share WHERE Name = '" + shareName + "'");
-					foreach (ManagementObject ShareData in win32Share.Get())
-					{
-						localPath = (String)ShareData["Path"];
-					}
-					var method = securitySetting.InvokeMethod("GetSecurityDescriptor", null, new InvokeMethodOptions());
-					var descriptor = (ManagementBaseObject)method["Descriptor"];
-					var dacl = (ManagementBaseObject[])descriptor["DACL"];
-					foreach (ManagementBaseObject ace in dacl)
-					{
-						var Trustee = (ManagementBaseObject)ace["Trustee"];
-						// Full Access = 2032127, Modify = 1245631, Read Write = 118009, Read Only = 1179817
-						var item = new SharedFolder();
-						item.ShareName = shareName;
-						item.Caption = caption;
-						item.Path = localPath;
-						item.Domain = (string)Trustee["Domain"];
-						item.User = (string)Trustee["Name"];
-						item.AccessMask = (uint)ace["AccessMask"];
-						item.AceType = (uint)ace["AceType"];
-						list.Add(item);
-					}
-				}
-			}
-			return list;
 		}
 
 		#endregion
