@@ -15,8 +15,23 @@
 <body class="SWUI_Blue">
 	<form id="form2" runat="server">
 		<asp:ScriptManager ID="ScriptManager1" runat="server" />
-		<asp:ContentPlaceHolder ID="PageMenuPlaceHolder" runat="server" />
-		<asp:ContentPlaceHolder ID="PageContentPlaceHolder" runat="server" />
+		<div class="HeadLayout HeadStyle" id="HeadPanel" runat="server">
+			<div runat="server" clientidmode="Static" class="HeadContentLayout HeadContentStyle">
+				<div>
+					<asp:ContentPlaceHolder ID="PageMenuPlaceHolder" runat="server" />
+				</div>
+			</div>
+		</div>
+		<div id="BodyPanel" class="ContentLayout ContentStyle" runat="server">
+			<div id="content" runat="server" clientidmode="Static" class="BodyContentLayout BodyContentStyle">
+				<div>
+					<asp:ContentPlaceHolder ID="PageContentPlaceHolder" runat="server" />
+				</div>
+			</div>
+		</div>
+		<div class="FootLayout FootStyle" id="FootPanel" runat="server">
+			
+		</div>
 	</form>
 </body>
 </html>

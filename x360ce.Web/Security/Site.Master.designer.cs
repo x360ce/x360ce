@@ -94,6 +94,15 @@ namespace JocysCom.Web.Security {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
+        /// HeadPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl HeadPanel;
+        
+        /// <summary>
         /// PageMenuPlaceHolder control.
         /// </summary>
         /// <remarks>
@@ -103,6 +112,24 @@ namespace JocysCom.Web.Security {
         protected global::System.Web.UI.WebControls.ContentPlaceHolder PageMenuPlaceHolder;
         
         /// <summary>
+        /// BodyPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl BodyPanel;
+        
+        /// <summary>
+        /// content control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl content;
+        
+        /// <summary>
         /// PageContentPlaceHolder control.
         /// </summary>
         /// <remarks>
@@ -110,5 +137,14 @@ namespace JocysCom.Web.Security {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder PageContentPlaceHolder;
+        
+        /// <summary>
+        /// FootPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl FootPanel;
     }
 }

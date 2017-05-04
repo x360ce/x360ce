@@ -2,8 +2,22 @@
  Default
 -----------------------------------------------------------------------------*/
 
-body    { font-family: 'Segoe UI', 'Verdana'; font-size: 9pt; }
-td      { font-family:  'Segoe UI', 'Verdana'; font-size: 9pt; }
+html, body, form { height: 100%; width: 100%; padding: 0; margin: 0; }
+form, html { }
 
+.HeadLayout { height: 48px; margin: 0; padding: 0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+.HeadContentLayout { width: 960px; margin: 0 auto; }
+.HeadContentStyle { background-color: #3b5998; }
+.HeadStyle {  }
+.BodyLayout { margin: 0; padding: 0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+.BodyStyle { }
+.BodyContentLayout { width: 960px; margin: 0 auto; min-height: -webkit-calc(100vh - 48px - 100px); min-height: -moz-calc(100vh - 48px - 100px); min-height: calc(100vh - 48px - 100px); }
+.BodyContentStyle { font-family: 'Segoe UI', 'Verdana'; font-size: 9pt; }
+.FootLayout { height: 100px; }
+.FootStyle { }
 
+.MainTable { border-collapse: collapse; }
+tr.MainTable { padding: 0; margin: 0; }
+td.MainTable  { padding: 0; margin: 0; }
 
+td { font-family: 'Segoe UI', 'Verdana'; font-size: 9pt; }

@@ -72,6 +72,7 @@
 			this.UsernameLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
+			this.ResetButton = new System.Windows.Forms.Button();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -430,6 +431,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.OnlineAccountGroupBox.Controls.Add(this.AnonymousNoteLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.PasswordTextBox);
+			this.OnlineAccountGroupBox.Controls.Add(this.ResetButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.CreateButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.LoginButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameTextBox);
@@ -547,6 +549,16 @@
 			this.label3.TabIndex = 32;
 			this.label3.Text = "Disk ID:";
 			// 
+			// ResetButton
+			// 
+			this.ResetButton.Location = new System.Drawing.Point(424, 108);
+			this.ResetButton.Name = "ResetButton";
+			this.ResetButton.Size = new System.Drawing.Size(75, 23);
+			this.ResetButton.TabIndex = 45;
+			this.ResetButton.Text = "Reset...";
+			this.ResetButton.UseVisualStyleBackColor = true;
+			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -629,5 +641,6 @@
         private System.Windows.Forms.Label UsernameLabel;
         private System.Windows.Forms.Label AnonymousNoteLabel;
         private System.Windows.Forms.Button CreateButton;
-    }
+		private System.Windows.Forms.Button ResetButton;
+	}
 }

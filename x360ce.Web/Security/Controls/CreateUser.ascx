@@ -187,10 +187,10 @@
 	<span style="display: none;">
 		<asp:TextBox runat="server" ID="AllTextBox" Text="" /></span>
 	<asp:CustomValidator ID="AllCustomValidator" runat="server" ControlToValidate="AllTextBox"
-		EnableClientScript="True" Text="All Validator" ValidationGroup="AllMemberRegistration"
+		EnableClientScript="True" ValidationGroup="AllMemberRegistration"
 		ErrorMessage="CustomValidator"
 		OnServerValidate="AllCustomValidator_ServerValidate" ValidateEmptyText="True"
-		Display="Dynamic" />
+		Display="Dynamic" Style="display: none;" />
 </div>
 <pre runat="server" id="DetailResults" style="display: none;"></pre>
 

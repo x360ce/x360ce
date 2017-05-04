@@ -8,11 +8,22 @@
 <asp:Content ID="Header1" ContentPlaceHolderID="HeaderPlaceHolder" runat="server">
 </asp:Content>
 
+<asp:Content ID="PageMenu" ContentPlaceHolderID="PageMenuPlaceHolder" runat="server">
+	<table class="MainTable" style="margin: auto;">
+		<tr>
+			<td>
+				<div class="MainDiv">
+					<img alt="" runat="server" id="LoginBanner" src="Images/Website_Management_System.gif" style="width: 240px; height: 48px;" class="Login_Banner" />
+				</div>
+			</td>
+		</tr>
+	</table>
+</asp:Content>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="PageContentPlaceHolder" runat="server">
 	<table class="MainTable" style="margin: auto;">
 		<tr>
 			<td style="background-color: #3b5998; text-align: center;">
-				<img alt="" runat="server" id="LoginBanner" src="Images/Website_Management_System.gif" style="width: 240px; height: 48px; margin-bottom: 8px;" class="Login_Banner" />
 				<div class="MainDiv">
 					<asp:Panel runat="server" ID="AnonymousPlaceHolder">
 						<uc:LoginUser ID="LoginUser1" runat="server" AutoFocus="true" />
@@ -36,5 +47,4 @@
 			</td>
 		</tr>
 	</table>
-
 </asp:Content>

@@ -247,8 +247,24 @@ namespace x360ce.App.Controls
 			var pql = new Uri(url).PathAndQuery.Length;
 			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowReset=0";
 			var form = new WebBrowserForm();
-			form.Size = new Size(342, 412);
+			form.Size = new Size(342, 500);
 			form.Text = "Create Login";
+			form.StartPosition = FormStartPosition.CenterParent;
+			form.NavigateUrl = navigateUrl;
+			form.ShowDialog();
+			form.Dispose();
+			form = null;
+		}
+
+		private void ResetButton_Click(object sender, EventArgs e)
+		{
+			var o = SettingsManager.Options;
+			var url = o.InternetDatabaseUrl;
+			var pql = new Uri(url).PathAndQuery.Length;
+			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowCreate=0";
+			var form = new WebBrowserForm();
+			form.Size = new Size(342, 300);
+			form.Text = "Reset Login";
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
 			form.ShowDialog();
