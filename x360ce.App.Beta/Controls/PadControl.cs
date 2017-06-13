@@ -20,6 +20,7 @@ namespace x360ce.App.Controls
 {
 	public partial class PadControl : UserControl
 	{
+
 		public PadControl(MapTo controllerIndex)
 		{
 			InitializeComponent();
@@ -51,12 +52,12 @@ namespace x360ce.App.Controls
 			AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
 			AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
 			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
+			UpdateSettingsMap();
 		}
 
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
-
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
 			//bs.Filter = string.Format("MapTo = {0}", (int)MappedTo);
@@ -546,7 +547,7 @@ namespace x360ce.App.Controls
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
-		public void UpdateSettingsMap<T>()
+		public void UpdateSettingsMap()
 		{
 			// FakeAPI
 			AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
@@ -1180,11 +1181,13 @@ namespace x360ce.App.Controls
 		{
 			var pad = string.Format("PAD{0}", (int)MappedTo);
 			var path = string.Format("{0}\\{1}", pad, key);
-			var control = SettingsManager.Current.SettingsMap
-				.Where(x => x.MapTo == MappedTo)
-				.First(x => x.IniPath == path).Control;
-			//control.Text = value;
-			SettingsManager.Current.LoadSetting(control, key, value);
+			var map = SettingsManager.Current.SettingsMap.FirstOrDefault(x => x.IniPath == path);
+			if (map == null)
+			{
+				MessageBox.Show(string.Format("SettingsMap[IniPath='{0}'] not found!", path));
+				return;
+			}
+			SettingsManager.Current.LoadSetting(map.Control, key, value);
 		}
 
 		void SavePresetButton_Click(object sender, EventArgs e)
@@ -1305,33 +1308,13 @@ namespace x360ce.App.Controls
 		}
 
 
-		#region Device To Map
-
-		private void DevicesToMapDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			var grid = (DataGridView)sender;
-			var viewRow = grid.Rows[e.RowIndex];
-			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
-			var device = SettingsManager.GetDevice(setting.InstanceGuid);
-			var isConnected = (device != null);
-			AppHelper.ApplyRowStyle(grid, e, isConnected);
-			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
-			{
-				// Hide device Instance GUID from public eyes. Show part of checksum.
-				e.Value = EngineHelper.GetID(setting.InstanceGuid);
-			}
-
-			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
-			{
-				e.Value = device == null
-					? ""
-					: device.HidManufacturer;
-			}
-		}
+		#region Mapped Devices
 
 		private void AddMapButton_Click(object sender, EventArgs e)
 		{
 			var items = MainForm.Current.ShowDeviceForm();
+			if (items == null)
+				return;
 			foreach (var item in items)
 			{
 				var game = MainForm.Current.GetCurrentGame();
@@ -1361,7 +1344,29 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void DevicesToMapDataGridView_SelectionChanged(object sender, EventArgs e)
+		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var viewRow = grid.Rows[e.RowIndex];
+			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
+			var device = SettingsManager.GetDevice(setting.InstanceGuid);
+			var isConnected = (device != null);
+			AppHelper.ApplyRowStyle(grid, e, isConnected);
+			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
+			{
+				// Hide device Instance GUID from public eyes. Show part of checksum.
+				e.Value = EngineHelper.GetID(setting.InstanceGuid);
+			}
+
+			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
+			{
+				e.Value = device == null
+					? ""
+					: device.HidManufacturer;
+			}
+		}
+
+		private void MappedDevicesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
@@ -1374,6 +1379,21 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
 		}
 
+		private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex < 0) return;
+			var grid = (DataGridView)sender;
+			// If user clicked on the checkbox column then...
+			if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
+			{
+				var row = grid.Rows[e.RowIndex];
+				var item = (Engine.Data.Setting)row.DataBoundItem;
+				// Changed check (enabled state) of the current item.
+				item.IsEnabled = !item.IsEnabled;
+			}
+		}
+
 		#endregion
+
 	}
 }

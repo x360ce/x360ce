@@ -178,12 +178,12 @@ namespace x360ce.App
         {
             detector = new DeviceDetector(false);
             detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
-            update4Enabled = true;
+            UpdateDevicesEnabled = true;
         }
 
         void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
         {
-            update4Enabled = true;
+            UpdateDevicesEnabled = true;
         }
 
         object UpdateDevicesLock = new object();
@@ -192,8 +192,17 @@ namespace x360ce.App
         {
             lock (UpdateDevicesLock)
             {
-                // List of connected devices.
-                var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+				IList<DeviceInstance> devices;
+				try
+				{
+					// List of connected devices.
+					devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+				}
+				catch (Exception ex)
+				{
+					throw;
+				}
+
                 // List of connected devices.
                 var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToArray();
                 // List of current devices.
@@ -261,7 +270,7 @@ namespace x360ce.App
                         //di.Capabilities = state.Capabilities;
                     });
                 }
-                update4Finished = true;
+                UpdateDevicesFinished = true;
             }
             Invoke((MethodInvoker)delegate ()
             {
@@ -840,9 +849,10 @@ namespace x360ce.App
         object formLoadLock = new object();
         public bool update1Enabled = true;
         public bool? update2Enabled;
-        public bool update3Enabled = false;
-        public bool update4Enabled = false;
-        public bool update4Finished = true;
+        public bool update3Enabled;
+		public bool update4Enabled;
+		public bool UpdateDevicesEnabled = false;
+        public bool UpdateDevicesFinished = true;
 
         void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -864,12 +874,15 @@ namespace x360ce.App
                 }
                 if (update3Enabled)
                 {
-                    UpdateForm3();
-                }
-                if (update4Enabled && update4Finished)
+					update3Enabled = false;
+					UpdateForm3();
+					update4Enabled = true;
+				}
+				// Make sure that interface handel is created, before starting device updates.
+                if (update4Enabled && UpdateDevicesEnabled && UpdateDevicesFinished && IsHandleCreated)
                 {
-                    update4Enabled = false;
-                    update4Finished = false;
+                    UpdateDevicesEnabled = false;
+                    UpdateDevicesFinished = false;
                     var ts = new System.Threading.ThreadStart(UpdateDevices);
                     var t = new System.Threading.Thread(ts);
                     t.IsBackground = true;
