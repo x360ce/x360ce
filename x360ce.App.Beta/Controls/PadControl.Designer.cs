@@ -194,11 +194,6 @@
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
 			this.MappedDevicesDataGridView = new System.Windows.Forms.DataGridView();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MappedDevicesTabControl = new System.Windows.Forms.TabControl();
 			this.MappedDevicesTabPage = new System.Windows.Forms.TabPage();
 			this.DevicesToMapSeparatorPanel = new System.Windows.Forms.Panel();
@@ -206,6 +201,11 @@
 			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
 			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
 			this.LoadPresetButton = new System.Windows.Forms.Button();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2241,51 +2241,6 @@
 			this.MappedDevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MappedDevicesDataGridView_CellFormatting);
 			this.MappedDevicesDataGridView.SelectionChanged += new System.EventHandler(this.MappedDevicesDataGridView_SelectionChanged);
 			// 
-			// IsEnabledColumn
-			// 
-			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "On";
-			this.IsEnabledColumn.Name = "IsEnabledColumn";
-			this.IsEnabledColumn.ReadOnly = true;
-			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.IsEnabledColumn.Width = 24;
-			// 
-			// InstanceIdColumn
-			// 
-			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.InstanceIdColumn.HeaderText = "Instance ID";
-			this.InstanceIdColumn.Name = "InstanceIdColumn";
-			this.InstanceIdColumn.ReadOnly = true;
-			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.InstanceIdColumn.Width = 68;
-			// 
-			// VendorNameColumn
-			// 
-			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.VendorNameColumn.DataPropertyName = "VendorName";
-			this.VendorNameColumn.HeaderText = "Vendor Name";
-			this.VendorNameColumn.Name = "VendorNameColumn";
-			this.VendorNameColumn.ReadOnly = true;
-			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.VendorNameColumn.Width = 78;
-			// 
-			// ProductNameColumn
-			// 
-			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.ProductNameColumn.DataPropertyName = "ProductName";
-			this.ProductNameColumn.HeaderText = "Product Name";
-			this.ProductNameColumn.Name = "ProductNameColumn";
-			this.ProductNameColumn.ReadOnly = true;
-			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// MapToColumn
-			// 
-			this.MapToColumn.HeaderText = "Map To";
-			this.MapToColumn.Name = "MapToColumn";
-			this.MapToColumn.ReadOnly = true;
-			this.MapToColumn.Visible = false;
-			// 
 			// MappedDevicesTabControl
 			// 
 			this.MappedDevicesTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -2372,6 +2327,51 @@
 			this.LoadPresetButton.Text = "&Load Preset...";
 			this.LoadPresetButton.UseVisualStyleBackColor = true;
 			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
+			// 
+			// IsEnabledColumn
+			// 
+			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
+			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.Name = "IsEnabledColumn";
+			this.IsEnabledColumn.ReadOnly = true;
+			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.IsEnabledColumn.Width = 24;
+			// 
+			// InstanceIdColumn
+			// 
+			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.InstanceIdColumn.HeaderText = "Instance ID";
+			this.InstanceIdColumn.Name = "InstanceIdColumn";
+			this.InstanceIdColumn.ReadOnly = true;
+			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.InstanceIdColumn.Width = 68;
+			// 
+			// VendorNameColumn
+			// 
+			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.VendorNameColumn.DataPropertyName = "VendorName";
+			this.VendorNameColumn.HeaderText = "Vendor Name";
+			this.VendorNameColumn.Name = "VendorNameColumn";
+			this.VendorNameColumn.ReadOnly = true;
+			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.VendorNameColumn.Width = 78;
+			// 
+			// ProductNameColumn
+			// 
+			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.ProductNameColumn.DataPropertyName = "ProductName";
+			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.Name = "ProductNameColumn";
+			this.ProductNameColumn.ReadOnly = true;
+			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// MapToColumn
+			// 
+			this.MapToColumn.HeaderText = "Map To";
+			this.MapToColumn.Name = "MapToColumn";
+			this.MapToColumn.ReadOnly = true;
+			this.MapToColumn.Visible = false;
 			// 
 			// PadControl
 			// 

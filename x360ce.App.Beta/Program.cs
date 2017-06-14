@@ -112,7 +112,7 @@ namespace x360ce.App
 
         public static int TimerCount = 0;
         public static int ReloadCount = 0;
-        public static int ErrorCount = 0;
+		public static int ErrorCount = 0;
 
         public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {

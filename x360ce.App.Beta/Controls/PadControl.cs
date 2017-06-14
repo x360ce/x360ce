@@ -686,9 +686,11 @@ namespace x360ce.App.Controls
 			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 			Engine.Data.Setting setting = null;
-			if (row != null) setting = row.DataBoundItem as Engine.Data.Setting;
+			if (row != null)
+				setting = row.DataBoundItem as Engine.Data.Setting;
 			UserDevice device = null;
-			if (setting != null) device = SettingsManager.GetDevice(setting.InstanceGuid);
+			if (setting != null)
+				device = SettingsManager.GetDevice(setting.InstanceGuid);
 			return device;
 		}
 
@@ -730,7 +732,12 @@ namespace x360ce.App.Controls
 				}
 				JoystickState state;
 				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
-				DirectInputPanel.UpdateFrom(diDevice, out state);
+				var isOnline = diDevice != null && diDevice.IsOnline;
+				var hasState = isOnline && diDevice.Device != null;
+				var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
+				var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
+				AppHelper.SetText(DirectInputTabPage, text);
+ 				DirectInputPanel.UpdateFrom(diDevice, out state);
 				DirectInputState diState = null;
 				if (state != null) diState = new DirectInputState(state);
 				StopRecording(diState);
@@ -1357,7 +1364,6 @@ namespace x360ce.App.Controls
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(setting.InstanceGuid);
 			}
-
 			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
 			{
 				e.Value = device == null

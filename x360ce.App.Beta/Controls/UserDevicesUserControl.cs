@@ -29,7 +29,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var item = ((UserDevice)grid.Rows[e.RowIndex].DataBoundItem);
-			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			if (e.ColumnIndex == grid.Columns[IsOnlineColumn.Name].Index)
 			{
 				e.Value = item.IsOnline
 					? Properties.Resources.bullet_square_glass_green
