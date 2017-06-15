@@ -346,11 +346,7 @@ namespace x360ce.App
 			// INI setting keys with controls.
 			SettingsManager.Current.ConfigSaved += Current_ConfigSaved;
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
-			OptionsPanel.UpdateSettingsManager();
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, ControlPads[0].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, ControlPads[1].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, ControlPads[2].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, ControlPads[3].MappedDevicesDataGridView);
+			OptionsPanel.UpdateSettingsMap();
 		}
 
 		void Current_ConfigSaved(object sender, SettingEventArgs e)
@@ -946,15 +942,30 @@ namespace x360ce.App
 			CheckEncoding(SettingsManager.IniFileName);
 			// Show status values.
 			MainStatusStrip.Visible = true;
+			// Update settings manager with [Options] section.
+			UpdateSettingsMap();
 			// Load PAD controls.
 			ControlPads = new PadControl[4];
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
-				ControlPads[i] = new Controls.PadControl((MapTo)i + 1);
-				ControlPads[i].Name = string.Format("ControlPad{0}", i + 1);
+				var mapTo = (MapTo)(i + 1);
+				ControlPads[i] = new Controls.PadControl(mapTo);
+				ControlPads[i].Name = string.Format("ControlPad{0}", (int)mapTo);
 				ControlPads[i].Dock = DockStyle.Fill;
 				ControlPages[i].Controls.Add(ControlPads[i]);
 				ControlPads[i].InitPadControl();
+				var section = string.Format(@"PAD{0}", (int)mapTo);
+			}
+			// Update settings manager with [Mappings] section.
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, ControlPads[0].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, ControlPads[1].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, ControlPads[2].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, ControlPads[3].MappedDevicesDataGridView);
+			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
+			// Note: There must be no such sections in new config.
+			for (int i = 0; i < ControlPads.Length; i++)
+			{
+				ControlPads[i].UpdateSettingsMap();
 			}
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
@@ -964,8 +975,6 @@ namespace x360ce.App
 			ControlAbout = new AboutControl();
 			ControlAbout.Dock = DockStyle.Fill;
 			AboutTabPage.Controls.Add(ControlAbout);
-			// Update settings map.
-			UpdateSettingsMap();
 			//ReloadXinputSettings();
 			//// start capture events.
 			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";

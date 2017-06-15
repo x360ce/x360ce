@@ -249,7 +249,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Write value to INI file by control.
 		/// </summary>
-		public bool WriteAllSettingsToInit()
+		public bool WriteAllSettingsToINI()
 		{
 			return WriteSettingsToIni(SettingsMap.ToArray());
 		}

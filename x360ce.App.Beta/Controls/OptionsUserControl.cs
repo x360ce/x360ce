@@ -44,7 +44,7 @@ namespace x360ce.App.Controls
 
 		/// <summary>
 		/// </summary>
-		public void UpdateSettingsManager()
+		public void UpdateSettingsMap()
 		{
 			// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 			// INI setting keys with controls.

@@ -418,46 +418,13 @@ namespace x360ce.App
 		//}
 
 		/// <summary>
-		/// Load PAD settings to form.
-		/// </summary>
-		/// <param name="padSetting">Settings to read.</param>
-		/// <param name="padIndex">Destination pad index.</param>
-		public void LoadPadSettings(MapTo padIndex, PadSetting padSetting)
-		{
-			if (padSetting == null) padSetting = new PadSetting();
-			// Get settings related to PAD.
-			var items = SettingsMap.Where(x => x.MapTo == padIndex).ToArray();
-			var props = padSetting.GetType().GetProperties();
-			foreach (var item in items)
-			{
-				string key = item.IniPath.Split('\\')[1];
-				var prop = props.FirstOrDefault(x => x.Name == item.PropertyName);
-				// If property was not found then...
-				if (prop == null)
-				{
-					//var message = string.Format("ReadPadSettings: Property '{0}' was not found", item.PropertyName);
-					//MessageBoxForm.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					continue;
-				}
-				var v = (string)prop.GetValue(padSetting, null) ?? "";
-				LoadSetting(item.Control, key, v);
-			}
-			loadCount++;
-			var ev = ConfigLoaded;
-			if (ev != null)
-			{
-				ev(this, new SettingEventArgs(padSetting.GetType().Name, loadCount));
-			}
-		}
-
-		/// <summary>
 		/// Read setting from INI file into windows form control.
 		/// </summary>
 		public void LoadSetting(Control control, string key = null, string value = null)
 		{
 			if (key != null && (
 				key == SettingName.HookMode ||
-				key.EndsWith(SettingName.DeviceSubType) ||
+				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
@@ -569,7 +536,7 @@ namespace x360ce.App
 			var padIndex = SettingName.GetPadIndex(path);
 			string v = string.Empty;
 			if (key == SettingName.HookMode ||
-				key.EndsWith(SettingName.DeviceSubType) ||
+				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
