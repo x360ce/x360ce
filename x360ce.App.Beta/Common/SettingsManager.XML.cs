@@ -18,8 +18,28 @@ namespace x360ce.App
 		/// </summary>
 		public bool WriteAllSettingsToXML()
 		{
-			var padSetting = GetPadSetting(MapTo.Controller1);
-
+			var maps = new[] { MapTo.Controller1, MapTo.Controller2, MapTo.Controller4, MapTo.Controller4 };
+			foreach (var map in maps)
+			{
+				var ps = GetPadSetting(map);
+				// If setting doesn't exists then...
+				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == ps.PadSettingChecksum))
+				{
+					// Add setting to configuration.
+					PadSettings.Items.Add(ps);
+				}
+			}
+			// Get all settings used by PADs.
+			var usedChecksums = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
+			// Get all stored padSettings.
+			var allChecksums = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
+			// Wipe all pad settings not attached to devices.
+			var notUsed = allChecksums.Except(usedChecksums);
+			foreach (var nu in notUsed)
+			{
+				var notUsedItems = PadSettings.Items.Where (x => x.PadSettingChecksum == nu).ToArray();
+				PadSettings.Remove(notUsedItems);
+			}
 			return true;
 		}
 

@@ -80,7 +80,7 @@ namespace x360ce.App
 		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices", "User Devices (Direct Input).");
 
 		/// <summary>User Controller Instances.</summary>
-		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances.");
+		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
 
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
 		{

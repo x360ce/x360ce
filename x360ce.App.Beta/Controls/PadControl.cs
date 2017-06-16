@@ -1199,6 +1199,7 @@ namespace x360ce.App.Controls
 		{
 			SettingsManager.Current.WriteAllSettingsToINI();
 			SettingsManager.Current.WriteAllSettingsToXML();
+			MainForm.Current.SaveAll();
 		}
 
 		/// <summary> 

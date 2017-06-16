@@ -97,7 +97,6 @@ namespace x360ce.App
 			SettingsManager.Presets.Load();
 			SettingsManager.PadSettings.Load();
 			SettingsManager.UserDevices.Load();
-			SettingsManager.UserDevices.Load();
 			SettingsManager.UserInstances.Load();
 			for (int i = 0; i < 4; i++)
 			{
@@ -670,6 +669,11 @@ namespace x360ce.App
 				// delete temp.
 				tmp.Delete();
 			}
+			SaveAll();
+		}
+
+		public void SaveAll()
+		{
 			Settings.Default.Save();
 			SettingsManager.OptionsData.Save();
 			SettingsManager.Settings.Save();
