@@ -202,6 +202,7 @@
 			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
 			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -2207,6 +2208,7 @@
 			this.MappedDevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.MappedDevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsEnabledColumn,
+            this.SettingIdColumn,
             this.InstanceIdColumn,
             this.VendorNameColumn,
             this.ProductNameColumn,
@@ -2337,6 +2339,15 @@
 			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.IsEnabledColumn.Width = 24;
+			// 
+			// SettingIdColumn
+			// 
+			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SettingIdColumn.HeaderText = "Setting ID";
+			this.SettingIdColumn.Name = "SettingIdColumn";
+			this.SettingIdColumn.ReadOnly = true;
+			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.SettingIdColumn.Width = 60;
 			// 
 			// InstanceIdColumn
 			// 
@@ -2633,6 +2644,7 @@
 		private System.Windows.Forms.Button LoadPresetButton;
 		public System.Windows.Forms.DataGridView MappedDevicesDataGridView;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn SettingIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn InstanceIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;

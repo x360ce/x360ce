@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using x360ce.App.Controls;
+using x360ce.Engine;
+using x360ce.Engine.Data;
+
+namespace x360ce.App
+{
+	public partial class SettingsManager
+	{
+
+		public Action<Control> NotifySettingsChange;
+		public Action<int> NotifySettingsStatus;
+
+		object eventsLock = new object();
+		// Events are suspended (not attached by default).
+		int eventsSuspendCount = 1;
+
+		public void SuspendEvents()
+		{
+			lock (eventsLock)
+			{
+				eventsSuspendCount++;
+				NotifySettingsStatus(eventsSuspendCount);
+				// If events already suspended then return.
+				if (eventsSuspendCount > 1)
+					return;
+				// Don't allow controls to fire events.
+				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control).ToArray();
+				foreach (var control in controls)
+				{
+					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
+					if (control is ListBox) ((ListBox)control).SelectedIndexChanged -= new EventHandler(Control_SelectedIndexChanged);
+					if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
+					if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
+					if (control is ComboBox)
+					{
+						var cbx = (ComboBox)control;
+						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
+						{
+							cbx.SelectedIndexChanged -= new EventHandler(Control_TextChanged);
+						}
+						else
+						{
+							cbx.TextChanged -= new EventHandler(Control_TextChanged);
+						}
+					}
+				}
+			}
+		}
+
+		public void ResumeEvents()
+		{
+			lock (eventsLock)
+			{
+				eventsSuspendCount--;
+				NotifySettingsStatus(eventsSuspendCount);
+				// If events must be suspended then return.
+				if (eventsSuspendCount > 0)
+					return;
+				if (eventsSuspendCount < 0)
+					throw new Exception("ResumeEvents() executed multiple times.");
+				// Allow controls to fire events.
+				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control);
+				foreach (var control in controls)
+				{
+					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
+					if (control is ListBox) ((ListBox)control).SelectedIndexChanged += new EventHandler(Control_SelectedIndexChanged);
+					if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
+					if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
+					if (control is ComboBox)
+					{
+						var cbx = (ComboBox)control;
+						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
+						{
+							cbx.SelectedIndexChanged += new EventHandler(Control_TextChanged);
+						}
+						else
+						{
+							cbx.TextChanged += new EventHandler(Control_TextChanged);
+						}
+					}
+				}
+			}
+		}
+
+		Dictionary<string, int> ListBoxCounts = new Dictionary<string, int>();
+
+		/// <summary>Monitor changes remove/add inside ListBoxes.</summary>
+		void Control_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			lock (ListBoxCounts)
+			{
+				var lb = (ListBox)sender;
+				// If list contains count of ListBoxes items.			
+				if (ListBoxCounts.ContainsKey(lb.Name))
+				{
+					// If ListBoxe haven't changed then return;
+					if (ListBoxCounts[lb.Name] == lb.Items.Count) return;
+					ListBoxCounts[lb.Name] = lb.Items.Count;
+				}
+				else
+				{
+					ListBoxCounts.Add(lb.Name, lb.Items.Count);
+				}
+			}
+			// Save setting and notify if value changed.
+			NotifySettingsChange((Control)sender);
+		}
+
+		void Control_TextChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if value changed.
+			NotifySettingsChange((Control)sender);
+		}
+
+		void Control_ValueChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if value changed.
+			NotifySettingsChange((Control)sender);
+		}
+
+		void Control_CheckedChanged(object sender, EventArgs e)
+		{
+			// Save setting and notify if value changed.
+			NotifySettingsChange((Control)sender);
+		}
+
+	}
+}

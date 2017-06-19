@@ -115,10 +115,10 @@ namespace x360ce.App.Controls
 					{
 						var iniFile = s.FileName;
 						var section = s.FileProductName;
-						MainForm.Current.SuspendEvents();
+						SettingsManager.Current.SuspendEvents();
 						// preset will be stored in inside [PAD1] section;
 						//SettingManager.Current.LoadPadSettings(iniFile, section, _padIndex);
-						MainForm.Current.ResumeEvents();
+						SettingsManager.Current.ResumeEvents();
 						this.DialogResult = System.Windows.Forms.DialogResult.OK;
 					}
 					else
@@ -156,9 +156,9 @@ namespace x360ce.App.Controls
 				var padSectionName = SettingsManager.Current.GetInstanceSection(_di.InstanceGuid);
 				SettingsManager.Current.SetPadSetting(padSectionName, _di);
 				//SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
-				MainForm.Current.SuspendEvents();
+				SettingsManager.Current.SuspendEvents();
 				//SettingManager.Current.LoadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
-				MainForm.Current.ResumeEvents();
+				SettingsManager.Current.ResumeEvents();
 				MainForm.Current.SetHeaderBody(
 					MessageBoxIcon.Information,
                     "{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.",

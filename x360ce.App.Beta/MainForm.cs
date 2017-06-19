@@ -84,6 +84,10 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
+			// NotifySettingsChange will be called on event suspention and resume.
+			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
+			// NotifySettingsChange will be called on setting changes.
+			SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
 			SettingsManager.Settings.Load();
 			SettingsManager.Summaries.Load();
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
@@ -434,117 +438,11 @@ namespace x360ce.App
 			StatusTimerLabel.Text = "";
 		}
 
-		#region Setting Events
-
-		object eventsLock = new object();
-		int eventsSuspendCount;
-
-		public void SuspendEvents()
-		{
-			lock (eventsLock)
-			{
-				eventsSuspendCount++;
-				StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
-				// If events already suspended then return.
-				if (eventsSuspendCount > 1) return;
-				// Don't allow controls to fire events.
-				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control).ToArray();
-				foreach (var control in controls)
-				{
-					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
-					if (control is ListBox) ((ListBox)control).SelectedIndexChanged -= new EventHandler(Control_SelectedIndexChanged);
-					if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
-					if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
-					if (control is ComboBox)
-					{
-						var cbx = (ComboBox)control;
-						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
-						{
-							cbx.SelectedIndexChanged -= new EventHandler(Control_TextChanged);
-						}
-						else
-						{
-							cbx.TextChanged -= new EventHandler(Control_TextChanged);
-						}
-					}
-				}
-			}
-		}
-
-		public void ResumeEvents()
-		{
-			lock (eventsLock)
-			{
-				eventsSuspendCount--;
-				StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
-				// If events already resumed then return.
-				if (eventsSuspendCount < 1) return;
-				// Allow controls to fire events.
-				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control);
-				foreach (var control in controls)
-				{
-					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
-					if (control is ListBox) ((ListBox)control).SelectedIndexChanged += new EventHandler(Control_SelectedIndexChanged);
-					if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
-					if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
-					if (control is ComboBox)
-					{
-						var cbx = (ComboBox)control;
-						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
-						{
-							cbx.SelectedIndexChanged += new EventHandler(Control_TextChanged);
-						}
-						else
-						{
-							cbx.TextChanged += new EventHandler(Control_TextChanged);
-						}
-					}
-				}
-			}
-		}
-
 		#region Control Changed Events
 
-		Dictionary<string, int> ListBoxCounts = new Dictionary<string, int>();
-
-		/// <summary>Monitor changes remove/add inside ListBoxes.</summary>
-		void Control_SelectedIndexChanged(object sender, EventArgs e)
+		public void NotifySettingsStatus(int eventsSuspendCount)
 		{
-			lock (ListBoxCounts)
-			{
-				var lb = (ListBox)sender;
-				// If list contains count of ListBoxes items.			
-				if (ListBoxCounts.ContainsKey(lb.Name))
-				{
-					// If ListBoxe haven't changed then return;
-					if (ListBoxCounts[lb.Name] == lb.Items.Count) return;
-					ListBoxCounts[lb.Name] = lb.Items.Count;
-				}
-				else
-				{
-					ListBoxCounts.Add(lb.Name, lb.Items.Count);
-				}
-			}
-			// Save setting and notify if value changed.
-			NotifySettingsChange((Control)sender);
-		}
-
-		void Control_TextChanged(object sender, EventArgs e)
-		{
-			// Save setting and notify if value changed.
-			NotifySettingsChange((Control)sender);
-		}
-
-		void Control_ValueChanged(object sender, EventArgs e)
-		{
-			// Save setting and notify if value changed.
-			NotifySettingsChange((Control)sender);
-		}
-
-		void Control_CheckedChanged(object sender, EventArgs e)
-		{
-			// Save setting and notify if value changed.
-			NotifySettingsChange((Control)sender);
+			StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
 		}
 
 		/// <summary>
@@ -597,8 +495,6 @@ namespace x360ce.App
 		//	StatusTimerLabel.Text = "Settings saved";
 		//	UpdateTimer.Start();
 		//}
-
-		#endregion
 
 		public static object XInputLock = new object();
 
@@ -970,6 +866,7 @@ namespace x360ce.App
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				ControlPads[i].UpdateSettingsMap();
+				ControlPads[i].InitPadData();
 			}
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
@@ -980,8 +877,9 @@ namespace x360ce.App
 			ControlAbout.Dock = DockStyle.Fill;
 			AboutTabPage.Controls.Add(ControlAbout);
 			//ReloadXinputSettings();
-			//// start capture events.
 			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+			// start capture events.
+			SettingsManager.Current.ResumeEvents();
 		}
 
 

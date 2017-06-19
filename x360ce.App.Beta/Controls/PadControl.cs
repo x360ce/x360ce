@@ -54,15 +54,19 @@ namespace x360ce.App.Controls
 			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
 		}
 
+		public void InitPadData()
+		{
+			var grid = MappedDevicesDataGridView;
+			grid.DataSource = mappedItems;
+			Settings_Items_ListChanged(null, null);
+			SettingsManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
+		}
+
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
-			//bs.Filter = string.Format("MapTo = {0}", (int)MappedTo);
-			grid.DataSource = mappedItems;
-			Settings_Items_ListChanged(null, null);
-			SettingsManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 			// Initialize images.
 			this.TopPictureBox.Image = topDisabledImage;
 			this.FrontPictureBox.Image = frontDisabledImage;
@@ -155,7 +159,12 @@ namespace x360ce.App.Controls
 					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
 				}
 				var visibleCount = mappedItems.Count();
-				MappedDevicesTabPage.Text = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
+				var title = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
+				if (mappedItems.Count(x => x.IsEnabled) > 1)
+				{
+					title += " (Combine)";
+				}
+				AppHelper.SetText(MappedDevicesTabPage, title);
 			}
 		}
 
@@ -735,7 +744,7 @@ namespace x360ce.App.Controls
 				var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
 				var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
 				AppHelper.SetText(DirectInputTabPage, text);
- 				DirectInputPanel.UpdateFrom(diDevice, out state);
+				DirectInputPanel.UpdateFrom(diDevice, out state);
 				DirectInputState diState = null;
 				if (state != null) diState = new DirectInputState(state);
 				StopRecording(diState);
@@ -1362,6 +1371,11 @@ namespace x360ce.App.Controls
 			{
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(setting.InstanceGuid);
+			}
+			else if (e.ColumnIndex == grid.Columns[SettingIdColumn.Name].Index)
+			{
+				// Hide device Setting GUID from public eyes. Show part of checksum.
+				e.Value = EngineHelper.GetID(setting.SettingId);
 			}
 			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
 			{

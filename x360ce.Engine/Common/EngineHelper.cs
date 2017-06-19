@@ -489,10 +489,13 @@ namespace x360ce.Engine
 
 		#endregion
 
+		/// <summary>
+		/// Get first 8 numbers of GUID.
+		/// </summary>
+		/// <remarks>Instance GUID or Setting GUID (MD5 checksum) is always random.</remarks>
 		public static string GetID(Guid guid)
 		{
-			Guid hash = Guid.Empty.Equals(guid) ? guid : ComputeMd5Hash(guid.ToByteArray());
-			return hash.ToString().Substring(0, 8).ToUpper();
+			return guid.ToString("N").Substring(0, 8).ToUpper();
 		}
 
 		#region Get Key Name
