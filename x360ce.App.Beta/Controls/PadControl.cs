@@ -156,7 +156,7 @@ namespace x360ce.App.Controls
 					cm.ResumeBinding();
 					grid.ResumeLayout();
 					// Restore selection.
-					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<Guid>(grid, "InstanceGuid", selection);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "InstanceGuid", selection);
 				}
 				var visibleCount = mappedItems.Count();
 				var title = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");

@@ -5,6 +5,7 @@ using System.Data.Objects.DataClasses;
 using System.Windows.Forms;
 using System.Linq;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -219,6 +220,36 @@ namespace JocysCom.ClassLibrary.Controls
 			// Cast to required type.
 			var result2 = result.Select(x => (T)(object)x).ToArray();
 			return result2;
+		}
+
+		#endregion
+
+		#region IsDesignMode
+
+		public static bool _IsDesignMode(IComponent component, IComponent parent)
+		{
+			// Check 1.
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+				return true;
+			// Check 2 (DesignMode).
+			var site = component.Site;
+			if (site != null && site.DesignMode)
+				return true;
+			if (parent != null && parent.GetType().FullName.Contains("VisualStudio"))
+				return true;
+			// Not design mode.
+			return false;
+		}
+
+		public static bool IsDesignMode(Component component)
+		{
+			var form = component as Form;
+			if (form != null)
+				return _IsDesignMode(form, form.ParentForm ?? form.Owner);
+			var control = component as Control;
+			if (control != null)
+				return _IsDesignMode(control, control.Parent);
+			return _IsDesignMode(component, null);
 		}
 
 		#endregion

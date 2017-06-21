@@ -35,10 +35,7 @@ namespace JocysCom.ClassLibrary.IO
 			detector = new DeviceDetector(false);
 		}
 
-		public bool IsDesignMode
-		{
-			get { return DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime; }
-		}
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{

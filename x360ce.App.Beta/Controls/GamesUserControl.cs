@@ -29,17 +29,7 @@ namespace x360ce.App.Controls
 			InitData();
 		}
 
-		bool IsDesignMode
-		{
-			get
-			{
-				if (DesignMode) return true;
-				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
-				var pa = this.ParentForm;
-				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
-				return false;
-			}
-		}
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		void InitData()
 		{
@@ -415,7 +405,7 @@ namespace x360ce.App.Controls
 			cm.ResumeBinding();
 			grid.ResumeLayout();
 			// Restore selection.
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
 		}
 
 		#endregion
@@ -627,7 +617,7 @@ namespace x360ce.App.Controls
 				DateTime.Now, programs.Count()
 			);
 			ProgramsDataGridView.DataSource = SettingsManager.Programs.Items;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
 			SettingsManager.Save(true);
 		}
 

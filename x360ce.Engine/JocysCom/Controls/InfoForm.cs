@@ -1,4 +1,4 @@
-using JocysCom.ClassLibrary.Processes;
+﻿using JocysCom.ClassLibrary.Processes;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -18,17 +18,7 @@ namespace JocysCom.ClassLibrary.Controls
 			set { _SelectedControl = value; }
 		}
 
-		public bool IsDesignMode
-		{
-			get
-			{
-				if (DesignMode) return true;
-				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
-				var pa = ParentForm;
-				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
-				return false;
-			}
-		}
+		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1306:SetLocaleForDataTypes")]
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]

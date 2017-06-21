@@ -152,17 +152,7 @@ namespace x360ce.App
 			}
 		}
 
-		internal bool IsDesignMode
-		{
-			get
-			{
-				if (DesignMode) return true;
-				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
-				var pa = this.ParentForm;
-				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
-				return false;
-			}
-		}
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{

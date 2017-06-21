@@ -28,17 +28,7 @@ namespace x360ce.App.Controls
 			HashedDiskIdTextBox.Text = BoardInfo.GetHashedDiskId().ToString();
 		}
 
-		bool IsDesignMode
-		{
-			get
-			{
-				if (DesignMode) return true;
-				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return true;
-				var pa = this.ParentForm;
-				if (pa != null && pa.GetType().FullName.Contains("VisualStudio")) return true;
-				return false;
-			}
-		}
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		void InitData()
 		{
@@ -403,7 +393,7 @@ namespace x360ce.App.Controls
 			cm.ResumeBinding();
 			grid.ResumeLayout();
 			// Restore selection.
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
 		}
 
 		private void GamesDataGridView_KeyDown(object sender, KeyEventArgs e)
@@ -593,7 +583,7 @@ namespace x360ce.App.Controls
 			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
 			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			ProgramsDataGridView.DataSource = SettingManager.Programs.Items;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection<string>(grid, "FileName", selection);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
 			SettingManager.Save(true);
 		}
 

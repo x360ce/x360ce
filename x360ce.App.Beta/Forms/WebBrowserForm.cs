@@ -25,10 +25,7 @@ namespace x360ce.App.Forms
 			// is not visible and is not added to a visible form as well.
 		}
 
-		public bool IsDesignMode
-		{
-			get { return DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime; }
-		}
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		void Form_HandleCreated(object sender, EventArgs e)
 		{

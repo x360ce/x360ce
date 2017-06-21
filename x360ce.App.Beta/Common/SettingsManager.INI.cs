@@ -178,7 +178,7 @@ namespace x360ce.App
 			{
 				var item = items[i];
 				var value = GetSettingValue(item.Control);
-				sb.AppendFormat("{0}={1}", item.IniKey, value);
+				sb.AppendFormat("{0}={1}\r\n", item.IniKey, value);
 			}
 			return sb.ToString();
 		}
