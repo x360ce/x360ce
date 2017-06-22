@@ -15,6 +15,7 @@ using JocysCom.ClassLibrary.IO;
 using System.Linq.Expressions;
 using JocysCom.ClassLibrary.ComponentModel;
 using x360ce.Engine.Data;
+using System.Reflection;
 
 namespace x360ce.App.Controls
 {
@@ -685,20 +686,55 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
+		/// Get selected Setting. If device is not selected then return null.
+		/// </summary>
+		/// <returns></returns>
+		public Setting GetCurrentSetting()
+		{
+			var grid = MappedDevicesDataGridView;
+			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+			var setting = (row == null)
+				? null
+				: (Engine.Data.Setting)row.DataBoundItem;
+			return setting;
+		}
+
+		/// <summary>
 		/// Get selected device. If device is not connected then return null.
 		/// </summary>
 		/// <returns></returns>
 		UserDevice GetCurrentDevice()
 		{
-			var grid = MappedDevicesDataGridView;
-			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			Engine.Data.Setting setting = null;
-			if (row != null)
-				setting = row.DataBoundItem as Engine.Data.Setting;
-			UserDevice device = null;
-			if (setting != null)
-				device = SettingsManager.GetDevice(setting.InstanceGuid);
+			var setting = GetCurrentSetting();
+			var device = (setting == null)
+				? null
+				: SettingsManager.GetDevice(setting.InstanceGuid);
 			return device;
+		}
+
+		/// <summary>
+		/// Get PadSetting from currently selected device.
+		/// </summary>
+		/// <param name="padIndex">Source pad index.</param>
+		public PadSetting GetCurrentPadSetting()
+		{
+			// Get settings related to PAD.
+			var maps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo).ToArray();
+			PropertyInfo[] properties;
+			if (!SettingsManager.ValidatePropertyNames(maps, out properties))
+				return null;
+			var ps = new PadSetting();
+			foreach (var p in properties)
+			{
+				var map = maps.First(x => x.PropertyName == p.Name);
+				var key = map.IniPath.Split('\\')[1];
+				// Get setting value from the form.
+				var v = SettingsManager.Current.GetSettingValue(map.Control);
+				// Set value onto padSetting.
+				p.SetValue(ps, v ?? "", null);
+			}
+			ps.PadSettingChecksum = ps.GetCheckSum();
+			return ps;
 		}
 
 		object updateFromDirectInputLock = new object();
@@ -1207,7 +1243,7 @@ namespace x360ce.App.Controls
 		void SavePresetButton_Click(object sender, EventArgs e)
 		{
 			SettingsManager.Current.WriteAllSettingsToINI();
-			SettingsManager.Current.WriteAllSettingsToXML();
+			SettingsManager.Current.ApplyAllSettingsToXML();
 			MainForm.Current.SaveAll();
 		}
 
@@ -1352,10 +1388,10 @@ namespace x360ce.App.Controls
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
 			var grid = MappedDevicesDataGridView;
-			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (Engine.Data.Setting)x.DataBoundItem).ToArray();
-			foreach (var item in items)
+			var setting = GetCurrentSetting();
+			if (setting != null)
 			{
-				item.MapTo = (int)MapTo.Disabled;
+				setting.MapTo = (int)MapTo.Disabled;
 			}
 		}
 
@@ -1375,7 +1411,7 @@ namespace x360ce.App.Controls
 			else if (e.ColumnIndex == grid.Columns[SettingIdColumn.Name].Index)
 			{
 				// Hide device Setting GUID from public eyes. Show part of checksum.
-				e.Value = EngineHelper.GetID(setting.SettingId);
+				e.Value = EngineHelper.GetID(setting.PadSettingChecksum);
 			}
 			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
 			{
@@ -1387,14 +1423,10 @@ namespace x360ce.App.Controls
 
 		private void MappedDevicesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
-			var grid = MappedDevicesDataGridView;
-			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			Engine.Data.PadSetting padSetting = null;
-			if (row != null)
-			{
-				var setting = (Engine.Data.Setting)row.DataBoundItem;
-				padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			}
+			var setting = GetCurrentSetting();
+			var padSetting = setting == null
+				? null
+				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
 		}
 

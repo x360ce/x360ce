@@ -2343,6 +2343,7 @@
 			// SettingIdColumn
 			// 
 			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SettingIdColumn.DataPropertyName = "PadSettingChecksum";
 			this.SettingIdColumn.HeaderText = "Setting ID";
 			this.SettingIdColumn.Name = "SettingIdColumn";
 			this.SettingIdColumn.ReadOnly = true;

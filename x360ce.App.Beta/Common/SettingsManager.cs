@@ -527,7 +527,7 @@ namespace x360ce.App
 
 		#region Save Settings
 
-		string GetSettingValue(Control control)
+		public string GetSettingValue(Control control)
 		{
 			var item = SettingsMap.First(x => x.Control == control);
 			var path = item.IniPath;

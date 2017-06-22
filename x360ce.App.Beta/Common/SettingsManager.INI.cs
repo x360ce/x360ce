@@ -276,9 +276,9 @@ namespace x360ce.App
 				{
 					var section = item.IniSection;
 					string key = item.IniKey;
-					var iniValue = ini.GetValue(section, key);
+					var oldValue = ini.GetValue(section, key);
 					var newValue = GetSettingValue(item.Control);
-					if (iniValue != newValue)
+					if (oldValue != newValue)
 					{
 						var result = ini.SetValue(section, key, newValue);
 						if (result != 0) saved = true;

@@ -877,10 +877,9 @@ namespace x360ce.App
 			AboutTabPage.Controls.Add(ControlAbout);
 			//ReloadXinputSettings();
 			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
-			// start capture events.
+			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
-
 
 		/// <summary>
 		/// This method will run continuously by the UpdateTimer.

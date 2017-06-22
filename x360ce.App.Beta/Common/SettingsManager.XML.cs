@@ -15,36 +15,56 @@ namespace x360ce.App
 	{
 
 		/// <summary>
-		/// Write all settings to XML files.
+		/// Apply all settings to XML.
 		/// </summary>
-		public bool WriteAllSettingsToXML()
+		public bool ApplyAllSettingsToXML()
 		{
-			var maps = new[] { MapTo.Controller1, MapTo.Controller2, MapTo.Controller4, MapTo.Controller4 };
-			foreach (var map in maps)
+			var padControls = MainForm.Current.PadControls;
+			for (int i = 0; i < padControls.Length; i++)
 			{
-				var ps = GetPadSetting(map);
+				// Get pad control with settings.
+				var padControl = MainForm.Current.PadControls[i];
+				var setting = padControl.GetCurrentSetting();
+				// Skip if not selected.
+				if (setting == null)
+					continue;
+				var padSetting = padControl.GetCurrentPadSetting();
 				// If setting doesn't exists then...
-				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == ps.PadSettingChecksum))
+				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == padSetting.PadSettingChecksum))
 				{
 					// Add setting to configuration.
-					PadSettings.Items.Add(ps);
+					PadSettings.Items.Add(padSetting);
+				}
+				// If pad setting checsum changed then...
+				if (setting.PadSettingChecksum != padSetting.PadSettingChecksum)
+				{
+					// Assign updated checksum.
+					setting.PadSettingChecksum = padSetting.PadSettingChecksum;
 				}
 			}
+			CleanupPadSettings();
+			return true;
+		}
+
+		/// <summary>
+		/// Remove PAD settings, not attached to any device.
+		/// </summary>
+		void CleanupPadSettings()
+		{
 			// Get all settings used by PADs.
-			var usedChecksums = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
+			var usedPadSettings = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
 			// Get all stored padSettings.
-			var allChecksums = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
+			var allPadSettings = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
 			// Wipe all pad settings not attached to devices.
-			var notUsed = allChecksums.Except(usedChecksums);
+			var notUsed = allPadSettings.Except(usedPadSettings);
 			foreach (var nu in notUsed)
 			{
 				var notUsedItems = PadSettings.Items.Where(x => x.PadSettingChecksum == nu).ToArray();
 				PadSettings.Remove(notUsedItems);
 			}
-			return true;
 		}
 
-		bool ValidatePropertyNames(SettingsMapItem[] maps, out PropertyInfo[] propertiesToSet)
+		public static bool ValidatePropertyNames(SettingsMapItem[] maps, out PropertyInfo[] propertiesToSet)
 		{
 			var availableNames = maps.Select(x => x.PropertyName);
 			var properties = typeof(PadSetting).GetProperties();
@@ -64,7 +84,7 @@ namespace x360ce.App
 		/// Get PadSetting from currently selected device.
 		/// </summary>
 		/// <param name="padIndex">Source pad index.</param>
-		public PadSetting GetPadSetting(MapTo padIndex)
+		public PadSetting GetCurrentPadSetting(MapTo padIndex)
 		{
 			// Get settings related to PAD.
 			var maps = SettingsMap.Where(x => x.MapTo == padIndex).ToArray();
