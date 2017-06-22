@@ -66,7 +66,7 @@ namespace x360ce.App
 		}
 
 		public AboutControl ControlAbout;
-		public PadControl[] ControlPads;
+		public PadControl[] PadControls;
 		public TabPage[] ControlPages;
 
 		/// <summary>
@@ -416,12 +416,12 @@ namespace x360ce.App
 
 		void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
-			for (int i = 0; i < ControlPads.Length; i++)
+			for (int i = 0; i < PadControls.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
 				if (e.KeyCode == Keys.Escape)
 				{
-					var recordingWasStopped = ControlPads[i].StopRecording();
+					var recordingWasStopped = PadControls[i].StopRecording();
 					if (recordingWasStopped)
 					{
 						e.Handled = true;
@@ -451,12 +451,14 @@ namespace x360ce.App
 		/// </summary>
 		public void NotifySettingsChange(Control changedControl)
 		{
+
 			var game = GetCurrentGame();
 			var iniContent = SettingsManager.Current.GetIniContent(game);
 			if (IniTextBox.Text != iniContent)
 			{
 				IniTextBox.Text = iniContent;
 			}
+			var changed = SettingsManager.Current.ApplyAllSettingsToXML();
 			// If settings changed then...
 			if (SettingsManager.Current.WriteSettingToIni(changedControl))
 			{
@@ -509,7 +511,7 @@ namespace x360ce.App
 				{
 					for (int i = 0; i < 4; i++)
 					{
-						if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
+						if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 						{
 							var gamePad = XiControllers[i];
 							if (XInput.IsLoaded && gamePad.IsConnected)
@@ -845,28 +847,25 @@ namespace x360ce.App
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// Load PAD controls.
-			ControlPads = new PadControl[4];
-			for (int i = 0; i < ControlPads.Length; i++)
+			PadControls = new PadControl[4];
+			var padSections = new[] { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
+			for (int i = 0; i < PadControls.Length; i++)
 			{
 				var mapTo = (MapTo)(i + 1);
-				ControlPads[i] = new Controls.PadControl(mapTo);
-				ControlPads[i].Name = string.Format("ControlPad{0}", (int)mapTo);
-				ControlPads[i].Dock = DockStyle.Fill;
-				ControlPages[i].Controls.Add(ControlPads[i]);
-				ControlPads[i].InitPadControl();
-				var section = string.Format(@"PAD{0}", (int)mapTo);
+				PadControls[i] = new Controls.PadControl(mapTo);
+				PadControls[i].Name = string.Format("ControlPad{0}", (int)mapTo);
+				PadControls[i].Dock = DockStyle.Fill;
+				ControlPages[i].Controls.Add(PadControls[i]);
+				PadControls[i].InitPadControl();
+				// Update settings manager with [Mappings] section.
+				SettingsManager.AddMap(SettingsManager.MappingsSection, () => padSections[i], PadControls[i].MappedDevicesDataGridView);
 			}
-			// Update settings manager with [Mappings] section.
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, ControlPads[0].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, ControlPads[1].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, ControlPads[2].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, ControlPads[3].MappedDevicesDataGridView);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
-			for (int i = 0; i < ControlPads.Length; i++)
+			for (int i = 0; i < PadControls.Length; i++)
 			{
-				ControlPads[i].UpdateSettingsMap();
-				ControlPads[i].InitPadData();
+				PadControls[i].UpdateSettingsMap();
+				PadControls[i].InitPadData();
 			}
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
@@ -915,7 +914,7 @@ namespace x360ce.App
 							xiOn = true;
 						}
 					}
-					var padControl = ControlPads[i];
+					var padControl = PadControls[i];
 					// Update Form from DInput state.
 					padControl.UpdateFromDInput();
 					// Update Form from XInput state.
@@ -971,7 +970,7 @@ namespace x360ce.App
 						for (int i = 0; i < 4; i++)
 						{
 
-							var currentPadControl = ControlPads[i];
+							var currentPadControl = PadControls[i];
 							currentPadControl.UpdateForceFeedBack();
 						}
 					}
