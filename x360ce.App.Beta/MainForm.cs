@@ -848,7 +848,6 @@ namespace x360ce.App
 			UpdateSettingsMap();
 			// Load PAD controls.
 			PadControls = new PadControl[4];
-			var padSections = new[] { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
 			for (int i = 0; i < PadControls.Length; i++)
 			{
 				var mapTo = (MapTo)(i + 1);
@@ -858,8 +857,11 @@ namespace x360ce.App
 				ControlPages[i].Controls.Add(PadControls[i]);
 				PadControls[i].InitPadControl();
 				// Update settings manager with [Mappings] section.
-				SettingsManager.AddMap(SettingsManager.MappingsSection, () => padSections[i], PadControls[i].MappedDevicesDataGridView);
 			}
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
 			for (int i = 0; i < PadControls.Length; i++)

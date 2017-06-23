@@ -30,7 +30,7 @@ namespace x360ce.App
 				if (eventsSuspendCount > 1)
 					return;
 				// Don't allow controls to fire events.
-				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control).ToArray();
+				var controls = Current.SettingsMap.Select(x => x.Control).ToArray();
 				foreach (var control in controls)
 				{
 					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
@@ -49,7 +49,22 @@ namespace x360ce.App
 							cbx.TextChanged -= new EventHandler(Control_TextChanged);
 						}
 					}
+					if (control is DataGridView)
+					{
+						var grid = (DataGridView)control;
+						grid.CellClick -= DataGridView_CellClick;
+					}
 				}
+			}
+		}
+
+		private void Grid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			if (grid.Columns[grid.CurrentCell.ColumnIndex] is DataGridViewCheckBoxColumn)
+			{
+				// Save setting and notify if value changed.
+				NotifySettingsChange((Control)sender);
 			}
 		}
 
@@ -84,6 +99,11 @@ namespace x360ce.App
 							cbx.TextChanged += new EventHandler(Control_TextChanged);
 						}
 					}
+					if (control is DataGridView)
+					{
+						var grid = (DataGridView)control;
+						grid.CellClick += DataGridView_CellClick;
+					}
 				}
 			}
 		}
@@ -114,20 +134,35 @@ namespace x360ce.App
 
 		void Control_TextChanged(object sender, EventArgs e)
 		{
-			// Save setting and notify if value changed.
+			// Notify about form value change.
 			NotifySettingsChange((Control)sender);
 		}
 
 		void Control_ValueChanged(object sender, EventArgs e)
 		{
-			// Save setting and notify if value changed.
+			// Notify about form value change.
 			NotifySettingsChange((Control)sender);
 		}
 
 		void Control_CheckedChanged(object sender, EventArgs e)
 		{
-			// Save setting and notify if value changed.
+			// Notify about form value change.
 			NotifySettingsChange((Control)sender);
+		}
+
+		/// <summary>
+		/// This event will fire after similar event attached on tje PadControl, because it was attached later.
+		/// </summary>
+		private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex < 0) return;
+			var grid = (DataGridView)sender;
+			// If user clicked on the checkbox column then...
+			if (grid.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
+			{
+				// Notify about form value change.
+				NotifySettingsChange((Control)sender);
+			}
 		}
 
 	}
