@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.App.Controls;
@@ -157,11 +158,48 @@ namespace x360ce.App
 		{
 			var sb = new StringBuilder();
 			var optionsContent = GetIniContent(OptionsSection);
-			var mappingsContent = GetIniContent(MappingsSection);
 			sb.Append(optionsContent);
+			var mappingsContent = GetIniContent(MappingsSection);
 			sb.AppendLine();
 			sb.Append(mappingsContent);
-			sb.AppendLine();
+			// Get all instances mapped to PADs.
+			var instances = Settings.Items.Where(x => x.MapTo > 0 && x.IsEnabled).ToArray();
+			for (int i = 0; i < instances.Count(); i++)
+			{
+				sb.AppendLine();
+				var instance = instances[i];
+				// Add PAD setting instance.
+				sb.AppendFormat("[{0}]", GetInstanceSection(instance.InstanceGuid));
+				sb.AppendLine();
+				// Get padd settings attached to specific instance.
+				var ps = PadSettings.Items.First(x => x.PadSettingChecksum == instance.PadSettingChecksum);
+				// Convert PadSettings to INI string.
+				sb.Append(ConvertToIni(ps));
+			}
+			// Get mapped instances.
+			return sb.ToString();
+		}
+
+		public string ConvertToIni(PadSetting ps)
+		{
+			var sb = new StringBuilder();
+			// Get settings related to PAD. Use Controller1 as reference.
+			var maps = SettingsMap.Where(x => x.MapTo == MapTo.Controller1).ToArray();
+			PropertyInfo[] properties;
+			if (!ValidatePropertyNames(maps, out properties))
+				return null;
+			foreach (var p in properties)
+			{
+				var map = maps.First(x => x.PropertyName == p.Name);
+				var key = map.IniPath.Split('\\')[1];
+				// Get setting value from the pad setting.
+				var value = (string)p.GetValue(ps, null) ?? "";
+				if (!string.IsNullOrEmpty(value))
+				{
+					sb.AppendFormat("{0}={1}", key, value);
+					sb.AppendLine();
+				}
+			}
 			return sb.ToString();
 		}
 
@@ -181,69 +219,6 @@ namespace x360ce.App
 				sb.AppendFormat("{0}={1}\r\n", item.IniKey, value);
 			}
 			return sb.ToString();
-		}
-
-		///// <summary>
-		///// Write game settings to INI file.
-		///// </summary>
-		///// <param name="game"></param>
-		//public string GetIniContent(Game game)
-		//{
-		//	// Get game directory.
-		//	var dir = new FileInfo(game.FullPath).Directory;
-		//	// Get INI file.
-		//	var iniFile = dir.GetFiles(IniFileName).FirstOrDefault();
-		//	var ini = new Ini(iniFile.FullName);
-		//	var optionKeys = new[] { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
-		//	for (int i = 0; i < optionKeys.Length; i++)
-		//	{
-		//		var optionKey = optionKeys[i];
-		//		var mapTo = (MapTo)(i + 1);
-		//		// Write PADx.
-		//		var mapItem = SettingsMap.FirstOrDefault(x => x.IniSection == OptionsSection && x.IniKey == optionKey);
-		//		WriteSettingsToIni(mapItem);
-		//		var settings = SettingManager.Settings.Items.Where(x => x.MapTo == (int)mapTo).ToArray();
-		//		for (int s = 0; s < settings.Length; s++)
-		//		{
-		//			var setting = settings[i];
-		//			var padSetting = SettingManager.GetPadSetting(setting.PadSettingChecksum);
-		//			var padSectionName = string.Format("IG_{0:N}", setting.InstanceGuid);
-		//			WritePadSettingsToIni(padSectionName, setting, padSetting);
-		//		}
-		//	}
-		//	return null;
-		//}
-
-
-		/// <summary>
-		/// Write game settings to INI file.
-		/// </summary>
-		/// <param name="game"></param>
-		public string GetIniContent2(UserGame game)
-		{
-			// Get game directory.
-			var dir = new FileInfo(game.FullPath).Directory;
-			// Get INI file.
-			var iniFile = dir.GetFiles(IniFileName).FirstOrDefault();
-			var ini = new Ini(iniFile.FullName);
-			var optionKeys = new[] { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
-			for (int i = 0; i < optionKeys.Length; i++)
-			{
-				var optionKey = optionKeys[i];
-				var mapTo = (MapTo)(i + 1);
-				// Write PADx.
-				var mapItem = SettingsMap.FirstOrDefault(x => x.IniSection == OptionsSection && x.IniKey == optionKey);
-				WriteSettingsToIni(mapItem);
-				var settings = SettingsManager.Settings.Items.Where(x => x.MapTo == (int)mapTo).ToArray();
-				for (int s = 0; s < settings.Length; s++)
-				{
-					var setting = settings[i];
-					var padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-					var padSectionName = string.Format("IG_{0:N}", setting.InstanceGuid);
-					WritePadSettingsToIni(padSectionName, setting, padSetting);
-				}
-			}
-			return null;
 		}
 
 		/// <summary>

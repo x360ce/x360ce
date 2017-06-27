@@ -613,7 +613,7 @@ namespace x360ce.App
 				var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as Setting)
 					// Make sure that only enabled controllers are added.
 					.Where(x => x != null && x.IsEnabled).ToArray();
-				var instances = data.Select(x => string.Format("IG_{0:N}", x.InstanceGuid).ToUpper()).ToArray();
+				var instances = data.Select(x => GetInstanceSection(x.InstanceGuid)).ToArray();
 				// Separate devices with comma. x360ce.dll must combine devices separated by comma.
 				v = string.Join(",", instances);
 			}
@@ -706,19 +706,19 @@ namespace x360ce.App
 
 		public string GetInstanceSection(Guid instanceGuid)
 		{
-			return string.Format("IG_{0:N}", instanceGuid);
+			return string.Format("IG_{0:N}", instanceGuid).ToUpper();
 		}
 
 		public string GetProductSection(Guid productGuid)
 		{
-			return string.Format("PG_{0:N}", productGuid);
+			return string.Format("PG_{0:N}", productGuid).ToUpper();
 		}
 
 
 		public bool ContainsProductSection(Guid productGuid, string iniFileName, out string sectionName)
 		{
 			var ini2 = new Ini(iniFileName);
-			var section = GetInstanceSection(productGuid);
+			var section = GetProductSection(productGuid);
 			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "ProductGUID"));
 			sectionName = contains ? section : null;
 			return contains;

@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Collections
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void NotifyPropertyChanged(string propertyName = "")
+		private void NotifyPropertyChanged(string propertyName)
 		{
 			var ev = PropertyChanged;
 			if (ev == null) return;
