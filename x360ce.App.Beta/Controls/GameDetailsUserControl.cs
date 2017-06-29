@@ -18,10 +18,11 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (IsDesignMode) return;
-			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			DInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("DInput")).ToArray();
 			XInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("XInput")).ToArray();
 			HookCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Hook")).ToArray();
+			AutoMapCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Controller")).ToArray();
+			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
 			lock (CurrentGameLock)
 			{
@@ -38,11 +39,12 @@ namespace x360ce.App.Controls
 		CheckBox[] XInputCheckBoxes;
 		CheckBox[] DInputCheckBoxes;
 		CheckBox[] HookCheckBoxes;
+		CheckBox[] AutoMapCheckBoxes;
 
 		x360ce.Engine.Data.UserGame _CurrentGame;
 		x360ce.Engine.Data.Program _DefaultSettings;
 
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public x360ce.Engine.Data.UserGame CurrentGame
 		{
 			get { return _CurrentGame; }
@@ -53,7 +55,7 @@ namespace x360ce.App.Controls
 				UpdateFakeVidPidControls();
 				UpdateDinputControls();
 				UpdateHelpButtons();
-            }
+			}
 		}
 
 		void UpdateInterface()
@@ -63,7 +65,8 @@ namespace x360ce.App.Controls
 			var dInputMask = (DInputMask)item.DInputMask;
 			var xInputMask = (XInputMask)item.XInputMask;
 			var hookMask = (HookMask)item.HookMask;
-			SetMask(en, hookMask, dInputMask, xInputMask, item.FullPath, item.ProcessorArchitecture);
+			var autoMapMask = (MapToMask)item.AutoMapMask;
+			SetMask(en, hookMask, dInputMask, xInputMask, autoMapMask, item.FullPath, item.ProcessorArchitecture);
 			HookModeFakeVidNumericUpDown_ValueChanged2(null, null);
 			HookModeFakeVidNumericUpDown.Value = item.FakeVID;
 			HookModeFakePidNumericUpDown.Value = item.FakePID;
@@ -190,20 +193,22 @@ namespace x360ce.App.Controls
 			return GameRefreshStatus.OK;
 		}
 
-		public void SetMask(bool en, HookMask hookMask, DInputMask dInputMask, XInputMask xInputMask, string path, int proc)
+		public void SetMask(bool showButtons, HookMask hookMask, DInputMask dInputMask, XInputMask xInputMask, MapToMask autoMapMask, string path, int processorArchitecture)
 		{
 			lock (CurrentGameLock)
 			{
-				if (EnabledEvents) DisableEvents();
-				SetMask<DInputMask>(DInputCheckBoxes, dInputMask);
-				SetMask<XInputMask>(XInputCheckBoxes, xInputMask);
-				SetMask<HookMask>(HookCheckBoxes, hookMask);
+				DisableEvents();
+				// Set textboxes
+				SetMask(DInputCheckBoxes, dInputMask);
+				SetMask(XInputCheckBoxes, xInputMask);
+				SetMask(HookCheckBoxes, hookMask);
+				SetMask(AutoMapCheckBoxes, autoMapMask);
 				// Processor architecture.
-				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), proc)
-					? (ProcessorArchitecture)proc
+				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), processorArchitecture)
+					? (ProcessorArchitecture)processorArchitecture
 					: ProcessorArchitecture.None;
-				SynchronizeSettingsButton.Visible = en;
-				ResetToDefaultButton.Visible = en;
+				SynchronizeSettingsButton.Visible = showButtons;
+				ResetToDefaultButton.Visible = showButtons;
 				// Enable events.
 				EnableEvents();
 			}
@@ -235,22 +240,34 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		/// <summary>
+		/// Run inside "CurrentGameLock" lock only.
+		/// </summary>
 		void EnableEvents()
 		{
+			if (EnabledEvents)
+				return;
 			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in AutoMapCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged += HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged += HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged += this.TimeoutNumericUpDown_ValueChanged;
 			EnabledEvents = true;
 		}
 
+		/// <summary>
+		/// Run inside "CurrentGameLock" lock only.
+		/// </summary>
 		void DisableEvents()
 		{
+			if (!EnabledEvents)
+				return;
 			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in AutoMapCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged -= HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged -= HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged -= this.TimeoutNumericUpDown_ValueChanged;
@@ -312,6 +329,10 @@ namespace x360ce.App.Controls
 				var hm = (int)GetMask<HookMask>(HookCheckBoxes);
 				CurrentGame.HookMask = hm;
 				HookMaskTextBox.Text = hm.ToString("X8");
+				// Set auto map mask.
+				var am = (int)GetMask<MapToMask>(AutoMapCheckBoxes);
+				CurrentGame.AutoMapMask = am;
+				AutoMapMaskTextBox.Text = am.ToString("X8");
 				SettingsManager.Save();
 				if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
 			}
@@ -366,6 +387,7 @@ namespace x360ce.App.Controls
 				// Reset to default all properties which affects checksum.
 				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
 				_CurrentGame.HookMask = _DefaultSettings.HookMask;
+				_CurrentGame.AutoMapMask = (int)MapToMask.None;
 				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
 				_CurrentGame.DInputFile = _DefaultSettings.DInputFile ?? "";
 				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;
@@ -533,7 +555,7 @@ namespace x360ce.App.Controls
 
 		private void NGEmuThreadLinkButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetNGemuThreadUrl()); 
+			EngineHelper.OpenUrl(GetNGemuThreadUrl());
 		}
 	}
 }

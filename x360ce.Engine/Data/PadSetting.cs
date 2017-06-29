@@ -8,6 +8,15 @@ namespace x360ce.Engine.Data
 {
 	public partial class PadSetting
 	{
+		//public PadSetting()
+		//{
+		//	// Set default values;
+		//	AxisToDPadDeadZone = "256";
+		//	ForceOverall = "100";
+		//	LeftMotorStrength = "100";
+		//	RightMotorStrength = "100";
+		//}
+
 		public Guid GetCheckSum()
 		{
 			// Make sure to update checksums in database if you are changing this method.
@@ -105,12 +114,18 @@ namespace x360ce.Engine.Data
 
 		#region Do not serialize default values
 
-		bool notDefault(string value, string defaultValue = null)
+		bool notDefault<T>(T value, T defaultValue = default(T))
 		{
-			return (value != "" && value != "0" && value != null && value != defaultValue);
+			if (value is string && Equals(value, ""))
+				return false;
+			if (Equals(value, default(T)))
+				return false;
+			if (Equals(value, defaultValue))
+				return false;
+			return true;
 		}
 
-		//public bool ShouldSerializePadSettingChecksum() { return IsDefault(PadSettingChecksum); }
+		public bool ShouldSerializePadSettingChecksum() { return notDefault(PadSettingChecksum); }
 		public bool ShouldSerializeAxisToDPadDeadZone() { return notDefault(AxisToDPadDeadZone, "256"); }
 		public bool ShouldSerializeAxisToDPadEnabled() { return notDefault(AxisToDPadEnabled); }
 		public bool ShouldSerializeAxisToDPadOffset() { return notDefault(AxisToDPadOffset); }

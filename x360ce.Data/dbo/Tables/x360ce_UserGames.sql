@@ -20,8 +20,11 @@
     [IsEnabled]             BIT              CONSTRAINT [DF_x360ce_UserGames_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]           DATETIME         CONSTRAINT [DF_x360ce_UserGames_DateCreated] DEFAULT (getdate()) NOT NULL,
     [DateUpdated]           DATETIME         NULL,
+    [AutoMapMask]           INT              CONSTRAINT [DF_x360ce_UserGames_AutoMapMask] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_x360ce_UserGames] PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
+
+
 
 
 

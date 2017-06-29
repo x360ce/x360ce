@@ -25,6 +25,12 @@ namespace x360ce.App.Controls
 		public PadControl(MapTo controllerIndex)
 		{
 			InitializeComponent();
+			// Hide left/right border.
+			//MappedDevicesDataGridView.Width = this.Width + 2;
+			//MappedDevicesDataGridView.Left = -1;
+			MappedDevicesDataGridView.CellPainting += MappedDevicesDataGridView_CellPainting;
+
+
 			MappedTo = controllerIndex;
 			object[] rates = {
 				1000/8, //  125
@@ -53,6 +59,51 @@ namespace x360ce.App.Controls
 			AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
 			AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
 			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
+		}
+
+		private void MappedDevicesDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		{
+			// Header and cell borders must be set to "Single" style.
+			var grid = (DataGridView)sender;
+			var lastVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Max(x => x.Index);
+			var selected = false;
+			if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+			{
+				selected = grid.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected;
+			}
+			e.Paint(e.CellBounds, DataGridViewPaintParts.All & ~DataGridViewPaintParts.Border);
+			var bounds = e.CellBounds;
+			var tl = new Point(bounds.X, bounds.Y);
+			var tr = new Point(bounds.X + bounds.Width - 1, bounds.Y);
+			var bl = new Point(bounds.X, bounds.Y + bounds.Height - 1);
+			var br = new Point(bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+			var style = e.ColumnIndex == -1
+				? grid.ColumnHeadersDefaultCellStyle
+				: grid.DefaultCellStyle;
+			var color = selected
+				? style.SelectionBackColor
+				: style.BackColor;
+			// Cell background colour.
+			var back = new Pen(color, 1);
+			// Border colour.
+			var border = new Pen(SystemColors.Control, 1);
+			// Do not draw borders for selected device.
+			if (selected) border = back;
+			Pen c;
+			// Top
+			c = e.ColumnIndex == -1 ? border : back;
+			e.Graphics.DrawLine(c, tl, tr);
+			// Left
+			e.Graphics.DrawLine(back, bl, tl);
+			// Right (only if not last column)
+			c = e.ColumnIndex < lastVisibleColumn ? border : back;
+			e.Graphics.DrawLine(c, tr, br);
+			// Bottom (only if not last line)
+			c = e.RowIndex < grid.RowCount - 1 ? border : back;
+			e.Graphics.DrawLine(c, bl, br);
+			back.Dispose();
+			border.Dispose();
+			e.Handled = true;
 		}
 
 		public void InitPadData()
@@ -165,7 +216,7 @@ namespace x360ce.App.Controls
 				{
 					title += " (Combine)";
 				}
-				AppHelper.SetText(MappedDevicesTabPage, title);
+				AppHelper.SetText(MappedDevicesLabel, title);
 			}
 		}
 
@@ -1446,5 +1497,39 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		MapToMask GetMapMask(MapTo mapTo)
+		{
+			switch (mapTo)
+			{
+				case MapTo.Controller1: return MapToMask.Controller1;
+				case MapTo.Controller2: return MapToMask.Controller1;
+				case MapTo.Controller3: return MapToMask.Controller1;
+				case MapTo.Controller4: return MapToMask.Controller1;
+				default: return MapToMask.None;
+			}
+		}
+
+
+		private void AutoMapButton_Click(object sender, EventArgs e)
+		{
+			var game = MainForm.Current.GetCurrentGame();
+			var mapMask = GetMapMask(MappedTo);
+			var value = (MapToMask)game.AutoMapMask;
+			var autoMap = value.HasFlag(mapMask);
+			// If AUTO enabled then...
+			if (autoMap)
+			{
+				// Remove AUTO.
+				game.AutoMapMask = (int)(value & ~mapMask);
+			}
+			else
+			{
+				// Add AUTO.
+				game.AutoMapMask = (int)(value | mapMask);
+			}
+			AutoMapButton.Image = !autoMap
+				? x360ce.App.Properties.Resources.checkbox_16x16
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+		}
 	}
 }

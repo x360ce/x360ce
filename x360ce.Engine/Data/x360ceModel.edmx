@@ -5,32 +5,6 @@
 		<!-- SSDL content -->
 		<edmx:StorageModels>
 		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
-        <EntityType Name="x360ce_UserGames">
-          <Key>
-            <PropertyRef Name="GameId" />
-          </Key>
-          <Property Name="GameId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="DiskDriveId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="FileName" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="FileProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="FileVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
-          <Property Name="FullPath" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="CompanyName" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
-          <Property Name="HookMask" Type="int" Nullable="false" />
-          <Property Name="XInputMask" Type="int" Nullable="false" />
-          <Property Name="DInputMask" Type="int" Nullable="false" />
-          <Property Name="DInputFile" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="FakeVID" Type="int" Nullable="false" />
-          <Property Name="FakePID" Type="int" Nullable="false" />
-          <Property Name="Timeout" Type="int" Nullable="false" />
-          <Property Name="SettingChecksum" Type="uniqueidentifier" StoreGeneratedPattern="Computed" />
-          <Property Name="Weight" Type="int" Nullable="false" />
-          <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
-          <Property Name="IsEnabled" Type="bit" Nullable="false" />
-          <Property Name="DateCreated" Type="datetime" Nullable="false" />
-          <Property Name="DateUpdated" Type="datetime" />
-        </EntityType>
         <EntityType Name="x360ce_PadSettings">
           <Key>
             <PropertyRef Name="PadSettingChecksum" />
@@ -190,9 +164,6 @@
           <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="ForceFeedbackDriverGuid" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Usage" Type="int" Nullable="false" />
-          <Property Name="UsagePage" Type="int" Nullable="false" />
           <Property Name="CapAxeCount" Type="int" Nullable="false" />
           <Property Name="CapButtonCount" Type="int" Nullable="false" />
           <Property Name="CapDriverVersion" Type="int" Nullable="false" />
@@ -229,6 +200,33 @@
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="x360ce_UserGames">
+          <Key>
+            <PropertyRef Name="GameId" />
+          </Key>
+          <Property Name="GameId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DiskDriveId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="FileProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="FileVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="FullPath" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="CompanyName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
+          <Property Name="HookMask" Type="int" Nullable="false" />
+          <Property Name="XInputMask" Type="int" Nullable="false" />
+          <Property Name="DInputMask" Type="int" Nullable="false" />
+          <Property Name="DInputFile" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="FakeVID" Type="int" Nullable="false" />
+          <Property Name="FakePID" Type="int" Nullable="false" />
+          <Property Name="Timeout" Type="int" Nullable="false" />
+          <Property Name="SettingChecksum" Type="uniqueidentifier" StoreGeneratedPattern="Computed" />
+          <Property Name="Weight" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" />
+          <Property Name="AutoMapMask" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="x360ce_UserInstances">
           <Key>
             <PropertyRef Name="Id" />
@@ -247,13 +245,13 @@
           <Property Name="WebSite" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityContainer Name="x360ceModelStoreContainer">
-          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Settings" EntityType="Self.x360ce_Settings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Summaries" EntityType="Self.x360ce_Summaries" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -454,6 +452,7 @@
           <Property Name="Timeout" Type="Int32" Nullable="false" />
           <Property Name="SettingChecksum" Type="Guid" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="Weight" Type="Int32" Nullable="false" />
+          <Property Name="AutoMapMask" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UserInstance">
           <Key>
@@ -474,9 +473,6 @@
           <Property Name="InstanceName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ProductGuid" Type="Guid" Nullable="false" />
           <Property Name="ProductName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ForceFeedbackDriverGuid" Type="Guid" Nullable="false" />
-          <Property Name="Usage" Type="Int32" Nullable="false" />
-          <Property Name="UsagePage" Type="Int32" Nullable="false" />
           <Property Name="CapAxeCount" Type="Int32" Nullable="false" />
           <Property Name="CapButtonCount" Type="Int32" Nullable="false" />
           <Property Name="CapDriverVersion" Type="Int32" Nullable="false" />
@@ -687,6 +683,7 @@
           <EntitySetMapping Name="UserGames">
             <EntityTypeMapping TypeName="x360ceModel.UserGame">
               <MappingFragment StoreEntitySet="x360ce_UserGames">
+                <ScalarProperty Name="AutoMapMask" ColumnName="AutoMapMask" />
                 <ScalarProperty Name="Weight" ColumnName="Weight" />
                 <ScalarProperty Name="SettingChecksum" ColumnName="SettingChecksum" />
                 <ScalarProperty Name="Timeout" ColumnName="Timeout" />
@@ -758,9 +755,6 @@
                 <ScalarProperty Name="CapDriverVersion" ColumnName="CapDriverVersion" />
                 <ScalarProperty Name="CapButtonCount" ColumnName="CapButtonCount" />
                 <ScalarProperty Name="CapAxeCount" ColumnName="CapAxeCount" />
-                <ScalarProperty Name="UsagePage" ColumnName="UsagePage" />
-                <ScalarProperty Name="Usage" ColumnName="Usage" />
-                <ScalarProperty Name="ForceFeedbackDriverGuid" ColumnName="ForceFeedbackDriverGuid" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
                 <ScalarProperty Name="InstanceName" ColumnName="InstanceName" />
@@ -793,16 +787,16 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="48" >
+			<Diagram Name="x360ceModel" ZoomLevel="36" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
-				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="7.875" PointY="0.5" Height="1.7879850260416674" />
+				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.5" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.75" />
-        <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.875" PointY="2.5" />
-        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="6.375" PointY="8.75" />
-        <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="9.75" PointY="3.5" />
+        <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.875" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.125" PointY="4.625" />
+        <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

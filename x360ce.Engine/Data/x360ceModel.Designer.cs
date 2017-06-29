@@ -3664,9 +3664,6 @@ namespace x360ce.Engine.Data
         /// <param name="instanceName">Initial value of the InstanceName property.</param>
         /// <param name="productGuid">Initial value of the ProductGuid property.</param>
         /// <param name="productName">Initial value of the ProductName property.</param>
-        /// <param name="forceFeedbackDriverGuid">Initial value of the ForceFeedbackDriverGuid property.</param>
-        /// <param name="usage">Initial value of the Usage property.</param>
-        /// <param name="usagePage">Initial value of the UsagePage property.</param>
         /// <param name="capAxeCount">Initial value of the CapAxeCount property.</param>
         /// <param name="capButtonCount">Initial value of the CapButtonCount property.</param>
         /// <param name="capDriverVersion">Initial value of the CapDriverVersion property.</param>
@@ -3702,7 +3699,7 @@ namespace x360ce.Engine.Data
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Guid forceFeedbackDriverGuid, global::System.Int32 usage, global::System.Int32 usagePage, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
         {
             UserDevice userDevice = new UserDevice();
             userDevice.Id = id;
@@ -3712,9 +3709,6 @@ namespace x360ce.Engine.Data
             userDevice.InstanceName = instanceName;
             userDevice.ProductGuid = productGuid;
             userDevice.ProductName = productName;
-            userDevice.ForceFeedbackDriverGuid = forceFeedbackDriverGuid;
-            userDevice.Usage = usage;
-            userDevice.UsagePage = usagePage;
             userDevice.CapAxeCount = capAxeCount;
             userDevice.CapButtonCount = capButtonCount;
             userDevice.CapDriverVersion = capDriverVersion;
@@ -3927,78 +3921,6 @@ namespace x360ce.Engine.Data
         private global::System.String _ProductName;
         partial void OnProductNameChanging(global::System.String value);
         partial void OnProductNameChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Guid ForceFeedbackDriverGuid
-        {
-            get
-            {
-                return _ForceFeedbackDriverGuid;
-            }
-            set
-            {
-                OnForceFeedbackDriverGuidChanging(value);
-                ReportPropertyChanging("ForceFeedbackDriverGuid");
-                _ForceFeedbackDriverGuid = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ForceFeedbackDriverGuid");
-                OnForceFeedbackDriverGuidChanged();
-            }
-        }
-        private global::System.Guid _ForceFeedbackDriverGuid;
-        partial void OnForceFeedbackDriverGuidChanging(global::System.Guid value);
-        partial void OnForceFeedbackDriverGuidChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 Usage
-        {
-            get
-            {
-                return _Usage;
-            }
-            set
-            {
-                OnUsageChanging(value);
-                ReportPropertyChanging("Usage");
-                _Usage = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("Usage");
-                OnUsageChanged();
-            }
-        }
-        private global::System.Int32 _Usage;
-        partial void OnUsageChanging(global::System.Int32 value);
-        partial void OnUsageChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 UsagePage
-        {
-            get
-            {
-                return _UsagePage;
-            }
-            set
-            {
-                OnUsagePageChanging(value);
-                ReportPropertyChanging("UsagePage");
-                _UsagePage = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("UsagePage");
-                OnUsagePageChanged();
-            }
-        }
-        private global::System.Int32 _UsagePage;
-        partial void OnUsagePageChanging(global::System.Int32 value);
-        partial void OnUsagePageChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4877,7 +4799,8 @@ namespace x360ce.Engine.Data
         /// <param name="fakePID">Initial value of the FakePID property.</param>
         /// <param name="timeout">Initial value of the Timeout property.</param>
         /// <param name="weight">Initial value of the Weight property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight)
+        /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.Int32 autoMapMask)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -4899,6 +4822,7 @@ namespace x360ce.Engine.Data
             userGame.FakePID = fakePID;
             userGame.Timeout = timeout;
             userGame.Weight = weight;
+            userGame.AutoMapMask = autoMapMask;
             return userGame;
         }
 
@@ -5412,6 +5336,30 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _Weight;
         partial void OnWeightChanging(global::System.Int32 value);
         partial void OnWeightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 AutoMapMask
+        {
+            get
+            {
+                return _AutoMapMask;
+            }
+            set
+            {
+                OnAutoMapMaskChanging(value);
+                ReportPropertyChanging("AutoMapMask");
+                _AutoMapMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AutoMapMask");
+                OnAutoMapMaskChanged();
+            }
+        }
+        private global::System.Int32 _AutoMapMask;
+        partial void OnAutoMapMaskChanging(global::System.Int32 value);
+        partial void OnAutoMapMaskChanged();
 
         #endregion
 

@@ -24,13 +24,10 @@ namespace x360ce.Engine.Data
 
 		public void LoadInstance(DeviceInstance ins)
 		{
-			ForceFeedbackDriverGuid = ins.ForceFeedbackDriverGuid;
 			InstanceGuid = ins.InstanceGuid;
 			InstanceName = ins.InstanceName;
 			ProductGuid = ins.ProductGuid;
 			ProductName = ins.ProductName;
-			Usage = (int)ins.Usage;
-			UsagePage = (int)ins.UsagePage;
 		}
 
 		public void LoadCapabilities(Capabilities cap)
@@ -76,7 +73,6 @@ namespace x360ce.Engine.Data
 			DevClassGuid = info.ClassGuid;
 			DevClassDescription = info.ClassDescription;
 		}
-
 
 		#region Ignored Properties
 

@@ -100,19 +100,19 @@ namespace JocysCom.ClassLibrary.Configuration
 			SaveAs(_XmlFile.FullName);
 		}
 
-		public void Remove(params object[] items)
+		public void Remove(params T[] items)
 		{
 			foreach (var item in items)
 			{
-				Items.Remove((T)item);
+				Items.Remove(item);
 			}
 		}
 
-		public void Add(params object[] items)
+		public void Add(params T[] items)
 		{
 			foreach (var item in items)
 			{
-				Items.Add((T)item);
+				Items.Add(item);
 			}
 		}
 

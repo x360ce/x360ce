@@ -253,6 +253,9 @@
     <Compile Include="Common\SettingType.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
+    <Compile Include="Controls\JcDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\UserDevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

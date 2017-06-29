@@ -74,6 +74,12 @@
 			this.GoogleSearchButton = new System.Windows.Forms.ToolStripMenuItem();
 			this.NGEmuSearchButton = new System.Windows.Forms.ToolStripMenuItem();
 			this.NGEmuThreadButton = new System.Windows.Forms.ToolStripMenuItem();
+			this.Controller1CheckBox = new System.Windows.Forms.CheckBox();
+			this.AutoMapLabel = new System.Windows.Forms.Label();
+			this.AutoMapMaskTextBox = new System.Windows.Forms.TextBox();
+			this.Controller2CheckBox = new System.Windows.Forms.CheckBox();
+			this.Controller3CheckBox = new System.Windows.Forms.CheckBox();
+			this.Controller4CheckBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
@@ -158,7 +164,7 @@
 			// HookDISABLECheckBox
 			// 
 			this.HookDISABLECheckBox.AutoSize = true;
-			this.HookDISABLECheckBox.Location = new System.Drawing.Point(85, 109);
+			this.HookDISABLECheckBox.Location = new System.Drawing.Point(101, 109);
 			this.HookDISABLECheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
 			this.HookDISABLECheckBox.Name = "HookDISABLECheckBox";
 			this.HookDISABLECheckBox.Size = new System.Drawing.Size(71, 17);
@@ -214,7 +220,7 @@
 			// HookWTCheckBox
 			// 
 			this.HookWTCheckBox.AutoSize = true;
-			this.HookWTCheckBox.Location = new System.Drawing.Point(85, 90);
+			this.HookWTCheckBox.Location = new System.Drawing.Point(101, 90);
 			this.HookWTCheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
 			this.HookWTCheckBox.Name = "HookWTCheckBox";
 			this.HookWTCheckBox.Size = new System.Drawing.Size(122, 17);
@@ -225,7 +231,7 @@
 			// HookSACheckBox
 			// 
 			this.HookSACheckBox.AutoSize = true;
-			this.HookSACheckBox.Location = new System.Drawing.Point(85, 71);
+			this.HookSACheckBox.Location = new System.Drawing.Point(101, 71);
 			this.HookSACheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
 			this.HookSACheckBox.Name = "HookSACheckBox";
 			this.HookSACheckBox.Size = new System.Drawing.Size(94, 17);
@@ -247,7 +253,7 @@
 			// HookLLCheckBox
 			// 
 			this.HookLLCheckBox.AutoSize = true;
-			this.HookLLCheckBox.Location = new System.Drawing.Point(85, 52);
+			this.HookLLCheckBox.Location = new System.Drawing.Point(101, 52);
 			this.HookLLCheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
 			this.HookLLCheckBox.Name = "HookLLCheckBox";
 			this.HookLLCheckBox.Size = new System.Drawing.Size(105, 17);
@@ -278,7 +284,7 @@
 			// 
 			this.ProcessorArchitectureLabel.AutoSize = true;
 			this.ProcessorArchitectureLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(3, 422);
+			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(3, 487);
 			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
 			this.ProcessorArchitectureLabel.Size = new System.Drawing.Size(67, 13);
 			this.ProcessorArchitectureLabel.TabIndex = 29;
@@ -287,7 +293,7 @@
 			// XInput91_x64CheckBox
 			// 
 			this.XInput91_x64CheckBox.AutoSize = true;
-			this.XInput91_x64CheckBox.Location = new System.Drawing.Point(85, 173);
+			this.XInput91_x64CheckBox.Location = new System.Drawing.Point(101, 173);
 			this.XInput91_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput91_x64CheckBox.Name = "XInput91_x64CheckBox";
 			this.XInput91_x64CheckBox.Size = new System.Drawing.Size(76, 17);
@@ -298,7 +304,7 @@
 			// XInput11_x64CheckBox
 			// 
 			this.XInput11_x64CheckBox.AutoSize = true;
-			this.XInput11_x64CheckBox.Location = new System.Drawing.Point(85, 192);
+			this.XInput11_x64CheckBox.Location = new System.Drawing.Point(101, 192);
 			this.XInput11_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput11_x64CheckBox.Name = "XInput11_x64CheckBox";
 			this.XInput11_x64CheckBox.Size = new System.Drawing.Size(76, 17);
@@ -309,7 +315,7 @@
 			// XInput12_x64CheckBox
 			// 
 			this.XInput12_x64CheckBox.AutoSize = true;
-			this.XInput12_x64CheckBox.Location = new System.Drawing.Point(85, 211);
+			this.XInput12_x64CheckBox.Location = new System.Drawing.Point(101, 211);
 			this.XInput12_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput12_x64CheckBox.Name = "XInput12_x64CheckBox";
 			this.XInput12_x64CheckBox.Size = new System.Drawing.Size(76, 17);
@@ -320,7 +326,7 @@
 			// XInput13_x64CheckBox
 			// 
 			this.XInput13_x64CheckBox.AutoSize = true;
-			this.XInput13_x64CheckBox.Location = new System.Drawing.Point(85, 230);
+			this.XInput13_x64CheckBox.Location = new System.Drawing.Point(101, 230);
 			this.XInput13_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput13_x64CheckBox.Name = "XInput13_x64CheckBox";
 			this.XInput13_x64CheckBox.Size = new System.Drawing.Size(76, 17);
@@ -331,7 +337,7 @@
 			// XInput14_x64CheckBox
 			// 
 			this.XInput14_x64CheckBox.AutoSize = true;
-			this.XInput14_x64CheckBox.Location = new System.Drawing.Point(85, 249);
+			this.XInput14_x64CheckBox.Location = new System.Drawing.Point(101, 249);
 			this.XInput14_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput14_x64CheckBox.Name = "XInput14_x64CheckBox";
 			this.XInput14_x64CheckBox.Size = new System.Drawing.Size(76, 17);
@@ -373,7 +379,7 @@
 			// DInput8_x64CheckBox
 			// 
 			this.DInput8_x64CheckBox.AutoSize = true;
-			this.DInput8_x64CheckBox.Location = new System.Drawing.Point(85, 294);
+			this.DInput8_x64CheckBox.Location = new System.Drawing.Point(101, 294);
 			this.DInput8_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.DInput8_x64CheckBox.Name = "DInput8_x64CheckBox";
 			this.DInput8_x64CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -385,7 +391,7 @@
 			// HookModeFakePidLabel
 			// 
 			this.HookModeFakePidLabel.AutoSize = true;
-			this.HookModeFakePidLabel.Location = new System.Drawing.Point(3, 370);
+			this.HookModeFakePidLabel.Location = new System.Drawing.Point(3, 435);
 			this.HookModeFakePidLabel.Name = "HookModeFakePidLabel";
 			this.HookModeFakePidLabel.Size = new System.Drawing.Size(55, 13);
 			this.HookModeFakePidLabel.TabIndex = 32;
@@ -394,7 +400,7 @@
 			// HookModeFakeVidLabel
 			// 
 			this.HookModeFakeVidLabel.AutoSize = true;
-			this.HookModeFakeVidLabel.Location = new System.Drawing.Point(3, 344);
+			this.HookModeFakeVidLabel.Location = new System.Drawing.Point(3, 409);
 			this.HookModeFakeVidLabel.Name = "HookModeFakeVidLabel";
 			this.HookModeFakeVidLabel.Size = new System.Drawing.Size(55, 13);
 			this.HookModeFakeVidLabel.TabIndex = 33;
@@ -402,18 +408,22 @@
 			// 
 			// HookModeFakePidTextBox
 			// 
-			this.HookModeFakePidTextBox.Location = new System.Drawing.Point(159, 367);
+			this.HookModeFakePidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.HookModeFakePidTextBox.Location = new System.Drawing.Point(159, 432);
 			this.HookModeFakePidTextBox.Name = "HookModeFakePidTextBox";
 			this.HookModeFakePidTextBox.ReadOnly = true;
-			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(51, 20);
+			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(63, 20);
 			this.HookModeFakePidTextBox.TabIndex = 34;
 			// 
 			// HookModeFakeVidTextBox
 			// 
-			this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(159, 341);
+			this.HookModeFakeVidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(159, 406);
 			this.HookModeFakeVidTextBox.Name = "HookModeFakeVidTextBox";
 			this.HookModeFakeVidTextBox.ReadOnly = true;
-			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(51, 20);
+			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(63, 20);
 			this.HookModeFakeVidTextBox.TabIndex = 35;
 			// 
 			// ProcessorArchitectureComboBox
@@ -421,7 +431,7 @@
 			this.ProcessorArchitectureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ProcessorArchitectureComboBox.Enabled = false;
 			this.ProcessorArchitectureComboBox.FormattingEnabled = true;
-			this.ProcessorArchitectureComboBox.Location = new System.Drawing.Point(85, 419);
+			this.ProcessorArchitectureComboBox.Location = new System.Drawing.Point(85, 484);
 			this.ProcessorArchitectureComboBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
 			this.ProcessorArchitectureComboBox.Name = "ProcessorArchitectureComboBox";
 			this.ProcessorArchitectureComboBox.Size = new System.Drawing.Size(68, 21);
@@ -429,7 +439,7 @@
 			// 
 			// TimeoutNumericUpDown
 			// 
-			this.TimeoutNumericUpDown.Location = new System.Drawing.Point(85, 393);
+			this.TimeoutNumericUpDown.Location = new System.Drawing.Point(85, 458);
 			this.TimeoutNumericUpDown.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -453,7 +463,7 @@
 			// TimeoutLabel
 			// 
 			this.TimeoutLabel.AutoSize = true;
-			this.TimeoutLabel.Location = new System.Drawing.Point(3, 395);
+			this.TimeoutLabel.Location = new System.Drawing.Point(3, 460);
 			this.TimeoutLabel.Name = "TimeoutLabel";
 			this.TimeoutLabel.Size = new System.Drawing.Size(48, 13);
 			this.TimeoutLabel.TabIndex = 33;
@@ -463,16 +473,16 @@
 			// 
 			this.DInputFileTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.DInputFileTextBox.Location = new System.Drawing.Point(85, 315);
+			this.DInputFileTextBox.Location = new System.Drawing.Point(85, 380);
 			this.DInputFileTextBox.Name = "DInputFileTextBox";
-			this.DInputFileTextBox.Size = new System.Drawing.Size(126, 20);
+			this.DInputFileTextBox.Size = new System.Drawing.Size(137, 20);
 			this.DInputFileTextBox.TabIndex = 34;
 			this.DInputFileTextBox.TextChanged += new System.EventHandler(this.DInputFileTextBox_TextChanged);
 			// 
 			// DInputFileLabel
 			// 
 			this.DInputFileLabel.AutoSize = true;
-			this.DInputFileLabel.Location = new System.Drawing.Point(3, 318);
+			this.DInputFileLabel.Location = new System.Drawing.Point(3, 383);
 			this.DInputFileLabel.Name = "DInputFileLabel";
 			this.DInputFileLabel.Size = new System.Drawing.Size(61, 13);
 			this.DInputFileLabel.TabIndex = 32;
@@ -480,7 +490,7 @@
 			// 
 			// HookModeFakePidNumericUpDown
 			// 
-			this.HookModeFakePidNumericUpDown.Location = new System.Drawing.Point(85, 367);
+			this.HookModeFakePidNumericUpDown.Location = new System.Drawing.Point(85, 432);
 			this.HookModeFakePidNumericUpDown.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -494,7 +504,7 @@
 			// 
 			// HookModeFakeVidNumericUpDown
 			// 
-			this.HookModeFakeVidNumericUpDown.Location = new System.Drawing.Point(85, 341);
+			this.HookModeFakeVidNumericUpDown.Location = new System.Drawing.Point(85, 406);
 			this.HookModeFakeVidNumericUpDown.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -512,9 +522,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_16x16;
 			this.SynchronizeSettingsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(3, 449);
+			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(3, 514);
 			this.SynchronizeSettingsButton.Name = "SynchronizeSettingsButton";
-			this.SynchronizeSettingsButton.Size = new System.Drawing.Size(210, 24);
+			this.SynchronizeSettingsButton.Size = new System.Drawing.Size(219, 24);
 			this.SynchronizeSettingsButton.TabIndex = 31;
 			this.SynchronizeSettingsButton.Text = "Apply/Synchronize Settings";
 			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
@@ -529,7 +539,7 @@
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip1.Size = new System.Drawing.Size(216, 25);
+			this.toolStrip1.Size = new System.Drawing.Size(225, 25);
 			this.toolStrip1.TabIndex = 37;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -551,7 +561,7 @@
 			this.HelpButton.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
 			this.HelpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.HelpButton.Name = "HelpButton";
-			this.HelpButton.Size = new System.Drawing.Size(91, 20);
+			this.HelpButton.Size = new System.Drawing.Size(91, 22);
 			this.HelpButton.Text = "Get Help...";
 			this.HelpButton.ToolTipText = "Help...";
 			// 
@@ -576,7 +586,74 @@
 			this.NGEmuThreadButton.Text = "NGemu Thread...";
 			this.NGEmuThreadButton.Click += new System.EventHandler(this.NGEmuThreadLinkButton_Click);
 			// 
-			// GameSettingDetailsUserControl
+			// Controller1CheckBox
+			// 
+			this.Controller1CheckBox.AutoSize = true;
+			this.Controller1CheckBox.Location = new System.Drawing.Point(16, 339);
+			this.Controller1CheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
+			this.Controller1CheckBox.Name = "Controller1CheckBox";
+			this.Controller1CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.Controller1CheckBox.TabIndex = 0;
+			this.Controller1CheckBox.Text = "Controller 1";
+			this.Controller1CheckBox.UseVisualStyleBackColor = true;
+			this.Controller1CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x86CheckBox_CheckedChanged);
+			// 
+			// AutoMapLabel
+			// 
+			this.AutoMapLabel.AutoSize = true;
+			this.AutoMapLabel.Location = new System.Drawing.Point(69, 318);
+			this.AutoMapLabel.Name = "AutoMapLabel";
+			this.AutoMapLabel.Size = new System.Drawing.Size(56, 13);
+			this.AutoMapLabel.TabIndex = 24;
+			this.AutoMapLabel.Text = "Auto Map:";
+			// 
+			// AutoMapMaskTextBox
+			// 
+			this.AutoMapMaskTextBox.Location = new System.Drawing.Point(3, 315);
+			this.AutoMapMaskTextBox.Name = "AutoMapMaskTextBox";
+			this.AutoMapMaskTextBox.ReadOnly = true;
+			this.AutoMapMaskTextBox.Size = new System.Drawing.Size(60, 20);
+			this.AutoMapMaskTextBox.TabIndex = 1;
+			this.AutoMapMaskTextBox.Text = "00000000";
+			this.AutoMapMaskTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// Controller2CheckBox
+			// 
+			this.Controller2CheckBox.AutoSize = true;
+			this.Controller2CheckBox.Location = new System.Drawing.Point(16, 358);
+			this.Controller2CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this.Controller2CheckBox.Name = "Controller2CheckBox";
+			this.Controller2CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.Controller2CheckBox.TabIndex = 0;
+			this.Controller2CheckBox.Text = "Controller 2";
+			this.Controller2CheckBox.UseVisualStyleBackColor = true;
+			this.Controller2CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x64CheckBox_CheckedChanged);
+			// 
+			// Controller3CheckBox
+			// 
+			this.Controller3CheckBox.AutoSize = true;
+			this.Controller3CheckBox.Location = new System.Drawing.Point(101, 339);
+			this.Controller3CheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
+			this.Controller3CheckBox.Name = "Controller3CheckBox";
+			this.Controller3CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.Controller3CheckBox.TabIndex = 0;
+			this.Controller3CheckBox.Text = "Controller 3";
+			this.Controller3CheckBox.UseVisualStyleBackColor = true;
+			this.Controller3CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x86CheckBox_CheckedChanged);
+			// 
+			// Controller4CheckBox
+			// 
+			this.Controller4CheckBox.AutoSize = true;
+			this.Controller4CheckBox.Location = new System.Drawing.Point(101, 358);
+			this.Controller4CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this.Controller4CheckBox.Name = "Controller4CheckBox";
+			this.Controller4CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.Controller4CheckBox.TabIndex = 0;
+			this.Controller4CheckBox.Text = "Controller 4";
+			this.Controller4CheckBox.UseVisualStyleBackColor = true;
+			this.Controller4CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x64CheckBox_CheckedChanged);
+			// 
+			// GameDetailsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -595,6 +672,8 @@
 			this.Controls.Add(this.HookModeFakePidTextBox);
 			this.Controls.Add(this.HookModeFakeVidTextBox);
 			this.Controls.Add(this.SynchronizeSettingsButton);
+			this.Controls.Add(this.Controller4CheckBox);
+			this.Controls.Add(this.Controller2CheckBox);
 			this.Controls.Add(this.DInput8_x64CheckBox);
 			this.Controls.Add(this.XInput91_x64CheckBox);
 			this.Controls.Add(this.ProcessorArchitectureComboBox);
@@ -602,7 +681,9 @@
 			this.Controls.Add(this.ProcessorArchitectureLabel);
 			this.Controls.Add(this.HookMaskTextBox);
 			this.Controls.Add(this.XInput14_x86CheckBox);
+			this.Controls.Add(this.AutoMapMaskTextBox);
 			this.Controls.Add(this.DInputMaskTextBox);
+			this.Controls.Add(this.AutoMapLabel);
 			this.Controls.Add(this.XInputMaskTextBox);
 			this.Controls.Add(this.DInputFilesLabel);
 			this.Controls.Add(this.XInput13_x86CheckBox);
@@ -612,7 +693,9 @@
 			this.Controls.Add(this.XInput11_x86CheckBox);
 			this.Controls.Add(this.HookDISABLECheckBox);
 			this.Controls.Add(this.XInput14_x64CheckBox);
+			this.Controls.Add(this.Controller3CheckBox);
 			this.Controls.Add(this.XInput13_x64CheckBox);
+			this.Controls.Add(this.Controller1CheckBox);
 			this.Controls.Add(this.XInput12_x64CheckBox);
 			this.Controls.Add(this.DInput8_x86CheckBox);
 			this.Controls.Add(this.XInput11_x64CheckBox);
@@ -621,8 +704,8 @@
 			this.Controls.Add(this.HookSTOPCheckBox);
 			this.Controls.Add(this.HookPIDVIDCheckBox);
 			this.Controls.Add(this.HookCOMCheckBox);
-			this.Name = "GameSettingDetailsUserControl";
-			this.Size = new System.Drawing.Size(216, 476);
+			this.Name = "GameDetailsUserControl";
+			this.Size = new System.Drawing.Size(225, 541);
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).EndInit();
@@ -681,5 +764,11 @@
 		private System.Windows.Forms.ToolStripMenuItem NGEmuSearchButton;
 		private System.Windows.Forms.ToolStripMenuItem GoogleSearchButton;
 		private System.Windows.Forms.ToolStripMenuItem NGEmuThreadButton;
+		private System.Windows.Forms.CheckBox Controller1CheckBox;
+		private System.Windows.Forms.Label AutoMapLabel;
+		private System.Windows.Forms.TextBox AutoMapMaskTextBox;
+		private System.Windows.Forms.CheckBox Controller2CheckBox;
+		private System.Windows.Forms.CheckBox Controller3CheckBox;
+		private System.Windows.Forms.CheckBox Controller4CheckBox;
 	}
 }
