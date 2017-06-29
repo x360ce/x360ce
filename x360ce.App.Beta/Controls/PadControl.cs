@@ -29,6 +29,7 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
 			MappedDevicesDataGridView.CellPainting += MappedDevicesDataGridView_CellPainting;
+			MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged1;
 
 
 			MappedTo = controllerIndex;
@@ -61,13 +62,21 @@ namespace x360ce.App.Controls
 			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
 		}
 
+		private void MappedDevicesDataGridView_SelectionChanged1(object sender, EventArgs e)
+		{
+			// Sort issue with paint artifcats.
+			MappedDevicesDataGridView.Invalidate();
+
+		}
+
 		private void MappedDevicesDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
 			// Header and cell borders must be set to "Single" style.
 			var grid = (DataGridView)sender;
+			var firstVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Min(x => x.Index);
 			var lastVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Max(x => x.Index);
 			var selected = false;
-			if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+			if (e.RowIndex > -1 && e.ColumnIndex > -1)
 			{
 				selected = grid.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected;
 			}
@@ -77,9 +86,14 @@ namespace x360ce.App.Controls
 			var tr = new Point(bounds.X + bounds.Width - 1, bounds.Y);
 			var bl = new Point(bounds.X, bounds.Y + bounds.Height - 1);
 			var br = new Point(bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-			var style = e.ColumnIndex == -1
-				? grid.ColumnHeadersDefaultCellStyle
-				: grid.DefaultCellStyle;
+			var style = grid.DefaultCellStyle;
+			// If column header then...
+			if (e.RowIndex == -1)
+				style = grid.ColumnHeadersDefaultCellStyle;
+			// if row header
+			if (e.ColumnIndex == -1)
+				style = grid.RowHeadersDefaultCellStyle;
+			// If header then
 			var color = selected
 				? style.SelectionBackColor
 				: style.BackColor;
@@ -91,15 +105,15 @@ namespace x360ce.App.Controls
 			if (selected) border = back;
 			Pen c;
 			// Top
-			c = e.ColumnIndex == -1 ? border : back;
-			e.Graphics.DrawLine(c, tl, tr);
-			// Left
-			e.Graphics.DrawLine(back, bl, tl);
+			e.Graphics.DrawLine(back, tl, tr);
+			// Left (only if not first)
+			c = e.ColumnIndex > firstVisibleColumn ? border : back;
+			e.Graphics.DrawLine(c, bl, tl);
 			// Right (only if not last column)
 			c = e.ColumnIndex < lastVisibleColumn ? border : back;
 			e.Graphics.DrawLine(c, tr, br);
-			// Bottom (only if not last line)
-			c = e.RowIndex < grid.RowCount - 1 ? border : back;
+			// Bottom (only if not last line or header if no rows)
+			c = (grid.Rows.Count == 0 || e.RowIndex < grid.RowCount - 1) ? border : back;
 			e.Graphics.DrawLine(c, bl, br);
 			back.Dispose();
 			border.Dispose();

@@ -194,18 +194,18 @@
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
 			this.MappedDevicesDataGridView = new System.Windows.Forms.DataGridView();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
 			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
 			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2197,8 +2197,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.MappedDevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.MappedDevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.MappedDevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			this.MappedDevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
@@ -2221,6 +2221,7 @@
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+			this.MappedDevicesDataGridView.EnableHeadersVisualStyles = false;
 			this.MappedDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.MappedDevicesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.MappedDevicesDataGridView.MultiSelect = false;
@@ -2241,61 +2242,6 @@
 			this.MappedDevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MappedDevicesDataGridView_CellClick);
 			this.MappedDevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MappedDevicesDataGridView_CellFormatting);
 			this.MappedDevicesDataGridView.SelectionChanged += new System.EventHandler(this.MappedDevicesDataGridView_SelectionChanged);
-			// 
-			// IsEnabledColumn
-			// 
-			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "";
-			this.IsEnabledColumn.Name = "IsEnabledColumn";
-			this.IsEnabledColumn.ReadOnly = true;
-			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.IsEnabledColumn.Width = 24;
-			// 
-			// SettingIdColumn
-			// 
-			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.SettingIdColumn.DataPropertyName = "PadSettingChecksum";
-			this.SettingIdColumn.HeaderText = "Setting ID";
-			this.SettingIdColumn.Name = "SettingIdColumn";
-			this.SettingIdColumn.ReadOnly = true;
-			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.SettingIdColumn.Width = 60;
-			// 
-			// InstanceIdColumn
-			// 
-			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.InstanceIdColumn.HeaderText = "Instance ID";
-			this.InstanceIdColumn.Name = "InstanceIdColumn";
-			this.InstanceIdColumn.ReadOnly = true;
-			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.InstanceIdColumn.Width = 68;
-			// 
-			// VendorNameColumn
-			// 
-			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.VendorNameColumn.DataPropertyName = "VendorName";
-			this.VendorNameColumn.HeaderText = "Vendor Name";
-			this.VendorNameColumn.Name = "VendorNameColumn";
-			this.VendorNameColumn.ReadOnly = true;
-			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.VendorNameColumn.Width = 78;
-			// 
-			// ProductNameColumn
-			// 
-			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.ProductNameColumn.DataPropertyName = "ProductName";
-			this.ProductNameColumn.HeaderText = "Product Name";
-			this.ProductNameColumn.Name = "ProductNameColumn";
-			this.ProductNameColumn.ReadOnly = true;
-			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// MapToColumn
-			// 
-			this.MapToColumn.HeaderText = "Map To";
-			this.MapToColumn.Name = "MapToColumn";
-			this.MapToColumn.ReadOnly = true;
-			this.MapToColumn.Visible = false;
 			// 
 			// LoadPresetButton
 			// 
@@ -2359,6 +2305,61 @@
 			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
 			this.MappedDevicesLabel.Size = new System.Drawing.Size(94, 22);
 			this.MappedDevicesLabel.Text = "Mapped Devices";
+			// 
+			// IsEnabledColumn
+			// 
+			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
+			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.Name = "IsEnabledColumn";
+			this.IsEnabledColumn.ReadOnly = true;
+			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.IsEnabledColumn.Width = 24;
+			// 
+			// SettingIdColumn
+			// 
+			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SettingIdColumn.DataPropertyName = "PadSettingChecksum";
+			this.SettingIdColumn.HeaderText = "Setting ID";
+			this.SettingIdColumn.Name = "SettingIdColumn";
+			this.SettingIdColumn.ReadOnly = true;
+			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.SettingIdColumn.Width = 59;
+			// 
+			// InstanceIdColumn
+			// 
+			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.InstanceIdColumn.HeaderText = "Instance ID";
+			this.InstanceIdColumn.Name = "InstanceIdColumn";
+			this.InstanceIdColumn.ReadOnly = true;
+			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.InstanceIdColumn.Width = 67;
+			// 
+			// VendorNameColumn
+			// 
+			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.VendorNameColumn.DataPropertyName = "VendorName";
+			this.VendorNameColumn.HeaderText = "Vendor Name";
+			this.VendorNameColumn.Name = "VendorNameColumn";
+			this.VendorNameColumn.ReadOnly = true;
+			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.VendorNameColumn.Width = 77;
+			// 
+			// ProductNameColumn
+			// 
+			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.ProductNameColumn.DataPropertyName = "ProductName";
+			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.Name = "ProductNameColumn";
+			this.ProductNameColumn.ReadOnly = true;
+			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// MapToColumn
+			// 
+			this.MapToColumn.HeaderText = "Map To";
+			this.MapToColumn.Name = "MapToColumn";
+			this.MapToColumn.ReadOnly = true;
+			this.MapToColumn.Visible = false;
 			// 
 			// PadControl
 			// 
@@ -2612,16 +2613,16 @@
 		private DirectInputUserControl DirectInputPanel;
 		private System.Windows.Forms.Button LoadPresetButton;
 		public System.Windows.Forms.DataGridView MappedDevicesDataGridView;
+		private System.Windows.Forms.ToolStrip GamesToolStrip;
+		private System.Windows.Forms.ToolStripButton AddMapButton;
+		private System.Windows.Forms.ToolStripButton RemoveMapButton;
+		private System.Windows.Forms.ToolStripButton AutoMapButton;
+		private System.Windows.Forms.ToolStripLabel MappedDevicesLabel;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SettingIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn InstanceIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
-		private System.Windows.Forms.ToolStrip GamesToolStrip;
-		private System.Windows.Forms.ToolStripButton AddMapButton;
-		private System.Windows.Forms.ToolStripButton RemoveMapButton;
-		private System.Windows.Forms.ToolStripButton AutoMapButton;
-		private System.Windows.Forms.ToolStripLabel MappedDevicesLabel;
 	}
 }
