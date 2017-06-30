@@ -48,7 +48,7 @@ namespace x360ce.App.Controls
 
 		private void Games_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			ShowHideAndSelectGridRows();
+			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
 		}
 
 		#region Scan Games
@@ -180,7 +180,7 @@ namespace x360ce.App.Controls
 
 		private void GamesDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
 		{
-			ShowHideAndSelectGridRows();
+			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
 		}
 
 		void GamesDataGridView_SelectionChanged(object sender, EventArgs e)
@@ -262,9 +262,11 @@ namespace x360ce.App.Controls
 
 		public void ProcessExecutable(string fileName)
 		{
-			SettingsManager.ProcessExecutable(fileName);
+			var game = SettingsManager.ProcessExecutable(fileName);
 			GamesDataGridView.ClearSelection();
-			ShowHideAndSelectGridRows(Path.GetFileName(fileName));
+			object selelectItemKey = null;
+			if (game != null) selelectItemKey = game.GameId;
+			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton, null, selelectItemKey);
 		}
 
 		private void StartGameButton_Click(object sender, EventArgs e)
@@ -346,6 +348,7 @@ namespace x360ce.App.Controls
 			var item = (ToolStripMenuItem)sender;
 			ShowGamesDropDownButton.Image = item.Image;
 			ShowGamesDropDownButton.Text = item.Text;
+			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
 		}
 
 		void GamesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -354,58 +357,11 @@ namespace x360ce.App.Controls
 			var row = grid.Rows[e.RowIndex];
 			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
-			AppHelper.ApplyRowStyle(grid, e, item.IsEnabled);
-			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
-			//	? System.Drawing.Color.Gray
-			//	: grid.DefaultCellStyle.ForeColor;
-			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
-			//{
-			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
-			//}
-			//else
+			ControlHelper.ApplyRowStyle(grid, e, item.IsEnabled);
 			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
 				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
 			}
-			else
-			{
-				//var row = grid.Rows[e.RowIndex].Cells[MyIconColumn.Name];
-				//e.CellStyle.BackColor = isCurrent ? currentColor : grid.DefaultCellStyle.BackColor;
-			}
-		}
-
-		void ShowHideAndSelectGridRows(string selectFile = null)
-		{
-			var grid = GamesDataGridView;
-			var selection = string.IsNullOrEmpty(selectFile)
-				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName")
-				: new List<string>() { selectFile };
-			grid.CurrentCell = null;
-			// Suspend Layout and CurrencyManager to avoid exceptions.
-			grid.SuspendLayout();
-			var cm = (CurrencyManager)BindingContext[grid.DataSource];
-			cm.SuspendBinding();
-			var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
-			// Reverse order to hide/show bottom records first..
-			Array.Reverse(rows);
-			var showEnabled = ShowGamesDropDownButton.Text.Contains("Enabled");
-			var showDisabled = ShowGamesDropDownButton.Text.Contains("Disabled");
-			for (int i = 0; i < rows.Length; i++)
-			{
-				var item = (x360ce.Engine.Data.UserGame)rows[i].DataBoundItem;
-				var show = true;
-				if (showEnabled) show = (item.IsEnabled == true);
-				if (showDisabled) show = (item.IsEnabled == false);
-				if (rows[i].Visible != show)
-				{
-					rows[i].Visible = show;
-				}
-			}
-			// Resume CurrencyManager and Layout.
-			cm.ResumeBinding();
-			grid.ResumeLayout();
-			// Restore selection.
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
 		}
 
 		#endregion
@@ -519,7 +475,8 @@ namespace x360ce.App.Controls
 		/// <summary>
 		/// Export Programs (Default Game Settings) to external file.
 		/// </summary>
-		void ExportPrograms(){
+		void ExportPrograms()
+		{
 			var dialog = ExportSaveFileDialog;
 			dialog.DefaultExt = "*.xml";
 			dialog.Filter = "Game Settings (*.xml)|*.xml|Compressed Game Settings (*.xml.gz)|*.gz|All files (*.*)|*.*";

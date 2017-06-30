@@ -3,5 +3,8 @@
 	public interface IDisplayName
 	{
 		string DisplayName { get; }
+
+		bool IsEnabled { get; }
+
 	}
 }

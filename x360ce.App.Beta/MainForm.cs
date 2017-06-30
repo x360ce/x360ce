@@ -29,16 +29,6 @@ namespace x360ce.App
 
 		public static MainForm Current { get; set; }
 
-		public Engine.Data.UserGame GetCurrentGame()
-		{
-			Engine.Data.UserGame game = null;
-			var item = GameToCustomizeComboBox.SelectedItem;
-			if (item != null)
-			{
-				game = (Engine.Data.UserGame)item;
-			}
-			return game;
-		}
 
 		public int oldIndex;
 
@@ -261,7 +251,7 @@ namespace x360ce.App
 			}
 			Invoke((MethodInvoker)delegate ()
 			{
-				var game = GetCurrentGame();
+				var game = MainForm.Current.CurrentGame;
 				if (game != null)
 				{
 					// Auto-configure new devices.
@@ -452,7 +442,7 @@ namespace x360ce.App
 		public void NotifySettingsChange(Control changedControl)
 		{
 
-			var game = GetCurrentGame();
+			var game = MainForm.Current.CurrentGame;
 			var iniContent = SettingsManager.Current.GetIniContent(game);
 			if (IniTextBox.Text != iniContent)
 			{
@@ -897,7 +887,7 @@ namespace x360ce.App
 			{
 				for (int i = 0; i < 4; i++)
 				{
-					var game = MainForm.Current.GetCurrentGame();
+					var game = MainForm.Current.CurrentGame;
 					var currentFile = (game == null) ? null : game.FileName;
 					// Get devices mapped to game and specific controller index.
 					var devices = SettingsManager.GetDevices(currentFile, (MapTo)(i + 1));
@@ -1397,9 +1387,55 @@ namespace x360ce.App
 			RestoreFromTray();
 		}
 
+		public UserGame CurrentGame;
+		public object CurrentGameLock = new object();
+
 		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			lock (CurrentGameLock)
+			{
+				var item = GameToCustomizeComboBox.SelectedItem as Engine.Data.UserGame;
+				// If nohting changed then...
+				if (Equals(item, CurrentGame))
+				{
+					return;
+				}
+				if (CurrentGame != null)
+				{
+					// Detach event from old game.
+					CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
+				}
+				if (item != null)
+				{
+					// attach event to new game.
+					item.PropertyChanged += CurrentGame_PropertyChanged;
+				}
+				CurrentGame = item;
+				if (PadControls != null)
+				{
+					// Update PAD Control.
+					foreach (var ps in PadControls)
+					{
+						if (ps != null)
+							ps.UpdateFromCurrentGame();
+					}
+				}
+			}
+		}
 
+		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var name = AppHelper.GetPropertyName<UserGame>(x => x.AutoMapMask);
+			// If AutoMapMask Changed then...
+			if (PadControls != null)
+			{
+				// Update PAD Control.
+				foreach (var ps in PadControls)
+				{
+					if (ps != null)
+						ps.UpdateFromCurrentGame();
+				}
+			}
 		}
 
 		private void StatusIniLabel_DoubleClick(object sender, EventArgs e)

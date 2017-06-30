@@ -44,6 +44,30 @@ namespace JocysCom.ClassLibrary.Controls
 			RestoreSelection(grid, primaryKeyPropertyName, sel, selectFirst);
 		}
 
+		static public string GetPrimaryKey(EntityObject eo)
+		{
+			// Try to select primary key name.
+			if (eo.EntityKey != null && eo.EntityKey.EntityKeyValues.Length > 0)
+			{
+				return eo.EntityKey.EntityKeyValues[0].Key;
+			}
+			// Try to find primary key by [EdmScalarPropertyAttribute] attribute.
+			var properties = eo.GetType().GetProperties();
+			foreach (var pi in properties)
+			{
+				var attributes = pi.GetCustomAttributes(true);
+				foreach (var attribute in attributes)
+				{
+					var ea = attribute as EdmScalarPropertyAttribute;
+					if (ea != null && ea.EntityKeyProperty)
+					{
+						return pi.Name;
+					}
+				}
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Get list of primary keys of items selected in the grid.
 		/// </summary>
@@ -53,18 +77,22 @@ namespace JocysCom.ClassLibrary.Controls
 		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
 		{
 			List<T> list = new List<T>();
-			for (int i = 0; i <= grid.SelectedRows.Count - 1; i++)
+			var rows = grid.SelectedRows.Cast<DataGridViewRow>().ToArray();
+			// If nothing selected then return.
+			if (rows.Length == 0)
+				return list;
+			if (string.IsNullOrEmpty(primaryKeyPropertyName))
 			{
-				var item = grid.SelectedRows[i].DataBoundItem;
-				// If primary key was not specified then...
-				if (primaryKeyPropertyName == null)
+				var item = rows.First().DataBoundItem;
+				var eo = item as EntityObject;
+				if (eo != null)
 				{
-					if (typeof(EntityObject).IsAssignableFrom(item.GetType()))
-					{
-						var eo = (EntityObject)item;
-						primaryKeyPropertyName = eo.EntityKey.EntityKeyValues[0].Key;
-					}
+					primaryKeyPropertyName = GetPrimaryKey(eo);
 				}
+			}
+			for (int i = 0; i < rows.Length; i++)
+			{
+				var item = rows[i].DataBoundItem;
 				var val = GetValue<T>(item, primaryKeyPropertyName);
 				list.Add(val);
 			}
@@ -73,37 +101,48 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void RestoreSelection<T>(DataGridView grid, string primaryKeyPropertyName, List<T> list, bool selectFirst = true)
 		{
-			// Restore selections
-			if (list.Count == 0)
+			var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
+			// Return if grid is empty.
+			if (rows.Length == 0)
 				return;
-			DataGridViewRow firstVisibleRow = null;
-			for (int i = 0; i <= grid.Rows.Count - 1; i++)
+			// If something to restore then...
+			if (list.Count > 0)
 			{
-				var row = grid.Rows[i];
-				if ((firstVisibleRow == null && row.Visible))
-					firstVisibleRow = row;
-				var item = row.DataBoundItem;
-				// If primary key was not specified then...
-				if (primaryKeyPropertyName == null)
+				if (string.IsNullOrEmpty(primaryKeyPropertyName))
 				{
-					if (typeof(EntityObject).IsAssignableFrom(item.GetType()))
+					var item = rows.First().DataBoundItem;
+					var eo = item as EntityObject;
+					if (eo != null)
 					{
-						var eo = (EntityObject)item;
-						primaryKeyPropertyName = eo.EntityKey.EntityKeyValues[0].Key;
+						primaryKeyPropertyName = GetPrimaryKey(eo);
 					}
 				}
-				var val = GetValue<T>(item, primaryKeyPropertyName);
-				if (list.Contains(val) != row.Selected)
+				DataGridViewRow firstVisibleRow = null;
+				for (int i = 0; i < rows.Length; i++)
 				{
-					var selected = list.Contains(val);
-					// Select visible rows only, because invisible rows can't be selected or they will throw exception:
-					// Row associated with the currency manager's position cannot be made invisible.'
-					row.Selected = selected && row.Visible;
+					var row = rows[i];
+					if ((firstVisibleRow == null && row.Visible))
+						firstVisibleRow = row;
+					var item = row.DataBoundItem;
+					var val = GetValue<T>(item, primaryKeyPropertyName);
+					if (list.Contains(val) != row.Selected)
+					{
+						var selected = list.Contains(val);
+						// Select visible rows only, because invisible rows can't be selected or they will throw exception:
+						// Row associated with the currency manager's position cannot be made invisible.'
+						row.Selected = selected && row.Visible;
+					}
 				}
 			}
-			if (selectFirst && grid.Rows.Count > 0 && grid.SelectedRows.Count == 0 && firstVisibleRow != null)
+			// If must select first row and nothing is selected then...
+			if (selectFirst && grid.SelectedRows.Count == 0)
 			{
-				firstVisibleRow.Selected = true;
+				var firstVisibleRow = rows.FirstOrDefault(x => x.Visible);
+				if (firstVisibleRow != null)
+				{
+					// Select first visible row.
+					firstVisibleRow.Selected = true;
+				}
 			}
 		}
 

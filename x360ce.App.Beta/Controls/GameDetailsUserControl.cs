@@ -214,7 +214,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		T GetMask<T>(CheckBox[] boxes)
+		T GetMask<T>(CheckBox[] boxes) where T : struct
 		{
 			uint mask = 0;
 			// Check/Uncheck CheckBox.
@@ -228,7 +228,7 @@ namespace x360ce.App.Controls
 			return (T)(object)mask;
 		}
 
-		void SetMask<T>(CheckBox[] boxes, T mask)
+		void SetMask<T>(CheckBox[] boxes, T mask) where T : struct
 		{
 			// Check/Uncheck CheckBox.
 			var xs = (T[])Enum.GetValues(typeof(T));
@@ -236,7 +236,12 @@ namespace x360ce.App.Controls
 			{
 				// Get CheckBox linked to enum value.
 				var cb = boxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
-				if (cb != null) cb.Checked = (((uint)(object)mask & (uint)(object)value) != 0);
+				if (cb != null)
+				{
+					var v = Convert.ToUInt32(value);
+					var m = Convert.ToUInt32(mask);
+					cb.Checked = ((m & v) != 0);
+				}
 			}
 		}
 

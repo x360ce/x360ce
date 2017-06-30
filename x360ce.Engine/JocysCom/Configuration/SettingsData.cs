@@ -195,15 +195,21 @@ namespace JocysCom.ClassLibrary.Configuration
 						catch (Exception ex)
 						{
 							var backupFile = fi.FullName + ".bak";
-							var text = string.Format("{0} file has become corrupted.\r\n\r\n" +
+							var sb = new StringBuilder();
+							sb.AppendFormat("{0} file has become corrupted.\r\n\r\n" +
 								"Reason: " + ex.Message + "\r\n\r\n" +
 								"Program must reset {0} file in order to continue.\r\n\r\n" +
 								"   Click [Yes] to reset and continue.\r\n" +
 								"   Click [No] if you wish to attempt manual repair.\r\n\r\n" +
 								" File: {1}", fi.Name, fi.FullName);
+							sb.AppendLine();
+							sb.Append('-', 64);
+							sb.AppendLine();
+							sb.AppendLine(ex.ToString());
 							var caption = string.Format("Corrupt {0} of {1}", fi.Name, Application.ProductName);
 							//var form = new MessageBox();
 							//form.StartPosition = FormStartPosition.CenterParent;
+							var text = sb.ToString();
 							var result = MessageBox.Show(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
 							if (result == DialogResult.Yes)
 							{

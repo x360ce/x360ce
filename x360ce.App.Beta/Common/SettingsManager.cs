@@ -138,10 +138,10 @@ namespace x360ce.App
 			}
 		}
 
-		public static void ProcessExecutable(string filePath)
+		public static UserGame ProcessExecutable(string filePath)
 		{
 			var fi = new FileInfo(filePath);
-			if (!fi.Exists) return;
+			if (!fi.Exists) return null;
 			// Check if item already exists.
 			var game = UserGames.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
 			if (game == null)
@@ -159,6 +159,7 @@ namespace x360ce.App
 			// Import INI settings.
 			Current.ReadIniFile(game);
 			Save();
+			return game;
 		}
 
 		#region Static Version
@@ -610,12 +611,19 @@ namespace x360ce.App
 			else if (control is DataGridView)
 			{
 				var grid = (DataGridView)control;
-				var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as Setting)
-					// Make sure that only enabled controllers are added.
-					.Where(x => x != null && x.IsEnabled).ToArray();
-				var instances = data.Select(x => GetInstanceSection(x.InstanceGuid)).ToArray();
-				// Separate devices with comma. x360ce.dll must combine devices separated by comma.
-				v = string.Join(",", instances);
+				if (grid.Enabled)
+				{
+					var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as Setting)
+						// Make sure that only enabled controllers are added.
+						.Where(x => x != null && x.IsEnabled).ToArray();
+					var instances = data.Select(x => GetInstanceSection(x.InstanceGuid)).ToArray();
+					// Separate devices with comma. x360ce.dll must combine devices separated by comma.
+					v = string.Join(",", instances);
+				}
+				else
+				{
+					v = "AUTO";
+				}
 			}
 			if (SettingName.IsThumbAxis(key))
 			{

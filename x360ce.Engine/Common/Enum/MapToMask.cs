@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace x360ce.Engine
 {
 	[Flags]
-	public enum MapToMask
+	public enum MapToMask : uint
 	{
 		[Description("None")]
 		None = 0,

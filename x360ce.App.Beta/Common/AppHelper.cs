@@ -12,6 +12,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
 using x360ce.Engine.Data;
+using System.Linq.Expressions;
 
 namespace x360ce.App
 {
@@ -235,16 +236,6 @@ namespace x360ce.App
 			return newSetting;
 		}
 
-		public static void ApplyRowStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, bool enabled)
-		{
-			e.CellStyle.ForeColor = enabled
-				? grid.DefaultCellStyle.ForeColor
-				: SystemColors.ControlDark;
-			e.CellStyle.SelectionBackColor = enabled
-			 ? grid.DefaultCellStyle.SelectionBackColor
-			 : SystemColors.ControlDark;
-		}
-
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
@@ -288,5 +279,24 @@ namespace x360ce.App
             if (control.Checked != check) control.Checked = check;
         }
 
-    }
+		public static MapToMask GetMapFlag(MapTo mapTo)
+		{
+			switch (mapTo)
+			{
+				case MapTo.Controller1: return MapToMask.Controller1;
+				case MapTo.Controller2: return MapToMask.Controller2;
+				case MapTo.Controller3: return MapToMask.Controller3;
+				case MapTo.Controller4: return MapToMask.Controller4;
+				default: return MapToMask.None;
+			}
+		}
+
+		public static string GetPropertyName<T>(Expression<Func<T, object>> selector)
+		{
+			var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
+			var name = body.Member.Name;
+			return name;
+		}
+
+	}
 }

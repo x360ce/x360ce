@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Xml.Serialization;
+using JocysCom.ClassLibrary.Configuration;
 
 namespace x360ce.Engine.Data
 {

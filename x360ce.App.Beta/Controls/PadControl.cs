@@ -102,18 +102,17 @@ namespace x360ce.App.Controls
 			// Border colour.
 			var border = new Pen(SystemColors.Control, 1);
 			// Do not draw borders for selected device.
-			if (selected) border = back;
 			Pen c;
 			// Top
 			e.Graphics.DrawLine(back, tl, tr);
 			// Left (only if not first)
-			c = e.ColumnIndex > firstVisibleColumn ? border : back;
+			c = !selected && e.ColumnIndex > firstVisibleColumn ? border : back;
 			e.Graphics.DrawLine(c, bl, tl);
 			// Right (only if not last column)
-			c = e.ColumnIndex < lastVisibleColumn ? border : back;
+			c = !selected && e.ColumnIndex < lastVisibleColumn ? border : back;
 			e.Graphics.DrawLine(c, tr, br);
 			// Bottom (only if not last line or header if no rows)
-			c = (grid.Rows.Count == 0 || e.RowIndex < grid.RowCount - 1) ? border : back;
+			c = !selected && (grid.Rows.Count == 0 || e.RowIndex < grid.RowCount - 1) ? border : back;
 			e.Graphics.DrawLine(c, bl, br);
 			back.Dispose();
 			border.Dispose();
@@ -175,6 +174,39 @@ namespace x360ce.App.Controls
 			{
 				((ComboBox)cb).ContextMenuStrip = DiMenuStrip;
 			}
+			UpdateFromCurrentGame();
+		}
+
+		public void UpdateFromCurrentGame()
+		{
+			var game = MainForm.Current.CurrentGame;
+			var flag = AppHelper.GetMapFlag(MappedTo);
+			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
+			AutoMapButton.Checked = auto;
+			AutoMapButton.Image = auto
+				? x360ce.App.Properties.Resources.checkbox_16x16
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			MappedDevicesDataGridView.Enabled = !auto;
+			MappedDevicesDataGridView.BackgroundColor = auto
+				? SystemColors.Control
+				: SystemColors.Window;
+			MappedDevicesDataGridView.DefaultCellStyle.BackColor = auto
+				? SystemColors.Control
+				: SystemColors.Window;
+			MappedDevicesDataGridView.ColumnHeadersDefaultCellStyle.BackColor = auto
+				? SystemColors.Control
+				: SystemColors.Window;
+			if (auto)
+			{
+				// Unmap all devices.	
+				var grid = MappedDevicesDataGridView;
+				var items = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => (Setting)x.DataBoundItem).ToArray();
+				foreach (var item in items)
+				{
+					item.MapTo = (int)MapTo.None;
+				}
+			}
+			UpdateGridButtons();
 		}
 
 		private void Settings_Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -1433,7 +1465,7 @@ namespace x360ce.App.Controls
 				return;
 			foreach (var item in items)
 			{
-				var game = MainForm.Current.GetCurrentGame();
+				var game = MainForm.Current.CurrentGame;
 				if (game != null)
 				{
 					var setting = SettingsManager.GetSetting(item.InstanceGuid, game.FileName);
@@ -1444,6 +1476,9 @@ namespace x360ce.App.Controls
 					}
 					else
 					{
+						// Enable if not enabled.
+						if (!setting.IsEnabled)
+							setting.IsEnabled = true;
 						setting.MapTo = (int)MappedTo;
 					}
 				}
@@ -1460,6 +1495,16 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		void UpdateGridButtons()
+		{
+			var grid = MappedDevicesDataGridView;
+			var game = MainForm.Current.CurrentGame;
+			var flag = AppHelper.GetMapFlag(MappedTo);
+			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
+			RemoveMapButton.Enabled = !auto && grid.SelectedRows.Count > 0;
+			AddMapButton.Enabled = !auto;
+		}
+
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
@@ -1467,7 +1512,7 @@ namespace x360ce.App.Controls
 			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
 			var device = SettingsManager.GetDevice(setting.InstanceGuid);
 			var isConnected = (device != null);
-			AppHelper.ApplyRowStyle(grid, e, isConnected);
+			ControlHelper.ApplyRowStyle(grid, e, isConnected);
 			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
 			{
 				// Hide device Instance GUID from public eyes. Show part of checksum.
@@ -1493,6 +1538,7 @@ namespace x360ce.App.Controls
 				? null
 				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
+			UpdateGridButtons();
 		}
 
 		private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -1511,39 +1557,24 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		MapToMask GetMapMask(MapTo mapTo)
-		{
-			switch (mapTo)
-			{
-				case MapTo.Controller1: return MapToMask.Controller1;
-				case MapTo.Controller2: return MapToMask.Controller1;
-				case MapTo.Controller3: return MapToMask.Controller1;
-				case MapTo.Controller4: return MapToMask.Controller1;
-				default: return MapToMask.None;
-			}
-		}
-
-
 		private void AutoMapButton_Click(object sender, EventArgs e)
 		{
-			var game = MainForm.Current.GetCurrentGame();
-			var mapMask = GetMapMask(MappedTo);
+			var game = MainForm.Current.CurrentGame;
+			var mapFlag = AppHelper.GetMapFlag(MappedTo);
 			var value = (MapToMask)game.AutoMapMask;
-			var autoMap = value.HasFlag(mapMask);
+			var autoMap = value.HasFlag(mapFlag);
 			// If AUTO enabled then...
 			if (autoMap)
 			{
 				// Remove AUTO.
-				game.AutoMapMask = (int)(value & ~mapMask);
+				game.AutoMapMask = (int)(value & ~mapFlag);
 			}
 			else
 			{
 				// Add AUTO.
-				game.AutoMapMask = (int)(value | mapMask);
+				game.AutoMapMask = (int)(value | mapFlag);
 			}
-			AutoMapButton.Image = !autoMap
-				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
 		}
+
 	}
 }

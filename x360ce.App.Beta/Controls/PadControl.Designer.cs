@@ -16,9 +16,9 @@
 		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
 			this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
 			this.AdvancedTabPage = new System.Windows.Forms.TabPage();
@@ -194,18 +194,18 @@
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
 			this.MappedDevicesDataGridView = new System.Windows.Forms.DataGridView();
-			this.LoadPresetButton = new System.Windows.Forms.Button();
-			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
-			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
-			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
-			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
-			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.LoadPresetButton = new System.Windows.Forms.Button();
+			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
+			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
+			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
+			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
+			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2198,13 +2198,13 @@
 			this.MappedDevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.MappedDevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.MappedDevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MappedDevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.MappedDevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
 			this.MappedDevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.MappedDevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsEnabledColumn,
@@ -2213,28 +2213,28 @@
             this.VendorNameColumn,
             this.ProductNameColumn,
             this.MapToColumn});
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle11;
 			this.MappedDevicesDataGridView.EnableHeadersVisualStyles = false;
 			this.MappedDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.MappedDevicesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.MappedDevicesDataGridView.MultiSelect = false;
 			this.MappedDevicesDataGridView.Name = "MappedDevicesDataGridView";
 			this.MappedDevicesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
 			this.MappedDevicesDataGridView.RowHeadersVisible = false;
 			this.MappedDevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.MappedDevicesDataGridView.Size = new System.Drawing.Size(707, 85);
@@ -2242,69 +2242,6 @@
 			this.MappedDevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MappedDevicesDataGridView_CellClick);
 			this.MappedDevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MappedDevicesDataGridView_CellFormatting);
 			this.MappedDevicesDataGridView.SelectionChanged += new System.EventHandler(this.MappedDevicesDataGridView_SelectionChanged);
-			// 
-			// LoadPresetButton
-			// 
-			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.LoadPresetButton.Location = new System.Drawing.Point(276, 584);
-			this.LoadPresetButton.Name = "LoadPresetButton";
-			this.LoadPresetButton.Size = new System.Drawing.Size(106, 23);
-			this.LoadPresetButton.TabIndex = 66;
-			this.LoadPresetButton.Text = "&Load Preset...";
-			this.LoadPresetButton.UseVisualStyleBackColor = true;
-			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
-			// 
-			// GamesToolStrip
-			// 
-			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.RemoveMapButton,
-            this.AddMapButton,
-            this.MappedDevicesLabel,
-            this.AutoMapButton});
-			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
-			this.GamesToolStrip.Name = "GamesToolStrip";
-			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.GamesToolStrip.Size = new System.Drawing.Size(707, 25);
-			this.GamesToolStrip.TabIndex = 3;
-			this.GamesToolStrip.Text = "MySettingsToolStrip";
-			// 
-			// AddMapButton
-			// 
-			this.AddMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.AddMapButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
-			this.AddMapButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.AddMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.AddMapButton.Name = "AddMapButton";
-			this.AddMapButton.Size = new System.Drawing.Size(58, 22);
-			this.AddMapButton.Text = "Add...";
-			this.AddMapButton.Click += new System.EventHandler(this.AddMapButton_Click);
-			// 
-			// AutoMapButton
-			// 
-			this.AutoMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.AutoMapButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
-			this.AutoMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.AutoMapButton.Name = "AutoMapButton";
-			this.AutoMapButton.Size = new System.Drawing.Size(80, 22);
-			this.AutoMapButton.Text = "&Auto Map";
-			this.AutoMapButton.Click += new System.EventHandler(this.AutoMapButton_Click);
-			// 
-			// RemoveMapButton
-			// 
-			this.RemoveMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RemoveMapButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.RemoveMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.RemoveMapButton.Name = "RemoveMapButton";
-			this.RemoveMapButton.Size = new System.Drawing.Size(70, 22);
-			this.RemoveMapButton.Text = "&Remove";
-			this.RemoveMapButton.Click += new System.EventHandler(this.RemoveMapButton_Click);
-			// 
-			// MappedDevicesLabel
-			// 
-			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
-			this.MappedDevicesLabel.Size = new System.Drawing.Size(94, 22);
-			this.MappedDevicesLabel.Text = "Mapped Devices";
 			// 
 			// IsEnabledColumn
 			// 
@@ -2360,6 +2297,70 @@
 			this.MapToColumn.Name = "MapToColumn";
 			this.MapToColumn.ReadOnly = true;
 			this.MapToColumn.Visible = false;
+			// 
+			// LoadPresetButton
+			// 
+			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.LoadPresetButton.Location = new System.Drawing.Point(276, 584);
+			this.LoadPresetButton.Name = "LoadPresetButton";
+			this.LoadPresetButton.Size = new System.Drawing.Size(106, 23);
+			this.LoadPresetButton.TabIndex = 66;
+			this.LoadPresetButton.Text = "&Load Preset...";
+			this.LoadPresetButton.UseVisualStyleBackColor = true;
+			this.LoadPresetButton.Click += new System.EventHandler(this.LoadPresetButton_Click);
+			// 
+			// GamesToolStrip
+			// 
+			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RemoveMapButton,
+            this.AddMapButton,
+            this.MappedDevicesLabel,
+            this.AutoMapButton});
+			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.GamesToolStrip.Name = "GamesToolStrip";
+			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
+			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.GamesToolStrip.Size = new System.Drawing.Size(707, 25);
+			this.GamesToolStrip.TabIndex = 3;
+			this.GamesToolStrip.Text = "MySettingsToolStrip";
+			// 
+			// RemoveMapButton
+			// 
+			this.RemoveMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RemoveMapButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.RemoveMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.RemoveMapButton.Name = "RemoveMapButton";
+			this.RemoveMapButton.Size = new System.Drawing.Size(70, 22);
+			this.RemoveMapButton.Text = "&Remove";
+			this.RemoveMapButton.Click += new System.EventHandler(this.RemoveMapButton_Click);
+			// 
+			// AddMapButton
+			// 
+			this.AddMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.AddMapButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddMapButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.AddMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AddMapButton.Name = "AddMapButton";
+			this.AddMapButton.Size = new System.Drawing.Size(58, 22);
+			this.AddMapButton.Text = "Add...";
+			this.AddMapButton.Click += new System.EventHandler(this.AddMapButton_Click);
+			// 
+			// MappedDevicesLabel
+			// 
+			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
+			this.MappedDevicesLabel.Size = new System.Drawing.Size(94, 22);
+			this.MappedDevicesLabel.Text = "Mapped Devices";
+			// 
+			// AutoMapButton
+			// 
+			this.AutoMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.AutoMapButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.AutoMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AutoMapButton.Name = "AutoMapButton";
+			this.AutoMapButton.Size = new System.Drawing.Size(80, 22);
+			this.AutoMapButton.Text = "&Auto Map";
+			this.AutoMapButton.Click += new System.EventHandler(this.AutoMapButton_Click);
 			// 
 			// PadControl
 			// 
