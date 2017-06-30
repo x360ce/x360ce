@@ -257,6 +257,8 @@ namespace x360ce.App
 					// Auto-configure new devices.
 					AutoConfigure(game);
 				}
+				// Fill INI textBox.
+				GetINI();
 			});
 		}
 
@@ -441,13 +443,7 @@ namespace x360ce.App
 		/// </summary>
 		public void NotifySettingsChange(Control changedControl)
 		{
-
-			var game = MainForm.Current.CurrentGame;
-			var iniContent = SettingsManager.Current.GetIniContent(game);
-			if (IniTextBox.Text != iniContent)
-			{
-				IniTextBox.Text = iniContent;
-			}
+			var iniContent = GetINI();
 			var changed = SettingsManager.Current.ApplyAllSettingsToXML();
 			// If settings changed then...
 			if (SettingsManager.Current.WriteSettingToIni(changedControl))
@@ -458,6 +454,17 @@ namespace x360ce.App
 				SettingsTimer.Stop();
 				SettingsTimer.Start();
 			}
+		}
+
+		public string GetINI()
+		{
+			var game = MainForm.Current.CurrentGame;
+			var iniContent = SettingsManager.Current.GetIniContent(game);
+			if (IniTextBox.Text != iniContent)
+			{
+				IniTextBox.Text = iniContent;
+			}
+			return iniContent;
 		}
 
 		void SettingsTimer_Elapsed(object sender, EventArgs e)

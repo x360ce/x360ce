@@ -225,6 +225,7 @@ namespace x360ce.App
 			// 
 			this.IniTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.IniTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.IniTextBox.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.IniTextBox.Location = new System.Drawing.Point(0, 0);
 			this.IniTextBox.Multiline = true;
 			this.IniTextBox.Name = "IniTextBox";
@@ -320,7 +321,7 @@ namespace x360ce.App
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(137, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(152, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// UpdateDevicesStatusLabel
