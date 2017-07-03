@@ -38,7 +38,7 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true, Description = "Save controller settings.")]
 		public string SaveSetting(Setting s, PadSetting ps)
 		{
-			var checksum = ps.GetCheckSum();
+			var checksum = ps.CleanAndGetCheckSum();
 			var db = new x360ceModelContainer();
 			var s1 = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			var n = DateTime.Now;

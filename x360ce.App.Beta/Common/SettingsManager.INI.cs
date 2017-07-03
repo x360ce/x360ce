@@ -162,6 +162,10 @@ namespace x360ce.App
 			var mappingsContent = GetIniContent(MappingsSection);
 			sb.AppendLine();
 			sb.Append(mappingsContent);
+			sb.AppendLine();
+			sb.Append(';').Append('-', 64).AppendLine();
+			sb.AppendLine("; Instance settings used for manually mapped controllers.");
+			sb.Append(';').Append('-', 64).AppendLine();
 			// Get all instances mapped to PADs.
 			var instances = Settings.Items.Where(x => x.MapTo > 0 && x.IsEnabled).ToArray();
 			for (int i = 0; i < instances.Count(); i++)
@@ -172,7 +176,32 @@ namespace x360ce.App
 				sb.AppendFormat("[{0}]", GetInstanceSection(instance.InstanceGuid));
 				sb.AppendLine();
 				// Get padd settings attached to specific instance.
-				var ps = PadSettings.Items.First(x => x.PadSettingChecksum == instance.PadSettingChecksum);
+				var ps = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == instance.PadSettingChecksum);
+				// If pad settings not found then...
+				if (ps == null)
+				{
+					// Reset setttings.
+					ps = new PadSetting();
+					instance.PadSettingChecksum = ps.PadSettingChecksum;
+				}
+				// Convert PadSettings to INI string.
+				sb.Append(ConvertToIni(ps));
+
+			}
+			sb.AppendLine();
+			sb.Append(';').Append('-', 64).AppendLine();
+			sb.AppendLine("; Product settings used for AUTO mapped controllers.");
+			sb.Append(';').Append('-', 64).AppendLine();
+			var products = Presets.Items.ToArray();
+			for (int i = 0; i < products.Count(); i++)
+			{
+				sb.AppendLine();
+				var product = products[i];
+				// Add PAD setting instance.
+				sb.AppendFormat("[{0}]", GetProductSection(product.ProductGuid));
+				sb.AppendLine();
+				// Get padd settings attached to specific product.
+				var ps = PadSettings.Items.First(x => x.PadSettingChecksum == product.PadSettingChecksum);
 				// Convert PadSettings to INI string.
 				sb.Append(ConvertToIni(ps));
 			}

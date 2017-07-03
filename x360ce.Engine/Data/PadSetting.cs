@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Web;
 using System.Xml.Serialization;
 
@@ -8,94 +10,94 @@ namespace x360ce.Engine.Data
 {
 	public partial class PadSetting
 	{
-		//public PadSetting()
-		//{
-		//	// Set default values;
-		//	AxisToDPadDeadZone = "256";
-		//	ForceOverall = "100";
-		//	LeftMotorStrength = "100";
-		//	RightMotorStrength = "100";
-		//}
+		public PadSetting()
+		{
+			// Set default values;
+			AxisToDPadDeadZone = "256";
+			ForceOverall = "100";
+			LeftMotorStrength = "100";
+			RightMotorStrength = "100";
+		}
 
-		public Guid GetCheckSum()
+		public Guid CleanAndGetCheckSum()
 		{
 			// Make sure to update checksums in database if you are changing this method.
 			var list = new List<string>();
-			AddValue(ref list, "AxisToDPadDeadZone", AxisToDPadDeadZone, null, "", "256");
-			AddValue(ref list, "AxisToDPadEnabled", AxisToDPadEnabled, null, "", "0");
-			AddValue(ref list, "AxisToDPadOffset", AxisToDPadOffset, null, "", "0");
-			AddValue(ref list, "ButtonA", ButtonA, null, "", "0");
-			AddValue(ref list, "ButtonB", ButtonB, null, "", "0");
-			AddValue(ref list, "ButtonGuide", ButtonGuide, null, "", "0");
-			AddValue(ref list, "ButtonBack", ButtonBack, null, "", "0");
-			AddValue(ref list, "ButtonStart", ButtonStart, null, "", "0");
-			AddValue(ref list, "ButtonX", ButtonX, null, "", "0");
-			AddValue(ref list, "ButtonY", ButtonY, null, "", "0");
-			AddValue(ref list, "DPad", DPad, null, "", "0");
-			AddValue(ref list, "DPadDown", DPadDown, null, "", "0");
-			AddValue(ref list, "DPadLeft", DPadLeft, null, "", "0");
-			AddValue(ref list, "DPadRight", DPadRight, null, "", "0");
-			AddValue(ref list, "DPadUp", DPadUp, null, "", "0");
-			AddValue(ref list, "ForceEnable", ForceEnable, null, "", "0");
-			AddValue(ref list, "ForceOverall", ForceOverall, null, "", "100");
-			AddValue(ref list, "ForceSwapMotor", ForceSwapMotor, null, "", "0");
-			AddValue(ref list, "ForceType", ForceType, null, "", "0");
-			AddValue(ref list, "GamePadType", GamePadType, null, "", "0");
-			AddValue(ref list, "LeftMotorPeriod", LeftMotorPeriod, null, "", "0");
-			AddValue(ref list, "LeftShoulder", LeftShoulder, null, "", "0");
-			AddValue(ref list, "LeftThumbAntiDeadZoneX", LeftThumbAntiDeadZoneX, null, "", "0");
-			AddValue(ref list, "LeftThumbAntiDeadZoneY", LeftThumbAntiDeadZoneY, null, "", "0");
-			AddValue(ref list, "LeftThumbAxisX", LeftThumbAxisX, null, "", "0");
-			AddValue(ref list, "LeftThumbAxisY", LeftThumbAxisY, null, "", "0");
-			AddValue(ref list, "LeftThumbButton", LeftThumbButton, null, "", "0");
-			AddValue(ref list, "LeftThumbDeadZoneX", LeftThumbDeadZoneX, null, "", "0");
-			AddValue(ref list, "LeftThumbDeadZoneY", LeftThumbDeadZoneY, null, "", "0");
-			AddValue(ref list, "LeftThumbDown", LeftThumbDown, null, "", "0");
-			AddValue(ref list, "LeftThumbLeft", LeftThumbLeft, null, "", "0");
-			AddValue(ref list, "LeftThumbRight", LeftThumbRight, null, "", "0");
-			AddValue(ref list, "LeftThumbUp", LeftThumbUp, null, "", "0");
-			AddValue(ref list, "LeftTrigger", LeftTrigger, null, "", "0");
-			AddValue(ref list, "LeftTriggerDeadZone", LeftTriggerDeadZone, null, "", "0");
-			AddValue(ref list, "PassThrough", PassThrough, null, "", "0");
-			AddValue(ref list, "RightMotorPeriod", RightMotorPeriod, null, "", "0");
-			AddValue(ref list, "RightShoulder", RightShoulder, null, "", "0");
-			AddValue(ref list, "RightThumbAntiDeadZoneX", RightThumbAntiDeadZoneX, null, "", "0");
-			AddValue(ref list, "RightThumbAntiDeadZoneY", RightThumbAntiDeadZoneY, null, "", "0");
-			AddValue(ref list, "RightThumbAxisX", RightThumbAxisX, null, "", "0");
-			AddValue(ref list, "RightThumbAxisY", RightThumbAxisY, null, "", "0");
-			AddValue(ref list, "RightThumbButton", RightThumbButton, null, "", "0");
-			AddValue(ref list, "RightThumbDeadZoneX", RightThumbDeadZoneX, null, "", "0");
-			AddValue(ref list, "RightThumbDeadZoneY", RightThumbDeadZoneY, null, "", "0");
-			AddValue(ref list, "RightThumbDown", RightThumbDown, null, "", "0");
-			AddValue(ref list, "RightThumbLeft", RightThumbLeft, null, "", "0");
-			AddValue(ref list, "RightThumbRight", RightThumbRight, null, "", "0");
-			AddValue(ref list, "RightThumbUp", RightThumbUp, null, "", "0");
-			AddValue(ref list, "RightTrigger", RightTrigger, null, "", "0");
-			AddValue(ref list, "RightTriggerDeadZone", RightTriggerDeadZone, null, "", "0");
+			AddValue(ref list, x => x.AxisToDPadDeadZone, "256");
+			AddValue(ref list, x => x.AxisToDPadEnabled);
+			AddValue(ref list, x => x.AxisToDPadOffset);
+			AddValue(ref list, x => x.ButtonA);
+			AddValue(ref list, x => x.ButtonB);
+			AddValue(ref list, x => x.ButtonGuide);
+			AddValue(ref list, x => x.ButtonBack);
+			AddValue(ref list, x => x.ButtonStart);
+			AddValue(ref list, x => x.ButtonX);
+			AddValue(ref list, x => x.ButtonY);
+			AddValue(ref list, x => x.DPad);
+			AddValue(ref list, x => x.DPadDown);
+			AddValue(ref list, x => x.DPadLeft);
+			AddValue(ref list, x => x.DPadRight);
+			AddValue(ref list, x => x.DPadUp);
+			AddValue(ref list, x => x.ForceEnable);
+			AddValue(ref list, x => x.ForceOverall, "100");
+			AddValue(ref list, x => x.ForceSwapMotor);
+			AddValue(ref list, x => x.ForceType);
+			AddValue(ref list, x => x.GamePadType);
+			AddValue(ref list, x => x.LeftMotorPeriod);
+			AddValue(ref list, x => x.LeftShoulder);
+			AddValue(ref list, x => x.LeftThumbAntiDeadZoneX);
+			AddValue(ref list, x => x.LeftThumbAntiDeadZoneY);
+			AddValue(ref list, x => x.LeftThumbAxisX);
+			AddValue(ref list, x => x.LeftThumbAxisY);
+			AddValue(ref list, x => x.LeftThumbButton);
+			AddValue(ref list, x => x.LeftThumbDeadZoneX);
+			AddValue(ref list, x => x.LeftThumbDeadZoneY);
+			AddValue(ref list, x => x.LeftThumbDown);
+			AddValue(ref list, x => x.LeftThumbLeft);
+			AddValue(ref list, x => x.LeftThumbRight);
+			AddValue(ref list, x => x.LeftThumbUp);
+			AddValue(ref list, x => x.LeftTrigger);
+			AddValue(ref list, x => x.LeftTriggerDeadZone);
+			AddValue(ref list, x => x.PassThrough);
+			AddValue(ref list, x => x.RightMotorPeriod);
+			AddValue(ref list, x => x.RightShoulder);
+			AddValue(ref list, x => x.RightThumbAntiDeadZoneX);
+			AddValue(ref list, x => x.RightThumbAntiDeadZoneY);
+			AddValue(ref list, x => x.RightThumbAxisX);
+			AddValue(ref list, x => x.RightThumbAxisY);
+			AddValue(ref list, x => x.RightThumbButton);
+			AddValue(ref list, x => x.RightThumbDeadZoneX);
+			AddValue(ref list, x => x.RightThumbDeadZoneY);
+			AddValue(ref list, x => x.RightThumbDown);
+			AddValue(ref list, x => x.RightThumbLeft);
+			AddValue(ref list, x => x.RightThumbRight);
+			AddValue(ref list, x => x.RightThumbUp);
+			AddValue(ref list, x => x.RightTrigger);
+			AddValue(ref list, x => x.RightTriggerDeadZone);
 			// New
-			AddValue(ref list, "LeftThumbLinearX", LeftThumbLinearX, null, "", "0");
-			AddValue(ref list, "LeftThumbLinearY", LeftThumbLinearY, null, "", "0");
-			AddValue(ref list, "RightThumbLinearX", RightThumbLinearX, null, "", "0");
-			AddValue(ref list, "RightThumbLinearY", RightThumbLinearY, null, "", "0");
-			AddValue(ref list, "LeftMotorStrength", LeftMotorStrength, null, "", "100");
-			AddValue(ref list, "RightMotorStrength", RightMotorStrength, null, "", "100");
-			AddValue(ref list, "LeftMotorDirection", LeftMotorDirection, null, "", "0");
-			AddValue(ref list, "RightMotorDirection", RightMotorDirection, null, "", "0");
+			AddValue(ref list, x => x.LeftThumbLinearX);
+			AddValue(ref list, x => x.LeftThumbLinearY);
+			AddValue(ref list, x => x.RightThumbLinearX);
+			AddValue(ref list, x => x.RightThumbLinearY);
+			AddValue(ref list, x => x.LeftMotorStrength, "100");
+			AddValue(ref list, x => x.RightMotorStrength, "100");
+			AddValue(ref list, x => x.LeftMotorDirection);
+			AddValue(ref list, x => x.RightMotorDirection);
 			// Axis to Button dead-zones.
-			AddValue(ref list, "ButtonADeadZone", ButtonADeadZone, null, "", "0");
-			AddValue(ref list, "ButtonBDeadZone", ButtonBDeadZone, null, "", "0");
-			AddValue(ref list, "ButtonBackDeadZone", ButtonBackDeadZone, null, "", "0");
-			AddValue(ref list, "ButtonStartDeadZone", ButtonStartDeadZone, null, "", "0");
-			AddValue(ref list, "ButtonXDeadZone", ButtonXDeadZone, null, "", "0");
-			AddValue(ref list, "ButtonYDeadZone", ButtonYDeadZone, null, "", "0");
-			AddValue(ref list, "LeftThumbButtonDeadZone", LeftThumbButtonDeadZone, null, "", "0");
-			AddValue(ref list, "RightThumbButtonDeadZone", RightThumbButtonDeadZone, null, "", "0");
-			AddValue(ref list, "LeftShoulderDeadZone", LeftShoulderDeadZone, null, "", "0");
-			AddValue(ref list, "RightShoulderDeadZone", RightShoulderDeadZone, null, "", "0");
-			AddValue(ref list, "DPadDownDeadZone", DPadDownDeadZone, null, "", "0");
-			AddValue(ref list, "DPadLeftDeadZone", DPadLeftDeadZone, null, "", "0");
-			AddValue(ref list, "DPadRightDeadZone", DPadRightDeadZone, null, "", "0");
-			AddValue(ref list, "DPadUpDeadZone", DPadUpDeadZone, null, "", "0");
+			AddValue(ref list, x => x.ButtonADeadZone);
+			AddValue(ref list, x => x.ButtonBDeadZone);
+			AddValue(ref list, x => x.ButtonBackDeadZone);
+			AddValue(ref list, x => x.ButtonStartDeadZone);
+			AddValue(ref list, x => x.ButtonXDeadZone);
+			AddValue(ref list, x => x.ButtonYDeadZone);
+			AddValue(ref list, x => x.LeftThumbButtonDeadZone);
+			AddValue(ref list, x => x.RightThumbButtonDeadZone);
+			AddValue(ref list, x => x.LeftShoulderDeadZone);
+			AddValue(ref list, x => x.RightShoulderDeadZone);
+			AddValue(ref list, x => x.DPadDownDeadZone);
+			AddValue(ref list, x => x.DPadLeftDeadZone);
+			AddValue(ref list, x => x.DPadRightDeadZone);
+			AddValue(ref list, x => x.DPadUpDeadZone);
 			// If all values are empty or default then...
 			if (list.Count == 0)
 				return Guid.Empty;
@@ -106,10 +108,20 @@ namespace x360ce.Engine.Data
 			return new Guid(md5.ComputeHash(bytes));
 		}
 
-		void AddValue(ref List<string> list, string name, string value, params string[] ignore)
+		void AddValue(ref List<string> list, Expression<Func<PadSetting, object>> setting, string defaultValue = "0")
 		{
-			if (ignore.Contains(value)) return;
-			list.Add(string.Format("{0}={1}", name, value));
+			var p = (PropertyInfo)((MemberExpression)setting.Body).Member;
+			var value = (string)p.GetValue(this, null);
+			if (notDefault(value, defaultValue))
+			{
+				list.Add(string.Format("{0}={1}", p.Name, value));
+			}
+			// If value is default but not empty then reset value.
+			else if (value != "")
+			{
+
+				p.SetValue(this, "", null);
+			}
 		}
 
 		#region Do not serialize default values

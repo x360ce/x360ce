@@ -830,7 +830,7 @@ namespace x360ce.App.Controls
 				// Set value onto padSetting.
 				p.SetValue(ps, v ?? "", null);
 			}
-			ps.PadSettingChecksum = ps.GetCheckSum();
+			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 			return ps;
 		}
 
@@ -1340,6 +1340,7 @@ namespace x360ce.App.Controls
 		void SavePresetButton_Click(object sender, EventArgs e)
 		{
 			SettingsManager.Current.WriteAllSettingsToINI();
+			var iniContent = MainForm.Current.GetINI();
 			SettingsManager.Current.ApplyAllSettingsToXML();
 			MainForm.Current.SaveAll();
 		}

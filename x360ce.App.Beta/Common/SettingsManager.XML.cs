@@ -52,7 +52,14 @@ namespace x360ce.App
 		void CleanupPadSettings()
 		{
 			// Get all settings used by PADs.
-			var usedPadSettings = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
+			var usedPadSettings = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			// Get all settings used by Presets.
+			var usedPadSettings2 = Presets.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			// Get all settings used by Presets.
+			var usedPadSettings3 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			// Combine settings.
+			usedPadSettings.AddRange(usedPadSettings2);
+			usedPadSettings.AddRange(usedPadSettings3);
 			// Get all stored padSettings.
 			var allPadSettings = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
 			// Wipe all pad settings not attached to devices.
@@ -101,7 +108,7 @@ namespace x360ce.App
 				// Set value onto padSetting.
 				p.SetValue(ps, v ?? "", null);
 			}
-			ps.PadSettingChecksum = ps.GetCheckSum();
+			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 			return ps;
 		}
 
