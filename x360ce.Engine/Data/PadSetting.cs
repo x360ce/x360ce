@@ -10,17 +10,9 @@ namespace x360ce.Engine.Data
 {
 	public partial class PadSetting
 	{
-		public PadSetting()
-		{
-			// Set default values;
-			AxisToDPadDeadZone = "256";
-			ForceOverall = "100";
-			LeftMotorStrength = "100";
-			RightMotorStrength = "100";
-		}
-
 		public Guid CleanAndGetCheckSum()
 		{
+
 			// Make sure to update checksums in database if you are changing this method.
 			var list = new List<string>();
 			AddValue(ref list, x => x.AxisToDPadDeadZone, "256");
@@ -112,7 +104,8 @@ namespace x360ce.Engine.Data
 		{
 			var p = (PropertyInfo)((MemberExpression)setting.Body).Member;
 			var value = (string)p.GetValue(this, null);
-			if (notDefault(value, defaultValue))
+			// If value is not empty or default then...
+			if (!isDefault(value, defaultValue))
 			{
 				list.Add(string.Format("{0}={1}", p.Name, value));
 			}
@@ -126,92 +119,94 @@ namespace x360ce.Engine.Data
 
 		#region Do not serialize default values
 
-		bool notDefault<T>(T value, T defaultValue = default(T))
+		bool isDefault<T>(T value, T defaultValue = default(T))
 		{
-			if (value is string && Equals(value, ""))
-				return false;
+			// If value is default for the type then...
 			if (Equals(value, default(T)))
-				return false;
+				return true;
+			// If value is default.
 			if (Equals(value, defaultValue))
-				return false;
+				return true;
+			// If value is stirng and empty or set to "0" then...
+			if (value is string && (Equals(value, "") || Equals(value, "0")))
+				return true;
 			return true;
 		}
 
-		public bool ShouldSerializePadSettingChecksum() { return notDefault(PadSettingChecksum); }
-		public bool ShouldSerializeAxisToDPadDeadZone() { return notDefault(AxisToDPadDeadZone, "256"); }
-		public bool ShouldSerializeAxisToDPadEnabled() { return notDefault(AxisToDPadEnabled); }
-		public bool ShouldSerializeAxisToDPadOffset() { return notDefault(AxisToDPadOffset); }
-		public bool ShouldSerializeButtonA() { return notDefault(ButtonA); }
-		public bool ShouldSerializeButtonB() { return notDefault(ButtonB); }
-		public bool ShouldSerializeButtonBig() { return notDefault(ButtonBig); }
-		public bool ShouldSerializeButtonBack() { return notDefault(ButtonBack); }
-		public bool ShouldSerializeButtonGuide() { return notDefault(ButtonGuide); }
-		public bool ShouldSerializeButtonStart() { return notDefault(ButtonStart); }
-		public bool ShouldSerializeButtonX() { return notDefault(ButtonX); }
-		public bool ShouldSerializeButtonY() { return notDefault(ButtonY); }
-		public bool ShouldSerializeDPad() { return notDefault(DPad); }
-		public bool ShouldSerializeDPadDown() { return notDefault(DPadDown); }
-		public bool ShouldSerializeDPadLeft() { return notDefault(DPadLeft); }
-		public bool ShouldSerializeDPadRight() { return notDefault(DPadRight); }
-		public bool ShouldSerializeDPadUp() { return notDefault(DPadUp); }
-		public bool ShouldSerializeForceEnable() { return notDefault(ForceEnable); }
-		public bool ShouldSerializeForceOverall() { return notDefault(ForceOverall, "100"); }
-		public bool ShouldSerializeForceSwapMotor() { return notDefault(ForceSwapMotor); }
-		public bool ShouldSerializeForceType() { return notDefault(ForceType); }
-		public bool ShouldSerializeGamePadType() { return notDefault(GamePadType); }
-		public bool ShouldSerializeLeftMotorPeriod() { return notDefault(LeftMotorPeriod); }
-		public bool ShouldSerializeLeftShoulder() { return notDefault(LeftShoulder); }
-		public bool ShouldSerializeLeftThumbAntiDeadZoneX() { return notDefault(LeftThumbAntiDeadZoneX); }
-		public bool ShouldSerializeLeftThumbAntiDeadZoneY() { return notDefault(LeftThumbAntiDeadZoneY); }
-		public bool ShouldSerializeLeftThumbAxisX() { return notDefault(LeftThumbAxisX); }
-		public bool ShouldSerializeLeftThumbAxisY() { return notDefault(LeftThumbAxisY); }
-		public bool ShouldSerializeLeftThumbButton() { return notDefault(LeftThumbButton); }
-		public bool ShouldSerializeLeftThumbDeadZoneX() { return notDefault(LeftThumbDeadZoneX); }
-		public bool ShouldSerializeLeftThumbDeadZoneY() { return notDefault(LeftThumbDeadZoneY); }
-		public bool ShouldSerializeLeftThumbDown() { return notDefault(LeftThumbDown); }
-		public bool ShouldSerializeLeftThumbLeft() { return notDefault(LeftThumbLeft); }
-		public bool ShouldSerializeLeftThumbRight() { return notDefault(LeftThumbRight); }
-		public bool ShouldSerializeLeftThumbUp() { return notDefault(LeftThumbUp); }
-		public bool ShouldSerializeLeftTrigger() { return notDefault(LeftTrigger); }
-		public bool ShouldSerializeLeftTriggerDeadZone() { return notDefault(LeftTriggerDeadZone); }
-		public bool ShouldSerializePassThrough() { return notDefault(PassThrough); }
-		public bool ShouldSerializeRightMotorPeriod() { return notDefault(RightMotorPeriod); }
-		public bool ShouldSerializeRightShoulder() { return notDefault(RightShoulder); }
-		public bool ShouldSerializeRightThumbAntiDeadZoneX() { return notDefault(RightThumbAntiDeadZoneX); }
-		public bool ShouldSerializeRightThumbAntiDeadZoneY() { return notDefault(RightThumbAntiDeadZoneY); }
-		public bool ShouldSerializeRightThumbAxisX() { return notDefault(RightThumbAxisX); }
-		public bool ShouldSerializeRightThumbAxisY() { return notDefault(RightThumbAxisY); }
-		public bool ShouldSerializeRightThumbButton() { return notDefault(RightThumbButton); }
-		public bool ShouldSerializeRightThumbDeadZoneX() { return notDefault(RightThumbDeadZoneX); }
-		public bool ShouldSerializeRightThumbDeadZoneY() { return notDefault(RightThumbDeadZoneY); }
-		public bool ShouldSerializeRightThumbDown() { return notDefault(RightThumbDown); }
-		public bool ShouldSerializeRightThumbLeft() { return notDefault(RightThumbLeft); }
-		public bool ShouldSerializeRightThumbRight() { return notDefault(RightThumbRight); }
-		public bool ShouldSerializeRightThumbUp() { return notDefault(RightThumbUp); }
-		public bool ShouldSerializeRightTrigger() { return notDefault(RightTrigger); }
-		public bool ShouldSerializeRightTriggerDeadZone() { return notDefault(RightTriggerDeadZone); }
-		public bool ShouldSerializeLeftThumbLinearX() { return notDefault(LeftThumbLinearX); }
-		public bool ShouldSerializeLeftThumbLinearY() { return notDefault(LeftThumbLinearY); }
-		public bool ShouldSerializeRightThumbLinearX() { return notDefault(RightThumbLinearX); }
-		public bool ShouldSerializeRightThumbLinearY() { return notDefault(RightThumbLinearY); }
-		public bool ShouldSerializeLeftMotorStrength() { return notDefault(LeftMotorStrength, "100"); }
-		public bool ShouldSerializeRightMotorStrength() { return notDefault(RightMotorStrength, "100"); }
-		public bool ShouldSerializeLeftMotorDirection() { return notDefault(LeftMotorDirection); }
-		public bool ShouldSerializeRightMotorDirection() { return notDefault(RightMotorDirection); }
-		public bool ShouldSerializeButtonADeadZone() { return notDefault(ButtonADeadZone); }
-		public bool ShouldSerializeButtonBDeadZone() { return notDefault(ButtonBDeadZone); }
-		public bool ShouldSerializeButtonBackDeadZone() { return notDefault(ButtonBackDeadZone); }
-		public bool ShouldSerializeButtonStartDeadZone() { return notDefault(ButtonStartDeadZone); }
-		public bool ShouldSerializeButtonXDeadZone() { return notDefault(ButtonXDeadZone); }
-		public bool ShouldSerializeButtonYDeadZone() { return notDefault(ButtonYDeadZone); }
-		public bool ShouldSerializeLeftThumbButtonDeadZone() { return notDefault(LeftThumbButtonDeadZone); }
-		public bool ShouldSerializeRightThumbButtonDeadZone() { return notDefault(RightThumbButtonDeadZone); }
-		public bool ShouldSerializeLeftShoulderDeadZone() { return notDefault(LeftShoulderDeadZone); }
-		public bool ShouldSerializeRightShoulderDeadZone() { return notDefault(RightShoulderDeadZone); }
-		public bool ShouldSerializeDPadDownDeadZone() { return notDefault(DPadDownDeadZone); }
-		public bool ShouldSerializeDPadLeftDeadZone() { return notDefault(DPadLeftDeadZone); }
-		public bool ShouldSerializeDPadRightDeadZone() { return notDefault(DPadRightDeadZone); }
-		public bool ShouldSerializeDPadUpDeadZone() { return notDefault(DPadUpDeadZone); }
+		public bool ShouldSerializePadSettingChecksum() { return !isDefault(PadSettingChecksum); }
+		public bool ShouldSerializeAxisToDPadDeadZone() { return !isDefault(AxisToDPadDeadZone, "256"); }
+		public bool ShouldSerializeAxisToDPadEnabled() { return !isDefault(AxisToDPadEnabled); }
+		public bool ShouldSerializeAxisToDPadOffset() { return !isDefault(AxisToDPadOffset); }
+		public bool ShouldSerializeButtonA() { return !isDefault(ButtonA); }
+		public bool ShouldSerializeButtonB() { return !isDefault(ButtonB); }
+		public bool ShouldSerializeButtonBack() { return !isDefault(ButtonBack); }
+		public bool ShouldSerializeButtonGuide() { return !isDefault(ButtonGuide); }
+		public bool ShouldSerializeButtonStart() { return !isDefault(ButtonStart); }
+		public bool ShouldSerializeButtonX() { return !isDefault(ButtonX); }
+		public bool ShouldSerializeButtonY() { return !isDefault(ButtonY); }
+		public bool ShouldSerializeDPad() { return !isDefault(DPad); }
+		public bool ShouldSerializeDPadDown() { return !isDefault(DPadDown); }
+		public bool ShouldSerializeDPadLeft() { return !isDefault(DPadLeft); }
+		public bool ShouldSerializeDPadRight() { return !isDefault(DPadRight); }
+		public bool ShouldSerializeDPadUp() { return !isDefault(DPadUp); }
+		public bool ShouldSerializeForceEnable() { return !isDefault(ForceEnable); }
+		public bool ShouldSerializeForceOverall() { return !isDefault(ForceOverall, "100"); }
+		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
+		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
+		public bool ShouldSerializeGamePadType() { return !isDefault(GamePadType); }
+		public bool ShouldSerializeLeftMotorPeriod() { return !isDefault(LeftMotorPeriod); }
+		public bool ShouldSerializeLeftShoulder() { return !isDefault(LeftShoulder); }
+		public bool ShouldSerializeLeftThumbAntiDeadZoneX() { return !isDefault(LeftThumbAntiDeadZoneX); }
+		public bool ShouldSerializeLeftThumbAntiDeadZoneY() { return !isDefault(LeftThumbAntiDeadZoneY); }
+		public bool ShouldSerializeLeftThumbAxisX() { return !isDefault(LeftThumbAxisX); }
+		public bool ShouldSerializeLeftThumbAxisY() { return !isDefault(LeftThumbAxisY); }
+		public bool ShouldSerializeLeftThumbButton() { return !isDefault(LeftThumbButton); }
+		public bool ShouldSerializeLeftThumbDeadZoneX() { return !isDefault(LeftThumbDeadZoneX); }
+		public bool ShouldSerializeLeftThumbDeadZoneY() { return !isDefault(LeftThumbDeadZoneY); }
+		public bool ShouldSerializeLeftThumbDown() { return !isDefault(LeftThumbDown); }
+		public bool ShouldSerializeLeftThumbLeft() { return !isDefault(LeftThumbLeft); }
+		public bool ShouldSerializeLeftThumbRight() { return !isDefault(LeftThumbRight); }
+		public bool ShouldSerializeLeftThumbUp() { return !isDefault(LeftThumbUp); }
+		public bool ShouldSerializeLeftTrigger() { return !isDefault(LeftTrigger); }
+		public bool ShouldSerializeLeftTriggerDeadZone() { return !isDefault(LeftTriggerDeadZone); }
+		public bool ShouldSerializePassThrough() { return !isDefault(PassThrough); }
+		public bool ShouldSerializeRightMotorPeriod() { return !isDefault(RightMotorPeriod); }
+		public bool ShouldSerializeRightShoulder() { return !isDefault(RightShoulder); }
+		public bool ShouldSerializeRightThumbAntiDeadZoneX() { return !isDefault(RightThumbAntiDeadZoneX); }
+		public bool ShouldSerializeRightThumbAntiDeadZoneY() { return !isDefault(RightThumbAntiDeadZoneY); }
+		public bool ShouldSerializeRightThumbAxisX() { return !isDefault(RightThumbAxisX); }
+		public bool ShouldSerializeRightThumbAxisY() { return !isDefault(RightThumbAxisY); }
+		public bool ShouldSerializeRightThumbButton() { return !isDefault(RightThumbButton); }
+		public bool ShouldSerializeRightThumbDeadZoneX() { return !isDefault(RightThumbDeadZoneX); }
+		public bool ShouldSerializeRightThumbDeadZoneY() { return !isDefault(RightThumbDeadZoneY); }
+		public bool ShouldSerializeRightThumbDown() { return !isDefault(RightThumbDown); }
+		public bool ShouldSerializeRightThumbLeft() { return !isDefault(RightThumbLeft); }
+		public bool ShouldSerializeRightThumbRight() { return !isDefault(RightThumbRight); }
+		public bool ShouldSerializeRightThumbUp() { return !isDefault(RightThumbUp); }
+		public bool ShouldSerializeRightTrigger() { return !isDefault(RightTrigger); }
+		public bool ShouldSerializeRightTriggerDeadZone() { return !isDefault(RightTriggerDeadZone); }
+		public bool ShouldSerializeLeftThumbLinearX() { return !isDefault(LeftThumbLinearX); }
+		public bool ShouldSerializeLeftThumbLinearY() { return !isDefault(LeftThumbLinearY); }
+		public bool ShouldSerializeRightThumbLinearX() { return !isDefault(RightThumbLinearX); }
+		public bool ShouldSerializeRightThumbLinearY() { return !isDefault(RightThumbLinearY); }
+		public bool ShouldSerializeLeftMotorStrength() { return !isDefault(LeftMotorStrength, "100"); }
+		public bool ShouldSerializeRightMotorStrength() { return !isDefault(RightMotorStrength, "100"); }
+		public bool ShouldSerializeLeftMotorDirection() { return !isDefault(LeftMotorDirection); }
+		public bool ShouldSerializeRightMotorDirection() { return !isDefault(RightMotorDirection); }
+		public bool ShouldSerializeButtonADeadZone() { return !isDefault(ButtonADeadZone); }
+		public bool ShouldSerializeButtonBDeadZone() { return !isDefault(ButtonBDeadZone); }
+		public bool ShouldSerializeButtonBackDeadZone() { return !isDefault(ButtonBackDeadZone); }
+		public bool ShouldSerializeButtonStartDeadZone() { return !isDefault(ButtonStartDeadZone); }
+		public bool ShouldSerializeButtonXDeadZone() { return !isDefault(ButtonXDeadZone); }
+		public bool ShouldSerializeButtonYDeadZone() { return !isDefault(ButtonYDeadZone); }
+		public bool ShouldSerializeLeftThumbButtonDeadZone() { return !isDefault(LeftThumbButtonDeadZone); }
+		public bool ShouldSerializeRightThumbButtonDeadZone() { return !isDefault(RightThumbButtonDeadZone); }
+		public bool ShouldSerializeLeftShoulderDeadZone() { return !isDefault(LeftShoulderDeadZone); }
+		public bool ShouldSerializeRightShoulderDeadZone() { return !isDefault(RightShoulderDeadZone); }
+		public bool ShouldSerializeDPadDownDeadZone() { return !isDefault(DPadDownDeadZone); }
+		public bool ShouldSerializeDPadLeftDeadZone() { return !isDefault(DPadLeftDeadZone); }
+		public bool ShouldSerializeDPadRightDeadZone() { return !isDefault(DPadRightDeadZone); }
+		public bool ShouldSerializeDPadUpDeadZone() { return !isDefault(DPadUpDeadZone); }
 
 		#endregion
 

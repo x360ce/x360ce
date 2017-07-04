@@ -106,11 +106,10 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void SendWarningMail(string subject, string body, bool isBodyHtml = false)
 		{
-			//var subject2 = LogHelper.GetSubjectPrefix(new Exception(subject), "Warning");
 			Smtp.SendErrorEmail(null, subject, body);
 		}
 
-		public Exception SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false, string[] attachments = null,SmtpDeliveryMethod DeliveryMethod = SmtpDeliveryMethod.Network)
+		public Exception SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml = false, bool preview = false, bool rethrow = false, string[] attachments = null, SmtpDeliveryMethod DeliveryMethod = SmtpDeliveryMethod.Network)
 		{
 			Exception ex = null;
 			var att = GetAttachments(attachments);
@@ -155,8 +154,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				}
 				if (DeliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory)
 				{
-					Smtp.SmtpDeliveryMethod  = SmtpDeliveryMethod.SpecifiedPickupDirectory;
-					Smtp.SmtpPickupFolder = SmtpClientEx.Current.SmtpPickupFolder;  
+					Smtp.SmtpDeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+					Smtp.SmtpPickupFolder = SmtpClientEx.Current.SmtpPickupFolder;
 				}
 				Smtp.SendMessage(mail);
 				return null;
@@ -208,6 +207,29 @@ namespace JocysCom.ClassLibrary.Runtime
 			Smtp.SendMessage(mail);
 		}
 
+		public bool SuspendError(Exception ex)
+		{
+			if (!ex.Data.Keys.Cast<object>().Contains("ErrorCode"))
+				return false;
+			var errorCode = ex.Data["ErrorCode"] as int?;
+			if (!errorCode.HasValue)
+				return false;
+			var codes = Smtp.ErrorCodeSuspended;
+			if (string.IsNullOrEmpty(codes))
+				return false;
+			var codeStrings = codes.Replace(" ", "").Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			foreach (var codeString in codeStrings)
+			{
+				int code;
+				if (int.TryParse(codeString, out code))
+				{
+					if (code == errorCode.Value)
+						return true;
+				}
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Send email to developers and show the exception box
 		/// </summary>
@@ -215,7 +237,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			var allowSend = Smtp.AllowToSendException(ex);
 			var body = ExceptionInfo(ex, "");
-			if (allowSend && Smtp.ErrorNotifications)
+			if (allowSend && Smtp.ErrorNotifications && !SuspendError(ex))
 			{
 				Smtp.SendErrorEmail(ex, subject, body);
 			}

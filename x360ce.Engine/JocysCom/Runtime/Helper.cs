@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Data;
+using System.Runtime.Serialization;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -46,15 +47,70 @@ namespace JocysCom.ClassLibrary.Runtime
 			return itersectingFields;
 		}
 
+		public static void CopyFields(object source, object dest)
+		{
+			// Get type of the destination object.
+			Type destType = dest.GetType();
+			// Copy fields.
+			FieldInfo[] sourceItersectingFields = GetItersectingFields(source, dest);
+			foreach (FieldInfo sfi in sourceItersectingFields)
+			{
+				if (IsKnownType(sfi.FieldType))
+				{
+					FieldInfo dfi = destType.GetField(sfi.Name, DefaultBindingFlags);
+					dfi.SetValue(dest, sfi.GetValue(source));
+				}
+			}
+		}
+
+		#region CopyProperties
+
+		static object PropertiesReadLock = new object();
+		static Dictionary<Type, PropertyInfo[]> PropertiesReadList = new Dictionary<Type, PropertyInfo[]>();
+		static object PropertiesWriteLock = new object();
+		static Dictionary<Type, PropertyInfo[]> PropertiesWriteList = new Dictionary<Type, PropertyInfo[]>();
+
 		/// <summary>
 		/// Get properties which exists on both objects.
 		/// </summary>
 		private static PropertyInfo[] GetItersectingProperties(object source, object dest)
 		{
-			string[] dPropertyNames = dest.GetType().GetProperties(DefaultBindingFlags).Select(x => x.Name).ToArray();
-			PropertyInfo[] itersectingProperties = source
-				.GetType()
-				.GetProperties(DefaultBindingFlags)
+			// Properties to read.
+			PropertyInfo[] sProperties;
+			lock (PropertiesReadLock)
+			{
+				var sType = source.GetType();
+				if (PropertiesReadList.ContainsKey(sType))
+				{
+					sProperties = PropertiesReadList[sType];
+				}
+				else
+				{
+					sProperties = sType.GetProperties(DefaultBindingFlags)
+						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)) && p.CanRead)
+						.ToArray();
+					PropertiesReadList.Add(sType, sProperties);
+				}
+			}
+			// Properties to write.
+			PropertyInfo[] dProperties;
+			lock (PropertiesWriteLock)
+			{
+				var dType = dest.GetType();
+				if (PropertiesWriteList.ContainsKey(dType))
+				{
+					dProperties = PropertiesWriteList[dType];
+				}
+				else
+				{
+					dProperties = dType.GetProperties(DefaultBindingFlags)
+						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)) && p.CanWrite)
+						.ToArray();
+					PropertiesWriteList.Add(dType, dProperties);
+				}
+			}
+			var dPropertyNames = dProperties.Select(x => x.Name).ToArray();
+			var itersectingProperties = sProperties
 				.Where(x => dPropertyNames.Contains(x.Name))
 				.ToArray();
 			return itersectingProperties;
@@ -64,18 +120,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			// Get type of the destination object.
 			Type destType = dest.GetType();
-			FieldInfo[] sourceItersectingFields = GetItersectingFields(source, dest);
-			// Copy fields.
-			foreach (FieldInfo sfi in sourceItersectingFields)
-			{
-				if (IsKnownType(sfi.FieldType))
-				{
-					FieldInfo dfi = destType.GetField(sfi.Name, DefaultBindingFlags);
-					dfi.SetValue(dest, sfi.GetValue(source));
-				}
-			}
-			PropertyInfo[] sourceItersectingProperties = GetItersectingProperties(source, dest);
 			// Copy properties.
+			PropertyInfo[] sourceItersectingProperties = GetItersectingProperties(source, dest);
 			foreach (PropertyInfo spi in sourceItersectingProperties)
 			{
 				if (IsKnownType(spi.PropertyType) && spi.CanWrite)
@@ -85,6 +131,44 @@ namespace JocysCom.ClassLibrary.Runtime
 				}
 			}
 		}
+
+		#endregion
+
+		#region CopyDataMembers
+
+		static object DataMembersLock = new object();
+		static Dictionary<Type, PropertyInfo[]> DataMembers = new Dictionary<Type, PropertyInfo[]>();
+
+		/// <summary>
+		/// Copy properties with [DataMemberAttribute].
+		/// Only members declared at the level of the supplied type's hierarchy should be copied.
+		/// Inherited members are not copied.
+		/// </summary>
+		public static void CopyDataMembers<T>(T source, T dest)
+		{
+			Type t = typeof(T);
+			PropertyInfo[] ps;
+			lock (DataMembersLock)
+			{
+				if (DataMembers.ContainsKey(t))
+				{
+					ps = DataMembers[t];
+				}
+				else
+				{
+					ps = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
+						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)) && p.CanRead && p.CanWrite)
+						.ToArray();
+					DataMembers.Add(t, ps);
+				}
+			}
+			foreach (PropertyInfo p in ps)
+			{
+				p.SetValue(dest, p.GetValue(source, null), null);
+			}
+		}
+
+		#endregion
 
 		public static object CloneObject(object o)
 		{

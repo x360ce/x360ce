@@ -28,8 +28,7 @@ namespace x360ce.App.Controls
 			// Hide left/right border.
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
-			MappedDevicesDataGridView.CellPainting += MappedDevicesDataGridView_CellPainting;
-			MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged1;
+			ControlHelper.ApplyBorderStyle(MappedDevicesDataGridView);
 
 
 			MappedTo = controllerIndex;
@@ -62,62 +61,6 @@ namespace x360ce.App.Controls
 			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
 		}
 
-		private void MappedDevicesDataGridView_SelectionChanged1(object sender, EventArgs e)
-		{
-			// Sort issue with paint artifcats.
-			MappedDevicesDataGridView.Invalidate();
-
-		}
-
-		private void MappedDevicesDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-		{
-			// Header and cell borders must be set to "Single" style.
-			var grid = (DataGridView)sender;
-			var firstVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Min(x => x.Index);
-			var lastVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Max(x => x.Index);
-			var selected = false;
-			if (e.RowIndex > -1 && e.ColumnIndex > -1)
-			{
-				selected = grid.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected;
-			}
-			e.Paint(e.CellBounds, DataGridViewPaintParts.All & ~DataGridViewPaintParts.Border);
-			var bounds = e.CellBounds;
-			var tl = new Point(bounds.X, bounds.Y);
-			var tr = new Point(bounds.X + bounds.Width - 1, bounds.Y);
-			var bl = new Point(bounds.X, bounds.Y + bounds.Height - 1);
-			var br = new Point(bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-			var style = grid.DefaultCellStyle;
-			// If column header then...
-			if (e.RowIndex == -1)
-				style = grid.ColumnHeadersDefaultCellStyle;
-			// if row header
-			if (e.ColumnIndex == -1)
-				style = grid.RowHeadersDefaultCellStyle;
-			// If header then
-			var color = selected
-				? style.SelectionBackColor
-				: style.BackColor;
-			// Cell background colour.
-			var back = new Pen(color, 1);
-			// Border colour.
-			var border = new Pen(SystemColors.Control, 1);
-			// Do not draw borders for selected device.
-			Pen c;
-			// Top
-			e.Graphics.DrawLine(back, tl, tr);
-			// Left (only if not first)
-			c = !selected && e.ColumnIndex > firstVisibleColumn ? border : back;
-			e.Graphics.DrawLine(c, bl, tl);
-			// Right (only if not last column)
-			c = !selected && e.ColumnIndex < lastVisibleColumn ? border : back;
-			e.Graphics.DrawLine(c, tr, br);
-			// Bottom (only if not last line or header if no rows)
-			c = !selected && (grid.Rows.Count == 0 || e.RowIndex < grid.RowCount - 1) ? border : back;
-			e.Graphics.DrawLine(c, bl, br);
-			back.Dispose();
-			border.Dispose();
-			e.Handled = true;
-		}
 
 		public void InitPadData()
 		{
@@ -191,9 +134,6 @@ namespace x360ce.App.Controls
 				? SystemColors.Control
 				: SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = auto
-				? SystemColors.Control
-				: SystemColors.Window;
-			MappedDevicesDataGridView.ColumnHeadersDefaultCellStyle.BackColor = auto
 				? SystemColors.Control
 				: SystemColors.Window;
 			if (auto)
@@ -1453,7 +1393,9 @@ namespace x360ce.App.Controls
 				presetForm = new LoadPresetsForm();
 			}
 			presetForm.StartPosition = FormStartPosition.CenterParent;
+			presetForm.InitPresets();
 			var result = presetForm.ShowDialog();
+			presetForm.UnInitPresets();
 		}
 
 

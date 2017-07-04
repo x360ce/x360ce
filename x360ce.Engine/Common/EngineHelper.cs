@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Runtime.Serialization;
 
 namespace x360ce.Engine
 {
@@ -152,6 +153,19 @@ namespace x360ce.Engine
 		}
 
 		#endregion
+
+		public static void CopyProperties<T>(T source, T dest)
+		{
+			Type t = typeof(T);
+			var pis = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute))).ToArray();
+			foreach (PropertyInfo pi in pis)
+			{
+				if (pi.CanWrite && pi.CanRead)
+				{
+					pi.SetValue(dest, pi.GetValue(source, null), null);
+				}
+			}
+		}
 
 		public static void OpenUrl(string url)
 		{

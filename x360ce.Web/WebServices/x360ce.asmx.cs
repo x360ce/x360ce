@@ -38,112 +38,33 @@ namespace x360ce.Web.WebServices
 		[WebMethod(EnableSession = true, Description = "Save controller settings.")]
 		public string SaveSetting(Setting s, PadSetting ps)
 		{
-			var checksum = ps.CleanAndGetCheckSum();
 			var db = new x360ceModelContainer();
-			var s1 = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
+			var checksum = ps.CleanAndGetCheckSum();
+			// Update checksum.
+			ps.PadSettingChecksum = checksum;
+			// Look for existing PadSetting.
+			var pDB = db.PadSettings.FirstOrDefault(x => x.PadSettingChecksum == checksum);
+			// If PadSetting doesn't exists then...
+			if (pDB == null)
+			{
+				pDB = ps;
+				pDB.EntityKey = null;
+				db.PadSettings.AddObject(pDB);
+			}
+			// Look for existing setting.
+			var sDB = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			var n = DateTime.Now;
-			if (s1 == null)
+			if (sDB == null)
 			{
-				s1 = new Setting();
-				s1.SettingId = Guid.NewGuid();
-				s1.DateCreated = n;
-				db.Settings.AddObject(s1);
+				sDB = s;
+				sDB.EntityKey = null;
+				// Assign brand new ID.
+				s.SettingId = Guid.NewGuid();
+				s.DateCreated = n;
+				// Link PadSetting with setting.
+				s.PadSettingChecksum = pDB.PadSettingChecksum;
+				db.Settings.AddObject(sDB);
 			}
-			s1.Comment = s.Comment;
-			s1.DateUpdated = n;
-			s1.DateSelected = n;
-			s1.DeviceType = s.DeviceType;
-			s1.FileName = s.FileName;
-			s1.FileProductName = s.FileProductName;
-			s1.InstanceGuid = s.InstanceGuid;
-			s1.InstanceName = s.InstanceName;
-			s1.ProductGuid = s.ProductGuid;
-			s1.ProductName = s.ProductName;
-			s1.IsEnabled = s.IsEnabled;
-			s1.PadSettingChecksum = checksum;
-			// Save Pad Settings.
-			var p1 = db.PadSettings.FirstOrDefault(x => x.PadSettingChecksum == checksum);
-			if (p1 == null)
-			{
-				p1 = new PadSetting();
-				p1.PadSettingChecksum = checksum;
-				db.PadSettings.AddObject(p1);
-			}
-			p1.AxisToDPadDeadZone = ps.AxisToDPadDeadZone;
-			p1.AxisToDPadEnabled = ps.AxisToDPadEnabled;
-			p1.AxisToDPadOffset = ps.AxisToDPadOffset;
-			p1.ButtonA = ps.ButtonA;
-			p1.ButtonB = ps.ButtonB;
-			p1.ButtonBig = string.IsNullOrEmpty(ps.ButtonBig) ? "" : ps.ButtonBig;
-			p1.ButtonGuide = string.IsNullOrEmpty(ps.ButtonGuide) ? "" : ps.ButtonGuide;
-			p1.ButtonBack = ps.ButtonBack;
-			p1.ButtonStart = ps.ButtonStart;
-			p1.ButtonX = ps.ButtonX;
-			p1.ButtonY = ps.ButtonY;
-			p1.DPad = ps.DPad;
-			p1.DPadDown = ps.DPadDown;
-			p1.DPadLeft = ps.DPadLeft;
-			p1.DPadRight = ps.DPadRight;
-			p1.DPadUp = ps.DPadUp;
-			p1.ForceEnable = ps.ForceEnable;
-			p1.ForceOverall = ps.ForceOverall;
-			p1.ForceSwapMotor = ps.ForceSwapMotor;
-			p1.ForceType = ps.ForceType;
-			p1.GamePadType = ps.GamePadType;
-			p1.LeftMotorPeriod = ps.LeftMotorPeriod;
-			p1.LeftMotorStrength = string.IsNullOrEmpty(ps.LeftMotorStrength) ? "100" : ps.LeftMotorStrength;
-			p1.LeftMotorDirection = string.IsNullOrEmpty(ps.LeftMotorDirection) ? "0" : ps.LeftMotorDirection;
-			p1.LeftShoulder = ps.LeftShoulder;
-			p1.LeftThumbAntiDeadZoneX = ps.LeftThumbAntiDeadZoneX;
-			p1.LeftThumbAntiDeadZoneY = ps.LeftThumbAntiDeadZoneY;
-			p1.LeftThumbAxisX = ps.LeftThumbAxisX;
-			p1.LeftThumbAxisY = ps.LeftThumbAxisY;
-			p1.LeftThumbButton = ps.LeftThumbButton;
-			p1.LeftThumbDeadZoneX = ps.LeftThumbDeadZoneX;
-			p1.LeftThumbDeadZoneY = ps.LeftThumbDeadZoneY;
-			p1.LeftThumbLinearX = string.IsNullOrEmpty(ps.LeftThumbLinearX) ? "" : ps.LeftThumbLinearX;
-			p1.LeftThumbLinearY = string.IsNullOrEmpty(ps.LeftThumbLinearY) ? "" : ps.LeftThumbLinearY;
-			p1.LeftThumbDown = ps.LeftThumbDown;
-			p1.LeftThumbLeft = ps.LeftThumbLeft;
-			p1.LeftThumbRight = ps.LeftThumbRight;
-			p1.LeftThumbUp = ps.LeftThumbUp;
-			p1.LeftTrigger = ps.LeftTrigger;
-			p1.LeftTriggerDeadZone = ps.LeftTriggerDeadZone;
-			p1.PassThrough = ps.PassThrough;
-			p1.RightMotorPeriod = ps.RightMotorPeriod;
-			p1.RightMotorStrength = string.IsNullOrEmpty(ps.RightMotorStrength) ? "100" : ps.RightMotorStrength;
-			p1.RightMotorDirection = string.IsNullOrEmpty(ps.RightMotorDirection) ? "0" : ps.RightMotorDirection;
-			p1.RightShoulder = ps.RightShoulder;
-			p1.RightThumbAntiDeadZoneX = ps.RightThumbAntiDeadZoneX;
-			p1.RightThumbAntiDeadZoneY = ps.RightThumbAntiDeadZoneY;
-			p1.RightThumbLinearX = string.IsNullOrEmpty(ps.RightThumbLinearX) ? "" : ps.RightThumbLinearX;
-			p1.RightThumbLinearY = string.IsNullOrEmpty(ps.RightThumbLinearY) ? "" : ps.RightThumbLinearY;
-			p1.RightThumbAxisX = ps.RightThumbAxisX;
-			p1.RightThumbAxisY = ps.RightThumbAxisY;
-			p1.RightThumbButton = ps.RightThumbButton;
-			p1.RightThumbDeadZoneX = ps.RightThumbDeadZoneX;
-			p1.RightThumbDeadZoneY = ps.RightThumbDeadZoneY;
-			p1.RightThumbDown = ps.RightThumbDown;
-			p1.RightThumbLeft = ps.RightThumbLeft;
-			p1.RightThumbRight = ps.RightThumbRight;
-			p1.RightThumbUp = ps.RightThumbUp;
-			p1.RightTrigger = ps.RightTrigger;
-			p1.RightTriggerDeadZone = ps.RightTriggerDeadZone;
-			// Axis to button dead-zones.
-			p1.ButtonADeadZone = ps.ButtonADeadZone ?? "";
-			p1.ButtonBDeadZone = ps.ButtonBDeadZone ?? "";
-			p1.ButtonBackDeadZone = ps.ButtonBackDeadZone ?? "";
-			p1.ButtonStartDeadZone = ps.ButtonStartDeadZone ?? "";
-			p1.ButtonXDeadZone = ps.ButtonXDeadZone ?? "";
-			p1.ButtonYDeadZone = ps.ButtonYDeadZone ?? "";
-			p1.LeftThumbButtonDeadZone = ps.LeftThumbButtonDeadZone ?? "";
-			p1.RightThumbButtonDeadZone = ps.RightThumbButtonDeadZone ?? "";
-			p1.LeftShoulderDeadZone = ps.LeftShoulderDeadZone ?? "";
-			p1.RightShoulderDeadZone = ps.RightShoulderDeadZone ?? "";
-			p1.DPadDownDeadZone = ps.DPadDownDeadZone ?? "";
-			p1.DPadLeftDeadZone = ps.DPadLeftDeadZone ?? "";
-			p1.DPadRightDeadZone = ps.DPadRightDeadZone ?? "";
-			p1.DPadUpDeadZone = ps.DPadUpDeadZone ?? "";
 			db.SaveChanges();
 			db.Dispose();
 			db = null;

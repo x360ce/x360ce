@@ -201,7 +201,14 @@ namespace x360ce.App
 				sb.AppendFormat("[{0}]", GetProductSection(product.ProductGuid));
 				sb.AppendLine();
 				// Get padd settings attached to specific product.
-				var ps = PadSettings.Items.First(x => x.PadSettingChecksum == product.PadSettingChecksum);
+				var ps = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == product.PadSettingChecksum);
+				// If pad settings not found then...
+				if (ps == null)
+				{
+					// Reset setttings.
+					ps = new PadSetting();
+					product.PadSettingChecksum = ps.PadSettingChecksum;
+				}
 				// Convert PadSettings to INI string.
 				sb.Append(ConvertToIni(ps));
 			}

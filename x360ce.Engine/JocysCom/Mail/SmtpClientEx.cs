@@ -105,6 +105,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public string SmtpFrom;
 		public string SmtpSendCopyTo;
 		public string ErrorRecipients;
+		public string ErrorCodeSuspended;
 		public bool ErrorNotifications;
 		public SmtpDeliveryMethod SmtpDeliveryMethod;
 		/// <summary>Maximum exceptions per specified time.</summary>
@@ -170,12 +171,13 @@ namespace JocysCom.ClassLibrary.Mail
 			SmtpPassword = LogHelper.ParseString("SmtpPassword", "");
 			SmtpDomain = LogHelper.ParseString("SmtpDomain", "");
 			SmtpServer = LogHelper.ParseString("SmtpServer", "");
-			SmtpPickupFolder = LogHelper.ParseString("SmtpPickupFolder", "");  
+			SmtpPickupFolder = LogHelper.ParseString("SmtpPickupFolder", "");
 			SmtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
 			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
 			SmtpSendCopyTo = LogHelper.ParseString("SmtpSendCopyTo", "");
 			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
 			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", true);
+			ErrorCodeSuspended = LogHelper.ParseString("ErrorCodeSuspended", "");
 			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
 			// Maximum 10 errors of same type per 5 minutes (2880 per day).
 			ErrorLimitMax = LogHelper.ParseInt("ErrorLimitMax", 5);

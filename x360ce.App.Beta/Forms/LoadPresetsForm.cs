@@ -15,21 +15,30 @@ namespace x360ce.App.Controls
 		public LoadPresetsForm()
 		{
 			InitializeComponent();
+			ControlHelper.ApplyBorderStyle(MyDevicesDataGridView);
+			ControlHelper.ApplyBorderStyle(SummariesDataGridView);
+			ControlHelper.ApplyBorderStyle(PresetsDataGridView);
 		}
 
 		#region Presets.
 
 		string _defaultPresetsTitle;
 
-		void InitPresets()
+		public void InitPresets()
 		{
 			_defaultPresetsTitle = PresetsTabPage.Text;
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			PresetsDataGridView.AutoGenerateColumns = false;
 			// Configure Presets.
-			SettingsManager.Presets.Items.ListChanged += new ListChangedEventHandler(Presets_ListChanged);
+			SettingsManager.Presets.Items.ListChanged += Presets_ListChanged;
 			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
 			UpdateControlsFromPresets();
+		}
+
+		public void UnInitPresets()
+		{
+			SettingsManager.Presets.Items.ListChanged -= Presets_ListChanged;
+			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
 		}
 
 		void UpdateControlsFromPresets()
@@ -56,50 +65,61 @@ namespace x360ce.App.Controls
 			var ws = new WebServiceClient();
 			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 			ws.SearchSettingsCompleted += wsPresets_SearchSettingsCompleted;
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
-			{
-				ws.SearchSettingsAsync(sp.ToArray(), showResult);
-			});
+			//System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
+			//{
+			ws.SearchSettingsAsync(sp.ToArray(), showResult);
+			//});
 		}
 
 		void wsPresets_SearchSettingsCompleted(object sender, ResultEventArgs e)
 		{
-            var ws = (WebServiceClient)sender;
+			if (InvokeRequired)
+			{
+				var method = new EventHandler<ResultEventArgs>(wsPresets_SearchSettingsCompleted);
+				BeginInvoke(method, new object[] { sender, e });
+				return;
+			}
+			var ws = (WebServiceClient)sender;
 			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;
 			// Make sure method is executed on the same thread as this control.
-			BeginInvoke((MethodInvoker)delegate ()
+			AddTask(TaskName.SearchPresets);
+			if (e.Error != null)
 			{
-                AddTask(TaskName.SearchPresets);
-                if (e.Error != null || e.Result == null)
+				var error = e.Error.Message;
+				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
+				SetHeaderBody(MessageBoxIcon.Error,
+						"{0: yyyy-MM-dd HH:mm:ss}: {1}",
+						DateTime.Now, error);
+			}
+			else if (e.Result == null)
+			{
+				var showResult = (bool)e.UserState;
+				if (showResult)
 				{
-					var showResult = (bool)e.UserState;
-					if (showResult)
-					{
-						SetHeaderBody(
-							MessageBoxIcon.Information,
-							"{0: yyyy-MM-dd HH:mm:ss}: No Presets received.",
-							DateTime.Now
-						);
-					}
+					SetHeaderBody(
+						MessageBoxIcon.Information,
+						"{0: yyyy-MM-dd HH:mm:ss}: No Presets received.",
+						DateTime.Now
+					);
 				}
-				else
+			}
+			else
+			{
+				var result = (SearchResult)e.Result;
+				AppHelper.UpdateList(result.Presets, SettingsManager.Presets.Items);
+				AppHelper.UpdateList(result.PadSettings, SettingsManager.PadSettings.Items);
+				if ((bool)e.UserState)
 				{
-					var result = (SearchResult)e.Result;
-					AppHelper.UpdateList(result.Presets, SettingsManager.Presets.Items);
-					AppHelper.UpdateList(result.PadSettings, SettingsManager.PadSettings.Items);
-					if ((bool)e.UserState)
-					{
-						var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
-						var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-						SetHeaderBody(
-							MessageBoxIcon.Information,
-							"{0: yyyy-MM-dd HH:mm:ss}: {1} Presets and {2} PAD Settings received.",
-							DateTime.Now, presetsCount, padSettingsCount
-						);
-					}
+					var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
+					var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
+					SetHeaderBody(
+						MessageBoxIcon.Information,
+						"{0: yyyy-MM-dd HH:mm:ss}: {1} Presets and {2} PAD Settings received.",
+						DateTime.Now, presetsCount, padSettingsCount
+					);
 				}
-                RemoveTask(TaskName.SearchPresets);
-            });
+			}
+			RemoveTask(TaskName.SearchPresets);
 		}
 
 		#endregion

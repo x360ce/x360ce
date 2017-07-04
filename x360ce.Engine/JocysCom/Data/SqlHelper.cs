@@ -323,7 +323,7 @@ namespace JocysCom.ClassLibrary.Data
 			var props = typeof(T).GetProperties().Where(x=>x.CanRead).ToArray();
 			foreach (var prop in props)
 			{
-				table.Columns.Add(prop.Name, prop.DeclaringType);
+				table.Columns.Add(prop.Name, prop.PropertyType);
 			}
 			var values = new object[props.Length];
 			foreach (T item in list)
