@@ -3375,7 +3375,8 @@ namespace x360ce.Engine.Data
         /// <param name="fileProductName">Initial value of the FileProductName property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
-        public static Summary CreateSummary(global::System.Guid summaryId, global::System.Int32 users, global::System.Guid padSettingChecksum, global::System.Guid productGuid, global::System.String productName, global::System.String fileName, global::System.String fileProductName, global::System.DateTime dateCreated, global::System.DateTime dateUpdated)
+        /// <param name="weight">Initial value of the Weight property.</param>
+        public static Summary CreateSummary(global::System.Guid summaryId, global::System.Int32 users, global::System.Guid padSettingChecksum, global::System.Guid productGuid, global::System.String productName, global::System.String fileName, global::System.String fileProductName, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 weight)
         {
             Summary summary = new Summary();
             summary.SummaryId = summaryId;
@@ -3387,6 +3388,7 @@ namespace x360ce.Engine.Data
             summary.FileProductName = fileProductName;
             summary.DateCreated = dateCreated;
             summary.DateUpdated = dateUpdated;
+            summary.Weight = weight;
             return summary;
         }
 
@@ -3612,6 +3614,30 @@ namespace x360ce.Engine.Data
         private global::System.DateTime _DateUpdated;
         partial void OnDateUpdatedChanging(global::System.DateTime value);
         partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Weight
+        {
+            get
+            {
+                return _Weight;
+            }
+            set
+            {
+                OnWeightChanging(value);
+                ReportPropertyChanging("Weight");
+                _Weight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Weight");
+                OnWeightChanged();
+            }
+        }
+        private global::System.Int32 _Weight;
+        partial void OnWeightChanging(global::System.Int32 value);
+        partial void OnWeightChanged();
 
         #endregion
 

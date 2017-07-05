@@ -8,8 +8,11 @@
     [FileProductName]    NVARCHAR (256)   NOT NULL,
     [DateCreated]        DATETIME         CONSTRAINT [DF_x360ce_Summaries_DateCreated] DEFAULT (getdate()) NOT NULL,
     [DateUpdated]        DATETIME         CONSTRAINT [DF_x360ce_Summaries_DateUpdated] DEFAULT (getdate()) NOT NULL,
+    [Weight]             INT              CONSTRAINT [DF_x360ce_Summaries_Weight] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_x360ce_Summaries] PRIMARY KEY CLUSTERED ([SummaryId] ASC)
 );
+
+
 
 
 GO

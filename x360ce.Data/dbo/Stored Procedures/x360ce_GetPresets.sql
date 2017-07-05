@@ -13,6 +13,8 @@ BEGIN
 	SELECT '00060079-0000-0000-0000-504944564944', null, null, null UNION
 	SELECT '00060079-0000-0000-0000-504944564944', null, 'x360ce.exe', null UNION
 	SELECT '00060079-0000-0000-0000-504944564944', null, '', null
+
+	--DECLARE @args dbo.x360ce_SearchParameterTableType
 	
 	EXEC [dbo].[x360ce_GetPresets] @args
 */
@@ -110,17 +112,19 @@ FROM (
 					ROW_NUMBER () OVER (PARTITION BY al.ProductGuid ORDER BY al.ProductGuid, al.Users DESC) AS RowNumberAll,
 					al.*
 				FROM (
-					-- Select most popular settings for product and file.
+					-- Select most popular settings for product.
 					SELECT DISTINCT
 						s.ProductGuid,
+						-- Don't care about the file name.
 						NULL AS [FileName],
 						s.PadSettingChecksum, SUM(Users) AS Users
-					FROM x360ce_Summaries s
+					FROM x360ce_Summaries s WITH(NOLOCK)
 					WHERE @SelectAll = 1
 					GROUP BY s.ProductGuid, s.PadSettingChecksum
 				) al
 			) al2
-			WHERE al2.RowNumberAll <= 1
+			-- Select most popular record only.
+			WHERE al2.RowNumberAll = 1
 			ORDER BY al2.Users DESC
 		) t2
 		LEFT JOIN x360ce_Products p ON t2.ProductGuid = p.ProductGuid

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -15,37 +16,81 @@ namespace x360ce.App.Controls
 		public LoadPresetsForm()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(MyDevicesDataGridView);
+			ControlHelper.ApplyBorderStyle(SettingsDataGridView);
 			ControlHelper.ApplyBorderStyle(SummariesDataGridView);
 			ControlHelper.ApplyBorderStyle(PresetsDataGridView);
+			_defaultPresetsTitle = PresetsTabPage.Text;
+			_defaultSettingsTitle = SettingsTabPage.Text;
+			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
+			EngineHelper.EnableDoubleBuffering(SettingsDataGridView);
+			PresetsDataGridView.AutoGenerateColumns = false;
+			SettingsDataGridView.AutoGenerateColumns = false;
 		}
 
-		#region Presets.
+		public void InitForm()
+		{
+			SettingsManager.Settings.Items.ListChanged += Settings_ListChanged;
+			SettingsManager.Presets.Items.ListChanged += Presets_ListChanged;
+			SettingsDataGridView.DataSource = SettingsManager.Settings.Items;
+			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
+			UpdateControlsFromPresets();
+			UpdateControlsFromSettings();
+		}
+
+		public void UnInitForm()
+		{
+			SettingsManager.Settings.Items.ListChanged -= Settings_ListChanged;
+			SettingsManager.Presets.Items.ListChanged -= Presets_ListChanged;
+			SettingsDataGridView.DataSource = null;
+			PresetsDataGridView.DataSource = null;
+		}
+
+		public PadSetting SelectedItem;
+
+		private void OkButton_Click(object sender, EventArgs e)
+		{
+			Guid? checksum = null;
+			if (MainTabControl.SelectedTab == PresetsTabPage)
+			{
+				var row = PresetsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+				if (row != null)
+				{
+					var preset = (Preset)row.DataBoundItem;
+					checksum = preset.PadSettingChecksum;
+				}
+			}
+			if (MainTabControl.SelectedTab == SettingsTabPage)
+			{
+				var row = SettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+				if (row != null)
+				{
+					var setting = (Setting)row.DataBoundItem;
+					checksum = setting.PadSettingChecksum;
+				}
+			}
+			if (checksum.HasValue)
+			{
+				SelectedItem = SettingsManager.PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == checksum.Value);
+			}
+			DialogResult = DialogResult.OK;
+		}
+
+		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var tab = MainTabControl.SelectedTab;
+			if (tab != null) SetHeaderSubject(tab.Text);
+		}
+
+		#region Presets
 
 		string _defaultPresetsTitle;
 
-		public void InitPresets()
-		{
-			_defaultPresetsTitle = PresetsTabPage.Text;
-			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
-			PresetsDataGridView.AutoGenerateColumns = false;
-			// Configure Presets.
-			SettingsManager.Presets.Items.ListChanged += Presets_ListChanged;
-			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
-			UpdateControlsFromPresets();
-		}
-
-		public void UnInitPresets()
-		{
-			SettingsManager.Presets.Items.ListChanged -= Presets_ListChanged;
-			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
-		}
-
 		void UpdateControlsFromPresets()
 		{
-			PresetsTabPage.Text = SettingsManager.Presets.Items.Count == 0
-				? _defaultPresetsTitle
-				: string.Format("{0} [{1}]", _defaultPresetsTitle, SettingsManager.Presets.Items.Count);
+			var count = SettingsManager.Presets.Items.Count;
+			PresetsTabPage.Text = count > 0
+				? string.Format("{0} [{1}]", _defaultPresetsTitle, count)
+				: _defaultPresetsTitle;
 		}
 
 		void Presets_ListChanged(object sender, ListChangedEventArgs e)
@@ -65,10 +110,11 @@ namespace x360ce.App.Controls
 			var ws = new WebServiceClient();
 			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 			ws.SearchSettingsCompleted += wsPresets_SearchSettingsCompleted;
-			//System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
-			//{
-			ws.SearchSettingsAsync(sp.ToArray(), showResult);
-			//});
+			// Make sure it starts completely on a separate thread.
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
+			{
+				ws.SearchSettingsAsync(sp.ToArray(), showResult);
+			});
 		}
 
 		void wsPresets_SearchSettingsCompleted(object sender, ResultEventArgs e)
@@ -124,33 +170,53 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void OkButton_Click(object sender, EventArgs e)
-		{
+		#region Settings
 
+		string _defaultSettingsTitle;
+
+		void UpdateControlsFromSettings()
+		{
+			var count = SettingsManager.Settings.Items.Count;
+			SettingsTabPage.Text = count > 0
+				? string.Format("{0} [{1}]", _defaultSettingsTitle, count)
+				: _defaultSettingsTitle;
 		}
 
-		void LoadPreset()
+
+		void Settings_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			//MainForm.Current.UpdateTimer.Stop();
-			//if (ControllerComboBox.SelectedItem == null) return;
-			//var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
-			//if (PresetsDataGridView.SelectedRows.Count == 0) return;
-			//var title = "Load Preset Setting?";
-			//var preset = (Preset)PresetsDataGridView.SelectedRows[0].DataBoundItem;
-			//var message = "Do you want to load Preset Setting:";
-			//message += "\r\n\r\n    " + preset.ProductName;
-			//message += "\r\n\r\nfor \"" + name + "\" controller?";
-			//MessageBoxForm form = new MessageBoxForm();
-			//form.StartPosition = FormStartPosition.CenterParent;
-			//var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-			//if (result == DialogResult.Yes) LoadPreset(preset.ProductName);
-			//else MainForm.Current.UpdateTimer.Start();
+			UpdateControlsFromSettings();
 		}
 
-		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		private void SettingsRefreshButton_Click(object sender, EventArgs e)
 		{
-			var tab = MainTabControl.SelectedTab;
-			if (tab != null) SetHeaderSubject(tab.Text);
+			MainForm.Current.SettingsDatabasePanel.RefreshGrid(true);
+		}
+
+		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var item = (Setting)grid.Rows[e.RowIndex].DataBoundItem;
+			if (e.ColumnIndex == grid.Columns[MySidColumn.Name].Index)
+			{
+				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
+			}
+			else if (e.ColumnIndex == grid.Columns[MapToColumn.Name].Index)
+			{
+				e.Value = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription((MapTo)item.MapTo);
+			}
+		}
+
+		#endregion
+
+		private void PresetsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var item = (Preset)grid.Rows[e.RowIndex].DataBoundItem;
+			if (e.ColumnIndex == grid.Columns[PresetSettingIdColumn.Name].Index)
+			{
+				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
+			}
 		}
 	}
 

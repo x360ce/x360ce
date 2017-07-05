@@ -1157,10 +1157,16 @@ namespace x360ce.App.Controls
 			var d = GetCurrentDevice();
 			if (d == null) return;
 			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
-			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			var buttons = MessageBoxButtons.YesNo;
+			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
+			if (d.Device == null)
+			{
+				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
+				buttons = MessageBoxButtons.OK;
+			}
+			var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
 				SettingsManager.Current.ClearPadSettings(MappedTo);
@@ -1393,11 +1399,20 @@ namespace x360ce.App.Controls
 				presetForm = new LoadPresetsForm();
 			}
 			presetForm.StartPosition = FormStartPosition.CenterParent;
-			presetForm.InitPresets();
+			presetForm.InitForm();
 			var result = presetForm.ShowDialog();
-			presetForm.UnInitPresets();
+			if (result == DialogResult.OK)
+			{
+				var ps = presetForm.SelectedItem;
+				if (ps != null)
+				{
+					MainForm.Current.UpdateTimer.Stop();
+					SettingsManager.Current.LoadPadSettings(MappedTo, ps);
+					MainForm.Current.UpdateTimer.Start();
+				}
+			}
+			presetForm.UnInitForm();
 		}
-
 
 		#region Mapped Devices
 

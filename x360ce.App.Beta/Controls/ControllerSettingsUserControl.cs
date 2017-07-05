@@ -411,18 +411,16 @@ namespace x360ce.App.Controls
 
 		void UpdateCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, Guid? checksum)
 		{
-			var v = e.Value.ToString().Substring(0, 8).ToUpper();
-			var s = checksum.HasValue ? checksum.Value.ToString().Substring(0, 8).ToUpper() : null;
+			var v = EngineHelper.GetID((Guid)e.Value);
+			var s = checksum.HasValue ? EngineHelper.GetID(checksum.Value) : null;
 			var match = v == s;
-			e.Value = e.Value.ToString().Substring(0, 8).ToUpper();
+			e.Value = v;
 			e.CellStyle.BackColor = match ? System.Drawing.Color.FromArgb(255, 222, 225, 231) : e.CellStyle.BackColor = grid.DefaultCellStyle.BackColor;
 		}
 
 		#region Settings Grid
 
 		Setting SettingSelection;
-
-		Color currentColor = System.Drawing.Color.FromArgb(255, 191, 210, 249);
 
 		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{

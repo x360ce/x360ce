@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Drawing;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -260,6 +261,52 @@ namespace JocysCom.ClassLibrary.Controls
 			var result2 = result.Select(x => (T)(object)x).ToArray();
 			return result2;
 		}
+
+		#endregion
+
+		#region Set Visible, Enabled and Text
+
+		internal const int STATE_VISIBLE = 0x00000002;
+		internal const int STATE_ENABLED = 0x00000004;
+
+		static MethodInfo _GetState;
+
+		public static void SetVisible(Control control, bool visible)
+		{
+			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);
+			// Can't check property directly, because it will return false if parent is not visible.
+			bool stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_VISIBLE });
+			if (stateValue != visible) control.Visible = visible;
+		}
+
+		public static void SetEnabled(Control control, bool enabled)
+		{
+			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);
+			// Can't check property directly, because it will return false if parent is not enabled.
+			bool stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_ENABLED });
+			if (stateValue != enabled) control.Enabled = enabled;
+		}
+
+		public static void SetText(Control control, string text)
+		{
+			if (control.Text != text)
+			{
+				control.Text = text;
+			}
+		}
+
+		public static void SetReadOnly(Control control, bool readOnly)
+		{
+			var p = control.GetType().GetProperty("ReadOnly");
+			if (p == null || !p.CanWrite)
+				return;
+			var value = (bool)p.GetValue(control, null);
+			if (value != readOnly)
+			{
+				p.SetValue(control, readOnly, null);
+			}
+		}
+
 
 		#endregion
 

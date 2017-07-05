@@ -23,12 +23,21 @@ namespace x360ce.App
 			}
 		}
 
+		internal const int STATE_VISIBLE = 0x00000002;
+		internal const int STATE_ENABLED = 0x00000004;
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
 		static void Main(string[] args)
 		{
+
+			if (IsDebug)
+			{
+				StartApp(args);
+				return;
+			}
 			try
 			{
 				StartApp(args);
@@ -47,15 +56,8 @@ namespace x360ce.App
 					box.MainLinkLabel.Visible = true;
 				}
 				var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-				if (IsDebug)
-				{
-					throw;
-				}
-				else
-				{
-					if (result == DialogResult.Cancel)
-						Application.Exit();
-				}
+				if (result == DialogResult.Cancel)
+					Application.Exit();
 			}
 		}
 

@@ -119,7 +119,7 @@ namespace x360ce.Engine.Data
 
 		#region Do not serialize default values
 
-		bool isDefault<T>(T value, T defaultValue = default(T))
+		public bool isDefault<T>(T value, T defaultValue = default(T))
 		{
 			// If value is default for the type then...
 			if (Equals(value, default(T)))
@@ -130,7 +130,7 @@ namespace x360ce.Engine.Data
 			// If value is stirng and empty or set to "0" then...
 			if (value is string && (Equals(value, "") || Equals(value, "0")))
 				return true;
-			return true;
+			return false;
 		}
 
 		public bool ShouldSerializePadSettingChecksum() { return !isDefault(PadSettingChecksum); }

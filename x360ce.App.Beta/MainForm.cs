@@ -183,26 +183,29 @@ namespace x360ce.App
 
 		void UpdateDevices()
 		{
+			UserDevice[] deleteDevices;
+			// Add connected devices.
+			var insertDevices = new List<UserDevice>();
+			var updateDevices = new List<KeyValuePair<UserDevice, DeviceInstance>>();
 			lock (UpdateDevicesLock)
 			{
+				var m = Manager;
+				if (Manager == null)
+				{
+					Manager = new DirectInput();
+				}
 				IList<DeviceInstance> devices;
 				// List of connected devices (can be very long operation).
 				devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+				if (Program.IsClosing)
+					return;
 				// List of connected devices.
 				var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToArray();
 				// List of current devices.
 				var currentInstanceGuids = SettingsManager.UserDevices.Items.Select(x => x.InstanceGuid).ToArray();
-				var removedDevices = SettingsManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
+				deleteDevices = SettingsManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
 				var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 				var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
-				// Remove disconnected devices.
-				for (int i = 0; i < removedDevices.Length; i++)
-				{
-					Invoke((MethodInvoker)delegate ()
-					{
-						removedDevices[i].IsOnline = false;
-					});
-				}
 				// Must find better way to find Device than by Vendor ID and Product ID.
 				DeviceInfo[] devInfos = null;
 				DeviceInfo[] intInfos = null;
@@ -214,8 +217,6 @@ namespace x360ce.App
 					var interfacePaths = states.Select(x => x.Properties.InterfacePath).ToArray();
 					intInfos = DeviceDetector.GetInterfaces(interfacePaths);
 				}
-				// Add connected devices.
-				var addedControllers = new List<UserDevice>();
 				for (int i = 0; i < addedDevices.Length; i++)
 				{
 					var device = addedDevices[i];
@@ -227,30 +228,40 @@ namespace x360ce.App
 					// Get device info for added devices.
 					var dev = devInfos.FirstOrDefault(x => x.DeviceId == di.HidDeviceId);
 					di.LoadDevDeviceInfo(dev);
-					addedControllers.Add(di);
-					Invoke((MethodInvoker)delegate ()
-					{
-						SettingsManager.UserDevices.Items.Add(di);
-					});
+					insertDevices.Add(di);
 				}
-				if (addedControllers.Count > 0)
+				if (insertDevices.Count > 0)
 				{
-					CloudPanel.Add(CloudAction.Insert, addedControllers.ToArray());
+					CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray());
 				}
 				for (int i = 0; i < updatedDevices.Length; i++)
 				{
 					var device = updatedDevices[i];
 					var di = SettingsManager.UserDevices.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
-					Invoke((MethodInvoker)delegate ()
-					{
-						RefreshDevice(di, device);
-					});
+					updateDevices.Add(new KeyValuePair<UserDevice, DeviceInstance>(di, device));
 				}
-				UpdateDevicesCount++;
 				UpdateDevicesFinished = true;
 			}
+			if (Program.IsClosing)
+				return;
 			Invoke((MethodInvoker)delegate ()
 			{
+				UpdateDevicesCount++;
+				// Remove disconnected devices.
+				for (int i = 0; i < deleteDevices.Length; i++)
+				{
+					deleteDevices[i].IsOnline = false;
+				}
+				for (int i = 0; i < insertDevices.Count; i++)
+				{
+					var di = insertDevices[i];
+					SettingsManager.UserDevices.Items.Add(di);
+				}
+				for (int i = 0; i < updateDevices.Count; i++)
+				{
+					var kv = updateDevices[i];
+					RefreshDevice(kv.Key, kv.Value);
+				}
 				var game = MainForm.Current.CurrentGame;
 				if (game != null)
 				{
@@ -264,6 +275,8 @@ namespace x360ce.App
 
 		void RefreshDevice(UserDevice di, DeviceInstance device)
 		{
+			if (Program.IsClosing)
+				return;
 			di.LoadInstance(device);
 			var state = new Joystick(Manager, device.InstanceGuid);
 			di.Device = state;
@@ -590,7 +603,7 @@ namespace x360ce.App
 		//string deviceInstancesNew = "";
 		public Guid AutoSelectControllerInstance = Guid.Empty;
 
-		public DirectInput Manager = new DirectInput();
+		DirectInput Manager;
 
 		///// <summary>
 		///// Get direct input devices.
@@ -752,13 +765,7 @@ namespace x360ce.App
 			set
 			{
 				_UpdateDevicesCount = value;
-				if (IsHandleCreated)
-				{
-					Invoke((MethodInvoker)delegate ()
-					{
-						UpdateDevicesStatusLabel.Text = string.Format("D: {0}", value);
-					});
-				}
+				UpdateDevicesStatusLabel.Text = string.Format("D: {0}", value);
 			}
 		}
 		int _UpdateDevicesCount = 0;
@@ -1264,8 +1271,11 @@ namespace x360ce.App
 					detector.Dispose();
 					detector = null;
 				}
-				Manager.Dispose();
-				Manager = null;
+				if (Manager != null)
+				{
+					Manager.Dispose();
+					Manager = null;
+				}
 				components.Dispose();
 				//lock (checkTimerLock)
 				//{

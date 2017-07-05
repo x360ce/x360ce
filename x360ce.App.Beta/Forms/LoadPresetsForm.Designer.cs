@@ -28,51 +28,49 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadPresetsForm));
 			this.MainTabControl = new System.Windows.Forms.TabControl();
-			this.MyDeviceSettingsTabPage = new System.Windows.Forms.TabPage();
-			this.MyDevicesDataGridView = new System.Windows.Forms.DataGridView();
-			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.MySettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.SettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.SummariesTabPage = new System.Windows.Forms.TabPage();
 			this.SummariesDataGridView = new System.Windows.Forms.DataGridView();
-			this.SidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
 			this.GlobalSettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.PresetsTabPage = new System.Windows.Forms.TabPage();
 			this.PresetsDataGridView = new System.Windows.Forms.DataGridView();
-			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.PresetVendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip3 = new System.Windows.Forms.ToolStrip();
 			this.PresetRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.OkButton = new System.Windows.Forms.Button();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.SettingsDataGridView = new System.Windows.Forms.DataGridView();
+			this.PresetSettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PresetTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PresetVendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.SummarySettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MainTabControl.SuspendLayout();
-			this.MyDeviceSettingsTabPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MyDevicesDataGridView)).BeginInit();
+			this.SettingsTabPage.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.SummariesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).BeginInit();
@@ -80,6 +78,7 @@
 			this.PresetsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).BeginInit();
 			this.toolStrip3.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
@@ -87,7 +86,7 @@
 			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.MainTabControl.Controls.Add(this.MyDeviceSettingsTabPage);
+			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Controls.Add(this.SummariesTabPage);
 			this.MainTabControl.Controls.Add(this.PresetsTabPage);
 			this.MainTabControl.Location = new System.Drawing.Point(12, 70);
@@ -97,127 +96,22 @@
 			this.MainTabControl.TabIndex = 19;
 			this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// 
-			// MyDeviceSettingsTabPage
+			// SettingsTabPage
 			// 
-			this.MyDeviceSettingsTabPage.Controls.Add(this.MyDevicesDataGridView);
-			this.MyDeviceSettingsTabPage.Controls.Add(this.toolStrip1);
-			this.MyDeviceSettingsTabPage.Location = new System.Drawing.Point(4, 22);
-			this.MyDeviceSettingsTabPage.Name = "MyDeviceSettingsTabPage";
-			this.MyDeviceSettingsTabPage.Size = new System.Drawing.Size(619, 350);
-			this.MyDeviceSettingsTabPage.TabIndex = 0;
-			this.MyDeviceSettingsTabPage.Text = "My Device Settings";
-			this.MyDeviceSettingsTabPage.UseVisualStyleBackColor = true;
-			// 
-			// MyDevicesDataGridView
-			// 
-			this.MyDevicesDataGridView.AllowUserToAddRows = false;
-			this.MyDevicesDataGridView.AllowUserToDeleteRows = false;
-			this.MyDevicesDataGridView.AllowUserToResizeRows = false;
-			this.MyDevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.MyDevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.MyDevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MyDevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-			this.MyDevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.MyDevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.MyIconColumn,
-            this.MySidColumn,
-            this.MyDeviceColumn,
-            this.MyFileColumn,
-            this.MyGameColumn,
-            this.MapToColumn});
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MyDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
-			this.MyDevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MyDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.MyDevicesDataGridView.Location = new System.Drawing.Point(0, 25);
-			this.MyDevicesDataGridView.MultiSelect = false;
-			this.MyDevicesDataGridView.Name = "MyDevicesDataGridView";
-			this.MyDevicesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MyDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-			this.MyDevicesDataGridView.RowHeadersVisible = false;
-			this.MyDevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.MyDevicesDataGridView.Size = new System.Drawing.Size(619, 325);
-			this.MyDevicesDataGridView.TabIndex = 0;
-			// 
-			// MyIconColumn
-			// 
-			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyIconColumn.HeaderText = "";
-			this.MyIconColumn.MinimumWidth = 24;
-			this.MyIconColumn.Name = "MyIconColumn";
-			this.MyIconColumn.ReadOnly = true;
-			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.MyIconColumn.Width = 24;
-			// 
-			// MySidColumn
-			// 
-			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MySidColumn.DataPropertyName = "PadSettingChecksum";
-			this.MySidColumn.HeaderText = "SID";
-			this.MySidColumn.Name = "MySidColumn";
-			this.MySidColumn.ReadOnly = true;
-			this.MySidColumn.Width = 50;
-			// 
-			// MyDeviceColumn
-			// 
-			this.MyDeviceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyDeviceColumn.DataPropertyName = "ProductName";
-			this.MyDeviceColumn.HeaderText = "Device";
-			this.MyDeviceColumn.Name = "MyDeviceColumn";
-			this.MyDeviceColumn.ReadOnly = true;
-			this.MyDeviceColumn.Width = 66;
-			// 
-			// MyFileColumn
-			// 
-			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyFileColumn.DataPropertyName = "FileName";
-			this.MyFileColumn.HeaderText = "File Name";
-			this.MyFileColumn.Name = "MyFileColumn";
-			this.MyFileColumn.ReadOnly = true;
-			this.MyFileColumn.Width = 79;
-			// 
-			// MyGameColumn
-			// 
-			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.MyGameColumn.DataPropertyName = "FileProductName";
-			this.MyGameColumn.HeaderText = "File Product Title";
-			this.MyGameColumn.Name = "MyGameColumn";
-			this.MyGameColumn.ReadOnly = true;
-			// 
-			// MapToColumn
-			// 
-			this.MapToColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MapToColumn.DataPropertyName = "MapTo";
-			this.MapToColumn.HeaderText = "Map To";
-			this.MapToColumn.Name = "MapToColumn";
-			this.MapToColumn.ReadOnly = true;
-			this.MapToColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.MapToColumn.Width = 69;
+			this.SettingsTabPage.Controls.Add(this.SettingsDataGridView);
+			this.SettingsTabPage.Controls.Add(this.toolStrip1);
+			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SettingsTabPage.Name = "SettingsTabPage";
+			this.SettingsTabPage.Size = new System.Drawing.Size(619, 350);
+			this.SettingsTabPage.TabIndex = 0;
+			this.SettingsTabPage.Text = "My Settings";
+			this.SettingsTabPage.UseVisualStyleBackColor = true;
 			// 
 			// toolStrip1
 			// 
 			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MySettingsRefreshButton});
+            this.SettingsRefreshButton});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -225,14 +119,15 @@
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "MySettingsToolStrip";
 			// 
-			// MySettingsRefreshButton
+			// SettingsRefreshButton
 			// 
-			this.MySettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.MySettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.MySettingsRefreshButton.Name = "MySettingsRefreshButton";
-			this.MySettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.MySettingsRefreshButton.Text = "&Refresh";
+			this.SettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.SettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.SettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.SettingsRefreshButton.Name = "SettingsRefreshButton";
+			this.SettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.SettingsRefreshButton.Text = "&Refresh";
+			this.SettingsRefreshButton.Click += new System.EventHandler(this.SettingsRefreshButton_Click);
 			// 
 			// SummariesTabPage
 			// 
@@ -258,11 +153,11 @@
 			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.SummariesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.SummariesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.SummariesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.SidColumn,
+            this.SummarySettingIdColumn,
             this.dataGridViewTextBoxColumn1,
             this.dataGridViewTextBoxColumn2,
             this.dataGridViewTextBoxColumn3,
@@ -293,51 +188,6 @@
 			this.SummariesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.SummariesDataGridView.Size = new System.Drawing.Size(619, 325);
 			this.SummariesDataGridView.TabIndex = 1;
-			// 
-			// SidColumn
-			// 
-			this.SidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.SidColumn.DataPropertyName = "PadSettingChecksum";
-			this.SidColumn.HeaderText = "SID";
-			this.SidColumn.Name = "SidColumn";
-			this.SidColumn.ReadOnly = true;
-			this.SidColumn.Width = 50;
-			// 
-			// dataGridViewTextBoxColumn1
-			// 
-			this.dataGridViewTextBoxColumn1.DataPropertyName = "Users";
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle5;
-			this.dataGridViewTextBoxColumn1.HeaderText = "Users";
-			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-			this.dataGridViewTextBoxColumn1.ReadOnly = true;
-			this.dataGridViewTextBoxColumn1.Width = 42;
-			// 
-			// dataGridViewTextBoxColumn2
-			// 
-			this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.dataGridViewTextBoxColumn2.DataPropertyName = "ProductName";
-			this.dataGridViewTextBoxColumn2.HeaderText = "Controller";
-			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-			this.dataGridViewTextBoxColumn2.ReadOnly = true;
-			this.dataGridViewTextBoxColumn2.Width = 76;
-			// 
-			// dataGridViewTextBoxColumn3
-			// 
-			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.dataGridViewTextBoxColumn3.DataPropertyName = "FileName";
-			this.dataGridViewTextBoxColumn3.HeaderText = "File Name";
-			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-			this.dataGridViewTextBoxColumn3.ReadOnly = true;
-			this.dataGridViewTextBoxColumn3.Width = 79;
-			// 
-			// dataGridViewTextBoxColumn4
-			// 
-			this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.dataGridViewTextBoxColumn4.DataPropertyName = "FileProductName";
-			this.dataGridViewTextBoxColumn4.HeaderText = "File Product Title";
-			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-			this.dataGridViewTextBoxColumn4.ReadOnly = true;
 			// 
 			// toolStrip2
 			// 
@@ -384,11 +234,11 @@
 			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.PresetsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
 			this.PresetsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.PresetsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn5,
+            this.PresetSettingIdColumn,
             this.PresetTypeColumn,
             this.PresetVendorNameColumn,
             this.dataGridViewTextBoxColumn7});
@@ -418,41 +268,7 @@
 			this.PresetsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.PresetsDataGridView.Size = new System.Drawing.Size(619, 325);
 			this.PresetsDataGridView.TabIndex = 2;
-			// 
-			// dataGridViewTextBoxColumn5
-			// 
-			this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.dataGridViewTextBoxColumn5.DataPropertyName = "PadSettingChecksum";
-			this.dataGridViewTextBoxColumn5.HeaderText = "SID";
-			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-			this.dataGridViewTextBoxColumn5.ReadOnly = true;
-			this.dataGridViewTextBoxColumn5.Visible = false;
-			// 
-			// PresetTypeColumn
-			// 
-			this.PresetTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.PresetTypeColumn.DataPropertyName = "Type";
-			this.PresetTypeColumn.HeaderText = "Type";
-			this.PresetTypeColumn.Name = "PresetTypeColumn";
-			this.PresetTypeColumn.ReadOnly = true;
-			this.PresetTypeColumn.Visible = false;
-			// 
-			// PresetVendorNameColumn
-			// 
-			this.PresetVendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.PresetVendorNameColumn.DataPropertyName = "VendorName";
-			this.PresetVendorNameColumn.HeaderText = "Vendor Name";
-			this.PresetVendorNameColumn.Name = "PresetVendorNameColumn";
-			this.PresetVendorNameColumn.ReadOnly = true;
-			this.PresetVendorNameColumn.Width = 97;
-			// 
-			// dataGridViewTextBoxColumn7
-			// 
-			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.dataGridViewTextBoxColumn7.DataPropertyName = "ProductName";
-			this.dataGridViewTextBoxColumn7.HeaderText = "Product Name";
-			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-			this.dataGridViewTextBoxColumn7.ReadOnly = true;
+			this.PresetsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.PresetsDataGridView_CellFormatting);
 			// 
 			// toolStrip3
 			// 
@@ -514,6 +330,182 @@
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
 			// 
+			// SettingsDataGridView
+			// 
+			this.SettingsDataGridView.AllowUserToAddRows = false;
+			this.SettingsDataGridView.AllowUserToDeleteRows = false;
+			this.SettingsDataGridView.AllowUserToResizeRows = false;
+			this.SettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.SettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.SettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.SettingsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.SettingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.SettingsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.MySidColumn,
+            this.MyFileColumn,
+            this.MyGameColumn,
+            this.MyDeviceColumn,
+            this.MapToColumn});
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.SettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+			this.SettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.SettingsDataGridView.MultiSelect = false;
+			this.SettingsDataGridView.Name = "SettingsDataGridView";
+			this.SettingsDataGridView.ReadOnly = true;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.SettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.SettingsDataGridView.RowHeadersVisible = false;
+			this.SettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.SettingsDataGridView.Size = new System.Drawing.Size(619, 325);
+			this.SettingsDataGridView.TabIndex = 2;
+			this.SettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
+			// 
+			// PresetSettingIdColumn
+			// 
+			this.PresetSettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.PresetSettingIdColumn.DataPropertyName = "PadSettingChecksum";
+			this.PresetSettingIdColumn.HeaderText = "SID";
+			this.PresetSettingIdColumn.Name = "PresetSettingIdColumn";
+			this.PresetSettingIdColumn.ReadOnly = true;
+			this.PresetSettingIdColumn.Width = 50;
+			// 
+			// PresetTypeColumn
+			// 
+			this.PresetTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.PresetTypeColumn.DataPropertyName = "Type";
+			this.PresetTypeColumn.HeaderText = "Type";
+			this.PresetTypeColumn.Name = "PresetTypeColumn";
+			this.PresetTypeColumn.ReadOnly = true;
+			this.PresetTypeColumn.Visible = false;
+			this.PresetTypeColumn.Width = 56;
+			// 
+			// PresetVendorNameColumn
+			// 
+			this.PresetVendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.PresetVendorNameColumn.DataPropertyName = "VendorName";
+			this.PresetVendorNameColumn.HeaderText = "Vendor Name";
+			this.PresetVendorNameColumn.Name = "PresetVendorNameColumn";
+			this.PresetVendorNameColumn.ReadOnly = true;
+			this.PresetVendorNameColumn.Width = 97;
+			// 
+			// dataGridViewTextBoxColumn7
+			// 
+			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn7.DataPropertyName = "ProductName";
+			this.dataGridViewTextBoxColumn7.HeaderText = "Product Name";
+			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+			this.dataGridViewTextBoxColumn7.ReadOnly = true;
+			// 
+			// SummarySettingIdColumn
+			// 
+			this.SummarySettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SummarySettingIdColumn.DataPropertyName = "PadSettingChecksum";
+			this.SummarySettingIdColumn.HeaderText = "SID";
+			this.SummarySettingIdColumn.Name = "SummarySettingIdColumn";
+			this.SummarySettingIdColumn.ReadOnly = true;
+			this.SummarySettingIdColumn.Width = 50;
+			// 
+			// dataGridViewTextBoxColumn1
+			// 
+			this.dataGridViewTextBoxColumn1.DataPropertyName = "Users";
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle5;
+			this.dataGridViewTextBoxColumn1.HeaderText = "Users";
+			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+			this.dataGridViewTextBoxColumn1.ReadOnly = true;
+			this.dataGridViewTextBoxColumn1.Width = 42;
+			// 
+			// dataGridViewTextBoxColumn2
+			// 
+			this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewTextBoxColumn2.DataPropertyName = "ProductName";
+			this.dataGridViewTextBoxColumn2.HeaderText = "Controller";
+			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+			this.dataGridViewTextBoxColumn2.ReadOnly = true;
+			this.dataGridViewTextBoxColumn2.Width = 76;
+			// 
+			// dataGridViewTextBoxColumn3
+			// 
+			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.dataGridViewTextBoxColumn3.DataPropertyName = "FileName";
+			this.dataGridViewTextBoxColumn3.HeaderText = "File Name";
+			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+			this.dataGridViewTextBoxColumn3.ReadOnly = true;
+			this.dataGridViewTextBoxColumn3.Width = 79;
+			// 
+			// dataGridViewTextBoxColumn4
+			// 
+			this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn4.DataPropertyName = "FileProductName";
+			this.dataGridViewTextBoxColumn4.HeaderText = "File Product Title";
+			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+			this.dataGridViewTextBoxColumn4.ReadOnly = true;
+			// 
+			// MySidColumn
+			// 
+			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MySidColumn.DataPropertyName = "PadSettingChecksum";
+			this.MySidColumn.HeaderText = "SID";
+			this.MySidColumn.Name = "MySidColumn";
+			this.MySidColumn.ReadOnly = true;
+			this.MySidColumn.Width = 50;
+			// 
+			// MyFileColumn
+			// 
+			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyFileColumn.DataPropertyName = "FileName";
+			this.MyFileColumn.HeaderText = "File Name";
+			this.MyFileColumn.Name = "MyFileColumn";
+			this.MyFileColumn.ReadOnly = true;
+			this.MyFileColumn.Width = 79;
+			// 
+			// MyGameColumn
+			// 
+			this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.MyGameColumn.DataPropertyName = "FileProductName";
+			this.MyGameColumn.HeaderText = "File Product Title";
+			this.MyGameColumn.Name = "MyGameColumn";
+			this.MyGameColumn.ReadOnly = true;
+			// 
+			// MyDeviceColumn
+			// 
+			this.MyDeviceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyDeviceColumn.DataPropertyName = "ProductName";
+			this.MyDeviceColumn.HeaderText = "Device";
+			this.MyDeviceColumn.Name = "MyDeviceColumn";
+			this.MyDeviceColumn.ReadOnly = true;
+			this.MyDeviceColumn.Width = 66;
+			// 
+			// MapToColumn
+			// 
+			this.MapToColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MapToColumn.DataPropertyName = "MapTo";
+			this.MapToColumn.HeaderText = "Map To";
+			this.MapToColumn.Name = "MapToColumn";
+			this.MapToColumn.ReadOnly = true;
+			this.MapToColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.MapToColumn.Width = 69;
+			// 
 			// LoadPresetsForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -529,9 +521,8 @@
 			this.Controls.SetChildIndex(this.CloseButton, 0);
 			this.Controls.SetChildIndex(this.OkButton, 0);
 			this.MainTabControl.ResumeLayout(false);
-			this.MyDeviceSettingsTabPage.ResumeLayout(false);
-			this.MyDeviceSettingsTabPage.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MyDevicesDataGridView)).EndInit();
+			this.SettingsTabPage.ResumeLayout(false);
+			this.SettingsTabPage.PerformLayout();
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.SummariesTabPage.ResumeLayout(false);
@@ -544,6 +535,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).EndInit();
 			this.toolStrip3.ResumeLayout(false);
 			this.toolStrip3.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -551,35 +543,34 @@
 		#endregion
 
 		private System.Windows.Forms.TabControl MainTabControl;
-		private System.Windows.Forms.TabPage MyDeviceSettingsTabPage;
-		private System.Windows.Forms.DataGridView MyDevicesDataGridView;
-		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
+		private System.Windows.Forms.TabPage SettingsTabPage;
 		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton MySettingsRefreshButton;
+		private System.Windows.Forms.ToolStripButton SettingsRefreshButton;
 		private System.Windows.Forms.TabPage SummariesTabPage;
 		private System.Windows.Forms.DataGridView SummariesDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn SidColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
 		private System.Windows.Forms.ToolStrip toolStrip2;
 		private System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
 		private System.Windows.Forms.TabPage PresetsTabPage;
 		private System.Windows.Forms.DataGridView PresetsDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-		private System.Windows.Forms.DataGridViewTextBoxColumn PresetTypeColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn PresetVendorNameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
 		private System.Windows.Forms.ToolStrip toolStrip3;
 		private System.Windows.Forms.ToolStripButton PresetRefreshButton;
 		private System.Windows.Forms.Button CloseButton;
 		private System.Windows.Forms.Button OkButton;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
+		private System.Windows.Forms.DataGridView SettingsDataGridView;
+		private System.Windows.Forms.DataGridViewTextBoxColumn SummarySettingIdColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PresetSettingIdColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PresetTypeColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PresetVendorNameColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
 	}
 }
