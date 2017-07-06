@@ -288,7 +288,10 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\x360ce_CleanupPadSettings.sql" />
+    <Build Include="dbo\Stored Procedures\x360ce_CleanupPadSettings.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Functions\x360ce_GetUserGameSettingChecksum.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>

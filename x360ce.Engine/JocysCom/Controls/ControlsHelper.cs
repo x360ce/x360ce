@@ -279,6 +279,11 @@ namespace JocysCom.ClassLibrary.Controls
 			if (stateValue != visible) control.Visible = visible;
 		}
 
+		public static void SetEnabled(ToolStripItem control, bool enabled)
+		{
+			if (control.Enabled != enabled) control.Enabled = enabled;
+		}
+
 		public static void SetEnabled(Control control, bool enabled)
 		{
 			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);

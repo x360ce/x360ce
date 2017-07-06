@@ -91,9 +91,12 @@ namespace x360ce.App.Controls
 
 		string defaultBody;
 
-		public void SetHeaderSubject(string subject)
+		public void SetHeaderSubject(string text)
 		{
-			HelpSubjectLabel.Text = subject;
+			if (HelpSubjectLabel.Text != text)
+			{
+				HelpSubjectLabel.Text = text;
+			}
 		}
 
 		public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)

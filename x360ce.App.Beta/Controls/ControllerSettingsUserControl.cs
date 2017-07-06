@@ -28,11 +28,8 @@ namespace x360ce.App.Controls
 		void InternetUserControl_Load(object sender, EventArgs e)
 		{
 			_myControllersTitle = MySettingsTabPage.Text;
-			_globalSummariesTitle = SummariesTabPage.Text;
 			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
-			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
 			MySettingsDataGridView.AutoGenerateColumns = false;
-			SummariesDataGridView.AutoGenerateColumns = false;
 			InitData();
 			InternetCheckBox_CheckedChanged(null, null);
 		}
@@ -43,10 +40,6 @@ namespace x360ce.App.Controls
 			SettingsManager.Settings.Items.ListChanged += new ListChangedEventHandler(Settings_ListChanged);
 			MySettingsDataGridView.DataSource = SettingsManager.Settings.Items;
 			UpdateControlsFromSettings();
-			// Configure Summaries.
-			SettingsManager.Summaries.Items.ListChanged += new ListChangedEventHandler(Summaries_ListChanged);
-			SummariesDataGridView.DataSource = SettingsManager.Summaries.Items;
-			UpdateControlsFromSummaries();
 		}
 
 		void UpdateControlsFromSettings()
@@ -59,18 +52,6 @@ namespace x360ce.App.Controls
 		void Settings_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			UpdateControlsFromSettings();
-		}
-
-		void UpdateControlsFromSummaries()
-		{
-			SummariesTabPage.Text = SettingsManager.Summaries.Items.Count == 0
-				? _globalSummariesTitle
-				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingsManager.Summaries.Items.Count);
-		}
-
-		void Summaries_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			UpdateControlsFromSummaries();
 		}
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -137,73 +118,6 @@ namespace x360ce.App.Controls
 		//}
 
 		List<System.Diagnostics.FileVersionInfo> _files = new List<System.Diagnostics.FileVersionInfo>();
-
-		//public void BindFiles()
-		//{
-		//	// Store current selection.
-		//	KeyValuePair selection = null;
-		//	if (GameComboBox.SelectedIndex > -1) selection = (KeyValuePair)GameComboBox.SelectedItem;
-		//	_files.Clear();
-		//	var names = AppHelper.GetFiles(".", "*.exe");
-		//	var list = new List<FileInfo>();
-		//	foreach (var name in names)
-		//	{
-		//		if (name.Contains("x360ce")) continue;
-		//		list.Add(new FileInfo(name));
-		//	}
-		//	var options = new List<KeyValuePair>();
-		//	options.Add(new KeyValuePair("", ""));
-		//	foreach (var item in list)
-		//	{
-		//		var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(item.FullName);
-		//		_files.Add(vi);
-		//		var productName = (item.Name + ": " + EngineHelper.FixName(vi.ProductName, item.Name)).Trim(new char[] { ':', ' ' });
-		//		options.Add(new KeyValuePair(productName, item.Length.ToString()));
-		//	}
-		//	GameComboBox.DataSource = options;
-		//	GameComboBox.DisplayMember = "Key";
-		//	GameComboBox.ValueMember = "Value";
-		//	GameComboBox.Enabled = GameComboBox.Items.Count > 1;
-		//	if (selection == null)
-		//	{
-		//		// Select best option automatically.
-		//		var rxUppercase = new Regex("[A-Z]");
-		//		var rxLowercase = new Regex("[A-Z]");
-		//		for (int i = 0; i < options.Count; i++)
-		//		{
-		//			var s = options[i].Key;
-		//			var v = options[i].Value;
-		//			if (rxUppercase.IsMatch(s) && rxLowercase.IsMatch(s) && s.Contains(" ")) { GameComboBox.SelectedIndex = i; break; }
-		//			else if (rxLowercase.IsMatch(s) && s.Contains(" ")) { GameComboBox.SelectedIndex = i; break; }
-		//			else if (rxLowercase.IsMatch(s)) { GameComboBox.SelectedIndex = i; break; }
-		//			// Select if value is not empty.
-		//			else if (rxLowercase.IsMatch(v) || rxUppercase.IsMatch(v)) { GameComboBox.SelectedIndex = i; break; }
-		//		}
-		//	}
-		//	else
-		//	{
-		//		// Restore selection.
-		//		for (int i = 0; i < options.Count; i++)
-		//		{
-		//			if (options[i].Key == selection.Key && options[i].Value == selection.Value)
-		//			{
-		//				GameComboBox.SelectedIndex = i;
-		//				break;
-		//			}
-		//		}
-		//	}
-		//	UpdateActionButtons();
-		//}
-
-		void ControllerComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			//UpdateActionButtons();
-		}
-
-		void GameComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			//UpdateActionButtons();
-		}
 
 		//Setting CurrentSetting;
 
@@ -296,39 +210,6 @@ namespace x360ce.App.Controls
 			//});
 		}
 
-		public void FillSearchParameterWithDevices(List<SearchParameter> sp)
-		{
-			SearchParameter p;
-			// Add controllers.
-			for (int i = 0; i < 4; i++)
-			{
-				var device = _devices[i];
-				if (device == null) continue;
-				p = new SearchParameter();
-				p.ProductGuid = device.ProductGuid;
-				p.InstanceGuid = device.InstanceGuid;
-				sp.Add(p);
-			}
-		}
-
-		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
-		{
-			SearchParameter p;
-			// Add files.
-			for (int i = 0; i < _files.Count; i++)
-			{
-				p = new SearchParameter();
-				p.FileName = System.IO.Path.GetFileName(_files[i].FileName);
-				p.FileProductName = EngineHelper.FixName(_files[i].ProductName, p.FileName);
-				sp.Add(p);
-			}
-		}
-
-		//public void LoadPreset(string controllerName)
-		//{
-		//	string name = controllerName.Replace(" ", "_");
-		//	mainForm.LoadPreset(name, ControllerComboBox.SelectedIndex);
-		//}
 
 		//public void LoadSetting(Guid padSettingChecksum)
 		//{
@@ -457,79 +338,6 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Summaries Grid
-
-		Summary SummariesSelection;
-
-		void SummariesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			var grid = (DataGridView)sender;
-			if (e.ColumnIndex == grid.Columns[SidColumn.Name].Index)
-			{
-				UpdateCellStyle(grid, e, SummariesSelection == null ? null : (Guid?)SummariesSelection.PadSettingChecksum);
-			}
-		}
-
-		void SummariesDataGridView_SelectionChanged(object sender, EventArgs e)
-		{
-			var grid = (DataGridView)sender;
-			SummariesSelection = grid.SelectedRows.Count == 0 ? null : (Summary)grid.SelectedRows[0].DataBoundItem;
-			grid.Refresh();
-		}
-
-		#endregion
-
-		#region Presets Grid
-
-		//BindingList<PresetItem> PresetsList = new BindingList<PresetItem>();
-
-		//public void InitPresets()
-		//{
-		//	PresetsDataGridView.DataSource = null;
-		//	PresetsList.Clear();
-		//	var prefix = System.IO.Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
-		//	var ext = System.IO.Path.GetExtension(SettingManager.IniFileName);
-		//	string name;
-		//	// Presets: Embedded.
-		//	var embeddedPresets = new List<string>();
-		//	var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-		//	string[] files = assembly.GetManifestResourceNames();
-		//	var pattern = string.Format("Presets\\.{0}\\.(?<name>.*?){1}", prefix, ext);
-		//	Regex rx = new Regex(pattern);
-		//	for (int i = 0; i < files.Length; i++)
-		//	{
-		//		if (rx.IsMatch(files[i]))
-		//		{
-		//			name = rx.Match(files[i]).Groups["name"].Value.Replace("_", " ");
-		//			embeddedPresets.Add(name);
-		//		}
-		//	}
-		//	// Presets: Custom.
-		//	var dir = new System.IO.DirectoryInfo(".");
-		//	var fis = dir.GetFiles(string.Format("{0}.*{1}", prefix, ext));
-		//	List<string> customPresets = new List<string>();
-		//	for (int i = 0; i < fis.Length; i++)
-		//	{
-		//		name = fis[i].Name.Substring(prefix.Length + 1);
-		//		name = name.Substring(0, name.Length - ext.Length);
-		//		name = name.Replace("_", " ");
-		//		if (!embeddedPresets.Contains(name)) customPresets.Add(name);
-		//	}
-		//	string[] cNames = customPresets.ToArray();
-		//	Array.Sort(cNames);
-		//	foreach (var item in cNames) PresetsList.Add(new PresetItem("Custom", item));
-		//	PresetTypeColumn.Visible = cNames.Count() > 0;
-		//	string[] eNames = embeddedPresets.ToArray();
-		//	Array.Sort(eNames);
-		//	foreach (var item in eNames)
-		//	{
-		//		if (item != "Clear") PresetsList.Add(new PresetItem("Embedded", item));
-		//	}
-		//	PresetsDataGridView.DataSource = PresetsList;
-		//}
-
-		#endregion
-
 		void InternetUserControl_KeyDown(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode)
@@ -543,20 +351,12 @@ namespace x360ce.App.Controls
 				case Keys.M:
 					if (e.Alt) SettingsListTabControl.SelectedTab = MySettingsTabPage;
 					break;
-				case Keys.G:
-					if (e.Alt) SettingsListTabControl.SelectedTab = SummariesTabPage;
-					break;
 				default:
 					break;
 			}
 		}
 
 		void SettingsListTabControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			//UpdateActionButtons();
-		}
-
-		private void PresetsDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			//UpdateActionButtons();
 		}
@@ -647,49 +447,6 @@ namespace x360ce.App.Controls
 		private void MySettingsRefreshButton_Click(object sender, EventArgs e)
 		{
 			RefreshGrid(true);
-		}
-
-		//void LoadGlobalSetting()
-		//{
-		//	mainForm.UpdateTimer.Stop();
-		//	if (ControllerComboBox.SelectedItem == null) return;
-		//	var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
-		//	if (SummariesDataGridView.SelectedRows.Count == 0) return;
-		//	var title = "Load Global Setting?";
-		//	var summary = (Summary)SummariesDataGridView.SelectedRows[0].DataBoundItem;
-		//	var message = "Do you want to load Global Setting:";
-		//	message += "\r\n\r\n    " + summary.ProductName;
-		//	message += "\r\n\r\nfor \"" + name + "\" controller?";
-		//	MessageBoxForm form = new MessageBoxForm();
-		//	form.StartPosition = FormStartPosition.CenterParent;
-		//	var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-		//	if (result == DialogResult.Yes) LoadSetting(summary.PadSettingChecksum);
-		//	else mainForm.UpdateTimer.Start();
-		//}
-
-		private void GlobalSettingsLoadButton_Click(object sender, EventArgs e)
-		{
-			//LoadGlobalSetting();
-		}
-
-		void SummariesDataGridView_DoubleClick(object sender, EventArgs e)
-		{
-			//LoadGlobalSetting();
-		}
-
-		private void GlobalSettingsRefreshButton_Click(object sender, EventArgs e)
-		{
-			RefreshGrid(true);
-		}
-
-		private void MapToMenuItem_Click(object sender, EventArgs e)
-		{
-			var v = (MapTo)((ToolStripMenuItem)sender).Tag;
-			var items = MySettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x => (Setting)x.DataBoundItem).ToArray();
-			foreach (var item in items)
-			{
-				item.MapTo = (int)v;
-			}
 		}
 
 	}

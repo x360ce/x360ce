@@ -57,5 +57,16 @@ namespace x360ce.Engine
 			return ds;
 		}
 
+		public static DataSet GetSettings(SearchParameter[] args)
+		{
+			var p = SqlHelper.ConvertToTable(args);
+			var cmd = new SqlCommand("x360ce_GetUserInstances");
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Parameters.AddWithValue("@args", p);
+			var cn = SqlHelper.Current.GetConnectionString("x360ceModelContainer");
+			var ds = SqlHelper.Current.ExecuteDataSet(cn, cmd);
+			return ds;
+		}
+
 	}
 }

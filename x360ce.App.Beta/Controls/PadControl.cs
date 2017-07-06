@@ -1397,6 +1397,7 @@ namespace x360ce.App.Controls
 			if (presetForm == null)
 			{
 				presetForm = new LoadPresetsForm();
+				presetForm.Owner = MainForm.Current;
 			}
 			presetForm.StartPosition = FormStartPosition.CenterParent;
 			presetForm.InitForm();

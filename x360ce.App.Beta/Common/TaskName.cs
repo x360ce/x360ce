@@ -5,9 +5,10 @@ namespace x360ce.App
     public enum TaskName: int
     {
         None = 0,
-        SearchPresets,
-        SearchSettings,
-        SaveToCloud,
+		SearchSettings,
+		SearchSummaries,
+		SearchPresets,
+		SaveToCloud,
         GetPrograms,
     }
 }
