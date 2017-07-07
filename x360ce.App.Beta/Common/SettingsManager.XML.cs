@@ -51,23 +51,61 @@ namespace x360ce.App
 		/// </summary>
 		void CleanupPadSettings()
 		{
-			// Get all settings used by PADs.
+			// Get all records used by Settings.
 			var usedPadSettings = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
-			// Get all settings used by Presets.
-			var usedPadSettings2 = Presets.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
-			// Get all settings used by Presets.
-			var usedPadSettings3 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
-			// Combine settings.
+			// Get all records used by Summaries.
+			var usedPadSettings2 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			// Get all records used by Presets.
+			var usedPadSettings3 = Presets.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			// Combine all pad settings.
 			usedPadSettings.AddRange(usedPadSettings2);
 			usedPadSettings.AddRange(usedPadSettings3);
 			// Get all stored padSettings.
 			var allPadSettings = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
-			// Wipe all pad settings not attached to devices.
+			// Wipe all not used pad settings.
 			var notUsed = allPadSettings.Except(usedPadSettings);
 			foreach (var nu in notUsed)
 			{
 				var notUsedItems = PadSettings.Items.Where(x => x.PadSettingChecksum == nu).ToArray();
 				PadSettings.Remove(notUsedItems);
+			}
+		}
+
+		/// <summary>
+		/// Insert missing pad settings and cleanup the list.
+		/// </summary>
+		/// <param name="list"></param>
+		public void UpsertPadSettings(params PadSetting[] list)
+		{
+			foreach (var item in list)
+			{
+				var old = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == item.PadSettingChecksum);
+				if (old == null)
+				{
+					PadSettings.Add(item);
+				}
+			}
+			CleanupPadSettings();
+		}
+
+		/// <summary>
+		/// Insert missing settings.
+		/// </summary>
+		/// <param name="list"></param>
+		public void UpsertSettings(params Setting[] list)
+		{
+			foreach (var item in list)
+			{
+				var old = Settings.Items.FirstOrDefault(x => x.SettingId == item.SettingId);
+				if (old == null)
+				{
+					Settings.Add(item);
+				}
+				// If item was updated then...
+				else if (item.DateUpdated > old.DateUpdated)
+				{
+					JocysCom.ClassLibrary.Runtime.Helper.CopyDataMembers(item, old);
+				}
 			}
 		}
 

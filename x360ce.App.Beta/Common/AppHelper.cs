@@ -199,7 +199,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Update DataGridView is such way that it won't loose selection.
+		/// Update (wipe all old records) DataGridView is such way that it won't loose selection.
 		/// </summary>
 		public static void UpdateList<T>(IList<T> source, IList<T> destination)
 		{

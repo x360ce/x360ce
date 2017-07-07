@@ -826,5 +826,39 @@ namespace x360ce.App
 		//}
 
 		#endregion // Instance Version
+		public void FillSearchParameterWithInstances(List<SearchParameter> sp)
+		{
+			// Select user devices as parameters to search.
+			var userDevices = Settings.Items
+				.Select(x => x.InstanceGuid).Distinct()
+				// Do not add empty records.
+				.Where(x => x != Guid.Empty)
+				.Select(x => new SearchParameter() { InstanceGuid = x })
+				.ToArray();
+			sp.AddRange(userDevices);
+		}
+
+		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
+		{
+			// Select user games as parameters to search.
+			var settings = Settings.Items.ToArray();
+			foreach (var setting in settings)
+			{
+				var fileName = Path.GetFileName(setting.FileName);
+				// Do not add empty records.
+				if (string.IsNullOrEmpty(fileName))
+					continue;
+				var fileTitle = EngineHelper.FixName(setting.ProductName, setting.FileName);
+				// If search doesn't contain game then...
+				if (!sp.Any(x => x.FileName == fileName && x.FileProductName == fileTitle))
+				{
+					// Add it to search parameters.
+					var p = new SearchParameter();
+					p.FileName = fileName;
+					p.FileProductName = fileTitle;
+					sp.Add(p);
+				}
+			}
+		}
 	}
 }

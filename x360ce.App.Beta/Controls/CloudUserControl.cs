@@ -18,7 +18,9 @@ namespace x360ce.App.Controls
         public CloudUserControl()
         {
             InitializeComponent();
-            data = new SortableBindingList<CloudItem>();
+			ControlHelper.ApplyBorderStyle(TasksDataGridView);
+			EngineHelper.EnableDoubleBuffering(TasksDataGridView);
+			data = new SortableBindingList<CloudItem>();
             data.ListChanged += Data_ListChanged;
             TasksDataGridView.AutoGenerateColumns = false;
             TasksDataGridView.DataSource = data;

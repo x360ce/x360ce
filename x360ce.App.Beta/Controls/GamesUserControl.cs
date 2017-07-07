@@ -23,7 +23,11 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (IsDesignMode) return;
+			ControlHelper.ApplyBorderStyle(GamesDataGridView);
+			EngineHelper.EnableDoubleBuffering(GamesDataGridView);
 			GamesDataGridView.AutoGenerateColumns = false;
+			ControlHelper.ApplyBorderStyle(ProgramsDataGridView);
+			EngineHelper.EnableDoubleBuffering(ProgramsDataGridView);
 			ProgramsDataGridView.AutoGenerateColumns = false;
 			ScanProgressLabel.Text = "";
 			InitData();
@@ -361,6 +365,10 @@ namespace x360ce.App.Controls
 			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
 				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
+			}
+			else if (e.ColumnIndex == grid.Columns[FileFolderColumn.Name].Index)
+			{
+				e.Value = Path.GetDirectoryName(item.FullPath);
 			}
 		}
 

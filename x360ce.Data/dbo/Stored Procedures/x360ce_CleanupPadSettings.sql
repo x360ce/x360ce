@@ -10,7 +10,6 @@ DELETE
 FROM [x360ce_PadSettings]
 WHERE [ButtonA] = '' AND
       [ButtonB] = '' AND
-      [ButtonBig] = '' AND
       [ButtonBack] = '' AND
       [ButtonGuide] = '' AND
       [ButtonStart] = '' AND

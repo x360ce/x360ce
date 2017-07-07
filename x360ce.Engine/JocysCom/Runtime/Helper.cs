@@ -126,8 +126,20 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				if (IsKnownType(spi.PropertyType) && spi.CanWrite)
 				{
-					PropertyInfo dpi = destType.GetProperty(spi.Name, DefaultBindingFlags);
-					if (dpi.CanWrite) dpi.SetValue(dest, spi.GetValue(source, null), null);
+					var dpi = destType.GetProperty(spi.Name, DefaultBindingFlags);
+					if (dpi.CanWrite)
+					{
+						var sValue = spi.GetValue(source, null);
+						var update = true;
+						if (dpi.CanRead)
+						{
+							var dValue = spi.GetValue(dest, null);
+							// Update only if values are different.
+							update = !Equals(sValue, dValue);
+						}
+						if (update)
+							dpi.SetValue(dest, sValue, null);
+					}
 				}
 			}
 		}
@@ -164,7 +176,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			foreach (PropertyInfo p in ps)
 			{
-				p.SetValue(dest, p.GetValue(source, null), null);
+				var sValue = p.GetValue(source, null);
+				var dValue = p.GetValue(dest, null);
+				// If values are different then...
+				if (!Equals(sValue, dValue))
+					p.SetValue(dest, sValue, null);
 			}
 		}
 

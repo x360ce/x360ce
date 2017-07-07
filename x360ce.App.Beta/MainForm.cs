@@ -23,6 +23,7 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
+			
 		}
 
 		DeviceDetector detector;
@@ -74,6 +75,9 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
+			SettingsGridPanel._ParentForm = this;
+			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
+			SettingsGridPanel.InitPanel();
 			// NotifySettingsChange will be called on event suspention and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
@@ -1017,7 +1021,7 @@ namespace x360ce.App
 			{
 				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoLoadCheckBox.Checked)
 				{
-					SettingsDatabasePanel.RefreshGrid(true);
+					//SettingsDatabasePanel.RefreshGrid(true);
 				}
 			}
 			var tab = MainTabControl.SelectedTab;

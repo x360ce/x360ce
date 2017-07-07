@@ -37,12 +37,6 @@
 			this.GamesTabControl = new System.Windows.Forms.TabControl();
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
 			this.GamesDataGridView = new System.Windows.Forms.DataGridView();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.FilePathColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.ScanGamesButton = new System.Windows.Forms.ToolStripButton();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
@@ -77,6 +71,13 @@
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.FileFolderColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.EmptyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.GamesTabControl.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
@@ -140,7 +141,8 @@
             this.GameIdColumn,
             this.FileNameColumn,
             this.ProductNameColumn,
-            this.FilePathColumn});
+            this.FileFolderColumn,
+            this.EmptyColumn});
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
 			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -171,60 +173,6 @@
 			this.GamesDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.GamesDataGridView_DataBindingComplete);
 			this.GamesDataGridView.SelectionChanged += new System.EventHandler(this.GamesDataGridView_SelectionChanged);
 			this.GamesDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GamesDataGridView_KeyDown);
-			// 
-			// IsEnabledColumn
-			// 
-			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "";
-			this.IsEnabledColumn.Name = "IsEnabledColumn";
-			this.IsEnabledColumn.ReadOnly = true;
-			this.IsEnabledColumn.Width = 24;
-			// 
-			// MyIconColumn
-			// 
-			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyIconColumn.HeaderText = "";
-			this.MyIconColumn.MinimumWidth = 24;
-			this.MyIconColumn.Name = "MyIconColumn";
-			this.MyIconColumn.ReadOnly = true;
-			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.MyIconColumn.Width = 24;
-			// 
-			// GameIdColumn
-			// 
-			this.GameIdColumn.DataPropertyName = "GameId";
-			this.GameIdColumn.HeaderText = "ID";
-			this.GameIdColumn.Name = "GameIdColumn";
-			this.GameIdColumn.ReadOnly = true;
-			this.GameIdColumn.Visible = false;
-			// 
-			// FileNameColumn
-			// 
-			this.FileNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.FileNameColumn.DataPropertyName = "FileName";
-			this.FileNameColumn.FillWeight = 30F;
-			this.FileNameColumn.HeaderText = "File Name";
-			this.FileNameColumn.Name = "FileNameColumn";
-			this.FileNameColumn.ReadOnly = true;
-			this.FileNameColumn.Width = 79;
-			// 
-			// ProductNameColumn
-			// 
-			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.ProductNameColumn.DataPropertyName = "FileProductName";
-			this.ProductNameColumn.FillWeight = 70F;
-			this.ProductNameColumn.HeaderText = "Product Name";
-			this.ProductNameColumn.Name = "ProductNameColumn";
-			this.ProductNameColumn.ReadOnly = true;
-			// 
-			// FilePathColumn
-			// 
-			this.FilePathColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.FilePathColumn.DataPropertyName = "FullPath";
-			this.FilePathColumn.HeaderText = "Full Path";
-			this.FilePathColumn.Name = "FilePathColumn";
-			this.FilePathColumn.ReadOnly = true;
-			this.FilePathColumn.Width = 73;
 			// 
 			// GamesToolStrip
 			// 
@@ -377,7 +325,7 @@
 			this.GlobalSettingsTabPage.Controls.Add(this.GameDefaultDetailsControl);
 			this.GlobalSettingsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.GlobalSettingsTabPage.Name = "GlobalSettingsTabPage";
-			this.GlobalSettingsTabPage.Size = new System.Drawing.Size(687, 474);
+			this.GlobalSettingsTabPage.Size = new System.Drawing.Size(707, 557);
 			this.GlobalSettingsTabPage.TabIndex = 1;
 			this.GlobalSettingsTabPage.Text = "Default Settings for Most Popular Games";
 			this.GlobalSettingsTabPage.UseVisualStyleBackColor = true;
@@ -427,7 +375,7 @@
 			this.ProgramsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
 			this.ProgramsDataGridView.RowHeadersVisible = false;
 			this.ProgramsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.ProgramsDataGridView.Size = new System.Drawing.Size(472, 449);
+			this.ProgramsDataGridView.Size = new System.Drawing.Size(492, 532);
 			this.ProgramsDataGridView.TabIndex = 1;
 			this.ProgramsDataGridView.SelectionChanged += new System.EventHandler(this.ProgramsDataGridView_SelectionChanged);
 			this.ProgramsDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProgramsDataGridView_KeyDown);
@@ -480,7 +428,7 @@
 			this.ProgramsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
 			this.ProgramsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.ProgramsToolStrip.Size = new System.Drawing.Size(472, 25);
+			this.ProgramsToolStrip.Size = new System.Drawing.Size(492, 25);
 			this.ProgramsToolStrip.TabIndex = 3;
 			this.ProgramsToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -525,9 +473,9 @@
 			// 
 			this.panel2.BackColor = System.Drawing.SystemColors.ControlDark;
 			this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-			this.panel2.Location = new System.Drawing.Point(472, 0);
+			this.panel2.Location = new System.Drawing.Point(492, 0);
 			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(1, 474);
+			this.panel2.Size = new System.Drawing.Size(1, 557);
 			this.panel2.TabIndex = 5;
 			// 
 			// GameDefaultDetailsControl
@@ -535,9 +483,9 @@
 			this.GameDefaultDetailsControl.BackColor = System.Drawing.SystemColors.Control;
 			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
 			this.GameDefaultDetailsControl.Enabled = false;
-			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(473, 0);
+			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(493, 0);
 			this.GameDefaultDetailsControl.Name = "GameDefaultDetailsControl";
-			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(214, 474);
+			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(214, 557);
 			this.GameDefaultDetailsControl.TabIndex = 4;
 			// 
 			// SettingsTabPage
@@ -549,7 +497,7 @@
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.SettingsTabPage.Name = "SettingsTabPage";
 			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.SettingsTabPage.Size = new System.Drawing.Size(687, 474);
+			this.SettingsTabPage.Size = new System.Drawing.Size(707, 557);
 			this.SettingsTabPage.TabIndex = 2;
 			this.SettingsTabPage.Text = "Options";
 			// 
@@ -588,6 +536,67 @@
             0,
             0,
             0});
+			// 
+			// IsEnabledColumn
+			// 
+			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
+			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.Name = "IsEnabledColumn";
+			this.IsEnabledColumn.ReadOnly = true;
+			this.IsEnabledColumn.Width = 24;
+			// 
+			// MyIconColumn
+			// 
+			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyIconColumn.HeaderText = "";
+			this.MyIconColumn.MinimumWidth = 24;
+			this.MyIconColumn.Name = "MyIconColumn";
+			this.MyIconColumn.ReadOnly = true;
+			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.MyIconColumn.Width = 24;
+			// 
+			// GameIdColumn
+			// 
+			this.GameIdColumn.DataPropertyName = "GameId";
+			this.GameIdColumn.HeaderText = "ID";
+			this.GameIdColumn.Name = "GameIdColumn";
+			this.GameIdColumn.ReadOnly = true;
+			this.GameIdColumn.Visible = false;
+			// 
+			// FileNameColumn
+			// 
+			this.FileNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.FileNameColumn.DataPropertyName = "FileName";
+			this.FileNameColumn.FillWeight = 30F;
+			this.FileNameColumn.HeaderText = "File Name";
+			this.FileNameColumn.Name = "FileNameColumn";
+			this.FileNameColumn.ReadOnly = true;
+			this.FileNameColumn.Width = 79;
+			// 
+			// ProductNameColumn
+			// 
+			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.ProductNameColumn.DataPropertyName = "FileProductName";
+			this.ProductNameColumn.FillWeight = 70F;
+			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.Name = "ProductNameColumn";
+			this.ProductNameColumn.ReadOnly = true;
+			// 
+			// FileFolderColumn
+			// 
+			this.FileFolderColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.FileFolderColumn.DataPropertyName = "FullPath";
+			this.FileFolderColumn.HeaderText = "File Folder";
+			this.FileFolderColumn.Name = "FileFolderColumn";
+			this.FileFolderColumn.ReadOnly = true;
+			this.FileFolderColumn.Width = 80;
+			// 
+			// EmptyColumn
+			// 
+			this.EmptyColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.EmptyColumn.HeaderText = "";
+			this.EmptyColumn.Name = "EmptyColumn";
+			this.EmptyColumn.ReadOnly = true;
 			// 
 			// GamesUserControl
 			// 
@@ -659,6 +668,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn FilePathColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn FileFolderColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn EmptyColumn;
 	}
 }

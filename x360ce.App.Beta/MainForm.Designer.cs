@@ -32,7 +32,6 @@ namespace x360ce.App
 			this.DevicesTabPage = new System.Windows.Forms.TabPage();
 			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
-			this.SettingsDatabasePanel = new x360ce.App.Controls.ControllerSettingsUserControl();
 			this.IniTabPage = new System.Windows.Forms.TabPage();
 			this.IniTextBox = new System.Windows.Forms.TextBox();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
@@ -63,6 +62,7 @@ namespace x360ce.App
 			this.label1 = new System.Windows.Forms.Label();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.SettingsGridPanel = new x360ce.App.Controls.SettingsGridUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -195,21 +195,13 @@ namespace x360ce.App
 			// 
 			// SettingsTabPage
 			// 
-			this.SettingsTabPage.Controls.Add(this.SettingsDatabasePanel);
+			this.SettingsTabPage.Controls.Add(this.SettingsGridPanel);
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.SettingsTabPage.Name = "SettingsTabPage";
 			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.SettingsTabPage.Size = new System.Drawing.Size(792, 597);
 			this.SettingsTabPage.TabIndex = 1;
 			this.SettingsTabPage.Text = "Settings";
-			// 
-			// SettingsDatabasePanel
-			// 
-			this.SettingsDatabasePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SettingsDatabasePanel.Location = new System.Drawing.Point(3, 3);
-			this.SettingsDatabasePanel.Name = "SettingsDatabasePanel";
-			this.SettingsDatabasePanel.Size = new System.Drawing.Size(786, 591);
-			this.SettingsDatabasePanel.TabIndex = 0;
 			// 
 			// IniTabPage
 			// 
@@ -485,6 +477,14 @@ namespace x360ce.App
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
 			// 
+			// SettingsGridPanel
+			// 
+			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsGridPanel.Location = new System.Drawing.Point(3, 3);
+			this.SettingsGridPanel.Name = "SettingsGridPanel";
+			this.SettingsGridPanel.Size = new System.Drawing.Size(786, 591);
+			this.SettingsGridPanel.TabIndex = 0;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -546,7 +546,6 @@ namespace x360ce.App
 		ToolStripStatusLabel StatusIniLabel;
         ToolStripStatusLabel StatusDllLabel;
         TabPage SettingsTabPage;
-        public Controls.ControllerSettingsUserControl SettingsDatabasePanel;
         public TabControl MainTabControl;
 		TabPage GamesTabPage;
         public Controls.OptionsUserControl OptionsPanel;
@@ -571,5 +570,6 @@ namespace x360ce.App
 		private TabPage CloudTabPage;
 		public Controls.CloudUserControl CloudPanel;
 		private ToolStripStatusLabel UpdateDevicesStatusLabel;
+		private Controls.SettingsGridUserControl SettingsGridPanel;
 	}
 }

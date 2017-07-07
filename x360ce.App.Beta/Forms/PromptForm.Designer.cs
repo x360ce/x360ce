@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PromptForm));
 			this.EditTextBox = new System.Windows.Forms.TextBox();
 			this.OkButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
@@ -104,6 +105,7 @@
 			this.Controls.Add(this.CopyButton);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.EditTextBox);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "PromptForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Prompt Form";

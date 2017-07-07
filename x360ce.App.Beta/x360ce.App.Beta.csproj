@@ -257,6 +257,24 @@
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\PresetsGridUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PresetsGridUserControl.Designer.cs">
+      <DependentUpon>PresetsGridUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SettingsGridUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SettingsGridUserControl.Designer.cs">
+      <DependentUpon>SettingsGridUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SummariesGridUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SummariesGridUserControl.Designer.cs">
+      <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserDevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -286,12 +304,6 @@
     </Compile>
     <Compile Include="Controls\CloudUserControl.Designer.cs">
       <DependentUpon>CloudUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ControllerSettingsUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ControllerSettingsUserControl.Designer.cs">
-      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DirectInputUserControl.cs">
       <SubType>UserControl</SubType>
@@ -404,6 +416,15 @@
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PresetsGridUserControl.resx">
+      <DependentUpon>PresetsGridUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SettingsGridUserControl.resx">
+      <DependentUpon>SettingsGridUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SummariesGridUserControl.resx">
+      <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\UserDevicesUserControl.resx">
       <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -412,9 +433,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CloudUserControl.resx">
       <DependentUpon>CloudUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ControllerSettingsUserControl.resx">
-      <DependentUpon>ControllerSettingsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DirectInputUserControl.resx">
       <DependentUpon>DirectInputUserControl.cs</DependentUpon>

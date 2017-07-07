@@ -16,6 +16,8 @@ namespace x360ce.App.Controls
 		public UserDevicesUserControl()
 		{
 			InitializeComponent();
+			ControlHelper.ApplyBorderStyle(ControllersDataGridView);
+			EngineHelper.EnableDoubleBuffering(ControllersDataGridView);
 		}
 
 		private void ControllersUserControl_Load(object sender, EventArgs e)

@@ -175,7 +175,7 @@ namespace x360ce.App
 				// Add PAD setting instance.
 				sb.AppendFormat("[{0}]", GetInstanceSection(instance.InstanceGuid));
 				sb.AppendLine();
-				// Get padd settings attached to specific instance.
+				// Get pad settings attached to specific instance.
 				var ps = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == instance.PadSettingChecksum);
 				// If pad settings not found then...
 				if (ps == null)
