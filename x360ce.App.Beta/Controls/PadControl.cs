@@ -1283,14 +1283,6 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.LoadSetting(map.Control, key, value);
 		}
 
-		void SavePresetButton_Click(object sender, EventArgs e)
-		{
-			SettingsManager.Current.WriteAllSettingsToINI();
-			var iniContent = MainForm.Current.GetINI();
-			SettingsManager.Current.ApplyAllSettingsToXML();
-			MainForm.Current.SaveAll();
-		}
-
 		/// <summary> 
 		/// Clean up any resources being used.
 		/// </summary>

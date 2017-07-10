@@ -144,7 +144,7 @@ namespace x360ce.App.Controls
                     result = ws.Execute(command);
                     if (result.ErrorCode > 0)
                     {
-                        queueTimer.SleepTimer.Interval = 5 * 60 * 1000;
+                        queueTimer.ChangeSleepInterval(5 * 60 * 1000);
                         return new Exception(result.ErrorMessage);
                     }
                     foreach (var item in citems)
@@ -156,7 +156,7 @@ namespace x360ce.App.Controls
             catch (Exception ex)
             {
                 // Sleep for 5 minutes;
-                queueTimer.SleepTimer.Interval = 5 * 60 * 1000;
+                queueTimer.ChangeSleepInterval(5 * 60 * 1000);
                 return ex;
             }
             return null;
@@ -184,7 +184,7 @@ namespace x360ce.App.Controls
         private void UploadToCloudButton_Click(object sender, EventArgs e)
         {
             data.Clear();
-            queueTimer.SleepTimer.Interval = 1000;
+            queueTimer.ChangeSleepInterval(1000);
             var allControllers = SettingsManager.UserDevices.Items.ToArray();
             Add(CloudAction.Insert, allControllers);
             var allGames = SettingsManager.UserGames.Items.ToArray();

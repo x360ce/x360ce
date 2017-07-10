@@ -63,6 +63,7 @@
 			this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
 			this.AnonymousNoteLabel = new System.Windows.Forms.Label();
 			this.PasswordTextBox = new System.Windows.Forms.TextBox();
+			this.ResetButton = new System.Windows.Forms.Button();
 			this.CreateButton = new System.Windows.Forms.Button();
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.UsernameTextBox = new System.Windows.Forms.TextBox();
@@ -72,7 +73,10 @@
 			this.UsernameLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.ResetButton = new System.Windows.Forms.Button();
+			this.GamesGroupBox = new System.Windows.Forms.GroupBox();
+			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
+			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
+			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -82,6 +86,8 @@
 			this.ConfigurationGroupBox.SuspendLayout();
 			this.DirectInputDevicesGroupBox.SuspendLayout();
 			this.OnlineAccountGroupBox.SuspendLayout();
+			this.GamesGroupBox.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -346,7 +352,7 @@
 			// 
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
-			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 319);
+			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 303);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
 			this.ConfigurationGroupBox.Size = new System.Drawing.Size(241, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
@@ -373,7 +379,7 @@
 			// SaveSettingsButton
 			// 
 			this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SaveSettingsButton.Location = new System.Drawing.Point(681, 519);
+			this.SaveSettingsButton.Location = new System.Drawing.Point(681, 472);
 			this.SaveSettingsButton.Name = "SaveSettingsButton";
 			this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
 			this.SaveSettingsButton.TabIndex = 68;
@@ -386,7 +392,7 @@
 			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(512, 519);
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(512, 472);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
 			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(163, 23);
 			this.OpenSettingsFolderButton.TabIndex = 69;
@@ -463,6 +469,16 @@
 			this.PasswordTextBox.Name = "PasswordTextBox";
 			this.PasswordTextBox.Size = new System.Drawing.Size(152, 20);
 			this.PasswordTextBox.TabIndex = 43;
+			// 
+			// ResetButton
+			// 
+			this.ResetButton.Location = new System.Drawing.Point(424, 108);
+			this.ResetButton.Name = "ResetButton";
+			this.ResetButton.Size = new System.Drawing.Size(75, 23);
+			this.ResetButton.TabIndex = 45;
+			this.ResetButton.Text = "Reset...";
+			this.ResetButton.UseVisualStyleBackColor = true;
+			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
 			// 
 			// CreateButton
 			// 
@@ -549,15 +565,53 @@
 			this.label3.TabIndex = 32;
 			this.label3.Text = "Disk ID:";
 			// 
-			// ResetButton
+			// GamesGroupBox
 			// 
-			this.ResetButton.Location = new System.Drawing.Point(424, 108);
-			this.ResetButton.Name = "ResetButton";
-			this.ResetButton.Size = new System.Drawing.Size(75, 23);
-			this.ResetButton.TabIndex = 45;
-			this.ResetButton.Text = "Reset...";
-			this.ResetButton.UseVisualStyleBackColor = true;
-			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+			this.GamesGroupBox.Controls.Add(this.IncludeEnabledCheckBox);
+			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountLabel);
+			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountNumericUpDown);
+			this.GamesGroupBox.Location = new System.Drawing.Point(3, 356);
+			this.GamesGroupBox.Name = "GamesGroupBox";
+			this.GamesGroupBox.Size = new System.Drawing.Size(241, 69);
+			this.GamesGroupBox.TabIndex = 31;
+			this.GamesGroupBox.TabStop = false;
+			this.GamesGroupBox.Text = "Games / Cloud";
+			// 
+			// IncludeEnabledCheckBox
+			// 
+			this.IncludeEnabledCheckBox.AutoSize = true;
+			this.IncludeEnabledCheckBox.Checked = true;
+			this.IncludeEnabledCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.IncludeEnabledCheckBox.Location = new System.Drawing.Point(74, 33);
+			this.IncludeEnabledCheckBox.Name = "IncludeEnabledCheckBox";
+			this.IncludeEnabledCheckBox.Size = new System.Drawing.Size(103, 17);
+			this.IncludeEnabledCheckBox.TabIndex = 30;
+			this.IncludeEnabledCheckBox.Text = "Include Enabled";
+			this.IncludeEnabledCheckBox.ThreeState = true;
+			this.IncludeEnabledCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// MinimumInstanceCountLabel
+			// 
+			this.MinimumInstanceCountLabel.AutoSize = true;
+			this.MinimumInstanceCountLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.MinimumInstanceCountLabel.Location = new System.Drawing.Point(6, 16);
+			this.MinimumInstanceCountLabel.Name = "MinimumInstanceCountLabel";
+			this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(178, 13);
+			this.MinimumInstanceCountLabel.TabIndex = 32;
+			this.MinimumInstanceCountLabel.Text = "Default Settings Minimum Instances:";
+			// 
+			// MinimumInstanceCountNumericUpDown
+			// 
+			this.MinimumInstanceCountNumericUpDown.Location = new System.Drawing.Point(9, 32);
+			this.MinimumInstanceCountNumericUpDown.Name = "MinimumInstanceCountNumericUpDown";
+			this.MinimumInstanceCountNumericUpDown.Size = new System.Drawing.Size(59, 20);
+			this.MinimumInstanceCountNumericUpDown.TabIndex = 31;
+			this.MinimumInstanceCountNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.MinimumInstanceCountNumericUpDown.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
 			// 
 			// OptionsUserControl
 			// 
@@ -567,13 +621,14 @@
 			this.Controls.Add(this.SaveSettingsButton);
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.Controls.Add(this.DirectInputDevicesGroupBox);
+			this.Controls.Add(this.GamesGroupBox);
 			this.Controls.Add(this.ConfigurationGroupBox);
 			this.Controls.Add(this.OnlineAccountGroupBox);
 			this.Controls.Add(this.OperationGroupBox);
 			this.Controls.Add(this.InternetGroupBox);
 			this.Controls.Add(this.ProgramScanLocationsTabControl);
 			this.Name = "OptionsUserControl";
-			this.Size = new System.Drawing.Size(759, 545);
+			this.Size = new System.Drawing.Size(759, 498);
 			this.TestingAndLoggingGroupBox.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
@@ -591,6 +646,9 @@
 			this.DirectInputDevicesGroupBox.PerformLayout();
 			this.OnlineAccountGroupBox.ResumeLayout(false);
 			this.OnlineAccountGroupBox.PerformLayout();
+			this.GamesGroupBox.ResumeLayout(false);
+			this.GamesGroupBox.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -642,5 +700,9 @@
         private System.Windows.Forms.Label AnonymousNoteLabel;
         private System.Windows.Forms.Button CreateButton;
 		private System.Windows.Forms.Button ResetButton;
+		private System.Windows.Forms.GroupBox GamesGroupBox;
+		private System.Windows.Forms.Label MinimumInstanceCountLabel;
+		public System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
+		public System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
 	}
 }

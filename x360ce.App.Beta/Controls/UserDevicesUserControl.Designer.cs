@@ -31,47 +31,18 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			this.ControllersTabControl = new System.Windows.Forms.TabControl();
-			this.DirectInputDevicesTabPage = new System.Windows.Forms.TabPage();
 			this.ControllersDataGridView = new System.Windows.Forms.DataGridView();
-			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
-			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
-			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
-			this.HardwareTabPage = new System.Windows.Forms.TabPage();
-			this.HardwarePanel = new JocysCom.ClassLibrary.IO.HardwareControl();
 			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ControllersTabControl.SuspendLayout();
-			this.DirectInputDevicesTabPage.SuspendLayout();
+			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
+			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			((System.ComponentModel.ISupportInitialize)(this.ControllersDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
-			this.HardwareTabPage.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// ControllersTabControl
-			// 
-			this.ControllersTabControl.Controls.Add(this.DirectInputDevicesTabPage);
-			this.ControllersTabControl.Controls.Add(this.HardwareTabPage);
-			this.ControllersTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ControllersTabControl.Location = new System.Drawing.Point(3, 3);
-			this.ControllersTabControl.Name = "ControllersTabControl";
-			this.ControllersTabControl.SelectedIndex = 0;
-			this.ControllersTabControl.Size = new System.Drawing.Size(711, 430);
-			this.ControllersTabControl.TabIndex = 19;
-			// 
-			// DirectInputDevicesTabPage
-			// 
-			this.DirectInputDevicesTabPage.Controls.Add(this.ControllersDataGridView);
-			this.DirectInputDevicesTabPage.Controls.Add(this.ControllersToolStrip);
-			this.DirectInputDevicesTabPage.Location = new System.Drawing.Point(4, 22);
-			this.DirectInputDevicesTabPage.Name = "DirectInputDevicesTabPage";
-			this.DirectInputDevicesTabPage.Size = new System.Drawing.Size(703, 404);
-			this.DirectInputDevicesTabPage.TabIndex = 0;
-			this.DirectInputDevicesTabPage.Text = "My Devices (Direct Input)";
-			this.DirectInputDevicesTabPage.UseVisualStyleBackColor = true;
 			// 
 			// ControllersDataGridView
 			// 
@@ -118,61 +89,10 @@
 			this.ControllersDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.ControllersDataGridView.RowHeadersVisible = false;
 			this.ControllersDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.ControllersDataGridView.Size = new System.Drawing.Size(703, 379);
+			this.ControllersDataGridView.Size = new System.Drawing.Size(717, 411);
 			this.ControllersDataGridView.TabIndex = 0;
 			this.ControllersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
 			this.ControllersDataGridView.SelectionChanged += new System.EventHandler(this.ControllersDataGridView_SelectionChanged);
-			// 
-			// ControllersToolStrip
-			// 
-			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.RefreshButton,
-            this.ControllerDeleteButton});
-			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
-			this.ControllersToolStrip.Name = "ControllersToolStrip";
-			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.ControllersToolStrip.Size = new System.Drawing.Size(703, 25);
-			this.ControllersToolStrip.TabIndex = 1;
-			this.ControllersToolStrip.Text = "MySettingsToolStrip";
-			// 
-			// RefreshButton
-			// 
-			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.RefreshButton.Name = "RefreshButton";
-			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.RefreshButton.Text = "&Refresh";
-			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-			// 
-			// ControllerDeleteButton
-			// 
-			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
-			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
-			this.ControllerDeleteButton.Text = "&Delete";
-			this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
-			// 
-			// HardwareTabPage
-			// 
-			this.HardwareTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.HardwareTabPage.Controls.Add(this.HardwarePanel);
-			this.HardwareTabPage.Location = new System.Drawing.Point(4, 22);
-			this.HardwareTabPage.Name = "HardwareTabPage";
-			this.HardwareTabPage.Size = new System.Drawing.Size(703, 404);
-			this.HardwareTabPage.TabIndex = 1;
-			this.HardwareTabPage.Text = "Hardware";
-			// 
-			// HardwarePanel
-			// 
-			this.HardwarePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.HardwarePanel.Location = new System.Drawing.Point(0, 0);
-			this.HardwarePanel.Name = "HardwarePanel";
-			this.HardwarePanel.Size = new System.Drawing.Size(703, 404);
-			this.HardwarePanel.TabIndex = 2;
 			// 
 			// IsOnlineColumn
 			// 
@@ -218,36 +138,61 @@
 			this.MyGameColumn.Name = "MyGameColumn";
 			this.MyGameColumn.ReadOnly = true;
 			// 
+			// ControllersToolStrip
+			// 
+			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshButton,
+            this.ControllerDeleteButton});
+			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.ControllersToolStrip.Name = "ControllersToolStrip";
+			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
+			this.ControllersToolStrip.TabIndex = 1;
+			this.ControllersToolStrip.Text = "MySettingsToolStrip";
+			// 
+			// RefreshButton
+			// 
+			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.RefreshButton.Name = "RefreshButton";
+			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.RefreshButton.Text = "&Refresh";
+			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+			// 
+			// ControllerDeleteButton
+			// 
+			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
+			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.ControllerDeleteButton.Text = "&Delete";
+			this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
+			// 
 			// UserDevicesUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.ControllersTabControl);
+			this.Controls.Add(this.ControllersDataGridView);
+			this.Controls.Add(this.ControllersToolStrip);
 			this.Name = "UserDevicesUserControl";
-			this.Padding = new System.Windows.Forms.Padding(3);
 			this.Size = new System.Drawing.Size(717, 436);
 			this.Load += new System.EventHandler(this.ControllersUserControl_Load);
-			this.ControllersTabControl.ResumeLayout(false);
-			this.DirectInputDevicesTabPage.ResumeLayout(false);
-			this.DirectInputDevicesTabPage.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ControllersDataGridView)).EndInit();
 			this.ControllersToolStrip.ResumeLayout(false);
 			this.ControllersToolStrip.PerformLayout();
-			this.HardwareTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.TabControl ControllersTabControl;
-		private System.Windows.Forms.TabPage DirectInputDevicesTabPage;
 		private System.Windows.Forms.DataGridView ControllersDataGridView;
 		private System.Windows.Forms.ToolStrip ControllersToolStrip;
 		private System.Windows.Forms.ToolStripButton ControllerDeleteButton;
 		private System.Windows.Forms.ToolStripButton RefreshButton;
-        private System.Windows.Forms.TabPage HardwareTabPage;
-        private JocysCom.ClassLibrary.IO.HardwareControl HardwarePanel;
 		private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;

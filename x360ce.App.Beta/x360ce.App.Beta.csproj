@@ -317,6 +317,12 @@
     <Compile Include="Controls\GameDetailsUserControl.Designer.cs">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\HardwareForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\HardwareForm.Designer.cs">
+      <DependentUpon>HardwareForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\LoadPresetsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -440,6 +446,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameDetailsUserControl.resx">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\HardwareForm.resx">
+      <DependentUpon>HardwareForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoadPresetsForm.resx">
       <DependentUpon>LoadPresetsForm.cs</DependentUpon>

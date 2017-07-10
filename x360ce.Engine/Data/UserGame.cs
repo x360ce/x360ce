@@ -7,6 +7,7 @@ using System.Text;
 using System.Reflection;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Configuration;
+using System.Threading.Tasks;
 
 namespace x360ce.Engine.Data
 {
@@ -30,10 +31,19 @@ namespace x360ce.Engine.Data
 			var fi = new FileInfo(fileName);
 			var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
 			var architecture = Win32.PEReader.GetProcessorArchitecture(fi.FullName);
-			var mask = GetMask(fi.FullName, architecture);
+			var is64bit = architecture == System.Reflection.ProcessorArchitecture.Amd64;
+			// Get XInput files used inside game folder.
+			var list = GetMasks(fi.DirectoryName, SearchOption.AllDirectories, is64bit);
+			XInputMask mask = Engine.XInputMask.None;
+			// Combine masks.
+			foreach (var value in list.Values)
+			{
+				mask |= value;
+			}
+			// var mask = GetMask(fi.FullName);
 			if (mask == Engine.XInputMask.None)
 			{
-				mask = (architecture == System.Reflection.ProcessorArchitecture.Amd64)
+				mask = (is64bit)
 				? mask = Engine.XInputMask.XInput13_x64
 				: mask = Engine.XInputMask.XInput13_x86;
 			}
@@ -63,13 +73,50 @@ namespace x360ce.Engine.Data
 		}
 
 		/// <summary>
+		/// Look inside folder for "XInput..." strings and return XInput mask.
+		/// </summary>
+		/// <returns>Thanks mrexodia (https://github.com/mrexodia) for suggestion</returns>
+		public static Dictionary<string, XInputMask> GetMasks(string path, SearchOption searchOption, bool is64bit)
+		{
+			// Check masks inside *.exe and *.dll files.
+			var files = Directory.GetFiles(path, "*.exe", searchOption).ToList();
+			var dlls = Directory.GetFiles(path, "*.dll", searchOption).ToList();
+			files.AddRange(dlls);
+			XInputMask mask = Engine.XInputMask.None;
+			// Create list to store masks.
+			var masks = new Dictionary<string, XInputMask>();
+			foreach (var file in files)
+			{
+				// Skip XInput files.
+				if (string.Compare(file, "xinput", true) == 00)
+					continue;
+				//  Skip X360CE files.
+				if (string.Compare(file, "x360ce", true) == 00)
+					continue;
+				var fileArchitecture = Win32.PEReader.GetProcessorArchitecture(file);
+				var fileIs64bit = (fileArchitecture == System.Reflection.ProcessorArchitecture.Amd64);
+				// Skip wrong architecture.
+				if (is64bit != fileIs64bit)
+					continue;
+				// Get XInput mask for the file.
+				mask = GetMask(file);
+				if (mask != Engine.XInputMask.None)
+				{
+					masks.Add(file, mask);
+				}
+			}
+			return masks;
+		}
+
+		/// <summary>
 		/// Look inside file for "XInput..." strings and return XInput mask.
 		/// </summary>
 		/// <param name="fullName"></param>
 		/// <param name="architecture"></param>
 		/// <returns></returns>
-		public static XInputMask GetMask(string fullName, ProcessorArchitecture architecture)
+		public static XInputMask GetMask(string fullName)
 		{
+			var architecture = Win32.PEReader.GetProcessorArchitecture(fullName);
 			XInputMask[] xiValues;
 			if (architecture == System.Reflection.ProcessorArchitecture.Amd64)
 			{

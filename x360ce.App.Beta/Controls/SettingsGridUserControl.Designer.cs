@@ -176,6 +176,7 @@
             this.SettingsEditNoteButton});
 			this.SettingsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SettingsToolStrip.Name = "SettingsToolStrip";
+			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
 			this.SettingsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.SettingsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SettingsToolStrip.TabIndex = 7;

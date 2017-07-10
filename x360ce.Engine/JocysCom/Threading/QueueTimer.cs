@@ -26,14 +26,14 @@ namespace JocysCom.ClassLibrary.Threading
 		Stopwatch LastAddTime = new Stopwatch();
 		long DoActionCount;
 
-        /// <summary>
-        /// If SynchronizingObject is set then make sure that handle is created.
-        /// var handle = control.Handle; // Creates handle if missing.
-        /// var isCreated = control.IsHandleCreated;
-        /// You can use 'HandleCreated' event.
-        /// </summary>
+		/// <summary>
+		/// If SynchronizingObject is set then make sure that handle is created.
+		/// var handle = control.Handle; // Creates handle if missing.
+		/// var isCreated = control.IsHandleCreated;
+		/// You can use 'HandleCreated' event.
+		/// </summary>
 		public Action<object> DoAction;
-        
+
 		public ISynchronizeInvoke SynchronizingObject { get; set; }
 
 		bool _isRunning;
@@ -67,12 +67,21 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <summary>
 		/// Controls how long application must sleep if last action finished without doing anything.
 		/// </summary>
-		public Timer SleepTimer;
+		Timer SleepTimer;
+
+		public void ChangeSleepInterval(int interval)
+		{
+			var t = SleepTimer;
+			if (t != null)
+			{
+				t.Interval = interval;
+			}
+		}
 
 		/// <summary>
 		/// Controls how long application must wait between actions.
 		/// </summary>
-		public Timer DelayTimer;
+		Timer DelayTimer;
 
 
 		public QueueTimer()
@@ -349,6 +358,9 @@ namespace JocysCom.ClassLibrary.Threading
 						queue.Clear();
 					}
 				}
+				// Make sure that outside objects are not holding this timer from disposal. 
+				SynchronizingObject = null;
+				DoAction = null;
 			}
 		}
 

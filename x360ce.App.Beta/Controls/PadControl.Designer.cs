@@ -1474,19 +1474,15 @@
 			// 
 			// SavePresetButton
 			// 
-			this.SavePresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SavePresetButton.Location = new System.Drawing.Point(629, 584);
+			this.SavePresetButton.Location = new System.Drawing.Point(0, 0);
 			this.SavePresetButton.Name = "SavePresetButton";
 			this.SavePresetButton.Size = new System.Drawing.Size(75, 23);
-			this.SavePresetButton.TabIndex = 67;
-			this.SavePresetButton.Text = "&Save";
-			this.SavePresetButton.UseVisualStyleBackColor = true;
-			this.SavePresetButton.Click += new System.EventHandler(this.SavePresetButton_Click);
+			this.SavePresetButton.TabIndex = 69;
 			// 
 			// ResetPresetButton
 			// 
 			this.ResetPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ResetPresetButton.Location = new System.Drawing.Point(548, 584);
+			this.ResetPresetButton.Location = new System.Drawing.Point(629, 584);
 			this.ResetPresetButton.Name = "ResetPresetButton";
 			this.ResetPresetButton.Size = new System.Drawing.Size(75, 23);
 			this.ResetPresetButton.TabIndex = 66;
@@ -2152,7 +2148,7 @@
 			// ClearPresetButton
 			// 
 			this.ClearPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ClearPresetButton.Location = new System.Drawing.Point(467, 584);
+			this.ClearPresetButton.Location = new System.Drawing.Point(548, 584);
 			this.ClearPresetButton.Name = "ClearPresetButton";
 			this.ClearPresetButton.Size = new System.Drawing.Size(75, 23);
 			this.ClearPresetButton.TabIndex = 66;
@@ -2178,7 +2174,7 @@
 			// AutoPresetButton
 			// 
 			this.AutoPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.AutoPresetButton.Location = new System.Drawing.Point(388, 584);
+			this.AutoPresetButton.Location = new System.Drawing.Point(469, 584);
 			this.AutoPresetButton.Name = "AutoPresetButton";
 			this.AutoPresetButton.Size = new System.Drawing.Size(75, 23);
 			this.AutoPresetButton.TabIndex = 66;
@@ -2293,7 +2289,7 @@
 			// LoadPresetButton
 			// 
 			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.LoadPresetButton.Location = new System.Drawing.Point(276, 584);
+			this.LoadPresetButton.Location = new System.Drawing.Point(357, 584);
 			this.LoadPresetButton.Name = "LoadPresetButton";
 			this.LoadPresetButton.Size = new System.Drawing.Size(106, 23);
 			this.LoadPresetButton.TabIndex = 66;

@@ -23,7 +23,7 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
-			
+
 		}
 
 		DeviceDetector detector;
@@ -1468,5 +1468,28 @@ namespace x360ce.App
 			EngineHelper.BrowsePath(fullPath);
 		}
 
+		private void SaveButton_Click(object sender, EventArgs e)
+		{
+			SaveButton.Enabled = false;
+			Application.DoEvents();
+			SettingsManager.Current.WriteAllSettingsToINI();
+			var iniContent = MainForm.Current.GetINI();
+			SettingsManager.Current.ApplyAllSettingsToXML();
+			SaveAll();
+			var timer = new System.Timers.Timer();
+			timer.AutoReset = false;
+			timer.Interval = 520;
+			timer.SynchronizingObject = this;
+			timer.Elapsed += Timer_Elapsed;
+			timer.Start();
+		}
+
+		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			SaveButton.Enabled = true;
+			var timer = (System.Timers.Timer)sender;
+			timer.Elapsed -= Timer_Elapsed;
+			timer.Dispose();
+		}
 	}
 }
