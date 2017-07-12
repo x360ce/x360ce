@@ -28,7 +28,7 @@ namespace x360ce.App
 			this.OptionsTabPage = new System.Windows.Forms.TabPage();
 			this.OptionsPanel = new x360ce.App.Controls.OptionsUserControl();
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
-			this.GameSettingsPanel = new x360ce.App.Controls.GamesUserControl();
+			this.GameSettingsPanel = new x360ce.App.Controls.GamesGridUserControl();
 			this.DevicesTabPage = new System.Windows.Forms.TabPage();
 			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
@@ -564,7 +564,7 @@ namespace x360ce.App
 		TabPage GamesTabPage;
         public Controls.OptionsUserControl OptionsPanel;
         public ToolTip ToolTip;
-		public Controls.GamesUserControl GameSettingsPanel;
+		public Controls.GamesGridUserControl GameSettingsPanel;
 		private NotifyIcon TrayNotifyIcon;
 		private ContextMenuStrip TrayContextMenuStrip;
 		private ToolStripMenuItem OpenApplicationToolStripMenuItem;

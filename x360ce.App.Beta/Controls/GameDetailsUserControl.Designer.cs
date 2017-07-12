@@ -68,7 +68,7 @@
 			this.HookModeFakePidNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.HookModeFakeVidNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.SynchronizeSettingsButton = new System.Windows.Forms.Button();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.DetailsToolStrip = new System.Windows.Forms.ToolStrip();
 			this.ResetToDefaultButton = new System.Windows.Forms.ToolStripButton();
 			this.HelpButton = new System.Windows.Forms.ToolStripDropDownButton();
 			this.GoogleSearchButton = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,7 +83,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
-			this.toolStrip1.SuspendLayout();
+			this.DetailsToolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// XInputMaskTextBox
@@ -530,18 +530,19 @@
 			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
 			this.SynchronizeSettingsButton.Click += new System.EventHandler(this.SynchronizeSettingsButton_Click);
 			// 
-			// toolStrip1
+			// DetailsToolStrip
 			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.DetailsToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.DetailsToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ResetToDefaultButton,
             this.HelpButton});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip1.Size = new System.Drawing.Size(225, 25);
-			this.toolStrip1.TabIndex = 37;
-			this.toolStrip1.Text = "toolStrip1";
+			this.DetailsToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.DetailsToolStrip.Name = "DetailsToolStrip";
+			this.DetailsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
+			this.DetailsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.DetailsToolStrip.Size = new System.Drawing.Size(225, 25);
+			this.DetailsToolStrip.TabIndex = 37;
+			this.DetailsToolStrip.Text = "toolStrip1";
 			// 
 			// ResetToDefaultButton
 			// 
@@ -657,7 +658,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.toolStrip1);
+			this.Controls.Add(this.DetailsToolStrip);
 			this.Controls.Add(this.HookModeFakeVidNumericUpDown);
 			this.Controls.Add(this.HookModeFakePidNumericUpDown);
 			this.Controls.Add(this.TimeoutNumericUpDown);
@@ -709,8 +710,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).EndInit();
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
+			this.DetailsToolStrip.ResumeLayout(false);
+			this.DetailsToolStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -758,7 +759,7 @@
 		private System.Windows.Forms.Label DInputFileLabel;
 		private System.Windows.Forms.NumericUpDown HookModeFakePidNumericUpDown;
 		private System.Windows.Forms.NumericUpDown HookModeFakeVidNumericUpDown;
-		private System.Windows.Forms.ToolStrip toolStrip1;
+		private System.Windows.Forms.ToolStrip DetailsToolStrip;
 		private System.Windows.Forms.ToolStripButton ResetToDefaultButton;
 		private System.Windows.Forms.ToolStripDropDownButton HelpButton;
 		private System.Windows.Forms.ToolStripMenuItem NGEmuSearchButton;

@@ -245,11 +245,16 @@ namespace x360ce.App
 			if (control.Enabled != enabled) control.Enabled = enabled;
 		}
 
-        /// <summary>
-        /// Change value if it is different only.
-        /// This helps not to trigger control events when doing frequent events.
-        /// </summary>
-        public static void SetText(Control control, string format, params object[] args)
+		public static void SetEnabled(ToolStripButton control, bool enabled)
+		{
+			if (control.Enabled != enabled) control.Enabled = enabled;
+		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetText(Control control, string format, params object[] args)
         {
             var text = (args == null)
                 ? format
