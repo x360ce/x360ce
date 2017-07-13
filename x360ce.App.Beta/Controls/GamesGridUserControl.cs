@@ -30,18 +30,14 @@ namespace x360ce.App.Controls
 			// Configure Games.
 			var x = IsHandleCreated;
 			SettingsManager.UserGames.Items.ListChanged += Games_Items_ListChanged;
-			GamesDataGridView.DataSourceChanged += GamesDataGridView_DataSourceChanged;
+			// WORKAROUND: Remove SelectionChanged event.
+			GamesDataGridView.SelectionChanged -= GamesDataGridView_SelectionChanged;
 			GamesDataGridView.DataSource = SettingsManager.UserGames.Items;
-		}
-
-		private void GamesDataGridView_DataSourceChanged(object sender, EventArgs e)
-		{
-			// Use bgin invoke to makes sure that SelectionChanged won't fire multiple times.
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
-				GamesDataGridView.SelectionChanged -= GamesDataGridView_SelectionChanged;
 				GamesDataGridView.SelectionChanged += GamesDataGridView_SelectionChanged;
-				SetGamesSelection();
+				GamesDataGridView_SelectionChanged(GamesDataGridView, new EventArgs());
 			});
 		}
 

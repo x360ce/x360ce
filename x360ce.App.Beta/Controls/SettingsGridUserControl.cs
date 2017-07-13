@@ -27,7 +27,15 @@ namespace x360ce.App.Controls
 		public void InitPanel()
 		{
 			SettingsManager.Settings.Items.ListChanged += Settings_ListChanged;
+			// WORKAROUND: Remove SelectionChanged event.
+			SettingsDataGridView.SelectionChanged -= SettingsDataGridView_SelectionChanged;
 			SettingsDataGridView.DataSource = SettingsManager.Settings.Items;
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				SettingsDataGridView.SelectionChanged += SettingsDataGridView_SelectionChanged;
+				SettingsDataGridView_SelectionChanged(SettingsDataGridView, new EventArgs());
+			});
 			UpdateControlsFromSettings();
 		}
 

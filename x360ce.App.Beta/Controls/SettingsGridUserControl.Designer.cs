@@ -120,7 +120,6 @@
 			this.SettingsDataGridView.Size = new System.Drawing.Size(480, 215);
 			this.SettingsDataGridView.TabIndex = 8;
 			this.SettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
-			this.SettingsDataGridView.SelectionChanged += new System.EventHandler(this.SettingsDataGridView_SelectionChanged);
 			// 
 			// SettingsSidColumn
 			// 

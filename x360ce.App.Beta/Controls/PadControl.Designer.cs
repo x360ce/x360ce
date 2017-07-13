@@ -2229,7 +2229,6 @@
 			this.MappedDevicesDataGridView.TabIndex = 68;
 			this.MappedDevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MappedDevicesDataGridView_CellClick);
 			this.MappedDevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MappedDevicesDataGridView_CellFormatting);
-			this.MappedDevicesDataGridView.SelectionChanged += new System.EventHandler(this.MappedDevicesDataGridView_SelectionChanged);
 			// 
 			// IsEnabledColumn
 			// 

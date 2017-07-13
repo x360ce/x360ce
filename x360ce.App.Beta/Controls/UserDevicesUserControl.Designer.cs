@@ -92,7 +92,6 @@
 			this.ControllersDataGridView.Size = new System.Drawing.Size(717, 411);
 			this.ControllersDataGridView.TabIndex = 0;
 			this.ControllersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
-			this.ControllersDataGridView.SelectionChanged += new System.EventHandler(this.ControllersDataGridView_SelectionChanged);
 			// 
 			// IsOnlineColumn
 			// 

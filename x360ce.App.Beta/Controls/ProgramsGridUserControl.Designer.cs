@@ -95,7 +95,6 @@
 			this.ProgramsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.ProgramsDataGridView.Size = new System.Drawing.Size(643, 547);
 			this.ProgramsDataGridView.TabIndex = 5;
-			this.ProgramsDataGridView.SelectionChanged += new System.EventHandler(this.ProgramsDataGridView_SelectionChanged);
 			this.ProgramsDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProgramsDataGridView_KeyDown);
 			// 
 			// ProgramImageColumn

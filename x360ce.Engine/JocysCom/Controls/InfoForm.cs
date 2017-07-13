@@ -56,7 +56,15 @@ namespace JocysCom.ClassLibrary.Controls
 				dtControls.Rows.Add(dr);
 			}
 			ControlsDataGridView.AutoGenerateColumns = false;
+			// WORKAROUND: Remove SelectionChanged event.
+			ControlsDataGridView.SelectionChanged -= ControlsDataGridView_SelectionChanged;
 			ControlsDataGridView.DataSource = dtControls;
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				ControlsDataGridView.SelectionChanged += ControlsDataGridView_SelectionChanged;
+				ControlsDataGridView_SelectionChanged(ControlsDataGridView, new EventArgs());
+			});
 			foreach (Control lbl in this.Controls)
 			{
 				if ((lbl) is Label)

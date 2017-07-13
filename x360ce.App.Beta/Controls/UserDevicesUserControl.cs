@@ -24,7 +24,15 @@ namespace x360ce.App.Controls
 		{
 			UpdateButtons();
 			ControllersDataGridView.AutoGenerateColumns = false;
+			// WORKAROUND: Remove SelectionChanged event.
+			ControllersDataGridView.SelectionChanged -= ControllersDataGridView_SelectionChanged;
 			ControllersDataGridView.DataSource = SettingsManager.UserDevices.Items;
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				ControllersDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
+				ControllersDataGridView_SelectionChanged(ControllersDataGridView, new EventArgs());
+			});
 		}
 
 		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

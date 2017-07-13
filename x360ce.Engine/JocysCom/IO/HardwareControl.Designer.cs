@@ -156,7 +156,6 @@
 			this.DeviceDataGridView.Size = new System.Drawing.Size(749, 438);
 			this.DeviceDataGridView.TabIndex = 6;
 			this.DeviceDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DeviceDataGridView_CellFormatting);
-			this.DeviceDataGridView.SelectionChanged += new System.EventHandler(this.DeviceDataGridView_SelectionChanged);
 			// 
 			// VendorIdColumn
 			// 

@@ -130,7 +130,6 @@ namespace JocysCom.ClassLibrary.Controls
 			this.ControlsDataGridView.TabIndex = 8;
 			this.ControlsDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ControlsDataGridView_CellContentClick);
 			this.ControlsDataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ControlsDataGridView_CellContentClick);
-			this.ControlsDataGridView.SelectionChanged += new System.EventHandler(this.ControlsDataGridView_SelectionChanged);
 			this.ControlsDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InfoForm_KeyDown);
 			// 
 			// colControlName

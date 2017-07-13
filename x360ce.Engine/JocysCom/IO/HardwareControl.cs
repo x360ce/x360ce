@@ -220,7 +220,15 @@ namespace JocysCom.ClassLibrary.IO
 						comp(x.DeviceId, filter))
 						.ToList();
 				}
+				// WORKAROUND: Remove SelectionChanged event.
+				DeviceDataGridView.SelectionChanged -= DeviceDataGridView_SelectionChanged;
 				DeviceDataGridView.DataSource = view;
+				// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+				BeginInvoke((MethodInvoker)delegate ()
+				{
+					DeviceDataGridView.SelectionChanged += DeviceDataGridView_SelectionChanged;
+					DeviceDataGridView_SelectionChanged(DeviceDataGridView, new EventArgs());
+				});
 				DeviceTabPage.Text = string.Format("{0} Devices on {1:yyyy-MM-dd HH:mm:ss}", view.Count, DateTime.Now);
 				var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
 				var classes = devices.Select(x => x.ClassGuid).Distinct();

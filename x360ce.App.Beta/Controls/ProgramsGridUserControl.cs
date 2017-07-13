@@ -27,7 +27,15 @@ namespace x360ce.App.Controls
 		{
 			// Configure Programs.
 			SettingsManager.Programs.Items.ListChanged += new ListChangedEventHandler(Programs_ListChanged);
+			// WORKAROUND: Remove SelectionChanged event.
+			ProgramsDataGridView.SelectionChanged -= ProgramsDataGridView_SelectionChanged;
 			ProgramsDataGridView.DataSource = SettingsManager.Programs.Items;
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				ProgramsDataGridView.SelectionChanged += ProgramsDataGridView_SelectionChanged;
+				ProgramsDataGridView_SelectionChanged(ProgramsDataGridView, new EventArgs());
+			});
 			UpdateControlsFromPrograms();
 		}
 

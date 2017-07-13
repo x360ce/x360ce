@@ -64,8 +64,15 @@ namespace x360ce.App.Controls
 
 		public void InitPadData()
 		{
-			var grid = MappedDevicesDataGridView;
-			grid.DataSource = mappedItems;
+			// WORKAROUND: Remove SelectionChanged event.
+			MappedDevicesDataGridView.SelectionChanged -= MappedDevicesDataGridView_SelectionChanged;
+			MappedDevicesDataGridView.DataSource = mappedItems;
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
+				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
+			});
 			Settings_Items_ListChanged(null, null);
 			SettingsManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 		}
