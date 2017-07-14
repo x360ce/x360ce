@@ -70,7 +70,8 @@ namespace x360ce.App
 			var game = Games.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
 			if (game == null)
 			{
-				game = x360ce.Engine.Data.UserGame.FromDisk(fi.FullName);
+				var scanner = new XInputMaskScanner();
+				game = scanner.FromDisk(fi.FullName);
 				// Load default settings.
 				var program = Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == game.FileName.ToLower());
 				game.LoadDefault(program);

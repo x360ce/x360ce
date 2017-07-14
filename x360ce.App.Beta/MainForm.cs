@@ -149,7 +149,8 @@ namespace x360ce.App
 			if (appItem == null)
 			{
 				// Add x360ce.exe
-				var item = x360ce.Engine.Data.UserGame.FromDisk(appFile.Name);
+				var scanner = new XInputMaskScanner();
+				var item = scanner.FromDisk(appFile.Name);
 				var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
 				item.LoadDefault(program);
 				distinctItems.Add(item);

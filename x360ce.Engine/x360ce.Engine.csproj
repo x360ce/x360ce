@@ -138,6 +138,8 @@
     <Compile Include="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Common\XInputMaskScannerEventArgs.cs" />
+    <Compile Include="Common\XInputMaskScannerState.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserGame.cs" />
     <Compile Include="Data\PadSetting.cs" />
@@ -149,6 +151,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>x360ceModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\ClassTools\EnumTools.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />

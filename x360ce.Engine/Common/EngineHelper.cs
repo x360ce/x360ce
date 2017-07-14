@@ -252,6 +252,34 @@ namespace x360ce.Engine
 			catch (Exception) { }
 		}
 
+		public static string[] GetFiles(string path, string searchPattern, bool allDirectories = false)
+		{
+			var dir = new DirectoryInfo(path);
+			var fis = new List<FileInfo>();
+			GetFiles(dir, ref fis, searchPattern, false);
+			return fis.Select(x => x.FullName).ToArray();
+		}
+
+		public static void GetFiles(DirectoryInfo di, ref List<FileInfo> fileList, string searchPattern, bool allDirectories)
+		{
+			try
+			{
+				if (allDirectories)
+				{
+					foreach (DirectoryInfo subDi in di.GetDirectories())
+					{
+						GetFiles(subDi, ref fileList, searchPattern, allDirectories);
+					}
+				}
+			}
+			catch { }
+			try
+			{
+				fileList.AddRange(di.GetFiles(searchPattern));
+			}
+			catch { }
+		}
+
 		/// <summary>Enable double buffering to make redraw faster.</summary>
 		public static void EnableDoubleBuffering(DataGridView grid)
 		{
@@ -560,6 +588,8 @@ namespace x360ce.Engine
 		}
 
 		#endregion
+
+
 
 	}
 }

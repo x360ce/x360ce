@@ -198,7 +198,7 @@ namespace x360ce.App.Controls
 		{
 			var dir = new DirectoryInfo(folderName);
 			var files = new List<FileInfo>();
-			AppHelper.GetFiles(dir, ref files, "*.ini", IncludeSubfoldersCheckBox.Checked);
+			EngineHelper.GetFiles(dir, ref files, "*.ini", IncludeSubfoldersCheckBox.Checked);
 			for (int i = 0; i < files.Count; i++)
 			{
 				string sectionName = null;

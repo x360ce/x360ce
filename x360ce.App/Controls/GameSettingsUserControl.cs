@@ -65,7 +65,7 @@ namespace x360ce.App.Controls
 		void ScanGames(object state)
 		{
 			string[] paths = null;
-			Invoke((MethodInvoker)delegate()
+			Invoke((MethodInvoker)delegate ()
 			{
 				ScanProgressLabel.Visible = true;
 				ScanGamesButton.Enabled = false;
@@ -104,9 +104,10 @@ namespace x360ce.App.Controls
 						// If file doesn't exist in the game list then continue.
 						if (game == null)
 						{
-							Invoke((MethodInvoker)delegate()
+							Invoke((MethodInvoker)delegate ()
 							{
-								game = x360ce.Engine.Data.UserGame.FromDisk(exe.FullName);
+								var scanner = new XInputMaskScanner();
+								game = scanner.FromDisk(exe.FullName);
 								game.LoadDefault(program);
 								SettingManager.Games.Items.Add(game);
 								added++;
@@ -122,14 +123,14 @@ namespace x360ce.App.Controls
 							updated++;
 						}
 					}
-					Invoke((MethodInvoker)delegate()
+					Invoke((MethodInvoker)delegate ()
 						{
 							ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
 						});
 				}
 				SettingManager.Save();
 			}
-			Invoke((MethodInvoker)delegate()
+			Invoke((MethodInvoker)delegate ()
 			{
 				ScanGamesButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
@@ -163,7 +164,7 @@ namespace x360ce.App.Controls
 
 		void UpdateControlsFromGames()
 		{
-			
+
 		}
 
 		#endregion
@@ -243,7 +244,7 @@ namespace x360ce.App.Controls
 				else
 				{
 					ProcessExecutable(AddGameOpenFileDialog.FileName);
-                }
+				}
 			}
 		}
 
@@ -365,7 +366,7 @@ namespace x360ce.App.Controls
 		void ShowHideAndSelectGridRows(string selectFile = null)
 		{
 			var grid = GamesDataGridView;
-            var selection = string.IsNullOrEmpty(selectFile)
+			var selection = string.IsNullOrEmpty(selectFile)
 				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName")
 				: new List<string>() { selectFile };
 			grid.CurrentCell = null;
@@ -384,10 +385,10 @@ namespace x360ce.App.Controls
 				var show = true;
 				if (showEnabled) show = (item.IsEnabled == true);
 				if (showDisabled) show = (item.IsEnabled == false);
-				if (rows[i].Visible  != show)
+				if (rows[i].Visible != show)
 				{
 					rows[i].Visible = show;
-                }
+				}
 			}
 			// Resume CurrencyManager and Layout.
 			cm.ResumeBinding();
@@ -597,7 +598,7 @@ namespace x360ce.App.Controls
 			if (IncludeEnabledCheckBox.CheckState == CheckState.Unchecked) enabled = EnabledState.Disabled;
 			int minInstances = (int)MinimumInstanceCountNumericUpDown.Value;
 			ws.GetProgramsCompleted += ProgramsWebServiceClient_GetProgramsCompleted;
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate(object state)
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
 			{
 				ws.GetProgramsAsync(enabled, minInstances);
 			});
@@ -606,7 +607,7 @@ namespace x360ce.App.Controls
 		void ProgramsWebServiceClient_GetProgramsCompleted(object sender, ResultEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
-			BeginInvoke((MethodInvoker)delegate()
+			BeginInvoke((MethodInvoker)delegate ()
 			{
 				MainForm.Current.LoadingCircle = false;
 				if (e.Error != null)

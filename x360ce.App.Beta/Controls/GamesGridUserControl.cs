@@ -62,78 +62,61 @@ namespace x360ce.App.Controls
 			}
 		}
 
+
+		private void Scanner_Progress(object sender, XInputMaskScannerEventArgs e)
+		{
+			if (MainForm.Current.InvokeRequired)
+			{
+				Invoke((MethodInvoker)delegate ()
+				{
+					Scanner_Progress(sender, e);
+				});
+				return;
+			}
+			var scanner = (XInputMaskScanner)sender;
+			switch (e.State)
+			{
+				case XInputMaskScannerState.Started:
+					ScanProgressLabel.Text = "Scanning...";
+					break;
+				case XInputMaskScannerState.GameFound:
+					SettingsManager.UserGames.Items.Add(e.Game);
+					break;
+				case XInputMaskScannerState.GameUpdated:
+					e.Game.FullPath = e.GameFileInfo.FullName;
+					if (string.IsNullOrEmpty(e.Game.FileProductName) && !string.IsNullOrEmpty(e.Program.FileProductName))
+					{
+						e.Game.FileProductName = e.Program.FileProductName;
+					}
+					break;
+				case XInputMaskScannerState.Update:
+					ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}",
+					e.CurentPath, scanner.Paths.Length,
+					scanner.Paths[e.CurentPath], e.Skipped, e.Added, e.Updated);
+					break;
+				case XInputMaskScannerState.Completed:
+					ScanGamesButton.Enabled = true;
+					ScanProgressLabel.Visible = false;
+					SettingsManager.Save();
+					break;
+				default:
+					break;
+			}
+		}
+
 		void ScanGames(object state)
 		{
-			string[] paths = null;
 			Invoke((MethodInvoker)delegate ()
 			{
 				ScanProgressLabel.Visible = true;
 				ScanGamesButton.Enabled = false;
-				paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
-				ScanProgressLabel.Text = "Scanning...";
 			});
-			var skipped = 0;
-			var added = 0;
-			var updated = 0;
-			for (int i = 0; i < paths.Length; i++)
-			{
-				var path = (string)paths[i];
-				// Don't allow to scan windows folder.
-				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (path.StartsWith(winFolder)) continue;
-				var di = new System.IO.DirectoryInfo(path);
-				// Skip folders if don't exists.
-				if (!di.Exists) continue;
-				var exes = new List<FileInfo>();
-				AppHelper.GetFiles(di, ref exes, "*.exe", true);
-				for (int f = 0; f < exes.Count; f++)
-				{
-
-					var exe = exes[f];
-					var exeName = exe.Name.ToLower();
-					var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == exeName);
-					// If file doesn't exist in the game list then continue.
-					if (program == null)
-					{
-						skipped++;
-					}
-					else
-					{
-						// Get game by executable name.
-						var game = SettingsManager.UserGames.Items.FirstOrDefault(x => x.FileName.ToLower() == exeName);
-						// If file doesn't exist in the game list then continue.
-						if (game == null)
-						{
-							Invoke((MethodInvoker)delegate ()
-							{
-								game = x360ce.Engine.Data.UserGame.FromDisk(exe.FullName);
-								game.LoadDefault(program);
-								SettingsManager.UserGames.Items.Add(game);
-								added++;
-							});
-						}
-						else
-						{
-							game.FullPath = exe.FullName;
-							if (string.IsNullOrEmpty(game.FileProductName) && !string.IsNullOrEmpty(program.FileProductName))
-							{
-								game.FileProductName = program.FileProductName;
-							}
-							updated++;
-						}
-					}
-					Invoke((MethodInvoker)delegate ()
-						{
-							ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
-						});
-				}
-				SettingsManager.Save();
-			}
-			Invoke((MethodInvoker)delegate ()
-			{
-				ScanGamesButton.Enabled = true;
-				ScanProgressLabel.Visible = false;
-			});
+			var scanner = new XInputMaskScanner();
+			scanner.Progress += Scanner_Progress;
+			var paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+			var games = SettingsManager.UserGames.Items;
+			var programs = SettingsManager.Programs.Items;
+			scanner.ScanGames(paths, games, programs);
 		}
 
 		#endregion
