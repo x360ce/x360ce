@@ -17,12 +17,18 @@ namespace x360ce.Engine
 
 		public FileInfo GameFileInfo { get; set; }
 
-		public int CurentPath { get; set; }
+		public List<DirectoryInfo> Directories;
+
+		public List<FileInfo> Files;
+
+		public int CurentIndex { get; set; }
 
 		public int Skipped { get; set; }
 
 		public int Added { get; set; }
 		public int Updated { get; set; }
+
+		public string Message { get; set; }
 
 	}
 }

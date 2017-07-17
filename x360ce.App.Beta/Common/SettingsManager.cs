@@ -143,6 +143,7 @@ namespace x360ce.App
 			{
 				Programs.Save();
 				UserGames.Save();
+
 			}
 		}
 

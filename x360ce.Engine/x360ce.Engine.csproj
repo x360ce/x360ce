@@ -138,8 +138,10 @@
     <Compile Include="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Common\XInputMaskFileInfo.cs" />
     <Compile Include="Common\XInputMaskScannerEventArgs.cs" />
     <Compile Include="Common\XInputMaskScannerState.cs" />
+    <Compile Include="Common\XSettingsData.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserGame.cs" />
     <Compile Include="Data\PadSetting.cs" />

@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.ComponentModel;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
     [Serializable, XmlRoot("Data")]
     public class XSettingsData<T> : JocysCom.ClassLibrary.Configuration.SettingsData<T>

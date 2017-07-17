@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,7 +11,6 @@ namespace x360ce.Engine
 {
 	public class XInputMaskScanner
 	{
-
 		public event EventHandler<XInputMaskScannerEventArgs> Progress;
 
 		void ReportProgress(XInputMaskScannerEventArgs e)
@@ -22,69 +22,116 @@ namespace x360ce.Engine
 			}
 		}
 
-		public string[] Paths;
+		public static XSettingsData<XInputMaskFileInfo> FileInfoCache = new XSettingsData<XInputMaskFileInfo>("XInputMask", "XInput mask scan cache.");
+
+		static object FileInfoCacheLock = new object();
+
+		XInputMask? GetCachedMask(FileInfo fi)
+		{
+			lock (FileInfoCacheLock)
+			{
+				var item = FileInfoCache.Items.FirstOrDefault(x => string.Compare(x.FullName, fi.FullName, true) == 0);
+				// if Found and changed then...
+				if (item != null && (item.Modified != fi.LastWriteTimeUtc || item.Size != fi.Length))
+				{
+					FileInfoCache.Remove(item);
+					item = null;
+				}
+				// Use cached value.
+				return (item == null)
+					? (XInputMask?)null
+					: item.Mask;
+			}
+		}
+
+		void SetCachedMask(FileInfo fi, XInputMask mask)
+		{
+			lock (FileInfoCacheLock)
+			{
+				var item = FileInfoCache.Items.FirstOrDefault(x => string.Compare(x.FullName, fi.FullName, true) == 0);
+				if (item != null)
+				{
+					FileInfoCache.Remove(item);
+				}
+				item = new XInputMaskFileInfo();
+				item.FullName = fi.FullName;
+				item.Mask = mask;
+				item.Modified = fi.LastWriteTimeUtc;
+				item.Size = fi.Length;
+				FileInfoCache.Add(item);
+			}
+		}
 
 		public void ScanGames(string[] paths, IList<UserGame> games, IList<Program> programs)
 		{
-			// Make copy of paths.
-			Paths = paths.ToArray();
 			var e = new XInputMaskScannerEventArgs();
 			e.State = XInputMaskScannerState.Started;
 			ReportProgress(e);
 			var skipped = 0;
 			var added = 0;
 			var updated = 0;
-			for (int i = 0; i < Paths.Length; i++)
+			var dirs = paths.Select(x => new DirectoryInfo(x)).ToList();
+			// Create list to store file to scan.
+			var exes = new List<FileInfo>();
+			// Step 1: Get list of executables inside the folder.
+			for (int i = 0; i < dirs.Count; i++)
 			{
-				var path = Paths[i];
+				e = new XInputMaskScannerEventArgs();
+				e.CurentIndex = i;
+				e.Directories = dirs;
+				e.State = XInputMaskScannerState.Update;
+				e.Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", exes.Count, i + 1, dirs.Count);
+				ReportProgress(e);
+				var di = dirs[i];
 				// Don't allow to scan windows folder.
-				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (path.StartsWith(winFolder)) continue;
-				var di = new System.IO.DirectoryInfo(path);
+				var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				if (di.FullName.StartsWith(winFolder)) continue;
 				// Skip folders if don't exists.
 				if (!di.Exists) continue;
-				var exes = new List<FileInfo>();
 				EngineHelper.GetFiles(di, ref exes, "*.exe", true);
-				for (int f = 0; f < exes.Count; f++)
+			}
+			// Step 2: Scan files.
+			for (int i = 0; i < exes.Count; i++)
+			{
+				var exe = exes[i];
+				var exeName = exe.Name.ToLower();
+				var program = programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+				// If file doesn't exist in the game list then continue.
+				e = new XInputMaskScannerEventArgs();
+				e.Message = string.Format("Step 2: Scan file {0} of {1}. Please wait...", i + 1, exes.Count);
+				e.CurentIndex = i;
+				e.Files = exes;
+				e.State = XInputMaskScannerState.Update;
+				e.Added = added;
+				e.Skipped = skipped;
+				e.Updated = updated;
+				ReportProgress(e);
+				if (program == null)
 				{
-
-					var exe = exes[f];
-					var exeName = exe.Name.ToLower();
-					var program = programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
-					// If file doesn't exist in the game list then continue.
-					if (program == null)
+					skipped++;
+				}
+				else
+				{
+					e = new XInputMaskScannerEventArgs();
+					e.Program = program;
+					e.GameFileInfo = exe;
+					// Get game by executable name.
+					var game = games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+					// If file doesn't exist in the game list then...
+					if (game == null)
 					{
-						skipped++;
+						game = FromDisk(exe.FullName, SearchOption.AllDirectories);
+						game.LoadDefault(program, true);
+						e.State = XInputMaskScannerState.GameFound;
+						e.Game = game;
+						added++;
 					}
 					else
 					{
-						e = new XInputMaskScannerEventArgs();
-						e.Program = program;
-						e.GameFileInfo = exe;
-						// Get game by executable name.
-						var game = games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
-						// If file doesn't exist in the game list then...
-						if (game == null)
-						{
-							game = FromDisk(exe.FullName, SearchOption.AllDirectories);
-							game.LoadDefault(program, true);
-							e.State = XInputMaskScannerState.GameFound;
-							e.Game = game;
-							added++;
-						}
-						else
-						{
-							e.Game = game;
-							e.State = XInputMaskScannerState.GameUpdated;
-							updated++;
-						}
-						ReportProgress(e);
+						e.Game = game;
+						e.State = XInputMaskScannerState.GameUpdated;
+						updated++;
 					}
-					e = new XInputMaskScannerEventArgs();
-					e.State = XInputMaskScannerState.Update;
-					e.Added = added;
-					e.Skipped = skipped;
-					e.Updated = updated;
 					ReportProgress(e);
 				}
 			}
@@ -213,6 +260,12 @@ namespace x360ce.Engine
 			{
 				dic.Add(value, JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value));
 			}
+			// Check cache first.
+			var fi = new FileInfo(fullName);
+			var cachedMask = GetCachedMask(fi);
+			if (cachedMask.HasValue)
+				return cachedMask.Value;
+			// Do scan.
 			byte[] fileBytes = File.ReadAllBytes(fullName);
 			foreach (var key in dic.Keys)
 			{
@@ -226,11 +279,13 @@ namespace x360ce.Engine
 						for (j = 1; j < stringLBytes.Length && (fileBytes[i + j] == stringLBytes[j] || fileBytes[i + j] == stringUBytes[j]); j++) ;
 						if (j == stringLBytes.Length)
 						{
+							SetCachedMask(fi, key);
 							return key;
 						}
 					}
 				}
 			}
+			SetCachedMask(fi, mask);
 			return mask;
 		}
 

@@ -275,7 +275,16 @@ namespace x360ce.Engine
 			catch { }
 			try
 			{
-				fileList.AddRange(di.GetFiles(searchPattern));
+				// Add only different files.
+				var files = di.GetFiles(searchPattern);
+				for (int i = 0; i < files.Length; i++)
+				{
+					var fullName = files[i].FullName;
+					if (!fileList.Any(x => x.FullName == fullName))
+					{
+						fileList.Add(files[i]);
+					}
+				}
 			}
 			catch { }
 		}

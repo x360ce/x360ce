@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -90,13 +91,25 @@ namespace x360ce.App.Controls
 					}
 					break;
 				case XInputMaskScannerState.Update:
-					ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}",
-					e.CurentPath, scanner.Paths.Length,
-					scanner.Paths[e.CurentPath], e.Skipped, e.Added, e.Updated);
+					var sb = new StringBuilder();
+					sb.AppendLine(e.Message);
+					if (e.Directories != null)
+					{
+						sb.AppendFormat("Current Folder: {0}", e.Directories[e.CurentIndex].FullName);
+					}
+					if (e.Files != null)
+					{
+						sb.AppendFormat("Current File: {0}", e.Files[e.CurentIndex].FullName);
+					}
+					sb.AppendLine();
+					sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
+					sb.AppendLine();
+					ScanProgressLabel.Text = sb.ToString();
+					Application.DoEvents();
 					break;
 				case XInputMaskScannerState.Completed:
 					ScanGamesButton.Enabled = true;
-					ScanProgressLabel.Visible = false;
+					ScanProgressPanel.Visible = false;
 					SettingsManager.Save();
 					break;
 				default:
@@ -108,7 +121,7 @@ namespace x360ce.App.Controls
 		{
 			Invoke((MethodInvoker)delegate ()
 			{
-				ScanProgressLabel.Visible = true;
+				ScanProgressPanel.Visible = true;
 				ScanGamesButton.Enabled = false;
 			});
 			var scanner = new XInputMaskScanner();
