@@ -18,10 +18,10 @@ namespace x360ce.Engine
 		public FileInfo GameFileInfo { get; set; }
 
 		public List<DirectoryInfo> Directories;
+		public int DirectoryIndex { get; set; }
 
 		public List<FileInfo> Files;
-
-		public int CurentIndex { get; set; }
+		public int FileIndex { get; set; }
 
 		public int Skipped { get; set; }
 

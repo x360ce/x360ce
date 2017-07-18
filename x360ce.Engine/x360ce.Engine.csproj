@@ -194,6 +194,8 @@
       <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
+    <Compile Include="JocysCom\IO\FileFinder.cs" />
+    <Compile Include="JocysCom\IO\FileFinderEventArgs.cs" />
     <Compile Include="JocysCom\IO\HardwareControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

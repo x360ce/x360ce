@@ -90,16 +90,17 @@ namespace x360ce.App.Controls
 						e.Game.FileProductName = e.Program.FileProductName;
 					}
 					break;
-				case XInputMaskScannerState.Update:
+				case XInputMaskScannerState.DirectoryUpdate:
+				case XInputMaskScannerState.FileUpdate:
 					var sb = new StringBuilder();
 					sb.AppendLine(e.Message);
-					if (e.Directories != null)
+					if (e.State == XInputMaskScannerState.DirectoryUpdate && e.Directories != null)
 					{
-						sb.AppendFormat("Current Folder: {0}", e.Directories[e.CurentIndex].FullName);
+						sb.AppendFormat("Current Folder: {0}", e.Directories[e.DirectoryIndex].FullName);
 					}
-					if (e.Files != null)
+					if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null)
 					{
-						sb.AppendFormat("Current File: {0}", e.Files[e.CurentIndex].FullName);
+						sb.AppendFormat("Current File: {0}", e.Files[e.FileIndex].FullName);
 					}
 					sb.AppendLine();
 					sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);

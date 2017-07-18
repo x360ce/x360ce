@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.IO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -70,26 +71,19 @@ namespace x360ce.Engine
 			var skipped = 0;
 			var added = 0;
 			var updated = 0;
-			var dirs = paths.Select(x => new DirectoryInfo(x)).ToList();
-			// Create list to store file to scan.
-			var exes = new List<FileInfo>();
 			// Step 1: Get list of executables inside the folder.
-			for (int i = 0; i < dirs.Count; i++)
-			{
-				e = new XInputMaskScannerEventArgs();
-				e.CurentIndex = i;
-				e.Directories = dirs;
-				e.State = XInputMaskScannerState.Update;
-				e.Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", exes.Count, i + 1, dirs.Count);
-				ReportProgress(e);
-				var di = dirs[i];
-				// Don't allow to scan windows folder.
-				var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (di.FullName.StartsWith(winFolder)) continue;
-				// Skip folders if don't exists.
-				if (!di.Exists) continue;
-				EngineHelper.GetFiles(di, ref exes, "*.exe", true);
-			}
+			var ff = new FileFinder();
+			ff.FileFound += ff_FileFound;
+
+			var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+			var dirs = paths
+				.Select(x => x)
+				// Except win folders.
+				.Where(x => !x.StartsWith(winFolder))
+				.ToArray();
+			// Create list to store file to scan.
+			var exes = ff.GetFiles("*.exe", true, dirs);
+			ff.FileFound -= ff_FileFound;
 			// Step 2: Scan files.
 			for (int i = 0; i < exes.Count; i++)
 			{
@@ -99,9 +93,9 @@ namespace x360ce.Engine
 				// If file doesn't exist in the game list then continue.
 				e = new XInputMaskScannerEventArgs();
 				e.Message = string.Format("Step 2: Scan file {0} of {1}. Please wait...", i + 1, exes.Count);
-				e.CurentIndex = i;
+				e.FileIndex = i;
 				e.Files = exes;
-				e.State = XInputMaskScannerState.Update;
+				e.State = XInputMaskScannerState.FileUpdate;
 				e.Added = added;
 				e.Skipped = skipped;
 				e.Updated = updated;
@@ -138,6 +132,18 @@ namespace x360ce.Engine
 			e = new XInputMaskScannerEventArgs();
 			e.State = XInputMaskScannerState.Completed;
 			ReportProgress(e);
+		}
+
+		private void ff_FileFound(object sender, FileFinderEventArgs e)
+		{
+			var e2 = new XInputMaskScannerEventArgs();
+			e2.DirectoryIndex = e.DirectoryIndex;
+			e2.Directories = e.Directories;
+			e2.FileIndex = e.FileIndex;
+			e2.Files = e.Files;
+			e2.State = XInputMaskScannerState.DirectoryUpdate;
+			e2.Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", e.Files.Count, e.DirectoryIndex + 1, e.Directories.Count);
+			ReportProgress(e2);
 		}
 
 		public UserGame FromDisk(string fileName, SearchOption? searchOption = null)

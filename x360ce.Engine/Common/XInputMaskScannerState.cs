@@ -12,7 +12,8 @@ namespace x360ce.Engine
 		Completed,
 		GameFound,
 		GameUpdated,
-		Update,
+		DirectoryUpdate,
+		FileUpdate
 	}
 
 }
