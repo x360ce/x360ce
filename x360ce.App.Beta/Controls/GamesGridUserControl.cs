@@ -115,8 +115,6 @@ namespace x360ce.App.Controls
 						// If this is 64-bit game then...
 						else if (is64bit)
 						{
-							// Disable other games
-							game.IsEnabled = false;
 							foreach (var oldGame in oldGames)
 							{
 								if (oldGame.IsEnabled)
