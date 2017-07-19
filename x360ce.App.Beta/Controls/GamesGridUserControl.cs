@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -58,11 +59,14 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm("Scan for games on your computer?", "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.OK)
 			{
+				ScanStarted = DateTime.Now;
 				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames);
 				if (!success) ScanProgressLabel.Text = "Scan failed!";
 			}
 		}
 
+		DateTime ScanStarted;
+		object GameAddLock = new object();
 
 		private void Scanner_Progress(object sender, XInputMaskScannerEventArgs e)
 		{
@@ -81,7 +85,52 @@ namespace x360ce.App.Controls
 					ScanProgressLabel.Text = "Scanning...";
 					break;
 				case XInputMaskScannerState.GameFound:
-					SettingsManager.UserGames.Items.Add(e.Game);
+					lock (GameAddLock)
+					{
+						// Get game to add.
+						var game = e.Game;
+						var pa = (ProcessorArchitecture)game.ProcessorArchitecture;
+						var is64bit = (pa == ProcessorArchitecture.Amd64 || pa == ProcessorArchitecture.IA64);
+						var dirFullName = e.GameFileInfo.Directory.FullName.ToLower();
+						// Get existing games in the same folder.
+						var oldGames = SettingsManager.UserGames.Items.Where(x => x.FullPath.ToLower().StartsWith(dirFullName)).ToList();
+						// If this is 32-bit windows but game is 64-bit then...
+						if (!Environment.Is64BitOperatingSystem && is64bit)
+						{
+							// Disable game.
+							game.IsEnabled = false;
+						}
+						// If list contains enabled old game before scan started then...
+						else if (oldGames.Any(x => x.IsEnabled && x.DateCreated < ScanStarted))
+						{
+							// Disable game.
+							game.IsEnabled = false;
+						}
+						// If contains enabled 64-bit game then...
+						else if (oldGames.Any(x => x.IsEnabled && x.ProcessorArchitecture == (int)ProcessorArchitecture.Amd64))
+						{
+							// Disable game.
+							game.IsEnabled = false;
+						}
+						// If this is 64-bit game then...
+						else if (is64bit)
+						{
+							// Disable other games
+							game.IsEnabled = false;
+							foreach (var oldGame in oldGames)
+							{
+								if (oldGame.IsEnabled)
+									oldGame.IsEnabled = false;
+							}
+						}
+						// If contains enabled game then...
+						else if (oldGames.Any(x => x.IsEnabled))
+						{
+							// Disable game.
+							game.IsEnabled = false;
+						}
+						SettingsManager.UserGames.Add(game);
+					}
 					break;
 				case XInputMaskScannerState.GameUpdated:
 					e.Game.FullPath = e.GameFileInfo.FullName;
@@ -326,6 +375,26 @@ namespace x360ce.App.Controls
 			else if (e.ColumnIndex == grid.Columns[FileFolderColumn.Name].Index)
 			{
 				e.Value = Path.GetDirectoryName(item.FullPath);
+			}
+			else if (e.ColumnIndex == grid.Columns[PlatformColumn.Name].Index)
+			{
+				var platform = (ProcessorArchitecture)item.ProcessorArchitecture;
+				switch (platform)
+				{
+					case ProcessorArchitecture.MSIL:
+						e.Value = "Any CPU";
+						break;
+					case ProcessorArchitecture.X86:
+						e.Value = "32-bit";
+						break;
+					case ProcessorArchitecture.IA64:
+					case ProcessorArchitecture.Amd64:
+						e.Value = "64-bit";
+						break;
+					default:
+						e.Value = "";
+						break;
+				}
 			}
 		}
 

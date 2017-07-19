@@ -28,17 +28,11 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.GamesDataGridView = new System.Windows.Forms.DataGridView();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.FileFolderColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.EmptyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.ScanGamesButton = new System.Windows.Forms.ToolStripButton();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
@@ -56,6 +50,14 @@
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.ScanProgressPanel = new System.Windows.Forms.Panel();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.GameIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.FileNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PlatformColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.FileFolderColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.EmptyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.ScanProgressPanel.SuspendLayout();
@@ -69,13 +71,13 @@
 			this.GamesDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.GamesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GamesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.GamesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.GamesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsEnabledColumn,
@@ -83,29 +85,30 @@
             this.GameIdColumn,
             this.FileNameColumn,
             this.ProductNameColumn,
+            this.PlatformColumn,
             this.FileFolderColumn,
             this.EmptyColumn});
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.GamesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.GamesDataGridView.Name = "GamesDataGridView";
 			this.GamesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.GamesDataGridView.RowHeadersVisible = false;
 			this.GamesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.GamesDataGridView.Size = new System.Drawing.Size(507, 564);
@@ -114,67 +117,6 @@
 			this.GamesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GamesDataGridView_CellFormatting);
 			this.GamesDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.GamesDataGridView_DataBindingComplete);
 			this.GamesDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GamesDataGridView_KeyDown);
-			// 
-			// IsEnabledColumn
-			// 
-			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "";
-			this.IsEnabledColumn.Name = "IsEnabledColumn";
-			this.IsEnabledColumn.ReadOnly = true;
-			this.IsEnabledColumn.Width = 24;
-			// 
-			// MyIconColumn
-			// 
-			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyIconColumn.HeaderText = "";
-			this.MyIconColumn.MinimumWidth = 24;
-			this.MyIconColumn.Name = "MyIconColumn";
-			this.MyIconColumn.ReadOnly = true;
-			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.MyIconColumn.Width = 24;
-			// 
-			// GameIdColumn
-			// 
-			this.GameIdColumn.DataPropertyName = "GameId";
-			this.GameIdColumn.HeaderText = "ID";
-			this.GameIdColumn.Name = "GameIdColumn";
-			this.GameIdColumn.ReadOnly = true;
-			this.GameIdColumn.Visible = false;
-			// 
-			// FileNameColumn
-			// 
-			this.FileNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.FileNameColumn.DataPropertyName = "FileName";
-			this.FileNameColumn.FillWeight = 30F;
-			this.FileNameColumn.HeaderText = "File Name";
-			this.FileNameColumn.Name = "FileNameColumn";
-			this.FileNameColumn.ReadOnly = true;
-			this.FileNameColumn.Width = 79;
-			// 
-			// ProductNameColumn
-			// 
-			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.ProductNameColumn.DataPropertyName = "FileProductName";
-			this.ProductNameColumn.FillWeight = 70F;
-			this.ProductNameColumn.HeaderText = "Product Name";
-			this.ProductNameColumn.Name = "ProductNameColumn";
-			this.ProductNameColumn.ReadOnly = true;
-			// 
-			// FileFolderColumn
-			// 
-			this.FileFolderColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.FileFolderColumn.DataPropertyName = "FullPath";
-			this.FileFolderColumn.HeaderText = "File Folder";
-			this.FileFolderColumn.Name = "FileFolderColumn";
-			this.FileFolderColumn.ReadOnly = true;
-			this.FileFolderColumn.Width = 80;
-			// 
-			// EmptyColumn
-			// 
-			this.EmptyColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.EmptyColumn.HeaderText = "";
-			this.EmptyColumn.Name = "EmptyColumn";
-			this.EmptyColumn.ReadOnly = true;
 			// 
 			// GamesToolStrip
 			// 
@@ -321,6 +263,79 @@
 			this.ScanProgressPanel.TabIndex = 4;
 			this.ScanProgressPanel.Visible = false;
 			// 
+			// IsEnabledColumn
+			// 
+			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
+			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.Name = "IsEnabledColumn";
+			this.IsEnabledColumn.ReadOnly = true;
+			this.IsEnabledColumn.Width = 24;
+			// 
+			// MyIconColumn
+			// 
+			this.MyIconColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyIconColumn.HeaderText = "";
+			this.MyIconColumn.MinimumWidth = 24;
+			this.MyIconColumn.Name = "MyIconColumn";
+			this.MyIconColumn.ReadOnly = true;
+			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.MyIconColumn.Width = 24;
+			// 
+			// GameIdColumn
+			// 
+			this.GameIdColumn.DataPropertyName = "GameId";
+			this.GameIdColumn.HeaderText = "ID";
+			this.GameIdColumn.Name = "GameIdColumn";
+			this.GameIdColumn.ReadOnly = true;
+			this.GameIdColumn.Visible = false;
+			// 
+			// FileNameColumn
+			// 
+			this.FileNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.FileNameColumn.DataPropertyName = "FileName";
+			this.FileNameColumn.FillWeight = 30F;
+			this.FileNameColumn.HeaderText = "File Name";
+			this.FileNameColumn.Name = "FileNameColumn";
+			this.FileNameColumn.ReadOnly = true;
+			this.FileNameColumn.Width = 79;
+			// 
+			// ProductNameColumn
+			// 
+			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.ProductNameColumn.DataPropertyName = "FileProductName";
+			this.ProductNameColumn.FillWeight = 70F;
+			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.Name = "ProductNameColumn";
+			this.ProductNameColumn.ReadOnly = true;
+			// 
+			// PlatformColumn
+			// 
+			this.PlatformColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.PlatformColumn.DataPropertyName = "ProcessorArchitecture";
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.PlatformColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			this.PlatformColumn.HeaderText = "Platform";
+			this.PlatformColumn.Name = "PlatformColumn";
+			this.PlatformColumn.ReadOnly = true;
+			this.PlatformColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.PlatformColumn.Width = 51;
+			// 
+			// FileFolderColumn
+			// 
+			this.FileFolderColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.FileFolderColumn.DataPropertyName = "FullPath";
+			this.FileFolderColumn.HeaderText = "File Folder";
+			this.FileFolderColumn.Name = "FileFolderColumn";
+			this.FileFolderColumn.ReadOnly = true;
+			this.FileFolderColumn.Width = 80;
+			// 
+			// EmptyColumn
+			// 
+			this.EmptyColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.EmptyColumn.HeaderText = "";
+			this.EmptyColumn.Name = "EmptyColumn";
+			this.EmptyColumn.ReadOnly = true;
+			// 
 			// GamesGridUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -360,13 +375,14 @@
 		private System.Windows.Forms.OpenFileDialog ImportOpenFileDialog;
 		private System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
 		public System.Windows.Forms.DataGridView GamesDataGridView;
+		private System.Windows.Forms.Panel ScanProgressPanel;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PlatformColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileFolderColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn EmptyColumn;
-		private System.Windows.Forms.Panel ScanProgressPanel;
 	}
 }

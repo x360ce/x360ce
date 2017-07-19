@@ -12,6 +12,13 @@ namespace x360ce.Engine
 {
 	public class XInputMaskScanner
 	{
+
+		public XInputMaskScanner()
+		{
+			ff = new FileFinder();
+			ff.FileFound += ff_FileFound;
+		}
+
 		public event EventHandler<XInputMaskScannerEventArgs> Progress;
 
 		void ReportProgress(XInputMaskScannerEventArgs e)
@@ -26,6 +33,10 @@ namespace x360ce.Engine
 		public static XSettingsData<XInputMaskFileInfo> FileInfoCache = new XSettingsData<XInputMaskFileInfo>("XInputMask", "XInput mask scan cache.");
 
 		static object FileInfoCacheLock = new object();
+
+		public bool IsStopping { get { return ff.IsStopping; } set { ff.IsStopping = value; } }
+
+		public bool IsPaused { get { return ff.IsPaused; } set { ff.IsPaused = value; } }
 
 		XInputMask? GetCachedMask(FileInfo fi)
 		{
@@ -63,18 +74,19 @@ namespace x360ce.Engine
 			}
 		}
 
+		FileFinder ff;
+
 		public void ScanGames(string[] paths, IList<UserGame> games, IList<Program> programs)
 		{
+			IsStopping = false;
+			IsPaused = false;
+			// Step 1: Get list of executables inside the folder.
 			var e = new XInputMaskScannerEventArgs();
 			e.State = XInputMaskScannerState.Started;
 			ReportProgress(e);
 			var skipped = 0;
 			var added = 0;
 			var updated = 0;
-			// Step 1: Get list of executables inside the folder.
-			var ff = new FileFinder();
-			ff.FileFound += ff_FileFound;
-
 			var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 			var dirs = paths
 				.Select(x => x)
@@ -83,7 +95,6 @@ namespace x360ce.Engine
 				.ToArray();
 			// Create list to store file to scan.
 			var exes = ff.GetFiles("*.exe", true, dirs);
-			ff.FileFound -= ff_FileFound;
 			// Step 2: Scan files.
 			for (int i = 0; i < exes.Count; i++)
 			{
@@ -215,6 +226,12 @@ namespace x360ce.Engine
 			var masks = new Dictionary<string, XInputMask>();
 			foreach (var file in files)
 			{
+				// Pause or Stop.
+				while (IsPaused && !IsStopping)
+					System.Threading.Thread.Sleep(500);
+				if (IsStopping)
+					return masks;
+				// Do tasks.
 				// Skip XInput files.
 				if (string.Compare(file, "xinput", true) == 00)
 					continue;
@@ -280,6 +297,12 @@ namespace x360ce.Engine
 				int j;
 				for (var i = 0; i <= (fileBytes.Length - stringLBytes.Length); i++)
 				{
+					// Pause or Stop.
+					while (IsPaused && !IsStopping)
+						System.Threading.Thread.Sleep(500);
+					if (IsStopping)
+						return mask;
+					// Do tasks.
 					if (fileBytes[i] == stringLBytes[0] || fileBytes[i] == stringUBytes[0])
 					{
 						for (j = 1; j < stringLBytes.Length && (fileBytes[i + j] == stringLBytes[j] || fileBytes[i + j] == stringUBytes[j]); j++) ;

@@ -13,13 +13,24 @@ namespace JocysCom.ClassLibrary.IO
 
 		int _DirectoryIndex;
 		List<DirectoryInfo> _Directories;
+		public bool IsPaused { get; set; }
+
+		public bool IsStopping { get; set; }
 
 		public List<FileInfo> GetFiles(string searchPattern, bool allDirectories = false, params string[] paths)
 		{
+			IsStopping = false;
+			IsPaused = false;
 			var fis = new List<FileInfo>();
 			_Directories = paths.Select(x => new DirectoryInfo(x)).ToList();
 			for (int i = 0; i < _Directories.Count; i++)
 			{
+				// Pause or Stop.
+				while (IsPaused && !IsStopping)
+					System.Threading.Thread.Sleep(500);
+				if (IsStopping)
+					return fis;
+				// Do tasks.
 				_DirectoryIndex = i;
 				var di = _Directories[i];
 				// Skip folders if don't exists.
@@ -37,6 +48,12 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					foreach (DirectoryInfo subDi in di.GetDirectories())
 					{
+						// Pause or Stop.
+						while (IsPaused && !IsStopping)
+							System.Threading.Thread.Sleep(500);
+						if (IsStopping)
+							return;
+						// Do tasks.
 						AddFiles(subDi, ref fileList, searchPattern, allDirectories);
 					}
 				}
@@ -48,6 +65,12 @@ namespace JocysCom.ClassLibrary.IO
 				var files = di.GetFiles(searchPattern);
 				for (int i = 0; i < files.Length; i++)
 				{
+					// Pause or Stop.
+					while (IsPaused && !IsStopping)
+						System.Threading.Thread.Sleep(500);
+					if (IsStopping)
+						return;
+					// Do tasks.
 					var fullName = files[i].FullName;
 					if (!fileList.Any(x => x.FullName == fullName))
 					{
