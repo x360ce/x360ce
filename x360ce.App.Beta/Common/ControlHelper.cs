@@ -72,7 +72,7 @@ namespace x360ce.App
 			}
 		}
 
-		public static void ApplyRowStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, bool enabled)
+		public static void ApplyCellStyle(DataGridView grid, DataGridViewCellFormattingEventArgs e, bool enabled)
 		{
 			e.CellStyle.ForeColor = enabled
 				? grid.DefaultCellStyle.ForeColor
@@ -80,6 +80,12 @@ namespace x360ce.App
 			e.CellStyle.SelectionBackColor = enabled
 			 ? grid.DefaultCellStyle.SelectionBackColor
 			 : SystemColors.ControlDark;
+			if (e.RowIndex > -1 && e.ColumnIndex > -1)
+			{
+				var cell = grid.Rows[e.RowIndex].Cells[e.ColumnIndex];
+				cell.Style.ForeColor = e.CellStyle.ForeColor;
+				cell.Style.SelectionBackColor = e.CellStyle.SelectionBackColor;
+			}
 		}
 
 		public static void ApplyBorderStyle(DataGridView grid)
@@ -119,17 +125,24 @@ namespace x360ce.App
 			var tr = new Point(bounds.X + bounds.Width - 1, bounds.Y);
 			var bl = new Point(bounds.X, bounds.Y + bounds.Height - 1);
 			var br = new Point(bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-			var style = grid.DefaultCellStyle;
+			DataGridViewCellStyle style;
 			// If column header then...
 			if (e.RowIndex == -1)
 				style = grid.ColumnHeadersDefaultCellStyle;
-			// if row header
-			if (e.ColumnIndex == -1)
+			// If row header then...
+			else if (e.ColumnIndex == -1)
 				style = grid.RowHeadersDefaultCellStyle;
+			// If normal cell then...
+			else
+			{
+				var cell = grid.Rows[e.RowIndex].Cells[e.ColumnIndex];
+				style = cell.HasStyle ? cell.InheritedStyle : grid.DefaultCellStyle;
+			}
+			//style = grid.DefaultCellStyle;
 			// If header then
 			var color = selected
-				? style.SelectionBackColor
-				: style.BackColor;
+			? style.SelectionBackColor
+			: style.BackColor;
 			// Cell background colour.
 			var back = new Pen(color, 1);
 			// Border colour.

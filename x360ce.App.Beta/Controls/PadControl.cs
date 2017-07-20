@@ -1470,7 +1470,7 @@ namespace x360ce.App.Controls
 			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
 			var device = SettingsManager.GetDevice(setting.InstanceGuid);
 			var isConnected = (device != null);
-			ControlHelper.ApplyRowStyle(grid, e, isConnected);
+			ControlHelper.ApplyCellStyle(grid, e, isConnected);
 			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
 			{
 				// Hide device Instance GUID from public eyes. Show part of checksum.

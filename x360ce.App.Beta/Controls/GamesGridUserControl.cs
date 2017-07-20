@@ -65,6 +65,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		XInputMaskScanner GameScanner;
 		DateTime ScanStarted;
 		object GameAddLock = new object();
 
@@ -89,43 +90,39 @@ namespace x360ce.App.Controls
 					{
 						// Get game to add.
 						var game = e.Game;
-						var pa = (ProcessorArchitecture)game.ProcessorArchitecture;
-						var is64bit = (pa == ProcessorArchitecture.Amd64 || pa == ProcessorArchitecture.IA64);
 						var dirFullName = e.GameFileInfo.Directory.FullName.ToLower();
 						// Get existing games in the same folder.
 						var oldGames = SettingsManager.UserGames.Items.Where(x => x.FullPath.ToLower().StartsWith(dirFullName)).ToList();
+						var oldGame = oldGames.FirstOrDefault(x => x.IsEnabled && x.DateCreated < ScanStarted);
+						var enabledGame = oldGames.FirstOrDefault(x => x.IsEnabled);
 						// If this is 32-bit windows but game is 64-bit then...
-						if (!Environment.Is64BitOperatingSystem && is64bit)
+						if (!Environment.Is64BitOperatingSystem && game.Is64Bit)
 						{
 							// Disable game.
 							game.IsEnabled = false;
 						}
-						// If list contains enabled old game before scan started then...
-						else if (oldGames.Any(x => x.IsEnabled && x.DateCreated < ScanStarted))
+						// If list contains enabled old game for other platform before scan started then...
+						else if (oldGame != null)
 						{
-							// Disable game.
-							game.IsEnabled = false;
+							// Enable if platform is the same, disable otherwise.
+							game.IsEnabled = game.ProcessorArchitecture == oldGame.ProcessorArchitecture;
 						}
-						// If contains enabled 64-bit game then...
-						else if (oldGames.Any(x => x.IsEnabled && x.ProcessorArchitecture == (int)ProcessorArchitecture.Amd64))
-						{
-							// Disable game.
-							game.IsEnabled = false;
-						}
+						// At this point, oldGames list contains only new games added during the scan.
 						// If this is 64-bit game then...
-						else if (is64bit)
+						else if (game.Is64Bit)
 						{
-							foreach (var oldGame in oldGames)
+							foreach (var g in oldGames)
 							{
-								if (oldGame.IsEnabled)
-									oldGame.IsEnabled = false;
+								// Disable non 64-bit games.
+								if (g.IsEnabled && !g.Is64Bit)
+									g.IsEnabled = false;
 							}
 						}
 						// If contains enabled game then...
-						else if (oldGames.Any(x => x.IsEnabled))
+						else if (enabledGame != null)
 						{
-							// Disable game.
-							game.IsEnabled = false;
+							// Enable if platform is the same, disable otherwise.
+							game.IsEnabled = game.ProcessorArchitecture == enabledGame.ProcessorArchitecture; ;
 						}
 						SettingsManager.UserGames.Add(game);
 					}
@@ -172,12 +169,12 @@ namespace x360ce.App.Controls
 				ScanProgressPanel.Visible = true;
 				ScanGamesButton.Enabled = false;
 			});
-			var scanner = new XInputMaskScanner();
-			scanner.Progress += Scanner_Progress;
+			GameScanner = new XInputMaskScanner();
+			GameScanner.Progress += Scanner_Progress;
 			var paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
 			var games = SettingsManager.UserGames.Items;
 			var programs = SettingsManager.Programs.Items;
-			scanner.ScanGames(paths, games, programs);
+			GameScanner.ScanGames(paths, games, programs);
 		}
 
 		#endregion
@@ -300,6 +297,20 @@ namespace x360ce.App.Controls
 				var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
 				// Changed check (enabled state) of the current item.
 				item.IsEnabled = !item.IsEnabled;
+				// If game was enabled then...
+				if (item.IsEnabled)
+				{
+					var dirFullName = Path.GetDirectoryName(item.FullPath).ToLower();
+					// Get games with different platform in the same folder.
+					var otherGames = SettingsManager.UserGames.Items
+						.Where(x => x.IsEnabled && x.FullPath.ToLower().StartsWith(dirFullName) && x.ProcessorArchitecture != item.ProcessorArchitecture)
+						.ToList();
+					// Disable other games, because used have to choose which 
+					foreach (var g in otherGames)
+					{
+						g.IsEnabled = false;
+					}
+				}
 			}
 		}
 
@@ -365,7 +376,9 @@ namespace x360ce.App.Controls
 			var row = grid.Rows[e.RowIndex];
 			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
-			ControlHelper.ApplyRowStyle(grid, e, item.IsEnabled);
+			ControlHelper.ApplyCellStyle(grid, e, item.IsEnabled);
+			//var cell = row.Cells[e.ColumnIndex];
+			//grid.InvalidateCell(cell);
 			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{
 				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
@@ -380,7 +393,7 @@ namespace x360ce.App.Controls
 				switch (platform)
 				{
 					case ProcessorArchitecture.MSIL:
-						e.Value = "Any CPU";
+						e.Value = "MSIL";
 						break;
 					case ProcessorArchitecture.X86:
 						e.Value = "32-bit";
@@ -401,6 +414,27 @@ namespace x360ce.App.Controls
 		private void GamesGridUserControl_Load(object sender, EventArgs e)
 		{
 			InitControl();
+		}
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (components != null)
+				{
+					components.Dispose();
+				}
+				var gs = GameScanner;
+				if (gs != null)
+				{
+					gs.IsStopping = true;
+				}
+			}
+			base.Dispose(disposing);
 		}
 	}
 }

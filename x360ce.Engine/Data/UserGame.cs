@@ -39,6 +39,28 @@ namespace x360ce.Engine.Data
 			}
 		}
 
+		[XmlIgnore]
+		public bool Is64Bit
+		{
+			get
+			{
+				return
+					ProcessorArchitecture == (int)System.Reflection.ProcessorArchitecture.Amd64 ||
+					ProcessorArchitecture == (int)System.Reflection.ProcessorArchitecture.IA64 ||
+					ProcessorArchitecture == (int)System.Reflection.ProcessorArchitecture.MSIL;
+			}
+		}
+
+		[XmlIgnore]
+		public bool Is32Bit
+		{
+			get
+			{
+				return
+					ProcessorArchitecture == (int)System.Reflection.ProcessorArchitecture.X86 ||
+					ProcessorArchitecture == (int)System.Reflection.ProcessorArchitecture.MSIL;
+			}
+		}
 
 		//#region Do not serialize default values
 
