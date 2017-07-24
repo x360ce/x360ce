@@ -245,6 +245,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="JocysCom\Security\MD5.cs" />
     <Compile Include="JocysCom\Security\Rijndael.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />

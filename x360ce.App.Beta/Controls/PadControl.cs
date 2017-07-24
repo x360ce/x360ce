@@ -153,6 +153,7 @@ namespace x360ce.App.Controls
 					item.MapTo = (int)MapTo.None;
 				}
 			}
+			ShowHideAndSelectGridRows(null);
 			UpdateGridButtons();
 		}
 
@@ -170,9 +171,14 @@ namespace x360ce.App.Controls
 			lock (DevicesToMapDataGridViewLock)
 			{
 				var grid = MappedDevicesDataGridView;
+				var game = MainForm.Current.CurrentGame;
 				// Get rows which must be displayed on the list.
-				var itemsToShow = SettingsManager.Settings.Items.Where(x => x.MapTo == (int)MappedTo).ToList();
-
+				var itemsToShow = SettingsManager.Settings.Items
+					// Filter devices by controller.	
+					.Where(x => x.MapTo == (int)MappedTo)
+					// Filter devices by selected game.
+					.Where(x => x.FileName == game.FileName && x.FileProductName == game.FileProductName)
+					.ToList();
 				var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
 				var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
 
@@ -183,10 +189,16 @@ namespace x360ce.App.Controls
 						? new List<Guid>() { instanceGuid.Value }
 						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
 					grid.CurrentCell = null;
-					// Suspend Layout and CurrencyManager to avoid exceptions.
+					// Suspend Layout.
 					grid.SuspendLayout();
-					var cm = (CurrencyManager)BindingContext[grid.DataSource];
-					cm.SuspendBinding();
+					var bound = grid.DataSource != null;
+					CurrencyManager cm = null;
+					if (bound)
+					{
+						// Suspend CurrencyManager to avoid exceptions.
+						cm = (CurrencyManager)BindingContext[grid.DataSource];
+						cm.SuspendBinding();
+					}
 					// Do removal.
 					foreach (var item in itemsToRemove)
 					{
@@ -197,8 +209,11 @@ namespace x360ce.App.Controls
 					{
 						mappedItems.Add(item);
 					}
-					// Resume CurrencyManager and Layout.
-					cm.ResumeBinding();
+					if (bound)
+					{
+						// Resume CurrencyManager and Layout.
+						cm.ResumeBinding();
+					}
 					grid.ResumeLayout();
 					// Restore selection.
 					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "InstanceGuid", selection);

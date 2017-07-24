@@ -74,7 +74,7 @@ namespace x360ce.App.Controls
 			TimeoutNumericUpDown.Value = item.Timeout;
 			if (en)
 			{
-				var status = GetGameStatus(CurrentGame, false);
+				var status = CheckDllStatusAndFix(CurrentGame, false);
 				ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
 				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK);
 				_DefaultSettings = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
@@ -87,7 +87,7 @@ namespace x360ce.App.Controls
 		}
 
 		// Check game settings against folder.
-		public GameRefreshStatus GetGameStatus(x360ce.Engine.Data.UserGame game, bool fix = false)
+		public GameRefreshStatus CheckDllStatusAndFix(x360ce.Engine.Data.UserGame game, bool fix = false)
 		{
 			var fi = new FileInfo(game.FullPath);
 			// Check if game file exists.
@@ -358,7 +358,7 @@ namespace x360ce.App.Controls
 		{
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var status = GetGameStatus(CurrentGame, false);
+			var status = CheckDllStatusAndFix(CurrentGame, false);
 			var values = Enum.GetValues(typeof(GameRefreshStatus));
 			List<string> errors = new List<string>();
 			foreach (GameRefreshStatus value in values)
@@ -377,7 +377,7 @@ namespace x360ce.App.Controls
 
 		void ApplySettings()
 		{
-			var status = GetGameStatus(CurrentGame, true);
+			var status = CheckDllStatusAndFix(CurrentGame, true);
 			ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
 			SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.OK);
 		}

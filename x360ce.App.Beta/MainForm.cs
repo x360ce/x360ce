@@ -463,9 +463,11 @@ namespace x360ce.App
 		public void NotifySettingsChange(Control changedControl)
 		{
 			var iniContent = GetINI();
-			var changed = SettingsManager.Current.ApplyAllSettingsToXML();
+			bool changed = false;
+			changed |= SettingsManager.Current.ApplyAllSettingsToXML();
+			//changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
 			// If settings changed then...
-			if (SettingsManager.Current.WriteSettingToIni(changedControl))
+			if (changed)
 			{
 				// Stop updating forms and controls.
 				// Update Timer will be started inside Settings timer.
@@ -477,7 +479,7 @@ namespace x360ce.App
 
 		public string GetINI()
 		{
-			var game = MainForm.Current.CurrentGame;
+			var game = CurrentGame;
 			var iniContent = SettingsManager.Current.GetIniContent(game);
 			if (IniTextBox.Text != iniContent)
 			{
@@ -908,7 +910,7 @@ namespace x360ce.App
 			{
 				for (int i = 0; i < 4; i++)
 				{
-					var game = MainForm.Current.CurrentGame;
+					var game = CurrentGame;
 					var currentFile = (game == null) ? null : game.FileName;
 					// Get devices mapped to game and specific controller index.
 					var devices = SettingsManager.GetDevices(currentFile, (MapTo)(i + 1));
@@ -1475,8 +1477,9 @@ namespace x360ce.App
 		{
 			SaveButton.Enabled = false;
 			Application.DoEvents();
-			SettingsManager.Current.WriteAllSettingsToINI();
-			var iniContent = MainForm.Current.GetINI();
+			//SettingsManager.Current.WriteAllSettingsToINI();
+			var iniContent = Current.GetINI();
+			SettingsManager.Current.SaveINI(CurrentGame);
 			SettingsManager.Current.ApplyAllSettingsToXML();
 			SaveAll();
 			var timer = new System.Timers.Timer();

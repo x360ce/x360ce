@@ -166,8 +166,8 @@ namespace x360ce.App
 			sb.Append(';').Append('-', 64).AppendLine();
 			sb.AppendLine("; Instance settings used for manually mapped controllers.");
 			sb.Append(';').Append('-', 64).AppendLine();
-			// Get all instances mapped to PADs.
-			var instances = Settings.Items.Where(x => x.MapTo > 0 && x.IsEnabled).ToArray();
+			// Get all instances mapped to PADs for specific game.
+			var instances = Settings.Items.Where(x => x.MapTo > 0 && x.IsEnabled && x.FileName == game.FileName && x.FileProductName == game.FileProductName).ToArray();
 			for (int i = 0; i < instances.Count(); i++)
 			{
 				sb.AppendLine();
@@ -257,47 +257,87 @@ namespace x360ce.App
 			return sb.ToString();
 		}
 
-		/// <summary>
-		/// Write value to INI file by control.
-		/// </summary>
-		public bool WriteAllSettingsToINI()
+		public static byte[] WriteToString(string content)
 		{
-			return WriteSettingsToIni(SettingsMap.ToArray());
+			var ms = new MemoryStream();
+			var sw = new StreamWriter(ms, System.Text.Encoding.Unicode);
+			sw.Write(content);
+			sw.Flush();
+			var bytes = ms.ToArray();
+			sw.Dispose();
+			return bytes;
 		}
 
-		/// <summary>
-		/// Write ALL values to INI.
-		/// </summary>
-		public bool WriteSettingToIni(Control control)
+		public void SaveINI(UserGame game)
 		{
-			var item = SettingsMap.FirstOrDefault(x => x.Control == control);
-			return WriteSettingsToIni(item);
-		}
-
-		/// <summary>
-		/// Write value to INI file by control.
-		/// </summary>
-		bool WriteSettingsToIni(params SettingsMapItem[] items)
-		{
-			var saved = false;
-			var ini = new Ini(IniFileName);
-			foreach (var item in items)
+			var fullPath = Path.GetDirectoryName(game.FullPath);
+			var fullName = Path.Combine(fullPath, IniFileName);
+			var iniContent = GetIniContent(game);
+			var iniBytes = WriteToString(iniContent);
+			var md5 = new JocysCom.ClassLibrary.Security.MD5();
+			var fi = new FileInfo(fullName);
+			var write = false;
+			if (!fi.Exists)
 			{
-				if (item != null)
-				{
-					var section = item.IniSection;
-					string key = item.IniKey;
-					var oldValue = ini.GetValue(section, key);
-					var newValue = GetSettingValue(item.Control);
-					if (oldValue != newValue)
-					{
-						var result = ini.SetValue(section, key, newValue);
-						if (result != 0) saved = true;
-					}
-				}
+				write = true;
 			}
-			return saved;
+			else if (fi.Length != iniBytes.Length)
+			{
+				write = true;
+			}
+			else
+			{
+				var iniMd5 = JocysCom.ClassLibrary.Security.MD5.GetGuid(iniBytes);
+				var checksum = md5.GetGuidFromFile(fi.FullName);
+				write = !iniMd5.Equals(checksum);
+			}
+			if (write)
+			{
+				File.WriteAllBytes(fi.FullName, iniBytes);
+			}
 		}
+
+		///// <summary>
+		///// Write value to INI file by control.
+		///// </summary>
+		//public bool WriteAllSettingsToINI()
+		//{
+		//	return WriteSettingsToIni(SettingsMap.ToArray());
+		//}
+
+		///// <summary>
+		///// Write ALL values to INI.
+		///// </summary>
+		//public bool WriteSettingToIni(Control control)
+		//{
+		//	var item = SettingsMap.FirstOrDefault(x => x.Control == control);
+		//	return WriteSettingsToIni(item);
+		//}
+
+		///// <summary>
+		///// Write value to INI file by control.
+		///// </summary>
+		//bool WriteSettingsToIni(params SettingsMapItem[] items)
+		//{
+		//	var saved = false;
+		//	var ini = new Ini(IniFileName);
+		//	foreach (var item in items)
+		//	{
+		//		if (item != null)
+		//		{
+		//			var section = item.IniSection;
+		//			string key = item.IniKey;
+		//			var oldValue = ini.GetValue(section, key);
+		//			var newValue = GetSettingValue(item.Control);
+		//			if (oldValue != newValue)
+		//			{
+		//				var result = ini.SetValue(section, key, newValue);
+		//				if (result != 0) saved = true;
+		//			}
+		//		}
+		//	}
+		//	return saved;
+		//}
 
 	}
 }
