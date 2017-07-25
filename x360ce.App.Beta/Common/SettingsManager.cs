@@ -41,7 +41,7 @@ namespace x360ce.App
 				{
 					if (_OptionsData == null)
 					{
-						_OptionsData = new XSettingsData<Options>("Options", "x360ce Options");
+						_OptionsData = new XSettingsData<Options>("Options.xml", "x360ce Options");
 						_OptionsData.Load();
 						if (_OptionsData.Items.Count == 0)
 						{
@@ -62,32 +62,32 @@ namespace x360ce.App
 
 		/// <summary>Programs - Default settings for most popular Games.</summary>
 		/// <remarks>Used to create PDB file.</remarks>
-		public static XSettingsData<Engine.Data.Program> Programs = new XSettingsData<Engine.Data.Program>("Programs", "Default settings for most popular Games.");
+		public static XSettingsData<Engine.Data.Program> Programs = new XSettingsData<Engine.Data.Program>("Programs.xml", "Default settings for most popular Games.");
 
 		/// <summary>Summaries - Default PadSettings for most popular Game, Device and Controller combination.</summary>
-		public static XSettingsData<Engine.Data.Summary> Summaries = new XSettingsData<Engine.Data.Summary>("Summaries", "Default PadSettings for most popular Game, Device and Controller combination.");
+		public static XSettingsData<Engine.Data.Summary> Summaries = new XSettingsData<Engine.Data.Summary>("Summaries.xml", "Default PadSettings for most popular Game, Device and Controller combination.");
 
 		/// <summary>Presets - Default PadSettings for most popular Devices (Products).</summary>
-		public static XSettingsData<Preset> Presets = new XSettingsData<Preset>("Presets", "Default PadSettings for most popular Devices (Products).");
+		public static XSettingsData<Preset> Presets = new XSettingsData<Preset>("Presets.xml", "Default PadSettings for most popular Devices (Products).");
 
 		// User settings.
 
 		/// <summary>User Games.</summary>
-		public static XSettingsData<Engine.Data.UserGame> UserGames = new XSettingsData<Engine.Data.UserGame>("UserGames", "User Games.");
+		public static XSettingsData<Engine.Data.UserGame> UserGames = new XSettingsData<Engine.Data.UserGame>("UserGames.xml", "User Games.");
 
 		/// <summary>User Devices (Direct Input).</summary>
-		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices", "User Devices (Direct Input).");
+		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
 
 		/// <summary>Setting contains link between Game, Device (DInput), PadSetting and Controller (XInput)</summary>
-		public static XSettingsData<Engine.Data.Setting> Settings = new XSettingsData<Engine.Data.Setting>("Settings", "User Settings.");
+		public static XSettingsData<Engine.Data.Setting> Settings = new XSettingsData<Engine.Data.Setting>("Settings.xml", "User Settings.");
 
 		/// <summary>User Instances.</summary>
-		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
+		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml.gz", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
 
 		// Property below is shared between User and Global settings:
 
 		/// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
-		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings", "User and Preset PadSettings.");
+		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
 
 
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)

@@ -57,6 +57,54 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		#region Writing
+
+		public static bool IsDifferent(string name, byte[] bytes)
+		{
+			var fi = new FileInfo(name);
+			var isDifferent = false;
+			// If file doesn't exists or file size is different then...
+			if (!fi.Exists || fi.Length != bytes.Length)
+			{
+				isDifferent = true;
+			}
+			else
+			{
+				// Compare checksums.
+				var iniMd5 = Security.MD5.GetGuid(bytes);
+				var md5 = new Security.MD5();
+				var checksum = md5.GetGuidFromFile(fi.FullName);
+				isDifferent = !iniMd5.Equals(checksum);
+			}
+			return isDifferent;
+		}
+
+		public static void WriteIfDifferent(string name, byte[] bytes)
+		{
+			var isDifferent = IsDifferent(name, bytes);
+			if (isDifferent)
+			{
+				File.WriteAllBytes(name, bytes);
+			}
+		}
+
+		/// <summary>
+		/// Get file content with encoding header.
+		/// </summary>
+		public static byte[] GetFileConentBytes(string content, Encoding encoding = null)
+		{
+			var ms = new MemoryStream();
+			// Encoding header will be added to content.
+			var sw = new StreamWriter(ms, encoding);
+			sw.Write(content);
+			sw.Flush();
+			var bytes = ms.ToArray();
+			sw.Dispose();
+			return bytes;
+		}
+
+		#endregion
+
 
 	}
 }

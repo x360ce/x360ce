@@ -81,17 +81,13 @@ namespace JocysCom.ClassLibrary.Configuration
 				{
 					fi.Directory.Create();
 				}
+				byte[] bytes;
+				bytes = Serializer.SerializeToXmlBytes(this, Encoding.UTF8, true, _Comment);
 				if (fi.Name.EndsWith(".gz"))
 				{
-					var s = Serializer.SerializeToXmlString(this, Encoding.UTF8, true);
-					var bytes = Encoding.UTF8.GetBytes(s);
-					var compressedBytes = SettingsHelper.Compress(bytes);
-					File.WriteAllBytes(fi.FullName, compressedBytes);
+					bytes = SettingsHelper.Compress(bytes);
 				}
-				else
-				{
-					Serializer.SerializeToXmlFile(this, fi.FullName, Encoding.UTF8, true, _Comment);
-				}
+				SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
 			}
 		}
 

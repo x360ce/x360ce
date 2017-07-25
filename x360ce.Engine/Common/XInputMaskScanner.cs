@@ -30,7 +30,7 @@ namespace x360ce.Engine
 			}
 		}
 
-		public static XSettingsData<XInputMaskFileInfo> FileInfoCache = new XSettingsData<XInputMaskFileInfo>("XInputMask", "XInput mask scan cache.");
+		public static XSettingsData<XInputMaskFileInfo> FileInfoCache = new XSettingsData<XInputMaskFileInfo>("XInputMask.xml", "XInput mask scan cache.");
 
 		static object FileInfoCacheLock = new object();
 
@@ -157,6 +157,12 @@ namespace x360ce.Engine
 			ReportProgress(e2);
 		}
 
+		/// <summary>
+		/// Create UserGame object from path.
+		/// </summary>
+		/// <param name="fileName">File name to check.</param>
+		/// <param name="searchOption">If not specified then check specified file only.</param>
+		/// <returns></returns>
 		public UserGame FromDisk(string fileName, SearchOption? searchOption = null)
 		{
 			var item = new UserGame();

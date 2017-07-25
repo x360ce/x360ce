@@ -391,6 +391,20 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
+		/// Serialize object to XML bytes with Byte Order Mark (BOM).
+		/// </summary>
+		/// <param name="o">The object to serialize.</param>
+		/// <param name="path">The file name to write to.</param>
+		/// <param name="encoding">The encoding to use (default is UTF8).</param>
+		public static byte[] SerializeToXmlBytes(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, int attempts = 2, int waitTime = 500)
+		{
+			var bytes = (o == null)
+				? new byte[0]
+				: SeriallizeToXml<byte[]>(o, encoding, omitXmlDeclaration, comment);
+			return bytes;
+		}
+
+		/// <summary>
 		/// Serialize object schema to XSD file.
 		/// </summary>
 		/// <param name="o">The object to serialize.</param>

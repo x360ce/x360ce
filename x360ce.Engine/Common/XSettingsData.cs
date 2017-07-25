@@ -5,33 +5,33 @@ using JocysCom.ClassLibrary.ComponentModel;
 
 namespace x360ce.Engine
 {
-    [Serializable, XmlRoot("Data")]
-    public class XSettingsData<T> : JocysCom.ClassLibrary.Configuration.SettingsData<T>
-    {
+	[Serializable, XmlRoot("Data")]
+	public class XSettingsData<T> : JocysCom.ClassLibrary.Configuration.SettingsData<T>
+	{
 
-        public XSettingsData()
-        {
-        }
+		public XSettingsData()
+		{
+		}
 
-        public XSettingsData(string collectionName, string comment = null)
-        {
-            Items = new SortableBindingList<T>();
-            _Comment = comment;
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-            var path = string.Format("{0}\\X360CE\\x360ce.{1}.xml", folder, collectionName);
-            _XmlFile = new FileInfo(path);
-        }
+		public XSettingsData(string fileSuffix, string comment = null)
+		{
+			Items = new SortableBindingList<T>();
+			_Comment = comment;
+			var folder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+			var path = string.Format("{0}\\X360CE\\x360ce.{1}", folder, fileSuffix);
+			_XmlFile = new FileInfo(path);
+		}
 
-        /// <summary>
-        /// File Version.
-        /// </summary>
-        [NonSerialized]
-        int _CurrentVersion = 4;
+		/// <summary>
+		/// File Version.
+		/// </summary>
+		[NonSerialized]
+		int _CurrentVersion = 4;
 
-        public bool IsValidVersion()
-        {
-            return Version == _CurrentVersion;
-        }
+		public bool IsValidVersion()
+		{
+			return Version == _CurrentVersion;
+		}
 
-    }
+	}
 }
