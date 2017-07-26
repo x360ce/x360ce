@@ -53,7 +53,7 @@ namespace x360ce.App.Controls
 				UpdateFakeVidPidControls();
 				UpdateDinputControls();
 				UpdateHelpButtons();
-            }
+			}
 		}
 
 		void UpdateInterface()
@@ -333,7 +333,7 @@ namespace x360ce.App.Controls
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var status = GetGameStatus(CurrentGame, false);
-			var values = Enum.GetValues(typeof(GameRefreshStatus));
+			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
 			List<string> errors = new List<string>();
 			foreach (GameRefreshStatus value in values)
 			{
@@ -533,7 +533,7 @@ namespace x360ce.App.Controls
 
 		private void NGEmuThreadLinkButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetNGemuThreadUrl()); 
+			EngineHelper.OpenUrl(GetNGemuThreadUrl());
 		}
 	}
 }

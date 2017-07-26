@@ -15,6 +15,7 @@ using x360ce.App.Properties;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using x360ce.Engine.Data;
+using System.Text;
 
 namespace x360ce.App
 {
@@ -1473,15 +1474,65 @@ namespace x360ce.App
 			EngineHelper.BrowsePath(fullPath);
 		}
 
+
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
+			// Refresh INI tab.
+			Current.GetINI();
+			Save(CurrentGame);
+		}
+
+		private void SaveAllButton_Click(object sender, EventArgs e)
+		{
+			var games = SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray();
+			Save(games);
+		}
+
+		void Save(params UserGame[] games)
+		{
 			SaveButton.Enabled = false;
+			SaveAllButton.Enabled = false;
 			Application.DoEvents();
-			//SettingsManager.Current.WriteAllSettingsToINI();
-			var iniContent = Current.GetINI();
-			SettingsManager.Current.SaveINI(CurrentGame);
-			SettingsManager.Current.ApplyAllSettingsToXML();
-			SaveAll();
+			var sb = new StringBuilder();
+			sb.AppendLine("Synchronize current settings to game folders?");
+			sb.AppendLine();
+			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
+			// Check changes first.
+			for (int i = 0; i < games.Length; i++)
+			{
+				var game = games[i];
+				var status = SettingsManager.Current.GetDllAndIniStatus(game, false);
+				if (status != GameRefreshStatus.OK)
+				{
+					sb.AppendFormat("{0} {1}\r\n", game.FileProductName, game.FileVersion);
+					sb.AppendFormat("{0}\r\n\r\n", game.FullPath);
+					var errors = new List<string>();
+					foreach (GameRefreshStatus value in values)
+					{
+						if (status.HasFlag(value))
+						{
+							var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+							errors.Add("    " + description);
+						}
+					}
+					sb.Append(string.Join("\r\n", errors));
+					sb.AppendLine();
+					sb.AppendLine();
+				}
+			}
+			MessageBoxForm form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			var result = form.ShowForm(sb.ToString(), "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			if (result == DialogResult.OK)
+			{
+				for (int i = 0; i < games.Length; i++)
+				{
+					var game = games[i];
+					SettingsManager.Current.SaveINI(game);
+				}
+				SettingsManager.Current.ApplyAllSettingsToXML();
+				SaveAll();
+			}
 			var timer = new System.Timers.Timer();
 			timer.AutoReset = false;
 			timer.Interval = 520;
@@ -1490,9 +1541,11 @@ namespace x360ce.App
 			timer.Start();
 		}
 
+
 		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			SaveButton.Enabled = true;
+			SaveAllButton.Enabled = true;
 			var timer = (System.Timers.Timer)sender;
 			timer.Elapsed -= Timer_Elapsed;
 			timer.Dispose();

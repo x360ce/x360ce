@@ -6,8 +6,10 @@ namespace x360ce.Engine
 	[Flags]
 	public enum GameRefreshStatus
 	{
-		[Description("All is OK")]
-		OK = 0x1,
+		[Description("OK")]
+		OK = 0,
+		[Description("Unknown Error")]
+		Error = 0x1,
 		[Description("Executable was not found.")]
 		ExeNotExist = 0x2,
 		[Description("Game Database file not found.")]

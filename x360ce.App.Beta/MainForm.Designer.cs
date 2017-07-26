@@ -64,6 +64,7 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.SaveButton = new System.Windows.Forms.Button();
+			this.SaveAllButton = new System.Windows.Forms.Button();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -464,7 +465,7 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.FormattingEnabled = true;
 			this.GameToCustomizeComboBox.Location = new System.Drawing.Point(149, 70);
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
-			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(568, 21);
+			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(477, 21);
 			this.GameToCustomizeComboBox.TabIndex = 7;
 			this.GameToCustomizeComboBox.SelectedIndexChanged += new System.EventHandler(this.GameToCustomizeComboBox_SelectedIndexChanged);
 			// 
@@ -489,7 +490,7 @@ namespace x360ce.App
 			this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
 			this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SaveButton.Location = new System.Drawing.Point(723, 69);
+			this.SaveButton.Location = new System.Drawing.Point(632, 68);
 			this.SaveButton.Name = "SaveButton";
 			this.SaveButton.Size = new System.Drawing.Size(75, 23);
 			this.SaveButton.TabIndex = 24;
@@ -497,11 +498,25 @@ namespace x360ce.App
 			this.SaveButton.UseVisualStyleBackColor = true;
 			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
 			// 
+			// SaveAllButton
+			// 
+			this.SaveAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.SaveAllButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveAllButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.SaveAllButton.Location = new System.Drawing.Point(713, 68);
+			this.SaveAllButton.Name = "SaveAllButton";
+			this.SaveAllButton.Size = new System.Drawing.Size(85, 23);
+			this.SaveAllButton.TabIndex = 24;
+			this.SaveAllButton.Text = "Save All";
+			this.SaveAllButton.UseVisualStyleBackColor = true;
+			this.SaveAllButton.Click += new System.EventHandler(this.SaveAllButton_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(810, 752);
+			this.Controls.Add(this.SaveAllButton);
 			this.Controls.Add(this.SaveButton);
 			this.Controls.Add(this.GameToCustomizeComboBox);
 			this.Controls.Add(this.label1);
@@ -521,6 +536,7 @@ namespace x360ce.App
 			this.Controls.SetChildIndex(this.label1, 0);
 			this.Controls.SetChildIndex(this.GameToCustomizeComboBox, 0);
 			this.Controls.SetChildIndex(this.SaveButton, 0);
+			this.Controls.SetChildIndex(this.SaveAllButton, 0);
 			this.MainTabControl.ResumeLayout(false);
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GamesTabPage.ResumeLayout(false);
@@ -586,5 +602,6 @@ namespace x360ce.App
 		private ToolStripStatusLabel UpdateDevicesStatusLabel;
 		private Controls.SettingsGridUserControl SettingsGridPanel;
 		private Button SaveButton;
+		private Button SaveAllButton;
 	}
 }

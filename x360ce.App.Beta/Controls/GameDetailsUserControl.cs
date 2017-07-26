@@ -253,7 +253,7 @@ namespace x360ce.App.Controls
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var status = SettingsManager.Current.GetDllAndIniStatus(CurrentGame, false);
-			var values = Enum.GetValues(typeof(GameRefreshStatus));
+			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
 			List<string> errors = new List<string>();
 			foreach (GameRefreshStatus value in values)
 			{
