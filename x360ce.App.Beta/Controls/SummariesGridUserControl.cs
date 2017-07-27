@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 		public SummariesGridUserControl()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(SummariesDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(SummariesDataGridView);
 			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
 			SummariesDataGridView.AutoGenerateColumns = false;
 		}

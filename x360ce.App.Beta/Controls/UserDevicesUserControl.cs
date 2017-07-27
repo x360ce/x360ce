@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 		public UserDevicesUserControl()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(ControllersDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(ControllersDataGridView);
 			EngineHelper.EnableDoubleBuffering(ControllersDataGridView);
 		}
 

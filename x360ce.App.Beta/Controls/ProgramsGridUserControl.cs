@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 		public ProgramsGridUserControl()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(ProgramsDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(ProgramsDataGridView);
 			EngineHelper.EnableDoubleBuffering(ProgramsDataGridView);
 			ProgramsDataGridView.AutoGenerateColumns = false;
 			ProgramImageColumn.Visible = false;

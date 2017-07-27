@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 		public CloudUserControl()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(TasksDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
 			EngineHelper.EnableDoubleBuffering(TasksDataGridView);
 			data = new SortableBindingList<CloudItem>();
 			data.ListChanged += Data_ListChanged;

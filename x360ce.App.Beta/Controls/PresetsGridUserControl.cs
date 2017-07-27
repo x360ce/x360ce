@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 		public PresetsGridUserControl()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(PresetsDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(PresetsDataGridView);
 			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			PresetsDataGridView.AutoGenerateColumns = false;
 		}

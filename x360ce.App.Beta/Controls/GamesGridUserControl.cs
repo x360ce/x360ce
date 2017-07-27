@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (IsDesignMode) return;
-			ControlHelper.ApplyBorderStyle(GamesDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);
 			//EngineHelper.EnableDoubleBuffering(GamesDataGridView);
 			GamesDataGridView.AutoGenerateColumns = false;
 			ScanProgressLabel.Text = "";
@@ -376,7 +376,6 @@ namespace x360ce.App.Controls
 			var row = grid.Rows[e.RowIndex];
 			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
-			ControlHelper.ApplyCellStyle(grid, e, item.IsEnabled);
 			//var cell = row.Cells[e.ColumnIndex];
 			//grid.InvalidateCell(cell);
 			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)

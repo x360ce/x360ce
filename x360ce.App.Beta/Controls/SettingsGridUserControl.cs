@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 		public SettingsGridUserControl()
 		{
 			InitializeComponent();
-			ControlHelper.ApplyBorderStyle(SettingsDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(SettingsDataGridView);
 			EngineHelper.EnableDoubleBuffering(SettingsDataGridView);
 			SettingsDataGridView.AutoGenerateColumns = false;
 		}

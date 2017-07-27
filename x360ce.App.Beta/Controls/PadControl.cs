@@ -28,7 +28,7 @@ namespace x360ce.App.Controls
 			// Hide left/right border.
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
-			ControlHelper.ApplyBorderStyle(MappedDevicesDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
 
 
 			MappedTo = controllerIndex;
@@ -1485,7 +1485,6 @@ namespace x360ce.App.Controls
 			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
 			var device = SettingsManager.GetDevice(setting.InstanceGuid);
 			var isConnected = (device != null);
-			ControlHelper.ApplyCellStyle(grid, e, isConnected);
 			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
 			{
 				// Hide device Instance GUID from public eyes. Show part of checksum.
