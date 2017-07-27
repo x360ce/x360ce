@@ -312,6 +312,129 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
+		#endregion
+
+
+		#region Apply Border Style
+
+		public static void ApplyBorderStyle(DataGridView grid)
+		{
+			grid.BackgroundColor = Color.White;
+			grid.BorderStyle = BorderStyle.None;
+			grid.EnableHeadersVisualStyles = false;
+			grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+			grid.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+			grid.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+			grid.RowHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+			grid.BackColor = SystemColors.Window;
+			grid.DefaultCellStyle.BackColor = SystemColors.Window;
+			grid.CellPainting += Grid_CellPainting;
+			grid.SelectionChanged += Grid_SelectionChanged;
+			grid.CellFormatting += Grid_CellFormatting;
+		}
+
+		private static void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			if (e.RowIndex == -1) return;
+
+			var grid = (DataGridView)sender;
+			var row = grid.Rows[e.RowIndex];
+			var item = row.DataBoundItem;
+			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
+			var enabled = (bool)enabledProperty.GetValue(item, null);
+			if (e.RowIndex > -1 && e.ColumnIndex > -1)
+			{
+				var fore = enabled ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
+				var selectedBack = enabled ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
+				// Apply style to row header.
+				if (row.HeaderCell.Style.ForeColor != fore)
+					row.HeaderCell.Style.ForeColor = fore;
+				if (row.HeaderCell.Style.SelectionBackColor != selectedBack)
+					row.HeaderCell.Style.SelectionBackColor = selectedBack;
+				// Apply style to cell
+				var cell = grid.Rows[e.RowIndex].Cells[e.ColumnIndex];
+				if (cell.Style.ForeColor != fore)
+					cell.Style.ForeColor = fore;
+				if (cell.Style.SelectionBackColor != selectedBack)
+					cell.Style.SelectionBackColor = selectedBack;
+			}
+		}
+
+		private static void Grid_SelectionChanged(object sender, EventArgs e)
+		{
+			// Sort issue with paint artifcats.
+			var grid = (DataGridView)sender;
+			grid.Invalidate();
+		}
+
+		private static void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		{
+			// Header and cell borders must be set to "Single" style.
+			var grid = (DataGridView)sender;
+			var firstVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Min(x => x.Index);
+			var lastVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Max(x => x.Index);
+			var selected = false;
+			var enabled = false;
+			if (e.RowIndex > -1)
+			{
+				var row = grid.Rows[e.RowIndex];
+				selected = row.Selected;
+				var item = row.DataBoundItem;
+				var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
+				enabled = (bool)enabledProperty.GetValue(item, null);
+			}
+			e.Paint(e.CellBounds, DataGridViewPaintParts.All & ~DataGridViewPaintParts.Border);
+			var bounds = e.CellBounds;
+			var tl = new Point(bounds.X, bounds.Y);
+			var tr = new Point(bounds.X + bounds.Width - 1, bounds.Y);
+			var bl = new Point(bounds.X, bounds.Y + bounds.Height - 1);
+			var br = new Point(bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+			Color backColor;
+			// If top left corner and column header then...
+			if (e.RowIndex == -1)
+			{
+				backColor = selected
+					? grid.ColumnHeadersDefaultCellStyle.SelectionBackColor
+					: grid.ColumnHeadersDefaultCellStyle.BackColor;
+			}
+			// If row header then...
+			else if (e.ColumnIndex == -1 && e.RowIndex > -1)
+			{
+				var row = grid.Rows[e.RowIndex];
+				backColor = selected
+					? row.HeaderCell.Style.SelectionBackColor
+					: row.HeaderCell.Style.BackColor;
+			}
+			// If normal cell then...
+			else
+			{
+				var row = grid.Rows[e.RowIndex];
+				var cell = row.Cells[e.ColumnIndex];
+				backColor = selected
+					? cell.InheritedStyle.SelectionBackColor
+					: cell.InheritedStyle.BackColor;
+			}
+			// Cell background colour.
+			var back = new Pen(backColor, 1);
+			// Border colour.
+			var border = new Pen(SystemColors.Control, 1);
+			// Do not draw borders for selected device.
+			Pen c;
+			// Top
+			e.Graphics.DrawLine(back, tl, tr);
+			// Left (only if not first)
+			c = !selected && e.ColumnIndex > firstVisibleColumn ? border : back;
+			e.Graphics.DrawLine(c, bl, tl);
+			// Right (always)
+			c = back;
+			e.Graphics.DrawLine(c, tr, br);
+			// Bottom (always)
+			c = border;
+			e.Graphics.DrawLine(c, bl, br);
+			back.Dispose();
+			border.Dispose();
+			e.Handled = true;
+		}
 
 		#endregion
 

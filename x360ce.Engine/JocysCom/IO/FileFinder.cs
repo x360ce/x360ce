@@ -44,9 +44,53 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			try
 			{
+				var patterns = searchPattern.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+				if (patterns.Length == 0)
+				{
+					// Lookup for all files.
+					patterns = new[] { "" };
+				}
+				for (int p = 0; p < patterns.Length; p++)
+				{
+					var pattern = patterns[p];
+					var files = string.IsNullOrEmpty(pattern)
+						? di.GetFiles()
+						: di.GetFiles(pattern);
+					for (int i = 0; i < files.Length; i++)
+					{
+						// Pause or Stop.
+						while (IsPaused && !IsStopping)
+							System.Threading.Thread.Sleep(500);
+						if (IsStopping)
+							return;
+						// Do tasks.
+						var fullName = files[i].FullName;
+						if (!fileList.Any(x => x.FullName == fullName))
+						{
+							fileList.Add(files[i]);
+							var ev = FileFound;
+
+							if (ev != null)
+							{
+								var e = new FileFinderEventArgs();
+								e.Directories = _Directories;
+								e.DirectoryIndex = _DirectoryIndex;
+								e.FileIndex = fileList.Count - 1;
+								e.Files = fileList;
+								ev(this, e);
+							}
+						}
+					}
+				}
+			}
+			catch { }
+			try
+			{
+				// If must search inside subdirectories then...
 				if (allDirectories)
 				{
-					foreach (DirectoryInfo subDi in di.GetDirectories())
+					var subDis = di.GetDirectories();
+					foreach (DirectoryInfo subDi in subDis)
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
@@ -55,37 +99,6 @@ namespace JocysCom.ClassLibrary.IO
 							return;
 						// Do tasks.
 						AddFiles(subDi, ref fileList, searchPattern, allDirectories);
-					}
-				}
-			}
-			catch { }
-			try
-			{
-				// Add only different files.
-				var files = di.GetFiles(searchPattern);
-				for (int i = 0; i < files.Length; i++)
-				{
-					// Pause or Stop.
-					while (IsPaused && !IsStopping)
-						System.Threading.Thread.Sleep(500);
-					if (IsStopping)
-						return;
-					// Do tasks.
-					var fullName = files[i].FullName;
-					if (!fileList.Any(x => x.FullName == fullName))
-					{
-						fileList.Add(files[i]);
-						var ev = FileFound;
-
-						if (ev != null)
-						{
-							var e = new FileFinderEventArgs();
-							e.Directories = _Directories;
-							e.DirectoryIndex = _DirectoryIndex;
-							e.FileIndex = fileList.Count - 1;
-							e.Files = fileList;
-							ev(this, e);
-						}
 					}
 				}
 			}

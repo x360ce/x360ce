@@ -88,6 +88,16 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		public static string ReadFileContent(string name, out Encoding encoding)
+		{
+			using (var reader = new System.IO.StreamReader(name, true))
+			{
+				encoding = reader.CurrentEncoding;
+				return reader.ReadToEnd();
+			}
+		}
+
+
 		/// <summary>
 		/// Get file content with encoding header.
 		/// </summary>

@@ -243,37 +243,48 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public bool ResetToDefault()
 		{
+			var assemblies = new List<Assembly>();
+			var exasm = Assembly.GetExecutingAssembly();
+			var enasm = Assembly.GetEntryAssembly();
+			assemblies.Add(exasm);
+			if (exasm != enasm)
+				assemblies.Add(enasm);
 			var success = false;
-			var assembly = Assembly.GetExecutingAssembly();
-			var names = assembly.GetManifestResourceNames();
-			// Get compressed resource name.
-			var name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name + ".gz"));
-			if (string.IsNullOrEmpty(name))
+			for (int a = 0; a < assemblies.Count; a++)
 			{
-				// Get uncompressed resource name.
-				name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name));
-			}
-			// If internal preset was found.
-			if (!string.IsNullOrEmpty(name))
-			{
-				var resource = assembly.GetManifestResourceStream(name);
-				var sr = new StreamReader(resource);
-				byte[] bytes;
-				using (var memstream = new MemoryStream())
+				var assembly = assemblies[a];
+				var names = assembly.GetManifestResourceNames();
+				// Get compressed resource name.
+				var name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name + ".gz"));
+				if (string.IsNullOrEmpty(name))
 				{
-					sr.BaseStream.CopyTo(memstream);
-					bytes = memstream.ToArray();
+					// Get uncompressed resource name.
+					name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name));
 				}
-				if (name.EndsWith(".gz"))
+				// If internal preset was found.
+				if (!string.IsNullOrEmpty(name))
 				{
+					var resource = assembly.GetManifestResourceStream(name);
+					var sr = new StreamReader(resource);
+					byte[] bytes;
+					using (var memstream = new MemoryStream())
+					{
+						sr.BaseStream.CopyTo(memstream);
+						bytes = memstream.ToArray();
+					}
+					if (name.EndsWith(".gz"))
+					{
 
-					bytes = SettingsHelper.Decompress(bytes);
+						bytes = SettingsHelper.Decompress(bytes);
+					}
+					var xml = Encoding.UTF8.GetString(bytes);
+					var data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
+					Items.Clear();
+					for (int i = 0; i < data.Items.Count; i++)
+						Items.Add(data.Items[i]);
+					success = true;
+					break;
 				}
-				var xml = Encoding.UTF8.GetString(bytes);
-				var data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
-				Items.Clear();
-				for (int i = 0; i < data.Items.Count; i++) Items.Add(data.Items[i]);
-				success = true;
 			}
 			return success;
 		}

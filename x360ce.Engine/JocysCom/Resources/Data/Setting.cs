@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -100,6 +101,23 @@ namespace JocysCom.ClassLibrary.Resources.Data
 			}
 		}
 
+		#region  ISettingsItem
+
+		[XmlIgnore]
+		public bool IsEmpty
+		{
+			get
+			{
+				return
+					string.IsNullOrEmpty(_Category) &&
+					string.IsNullOrEmpty(_KeyName) &&
+					string.IsNullOrEmpty(_KeyValue) &&
+					string.IsNullOrEmpty(_Replacement);
+			}
+		}
+
+		#endregion
+
 		public static string GetValue(string category, string section, string key)
 		{
 			var db = new ResourcesModelContainer();
@@ -173,6 +191,22 @@ namespace JocysCom.ClassLibrary.Resources.Data
 			return IndexOf(s, list) > -1;
 		}
 
+		public bool IsFilterMatch(string text)
+		{
+			// if no filter then...
+			if (string.IsNullOrEmpty(text))
+			{
+				// Show record.
+				return true;
+			}
+			var value = text.ToLower();
+			return
+				(!string.IsNullOrEmpty(KeyName) && KeyName.ToLower().Contains(value)) ||
+				(!string.IsNullOrEmpty(KeyValue) && KeyValue.ToLower().Contains(value)) ||
+				(!string.IsNullOrEmpty(Replacement) && Replacement.ToLower().Contains(value));
+		}
+
+
 		/// <summary>
 		/// Indicates whether the list contains a match in the input string.
 		/// </summary>
@@ -185,6 +219,8 @@ namespace JocysCom.ClassLibrary.Resources.Data
 			for (int i = 0; i <= list.Count - 1; i++)
 			{
 				item = list[i];
+				if (!item.IsEnabled)
+					continue;
 				var found = false;
 				if (item.IsExpression)
 				{
@@ -209,12 +245,14 @@ namespace JocysCom.ClassLibrary.Resources.Data
 		/// <param name="s">The string to search for a match.</param>
 		/// <param name="list">Transform List.</param>
 		/// <returns></returns>
-		public static string Replace(string s, List<Setting> list)
+		public static string Replace(string s, IList<Setting> list)
 		{
 			Setting item = null;
 			for (int i = 0; i <= list.Count - 1; i++)
 			{
 				item = list[i];
+				if (!item.IsEnabled)
+					continue;
 				if (item.IsExpression)
 				{
 					s = item.RegexValue.Replace(s, item.Replacement);
