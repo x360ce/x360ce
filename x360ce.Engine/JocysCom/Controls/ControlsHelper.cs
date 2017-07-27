@@ -403,7 +403,7 @@ namespace JocysCom.ClassLibrary.Controls
 				var row = grid.Rows[e.RowIndex];
 				backColor = selected
 					? row.HeaderCell.Style.SelectionBackColor
-					: row.HeaderCell.Style.BackColor;
+					: grid.RowHeadersDefaultCellStyle.BackColor;
 			}
 			// If normal cell then...
 			else
