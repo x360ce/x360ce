@@ -65,6 +65,8 @@ namespace x360ce.App
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SaveAllButton = new System.Windows.Forms.Button();
+			this.ProgramsTabPage = new System.Windows.Forms.TabPage();
+			this.ProgramsPanel = new x360ce.App.Controls.ProgramsGridUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -77,6 +79,7 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
+			this.ProgramsTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
@@ -90,6 +93,7 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.Pad4TabPage);
 			this.MainTabControl.Controls.Add(this.OptionsTabPage);
 			this.MainTabControl.Controls.Add(this.GamesTabPage);
+			this.MainTabControl.Controls.Add(this.ProgramsTabPage);
 			this.MainTabControl.Controls.Add(this.DevicesTabPage);
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Controls.Add(this.IniTabPage);
@@ -511,6 +515,24 @@ namespace x360ce.App
 			this.SaveAllButton.UseVisualStyleBackColor = true;
 			this.SaveAllButton.Click += new System.EventHandler(this.SaveAllButton_Click);
 			// 
+			// ProgramsTabPage
+			// 
+			this.ProgramsTabPage.Controls.Add(this.ProgramsPanel);
+			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 23);
+			this.ProgramsTabPage.Name = "ProgramsTabPage";
+			this.ProgramsTabPage.Size = new System.Drawing.Size(792, 597);
+			this.ProgramsTabPage.TabIndex = 7;
+			this.ProgramsTabPage.Text = "Programs";
+			this.ProgramsTabPage.UseVisualStyleBackColor = true;
+			// 
+			// ProgramsPanel
+			// 
+			this.ProgramsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramsPanel.Location = new System.Drawing.Point(0, 0);
+			this.ProgramsPanel.Name = "ProgramsPanel";
+			this.ProgramsPanel.Size = new System.Drawing.Size(792, 597);
+			this.ProgramsPanel.TabIndex = 0;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -551,6 +573,7 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.TrayContextMenuStrip.ResumeLayout(false);
+			this.ProgramsTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -577,7 +600,6 @@ namespace x360ce.App
         ToolStripStatusLabel StatusDllLabel;
         TabPage SettingsTabPage;
         public TabControl MainTabControl;
-		TabPage GamesTabPage;
         public Controls.OptionsUserControl OptionsPanel;
         public ToolTip ToolTip;
 		public Controls.GamesGridUserControl GameSettingsPanel;
@@ -603,5 +625,8 @@ namespace x360ce.App
 		private Controls.SettingsGridUserControl SettingsGridPanel;
 		private Button SaveButton;
 		private Button SaveAllButton;
+		private Controls.ProgramsGridUserControl ProgramsPanel;
+		public TabPage ProgramsTabPage;
+		public TabPage GamesTabPage;
 	}
 }

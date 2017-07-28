@@ -120,6 +120,7 @@ namespace x360ce.App
 			CleanStatusTimer.Interval = 3000;
 			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
 			Text = EngineHelper.GetProductFullName();
+			ShowPrograms(SettingsManager.Options.ShowProgramsPanel);
 			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
@@ -1550,5 +1551,21 @@ namespace x360ce.App
 			timer.Elapsed -= Timer_Elapsed;
 			timer.Dispose();
 		}
+
+		public void ShowPrograms(bool show){
+			var tc = MainForm.Current.MainTabControl;
+			var page = MainForm.Current.ProgramsTabPage;
+			if (show && !tc.TabPages.Contains(page))
+			{
+				var index = tc.TabPages.IndexOf(MainForm.Current.GamesTabPage);
+				tc.TabPages.Insert(index + 1, page);
+			}
+			else if (!show && tc.TabPages.Contains(page))
+			{
+				tc.TabPages.Remove(page);
+			}
+
+		}
+
 	}
 }

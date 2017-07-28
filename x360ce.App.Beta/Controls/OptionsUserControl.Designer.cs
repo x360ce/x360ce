@@ -77,6 +77,7 @@
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
+			this.ShowProgramsCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -92,6 +93,7 @@
 			// 
 			// TestingAndLoggingGroupBox
 			// 
+			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowProgramsCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.CombineEnabledCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
@@ -613,6 +615,17 @@
             0,
             0});
 			// 
+			// ShowProgramsCheckBox
+			// 
+			this.ShowProgramsCheckBox.AutoSize = true;
+			this.ShowProgramsCheckBox.Location = new System.Drawing.Point(124, 44);
+			this.ShowProgramsCheckBox.Name = "ShowProgramsCheckBox";
+			this.ShowProgramsCheckBox.Size = new System.Drawing.Size(106, 17);
+			this.ShowProgramsCheckBox.TabIndex = 1;
+			this.ShowProgramsCheckBox.Text = "Show [Programs]";
+			this.ShowProgramsCheckBox.UseVisualStyleBackColor = true;
+			this.ShowProgramsCheckBox.CheckedChanged += new System.EventHandler(this.ShowProgramsCheckBox_CheckedChanged);
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -704,5 +717,6 @@
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
 		public System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
 		public System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
+		private System.Windows.Forms.CheckBox ShowProgramsCheckBox;
 	}
 }

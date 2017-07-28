@@ -219,19 +219,19 @@ namespace x360ce.App.Controls
 				// Set DInput mask.
 				var dm = (int)GetMask<DInputMask>(DInputCheckBoxes);
 				CurrentGame.DInputMask = dm;
-				DInputMaskTextBox.Text = dm.ToString("X8");
+				DInputMaskGroupBox.Text = dm.ToString("X8");
 				// Set XInput mask.
 				var xm = (int)GetMask<XInputMask>(XInputCheckBoxes);
 				CurrentGame.XInputMask = xm;
-				XInputMaskTextBox.Text = xm.ToString("X8");
+				XInputMaskGroupBox.Text = xm.ToString("X8");
 				// Set hook mask.
 				var hm = (int)GetMask<HookMask>(HookCheckBoxes);
 				CurrentGame.HookMask = hm;
-				HookMaskTextBox.Text = hm.ToString("X8");
+				HookMaskGroupBox.Text = string.Format("Hook Mask {0:X8}", hm);
 				// Set auto map mask.
 				var am = (int)GetMask<MapToMask>(AutoMapCheckBoxes);
 				CurrentGame.AutoMapMask = am;
-				AutoMapMaskTextBox.Text = am.ToString("X8");
+				AutoMapMaskGroupBox.Text = am.ToString("X8");
 				SettingsManager.Save();
 				if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
 			}
@@ -436,10 +436,6 @@ namespace x360ce.App.Controls
 
 		void UpdateHelpButtons()
 		{
-			HelpButton.Enabled = CurrentGame != null;
-			GoogleSearchButton.Text = GetGoogleSearchUrl();
-			NGEmuSearchButton.Text = GetNGemuSearchUrl();
-			NGEmuThreadButton.Text = GetNGemuThreadUrl();
 		}
 
 		private void GoogleSearchButton_Click(object sender, EventArgs e)
@@ -456,5 +452,6 @@ namespace x360ce.App.Controls
 		{
 			EngineHelper.OpenUrl(GetNGemuThreadUrl());
 		}
+
 	}
 }

@@ -23,13 +23,14 @@ namespace x360ce.App.Controls
 			ProgramImageColumn.Visible = false;
 		}
 
-		void InitData()
+		public void InitPanel()
 		{
 			// Configure Programs.
-			SettingsManager.Programs.Items.ListChanged += new ListChangedEventHandler(Programs_ListChanged);
+			SettingsManager.Programs.Items.ListChanged += Programs_ListChanged;
 			// WORKAROUND: Remove SelectionChanged event.
 			ProgramsDataGridView.SelectionChanged -= ProgramsDataGridView_SelectionChanged;
 			ProgramsDataGridView.DataSource = SettingsManager.Programs.Items;
+			var handle = this.Handle;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
@@ -37,6 +38,13 @@ namespace x360ce.App.Controls
 				ProgramsDataGridView_SelectionChanged(ProgramsDataGridView, new EventArgs());
 			});
 			UpdateControlsFromPrograms();
+		}
+
+		public void UnInitPanel()
+		{
+			ProgramsDataGridView.SelectionChanged -= ProgramsDataGridView_SelectionChanged;
+			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;
+			ProgramsDataGridView.DataSource = null;
 		}
 
 		void Programs_ListChanged(object sender, ListChangedEventArgs e)
@@ -315,5 +323,9 @@ namespace x360ce.App.Controls
 			else if (e.KeyCode == Keys.Insert) ImportPrograms();
 		}
 
+		private void GameDefaultDetailsControl_Load(object sender, EventArgs e)
+		{
+			InitPanel();
+		}
 	}
 }

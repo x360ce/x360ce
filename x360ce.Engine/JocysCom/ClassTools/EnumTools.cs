@@ -109,6 +109,8 @@ namespace JocysCom.ClassLibrary.ClassTools
 		//    }
 		//}
 
+
+
 		public static T GetValue<T>(System.Windows.Forms.ComboBox box, T value)
 		{
 			return (T)((DictionaryEntry)box.SelectedItem).Value;

@@ -159,6 +159,7 @@ namespace x360ce.App.Controls
 			InternetAutoSaveCheckBox.Checked = o.InternetAutoSave;
 			InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
 			InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
+			ShowProgramsCheckBox.Checked = o.ShowProgramsPanel;
 			GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
 			DiskIdTextBox.Text = o.DiskId;
 			UsernameTextBox.Text = o.Username;
@@ -175,6 +176,7 @@ namespace x360ce.App.Controls
 			o.InternetAutoSave = InternetAutoSaveCheckBox.Checked;
 			o.InternetDatabaseUrls = (List<string>)InternetDatabaseUrlComboBox.DataSource;
 			o.InternetDatabaseUrl = (string)InternetDatabaseUrlComboBox.SelectedItem;
+			o.ShowProgramsPanel = ShowProgramsCheckBox.Checked;
 			o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
 			o.Username = UsernameTextBox.Text;
 			SettingsManager.OptionsData.Save();
@@ -270,6 +272,11 @@ namespace x360ce.App.Controls
 			form.ShowDialog();
 			form.Dispose();
 			form = null;
+		}
+
+		private void ShowProgramsCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			MainForm.Current.ShowPrograms(ShowProgramsCheckBox.Checked);
 		}
 	}
 }

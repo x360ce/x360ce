@@ -93,7 +93,7 @@
 			this.ProgramsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.ProgramsDataGridView.RowHeadersVisible = false;
 			this.ProgramsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.ProgramsDataGridView.Size = new System.Drawing.Size(643, 547);
+			this.ProgramsDataGridView.Size = new System.Drawing.Size(857, 321);
 			this.ProgramsDataGridView.TabIndex = 5;
 			this.ProgramsDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProgramsDataGridView_KeyDown);
 			// 
@@ -147,19 +147,22 @@
 			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
 			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
 			this.ProgramsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.ProgramsToolStrip.Size = new System.Drawing.Size(643, 25);
+			this.ProgramsToolStrip.Size = new System.Drawing.Size(857, 25);
 			this.ProgramsToolStrip.TabIndex = 6;
 			this.ProgramsToolStrip.Text = "MySettingsToolStrip";
 			// 
 			// GameDefaultDetailsControl
 			// 
+			this.GameDefaultDetailsControl.AutoSize = true;
+			this.GameDefaultDetailsControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.GameDefaultDetailsControl.BackColor = System.Drawing.SystemColors.Control;
-			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Right;
+			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.GameDefaultDetailsControl.Enabled = false;
-			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(643, 0);
+			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(0, 346);
 			this.GameDefaultDetailsControl.Name = "GameDefaultDetailsControl";
-			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(214, 572);
+			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(857, 226);
 			this.GameDefaultDetailsControl.TabIndex = 7;
+			this.GameDefaultDetailsControl.Load += new System.EventHandler(this.GameDefaultDetailsControl_Load);
 			// 
 			// RefreshProgramsButton
 			// 
@@ -203,8 +206,8 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.ProgramsDataGridView);
-			this.Controls.Add(this.ProgramsToolStrip);
 			this.Controls.Add(this.GameDefaultDetailsControl);
+			this.Controls.Add(this.ProgramsToolStrip);
 			this.Name = "ProgramsGridUserControl";
 			this.Size = new System.Drawing.Size(857, 572);
 			((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).EndInit();

@@ -40,7 +40,9 @@ namespace x360ce.App
             }
         }
         public bool AllowOnlyOneCopy { get; set; }
-        public bool InternetFeatures { get; set; }
+
+		public bool ShowProgramsPanel { get; set; }
+		public bool InternetFeatures { get; set; }
         public bool InternetAutoLoad { get; set; }
         public bool InternetAutoSave { get; set; }
 		public string InternetDatabaseUrl { get; set; }
