@@ -159,7 +159,10 @@ namespace x360ce.App.Controls
 			InternetAutoSaveCheckBox.Checked = o.InternetAutoSave;
 			InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
 			InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
-			ShowProgramsCheckBox.Checked = o.ShowProgramsPanel;
+			ShowProgramsTabCheckBox.Checked = o.ShowProgramsTab;
+			ShowSettingsTabCheckBox.Checked = o.ShowSettingsTab;
+			ShowDevicesTabCheckBox.Checked = o.ShowDevicesTab;
+			ShowIniTabCheckBox.Checked = o.ShowIniTab;
 			GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
 			DiskIdTextBox.Text = o.DiskId;
 			UsernameTextBox.Text = o.Username;
@@ -176,7 +179,10 @@ namespace x360ce.App.Controls
 			o.InternetAutoSave = InternetAutoSaveCheckBox.Checked;
 			o.InternetDatabaseUrls = (List<string>)InternetDatabaseUrlComboBox.DataSource;
 			o.InternetDatabaseUrl = (string)InternetDatabaseUrlComboBox.SelectedItem;
-			o.ShowProgramsPanel = ShowProgramsCheckBox.Checked;
+			o.ShowProgramsTab = ShowProgramsTabCheckBox.Checked;
+			o.ShowSettingsTab = ShowSettingsTabCheckBox.Checked;
+			o.ShowDevicesTab = ShowDevicesTabCheckBox.Checked;
+			o.ShowIniTab = ShowIniTabCheckBox.Checked;
 			o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
 			o.Username = UsernameTextBox.Text;
 			SettingsManager.OptionsData.Save();
@@ -274,9 +280,24 @@ namespace x360ce.App.Controls
 			form = null;
 		}
 
-		private void ShowProgramsCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.ShowPrograms(ShowProgramsCheckBox.Checked);
+			MainForm.Current.ShowProgramsTab(ShowProgramsTabCheckBox.Checked);
+		}
+
+		private void ShowSettingsTabCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			MainForm.Current.ShowSettingsTab(ShowSettingsTabCheckBox.Checked);
+		}
+
+		private void ShowDevicesTabCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			MainForm.Current.ShowDevicesTab(ShowDevicesTabCheckBox.Checked);
+		}
+
+		private void ShowIniTabCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			MainForm.Current.ShowIniTab(ShowIniTabCheckBox.Checked);
 		}
 	}
 }

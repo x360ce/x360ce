@@ -120,7 +120,10 @@ namespace x360ce.App
 			CleanStatusTimer.Interval = 3000;
 			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
 			Text = EngineHelper.GetProductFullName();
-			ShowPrograms(SettingsManager.Options.ShowProgramsPanel);
+			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
+			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
+			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			ShowIniTab(SettingsManager.Options.ShowIniTab);
 			SetMinimizeToTray(Settings.Default.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
@@ -1552,20 +1555,54 @@ namespace x360ce.App
 			timer.Dispose();
 		}
 
-		public void ShowPrograms(bool show){
-			var tc = MainForm.Current.MainTabControl;
-			var page = MainForm.Current.ProgramsTabPage;
+		#region Show/Hide tabs.
+
+
+		public void ShowTab(bool show, TabPage page)
+		{
+			var tc = MainTabControl;
+			// If must hide then...
+			if (!show && tc.TabPages.Contains(page))
+			{
+				// Hide and return.
+				tc.TabPages.Remove(page);
+				return;
+			}
+			// If must show then..
 			if (show && !tc.TabPages.Contains(page))
 			{
-				var index = tc.TabPages.IndexOf(MainForm.Current.GamesTabPage);
-				tc.TabPages.Insert(index + 1, page);
+				// Create list of tabs to maintain same order when hiding and showing tabs.
+				var tabs = new List<TabPage>() { ProgramsTabPage, SettingsTabPage, DevicesTabPage, IniTabPage };
+				// Get index of always displayed tab.
+				var index = tc.TabPages.IndexOf(GamesTabPage);
+				// Get tabs in front of tab which must be inserted.
+				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
+				// Count visible tabs.
+				var countBefore = tabsBefore.Count(x => tc.TabPages.Contains(x));
+				tc.TabPages.Insert(index + countBefore + 1, page);
 			}
-			else if (!show && tc.TabPages.Contains(page))
-			{
-				tc.TabPages.Remove(page);
-			}
-
 		}
+
+		public void ShowProgramsTab(bool show)
+		{
+			ShowTab(show, ProgramsTabPage);
+		}
+
+		public void ShowSettingsTab(bool show)
+		{
+			ShowTab(show, SettingsTabPage);
+		}
+		public void ShowDevicesTab(bool show)
+		{
+			ShowTab(show, DevicesTabPage);
+		}
+		public void ShowIniTab(bool show)
+		{
+			ShowTab(show, IniTabPage);
+		}
+
+		#endregion
 
 	}
 }
+

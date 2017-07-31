@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
 			this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
+			this.ShowSettingsTabCheckBox = new System.Windows.Forms.CheckBox();
+			this.ShowProgramsTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.CombineEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
 			this.UseInitBeepCheckBox = new System.Windows.Forms.CheckBox();
@@ -77,7 +79,8 @@
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.ShowProgramsCheckBox = new System.Windows.Forms.CheckBox();
+			this.ShowIniTabCheckBox = new System.Windows.Forms.CheckBox();
+			this.ShowDevicesTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -93,7 +96,10 @@
 			// 
 			// TestingAndLoggingGroupBox
 			// 
-			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowProgramsCheckBox);
+			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowIniTabCheckBox);
+			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowSettingsTabCheckBox);
+			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowDevicesTabCheckBox);
+			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowProgramsTabCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.CombineEnabledCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
@@ -102,10 +108,32 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
 			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 86);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(241, 136);
+			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 136);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
+			// 
+			// ShowSettingsTabCheckBox
+			// 
+			this.ShowSettingsTabCheckBox.AutoSize = true;
+			this.ShowSettingsTabCheckBox.Location = new System.Drawing.Point(124, 90);
+			this.ShowSettingsTabCheckBox.Name = "ShowSettingsTabCheckBox";
+			this.ShowSettingsTabCheckBox.Size = new System.Drawing.Size(122, 17);
+			this.ShowSettingsTabCheckBox.TabIndex = 1;
+			this.ShowSettingsTabCheckBox.Text = "Show [Settings] Tab";
+			this.ShowSettingsTabCheckBox.UseVisualStyleBackColor = true;
+			this.ShowSettingsTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowSettingsTabCheckBox_CheckedChanged);
+			// 
+			// ShowProgramsTabCheckBox
+			// 
+			this.ShowProgramsTabCheckBox.AutoSize = true;
+			this.ShowProgramsTabCheckBox.Location = new System.Drawing.Point(124, 44);
+			this.ShowProgramsTabCheckBox.Name = "ShowProgramsTabCheckBox";
+			this.ShowProgramsTabCheckBox.Size = new System.Drawing.Size(128, 17);
+			this.ShowProgramsTabCheckBox.TabIndex = 1;
+			this.ShowProgramsTabCheckBox.Text = "Show [Programs] Tab";
+			this.ShowProgramsTabCheckBox.UseVisualStyleBackColor = true;
+			this.ShowProgramsTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowProgramsTabCheckBox_CheckedChanged);
 			// 
 			// CombineEnabledCheckBox
 			// 
@@ -177,7 +205,7 @@
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(241, 77);
+			this.OperationGroupBox.Size = new System.Drawing.Size(254, 77);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -212,9 +240,9 @@
 			this.InternetGroupBox.Controls.Add(this.label1);
 			this.InternetGroupBox.Controls.Add(this.InternetAutoLoadCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
-			this.InternetGroupBox.Location = new System.Drawing.Point(250, 3);
+			this.InternetGroupBox.Location = new System.Drawing.Point(263, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(505, 144);
+			this.InternetGroupBox.Size = new System.Drawing.Size(492, 144);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -239,7 +267,7 @@
             "http://localhost:20360/webservices/x360ce.asmx"});
 			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 103);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
-			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(493, 21);
+			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(480, 21);
 			this.InternetDatabaseUrlComboBox.TabIndex = 14;
 			// 
 			// label1
@@ -277,10 +305,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
 			this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
-			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 153);
+			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(263, 153);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
-			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(506, 136);
+			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(493, 136);
 			this.ProgramScanLocationsTabControl.TabIndex = 34;
 			// 
 			// GameScanLocationsTabPage
@@ -289,7 +317,7 @@
 			this.GameScanLocationsTabPage.Controls.Add(this.LocationsToolStrip);
 			this.GameScanLocationsTabPage.Location = new System.Drawing.Point(4, 28);
 			this.GameScanLocationsTabPage.Name = "GameScanLocationsTabPage";
-			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(498, 104);
+			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(485, 104);
 			this.GameScanLocationsTabPage.TabIndex = 0;
 			this.GameScanLocationsTabPage.Text = "Game Scan Locations";
 			this.GameScanLocationsTabPage.UseVisualStyleBackColor = true;
@@ -301,7 +329,7 @@
 			this.GameScanLocationsListBox.FormattingEnabled = true;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
-			this.GameScanLocationsListBox.Size = new System.Drawing.Size(498, 79);
+			this.GameScanLocationsListBox.Size = new System.Drawing.Size(485, 79);
 			this.GameScanLocationsListBox.Sorted = true;
 			this.GameScanLocationsListBox.TabIndex = 0;
 			this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
@@ -316,7 +344,7 @@
 			this.LocationsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.LocationsToolStrip.Name = "LocationsToolStrip";
 			this.LocationsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.LocationsToolStrip.Size = new System.Drawing.Size(498, 25);
+			this.LocationsToolStrip.Size = new System.Drawing.Size(485, 25);
 			this.LocationsToolStrip.TabIndex = 2;
 			this.LocationsToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -356,7 +384,7 @@
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
 			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 303);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
-			this.ConfigurationGroupBox.Size = new System.Drawing.Size(241, 47);
+			this.ConfigurationGroupBox.Size = new System.Drawing.Size(254, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
 			this.ConfigurationGroupBox.TabStop = false;
 			this.ConfigurationGroupBox.Text = "Configuration";
@@ -408,7 +436,7 @@
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 228);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
-			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(241, 69);
+			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
 			this.DirectInputDevicesGroupBox.TabStop = false;
 			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
@@ -449,9 +477,9 @@
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.label2);
 			this.OnlineAccountGroupBox.Controls.Add(this.label3);
-			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(250, 295);
+			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(263, 295);
 			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(506, 140);
+			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(493, 140);
 			this.OnlineAccountGroupBox.TabIndex = 31;
 			this.OnlineAccountGroupBox.TabStop = false;
 			this.OnlineAccountGroupBox.Text = "Online Account";
@@ -516,7 +544,7 @@
 			this.DiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.DiskIdTextBox.Location = new System.Drawing.Point(107, 19);
 			this.DiskIdTextBox.Name = "DiskIdTextBox";
-			this.DiskIdTextBox.Size = new System.Drawing.Size(393, 20);
+			this.DiskIdTextBox.Size = new System.Drawing.Size(380, 20);
 			this.DiskIdTextBox.TabIndex = 40;
 			// 
 			// HashedDiskIdTextBox
@@ -574,7 +602,7 @@
 			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountNumericUpDown);
 			this.GamesGroupBox.Location = new System.Drawing.Point(3, 356);
 			this.GamesGroupBox.Name = "GamesGroupBox";
-			this.GamesGroupBox.Size = new System.Drawing.Size(241, 69);
+			this.GamesGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.GamesGroupBox.TabIndex = 31;
 			this.GamesGroupBox.TabStop = false;
 			this.GamesGroupBox.Text = "Games / Cloud";
@@ -615,16 +643,27 @@
             0,
             0});
 			// 
-			// ShowProgramsCheckBox
+			// ShowIniTabCheckBox
 			// 
-			this.ShowProgramsCheckBox.AutoSize = true;
-			this.ShowProgramsCheckBox.Location = new System.Drawing.Point(124, 44);
-			this.ShowProgramsCheckBox.Name = "ShowProgramsCheckBox";
-			this.ShowProgramsCheckBox.Size = new System.Drawing.Size(106, 17);
-			this.ShowProgramsCheckBox.TabIndex = 1;
-			this.ShowProgramsCheckBox.Text = "Show [Programs]";
-			this.ShowProgramsCheckBox.UseVisualStyleBackColor = true;
-			this.ShowProgramsCheckBox.CheckedChanged += new System.EventHandler(this.ShowProgramsCheckBox_CheckedChanged);
+			this.ShowIniTabCheckBox.AutoSize = true;
+			this.ShowIniTabCheckBox.Location = new System.Drawing.Point(124, 113);
+			this.ShowIniTabCheckBox.Name = "ShowIniTabCheckBox";
+			this.ShowIniTabCheckBox.Size = new System.Drawing.Size(98, 17);
+			this.ShowIniTabCheckBox.TabIndex = 1;
+			this.ShowIniTabCheckBox.Text = "Show [INI] Tab";
+			this.ShowIniTabCheckBox.UseVisualStyleBackColor = true;
+			this.ShowIniTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowIniTabCheckBox_CheckedChanged);
+			// 
+			// ShowDevicesTabCheckBox
+			// 
+			this.ShowDevicesTabCheckBox.AutoSize = true;
+			this.ShowDevicesTabCheckBox.Location = new System.Drawing.Point(124, 67);
+			this.ShowDevicesTabCheckBox.Name = "ShowDevicesTabCheckBox";
+			this.ShowDevicesTabCheckBox.Size = new System.Drawing.Size(123, 17);
+			this.ShowDevicesTabCheckBox.TabIndex = 1;
+			this.ShowDevicesTabCheckBox.Text = "Show [Devices] Tab";
+			this.ShowDevicesTabCheckBox.UseVisualStyleBackColor = true;
+			this.ShowDevicesTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowDevicesTabCheckBox_CheckedChanged);
 			// 
 			// OptionsUserControl
 			// 
@@ -717,6 +756,9 @@
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
 		public System.Windows.Forms.CheckBox IncludeEnabledCheckBox;
 		public System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
-		private System.Windows.Forms.CheckBox ShowProgramsCheckBox;
+		private System.Windows.Forms.CheckBox ShowProgramsTabCheckBox;
+		private System.Windows.Forms.CheckBox ShowSettingsTabCheckBox;
+		private System.Windows.Forms.CheckBox ShowIniTabCheckBox;
+		private System.Windows.Forms.CheckBox ShowDevicesTabCheckBox;
 	}
 }
