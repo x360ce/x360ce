@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace JocysCom.ClassLibrary.Controls
 {
-	public partial class ControlsHelper
+	public partial class WebControlsHelper
 	{
 
 		/// <summary>

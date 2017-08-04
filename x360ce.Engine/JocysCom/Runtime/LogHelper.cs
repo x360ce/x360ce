@@ -465,11 +465,11 @@ namespace JocysCom.ClassLibrary.Runtime
 					{
 						if (object.ReferenceEquals(ctrl.GetType(), typeof(HtmlForm)))
 						{
-							controls = Controls.ControlsHelper.GetAll<Control>((HtmlForm)ctrl);
+							controls = Controls.WebControlsHelper.GetAll<Control>((HtmlForm)ctrl);
 						}
 						else if (object.ReferenceEquals(ctrl.GetType().BaseType.BaseType, typeof(MasterPage)))
 						{
-							controls = Controls.ControlsHelper.GetAll<Control>((MasterPage)ctrl);
+							controls = Controls.WebControlsHelper.GetAll<Control>((MasterPage)ctrl);
 						}
 					}
 					if (controls != null)

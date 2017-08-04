@@ -172,7 +172,6 @@
     <Compile Include="JocysCom\Configuration\SettingsData.cs" />
     <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
-    <Compile Include="JocysCom\Controls\ControlsHelper.Web.cs" />
     <Compile Include="JocysCom\Controls\InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -255,6 +254,7 @@
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
+    <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />
     <Compile Include="JocysCom\Win32\ABS.cs" />
