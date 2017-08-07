@@ -57,7 +57,9 @@ namespace x360ce.App
 
         public string LoginEnabled { get; set; }
 
-        public string UserRsaPublicKey { get; set; }
+		public bool IncludeProductsInsideINI { get; set; }
+
+		public string UserRsaPublicKey { get; set; }
         public string UserRsaPrivateKey { get; set; }
 
         public string CloudRsaPublicKey { get; set; }

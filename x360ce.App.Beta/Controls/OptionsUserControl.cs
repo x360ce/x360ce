@@ -167,6 +167,7 @@ namespace x360ce.App.Controls
 			DiskIdTextBox.Text = o.DiskId;
 			UsernameTextBox.Text = o.Username;
 			HashedDiskIdTextBox.Text = o.HashedDiskId.ToString();
+			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 		}
 
 		private void SaveSettingsButton_Click(object sender, EventArgs e)
@@ -185,6 +186,7 @@ namespace x360ce.App.Controls
 			o.ShowIniTab = ShowIniTabCheckBox.Checked;
 			o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
 			o.Username = UsernameTextBox.Text;
+			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
 			SettingsManager.OptionsData.Save();
 		}
 

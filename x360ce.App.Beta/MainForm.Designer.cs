@@ -471,7 +471,6 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
 			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(477, 21);
 			this.GameToCustomizeComboBox.TabIndex = 7;
-			this.GameToCustomizeComboBox.SelectedIndexChanged += new System.EventHandler(this.GameToCustomizeComboBox_SelectedIndexChanged);
 			// 
 			// BusyLoadingCircle
 			// 

@@ -103,7 +103,13 @@ namespace x360ce.App
 				XiControllers[i] = new Controller((UserIndex)i);
 			}
 			GameToCustomizeComboBox.DataSource = SettingsManager.UserGames.Items;
+			// Make sure that X360CE.exe is on top.
 			GameToCustomizeComboBox.DisplayMember = "DisplayName";
+			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
+
+			// Select game by manually trigger event.
+			GameToCustomizeComboBox_SelectedIndexChanged(GameToCustomizeComboBox, new EventArgs());
+
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;
@@ -159,11 +165,18 @@ namespace x360ce.App
 				var item = scanner.FromDisk(appFile.Name);
 				var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
 				item.LoadDefault(program);
-				distinctItems.Add(item);
+				// Append to top.
+				distinctItems.Insert(0, item);
 			}
 			else
 			{
 				appItem.FullPath = appFile.FullName;
+				// Make sure it is on top.
+				if (distinctItems.IndexOf(appItem) > 0)
+				{
+					distinctItems.Remove(appItem);
+					distinctItems.Insert(0, appItem);
+				}
 			}
 			return distinctItems;
 		}
@@ -496,7 +509,7 @@ namespace x360ce.App
 		void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
 			if (Program.IsClosing) return;
-			//settingsChanged = true;
+			settingsChanged = true;
 			UpdateTimer.Start();
 		}
 
@@ -808,7 +821,7 @@ namespace x360ce.App
 					UpdateForm3();
 					update4Enabled = true;
 				}
-				// Make sure that interface handel is created, before starting device updates.
+				// Make sure that interface handle is created, before starting device updates.
 				if (update4Enabled && UpdateDevicesEnabled && UpdateDevicesFinished && IsHandleCreated)
 				{
 					UpdateDevicesEnabled = false;
@@ -958,7 +971,7 @@ namespace x360ce.App
 		public void ReloadLibrary()
 		{
 			Program.ReloadCount++;
-			//settingsChanged = false;
+			settingsChanged = false;
 			var dllInfo = EngineHelper.GetDefaultDll();
 			if (dllInfo != null && dllInfo.Exists)
 			{

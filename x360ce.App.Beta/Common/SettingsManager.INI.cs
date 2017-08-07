@@ -186,38 +186,41 @@ namespace x360ce.App
 					instance.PadSettingChecksum = ps.PadSettingChecksum;
 				}
 				// Convert PadSettings to INI string.
-				sb.Append(ConvertToIni(ps));
+				sb.Append(ConvertToIni(ps, instance.ProductName, instance.ProductGuid, instance.InstanceGuid));
 
 			}
-			sb.AppendLine();
-			sb.Append(';').Append('-', 64).AppendLine();
-			sb.AppendLine("; Product settings used for AUTO mapped controllers.");
-			sb.Append(';').Append('-', 64).AppendLine();
-			var products = Presets.Items.ToArray();
-			for (int i = 0; i < products.Count(); i++)
+			if (MainForm.Current.OptionsPanel.IncludeProductsCheckBox.Checked)
 			{
 				sb.AppendLine();
-				var product = products[i];
-				// Add PAD setting instance.
-				sb.AppendFormat("[{0}]", GetProductSection(product.ProductGuid));
-				sb.AppendLine();
-				// Get padd settings attached to specific product.
-				var ps = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == product.PadSettingChecksum);
-				// If pad settings not found then...
-				if (ps == null)
+				sb.Append(';').Append('-', 64).AppendLine();
+				sb.AppendLine("; Product settings used for AUTO mapped controllers.");
+				sb.Append(';').Append('-', 64).AppendLine();
+				var products = Presets.Items.ToArray();
+				for (int i = 0; i < products.Count(); i++)
 				{
-					// Reset setttings.
-					ps = new PadSetting();
-					product.PadSettingChecksum = ps.PadSettingChecksum;
+					sb.AppendLine();
+					var product = products[i];
+					// Add PAD setting instance.
+					sb.AppendFormat("[{0}]", GetProductSection(product.ProductGuid));
+					sb.AppendLine();
+					// Get padd settings attached to specific product.
+					var ps = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == product.PadSettingChecksum);
+					// If pad settings not found then...
+					if (ps == null)
+					{
+						// Reset setttings.
+						ps = new PadSetting();
+						product.PadSettingChecksum = ps.PadSettingChecksum;
+					}
+					// Convert PadSettings to INI string.
+					sb.Append(ConvertToIni(ps, product.ProductName, product.ProductGuid));
 				}
-				// Convert PadSettings to INI string.
-				sb.Append(ConvertToIni(ps));
 			}
 			// Get mapped instances.
 			return sb.ToString();
 		}
 
-		public string ConvertToIni(PadSetting ps)
+		public string ConvertToIni(PadSetting ps, string productName, Guid productGuid, Guid? instanceGuid = null)
 		{
 			var sb = new StringBuilder();
 			// Get settings related to PAD. Use Controller1 as reference.
@@ -225,6 +228,15 @@ namespace x360ce.App
 			PropertyInfo[] properties;
 			if (!ValidatePropertyNames(maps, out properties))
 				return null;
+			sb.AppendFormat("{0}={1}", SettingName.ProductName, productName);
+			sb.AppendLine();
+			sb.AppendFormat("{0}={1}", SettingName.ProductGuid, productGuid);
+			sb.AppendLine();
+			if (instanceGuid.HasValue)
+			{
+				sb.AppendFormat("{0}={1}", SettingName.InstanceGuid, instanceGuid);
+				sb.AppendLine();
+			}
 			foreach (var p in properties)
 			{
 				var map = maps.First(x => x.PropertyName == p.Name);

@@ -29,7 +29,9 @@
         private void InitializeComponent()
         {
 			this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
+			this.ShowIniTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowSettingsTabCheckBox = new System.Windows.Forms.CheckBox();
+			this.ShowDevicesTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowProgramsTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.CombineEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
@@ -79,8 +81,7 @@
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.ShowIniTabCheckBox = new System.Windows.Forms.CheckBox();
-			this.ShowDevicesTabCheckBox = new System.Windows.Forms.CheckBox();
+			this.IncludeProductsCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -113,6 +114,17 @@
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
 			// 
+			// ShowIniTabCheckBox
+			// 
+			this.ShowIniTabCheckBox.AutoSize = true;
+			this.ShowIniTabCheckBox.Location = new System.Drawing.Point(124, 113);
+			this.ShowIniTabCheckBox.Name = "ShowIniTabCheckBox";
+			this.ShowIniTabCheckBox.Size = new System.Drawing.Size(98, 17);
+			this.ShowIniTabCheckBox.TabIndex = 1;
+			this.ShowIniTabCheckBox.Text = "Show [INI] Tab";
+			this.ShowIniTabCheckBox.UseVisualStyleBackColor = true;
+			this.ShowIniTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowIniTabCheckBox_CheckedChanged);
+			// 
 			// ShowSettingsTabCheckBox
 			// 
 			this.ShowSettingsTabCheckBox.AutoSize = true;
@@ -123,6 +135,17 @@
 			this.ShowSettingsTabCheckBox.Text = "Show [Settings] Tab";
 			this.ShowSettingsTabCheckBox.UseVisualStyleBackColor = true;
 			this.ShowSettingsTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowSettingsTabCheckBox_CheckedChanged);
+			// 
+			// ShowDevicesTabCheckBox
+			// 
+			this.ShowDevicesTabCheckBox.AutoSize = true;
+			this.ShowDevicesTabCheckBox.Location = new System.Drawing.Point(124, 67);
+			this.ShowDevicesTabCheckBox.Name = "ShowDevicesTabCheckBox";
+			this.ShowDevicesTabCheckBox.Size = new System.Drawing.Size(123, 17);
+			this.ShowDevicesTabCheckBox.TabIndex = 1;
+			this.ShowDevicesTabCheckBox.Text = "Show [Devices] Tab";
+			this.ShowDevicesTabCheckBox.UseVisualStyleBackColor = true;
+			this.ShowDevicesTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowDevicesTabCheckBox_CheckedChanged);
 			// 
 			// ShowProgramsTabCheckBox
 			// 
@@ -380,6 +403,7 @@
 			// 
 			// ConfigurationGroupBox
 			// 
+			this.ConfigurationGroupBox.Controls.Add(this.IncludeProductsCheckBox);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
 			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 303);
@@ -401,7 +425,7 @@
 			// ConfigurationVersionTextBox
 			// 
 			this.ConfigurationVersionTextBox.Enabled = false;
-			this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(76, 19);
+			this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(55, 19);
 			this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
 			this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(51, 20);
 			this.ConfigurationVersionTextBox.TabIndex = 0;
@@ -643,27 +667,15 @@
             0,
             0});
 			// 
-			// ShowIniTabCheckBox
+			// IncludeProductsCheckBox
 			// 
-			this.ShowIniTabCheckBox.AutoSize = true;
-			this.ShowIniTabCheckBox.Location = new System.Drawing.Point(124, 113);
-			this.ShowIniTabCheckBox.Name = "ShowIniTabCheckBox";
-			this.ShowIniTabCheckBox.Size = new System.Drawing.Size(98, 17);
-			this.ShowIniTabCheckBox.TabIndex = 1;
-			this.ShowIniTabCheckBox.Text = "Show [INI] Tab";
-			this.ShowIniTabCheckBox.UseVisualStyleBackColor = true;
-			this.ShowIniTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowIniTabCheckBox_CheckedChanged);
-			// 
-			// ShowDevicesTabCheckBox
-			// 
-			this.ShowDevicesTabCheckBox.AutoSize = true;
-			this.ShowDevicesTabCheckBox.Location = new System.Drawing.Point(124, 67);
-			this.ShowDevicesTabCheckBox.Name = "ShowDevicesTabCheckBox";
-			this.ShowDevicesTabCheckBox.Size = new System.Drawing.Size(123, 17);
-			this.ShowDevicesTabCheckBox.TabIndex = 1;
-			this.ShowDevicesTabCheckBox.Text = "Show [Devices] Tab";
-			this.ShowDevicesTabCheckBox.UseVisualStyleBackColor = true;
-			this.ShowDevicesTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowDevicesTabCheckBox_CheckedChanged);
+			this.IncludeProductsCheckBox.AutoSize = true;
+			this.IncludeProductsCheckBox.Location = new System.Drawing.Point(124, 21);
+			this.IncludeProductsCheckBox.Name = "IncludeProductsCheckBox";
+			this.IncludeProductsCheckBox.Size = new System.Drawing.Size(112, 17);
+			this.IncludeProductsCheckBox.TabIndex = 0;
+			this.IncludeProductsCheckBox.Text = "Include [Products]";
+			this.IncludeProductsCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsUserControl
 			// 
@@ -760,5 +772,6 @@
 		private System.Windows.Forms.CheckBox ShowSettingsTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowIniTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowDevicesTabCheckBox;
+		public System.Windows.Forms.CheckBox IncludeProductsCheckBox;
 	}
 }
