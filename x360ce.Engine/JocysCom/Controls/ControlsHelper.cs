@@ -339,11 +339,9 @@ namespace JocysCom.ClassLibrary.Controls
 
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
-			var item = row.DataBoundItem;
-			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
-			var enabled = (bool)enabledProperty.GetValue(item, null);
 			if (e.RowIndex > -1 && e.ColumnIndex > -1)
 			{
+				var enabled = GetEnabled(row.DataBoundItem);
 				var fore = enabled ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
 				var selectedBack = enabled ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
 				// Apply style to row header.
@@ -367,22 +365,20 @@ namespace JocysCom.ClassLibrary.Controls
 			grid.Invalidate();
 		}
 
+		static bool GetEnabled(object item)
+		{
+			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
+			var enabled = enabledProperty == null ? true : (bool)enabledProperty.GetValue(item, null);
+			return enabled;
+		}
+
 		private static void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
 			// Header and cell borders must be set to "Single" style.
 			var grid = (DataGridView)sender;
 			var firstVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Min(x => x.Index);
 			var lastVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Max(x => x.Index);
-			var selected = false;
-			var enabled = false;
-			if (e.RowIndex > -1)
-			{
-				var row = grid.Rows[e.RowIndex];
-				selected = row.Selected;
-				var item = row.DataBoundItem;
-				var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
-				enabled = (bool)enabledProperty.GetValue(item, null);
-			}
+			var selected = e.RowIndex > -1 ? grid.Rows[e.RowIndex].Selected  : false;
 			e.Paint(e.CellBounds, DataGridViewPaintParts.All & ~DataGridViewPaintParts.Border);
 			var bounds = e.CellBounds;
 			var tl = new Point(bounds.X, bounds.Y);
