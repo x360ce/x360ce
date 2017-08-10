@@ -277,6 +277,12 @@ namespace x360ce.App
 			var content = GetIniContent(game);
 			var bytes = SettingsHelper.GetFileConentBytes(content, Encoding.Unicode);
 			SettingsHelper.WriteIfDifferent(fullName, bytes);
+			saveCount++;
+			var ev = ConfigSaved;
+			if (ev != null)
+			{
+				ev(this, new SettingEventArgs(typeof(PadSetting).Name, saveCount));
+			}
 		}
 
 	}

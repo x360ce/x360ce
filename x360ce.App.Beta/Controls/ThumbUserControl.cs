@@ -108,7 +108,7 @@ namespace x360ce.App.Controls
 		void RefreshBackgroundImageAsync()
 		{
 			var param = (int)SensitivityTrackBar.Value;
-			updateTimer.AddToQueue(param);
+			updateTimer.DoActionNow(param);
 			SensitivityLabel.Text = SensitivityCheckBox.Checked
 				? "Sensitivity - Make more sensitive in the center:"
 				: "Sensitivity - Make less sensitive in the center:";

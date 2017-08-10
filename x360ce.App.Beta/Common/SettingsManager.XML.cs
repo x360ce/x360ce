@@ -173,9 +173,9 @@ namespace x360ce.App
 				var v = (string)p.GetValue(ps, null) ?? "";
 				LoadSetting(map.Control, key, v);
 			}
-			loadCount++;
 			// Resume form events (track setting changes on the form).
 			ResumeEvents();
+			loadCount++;
 			var ev = ConfigLoaded;
 			if (ev != null)
 			{

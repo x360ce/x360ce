@@ -30,6 +30,7 @@ namespace x360ce.App.Controls
 			queueTimer.SynchronizingObject = this;
 			queueTimer.DoAction = DoAction;
 			queueTimer.DoActionNow();
+			QueueMonitorTimer.Start();
 		}
 
 		private void Data_ListChanged(object sender, ListChangedEventArgs e)
@@ -184,6 +185,9 @@ namespace x360ce.App.Controls
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Reupload all data to the cloud.
+		/// </summary>
 		private void UploadToCloudButton_Click(object sender, EventArgs e)
 		{
 			data.Clear();
@@ -194,10 +198,26 @@ namespace x360ce.App.Controls
 			Add(CloudAction.Insert, allGames);
 		}
 
+		/// <summary>
+		/// Download all data from the cloud.
+		/// </summary>
 		private void DownloadFromCloudButton_Click(object sender, EventArgs e)
 		{
 			var device = new UserDevice();
 			Add(CloudAction.Select, new UserDevice[] { device });
+		}
+
+		private void QueueMonitorTimer_Tick(object sender, EventArgs e)
+		{
+			var nextRunTime = queueTimer.NextRunTime;
+			TimeSpan remains = new TimeSpan();
+			if (nextRunTime.Ticks > 0)
+			{
+				remains = nextRunTime.Subtract(DateTime.Now);
+			}
+			var time = string.Format("{0} Next Run: {1:00}:{2:00.000}", queueTimer.IsRunning ? "↻" : " ",
+				remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
+			AppHelper.SetText(NextRunLabel, time);
 		}
 	}
 }

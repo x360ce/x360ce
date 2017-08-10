@@ -15,21 +15,25 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.TasksDataGridView = new System.Windows.Forms.DataGridView();
-			this.panel3 = new System.Windows.Forms.Panel();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-			this.UploadToCloudButton = new System.Windows.Forms.ToolStripButton();
-			this.DownloadFromCloudButton = new System.Windows.Forms.ToolStripButton();
 			this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
 			this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ActionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.StateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.UploadToCloudButton = new System.Windows.Forms.ToolStripButton();
+			this.DownloadFromCloudButton = new System.Windows.Forms.ToolStripButton();
+			this.NextRunSeparator = new System.Windows.Forms.ToolStripSeparator();
+			this.NextRunLabel = new System.Windows.Forms.ToolStripLabel();
+			this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.TasksDataGridView)).BeginInit();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -83,56 +87,6 @@
 			this.TasksDataGridView.Size = new System.Drawing.Size(654, 338);
 			this.TasksDataGridView.TabIndex = 7;
 			// 
-			// panel3
-			// 
-			this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel3.Location = new System.Drawing.Point(0, 363);
-			this.panel3.Name = "panel3";
-			this.panel3.Size = new System.Drawing.Size(654, 100);
-			this.panel3.TabIndex = 9;
-			// 
-			// toolStrip1
-			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.UploadToCloudButton,
-            this.DownloadFromCloudButton});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip1.Size = new System.Drawing.Size(654, 25);
-			this.toolStrip1.TabIndex = 8;
-			this.toolStrip1.Text = "MySettingsToolStrip";
-			// 
-			// toolStripButton1
-			// 
-			this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.toolStripButton1.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(66, 22);
-			this.toolStripButton1.Text = "&Refresh";
-			// 
-			// UploadToCloudButton
-			// 
-			this.UploadToCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_upload_16x16;
-			this.UploadToCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.UploadToCloudButton.Name = "UploadToCloudButton";
-			this.UploadToCloudButton.Size = new System.Drawing.Size(116, 22);
-			this.UploadToCloudButton.Text = "Upload To Cloud";
-			this.UploadToCloudButton.ToolTipText = "Upload To Cloud";
-			this.UploadToCloudButton.Click += new System.EventHandler(this.UploadToCloudButton_Click);
-			// 
-			// DownloadFromCloudButton
-			// 
-			this.DownloadFromCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_download_16x16;
-			this.DownloadFromCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.DownloadFromCloudButton.Name = "DownloadFromCloudButton";
-			this.DownloadFromCloudButton.Size = new System.Drawing.Size(147, 22);
-			this.DownloadFromCloudButton.Text = "Download From Cloud";
-			this.DownloadFromCloudButton.Click += new System.EventHandler(this.DownloadFromCloudButton_Click);
-			// 
 			// dataGridViewImageColumn1
 			// 
 			this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -143,7 +97,6 @@
 			this.dataGridViewImageColumn1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.dataGridViewImageColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 			this.dataGridViewImageColumn1.Visible = false;
-			this.dataGridViewImageColumn1.Width = 24;
 			// 
 			// DateColumn
 			// 
@@ -182,6 +135,77 @@
 			this.StateColumn.ReadOnly = true;
 			this.StateColumn.Width = 57;
 			// 
+			// panel3
+			// 
+			this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.panel3.Location = new System.Drawing.Point(0, 363);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(654, 100);
+			this.panel3.TabIndex = 9;
+			// 
+			// toolStrip1
+			// 
+			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1,
+            this.UploadToCloudButton,
+            this.DownloadFromCloudButton,
+            this.NextRunSeparator,
+            this.NextRunLabel});
+			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.toolStrip1.Size = new System.Drawing.Size(654, 25);
+			this.toolStrip1.TabIndex = 8;
+			this.toolStrip1.Text = "MySettingsToolStrip";
+			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.toolStripButton1.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(66, 22);
+			this.toolStripButton1.Text = "&Refresh";
+			// 
+			// UploadToCloudButton
+			// 
+			this.UploadToCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_upload_16x16;
+			this.UploadToCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.UploadToCloudButton.Name = "UploadToCloudButton";
+			this.UploadToCloudButton.Size = new System.Drawing.Size(116, 22);
+			this.UploadToCloudButton.Text = "Upload To Cloud";
+			this.UploadToCloudButton.ToolTipText = "Upload To Cloud";
+			this.UploadToCloudButton.Click += new System.EventHandler(this.UploadToCloudButton_Click);
+			// 
+			// DownloadFromCloudButton
+			// 
+			this.DownloadFromCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_download_16x16;
+			this.DownloadFromCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.DownloadFromCloudButton.Name = "DownloadFromCloudButton";
+			this.DownloadFromCloudButton.Size = new System.Drawing.Size(147, 22);
+			this.DownloadFromCloudButton.Text = "Download From Cloud";
+			this.DownloadFromCloudButton.Click += new System.EventHandler(this.DownloadFromCloudButton_Click);
+			// 
+			// NextRunSeparator
+			// 
+			this.NextRunSeparator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.NextRunSeparator.Name = "NextRunSeparator";
+			this.NextRunSeparator.Size = new System.Drawing.Size(6, 25);
+			// 
+			// NextRunLabel
+			// 
+			this.NextRunLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.NextRunLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.NextRunLabel.Name = "NextRunLabel";
+			this.NextRunLabel.Size = new System.Drawing.Size(103, 22);
+			this.NextRunLabel.Text = "Next Run: 00:00:00";
+			// 
+			// QueueMonitorTimer
+			// 
+			this.QueueMonitorTimer.Interval = 500;
+			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
+			// 
 			// CloudUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -212,5 +236,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ActionColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StateColumn;
+		private System.Windows.Forms.ToolStripSeparator NextRunSeparator;
+		private System.Windows.Forms.ToolStripLabel NextRunLabel;
+		private System.Windows.Forms.Timer QueueMonitorTimer;
 	}
 }

@@ -2,29 +2,70 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Timers;
 
 namespace JocysCom.ClassLibrary.Threading
 {
 
 	/// <summary>
-	/// Queue tasks for execution on a single thread.
+	/// Queue tasks for execution on a single thread in a synchronized order.
 	/// </summary>
 	public partial class QueueTimer : IDisposable
 	{
 
+		/// <summary>
+		/// Initialize new QueryTimer object. Default delay interval = 500 milliseconds. Default sleep interval = 5 seconds.
+		/// </summary>
+		/// <param name="delayInterval">Delay time between each run. If this value is set then some items won't be added to the queue, in order to avoid clogging.</param>
+		/// <param name="sleepInterval">If set then action will auto-run automatically after specified amount of milliseconds.</param>
+		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000)
+		{
+			// Create main properties.
+			queue = new List<object>();
+			queueLock = new object();
+			sleepTimerLock = new object();
+			// Create delay timer.
+			if (delayInterval > 0)
+			{
+				delayTimer = new Timer();
+				delayTimer.AutoReset = false;
+				delayTimer.Interval = delayInterval;
+				delayTimer.Elapsed += DelayTimer_Elapsed;
+			}
+			// Create sleep timer.
+			if (sleepInterval > 0)
+			{
+				sleepTimer = new Timer();
+				sleepTimer.AutoReset = false;
+				sleepTimer.Interval = sleepInterval;
+				sleepTimer.Elapsed += SleepTimer_Elapsed;
+			}
+		}
+
+		/// <summary>If delay timer is set then queue can contain only one item.</summary>
 		List<object> queue;
 		object queueLock;
+
+		/// <summary>Last added item.</summary>
 		object delayedItem;
-		object delayedItemLock;
 		object sleepTimerLock;
-		object delayTimerLock;
-		string LastException;
-		DateTime LastExceptionDate;
-		long ExceptionCount;
-		Stopwatch LastAddTime = new Stopwatch();
-		long DoActionCount;
+		string lastException;
+		DateTime lastExceptionDate;
+		long exceptionCount;
+		Stopwatch lastAddTime = new Stopwatch();
+		long doActionCount;
+
+		/// <summary>Thread action is running.</summary>
+		public bool IsRunning { get { return _IsRunning; } }
+
+		bool _IsRunning;
+
+		/// <summary>
+		/// Next run by sleep timer.
+		/// </summary>
+		public DateTime NextRunTime { get { return _NextRunTime; } }
+
+		DateTime _NextRunTime;
 
 		/// <summary>
 		/// If SynchronizingObject is set then make sure that handle is created.
@@ -36,167 +77,92 @@ namespace JocysCom.ClassLibrary.Threading
 
 		public ISynchronizeInvoke SynchronizingObject { get; set; }
 
-		bool _isRunning;
-		bool isRunning
-		{
-			get { return _isRunning; }
-			set
-			{
-				lock (sleepTimerLock)
-				{
-					_isRunning = value;
-					// If timer is used then...
-					if (SleepTimer != null)
-					{
-						// If thread running then...
-						if (_isRunning)
-						{
-							// Stop timer.
-							SleepTimer.Stop();
-						}
-						else
-						{
-							// Start sleep timer.
-							SleepTimer.Start();
-						}
-					}
-				}
-			}
-		}
+		/// <summary>
+		/// Controls how long application must wait between actions.
+		/// </summary>
+		Timer delayTimer;
 
 		/// <summary>
 		/// Controls how long application must sleep if last action finished without doing anything.
 		/// </summary>
-		Timer SleepTimer;
+		Timer sleepTimer;
 
 		public void ChangeSleepInterval(int interval)
 		{
-			var t = SleepTimer;
+			var t = sleepTimer;
 			if (t != null)
 			{
 				t.Interval = interval;
+				if (t.Enabled)
+				{
+					_NextRunTime = DateTime.Now.AddMilliseconds(t.Interval);
+				}
 			}
 		}
 
-		/// <summary>
-		/// Controls how long application must wait between actions.
-		/// </summary>
-		Timer DelayTimer;
-
-
-		public QueueTimer()
+		public string DoActionNow(object item = null)
 		{
-			// Default delay interval = 500 milliseconds.
-			// Default sleep interval = 5 seconds.
-			InitTimers(500, 5000);
-		}
-
-		/// <summary>
-		/// Initialize new QueryTimer object.
-		/// </summary>
-		/// <param name="delayInterval">Delay time between each run. If this value is set then some items won't be added to the queue, in order to avoid clogging.</param>
-		/// <param name="sleepInterval">If set then action will auto-run automatically after specified amount of milliseconds.</param>
-		public QueueTimer(int delayInterval, int sleepInterval)
-		{
-			InitTimers(delayInterval, sleepInterval);
-		}
-
-		void InitTimers(int delayInterval, int sleepInterval)
-		{
-			// Crete main properties
-			queue = new List<object>();
-			queueLock = new object();
-			delayedItemLock = new object();
-			sleepTimerLock = new object();
-			delayTimerLock = new object();
-			// Create delay timer.
-			if (delayInterval > 0)
-			{
-				DelayTimer = new Timer();
-				DelayTimer.AutoReset = false;
-				DelayTimer.Interval = delayInterval;
-				DelayTimer.Elapsed += DelayTimer_Elapsed;
-			}
-			// Create sleep timer.
-			if (sleepInterval > 0)
-			{
-				SleepTimer = new Timer();
-				SleepTimer.AutoReset = false;
-				SleepTimer.Interval = sleepInterval;
-				SleepTimer.Elapsed += SleepTimer_Elapsed;
-			}
-		}
-
-		public string DoActionNow()
-		{
-			return AddToQueue(new object());
-		}
-
-		public string AddToQueue(object item)
-		{
+			if (item == null)
+				item = new object();
 			string status = "";
+			var data = new List<string>();
 			lock (queueLock)
 			{
 				if (IsDisposing) return status;
 				// If there is no delay between actions then...
-				if (DelayTimer == null)
+				if (delayTimer == null)
 				{
 					// Add item to the queue instantly.
 					_AddToQueue(item);
-					status = "Queue item added. // ";
+					status = "Queue item added.";
 				}
 				else
 				{
 					// Get delay which is required.
-					long delayTime = Math.Max(0, (long)DelayTimer.Interval - LastAddTime.ElapsedMilliseconds);
-					// If item is not set then...
-					if (delayedItem == null)
+					long delayTime = Math.Max(0, (long)delayTimer.Interval - lastAddTime.ElapsedMilliseconds);
+					// If item is set already then...
+					if (delayedItem != null)
 					{
-						// Id delay is needed then...
-						if (delayTime > 0)
-						{
-							delayedItem = item;
-							DelayTimer.Start();
-							status = "Delayed item updated. Delay timer started.";
-						}
-						else
-						{
-							// If queue is empty then...
-							if (queue.Count == 0)
-							{
-								// Add item to the queue instantly.
-								_AddToQueue(item);
-								status = "Queue item added.";
-							}
-							else
-							{
-								// Queue already contains message.
-								// Update message.
-								queue[0] = item;
-								status = "Queue item updated. Action thread is running.";
-							}
-						}
+						delayedItem = item;
+						status = "Delayed item updated. Delay timer is running.";
+					}
+					// If delay is needed then...
+					else if (delayTime > 0)
+					{
+						delayedItem = item;
+						delayTimer.Start();
+						status = "Delayed item added. Delay timer started.";
+					}
+					// If queue is empty then...
+					else if (queue.Count == 0)
+					{
+						// Add item to the queue instantly.
+						_AddToQueue(item);
+						status = "Queue item added.";
 					}
 					else
 					{
-						delayedItem = item;
-						status = "Delay timer is running. Delayed item updated.";
+						// Queue already contains message.
+						// Update message.
+						queue[0] = item;
+						status = "Queue item updated. Action thread is running.";
 					}
-					status += string.Format(" // DelayTime = {0}, ", delayTime);
+					data.Add(string.Format("DelayTime = {0}", delayTime));
 				}
 			}
-			status += string.Format(" DoActionCount = {0}, queue[{1}], isRunning = {2}", DoActionCount, queue.Count, isRunning);
-			if (ExceptionCount > 0)
+			data.Add(string.Format("DoActionCount = {0}", doActionCount));
+			data.Add(string.Format("QueueCount = {0}", queue.Count));
+			data.Add(string.Format("IsRunning = {0}", _IsRunning));
+			if (exceptionCount > 0)
 			{
-				status += string.Format(", ExceptionCount = {0}", ExceptionCount);
-				if (LastExceptionDate.Ticks > 0)
+				data.Add(string.Format("ExceptionCount = {0}", exceptionCount));
+				if (lastExceptionDate.Ticks > 0)
 				{
-					status += string.Format(" LastException = {0}", LastException);
-					// 
-					if (DateTime.Now.Subtract(LastExceptionDate).TotalSeconds > 10) LastExceptionDate = new DateTime();
+					data.Add(string.Format("LastException = {0}", lastException));
+					if (DateTime.Now.Subtract(lastExceptionDate).TotalSeconds > 10) lastExceptionDate = new DateTime();
 				}
 			}
-			return status;
+			return status + " // " + string.Join(", ", data);
 		}
 
 		/// <summary>
@@ -209,12 +175,23 @@ namespace JocysCom.ClassLibrary.Threading
 			{
 				if (IsDisposing) return;
 				queue.Add(item);
-				LastAddTime.Reset();
-				LastAddTime.Start();
+				lastAddTime.Reset();
+				lastAddTime.Start();
 				// If thread is not running then...
-				if (!isRunning)
+				if (!_IsRunning)
 				{
-					isRunning = true;
+					lock (sleepTimerLock)
+					{
+						// Mark thread as running.
+						_IsRunning = true;
+						// If timer is used then...
+						if (sleepTimer != null)
+						{
+							// Stop timer.
+							sleepTimer.Stop();
+							_NextRunTime = default(DateTime);
+						}
+					}
 					// Put into another variable for thread safety.
 					ISynchronizeInvoke so = SynchronizingObject;
 					if (so == null)
@@ -230,7 +207,7 @@ namespace JocysCom.ClassLibrary.Threading
 						// If handle is missing then...
 						if (process != null && process.Handle == IntPtr.Zero)
 						{
-							// BeginInvoke will fail.
+							// BeginInvoke will fail. Silently remove the action.
 							queue.Remove(item);
 						}
 						else
@@ -275,27 +252,36 @@ namespace JocysCom.ClassLibrary.Threading
 					if (queue.Count == 0 || IsDisposing)
 					{
 						// Mark thread as not running;
-						isRunning = false;
+						lock (sleepTimerLock)
+						{
+							_IsRunning = false;
+							// If timer is used then...
+							if (sleepTimer != null)
+							{
+								// Start sleep timer.
+								sleepTimer.Start();
+								_NextRunTime = DateTime.Now.AddMilliseconds(sleepTimer.Interval);
+							}
+						}
 						return;
 					}
 					item = queue[0];
 					queue.RemoveAt(0);
 				}
 				// Do synchronous action.
-				DoActionCount++;
+				doActionCount++;
 				var da = DoAction;
 				if (da != null)
 				{
 					try
 					{
-
 						da(item);
 					}
 					catch (Exception ex)
 					{
-						LastException = ex.ToString();
-						LastExceptionDate = DateTime.Now;
-						ExceptionCount++;
+						lastException = ex.ToString();
+						lastExceptionDate = DateTime.Now;
+						exceptionCount++;
 					}
 
 				}
@@ -309,7 +295,7 @@ namespace JocysCom.ClassLibrary.Threading
 				if (IsDisposing) return;
 				// If thread is not running then add task.
 				// Use empty object as default task.
-				if (!_isRunning) AddToQueue(new object());
+				if (!_IsRunning) DoActionNow();
 			}
 		}
 
@@ -340,18 +326,19 @@ namespace JocysCom.ClassLibrary.Threading
 				// Dispose timers first
 				lock (sleepTimerLock)
 				{
-					if (SleepTimer != null)
+					if (sleepTimer != null)
 					{
-						SleepTimer.Dispose();
-						SleepTimer = null;
+						sleepTimer.Dispose();
+						_NextRunTime = default(DateTime);
+						sleepTimer = null;
 					}
 				}
 				lock (queueLock)
 				{
-					if (DelayTimer != null)
+					if (delayTimer != null)
 					{
-						DelayTimer.Dispose();
-						DelayTimer = null;
+						delayTimer.Dispose();
+						delayTimer = null;
 					}
 					if (queue != null)
 					{
