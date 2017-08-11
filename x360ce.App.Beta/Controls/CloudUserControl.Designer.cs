@@ -34,6 +34,7 @@
 			this.NextRunSeparator = new System.Windows.Forms.ToolStripSeparator();
 			this.NextRunLabel = new System.Windows.Forms.ToolStripLabel();
 			this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
+			this.DeleteButton = new System.Windows.Forms.ToolStripButton();
 			((System.ComponentModel.ISupportInitialize)(this.TasksDataGridView)).BeginInit();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -151,7 +152,8 @@
             this.UploadToCloudButton,
             this.DownloadFromCloudButton,
             this.NextRunSeparator,
-            this.NextRunLabel});
+            this.NextRunLabel,
+            this.DeleteButton});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -206,6 +208,15 @@
 			this.QueueMonitorTimer.Interval = 500;
 			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
 			// 
+			// DeleteButton
+			// 
+			this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.DeleteButton.Name = "DeleteButton";
+			this.DeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.DeleteButton.Text = "&Delete";
+			this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
+			// 
 			// CloudUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -239,5 +250,6 @@
 		private System.Windows.Forms.ToolStripSeparator NextRunSeparator;
 		private System.Windows.Forms.ToolStripLabel NextRunLabel;
 		private System.Windows.Forms.Timer QueueMonitorTimer;
+		private System.Windows.Forms.ToolStripButton DeleteButton;
 	}
 }

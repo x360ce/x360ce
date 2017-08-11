@@ -7,10 +7,17 @@ using System.Timers;
 namespace JocysCom.ClassLibrary.Threading
 {
 
+	public partial class QueueTimer : QueueTimer<object>
+	{
+		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000) : base(delayInterval = 500, sleepInterval = 5000)
+		{
+		}
+	}
+
 	/// <summary>
 	/// Queue tasks for execution on a single thread in a synchronized order.
 	/// </summary>
-	public partial class QueueTimer : IDisposable
+	public partial class QueueTimer<T> : IDisposable
 	{
 
 		/// <summary>
@@ -21,7 +28,7 @@ namespace JocysCom.ClassLibrary.Threading
 		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000)
 		{
 			// Create main properties.
-			queue = new List<object>();
+			_Queue = new BindingList<T>();
 			queueLock = new object();
 			sleepTimerLock = new object();
 			// Create delay timer.
@@ -43,11 +50,13 @@ namespace JocysCom.ClassLibrary.Threading
 		}
 
 		/// <summary>If delay timer is set then queue can contain only one item.</summary>
-		List<object> queue;
+		public BindingList<T> Queue { get { return _Queue; } set { _Queue = value; } }
+		BindingList<T> _Queue;
 		object queueLock;
 
 		/// <summary>Last added item.</summary>
-		object delayedItem;
+		bool delayedItemIsSet;
+		T delayedItem;
 		object sleepTimerLock;
 		string lastException;
 		DateTime lastExceptionDate;
@@ -73,7 +82,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// var isCreated = control.IsHandleCreated;
 		/// You can use 'HandleCreated' event.
 		/// </summary>
-		public Action<object> DoAction;
+		public Action<T> DoAction;
 
 		public ISynchronizeInvoke SynchronizingObject { get; set; }
 
@@ -100,10 +109,13 @@ namespace JocysCom.ClassLibrary.Threading
 			}
 		}
 
-		public string DoActionNow(object item = null)
+		/// <summary>
+		/// Trigger executaion of DoAction as soon as possible.
+		/// </summary>
+		public string DoActionNow(T item = default(T))
 		{
 			if (item == null)
-				item = new object();
+				item = default(T);
 			string status = "";
 			var data = new List<string>();
 			lock (queueLock)
@@ -121,7 +133,7 @@ namespace JocysCom.ClassLibrary.Threading
 					// Get delay which is required.
 					long delayTime = Math.Max(0, (long)delayTimer.Interval - lastAddTime.ElapsedMilliseconds);
 					// If item is set already then...
-					if (delayedItem != null)
+					if (delayedItemIsSet)
 					{
 						delayedItem = item;
 						status = "Delayed item updated. Delay timer is running.";
@@ -130,11 +142,12 @@ namespace JocysCom.ClassLibrary.Threading
 					else if (delayTime > 0)
 					{
 						delayedItem = item;
+						delayedItemIsSet = true;
 						delayTimer.Start();
 						status = "Delayed item added. Delay timer started.";
 					}
 					// If queue is empty then...
-					else if (queue.Count == 0)
+					else if (_Queue.Count == 0)
 					{
 						// Add item to the queue instantly.
 						_AddToQueue(item);
@@ -144,14 +157,14 @@ namespace JocysCom.ClassLibrary.Threading
 					{
 						// Queue already contains message.
 						// Update message.
-						queue[0] = item;
+						_Queue[0] = item;
 						status = "Queue item updated. Action thread is running.";
 					}
 					data.Add(string.Format("DelayTime = {0}", delayTime));
 				}
 			}
 			data.Add(string.Format("DoActionCount = {0}", doActionCount));
-			data.Add(string.Format("QueueCount = {0}", queue.Count));
+			data.Add(string.Format("QueueCount = {0}", _Queue.Count));
 			data.Add(string.Format("IsRunning = {0}", _IsRunning));
 			if (exceptionCount > 0)
 			{
@@ -169,12 +182,12 @@ namespace JocysCom.ClassLibrary.Threading
 		/// This function will be called inside 'queueLock' lock.
 		/// </summary>
 		/// <remarks>http://blogs.msdn.com/b/jaredpar/archive/2008/01/07/isynchronizeinvoke-now.aspx</remarks>
-		void _AddToQueue(object item)
+		void _AddToQueue(T item)
 		{
 			lock (disposeLock)
 			{
 				if (IsDisposing) return;
-				queue.Add(item);
+				_Queue.Add(item);
 				lastAddTime.Reset();
 				lastAddTime.Start();
 				// If thread is not running then...
@@ -208,7 +221,7 @@ namespace JocysCom.ClassLibrary.Threading
 						if (process != null && process.Handle == IntPtr.Zero)
 						{
 							// BeginInvoke will fail. Silently remove the action.
-							queue.Remove(item);
+							_Queue.Remove(item);
 						}
 						else
 						{
@@ -221,7 +234,7 @@ namespace JocysCom.ClassLibrary.Threading
 							}
 							catch (Exception)
 							{
-								queue.Remove(item);
+								_Queue.Remove(item);
 								throw;
 							}
 						}
@@ -234,8 +247,9 @@ namespace JocysCom.ClassLibrary.Threading
 		{
 			lock (queueLock)
 			{
-				object item = delayedItem;
-				delayedItem = null;
+				T item = delayedItem;
+				delayedItem = default(T);
+				delayedItemIsSet = false;
 				// Ad item to queue instantly.
 				_AddToQueue(item);
 			}
@@ -243,13 +257,13 @@ namespace JocysCom.ClassLibrary.Threading
 
 		void ThreadAction(object state)
 		{
-			object item = null;
+			T item;
 			while (true)
 			{
 				lock (queueLock)
 				{
 					// If no arguments left then leave the loop.
-					if (queue.Count == 0 || IsDisposing)
+					if (_Queue.Count == 0 || IsDisposing)
 					{
 						// Mark thread as not running;
 						lock (sleepTimerLock)
@@ -265,8 +279,8 @@ namespace JocysCom.ClassLibrary.Threading
 						}
 						return;
 					}
-					item = queue[0];
-					queue.RemoveAt(0);
+					item = _Queue[0];
+					_Queue.RemoveAt(0);
 				}
 				// Do synchronous action.
 				doActionCount++;
@@ -283,7 +297,6 @@ namespace JocysCom.ClassLibrary.Threading
 						lastExceptionDate = DateTime.Now;
 						exceptionCount++;
 					}
-
 				}
 			}
 		}
@@ -340,9 +353,9 @@ namespace JocysCom.ClassLibrary.Threading
 						delayTimer.Dispose();
 						delayTimer = null;
 					}
-					if (queue != null)
+					if (_Queue != null)
 					{
-						queue.Clear();
+						_Queue.Clear();
 					}
 				}
 				// Make sure that outside objects are not holding this timer from disposal. 
