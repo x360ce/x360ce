@@ -10,5 +10,6 @@ namespace x360ce.App
 		None = 0,
 		Busy = 1,
 		Done = 2,
+		Error = 3,
 	}
 }

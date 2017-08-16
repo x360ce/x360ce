@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
@@ -216,6 +217,46 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			int index = Items.IndexOf((T)sender);
 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
 		}
+
+		#region ISynchronizeInvoker
+
+		public ISynchronizeInvoke SynchronizingObject { get; set; }
+
+		protected override void OnListChanged(ListChangedEventArgs e)
+		{
+			var so = SynchronizingObject;
+			if (so != null && so.InvokeRequired)
+			{
+				var result = so.BeginInvoke((MethodInvoker)delegate ()
+				{
+					base.OnListChanged(e);
+				}, new object[] { });
+				so.EndInvoke(result);
+			}
+			else
+			{
+				base.OnListChanged(e);
+			}
+		}
+
+		protected override void OnAddingNew(AddingNewEventArgs e)
+		{
+			var so = SynchronizingObject;
+			if (so != null && so.InvokeRequired)
+			{
+				var result = so.BeginInvoke((MethodInvoker)delegate ()
+				{
+					base.OnAddingNew(e);
+				}, new object[] { });
+				so.EndInvoke(result);
+			}
+			else
+			{
+				base.OnAddingNew(e);
+			}
+		}
+
+		#endregion
 
 	}
 

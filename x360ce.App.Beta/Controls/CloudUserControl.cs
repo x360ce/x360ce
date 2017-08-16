@@ -12,41 +12,27 @@ namespace x360ce.App.Controls
 	public partial class CloudUserControl : UserControl
 	{
 
-		public class BindingListInvoked<T> : BindingList<T>
-		{
-			public BindingListInvoked(ISynchronizeInvoke synchronizingObject)
-			{
-				_SynchronizingObject = synchronizingObject;
-			}
-
-			public ISynchronizeInvoke _SynchronizingObject { get; set; }
-
-			protected override void OnListChanged(ListChangedEventArgs e)
-			{
-				var result = _SynchronizingObject.BeginInvoke((MethodInvoker)delegate ()
-				{
-					base.OnListChanged(e);
-				}, new object[] { });
-				_SynchronizingObject.EndInvoke(result);
-			}
-		}
-
-
 		public CloudUserControl()
 		{
 			InitializeComponent();
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
 			EngineHelper.EnableDoubleBuffering(TasksDataGridView);
-			queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000);
+			queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
 			queueTimer.DoAction = DoAction;
-			queueTimer.Queue = new BindingListInvoked<CloudItem>(this);
 			queueTimer.Queue.ListChanged += Data_ListChanged;
-			//queueTimer.SynchronizingObject = this;
 			TasksDataGridView.AutoGenerateColumns = false;
+			// Suspend errors.
+			TasksDataGridView.DataError += TasksDataGridView_DataError;
+			// Attach 
 			TasksDataGridView.DataSource = queueTimer.Queue;
 			// Force to create handle.
 			var handle = this.Handle;
 			QueueMonitorTimer.Start();
+		}
+
+		private void TasksDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		{
+			e.ThrowException = false;
 		}
 
 		private void Data_ListChanged(object sender, ListChangedEventArgs e)
@@ -85,8 +71,10 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		void DoAction(CloudItem item)
+		bool DoAction(CloudItem item)
 		{
+			if (item == null)
+				return true;
 			MainForm.Current.AddTask(TaskName.SaveToCloud);
 			Exception error = null;
 			try
@@ -122,10 +110,12 @@ namespace x360ce.App.Controls
 					error = new Exception(result.ErrorMessage);
 				}
 				ws.Dispose();
+				item.State = CloudState.Done;
 			}
 			catch (Exception ex)
 			{
 				error = ex;
+				item.State = CloudState.Error;
 			}
 			MainForm.Current.RemoveTask(TaskName.SaveToCloud);
 			if (error == null)
@@ -138,6 +128,7 @@ namespace x360ce.App.Controls
 				if (error.InnerException != null) body += "\r\n" + error.InnerException.Message;
 				MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, body);
 			}
+			return item.State != CloudState.Error;
 		}
 
 		/// <summary> 
@@ -191,9 +182,18 @@ namespace x360ce.App.Controls
 			{
 				remains = nextRunTime.Subtract(DateTime.Now);
 			}
-			var time = string.Format("{0} Next Run: {1:00}:{2:00.000}", queueTimer.IsRunning ? "↻" : " ",
-				remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
-			AppHelper.SetText(NextRunLabel, time);
+			var nextRun = string.Format("Next Run: {0:00}:{1:00.000}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
+			AppHelper.SetText(NextRunLabel, nextRun);
+			var lrt = queueTimer.LastActionDoneTime;
+			var lastRun = string.Format("Last Done: {0:00}:{1:00.000}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
+			//AppHelper.SetText(LastDoneLabel, lastRun);
+			var state = queueTimer.IsRunning ? "↑" : " ";
+			AppHelper.SetText(RunStateLabel, state);
+			//AppHelper.SetText(AddCountLabel, string.Format("Add: {0}", queueTimer.AddCount));
+			//AppHelper.SetText(StartCountLabel, string.Format("Start: {0}", queueTimer.StartCount));
+			//AppHelper.SetText(ThreadCountLabel, string.Format("Thread: {0}", queueTimer.ThreadCount));
+			//AppHelper.SetText(ActionCountLabel, string.Format("Action: {0}", queueTimer.ActionCount));
+			//AppHelper.SetText(ActionNoneCountLabel, string.Format("Action (null): {0}", queueTimer.ActionNoneCount));
 		}
 
 		private void DeleteButton_Click(object sender, EventArgs e)

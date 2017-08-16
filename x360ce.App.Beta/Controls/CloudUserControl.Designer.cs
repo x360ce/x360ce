@@ -16,10 +16,10 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.TasksDataGridView = new System.Windows.Forms.DataGridView();
 			this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
 			this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -33,8 +33,9 @@
 			this.DownloadFromCloudButton = new System.Windows.Forms.ToolStripButton();
 			this.NextRunSeparator = new System.Windows.Forms.ToolStripSeparator();
 			this.NextRunLabel = new System.Windows.Forms.ToolStripLabel();
-			this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
 			this.DeleteButton = new System.Windows.Forms.ToolStripButton();
+			this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
+			this.RunStateLabel = new System.Windows.Forms.ToolStripLabel();
 			((System.ComponentModel.ISupportInitialize)(this.TasksDataGridView)).BeginInit();
 			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -48,13 +49,13 @@
 			this.TasksDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.TasksDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.TasksDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.TasksDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.TasksDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
 			this.TasksDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.TasksDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewImageColumn1,
@@ -62,27 +63,27 @@
             this.ActionColumn,
             this.DescriptionColumn,
             this.StateColumn});
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.TasksDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.TasksDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
 			this.TasksDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TasksDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.TasksDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.TasksDataGridView.Name = "TasksDataGridView";
 			this.TasksDataGridView.ReadOnly = true;
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.TasksDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.TasksDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
 			this.TasksDataGridView.RowHeadersVisible = false;
 			this.TasksDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.TasksDataGridView.Size = new System.Drawing.Size(654, 338);
@@ -103,8 +104,8 @@
 			// 
 			this.DateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.DateColumn.DataPropertyName = "Date";
-			dataGridViewCellStyle2.Format = "yyyy-MM-dd HH:mm:ss";
-			this.DateColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle6.Format = "yyyy-MM-dd HH:mm:ss";
+			this.DateColumn.DefaultCellStyle = dataGridViewCellStyle6;
 			this.DateColumn.HeaderText = "Date";
 			this.DateColumn.Name = "DateColumn";
 			this.DateColumn.ReadOnly = true;
@@ -153,6 +154,7 @@
             this.DownloadFromCloudButton,
             this.NextRunSeparator,
             this.NextRunLabel,
+            this.RunStateLabel,
             this.DeleteButton});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
@@ -203,11 +205,6 @@
 			this.NextRunLabel.Size = new System.Drawing.Size(103, 22);
 			this.NextRunLabel.Text = "Next Run: 00:00:00";
 			// 
-			// QueueMonitorTimer
-			// 
-			this.QueueMonitorTimer.Interval = 500;
-			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
-			// 
 			// DeleteButton
 			// 
 			this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
@@ -216,6 +213,19 @@
 			this.DeleteButton.Size = new System.Drawing.Size(60, 22);
 			this.DeleteButton.Text = "&Delete";
 			this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
+			// 
+			// QueueMonitorTimer
+			// 
+			this.QueueMonitorTimer.Interval = 500;
+			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
+			// 
+			// RunStateLabel
+			// 
+			this.RunStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RunStateLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.RunStateLabel.Name = "RunStateLabel";
+			this.RunStateLabel.Size = new System.Drawing.Size(10, 22);
+			this.RunStateLabel.Text = " ";
 			// 
 			// CloudUserControl
 			// 
@@ -251,5 +261,6 @@
 		private System.Windows.Forms.ToolStripLabel NextRunLabel;
 		private System.Windows.Forms.Timer QueueMonitorTimer;
 		private System.Windows.Forms.ToolStripButton DeleteButton;
+		private System.Windows.Forms.ToolStripLabel RunStateLabel;
 	}
 }

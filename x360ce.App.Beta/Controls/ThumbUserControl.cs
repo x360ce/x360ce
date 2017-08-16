@@ -60,7 +60,7 @@ namespace x360ce.App.Controls
 
 		Bitmap LastBackgroundImage = null;
 
-		void RefreshBackgroundImage(object state)
+		bool RefreshBackgroundImage(object state)
 		{
 			int deadZone = 0;
 			int antiDeadZone = 0;
@@ -103,6 +103,7 @@ namespace x360ce.App.Controls
 				LastBackgroundImage = bmp;
 				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
 			}));
+			return true;
 		}
 
 		void RefreshBackgroundImageAsync()
