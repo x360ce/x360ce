@@ -13,6 +13,11 @@ namespace x360ce.Engine.Data
 	public partial class UserDevice : IDisplayName
 	{
 
+		public UserDevice()
+		{
+			IsEnabled = true;
+		}
+
 		[XmlIgnore]
 		public string DisplayName
 		{

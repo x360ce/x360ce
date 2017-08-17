@@ -57,6 +57,7 @@
 			this.AddLocationButton = new System.Windows.Forms.ToolStripButton();
 			this.LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.ConfigurationGroupBox = new System.Windows.Forms.GroupBox();
+			this.IncludeProductsCheckBox = new System.Windows.Forms.CheckBox();
 			this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
 			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
 			this.SaveSettingsButton = new System.Windows.Forms.Button();
@@ -72,7 +73,7 @@
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.UsernameTextBox = new System.Windows.Forms.TextBox();
 			this.DiskIdTextBox = new System.Windows.Forms.TextBox();
-			this.HashedDiskIdTextBox = new System.Windows.Forms.TextBox();
+			this.ComputerIdTextBox = new System.Windows.Forms.TextBox();
 			this.PasswordLabel = new System.Windows.Forms.Label();
 			this.UsernameLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -81,7 +82,6 @@
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.MinimumInstanceCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.IncludeProductsCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -413,6 +413,16 @@
 			this.ConfigurationGroupBox.TabStop = false;
 			this.ConfigurationGroupBox.Text = "Configuration";
 			// 
+			// IncludeProductsCheckBox
+			// 
+			this.IncludeProductsCheckBox.AutoSize = true;
+			this.IncludeProductsCheckBox.Location = new System.Drawing.Point(124, 21);
+			this.IncludeProductsCheckBox.Name = "IncludeProductsCheckBox";
+			this.IncludeProductsCheckBox.Size = new System.Drawing.Size(112, 17);
+			this.IncludeProductsCheckBox.TabIndex = 0;
+			this.IncludeProductsCheckBox.Text = "Include [Products]";
+			this.IncludeProductsCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// ConfigurationVersionLabel
 			// 
 			this.ConfigurationVersionLabel.AutoSize = true;
@@ -496,7 +506,7 @@
 			this.OnlineAccountGroupBox.Controls.Add(this.LoginButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.DiskIdTextBox);
-			this.OnlineAccountGroupBox.Controls.Add(this.HashedDiskIdTextBox);
+			this.OnlineAccountGroupBox.Controls.Add(this.ComputerIdTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.PasswordLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.label2);
@@ -571,13 +581,13 @@
 			this.DiskIdTextBox.Size = new System.Drawing.Size(380, 20);
 			this.DiskIdTextBox.TabIndex = 40;
 			// 
-			// HashedDiskIdTextBox
+			// ComputerIdTextBox
 			// 
-			this.HashedDiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.HashedDiskIdTextBox.Location = new System.Drawing.Point(107, 45);
-			this.HashedDiskIdTextBox.Name = "HashedDiskIdTextBox";
-			this.HashedDiskIdTextBox.Size = new System.Drawing.Size(233, 20);
-			this.HashedDiskIdTextBox.TabIndex = 41;
+			this.ComputerIdTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ComputerIdTextBox.Location = new System.Drawing.Point(107, 45);
+			this.ComputerIdTextBox.Name = "ComputerIdTextBox";
+			this.ComputerIdTextBox.Size = new System.Drawing.Size(233, 20);
+			this.ComputerIdTextBox.TabIndex = 41;
 			// 
 			// PasswordLabel
 			// 
@@ -667,16 +677,6 @@
             0,
             0});
 			// 
-			// IncludeProductsCheckBox
-			// 
-			this.IncludeProductsCheckBox.AutoSize = true;
-			this.IncludeProductsCheckBox.Location = new System.Drawing.Point(124, 21);
-			this.IncludeProductsCheckBox.Name = "IncludeProductsCheckBox";
-			this.IncludeProductsCheckBox.Size = new System.Drawing.Size(112, 17);
-			this.IncludeProductsCheckBox.TabIndex = 0;
-			this.IncludeProductsCheckBox.Text = "Include [Products]";
-			this.IncludeProductsCheckBox.UseVisualStyleBackColor = true;
-			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -753,7 +753,7 @@
 		public System.Windows.Forms.CheckBox InternetAutoSaveCheckBox;
 		private System.Windows.Forms.GroupBox OnlineAccountGroupBox;
         private System.Windows.Forms.TextBox DiskIdTextBox;
-        private System.Windows.Forms.TextBox HashedDiskIdTextBox;
+        private System.Windows.Forms.TextBox ComputerIdTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox PasswordTextBox;

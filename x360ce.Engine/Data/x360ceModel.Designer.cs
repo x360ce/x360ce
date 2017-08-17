@@ -164,22 +164,6 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<UserGame> UserGames
-        {
-            get
-            {
-                if ((_UserGames == null))
-                {
-                    _UserGames = base.CreateObjectSet<UserGame>("UserGames");
-                }
-                return _UserGames;
-            }
-        }
-        private ObjectSet<UserGame> _UserGames;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<UserInstance> UserInstances
         {
             get
@@ -192,6 +176,38 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<UserInstance> _UserInstances;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserComputer> UserComputers
+        {
+            get
+            {
+                if ((_UserComputers == null))
+                {
+                    _UserComputers = base.CreateObjectSet<UserComputer>("UserComputers");
+                }
+                return _UserComputers;
+            }
+        }
+        private ObjectSet<UserComputer> _UserComputers;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserGame> UserGames
+        {
+            get
+            {
+                if ((_UserGames == null))
+                {
+                    _UserGames = base.CreateObjectSet<UserGame>("UserGames");
+                }
+                return _UserGames;
+            }
+        }
+        private ObjectSet<UserGame> _UserGames;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -262,19 +278,27 @@ namespace x360ce.Engine.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the UserGames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToUserGames(UserGame userGame)
-        {
-            base.AddObject("UserGames", userGame);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the UserInstances EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToUserInstances(UserInstance userInstance)
         {
             base.AddObject("UserInstances", userInstance);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserComputers EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserComputers(UserComputer userComputer)
+        {
+            base.AddObject("UserComputers", userComputer);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserGames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserGames(UserGame userGame)
+        {
+            base.AddObject("UserGames", userGame);
         }
     
         /// <summary>
@@ -3647,104 +3671,30 @@ namespace x360ce.Engine.Data
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserDevice")]
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserComputer")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class UserDevice : EntityObject
+    public partial class UserComputer : EntityObject
     {
         #region Factory Method
     
         /// <summary>
-        /// Create a new UserDevice object.
+        /// Create a new UserComputer object.
         /// </summary>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="applicationId">Initial value of the ApplicationId property.</param>
         /// <param name="userId">Initial value of the UserId property.</param>
-        /// <param name="instanceGuid">Initial value of the InstanceGuid property.</param>
-        /// <param name="instanceName">Initial value of the InstanceName property.</param>
-        /// <param name="productGuid">Initial value of the ProductGuid property.</param>
-        /// <param name="productName">Initial value of the ProductName property.</param>
-        /// <param name="capAxeCount">Initial value of the CapAxeCount property.</param>
-        /// <param name="capButtonCount">Initial value of the CapButtonCount property.</param>
-        /// <param name="capDriverVersion">Initial value of the CapDriverVersion property.</param>
-        /// <param name="capFirmwareRevision">Initial value of the CapFirmwareRevision property.</param>
-        /// <param name="capFlags">Initial value of the CapFlags property.</param>
-        /// <param name="capForceFeedbackMinimumTimeResolution">Initial value of the CapForceFeedbackMinimumTimeResolution property.</param>
-        /// <param name="capForceFeedbackSamplePeriod">Initial value of the CapForceFeedbackSamplePeriod property.</param>
-        /// <param name="capHardwareRevision">Initial value of the CapHardwareRevision property.</param>
-        /// <param name="capPovCount">Initial value of the CapPovCount property.</param>
-        /// <param name="capIsHumanInterfaceDevice">Initial value of the CapIsHumanInterfaceDevice property.</param>
-        /// <param name="capSubtype">Initial value of the CapSubtype property.</param>
-        /// <param name="capType">Initial value of the CapType property.</param>
-        /// <param name="hidManufacturer">Initial value of the HidManufacturer property.</param>
-        /// <param name="hidVendorId">Initial value of the HidVendorId property.</param>
-        /// <param name="hidProductId">Initial value of the HidProductId property.</param>
-        /// <param name="hidRevision">Initial value of the HidRevision property.</param>
-        /// <param name="hidDescription">Initial value of the HidDescription property.</param>
-        /// <param name="hidDeviceId">Initial value of the HidDeviceId property.</param>
-        /// <param name="hidDevicePath">Initial value of the HidDevicePath property.</param>
-        /// <param name="hidParentDeviceId">Initial value of the HidParentDeviceId property.</param>
-        /// <param name="hidClassGuid">Initial value of the HidClassGuid property.</param>
-        /// <param name="hidClassDescription">Initial value of the HidClassDescription property.</param>
-        /// <param name="devManufacturer">Initial value of the DevManufacturer property.</param>
-        /// <param name="devVendorId">Initial value of the DevVendorId property.</param>
-        /// <param name="devProductId">Initial value of the DevProductId property.</param>
-        /// <param name="devRevision">Initial value of the DevRevision property.</param>
-        /// <param name="devDescription">Initial value of the DevDescription property.</param>
-        /// <param name="devDeviceId">Initial value of the DevDeviceId property.</param>
-        /// <param name="devDevicePath">Initial value of the DevDevicePath property.</param>
-        /// <param name="devParentDeviceId">Initial value of the DevParentDeviceId property.</param>
-        /// <param name="devClassGuid">Initial value of the DevClassGuid property.</param>
-        /// <param name="devClassDescription">Initial value of the DevClassDescription property.</param>
-        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
-        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
+        /// <param name="computerName">Initial value of the ComputerName property.</param>
+        public static UserComputer CreateUserComputer(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid computerId, global::System.String computerName)
         {
-            UserDevice userDevice = new UserDevice();
-            userDevice.Id = id;
-            userDevice.ApplicationId = applicationId;
-            userDevice.UserId = userId;
-            userDevice.InstanceGuid = instanceGuid;
-            userDevice.InstanceName = instanceName;
-            userDevice.ProductGuid = productGuid;
-            userDevice.ProductName = productName;
-            userDevice.CapAxeCount = capAxeCount;
-            userDevice.CapButtonCount = capButtonCount;
-            userDevice.CapDriverVersion = capDriverVersion;
-            userDevice.CapFirmwareRevision = capFirmwareRevision;
-            userDevice.CapFlags = capFlags;
-            userDevice.CapForceFeedbackMinimumTimeResolution = capForceFeedbackMinimumTimeResolution;
-            userDevice.CapForceFeedbackSamplePeriod = capForceFeedbackSamplePeriod;
-            userDevice.CapHardwareRevision = capHardwareRevision;
-            userDevice.CapPovCount = capPovCount;
-            userDevice.CapIsHumanInterfaceDevice = capIsHumanInterfaceDevice;
-            userDevice.CapSubtype = capSubtype;
-            userDevice.CapType = capType;
-            userDevice.HidManufacturer = hidManufacturer;
-            userDevice.HidVendorId = hidVendorId;
-            userDevice.HidProductId = hidProductId;
-            userDevice.HidRevision = hidRevision;
-            userDevice.HidDescription = hidDescription;
-            userDevice.HidDeviceId = hidDeviceId;
-            userDevice.HidDevicePath = hidDevicePath;
-            userDevice.HidParentDeviceId = hidParentDeviceId;
-            userDevice.HidClassGuid = hidClassGuid;
-            userDevice.HidClassDescription = hidClassDescription;
-            userDevice.DevManufacturer = devManufacturer;
-            userDevice.DevVendorId = devVendorId;
-            userDevice.DevProductId = devProductId;
-            userDevice.DevRevision = devRevision;
-            userDevice.DevDescription = devDescription;
-            userDevice.DevDeviceId = devDeviceId;
-            userDevice.DevDevicePath = devDevicePath;
-            userDevice.DevParentDeviceId = devParentDeviceId;
-            userDevice.DevClassGuid = devClassGuid;
-            userDevice.DevClassDescription = devClassDescription;
-            userDevice.DateCreated = dateCreated;
-            userDevice.DateUpdated = dateUpdated;
-            userDevice.IsEnabled = isEnabled;
-            return userDevice;
+            UserComputer userComputer = new UserComputer();
+            userComputer.Id = id;
+            userComputer.ApplicationId = applicationId;
+            userComputer.UserId = userId;
+            userComputer.ComputerId = computerId;
+            userComputer.ComputerName = computerName;
+            return userComputer;
         }
 
         #endregion
@@ -3825,6 +3775,215 @@ namespace x360ce.Engine.Data
         private global::System.Guid _UserId;
         partial void OnUserIdChanging(global::System.Guid value);
         partial void OnUserIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ComputerId
+        {
+            get
+            {
+                return _ComputerId;
+            }
+            set
+            {
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
+            }
+        }
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ComputerName
+        {
+            get
+            {
+                return _ComputerName;
+            }
+            set
+            {
+                OnComputerNameChanging(value);
+                ReportPropertyChanging("ComputerName");
+                _ComputerName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ComputerName");
+                OnComputerNameChanged();
+            }
+        }
+        private global::System.String _ComputerName;
+        partial void OnComputerNameChanging(global::System.String value);
+        partial void OnComputerNameChanged();
+
+        #endregion
+
+    
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserDevice")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UserDevice : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UserDevice object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
+        /// <param name="instanceGuid">Initial value of the InstanceGuid property.</param>
+        /// <param name="instanceName">Initial value of the InstanceName property.</param>
+        /// <param name="productGuid">Initial value of the ProductGuid property.</param>
+        /// <param name="productName">Initial value of the ProductName property.</param>
+        /// <param name="capAxeCount">Initial value of the CapAxeCount property.</param>
+        /// <param name="capButtonCount">Initial value of the CapButtonCount property.</param>
+        /// <param name="capDriverVersion">Initial value of the CapDriverVersion property.</param>
+        /// <param name="capFirmwareRevision">Initial value of the CapFirmwareRevision property.</param>
+        /// <param name="capFlags">Initial value of the CapFlags property.</param>
+        /// <param name="capForceFeedbackMinimumTimeResolution">Initial value of the CapForceFeedbackMinimumTimeResolution property.</param>
+        /// <param name="capForceFeedbackSamplePeriod">Initial value of the CapForceFeedbackSamplePeriod property.</param>
+        /// <param name="capHardwareRevision">Initial value of the CapHardwareRevision property.</param>
+        /// <param name="capPovCount">Initial value of the CapPovCount property.</param>
+        /// <param name="capIsHumanInterfaceDevice">Initial value of the CapIsHumanInterfaceDevice property.</param>
+        /// <param name="capSubtype">Initial value of the CapSubtype property.</param>
+        /// <param name="capType">Initial value of the CapType property.</param>
+        /// <param name="hidManufacturer">Initial value of the HidManufacturer property.</param>
+        /// <param name="hidVendorId">Initial value of the HidVendorId property.</param>
+        /// <param name="hidProductId">Initial value of the HidProductId property.</param>
+        /// <param name="hidRevision">Initial value of the HidRevision property.</param>
+        /// <param name="hidDescription">Initial value of the HidDescription property.</param>
+        /// <param name="hidDeviceId">Initial value of the HidDeviceId property.</param>
+        /// <param name="hidDevicePath">Initial value of the HidDevicePath property.</param>
+        /// <param name="hidParentDeviceId">Initial value of the HidParentDeviceId property.</param>
+        /// <param name="hidClassGuid">Initial value of the HidClassGuid property.</param>
+        /// <param name="hidClassDescription">Initial value of the HidClassDescription property.</param>
+        /// <param name="devManufacturer">Initial value of the DevManufacturer property.</param>
+        /// <param name="devVendorId">Initial value of the DevVendorId property.</param>
+        /// <param name="devProductId">Initial value of the DevProductId property.</param>
+        /// <param name="devRevision">Initial value of the DevRevision property.</param>
+        /// <param name="devDescription">Initial value of the DevDescription property.</param>
+        /// <param name="devDeviceId">Initial value of the DevDeviceId property.</param>
+        /// <param name="devDevicePath">Initial value of the DevDevicePath property.</param>
+        /// <param name="devParentDeviceId">Initial value of the DevParentDeviceId property.</param>
+        /// <param name="devClassGuid">Initial value of the DevClassGuid property.</param>
+        /// <param name="devClassDescription">Initial value of the DevClassDescription property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
+        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
+        {
+            UserDevice userDevice = new UserDevice();
+            userDevice.Id = id;
+            userDevice.ComputerId = computerId;
+            userDevice.InstanceGuid = instanceGuid;
+            userDevice.InstanceName = instanceName;
+            userDevice.ProductGuid = productGuid;
+            userDevice.ProductName = productName;
+            userDevice.CapAxeCount = capAxeCount;
+            userDevice.CapButtonCount = capButtonCount;
+            userDevice.CapDriverVersion = capDriverVersion;
+            userDevice.CapFirmwareRevision = capFirmwareRevision;
+            userDevice.CapFlags = capFlags;
+            userDevice.CapForceFeedbackMinimumTimeResolution = capForceFeedbackMinimumTimeResolution;
+            userDevice.CapForceFeedbackSamplePeriod = capForceFeedbackSamplePeriod;
+            userDevice.CapHardwareRevision = capHardwareRevision;
+            userDevice.CapPovCount = capPovCount;
+            userDevice.CapIsHumanInterfaceDevice = capIsHumanInterfaceDevice;
+            userDevice.CapSubtype = capSubtype;
+            userDevice.CapType = capType;
+            userDevice.HidManufacturer = hidManufacturer;
+            userDevice.HidVendorId = hidVendorId;
+            userDevice.HidProductId = hidProductId;
+            userDevice.HidRevision = hidRevision;
+            userDevice.HidDescription = hidDescription;
+            userDevice.HidDeviceId = hidDeviceId;
+            userDevice.HidDevicePath = hidDevicePath;
+            userDevice.HidParentDeviceId = hidParentDeviceId;
+            userDevice.HidClassGuid = hidClassGuid;
+            userDevice.HidClassDescription = hidClassDescription;
+            userDevice.DevManufacturer = devManufacturer;
+            userDevice.DevVendorId = devVendorId;
+            userDevice.DevProductId = devProductId;
+            userDevice.DevRevision = devRevision;
+            userDevice.DevDescription = devDescription;
+            userDevice.DevDeviceId = devDeviceId;
+            userDevice.DevDevicePath = devDevicePath;
+            userDevice.DevParentDeviceId = devParentDeviceId;
+            userDevice.DevClassGuid = devClassGuid;
+            userDevice.DevClassDescription = devClassDescription;
+            userDevice.DateCreated = dateCreated;
+            userDevice.DateUpdated = dateUpdated;
+            userDevice.IsEnabled = isEnabled;
+            return userDevice;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ComputerId
+        {
+            get
+            {
+                return _ComputerId;
+            }
+            set
+            {
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
+            }
+        }
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4781,47 +4940,47 @@ namespace x360ce.Engine.Data
         /// Create a new UserGame object.
         /// </summary>
         /// <param name="gameId">Initial value of the GameId property.</param>
-        /// <param name="diskDriveId">Initial value of the DiskDriveId property.</param>
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
         /// <param name="fileName">Initial value of the FileName property.</param>
         /// <param name="fileProductName">Initial value of the FileProductName property.</param>
         /// <param name="fileVersion">Initial value of the FileVersion property.</param>
         /// <param name="fullPath">Initial value of the FullPath property.</param>
         /// <param name="companyName">Initial value of the CompanyName property.</param>
+        /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
         /// <param name="hookMask">Initial value of the HookMask property.</param>
         /// <param name="xInputMask">Initial value of the XInputMask property.</param>
-        /// <param name="comment">Initial value of the Comment property.</param>
-        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
         /// <param name="dInputMask">Initial value of the DInputMask property.</param>
         /// <param name="dInputFile">Initial value of the DInputFile property.</param>
         /// <param name="fakeVID">Initial value of the FakeVID property.</param>
         /// <param name="fakePID">Initial value of the FakePID property.</param>
         /// <param name="timeout">Initial value of the Timeout property.</param>
         /// <param name="weight">Initial value of the Weight property.</param>
+        /// <param name="comment">Initial value of the Comment property.</param>
+        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid diskDriveId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.Int32 autoMapMask)
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 autoMapMask)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
-            userGame.DiskDriveId = diskDriveId;
+            userGame.ComputerId = computerId;
             userGame.FileName = fileName;
             userGame.FileProductName = fileProductName;
             userGame.FileVersion = fileVersion;
             userGame.FullPath = fullPath;
             userGame.CompanyName = companyName;
+            userGame.ProcessorArchitecture = processorArchitecture;
             userGame.HookMask = hookMask;
             userGame.XInputMask = xInputMask;
-            userGame.Comment = comment;
-            userGame.IsEnabled = isEnabled;
-            userGame.DateCreated = dateCreated;
-            userGame.ProcessorArchitecture = processorArchitecture;
             userGame.DInputMask = dInputMask;
             userGame.DInputFile = dInputFile;
             userGame.FakeVID = fakeVID;
             userGame.FakePID = fakePID;
             userGame.Timeout = timeout;
             userGame.Weight = weight;
+            userGame.Comment = comment;
+            userGame.IsEnabled = isEnabled;
+            userGame.DateCreated = dateCreated;
             userGame.AutoMapMask = autoMapMask;
             return userGame;
         }
@@ -4862,24 +5021,24 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Guid DiskDriveId
+        public global::System.Guid ComputerId
         {
             get
             {
-                return _DiskDriveId;
+                return _ComputerId;
             }
             set
             {
-                OnDiskDriveIdChanging(value);
-                ReportPropertyChanging("DiskDriveId");
-                _DiskDriveId = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DiskDriveId");
-                OnDiskDriveIdChanged();
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
             }
         }
-        private global::System.Guid _DiskDriveId;
-        partial void OnDiskDriveIdChanging(global::System.Guid value);
-        partial void OnDiskDriveIdChanged();
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -5006,6 +5165,30 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.Int32 ProcessorArchitecture
+        {
+            get
+            {
+                return _ProcessorArchitecture;
+            }
+            set
+            {
+                OnProcessorArchitectureChanging(value);
+                ReportPropertyChanging("ProcessorArchitecture");
+                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProcessorArchitecture");
+                OnProcessorArchitectureChanged();
+            }
+        }
+        private global::System.Int32 _ProcessorArchitecture;
+        partial void OnProcessorArchitectureChanging(global::System.Int32 value);
+        partial void OnProcessorArchitectureChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.Int32 HookMask
         {
             get
@@ -5048,126 +5231,6 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _XInputMask;
         partial void OnXInputMaskChanging(global::System.Int32 value);
         partial void OnXInputMaskChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Comment
-        {
-            get
-            {
-                return _Comment;
-            }
-            set
-            {
-                OnCommentChanging(value);
-                ReportPropertyChanging("Comment");
-                _Comment = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Comment");
-                OnCommentChanged();
-            }
-        }
-        private global::System.String _Comment;
-        partial void OnCommentChanging(global::System.String value);
-        partial void OnCommentChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean IsEnabled
-        {
-            get
-            {
-                return _IsEnabled;
-            }
-            set
-            {
-                OnIsEnabledChanging(value);
-                ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("IsEnabled");
-                OnIsEnabledChanged();
-            }
-        }
-        private global::System.Boolean _IsEnabled;
-        partial void OnIsEnabledChanging(global::System.Boolean value);
-        partial void OnIsEnabledChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.DateTime DateCreated
-        {
-            get
-            {
-                return _DateCreated;
-            }
-            set
-            {
-                OnDateCreatedChanging(value);
-                ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateCreated");
-                OnDateCreatedChanged();
-            }
-        }
-        private global::System.DateTime _DateCreated;
-        partial void OnDateCreatedChanging(global::System.DateTime value);
-        partial void OnDateCreatedChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DateUpdated
-        {
-            get
-            {
-                return _DateUpdated;
-            }
-            set
-            {
-                OnDateUpdatedChanging(value);
-                ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateUpdated");
-                OnDateUpdatedChanged();
-            }
-        }
-        private Nullable<global::System.DateTime> _DateUpdated;
-        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
-        partial void OnDateUpdatedChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 ProcessorArchitecture
-        {
-            get
-            {
-                return _ProcessorArchitecture;
-            }
-            set
-            {
-                OnProcessorArchitectureChanging(value);
-                ReportPropertyChanging("ProcessorArchitecture");
-                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ProcessorArchitecture");
-                OnProcessorArchitectureChanged();
-            }
-        }
-        private global::System.Int32 _ProcessorArchitecture;
-        partial void OnProcessorArchitectureChanging(global::System.Int32 value);
-        partial void OnProcessorArchitectureChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -5336,6 +5399,102 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _Weight;
         partial void OnWeightChanging(global::System.Int32 value);
         partial void OnWeightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+            set
+            {
+                OnCommentChanging(value);
+                ReportPropertyChanging("Comment");
+                _Comment = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Comment");
+                OnCommentChanged();
+            }
+        }
+        private global::System.String _Comment;
+        partial void OnCommentChanging(global::System.String value);
+        partial void OnCommentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsEnabled
+        {
+            get
+            {
+                return _IsEnabled;
+            }
+            set
+            {
+                OnIsEnabledChanging(value);
+                ReportPropertyChanging("IsEnabled");
+                _IsEnabled = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsEnabled");
+                OnIsEnabledChanged();
+            }
+        }
+        private global::System.Boolean _IsEnabled;
+        partial void OnIsEnabledChanging(global::System.Boolean value);
+        partial void OnIsEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _DateUpdated;
+        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
+        partial void OnDateUpdatedChanged();
     
         /// <summary>
         /// No Metadata Documentation available.

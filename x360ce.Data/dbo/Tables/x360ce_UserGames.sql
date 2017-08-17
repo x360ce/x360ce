@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[x360ce_UserGames] (
     [GameId]                UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_GameId] DEFAULT (newid()) NOT NULL,
-    [DiskDriveId]           UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_DiskDriveId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
+    [ComputerId]            UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_DiskDriveId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     [FileName]              NVARCHAR (128)   CONSTRAINT [DF_x360ce_UserGames_FileName] DEFAULT ('') NOT NULL,
     [FileProductName]       NVARCHAR (256)   CONSTRAINT [DF_x360ce_UserGames_FileProductName] DEFAULT ('') NOT NULL,
     [FileVersion]           NVARCHAR (32)    CONSTRAINT [DF_x360ce_UserGames_FileVersion] DEFAULT ('') NOT NULL,
@@ -23,6 +23,8 @@
     [AutoMapMask]           INT              CONSTRAINT [DF_x360ce_UserGames_AutoMapMask] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_x360ce_UserGames] PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
+
+
 
 
 

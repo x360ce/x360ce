@@ -34,9 +34,9 @@ namespace x360ce.App
             {
                 DiskId = Engine.BoardInfo.GetDiskId();
             }
-            if (HashedDiskId == Guid.Empty)
+            if (ComputerId == Guid.Empty)
             {
-                HashedDiskId = Engine.BoardInfo.GetHashedDiskId();
+                ComputerId = Engine.BoardInfo.GetHashedDiskId();
             }
         }
         public bool AllowOnlyOneCopy { get; set; }
@@ -53,7 +53,7 @@ namespace x360ce.App
         public List<string> InternetDatabaseUrls { get; set; }
         public List<string> GameScanLocations { get; set; }
         public string DiskId { get; set; }
-        public Guid HashedDiskId { get; set; }
+        public Guid ComputerId { get; set; }
 
         public string LoginEnabled { get; set; }
 

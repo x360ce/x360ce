@@ -608,6 +608,7 @@ namespace x360ce.App
 
 		public void SaveAll()
 		{
+			
 			Settings.Default.Save();
 			SettingsManager.OptionsData.Save();
 			SettingsManager.Settings.Save();

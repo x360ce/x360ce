@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using x360ce.Engine;
 
 namespace x360ce.App
@@ -12,7 +13,13 @@ namespace x360ce.App
 		public CloudState State { get { return _State; } set { _State = value; NotifyPropertyChanged("State"); } }
 		CloudState _State;
 
+		public int Try { get { return _Try; } set { _Try = value; NotifyPropertyChanged("Try"); } }
+		int _Try;
+
 		public DateTime Date { get; set; }
+
+		[XmlIgnore]
+		public Exception Error;
 
 		public object Item { get; set; }
 		public string Description

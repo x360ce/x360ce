@@ -9,24 +9,64 @@ namespace x360ce.Engine
 	public partial class CloudHelper
 	{
 
-		public static JocysCom.WebSites.Engine.Security.Data.User GetUser(CloudMessage message)
+		public static JocysCom.WebSites.Engine.Security.Data.User GetUser(CloudMessage input, out string error)
 		{
-			var values = message.Values;
-			if (values == null) return null;
+			var values = input.Values;
+			error = null;
+			if (values == null)
+			{
+				error = "Input message is null";
+				return null;
+			}
 			var randomPasswordEncrypted = values.GetValue<string>(CloudKey.RandomPassword);
 			if (string.IsNullOrEmpty(randomPasswordEncrypted)) return null;
 			// Decrypt random password supplied by the user.
 			var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
-			message.Values.DecryptRandomPassword(rsa.RsaPublicKeyValue, rsa.RsaPrivateKeyValue);
+			input.Values.DecryptRandomPassword(rsa.RsaPublicKeyValue, rsa.RsaPrivateKeyValue);
+			// Try to get user by username.
 			var username = values.GetValue<string>(CloudKey.Username, null, true);
 			var password = values.GetValue<string>(CloudKey.Password, null, true);
-			// If user password is not valid then return
-			if (!Membership.ValidateUser(username, password))
+			if (string.IsNullOrEmpty(username))
 			{
+				error = "Username is empty";
 				return null;
 			}
-			var user = JocysCom.WebSites.Engine.Security.Data.User.GetUser(username);
-			return user;
+			if (string.IsNullOrEmpty(password))
+			{
+				error = "Password is empty";
+				return null;
+			}
+			// If user password is valid then...
+			if (!Membership.ValidateUser(username, password))
+			{
+				error = "Invalid user credentials";
+			}
+			// Return user.
+			return JocysCom.WebSites.Engine.Security.Data.User.GetUser(username);
+		}
+
+		public static Guid? GetComputerId(CloudMessage input, out string error)
+		{
+			var values = input.Values;
+			error = null;
+			if (values == null)
+			{
+				error = "Input message is null";
+				return null;
+			}
+			var randomPasswordEncrypted = values.GetValue<string>(CloudKey.RandomPassword);
+			if (string.IsNullOrEmpty(randomPasswordEncrypted)) return null;
+			// Decrypt random password supplied by the user.
+			var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
+			input.Values.DecryptRandomPassword(rsa.RsaPublicKeyValue, rsa.RsaPrivateKeyValue);
+			// Try to get computer id.
+			var computerId = input.Values.GetValue(CloudKey.ComputerId, Guid.Empty, true);
+			if (computerId == Guid.Empty)
+			{
+				error = "DiskId is empty";
+				return null;
+			}
+			return computerId;
 		}
 
 		/// <summary>Get secure user command.</summary>

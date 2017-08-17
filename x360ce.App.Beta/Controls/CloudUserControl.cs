@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
 			EngineHelper.EnableDoubleBuffering(TasksDataGridView);
 			queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
-			queueTimer.DoAction = DoAction;
+			queueTimer.DoWork += queueTimer_DoWork;
 			queueTimer.Queue.ListChanged += Data_ListChanged;
 			TasksDataGridView.AutoGenerateColumns = false;
 			// Suspend errors.
@@ -71,11 +71,21 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		bool DoAction(CloudItem item)
+		/// <summary>
+		/// This function will run on different thread than UI. Make sure to use Invoke for interface update.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		void queueTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
+			var item = e.Item as CloudItem;
 			if (item == null)
-				return true;
-			MainForm.Current.AddTask(TaskName.SaveToCloud);
+				return;
+			item.Try++;
+			MainForm.Current.Invoke((Action)delegate ()
+			{
+				MainForm.Current.AddTask(TaskName.SaveToCloud);
+			});
 			Exception error = null;
 			try
 			{
@@ -85,7 +95,7 @@ namespace x360ce.App.Controls
 				// Add security.
 				var o = SettingsManager.Options;
 				var command = CloudHelper.NewMessage(item.Action, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
-				command.Values.Add(CloudKey.HashedDiskId, o.HashedDiskId, true);
+				command.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
 				//// Add secure credentials.
 				//var rsa = new JocysCom.ClassLibrary.Security.Encryption("Cloud");
 				//if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
@@ -101,34 +111,27 @@ namespace x360ce.App.Controls
 				}
 				else if (item.Item.GetType() == typeof(UserDevice))
 				{
-					command.UserControllers = new List<UserDevice>() { (UserDevice)item.Item };
+					command.UserDevices = new List<UserDevice>() { (UserDevice)item.Item };
 				}
 				result = ws.Execute(command);
 				if (result.ErrorCode > 0)
 				{
-					queueTimer.ChangeSleepInterval(5 * 60 * 1000);
 					error = new Exception(result.ErrorMessage);
 				}
 				ws.Dispose();
-				item.State = CloudState.Done;
 			}
 			catch (Exception ex)
 			{
 				error = ex;
-				item.State = CloudState.Error;
 			}
-			MainForm.Current.RemoveTask(TaskName.SaveToCloud);
-			if (error == null)
+			MainForm.Current.Invoke((Action)delegate ()
 			{
-				MainForm.Current.SetHeaderBody(MessageBoxIcon.Information);
-			}
-			else
-			{
-				var body = string.Format("Cloud Error: {0}", error.Message);
-				if (error.InnerException != null) body += "\r\n" + error.InnerException.Message;
-				MainForm.Current.SetHeaderBody(MessageBoxIcon.Error, body);
-			}
-			return item.State != CloudState.Error;
+				MainForm.Current.RemoveTask(TaskName.SaveToCloud);
+			});
+			item.Error = error;
+			item.State = error == null ? CloudState.Done : CloudState.Error;
+			e.Keep = error != null;
+			e.Break = error != null;
 		}
 
 		/// <summary> 
@@ -144,7 +147,6 @@ namespace x360ce.App.Controls
 			if (queueTimer != null)
 			{
 				queueTimer.Dispose();
-				queueTimer = null;
 			}
 
 			base.Dispose(disposing);
@@ -182,10 +184,10 @@ namespace x360ce.App.Controls
 			{
 				remains = nextRunTime.Subtract(DateTime.Now);
 			}
-			var nextRun = string.Format("Next Run: {0:00}:{1:00.000}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
+			var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
 			AppHelper.SetText(NextRunLabel, nextRun);
 			var lrt = queueTimer.LastActionDoneTime;
-			var lastRun = string.Format("Last Done: {0:00}:{1:00.000}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
+			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
 			//AppHelper.SetText(LastDoneLabel, lastRun);
 			var state = queueTimer.IsRunning ? "↑" : " ";
 			AppHelper.SetText(RunStateLabel, state);
@@ -199,6 +201,19 @@ namespace x360ce.App.Controls
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
 			queueTimer.Queue.Clear();
+		}
+
+		private void TasksDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.ColumnIndex < 0 || e.RowIndex < 0)
+				return;
+			var item = TasksDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x => (CloudItem)x.DataBoundItem).FirstOrDefault();
+			if (item == null)
+				return;
+			var error = item.Error;
+			if (error == null)
+				return;
+			MessageBoxForm.Show(error.ToString(), error.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
 }

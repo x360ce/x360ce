@@ -350,11 +350,13 @@ namespace x360ce.Web.WebServices
 			try
 			{
 				JocysCom.WebSites.Engine.Security.Data.User user;
+				string error;
+				Guid? computerId;
 				switch (command.Action)
 				{
 					case CloudAction.LogIn:
 						// Action requires valid user.
-						user = CloudHelper.GetUser(command);
+						user = CloudHelper.GetUser(command, out error);
 						if (user == null)
 						{
 							messages.Add("Not authorised");
@@ -372,31 +374,40 @@ namespace x360ce.Web.WebServices
 						break;
 					case CloudAction.Delete:
 						// Action requires valid user.
-						user = CloudHelper.GetUser(command);
-						if (user == null)
+						computerId = CloudHelper.GetComputerId(command, out error);
+						if (computerId.HasValue)
 						{
-							messages.Add("Not authorised");
-							results.ErrorCode = 2;
+							foreach (var item in command.UserGames)
+								item.ComputerId = computerId.Value;
+							foreach (var item in command.UserDevices)
+								item.ComputerId = computerId.Value;
+							messages.Add(Delete(command.UserDevices));
+							messages.Add(Delete(command.UserGames));
 						}
 						else
 						{
-							messages.Add(Delete(command.UserControllers));
-							messages.Add(Delete(command.UserGames));
+							messages.Add(error);
+							results.ErrorCode = 2;
 						}
 						break;
 					case CloudAction.Insert:
 					case CloudAction.Update:
-						// Action requires valid user.
-						user = CloudHelper.GetUser(command);
-						if (user == null)
+						computerId = CloudHelper.GetComputerId(command, out error);
+						if (computerId.HasValue)
 						{
-							messages.Add("Not authorised");
-							results.ErrorCode = 2;
+							// Fix computer id
+							foreach (var item in command.UserGames)
+								item.ComputerId = computerId.Value;
+							foreach (var item in command.UserDevices)
+								item.ComputerId = computerId.Value;
+							// Games can be inserted by using computer id only.
+							messages.Add(Upsert(command.UserGames));
+							messages.Add(Upsert(command.UserDevices));
 						}
 						else
 						{
-							messages.Add(Upsert(command.UserControllers));
-							messages.Add(Upsert(command.UserGames));
+							messages.Add(error);
+							results.ErrorCode = 2;
 						}
 						break;
 					default:
@@ -446,14 +457,17 @@ namespace x360ce.Web.WebServices
 				if (uc == null)
 				{
 					created++;
+					item.Id = Guid.NewGuid();
+					item.DateCreated = DateTime.Now;
+					item.DateUpdated = item.DateCreated;
 					db.UserDevices.AddObject(item);
-					uc.Id = Guid.NewGuid();
-					uc.DateCreated = DateTime.Now;
 				}
 				else
 				{
 					updated++;
-					Helper.CopyProperties(item, uc);
+					// Fix dates.
+					item.DateCreated = uc.DateCreated;
+					Helper.CopyDataMembers(item, uc, true);
 					uc.DateUpdated = DateTime.Now;
 				}
 			}
@@ -475,9 +489,9 @@ namespace x360ce.Web.WebServices
 			for (int i = 0; i < items.Count; i++)
 			{
 				var game = items[i];
-				var diskDriveId = game.DiskDriveId;
+				var computerId = game.ComputerId;
 				var fileName = game.FileName;
-				var currentGame = db.UserGames.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				var currentGame = db.UserGames.FirstOrDefault(x => x.ComputerId == computerId && x.FileName == fileName);
 				if (currentGame == null) continue;
 				db.UserGames.DeleteObject(currentGame);
 				deleted++;
@@ -496,9 +510,9 @@ namespace x360ce.Web.WebServices
 			for (int i = 0; i < items.Count; i++)
 			{
 				var item = items[i];
-				var diskDriveId = item.DiskDriveId;
+				var computerId = item.ComputerId;
 				var fileName = item.FileName;
-				var game = db.UserGames.FirstOrDefault(x => x.DiskDriveId == diskDriveId && x.FileName == fileName);
+				var game = db.UserGames.FirstOrDefault(x => x.ComputerId == computerId && x.FileName == fileName);
 				if (game == null)
 				{
 					created++;

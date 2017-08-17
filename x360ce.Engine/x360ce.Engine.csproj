@@ -255,6 +255,7 @@
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
+    <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />

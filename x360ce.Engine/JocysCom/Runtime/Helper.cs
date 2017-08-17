@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.Data;
 using System.Runtime.Serialization;
+using System.Data.Objects.DataClasses;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -156,7 +157,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// Only members declared at the level of the supplied type's hierarchy should be copied.
 		/// Inherited members are not copied.
 		/// </summary>
-		public static void CopyDataMembers<T>(T source, T dest)
+		public static void CopyDataMembers<T>(T source, T dest, bool skipKey = false)
 		{
 			Type t = typeof(T);
 			PropertyInfo[] ps;
@@ -168,9 +169,17 @@ namespace JocysCom.ClassLibrary.Runtime
 				}
 				else
 				{
-					ps = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
-						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)) && p.CanRead && p.CanWrite)
-						.ToArray();
+					var items = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
+						.Where(p => p.CanRead && p.CanWrite)
+						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)));
+					if (skipKey)
+					{
+						var keys = items
+							.Where(p => Attribute.IsDefined(p, typeof(EdmScalarPropertyAttribute)))
+							.Where(p => ((EdmScalarPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(EdmScalarPropertyAttribute))).EntityKeyProperty);
+						items = items.Except(keys);
+					}
+					ps = items.ToArray();
 					DataMembers.Add(t, ps);
 				}
 			}

@@ -42,6 +42,7 @@ namespace JocysCom.ClassLibrary.Threading
 			queueLock = new object();
 			ChangeDelayInterval(delayInterval);
 			ChangeSleepInterval(sleepInterval);
+			SleepTimerStart();
 		}
 
 		/// <summary>If delay timer is set then queue can contain only one item.</summary>
@@ -62,7 +63,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// var isCreated = control.IsHandleCreated;
 		/// You can use 'HandleCreated' event.
 		/// </summary>
-		public Func<T, bool> DoAction;
+		public EventHandler<QueueTimerEventArgs> DoWork;
 
 		public ISynchronizeInvoke SynchronizingObject { get; set; }
 
@@ -93,8 +94,6 @@ namespace JocysCom.ClassLibrary.Threading
 
 		#endregion
 
-		#region Timers
-
 		/// <summary>
 		/// Next run by sleep timer.
 		/// </summary>
@@ -102,67 +101,30 @@ namespace JocysCom.ClassLibrary.Threading
 		{
 			get
 			{
-				return (delayTimerElapsedTime.Ticks == 0 || (sleepTimerElapsedTime.Ticks > 0 && sleepTimerElapsedTime < delayTimerElapsedTime))
-					? sleepTimerElapsedTime
-					: delayTimerElapsedTime;
+				return (delayTimerNextRunTime.Ticks == 0 || (sleepTimerNextRunTime.Ticks > 0 && sleepTimerNextRunTime < delayTimerNextRunTime))
+					? sleepTimerNextRunTime
+					: delayTimerNextRunTime;
 			}
 		}
+
+		#region Delay Timer
 
 		/// <summary>
 		/// Controls how long application must wait between actions.
 		/// </summary>
 		Timer delayTimer;
-		DateTime delayTimerElapsedTime;
-
-		/// <summary>
-		/// Controls how long application must sleep if last action finished without doing anything.
-		/// </summary>
-		Timer sleepTimer;
-		DateTime sleepTimerElapsedTime;
-
-		public void ChangeSleepInterval(int interval)
-		{
-			lock (queueLock)
-			{
-				if (sleepTimer != null)
-				{
-					sleepTimer.Elapsed -= SleepTimer_Elapsed;
-					sleepTimer.Dispose();
-					sleepTimerElapsedTime = default(DateTime);
-					sleepTimer = null;
-				}
-				if (interval > 0)
-				{
-					// Create delay timer.
-					sleepTimer = new Timer();
-					sleepTimer.AutoReset = false;
-					sleepTimer.Interval = interval;
-					sleepTimer.Elapsed += SleepTimer_Elapsed;
-					sleepTimer.Start();
-					sleepTimerElapsedTime = DateTime.Now.AddMilliseconds(sleepTimer.Interval);
-				}
-			}
-		}
-
-		void SleepTimer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			lock (queueLock)
-			{
-				if (IsDisposing) return;
-				sleepTimerElapsedTime = default(DateTime);
-				_StarThread();
-			}
-		}
+		DateTime delayTimerNextRunTime;
+		object delayTimerLock = new object();
 
 		public void ChangeDelayInterval(int interval)
 		{
-			lock (queueLock)
+			lock (delayTimerLock)
 			{
 				if (delayTimer != null)
 				{
 					delayTimer.Elapsed -= DelayTimer_Elapsed;
 					delayTimer.Dispose();
-					delayTimerElapsedTime = default(DateTime);
+					delayTimerNextRunTime = default(DateTime);
 					delayTimer = null;
 				}
 				if (interval > 0)
@@ -176,13 +138,111 @@ namespace JocysCom.ClassLibrary.Threading
 			}
 		}
 
+		public void DelayTimerStop()
+		{
+			lock (delayTimerLock)
+			{
+				if (delayTimer != null)
+				{
+					delayTimer.Stop();
+					delayTimerNextRunTime = default(DateTime);
+				}
+			}
+		}
+
+		public void DelayTimerStart()
+		{
+			lock (delayTimerLock)
+			{
+				if (delayTimer != null)
+				{
+					delayTimerNextRunTime = DateTime.Now.AddMilliseconds(delayTimer.Interval);
+					delayTimer.Start();
+				}
+			}
+		}
+
 		void DelayTimer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			lock (delayTimerLock)
+			{
+				delayTimerNextRunTime = default(DateTime);
+			}
+			if (IsDisposing) return;
+			lock (queueLock)
+			{
+				_StarThread();
+			}
+		}
+
+		#endregion
+
+		#region Sleep Timer
+
+		/// <summary>
+		/// Controls how long application must sleep if last action finished without doing anything.
+		/// </summary>
+		Timer sleepTimer;
+		DateTime sleepTimerNextRunTime;
+		object sleepTimerLock = new object();
+
+		public void ChangeSleepInterval(int interval)
 		{
 			lock (queueLock)
 			{
-				if (IsDisposing) return;
-				delayTimerElapsedTime = default(DateTime);
+				if (sleepTimer != null)
+				{
+					sleepTimer.Elapsed -= SleepTimer_Elapsed;
+					sleepTimer.Dispose();
+					sleepTimerNextRunTime = default(DateTime);
+					sleepTimer = null;
+				}
+				if (interval > 0)
+				{
+					// Create delay timer.
+					sleepTimer = new Timer();
+					sleepTimer.AutoReset = false;
+					sleepTimer.Interval = interval;
+					sleepTimer.Elapsed += SleepTimer_Elapsed;
+				}
+			}
+		}
+
+		void SleepTimer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			lock (sleepTimerLock)
+			{
+				sleepTimerNextRunTime = default(DateTime);
+			}
+			if (IsDisposing) return;
+			lock (queueLock)
+			{
 				_StarThread();
+			}
+		}
+
+
+		public void SleepTimerStop()
+		{
+			lock (sleepTimerLock)
+			{
+				if (sleepTimer != null)
+				{
+					sleepTimer.Stop();
+					sleepTimerNextRunTime = default(DateTime);
+				}
+			}
+		}
+
+		public void SleepTimerStart()
+		{
+			lock (sleepTimerLock)
+			{
+				if (sleepTimer != null)
+				{
+					sleepTimerNextRunTime = DateTime.Now.AddMilliseconds(sleepTimer.Interval);
+					sleepTimer.Start();
+				}
 			}
 		}
 
@@ -218,8 +278,13 @@ namespace JocysCom.ClassLibrary.Threading
 			{
 				_AddCount++;
 				if (IsDisposing) return string.Empty;
+				double delayTimerInterval = 0;
+				lock (delayTimerLock)
+				{
+					delayTimerInterval = delayTimer == null ? 0 : delayTimer.Interval;
+				}
 				// If there is no delay between actions then...
-				if (delayTimer == null)
+				if (delayTimerInterval == 0)
 				{
 					if (item != null)
 						// Simply add all job items to the queue.
@@ -246,7 +311,7 @@ namespace JocysCom.ClassLibrary.Threading
 						}
 					}
 					// If must process first job immediately and enought time passed from last execution then...
-					if (ProcessImmediately && delayTimer.Interval < _LastActionDoneTime.ElapsedMilliseconds)
+					if (ProcessImmediately && delayTimerInterval < _LastActionDoneTime.ElapsedMilliseconds)
 					{
 						_StarThread();
 					}
@@ -254,17 +319,20 @@ namespace JocysCom.ClassLibrary.Threading
 					// Note: If thread is still running then queue item will be processed on running thread.
 					else if (!_IsRunning && _Queue.Count > 0)
 					{
-						// Check if sleep timer expired.
-						if (sleepTimer == null || sleepTimer.Interval < _LastActionDoneTime.ElapsedMilliseconds)
+						double sleepTimerInterval = 0;
+						lock (sleepTimerLock)
 						{
-							delayTimer.Stop();
-							delayTimerElapsedTime = default(DateTime);
+							sleepTimerInterval = sleepTimer == null ? 0 : sleepTimer.Interval;
+						}
+						// Check if sleep timer expired.
+						if (sleepTimerInterval <= _LastActionDoneTime.ElapsedMilliseconds)
+						{
+							DelayTimerStop();
 						}
 						// Restart delay.
-						delayTimer.Start();
-						delayTimerElapsedTime = DateTime.Now.AddMilliseconds(delayTimer.Interval);
+						DelayTimerStart();
 						data.Add("Delay timer started");
-						data.Add(string.Format("DelayTime = {0}", delayTimer.Interval));
+						data.Add(string.Format("DelayTime = {0}", delayTimerInterval));
 					}
 				}
 			}
@@ -289,61 +357,53 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <remarks>http://blogs.msdn.com/b/jaredpar/archive/2008/01/07/isynchronizeinvoke-now.aspx</remarks>
 		void _StarThread()
 		{
-			lock (disposeLock)
+			if (IsDisposing) return;
+			_StartCount++;
+			// If thread is not running and queue contains items to process then...
+			if (!_IsRunning)
 			{
-				_StartCount++;
-				if (IsDisposing) return;
-				// If thread is not running and queue contains items to process then...
-				if (!_IsRunning)
+				SleepTimerStop();
+				// Put into another variable for thread safety.
+				ISynchronizeInvoke so = SynchronizingObject;
+				if (so == null)
 				{
-					// If timer is used then...
-					if (sleepTimer != null)
+					// Mark thread as running.
+					_IsRunning = true;
+					// Start new thread.
+					// The thread pool job is to share and recycle threads.
+					// It allows to avoid losing a few millisecond every time we need to create a new thread.
+					System.Threading.ThreadPool.QueueUserWorkItem(ThreadAction, null);
+				}
+				else
+				{
+					var process = Process.GetCurrentProcess();
+					// If handle is missing then...
+					if (process != null && process.Handle == IntPtr.Zero)
 					{
-						// Stop timer.
-						sleepTimer.Stop();
-						sleepTimerElapsedTime = default(DateTime);
-					}
-					// Put into another variable for thread safety.
-					ISynchronizeInvoke so = SynchronizingObject;
-					if (so == null)
-					{
-						// Mark thread as running.
-						_IsRunning = true;
-						// Start new thread.
-						// The thread pool job is to share and recycle threads.
-						// It allows to avoid losing a few millisecond every time we need to create a new thread.
-						System.Threading.ThreadPool.QueueUserWorkItem(ThreadAction, null);
+						// BeginInvoke will fail. Silently clear the queue.
+						_Queue.Clear();
 					}
 					else
 					{
-						var process = Process.GetCurrentProcess();
-						// If handle is missing then...
-						if (process != null && process.Handle == IntPtr.Zero)
+						try
 						{
-							// BeginInvoke will fail. Silently clear the queue.
-							_Queue.Clear();
+							// Mark thread as running.
+							_IsRunning = true;
+							// Use asynchronous call to avoid 'queueLock' deadlock.
+							var action = (System.Threading.WaitCallback)ThreadAction;
+							// If handle exception then, maybe you forgot to dispose QueueTimer before 'so'.
+							var ar = so.BeginInvoke(action, new object[] { null });
 						}
-						else
+						catch (Exception)
 						{
-							try
-							{
-								// Mark thread as running.
-								_IsRunning = true;
-								// Use asynchronous call to avoid 'queueLock' deadlock.
-								var action = (System.Threading.WaitCallback)ThreadAction;
-								// If handle exception then, maybe you forgot to dispose QueueTimer before 'so'.
-								var ar = so.BeginInvoke(action, new object[] { null });
-							}
-							catch (Exception)
-							{
-								// Silently clear the queue.
-								_Queue.Clear();
-								throw;
-							}
+							// Silently clear the queue.
+							_Queue.Clear();
+							throw;
 						}
 					}
 				}
 			}
+
 		}
 
 		bool processingFirstItem = false;
@@ -353,19 +413,15 @@ namespace JocysCom.ClassLibrary.Threading
 			_ThreadCount++;
 			T item = null;
 			var firstRun = true;
+			var breakExecution = false;
 			while (true)
 			{
 				lock (queueLock)
 				{
 					// If no arguments left then leave the loop (except if this is firs run.
-					if (!firstRun && (_Queue.Count == 0 || IsDisposing))
+					if (!firstRun && (_Queue.Count == 0 || IsDisposing || breakExecution))
 					{
-						// If timer is used then...
-						if (sleepTimer != null)
-						{
-							sleepTimer.Start();
-							sleepTimerElapsedTime = DateTime.Now.AddMilliseconds(sleepTimer.Interval);
-						}
+						SleepTimerStart();
 						// Start sleep timer.
 						_LastActionDoneTime.Reset();
 						_LastActionDoneTime.Start();
@@ -385,13 +441,16 @@ namespace JocysCom.ClassLibrary.Threading
 					}
 					firstRun = false;
 				}
+				var e = new QueueTimerEventArgs();
+				e.Item = item;
 				// Do synchronous action.
-				var remove = ExecuteAction(item);
+				ExecuteAction(e);
+				breakExecution = e.Break;
 				// Remove item after job complete.
 				lock (queueLock)
 				{
 					// If thread item was taken then...
-					if (item != null && remove)
+					if (item != null && !e.Keep)
 					{
 						// Remove job from the queue.
 						_Queue.RemoveAt(0);
@@ -401,15 +460,15 @@ namespace JocysCom.ClassLibrary.Threading
 			}
 		}
 
-		bool ExecuteAction(T item = null)
+		void ExecuteAction(QueueTimerEventArgs e)
 		{
-			var da = DoAction;
-			if (da != null)
+			var dw = DoWork;
+			if (dw != null)
 			{
 				try
 				{
 					// New jobs can be added to the queue during execution.
-					return da(item);
+					dw(this, e);
 				}
 				catch (Exception ex)
 				{
@@ -418,7 +477,6 @@ namespace JocysCom.ClassLibrary.Threading
 					exceptionCount++;
 				}
 			}
-			return false;
 		}
 
 		#region IDisposable
@@ -432,17 +490,10 @@ namespace JocysCom.ClassLibrary.Threading
 			GC.SuppressFinalize(this);
 		}
 
-
-		object disposeLock = new object();
-
-
 		// The bulk of the clean-up code is implemented in Dispose(bool)
 		protected virtual void Dispose(bool disposing)
 		{
-			lock (disposeLock)
-			{
-				IsDisposing = true;
-			}
+			IsDisposing = true;
 			if (disposing)
 			{
 				ChangeDelayInterval(0);
@@ -450,14 +501,11 @@ namespace JocysCom.ClassLibrary.Threading
 				// Dispose timers first
 				lock (queueLock)
 				{
-					if (_Queue != null)
-					{
-						_Queue.Clear();
-					}
+					_Queue.Clear();
 				}
 				// Make sure that outside objects are not holding this timer from disposal. 
 				SynchronizingObject = null;
-				DoAction = null;
+				DoWork = null;
 			}
 		}
 

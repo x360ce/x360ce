@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[x360ce_UserDevices] (
     [Id]                                    UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Id] DEFAULT (newid()) NOT NULL,
-    [ApplicationId]                         UNIQUEIDENTIFIER NOT NULL,
-    [UserId]                                UNIQUEIDENTIFIER NOT NULL,
+    [ComputerId]                            UNIQUEIDENTIFIER NOT NULL,
     [InstanceGuid]                          UNIQUEIDENTIFIER NOT NULL,
     [InstanceName]                          NVARCHAR (256)   NOT NULL,
     [ProductGuid]                           UNIQUEIDENTIFIER NOT NULL,
@@ -43,6 +42,8 @@
     [IsEnabled]                             BIT              CONSTRAINT [DF_x360ce_UserDevices_IsEnabled] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			updateTimer = new QueueTimer(500, 0);
-			updateTimer.DoAction = RefreshBackgroundImage;
+			updateTimer.DoWork += updateTimer.DoWork;
 			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox);
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox);
@@ -60,7 +60,7 @@ namespace x360ce.App.Controls
 
 		Bitmap LastBackgroundImage = null;
 
-		bool RefreshBackgroundImage(object state)
+		void RefreshBackgroundImage(object sender, QueueTimerEventArgs e)
 		{
 			int deadZone = 0;
 			int antiDeadZone = 0;
@@ -103,7 +103,6 @@ namespace x360ce.App.Controls
 				LastBackgroundImage = bmp;
 				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
 			}));
-			return true;
 		}
 
 		void RefreshBackgroundImageAsync()

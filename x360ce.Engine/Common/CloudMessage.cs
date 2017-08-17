@@ -33,7 +33,7 @@ namespace x360ce.Engine
 		public KeyValueList Values { get; set; }
 
 		[DefaultValue(null)]
-		public List<UserDevice> UserControllers { get; set; }
+		public List<UserDevice> UserDevices { get; set; }
 
 		[DefaultValue(null)]
 		public List<UserGame> UserGames { get; set; }

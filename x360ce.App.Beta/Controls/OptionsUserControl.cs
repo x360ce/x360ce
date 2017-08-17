@@ -166,7 +166,7 @@ namespace x360ce.App.Controls
 			GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
 			DiskIdTextBox.Text = o.DiskId;
 			UsernameTextBox.Text = o.Username;
-			HashedDiskIdTextBox.Text = o.HashedDiskId.ToString();
+			ComputerIdTextBox.Text = o.ComputerId.ToString();
 			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 		}
 
@@ -241,7 +241,7 @@ namespace x360ce.App.Controls
 					SettingsManager.OptionsData.Save();
 				}
 				var cmd2 = CloudHelper.NewMessage(CloudAction.LogIn, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
-				cmd2.Values.Add(CloudKey.HashedDiskId, o.HashedDiskId);
+				cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
 				results = ws.Execute(cmd2);
 			}
 			else
