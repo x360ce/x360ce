@@ -81,9 +81,9 @@ namespace x360ce.App.Controls
 			var item = e.Item as CloudItem;
 			if (item == null)
 				return;
-			item.Try++;
 			MainForm.Current.Invoke((Action)delegate ()
 			{
+				item.Try++;
 				MainForm.Current.AddTask(TaskName.SaveToCloud);
 			});
 			Exception error = null;
@@ -102,7 +102,7 @@ namespace x360ce.App.Controls
 				//{
 				//	var username = rsa.RsaEncrypt("username");
 				//	var password = rsa.RsaEncrypt("password");
-				//	ws.SetCredentials(username, password);
+				//ws.SetCredentials(username, password);
 				//}
 				// Add changes.
 				if (item.Item.GetType() == typeof(UserGame))
@@ -127,9 +127,9 @@ namespace x360ce.App.Controls
 			MainForm.Current.Invoke((Action)delegate ()
 			{
 				MainForm.Current.RemoveTask(TaskName.SaveToCloud);
+				item.Error = error;
+				item.State = error == null ? CloudState.Done : CloudState.Error;
 			});
-			item.Error = error;
-			item.State = error == null ? CloudState.Done : CloudState.Error;
 			e.Keep = error != null;
 			e.Break = error != null;
 		}
@@ -160,11 +160,10 @@ namespace x360ce.App.Controls
 			queueTimer.Queue.Clear();
 			//queueTimer.ChangeSleepInterval(1000);
 			// For test purposes take only one record for processing.
-			var allControllers = SettingsManager.UserDevices.Items.Take(1).ToArray();
+			var allControllers = SettingsManager.UserDevices.Items.ToArray();
 			Add(CloudAction.Insert, allControllers);
-			//Add(CloudAction.Insert, allControllers);
-			//var allGames = SettingsManager.UserGames.Items.ToArray();
-			//Add(CloudAction.Insert, allGames);
+			var allGames = SettingsManager.UserGames.Items.ToArray();
+			Add(CloudAction.Insert, allGames);
 		}
 
 		/// <summary>

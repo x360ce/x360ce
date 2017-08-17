@@ -17,11 +17,10 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			var so = SynchronizingObject;
 			if (so != null && so.InvokeRequired)
 			{
-				var result = so.BeginInvoke((InvokeDelegate)delegate()
+				var result = so.Invoke((InvokeDelegate)delegate()
 				{
 					base.OnListChanged(e);
 				}, new object[0]);
-				so.EndInvoke(result);
 			}
 			else
 			{
@@ -35,8 +34,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			if (so != null && so.InvokeRequired)
 			{
 				var x = (InvokeDelegate)delegate () { base.OnAddingNew(e); };
-				var result = so.BeginInvoke(x, new object[0]);
-				so.EndInvoke(result);
+				var result = so.Invoke(x, new object[0]);
 			}
 			else
 			{
