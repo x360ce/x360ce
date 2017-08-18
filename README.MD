@@ -42,8 +42,8 @@ Games that work with x360ce can be found on the [Compatibility List](Wiki/Compat
   1. Windows Vista or newer.
   1. [.NET 3.5 (also installs 2.0 and 3.0)](http://www.microsoft.com/en-us/download/details.aspx?id=22) (included in Windows 7)
   1. [.NET 4.0 (link to 4.6, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=48130) (included in Windows 8 and 10)
-  1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=8109) (Required regardless of OS)
-  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (For x64 systems install both x86 and x64 redistributables)
+  1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=8109) (required regardless of OS)
+  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (**for x64 systems install both x86 and x64 redistributables**)
   1. If you upgraded to Windows 10, you must Uninstall and Reinstall the Visual C++ Redistributable
 
 Notes:
