@@ -418,7 +418,7 @@ namespace x360ce.Web.WebServices
 			catch (Exception ex)
 			{
 				results.ErrorCode = 1;
-				results.ErrorMessage = ex.Message;
+				results.ErrorMessage = "Server: " + ex.Message;
 			}
 			return results;
 		}
@@ -441,7 +441,7 @@ namespace x360ce.Web.WebServices
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0} record(s) deleted.", deleted);
+			return string.Format("{0}s: {1} deleted.", items.GetType().GetGenericArguments()[0].Name, deleted);
 		}
 
 		string Upsert(List<UserDevice> items)
@@ -453,8 +453,8 @@ namespace x360ce.Web.WebServices
 			{
 				var item = items[i];
 				var instanceGuid = item.InstanceGuid;
-				var uc = db.UserDevices.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
-				if (uc == null)
+				var dbItem = db.UserDevices.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+				if (dbItem == null)
 				{
 					created++;
 					item.Id = Guid.NewGuid();
@@ -466,15 +466,15 @@ namespace x360ce.Web.WebServices
 				{
 					updated++;
 					// Fix dates.
-					item.DateCreated = uc.DateCreated;
-					Helper.CopyDataMembers(item, uc, true);
-					uc.DateUpdated = DateTime.Now;
+					item.DateCreated = dbItem.DateCreated;
+					Helper.CopyDataMembers(item, dbItem, true);
+					dbItem.DateUpdated = DateTime.Now;
 				}
 			}
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0} record(s) created, {1} record(s) updated.", created, updated);
+			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetGenericArguments()[0].Name, created, updated);
 		}
 
 		#endregion
@@ -499,7 +499,7 @@ namespace x360ce.Web.WebServices
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0} game(s) deleted.", deleted);
+			return string.Format("{0}s: {1} deleted.", items.GetType().GetGenericArguments()[0].Name, deleted);
 		}
 
 		string Upsert(List<UserGame> items)
@@ -512,40 +512,28 @@ namespace x360ce.Web.WebServices
 				var item = items[i];
 				var computerId = item.ComputerId;
 				var fileName = item.FileName;
-				var game = db.UserGames.FirstOrDefault(x => x.ComputerId == computerId && x.FileName == fileName);
-				if (game == null)
+				var dbItem = db.UserGames.FirstOrDefault(x => x.ComputerId == computerId && x.FileName == fileName);
+				if (dbItem == null)
 				{
 					created++;
-					game = new UserGame();
-					game.GameId = Guid.NewGuid();
-					db.UserGames.AddObject(game);
-					game.DateCreated = DateTime.Now;
+					item.GameId = Guid.NewGuid();
+					item.DateCreated = DateTime.Now;
+					item.DateUpdated = item.DateCreated;
+					db.UserGames.AddObject(item);
 				}
 				else
 				{
 					updated++;
-					game.DateUpdated = DateTime.Now;
+					// Fix dates.
+					item.DateCreated = dbItem.DateCreated;
+					Helper.CopyDataMembers(item, dbItem, true);
+					dbItem.DateUpdated = DateTime.Now;
 				}
-				game.Comment = item.Comment;
-				game.CompanyName = item.CompanyName;
-				game.DInputFile = item.DInputFile;
-				game.DInputMask = item.DInputMask;
-				game.FakePID = item.FakePID;
-				game.FakeVID = item.FakeVID;
-				game.FileName = item.FileName;
-				game.FileProductName = item.FileProductName;
-				game.FileVersion = item.FileVersion;
-				game.FullPath = item.FullPath;
-				game.HookMask = item.HookMask;
-				game.IsEnabled = item.IsEnabled;
-				game.Timeout = item.Timeout;
-				game.Weight = 1;
-				game.XInputMask = item.XInputMask;
 			}
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0} game(s) created, {1} game(s) updated.", created, updated);
+			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetGenericArguments()[0].Name, created, updated);
 		}
 
 		#endregion

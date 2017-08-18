@@ -37,14 +37,15 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_UserGames_DateUpdated]
     ON [dbo].[x360ce_UserGames]([DateUpdated] ASC);
 
 
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_x360ce_UserGames_FileName_FileProductName]
-    ON [dbo].[x360ce_UserGames]([FileName] ASC, [FileProductName] ASC);
+
 
 
 GO
@@ -55,4 +56,9 @@ CREATE NONCLUSTERED INDEX [IX_x360ce_UserGames_XInputMask]
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_UserGames_HookMask]
     ON [dbo].[x360ce_UserGames]([HookMask] ASC);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_x360ce_UserGames_ComputerId_FileName_FileProductName]
+    ON [dbo].[x360ce_UserGames]([ComputerId] ASC, [FileName] ASC, [FileProductName] ASC);
 

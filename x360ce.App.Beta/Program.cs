@@ -44,9 +44,7 @@ namespace x360ce.App
 			}
 			catch (Exception ex)
 			{
-				var message = "";
-				AddExceptionMessage(ex, ref message);
-				if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+				var message = AppHelper.ExceptionToText(ex);
 				var box = new Controls.MessageBoxForm();
 				if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
 				{
@@ -103,37 +101,6 @@ namespace x360ce.App
 		}
 
 		public static bool IsClosing;
-
-		/// <summary>Add information about missing libraries and DLLs</summary>
-		static void AddExceptionMessage(Exception ex, ref string message)
-		{
-			var ex1 = ex as ConfigurationErrorsException;
-			var ex2 = ex as ReflectionTypeLoadException;
-			var m = "";
-			if (ex1 != null)
-			{
-				m += string.Format("Filename: {0}\r\n", ex1.Filename);
-				m += string.Format("Line: {0}\r\n", ex1.Line);
-			}
-			else if (ex2 != null)
-			{
-				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
-			}
-			if (message.Length > 0)
-			{
-				message += "===============================================================\r\n";
-			}
-			message += ex.ToString() + "\r\n";
-			foreach (var key in ex.Data.Keys)
-			{
-				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
-			}
-			if (m.Length > 0)
-			{
-				message += "===============================================================\r\n";
-				message += m;
-			}
-		}
 
 		public static object DeviceLock = new object();
 

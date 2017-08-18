@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Security;
+using System.Configuration;
 
 namespace JocysCom.ClassLibrary
 {
@@ -476,6 +477,50 @@ namespace JocysCom.ClassLibrary
 			if (isHtml) builder.Append("</span>");
 			return builder.ToString();
 		}
+
+		#endregion
+
+		#region ExceptionToText
+
+		public static string ExceptionToText(Exception ex)
+		{
+			var message = "";
+			AddExceptionMessage(ex, ref message);
+			if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+			return message;
+		}
+
+		/// <summary>Add information about missing libraries and DLLs</summary>
+		static void AddExceptionMessage(Exception ex, ref string message)
+		{
+			var ex1 = ex as ConfigurationErrorsException;
+			var ex2 = ex as ReflectionTypeLoadException;
+			var m = "";
+			if (ex1 != null)
+			{
+				m += string.Format("Filename: {0}\r\n", ex1.Filename);
+				m += string.Format("Line: {0}\r\n", ex1.Line);
+			}
+			else if (ex2 != null)
+			{
+				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
+			}
+			if (message.Length > 0)
+			{
+				message += "===============================================================\r\n";
+			}
+			message += ex.ToString() + "\r\n";
+			foreach (var key in ex.Data.Keys)
+			{
+				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
+			}
+			if (m.Length > 0)
+			{
+				message += "===============================================================\r\n";
+				message += m;
+			}
+		}
+
 
 		#endregion
 

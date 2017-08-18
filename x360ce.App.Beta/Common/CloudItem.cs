@@ -19,7 +19,7 @@ namespace x360ce.App
 		public DateTime Date { get; set; }
 
 		[XmlIgnore]
-		public Exception Error;
+		public Exception Error { get; set; }
 
 		public object Item { get; set; }
 		public string Description

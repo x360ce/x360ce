@@ -255,12 +255,10 @@ namespace JocysCom.ClassLibrary.Threading
 			var so = Queue.SynchronizingObject;
 			if (so != null)
 			{
-				// Use begin invoke to avoid query lock.
-				var result = so.BeginInvoke((InvokeDelegate)delegate ()
+				return (string)so.Invoke((InvokeDelegate)delegate ()
 				{
 					_DoActionNow(item);
-				}, new object[] { });
-				return (string)so.EndInvoke(result);
+				}, new object[0]);
 			}
 			else
 			{

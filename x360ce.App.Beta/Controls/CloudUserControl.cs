@@ -81,9 +81,9 @@ namespace x360ce.App.Controls
 			var item = e.Item as CloudItem;
 			if (item == null)
 				return;
-			MainForm.Current.Invoke((Action)delegate ()
+			item.Try++;
+			Invoke((Action)delegate ()
 			{
-				item.Try++;
 				MainForm.Current.AddTask(TaskName.SaveToCloud);
 			});
 			Exception error = null;
@@ -92,31 +92,48 @@ namespace x360ce.App.Controls
 				var ws = new WebServiceClient();
 				ws.Url = SettingsManager.Options.InternetDatabaseUrl;
 				CloudMessage result = null;
-				// Add security.
 				var o = SettingsManager.Options;
-				var command = CloudHelper.NewMessage(item.Action, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
-				command.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
-				//// Add secure credentials.
-				//var rsa = new JocysCom.ClassLibrary.Security.Encryption("Cloud");
-				//if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
-				//{
-				//	var username = rsa.RsaEncrypt("username");
-				//	var password = rsa.RsaEncrypt("password");
-				//ws.SetCredentials(username, password);
-				//}
-				// Add changes.
-				if (item.Item.GetType() == typeof(UserGame))
+				// Check if user public keys are present.
+				o.CheckAndFixUserRsaKeys();
+				// If cloud RSA keys are missing then...
+				if (string.IsNullOrEmpty(o.CloudRsaPublicKey))
 				{
-					command.UserGames = new List<UserGame>() { (UserGame)item.Item };
+					// Step 1: Get Server's Public RSA key for encryption.
+					var msg = CloudHelper.NewMessage(CloudAction.GetPublicRsaKey);
+					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
+					// Retrieve public RSA key.
+					var results = ws.Execute(msg);
+					if (results.ErrorCode == 0)
+					{
+						o.CloudRsaPublicKey = results.Values.GetValue<string>(CloudKey.RsaPublicKey);
+						SettingsManager.OptionsData.Save();
+					}
+					else
+					{
+						error = new Exception(result.ErrorMessage);
+					}
 				}
-				else if (item.Item.GetType() == typeof(UserDevice))
+				// If no errors till this point then...
+				if (error == null)
 				{
-					command.UserDevices = new List<UserDevice>() { (UserDevice)item.Item };
-				}
-				result = ws.Execute(command);
-				if (result.ErrorCode > 0)
-				{
-					error = new Exception(result.ErrorMessage);
+					// Add security.
+					var command = CloudHelper.NewMessage(item.Action, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
+					command.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
+					// If item is UserGame then...
+					if (item.Item.GetType() == typeof(UserGame))
+					{
+						command.UserGames = new List<UserGame>() { (UserGame)item.Item };
+					}
+					// If item is UserDevice then...
+					else if (item.Item.GetType() == typeof(UserDevice))
+					{
+						command.UserDevices = new List<UserDevice>() { (UserDevice)item.Item };
+					}
+					result = ws.Execute(command);
+					if (result.ErrorCode > 0)
+					{
+						error = new Exception(result.ErrorMessage);
+					}
 				}
 				ws.Dispose();
 			}
@@ -124,12 +141,12 @@ namespace x360ce.App.Controls
 			{
 				error = ex;
 			}
-			MainForm.Current.Invoke((Action)delegate ()
+			Invoke((Action)delegate ()
 			{
 				MainForm.Current.RemoveTask(TaskName.SaveToCloud);
-				item.Error = error;
-				item.State = error == null ? CloudState.Done : CloudState.Error;
 			});
+			item.Error = error;
+			item.State = error == null ? CloudState.Done : CloudState.Error;
 			e.Keep = error != null;
 			e.Break = error != null;
 		}
@@ -212,7 +229,9 @@ namespace x360ce.App.Controls
 			var error = item.Error;
 			if (error == null)
 				return;
-			MessageBoxForm.Show(error.ToString(), error.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			var message = AppHelper.ExceptionToText(error);
+			MessageBoxForm.Show(message, error.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
 		}
 	}
 }

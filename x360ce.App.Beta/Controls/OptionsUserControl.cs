@@ -208,15 +208,9 @@ namespace x360ce.App.Controls
 			{
 				var o = SettingsManager.Options;
 				var saveOptions = false;
-				// If user RSA keys are missing then...
-				if (string.IsNullOrEmpty(o.UserRsaPublicKey))
+				if (o.CheckAndFixUserRsaKeys())
 				{
-					// Create new RSA keys which will be used to send encrypted credentials.
-					var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User);
-					var keys = rsa.RsaNewKeys(2048);
-					o.UserRsaPublicKey = keys.Public;
-					o.UserRsaPrivateKey = keys.Private;
-					saveOptions = true;
+					SettingsManager.OptionsData.Save();
 				}
 				var ws = new WebServiceClient();
 				var url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Threading;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
@@ -10,36 +9,40 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		public ISynchronizeInvoke SynchronizingObject { get; set; }
 
-		delegate void InvokeDelegate();
+		delegate void ItemDelegate(int index, T item);
 
-		protected override void OnListChanged(ListChangedEventArgs e)
+		void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
 			if (so != null && so.InvokeRequired)
-			{
-				var result = so.Invoke((InvokeDelegate)delegate()
-				{
-					base.OnListChanged(e);
-				}, new object[0]);
-			}
+				so.Invoke(method, args);
 			else
-			{
-				base.OnListChanged(e);
-			}
+				method.DynamicInvoke(args);
+		}
+
+		protected override void RemoveItem(int index)
+		{
+			Invoke((Action<int>)base.RemoveItem, index);
+		}
+
+		protected override void InsertItem(int index, T item)
+		{
+			Invoke((ItemDelegate)base.InsertItem, index, item);
+		}
+
+		protected override void SetItem(int index, T item)
+		{
+			Invoke((ItemDelegate)base.SetItem, index, item);
+		}
+
+		protected override void OnListChanged(ListChangedEventArgs e)
+		{
+			Invoke((Action<ListChangedEventArgs>)base.OnListChanged, e);
 		}
 
 		protected override void OnAddingNew(AddingNewEventArgs e)
 		{
-			var so = SynchronizingObject;
-			if (so != null && so.InvokeRequired)
-			{
-				var x = (InvokeDelegate)delegate () { base.OnAddingNew(e); };
-				var result = so.Invoke(x, new object[0]);
-			}
-			else
-			{
-				base.OnAddingNew(e);
-			}
+			Invoke((Action<AddingNewEventArgs>)base.OnAddingNew, e);
 		}
 
 		#endregion
