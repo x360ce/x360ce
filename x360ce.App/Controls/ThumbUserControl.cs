@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			updateTimer = new QueueTimer(500, 0);
-			updateTimer.DoAction = RefreshBackgroundImage;
+			updateTimer.DoWork = RefreshBackgroundImage;
 			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox);
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox);
@@ -60,7 +60,7 @@ namespace x360ce.App.Controls
 
 		Bitmap LastBackgroundImage = null;
 
-		void RefreshBackgroundImage(object state)
+		void RefreshBackgroundImage(object sender, object state)
 		{
 			int deadZone = 0;
 			int antiDeadZone = 0;
@@ -108,7 +108,7 @@ namespace x360ce.App.Controls
 		void RefreshBackgroundImageAsync()
 		{
 			var param = (int)SensitivityTrackBar.Value;
-			updateTimer.AddToQueue(param);
+			updateTimer.DoActionNow(param);
 			SensitivityLabel.Text = SensitivityCheckBox.Checked
 				? "Sensitivity - Make more sensitive in the center:"
 				: "Sensitivity - Make less sensitive in the center:";
