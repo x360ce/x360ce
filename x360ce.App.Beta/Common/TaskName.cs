@@ -8,7 +8,7 @@ namespace x360ce.App
 		SearchSettings,
 		SearchSummaries,
 		SearchPresets,
-		SaveToCloud,
+		CloudCommand,
         GetPrograms,
     }
 }

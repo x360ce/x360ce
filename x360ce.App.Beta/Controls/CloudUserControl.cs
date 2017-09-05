@@ -84,7 +84,7 @@ namespace x360ce.App.Controls
 			item.Try++;
 			Invoke((Action)delegate ()
 			{
-				MainForm.Current.AddTask(TaskName.SaveToCloud);
+				MainForm.Current.AddTask(TaskName.CloudCommand);
 			});
 			Exception error = null;
 			try
@@ -143,7 +143,7 @@ namespace x360ce.App.Controls
 			}
 			Invoke((Action)delegate ()
 			{
-				MainForm.Current.RemoveTask(TaskName.SaveToCloud);
+				MainForm.Current.RemoveTask(TaskName.CloudCommand);
 			});
 			item.Error = error;
 			item.State = error == null ? CloudState.Done : CloudState.Error;
@@ -188,8 +188,8 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void DownloadFromCloudButton_Click(object sender, EventArgs e)
 		{
-			var device = new UserDevice();
-			Add(CloudAction.Select, new UserDevice[] { device });
+			//Add(CloudAction.Select, new UserDevice[] { new UserDevice() });
+			Add(CloudAction.Select, new UserGame[] { new UserGame() });
 		}
 
 		private void QueueMonitorTimer_Tick(object sender, EventArgs e)

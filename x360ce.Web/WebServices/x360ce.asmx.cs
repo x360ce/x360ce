@@ -374,13 +374,9 @@ namespace x360ce.Web.WebServices
 						break;
 					case CloudAction.Delete:
 						// Action requires valid user.
-						computerId = CloudHelper.GetComputerId(command, out error);
+						computerId = FixComputerId(command, out error);
 						if (computerId.HasValue)
 						{
-							foreach (var item in command.UserGames)
-								item.ComputerId = computerId.Value;
-							foreach (var item in command.UserDevices)
-								item.ComputerId = computerId.Value;
 							messages.Add(Delete(command.UserDevices));
 							messages.Add(Delete(command.UserGames));
 						}
@@ -392,17 +388,39 @@ namespace x360ce.Web.WebServices
 						break;
 					case CloudAction.Insert:
 					case CloudAction.Update:
-						computerId = CloudHelper.GetComputerId(command, out error);
+						computerId = FixComputerId(command, out error);
 						if (computerId.HasValue)
 						{
-							// Fix computer id
-							foreach (var item in command.UserGames)
-								item.ComputerId = computerId.Value;
-							foreach (var item in command.UserDevices)
-								item.ComputerId = computerId.Value;
 							// Games can be inserted by using computer id only.
 							messages.Add(Upsert(command.UserGames));
 							messages.Add(Upsert(command.UserDevices));
+						}
+						else
+						{
+							messages.Add(error);
+							results.ErrorCode = 2;
+						}
+						break;
+					case CloudAction.Select:
+						computerId = FixComputerId(command, out error);
+						if (computerId.HasValue)
+						{
+							// Get all user games.
+							if (command.UserGames != null && command.UserGames.Count > 0)
+							{
+								var userGames = new List<UserGame>();
+								error = Select(command.UserGames[0], out userGames);
+								messages.Add(error);
+								results.UserGames = userGames;
+							}
+							// Get all user devices.
+							if (command.UserDevices != null && command.UserDevices.Count > 0)
+							{
+								var userDevices = new List<UserDevice>();
+								error = Select(command.UserDevices[0], out userDevices);
+								messages.Add(error);
+								results.UserDevices = userDevices;
+							}
 						}
 						else
 						{
@@ -421,6 +439,26 @@ namespace x360ce.Web.WebServices
 				results.ErrorMessage = "Server: " + ex.Message;
 			}
 			return results;
+		}
+
+		Guid? FixComputerId(CloudMessage command, out string error)
+		{
+			var computerId = CloudHelper.GetComputerId(command, out error);
+			if (computerId.HasValue)
+			{
+				// Fix computer id
+				if (command.UserGames != null)
+				{
+					foreach (var item in command.UserGames)
+						item.ComputerId = computerId.Value;
+				}
+				if (command.UserDevices != null)
+				{
+					foreach (var item in command.UserDevices)
+						item.ComputerId = computerId.Value;
+				}
+			}
+			return computerId;
 		}
 
 		#region Maintain: User Controllers
@@ -500,6 +538,26 @@ namespace x360ce.Web.WebServices
 			db.Dispose();
 			db = null;
 			return string.Format("{0}s: {1} deleted.", items.GetType().GetGenericArguments()[0].Name, deleted);
+		}
+
+		string Select(UserGame filter, out List<UserGame> items)
+		{
+			var db = new x360ceModelContainer();
+			items = db.UserGames.Where(x => x.ComputerId == filter.ComputerId).ToList();
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0}s: {1} selected.", items.GetType().GetGenericArguments()[0].Name, items.Count);
+		}
+
+		string Select(UserDevice filter, out List<UserDevice> items)
+		{
+			var db = new x360ceModelContainer();
+			items = db.UserDevices.Where(x => x.ComputerId == filter.ComputerId).ToList();
+			db.SaveChanges();
+			db.Dispose();
+			db = null;
+			return string.Format("{0}s: {1} selected.", items.GetType().GetGenericArguments()[0].Name, items.Count);
 		}
 
 		string Upsert(List<UserGame> items)
