@@ -256,7 +256,7 @@ namespace x360ce.App
 				}
 				if (insertDevices.Count > 0)
 				{
-					CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray());
+					CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray(), true);
 				}
 				for (int i = 0; i < updatedDevices.Length; i++)
 				{
@@ -286,7 +286,7 @@ namespace x360ce.App
 					var kv = updateDevices[i];
 					RefreshDevice(kv.Key, kv.Value);
 				}
-				var game = MainForm.Current.CurrentGame;
+				var game = CurrentGame;
 				if (game != null)
 				{
 					// Auto-configure new devices.

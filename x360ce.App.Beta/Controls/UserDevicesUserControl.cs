@@ -66,7 +66,7 @@ namespace x360ce.App.Controls
 			{
 				SettingsManager.UserDevices.Items.Remove(item);
 			}
-			MainForm.Current.CloudPanel.Add(CloudAction.Delete, items);
+			MainForm.Current.CloudPanel.Add(CloudAction.Delete, items, true);
 		}
 
 		private void ControllersDataGridView_SelectionChanged(object sender, EventArgs e)

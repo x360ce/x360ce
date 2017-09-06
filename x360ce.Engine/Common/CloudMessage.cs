@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
+
+	/// <summary>
+	///  Message which will be used to communicate with webservice.
+	/// </summary>
 	public class CloudMessage
 	{
 
@@ -32,11 +37,15 @@ namespace x360ce.Engine
 		[DefaultValue(null)]
 		public KeyValueList Values { get; set; }
 
-		[DefaultValue(null)]
-		public List<UserDevice> UserDevices { get; set; }
+		[XmlArray]
+		public UserDevice[] UserDevices { get; set; }
 
-		[DefaultValue(null)]
-		public List<UserGame> UserGames { get; set; }
+		/// <summary>
+		/// During request it will be used to specify search filters. If null then do not retrieve.
+		/// During response it will contain used data.
+		/// </summary>
+		[XmlArray]
+		public UserGame[] UserGames { get; set; }
 
 	}
 }

@@ -70,30 +70,28 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>Get secure user command.</summary>
-		public static CloudMessage NewMessage(CloudAction action, string localRsaPublicKey = null, string remoteRsaPublicKey = null, string username = null, string password = null)
+		public static void ApplySecurity(CloudMessage message, string localRsaPublicKey = null, string remoteRsaPublicKey = null, string username = null, string password = null)
 		{
-			var cmd = new CloudMessage(action);
 			if (!string.IsNullOrEmpty(localRsaPublicKey))
 			{
 				// Include local RSA public key which will be used by remote side to encrypt reply data.
-				cmd.Values.Add(CloudKey.RsaPublicKey, localRsaPublicKey);
+				message.Values.Add(CloudKey.RsaPublicKey, localRsaPublicKey);
 			}
 			if (!string.IsNullOrEmpty(remoteRsaPublicKey))
 			{
 				// Use cloud RSA key to generate random AES-256 password inside.
-				cmd.Values.AddRandomPassword(remoteRsaPublicKey);
+				message.Values.AddRandomPassword(remoteRsaPublicKey);
 			}
 			if (!string.IsNullOrEmpty(username))
 			{
 				// Add encrypted username.
-				cmd.Values.Add(CloudKey.Username, username, true);
+				message.Values.Add(CloudKey.Username, username, true);
 			}
 			if (!string.IsNullOrEmpty(password))
 			{
 				// Add encrypted password.
-				cmd.Values.Add(CloudKey.Password, password, true);
+				message.Values.Add(CloudKey.Password, password, true);
 			}
-			return cmd;
 		}
 
 

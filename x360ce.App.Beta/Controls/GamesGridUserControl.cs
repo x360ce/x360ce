@@ -358,7 +358,7 @@ namespace x360ce.App.Controls
 					SettingsManager.UserGames.Items.Remove(item);
 				}
 				SettingsManager.Save();
-				MainForm.Current.CloudPanel.Add(CloudAction.Delete, itemsToDelete);
+				MainForm.Current.CloudPanel.Add(CloudAction.Delete, itemsToDelete, true);
 			}
 		}
 

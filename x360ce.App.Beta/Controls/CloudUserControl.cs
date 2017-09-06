@@ -48,7 +48,22 @@ namespace x360ce.App.Controls
 
 		JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem> queueTimer;
 
-		public void Add<T>(CloudAction action, T[] items = null)
+		void _Add(CloudAction action, object items)
+		{
+			var message = new CloudMessage(action);
+			// Try to assign list.
+			message.UserGames = items as UserGame[];
+			message.UserDevices = items as UserDevice[];
+			var item = new CloudItem()
+			{
+				Date = DateTime.Now,
+				Message = message,
+				State = CloudState.None,
+			};
+			queueTimer.DoActionNow(item);
+		}
+
+		public void Add<T>(CloudAction action, T[] items, bool split = false)
 		{
 			BeginInvoke((MethodInvoker)delegate ()
 			{
@@ -57,16 +72,16 @@ namespace x360ce.App.Controls
 				{
 					return;
 				}
-				for (int i = 0; i < items.Length; i++)
+				if (split)
 				{
-					var item = new CloudItem()
+					for (int i = 0; i < items.Length; i++)
 					{
-						Action = action,
-						Date = DateTime.Now,
-						Item = items[i],
-						State = CloudState.None,
-					};
-					queueTimer.DoActionNow(item);
+						_Add(action, new T[] { items[i] });
+					}
+				}
+				else
+				{
+					_Add(action, items);
 				}
 			});
 		}
@@ -99,7 +114,8 @@ namespace x360ce.App.Controls
 				if (string.IsNullOrEmpty(o.CloudRsaPublicKey))
 				{
 					// Step 1: Get Server's Public RSA key for encryption.
-					var msg = CloudHelper.NewMessage(CloudAction.GetPublicRsaKey);
+					var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
+					CloudHelper.ApplySecurity(item.Message);
 					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
 					// Retrieve public RSA key.
 					var results = ws.Execute(msg);
@@ -117,19 +133,10 @@ namespace x360ce.App.Controls
 				if (error == null)
 				{
 					// Add security.
-					var command = CloudHelper.NewMessage(item.Action, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
-					command.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
-					// If item is UserGame then...
-					if (item.Item.GetType() == typeof(UserGame))
-					{
-						command.UserGames = new List<UserGame>() { (UserGame)item.Item };
-					}
-					// If item is UserDevice then...
-					else if (item.Item.GetType() == typeof(UserDevice))
-					{
-						command.UserDevices = new List<UserDevice>() { (UserDevice)item.Item };
-					}
-					result = ws.Execute(command);
+					CloudHelper.ApplySecurity(item.Message, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
+					// Add computer Id
+					item.Message.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
+					result = ws.Execute(item.Message);
 					if (result.ErrorCode > 0)
 					{
 						error = new Exception(result.ErrorMessage);
@@ -178,9 +185,9 @@ namespace x360ce.App.Controls
 			//queueTimer.ChangeSleepInterval(1000);
 			// For test purposes take only one record for processing.
 			var allControllers = SettingsManager.UserDevices.Items.ToArray();
-			Add(CloudAction.Insert, allControllers);
+			Add(CloudAction.Insert, allControllers, true);
 			var allGames = SettingsManager.UserGames.Items.ToArray();
-			Add(CloudAction.Insert, allGames);
+			Add(CloudAction.Insert, allGames, true);
 		}
 
 		/// <summary>
@@ -188,8 +195,8 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void DownloadFromCloudButton_Click(object sender, EventArgs e)
 		{
-			//Add(CloudAction.Select, new UserDevice[] { new UserDevice() });
-			Add(CloudAction.Select, new UserGame[] { new UserGame() });
+			//Add(CloudAction.Select, new UserDevice[0]);
+			Add(CloudAction.Select, new UserGame[0]);
 		}
 
 		private void QueueMonitorTimer_Tick(object sender, EventArgs e)

@@ -220,7 +220,8 @@ namespace x360ce.App.Controls
 				if (string.IsNullOrEmpty(o.CloudRsaPublicKey))
 				{
 					// Step 1: Get Server's Public RSA key for encryption.
-					var msg = CloudHelper.NewMessage(CloudAction.GetPublicRsaKey);
+					var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
+					CloudHelper.ApplySecurity(msg);
 					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
 					// Retrieve public RSA key.
 					results = ws.Execute(msg);
@@ -234,7 +235,8 @@ namespace x360ce.App.Controls
 				{
 					SettingsManager.OptionsData.Save();
 				}
-				var cmd2 = CloudHelper.NewMessage(CloudAction.LogIn, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
+				var cmd2 = new CloudMessage(CloudAction.LogIn);
+				CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
 				cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
 				results = ws.Execute(cmd2);
 			}

@@ -406,18 +406,18 @@ namespace x360ce.Web.WebServices
 						if (computerId.HasValue)
 						{
 							// Get all user games.
-							if (command.UserGames != null && command.UserGames.Count > 0)
+							if (command.UserGames != null)
 							{
-								var userGames = new List<UserGame>();
-								error = Select(command.UserGames[0], out userGames);
+								UserGame[] userGames;
+								error = Select(computerId.Value, command.UserGames, out userGames);
 								messages.Add(error);
 								results.UserGames = userGames;
 							}
 							// Get all user devices.
-							if (command.UserDevices != null && command.UserDevices.Count > 0)
+							if (command.UserDevices != null)
 							{
-								var userDevices = new List<UserDevice>();
-								error = Select(command.UserDevices[0], out userDevices);
+								UserDevice[] userDevices;
+								error = Select(computerId.Value, command.UserDevices, out userDevices);
 								messages.Add(error);
 								results.UserDevices = userDevices;
 							}
@@ -463,11 +463,11 @@ namespace x360ce.Web.WebServices
 
 		#region Maintain: User Controllers
 
-		string Delete(List<UserDevice> items)
+		string Delete(UserDevice[] items)
 		{
 			var db = new x360ceModelContainer();
 			var deleted = 0;
-			for (int i = 0; i < items.Count; i++)
+			for (int i = 0; i < items.Length; i++)
 			{
 				var item = items[i];
 				var instanceGuid = item.InstanceGuid;
@@ -479,15 +479,15 @@ namespace x360ce.Web.WebServices
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0}s: {1} deleted.", items.GetType().GetGenericArguments()[0].Name, deleted);
+			return string.Format("{0}s: {1} deleted.", items.GetType().GetElementType().Name, deleted);
 		}
 
-		string Upsert(List<UserDevice> items)
+		string Upsert(UserDevice[] items)
 		{
 			var db = new x360ceModelContainer();
 			var created = 0;
 			var updated = 0;
-			for (int i = 0; i < items.Count; i++)
+			for (int i = 0; i < items.Length; i++)
 			{
 				var item = items[i];
 				var instanceGuid = item.InstanceGuid;
@@ -512,19 +512,19 @@ namespace x360ce.Web.WebServices
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetGenericArguments()[0].Name, created, updated);
+			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetElementType().Name, created, updated);
 		}
 
 		#endregion
 
 		#region Maintain: User Games
 
-		string Delete(List<UserGame> items)
+		string Delete(UserGame[] items)
 		{
 
 			var db = new x360ceModelContainer();
 			var deleted = 0;
-			for (int i = 0; i < items.Count; i++)
+			for (int i = 0; i < items.Length; i++)
 			{
 				var game = items[i];
 				var computerId = game.ComputerId;
@@ -537,35 +537,35 @@ namespace x360ce.Web.WebServices
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0}s: {1} deleted.", items.GetType().GetGenericArguments()[0].Name, deleted);
+			return string.Format("{0}s: {1} deleted.", items.GetType().GetElementType().Name, deleted);
 		}
 
-		string Select(UserGame filter, out List<UserGame> items)
+		string Select(Guid computerId, UserGame[] filter, out UserGame[] items)
 		{
 			var db = new x360ceModelContainer();
-			items = db.UserGames.Where(x => x.ComputerId == filter.ComputerId).ToList();
+			items = db.UserGames.Where(x => x.ComputerId == computerId).ToArray();
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0}s: {1} selected.", items.GetType().GetGenericArguments()[0].Name, items.Count);
+			return string.Format("{0}s: {1} selected.", items.GetType().GetElementType().Name, items.Length);
 		}
 
-		string Select(UserDevice filter, out List<UserDevice> items)
+		string Select(Guid computerId, UserDevice[] filter, out UserDevice[] items)
 		{
 			var db = new x360ceModelContainer();
-			items = db.UserDevices.Where(x => x.ComputerId == filter.ComputerId).ToList();
+			items = db.UserDevices.Where(x => x.ComputerId == computerId).ToArray();
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0}s: {1} selected.", items.GetType().GetGenericArguments()[0].Name, items.Count);
+			return string.Format("{0}s: {1} selected.", items.GetType().GetElementType().Name, items.Length);
 		}
 
-		string Upsert(List<UserGame> items)
+		string Upsert(UserGame[] items)
 		{
 			var db = new x360ceModelContainer();
 			var created = 0;
 			var updated = 0;
-			for (int i = 0; i < items.Count; i++)
+			for (int i = 0; i < items.Length; i++)
 			{
 				var item = items[i];
 				var computerId = item.ComputerId;
@@ -591,7 +591,7 @@ namespace x360ce.Web.WebServices
 			db.SaveChanges();
 			db.Dispose();
 			db = null;
-			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetGenericArguments()[0].Name, created, updated);
+			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetElementType().Name, created, updated);
 		}
 
 		#endregion
