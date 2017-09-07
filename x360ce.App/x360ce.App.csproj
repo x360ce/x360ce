@@ -168,7 +168,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
@@ -574,6 +573,13 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+	<Target Name="PopulateEmbeddedFiles"
+          AfterTargets="BeforeCompile"
+          BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
+    </ItemGroup>
+  </Target>
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
 if $(PlatformName) == x86 "$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.exe" -pl x86 -s -so -z "$(TargetPath)"

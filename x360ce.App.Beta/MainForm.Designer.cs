@@ -29,8 +29,10 @@ namespace x360ce.App
 			this.OptionsPanel = new x360ce.App.Controls.OptionsUserControl();
 			this.GamesTabPage = new System.Windows.Forms.TabPage();
 			this.GameSettingsPanel = new x360ce.App.Controls.GamesGridUserControl();
+			this.ProgramsTabPage = new System.Windows.Forms.TabPage();
+			this.ProgramsPanel = new x360ce.App.Controls.ProgramsGridUserControl();
 			this.DevicesTabPage = new System.Windows.Forms.TabPage();
-			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
+			this.DevicesPanel = new x360ce.App.Controls.UserDevicesUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsGridPanel = new x360ce.App.Controls.SettingsGridUserControl();
 			this.IniTabPage = new System.Windows.Forms.TabPage();
@@ -65,11 +67,10 @@ namespace x360ce.App
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SaveAllButton = new System.Windows.Forms.Button();
-			this.ProgramsTabPage = new System.Windows.Forms.TabPage();
-			this.ProgramsPanel = new x360ce.App.Controls.ProgramsGridUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
+			this.ProgramsTabPage.SuspendLayout();
 			this.DevicesTabPage.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			this.IniTabPage.SuspendLayout();
@@ -79,7 +80,6 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
-			this.ProgramsTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
@@ -180,23 +180,41 @@ namespace x360ce.App
 			this.GameSettingsPanel.Size = new System.Drawing.Size(786, 591);
 			this.GameSettingsPanel.TabIndex = 1;
 			// 
+			// ProgramsTabPage
+			// 
+			this.ProgramsTabPage.Controls.Add(this.ProgramsPanel);
+			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 23);
+			this.ProgramsTabPage.Name = "ProgramsTabPage";
+			this.ProgramsTabPage.Size = new System.Drawing.Size(792, 597);
+			this.ProgramsTabPage.TabIndex = 7;
+			this.ProgramsTabPage.Text = "Programs";
+			this.ProgramsTabPage.UseVisualStyleBackColor = true;
+			// 
+			// ProgramsPanel
+			// 
+			this.ProgramsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramsPanel.Location = new System.Drawing.Point(0, 0);
+			this.ProgramsPanel.Name = "ProgramsPanel";
+			this.ProgramsPanel.Size = new System.Drawing.Size(792, 597);
+			this.ProgramsPanel.TabIndex = 0;
+			// 
 			// DevicesTabPage
 			// 
 			this.DevicesTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.DevicesTabPage.Controls.Add(this.ControllersPanel);
+			this.DevicesTabPage.Controls.Add(this.DevicesPanel);
 			this.DevicesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.DevicesTabPage.Name = "DevicesTabPage";
 			this.DevicesTabPage.Size = new System.Drawing.Size(792, 597);
 			this.DevicesTabPage.TabIndex = 4;
 			this.DevicesTabPage.Text = "Devices";
 			// 
-			// ControllersPanel
+			// DevicesPanel
 			// 
-			this.ControllersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ControllersPanel.Location = new System.Drawing.Point(0, 0);
-			this.ControllersPanel.Name = "ControllersPanel";
-			this.ControllersPanel.Size = new System.Drawing.Size(792, 597);
-			this.ControllersPanel.TabIndex = 0;
+			this.DevicesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DevicesPanel.Location = new System.Drawing.Point(0, 0);
+			this.DevicesPanel.Name = "DevicesPanel";
+			this.DevicesPanel.Size = new System.Drawing.Size(792, 597);
+			this.DevicesPanel.TabIndex = 0;
 			// 
 			// SettingsTabPage
 			// 
@@ -514,24 +532,6 @@ namespace x360ce.App
 			this.SaveAllButton.UseVisualStyleBackColor = true;
 			this.SaveAllButton.Click += new System.EventHandler(this.SaveAllButton_Click);
 			// 
-			// ProgramsTabPage
-			// 
-			this.ProgramsTabPage.Controls.Add(this.ProgramsPanel);
-			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 23);
-			this.ProgramsTabPage.Name = "ProgramsTabPage";
-			this.ProgramsTabPage.Size = new System.Drawing.Size(792, 597);
-			this.ProgramsTabPage.TabIndex = 7;
-			this.ProgramsTabPage.Text = "Programs";
-			this.ProgramsTabPage.UseVisualStyleBackColor = true;
-			// 
-			// ProgramsPanel
-			// 
-			this.ProgramsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProgramsPanel.Location = new System.Drawing.Point(0, 0);
-			this.ProgramsPanel.Name = "ProgramsPanel";
-			this.ProgramsPanel.Size = new System.Drawing.Size(792, 597);
-			this.ProgramsPanel.TabIndex = 0;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -561,6 +561,7 @@ namespace x360ce.App
 			this.MainTabControl.ResumeLayout(false);
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GamesTabPage.ResumeLayout(false);
+			this.ProgramsTabPage.ResumeLayout(false);
 			this.DevicesTabPage.ResumeLayout(false);
 			this.SettingsTabPage.ResumeLayout(false);
 			this.IniTabPage.ResumeLayout(false);
@@ -572,7 +573,6 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.TrayContextMenuStrip.ResumeLayout(false);
-			this.ProgramsTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -615,8 +615,6 @@ namespace x360ce.App
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		private TabPage IniTabPage;
 		private TextBox IniTextBox;
-		private TabPage DevicesTabPage;
-		private Controls.UserDevicesUserControl ControllersPanel;
 		public ToolStripStatusLabel CloudMessagesLabel;
 		private TabPage CloudTabPage;
 		public Controls.CloudUserControl CloudPanel;
@@ -627,5 +625,7 @@ namespace x360ce.App
 		private Controls.ProgramsGridUserControl ProgramsPanel;
 		public TabPage ProgramsTabPage;
 		public TabPage GamesTabPage;
+		private TabPage DevicesTabPage;
+		public Controls.UserDevicesUserControl DevicesPanel;
 	}
 }

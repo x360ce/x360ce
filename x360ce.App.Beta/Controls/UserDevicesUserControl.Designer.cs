@@ -31,7 +31,7 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			this.ControllersDataGridView = new System.Windows.Forms.DataGridView();
+			this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
 			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -40,27 +40,27 @@
 			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
-			((System.ComponentModel.ISupportInitialize)(this.ControllersDataGridView)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// ControllersDataGridView
+			// DevicesDataGridView
 			// 
-			this.ControllersDataGridView.AllowUserToAddRows = false;
-			this.ControllersDataGridView.AllowUserToDeleteRows = false;
-			this.ControllersDataGridView.AllowUserToResizeRows = false;
-			this.ControllersDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.ControllersDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.ControllersDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+			this.DevicesDataGridView.AllowUserToAddRows = false;
+			this.DevicesDataGridView.AllowUserToDeleteRows = false;
+			this.DevicesDataGridView.AllowUserToResizeRows = false;
+			this.DevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.DevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.DevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
 			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.ControllersDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-			this.ControllersDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.ControllersDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.DevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			this.DevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.DevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
             this.MySidColumn,
             this.MyDeviceColumn,
@@ -73,12 +73,12 @@
 			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.ControllersDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
-			this.ControllersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ControllersDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.ControllersDataGridView.Location = new System.Drawing.Point(0, 25);
-			this.ControllersDataGridView.Name = "ControllersDataGridView";
-			this.ControllersDataGridView.ReadOnly = true;
+			this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+			this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+			this.DevicesDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.DevicesDataGridView.Name = "DevicesDataGridView";
+			this.DevicesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -86,12 +86,12 @@
 			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
 			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.ControllersDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-			this.ControllersDataGridView.RowHeadersVisible = false;
-			this.ControllersDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.ControllersDataGridView.Size = new System.Drawing.Size(717, 411);
-			this.ControllersDataGridView.TabIndex = 0;
-			this.ControllersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
+			this.DevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			this.DevicesDataGridView.RowHeadersVisible = false;
+			this.DevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.DevicesDataGridView.Size = new System.Drawing.Size(717, 411);
+			this.DevicesDataGridView.TabIndex = 0;
+			this.DevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
 			// 
 			// IsOnlineColumn
 			// 
@@ -174,12 +174,12 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.ControllersDataGridView);
+			this.Controls.Add(this.DevicesDataGridView);
 			this.Controls.Add(this.ControllersToolStrip);
 			this.Name = "UserDevicesUserControl";
 			this.Size = new System.Drawing.Size(717, 436);
 			this.Load += new System.EventHandler(this.ControllersUserControl_Load);
-			((System.ComponentModel.ISupportInitialize)(this.ControllersDataGridView)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).EndInit();
 			this.ControllersToolStrip.ResumeLayout(false);
 			this.ControllersToolStrip.PerformLayout();
 			this.ResumeLayout(false);
@@ -188,7 +188,7 @@
 		}
 
 		#endregion
-		private System.Windows.Forms.DataGridView ControllersDataGridView;
+		private System.Windows.Forms.DataGridView DevicesDataGridView;
 		private System.Windows.Forms.ToolStrip ControllersToolStrip;
 		private System.Windows.Forms.ToolStripButton ControllerDeleteButton;
 		private System.Windows.Forms.ToolStripButton RefreshButton;

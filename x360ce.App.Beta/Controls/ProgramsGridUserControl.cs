@@ -157,7 +157,7 @@ namespace x360ce.App.Controls
 				{
 					programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
 				}
-				ImportAndBindPrograms(programs);
+				ImportAndBindItems(programs);
 			}
 
 		}
@@ -235,21 +235,23 @@ namespace x360ce.App.Controls
 		/// <summary>
 		/// Merge supplied list of programs with current settings.
 		/// </summary>
-		/// <param name="programs">Programs list to merge.</param>
-		void ImportAndBindPrograms(List<x360ce.Engine.Data.Program> programs)
+		/// <param name="items">Programs list to merge.</param>
+		void ImportAndBindItems(IList<Engine.Data.Program> items)
 		{
 			var grid = ProgramsDataGridView;
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
-			var newItems = programs.ToArray();
-			ProgramsDataGridView.DataSource = null;
+			var key = "FileName";
+			var list = SettingsManager.Programs.Items;
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, key);
+			var newItems = items.ToArray();
+			grid.DataSource = null;
 			foreach (var newItem in newItems)
 			{
-				// Try to find existing item inside programs.
-				var existingItems = SettingsManager.Programs.Items.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
+				// Try to find existing item inside the list.
+				var existingItems = list.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
 				// Remove existing items.
 				for (int i = 0; i < existingItems.Length; i++)
 				{
-					SettingsManager.Programs.Items.Remove(existingItems[i]);
+					list.Remove(existingItems[i]);
 				}
 				// Fix product name.
 				var fixedProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
@@ -261,15 +263,15 @@ namespace x360ce.App.Controls
 					newItem.XInputMask = (int)XInputMask.XInput13_x86;
 				}
 				// Add new one.
-				SettingsManager.Programs.Items.Add(newItem);
+				list.Add(newItem);
 			}
 			MainForm.Current.SetHeaderBody(
 				MessageBoxIcon.Information,
-				"{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.",
-				DateTime.Now, programs.Count()
+				"{0: yyyy-MM-dd HH:mm:ss}: '{1}' {2}(s) loaded.",
+				DateTime.Now, items.Count(), typeof(Engine.Data.Program).Name
 			);
-			ProgramsDataGridView.DataSource = SettingsManager.Programs.Items;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
+			grid.DataSource = list;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save(true);
 		}
 
@@ -311,7 +313,7 @@ namespace x360ce.App.Controls
 				else
 				{
 					var result = (List<x360ce.Engine.Data.Program>)e.Result;
-					ImportAndBindPrograms(result);
+					ImportAndBindItems(result);
 				}
 				MainForm.Current.RemoveTask(TaskName.GetPrograms);
 			});

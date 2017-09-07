@@ -141,6 +141,13 @@ namespace x360ce.App.Controls
 					{
 						error = new Exception(result.ErrorMessage);
 					}
+					else
+					{
+						Invoke((Action)delegate ()
+						{
+							ProcessResult(item.Message, result);
+						});
+					}
 				}
 				ws.Dispose();
 			}
@@ -156,6 +163,17 @@ namespace x360ce.App.Controls
 			item.State = error == null ? CloudState.Done : CloudState.Error;
 			e.Keep = error != null;
 			e.Break = error != null;
+		}
+
+		void ProcessResult(CloudMessage command, CloudMessage result)
+		{
+			if (command.Action == CloudAction.Select)
+			{
+				if (result.UserGames != null)
+					MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
+				if (result.UserDevices != null)
+					MainForm.Current.DevicesPanel.ImportAndBindItems(result.UserDevices);
+			}
 		}
 
 		/// <summary> 
@@ -195,7 +213,7 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void DownloadFromCloudButton_Click(object sender, EventArgs e)
 		{
-			//Add(CloudAction.Select, new UserDevice[0]);
+			Add(CloudAction.Select, new UserDevice[0]);
 			Add(CloudAction.Select, new UserGame[0]);
 		}
 

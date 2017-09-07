@@ -32,7 +32,6 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
-
 			if (IsDebug)
 			{
 				StartApp(args);

@@ -415,6 +415,55 @@ namespace x360ce.App.Controls
 			InitControl();
 		}
 
+		#region Import
+
+		/// <summary>
+		/// Merge supplied list of items with current settings.
+		/// </summary>
+		/// <param name="items">List to merge.</param>
+		public void ImportAndBindItems(IList<Engine.Data.UserGame> items)
+		{
+			var grid = GamesDataGridView;
+			var key = "FileName";
+			var list = SettingsManager.UserGames.Items;
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, key);
+			var newItems = items.ToArray();
+			grid.DataSource = null;
+			foreach (var newItem in newItems)
+			{
+				// Try to find existing item inside the list.
+				var existingItems = list.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
+				// Remove existing items.
+				for (int i = 0; i < existingItems.Length; i++)
+				{
+					list.Remove(existingItems[i]);
+				}
+				// Fix product name.
+				var fixedProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
+				newItem.FileProductName = fixedProductName;
+				// If new item is missing XInputMask setting then...
+				if (newItem.XInputMask == (int)XInputMask.None)
+				{
+					// Assign default.
+					newItem.XInputMask = (int)XInputMask.XInput13_x86;
+				}
+				// Add new one.
+				list.Add(newItem);
+			}
+			MainForm.Current.SetHeaderBody(
+				MessageBoxIcon.Information,
+				"{0: yyyy-MM-dd HH:mm:ss}: '{1}' {2}(s) loaded.",
+				DateTime.Now, items.Count(), typeof(Engine.Data.UserGame).Name
+			);
+			grid.DataSource = list;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
+			SettingsManager.Save(true);
+		}
+
+		#endregion
+
+		#region Dispose
+
 		/// <summary> 
 		/// Clean up any resources being used.
 		/// </summary>
@@ -435,5 +484,7 @@ namespace x360ce.App.Controls
 			}
 			base.Dispose(disposing);
 		}
+
+		#endregion
 	}
 }

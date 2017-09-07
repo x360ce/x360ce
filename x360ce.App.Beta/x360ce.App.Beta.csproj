@@ -168,7 +168,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryDeviceType.cs">
       <Link>SharpDX.XInput\BatteryDeviceType.cs</Link>
     </Compile>
@@ -729,6 +728,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  	<Target Name="PopulateEmbeddedFiles"
+          AfterTargets="BeforeCompile"
+          BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
+    </ItemGroup>
+  </Target>
+
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
 if $(PlatformName) == x86 "$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.exe" -pl x86 -s -so -z "$(TargetPath)"

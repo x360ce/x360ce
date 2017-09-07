@@ -16,22 +16,22 @@ namespace x360ce.App.Controls
 		public UserDevicesUserControl()
 		{
 			InitializeComponent();
-			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(ControllersDataGridView);
-			EngineHelper.EnableDoubleBuffering(ControllersDataGridView);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(DevicesDataGridView);
+			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
 		}
 
 		private void ControllersUserControl_Load(object sender, EventArgs e)
 		{
 			UpdateButtons();
-			ControllersDataGridView.AutoGenerateColumns = false;
+			DevicesDataGridView.AutoGenerateColumns = false;
 			// WORKAROUND: Remove SelectionChanged event.
-			ControllersDataGridView.SelectionChanged -= ControllersDataGridView_SelectionChanged;
-			ControllersDataGridView.DataSource = SettingsManager.UserDevices.Items;
+			DevicesDataGridView.SelectionChanged -= ControllersDataGridView_SelectionChanged;
+			DevicesDataGridView.DataSource = SettingsManager.UserDevices.Items;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
-				ControllersDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
-				ControllersDataGridView_SelectionChanged(ControllersDataGridView, new EventArgs());
+				DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
+				ControllersDataGridView_SelectionChanged(DevicesDataGridView, new EventArgs());
 			});
 		}
 
@@ -49,14 +49,14 @@ namespace x360ce.App.Controls
 
 		public UserDevice[] GetSelected()
 		{
-			var grid = ControllersDataGridView;
+			var grid = DevicesDataGridView;
 			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserDevice)x.DataBoundItem).ToArray();
 			return items;
 		}
 
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
-			ControllersDataGridView.Invalidate();
+			DevicesDataGridView.Invalidate();
 		}
 
 		private void ControllerDeleteButton_Click(object sender, EventArgs e)
@@ -76,9 +76,47 @@ namespace x360ce.App.Controls
 
 		void UpdateButtons()
 		{
-			var grid = ControllersDataGridView;
+			var grid = DevicesDataGridView;
 			ControllerDeleteButton.Enabled = grid.SelectedRows.Count > 0;
 		}
+
+		#region Import
+
+		/// <summary>
+		/// Merge supplied list of items with current settings.
+		/// </summary>
+		/// <param name="items">List to merge.</param>
+		public void ImportAndBindItems(IList<UserDevice> items)
+		{
+			var grid = DevicesDataGridView;
+			var key = "InstanceGuid";
+			var list = SettingsManager.UserDevices.Items;
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, key);
+			var newItems = items.ToArray();
+			grid.DataSource = null;
+			foreach (var newItem in newItems)
+			{
+				// Try to find existing item inside the list.
+				var existingItems = list.Where(x => x.InstanceGuid == newItem.InstanceGuid).ToArray();
+				// Remove existing items.
+				for (int i = 0; i < existingItems.Length; i++)
+				{
+					list.Remove(existingItems[i]);
+				}
+				// Add new one.
+				list.Add(newItem);
+			}
+			MainForm.Current.SetHeaderBody(
+				MessageBoxIcon.Information,
+				"{0: yyyy-MM-dd HH:mm:ss}: '{1}' {2}(s) loaded.",
+				DateTime.Now, items.Count(), typeof(UserDevice).Name
+			);
+			grid.DataSource = list;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
+			SettingsManager.Save(true);
+		}
+
+		#endregion
 
 	}
 }

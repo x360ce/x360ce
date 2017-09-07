@@ -348,7 +348,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     <EmbeddedResource Include="JocysCom\Controls\InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -371,4 +370,11 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  	<Target Name="PopulateEmbeddedFiles"
+          AfterTargets="BeforeCompile"
+          BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
+    </ItemGroup>
+  </Target>
 </Project>
