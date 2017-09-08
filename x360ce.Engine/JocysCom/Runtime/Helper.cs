@@ -151,21 +151,18 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		static object DataMembersLock = new object();
 		static Dictionary<Type, PropertyInfo[]> DataMembers = new Dictionary<Type, PropertyInfo[]>();
+		static Dictionary<Type, PropertyInfo[]> DataMembersNoKey = new Dictionary<Type, PropertyInfo[]>();
 
-		/// <summary>
-		/// Copy properties with [DataMemberAttribute].
-		/// Only members declared at the level of the supplied type's hierarchy should be copied.
-		/// Inherited members are not copied.
-		/// </summary>
-		public static void CopyDataMembers<T>(T source, T dest, bool skipKey = false)
+		static PropertyInfo[] GetDataMemberProperties<T>(T item, bool skipKey = false)
 		{
-			Type t = typeof(T);
 			PropertyInfo[] ps;
+			Type t = item == null ? typeof(T) : item.GetType();
 			lock (DataMembersLock)
 			{
-				if (DataMembers.ContainsKey(t))
+				var cache = skipKey ? DataMembersNoKey : DataMembers;
+				if (cache.ContainsKey(t))
 				{
-					ps = DataMembers[t];
+					ps = cache[t];
 				}
 				else
 				{
@@ -179,10 +176,25 @@ namespace JocysCom.ClassLibrary.Runtime
 							.Where(p => ((EdmScalarPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(EdmScalarPropertyAttribute))).EntityKeyProperty);
 						items = items.Except(keys);
 					}
-					ps = items.ToArray();
-					DataMembers.Add(t, ps);
+					ps = items
+						// Order properties by name so list will change less with the code changed (important for checksums)
+						.OrderBy(x => x.Name)
+						.ToArray();
+					cache.Add(t, ps);
 				}
 			}
+			return ps;
+		}
+
+		/// <summary>
+		/// Copy properties with [DataMemberAttribute].
+		/// Only members declared at the level of the supplied type's hierarchy should be copied.
+		/// Inherited members are not copied.
+		/// </summary>
+		public static void CopyDataMembers<T>(T source, T dest, bool skipKey = false)
+		{
+			Type t = source == null ? typeof(T) : source.GetType();
+			PropertyInfo[] ps = GetDataMemberProperties(source, skipKey);
 			foreach (PropertyInfo p in ps)
 			{
 				var sValue = p.GetValue(source, null);
@@ -191,6 +203,35 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (!Equals(sValue, dValue))
 					p.SetValue(dest, sValue, null);
 			}
+		}
+
+		/// <summary>
+		/// Get string representation of [DataMemberAttribute].
+		/// Inherited members are not included.
+		/// </summary>
+		public static string GetDataMembersString<T>(T item, bool skipKey = true, bool skipTime = true)
+		{
+			Type t = item == null ?  typeof(T) : item.GetType();
+			PropertyInfo[] ps = GetDataMemberProperties(item, skipKey);
+			StringBuilder sb = new StringBuilder();
+			foreach (PropertyInfo p in ps)
+			{
+				var value = p.GetValue(item, null);
+				if (value == null)
+					continue;
+				var defaultValue = p.PropertyType.IsValueType ? Activator.CreateInstance(p.PropertyType) : null;
+				if (Equals(defaultValue, value))
+					continue;
+				if (skipTime && p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?))
+					continue;
+				if (p.PropertyType == typeof(string) && string.IsNullOrWhiteSpace((string)value))
+					continue;
+				if (p.Name.ToLower().Contains("checksum"))
+					continue;
+				sb.AppendFormat("{0}={1}", p.Name, value);
+				sb.AppendLine();
+			}
+			return sb.ToString();
 		}
 
 		#endregion

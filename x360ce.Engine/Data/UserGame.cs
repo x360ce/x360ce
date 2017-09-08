@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserGame : IDisplayName
+	public partial class UserGame : IDisplayName, IChecksum
 	{
 
 		public UserGame()

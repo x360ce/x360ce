@@ -12,7 +12,6 @@ namespace x360ce.Engine.Data
 	{
 		public Guid CleanAndGetCheckSum()
 		{
-
 			// Make sure to update checksums in database if you are changing this method.
 			var list = new List<string>();
 			AddValue(ref list, x => x.AxisToDPadDeadZone, "256");

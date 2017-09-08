@@ -196,22 +196,6 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<UserGame> UserGames
-        {
-            get
-            {
-                if ((_UserGames == null))
-                {
-                    _UserGames = base.CreateObjectSet<UserGame>("UserGames");
-                }
-                return _UserGames;
-            }
-        }
-        private ObjectSet<UserGame> _UserGames;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<UserDevice> UserDevices
         {
             get
@@ -224,6 +208,22 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<UserDevice> _UserDevices;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserGame> UserGames
+        {
+            get
+            {
+                if ((_UserGames == null))
+                {
+                    _UserGames = base.CreateObjectSet<UserGame>("UserGames");
+                }
+                return _UserGames;
+            }
+        }
+        private ObjectSet<UserGame> _UserGames;
 
         #endregion
 
@@ -294,19 +294,19 @@ namespace x360ce.Engine.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the UserGames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToUserGames(UserGame userGame)
-        {
-            base.AddObject("UserGames", userGame);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the UserDevices EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToUserDevices(UserDevice userDevice)
         {
             base.AddObject("UserDevices", userDevice);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserGames EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserGames(UserGame userGame)
+        {
+            base.AddObject("UserGames", userGame);
         }
 
         #endregion
@@ -3883,7 +3883,8 @@ namespace x360ce.Engine.Data
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled)
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum)
         {
             UserDevice userDevice = new UserDevice();
             userDevice.Id = id;
@@ -3927,6 +3928,7 @@ namespace x360ce.Engine.Data
             userDevice.DateCreated = dateCreated;
             userDevice.DateUpdated = dateUpdated;
             userDevice.IsEnabled = isEnabled;
+            userDevice.Checksum = checksum;
             return userDevice;
         }
 
@@ -4920,6 +4922,30 @@ namespace x360ce.Engine.Data
         private global::System.Boolean _IsEnabled;
         partial void OnIsEnabledChanging(global::System.Boolean value);
         partial void OnIsEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
 
         #endregion
 
@@ -4959,7 +4985,8 @@ namespace x360ce.Engine.Data
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 autoMapMask)
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 autoMapMask, global::System.Guid checksum)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -4982,6 +5009,7 @@ namespace x360ce.Engine.Data
             userGame.IsEnabled = isEnabled;
             userGame.DateCreated = dateCreated;
             userGame.AutoMapMask = autoMapMask;
+            userGame.Checksum = checksum;
             return userGame;
         }
 
@@ -5355,30 +5383,6 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.Guid> SettingChecksum
-        {
-            get
-            {
-                return _SettingChecksum;
-            }
-            set
-            {
-                OnSettingChecksumChanging(value);
-                ReportPropertyChanging("SettingChecksum");
-                _SettingChecksum = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("SettingChecksum");
-                OnSettingChecksumChanged();
-            }
-        }
-        private Nullable<global::System.Guid> _SettingChecksum;
-        partial void OnSettingChecksumChanging(Nullable<global::System.Guid> value);
-        partial void OnSettingChecksumChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.Int32 Weight
@@ -5519,6 +5523,30 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _AutoMapMask;
         partial void OnAutoMapMaskChanging(global::System.Int32 value);
         partial void OnAutoMapMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
 
         #endregion
 

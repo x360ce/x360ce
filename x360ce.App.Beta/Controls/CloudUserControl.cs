@@ -203,8 +203,10 @@ namespace x360ce.App.Controls
 			//queueTimer.ChangeSleepInterval(1000);
 			// For test purposes take only one record for processing.
 			var allControllers = SettingsManager.UserDevices.Items.ToArray();
+			EngineHelper.UpdateChecksums(allControllers);
 			Add(CloudAction.Insert, allControllers, true);
 			var allGames = SettingsManager.UserGames.Items.ToArray();
+			EngineHelper.UpdateChecksums(allGames);
 			Add(CloudAction.Insert, allGames, true);
 		}
 

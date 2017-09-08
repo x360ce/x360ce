@@ -598,7 +598,23 @@ namespace x360ce.Engine
 
 		#endregion
 
+		public static Guid UpdateChecksum(IChecksum item)
+		{
+			string s = JocysCom.ClassLibrary.Runtime.Helper.GetDataMembersString(item);
+			var bytes = Encoding.Unicode.GetBytes(s);
+			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+			var cs = new Guid(md5.ComputeHash(bytes));
+			if (item.Checksum != cs)
+				item.Checksum = cs;
+			return cs;
+		}
 
-
+		public static void UpdateChecksums<T>(T[] list) where T: IChecksum
+		{
+			for (int i = 0; i < list.Count(); i++)
+			{
+				UpdateChecksum(list[i]);
+			}
+		}
 	}
 }

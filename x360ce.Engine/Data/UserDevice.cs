@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserDevice : IDisplayName
+	public partial class UserDevice : IDisplayName, IChecksum
 	{
 
 		public UserDevice()
