@@ -75,12 +75,6 @@ namespace x360ce.App
 		[DefaultValue("0"), Description("Allow multiple controllers to be combined into a virtual controller. 0 = OFF, 1 = ON.")]
 		static public string CombineEnabled { get { return "CombineEnabled"; } }
 
-		[DefaultValue("0"), Description("Include Supplemental Direct Input devices. 0 = OFF, 1 = ON.")]
-		static public string ExcludeSupplementalDevices { get { return "ExcludeSupplementalDevices"; } }
-
-		[DefaultValue("0"), Description("Include Virtual Direct Input devices. 0 = OFF, 1 = ON.")]
-		static public string ExcludeVirtualDevices { get { return "ExcludeVirtualDevices"; } }
-
 		// [InputHook] section.
 		[DefaultValue("1"), Description("WMI API patching. 0 = Disabled, 1 = USB Only, 2 = USB and HID.")]
 		static public string HookMode { get { return "HookMode"; } }

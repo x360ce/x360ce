@@ -83,6 +83,9 @@ namespace x360ce.App
 
 		public string Username { get; set; }
 		public string Password { get; set; }
+		public bool MinimizeToTray { get; set; }
+		public bool ExcludeSupplementalDevices { get; set; }
+		public bool ExcludeVirtualDevices { get; set; }
 
 	}
 }

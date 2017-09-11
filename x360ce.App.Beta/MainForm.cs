@@ -130,7 +130,7 @@ namespace x360ce.App
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
 			ShowIniTab(SettingsManager.Options.ShowIniTab);
-			SetMinimizeToTray(Settings.Default.MinimizeToTray);
+			SetMinimizeToTray(SettingsManager.Options.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -314,7 +314,7 @@ namespace x360ce.App
 		{
 			var list = SettingsManager.UserDevices.Items.ToList();
 			// Filter devices.
-			if (Settings.Default.ExcludeSupplementalDevices)
+			if (SettingsManager.Options.ExcludeSupplementalDevices)
 			{
 				// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
 				// such as pedals used with a wheel.The following subtypes are defined.
@@ -324,7 +324,7 @@ namespace x360ce.App
 					list.Remove(supplemental);
 				}
 			}
-			if (Settings.Default.ExcludeSupplementalDevices)
+			if (SettingsManager.Options.ExcludeVirtualDevices)
 			{
 				// Exclude virtual devices so application could feed them.
 				var virtualDevices = list.Where(x => x.InstanceName.Contains("vJoy")).ToArray();
@@ -1353,9 +1353,9 @@ namespace x360ce.App
 			{
 				if (!ignoreMinimizeToTray)
 				{
-					if (ShowInTaskbar == Settings.Default.MinimizeToTray)
+					if (ShowInTaskbar == SettingsManager.Options.MinimizeToTray)
 					{
-						ShowInTaskbar = !Settings.Default.MinimizeToTray;
+						ShowInTaskbar = !SettingsManager.Options.MinimizeToTray;
 					}
 				}
 			}
@@ -1378,9 +1378,9 @@ namespace x360ce.App
 			{
 				OptionsPanel.MinimizeToTrayCheckBox.Checked = value;
 			}
-			if (Settings.Default.MinimizeToTray != value)
+			if (SettingsManager.Options.MinimizeToTray != value)
 			{
-				Settings.Default.MinimizeToTray = value;
+				SettingsManager.Options.MinimizeToTray = value;
 			}
 			UpdateStatusBar(WindowState);
 			MinimizeToTrayChanging = false;
@@ -1422,7 +1422,7 @@ namespace x360ce.App
 
 		void MinimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			SetMinimizeToTray(!Settings.Default.MinimizeToTray);
+			SetMinimizeToTray(!SettingsManager.Options.MinimizeToTray);
 		}
 
 		#endregion

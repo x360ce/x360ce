@@ -55,8 +55,6 @@ namespace x360ce.App.Controls
 			SettingsManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			SettingsManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.ExcludeSupplementalDevices, ExcludeSupplementalDevicesCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.ExcludeVirtualDevices, ExcludeVirtualDevicesCheckBox);
 			// Stored inside XML now.
 			SettingsManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
 			SettingsManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
@@ -168,6 +166,8 @@ namespace x360ce.App.Controls
 			UsernameTextBox.Text = o.Username;
 			ComputerIdTextBox.Text = o.ComputerId.ToString();
 			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
+			ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
+			ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
 		}
 
 		private void SaveSettingsButton_Click(object sender, EventArgs e)
@@ -187,6 +187,8 @@ namespace x360ce.App.Controls
 			o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
 			o.Username = UsernameTextBox.Text;
 			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
+			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
+			o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
 			SettingsManager.OptionsData.Save();
 		}
 
@@ -198,7 +200,7 @@ namespace x360ce.App.Controls
 
 		private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.SetMinimizeToTray(!Settings.Default.MinimizeToTray);
+			MainForm.Current.SetMinimizeToTray(!SettingsManager.Options.MinimizeToTray);
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e)

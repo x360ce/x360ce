@@ -37,6 +37,14 @@ namespace x360ce.Engine
 		[DefaultValue(null)]
 		public KeyValueList Values { get; set; }
 
+		#region Data
+
+		/// <summary>
+		/// Supply checksums of existing data to skip during synchronization in order to reduce traffic.
+		/// </summary>
+		[XmlArray]
+		public Guid[] Checksums { get; set; }
+
 		[XmlArray]
 		public UserDevice[] UserDevices { get; set; }
 
@@ -46,6 +54,8 @@ namespace x360ce.Engine
 		/// </summary>
 		[XmlArray]
 		public UserGame[] UserGames { get; set; }
+
+		#endregion
 
 	}
 }

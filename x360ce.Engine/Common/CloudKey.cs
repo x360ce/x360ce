@@ -14,5 +14,6 @@ namespace x360ce.Engine
         public const string Password = "Password";
         public const string Cloud = "Cloud";
         public const string User = "User";
-    }
+		public const string Checksum = "Checksum";
+	}
 }

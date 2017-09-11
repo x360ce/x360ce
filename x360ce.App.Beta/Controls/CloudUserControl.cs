@@ -48,10 +48,11 @@ namespace x360ce.App.Controls
 
 		JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem> queueTimer;
 
-		void _Add(CloudAction action, object items)
+		void _Add(CloudAction action, object items, Guid[] checksums)
 		{
 			var message = new CloudMessage(action);
 			// Try to assign list.
+			message.Checksums = checksums;
 			message.UserGames = items as UserGame[];
 			message.UserDevices = items as UserDevice[];
 			var item = new CloudItem()
@@ -59,11 +60,12 @@ namespace x360ce.App.Controls
 				Date = DateTime.Now,
 				Message = message,
 				State = CloudState.None,
+
 			};
 			queueTimer.DoActionNow(item);
 		}
 
-		public void Add<T>(CloudAction action, T[] items, bool split = false)
+		public void Add<T>(CloudAction action, T[] items, bool split = false, Guid[] checksums = null)
 		{
 			BeginInvoke((MethodInvoker)delegate ()
 			{
@@ -76,12 +78,12 @@ namespace x360ce.App.Controls
 				{
 					for (int i = 0; i < items.Length; i++)
 					{
-						_Add(action, new T[] { items[i] });
+						_Add(action, new T[] { items[i] }, checksums);
 					}
 				}
 				else
 				{
-					_Add(action, items);
+					_Add(action, items, checksums);
 				}
 			});
 		}
@@ -215,8 +217,10 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void DownloadFromCloudButton_Click(object sender, EventArgs e)
 		{
-			Add(CloudAction.Select, new UserDevice[0]);
-			Add(CloudAction.Select, new UserGame[0]);
+			var userDeviceChecksums = EngineHelper.UpdateChecksums(SettingsManager.UserDevices.Items.ToArray());
+			Add(CloudAction.Select, new UserDevice[0], false, userDeviceChecksums.ToArray());
+			var userGameChecksums = EngineHelper.UpdateChecksums(SettingsManager.UserGames.Items.ToArray());
+			Add(CloudAction.Select, new UserGame[0], false, userGameChecksums.ToArray());
 		}
 
 		private void QueueMonitorTimer_Tick(object sender, EventArgs e)
