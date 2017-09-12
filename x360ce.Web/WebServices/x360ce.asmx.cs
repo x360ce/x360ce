@@ -346,7 +346,8 @@ namespace x360ce.Web.WebServices
 		public CloudMessage Execute(CloudMessage command)
 		{
 			var results = new CloudMessage();
-			var messages = new List<string>();
+            // Output messages.
+            var messages = new List<string>();
 			try
 			{
 				JocysCom.WebSites.Engine.Security.Data.User user;
@@ -410,18 +411,22 @@ namespace x360ce.Web.WebServices
 							{
 								UserGame[] userGames;
 								error = Select(computerId.Value, command.UserGames, out userGames);
-								messages.Add(error);
-								results.UserGames = userGames;
-							}
-							// Get all user devices.
-							if (command.UserDevices != null)
+                                messages.Add(error);
+                                results.UserGames = FilterByChecksum(userGames, command.Checksums, out error);
+                                if (!string.IsNullOrEmpty(error))
+                                    messages.Add(error);
+                            }
+                            // Get all user devices.
+                            if (command.UserDevices != null)
 							{
 								UserDevice[] userDevices;
 								error = Select(computerId.Value, command.UserDevices, out userDevices);
-								messages.Add(error);
-								results.UserDevices = userDevices;
-							}
-						}
+                                messages.Add(error);
+                                results.UserDevices = FilterByChecksum(userDevices, command.Checksums, out error);
+                                if (!string.IsNullOrEmpty(error))
+                                    messages.Add(error);
+                            }
+                        }
 						else
 						{
 							messages.Add(error);
@@ -441,7 +446,28 @@ namespace x360ce.Web.WebServices
 			return results;
 		}
 
-		Guid? FixComputerId(CloudMessage command, out string error)
+        /// <summary>
+        /// Remove all unchanged items to save network bandwith.
+        /// </summary>
+        static T[] FilterByChecksum<T>(T[] items, Guid[] checksums, out string error) where T: IChecksum
+        {
+            error = null;
+            var list = new T[0];
+            if (checksums == null || checksums.Length == 0 || items == null || items.Length == 0)
+                return items;
+            var currentChecksums = EngineHelper.UpdateChecksums<T>(items);
+            //// If last checksum is same then records have not changed.
+            //if (checksums.Last().Equals(currentChecksums.Last()))
+            //{
+            //    return list;
+            //}
+            // Get only different items.
+            list = items.Where(x => !checksums.Contains(x.Checksum)).ToArray();
+            error = string.Format("{0} record(s) changed", list.Length);
+            return list;
+        }
+
+        Guid? FixComputerId(CloudMessage command, out string error)
 		{
 			var computerId = CloudHelper.GetComputerId(command, out error);
 			if (computerId.HasValue)

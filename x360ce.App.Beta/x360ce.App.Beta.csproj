@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug_x86\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;CODE_ANALYSIS</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>embedded</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -58,6 +58,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release_x86\</OutputPath>
@@ -749,12 +750,14 @@ echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
 copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"
 if $(ConfigurationName) == Debug (
 if $(PlatformName) == x86 (
-copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\*.dll" "$(TargetDir)"
-copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\*.pdb" "$(TargetDir)"
+echo copy xinput1_3.dll - 32-bit
+copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\xinput1_3.dll" "$(TargetDir)"
+copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\xinput1_3.pdb" "$(TargetDir)"
 )
 if $(PlatformName) == x64 (
-copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\*.dll" "$(TargetDir)"
-copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\*.pdb" "$(TargetDir)"
+echo copy xinput1_3.dll - 64-bit
+copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\xinput1_3.dll" "$(TargetDir)"
+copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\xinput1_3.pdb" "$(TargetDir)"
 )
 )</PreBuildEvent>
   </PropertyGroup>

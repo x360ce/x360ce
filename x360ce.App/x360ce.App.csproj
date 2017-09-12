@@ -573,9 +573,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-	<Target Name="PopulateEmbeddedFiles"
-          AfterTargets="BeforeCompile"
-          BeforeTargets="CoreCompile">
+  <Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
     <ItemGroup>
       <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     </ItemGroup>
