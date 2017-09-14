@@ -82,12 +82,15 @@ namespace x360ce.App
 		public static XSettingsData<Engine.Data.Setting> Settings = new XSettingsData<Engine.Data.Setting>("Settings.xml", "User Settings.");
 
 		/// <summary>User Instances.</summary>
-		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml.gz", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
+		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
 
-		// Property below is shared between User and Global settings:
+        /// <summary>User Computers.</summary>
+        public static XSettingsData<Engine.Data.UserComputer> UserComputers = new XSettingsData<Engine.Data.UserComputer>("UserComputers.xml", "User Computers. Maps login to user computers.");
 
-		/// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
-		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
+        // Property below is shared between User and Global settings:
+
+        /// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
+        public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
 
 
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
@@ -236,7 +239,7 @@ namespace x360ce.App
 
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
-			MainForm.Current.SetHeaderBody(MessageBoxIcon.None, null);
+			MainForm.Current.SetHeaderBody(MessageBoxIcon.None);
 		}
 
 		static void control_MouseEnter(object sender, EventArgs e)

@@ -10,12 +10,14 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserDevice : IDisplayName, IChecksum
-	{
+	public partial class UserDevice : IDisplayName, IChecksum, IDateTime
+    {
 
 		public UserDevice()
 		{
-			IsEnabled = true;
+            DateCreated = DateTime.Now;
+            DateUpdated = DateCreated;
+            IsEnabled = true;
 		}
 
 		[XmlIgnore]

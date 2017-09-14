@@ -99,19 +99,24 @@ namespace x360ce.App.Controls
             }
         }
 
-        public void SetHeaderBodyWithTime(string body = null, params object[] args)
+        public void SetHeaderBody(string body, params object[] args)
         {
+            // Apply format.
             if (body == null) body = defaultBody;
             else if (args != null) body = string.Format(body, args);
+            // Set info with time.
             SetHeaderBody(MessageBoxIcon.Information, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
         }
 
-        public void SetHeaderBodyWithTime(MessageBoxIcon icon, string body = null, params object[] args)
+        public void SetHeaderError(string body, params object[] args)
         {
+            // Apply format.
             if (body == null) body = defaultBody;
             else if (args != null) body = string.Format(body, args);
-            SetHeaderBody(icon, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
+            // Set info with time.
+            SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
         }
+
 
         public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)
         {

@@ -175,13 +175,19 @@ namespace x360ce.App.Controls
                 {
                     MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
                     if (!string.IsNullOrEmpty(result.ErrorMessage))
-                        MainForm.Current.SetHeaderBodyWithTime(result.ErrorMessage);
+                        if (result.ErrorCode > 0)
+                            MainForm.Current.SetHeaderError(result.ErrorMessage);
+                        else
+                            MainForm.Current.SetHeaderBody(result.ErrorMessage);
                 }
                 if (result.UserDevices != null)
                 {
                     MainForm.Current.DevicesPanel.ImportAndBindItems(result.UserDevices);
                     if (!string.IsNullOrEmpty(result.ErrorMessage))
-                        MainForm.Current.SetHeaderBodyWithTime(result.ErrorMessage);
+                        if (result.ErrorCode > 0)
+                            MainForm.Current.SetHeaderError(result.ErrorMessage);
+                        else
+                            MainForm.Current.SetHeaderBody(result.ErrorMessage);
                 }
             }
         }
@@ -210,14 +216,17 @@ namespace x360ce.App.Controls
         private void UploadToCloudButton_Click(object sender, EventArgs e)
         {
             queueTimer.Queue.Clear();
-            //queueTimer.ChangeSleepInterval(1000);
-            // For test purposes take only one record for processing.
-            var allControllers = SettingsManager.UserDevices.Items.ToArray();
-            EngineHelper.UpdateChecksums(allControllers);
-            Add(CloudAction.Insert, allControllers, true);
-            var allGames = SettingsManager.UserGames.Items.ToArray();
-            EngineHelper.UpdateChecksums(allGames);
-            Add(CloudAction.Insert, allGames, true);
+            AddInsert(SettingsManager.UserDevices.Items.ToArray());
+            AddInsert(SettingsManager.UserGames.Items.ToArray());
+            AddInsert(SettingsManager.UserComputers.Items.ToArray());
+            AddInsert(SettingsManager.UserInstances.Items.ToArray());
+        }
+
+        void AddInsert<T>(T[]items) where T: IChecksum
+        {
+            var arr = items.ToArray();
+            EngineHelper.UpdateChecksums(arr);
+            Add(CloudAction.Insert, arr, true);
         }
 
         /// <summary>

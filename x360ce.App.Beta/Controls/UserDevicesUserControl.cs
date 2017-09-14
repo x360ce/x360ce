@@ -106,11 +106,7 @@ namespace x360ce.App.Controls
 				// Add new one.
 				list.Add(newItem);
 			}
-			MainForm.Current.SetHeaderBody(
-				MessageBoxIcon.Information,
-				"{0: yyyy-MM-dd HH:mm:ss}: '{1}' {2}(s) loaded.",
-				DateTime.Now, items.Count(), typeof(UserDevice).Name
-			);
+            MainForm.Current.SetHeaderBody("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
 			grid.DataSource = list;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save(true);

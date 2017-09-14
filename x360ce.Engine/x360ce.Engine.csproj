@@ -131,6 +131,7 @@
     <Compile Include="Common\EngineHelper.cs" />
     <Compile Include="Common\GameDatabaseManager.cs" />
     <Compile Include="Common\IChecksum.cs" />
+    <Compile Include="Common\IDateTime.cs" />
     <Compile Include="Common\IDisplayName.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
@@ -149,10 +150,12 @@
     <Compile Include="Common\XInputMaskScannerState.cs" />
     <Compile Include="Common\XSettingsData.cs" />
     <Compile Include="Data\Summary.cs" />
+    <Compile Include="Data\UserComputer.cs" />
     <Compile Include="Data\UserGame.cs" />
     <Compile Include="Data\PadSetting.cs" />
     <Compile Include="Data\Program.cs" />
     <Compile Include="Data\UserDevice.cs" />
+    <Compile Include="Data\UserInstance.cs" />
     <Compile Include="Data\Vendor.cs" />
     <Compile Include="Data\x360ceModel.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -162,6 +162,9 @@
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ComputerName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+          <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_UserDevices">
           <Key>
@@ -233,7 +236,7 @@
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
-          <Property Name="DateUpdated" Type="datetime" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
           <Property Name="AutoMapMask" Type="int" Nullable="false" />
           <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
@@ -242,8 +245,12 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ControllerId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+          <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Vendors">
           <Key>
@@ -446,6 +453,10 @@
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="ControllerId" Type="Guid" Nullable="false" />
           <Property Name="InstanceGuid" Type="Guid" Nullable="false" />
+          <Property Name="Checksum" Type="Guid" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ComputerId" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="UserComputer">
           <Key>
@@ -456,6 +467,9 @@
           <Property Name="UserId" Type="Guid" Nullable="false" />
           <Property Name="ComputerId" Type="Guid" Nullable="false" />
           <Property Name="ComputerName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Checksum" Type="Guid" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="UserDevice">
           <Key>
@@ -527,7 +541,7 @@
           <Property Name="Comment" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="DateUpdated" Type="DateTime" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Precision="3" Nullable="false" />
           <Property Name="AutoMapMask" Type="Int32" Nullable="false" />
           <Property Name="Checksum" Type="Guid" Nullable="false" />
         </EntityType>
@@ -705,6 +719,10 @@
           <EntitySetMapping Name="UserInstances">
             <EntityTypeMapping TypeName="x360ceModel.UserInstance">
               <MappingFragment StoreEntitySet="x360ce_UserInstances">
+                <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
                 <ScalarProperty Name="ControllerId" ColumnName="ControllerId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -714,6 +732,9 @@
           <EntitySetMapping Name="UserComputers">
             <EntityTypeMapping TypeName="x360ceModel.UserComputer">
               <MappingFragment StoreEntitySet="x360ce_UserComputers">
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="ComputerName" ColumnName="ComputerName" />
                 <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -820,7 +841,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="67" >
+			<Diagram Name="x360ceModel" ZoomLevel="32" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

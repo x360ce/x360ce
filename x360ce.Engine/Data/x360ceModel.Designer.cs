@@ -3686,7 +3686,10 @@ namespace x360ce.Engine.Data
         /// <param name="userId">Initial value of the UserId property.</param>
         /// <param name="computerId">Initial value of the ComputerId property.</param>
         /// <param name="computerName">Initial value of the ComputerName property.</param>
-        public static UserComputer CreateUserComputer(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid computerId, global::System.String computerName)
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
+        public static UserComputer CreateUserComputer(global::System.Guid id, global::System.Guid applicationId, global::System.Guid userId, global::System.Guid computerId, global::System.String computerName, global::System.Guid checksum, global::System.DateTime dateCreated, global::System.DateTime dateUpdated)
         {
             UserComputer userComputer = new UserComputer();
             userComputer.Id = id;
@@ -3694,6 +3697,9 @@ namespace x360ce.Engine.Data
             userComputer.UserId = userId;
             userComputer.ComputerId = computerId;
             userComputer.ComputerName = computerName;
+            userComputer.Checksum = checksum;
+            userComputer.DateCreated = dateCreated;
+            userComputer.DateUpdated = dateUpdated;
             return userComputer;
         }
 
@@ -3823,6 +3829,78 @@ namespace x360ce.Engine.Data
         private global::System.String _ComputerName;
         partial void OnComputerNameChanging(global::System.String value);
         partial void OnComputerNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private global::System.DateTime _DateUpdated;
+        partial void OnDateUpdatedChanging(global::System.DateTime value);
+        partial void OnDateUpdatedChanged();
 
         #endregion
 
@@ -4984,9 +5062,10 @@ namespace x360ce.Engine.Data
         /// <param name="comment">Initial value of the Comment property.</param>
         /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
         /// <param name="checksum">Initial value of the Checksum property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.Int32 autoMapMask, global::System.Guid checksum)
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Guid checksum)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -5008,6 +5087,7 @@ namespace x360ce.Engine.Data
             userGame.Comment = comment;
             userGame.IsEnabled = isEnabled;
             userGame.DateCreated = dateCreated;
+            userGame.DateUpdated = dateUpdated;
             userGame.AutoMapMask = autoMapMask;
             userGame.Checksum = checksum;
             return userGame;
@@ -5479,9 +5559,9 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DateUpdated
+        public global::System.DateTime DateUpdated
         {
             get
             {
@@ -5496,8 +5576,8 @@ namespace x360ce.Engine.Data
                 OnDateUpdatedChanged();
             }
         }
-        private Nullable<global::System.DateTime> _DateUpdated;
-        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
+        private global::System.DateTime _DateUpdated;
+        partial void OnDateUpdatedChanging(global::System.DateTime value);
         partial void OnDateUpdatedChanged();
     
         /// <summary>
@@ -5569,12 +5649,20 @@ namespace x360ce.Engine.Data
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="controllerId">Initial value of the ControllerId property.</param>
         /// <param name="instanceGuid">Initial value of the InstanceGuid property.</param>
-        public static UserInstance CreateUserInstance(global::System.Guid id, global::System.Guid controllerId, global::System.Guid instanceGuid)
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
+        public static UserInstance CreateUserInstance(global::System.Guid id, global::System.Guid controllerId, global::System.Guid instanceGuid, global::System.Guid checksum, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Guid computerId)
         {
             UserInstance userInstance = new UserInstance();
             userInstance.Id = id;
             userInstance.ControllerId = controllerId;
             userInstance.InstanceGuid = instanceGuid;
+            userInstance.Checksum = checksum;
+            userInstance.DateCreated = dateCreated;
+            userInstance.DateUpdated = dateUpdated;
+            userInstance.ComputerId = computerId;
             return userInstance;
         }
 
@@ -5656,6 +5744,102 @@ namespace x360ce.Engine.Data
         private global::System.Guid _InstanceGuid;
         partial void OnInstanceGuidChanging(global::System.Guid value);
         partial void OnInstanceGuidChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private global::System.DateTime _DateUpdated;
+        partial void OnDateUpdatedChanging(global::System.DateTime value);
+        partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ComputerId
+        {
+            get
+            {
+                return _ComputerId;
+            }
+            set
+            {
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
+            }
+        }
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
 
         #endregion
 

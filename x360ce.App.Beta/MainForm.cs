@@ -97,7 +97,8 @@ namespace x360ce.App
 			SettingsManager.PadSettings.Load();
 			SettingsManager.UserDevices.Load();
 			SettingsManager.UserInstances.Load();
-			XInputMaskScanner.FileInfoCache.Load();
+            SettingsManager.UserComputers.Load();
+            XInputMaskScanner.FileInfoCache.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				XiControllers[i] = new Controller((UserIndex)i);
@@ -620,7 +621,8 @@ namespace x360ce.App
 			SettingsManager.PadSettings.Save();
 			SettingsManager.UserDevices.Save();
 			SettingsManager.UserInstances.Save();
-			XInputMaskScanner.FileInfoCache.Save();
+            SettingsManager.UserComputers.Save();
+            XInputMaskScanner.FileInfoCache.Save();
 		}
 
 		#region Timer

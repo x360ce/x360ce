@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 		public LoadPresetsForm()
 		{
 			InitializeComponent();
-			SetHeaderBody(MessageBoxIcon.None, "", "");
+			SetHeaderBody(MessageBoxIcon.None);
 			SettingsGridPanel._ParentForm = this;
 			SummariesGridPanel._ParentForm = this;
 			PresetsGridPanel._ParentForm = this;

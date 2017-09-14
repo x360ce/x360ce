@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode) return;
 			SetHeaderSubject(Text);
-			SetHeaderBody(MessageBoxIcon.Information, "");
+			SetHeaderBody(MessageBoxIcon.None);
 		}
 
 		public UserDevice[] SelectedDevices;
