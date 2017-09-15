@@ -15,5 +15,8 @@ namespace x360ce.Engine
         public const string Cloud = "Cloud";
         public const string User = "User";
 		public const string Checksum = "Checksum";
-	}
+        public const string ClientVersion = "ClientVersion";
+        public const string ServerVersion = "ServerVersion";
+        public const string UpdateUrl = "UpdateUrl";
+    }
 }

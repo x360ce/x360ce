@@ -242,6 +242,7 @@
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
+    <Compile Include="Common\LogItem.cs" />
     <Compile Include="Common\Options.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
@@ -256,6 +257,12 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Common\ControlHelper.cs" />
+    <Compile Include="Controls\LogUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\LogUserControl.Designer.cs">
+      <DependentUpon>LogUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -395,6 +402,12 @@
     <Compile Include="Forms\PromptForm.Designer.cs">
       <DependentUpon>PromptForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\UpdateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UpdateForm.Designer.cs">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\WebBrowserForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -429,6 +442,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LogUserControl.resx">
+      <DependentUpon>LogUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PresetsGridUserControl.resx">
       <DependentUpon>PresetsGridUserControl.cs</DependentUpon>
@@ -489,6 +505,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PromptForm.resx">
       <DependentUpon>PromptForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UpdateForm.resx">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WebBrowserForm.resx">
       <DependentUpon>WebBrowserForm.cs</DependentUpon>

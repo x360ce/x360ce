@@ -411,6 +411,11 @@ namespace x360ce.Web.WebServices
                             results.ErrorCode = 2;
                         }
                         break;
+                    case CloudAction.CheckUpdates:
+                        var clientVersion = command.Values.GetValue<string>(CloudKey.ClientVersion);
+                        results.Values.Add(CloudKey.ServerVersion, clientVersion);
+                        results.Values.Add(CloudKey.UpdateUrl, "https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce.zip?raw=true");
+                        break;
                     default:
                         break;
                 }

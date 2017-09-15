@@ -86,6 +86,7 @@ namespace x360ce.App
 		public bool MinimizeToTray { get; set; }
 		public bool ExcludeSupplementalDevices { get; set; }
 		public bool ExcludeVirtualDevices { get; set; }
+        public bool CheckForUpdates { get; set; }
 
-	}
+    }
 }

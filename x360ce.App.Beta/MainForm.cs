@@ -865,7 +865,8 @@ namespace x360ce.App
 			// Check for various issues.
 			InitWarnigForm();
 			InitDeviceForm();
-		}
+            InitUpdateForm();
+        }
 
 		void UpdateForm2()
 		{
@@ -1272,21 +1273,72 @@ namespace x360ce.App
 		{
 			lock (DeviceFormLock)
 			{
-				if (_DeviceForm == null) return null;
+				if (_DeviceForm == null)
+                    return null;
 				_DeviceForm.StartPosition = FormStartPosition.CenterParent;
 				var result = _DeviceForm.ShowDialog();
 				return _DeviceForm.SelectedDevices;
 			}
 		}
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Clean up any 
-		/// being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
+        #region Update Form
+
+        Forms.UpdateForm _UpdateForm;
+        object UpdateFormLock = new object();
+
+        void InitUpdateForm()
+        {
+            lock (UpdateFormLock)
+            {
+                _UpdateForm = new Forms.UpdateForm();
+            }
+        }
+
+        void DisposeUpdateForm()
+        {
+            lock (UpdateFormLock)
+            {
+                if (_UpdateForm != null)
+                {
+                    _UpdateForm.Dispose();
+                    _UpdateForm = null;
+                }
+            }
+        }
+
+        public bool? ShowUpdateForm()
+        {
+            lock (UpdateFormLock)
+            {
+                if (_UpdateForm == null)
+                    return null;
+                _UpdateForm.StartPosition = FormStartPosition.CenterParent;
+                var result = _UpdateForm.ShowDialog();
+                //return _UpdateForm.SelectedUpdates;
+                return null;
+            }
+        }
+
+        public void ProcessUpdateResults(CloudMessage results)
+        {
+            lock (UpdateFormLock)
+            {
+                if (_UpdateForm == null)
+                    return;
+                _UpdateForm.ProcessUpdateResults(results);
+            }
+        }
+
+        #endregion
+
+            /// <summary>
+            /// Clean up any 
+            /// being used.
+            /// </summary>
+            /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
 		{
 			if (disposing && (components != null))
 			{
@@ -1296,6 +1348,7 @@ namespace x360ce.App
 				}
 				DisposeWarnigForm();
 				DisposeDeviceForm();
+                DisposeUpdateForm();
 				if (detector != null)
 				{
 					detector.Dispose();

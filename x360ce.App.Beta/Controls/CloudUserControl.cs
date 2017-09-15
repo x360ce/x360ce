@@ -55,6 +55,8 @@ namespace x360ce.App.Controls
             message.Checksums = checksums;
             message.UserGames = items as UserGame[];
             message.UserDevices = items as UserDevice[];
+            message.UserComputers = items as UserComputer[];
+            message.UserInstances = items as UserInstance[];
             var item = new CloudItem()
             {
                 Date = DateTime.Now,
@@ -62,6 +64,11 @@ namespace x360ce.App.Controls
                 State = CloudState.None,
 
             };
+            queueTimer.DoActionNow(item);
+        }
+
+        public void Add(CloudItem item)
+        {
             queueTimer.DoActionNow(item);
         }
 
@@ -169,26 +176,31 @@ namespace x360ce.App.Controls
 
         void ProcessResult(CloudMessage command, CloudMessage result)
         {
-            if (command.Action == CloudAction.Select)
+            switch (command.Action)
             {
-                if (result.UserGames != null)
-                {
-                    MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
-                    if (!string.IsNullOrEmpty(result.ErrorMessage))
-                        if (result.ErrorCode > 0)
-                            MainForm.Current.SetHeaderError(result.ErrorMessage);
-                        else
-                            MainForm.Current.SetHeaderBody(result.ErrorMessage);
-                }
-                if (result.UserDevices != null)
-                {
-                    MainForm.Current.DevicesPanel.ImportAndBindItems(result.UserDevices);
-                    if (!string.IsNullOrEmpty(result.ErrorMessage))
-                        if (result.ErrorCode > 0)
-                            MainForm.Current.SetHeaderError(result.ErrorMessage);
-                        else
-                            MainForm.Current.SetHeaderBody(result.ErrorMessage);
-                }
+                case CloudAction.Select:
+                    if (result.UserGames != null)
+                    {
+                        MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
+                        if (!string.IsNullOrEmpty(result.ErrorMessage))
+                            if (result.ErrorCode > 0)
+                                MainForm.Current.SetHeaderError(result.ErrorMessage);
+                            else
+                                MainForm.Current.SetHeaderBody(result.ErrorMessage);
+                    }
+                    if (result.UserDevices != null)
+                    {
+                        MainForm.Current.DevicesPanel.ImportAndBindItems(result.UserDevices);
+                        if (!string.IsNullOrEmpty(result.ErrorMessage))
+                            if (result.ErrorCode > 0)
+                                MainForm.Current.SetHeaderError(result.ErrorMessage);
+                            else
+                                MainForm.Current.SetHeaderBody(result.ErrorMessage);
+                    }
+                    break;
+                case CloudAction.CheckUpdates:
+                        MainForm.Current.ProcessUpdateResults(result);
+                    break;
             }
         }
 
@@ -222,7 +234,7 @@ namespace x360ce.App.Controls
             AddInsert(SettingsManager.UserInstances.Items.ToArray());
         }
 
-        void AddInsert<T>(T[]items) where T: IChecksum
+        void AddInsert<T>(T[] items) where T : IChecksum
         {
             var arr = items.ToArray();
             EngineHelper.UpdateChecksums(arr);
