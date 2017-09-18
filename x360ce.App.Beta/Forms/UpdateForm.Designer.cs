@@ -32,7 +32,8 @@
             this.CloseButton = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
             this.CheckButton = new System.Windows.Forms.Button();
-            this.logUserControl1 = new x360ce.App.Controls.LogUserControl();
+            this.LogPanel = new x360ce.App.Controls.LogUserControl();
+            this.ProgressLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // CloseButton
@@ -69,22 +70,32 @@
             this.CheckButton.UseVisualStyleBackColor = true;
             this.CheckButton.Click += new System.EventHandler(this.CheckButton_Click);
             // 
-            // logUserControl1
+            // LogPanel
             // 
-            this.logUserControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.LogPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.logUserControl1.Location = new System.Drawing.Point(13, 12);
-            this.logUserControl1.Name = "logUserControl1";
-            this.logUserControl1.Size = new System.Drawing.Size(489, 208);
-            this.logUserControl1.TabIndex = 5;
+            this.LogPanel.Location = new System.Drawing.Point(13, 12);
+            this.LogPanel.Name = "LogPanel";
+            this.LogPanel.Size = new System.Drawing.Size(489, 208);
+            this.LogPanel.TabIndex = 5;
+            // 
+            // ProgressLabel
+            // 
+            this.ProgressLabel.AutoSize = true;
+            this.ProgressLabel.Location = new System.Drawing.Point(93, 231);
+            this.ProgressLabel.Name = "ProgressLabel";
+            this.ProgressLabel.Size = new System.Drawing.Size(74, 13);
+            this.ProgressLabel.TabIndex = 6;
+            this.ProgressLabel.Text = "ProgressLabel";
             // 
             // UpdateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(513, 261);
-            this.Controls.Add(this.logUserControl1);
+            this.Controls.Add(this.ProgressLabel);
+            this.Controls.Add(this.LogPanel);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.CheckButton);
             this.Controls.Add(this.OkButton);
@@ -93,6 +104,7 @@
             this.Text = "X360CE - Update";
             this.Load += new System.EventHandler(this.UpdateForm_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -101,6 +113,7 @@
         private System.Windows.Forms.Button CloseButton;
         private System.Windows.Forms.Button OkButton;
         private System.Windows.Forms.Button CheckButton;
-        private Controls.LogUserControl logUserControl1;
+        private Controls.LogUserControl LogPanel;
+        private System.Windows.Forms.Label ProgressLabel;
     }
 }

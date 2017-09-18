@@ -17,6 +17,7 @@ namespace x360ce.Engine
 
         public CloudMessage()
         {
+            Values = new KeyValueList();
         }
 
         public CloudMessage(CloudAction action)
