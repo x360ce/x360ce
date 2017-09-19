@@ -233,6 +233,7 @@
       <Link>SharpDX.XInput\XInput.cs</Link>
     </Compile>
     <Compile Include="Common\AppHelper.cs" />
+    <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Common\ControlHelper.cs" />
+    <Compile Include="Common\WinVerify.cs" />
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

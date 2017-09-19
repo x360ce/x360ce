@@ -24,8 +24,7 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
-
-		}
+        }
 
 		DeviceDetector detector;
 
