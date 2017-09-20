@@ -75,7 +75,7 @@ namespace x360ce.App.Controls
 
         private LogItem lastItem;
 
-        public void Add(string format, params object[] args)
+        public LogItem Add(string format, params object[] args)
         {
             var text = (args == null)
              ? format
@@ -83,6 +83,7 @@ namespace x360ce.App.Controls
             var e = new LogItem();
             e.Message = text;
             Add(e);
+            return e;
         }
 
         public void Add(LogItem e)

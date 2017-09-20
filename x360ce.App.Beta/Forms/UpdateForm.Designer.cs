@@ -40,7 +40,7 @@
             // 
             this.CloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CloseButton.Location = new System.Drawing.Point(426, 226);
+            this.CloseButton.Location = new System.Drawing.Point(537, 226);
             this.CloseButton.Name = "CloseButton";
             this.CloseButton.Size = new System.Drawing.Size(75, 23);
             this.CloseButton.TabIndex = 4;
@@ -51,7 +51,7 @@
             // OkButton
             // 
             this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OkButton.Location = new System.Drawing.Point(345, 226);
+            this.OkButton.Location = new System.Drawing.Point(456, 226);
             this.OkButton.Name = "OkButton";
             this.OkButton.Size = new System.Drawing.Size(75, 23);
             this.OkButton.TabIndex = 3;
@@ -77,7 +77,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LogPanel.Location = new System.Drawing.Point(13, 12);
             this.LogPanel.Name = "LogPanel";
-            this.LogPanel.Size = new System.Drawing.Size(489, 208);
+            this.LogPanel.Size = new System.Drawing.Size(600, 208);
             this.LogPanel.TabIndex = 5;
             // 
             // ProgressLabel
@@ -93,7 +93,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(513, 261);
+            this.ClientSize = new System.Drawing.Size(624, 261);
             this.Controls.Add(this.ProgressLabel);
             this.Controls.Add(this.LogPanel);
             this.Controls.Add(this.CloseButton);

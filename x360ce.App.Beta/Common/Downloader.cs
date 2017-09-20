@@ -14,7 +14,6 @@ namespace x360ce.App
     {
 
         public event EventHandler<DownloaderEventArgs> Progress;
-        public ISynchronizeInvoke SynchronizingObject;
 
         public void LoadAsync(string url, int timeout = 60, int retries = 4, int sleep = 0)
         {
@@ -25,9 +24,12 @@ namespace x360ce.App
             t.Start(p);
         }
 
+        public DownloaderParams Params;
+
         public void Load(object args)
         {
             var p = args as DownloaderParams;
+            Params = p;
             for (int retry = 0; retry < p.Retries; retry++)
             {
                 try
@@ -62,22 +64,25 @@ namespace x360ce.App
                                     var e = new DownloaderEventArgs
                                     {
                                         BytesReceived = ms.Length,
-                                        TotalBytesToReceive = p.Response.ContentLength
+                                        TotalBytesToReceive = p.Response.ContentLength,
                                     };
                                     var ev = Progress;
                                     if (ev != null)
                                     {
-                                        if (SynchronizingObject == null)
-                                        {
-                                            Progress(this, e);
-                                        }
-                                        else
-                                        {
-                                            SynchronizingObject.Invoke(Progress, new object[] { this, e });
-                                        }
+                                        ev(this, e);
                                     }
                                 }
+                                var e2 = new DownloaderEventArgs
+                                {
+                                    BytesReceived = ms.Length,
+                                    TotalBytesToReceive = ms.Length,
+                                };
                                 p.ResponseData = ms.ToArray();
+                                var ev2 = Progress;
+                                if (ev2 != null)
+                                {
+                                    ev2(this, e2);
+                                }
                             }
                             break;
 

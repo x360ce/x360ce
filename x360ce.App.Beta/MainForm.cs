@@ -1326,7 +1326,7 @@ namespace x360ce.App
             {
                 if (_UpdateForm == null)
                     return;
-                _UpdateForm.ProcessUpdateResults(results);
+                _UpdateForm.Step2ProcessUpdateResults(results);
             }
         }
 

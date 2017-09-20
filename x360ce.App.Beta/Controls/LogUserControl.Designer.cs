@@ -38,14 +38,14 @@ namespace x360ce.App.Controls
             this.DebugTabControl = new System.Windows.Forms.TabControl();
             this.LogTabPage = new System.Windows.Forms.TabPage();
             this.LogDataGridView = new System.Windows.Forms.DataGridView();
-            this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DelayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StatusColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DataColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LogSizeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.LogSizeLabel = new System.Windows.Forms.Label();
             this.LogToolStrip = new System.Windows.Forms.ToolStrip();
             this.ClearLogButton = new System.Windows.Forms.ToolStripButton();
+            this.DateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DelayColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StatusColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DataColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DebugTabControl.SuspendLayout();
             this.LogTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LogDataGridView)).BeginInit();
@@ -127,45 +127,6 @@ namespace x360ce.App.Controls
             this.LogDataGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.LogDataGridView_RowsAdded);
             this.LogDataGridView.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.LogDataGridView_RowsRemoved);
             // 
-            // DateColumn
-            // 
-            this.DateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.DateColumn.DataPropertyName = "Date";
-            dataGridViewCellStyle2.Format = "HH:mm:ss.fff";
-            this.DateColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            this.DateColumn.HeaderText = "Date";
-            this.DateColumn.Name = "DateColumn";
-            this.DateColumn.ReadOnly = true;
-            this.DateColumn.Width = 55;
-            // 
-            // DelayColumn
-            // 
-            this.DelayColumn.DataPropertyName = "Delay";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.DelayColumn.DefaultCellStyle = dataGridViewCellStyle3;
-            this.DelayColumn.HeaderText = "Delay";
-            this.DelayColumn.Name = "DelayColumn";
-            this.DelayColumn.Width = 48;
-            // 
-            // StatusColumn
-            // 
-            this.StatusColumn.DataPropertyName = "Status";
-            this.StatusColumn.HeaderText = "Status";
-            this.StatusColumn.Name = "StatusColumn";
-            this.StatusColumn.ReadOnly = true;
-            this.StatusColumn.Width = 72;
-            // 
-            // DataColumn
-            // 
-            this.DataColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DataColumn.DataPropertyName = "Message";
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataColumn.DefaultCellStyle = dataGridViewCellStyle4;
-            this.DataColumn.HeaderText = "Message";
-            this.DataColumn.Name = "DataColumn";
-            this.DataColumn.ReadOnly = true;
-            // 
             // LogSizeNumericUpDown
             // 
             this.LogSizeNumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -224,6 +185,47 @@ namespace x360ce.App.Controls
             this.ClearLogButton.Text = "Clear";
             this.ClearLogButton.ToolTipText = "Delete Message from Send Queue";
             this.ClearLogButton.Click += new System.EventHandler(this.ClearLogButton_Click);
+            // 
+            // DateColumn
+            // 
+            this.DateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DateColumn.DataPropertyName = "Date";
+            dataGridViewCellStyle2.Format = "HH:mm:ss.fff";
+            this.DateColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            this.DateColumn.HeaderText = "Date";
+            this.DateColumn.Name = "DateColumn";
+            this.DateColumn.ReadOnly = true;
+            this.DateColumn.Width = 55;
+            // 
+            // DelayColumn
+            // 
+            this.DelayColumn.DataPropertyName = "Delay";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.DelayColumn.DefaultCellStyle = dataGridViewCellStyle3;
+            this.DelayColumn.HeaderText = "Delay";
+            this.DelayColumn.Name = "DelayColumn";
+            this.DelayColumn.Visible = false;
+            this.DelayColumn.Width = 48;
+            // 
+            // StatusColumn
+            // 
+            this.StatusColumn.DataPropertyName = "Status";
+            this.StatusColumn.HeaderText = "Status";
+            this.StatusColumn.Name = "StatusColumn";
+            this.StatusColumn.ReadOnly = true;
+            this.StatusColumn.Visible = false;
+            this.StatusColumn.Width = 72;
+            // 
+            // DataColumn
+            // 
+            this.DataColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DataColumn.DataPropertyName = "Message";
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataColumn.DefaultCellStyle = dataGridViewCellStyle4;
+            this.DataColumn.HeaderText = "Message";
+            this.DataColumn.Name = "DataColumn";
+            this.DataColumn.ReadOnly = true;
             // 
             // LogUserControl
             // 
