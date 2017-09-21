@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace x360ce.App.Controls
 {
@@ -17,6 +18,7 @@ namespace x360ce.App.Controls
             JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(LogDataGridView);
             //EngineHelper.EnableDoubleBuffering(LogDataGridView);
             LogDataGridView.AutoGenerateColumns = false;
+            UpdateAppearance();
         }
 
         public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
@@ -108,8 +110,23 @@ namespace x360ce.App.Controls
         // Contains number for how many row add/remove actions to perform scroll.
         int LogGridDoScrollCount = 0;
         int LogGridFirstRowIndex;
-        bool LogGridScrollUp = true;
         object LogGridLock = new object();
+
+        [DefaultValue(false), Category("Misc Appearance")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool LogGridScrollUp { get { return _LogGridScrollUp; } set { _LogGridScrollUp = value; } }
+        bool _LogGridScrollUp;
+
+        [DefaultValue(true), Category("Misc Appearance")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        public bool ShowLogSize { get { return _ShowLogSize; } set { _ShowLogSize = value; UpdateAppearance(); } }
+        bool _ShowLogSize = true;
+
+        void UpdateAppearance()
+        {
+            LogSizeLabel.Visible = _ShowLogSize;
+            LogSizeNumericUpDown.Visible = _ShowLogSize;
+        }
 
         void AddGridRow<T>(DataGridView grid, IList<T> list, T item, int maxRows)
         {

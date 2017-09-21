@@ -38,24 +38,25 @@ GOTO:EOF
 SET upr=C:\Projects\Jocys.com\Class Library
 IF EXIST "D:\Projects\Jocys.com\Class Library" SET upr=D:\Projects\Jocys.com\Class Library
 CALL:MKJ ClassTools
-CALL:MKJ Common
-CALL:MKJ Extensions
-CALL:MKJ ComponentModel
-CALL:MKJ Controls
 CALL:MKJ Collections
+CALL:MKJ Common
+CALL:MKJ ComponentModel
 CALL:MKJ Configuration
+CALL:MKJ Controls
+CALL:MKJ Data
 CALL:MKJ Drawing
+CALL:MKJ Extensions
+CALL:MKJ Files
 CALL:MKJ IO
 CALL:MKJ Mail
 CALL:MKJ Processes
-CALL:MKJ Security
-CALL:MKJ Threading
-CALL:MKJ Win32
-CALL:MKJ Data
 CALL:MKJ Resources
 CALL:MKJ Runtime
+CALL:MKJ Security
 CALL:MKJ Text
+CALL:MKJ Threading
 CALL:MKJ Web
+CALL:MKJ Win32
 pause
 GOTO:EOF
 

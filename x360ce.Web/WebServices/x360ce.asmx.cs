@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-using System.Linq.Expressions;
 using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
-using x360ce.App;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Runtime;
 
@@ -414,7 +410,8 @@ namespace x360ce.Web.WebServices
                     case CloudAction.CheckUpdates:
                         var clientVersion = command.Values.GetValue<string>(CloudKey.ClientVersion);
                         results.Values.Add(CloudKey.ServerVersion, clientVersion);
-                        results.Values.Add(CloudKey.UpdateUrl, "https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce.zip?raw=true");
+                        //results.Values.Add(CloudKey.UpdateUrl, "https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce.zip?raw=true");
+                        results.Values.Add(CloudKey.UpdateUrl, JocysCom.ClassLibrary.Security.TokenHelper.GetApplicationUrl() + "/Files/x360ce_beta.zip");
                         break;
                     default:
                         break;

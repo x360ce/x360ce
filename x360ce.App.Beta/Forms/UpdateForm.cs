@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Processes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,6 +19,9 @@ namespace x360ce.App.Forms
         public UpdateForm()
         {
             InitializeComponent();
+            LogPanel.LogGridScrollUp = false;
+            var process = System.Diagnostics.Process.GetCurrentProcess();
+            processFileName = process.MainModule.FileName;
         }
 
         private void CloseButton_Click(object sender, EventArgs e)
@@ -45,6 +49,7 @@ namespace x360ce.App.Forms
         }
 
         Downloader _downloader;
+        string processFileName;
 
         public void Step2ProcessUpdateResults(CloudMessage results)
         {
@@ -76,13 +81,12 @@ namespace x360ce.App.Forms
                     oldProgress = progress;
                     Invoke((Action)delegate ()
                     {
-                        CurrentLogItem.Message = string.Format("Download...{0}%", progress);
+                        var mb = Math.Round((decimal)e.BytesReceived / 1024m / 1024m, 1);
+                        CurrentLogItem.Message = string.Format("Download... {0}% - {1} MB", progress, mb);
                         if (_downloader.Params.ResponseData != null)
                         {
                             CurrentLogItem.Message = "Saving File...";
-                            var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
-                            string fileName = thisProcess.MainModule.FileName;
-                            var zipFileName = fileName + ".zip";
+                            var zipFileName = processFileName + ".zip";
                             System.IO.File.WriteAllBytes(zipFileName, _downloader.Params.ResponseData);
                             CurrentLogItem.Message += " Done";
                             Step3AExtractFiles(zipFileName);
@@ -94,65 +98,50 @@ namespace x360ce.App.Forms
 
         void Step3AExtractFiles(string zipFileName)
         {
-            var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
-            string fileName = thisProcess.MainModule.FileName;
-            var name = System.IO.Path.GetFileName(fileName);
-            string updateFileName = fileName + ".tmp";
-            // Open an existing zip file for reading.
-            var zip = ZipStorer.Open(zipFileName, System.IO.FileAccess.Read);
-            // Read the central directory collection
-            List<ZipStorer.ZipFileEntry> dir = zip.ReadCentralDir();
-            // Look for the file.
-            foreach (ZipStorer.ZipFileEntry entry in dir)
-            {
-                if (System.IO.Path.GetFileName(entry.FilenameInZip) == name)
-                {
-                    // File found, extract it
-                    zip.ExtractFile(entry, updateFileName);
-                    break;
-                }
-            }
-            zip.Close();
+            var name = System.IO.Path.GetFileName(processFileName);
+            string updateFileName = processFileName + ".tmp";
+            JocysCom.ClassLibrary.Files.Zip.UnZipFile(zipFileName, "x360ce.exe", updateFileName);
             Step3CheckSignature(updateFileName);
         }
 
         void Step3CheckSignature(string updateFileName)
         {
-            // Begin new check.
-            CurrentLogItem = LogPanel.Add("Check Signature...");
-            X509Certificate2 certificate;
-            Exception error;
-            if (!CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
+            if (CheckDigitalSignatureCheckBox.Checked)
             {
-                var errMessage = error == null
-                    ? "Failed" : string.Format("Failed: {0}", error.Message);
-                CurrentLogItem.Message += errMessage;
-                return;
+                CurrentLogItem = LogPanel.Add("Check Digital Signature...");
+                X509Certificate2 certificate;
+                Exception error;
+                if (!CertificateHelper.IsSignedAndTrusted(updateFileName, out certificate, out error))
+                {
+                    var errMessage = error == null
+                        ? " Failed" : string.Format(" Failed: {0}", error.Message);
+                    CurrentLogItem.Message += errMessage;
+                    return;
+                }
             }
             Step4CheckVersion(updateFileName);
         }
 
         void Step4CheckVersion(string updatedFileName)
         {
-            var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
-            string fileName = thisProcess.MainModule.FileName;
-            var currentFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fileName);
-            var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(updatedFileName);
-
-            var currentVersion = new Version(currentFi.FileVersion);
-            var updatedVersion = new Version(updatedFi.FileVersion);
-
-            LogPanel.Add("Current version: {0}", currentVersion);
-            LogPanel.Add("Updated version: {0}", updatedVersion);
-            if (currentVersion == updatedVersion)
+            if (CheckVersionCheckBox.Checked)
             {
-                LogPanel.Add("Versions are the same. Skip Update");
-                return;
-            }
-            if (currentVersion > updatedVersion)
-            {
-                LogPanel.Add("Remote version is older. Skip Update.");
-                return;
+                var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(processFileName);
+                var updatedFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(updatedFileName);
+                var processVersion = new Version(processFi.FileVersion);
+                var updatedVersion = new Version(updatedFi.FileVersion);
+                LogPanel.Add("Current version: {0}", processVersion);
+                LogPanel.Add("Updated version: {0}", updatedVersion);
+                if (processVersion == updatedVersion)
+                {
+                    LogPanel.Add("Versions are the same. Skip Update");
+                    return;
+                }
+                if (processVersion > updatedVersion)
+                {
+                    LogPanel.Add("Remote version is older. Skip Update.");
+                    return;
+                }
             }
             Step5ReplaceFiles(updatedFileName);
         }
@@ -160,30 +149,30 @@ namespace x360ce.App.Forms
         void Step5ReplaceFiles(string updateFileName)
         {
             // Change the currently running executable so it can be overwritten.
-            var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
-            string fileName = thisProcess.MainModule.FileName;
-            string bak = fileName + ".bak";
+            string bak = processFileName + ".bak";
             CurrentLogItem = LogPanel.Add("Renaming running process...");
-            if (System.IO.File.Exists(bak))
-                System.IO.File.Delete(bak);
-            System.IO.File.Move(fileName, bak);
-            System.IO.File.Copy(updateFileName, fileName);
+            try
+            {
+                if (System.IO.File.Exists(bak))
+                    System.IO.File.Delete(bak);
+            }
+            catch (Exception ex)
+            {
+                CurrentLogItem.Message += " Failed: " + ex.Message;
+                return;
+            }
+            System.IO.File.Move(processFileName, bak);
+            System.IO.File.Copy(updateFileName, processFileName);
             CurrentLogItem.Message += " Done";
-            Step6Restart(fileName);
+            Step6Restart(processFileName);
         }
 
         void Step6Restart(string fileName)
         {
-            // Restart.
-            var thisProcess = System.Diagnostics.Process.GetCurrentProcess();
+            var process = System.Diagnostics.Process.GetCurrentProcess();
             CurrentLogItem = LogPanel.Add("Restarting...");
-            var spawn = System.Diagnostics.Process.Start(fileName);
-            LogPanel.Add("New process ID is {0}", spawn.Id);
-            LogPanel.Add("Closing old running process {0}.", thisProcess.Id);
-            thisProcess.CloseMainWindow();
-            thisProcess.Close();
-            thisProcess.Dispose();
-       }
+            Application.Restart();
+        }
 
         private void OkButton_Click(object sender, EventArgs e)
         {

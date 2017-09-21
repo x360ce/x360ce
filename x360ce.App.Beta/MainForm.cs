@@ -75,7 +75,7 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
-			SettingsGridPanel._ParentForm = this;
+            SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
 			// NotifySettingsChange will be called on event suspention and resume.

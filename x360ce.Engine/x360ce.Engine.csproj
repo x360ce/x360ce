@@ -111,7 +111,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
@@ -195,6 +194,7 @@
     <Compile Include="JocysCom\Drawing\Effects\Grayscale.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Transparent.cs" />
     <Compile Include="JocysCom\Extensions\IQueryable.cs" />
+    <Compile Include="JocysCom\Files\Zip.cs" />
     <Compile Include="JocysCom\Files\ZipStorer.cs" />
     <Compile Include="JocysCom\IO\DeviceDetector.cs" />
     <Compile Include="JocysCom\IO\DeviceDetectorEventArgs.cs" />

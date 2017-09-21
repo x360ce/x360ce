@@ -81,8 +81,9 @@ namespace x360ce.App
 				return;
 			}
 			if (!CheckSettings()) return;
-			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-			MainForm.Current = new MainForm();
+            //Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+            Application.ApplicationExit += Application_ApplicationExit;
+            MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
@@ -94,7 +95,13 @@ namespace x360ce.App
 			}
 		}
 
-		public static bool IsOneCopyRunningAlready()
+        private static void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            var ghere = 1;
+
+        }
+
+        public static bool IsOneCopyRunningAlready()
 		{
 			return (SettingsManager.Options.AllowOnlyOneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore));
 		}

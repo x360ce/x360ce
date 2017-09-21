@@ -13,9 +13,10 @@ namespace JocysCom.ClassLibrary.ComponentModel
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	[Serializable]
-	public class SortableBindingList<T> : BindingList<T>, IBindingListView, IRaiseItemChangedEvents
+	public class SortableBindingList<T> : BindingListInvoked<T>, IBindingListView, IRaiseItemChangedEvents
 	{
 		public SortableBindingList() : base() { }
+
 		public SortableBindingList(IList<T> list)
 			: base(list) { }
 
@@ -25,11 +26,6 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		public static SortableBindingList<T> From(IEnumerable<T> list)
 		{
 			return new SortableBindingList<T>(list);
-		}
-
-		public void AddRange(IEnumerable<T> list)
-		{
-			foreach (T item in list) { Add(item); }
 		}
 
 		protected override bool SupportsSearchingCore { get { return true; } }
@@ -218,46 +214,6 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
 		}
 
-		#region ISynchronizeInvoker
-
-		public ISynchronizeInvoke SynchronizingObject { get; set; }
-
-		protected override void OnListChanged(ListChangedEventArgs e)
-		{
-			var so = SynchronizingObject;
-			if (so != null && so.InvokeRequired)
-			{
-				var result = so.BeginInvoke((MethodInvoker)delegate ()
-				{
-					base.OnListChanged(e);
-				}, new object[] { });
-				so.EndInvoke(result);
-			}
-			else
-			{
-				base.OnListChanged(e);
-			}
-		}
-
-		protected override void OnAddingNew(AddingNewEventArgs e)
-		{
-			var so = SynchronizingObject;
-			if (so != null && so.InvokeRequired)
-			{
-				var result = so.BeginInvoke((MethodInvoker)delegate ()
-				{
-					base.OnAddingNew(e);
-				}, new object[] { });
-				so.EndInvoke(result);
-			}
-			else
-			{
-				base.OnAddingNew(e);
-			}
-		}
-
-		#endregion
-
-	}
+    }
 
 }

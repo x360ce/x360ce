@@ -32,8 +32,9 @@
             this.CloseButton = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
             this.CheckButton = new System.Windows.Forms.Button();
+            this.CheckDigitalSignatureCheckBox = new System.Windows.Forms.CheckBox();
+            this.CheckVersionCheckBox = new System.Windows.Forms.CheckBox();
             this.LogPanel = new x360ce.App.Controls.LogUserControl();
-            this.ProgressLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // CloseButton
@@ -70,6 +71,32 @@
             this.CheckButton.UseVisualStyleBackColor = true;
             this.CheckButton.Click += new System.EventHandler(this.CheckButton_Click);
             // 
+            // CheckDigitalSignatureCheckBox
+            // 
+            this.CheckDigitalSignatureCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.CheckDigitalSignatureCheckBox.AutoSize = true;
+            this.CheckDigitalSignatureCheckBox.Checked = true;
+            this.CheckDigitalSignatureCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CheckDigitalSignatureCheckBox.Location = new System.Drawing.Point(93, 230);
+            this.CheckDigitalSignatureCheckBox.Name = "CheckDigitalSignatureCheckBox";
+            this.CheckDigitalSignatureCheckBox.Size = new System.Drawing.Size(137, 17);
+            this.CheckDigitalSignatureCheckBox.TabIndex = 6;
+            this.CheckDigitalSignatureCheckBox.Text = "Check Digital Signature";
+            this.CheckDigitalSignatureCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // CheckVersionCheckBox
+            // 
+            this.CheckVersionCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.CheckVersionCheckBox.AutoSize = true;
+            this.CheckVersionCheckBox.Checked = true;
+            this.CheckVersionCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CheckVersionCheckBox.Location = new System.Drawing.Point(236, 230);
+            this.CheckVersionCheckBox.Name = "CheckVersionCheckBox";
+            this.CheckVersionCheckBox.Size = new System.Drawing.Size(95, 17);
+            this.CheckVersionCheckBox.TabIndex = 6;
+            this.CheckVersionCheckBox.Text = "Check Version";
+            this.CheckVersionCheckBox.UseVisualStyleBackColor = true;
+            // 
             // LogPanel
             // 
             this.LogPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -77,24 +104,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.LogPanel.Location = new System.Drawing.Point(13, 12);
             this.LogPanel.Name = "LogPanel";
+            this.LogPanel.ShowLogSize = false;
             this.LogPanel.Size = new System.Drawing.Size(600, 208);
             this.LogPanel.TabIndex = 5;
-            // 
-            // ProgressLabel
-            // 
-            this.ProgressLabel.AutoSize = true;
-            this.ProgressLabel.Location = new System.Drawing.Point(93, 231);
-            this.ProgressLabel.Name = "ProgressLabel";
-            this.ProgressLabel.Size = new System.Drawing.Size(74, 13);
-            this.ProgressLabel.TabIndex = 6;
-            this.ProgressLabel.Text = "ProgressLabel";
             // 
             // UpdateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 261);
-            this.Controls.Add(this.ProgressLabel);
+            this.Controls.Add(this.CheckVersionCheckBox);
+            this.Controls.Add(this.CheckDigitalSignatureCheckBox);
             this.Controls.Add(this.LogPanel);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.CheckButton);
@@ -114,6 +134,7 @@
         private System.Windows.Forms.Button OkButton;
         private System.Windows.Forms.Button CheckButton;
         private Controls.LogUserControl LogPanel;
-        private System.Windows.Forms.Label ProgressLabel;
+        private System.Windows.Forms.CheckBox CheckDigitalSignatureCheckBox;
+        private System.Windows.Forms.CheckBox CheckVersionCheckBox;
     }
 }
