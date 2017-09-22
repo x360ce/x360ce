@@ -17,14 +17,14 @@ namespace x360ce.App.Controls
             InitializeComponent();
             JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
             EngineHelper.EnableDoubleBuffering(TasksDataGridView);
-            queueTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
-            queueTimer.DoWork += queueTimer_DoWork;
-            queueTimer.Queue.ListChanged += Data_ListChanged;
+            TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
+            TasksTimer.DoWork += queueTimer_DoWork;
+            TasksTimer.Queue.ListChanged += Data_ListChanged;
             TasksDataGridView.AutoGenerateColumns = false;
             // Suspend errors.
             TasksDataGridView.DataError += TasksDataGridView_DataError;
             // Attach 
-            TasksDataGridView.DataSource = queueTimer.Queue;
+            TasksDataGridView.DataSource = TasksTimer.Queue;
             // Force to create handle.
             var handle = this.Handle;
             QueueMonitorTimer.Start();
@@ -41,12 +41,12 @@ namespace x360ce.App.Controls
             {
                 var f = MainForm.Current;
                 if (f == null) return;
-                var count = queueTimer.Queue.Count;
+                var count = TasksTimer.Queue.Count;
                 AppHelper.SetText(f.CloudMessagesLabel, "M: {0}", count);
             }
         }
 
-        JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem> queueTimer;
+        public JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem> TasksTimer;
 
         void _Add(CloudAction action, object items, Guid[] checksums)
         {
@@ -64,12 +64,12 @@ namespace x360ce.App.Controls
                 State = CloudState.None,
 
             };
-            queueTimer.DoActionNow(item);
+            TasksTimer.DoActionNow(item);
         }
 
         public void Add(CloudItem item)
         {
-            queueTimer.DoActionNow(item);
+            TasksTimer.DoActionNow(item);
         }
 
         public void Add<T>(CloudAction action, T[] items, bool split = false, Guid[] checksums = null)
@@ -168,10 +168,19 @@ namespace x360ce.App.Controls
             {
                 MainForm.Current.RemoveTask(TaskName.CloudCommand);
             });
+            var success = error == null;
             item.Error = error;
-            item.State = error == null ? CloudState.Done : CloudState.Error;
-            e.Keep = error != null;
-            e.Break = error != null;
+            item.State = success ? CloudState.Done : CloudState.Error;
+            // If error or have not finished.
+            e.Keep = !success;
+            // error and no more retries left then...
+            if (!success && item.Try >= item.Retries)
+            {
+                // Order to remove task.
+                e.Keep = false;
+            }
+            // Exit thread (queue will be processed later)
+            e.Cancel = !success;
         }
 
         void ProcessResult(CloudMessage command, CloudMessage result)
@@ -199,7 +208,7 @@ namespace x360ce.App.Controls
                     }
                     break;
                 case CloudAction.CheckUpdates:
-                        MainForm.Current.ProcessUpdateResults(result);
+                    MainForm.Current.ProcessUpdateResults(result);
                     break;
             }
         }
@@ -214,9 +223,9 @@ namespace x360ce.App.Controls
             {
                 components.Dispose();
             }
-            if (queueTimer != null)
+            if (TasksTimer != null)
             {
-                queueTimer.Dispose();
+                TasksTimer.Dispose();
             }
 
             base.Dispose(disposing);
@@ -227,7 +236,7 @@ namespace x360ce.App.Controls
         /// </summary>
         private void UploadToCloudButton_Click(object sender, EventArgs e)
         {
-            queueTimer.Queue.Clear();
+            TasksTimer.Queue.Clear();
             AddInsert(SettingsManager.UserDevices.Items.ToArray());
             AddInsert(SettingsManager.UserGames.Items.ToArray());
             AddInsert(SettingsManager.UserComputers.Items.ToArray());
@@ -254,7 +263,7 @@ namespace x360ce.App.Controls
 
         private void QueueMonitorTimer_Tick(object sender, EventArgs e)
         {
-            var nextRunTime = queueTimer.NextRunTime;
+            var nextRunTime = TasksTimer.NextRunTime;
             TimeSpan remains = new TimeSpan();
             if (nextRunTime.Ticks > 0)
             {
@@ -262,10 +271,10 @@ namespace x360ce.App.Controls
             }
             var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
             AppHelper.SetText(NextRunLabel, nextRun);
-            var lrt = queueTimer.LastActionDoneTime;
+            var lrt = TasksTimer.LastActionDoneTime;
             var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
             //AppHelper.SetText(LastDoneLabel, lastRun);
-            var state = queueTimer.IsRunning ? "↑" : " ";
+            var state = TasksTimer.IsRunning ? "↑" : " ";
             AppHelper.SetText(RunStateLabel, state);
             //AppHelper.SetText(AddCountLabel, string.Format("Add: {0}", queueTimer.AddCount));
             //AppHelper.SetText(StartCountLabel, string.Format("Start: {0}", queueTimer.StartCount));
@@ -276,7 +285,7 @@ namespace x360ce.App.Controls
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            queueTimer.Queue.Clear();
+            TasksTimer.Queue.Clear();
         }
 
         private void TasksDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -292,6 +301,20 @@ namespace x360ce.App.Controls
             var message = AppHelper.ExceptionToText(error);
             MessageBoxForm.Show(message, error.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+        }
+
+        private void TasksDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            var grid = TasksDataGridView;
+            var item = (CloudItem)grid.Rows[e.RowIndex].DataBoundItem;
+            var name = grid.Columns[e.ColumnIndex].Name;
+            if (name == TryColumn.Name)
+            {
+                if (item.Retries != int.MaxValue)
+                {
+                    e.Value = string.Format("{0}/{1}", item.Try, item.Retries);
+                }
+            }
         }
     }
 }

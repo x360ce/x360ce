@@ -74,7 +74,7 @@ namespace x360ce.App.Controls
 				var isLoaded = XInput.IsLoaded;
 				if (isLoaded) XInput.FreeLibrary();
 				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
+				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
 				effects = new List<EffectInfo>();
 				try
 				{
@@ -97,7 +97,7 @@ namespace x360ce.App.Controls
 							});
 				}
 				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
 				if (isLoaded)
 				{
 					Exception error;

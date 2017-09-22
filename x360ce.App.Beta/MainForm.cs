@@ -1313,9 +1313,11 @@ namespace x360ce.App
             {
                 if (_UpdateForm == null)
                     return null;
+                MainTabControl.SelectedTab = CloudTabPage;
                 _UpdateForm.StartPosition = FormStartPosition.CenterParent;
+                _UpdateForm.OpenDialog();
                 var result = _UpdateForm.ShowDialog();
-                //return _UpdateForm.SelectedUpdates;
+                _UpdateForm.CloseDialog();
                 return null;
             }
         }

@@ -35,6 +35,10 @@
             this.CheckDigitalSignatureCheckBox = new System.Windows.Forms.CheckBox();
             this.CheckVersionCheckBox = new System.Windows.Forms.CheckBox();
             this.LogPanel = new x360ce.App.Controls.LogUserControl();
+            this.MainTabControl = new System.Windows.Forms.TabControl();
+            this.LogTabPage = new System.Windows.Forms.TabPage();
+            this.MainTabControl.SuspendLayout();
+            this.LogTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // CloseButton
@@ -99,23 +103,43 @@
             // 
             // LogPanel
             // 
-            this.LogPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.LogPanel.Location = new System.Drawing.Point(13, 12);
+            this.LogPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LogPanel.Location = new System.Drawing.Point(0, 0);
             this.LogPanel.Name = "LogPanel";
             this.LogPanel.ShowLogSize = false;
-            this.LogPanel.Size = new System.Drawing.Size(600, 208);
+            this.LogPanel.Size = new System.Drawing.Size(592, 182);
             this.LogPanel.TabIndex = 5;
+            // 
+            // MainTabControl
+            // 
+            this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MainTabControl.Controls.Add(this.LogTabPage);
+            this.MainTabControl.Location = new System.Drawing.Point(12, 12);
+            this.MainTabControl.Name = "MainTabControl";
+            this.MainTabControl.SelectedIndex = 0;
+            this.MainTabControl.Size = new System.Drawing.Size(600, 208);
+            this.MainTabControl.TabIndex = 7;
+            // 
+            // LogTabPage
+            // 
+            this.LogTabPage.Controls.Add(this.LogPanel);
+            this.LogTabPage.Location = new System.Drawing.Point(4, 22);
+            this.LogTabPage.Name = "LogTabPage";
+            this.LogTabPage.Size = new System.Drawing.Size(592, 182);
+            this.LogTabPage.TabIndex = 0;
+            this.LogTabPage.Text = "Log";
+            this.LogTabPage.UseVisualStyleBackColor = true;
             // 
             // UpdateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 261);
+            this.Controls.Add(this.MainTabControl);
             this.Controls.Add(this.CheckVersionCheckBox);
             this.Controls.Add(this.CheckDigitalSignatureCheckBox);
-            this.Controls.Add(this.LogPanel);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.CheckButton);
             this.Controls.Add(this.OkButton);
@@ -123,6 +147,8 @@
             this.Name = "UpdateForm";
             this.Text = "X360CE - Update";
             this.Load += new System.EventHandler(this.UpdateForm_Load);
+            this.MainTabControl.ResumeLayout(false);
+            this.LogTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -136,5 +162,7 @@
         private Controls.LogUserControl LogPanel;
         private System.Windows.Forms.CheckBox CheckDigitalSignatureCheckBox;
         private System.Windows.Forms.CheckBox CheckVersionCheckBox;
+        private System.Windows.Forms.TabControl MainTabControl;
+        private System.Windows.Forms.TabPage LogTabPage;
     }
 }

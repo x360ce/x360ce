@@ -19,7 +19,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <summary>
 		/// Exit from Thread wihch runs DoWork items on the Queue.
 		/// </summary>
-		public bool Break { get; set; }
+		public bool Cancel { get; set; }
 
 	}
 }

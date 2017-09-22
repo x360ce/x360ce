@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Processes;
+using JocysCom.ClassLibrary.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +25,17 @@ namespace x360ce.App.Forms
             processFileName = process.MainModule.FileName;
         }
 
+        public void OpenDialog()
+        {
+            MainForm.Current.CloudPanel.TasksTimer.BeforeRemove += TasksTimer_BeforeRemove;
+        }
+
+
+        public void CloseDialog()
+        {
+            MainForm.Current.CloudPanel.TasksTimer.BeforeRemove -= TasksTimer_BeforeRemove;
+        }
+
         private void CloseButton_Click(object sender, EventArgs e)
         {
 
@@ -33,6 +45,8 @@ namespace x360ce.App.Forms
         {
             Step1ChekOnline();
         }
+
+        CloudItem CheckUpateItem;
 
         void Step1ChekOnline()
         {
@@ -44,8 +58,22 @@ namespace x360ce.App.Forms
                 Date = DateTime.Now,
                 Message = message,
                 State = CloudState.None,
+                Retries = 4,
             };
+            CheckUpateItem = item;
             MainForm.Current.CloudPanel.Add(item);
+        }
+
+        private void TasksTimer_BeforeRemove(object sender, QueueTimerEventArgs e)
+        {
+            var item = e.Item as CloudItem;
+            // If check online taks failed then...
+            if (Equals(CheckUpateItem, item) && !e.Keep)
+            {
+                CurrentLogItem.Message += " Failed";
+                if (item.Error != null)
+                    CurrentLogItem.Message += ": " + item.Error.Message;
+            }
         }
 
         Downloader _downloader;

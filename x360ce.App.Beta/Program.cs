@@ -97,8 +97,6 @@ namespace x360ce.App
 
         private static void Application_ApplicationExit(object sender, EventArgs e)
         {
-            var ghere = 1;
-
         }
 
         public static bool IsOneCopyRunningAlready()

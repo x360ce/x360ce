@@ -309,6 +309,7 @@ namespace x360ce.App.Controls
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
             MainForm.Current.ShowUpdateForm();
+
         }
     }
 }

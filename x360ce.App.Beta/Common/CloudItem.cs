@@ -18,8 +18,11 @@ namespace x360ce.App
 		public CloudState State { get { return _State; } set { _State = value; NotifyPropertyChanged("State"); } }
 		CloudState _State;
 
-		public int Try { get { return _Try; } set { _Try = value; NotifyPropertyChanged("Try"); } }
-		int _Try;
+        public int Try { get { return _Try; } set { _Try = value; NotifyPropertyChanged("Try"); } }
+        int _Try;
+
+        public int Retries { get { return _Retries; } set { _Retries = value; NotifyPropertyChanged("Retries"); } }
+		int _Retries = int.MaxValue;
 
 		public DateTime Date { get; set; }
 

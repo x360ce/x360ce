@@ -66,9 +66,11 @@ namespace x360ce.App.Controls
             LogList.Clear();
         }
 
+        int LogSize { get { int i; return int.TryParse(LogSizeComboBox.Text, out i) ? i : 200;  } }
+
         public void LogSizeNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            while (LogList.Count >= LogSizeNumericUpDown.Value)
+            while (LogList.Count >= LogSize)
             {
                 var first = LogList.First();
                 LogList.Remove(first);
@@ -102,7 +104,7 @@ namespace x360ce.App.Controls
                 if (allowToAdd)
                 {
                     lastItem = e;
-                    AddGridRow(LogDataGridView, LogList, e, (int)LogSizeNumericUpDown.Value);
+                    AddGridRow(LogDataGridView, LogList, e, LogSize);
                 }
             }));
         }
@@ -125,7 +127,7 @@ namespace x360ce.App.Controls
         void UpdateAppearance()
         {
             LogSizeLabel.Visible = _ShowLogSize;
-            LogSizeNumericUpDown.Visible = _ShowLogSize;
+            LogSizeComboBox.Visible = _ShowLogSize;
         }
 
         void AddGridRow<T>(DataGridView grid, IList<T> list, T item, int maxRows)
