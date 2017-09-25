@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateForm));
             this.CloseButton = new System.Windows.Forms.Button();
-            this.OkButton = new System.Windows.Forms.Button();
             this.CheckButton = new System.Windows.Forms.Button();
             this.CheckDigitalSignatureCheckBox = new System.Windows.Forms.CheckBox();
             this.CheckVersionCheckBox = new System.Windows.Forms.CheckBox();
@@ -49,20 +48,9 @@
             this.CloseButton.Name = "CloseButton";
             this.CloseButton.Size = new System.Drawing.Size(75, 23);
             this.CloseButton.TabIndex = 4;
-            this.CloseButton.Text = "Cancel";
+            this.CloseButton.Text = "Close";
             this.CloseButton.UseVisualStyleBackColor = true;
             this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
-            // 
-            // OkButton
-            // 
-            this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OkButton.Location = new System.Drawing.Point(456, 226);
-            this.OkButton.Name = "OkButton";
-            this.OkButton.Size = new System.Drawing.Size(75, 23);
-            this.OkButton.TabIndex = 3;
-            this.OkButton.Text = "OK";
-            this.OkButton.UseVisualStyleBackColor = true;
-            this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // CheckButton
             // 
@@ -142,7 +130,6 @@
             this.Controls.Add(this.CheckDigitalSignatureCheckBox);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.CheckButton);
-            this.Controls.Add(this.OkButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "UpdateForm";
             this.Text = "X360CE - Update";
@@ -157,7 +144,6 @@
         #endregion
 
         private System.Windows.Forms.Button CloseButton;
-        private System.Windows.Forms.Button OkButton;
         private System.Windows.Forms.Button CheckButton;
         private Controls.LogUserControl LogPanel;
         private System.Windows.Forms.CheckBox CheckDigitalSignatureCheckBox;

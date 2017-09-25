@@ -65,6 +65,8 @@ namespace x360ce.App.Controls
             }
         }
 
+
+
         XInputMaskScanner GameScanner;
         DateTime ScanStarted;
         object GameAddLock = new object();
@@ -162,8 +164,10 @@ namespace x360ce.App.Controls
             }
         }
 
+
         void ScanGames(object state)
         {
+            var exe = state as string;
             Invoke((MethodInvoker)delegate ()
             {
                 ScanProgressPanel.Visible = true;
@@ -171,10 +175,21 @@ namespace x360ce.App.Controls
             });
             GameScanner = new XInputMaskScanner();
             GameScanner.Progress += Scanner_Progress;
-            var paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+            string[] paths;
+            string name = null;
+            if (string.IsNullOrEmpty(exe))
+            {
+                paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+            }
+            else
+            {
+                // Set properties to scan single file.
+                paths = new string[] { System.IO.Path.GetDirectoryName(exe) };
+                name = System.IO.Path.GetFileName(exe);
+            }
             var games = SettingsManager.UserGames.Items;
             var programs = SettingsManager.Programs.Items;
-            GameScanner.ScanGames(paths, games, programs);
+            GameScanner.ScanGames(paths, games, programs, name);
         }
 
         #endregion
@@ -260,7 +275,9 @@ namespace x360ce.App.Controls
                 }
                 else
                 {
-                    ProcessExecutable(AddGameOpenFileDialog.FileName);
+                    ScanStarted = DateTime.Now;
+                    var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames, AddGameOpenFileDialog.FileName);
+                    if (!success) ScanProgressLabel.Text = "Scan failed!";
                 }
             }
         }

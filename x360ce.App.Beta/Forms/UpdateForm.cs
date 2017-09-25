@@ -36,9 +36,13 @@ namespace x360ce.App.Forms
             MainForm.Current.CloudPanel.TasksTimer.BeforeRemove -= TasksTimer_BeforeRemove;
         }
 
+        bool CancelUpdate;
+
         private void CloseButton_Click(object sender, EventArgs e)
         {
-
+            CancelUpdate = true;
+            var item = CheckUpateItem;
+            item.Retries = 0;
         }
 
         private void CheckButton_Click(object sender, EventArgs e)
@@ -81,6 +85,8 @@ namespace x360ce.App.Forms
 
         public void Step2ProcessUpdateResults(CloudMessage results)
         {
+            if (CancelUpdate)
+                return;
             var url = results.Values.GetValue<string>(CloudKey.UpdateUrl);
             if (string.IsNullOrEmpty(url))
             {
@@ -126,6 +132,8 @@ namespace x360ce.App.Forms
 
         void Step3AExtractFiles(string zipFileName)
         {
+            if (CancelUpdate)
+                return;
             var name = System.IO.Path.GetFileName(processFileName);
             string updateFileName = processFileName + ".tmp";
             JocysCom.ClassLibrary.Files.Zip.UnZipFile(zipFileName, "x360ce.exe", updateFileName);
@@ -134,6 +142,8 @@ namespace x360ce.App.Forms
 
         void Step3CheckSignature(string updateFileName)
         {
+            if (CancelUpdate)
+                return;
             if (CheckDigitalSignatureCheckBox.Checked)
             {
                 CurrentLogItem = LogPanel.Add("Check Digital Signature...");
@@ -152,6 +162,8 @@ namespace x360ce.App.Forms
 
         void Step4CheckVersion(string updatedFileName)
         {
+            if (CancelUpdate)
+                return;
             if (CheckVersionCheckBox.Checked)
             {
                 var processFi = System.Diagnostics.FileVersionInfo.GetVersionInfo(processFileName);
@@ -176,6 +188,8 @@ namespace x360ce.App.Forms
 
         void Step5ReplaceFiles(string updateFileName)
         {
+            if (CancelUpdate)
+                return;
             // Change the currently running executable so it can be overwritten.
             string bak = processFileName + ".bak";
             CurrentLogItem = LogPanel.Add("Renaming running process...");
@@ -197,19 +211,17 @@ namespace x360ce.App.Forms
 
         void Step6Restart(string fileName)
         {
+            if (CancelUpdate)
+                return;
             var process = System.Diagnostics.Process.GetCurrentProcess();
             CurrentLogItem = LogPanel.Add("Restarting...");
             Application.Restart();
         }
 
-        private void OkButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void UpdateForm_Load(object sender, EventArgs e)
         {
-
+            CancelUpdate = false;
+            LogPanel.LogList.Clear();
         }
 
     }
