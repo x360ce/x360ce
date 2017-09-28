@@ -246,7 +246,6 @@
             this.MinimizeToTrayCheckBox.Size = new System.Drawing.Size(108, 18);
             this.MinimizeToTrayCheckBox.TabIndex = 93;
             this.MinimizeToTrayCheckBox.Text = "Minimize to Tray";
-            this.MinimizeToTrayCheckBox.CheckedChanged += new System.EventHandler(this.MinimizeToTrayCheckBox_CheckedChanged);
             // 
             // AllowOnlyOneCopyCheckBox
             // 

@@ -18,10 +18,10 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (IsDesignMode) return;
-			DInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("DInput")).ToArray();
-			XInputCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("XInput")).ToArray();
-			HookCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Hook")).ToArray();
-			AutoMapCheckBoxes = Controls.OfType<CheckBox>().Where(x => x.Name.StartsWith("Controller")).ToArray();
+			DInputCheckBoxes = DInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
+			XInputCheckBoxes = XInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
+			HookCheckBoxes = HookMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
+			AutoMapCheckBoxes = AutoMapMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
 			lock (CurrentGameLock)

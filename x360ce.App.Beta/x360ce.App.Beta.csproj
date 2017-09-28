@@ -163,10 +163,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="vJoyInterfaceWrap">
-      <HintPath>Resources\vJoy\vJoyInterfaceWrap.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryDeviceType.cs">
@@ -271,6 +267,9 @@
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\PadControl.VirtualDevice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -355,9 +354,6 @@
     <Compile Include="Forms\MapDeviceToControllerForm.Designer.cs">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadControl.VirtualDevice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\ThumbUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -428,6 +424,10 @@
     <Compile Include="Issues\LeakDetectorIssue.cs" />
     <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Issues\IniFileIssue.cs" />
+    <Compile Include="MainForm.Tray.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\DPadEnum.cs">
@@ -441,6 +441,7 @@
       <DependentUpon>WarningsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Issues\DirectXIssue.cs" />
+    <Compile Include="vBox\vXboxInterface.cs" />
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -560,8 +561,6 @@
     </Compile>
     <Compile Include="Common\SettingsConverter.cs" />
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
-    <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterface.lib" />
-    <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterface.lib" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -627,10 +626,8 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
-    <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterface.dll" />
-    <EmbeddedResource Include="Resources\vJoy_x64\vJoyInterfaceWrap.dll" />
-    <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterface.dll" />
-    <EmbeddedResource Include="Resources\vJoy_x86\vJoyInterfaceWrap.dll" />
+    <EmbeddedResource Include="Resources\vXboxInterface_x64\vXboxInterface.dll" />
+    <EmbeddedResource Include="Resources\vXboxInterface_x86\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\dinput.dll" />
     <EmbeddedResource Include="Resources\dinput_x64.dll" />
     <EmbeddedResource Include="Resources\dinput_x86.dll" />

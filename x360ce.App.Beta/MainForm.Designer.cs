@@ -442,7 +442,6 @@ namespace x360ce.App
 			this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
 			this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
 			this.TrayNotifyIcon.Visible = true;
-			this.TrayNotifyIcon.DoubleClick += new System.EventHandler(this.TrayNotifyIcon_DoubleClick);
 			// 
 			// TrayContextMenuStrip
 			// 
@@ -551,7 +550,6 @@ namespace x360ce.App
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
-			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.Controls.SetChildIndex(this.MainTabControl, 0);
 			this.Controls.SetChildIndex(this.MainStatusStrip, 0);
 			this.Controls.SetChildIndex(this.label1, 0);

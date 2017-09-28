@@ -198,11 +198,6 @@ namespace x360ce.App.Controls
             EngineHelper.BrowsePath(GameDatabaseManager.Current.GdbFile.FullName);
         }
 
-        private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            MainForm.Current.SetMinimizeToTray(!SettingsManager.Options.MinimizeToTray);
-        }
-
         private void LoginButton_Click(object sender, EventArgs e)
         {
             // Secure login over insecure webservices.

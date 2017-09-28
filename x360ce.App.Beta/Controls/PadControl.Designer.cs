@@ -455,7 +455,7 @@
 			// 
 			// DeadZoneNumericUpDown
 			// 
-			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(138, 20);
+			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(138, 24);
 			this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             16,
             0,

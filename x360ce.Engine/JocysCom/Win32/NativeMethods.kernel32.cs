@@ -77,7 +77,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// </summary>
 		[return: MarshalAs(UnmanagedType.Bool)]
 		[SuppressUnmanagedCodeSecurity, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-		internal static extern bool FreeLibrary(IntPtr hModule);
+		public static extern bool FreeLibrary(IntPtr hModule);
 
 		/// <summary>
 		/// Sets the current system time and date. 

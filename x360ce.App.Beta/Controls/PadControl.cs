@@ -1384,9 +1384,6 @@ namespace x360ce.App.Controls
 				{
 					AppHelper.WriteFile(typeof(MainForm).Namespace + "." + resourceName + ".dll", "vJoyInterface.dll");
 				}
-
-
-
 				System.Threading.ThreadPool.QueueUserWorkItem(FeedWaitCallback, (uint)1);
 			}
 		}
@@ -1396,11 +1393,11 @@ namespace x360ce.App.Controls
 		void FeedWaitCallback(object state)
 		{
 			string message;
-			var success = FeedDinputDevice((uint)state, out message);
-			if (!string.IsNullOrEmpty(message) && !success)
-			{
-				MessageBox.Show(message);
-			}
+			var success = FeedXInputDevice((uint)state, out message);
+			//if (!string.IsNullOrEmpty(message) && !success)
+			//{
+			//	MessageBox.Show(message);
+			//}
 		}
 
 

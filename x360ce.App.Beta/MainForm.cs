@@ -24,7 +24,8 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
-        }
+			InitMinimize();
+		}
 
 		DeviceDetector detector;
 
@@ -75,7 +76,7 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
-            SettingsGridPanel._ParentForm = this;
+			SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
 			// NotifySettingsChange will be called on event suspention and resume.
@@ -96,8 +97,8 @@ namespace x360ce.App
 			SettingsManager.PadSettings.Load();
 			SettingsManager.UserDevices.Load();
 			SettingsManager.UserInstances.Load();
-            SettingsManager.UserComputers.Load();
-            XInputMaskScanner.FileInfoCache.Load();
+			SettingsManager.UserComputers.Load();
+			XInputMaskScanner.FileInfoCache.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				XiControllers[i] = new Controller((UserIndex)i);
@@ -130,7 +131,6 @@ namespace x360ce.App
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
 			ShowIniTab(SettingsManager.Options.ShowIniTab);
-			SetMinimizeToTray(SettingsManager.Options.MinimizeToTray);
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -608,7 +608,7 @@ namespace x360ce.App
 
 		public void SaveAll()
 		{
-			
+
 			Settings.Default.Save();
 			SettingsManager.OptionsData.Save();
 			SettingsManager.Settings.Save();
@@ -620,8 +620,8 @@ namespace x360ce.App
 			SettingsManager.PadSettings.Save();
 			SettingsManager.UserDevices.Save();
 			SettingsManager.UserInstances.Save();
-            SettingsManager.UserComputers.Save();
-            XInputMaskScanner.FileInfoCache.Save();
+			SettingsManager.UserComputers.Save();
+			XInputMaskScanner.FileInfoCache.Save();
 		}
 
 		#region Timer
@@ -864,8 +864,8 @@ namespace x360ce.App
 			// Check for various issues.
 			InitWarnigForm();
 			InitDeviceForm();
-            InitUpdateForm();
-        }
+			InitUpdateForm();
+		}
 
 		void UpdateForm2()
 		{
@@ -1196,12 +1196,7 @@ namespace x360ce.App
 				// Show currently running instance.
 				if (m.WParam.ToInt32() == wParam_Restore)
 				{
-					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
-					// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
-					// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
-					if (WindowState != FormWindowState.Minimized) WindowState = FormWindowState.Minimized;
-					this.Activate();
-					if (WindowState == FormWindowState.Minimized) WindowState = FormWindowState.Normal;
+					RestoreFromTray(true);
 				}
 				//  Close currently running instance.
 				if (m.WParam.ToInt32() == wParam_Close)
@@ -1273,75 +1268,75 @@ namespace x360ce.App
 			lock (DeviceFormLock)
 			{
 				if (_DeviceForm == null)
-                    return null;
+					return null;
 				_DeviceForm.StartPosition = FormStartPosition.CenterParent;
 				var result = _DeviceForm.ShowDialog();
 				return _DeviceForm.SelectedDevices;
 			}
 		}
 
-        #endregion
+		#endregion
 
-        #region Update Form
+		#region Update Form
 
-        Forms.UpdateForm _UpdateForm;
-        object UpdateFormLock = new object();
+		Forms.UpdateForm _UpdateForm;
+		object UpdateFormLock = new object();
 
-        void InitUpdateForm()
-        {
-            lock (UpdateFormLock)
-            {
-                _UpdateForm = new Forms.UpdateForm();
-            }
-        }
+		void InitUpdateForm()
+		{
+			lock (UpdateFormLock)
+			{
+				_UpdateForm = new Forms.UpdateForm();
+			}
+		}
 
-        void DisposeUpdateForm()
-        {
-            lock (UpdateFormLock)
-            {
-                if (_UpdateForm != null)
-                {
-                    _UpdateForm.Dispose();
-                    _UpdateForm = null;
-                }
-            }
-        }
+		void DisposeUpdateForm()
+		{
+			lock (UpdateFormLock)
+			{
+				if (_UpdateForm != null)
+				{
+					_UpdateForm.Dispose();
+					_UpdateForm = null;
+				}
+			}
+		}
 
-        public bool? ShowUpdateForm()
-        {
-            lock (UpdateFormLock)
-            {
-                if (_UpdateForm == null)
-                    return null;
-                var oldTab = MainTabControl.SelectedTab;
-                MainTabControl.SelectedTab = CloudTabPage;
-                _UpdateForm.StartPosition = FormStartPosition.CenterParent;
-                _UpdateForm.OpenDialog();
-                var result = _UpdateForm.ShowDialog();
-                _UpdateForm.CloseDialog();
-                MainTabControl.SelectedTab = oldTab;
-                return null;
-            }
-        }
+		public bool? ShowUpdateForm()
+		{
+			lock (UpdateFormLock)
+			{
+				if (_UpdateForm == null)
+					return null;
+				var oldTab = MainTabControl.SelectedTab;
+				MainTabControl.SelectedTab = CloudTabPage;
+				_UpdateForm.StartPosition = FormStartPosition.CenterParent;
+				_UpdateForm.OpenDialog();
+				var result = _UpdateForm.ShowDialog();
+				_UpdateForm.CloseDialog();
+				MainTabControl.SelectedTab = oldTab;
+				return null;
+			}
+		}
 
-        public void ProcessUpdateResults(CloudMessage results)
-        {
-            lock (UpdateFormLock)
-            {
-                if (_UpdateForm == null)
-                    return;
-                _UpdateForm.Step2ProcessUpdateResults(results);
-            }
-        }
+		public void ProcessUpdateResults(CloudMessage results)
+		{
+			lock (UpdateFormLock)
+			{
+				if (_UpdateForm == null)
+					return;
+				_UpdateForm.Step2ProcessUpdateResults(results);
+			}
+		}
 
-        #endregion
+		#endregion
 
-            /// <summary>
-            /// Clean up any 
-            /// being used.
-            /// </summary>
-            /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+		/// <summary>
+		/// Clean up any 
+		/// being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
 		{
 			if (disposing && (components != null))
 			{
@@ -1351,7 +1346,7 @@ namespace x360ce.App
 				}
 				DisposeWarnigForm();
 				DisposeDeviceForm();
-                DisposeUpdateForm();
+				DisposeUpdateForm();
 				if (detector != null)
 				{
 					detector.Dispose();
@@ -1373,121 +1368,9 @@ namespace x360ce.App
 			base.Dispose(disposing);
 		}
 
-		private void OpenApplicationToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			RestoreFromTray();
-		}
-
 		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Close();
-		}
-
-		#region Restore and Minimize
-
-		FormWindowState? oldWindowState;
-		object lastStateLock = new object();
-
-		/// <summary>Will be used to prevent form flickering when restoring from tray.</summary>
-		bool ignoreMinimizeToTray;
-
-		private void MainForm_Resize(object sender, EventArgs e)
-		{
-			// Track window state changes.
-			lock (lastStateLock)
-			{
-				var newWindowState = WindowState;
-				if (!oldWindowState.HasValue || oldWindowState.Value != newWindowState)
-				{
-					oldWindowState = newWindowState;
-					UpdateStatusBar(newWindowState);
-				}
-			}
-		}
-
-		void UpdateStatusBar(FormWindowState state)
-		{
-			if (state == FormWindowState.Minimized)
-			{
-				if (!ignoreMinimizeToTray)
-				{
-					if (ShowInTaskbar == SettingsManager.Options.MinimizeToTray)
-					{
-						ShowInTaskbar = !SettingsManager.Options.MinimizeToTray;
-					}
-				}
-			}
-			else
-			{
-				ignoreMinimizeToTray = false;
-				if (ShowInTaskbar == false)
-				{
-					ShowInTaskbar = true;
-				}
-			}
-		}
-
-		public bool MinimizeToTrayChanging;
-		public void SetMinimizeToTray(bool value)
-		{
-			if (MinimizeToTrayChanging) return;
-			MinimizeToTrayChanging = true;
-			if (OptionsPanel.MinimizeToTrayCheckBox.Checked != value)
-			{
-				OptionsPanel.MinimizeToTrayCheckBox.Checked = value;
-			}
-			if (SettingsManager.Options.MinimizeToTray != value)
-			{
-				SettingsManager.Options.MinimizeToTray = value;
-			}
-			UpdateStatusBar(WindowState);
-			MinimizeToTrayChanging = false;
-		}
-
-		/// <summary>
-		/// Method to Minimize the window and Hide the window item in the TaskBar. 
-		/// </summary>
-		public void MinimizeToTray(bool showBalloonTip)
-		{
-			// Show only first time.
-			if (showBalloonTip)
-			{
-				TrayNotifyIcon.BalloonTipText = "Password Generator...";
-				// Show balloon tip for 2 seconds.
-				TrayNotifyIcon.ShowBalloonTip(2);
-			}
-			// hold - program.
-			// NOTE: also it would be possible to track which direction mouse will move in or move out on TrayIcon.
-			// For example: open program if mouse moves in from left and moves out from top.
-			TrayNotifyIcon.Text = "Click: double - program, left - generate, right - menu.";
-			if (WindowState != FormWindowState.Minimized) WindowState = FormWindowState.Minimized;
-		}
-
-		/// <summary>
-		/// Restores the window.
-		/// </summary>
-		public void RestoreFromTray()
-		{
-			ignoreMinimizeToTray = true;
-			// Show in task bar before restoring windows state in order to prevent flickering.
-			ShowInTaskbar = true;
-			if (WindowState != FormWindowState.Normal)
-			{
-				WindowState = FormWindowState.Normal;
-			}
-			BringToFront();
-		}
-
-		void MinimizeToTrayToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			SetMinimizeToTray(!SettingsManager.Options.MinimizeToTray);
-		}
-
-		#endregion
-
-		private void TrayNotifyIcon_DoubleClick(object sender, EventArgs e)
-		{
-			RestoreFromTray();
 		}
 
 		public UserGame CurrentGame;
