@@ -249,6 +249,12 @@ namespace x360ce.App
 					var cStates = addedDevices
 						.Where(x => x.Type != SharpDX.DirectInput.DeviceType.Mouse && x.Type != SharpDX.DirectInput.DeviceType.Keyboard)
 						.Select(x => new Joystick(Manager, x.InstanceGuid)).ToArray();
+					var pStates = addedDevices
+						.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Mouse)
+						.Select(x => new Mouse(Manager)).ToArray();
+					var kStates = addedDevices
+						.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Keyboard)
+						.Select(x => new Keyboard(Manager)).ToArray();
 					var interfacePaths = cStates.Select(x => x.Properties.InterfacePath).ToArray();
 					intInfos = DeviceDetector.GetInterfaces(interfacePaths);
 					for (int i = 0; i < addedDevices.Length; i++)
