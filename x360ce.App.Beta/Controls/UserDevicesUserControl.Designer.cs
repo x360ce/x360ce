@@ -31,6 +31,7 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDevicesUserControl));
 			this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
 			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -40,6 +41,7 @@
 			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
+			this.HardwareButton = new System.Windows.Forms.ToolStripButton();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -142,7 +144,8 @@
 			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RefreshButton,
-            this.ControllerDeleteButton});
+            this.ControllerDeleteButton,
+            this.HardwareButton});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
 			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -169,6 +172,16 @@
 			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
 			this.ControllerDeleteButton.Text = "&Delete";
 			this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
+			// 
+			// HardwareButton
+			// 
+			this.HardwareButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.HardwareButton.Image = ((System.Drawing.Image)(resources.GetObject("HardwareButton.Image")));
+			this.HardwareButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.HardwareButton.Name = "HardwareButton";
+			this.HardwareButton.Size = new System.Drawing.Size(71, 22);
+			this.HardwareButton.Text = "Hardware...";
+			this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
 			// 
 			// UserDevicesUserControl
 			// 
@@ -197,5 +210,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
+		private System.Windows.Forms.ToolStripButton HardwareButton;
 	}
 }

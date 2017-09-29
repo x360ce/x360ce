@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
+using x360ce.App.Forms;
 
 namespace x360ce.App.Controls
 {
@@ -114,5 +115,11 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		private void HardwareButton_Click(object sender, EventArgs e)
+		{
+			var form = new HardwareForm();
+			form.ShowDialog();
+			form.Dispose();
+		}
 	}
 }
