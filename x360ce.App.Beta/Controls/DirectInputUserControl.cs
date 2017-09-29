@@ -123,8 +123,8 @@ namespace x360ce.App.Controls
 			AppHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
 			AppHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
 			AppHelper.SetText(DeviceProductNameTextBox, di.ProductName);
-			AppHelper.SetText(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.HidManufacturer);
-			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", dInfo == null ? 0 : dInfo.HidRevision);
+			AppHelper.SetText(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.DevManufacturer);
+			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", dInfo == null ? 0 : dInfo.DevRevision);
 			AppHelper.SetText(DeviceProductGuidTextBox, di.ProductGuid.ToString());
 			AppHelper.SetText(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
 			AppHelper.SetText(DeviceTypeTextBox, di.Type.ToString());

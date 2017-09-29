@@ -218,9 +218,20 @@ namespace x360ce.App
 				{
 					Manager = new DirectInput();
 				}
-				IList<DeviceInstance> devices;
+				var devices = new List<DeviceInstance>();
 				// List of connected devices (can be very long operation).
-				devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+				// Add controllers.
+				var controllers = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+				foreach (var controller in controllers)
+					devices.Add(controller);
+				// Add pointers.
+				var pointers = Manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AllDevices).ToList();
+				foreach (var pointer in pointers)
+					devices.Add(pointer);
+				// Add keyboards.
+				var keyboards = Manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AllDevices).ToList();
+				foreach (var keyboard in keyboards)
+					devices.Add(keyboard);
 				if (Program.IsClosing)
 					return;
 				// List of connected devices.
@@ -231,28 +242,28 @@ namespace x360ce.App
 				var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 				var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 				// Must find better way to find Device than by Vendor ID and Product ID.
-				DeviceInfo[] devInfos = null;
-				DeviceInfo[] intInfos = null;
-				Joystick[] states = null;
 				if (addedDevices.Length > 0)
 				{
-					devInfos = DeviceDetector.GetDevices();
-					states = addedDevices.Select(x => new Joystick(Manager, x.InstanceGuid)).ToArray();
-					var interfacePaths = states.Select(x => x.Properties.InterfacePath).ToArray();
+					DeviceInfo[] devInfos = DeviceDetector.GetDevices();
+					DeviceInfo[] intInfos = null;
+					var cStates = addedDevices
+						.Where(x => x.Type != SharpDX.DirectInput.DeviceType.Mouse && x.Type != SharpDX.DirectInput.DeviceType.Keyboard)
+						.Select(x => new Joystick(Manager, x.InstanceGuid)).ToArray();
+					var interfacePaths = cStates.Select(x => x.Properties.InterfacePath).ToArray();
 					intInfos = DeviceDetector.GetInterfaces(interfacePaths);
-				}
-				for (int i = 0; i < addedDevices.Length; i++)
-				{
-					var device = addedDevices[i];
-					var di = new UserDevice();
-					RefreshDevice(di, device);
-					// Get interface info for added devices.
-					var hid = intInfos.FirstOrDefault(x => x.DevicePath == di.Device.Properties.InterfacePath);
-					di.LoadHidDeviceInfo(hid);
-					// Get device info for added devices.
-					var dev = devInfos.FirstOrDefault(x => x.DeviceId == di.HidDeviceId);
-					di.LoadDevDeviceInfo(dev);
-					insertDevices.Add(di);
+					for (int i = 0; i < addedDevices.Length; i++)
+					{
+						var device = addedDevices[i];
+						var di = new UserDevice();
+						RefreshDevice(di, device);
+						// Get interface info for added devices.
+						var hid = intInfos.FirstOrDefault(x => x.DevicePath == di.Device.Properties.InterfacePath);
+						di.LoadHidDeviceInfo(hid);
+						// Get device info for added devices.
+						var dev = devInfos.FirstOrDefault(x => x.DeviceId == di.HidDeviceId);
+						di.LoadDevDeviceInfo(dev);
+						insertDevices.Add(di);
+					}
 				}
 				if (insertDevices.Count > 0)
 				{

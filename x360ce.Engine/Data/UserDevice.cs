@@ -55,6 +55,8 @@ namespace x360ce.Engine.Data
 
 		public void LoadHidDeviceInfo(DeviceInfo info)
 		{
+			if (info == null)
+				return;
 			HidManufacturer = info.Manufacturer;
 			HidVendorId = (int)info.VendorId;
 			HidProductId = (int)info.ProductId;
@@ -69,6 +71,8 @@ namespace x360ce.Engine.Data
 
 		public void LoadDevDeviceInfo(DeviceInfo info)
 		{
+			if (info == null)
+				return;
 			DevManufacturer = info.Manufacturer;
 			DevVendorId = (int)info.VendorId;
 			DevProductId = (int)info.ProductId;
