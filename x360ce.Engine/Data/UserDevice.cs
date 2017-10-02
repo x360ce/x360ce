@@ -11,13 +11,13 @@ using System.Xml.Serialization;
 namespace x360ce.Engine.Data
 {
 	public partial class UserDevice : IDisplayName, IChecksum, IDateTime
-    {
+	{
 
 		public UserDevice()
 		{
-            DateCreated = DateTime.Now;
-            DateUpdated = DateCreated;
-            IsEnabled = true;
+			DateCreated = DateTime.Now;
+			DateUpdated = DateCreated;
+			IsEnabled = true;
 		}
 
 		[XmlIgnore]
@@ -56,33 +56,61 @@ namespace x360ce.Engine.Data
 		public void LoadHidDeviceInfo(DeviceInfo info)
 		{
 			if (info == null)
-				return;
-			HidManufacturer = info.Manufacturer;
-			HidVendorId = (int)info.VendorId;
-			HidProductId = (int)info.ProductId;
-			HidRevision = (int)info.Revision;
-			HidDescription = info.Description;
-			HidDeviceId = info.DeviceId;
-			HidDevicePath = info.DevicePath;
-			HidParentDeviceId = info.ParentDeviceId;
-			HidClassGuid = info.ClassGuid;
-			HidClassDescription = info.ClassDescription;
+			{
+				HidManufacturer = "";
+				HidVendorId = 0;
+				HidProductId = 0;
+				HidRevision = 0;
+				HidDescription = "";
+				HidDeviceId = "";
+				HidDevicePath = "";
+				HidParentDeviceId = "";
+				HidClassGuid = Guid.Empty;
+				HidClassDescription = "";
+			}
+			else
+			{
+				HidManufacturer = info.Manufacturer;
+				HidVendorId = (int)info.VendorId;
+				HidProductId = (int)info.ProductId;
+				HidRevision = (int)info.Revision;
+				HidDescription = info.Description;
+				HidDeviceId = info.DeviceId;
+				HidDevicePath = info.DevicePath;
+				HidParentDeviceId = info.ParentDeviceId;
+				HidClassGuid = info.ClassGuid;
+				HidClassDescription = info.ClassDescription;
+			}
 		}
 
 		public void LoadDevDeviceInfo(DeviceInfo info)
 		{
 			if (info == null)
-				return;
-			DevManufacturer = info.Manufacturer;
-			DevVendorId = (int)info.VendorId;
-			DevProductId = (int)info.ProductId;
-			DevRevision = (int)info.Revision;
-			DevDescription = info.Description;
-			DevDeviceId = info.DeviceId;
-			DevDevicePath = info.DevicePath;
-			DevParentDeviceId = info.ParentDeviceId;
-			DevClassGuid = info.ClassGuid;
-			DevClassDescription = info.ClassDescription;
+			{
+				DevManufacturer = "";
+				DevVendorId = 0;
+				DevProductId = 0;
+				DevRevision = 0;
+				DevDescription = "";
+				DevDeviceId = "";
+				DevDevicePath = "";
+				DevParentDeviceId = "";
+				DevClassGuid = Guid.Empty;
+				DevClassDescription = "";
+			}
+			else
+			{
+				DevManufacturer = info.Manufacturer;
+				DevVendorId = (int)info.VendorId;
+				DevProductId = (int)info.ProductId;
+				DevRevision = (int)info.Revision;
+				DevDescription = info.Description;
+				DevDeviceId = info.DeviceId;
+				DevDevicePath = info.DevicePath;
+				DevParentDeviceId = info.ParentDeviceId;
+				DevClassGuid = info.ClassGuid;
+				DevClassDescription = info.ClassDescription;
+			}
 		}
 
 		#region Ignored Properties

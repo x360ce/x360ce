@@ -150,6 +150,10 @@
       <HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SharpDX.RawInput">
+      <HintPath>Resources\SharpDX\SharpDX.RawInput.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -626,6 +630,7 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
     <EmbeddedResource Include="Resources\vXboxInterface_x64\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\vXboxInterface_x86\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\dinput.dll" />
@@ -641,9 +646,6 @@
     <None Include="Images\app_16x16.png" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
-    <None Include="Resources\SharpDX\SharpDX.DirectInput.xml">
-      <SubType>Designer</SubType>
-    </None>
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
     <None Include="Resources\SharpDX\SharpDX.xml">
       <SubType>Designer</SubType>

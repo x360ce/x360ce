@@ -298,7 +298,8 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					continue;
 				}
-				var deviceId = GetDeviceId(deviceInfoData.DevInst);
+				var deviceHandle = deviceInfoData.DevInst;
+				var deviceId = GetDeviceId(deviceHandle);
 				devicePathNames3.Add(devicePath);
 				Marshal.FreeHGlobal(ptrDetails);
 				var accessRights = WinNT.GENERIC_READ | WinNT.GENERIC_WRITE;
@@ -347,13 +348,13 @@ namespace JocysCom.ClassLibrary.IO
 				}
 				uint parentDeviceInstance = 0;
 				string parentDeviceId = null;
-				var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
+				var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceHandle, 0);
 				if (CRResult == CR.CR_SUCCESS)
 				{
 					parentDeviceId = GetDeviceId(parentDeviceInstance);
 				}
 
-				var di = new DeviceInfo(deviceId, parentDeviceId, devicePath, vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
+				var di = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, devicePath, vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
 				list.Add(di);
 				serials.Add(phdesc);
 				devHandle.Close();
@@ -442,7 +443,8 @@ namespace JocysCom.ClassLibrary.IO
 			var deviceClassGuid = deviceInfoData.ClassGuid;
 			var classDescription = GetClassDescription(deviceClassGuid);
 			Win32.DeviceNodeStatus status;
-			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
+			var deviceHandle = deviceInfoData.DevInst;
+			NativeMethods.GetDeviceNodeStatus(deviceHandle, IntPtr.Zero, out status);
 			uint vid;
 			uint pid;
 			uint rev;
@@ -471,12 +473,12 @@ namespace JocysCom.ClassLibrary.IO
 			// Get device information.
 			uint parentDeviceInstance = 0;
 			string parentDeviceId = null;
-			var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
+			var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceHandle, 0);
 			if (CRResult == CR.CR_SUCCESS)
 			{
 				parentDeviceId = GetDeviceId(parentDeviceInstance);
 			}
-			var device = new DeviceInfo(deviceId, parentDeviceId, "", deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
+			var device = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, "", deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
 			return device;
 		}
 

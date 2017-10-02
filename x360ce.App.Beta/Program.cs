@@ -184,7 +184,10 @@ namespace x360ce.App
                 case "SharpDX.DirectInput":
                     path = "Resources.SharpDX.SharpDX.DirectInput.dll";
                     break;
-                default:
+				case "SharpDX.RawInput":
+					path = "Resources.SharpDX.SharpDX.RawInput.dll";
+					break;
+				default:
                     break;
             }
             if (path == null) return null;
