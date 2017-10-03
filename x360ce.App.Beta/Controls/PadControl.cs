@@ -832,19 +832,28 @@ namespace x360ce.App.Controls
 					_InstanceGuid = instanceGuid;
 					ResetDiMenuStrip(enable ? diDevice : null);
 				}
-				JoystickState state;
 				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
-				var isOnline = diDevice != null && diDevice.IsOnline;
-				var hasState = isOnline && diDevice.Device != null;
-				var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
-				var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
-				AppHelper.SetText(DirectInputTabPage, text);
+				UpdateDirectInputTabPage(diDevice);
+				JoystickState state;
 				DirectInputPanel.UpdateFrom(diDevice, out state);
 				DirectInputState diState = null;
 				if (state != null) diState = new DirectInputState(state);
 				StopRecording(diState);
 			}
 		}
+
+		#region Update Controls
+
+		void UpdateDirectInputTabPage(UserDevice diDevice)
+		{
+			var isOnline = diDevice != null && diDevice.IsOnline;
+			var hasState = isOnline && diDevice.Device != null;
+			var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
+			var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
+			AppHelper.SetText(DirectInputTabPage, text);
+		}
+
+		#endregion
 
 		State oldState;
 

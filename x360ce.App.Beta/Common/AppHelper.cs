@@ -104,12 +104,6 @@ namespace x360ce.App
 			effects.Transparent(newImage, 50);
 			return newImage;
 		}
-
-		// Use special function or comparison fails.
-		public static bool IsSameDevice(Device device, Guid instanceGuid)
-		{
-			return instanceGuid.Equals(device == null ? Guid.Empty : device.Information.InstanceGuid);
-		}
 		
 		/// <summary>
 		/// Remove explicit file rules and leave inherited rules only.

@@ -238,6 +238,7 @@
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
+    <Compile Include="Common\DInput\DInputHelper.cs" />
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
@@ -744,6 +745,7 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

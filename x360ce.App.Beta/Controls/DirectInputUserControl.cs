@@ -59,24 +59,33 @@ namespace x360ce.App.Controls
 			if (device == null)
 			{
 				// clean everything here.
+				AppHelper.SetText(DiCapFfStateTextBox, "");
+				AppHelper.SetText(DiCapButtonsTextBox, "");
+				AppHelper.SetText(DiCapDPadsTextBox, "");
+				AppHelper.SetText(ActuatorsTextBox, "");
+				AppHelper.SetText(DiCapAxesTextBox, "");
+				AppHelper.SetText(SlidersTextBox, "");
+				AppHelper.SetText(DeviceVidTextBox, "");
+				AppHelper.SetText(DevicePidTextBox, "");
+				AppHelper.SetText(DeviceRevTextBox, "");
 				AppHelper.SetText(DeviceProductNameTextBox, "");
 				AppHelper.SetText(DeviceVendorNameTextBox, "");
 				AppHelper.SetText(DeviceProductGuidTextBox, "");
 				AppHelper.SetText(DeviceInstanceGuidTextBox, "");
-				AppHelper.SetText(DiCapFfStateTextBox, "");
-				AppHelper.SetText(DiCapAxesTextBox, "");
-				AppHelper.SetText(DiCapButtonsTextBox, "");
-				AppHelper.SetText(DiCapDPadsTextBox, "");
+				AppHelper.SetText(DeviceTypeTextBox, "");
 				if (DiEffectsTable.Rows.Count > 0) DiEffectsTable.Rows.Clear();
 				return;
 			}
 			lock (MainForm.XInputLock)
 			{
+				// This must be done for the first time device is connected in order to retrieve 
+				// Force feedback information.
+				// XInput must be unloaded in case it tries to lock the device exclusivly.
 				var isLoaded = XInput.IsLoaded;
 				if (isLoaded) XInput.FreeLibrary();
 				device.Unacquire();
 				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
-				effects = new List<EffectInfo>();
+				IList<EffectInfo> effects = new List<EffectInfo>();
 				try
 				{
 					device.Acquire();
@@ -91,11 +100,11 @@ namespace x360ce.App.Controls
 				DiEffectsTable.Rows.Clear();
 				foreach (var eff in effects)
 				{
-					DiEffectsTable.Rows.Add(new object[]{
-								eff.Name,
-								((EffectParameterFlags)eff.StaticParameters).ToString(),
-								((EffectParameterFlags)eff.DynamicParameters).ToString()
-							});
+					DiEffectsTable.Rows.Add(
+						eff.Name,
+						eff.StaticParameters.ToString(),
+						eff.DynamicParameters.ToString()
+					);
 				}
 				device.Unacquire();
 				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
@@ -131,8 +140,6 @@ namespace x360ce.App.Controls
 		}
 
 		JoystickState oldState;
-		// List<string> actions = new List<string>();
-		IList<EffectInfo> effects;
 		string forceFeedbackState;
 
 		public int[] Axis = new int[6];
@@ -294,15 +301,17 @@ namespace x360ce.App.Controls
 		Guid deviceInstanceGuid;
 		bool isWheel = false;
 
-		public void UpdateFrom(UserDevice diDevice, out JoystickState state)
+		public void UpdateFrom(UserDevice uDevice, out JoystickState state)
 		{
 			state = null;
-			if (diDevice != null)
+			if (uDevice != null)
 			{
-				var device = diDevice.Device;
-				if (!AppHelper.IsSameDevice(device, deviceInstanceGuid))
+				var device = uDevice.Device;
+				var instanceGuid = device == null ? Guid.Empty : device.Information.InstanceGuid;
+				// If this is not same device.
+				if (!instanceGuid.Equals(deviceInstanceGuid))
 				{
-					ShowDeviceInfo(device, diDevice);
+					ShowDeviceInfo(device, uDevice);
 					deviceInstanceGuid = Guid.Empty;
 					if (device != null)
 					{
