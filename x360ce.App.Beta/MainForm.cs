@@ -27,7 +27,7 @@ namespace x360ce.App
 			InitMinimize();
 		}
 
-		DeviceDetector detector;
+		DInput.DInputHelper DHelper;
 
 		public static MainForm Current { get; set; }
 
@@ -76,6 +76,7 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
+			DHelper = new DInput.DInputHelper();
 			SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
@@ -191,157 +192,6 @@ namespace x360ce.App
 			}
 		}
 
-		void InitDevices()
-		{
-			detector = new DeviceDetector(false);
-			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
-			UpdateDevicesEnabled = true;
-		}
-
-		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
-		{
-			UpdateDevicesEnabled = true;
-		}
-
-		object UpdateDevicesLock = new object();
-
-		void UpdateDevices()
-		{
-			UserDevice[] deleteDevices;
-			// Add connected devices.
-			var insertDevices = new List<UserDevice>();
-			var updateDevices = new List<KeyValuePair<UserDevice, DeviceInstance>>();
-			lock (UpdateDevicesLock)
-			{
-				var m = Manager;
-				if (Manager == null)
-				{
-					Manager = new DirectInput();
-				}
-				// List of connected devices (can be a very long operation).
-				var devices = new List<DeviceInstance>();
-				// Controllers.
-				var controllerInstances = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
-				foreach (var item in controllerInstances)
-					devices.Add(item);
-				// Pointers.
-				var pointerInstances = Manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AllDevices).ToList();
-				foreach (var item in pointerInstances)
-					devices.Add(item);
-				// Keyboards.
-				var keyboardInstances = Manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AllDevices).ToList();
-				foreach (var item in keyboardInstances)
-					devices.Add(item);
-				if (Program.IsClosing)
-					return;
-				// List of connected devices.
-				var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToArray();
-				// List of current devices.
-				var currentInstanceGuids = SettingsManager.UserDevices.Items.Select(x => x.InstanceGuid).ToArray();
-				deleteDevices = SettingsManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
-				var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
-				var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
-				// Must find better way to find Device than by Vendor ID and Product ID.
-				if (addedDevices.Length > 0)
-				{
-					//Joystick    = new Guid("6f1d2b70-d5a0-11cf-bfc7-444553540000");
-					//SysMouse    = new Guid("6f1d2b60-d5a0-11cf-bfc7-444553540000");
-					//SysKeyboard = new Guid("6f1d2b61-d5a0-11cf-bfc7-444553540000");
-					DeviceInfo[] devInfos = DeviceDetector.GetDevices();
-					DeviceInfo[] intInfos = null;
-					// Controllers.
-					var controllers = addedDevices
-						.Where(x => x.Type != SharpDX.DirectInput.DeviceType.Mouse && x.Type != SharpDX.DirectInput.DeviceType.Keyboard)
-						.Select(x => new Joystick(Manager, x.InstanceGuid)).ToArray();
-					// Pointers.
-					var pointers = addedDevices
-						.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Mouse)
-						.Select(x => new Mouse(Manager)).ToArray();
-					// Keyboards.
-					var keyboards = addedDevices
-						.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Keyboard)
-						.Select(x => new Keyboard(Manager)).ToArray();
-					//var rawPointers = SharpDX.RawInput.Device.GetDevices()
-					//	.Where(x => x.DeviceType == SharpDX.RawInput.DeviceType.Mouse)
-					//	.ToList();
-					//var rawDevInfo = devInfos.FirstOrDefault(x=>x.DevicePath == rawPointers[0].DeviceName);
-					// Get interfaces.
-					var interfacePaths = controllers.Select(x => x.Properties.InterfacePath).ToArray();
-					intInfos = DeviceDetector.GetInterfaces(interfacePaths);
-					for (int i = 0; i < addedDevices.Length; i++)
-					{
-						var device = addedDevices[i];
-						var di = new UserDevice();
-						RefreshDevice(di, device);
-						DeviceInfo hid = null;
-						DeviceInfo dev = null;
-						if (device.IsHumanInterfaceDevice)
-						{
-							// Get interface info for added devices.
-							hid = intInfos.FirstOrDefault(x => x.DevicePath == di.Device.Properties.InterfacePath);
-							// Get device info for added devices.
-							dev = devInfos.FirstOrDefault(x => x.DeviceId == di.HidDeviceId);
-						}
-						di.LoadHidDeviceInfo(hid);
-						di.LoadDevDeviceInfo(dev);
-						insertDevices.Add(di);
-					}
-				}
-				if (insertDevices.Count > 0)
-				{
-					CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray(), true);
-				}
-				for (int i = 0; i < updatedDevices.Length; i++)
-				{
-					var device = updatedDevices[i];
-					var di = SettingsManager.UserDevices.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
-					updateDevices.Add(new KeyValuePair<UserDevice, DeviceInstance>(di, device));
-				}
-				UpdateDevicesFinished = true;
-			}
-			if (Program.IsClosing)
-				return;
-			Invoke((MethodInvoker)delegate ()
-			{
-				UpdateDevicesCount++;
-				// Remove disconnected devices.
-				for (int i = 0; i < deleteDevices.Length; i++)
-				{
-					deleteDevices[i].IsOnline = false;
-				}
-				for (int i = 0; i < insertDevices.Count; i++)
-				{
-					var di = insertDevices[i];
-					SettingsManager.UserDevices.Items.Add(di);
-				}
-				for (int i = 0; i < updateDevices.Count; i++)
-				{
-					var kv = updateDevices[i];
-					RefreshDevice(kv.Key, kv.Value);
-				}
-				var game = CurrentGame;
-				if (game != null)
-				{
-					// Auto-configure new devices.
-					AutoConfigure(game);
-				}
-				// Fill INI textBox.
-				GetINI();
-			});
-		}
-
-		void RefreshDevice(UserDevice di, DeviceInstance device)
-		{
-			if (Program.IsClosing)
-				return;
-			di.LoadInstance(device);
-			var state = new Joystick(Manager, device.InstanceGuid);
-			di.Device = state;
-			di.LoadCapabilities(state.Capabilities);
-			// If device is set as offline then make it online.
-			if (!di.IsOnline)
-				di.IsOnline = true;
-		}
 
 		void AutoConfigure(Engine.Data.UserGame game)
 		{
@@ -665,8 +515,7 @@ namespace x360ce.App
 		//string deviceInstancesNew = "";
 		public Guid AutoSelectControllerInstance = Guid.Empty;
 
-		DirectInput Manager;
-
+	
 		///// <summary>
 		///// Get direct input devices.
 		///// </summary>
@@ -817,10 +666,6 @@ namespace x360ce.App
 		bool update3Enabled;
 		bool update4Enabled;
 
-		bool UpdateDevicesEnabled = true;
-		bool UpdateDevicesFinished = true;
-
-
 		int UpdateDevicesCount
 		{
 			get { return _UpdateDevicesCount; }
@@ -857,12 +702,12 @@ namespace x360ce.App
 					update4Enabled = true;
 				}
 				// Make sure that interface handle is created, before starting device updates.
-				if (update4Enabled && UpdateDevicesEnabled && UpdateDevicesFinished && IsHandleCreated)
+				if (update4Enabled && IsHandleCreated && DHelper.UpdateDevicesEnabled && DHelper.UpdateDevicesFinished)
 				{
-					UpdateDevicesEnabled = false;
+					DHelper.UpdateDevicesEnabled = false;
 					// This property will make sure that only one 'UpdateDevices' is running at the time.
-					UpdateDevicesFinished = false;
-					var ts = new System.Threading.ThreadStart(UpdateDevices);
+					DHelper.UpdateDevicesFinished = false;
+					var ts = new System.Threading.ThreadStart(DHelper.UpdateDevices);
 					var t = new System.Threading.Thread(ts);
 					t.IsBackground = true;
 					t.Start();
@@ -873,7 +718,6 @@ namespace x360ce.App
 
 		void UpdateForm1()
 		{
-			InitDevices();
 			//if (DesignMode) return;
 			OptionsPanel.InitOptions();
 			// Set status.
@@ -1380,16 +1224,7 @@ namespace x360ce.App
 				DisposeWarnigForm();
 				DisposeDeviceForm();
 				DisposeUpdateForm();
-				if (detector != null)
-				{
-					detector.Dispose();
-					detector = null;
-				}
-				if (Manager != null)
-				{
-					Manager.Dispose();
-					Manager = null;
-				}
+				DHelper.Dispose();				
 				components.Dispose();
 				//lock (checkTimerLock)
 				//{
