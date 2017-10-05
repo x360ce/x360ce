@@ -79,6 +79,7 @@ namespace x360ce.App
 			RestoreFromTray();
 		}
 
+
 		#region Minimize / Restore
 
 		/// <summary>
@@ -108,6 +109,7 @@ namespace x360ce.App
 			}
 			if (WindowState != FormWindowState.Minimized)
 			{
+				EnableFormUpdates(false);
 				WindowState = FormWindowState.Minimized;
 			}
 		}
@@ -133,6 +135,7 @@ namespace x360ce.App
 				ShowInTaskbar = true;
 			if (WindowState != FormWindowState.Normal)
 			{
+				EnableFormUpdates(true);
 				WindowState = FormWindowState.Normal;
 			}
 			// Set window style as ToolWindow to show in ALT+TAB.

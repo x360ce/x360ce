@@ -149,6 +149,7 @@
     <Compile Include="Common\XInputMaskScannerEventArgs.cs" />
     <Compile Include="Common\XInputMaskScannerState.cs" />
     <Compile Include="Common\XSettingsData.cs" />
+    <Compile Include="Data\Setting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />
     <Compile Include="Data\UserGame.cs" />

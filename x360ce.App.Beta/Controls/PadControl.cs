@@ -1488,21 +1488,26 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var viewRow = grid.Rows[e.RowIndex];
-			var setting = (Engine.Data.Setting)viewRow.DataBoundItem;
-			var device = SettingsManager.GetDevice(setting.InstanceGuid);
-			var isConnected = (device != null);
+			var item = (Engine.Data.Setting)viewRow.DataBoundItem;
+			if (e.ColumnIndex == grid.Columns[IsOnlineColumn.Name].Index)
+			{
+				e.Value = item.IsOnline
+					? Properties.Resources.bullet_square_glass_green
+					: Properties.Resources.bullet_square_glass_grey;
+			}
 			if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
 			{
 				// Hide device Instance GUID from public eyes. Show part of checksum.
-				e.Value = EngineHelper.GetID(setting.InstanceGuid);
+				e.Value = EngineHelper.GetID(item.InstanceGuid);
 			}
 			else if (e.ColumnIndex == grid.Columns[SettingIdColumn.Name].Index)
 			{
 				// Hide device Setting GUID from public eyes. Show part of checksum.
-				e.Value = EngineHelper.GetID(setting.PadSettingChecksum);
+				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
 			}
 			else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
 			{
+				var device = SettingsManager.GetDevice(item.InstanceGuid);
 				e.Value = device == null
 					? ""
 					: device.DevManufacturer;

@@ -1,11 +1,7 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
@@ -118,6 +114,9 @@ namespace x360ce.Engine.Data
 		/// <summary>DInput Device State.</summary>
 		[XmlIgnore]
 		public Joystick Device;
+
+		[XmlIgnore]
+		public JoystickState State;
 
 		[XmlIgnore]
 		public bool IsOnline

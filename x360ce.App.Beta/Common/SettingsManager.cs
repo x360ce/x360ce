@@ -84,14 +84,24 @@ namespace x360ce.App
 		/// <summary>User Instances.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
 
-        /// <summary>User Computers.</summary>
-        public static XSettingsData<Engine.Data.UserComputer> UserComputers = new XSettingsData<Engine.Data.UserComputer>("UserComputers.xml", "User Computers. Maps login to user computers.");
+		/// <summary>User Computers.</summary>
+		public static XSettingsData<Engine.Data.UserComputer> UserComputers = new XSettingsData<Engine.Data.UserComputer>("UserComputers.xml", "User Computers. Maps login to user computers.");
 
-        // Property below is shared between User and Global settings:
+		// Property below is shared between User and Global settings:
 
-        /// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
-        public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
+		/// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
+		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
 
+		// Used for the grid.
+		public static void RefreshSettingsConnectionState()
+		{
+			var settings = Settings.Items.ToArray();
+			foreach (var item in settings)
+			{
+				var device = GetDevice(item.InstanceGuid);
+				item.IsOnline = device == null ? false : device.IsOnline;
+			}
+		}
 
 		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
 		{

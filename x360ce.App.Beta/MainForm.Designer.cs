@@ -67,6 +67,7 @@ namespace x360ce.App
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.SaveAllButton = new System.Windows.Forms.Button();
+			this.UpdateFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -320,6 +321,7 @@ namespace x360ce.App
 			this.MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusTimerLabel,
             this.toolStripStatusLabel2,
+            this.UpdateFrequencyLabel,
             this.UpdateDevicesStatusLabel,
             this.CloudMessagesLabel,
             this.StatusEventsLabel,
@@ -343,7 +345,7 @@ namespace x360ce.App
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(152, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(119, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// UpdateDevicesStatusLabel
@@ -531,6 +533,12 @@ namespace x360ce.App
 			this.SaveAllButton.UseVisualStyleBackColor = true;
 			this.SaveAllButton.Click += new System.EventHandler(this.SaveAllButton_Click);
 			// 
+			// UpdateFrequencyLabel
+			// 
+			this.UpdateFrequencyLabel.Name = "UpdateFrequencyLabel";
+			this.UpdateFrequencyLabel.Size = new System.Drawing.Size(33, 19);
+			this.UpdateFrequencyLabel.Text = "Hz: 0";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -625,5 +633,6 @@ namespace x360ce.App
 		public TabPage GamesTabPage;
 		private TabPage DevicesTabPage;
 		public Controls.UserDevicesUserControl DevicesPanel;
+		private ToolStripStatusLabel UpdateFrequencyLabel;
 	}
 }

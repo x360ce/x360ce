@@ -77,6 +77,10 @@ namespace x360ce.App
 		{
 			if (IsDesignMode) return;
 			DHelper = new DInput.DInputHelper();
+			if (WindowState != FormWindowState.Minimized)
+			{
+				EnableFormUpdates(true);
+			}
 			SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
@@ -515,7 +519,7 @@ namespace x360ce.App
 		//string deviceInstancesNew = "";
 		public Guid AutoSelectControllerInstance = Guid.Empty;
 
-	
+
 		///// <summary>
 		///// Get direct input devices.
 		///// </summary>
@@ -664,18 +668,6 @@ namespace x360ce.App
 		public bool update1Enabled = true;
 		public bool? update2Enabled;
 		bool update3Enabled;
-		bool update4Enabled;
-
-		int UpdateDevicesCount
-		{
-			get { return _UpdateDevicesCount; }
-			set
-			{
-				_UpdateDevicesCount = value;
-				UpdateDevicesStatusLabel.Text = string.Format("D: {0}", value);
-			}
-		}
-		int _UpdateDevicesCount = 0;
 
 		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -695,22 +687,11 @@ namespace x360ce.App
 					UpdateForm2();
 					update3Enabled = true;
 				}
-				if (update3Enabled)
+				if (update3Enabled && IsHandleCreated)
 				{
-					//update3Enabled = false;
-					UpdateForm3();
-					update4Enabled = true;
-				}
-				// Make sure that interface handle is created, before starting device updates.
-				if (update4Enabled && IsHandleCreated && DHelper.UpdateDevicesEnabled && DHelper.UpdateDevicesFinished)
-				{
-					DHelper.UpdateDevicesEnabled = false;
-					// This property will make sure that only one 'UpdateDevices' is running at the time.
-					DHelper.UpdateDevicesFinished = false;
-					var ts = new System.Threading.ThreadStart(DHelper.UpdateDevices);
-					var t = new System.Threading.Thread(ts);
-					t.IsBackground = true;
-					t.Start();
+					update3Enabled = false;
+					//UpdateForm3();
+					DHelper.Start();
 				}
 			}
 			UpdateTimer.Start();
@@ -1224,7 +1205,7 @@ namespace x360ce.App
 				DisposeWarnigForm();
 				DisposeDeviceForm();
 				DisposeUpdateForm();
-				DHelper.Dispose();				
+				DHelper.Dispose();
 				components.Dispose();
 				//lock (checkTimerLock)
 				//{
@@ -1377,6 +1358,59 @@ namespace x360ce.App
 			timer.Elapsed -= Timer_Elapsed;
 			timer.Dispose();
 		}
+
+		#region Update from DHelper
+
+
+		object LockFormEvents = new object();
+		bool FormEventsEnabled;
+
+		void EnableFormUpdates(bool enable)
+		{
+			lock (LockFormEvents)
+			{
+				if (enable && !FormEventsEnabled)
+				{
+					FormEventsEnabled = true;
+					DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
+					DHelper.DevicesUpdated += DHelper_DevicesUpdated;
+
+				}
+				else if (!enable && FormEventsEnabled)
+				{
+					FormEventsEnabled = false;
+					DHelper.FrequencyUpdated -= DHelper_FrequencyUpdated;
+					DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
+				}
+			}
+		}
+
+		private void DHelper_DevicesUpdated(object sender, EventArgs e)
+		{
+			// Make sure method is executed on the same thread as this control.
+			if (InvokeRequired)
+			{
+				var method = new EventHandler<EventArgs>(DHelper_DevicesUpdated);
+				BeginInvoke(method, new object[] { sender, e });
+				return;
+			}
+			SettingsManager.RefreshSettingsConnectionState();
+			AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
+		}
+
+		private void DHelper_FrequencyUpdated(object sender, EventArgs e)
+		{
+			// Make sure method is executed on the same thread as this control.
+			if (InvokeRequired)
+			{
+				var method = new EventHandler<EventArgs>(DHelper_FrequencyUpdated);
+				BeginInvoke(method, new object[] { sender, e });
+				return;
+			}
+			AppHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", DHelper.UpdateFrequency);
+		}
+
+		#endregion
 
 		#region Show/Hide tabs.
 

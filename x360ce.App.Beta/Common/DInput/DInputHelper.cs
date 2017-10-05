@@ -16,67 +16,14 @@ namespace x360ce.App.DInput
 		{
 			Manager = new DirectInput();
 			InitDeviceDetector();
+			watch = new System.Diagnostics.Stopwatch();
 		}
 
-		public void Start()
-		{
-			watch.Restart();
-			IsStopping = false;
-			var ts = new System.Threading.ThreadStart(RefreshAll);
-			var t = new System.Threading.Thread(ts);
-			t.IsBackground = true;
-			t.Start();
-		}
-
-		bool IsStopping;
-
-		/// <summary>
-		/// Watch to monitor update frequency.
-		/// </summary>
-		System.Diagnostics.Stopwatch watch;
-		long lastTime;
-		long lastTick;
-		long currentTick;
-		long UpdateFrequency;
-
-		public void Stop()
-		{
-			IsStopping = true;
-		}
-
-		void RefreshAll()
-		{
-			// Loop until stopped is pressed.
-			while (!IsStopping)
-			{
-				lock (DiUpdatesLock)
-				{
-					// Make sure that interface handle is created, before starting device updates.
-					if (UpdateDevicesEnabled && UpdateDevicesFinished)
-					{
-						UpdateDevicesEnabled = false;
-						// This property will make sure that only one 'UpdateDevices' is running at the time.
-						UpdateDevicesFinished = false;
-						UpdateDevices();
-					}
-					UpdateDiStates();
-					// Calculate update frequency.
-					currentTick++;
-					// Recalculate about every second.
-					var currentTime = watch.ElapsedMilliseconds;
-					var timeChange = currentTime - lastTime;
-					var tickChange = currentTick - lastTick;
-					// If one second passed then...
-					if (timeChange > 1000)
-					{
-						UpdateFrequency = tickChange * 1000 / timeChange;
-						lastTime = currentTime;
-						lastTick = currentTick;
-					}
-				}
-			}
-		}
-
+		// Where current DInput device state is stored:
+		//
+		//    UserDevice.Device - DirectInput Device (Joystick)
+		//    UserDevice.State - DirectInput Device (JoystickState)
+		//
 		// Process 1
 		// limited to [125, 250, 500, 1000Hz]
 		// Lock
@@ -97,43 +44,81 @@ namespace x360ce.App.DInput
 		//	  Update DInput and XInput forms.
 		// }
 
-		DirectInput Manager;
+		public event EventHandler<EventArgs> FrequencyUpdated;
+		public event EventHandler<EventArgs> DevicesUpdated;
 
-		Dictionary<Guid, DirectInputState> DinputStates;
+		DirectInput Manager;
+		bool IsStopping;
+
+		public void Start()
+		{
+			watch.Restart();
+			IsStopping = false;
+			var ts = new System.Threading.ThreadStart(RefreshAll);
+			var t = new System.Threading.Thread(ts);
+			t.IsBackground = true;
+			t.Start();
+		}
+
+		/// <summary>
+		/// Watch to monitor update frequency.
+		/// </summary>
+		System.Diagnostics.Stopwatch watch;
+		long lastTime;
+		long lastTick;
+		long currentTick;
+		long lastTickTime;
+		public long RequiredFrequency = 1000;
+		public long UpdateFrequency;
+
+		public void Stop()
+		{
+			IsStopping = true;
+		}
 
 		object DiUpdatesLock = new object();
 
-		void UpdateDiStates()
+		void RefreshAll()
 		{
-			// Get all mapped user instances.
-			var instances = SettingsManager.Settings.Items
-				.Where(x => x.MapTo > (int)MapTo.None)
-				.Select(x => x.InstanceGuid).ToArray();
-			// Get all connected devices.
-			var devices = SettingsManager.UserDevices.Items
-				.Where(x => instances.Contains(x.InstanceGuid) && x.IsOnline)
-				.ToArray();
-			for (int i = 0; i < devices.Count(); i++)
+			// Loop until stopped is pressed.
+			while (!IsStopping)
 			{
-				var diDevice = devices[i];
-				//JoystickState state;
-				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
-				//var isOnline = diDevice != null && diDevice.IsOnline;
-				//var hasState = isOnline && diDevice.Device != null;
-				//var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
-				//var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
-				//AppHelper.SetText(DirectInputTabPage, text);
-				//DirectInputPanel.UpdateFrom(diDevice, out state);
-				//DirectInputState diState = null;
-				//if (state != null) diState = new DirectInputState(state);
+				lock (DiUpdatesLock)
+				{
+					// Update information about connected devices.
+					UpdateDiDevices();
+					// Update JoystickStates from devices.
+					UpdateDiStates();
+					// Update pool frequency value and sleep if necessary.
+					UpdateDelayFrequency();
+				}
 			}
 		}
 
-
-		State[] GetXinputStates()
+		void UpdateDelayFrequency()
 		{
-
-			return null;
+			// Calculate update frequency.
+			currentTick++;
+			var currentTime = watch.ElapsedMilliseconds;
+			var timeChange = currentTime - lastTime;
+			var tickChange = currentTick - lastTick;
+			// Check if completed too soon
+			var requiredTimePerTick = 1000 / RequiredFrequency;
+			var timePassed = currentTime - lastTickTime;
+			lastTickTime = currentTime;
+			var waitTime = requiredTimePerTick - timePassed;
+			if (waitTime > 0)
+				System.Threading.Thread.Sleep((int)waitTime);
+			// If one second passed then...
+			if (timeChange > 1000)
+			{
+				UpdateFrequency = tickChange * 1000 / timeChange;
+				lastTime = currentTime;
+				lastTick = currentTick;
+				var ev = FrequencyUpdated;
+				if (ev != null)
+					ev(this, new EventArgs());
+			}
 		}
 
 		#region IDisposable
@@ -144,14 +129,11 @@ namespace x360ce.App.DInput
 			GC.SuppressFinalize(this);
 		}
 
-		bool IsDisposing;
-
 		// The bulk of the clean-up code is implemented in Dispose(bool)
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				IsDisposing = true;
 				UnInitDeviceDetector();
 				if (Manager != null)
 				{
