@@ -273,9 +273,6 @@
     <Compile Include="Issues\IniFileIssue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Common\DPadEnum.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
     <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
     <Compile Include="SharpDX.XInput\BatteryLevel.cs" />

@@ -117,9 +117,11 @@
     <Compile Include="Common\CloudAction.cs" />
     <Compile Include="Common\CloudMessage.cs" />
     <Compile Include="Common\CloudHelper.Security.cs" />
+    <Compile Include="Common\CustomDiState.cs" />
     <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\CloudKey.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
+    <Compile Include="Common\Enum\DPadEnum.cs" />
     <Compile Include="Common\Enum\EffectDirection.cs" />
     <Compile Include="Common\Enum\EnabledState.cs" />
     <Compile Include="Common\Enum\EffectType.cs" />

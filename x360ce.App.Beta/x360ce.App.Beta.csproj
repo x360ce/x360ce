@@ -239,9 +239,9 @@
     <Compile Include="Common\DeadZoneControlsLink.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
-    <Compile Include="Common\DInput\DInputHelper.UpdateDiDevices.cs" />
-    <Compile Include="Common\DInput\DInputHelper.UpdateDiStates.cs" />
-    <Compile Include="Common\DirectInputState.cs" />
+    <Compile Include="Common\DInput\DInputHelper.UpdateDevices.cs" />
+    <Compile Include="Common\DInput\DInputHelper.UpdateStates.cs" />
+    <Compile Include="Common\DInput\DInputHelper.VirtualDevice.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />
@@ -437,9 +437,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Common\DPadEnum.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Forms\WarningsForm.cs">
       <SubType>Form</SubType>

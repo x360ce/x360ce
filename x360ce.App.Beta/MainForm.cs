@@ -1374,6 +1374,7 @@ namespace x360ce.App
 					FormEventsEnabled = true;
 					DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 					DHelper.DevicesUpdated += DHelper_DevicesUpdated;
+					DHelper.StatesUpdated += DHelper_StatesUpdated;
 
 				}
 				else if (!enable && FormEventsEnabled)
@@ -1381,6 +1382,7 @@ namespace x360ce.App
 					FormEventsEnabled = false;
 					DHelper.FrequencyUpdated -= DHelper_FrequencyUpdated;
 					DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
+					DHelper.StatesUpdated -= DHelper_StatesUpdated;
 				}
 			}
 		}
@@ -1396,6 +1398,12 @@ namespace x360ce.App
 			}
 			SettingsManager.RefreshSettingsConnectionState();
 			AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
+		}
+
+		private void DHelper_StatesUpdated(object sender, EventArgs e)
+		{
+			// Get XInput states for form update.
+			var XiStates = DHelper.XInputStates.ToArray();
 		}
 
 		private void DHelper_FrequencyUpdated(object sender, EventArgs e)

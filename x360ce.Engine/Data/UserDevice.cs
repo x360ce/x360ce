@@ -116,7 +116,10 @@ namespace x360ce.Engine.Data
 		public Joystick Device;
 
 		[XmlIgnore]
-		public JoystickState State;
+		public JoystickState JoState;
+
+		[XmlIgnore]
+		public CustomDiState DiState;
 
 		[XmlIgnore]
 		public bool IsOnline

@@ -279,14 +279,14 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Initial Direct Input activity state</summary>
-		DirectInputState recordingSnapshot;
+		CustomDiState recordingSnapshot;
 
 		/// <summary>
 		/// Called when recording is in progress.
 		/// </summary>
 		/// <param name="state">Current direct input activity.</param>
 		/// <returns>True if recording stopped, otherwise false.</returns>
-		public bool StopRecording(DirectInputState state = null)
+		public bool StopRecording(CustomDiState state = null)
 		{
 			lock (recordingLock)
 			{
@@ -836,8 +836,8 @@ namespace x360ce.App.Controls
 				UpdateDirectInputTabPage(diDevice);
 				JoystickState state;
 				DirectInputPanel.UpdateFrom(diDevice, out state);
-				DirectInputState diState = null;
-				if (state != null) diState = new DirectInputState(state);
+				CustomDiState diState = null;
+				if (state != null) diState = new CustomDiState(state);
 				StopRecording(diState);
 			}
 		}

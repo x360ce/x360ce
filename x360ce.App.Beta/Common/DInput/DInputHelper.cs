@@ -16,6 +16,11 @@ namespace x360ce.App.DInput
 		{
 			Manager = new DirectInput();
 			InitDeviceDetector();
+			XInputStates = new Gamepad[4];
+			for (int i = 0; i < XInputStates.Length; i++)
+			{
+				XInputStates[i] = new Gamepad();
+			}
 			watch = new System.Diagnostics.Stopwatch();
 		}
 
@@ -46,6 +51,7 @@ namespace x360ce.App.DInput
 
 		public event EventHandler<EventArgs> FrequencyUpdated;
 		public event EventHandler<EventArgs> DevicesUpdated;
+		public event EventHandler<EventArgs> StatesUpdated;
 
 		DirectInput Manager;
 		bool IsStopping;

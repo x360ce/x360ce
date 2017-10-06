@@ -2,18 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
-	public class DirectInputState
+	/// <summary>
+	///  Custom X360CE direct input state class used for configuration.
+	/// </summary>
+	public class CustomDiState
 	{
-		int[] Axis = new int[0];
-		int[] Sliders = new int[0];
-		int[] Pows = new int[0];
-		bool[] Buttons = new bool[0];
+		public int[] Axis = new int[0];
+		public int[] Sliders = new int[0];
+		public int[] Pows = new int[0];
+		public bool[] Buttons = new bool[0];
 
-		public DirectInputState(JoystickState state)
+		public CustomDiState(JoystickState state)
 		{
 
 			// Fill axis.
@@ -61,7 +63,7 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="state"></param>
 		/// <returns></returns>
-		public string[] CompareTo(DirectInputState state)
+		public string[] CompareTo(CustomDiState state)
 		{
 			var list = new List<string>();
 			list.AddRange(CompareAxisAndSliders(Axis, state.Axis, "Axis"));
@@ -85,7 +87,7 @@ namespace x360ce.App
 					if (Pows[i] != state.Pows[i])
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
-                        var v = state.Pows[0];
+						var v = state.Pows[0];
                         if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
                         if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
                         if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace x360ce.App
+﻿namespace x360ce.Engine
 {
 	public enum DPadEnum
 	{

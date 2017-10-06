@@ -99,7 +99,9 @@ namespace x360ce.App
 			foreach (var item in settings)
 			{
 				var device = GetDevice(item.InstanceGuid);
-				item.IsOnline = device == null ? false : device.IsOnline;
+				var isOnline = device == null ? false : device.IsOnline;
+				if (item.IsOnline == isOnline)
+					item.IsOnline = isOnline;
 			}
 		}
 

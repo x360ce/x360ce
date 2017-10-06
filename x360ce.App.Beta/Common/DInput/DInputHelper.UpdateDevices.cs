@@ -3,8 +3,6 @@ using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
