@@ -10,7 +10,7 @@
 	using System.Threading;
 	using x360ce.Engine.Win32;
 
-	internal static class XInput
+	public static class XInput
 	{
 
 		/* NOTE:
@@ -158,7 +158,7 @@
 
 		/// <summary>Reloads settings from INI file.</summary>
 		[HandleProcessCorruptedStateExceptions]
-		internal static ErrorCode Reset()
+		public static ErrorCode Reset()
 		{
 			if (!IsResetSupported) return ErrorCode.NotSupported;
 			try { return GetMethod<ResetDelegate>("Reset")(); }
@@ -265,7 +265,7 @@
 		#region Dynamic Methods
 
 		static bool _IsResetSupported;
-		internal static bool IsResetSupported { get { return _IsResetSupported; } }
+		public static bool IsResetSupported { get { return _IsResetSupported; } }
 
 		static bool _IsGetStateExSupported;
 		internal static bool IsGetStateExSupported { get { return _IsGetStateExSupported; } }

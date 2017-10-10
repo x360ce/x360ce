@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
@@ -33,7 +34,7 @@ namespace x360ce.Engine.Data
 			ProductName = ins.ProductName;
 		}
 
-		public void LoadCapabilities(Capabilities cap)
+		public void LoadCapabilities(SharpDX.DirectInput.Capabilities cap)
 		{
 			CapAxeCount = cap.AxeCount;
 			CapButtonCount = cap.ButtonCount;
@@ -115,9 +116,11 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public Joystick Device;
 
+		/// <summary>DInput JoystickState State.</summary>
 		[XmlIgnore]
 		public JoystickState JoState;
 
+		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
 		[XmlIgnore]
 		public CustomDiState DiState;
 

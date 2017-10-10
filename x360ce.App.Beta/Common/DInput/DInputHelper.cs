@@ -16,10 +16,10 @@ namespace x360ce.App.DInput
 		{
 			Manager = new DirectInput();
 			InitDeviceDetector();
-			XInputStates = new Gamepad[4];
-			for (int i = 0; i < XInputStates.Length; i++)
+			CombinedXInputStates = new Gamepad[4];
+			for (int i = 0; i < CombinedXInputStates.Length; i++)
 			{
-				XInputStates[i] = new Gamepad();
+				CombinedXInputStates[i] = new Gamepad();
 			}
 			watch = new System.Diagnostics.Stopwatch();
 		}
@@ -95,6 +95,10 @@ namespace x360ce.App.DInput
 					UpdateDiDevices();
 					// Update JoystickStates from devices.
 					UpdateDiStates();
+					// Update XInput states from Custom DirectInput states.
+					UpdateXiStates();
+					// Combine XInput states of controllers.
+					CombineXiStates();
 					// Update pool frequency value and sleep if necessary.
 					UpdateDelayFrequency();
 				}

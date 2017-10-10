@@ -169,69 +169,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryDeviceType.cs">
-      <Link>SharpDX.XInput\BatteryDeviceType.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryInformation.cs">
-      <Link>SharpDX.XInput\BatteryInformation.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryLevel.cs">
-      <Link>SharpDX.XInput\BatteryLevel.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\BatteryType.cs">
-      <Link>SharpDX.XInput\BatteryType.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\Capabilities.cs">
-      <Link>SharpDX.XInput\Capabilities.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\CapabilityFlags.cs">
-      <Link>SharpDX.XInput\CapabilityFlags.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\Controller.cs">
-      <Link>SharpDX.XInput\Controller.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\DeviceQueryType.cs">
-      <Link>SharpDX.XInput\DeviceQueryType.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\DeviceSubType.cs">
-      <Link>SharpDX.XInput\DeviceSubType.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\DeviceType.cs">
-      <Link>SharpDX.XInput\DeviceType.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\Gamepad.cs">
-      <Link>SharpDX.XInput\Gamepad.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\GamepadButtonFlags.cs">
-      <Link>SharpDX.XInput\GamepadButtonFlags.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\GamepadKeyCode.cs">
-      <Link>SharpDX.XInput\GamepadKeyCode.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\Keystroke.cs">
-      <Link>SharpDX.XInput\Keystroke.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\KeyStrokeFlags.cs">
-      <Link>SharpDX.XInput\KeyStrokeFlags.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\ResultCode.cs">
-      <Link>SharpDX.XInput\ResultCode.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\State.cs">
-      <Link>SharpDX.XInput\State.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\ThumbIndex.cs">
-      <Link>SharpDX.XInput\ThumbIndex.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\UserIndex.cs">
-      <Link>SharpDX.XInput\UserIndex.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\Vibration.cs">
-      <Link>SharpDX.XInput\Vibration.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.App\SharpDX.XInput\XInput.cs">
-      <Link>SharpDX.XInput\XInput.cs</Link>
-    </Compile>
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudItem.cs" />
@@ -239,9 +176,10 @@
     <Compile Include="Common\DeadZoneControlsLink.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
-    <Compile Include="Common\DInput\DInputHelper.UpdateDevices.cs" />
-    <Compile Include="Common\DInput\DInputHelper.UpdateStates.cs" />
-    <Compile Include="Common\DInput\DInputHelper.VirtualDevice.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Step1.UpdateDevices.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Step2.UpdateStates.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Step3.CombineXiStates.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Step4.VirtualDevice.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />

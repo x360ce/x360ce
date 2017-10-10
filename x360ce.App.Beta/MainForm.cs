@@ -1403,7 +1403,7 @@ namespace x360ce.App
 		private void DHelper_StatesUpdated(object sender, EventArgs e)
 		{
 			// Get XInput states for form update.
-			var XiStates = DHelper.XInputStates.ToArray();
+			var XiStates = DHelper.CombinedXInputStates.ToArray();
 		}
 
 		private void DHelper_FrequencyUpdated(object sender, EventArgs e)

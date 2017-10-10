@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
 
@@ -14,6 +15,10 @@ namespace x360ce.Engine.Data
 			set { _IsOnline = value; ReportPropertyChanged(x => x.IsOnline); }
 		}
 		bool _IsOnline;
+
+		/// <summary>XInput state converted from X360CE custom DirectInput state.</summary>
+		[XmlIgnore]
+		public Gamepad XiState;
 
 		#region INotifyPropertyChanged
 
