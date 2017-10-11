@@ -181,6 +181,7 @@
     <Compile Include="Common\DInput\DInputHelper.Step4.CombineXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step3.UpdateXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
+    <Compile Include="Common\DInput\VirtualError.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />

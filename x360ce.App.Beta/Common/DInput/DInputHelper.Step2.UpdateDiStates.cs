@@ -39,7 +39,7 @@ namespace x360ce.App.DInput
 					}
 				}
 				ud.JoState = state ?? new JoystickState();
-				ud.DiState = new CustomDiState(state);
+				ud.DiState = new CustomDiState(ud.JoState);
 			}
 		}
 

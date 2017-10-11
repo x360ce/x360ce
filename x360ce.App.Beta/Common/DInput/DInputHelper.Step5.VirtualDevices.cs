@@ -34,26 +34,17 @@ namespace x360ce.App.DInput
 				return VirtualError.Index;
 			if (!vXboxInterface.isVBusExists())
 				return VirtualError.Missing;
-			if (vXboxInterface.isControllerOwned(userIndex))
+			if (vXboxInterface.isControllerExists(userIndex))
 			{
-				return VirtualError.None;
-			}
-			else
-			{
+				if (vXboxInterface.isControllerOwned(userIndex))
+					return VirtualError.None;
 				success = vXboxInterface.UnPlugForce(userIndex);
 				if (!success)
 					return VirtualError.Other;
 			}
-			if (vXboxInterface.isControllerExists(userIndex))
-			{
+			success = vXboxInterface.PlugIn(userIndex);
+			if (success)
 				return VirtualError.None;
-			}
-			else
-			{
-				success = vXboxInterface.PlugIn(userIndex);
-				if (success)
-					return VirtualError.None;
-			}
 			return VirtualError.Other;
 		}
 
