@@ -10,7 +10,8 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		public Gamepad[] CombinedXInputStates;
+		public State[] CombinedXInputStates;
+		public int PacketNumber;
 
 		void CombineXiStates()
 		{
@@ -21,24 +22,36 @@ namespace x360ce.App.DInput
 				   .Where(x => x.MapTo == m + 1)
 				   .Select(x => x.XiState)
 				   .ToArray();
-				var result = new Gamepad();
-				// Combine buttons.
-				foreach (var state in states)
+				var gp = new Gamepad();
+				if (states.Length > 0)
 				{
-					result.Buttons |= state.Buttons;
+					// Combine buttons.
+					foreach (var state in states)
+					{
+						gp.Buttons |= state.Buttons;
+					}
+					// Apply maximun on triggers.
+					gp.LeftTrigger = states.Max(x => x.LeftTrigger);
+					gp.RightTrigger = states.Max(x => x.RightTrigger);
+					// Apply differenceto thumbs:
+					// 1) Players, pushing thumbs to oposite sides, will cancel each other.
+					// 2) Player have full range of the thumb axis if thumb of the other player sits idle in the middle.
+					gp.LeftThumbX = CombineAxis(states.Select(x => x.LeftThumbX));
+					gp.LeftThumbY = CombineAxis(states.Select(x => x.LeftThumbY));
+					gp.RightThumbX = CombineAxis(states.Select(x => x.RightThumbX));
+					gp.RightThumbY = CombineAxis(states.Select(x => x.RightThumbY));
 				}
-				// Apply maximun on triggers.
-				result.LeftTrigger = states.Max(x => x.LeftTrigger);
-				result.RightTrigger = states.Max(x => x.RightTrigger);
-				// Apply differenceto thumbs:
-				// 1) Players, pushing thumbs to oposite sides, will cancel each other.
-				// 2) Player have full range of the thumb axis if thumb of the other player sits idle in the middle.
-				result.LeftThumbX = CombineAxis(states.Select(x => x.LeftThumbX));
-				result.LeftThumbY = CombineAxis(states.Select(x => x.LeftThumbY));
-				result.RightThumbX = CombineAxis(states.Select(x => x.RightThumbX));
-				result.RightThumbY = CombineAxis(states.Select(x => x.RightThumbY));
-				CombinedXInputStates[m] = result;
+				var combinedState = new State();
+				if (PacketNumber == int.MaxValue)
+					PacketNumber = 0;
+				PacketNumber++;
+				combinedState.PacketNumber = PacketNumber;
+				combinedState.Gamepad = gp;
+				CombinedXInputStates[m] = combinedState;
 			}
+			var ev = StatesCombined;
+			if (ev != null)
+				ev(this, new EventArgs());
 		}
 
 		short CombineAxis(IEnumerable<short> values)

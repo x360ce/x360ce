@@ -29,21 +29,7 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
-
-
 			MappedTo = controllerIndex;
-			object[] rates = {
-				1000/8, //  125
-				1000/7, //  142
-				1000/6, //  166
-				1000/5, //  200
-				1000/4, //  250
-				1000/3, //  333
-				1000/2, //  500
-				1000/1, // 1000
-			};
-			PollingRateComboBox.Items.AddRange(rates);
-			PollingRateComboBox.SelectedIndex = 0;
 			// Axis to Button DeadZones
 			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
 			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
@@ -131,6 +117,13 @@ namespace x360ce.App.Controls
 		{
 			var game = MainForm.Current.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
+			// Update Virtual.
+			var virt = game != null && ((MapToMask)game.VirtualMask).HasFlag(flag);
+			EnableVirtualButton.Checked = virt;
+			EnableVirtualButton.Image = virt
+				? x360ce.App.Properties.Resources.checkbox_16x16
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapButton.Checked = auto;
 			AutoMapButton.Image = auto
@@ -1382,34 +1375,6 @@ namespace x360ce.App.Controls
 			catch (Exception) { }
 		}
 
-
-		private void FeedVirtualDeviceCeckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			FeedingEnabled = EnableVirtualDeviceCeckBox.Checked;
-			if (EnableVirtualDeviceCeckBox.Checked)
-			{
-				var resourceName = Program.GetResourceName("vJoy", "vJoyInterface");
-				if (!System.IO.File.Exists("vJoyInterface.dll"))
-				{
-					AppHelper.WriteFile(typeof(MainForm).Namespace + "." + resourceName + ".dll", "vJoyInterface.dll");
-				}
-				System.Threading.ThreadPool.QueueUserWorkItem(FeedWaitCallback, (uint)1);
-			}
-		}
-
-		bool FeedingEnabled;
-
-		void FeedWaitCallback(object state)
-		{
-			string message;
-			var success = FeedXInputDevice((uint)state, out message);
-			//if (!string.IsNullOrEmpty(message) && !success)
-			//{
-			//	MessageBox.Show(message);
-			//}
-		}
-
-
 		LoadPresetsForm presetForm;
 
 		private void LoadPresetButton_Click(object sender, EventArgs e)
@@ -1543,21 +1508,39 @@ namespace x360ce.App.Controls
 		private void AutoMapButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
-			var mapFlag = AppHelper.GetMapFlag(MappedTo);
+			var flag = AppHelper.GetMapFlag(MappedTo);
 			var value = (MapToMask)game.AutoMapMask;
-			var autoMap = value.HasFlag(mapFlag);
+			var autoMap = value.HasFlag(flag);
 			// If AUTO enabled then...
 			if (autoMap)
 			{
 				// Remove AUTO.
-				game.AutoMapMask = (int)(value & ~mapFlag);
+				game.AutoMapMask = (int)(value & ~flag);
 			}
 			else
 			{
 				// Add AUTO.
-				game.AutoMapMask = (int)(value | mapFlag);
+				game.AutoMapMask = (int)(value | flag);
 			}
 		}
 
+		private void EnableVirtualButton_Click(object sender, EventArgs e)
+		{
+			var game = MainForm.Current.CurrentGame;
+			var flag = AppHelper.GetMapFlag(MappedTo);
+			var value = (MapToMask)game.VirtualMask;
+			var autoMap = value.HasFlag(flag);
+			// If AUTO enabled then...
+			if (autoMap)
+			{
+				// Remove AUTO.
+				game.VirtualMask = (int)(value & ~flag);
+			}
+			else
+			{
+				// Add AUTO.
+				game.VirtualMask = (int)(value | flag);
+			}
+		}
 	}
 }

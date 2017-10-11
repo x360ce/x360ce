@@ -4,8 +4,13 @@
     [UserId]        UNIQUEIDENTIFIER NOT NULL,
     [ComputerId]    UNIQUEIDENTIFIER NOT NULL,
     [ComputerName]  NVARCHAR (256)   CONSTRAINT [DF_x360ce_UserComputers_ComputerName] DEFAULT ('') NOT NULL,
+    [DateCreated]   DATETIME         CONSTRAINT [DF_x360ce_UserComputers_DateCreated] DEFAULT (getdate()) NOT NULL,
+    [DateUpdated]   DATETIME         CONSTRAINT [DF_x360ce_UserComputers_DateUpdated] DEFAULT (getdate()) NOT NULL,
+    [Checksum]      UNIQUEIDENTIFIER NOT NULL,
     CONSTRAINT [PK_x360ce_UserComputers] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO

@@ -38,11 +38,13 @@
     [DevClassGuid]                          UNIQUEIDENTIFIER NOT NULL,
     [DevClassDescription]                   NVARCHAR (256)   NOT NULL,
     [DateCreated]                           DATETIME         CONSTRAINT [DF_x360ce_UserDevices_DateCreated] DEFAULT (getdate()) NOT NULL,
-    [DateUpdated]                           DATETIME         NOT NULL,
+    [DateUpdated]                           DATETIME         CONSTRAINT [DF_x360ce_UserDevices_DateUpdated] DEFAULT (getdate()) NOT NULL,
     [IsEnabled]                             BIT              CONSTRAINT [DF_x360ce_UserDevices_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Checksum]                              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

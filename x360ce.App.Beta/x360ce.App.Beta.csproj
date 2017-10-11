@@ -180,7 +180,7 @@
     <Compile Include="Common\DInput\DInputHelper.Step2.UpdateDiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step4.CombineXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step3.UpdateXiStates.cs" />
-    <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevice.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />
@@ -212,9 +212,6 @@
     </Compile>
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\PadControl.VirtualDevice.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>

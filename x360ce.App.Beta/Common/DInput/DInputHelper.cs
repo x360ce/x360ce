@@ -16,10 +16,10 @@ namespace x360ce.App.DInput
 		{
 			Manager = new DirectInput();
 			InitDeviceDetector();
-			CombinedXInputStates = new Gamepad[4];
+			CombinedXInputStates = new State[4];
 			for (int i = 0; i < CombinedXInputStates.Length; i++)
 			{
-				CombinedXInputStates[i] = new Gamepad();
+				CombinedXInputStates[i] = new State();
 			}
 			watch = new System.Diagnostics.Stopwatch();
 		}
@@ -52,6 +52,7 @@ namespace x360ce.App.DInput
 		public event EventHandler<EventArgs> FrequencyUpdated;
 		public event EventHandler<EventArgs> DevicesUpdated;
 		public event EventHandler<EventArgs> StatesUpdated;
+		public event EventHandler<EventArgs> StatesCombined;
 
 		DirectInput Manager;
 		bool IsStopping;
@@ -99,6 +100,8 @@ namespace x360ce.App.DInput
 					UpdateXiStates();
 					// Combine XInput states of controllers.
 					CombineXiStates();
+					// Update virtual devices from combined states.
+					UpdateVirtualDevices();
 					// Update pool frequency value and sleep if necessary.
 					UpdateDelayFrequency();
 				}

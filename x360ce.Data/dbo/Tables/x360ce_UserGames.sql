@@ -18,8 +18,9 @@
     [Comment]               NVARCHAR (1024)  CONSTRAINT [DF_x360ce_UserGames_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]             BIT              CONSTRAINT [DF_x360ce_UserGames_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]           DATETIME         CONSTRAINT [DF_x360ce_UserGames_DateCreated] DEFAULT (getdate()) NOT NULL,
-    [DateUpdated]           DATETIME         NULL,
+    [DateUpdated]           DATETIME         CONSTRAINT [DF_x360ce_UserGames_DateUpdated] DEFAULT (getdate()) NOT NULL,
     [AutoMapMask]           INT              CONSTRAINT [DF_x360ce_UserGames_AutoMapMask] DEFAULT ((0)) NOT NULL,
+    [VirtualMask]           INT              CONSTRAINT [DF_x360ce_UserGames_VirtualMask] DEFAULT ((0)) NOT NULL,
     [Checksum]              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_UserGames] PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
@@ -41,9 +42,10 @@
 
 
 
+
+
 GO
-CREATE NONCLUSTERED INDEX [IX_x360ce_UserGames_DateUpdated]
-    ON [dbo].[x360ce_UserGames]([DateUpdated] ASC);
+
 
 
 GO

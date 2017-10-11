@@ -287,6 +287,7 @@ namespace x360ce.App.Controls
 				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
 				_CurrentGame.HookMask = _DefaultSettings.HookMask;
 				_CurrentGame.AutoMapMask = (int)MapToMask.None;
+				_CurrentGame.VirtualMask = (int)MapToMask.None;
 				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
 				_CurrentGame.DInputFile = _DefaultSettings.DInputFile ?? "";
 				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;

@@ -18,14 +18,22 @@ namespace x360ce.App.Controls
         public OptionsUserControl()
         {
             InitializeComponent();
-
-
-
-
             if (DesignMode) return;
-        }
+			object[] rates = {
+				1000/1, // 1000
+				1000/2, //  500
+				1000/3, //  333
+				1000/4, //  250
+				1000/5, //  200
+				1000/6, //  166
+				1000/7, //  142
+				1000/8, //  125
+			};
+			PollingRateComboBox.Items.AddRange(rates);
+			PollingRateComboBox.SelectedIndex = 0;
+		}
 
-        public void InitOptions()
+		public void InitOptions()
         {
             DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
         }
@@ -149,8 +157,8 @@ namespace x360ce.App.Controls
 
         public void LoadSettings()
         {
-            // Load XML settings into control.
-            var o = SettingsManager.Options;
+			// Load XML settings into control.
+			var o = SettingsManager.Options;
             AllowOnlyOneCopyCheckBox.Checked = o.AllowOnlyOneCopy;
             InternetCheckBox.Checked = o.InternetFeatures;
             InternetAutoLoadCheckBox.Checked = o.InternetAutoLoad;

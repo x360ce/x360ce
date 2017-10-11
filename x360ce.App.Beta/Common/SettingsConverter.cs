@@ -40,9 +40,11 @@ namespace x360ce.App
 
 		public static bool TryParseIndexAndType(string value, out int index, out SettingType type)
 		{
-			var m = textValueRegex.Match(value);
 			index = 0;
 			type = SettingType.None;
+			if (string.IsNullOrEmpty(value))
+				return false;
+			var m = textValueRegex.Match(value);
 			if (m.Success)
 			{
 				type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);

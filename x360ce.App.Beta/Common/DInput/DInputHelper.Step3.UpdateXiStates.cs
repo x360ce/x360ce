@@ -21,6 +21,9 @@ namespace x360ce.App.DInput
 			{
 				var setting = settings[i];
 				var ud = SettingsManager.GetDevice(setting.InstanceGuid);
+				// If device was not found then continue.
+				if (ud == null)
+					continue;
 				// If device is offline then continue.
 				if (!ud.IsOnline)
 					continue;

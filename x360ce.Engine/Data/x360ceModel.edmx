@@ -238,6 +238,7 @@
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
           <Property Name="AutoMapMask" Type="int" Nullable="false" />
+          <Property Name="VirtualMask" Type="int" Nullable="false" />
           <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_UserInstances">
@@ -544,6 +545,7 @@
           <Property Name="DateUpdated" Type="DateTime" Precision="3" Nullable="false" />
           <Property Name="AutoMapMask" Type="Int32" Nullable="false" />
           <Property Name="Checksum" Type="Guid" Nullable="false" />
+          <Property Name="VirtualMask" Type="Int32" Nullable="false" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -794,6 +796,7 @@
           <EntitySetMapping Name="UserGames">
             <EntityTypeMapping TypeName="x360ceModel.UserGame">
               <MappingFragment StoreEntitySet="x360ce_UserGames">
+                <ScalarProperty Name="VirtualMask" ColumnName="VirtualMask" />
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="AutoMapMask" ColumnName="AutoMapMask" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
@@ -841,7 +844,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="66" >
+			<Diagram Name="x360ceModel" ZoomLevel="74" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
@@ -849,7 +852,7 @@
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.75" />
         <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.125" PointY="4.625" />
-        <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.875" PointY="6" />
+        <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.875" PointY="6.25" />
         <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.875" PointY="0.5" />
 			</Diagram>

@@ -5065,7 +5065,8 @@ namespace x360ce.Engine.Data
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
         /// <param name="checksum">Initial value of the Checksum property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Guid checksum)
+        /// <param name="virtualMask">Initial value of the VirtualMask property.</param>
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Guid checksum, global::System.Int32 virtualMask)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -5090,6 +5091,7 @@ namespace x360ce.Engine.Data
             userGame.DateUpdated = dateUpdated;
             userGame.AutoMapMask = autoMapMask;
             userGame.Checksum = checksum;
+            userGame.VirtualMask = virtualMask;
             return userGame;
         }
 
@@ -5627,6 +5629,30 @@ namespace x360ce.Engine.Data
         private global::System.Guid _Checksum;
         partial void OnChecksumChanging(global::System.Guid value);
         partial void OnChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 VirtualMask
+        {
+            get
+            {
+                return _VirtualMask;
+            }
+            set
+            {
+                OnVirtualMaskChanging(value);
+                ReportPropertyChanging("VirtualMask");
+                _VirtualMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("VirtualMask");
+                OnVirtualMaskChanged();
+            }
+        }
+        private global::System.Int32 _VirtualMask;
+        partial void OnVirtualMaskChanging(global::System.Int32 value);
+        partial void OnVirtualMaskChanged();
 
         #endregion
 
