@@ -775,59 +775,60 @@ namespace x360ce.App
 			SettingsManager.Current.ResumeEvents();
 		}
 
-		///// <summary>
-		///// This method will run continuously by the UpdateTimer.
-		///// </summary>
-		//void UpdateForm3()
-		//{
-		//	// If settings changed then...
-		//	if (settingsChanged)
-		//	{
-		//		ReloadLibrary();
-		//	}
-		//	else
-		//	{
-		//		for (int i = 0; i < 4; i++)
-		//		{
-		//			var game = CurrentGame;
-		//			var currentFile = (game == null) ? null : game.FileName;
-		//			// Get devices mapped to game and specific controller index.
-		//			var devices = SettingsManager.GetDevices(currentFile, (MapTo)(i + 1));
-		//			// DInput instance is ON if active devices was found.
-		//			var diOn = devices.Count > 0;
-		//			// XInput instance is ON.
-		//			var xiOn = false;
-		//			State currentGamePad = emptyState;
-		//			lock (XInputLock)
-		//			{
-		//				var gamePad = XiControllers[i];
-		//				if (XInput.IsLoaded && gamePad.IsConnected)
-		//				{
-		//					currentGamePad = gamePad.GetState();
-		//					xiOn = true;
-		//				}
-		//			}
-		//			var padControl = PadControls[i];
-		//			// Update Form from DInput state.
-		//			padControl.UpdateFromDInput();
-		//			// Update Form from XInput state.
-		//			padControl.UpdateFromXInput(currentGamePad, xiOn);
-		//			// Update LED of GamePad state.
-		//			string image = diOn
-		//				// DInput ON, XInput ON 
-		//				? xiOn ? "green"
-		//				// DInput ON, XInput OFF
-		//				: "red"
-		//				// DInput OFF, XInput ON
-		//				: xiOn ? "yellow"
-		//				// DInput OFF, XInput OFF
-		//				: "grey";
-		//			string bullet = string.Format("bullet_square_glass_{0}.png", image);
-		//			if (ControlPages[i].ImageKey != bullet) ControlPages[i].ImageKey = bullet;
-		//		}
-		//		UpdateStatus();
-		//	}
-		//}
+		/// <summary>
+		/// This method will run continuously if form is not minimized.
+		/// </summary>
+		void UpdateForm3()
+		{
+			//	// If settings changed then...
+			//	if (settingsChanged)
+			//	{
+			//		ReloadLibrary();
+			//	}
+			//	else
+			//	{
+			for (int i = 0; i < 4; i++)
+			{
+				var game = CurrentGame;
+				var currentFile = (game == null) ? null : game.FileName;
+				// Get devices mapped to game and specific controller index.
+				var devices = SettingsManager.GetDevices(currentFile, (MapTo)(i + 1));
+				// DInput instance is ON if active devices found.
+				var diOn = devices.Count(x => x.IsOnline) > 0;
+				// XInput instance is ON.
+				var xiOn = false;
+				//			State currentGamePad = emptyState;
+				//			lock (XInputLock)
+				//			{
+				//				var gamePad = XiControllers[i];
+				//				if (XInput.IsLoaded && gamePad.IsConnected)
+				//				{
+				//					currentGamePad = gamePad.GetState();
+				//					xiOn = true;
+				//				}
+				//			}
+				var padControl = PadControls[i];
+				//			// Update Form from DInput state.
+				padControl.UpdateFromDInput();
+				//			// Update Form from XInput state.
+				//			padControl.UpdateFromXInput(currentGamePad, xiOn);
+				//			// Update LED of GamePad state.
+				string image = diOn
+					// DInput ON, XInput ON 
+					? xiOn ? "green"
+					// DInput ON, XInput OFF
+					: "red"
+					// DInput OFF, XInput ON
+					: xiOn ? "yellow"
+					// DInput OFF, XInput OFF
+					: "grey";
+				string bullet = string.Format("bullet_square_glass_{0}.png", image);
+				if (ControlPages[i].ImageKey != bullet)
+					ControlPages[i].ImageKey = bullet;
+			}
+			//		UpdateStatus();
+			//	}
+		}
 
 		public void ReloadLibrary()
 		{
@@ -1205,7 +1206,8 @@ namespace x360ce.App
 				DisposeWarnigForm();
 				DisposeDeviceForm();
 				DisposeUpdateForm();
-				DHelper.Dispose();
+				if (DHelper != null)
+					DHelper.Dispose();
 				components.Dispose();
 				//lock (checkTimerLock)
 				//{
@@ -1372,19 +1374,47 @@ namespace x360ce.App
 				if (enable && !FormEventsEnabled)
 				{
 					FormEventsEnabled = true;
-					DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 					DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 					DHelper.StatesCombined += DHelper_StatesCombined;
-
+					DHelper.UpdateCompleted += DHelper_UpdateCompleted;
+					DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 				}
 				else if (!enable && FormEventsEnabled)
 				{
 					FormEventsEnabled = false;
-					DHelper.FrequencyUpdated -= DHelper_FrequencyUpdated;
 					DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
 					DHelper.StatesCombined -= DHelper_StatesCombined;
+					DHelper.UpdateCompleted -= DHelper_UpdateCompleted;
+					DHelper.FrequencyUpdated -= DHelper_FrequencyUpdated;
 				}
 			}
+		}
+
+
+		DateTime lastRun;
+		bool UpdateCompletedBusy;
+		object UpdateCompletedLock = new object();
+
+		private void DHelper_UpdateCompleted(object sender, EventArgs e)
+		{
+			lock (UpdateCompletedLock)
+			{
+				var n = DateTime.Now;
+				// Allow no more than 5 frames per second.
+				if (UpdateCompletedBusy || n.Subtract(lastRun).Milliseconds < 200)
+					return;
+				lastRun = n;
+				UpdateCompletedBusy = true;
+			}
+			// Make sure method is executed on the same thread as this control.
+			var method = new EventHandler<EventArgs>(DHelper_UpdateCompletedInvoked);
+			BeginInvoke(method, new object[] { sender, e });
+		}
+
+		private void DHelper_UpdateCompletedInvoked(object sender, EventArgs e)
+		{
+			UpdateForm3();
+			UpdateCompletedBusy = false;
 		}
 
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
@@ -1405,6 +1435,7 @@ namespace x360ce.App
 			// Get XInput states for form update.
 			var combinedStates = DHelper.CombinedXInputStates.ToArray();
 		}
+
 
 		private void DHelper_FrequencyUpdated(object sender, EventArgs e)
 		{

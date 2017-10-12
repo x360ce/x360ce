@@ -53,6 +53,7 @@ namespace x360ce.App.DInput
 		public event EventHandler<EventArgs> DevicesUpdated;
 		public event EventHandler<EventArgs> StatesUpdated;
 		public event EventHandler<EventArgs> StatesCombined;
+		public event EventHandler<EventArgs> UpdateCompleted;
 
 		DirectInput Manager;
 		bool IsStopping;
@@ -104,6 +105,10 @@ namespace x360ce.App.DInput
 					UpdateVirtualDevices();
 					// Update pool frequency value and sleep if necessary.
 					UpdateDelayFrequency();
+					// Fire event.
+					var ev = UpdateCompleted;
+					if (ev != null)
+						ev(this, new EventArgs());
 				}
 			}
 		}

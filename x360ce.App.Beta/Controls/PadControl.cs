@@ -108,7 +108,7 @@ namespace x360ce.App.Controls
 			// Attach context strip with button names to every ComboBox on general tab.
 			foreach (var cb in comboBoxes)
 			{
-				((ComboBox)cb).ContextMenuStrip = DiMenuStrip;
+				cb.ContextMenuStrip = DiMenuStrip;
 			}
 			UpdateFromCurrentGame();
 		}

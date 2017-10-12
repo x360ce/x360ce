@@ -100,7 +100,7 @@ namespace x360ce.App
 			{
 				var device = GetDevice(item.InstanceGuid);
 				var isOnline = device == null ? false : device.IsOnline;
-				if (item.IsOnline == isOnline)
+				if (item.IsOnline != isOnline)
 					item.IsOnline = isOnline;
 			}
 		}

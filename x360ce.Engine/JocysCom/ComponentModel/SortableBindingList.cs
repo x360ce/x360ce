@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using System.Xml.Serialization;
-using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
