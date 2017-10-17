@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using x360ce.Engine;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
 
 	/// <summary>

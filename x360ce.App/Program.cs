@@ -73,7 +73,7 @@ namespace x360ce.App
 		public static bool IsOneCopyRunningAlready()
 		{
 			var ini = new x360ce.Engine.Ini(SettingManager.IniFileName);
-			var oneCopy = !ini.File.Exists || ini.GetValue("Options", SettingName.AllowOnlyOneCopy) == "1";
+			var oneCopy = !ini.File.Exists || ini.GetValue("Options", Engine.SettingName.AllowOnlyOneCopy) == "1";
 			return (oneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore));
 		}
 

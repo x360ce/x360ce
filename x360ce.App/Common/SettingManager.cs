@@ -114,29 +114,37 @@ namespace x360ce.App
 		{
 			// Validate
 			if (settingsMap == null) throw new ArgumentNullException("settingsMap");
-
 			// Get the member expression
 			var me = (MemberExpression)setting.Body;
-
 			// Get the property
 			var prop = (PropertyInfo)me.Member;
-
 			// Get the setting name by reading the property
 			var settingName = (string)prop.GetValue(null, null);
-
 			// Get the description attribute
 			var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
 			var desc = (descAttr != null ? descAttr.Description : string.Empty);
-
 			// Set the tool-tip
 			// MainForm.Current.ToolTip.SetToolTip(control, desc);
-
 			// Alternative (a little bit less obstructive) way to display help inside yellow header.
 			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
 			control.MouseHover += control_MouseEnter;
 			control.MouseLeave += control_MouseLeave;
 			Descriptions.Add(control, desc);
+			// Add to the map
+			settingsMap.Add(sectionName + settingName, control);
+		}
 
+		static public void AddMap(string sectionName, string settingName, Control control, Dictionary<string, Control> settingsMap)
+		{
+			// Validate
+			if (settingsMap == null) throw new ArgumentNullException("settingsMap");
+			// Set the tool-tip
+			// MainForm.Current.ToolTip.SetToolTip(control, desc);
+			// Alternative (a little bit less obstructive) way to display help inside yellow header.
+			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
+			control.MouseHover += control_MouseEnter;
+			control.MouseLeave += control_MouseLeave;
+			Descriptions.Add(control, settingName);
 			// Add to the map
 			settingsMap.Add(sectionName + settingName, control);
 		}
@@ -198,8 +206,8 @@ namespace x360ce.App
 		public event EventHandler<SettingEventArgs> ConfigLoaded;
 
 		public bool IsDebugMode { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.DebugMode]).Checked; } }
-		public bool ExcludeSuplementalDevices { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.ExcludeSupplementalDevices]).Checked; } }
-		public bool ExcludeVirtualDevices { get { return ((CheckBox)SettingsMap[@"Options\" + SettingName.ExcludeVirtualDevices]).Checked; } }
+		public bool ExcludeSuplementalDevices { get { return ((CheckBox)SettingsMap[@"Options\ExcludeSupplementalDevices"]).Checked; } }
+		public bool ExcludeVirtualDevices { get { return ((CheckBox)SettingsMap[@"Options\ExcludeVirtualDevices"]).Checked; } }
 
 		Dictionary<string, Control> _settingsMap;
 		/// <summary>
@@ -231,7 +239,7 @@ namespace x360ce.App
 		public void ReadSettingTo(Control control, string key, string value)
 		{
 			if (key == SettingName.HookMode ||
-				key.EndsWith(SettingName.DeviceSubType) ||
+				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
@@ -409,7 +417,7 @@ namespace x360ce.App
 			ps.ForceOverall = ini2.GetValue(padSectionName, SettingName.ForceOverall);
 			ps.ForceSwapMotor = ini2.GetValue(padSectionName, SettingName.ForceSwapMotor);
 			ps.ForceType = ini2.GetValue(padSectionName, SettingName.ForceType);
-			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.DeviceSubType);
+			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.GamePadType);
 			ps.LeftMotorPeriod = ini2.GetValue(padSectionName, SettingName.LeftMotorPeriod);
 			ps.LeftMotorStrength = ini2.GetValue(padSectionName, SettingName.LeftMotorStrength);
 			ps.LeftMotorDirection = ini2.GetValue(padSectionName, SettingName.LeftMotorDirection);
@@ -450,20 +458,20 @@ namespace x360ce.App
 			ps.RightTrigger = ini2.GetValue(padSectionName, SettingName.RightTrigger);
 			ps.RightTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.RightTriggerDeadZone);
 			// Axis to button dead-zones.
-			ps.ButtonADeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonADeadZone);
-			ps.ButtonBDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonBDeadZone);
-			ps.ButtonBackDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonBackDeadZone);
-			ps.ButtonStartDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonStartDeadZone);
-			ps.ButtonXDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonXDeadZone);
-			ps.ButtonYDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToButtonYDeadZone);
-			ps.LeftThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToLeftThumbButtonDeadZone);
-			ps.RightThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToRightThumbButtonDeadZone);
-			ps.LeftShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToLeftShoulderDeadZone);
-			ps.RightShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToRightShoulderDeadZone);
-			ps.DPadDownDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadDownDeadZone);
-			ps.DPadLeftDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadLeftDeadZone);
-			ps.DPadRightDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadRightDeadZone);
-			ps.DPadUpDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadUpDeadZone);
+			ps.ButtonADeadZone = ini2.GetValue(padSectionName, SettingName.ButtonADeadZone);
+			ps.ButtonBDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonBDeadZone);
+			ps.ButtonBackDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonBackDeadZone);
+			ps.ButtonStartDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonStartDeadZone);
+			ps.ButtonXDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonXDeadZone);
+			ps.ButtonYDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonYDeadZone);
+			ps.LeftThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.LeftThumbButtonDeadZone);
+			ps.RightThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.RightThumbButtonDeadZone);
+			ps.LeftShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.LeftShoulderDeadZone);
+			ps.RightShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.RightShoulderDeadZone);
+			ps.DPadDownDeadZone = ini2.GetValue(padSectionName, SettingName.DPadDownDeadZone);
+			ps.DPadLeftDeadZone = ini2.GetValue(padSectionName, SettingName.DPadLeftDeadZone);
+			ps.DPadRightDeadZone = ini2.GetValue(padSectionName, SettingName.DPadRightDeadZone);
+			ps.DPadUpDeadZone = ini2.GetValue(padSectionName, SettingName.DPadUpDeadZone);
 			return ps;
 		}
 
@@ -504,7 +512,7 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.ForceOverall, ps.ForceOverall);
 			ini2.SetValue(padSectionName, SettingName.ForceSwapMotor, ps.ForceSwapMotor);
 			ini2.SetValue(padSectionName, SettingName.ForceType, ps.ForceType);
-			ini2.SetValue(padSectionName, SettingName.DeviceSubType, ps.GamePadType);
+			ini2.SetValue(padSectionName, SettingName.GamePadType, ps.GamePadType);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorPeriod, ps.LeftMotorPeriod);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorStrength, ps.LeftMotorStrength);
 			ini2.SetValue(padSectionName, SettingName.LeftMotorDirection, ps.LeftMotorDirection);
@@ -545,20 +553,20 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.RightTrigger, ps.RightTrigger);
 			ini2.SetValue(padSectionName, SettingName.RightTriggerDeadZone, ps.RightTriggerDeadZone);
 			// Axis to button dead-zones.
-			ini2.SetValue(padSectionName, SettingName.AxisToButtonADeadZone, ps.ButtonADeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToButtonBDeadZone, ps.ButtonBDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToButtonBackDeadZone, ps.ButtonBackDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToButtonStartDeadZone, ps.ButtonStartDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToButtonXDeadZone, ps.ButtonXDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToButtonYDeadZone, ps.ButtonYDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToLeftThumbButtonDeadZone, ps.LeftThumbButtonDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToRightThumbButtonDeadZone, ps.RightThumbButtonDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToLeftShoulderDeadZone, ps.LeftShoulderDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToRightShoulderDeadZone, ps.RightShoulderDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadDownDeadZone, ps.DPadDownDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadLeftDeadZone, ps.DPadLeftDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadRightDeadZone, ps.DPadRightDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadUpDeadZone, ps.DPadUpDeadZone);
+			ini2.SetValue(padSectionName, SettingName.ButtonADeadZone, ps.ButtonADeadZone);
+			ini2.SetValue(padSectionName, SettingName.ButtonBDeadZone, ps.ButtonBDeadZone);
+			ini2.SetValue(padSectionName, SettingName.ButtonBackDeadZone, ps.ButtonBackDeadZone);
+			ini2.SetValue(padSectionName, SettingName.ButtonStartDeadZone, ps.ButtonStartDeadZone);
+			ini2.SetValue(padSectionName, SettingName.ButtonXDeadZone, ps.ButtonXDeadZone);
+			ini2.SetValue(padSectionName, SettingName.ButtonYDeadZone, ps.ButtonYDeadZone);
+			ini2.SetValue(padSectionName, SettingName.LeftThumbButtonDeadZone, ps.LeftThumbButtonDeadZone);
+			ini2.SetValue(padSectionName, SettingName.RightThumbButtonDeadZone, ps.RightThumbButtonDeadZone);
+			ini2.SetValue(padSectionName, SettingName.LeftShoulderDeadZone, ps.LeftShoulderDeadZone);
+			ini2.SetValue(padSectionName, SettingName.RightShoulderDeadZone, ps.RightShoulderDeadZone);
+			ini2.SetValue(padSectionName, SettingName.DPadDownDeadZone, ps.DPadDownDeadZone);
+			ini2.SetValue(padSectionName, SettingName.DPadLeftDeadZone, ps.DPadLeftDeadZone);
+			ini2.SetValue(padSectionName, SettingName.DPadRightDeadZone, ps.DPadRightDeadZone);
+			ini2.SetValue(padSectionName, SettingName.DPadUpDeadZone, ps.DPadUpDeadZone);
 		}
 
 		/// <summary>
@@ -729,7 +737,7 @@ namespace x360ce.App
 			var padIndex = SettingName.GetPadIndex(path);
 			string v = string.Empty;
 			if (key == SettingName.HookMode ||
-				key.EndsWith(SettingName.DeviceSubType) ||
+				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
@@ -950,7 +958,7 @@ namespace x360ce.App
 					MainForm.Current.ResumeEvents();
 				}
 				// Update Mappings.
-				ini2.SetValue(SettingName.Mappings, pad, section);
+				ini2.SetValue("Mappings", pad, section);
 			}
 			return updated;
 		}

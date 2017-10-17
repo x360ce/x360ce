@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,6 +11,57 @@ namespace x360ce.Engine.Data
 {
 	public partial class PadSetting
 	{
+		public PadSetting()
+		{
+			PropertyChanged += PadSetting_PropertyChanged;
+			Changed = true;
+		}
+
+		bool Changed;
+		object ChangedLock = new object();
+
+		[XmlIgnore]
+		public List<ButtonMap> ButtonMaps
+		{
+			get
+			{
+				lock (ChangedLock)
+				{
+					if (Changed)
+					{
+						var maps = new List<ButtonMap>();
+						maps.Add(new ButtonMap((GamepadButtonFlags)0x400, ButtonGuide));
+						maps.Add(new ButtonMap(GamepadButtonFlags.A, ButtonA, ButtonADeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.B, ButtonB, ButtonBDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.X, ButtonX, ButtonXDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.Y, ButtonY, ButtonYDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.Back, ButtonBack, ButtonBackDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.Start, ButtonStart, ButtonStartDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.DPadUp, DPadUp, DPadUpDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.DPadDown, DPadDown, DPadDownDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.DPadLeft, DPadLeft, DPadLeftDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.DPadRight, DPadRight, DPadRightDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.LeftShoulder, LeftShoulder, LeftShoulderDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.LeftThumb, LeftThumbButton, LeftThumbButtonDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.RightShoulder, RightShoulder, RightShoulderDeadZone));
+						maps.Add(new ButtonMap(GamepadButtonFlags.RightThumb, RightThumbButton, RightThumbButtonDeadZone));
+						_ButtonMaps = maps;
+						Changed = false;
+					}
+					return _ButtonMaps;
+				}
+			}
+		}
+		List<ButtonMap> _ButtonMaps;
+
+		private void PadSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			lock (ChangedLock)
+			{
+				Changed = true;
+			}
+		}
+
 		public Guid CleanAndGetCheckSum()
 		{
 			// Make sure to update checksums in database if you are changing this method.

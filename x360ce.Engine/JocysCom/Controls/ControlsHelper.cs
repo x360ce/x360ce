@@ -314,6 +314,72 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		#region Add grip to SplitContainer 
+
+		public static void ApplySplitterStyle(SplitContainer control)
+		{
+			// Paint 3 dots on the splitter.
+			control.Paint += SplitContainer_Paint;
+			// Remove focus from splitter after it moved.
+			control.SplitterMoved += SplitContainer_SplitterMoved;
+		}
+
+		static void SplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+		{
+			var s = sender as Control;
+			if (s.CanFocus)
+			{
+				while (true)
+				{
+					s = s.Parent;
+					if (s == null)
+						return;
+					if (s.CanFocus)
+						s.Focus();
+				}
+			}
+		}
+
+		static void SplitContainer_Paint(object sender, PaintEventArgs e)
+		{
+			// base.OnPaint(e);
+			var s = sender as SplitContainer;
+			// Paint the three dots.
+			Point[] points = new Point[3];
+			var w = s.Width;
+			var h = s.Height;
+			var d = s.SplitterDistance;
+			var sW = s.SplitterWidth;
+			int x;
+			int y;
+			int spacing = 10;
+			// Calculate the position of the points.
+			if (s.Orientation == Orientation.Horizontal)
+			{
+				x = (w / 2);
+				y = d + (sW / 2);
+				points[0] = new Point(x, y);
+				points[1] = new Point(x - spacing, y);
+				points[2] = new Point(x + spacing, y);
+			}
+			else
+			{
+				x = d + (sW / 2);
+				y = (h / 2);
+				points[0] = new Point(x, y);
+				points[1] = new Point(x, y - spacing);
+				points[2] = new Point(x, y + spacing);
+			}
+			foreach (Point p in points)
+			{
+				p.Offset(-2, -2);
+				e.Graphics.FillEllipse(SystemBrushes.ControlDark, new Rectangle(p, new Size(3, 3)));
+				p.Offset(1, 1);
+				e.Graphics.FillEllipse(SystemBrushes.ControlLight, new Rectangle(p, new Size(3, 3)));
+			}
+		}
+
+		#endregion
 
 		#region Apply Border Style
 
@@ -378,7 +444,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var grid = (DataGridView)sender;
 			var firstVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Min(x => x.Index);
 			var lastVisibleColumn = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Displayed).Max(x => x.Index);
-			var selected = e.RowIndex > -1 ? grid.Rows[e.RowIndex].Selected  : false;
+			var selected = e.RowIndex > -1 ? grid.Rows[e.RowIndex].Selected : false;
 			e.Paint(e.CellBounds, DataGridViewPaintParts.All & ~DataGridViewPaintParts.Border);
 			var bounds = e.CellBounds;
 			var tl = new Point(bounds.X, bounds.Y);

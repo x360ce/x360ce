@@ -12,7 +12,7 @@ namespace x360ce.Engine
 	{
 		public int[] Axis = new int[0];
 		public int[] Sliders = new int[0];
-		public int[] Pows = new int[0];
+		public int[] Povs = new int[0];
 		public bool[] Buttons = new bool[0];
 
 		public CustomDiState(JoystickState state)
@@ -53,7 +53,7 @@ namespace x360ce.Engine
 			sl.AddRange(state.VelocitySliders);
             Sliders = sl.ToArray();
             // Fill POVs.
-			Pows = state.PointOfViewControllers.ToArray();
+			Povs = state.PointOfViewControllers.ToArray();
 			// Fill buttons.
 			Buttons = state.Buttons.ToArray();
 		}
@@ -80,14 +80,14 @@ namespace x360ce.Engine
 				}
 			};
 			// Compare POVs.
-			if (Pows.Length == state.Pows.Length)
+			if (Povs.Length == state.Povs.Length)
 			{
-				for (int i = 0; i < Pows.Length; i++)
+				for (int i = 0; i < Povs.Length; i++)
 				{
-					if (Pows[i] != state.Pows[i])
+					if (Povs[i] != state.Povs[i])
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
-						var v = state.Pows[0];
+						var v = state.Povs[0];
                         if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
                         if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
                         if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
-using System.Windows.Forms;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
 	/// <summary>
 	/// Map between .NET and INI file. This makes refactoring easier.
@@ -367,39 +363,39 @@ namespace x360ce.App
 		public static int GetPadIndex(string path)
 		{
 			var section = path.Split('\\')[0];
-			var pads = new List<string>() { SettingName.PAD1, SettingName.PAD2, SettingName.PAD3, SettingName.PAD4 };
+			var pads = new List<string>() { PAD1, PAD2, PAD3, PAD4 };
 			return pads.IndexOf(section);
 		}
 
 		public static bool IsButton(string name)
 		{
-			return name == SettingName.LeftThumbButton
-				|| name == SettingName.LeftThumbUp
-				|| name == SettingName.LeftThumbRight
-				|| name == SettingName.LeftThumbDown
-				|| name == SettingName.LeftThumbLeft
-				|| name == SettingName.RightThumbButton
-				|| name == SettingName.RightThumbUp
-				|| name == SettingName.RightThumbRight
-				|| name == SettingName.RightThumbDown
-				|| name == SettingName.RightThumbLeft;
+			return name == LeftThumbButton
+				|| name == LeftThumbUp
+				|| name == LeftThumbRight
+				|| name == LeftThumbDown
+				|| name == LeftThumbLeft
+				|| name == RightThumbButton
+				|| name == RightThumbUp
+				|| name == RightThumbRight
+				|| name == RightThumbDown
+				|| name == RightThumbLeft;
 		}
 
 		public static bool IsDPad(string name)
 		{
-			return name == SettingName.DPad
-				|| name == SettingName.DPadDown
-				|| name == SettingName.DPadLeft
-				|| name == SettingName.DPadRight
-				|| name == SettingName.DPadUp;
+			return name == DPad
+				|| name == DPadDown
+				|| name == DPadLeft
+				|| name == DPadRight
+				|| name == DPadUp;
 		}
 
 		public static bool IsThumbAxis(string name)
 		{
-			return name == SettingName.LeftThumbAxisX
-				|| name == SettingName.LeftThumbAxisY
-				|| name == SettingName.RightThumbAxisX
-				|| name == SettingName.RightThumbAxisY;
+			return name == LeftThumbAxisX
+				|| name == LeftThumbAxisY
+				|| name == RightThumbAxisX
+				|| name == RightThumbAxisY;
 		}
 
 	}

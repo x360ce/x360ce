@@ -20,6 +20,26 @@ namespace JocysCom.ClassLibrary.Runtime
 				|| type.IsSerializable;
 		}
 
+		static readonly HashSet<Type> numericTypes = new HashSet<Type>
+		{
+			typeof(int),  typeof(double),  typeof(decimal),
+			typeof(long), typeof(short),   typeof(sbyte),
+			typeof(byte), typeof(ulong),   typeof(ushort),
+			typeof(uint), typeof(float),   //typeof(BigInteger)
+		};
+
+		public static bool IsNumeric(Type type)
+		{
+			return numericTypes.Contains(type);
+		}
+
+		//public static bool IsNumeric<T>(T item)
+		//{
+		//	return item == null
+		//	? false
+		//	: numericTypes.Contains(item.GetType());
+		//}
+
 		private static Type GetFirstArgumentOfGenericType(Type type)
 		{
 			return type.GetGenericArguments()[0];
@@ -211,7 +231,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static string GetDataMembersString<T>(T item, bool skipKey = true, bool skipTime = true)
 		{
-			Type t = item == null ?  typeof(T) : item.GetType();
+			Type t = item == null ? typeof(T) : item.GetType();
 			PropertyInfo[] ps = GetDataMemberProperties(item, skipKey);
 			StringBuilder sb = new StringBuilder();
 			foreach (PropertyInfo p in ps)
