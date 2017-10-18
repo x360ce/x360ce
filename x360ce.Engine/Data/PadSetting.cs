@@ -14,51 +14,51 @@ namespace x360ce.Engine.Data
 		public PadSetting()
 		{
 			PropertyChanged += PadSetting_PropertyChanged;
-			Changed = true;
+			MapsChanged = true;
 		}
 
-		bool Changed;
-		object ChangedLock = new object();
+		bool MapsChanged;
+		object MapsLock = new object();
 
 		[XmlIgnore]
-		public List<ButtonMap> ButtonMaps
+		public List<Map> Maps
 		{
 			get
 			{
-				lock (ChangedLock)
+				lock (MapsLock)
 				{
-					if (Changed)
+					if (MapsChanged)
 					{
-						var maps = new List<ButtonMap>();
-						maps.Add(new ButtonMap((GamepadButtonFlags)0x400, ButtonGuide));
-						maps.Add(new ButtonMap(GamepadButtonFlags.A, ButtonA, ButtonADeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.B, ButtonB, ButtonBDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.X, ButtonX, ButtonXDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.Y, ButtonY, ButtonYDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.Back, ButtonBack, ButtonBackDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.Start, ButtonStart, ButtonStartDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.DPadUp, DPadUp, DPadUpDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.DPadDown, DPadDown, DPadDownDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.DPadLeft, DPadLeft, DPadLeftDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.DPadRight, DPadRight, DPadRightDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.LeftShoulder, LeftShoulder, LeftShoulderDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.LeftThumb, LeftThumbButton, LeftThumbButtonDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.RightShoulder, RightShoulder, RightShoulderDeadZone));
-						maps.Add(new ButtonMap(GamepadButtonFlags.RightThumb, RightThumbButton, RightThumbButtonDeadZone));
+						var maps = new List<Map>();
+						maps.Add(new Map(ButtonGuide, (GamepadButtonFlags)0x400));
+						maps.Add(new Map(ButtonA, GamepadButtonFlags.A,ButtonADeadZone));
+						maps.Add(new Map(ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
+						maps.Add(new Map(ButtonX, GamepadButtonFlags.X,  ButtonXDeadZone));
+						maps.Add(new Map(ButtonY, GamepadButtonFlags.Y, ButtonYDeadZone));
+						maps.Add(new Map(ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
+						maps.Add(new Map(ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
+						maps.Add(new Map(DPadUp, GamepadButtonFlags.DPadUp, DPadUpDeadZone));
+						maps.Add(new Map(DPadDown, GamepadButtonFlags.DPadDown, DPadDownDeadZone));
+						maps.Add(new Map(DPadLeft, GamepadButtonFlags.DPadLeft, DPadLeftDeadZone));
+						maps.Add(new Map(DPadRight, GamepadButtonFlags.DPadRight, DPadRightDeadZone));
+						maps.Add(new Map(LeftShoulder, GamepadButtonFlags.LeftShoulder, LeftShoulderDeadZone));
+						maps.Add(new Map(LeftThumbButton, GamepadButtonFlags.LeftThumb, LeftThumbButtonDeadZone));
+						maps.Add(new Map(RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
+						maps.Add(new Map(RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
 						_ButtonMaps = maps;
-						Changed = false;
+						MapsChanged = false;
 					}
 					return _ButtonMaps;
 				}
 			}
 		}
-		List<ButtonMap> _ButtonMaps;
+		List<Map> _ButtonMaps;
 
 		private void PadSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			lock (ChangedLock)
+			lock (MapsLock)
 			{
-				Changed = true;
+				MapsChanged = true;
 			}
 		}
 

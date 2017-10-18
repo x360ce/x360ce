@@ -2,28 +2,51 @@
 
 namespace x360ce.Engine
 {
-	public class ButtonMap
+	public class Map
 	{
 
-		public ButtonMap(GamepadButtonFlags flag, string value, string deadZone = null)
+		/// <summary>
+		/// Load button parametes.
+		/// </summary>
+		public Map(string value, GamepadButtonFlags flag, string deadZone = null)
 		{
-			Flag = flag;
-			SettingsConverter.TryParseIndexAndType(value, out Index, out Type);
+			Load(value);
+			ButtonFlag = flag;
 			if (!string.IsNullOrEmpty(deadZone))
 				int.TryParse(deadZone, out DeadZone);
+			Target = TargetType.Button;
+		}
+
+		void Load(string value)
+		{
+			// Source parameters.
+			SettingsConverter.TryParseIndexAndType(value, out Index, out Type);
+			IsButton = Type == SettingType.Button || Type == SettingType.IButton;
 			IsAxis = Type == SettingType.Axis || Type == SettingType.IAxis || Type == SettingType.HAxis || Type == SettingType.IHAxis;
 			IsSlider = Type == SettingType.Slider || Type == SettingType.ISlider || Type == SettingType.HSlider || Type == SettingType.IHSlider;
 			IsHalf = Type == SettingType.HAxis || Type == SettingType.IHAxis || Type == SettingType.HSlider || Type == SettingType.IHSlider;
 			IsInverted = Type == SettingType.IAxis || Type == SettingType.IHAxis || Type == SettingType.ISlider || Type == SettingType.IHSlider;
+			Target = TargetType.Button;
 		}
 
+		int Min;
+		int Max;
+
+		// Source Paramaters.
+		public SettingType Type;
+		public int Index;
+		public bool IsButton;
 		public bool IsAxis;
 		public bool IsSlider;
 		public bool IsHalf;
 		public bool IsInverted;
-		public SettingType Type;
-		public int Index;
-		public GamepadButtonFlags Flag;
+
+		public TargetType Target;
+
+		// Used for Buttons.
+		public GamepadButtonFlags ButtonFlag;
+		// Used for AxisToButton DeadZone
 		public int DeadZone;
+
 	}
 }

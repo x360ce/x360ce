@@ -99,81 +99,135 @@ namespace x360ce.App.DInput
 				// MAP: Buttons
 				// --------------------------------------------------------
 
-				var buttonMaps = padSetting.ButtonMaps;
+				// Get all mapped items.
+				var maps = padSetting.Maps;
 
-				foreach (var map in buttonMaps)
+				foreach (var map in maps)
 				{
 					// If not mapped then continue.
 					if (map.Index == 0)
 						continue;
 
 					// If source is simple button then...
-					if (map.Type == SettingType.Button)
+					if (map.IsButton)
 					{
 						// If mapped index is in range then...
 						if (map.Index < diState.Buttons.Length)
 						{
-							// If button is pressed then Enable button on XInput state.
-							if (diState.Buttons[map.Index - 1])
-								gp.Buttons |= map.Flag;
+							var pressed = diState.Buttons[map.Index - 1];
+							if (pressed)
+							{
+								if (map.Target == TargetType.Button)
+									gp.Buttons |= map.ButtonFlag;
+								else if (map.Target == TargetType.LeftTrigger)
+									gp.LeftTrigger = byte.MaxValue;
+								else if (map.Target == TargetType.RightTrigger)
+									gp.RightTrigger = byte.MaxValue;
+								else if (map.Target == TargetType.LeftThumbX)
+									gp.LeftThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+								else if (map.Target == TargetType.LeftThumbY)
+									gp.LeftThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+								else if (map.Target == TargetType.RightThumbX)
+									gp.RightThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+								else if (map.Target == TargetType.RightThumbY)
+									gp.RightThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+							}
 						}
-						continue;
 					}
-
 					// If source is D-PAD button converted from POV.
-					if (map.Type == SettingType.DPadButton)
+					else if (map.Type == SettingType.DPadButton)
 					{
 						// If mapped index is in range then...
 						if (map.Index < dPadButtons.Length)
 						{
-							// If button is pressed then Enable button on XInput state.
-							if (dPadButtons[map.Index - 1])
-								gp.Buttons |= map.Flag;
+							var pressed = dPadButtons[map.Index - 1];
+							if (pressed)
+							{
+								if (map.Target == TargetType.Button)
+									gp.Buttons |= map.ButtonFlag;
+								else if (map.Target == TargetType.LeftTrigger)
+									gp.LeftTrigger = byte.MaxValue;
+								else if (map.Target == TargetType.RightTrigger)
+									gp.RightTrigger = byte.MaxValue;
+								else if (map.Target == TargetType.LeftThumbX)
+									gp.LeftThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+								else if (map.Target == TargetType.LeftThumbY)
+									gp.LeftThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+								else if (map.Target == TargetType.RightThumbX)
+									gp.RightThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+								else if (map.Target == TargetType.RightThumbY)
+									gp.RightThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+							}
 						}
-						continue;
 					}
-
-					// If source is not axis and not slider then continue.
-					if (!map.IsAxis && !map.IsSlider)
-						continue;
-
-					int[] values = map.IsAxis
-						? diState.Axis
-						: diState.Sliders;
-
-					// If index is out of range then...
-					if (map.Index > values.Length)
-						continue;
-
-					// Get value.
-					var v = values[map.Index - 1];
-
-					// Short bounds.
-					int min = -32768;
-					int max = 32767;
-
-					// Axis to Button DeadZone.
-					int deadZone = map.DeadZone;
-					int diValue;
-					if (map.IsHalf)
+					// If source is Axis or Slider then...
+					else if (map.IsAxis || map.IsSlider)
 					{
-						diValue = map.IsInverted ? -1 - v : v;
+						// Get source value.
+						int[] values = map.IsAxis
+							? diState.Axis
+							: diState.Sliders;
+
+						// If index is out of range then...
+						if (map.Index > values.Length)
+							continue;
+
+						// Get value.
+						var v = (ushort)values[map.Index - 1];
+
+						// If value is inverted (I) then...
+						if (map.IsInverted && !map.IsHalf)
+							v = (ushort)(ushort.MaxValue - v);
+						// If half value (H) then...
+						else if (!map.IsInverted && map.IsHalf && (v + short.MinValue) > 0)
+							v = (ushort)((v + short.MinValue) * 2 + 1);
+						// If inverted half value (IH) then...
+						else if (!map.IsInverted && map.IsHalf && v <= short.MaxValue)
+							v = (ushort)((short.MaxValue - v) * 2 + 1);
+
+						var deadZone = map.DeadZone;
+
+						// If full range then double deadzone.
+						if (!map.IsHalf)
+							deadZone = map.DeadZone * 2;
+
+						var isTrigger =
+							map.Target == TargetType.LeftTrigger ||
+							map.Target == TargetType.RightTrigger;
+
+						var isThumb =
+							map.Target == TargetType.LeftThumbX ||
+							map.Target == TargetType.LeftThumbY ||
+							map.Target == TargetType.RightThumbX ||
+							map.Target == TargetType.RightThumbY;
+
+						// If target is button.
+						if (map.Target == TargetType.Button)
+						{
+							// If axis reached beyond dead zone then...
+							if (v > deadZone)
+							{
+								gp.Buttons |= map.ButtonFlag;
+							}
+						}
+						//else if (isTrigger || isThumb)
+						//{
+						//int scale = isTrigger ? byte.MaxValue : ushort.MaxValue;
+						//}
+						// If target is trigger.
+						else if (isTrigger)
+						{
+							// Scale ushort (0-65535) to byte (0-255).
+							v = (byte)(v / byte.MaxValue);
+							var value = (byte)DeadZone(v, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
+							if (map.Target == TargetType.LeftTrigger)
+								gp.LeftTrigger = value;
+							if (map.Target == TargetType.RightTrigger)
+								gp.RightTrigger = value;
+						}
 					}
-					else
-					{
-						diValue = map.IsInverted ? max - v : v - min;
-						deadZone = deadZone * 2;
-					}
-					if (diValue > deadZone)
-					{
-						gp.Buttons |= map.Flag;
-					}
-					setting.XiState = gp;
 				}
-
-				// --------------------------------------------------------
-				// MAP: Triggers
-				// --------------------------------------------------------
+				setting.XiState = gp;
 
 				//        [  32768 steps | 32768 steps ]
 				// DInput [      0 32767 | 32768 65535 ] 
@@ -193,6 +247,13 @@ namespace x360ce.App.DInput
 			var ev = StatesUpdated;
 			if (ev != null)
 				ev(this, new EventArgs());
+		}
+
+		int DeadZone(int val, int min, int max, int lowerDZ, int upperDZ)
+		{
+			if (val < lowerDZ) return min;
+			if (val > upperDZ) return max;
+			return val;
 		}
 	}
 }

@@ -315,7 +315,8 @@
     <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
     <Compile Include="JocysCom\Win32\WinNT.cs" />
-    <Compile Include="Maps\ButtonMap.cs" />
+    <Compile Include="Maps\Map.cs" />
+    <Compile Include="Maps\TargetType.cs" />
     <Compile Include="Maps\SettingName.cs" />
     <Compile Include="Maps\SettingsConverter.cs" />
     <Compile Include="Maps\SettingType.cs" />

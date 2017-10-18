@@ -105,7 +105,7 @@ namespace x360ce.Engine
 						_Type = SettingType.DPadButton;
 						break;
 					default:
-						_Type = SettingType.Button;
+						_Type = n == "-" ? SettingType.IButton : SettingType.Button;
 						break;
 				}
 				if (_Index == 0) _Type = SettingType.None;
@@ -120,6 +120,7 @@ namespace x360ce.Engine
 			switch (Type)
 			{
 				case SettingType.Button: return string.Format("{0}{1}", SettingName.SType.Button, Index);
+				case SettingType.IButton: return string.Format("{0}{1}", SettingName.SType.Button, Index);
 				case SettingType.Axis: return string.Format("{0}{1}", SettingName.SType.Axis, Index);
 				case SettingType.IAxis: return string.Format("{0}{1}", SettingName.SType.Axis, -Index);
 				case SettingType.HAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, Index);

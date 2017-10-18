@@ -4,6 +4,7 @@
 	{
 		None = 0,
 		Button,
+		IButton,
 		Axis,
 		IAxis,
 		HAxis,
