@@ -770,7 +770,6 @@ namespace x360ce.App
 			ControlAbout.Dock = DockStyle.Fill;
 			AboutTabPage.Controls.Add(ControlAbout);
 			//ReloadXinputSettings();
-			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}

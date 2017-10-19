@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.IO;
+using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -121,7 +122,51 @@ namespace JocysCom.ClassLibrary.Configuration
 			{
 				s += " - " + Description;
 			}
+			// Add elevated tag.
+			var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+			var isElevated = identity.Owner != identity.User;
+			// Add running user.
+			string windowsDomain = GetWindowsDomainName();
+			string windowsUser = GetWindowsUserName();
+			string processDomain = Environment.UserDomainName;
+			string processUser = Environment.UserName;
+			if (string.Compare(windowsDomain, processDomain, true) != 0 || string.Compare(windowsUser, processUser, true) != 0)
+				s += string.Format(" ({0}\\{1})", processDomain, processUser);
+			else if (isElevated)
+				s += " (Administrator)";
+			// if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 			return s.Trim();
+		}
+
+		[DllImport("wtsapi32.dll")]
+		public static extern bool WTSQuerySessionInformationW(
+			IntPtr hServer,
+			int SessionId,
+			int WTSInfoClass,
+			out IntPtr ppBuffer,
+			out IntPtr pBytesReturned
+		);
+
+		public string GetWindowsDomainName() { return GetInformation(7); }
+
+		public string GetWindowsUserName() { return GetInformation(5); }
+
+		string GetInformation(int WTSInfoClass)
+		{
+			// Use current context.
+			var WTS_CURRENT_SERVER_HANDLE = IntPtr.Zero;
+			var p = System.Diagnostics.Process.GetCurrentProcess();
+			IntPtr AnswerBytes;
+			IntPtr AnswerCount;
+			// Get domain name.
+			var success = WTSQuerySessionInformationW(
+				WTS_CURRENT_SERVER_HANDLE,
+				p.SessionId,
+				WTSInfoClass,
+				out AnswerBytes,
+				out AnswerCount
+			);
+			return Marshal.PtrToStringUni(AnswerBytes);
 		}
 
 		public static DateTime GetBuildDateTime(string filePath)
