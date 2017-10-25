@@ -448,7 +448,7 @@ namespace x360ce.App.Controls
 		void TopPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			// Display controller.
-			bool on = gamePadStateIsConnected;
+			bool on = newConnected;
 			if (!on) return;
 			// Half mark position adjust.
 			int mW = -this.markB.Width / 2;
@@ -460,8 +460,8 @@ namespace x360ce.App.Controls
 			Point triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
 			if (!Recording)
 			{
-				var tl = gamePadState.Gamepad.LeftTrigger;
-				var tr = gamePadState.Gamepad.RightTrigger;
+				var tl = newState.Gamepad.LeftTrigger;
+				var tr = newState.Gamepad.RightTrigger;
 				// Temp workaround: when initialized triggers have default value of 127);
 				if (tl == 110 && tr == 110)
 				{
@@ -479,10 +479,10 @@ namespace x360ce.App.Controls
 					setLabelColor(on, RightTriggerLabel);
 					if (on) e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
 				}
-				on = gamePadState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
+				on = newState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
 				setLabelColor(on, LeftShoulderLabel);
 				if (on) e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
-				on = gamePadState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
+				on = newState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 				setLabelColor(on, RightShoulderLabel);
 				if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
 			}
@@ -520,7 +520,7 @@ namespace x360ce.App.Controls
 			pads[2] = new Point(116, 62);
 			pads[3] = new Point(139, 62);
 			// Display controller.
-			bool on = gamePadStateIsConnected;
+			bool on = newConnected;
 			if (!on) return;
 			// Display controller index light.
 			int mW = -this.markC.Width / 2;
@@ -587,7 +587,7 @@ namespace x360ce.App.Controls
 		{
 			var mW = -this.markB.Width / 2;
 			var mH = -this.markB.Height / 2;
-			var on = gamePadState.Gamepad.Buttons.HasFlag(button);
+			var on = newState.Gamepad.Buttons.HasFlag(button);
 			if (on) e.Graphics.DrawImage(this.markB, location.X + mW, location.Y + mH);
 			if (label != null) setLabelColor(on, label);
 		}
@@ -719,8 +719,6 @@ namespace x360ce.App.Controls
 		short _rightX;
 		short _rightY;
 
-		State gamePadState;
-		bool gamePadStateIsConnected;
 		//XINPUT_GAMEPAD GamePad;
 		Guid _InstanceGuid;
 
@@ -848,78 +846,71 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		// Old xinput state.
 		State oldState;
+		bool oldConnected;
+		// Current XInput state.
+		State newState;
+		bool newConnected;
 
-		public void UpdateFromXInput(State state, bool IsConnected)
+		public void UpdateFromXInput()
 		{
-			// If nothing changed then return.
-			if (state.Equals(oldState)) return;
-			oldState = state;
-			var wasConnected = gamePadStateIsConnected;
-			var nowConnected = IsConnected;
-			gamePadStateIsConnected = IsConnected;
-			gamePadState = state;
-			// If form was disabled and no data is coming then just return.
-			if (!wasConnected && !nowConnected) return;
-			// If device connection changed then...
-			if (wasConnected != nowConnected)
+			newState = MainForm.Current.DHelper.LiveXInputStates[(int)MappedTo - 1];
+			newConnected = MainForm.Current.DHelper.XiControllerConnected[(int)MappedTo - 1];
+			// If device is not connected and was not connected then return.
+			if (!newConnected && !oldConnected)
+				return;
+			// If device disconnected then...
+			if (!newConnected && oldConnected)
 			{
-				if (nowConnected)
-				{
-					// Enable form.
-					FrontPictureBox.Image = frontImage;
-					TopPictureBox.Image = topImage;
-				}
-				else
-				{
-					// Disable form.
-					FrontPictureBox.Image = frontDisabledImage;
-					TopPictureBox.Image = topDisabledImage;
+				// Disable form.
+				FrontPictureBox.Image = frontDisabledImage;
+				TopPictureBox.Image = topDisabledImage;
+			}
+			// If device connected then...
+			if (newConnected && !oldConnected)
+			{
+				// Enable form.
+				FrontPictureBox.Image = frontImage;
+				TopPictureBox.Image = topImage;
+			}
+			_leftX = newState.Gamepad.LeftThumbX;
+			_leftY = newState.Gamepad.LeftThumbY;
+			_rightX = newState.Gamepad.RightThumbX;
+			_rightY = newState.Gamepad.RightThumbY;
 
-				}
-			}
-			if (nowConnected)
-			{
-				_leftX = state.Gamepad.LeftThumbX;
-				_leftY = state.Gamepad.LeftThumbY;
-				_rightX = state.Gamepad.RightThumbX;
-				_rightY = state.Gamepad.RightThumbY;
-			}
-			else
-			{
-				_leftX = 0;
-				_leftY = 0;
-				_rightX = 0;
-				_rightY = 0;
-			}
 			AppHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
 			AppHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
 
-			var axis = DirectInputPanel.Axis;
-			bool success;
-			int index;
-			SettingType type;
-			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
-			if (success)
-				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
-			if (success)
-				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
-			if (success)
-				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
-			if (success)
-				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+			//var axis = DirectInputPanel.Axis;
+			//bool success;
+			//int index;
+			//SettingType type;
+			//success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
+			//if (success)
+			//	LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
+			//success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
+			//if (success)
+			//	LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
+			//success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
+			//if (success)
+			//	RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
+			//success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
+			//if (success)
+			//	RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+
 			// Update controller images.
-			this.TopPictureBox.Refresh();
-			this.FrontPictureBox.Refresh();
-			// Update Axis to Button Images.
-			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
-			foreach (var atbPanel in AxisToButtonControls)
-			{
-				atbPanel.Refresh(gamePadState, markB);
-			}
+			TopPictureBox.Refresh();
+			FrontPictureBox.Refresh();
+			//// Update Axis to Button Images.
+			//var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
+			//foreach (var atbPanel in AxisToButtonControls)
+			//{
+			//	atbPanel.Refresh(newState, markB);
+			//}
+			// Store old state.
+			oldState = newState;
+			oldConnected = newConnected;
 		}
 
 		// Check left thumbStick
@@ -1123,9 +1114,9 @@ namespace x360ce.App.Controls
 			var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
-			lock (MainForm.XInputLock)
+			lock (XInput.XInputLock)
 			{
-				var gamePad = MainForm.Current.XiControllers[(int)MappedTo - 1];
+				var gamePad = MainForm.Current.DHelper.XiControllers[(int)MappedTo - 1];
 				if (XInput.IsLoaded && gamePad.IsConnected)
 				{
 					var vibration = new Vibration();

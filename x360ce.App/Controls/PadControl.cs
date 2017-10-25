@@ -979,7 +979,7 @@ namespace x360ce.App.Controls
             // Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
             var leftMotor = (short)(LeftMotorStrengthTrackBar.Value / 100F * ushort.MaxValue);
             var rightMotor = (short)(RightMotorStrengthTrackBar.Value / 100F * ushort.MaxValue);
-            lock (MainForm.XInputLock)
+            lock (XInput.XInputLock)
             {
                 var gPad = MainForm.Current.GamePads[ControllerIndex];
                 if (XInput.IsLoaded && gPad.IsConnected)

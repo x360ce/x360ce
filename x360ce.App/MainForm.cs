@@ -433,8 +433,6 @@ namespace x360ce.App
 
 		#endregion
 
-		public static object XInputLock = new object();
-
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
@@ -442,7 +440,7 @@ namespace x360ce.App
 			// Disable force feedback effect before closing app.
 			try
 			{
-				lock (XInputLock)
+				lock (XInput.XInputLock)
 				{
 					for (int i = 0; i < 4; i++)
 					{
@@ -829,7 +827,7 @@ namespace x360ce.App
 					var xiOn = false;
 					State currentPad = emptyState;
 					var currentPadControl = ControlPads[i];
-					lock (XInputLock)
+					lock (XInput.XInputLock)
 					{
 						var gamePad = GamePads[i];
 						if (XInput.IsLoaded && gamePad.IsConnected)
@@ -867,7 +865,7 @@ namespace x360ce.App
 				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
 				StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
 				// If fast reload of settings is supported then...
-				lock (XInputLock)
+				lock (XInput.XInputLock)
 				{
 					if (XInput.IsResetSupported)
 					{
@@ -876,10 +874,10 @@ namespace x360ce.App
 					// Slow: Reload whole x360ce.dll.
 					Exception error;
 					//forceRecountDevices = true;
-					XInput.ReLoadLibrary(dllInfo.Name, out error);
+					XInput.ReLoadLibrary(dllInfo.FullName, out error);
 					if (!XInput.IsLoaded)
 					{
-						var caption = string.Format("Failed to load '{0}'", dllInfo.Name);
+						var caption = string.Format("Failed to load '{0}'", dllInfo.FullName);
 						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
 						var form = new MessageBoxForm();
 						form.StartPosition = FormStartPosition.CenterParent;
@@ -940,7 +938,7 @@ namespace x360ce.App
 
 		public void XInputEnable(bool enable)
 		{
-			lock (XInputLock)
+			lock (XInput.XInputLock)
 			{
 				XInput.XInputEnable(enable);
 			}

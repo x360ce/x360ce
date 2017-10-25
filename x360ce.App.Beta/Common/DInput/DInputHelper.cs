@@ -17,9 +17,14 @@ namespace x360ce.App.DInput
 			Manager = new DirectInput();
 			InitDeviceDetector();
 			CombinedXInputStates = new State[4];
-			for (int i = 0; i < CombinedXInputStates.Length; i++)
+			LiveXInputStates = new State[4];
+			XiControllers = new Controller[4];
+			XiControllerConnected = new bool[4];
+			for (int i = 0; i < 4; i++)
 			{
 				CombinedXInputStates[i] = new State();
+				LiveXInputStates[i] = new State();
+				XiControllers[i] = new Controller((UserIndex)i);
 			}
 			watch = new System.Diagnostics.Stopwatch();
 		}
@@ -53,6 +58,7 @@ namespace x360ce.App.DInput
 		public event EventHandler<EventArgs> DevicesUpdated;
 		public event EventHandler<EventArgs> StatesUpdated;
 		public event EventHandler<EventArgs> StatesCombined;
+		public event EventHandler<EventArgs> StatesRetrieved;
 		public event EventHandler<EventArgs> UpdateCompleted;
 
 		DirectInput Manager;
@@ -103,6 +109,8 @@ namespace x360ce.App.DInput
 					CombineXiStates();
 					// Update virtual devices from combined states.
 					UpdateVirtualDevices();
+					// Retrieve XInput states from XInput controllers.
+					RetrieveXiStates();
 					// Update pool frequency value and sleep if necessary.
 					UpdateDelayFrequency();
 					// Fire event.

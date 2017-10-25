@@ -69,7 +69,7 @@ namespace x360ce.App.Controls
 				DiEffectsTable.Rows.Clear();
 				return;
 			}
-			lock (MainForm.XInputLock)
+			lock (XInput.XInputLock)
 			{
 				var isLoaded = XInput.IsLoaded;
 				if (isLoaded) XInput.FreeLibrary();

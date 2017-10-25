@@ -18,6 +18,8 @@
 		   "[x] Enable Unmanaged/Native Code Debugging" in your C# project properties on [Debug] panel?
 		*/
 
+		public static object XInputLock = new object();
+
 		#region XInput functions
 
 		//[SuppressUnmanagedCodeSecurity, DllImport("xinput1_4.dll", EntryPoint = "XInputEnable", CallingConvention = CallingConvention.StdCall)]

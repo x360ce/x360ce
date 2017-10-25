@@ -71,8 +71,6 @@ namespace x360ce.App
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
 
-		public Controller[] XiControllers = new Controller[4];
-
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
@@ -104,10 +102,6 @@ namespace x360ce.App
 			SettingsManager.UserInstances.Load();
 			SettingsManager.UserComputers.Load();
 			XInputMaskScanner.FileInfoCache.Load();
-			for (int i = 0; i < 4; i++)
-			{
-				XiControllers[i] = new Controller((UserIndex)i);
-			}
 			GameToCustomizeComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
 			GameToCustomizeComboBox.DisplayMember = "DisplayName";
@@ -421,8 +415,6 @@ namespace x360ce.App
 		//	UpdateTimer.Start();
 		//}
 
-		public static object XInputLock = new object();
-
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
@@ -430,15 +422,16 @@ namespace x360ce.App
 			// Disable force feedback effect before closing app.
 			try
 			{
-				lock (XInputLock)
+				lock (XInput.XInputLock)
 				{
 					for (int i = 0; i < 4; i++)
 					{
 						if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 						{
-							var gamePad = XiControllers[i];
+							var gamePad = DHelper.XiControllers[i];
 							if (XInput.IsLoaded && gamePad.IsConnected)
 							{
+								// Stop vibration.
 								gamePad.SetVibration(new Vibration());
 							}
 						}
@@ -779,11 +772,12 @@ namespace x360ce.App
 		/// </summary>
 		void UpdateForm3()
 		{
-			//	// If settings changed then...
-			//	if (settingsChanged)
-			//	{
-			//		ReloadLibrary();
-			//	}
+			// If settings changed then...
+			if (settingsChanged)
+			{
+				ReloadLibrary();
+				return;
+			}
 			//	else
 			//	{
 			for (int i = 0; i < 4; i++)
@@ -810,7 +804,7 @@ namespace x360ce.App
 				//			// Update Form from DInput state.
 				padControl.UpdateFromDInput();
 				//			// Update Form from XInput state.
-				//			padControl.UpdateFromXInput(currentGamePad, xiOn);
+				padControl.UpdateFromXInput();
 				//			// Update LED of GamePad state.
 				string image = diOn
 					// DInput ON, XInput ON 
@@ -840,7 +834,7 @@ namespace x360ce.App
 				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
 				StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
 				// If fast reload of settings is supported then...
-				lock (XInputLock)
+				lock (XInput.XInputLock)
 				{
 					if (XInput.IsResetSupported)
 					{
@@ -849,10 +843,10 @@ namespace x360ce.App
 					// Slow: Reload whole x360ce.dll.
 					Exception error;
 					//forceRecountDevices = true;
-					XInput.ReLoadLibrary(dllInfo.Name, out error);
+					XInput.ReLoadLibrary(dllInfo.FullName, out error);
 					if (!XInput.IsLoaded)
 					{
-						var caption = string.Format("Failed to load '{0}'", dllInfo.Name);
+						var caption = string.Format("Failed to load '{0}'", dllInfo.FullName);
 						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
 						var form = new MessageBoxForm();
 						form.StartPosition = FormStartPosition.CenterParent;
@@ -914,7 +908,7 @@ namespace x360ce.App
 
 		public void XInputEnable(bool enable)
 		{
-			lock (XInputLock)
+			lock (XInput.XInputLock)
 			{
 				XInput.XInputEnable(enable);
 			}

@@ -28,11 +28,11 @@ namespace x360ce.Engine
             var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x => x != XInputMask.None);
             // Get unique file names.
             var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
-            // Get information about XInput files located on the disk.
+			// Get information about XInput files located on the disk.
             var infos = fileNames.Select(x => new FileInfo(x)).Where(x => x.Exists).ToArray();
             FileInfo defaultDll = null;
             Version defaultVer = null;
-            foreach (var info in infos)
+			foreach (var info in infos)
             {
                 var vi = FileVersionInfo.GetVersionInfo(info.FullName);
                 var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
@@ -44,8 +44,19 @@ namespace x360ce.Engine
                     defaultVer = ver;
                 }
             }
-            // Return newest file.
-            return defaultDll;
+			// If custom XInput DLL was not found then...
+			if (defaultDll == null)
+			{
+				// Use Microsoft DLL.
+				var sysFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.SystemX86);
+				var msx = System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
+				var info = new FileInfo(msx);
+				var vi = FileVersionInfo.GetVersionInfo(info.FullName);
+				var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+				defaultDll = info;
+			}
+			// Return newest file.
+			return defaultDll;
         }
 
         public static Guid GetFileChecksum(string fileName)

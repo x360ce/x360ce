@@ -76,7 +76,7 @@ namespace x360ce.App.Controls
 				if (DiEffectsTable.Rows.Count > 0) DiEffectsTable.Rows.Clear();
 				return;
 			}
-			lock (MainForm.XInputLock)
+			lock (XInput.XInputLock)
 			{
 				// This must be done for the first time device is connected in order to retrieve 
 				// Force feedback information.
