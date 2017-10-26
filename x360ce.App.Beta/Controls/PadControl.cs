@@ -882,32 +882,32 @@ namespace x360ce.App.Controls
 			AppHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
 			AppHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
 
-			//var axis = DirectInputPanel.Axis;
-			//bool success;
-			//int index;
-			//SettingType type;
-			//success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
-			//if (success)
-			//	LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
-			//success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
-			//if (success)
-			//	LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
-			//success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
-			//if (success)
-			//	RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
-			//success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
-			//if (success)
-			//	RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+			var axis =  DirectInputPanel.Axis;
+			bool success;
+			int index;
+			SettingType type;
+			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
+			if (success)
+				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
+			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
+			if (success)
+				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
+			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
+			if (success)
+				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
+			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
+			if (success)
+				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
 
 			// Update controller images.
 			TopPictureBox.Refresh();
 			FrontPictureBox.Refresh();
-			//// Update Axis to Button Images.
-			//var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
-			//foreach (var atbPanel in AxisToButtonControls)
-			//{
-			//	atbPanel.Refresh(newState, markB);
-			//}
+			// Update Axis to Button Images.
+			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
+			foreach (var atbPanel in AxisToButtonControls)
+			{
+				atbPanel.Refresh(newState, markB);
+			}
 			// Store old state.
 			oldState = newState;
 			oldConnected = newConnected;

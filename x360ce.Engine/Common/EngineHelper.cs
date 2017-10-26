@@ -22,28 +22,31 @@ namespace x360ce.Engine
         /// Get information about XInput located on the disk.
         /// </summary>
         /// <returns></returns>
-        public static FileInfo GetDefaultDll()
+        public static FileInfo GetDefaultDll(bool useMicrosoft = false)
         {
-            // Get XInput values.
-            var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x => x != XInputMask.None);
-            // Get unique file names.
-            var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
-			// Get information about XInput files located on the disk.
-            var infos = fileNames.Select(x => new FileInfo(x)).Where(x => x.Exists).ToArray();
-            FileInfo defaultDll = null;
-            Version defaultVer = null;
-			foreach (var info in infos)
-            {
-                var vi = FileVersionInfo.GetVersionInfo(info.FullName);
-                var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-                // if first time in the loop of file with newer version was found then...
-                if (defaultDll == null || ver > defaultVer)
-                {
-                    // Pick file.
-                    defaultDll = info;
-                    defaultVer = ver;
-                }
-            }
+			FileInfo defaultDll = null;
+			if (!useMicrosoft)
+			{
+				// Get XInput values.
+				var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x => x != XInputMask.None);
+				// Get unique file names.
+				var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
+				// Get information about XInput files located on the disk.
+				var infos = fileNames.Select(x => new FileInfo(x)).Where(x => x.Exists).ToArray();
+				Version defaultVer = null;
+				foreach (var info in infos)
+				{
+					var vi = FileVersionInfo.GetVersionInfo(info.FullName);
+					var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+					// if first time in the loop of file with newer version was found then...
+					if (defaultDll == null || ver > defaultVer)
+					{
+						// Pick file.
+						defaultDll = info;
+						defaultVer = ver;
+					}
+				}
+			}
 			// If custom XInput DLL was not found then...
 			if (defaultDll == null)
 			{

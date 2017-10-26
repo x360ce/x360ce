@@ -83,29 +83,36 @@ namespace x360ce.App.Controls
 				// XInput must be unloaded in case it tries to lock the device exclusivly.
 				var isLoaded = XInput.IsLoaded;
 				if (isLoaded) XInput.FreeLibrary();
-				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
-				IList<EffectInfo> effects = new List<EffectInfo>();
-				try
+				var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+				forceFeedbackState = forceFeedback ? "YES" : "NO";
+				if (DiEffectsTable.Rows.Count > 0)
+					DiEffectsTable.Rows.Clear();
+				// If device supports force feedback then...
+				if (forceFeedback)
 				{
-					device.Acquire();
-					var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
-					forceFeedbackState = forceFeedback ? "YES" : "NO";
-					effects = device.GetEffects(EffectType.All);
+					// Must reaquire device in exclusive mode to get effects.
+					device.Unacquire();
+					device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
+					IList<EffectInfo> effects = new List<EffectInfo>();
+					try
+					{
+						device.Acquire();
+						effects = device.GetEffects(EffectType.All);
+					}
+					catch (Exception)
+					{
+						forceFeedbackState = "ERROR";
+					}
+					foreach (var eff in effects)
+					{
+						DiEffectsTable.Rows.Add(
+							eff.Name,
+							eff.StaticParameters.ToString(),
+							eff.DynamicParameters.ToString()
+						);
+					}
 				}
-				catch (Exception)
-				{
-					forceFeedbackState = "ERROR";
-				}
-				DiEffectsTable.Rows.Clear();
-				foreach (var eff in effects)
-				{
-					DiEffectsTable.Rows.Add(
-						eff.Name,
-						eff.StaticParameters.ToString(),
-						eff.DynamicParameters.ToString()
-					);
-				}
+				// Reaquire device in non exclusive mode.
 				device.Unacquire();
 				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
 				if (isLoaded)

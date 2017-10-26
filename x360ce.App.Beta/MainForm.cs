@@ -326,6 +326,9 @@ namespace x360ce.App
 
 		void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
+			// If pad controls not initializes yet then return.
+			if (PadControls == null)
+				return;
 			for (int i = 0; i < PadControls.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
@@ -825,24 +828,27 @@ namespace x360ce.App
 
 		public void ReloadLibrary()
 		{
-			Program.ReloadCount++;
-			settingsChanged = false;
-			var dllInfo = EngineHelper.GetDefaultDll();
-			if (dllInfo != null && dllInfo.Exists)
+			lock (XInput.XInputLock)
 			{
-				bool byMicrosoft;
-				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
-				StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
-				// If fast reload of settings is supported then...
-				lock (XInput.XInputLock)
+				var game = CurrentGame;
+				if (game == null)
+					return;
+				var useMicrosoft = game.VirtualMask > 0;
+				Program.ReloadCount++;
+				settingsChanged = false;
+				var dllInfo = EngineHelper.GetDefaultDll(useMicrosoft);
+				if (dllInfo != null && dllInfo.Exists)
 				{
+					bool byMicrosoft;
+					var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
+					StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
+					// If fast reload of settings is supported then...
 					if (XInput.IsResetSupported)
 					{
 						XInput.Reset();
 					}
 					// Slow: Reload whole x360ce.dll.
 					Exception error;
-					//forceRecountDevices = true;
 					XInput.ReLoadLibrary(dllInfo.FullName, out error);
 					if (!XInput.IsLoaded)
 					{
@@ -854,18 +860,22 @@ namespace x360ce.App
 					}
 					else
 					{
-						for (int i = 0; i < 4; i++)
+						if (PadControls != null)
 						{
+							for (int i = 0; i < 4; i++)
+							{
 
-							var currentPadControl = PadControls[i];
-							currentPadControl.UpdateForceFeedBack();
+								var currentPadControl = PadControls[i];
+								currentPadControl.UpdateForceFeedBack();
+							}
 						}
 					}
+
 				}
-			}
-			else
-			{
-				StatusDllLabel.Text = "";
+				else
+				{
+					StatusDllLabel.Text = "";
+				}
 			}
 		}
 
@@ -1241,30 +1251,31 @@ namespace x360ce.App
 					item.PropertyChanged += CurrentGame_PropertyChanged;
 				}
 				CurrentGame = item;
-				if (PadControls != null)
-				{
-					// Update PAD Control.
-					foreach (var ps in PadControls)
-					{
-						if (ps != null)
-							ps.UpdateFromCurrentGame();
-					}
-				}
-			}
-		}
+				settingsChanged = true;
 
-		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			var name = AppHelper.GetPropertyName<UserGame>(x => x.AutoMapMask);
-			// If AutoMapMask Changed then...
-			if (PadControls != null)
-			{
+				// If pad controls not initializes yet then return.
+				if (PadControls == null)
+					return;
 				// Update PAD Control.
 				foreach (var ps in PadControls)
 				{
 					if (ps != null)
 						ps.UpdateFromCurrentGame();
 				}
+			}
+		}
+
+		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			// If pad controls not initializes yet then return.
+			if (PadControls == null)
+				return;
+			var name = AppHelper.GetPropertyName<UserGame>(x => x.AutoMapMask);
+			// Update PAD Control.
+			foreach (var ps in PadControls)
+			{
+				if (ps != null)
+					ps.UpdateFromCurrentGame();
 			}
 		}
 
@@ -1399,6 +1410,7 @@ namespace x360ce.App
 				lastRun = n;
 				UpdateCompletedBusy = true;
 			}
+			if (Program.IsClosing) return;
 			// Make sure method is executed on the same thread as this control.
 			var method = new EventHandler<EventArgs>(DHelper_UpdateCompletedInvoked);
 			BeginInvoke(method, new object[] { sender, e });

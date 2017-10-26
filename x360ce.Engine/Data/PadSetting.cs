@@ -27,7 +27,7 @@ namespace x360ce.Engine.Data
 			{
 				lock (MapsLock)
 				{
-					if (MapsChanged)
+					if (MapsChanged || true)
 					{
 						var maps = new List<Map>();
 						maps.Add(new Map(ButtonGuide, (GamepadButtonFlags)0x400));

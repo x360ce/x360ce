@@ -11,6 +11,7 @@ namespace x360ce.Engine
 		public Map(string value, GamepadButtonFlags flag, string deadZone = null)
 		{
 			Load(value);
+			
 			ButtonFlag = flag;
 			if (!string.IsNullOrEmpty(deadZone))
 				int.TryParse(deadZone, out DeadZone);
