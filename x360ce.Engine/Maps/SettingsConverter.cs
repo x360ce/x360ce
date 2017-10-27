@@ -5,37 +5,19 @@ namespace x360ce.Engine
 {
 
 	/// <summary>
-	/// Convert setting value between Enums and INI string.
+	/// Convert setting value between Text (used to display in Controls) and INI.
 	/// </summary>
-	public partial class SettingsConverter
+	public static class SettingsConverter
 	{
 
-		public SettingsConverter(string value)
-		{
-			this.FromSetting(value);
-		}
+		// D-Pads Buttons:
+		//  D-PAD 1  D-PAD2   D-PAD 3
+		// [1,2,3,4][5,6,7,8][9,10,11,12]...
+		static Regex textValueRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|IButton|DPad|IDPad) (?<num>[1-9][0-9]*)[ ]*(?<ext>Up|Left|Right|Down)?$");
+		// Axis - a, HAxis - x, Slider - s, HSlider - h, Button - none, DPad - p, DPadButton - d;
+		static Regex iniValueRegex = new Regex("^(?<type>[axshpd])?(?<neg>[-]*)?(?<num>[1-9][0-9]*)$");
 
-		public SettingsConverter(string value, string key)
-		{
-			this.FromSetting(value, key);
-		}
-
-		// Maybe index D-Pads buttons like [1,2,3,4][5,6,7,8][9,10,11,12]... and use 'BDpad' type. 
-		static Regex textValueRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|DPad) (?<num>[1-9][0-9]?)[ ]*(?<ext>Up|Left|Right|Down)?$");
-		static Regex iniValueRegex = new Regex("^(?<type>[asxhpd])?(?<neg>[-]*)?(?<num>[1-9][0-9]?)$");
-
-		int _Index;
-		public int Index { get { return _Index; } }
-
-		SettingType _Type;
-		public SettingType Type { get { return _Type; } }
-
-		public void FromSetting(string value)
-		{
-			FromSetting(value, string.Empty);
-		}
-
-		public static bool TryParseIndexAndType(string value, out int index, out SettingType type)
+		public static bool TryParseTextValue(string value, out SettingType type, out int index)
 		{
 			index = 0;
 			type = SettingType.None;
@@ -44,117 +26,139 @@ namespace x360ce.Engine
 			var m = textValueRegex.Match(value);
 			if (m.Success)
 			{
-				type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);
 				index = int.Parse(m.Groups["num"].Value);
-				if (m.Groups["ext"].Success)
+				// Index must be non zero.
+				if (index == 0)
+					return false;
+				type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);
+				// If type is DPad with extension then...
+				if (type == SettingType.DPad && m.Groups["ext"].Success)
 				{
-					if (type == SettingType.DPad)
+					// This is DPad button.
+					type = SettingType.DPadButton;
+					switch (m.Groups["ext"].Value)
 					{
-						type = SettingType.DPadButton;
-						switch (m.Groups["ext"].Value)
-						{
-							case "Up": index = (index - 1) * 4 + 1; break;
-							case "Right": index = (index - 1) * 4 + 2; break;
-							case "Down": index = (index - 1) * 4 + 3; break;
-							case "Left": index = (index - 1) * 4 + 4; break;
-						}
+						case "Up": index = (index - 1) * 4 + 1; break;
+						case "Right": index = (index - 1) * 4 + 2; break;
+						case "Down": index = (index - 1) * 4 + 3; break;
+						case "Left": index = (index - 1) * 4 + 4; break;
 					}
 				}
 			}
 			return m.Success;
 		}
 
-		public void FromSetting(string value, string key)
+		public static bool TryParseIniValue(string value, out SettingType type, out int index)
 		{
-			int index = 0;
-			SettingType type = SettingType.None;
-			var success = TryParseIndexAndType(value, out index, out type);
-			if (success)
-			{
-				_Type = type;
-				_Index = index;
-			}
+			index = 0;
+			type = SettingType.None;
+			if (string.IsNullOrEmpty(value))
+				return false;
 			// Try to convert setting from ini value.
 			var m = iniValueRegex.Match(value);
 			if (m.Success)
 			{
+				index = int.Parse(m.Groups["num"].Value);
+				// Index must be non zero.
+				if (index == 0)
+					return false;
 				string t = m.Groups["type"].Value;
 				string n = m.Groups["neg"].Value;
-				_Index = int.Parse(m.Groups["num"].Value);
-				if (key.Contains("Analog") && !key.Contains("Button") && t == "") t = SettingName.SType.Axis;
-				if (key.Contains("D-pad POV")) t = SettingName.SType.DPad;
-				if (t == SettingName.SType.Axis && Index == 7) _Index = 0;
 				switch (t)
 				{
 					case SettingName.SType.Axis:
-						_Type = n == "-" ? SettingType.IAxis : SettingType.Axis;
+						type = n == "-" ? SettingType.IAxis : SettingType.Axis;
 						break;
 					case SettingName.SType.Slider:
-						_Type = n == "-" ? SettingType.ISlider : SettingType.Slider;
+						type = n == "-" ? SettingType.ISlider : SettingType.Slider;
 						break;
 					case SettingName.SType.HAxis:
-						_Type = n == "-" ? SettingType.IHAxis : SettingType.HAxis;
+						type = n == "-" ? SettingType.IHAxis : SettingType.HAxis;
 						break;
 					case SettingName.SType.HSlider:
-						_Type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
+						type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
 						break;
 					case SettingName.SType.DPad:
-						_Type = SettingType.DPad;
+						type = n == "-" ? SettingType.IDPad : SettingType.DPad;
 						break;
 					case SettingName.SType.DPadButton:
-						_Type = SettingType.DPadButton;
+						type = n == "-" ? SettingType.IDPadButton : SettingType.DPadButton;
 						break;
 					default:
-						_Type = n == "-" ? SettingType.IButton : SettingType.Button;
+						type = n == "-" ? SettingType.IButton : SettingType.Button;
 						break;
 				}
-				if (_Index == 0) _Type = SettingType.None;
 			}
+			return m.Success;
 		}
 
 		/// <summary>
 		/// Convert setting to INI value.
 		/// </summary>
-		public string ToIniValue()
+		public static string ToIniValue(SettingType type, int index)
 		{
-			switch (Type)
+			switch (type)
 			{
-				case SettingType.Button: return string.Format("{0}{1}", SettingName.SType.Button, Index);
-				case SettingType.IButton: return string.Format("{0}{1}", SettingName.SType.Button, Index);
-				case SettingType.Axis: return string.Format("{0}{1}", SettingName.SType.Axis, Index);
-				case SettingType.IAxis: return string.Format("{0}{1}", SettingName.SType.Axis, -Index);
-				case SettingType.HAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, Index);
-				case SettingType.IHAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, -Index);
-				case SettingType.Slider: return string.Format("{0}{1}", SettingName.SType.Slider, Index);
-				case SettingType.ISlider: return string.Format("{0}{1}", SettingName.SType.Slider, -Index);
-				case SettingType.HSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, Index);
-				case SettingType.IHSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, -Index);
-				case SettingType.DPad: return string.Format("{0}{1}", SettingName.SType.DPad, Index);
-				case SettingType.DPadButton: return string.Format("{0}{1}", SettingName.SType.DPadButton, Index);
+				case SettingType.Button: return string.Format("{0}{1}", SettingName.SType.Button, index);
+				case SettingType.IButton: return string.Format("{0}{1}", SettingName.SType.Button, -index);
+				case SettingType.Axis: return string.Format("{0}{1}", SettingName.SType.Axis, index);
+				case SettingType.IAxis: return string.Format("{0}{1}", SettingName.SType.Axis, -index);
+				case SettingType.HAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, index);
+				case SettingType.IHAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, -index);
+				case SettingType.Slider: return string.Format("{0}{1}", SettingName.SType.Slider, index);
+				case SettingType.ISlider: return string.Format("{0}{1}", SettingName.SType.Slider, -index);
+				case SettingType.HSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, index);
+				case SettingType.IHSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, -index);
+				case SettingType.DPad: return string.Format("{0}{1}", SettingName.SType.DPad, index);
+				case SettingType.IDPad: return string.Format("{0}{1}", SettingName.SType.DPad, -index);
+				case SettingType.DPadButton: return string.Format("{0}{1}", SettingName.SType.DPadButton, index);
+				case SettingType.IDPadButton: return string.Format("{0}{1}", SettingName.SType.DPadButton, -index);
+				default: return "";
 			}
-			return string.Empty;
 		}
+
+		/// <summary>Convert Text value to INI value.</summary>
+		public static string ToIniValue(string textValue)
+		{
+			var index = 0;
+			var type = SettingType.None;
+			return TryParseTextValue(textValue, out type, out index)
+				? ToIniValue(type, index)
+				: "";
+		}
+
+
+		/// <summary>Convert INI value to Text value.</summary>
+		public static string ToTextValue(string iniValue)
+		{
+			var index = 0;
+			var type = SettingType.None;
+			return TryParseIniValue(iniValue, out type, out index)
+				? ToTextValue(type, index)
+				: "";
+		}
+
 
 		/// <summary>
 		/// Convert setting to text format for display to the user.
 		/// </summary>
 		/// <returns></returns>
-		public string ToTextValue()
+		public static string ToTextValue(SettingType type, int index)
 		{
 			var s = "";
-			if (Type == SettingType.DPadButton)
+			if (type == SettingType.DPadButton)
 			{
 				var dPadNames = Enum.GetNames(typeof(DPadEnum));
 				// Zero-based D-Pad Button Index [0-3];
-				var dPadButtonIndex = ((Index - 1) % 4);
+				var dPadButtonIndex = ((index - 1) % 4);
 				var dPadButtonName = dPadNames[dPadButtonIndex];
 				// Zero based D-Pad Index.
-				var dPadIndex = ((Index - 1) - dPadButtonIndex) / dPadNames.Length;
+				var dPadIndex = ((index - 1) - dPadButtonIndex) / dPadNames.Length;
 				s = string.Format("{0} {1} {2}", SettingType.DPad, dPadIndex + 1, dPadButtonName);
 			}
-			else if (Type != SettingType.None)
+			else if (type != SettingType.None)
 			{
-				s = string.Format("{0} {1}", Type, Index);
+				s = string.Format("{0} {1}", type, index);
 			}
 			return s;
 		}

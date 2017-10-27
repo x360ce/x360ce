@@ -8,6 +8,7 @@ namespace x360ce.App
 	{
 		public string Name { get; set; }
 		public int Offset { get; set; }
+		public string OffsetName { get; set; }
 		public int Instance { get; set; }
 		public short Usage { get; set; }
 		public ObjectAspect Aspect { get; set; }

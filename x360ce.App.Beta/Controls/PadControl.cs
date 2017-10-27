@@ -882,20 +882,20 @@ namespace x360ce.App.Controls
 			AppHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
 			AppHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
 
-			var axis =  DirectInputPanel.Axis;
+			var axis = DirectInputPanel.Axis;
 			bool success;
 			int index;
 			SettingType type;
-			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
+			success = SettingsConverter.TryParseTextValue(LeftThumbAxisXComboBox.Text, out type, out index);
 			if (success)
 				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
+			success = SettingsConverter.TryParseTextValue(LeftThumbAxisYComboBox.Text, out type, out index);
 			if (success)
 				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
+			success = SettingsConverter.TryParseTextValue(RightThumbAxisXComboBox.Text, out type, out index);
 			if (success)
 				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
+			success = SettingsConverter.TryParseTextValue(RightThumbAxisYComboBox.Text, out type, out index);
 			if (success)
 				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
 
@@ -943,36 +943,44 @@ namespace x360ce.App.Controls
 			// Add Buttons.
 			mi = new ToolStripMenuItem("Buttons");
 			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "Button {0}", "b{0}", device.CapButtonCount);
-			// Add Axes.
-			mi = new ToolStripMenuItem("Axes");
-			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", device.CapAxeCount);
-			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", device.CapAxeCount);
-			CreateItems(mi, "Half", "HAxis {0}", "x{0}", device.CapAxeCount);
-			CreateItems(mi, "Axis {0}", "a{0}", device.CapAxeCount);
-			// Add Sliders.            
-			mi = new ToolStripMenuItem("Sliders");
-			DiMenuStrip.Items.Add(mi);
-			var slidersCount = 8;
-			CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", slidersCount);
-			CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", slidersCount);
-			CreateItems(mi, "Half", "HSlider {0}", "h{0}", slidersCount);
-			CreateItems(mi, "Slider {0}", "s{0}", slidersCount);
-			// Add D-Pads.
-			mi = new ToolStripMenuItem("DPads");
-			DiMenuStrip.Items.Add(mi);
-			// Add D-Pad Top, Right, Bottom, Left button.
-			var dPadNames = Enum.GetNames(typeof(DPadEnum));
-			for (int p = 0; p < device.CapPovCount; p++)
+			CreateItems(mi, "Inverted", "IButton {0}", "-{0}", device.CapButtonCount);
+			CreateItems(mi, "Button {0}", "{0}", device.CapButtonCount);
+			if (device.CapAxeCount > 0)
 			{
-				var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.DPad);
-				mi.DropDownItems.Add(dPadItem);
-				for (int d = 0; d < dPadNames.Length; d++)
+				// Add Axes.
+				mi = new ToolStripMenuItem("Axes");
+				DiMenuStrip.Items.Add(mi);
+				CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", device.CapAxeCount);
+				CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", device.CapAxeCount);
+				CreateItems(mi, "Half", "HAxis {0}", "x{0}", device.CapAxeCount);
+				CreateItems(mi, "Axis {0}", "a{0}", device.CapAxeCount);
+				// Add Sliders.            
+				mi = new ToolStripMenuItem("Sliders");
+				DiMenuStrip.Items.Add(mi);
+				// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
+				var slidersCount = 8;
+				CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", slidersCount);
+				CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", slidersCount);
+				CreateItems(mi, "Half", "HSlider {0}", "h{0}", slidersCount);
+				CreateItems(mi, "Slider {0}", "s{0}", slidersCount);
+			}
+			// Add D-Pads.
+			if (device.CapPovCount > 0)
+			{
+				mi = new ToolStripMenuItem("DPads");
+				DiMenuStrip.Items.Add(mi);
+				// Add D-Pad Top, Right, Bottom, Left button.
+				var dPadNames = Enum.GetNames(typeof(DPadEnum));
+				for (int p = 0; p < device.CapPovCount; p++)
 				{
-					var dPadButtonIndex = p * 4 + d + 1;
-					var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.DPadButton, dPadButtonIndex);
-					dPadItem.DropDownItems.Add(dPadButtonItem);
+					var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.DPad);
+					mi.DropDownItems.Add(dPadItem);
+					for (int d = 0; d < dPadNames.Length; d++)
+					{
+						var dPadButtonIndex = p * 4 + d + 1;
+						var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.DPadButton, dPadButtonIndex);
+						dPadItem.DropDownItems.Add(dPadButtonItem);
+					}
 				}
 			}
 		}

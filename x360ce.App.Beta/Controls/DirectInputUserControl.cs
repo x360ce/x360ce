@@ -171,13 +171,13 @@ namespace x360ce.App.Controls
 			oldState = state;
 			//actions.Clear();
 			// X-axis.
-			DiAxisTable.Rows[0][1] = state.X;
-			DiAxisTable.Rows[0][2] = state.RotationX;
-			DiAxisTable.Rows[0][3] = state.AccelerationX;
+			DiAxisTable.Rows[0][1] = state.X; //
+			DiAxisTable.Rows[0][2] = state.RotationX; //
+			DiAxisTable.Rows[0][3] = state.AccelerationX; //
 			DiAxisTable.Rows[0][4] = state.AngularAccelerationX;
-			DiAxisTable.Rows[0][5] = state.ForceX;
+			DiAxisTable.Rows[0][5] = state.ForceX; //
 			DiAxisTable.Rows[0][6] = state.TorqueX;
-			DiAxisTable.Rows[0][7] = state.VelocityX;
+			DiAxisTable.Rows[0][7] = state.VelocityX; //
 			DiAxisTable.Rows[0][8] = state.AngularVelocityX;
 			// Y-axis.
 			DiAxisTable.Rows[1][1] = state.Y;
@@ -356,8 +356,9 @@ namespace x360ce.App.Controls
 			var maxGuidName = objects.Max(x => x.GuidName.Length);
 			var maxName = objects.Max(x => x.Name.Length);
 			var maxFlags = objects.Max(x => x.Flags.ToString().Length);
-			var names = new string[] { "Offset", "Usage", "Instance", "Guid", "Name", "Flags" };
-			var sizes = new int[] { 6, 6, 8, -maxGuidName, -maxName, -maxFlags };
+			var maxOffsetName = objects.Max(x => x.OffsetName.ToString().Length);
+			var names = new string[] { "OffsetName", "Offset", "Usage", "Instance", "Guid", "Name", "Flags" };
+			var sizes = new int[] { -maxOffsetName, 6, 6, 8, -maxGuidName, -maxName, -maxFlags };
 			var format = "// ";
 			for (int i = 0; i < sizes.Length; i++)
 			{
@@ -375,7 +376,7 @@ namespace x360ce.App.Controls
 			for (int i = 0; i < objects.Length; i++)
 			{
 				var o = objects[i];
-				sb.AppendFormat(format, o.Offset, o.Usage, o.Instance, o.GuidName, o.Name, o.Flags);
+				sb.AppendFormat(format, o.OffsetName, o.Offset, o.Usage, o.Instance, o.GuidName, o.Name, o.Flags);
 				sb.AppendLine();
 			}
 			Clipboard.SetDataObject(sb.ToString());

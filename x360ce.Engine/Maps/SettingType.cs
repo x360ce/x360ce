@@ -14,6 +14,8 @@
 		HSlider,
 		IHSlider,
 		DPad,
+		IDPad,
 		DPadButton,
+		IDPadButton,
 	}
 }

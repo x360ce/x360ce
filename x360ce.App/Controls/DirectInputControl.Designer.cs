@@ -91,13 +91,6 @@
 			this.DeviceDetailsTabControl = new System.Windows.Forms.TabControl();
 			this.DiObjectsTabPage = new System.Windows.Forms.TabPage();
 			this.DiObjectsDataGridView = new System.Windows.Forms.DataGridView();
-			this.ObjectsOffsetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ObjectsUsageColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ObjectsInstanceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ObjectsGuidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ObjectsNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ObjectsAspectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CopyContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CopyWithHeadersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
@@ -107,6 +100,13 @@
 			this.MapToPadComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceVendorNameTextBox = new System.Windows.Forms.TextBox();
 			this.DeviceVendorNameLabel = new System.Windows.Forms.Label();
+			this.ObjectsOffsetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ObjectsUsageColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ObjectsInstanceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ObjectsGuidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ObjectsNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ObjectsAspectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
 			this.DeviceDetailsTabControl.SuspendLayout();
@@ -137,7 +137,7 @@
 			this.DiEffectsDataGridView.RowHeadersVisible = false;
 			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
 			this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
-			this.DiEffectsDataGridView.Size = new System.Drawing.Size(764, 199);
+			this.DiEffectsDataGridView.Size = new System.Drawing.Size(764, 176);
 			this.DiEffectsDataGridView.TabIndex = 0;
 			// 
 			// DiEffectNameColumn
@@ -671,6 +671,95 @@
 			this.DiObjectsDataGridView.Size = new System.Drawing.Size(764, 176);
 			this.DiObjectsDataGridView.TabIndex = 1;
 			// 
+			// CopyContextMenuStrip
+			// 
+			this.CopyContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CopyWithHeadersMenuItem});
+			this.CopyContextMenuStrip.Name = "CopyContextMenuStrip";
+			this.CopyContextMenuStrip.Size = new System.Drawing.Size(175, 26);
+			// 
+			// CopyWithHeadersMenuItem
+			// 
+			this.CopyWithHeadersMenuItem.Name = "CopyWithHeadersMenuItem";
+			this.CopyWithHeadersMenuItem.Size = new System.Drawing.Size(174, 22);
+			this.CopyWithHeadersMenuItem.Text = "Copy with Headers";
+			this.CopyWithHeadersMenuItem.Click += new System.EventHandler(this.CopyWithHeadersMenuItem_Click);
+			// 
+			// DiEffectsDataTabPage
+			// 
+			this.DiEffectsDataTabPage.Controls.Add(this.DiEffectsDataGridView);
+			this.DiEffectsDataTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DiEffectsDataTabPage.Name = "DiEffectsDataTabPage";
+			this.DiEffectsDataTabPage.Size = new System.Drawing.Size(764, 176);
+			this.DiEffectsDataTabPage.TabIndex = 1;
+			this.DiEffectsDataTabPage.Text = "Force Feedback Effects";
+			this.DiEffectsDataTabPage.UseVisualStyleBackColor = true;
+			// 
+			// SlidersTextBox
+			// 
+			this.SlidersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.SlidersTextBox.Location = new System.Drawing.Point(743, 29);
+			this.SlidersTextBox.Name = "SlidersTextBox";
+			this.SlidersTextBox.ReadOnly = true;
+			this.SlidersTextBox.Size = new System.Drawing.Size(32, 20);
+			this.SlidersTextBox.TabIndex = 0;
+			this.SlidersTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// SlidersLabel
+			// 
+			this.SlidersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.SlidersLabel.AutoSize = true;
+			this.SlidersLabel.Location = new System.Drawing.Point(682, 32);
+			this.SlidersLabel.Name = "SlidersLabel";
+			this.SlidersLabel.Size = new System.Drawing.Size(41, 13);
+			this.SlidersLabel.TabIndex = 0;
+			this.SlidersLabel.Text = "Sliders:";
+			// 
+			// MapToControllerLabel
+			// 
+			this.MapToControllerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.MapToControllerLabel.AutoSize = true;
+			this.MapToControllerLabel.Location = new System.Drawing.Point(552, 110);
+			this.MapToControllerLabel.Name = "MapToControllerLabel";
+			this.MapToControllerLabel.Size = new System.Drawing.Size(47, 13);
+			this.MapToControllerLabel.TabIndex = 0;
+			this.MapToControllerLabel.Text = "Map To:";
+			// 
+			// MapToPadComboBox
+			// 
+			this.MapToPadComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.MapToPadComboBox.FormattingEnabled = true;
+			this.MapToPadComboBox.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4"});
+			this.MapToPadComboBox.Location = new System.Drawing.Point(606, 107);
+			this.MapToPadComboBox.Name = "MapToPadComboBox";
+			this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
+			this.MapToPadComboBox.TabIndex = 1;
+			// 
+			// DeviceVendorNameTextBox
+			// 
+			this.DeviceVendorNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.DeviceVendorNameTextBox.Location = new System.Drawing.Point(34, 3);
+			this.DeviceVendorNameTextBox.Name = "DeviceVendorNameTextBox";
+			this.DeviceVendorNameTextBox.ReadOnly = true;
+			this.DeviceVendorNameTextBox.Size = new System.Drawing.Size(410, 20);
+			this.DeviceVendorNameTextBox.TabIndex = 0;
+			// 
+			// DeviceVendorNameLabel
+			// 
+			this.DeviceVendorNameLabel.AutoSize = true;
+			this.DeviceVendorNameLabel.Location = new System.Drawing.Point(3, 6);
+			this.DeviceVendorNameLabel.Name = "DeviceVendorNameLabel";
+			this.DeviceVendorNameLabel.Size = new System.Drawing.Size(25, 13);
+			this.DeviceVendorNameLabel.TabIndex = 0;
+			this.DeviceVendorNameLabel.Text = "VN:";
+			// 
 			// ObjectsOffsetColumn
 			// 
 			this.ObjectsOffsetColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -741,6 +830,7 @@
 			this.ObjectsAspectColumn.ReadOnly = true;
 			this.ObjectsAspectColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			this.ObjectsAspectColumn.Visible = false;
+			this.ObjectsAspectColumn.Width = 46;
 			// 
 			// ObjectsFlagsColumn
 			// 
@@ -750,95 +840,6 @@
 			this.ObjectsFlagsColumn.Name = "ObjectsFlagsColumn";
 			this.ObjectsFlagsColumn.ReadOnly = true;
 			this.ObjectsFlagsColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// CopyContextMenuStrip
-			// 
-			this.CopyContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CopyWithHeadersMenuItem});
-			this.CopyContextMenuStrip.Name = "CopyContextMenuStrip";
-			this.CopyContextMenuStrip.Size = new System.Drawing.Size(175, 26);
-			// 
-			// CopyWithHeadersMenuItem
-			// 
-			this.CopyWithHeadersMenuItem.Name = "CopyWithHeadersMenuItem";
-			this.CopyWithHeadersMenuItem.Size = new System.Drawing.Size(174, 22);
-			this.CopyWithHeadersMenuItem.Text = "Copy with Headers";
-			this.CopyWithHeadersMenuItem.Click += new System.EventHandler(this.CopyWithHeadersMenuItem_Click);
-			// 
-			// DiEffectsDataTabPage
-			// 
-			this.DiEffectsDataTabPage.Controls.Add(this.DiEffectsDataGridView);
-			this.DiEffectsDataTabPage.Location = new System.Drawing.Point(4, 22);
-			this.DiEffectsDataTabPage.Name = "DiEffectsDataTabPage";
-			this.DiEffectsDataTabPage.Size = new System.Drawing.Size(764, 199);
-			this.DiEffectsDataTabPage.TabIndex = 1;
-			this.DiEffectsDataTabPage.Text = "Force Feedback Effects";
-			this.DiEffectsDataTabPage.UseVisualStyleBackColor = true;
-			// 
-			// SlidersTextBox
-			// 
-			this.SlidersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.SlidersTextBox.Location = new System.Drawing.Point(743, 29);
-			this.SlidersTextBox.Name = "SlidersTextBox";
-			this.SlidersTextBox.ReadOnly = true;
-			this.SlidersTextBox.Size = new System.Drawing.Size(32, 20);
-			this.SlidersTextBox.TabIndex = 0;
-			this.SlidersTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// SlidersLabel
-			// 
-			this.SlidersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.SlidersLabel.AutoSize = true;
-			this.SlidersLabel.Location = new System.Drawing.Point(682, 32);
-			this.SlidersLabel.Name = "SlidersLabel";
-			this.SlidersLabel.Size = new System.Drawing.Size(41, 13);
-			this.SlidersLabel.TabIndex = 0;
-			this.SlidersLabel.Text = "Sliders:";
-			// 
-			// MapToControllerLabel
-			// 
-			this.MapToControllerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.MapToControllerLabel.AutoSize = true;
-			this.MapToControllerLabel.Location = new System.Drawing.Point(552, 110);
-			this.MapToControllerLabel.Name = "MapToControllerLabel";
-			this.MapToControllerLabel.Size = new System.Drawing.Size(47, 13);
-			this.MapToControllerLabel.TabIndex = 0;
-			this.MapToControllerLabel.Text = "Map To:";
-			// 
-			// MapToPadComboBox
-			// 
-			this.MapToPadComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.MapToPadComboBox.FormattingEnabled = true;
-			this.MapToPadComboBox.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4"});
-			this.MapToPadComboBox.Location = new System.Drawing.Point(606, 107);
-			this.MapToPadComboBox.Name = "MapToPadComboBox";
-			this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
-			this.MapToPadComboBox.TabIndex = 1;
-			// 
-			// DeviceVendorNameTextBox
-			// 
-			this.DeviceVendorNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceVendorNameTextBox.Location = new System.Drawing.Point(34, 3);
-			this.DeviceVendorNameTextBox.Name = "DeviceVendorNameTextBox";
-			this.DeviceVendorNameTextBox.ReadOnly = true;
-			this.DeviceVendorNameTextBox.Size = new System.Drawing.Size(410, 20);
-			this.DeviceVendorNameTextBox.TabIndex = 0;
-			// 
-			// DeviceVendorNameLabel
-			// 
-			this.DeviceVendorNameLabel.AutoSize = true;
-			this.DeviceVendorNameLabel.Location = new System.Drawing.Point(3, 6);
-			this.DeviceVendorNameLabel.Name = "DeviceVendorNameLabel";
-			this.DeviceVendorNameLabel.Size = new System.Drawing.Size(25, 13);
-			this.DeviceVendorNameLabel.TabIndex = 0;
-			this.DeviceVendorNameLabel.Text = "VN:";
 			// 
 			// DirectInputControl
 			// 
@@ -961,6 +962,8 @@
 		public System.Windows.Forms.ComboBox MapToPadComboBox;
 		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem CopyWithHeadersMenuItem;
+		public System.Windows.Forms.TextBox DeviceVendorNameTextBox;
+		private System.Windows.Forms.Label DeviceVendorNameLabel;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsOffsetColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsUsageColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
@@ -968,7 +971,5 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsAspectColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsFlagsColumn;
-		public System.Windows.Forms.TextBox DeviceVendorNameTextBox;
-		private System.Windows.Forms.Label DeviceVendorNameLabel;
 	}
 }

@@ -11,7 +11,7 @@ namespace x360ce.Engine
 		public Map(string value, GamepadButtonFlags flag, string deadZone = null)
 		{
 			Load(value);
-			
+
 			ButtonFlag = flag;
 			if (!string.IsNullOrEmpty(deadZone))
 				int.TryParse(deadZone, out DeadZone);
@@ -21,7 +21,7 @@ namespace x360ce.Engine
 		void Load(string value)
 		{
 			// Source parameters.
-			SettingsConverter.TryParseIndexAndType(value, out Index, out Type);
+			SettingsConverter.TryParseIniValue(value, out Type, out Index);
 			IsButton = Type == SettingType.Button || Type == SettingType.IButton;
 			IsAxis = Type == SettingType.Axis || Type == SettingType.IAxis || Type == SettingType.HAxis || Type == SettingType.IHAxis;
 			IsSlider = Type == SettingType.Slider || Type == SettingType.ISlider || Type == SettingType.HSlider || Type == SettingType.IHSlider;

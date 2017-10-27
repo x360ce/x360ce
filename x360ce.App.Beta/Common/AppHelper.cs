@@ -68,6 +68,17 @@ namespace x360ce.App
 		}
 
 
+		public static string GetOffsetName(Joystick device, int offset)
+		{
+			switch (device.Information.Type)
+			{
+				case DeviceType.Mouse: return ((MouseOffset)offset).ToString();
+				case DeviceType.Keyboard: return string.Format("Buttons{0}", offset - 1);
+				case DeviceType.Joystick: return ((JoystickOffset)offset).ToString();
+				default: return "";
+			}
+		}
+
 		public static DeviceObjectItem[] GetDeviceObjects(Joystick device)
 		{
 			var og = typeof(SharpDX.DirectInput.ObjectGuid);
@@ -81,6 +92,7 @@ namespace x360ce.App
 				var item = new DeviceObjectItem()
 				{
 					Name = o.Name,
+					OffsetName = GetOffsetName(device, o.Offset),
 					Offset = o.Offset,
 					Instance = o.ObjectId.InstanceNumber,
 					Usage = o.Usage,
@@ -104,7 +116,7 @@ namespace x360ce.App
 			effects.Transparent(newImage, 50);
 			return newImage;
 		}
-		
+
 		/// <summary>
 		/// Remove explicit file rules and leave inherited rules only.
 		/// Allow built-in users to write and modify file.
@@ -222,18 +234,6 @@ namespace x360ce.App
 		/// This helps not to trigger control events when doing frequent events.
 		/// </summary>
 		public static void SetText(Control control, string format, params object[] args)
-        {
-            var text = (args == null)
-                ? format
-                : string.Format(format, args);
-            if (control.Text != text) control.Text = text;
-        }
-
-        /// <summary>
-        /// Change value if it is different only.
-        /// This helps not to trigger control events when doing frequent events.
-        /// </summary>
-        public static void SetText(ToolStripItem control, string format, params object[] args)
 		{
 			var text = (args == null)
 				? format
@@ -241,14 +241,26 @@ namespace x360ce.App
 			if (control.Text != text) control.Text = text;
 		}
 
-        /// <summary>
-        /// Change value if it is different only.
-        /// This helps not to trigger control events when doing frequent events.
-        /// </summary>
-        public static void SetChecked(CheckBox control, bool check)
-        {
-            if (control.Checked != check) control.Checked = check;
-        }
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetText(ToolStripItem control, string format, params object[] args)
+		{
+			var text = (args == null)
+				? format
+				: string.Format(format, args);
+			if (control.Text != text) control.Text = text;
+		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetChecked(CheckBox control, bool check)
+		{
+			if (control.Checked != check) control.Checked = check;
+		}
 
 		public static MapToMask GetMapFlag(MapTo mapTo)
 		{

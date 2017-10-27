@@ -492,7 +492,7 @@ namespace x360ce.App
 				}
 				else
 				{
-					var text = new SettingsConverter(value, key).ToTextValue();
+					var text = SettingsConverter.ToTextValue(value);
 					SetComboBoxValue(cbx, text);
 				}
 			}
@@ -584,7 +584,7 @@ namespace x360ce.App
 				}
 				else
 				{
-					v = new SettingsConverter(control.Text, key).ToIniValue();
+					v = SettingsConverter.ToIniValue(control.Text);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
 				}

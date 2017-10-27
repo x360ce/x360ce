@@ -755,16 +755,16 @@ namespace x360ce.App.Controls
             bool success;
             int index;
             SettingType type;
-            success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisXComboBox.Text, out index, out type);
+            success = SettingsConverter.TryParseTextValue(LeftThumbAxisXComboBox.Text, out type, out index);
             if (success)
                 LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
-            success = SettingsConverter.TryParseIndexAndType(LeftThumbAxisYComboBox.Text, out index, out type);
+            success = SettingsConverter.TryParseTextValue(LeftThumbAxisYComboBox.Text, out type, out index);
             if (success)
                 LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
-            success = SettingsConverter.TryParseIndexAndType(RightThumbAxisXComboBox.Text, out index, out type);
+            success = SettingsConverter.TryParseTextValue(RightThumbAxisXComboBox.Text, out type, out index);
             if (success)
                 RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
-            success = SettingsConverter.TryParseIndexAndType(RightThumbAxisYComboBox.Text, out index, out type);
+            success = SettingsConverter.TryParseTextValue(RightThumbAxisYComboBox.Text, out type, out index);
             if (success)
                 RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
             // Update controller images.

@@ -15,10 +15,103 @@ namespace x360ce.Engine
 		public int[] Povs = new int[0];
 		public bool[] Buttons = new bool[0];
 
+		// Return bitmasked integer about present axis.
+		// bit 1 = 1 - Axis 1 is present
+		// bit 2 = 0 - Axis 2 is missing
+		// bit 3 = 1 - Axis 3 is present
+		// ...
+		public static int GetAxisMask(Joystick device)
+		{
+			int mask = 0;
+			if (device.Information.Type == DeviceType.Joystick)
+			{
+				var items = device.GetObjects(DeviceObjectTypeFlags.All);
+				// Must have same order as in axis.
+				var list = new List<JoystickOffset>{
+					JoystickOffset.X,
+					JoystickOffset.Y,
+					JoystickOffset.Z,
+					JoystickOffset.RotationX,
+					JoystickOffset.RotationY,
+					JoystickOffset.RotationZ,
+					JoystickOffset.AccelerationX,
+					JoystickOffset.AccelerationY,
+					JoystickOffset.AccelerationZ,
+					JoystickOffset.AngularAccelerationX,
+					JoystickOffset.AngularAccelerationY,
+					JoystickOffset.AngularAccelerationZ,
+					JoystickOffset.ForceX,
+					JoystickOffset.ForceY,
+					JoystickOffset.ForceZ,
+					JoystickOffset.TorqueX,
+					JoystickOffset.TorqueY,
+					JoystickOffset.TorqueZ,
+					JoystickOffset.VelocityX,
+					JoystickOffset.VelocityY,
+					JoystickOffset.VelocityZ,
+					JoystickOffset.AngularVelocityX,
+					JoystickOffset.AngularVelocityY,
+					JoystickOffset.AngularVelocityZ,
+				};
+				foreach (var item in items)
+				{
+					var offset = (JoystickOffset)item.Offset;
+					var index = list.IndexOf(offset);
+					if (index > -1)
+						mask |= (int)Math.Pow(2, index);
+				}
+			}
+			else if (device.Information.Type == DeviceType.Mouse)
+			{
+				var items = device.GetObjects(DeviceObjectTypeFlags.All);
+				// Must have same order as in Axis[] property.
+				var list = new List<MouseOffset>{
+					MouseOffset.X,
+					MouseOffset.Y,
+					MouseOffset.Z,
+				};
+				foreach (var item in items)
+				{
+					var offset = (MouseOffset)item.Offset;
+					var index = list.IndexOf(offset);
+					if (index > -1)
+						mask |= (int)Math.Pow(2, index);
+				}
+			}
+			return mask;
+		}
+
+		public static int GetSlidersMask(Joystick device)
+		{
+			int mask = 0;
+			if (device.Information.Type == DeviceType.Joystick)
+			{
+				var items = device.GetObjects(DeviceObjectTypeFlags.All);
+				// Must have same order as in Sliders[] property.
+				var list = new List<JoystickOffset>{
+						JoystickOffset.Sliders0,
+						JoystickOffset.Sliders1,
+						JoystickOffset.AccelerationSliders0,
+						JoystickOffset.AccelerationSliders1,
+						JoystickOffset.ForceSliders0,
+						JoystickOffset.ForceSliders1,
+						JoystickOffset.VelocitySliders0,
+						JoystickOffset.VelocitySliders1,
+				};
+				foreach (var item in items)
+				{
+					var offset = (JoystickOffset)item.Offset;
+					var index = list.IndexOf(offset);
+					if (index > -1)
+						mask |= (int)Math.Pow(2, index);
+				}
+			}
+			return mask;
+		}
+
 		public CustomDiState(JoystickState state)
 		{
-
-			// Fill axis.
+			// Fill 24 axis.
 			Axis = new int[] {
 				state.X,
 				state.Y,
@@ -45,14 +138,14 @@ namespace x360ce.Engine
 				state.AngularVelocityY,
 				state.AngularVelocityZ,
 			};
-			// Fill Sliders.
+			// Fill 8 sliders.
 			List<int> sl = new List<int>();
 			sl.AddRange(state.Sliders);
 			sl.AddRange(state.AccelerationSliders);
 			sl.AddRange(state.ForceSliders);
 			sl.AddRange(state.VelocitySliders);
-            Sliders = sl.ToArray();
-            // Fill POVs.
+			Sliders = sl.ToArray();
+			// Fill POVs.
 			Povs = state.PointOfViewControllers.ToArray();
 			// Fill buttons.
 			Buttons = state.Buttons.ToArray();
@@ -88,12 +181,12 @@ namespace x360ce.Engine
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
 						var v = state.Povs[0];
-                        if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
-                        if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
-                        if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
-                        if ((DPadEnum)v == DPadEnum.Left) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
-                    }
-                }
+						if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
+						if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
+						if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
+						if ((DPadEnum)v == DPadEnum.Left) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
+					}
+				}
 			};
 			return list.ToArray();
 		}
