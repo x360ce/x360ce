@@ -1,10 +1,10 @@
-Notice: Games listed here do not necessarily reflect the games included in the GDB included in the lib download.
+﻿Notice: Games listed here do not necessarily reflect the games included in the GDB included in the lib download.
 
 To update the gdb, [save this page over the top of your gdb](https://github.com/x360ce/x360ce/blob/master/x360ce/Support/x360ce.gdb)
 
 # HookMode
 
-Items in these lists are in need of testing with the new hookmask system
+Items in these lists are in need of testing with the new hookmask system (DO NOT ADD TO THE HOOK MODE SECTIONS)
 
 ## Normal Mode
 
@@ -43,7 +43,6 @@ Items in these lists are in need of testing with the new hookmask system
   1. Puzzle Quest 2
   1. Resident Evil 5
   1. Resident Evil: Operation Raccoon City
-  1. Rise of the Tomb Rider 
   1. Saboteur, The
   1. Serious Sam HD - The Second Encounter
   1. Silent Hill Homecoming
@@ -109,6 +108,7 @@ This is the new system utilised by r574+
   1. Call of Duty Ghosts (64bit only)
   1. Call of Juarez: Gunslinger
   1. Capsized (If using Type 2 rumble, increase motor duration to 500)
+  1. Carmageddon Max Damage
   1. Carmageddon Reincarnation
   1. Castle Crashers
   1. Castlevania: Lords of Shadow – Ultimate Edition
@@ -125,6 +125,7 @@ This is the new system utilised by r574+
   1. DmC - Devil May Cry
   1. Dragon Age: Inquisition (uses xinput9_1_0.dll) (64bit only)
   1. Dragon Ball Xenoverse
+  1. Dragon Ball Xenoverse 2
   1. DuckTales Remastered
   1. Dungeon Defenders
   1. Dust: An Elysian Tail
@@ -172,9 +173,11 @@ This is the new system utilised by r574+
   1. NBA 2k13
   1. NBA 2k14
   1. NBA 2k15
+  1. Need For Speed 16 (uses xinput9_1_0.dll) (64bit only) (requires clearing all the Dinput mapped buttons)
   1. Need For Speed Most Wanted 2012
   1. Nuclear Throne
   1. Outlast (32bit and 64bit executables, defaults to 64bit on 64bit OS)
+  1. Pang
   1. Penny Arcade's On the Rain-Slick Precipice of Darkness 3
   1. Penny Arcade's On the Rain-Slick Precipice of Darkness 4
   1. Pro Evolution Soccer 2010 (uses xinput1_1.dll)
@@ -184,6 +187,7 @@ This is the new system utilised by r574+
   1. Remember Me
   1. Resident Evil 6 (needs dinput8.dll)
   1. Ring Runner
+  1. Rise of the Tomb Rider 
   1. Rise of the Triad (2013)
   1. Rogue Legacy
   1. Rusty Hearts (uses xinput9_1_0.dll and xinput1_3.dll)
@@ -248,12 +252,16 @@ This is the new system utilised by r574+
   1. Assassin's Creed Unity (Hook\_DI + HookVIDPID + HookName) (64bit only)
   1. Baconing, The (HookLL + HookCOM)
   1. Burnout Paradise - The Ultimate Box (HookCOM + HookDI + HookVIDPID + HookName)
+  1. Carmageddon Max Damage (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll)
+  1. Carmageddon Reincarnation (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll)
   1. FIFA 14 (HookCOM + HookDI + HookVIDPID + HookName)
+  1. Final Fantasy - FFX & FFX-2 HD Remastered (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll) (Requires Untitled Project X)
   1. Final Fantasy XIV: A Realm Reborn (HookCOM + HookDI + HookVIDPID) (DirectX 11 client is 64bit only)
   1. I Am Alive (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll)
   1. Kane & Lynch - Dead Men (HookCOM + HookDI + HookVIDPID + HookName)
   1. Metal Gear Solid V: Ground Zeroes (HookCOM + Hook\_DI + HookVIDPID) (64bit only)
   1. Need for Speed: Rivals (HookCOM + HookDI + HookVIDPID) (uses xinput9_1_0.dll) (32bit and 64bit executables, always uses 64bit on 64bit OS)
+  1. Rocket League (HookCOM + HookDI + HookVIDPID + HookSA)
   1. Slam Bolt Scrappers (HookCOM + HookDI + HookVIDPID)
   1. Teenage Mutant Ninja Turtles: Out of Shadows (HookCOM + HookDI + HookVIDPID)
   1. Tom Clancy's H.A.W.X (HookCOM + HookDI + HookVIDPID)
