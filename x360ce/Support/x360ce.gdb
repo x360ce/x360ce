@@ -118,6 +118,10 @@ HookMask = 0x00000002
 Name = Burnout Paradise - The Ultimate Box
 HookMask=0x0000001E
 
+[Carmageddon_Max_Damage.exe]
+Name = Carmageddon Max Damage
+HookMask = 0x0000000E
+
 [Carmageddon_Reincarnation.exe]
 Name = Carmageddon Reincarnation
 HookMask = 0x0000000E
@@ -156,6 +160,10 @@ HookMask = 0x00000002
 
 [DBXV.exe]
 Name = Dragon Ball Xenoverse
+HookMask = 0x00000002
+
+[DBXV2.exe]
+Name = Dragon Ball Xenoverse 2
 HookMask = 0x00000002
 
 [DeadIslandGame.exe]
@@ -213,6 +221,14 @@ HookMask = 0x00000002
 [farcry3_d3d11.exe]
 Name = Farcry 3 DX11
 HookMask = 0x00000002
+
+[ffx.exe]
+Name = Final Fantasy X
+HookMask = 0x0000000E
+
+[ffx-2.exe]
+Name = Final Fantasy X-2
+HookMask = 0x0000000E
 
 [ffxiv.exe]
 Name = Final Fantasy XIV: A Realm Reborn
