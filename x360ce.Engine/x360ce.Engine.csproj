@@ -123,6 +123,7 @@
     <Compile Include="Common\Enum\DInputMask.cs" />
     <Compile Include="Common\Enum\DPadEnum.cs" />
     <Compile Include="Common\Enum\EffectDirection.cs" />
+    <Compile Include="Common\Enum\EmulationType.cs" />
     <Compile Include="Common\Enum\EnabledState.cs" />
     <Compile Include="Common\Enum\EffectType.cs" />
     <Compile Include="Common\Enum\GameRefreshStatus.cs" />

@@ -118,7 +118,7 @@ namespace x360ce.App.Controls
 			var game = MainForm.Current.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			// Update Virtual.
-			var virt = game != null && ((MapToMask)game.VirtualMask).HasFlag(flag);
+			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableVirtualButton.Checked = virt;
 			EnableVirtualButton.Image = virt
 				? x360ce.App.Properties.Resources.checkbox_16x16
@@ -1523,22 +1523,22 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void EnableVirtualButton_Click(object sender, EventArgs e)
+		private void EnableMappingButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
-			var value = (MapToMask)game.VirtualMask;
+			var value = (MapToMask)game.EnableMask;
 			var autoMap = value.HasFlag(flag);
 			// If AUTO enabled then...
 			if (autoMap)
 			{
 				// Remove AUTO.
-				game.VirtualMask = (int)(value & ~flag);
+				game.EnableMask = (int)(value & ~flag);
 			}
 			else
 			{
 				// Add AUTO.
-				game.VirtualMask = (int)(value | flag);
+				game.EnableMask = (int)(value | flag);
 			}
 		}
 	}

@@ -22,8 +22,12 @@ namespace x360ce.App.Controls
 			XInputCheckBoxes = XInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			HookCheckBoxes = HookMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			AutoMapCheckBoxes = AutoMapMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
+			// Fill architecture combo box.
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
+			// Fill emulation type combo box.
+			var etItems = (EmulationType[])Enum.GetValues(typeof(EmulationType));
+			foreach (var item in etItems) EmulationTypeComboBox.Items.Add(item);
 			lock (CurrentGameLock)
 			{
 				EnableEvents();
@@ -67,6 +71,9 @@ namespace x360ce.App.Controls
 			var hookMask = (HookMask)item.HookMask;
 			var autoMapMask = (MapToMask)item.AutoMapMask;
 			SetMask(en, hookMask, dInputMask, xInputMask, autoMapMask, item.FullPath, item.ProcessorArchitecture);
+			EmulationTypeComboBox.SelectedItem = Enum.IsDefined(typeof(EmulationType), item.EmulationType)
+					? (EmulationType)item.EmulationType
+					: EmulationType.None;
 			HookModeFakeVidNumericUpDown_ValueChanged2(null, null);
 			HookModeFakeVidNumericUpDown.Value = item.FakeVID;
 			HookModeFakePidNumericUpDown.Value = item.FakePID;
@@ -287,7 +294,7 @@ namespace x360ce.App.Controls
 				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
 				_CurrentGame.HookMask = _DefaultSettings.HookMask;
 				_CurrentGame.AutoMapMask = (int)MapToMask.None;
-				_CurrentGame.VirtualMask = (int)MapToMask.None;
+				_CurrentGame.EnableMask = (int)MapToMask.None;
 				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
 				_CurrentGame.DInputFile = _DefaultSettings.DInputFile ?? "";
 				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;

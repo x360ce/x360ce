@@ -71,12 +71,14 @@
 			this.DInputMaskGroupBox = new System.Windows.Forms.GroupBox();
 			this.OtherOptionsGroupBox = new System.Windows.Forms.GroupBox();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
-			this.ActionGroupBox = new System.Windows.Forms.GroupBox();
-			this.ResetToDefaultButton = new System.Windows.Forms.Button();
-			this.SynchronizeSettingsButton = new System.Windows.Forms.Button();
 			this.GoogleSearchButton = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
 			this.button4 = new System.Windows.Forms.Button();
+			this.ActionGroupBox = new System.Windows.Forms.GroupBox();
+			this.ResetToDefaultButton = new System.Windows.Forms.Button();
+			this.SynchronizeSettingsButton = new System.Windows.Forms.Button();
+			this.EmulationTypeComboBox = new System.Windows.Forms.ComboBox();
+			this.EmulationTypeLabel = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
@@ -425,7 +427,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.DInputFileTextBox.Location = new System.Drawing.Point(90, 71);
 			this.DInputFileTextBox.Name = "DInputFileTextBox";
-			this.DInputFileTextBox.Size = new System.Drawing.Size(467, 20);
+			this.DInputFileTextBox.Size = new System.Drawing.Size(324, 20);
 			this.DInputFileTextBox.TabIndex = 34;
 			this.DInputFileTextBox.TextChanged += new System.EventHandler(this.DInputFileTextBox_TextChanged);
 			// 
@@ -587,7 +589,9 @@
 			this.OtherOptionsGroupBox.Controls.Add(this.TimeoutLabel);
 			this.OtherOptionsGroupBox.Controls.Add(this.DInputFileTextBox);
 			this.OtherOptionsGroupBox.Controls.Add(this.DInputFileLabel);
+			this.OtherOptionsGroupBox.Controls.Add(this.EmulationTypeComboBox);
 			this.OtherOptionsGroupBox.Controls.Add(this.ProcessorArchitectureComboBox);
+			this.OtherOptionsGroupBox.Controls.Add(this.EmulationTypeLabel);
 			this.OtherOptionsGroupBox.Controls.Add(this.ProcessorArchitectureLabel);
 			this.OtherOptionsGroupBox.Location = new System.Drawing.Point(3, 124);
 			this.OtherOptionsGroupBox.Name = "OtherOptionsGroupBox";
@@ -607,47 +611,6 @@
 			this.groupBox5.TabIndex = 42;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Help";
-			// 
-			// ActionGroupBox
-			// 
-			this.ActionGroupBox.Controls.Add(this.ResetToDefaultButton);
-			this.ActionGroupBox.Controls.Add(this.SynchronizeSettingsButton);
-			this.ActionGroupBox.Location = new System.Drawing.Point(572, 3);
-			this.ActionGroupBox.Name = "ActionGroupBox";
-			this.ActionGroupBox.Size = new System.Drawing.Size(191, 84);
-			this.ActionGroupBox.TabIndex = 43;
-			this.ActionGroupBox.TabStop = false;
-			this.ActionGroupBox.Text = "Action";
-			// 
-			// ResetToDefaultButton
-			// 
-			this.ResetToDefaultButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_16x16;
-			this.ResetToDefaultButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.ResetToDefaultButton.Location = new System.Drawing.Point(6, 19);
-			this.ResetToDefaultButton.Name = "ResetToDefaultButton";
-			this.ResetToDefaultButton.Size = new System.Drawing.Size(179, 24);
-			this.ResetToDefaultButton.TabIndex = 31;
-			this.ResetToDefaultButton.Text = "Reset to Default";
-			this.ResetToDefaultButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.ResetToDefaultButton.UseVisualStyleBackColor = true;
-			this.ResetToDefaultButton.Click += new System.EventHandler(this.ResetToDefaultButton_Click);
-			// 
-			// SynchronizeSettingsButton
-			// 
-			this.SynchronizeSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_16x16;
-			this.SynchronizeSettingsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(6, 49);
-			this.SynchronizeSettingsButton.Name = "SynchronizeSettingsButton";
-			this.SynchronizeSettingsButton.Size = new System.Drawing.Size(179, 24);
-			this.SynchronizeSettingsButton.TabIndex = 31;
-			this.SynchronizeSettingsButton.Text = "Apply/Synchronize Settings";
-			this.SynchronizeSettingsButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
-			this.SynchronizeSettingsButton.Click += new System.EventHandler(this.SynchronizeSettingsButton_Click);
 			// 
 			// GoogleSearchButton
 			// 
@@ -696,6 +659,69 @@
 			this.button4.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.button4.UseVisualStyleBackColor = true;
 			this.button4.Click += new System.EventHandler(this.NGEmuThreadLinkButton_Click);
+			// 
+			// ActionGroupBox
+			// 
+			this.ActionGroupBox.Controls.Add(this.ResetToDefaultButton);
+			this.ActionGroupBox.Controls.Add(this.SynchronizeSettingsButton);
+			this.ActionGroupBox.Location = new System.Drawing.Point(572, 3);
+			this.ActionGroupBox.Name = "ActionGroupBox";
+			this.ActionGroupBox.Size = new System.Drawing.Size(191, 84);
+			this.ActionGroupBox.TabIndex = 43;
+			this.ActionGroupBox.TabStop = false;
+			this.ActionGroupBox.Text = "Action";
+			// 
+			// ResetToDefaultButton
+			// 
+			this.ResetToDefaultButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_16x16;
+			this.ResetToDefaultButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ResetToDefaultButton.Location = new System.Drawing.Point(6, 19);
+			this.ResetToDefaultButton.Name = "ResetToDefaultButton";
+			this.ResetToDefaultButton.Size = new System.Drawing.Size(179, 24);
+			this.ResetToDefaultButton.TabIndex = 31;
+			this.ResetToDefaultButton.Text = "Reset to Default";
+			this.ResetToDefaultButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.ResetToDefaultButton.UseVisualStyleBackColor = true;
+			this.ResetToDefaultButton.Click += new System.EventHandler(this.ResetToDefaultButton_Click);
+			// 
+			// SynchronizeSettingsButton
+			// 
+			this.SynchronizeSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_16x16;
+			this.SynchronizeSettingsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(6, 49);
+			this.SynchronizeSettingsButton.Name = "SynchronizeSettingsButton";
+			this.SynchronizeSettingsButton.Size = new System.Drawing.Size(179, 24);
+			this.SynchronizeSettingsButton.TabIndex = 31;
+			this.SynchronizeSettingsButton.Text = "Apply/Synchronize Settings";
+			this.SynchronizeSettingsButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
+			this.SynchronizeSettingsButton.Click += new System.EventHandler(this.SynchronizeSettingsButton_Click);
+			// 
+			// EmulationTypeComboBox
+			// 
+			this.EmulationTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.EmulationTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.EmulationTypeComboBox.FormattingEnabled = true;
+			this.EmulationTypeComboBox.Location = new System.Drawing.Point(489, 72);
+			this.EmulationTypeComboBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.EmulationTypeComboBox.Name = "EmulationTypeComboBox";
+			this.EmulationTypeComboBox.Size = new System.Drawing.Size(68, 21);
+			this.EmulationTypeComboBox.TabIndex = 30;
+			// 
+			// EmulationTypeLabel
+			// 
+			this.EmulationTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.EmulationTypeLabel.AutoSize = true;
+			this.EmulationTypeLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.EmulationTypeLabel.Location = new System.Drawing.Point(418, 74);
+			this.EmulationTypeLabel.Name = "EmulationTypeLabel";
+			this.EmulationTypeLabel.Size = new System.Drawing.Size(56, 13);
+			this.EmulationTypeLabel.TabIndex = 29;
+			this.EmulationTypeLabel.Text = "Emulation:";
 			// 
 			// GameDetailsUserControl
 			// 
@@ -779,5 +805,7 @@
 		private System.Windows.Forms.Button button4;
 		private System.Windows.Forms.GroupBox groupBox5;
 		private System.Windows.Forms.GroupBox ActionGroupBox;
+		private System.Windows.Forms.ComboBox EmulationTypeComboBox;
+		private System.Windows.Forms.Label EmulationTypeLabel;
 	}
 }

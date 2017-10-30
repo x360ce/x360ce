@@ -5064,9 +5064,10 @@ namespace x360ce.Engine.Data
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
+        /// <param name="enableMask">Initial value of the EnableMask property.</param>
+        /// <param name="emulationType">Initial value of the EmulationType property.</param>
         /// <param name="checksum">Initial value of the Checksum property.</param>
-        /// <param name="virtualMask">Initial value of the VirtualMask property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Guid checksum, global::System.Int32 virtualMask)
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Int32 enableMask, global::System.Int32 emulationType, global::System.Guid checksum)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -5090,8 +5091,9 @@ namespace x360ce.Engine.Data
             userGame.DateCreated = dateCreated;
             userGame.DateUpdated = dateUpdated;
             userGame.AutoMapMask = autoMapMask;
+            userGame.EnableMask = enableMask;
+            userGame.EmulationType = emulationType;
             userGame.Checksum = checksum;
-            userGame.VirtualMask = virtualMask;
             return userGame;
         }
 
@@ -5611,6 +5613,54 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.Int32 EnableMask
+        {
+            get
+            {
+                return _EnableMask;
+            }
+            set
+            {
+                OnEnableMaskChanging(value);
+                ReportPropertyChanging("EnableMask");
+                _EnableMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("EnableMask");
+                OnEnableMaskChanged();
+            }
+        }
+        private global::System.Int32 _EnableMask;
+        partial void OnEnableMaskChanging(global::System.Int32 value);
+        partial void OnEnableMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 EmulationType
+        {
+            get
+            {
+                return _EmulationType;
+            }
+            set
+            {
+                OnEmulationTypeChanging(value);
+                ReportPropertyChanging("EmulationType");
+                _EmulationType = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("EmulationType");
+                OnEmulationTypeChanged();
+            }
+        }
+        private global::System.Int32 _EmulationType;
+        partial void OnEmulationTypeChanging(global::System.Int32 value);
+        partial void OnEmulationTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.Guid Checksum
         {
             get
@@ -5629,30 +5679,6 @@ namespace x360ce.Engine.Data
         private global::System.Guid _Checksum;
         partial void OnChecksumChanging(global::System.Guid value);
         partial void OnChecksumChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 VirtualMask
-        {
-            get
-            {
-                return _VirtualMask;
-            }
-            set
-            {
-                OnVirtualMaskChanging(value);
-                ReportPropertyChanging("VirtualMask");
-                _VirtualMask = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("VirtualMask");
-                OnVirtualMaskChanged();
-            }
-        }
-        private global::System.Int32 _VirtualMask;
-        partial void OnVirtualMaskChanging(global::System.Int32 value);
-        partial void OnVirtualMaskChanged();
 
         #endregion
 

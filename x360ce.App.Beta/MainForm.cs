@@ -833,7 +833,7 @@ namespace x360ce.App
 				var game = CurrentGame;
 				if (game == null)
 					return;
-				var useMicrosoft = game.VirtualMask > 0;
+				var useMicrosoft = game.EnableMask > 0;
 				Program.ReloadCount++;
 				settingsChanged = false;
 				var dllInfo = EngineHelper.GetDefaultDll(useMicrosoft);

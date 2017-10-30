@@ -15,7 +15,7 @@ namespace x360ce.App.DInput
 			{
 				var mapTo = (MapTo)i;
 				var flag = AppHelper.GetMapFlag(mapTo);
-				var value = (MapToMask)game.VirtualMask;
+				var value = (MapToMask)game.EnableMask;
 				var virtualEnabled = value.HasFlag(flag);
 				if (virtualEnabled)
 				{
