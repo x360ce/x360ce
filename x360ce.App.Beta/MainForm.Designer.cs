@@ -63,11 +63,15 @@ namespace x360ce.App
 			this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.label1 = new System.Windows.Forms.Label();
-			this.GameToCustomizeComboBox = new System.Windows.Forms.ComboBox();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.SaveButton = new System.Windows.Forms.Button();
-			this.SaveAllButton = new System.Windows.Forms.Button();
+			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
+			this.SaveAllButton = new System.Windows.Forms.ToolStripButton();
+			this.SaveButton = new System.Windows.Forms.ToolStripButton();
+			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
+			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
+			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -81,6 +85,7 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
+			this.GamesToolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
@@ -102,10 +107,10 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
 			this.MainTabControl.ImageList = this.BuletImageList;
-			this.MainTabControl.Location = new System.Drawing.Point(6, 97);
+			this.MainTabControl.Location = new System.Drawing.Point(6, 92);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(800, 624);
+			this.MainTabControl.Size = new System.Drawing.Size(800, 629);
 			this.MainTabControl.TabIndex = 1;
 			// 
 			// Pad1TabPage
@@ -113,7 +118,7 @@ namespace x360ce.App
 			this.Pad1TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
-			this.Pad1TabPage.Size = new System.Drawing.Size(792, 597);
+			this.Pad1TabPage.Size = new System.Drawing.Size(792, 602);
 			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "Controller 1";
 			// 
@@ -122,7 +127,7 @@ namespace x360ce.App
 			this.Pad2TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
-			this.Pad2TabPage.Size = new System.Drawing.Size(792, 597);
+			this.Pad2TabPage.Size = new System.Drawing.Size(792, 602);
 			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "Controller 2";
 			// 
@@ -131,7 +136,7 @@ namespace x360ce.App
 			this.Pad3TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
-			this.Pad3TabPage.Size = new System.Drawing.Size(792, 597);
+			this.Pad3TabPage.Size = new System.Drawing.Size(792, 602);
 			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "Controller 3";
 			// 
@@ -140,7 +145,7 @@ namespace x360ce.App
 			this.Pad4TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
-			this.Pad4TabPage.Size = new System.Drawing.Size(792, 597);
+			this.Pad4TabPage.Size = new System.Drawing.Size(792, 602);
 			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "Controller 4";
 			// 
@@ -150,7 +155,7 @@ namespace x360ce.App
 			this.OptionsTabPage.Controls.Add(this.OptionsPanel);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
-			this.OptionsTabPage.Size = new System.Drawing.Size(792, 597);
+			this.OptionsTabPage.Size = new System.Drawing.Size(792, 602);
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
@@ -159,7 +164,7 @@ namespace x360ce.App
 			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
 			this.OptionsPanel.Name = "OptionsPanel";
-			this.OptionsPanel.Size = new System.Drawing.Size(792, 597);
+			this.OptionsPanel.Size = new System.Drawing.Size(792, 602);
 			this.OptionsPanel.TabIndex = 30;
 			// 
 			// GamesTabPage
@@ -169,7 +174,7 @@ namespace x360ce.App
 			this.GamesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.GamesTabPage.Name = "GamesTabPage";
 			this.GamesTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.GamesTabPage.Size = new System.Drawing.Size(792, 597);
+			this.GamesTabPage.Size = new System.Drawing.Size(792, 602);
 			this.GamesTabPage.TabIndex = 2;
 			this.GamesTabPage.Text = "Games";
 			// 
@@ -178,7 +183,7 @@ namespace x360ce.App
 			this.GameSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameSettingsPanel.Location = new System.Drawing.Point(3, 3);
 			this.GameSettingsPanel.Name = "GameSettingsPanel";
-			this.GameSettingsPanel.Size = new System.Drawing.Size(786, 591);
+			this.GameSettingsPanel.Size = new System.Drawing.Size(786, 596);
 			this.GameSettingsPanel.TabIndex = 1;
 			// 
 			// ProgramsTabPage
@@ -186,7 +191,7 @@ namespace x360ce.App
 			this.ProgramsTabPage.Controls.Add(this.ProgramsPanel);
 			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.ProgramsTabPage.Name = "ProgramsTabPage";
-			this.ProgramsTabPage.Size = new System.Drawing.Size(792, 597);
+			this.ProgramsTabPage.Size = new System.Drawing.Size(792, 602);
 			this.ProgramsTabPage.TabIndex = 7;
 			this.ProgramsTabPage.Text = "Programs";
 			this.ProgramsTabPage.UseVisualStyleBackColor = true;
@@ -196,7 +201,7 @@ namespace x360ce.App
 			this.ProgramsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProgramsPanel.Location = new System.Drawing.Point(0, 0);
 			this.ProgramsPanel.Name = "ProgramsPanel";
-			this.ProgramsPanel.Size = new System.Drawing.Size(792, 597);
+			this.ProgramsPanel.Size = new System.Drawing.Size(792, 602);
 			this.ProgramsPanel.TabIndex = 0;
 			// 
 			// DevicesTabPage
@@ -205,7 +210,7 @@ namespace x360ce.App
 			this.DevicesTabPage.Controls.Add(this.DevicesPanel);
 			this.DevicesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.DevicesTabPage.Name = "DevicesTabPage";
-			this.DevicesTabPage.Size = new System.Drawing.Size(792, 597);
+			this.DevicesTabPage.Size = new System.Drawing.Size(792, 602);
 			this.DevicesTabPage.TabIndex = 4;
 			this.DevicesTabPage.Text = "Devices";
 			// 
@@ -214,7 +219,7 @@ namespace x360ce.App
 			this.DevicesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesPanel.Location = new System.Drawing.Point(0, 0);
 			this.DevicesPanel.Name = "DevicesPanel";
-			this.DevicesPanel.Size = new System.Drawing.Size(792, 597);
+			this.DevicesPanel.Size = new System.Drawing.Size(792, 602);
 			this.DevicesPanel.TabIndex = 0;
 			// 
 			// SettingsTabPage
@@ -222,7 +227,7 @@ namespace x360ce.App
 			this.SettingsTabPage.Controls.Add(this.SettingsGridPanel);
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.SettingsTabPage.Name = "SettingsTabPage";
-			this.SettingsTabPage.Size = new System.Drawing.Size(792, 597);
+			this.SettingsTabPage.Size = new System.Drawing.Size(792, 602);
 			this.SettingsTabPage.TabIndex = 1;
 			this.SettingsTabPage.Text = "Settings";
 			// 
@@ -231,7 +236,7 @@ namespace x360ce.App
 			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.SettingsGridPanel.Name = "SettingsGridPanel";
-			this.SettingsGridPanel.Size = new System.Drawing.Size(792, 597);
+			this.SettingsGridPanel.Size = new System.Drawing.Size(792, 602);
 			this.SettingsGridPanel.TabIndex = 0;
 			// 
 			// IniTabPage
@@ -240,7 +245,7 @@ namespace x360ce.App
 			this.IniTabPage.Controls.Add(this.IniTextBox);
 			this.IniTabPage.Location = new System.Drawing.Point(4, 23);
 			this.IniTabPage.Name = "IniTabPage";
-			this.IniTabPage.Size = new System.Drawing.Size(792, 597);
+			this.IniTabPage.Size = new System.Drawing.Size(792, 602);
 			this.IniTabPage.TabIndex = 3;
 			this.IniTabPage.Text = "INI";
 			// 
@@ -254,7 +259,7 @@ namespace x360ce.App
 			this.IniTextBox.Name = "IniTextBox";
 			this.IniTextBox.ReadOnly = true;
 			this.IniTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.IniTextBox.Size = new System.Drawing.Size(792, 597);
+			this.IniTextBox.Size = new System.Drawing.Size(792, 602);
 			this.IniTextBox.TabIndex = 1;
 			// 
 			// CloudTabPage
@@ -262,7 +267,7 @@ namespace x360ce.App
 			this.CloudTabPage.Controls.Add(this.CloudPanel);
 			this.CloudTabPage.Location = new System.Drawing.Point(4, 23);
 			this.CloudTabPage.Name = "CloudTabPage";
-			this.CloudTabPage.Size = new System.Drawing.Size(792, 597);
+			this.CloudTabPage.Size = new System.Drawing.Size(792, 602);
 			this.CloudTabPage.TabIndex = 6;
 			this.CloudTabPage.Text = "Cloud";
 			this.CloudTabPage.UseVisualStyleBackColor = true;
@@ -272,7 +277,7 @@ namespace x360ce.App
 			this.CloudPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.CloudPanel.Location = new System.Drawing.Point(0, 0);
 			this.CloudPanel.Name = "CloudPanel";
-			this.CloudPanel.Size = new System.Drawing.Size(792, 597);
+			this.CloudPanel.Size = new System.Drawing.Size(792, 602);
 			this.CloudPanel.TabIndex = 0;
 			// 
 			// HelpTabPage
@@ -280,7 +285,7 @@ namespace x360ce.App
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
 			this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
 			this.HelpTabPage.Name = "HelpTabPage";
-			this.HelpTabPage.Size = new System.Drawing.Size(792, 597);
+			this.HelpTabPage.Size = new System.Drawing.Size(792, 602);
 			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
@@ -293,7 +298,7 @@ namespace x360ce.App
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(792, 597);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(792, 602);
 			this.HelpRichTextBox.TabIndex = 0;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -302,7 +307,7 @@ namespace x360ce.App
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
-			this.AboutTabPage.Size = new System.Drawing.Size(792, 597);
+			this.AboutTabPage.Size = new System.Drawing.Size(792, 602);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
@@ -476,27 +481,6 @@ namespace x360ce.App
 			this.ExitToolStripMenuItem.Text = "Exit";
 			this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
 			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(3, 73);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(140, 13);
-			this.label1.TabIndex = 5;
-			this.label1.Text = "Select a game to customize:";
-			// 
-			// GameToCustomizeComboBox
-			// 
-			this.GameToCustomizeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.GameToCustomizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.GameToCustomizeComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.GameToCustomizeComboBox.FormattingEnabled = true;
-			this.GameToCustomizeComboBox.Location = new System.Drawing.Point(149, 70);
-			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
-			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(477, 21);
-			this.GameToCustomizeComboBox.TabIndex = 7;
-			// 
 			// BusyLoadingCircle
 			// 
 			this.BusyLoadingCircle.Active = false;
@@ -513,41 +497,88 @@ namespace x360ce.App
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
 			// 
-			// SaveButton
+			// GamesToolStrip
 			// 
-			this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-			this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SaveButton.Location = new System.Drawing.Point(632, 68);
-			this.SaveButton.Name = "SaveButton";
-			this.SaveButton.Size = new System.Drawing.Size(75, 23);
-			this.SaveButton.TabIndex = 24;
-			this.SaveButton.Text = "Save";
-			this.SaveButton.UseVisualStyleBackColor = true;
-			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SaveAllButton,
+            this.SaveButton,
+            this.MappedDevicesLabel,
+            this.GameToCustomizeComboBox,
+            this.toolStripLabel1,
+            this.toolStripButton2,
+            this.toolStripButton1});
+			this.GamesToolStrip.Location = new System.Drawing.Point(0, 64);
+			this.GamesToolStrip.Name = "GamesToolStrip";
+			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 2, 0);
+			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.GamesToolStrip.Size = new System.Drawing.Size(810, 25);
+			this.GamesToolStrip.TabIndex = 25;
+			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			// 
 			// SaveAllButton
 			// 
-			this.SaveAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.SaveAllButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.SaveAllButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
-			this.SaveAllButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SaveAllButton.Location = new System.Drawing.Point(713, 68);
+			this.SaveAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.SaveAllButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.SaveAllButton.Name = "SaveAllButton";
-			this.SaveAllButton.Size = new System.Drawing.Size(85, 23);
-			this.SaveAllButton.TabIndex = 24;
+			this.SaveAllButton.Size = new System.Drawing.Size(68, 20);
 			this.SaveAllButton.Text = "Save All";
-			this.SaveAllButton.UseVisualStyleBackColor = true;
 			this.SaveAllButton.Click += new System.EventHandler(this.SaveAllButton_Click);
+			// 
+			// SaveButton
+			// 
+			this.SaveButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.SaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.SaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.SaveButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.SaveButton.Name = "SaveButton";
+			this.SaveButton.Size = new System.Drawing.Size(51, 20);
+			this.SaveButton.Text = "Save";
+			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+			// 
+			// MappedDevicesLabel
+			// 
+			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
+			this.MappedDevicesLabel.Size = new System.Drawing.Size(41, 20);
+			this.MappedDevicesLabel.Text = "Game:";
+			// 
+			// GameToCustomizeComboBox
+			// 
+			this.GameToCustomizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
+			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(360, 23);
+			// 
+			// toolStripLabel1
+			// 
+			this.toolStripLabel1.Name = "toolStripLabel1";
+			this.toolStripLabel1.Size = new System.Drawing.Size(41, 20);
+			this.toolStripLabel1.Text = "Mode:";
+			// 
+			// toolStripButton2
+			// 
+			this.toolStripButton2.Image = global::x360ce.App.Properties.Resources.emulation_virtual_16x16;
+			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton2.Name = "toolStripButton2";
+			this.toolStripButton2.Size = new System.Drawing.Size(61, 20);
+			this.toolStripButton2.Text = "Virtual";
+			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.Image = global::x360ce.App.Properties.Resources.emulation_library_16x16;
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(67, 20);
+			this.toolStripButton1.Text = "Librarry";
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(810, 752);
-			this.Controls.Add(this.SaveAllButton);
-			this.Controls.Add(this.SaveButton);
-			this.Controls.Add(this.GameToCustomizeComboBox);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.GamesToolStrip);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Controls.Add(this.MainTabControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -560,10 +591,7 @@ namespace x360ce.App
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.Controls.SetChildIndex(this.MainTabControl, 0);
 			this.Controls.SetChildIndex(this.MainStatusStrip, 0);
-			this.Controls.SetChildIndex(this.label1, 0);
-			this.Controls.SetChildIndex(this.GameToCustomizeComboBox, 0);
-			this.Controls.SetChildIndex(this.SaveButton, 0);
-			this.Controls.SetChildIndex(this.SaveAllButton, 0);
+			this.Controls.SetChildIndex(this.GamesToolStrip, 0);
 			this.MainTabControl.ResumeLayout(false);
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GamesTabPage.ResumeLayout(false);
@@ -579,6 +607,8 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.TrayContextMenuStrip.ResumeLayout(false);
+			this.GamesToolStrip.ResumeLayout(false);
+			this.GamesToolStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -612,8 +642,6 @@ namespace x360ce.App
 		private ContextMenuStrip TrayContextMenuStrip;
 		private ToolStripMenuItem OpenApplicationToolStripMenuItem;
 		private ToolStripMenuItem ExitToolStripMenuItem;
-		private Label label1;
-		private ComboBox GameToCustomizeComboBox;
 		internal Label HelpBodyLabel;
 		internal PictureBox HelpPictureBox;
 		internal Label HelpSubjectLabel;
@@ -626,13 +654,19 @@ namespace x360ce.App
 		public Controls.CloudUserControl CloudPanel;
 		private ToolStripStatusLabel UpdateDevicesStatusLabel;
 		private Controls.SettingsGridUserControl SettingsGridPanel;
-		private Button SaveButton;
-		private Button SaveAllButton;
 		private Controls.ProgramsGridUserControl ProgramsPanel;
 		public TabPage ProgramsTabPage;
 		public TabPage GamesTabPage;
 		private TabPage DevicesTabPage;
 		public Controls.UserDevicesUserControl DevicesPanel;
 		private ToolStripStatusLabel UpdateFrequencyLabel;
+		private ToolStrip GamesToolStrip;
+		private ToolStripButton SaveAllButton;
+		private ToolStripButton SaveButton;
+		private ToolStripLabel MappedDevicesLabel;
+		private ToolStripComboBox GameToCustomizeComboBox;
+		private ToolStripButton toolStripButton2;
+		private ToolStripButton toolStripButton1;
+		private ToolStripLabel toolStripLabel1;
 	}
 }

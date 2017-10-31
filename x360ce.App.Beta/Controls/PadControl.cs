@@ -45,6 +45,7 @@ namespace x360ce.App.Controls
 			AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
 			AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
 			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
+			//GamesToolStrip.RenderMode = ToolStripRenderMode.
 		}
 
 

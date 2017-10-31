@@ -102,9 +102,9 @@ namespace x360ce.App
 			SettingsManager.UserInstances.Load();
 			SettingsManager.UserComputers.Load();
 			XInputMaskScanner.FileInfoCache.Load();
-			GameToCustomizeComboBox.DataSource = SettingsManager.UserGames.Items;
+			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
-			GameToCustomizeComboBox.DisplayMember = "DisplayName";
+			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
 			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
 
 			// Select game by manually trigger event.
@@ -134,6 +134,7 @@ namespace x360ce.App
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
+			GamesToolStrip.Renderer = new CustomToolStripSystemRenderer();
 		}
 
 		IList<Engine.Data.Program> Programs_FilterList(IList<Engine.Data.Program> items)

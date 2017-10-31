@@ -204,6 +204,7 @@
     <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
+    <Compile Include="Common\CustomToolStripSystemRenderer.cs" />
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -635,6 +636,9 @@
     <None Include="Images\cloud_computing_upload_16x16.png" />
     <None Include="Images\cloud_computing_download_16x16.png" />
     <None Include="Images\edit_note_16x16.png" />
+    <None Include="Images\emulation_library_16x16.png" />
+    <None Include="Images\emulation_none_16x16.png" />
+    <None Include="Images\emulation_virtual_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
