@@ -1,35 +1,33 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.App.Issues;
 
-namespace x360ce.App
+namespace x360ce.App.Controls
 {
-	public partial class WarningsForm : Form
+	public partial class IssuesUserControl : UserControl
 	{
-		public WarningsForm()
+		public IssuesUserControl()
 		{
 			InitializeComponent();
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(IssuesDataGridView);
+			if (IsDesignMode) return;
 			CheckTimer = new System.Timers.Timer();
 			CheckTimer.Interval = 1000;
 			CheckTimer.AutoReset = false;
 			CheckTimer.SynchronizingObject = this;
 			CheckTimer.Elapsed += CheckTimer_Elapsed;
-			WarningsDataGridView.AutoGenerateColumns = false;
-			WarningsDataGridView.DataSource = Warnings;
+			IssuesDataGridView.AutoGenerateColumns = false;
+			IssuesDataGridView.DataSource = Warnings;
 			Text = EngineHelper.GetProductFullName() + " - Warnings";
 		}
 
-		private void CheckTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+	internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
+
+	private void CheckTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			lock (checkTimerLock)
 			{
@@ -89,8 +87,6 @@ namespace x360ce.App
 				// If not visible and must not ignored then...
 				if (!Visible && !IgnoreAll)
 				{
-					StartPosition = FormStartPosition.CenterParent;
-					var result = ShowDialog(MainForm.Current);
 					// If ignore button was used then...
 					if (IgnoreAll)
 					{
@@ -110,7 +106,6 @@ namespace x360ce.App
 			}
 			else
 			{
-				if (Visible) DialogResult = DialogResult.OK;
 				if (!update2.HasValue)
 				{
 					MainForm.Current.update2Enabled = true;
@@ -160,12 +155,7 @@ namespace x360ce.App
 			base.Dispose(disposing);
 		}
 
-		private void Closebutton_Click(object sender, EventArgs e)
-		{
-			DialogResult = DialogResult.Cancel;
-		}
-
-		private void WarningsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		private void IssuesDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			if (grid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
@@ -179,10 +169,9 @@ namespace x360ce.App
 		private void IgnoreButton_Click(object sender, EventArgs e)
 		{
 			IgnoreAll = true;
-			DialogResult = DialogResult.Cancel;
 		}
 
-		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private void IssuesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex == -1) return;
 			var grid = (DataGridView)sender;
@@ -214,6 +203,7 @@ namespace x360ce.App
 
 			}
 		}
-	}
 
+
+	}
 }

@@ -13,7 +13,6 @@ using x360ce.Engine;
 using x360ce.Engine.Win32;
 using x360ce.App.Properties;
 using System.ComponentModel;
-using JocysCom.ClassLibrary.IO;
 using x360ce.Engine.Data;
 using System.Text;
 
@@ -24,7 +23,13 @@ namespace x360ce.App
 		public MainForm()
 		{
 			InitializeComponent();
+			if (IsDesignMode) return;
+			Pad1TabPage.Text = "Controller 1";
+			Pad2TabPage.Text = "Controller 2";
+			Pad3TabPage.Text = "Controller 3";
+			Pad4TabPage.Text = "Controller 4";
 			InitMinimize();
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 		}
 
 		public DInput.DInputHelper DHelper;
@@ -134,7 +139,6 @@ namespace x360ce.App
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
-			GamesToolStrip.Renderer = new CustomToolStripSystemRenderer();
 		}
 
 		IList<Engine.Data.Program> Programs_FilterList(IList<Engine.Data.Program> items)
@@ -717,7 +721,7 @@ namespace x360ce.App
 			StatusDllLabel.Text = "";
 			MainStatusStrip.Visible = false;
 			// Check for various issues.
-			InitWarnigForm();
+			InitIssuesPanel();
 			InitDeviceForm();
 			InitUpdateForm();
 		}
@@ -834,7 +838,8 @@ namespace x360ce.App
 				var game = CurrentGame;
 				if (game == null)
 					return;
-				var useMicrosoft = game.EnableMask > 0;
+				// Always load Microsoft XInput DLL by default.
+				var useMicrosoft = game.EmulationType != (int)EmulationType.Library;
 				Program.ReloadCount++;
 				settingsChanged = false;
 				var dllInfo = EngineHelper.GetDefaultDll(useMicrosoft);
@@ -1073,29 +1078,15 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Warning Form
+		#region Issues Panel
 
-		WarningsForm _WarningForm;
-		object warningFormLock = new object();
+		object issuesPanelLock = new object();
 
-		void InitWarnigForm()
+		void InitIssuesPanel()
 		{
-			lock (warningFormLock)
+			lock (issuesPanelLock)
 			{
-				_WarningForm = new WarningsForm();
-				_WarningForm.CheckTimer.Start();
-			}
-		}
-
-		void DisposeWarnigForm()
-		{
-			lock (warningFormLock)
-			{
-				if (_WarningForm != null)
-				{
-					_WarningForm.Dispose();
-					_WarningForm = null;
-				}
+				IssuesPanel.CheckTimer.Start();
 			}
 		}
 
@@ -1207,7 +1198,6 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
-				DisposeWarnigForm();
 				DisposeDeviceForm();
 				DisposeUpdateForm();
 				if (DHelper != null)
@@ -1271,6 +1261,9 @@ namespace x360ce.App
 			// If pad controls not initializes yet then return.
 			if (PadControls == null)
 				return;
+			var game = CurrentGame;
+			if (game == null)
+				return;
 			var name = AppHelper.GetPropertyName<UserGame>(x => x.AutoMapMask);
 			// Update PAD Control.
 			foreach (var ps in PadControls)
@@ -1278,6 +1271,8 @@ namespace x360ce.App
 				if (ps != null)
 					ps.UpdateFromCurrentGame();
 			}
+			VirtualButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+			LibraryButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Library);
 		}
 
 		private void StatusIniLabel_DoubleClick(object sender, EventArgs e)
@@ -1505,6 +1500,29 @@ namespace x360ce.App
 
 		#endregion
 
+		private void VirtualButton_Click(object sender, EventArgs e)
+		{
+			if (VirtualButton.Checked)
+				ChangeEmulationType(EmulationType.None);
+			else
+				ChangeEmulationType(EmulationType.Virtual);
+		}
+
+		private void LibraryButton_Click(object sender, EventArgs e)
+		{
+			if (LibraryButton.Checked)
+				ChangeEmulationType(EmulationType.None);
+			else
+				ChangeEmulationType(EmulationType.Library);
+		}
+
+		void ChangeEmulationType(EmulationType type)
+		{
+			var game = CurrentGame;
+			if (game == null)
+				return;
+			game.EmulationType = (int)type;
+		}
 	}
 }
 

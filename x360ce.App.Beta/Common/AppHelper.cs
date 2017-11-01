@@ -245,6 +245,16 @@ namespace x360ce.App
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
 		/// </summary>
+		public static void SetItem(ComboBox control, object item)
+		{
+			if (!Equals(control.SelectedItem, item))
+				control.SelectedItem = item;
+		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
 		public static void SetText(ToolStripItem control, string format, params object[] args)
 		{
 			var text = (args == null)

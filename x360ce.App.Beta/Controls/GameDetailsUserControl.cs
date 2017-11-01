@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using x360ce.Engine;
 using System.IO;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -54,11 +55,42 @@ namespace x360ce.App.Controls
 			get { return _CurrentGame; }
 			set
 			{
+				if (_CurrentGame != null)
+				{
+					// Detach event from old game.
+					_CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
+				}
+				// Assign new value
 				_CurrentGame = value;
+				if (_CurrentGame != null)
+				{
+					// attach event to new game.
+					_CurrentGame.PropertyChanged += CurrentGame_PropertyChanged;
+				}
 				UpdateInterface();
 				UpdateFakeVidPidControls();
 				UpdateDinputControls();
 				UpdateHelpButtons();
+			}
+		}
+
+		/// <summary>
+		/// Event will be triggered if somebody will change property directly on an object.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var game = CurrentGame;
+			if (game == null)
+				return;
+			lock (CurrentGameLock)
+			{
+				// Set values without triggering events.
+				DisableEvents();
+				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
+					AppHelper.SetItem(EmulationTypeComboBox, (EmulationType)game.EmulationType);
+				EnableEvents();
 			}
 		}
 
@@ -159,7 +191,8 @@ namespace x360ce.App.Controls
 			foreach (var cb in AutoMapCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged += HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged += HookModeFakePidNumericUpDown_ValueChanged;
-			TimeoutNumericUpDown.ValueChanged += this.TimeoutNumericUpDown_ValueChanged;
+			TimeoutNumericUpDown.ValueChanged += TimeoutNumericUpDown_ValueChanged;
+			EmulationTypeComboBox.SelectedIndexChanged += EmulationTypeComboBox_SelectedIndexChanged;
 			EnabledEvents = true;
 		}
 
@@ -176,7 +209,8 @@ namespace x360ce.App.Controls
 			foreach (var cb in AutoMapCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged -= HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged -= HookModeFakePidNumericUpDown_ValueChanged;
-			TimeoutNumericUpDown.ValueChanged -= this.TimeoutNumericUpDown_ValueChanged;
+			TimeoutNumericUpDown.ValueChanged -= TimeoutNumericUpDown_ValueChanged;
+			EmulationTypeComboBox.SelectedIndexChanged -= EmulationTypeComboBox_SelectedIndexChanged;
 			EnabledEvents = false;
 		}
 
@@ -295,6 +329,7 @@ namespace x360ce.App.Controls
 				_CurrentGame.HookMask = _DefaultSettings.HookMask;
 				_CurrentGame.AutoMapMask = (int)MapToMask.None;
 				_CurrentGame.EnableMask = (int)MapToMask.None;
+				_CurrentGame.EmulationType = (int)EmulationType.None;
 				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
 				_CurrentGame.DInputFile = _DefaultSettings.DInputFile ?? "";
 				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;
@@ -320,26 +355,42 @@ namespace x360ce.App.Controls
 
 		private void HookModeFakeVidNumericUpDown_ValueChanged2(object sender, EventArgs e)
 		{
-			HookModeFakeVidTextBox.Text = "0x" + ((int)HookModeFakeVidNumericUpDown.Value).ToString("X4");
+			AppHelper.SetText(HookModeFakeVidTextBox, "0x{0:X4}", (int)HookModeFakeVidNumericUpDown.Value);
 		}
 
 		private void HookModeFakePidNumericUpDown_ValueChanged(object sender, EventArgs e)
 		{
 			var item = CurrentGame;
-			if (item == null) return;
-			item.FakePID = (int)HookModeFakePidNumericUpDown.Value;
+			if (item == null)
+				return;
+			var value = (int)HookModeFakePidNumericUpDown.Value;
+			if (item.FakePID != value)
+				item.FakePID = value;
 		}
 
 		private void HookModeFakePidNumericUpDown_ValueChanged2(object sender, EventArgs e)
 		{
-			HookModeFakePidTextBox.Text = "0x" + ((int)HookModeFakePidNumericUpDown.Value).ToString("X4");
+			AppHelper.SetText(HookModeFakePidTextBox, "0x{0:X4}", (int)HookModeFakePidNumericUpDown.Value);
 		}
 
 		private void TimeoutNumericUpDown_ValueChanged(object sender, EventArgs e)
 		{
 			var item = CurrentGame;
-			if (item == null) return;
-			item.Timeout = (int)TimeoutNumericUpDown.Value;
+			if (item == null)
+				return;
+			var value = (int)TimeoutNumericUpDown.Value;
+			if (item.Timeout != value)
+				item.Timeout = value;
+		}
+
+		private void EmulationTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var item = CurrentGame;
+			if (item == null)
+				return;
+			var value = (int)EmulationTypeComboBox.SelectedItem;
+			if (item.EmulationType != value)
+				item.EmulationType = value;
 		}
 
 		private void HookPIDVIDCheckBox_CheckedChanged(object sender, EventArgs e)

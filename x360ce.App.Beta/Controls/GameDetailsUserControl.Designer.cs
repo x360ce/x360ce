@@ -70,6 +70,8 @@
 			this.AutoMapMaskGroupBox = new System.Windows.Forms.GroupBox();
 			this.DInputMaskGroupBox = new System.Windows.Forms.GroupBox();
 			this.OtherOptionsGroupBox = new System.Windows.Forms.GroupBox();
+			this.EmulationTypeComboBox = new System.Windows.Forms.ComboBox();
+			this.EmulationTypeLabel = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.GoogleSearchButton = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
@@ -77,8 +79,6 @@
 			this.ActionGroupBox = new System.Windows.Forms.GroupBox();
 			this.ResetToDefaultButton = new System.Windows.Forms.Button();
 			this.SynchronizeSettingsButton = new System.Windows.Forms.Button();
-			this.EmulationTypeComboBox = new System.Windows.Forms.ComboBox();
-			this.EmulationTypeLabel = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
@@ -600,6 +600,28 @@
 			this.OtherOptionsGroupBox.TabStop = false;
 			this.OtherOptionsGroupBox.Text = "Other Options";
 			// 
+			// EmulationTypeComboBox
+			// 
+			this.EmulationTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.EmulationTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.EmulationTypeComboBox.FormattingEnabled = true;
+			this.EmulationTypeComboBox.Location = new System.Drawing.Point(489, 72);
+			this.EmulationTypeComboBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
+			this.EmulationTypeComboBox.Name = "EmulationTypeComboBox";
+			this.EmulationTypeComboBox.Size = new System.Drawing.Size(68, 21);
+			this.EmulationTypeComboBox.TabIndex = 30;
+			// 
+			// EmulationTypeLabel
+			// 
+			this.EmulationTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.EmulationTypeLabel.AutoSize = true;
+			this.EmulationTypeLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.EmulationTypeLabel.Location = new System.Drawing.Point(418, 74);
+			this.EmulationTypeLabel.Name = "EmulationTypeLabel";
+			this.EmulationTypeLabel.Size = new System.Drawing.Size(56, 13);
+			this.EmulationTypeLabel.TabIndex = 29;
+			this.EmulationTypeLabel.Text = "Emulation:";
+			// 
 			// groupBox5
 			// 
 			this.groupBox5.Controls.Add(this.GoogleSearchButton);
@@ -700,28 +722,6 @@
 			this.SynchronizeSettingsButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
 			this.SynchronizeSettingsButton.Click += new System.EventHandler(this.SynchronizeSettingsButton_Click);
-			// 
-			// EmulationTypeComboBox
-			// 
-			this.EmulationTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.EmulationTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.EmulationTypeComboBox.FormattingEnabled = true;
-			this.EmulationTypeComboBox.Location = new System.Drawing.Point(489, 72);
-			this.EmulationTypeComboBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
-			this.EmulationTypeComboBox.Name = "EmulationTypeComboBox";
-			this.EmulationTypeComboBox.Size = new System.Drawing.Size(68, 21);
-			this.EmulationTypeComboBox.TabIndex = 30;
-			// 
-			// EmulationTypeLabel
-			// 
-			this.EmulationTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.EmulationTypeLabel.AutoSize = true;
-			this.EmulationTypeLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.EmulationTypeLabel.Location = new System.Drawing.Point(418, 74);
-			this.EmulationTypeLabel.Name = "EmulationTypeLabel";
-			this.EmulationTypeLabel.Size = new System.Drawing.Size(56, 13);
-			this.EmulationTypeLabel.TabIndex = 29;
-			this.EmulationTypeLabel.Text = "Emulation:";
 			// 
 			// GameDetailsUserControl
 			// 

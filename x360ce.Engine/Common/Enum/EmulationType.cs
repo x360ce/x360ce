@@ -3,7 +3,7 @@
 	public enum EmulationType
 	{
 		None = 0,
-		Librarry = 1,
+		Library = 1,
 		Virtual = 2,
 	}
 }

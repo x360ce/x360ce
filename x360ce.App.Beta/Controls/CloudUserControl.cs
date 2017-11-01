@@ -15,7 +15,8 @@ namespace x360ce.App.Controls
         public CloudUserControl()
         {
             InitializeComponent();
-            JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
+			if (IsDesignMode) return;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
             EngineHelper.EnableDoubleBuffering(TasksDataGridView);
             TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
             TasksTimer.DoWork += queueTimer_DoWork;
@@ -30,7 +31,9 @@ namespace x360ce.App.Controls
             QueueMonitorTimer.Start();
         }
 
-        private void TasksDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
+
+		private void TasksDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             e.ThrowException = false;
         }

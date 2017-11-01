@@ -314,7 +314,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region Add grip to SplitContainer 
+		#region Add Grip to SplitContainer 
 
 		public static void ApplySplitterStyle(SplitContainer control)
 		{
@@ -381,7 +381,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region Apply Border Style
+		#region Apply Grid Border Style
 
 		public static void ApplyBorderStyle(DataGridView grid)
 		{
@@ -496,6 +496,15 @@ namespace JocysCom.ClassLibrary.Controls
 			back.Dispose();
 			border.Dispose();
 			e.Handled = true;
+		}
+
+		#endregion
+
+		#region  Apply ToolStrip Border Style
+
+		public static void ApplyBorderStyle(ToolStrip control)
+		{
+			control.Renderer = new ToolStripBorderlessRenderer();
 		}
 
 		#endregion

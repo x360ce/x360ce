@@ -199,9 +199,8 @@
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
 			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
-			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
-			this.EnableVirtualButton = new System.Windows.Forms.ToolStripButton();
+			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2244,9 +2243,8 @@
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RemoveMapButton,
             this.AddMapButton,
-            this.MappedDevicesLabel,
             this.AutoMapButton,
-            this.EnableVirtualButton});
+            this.EnableButton});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
@@ -2278,12 +2276,6 @@
 			this.AddMapButton.Text = "Add...";
 			this.AddMapButton.Click += new System.EventHandler(this.AddMapButton_Click);
 			// 
-			// MappedDevicesLabel
-			// 
-			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
-			this.MappedDevicesLabel.Size = new System.Drawing.Size(94, 22);
-			this.MappedDevicesLabel.Text = "Mapped Devices";
-			// 
 			// AutoMapButton
 			// 
 			this.AutoMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -2295,16 +2287,15 @@
 			this.AutoMapButton.Text = "&Auto Map";
 			this.AutoMapButton.Click += new System.EventHandler(this.AutoMapButton_Click);
 			// 
-			// EnableVirtualButton
+			// EnableButton
 			// 
-			this.EnableVirtualButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.EnableVirtualButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
-			this.EnableVirtualButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.EnableVirtualButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
-			this.EnableVirtualButton.Name = "EnableVirtualButton";
-			this.EnableVirtualButton.Size = new System.Drawing.Size(113, 22);
-			this.EnableVirtualButton.Text = "&Enable Mapping";
-			this.EnableVirtualButton.Click += new System.EventHandler(this.EnableMappingButton_Click);
+			this.EnableButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.EnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.EnableButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.EnableButton.Name = "EnableButton";
+			this.EnableButton.Size = new System.Drawing.Size(62, 22);
+			this.EnableButton.Text = "&Enable";
+			this.EnableButton.Click += new System.EventHandler(this.EnableButton_Click);
 			// 
 			// PadControl
 			// 
@@ -2554,7 +2545,6 @@
 		private System.Windows.Forms.ToolStripButton AddMapButton;
 		private System.Windows.Forms.ToolStripButton RemoveMapButton;
 		private System.Windows.Forms.ToolStripButton AutoMapButton;
-		private System.Windows.Forms.ToolStripLabel MappedDevicesLabel;
 		private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SettingIdColumn;
@@ -2562,6 +2552,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
-		private System.Windows.Forms.ToolStripButton EnableVirtualButton;
+		private System.Windows.Forms.ToolStripButton EnableButton;
 	}
 }

@@ -120,10 +120,13 @@ namespace x360ce.App.Controls
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
-			EnableVirtualButton.Checked = virt;
-			EnableVirtualButton.Image = virt
+			EnableButton.Checked = virt;
+			EnableButton.Image = virt
 				? x360ce.App.Properties.Resources.checkbox_16x16
 				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			// Update emulation type.
+
+
 			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapButton.Checked = auto;
@@ -213,12 +216,12 @@ namespace x360ce.App.Controls
 					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "InstanceGuid", selection);
 				}
 				var visibleCount = mappedItems.Count();
-				var title = string.Format("{0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
+				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
 				if (mappedItems.Count(x => x.IsEnabled) > 1)
 				{
 					title += " (Combine)";
 				}
-				AppHelper.SetText(MappedDevicesLabel, title);
+				AppHelper.SetText(EnableButton, title);
 			}
 		}
 
@@ -1524,7 +1527,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void EnableMappingButton_Click(object sender, EventArgs e)
+		private void EnableButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);

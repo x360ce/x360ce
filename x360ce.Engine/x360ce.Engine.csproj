@@ -192,6 +192,7 @@
     <Compile Include="JocysCom\Controls\InfoForm.Designer.cs">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
