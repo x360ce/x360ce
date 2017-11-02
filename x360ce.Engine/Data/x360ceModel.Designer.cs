@@ -148,22 +148,6 @@ namespace x360ce.Engine.Data
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<Program> Programs
-        {
-            get
-            {
-                if ((_Programs == null))
-                {
-                    _Programs = base.CreateObjectSet<Program>("Programs");
-                }
-                return _Programs;
-            }
-        }
-        private ObjectSet<Program> _Programs;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<UserInstance> UserInstances
         {
             get
@@ -224,6 +208,22 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<UserGame> _UserGames;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Program> Programs
+        {
+            get
+            {
+                if ((_Programs == null))
+                {
+                    _Programs = base.CreateObjectSet<Program>("Programs");
+                }
+                return _Programs;
+            }
+        }
+        private ObjectSet<Program> _Programs;
 
         #endregion
 
@@ -270,14 +270,6 @@ namespace x360ce.Engine.Data
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the Programs EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToPrograms(Program program)
-        {
-            base.AddObject("Programs", program);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the UserInstances EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToUserInstances(UserInstance userInstance)
@@ -307,6 +299,14 @@ namespace x360ce.Engine.Data
         public void AddToUserGames(UserGame userGame)
         {
             base.AddObject("UserGames", userGame);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Programs EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToPrograms(Program program)
+        {
+            base.AddObject("Programs", program);
         }
 
         #endregion
@@ -2449,42 +2449,48 @@ namespace x360ce.Engine.Data
         /// <param name="programId">Initial value of the ProgramId property.</param>
         /// <param name="fileName">Initial value of the FileName property.</param>
         /// <param name="fileProductName">Initial value of the FileProductName property.</param>
-        /// <param name="hookMask">Initial value of the HookMask property.</param>
-        /// <param name="xInputMask">Initial value of the XInputMask property.</param>
-        /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
-        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
-        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
-        /// <param name="comment">Initial value of the Comment property.</param>
         /// <param name="fileVersion">Initial value of the FileVersion property.</param>
         /// <param name="processorArchitecture">Initial value of the ProcessorArchitecture property.</param>
+        /// <param name="emulationType">Initial value of the EmulationType property.</param>
+        /// <param name="autoMapMask">Initial value of the AutoMapMask property.</param>
+        /// <param name="hookMask">Initial value of the HookMask property.</param>
+        /// <param name="xInputMask">Initial value of the XInputMask property.</param>
         /// <param name="dInputMask">Initial value of the DInputMask property.</param>
         /// <param name="dInputFile">Initial value of the DInputFile property.</param>
         /// <param name="fakeVID">Initial value of the FakeVID property.</param>
         /// <param name="fakePID">Initial value of the FakePID property.</param>
         /// <param name="timeout">Initial value of the Timeout property.</param>
-        /// <param name="settingChecksum">Initial value of the SettingChecksum property.</param>
         /// <param name="weight">Initial value of the Weight property.</param>
-        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 instanceCount, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.String comment, global::System.String fileVersion, global::System.Int32 processorArchitecture, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Guid settingChecksum, global::System.Int32 weight)
+        /// <param name="settingChecksum">Initial value of the SettingChecksum property.</param>
+        /// <param name="comment">Initial value of the Comment property.</param>
+        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
+        /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
+        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.Int32 processorArchitecture, global::System.Int32 emulationType, global::System.Int32 autoMapMask, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.Guid settingChecksum, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 instanceCount)
         {
             Program program = new Program();
             program.ProgramId = programId;
             program.FileName = fileName;
             program.FileProductName = fileProductName;
-            program.HookMask = hookMask;
-            program.XInputMask = xInputMask;
-            program.InstanceCount = instanceCount;
-            program.IsEnabled = isEnabled;
-            program.DateCreated = dateCreated;
-            program.Comment = comment;
             program.FileVersion = fileVersion;
             program.ProcessorArchitecture = processorArchitecture;
+            program.EmulationType = emulationType;
+            program.AutoMapMask = autoMapMask;
+            program.HookMask = hookMask;
+            program.XInputMask = xInputMask;
             program.DInputMask = dInputMask;
             program.DInputFile = dInputFile;
             program.FakeVID = fakeVID;
             program.FakePID = fakePID;
             program.Timeout = timeout;
-            program.SettingChecksum = settingChecksum;
             program.Weight = weight;
+            program.SettingChecksum = settingChecksum;
+            program.Comment = comment;
+            program.IsEnabled = isEnabled;
+            program.DateCreated = dateCreated;
+            program.DateUpdated = dateUpdated;
+            program.InstanceCount = instanceCount;
             return program;
         }
 
@@ -2572,174 +2578,6 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Int32 HookMask
-        {
-            get
-            {
-                return _HookMask;
-            }
-            set
-            {
-                OnHookMaskChanging(value);
-                ReportPropertyChanging("HookMask");
-                _HookMask = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("HookMask");
-                OnHookMaskChanged();
-            }
-        }
-        private global::System.Int32 _HookMask;
-        partial void OnHookMaskChanging(global::System.Int32 value);
-        partial void OnHookMaskChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 XInputMask
-        {
-            get
-            {
-                return _XInputMask;
-            }
-            set
-            {
-                OnXInputMaskChanging(value);
-                ReportPropertyChanging("XInputMask");
-                _XInputMask = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("XInputMask");
-                OnXInputMaskChanged();
-            }
-        }
-        private global::System.Int32 _XInputMask;
-        partial void OnXInputMaskChanging(global::System.Int32 value);
-        partial void OnXInputMaskChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 InstanceCount
-        {
-            get
-            {
-                return _InstanceCount;
-            }
-            set
-            {
-                OnInstanceCountChanging(value);
-                ReportPropertyChanging("InstanceCount");
-                _InstanceCount = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("InstanceCount");
-                OnInstanceCountChanged();
-            }
-        }
-        private global::System.Int32 _InstanceCount;
-        partial void OnInstanceCountChanging(global::System.Int32 value);
-        partial void OnInstanceCountChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean IsEnabled
-        {
-            get
-            {
-                return _IsEnabled;
-            }
-            set
-            {
-                OnIsEnabledChanging(value);
-                ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("IsEnabled");
-                OnIsEnabledChanged();
-            }
-        }
-        private global::System.Boolean _IsEnabled;
-        partial void OnIsEnabledChanging(global::System.Boolean value);
-        partial void OnIsEnabledChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.DateTime DateCreated
-        {
-            get
-            {
-                return _DateCreated;
-            }
-            set
-            {
-                OnDateCreatedChanging(value);
-                ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateCreated");
-                OnDateCreatedChanged();
-            }
-        }
-        private global::System.DateTime _DateCreated;
-        partial void OnDateCreatedChanging(global::System.DateTime value);
-        partial void OnDateCreatedChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DateUpdated
-        {
-            get
-            {
-                return _DateUpdated;
-            }
-            set
-            {
-                OnDateUpdatedChanging(value);
-                ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateUpdated");
-                OnDateUpdatedChanged();
-            }
-        }
-        private Nullable<global::System.DateTime> _DateUpdated;
-        partial void OnDateUpdatedChanging(Nullable<global::System.DateTime> value);
-        partial void OnDateUpdatedChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Comment
-        {
-            get
-            {
-                return _Comment;
-            }
-            set
-            {
-                OnCommentChanging(value);
-                ReportPropertyChanging("Comment");
-                _Comment = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Comment");
-                OnCommentChanged();
-            }
-        }
-        private global::System.String _Comment;
-        partial void OnCommentChanging(global::System.String value);
-        partial void OnCommentChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
         public global::System.String FileVersion
         {
             get
@@ -2782,6 +2620,102 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _ProcessorArchitecture;
         partial void OnProcessorArchitectureChanging(global::System.Int32 value);
         partial void OnProcessorArchitectureChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 EmulationType
+        {
+            get
+            {
+                return _EmulationType;
+            }
+            set
+            {
+                OnEmulationTypeChanging(value);
+                ReportPropertyChanging("EmulationType");
+                _EmulationType = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("EmulationType");
+                OnEmulationTypeChanged();
+            }
+        }
+        private global::System.Int32 _EmulationType;
+        partial void OnEmulationTypeChanging(global::System.Int32 value);
+        partial void OnEmulationTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 AutoMapMask
+        {
+            get
+            {
+                return _AutoMapMask;
+            }
+            set
+            {
+                OnAutoMapMaskChanging(value);
+                ReportPropertyChanging("AutoMapMask");
+                _AutoMapMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AutoMapMask");
+                OnAutoMapMaskChanged();
+            }
+        }
+        private global::System.Int32 _AutoMapMask;
+        partial void OnAutoMapMaskChanging(global::System.Int32 value);
+        partial void OnAutoMapMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 HookMask
+        {
+            get
+            {
+                return _HookMask;
+            }
+            set
+            {
+                OnHookMaskChanging(value);
+                ReportPropertyChanging("HookMask");
+                _HookMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("HookMask");
+                OnHookMaskChanged();
+            }
+        }
+        private global::System.Int32 _HookMask;
+        partial void OnHookMaskChanging(global::System.Int32 value);
+        partial void OnHookMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 XInputMask
+        {
+            get
+            {
+                return _XInputMask;
+            }
+            set
+            {
+                OnXInputMaskChanging(value);
+                ReportPropertyChanging("XInputMask");
+                _XInputMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("XInputMask");
+                OnXInputMaskChanged();
+            }
+        }
+        private global::System.Int32 _XInputMask;
+        partial void OnXInputMaskChanging(global::System.Int32 value);
+        partial void OnXInputMaskChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -2908,6 +2842,30 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.Int32 Weight
+        {
+            get
+            {
+                return _Weight;
+            }
+            set
+            {
+                OnWeightChanging(value);
+                ReportPropertyChanging("Weight");
+                _Weight = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Weight");
+                OnWeightChanged();
+            }
+        }
+        private global::System.Int32 _Weight;
+        partial void OnWeightChanging(global::System.Int32 value);
+        partial void OnWeightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.Guid SettingChecksum
         {
             get
@@ -2932,24 +2890,120 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Int32 Weight
+        public global::System.String Comment
         {
             get
             {
-                return _Weight;
+                return _Comment;
             }
             set
             {
-                OnWeightChanging(value);
-                ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("Weight");
-                OnWeightChanged();
+                OnCommentChanging(value);
+                ReportPropertyChanging("Comment");
+                _Comment = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Comment");
+                OnCommentChanged();
             }
         }
-        private global::System.Int32 _Weight;
-        partial void OnWeightChanging(global::System.Int32 value);
-        partial void OnWeightChanged();
+        private global::System.String _Comment;
+        partial void OnCommentChanging(global::System.String value);
+        partial void OnCommentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsEnabled
+        {
+            get
+            {
+                return _IsEnabled;
+            }
+            set
+            {
+                OnIsEnabledChanging(value);
+                ReportPropertyChanging("IsEnabled");
+                _IsEnabled = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsEnabled");
+                OnIsEnabledChanged();
+            }
+        }
+        private global::System.Boolean _IsEnabled;
+        partial void OnIsEnabledChanging(global::System.Boolean value);
+        partial void OnIsEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private global::System.DateTime _DateUpdated;
+        partial void OnDateUpdatedChanging(global::System.DateTime value);
+        partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 InstanceCount
+        {
+            get
+            {
+                return _InstanceCount;
+            }
+            set
+            {
+                OnInstanceCountChanging(value);
+                ReportPropertyChanging("InstanceCount");
+                _InstanceCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("InstanceCount");
+                OnInstanceCountChanged();
+            }
+        }
+        private global::System.Int32 _InstanceCount;
+        partial void OnInstanceCountChanging(global::System.Int32 value);
+        partial void OnInstanceCountChanged();
 
         #endregion
 

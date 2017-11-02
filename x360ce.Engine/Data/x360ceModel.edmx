@@ -103,6 +103,8 @@
           <Property Name="FileProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="FileVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
           <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
+          <Property Name="EmulationType" Type="int" Nullable="false" />
+          <Property Name="AutoMapMask" Type="int" Nullable="false" />
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
           <Property Name="DInputMask" Type="int" Nullable="false" />
@@ -110,13 +112,13 @@
           <Property Name="FakeVID" Type="int" Nullable="false" />
           <Property Name="FakePID" Type="int" Nullable="false" />
           <Property Name="Timeout" Type="int" Nullable="false" />
-          <Property Name="SettingChecksum" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="InstanceCount" Type="int" Nullable="false" />
           <Property Name="Weight" Type="int" Nullable="false" />
+          <Property Name="SettingChecksum" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" />
+          <Property Name="InstanceCount" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Settings">
           <Key>
@@ -223,8 +225,11 @@
           <Property Name="FileProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="FileVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
           <Property Name="FullPath" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="EnableMask" Type="int" Nullable="false" />
           <Property Name="CompanyName" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ProcessorArchitecture" Type="int" Nullable="false" />
+          <Property Name="EmulationType" Type="int" Nullable="false" />
+          <Property Name="AutoMapMask" Type="int" Nullable="false" />
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
           <Property Name="DInputMask" Type="int" Nullable="false" />
@@ -233,14 +238,11 @@
           <Property Name="FakePID" Type="int" Nullable="false" />
           <Property Name="Timeout" Type="int" Nullable="false" />
           <Property Name="Weight" Type="int" Nullable="false" />
+          <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
-          <Property Name="AutoMapMask" Type="int" Nullable="false" />
-          <Property Name="EnableMask" Type="int" Nullable="false" />
-          <Property Name="EmulationType" Type="int" Nullable="false" />
-          <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_UserInstances">
           <Key>
@@ -285,11 +287,11 @@
 					<EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
 					<EntitySet Name="Vendors" EntityType="x360ceModel.Vendor" />
           <EntitySet Name="Products" EntityType="x360ceModel.Product" />
-          <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
           <EntitySet Name="UserInstances" EntityType="x360ceModel.UserInstance" />
           <EntitySet Name="UserComputers" EntityType="x360ceModel.UserComputer" />
           <EntitySet Name="UserDevices" EntityType="x360ceModel.UserDevice" />
           <EntitySet Name="UserGames" EntityType="x360ceModel.UserGame" />
+          <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -424,30 +426,6 @@
           <Property Name="VendorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
-        <EntityType Name="Program">
-          <Key>
-            <PropertyRef Name="ProgramId" />
-          </Key>
-          <Property Type="Guid" Name="ProgramId" Nullable="false" />
-          <Property Type="String" Name="FileName" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="HookMask" Nullable="false" />
-          <Property Type="Int32" Name="XInputMask" Nullable="false" />
-          <Property Type="Int32" Name="InstanceCount" Nullable="false" />
-          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
-          <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
-          <Property Type="DateTime" Name="DateUpdated" Precision="3" />
-          <Property Type="String" Name="Comment" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="FileVersion" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
-          <Property Name="ProcessorArchitecture" Type="Int32" Nullable="false" />
-          <Property Name="DInputMask" Type="Int32" Nullable="false" />
-          <Property Name="DInputFile" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="FakeVID" Type="Int32" Nullable="false" />
-          <Property Name="FakePID" Type="Int32" Nullable="false" />
-          <Property Name="Timeout" Type="Int32" Nullable="false" />
-          <Property Name="SettingChecksum" Type="Guid" Nullable="false" />
-          <Property Name="Weight" Type="Int32" Nullable="false" />
-        </EntityType>
         <EntityType Name="UserInstance">
           <Key>
             <PropertyRef Name="Id" />
@@ -548,6 +526,32 @@
           <Property Name="EnableMask" Type="Int32" Nullable="false" />
           <Property Name="EmulationType" Type="Int32" Nullable="false" />
           <Property Name="Checksum" Type="Guid" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Program">
+          <Key>
+            <PropertyRef Name="ProgramId" />
+          </Key>
+          <Property Name="ProgramId" Type="Guid" Nullable="false" />
+          <Property Name="FileName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="FileProductName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="FileVersion" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ProcessorArchitecture" Type="Int32" Nullable="false" />
+          <Property Name="EmulationType" Type="Int32" Nullable="false" />
+          <Property Name="AutoMapMask" Type="Int32" Nullable="false" />
+          <Property Name="HookMask" Type="Int32" Nullable="false" />
+          <Property Name="XInputMask" Type="Int32" Nullable="false" />
+          <Property Name="DInputMask" Type="Int32" Nullable="false" />
+          <Property Name="DInputFile" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="FakeVID" Type="Int32" Nullable="false" />
+          <Property Name="FakePID" Type="Int32" Nullable="false" />
+          <Property Name="Timeout" Type="Int32" Nullable="false" />
+          <Property Name="Weight" Type="Int32" Nullable="false" />
+          <Property Name="SettingChecksum" Type="Guid" Nullable="false" />
+          <Property Name="Comment" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Precision="3" Nullable="false" />
+          <Property Name="InstanceCount" Type="Int32" Nullable="false" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -695,31 +699,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Programs">
-            <EntityTypeMapping TypeName="x360ceModel.Program">
-              <MappingFragment StoreEntitySet="x360ce_Programs">
-                <ScalarProperty Name="Weight" ColumnName="Weight" />
-                <ScalarProperty Name="SettingChecksum" ColumnName="SettingChecksum" />
-                <ScalarProperty Name="Timeout" ColumnName="Timeout" />
-                <ScalarProperty Name="FakePID" ColumnName="FakePID" />
-                <ScalarProperty Name="FakeVID" ColumnName="FakeVID" />
-                <ScalarProperty Name="DInputFile" ColumnName="DInputFile" />
-                <ScalarProperty Name="DInputMask" ColumnName="DInputMask" />
-                <ScalarProperty Name="ProcessorArchitecture" ColumnName="ProcessorArchitecture" />
-                <ScalarProperty Name="FileVersion" ColumnName="FileVersion" />
-                <ScalarProperty Name="Comment" ColumnName="Comment" />
-                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
-                <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
-                <ScalarProperty Name="XInputMask" ColumnName="XInputMask" />
-                <ScalarProperty Name="HookMask" ColumnName="HookMask" />
-                <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
-                <ScalarProperty Name="FileName" ColumnName="FileName" />
-                <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="UserInstances">
             <EntityTypeMapping TypeName="x360ceModel.UserInstance">
               <MappingFragment StoreEntitySet="x360ce_UserInstances">
@@ -825,6 +804,33 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Programs">
+            <EntityTypeMapping TypeName="x360ceModel.Program">
+              <MappingFragment StoreEntitySet="x360ce_Programs">
+                <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="SettingChecksum" ColumnName="SettingChecksum" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Timeout" ColumnName="Timeout" />
+                <ScalarProperty Name="FakePID" ColumnName="FakePID" />
+                <ScalarProperty Name="FakeVID" ColumnName="FakeVID" />
+                <ScalarProperty Name="DInputFile" ColumnName="DInputFile" />
+                <ScalarProperty Name="DInputMask" ColumnName="DInputMask" />
+                <ScalarProperty Name="XInputMask" ColumnName="XInputMask" />
+                <ScalarProperty Name="HookMask" ColumnName="HookMask" />
+                <ScalarProperty Name="AutoMapMask" ColumnName="AutoMapMask" />
+                <ScalarProperty Name="EmulationType" ColumnName="EmulationType" />
+                <ScalarProperty Name="ProcessorArchitecture" ColumnName="ProcessorArchitecture" />
+                <ScalarProperty Name="FileVersion" ColumnName="FileVersion" />
+                <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
 				</EntityContainerMapping>
 			</Mapping>
 		</edmx:Mappings>
@@ -852,12 +858,12 @@
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="6" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="2.75" />
+        <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="9.75" PointY="5.75" />
         <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.125" PointY="4.625" />
         <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.875" PointY="6.25" />
         <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="0.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

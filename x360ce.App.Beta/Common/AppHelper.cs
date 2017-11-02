@@ -245,10 +245,12 @@ namespace x360ce.App
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
 		/// </summary>
-		public static void SetItem(ComboBox control, object item)
+		public static void SetItem<T>(ComboBox control, T value)
 		{
-			if (!Equals(control.SelectedItem, item))
-				control.SelectedItem = item;
+			if (!Enum.IsDefined(typeof(T), value))
+				value = default(T);
+			if (!Equals(control.SelectedItem, value))
+				control.SelectedItem = value;
 		}
 
 		/// <summary>

@@ -34,7 +34,7 @@
 			this.XInput11_x86CheckBox = new System.Windows.Forms.CheckBox();
 			this.XInput91_x86CheckBox = new System.Windows.Forms.CheckBox();
 			this.HookDISABLECheckBox = new System.Windows.Forms.CheckBox();
-			this.HookNameCheckBox = new System.Windows.Forms.CheckBox();
+			this.HookNAMECheckBox = new System.Windows.Forms.CheckBox();
 			this.HookSTOPCheckBox = new System.Windows.Forms.CheckBox();
 			this.HookPIDVIDCheckBox = new System.Windows.Forms.CheckBox();
 			this.HookDICheckBox = new System.Windows.Forms.CheckBox();
@@ -157,16 +157,16 @@
 			this.HookDISABLECheckBox.Text = "DISABLE";
 			this.HookDISABLECheckBox.UseVisualStyleBackColor = true;
 			// 
-			// HookNameCheckBox
+			// HookNAMECheckBox
 			// 
-			this.HookNameCheckBox.AutoSize = true;
-			this.HookNameCheckBox.Location = new System.Drawing.Point(6, 74);
-			this.HookNameCheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-			this.HookNameCheckBox.Name = "HookNameCheckBox";
-			this.HookNameCheckBox.Size = new System.Drawing.Size(57, 17);
-			this.HookNameCheckBox.TabIndex = 0;
-			this.HookNameCheckBox.Text = "NAME";
-			this.HookNameCheckBox.UseVisualStyleBackColor = true;
+			this.HookNAMECheckBox.AutoSize = true;
+			this.HookNAMECheckBox.Location = new System.Drawing.Point(6, 74);
+			this.HookNAMECheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+			this.HookNAMECheckBox.Name = "HookNAMECheckBox";
+			this.HookNAMECheckBox.Size = new System.Drawing.Size(57, 17);
+			this.HookNAMECheckBox.TabIndex = 0;
+			this.HookNAMECheckBox.Text = "NAME";
+			this.HookNAMECheckBox.UseVisualStyleBackColor = true;
 			// 
 			// HookSTOPCheckBox
 			// 
@@ -452,7 +452,6 @@
 			this.HookModeFakePidNumericUpDown.Size = new System.Drawing.Size(68, 20);
 			this.HookModeFakePidNumericUpDown.TabIndex = 36;
 			this.HookModeFakePidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.HookModeFakePidNumericUpDown.ValueChanged += new System.EventHandler(this.HookModeFakePidNumericUpDown_ValueChanged2);
 			// 
 			// HookModeFakeVidNumericUpDown
 			// 
@@ -466,7 +465,6 @@
 			this.HookModeFakeVidNumericUpDown.Size = new System.Drawing.Size(68, 20);
 			this.HookModeFakeVidNumericUpDown.TabIndex = 36;
 			this.HookModeFakeVidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.HookModeFakeVidNumericUpDown.ValueChanged += new System.EventHandler(this.HookModeFakeVidNumericUpDown_ValueChanged2);
 			// 
 			// Controller1CheckBox
 			// 
@@ -478,7 +476,6 @@
 			this.Controller1CheckBox.TabIndex = 0;
 			this.Controller1CheckBox.Text = "Controller 1";
 			this.Controller1CheckBox.UseVisualStyleBackColor = true;
-			this.Controller1CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x86CheckBox_CheckedChanged);
 			// 
 			// Controller2CheckBox
 			// 
@@ -490,7 +487,6 @@
 			this.Controller2CheckBox.TabIndex = 0;
 			this.Controller2CheckBox.Text = "Controller 2";
 			this.Controller2CheckBox.UseVisualStyleBackColor = true;
-			this.Controller2CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x64CheckBox_CheckedChanged);
 			// 
 			// Controller3CheckBox
 			// 
@@ -502,7 +498,6 @@
 			this.Controller3CheckBox.TabIndex = 0;
 			this.Controller3CheckBox.Text = "Controller 3";
 			this.Controller3CheckBox.UseVisualStyleBackColor = true;
-			this.Controller3CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x86CheckBox_CheckedChanged);
 			// 
 			// Controller4CheckBox
 			// 
@@ -514,14 +509,13 @@
 			this.Controller4CheckBox.TabIndex = 0;
 			this.Controller4CheckBox.Text = "Controller 4";
 			this.Controller4CheckBox.UseVisualStyleBackColor = true;
-			this.Controller4CheckBox.CheckedChanged += new System.EventHandler(this.DInput8_x64CheckBox_CheckedChanged);
 			// 
 			// HookMaskGroupBox
 			// 
 			this.HookMaskGroupBox.Controls.Add(this.HookCOMCheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookPIDVIDCheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookSTOPCheckBox);
-			this.HookMaskGroupBox.Controls.Add(this.HookNameCheckBox);
+			this.HookMaskGroupBox.Controls.Add(this.HookNAMECheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookLLCheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookDISABLECheckBox);
 			this.HookMaskGroupBox.Controls.Add(this.HookSACheckBox);
@@ -532,7 +526,7 @@
 			this.HookMaskGroupBox.Size = new System.Drawing.Size(202, 115);
 			this.HookMaskGroupBox.TabIndex = 38;
 			this.HookMaskGroupBox.TabStop = false;
-			this.HookMaskGroupBox.Text = "Hook Mask (00000000)";
+			this.HookMaskGroupBox.Text = "Hook Mask - 00000000";
 			// 
 			// XInputMaskGroupBox
 			// 
@@ -551,7 +545,7 @@
 			this.XInputMaskGroupBox.Size = new System.Drawing.Size(149, 115);
 			this.XInputMaskGroupBox.TabIndex = 39;
 			this.XInputMaskGroupBox.TabStop = false;
-			this.XInputMaskGroupBox.Text = "XInput Files (00000000)";
+			this.XInputMaskGroupBox.Text = "XInput Files - 00000000";
 			// 
 			// AutoMapMaskGroupBox
 			// 
@@ -564,7 +558,7 @@
 			this.AutoMapMaskGroupBox.Size = new System.Drawing.Size(200, 59);
 			this.AutoMapMaskGroupBox.TabIndex = 40;
 			this.AutoMapMaskGroupBox.TabStop = false;
-			this.AutoMapMaskGroupBox.Text = "Auto Map (00000000)";
+			this.AutoMapMaskGroupBox.Text = "Auto Map - 00000000";
 			// 
 			// DInputMaskGroupBox
 			// 
@@ -575,7 +569,7 @@
 			this.DInputMaskGroupBox.Size = new System.Drawing.Size(200, 50);
 			this.DInputMaskGroupBox.TabIndex = 40;
 			this.DInputMaskGroupBox.TabStop = false;
-			this.DInputMaskGroupBox.Text = "DInput File (00000000)";
+			this.DInputMaskGroupBox.Text = "DInput File - 00000000";
 			// 
 			// OtherOptionsGroupBox
 			// 
@@ -762,7 +756,7 @@
 		private System.Windows.Forms.CheckBox XInput11_x86CheckBox;
 		private System.Windows.Forms.CheckBox XInput91_x86CheckBox;
 		private System.Windows.Forms.CheckBox HookDISABLECheckBox;
-		private System.Windows.Forms.CheckBox HookNameCheckBox;
+		private System.Windows.Forms.CheckBox HookNAMECheckBox;
 		private System.Windows.Forms.CheckBox HookSTOPCheckBox;
 		private System.Windows.Forms.CheckBox HookPIDVIDCheckBox;
 		private System.Windows.Forms.CheckBox HookDICheckBox;

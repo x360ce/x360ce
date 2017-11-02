@@ -104,6 +104,7 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -152,6 +153,7 @@
     <Compile Include="Common\XInputMaskScannerEventArgs.cs" />
     <Compile Include="Common\XInputMaskScannerState.cs" />
     <Compile Include="Common\XSettingsData.cs" />
+    <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Setting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />

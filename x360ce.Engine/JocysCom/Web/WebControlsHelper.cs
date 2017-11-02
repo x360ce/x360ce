@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace JocysCom.ClassLibrary.Controls
+namespace JocysCom.ClassLibrary.Web
 {
 	public partial class WebControlsHelper
 	{
@@ -49,6 +49,74 @@ namespace JocysCom.ClassLibrary.Controls
 			var result2 = result.Select(x => (T)(object)x).ToArray();
 			return result2;
 		}
+
+		#region Apply Date Suffix
+
+		/// <summary>
+		/// All scripts, managed by ScriptManager and server side StyleSheets will be suffixed with v=LastWriteTime.
+		/// How to use:
+		/// protected void Page_PreRender(object sender, System.EventArgs e)
+		/// {
+		/// 	JocysCom.ClassLibrary.Web.WebControlsHelper.ApplyDateSuffix(Page);
+		/// }
+		/// </summary>
+		/// <param name="page"></param>
+		public static void ApplyDateSuffix(System.Web.UI.Page page)
+		{
+			foreach (var control in page.Header.Controls)
+			{
+				var link = control as System.Web.UI.HtmlControls.HtmlLink;
+				if (link == null)
+					continue;
+				var type = link.Attributes["type"];
+				var replace = "text/css".Equals(type, StringComparison.CurrentCultureIgnoreCase);
+				if (!replace)
+					continue;
+				link.Href = GetFileWithSuffix(link.Href, page);
+			}
+			// ScriptManager requires System.Web.Extensions.dll
+			var sm = System.Web.UI.ScriptManager.GetCurrent(page);
+			if (sm == null)
+				return;
+			sm.ResolveScriptReference += ScriptManager_ResolveScriptReference;
+		}
+
+
+		/// <summary>
+		/// ScriptReferenceEventArgs requires System.Web.Extensions.dll
+		/// </summary>
+		private static void ScriptManager_ResolveScriptReference(object sender, System.Web.UI.ScriptReferenceEventArgs e)
+		{
+			// ScriptManager requires System.Web.Extensions.dll
+			var sm = (System.Web.UI.ScriptManager)sender;
+			e.Script.Path = GetFileWithSuffix(e.Script.Path, sm.Page);
+		}
+
+		static string GetFileWithSuffix(string path, System.Web.UI.Page page)
+		{
+			if (string.IsNullOrEmpty(path))
+				return path;
+			// If path is absolute then return.
+			if (path.Contains(":"))
+				return path;
+			var resolvedPath = page.ResolveUrl(path);
+			// Check if path contains query.
+			var index = resolvedPath.IndexOf('?');
+			if (index > -1)
+				resolvedPath = resolvedPath.Substring(0, index);
+			var localPath = page.MapPath(resolvedPath);
+			var fi = new System.IO.FileInfo(localPath);
+			if (fi.Exists)
+			{
+				var v = string.Format("v={0:yyyyMMddHHmmss}", fi.LastWriteTime);
+				if (path.Contains(v))
+					return path;
+				path += (index > -1 ? "&" : "?") + v;
+			}
+			return path;
+		}
+
+		#endregion
 
 	}
 }

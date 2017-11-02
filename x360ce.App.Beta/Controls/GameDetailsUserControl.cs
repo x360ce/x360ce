@@ -25,10 +25,12 @@ namespace x360ce.App.Controls
 			AutoMapCheckBoxes = AutoMapMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			// Fill architecture combo box.
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
-			foreach (var item in paItems) ProcessorArchitectureComboBox.Items.Add(item);
+			foreach (var item in paItems)
+				ProcessorArchitectureComboBox.Items.Add(item);
 			// Fill emulation type combo box.
 			var etItems = (EmulationType[])Enum.GetValues(typeof(EmulationType));
-			foreach (var item in etItems) EmulationTypeComboBox.Items.Add(item);
+			foreach (var item in etItems)
+				EmulationTypeComboBox.Items.Add(item);
 			lock (CurrentGameLock)
 			{
 				EnableEvents();
@@ -46,31 +48,65 @@ namespace x360ce.App.Controls
 		CheckBox[] HookCheckBoxes;
 		CheckBox[] AutoMapCheckBoxes;
 
-		x360ce.Engine.Data.UserGame _CurrentGame;
+		x360ce.Engine.Data.IProgram _CurrentItem;
 		x360ce.Engine.Data.Program _DefaultSettings;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public x360ce.Engine.Data.UserGame CurrentGame
+		public x360ce.Engine.Data.IProgram CurrentItem
 		{
-			get { return _CurrentGame; }
+			get { return _CurrentItem; }
 			set
 			{
-				if (_CurrentGame != null)
+				lock (CurrentGameLock)
 				{
-					// Detach event from old game.
-					_CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
+					if (_CurrentItem != null)
+					{
+						// Detach event from old game.
+						_CurrentItem.PropertyChanged -= CurrentGame_PropertyChanged;
+					}
+					// Assign new value
+					_CurrentItem = value;
+					// Update interface.
+					DisableEvents();
+					var isGame = _CurrentItem as UserGame != null;
+					var item = _CurrentItem ?? new x360ce.Engine.Data.Program();
+					// Set textboxes
+					SetMask(DInputCheckBoxes, (DInputMask)item.DInputMask);
+					SetMask(XInputCheckBoxes, (XInputMask)item.XInputMask);
+					SetMask(HookCheckBoxes, (HookMask)item.HookMask);
+					SetMask(AutoMapCheckBoxes, (MapToMask)item.AutoMapMask);
+					HookModeFakeVidNumericUpDown.Value = item.FakeVID;
+					HookModeFakePidNumericUpDown.Value = item.FakePID;
+					TimeoutNumericUpDown.Value = item.Timeout;
+					AppHelper.SetItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)CurrentItem.ProcessorArchitecture);
+					AppHelper.SetItem(EmulationTypeComboBox, (EmulationType)CurrentItem.EmulationType);
+					var game = CurrentItem as UserGame;
+					if (game != null)
+					{
+						var status = SettingsManager.Current.GetDllAndIniStatus(game, false);
+						ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
+						SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK);
+						_DefaultSettings = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName == game.FileName);
+						ResetToDefaultButton.Enabled = _DefaultSettings != null;
+						if (ApplySettingsToFolderInstantly)
+						{
+
+						}
+					}
+					// Allow sync settings for game.
+					SynchronizeSettingsButton.Visible = isGame;
+					ResetToDefaultButton.Visible = isGame && _DefaultSettings != null;
+					UpdateFakeVidPidControls();
+					UpdateDinputControls();
+
+					// Enable events.
+					EnableEvents();
+					if (_CurrentItem != null)
+					{
+						// attach event to new game.
+						_CurrentItem.PropertyChanged += CurrentGame_PropertyChanged;
+					}
 				}
-				// Assign new value
-				_CurrentGame = value;
-				if (_CurrentGame != null)
-				{
-					// attach event to new game.
-					_CurrentGame.PropertyChanged += CurrentGame_PropertyChanged;
-				}
-				UpdateInterface();
-				UpdateFakeVidPidControls();
-				UpdateDinputControls();
-				UpdateHelpButtons();
 			}
 		}
 
@@ -81,7 +117,7 @@ namespace x360ce.App.Controls
 		/// <param name="e"></param>
 		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var game = CurrentGame;
+			var game = CurrentItem;
 			if (game == null)
 				return;
 			lock (CurrentGameLock)
@@ -90,64 +126,13 @@ namespace x360ce.App.Controls
 				DisableEvents();
 				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
 					AppHelper.SetItem(EmulationTypeComboBox, (EmulationType)game.EmulationType);
+				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.ProcessorArchitecture))
+					AppHelper.SetItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)game.ProcessorArchitecture);
 				EnableEvents();
 			}
 		}
 
-		void UpdateInterface()
-		{
-			var en = (CurrentGame != null);
-			var item = CurrentGame ?? new x360ce.Engine.Data.UserGame();
-			var dInputMask = (DInputMask)item.DInputMask;
-			var xInputMask = (XInputMask)item.XInputMask;
-			var hookMask = (HookMask)item.HookMask;
-			var autoMapMask = (MapToMask)item.AutoMapMask;
-			SetMask(en, hookMask, dInputMask, xInputMask, autoMapMask, item.FullPath, item.ProcessorArchitecture);
-			EmulationTypeComboBox.SelectedItem = Enum.IsDefined(typeof(EmulationType), item.EmulationType)
-					? (EmulationType)item.EmulationType
-					: EmulationType.None;
-			HookModeFakeVidNumericUpDown_ValueChanged2(null, null);
-			HookModeFakeVidNumericUpDown.Value = item.FakeVID;
-			HookModeFakePidNumericUpDown.Value = item.FakePID;
-			HookModeFakePidNumericUpDown_ValueChanged2(null, null);
-			TimeoutNumericUpDown.Value = item.Timeout;
-			if (en)
-			{
-				var status = SettingsManager.Current.GetDllAndIniStatus(CurrentGame, false);
-				ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
-				SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK);
-				_DefaultSettings = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName == CurrentGame.FileName);
-				ResetToDefaultButton.Enabled = _DefaultSettings != null;
-				if (ApplySettingsToFolderInstantly)
-				{
-
-				}
-			}
-		}
-
-
-		public void SetMask(bool showButtons, HookMask hookMask, DInputMask dInputMask, XInputMask xInputMask, MapToMask autoMapMask, string path, int processorArchitecture)
-		{
-			lock (CurrentGameLock)
-			{
-				DisableEvents();
-				// Set textboxes
-				SetMask(DInputCheckBoxes, dInputMask);
-				SetMask(XInputCheckBoxes, xInputMask);
-				SetMask(HookCheckBoxes, hookMask);
-				SetMask(AutoMapCheckBoxes, autoMapMask);
-				// Processor architecture.
-				ProcessorArchitectureComboBox.SelectedItem = Enum.IsDefined(typeof(ProcessorArchitecture), processorArchitecture)
-					? (ProcessorArchitecture)processorArchitecture
-					: ProcessorArchitecture.None;
-				SynchronizeSettingsButton.Visible = showButtons;
-				ResetToDefaultButton.Visible = showButtons;
-				// Enable events.
-				EnableEvents();
-			}
-		}
-
-		T GetMask<T>(CheckBox[] boxes) where T : struct
+		int GetMask<T>(CheckBox[] boxes) where T : struct, IConvertible
 		{
 			uint mask = 0;
 			// Check/Uncheck CheckBox.
@@ -155,16 +140,18 @@ namespace x360ce.App.Controls
 			foreach (var value in xs)
 			{
 				// Get CheckBox linked to enum value.
-				var cb = boxes.FirstOrDefault(x => x.Name.StartsWith(value.ToString()));
+				var boxName = string.Format("{0}CheckBox", value);
+				var cb = boxes.FirstOrDefault(x => x.Name.Equals(boxName, StringComparison.OrdinalIgnoreCase));
 				if (cb != null && cb.Checked) mask |= (uint)(object)value;
 			}
-			return (T)(object)mask;
+			return (int)mask;
 		}
 
-		void SetMask<T>(CheckBox[] boxes, T mask) where T : struct
+		void SetMask<T>(CheckBox[] boxes, T mask) where T : struct, IConvertible
 		{
 			// Check/Uncheck CheckBox.
 			var xs = (T[])Enum.GetValues(typeof(T));
+			var m = Convert.ToUInt32(mask);
 			foreach (var value in xs)
 			{
 				// Get CheckBox linked to enum value.
@@ -172,10 +159,10 @@ namespace x360ce.App.Controls
 				if (cb != null)
 				{
 					var v = Convert.ToUInt32(value);
-					var m = Convert.ToUInt32(mask);
 					cb.Checked = ((m & v) != 0);
 				}
 			}
+			UpdateTitle(boxes.FirstOrDefault().Parent as GroupBox, (int)m);
 		}
 
 		/// <summary>
@@ -192,6 +179,7 @@ namespace x360ce.App.Controls
 			HookModeFakeVidNumericUpDown.ValueChanged += HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged += HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged += TimeoutNumericUpDown_ValueChanged;
+			ProcessorArchitectureComboBox.SelectedIndexChanged += ProcessorArchitectureComboBox_SelectedIndexChanged;
 			EmulationTypeComboBox.SelectedIndexChanged += EmulationTypeComboBox_SelectedIndexChanged;
 			EnabledEvents = true;
 		}
@@ -210,6 +198,7 @@ namespace x360ce.App.Controls
 			HookModeFakeVidNumericUpDown.ValueChanged -= HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged -= HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged -= TimeoutNumericUpDown_ValueChanged;
+			ProcessorArchitectureComboBox.SelectedIndexChanged -= ProcessorArchitectureComboBox_SelectedIndexChanged;
 			EmulationTypeComboBox.SelectedIndexChanged -= EmulationTypeComboBox_SelectedIndexChanged;
 			EnabledEvents = false;
 		}
@@ -222,18 +211,18 @@ namespace x360ce.App.Controls
 
 		void CheckBox_Changed(object sender, EventArgs e)
 		{
-			if (CurrentGame == null) return;
+			if (CurrentItem == null) return;
 			lock (CheckBoxLock)
 			{
 				var cbx = (CheckBox)sender;
-				var is64bit = cbx.Name.Contains("x64");
-				var is32bit = cbx.Name.Contains("x86");
 				bool applySettings = true;
 				CheckBox[] cbxList = null;
 				if (XInputCheckBoxes.Contains(cbx)) cbxList = XInputCheckBoxes;
 				if (DInputCheckBoxes.Contains(cbx)) cbxList = DInputCheckBoxes;
 				if (cbxList != null)
 				{
+					var is64bit = cbx.Name.Contains("x64");
+					var is32bit = cbx.Name.Contains("x86");
 					// If 64-bit CheckBox an checked then...
 					if (is64bit && cbx.Checked)
 					{
@@ -257,43 +246,60 @@ namespace x360ce.App.Controls
 						}
 					}
 				}
-				// Set DInput mask.
-				var dm = (int)GetMask<DInputMask>(DInputCheckBoxes);
-				CurrentGame.DInputMask = dm;
-				DInputMaskGroupBox.Text = dm.ToString("X8");
-				// Set XInput mask.
-				var xm = (int)GetMask<XInputMask>(XInputCheckBoxes);
-				CurrentGame.XInputMask = xm;
-				XInputMaskGroupBox.Text = xm.ToString("X8");
-				// Set hook mask.
-				var hm = (int)GetMask<HookMask>(HookCheckBoxes);
-				CurrentGame.HookMask = hm;
-				HookMaskGroupBox.Text = string.Format("Hook Mask {0:X8}", hm);
-				// Set auto map mask.
-				var am = (int)GetMask<MapToMask>(AutoMapCheckBoxes);
-				CurrentGame.AutoMapMask = am;
-				AutoMapMaskGroupBox.Text = am.ToString("X8");
-				SettingsManager.Save();
-				if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
+				int mask = 0;
+				if (DInputCheckBoxes.Contains(cbx))
+				{
+					// Set DInput mask.DInputCheckBoxes
+					mask = GetMask<DInputMask>(DInputCheckBoxes);
+					if (CurrentItem.DInputMask != mask)
+						CurrentItem.DInputMask = mask;
+				}
+				else if (XInputCheckBoxes.Contains(cbx))
+				{
+					// Set XInput mask.
+					mask = GetMask<XInputMask>(XInputCheckBoxes);
+					if (CurrentItem.XInputMask != mask)
+						CurrentItem.XInputMask = mask;
+				}
+				else if (HookCheckBoxes.Contains(cbx))
+				{
+					// Set hook mask.
+					mask = GetMask<HookMask>(HookCheckBoxes);
+					if (CurrentItem.HookMask != mask)
+						CurrentItem.HookMask = mask;
+				}
+				else if (AutoMapCheckBoxes.Contains(cbx))
+				{
+					// Set auto map mask.
+					mask = GetMask<MapToMask>(AutoMapCheckBoxes);
+					if (CurrentItem.AutoMapMask != mask)
+						CurrentItem.AutoMapMask = mask;
+				}
+				UpdateTitle(cbx.Parent as GroupBox, mask);
+				if (CurrentItem.EmulationType == (int)EmulationType.Library)
+				{
+					SettingsManager.Save();
+					if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
+				}
 			}
 		}
 
-		void SetCheckXinput(XInputMask mask)
+		void UpdateTitle(GroupBox gp, int mask)
 		{
-			//if (CurrentGame == null) return;
-			var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
-			var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
-			var fullPath = System.IO.Path.Combine(path, name);
-			///var box = (CheckBox)sender;
-			//var exists = AppHelper.CreateDllFile(, fullPath);
-			//if (exists != box.Checked) box.Checked = exists;
+			var end = gp.Text.IndexOf(" - ") + 3;
+			var prefix = gp.Text.Substring(0, end);
+			AppHelper.SetText(gp, "{0}{1:X8}", prefix, mask);
 		}
 
+		/// <summary>
+		/// Button must be available only if editing UserGame .
+		/// </summary>
 		private void SynchronizeSettingsButton_Click(object sender, EventArgs e)
 		{
+			var game = CurrentItem as UserGame;
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			var status = SettingsManager.Current.GetDllAndIniStatus(CurrentGame, false);
+			var status = SettingsManager.Current.GetDllAndIniStatus(game, false);
 			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
 			List<string> errors = new List<string>();
 			foreach (GameRefreshStatus value in values)
@@ -312,85 +318,68 @@ namespace x360ce.App.Controls
 
 		void ApplySettings()
 		{
-			var status = SettingsManager.Current.GetDllAndIniStatus(CurrentGame, true);
+			var game = CurrentItem as UserGame;
+			var status = SettingsManager.Current.GetDllAndIniStatus(game, true);
 			ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
 			SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.OK);
 		}
 
 		private void ResetToDefaultButton_Click(object sender, EventArgs e)
 		{
-			MessageBoxForm form = new MessageBoxForm();
+			var game = CurrentItem;
+			if (game == null)
+				return;
+			var program = _DefaultSettings;
+			if (program == null)
+				return;
+			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm("Reset current settings to default?", "Reset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-			if (result == DialogResult.OK)
-			{
-				// Reset to default all properties which affects checksum.
-				_CurrentGame.XInputMask = _DefaultSettings.XInputMask;
-				_CurrentGame.HookMask = _DefaultSettings.HookMask;
-				_CurrentGame.AutoMapMask = (int)MapToMask.None;
-				_CurrentGame.EnableMask = (int)MapToMask.None;
-				_CurrentGame.EmulationType = (int)EmulationType.None;
-				_CurrentGame.DInputMask = _DefaultSettings.DInputMask;
-				_CurrentGame.DInputFile = _DefaultSettings.DInputFile ?? "";
-				_CurrentGame.FakeVID = _DefaultSettings.FakeVID;
-				_CurrentGame.FakePID = _DefaultSettings.FakePID;
-				_CurrentGame.Timeout = _DefaultSettings.Timeout;
-				UpdateInterface();
-			}
+			if (result != DialogResult.OK)
+				return;
+			// Reset to default all properties which affects checksum.
+			game.XInputMask = program.XInputMask;
+			game.HookMask = program.HookMask;
+			game.AutoMapMask = (int)MapToMask.None;
+			game.EmulationType = (int)EmulationType.None;
+			game.DInputMask = program.DInputMask;
+			game.DInputFile = program.DInputFile ?? "";
+			game.FakeVID = program.FakeVID;
+			game.FakePID = program.FakePID;
+			game.Timeout = program.Timeout;
 		}
 
 		private void DInputFileTextBox_TextChanged(object sender, EventArgs e)
 		{
-			var item = CurrentGame;
+			var item = CurrentItem;
 			if (item == null) return;
 			item.DInputFile = DInputFileTextBox.Text;
 		}
 
 		private void HookModeFakeVidNumericUpDown_ValueChanged(object sender, EventArgs e)
 		{
-			var item = CurrentGame;
-			if (item == null) return;
-			item.FakeVID = (int)HookModeFakeVidNumericUpDown.Value;
-		}
-
-		private void HookModeFakeVidNumericUpDown_ValueChanged2(object sender, EventArgs e)
-		{
-			AppHelper.SetText(HookModeFakeVidTextBox, "0x{0:X4}", (int)HookModeFakeVidNumericUpDown.Value);
+			var item = CurrentItem;
+			if (item == null)
+				return;
+			var value = (int)HookModeFakeVidNumericUpDown.Value;
+			if (item.FakeVID != value)
+			{
+				item.FakeVID = value;
+				AppHelper.SetText(HookModeFakeVidTextBox, "0x{0:X4}", (int)HookModeFakeVidNumericUpDown.Value);
+			}
 		}
 
 		private void HookModeFakePidNumericUpDown_ValueChanged(object sender, EventArgs e)
 		{
-			var item = CurrentGame;
+			var item = CurrentItem;
 			if (item == null)
 				return;
 			var value = (int)HookModeFakePidNumericUpDown.Value;
 			if (item.FakePID != value)
+			{
 				item.FakePID = value;
-		}
-
-		private void HookModeFakePidNumericUpDown_ValueChanged2(object sender, EventArgs e)
-		{
-			AppHelper.SetText(HookModeFakePidTextBox, "0x{0:X4}", (int)HookModeFakePidNumericUpDown.Value);
-		}
-
-		private void TimeoutNumericUpDown_ValueChanged(object sender, EventArgs e)
-		{
-			var item = CurrentGame;
-			if (item == null)
-				return;
-			var value = (int)TimeoutNumericUpDown.Value;
-			if (item.Timeout != value)
-				item.Timeout = value;
-		}
-
-		private void EmulationTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var item = CurrentGame;
-			if (item == null)
-				return;
-			var value = (int)EmulationTypeComboBox.SelectedItem;
-			if (item.EmulationType != value)
-				item.EmulationType = value;
+				AppHelper.SetText(HookModeFakePidTextBox, "0x{0:X4}", (int)HookModeFakePidNumericUpDown.Value);
+			}
 		}
 
 		private void HookPIDVIDCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -410,24 +399,16 @@ namespace x360ce.App.Controls
 			if (en)
 			{
 				if (HookModeFakeVidNumericUpDown.Value == 0)
-				{
 					HookModeFakeVidNumericUpDown.Value = msVid;
-				}
 				if (HookModeFakePidNumericUpDown.Value == 0)
-				{
 					HookModeFakePidNumericUpDown.Value = msPid;
-				}
 			}
 			else
 			{
 				if (HookModeFakeVidNumericUpDown.Value == msVid)
-				{
 					HookModeFakeVidNumericUpDown.Value = 0;
-				}
 				if (HookModeFakePidNumericUpDown.Value == msPid)
-				{
 					HookModeFakePidNumericUpDown.Value = 0;
-				}
 			}
 		}
 
@@ -461,9 +442,46 @@ namespace x360ce.App.Controls
 			}
 		}
 
+
+		#region Update original item when user interacts with the interface
+
+		private void TimeoutNumericUpDown_ValueChanged(object sender, EventArgs e)
+		{
+			var item = CurrentItem;
+			if (item == null)
+				return;
+			var value = (int)TimeoutNumericUpDown.Value;
+			if (item.Timeout != value)
+				item.Timeout = value;
+		}
+
+		private void ProcessorArchitectureComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var item = CurrentItem;
+			if (item == null)
+				return;
+			var value = (int)ProcessorArchitectureComboBox.SelectedItem;
+			if (item.ProcessorArchitecture != value)
+				item.ProcessorArchitecture = value;
+		}
+
+		private void EmulationTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var item = CurrentItem;
+			if (item == null)
+				return;
+			var value = (int)EmulationTypeComboBox.SelectedItem;
+			if (item.EmulationType != value)
+				item.EmulationType = value;
+		}
+
+		#endregion
+
+		#region Help Links
+
 		string GetGoogleSearchUrl()
 		{
-			var c = CurrentGame;
+			var c = CurrentItem;
 			if (c == null) return "";
 			var url = "https://www.google.co.uk/?#q=";
 			var q = "x360ce " + c.FileProductName;
@@ -474,7 +492,7 @@ namespace x360ce.App.Controls
 
 		string GetNGemuSearchUrl()
 		{
-			var c = CurrentGame;
+			var c = CurrentItem;
 			if (c == null) return "";
 			var url = "http://ngemu.com/search/5815705?q=";
 			var q = "x360ce " + c.FileProductName;
@@ -482,19 +500,16 @@ namespace x360ce.App.Controls
 			url += System.Web.HttpUtility.UrlEncode(keyName);
 			return url;
 		}
+
 		string GetNGemuThreadUrl()
 		{
-			var c = CurrentGame;
+			var c = CurrentItem;
 			if (c == null) return "";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false);
 			var url = "http://ngemu.com/threads/";
 			url += System.Web.HttpUtility.UrlEncode(keyName) + "/";
 			return url;
-		}
-
-		void UpdateHelpButtons()
-		{
 		}
 
 		private void GoogleSearchButton_Click(object sender, EventArgs e)
@@ -511,6 +526,8 @@ namespace x360ce.App.Controls
 		{
 			EngineHelper.OpenUrl(GetNGemuThreadUrl());
 		}
+
+		#endregion
 
 	}
 }
