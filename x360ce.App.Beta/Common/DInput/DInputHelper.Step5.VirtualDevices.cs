@@ -1,5 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
+using System.Windows.Forms;
 using x360ce.App.vBox;
 using x360ce.Engine;
 
@@ -11,6 +12,12 @@ namespace x360ce.App.DInput
 		void UpdateVirtualDevices()
 		{
 			var game = MainForm.Current.CurrentGame;
+			// If game does not support emulation type.
+			if (!((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
+				return;
+			var error = CheckInstallVirtualDriver();
+			if (error != VirtualError.None)
+				return;
 			for (uint i = 1; i <= 4; i++)
 			{
 				var mapTo = (MapTo)i;
@@ -54,6 +61,24 @@ namespace x360ce.App.DInput
 					DisableFeeding(i);
 				}
 			}
+		}
+
+		public VirtualError CheckInstallVirtualDriver()
+		{
+			// If driver is installed already then return.
+			if (vXboxInterface.isVBusExists())
+				return VirtualError.None;
+			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(Application.ExecutablePath, Program.InstallVirtualDriverParam, System.Diagnostics.ProcessWindowStyle.Hidden);
+			return VirtualError.None;
+		}
+
+		public VirtualError CheckUnInstallVirtualDriver()
+		{
+			// If driver is installed already then return.
+			if (vXboxInterface.isVBusExists())
+				return VirtualError.None;
+			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(Application.ExecutablePath, Program.UnInstallVirtualDriverParam, System.Diagnostics.ProcessWindowStyle.Hidden);
+			return VirtualError.None;
 		}
 
 		public VirtualError EnableFeeding(uint userIndex)

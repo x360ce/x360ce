@@ -182,6 +182,7 @@
     <Compile Include="Common\DInput\DInputHelper.Step3.UpdateXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
+    <Compile Include="Common\DInput\VirtualDriverInstaller.cs" />
     <Compile Include="Common\DInput\VirtualError.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
@@ -500,6 +501,12 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
+    <EmbeddedResource Include="Resources\vBox_x64\scpvbus.cat" />
+    <EmbeddedResource Include="Resources\vBox_x64\ScpVBus.sys" />
+    <EmbeddedResource Include="Resources\vBox_x64\ScpVBus_Setup.bat" />
+    <EmbeddedResource Include="Resources\vBox_x86\scpvbus.cat" />
+    <EmbeddedResource Include="Resources\vBox_x86\ScpVBus.sys" />
+    <EmbeddedResource Include="Resources\vBox_x86\ScpVBus_Setup.bat" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -565,6 +572,12 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\vBox_x64\devcon.exe" />
+    <EmbeddedResource Include="Resources\vBox_x64\ScpVBus.inf" />
+    <EmbeddedResource Include="Resources\vBox_x64\WdfCoinstaller01009.dll" />
+    <EmbeddedResource Include="Resources\vBox_x86\devcon.exe" />
+    <EmbeddedResource Include="Resources\vBox_x86\ScpVBus.inf" />
+    <EmbeddedResource Include="Resources\vBox_x86\WdfCoinstaller01009.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
     <EmbeddedResource Include="Resources\vXboxInterface_x64\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\vXboxInterface_x86\vXboxInterface.dll" />

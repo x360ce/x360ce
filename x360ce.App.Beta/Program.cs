@@ -58,7 +58,10 @@ namespace x360ce.App
             }
         }
 
-        static void StartApp(string[] args)
+		public const string InstallVirtualDriverParam = "InstallVirtualDriver";
+		public const string UnInstallVirtualDriverParam = "UnInstallVirtualDriver";
+
+		static void StartApp(string[] args)
         {
             //var fi = new FileInfo(Application.ExecutablePath);
             //Directory.SetCurrentDirectory(fi.Directory.FullName);
@@ -73,7 +76,17 @@ namespace x360ce.App
             Application.SetCompatibleTextRenderingDefault(false);
             // Requires System.Configuration.Installl reference.
             var ic = new System.Configuration.Install.InstallContext(null, args);
-            if (ic.Parameters.ContainsKey("Settings"))
+			if (ic.Parameters.ContainsKey(InstallVirtualDriverParam))
+			{
+				DInput.VirtualDriverInstaller.InstallVirtualDriver();
+				return;
+			}
+			if (ic.Parameters.ContainsKey(UnInstallVirtualDriverParam))
+			{
+				DInput.VirtualDriverInstaller.UnInstallVirtualDriver();
+				return;
+			}
+			if (ic.Parameters.ContainsKey("Settings"))
             {
                 OpenSettingsFolder(Application.UserAppDataPath);
                 OpenSettingsFolder(Application.CommonAppDataPath);

@@ -1238,7 +1238,10 @@ namespace x360ce.App
 				}
 				if (item != null)
 				{
-					// attach event to new game.
+					// Update buttons from current item.
+					VirtualButton.Checked = ((EmulationType)item.EmulationType).HasFlag(EmulationType.Virtual);
+					LibraryButton.Checked = ((EmulationType)item.EmulationType).HasFlag(EmulationType.Library);
+					// Attach event to new game.
 					item.PropertyChanged += CurrentGame_PropertyChanged;
 				}
 				CurrentGame = item;
@@ -1264,15 +1267,19 @@ namespace x360ce.App
 			var game = CurrentGame;
 			if (game == null)
 				return;
-			var name = AppHelper.GetPropertyName<UserGame>(x => x.AutoMapMask);
 			// Update PAD Control.
 			foreach (var ps in PadControls)
 			{
 				if (ps != null)
 					ps.UpdateFromCurrentGame();
 			}
-			VirtualButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-			LibraryButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Library);
+			// Update controls by specific property.
+			if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
+			{
+				// Update buttons from current item.
+				VirtualButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+				LibraryButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Library);
+			}
 		}
 
 		private void StatusIniLabel_DoubleClick(object sender, EventArgs e)
