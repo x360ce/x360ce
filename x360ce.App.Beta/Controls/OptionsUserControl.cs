@@ -314,5 +314,15 @@ namespace x360ce.App.Controls
             MainForm.Current.ShowUpdateForm();
 
         }
-    }
+
+		private void VirtualDeviceInstallButton_Click(object sender, EventArgs e)
+		{
+			DInput.VirtualDriverInstaller.InstallVirtualDriver();
+		}
+
+		private void VirtualDeviceUninstallButton_Click(object sender, EventArgs e)
+		{
+			DInput.VirtualDriverInstaller.UnInstallVirtualDriver();
+		}
+	}
 }

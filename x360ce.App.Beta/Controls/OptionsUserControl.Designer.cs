@@ -85,9 +85,11 @@
 			this.CheckForUpdatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.CheckUpdatesButton = new System.Windows.Forms.Button();
 			this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
 			this.PollingRateLabel = new System.Windows.Forms.Label();
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
+			this.VirtualDeviceInstallButton = new System.Windows.Forms.Button();
+			this.VirtualDeviceUninstallButton = new System.Windows.Forms.Button();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -100,7 +102,7 @@
 			this.GamesGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
 			this.UpdateOptionsGroupBox.SuspendLayout();
-			this.groupBox2.SuspendLayout();
+			this.VirtualDeviceGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -720,16 +722,18 @@
 			this.OpenSettingsFolderButton.UseVisualStyleBackColor = true;
 			this.OpenSettingsFolderButton.Click += new System.EventHandler(this.OpenSettingsFolderButton_Click);
 			// 
-			// groupBox2
+			// VirtualDeviceGroupBox
 			// 
-			this.groupBox2.Controls.Add(this.PollingRateLabel);
-			this.groupBox2.Controls.Add(this.PollingRateComboBox);
-			this.groupBox2.Location = new System.Drawing.Point(3, 431);
-			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(254, 64);
-			this.groupBox2.TabIndex = 70;
-			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = "Virtual Device";
+			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateLabel);
+			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateComboBox);
+			this.VirtualDeviceGroupBox.Controls.Add(this.VirtualDeviceUninstallButton);
+			this.VirtualDeviceGroupBox.Controls.Add(this.VirtualDeviceInstallButton);
+			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(3, 431);
+			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
+			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(254, 82);
+			this.VirtualDeviceGroupBox.TabIndex = 70;
+			this.VirtualDeviceGroupBox.TabStop = false;
+			this.VirtualDeviceGroupBox.Text = "Virtual Device";
 			// 
 			// PollingRateLabel
 			// 
@@ -749,11 +753,31 @@
 			this.PollingRateComboBox.Size = new System.Drawing.Size(79, 21);
 			this.PollingRateComboBox.TabIndex = 30;
 			// 
+			// VirtualDeviceInstallButton
+			// 
+			this.VirtualDeviceInstallButton.Location = new System.Drawing.Point(164, 17);
+			this.VirtualDeviceInstallButton.Name = "VirtualDeviceInstallButton";
+			this.VirtualDeviceInstallButton.Size = new System.Drawing.Size(75, 23);
+			this.VirtualDeviceInstallButton.TabIndex = 44;
+			this.VirtualDeviceInstallButton.Text = "Install";
+			this.VirtualDeviceInstallButton.UseVisualStyleBackColor = true;
+			this.VirtualDeviceInstallButton.Click += new System.EventHandler(this.VirtualDeviceInstallButton_Click);
+			// 
+			// VirtualDeviceUninstallButton
+			// 
+			this.VirtualDeviceUninstallButton.Location = new System.Drawing.Point(164, 46);
+			this.VirtualDeviceUninstallButton.Name = "VirtualDeviceUninstallButton";
+			this.VirtualDeviceUninstallButton.Size = new System.Drawing.Size(75, 23);
+			this.VirtualDeviceUninstallButton.TabIndex = 44;
+			this.VirtualDeviceUninstallButton.Text = "Uninstall";
+			this.VirtualDeviceUninstallButton.UseVisualStyleBackColor = true;
+			this.VirtualDeviceUninstallButton.Click += new System.EventHandler(this.VirtualDeviceUninstallButton_Click);
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.groupBox2);
+			this.Controls.Add(this.VirtualDeviceGroupBox);
 			this.Controls.Add(this.OpenSettingsFolderButton);
 			this.Controls.Add(this.SaveSettingsButton);
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
@@ -789,8 +813,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).EndInit();
 			this.UpdateOptionsGroupBox.ResumeLayout(false);
 			this.UpdateOptionsGroupBox.PerformLayout();
-			this.groupBox2.ResumeLayout(false);
-			this.groupBox2.PerformLayout();
+			this.VirtualDeviceGroupBox.ResumeLayout(false);
+			this.VirtualDeviceGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -854,8 +878,10 @@
         private System.Windows.Forms.GroupBox UpdateOptionsGroupBox;
         public System.Windows.Forms.CheckBox CheckForUpdatesCheckBox;
         private System.Windows.Forms.Button CheckUpdatesButton;
-		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.GroupBox VirtualDeviceGroupBox;
 		private System.Windows.Forms.Label PollingRateLabel;
 		private System.Windows.Forms.ComboBox PollingRateComboBox;
+		private System.Windows.Forms.Button VirtualDeviceUninstallButton;
+		private System.Windows.Forms.Button VirtualDeviceInstallButton;
 	}
 }

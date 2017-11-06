@@ -339,11 +339,13 @@ namespace JocysCom.ClassLibrary.Win32
 		}
 
 
-		public static Process CreateElevatedProcess(string fileName, string arguments = null)
+		public static Process CreateElevatedProcess(string fileName, string arguments = null, bool useFileWorkingFolder = false)
 		{
 			ProcessStartInfo psi = new ProcessStartInfo();
 			psi.UseShellExecute = true;
-			psi.WorkingDirectory = Environment.CurrentDirectory;
+			psi.WorkingDirectory = useFileWorkingFolder
+				? new System.IO.FileInfo(fileName).DirectoryName
+				: Environment.CurrentDirectory;
 			psi.FileName = fileName;
 			if (arguments != null) psi.Arguments = arguments;
 			psi.CreateNoWindow = true;
@@ -359,12 +361,12 @@ namespace JocysCom.ClassLibrary.Win32
 		/// Start program in elevated mode.
 		/// </summary>
 		/// <param name="fileName"></param>
-		public static int RunElevated(string fileName, string arguments, ProcessWindowStyle style)
+		public static int RunElevated(string fileName, string arguments, ProcessWindowStyle style, bool useFileWorkingFolder = false)
 		{
 			int exitCode = -1;
 			if (String.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException("Executable file name must be specified");
-			using (Process process = CreateElevatedProcess(fileName, arguments))
+			using (Process process = CreateElevatedProcess(fileName, arguments, useFileWorkingFolder))
 			{
 				try
 				{

@@ -7,9 +7,6 @@ using System.Collections;
 using System.Configuration;
 using System.Diagnostics;
 using System.Data.SqlClient;
-using System.Web.UI.WebControls;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using System.Net;
 
@@ -17,7 +14,7 @@ namespace JocysCom.ClassLibrary.Runtime
 {
 	public partial class LogHelper
 	{
-	
+
 		private static LogHelper _Current;
 		private static object currentLock = new object();
 		public static LogHelper Current
@@ -333,8 +330,19 @@ namespace JocysCom.ClassLibrary.Runtime
 
 				*/
 			}
-			UserInfo(ref s);
-			PageInfo(ref s);
+			// If LogHelper.Web.cs is included
+			var methods = new string[] { "UserInfo", "PageInfo" };
+			foreach (var method in methods)
+			{
+				var uiMethod = GetType().GetMethods().FirstOrDefault(x => x.Name == method);
+				if (uiMethod != null)
+				{
+					var uim = GetType().GetMethod(method, new Type[] { typeof(string).MakeByRefType() });
+					var args = new object[] { s };
+					uim.Invoke(this, args);
+					s = (string)args[0];
+				}
+			}
 			AddRow(ref s);
 			s += "</table>";
 			s += "<table border=\"0\" cellspacing=\"2\">";
@@ -441,183 +449,6 @@ namespace JocysCom.ClassLibrary.Runtime
 					ex.Data.Add(key, s1);
 					i++;
 				}
-			}
-		}
-
-		#endregion
-
-		#region Web Page Info
-
-		public virtual void PageInfo(ref string s)
-		{
-			var context = System.Web.HttpContext.Current;
-			if (context != null)
-			{
-				// Form controls.
-				var pg = System.Web.HttpContext.Current.Handler as Page;
-				Control[] controls = null;
-				//Need to find page on this
-				if (pg != null)
-				{
-					AddRow(ref s, "Page");
-					// find the form
-					foreach (Control ctrl in pg.Controls)
-					{
-						if (object.ReferenceEquals(ctrl.GetType(), typeof(HtmlForm)))
-						{
-							controls = Web.WebControlsHelper.GetAll<Control>((HtmlForm)ctrl);
-						}
-						else if (object.ReferenceEquals(ctrl.GetType().BaseType.BaseType, typeof(MasterPage)))
-						{
-							controls = Web.WebControlsHelper.GetAll<Control>((MasterPage)ctrl);
-						}
-					}
-					if (controls != null)
-					{
-						if (controls.Length > 0)
-						{
-							AddRow(ref s, "Page.Controls");
-						}
-						foreach (Control ctrl in controls)
-						{
-							bool show = false;
-							var type = ctrl.GetType();
-							var interfaces = type.GetInterfaces();
-							var values = new StringBuilder();
-							if (interfaces.Contains(typeof(IPostBackDataHandler)))
-							{
-								if (interfaces.Contains(typeof(ITextControl)))
-								{
-									values.AppendFormat("Text={0}\r\n", ((ITextControl)ctrl).Text);
-									show = true;
-								}
-								if (interfaces.Contains(typeof(ICheckBoxControl)))
-								{
-									values.AppendFormat("Checked={0}\r\n", ((ICheckBoxControl)ctrl).Checked);
-									show = true;
-								}
-								if (typeof(ListControl).IsAssignableFrom(type))
-								{
-									var items = ((ListControl)ctrl).Items;
-									foreach (ListItem item in items)
-									{
-										if (item != null)
-										{
-											var selected = item.Selected ? ", Selected = true" : "";
-											values.AppendFormat("Value={0}, Text={1}, {2}\r\n", item.Value, item.Text, selected);
-										}
-									}
-									show = true;
-								}
-							}
-							if (typeof(HyperLink).IsAssignableFrom(type))
-							{
-								values.AppendFormat("NavigateUrl={0}\r\n", ((HyperLink)ctrl).NavigateUrl);
-								show = true;
-							}
-							if (show)
-							{
-								AddRow(ref s, ctrl.ID, values.ToString());
-							}
-						}
-					}
-				}
-				var request = context.Request;
-				if (request != null)
-				{
-					AddRow(ref s, "Request");
-					AddRow(ref s, "User IP", request.UserHostName);
-					IPAddress address;
-					if (IPAddress.TryParse(request.UserHostName, out address))
-					{
-						try
-						{
-							IPHostEntry entry = Dns.GetHostEntry(address);
-							AddRow(ref s, "User Host", entry.HostName);
-						}
-						catch (Exception ex)
-						{
-							AddRow(ref s, "User Host", ex.Message);
-						}
-					}
-					AddRow(ref s, "Request.Url", request.Url.ToString());
-					if (request.Form.Keys.Count > 0)
-					{
-						AddRow(ref s, "Request.Form.Keys");
-					}
-					foreach (string key in request.Form.Keys)
-					{
-						if (key == "__VIEWSTATE")
-						{
-							AddRow(ref s, key, request.Form[key]);
-						}
-						else
-						{
-							string value = request.Form[key];
-							if (key.EndsWith("Pan") && !string.IsNullOrEmpty(value))
-							{
-								value = GetMasked(value);
-							}
-							AddRow(ref s, key, value);
-						}
-					}
-					if (request.QueryString.HasKeys())
-					{
-						if (request.QueryString.Count > 0)
-							AddRow(ref s, "Request.QueryString");
-						foreach (string key in request.QueryString)
-						{
-							string value = request.QueryString[key];
-							if (key.EndsWith("Pan") && !string.IsNullOrEmpty(value))
-							{
-								value = GetMasked(value);
-							}
-							AddRow(ref s, key, value);
-						}
-					}
-				}
-				var cookies = request.Cookies;
-				if (cookies.Keys.Count > 0)
-				{
-					AddRow(ref s, "Cookies");
-					foreach (string cookieKey in cookies.Keys)
-					{
-						var cookie = cookies[cookieKey];
-						AddRow(ref s, cookie.Name, cookie.Value);
-					}
-				}
-
-			}
-		}
-
-		public virtual void UserInfo(ref string s)
-		{
-			// get user info and return it as formatted html string
-			AddRow(ref s, "Session");
-			//var fa = System.Web.Security.FormsAuthentication.IsEnabled;
-			//var user = System.Web.Security.Membership.GetUser();
-			//var roles = System.Web.Security.Roles.GetRolesForUser();
-			var now = DateTime.Now;
-			var startTime = Process.GetCurrentProcess().StartTime;
-			AddRow(ref s, "Current Time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-			AddRow(ref s, "Running Since", startTime.ToString("yyyy-MM-dd HH:mm:ss"));
-			AddRow(ref s, "Running For", (now - startTime).ToString());
-			var connections = ConfigurationManager.ConnectionStrings;
-			foreach (ConnectionStringSettings item in connections)
-			{
-				string connectionString;
-				if (string.Compare(item.ProviderName, "System.Data.EntityClient", true) == 0)
-				{
-					// Use entity connection.
-					var e = new System.Data.EntityClient.EntityConnection(item.ConnectionString);
-					connectionString = e.StoreConnection.ConnectionString;
-				}
-				else
-				{
-					// Use classic connection.
-					connectionString = item.ConnectionString;
-				}
-				AddConnection(ref s, item.Name, connectionString);
 			}
 		}
 

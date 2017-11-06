@@ -30,8 +30,8 @@ namespace x360ce.Engine
 			Target = TargetType.Button;
 		}
 
-		int Min;
-		int Max;
+		//int Min;
+		//int Max;
 
 		// Source Paramaters.
 		public SettingType Type;
