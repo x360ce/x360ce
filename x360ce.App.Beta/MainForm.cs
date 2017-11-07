@@ -829,6 +829,10 @@ namespace x360ce.App
 			}
 			//		UpdateStatus();
 			//	}
+			// Update options panel.
+			var isVBusExists = vBox.vXboxInterface.isVBusExists();
+			OptionsPanel.VirtualDeviceInstallButton.Enabled = !isVBusExists;
+			OptionsPanel.VirtualDeviceUninstallButton.Enabled = isVBusExists;
 		}
 
 		public void ReloadLibrary()

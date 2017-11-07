@@ -374,6 +374,7 @@
     <Compile Include="Issues\LeakDetectorIssue.cs" />
     <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Issues\IniFileIssue.cs" />
+    <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
     <Compile Include="MainForm.Tray.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>

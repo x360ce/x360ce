@@ -1,39 +1,40 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Win32;
+using System.Linq;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
 	public class DllFileIssue : WarningItem
 	{
-		public DllFileIssue()
+		public DllFileIssue() : base()
 		{
 			Name = "DLL File";
 			FixName = "Create";
-			Description = "";
 		}
 
 		public override void Check()
 		{
-			Severity = System.IO.File.Exists(SettingsManager.IniFileName)
-				? IssueSeverity.None
-				: IssueSeverity.Critical;
-
+			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
+			if (!required)
+			{
+				SetSeverity(IssueSeverity.None);
+				return;
+			}
 			// If XInput file doesn't exists.
 			var appArchitecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
 			embeddedDllVersion = EngineHelper.GetEmbeddedDllVersion(appArchitecture);
 			var file = EngineHelper.GetDefaultDll();
-			//// If XInput DLL was not found then...
-			//if (file == null)
-			//{
-			//	var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
-			//	Description = string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", xFile);
-			//	// Offer extract.
-			//	FixType = 1;
-			//	Severity = IssueSeverity.Critical;
-			//	return;
-			//}
+			// If XInput DLL was not found then...
+			if (file == null)
+			{
+				var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
+				SetSeverity(
+					IssueSeverity.Critical, 1,
+					string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", xFile)
+				);
+				return;
+			}
 			if (file != null)
 			{
 				bool byMicrosoft;
@@ -44,9 +45,10 @@ namespace x360ce.App.Issues
 					// If file on the disk is older then...
 					if (dllVersion < embeddedDllVersion)
 					{
-						Description = string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", file.Name, dllVersion, embeddedDllVersion);
-						FixType = 2;
-						Severity = IssueSeverity.Moderate;
+						SetSeverity(
+							IssueSeverity.Moderate, 2,
+							string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", file.Name, dllVersion, embeddedDllVersion)
+						);
 						return;
 					}
 					var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(file.FullName);
@@ -55,17 +57,17 @@ namespace x360ce.App.Issues
 						// Offer upgrade.
 						var oldDesc = EngineHelper.GetProcessorArchitectureDescription(xiCurrentArchitecture);
 						var newDesc = EngineHelper.GetProcessorArchitectureDescription(appArchitecture);
-						Description = string.Format("You are running {2} application but {0} on the disk was built for {1} architecture.\r\n\r\nDo you want to replace {0} file with {2} version?", file.Name, oldDesc, newDesc);
-						FixType = 3;
-						Severity = IssueSeverity.Moderate;
+						SetSeverity(
+							IssueSeverity.Moderate, 3,
+							string.Format("You are running {2} application but {0} on the disk was built for {1} architecture.\r\n\r\nDo you want to replace {0} file with {2} version?", file.Name, oldDesc, newDesc)
+						);
 						return;
 					}
 				}
 			}
-			Severity = IssueSeverity.None;
+			SetSeverity(IssueSeverity.None);
 		}
 
-		int FixType = 0;
 		Version dllVersion;
 		Version embeddedDllVersion;
 

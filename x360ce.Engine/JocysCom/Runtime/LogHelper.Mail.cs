@@ -209,9 +209,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public bool SuspendError(Exception ex)
 		{
-			if (!ex.Data.Keys.Cast<object>().Contains("ErrorCode"))
+			if (!ex.Data.Keys.Cast<object>().Contains(SmtpClientEx.ErrorCode ))
 				return false;
-			var errorCode = ex.Data["ErrorCode"] as int?;
+			var errorCode = ex.Data[SmtpClientEx.ErrorCode] as int?;
 			if (!errorCode.HasValue)
 				return false;
 			var codes = Smtp.ErrorCodeSuspended;

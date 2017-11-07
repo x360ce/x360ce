@@ -9,6 +9,12 @@ namespace x360ce.App
 	public class WarningItem : INotifyPropertyChanged
 	{
 
+		public WarningItem()
+		{
+			Description = "";
+			FixName = "Fix";
+		}
+
 		public event EventHandler<EventArgs> FixApplied;
 
 		internal void RaiseFixApplied()
@@ -34,6 +40,8 @@ namespace x360ce.App
 		}
 		string _Description;
 
+		public int FixType;
+
 		public string FixName
 		{
 			get { return _FixName; }
@@ -41,16 +49,27 @@ namespace x360ce.App
 		}
 		string _FixName;
 
-		public IssueSeverity Severity
+		public IssueSeverity? Severity
 		{
 			get { return _Severity; }
 			set { _Severity = value; NotifyPropertyChanged("Severity"); }
 		}
-		IssueSeverity _Severity;
+		IssueSeverity? _Severity;
 
 		public virtual void Fix() { throw new NotImplementedException(); }
 
 		public virtual void Check() { throw new NotImplementedException(); }
+
+		public void SetSeverity(IssueSeverity severity, int fixType = 0, string description = "")
+		{
+			var update = !Severity.HasValue || Severity.Value != severity || Description != description;
+			if (update)
+			{
+				FixType = fixType;
+				Severity = severity;
+				Description = description;
+			}
+		}
 
 		#region INotifyPropertyChanged
 

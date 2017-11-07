@@ -9,11 +9,10 @@ namespace x360ce.App.Issues
 {
 	public class ExeFileIssue : WarningItem
 	{
-		public ExeFileIssue()
+		public ExeFileIssue() : base()
 		{
 			Name = "EXE File";
 			FixName = "Fix";
-			Description = "";
 		}
 
 		public override void Check()
@@ -23,21 +22,18 @@ namespace x360ce.App.Issues
 			var insideWindowsFolder = fi.FullName.StartsWith(winFolder, StringComparison.InvariantCultureIgnoreCase);
 			if (insideWindowsFolder)
 			{
-				Description = string.Format("Do not run X360CE Application from Windows folder.");
-				// Offer extract.
-				FixType = 1;
-				Severity = IssueSeverity.Critical;
+				SetSeverity(
+					IssueSeverity.Critical, 1,
+					string.Format("Do not run X360CE Application from Windows folder.")
+				);
 				return;
 			}
-			FixType = 0;
-			Severity = IssueSeverity.None;
+			SetSeverity(IssueSeverity.None);
 		}
-
-		int FixType = 0;
 
 		public override void Fix()
 		{
-			if (FixType > 0)
+			if (FixType == 1)
 			{
 				var fi = new FileInfo(Application.ExecutablePath);
 				var path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);

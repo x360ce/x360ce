@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Microsoft.Win32;
 using x360ce.Engine;
 using System.Linq;
 using System.Windows.Forms;
@@ -11,11 +10,10 @@ namespace x360ce.App.Issues
 {
 	public class ArchitectureIssue : WarningItem
 	{
-		public ArchitectureIssue()
+		public ArchitectureIssue() : base()
 		{
 			Name = "Architecture";
 			FixName = "Download";
-			Description = "";
 		}
 
 		// Check file only once.
@@ -23,6 +21,12 @@ namespace x360ce.App.Issues
 
 		public override void Check()
 		{
+			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
+			if (!required)
+			{
+				SetSeverity(IssueSeverity.None);
+				return;
+			}
 			var architectures = new Dictionary<string, ProcessorArchitecture>();
 			var architecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
 			var exes = EngineHelper.GetFiles(".", "*.exe");
@@ -51,35 +55,33 @@ namespace x360ce.App.Issues
 			// If executables are 32-bit, but this program is 64-bit then...
 			if (x86Count > 0 && x64Count == 0 && architecture == ProcessorArchitecture.Amd64)
 			{
-				Description = "This folder contains 32-bit game. You should use 32-bit X360CE Application:\r\n" +
-				"http://www.x360ce.com/Files/x360ce.zip";
-				_architecture = ProcessorArchitecture.X86;
-				FixName = "Download";
-				Severity = IssueSeverity.Moderate;
+				SetSeverity(
+					IssueSeverity.Moderate, 1,
+					"This folder contains 32-bit game. You should use 32-bit X360CE Application:\r\n" +
+					"http://www.x360ce.com/Files/x360ce.zip"
+				);
 				return;
 			}
 			// If executables are 64-bit, but this program is 32-bit then...
 			if (x64Count > 0 && x86Count == 0 && architecture == ProcessorArchitecture.X86)
 			{
-				Description = "This folder contains 64-bit game. You should use 64-bit X360CE Application:\r\n" +
-				"http://www.x360ce.com/Files/x360ce_x64.zip";
-				_architecture = ProcessorArchitecture.Amd64;
-				FixName = "Download";
-				Severity = IssueSeverity.Moderate;
+				SetSeverity(
+					IssueSeverity.Moderate, 2,
+					"This folder contains 64-bit game. You should use 64-bit X360CE Application:\r\n" +
+					"http://www.x360ce.com/Files/x360ce_x64.zip"
+				);
 				return;
 			}
-			Severity = IssueSeverity.None;
+			SetSeverity(IssueSeverity.None);
 		}
-
-		ProcessorArchitecture _architecture;
 
 		public override void Fix()
 		{
-			if (_architecture == ProcessorArchitecture.X86)
+			if (FixType == 1)
 			{
 				EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce.zip");
 			}
-			else
+			else if (FixType == 2)
 			{
 				EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip");
 			}

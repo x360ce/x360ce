@@ -88,8 +88,8 @@
 			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
 			this.PollingRateLabel = new System.Windows.Forms.Label();
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
-			this.VirtualDeviceInstallButton = new System.Windows.Forms.Button();
 			this.VirtualDeviceUninstallButton = new System.Windows.Forms.Button();
+			this.VirtualDeviceInstallButton = new System.Windows.Forms.Button();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -753,16 +753,6 @@
 			this.PollingRateComboBox.Size = new System.Drawing.Size(79, 21);
 			this.PollingRateComboBox.TabIndex = 30;
 			// 
-			// VirtualDeviceInstallButton
-			// 
-			this.VirtualDeviceInstallButton.Location = new System.Drawing.Point(164, 17);
-			this.VirtualDeviceInstallButton.Name = "VirtualDeviceInstallButton";
-			this.VirtualDeviceInstallButton.Size = new System.Drawing.Size(75, 23);
-			this.VirtualDeviceInstallButton.TabIndex = 44;
-			this.VirtualDeviceInstallButton.Text = "Install";
-			this.VirtualDeviceInstallButton.UseVisualStyleBackColor = true;
-			this.VirtualDeviceInstallButton.Click += new System.EventHandler(this.VirtualDeviceInstallButton_Click);
-			// 
 			// VirtualDeviceUninstallButton
 			// 
 			this.VirtualDeviceUninstallButton.Location = new System.Drawing.Point(164, 46);
@@ -772,6 +762,16 @@
 			this.VirtualDeviceUninstallButton.Text = "Uninstall";
 			this.VirtualDeviceUninstallButton.UseVisualStyleBackColor = true;
 			this.VirtualDeviceUninstallButton.Click += new System.EventHandler(this.VirtualDeviceUninstallButton_Click);
+			// 
+			// VirtualDeviceInstallButton
+			// 
+			this.VirtualDeviceInstallButton.Location = new System.Drawing.Point(164, 17);
+			this.VirtualDeviceInstallButton.Name = "VirtualDeviceInstallButton";
+			this.VirtualDeviceInstallButton.Size = new System.Drawing.Size(75, 23);
+			this.VirtualDeviceInstallButton.TabIndex = 44;
+			this.VirtualDeviceInstallButton.Text = "Install";
+			this.VirtualDeviceInstallButton.UseVisualStyleBackColor = true;
+			this.VirtualDeviceInstallButton.Click += new System.EventHandler(this.VirtualDeviceInstallButton_Click);
 			// 
 			// OptionsUserControl
 			// 
@@ -881,7 +881,7 @@
 		private System.Windows.Forms.GroupBox VirtualDeviceGroupBox;
 		private System.Windows.Forms.Label PollingRateLabel;
 		private System.Windows.Forms.ComboBox PollingRateComboBox;
-		private System.Windows.Forms.Button VirtualDeviceUninstallButton;
-		private System.Windows.Forms.Button VirtualDeviceInstallButton;
+		public System.Windows.Forms.Button VirtualDeviceUninstallButton;
+		public System.Windows.Forms.Button VirtualDeviceInstallButton;
 	}
 }

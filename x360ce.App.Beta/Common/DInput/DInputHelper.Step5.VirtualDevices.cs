@@ -15,8 +15,8 @@ namespace x360ce.App.DInput
 			// If game does not support emulation type.
 			if (!((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
 				return;
-			var error = CheckInstallVirtualDriver();
-			if (error != VirtualError.None)
+			// If virtual driver is missing then return.
+			if (!vXboxInterface.isVBusExists())
 				return;
 			for (uint i = 1; i <= 4; i++)
 			{

@@ -1,14 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using Microsoft.Win32;
+﻿using System.IO;
+using System.Linq;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
 	public class IniFileIssue : WarningItem
 	{
-		public IniFileIssue()
+		public IniFileIssue() : base()
 		{
 			Name = "INI File";
 			FixName = "Fix";
@@ -16,7 +14,6 @@ namespace x360ce.App.Issues
 		}
 
 		bool enableCheck = true;
-		int FixType = 0;
 
 		public override void Check()
 		{
@@ -24,7 +21,12 @@ namespace x360ce.App.Issues
 			{
 				// Note: further check will be disabled if no issues were found.
 				if (!enableCheck) return;
-				// Description = string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", SettingManager.IniFileName);
+				var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
+				if (!required)
+				{
+					SetSeverity(IssueSeverity.None);
+					return;
+				}
 				// If temp file exist then.
 				var iniFile = new FileInfo(SettingsManager.IniFileName);
 				var tmpFile = new FileInfo(SettingsManager.TmpFileName);
@@ -33,16 +35,15 @@ namespace x360ce.App.Issues
 					// It means that application crashed. Restore INI from temp.
 					if (AppHelper.CopyFile(tmpFile.FullName, SettingsManager.IniFileName))
 					{
-						Severity = IssueSeverity.None;
-						Description = "";
-						FixType = 0;
 						enableCheck = false;
+						SetSeverity(IssueSeverity.None);
 					}
 					else
 					{
-						Description = string.Format("Failed to restore '{0}' file from '{1}' file.", SettingsManager.IniFileName, tmpFile.Name);
-						Severity = IssueSeverity.Critical;
-						FixType = 0;
+						SetSeverity(
+							IssueSeverity.Critical, 0,
+							string.Format("Failed to restore '{0}' file from '{1}' file.", SettingsManager.IniFileName, tmpFile.Name)
+						);
 					}
 				}
 				else if (iniFile.Exists)
@@ -50,23 +51,23 @@ namespace x360ce.App.Issues
 					var rulesMustBeFixed = AppHelper.CheckExplicitAccessRulesAndAllowToModify(SettingsManager.IniFileName, false);
 					if (rulesMustBeFixed)
 					{
-						Description = string.Format("Can't write or modify '{0}' file.", SettingsManager.IniFileName);
-						Severity = IssueSeverity.Critical;
-						FixType = 1;
+						SetSeverity(
+							IssueSeverity.Critical, 1,
+							string.Format("Can't write or modify '{0}' file.", SettingsManager.IniFileName)
+						);
 					}
 					// Create temp file to store original settings.
 					else if (AppHelper.CopyFile(SettingsManager.IniFileName, SettingsManager.TmpFileName))
 					{
-						Severity = IssueSeverity.None;
-						Description = "";
-						FixType = 0;
 						enableCheck = false;
+						SetSeverity(IssueSeverity.None);
 					}
 					else
 					{
-						Description = string.Format("Failed to backup '{0}' file to '{1}' file.", SettingsManager.IniFileName, tmpFile.Name);
-						Severity = IssueSeverity.Critical;
-						FixType = 0;
+						SetSeverity(
+							IssueSeverity.Critical, 0,
+							string.Format("Failed to backup '{0}' file to '{1}' file.", SettingsManager.IniFileName, tmpFile.Name)
+						);
 					}
 				}
 				else
@@ -75,16 +76,15 @@ namespace x360ce.App.Issues
                     var resourceName = typeof(Program).Namespace + ".Presets." + SettingsManager.IniFileName;
 					if (AppHelper.WriteFile(resourceName, SettingsManager.IniFileName))
 					{
-						Severity = IssueSeverity.None;
-						Description = "";
-						FixType = 0;
 						enableCheck = false;
+						SetSeverity(IssueSeverity.None);
 					}
 					else
 					{
-						Description = string.Format("Failed create '{0}' file.", SettingsManager.IniFileName);
-						Severity = IssueSeverity.Critical;
-						FixType = 0;
+						SetSeverity(
+							IssueSeverity.Critical, 0,
+							string.Format("Failed create '{0}' file.", SettingsManager.IniFileName)
+						);
 					}
 				}
 			}

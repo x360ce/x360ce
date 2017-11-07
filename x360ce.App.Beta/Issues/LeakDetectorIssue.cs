@@ -1,44 +1,52 @@
-﻿using System;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using System.Linq;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
 	public class LeakDetectorIssue : WarningItem
 	{
-		public LeakDetectorIssue()
+		public LeakDetectorIssue() : base()
 		{
 			Name = "Leak Detector";
 			FixName = "Download";
-			Description = "You are using debug version of XInput Library. Visual Leak Detector not found You can click the link below to download Visual Leak Detector:\r\n" +
-					"https://vld.codeplex.com";
 		}
 
 		public override void Check()
 		{
-			// Get list of debug files.
-			var pdbs = EngineHelper.GetFiles(".", "*.pdb");
-			if (pdbs.Length == 0)
+			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
+			if (!required)
 			{
-				Severity = IssueSeverity.None;
+				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
+			// Get list of debug files.
+			var pdbs = EngineHelper.GetFiles(".", "*.pdb");
+			if (pdbs.Length > 0)
 			{
-				foreach (string subkey_name in key.GetSubKeyNames())
+				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
 				{
-					using (RegistryKey subkey = key.OpenSubKey(subkey_name))
+					foreach (string subkey_name in key.GetSubKeyNames())
 					{
-						var displayName = (string)subkey.GetValue("DisplayName", "");
-						if (displayName.StartsWith("Visual Leak Detector"))
+						using (RegistryKey subkey = key.OpenSubKey(subkey_name))
 						{
-							Severity = IssueSeverity.None;
-							return;
+							var displayName = (string)subkey.GetValue("DisplayName", "");
+							if (displayName.StartsWith("Visual Leak Detector"))
+							{
+								SetSeverity(IssueSeverity.None);
+								return;
+							}
 						}
 					}
 				}
+				SetSeverity(
+					IssueSeverity.Moderate, 0,
+					"You are using debug version of XInput Library. Visual Leak Detector not found You can click the link below to download Visual Leak Detector:\r\n" +
+					"https://vld.codeplex.com"
+				);
+				return;
 			}
-			Severity = IssueSeverity.Moderate;
+			SetSeverity(IssueSeverity.None);
 		}
 
 		public override void Fix()

@@ -62,6 +62,7 @@ namespace x360ce.App.Controls
 					IssueList.Add(new GdbFileIssue());
 					IssueList.Add(new IniFileIssue());
 					IssueList.Add(new DllFileIssue());
+					IssueList.Add(new VirtualDeviceDriverIssue());
 					foreach (var item in IssueList)
 					{
 						item.FixApplied += Item_FixApplied;
