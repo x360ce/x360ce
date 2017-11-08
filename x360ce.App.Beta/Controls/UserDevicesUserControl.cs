@@ -107,7 +107,7 @@ namespace x360ce.App.Controls
 				// Add new one.
 				list.Add(newItem);
 			}
-            MainForm.Current.SetHeaderBody("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
+			MainForm.Current.SetHeaderBody("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
 			grid.DataSource = list;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save(true);
@@ -120,6 +120,12 @@ namespace x360ce.App.Controls
 			var form = new HardwareForm();
 			form.ShowDialog();
 			form.Dispose();
+		}
+
+		private void AddDemoDevice_Click(object sender, EventArgs e)
+		{
+			var ud = TestDeviceHelper.NewUserDevice();
+			SettingsManager.UserDevices.Items.Add(ud);
 		}
 	}
 }

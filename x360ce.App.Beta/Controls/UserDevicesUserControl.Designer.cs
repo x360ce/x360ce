@@ -42,6 +42,7 @@
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.HardwareButton = new System.Windows.Forms.ToolStripButton();
+			this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -145,7 +146,8 @@
 			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RefreshButton,
             this.ControllerDeleteButton,
-            this.HardwareButton});
+            this.HardwareButton,
+            this.AddDemoDevice});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
 			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -183,6 +185,16 @@
 			this.HardwareButton.Text = "Hardware...";
 			this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
 			// 
+			// AddDemoDevice
+			// 
+			this.AddDemoDevice.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.AddDemoDevice.Image = ((System.Drawing.Image)(resources.GetObject("AddDemoDevice.Image")));
+			this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AddDemoDevice.Name = "AddDemoDevice";
+			this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
+			this.AddDemoDevice.Text = "Add Demo Device";
+			this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
+			// 
 			// UserDevicesUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -211,5 +223,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
 		private System.Windows.Forms.ToolStripButton HardwareButton;
+		private System.Windows.Forms.ToolStripButton AddDemoDevice;
 	}
 }

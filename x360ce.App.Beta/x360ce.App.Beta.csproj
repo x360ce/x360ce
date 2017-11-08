@@ -201,6 +201,7 @@
     <Compile Include="Common\SettingsManager.Validate.cs" />
     <Compile Include="Common\SettingsManager.XML.cs" />
     <Compile Include="Common\TaskName.cs" />
+    <Compile Include="Common\TestDeviceHelper.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Common\ControlHelper.cs" />

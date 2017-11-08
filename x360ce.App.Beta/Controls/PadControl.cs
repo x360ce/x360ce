@@ -1181,14 +1181,15 @@ namespace x360ce.App.Controls
 
 		private void AutoPresetButton_Click(object sender, EventArgs e)
 		{
-			var d = GetCurrentDevice();
-			if (d == null) return;
+			var ud = GetCurrentDevice();
+			if (ud == null) return;
 			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var buttons = MessageBoxButtons.YesNo;
 			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
-			if (d.Device == null)
+			var isTestDevice = TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid);
+			if (ud.Device == null && !isTestDevice)
 			{
 				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
 				buttons = MessageBoxButtons.OK;
@@ -1197,7 +1198,9 @@ namespace x360ce.App.Controls
 			if (result == DialogResult.Yes)
 			{
 				SettingsManager.Current.ClearPadSettings(MappedTo);
-				var objects = AppHelper.GetDeviceObjects(d.Device);
+				var objects = isTestDevice
+					? TestDeviceHelper.GetDeviceObjects()
+					: AppHelper.GetDeviceObjects(ud.Device);
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
 				// If Right thumb triggers are missing then...

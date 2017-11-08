@@ -69,7 +69,7 @@ namespace x360ce.App.DInput
 			if (Program.IsClosing)
 				return;
 			// List of connected devices.
-			var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToArray();
+			var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToList();
 			// List of current devices.
 			var currentInstanceGuids = SettingsManager.UserDevices.Items.Select(x => x.InstanceGuid).ToArray();
 			deleteDevices = SettingsManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
@@ -138,6 +138,9 @@ namespace x360ce.App.DInput
 				var kv = updateDevices[i];
 				RefreshDevice(kv.Key, kv.Value);
 			}
+			// Enable Test instances.
+			TestDeviceHelper.EnableTestInstances();
+
 
 			RefreshDevicesCount++;
 			var ev = DevicesUpdated;

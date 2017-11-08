@@ -124,11 +124,14 @@ namespace x360ce.App.Controls
 			AppHelper.SetText(DiCapFfStateTextBox, forceFeedbackState);
 			AppHelper.SetText(DiCapButtonsTextBox, device.Capabilities.ButtonCount.ToString());
 			AppHelper.SetText(DiCapDPadsTextBox, device.Capabilities.PovCount.ToString());
-			var objects = AppHelper.GetDeviceObjects(device);
+			var di = device.Information;
+			var isTestDevice = TestDeviceHelper.ProductGuid.Equals(di.ProductGuid);
+			var objects = isTestDevice
+				? TestDeviceHelper.GetDeviceObjects()
+				: AppHelper.GetDeviceObjects(device);
 			DiObjectsDataGridView.DataSource = objects;
 			var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
 			AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
-			var di = device.Information;
 			var slidersCount = objects.Where(x => x.GuidValue.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
 			// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
 			AppHelper.SetText(DiCapAxesTextBox, (device.Capabilities.AxeCount - slidersCount).ToString());
