@@ -67,39 +67,25 @@ namespace x360ce.App
 			return true;
 		}
 
-
-		public static string GetOffsetName(Joystick device, int offset)
-		{
-			switch (device.Information.Type)
-			{
-				case DeviceType.Mouse: return ((MouseOffset)offset).ToString();
-				case DeviceType.Keyboard: return string.Format("Buttons{0}", offset - 1);
-				case DeviceType.Joystick: return ((JoystickOffset)offset).ToString();
-				default: return "";
-			}
-		}
-
 		public static DeviceObjectItem[] GetDeviceObjects(Joystick device)
 		{
 			var og = typeof(SharpDX.DirectInput.ObjectGuid);
 			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
-			List<Guid> guids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
-			List<string> names = guidFileds.Select(x => x.Name).ToList();
-			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.Offset).ToArray();
+			List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
+			List<string> typeName = guidFileds.Select(x => x.Name).ToList();
+			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x=>x.ObjectId.InstanceNumber).ToArray();
 			var items = new List<DeviceObjectItem>();
 			foreach (var o in objects)
 			{
 				var item = new DeviceObjectItem()
 				{
 					Name = o.Name,
-					OffsetName = GetOffsetName(device, o.Offset),
 					Offset = o.Offset,
-					Instance = o.ObjectId.InstanceNumber,
-					Usage = o.Usage,
+					OffsetType = device.Information.Type,
 					Aspect = o.Aspect,
 					Flags = o.ObjectId.Flags,
-					GuidValue = o.ObjectType,
-					GuidName = guids.Contains(o.ObjectType) ? names[guids.IndexOf(o.ObjectType)] : o.ObjectType.ToString(),
+					Instance = o.ObjectId.InstanceNumber,
+					Type = o.ObjectType,
 				};
 				items.Add(item);
 			}

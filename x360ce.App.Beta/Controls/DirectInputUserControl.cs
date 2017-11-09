@@ -61,10 +61,10 @@ namespace x360ce.App.Controls
 				// clean everything here.
 				AppHelper.SetText(DiCapFfStateTextBox, "");
 				AppHelper.SetText(DiCapButtonsTextBox, "");
-				AppHelper.SetText(DiCapDPadsTextBox, "");
+				AppHelper.SetText(DiCapPovsTextBox, "");
 				AppHelper.SetText(ActuatorsTextBox, "");
 				AppHelper.SetText(DiCapAxesTextBox, "");
-				AppHelper.SetText(SlidersTextBox, "");
+				AppHelper.SetText(DiSlidersTextBox, "");
 				AppHelper.SetText(DeviceVidTextBox, "");
 				AppHelper.SetText(DevicePidTextBox, "");
 				AppHelper.SetText(DeviceRevTextBox, "");
@@ -123,19 +123,18 @@ namespace x360ce.App.Controls
 			}
 			AppHelper.SetText(DiCapFfStateTextBox, forceFeedbackState);
 			AppHelper.SetText(DiCapButtonsTextBox, device.Capabilities.ButtonCount.ToString());
-			AppHelper.SetText(DiCapDPadsTextBox, device.Capabilities.PovCount.ToString());
+			AppHelper.SetText(DiCapPovsTextBox, device.Capabilities.PovCount.ToString());
 			var di = device.Information;
-			var isTestDevice = TestDeviceHelper.ProductGuid.Equals(di.ProductGuid);
-			var objects = isTestDevice
+			var objects = TestDeviceHelper.ProductGuid.Equals(di.ProductGuid)
 				? TestDeviceHelper.GetDeviceObjects()
 				: AppHelper.GetDeviceObjects(device);
 			DiObjectsDataGridView.DataSource = objects;
 			var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
 			AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
-			var slidersCount = objects.Where(x => x.GuidValue.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
+			var slidersCount = objects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
 			// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
 			AppHelper.SetText(DiCapAxesTextBox, (device.Capabilities.AxeCount - slidersCount).ToString());
-			AppHelper.SetText(SlidersTextBox, slidersCount.ToString());
+			AppHelper.SetText(DiSlidersTextBox, slidersCount.ToString());
 			// Update PID and VID always so they wont be overwritten by load settings.
 			short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
 			short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
@@ -238,16 +237,16 @@ namespace x360ce.App.Controls
 
 			// Point of view buttons
 			int[] dPad = state.PointOfViewControllers;
-			DiDPadTextBox.Text = "";
+			DiPovTextBox.Text = "";
 			if (dPad != null)
 			{
 				for (int i = 0; i < dPad.Length; i++)
 				{
 					v = dPad[i];
-					if (DiDPadTextBox.Text.Length > 0) DiDPadTextBox.Text += " ";
+					if (DiPovTextBox.Text.Length > 0) DiPovTextBox.Text += " ";
 					if (v != -1)
 					{
-						DiDPadTextBox.Text += "[" + i + "," + v.ToString() + "]";
+						DiPovTextBox.Text += "[" + i + "," + v.ToString() + "]";
 						//if ((DPadEnum)v == DPadEnum.Up) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
 						//if ((DPadEnum)v == DPadEnum.Right) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
 						//if ((DPadEnum)v == DPadEnum.Down) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
@@ -356,12 +355,15 @@ namespace x360ce.App.Controls
 		{
 			var objects = DiObjectsDataGridView.DataSource as DeviceObjectItem[];
 			var sb = new StringBuilder();
-			var maxGuidName = objects.Max(x => x.GuidName.Length);
+			var maxTypeName = objects.Max(x => x.TypeName.Length);
 			var maxName = objects.Max(x => x.Name.Length);
 			var maxFlags = objects.Max(x => x.Flags.ToString().Length);
+			var maxAspectName = objects.Max(x => x.AspectName.Length);
 			var maxOffsetName = objects.Max(x => x.OffsetName.ToString().Length);
-			var names = new string[] { "OffsetName", "Offset", "Usage", "Instance", "Guid", "Name", "Flags" };
-			var sizes = new int[] { -maxOffsetName, 6, 6, 8, -maxGuidName, -maxName, -maxFlags };
+
+			var names = new string[] {"Offset", "Type", "Aspect", "Flags", "Instance", "Name" };
+			var sizes = new int[] { "Offset".Length, -maxTypeName, -maxAspectName, -maxFlags, "Instance".Length, -maxName };
+			// Create format line.
 			var format = "// ";
 			for (int i = 0; i < sizes.Length; i++)
 			{
@@ -379,7 +381,7 @@ namespace x360ce.App.Controls
 			for (int i = 0; i < objects.Length; i++)
 			{
 				var o = objects[i];
-				sb.AppendFormat(format, o.OffsetName, o.Offset, o.Usage, o.Instance, o.GuidName, o.Name, o.Flags);
+				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, o.Name);
 				sb.AppendLine();
 			}
 			Clipboard.SetDataObject(sb.ToString());

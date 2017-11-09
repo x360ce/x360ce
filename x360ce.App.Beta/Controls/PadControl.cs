@@ -1188,8 +1188,7 @@ namespace x360ce.App.Controls
 			form.StartPosition = FormStartPosition.CenterParent;
 			var buttons = MessageBoxButtons.YesNo;
 			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
-			var isTestDevice = TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid);
-			if (ud.Device == null && !isTestDevice)
+			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 			{
 				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
 				buttons = MessageBoxButtons.OK;
@@ -1198,11 +1197,11 @@ namespace x360ce.App.Controls
 			if (result == DialogResult.Yes)
 			{
 				SettingsManager.Current.ClearPadSettings(MappedTo);
-				var objects = isTestDevice
+				var objects = TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid)
 					? TestDeviceHelper.GetDeviceObjects()
 					: AppHelper.GetDeviceObjects(ud.Device);
 				DeviceObjectItem o = null;
-				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 				// If Right thumb triggers are missing then...
 				if (o == null)
 				{
@@ -1221,9 +1220,9 @@ namespace x360ce.App.Controls
 					AutoPreset(objects, SettingName.LeftTrigger, 6);
 					AutoPreset(objects, SettingName.RightTrigger, 7);
 					// Right Thumb.
-					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.ZAxis);
+					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.ZAxis);
 					if (o != null) AutoPresetRead(SettingName.RightThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RzAxis);
+					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RzAxis);
 					if (o != null) AutoPresetRead(SettingName.RightThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
 				}
 				else
@@ -1273,30 +1272,30 @@ namespace x360ce.App.Controls
 					AutoPreset(objects, SettingName.LeftThumbButton, 8);
 					AutoPreset(objects, SettingName.RightThumbButton, 9);
 					// Triggers.
-					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.ZAxis);
+					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.ZAxis);
 					if (o != null) AutoPresetRead(SettingName.LeftTrigger, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RzAxis);
+					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RzAxis);
 					if (o != null) AutoPresetRead(SettingName.RightTrigger, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
 					// Right Thumb.
-					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RxAxis);
+					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 					if (o != null) AutoPresetRead(SettingName.RightThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.RyAxis);
+					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RyAxis);
 					if (o != null) AutoPresetRead(SettingName.RightThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
 				}
 				// Left Thumb.
-				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.XAxis);
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
 				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.YAxis);
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
 				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
 				// D-Pad
-				o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.PovController);
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
 				if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.DPad, o.Instance + 1));
 			}
 		}
 
 		void AutoPreset(DeviceObjectItem[] objects, string settingName, int index)
 		{
-			var o = objects.FirstOrDefault(x => x.GuidValue == ObjectGuid.Button && x.Instance == index);
+			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Instance == index);
 			if (o != null) AutoPresetRead(settingName, string.Format("{0}{1}", SettingName.SType.Button, o.Instance + 1));
 		}
 
