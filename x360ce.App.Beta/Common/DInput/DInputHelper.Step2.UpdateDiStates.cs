@@ -25,17 +25,25 @@ namespace x360ce.App.DInput
 				JoystickState state = null;
 				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
 				var isOnline = ud != null && ud.IsOnline;
-				var device = ud.Device;
-				if (isOnline && device != null)
+				if (isOnline)
 				{
-					try
+					var device = ud.Device;
+					if (device != null)
 					{
-						device.Acquire();
-						state = device.GetCurrentState();
+						try
+						{
+							device.Acquire();
+							state = device.GetCurrentState();
+						}
+						catch (Exception ex)
+						{
+							var error = ex;
+						}
 					}
-					catch (Exception ex)
+					// If this is test device then...
+					else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 					{
-						var error = ex;
+						state = TestDeviceHelper.GetCurrentState(ud);
 					}
 				}
 				ud.JoState = state ?? new JoystickState();

@@ -109,10 +109,9 @@ namespace x360ce.Engine
 			return mask;
 		}
 
-		public CustomDiState(JoystickState state)
+		public static int[] GetAxisFromState(JoystickState state)
 		{
-			// Fill 24 axis.
-			Axis = new int[] {
+			return new int[] {
 				state.X,
 				state.Y,
 				state.Z,
@@ -138,16 +137,67 @@ namespace x360ce.Engine
 				state.AngularVelocityY,
 				state.AngularVelocityZ,
 			};
-			// Fill 8 sliders.
+		}
+
+		public static void SetStateFromAxis(JoystickState state, int[] axis)
+		{
+			state.X = axis[0];
+			state.Y = axis[1];
+			state.Z = axis[2];
+			state.RotationX = axis[3];
+			state.RotationY = axis[4];
+			state.RotationZ = axis[5];
+			state.AccelerationX = axis[6];
+			state.AccelerationY = axis[7];
+			state.AccelerationZ = axis[8];
+			state.AngularAccelerationX = axis[9];
+			state.AngularAccelerationY = axis[10];
+			state.AngularAccelerationZ = axis[11];
+			state.ForceX = axis[12];
+			state.ForceY = axis[13];
+			state.ForceZ = axis[14];
+			state.TorqueX = axis[15];
+			state.TorqueY = axis[16];
+			state.TorqueZ = axis[17];
+			state.VelocityX = axis[18];
+			state.VelocityY = axis[19];
+			state.VelocityZ = axis[20];
+			state.AngularVelocityX = axis[21];
+			state.AngularVelocityY = axis[22];
+			state.AngularVelocityZ = axis[23];
+		}
+
+		public static int[] GetSlidersFromState(JoystickState state)
+		{
 			List<int> sl = new List<int>();
 			sl.AddRange(state.Sliders);
 			sl.AddRange(state.AccelerationSliders);
 			sl.AddRange(state.ForceSliders);
 			sl.AddRange(state.VelocitySliders);
-			Sliders = sl.ToArray();
-			// Fill POVs.
+			return sl.ToArray();
+		}
+
+		public static void SetStateFromSliders(JoystickState state, int[] sliders)
+		{
+			state.Sliders[0] = sliders[0];
+			state.Sliders[1] = sliders[1];
+			state.AccelerationSliders[0] = sliders[2];
+			state.AccelerationSliders[1] = sliders[3];
+			state.ForceSliders[0] = sliders[4];
+			state.ForceSliders[1] = sliders[5];
+			state.VelocitySliders[0] = sliders[6];
+			state.VelocitySliders[1] = sliders[7];
+		}
+
+		public CustomDiState(JoystickState state)
+		{
+			// Fill 24 axis.
+			Axis = GetAxisFromState(state);
+			// Fill 8 sliders.
+			Sliders = GetSlidersFromState(state);
+			// Fill 4 POVs.
 			Povs = state.PointOfViewControllers.ToArray();
-			// Fill buttons.
+			// Fill 128 buttons.
 			Buttons = state.Buttons.ToArray();
 		}
 

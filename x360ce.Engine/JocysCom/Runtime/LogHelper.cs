@@ -167,18 +167,18 @@ namespace JocysCom.ClassLibrary.Runtime
 				s += "<table border=\"0\" cellspacing=\"2\">";
 			}
 			// if exception is not empty then 
-			if (!string.IsNullOrEmpty(ex.Message))
+			//if (!string.IsNullOrEmpty(ex.Message))
+			//{
+			var useHtml = ParseBool("ErrorHtmlException", true);
+			if (useHtml)
 			{
-				var useHtml = ParseBool("ErrorHtmlException", true);
-				if (useHtml)
-				{
-					AddException(ref s, JocysCom.ClassLibrary.Helper.ExceptionToString(ex, true, JocysCom.ClassLibrary.TraceFormat.Html));
-				}
-				else
-				{
-					AddException(ref s, "<pre>" + ex.ToString() + "</pre>");
-				}
+				AddException(ref s, ExceptionToString(ex, true, JocysCom.ClassLibrary.TraceFormat.Html));
 			}
+			else
+			{
+				AddException(ref s, "<pre>" + ex.ToString() + "</pre>");
+			}
+			//}
 		}
 
 		protected static void AddException(ref string s, string name)
@@ -355,7 +355,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static void ExceptionInfoRecursive(ref string s, Exception ex)
 		{
 			if (ex == null) return;
-			StackFrame frame = JocysCom.ClassLibrary.Helper.GetFormStackFrame(ex);
+			StackFrame frame = GetFormStackFrame(ex);
 			AddRow(ref s, "Exception");
 			AddRow(ref s, "Exception Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 			if (frame != null && frame.GetMethod() != null && frame.GetMethod().DeclaringType != null)

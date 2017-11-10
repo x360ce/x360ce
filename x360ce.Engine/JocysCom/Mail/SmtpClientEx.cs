@@ -162,8 +162,9 @@ namespace JocysCom.ClassLibrary.Mail
 				{
 					Upsert(ex, "ErrorType", errorType);
 					Upsert(ex, "ErrorCount", count);
-					Upsert(ex, "Config.ErrorLimitMax", ErrorLimitMax);
-					Upsert(ex, "Config.ErrorLimitAge", ErrorLimitAge);
+					Upsert(ex, "Config: ErrorLimitMax", ErrorLimitMax);
+					Upsert(ex, "Config: ErrorLimitAge", ErrorLimitAge);
+					Upsert(ex, "Config: ErrorUseNewStackTrace", LogHelper.ErrorUseNewStackTrace);
 				}
 				return true;
 			}

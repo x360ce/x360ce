@@ -1,8 +1,10 @@
 ﻿using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.App
@@ -80,7 +82,64 @@ namespace x360ce.App
 			return ud;
 		}
 
-	}
+		static Stopwatch watch;
 
+		public static JoystickState GetCurrentState(UserDevice ud)
+		{
+			if (watch == null)
+			{
+				watch = new Stopwatch();
+				watch.Start();
+			}
+			var elapsed = watch.Elapsed;
+			// Restart timer if out of limits.
+			if (elapsed.TotalMilliseconds > int.MaxValue)
+			{
+				watch.Restart();
+				elapsed = watch.Elapsed;
+			}
+			// Aquire values.
+			var ts = (int)elapsed.TotalSeconds;
+			var tm = (int)elapsed.TotalMilliseconds;
+			var state = new JoystickState();
+			// Set Buttons.
+			for (int i = 0; i < ud.CapButtonCount; i++)
+			{
+				var currentLocation = ts % ud.CapButtonCount;
+				// Enable button during its index.
+				state.Buttons[i] = currentLocation == i;
+			}
+			// Set POVs.
+			// Rotate POVs 360 degrees in 4 seconds, then stay for 2 seconds idle.
+			for (int i = 0; i < state.PointOfViewControllers.Length; i++)
+			{
+				// 6 = 4 + 2.
+				var time = tm % 6000;
+				var degree = -1;
+				if (time < 4000)
+				{
+					// Convert [0-4000] to [0-36000].
+					degree = time * 36000 / 4000;
+				}
+				state.PointOfViewControllers[i] = degree;
+			}
+			// Set Axis.
+			var axis = CustomDiState.GetAxisFromState(state);
+			for (int i = 0; i < axis.Length; i++)
+			{
+
+			}
+			CustomDiState.SetStateFromAxis(state, axis);
+			// Set sliders.
+			var sliders = CustomDiState.GetSlidersFromState(state);
+			for (int i = 0; i < axis.Length; i++)
+			{
+
+			}
+			CustomDiState.SetStateFromSliders(state, sliders);
+			// Return state.
+			return state;
+		}
+	}
 
 }
