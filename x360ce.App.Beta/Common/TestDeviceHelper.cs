@@ -109,32 +109,56 @@ namespace x360ce.App
 				// Enable button during its index.
 				state.Buttons[i] = currentLocation == i;
 			}
+			var busy = 4000;
+			var idle = 2000;
+			// Do action for 4 seconds, then stay for 2 seconds idle.
+			// 6 = 4 + 2.
+			var time = tm % (busy + idle);
 			// Set POVs.
-			// Rotate POVs 360 degrees in 4 seconds, then stay for 2 seconds idle.
 			for (int i = 0; i < state.PointOfViewControllers.Length; i++)
 			{
-				// 6 = 4 + 2.
-				var time = tm % 6000;
+				// Rotate POVs 360 degrees in 4 seconds
 				var degree = -1;
-				if (time < 4000)
+				if (time < busy)
 				{
+					// Shift busy value by half so movement starts from the centre.
+					var value = (time + busy / 2) % busy;
 					// Convert [0-4000] to [0-36000].
-					degree = time * 36000 / 4000;
+					degree = DInput.DInputHelper.ConvertRange(0, busy, 0, 36000, value);
 				}
 				state.PointOfViewControllers[i] = degree;
 			}
+
 			// Set Axis.
 			var axis = CustomDiState.GetAxisFromState(state);
 			for (int i = 0; i < axis.Length; i++)
 			{
-
+				var position = 0;
+				// Move slider in 4 seconds, then stay for 2 seconds idle.
+				if (time < busy)
+				{
+					// Shift busy value by half so movement starts from the centre.
+					var value = (time + busy / 2) % busy;
+					// Convert [0-4000] to [0-65535].
+					position = DInput.DInputHelper.ConvertRange(0, busy, 0, ushort.MaxValue, value);
+				}
+				axis[i] = position;
 			}
 			CustomDiState.SetStateFromAxis(state, axis);
 			// Set sliders.
 			var sliders = CustomDiState.GetSlidersFromState(state);
-			for (int i = 0; i < axis.Length; i++)
+			for (int i = 0; i < sliders.Length; i++)
 			{
-
+				var position = 0;
+				// Move slider in 4 seconds, then stay for 2 seconds idle.
+				if (time < busy)
+				{
+					// Shift busy value by half so movement starts from the centre.
+					var value = (time + busy / 2) % busy;
+					// Convert [0-4000] to [0-65535].
+					position = DInput.DInputHelper.ConvertRange(0, busy, 0, ushort.MaxValue, value);
+				}
+				sliders[i] = position;
 			}
 			CustomDiState.SetStateFromSliders(state, sliders);
 			// Return state.

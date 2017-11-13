@@ -859,7 +859,9 @@ namespace x360ce.App.Controls
 
 		public void UpdateFromXInput()
 		{
-			newState = MainForm.Current.DHelper.LiveXInputStates[(int)MappedTo - 1];
+			newState = TestCheckBox.Checked
+				? MainForm.Current.DHelper.LiveXInputStates[(int)MappedTo - 1]
+				: MainForm.Current.DHelper.CombinedXInputStates[(int)MappedTo - 1];
 			newConnected = MainForm.Current.DHelper.XiControllerConnected[(int)MappedTo - 1];
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)

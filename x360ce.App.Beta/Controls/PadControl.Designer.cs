@@ -201,6 +201,7 @@
 			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
 			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
+			this.TestCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2244,7 +2245,8 @@
             this.RemoveMapButton,
             this.AddMapButton,
             this.AutoMapButton,
-            this.EnableButton});
+            this.EnableButton,
+            this.TestCheckBox});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
@@ -2296,6 +2298,15 @@
 			this.EnableButton.Size = new System.Drawing.Size(62, 22);
 			this.EnableButton.Text = "&Enable";
 			this.EnableButton.Click += new System.EventHandler(this.EnableButton_Click);
+			// 
+			// TestCheckBox
+			// 
+			this.TestCheckBox.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.TestCheckBox.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TestCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.TestCheckBox.Name = "TestCheckBox";
+			this.TestCheckBox.Size = new System.Drawing.Size(48, 22);
+			this.TestCheckBox.Text = "&Test";
 			// 
 			// PadControl
 			// 
@@ -2553,5 +2564,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
 		private System.Windows.Forms.ToolStripButton EnableButton;
+		private System.Windows.Forms.ToolStripButton TestCheckBox;
 	}
 }

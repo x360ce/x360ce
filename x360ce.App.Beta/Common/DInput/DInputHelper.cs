@@ -9,7 +9,7 @@ using x360ce.Engine;
 
 namespace x360ce.App.DInput
 {
-	public partial class DInputHelper: IDisposable
+	public partial class DInputHelper : IDisposable
 	{
 
 		public DInputHelper()
@@ -171,6 +171,32 @@ namespace x360ce.App.DInput
 
 		#endregion
 
+		#region Helper Functions
+
+		/// <summary>Convert short [-32768;32767] to range [-1.0f;1.0f].</summary>
+		public static decimal ConvertToFloat(short value)
+		{
+			var maxValue = (decimal)Math.Abs(value < 0 ? short.MinValue : short.MaxValue);
+			return value / maxValue;
+		}
+
+		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
+		public static short ConvertToShort(decimal value)
+		{
+			var maxValue = (decimal)Math.Abs(value < 0 ? short.MinValue : short.MaxValue);
+			return (short)(value * maxValue);
+		}
+
+
+		/// <summary>Convert value from [x1;y1] range to [x2;y2] range.</summary>
+		public static int ConvertRange(int oldMin, int oldMax, int newMin, int newMax, int value)
+		{
+			var oldRange = oldMax - oldMin;
+			var newRange = newMax - newMin;
+			return (((value - oldMin) * newRange) / oldRange) + newMin;
+		}
+
+		#endregion
 
 	}
 }
