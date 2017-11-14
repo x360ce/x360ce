@@ -859,10 +859,11 @@ namespace x360ce.App.Controls
 
 		public void UpdateFromXInput()
 		{
+			var i = (int)MappedTo - 1;
 			newState = TestCheckBox.Checked
-				? MainForm.Current.DHelper.LiveXInputStates[(int)MappedTo - 1]
-				: MainForm.Current.DHelper.CombinedXInputStates[(int)MappedTo - 1];
-			newConnected = MainForm.Current.DHelper.XiControllerConnected[(int)MappedTo - 1];
+				? MainForm.Current.DHelper.CombinedXInputStates[i]
+				: MainForm.Current.DHelper.LiveXInputStates[i];
+			newConnected = MainForm.Current.DHelper.XiControllerConnected[i];
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)
 				return;
@@ -1548,6 +1549,11 @@ namespace x360ce.App.Controls
 				// Add AUTO.
 				game.EnableMask = (int)(value | flag);
 			}
+		}
+
+		private void TestCheckBox_Click(object sender, EventArgs e)
+		{
+			TestCheckBox.Checked = !TestCheckBox.Checked;
 		}
 	}
 }

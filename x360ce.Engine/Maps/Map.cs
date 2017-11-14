@@ -8,14 +8,20 @@ namespace x360ce.Engine
 		/// <summary>
 		/// Load button parametes.
 		/// </summary>
-		public Map(string value, GamepadButtonFlags flag, string deadZone = null)
+		public Map(string value, GamepadButtonFlags flag = GamepadButtonFlags.None, string deadZone = null)
 		{
 			Load(value);
-
 			ButtonFlag = flag;
-			if (!string.IsNullOrEmpty(deadZone))
-				int.TryParse(deadZone, out DeadZone);
+			int.TryParse(deadZone, out DeadZone);
 			Target = TargetType.Button;
+		}
+		public Map(string value, TargetType target, string deadZone = null, string antiDeadZone = null, string linear = null)
+		{
+			Load(value);
+			int.TryParse(deadZone, out DeadZone);
+			int.TryParse(antiDeadZone, out AntiDeadZone);
+			int.TryParse(linear, out Linear);
+			Target = target;
 		}
 
 		void Load(string value)
@@ -46,8 +52,13 @@ namespace x360ce.Engine
 
 		// Used for Buttons.
 		public GamepadButtonFlags ButtonFlag;
+
 		// Used for AxisToButton DeadZone
 		public int DeadZone;
+
+		// Used for Thumbs
+		public int AntiDeadZone;
+		public int Linear;
 
 	}
 }

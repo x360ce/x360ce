@@ -28,11 +28,11 @@ namespace x360ce.App.DInput
 				// If device is offline then continue.
 				if (!ud.IsOnline)
 					continue;
-				// If device is not set then...
-				var device = ud.Device;
-				if (device == null)
-					// Continue loop.
-					continue;
+				//// If device is not set or test device then...
+				//var device = ud.Device;
+				//if (device == null)
+				//	// Continue loop.
+				//	continue;
 				var padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 				// If setting was not found then continue.
 				if (padSetting == null)
@@ -96,7 +96,7 @@ namespace x360ce.App.DInput
 				}
 
 				// --------------------------------------------------------
-				// MAP: Buttons
+				// MAP:
 				// --------------------------------------------------------
 
 				// Get all mapped items.
@@ -108,7 +108,9 @@ namespace x360ce.App.DInput
 					if (map.Index == 0)
 						continue;
 
-					// If source is simple button then...
+					// --------------------------------------------------------
+					// MAP Source: Button
+					// --------------------------------------------------------
 					if (map.IsButton)
 					{
 						// If mapped index is in range then...
@@ -134,7 +136,9 @@ namespace x360ce.App.DInput
 							}
 						}
 					}
-					// If source is D-PAD button converted from POV.
+					// --------------------------------------------------------
+					// MAP Source: D-PAD button converted from POV
+					// --------------------------------------------------------
 					else if (map.Type == SettingType.DPadButton)
 					{
 						// If mapped index is in range then...
@@ -160,7 +164,9 @@ namespace x360ce.App.DInput
 							}
 						}
 					}
-					// If source is Axis or Slider then...
+					// --------------------------------------------------------
+					// MAP Source: Axis or Slider
+					// --------------------------------------------------------
 					else if (map.IsAxis || map.IsSlider)
 					{
 						// Get source value.

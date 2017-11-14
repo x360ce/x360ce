@@ -2307,6 +2307,7 @@
 			this.TestCheckBox.Name = "TestCheckBox";
 			this.TestCheckBox.Size = new System.Drawing.Size(48, 22);
 			this.TestCheckBox.Text = "&Test";
+			this.TestCheckBox.Click += new System.EventHandler(this.TestCheckBox_Click);
 			// 
 			// PadControl
 			// 
