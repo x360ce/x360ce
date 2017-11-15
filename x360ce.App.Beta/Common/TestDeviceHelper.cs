@@ -84,6 +84,8 @@ namespace x360ce.App
 
 		static Stopwatch watch;
 
+		static bool invertNext;
+
 		public static JoystickState GetCurrentState(UserDevice ud)
 		{
 			if (watch == null)
@@ -115,6 +117,7 @@ namespace x360ce.App
 			// Do action for 4 seconds, then stay for 2 seconds idle.
 			// 6 = 4 + 2.
 			var time = tm % (busy + idle);
+			var invert = tm % ((busy + idle) * 2) > (busy + idle);
 			// Set POVs.
 			for (int i = 0; i < state.PointOfViewControllers.Length; i++)
 			{
@@ -150,6 +153,8 @@ namespace x360ce.App
 					// Convert [0-3999] to [0-2Pi].
 					var angle = time * 2 * Math.PI / busy;
 					var sine = Math.Sin(angle);
+					if (invert && i % 2 == 0)
+						sine *= -1f;
 					var range = DInput.DInputHelper.ConvertToShort((decimal)sine);
 					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
 				}
@@ -168,6 +173,8 @@ namespace x360ce.App
 					// Convert [0-3999] to [0-2Pi].
 					var angle = time * 2 * Math.PI / busy;
 					var sine = Math.Sin(angle);
+					if (invert && i % 2 == 0)
+						sine *= -1f;
 					var range = DInput.DInputHelper.ConvertToShort((decimal)sine);
 					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
 				}
