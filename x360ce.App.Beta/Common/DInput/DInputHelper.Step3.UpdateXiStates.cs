@@ -197,16 +197,6 @@ namespace x360ce.App.DInput
 						if (!map.IsHalf)
 							deadZone = map.DeadZone * 2;
 
-						var isTrigger =
-							map.Target == TargetType.LeftTrigger ||
-							map.Target == TargetType.RightTrigger;
-
-						var isThumb =
-							map.Target == TargetType.LeftThumbX ||
-							map.Target == TargetType.LeftThumbY ||
-							map.Target == TargetType.RightThumbX ||
-							map.Target == TargetType.RightThumbY;
-
 						// If target is button.
 						if (map.Target == TargetType.Button)
 						{
@@ -216,28 +206,42 @@ namespace x360ce.App.DInput
 								gp.Buttons |= map.ButtonFlag;
 							}
 						}
-						//else if (isTrigger || isThumb)
-						//{
-						//int scale = isTrigger ? byte.MaxValue : ushort.MaxValue;
-						//}
-						// If target is trigger.
-						else if (isTrigger)
+						// If target is Trigger.
+						else if (TargetType.Triggers.HasFlag(map.Target))
 						{
 							// Scale ushort (0-65535) to byte (0-255).
-							v = (byte)(v / byte.MaxValue);
-							var value = (byte)DeadZone(v, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
+							var value = (byte)ConvertRange(ushort.MinValue, ushort.MaxValue, byte.MinValue, byte.MaxValue, v);
+							//value = (byte)DeadZone(value, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
 							if (map.Target == TargetType.LeftTrigger)
 								gp.LeftTrigger = value;
 							if (map.Target == TargetType.RightTrigger)
 								gp.RightTrigger = value;
+						}
+						// If target is Thumb.
+						else if (TargetType.Thumbs.HasFlag(map.Target))
+						{
+							// Scale ushort (0-65535) to short (-32768 - 32767).
+							var value = (short)ConvertRange(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, v);
+							if (map.Target == TargetType.LeftThumbX)
+								gp.LeftThumbX = value;
+							if (map.Target == TargetType.LeftThumbY)
+								gp.LeftThumbY = value;
+							if (map.Target == TargetType.RightThumbX)
+								gp.RightThumbX = value;
+							if (map.Target == TargetType.RightThumbY)
+								gp.RightThumbY = value;
 						}
 					}
 				}
 				setting.XiState = gp;
 
 				//        [  32768 steps | 32768 steps ]
-				// DInput [      0 32767 | 32768 65535 ] 
-				// XInput [ -32768    -1 |     0 32767 ]
+				// ushort [      0 32767 | 32768 65535 ] DInput
+				//  short [ -32768    -1 |     0 32767 ] XInput
+
+				//        [  128 steps | 128 steps ]
+				//  byte  [    0   127 | 128   255 ]
+				// sbyte  [ -128    -1 |   0   127 ]
 
 				// From Button:    OFF   |     ON
 				// From Axis  :      0 - D - 65535 (D - DeadZone)

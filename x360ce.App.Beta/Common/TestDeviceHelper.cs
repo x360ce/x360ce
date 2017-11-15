@@ -110,6 +110,7 @@ namespace x360ce.App
 				state.Buttons[i] = currentLocation == i;
 			}
 			var busy = 4000;
+			var half = busy / 2;
 			var idle = 2000;
 			// Do action for 4 seconds, then stay for 2 seconds idle.
 			// 6 = 4 + 2.
@@ -117,14 +118,22 @@ namespace x360ce.App
 			// Set POVs.
 			for (int i = 0; i < state.PointOfViewControllers.Length; i++)
 			{
-				// Rotate POVs 360 degrees in 4 seconds
+				// Rotate POVs 360 degrees in 4 seconds forward and back.
 				var degree = -1;
 				if (time < busy)
 				{
 					// Shift busy value by half so movement starts from the centre.
 					var value = (time + busy / 2) % busy;
-					// Convert [0-4000] to [0-36000].
-					degree = DInput.DInputHelper.ConvertRange(0, busy, 0, 36000, value);
+					if (time <= half)
+					{
+						// Convert [   0-1999] to [0-35999].
+						degree = DInput.DInputHelper.ConvertRange(0, half - 1, 0, 35999, value);
+					}
+					else
+					{
+						// Convert [2000-3999] to [35999-0].
+						degree = DInput.DInputHelper.ConvertRange(half, busy - 1, 35999, 0, value);
+					}
 				}
 				state.PointOfViewControllers[i] = degree;
 			}
@@ -133,14 +142,16 @@ namespace x360ce.App
 			var axis = CustomDiState.GetAxisFromState(state);
 			for (int i = 0; i < axis.Length; i++)
 			{
-				var position = 0;
-				// Move slider in 4 seconds, then stay for 2 seconds idle.
+				// Default position is in the center.
+				var position = ushort.MaxValue + short.MinValue;
+				// Move axis in 4 seconds, then stay for 2 seconds idle.
 				if (time < busy)
 				{
-					// Shift busy value by half so movement starts from the centre.
-					var value = (time + busy / 2) % busy;
-					// Convert [0-4000] to [0-65535].
-					position = DInput.DInputHelper.ConvertRange(0, busy, 0, ushort.MaxValue, value);
+					// Convert [0-3999] to [0-2Pi].
+					var angle = time * 2 * Math.PI / busy;
+					var sine = Math.Sin(angle);
+					var range = DInput.DInputHelper.ConvertToShort((decimal)sine);
+					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
 				}
 				axis[i] = position;
 			}
@@ -149,14 +160,16 @@ namespace x360ce.App
 			var sliders = CustomDiState.GetSlidersFromState(state);
 			for (int i = 0; i < sliders.Length; i++)
 			{
-				var position = 0;
+				// Default position is in the center.
+				var position = ushort.MaxValue + short.MinValue;
 				// Move slider in 4 seconds, then stay for 2 seconds idle.
 				if (time < busy)
 				{
-					// Shift busy value by half so movement starts from the centre.
-					var value = (time + busy / 2) % busy;
-					// Convert [0-4000] to [0-65535].
-					position = DInput.DInputHelper.ConvertRange(0, busy, 0, ushort.MaxValue, value);
+					// Convert [0-3999] to [0-2Pi].
+					var angle = time * 2 * Math.PI / busy;
+					var sine = Math.Sin(angle);
+					var range = DInput.DInputHelper.ConvertToShort((decimal)sine);
+					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
 				}
 				sliders[i] = position;
 			}

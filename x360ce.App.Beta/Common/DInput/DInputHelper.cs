@@ -176,14 +176,14 @@ namespace x360ce.App.DInput
 		/// <summary>Convert short [-32768;32767] to range [-1.0f;1.0f].</summary>
 		public static decimal ConvertToFloat(short value)
 		{
-			var maxValue = (decimal)Math.Abs(value < 0 ? short.MinValue : short.MaxValue);
+			var maxValue = (decimal)(value < 0 ? -short.MinValue : short.MaxValue);
 			return value / maxValue;
 		}
 
 		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
 		public static short ConvertToShort(decimal value)
 		{
-			var maxValue = (decimal)Math.Abs(value < 0 ? short.MinValue : short.MaxValue);
+			var maxValue = (decimal)(value < 0 ? -short.MinValue : short.MaxValue);
 			return (short)(value * maxValue);
 		}
 

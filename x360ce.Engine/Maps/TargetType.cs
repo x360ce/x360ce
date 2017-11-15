@@ -1,5 +1,8 @@
-﻿namespace x360ce.Engine
+﻿using System;
+
+namespace x360ce.Engine
 {
+	[Flags]
 	public enum TargetType
 	{
 		None = 0,
@@ -8,10 +11,12 @@
 		// [0;255]
 		LeftTrigger,
 		RightTrigger,
+		Triggers = LeftTrigger | RightTrigger,
 		// [-32768;32767]
 		LeftThumbX,
 		LeftThumbY,
 		RightThumbX,
 		RightThumbY,
+		Thumbs = LeftThumbX | LeftThumbY | RightThumbX | RightThumbY,
 	}
 }

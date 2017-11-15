@@ -650,12 +650,6 @@ namespace x360ce.App
 					v = "AUTO";
 				}
 			}
-			if (SettingName.IsThumbAxis(key))
-			{
-				v = v.Replace(SettingName.SType.Axis, "");
-			}
-			// If this is DPad setting then remove prefix.
-			if (key == SettingName.DPad) v = v.Replace(SettingName.SType.DPad, "");
 			return v;
 		}
 
