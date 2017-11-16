@@ -143,18 +143,33 @@ namespace x360ce.App
 			var axis = CustomDiState.GetAxisFromState(state);
 			for (int i = 0; i < axis.Length; i++)
 			{
-				// Default position is in the center.
-				var position = ushort.MaxValue - short.MaxValue;
+				var isEven = i % 2 == 0;
+				var position = isEven
+					// Default position is in the center.
+					? ushort.MaxValue - short.MaxValue
+					// Default position is at the bottom.
+					: 0;
 				// Move axis in 4 seconds, then stay for 2 seconds idle.
 				if (time < busy)
 				{
-					// Convert [0-3999] to [0-2Pi].
-					var angle = time * 2 * Math.PI / busy;
-					var sine = Math.Sin(angle);
-					if (invert && i % 2 == 0)
-						sine *= -1f;
-					var range = DInput.DInputHelper.ConvertToShort((float)sine);
-					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
+					if (isEven)
+					{
+						// Convert [0-3999] to [0-2Pi].
+						var angle = time * 2 * Math.PI / busy;
+						var sine = Math.Sin(angle);
+						if (invert && isEven)
+							sine *= -1f;
+						var range = DInput.DInputHelper.ConvertToShort((float)sine);
+						position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
+					}
+					else
+					{
+						position = time < half
+							// Move up.
+							? DInput.DInputHelper.ConvertRange(0, half - 1, ushort.MinValue, ushort.MaxValue, time)
+							// Move down.
+							: DInput.DInputHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
+					}
 				}
 				axis[i] = position;
 			}
@@ -163,18 +178,33 @@ namespace x360ce.App
 			var sliders = CustomDiState.GetSlidersFromState(state);
 			for (int i = 0; i < sliders.Length; i++)
 			{
-				// Default position is in the center.
-				var position = ushort.MaxValue - short.MaxValue;
+				var isEven = i % 2 == 0;
+				var position = isEven
+					// Default position is in the center.
+					? ushort.MaxValue - short.MaxValue
+					// Default position is at the bottom.
+					: 0;
 				// Move slider in 4 seconds, then stay for 2 seconds idle.
 				if (time < busy)
 				{
-					// Convert [0-3999] to [0-2Pi].
-					var angle = time * 2 * Math.PI / busy;
-					var sine = Math.Sin(angle);
-					if (invert && i % 2 == 0)
-						sine *= -1f;
-					var range = DInput.DInputHelper.ConvertToShort((float)sine);
-					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
+					if (isEven)
+					{
+						// Convert [0-3999] to [0-2Pi].
+						var angle = time * 2 * Math.PI / busy;
+						var sine = Math.Sin(angle);
+						if (invert && isEven)
+							sine *= -1f;
+						var range = DInput.DInputHelper.ConvertToShort((float)sine);
+						position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
+					}
+					else
+					{
+						position = time < half
+							// Move up.
+							? DInput.DInputHelper.ConvertRange(0, half - 1, ushort.MinValue, ushort.MaxValue, time)
+							// Move down.
+							: DInput.DInputHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
+					}
 				}
 				sliders[i] = position;
 			}

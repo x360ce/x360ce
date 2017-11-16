@@ -202,19 +202,37 @@ namespace x360ce.App.DInput
 						// Get value.
 						var v = (ushort)values[map.Index - 1];
 
-						//// If value is inverted (I) then...
-						//if (map.IsInverted && !map.IsHalf)
-						//	v = (ushort)(ushort.MaxValue - v);
-						//// If half value (H) then...
-						//else if (!map.IsInverted && map.IsHalf && (v + short.MinValue) > 0)
-						//	v = (ushort)((v + short.MinValue) * 2 + 1);
-						//// If inverted half value (IH) then...
-						//else if (!map.IsInverted && map.IsHalf && v <= short.MaxValue)
-						//	v = (ushort)((short.MaxValue - v) * 2 + 1);
+						// Destination range.
+						var min = short.MinValue; // -32768;
+						var max = short.MaxValue; //  32767;
+
+						// If value is inverted (I) then...
+						if (map.IsInverted && !map.IsHalf)
+						{
+							// Convert [0;65535] range to [65535;0] range.
+							v = (ushort)(ushort.MaxValue - v);
+						}
+						// If half value (H) then...
+						else if (!map.IsInverted && map.IsHalf)
+						{
+							// If value is in [32768;65535] range then...
+							v = (v > max)
+								// Convert [32768;65535] range to [0;65535] range.
+								? (ushort)ConvertRange(max + 1, ushort.MaxValue, ushort.MinValue, ushort.MaxValue, v)
+								: (ushort)0;
+						}
+						// If inverted half value (IH) then...
+						else if (map.IsInverted && map.IsHalf)
+						{
+							// If value is in [0;32767] range then...
+							v = (v <= max)
+								// Convert [32767;0] range to [0;65535] range.
+								? (ushort)ConvertRange(max, 0, ushort.MinValue, ushort.MaxValue, v)
+								: (ushort)0;
+						}
 
 						//var deadZone = map.DeadZone;
-
-						//// If full range then double deadzone.
+						// If full range then double deadzone.
 						//if (!map.IsHalf)
 						//	deadZone = map.DeadZone * 2;
 
@@ -248,16 +266,13 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (TargetType.Thumbs.HasFlag(map.Target))
 						{
-							// Destination range.
-							var min = short.MinValue; // -32768;
-							var max = short.MaxValue; //  32767;
 
 							// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
 							var xInput = ConvertRange(ushort.MinValue, ushort.MaxValue, min, max, v);
 
 							// If axis should be inverted, convert [-32768;32767] -> [32767;-32768]
-							if (map.IsInverted)
-								xInput = -1 - xInput;
+							//if (map.IsInverted)
+							//	xInput = -1 - xInput;
 
 							// NEGATIVE START:
 							// The following sections expect xInput values in range [0;32767]
