@@ -46,14 +46,15 @@ namespace x360ce.Engine.Data
 						maps.Add(new Map(LeftThumbButton, GamepadButtonFlags.LeftThumb, LeftThumbButtonDeadZone));
 						maps.Add(new Map(RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
 						maps.Add(new Map(RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
+						// Add triggers.
+						maps.Add(new Map(LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone));
+						maps.Add(new Map(RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone));
 						// Add thumbs.
 						maps.Add(new Map(LeftThumbAxisX, TargetType.LeftThumbX, LeftThumbDeadZoneX, LeftThumbAntiDeadZoneX, LeftThumbLinearX));
 						maps.Add(new Map(LeftThumbAxisY, TargetType.LeftThumbY, LeftThumbDeadZoneY, LeftThumbAntiDeadZoneY, LeftThumbLinearY));
 						maps.Add(new Map(RightThumbAxisX, TargetType.RightThumbX, RightThumbDeadZoneX, RightThumbAntiDeadZoneX, RightThumbLinearX));
 						maps.Add(new Map(RightThumbAxisY, TargetType.RightThumbY, RightThumbDeadZoneY, RightThumbAntiDeadZoneY, RightThumbLinearY));
-						// Add triggers.
-						maps.Add(new Map(LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone));
-						maps.Add(new Map(RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone));
+						// Assign list.
 						_Maps = maps;
 						MapsChanged = false;
 					}

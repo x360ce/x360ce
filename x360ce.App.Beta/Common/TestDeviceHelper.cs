@@ -84,8 +84,6 @@ namespace x360ce.App
 
 		static Stopwatch watch;
 
-		static bool invertNext;
-
 		public static JoystickState GetCurrentState(UserDevice ud)
 		{
 			if (watch == null)
@@ -146,7 +144,7 @@ namespace x360ce.App
 			for (int i = 0; i < axis.Length; i++)
 			{
 				// Default position is in the center.
-				var position = ushort.MaxValue + short.MinValue;
+				var position = ushort.MaxValue - short.MaxValue;
 				// Move axis in 4 seconds, then stay for 2 seconds idle.
 				if (time < busy)
 				{
@@ -155,7 +153,7 @@ namespace x360ce.App
 					var sine = Math.Sin(angle);
 					if (invert && i % 2 == 0)
 						sine *= -1f;
-					var range = DInput.DInputHelper.ConvertToShort((decimal)sine);
+					var range = DInput.DInputHelper.ConvertToShort((float)sine);
 					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
 				}
 				axis[i] = position;
@@ -166,7 +164,7 @@ namespace x360ce.App
 			for (int i = 0; i < sliders.Length; i++)
 			{
 				// Default position is in the center.
-				var position = ushort.MaxValue + short.MinValue;
+				var position = ushort.MaxValue - short.MaxValue;
 				// Move slider in 4 seconds, then stay for 2 seconds idle.
 				if (time < busy)
 				{
@@ -175,7 +173,7 @@ namespace x360ce.App
 					var sine = Math.Sin(angle);
 					if (invert && i % 2 == 0)
 						sine *= -1f;
-					var range = DInput.DInputHelper.ConvertToShort((decimal)sine);
+					var range = DInput.DInputHelper.ConvertToShort((float)sine);
 					position = DInput.DInputHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
 				}
 				sliders[i] = position;

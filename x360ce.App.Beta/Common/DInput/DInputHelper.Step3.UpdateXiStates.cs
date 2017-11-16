@@ -85,6 +85,9 @@ namespace x360ce.App.DInput
 				if (success && index > 0 && type == SettingType.DPad)
 				{
 					var dPadIndex = index - 1;
+					// --------------------------------------------------------
+					// Target: Button (DPad).
+					// --------------------------------------------------------
 					if (dPadButtons[dPadIndex * 4 + 0])
 						gp.Buttons |= GamepadButtonFlags.DPadUp;
 					if (dPadButtons[dPadIndex * 4 + 1])
@@ -119,12 +122,21 @@ namespace x360ce.App.DInput
 							var pressed = diState.Buttons[map.Index - 1];
 							if (pressed)
 							{
+								// --------------------------------------------------------
+								// Target: Button.
+								// --------------------------------------------------------
 								if (map.Target == TargetType.Button)
 									gp.Buttons |= map.ButtonFlag;
+								// --------------------------------------------------------
+								// Target: Trigger.
+								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftTrigger)
 									gp.LeftTrigger = byte.MaxValue;
 								else if (map.Target == TargetType.RightTrigger)
 									gp.RightTrigger = byte.MaxValue;
+								// --------------------------------------------------------
+								// Target: Thumb.
+								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftThumbX)
 									gp.LeftThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.LeftThumbY)
@@ -137,7 +149,7 @@ namespace x360ce.App.DInput
 						}
 					}
 					// --------------------------------------------------------
-					// MAP Source: D-PAD button converted from POV
+					// MAP Source: D-PAD button converted from POV.
 					// --------------------------------------------------------
 					else if (map.Type == SettingType.DPadButton)
 					{
@@ -147,12 +159,21 @@ namespace x360ce.App.DInput
 							var pressed = dPadButtons[map.Index - 1];
 							if (pressed)
 							{
+								// --------------------------------------------------------
+								// Target: Button.
+								// --------------------------------------------------------
 								if (map.Target == TargetType.Button)
 									gp.Buttons |= map.ButtonFlag;
+								// --------------------------------------------------------
+								// Target: Trigger.
+								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftTrigger)
 									gp.LeftTrigger = byte.MaxValue;
 								else if (map.Target == TargetType.RightTrigger)
 									gp.RightTrigger = byte.MaxValue;
+								// --------------------------------------------------------
+								// Target: Thumb.
+								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftThumbX)
 									gp.LeftThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.LeftThumbY)
@@ -165,7 +186,7 @@ namespace x360ce.App.DInput
 						}
 					}
 					// --------------------------------------------------------
-					// MAP Source: Axis or Slider
+					// MAP Source: Axis or Slider.
 					// --------------------------------------------------------
 					else if (map.IsAxis || map.IsSlider)
 					{
@@ -181,55 +202,131 @@ namespace x360ce.App.DInput
 						// Get value.
 						var v = (ushort)values[map.Index - 1];
 
-						// If value is inverted (I) then...
-						if (map.IsInverted && !map.IsHalf)
-							v = (ushort)(ushort.MaxValue - v);
-						// If half value (H) then...
-						else if (!map.IsInverted && map.IsHalf && (v + short.MinValue) > 0)
-							v = (ushort)((v + short.MinValue) * 2 + 1);
-						// If inverted half value (IH) then...
-						else if (!map.IsInverted && map.IsHalf && v <= short.MaxValue)
-							v = (ushort)((short.MaxValue - v) * 2 + 1);
+						//// If value is inverted (I) then...
+						//if (map.IsInverted && !map.IsHalf)
+						//	v = (ushort)(ushort.MaxValue - v);
+						//// If half value (H) then...
+						//else if (!map.IsInverted && map.IsHalf && (v + short.MinValue) > 0)
+						//	v = (ushort)((v + short.MinValue) * 2 + 1);
+						//// If inverted half value (IH) then...
+						//else if (!map.IsInverted && map.IsHalf && v <= short.MaxValue)
+						//	v = (ushort)((short.MaxValue - v) * 2 + 1);
 
-						var deadZone = map.DeadZone;
+						//var deadZone = map.DeadZone;
 
-						// If full range then double deadzone.
-						if (!map.IsHalf)
-							deadZone = map.DeadZone * 2;
+						//// If full range then double deadzone.
+						//if (!map.IsHalf)
+						//	deadZone = map.DeadZone * 2;
 
-						// If target is button.
+						// --------------------------------------------------------
+						// Target: Button.
+						// --------------------------------------------------------
 						if (map.Target == TargetType.Button)
 						{
 							// If axis reached beyond dead zone then...
-							if (v > deadZone)
+							if (v > map.DeadZone)
 							{
 								gp.Buttons |= map.ButtonFlag;
 							}
 						}
-						// If target is Trigger.
+						// --------------------------------------------------------
+						// Target: Trigger.
+						// --------------------------------------------------------
 						else if (TargetType.Triggers.HasFlag(map.Target))
 						{
-							// Scale ushort (0-65535) to byte (0-255).
+							// Convert range from ushort (0-65535) to byte (0-255).
 							var value = (byte)ConvertRange(ushort.MinValue, ushort.MaxValue, byte.MinValue, byte.MaxValue, v);
-							//value = (byte)DeadZone(value, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
+							// Apply dead zone range (0 to 255).
+							value = (byte)DeadZone(value, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
 							if (map.Target == TargetType.LeftTrigger)
 								gp.LeftTrigger = value;
 							if (map.Target == TargetType.RightTrigger)
 								gp.RightTrigger = value;
 						}
-						// If target is Thumb.
+						// --------------------------------------------------------
+						// Target: Thumb.
+						// --------------------------------------------------------
 						else if (TargetType.Thumbs.HasFlag(map.Target))
 						{
-							// Scale ushort (0-65535) to short (-32768 - 32767).
-							var value = (short)ConvertRange(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, v);
+							// Destination range.
+							var min = short.MinValue; // -32768;
+							var max = short.MaxValue; //  32767;
+
+							// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
+							var xInput = ConvertRange(ushort.MinValue, ushort.MaxValue, min, max, v);
+
+							// If axis should be inverted, convert [-32768;32767] -> [32767;-32768]
+							if (map.IsInverted)
+								xInput = -1 - xInput;
+
+							// NEGATIVE START:
+							// The following sections expect xInput values in range [0;32767]
+							// So, convert to positive: [-32768;-1] -> [32767;0]
+							bool negative = xInput < 0;
+							if (negative)
+								xInput = -1 - xInput;
+
+							// If deadzone value is set then...
+							if (map.DeadZone > 0)
+							{
+								// if value is inside deadzone then...
+								if (map.DeadZone <= xInput)
+								{
+									// Reset to minimum value.
+									xInput = 0;
+								}
+								else
+								{
+									// DeadZone is applied on source axis. Destination thumb will have full range.
+									// Convert to new range: [deadZone;32767] => [0;32767];
+									xInput = ConvertRange(map.DeadZone, max, 0, max, xInput);
+								}
+							}
+
+							// If anti-deadzone value is set then...
+							if (map.AntiDeadZone > 0)
+							{
+								if (xInput > 0)
+								{
+									// AntiDeadzone is applied to destination thumb. Source will have full range.
+									// Convert to new range: [0;32767] => [antiDeadZone;32767];
+									xInput = ConvertRange(0, max, map.AntiDeadZone, max, xInput);
+								}
+							}
+
+							// If linear value is set then...
+							if (map.Linear != 0 && xInput > 0)
+							{
+								// [antiDeadZone;32767] => [0;32767];
+								float xInputF = ConvertRange(map.AntiDeadZone, max, 0, max, xInput);
+								float linearF = (float)map.Linear / 100f;
+								xInputF = ConvertToFloat((short)xInputF);
+								float x = -xInputF;
+								if (linearF < 0f) x = 1f + x;
+								float sv = (float)Math.Sqrt(1f - x * x);
+								if (linearF < 0f) sv = 1f - sv;
+								xInputF = xInputF + (2f - sv - xInputF - 1f) * Math.Abs(linearF);
+								xInput = ConvertToShort(xInputF);
+								// [0;32767] => [antiDeadZone;32767];
+								xInput = ConvertRange(0, max, map.AntiDeadZone, max, xInput);
+							}
+
+							// NEGATIVE END:
+							// If originally negative, convert back: [32767;0] -> [-32768;-1]
+							if (negative)
+								xInput = -1 - xInput;
+
+							// Make sure values are in range.
+							var thumbValue = (short)Clamp(xInput, min, max);
+
 							if (map.Target == TargetType.LeftThumbX)
-								gp.LeftThumbX = value;
+								gp.LeftThumbX = thumbValue;
 							if (map.Target == TargetType.LeftThumbY)
-								gp.LeftThumbY = value;
+								gp.LeftThumbY = thumbValue;
 							if (map.Target == TargetType.RightThumbX)
-								gp.RightThumbX = value;
+								gp.RightThumbX = thumbValue;
 							if (map.Target == TargetType.RightThumbY)
-								gp.RightThumbY = value;
+								gp.RightThumbY = thumbValue;
 						}
 					}
 				}
@@ -263,6 +360,13 @@ namespace x360ce.App.DInput
 		{
 			if (val < lowerDZ) return min;
 			if (val > upperDZ) return max;
+			return val;
+		}
+
+		int Clamp(int val, int min, int max)
+		{
+			if (val < min) return min;
+			if (val > max) return max;
 			return val;
 		}
 	}
