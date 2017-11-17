@@ -34,41 +34,45 @@
           <Property Name="LeftMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftShoulder" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbAxisX" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="LeftThumbAxisY" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="LeftThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="LeftThumbDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbLinearX" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftThumbAxisY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftThumbDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbLinearY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbDown" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbLeft" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbRight" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftThumbUp" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftTrigger" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftTriggerDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftTriggerAntiDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="LeftTriggerLinear" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="PassThrough" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightShoulder" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="RightThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="RightThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbAxisX" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="RightThumbAxisY" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="RightThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="RightThumbDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbLinearX" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightThumbAxisY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightThumbDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbLinearY" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbDown" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbLeft" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbRight" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightThumbUp" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightTrigger" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightTriggerDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightTriggerAntiDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="RightTriggerLinear" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ButtonADeadZone" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ButtonBDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ButtonBackDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
@@ -117,7 +121,7 @@
           <Property Name="Comment" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
-          <Property Name="DateUpdated" Type="datetime" />
+          <Property Name="DateUpdated" Type="datetime" Nullable="false" />
           <Property Name="InstanceCount" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Settings">
@@ -371,6 +375,10 @@
           <Property Name="DPadLeftDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="DPadRightDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="DPadUpDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="LeftTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="LeftTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="RightTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="RightTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="Setting">
 					<Key>
@@ -564,7 +572,11 @@
 					<EntitySetMapping Name="PadSettings">
 						<EntityTypeMapping TypeName="x360ceModel.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
-								<ScalarProperty Name="DPadUpDeadZone" ColumnName="DPadUpDeadZone" />
+								<ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
+                <ScalarProperty Name="RightTriggerAntiDeadZone" ColumnName="RightTriggerAntiDeadZone" />
+                <ScalarProperty Name="LeftTriggerLinear" ColumnName="LeftTriggerLinear" />
+                <ScalarProperty Name="LeftTriggerAntiDeadZone" ColumnName="LeftTriggerAntiDeadZone" />
+                <ScalarProperty Name="DPadUpDeadZone" ColumnName="DPadUpDeadZone" />
                 <ScalarProperty Name="DPadRightDeadZone" ColumnName="DPadRightDeadZone" />
                 <ScalarProperty Name="DPadLeftDeadZone" ColumnName="DPadLeftDeadZone" />
                 <ScalarProperty Name="DPadDownDeadZone" ColumnName="DPadDownDeadZone" />
@@ -853,7 +865,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="71" >
+			<Diagram Name="x360ceModel" ZoomLevel="64" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

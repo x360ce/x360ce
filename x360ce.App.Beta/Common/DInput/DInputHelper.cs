@@ -194,7 +194,7 @@ namespace x360ce.App.DInput
 			var oldRange = (float)(oldMax - oldMin);
 			var newRange = (float)(newMax - newMin);
 			var scale = newRange / oldRange;
-			return (int)(newMin + ((value - oldMin) * scale));
+			return (int)Math.Round(newMin + ((value - oldMin) * scale));
 		}
 
 		#endregion

@@ -31,10 +31,10 @@ namespace x360ce.Engine.Data
 					{
 						var maps = new List<Map>();
 						// Add buttons.
-						maps.Add(new Map(ButtonGuide, (GamepadButtonFlags)0x400));
-						maps.Add(new Map(ButtonA, GamepadButtonFlags.A,ButtonADeadZone));
+						maps.Add(new Map(ButtonGuide, (GamepadButtonFlags)0x400, ""));
+						maps.Add(new Map(ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
 						maps.Add(new Map(ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
-						maps.Add(new Map(ButtonX, GamepadButtonFlags.X,  ButtonXDeadZone));
+						maps.Add(new Map(ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
 						maps.Add(new Map(ButtonY, GamepadButtonFlags.Y, ButtonYDeadZone));
 						maps.Add(new Map(ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
 						maps.Add(new Map(ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
@@ -47,8 +47,8 @@ namespace x360ce.Engine.Data
 						maps.Add(new Map(RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
 						maps.Add(new Map(RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
 						// Add triggers.
-						maps.Add(new Map(LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone));
-						maps.Add(new Map(RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone));
+						maps.Add(new Map(LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone, LeftTriggerAntiDeadZone, LeftTriggerLinear));
+						maps.Add(new Map(RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone, RightTriggerAntiDeadZone, RightTriggerLinear));
 						// Add thumbs.
 						maps.Add(new Map(LeftThumbAxisX, TargetType.LeftThumbX, LeftThumbDeadZoneX, LeftThumbAntiDeadZoneX, LeftThumbLinearX));
 						maps.Add(new Map(LeftThumbAxisY, TargetType.LeftThumbY, LeftThumbDeadZoneY, LeftThumbAntiDeadZoneY, LeftThumbLinearY));
@@ -76,9 +76,25 @@ namespace x360ce.Engine.Data
 		{
 			// Make sure to update checksums in database if you are changing this method.
 			var list = new List<string>();
+			// GamePad.
+			AddValue(ref list, x => x.PassThrough);
+			AddValue(ref list, x => x.GamePadType);
+			// Force Feedback.
+			AddValue(ref list, x => x.ForceEnable);
+			AddValue(ref list, x => x.ForceType);
+			AddValue(ref list, x => x.ForceSwapMotor);
+			AddValue(ref list, x => x.ForceOverall, "100");
+			AddValue(ref list, x => x.LeftMotorPeriod);
+			AddValue(ref list, x => x.LeftMotorDirection);
+			AddValue(ref list, x => x.LeftMotorStrength, "100");
+			AddValue(ref list, x => x.RightMotorPeriod);
+			AddValue(ref list, x => x.RightMotorDirection);
+			AddValue(ref list, x => x.RightMotorStrength, "100");
+			// D-PAD
 			AddValue(ref list, x => x.AxisToDPadDeadZone, "256");
 			AddValue(ref list, x => x.AxisToDPadEnabled);
 			AddValue(ref list, x => x.AxisToDPadOffset);
+			// Buttons.
 			AddValue(ref list, x => x.ButtonA);
 			AddValue(ref list, x => x.ButtonB);
 			AddValue(ref list, x => x.ButtonGuide);
@@ -91,51 +107,50 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.DPadLeft);
 			AddValue(ref list, x => x.DPadRight);
 			AddValue(ref list, x => x.DPadUp);
-			AddValue(ref list, x => x.ForceEnable);
-			AddValue(ref list, x => x.ForceOverall, "100");
-			AddValue(ref list, x => x.ForceSwapMotor);
-			AddValue(ref list, x => x.ForceType);
-			AddValue(ref list, x => x.GamePadType);
-			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftShoulder);
-			AddValue(ref list, x => x.LeftThumbAntiDeadZoneX);
-			AddValue(ref list, x => x.LeftThumbAntiDeadZoneY);
-			AddValue(ref list, x => x.LeftThumbAxisX);
-			AddValue(ref list, x => x.LeftThumbAxisY);
 			AddValue(ref list, x => x.LeftThumbButton);
-			AddValue(ref list, x => x.LeftThumbDeadZoneX);
-			AddValue(ref list, x => x.LeftThumbDeadZoneY);
-			AddValue(ref list, x => x.LeftThumbDown);
-			AddValue(ref list, x => x.LeftThumbLeft);
-			AddValue(ref list, x => x.LeftThumbRight);
-			AddValue(ref list, x => x.LeftThumbUp);
-			AddValue(ref list, x => x.LeftTrigger);
-			AddValue(ref list, x => x.LeftTriggerDeadZone);
-			AddValue(ref list, x => x.PassThrough);
-			AddValue(ref list, x => x.RightMotorPeriod);
 			AddValue(ref list, x => x.RightShoulder);
-			AddValue(ref list, x => x.RightThumbAntiDeadZoneX);
-			AddValue(ref list, x => x.RightThumbAntiDeadZoneY);
-			AddValue(ref list, x => x.RightThumbAxisX);
-			AddValue(ref list, x => x.RightThumbAxisY);
 			AddValue(ref list, x => x.RightThumbButton);
-			AddValue(ref list, x => x.RightThumbDeadZoneX);
-			AddValue(ref list, x => x.RightThumbDeadZoneY);
-			AddValue(ref list, x => x.RightThumbDown);
-			AddValue(ref list, x => x.RightThumbLeft);
-			AddValue(ref list, x => x.RightThumbRight);
-			AddValue(ref list, x => x.RightThumbUp);
+			// Right Trigger.
 			AddValue(ref list, x => x.RightTrigger);
 			AddValue(ref list, x => x.RightTriggerDeadZone);
-			// New
+			AddValue(ref list, x => x.RightTriggerAntiDeadZone);
+			AddValue(ref list, x => x.RightTriggerLinear);
+			// Left Thumb Virtual Buttons.
+			AddValue(ref list, x => x.LeftThumbUp);
+			AddValue(ref list, x => x.LeftThumbRight);
+			AddValue(ref list, x => x.LeftThumbDown);
+			AddValue(ref list, x => x.LeftThumbLeft);
+			// Left Thumb Axis X
+			AddValue(ref list, x => x.LeftThumbAxisX);
+			AddValue(ref list, x => x.LeftThumbDeadZoneX);
+			AddValue(ref list, x => x.LeftThumbAntiDeadZoneX);
 			AddValue(ref list, x => x.LeftThumbLinearX);
+			// Left Thumb Axis Y
+			AddValue(ref list, x => x.LeftThumbAxisY);
+			AddValue(ref list, x => x.LeftThumbDeadZoneY);
+			AddValue(ref list, x => x.LeftThumbAntiDeadZoneY);
 			AddValue(ref list, x => x.LeftThumbLinearY);
+			// Left Trigger.
+			AddValue(ref list, x => x.LeftTrigger);
+			AddValue(ref list, x => x.LeftTriggerDeadZone);
+			AddValue(ref list, x => x.LeftTriggerAntiDeadZone);
+			AddValue(ref list, x => x.LeftTriggerLinear);
+			// Right Thumb Virtual Buttons.
+			AddValue(ref list, x => x.RightThumbUp);
+			AddValue(ref list, x => x.RightThumbRight);
+			AddValue(ref list, x => x.RightThumbDown);
+			AddValue(ref list, x => x.RightThumbLeft);
+			// Right Thumb Axis X
+			AddValue(ref list, x => x.RightThumbAxisX);
+			AddValue(ref list, x => x.RightThumbDeadZoneX);
+			AddValue(ref list, x => x.RightThumbAntiDeadZoneX);
 			AddValue(ref list, x => x.RightThumbLinearX);
+			// Right Thumb Axis Y
+			AddValue(ref list, x => x.RightThumbAxisY);
+			AddValue(ref list, x => x.RightThumbDeadZoneY);
+			AddValue(ref list, x => x.RightThumbAntiDeadZoneY);
 			AddValue(ref list, x => x.RightThumbLinearY);
-			AddValue(ref list, x => x.LeftMotorStrength, "100");
-			AddValue(ref list, x => x.RightMotorStrength, "100");
-			AddValue(ref list, x => x.LeftMotorDirection);
-			AddValue(ref list, x => x.RightMotorDirection);
 			// Axis to Button dead-zones.
 			AddValue(ref list, x => x.ButtonADeadZone);
 			AddValue(ref list, x => x.ButtonBDeadZone);
@@ -154,8 +169,10 @@ namespace x360ce.Engine.Data
 			// If all values are empty or default then...
 			if (list.Count == 0)
 				return Guid.Empty;
+			// Sort list to make sure that categorized order above doesn't matter.
+			var sorted = list.OrderBy(x => x).ToArray();
 			// Prepare list for checksum.
-			var s = string.Join("\r\n", list.ToArray());
+			var s = string.Join("\r\n", sorted);
 			var bytes = System.Text.Encoding.ASCII.GetBytes(s);
 			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
 			return new Guid(md5.ComputeHash(bytes));
@@ -230,6 +247,8 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeLeftThumbUp() { return !isDefault(LeftThumbUp); }
 		public bool ShouldSerializeLeftTrigger() { return !isDefault(LeftTrigger); }
 		public bool ShouldSerializeLeftTriggerDeadZone() { return !isDefault(LeftTriggerDeadZone); }
+		public bool ShouldSerializeLeftTriggerAntiDeadZone() { return !isDefault(LeftTriggerAntiDeadZone); }
+		public bool ShouldSerializeLeftTriggerLinear() { return !isDefault(LeftTriggerLinear); }
 		public bool ShouldSerializePassThrough() { return !isDefault(PassThrough); }
 		public bool ShouldSerializeRightMotorPeriod() { return !isDefault(RightMotorPeriod); }
 		public bool ShouldSerializeRightShoulder() { return !isDefault(RightShoulder); }
@@ -246,6 +265,8 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeRightThumbUp() { return !isDefault(RightThumbUp); }
 		public bool ShouldSerializeRightTrigger() { return !isDefault(RightTrigger); }
 		public bool ShouldSerializeRightTriggerDeadZone() { return !isDefault(RightTriggerDeadZone); }
+		public bool ShouldSerializeRightTriggerAntiDeadZone() { return !isDefault(RightTriggerAntiDeadZone); }
+		public bool ShouldSerializeRightTriggerLinear() { return !isDefault(RightTriggerLinear); }
 		public bool ShouldSerializeLeftThumbLinearX() { return !isDefault(LeftThumbLinearX); }
 		public bool ShouldSerializeLeftThumbLinearY() { return !isDefault(LeftThumbLinearY); }
 		public bool ShouldSerializeRightThumbLinearX() { return !isDefault(RightThumbLinearX); }

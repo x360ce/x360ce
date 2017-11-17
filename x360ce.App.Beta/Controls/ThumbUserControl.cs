@@ -252,16 +252,13 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		const int XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE = 7849;
-		const int XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE = 8689;
-
 		private void P_X_Y_Z_MenuItem_Click(object sender, EventArgs e)
 		{
 			var c = (ToolStripMenuItem)sender;
 			var values = c.Name.Split('_');
 			var xDeadZone = ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX || ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX
-				? XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
-				: XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+				? XInput.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
+				: XInput.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
 			var deadZone = int.Parse(values[1]);
 			var antiDeadZone = int.Parse(values[2]);
 			var sensitivity = int.Parse(values[3]);

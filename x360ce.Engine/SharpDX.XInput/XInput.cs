@@ -20,6 +20,11 @@
 
 		public static object XInputLock = new object();
 
+		// https://msdn.microsoft.com/en-us/library/windows/desktop/ee417001(v=vs.85).aspx
+		public const int XINPUT_GAMEPAD_TRIGGER_THRESHOLD = 30; // 11.8% or 7680 on ushort.
+		public const int XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE = 7849; // 12.0%
+		public const int XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE = 8689; // 13.3%
+
 		#region XInput functions
 
 		//[SuppressUnmanagedCodeSecurity, DllImport("xinput1_4.dll", EntryPoint = "XInputEnable", CallingConvention = CallingConvention.StdCall)]

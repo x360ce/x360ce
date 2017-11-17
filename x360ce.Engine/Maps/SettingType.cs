@@ -1,4 +1,6 @@
-﻿namespace x360ce.Engine
+﻿using System;
+
+namespace x360ce.Engine
 {
 	public enum SettingType
 	{
