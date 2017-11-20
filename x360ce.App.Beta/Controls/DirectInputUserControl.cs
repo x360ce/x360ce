@@ -54,9 +54,9 @@ namespace x360ce.App.Controls
 			DiEffectsDataGridView.DataSource = DiEffectsTable;
 		}
 
-		void ShowDeviceInfo(Joystick device, UserDevice dInfo)
+		void ShowDeviceInfo(UserDevice ud)
 		{
-			if (device == null)
+			if (ud != null)
 			{
 				// clean everything here.
 				AppHelper.SetText(DiCapFfStateTextBox, "");
@@ -83,12 +83,13 @@ namespace x360ce.App.Controls
 				// XInput must be unloaded in case it tries to lock the device exclusivly.
 				var isLoaded = XInput.IsLoaded;
 				if (isLoaded) XInput.FreeLibrary();
-				var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+				var forceFeedback = ((DeviceFlags)ud.CapFlags).HasFlag(DeviceFlags.ForceFeedback);
 				forceFeedbackState = forceFeedback ? "YES" : "NO";
 				if (DiEffectsTable.Rows.Count > 0)
 					DiEffectsTable.Rows.Clear();
 				// If device supports force feedback then...
-				if (forceFeedback)
+				var device = ud.Device;
+				if (forceFeedback && device != null)
 				{
 					// Must reaquire device in exclusive mode to get effects.
 					device.Unacquire();
@@ -111,10 +112,11 @@ namespace x360ce.App.Controls
 							eff.DynamicParameters.ToString()
 						);
 					}
+					// Reaquire device in non exclusive mode.
+					device.Unacquire();
+					device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+
 				}
-				// Reaquire device in non exclusive mode.
-				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
 				if (isLoaded)
 				{
 					Exception error;
@@ -122,30 +124,29 @@ namespace x360ce.App.Controls
 				}
 			}
 			AppHelper.SetText(DiCapFfStateTextBox, forceFeedbackState);
-			AppHelper.SetText(DiCapButtonsTextBox, device.Capabilities.ButtonCount.ToString());
-			AppHelper.SetText(DiCapPovsTextBox, device.Capabilities.PovCount.ToString());
-			var di = device.Information;
-			var objects = TestDeviceHelper.ProductGuid.Equals(di.ProductGuid)
+			AppHelper.SetText(DiCapButtonsTextBox, ud.CapButtonCount.ToString());
+			AppHelper.SetText(DiCapPovsTextBox, ud.CapPovCount.ToString());
+			var objects = TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid)
 				? TestDeviceHelper.GetDeviceObjects()
-				: AppHelper.GetDeviceObjects(device);
+				: AppHelper.GetDeviceObjects(ud.Device);
 			DiObjectsDataGridView.DataSource = objects;
 			var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
 			AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
 			var slidersCount = objects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
 			// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
-			AppHelper.SetText(DiCapAxesTextBox, (device.Capabilities.AxeCount - slidersCount).ToString());
+			AppHelper.SetText(DiCapAxesTextBox, (ud.CapAxeCount - slidersCount).ToString());
 			AppHelper.SetText(DiSlidersTextBox, slidersCount.ToString());
 			// Update PID and VID always so they wont be overwritten by load settings.
-			short vid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 0);
-			short pid = BitConverter.ToInt16(di.ProductGuid.ToByteArray(), 2);
+			short vid = BitConverter.ToInt16(ud.ProductGuid.ToByteArray(), 0);
+			short pid = BitConverter.ToInt16(ud.ProductGuid.ToByteArray(), 2);
 			AppHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
 			AppHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
-			AppHelper.SetText(DeviceProductNameTextBox, di.ProductName);
-			AppHelper.SetText(DeviceVendorNameTextBox, dInfo == null ? "" : dInfo.DevManufacturer);
-			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", dInfo == null ? 0 : dInfo.DevRevision);
-			AppHelper.SetText(DeviceProductGuidTextBox, di.ProductGuid.ToString());
-			AppHelper.SetText(DeviceInstanceGuidTextBox, di.InstanceGuid.ToString());
-			AppHelper.SetText(DeviceTypeTextBox, di.Type.ToString());
+			AppHelper.SetText(DeviceProductNameTextBox, ud.ProductName);
+			AppHelper.SetText(DeviceVendorNameTextBox, ud == null ? "" : ud.DevManufacturer);
+			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", ud == null ? 0 : ud.DevRevision);
+			AppHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
+			AppHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
+			AppHelper.SetText(DeviceTypeTextBox, ((SharpDX.DirectInput.DeviceType)ud.CapType).ToString());
 		}
 
 		JoystickState oldState;
@@ -310,39 +311,21 @@ namespace x360ce.App.Controls
 		Guid deviceInstanceGuid;
 		bool isWheel = false;
 
-		public void UpdateFrom(UserDevice uDevice, out JoystickState state)
+		public void UpdateFrom(UserDevice ud)
 		{
-			state = null;
-			if (uDevice != null)
+			if (ud != null)
 			{
-				var device = uDevice.Device;
-				var instanceGuid = device == null ? Guid.Empty : device.Information.InstanceGuid;
+				var instanceGuid = ud == null ? Guid.Empty : ud.InstanceGuid;
 				// If this is not same device.
 				if (!instanceGuid.Equals(deviceInstanceGuid))
 				{
-					ShowDeviceInfo(device, uDevice);
+					ShowDeviceInfo(ud);
 					deviceInstanceGuid = Guid.Empty;
-					if (device != null)
-					{
-						deviceInstanceGuid = device.Information.InstanceGuid;
-						isWheel = device.Information.Type == SharpDX.DirectInput.DeviceType.Driving;
-					}
+					deviceInstanceGuid = ud.InstanceGuid;
+					isWheel = ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving;
 				}
-				if (device != null)
-				{
-					try
-					{
-
-						device.Acquire();
-						state = device.GetCurrentState();
-					}
-					catch (Exception ex)
-					{
-						var error = ex;
-					}
-				}
+				ShowDirectInputState(ud.JoState);
 			}
-			ShowDirectInputState(state);
 		}
 
 		private void DirectInputControl_Load(object sender, EventArgs e)
@@ -361,7 +344,7 @@ namespace x360ce.App.Controls
 			var maxAspectName = objects.Max(x => x.AspectName.Length);
 			var maxOffsetName = objects.Max(x => x.OffsetName.ToString().Length);
 
-			var names = new string[] {"Offset", "Type", "Aspect", "Flags", "Instance", "Name" };
+			var names = new string[] { "Offset", "Type", "Aspect", "Flags", "Instance", "Name" };
 			var sizes = new int[] { "Offset".Length, -maxTypeName, -maxAspectName, -maxFlags, "Instance".Length, -maxName };
 			// Create format line.
 			var format = "// ";

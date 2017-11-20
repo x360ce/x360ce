@@ -624,11 +624,16 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.PassThroughIndex, PassThroughIndexComboBox);
 			// Mapping
 			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
-			// Triggers
-			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox);
-			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerDeadZoneTrackBar);
+			// Left Trigger
 			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox);
-			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerDeadZoneTrackBar);
+			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerUserControl.DeadZoneTrackBar);
+			AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerUserControl.AntiDeadZoneNumericUpDown);
+			AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerUserControl.SensitivityNumericUpDown);
+			// Right Trigger
+			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox);
+			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
+			AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
+			AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
 			// Combining
 			AddMap(() => SettingName.Combined, CombinedCheckBox);
 			AddMap(() => SettingName.CombinedIndex, CombinedIndexComboBox);
@@ -800,12 +805,12 @@ namespace x360ce.App.Controls
 		{
 			lock (updateFromDirectInputLock)
 			{
-				var diDevice = GetCurrentDevice();
+				var ud = GetCurrentDevice();
 				Guid instanceGuid = Guid.Empty;
-				var enable = diDevice != null;
+				var enable = ud != null;
 				if (enable)
 				{
-					instanceGuid = diDevice.InstanceGuid;
+					instanceGuid = ud.InstanceGuid;
 				}
 				AppHelper.SetEnabled(LoadPresetButton, enable);
 				AppHelper.SetEnabled(AutoPresetButton, enable);
@@ -825,15 +830,15 @@ namespace x360ce.App.Controls
 				if (!Equals(instanceGuid, _InstanceGuid))
 				{
 					_InstanceGuid = instanceGuid;
-					ResetDiMenuStrip(enable ? diDevice : null);
+					ResetDiMenuStrip(enable ? ud : null);
 				}
 				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
-				UpdateDirectInputTabPage(diDevice);
-				JoystickState state;
-				DirectInputPanel.UpdateFrom(diDevice, out state);
-				CustomDiState diState = null;
-				if (state != null) diState = new CustomDiState(state);
-				StopRecording(diState);
+				UpdateDirectInputTabPage(ud);
+				DirectInputPanel.UpdateFrom(ud);
+				if (enable)
+				{
+					StopRecording(ud.DiState);
+				}
 			}
 		}
 
@@ -1085,19 +1090,6 @@ namespace x360ce.App.Controls
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
-		void LeftTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			LeftTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
-
-		void RightTriggerDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			RightTriggerDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 		void MotorTrackBar_ValueChanged(object sender, EventArgs e)

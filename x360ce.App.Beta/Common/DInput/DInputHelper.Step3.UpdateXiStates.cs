@@ -250,7 +250,7 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						// Target: Trigger.
 						// --------------------------------------------------------
-						else if (TargetType.Triggers.HasFlag(map.Target))
+						else if (map.Target == TargetType.LeftTrigger || map.Target == TargetType.RightTrigger)
 						{
 							// Convert range from ushort (0-65535) to byte (0-255).
 							var value = (byte)ConvertRange(ushort.MinValue, ushort.MaxValue, byte.MinValue, byte.MaxValue, v);
@@ -264,7 +264,7 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						// Target: Thumb.
 						// --------------------------------------------------------
-						else if (TargetType.Thumbs.HasFlag(map.Target))
+						else if (map.Target != TargetType.None)
 						{
 
 							// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).

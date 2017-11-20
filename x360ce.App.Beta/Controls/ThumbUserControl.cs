@@ -10,6 +10,7 @@ using System.Threading;
 using JocysCom.ClassLibrary.Threading;
 using System.Text.RegularExpressions;
 using SharpDX.XInput;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -46,15 +47,15 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		ThumbIndex _ThumbIndex;
+		TargetType _TargetType;
 
-		[Category("Appearance"), DefaultValue(ThumbIndex.LeftX)]
-		public ThumbIndex ThumbIndex
+		[Category("Appearance"), DefaultValue(TargetType.LeftThumbX)]
+		public TargetType TargetType
 		{
-			get { return _ThumbIndex; }
+			get { return _TargetType; }
 			set
 			{
-				_ThumbIndex = value;
+				_TargetType = value;
 			}
 		}
 
@@ -256,9 +257,24 @@ namespace x360ce.App.Controls
 		{
 			var c = (ToolStripMenuItem)sender;
 			var values = c.Name.Split('_');
-			var xDeadZone = ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX || ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX
-				? XInput.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
-				: XInput.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+			var xDeadZone = 0;
+			switch (TargetType)
+			{
+				case TargetType.LeftTrigger:
+				case TargetType.RightTrigger:
+					xDeadZone = XInput.XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+					break;
+				case TargetType.LeftThumbX:
+				case TargetType.LeftThumbY:
+					xDeadZone = XInput.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+					break;
+				case TargetType.RightThumbX:
+				case TargetType.RightThumbY:
+					xDeadZone = XInput.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+					break;
+				default:
+					break;
+			}
 			var deadZone = int.Parse(values[1]);
 			var antiDeadZone = int.Parse(values[2]);
 			var sensitivity = int.Parse(values[3]);

@@ -11,12 +11,10 @@ namespace x360ce.Engine
 		// [0;255]
 		LeftTrigger,
 		RightTrigger,
-		Triggers = LeftTrigger | RightTrigger,
 		// [-32768;32767]
 		LeftThumbX,
 		LeftThumbY,
 		RightThumbX,
 		RightThumbY,
-		Thumbs = LeftThumbX | LeftThumbY | RightThumbX | RightThumbY,
 	}
 }

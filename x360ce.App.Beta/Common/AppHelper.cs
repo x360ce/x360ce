@@ -69,12 +69,14 @@ namespace x360ce.App
 
 		public static DeviceObjectItem[] GetDeviceObjects(Joystick device)
 		{
+			var items = new List<DeviceObjectItem>();
+			if (device == null)
+				return items.ToArray();
 			var og = typeof(SharpDX.DirectInput.ObjectGuid);
 			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
 			List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
 			List<string> typeName = guidFileds.Select(x => x.Name).ToList();
 			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x=>x.ObjectId.InstanceNumber).ToArray();
-			var items = new List<DeviceObjectItem>();
 			foreach (var o in objects)
 			{
 				var item = new DeviceObjectItem()
