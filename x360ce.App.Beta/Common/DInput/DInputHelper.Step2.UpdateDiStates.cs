@@ -34,6 +34,11 @@ namespace x360ce.App.DInput
 						{
 							device.Acquire();
 							state = device.GetCurrentState();
+							// Fill device objects.
+							if (ud.DeviceObjects == null)
+								ud.DeviceObjects = AppHelper.GetDeviceObjects(device);
+							if (ud.DeviceEffects == null)
+								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 						}
 						catch (Exception ex)
 						{
@@ -44,6 +49,10 @@ namespace x360ce.App.DInput
 					else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 					{
 						state = TestDeviceHelper.GetCurrentState(ud);
+						// Fill device objects.
+						if (ud.DeviceObjects == null)
+							ud.DeviceObjects = TestDeviceHelper.GetDeviceObjects();
+						ud.DeviceEffects = new DeviceEffectItem[0];
 					}
 				}
 				ud.JoState = state ?? new JoystickState();

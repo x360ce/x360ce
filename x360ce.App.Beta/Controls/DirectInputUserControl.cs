@@ -56,7 +56,7 @@ namespace x360ce.App.Controls
 
 		void ShowDeviceInfo(UserDevice ud)
 		{
-			if (ud != null)
+			if (ud == null)
 			{
 				// clean everything here.
 				AppHelper.SetText(DiCapFfStateTextBox, "");
@@ -76,81 +76,52 @@ namespace x360ce.App.Controls
 				if (DiEffectsTable.Rows.Count > 0) DiEffectsTable.Rows.Clear();
 				return;
 			}
-			lock (XInput.XInputLock)
+			// This must be done for the first time device is connected in order to retrieve 
+			// Force feedback information.
+			// XInput must be unloaded in case it tries to lock the device exclusivly.
+			if (DiEffectsTable.Rows.Count > 0)
+				DiEffectsTable.Rows.Clear();
+			var effects = ud.DeviceEffects;
+			if (effects != null)
 			{
-				// This must be done for the first time device is connected in order to retrieve 
-				// Force feedback information.
-				// XInput must be unloaded in case it tries to lock the device exclusivly.
-				var isLoaded = XInput.IsLoaded;
-				if (isLoaded) XInput.FreeLibrary();
-				var forceFeedback = ((DeviceFlags)ud.CapFlags).HasFlag(DeviceFlags.ForceFeedback);
-				forceFeedbackState = forceFeedback ? "YES" : "NO";
-				if (DiEffectsTable.Rows.Count > 0)
-					DiEffectsTable.Rows.Clear();
-				// If device supports force feedback then...
-				var device = ud.Device;
-				if (forceFeedback && device != null)
+				foreach (var eff in ud.DeviceEffects)
 				{
-					// Must reaquire device in exclusive mode to get effects.
-					device.Unacquire();
-					device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
-					IList<EffectInfo> effects = new List<EffectInfo>();
-					try
-					{
-						device.Acquire();
-						effects = device.GetEffects(EffectType.All);
-					}
-					catch (Exception)
-					{
-						forceFeedbackState = "ERROR";
-					}
-					foreach (var eff in effects)
-					{
-						DiEffectsTable.Rows.Add(
-							eff.Name,
-							eff.StaticParameters.ToString(),
-							eff.DynamicParameters.ToString()
-						);
-					}
-					// Reaquire device in non exclusive mode.
-					device.Unacquire();
-					device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-
-				}
-				if (isLoaded)
-				{
-					Exception error;
-					XInput.ReLoadLibrary(XInput.LibraryName, out error);
+					DiEffectsTable.Rows.Add(
+						eff.Name,
+						eff.StaticParameters.ToString(),
+						eff.DynamicParameters.ToString()
+					);
 				}
 			}
+			var forceFeedbackState = ((DeviceFlags)ud.CapFlags).HasFlag(DeviceFlags.ForceFeedback) ? "YES" : "NO";
 			AppHelper.SetText(DiCapFfStateTextBox, forceFeedbackState);
 			AppHelper.SetText(DiCapButtonsTextBox, ud.CapButtonCount.ToString());
 			AppHelper.SetText(DiCapPovsTextBox, ud.CapPovCount.ToString());
-			var objects = TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid)
-				? TestDeviceHelper.GetDeviceObjects()
-				: AppHelper.GetDeviceObjects(ud.Device);
+			var objects = ud.DeviceObjects;
 			DiObjectsDataGridView.DataSource = objects;
-			var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
-			AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
-			var slidersCount = objects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
-			// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
-			AppHelper.SetText(DiCapAxesTextBox, (ud.CapAxeCount - slidersCount).ToString());
-			AppHelper.SetText(DiSlidersTextBox, slidersCount.ToString());
+			if (objects != null)
+			{
+				var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
+				AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
+				var slidersCount = objects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
+				// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
+				AppHelper.SetText(DiCapAxesTextBox, (ud.CapAxeCount - slidersCount).ToString());
+				AppHelper.SetText(DiSlidersTextBox, slidersCount.ToString());
+			}
 			// Update PID and VID always so they wont be overwritten by load settings.
 			short vid = BitConverter.ToInt16(ud.ProductGuid.ToByteArray(), 0);
 			short pid = BitConverter.ToInt16(ud.ProductGuid.ToByteArray(), 2);
 			AppHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
 			AppHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
 			AppHelper.SetText(DeviceProductNameTextBox, ud.ProductName);
-			AppHelper.SetText(DeviceVendorNameTextBox, ud == null ? "" : ud.DevManufacturer);
-			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", ud == null ? 0 : ud.DevRevision);
+			AppHelper.SetText(DeviceVendorNameTextBox, "{0}", ud.DevManufacturer);
+			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", ud.DevRevision);
 			AppHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
 			AppHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
 			AppHelper.SetText(DeviceTypeTextBox, ((SharpDX.DirectInput.DeviceType)ud.CapType).ToString());
 		}
 
 		JoystickState oldState;
-		string forceFeedbackState;
 
 		public int[] Axis = new int[6];
 
@@ -308,24 +279,31 @@ namespace x360ce.App.Controls
 			return null;
 		}
 
-		Guid deviceInstanceGuid;
+		Guid _DeviceInstanceGuid;
 		bool isWheel = false;
 
 		public void UpdateFrom(UserDevice ud)
 		{
+			var instanceGuid = ud == null ? Guid.Empty : ud.InstanceGuid;
+			bool deviceChanged = false;
 			if (ud != null)
 			{
-				var instanceGuid = ud == null ? Guid.Empty : ud.InstanceGuid;
-				// If this is not same device.
-				if (!instanceGuid.Equals(deviceInstanceGuid))
-				{
-					ShowDeviceInfo(ud);
-					deviceInstanceGuid = Guid.Empty;
-					deviceInstanceGuid = ud.InstanceGuid;
-					isWheel = ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving;
-				}
-				ShowDirectInputState(ud.JoState);
+				deviceChanged = ud.DeviceChanged;
+				ud.DeviceChanged = false;
 			}
+			// If this is different device then...
+			if (!instanceGuid.Equals(_DeviceInstanceGuid))
+				deviceChanged = true;
+			// If device information changed.
+			if (deviceChanged)
+			{
+				ShowDeviceInfo(ud);
+				_DeviceInstanceGuid = instanceGuid;
+				isWheel = ud == null
+					? false : ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving;
+			}
+			var state = ud == null ? null : ud.JoState;
+			ShowDirectInputState(state);
 		}
 
 		private void DirectInputControl_Load(object sender, EventArgs e)

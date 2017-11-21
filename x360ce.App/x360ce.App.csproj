@@ -172,7 +172,6 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
-    <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DirectInputState.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\HookMode.cs" />

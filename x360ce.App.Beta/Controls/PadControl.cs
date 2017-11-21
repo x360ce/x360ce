@@ -1192,9 +1192,7 @@ namespace x360ce.App.Controls
 			if (result == DialogResult.Yes)
 			{
 				SettingsManager.Current.ClearPadSettings(MappedTo);
-				var objects = TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid)
-					? TestDeviceHelper.GetDeviceObjects()
-					: AppHelper.GetDeviceObjects(ud.Device);
+				var objects = ud.DeviceObjects;
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 				// If Right thumb triggers are missing then...

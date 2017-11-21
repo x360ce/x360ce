@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using x360ce.Engine.Data;
 using System.Linq.Expressions;
 using System.Configuration;
+using SharpDX.XInput;
 
 namespace x360ce.App
 {
@@ -76,7 +77,7 @@ namespace x360ce.App
 			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
 			List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
 			List<string> typeName = guidFileds.Select(x => x.Name).ToList();
-			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x=>x.ObjectId.InstanceNumber).ToArray();
+			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
 			foreach (var o in objects)
 			{
 				var item = new DeviceObjectItem()
@@ -90,6 +91,56 @@ namespace x360ce.App
 					Type = o.ObjectType,
 				};
 				items.Add(item);
+			}
+			return items.ToArray();
+		}
+
+		public static DeviceEffectItem[] GetDeviceEffects(Joystick device)
+		{
+			var items = new List<DeviceEffectItem>();
+			if (device == null)
+				return items.ToArray();
+			// Check if device supports force feedback.
+			var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+			if (!forceFeedback)
+				return items.ToArray();
+			lock (XInput.XInputLock)
+			{
+
+
+				// Unload xinput.
+				var isLoaded = XInput.IsLoaded;
+				if (isLoaded) XInput.FreeLibrary();
+				// Must reaquire device in exclusive mode to get effects.
+				device.Unacquire();
+				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
+				IList<EffectInfo> effects = new List<EffectInfo>();
+				try
+				{
+					device.Acquire();
+					effects = device.GetEffects(EffectType.All);
+				}
+				catch (Exception)
+				{
+				}
+				foreach (var eff in effects)
+				{
+					items.Add(new DeviceEffectItem()
+					{
+						Name = eff.Name,
+						StaticParameters = eff.StaticParameters,
+						DynamicParameters = eff.DynamicParameters,
+					});
+				}
+				// Reaquire device in non exclusive mode.
+				device.Unacquire();
+				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+				// If XInput was loaded then...
+				if (isLoaded)
+				{
+					Exception error;
+					XInput.ReLoadLibrary(XInput.LibraryName, out error);
+				}
 			}
 			return items.ToArray();
 		}

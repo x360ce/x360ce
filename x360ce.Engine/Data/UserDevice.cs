@@ -112,9 +112,18 @@ namespace x360ce.Engine.Data
 
 		#region Ignored Properties
 
+		[XmlIgnore]
+		public bool DeviceChanged;
+
 		/// <summary>DInput Device State.</summary>
 		[XmlIgnore]
 		public Joystick Device;
+
+		[XmlIgnore]
+		public DeviceObjectItem[] DeviceObjects;
+
+		[XmlIgnore]
+		public DeviceEffectItem[] DeviceEffects;
 
 		/// <summary>DInput JoystickState State.</summary>
 		[XmlIgnore]

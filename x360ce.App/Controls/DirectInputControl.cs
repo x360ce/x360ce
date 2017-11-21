@@ -112,7 +112,7 @@ namespace x360ce.App.Controls
 			var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
 			ActuatorsTextBox.Text = actuators.Count().ToString();
 			var di = device.Information;
-			var slidersCount = objects.Where(x => x.GuidValue.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
+			var slidersCount = objects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
 			DiCapAxesTextBox.Text = (device.Capabilities.AxeCount - slidersCount).ToString();
 			SlidersTextBox.Text = slidersCount.ToString();
 			// Update PID and VID always so they wont be overwritten by load settings.
@@ -336,16 +336,20 @@ namespace x360ce.App.Controls
 		{
 			var objects = DiObjectsDataGridView.DataSource as DeviceObjectItem[];
 			var sb = new StringBuilder();
-			var maxGuidName = objects.Max(x => x.GuidName.Length);
+			var maxTypeName = objects.Max(x => x.TypeName.Length);
 			var maxName = objects.Max(x => x.Name.Length);
 			var maxFlags = objects.Max(x => x.Flags.ToString().Length);
-			var names = new string[] { "Offset", "Usage", "Instance", "Guid", "Name", "Flags" };
-			var sizes = new int[] { 6, 6, 8, -maxGuidName, -maxName, -maxFlags };
+			var maxAspectName = objects.Max(x => x.AspectName.Length);
+			var maxOffsetName = objects.Max(x => x.OffsetName.ToString().Length);
+
+			var names = new string[] { "Offset", "Type", "Aspect", "Flags", "Instance", "Name" };
+			var sizes = new int[] { "Offset".Length, -maxTypeName, -maxAspectName, -maxFlags, "Instance".Length, -maxName };
+			// Create format line.
 			var format = "// ";
 			for (int i = 0; i < sizes.Length; i++)
 			{
 				if (i > 0) format += "  ";
-				format += "{"+i.ToString()+"," + sizes[i].ToString() + "}";
+				format += "{" + i.ToString() + "," + sizes[i].ToString() + "}";
 			}
 			sb.AppendFormat(format, names).AppendLine();
 			sb.Append("// ");
@@ -358,7 +362,7 @@ namespace x360ce.App.Controls
 			for (int i = 0; i < objects.Length; i++)
 			{
 				var o = objects[i];
-				sb.AppendFormat(format, o.Offset, o.Usage, o.Instance, o.GuidName, o.Name, o.Flags);
+				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, o.Name);
 				sb.AppendLine();
 			}
 			Clipboard.SetDataObject(sb.ToString());

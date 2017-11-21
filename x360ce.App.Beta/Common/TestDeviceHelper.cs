@@ -55,19 +55,21 @@ namespace x360ce.App
 		public static UserDevice NewUserDevice()
 		{
 			var instanceName = "";
+			var productName = "Test Device";
 			for (int i = 1; ; i++)
 			{
-				instanceName = string.Format("Test Device {0}", i);
+				instanceName = string.Format("{0} {1}", productName, i);
 				// If device with same name found then continue.
 				if (SettingsManager.UserDevices.Items.Any(x => x.InstanceName == instanceName))
 					continue;
 				break;
 			}
 			var ud = new UserDevice();
+			ud.DevManufacturer = "X360CE";
 			ud.InstanceGuid = Guid.NewGuid();
 			ud.InstanceName = instanceName;
-			ud.ProductGuid = TestDeviceHelper.ProductGuid;
-			ud.ProductName = instanceName;
+			ud.ProductGuid = ProductGuid;
+			ud.ProductName = productName;
 			ud.CapAxeCount = 5;
 			ud.CapButtonCount = 10;
 			ud.CapFlags = 5;
@@ -141,7 +143,7 @@ namespace x360ce.App
 
 			// Set Axis.
 			var axis = CustomDiState.GetAxisFromState(state);
-			for (int i = 0; i < axis.Length; i++)
+			for (int i = 0; i < ud.CapAxeCount; i++)
 			{
 				var isEven = i % 2 == 0;
 				var position = isEven

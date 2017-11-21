@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SharpDX.DirectInput;
 using System.Linq;
 
-namespace x360ce.App
+namespace x360ce.Engine
 {
 	public class DeviceObjectItem
 	{
