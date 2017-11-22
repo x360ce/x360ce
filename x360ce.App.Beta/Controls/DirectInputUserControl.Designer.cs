@@ -901,7 +901,7 @@
 			// dataGridViewTextBoxColumn3
 			// 
 			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.dataGridViewTextBoxColumn3.DataPropertyName = "Slider";
+			this.dataGridViewTextBoxColumn3.DataPropertyName = "POV";
 			dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
 			this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle14;
 			this.dataGridViewTextBoxColumn3.HeaderText = "POV";

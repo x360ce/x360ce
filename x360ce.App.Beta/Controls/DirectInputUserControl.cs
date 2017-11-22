@@ -181,13 +181,13 @@ namespace x360ce.App.Controls
 		void UpdatePovsTable(JoystickState state)
 		{
 			if (oldState.PointOfViewControllers[0] != state.PointOfViewControllers[0])
-				DiPovsTable.Rows[0][0] = state.PointOfViewControllers[0];
+				DiPovsTable.Rows[0][1] = state.PointOfViewControllers[0];
 			if (oldState.PointOfViewControllers[1] != state.PointOfViewControllers[1])
-				DiPovsTable.Rows[0][1] = state.PointOfViewControllers[1];
+				DiPovsTable.Rows[0][2] = state.PointOfViewControllers[1];
 			if (oldState.PointOfViewControllers[2] != state.PointOfViewControllers[2])
-				DiPovsTable.Rows[1][0] = state.PointOfViewControllers[2];
+				DiPovsTable.Rows[1][1] = state.PointOfViewControllers[2];
 			if (oldState.PointOfViewControllers[3] != state.PointOfViewControllers[3])
-				DiPovsTable.Rows[1][1] = state.PointOfViewControllers[3];
+				DiPovsTable.Rows[1][2] = state.PointOfViewControllers[3];
 		}
 
 		#endregion
@@ -308,10 +308,10 @@ namespace x360ce.App.Controls
 			var buttonsText = "";
 			if (buttons != null)
 			{
-				var ids = new List<int>();
+				var ids = new List<string>();
 				for (int i = 0; i < buttons.Length; i++)
 					if (buttons[i])
-						ids.Add(i);
+						ids.Add(i.ToString("00"));
 				buttonsText = string.Join(" ", ids);
 			}
 			AppHelper.SetText(DiButtonsTextBox, buttonsText);
