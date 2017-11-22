@@ -119,7 +119,7 @@ namespace x360ce.App
 			var time = tm % (busy + idle);
 			var invert = tm % ((busy + idle) * 2) > (busy + idle);
 			// Set POVs.
-			for (int i = 0; i < state.PointOfViewControllers.Length; i++)
+			for (int i = 0; i < ud.CapPovCount; i++)
 			{
 				// Rotate POVs 360 degrees in 4 seconds forward and back.
 				var degree = -1;

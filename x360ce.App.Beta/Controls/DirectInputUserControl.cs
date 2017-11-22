@@ -18,17 +18,36 @@ namespace x360ce.App.Controls
 	{
 		public DirectInputUserControl()
 		{
+			oldState = new JoystickState();
+			emptyState = oldState;
 			InitializeComponent();
 			InitDirectInputTab();
 			DiObjectsDataGridView.AutoGenerateColumns = false;
 		}
 
 		DataTable DiAxisTable;
+		DataTable DiSlidersTable;
+		DataTable DiPovsTable;
 		DataTable DiEffectsTable;
 
 		void InitDirectInputTab()
 		{
 			var ToolTip1 = new ToolTip();
+			CreateAxisTable();
+			CreateSlidersTable();
+			CreatePovsTable();
+			// Create effects table.
+			DiEffectsTable = new DataTable();
+			DiEffectsTable.Columns.Add("Effect", typeof(string));
+			DiEffectsTable.Columns.Add("Parameters", typeof(string));
+			DiEffectsTable.Columns.Add("DynamicParameters", typeof(string));
+			DiEffectsDataGridView.DataSource = DiEffectsTable;
+		}
+
+		#region Axis Table
+
+		void CreateAxisTable()
+		{
 			DiAxisTable = new DataTable();
 			// http://msdn.microsoft.com/en-us/library/windows/desktop/bb151904%28v=vs.85%29.aspx
 			DiAxisTable.Columns.Add("Axis", typeof(string));
@@ -40,19 +59,139 @@ namespace x360ce.App.Controls
 			DiAxisTable.Columns.Add("FR", typeof(int)); // Torque
 			DiAxisTable.Columns.Add("V", typeof(int)); // Velocity
 			DiAxisTable.Columns.Add("VR", typeof(int)); // AngularVelocity
-			DiAxisTable.Rows.Add(DiAxisTable.NewRow());
-			DiAxisTable.Rows.Add(DiAxisTable.NewRow());
-			DiAxisTable.Rows.Add(DiAxisTable.NewRow());
-			DiAxisDataGridView.DataSource = DiAxisTable;
+			DiAxisTable.Rows.Add(DiAxisTable.NewRow()); // X
+			DiAxisTable.Rows.Add(DiAxisTable.NewRow()); // Y
+			DiAxisTable.Rows.Add(DiAxisTable.NewRow()); // Z
 			DiAxisTable.Rows[0][0] = "X";
 			DiAxisTable.Rows[1][0] = "Y";
 			DiAxisTable.Rows[2][0] = "Z";
-			DiEffectsTable = new DataTable();
-			DiEffectsTable.Columns.Add("Effect", typeof(string));
-			DiEffectsTable.Columns.Add("Parameters", typeof(string));
-			DiEffectsTable.Columns.Add("DynamicParameters", typeof(string));
-			DiEffectsDataGridView.DataSource = DiEffectsTable;
+			DiAxisDataGridView.DataSource = DiAxisTable;
 		}
+
+		void UpdateAxisTable(JoystickState state)
+		{
+			// X-axis.
+			if (oldState.X != state.X)
+				DiAxisTable.Rows[0][1] = state.X;
+			if (oldState.RotationX != state.RotationX)
+				DiAxisTable.Rows[0][2] = state.RotationX;
+			if (oldState.AccelerationX != state.AccelerationX)
+				DiAxisTable.Rows[0][3] = state.AccelerationX;
+			if (oldState.AngularAccelerationX != state.AngularAccelerationX)
+				DiAxisTable.Rows[0][4] = state.AngularAccelerationX;
+			if (oldState.ForceX != state.ForceX)
+				DiAxisTable.Rows[0][5] = state.ForceX;
+			if (oldState.TorqueX != state.TorqueX)
+				DiAxisTable.Rows[0][6] = state.TorqueX;
+			if (oldState.VelocityX != state.VelocityX)
+				DiAxisTable.Rows[0][7] = state.VelocityX;
+			if (oldState.AngularVelocityX != state.AngularVelocityX)
+				DiAxisTable.Rows[0][8] = state.AngularVelocityX;
+			// Y-axis.
+			if (oldState.Y != state.Y)
+				DiAxisTable.Rows[0][1] = state.Y;
+			if (oldState.RotationY != state.RotationY)
+				DiAxisTable.Rows[0][2] = state.RotationY;
+			if (oldState.AccelerationY != state.AccelerationY)
+				DiAxisTable.Rows[0][3] = state.AccelerationY;
+			if (oldState.AngularAccelerationY != state.AngularAccelerationY)
+				DiAxisTable.Rows[0][4] = state.AngularAccelerationY;
+			if (oldState.ForceY != state.ForceY)
+				DiAxisTable.Rows[0][5] = state.ForceY;
+			if (oldState.TorqueY != state.TorqueY)
+				DiAxisTable.Rows[0][6] = state.TorqueY;
+			if (oldState.VelocityY != state.VelocityY)
+				DiAxisTable.Rows[0][7] = state.VelocityY;
+			if (oldState.AngularVelocityY != state.AngularVelocityY)
+				DiAxisTable.Rows[0][8] = state.AngularVelocityY;
+			// Z-axis.
+			if (oldState.Z != state.Z)
+				DiAxisTable.Rows[0][1] = state.Z;
+			if (oldState.RotationZ != state.RotationZ)
+				DiAxisTable.Rows[0][2] = state.RotationZ;
+			if (oldState.AccelerationZ != state.AccelerationZ)
+				DiAxisTable.Rows[0][3] = state.AccelerationZ;
+			if (oldState.AngularAccelerationZ != state.AngularAccelerationZ)
+				DiAxisTable.Rows[0][4] = state.AngularAccelerationZ;
+			if (oldState.ForceZ != state.ForceZ)
+				DiAxisTable.Rows[0][5] = state.ForceZ;
+			if (oldState.TorqueZ != state.TorqueZ)
+				DiAxisTable.Rows[0][6] = state.TorqueZ;
+			if (oldState.VelocityZ != state.VelocityZ)
+				DiAxisTable.Rows[0][7] = state.VelocityZ;
+			if (oldState.AngularVelocityZ != state.AngularVelocityZ)
+				DiAxisTable.Rows[0][8] = state.AngularVelocityZ;
+		}
+
+		#endregion
+
+		#region Sliders Table
+
+		void CreateSlidersTable()
+		{
+			DiSlidersTable = new DataTable();
+			// http://msdn.microsoft.com/en-us/library/windows/desktop/bb151904%28v=vs.85%29.aspx
+			DiSlidersTable.Columns.Add("Slider", typeof(string));
+			DiSlidersTable.Columns.Add("M", typeof(int));
+			DiSlidersTable.Columns.Add("A", typeof(int)); // Acceleration
+			DiSlidersTable.Columns.Add("F", typeof(int)); // Force
+			DiSlidersTable.Columns.Add("V", typeof(int)); // Velocity
+			DiSlidersTable.Rows.Add(DiSlidersTable.NewRow()); // X
+			DiSlidersTable.Rows.Add(DiSlidersTable.NewRow()); // Y
+			DiSlidersTable.Rows[0][0] = "0";
+			DiSlidersTable.Rows[1][0] = "1";
+			DiSlidersDataGridView.DataSource = DiSlidersTable;
+		}
+
+
+		void UpdateSlidersTable(JoystickState state)
+		{
+			for (int i = 0; i <= 1; i++)
+			{
+				if (oldState.Sliders[i] != state.Sliders[i])
+					DiSlidersTable.Rows[i][1] = state.Sliders[i];
+				if (oldState.AccelerationSliders[i] != state.AccelerationSliders[i])
+					DiSlidersTable.Rows[i][2] = state.AccelerationSliders[i];
+				if (oldState.ForceSliders[i] != state.ForceSliders[i])
+					DiSlidersTable.Rows[i][3] = state.ForceSliders[i];
+				if (oldState.VelocitySliders[i] != state.VelocitySliders[i])
+					DiSlidersTable.Rows[i][4] = state.VelocitySliders[i];
+			}
+		}
+
+		#endregion
+
+		#region POVs Table
+
+		void CreatePovsTable()
+		{
+			DiPovsTable = new DataTable();
+			// http://msdn.microsoft.com/en-us/library/windows/desktop/bb151904%28v=vs.85%29.aspx
+			DiPovsTable.Columns.Add("POV", typeof(string));
+			DiPovsTable.Columns.Add("M", typeof(int));
+			DiPovsTable.Columns.Add("A", typeof(int));
+			DiPovsTable.Rows.Add(DiPovsTable.NewRow());
+			DiPovsTable.Rows.Add(DiPovsTable.NewRow());
+			DiPovsTable.Rows[0][0] = "0";
+			DiPovsTable.Rows[1][0] = "1";
+			DiPovsDataGridView.DataSource = DiPovsTable;
+		}
+
+
+		void UpdatePovsTable(JoystickState state)
+		{
+			if (oldState.PointOfViewControllers[0] != state.PointOfViewControllers[0])
+				DiPovsTable.Rows[0][0] = state.PointOfViewControllers[0];
+			if (oldState.PointOfViewControllers[1] != state.PointOfViewControllers[1])
+				DiPovsTable.Rows[0][1] = state.PointOfViewControllers[1];
+			if (oldState.PointOfViewControllers[2] != state.PointOfViewControllers[2])
+				DiPovsTable.Rows[1][0] = state.PointOfViewControllers[2];
+			if (oldState.PointOfViewControllers[3] != state.PointOfViewControllers[3])
+				DiPovsTable.Rows[1][1] = state.PointOfViewControllers[3];
+		}
+
+		#endregion
+
 
 		void ShowDeviceInfo(UserDevice ud)
 		{
@@ -122,6 +261,7 @@ namespace x360ce.App.Controls
 		}
 
 		JoystickState oldState;
+		JoystickState emptyState;
 
 		public int[] Axis = new int[6];
 
@@ -132,45 +272,22 @@ namespace x360ce.App.Controls
 		/// <returns>List of buttons/DPad pressed, axis/sliders turned.</returns>
 		void ShowDirectInputState(JoystickState state)
 		{
-			if (state == null || state.Equals(oldState)) return;
+			var newState = state ?? emptyState;
+			if (newState.Equals(oldState)) return;
 
 			// Fill axis.
-			Axis[0] = state.X;
-			Axis[1] = state.Y;
-			Axis[2] = state.Z;
-			Axis[3] = state.RotationX;
-			Axis[4] = state.RotationY;
-			Axis[5] = state.RotationZ;
+			Axis[0] = newState.X;
+			Axis[1] = newState.Y;
+			Axis[2] = newState.Z;
+			Axis[3] = newState.RotationX;
+			Axis[4] = newState.RotationY;
+			Axis[5] = newState.RotationZ;
 
-			oldState = state;
-			//actions.Clear();
-			// X-axis.
-			DiAxisTable.Rows[0][1] = state.X; //
-			DiAxisTable.Rows[0][2] = state.RotationX; //
-			DiAxisTable.Rows[0][3] = state.AccelerationX; //
-			DiAxisTable.Rows[0][4] = state.AngularAccelerationX;
-			DiAxisTable.Rows[0][5] = state.ForceX; //
-			DiAxisTable.Rows[0][6] = state.TorqueX;
-			DiAxisTable.Rows[0][7] = state.VelocityX; //
-			DiAxisTable.Rows[0][8] = state.AngularVelocityX;
-			// Y-axis.
-			DiAxisTable.Rows[1][1] = state.Y;
-			DiAxisTable.Rows[1][2] = state.RotationY;
-			DiAxisTable.Rows[1][3] = state.AccelerationY;
-			DiAxisTable.Rows[1][4] = state.AngularAccelerationY;
-			DiAxisTable.Rows[1][5] = state.ForceY;
-			DiAxisTable.Rows[1][6] = state.TorqueY;
-			DiAxisTable.Rows[1][7] = state.VelocityY;
-			DiAxisTable.Rows[1][8] = state.AngularVelocityY;
-			// Z-axis.
-			DiAxisTable.Rows[2][1] = state.Z;
-			DiAxisTable.Rows[2][2] = state.RotationZ;
-			DiAxisTable.Rows[2][3] = state.AccelerationZ;
-			DiAxisTable.Rows[2][4] = state.AngularAccelerationZ;
-			DiAxisTable.Rows[2][5] = state.ForceZ;
-			DiAxisTable.Rows[2][6] = state.TorqueZ;
-			DiAxisTable.Rows[2][7] = state.VelocityZ;
-			DiAxisTable.Rows[2][8] = state.AngularVelocityZ;
+			UpdateAxisTable(newState);
+			UpdateSlidersTable(newState);
+			UpdatePovsTable(newState);
+
+			oldState = newState;
 
 			var rows = DiAxisTable.Rows;
 			var cols = DiAxisTable.Columns;
@@ -187,69 +304,43 @@ namespace x360ce.App.Controls
 				}
 			}
 
-			bool[] buttons = state.Buttons;
-			DiButtonsTextBox.Text = "";
+			bool[] buttons = newState.Buttons;
+			var buttonsText = "";
 			if (buttons != null)
 			{
+				var ids = new List<int>();
 				for (int i = 0; i < buttons.Length; i++)
-				{
 					if (buttons[i])
-					{
-						//actions.Add(string.Format("Button {0}", i + 1));
-						if (DiButtonsTextBox.Text.Length > 0) DiButtonsTextBox.Text += " ";
-						DiButtonsTextBox.Text += (i + 1).ToString("00");
-					}
-				}
+						ids.Add(i);
+				buttonsText = string.Join(" ", ids);
 			}
-			// Sliders
-			ProcessSlider(state.Sliders, DiUvSliderTextBox);
-			ProcessSlider(state.AccelerationSliders, DiASliderTextBox);
-			ProcessSlider(state.ForceSliders, DiFSliderTextBox);
-			ProcessSlider(state.VelocitySliders, DiVSliderTextBox);
+			AppHelper.SetText(DiButtonsTextBox, buttonsText);
 
 			// Point of view buttons
-			int[] dPad = state.PointOfViewControllers;
-			DiPovTextBox.Text = "";
-			if (dPad != null)
-			{
-				for (int i = 0; i < dPad.Length; i++)
-				{
-					v = dPad[i];
-					if (DiPovTextBox.Text.Length > 0) DiPovTextBox.Text += " ";
-					if (v != -1)
-					{
-						DiPovTextBox.Text += "[" + i + "," + v.ToString() + "]";
-						//if ((DPadEnum)v == DPadEnum.Up) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
-						//if ((DPadEnum)v == DPadEnum.Right) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
-						//if ((DPadEnum)v == DPadEnum.Down) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
-						//if ((DPadEnum)v == DPadEnum.Left) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
-					}
-				}
-			}
+			int[] dPad = newState.PointOfViewControllers;
+			//DiPovTextBox.Text = "";
+			//if (dPad != null)
+			//{
+			//	for (int i = 0; i < dPad.Length; i++)
+			//	{
+			//		v = dPad[i];
+			//		if (DiPovTextBox.Text.Length > 0) DiPovTextBox.Text += " ";
+			//		if (v != -1)
+			//		{
+			//			DiPovTextBox.Text += "[" + i + "," + v.ToString() + "]";
+			//			//if ((DPadEnum)v == DPadEnum.Up) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
+			//			//if ((DPadEnum)v == DPadEnum.Right) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
+			//			//if ((DPadEnum)v == DPadEnum.Down) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
+			//			//if ((DPadEnum)v == DPadEnum.Left) actions.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
+			//		}
+			//	}
+			//}
 			//return actions;
-		}
-
-		void ProcessSlider(int[] sliders, TextBox control)
-		{
-			var s = "";
-			if (sliders != null)
-			{
-				int v;
-				for (int i = 0; i < sliders.Length; i++)
-				{
-					v = sliders[i];
-					if (s.Length > 0) s += " ";
-					s += v.ToString("00000");
-				}
-			}
-			AppHelper.SetText(control, s);
 		}
 
 		void addAction(List<string> actions, int v, string type, int index)
 		{
 			string d = DetectDirection(v);
-
-
 			if (d == null) return;
 			actions.Add(string.Format("{0}{1} {2:0}", d, type, index));
 		}
