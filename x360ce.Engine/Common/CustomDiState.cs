@@ -191,9 +191,9 @@ namespace x360ce.Engine
 
 		public CustomDiState(JoystickState state)
 		{
-			// Fill 24 axis.
+			// Fill 24 axis (3 x 8).
 			Axis = GetAxisFromState(state);
-			// Fill 8 sliders.
+			// Fill 8 sliders (2 x 4).
 			Sliders = GetSlidersFromState(state);
 			// Fill 4 POVs.
 			Povs = state.PointOfViewControllers.ToArray();

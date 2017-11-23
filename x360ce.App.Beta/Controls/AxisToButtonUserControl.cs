@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 		public AxisToButtonUserControl()
 		{
 			InitializeComponent();
-			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox);
+			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
 			arrowEnabledImage = ArrowPictureBox.Image;
 			if (arrowEnabledImage != null)

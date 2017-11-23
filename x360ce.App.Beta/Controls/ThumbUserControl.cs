@@ -19,12 +19,6 @@ namespace x360ce.App.Controls
 		public ThumbUserControl()
 		{
 			InitializeComponent();
-			updateTimer = new QueueTimer(500, 0);
-			updateTimer.DoWork += updateTimer.DoWork;
-			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox);
-			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox);
-			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 		}
 
 		void deadzoneLink_ValueChanged(object sender, EventArgs e)
@@ -61,12 +55,12 @@ namespace x360ce.App.Controls
 
 		Bitmap LastBackgroundImage = null;
 
-		void RefreshBackgroundImage(object sender, QueueTimerEventArgs e)
+		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
 			int deadZone = 0;
 			int antiDeadZone = 0;
 			int sensitivity = 0;
-			Invoke(((MethodInvoker)delegate()
+			Invoke(((MethodInvoker)delegate ()
 			{
 				deadZone = (int)DeadZoneNumericUpDown.Value;
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
@@ -99,7 +93,7 @@ namespace x360ce.App.Controls
 				var y1 = m - resultInt - 1f;
 				g.FillEllipse(xInputBrush, x1, y1, radius * 2f, radius * 2f);
 			}
-			Invoke(((MethodInvoker)delegate()
+			Invoke(((MethodInvoker)delegate ()
 			{
 				LastBackgroundImage = bmp;
 				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
@@ -117,6 +111,14 @@ namespace x360ce.App.Controls
 
 		private void LinearUserControl_Load(object sender, EventArgs e)
 		{
+			updateTimer = new QueueTimer(500, 0);
+			updateTimer.DoWork += updateTimer_DoWork;
+			var maxValue = TargetType == TargetType.LeftTrigger || TargetType == TargetType.RightTrigger
+				? byte.MaxValue : short.MaxValue;
+			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, maxValue);
+			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
+			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			RefreshBackgroundImageAsync();
 		}
 
@@ -128,10 +130,14 @@ namespace x360ce.App.Controls
 		{
 			if (disposing)
 			{
-				deadzoneLink.Dispose();
-				antiDeadzoneLink.Dispose();
-				if (updateTimer != null) updateTimer.Dispose();
-				if (components != null) components.Dispose();
+				if (deadzoneLink != null)
+					deadzoneLink.Dispose();
+				if (antiDeadzoneLink != null)
+					antiDeadzoneLink.Dispose();
+				if (updateTimer != null)
+					updateTimer.Dispose();
+				if (components != null)
+					components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -278,6 +284,8 @@ namespace x360ce.App.Controls
 			var deadZone = int.Parse(values[1]);
 			var antiDeadZone = int.Parse(values[2]);
 			var sensitivity = int.Parse(values[3]);
+			// Move focus away from below controls, so that their value can be changed.
+			ActiveControl = SensitivityCheckBox;
 			DeadZoneTrackBar.Value = deadZone;
 			AntiDeadZoneNumericUpDown.Value = (decimal)((float)xDeadZone * (float)antiDeadZone / 100f);
 		}

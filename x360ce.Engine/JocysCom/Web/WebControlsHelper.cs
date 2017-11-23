@@ -68,9 +68,10 @@ namespace JocysCom.ClassLibrary.Web
 				var link = control as System.Web.UI.HtmlControls.HtmlLink;
 				if (link == null)
 					continue;
-				var type = link.Attributes["type"];
-				var replace = "text/css".Equals(type, StringComparison.CurrentCultureIgnoreCase);
-				if (!replace)
+				var isCss =
+					"text/css".Equals(link.Attributes["type"], StringComparison.CurrentCultureIgnoreCase) ||
+					"stylesheet".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase);
+				if (!isCss)
 					continue;
 				link.Href = GetFileWithSuffix(link.Href, page);
 			}

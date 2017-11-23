@@ -13,10 +13,11 @@ namespace x360ce.App
 	public class DeadZoneControlsLink : IDisposable
 	{
 
-		public DeadZoneControlsLink(TrackBar trackBar, NumericUpDown numericUpDown, TextBox textBox)
+		public DeadZoneControlsLink(TrackBar trackBar, NumericUpDown numericUpDown, TextBox textBox, int maxValue)
 		{
 			_TrackBar = trackBar;
 			_NumericUpDown = numericUpDown;
+			_NumericUpDown.Maximum = maxValue;
 			_TextBox = textBox;
 			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 			_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
@@ -41,7 +42,7 @@ namespace x360ce.App
 				// Update percent TextBox.
 				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
 				// Update NumericUpDown.
-				var value = (decimal)Math.Round((float)percent / 100f * short.MaxValue);
+				var value = (decimal)Math.Round((float)percent / 100f * (float)_NumericUpDown.Maximum);
 				if (_NumericUpDown.Value != value) _NumericUpDown.Value = value;
 				_NumericUpDown.ValueChanged += new System.EventHandler(_NumericUpDown_ValueChanged);
 				ev = ValueChanged;
@@ -57,7 +58,7 @@ namespace x360ce.App
 				if (IsDisposing) return;
 				var control = (NumericUpDown)sender;
 				_TrackBar.ValueChanged -= new System.EventHandler(_TrackBar_ValueChanged);
-				var percent = (int)Math.Round(((float)control.Value / (float)short.MaxValue) * 100f);
+				var percent = (int)Math.Round(((float)control.Value / (float)_NumericUpDown.Maximum) * 100f);
 				var percentString = string.Format("{0} % ", percent);
 				// Update percent TextBox.
 				if (_TextBox.Text != percentString) _TextBox.Text = percentString;

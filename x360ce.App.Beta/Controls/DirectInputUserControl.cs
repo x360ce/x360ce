@@ -25,6 +25,7 @@ namespace x360ce.App.Controls
 			DiObjectsDataGridView.AutoGenerateColumns = false;
 		}
 
+		DataTable DiButtonsTable;
 		DataTable DiAxisTable;
 		DataTable DiSlidersTable;
 		DataTable DiPovsTable;
@@ -33,16 +34,69 @@ namespace x360ce.App.Controls
 		void InitDirectInputTab()
 		{
 			var ToolTip1 = new ToolTip();
+			CreateButtonsTable();
 			CreateAxisTable();
 			CreateSlidersTable();
 			CreatePovsTable();
-			// Create effects table.
+			CreateEffectsTable();
+		}
+
+		/// <summary>
+		/// Use this event handler to remove selection from DataGridView.
+		/// </summary>
+		private void DataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+		{
+			((DataGridView)sender).ClearSelection();
+		}
+
+		#region Effects Table
+
+		void CreateEffectsTable()
+		{
 			DiEffectsTable = new DataTable();
 			DiEffectsTable.Columns.Add("Effect", typeof(string));
 			DiEffectsTable.Columns.Add("Parameters", typeof(string));
 			DiEffectsTable.Columns.Add("DynamicParameters", typeof(string));
+			DiEffectsDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
 			DiEffectsDataGridView.DataSource = DiEffectsTable;
 		}
+
+		#endregion
+
+		#region Buttons Table
+
+		void CreateButtonsTable()
+		{
+			DiButtonsTable = new DataTable();
+			// http://msdn.microsoft.com/en-us/library/windows/desktop/bb151904%28v=vs.85%29.aspx
+			DiButtonsTable.Columns.Add("M", typeof(string));
+			DiButtonsTable.Rows.Add(DiButtonsTable.NewRow());
+			DiButtonsDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
+			DiButtonsDataGridView.DataSource = DiButtonsTable;
+		}
+
+		string oldButtons;
+
+		void UpdateButtonsTable(JoystickState state)
+		{
+			bool[] buttons = state.Buttons;
+			var buttonsText = "";
+			if (buttons != null)
+			{
+				var ids = new List<string>();
+				for (int i = 0; i < buttons.Length; i++)
+					if (buttons[i])
+						ids.Add(i.ToString("00"));
+				buttonsText = string.Join(" ", ids);
+			}
+			if (oldButtons != buttonsText)
+			{
+				oldButtons = buttonsText;
+				DiButtonsTable.Rows[0][0] = buttonsText;
+			}
+		}
+
+		#endregion
 
 		#region Axis Table
 
@@ -65,6 +119,7 @@ namespace x360ce.App.Controls
 			DiAxisTable.Rows[0][0] = "X";
 			DiAxisTable.Rows[1][0] = "Y";
 			DiAxisTable.Rows[2][0] = "Z";
+			DiAxisDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
 			DiAxisDataGridView.DataSource = DiAxisTable;
 		}
 
@@ -89,38 +144,38 @@ namespace x360ce.App.Controls
 				DiAxisTable.Rows[0][8] = state.AngularVelocityX;
 			// Y-axis.
 			if (oldState.Y != state.Y)
-				DiAxisTable.Rows[0][1] = state.Y;
+				DiAxisTable.Rows[1][1] = state.Y;
 			if (oldState.RotationY != state.RotationY)
-				DiAxisTable.Rows[0][2] = state.RotationY;
+				DiAxisTable.Rows[1][2] = state.RotationY;
 			if (oldState.AccelerationY != state.AccelerationY)
-				DiAxisTable.Rows[0][3] = state.AccelerationY;
+				DiAxisTable.Rows[1][3] = state.AccelerationY;
 			if (oldState.AngularAccelerationY != state.AngularAccelerationY)
-				DiAxisTable.Rows[0][4] = state.AngularAccelerationY;
+				DiAxisTable.Rows[1][4] = state.AngularAccelerationY;
 			if (oldState.ForceY != state.ForceY)
-				DiAxisTable.Rows[0][5] = state.ForceY;
+				DiAxisTable.Rows[1][5] = state.ForceY;
 			if (oldState.TorqueY != state.TorqueY)
-				DiAxisTable.Rows[0][6] = state.TorqueY;
+				DiAxisTable.Rows[1][6] = state.TorqueY;
 			if (oldState.VelocityY != state.VelocityY)
-				DiAxisTable.Rows[0][7] = state.VelocityY;
+				DiAxisTable.Rows[1][7] = state.VelocityY;
 			if (oldState.AngularVelocityY != state.AngularVelocityY)
-				DiAxisTable.Rows[0][8] = state.AngularVelocityY;
+				DiAxisTable.Rows[1][8] = state.AngularVelocityY;
 			// Z-axis.
 			if (oldState.Z != state.Z)
-				DiAxisTable.Rows[0][1] = state.Z;
+				DiAxisTable.Rows[2][1] = state.Z;
 			if (oldState.RotationZ != state.RotationZ)
-				DiAxisTable.Rows[0][2] = state.RotationZ;
+				DiAxisTable.Rows[2][2] = state.RotationZ;
 			if (oldState.AccelerationZ != state.AccelerationZ)
-				DiAxisTable.Rows[0][3] = state.AccelerationZ;
+				DiAxisTable.Rows[2][3] = state.AccelerationZ;
 			if (oldState.AngularAccelerationZ != state.AngularAccelerationZ)
-				DiAxisTable.Rows[0][4] = state.AngularAccelerationZ;
+				DiAxisTable.Rows[2][4] = state.AngularAccelerationZ;
 			if (oldState.ForceZ != state.ForceZ)
-				DiAxisTable.Rows[0][5] = state.ForceZ;
+				DiAxisTable.Rows[2][5] = state.ForceZ;
 			if (oldState.TorqueZ != state.TorqueZ)
-				DiAxisTable.Rows[0][6] = state.TorqueZ;
+				DiAxisTable.Rows[2][6] = state.TorqueZ;
 			if (oldState.VelocityZ != state.VelocityZ)
-				DiAxisTable.Rows[0][7] = state.VelocityZ;
+				DiAxisTable.Rows[2][7] = state.VelocityZ;
 			if (oldState.AngularVelocityZ != state.AngularVelocityZ)
-				DiAxisTable.Rows[0][8] = state.AngularVelocityZ;
+				DiAxisTable.Rows[2][8] = state.AngularVelocityZ;
 		}
 
 		#endregion
@@ -140,6 +195,7 @@ namespace x360ce.App.Controls
 			DiSlidersTable.Rows.Add(DiSlidersTable.NewRow()); // Y
 			DiSlidersTable.Rows[0][0] = "0";
 			DiSlidersTable.Rows[1][0] = "1";
+			DiSlidersDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
 			DiSlidersDataGridView.DataSource = DiSlidersTable;
 		}
 
@@ -174,9 +230,9 @@ namespace x360ce.App.Controls
 			DiPovsTable.Rows.Add(DiPovsTable.NewRow());
 			DiPovsTable.Rows[0][0] = "0";
 			DiPovsTable.Rows[1][0] = "1";
+			DiPovsDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
 			DiPovsDataGridView.DataSource = DiPovsTable;
 		}
-
 
 		void UpdatePovsTable(JoystickState state)
 		{
@@ -191,7 +247,6 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
-
 
 		void ShowDeviceInfo(UserDevice ud)
 		{
@@ -237,6 +292,8 @@ namespace x360ce.App.Controls
 			AppHelper.SetText(DiCapButtonsTextBox, ud.CapButtonCount.ToString());
 			AppHelper.SetText(DiCapPovsTextBox, ud.CapPovCount.ToString());
 			var objects = ud.DeviceObjects;
+
+			DiObjectsDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
 			DiObjectsDataGridView.DataSource = objects;
 			if (objects != null)
 			{
@@ -283,6 +340,7 @@ namespace x360ce.App.Controls
 			Axis[4] = newState.RotationY;
 			Axis[5] = newState.RotationZ;
 
+			UpdateButtonsTable(newState);
 			UpdateAxisTable(newState);
 			UpdateSlidersTable(newState);
 			UpdatePovsTable(newState);
@@ -304,17 +362,17 @@ namespace x360ce.App.Controls
 				}
 			}
 
-			bool[] buttons = newState.Buttons;
-			var buttonsText = "";
-			if (buttons != null)
-			{
-				var ids = new List<string>();
-				for (int i = 0; i < buttons.Length; i++)
-					if (buttons[i])
-						ids.Add(i.ToString("00"));
-				buttonsText = string.Join(" ", ids);
-			}
-			AppHelper.SetText(DiButtonsTextBox, buttonsText);
+			//bool[] buttons = newState.Buttons;
+			//var buttonsText = "";
+			//if (buttons != null)
+			//{
+			//	var ids = new List<string>();
+			//	for (int i = 0; i < buttons.Length; i++)
+			//		if (buttons[i])
+			//			ids.Add(i.ToString("00"));
+			//	buttonsText = string.Join(" ", ids);
+			//}
+			//AppHelper.SetText(DiButtonsTextBox, buttonsText);
 
 			// Point of view buttons
 			int[] dPad = newState.PointOfViewControllers;
