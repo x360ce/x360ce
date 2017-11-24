@@ -218,7 +218,7 @@ namespace x360ce.App.DInput
 							// If value is in [32768;65535] range then...
 							v = (v > max)
 								// Convert [32768;65535] range to [0;65535] range.
-								? (ushort)ConvertRange(max + 1, ushort.MaxValue, ushort.MinValue, ushort.MaxValue, v)
+								? (ushort)ConvertHelper.ConvertRange(max + 1, ushort.MaxValue, ushort.MinValue, ushort.MaxValue, v)
 								: (ushort)0;
 						}
 						// If inverted half value (IH) then...
@@ -227,7 +227,7 @@ namespace x360ce.App.DInput
 							// If value is in [0;32767] range then...
 							v = (v <= max)
 								// Convert [32767;0] range to [0;65535] range.
-								? (ushort)ConvertRange(max, 0, ushort.MinValue, ushort.MaxValue, v)
+								? (ushort)ConvertHelper.ConvertRange(max, 0, ushort.MinValue, ushort.MaxValue, v)
 								: (ushort)0;
 						}
 
@@ -253,9 +253,9 @@ namespace x360ce.App.DInput
 						else if (map.Target == TargetType.LeftTrigger || map.Target == TargetType.RightTrigger)
 						{
 							// Convert range from ushort (0-65535) to byte (0-255).
-							var value = (byte)ConvertRange(ushort.MinValue, ushort.MaxValue, byte.MinValue, byte.MaxValue, v);
+							var value = (byte)ConvertHelper.ConvertRange(ushort.MinValue, ushort.MaxValue, byte.MinValue, byte.MaxValue, v);
 							// Apply dead zone range (0 to 255).
-							value = (byte)DeadZone(value, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
+							value = (byte)ConvertHelper.DeadZone(value, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
 							if (map.Target == TargetType.LeftTrigger)
 								gp.LeftTrigger = value;
 							if (map.Target == TargetType.RightTrigger)
@@ -267,72 +267,7 @@ namespace x360ce.App.DInput
 						else if (map.Target != TargetType.None)
 						{
 
-							// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
-							var xInput = ConvertRange(ushort.MinValue, ushort.MaxValue, min, max, v);
-
-							// If axis should be inverted, convert [-32768;32767] -> [32767;-32768]
-							//if (map.IsInverted)
-							//	xInput = -1 - xInput;
-
-							// NEGATIVE START:
-							// The following sections expect xInput values in range [0;32767]
-							// So, convert to positive: [-32768;-1] -> [32767;0]
-							bool negative = xInput < 0;
-							if (negative)
-								xInput = -1 - xInput;
-
-							// If deadzone value is set then...
-							if (map.DeadZone > 0)
-							{
-								// if value is inside deadzone then...
-								if (map.DeadZone <= xInput)
-								{
-									// Reset to minimum value.
-									xInput = 0;
-								}
-								else
-								{
-									// DeadZone is applied on source axis. Destination thumb will have full range.
-									// Convert to new range: [deadZone;32767] => [0;32767];
-									xInput = ConvertRange(map.DeadZone, max, 0, max, xInput);
-								}
-							}
-
-							// If anti-deadzone value is set then...
-							if (map.AntiDeadZone > 0)
-							{
-								if (xInput > 0)
-								{
-									// AntiDeadzone is applied to destination thumb. Source will have full range.
-									// Convert to new range: [0;32767] => [antiDeadZone;32767];
-									xInput = ConvertRange(0, max, map.AntiDeadZone, max, xInput);
-								}
-							}
-
-							// If linear value is set then...
-							if (map.Linear != 0 && xInput > 0)
-							{
-								// [antiDeadZone;32767] => [0;32767];
-								float xInputF = ConvertRange(map.AntiDeadZone, max, 0, max, xInput);
-								float linearF = (float)map.Linear / 100f;
-								xInputF = ConvertToFloat((short)xInputF);
-								float x = -xInputF;
-								if (linearF < 0f) x = 1f + x;
-								float sv = (float)Math.Sqrt(1f - x * x);
-								if (linearF < 0f) sv = 1f - sv;
-								xInputF = xInputF + (2f - sv - xInputF - 1f) * Math.Abs(linearF);
-								xInput = ConvertToShort(xInputF);
-								// [0;32767] => [antiDeadZone;32767];
-								xInput = ConvertRange(0, max, map.AntiDeadZone, max, xInput);
-							}
-
-							// NEGATIVE END:
-							// If originally negative, convert back: [32767;0] -> [-32768;-1]
-							if (negative)
-								xInput = -1 - xInput;
-
-							// Make sure values are in range.
-							var thumbValue = (short)Clamp(xInput, min, max);
+							var thumbValue = ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear);
 
 							if (map.Target == TargetType.LeftThumbX)
 								gp.LeftThumbX = thumbValue;
@@ -371,18 +306,5 @@ namespace x360ce.App.DInput
 				ev(this, new EventArgs());
 		}
 
-		int DeadZone(int val, int min, int max, int lowerDZ, int upperDZ)
-		{
-			if (val < lowerDZ) return min;
-			if (val > upperDZ) return max;
-			return val;
-		}
-
-		int Clamp(int val, int min, int max)
-		{
-			if (val < min) return min;
-			if (val > max) return max;
-			return val;
-		}
 	}
 }

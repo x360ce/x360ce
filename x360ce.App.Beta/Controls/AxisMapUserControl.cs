@@ -11,14 +11,16 @@ using JocysCom.ClassLibrary.Threading;
 using System.Text.RegularExpressions;
 using SharpDX.XInput;
 using x360ce.Engine;
+using x360ce.App.DInput;
 
 namespace x360ce.App.Controls
 {
-	public partial class ThumbUserControl : UserControl
+	public partial class AxisMapUserControl : UserControl
 	{
-		public ThumbUserControl()
+		public AxisMapUserControl()
 		{
 			InitializeComponent();
+			InitPaintObjects();
 		}
 
 		void deadzoneLink_ValueChanged(object sender, EventArgs e)
@@ -55,53 +57,10 @@ namespace x360ce.App.Controls
 
 		Bitmap LastBackgroundImage = null;
 
-		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
-		{
-			int deadZone = 0;
-			int antiDeadZone = 0;
-			int sensitivity = 0;
-			Invoke(((MethodInvoker)delegate ()
-			{
-				deadZone = (int)DeadZoneNumericUpDown.Value;
-				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
-				sensitivity = (int)SensitivityNumericUpDown.Value;
-			}));
-			var borders = MainPictureBox.BorderStyle == System.Windows.Forms.BorderStyle.None ? 0 : 2;
-			var w = MainPictureBox.Width - borders;
-			var h = MainPictureBox.Height - borders;
-			var bmp = new Bitmap(w, h);
-			var g = Graphics.FromImage(bmp);
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			var dInputBrush = new SolidBrush(System.Drawing.Color.Gray);
-			var dInputPen = new Pen(dInputBrush);
-			var xInputBrush = new SolidBrush(System.Drawing.Color.Red);
-			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
-			var nInputPen = new Pen(nInputBrush);
-			var radius = 0.5f;
-			g.DrawLine(nInputPen, 0, h, w, 0);
-			for (float i = 0; i < w; i += 0.5f)
-			{
-				var m = (float)w;
-				// Get value range [-1;1].
-				float value = i / (m - 1f) * 2f - 1f;
-				short dInputValue = SharpDX.XInput.XInput.ConvertToShort(value);
-				short result = SharpDX.XInput.XInput.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
-				var resultInt = ((SharpDX.XInput.XInput.ConvertToFloat(result) + 1f) / 2f * m);
-				var x1 = i;
-				var y1 = m - resultInt - 1f;
-				g.FillEllipse(xInputBrush, x1, y1, radius * 2f, radius * 2f);
-			}
-			Invoke(((MethodInvoker)delegate ()
-			{
-				LastBackgroundImage = bmp;
-				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
-			}));
-		}
-
 		void RefreshBackgroundImageAsync()
 		{
+			if (updateTimer == null)
+				return;
 			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
 			SensitivityLabel.Text = SensitivityCheckBox.Checked
@@ -120,6 +79,11 @@ namespace x360ce.App.Controls
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			RefreshBackgroundImageAsync();
+		}
+
+		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
+		{
+			CreateBacgroundPicture();
 		}
 
 		/// <summary> 
@@ -154,12 +118,81 @@ namespace x360ce.App.Controls
 
 		public void DrawPoint(int dInput, int xInput, bool invert)
 		{
-			DInputValueLabel.Text = (dInput + short.MinValue).ToString();
+			DInputValueLabel.Text = dInput.ToString();
 			XInputValueLabel.Text = xInput.ToString();
 			_invert = invert;
 			_dInput = dInput;
 			_xInput = xInput;
 			MainPictureBox.Refresh();
+		}
+
+		public void InitPaintObjects()
+		{
+			xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 0, 255));
+			xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 0, 255));
+			xInputPen = new Pen(xInputBrush);
+			dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 128, 0));
+			dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 128, 0));
+			dInputPen = new Pen(dInputBrush);
+			nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
+			nInputPen = new Pen(nInputBrush);
+		}
+
+		SolidBrush xInputPoint;
+		SolidBrush xInputBrush;
+		Pen xInputPen;
+		SolidBrush dInputPoint;
+		SolidBrush dInputBrush;
+		Pen dInputPen;
+		SolidBrush nInputBrush;
+		Pen nInputPen;
+
+		private void CreateBacgroundPicture()
+		{
+			// Collect setting values.
+			int deadZone = 0;
+			int antiDeadZone = 0;
+			int sensitivity = 0;
+			Invoke(((MethodInvoker)delegate ()
+			{
+				deadZone = (int)DeadZoneNumericUpDown.Value;
+				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
+				sensitivity = (int)SensitivityNumericUpDown.Value;
+			}));
+			// Determine picture size.
+			var borders = MainPictureBox.BorderStyle == System.Windows.Forms.BorderStyle.None ? 0 : 2;
+			var w = (MainPictureBox.Width - borders);
+			var h = (MainPictureBox.Height - borders);
+			// Create picure and set graphics settings.
+			var bmp = new Bitmap(w, h);
+			var g = Graphics.FromImage(bmp);
+			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			// Draw thin grey line from [0;0] to [w;h] coordinates.
+			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
+			var nInputPen = new Pen(nInputBrush);
+			g.DrawLine(nInputPen, 0, h, w, 0);
+			// Draw red line where xinput value dot must travel.
+			var xInputBrush = new SolidBrush(System.Drawing.Color.Red);
+			// Draw line by drawing ellipses (circles).
+			var radius = 0.5f;
+			var m = (float)w;
+			for (float i = 0; i < m; i += 0.5f)
+			{
+				//Convert float [0;m] to ushort range [0;65535].
+				var dInputValue = (ushort)ConvertHelper.ConvertRangeF(0, m, ushort.MinValue, ushort.MaxValue, i);
+				var xInputValue = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
+				var resultInt = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0f, m, xInputValue);
+				var x1 = i;
+				var y1 = m - resultInt - 1f;
+				g.FillEllipse(xInputBrush, x1, y1, radius * 2f, radius * 2f);
+			}
+			Invoke(((MethodInvoker)delegate ()
+			{
+				LastBackgroundImage = bmp;
+				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
+			}));
 		}
 
 		private void LinearPictureBox_Paint(object sender, PaintEventArgs e)
@@ -171,14 +204,6 @@ namespace x360ce.App.Controls
 			var radius = 2f;
 			var di = ((float)_dInput / (float)ushort.MaxValue * (w - 1f));
 			var xi = ((float)(_xInput - short.MinValue) / (float)ushort.MaxValue * (w - 1f));
-			var xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 0, 255));
-			var xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 0, 255));
-			var xInputPen = new Pen(xInputBrush);
-			var dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 128, 0));
-			var dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 128, 0));
-			var dInputPen = new Pen(dInputBrush);
-			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
-			var nInputPen = new Pen(nInputBrush);
 			if (_invert) di = w - di - 1f;
 			var g = e.Graphics;
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;

@@ -171,33 +171,5 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		#region Helper Functions
-
-		/// <summary>Convert short [-32768;32767] to range [-1.0f;1.0f].</summary>
-		public static float ConvertToFloat(short value)
-		{
-			var maxValue = (float)(value < 0 ? -short.MinValue : short.MaxValue);
-			return value / maxValue;
-		}
-
-		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
-		public static short ConvertToShort(float value)
-		{
-			var maxValue = (float)(value < 0 ? -short.MinValue : short.MaxValue);
-			return (short)(value * maxValue);
-		}
-
-
-		/// <summary>Convert value from [x1;y1] range to [x2;y2] range.</summary>
-		public static int ConvertRange(int oldMin, int oldMax, int newMin, int newMax, int value)
-		{
-			var oldRange = (float)(oldMax - oldMin);
-			var newRange = (float)(newMax - newMin);
-			var scale = newRange / oldRange;
-			return (int)Math.Round(newMin + ((value - oldMin) * scale));
-		}
-
-		#endregion
-
 	}
 }

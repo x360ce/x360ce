@@ -10,6 +10,7 @@ using System.Threading;
 using JocysCom.ClassLibrary.Threading;
 using System.Text.RegularExpressions;
 using SharpDX.XInput;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -91,9 +92,9 @@ namespace x360ce.App.Controls
 				var m = (float)w;
 				// Get value range [-1;1].
 				float value = i / (m - 1f) * 2f - 1f;
-				short dInputValue = SharpDX.XInput.XInput.ConvertToShort(value);
-				short result = SharpDX.XInput.XInput.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
-				var resultInt = ((SharpDX.XInput.XInput.ConvertToFloat(result) + 1f) / 2f * m);
+				ushort dInputValue = ConvertHelper.ConvertToUShort(value);
+				short result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
+				var resultInt = ((ConvertHelper.ConvertToFloat(result) + 1f) / 2f * m);
 				var x1 = i;
 				var y1 = m - resultInt - 1f;
 				g.FillEllipse(xInputBrush, x1, y1, radius * 2f, radius * 2f);

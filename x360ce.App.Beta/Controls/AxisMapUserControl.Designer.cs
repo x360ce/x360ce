@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class ThumbUserControl
+	partial class AxisMapUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.

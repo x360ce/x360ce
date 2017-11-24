@@ -118,6 +118,7 @@
     <Compile Include="Common\CloudAction.cs" />
     <Compile Include="Common\CloudMessage.cs" />
     <Compile Include="Common\CloudHelper.Security.cs" />
+    <Compile Include="Common\ConvertHelper.cs" />
     <Compile Include="Common\CustomDiState.cs" />
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />

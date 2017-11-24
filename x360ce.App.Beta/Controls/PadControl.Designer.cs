@@ -192,12 +192,12 @@
 			this.AxisToLeftShoulderDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
 			this.AxisToButtonBackDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
 			this.AxisToButtonBDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.LeftTriggerUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.RightTriggerUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.LeftThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.LeftThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.RightThumbXUserControl = new x360ce.App.Controls.ThumbUserControl();
-			this.RightThumbYUserControl = new x360ce.App.Controls.ThumbUserControl();
+			this.LeftTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.RightTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.LeftThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.LeftThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.RightThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.RightThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
@@ -2449,10 +2449,10 @@
         private System.Windows.Forms.Timer RecordingTimer;
 		private System.Windows.Forms.TabPage LeftThumbTabPage;
 		private System.Windows.Forms.TabPage RightThumbTabPage;
-		public ThumbUserControl RightThumbXUserControl;
-		public ThumbUserControl LeftThumbXUserControl;
-		public ThumbUserControl RightThumbYUserControl;
-		public ThumbUserControl LeftThumbYUserControl;
+		public AxisMapUserControl RightThumbXUserControl;
+		public AxisMapUserControl LeftThumbXUserControl;
+		public AxisMapUserControl RightThumbYUserControl;
+		public AxisMapUserControl LeftThumbYUserControl;
         private System.Windows.Forms.Panel AdvancedOptionsPanel;
         private System.Windows.Forms.Panel LeftThumbPanel;
         private System.Windows.Forms.Panel RightThumbPanel;
@@ -2515,8 +2515,8 @@
 		private System.Windows.Forms.ToolStripButton EnableButton;
 		private System.Windows.Forms.ToolStripButton TestCheckBox;
 		private System.Windows.Forms.TabPage TriggersTabPage;
-		public ThumbUserControl RightTriggerUserControl;
-		public ThumbUserControl LeftTriggerUserControl;
+		public AxisMapUserControl RightTriggerUserControl;
+		public AxisMapUserControl LeftTriggerUserControl;
 		private System.Windows.Forms.Panel TriggersPanel;
 	}
 }

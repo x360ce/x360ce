@@ -304,11 +304,11 @@
     <Compile Include="Forms\MapDeviceToControllerForm.Designer.cs">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ThumbUserControl.cs">
+    <Compile Include="Controls\AxisMapUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ThumbUserControl.Designer.cs">
-      <DependentUpon>ThumbUserControl.cs</DependentUpon>
+    <Compile Include="Controls\AxisMapUserControl.Designer.cs">
+      <DependentUpon>AxisMapUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoadingCircle.cs">
       <SubType>Component</SubType>
@@ -434,8 +434,8 @@
     <EmbeddedResource Include="Forms\MapDeviceToControllerForm.resx">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ThumbUserControl.resx">
-      <DependentUpon>ThumbUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\AxisMapUserControl.resx">
+      <DependentUpon>AxisMapUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MessageBoxForm.resx">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
