@@ -57,7 +57,6 @@ namespace x360ce.App.DInput
 		public event EventHandler<EventArgs> FrequencyUpdated;
 		public event EventHandler<EventArgs> DevicesUpdated;
 		public event EventHandler<EventArgs> StatesUpdated;
-		public event EventHandler<EventArgs> StatesCombined;
 		public event EventHandler<EventArgs> StatesRetrieved;
 		public event EventHandler<EventArgs> UpdateCompleted;
 

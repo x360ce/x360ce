@@ -126,6 +126,7 @@ namespace x360ce.App.Controls
 		{
 			var ud = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(ud);
+			MainForm.Current.DHelper.UpdateDevicesEnabled = true;
 		}
 	}
 }

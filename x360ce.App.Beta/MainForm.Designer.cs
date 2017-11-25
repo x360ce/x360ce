@@ -43,6 +43,7 @@ namespace x360ce.App
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
 			this.IssuesTabPage = new System.Windows.Forms.TabPage();
+			this.IssuesPanel = new x360ce.App.Controls.IssuesUserControl();
 			this.BuletImageList = new System.Windows.Forms.ImageList(this.components);
 			this.MainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.StatusTimerLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -73,7 +74,6 @@ namespace x360ce.App
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.VirtualButton = new System.Windows.Forms.ToolStripButton();
 			this.LibraryButton = new System.Windows.Forms.ToolStripButton();
-			this.IssuesPanel = new x360ce.App.Controls.IssuesUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -319,12 +319,20 @@ namespace x360ce.App
 			// 
 			this.IssuesTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.IssuesTabPage.Controls.Add(this.IssuesPanel);
-			this.IssuesTabPage.ImageKey = "fix_16x16.png";
+			this.IssuesTabPage.ImageKey = "ok_off_16x16.png";
 			this.IssuesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.IssuesTabPage.Name = "IssuesTabPage";
 			this.IssuesTabPage.Size = new System.Drawing.Size(792, 602);
 			this.IssuesTabPage.TabIndex = 8;
 			this.IssuesTabPage.Text = "Issues";
+			// 
+			// IssuesPanel
+			// 
+			this.IssuesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.IssuesPanel.Location = new System.Drawing.Point(0, 0);
+			this.IssuesPanel.Name = "IssuesPanel";
+			this.IssuesPanel.Size = new System.Drawing.Size(792, 602);
+			this.IssuesPanel.TabIndex = 0;
 			// 
 			// BuletImageList
 			// 
@@ -335,7 +343,10 @@ namespace x360ce.App
 			this.BuletImageList.Images.SetKeyName(2, "bullet_square_glass_grey.png");
 			this.BuletImageList.Images.SetKeyName(3, "bullet_square_glass_red.png");
 			this.BuletImageList.Images.SetKeyName(4, "bullet_square_glass_yellow.png");
-			this.BuletImageList.Images.SetKeyName(5, "fix_16x16.png");
+			this.BuletImageList.Images.SetKeyName(5, "ok_16x16.png");
+			this.BuletImageList.Images.SetKeyName(6, "ok_off_16x16.png");
+			this.BuletImageList.Images.SetKeyName(7, "fix_16x16.png");
+			this.BuletImageList.Images.SetKeyName(8, "fix_off_16x16.png");
 			// 
 			// MainStatusStrip
 			// 
@@ -596,14 +607,6 @@ namespace x360ce.App
 			this.LibraryButton.Size = new System.Drawing.Size(63, 22);
 			this.LibraryButton.Text = "Library";
 			this.LibraryButton.Click += new System.EventHandler(this.LibraryButton_Click);
-			// 
-			// IssuesPanel
-			// 
-			this.IssuesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.IssuesPanel.Location = new System.Drawing.Point(0, 0);
-			this.IssuesPanel.Name = "IssuesPanel";
-			this.IssuesPanel.Size = new System.Drawing.Size(792, 602);
-			this.IssuesPanel.TabIndex = 0;
 			// 
 			// MainForm
 			// 

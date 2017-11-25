@@ -25,9 +25,9 @@ namespace x360ce.App.Controls
 			Text = EngineHelper.GetProductFullName() + " - Warnings";
 		}
 
-	internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
+		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
-	private void CheckTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void CheckTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			lock (checkTimerLock)
 			{
@@ -80,8 +80,11 @@ namespace x360ce.App.Controls
 			MainForm.Current.BeginInvoke((MethodInvoker)CheckAllAsync);
 		}
 
+		public bool HasIssues;
+
 		void CheckAllAsync()
 		{
+			var hasIssues = false;
 			var update2 = MainForm.Current.update2Enabled;
 			if (Warnings.Count > 0)
 			{
@@ -95,7 +98,7 @@ namespace x360ce.App.Controls
 						if (Warnings.Any(x => x.Severity == IssueSeverity.Critical))
 						{
 							// Close application.
-							MainForm.Current.Close();
+							//MainForm.Current.Close();
 						}
 						// Update 2 haven't ran yet then..
 						else if (!update2.HasValue)
@@ -103,6 +106,7 @@ namespace x360ce.App.Controls
 							MainForm.Current.update2Enabled = true;
 						}
 					}
+					hasIssues = true;
 				}
 			}
 			else
@@ -112,6 +116,7 @@ namespace x360ce.App.Controls
 					MainForm.Current.update2Enabled = true;
 				}
 			}
+			HasIssues = hasIssues;
 		}
 
 		private void Item_FixApplied(object sender, EventArgs e)

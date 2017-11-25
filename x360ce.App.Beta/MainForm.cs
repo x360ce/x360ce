@@ -79,7 +79,12 @@ namespace x360ce.App
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
+			// Init DInput Helper.
 			DHelper = new DInput.DInputHelper();
+			DHelper.DevicesUpdated += DHelper_DevicesUpdated;
+			DHelper.UpdateCompleted += DHelper_UpdateCompleted;
+			DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
+			// Enable all form updates if form not minimized.
 			if (WindowState != FormWindowState.Minimized)
 			{
 				EnableFormUpdates(true);
@@ -679,6 +684,7 @@ namespace x360ce.App
 				if (update1Enabled)
 				{
 					update1Enabled = false;
+					InitIssuesIcon();
 					UpdateForm1();
 					// Update 2 part will be enabled after all issues are checked.
 				}
@@ -697,6 +703,43 @@ namespace x360ce.App
 			}
 			UpdateTimer.Start();
 		}
+
+		#region Issue Icon Timer
+
+		public System.Timers.Timer IssueIconTimer;
+
+		void InitIssuesIcon()
+		{
+			IssueIconTimer = new System.Timers.Timer();
+			IssueIconTimer.SynchronizingObject = this;
+			IssueIconTimer.AutoReset = false;
+			IssueIconTimer.Interval = 1000;
+			IssueIconTimer.Elapsed += IssueIconTimer_Elapsed;
+			IssueIconTimer.Start();
+		}
+
+		private void IssueIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			var key = IssuesTabPage.ImageKey;
+			if (IssuesPanel.HasIssues)
+			{
+				key = key == "fix_16x16.png"
+					? "fix_off_16x16.png"
+					: "fix_16x16.png";
+			}
+			else
+			{
+				key = "ok_off_16x16.png";
+			}
+			if (IssuesTabPage.ImageKey != key)
+				IssuesTabPage.ImageKey = key;
+			if (Program.IsClosing)
+				return;
+			IssueIconTimer.Start();
+		}
+
+
+		#endregion
 
 		void UpdateForm1()
 		{
@@ -1378,6 +1421,11 @@ namespace x360ce.App
 		object LockFormEvents = new object();
 		bool FormEventsEnabled;
 
+		// Will be used to check it event handlers were called during form update period.
+		bool FormEventsDevicesUpdated;
+		bool FormEventsUpdateCompleted;
+		bool FormEventsFrequencyUpdated;
+
 		void EnableFormUpdates(bool enable)
 		{
 			lock (LockFormEvents)
@@ -1385,22 +1433,47 @@ namespace x360ce.App
 				if (enable && !FormEventsEnabled)
 				{
 					FormEventsEnabled = true;
-					DHelper.DevicesUpdated += DHelper_DevicesUpdated;
-					DHelper.StatesCombined += DHelper_StatesCombined;
-					DHelper.UpdateCompleted += DHelper_UpdateCompleted;
-					DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
+					if (FormEventsDevicesUpdated)
+						DHelper_DevicesUpdated(null, null);
+					if (FormEventsUpdateCompleted)
+						DHelper_UpdateCompleted(null, null);
+					if (FormEventsFrequencyUpdated)
+						DHelper_FrequencyUpdated(null, null);
 				}
 				else if (!enable && FormEventsEnabled)
 				{
 					FormEventsEnabled = false;
-					DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
-					DHelper.StatesCombined -= DHelper_StatesCombined;
-					DHelper.UpdateCompleted -= DHelper_UpdateCompleted;
-					DHelper.FrequencyUpdated -= DHelper_FrequencyUpdated;
+					FormEventsDevicesUpdated = false;
+					FormEventsUpdateCompleted = false;
+					FormEventsFrequencyUpdated = false;
 				}
 			}
 		}
 
+		private void DHelper_UpdateCompletedInvoked(object sender, EventArgs e)
+		{
+			UpdateForm3();
+			UpdateCompletedBusy = false;
+		}
+
+		private void DHelper_DevicesUpdated(object sender, EventArgs e)
+		{
+			lock (LockFormEvents)
+			{
+				FormEventsDevicesUpdated = true;
+				if (!FormEventsEnabled)
+					return;
+			}
+			// Make sure method is executed on the same thread as this control.
+			if (InvokeRequired)
+			{
+				var method = new EventHandler<EventArgs>(DHelper_DevicesUpdated);
+				BeginInvoke(method, new object[] { sender, e });
+				return;
+			}
+			SettingsManager.RefreshSettingsConnectionState();
+			AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
+		}
 
 		DateTime lastRun;
 		bool UpdateCompletedBusy;
@@ -1408,6 +1481,12 @@ namespace x360ce.App
 
 		private void DHelper_UpdateCompleted(object sender, EventArgs e)
 		{
+			lock (LockFormEvents)
+			{
+				FormEventsUpdateCompleted = true;
+				if (!FormEventsEnabled)
+					return;
+			}
 			lock (UpdateCompletedLock)
 			{
 				var n = DateTime.Now;
@@ -1423,34 +1502,14 @@ namespace x360ce.App
 			BeginInvoke(method, new object[] { sender, e });
 		}
 
-		private void DHelper_UpdateCompletedInvoked(object sender, EventArgs e)
-		{
-			UpdateForm3();
-			UpdateCompletedBusy = false;
-		}
-
-		private void DHelper_DevicesUpdated(object sender, EventArgs e)
-		{
-			// Make sure method is executed on the same thread as this control.
-			if (InvokeRequired)
-			{
-				var method = new EventHandler<EventArgs>(DHelper_DevicesUpdated);
-				BeginInvoke(method, new object[] { sender, e });
-				return;
-			}
-			SettingsManager.RefreshSettingsConnectionState();
-			AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
-		}
-
-		private void DHelper_StatesCombined(object sender, EventArgs e)
-		{
-			// Get XInput states for form update.
-			var combinedStates = DHelper.CombinedXInputStates.ToArray();
-		}
-
-
 		private void DHelper_FrequencyUpdated(object sender, EventArgs e)
 		{
+			lock (LockFormEvents)
+			{
+				FormEventsFrequencyUpdated = true;
+				if (!FormEventsEnabled)
+					return;
+			}
 			// Make sure method is executed on the same thread as this control.
 			if (InvokeRequired)
 			{

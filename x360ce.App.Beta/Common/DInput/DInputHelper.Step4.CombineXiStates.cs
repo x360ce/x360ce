@@ -49,9 +49,6 @@ namespace x360ce.App.DInput
 				combinedState.Gamepad = gp;
 				CombinedXInputStates[m] = combinedState;
 			}
-			var ev = StatesCombined;
-			if (ev != null)
-				ev(this, new EventArgs());
 		}
 
 		short CombineAxis(IEnumerable<short> values)
