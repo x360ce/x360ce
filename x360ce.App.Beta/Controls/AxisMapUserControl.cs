@@ -128,28 +128,27 @@ namespace x360ce.App.Controls
 
 		public void InitPaintObjects()
 		{
-			xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 0, 255));
-			xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 0, 255));
-			xInputPen = new Pen(xInputBrush);
-			dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 128, 0));
-			dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 128, 0));
-			dInputPen = new Pen(dInputBrush);
-			nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
-			nInputPen = new Pen(nInputBrush);
+			xInputPath = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Red));
+			xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Blue));
+			dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Green));
+			// Create thin lines.
+			var xInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Blue));
+			xInputLine = new Pen(xInputLineBrush);
+			var dInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Green));
+			dInputLine = new Pen(dInputLineBrush);
+			var nInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Gray));
+			nInputLine = new Pen(nInputLineBrush);
 		}
 
+		SolidBrush xInputPath;
 		SolidBrush xInputPoint;
-		SolidBrush xInputBrush;
-		Pen xInputPen;
 		SolidBrush dInputPoint;
-		SolidBrush dInputBrush;
-		Pen dInputPen;
-		SolidBrush nInputBrush;
-		Pen nInputPen;
+		Pen xInputLine;
+		Pen dInputLine;
+		Pen nInputLine;
 
 		private void CreateBacgroundPicture()
 		{
-			// Collect setting values.
 			int deadZone = 0;
 			int antiDeadZone = 0;
 			int sensitivity = 0;
@@ -159,34 +158,33 @@ namespace x360ce.App.Controls
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
 				sensitivity = (int)SensitivityNumericUpDown.Value;
 			}));
-			// Determine picture size.
 			var borders = MainPictureBox.BorderStyle == System.Windows.Forms.BorderStyle.None ? 0 : 2;
-			var w = (MainPictureBox.Width - borders);
-			var h = (MainPictureBox.Height - borders);
-			// Create picure and set graphics settings.
+			var w = MainPictureBox.Width - borders;
+			var h = MainPictureBox.Height - borders;
 			var bmp = new Bitmap(w, h);
 			var g = Graphics.FromImage(bmp);
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			// Draw thin grey line from [0;0] to [w;h] coordinates.
-			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
-			var nInputPen = new Pen(nInputBrush);
-			g.DrawLine(nInputPen, 0, h, w, 0);
-			// Draw red line where xinput value dot must travel.
-			var xInputBrush = new SolidBrush(System.Drawing.Color.Red);
-			// Draw line by drawing ellipses (circles).
-			var radius = 0.5f;
-			var m = (float)w;
-			for (float i = 0; i < m; i += 0.5f)
+			var wF = (float)w;
+			var hF = (float)h;
+			// Draw grey line from bottom-left to top-right.
+			g.DrawLine(nInputLine, 0f, (float)h, (float)w, 0f);
+			for (float i = 0; i <= wF; i += 0.5f)
 			{
-				//Convert float [0;m] to ushort range [0;65535].
-				var dInputValue = (ushort)ConvertHelper.ConvertRangeF(0, m, ushort.MinValue, ushort.MaxValue, i);
-				var xInputValue = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
-				var resultInt = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0f, m, xInputValue);
-				var x1 = i;
-				var y1 = m - resultInt - 1f;
-				g.FillEllipse(xInputBrush, x1, y1, radius * 2f, radius * 2f);
+				// Convert Image X position [0;m] to DInput position [0;65535].
+				var dInputValue = ConvertHelper.ConvertRangeF(0, wF, ushort.MinValue, ushort.MaxValue, i);
+				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
+				var rounded = result >= -1f && result <= 1f;
+				// Convert XInput Y position [-32768;32767] to image size [0;m].
+				var y = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0, hF, result);
+				var radius = 0.5f;
+				var shift = -0.5f;
+				// Round on zero so deadzone line will look nice.
+				var ir = rounded ? (float)Math.Round(i) : i;
+				var yr = rounded ? (float)Math.Round(y) - radius : y;
+				// Put red dot where XInput dot must travel. Use radius to fix exlipse position.
+				g.FillEllipse(xInputPath, ir - radius + shift, hF - yr - radius + shift, radius * 2f, radius * 2f);
 			}
 			Invoke(((MethodInvoker)delegate ()
 			{
@@ -201,21 +199,27 @@ namespace x360ce.App.Controls
 			if (image == null) return;
 			var w = (float)image.Width;
 			var h = (float)image.Width;
-			var radius = 2f;
-			var di = ((float)_dInput / (float)ushort.MaxValue * (w - 1f));
-			var xi = ((float)(_xInput - short.MinValue) / (float)ushort.MaxValue * (w - 1f));
-			if (_invert) di = w - di - 1f;
+			// Convert DInput to image position.
+			var di = ConvertHelper.ConvertRangeF(0, ushort.MaxValue, 0, w, _dInput);
+			// Convert XInput to image position.
+			var xi = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0, h, _xInput);
+			if (_invert) di = w - di;
 			var g = e.Graphics;
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			var x1 = (float)Math.Round(di, 0);
-			var y1 = (float)Math.Round(w - xi - 1f, 0);
-			g.DrawLine(nInputPen, x1, 0, x1, h);
-			g.DrawLine(dInputPen, 0, h - x1 - 1f, w, h - x1 - 1f);
-			g.DrawLine(xInputPen, 0, y1, w, y1);
-			g.FillEllipse(dInputPoint, x1 - radius, (h - x1 - 1f) - radius, radius * 2f, radius * 2f);
-			g.FillEllipse(xInputPoint, x1 - radius, y1 - radius, radius * 2f, radius * 2f);
+			// Round to make it snap.
+			var dir = (float)Math.Round(di, 0);
+			var xir = (float)Math.Round(xi, 0);
+			// Draw lines.
+			g.DrawLine(dInputLine, 0, h - dir, w, h - dir);
+			g.DrawLine(xInputLine, 0, w - xir, w, w - xir);
+			// Draw dots.
+			var radius = 2f;
+			var shift = -0.5f;
+			// Use radius to fix exlipse position.
+			g.FillEllipse(dInputPoint, di - radius + shift, h - di - radius + shift, radius * 2f, radius * 2f);
+			g.FillEllipse(xInputPoint, di - radius + shift, w - xi - radius + shift, radius * 2f, radius * 2f);
 		}
 
 		#region Sensitivity Controls

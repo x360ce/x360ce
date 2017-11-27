@@ -10,66 +10,53 @@ namespace x360ce.Engine
 
 		/// <summary>Get XInput thumb value by DINput value</summary>
 		/// <remarks>Used to create graphs pictures.</remarks>
-		public static short GetThumbValue(ushort dInputValue, int deadZone, int antiDeadZone, int linear)
+		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear)
 		{
 			// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
-			var xInput = ConvertRange(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, dInputValue);
-
+			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, dInputValue);
+			//
 			//        [ 32768 steps | 32768 steps ]
 			// DInput [ 0     32767 | 32768 65535 ] 
 			// XInput [ 32768    -1 | 0     32767 ]
 			//
-			//int xInput = *(targetAxis[i]);
-			//int deadZone = (int)device.axisdeadzone[i];
-			//int antiDeadZone = (int)device.antideadzone[i];
-			//int linear = (int)device.axislinear[i];
-			int max = 32767;
-			// If deadzone value is set then...
+			var max = 32767f;
+			// Check if value is negative.
 			bool invert = xInput < 0;
 			// Convert [-32768;-1] -> [32767;0]
 			if (invert) xInput = -1 - xInput;
-			//if  invert 
+			// If deadzone value is set then...
 			if (deadZone > 0)
 			{
-				if (xInput > deadZone)
-				{
-					// [deadZone;32767] => [0;32767];
-					xInput = (int)((float)(xInput - deadZone) / (float)(max - deadZone) * (float)max);
-				}
-				else
-				{
-					xInput = 0;
-				}
+				xInput = (xInput > deadZone)
+					// Convert range [deadZone;32767] => [0;32767];
+					? xInput = ConvertRangeF(deadZone, max, 0, max, xInput)
+					: xInput = 0;
 			}
 			// If anti-deadzone value is set then...
-			if (antiDeadZone > 0)
+			if (antiDeadZone > 0 && xInput > 0)
 			{
-				if (xInput > 0)
-				{
-					// [0;32767] => [antiDeadZone;32767];
-					xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
-				}
+					// Convert range [0;32767] => [antiDeadZone;32767];
+					xInput = ConvertRangeF(0, max, antiDeadZone, max, xInput);
 			}
 			// If linear value is set then...
 			if (linear != 0 && xInput > 0)
 			{
-				// [antiDeadZone;32767] => [0;32767];
-				float xInputF = (float)(xInput - antiDeadZone) / (float)(max - antiDeadZone) * (float)max;
-				float linearF = (float)linear / 100f;
-				xInputF = ConvertToFloat((short)xInputF);
-				float x = -xInputF;
+				// [antiDeadZone;32767] => [0;1f];
+				var valueF = ConvertRangeF(antiDeadZone, max, 0, 1, xInput);
+				var linearF = (float)linear / 100f;
+				var x = -valueF;
 				if (linearF < 0f) x = 1f + x;
-				float v = ((float)Math.Sqrt(1f - x * x));
+				var v = ((float)Math.Sqrt(1f - x * x));
 				if (linearF < 0f) v = 1f - v;
-				xInputF = xInputF + (2f - v - xInputF - 1f) * Math.Abs(linearF);
-				xInput = ConvertToShort(xInputF);
-				// [0;32767] => [antiDeadZone;32767];
-				xInput = (int)((float)(xInput) / (float)max * (float)(max - antiDeadZone) + antiDeadZone);
+				valueF = valueF + (2f - v - valueF - 1f) * Math.Abs(linearF);
+				// [0;1f] => [antiDeadZone;32767];
+				xInput = ConvertRangeF(0, 1, antiDeadZone, max, valueF);
 			}
-			// Convert [32767;0] -> [-32768;-1]
-			if (invert) xInput = -1 - xInput;
-			//*(targetAxis[i]) = (SHORT)clamp(xInput, min, max);
-			return (short)xInput;
+			// If inversion required then...
+			if (invert)
+				// Convert [32767;0] -> [-32768;-1]
+				xInput = -1 - xInput;
+			return xInput;
 		}
 
 		/// <summary>
@@ -111,10 +98,8 @@ namespace x360ce.Engine
 		/// <summary>Convert value from [x1;y1] range to [x2;y2] range.</summary>
 		public static int ConvertRange(int oldMin, int oldMax, int newMin, int newMax, int value)
 		{
-			var oldRange = (float)(oldMax - oldMin);
-			var newRange = (float)(newMax - newMin);
-			var scale = newRange / oldRange;
-			return (int)Math.Round(newMin + ((value - oldMin) * scale));
+			var newValue = ConvertRangeF(oldMin, oldMax, newMin, newMax, value);
+			return (int)Math.Round(newValue, 0);
 		}
 
 		public static float ConvertRangeF(float oldMin, float oldMax, float newMin, float newMax, float value)
@@ -123,6 +108,7 @@ namespace x360ce.Engine
 			var newRange = newMax - newMin;
 			var scale = newRange / oldRange;
 			var newValue = newMin + ((value - oldMin) * scale);
+			// Limit range.
 			if (newValue > newMax)
 				return newMax;
 			if (newValue < newMin)

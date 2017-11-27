@@ -66,7 +66,7 @@ namespace x360ce.App.Controls
 			int deadZone = 0;
 			int antiDeadZone = 0;
 			int sensitivity = 0;
-			Invoke(((MethodInvoker)delegate()
+			Invoke(((MethodInvoker)delegate ()
 			{
 				deadZone = (int)DeadZoneNumericUpDown.Value;
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
@@ -85,21 +85,19 @@ namespace x360ce.App.Controls
 			var xInputBrush = new SolidBrush(System.Drawing.Color.Red);
 			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
 			var nInputPen = new Pen(nInputBrush);
-			var radius = 0.5f;
+			var radius = 1f;
 			g.DrawLine(nInputPen, 0, h, w, 0);
-			for (float i = 0; i < w; i += 0.5f)
+			var m = (float)w;
+			for (float i = 0; i <= m; i += 0.5f)
 			{
-				var m = (float)w;
-				// Get value range [-1;1].
-				float value = i / (m - 1f) * 2f - 1f;
-				ushort dInputValue = ConvertHelper.ConvertToUShort(value);
-				short result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
-				var resultInt = ((ConvertHelper.ConvertToFloat(result) + 1f) / 2f * m);
-				var x1 = i;
-				var y1 = m - resultInt - 1f;
-				g.FillEllipse(xInputBrush, x1, y1, radius * 2f, radius * 2f);
+				// Convert Image X position [0;m] to DInput position [0;65535].
+				var dInputValue = ConvertHelper.ConvertRangeF(0, w, ushort.MinValue, ushort.MaxValue, i);
+				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
+				// Convert XInput Y position [-32768;32767] to image size [0;m].
+				var y = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0, h, result);
+				g.FillEllipse(xInputBrush, i - 1f, h - y - 1f, radius, radius);
 			}
-			Invoke(((MethodInvoker)delegate()
+			Invoke(((MethodInvoker)delegate ()
 			{
 				LastBackgroundImage = bmp;
 				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
@@ -162,8 +160,9 @@ namespace x360ce.App.Controls
 			if (image == null) return;
 			var w = (float)image.Width;
 			var h = (float)image.Width;
-			var radius = 2f;
-			var di = ((float)_dInput / (float)ushort.MaxValue * (w - 1f));
+			// Convert DInput to image position.
+			var di = ConvertHelper.ConvertRangeF(0, ushort.MaxValue, 0, w, _dInput);
+			// Convert DInput to image position.
 			var xi = ((float)(_xInput - short.MinValue) / (float)ushort.MaxValue * (w - 1f));
 			var xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 0, 255));
 			var xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 0, 255));
@@ -183,6 +182,7 @@ namespace x360ce.App.Controls
 			g.DrawLine(nInputPen, x1, 0, x1, h);
 			g.DrawLine(dInputPen, 0, h - x1 - 1f, w, h - x1 - 1f);
 			g.DrawLine(xInputPen, 0, y1, w, y1);
+			var radius = 2f;
 			g.FillEllipse(dInputPoint, x1 - radius, (h - x1 - 1f) - radius, radius * 2f, radius * 2f);
 			g.FillEllipse(xInputPoint, x1 - radius, y1 - radius, radius * 2f, radius * 2f);
 		}

@@ -267,7 +267,7 @@ namespace x360ce.App.DInput
 						else if (map.Target != TargetType.None)
 						{
 
-							var thumbValue = ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear);
+							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear);
 
 							if (map.Target == TargetType.LeftThumbX)
 								gp.LeftThumbX = thumbValue;
