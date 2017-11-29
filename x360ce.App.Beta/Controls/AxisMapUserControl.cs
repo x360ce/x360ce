@@ -45,7 +45,7 @@ namespace x360ce.App.Controls
 
 		TargetType _TargetType;
 
-		[Category("Appearance"), DefaultValue(TargetType.LeftThumbX)]
+		[Category("Appearance"), DefaultValue(TargetType.None)]
 		public TargetType TargetType
 		{
 			get { return _TargetType; }
@@ -149,6 +149,9 @@ namespace x360ce.App.Controls
 		Pen dInputLine;
 		Pen nInputLine;
 
+
+		float shift = -0.5f;
+
 		private void CreateBacgroundPicture()
 		{
 			int deadZone = 0;
@@ -171,17 +174,25 @@ namespace x360ce.App.Controls
 			var wF = (float)w;
 			var hF = (float)h;
 			// Draw grey line from bottom-left to top-right.
-			g.DrawLine(nInputLine, 0f, (float)h, (float)w, 0f);
+			g.DrawLine(nInputLine, 0f + shift, (float)h + shift, (float)w + shift, 0f + shift);
 			for (float i = 0; i <= wF; i += 0.5f)
 			{
-				// Convert Image X position [0;m] to DInput position [0;65535].
-				var dInputValue = ConvertHelper.ConvertRangeF(0, wF, ushort.MinValue, ushort.MaxValue, i);
-				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half);
+				var thumb =
+					TargetType == TargetType.LeftThumbX ||
+					TargetType == TargetType.LeftThumbY ||
+					TargetType == TargetType.RightThumbX ||
+					TargetType == TargetType.RightThumbY;
+
+				var min = thumb ? -32768f : 0f;
+				var max = thumb ? 32767f : 255f;
+
+				// Convert Image X position [0;w] to DInput position [0;65535].
+				var dInputValue = ConvertHelper.ConvertRangeF(0f, wF, ushort.MinValue, ushort.MaxValue, i);
+				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, thumb);
 				var rounded = result >= -1f && result <= 1f;
-				// Convert XInput Y position [-32768;32767] to image size [0;m].
-				var y = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0, hF, result);
+				// Convert XInput Y position [min;max] to image size [0;h].
+				var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
 				var radius = 0.5f;
-				var shift = -0.5f;
 				// Round on zero so deadzone line will look nice.
 				var ir = rounded ? (float)Math.Round(i) : i;
 				var yr = rounded ? (float)Math.Round(y) - radius : y;
@@ -202,9 +213,19 @@ namespace x360ce.App.Controls
 			var w = (float)image.Width;
 			var h = (float)image.Width;
 			// Convert DInput to image position.
-			var di = ConvertHelper.ConvertRangeF(0, ushort.MaxValue, 0, w, _dInput);
+			var di = ConvertHelper.ConvertRangeF(0f, ushort.MaxValue, 0f, w, _dInput);
+
+			var thumb =
+					TargetType == TargetType.LeftThumbX ||
+					TargetType == TargetType.LeftThumbY ||
+					TargetType == TargetType.RightThumbX ||
+					TargetType == TargetType.RightThumbY;
+
+			var min = thumb ? -32768f : 0f;
+			var max = thumb ? 32767f : 255f;
+
 			// Convert XInput to image position.
-			var xi = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0, h, _xInput);
+			var xi = ConvertHelper.ConvertRangeF(min, max, 0f, h, _xInput);
 			if (_invert) di = w - di;
 			var g = e.Graphics;
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -214,11 +235,12 @@ namespace x360ce.App.Controls
 			var dir = (float)Math.Round(di, 0);
 			var xir = (float)Math.Round(xi, 0);
 			// Draw lines.
-			g.DrawLine(dInputLine, 0, h - dir, w, h - dir);
-			g.DrawLine(xInputLine, 0, w - xir, w, w - xir);
+			// X will change
+			g.DrawLine(dInputLine, dir, 0, dir, h);
+			// Y will change
+			g.DrawLine(xInputLine, 0, h - xir, w, h - xir);
 			// Draw dots.
 			var radius = 2f;
-			var shift = -0.5f;
 			// Use radius to fix exlipse position.
 			g.FillEllipse(dInputPoint, di - radius + shift, h - di - radius + shift, radius * 2f, radius * 2f);
 			g.FillEllipse(xInputPoint, di - radius + shift, w - xi - radius + shift, radius * 2f, radius * 2f);

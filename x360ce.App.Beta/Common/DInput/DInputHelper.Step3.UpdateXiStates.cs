@@ -252,23 +252,18 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target == TargetType.LeftTrigger || map.Target == TargetType.RightTrigger)
 						{
-							// Convert range from ushort (0-65535) to byte (0-255).
-							var value = (byte)ConvertHelper.ConvertRange(ushort.MinValue, ushort.MaxValue, byte.MinValue, byte.MaxValue, v);
-							// Apply dead zone range (0 to 255).
-							value = (byte)ConvertHelper.DeadZone(value, 0, byte.MaxValue, map.DeadZone, byte.MaxValue);
+							var triggerValue = (byte)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf, false);
 							if (map.Target == TargetType.LeftTrigger)
-								gp.LeftTrigger = value;
+								gp.LeftTrigger = triggerValue;
 							if (map.Target == TargetType.RightTrigger)
-								gp.RightTrigger = value;
+								gp.RightTrigger = triggerValue;
 						}
 						// --------------------------------------------------------
 						// Target: Thumb.
 						// --------------------------------------------------------
 						else if (map.Target != TargetType.None)
 						{
-
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
-
 							if (map.Target == TargetType.LeftThumbX)
 								gp.LeftThumbX = thumbValue;
 							if (map.Target == TargetType.LeftThumbY)

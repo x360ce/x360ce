@@ -10,22 +10,21 @@ namespace x360ce.Engine
 
 		/// <summary>Get XInput thumb value by DINput value</summary>
 		/// <remarks>Used to create graphs pictures.</remarks>
-		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool inverted, bool half)
+		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool inverted, bool half, bool thumb = true)
 		{
 			//
-			//        [ 32768 steps | 32768 steps ]
-			// DInput [ 0     32767 | 32768 65535 ] 
-			// XInput [ 32768    -1 | 0     32767 ]
+			//        [  32768 steps | 32768 steps ]
+			// DInput [      0 32767 | 32768 65535 ] 
+			// XInput [ -32768    -1 | 0     32767 ]
 			//
-			var max = 32767f;
 			var dih = 32768f;
-
 			var dInput = (float)dInputValue;
-			// If soruce axis must be inverted then...
+			// If source axis must be inverted then...
 			if (inverted)
 				dInput = (float)ushort.MaxValue - dInput;
-			// If only upper half axis must be used then...
-			if (half)
+			// if only upper half axis must be used then...
+			// Note: half axis is ignored if destination is thumb.
+			if (half && !thumb)
 			{
 				// Limit minimum value.
 				if (dInput < dih)
@@ -33,25 +32,29 @@ namespace x360ce.Engine
 				// Convert half Dinput range [32768;65535] range to DInput range (ushort[0;65535])
 				dInput = ConvertRangeF(dih, ushort.MaxValue, 0f, ushort.MaxValue, dInput);
 			}
-			// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
-			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, dInput);
-			// Check if value is negative.
+			var min = thumb ? -32768f : 0f;
+			var max = thumb ? 32767f : 255f;
+
+			// Convert DInput range(ushort[0; 65535]) to XInput thumb range(ushort[min; max]).
+			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, min, max, dInput);
+			// Check if value is negative (only thumb).
 			bool invert = xInput < 0f;
 			// Convert [-32768;-1] -> [32767;0]
-			if (invert) xInput = -1f - xInput;
+			if (invert)
+				xInput = -1f - xInput;
 			// If deadzone value is set then...
 			if (deadZone > 0f)
 			{
 				xInput = (xInput > deadZone)
-					// Convert range [deadZone;32767] => [0;32767];
+					// Convert range [deadZone;max] => [0;max];
 					? xInput = ConvertRangeF(deadZone, max, 0f, max, xInput)
 					: xInput = 0f;
 			}
 			// If anti-deadzone value is set then...
 			if (antiDeadZone > 0f && xInput > 0f)
 			{
-					// Convert range [0;32767] => [antiDeadZone;32767];
-					xInput = ConvertRangeF(0f, max, antiDeadZone, max, xInput);
+				// Convert range [0;max] => [antiDeadZone;max];
+				xInput = ConvertRangeF(0f, max, antiDeadZone, max, xInput);
 			}
 			// If linear value is set then...
 			if (linear != 0f && xInput > 0f)
@@ -64,50 +67,20 @@ namespace x360ce.Engine
 				var v = ((float)Math.Sqrt(1f - x * x));
 				if (linearF < 0f) v = 1f - v;
 				valueF = valueF + (2f - v - valueF - 1f) * Math.Abs(linearF);
-				// [0;1f] => [antiDeadZone;32767];
+				// [0;1f] => [antiDeadZone;max];
 				xInput = ConvertRangeF(0f, 1f, antiDeadZone, max, valueF);
 			}
-			// If inversion required then...
+			// If inversion required (only thumb) then...
 			if (invert)
 				// Convert [32767;0] -> [-32768;-1]
 				xInput = -1f - xInput;
 			return xInput;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="value">[-1.0;1.0]</param>
-		/// <param name="strength">[-1.0;1.0]</param>
-		/// <returns>[-1.0;1.0]</returns>
-		static float GetValue(float value, float param)
-		{
-			var x = value;
-			if (value > 0f) x = 0f - x;
-			if (param < 0f) x = 1f + x;
-			var v = ((float)Math.Sqrt(1f - x * x));
-			if (param < 0f) v = 1f - v;
-			if (value > 0f) v = 2f - v;
-			var val = value + (v - value - 1f) * Math.Abs(param);
-			return val;
-		}
-
-		/// <summary>Convert short [-32768;32767] to float range [-1.0f;1.0f].</summary>
-		public static float ConvertToFloat(short value)
-		{
-			return ConvertRangeF(short.MinValue, short.MaxValue, -1f, 1f, value);
-		}
-
 		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
 		public static short ConvertToShort(float value)
 		{
 			return (short)ConvertRangeF(-1f, 1f, short.MinValue, short.MaxValue, value);
-		}
-
-		/// <summary>Convert float [-1.0f;1.0f] to ushort range [0;65535].</summary>
-		public static ushort ConvertToUShort(float value)
-		{
-			return (ushort)ConvertRangeF(-1f, 1f, ushort.MinValue, ushort.MaxValue, value);
 		}
 
 		/// <summary>Convert value from [x1;y1] range to [x2;y2] range.</summary>
@@ -137,14 +110,6 @@ namespace x360ce.Engine
 			if (val > upperDZ) return max;
 			return val;
 		}
-
-		public static int Clamp(int val, int min, int max)
-		{
-			if (val < min) return min;
-			if (val > max) return max;
-			return val;
-		}
-
 
 	}
 }
