@@ -725,8 +725,10 @@ namespace x360ce.App.Controls
 
 		short _leftX;
 		short _leftY;
+		byte _leftTrigger;
 		short _rightX;
 		short _rightY;
+		byte _rightTrigger;
 
 		//XINPUT_GAMEPAD GamePad;
 		Guid _InstanceGuid;
@@ -890,27 +892,43 @@ namespace x360ce.App.Controls
 			_leftY = newState.Gamepad.LeftThumbY;
 			_rightX = newState.Gamepad.RightThumbX;
 			_rightY = newState.Gamepad.RightThumbY;
+			_rightTrigger = newState.Gamepad.RightTrigger;
+			_leftTrigger = newState.Gamepad.LeftTrigger;
 
 			AppHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
 			AppHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
 
-			var axis = DirectInputPanel.Axis;
-			bool success;
-			int index;
-			SettingType type;
-			success = SettingsConverter.TryParseTextValue(LeftThumbAxisXComboBox.Text, out type, out index);
-			if (success)
-				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseTextValue(LeftThumbAxisYComboBox.Text, out type, out index);
-			if (success)
-				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseTextValue(RightThumbAxisXComboBox.Text, out type, out index);
-			if (success)
-				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
-			success = SettingsConverter.TryParseTextValue(RightThumbAxisYComboBox.Text, out type, out index);
-			if (success)
-				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
-
+			var ud = GetCurrentDevice();
+			if (ud != null && ud.DiState != null)
+			{
+				var axis = ud.DiState.Axis;
+				var ps = GetCurrentPadSetting();
+				Map map;
+				// LeftThumbX
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
+				if (map != null && map.Index > 0)
+					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], _leftX, map.IsInverted, map.IsHalf);
+				// LeftThumbY
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
+				if (map != null && map.Index > 0)
+					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], _leftY, map.IsInverted, map.IsHalf);
+				// RightThumbX
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
+				if (map != null && map.Index > 0)
+					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], _rightX, map.IsInverted, map.IsHalf);
+				// RightThumbY
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
+				if (map != null && map.Index > 0)
+					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], _rightY, map.IsInverted, map.IsHalf);
+				// LeftTrigger
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
+				if (map != null && map.Index > 0)
+					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], _leftTrigger, map.IsInverted, map.IsHalf);
+				// RightTrigger
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
+				if (map != null && map.Index > 0)
+					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], _rightTrigger, map.IsInverted, map.IsHalf);
+			}
 			// Update controller images.
 			TopPictureBox.Refresh();
 			FrontPictureBox.Refresh();

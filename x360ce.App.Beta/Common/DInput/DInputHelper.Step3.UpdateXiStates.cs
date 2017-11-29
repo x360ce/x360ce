@@ -206,30 +206,30 @@ namespace x360ce.App.DInput
 						var min = short.MinValue; // -32768;
 						var max = short.MaxValue; //  32767;
 
-						// If value is inverted (I) then...
-						if (map.IsInverted && !map.IsHalf)
-						{
-							// Convert [0;65535] range to [65535;0] range.
-							v = (ushort)(ushort.MaxValue - v);
-						}
-						// If half value (H) then...
-						else if (!map.IsInverted && map.IsHalf)
-						{
-							// If value is in [32768;65535] range then...
-							v = (v > max)
-								// Convert [32768;65535] range to [0;65535] range.
-								? (ushort)ConvertHelper.ConvertRange(max + 1, ushort.MaxValue, ushort.MinValue, ushort.MaxValue, v)
-								: (ushort)0;
-						}
+						//// If value is inverted (I) then...
+						//if (map.IsInverted && !map.IsHalf)
+						//{
+						//	// Convert [0;65535] range to [65535;0] range.
+						//	v = (ushort)(ushort.MaxValue - v);
+						//}
+						//// If half value (H) then...
+						//else if (!map.IsInverted && map.IsHalf)
+						//{
+						//	// If value is in [32768;65535] range then...
+						//	v = (v > max)
+						//		// Convert [32768;65535] range to [0;65535] range.
+						//		? (ushort)ConvertHelper.ConvertRange(max + 1, ushort.MaxValue, ushort.MinValue, ushort.MaxValue, v)
+						//		: (ushort)0;
+						//}
 						// If inverted half value (IH) then...
-						else if (map.IsInverted && map.IsHalf)
-						{
-							// If value is in [0;32767] range then...
-							v = (v <= max)
-								// Convert [32767;0] range to [0;65535] range.
-								? (ushort)ConvertHelper.ConvertRange(max, 0, ushort.MinValue, ushort.MaxValue, v)
-								: (ushort)0;
-						}
+						//else if (map.IsInverted && map.IsHalf)
+						//{
+						//	// If value is in [0;32767] range then...
+						//	v = (v <= max)
+						//		// Convert [32767;0] range to [0;65535] range.
+						//		? (ushort)ConvertHelper.ConvertRange(max, 0, ushort.MinValue, ushort.MaxValue, v)
+						//		: (ushort)0;
+						//}
 
 						//var deadZone = map.DeadZone;
 						// If full range then double deadzone.
@@ -267,7 +267,7 @@ namespace x360ce.App.DInput
 						else if (map.Target != TargetType.None)
 						{
 
-							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear);
+							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
 
 							if (map.Target == TargetType.LeftThumbX)
 								gp.LeftThumbX = thumbValue;

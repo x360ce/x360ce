@@ -10,39 +10,54 @@ namespace x360ce.Engine
 
 		/// <summary>Get XInput thumb value by DINput value</summary>
 		/// <remarks>Used to create graphs pictures.</remarks>
-		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear)
+		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool inverted, bool half)
 		{
-			// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
-			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, dInputValue);
 			//
 			//        [ 32768 steps | 32768 steps ]
 			// DInput [ 0     32767 | 32768 65535 ] 
 			// XInput [ 32768    -1 | 0     32767 ]
 			//
 			var max = 32767f;
+			var dih = 32768f;
+
+			var dInput = (float)dInputValue;
+			// If soruce axis must be inverted then...
+			if (inverted)
+				dInput = (float)ushort.MaxValue - dInput;
+			// If only upper half axis must be used then...
+			if (half)
+			{
+				// Limit minimum value.
+				if (dInput < dih)
+					dInput = dih;
+				// Convert half Dinput range [32768;65535] range to DInput range (ushort[0;65535])
+				dInput = ConvertRangeF(dih, ushort.MaxValue, 0f, ushort.MaxValue, dInput);
+			}
+			// Convert DInput range (ushort[0;65535]) to XInput range (ushort[-32768;32767]).
+			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, short.MinValue, short.MaxValue, dInput);
 			// Check if value is negative.
-			bool invert = xInput < 0;
+			bool invert = xInput < 0f;
 			// Convert [-32768;-1] -> [32767;0]
-			if (invert) xInput = -1 - xInput;
+			if (invert) xInput = -1f - xInput;
 			// If deadzone value is set then...
-			if (deadZone > 0)
+			if (deadZone > 0f)
 			{
 				xInput = (xInput > deadZone)
 					// Convert range [deadZone;32767] => [0;32767];
-					? xInput = ConvertRangeF(deadZone, max, 0, max, xInput)
-					: xInput = 0;
+					? xInput = ConvertRangeF(deadZone, max, 0f, max, xInput)
+					: xInput = 0f;
 			}
 			// If anti-deadzone value is set then...
-			if (antiDeadZone > 0 && xInput > 0)
+			if (antiDeadZone > 0f && xInput > 0f)
 			{
 					// Convert range [0;32767] => [antiDeadZone;32767];
-					xInput = ConvertRangeF(0, max, antiDeadZone, max, xInput);
+					xInput = ConvertRangeF(0f, max, antiDeadZone, max, xInput);
 			}
 			// If linear value is set then...
-			if (linear != 0 && xInput > 0)
+			if (linear != 0f && xInput > 0f)
 			{
 				// [antiDeadZone;32767] => [0;1f];
-				var valueF = ConvertRangeF(antiDeadZone, max, 0, 1, xInput);
+				var valueF = ConvertRangeF(antiDeadZone, max, 0f, 1f, xInput);
 				var linearF = (float)linear / 100f;
 				var x = -valueF;
 				if (linearF < 0f) x = 1f + x;
@@ -50,12 +65,12 @@ namespace x360ce.Engine
 				if (linearF < 0f) v = 1f - v;
 				valueF = valueF + (2f - v - valueF - 1f) * Math.Abs(linearF);
 				// [0;1f] => [antiDeadZone;32767];
-				xInput = ConvertRangeF(0, 1, antiDeadZone, max, valueF);
+				xInput = ConvertRangeF(0f, 1f, antiDeadZone, max, valueF);
 			}
 			// If inversion required then...
 			if (invert)
 				// Convert [32767;0] -> [-32768;-1]
-				xInput = -1 - xInput;
+				xInput = -1f - xInput;
 			return xInput;
 		}
 

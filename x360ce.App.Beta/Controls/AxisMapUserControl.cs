@@ -113,14 +113,16 @@ namespace x360ce.App.Controls
 		}
 
 		bool _invert;
+		bool _half;
 		int _dInput;
 		int _xInput;
 
-		public void DrawPoint(int dInput, int xInput, bool invert)
+		public void DrawPoint(int dInput, int xInput, bool invert, bool half)
 		{
 			DInputValueLabel.Text = dInput.ToString();
 			XInputValueLabel.Text = xInput.ToString();
 			_invert = invert;
+			_half = half;
 			_dInput = dInput;
 			_xInput = xInput;
 			MainPictureBox.Refresh();
@@ -174,7 +176,7 @@ namespace x360ce.App.Controls
 			{
 				// Convert Image X position [0;m] to DInput position [0;65535].
 				var dInputValue = ConvertHelper.ConvertRangeF(0, wF, ushort.MinValue, ushort.MaxValue, i);
-				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity);
+				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half);
 				var rounded = result >= -1f && result <= 1f;
 				// Convert XInput Y position [-32768;32767] to image size [0;m].
 				var y = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, 0, hF, result);

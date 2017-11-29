@@ -757,16 +757,16 @@ namespace x360ce.App.Controls
             SettingType type;
             success = SettingsConverter.TryParseTextValue(LeftThumbAxisXComboBox.Text, out type, out index);
             if (success)
-                LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis);
+                LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis, false);
             success = SettingsConverter.TryParseTextValue(LeftThumbAxisYComboBox.Text, out type, out index);
             if (success)
-                LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis);
+                LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis, false);
             success = SettingsConverter.TryParseTextValue(RightThumbAxisXComboBox.Text, out type, out index);
             if (success)
-                RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis);
+                RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis, false);
             success = SettingsConverter.TryParseTextValue(RightThumbAxisYComboBox.Text, out type, out index);
             if (success)
-                RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis);
+                RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis, false);
             // Update controller images.
             this.TopPictureBox.Refresh();
             this.FrontPictureBox.Refresh();

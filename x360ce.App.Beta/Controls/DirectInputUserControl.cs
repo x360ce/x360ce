@@ -320,8 +320,6 @@ namespace x360ce.App.Controls
 		JoystickState oldState;
 		JoystickState emptyState;
 
-		public int[] Axis = new int[6];
-
 		/// <summary>
 		/// Update DirectInput control from DirectInput device.
 		/// </summary>
@@ -331,14 +329,6 @@ namespace x360ce.App.Controls
 		{
 			var newState = state ?? emptyState;
 			if (newState.Equals(oldState)) return;
-
-			// Fill axis.
-			Axis[0] = newState.X;
-			Axis[1] = newState.Y;
-			Axis[2] = newState.Z;
-			Axis[3] = newState.RotationX;
-			Axis[4] = newState.RotationY;
-			Axis[5] = newState.RotationZ;
 
 			UpdateButtonsTable(newState);
 			UpdateAxisTable(newState);
