@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Threading;
+using SharpDX.XInput;
+using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Threading;
-using JocysCom.ClassLibrary.Threading;
-using System.Text.RegularExpressions;
-using SharpDX.XInput;
 using x360ce.Engine;
-using x360ce.App.DInput;
 
 namespace x360ce.App.Controls
 {
@@ -135,11 +128,11 @@ namespace x360ce.App.Controls
 			dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Green));
 			// Create thin lines.
 			var xInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Blue));
-			xInputLine = new Pen(xInputLineBrush);
+			xInputLine = new Pen(xInputLineBrush, 1f);
 			var dInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Green));
-			dInputLine = new Pen(dInputLineBrush);
+			dInputLine = new Pen(dInputLineBrush, 1f);
 			var nInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Gray));
-			nInputLine = new Pen(nInputLineBrush);
+			nInputLine = new Pen(nInputLineBrush, 1f);
 		}
 
 		SolidBrush xInputPath;
@@ -148,9 +141,6 @@ namespace x360ce.App.Controls
 		Pen xInputLine;
 		Pen dInputLine;
 		Pen nInputLine;
-
-
-		float shift = -0.5f;
 
 		private void CreateBacgroundPicture()
 		{
@@ -173,8 +163,11 @@ namespace x360ce.App.Controls
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			var wF = (float)w;
 			var hF = (float)h;
+			//DrawDLineLine(g, 74.5f);
+			//DrawXLineLine(g, 74.5f);
+			//DrawDot(g, 74.5f, 74.5f, 0.5f, xInputPath);
 			// Draw grey line from bottom-left to top-right.
-			g.DrawLine(nInputLine, 0f + shift, (float)h + shift, (float)w + shift, 0f + shift);
+			g.DrawLine(nInputLine, 0f, (float)h - 1f, (float)w - 1f, 0f);
 			for (float i = 0; i <= wF; i += 0.5f)
 			{
 				var thumb =
@@ -182,28 +175,87 @@ namespace x360ce.App.Controls
 					TargetType == TargetType.LeftThumbY ||
 					TargetType == TargetType.RightThumbX ||
 					TargetType == TargetType.RightThumbY;
-
 				var min = thumb ? -32768f : 0f;
 				var max = thumb ? 32767f : 255f;
-
 				// Convert Image X position [0;w] to DInput position [0;65535].
 				var dInputValue = ConvertHelper.ConvertRangeF(0f, wF, ushort.MinValue, ushort.MaxValue, i);
 				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, thumb);
 				var rounded = result >= -1f && result <= 1f;
 				// Convert XInput Y position [min;max] to image size [0;h].
 				var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
-				var radius = 0.5f;
-				// Round on zero so deadzone line will look nice.
-				var ir = rounded ? (float)Math.Round(i) : i;
-				var yr = rounded ? (float)Math.Round(y) - radius : y;
 				// Put red dot where XInput dot must travel. Use radius to fix exlipse position.
-				g.FillEllipse(xInputPath, ir - radius + shift, hF - yr - radius + shift, radius * 2f, radius * 2f);
+				var radius = 0.5f;
+				DrawDot(g, i, y, radius, xInputPath);
 			}
 			Invoke(((MethodInvoker)delegate ()
 			{
 				LastBackgroundImage = bmp;
 				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
 			}));
+		}
+
+		void DrawDLineLine(Graphics g, float x)
+		{
+			var w = g.VisibleClipBounds.Width;
+			var h = g.VisibleClipBounds.Height;
+			// Snap to pixels.
+			x = (float)Math.Floor(x);
+			// Make sure last line is not snapped outside.
+			if (x == w)
+				x -= 1f;
+			g.DrawLine(dInputLine, x, 0, x, h);
+		}
+
+		void DrawXLineLine(Graphics g, float y)
+		{
+			var w = g.VisibleClipBounds.Width;
+			var h = g.VisibleClipBounds.Height;
+			y = h - y;
+			// Snap to pixels.
+			y = (float)Math.Floor(y);
+			// Make sure last line is not snapped outside.
+			if (y == h)
+				y -= 1f;
+			g.DrawLine(xInputLine, 0, y, w, y);
+		}
+
+		void DrawDot(Graphics g, float x, float y, float radius, Brush brush, bool snap = false)
+		{
+			var w = g.VisibleClipBounds.Width;
+			var h = g.VisibleClipBounds.Height;
+			// Half pixel.
+			var p = 0.5f;
+			// If snap all.
+			if (snap)
+			{
+				// Snap to pixels.
+				x = (float)Math.Floor(x);
+				// Make sure last line is not snapped outside.
+				if (x == w)
+					x -= 1f;
+				x += p;
+			}
+			else
+			{
+				var wm = (w / 2f);
+				var hm = (h / 2f);
+				// Snap X to start, center and end.
+				if (x < 1f)
+					x = p;
+				if (x >= wm - p && x <= wm + p)
+					x = wm;
+				if (x > w - 1f)
+					x = w - p;
+				// Snap Y to top, middle and bottom.
+				if (y < 1f)
+					y = p;
+				if (y >= hm - p && y <= hm + p)
+					y = hm;
+				if (y > h - 1f)
+					y = h - p;
+			}
+			//g.FillRectangle(brush, x - radius - 0.5f, h - y - radius - 0.5f, radius * 2f, radius * 2f);
+			g.FillEllipse(brush, x - radius - 0.5f, h - y - radius - 0.5f, radius * 2f, radius * 2f);
 		}
 
 		private void LinearPictureBox_Paint(object sender, PaintEventArgs e)
@@ -220,10 +272,8 @@ namespace x360ce.App.Controls
 					TargetType == TargetType.LeftThumbY ||
 					TargetType == TargetType.RightThumbX ||
 					TargetType == TargetType.RightThumbY;
-
 			var min = thumb ? -32768f : 0f;
 			var max = thumb ? 32767f : 255f;
-
 			// Convert XInput to image position.
 			var xi = ConvertHelper.ConvertRangeF(min, max, 0f, h, _xInput);
 			if (_invert) di = w - di;
@@ -231,19 +281,12 @@ namespace x360ce.App.Controls
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			// Round to make it snap.
-			var dir = (float)Math.Round(di, 0);
-			var xir = (float)Math.Round(xi, 0);
-			// Draw lines.
-			// X will change
-			g.DrawLine(dInputLine, dir, 0, dir, h);
-			// Y will change
-			g.DrawLine(xInputLine, 0, h - xir, w, h - xir);
+			DrawDLineLine(g, di);
+			DrawXLineLine(g, xi);
 			// Draw dots.
-			var radius = 2f;
-			// Use radius to fix exlipse position.
-			g.FillEllipse(dInputPoint, di - radius + shift, h - di - radius + shift, radius * 2f, radius * 2f);
-			g.FillEllipse(xInputPoint, di - radius + shift, w - xi - radius + shift, radius * 2f, radius * 2f);
+			var radius = 2.5f;
+			DrawDot(g, di, di, radius, dInputPoint, true);
+			DrawDot(g, di, xi, radius, xInputPoint, true);
 		}
 
 		#region Sensitivity Controls

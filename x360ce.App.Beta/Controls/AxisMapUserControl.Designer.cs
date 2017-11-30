@@ -80,7 +80,7 @@
 			this.MainPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.MainPictureBox.Location = new System.Drawing.Point(6, 36);
 			this.MainPictureBox.Name = "MainPictureBox";
-			this.MainPictureBox.Size = new System.Drawing.Size(150, 150);
+			this.MainPictureBox.Size = new System.Drawing.Size(149, 149);
 			this.MainPictureBox.TabIndex = 10;
 			this.MainPictureBox.TabStop = false;
 			this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.LinearPictureBox_Paint);
@@ -344,12 +344,12 @@
 			this.P_0_20_0_MenuItem.Text = "20% Controller Anti-DeadZone";
 			this.P_0_20_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
-			// ThumbUserControl
+			// AxisMapUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MainGroupBox);
-			this.Name = "ThumbUserControl";
+			this.Name = "AxisMapUserControl";
 			this.Size = new System.Drawing.Size(578, 193);
 			this.Load += new System.EventHandler(this.LinearUserControl_Load);
 			this.EnabledChanged += new System.EventHandler(this.ThumbUserControl_EnabledChanged);

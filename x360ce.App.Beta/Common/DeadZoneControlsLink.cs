@@ -15,10 +15,13 @@ namespace x360ce.App
 
 		public DeadZoneControlsLink(TrackBar trackBar, NumericUpDown numericUpDown, TextBox textBox, int maxValue)
 		{
+			// Trackbar will be mapped as main settings control.
 			_TrackBar = trackBar;
 			_NumericUpDown = numericUpDown;
 			_NumericUpDown.Maximum = maxValue;
 			_TextBox = textBox;
+			// Update values from TrackBar before events attached.
+			UpdateValue();
 			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 			_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
 		}
@@ -31,13 +34,18 @@ namespace x360ce.App
 
 		void _TrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			EventHandler<EventArgs> ev;
+			UpdateValue();
+			var ev = ValueChanged;
+			if (ev != null) ev(this, new EventArgs());
+		}
+
+		void UpdateValue()
+		{
 			lock (eventsLock)
 			{
 				if (IsDisposing) return;
-				var control = (TrackBar)sender;
 				_NumericUpDown.ValueChanged -= new System.EventHandler(_NumericUpDown_ValueChanged);
-				var percent = control.Value;
+				var percent = _TrackBar.Value;
 				var percentString = string.Format("{0} % ", percent);
 				// Update percent TextBox.
 				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
@@ -45,9 +53,7 @@ namespace x360ce.App
 				var value = (decimal)Math.Round((float)percent / 100f * (float)_NumericUpDown.Maximum);
 				if (_NumericUpDown.Value != value) _NumericUpDown.Value = value;
 				_NumericUpDown.ValueChanged += new System.EventHandler(_NumericUpDown_ValueChanged);
-				ev = ValueChanged;
 			}
-			if (ev != null) ev(this, new EventArgs());
 		}
 
 		void _NumericUpDown_ValueChanged(object sender, EventArgs e)
