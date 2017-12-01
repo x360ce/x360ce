@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace JocysCom.ClassLibrary.ClassTools
 {
@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.ClassTools
 			{
 				if (exclude != null && exclude.Contains(value))
 					continue;
-				display = string.Format(format, value, System.Convert.ToInt64(value), GetDescription(value));
+				display = string.Format(format, value, System.Convert.ToInt64(value), Attributes.GetDescription(value));
 				list.Add(new DictionaryEntry(display, value));
 			}
 			if (sort)
@@ -77,13 +77,6 @@ namespace JocysCom.ClassLibrary.ClassTools
 					return;
 				}
 			}
-		}
-
-		public static string GetDescription(object value)
-		{
-			FieldInfo fi = value.GetType().GetField(value.ToString());
-			DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-			return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
 		}
 
 	}

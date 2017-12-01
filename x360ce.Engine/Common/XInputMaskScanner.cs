@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -292,7 +293,7 @@ namespace x360ce.Engine
             var dic = new Dictionary<XInputMask, string>();
             foreach (var value in xiValues)
             {
-                dic.Add(value, JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value));
+                dic.Add(value, Attributes.GetDescription(value));
             }
             // Check cache first.
             var fi = new FileInfo(fullName);

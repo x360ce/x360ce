@@ -82,7 +82,7 @@ namespace x360ce.App.DInput
 
 				success = SettingsConverter.TryParseTextValue(padSetting.DPad, out type, out index);
 				// If POV index is mapped to the D-PAD
-				if (success && index > 0 && type == SettingType.DPad)
+				if (success && index > 0 && type == SettingType.POV)
 				{
 					var dPadIndex = index - 1;
 					// --------------------------------------------------------
@@ -151,7 +151,7 @@ namespace x360ce.App.DInput
 					// --------------------------------------------------------
 					// MAP Source: D-PAD button converted from POV.
 					// --------------------------------------------------------
-					else if (map.Type == SettingType.DPadButton)
+					else if (map.Type == SettingType.DPOVButton)
 					{
 						// If mapped index is in range then...
 						if (map.Index < dPadButtons.Length)

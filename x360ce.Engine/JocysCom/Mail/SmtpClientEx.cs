@@ -1,15 +1,14 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Runtime;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Reflection;
-using System.IO;
-using JocysCom.ClassLibrary.Runtime;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Globalization;
 
 namespace JocysCom.ClassLibrary.Mail
 {
@@ -447,7 +446,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public static bool IsValidEmail(string email, bool mandatory, out string message)
 		{
 			var result = EmailValid(email);
-			message = ClassTools.EnumTools.GetDescription(result);
+			message = Attributes.GetDescription(result);
 			switch (result)
 			{
 				case EmailResult.OK: return true;

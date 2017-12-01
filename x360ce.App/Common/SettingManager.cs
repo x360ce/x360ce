@@ -820,7 +820,7 @@ namespace x360ce.App
 				v = v.Replace(SettingName.SType.Axis, "");
 			}
 			// If this is DPad setting then remove prefix.
-			if (key == SettingName.DPad) v = v.Replace(SettingName.SType.DPad, "");
+			if (key == SettingName.DPad) v = v.Replace(SettingName.SType.POV, "");
 			//if (v == "v1") v = "UP";
 			//if (v == "v2") v = "RIGHT";
 			//if (v == "v3") v = "DOWN";

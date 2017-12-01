@@ -15,9 +15,9 @@ namespace x360ce.Engine
 		ISlider,
 		HSlider,
 		IHSlider,
-		DPad,
-		IDPad,
-		DPadButton,
-		IDPadButton,
+		POV,
+		IPOV,
+		DPOVButton,
+		IPOVButton,
 	}
 }

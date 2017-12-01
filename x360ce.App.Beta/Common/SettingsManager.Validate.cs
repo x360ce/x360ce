@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +52,7 @@ namespace x360ce.App
 				var dic = new Dictionary<XInputMask, string>();
 				foreach (var value in xiValues)
 				{
-					dic.Add(value, JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value));
+					dic.Add(value, Attributes.GetDescription(value));
 				}
 				// Get names of files: xinput9_1_0.dll, xinput1_1.dll, xinput1_2.dll, xinput1_3.dll, xinput1_4.dll
 				var xiFileNames = dic.Values.Distinct();

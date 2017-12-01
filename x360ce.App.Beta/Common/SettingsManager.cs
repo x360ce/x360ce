@@ -70,6 +70,9 @@ namespace x360ce.App
 		/// <summary>Presets - Default PadSettings for most popular Devices (Products).</summary>
 		public static XSettingsData<Preset> Presets = new XSettingsData<Preset>("Presets.xml", "Default PadSettings for most popular Devices (Products).");
 
+		/// <summary>MapNames - Most popular layouts for Games.</summary>
+		public static XSettingsData<Layout> Layouts = new XSettingsData<Layout>("Layouts.xml", "Most popular layouts for Games.");
+
 		// User settings.
 
 		/// <summary>User Games.</summary>

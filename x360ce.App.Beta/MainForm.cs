@@ -15,6 +15,7 @@ using x360ce.App.Properties;
 using System.ComponentModel;
 using x360ce.Engine.Data;
 using System.Text;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App
 {
@@ -107,6 +108,9 @@ namespace x360ce.App
 			SettingsManager.UserGames.FilterList = Games_FilterList;
 			SettingsManager.UserGames.Load();
 			SettingsManager.Presets.Load();
+			// Make sure that data will be filtered before loading.
+			SettingsManager.Layouts.FilterList = MapNames_FilterList;
+			SettingsManager.Layouts.Load();
 			SettingsManager.PadSettings.Load();
 			SettingsManager.UserDevices.Load();
 			SettingsManager.UserInstances.Load();
@@ -154,6 +158,90 @@ namespace x360ce.App
 				.Select(g => g.First())
 				.ToList();
 			return distinctItems;
+		}
+
+		IList<Engine.Data.Layout> MapNames_FilterList(IList<Engine.Data.Layout> items)
+		{
+			var def = Guid.Empty;
+			var defaultItem = items.FirstOrDefault(x => x.Id == def);
+			// If default item was not found then...
+			if (defaultItem == null)
+			{
+				var item = new Layout();
+				item.Id = def;
+				item.Name = "Default";
+				item.ButtonA = "A Button";
+				item.ButtonB = "B Button";
+				item.ButtonBack = "Back";
+				item.ButtonGuide = "Guide";
+				item.ButtonStart = "Start";
+				item.ButtonX = "X Button";
+				item.ButtonY = "Y Button";
+				item.DPad = "D-Pad";
+				item.DPadDown = "D-Pad Down";
+				item.DPadLeft = "D-Pad Left";
+				item.DPadRight = "D-Pad Right";
+				item.DPadUp = "D-Pad Up";
+				item.LeftShoulder = "Bumper";
+				item.LeftThumbAxisX = "Stick Axis X";
+				item.LeftThumbAxisY = "Stick Axis Y";
+				item.LeftThumbButton = "Stick Button";
+				item.LeftThumbDown = "Stick Down";
+				item.LeftThumbLeft = "Stick Left";
+				item.LeftThumbRight = "Stick Right";
+				item.LeftThumbUp = "Stick Up";
+				item.LeftTrigger = "Trigger";
+				item.RightShoulder = "Bumper";
+				item.RightThumbAxisX = "Stick Axis X";
+				item.RightThumbAxisY = "Stick Axis Y";
+				item.RightThumbButton = "Stick Button";
+				item.RightThumbDown = "Stick Down";
+				item.RightThumbLeft = "Stick Left";
+				item.RightThumbRight = "Stick Right";
+				item.RightThumbUp = "Stick Up";
+				item.RightTrigger = "Trigger";
+				items.Add(item);
+			}
+			var onfoot = new Guid("00000000-0000-0000-0000-000000000001");
+			defaultItem = items.FirstOrDefault(x => x.Id == onfoot);
+			if (defaultItem == null)
+			{
+				var item = new Layout();
+				item.Id = onfoot;
+				item.Name = "On Foot";
+				item.ButtonA = "Answer/Block";
+				item.ButtonB = "Hangup/Punch";
+				item.ButtonBack = "Camera Modes";
+				item.ButtonGuide = "Guide";
+				item.ButtonStart = "Pause Menu";
+				item.ButtonX = "Jump/Kick";
+				item.ButtonY = "Enter/Melee";
+				item.DPad = "D-Pad";
+				item.DPadDown = "Phone Down";
+				item.DPadLeft = "Prev Weapon";
+				item.DPadRight = "Next Weapon";
+				item.DPadUp = "Phone Up";
+				item.LeftShoulder = "Pick Up";
+				item.LeftThumbAxisX = "Movement";
+				item.LeftThumbAxisY = "Movement";
+				item.LeftThumbButton = "Crouch";
+				item.LeftThumbDown = "Stick Down";
+				item.LeftThumbLeft = "Stick Left";
+				item.LeftThumbRight = "Stick Right";
+				item.LeftThumbUp = "Stick Up";
+				item.LeftTrigger = "Target Lock";
+				item.RightShoulder = "Cover";
+				item.RightThumbAxisX = "Switch Target";
+				item.RightThumbAxisY = "Switch Target";
+				item.RightThumbButton = "Look/Aim";
+				item.RightThumbDown = "Stick Down";
+				item.RightThumbLeft = "Stick Left";
+				item.RightThumbRight = "Stick Right";
+				item.RightThumbUp = "Stick Up";
+				item.RightTrigger = "Fire";
+				items.Add(item);
+			}
+			return items;
 		}
 
 		IList<Engine.Data.UserGame> Games_FilterList(IList<Engine.Data.UserGame> items)
@@ -509,6 +597,7 @@ namespace x360ce.App
 			SettingsManager.Programs.Save();
 			SettingsManager.UserGames.Save();
 			SettingsManager.Presets.Save();
+			SettingsManager.Layouts.Save();
 			SettingsManager.UserDevices.Save();
 			SettingsManager.PadSettings.Save();
 			SettingsManager.UserDevices.Save();
@@ -1286,8 +1375,7 @@ namespace x360ce.App
 				if (item != null)
 				{
 					// Update buttons from current item.
-					VirtualButton.Checked = ((EmulationType)item.EmulationType).HasFlag(EmulationType.Virtual);
-					LibraryButton.Checked = ((EmulationType)item.EmulationType).HasFlag(EmulationType.Library);
+					UpdateButtonsAndTabs((EmulationType)item.EmulationType);
 					// Attach event to new game.
 					item.PropertyChanged += CurrentGame_PropertyChanged;
 				}
@@ -1324,8 +1412,7 @@ namespace x360ce.App
 			if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
 			{
 				// Update buttons from current item.
-				VirtualButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-				LibraryButton.Checked = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Library);
+				UpdateButtonsAndTabs((EmulationType)game.EmulationType);
 			}
 		}
 
@@ -1375,7 +1462,7 @@ namespace x360ce.App
 					{
 						if (status.HasFlag(value))
 						{
-							var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+							var description = Attributes.GetDescription(value);
 							errors.Add("    " + description);
 						}
 					}
@@ -1593,6 +1680,13 @@ namespace x360ce.App
 				return;
 			game.EmulationType = (int)type;
 		}
+
+		void UpdateButtonsAndTabs(EmulationType et)
+		{
+			VirtualButton.Checked = et.HasFlag(EmulationType.Virtual);
+			LibraryButton.Checked = et.HasFlag(EmulationType.Library);
+		}
+
 	}
 }
 

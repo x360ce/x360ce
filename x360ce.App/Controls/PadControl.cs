@@ -838,12 +838,12 @@ namespace x360ce.App.Controls
             var dPadNames = Enum.GetNames(typeof(DPadEnum));
             for (int p = 0; p < device.Capabilities.PovCount; p++)
             {
-                var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.DPad);
+                var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.POV);
                 mi.DropDownItems.Add(dPadItem);
                 for (int d = 0; d < dPadNames.Length; d++)
                 {
                     var dPadButtonIndex = p * 4 + d + 1;
-                    var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.DPadButton, dPadButtonIndex);
+                    var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
                     dPadItem.DropDownItems.Add(dPadButtonItem);
                 }
             }
@@ -1137,7 +1137,7 @@ namespace x360ce.App.Controls
                 if (o != null) AutoPresetRead(SettingName.LeftThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
                 // D-Pad
                 o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
-                if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.DPad, o.Instance + 1));
+                if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1));
             }
         }
 

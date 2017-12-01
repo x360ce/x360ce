@@ -224,6 +224,22 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<Program> _Programs;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Layout> Layouts
+        {
+            get
+            {
+                if ((_Layouts == null))
+                {
+                    _Layouts = base.CreateObjectSet<Layout>("Layouts");
+                }
+                return _Layouts;
+            }
+        }
+        private ObjectSet<Layout> _Layouts;
 
         #endregion
 
@@ -308,6 +324,14 @@ namespace x360ce.Engine.Data
         {
             base.AddObject("Programs", program);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Layouts EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToLayouts(Layout layout)
+        {
+            base.AddObject("Layouts", layout);
+        }
 
         #endregion
 
@@ -316,6 +340,869 @@ namespace x360ce.Engine.Data
     #endregion
 
     #region Entities
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="Layout")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Layout : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Layout object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="name">Initial value of the Name property.</param>
+        /// <param name="buttonA">Initial value of the ButtonA property.</param>
+        /// <param name="buttonB">Initial value of the ButtonB property.</param>
+        /// <param name="buttonBack">Initial value of the ButtonBack property.</param>
+        /// <param name="buttonGuide">Initial value of the ButtonGuide property.</param>
+        /// <param name="buttonStart">Initial value of the ButtonStart property.</param>
+        /// <param name="buttonX">Initial value of the ButtonX property.</param>
+        /// <param name="buttonY">Initial value of the ButtonY property.</param>
+        /// <param name="dPad">Initial value of the DPad property.</param>
+        /// <param name="dPadDown">Initial value of the DPadDown property.</param>
+        /// <param name="dPadLeft">Initial value of the DPadLeft property.</param>
+        /// <param name="dPadRight">Initial value of the DPadRight property.</param>
+        /// <param name="dPadUp">Initial value of the DPadUp property.</param>
+        /// <param name="leftShoulder">Initial value of the LeftShoulder property.</param>
+        /// <param name="leftThumbAxisX">Initial value of the LeftThumbAxisX property.</param>
+        /// <param name="leftThumbAxisY">Initial value of the LeftThumbAxisY property.</param>
+        /// <param name="leftThumbButton">Initial value of the LeftThumbButton property.</param>
+        /// <param name="leftThumbDown">Initial value of the LeftThumbDown property.</param>
+        /// <param name="leftThumbLeft">Initial value of the LeftThumbLeft property.</param>
+        /// <param name="leftThumbRight">Initial value of the LeftThumbRight property.</param>
+        /// <param name="leftThumbUp">Initial value of the LeftThumbUp property.</param>
+        /// <param name="leftTrigger">Initial value of the LeftTrigger property.</param>
+        /// <param name="rightShoulder">Initial value of the RightShoulder property.</param>
+        /// <param name="rightThumbAxisX">Initial value of the RightThumbAxisX property.</param>
+        /// <param name="rightThumbAxisY">Initial value of the RightThumbAxisY property.</param>
+        /// <param name="rightThumbButton">Initial value of the RightThumbButton property.</param>
+        /// <param name="rightThumbDown">Initial value of the RightThumbDown property.</param>
+        /// <param name="rightThumbLeft">Initial value of the RightThumbLeft property.</param>
+        /// <param name="rightThumbRight">Initial value of the RightThumbRight property.</param>
+        /// <param name="rightThumbUp">Initial value of the RightThumbUp property.</param>
+        /// <param name="rightTrigger">Initial value of the RightTrigger property.</param>
+        public static Layout CreateLayout(global::System.Guid id, global::System.String name, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String leftShoulder, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String rightShoulder, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger)
+        {
+            Layout layout = new Layout();
+            layout.Id = id;
+            layout.Name = name;
+            layout.ButtonA = buttonA;
+            layout.ButtonB = buttonB;
+            layout.ButtonBack = buttonBack;
+            layout.ButtonGuide = buttonGuide;
+            layout.ButtonStart = buttonStart;
+            layout.ButtonX = buttonX;
+            layout.ButtonY = buttonY;
+            layout.DPad = dPad;
+            layout.DPadDown = dPadDown;
+            layout.DPadLeft = dPadLeft;
+            layout.DPadRight = dPadRight;
+            layout.DPadUp = dPadUp;
+            layout.LeftShoulder = leftShoulder;
+            layout.LeftThumbAxisX = leftThumbAxisX;
+            layout.LeftThumbAxisY = leftThumbAxisY;
+            layout.LeftThumbButton = leftThumbButton;
+            layout.LeftThumbDown = leftThumbDown;
+            layout.LeftThumbLeft = leftThumbLeft;
+            layout.LeftThumbRight = leftThumbRight;
+            layout.LeftThumbUp = leftThumbUp;
+            layout.LeftTrigger = leftTrigger;
+            layout.RightShoulder = rightShoulder;
+            layout.RightThumbAxisX = rightThumbAxisX;
+            layout.RightThumbAxisY = rightThumbAxisY;
+            layout.RightThumbButton = rightThumbButton;
+            layout.RightThumbDown = rightThumbDown;
+            layout.RightThumbLeft = rightThumbLeft;
+            layout.RightThumbRight = rightThumbRight;
+            layout.RightThumbUp = rightThumbUp;
+            layout.RightTrigger = rightTrigger;
+            return layout;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                OnNameChanging(value);
+                ReportPropertyChanging("Name");
+                _Name = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Name");
+                OnNameChanged();
+            }
+        }
+        private global::System.String _Name;
+        partial void OnNameChanging(global::System.String value);
+        partial void OnNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonA
+        {
+            get
+            {
+                return _ButtonA;
+            }
+            set
+            {
+                OnButtonAChanging(value);
+                ReportPropertyChanging("ButtonA");
+                _ButtonA = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonA");
+                OnButtonAChanged();
+            }
+        }
+        private global::System.String _ButtonA;
+        partial void OnButtonAChanging(global::System.String value);
+        partial void OnButtonAChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonB
+        {
+            get
+            {
+                return _ButtonB;
+            }
+            set
+            {
+                OnButtonBChanging(value);
+                ReportPropertyChanging("ButtonB");
+                _ButtonB = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonB");
+                OnButtonBChanged();
+            }
+        }
+        private global::System.String _ButtonB;
+        partial void OnButtonBChanging(global::System.String value);
+        partial void OnButtonBChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonBack
+        {
+            get
+            {
+                return _ButtonBack;
+            }
+            set
+            {
+                OnButtonBackChanging(value);
+                ReportPropertyChanging("ButtonBack");
+                _ButtonBack = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonBack");
+                OnButtonBackChanged();
+            }
+        }
+        private global::System.String _ButtonBack;
+        partial void OnButtonBackChanging(global::System.String value);
+        partial void OnButtonBackChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonGuide
+        {
+            get
+            {
+                return _ButtonGuide;
+            }
+            set
+            {
+                OnButtonGuideChanging(value);
+                ReportPropertyChanging("ButtonGuide");
+                _ButtonGuide = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonGuide");
+                OnButtonGuideChanged();
+            }
+        }
+        private global::System.String _ButtonGuide;
+        partial void OnButtonGuideChanging(global::System.String value);
+        partial void OnButtonGuideChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonStart
+        {
+            get
+            {
+                return _ButtonStart;
+            }
+            set
+            {
+                OnButtonStartChanging(value);
+                ReportPropertyChanging("ButtonStart");
+                _ButtonStart = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonStart");
+                OnButtonStartChanged();
+            }
+        }
+        private global::System.String _ButtonStart;
+        partial void OnButtonStartChanging(global::System.String value);
+        partial void OnButtonStartChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonX
+        {
+            get
+            {
+                return _ButtonX;
+            }
+            set
+            {
+                OnButtonXChanging(value);
+                ReportPropertyChanging("ButtonX");
+                _ButtonX = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonX");
+                OnButtonXChanged();
+            }
+        }
+        private global::System.String _ButtonX;
+        partial void OnButtonXChanging(global::System.String value);
+        partial void OnButtonXChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonY
+        {
+            get
+            {
+                return _ButtonY;
+            }
+            set
+            {
+                OnButtonYChanging(value);
+                ReportPropertyChanging("ButtonY");
+                _ButtonY = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ButtonY");
+                OnButtonYChanged();
+            }
+        }
+        private global::System.String _ButtonY;
+        partial void OnButtonYChanging(global::System.String value);
+        partial void OnButtonYChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPad
+        {
+            get
+            {
+                return _DPad;
+            }
+            set
+            {
+                OnDPadChanging(value);
+                ReportPropertyChanging("DPad");
+                _DPad = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPad");
+                OnDPadChanged();
+            }
+        }
+        private global::System.String _DPad;
+        partial void OnDPadChanging(global::System.String value);
+        partial void OnDPadChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadDown
+        {
+            get
+            {
+                return _DPadDown;
+            }
+            set
+            {
+                OnDPadDownChanging(value);
+                ReportPropertyChanging("DPadDown");
+                _DPadDown = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadDown");
+                OnDPadDownChanged();
+            }
+        }
+        private global::System.String _DPadDown;
+        partial void OnDPadDownChanging(global::System.String value);
+        partial void OnDPadDownChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadLeft
+        {
+            get
+            {
+                return _DPadLeft;
+            }
+            set
+            {
+                OnDPadLeftChanging(value);
+                ReportPropertyChanging("DPadLeft");
+                _DPadLeft = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadLeft");
+                OnDPadLeftChanged();
+            }
+        }
+        private global::System.String _DPadLeft;
+        partial void OnDPadLeftChanging(global::System.String value);
+        partial void OnDPadLeftChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadRight
+        {
+            get
+            {
+                return _DPadRight;
+            }
+            set
+            {
+                OnDPadRightChanging(value);
+                ReportPropertyChanging("DPadRight");
+                _DPadRight = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadRight");
+                OnDPadRightChanged();
+            }
+        }
+        private global::System.String _DPadRight;
+        partial void OnDPadRightChanging(global::System.String value);
+        partial void OnDPadRightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String DPadUp
+        {
+            get
+            {
+                return _DPadUp;
+            }
+            set
+            {
+                OnDPadUpChanging(value);
+                ReportPropertyChanging("DPadUp");
+                _DPadUp = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("DPadUp");
+                OnDPadUpChanged();
+            }
+        }
+        private global::System.String _DPadUp;
+        partial void OnDPadUpChanging(global::System.String value);
+        partial void OnDPadUpChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftShoulder
+        {
+            get
+            {
+                return _LeftShoulder;
+            }
+            set
+            {
+                OnLeftShoulderChanging(value);
+                ReportPropertyChanging("LeftShoulder");
+                _LeftShoulder = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftShoulder");
+                OnLeftShoulderChanged();
+            }
+        }
+        private global::System.String _LeftShoulder;
+        partial void OnLeftShoulderChanging(global::System.String value);
+        partial void OnLeftShoulderChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbAxisX
+        {
+            get
+            {
+                return _LeftThumbAxisX;
+            }
+            set
+            {
+                OnLeftThumbAxisXChanging(value);
+                ReportPropertyChanging("LeftThumbAxisX");
+                _LeftThumbAxisX = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbAxisX");
+                OnLeftThumbAxisXChanged();
+            }
+        }
+        private global::System.String _LeftThumbAxisX;
+        partial void OnLeftThumbAxisXChanging(global::System.String value);
+        partial void OnLeftThumbAxisXChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbAxisY
+        {
+            get
+            {
+                return _LeftThumbAxisY;
+            }
+            set
+            {
+                OnLeftThumbAxisYChanging(value);
+                ReportPropertyChanging("LeftThumbAxisY");
+                _LeftThumbAxisY = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbAxisY");
+                OnLeftThumbAxisYChanged();
+            }
+        }
+        private global::System.String _LeftThumbAxisY;
+        partial void OnLeftThumbAxisYChanging(global::System.String value);
+        partial void OnLeftThumbAxisYChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbButton
+        {
+            get
+            {
+                return _LeftThumbButton;
+            }
+            set
+            {
+                OnLeftThumbButtonChanging(value);
+                ReportPropertyChanging("LeftThumbButton");
+                _LeftThumbButton = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbButton");
+                OnLeftThumbButtonChanged();
+            }
+        }
+        private global::System.String _LeftThumbButton;
+        partial void OnLeftThumbButtonChanging(global::System.String value);
+        partial void OnLeftThumbButtonChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbDown
+        {
+            get
+            {
+                return _LeftThumbDown;
+            }
+            set
+            {
+                OnLeftThumbDownChanging(value);
+                ReportPropertyChanging("LeftThumbDown");
+                _LeftThumbDown = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbDown");
+                OnLeftThumbDownChanged();
+            }
+        }
+        private global::System.String _LeftThumbDown;
+        partial void OnLeftThumbDownChanging(global::System.String value);
+        partial void OnLeftThumbDownChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbLeft
+        {
+            get
+            {
+                return _LeftThumbLeft;
+            }
+            set
+            {
+                OnLeftThumbLeftChanging(value);
+                ReportPropertyChanging("LeftThumbLeft");
+                _LeftThumbLeft = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbLeft");
+                OnLeftThumbLeftChanged();
+            }
+        }
+        private global::System.String _LeftThumbLeft;
+        partial void OnLeftThumbLeftChanging(global::System.String value);
+        partial void OnLeftThumbLeftChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbRight
+        {
+            get
+            {
+                return _LeftThumbRight;
+            }
+            set
+            {
+                OnLeftThumbRightChanging(value);
+                ReportPropertyChanging("LeftThumbRight");
+                _LeftThumbRight = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbRight");
+                OnLeftThumbRightChanged();
+            }
+        }
+        private global::System.String _LeftThumbRight;
+        partial void OnLeftThumbRightChanging(global::System.String value);
+        partial void OnLeftThumbRightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftThumbUp
+        {
+            get
+            {
+                return _LeftThumbUp;
+            }
+            set
+            {
+                OnLeftThumbUpChanging(value);
+                ReportPropertyChanging("LeftThumbUp");
+                _LeftThumbUp = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftThumbUp");
+                OnLeftThumbUpChanged();
+            }
+        }
+        private global::System.String _LeftThumbUp;
+        partial void OnLeftThumbUpChanging(global::System.String value);
+        partial void OnLeftThumbUpChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String LeftTrigger
+        {
+            get
+            {
+                return _LeftTrigger;
+            }
+            set
+            {
+                OnLeftTriggerChanging(value);
+                ReportPropertyChanging("LeftTrigger");
+                _LeftTrigger = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("LeftTrigger");
+                OnLeftTriggerChanged();
+            }
+        }
+        private global::System.String _LeftTrigger;
+        partial void OnLeftTriggerChanging(global::System.String value);
+        partial void OnLeftTriggerChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightShoulder
+        {
+            get
+            {
+                return _RightShoulder;
+            }
+            set
+            {
+                OnRightShoulderChanging(value);
+                ReportPropertyChanging("RightShoulder");
+                _RightShoulder = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightShoulder");
+                OnRightShoulderChanged();
+            }
+        }
+        private global::System.String _RightShoulder;
+        partial void OnRightShoulderChanging(global::System.String value);
+        partial void OnRightShoulderChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbAxisX
+        {
+            get
+            {
+                return _RightThumbAxisX;
+            }
+            set
+            {
+                OnRightThumbAxisXChanging(value);
+                ReportPropertyChanging("RightThumbAxisX");
+                _RightThumbAxisX = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbAxisX");
+                OnRightThumbAxisXChanged();
+            }
+        }
+        private global::System.String _RightThumbAxisX;
+        partial void OnRightThumbAxisXChanging(global::System.String value);
+        partial void OnRightThumbAxisXChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbAxisY
+        {
+            get
+            {
+                return _RightThumbAxisY;
+            }
+            set
+            {
+                OnRightThumbAxisYChanging(value);
+                ReportPropertyChanging("RightThumbAxisY");
+                _RightThumbAxisY = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbAxisY");
+                OnRightThumbAxisYChanged();
+            }
+        }
+        private global::System.String _RightThumbAxisY;
+        partial void OnRightThumbAxisYChanging(global::System.String value);
+        partial void OnRightThumbAxisYChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbButton
+        {
+            get
+            {
+                return _RightThumbButton;
+            }
+            set
+            {
+                OnRightThumbButtonChanging(value);
+                ReportPropertyChanging("RightThumbButton");
+                _RightThumbButton = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbButton");
+                OnRightThumbButtonChanged();
+            }
+        }
+        private global::System.String _RightThumbButton;
+        partial void OnRightThumbButtonChanging(global::System.String value);
+        partial void OnRightThumbButtonChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbDown
+        {
+            get
+            {
+                return _RightThumbDown;
+            }
+            set
+            {
+                OnRightThumbDownChanging(value);
+                ReportPropertyChanging("RightThumbDown");
+                _RightThumbDown = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbDown");
+                OnRightThumbDownChanged();
+            }
+        }
+        private global::System.String _RightThumbDown;
+        partial void OnRightThumbDownChanging(global::System.String value);
+        partial void OnRightThumbDownChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbLeft
+        {
+            get
+            {
+                return _RightThumbLeft;
+            }
+            set
+            {
+                OnRightThumbLeftChanging(value);
+                ReportPropertyChanging("RightThumbLeft");
+                _RightThumbLeft = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbLeft");
+                OnRightThumbLeftChanged();
+            }
+        }
+        private global::System.String _RightThumbLeft;
+        partial void OnRightThumbLeftChanging(global::System.String value);
+        partial void OnRightThumbLeftChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbRight
+        {
+            get
+            {
+                return _RightThumbRight;
+            }
+            set
+            {
+                OnRightThumbRightChanging(value);
+                ReportPropertyChanging("RightThumbRight");
+                _RightThumbRight = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbRight");
+                OnRightThumbRightChanged();
+            }
+        }
+        private global::System.String _RightThumbRight;
+        partial void OnRightThumbRightChanging(global::System.String value);
+        partial void OnRightThumbRightChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightThumbUp
+        {
+            get
+            {
+                return _RightThumbUp;
+            }
+            set
+            {
+                OnRightThumbUpChanging(value);
+                ReportPropertyChanging("RightThumbUp");
+                _RightThumbUp = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightThumbUp");
+                OnRightThumbUpChanged();
+            }
+        }
+        private global::System.String _RightThumbUp;
+        partial void OnRightThumbUpChanging(global::System.String value);
+        partial void OnRightThumbUpChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String RightTrigger
+        {
+            get
+            {
+                return _RightTrigger;
+            }
+            set
+            {
+                OnRightTriggerChanging(value);
+                ReportPropertyChanging("RightTrigger");
+                _RightTrigger = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("RightTrigger");
+                OnRightTriggerChanged();
+            }
+        }
+        private global::System.String _RightTrigger;
+        partial void OnRightTriggerChanging(global::System.String value);
+        partial void OnRightTriggerChanged();
+
+        #endregion
+
+    
+    }
     
     /// <summary>
     /// No Metadata Documentation available.

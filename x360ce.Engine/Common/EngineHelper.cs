@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.Serialization;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.Engine
 {
@@ -30,7 +31,7 @@ namespace x360ce.Engine
 				// Get XInput values.
 				var values = Enum.GetValues(typeof(XInputMask)).Cast<XInputMask>().Where(x => x != XInputMask.None);
 				// Get unique file names.
-				var fileNames = values.Select(x => JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(x)).Distinct();
+				var fileNames = values.Select(x => Attributes.GetDescription(x)).Distinct();
 				// Get information about XInput files located on the disk.
 				var infos = fileNames.Select(x => new FileInfo(x)).Where(x => x.Exists).ToArray();
 				Version defaultVer = null;

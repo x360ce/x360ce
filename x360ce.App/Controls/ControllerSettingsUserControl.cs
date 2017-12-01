@@ -11,6 +11,7 @@ using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using System.Text.RegularExpressions;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
@@ -498,7 +499,7 @@ namespace x360ce.App.Controls
 			}
 			else if (e.ColumnIndex == grid.Columns[MapToColumn.Name].Index)
 			{
-				e.Value = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription((MapTo)setting.MapTo);
+				e.Value = Attributes.GetDescription((MapTo)setting.MapTo);
 			}
 			else if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
 			{

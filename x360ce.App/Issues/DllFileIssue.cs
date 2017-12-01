@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Win32;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Issues
 {
@@ -27,7 +28,7 @@ namespace x360ce.App.Issues
 			// If XInput DLL was not found then...
 			if (file == null)
 			{
-				var xFile = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86);
+				var xFile = Attributes.GetDescription(XInputMask.XInput13_x86);
 				Description = string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", xFile);
 				// Offer extract.
 				FixType = 1;
@@ -69,7 +70,7 @@ namespace x360ce.App.Issues
 				var resourceName = EngineHelper.GetXInputResoureceName();
 				var file = EngineHelper.GetDefaultDll();
 				var fileName = file == null
-					? JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(XInputMask.XInput13_x86)
+					? Attributes.GetDescription(XInputMask.XInput13_x86)
 					: file.Name;
 				AppHelper.WriteFile(resourceName, fileName);
 			}

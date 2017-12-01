@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
@@ -64,7 +65,7 @@ namespace x360ce.App.Controls
             }
             else if (e.ColumnIndex == grid.Columns[SettingsMapToColumn.Name].Index)
             {
-                e.Value = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription((MapTo)item.MapTo);
+                e.Value = Attributes.GetDescription((MapTo)item.MapTo);
             }
         }
 

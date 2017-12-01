@@ -10,6 +10,7 @@ using System.Reflection;
 using x360ce.Engine;
 using System.IO;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
@@ -306,7 +307,7 @@ namespace x360ce.App.Controls
 			{
 				if (status.HasFlag(value))
 				{
-					var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+					var description = Attributes.GetDescription(value);
 					errors.Add(description);
 				}
 			}

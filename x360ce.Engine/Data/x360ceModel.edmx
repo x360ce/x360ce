@@ -5,6 +5,43 @@
 		<!-- SSDL content -->
 		<edmx:StorageModels>
 		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityType Name="x360ce_Layouts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ButtonA" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="ButtonB" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="ButtonBack" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="ButtonGuide" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="ButtonStart" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="ButtonX" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="ButtonY" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="DPad" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="DPadDown" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="DPadLeft" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="DPadRight" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="DPadUp" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftShoulder" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbAxisX" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbAxisY" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbButton" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbDown" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbLeft" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbRight" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftThumbUp" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="LeftTrigger" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightShoulder" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbAxisX" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbAxisY" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbButton" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbDown" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbLeft" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbRight" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightThumbUp" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="RightTrigger" Type="nvarchar" MaxLength="32" Nullable="false" />
+        </EntityType>
         <EntityType Name="x360ce_PadSettings">
           <Key>
             <PropertyRef Name="PadSettingChecksum" />
@@ -270,6 +307,7 @@
           <Property Name="WebSite" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityContainer Name="x360ceModelStoreContainer">
+          <EntitySet Name="x360ce_Layouts" EntityType="Self.x360ce_Layouts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" />
@@ -296,6 +334,7 @@
           <EntitySet Name="UserDevices" EntityType="x360ceModel.UserDevice" />
           <EntitySet Name="UserGames" EntityType="x360ceModel.UserGame" />
           <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
+          <EntitySet Name="Layouts" EntityType="x360ceModel.Layout" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -560,6 +599,43 @@
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DateUpdated" Type="DateTime" Precision="3" Nullable="false" />
           <Property Name="InstanceCount" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Layout">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonA" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonB" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonBack" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonGuide" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonStart" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonX" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ButtonY" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="DPad" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="DPadDown" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="DPadLeft" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="DPadRight" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="DPadUp" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftShoulder" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbAxisX" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbAxisY" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbButton" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbDown" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbLeft" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbRight" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftThumbUp" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="LeftTrigger" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightShoulder" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbAxisX" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbAxisY" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbButton" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbDown" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbLeft" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbRight" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightThumbUp" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="RightTrigger" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -843,6 +919,44 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Layouts">
+            <EntityTypeMapping TypeName="x360ceModel.Layout">
+              <MappingFragment StoreEntitySet="x360ce_Layouts">
+                <ScalarProperty Name="RightTrigger" ColumnName="RightTrigger" />
+                <ScalarProperty Name="RightThumbUp" ColumnName="RightThumbUp" />
+                <ScalarProperty Name="RightThumbRight" ColumnName="RightThumbRight" />
+                <ScalarProperty Name="RightThumbLeft" ColumnName="RightThumbLeft" />
+                <ScalarProperty Name="RightThumbDown" ColumnName="RightThumbDown" />
+                <ScalarProperty Name="RightThumbButton" ColumnName="RightThumbButton" />
+                <ScalarProperty Name="RightThumbAxisY" ColumnName="RightThumbAxisY" />
+                <ScalarProperty Name="RightThumbAxisX" ColumnName="RightThumbAxisX" />
+                <ScalarProperty Name="RightShoulder" ColumnName="RightShoulder" />
+                <ScalarProperty Name="LeftTrigger" ColumnName="LeftTrigger" />
+                <ScalarProperty Name="LeftThumbUp" ColumnName="LeftThumbUp" />
+                <ScalarProperty Name="LeftThumbRight" ColumnName="LeftThumbRight" />
+                <ScalarProperty Name="LeftThumbLeft" ColumnName="LeftThumbLeft" />
+                <ScalarProperty Name="LeftThumbDown" ColumnName="LeftThumbDown" />
+                <ScalarProperty Name="LeftThumbButton" ColumnName="LeftThumbButton" />
+                <ScalarProperty Name="LeftThumbAxisY" ColumnName="LeftThumbAxisY" />
+                <ScalarProperty Name="LeftThumbAxisX" ColumnName="LeftThumbAxisX" />
+                <ScalarProperty Name="LeftShoulder" ColumnName="LeftShoulder" />
+                <ScalarProperty Name="DPadUp" ColumnName="DPadUp" />
+                <ScalarProperty Name="DPadRight" ColumnName="DPadRight" />
+                <ScalarProperty Name="DPadLeft" ColumnName="DPadLeft" />
+                <ScalarProperty Name="DPadDown" ColumnName="DPadDown" />
+                <ScalarProperty Name="DPad" ColumnName="DPad" />
+                <ScalarProperty Name="ButtonY" ColumnName="ButtonY" />
+                <ScalarProperty Name="ButtonX" ColumnName="ButtonX" />
+                <ScalarProperty Name="ButtonStart" ColumnName="ButtonStart" />
+                <ScalarProperty Name="ButtonGuide" ColumnName="ButtonGuide" />
+                <ScalarProperty Name="ButtonBack" ColumnName="ButtonBack" />
+                <ScalarProperty Name="ButtonB" ColumnName="ButtonB" />
+                <ScalarProperty Name="ButtonA" ColumnName="ButtonA" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
 				</EntityContainerMapping>
 			</Mapping>
 		</edmx:Mappings>
@@ -865,7 +979,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="62" >
+			<Diagram Name="x360ceModel" ZoomLevel="39" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
@@ -876,6 +990,7 @@
         <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ceModel.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

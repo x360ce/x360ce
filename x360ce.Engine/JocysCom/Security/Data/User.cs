@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace JocysCom.WebSites.Engine.Security.Data
 {
@@ -106,7 +107,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			}
 			foreach (var item in allValues)
 			{
-				var description = ClassLibrary.ClassTools.EnumTools.GetDescription(item);
+				var description = Attributes.GetDescription(item);
 				if (requiredFields.HasFlag(item))
 				{
 					var field = values.FirstOrDefault(x => x.Name == item);

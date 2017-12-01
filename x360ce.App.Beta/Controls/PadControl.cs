@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using JocysCom.ClassLibrary.ComponentModel;
 using x360ce.Engine.Data;
 using System.Reflection;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
@@ -57,6 +58,8 @@ namespace x360ce.App.Controls
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
+				MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
+				MapNameComboBox.DisplayMember = "Name";
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
 			});
@@ -125,8 +128,7 @@ namespace x360ce.App.Controls
 				? x360ce.App.Properties.Resources.checkbox_16x16
 				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
 			// Update emulation type.
-
-
+			ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
 			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapButton.Checked = auto;
@@ -553,8 +555,8 @@ namespace x360ce.App.Controls
 				DrawState(GamepadButtonFlags.X, buttonX, ButtonXLabel, e);
 				DrawState(GamepadButtonFlags.Y, buttonY, ButtonYLabel, e);
 				//DrawState(GamepadButtonFlags.Guide, buttonGuide, ButtonGuideLabel, e);
-				DrawState(GamepadButtonFlags.Start, buttonStart, StartButtonLabel, e);
-				DrawState(GamepadButtonFlags.Back, buttonBack, BackButtonLabel, e);
+				DrawState(GamepadButtonFlags.Start, buttonStart, ButtonStartLabel, e);
+				DrawState(GamepadButtonFlags.Back, buttonBack, ButtonBackLabel, e);
 				DrawState(GamepadButtonFlags.DPadUp, dPadUp, DPadUpLabel, e);
 				DrawState(GamepadButtonFlags.DPadDown, dPadDown, DPadDownLabel, e);
 				DrawState(GamepadButtonFlags.DPadLeft, dPadLeft, DPadLeftLabel, e);
@@ -997,18 +999,18 @@ namespace x360ce.App.Controls
 			// Add D-Pads.
 			if (device.CapPovCount > 0)
 			{
-				mi = new ToolStripMenuItem("DPads");
+				mi = new ToolStripMenuItem("POVs");
 				DiMenuStrip.Items.Add(mi);
 				// Add D-Pad Top, Right, Bottom, Left button.
 				var dPadNames = Enum.GetNames(typeof(DPadEnum));
 				for (int p = 0; p < device.CapPovCount; p++)
 				{
-					var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.DPad);
+					var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
 					mi.DropDownItems.Add(dPadItem);
 					for (int d = 0; d < dPadNames.Length; d++)
 					{
 						var dPadButtonIndex = p * 4 + d + 1;
-						var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.DPadButton, dPadButtonIndex);
+						var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
 						dPadItem.DropDownItems.Add(dPadButtonItem);
 					}
 				}
@@ -1168,7 +1170,7 @@ namespace x360ce.App.Controls
 
 		void ClearPresetButton_Click(object sender, EventArgs e)
 		{
-			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
+			var description = Attributes.GetDescription(MappedTo);
 			var text = string.Format("Do you really want to clear all {0} settings?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -1181,7 +1183,7 @@ namespace x360ce.App.Controls
 
 		void ResetPresetButton_Click(object sender, EventArgs e)
 		{
-			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
+			var description = Attributes.GetDescription(MappedTo);
 			var text = string.Format("Do you really want to reset all {0} settings?", description);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -1196,7 +1198,7 @@ namespace x360ce.App.Controls
 		{
 			var ud = GetCurrentDevice();
 			if (ud == null) return;
-			var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(MappedTo);
+			var description = Attributes.GetDescription(MappedTo);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var buttons = MessageBoxButtons.YesNo;
@@ -1300,7 +1302,7 @@ namespace x360ce.App.Controls
 				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
 				// D-Pad
 				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
-				if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.DPad, o.Instance + 1));
+				if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1));
 			}
 		}
 
@@ -1562,6 +1564,71 @@ namespace x360ce.App.Controls
 		private void TestCheckBox_Click(object sender, EventArgs e)
 		{
 			TestCheckBox.Checked = !TestCheckBox.Checked;
+		}
+
+		public void ShowAdvancedTab(bool show)
+		{
+			ShowTab(show, AdvancedTabPage);
+		}
+
+		void ShowTab(bool show, TabPage page)
+		{
+			var tc = PadTabControl;
+			// If must hide then...
+			if (!show && tc.TabPages.Contains(page))
+			{
+				// Hide and return.
+				tc.TabPages.Remove(page);
+				return;
+			}
+			// If must show then..
+			if (show && !tc.TabPages.Contains(page))
+			{
+				// Create list of tabs to maintain same order when hiding and showing tabs.
+				var tabs = new List<TabPage>() { AdvancedTabPage };
+				// Get index of always displayed tab.
+				var index = tc.TabPages.IndexOf(GeneralTabPage);
+				// Get tabs in front of tab which must be inserted.
+				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
+				// Count visible tabs.
+				var countBefore = tabsBefore.Count(x => tc.TabPages.Contains(x));
+				tc.TabPages.Insert(index + countBefore + 1, page);
+			}
+		}
+
+		private void MapNameComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var item = (Layout)MapNameComboBox.SelectedItem;
+			ButtonALabel.Text = item.ButtonA;
+			ButtonBLabel.Text = item.ButtonB;
+			ButtonBackLabel.Text = item.ButtonBack;
+			ButtonGuideLabel.Text = item.ButtonGuide;
+			ButtonStartLabel.Text = item.ButtonStart;
+			ButtonXLabel.Text = item.ButtonX;
+			ButtonYLabel.Text = item.ButtonY;
+			DPadLabel.Text = item.DPad;
+			DPadDownLabel.Text = item.DPadDown;
+			DPadLeftLabel.Text = item.DPadLeft;
+			DPadRightLabel.Text = item.DPadRight;
+			DPadUpLabel.Text = item.DPadUp;
+			LeftShoulderLabel.Text = item.LeftShoulder;
+			LeftThumbAxisXLabel.Text = item.LeftThumbAxisX;
+			LeftThumbAxisYLabel.Text = item.LeftThumbAxisY;
+			LeftThumbButtonLabel.Text = item.LeftThumbButton;
+			LeftThumbDownLabel.Text = item.LeftThumbDown;
+			LeftThumbLeftLabel.Text = item.LeftThumbLeft;
+			LeftThumbRightLabel.Text = item.LeftThumbRight;
+			LeftThumbUpLabel.Text = item.LeftThumbUp;
+			LeftTriggerLabel.Text = item.LeftTrigger;
+			RightShoulderLabel.Text = item.RightShoulder;
+			RightThumbAxisXLabel.Text = item.RightThumbAxisX;
+			RightThumbAxisYLabel.Text = item.RightThumbAxisY;
+			RightThumbButtonLabel.Text = item.RightThumbButton;
+			RightThumbDownLabel.Text = item.RightThumbDown;
+			RightThumbLeftLabel.Text = item.RightThumbLeft;
+			RightThumbRightLabel.Text = item.RightThumbRight;
+			RightThumbUpLabel.Text = item.RightThumbUp;
+			RightTriggerLabel.Text = item.RightTrigger;
 		}
 	}
 }

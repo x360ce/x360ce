@@ -27,8 +27,8 @@ namespace x360ce.Engine
 			public const string HAxis = "x";
 			public const string Slider = "s";
 			public const string HSlider = "h";
-			public const string DPad = "p";
-			public const string DPadButton = "d";
+			public const string POV = "p";
+			public const string POVButton = "d";
 		}
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";

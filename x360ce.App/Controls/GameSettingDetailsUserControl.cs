@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using x360ce.Engine;
 using System.IO;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
 {
@@ -105,7 +106,7 @@ namespace x360ce.App.Controls
 				var dic = new Dictionary<XInputMask, string>();
 				foreach (var value in xiValues)
 				{
-					dic.Add(value, JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value));
+					dic.Add(value, Attributes.GetDescription(value));
 				}
 				var xiFileNames = dic.Values.Distinct();
 				// Loop through all files.
@@ -320,7 +321,7 @@ namespace x360ce.App.Controls
 		void SetCheckXinput(XInputMask mask)
 		{
 			//if (CurrentGame == null) return;
-			var name = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(mask);
+			var name = Attributes.GetDescription(mask);
 			var path = System.IO.Path.GetDirectoryName(CurrentGame.FullPath);
 			var fullPath = System.IO.Path.Combine(path, name);
 			///var box = (CheckBox)sender;
@@ -339,7 +340,7 @@ namespace x360ce.App.Controls
 			{
 				if (status.HasFlag(value))
 				{
-					var description = JocysCom.ClassLibrary.ClassTools.EnumTools.GetDescription(value);
+					var description = Attributes.GetDescription(value);
 					errors.Add(description);
 				}
 			}

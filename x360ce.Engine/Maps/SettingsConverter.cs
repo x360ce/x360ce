@@ -13,7 +13,7 @@ namespace x360ce.Engine
 		// D-Pads Buttons:
 		//  D-PAD 1  D-PAD2   D-PAD 3
 		// [1,2,3,4][5,6,7,8][9,10,11,12]...
-		static Regex textValueRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|IButton|DPad|IDPad) (?<num>[1-9][0-9]*)[ ]*(?<ext>Up|Left|Right|Down)?$");
+		static Regex textValueRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|IButton|POV|IPOV) (?<num>[1-9][0-9]*)[ ]*(?<ext>Up|Left|Right|Down)?$");
 		// Axis - a, HAxis - x, Slider - s, HSlider - h, Button - none, DPad - p, DPadButton - d;
 		static Regex iniValueRegex = new Regex("^(?<type>[axshpd])?(?<neg>[-]*)?(?<num>[1-9][0-9]*)$");
 
@@ -32,10 +32,10 @@ namespace x360ce.Engine
 					return false;
 				type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);
 				// If type is DPad with extension then...
-				if (type == SettingType.DPad && m.Groups["ext"].Success)
+				if (type == SettingType.POV && m.Groups["ext"].Success)
 				{
 					// This is DPad button.
-					type = SettingType.DPadButton;
+					type = SettingType.DPOVButton;
 					switch (m.Groups["ext"].Value)
 					{
 						case "Up": index = (index - 1) * 4 + 1; break;
@@ -78,11 +78,11 @@ namespace x360ce.Engine
 					case SettingName.SType.HSlider:
 						type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
 						break;
-					case SettingName.SType.DPad:
-						type = n == "-" ? SettingType.IDPad : SettingType.DPad;
+					case SettingName.SType.POV:
+						type = n == "-" ? SettingType.IPOV : SettingType.POV;
 						break;
-					case SettingName.SType.DPadButton:
-						type = n == "-" ? SettingType.IDPadButton : SettingType.DPadButton;
+					case SettingName.SType.POVButton:
+						type = n == "-" ? SettingType.IPOVButton : SettingType.DPOVButton;
 						break;
 					default:
 						type = n == "-" ? SettingType.IButton : SettingType.Button;
@@ -109,10 +109,10 @@ namespace x360ce.Engine
 				case SettingType.ISlider: return string.Format("{0}{1}", SettingName.SType.Slider, -index);
 				case SettingType.HSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, index);
 				case SettingType.IHSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, -index);
-				case SettingType.DPad: return string.Format("{0}{1}", SettingName.SType.DPad, index);
-				case SettingType.IDPad: return string.Format("{0}{1}", SettingName.SType.DPad, -index);
-				case SettingType.DPadButton: return string.Format("{0}{1}", SettingName.SType.DPadButton, index);
-				case SettingType.IDPadButton: return string.Format("{0}{1}", SettingName.SType.DPadButton, -index);
+				case SettingType.POV: return string.Format("{0}{1}", SettingName.SType.POV, index);
+				case SettingType.IPOV: return string.Format("{0}{1}", SettingName.SType.POV, -index);
+				case SettingType.DPOVButton: return string.Format("{0}{1}", SettingName.SType.POVButton, index);
+				case SettingType.IPOVButton: return string.Format("{0}{1}", SettingName.SType.POVButton, -index);
 				default: return "";
 			}
 		}
@@ -146,7 +146,7 @@ namespace x360ce.Engine
 		public static string ToTextValue(SettingType type, int index)
 		{
 			var s = "";
-			if (type == SettingType.DPadButton)
+			if (type == SettingType.DPOVButton)
 			{
 				var dPadNames = Enum.GetNames(typeof(DPadEnum));
 				// Zero-based D-Pad Button Index [0-3];
@@ -154,7 +154,7 @@ namespace x360ce.Engine
 				var dPadButtonName = dPadNames[dPadButtonIndex];
 				// Zero based D-Pad Index.
 				var dPadIndex = ((index - 1) - dPadButtonIndex) / dPadNames.Length;
-				s = string.Format("{0} {1} {2}", SettingType.DPad, dPadIndex + 1, dPadButtonName);
+				s = string.Format("{0} {1} {2}", SettingType.POV, dPadIndex + 1, dPadButtonName);
 			}
 			else if (type != SettingType.None)
 			{
