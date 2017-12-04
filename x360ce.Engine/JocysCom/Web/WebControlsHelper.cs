@@ -70,7 +70,8 @@ namespace JocysCom.ClassLibrary.Web
 					continue;
 				var isCss =
 					"text/css".Equals(link.Attributes["type"], StringComparison.CurrentCultureIgnoreCase) ||
-					"stylesheet".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase);
+					"stylesheet".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase) ||
+					"icon".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase);
 				if (!isCss)
 					continue;
 				link.Href = GetFileWithSuffix(link.Href, page);

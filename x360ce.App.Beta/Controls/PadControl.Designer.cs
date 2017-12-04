@@ -184,7 +184,6 @@
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.ClearPresetButton = new System.Windows.Forms.Button();
-			this.RecordingTimer = new System.Windows.Forms.Timer(this.components);
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
 			this.MappedDevicesDataGridView = new System.Windows.Forms.DataGridView();
@@ -2082,10 +2081,6 @@
 			this.ClearPresetButton.UseVisualStyleBackColor = true;
 			this.ClearPresetButton.Click += new System.EventHandler(this.ClearPresetButton_Click);
 			// 
-			// RecordingTimer
-			// 
-			this.RecordingTimer.Tick += new System.EventHandler(this.RecordingTimer_Tick);
-			// 
 			// GameControllersButton
 			// 
 			this.GameControllersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -2488,7 +2483,6 @@
 		public System.Windows.Forms.TabControl PadTabControl;
         private System.Windows.Forms.Button ClearPresetButton;
         private System.Windows.Forms.GroupBox DeviceGroupBox;
-        private System.Windows.Forms.Timer RecordingTimer;
 		private System.Windows.Forms.TabPage LeftStickTabPage;
 		private System.Windows.Forms.TabPage RightStickTabPage;
 		public AxisMapUserControl RightThumbXUserControl;

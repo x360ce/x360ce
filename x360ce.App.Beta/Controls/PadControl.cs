@@ -67,6 +67,8 @@ namespace x360ce.App.Controls
 			SettingsManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
 		}
 
+		public Recorder _recorder;
+
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
@@ -78,14 +80,17 @@ namespace x360ce.App.Controls
 			this.markB = new Bitmap(EngineHelper.GetResource("Images.MarkButton.png"));
 			this.markA = new Bitmap(EngineHelper.GetResource("Images.MarkAxis.png"));
 			this.markC = new Bitmap(EngineHelper.GetResource("Images.MarkController.png"));
-			this.markR = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
 			float rH = topDisabledImage.HorizontalResolution;
 			float rV = topDisabledImage.VerticalResolution;
 			// Make sure resolution is same everywhere so images won't be resized.
 			this.markB.SetResolution(rH, rV);
 			this.markA.SetResolution(rH, rV);
 			this.markC.SetResolution(rH, rV);
-			this.markR.SetResolution(rH, rV);
+			_recorder = new Recorder(this.components, rH, rV);
+
+
+
+
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
@@ -241,118 +246,6 @@ namespace x360ce.App.Controls
 
 
 
-		#region Recording
-
-		bool Recording;
-		Regex dPadRx = new Regex("(DPad [0-9]+)");
-		bool drawRecordingImage;
-		object recordingLock = new object();
-
-		private void RecordingTimer_Tick(object sender, EventArgs e)
-		{
-			drawRecordingImage = !drawRecordingImage;
-		}
-
-		void drawMarkR(PaintEventArgs e, Point position)
-		{
-			int rW = -this.markR.Width / 2;
-			int rH = -this.markR.Height / 2;
-			e.Graphics.DrawImage(this.markR, position.X + rW, position.Y + rH);
-		}
-
-		void StartRecording()
-		{
-			lock (recordingLock)
-			{
-				// If recording is not in progress then return.
-				if (Recording) return;
-				Recording = true;
-				recordingSnapshot = null;
-				drawRecordingImage = true;
-				RecordingTimer.Start();
-				CurrentCbx.ForeColor = SystemColors.GrayText;
-				MainForm.Current.StatusTimerLabel.Text = (CurrentCbx == DPadComboBox)
-					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
-					 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
-			}
-		}
-
-		/// <summary>Initial Direct Input activity state</summary>
-		CustomDiState recordingSnapshot;
-
-		/// <summary>
-		/// Called when recording is in progress.
-		/// </summary>
-		/// <param name="state">Current direct input activity.</param>
-		/// <returns>True if recording stopped, otherwise false.</returns>
-		public bool StopRecording(CustomDiState state = null)
-		{
-			lock (recordingLock)
-			{
-				// If recording is not in progress then return false.
-				if (!Recording)
-				{
-					recordingSnapshot = null;
-					return false;
-				}
-				// If recording snapshot was not created yet then...
-				else if (recordingSnapshot == null)
-				{
-					// Make snapshot out of the first state during recording.
-					recordingSnapshot = state;
-					return false;
-				}
-				// Get actions by comparing initial snapshot with current state.
-				var actions = recordingSnapshot.CompareTo(state);
-				string action = null;
-				// Must stop recording if null passed.
-				var stop = actions == null;
-				// if at least one action was recorded then...
-				if (!stop && actions.Length > 0)
-				{
-					// If this is DPad ComboBox then...
-					if (CurrentCbx == DPadComboBox)
-					{
-						// Get first action suitable for DPad
-						var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
-						if (dPadAction != null)
-						{
-							action = dPadRx.Match(dPadAction).Groups[0].Value;
-							stop = true;
-						}
-					}
-					else
-					{
-						// Get first recorded action.
-						action = actions[0];
-						stop = true;
-					}
-				}
-				// If recording must stop then...
-				if (stop)
-				{
-					Recording = false;
-					RecordingTimer.Stop();
-					// If stop was initiated before action was recorded then...                    
-					if (string.IsNullOrEmpty(action))
-					{
-						CurrentCbx.Items.Clear();
-					}
-					else
-					{
-						// If suitable action was recorded then...
-						SettingsManager.Current.SetComboBoxValue(CurrentCbx, action);
-						// Save setting and notify if value changed.
-						MainForm.Current.NotifySettingsChange(CurrentCbx);
-					}
-					CurrentCbx.ForeColor = SystemColors.WindowText;
-					CurrentCbx = null;
-				}
-				return stop;
-			}
-		}
-
-		#endregion
 
 		#region Control ComboBox'es
 
@@ -411,7 +304,6 @@ namespace x360ce.App.Controls
 		Bitmap markB;
 		Bitmap markA;
 		Bitmap markC;
-		Bitmap markR;
 
 		Bitmap _topImage;
 		Bitmap topImage
@@ -460,11 +352,11 @@ namespace x360ce.App.Controls
 			int mW = -this.markB.Width / 2;
 			int mH = -this.markB.Height / 2;
 			// Button coordinates.
-			Point shoulderLeft = new Point(43, 66);
-			Point shoulderRight = new Point(this.FrontPictureBox.Width - shoulderLeft.X, shoulderLeft.Y);
-			Point triggerLeft = new Point(63, 27);
-			Point triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
-			if (!Recording)
+			var shoulderLeft = new Point(43, 66);
+			var shoulderRight = new Point(this.FrontPictureBox.Width - shoulderLeft.X, shoulderLeft.Y);
+			var triggerLeft = new Point(63, 27);
+			var triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
+			if (!_recorder.Recording)
 			{
 				var tl = newState.Gamepad.LeftTrigger;
 				var tr = newState.Gamepad.RightTrigger;
@@ -493,13 +385,13 @@ namespace x360ce.App.Controls
 				if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
 			}
 			// If recording is in progress and recording image must be drawn then...
-			else if (drawRecordingImage)
+			else if (_recorder.drawRecordingImage)
 			{
 				// Draw recording mark on controller.
-				if (CurrentCbx == LeftTriggerComboBox) drawMarkR(e, triggerLeft);
-				if (CurrentCbx == LeftShoulderComboBox) drawMarkR(e, shoulderLeft);
-				if (CurrentCbx == RightTriggerComboBox) drawMarkR(e, triggerRight);
-				if (CurrentCbx == RightShoulderComboBox) drawMarkR(e, shoulderRight);
+				if (CurrentCbx == LeftTriggerComboBox) _recorder.drawMarkR(e, triggerLeft);
+				if (CurrentCbx == LeftShoulderComboBox) _recorder.drawMarkR(e, shoulderLeft);
+				if (CurrentCbx == RightTriggerComboBox) _recorder.drawMarkR(e, triggerRight);
+				if (CurrentCbx == RightShoulderComboBox) _recorder.drawMarkR(e, shoulderRight);
 			}
 		}
 
@@ -539,7 +431,7 @@ namespace x360ce.App.Controls
 			mW = -this.markB.Width / 2;
 			mH = -this.markB.Height / 2;
 
-			if (!Recording)
+			if (!_recorder.Recording)
 			{
 				setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
 				if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
@@ -568,24 +460,28 @@ namespace x360ce.App.Controls
 				e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (_leftX * padSize)), (float)((thumbLeft.Y + mH) + (-_leftY * padSize)));
 			}
 			// If recording is in progress and recording image must be drawn then...
-			else if (drawRecordingImage)
+			else if (_recorder.drawRecordingImage)
 			{
-				if (CurrentCbx == ButtonBackComboBox) drawMarkR(e, buttonBack);
-				if (CurrentCbx == ButtonStartComboBox) drawMarkR(e, buttonStart);
-				if (CurrentCbx == ButtonYComboBox) drawMarkR(e, buttonY);
-				if (CurrentCbx == ButtonXComboBox) drawMarkR(e, buttonX);
-				if (CurrentCbx == ButtonBComboBox) drawMarkR(e, buttonB);
-				if (CurrentCbx == ButtonAComboBox) drawMarkR(e, buttonA);
-				if (CurrentCbx == DPadUpComboBox) drawMarkR(e, dPadUp);
-				if (CurrentCbx == DPadRightComboBox) drawMarkR(e, dPadRight);
-				if (CurrentCbx == DPadDownComboBox) drawMarkR(e, dPadDown);
-				if (CurrentCbx == DPadLeftComboBox) drawMarkR(e, dPadLeft);
-				if (CurrentCbx == LeftThumbButtonComboBox) drawMarkR(e, thumbLeft);
-				if (CurrentCbx == RightThumbButtonComboBox) drawMarkR(e, thumbRight);
-				if (CurrentCbx == LeftThumbAxisXComboBox) drawMarkR(e, new Point(thumbLeft.X + 10, thumbLeft.Y));
-				if (CurrentCbx == LeftThumbAxisYComboBox) drawMarkR(e, new Point(thumbLeft.X, thumbLeft.Y - 10));
-				if (CurrentCbx == RightThumbAxisXComboBox) drawMarkR(e, new Point(thumbRight.X + 10, thumbRight.Y));
-				if (CurrentCbx == RightThumbAxisYComboBox) drawMarkR(e, new Point(thumbRight.X, thumbRight.Y - 10));
+				Point? p = null;
+				if (CurrentCbx == ButtonBackComboBox) p = buttonBack;
+				if (CurrentCbx == ButtonStartComboBox) p = buttonStart;
+				if (CurrentCbx == ButtonYComboBox) p = buttonY;
+				if (CurrentCbx == ButtonXComboBox) p = buttonX;
+				if (CurrentCbx == ButtonBComboBox) p = buttonB;
+				if (CurrentCbx == ButtonAComboBox) p = buttonA;
+				if (CurrentCbx == DPadUpComboBox) p = dPadUp;
+				if (CurrentCbx == DPadRightComboBox) p = dPadRight;
+				if (CurrentCbx == DPadDownComboBox) p = dPadDown;
+				if (CurrentCbx == DPadLeftComboBox) p = dPadLeft;
+				if (CurrentCbx == LeftThumbButtonComboBox) p = thumbLeft;
+				if (CurrentCbx == RightThumbButtonComboBox) p = thumbRight;
+				if (CurrentCbx == LeftThumbAxisXComboBox) p = new Point(thumbLeft.X + 10, thumbLeft.Y);
+				if (CurrentCbx == LeftThumbAxisYComboBox) p = new Point(thumbLeft.X, thumbLeft.Y - 10);
+				if (CurrentCbx == RightThumbAxisXComboBox) p = new Point(thumbRight.X + 10, thumbRight.Y);
+				if (CurrentCbx == RightThumbAxisYComboBox) p = new Point(thumbRight.X, thumbRight.Y - 10);
+				if (p.HasValue)
+					_recorder.drawMarkR(e, p.Value);
+
 			}
 		}
 
@@ -841,7 +737,7 @@ namespace x360ce.App.Controls
 				DirectInputPanel.UpdateFrom(ud);
 				if (enable)
 				{
-					StopRecording(ud.DiState);
+					_recorder.StopRecording(ud.DiState);
 				}
 			}
 		}
@@ -1068,7 +964,8 @@ namespace x360ce.App.Controls
 			{
 				if (item.Text == cRecord)
 				{
-					StartRecording();
+					var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
+					_recorder.StartRecording(map);
 				}
 				else if (item.Text == cEmpty)
 				{
@@ -1336,7 +1233,6 @@ namespace x360ce.App.Controls
 				markA.Dispose();
 				markB.Dispose();
 				markC.Dispose();
-				markR.Dispose();
 				components.Dispose();
 			}
 			base.Dispose(disposing);

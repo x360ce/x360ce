@@ -432,7 +432,7 @@ namespace x360ce.App
 				// If Escape key was pressed while recording then...
 				if (e.KeyCode == Keys.Escape)
 				{
-					var recordingWasStopped = PadControls[i].StopRecording();
+					var recordingWasStopped = PadControls[i]._recorder.StopRecording();
 					if (recordingWasStopped)
 					{
 						e.Handled = true;

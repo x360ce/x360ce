@@ -10,16 +10,78 @@ namespace x360ce.Engine
 	/// </summary>
 	public class CustomDiState
 	{
-		public int[] Axis = new int[0];
-		public int[] Sliders = new int[0];
-		public int[] Povs = new int[0];
-		public bool[] Buttons = new bool[0];
+		public int[] Axis = new int[24];
+		public int[] Sliders = new int[8];
+		public int[] Povs = new int[4];
+		public bool[] Buttons = new bool[128];
 
-		// Return bitmasked integer about present axis.
-		// bit 1 = 1 - Axis 1 is present
-		// bit 2 = 0 - Axis 2 is missing
-		// bit 3 = 1 - Axis 3 is present
-		// ...
+		#region Get/Set Axis Array and Existence Mask
+
+		public static int[] GetAxisFromState(JoystickState state)
+		{
+			return new int[] {
+				state.X,
+				state.Y,
+				state.Z,
+				state.RotationX,
+				state.RotationY,
+				state.RotationZ,
+				state.AccelerationX,
+				state.AccelerationY,
+				state.AccelerationZ,
+				state.AngularAccelerationX,
+				state.AngularAccelerationY,
+				state.AngularAccelerationZ,
+				state.ForceX,
+				state.ForceY,
+				state.ForceZ,
+				state.TorqueX,
+				state.TorqueY,
+				state.TorqueZ,
+				state.VelocityX,
+				state.VelocityY,
+				state.VelocityZ,
+				state.AngularVelocityX,
+				state.AngularVelocityY,
+				state.AngularVelocityZ,
+			};
+		}
+
+		public static void SetStateFromAxis(JoystickState state, int[] axis)
+		{
+			state.X = axis[0];
+			state.Y = axis[1];
+			state.Z = axis[2];
+			state.RotationX = axis[3];
+			state.RotationY = axis[4];
+			state.RotationZ = axis[5];
+			state.AccelerationX = axis[6];
+			state.AccelerationY = axis[7];
+			state.AccelerationZ = axis[8];
+			state.AngularAccelerationX = axis[9];
+			state.AngularAccelerationY = axis[10];
+			state.AngularAccelerationZ = axis[11];
+			state.ForceX = axis[12];
+			state.ForceY = axis[13];
+			state.ForceZ = axis[14];
+			state.TorqueX = axis[15];
+			state.TorqueY = axis[16];
+			state.TorqueZ = axis[17];
+			state.VelocityX = axis[18];
+			state.VelocityY = axis[19];
+			state.VelocityZ = axis[20];
+			state.AngularVelocityX = axis[21];
+			state.AngularVelocityY = axis[22];
+			state.AngularVelocityZ = axis[23];
+		}
+
+		/// <summary>
+		/// Return bitmasked integer about present axis.
+		/// bit 1 = 1 - Axis 1 is present
+		/// bit 2 = 0 - Axis 2 is missing
+		/// bit 3 = 1 - Axis 3 is present
+		/// ...
+		/// </summary>
 		public static int GetAxisMask(Joystick device)
 		{
 			int mask = 0;
@@ -80,6 +142,32 @@ namespace x360ce.Engine
 			}
 			return mask;
 		}
+		
+		#endregion
+
+		#region Get/Set Sliders Array and Existence Mask
+
+		public static int[] GetSlidersFromState(JoystickState state)
+		{
+			List<int> sl = new List<int>();
+			sl.AddRange(state.Sliders);
+			sl.AddRange(state.AccelerationSliders);
+			sl.AddRange(state.ForceSliders);
+			sl.AddRange(state.VelocitySliders);
+			return sl.ToArray();
+		}
+
+		public static void SetStateFromSliders(JoystickState state, int[] sliders)
+		{
+			state.Sliders[0] = sliders[0];
+			state.Sliders[1] = sliders[1];
+			state.AccelerationSliders[0] = sliders[2];
+			state.AccelerationSliders[1] = sliders[3];
+			state.ForceSliders[0] = sliders[4];
+			state.ForceSliders[1] = sliders[5];
+			state.VelocitySliders[0] = sliders[6];
+			state.VelocitySliders[1] = sliders[7];
+		}
 
 		public static int GetSlidersMask(Joystick device)
 		{
@@ -109,85 +197,7 @@ namespace x360ce.Engine
 			return mask;
 		}
 
-		public static int[] GetAxisFromState(JoystickState state)
-		{
-			return new int[] {
-				state.X,
-				state.Y,
-				state.Z,
-				state.RotationX,
-				state.RotationY,
-				state.RotationZ,
-				state.AccelerationX,
-				state.AccelerationY,
-				state.AccelerationZ,
-				state.AngularAccelerationX,
-				state.AngularAccelerationY,
-				state.AngularAccelerationZ,
-				state.ForceX,
-				state.ForceY,
-				state.ForceZ,
-				state.TorqueX,
-				state.TorqueY,
-				state.TorqueZ,
-				state.VelocityX,
-				state.VelocityY,
-				state.VelocityZ,
-				state.AngularVelocityX,
-				state.AngularVelocityY,
-				state.AngularVelocityZ,
-			};
-		}
-
-		public static void SetStateFromAxis(JoystickState state, int[] axis)
-		{
-			state.X = axis[0];
-			state.Y = axis[1];
-			state.Z = axis[2];
-			state.RotationX = axis[3];
-			state.RotationY = axis[4];
-			state.RotationZ = axis[5];
-			state.AccelerationX = axis[6];
-			state.AccelerationY = axis[7];
-			state.AccelerationZ = axis[8];
-			state.AngularAccelerationX = axis[9];
-			state.AngularAccelerationY = axis[10];
-			state.AngularAccelerationZ = axis[11];
-			state.ForceX = axis[12];
-			state.ForceY = axis[13];
-			state.ForceZ = axis[14];
-			state.TorqueX = axis[15];
-			state.TorqueY = axis[16];
-			state.TorqueZ = axis[17];
-			state.VelocityX = axis[18];
-			state.VelocityY = axis[19];
-			state.VelocityZ = axis[20];
-			state.AngularVelocityX = axis[21];
-			state.AngularVelocityY = axis[22];
-			state.AngularVelocityZ = axis[23];
-		}
-
-		public static int[] GetSlidersFromState(JoystickState state)
-		{
-			List<int> sl = new List<int>();
-			sl.AddRange(state.Sliders);
-			sl.AddRange(state.AccelerationSliders);
-			sl.AddRange(state.ForceSliders);
-			sl.AddRange(state.VelocitySliders);
-			return sl.ToArray();
-		}
-
-		public static void SetStateFromSliders(JoystickState state, int[] sliders)
-		{
-			state.Sliders[0] = sliders[0];
-			state.Sliders[1] = sliders[1];
-			state.AccelerationSliders[0] = sliders[2];
-			state.AccelerationSliders[1] = sliders[3];
-			state.ForceSliders[0] = sliders[4];
-			state.ForceSliders[1] = sliders[5];
-			state.VelocitySliders[0] = sliders[6];
-			state.VelocitySliders[1] = sliders[7];
-		}
+		#endregion
 
 		public CustomDiState(JoystickState state)
 		{
@@ -200,94 +210,6 @@ namespace x360ce.Engine
 			// Fill 128 buttons.
 			Buttons = state.Buttons.ToArray();
 		}
-
-		/// <summary>
-		/// Compare to another state.
-		/// </summary>
-		/// <param name="state"></param>
-		/// <returns></returns>
-		public string[] CompareTo(CustomDiState state)
-		{
-			var list = new List<string>();
-			list.AddRange(CompareAxisAndSliders(Axis, state.Axis, "Axis"));
-			list.AddRange(CompareAxisAndSliders(Sliders, state.Sliders, "Slider"));
-			// Compare Buttons
-			if (Buttons.Length == state.Buttons.Length)
-			{
-				for (int i = 0; i < Buttons.Length; i++)
-				{
-					if (Buttons[i] != state.Buttons[i])
-					{
-						list.Add(string.Format("Button {0}", i + 1));
-					}
-				}
-			};
-			// Compare POVs.
-			if (Povs.Length == state.Povs.Length)
-			{
-				for (int i = 0; i < Povs.Length; i++)
-				{
-					if (Povs[i] != state.Povs[i])
-					{
-						//list.Add(string.Format("DPad {0}", i + 1));
-						var v = state.Povs[0];
-						if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
-						if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
-						if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
-						if ((DPadEnum)v == DPadEnum.Left) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
-					}
-				}
-			};
-			return list.ToArray();
-		}
-
-		string[] CompareAxisAndSliders(int[] oldValues, int[] newValues, string name)
-		{
-			var list = new List<string>();
-			if (oldValues.Length != newValues.Length) return list.ToArray();
-			for (int i = 0; i < oldValues.Length; i++)
-			{
-				// Get difference between states (this object represents old value).
-				var oldValue = oldValues[i];
-				var diff = newValues[i] - oldValue;
-				var prefix = "";
-				// If moved more than 10%.
-				if (Math.Abs(diff) > (ushort.MaxValue / 10))
-				{
-					// If value is negative then add "I" prefix.
-					if (diff < 0) prefix += "I";
-					// if starting point is located in the middle then...
-					if ((oldValue > (ushort.MaxValue / 4)) && oldValue < (ushort.MaxValue * 3 / 4))
-					{
-						// Add half prefix.
-						prefix += "H";
-					}
-					list.Add(string.Format("{0}{1} {2}", prefix, name, i + 1));
-				}
-			}
-			return list.ToArray();
-		}
-
-		//public string DetectDirection(int v)
-		//{
-		//	// Threshold mark at which action on axis/slider is detected.
-		//	// Value gets in-between of specified range then action is recorded.
-		//	// [--[p1]----[p2]--[n1]----[n2]--|--[p3]----[p4]--[n3]----[n4]--]
-		//	int p1 = 2000;
-		//	int space = (ushort.MaxValue - (p1 * 6)) / 4;
-		//	int p2 = p1 + space;
-		//	int n1 = p2 + p1;
-		//	int n2 = n1 + space;
-		//	int p3 = n2 + (p1 * 2);
-		//	int p4 = p3 + space;
-		//	int n3 = p4 + p1;
-		//	int n4 = n3 + space;
-		//	if (v > p1 && v < p2) return "";
-		//	if (v > n1 && v < n2) return (isWheel) ? "IH" : "I";
-		//	if (v > p3 && v < p4) return (isWheel) ? "H" : "";
-		//	if (v > n3 && v < n4) return "I";
-		//	return null;
-		//}
 
 	}
 }
