@@ -181,6 +181,15 @@ namespace x360ce.App
 
 		string[] CompareAxisAndSliders(int[] oldValues, int[] newValues, string name)
 		{
+			// Threshold mark at which action on axis/slider is detected.
+			// [------|------------|------]
+			//   full      half      full
+			// Full/Half depends on where original value was started:
+			//     [    0 16383] - Full (16384 steps)
+			//     [16384 32767] - Half (16384 steps)
+			//     [32768 49151] - Half (16384 steps)
+			//     [49152 65535] - Full (16384 steps)
+			// Inverted is added if new value is smaller (change is negative).
 			var list = new List<string>();
 			if (oldValues.Length != newValues.Length) return list.ToArray();
 			for (int i = 0; i < oldValues.Length; i++)
@@ -216,28 +225,6 @@ namespace x360ce.App
 			}
 			return list.ToArray();
 		}
-
-		//public string DetectDirection(int v)
-		//{
-		//	// Threshold mark at which action on axis/slider is detected.
-		//	// Value gets in-between of specified range then action is recorded.
-		//	// [--[p1]----[p2]--[n1]----[n2]--|--[p3]----[p4]--[n3]----[n4]--]
-		//	int p1 = 2000;
-		//	int space = (ushort.MaxValue - (p1 * 6)) / 4;
-		//	int p2 = p1 + space;
-		//	int n1 = p2 + p1;
-		//	int n2 = n1 + space;
-		//	int p3 = n2 + (p1 * 2);
-		//	int p4 = p3 + space;
-		//	int n3 = p4 + p1;
-		//	int n4 = n3 + space;
-		//	if (v > p1 && v < p2) return "";
-		//	if (v > n1 && v < n2) return (isWheel) ? "IH" : "I";
-		//	if (v > p3 && v < p4) return (isWheel) ? "H" : "";
-		//	if (v > n3 && v < n4) return "I";
-		//	return null;
-		//}
-
 
 		#region IDisposable
 
