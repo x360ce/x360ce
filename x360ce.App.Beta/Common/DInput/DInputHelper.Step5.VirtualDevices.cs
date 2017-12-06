@@ -53,37 +53,69 @@ namespace x360ce.App.DInput
 
 		bool?[] FeedingState = new bool?[4];
 
-		Gamepad?[] GamepadStates = new Gamepad?[4];
+		Gamepad[] oldGamepadStates = new Gamepad[4];
 
+		bool Changed(uint i, GamepadButtonFlags flag)
+		{
+			return oldGamepadStates[i - 1].Buttons.HasFlag(flag) != CombinedXInputStates[i - 1].Gamepad.Buttons.HasFlag(flag);
+		}
 
 		public void FeedDevice(uint i)
 		{
-			var gp = CombinedXInputStates[i - 1].Gamepad;
-			vXboxInterface.SetBtnA(i, gp.Buttons.HasFlag(GamepadButtonFlags.A));
-			vXboxInterface.SetBtnB(i, gp.Buttons.HasFlag(GamepadButtonFlags.B));
-			vXboxInterface.SetBtnX(i, gp.Buttons.HasFlag(GamepadButtonFlags.X));
-			vXboxInterface.SetBtnY(i, gp.Buttons.HasFlag(GamepadButtonFlags.Y));
-			vXboxInterface.SetBtnStart(i, gp.Buttons.HasFlag(GamepadButtonFlags.Start));
-			vXboxInterface.SetBtnBack(i, gp.Buttons.HasFlag(GamepadButtonFlags.Back));
-			vXboxInterface.SetBtnLT(i, gp.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
-			vXboxInterface.SetBtnRT(i, gp.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
-			vXboxInterface.SetBtnLB(i, gp.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
-			vXboxInterface.SetBtnRB(i, gp.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
-			vXboxInterface.SetTriggerL(i, gp.LeftTrigger);
-			vXboxInterface.SetTriggerR(i, gp.RightTrigger);
-			vXboxInterface.SetAxisX(i, gp.LeftThumbX);
-			vXboxInterface.SetAxisY(i, gp.LeftThumbY);
-			vXboxInterface.SetAxisRx(i, gp.RightThumbX);
-			vXboxInterface.SetAxisRy(i, gp.RightThumbY);
-			vXboxInterface.SetDpadOff(i);
-			if (gp.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
-				vXboxInterface.SetDpadUp(i);
-			if (gp.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-				vXboxInterface.SetDpadRight(i);
-			if (gp.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-				vXboxInterface.SetDpadDown(i);
-			if (gp.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-				vXboxInterface.SetDpadLeft(i);
+			// Get old and new game pad values.
+			var n = CombinedXInputStates[i - 1].Gamepad;
+			var o = oldGamepadStates[i - 1];
+			// Update only when change.
+			if (Changed(i, GamepadButtonFlags.A))
+				vXboxInterface.SetBtnA(i, n.Buttons.HasFlag(GamepadButtonFlags.A));
+			if (Changed(i, GamepadButtonFlags.B))
+				vXboxInterface.SetBtnB(i, n.Buttons.HasFlag(GamepadButtonFlags.B));
+			if (Changed(i, GamepadButtonFlags.X))
+				vXboxInterface.SetBtnX(i, n.Buttons.HasFlag(GamepadButtonFlags.X));
+			if (Changed(i, GamepadButtonFlags.Y))
+				vXboxInterface.SetBtnY(i, n.Buttons.HasFlag(GamepadButtonFlags.Y));
+			if (Changed(i, GamepadButtonFlags.Start))
+				vXboxInterface.SetBtnStart(i, n.Buttons.HasFlag(GamepadButtonFlags.Start));
+			if (Changed(i, GamepadButtonFlags.Back))
+				vXboxInterface.SetBtnBack(i, n.Buttons.HasFlag(GamepadButtonFlags.Back));
+			if (Changed(i, GamepadButtonFlags.LeftThumb))
+				vXboxInterface.SetBtnLT(i, n.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
+			if (Changed(i, GamepadButtonFlags.RightThumb))
+				vXboxInterface.SetBtnRT(i, n.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
+			if (Changed(i, GamepadButtonFlags.LeftShoulder))
+				vXboxInterface.SetBtnLB(i, n.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
+			if (Changed(i, GamepadButtonFlags.RightShoulder))
+				vXboxInterface.SetBtnRB(i, n.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
+			if (n.LeftTrigger != o.LeftTrigger)
+				vXboxInterface.SetTriggerL(i, n.LeftTrigger);
+			if (n.RightTrigger != o.RightTrigger)
+				vXboxInterface.SetTriggerR(i, n.RightTrigger);
+			if (n.LeftThumbX != o.LeftThumbX)
+				vXboxInterface.SetAxisX(i, n.LeftThumbX);
+			if (n.LeftThumbY != o.LeftThumbY)
+				vXboxInterface.SetAxisY(i, n.LeftThumbY);
+			if (n.RightThumbX != o.RightThumbX)
+				vXboxInterface.SetAxisRx(i, n.RightThumbX);
+			if (n.RightThumbY != o.RightThumbY)
+				vXboxInterface.SetAxisRy(i, n.RightThumbY);
+			var changed = Changed(i, GamepadButtonFlags.DPadUp) ||
+				Changed(i, GamepadButtonFlags.DPadRight) ||
+				Changed(i, GamepadButtonFlags.DPadDown) ||
+				Changed(i, GamepadButtonFlags.DPadLeft);
+			if (changed)
+			{
+				vXboxInterface.SetDpadOff(i);
+				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
+					vXboxInterface.SetDpadUp(i);
+				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
+					vXboxInterface.SetDpadRight(i);
+				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
+					vXboxInterface.SetDpadDown(i);
+				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
+					vXboxInterface.SetDpadLeft(i);
+			}
+			// Update old state.
+			oldGamepadStates[i - 1] = n;
 		}
 
 		public VirtualError CheckInstallVirtualDriver()

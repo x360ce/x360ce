@@ -147,13 +147,27 @@ namespace x360ce.App
 
 		#endregion
 
+		// Use cache so same image won't processed multiple times.
+		public static Dictionary<Bitmap, Bitmap> DisabledImageCache = new Dictionary<Bitmap, Bitmap>();
+		static object DisabledImageLock = new object();
+
+		/// <summary>
+		/// Generates disabled Image. Images are cached so do not use method for random images.
+		/// </summary>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
-			var effects = new JocysCom.ClassLibrary.Drawing.Effects();
-			var newImage = (Bitmap)image.Clone();
-			effects.GrayScale(newImage);
-			effects.Transparent(newImage, 50);
-			return newImage;
+			lock (DisabledImageLock)
+			{
+				if (!DisabledImageCache.ContainsKey(image))
+				{
+					var effects = new JocysCom.ClassLibrary.Drawing.Effects();
+					var newImage = (Bitmap)image.Clone();
+					effects.GrayScale(newImage);
+					effects.Transparent(newImage, 50);
+					DisabledImageCache.Add(image, newImage);
+				}
+				return DisabledImageCache[image];
+			}
 		}
 
 		/// <summary>

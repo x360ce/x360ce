@@ -39,8 +39,10 @@
 		//private static extern unsafe int XInputGetDSoundAudioDeviceGuids_(int dwUserIndex, out Guid pDSoundRenderGuid, out Guid pDSoundCaptureGuid);
 		//[SuppressUnmanagedCodeSecurity, DllImport("xinput1_4.dll", EntryPoint = "XInputGetKeystroke", CallingConvention = CallingConvention.StdCall)]
 		//private static extern unsafe int XInputGetKeystroke_(int dwUserIndex, int dwReserved, out Keystroke pKeystroke);
-		//[SuppressUnmanagedCodeSecurity, DllImport("xinput1_4.dll", EntryPoint = "XInputGetState", CallingConvention = CallingConvention.StdCall)]
-		//private static extern unsafe int XInputGetState_(int dwUserIndex, out State pState);
+
+		[SuppressUnmanagedCodeSecurity, DllImport("xinput1_3.dll", EntryPoint = "XInputGetState", CallingConvention = CallingConvention.StdCall)]
+		private static extern unsafe int XInputGetState_(int dwUserIndex, out State pState);
+
 		//[SuppressUnmanagedCodeSecurity, DllImport("xinput1_4.dll", EntryPoint = "XInputSetState", CallingConvention = CallingConvention.StdCall)]
 		//private static extern unsafe int XInputSetState_(int dwUserIndex, ref Vibration pVibration);
 
@@ -130,9 +132,13 @@
 			catch (Exception) { throw; }
 		}
 
+		static bool UseMicrosoft = true;
+
 		[HandleProcessCorruptedStateExceptions]
 		public static unsafe ErrorCode XInputGetState(int dwUserIndex, out State pState)
 		{
+			if (UseMicrosoft)
+				return (ErrorCode)XInputGetState_(dwUserIndex, out pState);
 			var functionName = "XInputGetState";
 			//if (IsGetStateExSupported) functionName = "XInputGetStateEx";
 			pState = new State();
