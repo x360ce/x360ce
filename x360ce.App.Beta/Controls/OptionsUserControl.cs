@@ -45,11 +45,6 @@ namespace x360ce.App.Controls
             else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
         }
 
-        void XInputEnableCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            MainForm.Current.XInputEnable(XInputEnableCheckBox.Checked);
-        }
-
         /// <summary>
         /// </summary>
         public void UpdateSettingsMap()

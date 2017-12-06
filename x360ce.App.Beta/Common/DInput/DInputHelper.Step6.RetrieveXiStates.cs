@@ -15,13 +15,13 @@ namespace x360ce.App.DInput
 
 		void RetrieveXiStates()
 		{
-			lock (XInput.XInputLock)
+			lock (Controller.XInputLock)
 			{
 				// Before states can be retrieved xinput configuration must be checked.
 				for (uint i = 0; i < 4; i++)
 				{
 					var gamePad = XiControllers[i];
-					if (XInput.IsLoaded && gamePad.IsConnected)
+					if (Controller.IsLoaded && gamePad.IsConnected)
 					{
 						LiveXInputStates[i] = gamePad.GetState();
 						XiControllerConnected[i] = true;

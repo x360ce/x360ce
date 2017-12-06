@@ -440,14 +440,14 @@ namespace x360ce.App
 			// Disable force feedback effect before closing app.
 			try
 			{
-				lock (XInput.XInputLock)
+				lock (Controller.XInputLock)
 				{
 					for (int i = 0; i < 4; i++)
 					{
 						//if (ControlPads[i].LeftMotorTestTrackBar.Value > 0 || ControlPads[i].RightMotorTestTrackBar.Value > 0)
 						//{
 						var gamePad = GamePads[i];
-						if (XInput.IsLoaded && gamePad.IsConnected)
+						if (Controller.IsLoaded && gamePad.IsConnected)
 						{
 							// Disable force feedback.
 							ControlPads[i].TestEnabled = false;
@@ -827,10 +827,10 @@ namespace x360ce.App
 					var xiOn = false;
 					State currentPad = emptyState;
 					var currentPadControl = ControlPads[i];
-					lock (XInput.XInputLock)
+					lock (Controller.XInputLock)
 					{
 						var gamePad = GamePads[i];
-						if (XInput.IsLoaded && gamePad.IsConnected)
+						if (Controller.IsLoaded && gamePad.IsConnected)
 						{
 							currentPad = gamePad.GetState();
 							xiOn = true;
@@ -865,17 +865,17 @@ namespace x360ce.App
 				var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
 				StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
 				// If fast reload of settings is supported then...
-				lock (XInput.XInputLock)
+				lock (Controller.XInputLock)
 				{
-					if (XInput.IsResetSupported)
+					if (Controller.IsResetSupported)
 					{
-						XInput.Reset();
+						Controller.Reset();
 					}
 					// Slow: Reload whole x360ce.dll.
 					Exception error;
 					//forceRecountDevices = true;
-					XInput.ReLoadLibrary(dllInfo.FullName, out error);
-					if (!XInput.IsLoaded)
+					Controller.ReLoadLibrary(dllInfo.FullName, out error);
+					if (!Controller.IsLoaded)
 					{
 						var caption = string.Format("Failed to load '{0}'", dllInfo.FullName);
 						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
@@ -934,14 +934,6 @@ namespace x360ce.App
 				}
 			}
 			UpdateHelpHeader();
-		}
-
-		public void XInputEnable(bool enable)
-		{
-			lock (XInput.XInputLock)
-			{
-				XInput.XInputEnable(enable);
-			}
 		}
 
 		#region Help Header

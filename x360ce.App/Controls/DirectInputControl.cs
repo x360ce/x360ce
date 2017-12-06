@@ -69,10 +69,10 @@ namespace x360ce.App.Controls
 				DiEffectsTable.Rows.Clear();
 				return;
 			}
-			lock (XInput.XInputLock)
+			lock (Controller.XInputLock)
 			{
-				var isLoaded = XInput.IsLoaded;
-				if (isLoaded) XInput.FreeLibrary();
+				var isLoaded = Controller.IsLoaded;
+				if (isLoaded) Controller.FreeLibrary();
 				device.Unacquire();
 				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
 				effects = new List<EffectInfo>();
@@ -101,7 +101,7 @@ namespace x360ce.App.Controls
 				if (isLoaded)
 				{
 					Exception error;
-					XInput.ReLoadLibrary(XInput.LibraryName, out error);
+					Controller.ReLoadLibrary(Controller.LibraryName, out error);
 				}
 			}
 			DiCapFfStateTextBox.Text = forceFeedbackState;

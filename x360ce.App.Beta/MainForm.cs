@@ -523,14 +523,14 @@ namespace x360ce.App
 			// Disable force feedback effect before closing app.
 			try
 			{
-				lock (XInput.XInputLock)
+				lock (Controller.XInputLock)
 				{
 					for (int i = 0; i < 4; i++)
 					{
 						if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 						{
 							var gamePad = DHelper.XiControllers[i];
-							if (XInput.IsLoaded && gamePad.IsConnected)
+							if (Controller.IsLoaded && gamePad.IsConnected)
 							{
 								// Stop vibration.
 								gamePad.SetVibration(new Vibration());
@@ -969,7 +969,7 @@ namespace x360ce.App
 
 		public void ReloadLibrary()
 		{
-			lock (XInput.XInputLock)
+			lock (Controller.XInputLock)
 			{
 				var game = CurrentGame;
 				if (game == null)
@@ -985,14 +985,14 @@ namespace x360ce.App
 					var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
 					StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
 					// If fast reload of settings is supported then...
-					if (XInput.IsResetSupported)
+					if (Controller.IsResetSupported)
 					{
-						XInput.Reset();
+						Controller.Reset();
 					}
 					// Slow: Reload whole x360ce.dll.
 					Exception error;
-					XInput.ReLoadLibrary(dllInfo.FullName, out error);
-					if (!XInput.IsLoaded)
+					Controller.ReLoadLibrary(dllInfo.FullName, out error);
+					if (!Controller.IsLoaded)
 					{
 						var caption = string.Format("Failed to load '{0}'", dllInfo.FullName);
 						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
@@ -1056,14 +1056,6 @@ namespace x360ce.App
 			}
 			var tab = MainTabControl.SelectedTab;
 			if (tab != null) SetHeaderSubject(tab.Text);
-		}
-
-		public void XInputEnable(bool enable)
-		{
-			lock (XInput.XInputLock)
-			{
-				XInput.XInputEnable(enable);
-			}
 		}
 
 		#region Check Files

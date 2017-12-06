@@ -364,15 +364,15 @@ namespace x360ce.App.Controls
 			{
 				case TargetType.LeftTrigger:
 				case TargetType.RightTrigger:
-					xDeadZone = XInput.XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+					xDeadZone = Controller.XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
 					break;
 				case TargetType.LeftThumbX:
 				case TargetType.LeftThumbY:
-					xDeadZone = XInput.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+					xDeadZone = Controller.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
 					break;
 				case TargetType.RightThumbX:
 				case TargetType.RightThumbY:
-					xDeadZone = XInput.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+					xDeadZone = Controller.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
 					break;
 				default:
 					break;

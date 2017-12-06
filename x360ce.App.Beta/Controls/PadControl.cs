@@ -1038,10 +1038,10 @@ namespace x360ce.App.Controls
 			var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
-			lock (XInput.XInputLock)
+			lock (Controller.XInputLock)
 			{
 				var gamePad = MainForm.Current.DHelper.XiControllers[(int)MappedTo - 1];
-				if (XInput.IsLoaded && gamePad.IsConnected)
+				if (Controller.IsLoaded && gamePad.IsConnected)
 				{
 					var vibration = new Vibration();
 					vibration.LeftMotorSpeed = leftMotor;

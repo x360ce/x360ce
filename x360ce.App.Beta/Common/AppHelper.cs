@@ -104,13 +104,13 @@ namespace x360ce.App
 			var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
 			if (!forceFeedback)
 				return items.ToArray();
-			lock (XInput.XInputLock)
+			lock (Controller.XInputLock)
 			{
 
 
 				// Unload xinput.
-				var isLoaded = XInput.IsLoaded;
-				if (isLoaded) XInput.FreeLibrary();
+				var isLoaded = Controller.IsLoaded;
+				if (isLoaded) Controller.FreeLibrary();
 				// Must reaquire device in exclusive mode to get effects.
 				device.Unacquire();
 				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
@@ -139,7 +139,7 @@ namespace x360ce.App
 				if (isLoaded)
 				{
 					Exception error;
-					XInput.ReLoadLibrary(XInput.LibraryName, out error);
+					Controller.ReLoadLibrary(Controller.LibraryName, out error);
 				}
 			}
 			return items.ToArray();

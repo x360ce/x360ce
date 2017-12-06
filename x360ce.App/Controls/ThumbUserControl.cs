@@ -260,8 +260,8 @@ namespace x360ce.App.Controls
 			var c = (ToolStripMenuItem)sender;
 			var values = c.Name.Split('_');
 			var xDeadZone = ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX || ThumbIndex == SharpDX.XInput.ThumbIndex.LeftX
-				? XInput.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
-				: XInput.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+				? Controller.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
+				: Controller.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
 			var deadZone = int.Parse(values[1]);
 			var antiDeadZone = int.Parse(values[2]);
 			var sensitivity = int.Parse(values[3]);
