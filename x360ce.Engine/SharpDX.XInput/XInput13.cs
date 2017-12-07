@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using SharpDX.Mathematics.Interop;
+using System.Threading;
 
 namespace SharpDX.XInput
 {
@@ -68,6 +69,7 @@ namespace SharpDX.XInput
 
 		private static partial class Native
 		{
+
 			[DllImport("xinput1_3.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "XInputGetKeystroke")]
 			public static extern int XInputGetKeystroke(int dwUserIndex, int dwReserved, out Keystroke keystrokeRef);
 

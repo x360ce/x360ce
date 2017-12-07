@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Linq;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Issues
 {
@@ -52,7 +53,7 @@ namespace x360ce.App.Issues
 						);
 						return;
 					}
-					var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(file.FullName);
+					var xiCurrentArchitecture = PEReader.GetProcessorArchitecture(file.FullName);
 					if (appArchitecture != xiCurrentArchitecture)
 					{
 						// Offer upgrade.

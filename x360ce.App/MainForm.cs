@@ -10,10 +10,10 @@ using System.Security.AccessControl;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.Engine;
-using x360ce.Engine.Win32;
 using x360ce.App.Properties;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App
 {

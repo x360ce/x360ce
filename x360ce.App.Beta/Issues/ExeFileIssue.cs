@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using x360ce.Engine;
 using System.IO;
 using System.Windows.Forms;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Issues
 {
@@ -49,7 +50,7 @@ namespace x360ce.App.Issues
 					}
 					fi.CopyTo(newFile.FullName);
 				}
-				x360ce.Engine.Win32.WinAPI.RunElevatedAsync(newFile.FullName, null);
+				WinAPI.RunElevatedAsync(newFile.FullName, null);
 				//Close this instance because we have an elevated instance
 				Application.Exit();
 			}

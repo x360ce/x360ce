@@ -1,8 +1,7 @@
-﻿
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System;
 
-namespace x360ce.Engine.Win32
+namespace JocysCom.ClassLibrary.Win32
 {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct BIND_OPTS3

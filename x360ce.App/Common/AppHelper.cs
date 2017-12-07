@@ -7,9 +7,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using x360ce.Engine;
-using x360ce.Engine.Win32;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App
 {

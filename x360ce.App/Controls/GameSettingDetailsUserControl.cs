@@ -10,6 +10,7 @@ using System.Reflection;
 using x360ce.Engine;
 using System.IO;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Controls
 {
@@ -154,7 +155,7 @@ namespace x360ce.App.Controls
 							else return GameRefreshStatus.XInputFilesNotExist;
 						}
 						// Get current architecture.
-						var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(xiFullPath);
+						var xiCurrentArchitecture = PEReader.GetProcessorArchitecture(xiFullPath);
 						// If processor architectures doesn't match then...
 						if (xiArchitecture != xiCurrentArchitecture)
 						{

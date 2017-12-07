@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Security;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Security.Permissions;
-using Microsoft.Win32.SafeHandles;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -22,7 +18,5 @@ namespace JocysCom.ClassLibrary.Win32
 			return NativeMethods.FreeLibrary(base.handle);
 		}
 	}
-
- 
 
 }

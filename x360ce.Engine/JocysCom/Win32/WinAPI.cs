@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Security.Principal;
 using System.Security.Permissions;
 
-namespace x360ce.Engine.Win32
+namespace JocysCom.ClassLibrary.Win32
 {
 	public class WinAPI
 	{

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using x360ce.Engine.Win32;
 
 namespace x360ce.App.vBox
 {
@@ -53,7 +52,7 @@ namespace x360ce.App.vBox
 			try
 			{
 				Exception loadException;
-				libHandle = NativeMethods.LoadLibrary(_LibraryName, out loadException);
+				libHandle = JocysCom.ClassLibrary.Win32.NativeMethods.LoadLibrary(_LibraryName, out loadException);
 				if (libHandle == IntPtr.Zero)
 				{
 					LastLoadException = loadException;
@@ -69,7 +68,7 @@ namespace x360ce.App.vBox
 		{
 			if (!IsLoaded) return;
 			Exception error;
-			NativeMethods.FreeLibrary(libHandle, out error);
+			JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out error);
 			libHandle = IntPtr.Zero;
 		}
 

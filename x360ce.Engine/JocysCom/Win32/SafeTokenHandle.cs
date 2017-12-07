@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Win32.SafeHandles;
 
-namespace x360ce.Engine.Win32
+namespace JocysCom.ClassLibrary.Win32
 {
 	/// <summary>
 	/// Represents a wrapper class for a token handle.

@@ -174,7 +174,7 @@ namespace x360ce.Engine
             var item = new UserGame();
             var fi = new FileInfo(fileName);
             var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
-            var architecture = Win32.PEReader.GetProcessorArchitecture(fi.FullName);
+            var architecture = JocysCom.ClassLibrary.Win32.PEReader.GetProcessorArchitecture(fi.FullName);
             var is64bit = architecture == System.Reflection.ProcessorArchitecture.Amd64;
             XInputMask mask = Engine.XInputMask.None;
             if (searchOption.HasValue)
@@ -250,7 +250,7 @@ namespace x360ce.Engine
                 //  Skip X360CE files.
                 if (string.Compare(file, "x360ce", true) == 00)
                     continue;
-                var fileArchitecture = Win32.PEReader.GetProcessorArchitecture(file);
+                var fileArchitecture = JocysCom.ClassLibrary.Win32.PEReader.GetProcessorArchitecture(file);
                 var fileIs64bit = (fileArchitecture == System.Reflection.ProcessorArchitecture.Amd64);
                 // Skip wrong architecture.
                 if (is64bit != fileIs64bit)
@@ -273,7 +273,7 @@ namespace x360ce.Engine
         /// <returns></returns>
         public XInputMask GetMask(string fullName)
         {
-            var architecture = Win32.PEReader.GetProcessorArchitecture(fullName);
+            var architecture = JocysCom.ClassLibrary.Win32.PEReader.GetProcessorArchitecture(fullName);
             XInputMask[] xiValues;
             if (architecture == System.Reflection.ProcessorArchitecture.Amd64)
             {

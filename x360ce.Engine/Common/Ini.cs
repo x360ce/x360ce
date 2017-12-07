@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using x360ce.Engine.Win32;
 
 namespace x360ce.Engine
 {
@@ -22,7 +21,7 @@ namespace x360ce.Engine
         string[] _getPrivateProfileString(string section, string key, string defaultValue, int bufferLength)
 		{
 			char[] returnString = new char[bufferLength];
-			int size = NativeMethods.GetPrivateProfileString(section, key, defaultValue, returnString, returnString.Length, this.File.FullName);
+			int size = JocysCom.ClassLibrary.Win32.NativeMethods.GetPrivateProfileString(section, key, defaultValue, returnString, returnString.Length, this.File.FullName);
 			string values = new string(returnString, 0, size);
 			string[] list = values.Split(new[] { (char)0 }, StringSplitOptions.RemoveEmptyEntries);
 			return list;
@@ -108,7 +107,7 @@ namespace x360ce.Engine
 		/// <param name="value">The value of the element to add.</param>
 		public int SetValue(string section, string key, string value)
 		{
-			return NativeMethods.WritePrivateProfileString(section, key, value, this.File.FullName);
+			return JocysCom.ClassLibrary.Win32.NativeMethods.WritePrivateProfileString(section, key, value, this.File.FullName);
 		}
 
 		/// <summary>
@@ -136,7 +135,7 @@ namespace x360ce.Engine
 		/// <param name="key">The key of the element to add.</param>
 		public void RemoveValue(string section, string key)
 		{
-			NativeMethods.WritePrivateProfileString(section, key, null, this.File.FullName);
+			JocysCom.ClassLibrary.Win32.NativeMethods.WritePrivateProfileString(section, key, null, this.File.FullName);
 		}
 
 		/// <summary>
@@ -145,7 +144,7 @@ namespace x360ce.Engine
 		/// <param name="section">The name of the section.</param>
 		public void RemoveSection(string section)
 		{
-			NativeMethods.WritePrivateProfileString(section, null, null, this.File.FullName);
+			JocysCom.ClassLibrary.Win32.NativeMethods.WritePrivateProfileString(section, null, null, this.File.FullName);
 		}
 
 		#endregion

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SharpDX.XInput
 {
@@ -12,11 +13,21 @@ namespace SharpDX.XInput
 			return result;
 		}
 
+
+		static IntPtr libHandle;
+
 		private static partial class Native
 		{
-			[DllImport("xinput1_3.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "Reset")]
+			static Native()
+			{
+				Exception loadException;
+				libHandle = JocysCom.ClassLibrary.Win32.NativeMethods.LoadLibrary("xinput1_4.dll", out loadException);
+			}
+
+			[DllImport("xinput1_4.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "Reset")]
 			public static extern int Reset();
 
 		}
+
 	}
 }

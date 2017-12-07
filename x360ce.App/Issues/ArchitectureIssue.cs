@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using x360ce.Engine;
 using System.Linq;
 using System.Windows.Forms;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Issues
 {
@@ -40,7 +41,7 @@ namespace x360ce.App.Issues
 			}
 			foreach (var exe in exes)
 			{
-				var pa = Engine.Win32.PEReader.GetProcessorArchitecture(exe);
+				var pa = PEReader.GetProcessorArchitecture(exe);
 				architectures.Add(exe, pa);
 			}
 			var fi = new FileInfo(Application.ExecutablePath);

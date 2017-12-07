@@ -284,6 +284,10 @@
     <Compile Include="JocysCom\Win32\ABM.cs" />
     <Compile Include="JocysCom\Win32\ABS.cs" />
     <Compile Include="JocysCom\Win32\APPBARDATA.cs" />
+    <Compile Include="JocysCom\Win32\BIND_OPTS3.cs" />
+    <Compile Include="JocysCom\Win32\BSF.cs" />
+    <Compile Include="JocysCom\Win32\BSM.cs" />
+    <Compile Include="JocysCom\Win32\CLSCTX.cs" />
     <Compile Include="JocysCom\Win32\CR.cs" />
     <Compile Include="JocysCom\Win32\DBCH_DEVICETYPE.cs" />
     <Compile Include="JocysCom\Win32\DBT.cs" />
@@ -298,16 +302,21 @@
     <Compile Include="JocysCom\Win32\HIDD_ATTRIBUTES.cs" />
     <Compile Include="JocysCom\Win32\HIDP_CAPS.cs" />
     <Compile Include="JocysCom\Win32\ICONINFO.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.advapi32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cfgmgr32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.hid.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.kernel32.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.ole32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.setupapi.cs" />
+    <Compile Include="JocysCom\Win32\NativeMethods.shell32.cs" />
     <Compile Include="JocysCom\Win32\NativeMethods.user32.cs" />
+    <Compile Include="JocysCom\Win32\PEReader.cs" />
     <Compile Include="JocysCom\Win32\POINT.cs" />
     <Compile Include="JocysCom\Win32\RECT.cs" />
     <Compile Include="JocysCom\Win32\REG.cs" />
     <Compile Include="JocysCom\Win32\SafeLibraryHandle.cs" />
+    <Compile Include="JocysCom\Win32\SafeTokenHandle.cs" />
     <Compile Include="JocysCom\Win32\SID_AND_ATTRIBUTES.cs" />
     <Compile Include="JocysCom\Win32\SPDRP.cs" />
     <Compile Include="JocysCom\Win32\SP_CLASSINSTALL_HEADER.cs" />
@@ -323,6 +332,7 @@
     <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
     <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
+    <Compile Include="JocysCom\Win32\WinAPI.cs" />
     <Compile Include="JocysCom\Win32\WinNT.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\TargetType.cs" />
@@ -359,21 +369,6 @@
     <Compile Include="SharpDX.XInput\XInput14.x360ce.cs" />
     <Compile Include="SharpDX.XInput\XInput910.cs" />
     <Compile Include="SharpDX.XInput\XInput910.x360ce.cs" />
-    <Compile Include="Win32\BIND_OPTS3.cs" />
-    <Compile Include="Win32\BSF.cs" />
-    <Compile Include="Win32\BSM.cs" />
-    <Compile Include="Win32\CLSCTX.cs" />
-    <Compile Include="Win32\NativeMethods.cs" />
-    <Compile Include="Win32\PEReader.cs" />
-    <Compile Include="Win32\SafeLibraryHandle.cs" />
-    <Compile Include="Win32\SafeTokenHandle.cs" />
-    <Compile Include="Win32\SID_AND_ATTRIBUTES.cs" />
-    <Compile Include="Win32\TOKEN_ELEVATION.cs" />
-    <Compile Include="Win32\TOKEN_ELEVATION_TYPE.cs" />
-    <Compile Include="Win32\TOKEN_INFORMATION_CLASS.cs" />
-    <Compile Include="Win32\TOKEN_MANDATORY_LABEL.cs" />
-    <Compile Include="Win32\WinAPI.cs" />
-    <Compile Include="Win32\WinNT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Data\x360ceModel.edmx">

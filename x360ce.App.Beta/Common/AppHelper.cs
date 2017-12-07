@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using x360ce.Engine;
-using x360ce.Engine.Win32;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
@@ -15,6 +14,7 @@ using x360ce.Engine.Data;
 using System.Linq.Expressions;
 using System.Configuration;
 using SharpDX.XInput;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App
 {

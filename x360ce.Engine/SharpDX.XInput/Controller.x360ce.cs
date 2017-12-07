@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using x360ce.Engine;
-using x360ce.Engine.Win32;
 
 namespace SharpDX.XInput
 {
@@ -62,7 +61,7 @@ namespace SharpDX.XInput
 				if (IsLoaded)
 				{
 					Exception freeError;
-					NativeMethods.FreeLibrary(libHandle, out freeError);
+					JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out freeError);
 					libHandle = IntPtr.Zero;
 					GC.Collect();
 					GC.WaitForPendingFinalizers();
@@ -80,13 +79,13 @@ namespace SharpDX.XInput
 				IntPtr procAddress;
 				Exception procException;
 				// Check if XInputGetStateEx function is supported.
-				procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx", out procException);
+				procAddress = JocysCom.ClassLibrary.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetStateEx", out procException);
 				_IsGetStateExSupported = procAddress != IntPtr.Zero;
 				// Check if XInputGetAudioDeviceIds function is supported.
-				procAddress = NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds", out procException);
+				procAddress = JocysCom.ClassLibrary.Win32.NativeMethods.GetProcAddress(libHandle, "XInputGetAudioDeviceIds", out procException);
 				_IsGetAudioDeviceIdsSupported = procAddress != IntPtr.Zero;
 				// Check if Reset function is supported.
-				procAddress = NativeMethods.GetProcAddress(libHandle, "Reset", out procException);
+				procAddress = JocysCom.ClassLibrary.Win32.NativeMethods.GetProcAddress(libHandle, "Reset", out procException);
 				_IsResetSupported = procAddress != IntPtr.Zero;
 			}
 		}
@@ -96,7 +95,7 @@ namespace SharpDX.XInput
 			try
 			{
 				Exception loadException;
-				libHandle = NativeMethods.LoadLibrary(_LibraryName, out loadException);
+				libHandle = JocysCom.ClassLibrary.Win32.NativeMethods.LoadLibrary(_LibraryName, out loadException);
 				if (libHandle == IntPtr.Zero)
 				{
 					LastLoadException = loadException;
@@ -104,22 +103,20 @@ namespace SharpDX.XInput
 				else
 				{
 					var values = (XInputMask[])Enum.GetValues(typeof(XInputMask));
-					foreach (var value in values)
+				foreach (var value in values)
+				{
+					var fileName = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(value);
+					if (_LibraryName.IndexOf(fileName, StringComparison.OrdinalIgnoreCase) > -1)
 					{
-						var fileName = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(value);
-						if (_LibraryName.IndexOf(fileName, StringComparison.OrdinalIgnoreCase) > -1)
-						{
-							if (value == XInputMask.XInput91_x64 || value == XInputMask.XInput91_x86)
-								xinput = new XInput910();
-							if (value == XInputMask.XInput13_x64 || value == XInputMask.XInput13_x86)
-								xinput = new XInput13();
-							if (value == XInputMask.XInput14_x64 || value == XInputMask.XInput14_x86)
-								xinput = new XInput14();
-							if (xinput != null)
-								xinput.XInputEnable(true);
-							break;
-						}
+						if (value == XInputMask.XInput91_x64 || value == XInputMask.XInput91_x86)
+							xinput = new XInput910();
+						if (value == XInputMask.XInput13_x64 || value == XInputMask.XInput13_x86)
+							xinput = new XInput13();
+						if (value == XInputMask.XInput14_x64 || value == XInputMask.XInput14_x86)
+							xinput = new XInput14();
+						break;
 					}
+				}
 				}
 			}
 			catch (Exception ex)
@@ -135,7 +132,7 @@ namespace SharpDX.XInput
 			{
 				if (!IsLoaded) return;
 				Exception error;
-				NativeMethods.FreeLibrary(libHandle, out error);
+				JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out error);
 				libHandle = IntPtr.Zero;
 			}
 		}

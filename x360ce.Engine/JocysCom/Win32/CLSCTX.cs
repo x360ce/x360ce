@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace x360ce.Engine.Win32
+namespace JocysCom.ClassLibrary.Win32
 {
 	[Flags]
 	public enum CLSCTX

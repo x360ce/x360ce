@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -12,10 +13,16 @@ namespace JocysCom.ClassLibrary.Win32
 		#region user32
 
 		/// <summary>
-		/// API used to send a message to another window
+		/// Sends the specified message to a window or windows.
 		/// </summary>
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+		/// <summary>
+		/// Sends the specified message to a window or windows.
+		/// </summary>
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		internal static extern IntPtr SendMessage(HandleRef hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
 		/// <summary>
 		/// Retrieves a handle to the top-level window whose class name and
@@ -70,12 +77,43 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern bool GetClientRect(IntPtr hWnd, ref Rectangle lpRect);
 
+		/// <summary>
+		/// Registers the device or type of device for which a window will receive notifications.
+		/// </summary>
+		/// <param name="hRecipient">A handle to the window or service that will receive device events for the devices specified in the NotificationFilter parameter.</param>
+		/// <param name="NotificationFilter">A pointer to a block of data that specifies the type of device for which notifications should be sent.</param>
+		/// <param name="Flags">This parameter can be one of the following values.</param>
+		/// <returns>If the function succeeds, the return value is a device notification handle. If the function fails, the return value is NULL. To get extended error information, call GetLastError.</returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		internal static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr NotificationFilter, uint Flags);
 
 		/// <summary>
-		/// Determine if the application is already open.
+		/// Closes the specified device notification handle.
 		/// </summary>
-		[DllImport("USER32.DLL", EntryPoint = "BroadcastSystemMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-		public static extern int BroadcastSystemMessage(Int32 dwFlags, ref Int32 pdwRecipients, int uiMessage, int wParam, int lParam);
+		/// <param name="Handle">Device notification handle returned by the RegisterDeviceNotification function.</param>
+		/// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero. To get extended error information, call GetLastError.</returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		internal static extern uint UnregisterDeviceNotification(IntPtr Handle);
+
+		/// <summary>
+		/// Sends a message to the specified recipients. The recipients can be applications, installable drivers,
+		/// network drivers, system-level device drivers, or any combination of these system components. 
+		/// </summary>
+		/// <param name="dwFlags">The broadcast option.</param>
+		/// <param name="pdwRecipients">A pointer to a variable that contains and receives information about the recipients of the message.</param>
+		/// <param name="uiMessage">The message to be sent.</param>
+		/// <param name="wParam">Additional message-specific information.</param>
+		/// <param name="lParam">Additional message-specific information.</param>
+		/// <returns>Positive value if the function succeeds, -1 if the function is unable to broadcast the message.</returns>
+		[DllImport("user32.dll", EntryPoint = "BroadcastSystemMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		internal static extern int BroadcastSystemMessage(Int32 dwFlags, ref Int32 pdwRecipients, int uiMessage, int wParam, int lParam);
+
+		public static int BroadcastSystemMessage(int dwFlags, ref int pdwRecipients, int uiMessage, int wParam, int lParam, out Exception error)
+		{
+			var result = BroadcastSystemMessage(dwFlags, ref pdwRecipients, uiMessage, wParam, lParam);
+			error = (result < 0) ? new Exception(new Win32Exception().ToString()) : null;
+			return result;
+		}
 
 		/// <summary>
 		/// Defines a new window message that is guaranteed to be unique throughout the system.
@@ -83,11 +121,18 @@ namespace JocysCom.ClassLibrary.Win32
 		/// </summary>
 		/// <param name="pString">The message to be registered.</param>
 		/// <returns>
-		/// If the message is successfully registered, the return value is
-		/// a message identifier in the range 0xC000 through 0xFFFF.
-		/// If the function fails, the return value is zero.</returns>
-		[DllImport("USER32.DLL", EntryPoint = "RegisterWindowMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-		public static extern int RegisterWindowMessage(String pString);
+		/// If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.
+		/// If the function fails, the return value is zero. To get extended error information, call GetLastError.
+		/// </returns>
+		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		internal static extern int RegisterWindowMessage(String pString);
+
+		public static int RegisterWindowMessage(string pString, out Exception error)
+		{
+			var id = RegisterWindowMessage(pString);
+			error = (id == 0) ? new Exception(new Win32Exception().ToString()) : null;
+			return id;
+		}
 
 		/// <summary>
 		/// Retrieves the value of one of the system-wide parameters.

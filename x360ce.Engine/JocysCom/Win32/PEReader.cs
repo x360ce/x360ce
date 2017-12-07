@@ -26,7 +26,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace x360ce.Engine.Win32
+namespace JocysCom.ClassLibrary.Win32
 {
 	public class PEReader
 	{

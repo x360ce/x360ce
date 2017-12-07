@@ -19,43 +19,6 @@ namespace JocysCom.ClassLibrary.Win32
 		// PDWORD - UInt32
 		// LPVOID - IntPtr
 
-		#region advapi32
-
-		/// <summary>
-		/// The LogonUser function attempts to log a user on to the local computer.
-		/// </summary>
-		[DllImport("advapi32.dll", SetLastError = true)]
-		internal static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, ref IntPtr phToken);
-
-		/// <summary>
-		/// Opens the access token associated with a process.
-		/// </summary>
-		[DllImport("advapi32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern Boolean OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
-
-		/// <summary>
-		/// Retrieves a specified type of information about an access token.
-		/// </summary>
-		[DllImport("advapi32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool GetTokenInformation(
-			IntPtr TokenHandle,
-			TOKEN_INFORMATION_CLASS TokenInformationClass,
-			IntPtr TokenInformation,
-			UInt32 TokenInformationLength,
-			out UInt32 ReturnLength
-		);
-
-		#endregion
-
-		#region shell32
-
-		[DllImport("shell32.dll")]
-		public static extern IntPtr SHAppBarMessage(int dwMessage, [MarshalAs(UnmanagedType.Struct)] ref APPBARDATA pData);
-
-		#endregion
-
 		#region Disable/Enable UI Effects
 
 		public static void EnableUiEffects(bool enable)

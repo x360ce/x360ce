@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -108,7 +109,7 @@ namespace x360ce.App
 					else
 					{
 						// Get current architecture of XInput DLL.
-						var xiCurrentArchitecture = Engine.Win32.PEReader.GetProcessorArchitecture(xiFullPath);
+						var xiCurrentArchitecture = PEReader.GetProcessorArchitecture(xiFullPath);
 						// If processor architectures doesn't match then...
 						if (requiredArchitecture != xiCurrentArchitecture)
 						{
