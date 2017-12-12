@@ -88,5 +88,13 @@ namespace x360ce.App
 		public bool ExcludeVirtualDevices { get; set; }
         public bool CheckForUpdates { get; set; }
 
-    }
+		// Performance Test
+
+		public bool TestEnabled { get; set; }
+		public bool TestGetDInputStates { get; set; }
+		public bool TestSetXInputStates { get; set; }
+		public bool TestGetXInputStates { get; set; }
+		public bool TestUpdateInterface { get; set; }
+
+	}
 }

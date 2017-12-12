@@ -65,7 +65,8 @@ namespace x360ce.App.Controls
             SettingsManager.AddMap(section, () => SettingName.InternetAutoSave, InternetAutoSaveCheckBox);
             SettingsManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
             SettingsManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
-            LoadSettings();
+			//
+			LoadSettings();
         }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

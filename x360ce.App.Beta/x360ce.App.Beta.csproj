@@ -221,6 +221,12 @@
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\PerformanceTestUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PerformanceTestUserControl.Designer.cs">
+      <DependentUpon>PerformanceTestUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -397,6 +403,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogUserControl.resx">
       <DependentUpon>LogUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PerformanceTestUserControl.resx">
+      <DependentUpon>PerformanceTestUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PresetsGridUserControl.resx">
       <DependentUpon>PresetsGridUserControl.cs</DependentUpon>

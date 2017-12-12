@@ -90,6 +90,7 @@
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
 			this.VirtualDeviceUninstallButton = new System.Windows.Forms.Button();
 			this.VirtualDeviceInstallButton = new System.Windows.Forms.Button();
+			this.PerformanceTestPanel = new x360ce.App.Controls.PerformanceTestUserControl();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -274,7 +275,7 @@
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(263, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(492, 144);
+			this.InternetGroupBox.Size = new System.Drawing.Size(506, 144);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -299,7 +300,7 @@
             "http://localhost:20360/webservices/x360ce.asmx"});
 			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 103);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
-			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(480, 21);
+			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(494, 21);
 			this.InternetDatabaseUrlComboBox.TabIndex = 14;
 			// 
 			// label1
@@ -340,7 +341,7 @@
 			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(263, 153);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
-			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(493, 136);
+			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(507, 136);
 			this.ProgramScanLocationsTabControl.TabIndex = 34;
 			// 
 			// GameScanLocationsTabPage
@@ -349,7 +350,7 @@
 			this.GameScanLocationsTabPage.Controls.Add(this.LocationsToolStrip);
 			this.GameScanLocationsTabPage.Location = new System.Drawing.Point(4, 28);
 			this.GameScanLocationsTabPage.Name = "GameScanLocationsTabPage";
-			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(485, 104);
+			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(499, 104);
 			this.GameScanLocationsTabPage.TabIndex = 0;
 			this.GameScanLocationsTabPage.Text = "Game Scan Locations";
 			this.GameScanLocationsTabPage.UseVisualStyleBackColor = true;
@@ -361,7 +362,7 @@
 			this.GameScanLocationsListBox.FormattingEnabled = true;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
-			this.GameScanLocationsListBox.Size = new System.Drawing.Size(485, 79);
+			this.GameScanLocationsListBox.Size = new System.Drawing.Size(499, 79);
 			this.GameScanLocationsListBox.Sorted = true;
 			this.GameScanLocationsListBox.TabIndex = 0;
 			this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
@@ -376,7 +377,7 @@
 			this.LocationsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.LocationsToolStrip.Name = "LocationsToolStrip";
 			this.LocationsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.LocationsToolStrip.Size = new System.Drawing.Size(485, 25);
+			this.LocationsToolStrip.Size = new System.Drawing.Size(499, 25);
 			this.LocationsToolStrip.TabIndex = 2;
 			this.LocationsToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -452,7 +453,7 @@
 			// SaveSettingsButton
 			// 
 			this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SaveSettingsButton.Location = new System.Drawing.Point(681, 508);
+			this.SaveSettingsButton.Location = new System.Drawing.Point(695, 539);
 			this.SaveSettingsButton.Name = "SaveSettingsButton";
 			this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
 			this.SaveSettingsButton.TabIndex = 68;
@@ -509,7 +510,7 @@
 			this.OnlineAccountGroupBox.Controls.Add(this.label3);
 			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(263, 295);
 			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(493, 140);
+			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(507, 140);
 			this.OnlineAccountGroupBox.TabIndex = 31;
 			this.OnlineAccountGroupBox.TabStop = false;
 			this.OnlineAccountGroupBox.Text = "Online Account";
@@ -574,7 +575,7 @@
 			this.DiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.DiskIdTextBox.Location = new System.Drawing.Point(107, 19);
 			this.DiskIdTextBox.Name = "DiskIdTextBox";
-			this.DiskIdTextBox.Size = new System.Drawing.Size(380, 20);
+			this.DiskIdTextBox.Size = new System.Drawing.Size(394, 20);
 			this.DiskIdTextBox.TabIndex = 40;
 			// 
 			// ComputerIdTextBox
@@ -714,7 +715,7 @@
 			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(512, 508);
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(526, 539);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
 			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(163, 23);
 			this.OpenSettingsFolderButton.TabIndex = 69;
@@ -773,10 +774,21 @@
 			this.VirtualDeviceInstallButton.UseVisualStyleBackColor = true;
 			this.VirtualDeviceInstallButton.Click += new System.EventHandler(this.VirtualDeviceInstallButton_Click);
 			// 
+			// PerformanceTestPanel
+			// 
+			this.PerformanceTestPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PerformanceTestPanel.Location = new System.Drawing.Point(523, 441);
+			this.PerformanceTestPanel.Name = "PerformanceTestPanel";
+			this.PerformanceTestPanel.Size = new System.Drawing.Size(247, 92);
+			this.PerformanceTestPanel.TabIndex = 71;
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.PerformanceTestPanel);
 			this.Controls.Add(this.VirtualDeviceGroupBox);
 			this.Controls.Add(this.OpenSettingsFolderButton);
 			this.Controls.Add(this.SaveSettingsButton);
@@ -790,7 +802,7 @@
 			this.Controls.Add(this.InternetGroupBox);
 			this.Controls.Add(this.ProgramScanLocationsTabControl);
 			this.Name = "OptionsUserControl";
-			this.Size = new System.Drawing.Size(759, 534);
+			this.Size = new System.Drawing.Size(773, 565);
 			this.TestingAndLoggingGroupBox.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
@@ -883,5 +895,6 @@
 		private System.Windows.Forms.ComboBox PollingRateComboBox;
 		public System.Windows.Forms.Button VirtualDeviceUninstallButton;
 		public System.Windows.Forms.Button VirtualDeviceInstallButton;
+		private PerformanceTestUserControl PerformanceTestPanel;
 	}
 }
