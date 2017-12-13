@@ -29,17 +29,19 @@
 		private void InitializeComponent()
 		{
 			this.MainGroupBox = new System.Windows.Forms.GroupBox();
-			this.UpdateInterfaceCheckBox = new System.Windows.Forms.CheckBox();
-			this.EnableCheckBox = new System.Windows.Forms.CheckBox();
-			this.GetDInputStatesCheckBox = new System.Windows.Forms.CheckBox();
-			this.SetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
-			this.GetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.CpuTextBox = new System.Windows.Forms.TextBox();
+			this.EnableCheckBox = new System.Windows.Forms.CheckBox();
+			this.GetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
+			this.SetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
+			this.GetDInputStatesCheckBox = new System.Windows.Forms.CheckBox();
+			this.UpdateInterfaceCheckBox = new System.Windows.Forms.CheckBox();
+			this.CpuLabel = new System.Windows.Forms.Label();
 			this.MainGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainGroupBox
 			// 
+			this.MainGroupBox.Controls.Add(this.CpuLabel);
 			this.MainGroupBox.Controls.Add(this.CpuTextBox);
 			this.MainGroupBox.Controls.Add(this.EnableCheckBox);
 			this.MainGroupBox.Controls.Add(this.GetXInputStatesCheckBox);
@@ -54,15 +56,14 @@
 			this.MainGroupBox.TabStop = false;
 			this.MainGroupBox.Text = "Performance Test";
 			// 
-			// UpdateInterfaceCheckBox
+			// CpuTextBox
 			// 
-			this.UpdateInterfaceCheckBox.AutoSize = true;
-			this.UpdateInterfaceCheckBox.Location = new System.Drawing.Point(123, 65);
-			this.UpdateInterfaceCheckBox.Name = "UpdateInterfaceCheckBox";
-			this.UpdateInterfaceCheckBox.Size = new System.Drawing.Size(106, 17);
-			this.UpdateInterfaceCheckBox.TabIndex = 1;
-			this.UpdateInterfaceCheckBox.Text = "Update Interface";
-			this.UpdateInterfaceCheckBox.UseVisualStyleBackColor = true;
+			this.CpuTextBox.Location = new System.Drawing.Point(158, 16);
+			this.CpuTextBox.Name = "CpuTextBox";
+			this.CpuTextBox.ReadOnly = true;
+			this.CpuTextBox.Size = new System.Drawing.Size(71, 20);
+			this.CpuTextBox.TabIndex = 2;
+			this.CpuTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// EnableCheckBox
 			// 
@@ -74,15 +75,15 @@
 			this.EnableCheckBox.Text = "Enable";
 			this.EnableCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// GetDInputStatesCheckBox
+			// GetXInputStatesCheckBox
 			// 
-			this.GetDInputStatesCheckBox.AutoSize = true;
-			this.GetDInputStatesCheckBox.Location = new System.Drawing.Point(6, 42);
-			this.GetDInputStatesCheckBox.Name = "GetDInputStatesCheckBox";
-			this.GetDInputStatesCheckBox.Size = new System.Drawing.Size(111, 17);
-			this.GetDInputStatesCheckBox.TabIndex = 1;
-			this.GetDInputStatesCheckBox.Text = "Get DInput States";
-			this.GetDInputStatesCheckBox.UseVisualStyleBackColor = true;
+			this.GetXInputStatesCheckBox.AutoSize = true;
+			this.GetXInputStatesCheckBox.Location = new System.Drawing.Point(123, 42);
+			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
+			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(110, 17);
+			this.GetXInputStatesCheckBox.TabIndex = 1;
+			this.GetXInputStatesCheckBox.Text = "Get XInput States";
+			this.GetXInputStatesCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// SetXInputStatesCheckBox
 			// 
@@ -94,23 +95,34 @@
 			this.SetXInputStatesCheckBox.Text = "Set XInput States";
 			this.SetXInputStatesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// GetXInputStatesCheckBox
+			// GetDInputStatesCheckBox
 			// 
-			this.GetXInputStatesCheckBox.AutoSize = true;
-			this.GetXInputStatesCheckBox.Location = new System.Drawing.Point(123, 42);
-			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
-			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(110, 17);
-			this.GetXInputStatesCheckBox.TabIndex = 1;
-			this.GetXInputStatesCheckBox.Text = "Get XInput States";
-			this.GetXInputStatesCheckBox.UseVisualStyleBackColor = true;
+			this.GetDInputStatesCheckBox.AutoSize = true;
+			this.GetDInputStatesCheckBox.Location = new System.Drawing.Point(6, 42);
+			this.GetDInputStatesCheckBox.Name = "GetDInputStatesCheckBox";
+			this.GetDInputStatesCheckBox.Size = new System.Drawing.Size(111, 17);
+			this.GetDInputStatesCheckBox.TabIndex = 1;
+			this.GetDInputStatesCheckBox.Text = "Get DInput States";
+			this.GetDInputStatesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// CpuTextBox
+			// UpdateInterfaceCheckBox
 			// 
-			this.CpuTextBox.Location = new System.Drawing.Point(123, 16);
-			this.CpuTextBox.Name = "CpuTextBox";
-			this.CpuTextBox.ReadOnly = true;
-			this.CpuTextBox.Size = new System.Drawing.Size(106, 20);
-			this.CpuTextBox.TabIndex = 2;
+			this.UpdateInterfaceCheckBox.AutoSize = true;
+			this.UpdateInterfaceCheckBox.Location = new System.Drawing.Point(123, 65);
+			this.UpdateInterfaceCheckBox.Name = "UpdateInterfaceCheckBox";
+			this.UpdateInterfaceCheckBox.Size = new System.Drawing.Size(106, 17);
+			this.UpdateInterfaceCheckBox.TabIndex = 1;
+			this.UpdateInterfaceCheckBox.Text = "Update Interface";
+			this.UpdateInterfaceCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// CpuLabel
+			// 
+			this.CpuLabel.AutoSize = true;
+			this.CpuLabel.Location = new System.Drawing.Point(120, 19);
+			this.CpuLabel.Name = "CpuLabel";
+			this.CpuLabel.Size = new System.Drawing.Size(32, 13);
+			this.CpuLabel.TabIndex = 3;
+			this.CpuLabel.Text = "CPU:";
 			// 
 			// PerformanceTestUserControl
 			// 
@@ -134,5 +146,6 @@
 		public System.Windows.Forms.CheckBox GetDInputStatesCheckBox;
 		public System.Windows.Forms.CheckBox UpdateInterfaceCheckBox;
 		private System.Windows.Forms.TextBox CpuTextBox;
+		private System.Windows.Forms.Label CpuLabel;
 	}
 }
