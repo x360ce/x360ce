@@ -21,11 +21,14 @@ namespace x360ce.App.DInput
 				.ToArray();
 			for (int i = 0; i < userDevices.Count(); i++)
 			{
+				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
 				var ud = userDevices[i];
 				JoystickState state = null;
-				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
+				// Allow if not testing or testing with option enabled.
+				var o = SettingsManager.Options;
+				var allow = !o.TestEnabled || o.TestGetDInputStates;
 				var isOnline = ud != null && ud.IsOnline;
-				if (isOnline)
+				if (isOnline && allow)
 				{
 					var device = ud.Device;
 					if (device != null)

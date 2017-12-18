@@ -77,9 +77,12 @@ namespace x360ce.App
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
 
+		Forms.DebugForm DebugPanel;
+
 		void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode) return;
+			DebugPanel = new Forms.DebugForm();
 			// Init DInput Helper.
 			DHelper = new DInput.DInputHelper();
 			DHelper.DevicesUpdated += DHelper_DevicesUpdated;
@@ -918,8 +921,12 @@ namespace x360ce.App
 				ReloadLibrary();
 				return;
 			}
-			//	else
-			//	{
+
+			// Allow if not testing or testing with option enabled.
+			var o = SettingsManager.Options;
+			var allow = !o.TestEnabled || o.TestUpdateInterface;
+			if (!allow)
+				return;
 			for (int i = 0; i < 4; i++)
 			{
 				var game = CurrentGame;
@@ -959,8 +966,6 @@ namespace x360ce.App
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
 			}
-			//		UpdateStatus();
-			//	}
 			// Update options panel.
 			var isVBusExists = vBox.vXboxInterface.isVBusExists();
 			OptionsPanel.VirtualDeviceInstallButton.Enabled = !isVBusExists;
@@ -1679,6 +1684,19 @@ namespace x360ce.App
 			LibraryButton.Checked = et.HasFlag(EmulationType.Library);
 		}
 
+		private void TestButton_Click(object sender, EventArgs e)
+		{
+			DebugPanel.ShowPanel();
+		}
+
+		private void MainForm_Shown(object sender, EventArgs e)
+		{
+			if (SettingsManager.Options.ShowDebugPanel)
+			{
+				DebugPanel.ShowPanel();
+			}
+
+		}
 	}
 }
 

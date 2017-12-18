@@ -17,6 +17,7 @@ namespace x360ce.App.Controls
 		public PerformanceTestUserControl()
 		{
 			InitializeComponent();
+			if (IsDesignMode) return;
 			CpuTimer = new System.Timers.Timer();
 			CpuTimer.Interval = 1000;
 			CpuTimer.AutoReset = false;
@@ -24,6 +25,8 @@ namespace x360ce.App.Controls
 			LoadSettings();
 			CheckTimer();
 		}
+
+		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		public void LoadSettings()
 		{
@@ -70,7 +73,19 @@ namespace x360ce.App.Controls
 		void CheckTimer()
 		{
 			if (SettingsManager.Options.TestEnabled && !Program.IsClosing)
+			{
+
 				CpuTimer.Start();
+			}
+			else
+			{
+				if (!IsHandleCreated)
+					return;
+				BeginInvoke((MethodInvoker)delegate ()
+				{
+					CpuTextBox.Text = "";
+				});
+			}
 		}
 
 		public void SaveSettings()
@@ -86,7 +101,7 @@ namespace x360ce.App.Controls
 		#region Performace Counter
 
 		CpuUsage _Counter;
-	
+
 		object counterLock = new object();
 
 		System.Timers.Timer CpuTimer;
@@ -95,16 +110,18 @@ namespace x360ce.App.Controls
 		{
 			lock (counterLock)
 			{
-				if (_Counter == null)
+				if (IsHandleCreated)
 				{
-					_Counter = new CpuUsage();
-				}
-				if (_Counter != null)
-				{
+					if (_Counter == null)
+					{
+						_Counter = new CpuUsage();
+					}
 					var process_cpu_usage = _Counter.GetUsage();
 					BeginInvoke((MethodInvoker)delegate ()
 					{
-						CpuTextBox.Text = string.Format("{0:0.0} %", Math.Round(process_cpu_usage, 1));
+						CpuTextBox.Text = process_cpu_usage.HasValue
+							? string.Format("{0:0.0} %", Math.Round(process_cpu_usage.Value, 1))
+							: "";
 					});
 				}
 				CheckTimer();
@@ -133,13 +150,12 @@ namespace x360ce.App.Controls
 
 			TimeSpan _prevProcTotal;
 
-			float _cpuUsage;
+			float? _cpuUsage;
 			DateTime _lastRun;
 			long _runCount;
 
 			public CpuUsage()
 			{
-				_cpuUsage = -1f;
 				_lastRun = DateTime.MinValue;
 				_prevSysUser.dwHighDateTime = _prevSysUser.dwLowDateTime = 0;
 				_prevSysKernel.dwHighDateTime = _prevSysKernel.dwLowDateTime = 0;
@@ -147,9 +163,9 @@ namespace x360ce.App.Controls
 				_runCount = 0;
 			}
 
-			public float GetUsage()
+			public float? GetUsage()
 			{
-				float cpuCopy = _cpuUsage;
+				var cpuCopy = _cpuUsage;
 				if (Interlocked.Increment(ref _runCount) == 1)
 				{
 					if (!EnoughTimePassed)
@@ -190,9 +206,7 @@ namespace x360ce.App.Controls
 					cpuCopy = _cpuUsage;
 				}
 				Interlocked.Decrement(ref _runCount);
-
 				return cpuCopy;
-
 			}
 
 			private UInt64 SubtractTimes(System.Runtime.InteropServices.ComTypes.FILETIME a, System.Runtime.InteropServices.ComTypes.FILETIME b)

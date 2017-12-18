@@ -293,6 +293,12 @@
     <Compile Include="Controls\GameDetailsUserControl.Designer.cs">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DebugForm.Designer.cs">
+      <DependentUpon>DebugForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\HardwareForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -434,6 +440,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameDetailsUserControl.resx">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DebugForm.resx">
+      <DependentUpon>DebugForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\HardwareForm.resx">
       <DependentUpon>HardwareForm.cs</DependentUpon>
@@ -662,6 +671,7 @@
     <None Include="Images\emulation_library_16x16.png" />
     <None Include="Images\emulation_none_16x16.png" />
     <None Include="Images\emulation_virtual_16x16.png" />
+    <None Include="Images\test_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />

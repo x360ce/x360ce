@@ -11,6 +11,12 @@ namespace x360ce.App.DInput
 
 		void UpdateVirtualDevices()
 		{
+
+			// Allow if not testing or testing with option enabled.
+			var o = SettingsManager.Options;
+			var allow = !o.TestEnabled || o.TestSetXInputStates;
+			if (!allow)
+				return;
 			var game = MainForm.Current.CurrentGame;
 			// If game does not support emulation type.
 			if (!((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))

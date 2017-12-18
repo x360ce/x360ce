@@ -90,7 +90,6 @@
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
 			this.VirtualDeviceUninstallButton = new System.Windows.Forms.Button();
 			this.VirtualDeviceInstallButton = new System.Windows.Forms.Button();
-			this.PerformanceTestPanel = new x360ce.App.Controls.PerformanceTestUserControl();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -774,21 +773,10 @@
 			this.VirtualDeviceInstallButton.UseVisualStyleBackColor = true;
 			this.VirtualDeviceInstallButton.Click += new System.EventHandler(this.VirtualDeviceInstallButton_Click);
 			// 
-			// PerformanceTestPanel
-			// 
-			this.PerformanceTestPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PerformanceTestPanel.Location = new System.Drawing.Point(523, 441);
-			this.PerformanceTestPanel.Name = "PerformanceTestPanel";
-			this.PerformanceTestPanel.Size = new System.Drawing.Size(247, 92);
-			this.PerformanceTestPanel.TabIndex = 71;
-			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.PerformanceTestPanel);
 			this.Controls.Add(this.VirtualDeviceGroupBox);
 			this.Controls.Add(this.OpenSettingsFolderButton);
 			this.Controls.Add(this.SaveSettingsButton);
@@ -895,6 +883,5 @@
 		private System.Windows.Forms.ComboBox PollingRateComboBox;
 		public System.Windows.Forms.Button VirtualDeviceUninstallButton;
 		public System.Windows.Forms.Button VirtualDeviceInstallButton;
-		private PerformanceTestUserControl PerformanceTestPanel;
 	}
 }

@@ -69,6 +69,7 @@ namespace x360ce.App
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.SaveAllButton = new System.Windows.Forms.ToolStripButton();
 			this.SaveButton = new System.Windows.Forms.ToolStripButton();
+			this.TestButton = new System.Windows.Forms.ToolStripButton();
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -530,6 +531,7 @@ namespace x360ce.App
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SaveAllButton,
             this.SaveButton,
+            this.TestButton,
             this.MappedDevicesLabel,
             this.GameToCustomizeComboBox,
             this.toolStripLabel1,
@@ -567,6 +569,19 @@ namespace x360ce.App
 			this.SaveButton.Size = new System.Drawing.Size(51, 22);
 			this.SaveButton.Text = "Save";
 			this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
+			// 
+			// TestButton
+			// 
+			this.TestButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.TestButton.Image = global::x360ce.App.Properties.Resources.test_16x16;
+			this.TestButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.TestButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TestButton.Margin = new System.Windows.Forms.Padding(1);
+			this.TestButton.Name = "TestButton";
+			this.TestButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+			this.TestButton.Size = new System.Drawing.Size(57, 22);
+			this.TestButton.Text = "Test...";
+			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
 			// MappedDevicesLabel
 			// 
@@ -623,6 +638,7 @@ namespace x360ce.App
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
+			this.Shown += new System.EventHandler(this.MainForm_Shown);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.Controls.SetChildIndex(this.MainTabControl, 0);
 			this.Controls.SetChildIndex(this.MainStatusStrip, 0);
@@ -706,5 +722,6 @@ namespace x360ce.App
 		private ToolStripLabel toolStripLabel1;
 		private TabPage IssuesTabPage;
 		private Controls.IssuesUserControl IssuesPanel;
+		private ToolStripButton TestButton;
 	}
 }

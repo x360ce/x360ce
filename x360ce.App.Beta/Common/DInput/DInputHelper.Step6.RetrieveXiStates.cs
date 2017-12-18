@@ -15,13 +15,16 @@ namespace x360ce.App.DInput
 
 		void RetrieveXiStates()
 		{
+			// Allow if not testing or testing with option enabled.
+			var o = SettingsManager.Options;
+			var allow = !o.TestEnabled || o.TestGetXInputStates;
 			lock (Controller.XInputLock)
 			{
 				// Before states can be retrieved xinput configuration must be checked.
 				for (uint i = 0; i < 4; i++)
 				{
 					var gamePad = XiControllers[i];
-					if (Controller.IsLoaded && gamePad.IsConnected)
+					if (Controller.IsLoaded && gamePad.IsConnected && allow)
 					{
 						LiveXInputStates[i] = gamePad.GetState();
 						XiControllerConnected[i] = true;

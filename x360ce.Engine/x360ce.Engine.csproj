@@ -346,8 +346,6 @@
     <Compile Include="SharpDX.XInput\BatteryType.cs" />
     <Compile Include="SharpDX.XInput\Capabilities.cs" />
     <Compile Include="SharpDX.XInput\CapabilityFlags.cs" />
-    <Compile Include="SharpDX.XInput\Controller.cs" />
-    <Compile Include="SharpDX.XInput\Controller.x360ce.cs" />
     <Compile Include="SharpDX.XInput\DeviceQueryType.cs" />
     <Compile Include="SharpDX.XInput\DeviceSubType.cs" />
     <Compile Include="SharpDX.XInput\DeviceType.cs" />
@@ -363,6 +361,7 @@
     <Compile Include="SharpDX.XInput\ThumbIndex.cs" />
     <Compile Include="SharpDX.XInput\UserIndex.cs" />
     <Compile Include="SharpDX.XInput\Vibration.cs" />
+    <Compile Include="SharpDX.XInput\Controller.x360ce.All.cs" />
     <Compile Include="SharpDX.XInput\XInput13.cs" />
     <Compile Include="SharpDX.XInput\XInput13.x360ce.cs" />
     <Compile Include="SharpDX.XInput\XInput14.cs" />
