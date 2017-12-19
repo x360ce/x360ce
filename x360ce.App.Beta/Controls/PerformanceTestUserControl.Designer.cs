@@ -29,18 +29,20 @@
 		private void InitializeComponent()
 		{
 			this.MainGroupBox = new System.Windows.Forms.GroupBox();
+			this.CpuLabel = new System.Windows.Forms.Label();
 			this.CpuTextBox = new System.Windows.Forms.TextBox();
 			this.EnableCheckBox = new System.Windows.Forms.CheckBox();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.SetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.GetDInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.UpdateInterfaceCheckBox = new System.Windows.Forms.CheckBox();
-			this.CpuLabel = new System.Windows.Forms.Label();
+			this.TestButton = new System.Windows.Forms.Button();
 			this.MainGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainGroupBox
 			// 
+			this.MainGroupBox.Controls.Add(this.TestButton);
 			this.MainGroupBox.Controls.Add(this.CpuLabel);
 			this.MainGroupBox.Controls.Add(this.CpuTextBox);
 			this.MainGroupBox.Controls.Add(this.EnableCheckBox);
@@ -55,6 +57,15 @@
 			this.MainGroupBox.TabIndex = 0;
 			this.MainGroupBox.TabStop = false;
 			this.MainGroupBox.Text = "Performance Test";
+			// 
+			// CpuLabel
+			// 
+			this.CpuLabel.AutoSize = true;
+			this.CpuLabel.Location = new System.Drawing.Point(120, 19);
+			this.CpuLabel.Name = "CpuLabel";
+			this.CpuLabel.Size = new System.Drawing.Size(32, 13);
+			this.CpuLabel.TabIndex = 3;
+			this.CpuLabel.Text = "CPU:";
 			// 
 			// CpuTextBox
 			// 
@@ -115,14 +126,15 @@
 			this.UpdateInterfaceCheckBox.Text = "Update Interface";
 			this.UpdateInterfaceCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// CpuLabel
+			// TestButton
 			// 
-			this.CpuLabel.AutoSize = true;
-			this.CpuLabel.Location = new System.Drawing.Point(120, 19);
-			this.CpuLabel.Name = "CpuLabel";
-			this.CpuLabel.Size = new System.Drawing.Size(32, 13);
-			this.CpuLabel.TabIndex = 3;
-			this.CpuLabel.Text = "CPU:";
+			this.TestButton.Location = new System.Drawing.Point(92, 14);
+			this.TestButton.Name = "TestButton";
+			this.TestButton.Size = new System.Drawing.Size(25, 23);
+			this.TestButton.TabIndex = 4;
+			this.TestButton.Text = "T";
+			this.TestButton.UseVisualStyleBackColor = true;
+			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
 			// PerformanceTestUserControl
 			// 
@@ -147,5 +159,6 @@
 		public System.Windows.Forms.CheckBox UpdateInterfaceCheckBox;
 		private System.Windows.Forms.TextBox CpuTextBox;
 		private System.Windows.Forms.Label CpuLabel;
+		private System.Windows.Forms.Button TestButton;
 	}
 }

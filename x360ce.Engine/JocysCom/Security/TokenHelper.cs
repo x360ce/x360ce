@@ -193,21 +193,27 @@ namespace JocysCom.ClassLibrary.Security
 			return string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, absolutePath, keyName, token);
 		}
 
+		public static string GetFullUrl(string absolutePath)
+		{
+			var context = System.Web.HttpContext.Current;
+			if (context == null)
+				return null;
+			var u = context.Request.Url;
+			var port = u.IsDefaultPort ? "" : ":" + u.Port;
+			var appPath = context.Request.ApplicationPath;
+			var url = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, absolutePath);
+			return url;
+		}
+
 		/// <summary>
 		/// Get URL to web application root.
 		/// </summary>
 		public static string GetApplicationUrl()
 		{
-			var url = string.Empty;
 			var context = System.Web.HttpContext.Current;
-			if (context != null)
-			{
-				var u = context.Request.Url;
-				var port = u.IsDefaultPort ? "" : ":" + u.Port;
-				var appPath = context.Request.ApplicationPath;
-				url = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, appPath);
-			}
-			return url.TrimEnd('/');
+			if (context == null)
+				return null;
+			return GetFullUrl(context.Request.ApplicationPath).TrimEnd('/');
 		}
 
 		/// <summary>

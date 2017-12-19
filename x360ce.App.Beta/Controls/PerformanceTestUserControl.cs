@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
+using JocysCom.ClassLibrary;
 
 namespace x360ce.App.Controls
 {
@@ -235,6 +236,13 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		HiResTimer _timer;
+
+		private void TestButton_Click(object sender, EventArgs e)
+		{
+			_timer = new HiResTimer();
+			_timer.Test(1, true);
+		}
 
 	}
 }
