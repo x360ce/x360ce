@@ -121,8 +121,6 @@
 			catch (Exception) { throw; }
 		}
 
-		static bool UseMicrosoft = true;
-
 		[HandleProcessCorruptedStateExceptions]
 		public static unsafe ErrorCode XInputGetState(int dwUserIndex, out State pState)
 		{

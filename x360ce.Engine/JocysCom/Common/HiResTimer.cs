@@ -1,40 +1,177 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
+using System.Timers;
 
 namespace JocysCom.ClassLibrary
 {
-	public partial class HiResTimer
+
+	/// <summary>
+	/// Hi accuracy and performance timer.
+	/// </summary>
+	/// <remarks>
+	/// Standard C# timers are highly inaccurate and slow. They would add 8ms to every call-back.
+	/// Note: Callback will finish before timer schedules next run.
+	/// </remarks>
+	[DefaultProperty("Interval"), DefaultEvent("Elapsed")]
+	public class HiResTimer
 	{
 
 
+		/// <summary>
+		/// Initializes a new instance of the HiResTimer.
+		/// </summary>
+		public HiResTimer() { }
+		/// <summary>
+		/// Initializes a new instance of the HiResTimer.
+		/// </summary>
+		public HiResTimer(int interval)
+		{
+			if (interval <= 0)
+				throw new ArgumentException("Invalid value", "interval");
+			_Interval = interval;
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the Timer raises the Tick event each time the specified
+		/// Interval has elapsed, when Enabled is set to true.
+		/// </summary>
+		[Category("Behavior"), DefaultValue(true)]
+		public bool AutoReset
+		{
+			get { return _AutoReset; }
+			set
+			{
+				if (_AutoReset == value)
+					return;
+				_AutoReset = value;
+				UpdateTimer();
+			}
+		}
+		bool _AutoReset = true;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the Timer is able
+		/// to raise events at a defined interval.
+		/// </summary>
+		[Category("Behavior"), DefaultValue(false)]
+		public bool Enabled
+		{
+			get { return _Enabled; }
+			set
+			{
+				if (_Enabled == value)
+					return;
+				_Enabled = value;
+				UpdateTimer();
+			}
+		}
+		bool _Enabled;
+
+
+		/// <summary>
+		/// Gets or sets the interval on which to raise events.
+		/// </summary>
+		[Category("Behavior"), DefaultValue(100)]
+		public int Interval
+		{
+			get { return _Interval; }
+			set
+			{
+				if (_Interval == value)
+					return;
+				if (value <= 0)
+					throw new ArgumentException("Invalid value", "interval");
+				_Interval = value;
+				UpdateTimer();
+			}
+		}
+		int _Interval = 100;
+
+
+		void UpdateTimer()
+		{
+			KillTimer();
+			if (_Enabled)
+				StartTimer(OnElapsed);
+		}
+
+		/// <summary>
+		/// Occurs when the Interval has elapsed.
+		/// </summary>
+		[Category("Behavior")]
+		public event ElapsedEventHandler Elapsed;
+
+		/// <summary>
+		/// Gets or sets the object used to marshal event-handler calls that are issued when
+		/// an interval has elapsed.
+		/// </summary>
+		[Browsable(false), DefaultValue(null)]
+		public ISynchronizeInvoke SynchronizingObject { get; set; }
+
+		/// <summary>Starts the timing by setting 'Enabled' to 'true'.</summary>
+		public void Start() { Enabled = true; }
+
+		/// <summary>Stops the timing by setting 'Enabled' to 'false'.</summary>
+		public void Stop() { Enabled = false; }
+
+		void OnElapsed(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
+		{
+			try
+			{
+				var ev = Elapsed;
+				if (ev != null)
+				{
+					ElapsedEventArgs e = null;
+					var so = SynchronizingObject;
+					if (so != null && so.InvokeRequired)
+						so.BeginInvoke(ev, new object[] { this, e });
+					else
+						ev(this, e);
+				}
+			}
+			catch { }
+		}
+
+		#region Test
 
 		Stopwatch stopwatch;
 
+		int currentIndex;
+		long[] marks = new long[0];
+		double ticksToWait;
 
-		public HiResTimer()
+		// 1000 Hz - 1 ms
+		//  500 Hz = 2 ms
+		//  250 Hz = 4 ms
+		//  125 Hz = 8 ms
+		public void BeginTest()
 		{
+			currentIndex = 0;
 			stopwatch = new Stopwatch();
-			timer = new System.Timers.Timer();
-			timer.Interval = 1000;
-			//timer.AutoReset = false;
-			timer.Elapsed += Timer_Elapsed;
+			stopwatch.Restart();
+			// Get hz.
+			var hz = 1000 / Interval;
+			// Run for two seconds.
+			var maxMarks = hz * 2;
+			Array.Resize(ref marks, (int)maxMarks);
+			// Get amount of ticks to wait inbetween actions.
+			ticksToWait = Stopwatch.Frequency * Interval / 1000;
+			StartTimer(OnTestElapsed);
 		}
 
-		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		void OnTestElapsed(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
 		{
 			marks[currentIndex] = stopwatch.ElapsedTicks;
 			currentIndex++;
 			if (currentIndex >= marks.Length)
 			{
 				stopwatch.Stop();
-				long totalDiff = 0;
-				long minDiff = 0;
-				long maxDiff = 0;
+				double totalDiff = 0;
+				double minDiff = 0;
+				double maxDiff = 0;
 				for (int i = 0; i < marks.Length - 1; i++)
 				{
 					// Get waiting time.
@@ -53,16 +190,15 @@ namespace JocysCom.ClassLibrary
 				var averageInaccuracyTicks = totalDiff / marks.Length - 1;
 				// Ticks per second.
 				var ms = (float)averageInaccuracyTicks * 1000f / (float)Stopwatch.Frequency;
-				var msPc = (float)ms / (float)timer.Interval;
+				var msPc = (float)ms / (float)Interval;
 				var msMin = (float)minDiff * 1000f / (float)Stopwatch.Frequency;
 				var msMax = (float)maxDiff * 1000f / (float)Stopwatch.Frequency;
 				var totalRuntimeTicks = marks[marks.Length - 1] - marks[0];
 				var totalRuntimeMs = (float)totalRuntimeTicks * 1000f / (float)Stopwatch.Frequency;
 				var sb = new StringBuilder();
 				sb.AppendFormat("Ticks per Second = {0}\r\n", Stopwatch.Frequency);
-				sb.AppendFormat("Timer Interval = {0}\r\n", timer.Interval);
-				sb.AppendFormat("Timer Autoreset = {0}\r\n", timer.AutoReset);
-				sb.AppendFormat("Hz = {0}\r\n", 1000 / timer.Interval);
+				sb.AppendFormat("Timer Interval = {0}\r\n", Interval);
+				sb.AppendFormat("Hz = {0}\r\n", 1000 / Interval);
 				sb.AppendFormat("Mark Samples = {0}\r\n", marks.Length);
 				sb.AppendFormat("AverageInaccuracyTicks = {0}\r\n", averageInaccuracyTicks);
 				sb.AppendFormat("AverageInaccuracyMs = {0}\r\n", ms);
@@ -70,192 +206,108 @@ namespace JocysCom.ClassLibrary
 				sb.AppendFormat("AverageInaccuracyMsMin = {0}\r\n", msMin);
 				sb.AppendFormat("AverageInaccuracyMsMax = {0}\r\n", msMax);
 				sb.AppendFormat("Total run time ms = {0}\r\n", totalRuntimeMs);
-				if (timerId > 0)
-				{
-					try
-					{
-						Stop();
-					}
-					catch (Exception)
-					{
-						MessageBox.Show("Error");
-					}
-					// end timer
-				}
-				else if (timer.AutoReset)
-				{
-					timer.Stop();
-				}
-				MessageBox.Show(sb.ToString());
+				TestResults = sb.ToString();
+				KillTimer();
+				var ev = TestFinished;
+				if (ev != null)
+					ev(this, new EventArgs());
 				return;
 			}
-			if (timerId == 0 && !timer.AutoReset)
-				timer.Start();
 		}
 
-		int currentIndex;
-		long[] marks = new long[0];
+		public string TestResults;
 
-		long ticksToWait;
-		uint timerId;
+		[Category("Behavior")]
+		public event EventHandler TestFinished;
 
-
-		// 1000 Hz - 1 ms
-		//  500 Hz = 2 ms
-		//  250 Hz = 4 ms
-		//  125 Hz = 8 ms
-		public void Test(int interval, bool hiResTimer)
-		{
-			currentIndex = 0;
-			stopwatch.Restart();
-			// Get hz.
-			var hz = 1000 / interval;
-			// Run for two seconds.
-			var maxMarks = hz * 2;
-			Array.Resize(ref marks, maxMarks);
-			timer.Interval = interval;
-			// Get amount of ticks to wait inbetween actions.
-			ticksToWait = Stopwatch.Frequency * interval / 1000;
-			if (hiResTimer)
-			{
-				try
-				{
-					thisCB = new TimerCallback(OnElapsed);
-					Start((uint)interval, true);
-				}
-				catch (Exception)
-				{
-					MessageBox.Show("error 1");
-				}
-			}
-			else
-			{
-				timer.Start();
-			}
-		}
-
-		System.Timers.Timer timer;
+		#endregion
 
 		#region  Hi Resolution timer.
 
-		//Lib API declarations
-		[DllImport("Winmm.dll", CharSet = CharSet.Auto)]
-		static extern uint timeSetEvent(uint uDelay, uint uResolution, TimerCallback lpTimeProc, UIntPtr dwUser, uint fuEvent);
+		/// <summary>
+		/// Delegate definition for the API callback
+		/// </summary>
+		internal delegate void HiResTimerCallback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2);
 
-		[DllImport("Winmm.dll", CharSet = CharSet.Auto)]
-		static extern uint timeKillEvent(uint uTimerID);
+		internal class Native
+		{
 
-		[DllImport("Winmm.dll", CharSet = CharSet.Auto)]
-		static extern uint timeGetTime();
+			//Lib API declarations
+			[DllImport("Winmm.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern uint timeSetEvent(uint uDelay, uint uResolution, HiResTimerCallback lpTimeProc, UIntPtr dwUser, uint fuEvent);
 
-		[DllImport("Winmm.dll", CharSet = CharSet.Auto)]
-		static extern uint timeBeginPeriod(uint uPeriod);
+			[DllImport("Winmm.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern uint timeKillEvent(uint uTimerID);
 
-		[DllImport("Winmm.dll", CharSet = CharSet.Auto)]
-		static extern uint timeEndPeriod(uint uPeriod);
+			[DllImport("Winmm.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern uint timeGetTime();
 
-		//Timer type definitions
+			[DllImport("Winmm.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern uint timeBeginPeriod(uint uPeriod);
+
+			[DllImport("Winmm.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern uint timeEndPeriod(uint uPeriod);
+
+		}
+
+		/// <summary>
+		/// Timer type definitions.
+		/// </summary>
 		[Flags]
 		public enum fuEvent : uint
 		{
-			TIME_ONESHOT = 0,      //Event occurs once, after uDelay milliseconds. 
+			TIME_ONESHOT = 0, // Event occurs once, after uDelay milliseconds.
 			TIME_PERIODIC = 1,
-			TIME_CALLBACK_FUNCTION = 0x0000,  /* callback is function */
-											  //TIME_CALLBACK_EVENT_SET = 0x0010, /* callback is event - use SetEvent */
-											  //TIME_CALLBACK_EVENT_PULSE = 0x0020  /* callback is event - use PulseEvent */
-		}
-
-		void OnElapsed(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
-		{
-			Timer_Elapsed(null, null);
-		}
-
-		//Delegate definition for the API callback
-		delegate void TimerCallback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2);
-
-		//IDisposable code
-		private bool disposed = false;
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		private void Dispose(bool disposing)
-		{
-			if (!this.disposed)
-			{
-				if (disposing)
-				{
-					Stop();
-				}
-			}
-			disposed = true;
+			TIME_CALLBACK_FUNCTION = 0x0000,  // callback is function
+			TIME_CALLBACK_EVENT_SET = 0x0010, // callback is event - use SetEvent
+			TIME_CALLBACK_EVENT_PULSE = 0x0020  // callback is event - use PulseEvent
 		}
 
 		/// <summary>
 		/// The current timer instance ID
 		/// </summary>
-		uint id = 0;
-
-		/// <summary>
-		/// The callback used by the the API
-		/// </summary>
-		TimerCallback thisCB;
-
-		/// <summary>
-		/// The timer elapsed event 
-		/// </summary>
-		public event EventHandler Timer;
-		protected virtual void OnTimer(EventArgs e)
-		{
-			if (Timer != null)
-				Timer(this, e);
-		}
+		uint _TimerId = 0;
 
 		/// <summary>
 		/// Stop the current timer instance (if any)
 		/// </summary>
-		public void Stop()
+		internal void KillTimer()
 		{
 			lock (this)
 			{
-				if (id != 0)
-				{
-					timeKillEvent(id);
-					Debug.WriteLine("MMTimer " + id.ToString() + " stopped");
-					id = 0;
-				}
+				if (_TimerId <= 0)
+					return;
+				Native.timeKillEvent(_TimerId);
+				_TimerId = 0;
 			}
 		}
+
+		HiResTimerCallback _callback;
 
 		/// <summary>
 		/// Start a timer instance
 		/// </summary>
-		/// <param name="ms">Timer interval in milliseconds</param>
-		/// <param name="repeat">If true sets a repetitive event, otherwise sets a one-shot</param>
-		public void Start(uint ms, bool repeat)
+		internal void StartTimer(HiResTimerCallback callback)
 		{
-			//Kill any existing timer
-			Stop();
-
-			//Set the timer type flags
-			fuEvent f = fuEvent.TIME_CALLBACK_FUNCTION | (repeat ? fuEvent.TIME_PERIODIC : fuEvent.TIME_ONESHOT);
-
 			lock (this)
 			{
-				id = timeSetEvent(ms, 0, thisCB, UIntPtr.Zero, (uint)f);
-				if (id == 0)
-					throw new Exception("timeSetEvent error");
-				Debug.WriteLine("MMTimer " + id.ToString() + " started");
+				// Kill timer.
+				if (_TimerId > 0)
+				{
+					Native.timeKillEvent(_TimerId);
+					_TimerId = 0;
+				}
+				// Must create callback or timer will crash.
+				_callback = new HiResTimerCallback(callback);
+				//Set the timer type flags
+				var f = fuEvent.TIME_CALLBACK_FUNCTION | (AutoReset ? fuEvent.TIME_PERIODIC : fuEvent.TIME_ONESHOT);
+				_TimerId = Native.timeSetEvent((uint)Interval, 0, _callback, UIntPtr.Zero, (uint)f);
+				if (_TimerId == 0)
+				{
+					var ex = new Win32Exception(Marshal.GetLastWin32Error());
+					throw new Exception(ex.Message);
+				}
 			}
-		}
-
-		void CBFunc(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
-		{
-			//Callback from the MMTimer API that fires the Timer event. Note we are in a different thread here
-			OnTimer(new EventArgs());
 		}
 
 		#endregion

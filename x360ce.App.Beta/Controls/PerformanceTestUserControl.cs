@@ -241,8 +241,18 @@ namespace x360ce.App.Controls
 		private void TestButton_Click(object sender, EventArgs e)
 		{
 			_timer = new HiResTimer();
-			_timer.Test(1, true);
+			_timer.Interval = 1;
+			_timer.AutoReset = true;
+			_timer.TestFinished += _timer_TestFinished;
+			_timer.BeginTest();
 		}
 
+		private void _timer_TestFinished(object sender, EventArgs e)
+		{
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				MessageBox.Show(_timer.TestResults);
+			});
+		}
 	}
 }
