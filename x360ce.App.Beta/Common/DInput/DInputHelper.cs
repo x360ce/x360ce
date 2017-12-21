@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using x360ce.Engine;
 
 namespace x360ce.App.DInput
@@ -14,6 +15,7 @@ namespace x360ce.App.DInput
 
 		public DInputHelper()
 		{
+			TimerSemaphore = new SemaphoreSlim(0);
 			Manager = new DirectInput();
 			InitDeviceDetector();
 			CombinedXInputStates = new State[4];
@@ -61,16 +63,78 @@ namespace x360ce.App.DInput
 		public event EventHandler<EventArgs> UpdateCompleted;
 
 		DirectInput Manager;
-		bool IsStopping;
+
+		JocysCom.ClassLibrary.HiResTimer _timer;
 
 		public void Start()
 		{
 			watch.Restart();
-			IsStopping = false;
-			var ts = new System.Threading.ThreadStart(RefreshAll);
+			var ts = new System.Threading.ThreadStart(TimerProcess);
 			var t = new System.Threading.Thread(ts);
 			t.IsBackground = true;
 			t.Start();
+		}
+
+		public void Stop()
+		{
+			// Unlock EventArgsSemaphore.Wait() line.
+			TimerSemaphore.Release();
+		}
+
+		SemaphoreSlim TimerSemaphore;
+		object EventArgsSemaphoreLock = new object();
+
+
+		void TimerProcess()
+		{
+			_timer = new JocysCom.ClassLibrary.HiResTimer();
+			_timer.Interval = (int)Frequency;
+			_timer.Elapsed += Timer_Elapsed;
+			_timer.Start();
+			// Wait here until all items returns to the pool.
+			TimerSemaphore.Wait();
+			_timer.Dispose();
+		}
+
+		public Exception LastException = null;
+
+		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			try
+			{
+				RefreshAll();
+			}
+			catch (Exception ex)
+			{
+				LastException = ex;
+			}
+		}
+
+		object DiUpdatesLock = new object();
+
+		void RefreshAll()
+		{
+			lock (DiUpdatesLock)
+			{
+				// Update information about connected devices.
+				UpdateDiDevices();
+				// Update JoystickStates from devices.
+				UpdateDiStates();
+				// Update XInput states from Custom DirectInput states.
+				UpdateXiStates();
+				// Combine XInput states of controllers.
+				CombineXiStates();
+				// Update virtual devices from combined states.
+				UpdateVirtualDevices();
+				// Retrieve XInput states from XInput controllers.
+				RetrieveXiStates();
+				// Update pool frequency value and sleep if necessary.
+				UpdateDelayFrequency();
+				// Fire event.
+				var ev = UpdateCompleted;
+				if (ev != null)
+					ev(this, new EventArgs());
+			}
 		}
 
 		/// <summary>
@@ -78,68 +142,33 @@ namespace x360ce.App.DInput
 		/// </summary>
 		System.Diagnostics.Stopwatch watch;
 		long lastTime;
-		long lastTick;
 		long currentTick;
-		long lastTickTime;
-		public long RequiredFrequency = 1000;
-		public long UpdateFrequency;
+		public long CurrentUpdateFrequency;
 
-		public void Stop()
+		UpdateFrequency Frequency
 		{
-			IsStopping = true;
-		}
-
-		object DiUpdatesLock = new object();
-
-		void RefreshAll()
-		{
-			// Loop until stopped is pressed.
-			while (!IsStopping)
+			get			{ return _Frequency;  }
+			set
 			{
-				lock (DiUpdatesLock)
-				{
-					// Update information about connected devices.
-					UpdateDiDevices();
-					// Update JoystickStates from devices.
-					UpdateDiStates();
-					// Update XInput states from Custom DirectInput states.
-					UpdateXiStates();
-					// Combine XInput states of controllers.
-					CombineXiStates();
-					// Update virtual devices from combined states.
-					UpdateVirtualDevices();
-					// Retrieve XInput states from XInput controllers.
-					RetrieveXiStates();
-					// Update pool frequency value and sleep if necessary.
-					UpdateDelayFrequency();
-					// Fire event.
-					var ev = UpdateCompleted;
-					if (ev != null)
-						ev(this, new EventArgs());
-				}
+				_Frequency = value;
+				var t = _timer;
+				if (t != null && t.Interval != (int)value)
+					t.Interval = (int)value;
 			}
 		}
+		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
 		void UpdateDelayFrequency()
 		{
 			// Calculate update frequency.
 			currentTick++;
 			var currentTime = watch.ElapsedMilliseconds;
-			var timeChange = currentTime - lastTime;
-			var tickChange = currentTick - lastTick;
-			// Check if completed too soon
-			var requiredTimePerTick = 1000 / RequiredFrequency;
-			var timePassed = currentTime - lastTickTime;
-			lastTickTime = currentTime;
-			var waitTime = requiredTimePerTick - timePassed;
-			if (waitTime > 0)
-				System.Threading.Thread.Sleep((int)waitTime);
-			// If one second passed then...
-			if (timeChange > 1000)
+			// If one second elapsed then...
+			if ((currentTime - lastTime) > 1000)
 			{
-				UpdateFrequency = tickChange * 1000 / timeChange;
+				CurrentUpdateFrequency = currentTick;
+				currentTick = 0;
 				lastTime = currentTime;
-				lastTick = currentTick;
 				var ev = FrequencyUpdated;
 				if (ev != null)
 					ev(this, new EventArgs());
@@ -159,6 +188,7 @@ namespace x360ce.App.DInput
 		{
 			if (disposing)
 			{
+				Stop();
 				UnInitDeviceDetector();
 				if (Manager != null)
 				{

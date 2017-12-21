@@ -11,6 +11,7 @@ namespace x360ce.App
             Headers = new WebHeaderCollection();
             Timeout = timeout;
             Retries = retries;
+			RetriesLeft = retries;
             Sleep = sleep;
             Url = url;
         }
@@ -25,7 +26,9 @@ namespace x360ce.App
 
         public int Retries { get; set; }
 
-        public int Sleep { get; set; }
+		public int RetriesLeft { get; set; }
+
+		public int Sleep { get; set; }
 
         public bool Cancel { get; set; }
 

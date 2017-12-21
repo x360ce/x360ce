@@ -180,6 +180,7 @@
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
     <Compile Include="JocysCom\Common\Helper.cs" />
+    <Compile Include="JocysCom\Common\HiResDateTime.cs" />
     <Compile Include="JocysCom\Common\HiResTimer.cs" />
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />

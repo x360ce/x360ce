@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
@@ -121,15 +115,13 @@ namespace x360ce.App.Controls
 					BeginInvoke((MethodInvoker)delegate ()
 					{
 						CpuTextBox.Text = process_cpu_usage.HasValue
-							? string.Format("{0:0.0} %", Math.Round(process_cpu_usage.Value, 1))
+							? string.Format("{0:0.000} %", Math.Round(process_cpu_usage.Value, 3))
 							: "";
 					});
 				}
 				CheckTimer();
 			}
 		}
-
-
 
 		#endregion
 
@@ -202,7 +194,7 @@ namespace x360ce.App.Controls
 					_prevSysKernel = sysKernel;
 					_prevSysUser = sysUser;
 
-					_lastRun = DateTime.Now;
+					_lastRun = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
 
 					cpuCopy = _cpuUsage;
 				}
@@ -222,7 +214,7 @@ namespace x360ce.App.Controls
 				get
 				{
 					const int minimumElapsedMS = 250;
-					TimeSpan sinceLast = DateTime.Now - _lastRun;
+					TimeSpan sinceLast = JocysCom.ClassLibrary.HiResDateTime.Current.Now - _lastRun;
 					return sinceLast.TotalMilliseconds > minimumElapsedMS;
 				}
 			}

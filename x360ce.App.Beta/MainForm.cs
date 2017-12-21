@@ -1559,9 +1559,11 @@ namespace x360ce.App
 			AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
 		}
 
-		DateTime lastRun;
 		bool UpdateCompletedBusy;
 		object UpdateCompletedLock = new object();
+
+		System.Diagnostics.Stopwatch InterfaceUpdateWatch;
+		long LastUpdateTime;
 
 		private void DHelper_UpdateCompleted(object sender, EventArgs e)
 		{
@@ -1573,11 +1575,19 @@ namespace x360ce.App
 			}
 			lock (UpdateCompletedLock)
 			{
-				var n = DateTime.Now;
-				// Allow no more than 5 frames per second.
-				if (UpdateCompletedBusy || n.Subtract(lastRun).Milliseconds < 200)
+				if (InterfaceUpdateWatch == null)
+				{
+					InterfaceUpdateWatch = new System.Diagnostics.Stopwatch();
+					InterfaceUpdateWatch.Start();
+				}
+				// If still updating interface then return.
+				if (UpdateCompletedBusy)
 					return;
-				lastRun = n;
+				// Allow no more than 5 frames per second.
+				var currentTime = InterfaceUpdateWatch.ElapsedMilliseconds;
+				if ((currentTime - LastUpdateTime) < 200)
+					return;
+				LastUpdateTime = currentTime;
 				UpdateCompletedBusy = true;
 			}
 			if (Program.IsClosing) return;
@@ -1601,7 +1611,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			AppHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", DHelper.UpdateFrequency);
+			AppHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", DHelper.CurrentUpdateFrequency);
 		}
 
 		#endregion

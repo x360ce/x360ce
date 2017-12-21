@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary
 	/// Note: Callback will finish before timer schedules next run.
 	/// </remarks>
 	[DefaultProperty("Interval"), DefaultEvent("Elapsed")]
-	public class HiResTimer
+	public class HiResTimer: IDisposable
 	{
 
 
@@ -221,6 +221,27 @@ namespace JocysCom.ClassLibrary
 		public event EventHandler TestFinished;
 
 		#endregion
+
+		#region IDisposable
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		// The bulk of the clean-up code is implemented in Dispose(bool)
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Stop();
+				Elapsed = null;
+			}
+		}
+
+		#endregion
+
 
 		#region  Hi Resolution timer.
 
