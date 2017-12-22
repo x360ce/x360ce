@@ -595,8 +595,8 @@
     <EmbeddedResource Include="Resources\ScpVBus\x86\devcon.exe" />
     <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus.inf" />
     <EmbeddedResource Include="Resources\ScpVBus\x86\WdfCoinstaller01009.dll" />
-    <EmbeddedResource Include="Resources\DInput\x64\dinput.dll" />
-    <EmbeddedResource Include="Resources\DInput\x86\dinput.dll" />
+    <EmbeddedResource Include="Resources\DInput\x64\dinput8.dll" />
+    <EmbeddedResource Include="Resources\DInput\x86\dinput8.dll" />
     <EmbeddedResource Include="Resources\vXboxInterface\x64\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\vXboxInterface\x86\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using x360ce.App.Properties;
 
 namespace x360ce.App
 {
@@ -33,6 +32,12 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
+			//var fi = new FileInfo(Application.ExecutablePath);
+			//Directory.SetCurrentDirectory(fi.Directory.FullName);
+
+			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
+			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 			if (IsDebug)
 			{
 				StartApp(args);
@@ -146,7 +151,7 @@ namespace x360ce.App
 		{
 			try
 			{
-				Settings.Default.Reload();
+				Properties.Settings.Default.Reload();
 			}
 			catch (ConfigurationErrorsException ex)
 			{
@@ -163,7 +168,7 @@ namespace x360ce.App
 				if (result == DialogResult.Yes)
 				{
 					File.Delete(filename);
-					Settings.Default.Reload();
+					Properties.Settings.Default.Reload();
 				}
 				else
 				{
