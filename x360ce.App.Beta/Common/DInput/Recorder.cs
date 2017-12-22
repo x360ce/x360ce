@@ -15,7 +15,7 @@ namespace x360ce.App
 
 		public Recorder(IContainer container, float horizontalResolution, float verticalResolution)
 		{
-			markR = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+			markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
 			markR.SetResolution(horizontalResolution, verticalResolution);
 			RecordingTimer = new System.Windows.Forms.Timer(container);
 			RecordingTimer.Tick += RecordingTimer_Tick;

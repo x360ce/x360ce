@@ -6,10 +6,10 @@ using System.Resources;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TocaEdit X360 Controller Emulator")]
+[assembly: AssemblyTitle("Jocys.com X360 Controller Emulator")]
 [assembly: AssemblyDescription("Wrapper library that translates XInput calls to DirectInput calls, for support old, no XInput compatible gamepads.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("TocaEdit")]
+[assembly: AssemblyCompany("Jocys.com")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
 [assembly: AssemblyCopyright("Copyright © Jocys.com 2017")]
 [assembly: AssemblyTrademark("")]
@@ -32,7 +32,7 @@ using System.Resources;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyFileVersion("4.1.0.0")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: NeutralResourcesLanguageAttribute("en")]

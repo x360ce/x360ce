@@ -19,7 +19,7 @@ namespace x360ce.App.Issues
 				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			if (!vBox.vXboxInterface.isVBusExists())
+			if (!vXboxInterface.isVBusExists())
 			{
 				SetSeverity(IssueSeverity.Critical, 0, "You need to install Virtual Driver for emulation to work.");
 				return;

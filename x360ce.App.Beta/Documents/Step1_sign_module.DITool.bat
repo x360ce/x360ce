@@ -1,6 +1,5 @@
 @ECHO OFF
-CALL:SIG "..\Resources\SharpDX\SharpDX.dll"
-CALL:SIG "..\Resources\SharpDX\SharpDX.DirectInput.dll"
+CALL:SIG "..\..\x360ce\ditool\bin\Debug\ditool.exe"
 pause
 
 GOTO:EOF
@@ -14,7 +13,7 @@ GOTO:EOF
 set sgt=%ProgramFiles%\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
 if not exist "%sgt%" set sgt=%ProgramFiles(x86)%\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
 set pfx=D:\_Backup\Configuration\SSL\CodeSign_Standard\2016\Evaldas_Jocys.CodeSign.pfx
-set d=DirectInput Tool
+set d=X360CE - DirectInput Tool
 set du=http://www.x360ce.com
 set vsg=http://timestamp.verisign.com/scripts/timestamp.dll
 if not exist "%sgt%" CALL:Error "%sgt%"

@@ -12,7 +12,7 @@ namespace x360ce.App.DInput
 		static string GetVboxPath()
 		{
 			string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
-			return System.IO.Path.Combine(baseDirectory, "Program Files", "Nefarius vBox");
+			return System.IO.Path.Combine(baseDirectory, "Program Files", "Nefarius ScpVBus");
 		}
 
 		/// <summary>
@@ -22,10 +22,10 @@ namespace x360ce.App.DInput
 		{
 			var folderName = GetVboxPath();
 			// There must be an easier way to check embedded non managed DLL version.
-			var paString = Environment.Is64BitOperatingSystem ? "_x64" : "_x86";
+			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
 			// Get list of resources to extract.
 			var assembly = Assembly.GetEntryAssembly();
-			var resourceFolder = string.Format(".Resources.vBox{0}.", paString);
+			var resourceFolder = string.Format(".Resources.ScpVBus.{0}.", paString);
 			var resourceNames = assembly.GetManifestResourceNames().Where(x => x.Contains(resourceFolder)).ToArray();
 			foreach (var resourceName in resourceNames)
 			{

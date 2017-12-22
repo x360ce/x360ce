@@ -967,7 +967,7 @@ namespace x360ce.App
 					ControlPages[i].ImageKey = bullet;
 			}
 			// Update options panel.
-			var isVBusExists = vBox.vXboxInterface.isVBusExists();
+			var isVBusExists = vXboxInterface.isVBusExists();
 			OptionsPanel.VirtualDeviceInstallButton.Enabled = !isVBusExists;
 			OptionsPanel.VirtualDeviceUninstallButton.Enabled = isVBusExists;
 		}
@@ -1041,7 +1041,7 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				var stream = EngineHelper.GetResource("Documents.Help.htm");
+				var stream = EngineHelper.GetResourceStream("Documents.Help.htm");
 				var sr = new StreamReader(stream);
 				NameValueCollection list = new NameValueCollection();
 				list.Add("font-name-default", "'Microsoft Sans Serif'");

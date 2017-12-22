@@ -1,7 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.Windows.Forms;
-using x360ce.App.vBox;
 using x360ce.Engine;
 
 namespace x360ce.App.DInput

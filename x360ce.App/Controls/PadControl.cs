@@ -65,10 +65,10 @@ namespace x360ce.App.Controls
             // Initialize images.
             this.TopPictureBox.Image = topDisabledImage;
             this.FrontPictureBox.Image = frontDisabledImage;
-            this.markB = new Bitmap(EngineHelper.GetResource("Images.MarkButton.png"));
-            this.markA = new Bitmap(EngineHelper.GetResource("Images.MarkAxis.png"));
-            this.markC = new Bitmap(EngineHelper.GetResource("Images.MarkController.png"));
-            this.markR = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+            this.markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
+            this.markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
+            this.markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
+            this.markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
             float rH = topDisabledImage.HorizontalResolution;
             float rV = topDisabledImage.VerticalResolution;
             // Make sure resolution is same everywhere so images won't be resized.
@@ -293,19 +293,19 @@ namespace x360ce.App.Controls
         Bitmap markC;
         Bitmap markR;
 
-        Bitmap _topImage;
         Bitmap topImage
         {
-            get { return _topImage = _topImage ?? new Bitmap(EngineHelper.GetResource("Images.xboxControllerTop.png")); }
+            get { return _topImage = _topImage ?? new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png")); }
         }
+		Bitmap _topImage;
 
-        Bitmap _frontImage;
         Bitmap frontImage
         {
-            get { return _frontImage = _frontImage ?? new Bitmap(EngineHelper.GetResource("Images.xboxControllerFront.png")); }
+            get { return _frontImage = _frontImage ?? new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png")); }
         }
+		Bitmap _frontImage;
 
-        Bitmap _topDisabledImage;
+		Bitmap _topDisabledImage;
         Bitmap topDisabledImage
         {
             get
@@ -808,7 +808,7 @@ namespace x360ce.App.Controls
             if (device == null) return;
             // Add [Record] button.
             mi = new ToolStripMenuItem(cRecord);
-            mi.Image = new Bitmap(EngineHelper.GetResource("Images.bullet_ball_glass_red_16x16.png"));
+            mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
             mi.Click += new EventHandler(DiMenuStrip_Click);
             DiMenuStrip.Items.Add(mi);
             // Add Buttons.

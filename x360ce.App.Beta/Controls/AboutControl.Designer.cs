@@ -31,7 +31,6 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutControl));
 			this.ChangeLogTextBox = new System.Windows.Forms.TextBox();
 			this.AboutDescriptionLabel = new System.Windows.Forms.Label();
-			this.AboutWikiLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.AboutWikiLabel = new System.Windows.Forms.Label();
 			this.AboutTocaEditLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.AboutTocaLabel = new System.Windows.Forms.Label();
@@ -47,6 +46,7 @@
 			this.ChangesTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTextBox = new System.Windows.Forms.TextBox();
+			this.AboutWikiLinkLabel = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).BeginInit();
 			this.AboutTabControl.SuspendLayout();
 			this.ChangesTabPage.SuspendLayout();
@@ -73,25 +73,14 @@
 			this.AboutDescriptionLabel.TabIndex = 0;
 			this.AboutDescriptionLabel.Text = "Settings editor and test application for XBOX 360 Controller Emulator";
 			// 
-			// AboutWikiLinkLabel
-			// 
-			this.AboutWikiLinkLabel.AutoSize = true;
-			this.AboutWikiLinkLabel.Location = new System.Drawing.Point(219, 109);
-			this.AboutWikiLinkLabel.Name = "AboutWikiLinkLabel";
-			this.AboutWikiLinkLabel.Size = new System.Drawing.Size(241, 13);
-			this.AboutWikiLinkLabel.TabIndex = 0;
-			this.AboutWikiLinkLabel.TabStop = true;
-			this.AboutWikiLinkLabel.Text = "http://en.wikipedia.org/wiki/Xbox_360_Controller";
-			this.AboutWikiLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-			// 
 			// AboutWikiLabel
 			// 
 			this.AboutWikiLabel.AutoSize = true;
 			this.AboutWikiLabel.Location = new System.Drawing.Point(148, 109);
 			this.AboutWikiLabel.Name = "AboutWikiLabel";
-			this.AboutWikiLabel.Size = new System.Drawing.Size(65, 13);
+			this.AboutWikiLabel.Size = new System.Drawing.Size(48, 13);
 			this.AboutWikiLabel.TabIndex = 0;
-			this.AboutWikiLabel.Text = "X360c Wiki:";
+			this.AboutWikiLabel.Text = "shauleiz:";
 			// 
 			// AboutTocaEditLinkLabel
 			// 
@@ -236,6 +225,17 @@
 			this.LicenseTextBox.Size = new System.Drawing.Size(605, 330);
 			this.LicenseTextBox.TabIndex = 1;
 			// 
+			// AboutWikiLinkLabel
+			// 
+			this.AboutWikiLinkLabel.AutoSize = true;
+			this.AboutWikiLinkLabel.Location = new System.Drawing.Point(219, 109);
+			this.AboutWikiLinkLabel.Name = "AboutWikiLinkLabel";
+			this.AboutWikiLinkLabel.Size = new System.Drawing.Size(215, 13);
+			this.AboutWikiLinkLabel.TabIndex = 0;
+			this.AboutWikiLinkLabel.TabStop = true;
+			this.AboutWikiLinkLabel.Text = "https://github.com/shauleiz/vXboxInterface";
+			this.AboutWikiLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+			// 
 			// AboutControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -272,7 +272,6 @@
 
 		System.Windows.Forms.TextBox ChangeLogTextBox;
 		System.Windows.Forms.Label AboutDescriptionLabel;
-		System.Windows.Forms.LinkLabel AboutWikiLinkLabel;
 		System.Windows.Forms.Label AboutWikiLabel;
 		System.Windows.Forms.LinkLabel AboutTocaEditLinkLabel;
 		System.Windows.Forms.Label AboutTocaLabel;
@@ -288,5 +287,6 @@
 		private System.Windows.Forms.TabPage ChangesTabPage;
 		private System.Windows.Forms.TabPage LicenseTabPage;
 		private System.Windows.Forms.TextBox LicenseTextBox;
+		private System.Windows.Forms.LinkLabel AboutWikiLinkLabel;
 	}
 }

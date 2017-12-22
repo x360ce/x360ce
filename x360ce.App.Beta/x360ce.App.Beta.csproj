@@ -397,7 +397,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Issues\DirectXIssue.cs" />
-    <Compile Include="vBox\vXboxInterface.cs" />
+    <Compile Include="Common\vXboxInterface.cs" />
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -522,12 +522,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
-    <EmbeddedResource Include="Resources\vBox_x64\scpvbus.cat" />
-    <EmbeddedResource Include="Resources\vBox_x64\ScpVBus.sys" />
-    <EmbeddedResource Include="Resources\vBox_x64\ScpVBus_Setup.bat" />
-    <EmbeddedResource Include="Resources\vBox_x86\scpvbus.cat" />
-    <EmbeddedResource Include="Resources\vBox_x86\ScpVBus.sys" />
-    <EmbeddedResource Include="Resources\vBox_x86\ScpVBus_Setup.bat" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -593,22 +587,20 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
-    <EmbeddedResource Include="Resources\vBox_x64\devcon.exe" />
-    <EmbeddedResource Include="Resources\vBox_x64\ScpVBus.inf" />
-    <EmbeddedResource Include="Resources\vBox_x64\WdfCoinstaller01009.dll" />
-    <EmbeddedResource Include="Resources\vBox_x86\devcon.exe" />
-    <EmbeddedResource Include="Resources\vBox_x86\ScpVBus.inf" />
-    <EmbeddedResource Include="Resources\vBox_x86\WdfCoinstaller01009.dll" />
+    <EmbeddedResource Include="Resources\XInput\x64\xinput.dll" />
+    <EmbeddedResource Include="Resources\XInput\x86\xinput.dll" />
+    <EmbeddedResource Include="Resources\ScpVBus\x64\devcon.exe" />
+    <EmbeddedResource Include="Resources\ScpVBus\x64\ScpVBus.inf" />
+    <EmbeddedResource Include="Resources\ScpVBus\x64\WdfCoinstaller01009.dll" />
+    <EmbeddedResource Include="Resources\ScpVBus\x86\devcon.exe" />
+    <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus.inf" />
+    <EmbeddedResource Include="Resources\ScpVBus\x86\WdfCoinstaller01009.dll" />
+    <EmbeddedResource Include="Resources\DInput\x64\dinput.dll" />
+    <EmbeddedResource Include="Resources\DInput\x86\dinput.dll" />
+    <EmbeddedResource Include="Resources\vXboxInterface\x64\vXboxInterface.dll" />
+    <EmbeddedResource Include="Resources\vXboxInterface\x86\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
-    <EmbeddedResource Include="Resources\vXboxInterface_x64\vXboxInterface.dll" />
-    <EmbeddedResource Include="Resources\vXboxInterface_x86\vXboxInterface.dll" />
-    <EmbeddedResource Include="Resources\dinput.dll" />
-    <EmbeddedResource Include="Resources\dinput_x64.dll" />
-    <EmbeddedResource Include="Resources\dinput_x86.dll" />
-    <EmbeddedResource Include="Resources\xinput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
-    <EmbeddedResource Include="Resources\xinput_x86.dll" />
-    <EmbeddedResource Include="Resources\xinput_x64.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
@@ -616,6 +608,12 @@
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
+    <EmbeddedResource Include="Resources\ScpVBus\x64\scpvbus.cat" />
+    <EmbeddedResource Include="Resources\ScpVBus\x64\ScpVBus.sys" />
+    <EmbeddedResource Include="Resources\ScpVBus\x64\ScpVBus_Setup.bat" />
+    <EmbeddedResource Include="Resources\ScpVBus\x86\scpvbus.cat" />
+    <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus.sys" />
+    <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus_Setup.bat" />
     <None Include="Resources\SharpDX\SharpDX.xml">
       <SubType>Designer</SubType>
     </None>

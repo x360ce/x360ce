@@ -5,20 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace x360ce.App.vBox
+namespace x360ce.App
 {
 	public class vXboxInterface
 	{
 
 		static vXboxInterface()
 		{
-			var path = Program.GetResourceName("vXboxInterface", "vXboxInterface.dll");
-			if (path == null)
-				return;
-			var assembly = Assembly.GetExecutingAssembly();
-			var fullPath = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(path));
-			var sr = assembly.GetManifestResourceStream(fullPath);
-
+			var sr = Program.GetResourceStream("vXboxInterface.dll");
 			if (sr == null)
 				return;
 			string tempPath = Path.GetTempPath();

@@ -272,7 +272,7 @@ namespace x360ce.App
 			var prefix = Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
 			var ext = Path.GetExtension(SettingManager.IniFileName);
 			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
-			var resource = EngineHelper.GetResource("Presets." + resourceName);
+			var resource = EngineHelper.GetResourceStream("Presets." + resourceName);
 			// If internal preset was found.
 			if (resource != null)
 			{
@@ -915,7 +915,7 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				var stream = EngineHelper.GetResource("Documents.Help.htm");
+				var stream = EngineHelper.GetResourceStream("Documents.Help.htm");
 				var sr = new StreamReader(stream);
 				NameValueCollection list = new NameValueCollection();
 				list.Add("font-name-default", "'Microsoft Sans Serif'");

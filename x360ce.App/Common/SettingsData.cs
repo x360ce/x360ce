@@ -172,7 +172,7 @@ namespace x360ce.App
 			if (!settingsLoaded)
 			{
 				// Get internal resources.
-				var resource = EngineHelper.GetResource(_FileName + ".gz");
+				var resource = EngineHelper.GetResourceStream(_FileName + ".gz");
 				// If internal preset was found.
 				if (resource != null)
 				{
