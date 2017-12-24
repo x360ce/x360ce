@@ -1,17 +1,18 @@
 @ECHO OFF
-SET file=%~1
-SET dst32=..\..\x360ce.App\Resources\x86\xBoxInterface.dll
-SET dst64=..\..\x360ce.App\Resources\x64\xBoxInterface.dll
-:: If file name was supplied then sign file.
-IF NOT "%file%" == "" CALL:SIG "%file%"
+CALL:SIG "..\Resources\vXboxInterface\x86\vXboxInterface.dll"
+CALL:SIG "..\Resources\vXboxInterface\x64\vXboxInterface.dll"
 pause
 
 GOTO:EOF
 ::=============================================================
 :SIG :: Sign and Timestamp Code
 ::-------------------------------------------------------------
-set sgt=%ProgramFiles%\Microsoft SDKs\Windows\v7.1\Bin\signtool.exe
-if not exist "%sgt%" set sgt=%ProgramFiles(x86)%\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe
+:: SIGNTOOL.EXE Note:
+:: Use the Windows 7 Platform SDK web installer that lets you
+:: download just the components you need - so just choose the
+:: ".NET developer \ Tools" and deselect everything else.
+set sgt=%ProgramFiles%\Windows Kits\10\bin\x86\signtool.exe
+if not exist "%sgt%" set sgt=%ProgramFiles(x86)%\Windows Kits\10\bin\x86\signtool.exe
 set pfx=D:\_Backup\Configuration\SSL\CodeSign_Standard\2016\Evaldas_Jocys.CodeSign.pfx
 set d=X360CE - Shauleiz Virtual Xbox Interface
 set du=http://www.x360ce.com
@@ -24,3 +25,4 @@ GOTO:EOF
 
 :Error
 echo File doesn't Exist: "%~1"
+pause

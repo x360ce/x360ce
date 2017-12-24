@@ -18,7 +18,7 @@
     [Comment]               NVARCHAR (1024)  CONSTRAINT [DF_x360ce_Programs_Comment] DEFAULT ('') NOT NULL,
     [IsEnabled]             BIT              CONSTRAINT [DF_x360ce_Programs_IsEnabled] DEFAULT ((1)) NOT NULL,
     [DateCreated]           DATETIME         CONSTRAINT [DF_x360ce_Programs_DateCreated] DEFAULT (getdate()) NOT NULL,
-    [DateUpdated]           DATETIME         NOT NULL,
+    [DateUpdated]           DATETIME         CONSTRAINT [DF_x360ce_Programs_DateUpdated] DEFAULT (getdate()) NOT NULL,
     [InstanceCount]         INT              CONSTRAINT [DF_x360ce_Programs_InstanceCount] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_x360ce_Programs] PRIMARY KEY CLUSTERED ([ProgramId] ASC)
 );
