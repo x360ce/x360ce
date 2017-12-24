@@ -1,6 +1,11 @@
 These are instructions for early Xbox 360 Controller Emulator 4.0 Alpha version testing, which includes virtual X360 controller.
 
-Please note that many things would not work and this release is intended to test games with Virtual X360CE.
+IMPORTANT Note 1: This is ALPHA release. Some things will not work and this release is intended to test games with Virtual X360 controller only.
+
+IMPORTANT Note 2: Make sure your game is set to use XInput Devices. For example, in "Tom Clancy's Ghost Recon Wildlands" you have to set 
+OPTIONS -> CONTROLLER -> ENABLE CONTROLLER: *ONLY GAMEPADS*
+
+IMPORTANT Note 3: Do not close "Xbox 360 Controller Emulator" during the game, just minimize it in order to reduce CPU use.
 
 1. Download Xbox 360 Controller Emulator (32-bit will work on a 64-bit Windows too, because it contains all required 64-bit files):
 
@@ -27,4 +32,6 @@ Configuring Mapping:
 9. Map buttons and axis by clicking on dropdowns, selecting [Record] and pressing on button or moving axis.
 10 Hit [Save] button (at top right corner of application) when done.
 
-11. Launch the game and see how it works (game must be set to use XInput controllers).
+11. Launch the game and see how it works.
+
+How to Uninstall Virtual Driver: Run "Xbox 360 Controller Emulator" as an Administrator, go to [Options] tab and press [Uninstall] button inside "Virtual Device" group box.
