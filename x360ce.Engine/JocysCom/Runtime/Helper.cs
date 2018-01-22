@@ -54,6 +54,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static BindingFlags DefaultBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
+		#region Copy Fields
+
 		/// <summary>
 		/// Get source intersecting fields.
 		/// </summary>
@@ -84,7 +86,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		#region CopyProperties
+		#endregion
+
+		#region Copy Properties
 
 		static object PropertiesReadLock = new object();
 		static Dictionary<Type, PropertyInfo[]> PropertiesReadList = new Dictionary<Type, PropertyInfo[]>();
@@ -108,7 +112,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				else
 				{
 					sProperties = sType.GetProperties(DefaultBindingFlags)
-						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)) && p.CanRead)
+						.Where(p => p.CanRead)
 						.ToArray();
 					PropertiesReadList.Add(sType, sProperties);
 				}
@@ -125,7 +129,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				else
 				{
 					dProperties = dType.GetProperties(DefaultBindingFlags)
-						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)) && p.CanWrite)
+						.Where(p => p.CanWrite)
 						.ToArray();
 					PropertiesWriteList.Add(dType, dProperties);
 				}
@@ -167,7 +171,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		#region CopyDataMembers
+		#region Copy Properties with DataMember attribute
 
 		static object DataMembersLock = new object();
 		static Dictionary<Type, PropertyInfo[]> DataMembers = new Dictionary<Type, PropertyInfo[]>();

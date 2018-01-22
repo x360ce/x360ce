@@ -649,7 +649,7 @@ namespace x360ce.App.Controls
 		/// Get selected Setting. If device is not selected then return null.
 		/// </summary>
 		/// <returns></returns>
-		public Setting GetCurrentSetting()
+		public Setting GetSelectedSetting()
 		{
 			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
@@ -665,7 +665,7 @@ namespace x360ce.App.Controls
 		/// <returns></returns>
 		UserDevice GetCurrentDevice()
 		{
-			var setting = GetCurrentSetting();
+			var setting = GetSelectedSetting();
 			var device = (setting == null)
 				? null
 				: SettingsManager.GetDevice(setting.InstanceGuid);
@@ -1319,38 +1319,58 @@ namespace x360ce.App.Controls
 
 		private void AddMapButton_Click(object sender, EventArgs e)
 		{
-			var items = MainForm.Current.ShowDeviceForm();
-			if (items == null)
+			var game = MainForm.Current.CurrentGame;
+			// return ir game is not selected.
+			if (game == null)
 				return;
-			foreach (var item in items)
+			var userDevices = MainForm.Current.ShowDeviceForm();
+			// Return if no devices were selected.
+			if (userDevices == null)
+				return;
+			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
+			foreach (var ud in userDevices)
 			{
-				var game = MainForm.Current.CurrentGame;
-				if (game != null)
+				var setting = SettingsManager.GetSetting(ud.InstanceGuid, game.FileName);
+				if (setting == null)
 				{
-					var setting = SettingsManager.GetSetting(item.InstanceGuid, game.FileName);
-					if (setting == null)
-					{
-						var newSetting = AppHelper.GetNewSetting(item, game, MappedTo);
-						SettingsManager.Settings.Items.Add(newSetting);
-					}
-					else
-					{
-						// Enable if not enabled.
-						if (!setting.IsEnabled)
-							setting.IsEnabled = true;
-						setting.MapTo = (int)MappedTo;
-					}
+					var newSetting = AppHelper.GetNewSetting(ud, game, MappedTo);
+					SettingsManager.Settings.Items.Add(newSetting);
 				}
+				else
+				{
+					// Enable if not enabled.
+					if (!setting.IsEnabled)
+						setting.IsEnabled = true;
+					setting.MapTo = (int)MappedTo;
+				}
+			}
+			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
+			// if new devices mapped and button is not enabled then...
+			if (settingsOld.Count == 0 && settingsNew.Count > 0 && !EnableButton.Checked)
+			{
+				// Enable mapping.
+				EnableButton_Click(null, null);
 			}
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
-			var grid = MappedDevicesDataGridView;
-			var setting = GetCurrentSetting();
+			var game = MainForm.Current.CurrentGame;
+			// return ir game is not selected.
+			if (game == null)
+				return;
+			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
+			var setting = GetSelectedSetting();
 			if (setting != null)
 			{
 				setting.MapTo = (int)MapTo.Disabled;
+			}
+			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
+			// if all devices unmapped and mapping is enabled then...
+			if (settingsOld.Count > 0 && settingsNew.Count == 0 && EnableButton.Checked)
+			{
+				// Disable mapping.
+				EnableButton_Click(null, null);
 			}
 		}
 
@@ -1396,7 +1416,7 @@ namespace x360ce.App.Controls
 
 		private void MappedDevicesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
-			var setting = GetCurrentSetting();
+			var setting = GetSelectedSetting();
 			var padSetting = setting == null
 				? null
 				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);

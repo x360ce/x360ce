@@ -281,10 +281,10 @@ namespace JocysCom.ClassLibrary.Mail
 			var list = address.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string item in list)
 			{
-				var addres = item.Trim();
-				if (string.IsNullOrEmpty(address)) continue;
-				if (result.Any(x => x.Address == address)) continue;
-				result.Add(new MailAddress(address));
+				var a = item.Trim();
+				if (string.IsNullOrEmpty(a)) continue;
+				if (result.Any(x => x.Address == a)) continue;
+				result.Add(new MailAddress(a));
 			}
 			return result;
 		}

@@ -24,7 +24,7 @@ namespace x360ce.App
 			{
 				// Get pad control with settings.
 				var padControl = MainForm.Current.PadControls[i];
-				var setting = padControl.GetCurrentSetting();
+				var setting = padControl.GetSelectedSetting();
 				// Skip if not selected.
 				if (setting == null)
 					continue;

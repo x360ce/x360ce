@@ -70,7 +70,9 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public static T FindResource<T>(Assembly assembly, string name)
 		{
-			object results = default(T);
+			T results = default(T);
+			if (assembly.IsDynamic)
+				return results;
 			var resourceNames = assembly.GetManifestResourceNames();
 			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
 			foreach (var resourceName in resourceNames)

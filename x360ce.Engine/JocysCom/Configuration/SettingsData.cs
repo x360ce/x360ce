@@ -112,10 +112,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public delegate IList<T> FilterListDelegate(IList<T> items);
+		public delegate IList<T> ValidateDataDelegate(IList<T> items);
 
 		[NonSerialized, XmlIgnore]
-		public FilterListDelegate FilterList;
+		public ValidateDataDelegate ValidateData;
 
 		public void Load()
 		{
@@ -124,15 +124,15 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public void LoadFrom(string fileName)
 		{
-			bool settingsLoaded = false;
+			var settingsLoaded = false;
 			var fi = new FileInfo(fileName);
 			// If configuration file exists then...
 			if (fi.Exists)
 			{
+				SettingsData<T> data = null;
 				// Try to read file until success.
 				while (true)
 				{
-					SettingsData<T> data;
 					// Deserialize and load data.
 					lock (saveReadFileLock)
 					{
@@ -151,41 +151,6 @@ namespace JocysCom.ClassLibrary.Configuration
 								xmlItems = Serializer.DeserializeFromXmlFile<SettingsData<T>>(fi.FullName);
 							}
 							data = xmlItems;
-							//foreach (T item in items.Items)
-							//{
-							//	var oldItem = data.FirstOrDefault(x => x.Group == item.Group);
-							//	// If old item was not found then...
-							//	if (oldItem == null)
-							//	{
-							//		// Add as new.
-							//		SettingsManager.Current.Settings.Items.Add(item);
-							//	}
-							//	else
-							//	{
-							//		// Udate old item.
-							//		oldItem.Group = item.Group;
-							//	}
-							//}
-							if (data != null)
-							{
-								if (ApplyOrder != null)
-								{
-									ApplyOrder(data);
-								}
-								Items.Clear();
-								if (data != null)
-								{
-									var m = FilterList;
-									var items = (m == null)
-										? data.Items
-										: m(data.Items);
-									if (items != null)
-									{
-										for (int i = 0; i < items.Count; i++) Items.Add(items[i]);
-									}
-								}
-								settingsLoaded = true;
-							}
 							break;
 						}
 						catch (Exception ex)
@@ -229,20 +194,45 @@ namespace JocysCom.ClassLibrary.Configuration
 						}
 					}
 				}
+				// If data read was successful then...
+				if (data != null)
+				{
+					// Reorder data of order method exists.
+					var ao = ApplyOrder;
+					if (ao != null)
+						ao(data);
+					LoadAndValidateData(data.Items);
+					settingsLoaded = true;
+				}
 			}
 			// If settings failed to load then...
 			if (!settingsLoaded)
 			{
 				ResetToDefault();
-			}
-			if (!settingsLoaded)
-			{
 				Save();
 			}
 		}
 
+		void LoadAndValidateData(IList<T> data)
+		{
+			// Clear original data.
+			Items.Clear();
+			if (data == null)
+				data = new SortableBindingList<T>();
+			// Filter data if filter method exists.
+			var fl = ValidateData;
+			var items = (fl == null)
+				? data
+				: fl(data);
+			for (int i = 0; i < items.Count; i++)
+				Items.Add(items[i]);
+		}
+
 		public bool ResetToDefault()
 		{
+			// Clear original data.
+			Items.Clear();
+			SettingsData<T> data = null;
 			var assemblies = new List<Assembly>();
 			var exasm = Assembly.GetExecutingAssembly();
 			var enasm = Assembly.GetEntryAssembly();
@@ -274,18 +264,15 @@ namespace JocysCom.ClassLibrary.Configuration
 					}
 					if (name.EndsWith(".gz"))
 					{
-
 						bytes = SettingsHelper.Decompress(bytes);
 					}
 					var xml = Encoding.UTF8.GetString(bytes);
-					var data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
-					Items.Clear();
-					for (int i = 0; i < data.Items.Count; i++)
-						Items.Add(data.Items[i]);
+					data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
 					success = true;
 					break;
 				}
 			}
+			LoadAndValidateData(data == null ? null : data.Items);
 			return success;
 		}
 

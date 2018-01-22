@@ -105,14 +105,14 @@ namespace x360ce.App
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			// Make sure that data will be filtered before loading.
 			// Note: Make sure to load Programs before Games.
-			SettingsManager.Programs.FilterList = Programs_FilterList;
+			SettingsManager.Programs.ValidateData = Programs_ValidateData;
 			SettingsManager.Programs.Load();
 			// Make sure that data will be filtered before loading.
-			SettingsManager.UserGames.FilterList = Games_FilterList;
+			SettingsManager.UserGames.ValidateData = Games_ValidateData;
 			SettingsManager.UserGames.Load();
 			SettingsManager.Presets.Load();
 			// Make sure that data will be filtered before loading.
-			SettingsManager.Layouts.FilterList = MapNames_FilterList;
+			SettingsManager.Layouts.ValidateData = MapNames_ValidateData;
 			SettingsManager.Layouts.Load();
 			SettingsManager.PadSettings.Load();
 			SettingsManager.UserDevices.Load();
@@ -153,7 +153,7 @@ namespace x360ce.App
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
 		}
 
-		IList<Engine.Data.Program> Programs_FilterList(IList<Engine.Data.Program> items)
+		IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
 		{
 			// Make sure default settings have unique by file name.
 			var distinctItems = items
@@ -163,7 +163,7 @@ namespace x360ce.App
 			return distinctItems;
 		}
 
-		IList<Engine.Data.Layout> MapNames_FilterList(IList<Engine.Data.Layout> items)
+		IList<Engine.Data.Layout> MapNames_ValidateData(IList<Engine.Data.Layout> items)
 		{
 			var def = Guid.Empty;
 			var defaultItem = items.FirstOrDefault(x => x.Id == def);
@@ -247,7 +247,7 @@ namespace x360ce.App
 			return items;
 		}
 
-		IList<Engine.Data.UserGame> Games_FilterList(IList<Engine.Data.UserGame> items)
+		IList<Engine.Data.UserGame> Games_ValidateData(IList<Engine.Data.UserGame> items)
 		{
 			// Make sure default settings have unique by file name.
 			var distinctItems = items

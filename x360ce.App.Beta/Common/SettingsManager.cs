@@ -124,10 +124,13 @@ namespace x360ce.App
 			);
 		}
 
-		public static List<Engine.Data.Setting> GetSettings(string fileName)
+		/// <summary>
+		/// Get settingsby file name and optionally filter by mapped to XInput controller.
+		/// </summary>
+		public static List<Engine.Data.Setting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
 			return Settings.Items.Where(x =>
-				string.Compare(x.FileName, fileName, true) == 0
+				string.Compare(x.FileName, fileName, true) == 0 && (!mapTo.HasValue || x.MapTo == (int)mapTo.Value)
 			).ToList();
 		}
 

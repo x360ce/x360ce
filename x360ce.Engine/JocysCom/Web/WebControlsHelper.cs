@@ -26,6 +26,11 @@ namespace JocysCom.ClassLibrary.Web
 				.Where(x => type == null || (type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType())));
 		}
 
+		public static object GetAll<T>(object itemsList, bool v)
+		{
+			throw new NotImplementedException();
+		}
+
 		/// <summary>
 		/// Get all child controls.
 		/// </summary>
