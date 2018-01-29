@@ -188,7 +188,7 @@ namespace x360ce.App
 			Stream sr = null;
 			switch (dllName)
 			{
-				case "vXboxInterface":
+				case "ViGEmClient":
 				case "x360ce.Engine":
 				case "x360ce.Engine.XmlSerializers":
 				case "SharpDX":

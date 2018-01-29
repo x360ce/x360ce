@@ -19,7 +19,7 @@ namespace x360ce.App.Issues
 				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			if (!vXboxInterface.isVBusExists())
+			if (!Nefarius.ViGEm.Client.ViGEmClient.isVBusExists())
 			{
 				SetSeverity(IssueSeverity.Critical, 0, "You need to install Virtual Driver for emulation to work.");
 				return;

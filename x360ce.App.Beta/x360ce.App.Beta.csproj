@@ -397,7 +397,28 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Issues\DirectXIssue.cs" />
-    <Compile Include="Common\vXboxInterface.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemAlreadyConnectedException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemBusAccessFailedException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemBusNotFoundException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemBusVersionMismatchException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemCallbackAlreadyRegisteredException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemCallbackNotFoundException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemInvalidTargetException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemNoFreeSlotException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemRemovalFailedException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemTargetNotPluggedInException.cs" />
+    <Compile Include="ViGEm\Client\Exceptions\VigemTargetUninitializedException.cs" />
+    <Compile Include="ViGEm\Client\Targets\DualShock4Controller.cs" />
+    <Compile Include="ViGEm\Client\Targets\DualShock4\DualShock4FeedbackReceivedEventArgs.cs" />
+    <Compile Include="ViGEm\Client\Targets\DualShock4\DualShock4Report.cs" />
+    <Compile Include="ViGEm\Client\Targets\DualShock4\LightbarColor.cs" />
+    <Compile Include="ViGEm\Client\Targets\Xbox360Controller.cs" />
+    <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360FeedbackReceivedEventArgs.cs" />
+    <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360Report.cs" />
+    <Compile Include="ViGEm\Client\ViGEmClient.cs" />
+    <Compile Include="ViGEm\Client\ViGEmClient.Native.cs" />
+    <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />
+    <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -522,6 +543,12 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\vigembus.cat" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\ViGEmBus.sys" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\ViGEmBus_Setup.bat" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\vigembus.cat" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.sys" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus_Setup.bat" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -587,18 +614,20 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
+    <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\devcon.exe" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\VDX.exe" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\ViGEmBus.inf" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x64\WdfCoinstaller01009.dll" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\devcon.exe" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\VDX.exe" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.inf" />
+    <EmbeddedResource Include="Resources\ViGEmBus\x86\WdfCoinstaller01009.dll" />
     <EmbeddedResource Include="Resources\XInput\x64\xinput.dll" />
     <EmbeddedResource Include="Resources\XInput\x86\xinput.dll" />
-    <EmbeddedResource Include="Resources\ScpVBus\x64\devcon.exe" />
-    <EmbeddedResource Include="Resources\ScpVBus\x64\ScpVBus.inf" />
-    <EmbeddedResource Include="Resources\ScpVBus\x64\WdfCoinstaller01009.dll" />
-    <EmbeddedResource Include="Resources\ScpVBus\x86\devcon.exe" />
-    <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus.inf" />
-    <EmbeddedResource Include="Resources\ScpVBus\x86\WdfCoinstaller01009.dll" />
     <EmbeddedResource Include="Resources\DInput\x64\dinput8.dll" />
     <EmbeddedResource Include="Resources\DInput\x86\dinput8.dll" />
-    <EmbeddedResource Include="Resources\vXboxInterface\x64\vXboxInterface.dll" />
-    <EmbeddedResource Include="Resources\vXboxInterface\x86\vXboxInterface.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
@@ -608,12 +637,6 @@
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
-    <EmbeddedResource Include="Resources\ScpVBus\x64\scpvbus.cat" />
-    <EmbeddedResource Include="Resources\ScpVBus\x64\ScpVBus.sys" />
-    <EmbeddedResource Include="Resources\ScpVBus\x64\ScpVBus_Setup.bat" />
-    <EmbeddedResource Include="Resources\ScpVBus\x86\scpvbus.cat" />
-    <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus.sys" />
-    <EmbeddedResource Include="Resources\ScpVBus\x86\ScpVBus_Setup.bat" />
     <None Include="Resources\SharpDX\SharpDX.xml">
       <SubType>Designer</SubType>
     </None>

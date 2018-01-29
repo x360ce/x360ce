@@ -1,4 +1,6 @@
-﻿using SharpDX.XInput;
+﻿using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets.Xbox360;
+using SharpDX.XInput;
 using System;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -7,6 +9,8 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
+
+		Nefarius.ViGEm.Client.ViGEmClient client;
 
 		void UpdateVirtualDevices()
 		{
@@ -20,8 +24,18 @@ namespace x360ce.App.DInput
 			// If game does not support emulation type.
 			if (!((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
 				return;
+			if (client == null)
+				client = new Nefarius.ViGEm.Client.ViGEmClient();
+			if (ViGEmClient.Targets == null)
+			{
+				ViGEmClient.Targets = new Nefarius.ViGEm.Client.Targets.Xbox360Controller[4];
+				ViGEmClient.Targets[0] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
+				ViGEmClient.Targets[1] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
+				ViGEmClient.Targets[2] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
+				ViGEmClient.Targets[3] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
+			}
 			// If virtual driver is missing then return.
-			if (!vXboxInterface.isVBusExists())
+			if (!ViGEmClient.isVBusExists())
 				return;
 			for (uint i = 1; i <= 4; i++)
 			{
@@ -70,55 +84,51 @@ namespace x360ce.App.DInput
 			// Get old and new game pad values.
 			var n = CombinedXInputStates[i - 1].Gamepad;
 			var o = oldGamepadStates[i - 1];
+			var report = new Nefarius.ViGEm.Client.Targets.Xbox360.Xbox360Report();
 			// Update only when change.
 			if (Changed(i, GamepadButtonFlags.A))
-				vXboxInterface.SetBtnA(i, n.Buttons.HasFlag(GamepadButtonFlags.A));
+				report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));
 			if (Changed(i, GamepadButtonFlags.B))
-				vXboxInterface.SetBtnB(i, n.Buttons.HasFlag(GamepadButtonFlags.B));
+				report.SetButtonState(Xbox360Buttons.B, n.Buttons.HasFlag(GamepadButtonFlags.B));
 			if (Changed(i, GamepadButtonFlags.X))
-				vXboxInterface.SetBtnX(i, n.Buttons.HasFlag(GamepadButtonFlags.X));
+				report.SetButtonState(Xbox360Buttons.X, n.Buttons.HasFlag(GamepadButtonFlags.X));
 			if (Changed(i, GamepadButtonFlags.Y))
-				vXboxInterface.SetBtnY(i, n.Buttons.HasFlag(GamepadButtonFlags.Y));
+				report.SetButtonState(Xbox360Buttons.Y, n.Buttons.HasFlag(GamepadButtonFlags.Y));
 			if (Changed(i, GamepadButtonFlags.Start))
-				vXboxInterface.SetBtnStart(i, n.Buttons.HasFlag(GamepadButtonFlags.Start));
+				report.SetButtonState(Xbox360Buttons.Start, n.Buttons.HasFlag(GamepadButtonFlags.Start));
 			if (Changed(i, GamepadButtonFlags.Back))
-				vXboxInterface.SetBtnBack(i, n.Buttons.HasFlag(GamepadButtonFlags.Back));
+				report.SetButtonState(Xbox360Buttons.Back, n.Buttons.HasFlag(GamepadButtonFlags.Back));
 			if (Changed(i, GamepadButtonFlags.LeftThumb))
-				vXboxInterface.SetBtnLT(i, n.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
+				report.SetButtonState(Xbox360Buttons.LeftThumb, n.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
 			if (Changed(i, GamepadButtonFlags.RightThumb))
-				vXboxInterface.SetBtnRT(i, n.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
+				report.SetButtonState(Xbox360Buttons.RightThumb, n.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
 			if (Changed(i, GamepadButtonFlags.LeftShoulder))
-				vXboxInterface.SetBtnLB(i, n.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
+				report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
 			if (Changed(i, GamepadButtonFlags.RightShoulder))
-				vXboxInterface.SetBtnRB(i, n.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
+				report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
 			if (n.LeftTrigger != o.LeftTrigger)
-				vXboxInterface.SetTriggerL(i, n.LeftTrigger);
+				report.SetAxis(Xbox360Axes.LeftTrigger, n.LeftTrigger);
 			if (n.RightTrigger != o.RightTrigger)
-				vXboxInterface.SetTriggerR(i, n.RightTrigger);
+				report.SetAxis(Xbox360Axes.RightTrigger, n.RightTrigger);
 			if (n.LeftThumbX != o.LeftThumbX)
-				vXboxInterface.SetAxisX(i, n.LeftThumbX);
+				report.SetAxis(Xbox360Axes.LeftThumbX, n.LeftThumbX);
 			if (n.LeftThumbY != o.LeftThumbY)
-				vXboxInterface.SetAxisY(i, n.LeftThumbY);
+				report.SetAxis(Xbox360Axes.LeftThumbY, n.LeftThumbY);
 			if (n.RightThumbX != o.RightThumbX)
-				vXboxInterface.SetAxisRx(i, n.RightThumbX);
+				report.SetAxis(Xbox360Axes.RightThumbX, n.RightThumbX);
 			if (n.RightThumbY != o.RightThumbY)
-				vXboxInterface.SetAxisRy(i, n.RightThumbY);
-			var changed = Changed(i, GamepadButtonFlags.DPadUp) ||
-				Changed(i, GamepadButtonFlags.DPadRight) ||
-				Changed(i, GamepadButtonFlags.DPadDown) ||
-				Changed(i, GamepadButtonFlags.DPadLeft);
-			if (changed)
-			{
-				vXboxInterface.SetDpadOff(i);
-				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
-					vXboxInterface.SetDpadUp(i);
-				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-					vXboxInterface.SetDpadRight(i);
-				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-					vXboxInterface.SetDpadDown(i);
-				if (n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-					vXboxInterface.SetDpadLeft(i);
-			}
+				report.SetAxis(Xbox360Axes.RightThumbY, n.RightThumbY);
+			// D-PAD
+			if (Changed(i, GamepadButtonFlags.DPadUp))
+				report.SetButtonState(Xbox360Buttons.Up, n.Buttons.HasFlag(GamepadButtonFlags.DPadUp));
+			if (Changed(i, GamepadButtonFlags.DPadRight))
+				report.SetButtonState(Xbox360Buttons.Right, n.Buttons.HasFlag(GamepadButtonFlags.DPadRight));
+			if (Changed(i, GamepadButtonFlags.DPadDown))
+				report.SetButtonState(Xbox360Buttons.Down, n.Buttons.HasFlag(GamepadButtonFlags.DPadDown));
+			if (Changed(i, GamepadButtonFlags.DPadLeft))
+				report.SetButtonState(Xbox360Buttons.Left, n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft));
+			// Update controller.
+			ViGEmClient.Targets[i - 1].SendReport(report);
 			// Update old state.
 			oldGamepadStates[i - 1] = n;
 		}
@@ -126,7 +136,7 @@ namespace x360ce.App.DInput
 		public VirtualError CheckInstallVirtualDriver()
 		{
 			// If driver is installed already then return.
-			if (vXboxInterface.isVBusExists())
+			if (ViGEmClient.isVBusExists())
 				return VirtualError.None;
 			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(Application.ExecutablePath, Program.InstallVirtualDriverParam, System.Diagnostics.ProcessWindowStyle.Hidden);
 			return VirtualError.None;
@@ -135,7 +145,7 @@ namespace x360ce.App.DInput
 		public VirtualError CheckUnInstallVirtualDriver()
 		{
 			// If driver is installed already then return.
-			if (vXboxInterface.isVBusExists())
+			if (ViGEmClient.isVBusExists())
 				return VirtualError.None;
 			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(Application.ExecutablePath, Program.UnInstallVirtualDriverParam, System.Diagnostics.ProcessWindowStyle.Hidden);
 			return VirtualError.None;
@@ -146,19 +156,19 @@ namespace x360ce.App.DInput
 			bool success;
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
-			if (!vXboxInterface.isVBusExists())
+			if (!ViGEmClient.isVBusExists())
 				return VirtualError.Missing;
-			if (vXboxInterface.isControllerExists(userIndex))
+			if (ViGEmClient.isControllerExists(userIndex))
 			{
-				if (vXboxInterface.isControllerOwned(userIndex))
+				if (ViGEmClient.isControllerOwned(userIndex))
 				{
 					return VirtualError.None;
 				}
-				success = vXboxInterface.UnPlugForce(userIndex);
+				success = ViGEmClient.UnPlugForce(userIndex);
 				if (!success)
 					return VirtualError.Other;
 			}
-			success = vXboxInterface.PlugIn(userIndex);
+			success = ViGEmClient.PlugIn(userIndex);
 			if (success)
 			{
 				return VirtualError.None;
@@ -171,19 +181,19 @@ namespace x360ce.App.DInput
 			bool success;
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
-			if (!vXboxInterface.isVBusExists())
+			if (!ViGEmClient.isVBusExists())
 				return VirtualError.Missing;
-			if (!vXboxInterface.isControllerExists(userIndex))
+			if (!ViGEmClient.isControllerExists(userIndex))
 				return VirtualError.None;
-			if (vXboxInterface.isControllerOwned(userIndex))
+			if (ViGEmClient.isControllerOwned(userIndex))
 			{
-				success = vXboxInterface.UnPlug(userIndex);
+				success = ViGEmClient.UnPlug(userIndex);
 				if (success)
 					return VirtualError.None;
 			}
 			else
 			{
-				success = vXboxInterface.UnPlugForce(userIndex);
+				success = ViGEmClient.UnPlugForce(userIndex);
 				if (success)
 					return VirtualError.None;
 			}

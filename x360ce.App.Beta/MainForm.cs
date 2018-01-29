@@ -967,7 +967,7 @@ namespace x360ce.App
 					ControlPages[i].ImageKey = bullet;
 			}
 			// Update options panel.
-			var isVBusExists = vXboxInterface.isVBusExists();
+			var isVBusExists = Nefarius.ViGEm.Client.ViGEmClient.isVBusExists();
 			OptionsPanel.VirtualDeviceInstallButton.Enabled = !isVBusExists;
 			OptionsPanel.VirtualDeviceUninstallButton.Enabled = isVBusExists;
 		}

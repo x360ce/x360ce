@@ -12,7 +12,7 @@ namespace x360ce.App.DInput
 		static string GetVboxPath()
 		{
 			string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
-			return System.IO.Path.Combine(baseDirectory, "Program Files", "Nefarius ScpVBus");
+			return System.IO.Path.Combine(baseDirectory, "Program Files", "ViGEm ViGEmBus");
 		}
 
 		/// <summary>
@@ -25,7 +25,7 @@ namespace x360ce.App.DInput
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
 			// Get list of resources to extract.
 			var assembly = Assembly.GetEntryAssembly();
-			var resourceFolder = string.Format(".Resources.ScpVBus.{0}.", paString);
+			var resourceFolder = string.Format(".Resources.ViGEmBus.{0}.", paString);
 			var resourceNames = assembly.GetManifestResourceNames().Where(x => x.Contains(resourceFolder)).ToArray();
 			foreach (var resourceName in resourceNames)
 			{
@@ -67,7 +67,7 @@ namespace x360ce.App.DInput
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
 			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(
 				fullPath,
-				"install ScpVBus.inf Root\\ScpVBus",
+				"install ViGEmBus.inf Root\\ViGEmBus",
 				System.Diagnostics.ProcessWindowStyle.Normal, true);
 		}
 
@@ -82,7 +82,7 @@ namespace x360ce.App.DInput
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
 			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(
 				fullPath,
-				"remove Root\\ScpVBus",
+				"remove Root\\ViGEmBus",
 				System.Diagnostics.ProcessWindowStyle.Normal, true);
 		}
 
