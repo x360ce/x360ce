@@ -1,5 +1,4 @@
 ﻿using System;
-using Nefarius.ViGEm.Client.Exceptions;
 
 namespace Nefarius.ViGEm.Client
 {
@@ -10,22 +9,17 @@ namespace Nefarius.ViGEm.Client
     /// </summary>
     public partial class ViGEmClient : IDisposable
     {
-        public ViGEmClient()
+		public ViGEmClient()
         {
-			Init_x360ce();
 			NativeHandle = vigem_alloc();
             var error = vigem_connect(NativeHandle);
-
-            switch (error)
+			switch (error)
             {
                 case VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED:
-                    throw new VigemAlreadyConnectedException();
                 case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                    throw new VigemBusNotFoundException();
                 case VIGEM_ERROR.VIGEM_ERROR_BUS_ACCESS_FAILED:
-                    throw new VigemBusAccessFailedException();
                 case VIGEM_ERROR.VIGEM_ERROR_BUS_VERSION_MISMATCH:
-                    throw new VigemBusVersionMismatchException();
+                    throw new ViGEmException(error);
             }
         }
 
@@ -51,8 +45,8 @@ namespace Nefarius.ViGEm.Client
                 // TODO: set large fields to null.
                 vigem_disconnect(NativeHandle);
                 vigem_free(NativeHandle);
-
-                disposedValue = true;
+				FreeLibrary();
+				disposedValue = true;
             }
         }
 

@@ -10,8 +10,6 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		Nefarius.ViGEm.Client.ViGEmClient client;
-
 		void UpdateVirtualDevices()
 		{
 
@@ -24,19 +22,17 @@ namespace x360ce.App.DInput
 			// If game does not support emulation type.
 			if (!((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
 				return;
-			if (client == null)
-				client = new Nefarius.ViGEm.Client.ViGEmClient();
-			if (ViGEmClient.Targets == null)
-			{
-				ViGEmClient.Targets = new Nefarius.ViGEm.Client.Targets.Xbox360Controller[4];
-				ViGEmClient.Targets[0] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
-				ViGEmClient.Targets[1] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
-				ViGEmClient.Targets[2] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
-				ViGEmClient.Targets[3] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(client);
-			}
 			// If virtual driver is missing then return.
 			if (!ViGEmClient.isVBusExists())
 				return;
+			if (ViGEmClient.Targets == null)
+			{
+				ViGEmClient.Targets = new Nefarius.ViGEm.Client.Targets.Xbox360Controller[4];
+				ViGEmClient.Targets[0] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
+				ViGEmClient.Targets[1] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
+				ViGEmClient.Targets[2] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
+				ViGEmClient.Targets[3] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
+			}
 			for (uint i = 1; i <= 4; i++)
 			{
 				var mapTo = (MapTo)i;

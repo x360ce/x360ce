@@ -11,13 +11,56 @@ namespace Nefarius.ViGEm.Client
 	partial class ViGEmClient
 	{
 
+		public static ViGEmClient Client;
+		public static object ClientLock = new object();
 		public static Xbox360Controller[] Targets;
 		public static bool[] owned = new bool[4];
 
+		public ViGEmClient(out VIGEM_ERROR error)
+		{
+			Init_x360ce();
+			NativeHandle = vigem_alloc();
+			error = vigem_connect(NativeHandle);
+		}
+
+		static VIGEM_ERROR? PendingError;
+		static DateTime PendingErrorTime;
+
+		public static VIGEM_ERROR UpdateClient()
+		{
+			lock (ClientLock)
+			{
+				// Keep error for 5 seconds.
+				if (DateTime.Now.Subtract(PendingErrorTime).TotalSeconds > 5)
+					PendingError = null;
+				// Do not process untill user dealed with the error.
+				if (PendingError.HasValue)
+					return PendingError.Value;
+				if (Client != null)
+					return VIGEM_ERROR.VIGEM_ERROR_NONE;
+				VIGEM_ERROR error;
+				var client = new ViGEmClient(out error);
+				if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
+				{
+					PendingError = null;
+					Client = client;
+				}
+				else
+				{
+					PendingError = error;
+					PendingErrorTime = DateTime.Now;
+					client.Dispose();
+					Client = null;
+
+				}
+				return error;
+			}
+		}
+
 		public static bool isVBusExists()
 		{
-			// Not properly implemented yet.
-			return true;
+			var error = UpdateClient();
+			return error == VIGEM_ERROR.VIGEM_ERROR_NONE;
 		}
 
 		public static bool isControllerExists(uint i)
@@ -72,22 +115,26 @@ namespace Nefarius.ViGEm.Client
 
 		void Init_x360ce()
 		{
-			var sr = Program.GetResourceStream("ViGEmClient.dll");
-			if (sr == null)
-				return;
-			string tempPath = Path.GetTempPath();
-			FileStream sw = null;
 			var tempFile = Path.Combine(Path.GetTempPath(), "ViGEmClient.dll");
-			sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
-			var buffer = new byte[1024];
-			while (true)
+			if (!File.Exists(tempFile))
 			{
-				var count = sr.Read(buffer, 0, buffer.Length);
-				if (count == 0) break;
-				sw.Write(buffer, 0, count);
+				var sr = Program.GetResourceStream("ViGEmClient.dll");
+				if (sr == null)
+					return;
+				string tempPath = Path.GetTempPath();
+				FileStream sw = null;
+
+				sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
+				var buffer = new byte[1024];
+				while (true)
+				{
+					var count = sr.Read(buffer, 0, buffer.Length);
+					if (count == 0) break;
+					sw.Write(buffer, 0, count);
+				}
+				sr.Close();
+				sw.Close();
 			}
-			sr.Close();
-			sw.Close();
 			_LibraryName = tempFile;
 			LoadLibrary();
 		}

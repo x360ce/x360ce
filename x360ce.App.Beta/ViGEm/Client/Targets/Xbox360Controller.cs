@@ -1,5 +1,4 @@
-﻿using Nefarius.ViGEm.Client.Exceptions;
-using Nefarius.ViGEm.Client.Targets.Xbox360;
+﻿using Nefarius.ViGEm.Client.Targets.Xbox360;
 
 namespace Nefarius.ViGEm.Client.Targets
 {
@@ -59,10 +58,9 @@ namespace Nefarius.ViGEm.Client.Targets
 
             switch (error)
             {
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                    throw new VigemBusNotFoundException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET:
-                    throw new VigemInvalidTargetException();
+                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
+                case VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET:
+                    throw new ViGEmException(error);
             }
         }
 
@@ -81,13 +79,11 @@ namespace Nefarius.ViGEm.Client.Targets
 
             switch (error)
             {
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                    throw new VigemBusNotFoundException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET:
-                    throw new VigemInvalidTargetException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_CALLBACK_ALREADY_REGISTERED:
-                    throw new VigemCallbackAlreadyRegisteredException();
-            }
+                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
+                case VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET:
+                case VIGEM_ERROR.VIGEM_ERROR_CALLBACK_ALREADY_REGISTERED:
+					throw new ViGEmException(error);
+			}
         }
 
         public override void Disconnect()

@@ -1,5 +1,4 @@
 ﻿using System;
-using Nefarius.ViGEm.Client.Exceptions;
 
 namespace Nefarius.ViGEm.Client
 {
@@ -48,17 +47,13 @@ namespace Nefarius.ViGEm.Client
             }
 
             var error = ViGEmClient.vigem_target_add(Client.NativeHandle, NativeHandle);
-
             switch (error)
             {
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                    throw new VigemBusNotFoundException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_TARGET_UNINITIALIZED:
-                    throw new VigemTargetUninitializedException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED:
-                    throw new VigemAlreadyConnectedException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_NO_FREE_SLOT:
-                    throw new VigemNoFreeSlotException();
+                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
+                case VIGEM_ERROR.VIGEM_ERROR_TARGET_UNINITIALIZED:
+                case VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED:
+                case VIGEM_ERROR.VIGEM_ERROR_NO_FREE_SLOT:
+                    throw new ViGEmException(error);
             }
         }
 
@@ -71,16 +66,13 @@ namespace Nefarius.ViGEm.Client
 
             switch (error)
             {
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                    throw new VigemBusNotFoundException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_TARGET_UNINITIALIZED:
-                    throw new VigemTargetUninitializedException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN:
-                    throw new VigemTargetNotPluggedInException();
-                case ViGEmClient.VIGEM_ERROR.VIGEM_ERROR_REMOVAL_FAILED:
-                    throw new VigemRemovalFailedException();
-            }
-        }
+                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
+                case VIGEM_ERROR.VIGEM_ERROR_TARGET_UNINITIALIZED:
+                case VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN:
+                case VIGEM_ERROR.VIGEM_ERROR_REMOVAL_FAILED:
+					throw new ViGEmException(error);
+			}
+		}
 
         #region IDisposable Support
 
