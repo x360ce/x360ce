@@ -11,7 +11,7 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-	public partial class MapDeviceToControllerForm : BaseForm
+	public partial class MapDeviceToControllerForm : BaseFormWithHeader
 	{
 		public MapDeviceToControllerForm()
 		{

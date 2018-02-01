@@ -12,7 +12,7 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-	public partial class LoadPresetsForm : BaseForm
+	public partial class LoadPresetsForm : BaseFormWithHeader
 	{
 		public LoadPresetsForm()
 		{

@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class BaseForm
+	partial class BaseFormWithHeader
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseForm));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaseFormWithHeader));
 			this.TopPanel = new System.Windows.Forms.Panel();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();

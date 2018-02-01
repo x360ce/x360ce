@@ -22,7 +22,7 @@ namespace x360ce.App.Controls
             SummariesDataGridView.AutoGenerateColumns = false;
         }
 
-        public BaseForm _ParentForm;
+        public BaseFormWithHeader _ParentForm;
 
         public void InitPanel()
         {

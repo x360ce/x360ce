@@ -320,5 +320,14 @@ namespace x360ce.App.Controls
 		{
 			DInput.VirtualDriverInstaller.UnInstallVirtualDriver();
 		}
+
+		DeveloperToolsForm _ToolsForm;
+
+		private void DeveloperToolsButton_Click(object sender, EventArgs e)
+		{
+			if (_ToolsForm == null)
+				_ToolsForm = new DeveloperToolsForm();
+			_ToolsForm.ShowPanel();
+		}
 	}
 }

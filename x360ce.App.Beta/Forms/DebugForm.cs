@@ -36,6 +36,7 @@ namespace x360ce.App.Forms
 				}
 				Left = MainForm.Current.Left + MainForm.Current.Width + 8;
 				Top = MainForm.Current.Top;
+				BringToFront();
 			}
 		}
 

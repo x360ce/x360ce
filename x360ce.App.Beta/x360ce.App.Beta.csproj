@@ -270,11 +270,11 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BaseForm.cs">
+    <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BaseForm.Designer.cs">
-      <DependentUpon>BaseForm.cs</DependentUpon>
+    <Compile Include="Forms\BaseFormWithHeader.Designer.cs">
+      <DependentUpon>BaseFormWithHeader.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\CloudUserControl.cs">
       <SubType>UserControl</SubType>
@@ -299,6 +299,12 @@
     </Compile>
     <Compile Include="Forms\DebugForm.Designer.cs">
       <DependentUpon>DebugForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DeveloperToolsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DeveloperToolsForm.Designer.cs">
+      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\HardwareForm.cs">
       <SubType>Form</SubType>
@@ -397,6 +403,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Issues\DirectXIssue.cs" />
+    <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
+    <Compile Include="ViGEm\Client\Enums\XUSB_REPORT.cs" />
     <Compile Include="ViGEm\Client\ViGEmException.cs" />
     <Compile Include="ViGEm\Client\Targets\Xbox360Controller.cs" />
     <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360FeedbackReceivedEventArgs.cs" />
@@ -405,7 +413,7 @@
     <Compile Include="ViGEm\Client\ViGEmClient.Native.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
-    <Compile Include="ViGEm\Client\VIGEM_ERROR.cs" />
+    <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -437,8 +445,8 @@
     <EmbeddedResource Include="Controls\UserDevicesUserControl.resx">
       <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BaseForm.resx">
-      <DependentUpon>BaseForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BaseFormWithHeader.resx">
+      <DependentUpon>BaseFormWithHeader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CloudUserControl.resx">
       <DependentUpon>CloudUserControl.cs</DependentUpon>
@@ -452,6 +460,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DeveloperToolsForm.resx">
+      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\HardwareForm.resx">
       <DependentUpon>HardwareForm.cs</DependentUpon>

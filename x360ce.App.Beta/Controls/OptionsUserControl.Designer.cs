@@ -90,6 +90,7 @@
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
 			this.VirtualDeviceUninstallButton = new System.Windows.Forms.Button();
 			this.VirtualDeviceInstallButton = new System.Windows.Forms.Button();
+			this.DeveloperToolsButton = new System.Windows.Forms.Button();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -773,11 +774,24 @@
 			this.VirtualDeviceInstallButton.UseVisualStyleBackColor = true;
 			this.VirtualDeviceInstallButton.Click += new System.EventHandler(this.VirtualDeviceInstallButton_Click);
 			// 
+			// DeveloperToolsButton
+			// 
+			this.DeveloperToolsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.DeveloperToolsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.DeveloperToolsButton.Location = new System.Drawing.Point(3, 539);
+			this.DeveloperToolsButton.Name = "DeveloperToolsButton";
+			this.DeveloperToolsButton.Size = new System.Drawing.Size(114, 23);
+			this.DeveloperToolsButton.TabIndex = 69;
+			this.DeveloperToolsButton.Text = "Developer Tools...";
+			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
+			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.VirtualDeviceGroupBox);
+			this.Controls.Add(this.DeveloperToolsButton);
 			this.Controls.Add(this.OpenSettingsFolderButton);
 			this.Controls.Add(this.SaveSettingsButton);
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
@@ -883,5 +897,6 @@
 		private System.Windows.Forms.ComboBox PollingRateComboBox;
 		public System.Windows.Forms.Button VirtualDeviceUninstallButton;
 		public System.Windows.Forms.Button VirtualDeviceInstallButton;
+		private System.Windows.Forms.Button DeveloperToolsButton;
 	}
 }

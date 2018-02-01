@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace x360ce.App.Controls
 {
-    public partial class BaseForm : Form
+    public partial class BaseFormWithHeader : Form
     {
-        public BaseForm()
+        public BaseFormWithHeader()
         {
             InitializeComponent();
             if (IsDesignMode) return;

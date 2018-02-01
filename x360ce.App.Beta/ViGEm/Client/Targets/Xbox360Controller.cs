@@ -43,7 +43,7 @@ namespace Nefarius.ViGEm.Client.Targets
         public void SendReport(Xbox360Report report)
         {
             // Convert managed to unmanaged structure
-            var submit = new ViGEmClient.XUSB_REPORT
+            var submit = new XUSB_REPORT
             {
                 wButtons = report.Buttons,
                 bLeftTrigger = report.LeftTrigger,

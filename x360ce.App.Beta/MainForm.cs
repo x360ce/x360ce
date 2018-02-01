@@ -19,7 +19,7 @@ using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App
 {
-	public partial class MainForm : BaseForm
+	public partial class MainForm : BaseFormWithHeader
 	{
 		public MainForm()
 		{
