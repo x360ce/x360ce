@@ -547,6 +547,8 @@
     <EmbeddedResource Include="Resources\ViGEmBus\x86\vigembus.cat" />
     <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.sys" />
     <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus_Setup.bat" />
+    <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
+    <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">

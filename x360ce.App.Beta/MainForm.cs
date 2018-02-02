@@ -112,7 +112,7 @@ namespace x360ce.App
 			SettingsManager.UserGames.Load();
 			SettingsManager.Presets.Load();
 			// Make sure that data will be filtered before loading.
-			SettingsManager.Layouts.ValidateData = MapNames_ValidateData;
+			SettingsManager.Layouts.ValidateData = Layouts_ValidateData;
 			SettingsManager.Layouts.Load();
 			SettingsManager.PadSettings.Load();
 			SettingsManager.UserDevices.Load();
@@ -163,7 +163,7 @@ namespace x360ce.App
 			return distinctItems;
 		}
 
-		IList<Engine.Data.Layout> MapNames_ValidateData(IList<Engine.Data.Layout> items)
+		IList<Engine.Data.Layout> Layouts_ValidateData(IList<Engine.Data.Layout> items)
 		{
 			var def = Guid.Empty;
 			var defaultItem = items.FirstOrDefault(x => x.Id == def);
@@ -203,45 +203,6 @@ namespace x360ce.App
 				item.RightThumbRight = "Stick Right";
 				item.RightThumbUp = "Stick Up";
 				item.RightTrigger = "Trigger";
-				items.Add(item);
-			}
-			var onfoot = new Guid("00000000-0000-0000-0000-000000000001");
-			defaultItem = items.FirstOrDefault(x => x.Id == onfoot);
-			if (defaultItem == null)
-			{
-				var item = new Layout();
-				item.Id = onfoot;
-				item.Name = "On Foot";
-				item.ButtonA = "Answer/Block";
-				item.ButtonB = "Hangup/Punch";
-				item.ButtonBack = "Camera Modes";
-				item.ButtonGuide = "Guide";
-				item.ButtonStart = "Pause Menu";
-				item.ButtonX = "Jump/Kick";
-				item.ButtonY = "Enter/Melee";
-				item.DPad = "D-Pad";
-				item.DPadDown = "Phone Down";
-				item.DPadLeft = "Prev Weapon";
-				item.DPadRight = "Next Weapon";
-				item.DPadUp = "Phone Up";
-				item.LeftShoulder = "Pick Up";
-				item.LeftThumbAxisX = "Movement";
-				item.LeftThumbAxisY = "Movement";
-				item.LeftThumbButton = "Crouch";
-				item.LeftThumbDown = "Stick Down";
-				item.LeftThumbLeft = "Stick Left";
-				item.LeftThumbRight = "Stick Right";
-				item.LeftThumbUp = "Stick Up";
-				item.LeftTrigger = "Target Lock";
-				item.RightShoulder = "Cover";
-				item.RightThumbAxisX = "Switch Target";
-				item.RightThumbAxisY = "Switch Target";
-				item.RightThumbButton = "Look/Aim";
-				item.RightThumbDown = "Stick Down";
-				item.RightThumbLeft = "Stick Left";
-				item.RightThumbRight = "Stick Right";
-				item.RightThumbUp = "Stick Up";
-				item.RightTrigger = "Fire";
 				items.Add(item);
 			}
 			return items;

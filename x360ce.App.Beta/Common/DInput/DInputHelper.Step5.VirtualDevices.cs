@@ -70,63 +70,50 @@ namespace x360ce.App.DInput
 
 		Gamepad[] oldGamepadStates = new Gamepad[4];
 
-		bool Changed(uint i, GamepadButtonFlags flag)
-		{
-			return oldGamepadStates[i - 1].Buttons.HasFlag(flag) != CombinedXInputStates[i - 1].Gamepad.Buttons.HasFlag(flag);
-		}
-
 		public void FeedDevice(uint i)
 		{
 			// Get old and new game pad values.
 			var n = CombinedXInputStates[i - 1].Gamepad;
-			var o = oldGamepadStates[i - 1];
-			var report = new Nefarius.ViGEm.Client.Targets.Xbox360.Xbox360Report();
+			var report = new Xbox360Report();
 			// Update only when change.
-			if (Changed(i, GamepadButtonFlags.A))
-				report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));
-			if (Changed(i, GamepadButtonFlags.B))
-				report.SetButtonState(Xbox360Buttons.B, n.Buttons.HasFlag(GamepadButtonFlags.B));
-			if (Changed(i, GamepadButtonFlags.X))
-				report.SetButtonState(Xbox360Buttons.X, n.Buttons.HasFlag(GamepadButtonFlags.X));
-			if (Changed(i, GamepadButtonFlags.Y))
-				report.SetButtonState(Xbox360Buttons.Y, n.Buttons.HasFlag(GamepadButtonFlags.Y));
-			if (Changed(i, GamepadButtonFlags.Start))
-				report.SetButtonState(Xbox360Buttons.Start, n.Buttons.HasFlag(GamepadButtonFlags.Start));
-			if (Changed(i, GamepadButtonFlags.Back))
-				report.SetButtonState(Xbox360Buttons.Back, n.Buttons.HasFlag(GamepadButtonFlags.Back));
-			if (Changed(i, GamepadButtonFlags.LeftThumb))
-				report.SetButtonState(Xbox360Buttons.LeftThumb, n.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
-			if (Changed(i, GamepadButtonFlags.RightThumb))
-				report.SetButtonState(Xbox360Buttons.RightThumb, n.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
-			if (Changed(i, GamepadButtonFlags.LeftShoulder))
-				report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
-			if (Changed(i, GamepadButtonFlags.RightShoulder))
-				report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
-			if (n.LeftTrigger != o.LeftTrigger)
-				report.SetAxis(Xbox360Axes.LeftTrigger, n.LeftTrigger);
-			if (n.RightTrigger != o.RightTrigger)
-				report.SetAxis(Xbox360Axes.RightTrigger, n.RightTrigger);
-			if (n.LeftThumbX != o.LeftThumbX)
-				report.SetAxis(Xbox360Axes.LeftThumbX, n.LeftThumbX);
-			if (n.LeftThumbY != o.LeftThumbY)
-				report.SetAxis(Xbox360Axes.LeftThumbY, n.LeftThumbY);
-			if (n.RightThumbX != o.RightThumbX)
-				report.SetAxis(Xbox360Axes.RightThumbX, n.RightThumbX);
-			if (n.RightThumbY != o.RightThumbY)
-				report.SetAxis(Xbox360Axes.RightThumbY, n.RightThumbY);
-			// D-PAD
-			if (Changed(i, GamepadButtonFlags.DPadUp))
-				report.SetButtonState(Xbox360Buttons.Up, n.Buttons.HasFlag(GamepadButtonFlags.DPadUp));
-			if (Changed(i, GamepadButtonFlags.DPadRight))
-				report.SetButtonState(Xbox360Buttons.Right, n.Buttons.HasFlag(GamepadButtonFlags.DPadRight));
-			if (Changed(i, GamepadButtonFlags.DPadDown))
-				report.SetButtonState(Xbox360Buttons.Down, n.Buttons.HasFlag(GamepadButtonFlags.DPadDown));
-			if (Changed(i, GamepadButtonFlags.DPadLeft))
-				report.SetButtonState(Xbox360Buttons.Left, n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft));
-			// Update controller.
-			ViGEmClient.Targets[i - 1].SendReport(report);
-			// Update old state.
-			oldGamepadStates[i - 1] = n;
+			report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));
+			report.SetButtonState(Xbox360Buttons.B, n.Buttons.HasFlag(GamepadButtonFlags.B));
+			report.SetButtonState(Xbox360Buttons.X, n.Buttons.HasFlag(GamepadButtonFlags.X));
+			report.SetButtonState(Xbox360Buttons.Y, n.Buttons.HasFlag(GamepadButtonFlags.Y));
+			report.SetButtonState(Xbox360Buttons.Start, n.Buttons.HasFlag(GamepadButtonFlags.Start));
+			report.SetButtonState(Xbox360Buttons.Back, n.Buttons.HasFlag(GamepadButtonFlags.Back));
+			report.SetButtonState(Xbox360Buttons.LeftThumb, n.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
+			report.SetButtonState(Xbox360Buttons.RightThumb, n.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
+			report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
+			report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
+			report.SetButtonState(Xbox360Buttons.Up, n.Buttons.HasFlag(GamepadButtonFlags.DPadUp));
+			report.SetButtonState(Xbox360Buttons.Right, n.Buttons.HasFlag(GamepadButtonFlags.DPadRight));
+			report.SetButtonState(Xbox360Buttons.Down, n.Buttons.HasFlag(GamepadButtonFlags.DPadDown));
+			report.SetButtonState(Xbox360Buttons.Left, n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft));
+			report.SetAxis(Xbox360Axes.LeftTrigger, n.LeftTrigger);
+			report.SetAxis(Xbox360Axes.RightTrigger, n.RightTrigger);
+			report.SetAxis(Xbox360Axes.LeftThumbX, n.LeftThumbX);
+			report.SetAxis(Xbox360Axes.LeftThumbY, n.LeftThumbY);
+			report.SetAxis(Xbox360Axes.RightThumbX, n.RightThumbX);
+			report.SetAxis(Xbox360Axes.RightThumbY, n.RightThumbY);
+			// Compare with old state.
+			var o = oldGamepadStates[i - 1];
+			var changed =
+				n.Buttons != o.Buttons ||
+				n.LeftThumbX != o.LeftThumbX ||
+				n.LeftThumbY != o.LeftThumbY ||
+				n.LeftTrigger != o.LeftTrigger ||
+				n.RightThumbX != o.RightThumbX ||
+				n.RightThumbY != o.RightThumbY ||
+				n.RightTrigger != o.RightTrigger;
+			// If state changed then...
+			if (changed)
+			{
+				// Update controller.
+				ViGEmClient.Targets[i - 1].SendReport(report);
+				// Update old state.
+				oldGamepadStates[i - 1] = n;
+			}
 		}
 
 		public VirtualError CheckInstallVirtualDriver()

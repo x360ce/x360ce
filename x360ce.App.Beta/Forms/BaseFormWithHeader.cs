@@ -103,7 +103,7 @@ namespace x360ce.App.Controls
         {
             // Apply format.
             if (body == null) body = defaultBody;
-            else if (args != null) body = string.Format(body, args);
+            else if (args.Length > 0) body = string.Format(body, args);
             // Set info with time.
             SetHeaderBody(MessageBoxIcon.Information, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
         }
@@ -112,7 +112,7 @@ namespace x360ce.App.Controls
         {
             // Apply format.
             if (body == null) body = defaultBody;
-            else if (args != null) body = string.Format(body, args);
+            else if (args.Length > 0) body = string.Format(body, args);
             // Set info with time.
             SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
         }
@@ -121,7 +121,7 @@ namespace x360ce.App.Controls
         public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)
         {
             if (body == null) body = defaultBody;
-            else if (args != null) body = string.Format(body, args);
+            else if (args.Length > 0) body = string.Format(body, args);
             HelpBodyLabel.Text = body;
             // Update body colours.
             if (icon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = Color.DarkRed;

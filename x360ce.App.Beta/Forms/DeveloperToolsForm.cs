@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -86,7 +87,15 @@ namespace x360ce.App.Forms
 
 		private void CompressXmlResourcesButton_Click(object sender, EventArgs e)
 		{
-
+			var di = new DirectoryInfo(WorkingFolderTextBox.Text);
+			var fis = di.GetFiles("*.xml");
+			foreach (var fi in fis)
+			{
+				var bytes = File.ReadAllBytes(fi.FullName);
+				bytes = SettingsHelper.Compress(bytes);
+				SettingsHelper.WriteIfDifferent(fi.FullName + ".gz", bytes);
+				LogTextBox.AppendText(string.Format("Compress {0}\r\n", fi.Name));
+			}
 		}
 	}
 }
