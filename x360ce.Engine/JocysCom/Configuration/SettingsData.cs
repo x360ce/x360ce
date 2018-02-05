@@ -12,10 +12,11 @@ using JocysCom.ClassLibrary.ComponentModel;
 using System.Reflection;
 using System.Linq;
 using System.IO.Compression;
+using System.Runtime.Serialization;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	[Serializable, XmlRoot("Data")]
+	[Serializable, XmlRoot("Data"), DataContract]
 	public class SettingsData<T> : ISettingsData
 	{
 
@@ -48,6 +49,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		[NonSerialized]
 		protected string _Comment;
 
+		[DataMember]
 		public SortableBindingList<T> Items { get; set; }
 
 		[XmlIgnore]
@@ -55,7 +57,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public ApplyOrderDelegate ApplyOrder;
 
 		/// <summary>
@@ -64,7 +66,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlAttribute]
 		public int Version { get; set; }
 
+		[XmlIgnore, NonSerialized]
 		object initialFileLock = new object();
+
+		[XmlIgnore, NonSerialized]
 		object saveReadFileLock = new object();
 
 		public void SaveAs(string fileName)
@@ -138,19 +143,8 @@ namespace JocysCom.ClassLibrary.Configuration
 					{
 						try
 						{
-							SettingsData<T> xmlItems;
-							if (fi.FullName.EndsWith(".gz"))
-							{
-								var compressedBytes = File.ReadAllBytes(fi.FullName);
-								var bytes = SettingsHelper.Decompress(compressedBytes);
-								var xml = Encoding.UTF8.GetString(bytes);
-								xmlItems = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml, Encoding.UTF8);
-							}
-							else
-							{
-								xmlItems = Serializer.DeserializeFromXmlFile<SettingsData<T>>(fi.FullName);
-							}
-							data = xmlItems;
+							var bytes = File.ReadAllBytes(fi.FullName);
+							data = DeserializeData(bytes, fi.Name.EndsWith(".gz"));
 							break;
 						}
 						catch (Exception ex)
@@ -262,12 +256,7 @@ namespace JocysCom.ClassLibrary.Configuration
 						sr.BaseStream.CopyTo(memstream);
 						bytes = memstream.ToArray();
 					}
-					if (name.EndsWith(".gz"))
-					{
-						bytes = SettingsHelper.Decompress(bytes);
-					}
-					var xml = Encoding.UTF8.GetString(bytes);
-					data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
+					data = DeserializeData(bytes, name.EndsWith(".gz"));
 					success = true;
 					break;
 				}
@@ -276,5 +265,23 @@ namespace JocysCom.ClassLibrary.Configuration
 			return success;
 		}
 
+		SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
+		{
+			if (compressed)
+			{
+				bytes = SettingsHelper.Decompress(bytes);
+			}
+			var xml = Encoding.UTF8.GetString(bytes);
+			// Problems with exporting generic.
+			//var validator = new XmlValidator();
+			//validator.ExportXsdToFile<SettingsData<T>>("d:\\temp\\text.xsd", Encoding.UTF8, typeof(T), typeof(SettingsData<T>));
+			//validator.IsValid<SettingsData<T>>(xml, false);
+			SettingsData<T> data = null;
+			//if (validator.Exceptions.Count == 0)
+			//{
+			data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
+			//}
+			return data;
+		}
 	}
 }

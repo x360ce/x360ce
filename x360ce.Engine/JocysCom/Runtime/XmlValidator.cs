@@ -42,13 +42,10 @@ namespace JocysCom.ClassLibrary.Runtime
 				exporter.Export(tp);
 				//Console.WriteLine("number of schemas: {0}", exporter.Schemas.Count)
 				//Console.WriteLine()
-				var mySchemas = exporter.Schemas;
 				var XmlNameValue = exporter.GetRootElementName(tp);
-				string EmployeeNameSpace = XmlNameValue.Namespace;
-				System.Xml.Schema.XmlSchema schema = null;
-				foreach (System.Xml.Schema.XmlSchema schema_loopVariable in mySchemas.Schemas(EmployeeNameSpace))
+				string nameSpace = XmlNameValue.Namespace;
+				foreach (System.Xml.Schema.XmlSchema schema in exporter.Schemas.Schemas(nameSpace))
 				{
-					schema = schema_loopVariable;
 					schema.Write(ms);
 				}
 			}
@@ -63,6 +60,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			var xd = ExportXsd<T>(knownTypes);
 			System.Xml.XmlTextWriter file = new System.Xml.XmlTextWriter(filename, encoding);
 			xd.Write(file);
+			file.Flush();
+			file.Close();
 		}
 
 		public bool IsValid(string xml, System.Xml.Schema.XmlSchema xd, bool reportWarnings = false)
