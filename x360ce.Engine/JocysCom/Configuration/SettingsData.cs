@@ -272,15 +272,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				bytes = SettingsHelper.Decompress(bytes);
 			}
 			var xml = Encoding.UTF8.GetString(bytes);
-			// Problems with exporting generic.
-			//var validator = new XmlValidator();
-			//validator.ExportXsdToFile<SettingsData<T>>("d:\\temp\\text.xsd", Encoding.UTF8, typeof(T), typeof(SettingsData<T>));
-			//validator.IsValid<SettingsData<T>>(xml, false);
-			SettingsData<T> data = null;
-			//if (validator.Exceptions.Count == 0)
-			//{
-			data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
-			//}
+			var data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
 			return data;
 		}
 	}

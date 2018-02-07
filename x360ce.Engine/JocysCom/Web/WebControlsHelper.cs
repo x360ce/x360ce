@@ -8,6 +8,19 @@ namespace JocysCom.ClassLibrary.Web
 	public partial class WebControlsHelper
 	{
 
+		public static System.Web.UI.Control FindControlRecursive(System.Web.UI.Control root, string id)
+		{
+			if (root.ID == id)
+				return root;
+			foreach (System.Web.UI.Control control in root.Controls)
+			{
+				var t = FindControlRecursive(control, id);
+				if (t != null)
+					return t;
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Get all child controls.
 		/// </summary>
@@ -24,11 +37,6 @@ namespace JocysCom.ClassLibrary.Web
 				.Concat(includeTop ? new[] { control } : new System.Web.UI.Control[0])
 				// Filter controls by type.
 				.Where(x => type == null || (type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType())));
-		}
-
-		public static object GetAll<T>(object itemsList, bool v)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>

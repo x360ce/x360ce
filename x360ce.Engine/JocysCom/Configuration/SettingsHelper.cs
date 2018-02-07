@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
-using System.Xml;
+﻿using System.IO;
 using System.Text;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Data.Objects.DataClasses;
-using JocysCom.ClassLibrary.Runtime;
-using JocysCom.ClassLibrary.ComponentModel;
-using System.Reflection;
-using System.Linq;
+
 using System.IO.Compression;
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -71,10 +61,9 @@ namespace JocysCom.ClassLibrary.Configuration
 			else
 			{
 				// Compare checksums.
-				var iniMd5 = Security.MD5.GetGuid(bytes);
-				var md5 = new Security.MD5();
-				var checksum = md5.GetGuidFromFile(fi.FullName);
-				isDifferent = !iniMd5.Equals(checksum);
+				var byteHash = Security.SHA256Helper.GetGuid(bytes);
+				var fileHash = Security.SHA256Helper.GetGuidFromFile(fi.FullName);
+				isDifferent = !byteHash.Equals(byteHash);
 			}
 			return isDifferent;
 		}

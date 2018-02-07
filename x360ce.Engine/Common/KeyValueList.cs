@@ -28,7 +28,7 @@ namespace x360ce.Engine
 				if (encrypt)
 				{
 					// Encrypt with AES-256...
-					stringValue = JocysCom.ClassLibrary.Security.Rijndael.EncryptString(_RandomPassword, stringValue);
+					stringValue = JocysCom.ClassLibrary.Security.AESHelper.EncryptString(_RandomPassword, stringValue);
 				}
 				base.Add(new KeyValue(key, stringValue));
 			}
@@ -81,7 +81,7 @@ namespace x360ce.Engine
 			if (decrypt)
 			{
 				// Decrypt value.
-				v = JocysCom.ClassLibrary.Security.Rijndael.DecryptString(_RandomPassword, (string)v);
+				v = JocysCom.ClassLibrary.Security.AESHelper.DecryptString(_RandomPassword, (string)v);
 			}
 			// If value is string but-non string is wanted then...
 			if ((v is string) && typeof(T) != typeof(string))

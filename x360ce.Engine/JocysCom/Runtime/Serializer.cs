@@ -221,7 +221,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>The deserialized object.</returns>
 		public T DeserializeFromJson<T>(string json)
 		{
-			return (T)DeserializeFromJson(json, typeof(T), Encoding.Default);
+			return (T)DeserializeFromJson(json, typeof(T), Encoding.UTF8);
 		}
 
 		/// <summary>

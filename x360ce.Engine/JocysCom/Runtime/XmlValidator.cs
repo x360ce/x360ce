@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
+using System.Xml.Schema;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -14,62 +16,122 @@ namespace JocysCom.ClassLibrary.Runtime
 		private string _xml;
 		private string _xsd;
 
-		public bool IsValid<T>(string xml, bool reportWarnings, params Type[] knownTypes)
+		public bool IsValid(Type type, string xml, bool reportWarnings, params Type[] knownTypes)
 		{
-			var xd = ExportXsd<T>(knownTypes);
-			return IsValid(xml, xd, reportWarnings);
+			var xss = ExportSchemaSet(type, knownTypes);
+			return IsValid(xml, xss, reportWarnings);
 		}
 
-		public System.Xml.Schema.XmlSchema ExportXsd<T>(params Type[] knownTypes)
+		public bool IsValid<T>(string xml, bool reportWarnings, params Type[] knownTypes)
 		{
-			Type tp = typeof(T);
-			XsdDataContractExporter exporter = new XsdDataContractExporter();
+			var xss = ExportSchemaSet<T>(knownTypes);
+			return IsValid(xml, xss, reportWarnings);
+		}
+
+		public XmlSchemaSet ExportSchemaSet(Type tp, params Type[] knownTypes)
+		{
+			var exporter = new XsdDataContractExporter();
 			// Use the ExportOptions to add the Possessions type to the  
 			// collection of KnownTypes.  
-			if (knownTypes != null)
+			if (knownTypes.Length > 0)
 			{
-				ExportOptions eOptions = new ExportOptions();
+				var eo = new ExportOptions();
 				foreach (Type kt in knownTypes)
-				{
-					eOptions.KnownTypes.Add(kt);
-				}
-				exporter.Options = eOptions;
+					eo.KnownTypes.Add(kt);
+				exporter.Options = eo;
 			}
-
-			System.IO.MemoryStream ms = new System.IO.MemoryStream();
 			if (exporter.CanExport(tp))
 			{
 				exporter.Export(tp);
-				//Console.WriteLine("number of schemas: {0}", exporter.Schemas.Count)
-				//Console.WriteLine()
-				var XmlNameValue = exporter.GetRootElementName(tp);
+			}
+			return exporter.Schemas;
+			//System.IO.MemoryStream ms = new System.IO.MemoryStream();
+			//if (exporter.CanExport(tp))
+			//{
+			//	exporter.Export(tp);
+			//	var XmlNameValue = exporter.GetRootElementName(tp);
+			//	string nameSpace = XmlNameValue.Namespace;
+			//	foreach (System.Xml.Schema.XmlSchema schema in exporter.Schemas.Schemas(nameSpace))
+			//	{
+			//		foreach (System.Xml.Schema.XmlSchema sc in exporter.Schemas.Schemas())
+			//		{
+			//			//var import = new XmlSchemaImport();
+			//			var include = new XmlSchemaInclude();
+			//			include.Schema = sc;
+			//			schema.Includes.Add(include);
+			//		}
+			//		schema.Write(ms);
+			//	}
+			//}
+			//var xd = new XmlSchema();
+			//ms.Position = 0;
+			//xd = XmlSchema.Read(ms, new ValidationEventHandler(XmlSchema_ValidationCallBack));
+			//return xd;
+		}
+
+		public XmlSchemaSet ExportSchemaSet<T>(params Type[] knownTypes)
+		{
+			return ExportSchemaSet(typeof(T), knownTypes);
+		}
+
+		public void ExportXsdToFile(Type type, string filename, System.Text.Encoding encoding, params Type[] knownTypes)
+		{
+			var exporter = new XsdDataContractExporter();
+			// Use the ExportOptions to add the Possessions type to the  
+			// collection of KnownTypes.  
+			if (knownTypes.Length > 0)
+			{
+				var eo = new ExportOptions();
+				foreach (Type kt in knownTypes)
+					eo.KnownTypes.Add(kt);
+				exporter.Options = eo;
+			}
+			if (exporter.CanExport(type))
+			{
+				exporter.Export(type);
+
+				var XmlNameValue = exporter.GetRootElementName(type);
 				string nameSpace = XmlNameValue.Namespace;
+				XmlSchema mainSchema = null;
 				foreach (System.Xml.Schema.XmlSchema schema in exporter.Schemas.Schemas(nameSpace))
 				{
-					schema.Write(ms);
+					mainSchema = schema;
+				}
+				var i = 0;
+				foreach (System.Xml.Schema.XmlSchema schema in exporter.Schemas.Schemas())
+				{
+					if (schema == mainSchema)
+					{
+						var file = new System.Xml.XmlTextWriter(filename, encoding);
+						file.Formatting = System.Xml.Formatting.Indented;
+						schema.Write(file);
+						file.Flush();
+						file.Close();
+					}
+					else
+					{
+						var dir = System.IO.Path.GetDirectoryName(filename);
+						var nam = System.IO.Path.GetFileNameWithoutExtension(filename);
+						var ext = System.IO.Path.GetExtension(filename);
+						var newName = System.IO.Path.Combine(dir, nam + "." + (i++) + ext);
+						var file = new System.Xml.XmlTextWriter(newName, encoding);
+						file.Formatting = System.Xml.Formatting.Indented;
+						schema.Write(file);
+						file.Flush();
+						file.Close();
+					}
 				}
 			}
-			System.Xml.Schema.XmlSchema xd = new System.Xml.Schema.XmlSchema();
-			ms.Position = 0;
-			xd = System.Xml.Schema.XmlSchema.Read(ms, new System.Xml.Schema.ValidationEventHandler(XmlSchema_ValidationCallBack));
-			return xd;
 		}
 
 		public void ExportXsdToFile<T>(string filename, System.Text.Encoding encoding, params Type[] knownTypes)
 		{
-			var xd = ExportXsd<T>(knownTypes);
-			System.Xml.XmlTextWriter file = new System.Xml.XmlTextWriter(filename, encoding);
-			xd.Write(file);
-			file.Flush();
-			file.Close();
+			ExportXsdToFile(typeof(T), filename, encoding, knownTypes);
 		}
 
-		public bool IsValid(string xml, System.Xml.Schema.XmlSchema xd, bool reportWarnings = false)
+		public bool IsValid(string xml, System.Xml.Schema.XmlSchemaSet sc, bool reportWarnings = false)
 		{
-			// Create the schema object
-			System.Xml.Schema.XmlSchemaSet sc = new System.Xml.Schema.XmlSchemaSet();
 			_xml = xml;
-			sc.Add(xd);
 			// Create reader settings
 			System.Xml.XmlReaderSettings settings = new System.Xml.XmlReaderSettings();
 			// Attach event handler whic will be fired when validation error occurs
@@ -83,19 +145,23 @@ namespace JocysCom.ClassLibrary.Runtime
 			//settings.ValidationFlags = settings.ValidationFlags Or System.Xml.Schema.XmlSchemaValidationFlags.ProcessInlineSchema
 			//settings.ValidationFlags = settings.ValidationFlags Or System.Xml.Schema.XmlSchemaValidationFlags.ProcessSchemaLocation
 			// Add to the collection of schemas in readerSettings
-			settings.Schemas.Add(sc);
+			settings.Schemas = sc;
 			//settings.ProhibitDtd = False
 			// Create object of XmlReader using XmlReaderSettings
 			System.IO.StringReader xmlMs = new System.IO.StringReader(xml);
-
 			System.Xml.XmlReader reader = System.Xml.XmlReader.Create(xmlMs, settings);
 			Exceptions = new List<System.Xml.Schema.XmlSchemaException>();
-
 			// Parse the file. 
-			while (reader.Read())
-			{
-			}
+			while (reader.Read()) { }
 			return Exceptions.Count == 0;
+		}
+
+		public bool IsValid(string xml, System.Xml.Schema.XmlSchema xd, bool reportWarnings = false)
+		{
+			// Create the schema object
+			var sc = new System.Xml.Schema.XmlSchemaSet();
+			sc.Add(xd);
+			return IsValid(xml, sc, reportWarnings);
 		}
 
 		public bool IsValid(string xml, string xsdResource, Type xsdResourceType, bool reportWarnings = false)

@@ -259,6 +259,7 @@
     <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />
     <Compile Include="JocysCom\Runtime\XmlValidator.cs" />
+    <Compile Include="JocysCom\Security\AESHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
@@ -271,8 +272,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="JocysCom\Security\Data\User.cs" />
-    <Compile Include="JocysCom\Security\MD5.cs" />
-    <Compile Include="JocysCom\Security\Rijndael.cs" />
+    <Compile Include="JocysCom\Security\HashHelper.cs" />
+    <Compile Include="JocysCom\Security\SHA256Helper.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />
     <Compile Include="JocysCom\Security\Encryption.cs" />
