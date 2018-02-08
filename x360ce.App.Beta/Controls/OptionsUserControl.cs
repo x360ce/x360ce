@@ -240,12 +240,22 @@ namespace x360ce.App.Controls
                 CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
                 cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
                 results = ws.Execute(cmd2);
-            }
+				if (results.ErrorCode > 0)
+				{
+					MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					MessageBoxForm.Show(string.Format("Authorised: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+			}
             else
             {
 
             }
         }
+
+
 
         private void CreateButton_Click(object sender, EventArgs e)
         {
@@ -254,7 +264,7 @@ namespace x360ce.App.Controls
             var pql = new Uri(url).PathAndQuery.Length;
             var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowReset=0";
             var form = new WebBrowserForm();
-            form.Size = new Size(342, 500);
+            form.Size = new Size(400, 500);
             form.Text = "Create Login";
             form.StartPosition = FormStartPosition.CenterParent;
             form.NavigateUrl = navigateUrl;
@@ -270,7 +280,7 @@ namespace x360ce.App.Controls
             var pql = new Uri(url).PathAndQuery.Length;
             var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowCreate=0";
             var form = new WebBrowserForm();
-            form.Size = new Size(342, 300);
+            form.Size = new Size(400, 300);
             form.Text = "Reset Login";
             form.StartPosition = FormStartPosition.CenterParent;
             form.NavigateUrl = navigateUrl;

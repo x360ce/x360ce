@@ -9,42 +9,32 @@
 </asp:Content>
 
 <asp:Content ID="PageMenu" ContentPlaceHolderID="PageMenuPlaceHolder" runat="server">
-	<table class="MainTable" style="margin: auto;">
-		<tr>
-			<td>
-				<div class="MainDiv">
-					<img alt="" runat="server" id="LoginBanner" src="Images/Website_Management_System.gif" style="width: 240px; height: 48px;" class="Login_Banner" />
-				</div>
-			</td>
-		</tr>
-	</table>
+	<div style="text-align: center;">
+		<img alt="" runat="server" id="LoginBanner" src="Images/Website_Management_System.gif" style="width: 240px; height: 48px;" class="Login_Banner" />
+	</div>
 </asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="PageContentPlaceHolder" runat="server">
-	<table class="MainTable" style="margin: auto;">
-		<tr>
-			<td style="background-color: #3b5998; text-align: center;">
-				<div class="MainDiv">
-					<asp:Panel runat="server" ID="AnonymousPlaceHolder">
-						<uc:LoginUser ID="LoginUser1" runat="server" AutoFocus="true" />
-						<uc:ResetPassword ID="ResetPassword1" runat="server" />
-						<div runat="server" id="RegisterPanel">
-							<uc:CreateUser ID="CreateUser1" runat="server" ShowBirthday="False" ShowGender="False"
-								ShowTerms="false" ShowPromotions="false" ShowUsername="True" ShowNews="false" />
-						</div>
-					</asp:Panel>
-					<asp:Panel runat="server" ID="LoggedInPlaceHolder">
-						<div>
-							<div class="SWUI_Login_Title">Login</div>
-							<div class="SWUI_Login_Body">
-								<asp:LoginStatus ID="LoginStatus1" runat="server" />
-								Logged in as
-                                <asp:LoginName ID="LoginName1" runat="Server" />
-							</div>
-						</div>
-					</asp:Panel>
+	<div class="ContentDiv">
+		<div class="LoginDiv">
+			<asp:Panel runat="server" ID="AnonymousPlaceHolder">
+				<uc:LoginUser ID="LoginUser1" runat="server" AutoFocus="true" />
+				<uc:ResetPassword ID="ResetPassword1" runat="server" />
+				<div runat="server" id="RegisterPanel">
+					<uc:CreateUser ID="CreateUser1" runat="server" ShowBirthday="False" ShowGender="False"
+						ShowTerms="false" ShowPromotions="false" ShowUsername="True" ShowNews="false" />
 				</div>
-			</td>
-		</tr>
-	</table>
+			</asp:Panel>
+			<asp:Panel runat="server" ID="LoggedInPlaceHolder">
+				<div>
+					<div class="SWUI_Login_Title">Login</div>
+					<div class="SWUI_Login_Body">
+						<asp:LoginStatus ID="LoginStatus1" runat="server" />
+						Logged in as
+                                <asp:LoginName ID="LoginName1" runat="Server" />
+					</div>
+				</div>
+			</asp:Panel>
+		</div>
+	</div>
 </asp:Content>

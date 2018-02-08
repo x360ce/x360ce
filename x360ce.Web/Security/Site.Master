@@ -30,7 +30,6 @@
 			</div>
 		</div>
 		<div class="FootLayout FootStyle" id="FootPanel" runat="server">
-			
 		</div>
 	</form>
 </body>

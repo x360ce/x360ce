@@ -244,8 +244,7 @@ namespace x360ce.Web.WebServices
 				var fileName = Server.MapPath(path);
 				if (System.IO.File.Exists(fileName))
 				{
-					var xml = System.IO.File.ReadAllText(fileName);
-					programs = Serializer.DeserializeFromXmlString<List<Program>>(xml, System.Text.Encoding.UTF8);
+					programs = Serializer.DeserializeFromXmlFile<List<Program>>(fileName);
 				}
 			}
 			return programs;
@@ -259,7 +258,9 @@ namespace x360ce.Web.WebServices
 			{
 				programs = GetOverridePrograms();
 			}
-			catch (Exception) { }
+			catch (Exception ex) {
+				var x = ex;
+			}
 			if (programs == null)
 			{
 				var db = new x360ceModelContainer();

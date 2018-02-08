@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace JocysCom.WebSites.Engine.Security.Data
 {
@@ -14,7 +11,6 @@ namespace JocysCom.WebSites.Engine.Security.Data
 
 		public string GetRedirectToken()
 		{
-
 			return JocysCom.ClassLibrary.Security.TokenHelper.GetSecurityToken(UserId, Password, JocysCom.ClassLibrary.TimeUnitType.Minutes);
 		}
 

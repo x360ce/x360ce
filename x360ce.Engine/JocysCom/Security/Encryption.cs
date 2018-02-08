@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Xml;
-// Add reference System.Security
 using System.Security.Cryptography.Xml;
 using System.Configuration;
 
@@ -36,18 +33,28 @@ namespace JocysCom.ClassLibrary.Security
 
 		/// <summary>Gets HMAC hash key name inside config file.</summary>
 		public string HmacHashKeyName { get { return _prefix + "HmacHashKey"; } }
+
 		/// <summary>RSA public key name inside config file.</summary>
 		public string RsaPublicKeyName { get { return _prefix + "RsaPublicKey"; } }
+
 		/// <summary>RSA private key name inside config file.</summary>
 		public string RsaPrivateKeyName { get { return _prefix + "RsaPrivateKey"; } }
+
+		/// <summary>RSA OAEP Padding key name inside config file.</summary>
+		public string RsaUseOaepName { get { return _prefix + "RsaUseOaep"; } }
 
 		string _HmacHashKeyValue;
 		public string HmacHashKeyValue
 		{
 			get
 			{
-				return _HmacHashKeyValue = _HmacHashKeyValue
-					?? System.Configuration.ConfigurationManager.AppSettings[HmacHashKeyName];
+				if (string.IsNullOrEmpty(_HmacHashKeyValue))
+				{
+					_HmacHashKeyValue =
+						ConfigurationManager.AppSettings[HmacHashKeyName]
+						?? _prefix + "Hmac";
+				}
+				return _HmacHashKeyValue;
 			}
 			set { _HmacHashKeyValue = value; }
 		}
@@ -58,7 +65,7 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _RsaPublicKeyValue = _RsaPublicKeyValue
-					?? System.Configuration.ConfigurationManager.AppSettings[RsaPublicKeyName];
+					?? ConfigurationManager.AppSettings[RsaPublicKeyName];
 			}
 			set { _RsaPublicKeyValue = value; }
 		}
@@ -69,9 +76,25 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _RsaPrivateKeyValue = _RsaPrivateKeyValue
-					?? System.Configuration.ConfigurationManager.AppSettings[RsaPrivateKeyName];
+					?? ConfigurationManager.AppSettings[RsaPrivateKeyName];
 			}
 			set { _RsaPrivateKeyValue = value; }
+		}
+
+		bool? _RsaUseOaepValue;
+		public bool RsaUseOaepValue
+		{
+			get
+			{
+				if (!_RsaUseOaepValue.HasValue)
+				{
+					bool value;
+					bool.TryParse(ConfigurationManager.AppSettings[RsaUseOaepName], out value);
+					_RsaUseOaepValue = value;
+				}
+				return _RsaUseOaepValue.Value;
+			}
+			set { _RsaUseOaepValue = value; }
 		}
 
 		#region MD5
@@ -138,8 +161,8 @@ namespace JocysCom.ClassLibrary.Security
 
 		object MacProviderLock = new object();
 
-		System.Security.Cryptography.HMACMD5 _MacProvider;
-		public System.Security.Cryptography.HMACMD5 MacProvider
+		System.Security.Cryptography.KeyedHashAlgorithm _MacProvider;
+		public System.Security.Cryptography.KeyedHashAlgorithm MacProvider
 		{
 			get
 			{
@@ -278,6 +301,8 @@ namespace JocysCom.ClassLibrary.Security
 			byte[] encrypted;
 			lock (RsaProviderLock)
 			{
+				// Enable OAEP padding for better security.
+				// Disable for compatibility.
 				encrypted = this.RsaProvider.Encrypt(bytes, false);
 			}
 			return System.Convert.ToBase64String(encrypted);
@@ -305,6 +330,8 @@ namespace JocysCom.ClassLibrary.Security
 			byte[] decrypted;
 			lock (RsaProviderLock)
 			{
+				// Enable OAEP padding for better security.
+				// Disable for compatibility.
 				decrypted = RsaProvider.Decrypt(bytes, false);
 			}
 			return System.Text.Encoding.UTF8.GetString(decrypted);
@@ -584,6 +611,14 @@ namespace JocysCom.ClassLibrary.Security
 			RsaNewKeysSave(2048);
 		}
 
+		public void UpsertKey(System.Configuration.Configuration config, string name, object value)
+		{
+			if (config.AppSettings.Settings[HmacHashKeyName] == null)
+				config.AppSettings.Settings.Add(HmacHashKeyName, string.Format("{0}", value));
+			else
+				config.AppSettings.Settings[RsaPublicKeyName].Value = string.Format("{0}", value);
+		}
+
 		public void RsaNewKeysSave(int keySize)
 		{
 			Keys keys = RsaNewKeys(keySize);
@@ -594,15 +629,10 @@ namespace JocysCom.ClassLibrary.Security
 				? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
 				: System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
 			// Modify settings.
-			if (config.AppSettings.Settings[HmacHashKeyName] == null)
-				config.AppSettings.Settings.Add(HmacHashKeyName, string.Empty);
-			if (config.AppSettings.Settings[RsaPublicKeyName] == null)
-				config.AppSettings.Settings.Add(RsaPublicKeyName, string.Empty);
-			if (config.AppSettings.Settings[RsaPrivateKeyName] == null)
-				config.AppSettings.Settings.Add(RsaPrivateKeyName, string.Empty);
-			config.AppSettings.Settings[HmacHashKeyName].Value = _prefix + "Hmac";
-			config.AppSettings.Settings[RsaPublicKeyName].Value = keys.Public;
-			config.AppSettings.Settings[RsaPrivateKeyName].Value = keys.Private;
+			UpsertKey(config, HmacHashKeyName, HmacHashKeyValue);
+			UpsertKey(config, RsaPublicKeyName, keys.Public);
+			UpsertKey(config, RsaPrivateKeyName, keys.Private);
+			UpsertKey(config, RsaUseOaepName, RsaUseOaepValue);
 			// Save the configuration file.
 			config.Save(System.Configuration.ConfigurationSaveMode.Modified);
 			// Reset values.
@@ -615,16 +645,6 @@ namespace JocysCom.ClassLibrary.Security
 			// Reload other settings.
 			//Engine.Properties.PublicSettings.Default.Reload();
 		}
-
-		//static ApplicationSettingsBase defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(Pr())));
-		//public static Settings Default
-		//{
-		//    get
-		//    {
-		//        return defaultInstance;
-		//    }
-		//}
-
 
 		#endregion
 

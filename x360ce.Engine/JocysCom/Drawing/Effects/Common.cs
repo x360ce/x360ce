@@ -7,12 +7,6 @@ namespace JocysCom.ClassLibrary.Drawing
 {
 	public partial class Effects
 	{
-		private Random random;
-
-		public Effects()
-		{
-			random = new Random();
-		}
 
 		public byte[] ColorToBytes(Color c)
 		{

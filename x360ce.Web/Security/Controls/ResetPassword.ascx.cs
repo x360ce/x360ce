@@ -19,24 +19,29 @@ namespace JocysCom.Web.Security.Controls
 		protected void ResetButton_Click(object sender, EventArgs e)
 		{
 			var user = User.GetUser(PasswordRecovery1.UserName);
+			ResetPasswordSuccessPanel.Visible = false;
+			ResetPasswordErrorLabel.Visible = false;
 			if (user == null)
-			{
 				user = User.GetUserByEmail(PasswordRecovery1.UserName);
-			}
 			if (user == null)
 			{
-				ResetPasswordUserNotFoundLabel.Text = string.Format("'{0}' was not found.", PasswordRecovery1.UserName);
-				ResetPasswordUserNotFoundLabel.Visible = true;
-				ResetPasswordSuccessPanel.Visible = false;
+				ResetPasswordErrorLabel.Text = string.Format("'{0}' was not found.", PasswordRecovery1.UserName);
+				ResetPasswordErrorLabel.Visible = true;
+				return;
 			}
-			else
+			try
 			{
-				ResetPasswordUserNotFoundLabel.Visible = false;
 				var subject = PasswordResetSubject.InnerHtml;
 				var body = PasswordResetBody.InnerHtml;
 				Membership.SendPasswordResetKey(user, subject, body);
-				ResetPasswordSuccessPanel.Visible = true;
 			}
+			catch (Exception ex)
+			{
+				ResetPasswordErrorLabel.Text = ex.Message;
+				ResetPasswordErrorLabel.Visible = true;
+				return;
+			}
+			ResetPasswordSuccessPanel.Visible = true;
 		}
 
 	}

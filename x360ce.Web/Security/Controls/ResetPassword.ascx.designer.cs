@@ -67,12 +67,12 @@ namespace JocysCom.Web.Security.Controls {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl PasswordResetBody;
         
         /// <summary>
-        /// ResetPasswordUserNotFoundLabel control.
+        /// ResetPasswordErrorLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ResetPasswordUserNotFoundLabel;
+        protected global::System.Web.UI.WebControls.Label ResetPasswordErrorLabel;
     }
 }

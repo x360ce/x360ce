@@ -44,7 +44,7 @@
 		Password reset instructions were sent to your e-mail address.<br />
 		If the email doesn't show up in your inbox, check your SPAM folder.
 	</asp:Panel>
-	<pre runat="server" id="PasswordResetSubject" visible="false">Reset your {Host} password"</pre>
+	<pre runat="server" id="PasswordResetSubject" visible="false">Reset your {Host} password</pre>
 	<pre runat="server" id="PasswordResetBody" visible="false">
 Hello, {UserName}:
 
@@ -69,6 +69,6 @@ IT Helpdesk
 
 NOTE: Please do not reply to this message, which was sent from an unmonitored e-mail address. Mail sent to this address cannot be answered.
 </pre>
-	<asp:Label CssClass="SWUI_Table_ErrorPanel" runat="server" ID="ResetPasswordUserNotFoundLabel"
-		Visible="false" />
+	<asp:Label CssClass="SWUI_Table_ErrorPanel" runat="server" ID="ResetPasswordErrorLabel"
+		Visible="False" />
 </div>
