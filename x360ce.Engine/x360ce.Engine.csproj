@@ -273,7 +273,7 @@
     </Compile>
     <Compile Include="JocysCom\Security\Data\User.cs" />
     <Compile Include="JocysCom\Security\HashHelper.cs" />
-    <Compile Include="JocysCom\Security\SHA256Helper.cs" />
+    <Compile Include="JocysCom\Security\MD5Helper.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />
     <Compile Include="JocysCom\Security\Encryption.cs" />

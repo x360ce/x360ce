@@ -6,7 +6,7 @@ namespace JocysCom.ClassLibrary.Security
 	/// <summary>
 	/// UTF-8 is used as a default encoding (smaller Internet messaging size).
 	/// </summary>
-	public partial class MD5
+	public partial class MD5Helper
 	{
 		public static Guid GetGuid(string value)
 		{
