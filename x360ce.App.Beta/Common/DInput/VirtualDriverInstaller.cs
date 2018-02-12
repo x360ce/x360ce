@@ -65,7 +65,7 @@ namespace x360ce.App.DInput
 			ExtractFiles();
 			var folder = GetVboxPath();
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
-			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(
+			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"install ViGEmBus.inf Root\\ViGEmBus",
 				System.Diagnostics.ProcessWindowStyle.Normal, true);
@@ -80,7 +80,7 @@ namespace x360ce.App.DInput
 			ExtractFiles();
 			var folder = GetVboxPath();
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
-			JocysCom.ClassLibrary.Win32.NativeMethods.RunElevated(
+			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"remove Root\\ViGEmBus",
 				System.Diagnostics.ProcessWindowStyle.Normal, true);

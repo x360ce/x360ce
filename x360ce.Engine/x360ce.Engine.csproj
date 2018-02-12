@@ -335,6 +335,7 @@
     <Compile Include="JocysCom\Win32\TOKEN_ELEVATION_TYPE.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
+    <Compile Include="JocysCom\Win32\UacHelper.cs" />
     <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
     <Compile Include="JocysCom\Win32\WinAPI.cs" />
     <Compile Include="JocysCom\Win32\WinNT.cs" />

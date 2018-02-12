@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// </summary>
 		[return: MarshalAs(UnmanagedType.Bool)]
 		[SuppressUnmanagedCodeSecurity, DllImport("kernel32.dll", SetLastError = true)]
-		internal static extern bool CloseHandle(IntPtr handle);
+		public static extern bool CloseHandle(IntPtr handle);
 
 		/// <summary>
 		/// Loads the specified module into the address space of the calling process.

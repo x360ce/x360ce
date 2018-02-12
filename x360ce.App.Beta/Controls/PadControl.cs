@@ -90,8 +90,6 @@ namespace x360ce.App.Controls
 			_recorder = new Recorder(this.components, rH, rV);
 
 
-
-
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
@@ -1073,10 +1071,9 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-			if (result == DialogResult.Yes)
-			{
-				SettingsManager.Current.ClearPadSettings(MappedTo);
-			}
+			if (result != DialogResult.Yes)
+				return;
+			SettingsManager.Current.LoadPadSettings(MappedTo, null);
 		}
 
 		void ResetPresetButton_Click(object sender, EventArgs e)
@@ -1095,7 +1092,8 @@ namespace x360ce.App.Controls
 		private void AutoPresetButton_Click(object sender, EventArgs e)
 		{
 			var ud = GetCurrentDevice();
-			if (ud == null) return;
+			if (ud == null)
+				return;
 			var description = Attributes.GetDescription(MappedTo);
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -1107,121 +1105,13 @@ namespace x360ce.App.Controls
 				buttons = MessageBoxButtons.OK;
 			}
 			var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
-			if (result == DialogResult.Yes)
-			{
-				SettingsManager.Current.ClearPadSettings(MappedTo);
-				var objects = ud.DeviceObjects;
-				DeviceObjectItem o = null;
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
-				// If Right thumb triggers are missing then...
-				if (o == null)
-				{
-					// Logitech RumblePad 2 USB
-					AutoPreset(objects, SettingName.ButtonA, 1);
-					AutoPreset(objects, SettingName.ButtonB, 2);
-					AutoPreset(objects, SettingName.ButtonX, 0);
-					AutoPreset(objects, SettingName.ButtonY, 3);
-					AutoPreset(objects, SettingName.LeftShoulder, 4);
-					AutoPreset(objects, SettingName.RightShoulder, 5);
-					AutoPreset(objects, SettingName.ButtonBack, 8);
-					AutoPreset(objects, SettingName.ButtonStart, 9);
-					AutoPreset(objects, SettingName.LeftThumbButton, 10);
-					AutoPreset(objects, SettingName.RightThumbButton, 11);
-					// Triggers.
-					AutoPreset(objects, SettingName.LeftTrigger, 6);
-					AutoPreset(objects, SettingName.RightTrigger, 7);
-					// Right Thumb.
-					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.ZAxis);
-					if (o != null) AutoPresetRead(SettingName.RightThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RzAxis);
-					if (o != null) AutoPresetRead(SettingName.RightThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
-				}
-				else
-				{
-					// ----------------------------------------------------------------------------------------------
-					// Controller (Xbox One For Windows)
-					// ----------------------------------------------------------------------------------------------
-					// Offset   Usage  Instance  Guid           Name                            Flags                
-					// ------  ------  --------  -------------  ------------------------------  ---------------------
-					//      0      49         1  YAxis          Y Axis                          AbsoluteAxis         
-					//      0       5         0  Unknown        Collection 0 - Game Pad         Collection, NoData   
-					//      0       0         1  Unknown        Collection 1                    Collection, NoData   
-					//      0       0         2  Unknown        Collection 2                    Collection, NoData   
-					//      0       0         3  Unknown        Collection 3                    Collection, NoData   
-					//      0     128         4  Unknown        Collection 4 - System Controls  Collection, NoData   
-					//      4      48         0  XAxis          X Axis                          AbsoluteAxis         
-					//      8      52         4  RyAxis         Y Rotation                      AbsoluteAxis         
-					//     12      51         3  RxAxis         X Rotation                      AbsoluteAxis         
-					//     16      50         2  ZAxis          Z Axis                          AbsoluteAxis         
-					//     20      53         5  RzAxis         Z Rotation                      AbsoluteAxis         
-					//     24      57         0  PovController  Hat Switch                      PointOfViewController
-					//     32     151        19  Unknown        DC Enable Actuators             NoData, Output       
-					//     36       1        20  Unknown        Physical Interface Device       NoData, Output       
-					//     40     112        21  Unknown        Magnitude                       NoData, Output       
-					//     44      80        22  Unknown        Duration                        NoData, Output       
-					//     48     167        23  Unknown        Start Delay                     NoData, Output       
-					//     52     124        24  Unknown        Loop Count                      NoData, Output       
-					//     56       1         0  Button         Button 0                        PushButton           
-					//     57       2         1  Button         Button 1                        PushButton           
-					//     58       3         2  Button         Button 2                        PushButton           
-					//     59       4         3  Button         Button 3                        PushButton           
-					//     60       5         4  Button         Button 4                        PushButton           
-					//     61       6         5  Button         Button 5                        PushButton           
-					//     62       7         6  Button         Button 6                        PushButton           
-					//     63       8         7  Button         Button 7                        PushButton           
-					//     64       9         8  Button         Button 8                        PushButton           
-					//     65      10         9  Button         Button 9                        PushButton           
-					//     66     133        10  Button         System Main Menu                PushButton           
-					AutoPreset(objects, SettingName.ButtonA, 0);
-					AutoPreset(objects, SettingName.ButtonB, 1);
-					AutoPreset(objects, SettingName.ButtonX, 2);
-					AutoPreset(objects, SettingName.ButtonY, 3);
-					AutoPreset(objects, SettingName.LeftShoulder, 4);
-					AutoPreset(objects, SettingName.RightShoulder, 5);
-					AutoPreset(objects, SettingName.ButtonBack, 6);
-					AutoPreset(objects, SettingName.ButtonStart, 7);
-					AutoPreset(objects, SettingName.LeftThumbButton, 8);
-					AutoPreset(objects, SettingName.RightThumbButton, 9);
-					// Triggers.
-					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.ZAxis);
-					if (o != null) AutoPresetRead(SettingName.LeftTrigger, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RzAxis);
-					if (o != null) AutoPresetRead(SettingName.RightTrigger, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					// Right Thumb.
-					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
-					if (o != null) AutoPresetRead(SettingName.RightThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-					o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RyAxis);
-					if (o != null) AutoPresetRead(SettingName.RightThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
-				}
-				// Left Thumb.
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
-				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisX, string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1));
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
-				if (o != null) AutoPresetRead(SettingName.LeftThumbAxisY, string.Format("{0}-{1}", SettingName.SType.Axis, o.Instance + 1));
-				// D-Pad
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
-				if (o != null) AutoPresetRead(SettingName.DPad, string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1));
-			}
-		}
-
-		void AutoPreset(DeviceObjectItem[] objects, string settingName, int index)
-		{
-			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Instance == index);
-			if (o != null) AutoPresetRead(settingName, string.Format("{0}{1}", SettingName.SType.Button, o.Instance + 1));
-		}
-
-		void AutoPresetRead(string key, string value)
-		{
-			var pad = string.Format("PAD{0}", (int)MappedTo);
-			var path = string.Format("{0}\\{1}", pad, key);
-			var map = SettingsManager.Current.SettingsMap.FirstOrDefault(x => x.IniPath == path);
-			if (map == null)
-			{
-				MessageBox.Show(string.Format("SettingsMap[IniPath='{0}'] not found!", path));
+			if (result != DialogResult.Yes)
 				return;
-			}
-			SettingsManager.Current.LoadSetting(map.Control, key, value);
+			var padSetting = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
+			// Load created setting.
+			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
 		}
+
 
 		/// <summary> 
 		/// Clean up any resources being used.
@@ -1294,6 +1184,11 @@ namespace x360ce.App.Controls
 
 		private void LoadPresetButton_Click(object sender, EventArgs e)
 		{
+			ShowPresetForm();
+		}
+
+		void ShowPresetForm()
+		{
 			if (presetForm == null)
 			{
 				presetForm = new LoadPresetsForm();
@@ -1320,33 +1215,44 @@ namespace x360ce.App.Controls
 		private void AddMapButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
-			// return ir game is not selected.
+			// Return if game is not selected.
 			if (game == null)
 				return;
-			var userDevices = MainForm.Current.ShowDeviceForm();
+			// Show form which allows to select device.
+			var selectedUserDevices = MainForm.Current.ShowDeviceForm();
 			// Return if no devices were selected.
-			if (userDevices == null)
+			if (selectedUserDevices == null)
 				return;
-			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
-			foreach (var ud in userDevices)
+			// Check if device already have old settings before adding new ones.
+			var noOldSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count == 0;
+			// Loop trough selected devices.
+			foreach (var ud in selectedUserDevices)
 			{
+				// Try to get existing setting by instance guid and file name.
 				var setting = SettingsManager.GetSetting(ud.InstanceGuid, game.FileName);
+				// If device setting for game was not found then.
 				if (setting == null)
 				{
+					// Create new setting.
 					var newSetting = AppHelper.GetNewSetting(ud, game, MappedTo);
 					SettingsManager.Settings.Items.Add(newSetting);
+					// Load new pad setting.
+					var padSetting = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
+					// Load created setting.
+					SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
 				}
 				else
 				{
 					// Enable if not enabled.
 					if (!setting.IsEnabled)
 						setting.IsEnabled = true;
+					// Map setting to current pad.
 					setting.MapTo = (int)MappedTo;
 				}
 			}
-			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
+			var hasNewSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count > 0;
 			// if new devices mapped and button is not enabled then...
-			if (settingsOld.Count == 0 && settingsNew.Count > 0 && !EnableButton.Checked)
+			if (noOldSettings && hasNewSettings && !EnableButton.Checked)
 			{
 				// Enable mapping.
 				EnableButton_Click(null, null);

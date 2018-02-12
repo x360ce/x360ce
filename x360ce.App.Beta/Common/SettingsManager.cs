@@ -389,15 +389,6 @@ namespace x360ce.App
 			ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
 		}
 
-		/// <summary>
-		/// Clear Pad settings.
-		/// </summary>
-		/// <param name="padIndex">Destination pad index.</param>
-		public void ClearPadSettings(MapTo mapTo)
-		{
-			LoadPadSettings(mapTo, null);
-		}
-
 		public void SetComboBoxValue(ComboBox cbx, string text)
 		{
 			// Remove value from other box.

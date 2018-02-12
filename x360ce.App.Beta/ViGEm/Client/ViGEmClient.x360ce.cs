@@ -67,7 +67,7 @@ namespace Nefarius.ViGEm.Client
 		{
 			// Not properly implemented yet.
 			var t = Targets;
-			return (t != null);
+			return (t != null && (i - 1) < t.Length && t[i - 1] != null);
 		}
 
 		public static bool UnPlugForce(uint i)

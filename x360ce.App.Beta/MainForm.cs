@@ -897,7 +897,7 @@ namespace x360ce.App
 				// DInput instance is ON if active devices found.
 				var diOn = devices.Count(x => x.IsOnline) > 0;
 				// XInput instance is ON.
-				var xiOn = false;
+				var xiOn = Nefarius.ViGEm.Client.ViGEmClient.isControllerExists((uint)i + 1);
 				//			State currentGamePad = emptyState;
 				//			lock (XInputLock)
 				//			{

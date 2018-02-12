@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using SharpDX.DirectInput;
 using System.IO;
-using Microsoft.Win32;
-//using x360ce.App.com.x360ce.localhost;
 using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;

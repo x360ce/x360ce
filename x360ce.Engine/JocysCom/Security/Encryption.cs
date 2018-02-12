@@ -303,7 +303,7 @@ namespace JocysCom.ClassLibrary.Security
 			{
 				// Enable OAEP padding for better security.
 				// Disable for compatibility.
-				encrypted = this.RsaProvider.Encrypt(bytes, false);
+				encrypted = this.RsaProvider.Encrypt(bytes, RsaUseOaepValue);
 			}
 			return System.Convert.ToBase64String(encrypted);
 		}
@@ -332,7 +332,7 @@ namespace JocysCom.ClassLibrary.Security
 			{
 				// Enable OAEP padding for better security.
 				// Disable for compatibility.
-				decrypted = RsaProvider.Decrypt(bytes, false);
+				decrypted = RsaProvider.Decrypt(bytes, RsaUseOaepValue);
 			}
 			return System.Text.Encoding.UTF8.GetString(decrypted);
 		}

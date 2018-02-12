@@ -19,7 +19,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// </summary>
 		[DllImport("advapi32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern Boolean OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
+		public static extern Boolean OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
 
 		/// <summary>
 		/// The function opens the access token associated with a process.
@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// </summary>
 		[DllImport("advapi32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool GetTokenInformation(
+		public static extern bool GetTokenInformation(
 			IntPtr TokenHandle,
 			TOKEN_INFORMATION_CLASS TokenInformationClass,
 			IntPtr TokenInformation,
