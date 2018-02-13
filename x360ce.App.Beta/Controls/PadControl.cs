@@ -1235,11 +1235,13 @@ namespace x360ce.App.Controls
 				{
 					// Create new setting.
 					var newSetting = AppHelper.GetNewSetting(ud, game, MappedTo);
-					SettingsManager.Settings.Items.Add(newSetting);
-					// Load new pad setting.
-					var padSetting = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
+					// Get pad setting.
+					var ps = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
+					newSetting.PadSettingChecksum = ps.PadSettingChecksum;
+					// Insert new settings.
+					SettingsManager.Current.UpsertSettings(newSetting);
 					// Load created setting.
-					SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
+					SettingsManager.Current.LoadPadSettings(MappedTo, ps);
 				}
 				else
 				{

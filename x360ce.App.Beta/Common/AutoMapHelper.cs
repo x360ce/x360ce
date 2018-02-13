@@ -12,29 +12,29 @@ namespace x360ce.App
 	{
 		public static PadSetting GetAutoPreset(DeviceObjectItem[] objects)
 		{
-			var setting = new PadSetting();
+			var ps = new PadSetting();
 			// Get information about device.
 			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 			// If Right thumb triggers are missing then...
 			if (o == null)
 			{
 				// Logitech RumblePad 2 USB
-				setting.ButtonA = GetButtonValue(objects, 1);
-				setting.ButtonB = GetButtonValue(objects, 2);
-				setting.ButtonX = GetButtonValue(objects, 0);
-				setting.ButtonY = GetButtonValue(objects, 3);
-				setting.LeftShoulder = GetButtonValue(objects, 4);
-				setting.RightShoulder = GetButtonValue(objects, 5);
-				setting.ButtonBack = GetButtonValue(objects, 8);
-				setting.ButtonStart = GetButtonValue(objects, 9);
-				setting.LeftThumbButton = GetButtonValue(objects, 10);
-				setting.RightThumbButton = GetButtonValue(objects, 11);
+				ps.ButtonA = GetButtonValue(objects, 1);
+				ps.ButtonB = GetButtonValue(objects, 2);
+				ps.ButtonX = GetButtonValue(objects, 0);
+				ps.ButtonY = GetButtonValue(objects, 3);
+				ps.LeftShoulder = GetButtonValue(objects, 4);
+				ps.RightShoulder = GetButtonValue(objects, 5);
+				ps.ButtonBack = GetButtonValue(objects, 8);
+				ps.ButtonStart = GetButtonValue(objects, 9);
+				ps.LeftThumbButton = GetButtonValue(objects, 10);
+				ps.RightThumbButton = GetButtonValue(objects, 11);
 				// Triggers.
-				setting.LeftTrigger = GetButtonValue(objects, 6);
-				setting.RightTrigger = GetButtonValue(objects, 7);
+				ps.LeftTrigger = GetButtonValue(objects, 6);
+				ps.RightTrigger = GetButtonValue(objects, 7);
 				// Right Thumb.
-				setting.RightThumbAxisX = GetAxisValue(objects, ObjectGuid.ZAxis);
-				setting.RightThumbAxisY = GetAxisValue(objects, ObjectGuid.RzAxis);
+				ps.RightThumbAxisX = GetAxisValue(objects, ObjectGuid.ZAxis);
+				ps.RightThumbAxisY = GetAxisValue(objects, ObjectGuid.RzAxis);
 			}
 			else
 			{
@@ -73,30 +73,31 @@ namespace x360ce.App
 				//     65      10         9  Button         Button 9                        PushButton           
 				//     66     133        10  Button         System Main Menu                PushButton           
 
-				setting.ButtonA = GetButtonValue(objects, 0);
-				setting.ButtonB = GetButtonValue(objects, 1);
-				setting.ButtonX = GetButtonValue(objects, 2);
-				setting.ButtonY = GetButtonValue(objects, 3);
-				setting.LeftShoulder = GetButtonValue(objects, 4);
-				setting.RightShoulder = GetButtonValue(objects, 5);
-				setting.ButtonBack = GetButtonValue(objects, 6);
-				setting.ButtonStart = GetButtonValue(objects, 7);
-				setting.LeftThumbButton = GetButtonValue(objects, 8);
-				setting.RightThumbButton = GetButtonValue(objects, 9);
+				ps.ButtonA = GetButtonValue(objects, 0);
+				ps.ButtonB = GetButtonValue(objects, 1);
+				ps.ButtonX = GetButtonValue(objects, 2);
+				ps.ButtonY = GetButtonValue(objects, 3);
+				ps.LeftShoulder = GetButtonValue(objects, 4);
+				ps.RightShoulder = GetButtonValue(objects, 5);
+				ps.ButtonBack = GetButtonValue(objects, 6);
+				ps.ButtonStart = GetButtonValue(objects, 7);
+				ps.LeftThumbButton = GetButtonValue(objects, 8);
+				ps.RightThumbButton = GetButtonValue(objects, 9);
 				// Triggers.
-				setting.LeftTrigger = GetAxisValue(objects, ObjectGuid.ZAxis);
-				setting.RightTrigger = GetAxisValue(objects, ObjectGuid.RzAxis);
+				ps.LeftTrigger = GetAxisValue(objects, ObjectGuid.ZAxis);
+				ps.RightTrigger = GetAxisValue(objects, ObjectGuid.RzAxis);
 				// Right Thumb.
-				setting.RightThumbAxisX = GetAxisValue(objects, ObjectGuid.RxAxis);
-				setting.RightThumbAxisY = GetAxisValue(objects, ObjectGuid.RyAxis);
+				ps.RightThumbAxisX = GetAxisValue(objects, ObjectGuid.RxAxis);
+				ps.RightThumbAxisY = GetAxisValue(objects, ObjectGuid.RyAxis);
 			}
 			// Right Thumb.
-			setting.LeftThumbAxisX = GetAxisValue(objects, ObjectGuid.XAxis);
-			setting.LeftThumbAxisY = GetAxisValue(objects, ObjectGuid.YAxis);
+			ps.LeftThumbAxisX = GetAxisValue(objects, ObjectGuid.XAxis);
+			ps.LeftThumbAxisY = GetAxisValue(objects, ObjectGuid.YAxis);
 			// D-Pad
 			o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
-			setting.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
-			return setting;
+			ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
+			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+			return ps;
 		}
 
 		/// <summary>Return button setting value if button exists.</summary>

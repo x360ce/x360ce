@@ -200,7 +200,6 @@ namespace JocysCom.ClassLibrary.Security
 				return null;
 			var u = context.Request.Url;
 			var port = u.IsDefaultPort ? "" : ":" + u.Port;
-			var appPath = context.Request.ApplicationPath;
 			var url = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, absolutePath);
 			return url;
 		}

@@ -175,6 +175,8 @@ namespace x360ce.App
 			}
 			// Resume form events (track setting changes on the form).
 			ResumeEvents();
+			// Must not use this (settings must take effect before, simplify later).
+			Current.ApplyAllSettingsToXML();
 			loadCount++;
 			var ev = ConfigLoaded;
 			if (ev != null)
