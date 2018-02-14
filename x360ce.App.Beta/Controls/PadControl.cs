@@ -1230,18 +1230,25 @@ namespace x360ce.App.Controls
 			{
 				// Try to get existing setting by instance guid and file name.
 				var setting = SettingsManager.GetSetting(ud.InstanceGuid, game.FileName);
-				// If device setting for game was not found then.
+				// If device setting for the game was not found then.
 				if (setting == null)
 				{
 					// Create new setting.
-					var newSetting = AppHelper.GetNewSetting(ud, game, MappedTo);
-					// Get pad setting.
+					setting = AppHelper.GetNewSetting(ud, game, MappedTo);
+					// Get auto-configured pad setting.
 					var ps = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
-					newSetting.PadSettingChecksum = ps.PadSettingChecksum;
-					// Insert new settings.
-					SettingsManager.Current.UpsertSettings(newSetting);
+					// Link setting with pad setting.
+					setting.PadSettingChecksum = ps.PadSettingChecksum;
+					// Insert pad setting first, because it will be linked with the setting.
+					SettingsManager.Current.UpsertPadSettings(ps);
+					// Insert setting.
+					SettingsManager.Settings.Add(setting);
+					// Cleanup pad settings.
+					SettingsManager.Current.CleanupPadSettings();
+					// Refresh online status
+					SettingsManager.RefreshSettingsConnectionState(setting);
 					// Load created setting.
-					SettingsManager.Current.LoadPadSettings(MappedTo, ps);
+					//SettingsManager.Current.LoadPadSettings(MappedTo, ps);
 				}
 				else
 				{

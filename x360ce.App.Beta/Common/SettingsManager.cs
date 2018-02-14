@@ -96,9 +96,8 @@ namespace x360ce.App
 		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
 
 		// Used for the grid.
-		public static void RefreshSettingsConnectionState()
+		public static void RefreshSettingsConnectionState(params Setting[] settings)
 		{
-			var settings = Settings.Items.ToArray();
 			foreach (var item in settings)
 			{
 				bool isOnline;

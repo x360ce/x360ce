@@ -84,6 +84,7 @@ namespace Nefarius.ViGEm.Client
 			try
 			{
 				Targets[i - 1].Disconnect();
+				owned[i - 1] = false;
 			}
 			catch (Exception) { }
 			return true;

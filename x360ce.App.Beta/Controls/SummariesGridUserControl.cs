@@ -125,7 +125,8 @@ namespace x360ce.App.Controls
                 result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
                 AppHelper.UpdateList(result.Summaries, SettingsManager.Summaries.Items);
                 SettingsManager.Current.UpsertPadSettings(result.PadSettings);
-                var summariesCount = (result.Summaries == null) ? 0 : result.Summaries.Length;
+				SettingsManager.Current.CleanupPadSettings();
+				var summariesCount = (result.Summaries == null) ? 0 : result.Summaries.Length;
                 var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
                 _ParentForm.SetHeaderBody("{0} default settings and {0} PAD settings received.", summariesCount, padSettingsCount);
             }

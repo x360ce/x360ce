@@ -49,7 +49,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Remove PAD settings, not attached to any device.
 		/// </summary>
-		void CleanupPadSettings()
+		public void CleanupPadSettings()
 		{
 			// Get all records used by Settings.
 			var usedPadSettings = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
@@ -79,13 +79,11 @@ namespace x360ce.App
 		{
 			foreach (var item in list)
 			{
-				var old = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == item.PadSettingChecksum);
-				if (old == null)
-				{
+				// If pad setting was not found then...
+				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == item.PadSettingChecksum))
+					// Add pad setting.
 					PadSettings.Add(item);
-				}
 			}
-			CleanupPadSettings();
 		}
 
 		/// <summary>

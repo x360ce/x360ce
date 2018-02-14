@@ -284,7 +284,7 @@ namespace JocysCom.ClassLibrary.Security
 			{
 				if (_RsaSignatureHashAlgorithm == null)
 				{
-					_RsaSignatureHashAlgorithm = new System.Security.Cryptography.SHA1Managed();
+					_RsaSignatureHashAlgorithm = new System.Security.Cryptography.SHA1CryptoServiceProvider();
 					//_RsaSignatureHashAlgorithm = new System.Security.Cryptography.MD5CryptoServiceProvider();
 				}
 				return _RsaSignatureHashAlgorithm;

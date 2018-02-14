@@ -1516,7 +1516,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			SettingsManager.RefreshSettingsConnectionState();
+			SettingsManager.RefreshSettingsConnectionState(SettingsManager.Settings.Items.ToArray());
 			AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
 		}
 

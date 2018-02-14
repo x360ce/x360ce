@@ -186,7 +186,8 @@ namespace x360ce.App.Controls
                 result.Settings = result.Settings.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ToArray();
                 SettingsManager.Current.UpsertSettings(result.Settings);
                 SettingsManager.Current.UpsertPadSettings(result.PadSettings);
-                var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
+				SettingsManager.Current.CleanupPadSettings();
+				var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
                 var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
                 _ParentForm.SetHeaderBody("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
             }

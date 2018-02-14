@@ -94,7 +94,8 @@ namespace x360ce.App.Controls
                 var result = (SearchResult)e.Result;
                 AppHelper.UpdateList(result.Presets, SettingsManager.Presets.Items);
                 SettingsManager.Current.UpsertPadSettings(result.PadSettings);
-                var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
+				SettingsManager.Current.CleanupPadSettings();
+				var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
                 var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
                 _ParentForm.SetHeaderBody("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
             }

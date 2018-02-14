@@ -247,6 +247,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static string XmlFormat(string xml)
 		{
 			XmlDocument xd = new XmlDocument();
+			xd.XmlResolver = null;
 			xd.LoadXml(xml);
 			StringBuilder sb = new StringBuilder();
 			XmlWriterSettings xws = new XmlWriterSettings();
