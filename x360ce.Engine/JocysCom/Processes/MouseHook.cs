@@ -5,6 +5,36 @@ using System.Drawing;
 
 namespace JocysCom.ClassLibrary.Processes
 {
+
+	internal partial class NativeMethods
+	{
+
+		/// <summary>Retrieves information about the global cursor.</summary>
+		/// <param name="info">A pointer to a CURSORINFO structure that receives the information.</param>
+		/// <returns>If the function succeeds, the return value is non-zero.</returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern bool GetCursorInfo(out CURSORINFO info);
+
+		/// <summary>
+		/// Switch the left and right mouse buttons: SwapMouseButton(1);
+		/// Restore the normal mouse button settings: SwapMouseButton(0);
+		/// </summary>
+		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+		public static extern int SwapMouseButton(int bSwap);
+
+		[DllImport("user32.dll", SetLastError = true)]
+		internal static extern bool SetCursorPos(int X, int Y);
+
+		[DllImport("user32", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetTouchInputInfo(System.IntPtr hTouchInput, int cInputs, [In, Out] TOUCHINPUT[] pInputs, int cbSize);
+
+		[DllImport("user32", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern void CloseTouchInputHandle(System.IntPtr lParam);
+
+	}
+
 	public class MouseHook : BaseHook
 	{
 
@@ -80,30 +110,6 @@ namespace JocysCom.ClassLibrary.Processes
 		private const int TOUCHEVENTF_NOCOALESCE = 0x0020;
 		private const int TOUCHEVENTF_PEN = 0x0040;
 
-		/// <summary>Retrieves information about the global cursor.</summary>
-		/// <param name="info">A pointer to a CURSORINFO structure that receives the information.</param>
-		/// <returns>If the function succeeds, the return value is non-zero.</returns>
-		[DllImport("user32.dll", SetLastError = true)]
-		public static extern bool GetCursorInfo(out CURSORINFO info);
-
-		/// <summary>
-		/// Switch the left and right mouse buttons: SwapMouseButton(1);
-		/// Restore the normal mouse button settings: SwapMouseButton(0);
-		/// </summary>
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-		public static extern int SwapMouseButton(int bSwap);
-
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern bool SetCursorPos(int X, int Y);
-
-		[DllImport("user32", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetTouchInputInfo(System.IntPtr hTouchInput, int cInputs, [In, Out] TOUCHINPUT[] pInputs, int cbSize);
-
-		[DllImport("user32", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern void CloseTouchInputHandle(System.IntPtr lParam);
-
 		//---------------------------------------------------------------------
 
 		int scrnX = -1;
@@ -121,7 +127,7 @@ namespace JocysCom.ClassLibrary.Processes
 				{
 					var info = new CURSORINFO();
 					info.Size = Marshal.SizeOf(info.GetType());
-					if (!GetCursorInfo(out info))
+					if (!NativeMethods.GetCursorInfo(out info))
 					{
 						var ex = new System.ComponentModel.Win32Exception();
 						throw new Exception(ex.Message);
@@ -153,7 +159,7 @@ namespace JocysCom.ClassLibrary.Processes
 							lastY = y - prevY;
 							var fX = (int)Math.Max(Math.Min(scrnX, x), 0);
 							var fY = (int)Math.Max(Math.Min(scrnY, y), 0);
-							if (fX != x || fY != y) SetCursorPos(fX, fY);
+							if (fX != x || fY != y) NativeMethods.SetCursorPos(fX, fY);
 							prevX = fX;
 							prevY = fY;
 							break;
@@ -253,7 +259,7 @@ namespace JocysCom.ClassLibrary.Processes
 					{
 						var ci = default(CURSORINFO);
 						ci.Size = Marshal.SizeOf(ci);
-						var success = GetCursorInfo(out ci);
+						var success = NativeMethods.GetCursorInfo(out ci);
 						Bitmap image = null;
 						if (success)
 						{
@@ -287,7 +293,7 @@ namespace JocysCom.ClassLibrary.Processes
 													 // Unpack message parameters into the array of TOUCHINPUT structures, each
 													 // representing a message for one single contact.
 			var touchInputSize = Marshal.SizeOf(new TOUCHINPUT());
-			if (!GetTouchInputInfo(lParam, inputCount, inputs, touchInputSize))
+			if (!NativeMethods.GetTouchInputInfo(lParam, inputCount, inputs, touchInputSize))
 			{
 				// Get touch info failed.
 				return false;
@@ -336,7 +342,7 @@ namespace JocysCom.ClassLibrary.Processes
 					handled = true;
 				}
 			}
-			CloseTouchInputHandle(lParam);
+			NativeMethods.CloseTouchInputHandle(lParam);
 			return handled;
 		}
 	}

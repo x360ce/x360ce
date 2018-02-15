@@ -13,6 +13,8 @@ namespace x360ce.App
 		public static PadSetting GetAutoPreset(DeviceObjectItem[] objects)
 		{
 			var ps = new PadSetting();
+			if (objects == null)
+				return ps;
 			// Get information about device.
 			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 			// If Right thumb triggers are missing then...

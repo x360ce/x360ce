@@ -250,7 +250,7 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		internal delegate void HiResTimerCallback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2);
 
-		internal class Native
+		internal class NativeMethods
 		{
 
 			//Lib API declarations
@@ -298,7 +298,7 @@ namespace JocysCom.ClassLibrary
 			{
 				if (_TimerId <= 0)
 					return;
-				Native.timeKillEvent(_TimerId);
+				NativeMethods.timeKillEvent(_TimerId);
 				_TimerId = 0;
 			}
 		}
@@ -315,14 +315,14 @@ namespace JocysCom.ClassLibrary
 				// Kill timer.
 				if (_TimerId > 0)
 				{
-					Native.timeKillEvent(_TimerId);
+					NativeMethods.timeKillEvent(_TimerId);
 					_TimerId = 0;
 				}
 				// Must create callback or timer will crash.
 				_callback = new HiResTimerCallback(callback);
 				//Set the timer type flags
 				var f = fuEvent.TIME_CALLBACK_FUNCTION | (AutoReset ? fuEvent.TIME_PERIODIC : fuEvent.TIME_ONESHOT);
-				_TimerId = Native.timeSetEvent((uint)Interval, 0, _callback, UIntPtr.Zero, (uint)f);
+				_TimerId = NativeMethods.timeSetEvent((uint)Interval, 0, _callback, UIntPtr.Zero, (uint)f);
 				if (_TimerId == 0)
 				{
 					var ex = new Win32Exception(Marshal.GetLastWin32Error());

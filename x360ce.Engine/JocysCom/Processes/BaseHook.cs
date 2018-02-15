@@ -3,83 +3,13 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 namespace JocysCom.ClassLibrary.Processes
 {
-	public class BaseHook : IDisposable
+
+	internal partial class NativeMethods
 	{
-
-		public bool EnableEvents = true;
-
-		internal static class NativeMethods
-		{
-
-			/// <summary>Retrieves a module handle for the specified module. The module must have been loaded by the calling process.</summary>
-			/// <returns>If the function succeeds, the return value is a handle to the specified module.</returns>
-			[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-			internal static extern IntPtr GetModuleHandle(string lpModuleName);
-
-			/// <summary>Installs an application-defined hook procedure into a hook chain.</summary>
-			/// <returns>If the function succeeds, the return value is the handle to the hook procedure. </returns>
-			[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-			internal static extern IntPtr SetWindowsHookEx(uint hookid, HookProcDelegate pfnhook, HandleRef hinst, uint threadid);
-
-			/// <summary>Installs an application-defined hook procedure into a hook chain.</summary>
-			/// <returns>If the function succeeds, the return value is the handle to the hook procedure. </returns>
-			[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-			internal static extern IntPtr SetWindowsHookEx(uint hookid, HookProcDelegate pfnhook, IntPtr hinst, uint threadid);
-
-			/// <summary>Removes a hook procedure installed in a hook chain by the SetWindowsHookEx function. </summary>
-			/// <returns>If the function succeeds, the return value is non-zero. If the function fails, the return value is zero.</returns>
-			[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
-			internal static extern bool UnhookWindowsHookEx(HandleRef hhook);
-
-			[DllImport("user32.dll", SetLastError = true)]
-			internal static extern IntPtr SetWinEventHook(
-				uint eventMin,
-				uint eventMax,
-				IntPtr hmodWinEventProc,
-				WinEventProcDelegate lpfnWinEventProc,
-				uint idProcess,
-				uint idThread,
-				uint dwFlags
-			);
-
-			[DllImport("user32.dll", SetLastError = true)]
-			internal static extern bool UnhookWinEvent(HandleRef hWinEventHook);
-
-			/// <summary>
-			/// Passes the hook information to the next hook procedure in the current hook chain.
-			/// A hook procedure can call this function either before or after processing the hook information.
-			/// </summary>
-			/// <returns>
-			/// This value is returned by the next hook procedure in the chain.
-			/// The current hook procedure must also return this value.
-			/// The meaning of the return value depends on the hook type.
-			/// </returns>
-			[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
-			internal static extern IntPtr CallNextHookEx(HandleRef hhook, int code, IntPtr wparam, IntPtr lparam);
-
-			// When you don't want the ProcessId, use this overload and pass IntPtr.Zero for the second parameter
-			[DllImport("user32.dll")]
-			internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-			[DllImport("kernel32.dll")]
-			internal static extern uint GetCurrentThreadId();
-
-		}
-
-		public const uint EVENT_OBJECT_SHOW = 0x8002;
-		public const uint EVENT_OBJECT_HIDE = 0x8004;
-		public const uint EVENT_OBJECT_NAMECHANGE = 0x800C;
-		public const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
-
-		public const uint WINEVENT_INCONTEXT = 0x0004;
-		public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
-
 		/// <summary>
 		/// Used for processing WH_MOUSE and WH_KEYBOARD_LL messages.
 		/// </summary>
 		internal delegate IntPtr HookProcDelegate(int nCode, IntPtr wParam, IntPtr lParam);
-
-		HookProcDelegate _Hook1Procedure;
 
 		internal delegate void WinEventProcDelegate(
 			IntPtr hWinEventHook,
@@ -91,10 +21,80 @@ namespace JocysCom.ClassLibrary.Processes
 			uint dwmsEventTime
 		);
 
+		/// <summary>Retrieves a module handle for the specified module. The module must have been loaded by the calling process.</summary>
+		/// <returns>If the function succeeds, the return value is a handle to the specified module.</returns>
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		internal static extern IntPtr GetModuleHandle(string lpModuleName);
+
+		/// <summary>Installs an application-defined hook procedure into a hook chain.</summary>
+		/// <returns>If the function succeeds, the return value is the handle to the hook procedure. </returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		internal static extern IntPtr SetWindowsHookEx(uint hookid, HookProcDelegate pfnhook, HandleRef hinst, uint threadid);
+
+		/// <summary>Installs an application-defined hook procedure into a hook chain.</summary>
+		/// <returns>If the function succeeds, the return value is the handle to the hook procedure. </returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		internal static extern IntPtr SetWindowsHookEx(uint hookid, HookProcDelegate pfnhook, IntPtr hinst, uint threadid);
+
+		/// <summary>Removes a hook procedure installed in a hook chain by the SetWindowsHookEx function. </summary>
+		/// <returns>If the function succeeds, the return value is non-zero. If the function fails, the return value is zero.</returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
+		internal static extern bool UnhookWindowsHookEx(HandleRef hhook);
+
+		[DllImport("user32.dll", SetLastError = true)]
+		internal static extern IntPtr SetWinEventHook(
+			uint eventMin,
+			uint eventMax,
+			IntPtr hmodWinEventProc,
+			WinEventProcDelegate lpfnWinEventProc,
+			uint idProcess,
+			uint idThread,
+			uint dwFlags
+		);
+
+		[DllImport("user32.dll", SetLastError = true)]
+		internal static extern bool UnhookWinEvent(HandleRef hWinEventHook);
+
+		/// <summary>
+		/// Passes the hook information to the next hook procedure in the current hook chain.
+		/// A hook procedure can call this function either before or after processing the hook information.
+		/// </summary>
+		/// <returns>
+		/// This value is returned by the next hook procedure in the chain.
+		/// The current hook procedure must also return this value.
+		/// The meaning of the return value depends on the hook type.
+		/// </returns>
+		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
+		internal static extern IntPtr CallNextHookEx(HandleRef hhook, int code, IntPtr wparam, IntPtr lparam);
+
+		// When you don't want the ProcessId, use this overload and pass IntPtr.Zero for the second parameter
+		[DllImport("user32.dll")]
+		internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+		[DllImport("kernel32.dll")]
+		internal static extern uint GetCurrentThreadId();
+
+	}
+
+	public class BaseHook : IDisposable
+	{
+
+		public bool EnableEvents = true;
+
+		public const uint EVENT_OBJECT_SHOW = 0x8002;
+		public const uint EVENT_OBJECT_HIDE = 0x8004;
+		public const uint EVENT_OBJECT_NAMECHANGE = 0x800C;
+		public const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+
+		public const uint WINEVENT_INCONTEXT = 0x0004;
+		public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
+
+		NativeMethods.HookProcDelegate _Hook1Procedure;
+
 		/// <summary>
 		/// Used for processing EVENT_OBJECT_NAMECHANGE messages.
 		/// </summary>
-		WinEventProcDelegate _Hook2Procedure;
+		NativeMethods.WinEventProcDelegate _Hook2Procedure;
 
 		protected HandleRef hook1handleRef;
 		protected HandleRef hook2handleRef;
@@ -117,7 +117,7 @@ namespace JocysCom.ClassLibrary.Processes
 				string lpModuleName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
 				var hMod = NativeMethods.GetModuleHandle(lpModuleName);
 				// Assign Virtual function.
-				_Hook1Procedure = new HookProcDelegate(Hook1Procedure);
+				_Hook1Procedure = new NativeMethods.HookProcDelegate(Hook1Procedure);
 				IntPtr hook1Handle;
 				if (hookType == HookType.WH_MOUSE)
 				{
@@ -135,7 +135,7 @@ namespace JocysCom.ClassLibrary.Processes
 						var ex = new Win32Exception();
 						throw new Exception(ex.Message);
 					}
-					_Hook2Procedure = new WinEventProcDelegate(Hook2Procedure);
+					_Hook2Procedure = new NativeMethods.WinEventProcDelegate(Hook2Procedure);
 					// Listen for name change changes across all processes/threads on current desktop...
 					var hook2Handle = NativeMethods.SetWinEventHook(
 						EVENT_OBJECT_NAMECHANGE,

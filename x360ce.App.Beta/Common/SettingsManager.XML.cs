@@ -148,22 +148,56 @@ namespace x360ce.App
 			return ps;
 		}
 
+		public void LoadPadSettingAndCleanup(Setting setting, PadSetting ps, bool add = false)
+		{
+			// Link setting with pad setting.
+			setting.PadSettingChecksum = ps.PadSettingChecksum;
+			// Insert pad setting first, because it will be linked with the setting.
+			UpsertPadSettings(ps);
+			// Insert setting if not in the list.
+			if (add)
+				Settings.Add(setting);
+			// Cleanup pad settings.
+			Current.CleanupPadSettings();
+		}
+
 		/// <summary>
 		/// Load PAD settings to form.
 		/// </summary>
 		/// <param name="padSetting">Settings to read.</param>
 		/// <param name="padIndex">Destination pad index.</param>
-		public void LoadPadSettings(MapTo padIndex, PadSetting padSetting)
+		public void LoadPadSettingsIntoSelectedDevice(MapTo padIndex, PadSetting ps)
 		{
-			// Get settings related to PAD.
+			// Get pad control with settings.
+			var padControl = MainForm.Current.PadControls[(int)padIndex - 1];
+			// Get selected setting.
+			var setting = padControl.GetSelectedSetting();
+			// Return if nothing selected.
+			if (setting == null)
+				return;
+			// If setting not supplied then use empty (clear settings).
+			if (ps == null)
+				ps = new PadSetting();
+			LoadPadSettingAndCleanup(setting, ps);
+			SyncFormFromPadSetting(padIndex, ps);
+			NotifySettingsChange(null);
+			loadCount++;
+			var ev = ConfigLoaded;
+			if (ev != null)
+			{
+				ev(this, new SettingEventArgs(typeof(PadSetting).Name, loadCount));
+			}
+		}
+
+		public void SyncFormFromPadSetting(MapTo padIndex, PadSetting ps)
+		{
+			// Get setting maps for specified PAD Control.
 			var maps = SettingsMap.Where(x => x.MapTo == padIndex).ToArray();
 			PropertyInfo[] properties;
 			if (!ValidatePropertyNames(maps, out properties))
 				return;
 			// Suspend form events (do not track setting changes on the form).
 			SuspendEvents();
-			// If pad settings must be reset then load default.
-			var ps = padSetting == null ? new PadSetting() : padSetting;
 			foreach (var p in properties)
 			{
 				var map = maps.First(x => x.PropertyName == p.Name);
@@ -173,14 +207,6 @@ namespace x360ce.App
 			}
 			// Resume form events (track setting changes on the form).
 			ResumeEvents();
-			// Must not use this (settings must take effect before, simplify later).
-			Current.ApplyAllSettingsToXML();
-			loadCount++;
-			var ev = ConfigLoaded;
-			if (ev != null)
-			{
-				ev(this, new SettingEventArgs(typeof(PadSetting).Name, loadCount));
-			}
 		}
 
 	}

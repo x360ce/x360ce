@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
 using System.Diagnostics;
-using JocysCom.ClassLibrary.IO;
 using System.Linq.Expressions;
 using JocysCom.ClassLibrary.ComponentModel;
 using x360ce.Engine.Data;
 using System.Reflection;
 using JocysCom.ClassLibrary.Runtime;
-using System.IO;
 
 namespace x360ce.App.Controls
 {
@@ -1073,7 +1068,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result != DialogResult.Yes)
 				return;
-			SettingsManager.Current.LoadPadSettings(MappedTo, null);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, null);
 		}
 
 		void ResetPresetButton_Click(object sender, EventArgs e)
@@ -1109,7 +1104,7 @@ namespace x360ce.App.Controls
 				return;
 			var padSetting = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
 			// Load created setting.
-			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
 		}
 
 
@@ -1203,7 +1198,7 @@ namespace x360ce.App.Controls
 				if (ps != null)
 				{
 					MainForm.Current.UpdateTimer.Stop();
-					SettingsManager.Current.LoadPadSettings(MappedTo, ps);
+					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, ps);
 					MainForm.Current.UpdateTimer.Start();
 				}
 			}
@@ -1237,14 +1232,8 @@ namespace x360ce.App.Controls
 					setting = AppHelper.GetNewSetting(ud, game, MappedTo);
 					// Get auto-configured pad setting.
 					var ps = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
-					// Link setting with pad setting.
-					setting.PadSettingChecksum = ps.PadSettingChecksum;
-					// Insert pad setting first, because it will be linked with the setting.
-					SettingsManager.Current.UpsertPadSettings(ps);
-					// Insert setting.
-					SettingsManager.Settings.Add(setting);
-					// Cleanup pad settings.
-					SettingsManager.Current.CleanupPadSettings();
+					SettingsManager.Current.LoadPadSettingAndCleanup(setting, ps, true);
+					SettingsManager.Current.SyncFormFromPadSetting(MappedTo, ps);
 					// Refresh online status
 					SettingsManager.RefreshSettingsConnectionState(setting);
 					// Load created setting.
@@ -1266,6 +1255,7 @@ namespace x360ce.App.Controls
 				// Enable mapping.
 				EnableButton_Click(null, null);
 			}
+			SettingsManager.Current.NotifySettingsChange(null);
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
@@ -1335,7 +1325,7 @@ namespace x360ce.App.Controls
 			var padSetting = setting == null
 				? null
 				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			SettingsManager.Current.LoadPadSettings(MappedTo, padSetting);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
 			UpdateGridButtons();
 		}
 

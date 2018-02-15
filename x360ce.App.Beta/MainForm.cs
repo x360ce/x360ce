@@ -426,7 +426,7 @@ namespace x360ce.App
 		/// </summary>
 		public void NotifySettingsChange(Control changedControl)
 		{
-			var iniContent = GetINI();
+			var iniContent = UpdateINI();
 			bool changed = false;
 			changed |= SettingsManager.Current.ApplyAllSettingsToXML();
 			//changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
@@ -441,15 +441,21 @@ namespace x360ce.App
 			}
 		}
 
-		public string GetINI()
+		string iniOld;
+		int iniUpdateCount;
+
+		public string UpdateINI()
 		{
 			var game = CurrentGame;
-			var iniContent = SettingsManager.Current.GetIniContent(game);
-			if (IniTextBox.Text != iniContent)
+			var iniNew = SettingsManager.Current.GetIniContent(game);
+			if (iniOld != iniNew)
 			{
-				IniTextBox.Text = iniContent;
+				iniOld = iniNew;
+				IniTextBox.Text = iniNew;
+				iniUpdateCount++;
+				IniTabPage.Text = string.Format("INI: {0}", iniUpdateCount);
 			}
-			return iniContent;
+			return iniNew;
 		}
 
 		void SettingsTimer_Elapsed(object sender, EventArgs e)
@@ -1372,6 +1378,7 @@ namespace x360ce.App
 				// Update buttons from current item.
 				UpdateButtonsAndTabs((EmulationType)game.EmulationType);
 			}
+			SettingsManager.Current.NotifySettingsChange(null);
 		}
 
 		private void StatusIniLabel_DoubleClick(object sender, EventArgs e)
@@ -1386,8 +1393,6 @@ namespace x360ce.App
 
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
-			// Refresh INI tab.
-			Current.GetINI();
 			Save(CurrentGame);
 		}
 
@@ -1439,7 +1444,6 @@ namespace x360ce.App
 					var game = games[i];
 					SettingsManager.Current.SaveINI(game);
 				}
-				SettingsManager.Current.ApplyAllSettingsToXML();
 				SaveAll();
 			}
 			var timer = new System.Timers.Timer();

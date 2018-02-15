@@ -131,7 +131,7 @@ namespace x360ce.App
 						// If suitable action was recorded then...
 						SettingsManager.Current.SetComboBoxValue(box, action);
 						// Save setting and notify if value changed.
-						MainForm.Current.NotifySettingsChange(box);
+						SettingsManager.Current.NotifySettingsChange(box);
 					}
 					box.ForeColor = SystemColors.WindowText;
 				}
