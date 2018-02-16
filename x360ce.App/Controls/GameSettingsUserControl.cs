@@ -471,8 +471,7 @@ namespace x360ce.App.Controls
 				{
 					var compressedBytes = System.IO.File.ReadAllBytes(dialog.FileName);
 					var bytes = EngineHelper.Decompress(compressedBytes);
-					var xml = System.Text.Encoding.UTF8.GetString(bytes);
-					programs = Serializer.DeserializeFromXmlString<List<x360ce.Engine.Data.Program>>(xml, System.Text.Encoding.UTF8);
+					programs = Serializer.DeserializeFromXmlBytes<List<x360ce.Engine.Data.Program>>(bytes);
 				}
 				else if (dialog.FileName.EndsWith(".ini") || dialog.FileName.EndsWith(".gdb"))
 				{

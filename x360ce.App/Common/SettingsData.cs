@@ -184,8 +184,7 @@ namespace x360ce.App
 						compressedBytes = memstream.ToArray();
 					}
 					var bytes = EngineHelper.Decompress(compressedBytes);
-					var xml = Encoding.UTF8.GetString(bytes);
-					var data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
+					var data = Serializer.DeserializeFromXmlBytes<SettingsData<T>>(bytes);
 					Items.Clear();
 					for (int i = 0; i < data.Items.Count; i++) Items.Add(data.Items[i]);
 				}

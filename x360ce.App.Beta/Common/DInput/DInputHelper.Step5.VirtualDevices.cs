@@ -19,9 +19,14 @@ namespace x360ce.App.DInput
 			if (!allow)
 				return;
 			var game = MainForm.Current.CurrentGame;
-			// If game does not support emulation type.
-			if (!((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
+			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+			// If game does not use virtual emulation then...
+			if (!isVirtual)
+			{
+				// Make sure all controllers are unpluged.
+				ViGEmClient.UnplugAllControllers();
 				return;
+			}
 			// If virtual driver is missing then return.
 			if (!ViGEmClient.isVBusExists())
 				return;
@@ -43,7 +48,7 @@ namespace x360ce.App.DInput
 				if (virtualEnabled)
 				{
 					// If feeding status unknonw or not enabled then...
-					if (!feedingState.HasValue || !feedingState.Value)
+					if (!feedingState.HasValue || !feedingState.Value || !ViGEmClient.IsControllerOwned(i))
 					{
 						var success = EnableFeeding(i) == VirtualError.None;
 						if (!success)
@@ -55,7 +60,7 @@ namespace x360ce.App.DInput
 				else
 				{
 					// If feeding status unknonw or enabled then...
-					if (!feedingState.HasValue || feedingState.Value)
+					if (!feedingState.HasValue || feedingState.Value || ViGEmClient.IsControllerOwned(i))
 					{
 						var success = DisableFeeding(i) == VirtualError.None;
 						if (!success)
@@ -143,7 +148,7 @@ namespace x360ce.App.DInput
 				return VirtualError.Missing;
 			if (ViGEmClient.isControllerExists(userIndex))
 			{
-				if (ViGEmClient.isControllerOwned(userIndex))
+				if (ViGEmClient.IsControllerOwned(userIndex))
 				{
 					return VirtualError.None;
 				}
@@ -168,7 +173,7 @@ namespace x360ce.App.DInput
 				return VirtualError.Missing;
 			if (!ViGEmClient.isControllerExists(userIndex))
 				return VirtualError.None;
-			if (ViGEmClient.isControllerOwned(userIndex))
+			if (ViGEmClient.IsControllerOwned(userIndex))
 			{
 				success = ViGEmClient.UnPlug(userIndex);
 				if (success)

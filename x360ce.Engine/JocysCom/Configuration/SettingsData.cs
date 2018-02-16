@@ -271,8 +271,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			{
 				bytes = SettingsHelper.Decompress(bytes);
 			}
-			var xml = Encoding.UTF8.GetString(bytes);
-			var data = Serializer.DeserializeFromXmlString<SettingsData<T>>(xml);
+			var data = Serializer.DeserializeFromXmlBytes<SettingsData<T>>(bytes);
 			return data;
 		}
 	}

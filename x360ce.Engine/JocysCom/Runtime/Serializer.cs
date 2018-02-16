@@ -29,7 +29,6 @@ namespace JocysCom.ClassLibrary.Runtime
 				attempts -= 1;
 				try
 				{
-					// ReadAllBytes will lock file for writing, but leave open for other apps to read.
 					return System.IO.File.ReadAllBytes(path);
 				}
 				catch (Exception)
@@ -275,6 +274,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			return XmlSerializers[type];
 		}
 
+		#endregion
+
+		#region XML: Serialize
+
 		/// <summary>
 		/// Serialize object to XML document.
 		/// </summary>
@@ -299,15 +302,15 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (o == null) return default(T);
 			// Create serialization settings.
 			encoding = encoding ?? Encoding.UTF8;
-			XmlWriterSettings settings = new XmlWriterSettings();
+			var settings = new XmlWriterSettings();
 			settings.OmitXmlDeclaration = omitXmlDeclaration;
 			settings.Encoding = encoding;
 			settings.Indent = true;
 			// Serialize.
-			XmlSerializer serializer = GetXmlSerializer(o.GetType());
+			var serializer = GetXmlSerializer(o.GetType());
 			// Serialize in memory first, so file will be locked for shorter times.
-			MemoryStream ms = new MemoryStream();
-			XmlWriter xw = XmlWriter.Create(ms, settings);
+			var ms = new MemoryStream();
+			var xw = XmlWriter.Create(ms, settings);
 			try
 			{
 				lock (serializer)
@@ -405,6 +408,141 @@ namespace JocysCom.ClassLibrary.Runtime
 			return bytes;
 		}
 
+		#endregion
+
+		#region XML: Deserialize
+
+		/// <summary>
+		/// Deserialize System.Collections.Generic.List to XML document.
+		/// </summary>
+		/// <param name="doc">Xml document representing object.</param>
+		/// <param name="type">Type of object.</param>
+		/// <returns>Xml document</returns>
+		public static object DeserializeFromXml(XmlDocument doc, Type type)
+		{
+			if (doc == null)
+				return null;
+			return DeserializeFromXmlString(doc.OuterXml, type);
+		}
+
+		/// <summary>
+		/// Deserialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
+		/// </summary>
+		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="type">Type of object.</param>
+		/// <param name="encoding">Encoding to use (default is UTF8) if Byte Order Mark (BOM) is missing.</param>
+		/// <returns>Object.</returns>
+		public static object DeserializeFromXmlBytes(byte[] bytes, Type type, Encoding encoding = null)
+		{
+			using (var ms = new MemoryStream(bytes))
+			{
+				// Use stream reader (inherits from TextReader) to avoid encoding errors.
+				// Use specified encoding if Byte Order Mark (BOM) is missing.
+				using (var sr = new StreamReader(ms, encoding ?? Encoding.UTF8, true))
+				{
+					// Use settings to secure CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+					var settings = new XmlReaderSettings();
+					settings.DtdProcessing = DtdProcessing.Ignore;
+					settings.XmlResolver = null;
+					using (var reader = XmlReader.Create(sr, settings))
+					{
+						object o;
+						var serializer = GetXmlSerializer(type);
+						lock (serializer) { o = serializer.Deserialize(reader); }
+						return o;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Deserialize object from XML string. XML string must not contain Byte Order Mark (BOM).
+		/// </summary>
+		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="type">Type of object.</param>
+		/// <returns>Object.</returns>
+		public static object DeserializeFromXmlString(string xml, Type type)
+		{
+			using (var sr = new StringReader(xml))
+			{
+				// Use settings to secure CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+				var settings = new XmlReaderSettings();
+				settings.DtdProcessing = DtdProcessing.Ignore;
+				settings.XmlResolver = null;
+				using (var reader = XmlReader.Create(sr, settings))
+				{
+					object o;
+					var serializer = GetXmlSerializer(type);
+					lock (serializer) { o = serializer.Deserialize(reader); }
+					return o;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Deserialize object from XML file.
+		/// </summary>
+		/// <param name="filename">The file name to read from.</param>
+		/// <param name="type">Type of object.</param>
+		/// <param name="encoding">Encoding to use (default is UTF8) if file Byte Order Mark (BOM) is missing.</param>
+		/// <returns>Object.</returns>
+		public static object DeserializeFromXmlFile(string filename, Type type, Encoding encoding = null, int attempts = 1, int waitTime = 500)
+		{
+			// Read full file content first, so file will be locked for shorter period of time.
+			var bytes = ReadFile(filename, attempts, waitTime);
+			if (bytes == null || bytes.Length == 0)
+				return null;
+			return DeserializeFromXmlBytes(bytes, type, encoding);
+		}
+
+		/// <summary>
+		/// Deserialize object from XML Document.
+		/// </summary>
+		/// <param name="doc">Xml document representing object.</param>
+		/// <returns>Xml document</returns>
+		public static T DeserializeFromXml<T>(XmlDocument doc)
+		{
+			return (T)DeserializeFromXml(doc, typeof(T));
+		}
+
+		/// <summary>
+		/// Deserialize object from XML string.
+		/// </summary>
+		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="encoding">The encoding to use (default is UTF8).</param>
+		/// <returns>Object.</returns>
+		public static T DeserializeFromXmlString<T>(string xml)
+		{
+			return (T)DeserializeFromXmlString(xml, typeof(T));
+		}
+
+		/// <summary>
+		/// Deserialize object from XML file.
+		/// </summary>
+		/// <param name="filename">The file name to read from.</param>
+		/// <param name="encoding">Specified encoding will be used if file Byte Order Mark (BOM) is missing.</param>
+		/// <returns>Object.</returns>
+		public static T DeserializeFromXmlFile<T>(string filename, Encoding encoding = null, int attempts = 1, int waitTime = 500)
+		{
+			return (T)DeserializeFromXmlFile(filename, typeof(T), encoding, attempts, waitTime);
+		}
+
+		/// <summary>
+		/// Deserialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
+		/// </summary>
+		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="type">Type of object.</param>
+		/// <param name="encoding">The encoding to use (default is UTF8) if Byte Order Mark (BOM) is missing.</param>
+		/// <returns>Object.</returns>
+		public static T DeserializeFromXmlBytes<T>(byte[] bytes, Encoding encoding = null)
+		{
+			return (T)DeserializeFromXmlBytes(bytes, typeof(T), encoding);
+		}
+
+		#endregion
+
+		#region XSD: Serialize
+
 		/// <summary>
 		/// Serialize object schema to XSD file.
 		/// </summary>
@@ -463,107 +601,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Write serialized data into file.
 			WriteFile(path, bytes, attempts, waitTime);
 		}
-
-		/// <summary>
-		/// Deserialize System.Collections.Generic.List to XML document.
-		/// </summary>
-		/// <param name="doc">Xml document representing object.</param>
-		/// <param name="type">Type of object.</param>
-		/// <returns>Xml document</returns>
-		public static object DeserializeFromXml(XmlDocument doc, Type type)
-		{
-			if (doc == null) return null;
-			var ms = new MemoryStream();
-			doc.Save(ms);
-			ms.Seek(0, SeekOrigin.Begin);
-			XmlSerializer serializer = GetXmlSerializer(type);
-			object o;
-			lock (serializer) { o = serializer.Deserialize(ms); }
-			ms.Close();
-			ms = null;
-			return o;
-		}
-
-		/// <summary>
-		/// Deserialize object from XML string.
-		/// </summary>
-		/// <param name="xml">Xml string representing object.</param>
-		/// <param name="type">Type of object.</param>
-		/// <param name="encoding">The encoding to use (default is UTF8).</param>
-		/// <returns>Object.</returns>
-		public static object DeserializeFromXmlString(string xml, Type type, Encoding encoding = null)
-		{
-			encoding = encoding ?? Encoding.UTF8;
-			MemoryStream ms = new MemoryStream(encoding.GetBytes(xml));
-			// Use stream reader to avoid error: There is no Unicode byte order mark. Cannot switch to Unicode.
-			StreamReader sr = new StreamReader(ms, encoding);
-			XmlSerializer serializer = GetXmlSerializer(type);
-			object o;
-			lock (serializer) { o = serializer.Deserialize(sr); }
-			sr.Close();
-			sr = null;
-			return o;
-		}
-
-		/// <summary>
-		/// Deserialize object from XML file.
-		/// </summary>
-		/// <param name="filename">The file name to read from.</param>
-		/// <param name="type">Type of object.</param>
-		/// <param name="encoding">The encoding to use (default is UTF8).</param>
-		/// <returns>Object.</returns>
-		public static object DeserializeFromXmlFile(string filename, Type type, Encoding encoding = null, int attempts = 1, int waitTime = 500)
-		{
-			// Read full file content first, so file will be locked for shorter times.
-			var bytes = ReadFile(filename, attempts, waitTime);
-			if (bytes == null) return null;
-			encoding = encoding ?? Encoding.UTF8;
-			// Read bytes.
-			var ms = new MemoryStream(bytes);
-			// Use stream reader to avoid error: There is no Unicode byte order mark. Cannot switch to Unicode.
-			var sr = new StreamReader(ms, encoding);
-			// Deserialize
-			object o;
-			XmlSerializer serializer = GetXmlSerializer(type);
-			lock (serializer) { o = serializer.Deserialize(sr); }
-			sr.Dispose();
-			sr = null;
-			ms = null;
-			return o;
-		}
-
-		/// <summary>
-		/// Deserialize object from XML Document.
-		/// </summary>
-		/// <param name="doc">Xml document representing object.</param>
-		/// <returns>Xml document</returns>
-		public static T DeserializeFromXml<T>(XmlDocument doc)
-		{
-			return (T)DeserializeFromXml(doc, typeof(T));
-		}
-
-		/// <summary>
-		/// Deserialize object from XML file.
-		/// </summary>
-		/// <param name="filename">The file name to read from.</param>
-		/// <returns>Object.</returns>
-		public static T DeserializeFromXmlFile<T>(string filename)
-		{
-			return (T)DeserializeFromXmlFile(filename, typeof(T));
-		}
-
-		/// <summary>
-		/// Deserialize object from XML string.
-		/// </summary>
-		/// <param name="xml">Xml string representing object.</param>
-		/// <param name="encoding">The encoding to use (default is UTF8).</param>
-		/// <returns>Object.</returns>
-		public static T DeserializeFromXmlString<T>(string xml, Encoding encoding = null)
-		{
-			encoding = encoding ?? Encoding.UTF8;
-			return (T)DeserializeFromXmlString(xml, typeof(T), encoding);
-		}
-
 
 		#endregion
 

@@ -63,11 +63,11 @@ namespace Nefarius.ViGEm.Client
 			return error == VIGEM_ERROR.VIGEM_ERROR_NONE;
 		}
 
-		public static bool isControllerExists(uint i)
+		public static bool isControllerExists(uint userIndex)
 		{
 			// Not properly implemented yet.
 			var t = Targets;
-			return (t != null && (i - 1) < t.Length && t[i - 1] != null);
+			return (t != null && (userIndex - 1) < t.Length && t[userIndex - 1] != null);
 		}
 
 		public static bool UnPlugForce(uint i)
@@ -90,15 +90,32 @@ namespace Nefarius.ViGEm.Client
 			return true;
 		}
 
-		public static bool PlugIn(uint i)
+		public static bool PlugIn(uint userIndex)
 		{
 			var t = Targets;
 			if (t == null)
 				return false;
 			try
 			{
-				Targets[i - 1].Connect();
-				owned[i - 1] = true;
+				// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
+				var tempDevices = new bool[4];
+				for (int i = 0; i < userIndex - 1; i++)
+				{
+					if (!owned[i])
+					{
+						tempDevices[i] = true;
+						Targets[i].Connect();
+					}
+				}
+				// Connect specified device.
+				Targets[userIndex - 1].Connect();
+				owned[userIndex - 1] = true;
+				// Disconnect temporary connected devices.
+				for (int i = 0; i < 4; i++)
+				{
+					if (tempDevices[i])
+						Targets[i].Disconnect();
+				}
 				return true;
 			}
 			catch (Exception)
@@ -107,7 +124,22 @@ namespace Nefarius.ViGEm.Client
 			}
 		}
 
-		public static bool isControllerOwned(uint i)
+		public static void UnplugAllControllers()
+		{
+			// If targets are installed then...
+			if (Targets != null)
+			{
+				for (uint i = 1; i <= 4; i++)
+				{
+					// Unplug device if owned.
+					if (IsControllerOwned(i))
+						UnPlug(i);
+				}
+			}
+			return;
+		}
+
+		public static bool IsControllerOwned(uint i)
 		{
 			// Not properly implemented yet.
 			return owned[i - 1];
@@ -168,6 +200,7 @@ namespace Nefarius.ViGEm.Client
 		public static void FreeLibrary()
 		{
 			if (!IsLoaded) return;
+			UnplugAllControllers();
 			Exception error;
 			JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out error);
 			libHandle = IntPtr.Zero;
