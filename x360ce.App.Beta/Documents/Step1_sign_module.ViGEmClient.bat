@@ -1,6 +1,6 @@
 @ECHO OFF
-CALL:SIG "..\Resources\vXboxInterface\x86\vXboxInterface.dll"
-CALL:SIG "..\Resources\vXboxInterface\x64\vXboxInterface.dll"
+CALL:SIG "..\Resources\ViGEmClient\x86\ViGEmClient.dll"
+CALL:SIG "..\Resources\ViGEmClient\x64\ViGEmClient.dll"
 pause
 
 GOTO:EOF

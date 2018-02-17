@@ -148,16 +148,19 @@ namespace Nefarius.ViGEm.Client
 
 		void Init_x360ce()
 		{
-			var tempFile = Path.Combine(Path.GetTempPath(), "ViGEmClient.dll");
-			if (!File.Exists(tempFile))
+			var name = "ViGEmClient.dll";
+			var chName = Program.GetResourceChecksumFile(name);
+			var fileName = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", chName);
+			var fi = new FileInfo(fileName);
+			if (!fi.Exists)
 			{
-				var sr = Program.GetResourceStream("ViGEmClient.dll");
+				if (!fi.Directory.Exists)
+					fi.Directory.Create();
+				var sr = Program.GetResourceStream(name);
 				if (sr == null)
 					return;
-				string tempPath = Path.GetTempPath();
 				FileStream sw = null;
-
-				sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
+				sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 				var buffer = new byte[1024];
 				while (true)
 				{
@@ -168,7 +171,7 @@ namespace Nefarius.ViGEm.Client
 				sr.Close();
 				sw.Close();
 			}
-			_LibraryName = tempFile;
+			_LibraryName = fileName;
 			LoadLibrary();
 		}
 

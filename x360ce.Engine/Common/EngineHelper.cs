@@ -19,6 +19,14 @@ namespace x360ce.Engine
 	{
 		#region Manipulate XInput DLL
 
+		public static string AppDataPath
+		{
+			get
+			{
+				return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE";
+			}
+		}
+
 		/// <summary>
 		/// Get information about XInput located on the disk.
 		/// </summary>
@@ -51,8 +59,12 @@ namespace x360ce.Engine
 			// If custom XInput DLL was not found then...
 			if (defaultDll == null)
 			{
-				// Use Microsoft DLL.
-				var sysFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.SystemX86);
+
+				// If this is 32 bit process on 64-bit OS then
+				var sp = !IsApp64bit() && Environment.Is64BitOperatingSystem
+					? Environment.SpecialFolder.SystemX86
+					: Environment.SpecialFolder.System;
+				var sysFolder = System.Environment.GetFolderPath(sp);
 				var msx = System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
 				var info = new FileInfo(msx);
 				var vi = FileVersionInfo.GetVersionInfo(info.FullName);
@@ -117,6 +129,16 @@ namespace x360ce.Engine
 			return bytes;
 		}
 
+		public static bool IsApp64bit()
+		{
+			var assembly = Assembly.GetEntryAssembly();
+			var architecture = assembly.GetName().ProcessorArchitecture;
+			// There must be an easier way to check embedded non managed DLL version.
+			return
+				architecture == ProcessorArchitecture.Amd64 ||
+				architecture == ProcessorArchitecture.IA64;
+		}
+
 		/// <summary>
 		/// Get 32-bit or 64-bit resource depending on x360ce.exe platform.
 		/// </summary>
@@ -125,8 +147,7 @@ namespace x360ce.Engine
 			var assembly = Assembly.GetEntryAssembly();
 			var names = assembly.GetManifestResourceNames()
 				.Where(x => x.EndsWith(name));
-			var architecture = assembly.GetName().ProcessorArchitecture;
-			var a = architecture == ProcessorArchitecture.Amd64 ? ".x64." : ".x86.";
+			var a = IsApp64bit() ? ".x64." : ".x86.";
 			// Try to get by architecture first.
 			var path = names.FirstOrDefault(x => x.Contains(a));
 			if (!string.IsNullOrEmpty(path))

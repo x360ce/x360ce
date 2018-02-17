@@ -16,9 +16,9 @@ namespace x360ce.Engine
 
 		public GameDatabaseManager()
 		{
-			var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE\\x360ce.gdb";
+			var path = EngineHelper.AppDataPath + "\\x360ce.gdb";
 			GdbFile = new FileInfo(path);
-			path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE\\x360ce.md5";
+			path = EngineHelper.AppDataPath + "\\x360ce.md5";
 			Md5File = new FileInfo(path);
 		}
 

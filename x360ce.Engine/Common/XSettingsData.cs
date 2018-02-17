@@ -17,8 +17,7 @@ namespace x360ce.Engine
 		{
 			Items = new SortableBindingList<T>();
 			_Comment = comment;
-			var folder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-			var path = string.Format("{0}\\X360CE\\x360ce.{1}", folder, fileSuffix);
+			var path = string.Format("{0}\\x360ce.{1}", EngineHelper.AppDataPath, fileSuffix);
 			_XmlFile = new FileInfo(path);
 		}
 

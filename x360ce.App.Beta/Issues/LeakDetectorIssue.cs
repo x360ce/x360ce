@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine;
 
@@ -24,17 +25,26 @@ namespace x360ce.App.Issues
 			var pdbs = EngineHelper.GetFiles(".", "*.pdb");
 			if (pdbs.Length > 0)
 			{
-				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"))
+
+				var keyPaths = new List<string>();
+				keyPaths.Add(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+				// Add support for 32-bit installers.
+				if (System.Environment.Is64BitOperatingSystem)
+					keyPaths.Add(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
+				foreach (var keyPath in keyPaths)
 				{
-					foreach (string subkey_name in key.GetSubKeyNames())
+					using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath))
 					{
-						using (RegistryKey subkey = key.OpenSubKey(subkey_name))
+						foreach (string subkey_name in key.GetSubKeyNames())
 						{
-							var displayName = (string)subkey.GetValue("DisplayName", "");
-							if (displayName.StartsWith("Visual Leak Detector"))
+							using (RegistryKey subkey = key.OpenSubKey(subkey_name))
 							{
-								SetSeverity(IssueSeverity.None);
-								return;
+								var displayName = (string)subkey.GetValue("DisplayName", "");
+								if (displayName.StartsWith("Visual Leak Detector"))
+								{
+									SetSeverity(IssueSeverity.None);
+									return;
+								}
 							}
 						}
 					}

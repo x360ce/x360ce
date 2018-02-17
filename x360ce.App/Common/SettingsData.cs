@@ -68,8 +68,7 @@ namespace x360ce.App
 				{
 					if (_XmlFile == null)
 					{
-						var folder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE";
-						var path = folder + "\\" + _FileName;
+						var path = EngineHelper.AppDataPath + "\\" + _FileName;
 						_XmlFile = new FileInfo(path);
 					}
 					return _XmlFile;
