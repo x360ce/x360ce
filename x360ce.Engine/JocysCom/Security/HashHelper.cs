@@ -62,55 +62,66 @@ namespace JocysCom.ClassLibrary.Security
 			return guid;
 		}
 
+		public static byte[] GetHashFromFile(HashAlgorithm algorithm, string path,
+			object sender = null,
+			ProgressChangedEventHandler progressHandler = null,
+			RunWorkerCompletedEventHandler completedHandler = null
+		)
+		{
+			// This method is equivalent to the FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read).
+			using (var stream = System.IO.File.OpenRead(path))
+			{
+				int _progress = -1;
+				long totalBytes = stream.Length;
+				long totalBytesRead = 0;
+				// 4096 buffer preferable because the CPU cache can hold such amounts.
+				var buffer = new byte[0x1000];
+				bool done;
+				int bytesRead;
+				do
+				{
+					bytesRead = stream.Read(buffer, 0, buffer.Length);
+					totalBytesRead += bytesRead;
+					// True if reading of all bytes completed.
+					done = totalBytesRead == totalBytes;
+					// If more bytes left to read then...
+					if (done)
+						algorithm.TransformFinalBlock(buffer, 0, bytesRead);
+					else
+						algorithm.TransformBlock(buffer, 0, bytesRead, null, 0);
+					var progress = (int)((double)totalBytesRead * 100 / totalBytes);
+					var ev = progressHandler;
+					if (_progress != progress && ev != null)
+					{
+						_progress = progress;
+						ev(sender, new ProgressChangedEventArgs(progress, null));
+					}
+					// Continue if not done...
+				} while (!done);
+			}
+			var hash = algorithm.Hash;
+			var ev2 = completedHandler;
+			if (ev2 != null)
+				ev2(sender, new RunWorkerCompletedEventArgs(hash, null, false));
+			return hash;
+		}
+
 		public static Guid GetGuidFromFile(HashAlgorithm algorithm, string path,
 			object sender = null,
 			ProgressChangedEventHandler progressHandler = null,
 			RunWorkerCompletedEventHandler completedHandler = null
 		)
 		{
-			byte[] buffer;
-			byte[] oldBuffer;
-			int bytesRead;
-			int oldBytesRead;
-			long size;
-			long totalBytesRead = 0;
-			int _progress = -1;
-			using (var stream = System.IO.File.OpenRead(path))
-			{
-				size = stream.Length;
-				buffer = new byte[4096];
-				bytesRead = stream.Read(buffer, 0, buffer.Length);
-				totalBytesRead += bytesRead;
-				do
-				{
-					oldBytesRead = bytesRead;
-					oldBuffer = buffer;
-					buffer = new byte[4096];
-					bytesRead = stream.Read(buffer, 0, buffer.Length);
-					totalBytesRead += bytesRead;
-					if (bytesRead == 0)
-					{
-						algorithm.TransformFinalBlock(oldBuffer, 0, oldBytesRead);
-					}
-					else
-					{
-						algorithm.TransformBlock(oldBuffer, 0, oldBytesRead, oldBuffer, 0);
-					}
-					var progress = (int)((double)totalBytesRead * 100 / size);
-					if (_progress != progress && progressHandler != null)
-					{
-						_progress = progress;
-						progressHandler(sender, new ProgressChangedEventArgs(progress, null));
-					}
-				} while (bytesRead != 0);
-				byte[] guidBytes = new byte[16];
-				Array.Copy(algorithm.Hash, guidBytes, guidBytes.Length);
-				Guid guid = new Guid(guidBytes);
-				if (completedHandler != null)
-					completedHandler(sender, new RunWorkerCompletedEventArgs(guid, null, false));
-				return guid;
-			}
+			var hash = GetHashFromFile(algorithm, path, sender, progressHandler, null);
+			byte[] guidBytes = new byte[16];
+			Array.Copy(hash, guidBytes, guidBytes.Length);
+			Guid guid = new Guid(guidBytes);
+			var ev2 = completedHandler;
+			if (ev2 != null)
+				ev2(sender, new RunWorkerCompletedEventArgs(guid, null, false));
+			return guid;
 		}
-
 	}
+
 }
+

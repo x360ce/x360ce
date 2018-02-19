@@ -60,7 +60,6 @@
 			this.IncludeProductsCheckBox = new System.Windows.Forms.CheckBox();
 			this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
 			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
-			this.SaveSettingsButton = new System.Windows.Forms.Button();
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
@@ -450,17 +449,6 @@
 			this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(51, 20);
 			this.ConfigurationVersionTextBox.TabIndex = 0;
 			// 
-			// SaveSettingsButton
-			// 
-			this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.SaveSettingsButton.Location = new System.Drawing.Point(695, 539);
-			this.SaveSettingsButton.Name = "SaveSettingsButton";
-			this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
-			this.SaveSettingsButton.TabIndex = 68;
-			this.SaveSettingsButton.Text = "&Save";
-			this.SaveSettingsButton.UseVisualStyleBackColor = true;
-			this.SaveSettingsButton.Click += new System.EventHandler(this.SaveSettingsButton_Click);
-			// 
 			// DirectInputDevicesGroupBox
 			// 
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
@@ -715,7 +703,7 @@
 			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(526, 539);
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(607, 539);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
 			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(163, 23);
 			this.OpenSettingsFolderButton.TabIndex = 69;
@@ -793,7 +781,6 @@
 			this.Controls.Add(this.VirtualDeviceGroupBox);
 			this.Controls.Add(this.DeveloperToolsButton);
 			this.Controls.Add(this.OpenSettingsFolderButton);
-			this.Controls.Add(this.SaveSettingsButton);
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.Controls.Add(this.DirectInputDevicesGroupBox);
 			this.Controls.Add(this.UpdateOptionsGroupBox);
@@ -859,7 +846,6 @@
         private System.Windows.Forms.ToolStripButton RefreshLocationsButton;
         private System.Windows.Forms.ToolStripButton AddLocationButton;
         private System.Windows.Forms.ToolStripButton RemoveLocationButton;
-		private System.Windows.Forms.Button SaveSettingsButton;
 		private System.Windows.Forms.Button OpenSettingsFolderButton;
         private System.Windows.Forms.CheckBox CombineEnabledCheckBox;
 		private System.Windows.Forms.GroupBox DirectInputDevicesGroupBox;

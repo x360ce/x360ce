@@ -559,7 +559,6 @@ namespace x360ce.App
 
 		public void SaveAll()
 		{
-
 			Settings.Default.Save();
 			SettingsManager.OptionsData.Save();
 			SettingsManager.Settings.Save();
@@ -1618,10 +1617,12 @@ namespace x360ce.App
 		{
 			ShowTab(show, SettingsTabPage);
 		}
+
 		public void ShowDevicesTab(bool show)
 		{
 			ShowTab(show, DevicesTabPage);
 		}
+
 		public void ShowIniTab(bool show)
 		{
 			ShowTab(show, IniTabPage);
@@ -1670,6 +1671,7 @@ namespace x360ce.App
 			{
 				DebugPanel.ShowPanel();
 			}
+
 
 		}
 	}

@@ -463,6 +463,11 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>Object.</returns>
 		public static object DeserializeFromXmlString(string xml, Type type)
 		{
+			// Note: If you are getting deserialization error in XML document(1,1) then there is a chance that
+			// you are trying to deserialize string which contains Byte Order Mark (BOM) which must not be there.
+			// Probably you used "var xml = System.Text.Encoding.GetString(bytes)" directly on file content.
+			// You should use "StreamReader" on file content, because this method will strip BOM properly
+			// when converting bytes to string.
 			using (var sr = new StringReader(xml))
 			{
 				// Use settings to secure CWE-611: Improper Restriction of XML External Entity Reference('XXE')

@@ -65,9 +65,11 @@ namespace x360ce.App.Controls
             SettingsManager.AddMap(section, () => SettingName.InternetAutoSave, InternetAutoSaveCheckBox);
             SettingsManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
             SettingsManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
-			//
+			// Load settings into control.
 			LoadSettings();
-        }
+			// Attach event which will save form settings before Save().
+			SettingsManager.OptionsData.Saving += OptionsData_Saving;
+		}
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
         {
@@ -172,10 +174,10 @@ namespace x360ce.App.Controls
             IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
             ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
             ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
-        }
+		}
 
-        private void SaveSettingsButton_Click(object sender, EventArgs e)
-        {
+		private void OptionsData_Saving(object sender, EventArgs e)
+		{
             // Save XML settings into control.
             var o = SettingsManager.Options;
             o.AllowOnlyOneCopy = AllowOnlyOneCopyCheckBox.Checked;
@@ -193,8 +195,7 @@ namespace x360ce.App.Controls
             o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
             o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
             o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
-            SettingsManager.OptionsData.Save();
-        }
+		}
 
         private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
         {
