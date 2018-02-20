@@ -155,13 +155,11 @@
 		/// <summary>
 		/// Gets the state.
 		/// </summary>
-		/// <returns>The state of this controller.</returns>
-		public State GetState()
+		/// <param name="state">The state of this controller.</param>
+		/// <returns><c>true</c> if the controller is connected, <c>false</c> otherwise.</returns>
+		public bool GetState(out State state)
 		{
-			State temp;
-			var result = ErrorCodeHelper.ToResult(XInputGetState((int)userIndex, out temp));
-			result.CheckError();
-			return temp;
+			return XInputGetState((int)userIndex, out state) == 0;
 		}
 
 		/// <summary>

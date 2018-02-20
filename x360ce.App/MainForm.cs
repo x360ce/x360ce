@@ -830,10 +830,14 @@ namespace x360ce.App
 					lock (Controller.XInputLock)
 					{
 						var gamePad = GamePads[i];
-						if (Controller.IsLoaded && gamePad.IsConnected)
+						if (Controller.IsLoaded)
 						{
-							currentPad = gamePad.GetState();
-							xiOn = true;
+							State state;
+							if (gamePad.GetState(out state))
+							{
+								currentPad = state;
+								xiOn = true;
+							}
 						}
 					}
 					currentPadControl.UpdateFromXInput(currentPad, xiOn);

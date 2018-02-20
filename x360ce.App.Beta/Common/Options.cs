@@ -86,7 +86,7 @@ namespace x360ce.App
 		public bool MinimizeToTray { get; set; }
 		public bool ExcludeSupplementalDevices { get; set; }
 		public bool ExcludeVirtualDevices { get; set; }
-        public bool CheckForUpdates { get; set; }
+		public bool CheckForUpdates { get; set; }
 
 		// Performance Test
 
@@ -97,6 +97,8 @@ namespace x360ce.App
 		public bool TestUpdateInterface { get; set; }
 
 		public bool ShowDebugPanel { get; set; }
+
+		public bool UseCombinedXiStates { get; set; }
 
 	}
 }

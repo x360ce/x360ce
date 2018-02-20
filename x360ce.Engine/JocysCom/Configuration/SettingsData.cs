@@ -72,8 +72,13 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlIgnore, NonSerialized]
 		object saveReadFileLock = new object();
 
+		public event EventHandler Saving;
+
 		public void SaveAs(string fileName)
 		{
+			var ev = Saving;
+			if (ev != null)
+				ev(this, new EventArgs());
 			lock (saveReadFileLock)
 			{
 				for (int i = 0; i < Items.Count; i++)

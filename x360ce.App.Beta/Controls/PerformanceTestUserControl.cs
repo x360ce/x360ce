@@ -31,12 +31,14 @@ namespace x360ce.App.Controls
 			SetXInputStatesCheckBox.Checked = o.TestSetXInputStates;
 			GetXInputStatesCheckBox.Checked = o.TestGetXInputStates;
 			UpdateInterfaceCheckBox.Checked = o.TestUpdateInterface;
+			UseCombinedXiStatesCheckBox.Checked = o.UseCombinedXiStates;
 			// Attach events.
 			EnableCheckBox.CheckedChanged += EnableCheckBox_CheckedChanged;
 			GetDInputStatesCheckBox.CheckedChanged += GetDInputStatesCheckBox_CheckedChanged;
 			SetXInputStatesCheckBox.CheckedChanged += SetXInputStatesCheckBox_CheckedChanged;
 			GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
 			UpdateInterfaceCheckBox.CheckedChanged += UpdateInterfaceCheckBox_CheckedChanged;
+			UseCombinedXiStatesCheckBox.CheckedChanged += UseCombinedXiStatesCheckBox_CheckedChanged;
 		}
 
 		private void UpdateInterfaceCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -65,6 +67,16 @@ namespace x360ce.App.Controls
 			CheckTimer();
 		}
 
+		private void UseCombinedXiStatesCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			SettingsManager.Options.UseCombinedXiStates = UseCombinedXiStatesCheckBox.Checked;
+			var padControls = MainForm.Current.PadControls;
+			for (int i = 0; i < padControls.Length; i++)
+			{
+				AppHelper.SetChecked(padControls[i].UseCombinedXiStatesCheckBox, SettingsManager.Options.UseCombinedXiStates);
+			}
+		}
+
 		void CheckTimer()
 		{
 			if (SettingsManager.Options.TestEnabled && !Program.IsClosing)
@@ -91,6 +103,7 @@ namespace x360ce.App.Controls
 			o.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
 			o.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
 			o.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
+			o.UseCombinedXiStates = UseCombinedXiStatesCheckBox.Checked;
 		}
 
 		#region Performace Counter
@@ -246,5 +259,6 @@ namespace x360ce.App.Controls
 				MessageBox.Show(_timer.TestResults);
 			});
 		}
+
 	}
 }

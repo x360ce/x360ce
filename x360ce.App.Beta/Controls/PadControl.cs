@@ -759,10 +759,13 @@ namespace x360ce.App.Controls
 		public void UpdateFromXInput()
 		{
 			var i = (int)MappedTo - 1;
-			newState = TestCheckBox.Checked
-				? MainForm.Current.DHelper.CombinedXInputStates[i]
-				: MainForm.Current.DHelper.LiveXInputStates[i];
-			newConnected = MainForm.Current.DHelper.XiControllerConnected[i];
+			var usedCombined = SettingsManager.Options.UseCombinedXiStates;
+			newState = usedCombined
+				? MainForm.Current.DHelper.CombinedXiStates[i]
+				: MainForm.Current.DHelper.LiveXiStates[i];
+			newConnected = usedCombined
+				? MainForm.Current.DHelper.CombinedXiConencted[i]
+				: MainForm.Current.DHelper.LiveXiConnected[i];
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)
 				return;
@@ -1034,8 +1037,10 @@ namespace x360ce.App.Controls
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
 			lock (Controller.XInputLock)
 			{
-				var gamePad = MainForm.Current.DHelper.XiControllers[(int)MappedTo - 1];
-				if (Controller.IsLoaded && gamePad.IsConnected)
+				var index = (int)MappedTo - 1;
+				var gamePad = MainForm.Current.DHelper.LiveXiControllers[index];
+				var isConnected = MainForm.Current.DHelper.LiveXiConnected[index];
+				if (Controller.IsLoaded && isConnected)
 				{
 					var vibration = new Vibration();
 					vibration.LeftMotorSpeed = leftMotor;
@@ -1383,9 +1388,10 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void TestCheckBox_Click(object sender, EventArgs e)
+		private void UseCombinedXiStatesCheckBox_Click(object sender, EventArgs e)
 		{
-			TestCheckBox.Checked = !TestCheckBox.Checked;
+			UseCombinedXiStatesCheckBox.Checked = !UseCombinedXiStatesCheckBox.Checked;
+			SettingsManager.Options.UseCombinedXiStates = UseCombinedXiStatesCheckBox.Checked;
 		}
 
 		public void ShowAdvancedTab(bool show)

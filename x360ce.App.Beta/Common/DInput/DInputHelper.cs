@@ -18,15 +18,16 @@ namespace x360ce.App.DInput
 			TimerSemaphore = new SemaphoreSlim(0);
 			Manager = new DirectInput();
 			InitDeviceDetector();
-			CombinedXInputStates = new State[4];
-			LiveXInputStates = new State[4];
-			XiControllers = new Controller[4];
-			XiControllerConnected = new bool[4];
+			CombinedXiConencted = new bool[4];
+			CombinedXiStates = new State[4];
+			LiveXiControllers = new Controller[4];
+			LiveXiConnected = new bool[4];
+			LiveXiStates = new State[4];
 			for (int i = 0; i < 4; i++)
 			{
-				CombinedXInputStates[i] = new State();
-				LiveXInputStates[i] = new State();
-				XiControllers[i] = new Controller((UserIndex)i);
+				CombinedXiStates[i] = new State();
+				LiveXiControllers[i] = new Controller((UserIndex)i);
+				LiveXiStates[i] = new State();
 			}
 			watch = new System.Diagnostics.Stopwatch();
 		}

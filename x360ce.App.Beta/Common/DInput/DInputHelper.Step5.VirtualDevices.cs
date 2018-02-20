@@ -77,7 +77,7 @@ namespace x360ce.App.DInput
 		public void FeedDevice(uint i)
 		{
 			// Get old and new game pad values.
-			var n = CombinedXInputStates[i - 1].Gamepad;
+			var n = CombinedXiStates[i - 1].Gamepad;
 			var report = new Xbox360Report();
 			// Update only when change.
 			report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));

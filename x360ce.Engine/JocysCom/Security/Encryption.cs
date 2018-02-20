@@ -19,14 +19,9 @@ namespace JocysCom.ClassLibrary.Security
 			get { return _Current = _Current ?? new Encryption(); }
 		}
 
-		public Encryption()
+		public Encryption(string prefix = null)
 		{
-			_prefix = "AppEncryption";
-		}
-
-		public Encryption(string prefix)
-		{
-			_prefix = prefix;
+			_prefix = prefix ?? "AppEncryption";
 		}
 
 		string _prefix;
@@ -101,12 +96,14 @@ namespace JocysCom.ClassLibrary.Security
 
 		object HashProviderLock = new object();
 
-		System.Security.Cryptography.MD5 _HashProvider;
-		public System.Security.Cryptography.MD5 HashProvider
+		System.Security.Cryptography.HashAlgorithm _HashProvider;
+		public System.Security.Cryptography.HashAlgorithm HashProvider
 		{
 			get
 			{
-				return _HashProvider = _HashProvider ?? new System.Security.Cryptography.MD5CryptoServiceProvider();
+				return _HashProvider = _HashProvider ??
+
+					new System.Security.Cryptography.MD5CryptoServiceProvider();
 			}
 		}
 
@@ -612,10 +609,10 @@ namespace JocysCom.ClassLibrary.Security
 
 		public void UpsertKey(System.Configuration.Configuration config, string name, object value)
 		{
-			if (config.AppSettings.Settings[HmacHashKeyName] == null)
-				config.AppSettings.Settings.Add(HmacHashKeyName, string.Format("{0}", value));
+			if (config.AppSettings.Settings[name] == null)
+				config.AppSettings.Settings.Add(name, string.Format("{0}", value));
 			else
-				config.AppSettings.Settings[RsaPublicKeyName].Value = string.Format("{0}", value);
+				config.AppSettings.Settings[name].Value = string.Format("{0}", value);
 		}
 
 		public void RsaNewKeysSave(int keySize)

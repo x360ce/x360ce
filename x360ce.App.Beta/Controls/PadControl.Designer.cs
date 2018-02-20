@@ -200,7 +200,7 @@
 			this.AddMapButton = new System.Windows.Forms.ToolStripButton();
 			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
-			this.TestCheckBox = new System.Windows.Forms.ToolStripButton();
+			this.UseCombinedXiStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2238,7 +2238,7 @@
             this.AddMapButton,
             this.AutoMapButton,
             this.EnableButton,
-            this.TestCheckBox});
+            this.UseCombinedXiStatesCheckBox});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
@@ -2291,15 +2291,15 @@
 			this.EnableButton.Text = "&Enable";
 			this.EnableButton.Click += new System.EventHandler(this.EnableButton_Click);
 			// 
-			// TestCheckBox
+			// UseCombinedXiStatesCheckBox
 			// 
-			this.TestCheckBox.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
-			this.TestCheckBox.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.TestCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
-			this.TestCheckBox.Name = "TestCheckBox";
-			this.TestCheckBox.Size = new System.Drawing.Size(48, 22);
-			this.TestCheckBox.Text = "&Test";
-			this.TestCheckBox.Click += new System.EventHandler(this.TestCheckBox_Click);
+			this.UseCombinedXiStatesCheckBox.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.UseCombinedXiStatesCheckBox.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.UseCombinedXiStatesCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.UseCombinedXiStatesCheckBox.Name = "UseCombinedXiStatesCheckBox";
+			this.UseCombinedXiStatesCheckBox.Size = new System.Drawing.Size(48, 22);
+			this.UseCombinedXiStatesCheckBox.Text = "&Test";
+			this.UseCombinedXiStatesCheckBox.Click += new System.EventHandler(this.UseCombinedXiStatesCheckBox_Click);
 			// 
 			// PadControl
 			// 
@@ -2549,7 +2549,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
 		private System.Windows.Forms.ToolStripButton EnableButton;
-		private System.Windows.Forms.ToolStripButton TestCheckBox;
 		private System.Windows.Forms.TabPage TriggersTabPage;
 		public AxisMapUserControl RightTriggerUserControl;
 		public AxisMapUserControl LeftTriggerUserControl;
@@ -2557,5 +2556,6 @@
 		private System.Windows.Forms.TabPage DPadTabPage;
 		private System.Windows.Forms.Panel DPadPanel;
 		private System.Windows.Forms.ComboBox MapNameComboBox;
+		public System.Windows.Forms.ToolStripButton UseCombinedXiStatesCheckBox;
 	}
 }

@@ -10,7 +10,8 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		public State[] CombinedXInputStates;
+		public State[] CombinedXiStates;
+		public bool[] CombinedXiConencted;
 		public int PacketNumber;
 
 		void CombineXiStates()
@@ -47,7 +48,8 @@ namespace x360ce.App.DInput
 				PacketNumber++;
 				combinedState.PacketNumber = PacketNumber;
 				combinedState.Gamepad = gp;
-				CombinedXInputStates[m] = combinedState;
+				CombinedXiStates[m] = combinedState;
+				CombinedXiConencted[m] = states.Length > 0;
 			}
 		}
 

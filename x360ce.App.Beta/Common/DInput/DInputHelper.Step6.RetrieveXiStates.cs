@@ -9,9 +9,10 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		public Controller[] XiControllers;
-		public State[] LiveXInputStates;
-		public bool[] XiControllerConnected;
+		public Controller[] LiveXiControllers;
+		public bool[] LiveXiConnected;
+		public State[] LiveXiStates;
+		
 
 		void RetrieveXiStates()
 		{
@@ -23,16 +24,17 @@ namespace x360ce.App.DInput
 				// Before states can be retrieved xinput configuration must be checked.
 				for (uint i = 0; i < 4; i++)
 				{
-					var gamePad = XiControllers[i];
-					if (Controller.IsLoaded && gamePad.IsConnected && allow)
+					var gamePad = LiveXiControllers[i];
+					State state;
+					if (Controller.IsLoaded && allow && gamePad.GetState(out state))
 					{
-						LiveXInputStates[i] = gamePad.GetState();
-						XiControllerConnected[i] = true;
+						LiveXiStates[i] = state;
+						LiveXiConnected[i] = true;
 					}
 					else
 					{
-						LiveXInputStates[i] = new State();
-						XiControllerConnected[i] = false;
+						LiveXiStates[i] = new State();
+						LiveXiConnected[i] = false;
 					}
 				}
 			}

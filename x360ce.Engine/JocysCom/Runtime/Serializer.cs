@@ -440,7 +440,9 @@ namespace JocysCom.ClassLibrary.Runtime
 				// Use specified encoding if Byte Order Mark (BOM) is missing.
 				using (var sr = new StreamReader(ms, encoding ?? Encoding.UTF8, true))
 				{
-					// Use settings to secure CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+					// Settings used to protect from
+					// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+					// https://cwe.mitre.org/data/definitions/611.html
 					var settings = new XmlReaderSettings();
 					settings.DtdProcessing = DtdProcessing.Ignore;
 					settings.XmlResolver = null;
@@ -470,7 +472,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			// when converting bytes to string.
 			using (var sr = new StringReader(xml))
 			{
-				// Use settings to secure CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+				// Settings used to protect from
+				// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+				// https://cwe.mitre.org/data/definitions/611.html
 				var settings = new XmlReaderSettings();
 				settings.DtdProcessing = DtdProcessing.Ignore;
 				settings.XmlResolver = null;

@@ -327,6 +327,11 @@ namespace x360ce.App
 			if (control.Checked != check) control.Checked = check;
 		}
 
+		public static void SetChecked(ToolStripButton control, bool check)
+		{
+			if (control.Checked != check) control.Checked = check;
+		}
+
 		public static MapToMask GetMapFlag(MapTo mapTo)
 		{
 			switch (mapTo)

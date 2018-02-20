@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.MainGroupBox = new System.Windows.Forms.GroupBox();
+			this.TestButton = new System.Windows.Forms.Button();
 			this.CpuLabel = new System.Windows.Forms.Label();
 			this.CpuTextBox = new System.Windows.Forms.TextBox();
 			this.EnableCheckBox = new System.Windows.Forms.CheckBox();
@@ -36,27 +37,40 @@
 			this.SetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.GetDInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.UpdateInterfaceCheckBox = new System.Windows.Forms.CheckBox();
-			this.TestButton = new System.Windows.Forms.Button();
+			this.UseCombinedXiStatesCheckBox = new System.Windows.Forms.CheckBox();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.MainGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainGroupBox
 			// 
+			this.MainGroupBox.Controls.Add(this.panel1);
 			this.MainGroupBox.Controls.Add(this.TestButton);
 			this.MainGroupBox.Controls.Add(this.CpuLabel);
 			this.MainGroupBox.Controls.Add(this.CpuTextBox);
 			this.MainGroupBox.Controls.Add(this.EnableCheckBox);
 			this.MainGroupBox.Controls.Add(this.GetXInputStatesCheckBox);
+			this.MainGroupBox.Controls.Add(this.UseCombinedXiStatesCheckBox);
 			this.MainGroupBox.Controls.Add(this.SetXInputStatesCheckBox);
 			this.MainGroupBox.Controls.Add(this.GetDInputStatesCheckBox);
 			this.MainGroupBox.Controls.Add(this.UpdateInterfaceCheckBox);
 			this.MainGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainGroupBox.Location = new System.Drawing.Point(0, 0);
 			this.MainGroupBox.Name = "MainGroupBox";
-			this.MainGroupBox.Size = new System.Drawing.Size(235, 94);
+			this.MainGroupBox.Size = new System.Drawing.Size(235, 144);
 			this.MainGroupBox.TabIndex = 0;
 			this.MainGroupBox.TabStop = false;
 			this.MainGroupBox.Text = "Performance Test";
+			// 
+			// TestButton
+			// 
+			this.TestButton.Location = new System.Drawing.Point(92, 14);
+			this.TestButton.Name = "TestButton";
+			this.TestButton.Size = new System.Drawing.Size(25, 23);
+			this.TestButton.TabIndex = 4;
+			this.TestButton.Text = "T";
+			this.TestButton.UseVisualStyleBackColor = true;
+			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
 			// CpuLabel
 			// 
@@ -126,15 +140,23 @@
 			this.UpdateInterfaceCheckBox.Text = "Update Interface";
 			this.UpdateInterfaceCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// TestButton
+			// UseCombinedXiStatesCheckBox
 			// 
-			this.TestButton.Location = new System.Drawing.Point(92, 14);
-			this.TestButton.Name = "TestButton";
-			this.TestButton.Size = new System.Drawing.Size(25, 23);
-			this.TestButton.TabIndex = 4;
-			this.TestButton.Text = "T";
-			this.TestButton.UseVisualStyleBackColor = true;
-			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
+			this.UseCombinedXiStatesCheckBox.AutoSize = true;
+			this.UseCombinedXiStatesCheckBox.Location = new System.Drawing.Point(6, 95);
+			this.UseCombinedXiStatesCheckBox.Name = "UseCombinedXiStatesCheckBox";
+			this.UseCombinedXiStatesCheckBox.Size = new System.Drawing.Size(141, 17);
+			this.UseCombinedXiStatesCheckBox.TabIndex = 1;
+			this.UseCombinedXiStatesCheckBox.Text = "Use Combined XI States";
+			this.UseCombinedXiStatesCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.panel1.Location = new System.Drawing.Point(6, 88);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(223, 1);
+			this.panel1.TabIndex = 5;
 			// 
 			// PerformanceTestUserControl
 			// 
@@ -142,7 +164,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MainGroupBox);
 			this.Name = "PerformanceTestUserControl";
-			this.Size = new System.Drawing.Size(235, 94);
+			this.Size = new System.Drawing.Size(235, 144);
 			this.MainGroupBox.ResumeLayout(false);
 			this.MainGroupBox.PerformLayout();
 			this.ResumeLayout(false);
@@ -160,5 +182,7 @@
 		private System.Windows.Forms.TextBox CpuTextBox;
 		private System.Windows.Forms.Label CpuLabel;
 		private System.Windows.Forms.Button TestButton;
+		private System.Windows.Forms.Panel panel1;
+		public System.Windows.Forms.CheckBox UseCombinedXiStatesCheckBox;
 	}
 }
