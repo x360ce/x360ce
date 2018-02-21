@@ -246,7 +246,7 @@ namespace x360ce.App
 		{
 			// If map to changed then re-detect devices.
 			var pd = e.PropertyDescriptor;
-			if (pd != null && pd.Name == "MapTo")
+			if (pd != null && pd.Name ==   "MapTo")
 			{
 				forceRecountDevices = true;
 			}

@@ -1,104 +1,137 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using x360ce.Engine;
 
 namespace x360ce.App
 {
-	public class Options
-	{
-		public Options()
-		{
-			AllowOnlyOneCopy = true;
-			InternetFeatures = true;
-			InternetAutoLoad = true;
-			InternetAutoSave = true;
-		}
-		/// <summary>
-		/// Avoid deserialization duplicates by using separate method.
-		/// </summary>
-		public void InitDefaults()
-		{
-			if (string.IsNullOrEmpty(InternetDatabaseUrl))
-				InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
-			if (InternetDatabaseUrls == null)
-				InternetDatabaseUrls = new List<string>();
-			if (InternetDatabaseUrls.Count == 0)
-			{
-				InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
-				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
-			}
-			if (GameScanLocations == null)
-				GameScanLocations = new List<string>() { };
-			if (string.IsNullOrEmpty(DiskId))
-			{
-				DiskId = Engine.BoardInfo.GetDiskId();
-			}
-			if (ComputerId == Guid.Empty)
-			{
-				ComputerId = Engine.BoardInfo.GetHashedDiskId();
-			}
-		}
+    public class Options : INotifyPropertyChanged
+    {
+        public Options()
+        {
+            AllowOnlyOneCopy = true;
+            InternetFeatures = true;
+            InternetAutoLoad = true;
+            InternetAutoSave = true;
+        }
+        /// <summary>
+        /// Avoid deserialization duplicates by using separate method.
+        /// </summary>
+        public void InitDefaults()
+        {
+            if (string.IsNullOrEmpty(InternetDatabaseUrl))
+                InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+            if (InternetDatabaseUrls == null)
+                InternetDatabaseUrls = new List<string>();
+            if (InternetDatabaseUrls.Count == 0)
+            {
+                InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
+                InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
+            }
+            if (GameScanLocations == null)
+                GameScanLocations = new List<string>() { };
+            if (string.IsNullOrEmpty(DiskId))
+            {
+                DiskId = Engine.BoardInfo.GetDiskId();
+            }
+            if (ComputerId == Guid.Empty)
+            {
+                ComputerId = Engine.BoardInfo.GetHashedDiskId();
+            }
+        }
 
-		public bool CheckAndFixUserRsaKeys()
-		{
-			// If user RSA keys are missing then...
-			if (string.IsNullOrEmpty(UserRsaPublicKey))
-			{
-				// Create new RSA keys which will be used to send encrypted credentials.
-				var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User);
-				var keys = rsa.RsaNewKeys(2048);
-				UserRsaPublicKey = keys.Public;
-				UserRsaPrivateKey = keys.Private;
-				return true;
-			}
-			return false;
-		}
+        public bool CheckAndFixUserRsaKeys()
+        {
+            // If user RSA keys are missing then...
+            if (string.IsNullOrEmpty(UserRsaPublicKey))
+            {
+                // Create new RSA keys which will be used to send encrypted credentials.
+                var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User);
+                var keys = rsa.RsaNewKeys(2048);
+                UserRsaPublicKey = keys.Public;
+                UserRsaPrivateKey = keys.Private;
+                return true;
+            }
+            return false;
+        }
 
-		public bool AllowOnlyOneCopy { get; set; }
+        public bool AllowOnlyOneCopy { get; set; }
 
-		public bool ShowProgramsTab { get; set; }
-		public bool ShowSettingsTab { get; set; }
-		public bool ShowDevicesTab { get; set; }
-		public bool ShowIniTab { get; set; }
+        public bool ShowProgramsTab { get; set; }
+        public bool ShowSettingsTab { get; set; }
+        public bool ShowDevicesTab { get; set; }
+        public bool ShowIniTab { get; set; }
 
-		public bool InternetFeatures { get; set; }
-		public bool InternetAutoLoad { get; set; }
-		public bool InternetAutoSave { get; set; }
-		public string InternetDatabaseUrl { get; set; }
-		public List<string> InternetDatabaseUrls { get; set; }
-		public List<string> GameScanLocations { get; set; }
-		public string DiskId { get; set; }
-		public Guid ComputerId { get; set; }
+        public bool InternetFeatures { get; set; }
+        public bool InternetAutoLoad { get; set; }
+        public bool InternetAutoSave { get; set; }
+        public string InternetDatabaseUrl { get; set; }
+        public List<string> InternetDatabaseUrls { get; set; }
+        public List<string> GameScanLocations { get; set; }
+        public string DiskId { get; set; }
+        public Guid ComputerId { get; set; }
 
-		public string LoginEnabled { get; set; }
+        public string LoginEnabled { get; set; }
 
-		public bool IncludeProductsInsideINI { get; set; }
+        public bool IncludeProductsInsideINI { get; set; }
 
-		public string UserRsaPublicKey { get; set; }
-		public string UserRsaPrivateKey { get; set; }
+        public string UserRsaPublicKey { get; set; }
+        public string UserRsaPrivateKey { get; set; }
 
-		public string CloudRsaPublicKey { get; set; }
+        public string CloudRsaPublicKey { get; set; }
 
-		public string Username { get; set; }
-		public string Password { get; set; }
-		public bool MinimizeToTray { get; set; }
-		public bool ExcludeSupplementalDevices { get; set; }
-		public bool ExcludeVirtualDevices { get; set; }
-		public bool CheckForUpdates { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public bool MinimizeToTray { get; set; }
+        public bool ExcludeSupplementalDevices { get; set; }
+        public bool ExcludeVirtualDevices { get; set; }
+        public bool CheckForUpdates { get; set; }
 
-		// Performance Test
+        // Performance Test
 
-		public bool TestEnabled { get; set; }
-		public bool TestGetDInputStates { get; set; }
-		public bool TestSetXInputStates { get; set; }
-		public bool TestGetXInputStates { get; set; }
-		public bool TestUpdateInterface { get; set; }
+        public bool TestEnabled { get; set; }
+        public bool TestGetDInputStates { get; set; }
+        public bool TestSetXInputStates { get; set; }
+        public bool TestGetXInputStates { get; set; }
+        public bool TestUpdateInterface { get; set; }
 
-		public bool ShowDebugPanel { get; set; }
+        public bool ShowDebugPanel { get; set; }
 
-		public bool UseCombinedXiStates { get; set; }
+        public bool UseCombinedXiStates
+        {
+            get { return _UseCombinedXiStates; }
+            set { _UseCombinedXiStates = value; ReportPropertyChanged(x => x.UseCombinedXiStates); }
+        }
+        bool _UseCombinedXiStates;
 
-	}
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public static string GetName(Expression<Func<Options, object>> selector)
+        {
+            var body = selector.Body as MemberExpression;
+            if (body == null)
+            {
+                var ubody = (UnaryExpression)selector.Body;
+                body = ubody.Operand as MemberExpression;
+            }
+            return body.Member.Name;
+        }
+
+        void ReportPropertyChanged(Expression<Func<Options, object>> selector)
+        {
+            var ev = PropertyChanged;
+            if (ev == null) return;
+            var name = GetName(selector);
+            ev(this, new PropertyChangedEventArgs(name));
+        }
+
+        #endregion
+
+
+    }
 }

@@ -4,261 +4,277 @@ using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
 using JocysCom.ClassLibrary;
+using System.ComponentModel;
 
 namespace x360ce.App.Controls
 {
-	public partial class PerformanceTestUserControl : UserControl
-	{
-		public PerformanceTestUserControl()
-		{
-			InitializeComponent();
-			if (IsDesignMode) return;
-			CpuTimer = new System.Timers.Timer();
-			CpuTimer.Interval = 1000;
-			CpuTimer.AutoReset = false;
-			CpuTimer.Elapsed += CpuTimer_Elapsed;
-			LoadSettings();
-			CheckTimer();
-		}
+    public partial class PerformanceTestUserControl : UserControl
+    {
+        public PerformanceTestUserControl()
+        {
+            InitializeComponent();
+            if (IsDesignMode) return;
+            CpuTimer = new System.Timers.Timer();
+            CpuTimer.Interval = 1000;
+            CpuTimer.AutoReset = false;
+            CpuTimer.Elapsed += CpuTimer_Elapsed;
+            LoadSettings();
+            CheckTimer();
+        }
 
-		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
+        public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
-		public void LoadSettings()
-		{
-			var o = SettingsManager.Options;
-			EnableCheckBox.Checked = o.TestEnabled;
-			GetDInputStatesCheckBox.Checked = o.TestGetDInputStates;
-			SetXInputStatesCheckBox.Checked = o.TestSetXInputStates;
-			GetXInputStatesCheckBox.Checked = o.TestGetXInputStates;
-			UpdateInterfaceCheckBox.Checked = o.TestUpdateInterface;
-			UseCombinedXiStatesCheckBox.Checked = o.UseCombinedXiStates;
-			// Attach events.
-			EnableCheckBox.CheckedChanged += EnableCheckBox_CheckedChanged;
-			GetDInputStatesCheckBox.CheckedChanged += GetDInputStatesCheckBox_CheckedChanged;
-			SetXInputStatesCheckBox.CheckedChanged += SetXInputStatesCheckBox_CheckedChanged;
-			GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
-			UpdateInterfaceCheckBox.CheckedChanged += UpdateInterfaceCheckBox_CheckedChanged;
-			UseCombinedXiStatesCheckBox.CheckedChanged += UseCombinedXiStatesCheckBox_CheckedChanged;
-		}
+        public void LoadSettings()
+        {
+            var o = SettingsManager.Options;
+            EnableCheckBox.Checked = o.TestEnabled;
+            GetDInputStatesCheckBox.Checked = o.TestGetDInputStates;
+            SetXInputStatesCheckBox.Checked = o.TestSetXInputStates;
+            GetXInputStatesCheckBox.Checked = o.TestGetXInputStates;
+            UpdateInterfaceCheckBox.Checked = o.TestUpdateInterface;
+            // Attach events.
+            EnableCheckBox.CheckedChanged += EnableCheckBox_CheckedChanged;
+            GetDInputStatesCheckBox.CheckedChanged += GetDInputStatesCheckBox_CheckedChanged;
+            SetXInputStatesCheckBox.CheckedChanged += SetXInputStatesCheckBox_CheckedChanged;
+            GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
+            UpdateInterfaceCheckBox.CheckedChanged += UpdateInterfaceCheckBox_CheckedChanged;
+            // Set UseCombinedXiStates.
+            UseCombinedXiStatesCheckBox.Checked = o.UseCombinedXiStates;
+            UseCombinedXiStatesCheckBox.CheckedChanged += UseCombinedXiStatesCheckBox_CheckedChanged;
+            // Monitor option changes.
+            SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
+        }
 
-		private void UpdateInterfaceCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
-		}
+        private void Items_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            var pd = e.PropertyDescriptor;
+            if (pd != null)
+            {
+                var o = SettingsManager.Options;
+                // Update values only if different.
+                if (e.PropertyDescriptor.Name == Options.GetName(x => x.UseCombinedXiStates))
+                {
+                    UseCombinedXiStatesCheckBox.CheckedChanged -= UseCombinedXiStatesCheckBox_CheckedChanged;
+                    AppHelper.SetChecked(UseCombinedXiStatesCheckBox, o.UseCombinedXiStates);
+                    UseCombinedXiStatesCheckBox.CheckedChanged += UseCombinedXiStatesCheckBox_CheckedChanged;
+                }
 
-		private void GetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
-		}
+            }
+        }
 
-		private void SetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
-		}
+        // Must trigger only by the user input.
+        private void UseCombinedXiStatesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsManager.Options.UseCombinedXiStates = !SettingsManager.Options.UseCombinedXiStates;
+        }
 
-		private void GetDInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
-		}
+        private void UpdateInterfaceCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsManager.Options.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
+        }
 
-		private void EnableCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.TestEnabled = EnableCheckBox.Checked;
-			CheckTimer();
-		}
+        private void GetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsManager.Options.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
+        }
 
-		private void UseCombinedXiStatesCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.UseCombinedXiStates = UseCombinedXiStatesCheckBox.Checked;
-			var padControls = MainForm.Current.PadControls;
-			for (int i = 0; i < padControls.Length; i++)
-			{
-				AppHelper.SetChecked(padControls[i].UseCombinedXiStatesCheckBox, SettingsManager.Options.UseCombinedXiStates);
-			}
-		}
+        private void SetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsManager.Options.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
+        }
 
-		void CheckTimer()
-		{
-			if (SettingsManager.Options.TestEnabled && !Program.IsClosing)
-			{
+        private void GetDInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsManager.Options.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
+        }
 
-				CpuTimer.Start();
-			}
-			else
-			{
-				if (!IsHandleCreated)
-					return;
-				BeginInvoke((MethodInvoker)delegate ()
-				{
-					CpuTextBox.Text = "";
-				});
-			}
-		}
+        private void EnableCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SettingsManager.Options.TestEnabled = EnableCheckBox.Checked;
+            CheckTimer();
+        }
 
-		public void SaveSettings()
-		{
-			var o = SettingsManager.Options;
-			EnableCheckBox.Checked = o.TestEnabled;
-			o.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
-			o.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
-			o.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
-			o.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
-			o.UseCombinedXiStates = UseCombinedXiStatesCheckBox.Checked;
-		}
+        void CheckTimer()
+        {
+            if (SettingsManager.Options.TestEnabled && !Program.IsClosing)
+            {
 
-		#region Performace Counter
+                CpuTimer.Start();
+            }
+            else
+            {
+                if (!IsHandleCreated)
+                    return;
+                BeginInvoke((MethodInvoker)delegate ()
+                {
+                    CpuTextBox.Text = "";
+                });
+            }
+        }
 
-		CpuUsage _Counter;
+        public void SaveSettings()
+        {
+            var o = SettingsManager.Options;
+            EnableCheckBox.Checked = o.TestEnabled;
+            o.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
+            o.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
+            o.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
+            o.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
+        }
 
-		object counterLock = new object();
+        #region Performace Counter
 
-		System.Timers.Timer CpuTimer;
+        CpuUsage _Counter;
 
-		private void CpuTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			lock (counterLock)
-			{
-				if (IsHandleCreated)
-				{
-					if (_Counter == null)
-					{
-						_Counter = new CpuUsage();
-					}
-					var process_cpu_usage = _Counter.GetUsage();
-					BeginInvoke((MethodInvoker)delegate ()
-					{
-						CpuTextBox.Text = process_cpu_usage.HasValue
-							? string.Format("{0:0.000} %", Math.Round(process_cpu_usage.Value, 3))
-							: "";
-					});
-				}
-				CheckTimer();
-			}
-		}
+        object counterLock = new object();
 
-		#endregion
+        System.Timers.Timer CpuTimer;
 
-		/// <summary>
-		/// Class Source.
-		///  http://www.philosophicalgeek.com/2009/01/03/determine-cpu-usage-of-current-process-c-and-c/
-		/// </summary>
-		class CpuUsage
-		{
-			[DllImport("kernel32.dll", SetLastError = true)]
-			static extern bool GetSystemTimes(
-						out System.Runtime.InteropServices.ComTypes.FILETIME lpIdleTime,
-						out System.Runtime.InteropServices.ComTypes.FILETIME lpKernelTime,
-						out System.Runtime.InteropServices.ComTypes.FILETIME lpUserTime
-						);
+        private void CpuTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            lock (counterLock)
+            {
+                if (IsHandleCreated)
+                {
+                    if (_Counter == null)
+                    {
+                        _Counter = new CpuUsage();
+                    }
+                    var process_cpu_usage = _Counter.GetUsage();
+                    BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        CpuTextBox.Text = process_cpu_usage.HasValue
+                            ? string.Format("{0:0.000} %", Math.Round(process_cpu_usage.Value, 3))
+                            : "";
+                    });
+                }
+                CheckTimer();
+            }
+        }
 
-			System.Runtime.InteropServices.ComTypes.FILETIME _prevSysKernel;
-			System.Runtime.InteropServices.ComTypes.FILETIME _prevSysUser;
+        #endregion
 
-			TimeSpan _prevProcTotal;
+        /// <summary>
+        /// Class Source.
+        ///  http://www.philosophicalgeek.com/2009/01/03/determine-cpu-usage-of-current-process-c-and-c/
+        /// </summary>
+        class CpuUsage
+        {
+            [DllImport("kernel32.dll", SetLastError = true)]
+            static extern bool GetSystemTimes(
+                        out System.Runtime.InteropServices.ComTypes.FILETIME lpIdleTime,
+                        out System.Runtime.InteropServices.ComTypes.FILETIME lpKernelTime,
+                        out System.Runtime.InteropServices.ComTypes.FILETIME lpUserTime
+                        );
 
-			float? _cpuUsage;
-			DateTime _lastRun;
-			long _runCount;
+            System.Runtime.InteropServices.ComTypes.FILETIME _prevSysKernel;
+            System.Runtime.InteropServices.ComTypes.FILETIME _prevSysUser;
 
-			public CpuUsage()
-			{
-				_lastRun = DateTime.MinValue;
-				_prevSysUser.dwHighDateTime = _prevSysUser.dwLowDateTime = 0;
-				_prevSysKernel.dwHighDateTime = _prevSysKernel.dwLowDateTime = 0;
-				_prevProcTotal = TimeSpan.MinValue;
-				_runCount = 0;
-			}
+            TimeSpan _prevProcTotal;
 
-			public float? GetUsage()
-			{
-				var cpuCopy = _cpuUsage;
-				if (Interlocked.Increment(ref _runCount) == 1)
-				{
-					if (!EnoughTimePassed)
-					{
-						Interlocked.Decrement(ref _runCount);
-						return cpuCopy;
-					}
+            float? _cpuUsage;
+            DateTime _lastRun;
+            long _runCount;
 
-					System.Runtime.InteropServices.ComTypes.FILETIME sysIdle, sysKernel, sysUser;
-					TimeSpan procTime;
-					Process process = Process.GetCurrentProcess();
-					procTime = process.TotalProcessorTime;
+            public CpuUsage()
+            {
+                _lastRun = DateTime.MinValue;
+                _prevSysUser.dwHighDateTime = _prevSysUser.dwLowDateTime = 0;
+                _prevSysKernel.dwHighDateTime = _prevSysKernel.dwLowDateTime = 0;
+                _prevProcTotal = TimeSpan.MinValue;
+                _runCount = 0;
+            }
 
-					if (!GetSystemTimes(out sysIdle, out sysKernel, out sysUser))
-					{
-						Interlocked.Decrement(ref _runCount);
-						return cpuCopy;
-					}
+            public float? GetUsage()
+            {
+                var cpuCopy = _cpuUsage;
+                if (Interlocked.Increment(ref _runCount) == 1)
+                {
+                    if (!EnoughTimePassed)
+                    {
+                        Interlocked.Decrement(ref _runCount);
+                        return cpuCopy;
+                    }
 
-					if (!IsFirstRun)
-					{
-						float sysKernelDiff = SubtractTimes(sysKernel, _prevSysKernel);
-						float sysUserDiff = SubtractTimes(sysUser, _prevSysUser);
-						float sysTotal = sysKernelDiff + sysUserDiff;
-						float procTotal = procTime.Ticks - _prevProcTotal.Ticks;
-						if (sysTotal > 0f)
-						{
-							_cpuUsage = (100f * procTotal) / sysTotal;
-						}
-					}
+                    System.Runtime.InteropServices.ComTypes.FILETIME sysIdle, sysKernel, sysUser;
+                    TimeSpan procTime;
+                    Process process = Process.GetCurrentProcess();
+                    procTime = process.TotalProcessorTime;
 
-					_prevProcTotal = procTime;
-					_prevSysKernel = sysKernel;
-					_prevSysUser = sysUser;
+                    if (!GetSystemTimes(out sysIdle, out sysKernel, out sysUser))
+                    {
+                        Interlocked.Decrement(ref _runCount);
+                        return cpuCopy;
+                    }
 
-					_lastRun = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
+                    if (!IsFirstRun)
+                    {
+                        float sysKernelDiff = SubtractTimes(sysKernel, _prevSysKernel);
+                        float sysUserDiff = SubtractTimes(sysUser, _prevSysUser);
+                        float sysTotal = sysKernelDiff + sysUserDiff;
+                        float procTotal = procTime.Ticks - _prevProcTotal.Ticks;
+                        if (sysTotal > 0f)
+                        {
+                            _cpuUsage = (100f * procTotal) / sysTotal;
+                        }
+                    }
 
-					cpuCopy = _cpuUsage;
-				}
-				Interlocked.Decrement(ref _runCount);
-				return cpuCopy;
-			}
+                    _prevProcTotal = procTime;
+                    _prevSysKernel = sysKernel;
+                    _prevSysUser = sysUser;
 
-			private UInt64 SubtractTimes(System.Runtime.InteropServices.ComTypes.FILETIME a, System.Runtime.InteropServices.ComTypes.FILETIME b)
-			{
-				UInt64 aInt = ((UInt64)(a.dwHighDateTime << 32)) | (UInt64)a.dwLowDateTime;
-				UInt64 bInt = ((UInt64)(b.dwHighDateTime << 32)) | (UInt64)b.dwLowDateTime;
-				return aInt - bInt;
-			}
+                    _lastRun = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
 
-			private bool EnoughTimePassed
-			{
-				get
-				{
-					const int minimumElapsedMS = 250;
-					TimeSpan sinceLast = JocysCom.ClassLibrary.HiResDateTime.Current.Now - _lastRun;
-					return sinceLast.TotalMilliseconds > minimumElapsedMS;
-				}
-			}
+                    cpuCopy = _cpuUsage;
+                }
+                Interlocked.Decrement(ref _runCount);
+                return cpuCopy;
+            }
 
-			private bool IsFirstRun
-			{
-				get
-				{
-					return (_lastRun == DateTime.MinValue);
-				}
-			}
-		}
+            private UInt64 SubtractTimes(System.Runtime.InteropServices.ComTypes.FILETIME a, System.Runtime.InteropServices.ComTypes.FILETIME b)
+            {
+                UInt64 aInt = ((UInt64)(a.dwHighDateTime << 32)) | (UInt64)a.dwLowDateTime;
+                UInt64 bInt = ((UInt64)(b.dwHighDateTime << 32)) | (UInt64)b.dwLowDateTime;
+                return aInt - bInt;
+            }
 
-		HiResTimer _timer;
+            private bool EnoughTimePassed
+            {
+                get
+                {
+                    const int minimumElapsedMS = 250;
+                    TimeSpan sinceLast = JocysCom.ClassLibrary.HiResDateTime.Current.Now - _lastRun;
+                    return sinceLast.TotalMilliseconds > minimumElapsedMS;
+                }
+            }
 
-		private void TestButton_Click(object sender, EventArgs e)
-		{
-			_timer = new HiResTimer();
-			_timer.Interval = 1;
-			_timer.AutoReset = true;
-			_timer.TestFinished += _timer_TestFinished;
-			_timer.BeginTest();
-		}
+            private bool IsFirstRun
+            {
+                get
+                {
+                    return (_lastRun == DateTime.MinValue);
+                }
+            }
+        }
 
-		private void _timer_TestFinished(object sender, EventArgs e)
-		{
-			BeginInvoke((MethodInvoker)delegate ()
-			{
-				MessageBox.Show(_timer.TestResults);
-			});
-		}
+        HiResTimer _timer;
 
-	}
+        private void TestButton_Click(object sender, EventArgs e)
+        {
+            _timer = new HiResTimer();
+            _timer.Interval = 1;
+            _timer.AutoReset = true;
+            _timer.TestFinished += _timer_TestFinished;
+            _timer.BeginTest();
+        }
+
+        private void _timer_TestFinished(object sender, EventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                MessageBox.Show(_timer.TestResults);
+            });
+        }
+
+    }
 }
