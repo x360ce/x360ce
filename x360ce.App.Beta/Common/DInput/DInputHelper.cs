@@ -1,12 +1,7 @@
-﻿using JocysCom.ClassLibrary.IO;
-using SharpDX.DirectInput;
+﻿using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using x360ce.Engine;
 
 namespace x360ce.App.DInput
 {
@@ -57,12 +52,11 @@ namespace x360ce.App.DInput
 		//	  Update DInput and XInput forms.
 		// }
 
-		public event EventHandler<EventArgs> FrequencyUpdated;
-		public event EventHandler<EventArgs> DevicesUpdated;
-		public event EventHandler<EventArgs> StatesUpdated;
-		public event EventHandler<EventArgs> StatesRetrieved;
-		public event EventHandler<EventArgs> UpdateCompleted;
-
+		public event EventHandler<DInputEventArgs> FrequencyUpdated;
+		public event EventHandler<DInputEventArgs> DevicesUpdated;
+		public event EventHandler<DInputEventArgs> StatesUpdated;
+		public event EventHandler<DInputEventArgs> StatesRetrieved;
+		public event EventHandler<DInputEventArgs> UpdateCompleted;
 		DirectInput Manager;
 
 		JocysCom.ClassLibrary.HiResTimer _timer;
@@ -134,7 +128,7 @@ namespace x360ce.App.DInput
 				// Fire event.
 				var ev = UpdateCompleted;
 				if (ev != null)
-					ev(this, new EventArgs());
+					ev(this, new DInputEventArgs());
 			}
 		}
 
@@ -148,7 +142,7 @@ namespace x360ce.App.DInput
 
 		UpdateFrequency Frequency
 		{
-			get			{ return _Frequency;  }
+			get { return _Frequency; }
 			set
 			{
 				_Frequency = value;
@@ -172,7 +166,7 @@ namespace x360ce.App.DInput
 				lastTime = currentTime;
 				var ev = FrequencyUpdated;
 				if (ev != null)
-					ev(this, new EventArgs());
+					ev(this, new DInputEventArgs());
 			}
 		}
 

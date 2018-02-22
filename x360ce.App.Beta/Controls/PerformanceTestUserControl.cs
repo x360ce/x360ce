@@ -30,19 +30,16 @@ namespace x360ce.App.Controls
             EnableCheckBox.Checked = o.TestEnabled;
             GetDInputStatesCheckBox.Checked = o.TestGetDInputStates;
             SetXInputStatesCheckBox.Checked = o.TestSetXInputStates;
-            GetXInputStatesCheckBox.Checked = o.TestGetXInputStates;
             UpdateInterfaceCheckBox.Checked = o.TestUpdateInterface;
             // Attach events.
             EnableCheckBox.CheckedChanged += EnableCheckBox_CheckedChanged;
             GetDInputStatesCheckBox.CheckedChanged += GetDInputStatesCheckBox_CheckedChanged;
             SetXInputStatesCheckBox.CheckedChanged += SetXInputStatesCheckBox_CheckedChanged;
-            GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
             UpdateInterfaceCheckBox.CheckedChanged += UpdateInterfaceCheckBox_CheckedChanged;
-            // Set UseCombinedXiStates.
-            UseCombinedXiStatesCheckBox.Checked = o.UseCombinedXiStates;
-            UseCombinedXiStatesCheckBox.CheckedChanged += UseCombinedXiStatesCheckBox_CheckedChanged;
-            // Monitor option changes.
-            SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
+			// Load Settings and enable events.
+			UpdateGetXInputStatesWithNoEvents();
+			// Monitor option changes.
+			SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
         }
 
         private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -52,30 +49,35 @@ namespace x360ce.App.Controls
             {
                 var o = SettingsManager.Options;
                 // Update values only if different.
-                if (e.PropertyDescriptor.Name == Options.GetName(x => x.UseCombinedXiStates))
+                if (e.PropertyDescriptor.Name == Options.GetName(x => x.GetXInputStates))
                 {
-                    UseCombinedXiStatesCheckBox.CheckedChanged -= UseCombinedXiStatesCheckBox_CheckedChanged;
-                    AppHelper.SetChecked(UseCombinedXiStatesCheckBox, o.UseCombinedXiStates);
-                    UseCombinedXiStatesCheckBox.CheckedChanged += UseCombinedXiStatesCheckBox_CheckedChanged;
-                }
-
+					UpdateGetXInputStatesWithNoEvents();
+				}
             }
         }
 
-        // Must trigger only by the user input.
-        private void UseCombinedXiStatesCheckBox_CheckedChanged(object sender, EventArgs e)
+		public void UpdateGetXInputStatesWithNoEvents()
+		{
+			lock (GetXInputStatesCheckBox)
+			{
+				// Disable events.
+				GetXInputStatesCheckBox.CheckedChanged -= GetXInputStatesCheckBox_CheckedChanged;
+				var o = SettingsManager.Options;
+				AppHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
+				// Enable events.
+				GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
+			}
+		}
+
+		// Must trigger only by the user input.
+		private void GetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            SettingsManager.Options.UseCombinedXiStates = !SettingsManager.Options.UseCombinedXiStates;
+            SettingsManager.Options.GetXInputStates = !SettingsManager.Options.GetXInputStates;
         }
 
         private void UpdateInterfaceCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             SettingsManager.Options.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
-        }
-
-        private void GetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            SettingsManager.Options.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
         }
 
         private void SetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -118,7 +120,6 @@ namespace x360ce.App.Controls
             EnableCheckBox.Checked = o.TestEnabled;
             o.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
             o.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
-            o.TestGetXInputStates = GetXInputStatesCheckBox.Checked;
             o.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
         }
 

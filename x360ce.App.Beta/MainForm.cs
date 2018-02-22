@@ -1,5 +1,4 @@
-﻿using SharpDX.DirectInput;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -88,6 +87,7 @@ namespace x360ce.App
 			DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			DHelper.UpdateCompleted += DHelper_UpdateCompleted;
 			DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
+			DHelper.StatesRetrieved += DHelper_StatesRetrieved;
 			// Enable all form updates if form not minimized.
 			if (WindowState != FormWindowState.Minimized)
 			{
@@ -118,6 +118,7 @@ namespace x360ce.App
 			SettingsManager.UserDevices.Load();
 			SettingsManager.UserInstances.Load();
 			SettingsManager.UserComputers.Load();
+			SettingsManager.OptionsData.Items.SynchronizingObject = this;
 			XInputMaskScanner.FileInfoCache.Load();
 			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
@@ -151,6 +152,18 @@ namespace x360ce.App
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
+		}
+
+		private void DHelper_StatesRetrieved(object sender, DInput.DInputEventArgs e)
+		{
+			if (e.Error!= null)
+			{
+				BeginInvoke((MethodInvoker)delegate
+				{
+					SettingsManager.Options.GetXInputStates = false;
+					SetHeaderError(e.Error.Message);
+				});
+			}
 		}
 
 		IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
@@ -246,7 +259,7 @@ namespace x360ce.App
 		{
 			// If map to changed then re-detect devices.
 			var pd = e.PropertyDescriptor;
-			if (pd != null && pd.Name ==   "MapTo")
+			if (pd != null && pd.Name == "MapTo")
 			{
 				forceRecountDevices = true;
 			}
@@ -957,9 +970,16 @@ namespace x360ce.App
 					var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
 					StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
 					// If fast reload of settings is supported then...
-					if (Controller.IsResetSupported)
+					if (Controller.IsLoaded && Controller.IsResetSupported)
 					{
-						Controller.Reset();
+						IAsyncResult result;
+						Action action = () =>
+						{
+							Controller.Reset();
+						};
+						result = action.BeginInvoke(null, null);
+						var timeout = !result.AsyncWaitHandle.WaitOne(1000);
+						SetHeaderError("Controller.Reset() timed out!");
 					}
 					// Slow: Reload whole x360ce.dll.
 					Exception error;

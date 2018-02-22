@@ -175,6 +175,7 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
+    <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step1.UpdateDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step2.UpdateDiStates.cs" />

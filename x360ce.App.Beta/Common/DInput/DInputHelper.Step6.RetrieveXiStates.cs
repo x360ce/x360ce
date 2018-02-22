@@ -1,8 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 
 namespace x360ce.App.DInput
 {
@@ -12,35 +10,42 @@ namespace x360ce.App.DInput
 		public Controller[] LiveXiControllers;
 		public bool[] LiveXiConnected;
 		public State[] LiveXiStates;
-		
 
 		void RetrieveXiStates()
 		{
 			// Allow if not testing or testing with option enabled.
-			var o = SettingsManager.Options;
-			var allow = !o.TestEnabled || o.TestGetXInputStates;
+			Exception error = null;
 			lock (Controller.XInputLock)
 			{
 				// Before states can be retrieved xinput configuration must be checked.
 				for (uint i = 0; i < 4; i++)
 				{
 					var gamePad = LiveXiControllers[i];
-					State state;
-					if (Controller.IsLoaded && allow && gamePad.GetState(out state))
+					State state = new State();
+					var allow = SettingsManager.Options.GetXInputStates;
+					var success = false;
+					var timeout = false;
+					if (Controller.IsLoaded && allow)
 					{
-						LiveXiStates[i] = state;
-						LiveXiConnected[i] = true;
+						IAsyncResult result;
+						Action action = () =>
+						{
+							success = gamePad.GetState(out state);
+						};
+						result = action.BeginInvoke(null, null);
+						timeout = !result.AsyncWaitHandle.WaitOne(1000);
 					}
-					else
+					if (timeout)
 					{
-						LiveXiStates[i] = new State();
-						LiveXiConnected[i] = false;
+						error = new Exception("gamePad.GetState(out state) timed out.");
 					}
+					LiveXiConnected[i] = success && !timeout;
+					LiveXiStates[i] = state;
 				}
 			}
 			var ev = StatesRetrieved;
 			if (ev != null)
-				ev(this, new EventArgs());
+				ev(this, new DInputEventArgs(error));
 		}
 
 	}

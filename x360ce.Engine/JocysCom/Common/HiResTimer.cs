@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary
 	/// Note: Callback will finish before timer schedules next run.
 	/// </remarks>
 	[DefaultProperty("Interval"), DefaultEvent("Elapsed")]
-	public class HiResTimer: IDisposable
+	public class HiResTimer : IDisposable
 	{
 
 
@@ -132,8 +132,13 @@ namespace JocysCom.ClassLibrary
 						ev(this, e);
 				}
 			}
-			catch { }
+			catch (Exception ex)
+			{
+				LastException = ex;
+			}
 		}
+
+		public Exception LastException;
 
 		#region Test
 

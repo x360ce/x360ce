@@ -298,7 +298,7 @@ namespace x360ce.App.DInput
 			}
 			var ev = StatesUpdated;
 			if (ev != null)
-				ev(this, new EventArgs());
+				ev(this, new DInputEventArgs());
 		}
 
 	}

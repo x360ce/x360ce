@@ -145,7 +145,7 @@ namespace x360ce.App.DInput
 			RefreshDevicesCount++;
 			var ev = DevicesUpdated;
 			if (ev != null)
-				ev(this, new EventArgs());
+				ev(this, new DInputEventArgs());
 
 			//	var game = CurrentGame;
 			//	if (game != null)

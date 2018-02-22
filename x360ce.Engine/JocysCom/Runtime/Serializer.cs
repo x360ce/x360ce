@@ -323,7 +323,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					if (omitXmlDeclaration)
 					{
 						//Create our own namespaces for the output
-						XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+						var ns = new XmlSerializerNamespaces();
 						//Add an empty namespace and empty value
 						ns.Add("", "");
 						serializer.Serialize(xw, o, ns);
@@ -336,37 +336,37 @@ namespace JocysCom.ClassLibrary.Runtime
 					{
 						xw.WriteEndDocument();
 					}
+					// Make sure that all data flushed into memory stream.
+					xw.Flush();
 				}
 			}
 			catch (Exception)
 			{
-				xw.Close();
-				// CA2202: Do not dispose objects multiple times
-				//ms.Close();
-				xw = null;
-				ms = null;
 				throw;
 			}
-			xw.Flush();
-			object result = null;
+			finally
+			{
+				// This will close underlying MemoryStream too.
+				xw.Close();
+			}
+			// ToArray will return all bytes from memory stream despite it being closed.
+			// Bytes will start with Byte Order Mark(BOM) and are ready to write into file.
+			var xmlBytes = ms.ToArray();
+			// If string must be returned then...
 			if (typeof(T) == typeof(string))
 			{
-				StreamReader tr = new StreamReader(ms, true);
-				ms.Seek(0, SeekOrigin.Begin);
-				result = tr.ReadToEnd();
-				// can't close here or xw.Close(); will fail.
-				//tr.Dispose();
+				// Use StreamReader to remove Byte Order Mark(BOM).
+				var ms2 = new MemoryStream(xmlBytes);
+				var sr = new StreamReader(ms2, true);
+				var xmlString = sr.ReadToEnd();
+				// This will close underlying MemoryStream too.
+				sr.Close();
+				return (T)(object)xmlString;
 			}
 			else
 			{
-				result = ms.ToArray();
+				return (T)(object)xmlBytes;
 			}
-			xw.Close();
-			// CA2202: Do not dispose objects multiple times
-			//ms.Close();
-			xw = null;
-			ms = null;
-			return (T)result;
 		}
 
 		/// <summary>

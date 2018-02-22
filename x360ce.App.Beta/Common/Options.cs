@@ -95,17 +95,16 @@ namespace x360ce.App
         public bool TestEnabled { get; set; }
         public bool TestGetDInputStates { get; set; }
         public bool TestSetXInputStates { get; set; }
-        public bool TestGetXInputStates { get; set; }
         public bool TestUpdateInterface { get; set; }
 
         public bool ShowDebugPanel { get; set; }
 
-        public bool UseCombinedXiStates
+        public bool GetXInputStates
         {
-            get { return _UseCombinedXiStates; }
-            set { _UseCombinedXiStates = value; ReportPropertyChanged(x => x.UseCombinedXiStates); }
+            get { return _GetXInputStates; }
+            set { _GetXInputStates = value; ReportPropertyChanged(x => x.GetXInputStates); }
         }
-        bool _UseCombinedXiStates;
+        bool _GetXInputStates;
 
         #region INotifyPropertyChanged
 
