@@ -354,7 +354,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				StreamReader tr = new StreamReader(ms, true);
 				ms.Seek(0, SeekOrigin.Begin);
 				result = tr.ReadToEnd();
-				tr.Dispose();
+				// can't close here or xw.Close(); will fail.
+				//tr.Dispose();
 			}
 			else
 			{
