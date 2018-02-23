@@ -97,7 +97,9 @@ namespace x360ce.App
         public bool TestSetXInputStates { get; set; }
         public bool TestUpdateInterface { get; set; }
 
-        public bool ShowDebugPanel { get; set; }
+		public bool TestCheckIssues { get; set; }
+
+		public bool ShowDebugPanel { get; set; }
 
         public bool GetXInputStates
         {

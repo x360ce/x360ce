@@ -1488,7 +1488,7 @@ namespace x360ce.App
 
 
 		object LockFormEvents = new object();
-		bool FormEventsEnabled;
+		public bool FormEventsEnabled;
 
 		// Will be used to check it event handlers were called during form update period.
 		bool FormEventsDevicesUpdated;

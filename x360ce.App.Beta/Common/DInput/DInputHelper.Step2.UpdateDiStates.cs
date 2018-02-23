@@ -1,8 +1,10 @@
-﻿using SharpDX.DirectInput;
+﻿using Nefarius.ViGEm.Client;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Linq;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
@@ -19,6 +21,10 @@ namespace x360ce.App.DInput
 			var userDevices = SettingsManager.UserDevices.Items
 				.Where(x => instanceGuids.Contains(x.InstanceGuid) && x.IsOnline)
 				.ToArray();
+
+			// Aquire copy of feedbacks for processing.
+			var feedbacks = CopyAndClearFeedbacks();
+
 			for (int i = 0; i < userDevices.Count(); i++)
 			{
 				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
@@ -42,6 +48,11 @@ namespace x360ce.App.DInput
 								ud.DeviceObjects = AppHelper.GetDeviceObjects(device);
 							if (ud.DeviceEffects == null)
 								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
+							// Get PAD index this device is mapped to.
+							var userIndex = SettingsManager.Settings.Items
+								.Where(x => x.MapTo > (int)MapTo.None)
+								.Where(x => x.InstanceGuid == ud.InstanceGuid)
+								.Select(x => x.MapTo).First();
 						}
 						catch (Exception ex)
 						{
@@ -63,5 +74,6 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		
 	}
 }

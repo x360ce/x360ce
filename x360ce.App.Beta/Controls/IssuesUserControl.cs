@@ -33,7 +33,9 @@ namespace x360ce.App.Controls
 			{
 				// If timer is disposed then return;
 				if (CheckTimer == null) return;
-				CheckAll();
+				var o = SettingsManager.Options;
+				if (MainForm.Current.FormEventsEnabled && (!o.TestEnabled || o.TestCheckIssues))
+					CheckAll();
 			}
 			if (CheckTimer.Interval != 5000) CheckTimer.Interval = 5000;
 			CheckTimer.Start();

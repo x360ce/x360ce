@@ -1,8 +1,10 @@
 ﻿using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
 using System.Windows.Forms;
 using x360ce.Engine;
+using System.Linq;
 
 namespace x360ce.App.DInput
 {
@@ -31,11 +33,13 @@ namespace x360ce.App.DInput
 				return;
 			if (ViGEmClient.Targets == null)
 			{
-				ViGEmClient.Targets = new Nefarius.ViGEm.Client.Targets.Xbox360Controller[4];
-				ViGEmClient.Targets[0] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
-				ViGEmClient.Targets[1] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
-				ViGEmClient.Targets[2] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
-				ViGEmClient.Targets[3] = new Nefarius.ViGEm.Client.Targets.Xbox360Controller(ViGEmClient.Client);
+				ViGEmClient.Targets = new Xbox360Controller[4];
+				for (int i = 0; i < 4; i++)
+				{
+					var controller = new Xbox360Controller(ViGEmClient.Client);
+					ViGEmClient.Targets[i] = controller;
+					controller.FeedbackReceived += Controller_FeedbackReceived;
+				}
 			}
 			for (uint i = 1; i <= 4; i++)
 			{
@@ -65,6 +69,38 @@ namespace x360ce.App.DInput
 						if (!success)
 							return;
 						FeedingState[i - 1] = false;
+					}
+				}
+			}
+		}
+
+		object FeedbackLock = new object();
+
+		Xbox360FeedbackReceivedEventArgs[] CopyAndClearFeedbacks()
+		{
+			lock (FeedbackLock)
+			{
+				var list = ViGEmClient.Feedbacks.ToArray();
+				for (int i = 0; i < 4; i++)
+				{
+					ViGEmClient.Feedbacks[i] = null;
+				}
+				return list;
+			}
+		}
+
+		private void Controller_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
+		{
+			lock (FeedbackLock)
+			{
+				var controller = (Xbox360Controller)sender;
+				for (int i = 0; i < 4; i++)
+				{
+					if (ViGEmClient.Targets[i] == controller)
+					{
+						// Add forcefeedback value for processing.
+						ViGEmClient.Feedbacks[i] = e;
+						break;
 					}
 				}
 			}

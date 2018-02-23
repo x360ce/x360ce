@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.MainGroupBox = new System.Windows.Forms.GroupBox();
-			this.panel1 = new System.Windows.Forms.Panel();
 			this.TestButton = new System.Windows.Forms.Button();
 			this.CpuLabel = new System.Windows.Forms.Label();
 			this.CpuTextBox = new System.Windows.Forms.TextBox();
@@ -38,17 +37,18 @@
 			this.SetXInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.GetDInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.UpdateInterfaceCheckBox = new System.Windows.Forms.CheckBox();
+			this.TestCheckIssuesCheckBox = new System.Windows.Forms.CheckBox();
 			this.MainGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainGroupBox
 			// 
-			this.MainGroupBox.Controls.Add(this.panel1);
 			this.MainGroupBox.Controls.Add(this.TestButton);
 			this.MainGroupBox.Controls.Add(this.CpuLabel);
 			this.MainGroupBox.Controls.Add(this.CpuTextBox);
 			this.MainGroupBox.Controls.Add(this.EnableCheckBox);
 			this.MainGroupBox.Controls.Add(this.GetXInputStatesCheckBox);
+			this.MainGroupBox.Controls.Add(this.TestCheckIssuesCheckBox);
 			this.MainGroupBox.Controls.Add(this.SetXInputStatesCheckBox);
 			this.MainGroupBox.Controls.Add(this.GetDInputStatesCheckBox);
 			this.MainGroupBox.Controls.Add(this.UpdateInterfaceCheckBox);
@@ -59,14 +59,6 @@
 			this.MainGroupBox.TabIndex = 0;
 			this.MainGroupBox.TabStop = false;
 			this.MainGroupBox.Text = "Performance Test";
-			// 
-			// panel1
-			// 
-			this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.panel1.Location = new System.Drawing.Point(6, 88);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(223, 1);
-			this.panel1.TabIndex = 5;
 			// 
 			// TestButton
 			// 
@@ -146,6 +138,16 @@
 			this.UpdateInterfaceCheckBox.Text = "Update Interface";
 			this.UpdateInterfaceCheckBox.UseVisualStyleBackColor = true;
 			// 
+			// TestCheckIssuesCheckBox
+			// 
+			this.TestCheckIssuesCheckBox.AutoSize = true;
+			this.TestCheckIssuesCheckBox.Location = new System.Drawing.Point(6, 88);
+			this.TestCheckIssuesCheckBox.Name = "TestCheckIssuesCheckBox";
+			this.TestCheckIssuesCheckBox.Size = new System.Drawing.Size(90, 17);
+			this.TestCheckIssuesCheckBox.TabIndex = 1;
+			this.TestCheckIssuesCheckBox.Text = "Check Issues";
+			this.TestCheckIssuesCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// PerformanceTestUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -170,6 +172,6 @@
 		private System.Windows.Forms.TextBox CpuTextBox;
 		private System.Windows.Forms.Label CpuLabel;
 		private System.Windows.Forms.Button TestButton;
-		private System.Windows.Forms.Panel panel1;
+		public System.Windows.Forms.CheckBox TestCheckIssuesCheckBox;
 	}
 }
