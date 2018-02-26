@@ -407,7 +407,17 @@ namespace JocysCom.ClassLibrary.Controls
 			var row = grid.Rows[e.RowIndex];
 			if (e.RowIndex > -1 && e.ColumnIndex > -1)
 			{
-				var enabled = GetEnabled(row.DataBoundItem);
+				var item = row.DataBoundItem;
+				// If grid is virtual then...
+				if (item == null)
+				{
+					var list = grid.DataSource as IBindingList;
+					if (list != null)
+						item = list[e.RowIndex];
+				}
+				var enabled = true;
+				if (item != null)
+					enabled = GetEnabled(item);
 				var fore = enabled ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
 				var selectedBack = enabled ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
 				// Apply style to row header.

@@ -140,6 +140,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region JSON
 
+		// Notes: Use [DataMember(EmitDefaultValue = false, IsRequired = false)] attribute
+		// if you don't want to serialize default values.
+
 		static object JsonSerializersLock = new object();
 		static Dictionary<Type, DataContractJsonSerializer> JsonSerializers;
 		static DataContractJsonSerializer GetJsonSerializer(Type type)
@@ -218,7 +221,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		/// <param name="json">JSON string representing object.</param>
 		/// <returns>The deserialized object.</returns>
-		public T DeserializeFromJson<T>(string json)
+		public static T DeserializeFromJson<T>(string json)
 		{
 			return (T)DeserializeFromJson(json, typeof(T), Encoding.UTF8);
 		}
@@ -229,7 +232,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="json">JSON string representing object.</param>
 		/// <param name="encoding">JSON string encoding.</param>
 		/// <returns>The deserialized object.</returns>
-		public T DeserializeFromJson<T>(string json, Encoding encoding)
+		public static T DeserializeFromJson<T>(string json, Encoding encoding)
 		{
 			return (T)DeserializeFromJson(json, typeof(T), encoding);
 		}
