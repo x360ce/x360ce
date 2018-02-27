@@ -36,7 +36,5 @@ namespace x360ce.Engine
 		public PeriodicForce RightPeriodicForce;
 		public ConstantForce RightConstantForce;
 
-		public void 
-
 	}
 }
