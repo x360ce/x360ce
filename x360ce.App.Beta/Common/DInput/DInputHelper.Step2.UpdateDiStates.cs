@@ -68,7 +68,7 @@ namespace x360ce.App.DInput
 									var v = new Vibration();
 									v.LeftMotorSpeed = force.LargeMotor;
 									v.RightMotorSpeed = force.SmallMotor;
-									//SetDeviceForces(ud, ps, v);
+									SetDeviceForces(ud, ps, v);
 								}
 							}
 						}
@@ -105,23 +105,26 @@ namespace x360ce.App.DInput
 		uint m_LeftPeriod;
 		uint m_LeftStrength;
 		int m_LeftDirection;
-		bool m_LeftRestartEffect = true;
 		// Right Motor.
 		uint m_RightPeriod;
 		uint m_RightStrength;
 		int m_RightDirection;
-		bool m_RightRestartEffect = true;
-		// Create X effect.
-		Effect effectX;
-		// Create Y effect.
-		Effect effectY;
-
 		bool m_SwapMotors;
-
-		List<Effect> m_effects = new List<Effect>();
 
 		bool SetDeviceForces(UserDevice ud, PadSetting ps, Vibration v)
 		{
+			var actuatorCount = 0;
+			if (ud.FFState == null)
+			{
+				ud.FFState = new Engine.ForceFeedbackState();
+				// Find actuators.
+				var actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToArray();
+				actuatorCount = actuators.Length;
+			}
+			// Return if no force feedback actuators found.
+			if (actuatorCount == 0)
+				return false;
+
 			var leftSpeed = v.LeftMotorSpeed;
 			var rightSpeed = v.RightMotorSpeed;
 
@@ -134,10 +137,8 @@ namespace x360ce.App.DInput
 
 			var overalStrength = int.Parse(ps.ForceOverall);
 
-			var actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
-			var m_Axes = actuators.Count();
 
-			var forceType = int.Parse(ps.ForceType);
+			var forceType = (ForceFeedBackType)int.Parse(ps.ForceType);
 
 			// Combine strengths into magnitude.
 			var leftMagnitude = MulDiv(leftSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
@@ -150,10 +151,6 @@ namespace x360ce.App.DInput
 			var diEffectX = new EffectParameters();
 			// Parameters for created effect.
 			var diEffectY = new EffectParameters();
-			var periodicForceX = new PeriodicForce();
-			var periodicForceY = new PeriodicForce();
-			var constantForceX = new ConstantForce();
-			var constantForceY = new ConstantForce();
 
 			// Right-handed Cartesian direction:
 			// x: -1 = left,     1 = right,   0 - no direction
@@ -175,7 +172,7 @@ namespace x360ce.App.DInput
 			diEffectX.TriggerRepeatInterval = 0;
 			diEffectY.Axes = new int[1] { DIJOFS_X };
 			diEffectY.Directions = new int[1] { lZeroX };
-			if (m_Axes > 1)
+			if (actuatorCount > 1)
 			{
 				// Right motor.
 				diEffectY.Axes = new int[1] { DIJOFS_Y };
@@ -191,7 +188,7 @@ namespace x360ce.App.DInput
 			}
 			Guid GUID_Force;
 			// If device have only one force fedback actuator (probably wheel).
-			if (m_Axes == 1)
+			if (actuatorCount == 1)
 			{
 				// Forces must be combined.
 				var combinedMagnitudeAdjusted = Math.Max(leftMagnitudeAdjusted, rightMagnitudeAdjusted);
@@ -209,17 +206,21 @@ namespace x360ce.App.DInput
 
 			// 1 - Periodic 'Sine Wave'.
 			// 2 - Periodic 'Sawtooth Down Wave'.
-			if (forceType == 1 || forceType == 2)
+			if (forceType == ForceFeedBackType.PeriodicSine || forceType == ForceFeedBackType.PeriodicSawtooth)
 			{
-				GUID_Force = forceType == 1 ? EffectGuid.Sine : EffectGuid.SawtoothDown;
+				GUID_Force = forceType == ForceFeedBackType.PeriodicSine
+					? EffectGuid.Sine
+					: EffectGuid.SawtoothDown;
 				// Left motor.
-				periodicForceX.Magnitude = leftMagnitudeAdjusted;
-				periodicForceX.Period = leftPeriod;
-				if (m_Axes > 1)
+				ud.FFState.LeftPeriodicForce.Magnitude = leftMagnitudeAdjusted;
+				ud.FFState.LeftPeriodicForce.Period = leftPeriod;
+				diEffectX.Parameters = ud.FFState.LeftPeriodicForce;
+				if (actuatorCount > 1)
 				{
 					// Right motor.
-					periodicForceY.Magnitude = rightMagnitudeAdjusted;
-					periodicForceY.Period = rightPeriod;
+					ud.FFState.RightPeriodicForce.Magnitude = rightMagnitudeAdjusted;
+					ud.FFState.RightPeriodicForce.Period = rightPeriod;
+					diEffectY.Parameters = ud.FFState.RightPeriodicForce;
 				}
 			}
 			// Constant.
@@ -227,81 +228,80 @@ namespace x360ce.App.DInput
 			{
 				GUID_Force = EffectGuid.ConstantForce;
 				// Left motor.
-				constantForceX.Magnitude = leftMagnitudeAdjusted;
-				if (m_Axes > 1)
+				ud.FFState.LeftConstantForce.Magnitude = leftMagnitudeAdjusted;
+				diEffectX.Parameters = ud.FFState.LeftConstantForce;
+				if (actuatorCount > 1)
 				{
 					// Right motor.
-					constantForceY.Magnitude = rightMagnitudeAdjusted;
+					ud.FFState.RightConstantForce.Magnitude = rightMagnitudeAdjusted;
+					diEffectY.Parameters = ud.FFState.RightConstantForce;
 				}
 			}
 			//PrintLog("Type %d Axes %d OMag %d LSpeed %d RSpeed %d LMag %d RMag %d LPeriod %d RPeriod", forceType, m_Axes, m_OveralStrength, leftSpeed, rightSpeed, leftMagnitudeAdjusted, rightMagnitudeAdjusted, leftPeriod, rightPeriod);
-			// If no effects exists then...
-			if (m_effects.Count == 0)
+			// If no effect exists then...
+			if (ud.FFState.LeftEffect == null)
 			{
-				m_LeftRestartEffect = true;
+				ud.FFState.LeftRestart = true;
 				// Left motor.
 				try
 				{
-					effectX = new Effect(ud.Device, GUID_Force, diEffectX);
-					m_effects.Add(effectX);
+					ud.FFState.LeftEffect = new Effect(ud.Device, GUID_Force, diEffectX);
 				}
 				catch (Exception ex)
 				{
 					LastException = ex;
 					return false;
 				}
-				if (m_Axes > 1)
+			}
+			// If no effect exists then...
+			if (actuatorCount > 1 && ud.FFState.RightEffect == null)
+			{
+				ud.FFState.RightRestart = true;
+				// Right motor.
+				try
 				{
-					m_RightRestartEffect = true;
-					// Right motor.
-					try
-					{
-						effectY = new Effect(ud.Device, GUID_Force, diEffectY);
-						m_effects.Add(effectY);
-					}
-					catch (Exception ex)
-					{
-						LastException = ex;
-						return false;
-					}
+					ud.FFState.RightEffect = new Effect(ud.Device, GUID_Force, diEffectY);
+				}
+				catch (Exception ex)
+				{
+					LastException = ex;
+					return false;
 				}
 			}
 			// If start new effect then.
-			if (m_LeftRestartEffect)
+			if (ud.FFState.LeftRestart)
 			{
 				// Note: stop previous effect first.
-				effectX.Start();
+				ud.FFState.LeftEffect.Start();
 			}
 			else
 			{
 				// Modify effect.
-				effectX.SetParameters(diEffectX);
+				ud.FFState.LeftEffect.SetParameters(diEffectX);
 			}
-			if (m_Axes > 1)
+			if (actuatorCount > 1)
 			{
 				// If start new effect then.
-				if (m_RightRestartEffect)
+				if (ud.FFState.RightRestart)
 				{
 					// Note: stop previous effect first.
-					effectY.Start();
+					ud.FFState.RightEffect.Start();
 				}
 				else
 				{
 					// Modify effect.
-					effectY.SetParameters(diEffectY);
+					ud.FFState.RightEffect.SetParameters(diEffectY);
 				}
-				effectY.Start();
 				// Restart left motorr effect next time if it was stopped.
-				m_LeftRestartEffect = (leftSpeed == 0);
+				ud.FFState.LeftRestart = (leftSpeed == 0);
 				// Restart right motor effect next time if it was stopped.
-				m_RightRestartEffect = (rightSpeed == 0);
+				ud.FFState.RightRestart = (rightSpeed == 0);
 			}
 			else
 			{
 				// Restart combined effect if it was stopped.
-				m_LeftRestartEffect = (leftMagnitudeAdjusted == 0);
+				ud.FFState.LeftRestart = (leftMagnitudeAdjusted == 0);
 			}
-
 			return true;
 		}
 

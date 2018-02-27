@@ -110,7 +110,7 @@ namespace x360ce.Engine.Data
 			}
 		}
 
-		#region Ignored Properties
+		#region Ignored properties used by application to store various device states.
 
 		[XmlIgnore]
 		public bool DeviceChanged;
@@ -132,6 +132,9 @@ namespace x360ce.Engine.Data
 		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
 		[XmlIgnore]
 		public CustomDiState DiState;
+
+		[XmlIgnore]
+		public ForceFeedbackState FFState;
 
 		[XmlIgnore]
 		public bool IsOnline
