@@ -96,6 +96,17 @@ namespace x360ce.App.DInput
 
 		const int DI_FFNOMINALMAX = 10000;
 
+		string old_LeftPeriod;
+		string old_RightPeriod;
+		string old_LeftStrength;
+		string old_RightStrength;
+		string old_LeftDirection;
+		string old_RightDirection;
+		string old_OveralStrength;
+		string old_ForceType;
+		short old_LeftMotorSpeed;
+		short old_RightMotorSpeed;
+
 		bool SetDeviceForces(UserDevice ud, PadSetting ps, Vibration v)
 		{
 			if (ud.FFState == null)
@@ -106,113 +117,118 @@ namespace x360ce.App.DInput
 			if (ud.FFState.LeftActuator == null)
 				return false;
 
-			var leftPeriod = int.Parse(ps.LeftMotorDirection) * 1000;
-			var rightPeriod = int.Parse(ps.RightMotorPeriod) * 1000;
-			var leftStrength = int.Parse(ps.LeftMotorStrength);
-			var rightStrength = int.Parse(ps.RightMotorStrength);
-			var leftDirection = int.Parse(ps.LeftMotorDirection);
-			var rightDirection = int.Parse(ps.RightMotorDirection);
-			var overalStrength = int.Parse(ps.ForceOverall);
-			var forceType = (ForceFeedBackType)int.Parse(ps.ForceType);
+			bool paramsChanged =
+				// Left motor parameters.
+				old_LeftPeriod != ps.LeftMotorPeriod ||
+				old_LeftDirection != ps.LeftMotorDirection ||
+				old_LeftStrength != ps.LeftMotorStrength ||
+				old_LeftMotorSpeed != v.LeftMotorSpeed ||
+				// Right motor parameters.
+				old_RightPeriod != ps.RightMotorPeriod ||
+				old_RightDirection != ps.RightMotorDirection ||
+				old_RightStrength != ps.RightMotorStrength ||
+				old_RightMotorSpeed != v.RightMotorSpeed ||
+				// Shared motor parameters.
+				old_OveralStrength != ps.ForceOverall;
 
+			bool forceChanged =
+				old_ForceType != ps.ForceType;
+
+			// Vibration values sent by controller.
 			var leftSpeed = v.LeftMotorSpeed;
 			var rightSpeed = v.RightMotorSpeed;
 
-			// Combine strengths into magnitude.
-			var leftMagnitude = MulDiv(leftSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
-			var rightMagnitude = MulDiv(rightSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
-
-			var leftMagnitudeAdjusted = MulDiv(leftMagnitude, leftStrength, DI_FFNOMINALMAX);
-			var rightMagnitudeAdjusted = MulDiv(rightMagnitude, rightStrength, DI_FFNOMINALMAX);
-
-			// Right-handed Cartesian direction:
-			// x: -1 = left,     1 = right,   0 - no direction
-			// y: -1 = backward, 1 = forward, 0 - no direction
-			// z: -1 = down,     1 = up,      0 - no direction
-
-			ud.FFState.UpdateLeftParameters(overalStrength, leftDirection);
-			ud.FFState.UpdateRightParameters(overalStrength, rightDirection);
-
-			Guid GUID_Force;
-			// If device have only one force feedback actuator (probably wheel).
-			if (!ud.FFState.RightEnabled)
+			Guid GUID_Force = EffectGuid.ConstantForce;
+			if (forceChanged)
 			{
-				// Forces must be combined.
-				var combinedMagnitudeAdjusted = Math.Max(leftMagnitudeAdjusted, rightMagnitudeAdjusted);
-				var combinedPeriod = 0;
-				// If at least one speed is specified then...
-				if (leftMagnitudeAdjusted > 0 || rightMagnitudeAdjusted > 0)
+				int forceType;
+				int.TryParse(ps.ForceType, out forceType);
+				// Forces for vibrating motors (Game pads).
+				// 0 - Constant. Good for vibrating motors.
+				// Forces for torque motors (Wheels).
+				// 1 - Periodic 'Sine Wave'. Good for car/plane engine vibration.
+				// 2 - Periodic 'Sawtooth Down Wave'. Good for gun recoil.
+				switch ((ForceFeedBackType)forceType)
 				{
-					combinedPeriod = 1000 *
-						((leftPeriod * leftMagnitudeAdjusted) + (rightPeriod * rightMagnitudeAdjusted))
-						/ (leftMagnitudeAdjusted + rightMagnitudeAdjusted);
-				}
-				leftMagnitudeAdjusted = combinedMagnitudeAdjusted;
-				leftPeriod = combinedPeriod;
-			}
-			// Forces for torque motors (Wheels).
-			// 1 - Periodic 'Sine Wave'. Good for car/plane engine vibration.
-			// 2 - Periodic 'Sawtooth Down Wave'. Good for gun recoil.
-			if (forceType == ForceFeedBackType.PeriodicSine || forceType == ForceFeedBackType.PeriodicSawtooth)
-			{
-				GUID_Force = forceType == ForceFeedBackType.PeriodicSine ? EffectGuid.Sine : EffectGuid.SawtoothDown;
-				// Left motor.
-				ud.FFState.LeftPeriodicForce.Magnitude = leftMagnitudeAdjusted;
-				ud.FFState.LeftPeriodicForce.Period = leftPeriod;
-				//diEffectX.Parameters = ud.FFState.LeftPeriodicForce;
-				if (ud.FFState.RightEnabled)
-				{
-					// Right motor.
-					ud.FFState.RightPeriodicForce.Magnitude = rightMagnitudeAdjusted;
-					ud.FFState.RightPeriodicForce.Period = rightPeriod;
-					//diEffectY.Parameters = ud.FFState.RightPeriodicForce;
+					case ForceFeedBackType.PeriodicSine: GUID_Force = EffectGuid.Sine; break;
+					case ForceFeedBackType.PeriodicSawtooth: GUID_Force = EffectGuid.SawtoothDown; break;
+					default: GUID_Force = EffectGuid.ConstantForce; break;
 				}
 			}
-			// Forces for vibrating motors (Game pads).
-			// 0 - Constant. Good for vibrating motors.
-			else
+
+			if (paramsChanged)
 			{
-				GUID_Force = EffectGuid.ConstantForce;
-				// Left motor.
-				ud.FFState.LeftConstantForce.Magnitude = leftMagnitudeAdjusted;
-				//diEffectX.Parameters = ud.FFState.LeftConstantForce;
-				if (ud.FFState.RightEnabled)
+				// Right-handed Cartesian direction:
+				// x: -1 = left,     1 = right,   0 - no direction
+				// y: -1 = backward, 1 = forward, 0 - no direction
+				// z: -1 = down,     1 = up,      0 - no direction
+				int leftDirection = TryParse(ps.LeftMotorDirection);
+				int leftStrength = TryParse(ps.LeftMotorStrength);
+				int rightDirection = TryParse(ps.RightMotorDirection);
+				int rightStrength = TryParse(ps.RightMotorStrength);
+
+				int overalStrength = TryParse(ps.ForceOverall);
+
+				ud.FFState.UpdateLeftParameters(overalStrength, leftDirection);
+				ud.FFState.UpdateRightParameters(overalStrength, rightDirection);
+
+				// Convert speed into magnitude/amplitude.
+				var leftMagnitude = MulDiv(leftSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
+				var rightMagnitude = MulDiv(rightSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
+
+				var leftMagnitudeAdjusted = MulDiv(leftMagnitude, leftStrength, DI_FFNOMINALMAX);
+				var rightMagnitudeAdjusted = MulDiv(rightMagnitude, rightStrength, DI_FFNOMINALMAX);
+
+				int leftPeriod;
+				int.TryParse(ps.LeftMotorDirection, out leftPeriod);
+				leftPeriod *= 1000;
+				int rightPeriod;
+				int.TryParse(ps.RightMotorDirection, out rightPeriod);
+				rightPeriod *= 1000;
+
+				// If device have only one force feedback actuator (probably wheel).
+				if (!ud.FFState.RightEnabled)
 				{
-					// Right motor.
-					ud.FFState.RightConstantForce.Magnitude = rightMagnitudeAdjusted;
-					//diEffectY.Parameters = ud.FFState.RightConstantForce;
+					// Forces must be combined.
+					var combinedMagnitudeAdjusted = Math.Max(leftMagnitudeAdjusted, rightMagnitudeAdjusted);
+					var combinedPeriod = 0;
+					// If at least one speed is specified then...
+					if (leftMagnitudeAdjusted > 0 || rightMagnitudeAdjusted > 0)
+					{
+						combinedPeriod = 1000 *
+							((leftPeriod * leftMagnitudeAdjusted) + (rightPeriod * rightMagnitudeAdjusted))
+							/ (leftMagnitudeAdjusted + rightMagnitudeAdjusted);
+					}
+					leftMagnitudeAdjusted = combinedMagnitudeAdjusted;
+					leftPeriod = combinedPeriod;
+				}
+
+				if (GUID_Force == EffectGuid.ConstantForce)
+				{
+					ud.FFState.UpdateLeftForce(leftMagnitudeAdjusted);
+					ud.FFState.UpdateRightForce(rightMagnitudeAdjusted);
+				}
+				else
+				{
+					ud.FFState.UpdateLeftForce(leftMagnitudeAdjusted, leftPeriod);
+					ud.FFState.UpdateRightForce(rightMagnitudeAdjusted, rightPeriod);
 				}
 			}
-			//PrintLog("Type %d Axes %d OMag %d LSpeed %d RSpeed %d LMag %d RMag %d LPeriod %d RPeriod", forceType, m_Axes, m_OveralStrength, leftSpeed, rightSpeed, leftMagnitudeAdjusted, rightMagnitudeAdjusted, leftPeriod, rightPeriod);
-			// If no effect exists then...
-			if (ud.FFState.LeftEffect == null)
+
+			if (forceChanged)
 			{
 				ud.FFState.LeftRestart = true;
-				// Left motor.
-				try
-				{
-					//ud.FFState.LeftEffect = new Effect(ud.Device, GUID_Force, diEffectX);
-				}
-				catch (Exception ex)
-				{
-					LastException = ex;
-					return false;
-				}
-			}
-			// If no effect exists then...
-			if (ud.FFState.RightEnabled && ud.FFState.RightEffect == null)
-			{
 				ud.FFState.RightRestart = true;
-				// Right motor.
 				try
 				{
-					//ud.FFState.RightEffect = new Effect(ud.Device, GUID_Force, diEffectY);
+					ud.FFState.LeftEffect = new Effect(ud.Device, GUID_Force, ud.FFState.LeftParameters);
+					ud.FFState.RightEffect = new Effect(ud.Device, GUID_Force, ud.FFState.RightParameters);
 				}
 				catch (Exception ex)
 				{
 					LastException = ex;
-					return false;
 				}
+
 			}
 			// If start new effect then.
 			if (ud.FFState.LeftRestart)
@@ -246,7 +262,7 @@ namespace x360ce.App.DInput
 			else
 			{
 				// Restart combined effect if it was stopped.
-				ud.FFState.LeftRestart = (leftMagnitudeAdjusted == 0);
+				ud.FFState.LeftRestart = (leftSpeed == 0 && rightSpeed == 0);
 			}
 			return true;
 		}
@@ -254,6 +270,13 @@ namespace x360ce.App.DInput
 		public static int MulDiv(int number, int numerator, int denominator)
 		{
 			return (int)(((long)number * numerator) / denominator);
+		}
+
+		int TryParse(string value)
+		{
+			int i;
+			int.TryParse(value, out i);
+			return i;
 		}
 
 		#endregion

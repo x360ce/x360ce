@@ -73,19 +73,50 @@ namespace x360ce.Engine
 			return p;
 		}
 
-		public void UpdateLeftParameters(int strength, int direction)
+		public void UpdateLeftParameters(int gain, int direction)
 		{
 			if (!LeftEnabled)
 				return;
-			LeftParameters.Gain = strength;
+			LeftParameters.Gain = gain;
 			LeftParameters.Directions = new int[1] { direction };
 		}
-		public void UpdateRightParameters(int strength, int direction)
+
+		public void UpdateRightParameters(int gain, int direction)
 		{
 			if (!RightEnabled)
 				return;
-			RightParameters.Gain = strength;
+			RightParameters.Gain = gain;
 			RightParameters.Directions = new int[1] { direction };
+		}
+
+		public void UpdateLeftForce(int magnitude, int? period = null)
+		{
+			if (!LeftEnabled)
+				return;
+			if (period.HasValue)
+			{
+				LeftPeriodicForce.Magnitude = magnitude;
+				LeftPeriodicForce.Period = period.Value;
+			}
+			else
+			{
+				LeftConstantForce.Magnitude = magnitude;
+			}
+		}
+
+		public void UpdateRightForce(int magnitude, int? period = null)
+		{
+			if (!RightEnabled)
+				return;
+			if (period.HasValue)
+			{
+				RightPeriodicForce.Magnitude = magnitude;
+				RightPeriodicForce.Period = period.Value;
+			}
+			else
+			{
+				RightConstantForce.Magnitude = magnitude;
+			}
 		}
 
 		// Left

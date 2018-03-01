@@ -192,7 +192,6 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\UpdateFrequency.cs" />
     <Compile Include="Common\HookMode.cs" />
-    <Compile Include="Common\ForceFeedBackType.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
     <Compile Include="Common\LogItem.cs" />
     <Compile Include="Common\Options.cs" />
