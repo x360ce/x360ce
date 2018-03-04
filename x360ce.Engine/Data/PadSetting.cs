@@ -211,6 +211,21 @@ namespace x360ce.Engine.Data
 			return false;
 		}
 
+		public int GetValue(string s, int defaultValue)
+		{
+			if (string.IsNullOrEmpty(s))
+				return defaultValue;
+			int value;
+			int.TryParse(s, out value);
+			return value;
+		}
+
+		// Get non standard values.
+		public int GetLeftMotorStrength() { return GetValue(LeftMotorStrength, 100); }
+		public int GetRightMotorStrength() { return GetValue(RightMotorStrength, 100); }
+		public int GetForceOverall() { return GetValue(ForceOverall, 256); }
+
+
 		public bool ShouldSerializePadSettingChecksum() { return !isDefault(PadSettingChecksum); }
 		public bool ShouldSerializeAxisToDPadDeadZone() { return !isDefault(AxisToDPadDeadZone, "256"); }
 		public bool ShouldSerializeAxisToDPadEnabled() { return !isDefault(AxisToDPadEnabled); }

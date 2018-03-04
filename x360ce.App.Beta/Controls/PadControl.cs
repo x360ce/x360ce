@@ -1067,23 +1067,35 @@ namespace x360ce.App.Controls
 
 		public void UpdateForceFeedBack()
 		{
-			if (MainForm.Current.ControllerIndex == -1) return;
-			// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
-			var leftMotor = (short)(LeftMotorTestTrackBar.Value / 100F * ushort.MaxValue);
-			var rightMotor = (short)(RightMotorTestTrackBar.Value / 100F * ushort.MaxValue);
+			if (MainForm.Current.ControllerIndex == -1)
+				return;
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
-			lock (Controller.XInputLock)
+			var index = (int)MappedTo - 1;
+			var game = MainForm.Current.CurrentGame;
+			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+			if (isVirtual)
 			{
-				var index = (int)MappedTo - 1;
-				var gamePad = MainForm.Current.DHelper.LiveXiControllers[index];
-				var isConnected = MainForm.Current.DHelper.LiveXiConnected[index];
-				if (Controller.IsLoaded && isConnected)
+				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
+				var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
+				MainForm.Current.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
+			}
+			else
+			{
+				lock (Controller.XInputLock)
 				{
-					var vibration = new Vibration();
-					vibration.LeftMotorSpeed = leftMotor;
-					vibration.RightMotorSpeed = rightMotor;
-					gamePad.SetVibration(vibration);
+					// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
+					var leftMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, LeftMotorTestTrackBar.Value);
+					var rightMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, RightMotorTestTrackBar.Value);
+					var gamePad = MainForm.Current.DHelper.LiveXiControllers[index];
+					var isConnected = MainForm.Current.DHelper.LiveXiConnected[index];
+					if (Controller.IsLoaded && isConnected)
+					{
+						var vibration = new Vibration();
+						vibration.LeftMotorSpeed = leftMotor;
+						vibration.RightMotorSpeed = rightMotor;
+						gamePad.SetVibration(vibration);
+					}
 				}
 			}
 			//UnsafeNativeMethods.Enable(false);

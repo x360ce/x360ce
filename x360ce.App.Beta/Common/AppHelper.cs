@@ -95,7 +95,7 @@ namespace x360ce.App
 			return items.ToArray();
 		}
 
-		public static DeviceEffectItem[] GetDeviceEffects(Joystick device)
+		public static DeviceEffectItem[] GetDeviceEffects(Joystick device, IntPtr handle)
 		{
 			var items = new List<DeviceEffectItem>();
 			if (device == null)
@@ -113,7 +113,7 @@ namespace x360ce.App
 				if (isLoaded) Controller.FreeLibrary();
 				// Must reaquire device in exclusive mode to get effects.
 				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
+				device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
 				IList<EffectInfo> effects = new List<EffectInfo>();
 				try
 				{
@@ -134,7 +134,7 @@ namespace x360ce.App
 				}
 				// Reaquire device in non exclusive mode.
 				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+				device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
 				// If XInput was loaded then...
 				if (isLoaded)
 				{

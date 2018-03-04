@@ -89,6 +89,12 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		public void SetVibration(MapTo userIndex, byte largeMotor, byte smallMotor, byte ledNumber)
+		{
+			var e = new Xbox360FeedbackReceivedEventArgs(largeMotor, smallMotor, ledNumber);
+			ViGEmClient.Feedbacks[(int)userIndex - 1] = e;
+		}
+
 		private void Controller_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
 		{
 			lock (FeedbackLock)

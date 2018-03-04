@@ -47,7 +47,7 @@ namespace x360ce.App.DInput
 							if (ud.DeviceObjects == null)
 								ud.DeviceObjects = AppHelper.GetDeviceObjects(device);
 							if (ud.DeviceEffects == null)
-								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
+								ud.DeviceEffects = AppHelper.GetDeviceEffects(device, deviceForm.Handle);
 							// Get PAD index this device is mapped to.
 							var userIndex = SettingsManager.Settings.Items
 								.Where(x => x.MapTo > (int)MapTo.None)
@@ -55,20 +55,23 @@ namespace x360ce.App.DInput
 								.Select(x => x.MapTo).First();
 
 							var force = feedbacks[userIndex - 1];
-							// Get setting related to user device.
-							var setting = SettingsManager.Settings.Items
-								.FirstOrDefault(x => x.MapTo == userIndex && x.InstanceGuid == ud.InstanceGuid);
-							if (setting != null)
+							if (force != null)
 							{
-
-								// Get pad setting attached to device.
-								var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-								if (ps != null && ps.ForceEnable == "1")
+								// Get setting related to user device.
+								var setting = SettingsManager.Settings.Items
+									.FirstOrDefault(x => x.MapTo == userIndex && x.InstanceGuid == ud.InstanceGuid);
+								if (setting != null)
 								{
-									var v = new Vibration();
-									v.LeftMotorSpeed = force.LargeMotor;
-									v.RightMotorSpeed = force.SmallMotor;
-									SetDeviceForces(ud, ps, v);
+
+									// Get pad setting attached to device.
+									var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+									if (ps != null && ps.ForceEnable == "1")
+									{
+										var v = new Vibration();
+										v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
+										v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
+										SetDeviceForces(ud, ps, v);
+									}
 								}
 							}
 						}
@@ -103,7 +106,7 @@ namespace x360ce.App.DInput
 		string old_LeftDirection;
 		string old_RightDirection;
 		string old_OveralStrength;
-		string old_ForceType;
+		string old_ForceType = "0";
 		short old_LeftMotorSpeed;
 		short old_RightMotorSpeed;
 
@@ -141,6 +144,9 @@ namespace x360ce.App.DInput
 			Guid GUID_Force = EffectGuid.ConstantForce;
 			if (forceChanged)
 			{
+				// Update values.
+				old_ForceType = ps.ForceType;
+				//
 				int forceType;
 				int.TryParse(ps.ForceType, out forceType);
 				// Forces for vibrating motors (Game pads).
@@ -158,32 +164,40 @@ namespace x360ce.App.DInput
 
 			if (paramsChanged)
 			{
+				// Update values.
+				old_LeftPeriod = ps.LeftMotorPeriod;
+				old_LeftDirection = ps.LeftMotorDirection;
+				old_LeftStrength = ps.LeftMotorStrength;
+				old_LeftMotorSpeed = v.LeftMotorSpeed;
+				old_RightPeriod = ps.RightMotorPeriod;
+				old_RightDirection = ps.RightMotorDirection;
+				old_RightStrength = ps.RightMotorStrength;
+				old_RightMotorSpeed = v.RightMotorSpeed;
+				old_OveralStrength = ps.ForceOverall;
+
 				// Right-handed Cartesian direction:
 				// x: -1 = left,     1 = right,   0 - no direction
 				// y: -1 = backward, 1 = forward, 0 - no direction
 				// z: -1 = down,     1 = up,      0 - no direction
 				int leftDirection = TryParse(ps.LeftMotorDirection);
-				int leftStrength = TryParse(ps.LeftMotorStrength);
+				int leftStrength = ps.GetLeftMotorStrength();
 				int rightDirection = TryParse(ps.RightMotorDirection);
-				int rightStrength = TryParse(ps.RightMotorStrength);
+				int rightStrength = ps.GetRightMotorStrength();
 
-				int overalStrength = TryParse(ps.ForceOverall);
+				int overalStrength = ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
 
-				ud.FFState.UpdateLeftParameters(overalStrength, leftDirection);
-				ud.FFState.UpdateRightParameters(overalStrength, rightDirection);
+				ud.FFState.UpdateLeftParameters(overalStrength, 1);//leftDirection);
+				ud.FFState.UpdateRightParameters(overalStrength, 1);// rightDirection);
 
 				// Convert speed into magnitude/amplitude.
-				var leftMagnitude = MulDiv(leftSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
-				var rightMagnitude = MulDiv(rightSpeed, DI_FFNOMINALMAX, ushort.MaxValue);
-
-				var leftMagnitudeAdjusted = MulDiv(leftMagnitude, leftStrength, DI_FFNOMINALMAX);
-				var rightMagnitudeAdjusted = MulDiv(rightMagnitude, rightStrength, DI_FFNOMINALMAX);
+				var leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, overalStrength, leftSpeed);
+				var rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, overalStrength, rightSpeed);
 
 				int leftPeriod;
-				int.TryParse(ps.LeftMotorDirection, out leftPeriod);
+				int.TryParse(ps.LeftMotorPeriod, out leftPeriod);
 				leftPeriod *= 1000;
 				int rightPeriod;
-				int.TryParse(ps.RightMotorDirection, out rightPeriod);
+				int.TryParse(ps.RightMotorPeriod, out rightPeriod);
 				rightPeriod *= 1000;
 
 				// If device have only one force feedback actuator (probably wheel).
@@ -215,14 +229,27 @@ namespace x360ce.App.DInput
 				}
 			}
 
-			if (forceChanged)
+			if (forceChanged || ud.FFState.LeftEffect == null)
 			{
+				if (GUID_Force == EffectGuid.ConstantForce)
+				{
+					ud.FFState.LeftParameters.Parameters = ud.FFState.LeftConstantForce;
+					if (ud.FFState.RightEnabled)
+						ud.FFState.RightParameters.Parameters = ud.FFState.RightConstantForce;
+				}
+				else
+				{
+					ud.FFState.LeftParameters.Parameters = ud.FFState.LeftPeriodicForce;
+					if (ud.FFState.RightEnabled)
+						ud.FFState.RightParameters.Parameters = ud.FFState.RightPeriodicForce;
+				}
 				ud.FFState.LeftRestart = true;
 				ud.FFState.RightRestart = true;
 				try
 				{
 					ud.FFState.LeftEffect = new Effect(ud.Device, GUID_Force, ud.FFState.LeftParameters);
-					ud.FFState.RightEffect = new Effect(ud.Device, GUID_Force, ud.FFState.RightParameters);
+					if (ud.FFState.RightEnabled)
+						ud.FFState.RightEffect = new Effect(ud.Device, GUID_Force, ud.FFState.RightParameters);
 				}
 				catch (Exception ex)
 				{
@@ -231,29 +258,37 @@ namespace x360ce.App.DInput
 
 			}
 			// If start new effect then.
-			if (ud.FFState.LeftRestart)
-			{
-				// Note: stop previous effect first.
-				ud.FFState.LeftEffect.Start();
-			}
-			else
-			{
-				// Modify effect.
-				//ud.FFState.LeftEffect.SetParameters(diEffectX);
-			}
+			//if (ud.FFState.LeftRestart)
+			//{
+			ud.Device.Unacquire();
+			ud.Device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+			ud.Device.Acquire();
+			// Note: stop previous effect first.
+			ud.FFState.LeftEffect.Start();
+			ud.Device.Unacquire();
+			//}
+			//else
+			//{
+			// Modify effect.
+			//ud.FFState.LeftEffect.SetParameters(diEffectX);
+			//}
 			if (ud.FFState.RightEnabled)
 			{
 				// If start new effect then.
-				if (ud.FFState.RightRestart)
-				{
-					// Note: stop previous effect first.
-					ud.FFState.RightEffect.Start();
-				}
-				else
-				{
-					// Modify effect.
-					//ud.FFState.RightEffect.SetParameters(diEffectY);
-				}
+				//if (ud.FFState.RightRestart)
+				//{
+				ud.Device.Unacquire();
+				ud.Device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+				ud.Device.Acquire();
+				// Note: stop previous effect first.
+				ud.FFState.RightEffect.Start();
+				ud.Device.Unacquire();
+				//}
+				//else
+				//{
+				// Modify effect.
+				//ud.FFState.RightEffect.SetParameters(diEffectY);
+				//}
 				// Restart left motor effect next time if it was stopped.
 				ud.FFState.LeftRestart = (leftSpeed == 0);
 				// Restart right motor effect next time if it was stopped.
@@ -265,11 +300,6 @@ namespace x360ce.App.DInput
 				ud.FFState.LeftRestart = (leftSpeed == 0 && rightSpeed == 0);
 			}
 			return true;
-		}
-
-		public static int MulDiv(int number, int numerator, int denominator)
-		{
-			return (int)(((long)number * numerator) / denominator);
 		}
 
 		int TryParse(string value)

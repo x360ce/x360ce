@@ -27,7 +27,8 @@ namespace x360ce.Engine
 			if (actuators.Count > 0)
 			{
 				// Try to find left actuator.
-				var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
+				//var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
+				var actuator = actuators[0];
 				// If default actuator not found then take default.
 				if (actuator == null)
 					actuator = actuators[0];
@@ -40,13 +41,14 @@ namespace x360ce.Engine
 			if (actuators.Count > 0)
 			{
 				// Try to find right actuator.
-				var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
+				//var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
+				var actuator = actuators[0];
 				// If default actuator not found then take default.
 				if (actuator == null)
 					actuator = actuators[0];
 				actuators.Remove(actuator);
 				RightActuator = actuator;
-				LeftParameters = GetParameters(RightActuator.Offset);
+				RightParameters = GetParameters(RightActuator.Offset);
 				RightEnabled = true;
 			}
 		}
@@ -62,9 +64,10 @@ namespace x360ce.Engine
 			// y: -1 = backward, 1 = forward, 0 - no direction
 			// z: -1 = down,     1 = up,      0 - no direction
 			// Left motor.
-			p.Axes = new int[1] { offset };
+			p.SetAxes(new int[1], new int[1]);
+			//p.Axes = new int[1] { offset };
 			p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectOffsets;
-			p.Envelope = new Envelope();
+			//p.Envelope = new Envelope();
 			p.StartDelay = 0;
 			p.Duration = unchecked((int)INFINITE);
 			p.SamplePeriod = 0;

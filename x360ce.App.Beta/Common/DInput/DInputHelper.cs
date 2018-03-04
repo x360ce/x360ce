@@ -107,10 +107,25 @@ namespace x360ce.App.DInput
 
 		object DiUpdatesLock = new object();
 
+		// DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
+		// separate windows form must be created on the same thread as the process which will access and update device.
+		System.Windows.Forms.Form deviceForm;
+
 		void RefreshAll()
 		{
 			lock (DiUpdatesLock)
 			{
+				if (deviceForm == null)
+				{
+					deviceForm = new System.Windows.Forms.Form();
+					deviceForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+					deviceForm.MinimizeBox = false;
+					deviceForm.MaximizeBox = false;
+					deviceForm.ShowInTaskbar = false;
+					deviceForm.Visible = false;
+					deviceForm.Show();
+				}
+
 				// Update information about connected devices.
 				UpdateDiDevices();
 				// Update JoystickStates from devices.

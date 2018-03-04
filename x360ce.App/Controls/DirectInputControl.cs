@@ -74,7 +74,7 @@ namespace x360ce.App.Controls
 				var isLoaded = Controller.IsLoaded;
 				if (isLoaded) Controller.FreeLibrary();
 				device.Unacquire();
-				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Foreground | CooperativeLevel.Exclusive);
+				device.SetCooperativeLevel(MainForm.Current.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
 				effects = new List<EffectInfo>();
 				try
 				{
