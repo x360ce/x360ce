@@ -258,37 +258,37 @@ namespace x360ce.App.DInput
 
 			}
 			// If start new effect then.
-			//if (ud.FFState.LeftRestart)
-			//{
-			ud.Device.Unacquire();
-			ud.Device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
-			ud.Device.Acquire();
-			// Note: stop previous effect first.
-			ud.FFState.LeftEffect.Start();
-			ud.Device.Unacquire();
-			//}
-			//else
-			//{
-			// Modify effect.
-			//ud.FFState.LeftEffect.SetParameters(diEffectX);
-			//}
-			if (ud.FFState.RightEnabled)
+			if (ud.FFState.LeftRestart)
 			{
-				// If start new effect then.
-				//if (ud.FFState.RightRestart)
-				//{
 				ud.Device.Unacquire();
 				ud.Device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
 				ud.Device.Acquire();
 				// Note: stop previous effect first.
-				ud.FFState.RightEffect.Start();
+				ud.FFState.LeftEffect.Start();
 				ud.Device.Unacquire();
-				//}
-				//else
-				//{
+			}
+			else
+			{
 				// Modify effect.
-				//ud.FFState.RightEffect.SetParameters(diEffectY);
-				//}
+				ud.FFState.LeftEffect.SetParameters(ud.FFState.LeftParameters, EffectParameterFlags.NoRestart);
+			}
+			if (ud.FFState.RightEnabled)
+			{
+				// If start new effect then.
+				if (ud.FFState.RightRestart)
+				{
+					ud.Device.Unacquire();
+					ud.Device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+					ud.Device.Acquire();
+					// Note: stop previous effect first.
+					ud.FFState.RightEffect.Start();
+					ud.Device.Unacquire();
+				}
+				else
+				{
+					// Modify effect.
+					ud.FFState.RightEffect.SetParameters(ud.FFState.RightParameters, EffectParameterFlags.NoRestart);
+				}
 				// Restart left motor effect next time if it was stopped.
 				ud.FFState.LeftRestart = (leftSpeed == 0);
 				// Restart right motor effect next time if it was stopped.
