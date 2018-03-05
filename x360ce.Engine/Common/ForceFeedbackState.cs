@@ -29,8 +29,8 @@ namespace x360ce.Engine
 			if (actuators.Count > 0)
 			{
 				// Try to find left actuator.
-				//var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
-				var actuator = actuators[0];
+				var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
+				//var actuator = actuators[0];
 				// If default actuator not found then take default.
 				if (actuator == null)
 					actuator = actuators[0];
@@ -41,8 +41,8 @@ namespace x360ce.Engine
 			if (actuators.Count > 0)
 			{
 				// Try to find right actuator.
-				//var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
-				var actuator = actuators[0];
+				var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
+				//var actuator = actuators[0];
 				// If default actuator not found then take default.
 				if (actuator == null)
 					actuator = actuators[0];
@@ -62,7 +62,7 @@ namespace x360ce.Engine
 			// y: -1 = backward, 1 = forward, 0 - no direction
 			// z: -1 = down,     1 = up,      0 - no direction
 			// Left motor.
-			p.SetAxes(new int[1], new int[1]);
+			p.SetAxes(new int[1] { offset }, new int[1] { 1 });
 			//p.Axes = new int[1] { offset };
 			p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectOffsets;
 			//p.Envelope = new Envelope();
@@ -70,7 +70,7 @@ namespace x360ce.Engine
 			p.Duration = unchecked((int)INFINITE);
 			p.SamplePeriod = 0;
 			p.TriggerButton = unchecked((int)DIEB_NOTRIGGER);
-			p.TriggerRepeatInterval = 0;
+			p.TriggerRepeatInterval = unchecked((int)INFINITE);
 			return p;
 		}
 
@@ -155,22 +155,6 @@ namespace x360ce.Engine
 					case ForceFeedBackType.PeriodicSawtooth: GUID_Force = EffectGuid.SawtoothDown; break;
 					default: GUID_Force = EffectGuid.ConstantForce; break;
 				}
-				if (GUID_Force == EffectGuid.ConstantForce)
-					LeftParameters.Parameters = LeftConstantForce;
-				else
-					LeftParameters.Parameters = LeftPeriodicForce;
-				LeftEffect = new Effect(device, GUID_Force, LeftParameters);
-				if (RightParameters != null)
-					LeftRestart = true;
-				if (RightParameters != null)
-				{
-					if (GUID_Force == EffectGuid.ConstantForce)
-						RightParameters.Parameters = RightConstantForce;
-					else
-						RightParameters.Parameters = RightPeriodicForce;
-					RightEffect = new Effect(device, GUID_Force, RightParameters);
-					RightRestart = true;
-				}
 			}
 
 			if (paramsChanged)
@@ -243,31 +227,39 @@ namespace x360ce.Engine
 					RightPeriodicForce.Period = rightPeriod;
 				}
 			}
+
 			device.Unacquire();
 			device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
 			device.Acquire();
-			// If start new effect then.
-			if (LeftRestart)
+
+			if (forceChanged)
 			{
-				LeftEffect.Start();
+				if (GUID_Force == EffectGuid.ConstantForce)
+					LeftParameters.Parameters = LeftConstantForce;
+				else
+					LeftParameters.Parameters = LeftPeriodicForce;
+				LeftEffect = new Effect(device, GUID_Force, LeftParameters);
+				if (RightParameters != null)
+					LeftRestart = true;
+				if (RightParameters != null)
+				{
+					if (GUID_Force == EffectGuid.ConstantForce)
+						RightParameters.Parameters = RightConstantForce;
+					else
+						RightParameters.Parameters = RightPeriodicForce;
+					RightEffect = new Effect(device, GUID_Force, RightParameters);
+					RightRestart = true;
+				}
 			}
-			else
-			{
-				// Modify effect.
-				LeftEffect.SetParameters(LeftParameters, EffectParameterFlags.NoRestart);
-			}
+		
+			var leftFlags = EffectParameterFlags.Envelope;
+			leftFlags |= LeftRestart ? EffectParameterFlags.Start : EffectParameterFlags.NoRestart;
+			LeftEffect.SetParameters(LeftParameters, leftFlags);
 			if (RightParameters != null)
 			{
-				// If start new effect then.
-				if (RightRestart)
-				{
-					RightEffect.Start();
-				}
-				else
-				{
-					// Modify effect.
-					RightEffect.SetParameters(RightParameters, EffectParameterFlags.NoRestart);
-				}
+				var rightFlags = EffectParameterFlags.Envelope;
+				rightFlags |= RightRestart ? EffectParameterFlags.Start : EffectParameterFlags.NoRestart;
+				RightEffect.SetParameters(RightParameters, rightFlags);
 			}
 			device.Unacquire();
 			// If combined then...

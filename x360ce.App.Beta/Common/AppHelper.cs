@@ -106,8 +106,6 @@ namespace x360ce.App
 				return items.ToArray();
 			lock (Controller.XInputLock)
 			{
-
-
 				// Unload xinput.
 				var isLoaded = Controller.IsLoaded;
 				if (isLoaded) Controller.FreeLibrary();
