@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Web;
 using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
@@ -205,7 +204,7 @@ namespace x360ce.Engine.Data
 			// If value is default.
 			if (Equals(value, defaultValue))
 				return true;
-			// If value is stirng and empty or set to "0" then...
+			// If value is string and empty or set to "0" then...
 			if (value is string && (Equals(value, "") || Equals(value, "0")))
 				return true;
 			return false;
@@ -223,7 +222,7 @@ namespace x360ce.Engine.Data
 		// Get non standard values.
 		public int GetLeftMotorStrength() { return GetValue(LeftMotorStrength, 100); }
 		public int GetRightMotorStrength() { return GetValue(RightMotorStrength, 100); }
-		public int GetForceOverall() { return GetValue(ForceOverall, 256); }
+		public int GetForceOverall() { return GetValue(ForceOverall, 100); }
 
 
 		public bool ShouldSerializePadSettingChecksum() { return !isDefault(PadSettingChecksum); }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -35,7 +30,7 @@ namespace x360ce.App
 					// Add setting to configuration.
 					PadSettings.Items.Add(padSetting);
 				}
-				// If pad setting checsum changed then...
+				// If pad setting checksum changed then...
 				if (setting.PadSettingChecksum != padSetting.PadSettingChecksum)
 				{
 					// Assign updated checksum.
@@ -72,7 +67,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Insert missing pad settings and cleanup the list.
+		/// Insert missing pad settings and clean-up the list.
 		/// </summary>
 		/// <param name="list"></param>
 		public void UpsertPadSettings(params PadSetting[] list)
@@ -117,7 +112,7 @@ namespace x360ce.App
 			if (missing.Count() > 0)
 			{
 				var list = string.Join(", ", missing);
-				MessageBox.Show("'PadSetting' class property names must match 'SettingName' class property names. Plese make sure that these properties exists in 'SettingName' class:\r\n\r\n" + list);
+				MessageBox.Show("'PadSetting' class property names must match 'SettingName' class property names. Please make sure that these properties exists in 'SettingName' class:\r\n\r\n" + list);
 				return false;
 			}
 			return true;
@@ -141,6 +136,10 @@ namespace x360ce.App
 				var key = map.IniPath.Split('\\')[1];
 				// Get setting value from the form.
 				var v = GetSettingValue(map.Control);
+				// If value is default then...
+				if (v == map.DefaultValue)
+					// Remove default value.
+					v = null;
 				// Set value onto padSetting.
 				p.SetValue(ps, v ?? "", null);
 			}
@@ -157,7 +156,7 @@ namespace x360ce.App
 			// Insert setting if not in the list.
 			if (add)
 				Settings.Add(setting);
-			// Cleanup pad settings.
+			// Clean-up pad settings.
 			Current.CleanupPadSettings();
 		}
 
@@ -203,6 +202,10 @@ namespace x360ce.App
 				var map = maps.First(x => x.PropertyName == p.Name);
 				var key = map.IniPath.Split('\\')[1];
 				var v = (string)p.GetValue(ps, null) ?? "";
+				// If value is not set then...
+				if (string.IsNullOrEmpty(v))
+					// Restore default value.
+					v = map.DefaultValue ?? "";
 				LoadSetting(map.Control, key, v);
 			}
 			// Resume form events (track setting changes on the form).

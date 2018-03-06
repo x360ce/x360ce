@@ -41,7 +41,7 @@ namespace x360ce.App.DInput
 				// If custom directInput state is not available then continue.
 				if (diState == null)
 					continue;
-				// Create Gamepad to map to.
+				// Create GamePad to map to.
 				var gp = new Gamepad();
 				bool success;
 				int index;
@@ -51,7 +51,7 @@ namespace x360ce.App.DInput
 				// Convert DInput POV Hat value to D-PAD buttons.
 				// --------------------------------------------------------
 
-				// Create arrray to store 4 buttons for each POV.
+				// Create array to store 4 buttons for each POV.
 				var dPadButtons = new bool[4 * diState.Povs.Length];
 				// Loop trough D-Pad button states.
 				for (int d = 0; d < diState.Povs.Length; ++d)
@@ -203,8 +203,8 @@ namespace x360ce.App.DInput
 						var v = (ushort)values[map.Index - 1];
 
 						// Destination range.
-						var min = short.MinValue; // -32768;
-						var max = short.MaxValue; //  32767;
+						//var min = short.MinValue; // -32768;
+						//var max = short.MaxValue; //  32767;
 
 						//// If value is inverted (I) then...
 						//if (map.IsInverted && !map.IsHalf)

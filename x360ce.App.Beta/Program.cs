@@ -107,7 +107,7 @@ namespace x360ce.App
 				return;
 			}
 			var doNotAllowToRun = SettingsManager.Options.AllowOnlyOneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore);
-			// If one copy is already oppened then...
+			// If one copy is already opened then...
 			if (doNotAllowToRun)
 			{
 				// Dispose properly so that the tray icon will be removed.

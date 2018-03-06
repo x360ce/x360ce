@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace x360ce.App
+﻿namespace x360ce.App
 {
 	public class SettingsMapItem
 	{
@@ -44,7 +39,10 @@ namespace x360ce.App
 		/// </summary>
 		public Engine.MapTo MapTo { get; set; }
 
-
+		/// <summary>
+		/// Default value if property is null or empty.
+		/// </summary>
+		public string DefaultValue { get; set; }
 
 	}
 }

@@ -181,7 +181,7 @@ namespace x360ce.App.Controls
 				: SystemColors.Window;
 			if (auto)
 			{
-				// Unmap all devices.	
+				// Remove mapping from all devices.	
 				var grid = MappedDevicesDataGridView;
 				var items = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => (Setting)x.DataBoundItem).ToArray();
 				foreach (var item in items)
@@ -764,7 +764,7 @@ namespace x360ce.App.Controls
 					_InstanceGuid = instanceGuid;
 					ResetDiMenuStrip(enable ? ud : null);
 				}
-				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
+				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
 				DirectInputPanel.UpdateFrom(ud);
 				if (enable)
@@ -787,7 +787,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		// Old xinput state.
+		// Old XInput state.
 		State oldState;
 		bool oldConnected;
 		// Current XInput state.
@@ -1219,7 +1219,7 @@ namespace x360ce.App.Controls
 			{
 				var fi = new System.IO.FileInfo(path);
 				//if (!fi.Exists) return;
-				// Brings up the "Windows cannot open this file" dialog if association not found.
+				// Brings up the "Windows cannot open this file" MessageBox if association not found.
 				var psi = new ProcessStartInfo(path);
 				psi.UseShellExecute = true;
 				psi.WorkingDirectory = fi.Directory.FullName;
@@ -1316,7 +1316,7 @@ namespace x360ce.App.Controls
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
-			// return ir game is not selected.
+			// Return if game is not selected.
 			if (game == null)
 				return;
 			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
@@ -1388,7 +1388,7 @@ namespace x360ce.App.Controls
 		{
 			if (e.RowIndex < 0) return;
 			var grid = (DataGridView)sender;
-			// If user clicked on the checkbox column then...
+			// If user clicked on the CheckBox column then...
 			if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
 			{
 				var row = grid.Rows[e.RowIndex];

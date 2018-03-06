@@ -2,6 +2,7 @@
 using SharpDX.XInput;
 using System;
 using System.Threading;
+using x360ce.Engine;
 
 namespace x360ce.App.DInput
 {
@@ -118,24 +119,26 @@ namespace x360ce.App.DInput
 				if (deviceForm == null)
 				{
 					deviceForm = new System.Windows.Forms.Form();
+					deviceForm.Text = "X360CE Force Feedback Form";
 					deviceForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 					deviceForm.MinimizeBox = false;
 					deviceForm.MaximizeBox = false;
 					deviceForm.ShowInTaskbar = false;
-					deviceForm.Visible = false;
-					deviceForm.Show();
+					// Force to create handle.
+					var handle = deviceForm.Handle;
 				}
+				var game = MainForm.Current.CurrentGame;
 
 				// Update information about connected devices.
 				UpdateDiDevices();
 				// Update JoystickStates from devices.
-				UpdateDiStates();
+				UpdateDiStates(game);
 				// Update XInput states from Custom DirectInput states.
 				UpdateXiStates();
 				// Combine XInput states of controllers.
 				CombineXiStates();
 				// Update virtual devices from combined states.
-				UpdateVirtualDevices();
+				UpdateVirtualDevices(game);
 				// Retrieve XInput states from XInput controllers.
 				RetrieveXiStates();
 				// Update pool frequency value and sleep if necessary.

@@ -200,14 +200,18 @@ namespace JocysCom.ClassLibrary.Configuration
 			return s.Trim();
 		}
 
-		[DllImport("wtsapi32.dll")]
-		public static extern bool WTSQuerySessionInformationW(
-			IntPtr hServer,
-			int SessionId,
-			int WTSInfoClass,
-			out IntPtr ppBuffer,
-			out IntPtr pBytesReturned
-		);
+		internal partial class NativeMethods
+		{
+			[DllImport("wtsapi32.dll")]
+			internal static extern bool WTSQuerySessionInformationW(
+				IntPtr hServer,
+				int SessionId,
+				int WTSInfoClass,
+				out IntPtr ppBuffer,
+				out IntPtr pBytesReturned
+			);
+
+		}
 
 		public string GetWindowsDomainName() { return GetInformation(7); }
 
@@ -221,7 +225,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			IntPtr AnswerBytes;
 			IntPtr AnswerCount;
 			// Get domain name.
-			var success = WTSQuerySessionInformationW(
+			var success = NativeMethods.WTSQuerySessionInformationW(
 				WTS_CURRENT_SERVER_HANDLE,
 				p.SessionId,
 				WTSInfoClass,

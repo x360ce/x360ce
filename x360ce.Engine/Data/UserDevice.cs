@@ -137,6 +137,9 @@ namespace x360ce.Engine.Data
 		public ForceFeedbackState FFState;
 
 		[XmlIgnore]
+		public EmulationType CurrentMode;
+
+		[XmlIgnore]
 		public bool IsOnline
 		{
 			get { return _IsOnline; }

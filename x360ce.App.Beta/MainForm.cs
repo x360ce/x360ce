@@ -82,7 +82,7 @@ namespace x360ce.App
 		{
 			if (IsDesignMode) return;
 			DebugPanel = new Forms.DebugForm();
-			// Init DInput Helper.
+			// Initialize DInput Helper.
 			DHelper = new DInput.DInputHelper();
 			DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			DHelper.UpdateCompleted += DHelper_UpdateCompleted;
@@ -96,7 +96,7 @@ namespace x360ce.App
 			SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
-			// NotifySettingsChange will be called on event suspention and resume.
+			// NotifySettingsChange will be called on event suspension and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
 			SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
@@ -480,25 +480,6 @@ namespace x360ce.App
 
 		#endregion
 
-		//public void ReloadXinputSettings()
-		//{
-		//	SuspendEvents();
-		//	SettingManager.Current.ReadSettings();
-		//	ResumeEvents();
-		//}
-
-		//public void SaveSettings()
-		//{
-		//	UpdateTimer.Stop();
-		//	// Save settings to INI file.
-		//	SettingManager.Current.WriteAllSettingsToInit();
-		//	// Overwrite Temp file.
-		//	var ini = new FileInfo(SettingManager.IniFileName);
-		//	ini.CopyTo(SettingManager.TmpFileName, true);
-		//	StatusTimerLabel.Text = "Settings saved";
-		//	UpdateTimer.Start();
-		//}
-
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
@@ -597,148 +578,9 @@ namespace x360ce.App
 		//string deviceInstancesNew = "";
 		public Guid AutoSelectControllerInstance = Guid.Empty;
 
-
-		///// <summary>
-		///// Get direct input devices.
-		///// </summary>
-		//DeviceInstance[] GetDevices()
-		//{
-		//	var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
-		//	if (SettingManager.Current.ExcludeSuplementalDevices)
-		//	{
-		//		// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
-		//		// such as pedals used with a wheel.The following subtypes are defined.
-		//		var supplementals = devices.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Supplemental).ToArray();
-		//		foreach (var supplemental in supplementals)
-		//		{
-		//			devices.Remove(supplemental);
-		//		}
-		//	}
-		//	if (SettingManager.Current.ExcludeVirtualDevices)
-		//	{
-		//		// Exclude virtual devices so application could feed them.
-		//		var virtualDevices = devices.Where(x => x.InstanceName.Contains("vJoy")).ToArray();
-		//		foreach (var virtualDevice in virtualDevices)
-		//		{
-		//			devices.Remove(virtualDevice);
-		//		}
-		//	}
-		//	// Move gaming wheels to the top index position by default.
-		//	// Games like GTA need wheel to be first device to work properly.
-		//	var wheels = devices.Where(x => x.Type == SharpDX.DirectInput.DeviceType.Driving || x.Subtype == (int)DeviceSubType.Wheel).ToArray();
-		//	foreach (var wheel in wheels)
-		//	{
-		//		devices.Remove(wheel);
-		//		devices.Insert(0, wheel);
-		//	}
-		//	var orderedDevices = new DeviceInstance[4];
-		//	// Assign devices to their positions.
-		//	for (int d = 0; d < devices.Count; d++)
-		//	{
-		//		var ig = devices[d].InstanceGuid;
-		//		var section = SettingManager.Current.GetInstanceSection(ig);
-		//		var ini2 = new Ini(SettingManager.IniFileName);
-		//		string v = ini2.GetValue(section, SettingName.MapToPad);
-		//		int mapToPad = 0;
-		//		if (int.TryParse(v, out mapToPad) && mapToPad > 0 && mapToPad <= 4)
-		//		{
-		//			// If position is not occupied then...
-		//			if (orderedDevices[mapToPad - 1] == null)
-		//			{
-		//				orderedDevices[mapToPad - 1] = devices[d];
-		//			}
-		//		}
-		//	}
-		//	// Get list of unassigned devices.
-		//	var unassignedDevices = devices.Except(orderedDevices).ToArray();
-		//	for (int i = 0; i < unassignedDevices.Length; i++)
-		//	{
-		//		// Assign to first empty slot.
-		//		for (int d = 0; d < orderedDevices.Length; d++)
-		//		{
-		//			// If position is not occupied then...
-		//			if (orderedDevices[d] == null)
-		//			{
-		//				orderedDevices[d] = unassignedDevices[i];
-		//				break;
-		//			}
-		//		}
-		//	}
-		//	return orderedDevices;
-		//}
-
-
-		///// <summary>
-		///// Access this only inside Timer_Click!
-		///// </summary>
-		//bool RefreshCurrentInstances(bool forceReload = false)
-		//{
-		//	bool instancesChanged = false;
-		//	DeviceInstance[] devices = null;
-		//	//var types = DeviceType.Driving | DeviceType.Flight | DeviceType.Gamepad | DeviceType.Joystick | DeviceType.FirstPerson;
-		//	if (forceRecountDevices || forceReload)
-		//	{
-		//		devices = GetDevices();
-		//		// Store device instances and their order.
-		//		deviceInstancesNew = string.Join(",", devices.Select(x => x == null ? "" : x.InstanceGuid.ToString()));
-		//		forceRecountDevices = false;
-		//	}
-		//	// If device list changed then...
-		//	if (deviceInstancesNew != deviceInstancesOld)
-		//	{
-		//		deviceInstancesOld = deviceInstancesNew;
-		//		if (devices == null) devices = GetDevices();
-		//		var instances = devices;
-		//		// Dispose previous list of devices.
-		//		for (int i = 0; i < 4; i++)
-		//		{
-		//			if (DiDevices[i].State != null)
-		//			{
-		//				// Dispose current device.
-		//				DiDevices[i].State.Unacquire();
-		//				DiDevices[i].State.Dispose();
-		//			}
-		//		}
-		//		// Create new list of devices.
-		//		for (int i = 0; i < 4; i++)
-		//		{
-		//			var inst = instances[i];
-		//			if (inst == null)
-		//			{
-		//				DiDevices[i].State = null;
-		//				DiDevices[i].Info = null;
-		//			}
-		//			else
-		//			{
-
-		//				var j = new Joystick(Manager, inst.InstanceGuid);
-		//				DiDevices[i].State = j;
-		//				var classGuid = j.Properties.ClassGuid;
-		//				var interfacePath = j.Properties.InterfacePath;
-		//				// Must find better way to find Device than by Vendor ID and Product ID.
-		//				var devs = DeviceDetector.GetDevices(classGuid, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, null, j.Properties.VendorId, j.Properties.ProductId, 0);
-		//				DiDevices[i].Info = devs.FirstOrDefault();
-		//			}
-		//		}
-		//		SettingsDatabasePanel.BindDevices(instances);
-		//		SettingsDatabasePanel.BindFiles();
-		//		for (int i = 0; i < 4; i++)
-		//		{
-		//			// Backup old instance.
-		//			DiDevices[i].InstanceOld = DiDevices[i].Instance;
-		//			// Assign new instance.
-		//			DiDevices[i].Instance = instances[i];
-		//		}
-		//		instancesChanged = true;
-		//	}
-		//	// Return true if instances changed.
-		//	return instancesChanged;
-		//}
-
 		// This value will be modified to true when settings on the form changes and 
 		// XInput library needs to be reload.
 		bool settingsChanged = false;
-		State emptyState = new State();
 
 		//bool[] cleanPadStatus = new bool[4];
 
@@ -809,7 +651,6 @@ namespace x360ce.App
 				return;
 			IssueIconTimer.Start();
 		}
-
 
 		#endregion
 
@@ -1346,7 +1187,7 @@ namespace x360ce.App
 			lock (CurrentGameLock)
 			{
 				var item = GameToCustomizeComboBox.SelectedItem as Engine.Data.UserGame;
-				// If nohting changed then...
+				// If nothing changed then...
 				if (Equals(item, CurrentGame))
 				{
 					return;

@@ -23,7 +23,7 @@ namespace JocysCom.ClassLibrary.Processes
 
 		/// <summary>Retrieves a module handle for the specified module. The module must have been loaded by the calling process.</summary>
 		/// <returns>If the function succeeds, the return value is a handle to the specified module.</returns>
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		internal static extern IntPtr GetModuleHandle(string lpModuleName);
 
 		/// <summary>Installs an application-defined hook procedure into a hook chain.</summary>

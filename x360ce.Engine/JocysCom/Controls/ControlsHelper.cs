@@ -271,12 +271,20 @@ namespace JocysCom.ClassLibrary.Controls
 
 		static MethodInfo _GetState;
 
-		public static void SetVisible(Control control, bool visible)
+		// Check control.Visible state.
+		public static bool IsVisible(Control control)
 		{
 			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);
 			// Can't check property directly, because it will return false if parent is not visible.
 			bool stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_VISIBLE });
-			if (stateValue != visible) control.Visible = visible;
+			return stateValue;
+		}
+
+		public static void SetVisible(Control control, bool visible)
+		{
+			var stateValue = IsVisible(control);
+			if (stateValue != visible)
+				control.Visible = visible;
 		}
 
 		public static void SetEnabled(ToolStripItem control, bool enabled)

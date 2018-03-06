@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -79,8 +80,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				if (!DefaultValues.ContainsKey(value))
 				{
-					DefaultValueAttribute[] attributes = (DefaultValueAttribute[])(value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(DefaultValueAttribute), false));
-					var r = ((attributes.Length > 0) ? (attributes[0].Value) : null).ToString();
+					DefaultValueAttribute[] attributes;
+					ICustomAttributeProvider p;
+					if (value is ICustomAttributeProvider)
+					{
+						p = (ICustomAttributeProvider)value;
+					}
+					else
+					{
+						p = value.GetType().GetField(value.ToString());
+					}
+					attributes = (DefaultValueAttribute[])p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+					var r = attributes.Length > 0 ? attributes[0].Value : null;
 					DefaultValues.Add(value, r);
 				}
 			}

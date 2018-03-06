@@ -48,10 +48,10 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		string _FilterString = null;
 		ListSortDirection _SortDirection = ListSortDirection.Ascending;
 
-		[NonSerializedAttribute]
+		[NonSerialized]
 		PropertyDescriptor _SortProperty = null;
 
-		[NonSerializedAttribute]
+		[NonSerialized]
 		ListSortDescriptionCollection _SortDescriptions = new ListSortDescriptionCollection();
 
 		List<T> _OriginalCollection = new List<T>();

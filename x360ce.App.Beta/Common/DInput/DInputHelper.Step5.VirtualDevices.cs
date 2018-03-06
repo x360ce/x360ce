@@ -5,13 +5,14 @@ using SharpDX.XInput;
 using System.Windows.Forms;
 using x360ce.Engine;
 using System.Linq;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
 
-		void UpdateVirtualDevices()
+		void UpdateVirtualDevices(UserGame game)
 		{
 
 			// Allow if not testing or testing with option enabled.
@@ -19,12 +20,11 @@ namespace x360ce.App.DInput
 			var allow = !o.TestEnabled || o.TestSetXInputStates;
 			if (!allow)
 				return;
-			var game = MainForm.Current.CurrentGame;
 			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 			// If game does not use virtual emulation then...
 			if (!isVirtual)
 			{
-				// Make sure all controllers are unpluged.
+				// Make sure all controllers are unplugged.
 				ViGEmClient.UnplugAllControllers();
 				return;
 			}
@@ -50,7 +50,7 @@ namespace x360ce.App.DInput
 				var feedingState = FeedingState[i - 1];
 				if (virtualEnabled)
 				{
-					// If feeding status unknonw or not enabled then...
+					// If feeding status unknown or not enabled then...
 					if (!feedingState.HasValue || !feedingState.Value || !ViGEmClient.IsControllerOwned(i))
 					{
 						var success = EnableFeeding(i) == VirtualError.None;
@@ -62,7 +62,7 @@ namespace x360ce.App.DInput
 				}
 				else
 				{
-					// If feeding status unknonw or enabled then...
+					// If feeding status unknown or enabled then...
 					if (!feedingState.HasValue || feedingState.Value || ViGEmClient.IsControllerOwned(i))
 					{
 						var success = DisableFeeding(i) == VirtualError.None;
@@ -104,7 +104,7 @@ namespace x360ce.App.DInput
 				{
 					if (ViGEmClient.Targets[i] == controller)
 					{
-						// Add forcefeedback value for processing.
+						// Add force feedback value for processing.
 						ViGEmClient.Feedbacks[i] = e;
 						break;
 					}

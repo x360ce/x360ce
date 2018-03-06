@@ -110,7 +110,7 @@ namespace x360ce.Engine
 
 		Guid GUID_Force;
 
-		public bool SetDeviceForces(Joystick device, IntPtr handle, PadSetting ps, Vibration v)
+		public bool SetDeviceForces(Joystick device, PadSetting ps, Vibration v)
 		{
 			// Return if force feedback actuators not found.
 			if (LeftParameters == null)
@@ -228,9 +228,9 @@ namespace x360ce.Engine
 				}
 			}
 
-			device.Unacquire();
-			device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
-			device.Acquire();
+			//device.Unacquire();
+			//device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+			//device.Acquire();
 
 			if (forceChanged)
 			{
@@ -238,6 +238,7 @@ namespace x360ce.Engine
 					LeftParameters.Parameters = LeftConstantForce;
 				else
 					LeftParameters.Parameters = LeftPeriodicForce;
+				// Device must be acquired in exclusive state before effect can be created.
 				LeftEffect = new Effect(device, GUID_Force, LeftParameters);
 				if (RightParameters != null)
 					LeftRestart = true;
@@ -261,7 +262,7 @@ namespace x360ce.Engine
 				rightFlags |= RightRestart ? EffectParameterFlags.Start : EffectParameterFlags.NoRestart;
 				RightEffect.SetParameters(RightParameters, rightFlags);
 			}
-			device.Unacquire();
+			//device.Unacquire();
 			// If combined then...
 			if (RightParameters == null)
 			{

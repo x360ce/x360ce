@@ -11,7 +11,7 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		void UpdateDiStates()
+		void UpdateDiStates(UserGame game)
 		{
 			// Get all mapped user instances.
 			var instanceGuids = SettingsManager.Settings.Items
@@ -27,7 +27,7 @@ namespace x360ce.App.DInput
 
 			for (int i = 0; i < userDevices.Count(); i++)
 			{
-				// Update direct input form and return actions (pressed buttons/dpads, turned axis/sliders).
+				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				var ud = userDevices[i];
 				JoystickState state = null;
 				// Allow if not testing or testing with option enabled.
@@ -41,13 +41,31 @@ namespace x360ce.App.DInput
 					{
 						try
 						{
-							device.Acquire();
+							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+							// If current mode must be virtual or exclusive mode is needed to get device into then...
+							if ((isVirtual && ud.CurrentMode != EmulationType.Virtual) || ud.DeviceObjects == null || ud.DeviceEffects == null)
+							{
+								ud.CurrentMode = EmulationType.Virtual;
+								// Reacquire device in exclusive mode.
+								device.Unacquire();
+								device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+								device.Acquire();
+							}
+							// if current mode must be library then...
+							else if (!isVirtual && ud.CurrentMode != EmulationType.Library)
+							{
+								ud.CurrentMode = EmulationType.Library;
+								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
+								device.Unacquire();
+								device.SetCooperativeLevel(deviceForm.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+								device.Acquire();
+							}
 							state = device.GetCurrentState();
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 								ud.DeviceObjects = AppHelper.GetDeviceObjects(device);
 							if (ud.DeviceEffects == null)
-								ud.DeviceEffects = AppHelper.GetDeviceEffects(device, deviceForm.Handle);
+								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 							// Get PAD index this device is mapped to.
 							var userIndex = SettingsManager.Settings.Items
 								.Where(x => x.MapTo > (int)MapTo.None)
@@ -74,7 +92,7 @@ namespace x360ce.App.DInput
 										{
 											ud.FFState = new Engine.ForceFeedbackState(ud);
 										}
-										ud.FFState.SetDeviceForces(ud.Device, deviceForm.Handle, ps, v);
+										ud.FFState.SetDeviceForces(ud.Device, ps, v);
 									}
 								}
 							}

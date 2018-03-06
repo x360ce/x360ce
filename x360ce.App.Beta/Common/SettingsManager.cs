@@ -124,7 +124,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Get settingsby file name and optionally filter by mapped to XInput controller.
+		/// Get settings by file name and optionally filter by mapped to XInput controller.
 		/// </summary>
 		public static List<Engine.Data.Setting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
@@ -246,7 +246,10 @@ namespace x360ce.App
 			}
 			// Get the description attribute
 			var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
-			var desc = (descAttr != null ? descAttr.Description : string.Empty);
+			var desc = descAttr != null ? descAttr.Description : string.Empty;
+			// Get the default value attribute
+			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
+			var dval = (string)(descAttr != null ? dvalAttr.Value : null);
 			// Display help inside yellow header.
 			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
 			control.MouseHover += control_MouseEnter;
@@ -256,8 +259,9 @@ namespace x360ce.App
 			item.IniSection = sectionName;
 			item.IniKey = keyName;
 			item.Control = control;
-			item.PropertyName = prop.Name;
 			item.MapTo = mapTo;
+			item.PropertyName = prop.Name;
+			item.DefaultValue = dval;
 			// Add to the map
 			Current.SettingsMap.Add(item);
 		}
@@ -349,36 +353,6 @@ namespace x360ce.App
 			return (T)prop.GetCustomAttributes(typeof(T), false).FirstOrDefault();
 		}
 
-		///// <summary>
-		///// Read settings from INI file into windows form controls.
-		///// </summary>
-		///// <param name="file">INI file containing settings.</param>
-		///// <param name="iniSection">Read settings from specified section only. Null - read from all sections.</param>
-		//public void ReadSettings(string file)
-		//{
-		//	var ini2 = new Ini(file);
-		//	var items = SettingsMap.ToArray();
-		//	foreach (var item in items)
-		//	{
-		//		string section = item.IniSection;
-		//		string key = item.IniKey;
-		//		// If this is PAD section.
-		//		var mapTo = (int)(item.MapTo);
-		//		if (mapTo > 0)
-		//		{
-		//			section = GetInstanceSection(item.MapTo);
-		//			// If destination section is empty because controller is not connected then skip.
-		//			if (string.IsNullOrEmpty(section)) continue;
-		//		}
-		//		var v = ini2.GetValue(section, key);
-		//		LoadSetting(item.Control, key, v);
-		//	}
-		//	loadCount++;
-		//	if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(ini2.File.Name, loadCount));
-		//	// Read XML too.
-		//	//SettingsFile.Current.Load();
-		//}
-
 		public void SetPadSetting(string padSectionName, DeviceInstance di)
 		{
 			var ini2 = new Ini(IniFileName);
@@ -417,35 +391,6 @@ namespace x360ce.App
 		}
 
 		#region Load Settings
-
-		///// <summary>
-		///// Load PAD settings from INI file to form.
-		///// </summary>
-		///// <param name="file">INI file name.</param>
-		///// <param name="iniSection">Source INI pad section.</param>
-		///// <param name="padIndex">Destination pad index.</param>
-		//public void LoadPadSettings(string file, string iniSection, int padIndex)
-		//{
-		//	var ini2 = new Ini(file);
-		//	var pad = string.Format("PAD{0}", padIndex + 1);
-		//	var paths = SettingsMap.Select(x => x.IniPath).ToArray();
-		//	foreach (string path in paths)
-		//	{
-		//		string section = path.Split('\\')[0];
-		//		if (section != pad) continue;
-		//		string key = path.Split('\\')[1];
-
-		//		Control control = SettingsMap.FirstOrDefault(x => x.IniPath == path).Control;
-		//		string dstPath = string.Format("{0}\\{1}", pad, key);
-		//		control = SettingsMap.FirstOrDefault(x => x.IniPath == dstPath).Control;
-
-
-		//		string v = ini2.GetValue(iniSection, key);
-		//		LoadSetting(control, key, v);
-		//	}
-		//	loadCount++;
-		//	if (ConfigLoaded != null) ConfigLoaded(this, new SettingEventArgs(ini2.File.Name, loadCount));
-		//}
 
 		/// <summary>
 		/// Read setting from INI file into windows form control.
@@ -486,7 +431,7 @@ namespace x360ce.App
 					}
 				}
 			}
-			// If Di menu strip attached.
+			// If DI menu strip attached.
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
@@ -578,7 +523,7 @@ namespace x360ce.App
 				else if (v1 is KeyValuePair) { v = ((KeyValuePair)v1).Value; }
 				else { v = System.Convert.ToInt32(v1).ToString(); }
 			}
-			// If di menu strip attached.
+			// If DI menu strip attached.
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
@@ -657,40 +602,6 @@ namespace x360ce.App
 			return v;
 		}
 
-		///// <summary>
-		///// Save setting from windows form control to current INI file.
-		///// </summary>
-		///// <param name="path">path of parameter (related to actual control)</param>
-		///// <param name="dstIniSection">if not null then section will be different inside INI file than specified in path</param>
-		//public bool SaveSetting(Ini ini, string path, bool single = false)
-		//{
-		//	var control = SettingsMap.First(x => x.IniPath == path).Control;
-		//	var v = GetSettingValue(control);
-		//	var item = SettingsMap.First(x => x.Control == control);
-		//	var section = path.Split('\\')[0];
-		//	string key = path.Split('\\')[1];
-		//	var padIndex = SettingName.GetPadIndex(path);
-		//	// If this is PAD section then
-		//	if (padIndex > -1)
-		//	{
-		//		section = GetInstanceSection(padIndex);
-		//		// If destination section is empty because controller is not connected then skip.
-		//		if (string.IsNullOrEmpty(section)) return false;
-		//	}
-		//	var oldValue = ini.GetValue(section, key);
-		//	var saved = false;
-		//	if (oldValue != v)
-		//	{
-		//		ini.SetValue(section, key, v);
-		//		saveCount++;
-		//		saved = true;
-		//		if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(IniFileName, saveCount));
-		//	}
-		//	// Flush XML too.
-		//	Save();
-		//	return saved;
-		//}
-
 		#endregion
 
 		static Guid GetInstanceGuid(MapTo mapTo)
@@ -711,29 +622,6 @@ namespace x360ce.App
 			// Save settings to unique Instance section.
 			return Current.GetInstanceSection(ig);
 		}
-
-		///// <summary>
-		///// Save pad settings.
-		///// </summary>
-		///// <param name="padIndex">Source PAD index.</param>
-		///// <param name="file">Destination INI file name.</param>
-		///// <param name="iniSection">Destination INI section to save.</param>
-		//public bool SavePadSettings(int padIndex, string file)
-		//{
-		//	var ini = new Ini(file);
-		//	var saved = false;
-		//	var pad = string.Format("PAD{0}", padIndex + 1);
-		//	var paths = SettingsMap.Select(x => x.IniPath).ToArray();
-		//	foreach (string path in paths)
-		//	{
-		//		string section = path.Split('\\')[0];
-		//		// If this is not PAD section then skip.
-		//		if (section != pad) continue;
-		//		var r = SaveSetting(ini, path);
-		//		if (r) saved = true;
-		//	}
-		//	return saved;
-		//}
 
 		public string GetInstanceSection(Guid instanceGuid)
 		{
@@ -782,65 +670,8 @@ namespace x360ce.App
 			return false;
 		}
 
-		///// <summary>
-		///// Check settings.
-		///// </summary>
-		///// <returns>True if settings changed.</returns>
-		//public bool CheckSettings(IList<DiDevice> diInstances)
-		//{
-		//	var updated = false;
-		//	var ini2 = new Ini(IniFileName);
-		//	for (int i = 0; i < 4; i++)
-		//	{
-		//		var pad = string.Format("PAD{0}", i + 1);
-		//		var section = "";
-		//		var di = diInstances[i].Instance;
-		//		// If direct Input instance is connected.
-		//		if (di != null)
-		//		{
-		//			var ig = di.InstanceGuid;
-		//			section = GetInstanceSection(ig);
-		//			// If INI file contain settings for this device then...
-		//			string sectionName = null;
-		//			if (ContainsInstanceSection(ig, IniFileName, out sectionName))
-		//			{
-		//				var diOld = diInstances[i].InstanceOld;
-		//				var samePosition = diOld != null && diOld.InstanceGuid.Equals(ig);
-		//				// Load settings.
-		//				if (!samePosition)
-		//				{
-		//					MainForm.Current.SuspendEvents();
-		//					LoadPadSettings(IniFileName, section, i);
-		//					MainForm.Current.ResumeEvents();
-		//				}
-		//			}
-		//			else
-		//			{
-		//				MainForm.Current.MainTabControl.SelectedIndex = i;
-		//				MainForm.Current.SuspendEvents();
-		//				ClearPadSettings(i);
-		//				MainForm.Current.ResumeEvents();
-		//				var f = new NewDeviceForm();
-		//				f.LoadData(di, i);
-		//				f.StartPosition = FormStartPosition.CenterParent;
-		//				var result = f.ShowDialog(MainForm.Current);
-		//				f.Dispose();
-		//				updated = (result == DialogResult.OK);
-		//			}
-		//		}
-		//		else
-		//		{
-		//			MainForm.Current.SuspendEvents();
-		//			ClearPadSettings(i);
-		//			MainForm.Current.ResumeEvents();
-		//		}
-		//		// Update Mappings.
-		//		ini2.SetValue(MappingsSection, pad, section);
-		//	}
-		//	return updated;
-		//}
-
 		#endregion // Instance Version
+
 		public void FillSearchParameterWithInstances(List<SearchParameter> sp)
 		{
 			// Select user devices as parameters to search.

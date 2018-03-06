@@ -95,7 +95,11 @@ namespace x360ce.App
 			return items.ToArray();
 		}
 
-		public static DeviceEffectItem[] GetDeviceEffects(Joystick device, IntPtr handle)
+
+		/// <summary>
+		/// Device must be acquired in exclusive mode to get effects.
+		/// </summary>
+		public static DeviceEffectItem[] GetDeviceEffects(Joystick device)
 		{
 			var items = new List<DeviceEffectItem>();
 			if (device == null)
@@ -106,16 +110,12 @@ namespace x360ce.App
 				return items.ToArray();
 			lock (Controller.XInputLock)
 			{
-				// Unload xinput.
+				// Unload XInput.
 				var isLoaded = Controller.IsLoaded;
 				if (isLoaded) Controller.FreeLibrary();
-				// Must reaquire device in exclusive mode to get effects.
-				device.Unacquire();
-				device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
 				IList<EffectInfo> effects = new List<EffectInfo>();
 				try
 				{
-					device.Acquire();
 					effects = device.GetEffects(EffectType.All);
 				}
 				catch (Exception)
@@ -130,9 +130,6 @@ namespace x360ce.App
 						DynamicParameters = eff.DynamicParameters,
 					});
 				}
-				// Reaquire device in non exclusive mode.
-				device.Unacquire();
-				device.SetCooperativeLevel(handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
 				// If XInput was loaded then...
 				if (isLoaded)
 				{
@@ -367,7 +364,7 @@ namespace x360ce.App
 			var m = "";
 			if (ex1 != null)
 			{
-				m += string.Format("Filename: {0}\r\n", ex1.Filename);
+				m += string.Format("FileName: {0}\r\n", ex1.Filename);
 				m += string.Format("Line: {0}\r\n", ex1.Line);
 			}
 			else if (ex2 != null)
