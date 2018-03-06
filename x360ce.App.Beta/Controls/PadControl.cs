@@ -834,10 +834,16 @@ namespace x360ce.App.Controls
 			var ud = GetCurrentDevice();
 			if (ud != null && ud.DiState != null)
 			{
-				var axis = ud.DiState.Axis;
-				var ps = GetCurrentPadSetting();
+				// Get current pad setting.
+				PadSetting ps = null;
+				var setting = GetSelectedSetting();
+				if (setting != null)
+					ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				if (ps == null)
+					ps = new PadSetting();
 				Map map;
 				// LeftThumbX
+				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				if (map != null && map.Index > 0)
 					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], _leftX, map.IsInverted, map.IsHalf);
