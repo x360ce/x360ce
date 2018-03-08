@@ -251,6 +251,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		public static object DeleteLock = new object();
+
+
+
+
 		public void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml)
 		{
 			var prefix = "FCE_" + ex.GetType().Name;
@@ -258,11 +263,15 @@ namespace JocysCom.ClassLibrary.Runtime
 			var di = new System.IO.DirectoryInfo(logsFolder);
 			if (di.Exists)
 			{
-				var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
-				if (maxFiles > 0 && files.Count() > 0 && files.Count() > maxFiles)
+				// Must wrap into lock so that process won't attempt to delete same file twice from different threads.
+				lock (DeleteLock)
 				{
-					// Remove oldest file.
-					files[0].Delete();
+					var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
+					if (maxFiles > 0 && files.Count() > 0 && files.Count() > maxFiles)
+					{
+						// Remove oldest file.
+						files[0].Delete();
+					}
 				}
 			}
 			else
@@ -270,8 +279,9 @@ namespace JocysCom.ClassLibrary.Runtime
 				di.Create();
 			}
 			//var fileTime = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
-			var fileTime = DateTime.Now;
+			var fileTime = HiResDateTime.Current.Now;
 			var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}.{3}", di.FullName, prefix, fileTime, ext);
+			var fi = new System.IO.FileInfo(fileName);
 			var content = writeAsHtml ? ExceptionInfo(ex, "") : ex.ToString();
 			System.IO.File.AppendAllText(fileName, content);
 		}

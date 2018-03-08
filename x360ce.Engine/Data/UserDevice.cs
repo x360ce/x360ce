@@ -133,11 +133,20 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public CustomDiState DiState;
 
-		[XmlIgnore]
+        [XmlIgnore]
+        public long DiStateTime;
+
+        [XmlIgnore]
+        public CustomDiState OldDiState;
+
+        [XmlIgnore]
+        public long OldDiStateTime;
+
+        [XmlIgnore]
 		public ForceFeedbackState FFState;
 
 		[XmlIgnore]
-		public EmulationType CurrentMode;
+		public bool? IsExclusiveMode;
 
 		[XmlIgnore]
 		public bool IsOnline

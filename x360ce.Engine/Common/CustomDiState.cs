@@ -209,7 +209,7 @@ namespace x360ce.Engine
 			Povs = state.PointOfViewControllers.ToArray();
 			// Fill 128 buttons.
 			Buttons = state.Buttons.ToArray();
-		}
+        }
 
 	}
 }
