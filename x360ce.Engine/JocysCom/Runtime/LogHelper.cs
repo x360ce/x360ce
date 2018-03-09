@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -169,7 +170,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// if exception is not empty then 
 			//if (!string.IsNullOrEmpty(ex.Message))
 			//{
-			var useHtml = ParseBool("ErrorHtmlException", true);
+			var useHtml = ParseBool("LogHelper_ErrorHtmlException", true);
 			if (useHtml)
 			{
 				AddException(ref s, ExceptionToString(ex, true, JocysCom.ClassLibrary.TraceFormat.Html));
@@ -251,39 +252,63 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		public static object DeleteLock = new object();
+		public static object WriteLock = new object();
 
-
-
+		// Use dictionary to prevent mass writings of exceptions into disk.
+		Dictionary<Type, DateTime> exeptionTimes = new Dictionary<Type, DateTime>();
+		Dictionary<Type, int> exeptionCount = new Dictionary<Type, int>();
 
 		public void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml)
 		{
-			var prefix = "FCE_" + ex.GetType().Name;
-			var ext = writeAsHtml ? "htm" : "txt";
-			var di = new System.IO.DirectoryInfo(logsFolder);
-			if (di.Exists)
+			// Must wrap into lock so that process won't attempt to delete/write same file twice from different threads.
+			lock (WriteLock)
 			{
-				// Must wrap into lock so that process won't attempt to delete same file twice from different threads.
-				lock (DeleteLock)
+				var n = DateTime.Now;
+				var type = ex.GetType();
+				if (exeptionTimes.ContainsKey(type))
 				{
+					// Increase counter.
+					exeptionCount[type] = exeptionCount[type] + 1;
+					// Do not allow write if not enough time passed.
+					if (n.Subtract(exeptionTimes[type]).Milliseconds < 500)
+						return;
+				}
+				else
+				{
+					exeptionTimes.Add(type, n);
+					exeptionCount.Add(type, 1);
+				}
+				var count = exeptionCount[type];
+				// Reset count and update last write time.
+				exeptionCount[type] = 0;
+				exeptionTimes[type] = n;
+				// Create file.
+				var prefix = "FCE_" + ex.GetType().Name;
+				var ext = writeAsHtml ? "htm" : "txt";
+				var di = new System.IO.DirectoryInfo(logsFolder);
+				if (di.Exists)
+				{
+
 					var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
 					if (maxFiles > 0 && files.Count() > 0 && files.Count() > maxFiles)
 					{
 						// Remove oldest file.
 						files[0].Delete();
 					}
+
 				}
+				else
+				{
+					di.Create();
+				}
+				//var fileTime = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
+				var fileTime = HiResDateTime.Current.Now;
+				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}{3}.{4}",
+					di.FullName, prefix, fileTime, count == 1 ? "" : "." + count.ToString(), ext);
+				var fi = new System.IO.FileInfo(fileName);
+				var content = writeAsHtml ? ExceptionInfo(ex, "") : ex.ToString();
+				System.IO.File.AppendAllText(fileName, content);
 			}
-			else
-			{
-				di.Create();
-			}
-			//var fileTime = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
-			var fileTime = HiResDateTime.Current.Now;
-			var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}.{3}", di.FullName, prefix, fileTime, ext);
-			var fi = new System.IO.FileInfo(fileName);
-			var content = writeAsHtml ? ExceptionInfo(ex, "") : ex.ToString();
-			System.IO.File.AppendAllText(fileName, content);
 		}
 
 		public string ExceptionInfo(Exception ex, string body)

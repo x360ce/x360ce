@@ -64,6 +64,24 @@ namespace x360ce.Engine.Data
             }
         }
 
+        [XmlIgnore]
+        public bool IsVirtual
+        {
+            get
+            {
+                return ((Engine.EmulationType)EmulationType).HasFlag(Engine.EmulationType.Virtual);
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsLibrary
+        {
+            get
+            {
+                return ((Engine.EmulationType)EmulationType).HasFlag(Engine.EmulationType.Library);
+            }
+        }
+
         //#region Do not serialize default values
 
         //bool notDefault<T>(T value, T defaultValue = default(T))

@@ -63,7 +63,6 @@ namespace Nefarius.ViGEm.Client
         public virtual void Disconnect()
         {
             var error = ViGEmClient.vigem_target_remove(Client.NativeHandle, NativeHandle);
-
             switch (error)
             {
                 case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:

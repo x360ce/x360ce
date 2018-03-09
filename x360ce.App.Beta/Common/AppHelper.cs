@@ -112,7 +112,10 @@ namespace x360ce.App
 			{
 				// Unload XInput.
 				var isLoaded = Controller.IsLoaded;
-				if (isLoaded) Controller.FreeLibrary();
+                if (isLoaded)
+                {
+                    Controller.FreeLibrary();
+                }
 				IList<EffectInfo> effects = new List<EffectInfo>();
 				try
 				{
@@ -135,7 +138,7 @@ namespace x360ce.App
 				{
 					Exception error;
 					Controller.ReLoadLibrary(Controller.LibraryName, out error);
-				}
+                }
 			}
 			return items.ToArray();
 		}
