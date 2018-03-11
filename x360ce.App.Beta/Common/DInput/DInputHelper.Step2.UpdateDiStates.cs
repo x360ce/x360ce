@@ -85,7 +85,6 @@ namespace x360ce.App.DInput
                                     .FirstOrDefault(x => x.MapTo == userIndex && x.InstanceGuid == ud.InstanceGuid);
                                 if (setting != null)
                                 {
-
                                     // Get pad setting attached to device.
                                     var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
                                     if (ps != null && ps.ForceEnable == "1")
