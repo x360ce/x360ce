@@ -149,23 +149,29 @@ namespace JocysCom.ClassLibrary.Runtime
 			PropertyInfo[] sourceItersectingProperties = GetItersectingProperties(source, dest);
 			foreach (PropertyInfo spi in sourceItersectingProperties)
 			{
-				if (IsKnownType(spi.PropertyType) && spi.CanWrite)
+				// Skip if can't read.
+				if (!spi.CanRead)
+					continue;
+				if (!IsKnownType(spi.PropertyType))
+					continue;
+				// Get destination type.
+				var dpi = destType.GetProperty(spi.Name, DefaultBindingFlags);
+				// Skip if can't write.
+				if (!dpi.CanWrite)
+					continue;
+				// Get source value.
+				var sValue = spi.GetValue(source, null);
+				var update = true;
+				// If can read destination.
+				if (dpi.CanRead)
 				{
-					var dpi = destType.GetProperty(spi.Name, DefaultBindingFlags);
-					if (dpi.CanWrite)
-					{
-						var sValue = spi.GetValue(source, null);
-						var update = true;
-						if (dpi.CanRead)
-						{
-							var dValue = spi.GetValue(dest, null);
-							// Update only if values are different.
-							update = !Equals(sValue, dValue);
-						}
-						if (update)
-							dpi.SetValue(dest, sValue, null);
-					}
+					// Get destination value.
+					var dValue = dpi.GetValue(dest, null);
+					// Update only if values are different.
+					update = !Equals(sValue, dValue);
 				}
+				if (update)
+					dpi.SetValue(dest, sValue, null);
 			}
 		}
 

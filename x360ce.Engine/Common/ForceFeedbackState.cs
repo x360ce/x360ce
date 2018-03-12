@@ -14,10 +14,10 @@ namespace x360ce.Engine
     {
         public ForceFeedbackState(UserDevice ud)
         {
-            LeftPeriodicForce = new PeriodicForce();
-            RightPeriodicForce = new PeriodicForce();
-            LeftConstantForce = new ConstantForce();
-            RightConstantForce = new ConstantForce();
+            PeriodicForceL = new PeriodicForce();
+            PeriodicForceR = new PeriodicForce();
+            ConstantForceL = new ConstantForce();
+            ConstantForceR = new ConstantForce();
             GUID_Force = EffectGuid.ConstantForce;
             // Find and assign actuators.
             var actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToList();
@@ -31,7 +31,7 @@ namespace x360ce.Engine
                 if (actuator == null)
                     actuator = actuators[0];
                 actuators.Remove(actuator);
-                LeftParameters = GetParameters(actuator.Offset);
+                paramsL = GetParameters(actuator.Offset);
             }
             // If actuator available then...
             if (actuators.Count > 0)
@@ -43,7 +43,7 @@ namespace x360ce.Engine
                 if (actuator == null)
                     actuator = actuators[0];
                 actuators.Remove(actuator);
-                RightParameters = GetParameters(actuator.Offset);
+                paramsR = GetParameters(actuator.Offset);
             }
         }
 
@@ -53,12 +53,7 @@ namespace x360ce.Engine
         EffectParameters GetParameters(int offset)
         {
             var p = new EffectParameters();
-            // Right-handed Cartesian direction:
-            // x: -1 = left,     1 = right,   0 - no direction
-            // y: -1 = backward, 1 = forward, 0 - no direction
-            // z: -1 = down,     1 = up,      0 - no direction
-            // Left motor.
-            p.SetAxes(new int[1] { offset }, new int[1] { 1 });
+            p.Axes = new int[1] { offset };
             p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectOffsets;
             p.StartDelay = 0;
             p.Duration = unchecked((int)INFINITE);
@@ -70,15 +65,15 @@ namespace x360ce.Engine
 
         // Left
 
-        EffectParameters LeftParameters;
-        public PeriodicForce LeftPeriodicForce;
-        public ConstantForce LeftConstantForce;
+        EffectParameters paramsL;
+        public PeriodicForce PeriodicForceL;
+        public ConstantForce ConstantForceL;
 
         // Right
 
-        EffectParameters RightParameters;
-        public PeriodicForce RightPeriodicForce;
-        public ConstantForce RightConstantForce;
+        EffectParameters paramsR;
+        public PeriodicForce PeriodicForceR;
+        public ConstantForce ConstantForceR;
 
         #region Force Feedback
 
@@ -100,39 +95,37 @@ namespace x360ce.Engine
 
         Guid GUID_Force;
 
+        public void StopDeviceForces(Joystick device)
+        {
+            for (int i = 0; i < device.CreatedEffects.Count; i++)
+            {
+                var effect = device.CreatedEffects[i];
+                if (effect.Status == EffectStatus.Playing)
+                    effect.Stop();
+            }
+        }
+
         public bool SetDeviceForces(Joystick device, PadSetting ps, Vibration v)
         {
             // Return if force feedback actuators not found.
-            if (LeftParameters == null)
+            if (paramsL == null)
                 return false;
 
-            bool forceChanged =
-                old_ForceType != ps.ForceType;
+            Effect effectL = null;
+            Effect effectR = null;
 
-            bool paramsChanged =
-                // Left motor parameters.
-                old_LeftPeriod != ps.LeftMotorPeriod ||
-                old_LeftDirection != ps.LeftMotorDirection ||
-                old_LeftStrength != ps.LeftMotorStrength ||
-                // Right motor parameters.
-                old_RightPeriod != ps.RightMotorPeriod ||
-                old_RightDirection != ps.RightMotorDirection ||
-                old_RightStrength != ps.RightMotorStrength ||
-                // Shared motor parameters.
-                old_OveralStrength != ps.ForceOverall;
+            // If device already have effects then...
+            if (device.CreatedEffects.Count > 0)
+                effectL = device.CreatedEffects[0];
+            if (device.CreatedEffects.Count > 1)
+                effectR = device.CreatedEffects[1];
 
-            bool speedChanged =
-                old_LeftMotorSpeed != v.LeftMotorSpeed ||
-                old_RightMotorSpeed != v.RightMotorSpeed;
-
-            // If nothing changed then return.
-            if (!forceChanged && !paramsChanged && !speedChanged)
-                return false;
+            // Effect type changed.
+            bool forceChanged = Changed(ref old_ForceType, ps.ForceType);
 
             if (forceChanged)
             {
                 // Update values.
-                old_ForceType = ps.ForceType;
                 var forceType = (ForceFeedBackType)TryParse(ps.ForceType);
                 // Forces for vibrating motors (Game pads).
                 // 0 - Constant. Good for vibrating motors.
@@ -145,60 +138,118 @@ namespace x360ce.Engine
                     case ForceFeedBackType.PeriodicSawtooth: GUID_Force = EffectGuid.SawtoothDown; break;
                     default: GUID_Force = EffectGuid.ConstantForce; break;
                 }
+                // Force change requries to dispose old effects.
+                // Stop old effects.
+                if (effectL != null)
+                {
+                    effectL.Stop();
+                    effectL.Dispose();
+                    effectL = null;
+                }
+                // Stop old effects.
+                if (effectR != null)
+                {
+                    effectR.Stop();
+                    effectR.Dispose();
+                    effectR = null;
+                }
             }
 
             // Tells which effect paramaters to modify.
             var flagsL = EffectParameterFlags.None;
             var flagsR = EffectParameterFlags.None;
 
-            if (paramsChanged)
+            // Direction changed.
+            // Right-handed Cartesian direction:
+            // x: -1 = left,     1 = right,   0 - no direction
+            // y: -1 = backward, 1 = forward, 0 - no direction
+            // z: -1 = down,     1 = up,      0 - no direction
+
+            var directionLChanged = Changed(ref old_LeftDirection, ps.LeftMotorDirection);
+            var directionRChanged = Changed(ref old_RightDirection, ps.RightMotorDirection);
+
+            // Direction needs to be updated when force or direction change.
+            if (forceChanged || directionLChanged)
             {
-                // Update values.
-                old_LeftPeriod = ps.LeftMotorPeriod;
-                old_LeftDirection = ps.LeftMotorDirection;
-                old_LeftStrength = ps.LeftMotorStrength;
-                old_RightPeriod = ps.RightMotorPeriod;
-                old_RightDirection = ps.RightMotorDirection;
-                old_RightStrength = ps.RightMotorStrength;
-                old_OveralStrength = ps.ForceOverall;
+                var directionL = TryParse(old_LeftDirection);
+                paramsL.Directions = new int[1] { directionL };
+                flagsL |= EffectParameterFlags.Direction;
+            }
 
-                old_LeftMotorSpeed = v.LeftMotorSpeed;
-                old_RightMotorSpeed = v.RightMotorSpeed;
+            // Direction needs to be updated when force or direction change.
+            if (forceChanged || directionRChanged)
+            {
+                var directionR = TryParse(old_RightDirection);
+                paramsR.Directions = new int[1] { directionR };
+                flagsR |= EffectParameterFlags.Direction;
+            }
 
-                // Right-handed Cartesian direction:
-                // x: -1 = left,     1 = right,   0 - no direction
-                // y: -1 = backward, 1 = forward, 0 - no direction
-                // z: -1 = down,     1 = up,      0 - no direction
+            var strengthChanged = Changed(ref old_OveralStrength, ps.ForceOverall);
+            var strengthLChanged = Changed(ref old_LeftStrength, ps.LeftMotorStrength);
+            var strengthRChanged = Changed(ref old_RightStrength, ps.RightMotorStrength);
+
+            if (forceChanged || strengthChanged || strengthLChanged)
+            {
                 int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
                 int leftGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetLeftMotorStrength());
-                int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
-
-                LeftParameters.Gain = leftGain;
+                paramsL.Gain = leftGain;
                 flagsL |= EffectParameterFlags.Gain;
-                //int leftDirection = TryParse(ps.LeftMotorDirection);
-                //LeftParameters.Directions = new int[1] { 1 }; // leftDirection;
-                if (RightParameters != null)
+            }
+
+            if (paramsR != null && (forceChanged || strengthChanged || strengthRChanged))
+            {
+                int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
+                int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
+                paramsR.Gain = rightGain;
+                flagsR |= EffectParameterFlags.Gain;
+            }
+
+            var periodLChanged = Changed(ref old_LeftPeriod, ps.LeftMotorPeriod);
+            var periodRChanged = Changed(ref old_RightPeriod, ps.RightMotorPeriod);
+
+            var speedLChanged = Changed(ref old_LeftMotorSpeed, v.LeftMotorSpeed);
+            var speedRChanged = Changed(ref old_RightMotorSpeed, v.RightMotorSpeed);
+
+            // Convert speed into magnitude/amplitude.
+            int leftMagnitudeAdjusted;
+            int rightMagnitudeAdjusted = 0;
+
+            int leftPeriod;
+            int rightPeriod = 0;
+
+            // If device have only one force feedback actuator (probably wheel).
+            var combine = paramsR == null;
+
+            // Get right values first for possible combine later.
+            if (forceChanged || periodLChanged || speedLChanged || combine)
+            {
+                rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
+                rightPeriod = TryParse(old_RightPeriod) * 1000;
+                if (paramsR != null)
                 {
-                    RightParameters.Gain = rightGain;
-                    flagsR |= EffectParameterFlags.Gain;
-                    //int rightDirection = TryParse(ps.RightMotorDirection);
-                    //RightParameters.Directions = new int[1] { 1 }; // // rightDirection
-                    // Update flags to indicate that gain changed.
+                    // Update force values.
+                    if (GUID_Force == EffectGuid.ConstantForce)
+                    {
+                        ConstantForceR.Magnitude = rightMagnitudeAdjusted;
+                    }
+                    else
+                    {
+                        PeriodicForceR.Magnitude = rightMagnitudeAdjusted;
+                        PeriodicForceR.Period = rightPeriod;
+                    }
+                    // Update flags to indicate that specific force parameters changed.
+                    flagsR |= EffectParameterFlags.TypeSpecificParameters;
                 }
             }
 
-            // Vibration speed changed will affect force magnitude and period when combined.
-            if (speedChanged)
+            // Calculate left later for possible combine.
+            if (forceChanged || periodLChanged || speedRChanged || combine)
             {
                 // Convert speed into magnitude/amplitude.
-                var leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, v.LeftMotorSpeed);
-                var rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, v.RightMotorSpeed);
-
-                int leftPeriod = TryParse(ps.LeftMotorPeriod) * 1000;
-                int rightPeriod = TryParse(ps.RightMotorPeriod) * 1000;
-
+                leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_LeftMotorSpeed);
+                leftPeriod = TryParse(old_LeftPeriod) * 1000;
                 // If device have only one force feedback actuator (probably wheel).
-                if (RightParameters == null)
+                if (combine)
                 {
                     // Forces must be combined.
                     var combinedMagnitudeAdjusted = Math.Max(leftMagnitudeAdjusted, rightMagnitudeAdjusted);
@@ -215,76 +266,51 @@ namespace x360ce.Engine
                     leftMagnitudeAdjusted = combinedMagnitudeAdjusted;
                     leftPeriod = combinedPeriod;
                 }
-
                 // Update force values.
                 if (GUID_Force == EffectGuid.ConstantForce)
                 {
-                    LeftConstantForce.Magnitude = leftMagnitudeAdjusted;
-                    RightConstantForce.Magnitude = rightMagnitudeAdjusted;
+                    ConstantForceL.Magnitude = leftMagnitudeAdjusted;
                 }
                 else
                 {
-                    LeftPeriodicForce.Magnitude = leftMagnitudeAdjusted;
-                    LeftPeriodicForce.Period = leftPeriod;
-                    RightPeriodicForce.Magnitude = rightMagnitudeAdjusted;
-                    RightPeriodicForce.Period = rightPeriod;
+                    PeriodicForceL.Magnitude = leftMagnitudeAdjusted;
+                    PeriodicForceL.Period = leftPeriod;
                 }
-                // Update flags to indicate that force properties changed.
+                // Update flags to indicate that specific force parameters changed.
                 flagsL |= EffectParameterFlags.TypeSpecificParameters;
-                flagsR |= EffectParameterFlags.TypeSpecificParameters;
             }
-
-            Effect effectL = null;
-            Effect effectR = null;
-
-            // If device already have effects then...
-            if (device.CreatedEffects.Count > 0)
-                effectL = device.CreatedEffects[0];
-            if (device.CreatedEffects.Count > 1)
-                effectR = device.CreatedEffects[1];
 
             // Recreate effects if force changed.
             if (forceChanged)
             {
-                // Stop old effects.
-                if (effectL != null)
-                {
-                    effectL.Stop();
-                    effectL.Dispose();
-                }
-                // Stop old effects.
-                if (effectR != null)
-                {
-                    effectR.Stop();
-                    effectR.Dispose();
-                }
                 // Update Left force
-                LeftParameters.Parameters = GUID_Force == EffectGuid.ConstantForce
-                    ? LeftConstantForce as TypeSpecificParameters : LeftPeriodicForce;
+                paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce
+                    ? ConstantForceL as TypeSpecificParameters : PeriodicForceL;
                 // Note: Device must be acquired in exclusive mode before effect can be created.
-                effectL = new Effect(device, GUID_Force, LeftParameters);
-                if (RightParameters != null)
+                effectL = new Effect(device, GUID_Force, paramsL);
+                if (paramsR != null)
                 {
                     // Update Right force
-                    RightParameters.Parameters = GUID_Force == EffectGuid.ConstantForce
-                        ? RightConstantForce as TypeSpecificParameters : RightPeriodicForce;
-                    effectR = new Effect(device, GUID_Force, RightParameters);
+                    paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
+                        ? ConstantForceR as TypeSpecificParameters : PeriodicForceR;
+                    effectR = new Effect(device, GUID_Force, paramsR);
                 }
             }
-
-            // Do not restart playing effect.
-            flagsL |= effectL.Status == EffectStatus.Playing
-                ? EffectParameterFlags.NoRestart : EffectParameterFlags.Start;
-            effectL.SetParameters(LeftParameters, flagsL);
-
-            if (RightParameters != null)
-            {
-                // Do not restart playing effect.
-                flagsR |= effectR.Status == EffectStatus.Playing
-                    ? EffectParameterFlags.NoRestart : EffectParameterFlags.Start;
-                effectR.SetParameters(RightParameters, flagsR);
-            }
+            if (flagsL != EffectParameterFlags.None)
+                SetParamaters(effectL, paramsL, flagsL);
+            if (flagsR != EffectParameterFlags.None)
+                SetParamaters(effectR, paramsR, flagsR);
             return true;
+        }
+
+        void SetParamaters(Effect effect, EffectParameters parameters, EffectParameterFlags flags)
+        {
+            if (parameters == null)
+                return;
+            // Do not restart playing effect.
+            flags |= effect.Status == EffectStatus.Playing
+                ? EffectParameterFlags.NoRestart : EffectParameterFlags.Start;
+            effect.SetParameters(parameters, flags);
         }
 
         int TryParse(string value)
@@ -292,6 +318,20 @@ namespace x360ce.Engine
             int i;
             int.TryParse(value, out i);
             return i;
+        }
+
+        bool Changed(ref string oldValue, string newValue)
+        {
+            var changed = oldValue != newValue;
+            oldValue = newValue;
+            return changed;
+        }
+
+        bool Changed(ref short oldValue, short newValue)
+        {
+            var changed = oldValue != newValue;
+            oldValue = newValue;
+            return changed;
         }
 
         #endregion

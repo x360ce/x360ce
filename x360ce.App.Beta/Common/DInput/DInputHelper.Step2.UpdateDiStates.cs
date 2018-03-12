@@ -77,8 +77,7 @@ namespace x360ce.App.DInput
                                 .Where(x => x.InstanceGuid == ud.InstanceGuid)
                                 .Select(x => x.MapTo).First();
 
-                            var force = feedbacks[userIndex - 1];
-                            if (hasForceFeedback && force != null)
+                            if (hasForceFeedback)
                             {
                                 // Get setting related to user device.
                                 var setting = SettingsManager.Settings.Items
@@ -87,18 +86,33 @@ namespace x360ce.App.DInput
                                 {
                                     // Get pad setting attached to device.
                                     var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-                                    if (ps != null && ps.ForceEnable == "1")
+                                    // If force is enabled then...
+                                    if (ps.ForceEnable == "1")
                                     {
-                                        var v = new Vibration();
-                                        v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
-                                        v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
-                                        if (ud.FFState == null)
+                                        // If force update supplied then...
+                                        var force = feedbacks[userIndex - 1];
+                                        if (force != null)
                                         {
-                                            ud.FFState = new Engine.ForceFeedbackState(ud);
+                                            if (ps != null && ps.ForceEnable == "1")
+                                            {
+                                                var v = new Vibration();
+                                                v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
+                                                v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
+                                                if (ud.FFState == null)
+                                                    ud.FFState = new Engine.ForceFeedbackState(ud);
+                                                ud.FFState.SetDeviceForces(ud.Device, ps, v);
+                                            }
                                         }
-                                        ud.FFState.SetDeviceForces(ud.Device, ps, v);
+                                    }
+                                    // If force state was created then...
+                                    else if (ud.FFState != null)
+                                    {
+                                        // Stop device forces.
+                                        ud.FFState.StopDeviceForces(ud.Device);
+                                        ud.FFState = null;
                                     }
                                 }
+
                             }
                         }
                         catch (Exception ex)
@@ -121,7 +135,7 @@ namespace x360ce.App.DInput
                 var newState = new CustomDiState(ud.JoState);
                 var newTime = watch.ElapsedTicks;
                 // Mouse needs special update.
-                if (ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
+                if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
                 {
                     var mouseState = new CustomDiState(ud.JoState);
                     if (ud.OldDiState == null)
