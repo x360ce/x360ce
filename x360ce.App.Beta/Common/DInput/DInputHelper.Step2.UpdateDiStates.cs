@@ -86,30 +86,39 @@ namespace x360ce.App.DInput
                                 {
                                     // Get pad setting attached to device.
                                     var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-                                    // If force is enabled then...
-                                    if (ps.ForceEnable == "1")
+                                    if (ps != null)
                                     {
-                                        // If force update supplied then...
-                                        var force = feedbacks[userIndex - 1];
-                                        if (force != null)
+                                        // If force is enabled then...
+                                        if (ps.ForceEnable == "1")
                                         {
-                                            if (ps != null && ps.ForceEnable == "1")
+                                            if (ud.FFState == null)
+                                                ud.FFState = new Engine.ForceFeedbackState(ud);
+                                            // If force update supplied then...
+                                            var force = feedbacks[userIndex - 1];
+                                            if (force != null || ud.FFState.Changed(ps))
                                             {
                                                 var v = new Vibration();
-                                                v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
-                                                v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
-                                                if (ud.FFState == null)
-                                                    ud.FFState = new Engine.ForceFeedbackState(ud);
+                                                if (force == null)
+                                                {
+                                                    v.LeftMotorSpeed = short.MinValue;
+                                                    v.RightMotorSpeed = short.MinValue;
+                                                }
+                                                else
+                                                {
+                                                    v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
+                                                    v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
+                                                }
                                                 ud.FFState.SetDeviceForces(ud.Device, ps, v);
+
                                             }
                                         }
-                                    }
-                                    // If force state was created then...
-                                    else if (ud.FFState != null)
-                                    {
-                                        // Stop device forces.
-                                        ud.FFState.StopDeviceForces(ud.Device);
-                                        ud.FFState = null;
+                                        // If force state was created then...
+                                        else if (ud.FFState != null)
+                                        {
+                                            // Stop device forces.
+                                            ud.FFState.StopDeviceForces(ud.Device);
+                                            ud.FFState = null;
+                                        }
                                     }
                                 }
 

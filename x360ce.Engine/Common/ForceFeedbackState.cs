@@ -155,6 +155,12 @@ namespace x360ce.Engine
                 }
             }
 
+            // If device already have effects then...
+            if (paramsL != null && device.CreatedEffects.Count < 1)
+                forceChanged = true;
+            if (paramsR != null && device.CreatedEffects.Count < 2)
+                forceChanged = true;
+
             // Tells which effect paramaters to modify.
             var flagsL = EffectParameterFlags.None;
             var flagsR = EffectParameterFlags.None;
@@ -177,7 +183,7 @@ namespace x360ce.Engine
             }
 
             // Direction needs to be updated when force or direction change.
-            if (forceChanged || directionRChanged)
+            if (paramsR != null && (forceChanged || directionRChanged))
             {
                 var directionR = TryParse(old_RightDirection);
                 paramsR.Directions = new int[1] { directionR };
@@ -333,6 +339,20 @@ namespace x360ce.Engine
             oldValue = newValue;
             return changed;
         }
+
+        public bool Changed(PadSetting ps)
+        {
+            return
+            old_ForceType != ps.ForceType ||
+            old_LeftPeriod != ps.LeftMotorPeriod ||
+            old_RightPeriod != ps.RightMotorPeriod ||
+            old_LeftStrength != ps.LeftMotorStrength ||
+            old_RightStrength != ps.RightMotorStrength ||
+            old_LeftDirection != ps.LeftMotorDirection ||
+           old_RightDirection != ps.RightMotorDirection ||
+           old_OveralStrength != ps.ForceOverall;
+        }
+
 
         #endregion
 
