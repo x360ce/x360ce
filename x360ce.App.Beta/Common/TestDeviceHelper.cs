@@ -149,7 +149,7 @@ namespace x360ce.App
             for (int i = 0; i < axisObjects.Count(); i++)
 			{
                 var ao = axisObjects[i];
-                var axisMask = CustomDiState.GetAxisMask()
+                //var axisMask = CustomDiState.GetAxisMask();
                 //
 
                 var isEven = i % 2 == 0;

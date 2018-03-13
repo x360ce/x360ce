@@ -14,7 +14,7 @@ namespace Nefarius.ViGEm.Client
 		public static ViGEmClient Client;
 		public static object ClientLock = new object();
 		public static Xbox360Controller[] Targets;
-		public static Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[] Feedbacks;
+		public static Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[] Feedbacks = new Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[4];
 		public static bool[] owned = new bool[4];
 
 		public ViGEmClient(out VIGEM_ERROR error)
@@ -22,7 +22,6 @@ namespace Nefarius.ViGEm.Client
 			Init_x360ce();
 			NativeHandle = vigem_alloc();
 			error = vigem_connect(NativeHandle);
-			Feedbacks = new Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[4];
 		}
 
 		static VIGEM_ERROR? PendingError;

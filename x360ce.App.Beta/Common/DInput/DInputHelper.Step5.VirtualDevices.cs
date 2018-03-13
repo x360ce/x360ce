@@ -80,7 +80,7 @@ namespace x360ce.App.DInput
 		{
 			lock (FeedbackLock)
 			{
-				var list = ViGEmClient.Feedbacks.ToArray();
+                var list = ViGEmClient.Feedbacks.ToArray();
 				for (int i = 0; i < 4; i++)
 				{
 					ViGEmClient.Feedbacks[i] = null;

@@ -25,25 +25,23 @@ namespace x360ce.Engine
             if (actuators.Count > 0)
             {
                 // Try to find left actuator.
-                var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
+                actuatorL = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
                 //var actuator = actuators[0];
                 // If default actuator not found then take default.
-                if (actuator == null)
-                    actuator = actuators[0];
-                actuators.Remove(actuator);
-                paramsL = GetParameters(actuator.Offset);
+                if (actuatorL == null)
+                    actuatorL = actuators[0];
+                actuators.Remove(actuatorL);
             }
             // If actuator available then...
             if (actuators.Count > 0)
             {
                 // Try to find right actuator.
-                var actuator = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
+                actuatorR = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
                 //var actuator = actuators[0];
                 // If default actuator not found then take default.
-                if (actuator == null)
-                    actuator = actuators[0];
-                actuators.Remove(actuator);
-                paramsR = GetParameters(actuator.Offset);
+                if (actuatorR == null)
+                    actuatorR = actuators[0];
+                actuators.Remove(actuatorR);
             }
         }
 
@@ -54,6 +52,7 @@ namespace x360ce.Engine
         {
             var p = new EffectParameters();
             p.Axes = new int[1] { offset };
+            p.Envelope = new Envelope();
             p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectOffsets;
             p.StartDelay = 0;
             p.Duration = unchecked((int)INFINITE);
@@ -65,12 +64,14 @@ namespace x360ce.Engine
 
         // Left
 
+        DeviceObjectItem actuatorL;
         EffectParameters paramsL;
         public PeriodicForce PeriodicForceL;
         public ConstantForce ConstantForceL;
 
         // Right
 
+        DeviceObjectItem actuatorR;
         EffectParameters paramsR;
         public PeriodicForce PeriodicForceR;
         public ConstantForce ConstantForceR;
@@ -108,7 +109,7 @@ namespace x360ce.Engine
         public bool SetDeviceForces(Joystick device, PadSetting ps, Vibration v)
         {
             // Return if force feedback actuators not found.
-            if (paramsL == null)
+            if (actuatorL == null)
                 return false;
 
             Effect effectL = null;
@@ -155,7 +156,7 @@ namespace x360ce.Engine
                 }
             }
 
-            // If device already have effects then...
+            // If device already do not have effects then.
             if (paramsL != null && device.CreatedEffects.Count < 1)
                 forceChanged = true;
             if (paramsR != null && device.CreatedEffects.Count < 2)
@@ -164,6 +165,20 @@ namespace x360ce.Engine
             // Tells which effect paramaters to modify.
             var flagsL = EffectParameterFlags.None;
             var flagsR = EffectParameterFlags.None;
+
+            if (forceChanged)
+            {
+                if (actuatorL != null)
+                {
+                    paramsL = GetParameters(actuatorL.Offset);
+                    flagsL |= EffectParameterFlags.Axes;
+                }
+                if (actuatorR != null)
+                {
+                    paramsR = GetParameters(actuatorR.Offset);
+                    flagsR |= EffectParameterFlags.Axes;
+                }
+            }
 
             // Direction changed.
             // Right-handed Cartesian direction:
@@ -183,7 +198,7 @@ namespace x360ce.Engine
             }
 
             // Direction needs to be updated when force or direction change.
-            if (paramsR != null && (forceChanged || directionRChanged))
+            if (actuatorR != null && (forceChanged || directionRChanged))
             {
                 var directionR = TryParse(old_RightDirection);
                 paramsR.Directions = new int[1] { directionR };
@@ -202,7 +217,7 @@ namespace x360ce.Engine
                 flagsL |= EffectParameterFlags.Gain;
             }
 
-            if (paramsR != null && (forceChanged || strengthChanged || strengthRChanged))
+            if (actuatorR != null && (forceChanged || strengthChanged || strengthRChanged))
             {
                 int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
                 int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
@@ -224,14 +239,14 @@ namespace x360ce.Engine
             int rightPeriod = 0;
 
             // If device have only one force feedback actuator (probably wheel).
-            var combine = paramsR == null;
+            var combine = actuatorR == null;
 
             // Get right values first for possible combine later.
             if (forceChanged || periodLChanged || speedLChanged || combine)
             {
                 rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
                 rightPeriod = TryParse(old_RightPeriod) * 1000;
-                if (paramsR != null)
+                if (actuatorR != null)
                 {
                     // Update force values.
                     if (GUID_Force == EffectGuid.ConstantForce)
@@ -293,17 +308,38 @@ namespace x360ce.Engine
                 paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce
                     ? ConstantForceL as TypeSpecificParameters : PeriodicForceL;
                 // Note: Device must be acquired in exclusive mode before effect can be created.
-                effectL = new Effect(device, GUID_Force, paramsL);
-                if (paramsR != null)
+                try
+                {
+                    effectL = new Effect(device, GUID_Force, paramsL);
+                }
+                catch (Exception ex)
+                {
+                }
+                if (actuatorR != null)
                 {
                     // Update Right force
                     paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
                         ? ConstantForceR as TypeSpecificParameters : PeriodicForceR;
-                    effectR = new Effect(device, GUID_Force, paramsR);
+                    try
+                    {
+                        effectR = new Effect(device, GUID_Force, paramsR);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
                 }
             }
             if (flagsL != EffectParameterFlags.None)
-                SetParamaters(effectL, paramsL, flagsL);
+            {
+                try
+                {
+                    SetParamaters(effectL, paramsL, flagsL);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
             if (flagsR != EffectParameterFlags.None)
                 SetParamaters(effectR, paramsR, flagsR);
             return true;
