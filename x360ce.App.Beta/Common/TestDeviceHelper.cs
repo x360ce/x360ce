@@ -29,22 +29,22 @@ namespace x360ce.App
 		public static DeviceObjectItem[] GetDeviceObjects()
 		{
 			var list = new List<DeviceObjectItem>();
-			list.Add(new DeviceObjectItem(4, ObjectGuid.XAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 0, "X Axis"));
-			list.Add(new DeviceObjectItem(0, ObjectGuid.YAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 1, "Y Axis"));
-			list.Add(new DeviceObjectItem(16, ObjectGuid.ZAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis"));
-			list.Add(new DeviceObjectItem(12, ObjectGuid.RxAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 3, "X Rotation"));
-			list.Add(new DeviceObjectItem(8, ObjectGuid.RyAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 4, "Y Rotation"));
-			list.Add(new DeviceObjectItem(24, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 0, "Button 0"));
-			list.Add(new DeviceObjectItem(25, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 1, "Button 1"));
-			list.Add(new DeviceObjectItem(26, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 2, "Button 2"));
-			list.Add(new DeviceObjectItem(27, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 3, "Button 3"));
-			list.Add(new DeviceObjectItem(28, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 4, "Button 4"));
-			list.Add(new DeviceObjectItem(29, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 5, "Button 5"));
-			list.Add(new DeviceObjectItem(30, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 6, "Button 6"));
-			list.Add(new DeviceObjectItem(31, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 7, "Button 7"));
-			list.Add(new DeviceObjectItem(32, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 8, "Button 8"));
-			list.Add(new DeviceObjectItem(33, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 9, "Button 9"));
-			list.Add(new DeviceObjectItem(20, ObjectGuid.PovController, 0, DeviceObjectTypeFlags.PointOfViewController, 0, "Hat Switch"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.X, ObjectGuid.XAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 0, "X Axis"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Y, ObjectGuid.YAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 1, "Y Axis"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Z, ObjectGuid.ZAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationY, ObjectGuid.RxAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 3, "X Rotation"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationX, ObjectGuid.RyAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 4, "Y Rotation"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons0, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 0, "Button 0"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons1, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 1, "Button 1"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons2, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 2, "Button 2"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons3, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 3, "Button 3"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons4, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 4, "Button 4"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons5, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 5, "Button 5"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons6, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 6, "Button 6"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons7, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 7, "Button 7"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons8, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 8, "Button 8"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons9, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 9, "Button 9"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.PointOfViewControllers0, ObjectGuid.PovController, 0, DeviceObjectTypeFlags.PointOfViewController, 0, "Hat Switch"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 0, "Collection 0 - Game Pad"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 1, "Collection 1"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 2, "Collection 2"));
@@ -143,9 +143,16 @@ namespace x360ce.App
 
 			// Set Axis.
 			var axis = CustomDiState.GetAxisFromState(state);
-			for (int i = 0; i < ud.CapAxeCount; i++)
+            // Get information about axis.
+            var axisObjects = ud.DeviceObjects
+                .Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis) || x.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis)).ToArray();
+            for (int i = 0; i < axisObjects.Count(); i++)
 			{
-				var isEven = i % 2 == 0;
+                var ao = axisObjects[i];
+                var axisMask = CustomDiState.GetAxisMask()
+                //
+
+                var isEven = i % 2 == 0;
 				var position = isEven
 					// Default position is in the center.
 					? ushort.MaxValue - short.MaxValue
@@ -176,9 +183,10 @@ namespace x360ce.App
 				axis[i] = position;
 			}
 			CustomDiState.SetStateFromAxis(state, axis);
-			// Set sliders.
-			var sliders = CustomDiState.GetSlidersFromState(state);
-			for (int i = 0; i < sliders.Length; i++)
+            // Get sliders array.
+            var sliders = CustomDiState.GetSlidersFromState(state);
+            // Set sliders.
+            for (int i = 0; i < sliders.Length; i++)
 			{
 				var isEven = i % 2 == 0;
 				var position = isEven

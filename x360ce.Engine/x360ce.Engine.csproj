@@ -139,6 +139,7 @@
     <Compile Include="Common\EngineHelper.cs" />
     <Compile Include="Common\ForceFeedbackState.cs" />
     <Compile Include="Common\GameDatabaseManager.cs" />
+    <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />
     <Compile Include="Common\IDateTime.cs" />
     <Compile Include="Common\IDisplayName.cs" />
