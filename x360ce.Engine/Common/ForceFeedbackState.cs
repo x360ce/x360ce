@@ -21,6 +21,7 @@ namespace x360ce.Engine
             GUID_Force = EffectGuid.ConstantForce;
             // Find and assign actuators.
             var actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToList();
+
             // If actuator available then...
             if (actuators.Count > 0)
             {
@@ -48,12 +49,11 @@ namespace x360ce.Engine
         const uint INFINITE = 0xFFFFFFFF;
         const uint DIEB_NOTRIGGER = 0xFFFFFFFF;
 
-        EffectParameters GetParameters(int offset)
+        EffectParameters GetParameters(int objectId)
         {
             var p = new EffectParameters();
-            p.Axes = new int[1] { offset };
-            p.Envelope = new Envelope();
-            p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectOffsets;
+            p.Axes = new int[1] { objectId };
+            p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectIds;
             p.StartDelay = 0;
             p.Duration = unchecked((int)INFINITE);
             p.SamplePeriod = 0;
@@ -170,12 +170,12 @@ namespace x360ce.Engine
             {
                 if (actuatorL != null)
                 {
-                    paramsL = GetParameters(actuatorL.Offset);
+                    paramsL = GetParameters(actuatorL.ObjectId);
                     flagsL |= EffectParameterFlags.Axes;
                 }
                 if (actuatorR != null)
                 {
-                    paramsR = GetParameters(actuatorR.Offset);
+                    paramsR = GetParameters(actuatorR.ObjectId);
                     flagsR |= EffectParameterFlags.Axes;
                 }
             }
@@ -242,7 +242,7 @@ namespace x360ce.Engine
             var combine = actuatorR == null;
 
             // Get right values first for possible combine later.
-            if (forceChanged || periodLChanged || speedLChanged || combine)
+            if (forceChanged || periodRChanged || speedRChanged || combine)
             {
                 rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
                 rightPeriod = TryParse(old_RightPeriod) * 1000;
@@ -264,7 +264,7 @@ namespace x360ce.Engine
             }
 
             // Calculate left later for possible combine.
-            if (forceChanged || periodLChanged || speedRChanged || combine)
+            if (forceChanged || periodLChanged || speedLChanged || combine)
             {
                 // Convert speed into magnitude/amplitude.
                 leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_LeftMotorSpeed);

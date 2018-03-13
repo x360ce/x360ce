@@ -76,15 +76,17 @@ namespace x360ce.App
 			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
 			foreach (var o in objects)
 			{
-				var item = new DeviceObjectItem()
-				{
-					Name = o.Name,
-					Offset = o.Offset,
-					OffsetType = device.Information.Type,
-					Aspect = o.Aspect,
-					Flags = o.ObjectId.Flags,
-					Instance = o.ObjectId.InstanceNumber,
+                var item = new DeviceObjectItem()
+                {
+                    Name = o.Name,
+                    Offset = o.Offset,
+                    OffsetType = device.Information.Type,
+                    Aspect = o.Aspect,
+                    Flags = o.ObjectId.Flags,
+                    ObjectId = (int)o.ObjectId,
+                    Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
+
 				};
 				items.Add(item);
 			}

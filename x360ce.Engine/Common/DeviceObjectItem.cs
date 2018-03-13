@@ -24,7 +24,8 @@ namespace x360ce.Engine
 
 		public string Name { get; set; }
 		public int Offset { get; set; }
-		public int Instance { get; set; }
+        public int ObjectId { get; set; }
+        public int Instance { get; set; }
 		public ObjectAspect Aspect { get; set; }
 		public DeviceObjectTypeFlags Flags { get; set; }
 		public Guid Type { get; set; }
