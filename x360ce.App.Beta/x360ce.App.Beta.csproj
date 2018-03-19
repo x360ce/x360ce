@@ -205,15 +205,8 @@
     <Compile Include="Common\TaskName.cs" />
     <Compile Include="Common\TestDeviceHelper.cs" />
     <Compile Include="Common\Vendor.cs" />
-    <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
-    <Compile Include="Controls\IssuesUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\IssuesUserControl.Designer.cs">
-      <DependentUpon>IssuesUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -391,7 +384,6 @@
     <Compile Include="Issues\DllFileIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\GdbFileClass.cs" />
-    <Compile Include="Issues\IssueSeverity.cs" />
     <Compile Include="Issues\LeakDetectorIssue.cs" />
     <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Issues\IniFileIssue.cs" />
@@ -421,9 +413,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\IssuesUserControl.resx">
-      <DependentUpon>IssuesUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogUserControl.resx">
       <DependentUpon>LogUserControl.cs</DependentUpon>

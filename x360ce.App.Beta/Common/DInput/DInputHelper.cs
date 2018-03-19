@@ -207,6 +207,7 @@ namespace x360ce.App.DInput
             {
                 Stop();
                 UnInitDeviceDetector();
+                TimerSemaphore.Dispose();
                 if (Manager != null)
                 {
                     Manager.Dispose();

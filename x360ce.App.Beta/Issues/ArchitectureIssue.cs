@@ -6,10 +6,11 @@ using x360ce.Engine;
 using System.Linq;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
+using JocysCom.ClassLibrary.Controls.IssueControl;
 
 namespace x360ce.App.Issues
 {
-	public class ArchitectureIssue : WarningItem
+	public class ArchitectureIssue : IssueItem
 	{
 		public ArchitectureIssue() : base()
 		{
@@ -86,7 +87,6 @@ namespace x360ce.App.Issues
 			{
 				EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip");
 			}
-			RaiseFixApplied();
 		}
 
 	}

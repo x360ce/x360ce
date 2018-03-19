@@ -1,11 +1,12 @@
-﻿using Microsoft.Win32;
+﻿using JocysCom.ClassLibrary.Controls.IssueControl;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
-	public class LeakDetectorIssue : WarningItem
+	public class LeakDetectorIssue : IssueItem
 	{
 		public LeakDetectorIssue() : base()
 		{
@@ -62,7 +63,6 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			EngineHelper.OpenUrl("https://vld.codeplex.com");
-			RaiseFixApplied();
 		}
 
 	}

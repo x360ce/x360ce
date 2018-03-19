@@ -43,7 +43,7 @@ namespace x360ce.App
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
 			this.IssuesTabPage = new System.Windows.Forms.TabPage();
-			this.IssuesPanel = new x360ce.App.Controls.IssuesUserControl();
+			this.IssuesPanel = new JocysCom.ClassLibrary.Controls.IssueControl.IssuesUserControl();
 			this.BuletImageList = new System.Windows.Forms.ImageList(this.components);
 			this.MainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.StatusTimerLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -721,7 +721,7 @@ namespace x360ce.App
 		private ToolStripButton LibraryButton;
 		private ToolStripLabel toolStripLabel1;
 		private TabPage IssuesTabPage;
-		private Controls.IssuesUserControl IssuesPanel;
+		private JocysCom.ClassLibrary.Controls.IssueControl.IssuesUserControl IssuesPanel;
 		private ToolStripButton TestButton;
 	}
 }

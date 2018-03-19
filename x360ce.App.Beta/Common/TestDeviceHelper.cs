@@ -100,7 +100,7 @@ namespace x360ce.App
 				watch.Restart();
 				elapsed = watch.Elapsed;
 			}
-			// Aquire values.
+			// Acquire values.
 			var ts = (int)elapsed.TotalSeconds;
 			var tm = (int)elapsed.TotalMilliseconds;
 			var state = new JoystickState();

@@ -203,6 +203,14 @@
     <Compile Include="JocysCom\Controls\InfoForm.Designer.cs">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\IssuesControl\IssueItem.cs" />
+    <Compile Include="JocysCom\Controls\IssuesControl\IssueSeverity.cs" />
+    <Compile Include="JocysCom\Controls\IssuesControl\IssuesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Controls\IssuesControl\IssuesUserControl.Designer.cs">
+      <DependentUpon>IssuesUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
@@ -407,6 +415,9 @@
   <ItemGroup>
     <EmbeddedResource Include="JocysCom\Controls\InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JocysCom\Controls\IssuesControl\IssuesUserControl.resx">
+      <DependentUpon>IssuesUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>

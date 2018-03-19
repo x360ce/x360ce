@@ -15,6 +15,7 @@ using x360ce.Engine.Data;
 using System.Text;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
+using x360ce.App.Issues;
 
 namespace x360ce.App
 {
@@ -1055,7 +1056,38 @@ namespace x360ce.App
         {
             lock (issuesPanelLock)
             {
+                IssuesPanel.AddIssues(
+                    new ExeFileIssue(),
+                    new DirectXIssue(),
+                    new LeakDetectorIssue(),
+                    new MdkIssue(),
+                    new ArchitectureIssue(),
+                    new GdbFileIssue(),
+                    new IniFileIssue(),
+                    new IniFileIssue(),
+                    new DllFileIssue(),
+                    new VirtualDeviceDriverIssue()
+                );
+                IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
+                IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
                 IssuesPanel.CheckTimer.Start();
+            }
+        }
+
+        bool IssuesPanel_IsSuspended()
+        {
+            var o = SettingsManager.Options;
+            var allow = FormEventsEnabled && (!o.TestEnabled || o.TestCheckIssues);
+            return !allow;
+        }
+
+        private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
+        {
+            // If check completed without issued then...
+            if (!update2Enabled.HasValue && !IssuesPanel.HasIssues)
+            {
+                // Enabled update 2 step.
+                update2Enabled = true;
             }
         }
 

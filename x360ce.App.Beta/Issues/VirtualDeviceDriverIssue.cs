@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using JocysCom.ClassLibrary.Controls.IssueControl;
+using System.Linq;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
-	class VirtualDeviceDriverIssue : WarningItem
+	class VirtualDeviceDriverIssue : IssueItem
 	{
 		public VirtualDeviceDriverIssue() : base()
 		{
@@ -29,7 +30,6 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			MainForm.Current.DHelper.CheckInstallVirtualDriver();
-			RaiseFixApplied();
 		}
 
 	}

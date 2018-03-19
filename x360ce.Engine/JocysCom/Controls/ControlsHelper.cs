@@ -7,12 +7,27 @@ using System.Linq;
 using System.Drawing;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Controls
 {
 	public partial class ControlsHelper
 	{
 		private const int WM_SETREDRAW = 0x000B;
+
+		internal class NativeMethods
+		{
+			/// <summary>
+			/// Retrieves a handle to the window that contains the specified point. 
+			/// </summary>
+			/// <param name="Point">The point to be checked. </param>
+			/// <returns>
+			/// The return value is a handle to the window that contains the point.
+			/// If no window exists at the given point, the return value is NULL.
+			/// If the point is over a static text control, the return value is a handle to the window under the static text control. </returns>
+			[DllImport("user32.dll", SetLastError = true)]
+			public static extern IntPtr WindowFromPoint(Point point);
+		}
 
 		public static void SuspendDrawing(Control control)
 		{
@@ -73,7 +88,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Get list of primary keys of items selected in the grid.
 		/// </summary>
 		/// <typeparam name="T">Type of Primary key.</typeparam>
-		/// <param name="grid">Grid for geting selection</param>
+		/// <param name="grid">Grid for getting selection</param>
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
 		{
@@ -212,7 +227,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var pointsToCheck = GetPoints(control);
 			foreach (var p in pointsToCheck)
 			{
-				var hwnd = JocysCom.ClassLibrary.Win32.NativeMethods.WindowFromPoint(p);
+				var hwnd = NativeMethods.WindowFromPoint(p);
 				var other = Control.FromChildHandle(hwnd);
 				if (other == null) continue;
 				if (GetAll(control, null, true).Contains(other)) return true;

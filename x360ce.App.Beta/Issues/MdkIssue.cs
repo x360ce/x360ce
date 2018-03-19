@@ -2,10 +2,11 @@
 using Microsoft.Win32;
 using System.Linq;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.IssueControl;
 
 namespace x360ce.App.Issues
 {
-	public class MdkIssue : WarningItem
+	public class MdkIssue : IssueItem
 	{
 		public MdkIssue() : base()
 		{
@@ -51,7 +52,6 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			EngineHelper.OpenUrl("https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx");
-			RaiseFixApplied();
 		}
 
 	}

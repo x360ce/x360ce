@@ -4,10 +4,11 @@ using System.Linq;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
+using JocysCom.ClassLibrary.Controls.IssueControl;
 
 namespace x360ce.App.Issues
 {
-	public class DllFileIssue : WarningItem
+	public class DllFileIssue : IssueItem
 	{
 		public DllFileIssue() : base()
 		{
@@ -84,7 +85,6 @@ namespace x360ce.App.Issues
 					: file.Name;
 				AppHelper.WriteFile(resourceName, fileName);
 			}
-			RaiseFixApplied();
 		}
 
 	}

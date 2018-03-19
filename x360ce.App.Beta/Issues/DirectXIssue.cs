@@ -2,11 +2,12 @@
 using Microsoft.Win32;
 using System.Linq;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls.IssueControl;
 
 namespace x360ce.App.Issues
 {
-	public class DirectXIssue : WarningItem
-	{
+	public class DirectXIssue : IssueItem
+    {
 		public DirectXIssue() : base()
 		{
 			Name = "DirectX";
@@ -45,7 +46,6 @@ namespace x360ce.App.Issues
 		public override void Fix()
 		{
 			EngineHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=8109");
-			RaiseFixApplied();
 		}
 
 	}

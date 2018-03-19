@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Reflection;
-using Microsoft.Win32;
-using x360ce.Engine;
 using System.IO;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
+using JocysCom.ClassLibrary.Controls.IssueControl;
 
 namespace x360ce.App.Issues
 {
-	public class ExeFileIssue : WarningItem
+	public class ExeFileIssue : IssueItem
 	{
 		public ExeFileIssue() : base()
 		{
@@ -54,7 +52,6 @@ namespace x360ce.App.Issues
 				//Close this instance because we have an elevated instance
 				Application.Exit();
 			}
-			RaiseFixApplied();
 		}
 
 	}

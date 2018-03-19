@@ -133,11 +133,12 @@ namespace x360ce.App.DInput
                     // If this is test device then...
                     else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
                     {
-                        state = TestDeviceHelper.GetCurrentState(ud);
                         // Fill device objects.
                         if (ud.DeviceObjects == null)
                             ud.DeviceObjects = TestDeviceHelper.GetDeviceObjects();
-                        ud.DeviceEffects = new DeviceEffectItem[0];
+                        if (ud.DeviceEffects == null)
+                            ud.DeviceEffects = new DeviceEffectItem[0];
+                        state = TestDeviceHelper.GetCurrentState(ud);
                     }
                 }
                 ud.JoState = state ?? new JoystickState();
