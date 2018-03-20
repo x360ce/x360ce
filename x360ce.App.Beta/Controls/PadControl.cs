@@ -62,9 +62,11 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public void UpdateGetXInputStatesWithNoEvents()
+        object GetXInputStatesCheckBoxLock = new object();
+
+        public void UpdateGetXInputStatesWithNoEvents()
 		{
-			lock (GetXInputStatesCheckBox)
+			lock (GetXInputStatesCheckBoxLock)
 			{
 				// Disable events.
 				GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
@@ -1181,6 +1183,7 @@ namespace x360ce.App.Controls
 				markB.Dispose();
 				markC.Dispose();
 				components.Dispose();
+                _recorder.Dispose();
 			}
 			base.Dispose(disposing);
 		}

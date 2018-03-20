@@ -18,7 +18,7 @@ namespace Nefarius.ViGEm.Client.Targets
         /// <param name="client">The <see cref="T:Nefarius.ViGEm.Client.ViGEmClient" /> this device is attached to.</param>
         public Xbox360Controller(ViGEmClient client) : base(client)
         {
-            NativeHandle = ViGEmClient.vigem_target_x360_alloc();
+            NativeHandle = ViGEmClient.NativeMethods.vigem_target_x360_alloc();
         }
 
         /// <inheritdoc />
@@ -54,7 +54,7 @@ namespace Nefarius.ViGEm.Client.Targets
                 sThumbRY = report.RightThumbY
             };
 
-            var error = ViGEmClient.vigem_target_x360_update(Client.NativeHandle, NativeHandle, submit);
+            var error = ViGEmClient.NativeMethods.vigem_target_x360_update(Client.NativeHandle, NativeHandle, submit);
 
             switch (error)
             {
@@ -74,7 +74,7 @@ namespace Nefarius.ViGEm.Client.Targets
             _notificationCallback = (client, target, largeMotor, smallMotor, number) => FeedbackReceived?.Invoke(this,
                 new Xbox360FeedbackReceivedEventArgs(largeMotor, smallMotor, number));
 
-            var error = ViGEmClient.vigem_target_x360_register_notification(Client.NativeHandle, NativeHandle,
+            var error = ViGEmClient.NativeMethods.vigem_target_x360_register_notification(Client.NativeHandle, NativeHandle,
                 _notificationCallback);
 
             switch (error)
@@ -88,7 +88,7 @@ namespace Nefarius.ViGEm.Client.Targets
 
         public override void Disconnect()
         {
-            ViGEmClient.vigem_target_x360_unregister_notification(NativeHandle);
+            ViGEmClient.NativeMethods.vigem_target_x360_unregister_notification(NativeHandle);
 
             base.Disconnect();
         }

@@ -1,4 +1,4 @@
-﻿namespace JocysCom.ClassLibrary.Controls.IssueControl
+﻿namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
 	partial class IssuesUserControl
 	{

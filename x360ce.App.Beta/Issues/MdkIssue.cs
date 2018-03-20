@@ -2,7 +2,7 @@
 using Microsoft.Win32;
 using System.Linq;
 using x360ce.Engine;
-using JocysCom.ClassLibrary.Controls.IssueControl;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 
 namespace x360ce.App.Issues
 {
@@ -14,7 +14,7 @@ namespace x360ce.App.Issues
 			FixName = "Download";
 		}
 
-		public override void Check()
+		public override void CheckTask()
 		{
 			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
 			if (!required)
@@ -49,7 +49,7 @@ namespace x360ce.App.Issues
 			SetSeverity(IssueSeverity.None);
 		}
 
-		public override void Fix()
+		public override void FixTask()
 		{
 			EngineHelper.OpenUrl("https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx");
 		}

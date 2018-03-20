@@ -11,8 +11,8 @@ namespace Nefarius.ViGEm.Client
     {
 		public ViGEmClient()
         {
-			NativeHandle = vigem_alloc();
-            var error = vigem_connect(NativeHandle);
+			NativeHandle = NativeMethods.vigem_alloc();
+            var error = NativeMethods.vigem_connect(NativeHandle);
 			switch (error)
             {
                 case VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED:
@@ -43,8 +43,8 @@ namespace Nefarius.ViGEm.Client
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
-                vigem_disconnect(NativeHandle);
-                vigem_free(NativeHandle);
+                NativeMethods.vigem_disconnect(NativeHandle);
+                NativeMethods.vigem_free(NativeHandle);
 				FreeLibrary();
 				disposedValue = true;
             }

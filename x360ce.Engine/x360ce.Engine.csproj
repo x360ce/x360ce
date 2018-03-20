@@ -203,8 +203,10 @@
     <Compile Include="JocysCom\Controls\InfoForm.Designer.cs">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\IssuesControl\IssueHelper.cs" />
     <Compile Include="JocysCom\Controls\IssuesControl\IssueItem.cs" />
     <Compile Include="JocysCom\Controls\IssuesControl\IssueSeverity.cs" />
+    <Compile Include="JocysCom\Controls\IssuesControl\IssueStatus.cs" />
     <Compile Include="JocysCom\Controls\IssuesControl\IssuesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

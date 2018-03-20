@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
-using JocysCom.ClassLibrary.Controls.IssueControl;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 
 namespace x360ce.App.Issues
 {
@@ -14,7 +14,7 @@ namespace x360ce.App.Issues
 			FixName = "Fix";
 		}
 
-		public override void Check()
+		public override void CheckTask()
 		{
 			var fi = new FileInfo(Application.ExecutablePath);
 			var winFolder = Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
@@ -30,7 +30,7 @@ namespace x360ce.App.Issues
 			SetSeverity(IssueSeverity.None);
 		}
 
-		public override void Fix()
+		public override void FixTask()
 		{
 			if (FixType == 1)
 			{

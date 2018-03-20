@@ -42,11 +42,11 @@ namespace Nefarius.ViGEm.Client
         {
             if (VendorId > 0 && ProductId > 0)
             {
-                ViGEmClient.vigem_target_set_vid(NativeHandle, VendorId);
-                ViGEmClient.vigem_target_set_pid(NativeHandle, ProductId);
+                ViGEmClient.NativeMethods.vigem_target_set_vid(NativeHandle, VendorId);
+                ViGEmClient.NativeMethods.vigem_target_set_pid(NativeHandle, ProductId);
             }
 
-            var error = ViGEmClient.vigem_target_add(Client.NativeHandle, NativeHandle);
+            var error = ViGEmClient.NativeMethods.vigem_target_add(Client.NativeHandle, NativeHandle);
             switch (error)
             {
                 case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
@@ -62,7 +62,7 @@ namespace Nefarius.ViGEm.Client
         /// </summary>
         public virtual void Disconnect()
         {
-            var error = ViGEmClient.vigem_target_remove(Client.NativeHandle, NativeHandle);
+            var error = ViGEmClient.NativeMethods.vigem_target_remove(Client.NativeHandle, NativeHandle);
             switch (error)
             {
                 case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
@@ -86,7 +86,7 @@ namespace Nefarius.ViGEm.Client
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
-                ViGEmClient.vigem_target_free(NativeHandle);
+                ViGEmClient.NativeMethods.vigem_target_free(NativeHandle);
 
                 disposedValue = true;
             }

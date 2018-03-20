@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls.IssueControl;
+﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System.Linq;
 using x360ce.Engine;
 
@@ -12,7 +12,7 @@ namespace x360ce.App.Issues
 			FixName = "Install";
 		}
 
-		public override void Check()
+		public override void CheckTask()
 		{
 			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Virtual);
 			if (!required)
@@ -27,7 +27,7 @@ namespace x360ce.App.Issues
 			}
 			SetSeverity(IssueSeverity.None);
 		}
-		public override void Fix()
+		public override void FixTask()
 		{
 			MainForm.Current.DHelper.CheckInstallVirtualDriver();
 		}

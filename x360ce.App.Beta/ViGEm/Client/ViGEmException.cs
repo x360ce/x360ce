@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Nefarius.ViGEm.Client
 {
@@ -26,5 +27,13 @@ namespace Nefarius.ViGEm.Client
 
 		protected ViGEmException(VIGEM_ERROR code, SerializationInfo info, StreamingContext context)
 			: base(info, context) { _Code = code; }
-	}
+
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Code", _Code);
+        }
+    }
 }

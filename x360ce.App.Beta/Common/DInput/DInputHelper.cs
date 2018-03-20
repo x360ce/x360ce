@@ -11,6 +11,8 @@ namespace x360ce.App.DInput
 
         public DInputHelper()
         {
+            _timer = new JocysCom.ClassLibrary.HiResTimer();
+            _timer.Elapsed += Timer_Elapsed;
             TimerSemaphore = new SemaphoreSlim(0);
             Manager = new DirectInput();
             InitDeviceDetector();
@@ -39,7 +41,7 @@ namespace x360ce.App.DInput
         // limited to [125, 250, 500, 1000Hz]
         // Lock
         // {
-        //    Aquire:
+        //    Acquire:
         //    DiDevices - when device is detected.
         //	  DiCapabilities - when device is detected.
         //	  JoStates - from mapped devices.
@@ -64,13 +66,17 @@ namespace x360ce.App.DInput
 
         JocysCom.ClassLibrary.HiResTimer _timer;
 
+        ThreadStart _ThreadStart;
+        Thread _Thread;
+
         public void Start()
         {
             watch.Restart();
-            var ts = new System.Threading.ThreadStart(TimerProcess);
-            var t = new System.Threading.Thread(ts);
-            t.IsBackground = true;
-            t.Start();
+            _ThreadStart = new ThreadStart(TimerProcess);
+            _Thread = new Thread(_ThreadStart);
+            _Thread.Name = "DInputHelperThread";
+            _Thread.IsBackground = true;
+            _Thread.Start();
         }
 
         public void Stop()
@@ -85,13 +91,11 @@ namespace x360ce.App.DInput
 
         void TimerProcess()
         {
-            _timer = new JocysCom.ClassLibrary.HiResTimer();
             _timer.Interval = (int)Frequency;
-            _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
             // Wait here until all items returns to the pool.
             TimerSemaphore.Wait();
-            _timer.Dispose();
+            _timer.Stop();
         }
 
         public Exception LastException = null;
@@ -213,6 +217,10 @@ namespace x360ce.App.DInput
                     Manager.Dispose();
                     Manager = null;
                 }
+                if (_timer != null)
+                    _timer.Dispose();
+                if (deviceForm != null)
+                    deviceForm.Dispose();
             }
         }
 

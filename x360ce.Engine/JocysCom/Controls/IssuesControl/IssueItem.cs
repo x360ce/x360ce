@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace JocysCom.ClassLibrary.Controls.IssueControl
+namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
     public class IssueItem : INotifyPropertyChanged
     {
@@ -12,8 +12,20 @@ namespace JocysCom.ClassLibrary.Controls.IssueControl
             FixName = "Fix";
         }
 
+        public event EventHandler<EventArgs> Checking;
+        public event EventHandler<EventArgs> Checked;
+
         public event EventHandler<EventArgs> Fixing;
         public event EventHandler<EventArgs> Fixed;
+
+        public IssueStatus Status { get { return _Status; } }
+        IssueStatus _Status;
+
+        void SetStatus(IssueStatus status)
+        {
+            _Status = status;
+            NotifyPropertyChanged("Status");
+        }
 
         public string Name
         {
@@ -45,9 +57,41 @@ namespace JocysCom.ClassLibrary.Controls.IssueControl
         }
         IssueSeverity? _Severity;
 
-        public virtual void Fix() { throw new NotImplementedException(); }
+        public virtual void CheckTask()
+        {
+            throw new NotImplementedException();
+        }
 
-        public virtual void Check() { throw new NotImplementedException(); }
+        public void Check()
+        {
+            SetStatus(IssueStatus.Checking);
+            var ev1 = Checking;
+            if (ev1 != null)
+                ev1(this, new EventArgs());
+            CheckTask();
+            SetStatus(IssueStatus.Idle);
+            var ev2 = Checked;
+            if (ev2 != null)
+                ev2(this, new EventArgs());
+        }
+
+        public virtual void FixTask()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fix()
+        {
+            SetStatus(IssueStatus.Fixing);
+            var ev1 = Fixing;
+            if (ev1 != null)
+                ev1(this, new EventArgs());
+            FixTask();
+            SetStatus(IssueStatus.Idle);
+            var ev2 = Fixed;
+            if (ev2 != null)
+                ev2(this, new EventArgs());
+        }
 
         public void SetSeverity(IssueSeverity severity, int fixType = 0, string description = "")
         {

@@ -20,8 +20,8 @@ namespace Nefarius.ViGEm.Client
 		public ViGEmClient(out VIGEM_ERROR error)
 		{
 			Init_x360ce();
-			NativeHandle = vigem_alloc();
-			error = vigem_connect(NativeHandle);
+			NativeHandle = NativeMethods.vigem_alloc();
+			error = NativeMethods.vigem_connect(NativeHandle);
 		}
 
 		static VIGEM_ERROR? PendingError;
@@ -34,7 +34,7 @@ namespace Nefarius.ViGEm.Client
 				// Keep error for 5 seconds.
 				if (DateTime.Now.Subtract(PendingErrorTime).TotalSeconds > 5)
 					PendingError = null;
-				// Do not process untill user dealed with the error.
+				// Do not process until user dealt with the error.
 				if (PendingError.HasValue)
 					return PendingError.Value;
 				if (Client != null)

@@ -1,15 +1,6 @@
-﻿using JocysCom.ClassLibrary.Processes;
-using JocysCom.ClassLibrary.Threading;
+﻿using JocysCom.ClassLibrary.Threading;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO.Compression;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -71,7 +62,7 @@ namespace x360ce.App.Forms
         private void TasksTimer_BeforeRemove(object sender, QueueTimerEventArgs e)
         {
             var item = e.Item as CloudItem;
-            // If check online taks failed then...
+            // If check online task failed then...
             if (Equals(CheckUpateItem, item) && !e.Keep)
             {
                 CurrentLogItem.Message += " Failed";
@@ -222,6 +213,23 @@ namespace x360ce.App.Forms
         {
             CancelUpdate = false;
             LogPanel.LogList.Clear();
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+
+                if (components != null)
+                    components.Dispose();
+                if (_downloader != null)
+                    _downloader.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
     }

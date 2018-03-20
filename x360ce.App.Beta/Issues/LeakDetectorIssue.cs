@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls.IssueControl;
+﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace x360ce.App.Issues
 			FixName = "Download";
 		}
 
-		public override void Check()
+		public override void CheckTask()
 		{
 			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
 			if (!required)
@@ -60,7 +60,7 @@ namespace x360ce.App.Issues
 			SetSeverity(IssueSeverity.None);
 		}
 
-		public override void Fix()
+		public override void FixTask()
 		{
 			EngineHelper.OpenUrl("https://vld.codeplex.com");
 		}

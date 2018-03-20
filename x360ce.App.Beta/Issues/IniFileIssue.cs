@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls.IssueControl;
+﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System.IO;
 using System.Linq;
 using x360ce.Engine;
@@ -16,7 +16,7 @@ namespace x360ce.App.Issues
 
         bool enableCheck = true;
 
-        public override void Check()
+        public override void CheckTask()
         {
             // Note: further check will be disabled if no issues were found.
             if (!enableCheck) return;
@@ -88,7 +88,7 @@ namespace x360ce.App.Issues
             }
         }
 
-        public override void Fix()
+        public override void FixTask()
         {
             if (FixType == 1)
             {

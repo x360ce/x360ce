@@ -139,7 +139,7 @@ namespace x360ce.Engine
                     case ForceFeedBackType.PeriodicSawtooth: GUID_Force = EffectGuid.SawtoothDown; break;
                     default: GUID_Force = EffectGuid.ConstantForce; break;
                 }
-                // Force change requries to dispose old effects.
+                // Force change requires to dispose old effects.
                 // Stop old effects.
                 if (effectL != null)
                 {
@@ -162,7 +162,7 @@ namespace x360ce.Engine
             if (paramsR != null && device.CreatedEffects.Count < 2)
                 forceChanged = true;
 
-            // Tells which effect paramaters to modify.
+            // Tells which effect parameters to modify.
             var flagsL = EffectParameterFlags.None;
             var flagsR = EffectParameterFlags.None;
 
@@ -312,8 +312,9 @@ namespace x360ce.Engine
                 {
                     effectL = new Effect(device, GUID_Force, paramsL);
                 }
-                catch (Exception ex)
+                catch
                 {
+                    throw;
                 }
                 if (actuatorR != null)
                 {
@@ -324,7 +325,7 @@ namespace x360ce.Engine
                     {
                         effectR = new Effect(device, GUID_Force, paramsR);
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         throw;
                     }
@@ -336,8 +337,9 @@ namespace x360ce.Engine
                 {
                     SetParamaters(effectL, paramsL, flagsL);
                 }
-                catch (Exception ex)
+                catch
                 {
+                    throw;
                 }
             }
             if (flagsR != EffectParameterFlags.None)

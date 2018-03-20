@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace x360ce.App
 {
-	public class Downloader
+	public class Downloader: IDisposable
 	{
 		public Downloader()
 		{
@@ -103,10 +103,29 @@ namespace x360ce.App
 			{
 				Console.WriteLine(":Exception " + ex.Message);
 				p.Response = ex.Response as HttpWebResponse;
-				// If update retries left then shcedule next attempt.
+				// If update retries left then schedule next attempt.
 				if (p.RetriesLeft > 0)
 					retryTimer.Start();
 			}
 		}
-	}
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // The bulk of the clean-up code is implemented in Dispose(bool)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                retryTimer.Dispose();
+            }
+        }
+
+        #endregion
+    }
 }

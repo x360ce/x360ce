@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls.IssueControl;
+﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System.Linq;
 using x360ce.Engine;
 
@@ -14,7 +14,7 @@ namespace x360ce.App.Issues
 
         bool enableCheck = true;
 
-        public override void Check()
+        public override void CheckTask()
         {
             if (!enableCheck) return;
             var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
@@ -54,7 +54,7 @@ namespace x360ce.App.Issues
             SetSeverity(IssueSeverity.None);
         }
 
-        public override void Fix()
+        public override void FixTask()
         {
             if (FixType == 1)
             {
