@@ -102,7 +102,8 @@ namespace x360ce.App
             // NotifySettingsChange will be called on event suspension and resume.
             SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
             // NotifySettingsChange will be called on setting changes.
-            SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
+            SettingsManager.Current.SettingChanged += Current_SettingChanged;
+            //SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
             SettingsManager.Settings.Load();
             SettingsManager.Summaries.Load();
             SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
@@ -155,6 +156,29 @@ namespace x360ce.App
             UpdateTimer.Start();
             JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
             JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
+        }
+
+
+
+        /// <summary>
+        /// Delay settings trough timer so interface will be more responsive on TrackBars.
+        /// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
+        /// </summary>
+        private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
+        {
+            var iniContent = UpdateINI();
+            bool changed = false;
+            changed |= SettingsManager.Current.ApplyAllSettingsToXML();
+            //changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
+            // If settings changed then...
+            if (changed)
+            {
+                // Stop updating forms and controls.
+                // Update Timer will be started inside Settings timer.
+                UpdateTimer.Stop();
+                SettingsTimer.Stop();
+                SettingsTimer.Start();
+            }
         }
 
         private void DHelper_StatesRetrieved(object sender, DInput.DInputEventArgs e)
@@ -434,27 +458,6 @@ namespace x360ce.App
         public void NotifySettingsStatus(int eventsSuspendCount)
         {
             StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
-        }
-
-        /// <summary>
-        /// Delay settings trough timer so interface will be more responsive on TrackBars.
-        /// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
-        /// </summary>
-        public void NotifySettingsChange(Control changedControl)
-        {
-            var iniContent = UpdateINI();
-            bool changed = false;
-            changed |= SettingsManager.Current.ApplyAllSettingsToXML();
-            //changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
-            // If settings changed then...
-            if (changed)
-            {
-                // Stop updating forms and controls.
-                // Update Timer will be started inside Settings timer.
-                UpdateTimer.Stop();
-                SettingsTimer.Stop();
-                SettingsTimer.Start();
-            }
         }
 
         string iniOld;
@@ -1279,7 +1282,7 @@ namespace x360ce.App
                 // Update buttons from current item.
                 UpdateButtonsAndTabs((EmulationType)game.EmulationType);
             }
-            SettingsManager.Current.NotifySettingsChange(null);
+            SettingsManager.Current.RaiseSettingsChanged(null);
         }
 
         private void StatusIniLabel_DoubleClick(object sender, EventArgs e)

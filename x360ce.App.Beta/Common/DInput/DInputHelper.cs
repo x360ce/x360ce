@@ -88,14 +88,29 @@ namespace x360ce.App.DInput
         SemaphoreSlim TimerSemaphore;
         object EventArgsSemaphoreLock = new object();
 
+        // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
+        // separate windows form must be created on the same thread as the process which will access and update device.
+        System.Windows.Forms.Form deviceForm;
 
         void TimerProcess()
         {
+            // Create device form.
+            deviceForm = new System.Windows.Forms.Form();
+            deviceForm.Text = "X360CE Force Feedback Form";
+            deviceForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            deviceForm.MinimizeBox = false;
+            deviceForm.MaximizeBox = false;
+            deviceForm.ShowInTaskbar = false;
+            // Force to create handle.
+            var handle = deviceForm.Handle;
+            // Set timer.
             _timer.Interval = (int)Frequency;
             _timer.Start();
             // Wait here until all items returns to the pool.
             TimerSemaphore.Wait();
             _timer.Stop();
+            // Dispose form on the same thread as it was created.
+            deviceForm.Dispose();
         }
 
         public Exception LastException = null;
@@ -116,27 +131,11 @@ namespace x360ce.App.DInput
 
         object DiUpdatesLock = new object();
 
-        // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
-        // separate windows form must be created on the same thread as the process which will access and update device.
-        System.Windows.Forms.Form deviceForm;
-
         void RefreshAll()
         {
             lock (DiUpdatesLock)
             {
-                if (deviceForm == null)
-                {
-                    deviceForm = new System.Windows.Forms.Form();
-                    deviceForm.Text = "X360CE Force Feedback Form";
-                    deviceForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-                    deviceForm.MinimizeBox = false;
-                    deviceForm.MaximizeBox = false;
-                    deviceForm.ShowInTaskbar = false;
-                    // Force to create handle.
-                    var handle = deviceForm.Handle;
-                }
                 var game = MainForm.Current.CurrentGame;
-
                 // Update information about connected devices.
                 UpdateDiDevices();
                 // Update JoystickStates from devices.
@@ -219,8 +218,6 @@ namespace x360ce.App.DInput
                 }
                 if (_timer != null)
                     _timer.Dispose();
-                if (deviceForm != null)
-                    deviceForm.Dispose();
             }
         }
 

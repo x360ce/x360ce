@@ -190,6 +190,7 @@
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\SettingChangedEventArgs.cs" />
     <Compile Include="Common\UpdateFrequency.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\KeyValuePair.cs" />

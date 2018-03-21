@@ -23,7 +23,7 @@ namespace x360ce.App
 				// Skip if not selected.
 				if (setting == null)
 					continue;
-				var padSetting = padControl.GetCurrentPadSetting();
+				var padSetting = padControl.CloneCurrentPadSetting();
 				// If setting doesn't exists then...
 				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == padSetting.PadSettingChecksum))
 				{
@@ -179,7 +179,7 @@ namespace x360ce.App
 				ps = new PadSetting();
 			LoadPadSettingAndCleanup(setting, ps);
 			SyncFormFromPadSetting(padIndex, ps);
-			NotifySettingsChange(null);
+            RaiseSettingsChanged(null);
 			loadCount++;
 			var ev = ConfigLoaded;
 			if (ev != null)

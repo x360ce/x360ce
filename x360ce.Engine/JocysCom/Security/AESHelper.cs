@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.IO;
 using System.IO.Compression;
+using System.Configuration;
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -22,15 +23,40 @@ namespace JocysCom.ClassLibrary.Security
 		private static byte[] SaltFromPassword(string password)
 		{
 			var passwordBytes = Encoding.UTF8.GetBytes(password);
-			var algorithm = new HMACSHA256(passwordBytes);
+			HMAC algorithm;
+			switch (AesSaltAlgorithm)
+			{
+				case "HMACSHA1": algorithm = new HMACSHA1(); break;
+				case "HMACSHA256": algorithm = new HMACSHA256(); break;
+				default: algorithm = new HMACSHA256(); break;
+			}
+			algorithm.Key = passwordBytes;
 			var salt = algorithm.ComputeHash(passwordBytes);
 			algorithm.Dispose();
 			return salt;
 		}
 
+		static string _prefix = "AppEncryption_";
+
+		static string _AesSaltAlgorithm;
+		public static string AesSaltAlgorithm
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_AesSaltAlgorithm))
+				{
+					_AesSaltAlgorithm =
+						ConfigurationManager.AppSettings[_prefix + "AesSaltAlgorithm"]
+						?? "HMACSHA256";
+				}
+				return _AesSaltAlgorithm;
+			}
+			set { _AesSaltAlgorithm = value; }
+		}
+
 		private static ICryptoTransform GetTransform(string password, bool encrypt)
 		{
-			// Create an instance of the Rihndael class. 
+			// Create an instance of the AES class. 
 			var provider = new AesCryptoServiceProvider();
 			// Calculate salt to make it harder to guess key by using a dictionary attack.
 			var salt = SaltFromPassword(password);

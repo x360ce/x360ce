@@ -21,7 +21,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public Encryption(string prefix = null)
 		{
-			_prefix = prefix ?? "AppEncryption";
+			_prefix = prefix ?? "AppEncryption_";
 		}
 
 		string _prefix;
@@ -250,7 +250,7 @@ namespace JocysCom.ClassLibrary.Security
 						cspParams.KeyContainerName = "XML_DSIG_RSA_KEY";
 						cspParams.Flags = System.Security.Cryptography.CspProviderFlags.UseMachineKeyStore;
 						_RsaProvider = new System.Security.Cryptography.RSACryptoServiceProvider();
-						// If webconfig data is not available then return.
+						// If web.config data is not available then return.
 						if (RsaPublicKeyValue == null) return _RsaProvider;
 						byte[] privateKeyBytes = string.IsNullOrEmpty(RsaPrivateKeyValue)
 							? new byte[0] : System.Convert.FromBase64String(RsaPrivateKeyValue);

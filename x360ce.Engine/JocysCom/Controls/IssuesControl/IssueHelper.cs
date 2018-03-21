@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 									if (uninstall)
 									{
 										var uninstallPath = (string)subKey.GetValue("UninstallPath", "");
-										string installSource = Convert.ToString(subKey.GetValue("InstallSource"));
+										//string installSource = Convert.ToString(subKey.GetValue("InstallSource"));
 										if (!string.IsNullOrEmpty(uninstallPath))
 										{
 											// Get first space.

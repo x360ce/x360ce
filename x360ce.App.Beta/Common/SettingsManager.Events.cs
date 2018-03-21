@@ -8,7 +8,9 @@ namespace x360ce.App
 	public partial class SettingsManager
 	{
 
-		public Action<Control> NotifySettingsChange;
+        public event EventHandler<SettingChangedEventArgs> SettingChanged;
+
+        //public Action<Control> NotifySettingsChange;
 		public Action<int> NotifySettingsStatus;
 
 		object eventsLock = new object();
@@ -58,12 +60,21 @@ namespace x360ce.App
 			var grid = (DataGridView)sender;
 			if (grid.Columns[grid.CurrentCell.ColumnIndex] is DataGridViewCheckBoxColumn)
 			{
-				// Save setting and notify if value changed.
-				NotifySettingsChange((Control)sender);
+                // Save setting and notify if value changed.
+                RaiseSettingsChanged((Control)sender);
 			}
 		}
+        public void RaiseSettingsChanged(Control control)
+        {
+            var ev = SettingChanged;
+            if (ev == null)
+                return;
+            var map = SettingsMap.FirstOrDefault(x => x.Control == control);
+            var e = new SettingChangedEventArgs(map);
+            ev(this, e);
+        }
 
-		public void ResumeEvents()
+        public void ResumeEvents()
 		{
 			lock (eventsLock)
 			{
@@ -123,26 +134,26 @@ namespace x360ce.App
 					ListBoxCounts.Add(lb.Name, lb.Items.Count);
 				}
 			}
-			// Save setting and notify if value changed.
-			NotifySettingsChange((Control)sender);
+            // Save setting and notify if value changed.
+            RaiseSettingsChanged((Control)sender);
 		}
 
 		void Control_TextChanged(object sender, EventArgs e)
 		{
-			// Notify about form value change.
-			NotifySettingsChange((Control)sender);
+            // Notify about form value change.
+            RaiseSettingsChanged((Control)sender);
 		}
 
 		void Control_ValueChanged(object sender, EventArgs e)
 		{
-			// Notify about form value change.
-			NotifySettingsChange((Control)sender);
+            // Notify about form value change.
+            RaiseSettingsChanged((Control)sender);
 		}
 
 		void Control_CheckedChanged(object sender, EventArgs e)
 		{
-			// Notify about form value change.
-			NotifySettingsChange((Control)sender);
+            // Notify about form value change.
+            RaiseSettingsChanged((Control)sender);
 		}
 
 		/// <summary>
@@ -152,11 +163,11 @@ namespace x360ce.App
 		{
 			if (e.RowIndex < 0) return;
 			var grid = (DataGridView)sender;
-			// If user clicked on the checkbox column then...
+			// If user clicked on the CheckBox column then...
 			if (grid.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)
 			{
-				// Notify about form value change.
-				NotifySettingsChange((Control)sender);
+                // Notify about form value change.
+                RaiseSettingsChanged((Control)sender);
 			}
 		}
 

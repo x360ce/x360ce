@@ -17,10 +17,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			if (IsDesignMode) return;
 			// List which contains all issues.
 			IssueList = new BindingListInvoked<IssueItem>();
-            IssueList.SynchronizingObject = this;
-            IssueList.ListChanged += IssueList_ListChanged;
-            // List which is bound to the grid and displays issues, which needs user attention.
-            Warnings = new BindingListInvoked<IssueItem>();
+			IssueList.SynchronizingObject = this;
+			IssueList.ListChanged += IssueList_ListChanged;
+			// List which is bound to the grid and displays issues, which needs user attention.
+			Warnings = new BindingListInvoked<IssueItem>();
 			Warnings.SynchronizingObject = this;
 			// Configure data grid.
 			ControlsHelper.ApplyBorderStyle(IssuesDataGridView);
@@ -37,13 +37,21 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			Text = title;
 		}
 
-        private void IssueList_ListChanged(object sender, ListChangedEventArgs e)
-        {
-            var list = IssueList.Where(x => x.Status != IssueStatus.Idle).Select(x=> string.Format("{0}: {1}", x.GetType().Name, x.Status));
-            StatusLabel.Text = string.Join(", ", list);
-        }
+		private void IssueList_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			// Get issues in progress.
+			var list = IssueList.Where(x => x.Status != IssueStatus.Idle).ToArray();
+			var sb = new StringBuilder();
+			foreach (var item in list)
+			{
+				if (sb.Length > 0)
+					sb.Append(", ");
+				sb.AppendFormat("{0}/{1} {0}: {1}", IssueList.IndexOf(item), IssueList.Count, item.GetType().Name, item.Status);
+			}
+			StatusLabel.Text = sb.ToString();
+		}
 
-        internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
+		internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
 
 		System.Threading.ThreadStart _ThreadStart;
 		System.Threading.Thread _Thread;
@@ -53,11 +61,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// If timer is disposed then return;
 			if (CheckTimer == null)
 				return;
+			// Perform check on a separate thread, because checking can take a while.
 			_ThreadStart = new System.Threading.ThreadStart(CheckAsync);
 			_Thread = new System.Threading.Thread(_ThreadStart);
 			_Thread.IsBackground = true;
 			_Thread.Start();
-
 		}
 
 		void CheckAsync()
@@ -122,7 +130,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public System.Timers.Timer CheckTimer;
 		bool IgnoreAll;
 
-        BindingListInvoked<IssueItem> IssueList;
+		BindingListInvoked<IssueItem> IssueList;
 		object IssueListLock = new object();
 
 		public void AddIssues(params IssueItem[] items)
