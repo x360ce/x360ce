@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Threading;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Threading;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,6 +29,7 @@ namespace x360ce.App.Controls
             TasksDataGridView.DataSource = TasksTimer.Queue;
             // Force to create handle.
             var handle = this.Handle;
+            // Start monitoring tasks queue.
             QueueMonitorTimer.Start();
         }
 
@@ -45,7 +47,7 @@ namespace x360ce.App.Controls
                 var f = MainForm.Current;
                 if (f == null) return;
                 var count = TasksTimer.Queue.Count;
-                AppHelper.SetText(f.CloudMessagesLabel, "M: {0}", count);
+                ControlsHelper.SetText(f.CloudMessagesLabel, "M: {0}", count);
             }
         }
 
@@ -235,7 +237,7 @@ namespace x360ce.App.Controls
         }
 
         /// <summary>
-        /// Reupload all data to the cloud.
+        /// Re-upload all data to the cloud.
         /// </summary>
         private void UploadToCloudButton_Click(object sender, EventArgs e)
         {
@@ -273,17 +275,17 @@ namespace x360ce.App.Controls
                 remains = nextRunTime.Subtract(DateTime.Now);
             }
             var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
-            AppHelper.SetText(NextRunLabel, nextRun);
+            ControlsHelper.SetText(NextRunLabel, nextRun);
             var lrt = TasksTimer.LastActionDoneTime;
             var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
-            //AppHelper.SetText(LastDoneLabel, lastRun);
+            //ControlsHelper.SetText(LastDoneLabel, lastRun);
             var state = TasksTimer.IsRunning ? "↑" : " ";
-            AppHelper.SetText(RunStateLabel, state);
-            //AppHelper.SetText(AddCountLabel, string.Format("Add: {0}", queueTimer.AddCount));
-            //AppHelper.SetText(StartCountLabel, string.Format("Start: {0}", queueTimer.StartCount));
-            //AppHelper.SetText(ThreadCountLabel, string.Format("Thread: {0}", queueTimer.ThreadCount));
-            //AppHelper.SetText(ActionCountLabel, string.Format("Action: {0}", queueTimer.ActionCount));
-            //AppHelper.SetText(ActionNoneCountLabel, string.Format("Action (null): {0}", queueTimer.ActionNoneCount));
+            ControlsHelper.SetText(RunStateLabel, state);
+            //ControlsHelper.SetText(AddCountLabel, string.Format("Add: {0}", queueTimer.AddCount));
+            //ControlsHelper.SetText(StartCountLabel, string.Format("Start: {0}", queueTimer.StartCount));
+            //ControlsHelper.SetText(ThreadCountLabel, string.Format("Thread: {0}", queueTimer.ThreadCount));
+            //ControlsHelper.SetText(ActionCountLabel, string.Format("Action: {0}", queueTimer.ActionCount));
+            //ControlsHelper.SetText(ActionNoneCountLabel, string.Format("Action (null): {0}", queueTimer.ActionNoneCount));
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
@@ -301,7 +303,7 @@ namespace x360ce.App.Controls
             var error = item.Error;
             if (error == null)
                 return;
-            var message = AppHelper.ExceptionToText(error);
+            var message = JocysCom.ClassLibrary.Runtime.LogHelper.ExceptionToText(error);
             MessageBoxForm.Show(message, error.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         }

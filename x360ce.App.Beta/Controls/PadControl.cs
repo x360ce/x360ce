@@ -13,6 +13,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using x360ce.Engine.Data;
 using System.Reflection;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -109,7 +110,7 @@ namespace x360ce.App.Controls
                 // Disable events.
                 GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
                 var o = SettingsManager.Options;
-                AppHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
+                ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
                 GetXInputStatesCheckBox.Image = o.GetXInputStates
                    ? Properties.Resources.checkbox_16x16
                    : Properties.Resources.checkbox_unchecked_16x16;
@@ -300,7 +301,7 @@ namespace x360ce.App.Controls
                 {
                     title += " (Combine)";
                 }
-                AppHelper.SetText(EnableButton, title);
+                ControlsHelper.SetText(EnableButton, title);
             }
         }
 
@@ -440,8 +441,8 @@ namespace x360ce.App.Controls
                 }
                 else
                 {
-                    AppHelper.SetText(LeftTriggerTextBox, tl.ToString());
-                    AppHelper.SetText(RightTriggerTextBox, tr.ToString());
+                    ControlsHelper.SetText(LeftTriggerTextBox, tl.ToString());
+                    ControlsHelper.SetText(RightTriggerTextBox, tr.ToString());
                     on = tl > 0;
                     setLabelColor(on, LeftTriggerLabel);
                     if (on) e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
@@ -793,10 +794,10 @@ namespace x360ce.App.Controls
                 {
                     instanceGuid = ud.InstanceGuid;
                 }
-                AppHelper.SetEnabled(LoadPresetButton, enable);
-                AppHelper.SetEnabled(AutoPresetButton, enable);
-                AppHelper.SetEnabled(ClearPresetButton, enable);
-                AppHelper.SetEnabled(ResetPresetButton, enable);
+                ControlsHelper.SetEnabled(LoadPresetButton, enable);
+                ControlsHelper.SetEnabled(AutoPresetButton, enable);
+                ControlsHelper.SetEnabled(ClearPresetButton, enable);
+                ControlsHelper.SetEnabled(ResetPresetButton, enable);
                 var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
                 for (int p = 0; p < pages.Length; p++)
                 {
@@ -804,7 +805,7 @@ namespace x360ce.App.Controls
                     var controls = pages[p].Controls.Cast<Control>().ToArray();
                     for (int c = 0; c < controls.Length; c++)
                     {
-                        AppHelper.SetEnabled(controls[c], enable);
+                        ControlsHelper.SetEnabled(controls[c], enable);
                     }
                 }
                 // If device instance changed then...
@@ -831,7 +832,7 @@ namespace x360ce.App.Controls
             var hasState = isOnline && diDevice.Device != null;
             var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
             var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
-            AppHelper.SetText(DirectInputTabPage, text);
+            ControlsHelper.SetText(DirectInputTabPage, text);
         }
 
         #endregion
@@ -877,8 +878,8 @@ namespace x360ce.App.Controls
             _rightTrigger = newState.Gamepad.RightTrigger;
             _leftTrigger = newState.Gamepad.LeftTrigger;
 
-            AppHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
-            AppHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
+            ControlsHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
+            ControlsHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
 
             var ud = GetCurrentDevice();
             if (ud != null && ud.DiState != null)

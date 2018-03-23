@@ -266,71 +266,7 @@ namespace x360ce.App
 			return newSetting;
 		}
 
-		/// <summary>
-		/// Change value if it is different only.
-		/// This helps not to trigger control events when doing frequent events.
-		/// </summary>
-		public static void SetEnabled(Control control, bool enabled)
-		{
-			if (control.Enabled != enabled) control.Enabled = enabled;
-		}
-
-		public static void SetEnabled(ToolStripButton control, bool enabled)
-		{
-			if (control.Enabled != enabled) control.Enabled = enabled;
-		}
-
-		/// <summary>
-		/// Change value if it is different only.
-		/// This helps not to trigger control events when doing frequent events.
-		/// </summary>
-		public static void SetText(Control control, string format, params object[] args)
-		{
-			var text = (args == null)
-				? format
-				: string.Format(format, args);
-			if (control.Text != text) control.Text = text;
-		}
-
-		/// <summary>
-		/// Change value if it is different only.
-		/// This helps not to trigger control events when doing frequent events.
-		/// </summary>
-		public static void SetItem<T>(ComboBox control, T value)
-		{
-			if (!Enum.IsDefined(typeof(T), value))
-				value = default(T);
-			if (!Equals(control.SelectedItem, value))
-				control.SelectedItem = value;
-		}
-
-		/// <summary>
-		/// Change value if it is different only.
-		/// This helps not to trigger control events when doing frequent events.
-		/// </summary>
-		public static void SetText(ToolStripItem control, string format, params object[] args)
-		{
-			var text = (args == null)
-				? format
-				: string.Format(format, args);
-			if (control.Text != text) control.Text = text;
-		}
-
-		/// <summary>
-		/// Change value if it is different only.
-		/// This helps not to trigger control events when doing frequent events.
-		/// </summary>
-		public static void SetChecked(CheckBox control, bool check)
-		{
-			if (control.Checked != check) control.Checked = check;
-		}
-
-		public static void SetChecked(ToolStripButton control, bool check)
-		{
-			if (control.Checked != check) control.Checked = check;
-		}
-
-		public static MapToMask GetMapFlag(MapTo mapTo)
+    	public static MapToMask GetMapFlag(MapTo mapTo)
 		{
 			switch (mapTo)
 			{
@@ -348,49 +284,6 @@ namespace x360ce.App
 			var name = body.Member.Name;
 			return name;
 		}
-
-		#region ExceptionToText
-
-		public static string ExceptionToText(Exception ex)
-		{
-			var message = "";
-			AddExceptionMessage(ex, ref message);
-			if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
-			return message;
-		}
-
-		/// <summary>Add information about missing libraries and DLLs</summary>
-		static void AddExceptionMessage(Exception ex, ref string message)
-		{
-			var ex1 = ex as ConfigurationErrorsException;
-			var ex2 = ex as ReflectionTypeLoadException;
-			var m = "";
-			if (ex1 != null)
-			{
-				m += string.Format("FileName: {0}\r\n", ex1.Filename);
-				m += string.Format("Line: {0}\r\n", ex1.Line);
-			}
-			else if (ex2 != null)
-			{
-				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
-			}
-			if (message.Length > 0)
-			{
-				message += "===============================================================\r\n";
-			}
-			message += ex.ToString() + "\r\n";
-			foreach (var key in ex.Data.Keys)
-			{
-				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
-			}
-			if (m.Length > 0)
-			{
-				message += "===============================================================\r\n";
-				message += m;
-			}
-		}
-
-		#endregion
 
 	}
 }

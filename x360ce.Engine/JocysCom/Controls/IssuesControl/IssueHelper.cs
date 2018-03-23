@@ -32,27 +32,33 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				{
 					using (var key = keyPart.OpenSubKey(keyName))
 					{
+						if (key == null)
+							continue;
 						foreach (string subkey_name in key.GetSubKeyNames())
 						{
 							using (var subKey = key.OpenSubKey(subkey_name))
 							{
+								if (subKey == null)
+									continue;
 								var displayName = (string)subKey.GetValue("DisplayName", "");
 								if (displayName.Contains(name))
 								{
 									if (uninstall)
 									{
-										var uninstallPath = (string)subKey.GetValue("UninstallPath", "");
+										var uninstallCommand = (string)subKey.GetValue("UninstallPath", "");
+										if (string.IsNullOrEmpty(uninstallCommand))
+											uninstallCommand = (string)subKey.GetValue("UninstallString", "");
 										//string installSource = Convert.ToString(subKey.GetValue("InstallSource"));
-										if (!string.IsNullOrEmpty(uninstallPath))
+										if (!string.IsNullOrEmpty(uninstallCommand))
 										{
 											// Get first space.
-											var splitIndex = uninstallPath.StartsWith("\"")
+											var splitIndex = uninstallCommand.StartsWith("\"")
 												// Split from second quote.
-												? uninstallPath.IndexOf('\"', 1)
+												? uninstallCommand.IndexOf('\"', 1)
 												// Split from first space.
-												: uninstallPath.IndexOf(' ');
-											var path = uninstallPath.Substring(0, splitIndex);
-											var args = uninstallPath.Substring(splitIndex);
+												: uninstallCommand.IndexOf(' ');
+											var path = uninstallCommand.Substring(0, splitIndex);
+											var args = uninstallCommand.Substring(splitIndex);
 											OpenPath(path, args);
 										}
 									}

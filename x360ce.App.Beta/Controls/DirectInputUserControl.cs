@@ -11,6 +11,7 @@ using System.Linq;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.IO;
 using x360ce.Engine.Data;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -253,20 +254,20 @@ namespace x360ce.App.Controls
 			if (ud == null)
 			{
 				// clean everything here.
-				AppHelper.SetText(DiCapFfStateTextBox, "");
-				AppHelper.SetText(DiCapButtonsTextBox, "");
-				AppHelper.SetText(DiCapPovsTextBox, "");
-				AppHelper.SetText(ActuatorsTextBox, "");
-				AppHelper.SetText(DiCapAxesTextBox, "");
-				AppHelper.SetText(DiSlidersTextBox, "");
-				AppHelper.SetText(DeviceVidTextBox, "");
-				AppHelper.SetText(DevicePidTextBox, "");
-				AppHelper.SetText(DeviceRevTextBox, "");
-				AppHelper.SetText(DeviceProductNameTextBox, "");
-				AppHelper.SetText(DeviceVendorNameTextBox, "");
-				AppHelper.SetText(DeviceProductGuidTextBox, "");
-				AppHelper.SetText(DeviceInstanceGuidTextBox, "");
-				AppHelper.SetText(DeviceTypeTextBox, "");
+				ControlsHelper.SetText(DiCapFfStateTextBox, "");
+				ControlsHelper.SetText(DiCapButtonsTextBox, "");
+				ControlsHelper.SetText(DiCapPovsTextBox, "");
+				ControlsHelper.SetText(ActuatorsTextBox, "");
+				ControlsHelper.SetText(DiCapAxesTextBox, "");
+				ControlsHelper.SetText(DiSlidersTextBox, "");
+				ControlsHelper.SetText(DeviceVidTextBox, "");
+				ControlsHelper.SetText(DevicePidTextBox, "");
+				ControlsHelper.SetText(DeviceRevTextBox, "");
+				ControlsHelper.SetText(DeviceProductNameTextBox, "");
+				ControlsHelper.SetText(DeviceVendorNameTextBox, "");
+				ControlsHelper.SetText(DeviceProductGuidTextBox, "");
+				ControlsHelper.SetText(DeviceInstanceGuidTextBox, "");
+				ControlsHelper.SetText(DeviceTypeTextBox, "");
 				if (DiEffectsTable.Rows.Count > 0) DiEffectsTable.Rows.Clear();
 				return;
 			}
@@ -288,9 +289,9 @@ namespace x360ce.App.Controls
 				}
 			}
 			var forceFeedbackState = ((DeviceFlags)ud.CapFlags).HasFlag(DeviceFlags.ForceFeedback) ? "YES" : "NO";
-			AppHelper.SetText(DiCapFfStateTextBox, forceFeedbackState);
-			AppHelper.SetText(DiCapButtonsTextBox, ud.CapButtonCount.ToString());
-			AppHelper.SetText(DiCapPovsTextBox, ud.CapPovCount.ToString());
+			ControlsHelper.SetText(DiCapFfStateTextBox, forceFeedbackState);
+			ControlsHelper.SetText(DiCapButtonsTextBox, ud.CapButtonCount.ToString());
+			ControlsHelper.SetText(DiCapPovsTextBox, ud.CapPovCount.ToString());
 			var objects = ud.DeviceObjects;
 
 			DiObjectsDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
@@ -298,23 +299,23 @@ namespace x360ce.App.Controls
 			if (objects != null)
 			{
 				var actuators = objects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
-				AppHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
+				ControlsHelper.SetText(ActuatorsTextBox, actuators.Count().ToString());
 				var slidersCount = objects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
 				// https://msdn.microsoft.com/en-us/library/windows/desktop/microsoft.directx_sdk.reference.dijoystate2(v=vs.85).aspx
-				AppHelper.SetText(DiCapAxesTextBox, (ud.CapAxeCount - slidersCount).ToString());
-				AppHelper.SetText(DiSlidersTextBox, slidersCount.ToString());
+				ControlsHelper.SetText(DiCapAxesTextBox, (ud.CapAxeCount - slidersCount).ToString());
+				ControlsHelper.SetText(DiSlidersTextBox, slidersCount.ToString());
 			}
 			// Update PID and VID always so they wont be overwritten by load settings.
 			short vid = BitConverter.ToInt16(ud.ProductGuid.ToByteArray(), 0);
 			short pid = BitConverter.ToInt16(ud.ProductGuid.ToByteArray(), 2);
-			AppHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
-			AppHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
-			AppHelper.SetText(DeviceProductNameTextBox, ud.ProductName);
-			AppHelper.SetText(DeviceVendorNameTextBox, "{0}", ud.DevManufacturer);
-			AppHelper.SetText(DeviceRevTextBox, "0x{0:X4}", ud.DevRevision);
-			AppHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
-			AppHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
-			AppHelper.SetText(DeviceTypeTextBox, ((SharpDX.DirectInput.DeviceType)ud.CapType).ToString());
+			ControlsHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
+			ControlsHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
+			ControlsHelper.SetText(DeviceProductNameTextBox, ud.ProductName);
+			ControlsHelper.SetText(DeviceVendorNameTextBox, "{0}", ud.DevManufacturer);
+			ControlsHelper.SetText(DeviceRevTextBox, "0x{0:X4}", ud.DevRevision);
+			ControlsHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
+			ControlsHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
+			ControlsHelper.SetText(DeviceTypeTextBox, ((SharpDX.DirectInput.DeviceType)ud.CapType).ToString());
 		}
 
 		JoystickState oldState;
@@ -362,7 +363,7 @@ namespace x360ce.App.Controls
 			//			ids.Add(i.ToString("00"));
 			//	buttonsText = string.Join(" ", ids);
 			//}
-			//AppHelper.SetText(DiButtonsTextBox, buttonsText);
+			//ControlsHelper.SetText(DiButtonsTextBox, buttonsText);
 
 			// Point of view buttons
 			int[] dPad = newState.PointOfViewControllers;

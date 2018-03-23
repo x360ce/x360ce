@@ -11,6 +11,7 @@ using x360ce.Engine;
 using System.IO;
 using x360ce.Engine.Data;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -71,7 +72,7 @@ namespace x360ce.App.Controls
 					DisableEvents();
 					var isGame = _CurrentItem as UserGame != null;
 					var item = _CurrentItem ?? new x360ce.Engine.Data.Program();
-					// Set textboxes
+					// Set TextBoxes
 					SetMask(DInputCheckBoxes, (DInputMask)item.DInputMask);
 					SetMask(XInputCheckBoxes, (XInputMask)item.XInputMask);
 					SetMask(HookCheckBoxes, (HookMask)item.HookMask);
@@ -79,8 +80,8 @@ namespace x360ce.App.Controls
 					HookModeFakeVidNumericUpDown.Value = item.FakeVID;
 					HookModeFakePidNumericUpDown.Value = item.FakePID;
 					TimeoutNumericUpDown.Value = item.Timeout;
-					AppHelper.SetItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)CurrentItem.ProcessorArchitecture);
-					AppHelper.SetItem(EmulationTypeComboBox, (EmulationType)CurrentItem.EmulationType);
+					ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)CurrentItem.ProcessorArchitecture);
+					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)CurrentItem.EmulationType);
 					var game = CurrentItem as UserGame;
 					if (game != null)
 					{
@@ -126,9 +127,9 @@ namespace x360ce.App.Controls
 				// Set values without triggering events.
 				DisableEvents();
 				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
-					AppHelper.SetItem(EmulationTypeComboBox, (EmulationType)game.EmulationType);
+					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)game.EmulationType);
 				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.ProcessorArchitecture))
-					AppHelper.SetItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)game.ProcessorArchitecture);
+					ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)game.ProcessorArchitecture);
 				EnableEvents();
 			}
 		}
@@ -289,7 +290,7 @@ namespace x360ce.App.Controls
 		{
 			var end = gp.Text.IndexOf(" - ") + 3;
 			var prefix = gp.Text.Substring(0, end);
-			AppHelper.SetText(gp, "{0}{1:X8}", prefix, mask);
+			ControlsHelper.SetText(gp, "{0}{1:X8}", prefix, mask);
 		}
 
 		/// <summary>
@@ -366,7 +367,7 @@ namespace x360ce.App.Controls
 			if (item.FakeVID != value)
 			{
 				item.FakeVID = value;
-				AppHelper.SetText(HookModeFakeVidTextBox, "0x{0:X4}", (int)HookModeFakeVidNumericUpDown.Value);
+				ControlsHelper.SetText(HookModeFakeVidTextBox, "0x{0:X4}", (int)HookModeFakeVidNumericUpDown.Value);
 			}
 		}
 
@@ -379,7 +380,7 @@ namespace x360ce.App.Controls
 			if (item.FakePID != value)
 			{
 				item.FakePID = value;
-				AppHelper.SetText(HookModeFakePidTextBox, "0x{0:X4}", (int)HookModeFakePidNumericUpDown.Value);
+				ControlsHelper.SetText(HookModeFakePidTextBox, "0x{0:X4}", (int)HookModeFakePidNumericUpDown.Value);
 			}
 		}
 

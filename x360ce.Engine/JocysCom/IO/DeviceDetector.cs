@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -30,7 +29,7 @@ namespace JocysCom.ClassLibrary.IO
 		public const uint DICS_FLAG_CONFIGSPECIFIC = 0x00000002;
 		public const uint DICS_ENABLE = 0x00000001;
 		public const uint DICS_DISABLE = 0x00000002;
-		public const int MAX_DEVICE_LEN = 1000;
+		//public const int MAX_DEVICE_LEN = 1000;
 		public const int MAX_DEVICE_ID_LEN = 200;
 		private const int ERROR_INVALID_HANDLE_VALUE = -1;
 		const int BROADCAST_QUERY_DENY = 0x424D5144;
@@ -209,8 +208,17 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			uint proptype;
 			uint outsize = 0;
-			var buffer = new byte[MAX_DEVICE_LEN];
-			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, buffer, (uint)buffer.Length, out outsize);
+			// Get buffer size.
+			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, null, 0, out outsize);
+			if (!result)
+			{
+				var errorCode = Marshal.GetLastWin32Error();
+				if (errorCode == ERROR_INVALID_DATA) return null;
+				// We can safely ignore other errors when retrieving buffer size.
+			}
+			var buffer = new byte[outsize];
+			// Get data.
+			result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, buffer, buffer.Length, out outsize);
 			if (!result)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
@@ -281,8 +289,8 @@ namespace JocysCom.ClassLibrary.IO
 			int requiredSize3 = 0;
 			List<string> devicePathNames3 = new List<string>();
 			var interfaceData = new SP_DEVICE_INTERFACE_DATA();
-			List<string> serials = new List<string>();
-			interfaceData.Initialize();
+            interfaceData.Initialize();
+            List<string> serials = new List<string>();
 			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_DEVICEINTERFACE);
 			for (int i2 = 0; NativeMethods.SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
 			{
@@ -326,11 +334,11 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					IntPtr preparsedDataPtr = new IntPtr();
 					HIDP_CAPS caps = new HIDP_CAPS();
-					// Read out the 'preparsed data'.
+					// Read out the 'pre-parsed data'.
 					NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
 					// feed that to GetCaps.
 					NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
-					// Free the 'preparsed data'.
+					// Free the 'pre-parsed data'.
 					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
 					// This could fail if the device was recently attached.
 					uint capacity = 126;
@@ -449,27 +457,6 @@ namespace JocysCom.ClassLibrary.IO
 			uint pid;
 			uint rev;
 			var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out vid, out pid, out rev);
-			//if (deviceId.Contains("2FBF"))
-			//{
-			//	var sb = new StringBuilder();
-			//	var props = (SPDRP[])Enum.GetValues(typeof(SPDRP));
-			//	foreach (var item in props)
-			//	{
-			//		if (new[] { SPDRP.SPDRP_UNUSED0, SPDRP.SPDRP_UNUSED1, SPDRP.SPDRP_UNUSED2 }.Contains(item))
-			//		{
-			//			continue;
-			//		}
-			//		try
-			//		{
-			//			var value = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, item);
-			//			sb.AppendFormat("{0}={1}\r\n", item, value);
-			//		}
-			//		catch (Exception ex)
-			//		{
-			//			sb.AppendFormat("{0}={1}\r\n", item, ex.ToString());
-			//		}
-			//	}
-			//}
 			// Get device information.
 			uint parentDeviceInstance = 0;
 			string parentDeviceId = null;
@@ -482,12 +469,51 @@ namespace JocysCom.ClassLibrary.IO
 			return device;
 		}
 
+
+
+
+
+
+		public static string GetAllDeviceProperties(string deviceId)
+		{
+			var sb = new StringBuilder();
+			Guid classGuid = System.Guid.Empty;
+			IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
+			if (deviceInfoSet.ToInt64() != ERROR_INVALID_HANDLE_VALUE)
+			{
+				var deviceInfoData = GetDeviceInfo(deviceInfoSet, deviceId);
+				if (deviceInfoData.HasValue)
+				{
+					var di = deviceInfoData.Value;
+					var props = (SPDRP[])Enum.GetValues(typeof(SPDRP));
+					foreach (var item in props)
+					{
+						if (new[] { SPDRP.SPDRP_UNUSED0, SPDRP.SPDRP_UNUSED1, SPDRP.SPDRP_UNUSED2 }.Contains(item))
+						{
+							continue;
+						}
+						try
+						{
+							var value = GetStringPropertyForDevice(deviceInfoSet, di, item);
+							sb.AppendFormat("{0}={1}\r\n", item, value);
+						}
+						catch (Exception ex)
+						{
+							sb.AppendFormat("{0}={1}\r\n", item, ex.ToString());
+						}
+					}
+				}
+				NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
+			}
+			return sb.ToString();
+		}
+
 		public static DeviceInfo GetParentDevice(Guid classGuid, DIGCF flags, string deviceId)
 		{
 			lock (GetDevicesLock)
 			{
 				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, flags); //  | DIGCF.DIGCF_PRESENT
-				if (deviceInfoSet.ToInt32() == ERROR_INVALID_HANDLE_VALUE)
+				if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
 				{
 					throw new Exception("Invalid Handle");
 				}

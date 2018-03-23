@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -230,10 +231,10 @@ namespace x360ce.App.Controls
 			{
 				GameDetailsControl.CurrentItem = item;
 			}
-			AppHelper.SetEnabled(OpenGameButton, selected && exists);
-			AppHelper.SetEnabled(StartGameButton, selected && exists);
-			AppHelper.SetEnabled(SaveGamesButton, selected);
-			AppHelper.SetEnabled(DeleteGamesButton, selected);
+			ControlsHelper.SetEnabled(OpenGameButton, selected && exists);
+			ControlsHelper.SetEnabled(StartGameButton, selected && exists);
+			ControlsHelper.SetEnabled(SaveGamesButton, selected);
+			ControlsHelper.SetEnabled(DeleteGamesButton, selected);
 		}
 
 		private void AddGameButton_Click(object sender, EventArgs e)

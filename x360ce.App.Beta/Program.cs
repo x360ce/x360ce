@@ -32,9 +32,6 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
-			//var fi = new FileInfo(Application.ExecutablePath);
-			//Directory.SetCurrentDirectory(fi.Directory.FullName);
-
 			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
 			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
@@ -49,7 +46,7 @@ namespace x360ce.App
 			}
 			catch (Exception ex)
 			{
-				var message = AppHelper.ExceptionToText(ex);
+				var message = ExceptionToText(ex);
 				var box = new Controls.MessageBoxForm();
 				if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
 				{
@@ -216,7 +213,7 @@ namespace x360ce.App
 			byte[] hash = md5.ComputeHash(sr);
 			var intHash = BitConverter.ToUInt32(hash, 0);
 			sr.Close();
-			// Put file into subfolder because file name must match with LoadLibrary() argument. 
+			// Put file into sub folder because file name must match with LoadLibrary() argument. 
 			var newName = string.Format("{0}.{1:X8}\\{0}", name, intHash);
 			return newName;
 		}
@@ -252,5 +249,50 @@ namespace x360ce.App
 			return names.FirstOrDefault();
 		}
 
-	}
+        #region ExceptionToText
+
+        // Exception to string needed here so that links to other references won't be an issue.
+
+        static string ExceptionToText(Exception ex)
+        {
+            var message = "";
+            AddExceptionMessage(ex, ref message);
+            if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+            return message;
+        }
+
+        /// <summary>Add information about missing libraries and DLLs</summary>
+        static void AddExceptionMessage(Exception ex, ref string message)
+        {
+            var ex1 = ex as ConfigurationErrorsException;
+            var ex2 = ex as ReflectionTypeLoadException;
+            var m = "";
+            if (ex1 != null)
+            {
+                m += string.Format("FileName: {0}\r\n", ex1.Filename);
+                m += string.Format("Line: {0}\r\n", ex1.Line);
+            }
+            else if (ex2 != null)
+            {
+                foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
+            }
+            if (message.Length > 0)
+            {
+                message += "===============================================================\r\n";
+            }
+            message += ex.ToString() + "\r\n";
+            foreach (var key in ex.Data.Keys)
+            {
+                m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
+            }
+            if (m.Length > 0)
+            {
+                message += "===============================================================\r\n";
+                message += m;
+            }
+        }
+
+        #endregion
+
+    }
 }

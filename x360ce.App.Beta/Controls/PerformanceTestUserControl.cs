@@ -5,6 +5,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using JocysCom.ClassLibrary;
 using System.ComponentModel;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -73,7 +74,7 @@ namespace x360ce.App.Controls
                 // Disable events.
                 GetXInputStatesCheckBox.CheckedChanged -= GetXInputStatesCheckBox_CheckedChanged;
                 var o = SettingsManager.Options;
-                AppHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
+                ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
                 // Enable events.
                 GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
             }

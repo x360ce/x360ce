@@ -16,6 +16,7 @@ using System.Text;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
 using x360ce.App.Issues;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App
 {
@@ -868,7 +869,7 @@ namespace x360ce.App
 
         public void UpdateStatus(string message = "")
         {
-            AppHelper.SetText(StatusTimerLabel, "Count: {0}, Reloads: {1}, Errors: {2} {3}",
+            ControlsHelper.SetText(StatusTimerLabel, "Count: {0}, Reloads: {1}, Errors: {2} {3}",
                 Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
         }
         #endregion
@@ -1073,7 +1074,7 @@ namespace x360ce.App
                 );
                 IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
                 IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
-                IssuesPanel.CheckTimer.Start();
+                IssuesPanel.TasksTimer.DoActionNow();
             }
         }
 
@@ -1425,7 +1426,7 @@ namespace x360ce.App
                 return;
             }
             SettingsManager.RefreshSettingsConnectionState(SettingsManager.Settings.Items.ToArray());
-            AppHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
+            ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
         }
 
         bool UpdateCompletedBusy;
@@ -1480,7 +1481,7 @@ namespace x360ce.App
                 BeginInvoke(method, new object[] { sender, e });
                 return;
             }
-            AppHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", DHelper.CurrentUpdateFrequency);
+            ControlsHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", DHelper.CurrentUpdateFrequency);
         }
 
         #endregion

@@ -53,7 +53,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
         /// <summary>
         /// This is a "first chance exception", which means the debugger is simply notifying you
-        /// that an exception was thrown, rather than that one was unhandled.
+        /// that an exception was thrown, rather than that one was not handled.
         /// </summary>
         public void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
         {
@@ -433,7 +433,7 @@ namespace JocysCom.ClassLibrary.Runtime
             var m = "";
             if (ex1 != null)
             {
-                m += string.Format("Filename: {0}\r\n", ex1.Filename);
+                m += string.Format("FileName: {0}\r\n", ex1.Filename);
                 m += string.Format("Line: {0}\r\n", ex1.Line);
             }
             else if (ex2 != null)

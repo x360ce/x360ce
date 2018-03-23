@@ -11,6 +11,26 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("setupapi.dll", SetLastError = true)]
 		public static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData, ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
+		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+       public static extern bool SetupDiGetDriverInfoDetail(
+	   IntPtr DeviceInfoSet,
+	   ref SP_DEVINFO_DATA DeviceInfoData,
+	   ref SP_DRVINFO_DATA DriverInfoData,
+	   ref SP_DRVINFO_DETAIL_DATA DriverInfoDetailData,
+	   Int32 DriverInfoDetailDataSize,
+	   ref Int32 RequiredSize);
+
+		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern bool SetupDiEnumDriverInfo(
+				IntPtr DeviceInfoSet,
+				ref SP_DEVINFO_DATA DeviceInfoData,
+				int DriverType,
+				int MemberIndex,
+				ref SP_DRVINFO_DATA DriverInfoData);
+
+		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern bool SetupDiGetDeviceInstallParams(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref SP_DEVINSTALL_PARAMS DeviceInstallParams);
+
 		[DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData, int DeviceInterfaceDetailDataSize, ref int RequiredSize, ref SP_DEVINFO_DATA DeviceInfoData);
 
@@ -98,7 +118,7 @@ namespace JocysCom.ClassLibrary.Win32
 		   uint property,
 		   out uint propertyRegDataType,
 		   byte[] propertyBuffer,
-		   uint propertyBufferSize,
+		   int propertyBufferSize,
 		   out uint requiredSize
 		);
 
@@ -123,9 +143,9 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("setupapi.dll", SetLastError = true)]
 		public static extern CR CM_Get_DevNode_Status_Ex(out UInt32 Status, out UInt32 ProblemNumber, UInt32 dnDevInst, int ulFlags, IntPtr hMachine);
 
-		#region Helper Methods
+        #region Helper Methods
 
-		public static bool GetDeviceNodeStatus(UInt32 dnDevInst, IntPtr hMachine, out Win32.DeviceNodeStatus status)
+        public static bool GetDeviceNodeStatus(UInt32 dnDevInst, IntPtr hMachine, out Win32.DeviceNodeStatus status)
 		{
 			// c:\Program Files\Microsoft SDKs\Windows\v7.1\Include\cfg.h
 			uint Status;
