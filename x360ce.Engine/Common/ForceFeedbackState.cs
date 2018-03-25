@@ -12,6 +12,8 @@ namespace x360ce.Engine
     /// </summary>
     public class ForceFeedbackState
     {
+        System.Collections.Generic.List<DeviceObjectItem> actuators;
+
         public ForceFeedbackState(UserDevice ud)
         {
             PeriodicForceL = new PeriodicForce();
@@ -20,7 +22,7 @@ namespace x360ce.Engine
             ConstantForceR = new ConstantForce();
             GUID_Force = EffectGuid.ConstantForce;
             // Find and assign actuators.
-            var actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToList();
+            actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToList();
 
             // If actuator available then...
             if (actuators.Count > 0)
@@ -167,19 +169,29 @@ namespace x360ce.Engine
 
             if (forceChanged)
             {
-                if (actuatorL != null)
+                // If 2 actuators available
+                if (actuatorR != null)
+                {
+                    // It would be logical to use one axis per Effect/Parameter. Logitech gamepad supports that.
+                    // Unfortunatelly SpeedLink gamepad needs both axis specified in order to operate motors separatelly.
+                    // Which is counter-intuitive.
+                    // Direction must be set to 'Positive' on both axis via force feedback settings interface.
+                    paramsL = GetParameters();
+                    // Note: Second axis direction will be set to zero i.e. motor will be not used by effect.
+                    paramsL.Axes = new int[2] { actuatorL.ObjectId, actuatorR.ObjectId };
+                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
+                    //flagsL |= EffectParameterFlags.Axes;
+                    paramsR = GetParameters();
+                    // Note: Second axis direction will be set to zero i.e. motor will be not used by effect.
+                    paramsR.Axes = new int[2] { actuatorR.ObjectId, actuatorL.ObjectId };
+                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
+                    //flagsR |= EffectParameterFlags.Axes;
+                }
+                // If one actuator available.
+                else if (actuatorL != null)
                 {
                     paramsL = GetParameters();
                     paramsL.Axes = new int[1] { actuatorL.ObjectId };
-                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
-                    //flagsL |= EffectParameterFlags.Axes;
-                }
-                if (actuatorR != null)
-                {
-                    paramsR = GetParameters();
-                    paramsR.Axes = new int[1] { actuatorR.ObjectId };
-                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
-                    //flagsR |= EffectParameterFlags.Axes;
                 }
             }
 
@@ -196,7 +208,9 @@ namespace x360ce.Engine
             if (forceChanged || directionLChanged)
             {
                 var directionL = TryParse(old_LeftDirection);
-                paramsL.Directions = new int[1] { directionL };
+                var dirL = new int[paramsL.Axes.Length];
+                dirL[0] = directionL;
+                paramsL.Directions = dirL;
                 flagsL |= EffectParameterFlags.Direction;
             }
 
@@ -204,7 +218,9 @@ namespace x360ce.Engine
             if (actuatorR != null && (forceChanged || directionRChanged))
             {
                 var directionR = TryParse(old_RightDirection);
-                paramsR.Directions = new int[1] { directionR };
+                var dirR = new int[paramsR.Axes.Length];
+                dirR[0] = directionR;
+                paramsR.Directions = dirR;
                 flagsR |= EffectParameterFlags.Direction;
             }
 
@@ -310,8 +326,6 @@ namespace x360ce.Engine
                 paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce
                     ? ConstantForceL as TypeSpecificParameters : PeriodicForceL;
                 // Note: Device must be acquired in exclusive mode before effect can be created.
-                // try
-                // {
                 effectL = new Effect(device, GUID_Force, paramsL);
                 if (actuatorR != null)
                 {
