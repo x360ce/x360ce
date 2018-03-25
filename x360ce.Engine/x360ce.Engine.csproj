@@ -223,6 +223,7 @@
     <Compile Include="JocysCom\Files\Zip.cs" />
     <Compile Include="JocysCom\Files\ZipStorer.cs" />
     <Compile Include="JocysCom\IO\DeviceDetector.cs" />
+    <Compile Include="JocysCom\IO\DeviceDetector.Drivers.cs" />
     <Compile Include="JocysCom\IO\DeviceDetectorEventArgs.cs" />
     <Compile Include="JocysCom\IO\DeviceDetectorForm.cs">
       <SubType>Form</SubType>
@@ -340,6 +341,10 @@
     <Compile Include="JocysCom\Win32\SP_DEVINFO_DATA.cs" />
     <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DATA.cs" />
     <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DETAIL_DATA.cs" />
+    <Compile Include="JocysCom\Win32\SP_DEVINSTALL_PARAMS.cs" />
+    <Compile Include="JocysCom\Win32\SP_DRVINFO_DATA.cs" />
+    <Compile Include="JocysCom\Win32\SP_DRVINFO_DETAIL_DATA.cs" />
+    <Compile Include="JocysCom\Win32\SP_DRVINSTALL_PARAMS.cs" />
     <Compile Include="JocysCom\Win32\SP_PROPCHANGE_PARAMS.cs" />
     <Compile Include="JocysCom\Win32\SP_REMOVEDEVICE_PARAMS.cs" />
     <Compile Include="JocysCom\Win32\SW.cs" />
