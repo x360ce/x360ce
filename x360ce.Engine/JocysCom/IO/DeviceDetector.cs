@@ -47,16 +47,16 @@ namespace JocysCom.ClassLibrary.IO
 		/// </summary>
 		public event DeviceDetectorEventHandler DeviceChanged;
 
-		private DeviceDetectorForm detectorForm;
+		public DeviceDetectorForm DetectorForm;
 
 		/// <summary>
 		/// Create hidden form for processing Windows messages about USB drives. You do not need to override WndProc in your form.
 		/// </summary>
 		public DeviceDetector(bool showForm = false)
 		{
-			detectorForm = new DeviceDetectorForm(this);
-			if (showForm) detectorForm.Show();
-			_RecipientHandle = detectorForm.Handle;
+			DetectorForm = new DeviceDetectorForm(this);
+			if (showForm) DetectorForm.Show();
+			_RecipientHandle = DetectorForm.Handle;
 			//RegisterDeviceNotification(_RecipientHandle, DEV_BROADCAST_DEVICEINTERFACE, 0)
 		}
 
@@ -748,8 +748,8 @@ namespace JocysCom.ClassLibrary.IO
 			if (disposing)
 			{
 				//UnregisterDeviceNotification(_RecipientHandle);
-				detectorForm.Dispose();
-				detectorForm = null;
+				DetectorForm.Dispose();
+				DetectorForm = null;
 			}
 		}
 

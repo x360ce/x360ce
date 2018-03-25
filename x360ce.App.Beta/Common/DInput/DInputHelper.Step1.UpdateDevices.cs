@@ -29,7 +29,8 @@ namespace x360ce.App.DInput
 		public void UnInitDeviceDetector()
 		{
 			detector.DeviceChanged -= detector_DeviceChanged;
-			detector.Dispose();
+			// Can't dispose here due to cross-threading.
+            //detector.Dispose();
 		}
 
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)

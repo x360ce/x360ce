@@ -51,7 +51,7 @@ namespace x360ce.App.DInput
                                 var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
                                 // Reacquire device in exclusive mode.
                                 device.Unacquire();
-                                device.SetCooperativeLevel(deviceForm.Handle, flags);
+                                device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
                                 device.Acquire();
                                 ud.IsExclusiveMode = true;
                             }
@@ -61,7 +61,7 @@ namespace x360ce.App.DInput
                                 var flags = CooperativeLevel.Background | CooperativeLevel.NonExclusive;
                                 // Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
                                 device.Unacquire();
-                                device.SetCooperativeLevel(deviceForm.Handle, flags);
+                                device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
                                 device.Acquire();
                                 ud.IsExclusiveMode = false;
                             }

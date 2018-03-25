@@ -84,7 +84,9 @@ namespace x360ce.App
 
         void MainForm_Load(object sender, EventArgs e)
         {
-            if (IsDesignMode) return;
+            if (IsDesignMode)
+                return;
+            System.Threading.Thread.CurrentThread.Name = "MainFormThread";
             DebugPanel = new Forms.DebugForm();
             // Initialize DInput Helper.
             DHelper = new DInput.DInputHelper();

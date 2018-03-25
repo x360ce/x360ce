@@ -2,7 +2,6 @@
 using SharpDX.XInput;
 using System;
 using System.Threading;
-using x360ce.Engine;
 
 namespace x360ce.App.DInput
 {
@@ -13,9 +12,6 @@ namespace x360ce.App.DInput
         {
             _timer = new JocysCom.ClassLibrary.HiResTimer();
             _timer.Elapsed += Timer_Elapsed;
-            TimerSemaphore = new SemaphoreSlim(0);
-            Manager = new DirectInput();
-            InitDeviceDetector();
             CombinedXiConencted = new bool[4];
             CombinedXiStates = new State[4];
             LiveXiControllers = new Controller[4];
@@ -66,52 +62,21 @@ namespace x360ce.App.DInput
 
         JocysCom.ClassLibrary.HiResTimer _timer;
 
-        ThreadStart _ThreadStart;
-        Thread _Thread;
+        //ThreadStart _ThreadStart;
+        //Thread _Thread;
 
         public void Start()
         {
             watch.Restart();
-            _ThreadStart = new ThreadStart(TimerProcess);
-            _Thread = new Thread(_ThreadStart);
-            _Thread.Name = "DInputHelperThread";
-            _Thread.IsBackground = true;
-            _Thread.Start();
+            _timer.Interval = (int)Frequency;
+            _timer.Start();
         }
 
         public void Stop()
         {
-            // Unlock EventArgsSemaphore.Wait() line.
-            TimerSemaphore.Release();
-        }
-
-        SemaphoreSlim TimerSemaphore;
-        object EventArgsSemaphoreLock = new object();
-
-        // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
-        // separate windows form must be created on the same thread as the process which will access and update device.
-        System.Windows.Forms.Form deviceForm;
-
-        void TimerProcess()
-        {
-            // Create device form.
-            deviceForm = new System.Windows.Forms.Form();
-            deviceForm.Text = "X360CE Force Feedback Form";
-            deviceForm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            deviceForm.MinimizeBox = false;
-            deviceForm.MaximizeBox = false;
-            deviceForm.ShowInTaskbar = false;
-            // Force to create handle.
-            var handle = deviceForm.Handle;
-            // Set timer.
-            _timer.Interval = (int)Frequency;
-            _timer.Start();
-            // Wait here until all items returns to the pool.
-            TimerSemaphore.Wait();
             _timer.Stop();
-            // Dispose form on the same thread as it was created.
-            deviceForm.Dispose();
         }
+
 
         public Exception LastException = null;
 
@@ -131,10 +96,29 @@ namespace x360ce.App.DInput
 
         object DiUpdatesLock = new object();
 
+        int? RefreshAllThreadId;
+
         void RefreshAll()
         {
             lock (DiUpdatesLock)
             {
+                // If thread channged then...
+                if (RefreshAllThreadId.HasValue && RefreshAllThreadId.Value != Thread.CurrentThread.ManagedThreadId)
+                {
+                    UnInitDeviceDetector();
+                    Manager.Dispose();
+                    RefreshAllThreadId = null;
+                }
+                if (!RefreshAllThreadId.HasValue)
+                {
+                    Thread.CurrentThread.Name = "RefreshAllThread";
+                    RefreshAllThreadId = Thread.CurrentThread.ManagedThreadId;
+                    // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
+                    // separate windows form must be created on the same thread as the process which will access and update device.
+                    // detector.DetectorForm will be used to acquire devivces.
+                    InitDeviceDetector();
+                    Manager = new DirectInput();
+                }
                 var game = MainForm.Current.CurrentGame;
                 // Update information about connected devices.
                 UpdateDiDevices();
@@ -210,14 +194,11 @@ namespace x360ce.App.DInput
             {
                 Stop();
                 UnInitDeviceDetector();
-                TimerSemaphore.Dispose();
                 if (Manager != null)
                 {
                     Manager.Dispose();
                     Manager = null;
                 }
-                if (_timer != null)
-                    _timer.Dispose();
             }
         }
 

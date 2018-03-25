@@ -49,10 +49,9 @@ namespace x360ce.Engine
         const uint INFINITE = 0xFFFFFFFF;
         const uint DIEB_NOTRIGGER = 0xFFFFFFFF;
 
-        EffectParameters GetParameters(int objectId)
+        EffectParameters GetParameters()
         {
             var p = new EffectParameters();
-            p.Axes = new int[1] { objectId };
             p.Flags = EffectFlags.Cartesian | EffectFlags.ObjectIds;
             p.StartDelay = 0;
             p.Duration = unchecked((int)INFINITE);
@@ -170,13 +169,17 @@ namespace x360ce.Engine
             {
                 if (actuatorL != null)
                 {
-                    paramsL = GetParameters(actuatorL.ObjectId);
-                    flagsL |= EffectParameterFlags.Axes;
+                    paramsL = GetParameters();
+                    paramsL.Axes = new int[1] { actuatorL.ObjectId };
+                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
+                    //flagsL |= EffectParameterFlags.Axes;
                 }
                 if (actuatorR != null)
                 {
-                    paramsR = GetParameters(actuatorR.ObjectId);
-                    flagsR |= EffectParameterFlags.Axes;
+                    paramsR = GetParameters();
+                    paramsR.Axes = new int[1] { actuatorR.ObjectId };
+                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
+                    //flagsR |= EffectParameterFlags.Axes;
                 }
             }
 
@@ -300,7 +303,6 @@ namespace x360ce.Engine
                 // Update flags to indicate that specific force parameters changed.
                 flagsL |= EffectParameterFlags.TypeSpecificParameters;
             }
-
             // Recreate effects if force changed.
             if (forceChanged)
             {
@@ -308,39 +310,20 @@ namespace x360ce.Engine
                 paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce
                     ? ConstantForceL as TypeSpecificParameters : PeriodicForceL;
                 // Note: Device must be acquired in exclusive mode before effect can be created.
-                try
-                {
-                    effectL = new Effect(device, GUID_Force, paramsL);
-                }
-                catch
-                {
-                    throw;
-                }
+                // try
+                // {
+                effectL = new Effect(device, GUID_Force, paramsL);
                 if (actuatorR != null)
                 {
                     // Update Right force
                     paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
                         ? ConstantForceR as TypeSpecificParameters : PeriodicForceR;
-                    try
-                    {
-                        effectR = new Effect(device, GUID_Force, paramsR);
-                    }
-                    catch
-                    {
-                        throw;
-                    }
+                    effectR = new Effect(device, GUID_Force, paramsR);
                 }
             }
             if (flagsL != EffectParameterFlags.None)
             {
-                try
-                {
-                    SetParamaters(effectL, paramsL, flagsL);
-                }
-                catch
-                {
-                    throw;
-                }
+                SetParamaters(effectL, paramsL, flagsL);
             }
             if (flagsR != EffectParameterFlags.None)
                 SetParamaters(effectR, paramsR, flagsR);
