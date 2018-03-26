@@ -336,6 +336,7 @@
     <Compile Include="JocysCom\Win32\SafeLibraryHandle.cs" />
     <Compile Include="JocysCom\Win32\SafeTokenHandle.cs" />
     <Compile Include="JocysCom\Win32\SID_AND_ATTRIBUTES.cs" />
+    <Compile Include="JocysCom\Win32\SPDIT.cs" />
     <Compile Include="JocysCom\Win32\SPDRP.cs" />
     <Compile Include="JocysCom\Win32\SP_CLASSINSTALL_HEADER.cs" />
     <Compile Include="JocysCom\Win32\SP_DEVINFO_DATA.cs" />

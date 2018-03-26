@@ -128,5 +128,37 @@ namespace x360ce.App.Controls
 			SettingsManager.UserDevices.Items.Add(ud);
 			MainForm.Current.DHelper.UpdateDevicesEnabled = true;
 		}
-	}
+
+        private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            var grid = (DataGridView)sender;
+            // If user clicked on the CheckBox column then...
+            if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
+            {
+                var row = grid.Rows[e.RowIndex];
+                var item = (Engine.Data.UserDevice)row.DataBoundItem;
+                // Changed check (enabled state) of the current item.
+                item.IsEnabled = !item.IsEnabled;
+                var deviceId = item.HidDeviceId;
+                if (!string.IsNullOrEmpty(deviceId))
+                {
+                    if (item.IsEnabled)
+                    {
+                        ViGEm.HidGuardianHelper.RemoveFromAffected(deviceId);
+                    }
+                    else
+                    {
+                        ViGEm.HidGuardianHelper.InsertToAffected(deviceId);
+                    }
+                }
+            }
+        }
+
+        private void HiddenDevicesButton_Click(object sender, EventArgs e)
+        {
+            var devices = ViGEm.HidGuardianHelper.GetAffected();
+            MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ",devices), "Affected Devices");
+        }
+    }
 }

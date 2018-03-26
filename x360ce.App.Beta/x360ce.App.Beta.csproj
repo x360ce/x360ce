@@ -408,6 +408,7 @@
     <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
+    <Compile Include="ViGEm\HidGuardianHelper.cs" />
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>

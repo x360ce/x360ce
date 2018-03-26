@@ -12,7 +12,7 @@ namespace JocysCom.ClassLibrary.Win32
 		public static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData, ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
 		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-       public static extern bool SetupDiGetDriverInfoDetail(
+		public static extern bool SetupDiGetDriverInfoDetail(
 	   IntPtr DeviceInfoSet,
 	   ref SP_DEVINFO_DATA DeviceInfoData,
 	   ref SP_DRVINFO_DATA DriverInfoData,
@@ -24,9 +24,12 @@ namespace JocysCom.ClassLibrary.Win32
 		public static extern bool SetupDiEnumDriverInfo(
 				IntPtr DeviceInfoSet,
 				ref SP_DEVINFO_DATA DeviceInfoData,
-				int DriverType,
+				SPDIT DriverType,
 				int MemberIndex,
 				ref SP_DRVINFO_DATA DriverInfoData);
+
+		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern bool SetupDiBuildDriverInfoList(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, SPDIT DriverType);
 
 		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern bool SetupDiGetDeviceInstallParams(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref SP_DEVINSTALL_PARAMS DeviceInstallParams);
@@ -143,9 +146,9 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("setupapi.dll", SetLastError = true)]
 		public static extern CR CM_Get_DevNode_Status_Ex(out UInt32 Status, out UInt32 ProblemNumber, UInt32 dnDevInst, int ulFlags, IntPtr hMachine);
 
-        #region Helper Methods
+		#region Helper Methods
 
-        public static bool GetDeviceNodeStatus(UInt32 dnDevInst, IntPtr hMachine, out Win32.DeviceNodeStatus status)
+		public static bool GetDeviceNodeStatus(UInt32 dnDevInst, IntPtr hMachine, out Win32.DeviceNodeStatus status)
 		{
 			// c:\Program Files\Microsoft SDKs\Windows\v7.1\Include\cfg.h
 			uint Status;

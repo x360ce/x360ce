@@ -252,7 +252,7 @@ namespace JocysCom.ClassLibrary.IO
 			Guid classGuid = System.Guid.Empty;
 			IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
 			SP_DEVINFO_DATA? di = null;
-			if (deviceInfoSet.ToInt32() != ERROR_INVALID_HANDLE_VALUE)
+			if (deviceInfoSet.ToInt64() != ERROR_INVALID_HANDLE_VALUE)
 			{
 				di = GetDeviceInfo(deviceInfoSet, deviceInstanceId);
 				NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
@@ -678,7 +678,7 @@ namespace JocysCom.ClassLibrary.IO
 			Win32Exception ex = null;
 			needReboot = false;
 			var success = false;
-			if (deviceInfoSet.ToInt32() != ERROR_INVALID_HANDLE_VALUE)
+			if (deviceInfoSet.ToInt64() != ERROR_INVALID_HANDLE_VALUE)
 			{
 				var deviceInfoData = GetDeviceInfo(deviceInfoSet, deviceId);
 				if (deviceInfoData.HasValue)
