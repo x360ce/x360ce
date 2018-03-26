@@ -108,8 +108,11 @@ namespace x360ce.App.DInput
                                                     v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
                                                     v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
                                                 }
+                                                // For teh future: Investigate device states if force feedback is not working. 
+                                                // var st = ud.Device.GetForceFeedbackState();
+                                                //st == SharpDX.DirectInput.ForceFeedbackState
+                                                // ud.Device.SendForceFeedbackCommand(ForceFeedbackCommand.SetActuatorsOn);
                                                 ud.FFState.SetDeviceForces(ud.Device, ps, v);
-
                                             }
                                         }
                                         // If force state was created then...

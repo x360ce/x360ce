@@ -112,7 +112,6 @@ namespace x360ce.Engine
             // Return if force feedback actuators not found.
             if (actuatorL == null)
                 return false;
-
             Effect effectL = null;
             Effect effectR = null;
 
