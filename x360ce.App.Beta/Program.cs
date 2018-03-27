@@ -61,10 +61,14 @@ namespace x360ce.App
 			}
 		}
 
-		public const string InstallVirtualDriverParam = "InstallVirtualDriver";
-		public const string UnInstallVirtualDriverParam = "UnInstallVirtualDriver";
+		public const string InstallViGEmBusParam = "InstallViGEmBus";
+		public const string UninstallViGEmBusParam = "UninstallViGEmBus";
 
-		static void StartApp(string[] args)
+        public const string InstallHidGuardianParam = "InstallHidGuardian";
+        public const string UninstallHidGuardianParam = "UninstallHidGuardian";
+
+
+        static void StartApp(string[] args)
 		{
 			//var fi = new FileInfo(Application.ExecutablePath);
 			//Directory.SetCurrentDirectory(fi.Directory.FullName);
@@ -79,17 +83,31 @@ namespace x360ce.App
 			Application.SetCompatibleTextRenderingDefault(false);
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
-			if (ic.Parameters.ContainsKey(InstallVirtualDriverParam))
+            // ------------------------------------------------
+            // Virtual Drivers
+            // ------------------------------------------------
+            if (ic.Parameters.ContainsKey(InstallViGEmBusParam))
 			{
-				DInput.VirtualDriverInstaller.InstallVirtualDriver();
+				DInput.VirtualDriverInstaller.InstallViGEmBus();
 				return;
 			}
-			if (ic.Parameters.ContainsKey(UnInstallVirtualDriverParam))
+			if (ic.Parameters.ContainsKey(UninstallViGEmBusParam))
 			{
-				DInput.VirtualDriverInstaller.UnInstallVirtualDriver();
+				DInput.VirtualDriverInstaller.UninstallViGEmBus();
 				return;
 			}
-			if (ic.Parameters.ContainsKey("Settings"))
+            if (ic.Parameters.ContainsKey(InstallHidGuardianParam))
+            {
+                DInput.VirtualDriverInstaller.InstallHidGuardian();
+                return;
+            }
+            if (ic.Parameters.ContainsKey(UninstallHidGuardianParam))
+            {
+                DInput.VirtualDriverInstaller.UninstallHidGuardian();
+                return;
+            }
+            // ------------------------------------------------
+            if (ic.Parameters.ContainsKey("Settings"))
 			{
 				OpenSettingsFolder(Application.UserAppDataPath);
 				OpenSettingsFolder(Application.CommonAppDataPath);

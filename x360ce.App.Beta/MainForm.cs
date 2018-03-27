@@ -804,8 +804,8 @@ namespace x360ce.App
             }
             // Update options panel.
             var isVBusExists = Nefarius.ViGEm.Client.ViGEmClient.isVBusExists();
-            OptionsPanel.VirtualDeviceInstallButton.Enabled = !isVBusExists;
-            OptionsPanel.VirtualDeviceUninstallButton.Enabled = isVBusExists;
+            OptionsPanel.ViGEmBusInstallButton.Enabled = !isVBusExists;
+            OptionsPanel.ViGEmBusUninstallButton.Enabled = isVBusExists;
         }
 
         public void ReloadLibrary()

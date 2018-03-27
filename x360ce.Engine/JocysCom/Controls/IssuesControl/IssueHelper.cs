@@ -140,7 +140,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			catch (Exception) { }
 		}
 
-		public static void HoldWhileRunning(string processName, string argumentFilter)
+		public static void HoldWhileRunning(string processName, string argumentFilter = null)
 		{
 			var semaphore = new SemaphoreSlim(0);
 			var timer = new System.Timers.Timer();
@@ -162,7 +162,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 						var found = false;
 						foreach (Process item in items)
 						{
-							if (item.StartInfo.Arguments.Contains(argumentFilter))
+							if (item.StartInfo.Arguments.ToLower().Contains(argumentFilter.ToLower()))
 								found = true;
 						}
 						if (!found)
@@ -173,9 +173,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				{
 					release = true;
 				}
-				if (release)
+				if (release) {
 					// Unlock EventArgsSemaphore.Wait() line.
 					semaphore.Release();
+				}
+				else
+				{
+					timer.Start();
+				}
 			};
 			timer.Start();
 			// Wait here until all items returns to the pool.

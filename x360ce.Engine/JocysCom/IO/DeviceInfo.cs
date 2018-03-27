@@ -4,11 +4,12 @@ namespace JocysCom.ClassLibrary.IO
 	public class DeviceInfo
 	{
 
-		public DeviceInfo(string deviceId, uint handle, string parentDeviceId, string devicePath, string manufacturer, string description, Guid classGuid, string classDescription, Win32.DeviceNodeStatus status, uint vid, uint pid, uint rev)
+		public DeviceInfo(string deviceId, uint handle, string parentDeviceId, string devicePath, string hardwareId, string manufacturer, string description, Guid classGuid, string classDescription, Win32.DeviceNodeStatus status, uint vid, uint pid, uint rev)
 		{
 			_DeviceId = deviceId ?? "";
 			_DeviceHandle = handle;
 			_ParentDeviceId = parentDeviceId ?? "";
+            _HardwareId = hardwareId ?? "";
 			_Description = description ?? "";
 			_Manufacturer = manufacturer ?? "";
             _ClassGuid = classGuid;
@@ -18,6 +19,7 @@ namespace JocysCom.ClassLibrary.IO
 			_ProductId = pid;
 			_Revision = rev;
 			_DevicePath = devicePath ?? "";
+
 		}
 
 		public string Manufacturer { get { return _Manufacturer; } }
@@ -28,8 +30,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		public uint ProductId { get { return _ProductId; } }
 		private uint _ProductId;
-
-		public uint Revision { get { return _Revision; } }
+   
+        public uint Revision { get { return _Revision; } }
 		private uint _Revision;
 
 		public string Description { get { return _Description; } }
@@ -38,7 +40,10 @@ namespace JocysCom.ClassLibrary.IO
 		public string DeviceId { get { return _DeviceId; } }
 		private string _DeviceId;
 
-		public uint DeviceHandle { get { return _DeviceHandle; } }
+        public string HardwareId { get { return _HardwareId; } }
+        private string _HardwareId;
+
+        public uint DeviceHandle { get { return _DeviceHandle; } }
 		private uint _DeviceHandle;
 
 		public string DevicePath { get { return _DevicePath; } }

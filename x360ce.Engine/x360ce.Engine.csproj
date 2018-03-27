@@ -309,6 +309,7 @@
     <Compile Include="JocysCom\Win32\CR.cs" />
     <Compile Include="JocysCom\Win32\DBCH_DEVICETYPE.cs" />
     <Compile Include="JocysCom\Win32\DBT.cs" />
+    <Compile Include="JocysCom\Win32\DEVCLASS.cs" />
     <Compile Include="JocysCom\Win32\DeviceNodeStatus.cs" />
     <Compile Include="JocysCom\Win32\DEV_BROADCAST_DEVICEINTERFACE.cs" />
     <Compile Include="JocysCom\Win32\DEV_BROADCAST_HANDLE.cs" />

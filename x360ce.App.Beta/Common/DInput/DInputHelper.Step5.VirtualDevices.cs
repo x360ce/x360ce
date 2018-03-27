@@ -167,7 +167,7 @@ namespace x360ce.App.DInput
 			// If driver is installed already then return.
 			if (ViGEmClient.isVBusExists())
 				return VirtualError.None;
-			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(Application.ExecutablePath, Program.InstallVirtualDriverParam, System.Diagnostics.ProcessWindowStyle.Hidden);
+			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(Application.ExecutablePath, Program.InstallViGEmBusParam, System.Diagnostics.ProcessWindowStyle.Hidden);
 			return VirtualError.None;
 		}
 
@@ -176,7 +176,7 @@ namespace x360ce.App.DInput
 			// If driver is installed already then return.
 			if (ViGEmClient.isVBusExists())
 				return VirtualError.None;
-			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(Application.ExecutablePath, Program.UnInstallVirtualDriverParam, System.Diagnostics.ProcessWindowStyle.Hidden);
+			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(Application.ExecutablePath, Program.UninstallViGEmBusParam, System.Diagnostics.ProcessWindowStyle.Hidden);
 			return VirtualError.None;
 		}
 

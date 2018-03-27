@@ -10,6 +10,8 @@ using System.IO;
 using x360ce.Engine;
 using x360ce.App.Properties;
 using x360ce.App.Forms;
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Controls
 {
@@ -19,8 +21,8 @@ namespace x360ce.App.Controls
         {
             InitializeComponent();
             if (DesignMode) return;
-			object[] rates = {
-				1000/1, // 1000
+            object[] rates = {
+                1000/1, // 1000
 				1000/2, //  500
 				1000/3, //  333
 				1000/4, //  250
@@ -29,11 +31,11 @@ namespace x360ce.App.Controls
 				1000/7, //  142
 				1000/8, //  125
 			};
-			PollingRateComboBox.Items.AddRange(rates);
-			PollingRateComboBox.SelectedIndex = 0;
-		}
+            PollingRateComboBox.Items.AddRange(rates);
+            PollingRateComboBox.SelectedIndex = 0;
+        }
 
-		public void InitOptions()
+        public void InitOptions()
         {
             DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
         }
@@ -65,11 +67,11 @@ namespace x360ce.App.Controls
             SettingsManager.AddMap(section, () => SettingName.InternetAutoSave, InternetAutoSaveCheckBox);
             SettingsManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
             SettingsManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
-			// Load settings into control.
-			LoadSettings();
-			// Attach event which will save form settings before Save().
-			SettingsManager.OptionsData.Saving += OptionsData_Saving;
-		}
+            // Load settings into control.
+            LoadSettings();
+            // Attach event which will save form settings before Save().
+            SettingsManager.OptionsData.Saving += OptionsData_Saving;
+        }
 
         void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
         {
@@ -155,8 +157,8 @@ namespace x360ce.App.Controls
 
         public void LoadSettings()
         {
-			// Load XML settings into control.
-			var o = SettingsManager.Options;
+            // Load XML settings into control.
+            var o = SettingsManager.Options;
             AllowOnlyOneCopyCheckBox.Checked = o.AllowOnlyOneCopy;
             InternetCheckBox.Checked = o.InternetFeatures;
             InternetAutoLoadCheckBox.Checked = o.InternetAutoLoad;
@@ -174,10 +176,10 @@ namespace x360ce.App.Controls
             IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
             ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
             ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
-		}
+        }
 
-		private void OptionsData_Saving(object sender, EventArgs e)
-		{
+        private void OptionsData_Saving(object sender, EventArgs e)
+        {
             // Save XML settings into control.
             var o = SettingsManager.Options;
             o.AllowOnlyOneCopy = AllowOnlyOneCopyCheckBox.Checked;
@@ -195,7 +197,7 @@ namespace x360ce.App.Controls
             o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
             o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
             o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
-		}
+        }
 
         private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
         {
@@ -205,7 +207,7 @@ namespace x360ce.App.Controls
 
         private void LoginButton_Click(object sender, EventArgs e)
         {
-            // Secure login over insecure webservices.
+            // Secure login over insecure web services.
             if (LoginButton.Text == "Log In")
             {
                 var o = SettingsManager.Options;
@@ -241,15 +243,15 @@ namespace x360ce.App.Controls
                 CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
                 cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
                 results = ws.Execute(cmd2);
-				if (results.ErrorCode > 0)
-				{
-					MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-				else
-				{
-					MessageBoxForm.Show(string.Format("Authorised: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-			}
+                if (results.ErrorCode > 0)
+                {
+                    MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBoxForm.Show(string.Format("Authorised: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
             else
             {
 
@@ -322,23 +324,46 @@ namespace x360ce.App.Controls
 
         }
 
-		private void VirtualDeviceInstallButton_Click(object sender, EventArgs e)
-		{
-			DInput.VirtualDriverInstaller.InstallVirtualDriver();
-		}
+        DeveloperToolsForm _ToolsForm;
 
-		private void VirtualDeviceUninstallButton_Click(object sender, EventArgs e)
-		{
-			DInput.VirtualDriverInstaller.UnInstallVirtualDriver();
-		}
+        private void DeveloperToolsButton_Click(object sender, EventArgs e)
+        {
+            if (_ToolsForm == null)
+                _ToolsForm = new DeveloperToolsForm();
+            _ToolsForm.ShowPanel();
+        }
 
-		DeveloperToolsForm _ToolsForm;
+        #region Virtual Drivers
 
-		private void DeveloperToolsButton_Click(object sender, EventArgs e)
-		{
-			if (_ToolsForm == null)
-				_ToolsForm = new DeveloperToolsForm();
-			_ToolsForm.ShowPanel();
-		}
-	}
+        private void ViGEmBusInstallButton_Click(object sender, EventArgs e)
+        {
+            DInput.VirtualDriverInstaller.InstallViGEmBus();
+        }
+
+        private void ViGEmBusUninstallButton_Click(object sender, EventArgs e)
+        {
+            DInput.VirtualDriverInstaller.UninstallViGEmBus();
+        }
+
+        private void HidGuardianInstallButton_Click(object sender, EventArgs e)
+        {
+            DInput.VirtualDriverInstaller.InstallHidGuardian();
+        }
+
+        private void HidGuardianUninstallButton_Click(object sender, EventArgs e)
+        {
+            DInput.VirtualDriverInstaller.UninstallHidGuardian();
+        }
+
+        private void VirtualInfoRefreshButton_Click(object sender, EventArgs e)
+        {
+            SP_DRVINFO_DATA v;
+            v = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
+            ControlsHelper.SetText(ViGEmBusTextBox, string.Format("{0} {1}", v.Description, v.GetVersion()));
+            v = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
+            ControlsHelper.SetText(HidGuardianTextBox, string.Format("{0} {1}", v.Description, v.GetVersion()));
+        }
+
+        #endregion
+    }
 }

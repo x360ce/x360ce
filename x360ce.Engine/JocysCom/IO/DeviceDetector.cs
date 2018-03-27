@@ -361,8 +361,7 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					parentDeviceId = GetDeviceId(parentDeviceInstance);
 				}
-
-				var di = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, devicePath, vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
+                var di = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, devicePath, "", vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
 				list.Add(di);
 				serials.Add(phdesc);
 				devHandle.Close();
@@ -450,7 +449,8 @@ namespace JocysCom.ClassLibrary.IO
 			var deviceManufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
 			var deviceClassGuid = deviceInfoData.ClassGuid;
 			var classDescription = GetClassDescription(deviceClassGuid);
-			Win32.DeviceNodeStatus status;
+            var hardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
+            Win32.DeviceNodeStatus status;
 			var deviceHandle = deviceInfoData.DevInst;
 			NativeMethods.GetDeviceNodeStatus(deviceHandle, IntPtr.Zero, out status);
 			uint vid;
@@ -465,7 +465,7 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				parentDeviceId = GetDeviceId(parentDeviceInstance);
 			}
-			var device = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, "", deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
+			var device = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, "", hardwareId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
 			return device;
 		}
 

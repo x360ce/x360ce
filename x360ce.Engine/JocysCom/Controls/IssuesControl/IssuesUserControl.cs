@@ -16,6 +16,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             InitializeComponent();
             if (IsDesignMode)
                 return;
+            NoIssuesPanel.Visible = false;
+            LinePanel.Visible = false;
             ExceptionInfoButton.Visible = false;
             // List which contains all issues.
             IssueList = new BindingListInvoked<IssueItem>();
@@ -24,6 +26,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             // List which is bound to the grid and displays issues, which needs user attention.
             Warnings = new BindingListInvoked<IssueItem>();
             Warnings.SynchronizingObject = this;
+            Warnings.ListChanged += Warnings_ListChanged;
             // Configure data grid.
             ControlsHelper.ApplyBorderStyle(IssuesDataGridView);
             IssuesDataGridView.AutoGenerateColumns = false;
@@ -37,6 +40,22 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             TasksTimer.Queue.ListChanged += Data_ListChanged;
             // Start monitoring tasks queue.
             QueueMonitorTimer.Start();
+        }
+
+        private void Warnings_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
+            {
+                UpdateNoIssuesPanel();
+            }
+        }
+
+        void UpdateNoIssuesPanel()
+        {
+            // Panel is visible only if all tests are complete and no issues were found.
+            var noIssues = CheckAllIsComplete && Warnings.Count == 0;
+            ControlsHelper.SetVisible(NoIssuesPanel, noIssues);
+            ControlsHelper.SetVisible(LinePanel, noIssues);
         }
 
         public JocysCom.ClassLibrary.Threading.QueueTimer<object> TasksTimer;
@@ -77,15 +96,21 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
         internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
 
+        bool CheckAllIsComplete = false;
+
         void CheckAll()
         {
             bool clearRest = false;
             foreach (var issue in IssueList)
             {
+                if (IsDisposing)
+                    return;
                 if (clearRest)
                     issue.Severity = IssueSeverity.None;
                 else
                     issue.Check();
+                if (IsDisposing)
+                    return;
                 // If issue is critical then...
                 if (issue.Severity == IssueSeverity.Critical)
                 {
@@ -106,6 +131,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             HasIssues = IgnoreAll
                 ? false
                 : Warnings.Any(x => x.Severity > IssueSeverity.Moderate);
+            CheckAllIsComplete = true;
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                UpdateNoIssuesPanel();
+            });
             var ev = CheckCompleted;
             if (ev != null)
                 CheckCompleted(this, new EventArgs());
@@ -170,6 +200,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             TasksTimer.SleepTimerStop();
         }
 
+        public bool IsDisposing;
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -178,6 +210,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
         {
             if (disposing)
             {
+                IsDisposing = true;
                 if (TasksTimer != null)
                     TasksTimer.Dispose();
                 // Clear list.
@@ -242,7 +275,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
                     default:
                         break;
                 }
-
+            }
+            else if (e.ColumnIndex == grid.Columns[SolutionColumn.Name].Index)
+            {
+                e.Value = item.Status == IssueStatus.Fixing ? "Please Wait..." : item.FixName;
             }
         }
 
