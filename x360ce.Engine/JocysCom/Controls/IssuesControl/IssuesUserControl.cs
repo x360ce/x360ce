@@ -23,14 +23,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             IssueList = new BindingListInvoked<IssueItem>();
             IssueList.SynchronizingObject = this;
             IssueList.ListChanged += IssueList_ListChanged;
+            UpdateIgnoreAllButton();
             // List which is bound to the grid and displays issues, which needs user attention.
             Warnings = new BindingListInvoked<IssueItem>();
             Warnings.SynchronizingObject = this;
-            Warnings.ListChanged += Warnings_ListChanged;
             // Configure data grid.
-            ControlsHelper.ApplyBorderStyle(IssuesDataGridView);
-            IssuesDataGridView.AutoGenerateColumns = false;
-            IssuesDataGridView.DataSource = Warnings;
+            ControlsHelper.ApplyBorderStyle(WarningsDataGridView);
+            WarningsDataGridView.AutoGenerateColumns = false;
+            WarningsDataGridView.DataSource = Warnings;
+            UpdateIgnoreButton();
             // Timer which checks for the issues.
             var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
             var title = ai.GetTitle(true, true, true, true, false) + " - Issues";
@@ -42,18 +43,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             QueueMonitorTimer.Start();
         }
 
-        private void Warnings_ListChanged(object sender, ListChangedEventArgs e)
-        {
-            if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
-            {
-                UpdateNoIssuesPanel();
-            }
-        }
-
         void UpdateNoIssuesPanel()
         {
+            var items = IssueList.Where(x => x.IsEnabled).ToArray();
+            var noIssues =
+                // List contains enabled issues.
+                items.Count() > 0 &&
+                // There are no unchecked issues or issues with the problem.
+                !items.Any(x => !x.Severity.HasValue || x.Severity.Value != IssueSeverity.None);
             // Panel is visible only if all tests are complete and no issues were found.
-            var noIssues = CheckAllIsComplete && Warnings.Count == 0;
             ControlsHelper.SetVisible(NoIssuesPanel, noIssues);
             ControlsHelper.SetVisible(LinePanel, noIssues);
         }
@@ -82,8 +80,20 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
         private void IssueList_ListChanged(object sender, ListChangedEventArgs e)
         {
+            var list = IssueList.ToArray();
+            foreach (var item in list)
+            {
+                // If issue is unchecked or no longer a problem then...
+                if (Warnings.Contains(item) && (!item.IsEnabled || !item.Severity.HasValue || item.Severity == IssueSeverity.None))
+                    // Remove from warnings list.
+                    Warnings.Remove(item);
+                // If issue not found and problem found then...
+                else if (!Warnings.Contains(item) && item.IsEnabled && item.Severity.HasValue && item.Severity.Value != IssueSeverity.None)
+                    // Add to warnings list.
+                    Warnings.Add(item);
+            }
             // Get issues in progress.
-            var list = IssueList.Where(x => x.Status != IssueStatus.Idle).ToArray();
+            list = IssueList.Where(x => x.Status != IssueStatus.Idle).ToArray();
             var sb = new StringBuilder();
             foreach (var item in list)
             {
@@ -92,50 +102,27 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
                 sb.AppendFormat("{0}/{1} {2}: {3}", IssueList.IndexOf(item), IssueList.Count, item.GetType().Name, item.Status);
             }
             StatusLabel.Text = sb.ToString();
+            UpdateIgnoreAllButton();
+            UpdateNoIssuesPanel();
         }
 
         internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
 
-        bool CheckAllIsComplete = false;
-
         void CheckAll()
         {
-            bool clearRest = false;
             foreach (var issue in IssueList)
             {
                 if (IsDisposing)
                     return;
-                if (clearRest)
-                    issue.Severity = IssueSeverity.None;
-                else
-                    issue.Check();
+                issue.Check();
                 if (IsDisposing)
                     return;
                 // If issue is critical then...
-                if (issue.Severity == IssueSeverity.Critical)
-                {
+                if (issue.IsEnabled && issue.Severity.HasValue && issue.Severity.Value >= IssueSeverity.Critical)
                     // Skip checking other issues.
-                    clearRest = true;
-                }
-                // Try to get issue from warnings list.
-                var item = Warnings.FirstOrDefault(x => x.Name == issue.Name);
-                // If issue found and not a problem then...
-                if (item != null && issue.Severity == IssueSeverity.None)
-                    // Remove from the list.
-                    Warnings.Remove(item);
-                // If issue not found and there is a problem then...
-                else if (item == null && issue.Severity != IssueSeverity.None)
-                    // Add to the list.
-                    Warnings.Add(issue);
+                    break;
             }
-            HasIssues = IgnoreAll
-                ? false
-                : Warnings.Any(x => x.Severity > IssueSeverity.Moderate);
-            CheckAllIsComplete = true;
-            BeginInvoke((MethodInvoker)delegate ()
-            {
-                UpdateNoIssuesPanel();
-            });
+            HasIssues = IssueList.Any(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value > IssueSeverity.Critical);
             var ev = CheckCompleted;
             if (ev != null)
                 CheckCompleted(this, new EventArgs());
@@ -147,7 +134,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
         // List of warnings to show.
         public BindingListInvoked<IssueItem> Warnings;
         object checkTimerLock = new object();
-        bool IgnoreAll;
 
         BindingListInvoked<IssueItem> IssueList;
         object IssueListLock = new object();
@@ -229,7 +215,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             base.Dispose(disposing);
         }
 
-        private void IssuesDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void WarningsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             var grid = (DataGridView)sender;
             if (grid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
@@ -242,11 +228,23 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
         private void IgnoreAllButton_Click(object sender, EventArgs e)
         {
-            IgnoreAll = !IgnoreAll;
-            IgnoreAllButton.Checked = IgnoreAll;
+            var ignoreAll = IsIgnoreAll();
+            var items = IssueList.ToArray();
+            foreach (var item in items)
+                item.IsEnabled = ignoreAll;
+            TasksTimer.DoActionNow();
         }
 
-        private void IssuesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void IgnoreButton_Click(object sender, EventArgs e)
+        {
+            var viewRows = WarningsDataGridView.SelectedRows.Cast<DataGridViewRow>();
+            var items = viewRows.Select(x => (IssueItem)x.DataBoundItem).ToArray();
+            foreach (var item in items)
+                item.IsEnabled = false;
+            TasksTimer.DoActionNow();
+        }
+
+        private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex == -1) return;
             var grid = (DataGridView)sender;
@@ -307,5 +305,30 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             var message = JocysCom.ClassLibrary.Runtime.LogHelper.ExceptionToText(LastException);
             MessageBox.Show(message, LastException.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        private void WarningsDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            UpdateIgnoreButton();
+        }
+
+        void UpdateIgnoreButton()
+        {
+            var enabled = WarningsDataGridView.SelectedRows.Count > 0;
+            ControlsHelper.SetEnabled(IgnoreButton, enabled);
+        }
+
+        bool IsIgnoreAll()
+        {
+            // If no enabled issues found.
+            var ignoreAllChecked = IssueList.Count > 0 && !IssueList.Any(x => x.IsEnabled);
+            return ignoreAllChecked;
+        }
+
+        void UpdateIgnoreAllButton()
+        {
+            // If no enabled issues found.
+            ControlsHelper.SetChecked(IgnoreAllButton, IsIgnoreAll());
+        }
+
     }
 }

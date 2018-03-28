@@ -24,12 +24,13 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.IssuesDataGridView = new System.Windows.Forms.DataGridView();
+            this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
             this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SolutionColumn = new System.Windows.Forms.DataGridViewButtonColumn();
             this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
+            this.IgnoreButton = new System.Windows.Forms.ToolStripButton();
             this.IgnoreAllButton = new System.Windows.Forms.ToolStripButton();
             this.ExceptionInfoButton = new System.Windows.Forms.ToolStripButton();
             this.StatusLabel = new System.Windows.Forms.ToolStripLabel();
@@ -41,30 +42,30 @@
             this.NoIssuesPanel = new System.Windows.Forms.Panel();
             this.NoIssuesLabel = new System.Windows.Forms.Label();
             this.LinePanel = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.IssuesDataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).BeginInit();
             this.GamesToolStrip.SuspendLayout();
             this.NoIssuesPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // IssuesDataGridView
+            // WarningsDataGridView
             // 
-            this.IssuesDataGridView.AllowUserToAddRows = false;
-            this.IssuesDataGridView.AllowUserToDeleteRows = false;
-            this.IssuesDataGridView.AllowUserToOrderColumns = true;
-            this.IssuesDataGridView.AllowUserToResizeRows = false;
-            this.IssuesDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            this.IssuesDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.IssuesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.IssuesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.WarningsDataGridView.AllowUserToAddRows = false;
+            this.WarningsDataGridView.AllowUserToDeleteRows = false;
+            this.WarningsDataGridView.AllowUserToOrderColumns = true;
+            this.WarningsDataGridView.AllowUserToResizeRows = false;
+            this.WarningsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.WarningsDataGridView.BackgroundColor = System.Drawing.Color.White;
+            this.WarningsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.WarningsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
             dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.IssuesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.IssuesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.IssuesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.WarningsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            this.WarningsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.WarningsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.SeverityColumn,
             this.NameColumn,
             this.DescriptionColumn,
@@ -76,13 +77,13 @@
             dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.IssuesDataGridView.DefaultCellStyle = dataGridViewCellStyle13;
-            this.IssuesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.IssuesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.IssuesDataGridView.Location = new System.Drawing.Point(0, 25);
-            this.IssuesDataGridView.Margin = new System.Windows.Forms.Padding(0);
-            this.IssuesDataGridView.Name = "IssuesDataGridView";
-            this.IssuesDataGridView.ReadOnly = true;
+            this.WarningsDataGridView.DefaultCellStyle = dataGridViewCellStyle13;
+            this.WarningsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.WarningsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
+            this.WarningsDataGridView.Location = new System.Drawing.Point(0, 25);
+            this.WarningsDataGridView.Margin = new System.Windows.Forms.Padding(0);
+            this.WarningsDataGridView.Name = "WarningsDataGridView";
+            this.WarningsDataGridView.ReadOnly = true;
             dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -90,13 +91,14 @@
             dataGridViewCellStyle14.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.IssuesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle14;
-            this.IssuesDataGridView.RowHeadersVisible = false;
-            this.IssuesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.IssuesDataGridView.Size = new System.Drawing.Size(605, 185);
-            this.IssuesDataGridView.TabIndex = 23;
-            this.IssuesDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.IssuesDataGridView_CellContentClick);
-            this.IssuesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.IssuesDataGridView_CellFormatting);
+            this.WarningsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle14;
+            this.WarningsDataGridView.RowHeadersVisible = false;
+            this.WarningsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.WarningsDataGridView.Size = new System.Drawing.Size(605, 185);
+            this.WarningsDataGridView.TabIndex = 23;
+            this.WarningsDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WarningsDataGridView_CellContentClick);
+            this.WarningsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.WarningsDataGridView_CellFormatting);
+            this.WarningsDataGridView.SelectionChanged += new System.EventHandler(this.WarningsDataGridView_SelectionChanged);
             // 
             // SeverityColumn
             // 
@@ -152,6 +154,7 @@
             this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.IgnoreAllButton,
+            this.IgnoreButton,
             this.ExceptionInfoButton,
             this.StatusLabel,
             this.NextRunSeparator,
@@ -164,6 +167,17 @@
             this.GamesToolStrip.Size = new System.Drawing.Size(605, 25);
             this.GamesToolStrip.TabIndex = 24;
             this.GamesToolStrip.Text = "MySettingsToolStrip";
+            // 
+            // IgnoreButton
+            // 
+            this.IgnoreButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.IgnoreButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreButton.Image")));
+            this.IgnoreButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.IgnoreButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+            this.IgnoreButton.Name = "IgnoreButton";
+            this.IgnoreButton.Size = new System.Drawing.Size(61, 21);
+            this.IgnoreButton.Text = "Ignore";
+            this.IgnoreButton.Click += new System.EventHandler(this.IgnoreButton_Click);
             // 
             // IgnoreAllButton
             // 
@@ -262,13 +276,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.IssuesDataGridView);
+            this.Controls.Add(this.WarningsDataGridView);
             this.Controls.Add(this.LinePanel);
             this.Controls.Add(this.NoIssuesPanel);
             this.Controls.Add(this.GamesToolStrip);
             this.Name = "IssuesUserControl";
             this.Size = new System.Drawing.Size(605, 258);
-            ((System.ComponentModel.ISupportInitialize)(this.IssuesDataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).EndInit();
             this.GamesToolStrip.ResumeLayout(false);
             this.GamesToolStrip.PerformLayout();
             this.NoIssuesPanel.ResumeLayout(false);
@@ -280,7 +294,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView IssuesDataGridView;
+		private System.Windows.Forms.DataGridView WarningsDataGridView;
 		private System.Windows.Forms.ToolStrip GamesToolStrip;
 		private System.Windows.Forms.ToolStripButton IgnoreAllButton;
         private System.Windows.Forms.ToolStripLabel StatusLabel;
@@ -297,5 +311,6 @@
         private System.Windows.Forms.Panel NoIssuesPanel;
         private System.Windows.Forms.Label NoIssuesLabel;
         private System.Windows.Forms.Panel LinePanel;
+        private System.Windows.Forms.ToolStripButton IgnoreButton;
     }
 }
