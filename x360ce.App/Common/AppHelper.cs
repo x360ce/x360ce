@@ -80,7 +80,6 @@ namespace x360ce.App
                 {
                     Name = o.Name,
                     Offset = o.Offset,
-                    OffsetType = device.Information.Type,
                     Aspect = o.Aspect,
                     Flags = o.ObjectId.Flags,
                     ObjectId = (int)o.ObjectId,

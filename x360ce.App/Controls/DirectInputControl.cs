@@ -340,8 +340,6 @@ namespace x360ce.App.Controls
 			var maxName = objects.Max(x => x.Name.Length);
 			var maxFlags = objects.Max(x => x.Flags.ToString().Length);
 			var maxAspectName = objects.Max(x => x.AspectName.Length);
-			var maxOffsetName = objects.Max(x => x.OffsetName.ToString().Length);
-
 			var names = new string[] { "Offset", "Type", "Aspect", "Flags", "Instance", "Name" };
 			var sizes = new int[] { "Offset".Length, -maxTypeName, -maxAspectName, -maxFlags, "Instance".Length, -maxName };
 			// Create format line.

@@ -944,7 +944,7 @@ namespace x360ce.App.Controls
 
 
         // Function is recreated as soon as new DirectInput Device is available.
-        public void ResetDiMenuStrip(UserDevice device)
+        public void ResetDiMenuStrip(UserDevice ud)
         {
             DiMenuStrip.Items.Clear();
             ToolStripMenuItem mi;
@@ -953,7 +953,7 @@ namespace x360ce.App.Controls
             mi.Click += new EventHandler(DiMenuStrip_Click);
             DiMenuStrip.Items.Add(mi);
             // Return if direct input device is not available.
-            if (device == null) return;
+            if (ud == null) return;
             // Add [Record] button.
             mi = new ToolStripMenuItem(cRecord);
             mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
@@ -962,35 +962,37 @@ namespace x360ce.App.Controls
             // Add Buttons.
             mi = new ToolStripMenuItem("Buttons");
             DiMenuStrip.Items.Add(mi);
-            CreateItems(mi, "Inverted", "IButton {0}", "-{0}", device.CapButtonCount);
-            CreateItems(mi, "Button {0}", "{0}", device.CapButtonCount);
-            if (device.CapAxeCount > 0)
+            CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
+            CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
+            if (ud.DiAxeMask > 0)
             {
                 // Add Axes.
                 mi = new ToolStripMenuItem("Axes");
                 DiMenuStrip.Items.Add(mi);
-                CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", device.CapAxeCount);
-                CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", device.CapAxeCount);
-                CreateItems(mi, "Half", "HAxis {0}", "x{0}", device.CapAxeCount);
-                CreateItems(mi, "Axis {0}", "a{0}", device.CapAxeCount);
+                CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+                CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+                CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+                CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+            }
+            if (ud.DiSliderMask > 0)
+            {
                 // Add Sliders.            
                 mi = new ToolStripMenuItem("Sliders");
                 DiMenuStrip.Items.Add(mi);
                 // 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
-                var slidersCount = 8;
-                CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", slidersCount);
-                CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", slidersCount);
-                CreateItems(mi, "Half", "HSlider {0}", "h{0}", slidersCount);
-                CreateItems(mi, "Slider {0}", "s{0}", slidersCount);
+                CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+                CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+                CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+                CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
             }
             // Add D-Pads.
-            if (device.CapPovCount > 0)
+            if (ud.CapPovCount > 0)
             {
                 mi = new ToolStripMenuItem("POVs");
                 DiMenuStrip.Items.Add(mi);
                 // Add D-Pad Top, Right, Bottom, Left button.
                 var dPadNames = Enum.GetNames(typeof(DPadEnum));
-                for (int p = 0; p < device.CapPovCount; p++)
+                for (int p = 0; p < ud.CapPovCount; p++)
                 {
                     var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
                     mi.DropDownItems.Add(dPadItem);
@@ -1004,17 +1006,22 @@ namespace x360ce.App.Controls
             }
         }
 
-        void CreateItems(ToolStripMenuItem parent, string subMenu, string text, string tag, int count)
+        void CreateItems(ToolStripMenuItem parent, string subMenu, string text, string tag, int count, int? mask = null)
         {
             var smi = new ToolStripMenuItem(subMenu);
             parent.DropDownItems.Add(smi);
-            CreateItems(smi, text, tag, count);
+            CreateItems(smi, text, tag, count, mask);
         }
 
-        void CreateItems(ToolStripMenuItem parent, string text, string tag, int count)
+        /// <summary>Create menu item.</summary>
+        /// <param name="mask">Mask contains information if item is presend.</param>
+        void CreateItems(ToolStripMenuItem parent, string text, string tag, int count, int? mask = null)
         {
             for (int i = 0; i < count; i++)
             {
+                // If mask specified and item is not present then...
+                if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
+                    continue;
                 var item = CreateItem(text, tag, i + 1);
                 parent.DropDownItems.Add(item);
             }

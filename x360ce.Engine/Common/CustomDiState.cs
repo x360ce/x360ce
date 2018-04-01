@@ -10,8 +10,11 @@ namespace x360ce.Engine
     /// </summary>
     public class CustomDiState
     {
-        public int[] Axis = new int[24];
-        public int[] Sliders = new int[8];
+        public const int MaxAxis = 24;
+        public const int MaxSliders = 8;
+
+        public int[] Axis = new int[MaxAxis];
+        public int[] Sliders = new int[MaxSliders];
         public int[] Povs = new int[4];
         public bool[] Buttons = new bool[128];
 
@@ -82,37 +85,8 @@ namespace x360ce.Engine
         /// bit 3 = 1 - Axis 3 is present
         /// ...
         /// </summary>
-        public static int GetAxisMask(Joystick device)
+        public static int GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device)
         {
-            int mask = 0;
-            if (device.Information.Type == DeviceType.Joystick)
-            {
-                var items = device.GetObjects(DeviceObjectTypeFlags.All);
-                mask = GetJoystickAxisMask(items);
-            }
-            else if (device.Information.Type == DeviceType.Mouse)
-            {
-                var items = device.GetObjects(DeviceObjectTypeFlags.All);
-                // Must have same order as in Axis[] property.
-                var list = new List<MouseOffset>{
-                    MouseOffset.X,
-                    MouseOffset.Y,
-                    MouseOffset.Z,
-                };
-                foreach (var item in items)
-                {
-                    var offset = (MouseOffset)item.Offset;
-                    var index = list.IndexOf(offset);
-                    if (index > -1)
-                        mask |= (int)Math.Pow(2, index);
-                }
-            }
-            return mask;
-        }
-
-        public static int GetJoystickAxisMask(IList<DeviceObjectInstance> items)
-        {
-            int mask = 0;
             // Must have same order as in axis.
             var list = new List<JoystickOffset>{
                     JoystickOffset.X,
@@ -140,9 +114,33 @@ namespace x360ce.Engine
                     JoystickOffset.AngularVelocityY,
                     JoystickOffset.AngularVelocityZ,
                 };
+
+            int mask = 0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                try
+                {
+                    var item = device.GetObjectInfoByOffset((int)list[i]);
+                    if (item != null)
+                        mask |= (int)Math.Pow(2, i);
+                }
+                catch { }
+            }
+            return mask;
+        }
+
+        public static int GetMouseAxisMask(IList<DeviceObjectInstance> items)
+        {
+            // Must have same order as in Axis[] property.
+            var list = new List<MouseOffset>{
+                    MouseOffset.X,
+                    MouseOffset.Y,
+                    MouseOffset.Z,
+                };
+            int mask = 0;
             foreach (var item in items)
             {
-                var offset = (JoystickOffset)item.Offset;
+                var offset = (MouseOffset)item.Offset;
                 var index = list.IndexOf(offset);
                 if (index > -1)
                     mask |= (int)Math.Pow(2, index);
@@ -176,30 +174,29 @@ namespace x360ce.Engine
             state.VelocitySliders[1] = sliders[7];
         }
 
-        public static int GetSlidersMask(Joystick device)
+        public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device)
         {
+            // Must have same order as in Sliders[] property.
+            var list = new List<JoystickOffset>{
+                JoystickOffset.Sliders0,
+                JoystickOffset.Sliders1,
+                JoystickOffset.AccelerationSliders0,
+                JoystickOffset.AccelerationSliders1,
+                JoystickOffset.ForceSliders0,
+                JoystickOffset.ForceSliders1,
+                JoystickOffset.VelocitySliders0,
+                JoystickOffset.VelocitySliders1,
+            };
             int mask = 0;
-            if (device.Information.Type == DeviceType.Joystick)
+            for (int i = 0; i < list.Count; i++)
             {
-                var items = device.GetObjects(DeviceObjectTypeFlags.All);
-                // Must have same order as in Sliders[] property.
-                var list = new List<JoystickOffset>{
-                        JoystickOffset.Sliders0,
-                        JoystickOffset.Sliders1,
-                        JoystickOffset.AccelerationSliders0,
-                        JoystickOffset.AccelerationSliders1,
-                        JoystickOffset.ForceSliders0,
-                        JoystickOffset.ForceSliders1,
-                        JoystickOffset.VelocitySliders0,
-                        JoystickOffset.VelocitySliders1,
-                };
-                foreach (var item in items)
+                try
                 {
-                    var offset = (JoystickOffset)item.Offset;
-                    var index = list.IndexOf(offset);
-                    if (index > -1)
-                        mask |= (int)Math.Pow(2, index);
+                    var item = device.GetObjectInfoByOffset((int)list[i]);
+                    if (item != null)
+                        mask |= (int)Math.Pow(2, i);
                 }
+                catch { }
             }
             return mask;
         }

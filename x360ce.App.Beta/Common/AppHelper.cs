@@ -8,10 +8,8 @@ using System.Reflection;
 using x360ce.Engine;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Windows.Forms;
 using x360ce.Engine.Data;
 using System.Linq.Expressions;
-using System.Configuration;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
 
@@ -76,14 +74,14 @@ namespace x360ce.App
 			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
 			List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
 			List<string> typeName = guidFileds.Select(x => x.Name).ToList();
-			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
-			foreach (var o in objects)
+            var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
+            foreach (var o in objects)
 			{
-				var item = new DeviceObjectItem()
+                var props = device.GetObjectPropertiesById(o.ObjectId);
+                var item = new DeviceObjectItem()
 				{
 					Name = o.Name,
 					Offset = o.Offset,
-					OffsetType = device.Information.Type,
 					Aspect = o.Aspect,
 					Flags = o.ObjectId.Flags,
                     ObjectId = (int)o.ObjectId,

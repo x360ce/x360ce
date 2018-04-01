@@ -23,16 +23,20 @@ namespace x360ce.Engine
 		}
 
 		public string Name { get; set; }
-		public int Offset { get; set; }
+
+        /// <summary>
+        /// Important note: 
+        /// This Offset is in the native data format of the device. The native data format corresponds to the raw device data.
+        /// This member does not correspond to the device constant, such as DIJOFS_BUTTON0 (JoystickOffset.Buttons0), for this object.
+        /// </summary>
+        public int Offset { get; set; }
         public int ObjectId { get; set; }
         public int Instance { get; set; }
 		public ObjectAspect Aspect { get; set; }
 		public DeviceObjectTypeFlags Flags { get; set; }
 		public Guid Type { get; set; }
 
-		public DeviceType OffsetType { get; set; }
-
-		public string AspectName
+        public string AspectName
 		{
 			get
 			{
@@ -64,25 +68,6 @@ namespace x360ce.Engine
 					// Return type name.
 					return TypeNames.ContainsKey(Type) ? TypeNames[Type] : Type.ToString();
 				}
-			}
-		}
-
-		public string OffsetName
-		{
-			get
-			{
-				switch (OffsetType)
-				{
-					case DeviceType.Mouse: return ((MouseOffset)Offset).ToString();
-					case DeviceType.Keyboard: return string.Format("Buttons{0}", Offset - 1);
-					case DeviceType.Joystick: return ((JoystickOffset)Offset).ToString();
-					case DeviceType.Gamepad:
-						return Flags.HasFlag(DeviceObjectTypeFlags.NoData)
-								? "" : ((GamepadOffset)Offset).ToString();
-
-					default: return "";
-				}
-
 			}
 		}
 

@@ -8,6 +8,12 @@ using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
+
+    public class LogHelperEventArgs: CancelEventArgs
+    {
+        public Exception Exception { get; set; }
+    }
+
     public partial class LogHelper
     {
         #region Handling
@@ -34,6 +40,8 @@ namespace JocysCom.ClassLibrary.Runtime
         }
 
         string _LogFolder;
+
+        public event EventHandler<LogHelperEventArgs> WritingException;
 
         public void WriteException(Exception ex)
         {

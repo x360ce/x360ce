@@ -42,7 +42,6 @@ namespace x360ce.App.DInput
                         {
                             var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
                             var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
-
                             // Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
                             var exclusiveRequired = hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
                             // If exclusive mode is required and mode is not exclusive then...
@@ -68,7 +67,13 @@ namespace x360ce.App.DInput
                             state = device.GetCurrentState();
                             // Fill device objects.
                             if (ud.DeviceObjects == null)
-                                ud.DeviceObjects = AppHelper.GetDeviceObjects(device);
+                            {
+                                var dos = AppHelper.GetDeviceObjects(device);
+                                ud.DeviceObjects = dos;
+                                // Update masks.
+                                ud.DiAxeMask = CustomDiState.GetJoystickAxisMask(dos, device);
+                                ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device);
+                            }
                             if (ud.DeviceEffects == null)
                                 ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
                             // Get PAD index this device is mapped to.
@@ -137,8 +142,13 @@ namespace x360ce.App.DInput
                     else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
                     {
                         // Fill device objects.
-                        if (ud.DeviceObjects == null)
-                            ud.DeviceObjects = TestDeviceHelper.GetDeviceObjects();
+                        if (ud.DeviceObjects == null) {
+                            var dos = TestDeviceHelper.GetDeviceObjects();
+                            ud.DeviceObjects = dos;
+                            // Update masks.
+                            ud.DiAxeMask = 0x1 | 0x2 | 0x4 | 0x8;
+                            ud.DiSliderMask = 0;
+                        }
                         if (ud.DeviceEffects == null)
                             ud.DeviceEffects = new DeviceEffectItem[0];
                         state = TestDeviceHelper.GetCurrentState(ud);

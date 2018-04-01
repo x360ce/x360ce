@@ -25,6 +25,7 @@ namespace x360ce.App
         public MainForm()
         {
             LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
+            LogHelper.Current.WritingException += Current_WritingException;
             InitializeComponent();
             if (IsDesignMode) return;
             Pad1TabPage.Text = "Controller 1";
@@ -35,6 +36,22 @@ namespace x360ce.App
             JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesToolStrip);
         }
 
+        private void Current_WritingException(object sender, LogHelperEventArgs e)
+        {
+            var ex = e.Exception as SharpDX.SharpDXException;
+            if (ex != null && ex.Descriptor != null)
+            {
+                var d = ex.Descriptor;
+                if (d.ApiCode == "NotFound" &&
+                     d.Code == -2147024894 &&
+                     d.Module == "SharpDX.DirectInput" &&
+                    d.NativeApiCode == "DIERR_NOTFOUND")
+                {
+                    // Cancel writing error to file.
+                    e.Cancel = true;
+                }
+            }
+        }
 
         public DInput.DInputHelper DHelper;
 

@@ -80,7 +80,7 @@ namespace x360ce.App
 			//ud.HidProductId = 0;
 			ud.HidDescription = instanceName;
 			ud.HidClassGuid = new Guid("4d1e55b2-f16f-11cf-88cb-001111000030");
-			ud.IsEnabled = true;
+            ud.IsEnabled = true;
 			return ud;
 		}
 
